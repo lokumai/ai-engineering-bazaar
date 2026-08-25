@@ -1,8 +1,8 @@
 site_name: AI Mini-Courses
 site_description: AI Engineering made simple, short, and useful.
-site_url: https://lokumai.github.io/ai-minicourses/
-repo_url: https://github.com/lokumai/ai-minicourses
-repo_name: lokumai/ai-minicourses
+site_url: https://lokumai.github.io/ai-engineering-bazaar/
+repo_url: https://github.com/lokumai/ai-engineering-bazaar
+repo_name: lokumai/ai-engineering-bazaar
 
 docs_dir: mini-courses
 

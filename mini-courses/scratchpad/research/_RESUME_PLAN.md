@@ -48,18 +48,37 @@ Note `mkdocs.yml` renders mermaid via `pymdownx.superfences` custom fences, and
 
 ## Phase status
 
-### Phase 1a — Research dossiers  ✅ COMPLETE
+### Phase 1a — Research dossiers  ✅ COMPLETE (7 of 7)
 
-| # | Module | Dossier file | Lines | Citations |
-|---|---|---|---|---|
-| 8 | Prompt Engineering | `08_prompt_engineering.md` | 1048 | 250 |
-| 9 | Context Engineering | `09_context_engineering.md` | 592 | 208 |
-| 10 | Coding Agents | `10_coding_agents.md` | 1862 | 152 |
-| 11 | Harness Engineering | `11_harness_engineering.md` | 821 | 267 |
-| 12 | Security | `12_security.md` | 872 | 156 |
-| 12+ | Security appendix — PyRIT/garak tooling | `12_security_appendix_redteam_tooling.md` | 246 | (table-form) |
-| 13 | Loop Engineering | `13_loop_engineering.md` | 751 | 196 |
-| 14 | Personal Agents | `14_personal_agents.md` | 663 | 55 |
+| # | Module | Dossier file | Lines | Citations | Status |
+|---|---|---|---|---|---|
+| 8 | Prompt Engineering | `08_prompt_engineering.md` | 1048 | 250 | complete |
+| 9 | Context Engineering | `09_context_engineering.md` | 592 | 208 | complete |
+| 10 | Coding Agents | `10_coding_agents.md` | 1862 | 152 | complete |
+| 11 | Harness Engineering | `11_harness_engineering.md` | 821 | 267 | complete |
+| 12 | Security | `12_security.md` + 3 supplements | 2754 | 356 | complete |
+| 12+ | Security — PyRIT/garak appendix | `12_security_appendix_redteam_tooling.md` | 246 | (table-form) | complete |
+| 12+ | Security — attack classes & CVEs | `12_supp_attacks.md` | 305 | 52 | complete |
+| 12+ | Security — guardrails, tooling, CI | `12_supp_guardrails.md` | 1074 | 59 | complete |
+| 12+ | Security — standards & frameworks | `12_supp_standards.md` | 503 | 89 | complete |
+| 13 | Loop Engineering | `13_loop_engineering.md` | 751 | 196 | complete |
+| 14 | Personal Agents | `14_personal_agents.md` | 663 | 55 | complete |
+
+> **Module 12 was rebuilt.** It was cut short by a usage limit while two of its own sub-agents
+> were still running, and it correctly self-declared PARTIAL on its own line 5. Three targeted
+> supplements closed every gap on 2026-08-25 — read `12_security.md` together with
+> `12_supp_attacks.md`, `12_supp_guardrails.md` and `12_supp_standards.md`. The supplements
+> also **correct four claims** in the base file; the corrections are listed at the top of
+> `12_security.md` and must be applied when the module is written.
+>
+> **Process lesson worth keeping:** a dossier having a Link Verification Log and a References
+> section does **not** mean it is finished — those get written during a graceful shutdown too.
+> Check the file's own status line and `## RESUME NOTES` before declaring completion.
+>
+> **Identifier lesson:** resolve every identifier (CVE, arXiv ID, OWASP code, package name)
+> against *its own authority*, never against a secondary source that quotes it. A CVE ID
+> circulating in blogs for the CamoLeak vulnerability turned out to belong to an unrelated npm
+> account takeover — the citation existed, it was just pointing at the wrong thing.
 
 **278 unique URLs** cited across all dossiers, each fetched and confirmed on 2026-08-25.
 Every dossier carries a `## Link Verification Log` and a curated

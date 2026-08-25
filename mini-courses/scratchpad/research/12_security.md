@@ -2,7 +2,16 @@
 
 **Prepared:** 2026-08-25 · **For:** `mini-courses/2_intermediate/12_security.md` (INTERMEDIATE, professional devs, post-Fundamentals)
 **Framing:** DEFENSIVE. Understand the attack class well enough to test for it and defend against it. Attack *classes* explained conceptually; no payloads, no operational tooling.
-**Status:** PARTIAL — see `## RESUME NOTES` at the bottom. Session stopped early (usage limit). Two background research agents were still running when I stopped; their findings are NOT in here.
+**Status:** COMPLETE — the gaps this file originally listed as PARTIAL / NOT STARTED were closed on 2026-08-25 by three supplement files, which are part of this dossier and must be read with it:
+> - `12_supp_attacks.md` — fills §4.5 (agent attack classes, 11 NVD-verified CVEs, MCP tool poisoning, supply chain, exfiltration, denial-of-wallet).
+> - `12_supp_guardrails.md` — fills §4.6, §6.3, §6.4, §7.7 (guardrail models, independent bypass evidence, test tooling, CI, the guardrail-check snippet).
+> - `12_supp_standards.md` — fills §3.4, §3.8 (OWASP Agentic taxonomy, Google SAIF, UK AISI, ISO/IEC 42001, MCP spec security).
+>
+> **Corrections the supplements make to THIS file — apply them when writing the module:**
+> - §3.4: the `[SECONDARY-VERIFIED]` caveat on ASI01–ASI10 can be dropped; names are now primary-verified. Two wording fixes: ASI04 is "Agentic Supply Chain **Vulnerabilities**", ASI08 is "Cascading **Failures**".
+> - §4.5: `CVE-2025-54136` is **CVSS 7.2 HIGH** (not 8.8) and is a *config-file* rug pull in Cursor, not a server-side description swap.
+> - §4.5: PoisonedRAG is **arXiv:2402.07867**, USENIX Security 2025.
+> - §4.5: **CamoLeak has no CVE.** The `CVE-2025-59145` cited for it in secondary blogs is a different vulnerability (a `color-name` npm account takeover).
 
 ---
 

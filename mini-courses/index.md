@@ -31,4 +31,4 @@ reading materials.
 ## Contributing
 
 This is an open source project. Found a typo or want to improve a module?
-[Open an issue or PR on GitHub](https://github.com/lokumai/ai-minicourses).
+[Open an issue or PR on GitHub](https://github.com/lokumai/ai-engineering-bazaar).

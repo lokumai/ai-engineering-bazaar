@@ -198,15 +198,19 @@ A plugin can ship `SessionStart` hooks that run arbitrary shell and MCP servers 
 
 ## IX. Cross-tool: everyone has these, under different names
 
-You may not be on Claude Code. The mechanisms are converging; the spellings are not. (Each vendor's docs verified 2026-08-25.) Cursor and Copilot read `.claude/skills/`, Cursor also reads `.claude/agents/`, Gemini CLI ships `CLAUDE_PROJECT_DIR` as a hook env alias, and everyone reads `.agents/skills/` — write to the six-field spec and you are portable by default.
+You may not be on Claude Code. The mechanisms are converging; the spellings are not. Cursor and Copilot read `.claude/skills/`, Cursor also reads `.claude/agents/`, and everyone reads `.agents/skills/` — write to the six-field spec and you are portable by default.
+> **A dated warning.** Google retired Gemini CLI — on 2026-06-18 it *"stopped serving requests"*, replaced by Antigravity CLI, binary `agy` ([Google Developers Blog, 2026-05-19](https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli/)). Tables like this one are snapshots: check the docs' date, not your memory. Note that the *rows* survived the rename even though the product did not.
 
-| | Claude Code | Codex CLI | Gemini CLI | Cursor | GitHub Copilot |
+| | Claude Code | Codex CLI | Antigravity CLI (`agy`) | Cursor | GitHub Copilot |
 |---|---|---|---|---|---|
-| Instructions | `CLAUDE.md` + `.claude/rules/` | `AGENTS.md` (+`AGENTS.override.md`) | `GEMINI.md`; can alias `AGENTS.md` | `.cursor/rules/*.mdc` + `AGENTS.md` | `.github/copilot-instructions.md`, `AGENTS.md` |
-| Skills | `.claude/skills/` | `.agents/skills/` | `.gemini/skills/`, `.agents/skills/` | `.cursor/skills/`, `.agents/skills/`, `.claude/skills/` | `.github/skills`, `.claude/skills`, `.agents/skills` |
-| Subagents | `.claude/agents/*.md` | `.codex/agents/*.toml` | built-ins + `agents.overrides` | `.cursor/agents/*.md` | `.github/agents/*.agent.md` |
-| Hooks | `settings.json`, ~31 events | `hooks.json` / TOML, 11 events | `settings.json`, 11 events | `.cursor/hooks.json`, 21 **camelCase** events | `.github/hooks/*.json`, 8 events |
-| MCP | `.mcp.json` | `[mcp_servers.x]` in TOML | `mcpServers` in `settings.json` | `.cursor/mcp.json` | `~/.copilot/mcp-config.json` |
+| Instructions | `CLAUDE.md` + `.claude/rules/` | `AGENTS.md` (+`AGENTS.override.md`) | `.agents/rules/`; global `~/.gemini/GEMINI.md` | `.cursor/rules/*.mdc` + `AGENTS.md` | `.github/copilot-instructions.md`, `AGENTS.md` |
+| Skills | `.claude/skills/` | `.agents/skills/` | `.agents/skills/` | `.cursor/skills/`, `.agents/skills/`, `.claude/skills/` | `.github/skills`, `.claude/skills`, `.agents/skills` |
+| Subagents | `.claude/agents/*.md` | `.codex/agents/*.toml` | `/agents`, async by design | `.cursor/agents/*.md` | `.github/agents/*.agent.md` |
+| Hooks | `settings.json`, ~31 events | `hooks.json` / TOML, 11 events | `hooks.json`, `/hooks` | `.cursor/hooks.json`, 21 **camelCase** events | `.github/hooks/*.json`, 8 events |
+| MCP | `.mcp.json` | `[mcp_servers.x]` in TOML | `/mcp`, plugin `mcp_config.json` | `.cursor/mcp.json` | `~/.copilot/mcp-config.json` |
+| Plugins | `.claude-plugin/plugin.json` | `.codex-plugin/plugin.json` | `plugin.json`, `agy plugin install` | — | — |
+
+Empty cells mean **not verified**, not "does not exist". Note what the table really shows: the *rows* are the same across competing vendors. Learn the concepts and you move between tools in an afternoon; memorise `CLAUDE.md` and you are stuck. Which tool to actually pick is [Module 10](10_coding_agents_landscape.md)'s job.
 
 ## X. Composing an AI-powered SDLC
 

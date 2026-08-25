@@ -11,7 +11,7 @@ A series of mini-courses from beginner to advanced to help you learn practical t
 | Category                                                         | Modules | Description                                                                                                               |
 | ---------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------- |
 | [Fundamentals](mini-courses/1_fundamentals/README.md)             | 1-7     | LLMs, training, RAG, tools, memory, agents, multi-agent systems.**Start here.**                                     |
-| [NOT READY] [Intermediate](mini-courses/2_intermediate/README.md)  | 8-14    | Prompt engineering, context engineering, coding agents, harness engineering, security, loop engineering, personal agents. |
+| [NOT READY] [Intermediate](mini-courses/2_intermediate/README.md)  | 8-15    | Prompt engineering, context engineering, coding agents, harness engineering, security, loop engineering, personal agents. |
 | [NOT READY] [Expert](mini-courses/3_expert/README.md)                         | 15-23   | Advanced UI, architectures, tools, memory, multi-agent, prompting, context engineering, harness engineering, deployment.  |
 | [NOT READY] [Ecosystem](mini-courses/4_ecosystem/README.md)                   | 24-28   | Agent frameworks, inference providers, inference engines, UI design, observability.                                       |
 | [NOT READY] [Protocols &amp; Specs](mini-courses/5_protocols_specs/README.md) | 29      | A single reference of every protocol and spec mentioned across the series.                                                |

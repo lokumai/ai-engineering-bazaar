@@ -1,6 +1,6 @@
 # Module 8: Prompt Engineering
 
-*Category: Intermediate — Module 8 (1 of 7 in this category)*
+*Category: Intermediate — Module 8 (1 of 8 in this category)*
 
 Most of the prompt advice you'll find on the internet was written for models that no longer exist, and a surprising amount of it was never true. "Let's think step by step" is not recommended by Anthropic, OpenAI or Google any more; the famous tipping trick measures as a null; assistant prefill returns HTTP 400 on recent Claude models. This module separates the tricks that died from the handful of things that reliably move the number — and, more usefully, shows you how to tell the difference yourself on your own tasks.
 
@@ -180,7 +180,7 @@ print(resp.parsed_output)   # guaranteed schema-valid
 
 Guarantees are narrower than they look. Anthropic's structured outputs do **not** enforce `minimum`/`maxLength` and don't support recursive schemas; OpenAI's strict mode requires *every* field to be `required`, forbids a root `anyOf`, and surfaces refusals in a distinct `refusal` field. Validate after parsing anyway. Rule of thumb: **if the output feeds a program, use a schema; if it feeds a human, use prose and prompt for length.**
 
-**Where instructions live.** Anthropic exposes a top-level `system` **parameter** plus `user`/`assistant`, and has **no `developer` role**; OpenAI has one, and *"Developer messages are the new system messages."* Put the durable contract — role, constraints, output rules, coding standards — in `system`, and the task in the user turn. Reusable content then caches, and the user turn is by design lower-privilege. OpenAI's Model Spec gives quoted or untrusted content **"no authority"** ([Model Spec, 2025-10-27](https://model-spec.openai.com/2025-10-27.html)) — both the whole defence against prompt injection and the whole problem, since instructions and data still share one channel. That's [Module 12: Security](12_security.md). In practice you rarely write that system prompt by hand — you write `CLAUDE.md` / `AGENTS.md` and the harness assembles it, so keep it small: *"Bloated CLAUDE.md files cause Claude to ignore your actual instructions!"* ([Module 10](10_coding_agents.md), [Module 11](11_harness_engineering.md)).
+**Where instructions live.** Anthropic exposes a top-level `system` **parameter** plus `user`/`assistant`, and has **no `developer` role**; OpenAI has one, and *"Developer messages are the new system messages."* Put the durable contract — role, constraints, output rules, coding standards — in `system`, and the task in the user turn. Reusable content then caches, and the user turn is by design lower-privilege. OpenAI's Model Spec gives quoted or untrusted content **"no authority"** ([Model Spec, 2025-10-27](https://model-spec.openai.com/2025-10-27.html)) — both the whole defence against prompt injection and the whole problem, since instructions and data still share one channel. That's [Module 13: Security](13_security.md). In practice you rarely write that system prompt by hand — you write `CLAUDE.md` / `AGENTS.md` and the harness assembles it, so keep it small: *"Bloated CLAUDE.md files cause Claude to ignore your actual instructions!"* ([Module 11](11_coding_agents.md), [Module 12](12_harness_engineering.md)).
 
 ## VIII. Worked Example: A PR Reviewer You'd Actually Ship
 
@@ -257,11 +257,12 @@ graph TD
 ```mermaid
 graph LR
     A[8: Prompt Engineering] --> B[9: Context Engineering]
-    B --> C[10: Coding Agents]
-    C --> D[11: Harness Engineering]
-    D --> E[12: Security]
-    E --> F[13: Loop Engineering]
-    F --> G[14: Personal Agents]
+    B --> C[10: Landscape]
+    C --> D[11: Extending Agents]
+    D --> E[12: Harness Engineering]
+    E --> F[13: Security]
+    F --> G[14: Loop Engineering]
+    G --> H[15: Personal Agents]
     style A fill:#FFFF00
 ```
 
@@ -296,5 +297,5 @@ Anthropic's and OpenAI's docs pages carry no publication dates; those were fetch
 - [Quantifying Language Models' Sensitivity to Spurious Features in Prompt Design](https://arxiv.org/abs/2310.11324) — Sclar et al., arXiv 2310.11324, v2 2024-07-01 (ICLR 2024). Up to 76 accuracy points from meaning-preserving formatting changes.
 - [Flaw or Artifact? Rethinking Prompt Sensitivity in Evaluating LLMs](https://arxiv.org/abs/2509.01790) — arXiv 2509.01790, EMNLP 2025 Main. The counterweight: much measured sensitivity is an evaluation artifact.
 
-**Previous Module:** [Fundamentals — Module 7: Multi-Agent Architectures](../1_fundamentals/7_multi_agent.md)
+**Previous Module:** [Fundamentals — Module 7: Multi-Agent](../1_fundamentals/7_multi_agent.md)
 **Next Module:** [Module 9: Context Engineering](9_context_engineering.md)

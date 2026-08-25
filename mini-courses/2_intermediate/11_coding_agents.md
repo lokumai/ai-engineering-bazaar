@@ -1,6 +1,6 @@
-# Module 10: Coding Agents
+# Module 11: Coding Agents: Extending Them
 
-*Category: Intermediate — Module 10 (3 of 7 in this category)*
+*Category: Intermediate — Module 11 (4 of 8 in this category)*
 
 Out of the box, a coding agent knows a lot about programming and nothing about *your* repo. Six extension points fix that — instruction files, skills, subagents, hooks, MCP servers and plugins — and the whole skill of using them is knowing **which one to reach for**. Pick wrong and you get an instruction the model quietly ignores; pick right and you get a guarantee. Every path, field name and event name below comes from vendor docs fetched **2026-08-25** (Claude Code ~v2.1.2xx); this area moves fast enough that the Claude Code docs changed host recently, from `docs.claude.com/en/docs/claude-code/*` to `code.claude.com/docs/en/*`, so check the links rather than your memory.
 
@@ -136,7 +136,7 @@ exit 0
 
 There are two ways to block. `permissionDecision: "deny"` on exit 0 is the *polite* block — it hands the model a reason it can act on. **Exit 2** is the blunt, override-proof one: *"JSON `permissionDecision: 'allow'` cannot override it."* Matchers are worth knowing too: plain names and `|`-separated lists match exactly, but any other character (`^`, `*`, `.`) turns the matcher into an unanchored JavaScript regex.
 
-A `Stop` hook is the cure for "it works now!" — it blocks the turn from ending until your check script passes, with a built-in escape hatch so you can't build an infinite gate: *"Claude Code overrides the hook and ends the turn after 8 consecutive blocks."* **Watch for hook loops.** A `PostToolUse` hook on `Edit|Write` that itself writes files — a formatter, a codegen step — re-triggers its own event. Guard on file path, use `async: true`, cap `timeout`, and remember `disableAllHooks` while debugging. *(That failure mode follows from the event semantics; it isn't spelled out in the docs.)* Hooks as a design surface get the full treatment in [Module 11: Harness Engineering](11_harness_engineering.md).
+A `Stop` hook is the cure for "it works now!" — it blocks the turn from ending until your check script passes, with a built-in escape hatch so you can't build an infinite gate: *"Claude Code overrides the hook and ends the turn after 8 consecutive blocks."* **Watch for hook loops.** A `PostToolUse` hook on `Edit|Write` that itself writes files — a formatter, a codegen step — re-triggers its own event. Guard on file path, use `async: true`, cap `timeout`, and remember `disableAllHooks` while debugging. *(That failure mode follows from the event semantics; it isn't spelled out in the docs.)* Hooks as a design surface get the full treatment in [Module 12: Harness Engineering](12_harness_engineering.md).
 
 ## VI. MCP — and when it's the wrong answer
 
@@ -179,7 +179,7 @@ Publish by adding `.claude-plugin/marketplace.json` to a git repo, then `claude 
   "enabledPlugins": { "team-workflow@acme-plugins": true } }
 ```
 
-A plugin can ship `SessionStart` hooks that run arbitrary shell and MCP servers that phone home, so read its `hooks.json` and `.mcp.json` first, run `claude plugin validate`, and pin marketplace sources with `ref`/`sha`. Supply chain gets its own treatment in [Module 12: Security](12_security.md). And don't build one for one repo, one person, three files.
+A plugin can ship `SessionStart` hooks that run arbitrary shell and MCP servers that phone home, so read its `hooks.json` and `.mcp.json` first, run `claude plugin validate`, and pin marketplace sources with `ref`/`sha`. Supply chain gets its own treatment in [Module 13: Security](13_security.md). And don't build one for one repo, one person, three files.
 
 ## VIII. The decision table
 
@@ -257,19 +257,21 @@ graph TD
 ```mermaid
 graph LR
     A[8: Prompt Engineering] --> B[9: Context Engineering]
-    B --> C[10: Coding Agents]
-    C --> D[11: Harness Engineering]
-    D --> E[12: Security]
-    E --> F[13: Loop Engineering]
-    F --> G[14: Personal Agents]
+    B --> C[10: Landscape]
+    C --> D[11: Extending Agents]
+    D --> E[12: Harness Engineering]
+    E --> F[13: Security]
+    F --> G[14: Loop Engineering]
+    G --> H[15: Personal Agents]
     style A fill:#90EE90
     style B fill:#90EE90
-    style C fill:#FFFF00
+    style C fill:#90EE90
+    style D fill:#FFFF00
 ```
 
 ## Summary
 
-A coding agent is a generic agent loop plus six extension points, and choosing between them comes down to *when you pay for context* and *whether you need a guarantee*. Facts go in instruction files, procedures in skills, expensive research in subagents, connections in MCP servers, and the whole thing ships as a plugin. The one idea to carry out: **everything except a hook is advice.** If a rule must hold every single time, write a `PreToolUse` hook and stop arguing with the model about it. [Module 11: Harness Engineering](11_harness_engineering.md) takes these apart at the harness level; [Module 22: Advanced Harness Engineering](../3_expert/22_advanced_harness_engineering.md) scales them.
+A coding agent is a generic agent loop plus six extension points, and choosing between them comes down to *when you pay for context* and *whether you need a guarantee*. Facts go in instruction files, procedures in skills, expensive research in subagents, connections in MCP servers, and the whole thing ships as a plugin. The one idea to carry out: **everything except a hook is advice.** If a rule must hold every single time, write a `PreToolUse` hook and stop arguing with the model about it. [Module 12: Harness Engineering](12_harness_engineering.md) takes these apart at the harness level; [Module 22: Advanced Harness Engineering](../3_expert/22_advanced_harness_engineering.md) scales them.
 
 **Quick Check**: Your team keeps letting the agent edit a migration that's already applied in staging. You add "never edit applied migrations" to `CLAUDE.md`, and it happens again a week later. What should you have used instead — and why was the instruction file never going to work?
 
@@ -296,5 +298,5 @@ Keep going! 🚀
 - [Steering Claude Code: when to use CLAUDE.md, skills, hooks, rules, subagents and more](https://claude.com/blog/steering-claude-code-skills-hooks-rules-subagents-and-more) — Anthropic, 2026-06-18. The best prose version of the decision framework.
 - [Code execution with MCP: building more efficient agents](https://www.anthropic.com/engineering/code-execution-with-mcp) — Anthropic Engineering, 2025-11-04. The token-cost case against eager tool loading: 150,000 tokens → 2,000, plus an honest account of what code execution costs you in sandboxing.
 
-**Previous Module:** [Module 9: Context Engineering](9_context_engineering.md)
-**Next Module:** [Module 11: Harness Engineering](11_harness_engineering.md)
+**Previous Module:** [Module 10: Coding Agents: The Landscape](10_coding_agents_landscape.md)
+**Next Module:** [Module 12: Harness Engineering](12_harness_engineering.md)

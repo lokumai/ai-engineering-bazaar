@@ -1,8 +1,8 @@
-# Module 13: Loop Engineering
+# Module 14: Loop Engineering
 
-*Category: Intermediate — Module 13 (6 of 7 in this category)*
+*Category: Intermediate — Module 14 (7 of 8 in this category)*
 
-[Module 6](../1_fundamentals/6_agents.md) gave you one agent's loop. [Module 11](11_harness_engineering.md) gave you the deterministic harness around it. Now the uncomfortable questions: when do you run five loops instead of one, who decides how many, and how do you know any of it worked? That last question is the one most teams skip, and it's the one that decides whether you ship.
+[Module 6](../1_fundamentals/6_agents.md) gave you one agent's loop. [Module 12](12_harness_engineering.md) gave you the deterministic harness around it. Now the uncomfortable questions: when do you run five loops instead of one, who decides how many, and how do you know any of it worked? That last question is the one most teams skip, and it's the one that decides whether you ship.
 
 ## I. The Loop Is the Unit of Engineering
 
@@ -13,7 +13,7 @@ Every loop you will ever design is four choices. Nail these and the rest of this
 | Knob | The question | Where it lives in code |
 |---|---|---|
 | **What ends it** | Termination criteria | `max_turns` → `MaxTurnsExceeded` ([OpenAI Agents SDK](https://openai.github.io/openai-agents-python/running_agents/)); `recursion_limit` → `GraphRecursionError` ([LangGraph](https://docs.langchain.com/oss/python/langgraph/graph-api)); `max_iterations` ([ADK LoopAgent](https://adk.dev/agents/workflow-agents/loop-agents/)); `maxTurns` on a Claude Code subagent |
-| **What it can do per step** | Tool surface and permissions | [Module 11](11_harness_engineering.md)'s territory. The loop-level consequence: parallel tool calls cut wall-clock hard — Anthropic reports *"up to 90%"* off research time ([Anthropic, 2025-06-13](https://www.anthropic.com/engineering/multi-agent-research-system)) |
+| **What it can do per step** | Tool surface and permissions | [Module 12](12_harness_engineering.md)'s territory. The loop-level consequence: parallel tool calls cut wall-clock hard — Anthropic reports *"up to 90%"* off research time ([Anthropic, 2025-06-13](https://www.anthropic.com/engineering/multi-agent-research-system)) |
 | **What it remembers** | Context carried across iterations | [Module 9](9_context_engineering.md)'s territory. The loop-level lever is subagent isolation: delegate, and only a distilled report comes back |
 | **Who checks it** | The verifier | Defined rules and linters, then visual feedback, then an LLM judge — *in that order* ([Claude Agent SDK, 2025-09-29](https://claude.com/blog/building-agents-with-the-claude-agent-sdk)) |
 
@@ -97,7 +97,7 @@ Claude Code's **agent teams** is the most concrete implementation you can actual
 
 The distinction from a subagent is cost, not capability. A subagent has its own context window and *"results [are] summarized back to main context"* — cheap. A teammate is *"a separate Claude instance"* with fully independent context — expensive; teams *"use approximately 7x more tokens than standard sessions when teammates run in plan mode"* ([Manage costs](https://code.claude.com/docs/en/costs)). [Module 9](9_context_engineering.md) taught you subagents as a context-isolation device; here they are a coordination device with a bill attached.
 
-One warning that explains why teams are hard to debug: *"Multi-agent systems have emergent behaviors, which arise without specific programming. For instance, small changes to the lead agent can unpredictably change how subagents behave"* ([Anthropic, 2025-06-13](https://www.anthropic.com/engineering/multi-agent-research-system)). Regress the whole team, never just the prompt. (Cross-agent *protocols* — A2A, agent cards, discovery — are [Module 19](../3_expert/19_advanced_multiagent.md); teammate messages count as untrusted input, which is [Module 12](12_security.md).)
+One warning that explains why teams are hard to debug: *"Multi-agent systems have emergent behaviors, which arise without specific programming. For instance, small changes to the lead agent can unpredictably change how subagents behave"* ([Anthropic, 2025-06-13](https://www.anthropic.com/engineering/multi-agent-research-system)). Regress the whole team, never just the prompt. (Cross-agent *protocols* — A2A, agent cards, discovery — are [Module 19](../3_expert/19_advanced_multiagent.md); teammate messages count as untrusted input, which is [Module 13](13_security.md).)
 
 ## VI. The Argument You Should Know Both Sides Of
 
@@ -254,17 +254,19 @@ graph LR
 ```mermaid
 graph LR
     A[8: Prompt Engineering] --> B[9: Context Engineering]
-    B --> C[10: Coding Agents]
-    C --> D[11: Harness Engineering]
-    D --> E[12: Security]
-    E --> F[13: Loop Engineering]
-    F --> G[14: Personal Agents]
+    B --> C[10: Landscape]
+    C --> D[11: Extending Agents]
+    D --> E[12: Harness Engineering]
+    E --> F[13: Security]
+    F --> G[14: Loop Engineering]
+    G --> H[15: Personal Agents]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
     style D fill:#90EE90
     style E fill:#90EE90
-    style F fill:#FFFF00
+    style F fill:#90EE90
+    style G fill:#FFFF00
 ```
 
 ## Summary
@@ -295,5 +297,5 @@ A loop is defined by four choices — what ends it, what it can do per step, wha
 
 - [Workflows and agents](https://docs.langchain.com/oss/python/langgraph/workflows-agents) and [Graph API](https://docs.langchain.com/oss/python/langgraph/graph-api) — LangGraph, accessed 2026-08-25. Runnable code for every pattern, the `Send` fan-out, supersteps and barriers, `recursion_limit`.
 
-**Previous Module:** [Module 12: Security](12_security.md)
-**Next Module:** [Module 14: Personal Agents](14_personal_agents.md)
+**Previous Module:** [Module 13: Security](13_security.md)
+**Next Module:** [Module 15: Personal Agents](15_personal_agents.md)

@@ -1,6 +1,6 @@
-# Module 14: Personal Agents
+# Module 15: Personal Agents
 
-*Category: Intermediate — Module 14 (7 of 7 in this category)*
+*Category: Intermediate — Module 15 (8 of 8 in this category)*
 
 Every agent so far has been something you *invoke*: you open it, you give it a task, it finishes, it exits. A personal agent is different — it runs as a daemon on your machine, wakes on a schedule or an inbound message, and acts with your credentials while you sleep. That one change turns almost every lesson in this category into an operations problem, and it makes Module 12's threat model unavoidable rather than optional.
 
@@ -128,7 +128,7 @@ And the headline lesson, which is the whole course's thesis in one pattern: *"go
 
 ## IV. Security: you cannot drop a leg here
 
-[Module 12: Security](12_security.md) established the lethal trifecta, the Rule of Two, and *"assume the injection succeeds, and make sure it doesn't matter."* Apply it, don't re-derive it. The difference: in Modules 10–12 you could cut one leg and the high-impact attack disappeared. Here all three legs *are the product* — **private data** is your mail and repos, **untrusted content** is every inbound DM plus OpenClaw's own enumeration of *"web fetches, attachments, pasted logs, email bodies, and fetched documents"*, and **the ability to act** is `exec` on your host and `message` on your accounts. Dropping a leg removes the point. So the thesis here is narrower and more useful: **bound the blast radius, and put a policy gate on irreversible actions.**
+[Module 13: Security](13_security.md) established the lethal trifecta, the Rule of Two, and *"assume the injection succeeds, and make sure it doesn't matter."* Apply it, don't re-derive it. The difference: in Modules 10–12 you could cut one leg and the high-impact attack disappeared. Here all three legs *are the product* — **private data** is your mail and repos, **untrusted content** is every inbound DM plus OpenClaw's own enumeration of *"web fetches, attachments, pasted logs, email bodies, and fetched documents"*, and **the ability to act** is `exec` on your host and `message` on your accounts. Dropping a leg removes the point. So the thesis here is narrower and more useful: **bound the blast radius, and put a policy gate on irreversible actions.**
 
 Three dated incidents, so you are not arguing with hypotheticals — all from [Simon Willison's `openclaw` tag](https://simonwillison.net/tags/openclaw/):
 
@@ -161,7 +161,7 @@ Then turn sandboxing **on**, because it defaults to `off`: `agents.defaults.sand
 
 A heartbeat *"approximately every 30 minutes"* is ~48 model turns a day, ~1,450 a month, each re-sending a context. Three levers, all verified: **trim the context** with `--light-context`, which *"skip[s] workspace file injection"*; **tier the model per job** with `--model`, `--fallbacks` and `--thinking off|minimal|low|medium|high|xhigh|adaptive` — cheap model and `--thinking off` for the watcher, the expensive one only where judgement is needed, because you save money on the *watcher*, never on the *actor*; and **don't pay for idle**, since hibernating backends (Daytona, Modal) and Chronos scale-to-zero triggers mean no VPS burning 24/7.
 
-**Bound every run** with `--timeout-seconds 600`, `--no-output-timeout-seconds 120`, `--output-max-bytes 65536`; for scripts, `--script-timeout-seconds 300` (capped at 900) and `--script-tool-budget 50` (capped at 200). The tool budget is your anti-infinite-loop control — the external counterpart to the termination conditions in [Module 13: Loop Engineering](13_loop_engineering.md). **Supervise, don't loop**: `hermes gateway install` and `openclaw onboard --install-daemon` register a service; a `while true` bash loop has no restart policy, no backoff and no logs. And **turn on failure alerts** — `--failure-alert --failure-alert-after 3 --failure-alert-cooldown "1h"` — the one ops setting people skip and then regret.
+**Bound every run** with `--timeout-seconds 600`, `--no-output-timeout-seconds 120`, `--output-max-bytes 65536`; for scripts, `--script-timeout-seconds 300` (capped at 900) and `--script-tool-budget 50` (capped at 200). The tool budget is your anti-infinite-loop control — the external counterpart to the termination conditions in [Module 14: Loop Engineering](14_loop_engineering.md). **Supervise, don't loop**: `hermes gateway install` and `openclaw onboard --install-daemon` register a service; a `while true` bash loop has no restart policy, no backoff and no logs. And **turn on failure alerts** — `--failure-alert --failure-alert-after 3 --failure-alert-cooldown "1h"` — the one ops setting people skip and then regret.
 
 ## VI. Point one at your own SDLC
 
@@ -250,18 +250,20 @@ Module 12 calls this the lethal trifecta. Here you cannot remove a leg — you c
 ```mermaid
 graph LR
     A[8: Prompt Engineering] --> B[9: Context Engineering]
-    B --> C[10: Coding Agents]
-    C --> D[11: Harness Engineering]
-    D --> E[12: Security]
-    E --> F[13: Loop Engineering]
-    F --> G[14: Personal Agents]
+    B --> C[10: Landscape]
+    C --> D[11: Extending Agents]
+    D --> E[12: Harness Engineering]
+    E --> F[13: Security]
+    F --> G[14: Loop Engineering]
+    G --> H[15: Personal Agents]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
     style D fill:#90EE90
     style E fill:#90EE90
     style F fill:#90EE90
-    style G fill:#FFFF00
+    style G fill:#90EE90
+    style H fill:#FFFF00
 ```
 
 ## Summary
@@ -295,5 +297,5 @@ That closes Intermediate. Across Modules 8–14 you moved from shaping a single 
 - [Posts tagged `openclaw`](https://simonwillison.net/tags/openclaw/) — Simon Willison, accessed 2026-08-25. The dated incident log behind Section IV.
 - [Run Claude Code programmatically](https://code.claude.com/docs/en/headless) — Anthropic, accessed 2026-08-25. Authority for every flag in Recipes 1 and 2: `--bare`, `--allowedTools`, `--permission-mode`, `--output-format json`, and the cost fields.
 
-**Previous Module:** [Module 13: Loop Engineering](13_loop_engineering.md)
-**Next Module:** [Expert — Module 15: Advanced UI](../3_expert/15_advanced_ui.md)
+**Previous Module:** [Module 14: Loop Engineering](14_loop_engineering.md)
+**Next Module:** [Expert — Module 16: Advanced UI](../3_expert/15_advanced_ui.md)

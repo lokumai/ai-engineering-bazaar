@@ -1,8 +1,8 @@
-# Module 12: Security
+# Module 13: Security
 
-*Category: Intermediate — Module 12 (5 of 7 in this category)*
+*Category: Intermediate — Module 13 (6 of 8 in this category)*
 
-Your coding agent reads text an attacker can write, takes actions with your credentials, and can talk to the internet. That combination is not a bug you can patch — it is the product, and the field has no reliable fix for it. This module is about thinking like the adversary. [Module 11](11_harness_engineering.md) taught the mechanism — hooks, permission rules, sandboxes; here we ask the question it never asks: *what happens when someone is trying to break this?*
+Your coding agent reads text an attacker can write, takes actions with your credentials, and can talk to the internet. That combination is not a bug you can patch — it is the product, and the field has no reliable fix for it. This module is about thinking like the adversary. [Module 12](12_harness_engineering.md) taught the mechanism — hooks, permission rules, sandboxes; here we ask the question it never asks: *what happens when someone is trying to break this?*
 
 ## I. What is actually different about an agent
 
@@ -253,16 +253,18 @@ flowchart TD
 ```mermaid
 graph LR
     A[8: Prompt Engineering] --> B[9: Context Engineering]
-    B --> C[10: Coding Agents]
-    C --> D[11: Harness Engineering]
-    D --> E[12: Security]
-    E --> F[13: Loop Engineering]
-    F --> G[14: Personal Agents]
+    B --> C[10: Landscape]
+    C --> D[11: Extending Agents]
+    D --> E[12: Harness Engineering]
+    E --> F[13: Security]
+    F --> G[14: Loop Engineering]
+    G --> H[15: Personal Agents]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
     style D fill:#90EE90
-    style E fill:#FFFF00
+    style E fill:#90EE90
+    style F fill:#FFFF00
 ```
 
 ## Summary
@@ -296,5 +298,5 @@ An agent is a different security problem because it reads untrusted data, acts w
 - [Claude Code security](https://code.claude.com/docs/en/security) and [sandboxing](https://code.claude.com/docs/en/sandboxing) — Anthropic. The permission model, OS-enforced sandbox and egress allowlist you will actually configure.
 - [promptfoo CI/CD integration](https://www.promptfoo.dev/docs/integrations/ci-cd/) — promptfoo. The only vendor-published red-team-in-CI recipe in this space. Its plugin set — indirect prompt injection, data exfiltration, MCP — maps closely onto this module.
 
-**Previous Module:** [Module 11: Harness Engineering](11_harness_engineering.md)
-**Next Module:** [Module 13: Loop Engineering](13_loop_engineering.md)
+**Previous Module:** [Module 12: Harness Engineering](12_harness_engineering.md)
+**Next Module:** [Module 14: Loop Engineering](14_loop_engineering.md)

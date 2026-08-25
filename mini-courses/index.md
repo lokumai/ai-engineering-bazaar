@@ -12,7 +12,7 @@ reading materials.
 | Category | Modules | Status | Description |
 | -------- | ------- | ------ | ----------- |
 | [Fundamentals](1_fundamentals/README.md) | 1–7 | ✅ Ready | LLMs, training, RAG, tools, memory, agents, multi-agent systems. **Start here.** |
-| [Intermediate](2_intermediate/README.md) | 8–14 | 🚧 Draft | Prompt engineering, context engineering, coding agents, harness engineering, security, loop engineering, personal agents. |
+| [Intermediate](2_intermediate/README.md) | 8–15 | 🚧 Draft | Prompt engineering, context engineering, coding agents, harness engineering, security, loop engineering, personal agents. |
 | [Expert](3_expert/README.md) | 15–23 | 🚧 Draft | Advanced UI, architectures, tools, memory, multi-agent, prompting, context engineering, harness engineering, deployment. |
 | [Ecosystem](4_ecosystem/README.md) | 24–28 | 🚧 Draft | Agent frameworks, inference providers, inference engines, UI design, observability. |
 | [Protocols & Specs](5_protocols_specs/README.md) | 29 | 🚧 Draft | A single reference of every protocol and spec mentioned across the series. |

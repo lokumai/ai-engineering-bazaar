@@ -1,6 +1,6 @@
-# Module 11: Harness Engineering
+# Module 12: Harness Engineering
 
-*Category: Intermediate — Module 11 (4 of 7 in this category)*
+*Category: Intermediate — Module 12 (5 of 8 in this category)*
 
 You have an agent that works brilliantly four times out of five, and you cannot ship it. The usual instinct is to go rewrite the prompt. This module argues the opposite: the reliability you are missing lives in the deterministic program *around* the model — the permission gate, the hook, the sandbox, the test suite it must pass — and that program is something you can engineer the way you engineer anything else.
 
@@ -146,7 +146,7 @@ Be specific about what you are defending against, or you will build the wrong wa
 
 1. **Destructive commands.** `rm -rf` in the wrong directory.
 2. **Secret exfiltration.** *"Without network isolation, a compromised agent could exfiltrate sensitive files like SSH keys"* — and note that the default read policy *"still allows reading credential files such as `~/.aws/credentials` and `~/.ssh/`"* unless you configure it ([Sandboxing](https://code.claude.com/docs/en/sandboxing)).
-3. **Injected tool calls.** *"if a repository's README contains unusual instructions, Claude Code might incorporate those into its actions in ways the operator didn't anticipate"* ([Secure deployment](https://code.claude.com/docs/en/agent-sdk/secure-deployment)). The adversary's view of this — who attacks it, how, and how you prove your defence works — is [Module 12: Security](12_security.md).
+3. **Injected tool calls.** *"if a repository's README contains unusual instructions, Claude Code might incorporate those into its actions in ways the operator didn't anticipate"* ([Secure deployment](https://code.claude.com/docs/en/agent-sdk/secure-deployment)). The adversary's view of this — who attacks it, how, and how you prove your defence works — is [Module 13: Security](13_security.md).
 4. **Self-escalation.** The non-obvious one. A sandbox that lets a command write `.claude/settings.json`, `.claude/hooks`, `.mcp.json`, `.git/hooks` or your shell rc has granted that command *next session's* permissions too: *"A command that could edit those files could grant itself permissions, or add a hook or MCP server that Claude Code runs outside the sandbox."* ([Sandboxing](https://code.claude.com/docs/en/sandboxing)).
 5. **Runaway cost.** Not a sandbox problem — a budget problem. See §VI.
 
@@ -261,15 +261,17 @@ graph TD
 ```mermaid
 graph LR
     A[8: Prompt Engineering] --> B[9: Context Engineering]
-    B --> C[10: Coding Agents]
-    C --> D[11: Harness Engineering]
-    D --> E[12: Security]
-    E --> F[13: Loop Engineering]
-    F --> G[14: Personal Agents]
+    B --> C[10: Landscape]
+    C --> D[11: Extending Agents]
+    D --> E[12: Harness Engineering]
+    E --> F[13: Security]
+    F --> G[14: Loop Engineering]
+    G --> H[15: Personal Agents]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
-    style D fill:#FFFF00
+    style D fill:#90EE90
+    style E fill:#FFFF00
 ```
 
 ## Summary
@@ -295,5 +297,5 @@ The harness is the deterministic program around a nondeterministic model, and it
 - [Agent Hooks](https://learn.microsoft.com/en-us/agent-framework/agents/agent-hooks) — Microsoft Learn, 2026-08-07. The clearest published statement of fail-closed guardrail semantics: "a control plane, not a telemetry plane."
 - [SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering](https://arxiv.org/abs/2405.15793) — arXiv:2405.15793, 2024-05-06. The academic case that interface design, not prompting, moves agent performance.
 
-**Previous Module:** [Module 10: Coding Agents](10_coding_agents.md)
-**Next Module:** [Module 12: Security](12_security.md)
+**Previous Module:** [Module 11: Coding Agents: Extending Them](11_coding_agents.md)
+**Next Module:** [Module 13: Security](13_security.md)

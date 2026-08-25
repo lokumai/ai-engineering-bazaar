@@ -31,5 +31,5 @@ graph LR
     style A fill:#FFFF00
 ```
 
-**Önceki Modül:** [Intermediate — Modül 14: Kişisel Agent'lar](../2_intermediate/14_personal_agents_tr.md)
+**Önceki Modül:** [Intermediate — Modül 15: Kişisel Agent'lar](../2_intermediate/15_personal_agents_tr.md)
 **Sonraki Modül:** [Modül 16: İleri Seviye Mimariler](16_advanced_architectures_tr.md)

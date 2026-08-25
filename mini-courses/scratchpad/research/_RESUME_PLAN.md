@@ -48,21 +48,23 @@ Note `mkdocs.yml` renders mermaid via `pymdownx.superfences` custom fences, and
 
 ## Phase status
 
-### Phase 1a — Research dossiers
+### Phase 1a — Research dossiers  ✅ COMPLETE
 
-| # | Module | Dossier file | Status |
-|---|---|---|---|
-| 8 | Prompt Engineering | `08_prompt_engineering.md` | PARTIAL — flushed at pause, see its RESUME NOTES |
-| 9 | Context Engineering | `09_context_engineering.md` | PARTIAL — flushed at pause, see its RESUME NOTES |
-| 10 | Coding Agents | `10_coding_agents.md` | PARTIAL — flushed at pause, see its RESUME NOTES |
-| 11 | Harness Engineering | `11_harness_engineering.md` | PARTIAL — flushed at pause, see its RESUME NOTES |
-| 12 | Security | `12_security.md` | PARTIAL — flushed at pause, see its RESUME NOTES |
-| 13 | Loop Engineering | `13_loop_engineering.md` | **NOT STARTED** — hit concurrency limit, never launched |
-| 14 | Personal Agents | `14_personal_agents.md` | **NOT STARTED** — hit concurrency limit, never launched |
+| # | Module | Dossier file | Lines | Citations |
+|---|---|---|---|---|
+| 8 | Prompt Engineering | `08_prompt_engineering.md` | 1048 | 250 |
+| 9 | Context Engineering | `09_context_engineering.md` | 592 | 208 |
+| 10 | Coding Agents | `10_coding_agents.md` | 1862 | 152 |
+| 11 | Harness Engineering | `11_harness_engineering.md` | 821 | 267 |
+| 12 | Security | `12_security.md` | 872 | 156 |
+| 12+ | Security appendix — PyRIT/garak tooling | `12_security_appendix_redteam_tooling.md` | 246 | (table-form) |
+| 13 | Loop Engineering | `13_loop_engineering.md` | 751 | 196 |
+| 14 | Personal Agents | `14_personal_agents.md` | 663 | 55 |
 
-Each partial dossier ends with a `## RESUME NOTES` section listing DONE / PARTIAL /
-NOT STARTED sections, searches already run, URLs verified, dead URLs, unfollowed leads,
-and ordered next actions. **Read that section first** before resuming a dossier.
+**278 unique URLs** cited across all dossiers, each fetched and confirmed on 2026-08-25.
+Every dossier carries a `## Link Verification Log` and a curated
+`## References for the module` list that becomes the module's reader-facing
+reference section.
 
 ### Phase 1b — Independent link verification
 
@@ -80,26 +82,65 @@ Not started. Separate PR.
 
 ## Open questions to settle before writing modules
 
-1. **Module 11 vs 12 boundary** — "Guardrails" is listed in both stubs.
-   Proposed split: 11 = engineering the wrapper mechanism (hooks, sandboxes, permission gates,
-   budgets); 12 = threat model, attack classes, testing, defense-in-depth.
-   Both dossiers were asked to make a boundary proposal — reconcile them.
-2. **Module 13 vs 16/19 boundary** — Module 16 (Advanced Architectures) already claims
-   "Dynamic Workflows" and Module 19 claims multi-agent coordination. Confirm what stays
-   at intermediate level.
-3. **Module 14 name verification** — the stub lists **Openclaw**, **Hermes Agent**, **Moltbook**.
-   These are unusual, possibly misspelled or ambiguous names (e.g. "OpenClaw" is also a
-   well-known open-source platformer game reimplementation; "Hermes" is also Nous Research's
-   LLM family). The research agent must verify each against a primary source and, if a name
-   cannot be verified, **recommend a replacement rather than invent details.** The repo owner
-   decides keep vs replace.
+Q3 (Module 14 name verification) is **RESOLVED** — see below. Q1/Q2 now have concrete
+proposals from the dossiers and need the repo owner's sign-off.
+
+1. **Boundary line across modules 11/12/13/16/19/22 — needs sign-off.** The dossiers
+   converged on a single unified split, proposed in `13_loop_engineering.md` §10:
+   *11 = mechanism · 12 = adversary · 13 = orchestration + measurement ·
+   16 = architecture inside a step · 19 = protocols between agents · 22 = scale.*
+   This resolves the "Guardrails in both 11 and 12" overlap and the
+   "Dynamic Workflows in both 13 and 16" overlap. Under it, Module 13 keeps one
+   paragraph on dynamic workflows (plus the LangGraph `Send` snippet and the barrier
+   lesson) and hands the taxonomy — planner DAGs, CodeAct, declarative-vs-code-first —
+   to Module 16.
+
+2. **Rubric scales: binary-first vs Likert — needs a stance.** There is **no head-to-head
+   reliability study.** The binary/checklist argument (Hamel Husain) is about actionability,
+   not measured reliability; Anthropic's own docs still ship a Likert example. The dossier
+   recommends presenting binary-first as an *opinionated engineering stance with stated
+   reasons* rather than as an empirical finding, and is written that way.
+
+3. **Module 14 name verification — RESOLVED.** All three stub names are real:
+   **OpenClaw** (`openclaw/openclaw`, OpenClaw Foundation, MIT) — a self-hosted personal
+   assistant, *not* the Captain Claw game reimplementation; rename lineage
+   Warelay → Clawdbot → Moltbot → OpenClaw confirmed from its own docs.
+   **Hermes Agent** (`NousResearch/hermes-agent`, MIT) — a harness, *not* the Hermes LLM
+   family. **Moltbook** — real, but a social network whose posters are agents, not a
+   runtime; recommend reframing it as a **case study** rather than a tool.
+   Note the collision hazard to spell out in the module: OpenClaw's former name
+   *Moltbot* is a different thing from *Moltbook*.
+
+4. **Module 9 editorial calls.** Drop the "95% auto-compact" figure and the third-hand
+   grep-vs-embeddings anecdote — one is contradicted, the other unverifiable; replacements
+   are in `09_context_engineering.md`. Also decide whether Module 9 shows one API snippet
+   (`memory_20250818` / `clear_tool_uses_20250919` / `compact_20260112`) or stays CLI-only.
+
+5. **Coverage gaps to close or drop — do not paper over these.**
+   - Module 9 claims about **Codex / Cursor parity were never researched.** Either research
+     them or don't promise them.
+   - Module 14's candidate **alternatives (OpenHands, Goose, Letta, Khoj, ...) carry zero
+     verification** — the agent's search budget ran out and it correctly refused to guess.
+     Either commission a follow-up pass or drop them from the module.
+   - **Moltbook's owner is genuinely unclear** (Willison credits Steinberger; the site
+     credits @mattprd). The module should name no owner.
+
+6. **Unrelated bug found in already-published content:** `1_fundamentals/7_multi_agent.md`
+   line 69 links `https://langchain-ai.github.io/langgraph/concepts/multi_agent/`, which now
+   serves a content-free redirect. Worth a separate small fix PR.
 
 ## Next actions on resume
 
-1. Read every `## RESUME NOTES` section in this directory.
-2. Relaunch the 5 partial dossier agents (max ~4-5 concurrent — the earlier attempt at 7 hit
-   the concurrent-subagent limit), each pointed at its own partial file and told to continue
-   from its RESUME NOTES rather than restart.
-3. Launch the 2 never-started dossiers (13 Loop Engineering, 14 Personal Agents).
-4. Run phase 1b link verification.
-5. Commit the dossiers and open PR 1.
+Phase 1a is done. Next:
+
+1. **Open PR 1** with the dossiers (branch `docs/intermediate-research`).
+2. **Phase 1b — independent link verification.** Spawn agents that are *not* the dossier
+   authors, hand them only the extracted URL lists (278 unique URLs), and have each fetch
+   every link and report dead / redirected / wrong-content results. Authors must not grade
+   their own homework.
+3. **Settle the open questions above** with the repo owner — especially the boundary line
+   (Q1), since it determines what each module may cover.
+4. **Phase 2 — write the 7 English modules**, ~200-300 lines each, in the
+   `1_fundamentals/6_agents.md` house style, each ending in a verified
+   "References & Further Reading" section drawn from its dossier's curated list.
+5. **Phase 3 — Turkish translations**, separate PR.

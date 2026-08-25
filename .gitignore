@@ -17,3 +17,5 @@ node_modules/
 
 site/
 .venv/
+# Playwright MCP session artifacts (console logs, page snapshots)
+.playwright-mcp/

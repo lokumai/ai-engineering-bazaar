@@ -1,0 +1,2 @@
+[    1873ms] [WARNING]   WARN  [Statsig] Caught error in _writeToCache {error: QuotaExceededError: Failed to execute 'setItem' on 'Storage': Setting the value of 'statsig.cached.…} @ https://openai.com/_next/static/immutable/chunks/2uqpy--mfhkhp.js:0
+[    1990ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://statsigapi.net/v1/sdk_exception:0

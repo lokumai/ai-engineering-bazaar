@@ -95,7 +95,7 @@ Everything practical reduces to four moves. LangChain frames them as **write / s
 
 The API's memory tool encodes the mindset in its own injected instruction: *"ASSUME INTERRUPTION: Your context window might be reset at any moment, so you risk losing any progress that is not recorded in your memory directory"* ([Memory tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool)).
 
-**When it backfires:** stale and bloated notes. A wrong fact written once is re-read every session. Timestamp your notes and expire the ones nothing has touched — and mind the index limits: Claude Code's auto-memory `MEMORY.md` loads only the first **200 lines or 25KB, whichever comes first**, and anything past that is silently dropped on the next load ([How Claude remembers your project](https://code.claude.com/docs/en/memory)). Deeper memory architectures are Module 18's job.
+**When it backfires:** stale and bloated notes. A wrong fact written once is re-read every session. Timestamp your notes and expire the ones nothing has touched — and mind the index limits: Claude Code's auto-memory `MEMORY.md` loads only the first **200 lines or 25KB, whichever comes first**, and anything past that is silently dropped on the next load ([How Claude remembers your project](https://code.claude.com/docs/en/memory)). Deeper memory architectures are Module 19's job.
 
 ### 3. Isolate — spawn a subagent
 
@@ -153,7 +153,7 @@ resp = client.beta.messages.create(
 print(resp.context_management.applied_edits)  # cleared_tool_uses, cleared_input_tokens
 ```
 
-Anthropic's own docs note that for most cases you should prefer **server-side compaction** over hand-rolled tool clearing ([Context editing](https://platform.claude.com/docs/en/build-with-claude/context-editing)). Tuning these knobs belongs to [Module 12](12_harness_engineering.md) and Module 21.
+Anthropic's own docs note that for most cases you should prefer **server-side compaction** over hand-rolled tool clearing ([Context editing](https://platform.claude.com/docs/en/build-with-claude/context-editing)). Tuning these knobs belongs to [Module 12](12_harness_engineering.md) and Module 22.
 
 ## VII. When Context Goes Bad
 

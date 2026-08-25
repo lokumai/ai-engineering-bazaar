@@ -33,4 +33,4 @@ graph LR
 ```
 
 **Önceki Modül:** [Modül 14: Loop Engineering](14_loop_engineering_tr.md)
-**Sonraki Modül:** [Expert — Modül 16: Advanced UI](../3_expert/15_advanced_ui_tr.md)
+**Sonraki Modül:** [Expert — Modül 16: Advanced UI](../3_expert/16_advanced_ui_tr.md)

@@ -275,7 +275,7 @@ graph LR
 
 ## Summary
 
-A coding agent is a generic agent loop plus six extension points, and choosing between them comes down to *when you pay for context* and *whether you need a guarantee*. Facts go in instruction files, procedures in skills, expensive research in subagents, connections in MCP servers, and the whole thing ships as a plugin. The one idea to carry out: **everything except a hook is advice.** If a rule must hold every single time, write a `PreToolUse` hook and stop arguing with the model about it. [Module 12: Harness Engineering](12_harness_engineering.md) takes these apart at the harness level; [Module 22: Advanced Harness Engineering](../3_expert/22_advanced_harness_engineering.md) scales them.
+A coding agent is a generic agent loop plus six extension points, and choosing between them comes down to *when you pay for context* and *whether you need a guarantee*. Facts go in instruction files, procedures in skills, expensive research in subagents, connections in MCP servers, and the whole thing ships as a plugin. The one idea to carry out: **everything except a hook is advice.** If a rule must hold every single time, write a `PreToolUse` hook and stop arguing with the model about it. [Module 12: Harness Engineering](12_harness_engineering.md) takes these apart at the harness level; [Module 23: Advanced Harness Engineering](../3_expert/23_advanced_harness_engineering.md) scales them.
 
 **Quick Check**: Your team keeps letting the agent edit a migration that's already applied in staging. You add "never edit applied migrations" to `CLAUDE.md`, and it happens again a week later. What should you have used instead — and why was the instruction file never going to work?
 

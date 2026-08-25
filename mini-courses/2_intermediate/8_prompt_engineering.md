@@ -112,7 +112,7 @@ Two non-obvious things from the [Effort](https://platform.claude.com/docs/en/bui
 
 Manual CoT still earns its keep in one place: **thinking off** — cheap high-volume calls, non-reasoning or local models; use `<thinking>` and `<answer>` tags to separate reasoning from output. And never ask the model *"is this correct?"* when you can ask the test runner: *"LLMs struggle to self-correct their responses without external feedback, and at times, their performance even degrades after self-correction"* ([arXiv 2310.01798, ICLR 2024](https://arxiv.org/abs/2310.01798)). Beware the mirror image too — *"A reviewer prompted to find gaps will usually report some, even when the work is sound"* ([Claude Code best practices](https://code.claude.com/docs/en/best-practices)).
 
-Tree of Thoughts, self-consistency machinery and automatic prompt optimisation are [Module 20: Advanced Prompting](../3_expert/20_advanced_prompting.md).
+Tree of Thoughts, self-consistency machinery and automatic prompt optimisation are [Module 21: Advanced Prompting](../3_expert/21_advanced_prompting.md).
 
 ## V. Few-Shot / In-Context Learning
 

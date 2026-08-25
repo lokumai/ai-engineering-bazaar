@@ -183,7 +183,7 @@ The answer is not nihilism, though. Apply the *same* adaptive methodology to a d
 | **Default-deny egress allowlist enforced by the sandbox proxy** | The exfiltration leg | Exfiltration *to an allowed host* — e.g. into a public PR | Low–medium | **Very high value, commonly skipped** |
 | **OS-enforced sandbox (filesystem + network)** | Blast radius of executed code, including child processes | The model doing something bad inside the sandbox | Low, once configured | **Deterministic. Ship it.** |
 | **Human approval on irreversible actions** | Catastrophic single actions | Approval fatigue; invisible characters making displayed ≠ executed | High human cost | **Necessary, degrades at volume. Show the rendered action, not a summary.** |
-| **Architectural patterns** (plan-then-execute, dual LLM, context minimization, CaMeL) | Untrusted input triggering consequential actions at all | Anything outside the modelled flows; general-purpose agents | High | **The principled answer.** See [arXiv:2506.08837](https://arxiv.org/abs/2506.08837) and [Module 22](../3_expert/22_advanced_harness_engineering.md) |
+| **Architectural patterns** (plan-then-execute, dual LLM, context minimization, CaMeL) | Untrusted input triggering consequential actions at all | Anything outside the modelled flows; general-purpose agents | High | **The principled answer.** See [arXiv:2506.08837](https://arxiv.org/abs/2506.08837) and [Module 23](../3_expert/23_advanced_harness_engineering.md) |
 | **Stripping invisible Unicode at ingest and render** | Tag-block, variation-selector and zero-width smuggling | Visible-text payloads | Very low | **Free win. Ship it today.** |
 | **Input/output classifiers** | A large fraction of *known* attack distributions | Adaptive attackers, character injection, unseen attack families | Low–medium | **Buy time and telemetry, not safety. Never the only layer.** |
 | **"Ignore injected instructions" in the system prompt** | Accidental cases | Anyone who can infer the prompt — assume they can | ~0 | **Security theater if it is your primary control** |
@@ -201,7 +201,7 @@ The highest-leverage lines of configuration here are an egress allowlist the OS 
 }
 ```
 
-Claude Code pre-allows no domains by default; setting `network.strictAllowlist` to `true` makes it deny rather than prompt, which is what you want in CI. Module 11 covers building this; [Module 23](../3_expert/23_advanced_deployment.md) covers operating it at organisation scale.
+Claude Code pre-allows no domains by default; setting `network.strictAllowlist` to `true` makes it deny rather than prompt, which is what you want in CI. Module 11 covers building this; [Module 24](../3_expert/24_advanced_deployment.md) covers operating it at organisation scale.
 
 ## VIII. Making it part of the SDLC
 

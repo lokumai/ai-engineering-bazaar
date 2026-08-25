@@ -270,7 +270,7 @@ graph LR
 
 A personal agent is defined by a single-operator trust boundary: one long-lived daemon, your credentials, your memory files on disk, and triggers that are not you. That definition is what makes it the hardest case in this course — the lethal trifecta is not a configuration you can cut down, it is the product, so your leverage is bounding the blast radius and gating irreversible actions with policy rather than prose. OpenClaw shows the gateway-and-channels shape, Hermes Agent shows memory and scheduling you can inspect on disk, and Moltbook shows what happens when an agent's instructions come from a URL someone else controls. You can build the first two recipes tonight with nothing but `claude`, `gh` and `cron`. If you remember one line: **the prompt is not the control — the allowlist is.**
 
-That closes Intermediate. Across Modules 8–14 you moved from shaping a single call (8), to curating what the model sees (9), to using and then rebuilding the wrapper around it (10–11), to attacking your own system (12), to controlling the loop from inside (13), and now to controlling it from outside — what wakes it, what it may touch, who it reports to, and what it costs while you sleep. [Expert](../3_expert/15_advanced_ui.md) picks up from here, starting with the surfaces humans actually use to supervise all of this.
+That closes Intermediate. Across Modules 8–15 you moved from shaping a single call (8), to curating what the model sees (9), to using and then rebuilding the wrapper around it (10–11), to attacking your own system (12), to controlling the loop from inside (13), and now to controlling it from outside — what wakes it, what it may touch, who it reports to, and what it costs while you sleep. [Expert](../3_expert/16_advanced_ui.md) picks up from here, starting with the surfaces humans actually use to supervise all of this.
 
 **Quick Check**: You put "always confirm before deleting anything" in your personal agent's system prompt. Three hours into an unattended run it deletes forty emails without asking. What mechanism most likely explains the failure, why would a stronger-worded prompt not have fixed it, and name two configuration changes that would have actually stopped it.
 
@@ -298,4 +298,4 @@ That closes Intermediate. Across Modules 8–14 you moved from shaping a single 
 - [Run Claude Code programmatically](https://code.claude.com/docs/en/headless) — Anthropic, accessed 2026-08-25. Authority for every flag in Recipes 1 and 2: `--bare`, `--allowedTools`, `--permission-mode`, `--output-format json`, and the cost fields.
 
 **Previous Module:** [Module 14: Loop Engineering](14_loop_engineering.md)
-**Next Module:** [Expert — Module 16: Advanced UI](../3_expert/15_advanced_ui.md)
+**Next Module:** [Expert — Module 16: Advanced UI](../3_expert/16_advanced_ui.md)

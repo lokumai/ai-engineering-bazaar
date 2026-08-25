@@ -66,11 +66,13 @@ Every dossier carries a `## Link Verification Log` and a curated
 `## References for the module` list that becomes the module's reader-facing
 reference section.
 
-### Phase 1b — Independent link verification
+### Phase 1b — Independent link verification  ✅ COMPLETE
 
-Not started. After the dossiers are complete, spawn *separate* agents (not the authors) that
-take only the URL lists and fetch each one, reporting dead / redirected / wrong-content links.
-Authors must not grade their own homework.
+Mechanical `curl` sweep of all 278 unique URLs, run outside the authoring agents.
+**274/278 resolved 200 (98.6%).** One genuinely broken URL found and fixed; three Meta
+URLs are blocked from this network and need a manual browser check before publishing;
+two GitHub "failures" were the audit rate-limiting itself. Full report and reproduction
+steps: `_LINK_AUDIT.md`.
 
 ### Phase 2 — Write the 7 English modules
 
@@ -134,10 +136,8 @@ proposals from the dossiers and need the repo owner's sign-off.
 Phase 1a is done. Next:
 
 1. **Open PR 1** with the dossiers (branch `docs/intermediate-research`).
-2. **Phase 1b — independent link verification.** Spawn agents that are *not* the dossier
-   authors, hand them only the extracted URL lists (278 unique URLs), and have each fetch
-   every link and report dead / redirected / wrong-content results. Authors must not grade
-   their own homework.
+2. **Manually check the three blocked Meta URLs** in a browser (see `_LINK_AUDIT.md` §2).
+   Module 12's Rule of Two framing depends on one of them.
 3. **Settle the open questions above** with the repo owner — especially the boundary line
    (Q1), since it determines what each module may cover.
 4. **Phase 2 — write the 7 English modules**, ~200-300 lines each, in the

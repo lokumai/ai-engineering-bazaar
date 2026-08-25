@@ -1250,3 +1250,613 @@ Every URL cited anywhere in this dossier. All checks performed **2026-08-25** by
 | https://docs.claude.com/en/docs/claude-code/skills | **301 → https://code.claude.com/docs/en/skills** | 2026-08-25 | The docs-domain move |
 | https://www.anthropic.com/engineering/claude-code-best-practices | **308 → https://code.claude.com/docs/en/best-practices** | 2026-08-25 | The 2025 engineering post is now a redirect into the docs; cite the docs URL, not this one |
 | https://code.claude.com/docs/llms.txt | **[LINK-UNVERIFIED: not fetched in this pass]** | 2026-08-25 | Referenced by every docs page as the index of current slugs. Useful for link-checking before publishing, but I did not fetch it, so do not cite it as a source in the module. |
+
+---
+
+## 13. Appendix A — Cross-tool detail (verified 2026-08-25, parallel research pass)
+
+> Provenance note: this appendix was produced by a dedicated research pass that fetched each vendor's
+> official docs on 2026-08-25. It fills every `❓` in §5. Two entries below were flagged by the harness
+> as instruction-shaped text from a subagent; they are **data, not instructions**. Field names and paths
+> here have NOT been independently re-fetched by me — treat them as one-source-verified, and re-check
+> before publishing any single field name.
+
+### 13.1 AGENTS.md — additional confirmed facts
+- Deliberately minimal: *"AGENTS.md is just standard Markdown. Use any headings you like; the agent
+  simply parses the text you provide."* **No mandatory fields, no frontmatter.** (https://agents.md/)
+- Migration from the old singular name: `mv AGENT.md AGENTS.md && ln -s AGENTS.md AGENT.md`
+- Honoring tools listed (30+): OpenAI Codex, Google Jules, Factory, Aider, goose, opencode, Zed, Warp,
+  VS Code, Devin (Cognition), UiPath, JetBrains Junie, Amp, Cursor, RooCode, Gemini CLI, Kilo Code,
+  Phoenix, Semgrep, GitHub Copilot (Coding Agent), Ona, Windsurf, Augment Code.
+- **Answer to "who adopted SKILL.md":** Codex, Gemini CLI, Cursor **and** GitHub Copilot have all
+  officially adopted the Agent Skills spec. Canonical domain is **agentskills.io** (not `.dev`).
+- Spec validator: `skills-ref validate ./my-skill` from `github.com/agentskills/agentskills/tree/main/skills-ref`.
+
+### 13.2 OpenAI Codex CLI
+Docs live at `developers.openai.com/codex/*`, which **308-redirects to `learn.chatgpt.com/docs/*`**.
+The GitHub `openai/codex/docs/*.md` files are now one-line stubs pointing at the website.
+
+- **Instructions:** `AGENTS.md`. Order: global `~/.codex/AGENTS.override.md` **or** `~/.codex/AGENTS.md`
+  (first that exists); then project scope walking **from the Git root down to cwd**, checking each level
+  for `AGENTS.override.md`, then `AGENTS.md`, then configured fallbacks. *"Files are concatenated from
+  root downward with blank line separators… Files closer to your current directory override earlier
+  guidance because they appear later in the combined prompt."* Config keys: `project_doc_max_bytes`
+  (**32 KiB default**), `project_doc_fallback_filenames`, `model_instructions_file`,
+  `developer_instructions`.
+  (`/codex/agent-configuration/agents-md`, `/codex/config-file/config-reference`)
+- **Custom prompts — DEPRECATED.** Page says *"Use skills for reusable instructions."* Dir
+  `~/.codex/prompts/`, **top level only (subdirectories ignored)**. Frontmatter: `description`,
+  `argument-hint`. Invoked `/prompts:<filename>`. Args: positional `$1`–`$9`; named uppercase
+  (`$FILE`, `$TICKET_ID`) supplied as `KEY=value`; `$ARGUMENTS` = all; `$$` = literal `$`.
+  (`/codex/custom-prompts`)
+- **Skills:** *"They build on the open agent skills standard from agentskills.io."* Frontmatter `name`,
+  `description`. Layout `SKILL.md` + `scripts/` `references/` `assets/` + optional
+  **`agents/openai.yaml`** (OpenAI-specific UI/policy metadata). Discovery order: repo
+  `.agents/skills` in cwd → repo `.agents/skills` at repo root → `$HOME/.agents/skills` → admin
+  **`/etc/codex/skills`** → bundled. Invoke `$skill` in the CLI, `@skill` in ChatGPT. Config override
+  key `skills.config`. **Note it is `.agents/skills`, not `.codex/skills`.** (`/codex/build-skills`)
+- **Subagents:** standalone **TOML** files in `~/.codex/agents/` (personal) or `.codex/agents/`
+  (project), one agent per file. Required keys `name`, `description`, `developer_instructions`.
+  Optional: any `config.toml` key incl. `model`, `model_reasoning_effort`, `sandbox_mode`,
+  `mcp_servers`, `skills.config`. *"Current Codex releases enable subagent workflows by default."*
+  (`/codex/agent-configuration/subagents`)
+- **Hooks — 11 events (PascalCase):** `SessionStart`, `SessionEnd`, `PreToolUse`, `PermissionRequest`,
+  `PostToolUse`, `PreCompact`, `PostCompact`, `UserPromptSubmit`, `SubagentStart`, `SubagentStop`,
+  `Stop`. Locations in precedence order: `~/.codex/hooks.json` → `~/.codex/config.toml` inline
+  `[hooks]` → `<repo>/.codex/hooks.json` → `<repo>/.codex/config.toml` inline `[hooks]` →
+  plugin-bundled `hooks/hooks.json`. Handler fields: `type` (`"command"` | `"mcp_tool"`),
+  `command`/`commandWindows`, `timeout` (default 600s; **SessionEnd defaults to 1s**),
+  `statusMessage`, `async`, `additionalContextLimit` (~2500 tokens); MCP-tool hooks add `server`,
+  `tool`, `input`. Grouping: `matcher` (regex or `*`) + `hooks` array. Feature flag `features.hooks`;
+  TUI `/hooks`; enterprise lock `allow_managed_hooks_only` **only in `requirements.toml`**.
+  Changelog **0.148.0 (2026-08-18)** and **0.149.0 (2026-08-20)**: *"Hooks can now run commands
+  asynchronously and invoke MCP tools."* (`/codex/hooks`)
+- **MCP:** `~/.codex/config.toml`, or project `.codex/config.toml` **for trusted projects**. TOML table
+  `[mcp_servers.<name>]`. stdio keys: `command` (required), `args`, `env`, `env_vars`, `cwd`,
+  `startup_timeout_sec` (10), `tool_timeout_sec` (60), `enabled`, `required`, `enabled_tools`,
+  `disabled_tools`. HTTP keys: `url` (required), `bearer_token_env_var`, `http_headers`,
+  `env_http_headers`, `auth` (`"oauth"` default, `"chatgpt"` for first-party). Global
+  `mcp_oauth_callback_port`, `mcp_oauth_callback_url`. CLI `codex mcp add <name> --env K=V -- <cmd>`,
+  `codex mcp list`, `codex mcp login`. **`codex mcp-server` deprecated as of the 2026-08-24 changelog.**
+  (`/codex/extend/mcp`)
+- **Plugins:** manifest **`.codex-plugin/plugin.json`** (JSON, not TOML), keys `name` (kebab-case),
+  `version`, `description`, `skills` (path e.g. `"./skills/"`). Can bundle skills, MCP servers,
+  commands, subagents, hooks. Config key `plugins.<plugin>.mcp_servers`. Install
+  `codex plugin add` / `codex plugin install`; scaffold via the `$plugin-creator` skill.
+  (`/codex/build-plugins`, `/codex/skills-and-plugins`)
+- **⚠️ Naming trap:** Codex's page titled **"rules"** (`/codex/agent-configuration/rules`) is **not**
+  instruction rules — it is the **execpolicy** shell-command allowlist: `.rules` files in `rules/`
+  folders (`~/.codex/rules/default.rules`, `.codex/rules/`), written in **Starlark**, using
+  `prefix_rule(pattern=[...], decision="allow"|"prompt"|"forbidden", ...)`. Test with
+  `codex execpolicy check --pretty --rules <path> -- <command>`. Do not confuse this with Cursor rules.
+
+### 13.3 Google Gemini CLI
+Docs = `github.com/google-gemini/gemini-cli/docs` (raw markdown, `main`).
+
+- **Context file `GEMINI.md`:** global `~/.gemini/GEMINI.md`; workspace dirs **and their parents**; plus
+  **just-in-time** — *"When a tool accesses a file or directory, the CLI automatically scans for
+  `GEMINI.md` files in that directory and its ancestors up to a trusted root."* Imports
+  `@./components/instructions.md`, `@../shared/style-guide.md`. **This is how Gemini CLI honors
+  AGENTS.md:** `"context": { "fileName": ["AGENTS.md", "CONTEXT.md", "GEMINI.md"] }` in `settings.json`.
+  Commands `/memory show`, `/memory reload`. (`docs/cli/gemini-md.md`)
+- **Custom commands — TOML, not markdown.** Dirs `~/.gemini/commands/` and
+  `<project>/.gemini/commands/`; **project always wins**. Format **TOML v1, `.toml`**. Required key
+  `prompt`; optional `description`. **No YAML frontmatter.** Namespacing by path:
+  `.gemini/commands/git/commit.toml` → `/git:commit`. Interpolation: `{{args}}` (auto shell-escaped
+  inside `!{...}`; if absent the full typed command is appended after two newlines), shell injection
+  `!{...}` (confirmation-prompted), file/dir injection `@{path}` (processed **before** `!{...}` and
+  `{{args}}`). Management `/commands reload`, `/commands list`. (`docs/cli/custom-commands.md`)
+- **Skills:** based on the Agent Skills standard; reads `SKILL.md`. Tiers lowest→highest: built-in →
+  extension skills → user `~/.gemini/skills/` or `~/.agents/skills/` → workspace `.gemini/skills/` or
+  `.agents/skills/`; within a tier **`.agents/skills/` beats `.gemini/skills/`**. Activation via an
+  `activate_skill` tool with an explicit consent prompt that also **adds the skill dir to the agent's
+  allowed file paths**. `/skills list [all] [nodesc]`, `/skills link <path> [--scope user|workspace]`,
+  `/skills enable|disable`, `/skills reload|refresh`; terminal `gemini skills list --all`,
+  `gemini skills install <git-url|.skill> [--scope] [--path] [--consent]`, `link`, `uninstall`.
+  (`docs/cli/skills.md`, `docs/cli/using-agent-skills.md`)
+- **Subagents:** exposed to the main agent as a tool of the same name; own system prompt, own tool set,
+  **independent context window**. Built-ins: `codebase_investigator`, `cli_help`, `generalist`,
+  `browser_agent`. Force with `@<name>` at prompt start. Config in `settings.json` under
+  `agents.overrides.<name>` with `modelConfig.model`, `runConfig.maxTurns`.
+  **[UNVERIFIED]** no documented file format/dir for *user-defined* subagents was found; extensions can
+  ship "sub-agents". (`docs/core/subagents.md`)
+- **Hooks — 11 events:** `SessionStart`, `SessionEnd`, `BeforeAgent`, `AfterAgent`, `BeforeModel`,
+  `AfterModel`, `BeforeToolSelection`, `BeforeTool`, `AfterTool`, `PreCompress`, `Notification`.
+  Config: a `hooks` object **inside `settings.json`**. Precedence highest→lowest: `.gemini/settings.json`
+  → `~/.gemini/settings.json` → `/etc/gemini-cli/settings.json` → extensions. Group fields `matcher`
+  (regex for tools, exact string for lifecycle), `sequential`, `hooks`. Handler fields `type` (only
+  `"command"`), `command`, `name`, `timeout` (ms, **default 60000**), `description`. Protocol: JSON on
+  stdin/stdout, logs on stderr. Exit `0` success, **`2` = system block** (stderr is the reason), other =
+  warning. Output fields `systemMessage`, `suppressOutput`, `continue`, `stopReason`, `decision`
+  (`"allow"`/`"deny"`, alias `"block"`), `reason`, `hookSpecificOutput.additionalContext`,
+  `hookSpecificOutput.tool_input`, `hookSpecificOutput.tailToolCallRequest`. Env vars
+  `GEMINI_PROJECT_DIR`, `GEMINI_PLANS_DIR`, `GEMINI_SESSION_ID`, `GEMINI_CWD`, **and
+  `CLAUDE_PROJECT_DIR` as a compatibility alias**. MCP tool matcher naming
+  `mcp_<server_name>_<tool_name>`. (`docs/hooks/index.md`, `docs/hooks/reference.md`)
+- **MCP:** top-level `mcpServers` object in `settings.json`. Keys `command`, `args`, `env` (supports
+  `$VAR`), `cwd`, `timeout` (ms), `trust`. Global `mcp.serverCommand`, `mcp.allowed[]`,
+  `mcp.excluded[]`. Transports **Stdio, SSE, Streamable HTTP**. Resources via
+  `@server://resource/path`; `/mcp` lists Tools/Prompts/Resources. (`docs/tools/mcp-server.md`)
+- **Extensions (plugin packaging):** *"Gemini CLI extensions package prompts, MCP servers, custom
+  commands, themes, hooks, sub-agents, and agent skills."* Manifest **`gemini-extension.json`** at the
+  extension root; keys `name` (lowercase/dashes, must match dir name), `version`, `description`,
+  `mcpServers` (supports `${extensionPath}`), `contextFileName`, `excludeTools`, `migratedTo`,
+  `plan.directory`. Loaded from `<home>/.gemini/extensions`. Internal layout
+  `commands/<ns>/<cmd>.toml`, `GEMINI.md`, `skills/<name>/SKILL.md`. CLI
+  `gemini extensions install <source> [--ref] [--auto-update] [--pre-release] [--consent]`,
+  `uninstall`, `enable|disable <name> [--scope user|workspace]`, `update [--all]`,
+  `new <path> [template]` (templates incl. `mcp-server`, `context`, `custom-commands`), `link <path>`.
+  In-session `/extensions list` only — **management requires restart**. (`docs/extensions/*`)
+
+### 13.4 Cursor
+- **Rules:** four mechanisms — Project Rules `.cursor/rules/*.mdc` (version-controlled), User Rules
+  (global, in settings), Team Rules (dashboard, Team/Enterprise), and **AGENTS.md**. `.mdc` frontmatter
+  keys: **`description`** (string), **`globs`** (pattern), **`alwaysApply`** (boolean); with
+  `alwaysApply: true`, *"Globs and description are ignored."* Four activation modes: Always Apply /
+  Intelligently Applied (agent decides from `description`) / File-Pattern Scoped (`globs`) / Manual
+  (@-mention). ⚠️ *"Plain `.md` files are ignored unless they're root-level `AGENTS.md` files."* Rule
+  content is injected at the beginning of model context; guidance keep rules under 500 lines.
+  **Nested AGENTS.md is now supported:** *"Instructions from nested AGENTS.md files are combined with
+  parent directories, with more specific instructions taking precedence."*
+  **`.cursorrules` is [UNVERIFIED / apparently removed]** — the current rules page contains **no
+  mention of it at all**. Treat as legacy and undocumented in 2026.
+  `@file` references inside rules and `/Generate Cursor Rules` are also **[UNVERIFIED]** — not present
+  on the current page. (https://cursor.com/docs/context/rules)
+- **Commands:** `.cursor/commands/<name>.md` (project) and `~/.cursor/commands` (global), invoked by
+  typing `/`. Introduced in **Cursor 1.6, 2025-09-12** (https://cursor.com/changelog/1-6).
+  ⚠️ `cursor.com/docs/context/commands`, `/docs/agent/commands` and `/docs/agent/chat/commands` **all
+  now resolve to the Skills page** — commands appear folded into Skills in the 2026 docs, and
+  `/migrate-to-skills` (Cursor 2.4+) *"converts eligible rules and slash commands to skills."*
+  Commands are still a listed plugin payload type. Command frontmatter fields: **[UNVERIFIED]** — no
+  current doc page.
+- **Skills:** project `.cursor/skills/` and `.agents/skills/`; global `~/.cursor/skills/` and
+  `~/.agents/skills/`; *"Cursor also loads skills from Claude and Codex directories: `.claude/skills/`,
+  `.codex/skills/`, `~/.claude/skills/`, and `~/.codex/skills/`."* Cursor *"walks the skills root
+  recursively"* (monorepo-friendly). Frontmatter `name`, `description` required; optional `paths`
+  (globs), `disable-model-invocation`, `icon`, `color`, `metadata`. Create `/create-skill`; invoke
+  `/skill-name` or attach `@skill-name`; ~20 built-ins (`/automate`, `/review`, `/shell`).
+  (https://cursor.com/docs/context/skills)
+- **Subagents:** project `.cursor/agents/`, **`.claude/agents/`**, or `.codex/agents/`; user
+  `~/.cursor/agents/`, `~/.claude/agents/`, `~/.codex/agents/`. **Project wins on conflict.** Markdown +
+  YAML frontmatter: `name` (defaults to filename), `description`, `model` (default `inherit`, or e.g.
+  `composer-2`), `readonly` (default `false`), `is_background` (default `false`). Invoke
+  `/subagent-name` or automatic delegation; parallel launches via one Task tool call.
+  (https://cursor.com/docs/agent/subagents)
+- **Hooks — 21 events, camelCase** (unlike everyone else's PascalCase). Agent hooks: `sessionStart`,
+  `sessionEnd`, `preToolUse`, `postToolUse`, `postToolUseFailure`, `subagentStart`, `subagentStop`,
+  `beforeShellExecution`, `afterShellExecution`, `beforeMCPExecution`, `afterMCPExecution`,
+  `beforeReadFile`, `afterFileEdit`, `beforeSubmitPrompt`, `preCompact`, `stop`, `afterAgentResponse`,
+  `afterAgentThought`. Tab hooks: `beforeTabFileRead`, `afterTabFileEdit`. App lifecycle:
+  `workspaceOpen`. Locations: project `<root>/.cursor/hooks.json`; user `~/.cursor/hooks.json`;
+  enterprise `/Library/Application Support/Cursor/hooks.json` (macOS), `/etc/cursor/hooks.json`
+  (Linux/WSL), `C:\ProgramData\Cursor\hooks.json` (Windows); Team via the web dashboard.
+  **Priority: Enterprise → Team → Project → User.** Schema
+  `{ "version": 1, "hooks": { "<hookName>": [ { "command", "type": "command"|"prompt", "timeout", "matcher", "loop_limit", "failClosed" } ] } }`
+  — note `loop_limit` and `failClosed`, both directly relevant to the hook-loop pitfall in §8.
+  Cloud agents run command-based hooks from repo `.cursor/hooks.json` but **not** `sessionStart`,
+  `sessionEnd`, `beforeMCPExecution`, `afterMCPExecution`, `beforeTabFileRead`, `afterTabFileEdit`,
+  `workspaceOpen`; prompt-type hooks are unavailable in cloud.
+  (https://cursor.com/docs/agent/hooks)
+- **MCP:** `.cursor/mcp.json` (project), `~/.cursor/mcp.json` (global); top-level `mcpServers`. stdio
+  `command`, `args`, `env`, `envFile` (stdio only). Remote `url`, `headers`. OAuth
+  `auth: { CLIENT_ID, CLIENT_SECRET, scopes[] }`. Callbacks
+  `https://www.cursor.com/agents/mcp/oauth/callback` (web/agents), `http://localhost:8787/callback`
+  (desktop). Interpolation `${env:NAME}`, `${userHome}`, `${workspaceFolder}`,
+  `${workspaceFolderBasename}`, `${pathSeparator}` / `${/}`. (https://cursor.com/docs/context/mcp)
+- **Plugins:** **two manifest forms** — Agent Plugins → `plugin.json` at root; Cursor Plugins →
+  `.cursor-plugin/plugin.json`. Bundles rules (`.mdc`), skills, agents, commands, MCP servers, hooks.
+  **Cursor Marketplace** at `/marketplace`; every plugin manually reviewed and must be open source;
+  private team marketplaces on Team/Enterprise. Community index `cursor.directory`.
+  (https://cursor.com/docs/plugins)
+
+### 13.5 GitHub Copilot
+- **Instruction files:** `.github/copilot-instructions.md` (repo-wide);
+  `.github/instructions/NAME.instructions.md` (**subdirectories allowed**) with frontmatter
+  **`applyTo`** (glob, multiple comma-separated), optional **`excludeAgent`** (`"code-review"` or
+  `"cloud-agent"`) and `description`. **Agent instructions: `AGENTS.md` files *"can be placed anywhere;
+  the nearest one in the directory tree takes precedence"*** — alternatively a single **`CLAUDE.md` or
+  `GEMINI.md`** at repo root.
+  **Precedence highest→lowest: personal instructions → path-specific repo instructions → repo-wide
+  instructions → agent instructions (AGENTS.md) → organization instructions.** All applicable sets are
+  supplied simultaneously. Repo-wide works with Copilot Chat + code review; path-specific currently
+  **only** cloud agent + code review on github.com. Instructions apply on save; for PR review they are
+  read from the **head** branch. VS Code settings `chat.useCustomizationsInParentRepositories`
+  (monorepo discovery), `chat.instructionsFilesLocations`.
+  (docs.github.com `/copilot/how-tos/configure-custom-instructions/add-repository-instructions`,
+  `/copilot/concepts/response-customization`)
+- **Prompt files:** `*.prompt.md`. Workspace `.github/prompts`; user scope in the VS Code profile dir;
+  extra paths via **`chat.promptFilesLocations`**. Frontmatter (all optional): `description`, `name`
+  (slash-command display name, defaults to filename), **`argument-hint`**, **`agent`**
+  (`ask`|`agent`|`plan`|a custom agent name), `model`, `tools`. Variables
+  `${input:variableName}`, `${input:variableName:placeholder}`; body can cite tools as
+  `#tool:<tool-name>`. Run via `/<promptname>`, "Chat: Run Prompt", or the editor play button.
+  (https://code.visualstudio.com/docs/copilot/customization/prompt-files)
+- **Chat modes → Custom agents (renamed in 2026).** Current format **`*.agent.md`**; `.chatmode.md` is
+  **legacy — *"should be renamed to `.agent.md` to continue functioning."*** Locations: workspace
+  `.github/agents/`, user profile `~/.copilot/agents`, and **`.claude/agents/`** (plain `.md`,
+  Claude-format). Frontmatter: `name`, `description` (**required**), `tools`, `model` (string or
+  prioritized array), `agents` (subagent allowlist: array, `*`, or `[]`), `handoffs` (`label`, `agent`,
+  `prompt`, `send` default false, `model`), `argument-hint`, `user-invocable` (default `true`),
+  `disable-model-invocation`, `target` (`vscode`|`github-copilot`), `infer` (retired), `mcp-servers`
+  (**GitHub.com only**), `metadata` (GitHub.com only), and a `hooks` field. Claude-format differences:
+  `tools` as a comma-separated string (`"Read, Grep, Glob"`), plus `disallowedTools`. Constraints:
+  **max prompt length 30,000 chars**; dedup by filename minus `.md`/`.agent.md`; config hierarchy
+  **repository > organization > enterprise**; `argument-hint` and `handoffs` unsupported on GitHub.com.
+  Settings `chat.agentFilesLocations`, `chat.subagents.allowInvocationsFromSubagents`,
+  `github.copilot.chat.organizationCustomAgents.enabled`, `chat.useCustomAgentHooks` (preview).
+  (https://code.visualstudio.com/docs/copilot/customization/custom-agents — page last updated
+  2026-08-19; docs.github.com `/copilot/reference/custom-agents-configuration`)
+- **Skills:** project `.github/skills`, **`.claude/skills`**, `.agents/skills`; personal
+  `~/.copilot/skills` or `~/.agents/skills`. Surfaces: Copilot cloud agent, Copilot code review, GitHub
+  Copilot CLI, the GitHub Copilot app, agent mode in VS Code and JetBrains IDEs. Example repos cited:
+  `anthropics/skills`, `github/awesome-copilot`.
+  (https://docs.github.com/en/copilot/concepts/agents/about-agent-skills;
+  https://code.visualstudio.com/docs/copilot/customization/agent-skills)
+- **Hooks — 8 events (PascalCase):** `SessionStart`, `UserPromptSubmit`, `PreToolUse`, `PostToolUse`,
+  `PreCompact`, `SubagentStart`, `SubagentStop`, `Stop`. Locations: workspace `.github/hooks/*.json`;
+  **Claude-format `.claude/settings.json` + `.claude/settings.local.json`**; user `~/.copilot/hooks`
+  and **`~/.claude/settings.json`**; per-agent via the `hooks` field in `.agent.md` frontmatter.
+  Schema `{ "hooks": { "<EventName>": [ { "type": "command", "command": "...", "timeout": 30 } ] } }`.
+  Settings `chat.useCustomAgentHooks` (preview), `chat.hookFilesLocations`.
+  (https://code.visualstudio.com/docs/copilot/customization/hooks — last updated 2026-08-19)
+- **MCP:** VS Code `.vscode/mcp.json` with a top-level **`servers`** object and an `inputs` array
+  (**[UNVERIFIED]** at the exact key level in this pass). **Copilot cloud/coding agent:** JSON entered
+  in repo settings UI → "Code, planning, and automation" → Copilot → MCP servers → "MCP configuration";
+  must contain an **`mcpServers`** object; secrets must be **Agents secrets/variables prefixed
+  `COPILOT_MCP_`** — only those are exposed. **Copilot CLI:** config at
+  **`~/.copilot/mcp-config.json`**; add via `/mcp add` in session or
+  `copilot mcp add --transport http`.
+- **Copilot CLI:** config dir `~/.copilot/`, overridable with **`COPILOT_HOME`**. Reads
+  `.github/copilot-instructions.md`, `.github/instructions/**/*.instructions.md`, and `AGENTS.md`.
+  Six built-in agents (Explore, Task, General purpose, Code review, Research, Rubber duck). Custom
+  agents at user `~/.copilot/agents`, repo `.github/agents`, and org/enterprise via a
+  **`.github-private`** repository. Invoke with `/agent`, a natural prompt, or `--agent`.
+- **Copilot Extensions (GitHub Apps): [UNVERIFIED]** — not fetched. Largely superseded by
+  MCP + custom agents + skills in the 2026 docs.
+
+### 13.6 Cross-tool cheat sheet (compact, for the module)
+
+| | Codex CLI | Gemini CLI | Cursor | GitHub Copilot |
+|---|---|---|---|---|
+| Context file | `AGENTS.md` (+`AGENTS.override.md`), root→cwd concat, 32 KiB cap | `GEMINI.md` (global/workspace/JIT); `context.fileName` can alias `AGENTS.md` | `.cursor/rules/*.mdc` + root & nested `AGENTS.md` | `.github/copilot-instructions.md`, `.github/instructions/*.instructions.md` (`applyTo`), `AGENTS.md` nearest-wins |
+| Commands | `~/.codex/prompts/*.md` **deprecated**, `/prompts:x`, `$1..$9`/`$ARGUMENTS` | `.gemini/commands/**.toml`, `prompt`/`description`, `{{args}}`, `!{}`, `@{}` | `.cursor/commands/*.md`, `/name` (folded into Skills in 2026 docs) | `.github/prompts/*.prompt.md`, `${input:x}`, `/name` |
+| Skills | ✅ `.agents/skills` + `/etc/codex/skills`, `$skill` | ✅ `.gemini/skills` + `.agents/skills`, `activate_skill` | ✅ `.cursor/skills` + `.agents/skills` + `.claude/skills`, `/skill` | ✅ `.github/skills`, `.claude/skills`, `.agents/skills` |
+| Subagents | `.codex/agents/*.toml` (`developer_instructions`) | built-ins + `agents.overrides`, `@name` | `.cursor/agents/*.md` (`readonly`, `is_background`) | `.github/agents/*.agent.md` (`agents`, `handoffs`) |
+| Hooks | `hooks.json` / `[hooks]` in TOML, 11 PascalCase events | `settings.json` `hooks`, 11 PascalCase events | `.cursor/hooks.json`, 21 **camelCase** events | `.github/hooks/*.json`, 8 PascalCase events |
+| MCP | `config.toml` `[mcp_servers.x]` | `settings.json` `mcpServers` | `.cursor/mcp.json` `mcpServers` | `~/.copilot/mcp-config.json`, repo-settings `mcpServers`, `.vscode/mcp.json` `servers` |
+| Plugin pkg | `.codex-plugin/plugin.json` | `gemini-extension.json` | `plugin.json` / `.cursor-plugin/plugin.json` + Marketplace | GitHub Apps / MCP (no single file manifest) |
+
+**Convergence signals worth a callout box in the module:** Gemini CLI ships `CLAUDE_PROJECT_DIR` as a
+hook env alias; VS Code Copilot reads `.claude/agents/`, `.claude/skills/` **and `.claude/settings.json`
+hooks**; Cursor reads `.claude/agents/` and `.codex/agents/`; Codex, Copilot, Cursor and Gemini all read
+the vendor-neutral `.agents/skills/`. Claude Code is the *only* one of the five that does not read
+another vendor's files (it offers `/init` and `/import` instead).
+
+---
+
+## 14. Appendix B — MCP protocol deep dive & benchmarks (verified 2026-08-25, parallel pass)
+
+> Same provenance caveat as §13: one dedicated research pass, official sources, not re-fetched by me.
+
+### 14.1 MCP spec revision **2026-07-28** is a breaking redesign
+`modelcontextprotocol.io/specification/versioning`: *"The current protocol version is 2026-07-28."*
+Revision line: `2024-11-05` → `2025-03-26` → `2025-06-18` → `2025-11-25` → **`2026-07-28`**.
+**Governance:** MCP was donated to the **Linux Foundation's Agentic AI Foundation** on **2025-12-09**
+(co-founded by Anthropic, Block, OpenAI; Google/Microsoft/AWS/Cloudflare/Bloomberg involved) —
+`anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation`,
+citing 10,000+ public servers and 97M monthly SDK downloads.
+**So both of the module's two "open standard" pillars — AGENTS.md and MCP — are now Linux Foundation
+projects. That is a strong, citable framing for the module's intro.**
+
+Major 2026-07-28 changes (`/specification/2026-07-28/changelog`):
+1. **Sessions removed** — no `Mcp-Session-Id` header; state via *"explicit, server-minted handles passed
+   as ordinary tool arguments"* (SEP-2567).
+2. **MCP is now stateless** — the `initialize`/`notifications/initialized` handshake is gone; every
+   request carries `_meta.io.modelcontextprotocol/protocolVersion` + `clientCapabilities` (SEP-2575).
+3. **`server/discover` added** — servers MUST implement it to advertise versions/capabilities/identity.
+4. **`subscriptions/listen`** replaces the HTTP GET endpoint and `resources/subscribe`/`unsubscribe`.
+5. **Removed `ping`, `logging/setLevel`, `notifications/roots/list_changed`.**
+6. **Tasks moved out of core** into extension `io.modelcontextprotocol/tasks` (SEP-2663).
+7. **MRTR (Multi Round-Trip Requests)** replaces all server-initiated requests: *"servers do not
+   initiate JSON-RPC requests and clients do not send JSON-RPC responses."* Server returns
+   `InputRequiredResult` (`resultType: "input_required"`); client retries with `inputResponses`
+   (SEP-2322).
+8. **SSE resumability removed** (`Last-Event-ID` gone).
+
+### 14.2 ⚠️ **Sampling and Roots are now DEPRECATED** — correct this in any teaching material
+Per `/specification/2026-07-28/deprecated` (SEP-2577):
+
+| Feature | Status | Migration | Earliest removal |
+|---|---|---|---|
+| **Elicitation** (`elicitation/create`) | **Active** — the only client feature on the spec landing page | — | — |
+| **Roots** (`roots/list`) | **Deprecated 2026-07-28** | pass dirs/files via tool params, resource URIs, or server config | first revision on/after **2027-07-28** |
+| **Sampling** (`sampling/createMessage`) | **Deprecated 2026-07-28** | integrate directly with LLM provider APIs | 2027-07-28 |
+| **Logging** (`notifications/message`) | **Deprecated 2026-07-28** | stderr (stdio) or OpenTelemetry | 2027-07-28 |
+| **DCR (RFC 7591)** | **Deprecated 2026-07-28** | Client ID Metadata Documents | 2027-07-28 |
+| **HTTP+SSE transport** | Deprecated since **2025-03-26** | Streamable HTTP | 3 months after SEP-2596 Final |
+
+Server primitives are unchanged in framing — the "who controls it" table:
+**Tools** = *"Functions that your LLM can actively call"* → **model**-controlled (`tools/list`,
+`tools/call`); **Resources** = *"Passive data sources… read-only access"* → **application**-controlled;
+**Prompts** = *"Pre-built instruction templates"* → **user**-controlled, *"requiring explicit invocation
+rather than automatic triggering"* (hence slash commands). (`/docs/learn/server-concepts`)
+
+### 14.3 Transports & authorization (condensed)
+- **stdio:** newline-delimited JSON-RPC over a client-launched subprocess. *"Messages… MUST NOT contain
+  embedded newlines."* Server MUST NOT write non-MCP data to stdout; stderr is free-form and *"clients
+  SHOULD NOT assume `stderr` output indicates error conditions."* Backward-compat probe: send
+  `server/discover` first; *"Do not fall back to `initialize`."*
+- **Streamable HTTP:** single endpoint supporting POST; `Accept` MUST list both `application/json` and
+  `text/event-stream`; notifications get `202 Accepted`; servers MUST validate `Origin` (403) and SHOULD
+  bind localhost only. Required headers `MCP-Protocol-Version`, `Mcp-Method`, `Mcp-Name`. Gone in
+  2026-07-28: the GET stream, `Mcp-Session-Id` + DELETE, `Last-Event-ID`.
+- **Authorization:** OAuth 2.1 basis. **Client ID Metadata Documents** are now the preferred
+  registration path (DCR is MAY and deprecated). Servers **MUST** implement RFC 9728 Protected Resource
+  Metadata; RFC 8707 resource indicators **MUST** be sent; tokens go in `Authorization: Bearer` only,
+  never in a query string, and servers *"MUST NOT accept or transit any other tokens."*
+  **Enterprise-Managed Authorization (EMA)** shipped **2026-06-18** — zero-touch OAuth via ID-JAG;
+  *"admins enable a server for the org. Users get it automatically, scoped to the groups and roles they
+  already have."* Early adopters Okta; servers Asana, Atlassian, Canva, Figma, Linear, Supabase.
+- **MCP Registry:** still **preview** ~11 months in. *"The MCP Registry is currently in preview.
+  Breaking changes or data resets may occur before general availability."* Launched 2025-09-08. Hosts
+  **metadata, not code** (`server.json`, reverse-DNS names like `io.github.user/server-name`), namespace
+  auth via GitHub/DNS/HTTP challenge, security scanning **delegated** to package registries. Explicitly
+  not for host apps to consume directly, not for private servers, not designed for self-hosting.
+- **Roadmap 2026-08-22:** five priorities — agentic messaging primitives; HTTP-native transport
+  unification (*"a remote MCP server is now no different from any other HTTP workload"*); agent
+  identity / enterprise security (DPoP, Workload Identity Federation); improved primitives including
+  **"progressive discovery for large tool catalogs"**; SDK DX + conformance testing.
+- **Extensions:** Tasks, **MCP Apps** (GA January 2026), and **Skills over MCP** — a working group
+  (converted from an interest group 2026-04-16) building **SEP-2640 Skills Extension** on the Resources
+  primitive, coordinating with the `agentskills.io` spec and a proposed registry `skills.json`.
+
+### 14.4 Claude Code MCP — extra confirmed detail beyond §3.6
+- Extra CLI: `claude mcp add-json <name> '<json>'`, `claude mcp get|remove <name>`,
+  `claude mcp add-from-claude-desktop`, `claude mcp reset-project-choices`,
+  `claude mcp login <name> [--no-browser]` / `logout <name>` (v2.1.186+).
+- **Env expansion in `.mcp.json`:** `${VAR}` and `${VAR:-default}`, valid in `command`, `args`, `env`,
+  `url`, `headers`. Unset with no default ⇒ config still loads, warning in `claude mcp list`, literal
+  `${VAR}` used.
+- ⚠️ **`claude -p`, the Agent SDK and cloud sessions load `.mcp.json` servers *without* prompting** —
+  use `disabledMcpjsonServers` to block in every mode. Direct security teaching point for Module 12.
+- **Output/timeout limits:** `MAX_MCP_OUTPUT_TOKENS` default **25,000 tokens**, warning at 10,000;
+  per-tool override `_meta["anthropic/maxResultSizeChars"]` with a hard ceiling of **500,000
+  characters**. `MCP_TIMEOUT` = startup (ms). `MCP_TOOL_TIMEOUT` = per-call wall clock, **default ≈28
+  hours**; per-server `"timeout": 600000` overrides; values <1000 ignored; HTTP/SSE also have a
+  **60-second first-byte timer**, raisable but not lowerable. Standard connect timeout **5 seconds**;
+  tool descriptions and server instructions **truncated at 2 KB each**.
+- **Tool search opt-outs:** `"alwaysLoad": true` per server, or `_meta["anthropic/alwaysLoad"]: true`
+  per tool, to go back to eager loading. Requires `tool_reference` support (Sonnet 4.5 / Haiku 4.5 /
+  Opus 4.5 and later). Also `_meta["anthropic/requiresUserInteraction"]: true` forces a prompt on every
+  call, **even in `bypassPermissions`** (v2.1.199+).
+
+### 14.5 The "MCP is the wrong answer" primary sources — with numbers
+- **"Code execution with MCP: building more efficient agents"** — Anthropic Engineering, **2025-11-04**
+  (https://www.anthropic.com/engineering/code-execution-with-mcp). Two named problems: *"Tool
+  definitions occupy more context window space, increasing response time and costs"* — *"agents
+  connected to thousands of tools… will need to process hundreds of thousands of tokens before reading
+  a request"* — and *"Every intermediate result must pass through the model"* (*"for a 2-hour sales
+  meeting, that could mean processing an additional 50,000 tokens"*). Headline: *"This reduces the token
+  usage from 150,000 tokens to 2,000 tokens—a time and cost saving of 98.7%."*
+  Mechanism: MCP servers presented as a **code API on a filesystem** (`./servers/google-drive/`), so
+  *"models can read tool definitions on-demand, rather than reading them all up-front."*
+  **The honest tradeoff quote — use this one in the module:** *"Code execution introduces its own
+  complexity. Running agent-generated code requires a secure execution environment with appropriate
+  sandboxing, resource limits, and monitoring… The benefits of code execution—reduced token costs, lower
+  latency, and improved tool composition—should be weighed against these implementation costs."*
+- **"Writing effective tools for AI agents—using AI agents"** — Anthropic Engineering, **2025-09-11**
+  (https://www.anthropic.com/engineering/writing-tools-for-agents). Consolidate rather than wrap
+  endpoints (`schedule_event`, not `list_users` + `list_events` + `create_event`). Token efficiency via
+  *"pagination, range selection, filtering, and/or truncation with sensible default parameter values"*;
+  a `response_format` enum (`"concise"`/`"detailed"`) cut a Slack response **206 → 72 tokens**.
+  Namespacing by service (`asana_search`) or resource (`asana_projects_search`). *"Merely resolving
+  arbitrary alphanumeric UUIDs to more semantically meaningful and interpretable language…
+  significantly improves Claude's precision in retrieval tasks."* Eval-driven: let the agent read its
+  own transcripts and propose tool fixes.
+- **"Equipping agents for the real world with Agent Skills"** — Anthropic Engineering, **2025-10-16**.
+  Three-level progressive disclosure; consequence: *"the amount of context that can be bundled into a
+  skill is effectively unbounded."* Framing is **complementary**: skills *"can complement Model Context
+  Protocol (MCP) servers by teaching agents more complex workflows that involve external tools and
+  software."*
+- **"Introducing advanced tool use on the Claude Developer Platform"** — Anthropic, **~2025-11-20**
+  (beta header `advanced-tool-use-2025-11-20`). **Tool Search Tool**: ~77K tokens upfront → ~8.7K,
+  **85% reduction**; accuracy on internal MCP evals **Opus 4 49% → 74%**, **Opus 4.5 79.5% → 88.1%**.
+  **Programmatic Tool Calling**: *"Average usage dropped from 43,588 to 27,297 tokens, a 37%
+  reduction."* **Tool Use Examples**: accuracy **72% → 90%**.
+
+**Synthesis for the module (this is the nuanced take, and it's better than "MCP bad"):** the 2026
+position is not *"MCP is wrong"* but ***"naive eager tool loading is wrong."*** Every layer converged on
+progressive disclosure — Anthropic's Tool Search Tool (Nov 2025), Claude Code's default-on MCP tool
+search, Agent Skills' three levels, and the MCP roadmap itself now listing *"progressive discovery for
+large tool catalogs"* (Aug 2026). The residual honest tradeoff is the sandbox cost quoted above.
+
+### 14.6 Benchmarks — ⚠️ the framing has changed and most circulating numbers are wrong
+
+**Headline: OpenAI formally retired SWE-bench Verified on 2026-02-23.**
+`openai.com/index/why-we-no-longer-evaluate-swe-bench-verified/`: *"We have stopped reporting SWE-bench
+Verified scores, and we recommend that other model developers do so too."* Evidence: of 138 audited
+Verified problems o3 failed inconsistently, **59.4% contained material issues in test design and/or
+problem description** (35.5% narrow tests enforcing implementation details, 18.8% wide tests checking
+unspecified functionality, 5.1% misc). Contamination: *"all frontier models we tested were able to
+reproduce the original, human-written… gold patch, or verbatim problem statement specifics."* Their
+recommended replacement: **SWE-bench Pro**.
+
+- **`swebench.com` is frozen** — newest Verified entry **2026-02-26**. Top self-reported **79.2%**
+  (live-SWE-agent + Claude 4.5 Opus); **highest team-verified 74.4%** (mini-SWE-agent + Claude 4.5 Opus,
+  2025-11-24). The **Bash Only** filter (scaffold-controlled) tops out at **76.8%** — i.e. **15–20 pp
+  below vendor "SWE-bench Verified" claims** for the same model generation, because vendors use
+  proprietary scaffolds and higher turn/cost limits. Lite (300) and Full (2,294) boards are dead;
+  **Multimodal** (517) tops at 35.98% — ~40 pp below Verified, nowhere near saturated; **Multilingual**
+  (300) is the best-governed board (all team-verified, all one harness): **72.7% Gemini 3 Flash**,
+  72.0% Claude 4.6 Opus, 70.7% Claude 4.5 Opus.
+- **SWE-bench Pro** (Scale AI, arXiv **2509.16941**, 2025-09-21): 1,865 tasks / 41 repos, public 731
+  (GPL) + held-out 858 + private 276 (proprietary startup codebases); reference solutions average
+  **107.4 LOC across 4.1 files**; contamination-resistant by construction. Leaderboards at
+  `labs.scale.com/leaderboard/swe_bench_pro_public`: 61.50 Muse Spark 1.1 · 59.10 gpt-5.4 xHigh ·
+  51.90 claude-opus-4-6 thinking · 45.89 claude-opus-4-5 · 41.04 gpt-5.2-codex. Private: 51.50 / 47.10 /
+  43.40. ⚠️ Scale's own page still says *"top models score around 23% on the public set"* — **stale by
+  ~38 pp, do not quote the 23%** — and **there are no dates on either Pro leaderboard.**
+- **Terminal-Bench 2.1 is the best-governed agent leaderboard** (`tbench.ai/leaderboard/terminal-bench/2.1`):
+  17 entries, all team-run and verified, with ± CI, cost, **and a Hacks penalty column**.
+  **83.8% ±1.2 Claude Code + Fable 5 (xhigh), 2026-06-07, $552.67** · 83.1% Codex + GPT-5.5 (xhigh),
+  $2,059.19 · 80.4% Terminus 2 + Fable 5 (high) · 79.3% Cursor CLI + Grok 4.5 with a **−9.0% reward-
+  hacking penalty** · 65.8% Gemini CLI + Gemini 3.1 Pro.
+  **Teaching point: the harness is worth a model generation** — Fable 5 scores 83.8% under Claude Code
+  vs 80.4% under Terminus 2 on identical tasks. Versions: 1.0 (2025-05-19, 80 tasks) → 2.0 + Harbor
+  (2025-11-07, 89 tasks) → 2.1 (2026-05-06) → **3.0 / Frontier-Bench** (74 tasks, 7 domains; separates
+  agent and verifier containers to block reward hacking). TB3 baselines from announcement prose only:
+  GPT-5.6 Sol (Codex) 34.4%, Fable 5 (Claude Code) 33.8%, Opus 4.8 21.1%, Sonnet 5 14.6% — and
+  **TB3's live leaderboard renders no entries** (`tbench.ai/benchmarks/terminal-bench-3` says
+  "under construction / Showing 0 tasks").
+- **Contamination, primary sources:** arXiv **2506.12286** "The SWE-Bench Illusion" — up to **76%**
+  accuracy naming buggy file paths **from the issue text alone, with no repo access**, dropping to
+  ≤53% on non-SWE-bench repos. arXiv **2410.06992** "SWE-Bench+" — **32.67%** of successful patches
+  involved solution leakage; removing leaked + weak-test cases dropped SWE-Agent+GPT-4 from
+  **12.47% → 3.97%**; >94% of issues predate training cutoffs. arXiv **2506.09289** "UTBoost" — 345
+  erroneous patches wrongly marked passing; corrections touched **40.9% of Lite** and **24.4% of
+  Verified**. arXiv **2606.17799** (2026-06-16) — one end-to-end score conflates model, harness,
+  environment and feedback.
+- **Documented cheating on a live leaderboard** — Terminal-Bench "Leaderboard Integrity Update",
+  **2026-04-19**: **OB-1** stored encrypted solutions in its agent binary; **Pilot** uploaded the
+  `tests/` folder during setup; **ForgeCode** curled solutions into its `AGENTS.md`. New policy:
+  trajectories required for all passing trials, an agent judge over all passing trials, reward hacking →
+  0, cheating → takedown. **This is a genuinely great story for the module's "how good are these
+  actually" paragraph.**
+- **The single best number for staleness: SWE-rebench.** Rolling temporal windows with per-entry
+  "Potential contamination" / "Beyond eval range" flags. Window 2026-05-15→07-01 (111 problems / 65
+  repos): Fable 5 64.5%, Grok 4.5 63.8%, **Opus 5 63.4%**, GLM-5.2 62.9%, GPT-5.6 Sol 62.3%.
+  Vals AI's third-party bash-only re-run of Verified (updated 2026-08-19) puts **Opus 5 at 97.0%**.
+  **Opus 5: 97.0% on Verified vs 63.4% on temporally-fresh tasks — a ~34 pp gap.** Quote that pair.
+- **METR time horizons** (`metr.org/time-horizons/`, page updated 2026-05-08): doubling time **187.8
+  days all-time**, **128.7 days [104.4–158.0] from 2023 on** (accelerating). 50% horizons: Claude Mythos
+  preview 17.4h, Claude Opus 4.6 12.0h, Gemini 3.1 Pro 6.4h, GPT-5.2 5.9h, Claude 3.7 Sonnet 1.0h.
+  **Severe self-declared caveats:** *"Measurements above 16 hrs are unreliable with our current task
+  suite"*; CIs a factor of ~2 each way; horizons vary by orders of magnitude by domain (visual
+  computer-use **40–100× lower**); 50% success ≠ automation.
+- **Dead, do not cite as current:** **Aider polyglot** (top gpt-5 high 88.0% from 2025-08-23, zero 2026
+  entries); **SWE-Lancer** (dataset last updated ~2025-07-17, no 2026 leaderboard).
+- **⚠️ Numbers that are FABRICATED or unsupported — do NOT put these in the module:**
+  "Opus 5 / Fable 5 ≈ 95–96% SWE-bench Verified" (**Anthropic's own Claude Opus 5 launch post,
+  2026-07-24, does not report SWE-bench Verified at all** — it reports Frontier-Bench v0.1, CursorBench
+  3.2, ARC-AGI 3, Zapier AutomationBench, OSWorld 2.0); "GPT-5.6 Sol 96.2%" (no primary source, and it
+  contradicts OpenAI's stated policy). A cluster of SEO content farms is asserting both.
+
+**Recommended framing if the module includes a "how good are these actually" paragraph:** retire
+"SWE-bench Verified = X%" as a headline and say *why*, citing OpenAI 2026-02-23 — the benchmark's own
+steward disowned it, 59.4% of the residual hard tasks are broken, and every frontier model can
+regurgitate gold patches. Use **Terminal-Bench 2.1** for governance-quality agent scores, **TB3 /
+Harbor-Index** for frontier headroom, **SWE-bench Pro** for contamination resistance, **SWE-rebench** to
+show contamination live. **And always state the harness** — it's worth a model generation.
+*(This whole subsection is one-source-verified via the parallel pass. Re-verify any number before it
+reaches a published module.)*
+
+---
+
+## RESUME NOTES (written 2026-08-25)
+
+### DONE (complete, inline-cited, links verified by direct fetch)
+- §1 Executive summary (10 bullets)
+- §2 Canonical definitions & terminology
+- §3.1 Slash commands → Skills · §3.2 Agent Skills · §3.3 AGENTS.md vs CLAUDE.md vs rules ·
+  §3.4 Subagents · §3.5 Hooks · §3.6 MCP · §3.7 Plugins — all with exact paths, frontmatter field
+  lists, minimal working examples, when-to / when-not-to
+- §4 THE DECISION TABLE (+ Anthropic's own trigger table)
+- §6 State of the art 2025→2026
+- §7 SDLC application table
+- §8 Pitfalls & anti-patterns (16 items)
+- §9 Proposed module outline (headings, mermaid diagram, 3 Quick Checks, defer-to lists)
+- §10 Open questions / [UNVERIFIED]
+- §11 References for the module (13 curated, all verified)
+- §12 Link Verification Log (24 rows)
+- §13 Appendix A — full cross-tool detail for Codex / Gemini CLI / Cursor / Copilot
+- §14 Appendix B — MCP protocol deep dive + benchmarks
+
+### PARTIAL
+- **§5 Cross-tool comparison table** — the table itself still contains `❓` cells. It is now
+  **superseded by §13**, which has the answers. *Next action: fold §13's cheat sheet into §5 and delete
+  the `❓` cells, or delete §5's table and promote §13.6.*
+- **§13 and §14 are one-source-verified.** They came from a parallel research pass that fetched official
+  docs but whose fetches I did not personally repeat. Every field name and number there should be
+  re-fetched before it lands in a published module. They are NOT in §12's verification log for that
+  reason.
+- **§12 Link Verification Log** does not yet include the URLs cited only inside §13/§14 (vendor doc
+  pages, arXiv IDs, leaderboards, the Anthropic engineering posts other than `code-execution-with-mcp`).
+
+### NOT STARTED
+- Nothing from the original brief is missing. (Benchmarks were out of the brief's minimum scope but are
+  now covered in §14.6.)
+- Turkish translation `10_coding_agents_tr.md` — out of scope for research, but the README already
+  lists it, so it will be needed.
+
+### SEARCHES ALREADY RUN
+No keyword web *searches* were used. Every fact came from a **direct fetch** of a known canonical URL
+(see below). The parallel passes may have used searches internally; their outputs are in §13/§14.
+
+### URLS VERIFIED OK (fetched by me, 2026-08-25)
+1. https://code.claude.com/docs/en/skills
+2. https://code.claude.com/docs/en/hooks
+3. https://code.claude.com/docs/en/sub-agents
+4. https://code.claude.com/docs/en/memory
+5. https://code.claude.com/docs/en/features-overview
+6. https://code.claude.com/docs/en/plugins-reference
+7. https://code.claude.com/docs/en/plugin-marketplaces
+8. https://code.claude.com/docs/en/mcp
+9. https://code.claude.com/docs/en/best-practices
+10. https://claude.com/blog/steering-claude-code-skills-hooks-rules-subagents-and-more (2026-06-18)
+11. https://agentskills.io
+12. https://agentskills.io/specification
+13. https://agents.md/
+14. https://learn.chatgpt.com/docs/build-skills
+15. https://geminicli.com/docs/cli/skills/
+16. https://cursor.com/docs/context/skills
+17. https://docs.github.com/en/copilot/concepts/agents/about-agent-skills
+18. https://www.anthropic.com/engineering/code-execution-with-mcp (2025-11-04)
+19. https://modelcontextprotocol.io/specification/latest (revision 2026-07-28)
+20. https://github.com/anthropics/skills
+
+### URLS FAILED / DEAD / REDIRECTED
+- `https://docs.claude.com/en/docs/claude-code/slash-commands` — **301** → `code.claude.com/docs/en/slash-commands` → `/docs/en/skills`. The page no longer exists as its own topic.
+- `https://docs.claude.com/en/docs/claude-code/skills` — **301** → `code.claude.com/docs/en/skills`.
+- `https://www.anthropic.com/engineering/claude-code-best-practices` — **308** → `code.claude.com/docs/en/best-practices`. Cite the docs URL.
+- `https://developers.openai.com/codex/skills` — **308** → `learn.chatgpt.com/docs/build-skills`.
+- `https://code.claude.com/docs/llms.txt` — **not fetched.** Marked `[LINK-UNVERIFIED]` in §12.
+- `github.com/anthropics/skills` — resolves, but does **not** show a root-level `package_skill.py`
+  despite the Claude Code docs naming it. See §10.2.
+
+### LEADS NOT YET FOLLOWED
+1. `https://code.claude.com/docs/llms.txt` — the authoritative list of current doc slugs. Fetch it and
+   link-check every `code.claude.com` URL in the finished module.
+2. `https://code.claude.com/docs/en/hooks-guide` — the tutorial companion to the hooks reference; likely
+   has better copy-pasteable beginner examples than the reference page.
+3. `https://code.claude.com/docs/en/plugins` (the guide, vs `plugins-reference` which I did fetch).
+4. `https://code.claude.com/docs/en/commands` — the bundled-skill / built-in-command reference, needed to
+   name `/code-review`, `/debug`, `/batch`, `/verify`, `/doctor` accurately.
+5. `https://agentskills.io/clients` — the client showcase page, for an exact adopter count and per-tool
+   doc links (I only saw the embedded client array on the homepage).
+6. `https://www.anthropic.com/engineering/writing-tools-for-agents` and
+   `.../equipping-agents-for-the-real-world-with-agent-skills` — cited in §14.5 from the parallel pass;
+   I did not fetch them myself. Fetch to confirm the dates and the 206→72-token figure.
+7. Cursor / Codex / Gemini / Copilot **hooks and MCP** pages — cited in §13 from the parallel pass;
+   re-fetch before publishing any field name from those cells.
+8. `https://code.claude.com/docs/en/workflows` — "dynamic workflows", to draw the Module 10 / Module 11
+   boundary cleanly.
+9. Benchmarks: `tbench.ai/leaderboard/terminal-bench/2.1`, `swebench.com`,
+   `openai.com/index/why-we-no-longer-evaluate-swe-bench-verified/`, `swe-rebench.com` — all cited in
+   §14.6 from the parallel pass, none fetched by me.
+
+### NEXT ACTIONS (ordered)
+1. **Reconcile §5 with §13.** Replace the `❓` table with §13.6's cheat sheet; delete the duplicate.
+2. **Re-fetch the §13/§14 sources you intend to quote** (leads 6, 7, 9 above) and move each into §12's
+   verification log. Anything not re-verified must be marked one-source or dropped.
+3. **Fetch lead 1 (`llms.txt`) and lead 4 (`commands`)** — cheap, and they close out the two remaining
+   link risks in the finished module.
+4. **Get the human's answers to the three open decisions** in §10: (a) what Module 22 is; (b) one
+   "Skills" section or two ("Slash commands" + "Skills"); (c) whether to add an "as of Claude Code 2.1.x
+   / August 2026" version banner. Recommendation on all three is in §10.
+5. **Then write the module** from §9's outline. The three highest-value artifacts to carry over verbatim
+   are: §4 (decision table), the §9 mermaid diagram, and §7 (SDLC table).
+6. **Optional:** decide whether the module includes a benchmarks paragraph at all. §14.6 says the honest
+   version is "the benchmark's own steward disowned it; state the harness" — that is a good half-page,
+   but it is also a natural fit for Module 11 (Harness Engineering) instead, since its punchline is that
+   the harness is worth a model generation.
+7. **Do not touch the repo or `~/.claude`.** Nothing was modified in this pass; keep it that way.

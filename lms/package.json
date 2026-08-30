@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "predev": "node scripts/copy-course-images.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/copy-course-images.mjs",
     "build": "next build",
     "test": "vitest run",
     "test:watch": "vitest",

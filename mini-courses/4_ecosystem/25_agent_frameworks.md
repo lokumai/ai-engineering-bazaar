@@ -1,3 +1,10 @@
+---
+module: 25
+title: "Agent Frameworks"
+category: ecosystem
+status: draft
+---
+
 # Module 25: Agent Frameworks
 
 *Category: Ecosystem — Module 25 (1 of 5 in this category)*

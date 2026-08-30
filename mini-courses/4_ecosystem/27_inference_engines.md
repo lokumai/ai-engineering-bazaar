@@ -1,3 +1,10 @@
+---
+module: 27
+title: "Inference Engines"
+category: ecosystem
+status: draft
+---
+
 # Module 27: Inference Engines
 
 *Category: Ecosystem — Module 27 (3 of 5 in this category)*

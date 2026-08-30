@@ -1,3 +1,10 @@
+---
+module: 31
+title: "Human in the Loop"
+category: optional
+status: draft
+---
+
 # Module 31: Human-in-the-Loop
 
 *Category: Optional — Module 31 (1 of 2 in this category)*

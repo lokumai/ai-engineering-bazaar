@@ -1,3 +1,17 @@
+---
+module: 14
+title: "Loop Engineering"
+category: intermediate
+status: ready
+duration: 30
+summary: "The loop as the unit of engineering: workflow or agent, which composition pattern, and who checks the work."
+objectives:
+  - "Decide between a fixed workflow and an autonomous agent"
+  - "Select a composition pattern for a given task shape"
+  - "Design a verifier appropriate to the risk"
+prerequisites: [12]
+---
+
 # Module 14: Loop Engineering
 
 *Category: Intermediate — Module 14 (7 of 8 in this category)*

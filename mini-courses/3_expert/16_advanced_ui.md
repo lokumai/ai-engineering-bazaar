@@ -1,3 +1,10 @@
+---
+module: 16
+title: "Advanced UI"
+category: expert
+status: draft
+---
+
 # Module 16: Advanced UI
 
 *Category: Expert — Module 16 (1 of 9 in this category)*

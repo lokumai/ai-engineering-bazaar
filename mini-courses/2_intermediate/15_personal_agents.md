@@ -1,3 +1,17 @@
+---
+module: 15
+title: "Personal Agents"
+category: intermediate
+status: ready
+duration: 30
+summary: "Pointing an agent at your own work and life, and the trust boundary that makes it survivable."
+objectives:
+  - "Describe a reference architecture for a personal agent"
+  - "Identify the trust boundary and what is allowed to cross it"
+  - "Estimate the cost and operational burden of running one"
+prerequisites: [13, 14]
+---
+
 # Module 15: Personal Agents
 
 *Category: Intermediate — Module 15 (8 of 8 in this category)*

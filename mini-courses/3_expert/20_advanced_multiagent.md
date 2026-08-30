@@ -1,3 +1,10 @@
+---
+module: 20
+title: "Advanced Multi-Agent"
+category: expert
+status: draft
+---
+
 # Module 20: Advanced Multi-Agent
 
 *Category: Expert — Module 20 (5 of 9 in this category)*

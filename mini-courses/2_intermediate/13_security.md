@@ -1,3 +1,17 @@
+---
+module: 13
+title: "Security"
+category: intermediate
+status: ready
+duration: 30
+summary: "What changes when the system you are securing can be talked into acting."
+objectives:
+  - "Explain why prompt injection remains unsolved"
+  - "Distinguish prompt injection from jailbreaking"
+  - "Rate common guardrails honestly, and place security in the SDLC"
+prerequisites: [12]
+---
+
 # Module 13: Security
 
 *Category: Intermediate — Module 13 (6 of 8 in this category)*

@@ -19,3 +19,9 @@ site/
 .venv/
 # Playwright MCP session artifacts (console logs, page snapshots)
 .playwright-mcp/
+
+# LMS (Next.js) build output
+lms/.next/
+lms/out/
+lms/next-env.d.ts
+lms/*.tsbuildinfo

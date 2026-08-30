@@ -4,3 +4,7 @@ out/
 next-env.d.ts
 *.tsbuildinfo
 public/course-images/
+
+# Written and re-added by `next dev` on every run (Next 16 agent rules).
+AGENTS.md
+CLAUDE.md

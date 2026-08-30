@@ -1,0 +1,29 @@
+'use client'
+
+import { usePathname } from 'next/navigation'
+import { markTokens, sheetLabelFor } from '@/lib/route-labels'
+
+/**
+ * The left cell of footer row 1 (spec §5.2): `SHEET 13 OF 32` on a module
+ * sheet, the page's own name everywhere else. Words take `--color-ink-muted`,
+ * machine-derived values take `--color-ink`.
+ *
+ * `sheet` is the override a module page passes once it knows its number; with
+ * nothing passed, the label is derived from the route, and a route that cannot
+ * name itself renders nothing rather than a number nobody counted.
+ */
+export function SheetLabel({ sheet }: { sheet?: string | null }) {
+  const pathname = usePathname() ?? '/'
+  const label = sheet ?? sheetLabelFor(pathname)
+  if (!label) return null
+
+  return (
+    <span className="hl-mark text-ink-muted">
+      {markTokens(label).map((token, i) => (
+        <span key={i} className={token.value ? 'text-ink' : undefined}>
+          {token.text}
+        </span>
+      ))}
+    </span>
+  )
+}

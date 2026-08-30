@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Lkm01 } from '@/components/mascot/Lkm01'
 import { REPO_URL } from '@/lib/site'
 import { Breadcrumb } from './Breadcrumb'
 import { ThemeToggle } from './ThemeToggle'
@@ -16,12 +17,13 @@ export function SiteHeader() {
     <header role="banner" className="sticky top-0 z-40 border-b border-line-strong bg-paper">
       <div className="mx-auto flex h-14 w-full max-w-[var(--width-shell)] items-center gap-4 px-6">
         {/*
-          MASCOT SLOT — LKM-01 (§8) lands here as the live progress meter:
-          a 32px box drawn on a 0 0 32 32 viewBox, painted at 28px. The cube
-          does not exist yet and this system does not improvise a mascot, so
-          the slot holds its space and nothing else.
+          MASCOT SLOT — LKM-01 (§8) as the live progress meter: a 32px box
+          holding the 28px mark §5.1 asks for, drawn on a 0 0 32 32 viewBox.
         */}
-        <span data-slot="mascot" aria-hidden="true" className="block h-8 w-8 shrink-0" />
+        <span data-slot="mascot" className="flex h-8 w-8 shrink-0 items-center justify-center">
+          {/* Slice 1b wires this to lib/progress/; until then nobody has approved anything. */}
+          <Lkm01 progress={0} />
+        </span>
 
         <Link
           href="/"

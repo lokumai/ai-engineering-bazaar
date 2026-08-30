@@ -21,6 +21,24 @@ export interface CourseModule {
 
 const MODULE_FILE = /^\d+_.+\.md$/
 
+/**
+ * A module's declared category must agree with the directory it sits in.
+ * Nothing downstream re-checks this: the loader trusts `category.slug` for the
+ * URL and the frontmatter for filtering, so a disagreement would silently file
+ * a module under one category and link it under another.
+ */
+export function assertCategoryMatchesDirectory(
+  declared: string,
+  category: Category,
+  source: string,
+): void {
+  if (declared === category.slug) return
+  throw new Error(
+    `${source} declares category "${declared}" ` +
+    `but lives in the "${category.slug}" directory`,
+  )
+}
+
 let cache: CourseModule[] | null = null
 
 export function loadAllModules(): CourseModule[] {
@@ -39,12 +57,11 @@ export function loadAllModules(): CourseModule[] {
         parsed.data,
         `${category.dir}/${filename}`,
       )
-      if (frontmatter.category !== category.slug) {
-        throw new Error(
-          `${category.dir}/${filename} declares category "${frontmatter.category}" ` +
-          `but lives in the "${category.slug}" directory`,
-        )
-      }
+      assertCategoryMatchesDirectory(
+        frontmatter.category,
+        category,
+        `${category.dir}/${filename}`,
+      )
       const moduleSlug = moduleSlugFromFilename(filename)
       modules.push({
         slug: fullSlug(category.slug, moduleSlug),

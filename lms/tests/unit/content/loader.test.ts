@@ -1,5 +1,14 @@
+import fs from 'node:fs'
+import path from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { loadAllModules, loadCategoryIntro, loadModule } from '@/lib/content/loader'
+import { CATEGORIES, type CategorySlug, categoryBySlug } from '@/lib/content/categories'
+import {
+  assertCategoryMatchesDirectory,
+  loadAllModules,
+  loadCategoryIntro,
+  loadModule,
+} from '@/lib/content/loader'
+import { CONTENT_ROOT } from '@/lib/content/paths'
 
 describe('loadAllModules', () => {
   const modules = loadAllModules()
@@ -75,7 +84,41 @@ describe('loadModule', () => {
 })
 
 describe('loadCategoryIntro', () => {
-  it('returns the category README body', () => {
-    expect(loadCategoryIntro('fundamentals')).toContain('#')
+  it('returns each category its own README, not just any README', () => {
+    for (const category of CATEGORIES) {
+      expect(loadCategoryIntro(category.slug)).toBe(
+        fs.readFileSync(
+          path.join(CONTENT_ROOT, category.dir, 'README.md'),
+          'utf8',
+        ).trimStart(),
+      )
+    }
+  })
+
+  it('opens the body with the category heading, not with frontmatter', () => {
+    for (const category of CATEGORIES) {
+      expect(loadCategoryIntro(category.slug)?.split('\n')[0])
+        .toBe(`# ${category.title}`)
+    }
+  })
+
+  it('returns null for a slug no category claims', () => {
+    expect(loadCategoryIntro('wizardry' as CategorySlug)).toBeNull()
+  })
+})
+
+describe('assertCategoryMatchesDirectory', () => {
+  const expert = categoryBySlug('expert')!
+
+  it('accepts a module whose frontmatter agrees with its directory', () => {
+    expect(() =>
+      assertCategoryMatchesDirectory('expert', expert, '3_expert/16_advanced_ui.md'),
+    ).not.toThrow()
+  })
+
+  it('rejects a module filed under the wrong directory, naming both sides', () => {
+    expect(() =>
+      assertCategoryMatchesDirectory('fundamentals', expert, '3_expert/16_advanced_ui.md'),
+    ).toThrow(/3_expert\/16_advanced_ui\.md.*"fundamentals".*"expert"/s)
   })
 })

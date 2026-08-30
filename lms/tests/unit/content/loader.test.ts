@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
@@ -70,6 +71,46 @@ describe('loadAllModules', () => {
 
   it('ignores Turkish translations', () => {
     expect(modules.some((m) => m.filePath.endsWith('_tr.md'))).toBe(false)
+  })
+
+  it('serves a body with the progress rail and the prev/next furniture gone', () => {
+    for (const m of modules) {
+      expect(m.body, m.slug).not.toMatch(/^##\s+Tutorial Progress/m)
+      expect(m.body, m.slug).not.toMatch(/^\*\*(Previous|Next) Module:\*\*/m)
+    }
+  })
+
+  it('never touches the file on disk to do it', () => {
+    const m = loadModule('fundamentals/llms')!
+    expect(fs.readFileSync(m.filePath, 'utf8')).toContain('## Tutorial Progress')
+  })
+
+  it('derives an extent, a sheet format, figures, sources and a language for each', () => {
+    for (const m of modules) {
+      expect(m.extent, m.slug).toBeGreaterThan(0)
+      expect(['A0', 'A2', 'A4'], m.slug).toContain(m.sheetFormat)
+      expect(m.figures, m.slug).toBeGreaterThanOrEqual(0)
+      expect(m.sources, m.slug).toBeGreaterThanOrEqual(0)
+      expect(['EN', 'EN·TR'], m.slug).toContain(m.lang)
+    }
+  })
+
+  it('stamps each module with the commit that last touched its own file', () => {
+    for (const m of modules) {
+      expect(m.revision, m.slug).not.toBeNull()
+      expect(m.revision!.hash, m.slug).toMatch(/^[0-9a-f]{7,}$/)
+      expect(m.revision!.date, m.slug).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+    }
+  })
+
+  it('takes that commit from the file itself, not from repo HEAD', () => {
+    const m = loadModule('fundamentals/llms')!
+    const git = (args: string[]) =>
+      execFileSync('git', ['-C', CONTENT_ROOT, ...args], { encoding: 'utf8' }).trim()
+    expect(m.revision!.hash).toBe(git(['log', '-1', '--format=%h', '--', m.filePath]))
+    expect(m.revision!.date).toBe(
+      git(['log', '-1', '--format=%ad', '--date=short', '--', m.filePath]),
+    )
   })
 })
 

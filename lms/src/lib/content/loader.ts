@@ -2,9 +2,20 @@ import fs from 'node:fs'
 import path from 'node:path'
 import matter from 'gray-matter'
 import { CATEGORIES, type Category, type CategorySlug, categoryBySlug } from './categories'
+import {
+  type Lang,
+  type SheetFormat,
+  countFigures,
+  countSources,
+  extent,
+  langCoverage,
+  sheetFormat,
+} from './derive'
 import { CONTENT_ROOT } from './paths'
+import { type Revision, revisionFor } from './revision'
 import { type ModuleFrontmatter, parseFrontmatter } from './schema'
 import { fullSlug, moduleSlugFromFilename } from './slugs'
+import { stripBuildFurniture } from './strip'
 
 export interface CourseModule {
   /** `fundamentals/llms` — the identifier used across the app */
@@ -13,8 +24,24 @@ export interface CourseModule {
   moduleSlug: string
   category: Category
   frontmatter: ModuleFrontmatter
-  /** Markdown body with the frontmatter removed */
+  /**
+   * Markdown body with the frontmatter removed and the B1 furniture — the
+   * progress rail and the prev/next lines — already stripped. Every derived
+   * value below is measured from this string, never from the raw file.
+   */
   body: string
+  /** §5.5 `EXTENT` — words in the stripped body */
+  extent: number
+  /** §4.4 — which of the three sheet formats this module is drawn on */
+  sheetFormat: SheetFormat
+  /** §5.5 `FIGURES` — real mermaid diagrams plus images */
+  figures: number
+  /** §5.5 `SOURCES` — distinct external http(s) links */
+  sources: number
+  /** §7.6 `LANG` — `EN·TR` only where the Turkish is a real translation */
+  lang: Lang
+  /** §5.5 `REVISION` / `DATE` — this file's last-touching commit, or null */
+  revision: Revision | null
   /** Absolute path, for diagnostics */
   filePath: string
 }
@@ -63,12 +90,21 @@ export function loadAllModules(): CourseModule[] {
         `${category.dir}/${filename}`,
       )
       const moduleSlug = moduleSlugFromFilename(filename)
+      const slug = fullSlug(category.slug, moduleSlug)
+      const body = stripBuildFurniture(parsed.content).trimStart()
+      const words = extent(body)
       modules.push({
-        slug: fullSlug(category.slug, moduleSlug),
+        slug,
         moduleSlug,
         category,
         frontmatter,
-        body: parsed.content.trimStart(),
+        body,
+        extent: words,
+        sheetFormat: sheetFormat(frontmatter, words),
+        figures: countFigures(body),
+        sources: countSources(body),
+        lang: langCoverage(slug),
+        revision: revisionFor(filePath),
         filePath,
       })
     }

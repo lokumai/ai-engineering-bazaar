@@ -1,4 +1,4 @@
-import { unfenced } from './lines'
+import { DIAGRAM_HEADING, unfenced } from './lines'
 import { scheduleOfParts } from './schedule'
 
 /**
@@ -18,13 +18,6 @@ import { scheduleOfParts } from './schedule'
 const ROMAN_H2 = /^([IVXLC]+)\.\s+/
 /** An h2, and only an h2: an h3 is a sub-heading, not a section. */
 const H2 = /^##[ \t]+(.+?)[ \t]*$/
-/**
- * A heading that exists only to introduce the diagram under it. The build
- * deletes it (B6) and the sheet never shows it, so it is not a topic either.
- * Same rule as `render.ts`'s `DIAGRAM_HEADING`.
- */
-const DIAGRAM_HEADING = /^Mermaid Diagram:\s*/i
-
 /** §4.9's own limit, and the reason it is three: the column is 168px wide. */
 const TOPIC_LIMIT = 3
 
@@ -41,6 +34,9 @@ export function sectionTitles(markdown: string): string[] {
     if (!heading) continue
 
     const text = heading[1]
+    // `## Mermaid Diagram: …` introduces the fence under it and describes no
+    // topic. The sheet still prints the heading — see `DIAGRAM_HEADING` — so
+    // this column is deliberately one entry shorter than the section spine.
     if (DIAGRAM_HEADING.test(text)) continue
     titles.push(text.replace(ROMAN_H2, ''))
   }

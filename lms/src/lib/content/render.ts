@@ -10,6 +10,7 @@ import { toString as hastToString } from 'hast-util-to-string'
 import type { Element, ElementContent, Root, RootContent, Text } from 'hast'
 import { widthForColumns } from '@/lib/figure/width'
 import { codeThemes } from './code-theme'
+import { DIAGRAM_HEADING } from './lines'
 import { assertNoRawHex, remapMermaidFills } from './mermaid'
 
 export interface TocEntry {
@@ -43,8 +44,6 @@ const ROMAN_H2 = /^([IVXLC]+)\.\s+/
 const EXTERNAL_HREF = /^https?:\/\//i
 /** B6.2 — the dek line, in both languages the corpus is written in. */
 const DEK = /^(Category|Kategori):\s/
-/** A heading that exists only to introduce the diagram under it. */
-const DIAGRAM_HEADING = /^Mermaid Diagram:\s*/i
 /** §6.7 — shiki writes bold as a keyword; §6.7 wants weight 500, not 700. */
 const BOLD_WEIGHT = /-font-weight:\s*bold/g
 

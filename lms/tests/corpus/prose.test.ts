@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { imageBaseFor } from '@/lib/content/images'
 import { type CourseModule, loadAllModules } from '@/lib/content/loader'
+import { DIAGRAM_HEADING } from '@/lib/content/lines'
 import { type RenderedMarkdown, renderMarkdown } from '@/lib/content/render'
+import { sectionTitles } from '@/lib/content/topics'
 
 /**
  * The render pipeline, run against the real corpus rather than fixtures.
@@ -97,6 +99,34 @@ describe('B6.3 — section marks', () => {
       expect(entry.text, `${module.slug}`).toMatch(/\S/)
     }
   }))
+})
+
+/**
+ * `topics.ts` reads sections out of the markdown with a regex and `render.ts`
+ * reads them out of the rendered tree. Two readers of one fact, and they had
+ * two private copies of the rule that recognises `## Mermaid Diagram: …`; the
+ * comment beside one of them claimed the build deleted the heading, which
+ * Appendix B never asked for and the build has never done. Either copy drifting
+ * changes what a `FIG. n.n — …` caption is labelled or what a category page
+ * lists, so the constant is shared and this is the check that they agree on the
+ * whole corpus rather than on a fixture.
+ */
+describe('§4.9 — the TOPICS column reads the same sections the sheet renders', () => {
+  it('lists exactly the h2s of the spine, less the diagram headings',
+    forEachModule((module, { toc }) => {
+      const spine = toc.filter((entry) => entry.depth === 2).map((entry) => entry.text)
+      const kept = spine.filter((title) => !DIAGRAM_HEADING.test(title))
+      expect(sectionTitles(module.body), module.slug).toEqual(kept)
+    }))
+
+  it('is one entry shorter than the spine on every drawn sheet, and only there',
+    forEachModule((module, { toc }) => {
+      // The carve-out is real and visible: every drawn sheet carries exactly one
+      // such heading, which renders in the spine and is absent from TOPICS.
+      const spine = toc.filter((entry) => entry.depth === 2).map((entry) => entry.text)
+      const introductions = spine.filter((title) => DIAGRAM_HEADING.test(title))
+      expect(introductions.length, module.slug).toBe(module.frontmatter.status === 'ready' ? 1 : 0)
+    }))
 })
 
 describe('B5 — every table and figure is width-classed and scrollable', () => {

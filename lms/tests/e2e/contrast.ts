@@ -108,10 +108,30 @@ export function worst(samples: readonly ContrastSample[]): ContrastSample {
   return samples.reduce((low, sample) => (sample.ratio < low.ratio ? sample : low))
 }
 
-/** Puts the page into the named theme, the way the toggle does (§2.5). */
+/**
+ * Puts the page into the named theme, the way the toggle does (§2.5, §9.2).
+ *
+ * The one-frame `disable-transitions` freeze is not decoration here. Without
+ * it every element that transitions `background-color` — a manifest row, a
+ * prev/next cell — cross-fades over 90ms, and a contrast sample taken straight
+ * after the switch reads the new ink against the old ground: dark-mode
+ * `ink-muted` on light-mode paper, a pairing that is on screen for a tenth of
+ * a second and exists in no theme. The frame after the freeze is lifted is the
+ * first one that is honest.
+ */
 export async function useTheme(page: Page, theme: 'light' | 'dark'): Promise<void> {
-  await page.evaluate((next) => {
-    localStorage.setItem('hl-theme', next)
-    document.documentElement.classList.toggle('dark', next === 'dark')
+  await page.evaluate(async (next) => {
+    const root = document.documentElement
+    root.classList.add('disable-transitions')
+    try {
+      localStorage.setItem('hl-theme', next)
+    } catch {
+      // A private window throws; the class below still applies the theme.
+    }
+    root.classList.toggle('dark', next === 'dark')
+    const frame = () => new Promise((resolve) => requestAnimationFrame(resolve))
+    await frame()
+    root.classList.remove('disable-transitions')
+    await frame()
   }, theme)
 }

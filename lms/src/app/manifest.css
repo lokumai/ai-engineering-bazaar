@@ -166,8 +166,20 @@
     border-left-color: var(--color-line-cut);
   }
 
-  .hl-row-number {
-    color: var(--color-ink-faint);
+  /* Written `.hl-row > …` because `.hl-row > :is(td, th)` above is (0,1,1) —
+     `:is()` takes the specificity of its most specific argument — and a bare
+     `.hl-row-number` at (0,1,0) loses to it. Unqualified, both quiet columns
+     silently painted at full `--color-ink` and the row had no hierarchy left.
+
+     §4.8 asks for `--color-ink-faint` here. This is the only text in a column
+     headed `#`, it is not `aria-hidden`, and at 11px mono it is exactly what
+     §10.4 rules out below `ink-muted` — 2.69:1 / 2.40:1, and T5 refuses the
+     decorative ink on content a reader has to read. Same call, same reason, as
+     the `ITEM` column of §4.5's schedule of parts (`.hl-schedule-item`). The
+     number stays subordinate to the sheet title by size and family: 11px mono
+     against 14px display at weight 500. */
+  .hl-row > .hl-row-number {
+    color: var(--color-ink-muted);
   }
 
   /* §4.8 — a draft row's `#` cell carries a 3 2 dashed left border, 1.5px, in
@@ -207,7 +219,10 @@
     outline-offset: -2px;
   }
 
-  .hl-row-context {
+  /* §4.8 `SUBSYSTEM` / §4.9 `TOPICS`, at 5.13:1 — quieter than the sheet title
+     beside it, which is the whole job of the column. `.hl-row > …` for the
+     same cascade reason as `#` above. */
+  .hl-row > .hl-row-context {
     font-size: var(--text-meta);
     line-height: var(--text-meta--line-height);
     color: var(--color-ink-muted);

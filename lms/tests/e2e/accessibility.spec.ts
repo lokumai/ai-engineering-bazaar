@@ -208,6 +208,47 @@ test('the schedule of parts announces its ITEM column legibly (§4.5)', async ({
   }
 })
 
+test('the manifest\'s quiet columns clear the §10.4 floor (§4.8, §4.9)', async ({ page }) => {
+  for (const theme of THEMES) {
+    await page.goto('/')
+    await useTheme(page, theme)
+
+    // §4.8 sets `#` in `--color-ink-faint` and `SUBSYSTEM` in `--color-ink-
+    // muted`. The `#` cell is the sheet's number under a `<th>` reading `#`,
+    // it is not `aria-hidden`, and it is 11px mono — the same shape §10.4
+    // already forced up to `ink-muted` in the schedule of parts. Same call
+    // here, for the same reason, so the two do not disagree.
+    await expect(page.locator('.hl-row-number').first()).not.toHaveAttribute('aria-hidden')
+    const samples = await contrastSamples(page, '.hl-row-number, .hl-row-context')
+    expect(samples.length).toBeGreaterThan(SHEETS.length)
+    const low = worst(samples)
+    expect(low.ratio, `${theme}: "${low.text}" at ${low.ratio.toFixed(2)}:1`)
+      .toBeGreaterThanOrEqual(4.5)
+  }
+})
+
+test('the manifest keeps a hierarchy across its columns (§4.8)', async ({ page }) => {
+  await page.goto('/')
+
+  // A cascade collision painted both quiet columns at full `--color-ink`:
+  // `.hl-row > :is(td, th)` is (0,1,1) and outranked the class rules. The
+  // symptom was invisible in the stylesheet and obvious on the page — three
+  // columns competing for the same voice.
+  const inks = await page.evaluate(() => {
+    const of = (sel: string) => getComputedStyle(document.querySelector(sel)!).color
+    return {
+      number: of('.hl-row-number'),
+      context: of('.hl-row-context'),
+      title: of('.hl-row-title'),
+      ink: getComputedStyle(document.body).color,
+    }
+  })
+
+  expect(inks.title, 'the sheet title is the loud column').toBe(inks.ink)
+  expect(inks.number, '# recedes from the title').not.toBe(inks.ink)
+  expect(inks.context, 'SUBSYSTEM recedes from the title').not.toBe(inks.ink)
+})
+
 test('prev/next carries no text below the §10.4 floor (§5.7)', async ({ page }) => {
   // Sheet 1 has no previous, so it prints the `— END OF SET` cell as well as a
   // live one; both are 11px mono and both are read out.

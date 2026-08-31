@@ -197,19 +197,44 @@ describe('externalLinks / countSources', () => {
     expect(countSources('[a](https://x.example) [b](https://x.example)')).toBe(1)
   })
 
-  it('reproduces the 404 measured link occurrences, 386 of them in modules 8-15', () => {
+  it('does not count a URL inside a fenced code block', () => {
+    // 15_personal_agents.md:107 pipes `curl https://openclaw.ai/install.sh`
+    // through a ```bash fence. An install command is not a cited source and
+    // there is nothing on the page to click.
+    const md = 'Run it:\n\n```bash\ncurl -fsSL https://openclaw.ai/install.sh | sh\n```\n'
+    expect(externalLinks(md)).toEqual([])
+  })
+
+  it('does not count a URL inside an inline code span', () => {
+    // 10_coding_agents_landscape.md:59 writes the installer host in
+    // backticks; `unfenced()` would still have counted it, which is why this
+    // reads anchors off the parsed tree rather than lines of markdown.
+    expect(externalLinks('the host is `https://hermes-agent.example/install.sh`')).toEqual([])
+  })
+
+  it('counts the same links the renderer will mark with the external glyph', () => {
+    const md = 'A [link](https://a.example), `https://b.example`, and https://c.example.'
+    expect(externalLinks(md)).toEqual(['https://a.example', 'https://c.example'])
+  })
+
+  it('reproduces the 397 measured link occurrences, 379 of them in modules 8-15', () => {
     const occurrences = (ns: number[]) =>
       ns.reduce((sum, n) => sum + externalLinks(body(n)).length, 0)
-    expect(occurrences(numbers(() => true))).toBe(404)
-    expect(occurrences(numbers((n) => n >= 8 && n <= 15))).toBe(386)
+    expect(occurrences(numbers(() => true))).toBe(397)
+    expect(occurrences(numbers((n) => n >= 8 && n <= 15))).toBe(379)
     expect(occurrences(numbers((n) => n >= 16))).toBe(0)
   })
 
-  it('reproduces 214 distinct sources across the corpus', () => {
-    // 215 before the trailing-markup trim: module 15 cites moltbook.com twice,
-    // once with a stray closing backtick, and one source is one source.
+  it('reproduces 209 distinct sources across the corpus', () => {
     const total = modules.reduce((sum, m) => sum + countSources(m.body), 0)
-    expect(total).toBe(214)
+    expect(total).toBe(209)
+  })
+
+  it('counts only the openable links on the three sheets that quoted URLs', () => {
+    // The three modules where the old regex and the rendered page disagreed.
+    expect(countSources(body(10))).toBe(30)
+    expect(countSources(body(11))).toBe(15)
+    expect(countSources(body(15))).toBe(16)
   })
 })
 

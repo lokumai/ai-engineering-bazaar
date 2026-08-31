@@ -1,6 +1,12 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import matter from 'gray-matter'
+import remarkGfm from 'remark-gfm'
+import remarkParse from 'remark-parse'
+import remarkRehype from 'remark-rehype'
+import { unified } from 'unified'
+import { visit } from 'unist-util-visit'
+import type { Element } from 'hast'
 import { categoryBySlug } from './categories'
 import { CONTENT_ROOT } from './paths'
 import { moduleSlugFromFilename } from './slugs'
@@ -34,9 +40,8 @@ const FENCE = /^[ \t]*(`{3,}|~{3,})[ \t]*(\S*)/
 const IMAGE = /!\[[^\]]*\]\([^)]*\)/g
 const TABLE_DELIMITER =
   /^[ \t]*\|?[ \t]*:?-+:?[ \t]*(\|[ \t]*:?-+:?[ \t]*)+\|?[ \t]*$/
-const EXTERNAL_LINK = /https?:\/\/[^\s)\]"'<>]+/g
-/** Sentence punctuation and markup a bare URL picks up in prose. */
-const LINK_TAIL = /[.,;:!?*`]+$/
+/** §6.3's rule, restated here because `render.ts` cannot import this module. */
+const EXTERNAL_HREF = /^https?:\/\//i
 
 interface Line {
   text: string
@@ -129,9 +134,35 @@ export function countFigures(body: string): number {
   return countDiagrams(body) + countImages(body)
 }
 
-/** Every external http(s) link occurrence in the body, in document order. */
+/**
+ * The markdown pipeline, up to the point where links become `<a href>`. Built
+ * once: `parse` and `runSync` are re-entrant, and the corpus goes through here
+ * thirty-two times per build.
+ */
+const links = unified().use(remarkParse).use(remarkGfm).use(remarkRehype)
+
+/**
+ * Every external http(s) link occurrence in the body, in document order.
+ *
+ * Read off the parsed tree rather than matched out of the raw string, because
+ * the two disagree in the places that matter: `curl https://openclaw.ai/…`
+ * inside a ```bash fence and a bare `https://www.moltbook.com` inside inline
+ * backticks are *text about* a URL, not links, and no reader can open them.
+ * §5.5 counts "distinct external http(s) links" and §5.11 indexes them as
+ * "external primary-source links"; a curl target is neither.
+ *
+ * This is the same node set `rehypeExternalLinks` decorates with the `↗` mark
+ * (render.ts, §6.3), reached through the same parser, so the number the header
+ * prints is by construction the number of marks on the page.
+ */
 export function externalLinks(body: string): string[] {
-  return (body.match(EXTERNAL_LINK) ?? []).map((url) => url.replace(LINK_TAIL, ''))
+  const found: string[] = []
+  visit(links.runSync(links.parse(body)), 'element', (node: Element) => {
+    if (node.tagName !== 'a') return
+    const href = node.properties?.href
+    if (typeof href === 'string' && EXTERNAL_HREF.test(href)) found.push(href)
+  })
+  return found
 }
 
 /** §5.5 `SOURCES` — the count of *distinct* external links. */

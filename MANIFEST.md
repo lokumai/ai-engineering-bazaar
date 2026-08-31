@@ -1,71 +1,67 @@
 # Manifest
 
-Why this project exists, and the rules every file in it follows.
+What this project is, and how it is written.
 
-There is no shortage of AI content on the internet, so the only thing that justifies
-writing more of it is being different in a way that matters. The seven rules below are
-that difference — not style preferences, but the reason the material is worth your time.
-Every file under `sections/` follows them.
-
----
-
-## 1. Human-written
-
-These topics are new enough that reliable sources barely exist yet. Most articles about
-them are guesswork, and an LLM is worse here rather than better: its knowledge cutoff
-predates the material, so it searches those same weak articles and hands them back with
-confidence. It also has no sense of a topic's history — when it appeared, what it
-replaced, which idea won — and that history is often the part that makes the topic
-finally click.
-
-So the drafts come from a working AI engineer — me — after years of doing this in
-production. Some of what you will read here is not written down anywhere else. That is
-the contribution. If the existing sources were good enough, we would simply link to them
-and let you read those instead.
-
-## 2. Written like a conversation, not a book
-
-Ask one of these questions in person and you get a direct answer in the vocabulary
-engineers actually use with each other. That is the register here. No effort goes into
-sounding authoritative.
-
-## 3. Simple, sometimes deliberately oversimplified
-
-Plain language, no jargon, no buzzwords. It should read easily even if English is not
-your first language.
-
-## 4. Five to ten minutes per module
-
-If you ever need to paste one of these files into ChatGPT and ask for a summary, the file
-failed.
-
-Short is not the same as cryptic, though. Compressing a sentence until it has to be
-decoded costs more than the words it saves.
-
-## 5. Visuals do the heavy lifting
-
-Most of these topics become easy the moment you see them drawn. Diagrams, mermaid charts,
-ASCII sketches, mind-maps and the occasional meme carry things a paragraph cannot.
-
-## 6. Every module links out
-
-Each topic is covered short and simple, then points you at further reading. We stay
-simple deliberately, so you finish wanting more — then go read the sources yourself.
-
-## 7. Only what matters
-
-Not everything worth knowing carries the same weight in real work. We cover the topics
-that do and skip the rest.
-
-This is a cheatsheet of AI Engineering, not a book about it. Knowing what to leave out is
-judgment that comes from shipping rather than searching — so that decision is itself part
-of the material.
+The internet already has plenty of AI content. Adding more only makes sense if it is
+different in a way that actually helps you. So here are the seven rules behind every
+module. They are not writing preferences. They are the reason this is worth your time.
 
 ---
 
-## Conventions
+## 1. A human writes it
 
-- Modules are written and finalized in English. The Turkish versions (`*_tr.md`) are
-  translated once the English is settled, so we translate each module only once.
-- `README.md` and `sections/index.md` are the same page for two audiences and are always
-  updated together — only the link paths differ.
+Most of what we cover is new. Good sources for it barely exist yet, so a lot of what you
+find online is guesswork.
+
+AI tools (LLMs) do not fix that. They were trained before much of this existed, so they go and
+read the same weak articles, then repeat them back to you with confidence. They also miss
+the story of a topic: when it showed up, what it replaced, which idea won. That story is
+often the thing that makes a topic finally make sense.
+
+So the writing here comes from a working AI engineer — me — after years of building this
+in production. Some of it is not written down anywhere else. If good sources already
+existed, we would just link to them and save you the trouble.
+
+## 2. It sounds like a person talking
+
+Ask an engineer this question in real life and you get a straight answer, in normal words.
+That is how it is written here. No trying to sound clever.
+
+## 3. It stays simple
+
+Plain language. No jargon, no buzzwords. Sometimes we oversimplify on purpose. It should
+be easy to read even if English is not your first language.
+
+## 4. It takes five to ten minutes to read
+
+If you ever feel the need to paste one of these pages into ChatGPT and ask for a summary,
+we failed.
+
+Short is not the same as hard to follow. We would rather spend one extra sentence than
+make you read a line twice.
+
+## 5. Pictures do a lot of the work
+
+Most of these ideas get easy the moment you see them drawn. So expect diagrams, charts,
+simple sketches, and now and then a meme. A picture often explains more than a paragraph
+does.
+
+## 6. Every module points you somewhere next
+
+Each topic is kept short and simple, then links out to more. That is on purpose. We want
+you to finish a page still wanting more, and then go read the source yourself. Nobody
+really learns something they were pushed into.
+
+## 7. We only cover what matters
+
+Plenty of things can be learned. They do not all matter equally in real work. We cover the
+ones that do, and skip the rest.
+
+Think of this as a cheatsheet for AI engineering, not a textbook. Knowing what to leave
+out comes from building things, not from searching. That choice is part of what you get
+here.
+
+---
+
+Modules are written in English first. The Turkish versions follow once the English is
+final.

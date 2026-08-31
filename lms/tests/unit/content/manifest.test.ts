@@ -98,7 +98,8 @@ describe('the filter chips (§4.8 item 5)', () => {
     expect(applyFilter(rows, 'all')).toHaveLength(32)
     expect(applyFilter(rows, 'ready')).toHaveLength(15)
     expect(applyFilter(rows, 'not-drawn')).toHaveLength(17)
-    expect(applyFilter(rows, 'bilingual')).toHaveLength(24)
+    // §7.6: the seven sheets whose Turkish is a real translation.
+    expect(applyFilter(rows, 'bilingual')).toHaveLength(7)
   })
 
   it('keeps the set in sheet order — filtering never re-sorts', () => {

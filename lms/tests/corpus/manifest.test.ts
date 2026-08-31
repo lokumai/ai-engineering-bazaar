@@ -50,6 +50,18 @@ describe('§4.8 — the index table lists the set, and only the set', () => {
     }
   })
 
+  it('marks exactly the seven sheets §7.6 names as bilingual', () => {
+    // The chip filters on this. Before the draft gate it selected 24 rows —
+    // the 17 undrawn sheets advertised as bilingual and the 8 finished ones as
+    // English-only, which is the claim inverted.
+    expect(rows.filter((row) => row.bilingual).map((row) => row.module))
+      .toEqual([1, 2, 3, 4, 5, 6, 7])
+    for (const row of rows) {
+      expect(row.lang, row.title).toBe(row.bilingual ? 'EN · TR' : 'EN')
+      if (!row.drawn) expect(row.lang, row.title).toBe('EN')
+    }
+  })
+
   it('agrees with the frontmatter about every prerequisite it prints', () => {
     for (const sheet of modules) {
       const row = rows.find((r) => r.module === sheet.frontmatter.module)!

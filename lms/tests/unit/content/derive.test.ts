@@ -1,5 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import matter from 'gray-matter'
 import { describe, expect, it } from 'vitest'
 import { CATEGORIES } from '@/lib/content/categories'
 import {
@@ -34,6 +35,12 @@ function body(moduleNumber: number): string {
 /** The extent that module's sheet actually prints. */
 function measured(moduleNumber: number): number {
   return byNumber.get(moduleNumber)!.extent
+}
+
+/** The Turkish sibling's extent, measured the way the loader measures the English. */
+function trExtent(moduleNumber: number): number {
+  const file = byNumber.get(moduleNumber)!.filePath.replace(/\.md$/, '_tr.md')
+  return extent(stripLeadIn(stripBuildFurniture(matter(fs.readFileSync(file, 'utf8')).content)))
 }
 
 describe('extent', () => {
@@ -295,24 +302,27 @@ describe('langCoverage', () => {
   })
 
   it(
-    'marks the draft stubs 16-32 bilingual, because their Turkish stubs really are ' +
-    'complete translations of a stub — Appendix A says EN here and is wrong',
+    'marks the draft stubs 16-32 English-only, even though the Turkish stub ' +
+    'really is a complete translation of the English one',
     () => {
+      // The ratio alone would badge all seventeen: both sides of those pairs
+      // are stubs, so the Turkish one clears 40% easily. §4.5 item 4 prints
+      // `LANG EN` on the draft strip, §7.6 calls those files placeholders and
+      // states the outcome as EN on sheets 8-32, and §11.27 reserves the badge
+      // for a real translation. A schedule of parts is not bilingual: there is
+      // no drawing yet, in either language.
       for (const n of numbers((n) => n >= 16)) {
-        const en = extent(body(n))
-        const tr = extent(
-          stripBuildFurniture(
-            fs.readFileSync(
-              byNumber.get(n)!.filePath.replace(/\.md$/, '_tr.md'),
-              'utf8',
-            ).replace(/^---\n[\s\S]*?\n---\n/, ''),
-          ),
-        )
-        expect(tr / en, `module ${n}`).toBeGreaterThanOrEqual(TRANSLATION_RATIO)
-        expect(langCoverage(byNumber.get(n)!.slug), `module ${n}`).toBe('EN·TR')
+        expect(byNumber.get(n)!.frontmatter.status, `module ${n}`).toBe('draft')
+        expect(langFromExtents(extent(body(n)), trExtent(n)), `module ${n}`).toBe('EN·TR')
+        expect(langCoverage(byNumber.get(n)!.slug), `module ${n}`).toBe('EN')
       }
     },
   )
+
+  it('leaves exactly the seven sheets §7.6 names bilingual', () => {
+    expect(modules.filter((m) => m.lang === 'EN·TR').map((m) => m.frontmatter.module))
+      .toEqual([1, 2, 3, 4, 5, 6, 7])
+  })
 
   it('returns EN for a slug no module claims', () => {
     expect(langCoverage('fundamentals/nope')).toBe('EN')

@@ -180,16 +180,31 @@ export function langFromExtents(en: number, tr: number): Lang {
   return tr / en >= TRANSLATION_RATIO ? 'EN·TR' : 'EN'
 }
 
-const fileExtents = new Map<string, number>()
+interface FileFacts {
+  /** The declared status, or null where the file has none — or is not there. */
+  status: 'ready' | 'draft' | null
+  /** §5.5 `EXTENT`, measured exactly as the loader measures the English body. */
+  extent: number
+}
 
-function extentOfFile(file: string): number {
-  const cached = fileExtents.get(file)
+const fileFacts = new Map<string, FileFacts>()
+
+function factsOfFile(file: string): FileFacts {
+  const cached = fileFacts.get(file)
   if (cached !== undefined) return cached
-  const words = fs.existsSync(file)
-    ? extent(stripLeadIn(stripBuildFurniture(matter(fs.readFileSync(file, 'utf8')).content)))
-    : 0
-  fileExtents.set(file, words)
-  return words
+
+  let facts: FileFacts = { status: null, extent: 0 }
+  if (fs.existsSync(file)) {
+    const parsed = matter(fs.readFileSync(file, 'utf8'))
+    const status = parsed.data.status
+    facts = {
+      status: status === 'ready' || status === 'draft' ? status : null,
+      extent: extent(stripLeadIn(stripBuildFurniture(parsed.content))),
+    }
+  }
+
+  fileFacts.set(file, facts)
+  return facts
 }
 
 /** Resolve `fundamentals/llms` to its English file, without asking the loader. */
@@ -209,31 +224,36 @@ function englishFileFor(slug: string): string | null {
 const langs = new Map<string, Lang>()
 
 /**
- * §7.6 `LANG` — `EN · TR` only where the sibling `_tr.md` is a real
- * translation, never where it is a placeholder.
+ * §7.6 `LANG` — `EN · TR` only where the Turkish sibling is a real translation
+ * of a sheet that has actually been drawn.
  *
- * The rule is §7.6's, unaltered. Its stated *outcome* — "EN · TR on sheets 1–7
- * and EN on sheets 8–32" — does not survive contact with the corpus, and
- * neither does Appendix A's "7 real translations". Measured today: modules 1–7
- * are at 0.80–0.90, modules 8–15 at 0.011–0.020 (a ~60-word Turkish stub
- * against a ~4,000-word English module), and modules 16–32 at 0.83–1.00 —
- * because *both* sides of those pairs are stubs, and the Turkish stub is a
- * complete translation of the English one. Twenty-four sheets are bilingual,
- * not seven. Suppressing the badge on drafts to reach the stated number would
- * be the exact lie §7.6 exists to prevent, in the opposite direction: a
- * Turkish reader really can read all of modules 16–32.
+ * Two rules, and both of them are the spec's. §7.6's ratio decides a drawn
+ * sheet. A sheet that is *not* drawn prints `EN`, because §4.5 item 4 spells
+ * the draft strip out as `LANG EN` and §7.6's own stated outcome is `EN` on
+ * sheets 8–32.
+ *
+ * That second rule is not a rounding of the first. Measured today, modules
+ * 16–32 sit at 0.83–1.00 — both sides of those pairs are stubs, and the
+ * Turkish stub is a faithful translation of the English one. But §7.6 calls
+ * those files placeholders in the same breath, §11.27 reserves the badge for a
+ * "real translation", and §1's self-check names this exact sheet: a `LANG
+ * EN·TR` badge on a schedule of parts is a claim about a drawing nobody has
+ * drawn in either language. Printing it would also invert the index — the
+ * seventeen undrawn sheets advertised as bilingual and the seven finished ones
+ * as English-only.
  */
+function langOfEnglishFile(file: string): Lang {
+  const english = factsOfFile(file)
+  if (english.status === 'draft') return 'EN'
+  return langFromExtents(english.extent, factsOfFile(file.replace(/\.md$/, '_tr.md')).extent)
+}
+
 export function langCoverage(slug: string): Lang {
   const cached = langs.get(slug)
   if (cached !== undefined) return cached
 
   const english = englishFileFor(slug)
-  const lang = english === null
-    ? 'EN'
-    : langFromExtents(
-      extentOfFile(english),
-      extentOfFile(english.replace(/\.md$/, '_tr.md')),
-    )
+  const lang = english === null ? 'EN' : langOfEnglishFile(english)
 
   langs.set(slug, lang)
   return lang

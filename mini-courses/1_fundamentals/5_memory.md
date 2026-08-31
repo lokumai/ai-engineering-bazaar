@@ -1,3 +1,17 @@
+---
+module: 5
+title: "Memory"
+category: fundamentals
+status: ready
+duration: 20
+summary: "Three kinds of memory — parametric, working, and long-term — and where each one actually lives."
+objectives:
+  - "Distinguish parametric, working, and long-term memory"
+  - "Explain why working memory is just the context window"
+  - "Describe how long-term memory persists across sessions"
+prerequisites: [1, 3]
+---
+
 # Module 5: Memory — Parametric, Working (Short-Term), and Long-Term
 
 Hi again! We've covered LLMs, training, RAG, and tools. Before we get to agents, there's one idea that quietly underlies everything we've done so far: LLMs don't actually remember anything on their own. There isn't just one kind of "memory" either — there are three, and they behave very differently. Let's break them down.

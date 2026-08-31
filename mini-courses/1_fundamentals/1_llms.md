@@ -1,3 +1,17 @@
+---
+module: 1
+title: "LLM Fundamentals"
+category: fundamentals
+status: ready
+duration: 25
+summary: "What a language model actually does, what the context window costs you, and which knobs change its output."
+objectives:
+  - "Explain what an LLM does with a prompt, and why it is a next-token predictor"
+  - "Describe the context window and what happens when you exceed it"
+  - "Choose temperature and max output tokens for a given task"
+prerequisites: []
+---
+
 # Module 1: Large Language Model (LLM) Fundamentals
 
 Welcome to the first module of our AI mini-courses series! I'll guide you through the basics of Large Language Models (LLMs) in a clear, step-by-step way. We'll use simple examples, visuals, and diagrams to make learning fun and easy. Remember, LLMs are powerful tools, but understanding them helps you use them wisely.

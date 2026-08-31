@@ -1,3 +1,10 @@
+---
+module: 21
+title: "Advanced Prompting"
+category: expert
+status: draft
+---
+
 # Module 21: Advanced Prompting
 
 *Category: Expert — Module 21 (6 of 9 in this category)*

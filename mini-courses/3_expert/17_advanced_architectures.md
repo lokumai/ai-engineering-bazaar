@@ -1,3 +1,10 @@
+---
+module: 17
+title: "Advanced Architectures"
+category: expert
+status: draft
+---
+
 # Module 17: Advanced Architectures
 
 *Category: Expert — Module 17 (2 of 9 in this category)*

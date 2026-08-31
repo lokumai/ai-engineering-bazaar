@@ -1,3 +1,17 @@
+---
+module: 2
+title: "Training LLMs"
+category: fundamentals
+status: ready
+duration: 20
+summary: "How a general model is born in pre-training, and the two ways you specialise it afterwards."
+objectives:
+  - "Distinguish pre-training from fine-tuning"
+  - "Explain when fine-tuning is worth its cost"
+  - "Describe what PEFT changes, and why it is the common choice"
+prerequisites: [1]
+---
+
 # Module 2: Training LLMs — From General Brain to Specialist
 
 Hello again! In Module 1, we learned what LLMs are and how to use them. But how does an LLM learn everything it knows in the first place, and how do we make it really good at one specific job? That's what this module is about: pre-training, fine-tuning, and a cheaper way to fine-tune called PEFT.

@@ -1,0 +1,61 @@
+/* ===========================================================================
+   §6.10 B5 — the EXPAND overlay.
+
+   The figure itself is styled in `prose.css`, inside the measure. This file is
+   only the overlay, which Radix portals to the end of `<body>` and therefore
+   out of `.prose`'s reach.
+
+   It is a light table, not a lightbox: `--color-paper` at 100vw × 100vh, one
+   hairline under the caption, the drawing at natural size, and no dimming, no
+   blur (§11.7), no shadow (§11.6) and no animation (§9.1) anywhere in it.
+   =========================================================================== */
+
+@layer components {
+  .hl-expand {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    background: var(--color-paper);
+  }
+
+  .hl-expand-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 40px;
+    padding: 0 16px;
+    color: var(--color-ink-muted);
+    border-bottom: var(--stroke-hair) solid var(--color-line-strong);
+  }
+
+  /* Drag to pan (§6.10 B5). `touch-action: none` is what makes a drag on a
+     touch screen pan the drawing instead of scrolling the page out from under
+     it; the overlay owns the whole viewport, so there is nothing else to
+     scroll. */
+  .hl-expand-view {
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    touch-action: none;
+    cursor: grab;
+  }
+
+  .hl-expand-view[data-hl-dragging] {
+    cursor: grabbing;
+  }
+
+  /* Direct manipulation: the transform follows the pointer with no easing and
+     no transition. §9.1 prohibits the alternative outright. */
+  .hl-expand-paper {
+    transform-origin: center center;
+    transition: none;
+  }
+
+  .hl-expand-paper svg {
+    display: block;
+    height: auto;
+  }
+}

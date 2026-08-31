@@ -1,3 +1,17 @@
+---
+module: 3
+title: "RAG & Embeddings"
+category: fundamentals
+status: ready
+duration: 30
+summary: "Giving a model knowledge it was never trained on, using embeddings and a vector store."
+objectives:
+  - "Explain why retrieval beats fine-tuning for facts that change"
+  - "Describe how text becomes an embedding and how similarity is measured"
+  - "Walk through the retrieve-then-generate pipeline end to end"
+prerequisites: [1, 2]
+---
+
 # Module 3: Retrieval-Augmented Generation (RAG) and Vector Embeddings
 
 Hello again! Modules 1 and 2 taught us about LLMs and how fine-tuning specializes them. Now, imagine giving your LLM a "super brain" that remembers your code. That's RAG! It helps LLMs answer questions about specific things, like your projects. Let's learn it step by step with fun visuals.

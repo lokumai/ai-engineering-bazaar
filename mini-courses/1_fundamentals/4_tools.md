@@ -1,3 +1,17 @@
+---
+module: 4
+title: "Tool Calling"
+category: fundamentals
+status: ready
+duration: 20
+summary: "How a model reaches outside itself — the mechanism underneath every agent."
+objectives:
+  - "Explain how a model requests a tool call, and who actually executes it"
+  - "Describe what a tool schema must contain"
+  - "Identify tasks that need a tool rather than more prompting"
+prerequisites: [1]
+---
+
 # Module 4: LLM Tool Calling
 
 Hi! Modules 1, 2, and 3 covered LLMs, fine-tuning, and RAG. Now, let's make LLMs do real actions, like reading files or running commands. This is "tool calling"—giving LLMs superpowers to interact with the world. Let's explore in more detail!

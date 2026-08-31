@@ -1,3 +1,17 @@
+---
+module: 9
+title: "Context Engineering"
+category: intermediate
+status: ready
+duration: 30
+summary: "Treating the context window as a budget you spend deliberately, not a bucket you fill."
+objectives:
+  - "Break an agent's context into its constituent parts"
+  - "Apply the four levers for controlling context"
+  - "Recognise context rot and the failure modes that follow"
+prerequisites: [5, 8]
+---
+
 # Module 9: Context Engineering
 
 *Category: Intermediate — Module 9 (2 of 8 in this category)*

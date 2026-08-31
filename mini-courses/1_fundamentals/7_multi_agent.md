@@ -1,3 +1,17 @@
+---
+module: 7
+title: "Multi-Agent Systems"
+category: fundamentals
+status: ready
+duration: 25
+summary: "When one agent stops being enough, and the architectures that split the work."
+objectives:
+  - "Explain what kind of complexity pushes you toward multiple agents"
+  - "Compare supervisor and manager architectures"
+  - "Recognise when a single agent is still the right answer"
+prerequisites: [6]
+---
+
 # Module 7: Multi-Agent Architectures
 
 Hello! We've covered LLMs, fine-tuning, RAG, tools, and single agents. Now, for super complex tasks, we use multiple agents working together. This is multi-agent systems—teams of AI helpers. Let's learn how!

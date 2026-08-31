@@ -1,0 +1,417 @@
+/* ===========================================================================
+   §13 — THE LOKUM PALETTE
+   ===========================================================================
+
+   Six category hues. HUE SAYS WHICH SUBSYSTEM; CHROMA SAYS HOW FAR. Three
+   rules govern every declaration in this file, and each one is a rule the
+   system already had:
+
+   1. **A category hue may only appear on a surface that reports that
+      category's own progress.** §13.1.3's list is closed and exhaustive:
+      an LKM-01 face, a category card's rule and meter, a module row's leading
+      rule, a category page's header band, a dashboard meter, a path step's
+      leading rule, the report's ledger rule. Nothing else. Body text, prose,
+      links, headings, buttons and inputs stay ink-on-paper — the reading page
+      gains one coloured element, its band, and no more.
+
+   2. **Colour is never the only carrier** (SC 1.4.1). Every surface below sits
+      beside a printed count or keeps a line type that says the same thing.
+      `forced-colors: active` at the foot of this file drops every hue and the
+      drawing still reads.
+
+   3. **Reader state arrives on channel A** (§12.2). Every state selector here
+      begins `html.hl-…`, stamped before first paint by
+      `lib/record/boot.ts`. Zero React, zero hydration, correct in frame one.
+      There is no channel for a colour to arrive on after mount.
+
+   And one rule inherited from §2.2, which this file must not break: a
+   structural weight is PAINTED, never bordered. Chrome floors
+   `border-*-width` to whole pixels, so `border: var(--stroke-struct)` paints a
+   hairline. `--stroke-cut` is 2px and safe as a border; `--stroke-struct` is
+   1.5px and is not. `tests/unit/stroke-weights.test.ts` fails the build on it.
+
+   WHY SEGMENTS AND NOT A BAR. A progress bar's length is a computed number,
+   and a computed number cannot reach CSS on channel A — so a bar would have to
+   be drawn after hydration, which is the one thing §12.2 forbids for a mark
+   that must be right in frame one. One segment per sheet is drawable from
+   `html.hl-signed-<n>` alone, needs no arithmetic, and says more: it reports
+   WHICH sheets are done, not just how many. It also draws like a drafting
+   scale rather than a SaaS meter, which is the house style (T7).
+
+   =========================================================================== */
+
+:root {
+  /* §13.1.1 — one lightness for all six, and therefore ONE set of tokens for
+     both themes. Measured, not chosen: the grounds sit at the extremes
+     (0.976 light / 0.185 dark), so L 0.605 clears 3:1 against both. Worst case
+     in the whole palette is FISTIK at 3.14:1 on `sunken` light, 4.64:1 dark.
+     `tests/unit/lokum-contrast.test.ts` recomputes every number here.
+
+     These are deliberately NOT in `@theme` and NOT in the `--color-*`
+     namespace: Tailwind would then emit `bg-cat-*` utilities, and a utility is
+     an invitation to paint a hue onto something that is not on §13.1.3's list.
+     No utility exists, so rule 1 is enforced by absence. */
+  --cat-fundamentals:      oklch(0.605 0.150 350);  /* GÜL     — rose        */
+  --cat-fundamentals-half: oklch(0.605 0.075 350);
+  --cat-intermediate:      oklch(0.605 0.128 138);  /* FISTIK  — pistachio   */
+  --cat-intermediate-half: oklch(0.605 0.064 138);
+  --cat-expert:            oklch(0.605 0.130 288);  /* LAVANTA — lavender    */
+  --cat-expert-half:       oklch(0.605 0.065 288);
+  --cat-ecosystem:         oklch(0.605 0.098 200);  /* NANE    — mint        */
+  --cat-ecosystem-half:    oklch(0.605 0.049 200);
+  --cat-protocols:         oklch(0.605 0.115  54);  /* KAHVE   — coffee      */
+  --cat-protocols-half:    oklch(0.605 0.0575 54);
+  --cat-optional:          oklch(0.605 0.085  100); /* KAYMAK  — cream       */
+  --cat-optional-half:     oklch(0.605 0.0425 100);
+
+  /* There is no `--cat-dormant`. §13.1.2: a category with nothing signed off
+     is not "the grey version of gül", it is a category with nothing special
+     about it, so it is drawn in the structural line every other component
+     uses. Inventing a per-category grey failed twice when measured — 2.11:1
+     against `sunken`, and indistinguishable from KAYMAK's complete state. */
+}
+
+@layer components {
+  /* -------------------------------------------------------------------------
+     The hue carrier
+     -------------------------------------------------------------------------
+     One rule per category maps `data-cat` onto two local custom properties.
+     Every rule after this reads `--hl-cat` / `--hl-cat-half` and never names a
+     category again — so the 32 module selectors below are written once instead
+     of six times, and a seventh category costs exactly one rule here.
+     `tests/unit/category-css.test.ts` asserts one carrier per category and no
+     orphans. */
+  [data-cat="fundamentals"] { --hl-cat: var(--cat-fundamentals); --hl-cat-half: var(--cat-fundamentals-half); }
+  [data-cat="intermediate"] { --hl-cat: var(--cat-intermediate); --hl-cat-half: var(--cat-intermediate-half); }
+  [data-cat="expert"]       { --hl-cat: var(--cat-expert);       --hl-cat-half: var(--cat-expert-half); }
+  [data-cat="ecosystem"]    { --hl-cat: var(--cat-ecosystem);    --hl-cat-half: var(--cat-ecosystem-half); }
+  [data-cat="protocols"]    { --hl-cat: var(--cat-protocols);    --hl-cat-half: var(--cat-protocols-half); }
+  [data-cat="optional"]     { --hl-cat: var(--cat-optional);     --hl-cat-half: var(--cat-optional-half); }
+
+  /* -------------------------------------------------------------------------
+     §13.1.3 (2, 5) — the segmented meter
+     -------------------------------------------------------------------------
+     One segment per sheet in the category, in module order. A segment is
+     binary: this sheet is signed off, or it is not. Chroma-as-state (§13.1.2)
+     applies to the AGGREGATE surfaces below, not here — half a hue on a single
+     sheet would mean half a sign-off, and there is no such thing.
+
+     The meter must never be the only statement of progress: every caller
+     prints the count beside it (`4/7`), and the segment count itself is a
+     visible tally. */
+  .hl-meter {
+    display: flex;
+    gap: 2px;
+    /* No radius, ever (T7). */
+    align-items: stretch;
+    min-height: 10px;
+  }
+
+  .hl-seg {
+    flex: 1 1 0;
+    min-width: 4px;
+    /* Dormant: the ordinary recess, outlined in the ordinary structural line.
+       `--stroke-hair` is 1px, so a border is honest here. */
+    background: var(--color-sunken);
+    border: var(--stroke-hair) solid var(--color-line-strong);
+  }
+
+  /* §11.25 / §13.4.2 — a sheet nobody has drawn cannot be signed off, so its
+     segment is drawn as hidden geometry and can never fill. The dash is the
+     same `--dash-hidden` the draft treatment uses everywhere else, expressed
+     as a border style because a border is what this element has. */
+  .hl-seg[data-drawn="false"] {
+    border-style: dashed;
+    background: transparent;
+  }
+
+  /* Channel A. 32 selectors, one per module number, all sharing one
+     declaration. `--hl-cat` was resolved by the carrier above from the
+     segment's own `data-cat`, so the category never appears here. */
+  html.hl-signed-1  .hl-seg[data-module="1"],
+  html.hl-signed-2  .hl-seg[data-module="2"],
+  html.hl-signed-3  .hl-seg[data-module="3"],
+  html.hl-signed-4  .hl-seg[data-module="4"],
+  html.hl-signed-5  .hl-seg[data-module="5"],
+  html.hl-signed-6  .hl-seg[data-module="6"],
+  html.hl-signed-7  .hl-seg[data-module="7"],
+  html.hl-signed-8  .hl-seg[data-module="8"],
+  html.hl-signed-9  .hl-seg[data-module="9"],
+  html.hl-signed-10 .hl-seg[data-module="10"],
+  html.hl-signed-11 .hl-seg[data-module="11"],
+  html.hl-signed-12 .hl-seg[data-module="12"],
+  html.hl-signed-13 .hl-seg[data-module="13"],
+  html.hl-signed-14 .hl-seg[data-module="14"],
+  html.hl-signed-15 .hl-seg[data-module="15"],
+  html.hl-signed-16 .hl-seg[data-module="16"],
+  html.hl-signed-17 .hl-seg[data-module="17"],
+  html.hl-signed-18 .hl-seg[data-module="18"],
+  html.hl-signed-19 .hl-seg[data-module="19"],
+  html.hl-signed-20 .hl-seg[data-module="20"],
+  html.hl-signed-21 .hl-seg[data-module="21"],
+  html.hl-signed-22 .hl-seg[data-module="22"],
+  html.hl-signed-23 .hl-seg[data-module="23"],
+  html.hl-signed-24 .hl-seg[data-module="24"],
+  html.hl-signed-25 .hl-seg[data-module="25"],
+  html.hl-signed-26 .hl-seg[data-module="26"],
+  html.hl-signed-27 .hl-seg[data-module="27"],
+  html.hl-signed-28 .hl-seg[data-module="28"],
+  html.hl-signed-29 .hl-seg[data-module="29"],
+  html.hl-signed-30 .hl-seg[data-module="30"],
+  html.hl-signed-31 .hl-seg[data-module="31"],
+  html.hl-signed-32 .hl-seg[data-module="32"] {
+    background: var(--hl-cat);
+    border-color: var(--hl-cat);
+  }
+
+  /* -------------------------------------------------------------------------
+     §13.1.2 — the aggregate surfaces, where chroma IS the state
+     -------------------------------------------------------------------------
+     `.hl-cat-tint` marks an element whose colour reports a whole category's
+     standing. Dormant is the inherited structural line — no declaration at
+     all, which is the point: a dormant category is drawn exactly like every
+     other component in the system. */
+  .hl-cat-tint {
+    /* The local name every consumer below paints with. Dormant by default. */
+    --hl-tint: var(--color-line-strong);
+  }
+
+  html.hl-cat-fundamentals-started .hl-cat-tint[data-cat="fundamentals"],
+  html.hl-cat-intermediate-started .hl-cat-tint[data-cat="intermediate"],
+  html.hl-cat-expert-started       .hl-cat-tint[data-cat="expert"],
+  html.hl-cat-ecosystem-started    .hl-cat-tint[data-cat="ecosystem"],
+  html.hl-cat-protocols-started    .hl-cat-tint[data-cat="protocols"],
+  html.hl-cat-optional-started     .hl-cat-tint[data-cat="optional"] {
+    --hl-tint: var(--hl-cat-half);
+  }
+
+  html.hl-cat-fundamentals-complete .hl-cat-tint[data-cat="fundamentals"],
+  html.hl-cat-intermediate-complete .hl-cat-tint[data-cat="intermediate"],
+  html.hl-cat-expert-complete       .hl-cat-tint[data-cat="expert"],
+  html.hl-cat-ecosystem-complete    .hl-cat-tint[data-cat="ecosystem"],
+  html.hl-cat-protocols-complete    .hl-cat-tint[data-cat="protocols"],
+  html.hl-cat-optional-complete     .hl-cat-tint[data-cat="optional"] {
+    --hl-tint: var(--hl-cat);
+  }
+
+  /* §13.1.3 (2) — the category card's leading rule. PAINTED, not bordered:
+     `--stroke-struct` is 1.5px and Chrome would floor a border to 1px. The
+     transparent border holds the layout space the rule occupies. */
+  .hl-cat-rule {
+    border-inline-start: var(--stroke-struct) solid transparent;
+    background-image: linear-gradient(to right, var(--hl-tint), var(--hl-tint));
+    background-repeat: no-repeat;
+    background-size: var(--stroke-struct) 100%;
+    background-position: left top;
+  }
+
+  /* §13.1.3 (3) — a module row's leading rule. `.hl-row > :first-child`
+     already carries a transparent `--stroke-cut` (2px) border with the space
+     reserved, so a border is both honest and free here. The row states
+     `SIGNED OFF` / `NOT DRAWN` in its own cell, so the colour adds
+     nothing the row does not already say. */
+  .hl-row.hl-cat-tint:not(:hover):not(:focus-within) > :first-child {
+    border-inline-start-color: var(--hl-tint);
+  }
+  /* The two `:not()`s are load-bearing, not caution. `.hl-row:hover >
+     :first-child` in `manifest.css` paints §5.3's 2px cut-plane line and has
+     the same specificity as this rule, and `lokum.css` is imported last — so
+     the plain form won every tie and a drawn row silently lost its hover
+     affordance. Standing the tint down while the row is hovered or holds focus
+     hands the cut line back, without touching another stylesheet and without a
+     specificity arms race. A draft row keeps its hover line either way,
+     because it is never tinted (see below). */
+
+  /* §13.1.3 (4) — the category page header band. One coloured element on the
+     reading surface, and the last one. */
+  .hl-band-tint {
+    border-block-start: var(--stroke-cut) solid var(--hl-tint);
+  }
+
+  /* §13.1.3 (6) — a path step's leading rule takes the hue of the step's OWN
+     category, so a path reads as the six subsystems it crosses. */
+  .hl-step.hl-cat-tint {
+    border-inline-start: var(--stroke-cut) solid var(--hl-tint);
+  }
+
+  /* -------------------------------------------------------------------------
+     §13.2 — LKM-01's faces gain a flat fill
+     -------------------------------------------------------------------------
+     The stroke rules already live in `record.css` and are untouched: §8.2's
+     line types hold in every state, so the visible faces keep solid edges and
+     the hidden three keep their `2 2` dashes. That is what makes the fill
+     redundant reinforcement rather than the carrier (SC 1.4.1) — with hue
+     removed the cube still reports its state through line type and hatch.
+
+     No gradient (§8.5 stands) and NO TRANSITION (§9.1): a state change is a
+     repaint, not a tween. */
+  .hl-face { fill: none; }
+
+  html.hl-cat-fundamentals-started .hl-face[data-cat="fundamentals"],
+  html.hl-cat-intermediate-started .hl-face[data-cat="intermediate"],
+  html.hl-cat-expert-started       .hl-face[data-cat="expert"],
+  html.hl-cat-ecosystem-started    .hl-face[data-cat="ecosystem"],
+  html.hl-cat-protocols-started    .hl-face[data-cat="protocols"],
+  html.hl-cat-optional-started     .hl-face[data-cat="optional"] {
+    fill: var(--hl-cat-half);
+  }
+
+  html.hl-cat-fundamentals-complete .hl-face[data-cat="fundamentals"],
+  html.hl-cat-intermediate-complete .hl-face[data-cat="intermediate"],
+  html.hl-cat-expert-complete       .hl-face[data-cat="expert"],
+  html.hl-cat-ecosystem-complete    .hl-face[data-cat="ecosystem"],
+  html.hl-cat-protocols-complete    .hl-face[data-cat="protocols"],
+  html.hl-cat-optional-complete     .hl-face[data-cat="optional"] {
+    fill: var(--hl-cat);
+  }
+
+  /* The sugar stipple (§8.1), and a bug this file shipped in its first draft.
+     "Sugar is sugar in every flavour, so it stays paper-coloured and needs no
+     state rule" — which is right over a face that is FILLED, and wrong for
+     every reader who has not yet signed off a fundamentals sheet. The stipple
+     is on the top face only, the top face is `fill: none` while fundamentals is
+     dormant, and seven paper-coloured dots on the paper ground are seven dots
+     nobody can see. §8.1's stipple was absent in the default state at all four
+     sizes.
+
+     So the sugar takes its colour from the face under it. `--color-ink-faint`
+     is decorative-only by T5, which is exactly what an `aria-hidden` stipple
+     is; over a filled face it becomes the paper it is dusted onto. */
+  .hl-sugar { fill: var(--color-ink-faint); }
+
+  html.hl-cat-fundamentals-started  .hl-sugar,
+  html.hl-cat-fundamentals-complete .hl-sugar {
+    fill: var(--color-paper);
+  }
+
+  /* §13.2 — the face legend. Real text beside the drawing at 96px and above,
+     and the reason the SVG can stay `aria-hidden` in every state. The swatch
+     is the only place a hue appears without an adjacent count, and it is
+     labelled by the flavour name and the category title in the same row. */
+  .hl-legend-swatch {
+    display: inline-block;
+    inline-size: 12px;
+    block-size: 12px;
+    background: var(--hl-tint);
+    border: var(--stroke-hair) solid var(--color-line-strong);
+  }
+
+  /* -------------------------------------------------------------------------
+     §13.4.3 — the reader's own path, drawn on channel A
+     -------------------------------------------------------------------------
+     `hl-role-<id>` is stamped by the boot script. These rules let `/path/`
+     show the chosen role's list and hide the other eight without React
+     deciding anything — the same technique the theme boot script has used
+     since §2.5. The nine role blocks are all present in the markup, which is
+     what makes the page correct in frame one for a reader who has a role and
+     for one who has not. */
+  .hl-path-body,
+  .hl-path-empty { display: none; }
+
+  /* No role stamped: the honest empty state (§12.13's fifth). */
+  html:not(.hl-role-software-engineer):not(.hl-role-devops):not(.hl-role-data-engineer):not(.hl-role-data-analyst):not(.hl-role-analyst):not(.hl-role-qa):not(.hl-role-project-manager):not(.hl-role-dba):not(.hl-role-pre-sales) .hl-path-empty {
+    display: block;
+  }
+
+  html.hl-role-software-engineer .hl-path-body[data-role="software-engineer"],
+  html.hl-role-devops            .hl-path-body[data-role="devops"],
+  html.hl-role-data-engineer     .hl-path-body[data-role="data-engineer"],
+  html.hl-role-data-analyst      .hl-path-body[data-role="data-analyst"],
+  html.hl-role-analyst           .hl-path-body[data-role="analyst"],
+  html.hl-role-qa                .hl-path-body[data-role="qa"],
+  html.hl-role-project-manager   .hl-path-body[data-role="project-manager"],
+  html.hl-role-dba               .hl-path-body[data-role="dba"],
+  html.hl-role-pre-sales         .hl-path-body[data-role="pre-sales"] {
+    display: block;
+  }
+
+  /* A step the reader has signed off says so in words. The marker is real
+     text — `SIGNED OFF`, in the accent pen, which still means exactly that and
+     nothing else (T1 is unamended) — hidden by default and revealed by channel
+     A. Only the 15 drawn modules appear here: a draft sheet has no sign-off
+     control at all (§12.4.1), so no selector for one can ever match, and
+     writing 32 would state that it could.
+
+     The next-step marker is a different problem and is handled below. */
+  .hl-step-tick { display: none; }
+
+  html.hl-signed-1  .hl-step[data-module="1"]  .hl-step-tick,
+  html.hl-signed-2  .hl-step[data-module="2"]  .hl-step-tick,
+  html.hl-signed-3  .hl-step[data-module="3"]  .hl-step-tick,
+  html.hl-signed-4  .hl-step[data-module="4"]  .hl-step-tick,
+  html.hl-signed-5  .hl-step[data-module="5"]  .hl-step-tick,
+  html.hl-signed-6  .hl-step[data-module="6"]  .hl-step-tick,
+  html.hl-signed-7  .hl-step[data-module="7"]  .hl-step-tick,
+  html.hl-signed-8  .hl-step[data-module="8"]  .hl-step-tick,
+  html.hl-signed-9  .hl-step[data-module="9"]  .hl-step-tick,
+  html.hl-signed-10 .hl-step[data-module="10"] .hl-step-tick,
+  html.hl-signed-11 .hl-step[data-module="11"] .hl-step-tick,
+  html.hl-signed-12 .hl-step[data-module="12"] .hl-step-tick,
+  html.hl-signed-13 .hl-step[data-module="13"] .hl-step-tick,
+  html.hl-signed-14 .hl-step[data-module="14"] .hl-step-tick,
+  html.hl-signed-15 .hl-step[data-module="15"] .hl-step-tick {
+    display: inline;
+    color: var(--color-accent-ink);   /* T2 — accent as TEXT is `-ink` only. */
+  }
+
+  /* THE NEXT STEP IS CHANNEL B, and the first draft of this file got it wrong.
+     "Next" means FIRST UNSIGNED, which is a computation over the whole list,
+     and CSS has no selector for it — the attempt was a per-module rule that
+     would have marked every unsigned step as next. So the prerender marks no
+     step at all, which is honest (the build genuinely cannot know), and a
+     client island sets `data-next="true"` after mount using §12's existing
+     `nextUnsigned` derive. §12.2 has two channels and this is the second one;
+     there is no third. */
+  .hl-step-next { display: none; }
+  .hl-step[data-next="true"] .hl-step-next { display: inline; }
+}
+
+/* ===========================================================================
+   Forced colours — §13.1.4
+   ===========================================================================
+   Every hue is dropped. The drawing must still read, and it does: LKM-01 keeps
+   §8.2's line types and its section hatch, every meter keeps its segment
+   borders and its printed count, and every band keeps its rule.
+   `tests/e2e/colour-not-alone.spec.ts` loads a signed record under
+   `forced-colors: active` and asserts each surface still reports its state. */
+@media (forced-colors: active) {
+  .hl-seg {
+    background: Canvas;
+    border-color: CanvasText;
+    forced-color-adjust: none;
+  }
+  html.hl-signed-1  .hl-seg[data-module="1"],
+  html.hl-signed-2  .hl-seg[data-module="2"],
+  html.hl-signed-3  .hl-seg[data-module="3"],
+  html.hl-signed-4  .hl-seg[data-module="4"],
+  html.hl-signed-5  .hl-seg[data-module="5"],
+  html.hl-signed-6  .hl-seg[data-module="6"],
+  html.hl-signed-7  .hl-seg[data-module="7"],
+  html.hl-signed-8  .hl-seg[data-module="8"],
+  html.hl-signed-9  .hl-seg[data-module="9"],
+  html.hl-signed-10 .hl-seg[data-module="10"],
+  html.hl-signed-11 .hl-seg[data-module="11"],
+  html.hl-signed-12 .hl-seg[data-module="12"],
+  html.hl-signed-13 .hl-seg[data-module="13"],
+  html.hl-signed-14 .hl-seg[data-module="14"],
+  html.hl-signed-15 .hl-seg[data-module="15"] {
+    /* Filled with the system colour, so "signed off" is still a filled cell
+       against an empty one — a difference in fill, not in hue. */
+    background: CanvasText;
+    border-color: CanvasText;
+  }
+
+  .hl-cat-tint { --hl-tint: CanvasText; }
+  .hl-face { fill: none; }
+  .hl-legend-swatch { background: Canvas; border-color: CanvasText; }
+}
+
+/* ===========================================================================
+   Print — §4 and §12's `@page` already set the sheet up. A hue survives
+   printing only if the reader asked for background graphics, so every meter
+   keeps its segment borders, which print regardless.
+   =========================================================================== */
+@media print {
+  .hl-meter { break-inside: avoid; }
+  .hl-seg { print-color-adjust: exact; }
+}

@@ -1,3 +1,10 @@
+---
+module: 28
+title: "UI Design"
+category: ecosystem
+status: draft
+---
+
 # Module 28: UI Design
 
 *Category: Ecosystem — Module 28 (4 of 5 in this category)*

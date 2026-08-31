@@ -1,3 +1,17 @@
+---
+module: 11
+title: "Coding Agents: Extending Them"
+category: intermediate
+status: ready
+duration: 30
+summary: "Six mechanisms — instructions, skills, subagents, hooks, MCP, plugins — and when each is the right one."
+objectives:
+  - "Name the six extension mechanisms and what each one controls"
+  - "Choose between a skill, a hook, and an MCP server for a given need"
+  - "Package a team workflow so others can install it"
+prerequisites: [10]
+---
+
 # Module 11: Coding Agents: Extending Them
 
 *Category: Intermediate — Module 11 (4 of 8 in this category)*

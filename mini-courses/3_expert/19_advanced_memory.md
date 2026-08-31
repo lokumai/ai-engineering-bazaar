@@ -1,3 +1,10 @@
+---
+module: 19
+title: "Advanced Memory"
+category: expert
+status: draft
+---
+
 # Module 19: Advanced Memory
 
 *Category: Expert — Module 19 (4 of 9 in this category)*

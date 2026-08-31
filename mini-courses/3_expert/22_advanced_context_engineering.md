@@ -1,3 +1,10 @@
+---
+module: 22
+title: "Advanced Context Engineering"
+category: expert
+status: draft
+---
+
 # Module 22: Advanced Context Engineering
 
 *Category: Expert — Module 22 (7 of 9 in this category)*

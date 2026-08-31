@@ -1,3 +1,17 @@
+---
+module: 6
+title: "AI Agents"
+category: fundamentals
+status: ready
+duration: 25
+summary: "The agent loop — what turns a single model call into multi-step work."
+objectives:
+  - "Describe the agent loop and what ends it"
+  - "Explain how the system prompt tells a model which tools exist"
+  - "Identify the components a minimal agent needs"
+prerequisites: [4, 5]
+---
+
 # Module 6: AI Agents: From Single Call to Multi-Step Reasoning
 
 Hey there! We've built up from LLMs, fine-tuning, RAG, and tools. Now, agents—LLMs that think and act like smart helpers. Agents solve big problems step by step. Let's break it down!

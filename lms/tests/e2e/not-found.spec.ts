@@ -2,7 +2,7 @@ import { type Page, expect, test } from '@playwright/test'
 import { watchPage } from './watch'
 
 /**
- * The 404 (§5.1, §5.2, §2.5).
+ * The 404 (§8.4, §8.5, §5.1, §5.2).
  *
  * Every assertion here is one a source read could not have made, because the
  * defect was invisible in the source. `404.html` is prerendered once, at
@@ -31,6 +31,9 @@ const ADDRESSES: [string, number][] = [
   ['/404/', 200],
   ['/courses/fundamentals/no-such-module/', 404],
 ]
+
+/** §8.4 — the caption, in the words the spec fixes for this page. */
+const CAPTION = 'ASSEMBLY NOT FOUND · SHEET DOES NOT EXIST IN THIS DRAWING SET'
 
 /**
  * A static host answers an unknown address with `404.html` *and* a 404 status.
@@ -116,6 +119,44 @@ test('the trail and the footer read the same at every address', async ({ page })
     ])
   }
   for (const reading of readings) expect(reading).toEqual(readings[0])
+})
+
+test('draws §8.4’s exploded axonometric, and only one of it', async ({ page }) => {
+  await page.goto(ADDRESSES[0][0])
+
+  const svg = page.locator('main svg')
+  await expect(svg).toHaveCount(1)
+  await expect(svg).toHaveAttribute('viewBox', '0 0 56 56')
+
+  // §8.3 fixes this variant at 96px, and the caption carries the meaning, so
+  // the drawing itself is hidden from assistive technology (T5).
+  const box = await svg.boundingBox()
+  expect(box?.width).toBe(96)
+  expect(box?.height).toBe(96)
+  await expect(svg).toHaveAttribute('aria-hidden', 'true')
+
+  // Six faces, six leader lines: the cube taken apart, not a cube with a line
+  // through it.
+  await expect(page.locator('main [data-face]')).toHaveCount(6)
+  await expect(page.locator('main [data-leader]')).toHaveCount(6)
+
+  await expect(page.getByText(CAPTION, { exact: true })).toHaveCount(1)
+})
+
+test('keeps §8.2’s line types once the faces no longer touch', async ({ page }) => {
+  await page.goto(ADDRESSES[0][0])
+
+  const dashOf = (face: string) =>
+    page.locator(`main [data-face="${face}"]`)
+      .evaluate((el) => getComputedStyle(el).strokeDasharray)
+
+  // Visible faces keep solid edges and hidden faces keep their 2 2 dashes "in
+  // every state" — which is the only thing left telling a reader the cube's
+  // front from its back once it is disassembled.
+  for (const visible of ['F1', 'F2', 'F3']) expect(await dashOf(visible), visible).toBe('none')
+  for (const hidden of ['F4', 'F5', 'F6']) {
+    expect(await dashOf(hidden), hidden).toMatch(/^2px,\s*2px$/)
+  }
 })
 
 test('sits in the normal shell flow, with its footer above the fold', async ({ page }) => {

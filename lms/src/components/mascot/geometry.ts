@@ -56,19 +56,31 @@ export interface Face {
   name: string
   /** The category this face is the meter for. */
   category: CategorySlug
+  /** Its four vertices, in the order §8.1's path walks them. */
+  points: readonly PointName[]
   path: string
   /** An isometric cube shows three faces; the other three are hidden geometry. */
   visible: boolean
 }
 
+function defineFace(
+  id: FaceId,
+  name: string,
+  category: CategorySlug,
+  visible: boolean,
+  points: readonly PointName[],
+): Face {
+  return { id, name, category, visible, points, path: polyline(points, true) }
+}
+
 /** §8.1 — six rhombi, mapped to the six categories in order. */
 export const FACES: readonly Face[] = [
-  { id: 'F1', name: 'TOP', category: 'fundamentals', visible: true, path: polyline(['T', 'R', 'C', 'L'], true) },
-  { id: 'F2', name: 'LEFT', category: 'intermediate', visible: true, path: polyline(['L', 'C', 'Bp', 'Lp'], true) },
-  { id: 'F3', name: 'RIGHT', category: 'expert', visible: true, path: polyline(['C', 'R', 'Rp', 'Bp'], true) },
-  { id: 'F4', name: 'BACK-LEFT', category: 'ecosystem', visible: false, path: polyline(['T', 'C', 'Lp', 'L'], true) },
-  { id: 'F5', name: 'BACK-RIGHT', category: 'protocols', visible: false, path: polyline(['T', 'R', 'Rp', 'C'], true) },
-  { id: 'F6', name: 'BOTTOM', category: 'optional', visible: false, path: polyline(['Lp', 'C', 'Rp', 'Bp'], true) },
+  defineFace('F1', 'TOP', 'fundamentals', true, ['T', 'R', 'C', 'L']),
+  defineFace('F2', 'LEFT', 'intermediate', true, ['L', 'C', 'Bp', 'Lp']),
+  defineFace('F3', 'RIGHT', 'expert', true, ['C', 'R', 'Rp', 'Bp']),
+  defineFace('F4', 'BACK-LEFT', 'ecosystem', false, ['T', 'C', 'Lp', 'L']),
+  defineFace('F5', 'BACK-RIGHT', 'protocols', false, ['T', 'R', 'Rp', 'C']),
+  defineFace('F6', 'BOTTOM', 'optional', false, ['Lp', 'C', 'Rp', 'Bp']),
 ]
 
 /**
@@ -191,4 +203,74 @@ export interface HatchSpec {
 /** §8.2 — the hatch opens up above 32px so it does not read as a solid fill. */
 export function hatchSpec(size: number): HatchSpec {
   return size <= 32 ? { pitch: 3, stroke: 0.5 } : { pitch: 4, stroke: 0.75 }
+}
+
+// ---------------------------------------------------------------------------
+// §8.4 — the exploded axonometric
+// ---------------------------------------------------------------------------
+
+/**
+ * §8.4 — the cube taken apart. Two moments get this drawing and only two, and
+ * the 404 page is one of them (§8.5).
+ *
+ * It is drawn on its own larger board so the six displaced faces still fit:
+ * the §8.1 geometry spans 6.47–25.53 across and 5–27 down, which lands inside
+ * `0 0 56 56` with room for a ±7 displacement once it is set at (12, 12).
+ */
+export const EXPLODED_VIEW_BOX = '0 0 56 56'
+
+/** §8.4 — where the untouched `0 0 32 32` geometry sits on that board. */
+export const EXPLODED_ORIGIN: Point = [12, 12]
+
+/**
+ * §8.4 — each face's displacement along its own normal. Every one is 7 units
+ * long: the two along the vertical axis take it whole, the four along the
+ * isometric diagonals split it 7·cos30° across by 7·sin30° down, which is the
+ * same 30° projection the cube itself is drawn in.
+ */
+export const EXPLODED_OFFSETS: Readonly<Record<FaceId, Point>> = {
+  F1: [0, -7],
+  F2: [-6.06, 3.5],
+  F3: [6.06, 3.5],
+  F4: [-6.06, -3.5],
+  F5: [6.06, -3.5],
+  F6: [0, 7],
+}
+
+/**
+ * A face's centroid at rest, before `EXPLODED_ORIGIN` is applied — where its
+ * leader line starts (§8.4). Derived from the face rather than transcribed
+ * from the spec's table: a rhombus's centroid is the mean of its four
+ * vertices, so the table is a rounding of this and not a separate fact.
+ */
+export function centroidOf(face: Face): Point {
+  const points = face.points.map(at)
+  const mean = (axis: 0 | 1) =>
+    points.reduce((total, point) => total + point[axis], 0) / points.length
+  return [mean(0), mean(1)]
+}
+
+/** One face of the exploded view: where it is drawn, and the line back to it. */
+export interface Explosion {
+  face: Face
+  /** Its `<g transform="translate(…)">`, in board units. */
+  offset: Point
+  /** §8.4's leader line, centroid at rest to displaced centroid. */
+  leader: string
+}
+
+/** §8.4 — the six faces, displaced, each with the line back to where it sat. */
+export const EXPLODED: readonly Explosion[] = FACES.map((face) => {
+  const offset = EXPLODED_OFFSETS[face.id]
+  const [cx, cy] = centroidOf(face)
+  return {
+    face,
+    offset,
+    leader: `M${round(cx)} ${round(cy)} L${round(cx + offset[0])} ${round(cy + offset[1])}`,
+  }
+})
+
+/** Enough precision for a 56-unit board; without it a mean prints float noise. */
+function round(value: number): number {
+  return Number(value.toFixed(3))
 }

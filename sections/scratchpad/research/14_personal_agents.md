@@ -1,6 +1,6 @@
 # Research Dossier — Module 14: Personal Agents
 
-**Prepared:** 2026-08-25 · **For:** `mini-courses/2_intermediate/14_personal_agents.md` (INTERMEDIATE, professional devs, post-Fundamentals)
+**Prepared:** 2026-08-25 · **For:** `sections/2_intermediate/14_personal_agents.md` (INTERMEDIATE, professional devs, post-Fundamentals)
 **Framing:** always-on agents that run on YOUR devices and YOUR accounts, single-operator trust model, and how a developer points one at their own SDLC work.
 **Status:** COMPLETE for the required scope. See `## RESUME NOTES` for the few leads I did not chase.
 
@@ -239,7 +239,7 @@ Only the two verified runners are stated with confidence. The rest of the row se
 
 ## 7. Security & privacy
 
-> **Cross-reference, do not re-derive.** Module 12 already establishes the lethal trifecta / Meta's Agents Rule of Two, OWASP `LLM01:2026` Prompt Injection and `LLM03:2026` Excessive Agency, the guardrail-vs-sandbox distinction, and the confused-deputy pattern (see `mini-courses/scratchpad/research/12_security.md`). Module 14's job is **one paragraph of callback plus the personal-agent-specific parts below.**
+> **Cross-reference, do not re-derive.** Module 12 already establishes the lethal trifecta / Meta's Agents Rule of Two, OWASP `LLM01:2026` Prompt Injection and `LLM03:2026` Excessive Agency, the guardrail-vs-sandbox distinction, and the confused-deputy pattern (see `sections/scratchpad/research/12_security.md`). Module 14's job is **one paragraph of callback plus the personal-agent-specific parts below.**
 
 ### 7.1 Why a personal agent is the trifecta's worst case
 

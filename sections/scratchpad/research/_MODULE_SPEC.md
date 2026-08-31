@@ -21,7 +21,7 @@ Monday that they could not do on Friday.
 
 ## House style
 
-Read `mini-courses/1_fundamentals/6_agents.md` first and match it:
+Read `sections/1_fundamentals/6_agents.md` first and match it:
 
 - **Friendly second person.** "You'll see…", "Let's break it down". Warm, not chatty.
 - **Short sections** under `##` Roman-numeral headings (`## I.`, `## II.`), with `###` subsections.

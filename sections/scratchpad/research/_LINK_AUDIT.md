@@ -76,7 +76,7 @@ list must use the new forms:
 ## Reproducing this audit
 
 ```bash
-cd mini-courses/scratchpad/research
+cd sections/scratchpad/research
 grep -ohE '\]\(https?://[^) ]+' *.md | sed -E 's/\]\(//; s/[.,;]+$//' | sort -u > /tmp/urls.txt
 # then check serially (parallel checks trigger rate limits and produce false 429s)
 while read -r u; do

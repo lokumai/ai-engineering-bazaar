@@ -1,6 +1,6 @@
 # Research Supplement — Module 12: Standards & Frameworks
 
-**Prepared:** 2026-08-25 · **Supplements:** `mini-courses/scratchpad/research/12_security.md`
+**Prepared:** 2026-08-25 · **Supplements:** `sections/scratchpad/research/12_security.md`
 **Status:** COMPLETE. All eleven required sections written; every non-obvious claim carries an inline citation to a URL that was actually fetched. Blocked sources and unverifiable items are flagged explicitly rather than filled from memory. See `## Open questions / [UNVERIFIED]` and `## RESUME NOTES`.
 
 ---

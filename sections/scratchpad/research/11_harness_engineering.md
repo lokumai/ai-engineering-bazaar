@@ -1,8 +1,8 @@
 # Research Dossier — Module 11: Harness Engineering
 
-**Researched:** 2026-08-25. **Target:** `mini-courses/2_intermediate/11_harness_engineering.md`
+**Researched:** 2026-08-25. **Target:** `sections/2_intermediate/11_harness_engineering.md`
 **Audience:** professional developers, INTERMEDIATE, post-Fundamentals.
-**House style reference:** `mini-courses/1_fundamentals/6_agents.md` (friendly 2nd person, short sections, comparison tables, mermaid, short runnable snippets, Quick Check, prev/next links, ~150–280 lines).
+**House style reference:** `sections/1_fundamentals/6_agents.md` (friendly 2nd person, short sections, comparison tables, mermaid, short runnable snippets, Quick Check, prev/next links, ~150–280 lines).
 
 > **Currency warning for the module author.** Almost every config surface cited here changed within the last 12 months. Anthropic's Claude Code docs **moved from `docs.claude.com/en/docs/claude-code/*` to `code.claude.com/docs/en/*`** (301, verified today). OpenAI's Codex docs **moved from `developers.openai.com/codex/*` to `learn.chatgpt.com/docs/*`** (308, verified today). Meta's model cards moved from `llama.com/docs` to `developer.meta.com/ai/docs`. Do not reuse old URLs, and do not write config field names from memory.
 

@@ -1,10 +1,10 @@
-site_name: AI Mini-Courses
+site_name: AI Engineering Bazaar
 site_description: AI Engineering made simple, short, and useful.
 site_url: https://lokumai.github.io/ai-engineering-bazaar/
 repo_url: https://github.com/lokumai/ai-engineering-bazaar
 repo_name: lokumai/ai-engineering-bazaar
 
-docs_dir: mini-courses
+docs_dir: sections
 
 exclude_docs: |
   scratchpad/

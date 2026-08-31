@@ -1,6 +1,6 @@
 # Research Dossier — Module 15: Choosing a Coding Agent (comparison framework + evidence base)
 
-**Researched:** 2026-08-25 · **For:** the "landscape / how to choose" module in `mini-courses/2_intermediate/`
+**Researched:** 2026-08-25 · **For:** the "landscape / how to choose" module in `sections/2_intermediate/`
 **Scope:** the *connective tissue* between the three tool dossiers (open-source, commercial CLI, IDE).
 Benchmarks and what they don't measure · the axes that actually differentiate agents · the empirical
 evidence on developer speed · a decision framework.

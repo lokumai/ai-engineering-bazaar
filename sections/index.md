@@ -2,8 +2,6 @@
 
 AI Engineering made simple, short, and useful.
 
-📖 **Read online:** [lokumai.github.io/ai-engineering-bazaar](https://lokumai.github.io/ai-engineering-bazaar/)
-
 A series of mini-courses from beginner to advanced to help you learn practical topics in modern AI engineering. Each course is short, easy to understand, and includes real-world examples, clear visuals, and extra reading materials. It is the fastest way to master what you actually need on the job.
 
 ## Why This Is Valuable
@@ -29,34 +27,28 @@ rules — the short version:
 7. **Only the topics that matter.** A cheatsheet of AI Engineering, not a book about it.
    Knowing what to leave out takes experience a search engine cannot give you.
 
-📜 Full version: **[MANIFEST.md](MANIFEST.md)**
+📜 Full version: **[MANIFEST.md](https://github.com/lokumai/ai-engineering-bazaar/blob/main/MANIFEST.md)**
 
 ## Structure
 
-
 | Category                                                              | Modules | Description                                                                                                               |
 | --------------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------- |
-| [Fundamentals](sections/1_fundamentals/README.md)                     | 1-7     | LLMs, training, RAG, tools, memory, agents, multi-agent systems.**Start here.**                                           |
-| [Intermediate](sections/2_intermediate/README.md)                     | 8-15    | Prompt engineering, context engineering, coding agents, harness engineering, security, loop engineering, personal agents. |
-| [NOT READY] [Expert](sections/3_expert/README.md)                     | 16-24   | Advanced UI, architectures, tools, memory, multi-agent, prompting, context engineering, harness engineering, deployment.  |
-| [NOT READY] [Ecosystem](sections/4_ecosystem/README.md)               | 25-29   | Agent frameworks, inference providers, inference engines, UI design, observability.                                       |
-| [NOT READY] [Protocols & Specs](sections/5_protocols_specs/README.md) | 30      | A single reference of every protocol and spec mentioned across the series.                                                |
-| [NOT READY] [Optional](sections/6_optional/README.md)                 | 31-32   | Human-in-the-loop and runtime topics that round out the series.                                                           |
-
-
-
+| [Fundamentals](1_fundamentals/README.md)                     | 1-7     | LLMs, training, RAG, tools, memory, agents, multi-agent systems.**Start here.**                                           |
+| [Intermediate](2_intermediate/README.md)                     | 8-15    | Prompt engineering, context engineering, coding agents, harness engineering, security, loop engineering, personal agents. |
+| [NOT READY] [Expert](3_expert/README.md)                     | 16-24   | Advanced UI, architectures, tools, memory, multi-agent, prompting, context engineering, harness engineering, deployment.  |
+| [NOT READY] [Ecosystem](4_ecosystem/README.md)               | 25-29   | Agent frameworks, inference providers, inference engines, UI design, observability.                                       |
+| [NOT READY] [Protocols & Specs](5_protocols_specs/README.md) | 30      | A single reference of every protocol and spec mentioned across the series.                                                |
+| [NOT READY] [Optional](6_optional/README.md)                 | 31-32   | Human-in-the-loop and runtime topics that round out the series.                                                           |
 
 ### How to Use
 
-1. Start with [Fundamentals](sections/1_fundamentals/README.md) to learn must-know concepts in AI Engineering.
-2. Move on to [Intermediate](sections/2_intermediate/README.md) to build your core skills.
-3. Jump to [Ecosystem](sections/4_ecosystem/README.md) to learn the tools and frameworks needed to become a well-rounded AI engineer.
+1. Start with [Fundamentals](1_fundamentals/README.md) to learn must-know concepts in AI Engineering.
+2. Move on to [Intermediate](2_intermediate/README.md) to build your core skills.
+3. Jump to [Ecosystem](4_ecosystem/README.md) to learn the tools and frameworks needed to become a well-rounded AI engineer.
 
 🎉 Congrats! You are now an **AI engineer**. You can now build your own AI agents and systems.
 
-1. ⚜️ [ADVANCED] ⚜️ If you want to become a rare, highly-skilled AI engineer, take the [Expert](sections/3_expert/README.md) course to learn advanced topics.
-
-
+1. ⚜️ [ADVANCED] ⚜️ If you want to become a rare, highly-skilled AI engineer, take the [Expert](3_expert/README.md) course to learn advanced topics.
 
 ## Local Development
 
@@ -79,3 +71,7 @@ Before opening a PR, make sure the strict build passes (broken links fail CI):
 .venv/bin/mkdocs build --strict
 ```
 
+## Contributing
+
+This is an open source project. Found a typo or want to improve a module?
+[Open an issue or PR on GitHub](https://github.com/lokumai/ai-engineering-bazaar).

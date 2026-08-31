@@ -210,6 +210,15 @@
   }
   :focus:not(:focus-visible) { outline: none; }
 
+  /* `main` carries `tabindex="-1"` so the skip link's fragment target can hold
+     focus (§10.2, §10.3). A browser that lands focus there after a keypress
+     leaves it matching `:focus-visible`, which would ring the entire main
+     region in 2px of vermilion — a focus ring around a whole page is noise,
+     not an affordance. Specificity (0,1,1) beats the bare rule above without
+     `!important`; §9.6's one focus treatment still applies to everything a
+     keyboard actually tabs to. */
+  main:focus { outline: none; }
+
   /* §9.3 — the one page-load animation: opacity absorbs the font swap on the
      main column. Not a reveal; nothing is staggered; nothing else joins in.
      No fill mode, so a browser that ignores it still paints the page. */

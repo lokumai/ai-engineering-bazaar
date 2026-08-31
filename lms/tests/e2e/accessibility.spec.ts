@@ -58,6 +58,29 @@ test('the skip link moves the reader past the header', async ({ page }) => {
 
   await expect(page).toHaveURL(/#main$/)
 
+  // Focus itself has to land on `main`, not merely the fragment. Chrome and
+  // Firefox relocate the sequential-focus starting point to a fragment target
+  // that cannot hold focus, which hides the defect; Safari/VoiceOver does not,
+  // and leaves the VO cursor in the header. `main` carries `tabindex="-1"` so
+  // the target is focusable and every engine agrees.
+  expect(
+    await page.evaluate(() => document.activeElement?.id ?? null),
+    'the skip link left focus on the body',
+  ).toBe('main')
+
+  // …and it must not be *ringed*. `main` matches `:focus-visible` once focus
+  // arrives from a keypress, so without `main:focus { outline: none }` §9.6's
+  // one focus treatment paints 2px of vermilion around the whole page.
+  const ring = await page.evaluate(() => {
+    const main = document.getElementById('main')!
+    return {
+      outline: getComputedStyle(main).outlineStyle,
+      focusVisible: main.matches(':focus-visible'),
+    }
+  })
+  expect(ring.focusVisible, 'the un-ringing rule is no longer under test').toBe(true)
+  expect(ring.outline, 'main is ringed after the skip').toBe('none')
+
   // The point of the link is the next Tab, not the hash: whatever the browser
   // does with the fragment, focus has to continue from `main` rather than
   // restart at the header.
@@ -66,6 +89,13 @@ test('the skip link moves the reader past the header', async ({ page }) => {
   expect(focused, 'something has focus after the skip').not.toBeNull()
   expect(focused!.inHeader, `focus went back into the header: ${focused!.text}`).toBe(false)
   expect(focused!.inMain).toBe(true)
+})
+
+test('main is not a tab stop of its own', async ({ page }) => {
+  // `tabindex="-1"` and not `0`: §10.3 forbids a positive tabindex and a
+  // landmark that swallows a Tab is a new obstacle, not a fix.
+  await page.goto(A0.path)
+  await expect(page.locator('main#main')).toHaveAttribute('tabindex', '-1')
 })
 
 test('the header tab order runs left to right and stops at the repo link', async ({ page }) => {

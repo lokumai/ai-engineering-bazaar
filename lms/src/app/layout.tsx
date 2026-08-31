@@ -33,7 +33,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         <SiteHeader />
-        <main id="main" className="flex-1 pt-10 pb-16">
+        {/* §10.2 — the skip link's target. `tabIndex={-1}` so the fragment can
+            actually take focus: without it Safari/VoiceOver leaves the VO
+            cursor in the header after the skip. `main:focus` is un-ringed in
+            globals.css. */}
+        <main id="main" tabIndex={-1} className="flex-1 pt-10 pb-16">
           <RegistrationMarks edge="top" />
           {/* §4.7 — 24px of side padding, dropping to 20px below 768px. */}
           <div className="mx-auto w-full max-w-[var(--width-shell)] px-5 md:px-6">

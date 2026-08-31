@@ -170,6 +170,52 @@ test('the manifest table scrolls inside its region rather than the page', async 
   }
 })
 
+/**
+ * §6.5's affordance row: a 24px right-edge fade "applied **only while**
+ * `scrollWidth > clientWidth` and removed at the right end".
+ *
+ * It used to be scoped to `[data-hl-prose]`, which left out the two scrollers
+ * that need it most: the index sheet's 988px manifest table, which is the
+ * site's primary navigation surface and sits outside the prose column, and
+ * every code block, which §6.7 gives `overflow-x: auto` and no cue at all. At
+ * 390px that meant four columns of the manifest and half of every code fence
+ * ending at a hard border with nothing to say they continued.
+ */
+for (const [name, path] of [['index', '/'], ['module 13', LONGEST.path]] as const) {
+  test(`${name} tells the reader where a scroller continues`, async ({ page }) => {
+    await page.goto(path)
+    await page.waitForLoadState('networkidle')
+
+    const scrollers = await page.locator('[data-hl-scroller]').evaluateAll(
+      (nodes) => nodes.map((node) => ({
+        kind: node.className || node.tagName.toLowerCase(),
+        overflows: node.scrollWidth > node.clientWidth + 1,
+        marked: node.getAttribute('data-hl-overflow'),
+        mask: getComputedStyle(node).maskImage,
+      })),
+    )
+
+    expect(scrollers.length, `${path} has scroll containers`).toBeGreaterThan(0)
+    for (const scroller of scrollers) {
+      if (scroller.overflows) {
+        expect(scroller.marked, `${scroller.kind} overflows silently`).toBe('right')
+        expect(scroller.mask, `${scroller.kind} has no fade`).toContain('gradient')
+      } else {
+        // The other half of §6.5: a fade over content that does not continue
+        // is the affordance lying about there being more.
+        expect(scroller.marked, `${scroller.kind} fades but fits`).toBeNull()
+        expect(scroller.mask).toBe('none')
+      }
+    }
+
+    // At 390 the containment has to be doing real work, or the loop above is
+    // proving nothing.
+    if (page.viewportSize()!.width < 500) {
+      expect(scrollers.some((s) => s.overflows)).toBe(true)
+    }
+  })
+}
+
 test('the sheet gives up its zones in §4.7 order as the viewport narrows', async ({ page }) => {
   const width = page.viewportSize()!.width
   await page.goto(LONGEST.path) // an A0 sheet — the only format with three zones

@@ -87,7 +87,16 @@ export function SheetIndex({
   const columns = columnsFor(column)
 
   return (
-    <div className="hl-index-scroll" role="region" tabIndex={0} aria-label={label}>
+    <div
+      className="hl-index-scroll"
+      role="region"
+      tabIndex={0}
+      aria-label={label}
+      // §6.5's overflow fade, measured by `Affordances` in the shell. At 390px
+      // this table is 988px wide in a 350px box and four of its columns are
+      // off-screen; without the cue nothing says so.
+      data-hl-scroller=""
+    >
       <table className="hl-index">
         <caption className="sr-only">{label}</caption>
         <colgroup>

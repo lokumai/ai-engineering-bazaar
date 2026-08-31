@@ -1,5 +1,9 @@
 /**
- * The two behaviours §6 asks of the prose column that CSS cannot express.
+ * The two behaviours §6 asks for that CSS cannot express.
+ *
+ * They are not scoped to the prose column: §6.5's overflow rule governs any
+ * container that scrolls sideways, and the widest one on the site is the index
+ * sheet's manifest table (§4.8), which has no prose anywhere near it.
  *
  * Both are affordances, not information: with JavaScript off the table still
  * scrolls and the code is still selectable and copyable by hand. Nothing here

@@ -252,6 +252,28 @@
     transition: background-color 90ms linear, border-color 90ms linear;
   }
 
+  /* §6.5 — the overflow affordance: a 24px fade at the right edge of anything
+     that scrolls sideways, present only while `scrollWidth > clientWidth` and
+     removed at the right end. `Affordances` sets the attribute on every
+     `[data-hl-scroller]`; §6.5 writes the rule for a table, §6.10 B5 reuses it
+     for a diagram, and a code block that clips mid-token beside a table that
+     fades is one page saying two things. With no JavaScript there is no fade,
+     and nothing is hidden by its absence (§10.4 — the fade is never the sole
+     carrier of anything; the container still scrolls and still says so to a
+     screen reader).
+
+     Suspended while the container has focus. §10.3 makes every scroller a tab
+     stop and §9.6 rings it at `outline-offset: -2px`, so the mask would fade
+     the right-hand side of that ring away exactly when a keyboard reader needs
+     it. The ring wins; the fade comes back when focus leaves. */
+  [data-hl-overflow="right"] {
+    mask-image: linear-gradient(to left, transparent, black 24px);
+  }
+
+  [data-hl-overflow="right"]:focus-visible {
+    mask-image: none;
+  }
+
   /* §3.4 — any machine-derived value in chrome. Always uppercase, always
      tabular: a readout whose digits shift width is not an instrument. */
   .hl-mark {

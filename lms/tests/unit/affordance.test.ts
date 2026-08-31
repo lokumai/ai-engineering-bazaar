@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { COPIED_MS, overflowState } from '@/lib/prose-affordance'
+import { COPIED_MS, overflowState } from '@/lib/affordance'
 
 describe('overflowState', () => {
   it('shows nothing when the content fits', () => {

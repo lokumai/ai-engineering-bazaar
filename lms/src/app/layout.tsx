@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Affordances } from '@/components/shell/Affordances'
 import { RegistrationMarks } from '@/components/shell/RegistrationMarks'
 import { SiteFooter } from '@/components/shell/SiteFooter'
 import { SiteHeader } from '@/components/shell/SiteHeader'
@@ -46,6 +47,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <RegistrationMarks edge="bottom" className="mt-16" />
         </main>
         <SiteFooter />
+        {/* §6.5 / §6.7 — the overflow fade and the COPY control, once per
+            document. In the shell rather than in the prose column because the
+            index sheet's manifest table scrolls too and has no prose. */}
+        <Affordances />
       </body>
     </html>
   )

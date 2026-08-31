@@ -47,7 +47,7 @@ import {
  *    magnify something that does not exist.
  */
 
-/** The markers `render.ts` emits, scoped the way `ProseEnhancements` scopes. */
+/** The markers `render.ts` emits, scoped to the prose column the island owns. */
 const SOURCES = '[data-hl-prose] .mermaid-source[data-mermaid]'
 /** §6.10 B5's control, in the caption strip. */
 const EXPAND = '[data-hl-prose] [data-hl-expand]'

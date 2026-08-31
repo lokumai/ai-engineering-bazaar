@@ -439,17 +439,12 @@
     );
   }
 
-  /* Every wide thing scrolls inside its own container, in every case. */
+  /* Every wide thing scrolls inside its own container, in every case. The
+     right-edge fade that says so lives in globals.css, keyed on the same
+     `[data-hl-overflow]` attribute for every scroller on the site. */
   .prose :is(.table-scroll, .hl-diagram-body) {
     overflow-x: auto;
     overscroll-behavior-x: contain;
-  }
-
-  /* The overflow affordance: a 24px fade at the right edge, present only while
-     there is more to the right. `ProseEnhancements` sets the attribute; with no
-     JavaScript there is no fade, and nothing is hidden by its absence. */
-  .prose [data-hl-overflow="right"] {
-    mask-image: linear-gradient(to left, transparent, black 24px);
   }
 
   /* -- §6.5 Tables -------------------------------------------------------- */

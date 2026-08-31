@@ -361,10 +361,17 @@ function scrollRegion(
   children: ElementContent[],
 ): Element {
   // §10.3 — a horizontal scroll container is reachable and scrollable from the
-  // keyboard, or it is unusable without a mouse.
+  // keyboard, or it is unusable without a mouse. `data-hl-scroller` is what
+  // `Affordances` measures for §6.5's right-edge fade.
   return element(
     'div',
-    { className: [className], role: 'region', tabIndex: 0, 'aria-label': ariaLabel },
+    {
+      className: [className],
+      role: 'region',
+      tabIndex: 0,
+      'aria-label': ariaLabel,
+      'data-hl-scroller': '',
+    },
     children,
   )
 }
@@ -656,6 +663,11 @@ function rehypeCodeBlocks() {
         tabIndex: 0,
         role: 'region',
         'aria-label': language === 'output' ? 'Program output' : `${language} code`,
+        // §6.7 gives the body `overflow-x: auto` and says nothing about a fade,
+        // but a code block that clips mid-token while the table beside it fades
+        // is the same page telling a reader two different things. MEASURED: at
+        // 390px all eight blocks on the RAG sheet overflow.
+        'data-hl-scroller': '',
       }
 
       parent.children[index] = element(

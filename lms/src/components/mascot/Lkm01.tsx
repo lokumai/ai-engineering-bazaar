@@ -9,6 +9,7 @@ import {
   edgeStateOf,
   faceStatesFor,
   hatchSpec,
+  isTracked,
   progressLabel,
   type FaceState,
   type HatchSpec,
@@ -34,8 +35,18 @@ import {
  * colour answer to its state while its solid/dashed treatment never changes.
  * So the ink named in §8.1 is what the cube looks like once a subsystem is
  * under way, and an untouched cube is the same drawing at hairline weight —
- * the "unenergized" cube §8.3 asks for on the empty state. Nothing is lost to
- * a reader who cannot see it: the state is in the accessible name (§10.4).
+ * the "unenergized" cube §8.3 asks for on the empty state.
+ *
+ * **The name it takes depends on whether it has a state to report.** Given a
+ * real reading it is `role="img"` named in §8.3's form, so nothing is lost to a
+ * reader who cannot see it (§10.4). Given `0` there is no progress store to
+ * read, every face is dormant for that reason alone, and the mark conveys
+ * nothing a reader could act on — so it paints and carries `aria-hidden`,
+ * rather than telling assistive technology about an empty progress record the
+ * site cannot keep. That is the same resolution §7.2 reaches for the inert task
+ * lists: an element that cannot yet back its state still draws, it just stops
+ * announcing itself. §1 forbids the alternative, and the header already applies
+ * it by withholding the search trigger and the language toggle.
  */
 
 /** §8.2 — the three face states, and the two things that answer to them. */
@@ -62,6 +73,7 @@ export interface Lkm01Props {
 export function Lkm01({ progress, size = 28, idPrefix = 'lkm01', className }: Lkm01Props) {
   const states = faceStatesFor(progress)
   const hatch = hatchSpec(size)
+  const tracked = isTracked(progress)
 
   const approved = FACES.filter((face) => states[face.id] === 'complete')
   const hatchVisible = approved.some((face) => face.visible)
@@ -78,8 +90,9 @@ export function Lkm01({ progress, size = 28, idPrefix = 'lkm01', className }: Lk
       width={size}
       height={size}
       viewBox={VIEW_BOX}
-      role="img"
-      aria-label={progressLabel(states)}
+      {...(tracked
+        ? { role: 'img' as const, 'aria-label': progressLabel(states) }
+        : { 'aria-hidden': true })}
       className={className}
     >
       {(hatchVisible || hatchHidden) && (

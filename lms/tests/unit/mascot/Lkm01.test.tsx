@@ -40,9 +40,25 @@ describe('Lkm01 — the mark itself', () => {
   })
 
   it('names its state for a screen reader, in the §8.3 form', () => {
-    const svg = tagsOf(markup, 'svg')[0]
+    const svg = tagsOf(
+      renderToStaticMarkup(<Lkm01 progress={{ fundamentals: { approved: 1, total: 7 } }} />),
+      'svg',
+    )[0]
     expect(svg.role).toBe('img')
-    expect(svg['aria-label']).toBe('Progress: 0 of 6 subsystems started')
+    expect(svg['aria-label']).toBe('Progress: 1 of 6 subsystems started')
+  })
+
+  it('claims no progress reading when there is no progress store (§1)', () => {
+    // `progress={0}` means "nothing can record an approval yet", not "this
+    // reader has approved nothing". Announcing an empty progress record would
+    // tell a screen-reader user about a feature the site does not have, so the
+    // untracked mark paints and stays out of the accessibility tree — the same
+    // resolution §7.2 reaches for the inert task lists.
+    const svg = tagsOf(markup, 'svg')[0]
+    expect(svg['aria-hidden']).toBe('true')
+    expect(svg.role).toBeUndefined()
+    expect(svg['aria-label']).toBeUndefined()
+    expect(markup).not.toContain('Progress:')
   })
 
   it('draws all twelve edges of the cube', () => {

@@ -193,6 +193,18 @@ export function progressLabel(states: FaceStates): string {
   return `Progress: ${started} of ${FACES.length} subsystems started`
 }
 
+/**
+ * Whether a progress value is a *reading* or the absence of one.
+ *
+ * `0` is not "this reader has approved nothing" — it is "there is nothing that
+ * could record an approval", because the progress store does not exist yet.
+ * The two are different facts and only one of them is worth announcing, so the
+ * mark asks this before it decides whether it has a state to name (§1).
+ */
+export function isTracked(progress: Lkm01Progress): boolean {
+  return progress !== 0
+}
+
 export interface HatchSpec {
   /** Distance between hatch lines, in user units. */
   pitch: number

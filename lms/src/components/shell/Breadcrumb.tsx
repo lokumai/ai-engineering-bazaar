@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useSelectedLayoutSegment } from 'next/navigation'
 import { breadcrumbFor } from '@/lib/route-labels'
 
 /**
@@ -13,11 +13,16 @@ import { breadcrumbFor } from '@/lib/route-labels'
  * A module's sheet number is not — that lives in the content — so it is
  * absent here rather than guessed at.
  *
+ * The route is the pathname on every page but one. `404.html` is prerendered
+ * at `/_not-found` and served at every address that is not a sheet, so there
+ * the pathname is whatever was asked for and names nothing; the layout segment
+ * is what both the export and the browser agree on. See `NOT_FOUND_SEGMENT`.
+ *
  * Below 768px only the current segment shows: the landmark stays, the 56px
  * header does not overflow (§11.10).
  */
 export function Breadcrumb() {
-  const crumbs = breadcrumbFor(usePathname() ?? '/')
+  const crumbs = breadcrumbFor(usePathname() ?? '/', useSelectedLayoutSegment())
 
   return (
     <nav aria-label="Drawing set" className="min-w-0">

@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { breadcrumbFor, markTokens, sheetLabelFor } from '@/lib/route-labels'
+import {
+  NOT_FOUND_SEGMENT,
+  NOT_FOUND_SHEET_LABEL,
+  NOT_FOUND_TITLE,
+  breadcrumbFor,
+  markTokens,
+  sheetLabelFor,
+} from '@/lib/route-labels'
 
 describe('breadcrumbFor', () => {
   it('shows the index as the current page at the root', () => {
@@ -46,6 +53,60 @@ describe('breadcrumbFor', () => {
       { label: 'Intermediate', href: '/courses/intermediate/' },
       { label: 'security', href: null },
     ])
+  })
+})
+
+describe('breadcrumbFor on the not-found route', () => {
+  /**
+   * The regression this exists for: `404.html` is prerendered once at
+   * `/_not-found` and a static host serves it at every address that is not a
+   * sheet, so the trail has to come out the same whatever the URL says. It did
+   * not — the export read `_NOT FOUND` and the browser `404` — and React
+   * answers a text mismatch by re-rendering the document, which threw away
+   * §2.5's theme class and left a dark-theme reader on a white 404.
+   */
+  const urls = ['/_not-found/', '/404/', '/typo/', '/courses/fundamentals/bogus/', '/']
+
+  it('reads the same on every address the document can be served at', () => {
+    const trails = urls.map((url) => breadcrumbFor(url, NOT_FOUND_SEGMENT))
+    for (const trail of trails) expect(trail).toEqual(trails[0])
+  })
+
+  it('names the page rather than the URL that was asked for', () => {
+    expect(breadcrumbFor('/404/', NOT_FOUND_SEGMENT)).toEqual([
+      { label: 'Index', href: '/' },
+      { label: NOT_FOUND_TITLE, href: null },
+    ])
+  })
+
+  it('leaks no part of the address into the trail', () => {
+    const labels = breadcrumbFor('/courses/fundamentals/bogus/', NOT_FOUND_SEGMENT)
+      .map((crumb) => crumb.label)
+      .join(' ')
+    expect(labels).not.toMatch(/bogus|not.?found|404/i)
+  })
+
+  it('still links home, which is the one route it can promise exists', () => {
+    expect(breadcrumbFor('/404/', NOT_FOUND_SEGMENT)[0].href).toBe('/')
+  })
+
+  it('leaves every other route to the pathname', () => {
+    for (const segment of [null, 'courses', '__PAGE__']) {
+      expect(breadcrumbFor('/courses/', segment)).toEqual([
+        { label: 'Index', href: '/' },
+        { label: 'Drawing set', href: null },
+      ])
+    }
+  })
+})
+
+describe('NOT_FOUND_SHEET_LABEL', () => {
+  it('is the page\'s own name, in the case §3.4 writes chrome labels in', () => {
+    expect(NOT_FOUND_SHEET_LABEL).toBe(NOT_FOUND_TITLE.toUpperCase())
+  })
+
+  it('carries no machine-derived value, because nothing was counted', () => {
+    expect(markTokens(NOT_FOUND_SHEET_LABEL).some((token) => token.value)).toBe(false)
   })
 })
 

@@ -18,6 +18,40 @@ export interface Crumb {
   href: string | null
 }
 
+/**
+ * Next's own segment for the not-found boundary, and the one route whose URL
+ * is not a fact about the page.
+ *
+ * `404.html` is prerendered once, at `/_not-found`, and a static host then
+ * serves that same document at every address that is not a sheet. Anything in
+ * the shell derived from `usePathname()` therefore renders one string on the
+ * server and a different one in the browser — the header trail read `_NOT
+ * FOUND` in the export and `404` on the page — and React answers a text
+ * mismatch by re-rendering the whole document from scratch. That threw away
+ * §2.5's boot script class with it, so a reader whose theme is dark got a 404
+ * in light. It was the only page on the site logging a hydration error.
+ *
+ * `useSelectedLayoutSegment()` reads the router tree, which is embedded in the
+ * document, so both sides see this constant and agree.
+ */
+export const NOT_FOUND_SEGMENT = '/_not-found'
+
+/**
+ * What that route calls itself, in the trail (§5.1), in the footer's sheet
+ * slot (§5.2) and as the page title. It is not a sheet in the set, and the
+ * one honest thing it can say is that no such sheet exists — never the URL
+ * that was asked for, which names nothing.
+ */
+export const NOT_FOUND_TITLE = 'No such sheet'
+
+/**
+ * The same name in the case chrome labels are written in (§3.4). The footer
+ * takes it as `PageShell`'s `sheet` override rather than reading the route:
+ * `SheetLabel` sits below the page boundary, where the layout segment is the
+ * page's own and no longer names the not-found route.
+ */
+export const NOT_FOUND_SHEET_LABEL = NOT_FOUND_TITLE.toUpperCase()
+
 function segmentsOf(pathname: string): string[] {
   return pathname.split('/').filter(Boolean)
 }
@@ -44,7 +78,15 @@ function subsystemLabel(slug: string): string {
     : titleFor(slug).toUpperCase()
 }
 
-export function breadcrumbFor(pathname: string): Crumb[] {
+/**
+ * `segment` is `useSelectedLayoutSegment()`. It is only ever consulted to
+ * recognise the not-found route, where the pathname is not the page's.
+ */
+export function breadcrumbFor(pathname: string, segment: string | null = null): Crumb[] {
+  if (segment === NOT_FOUND_SEGMENT) {
+    return [{ label: 'Index', href: '/' }, { label: NOT_FOUND_TITLE, href: null }]
+  }
+
   const segments = segmentsOf(pathname)
   if (segments.length === 0) return [{ label: 'Index', href: null }]
 

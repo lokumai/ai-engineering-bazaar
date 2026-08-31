@@ -11,6 +11,10 @@ import { markTokens, sheetLabelFor } from '@/lib/route-labels'
  * `sheet` is the override a module page passes once it knows its number; with
  * nothing passed, the label is derived from the route, and a route that cannot
  * name itself renders nothing rather than a number nobody counted.
+ *
+ * The not-found route is the reason `sheet` is not optional *there*: its URL
+ * is whatever was asked for, so it has to be told its own name. See
+ * `NOT_FOUND_SEGMENT`.
  */
 export function SheetLabel({ sheet }: { sheet?: string | null }) {
   const pathname = usePathname() ?? '/'

@@ -1,4 +1,7 @@
 @import "tailwindcss";
+/* §6 — the prose column, in its own file because it is the largest single
+   section of the spec and the one a reader spends 95% of their time inside. */
+@import "./prose.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 

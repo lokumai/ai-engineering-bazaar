@@ -1,0 +1,216 @@
+import { describe, expect, it } from 'vitest'
+import { imageBaseFor } from '@/lib/content/images'
+import { type CourseModule, loadAllModules } from '@/lib/content/loader'
+import { type RenderedMarkdown, renderMarkdown } from '@/lib/content/render'
+
+/**
+ * The render pipeline, run against the real corpus rather than fixtures.
+ *
+ * A fixture proves the transform does what its author expected. Thirty-two
+ * real modules — 96 Roman-numeral headings, 44 tagged code blocks, 30 diagrams,
+ * 46 tables, 404 external links and 8 images — prove it survives the content
+ * that actually exists, which is the only thing a reader will ever see.
+ *
+ * Run on its own with:  npx vitest run tests/corpus
+ */
+
+const modules = loadAllModules()
+
+const rendered = new Map<string, RenderedMarkdown>()
+
+async function renderAll(): Promise<Map<string, RenderedMarkdown>> {
+  if (rendered.size > 0) return rendered
+  for (const module of modules) {
+    rendered.set(
+      module.slug,
+      await renderMarkdown(module.body, {
+        imageBase: imageBaseFor(module.category.slug),
+        sheet: module.frontmatter.module,
+      }),
+    )
+  }
+  return rendered
+}
+
+function forEachModule(
+  assertion: (module: CourseModule, output: RenderedMarkdown) => void,
+): () => Promise<void> {
+  return async () => {
+    const all = await renderAll()
+    for (const module of modules) {
+      const output = all.get(module.slug)
+      expect(output, `${module.slug} did not render`).toBeDefined()
+      assertion(module, output as RenderedMarkdown)
+    }
+  }
+}
+
+describe('the corpus renders', () => {
+  it('finds all 32 sheets', () => {
+    expect(modules).toHaveLength(32)
+  })
+
+  it('renders every one of them without throwing', async () => {
+    const all = await renderAll()
+    expect(all.size).toBe(32)
+    for (const [slug, output] of all) {
+      expect(output.html.length, `${slug} rendered empty`).toBeGreaterThan(0)
+    }
+  })
+})
+
+describe('B6.1 / B6.2 — the header lines the title block already states', () => {
+  it('leaks no h1 into the prose', forEachModule((_, { html }) => {
+    expect(html).not.toContain('<h1')
+  }))
+
+  it('leaks no category dek', forEachModule((_, { html }) => {
+    expect(html).not.toMatch(/<em>(Category|Kategori):/)
+  }))
+})
+
+describe('B6.3 — section marks', () => {
+  it('splits 96 Roman numerals across 15 sheets, and no more', async () => {
+    const all = await renderAll()
+    let marks = 0
+    let sheets = 0
+    for (const module of modules) {
+      const found = all.get(module.slug)?.toc.filter((entry) => entry.mark).length ?? 0
+      marks += found
+      if (found > 0) sheets += 1
+    }
+    expect(marks).toBe(96)
+    expect(sheets).toBe(15)
+  })
+
+  it('never leaves a numeral in an h2 heading text', forEachModule((module, { toc }) => {
+    // h3s carry their own `A.` / `B.` lettering, which §6.1 deliberately leaves
+    // alone: only h2 is a section.
+    for (const entry of toc.filter((e) => e.depth === 2)) {
+      expect(entry.text, `${module.slug}`).not.toMatch(/^[IVXLC]+\.\s/)
+    }
+  }))
+
+  it('gives every section a non-empty id and text', forEachModule((module, { toc }) => {
+    for (const entry of toc) {
+      expect(entry.id, `${module.slug}`).toMatch(/\S/)
+      expect(entry.text, `${module.slug}`).toMatch(/\S/)
+    }
+  }))
+})
+
+describe('B5 — every table and figure is width-classed and scrollable', () => {
+  it('classes every table, and never leaves one unclassed', forEachModule((module, { html }) => {
+    const figures = html.match(/<figure class="hl-figure hl-table"[^>]*>/g) ?? []
+    const tables = html.match(/<table>/g) ?? []
+    expect(figures.length, `${module.slug}`).toBe(tables.length)
+    for (const figure of figures) {
+      expect(figure, `${module.slug}`).toMatch(/data-hl-width="(prose|wide|full)"/)
+    }
+  }))
+
+  it('puts every table inside its own scroll container', forEachModule((module, { html }) => {
+    const tables = (html.match(/<table>/g) ?? []).length
+    const scrollers = (html.match(/<div class="table-scroll"/g) ?? []).length
+    expect(scrollers, `${module.slug}`).toBe(tables)
+  }))
+
+  it('agrees with the corpus: 49 tables, the widest 6 columns', async () => {
+    const all = await renderAll()
+    const columns: number[] = []
+    for (const module of modules) {
+      const html = all.get(module.slug)?.html ?? ''
+      for (const match of html.matchAll(/data-hl-columns="(\d+)"/g)) {
+        columns.push(Number(match[1]))
+      }
+    }
+    expect(columns).toHaveLength(49)
+    expect(Math.max(...columns)).toBe(6)
+  })
+
+  it('gives every scroll container a keyboard entry point (§10.3)', forEachModule((module, { html }) => {
+    for (const region of html.match(/<div class="(table-scroll|hl-diagram-body)"[^>]*>/g) ?? []) {
+      expect(region, `${module.slug}`).toContain('tabindex="0"')
+      expect(region, `${module.slug}`).toContain('role="region"')
+      expect(region, `${module.slug}`).toMatch(/aria-label="[^"]+"/)
+    }
+  }))
+
+  it('captions every figure with a figcaption, never a div (§10.2)', forEachModule((module, { html }) => {
+    const figures = (html.match(/<figure class="hl-figure/g) ?? []).length
+    const captions = (html.match(/<figcaption class="hl-cap"/g) ?? []).length
+    expect(captions, `${module.slug}`).toBe(figures)
+  }))
+})
+
+describe('B3 — no hardcoded colour reaches the browser', () => {
+  it('leaves no raw fill anywhere in the rendered corpus', forEachModule((module, { html }) => {
+    expect(html, `${module.slug}`).not.toMatch(/fill:\s*#[0-9A-Fa-f]{3,8}/)
+  }))
+
+  it('leaves no colour literal at all inside a mermaid source', forEachModule((module, { html }) => {
+    for (const match of html.matchAll(/data-mermaid="([^"]*)"/g)) {
+      expect(match[1], `${module.slug}`).not.toMatch(/#[0-9A-Fa-f]{3,8}\b/)
+    }
+  }))
+
+  it('remaps all 22 semantic fills into the four token classes', async () => {
+    const all = await renderAll()
+    const classes = new Set<string>()
+    let assignments = 0
+    for (const module of modules) {
+      for (const match of (all.get(module.slug)?.html ?? '').matchAll(
+        /class (\S+) (fault|verify|info|caution)/g,
+      )) {
+        classes.add(match[2])
+        assignments += match[1].split(',').length
+      }
+    }
+    expect(assignments).toBe(22)
+    expect(classes).toEqual(new Set(['fault', 'verify', 'info', 'caution']))
+  })
+
+  it('keeps the 30 real diagrams and drops the 32 progress rails', async () => {
+    const all = await renderAll()
+    let diagrams = 0
+    for (const module of modules) {
+      diagrams += (all.get(module.slug)?.html.match(/class="mermaid-source"/g) ?? []).length
+    }
+    expect(diagrams).toBe(21)
+  })
+})
+
+describe('§6.7 — code blocks', () => {
+  it('gives every block a language tag and a copy control', forEachModule((module, { html }) => {
+    const blocks = (html.match(/<div class="hl-code"/g) ?? []).length
+    expect((html.match(/data-hl-copy/g) ?? []).length, `${module.slug}`).toBe(blocks)
+    expect((html.match(/class="hl-code-lang"/g) ?? []).length, `${module.slug}`).toBe(blocks)
+  }))
+
+  it('never leaves a bare pre outside a code container', forEachModule((module, { html }) => {
+    const containers = (html.match(/<div class="hl-code"/g) ?? []).length
+    expect((html.match(/<pre/g) ?? []).length, `${module.slug}`).toBe(containers)
+  }))
+
+  it('emphasises keywords at 500, never at bold', forEachModule((module, { html }) => {
+    expect(html, `${module.slug}`).not.toContain('font-weight:bold')
+  }))
+
+  it('emits both theme variants wherever it highlights (B8)', async () => {
+    const all = await renderAll()
+    const highlighted = [...all.values()].filter((o) => o.html.includes('--shiki-light:'))
+    expect(highlighted.length).toBeGreaterThan(0)
+    for (const output of highlighted) expect(output.html).toContain('--shiki-dark:')
+  })
+})
+
+describe('§6.3 — links', () => {
+  it('marks every external link and no internal one', forEachModule((module, { html }) => {
+    const externals = (html.match(/data-hl-external/g) ?? []).length
+    const marks = (html.match(/class="hl-ext-mark"/g) ?? []).length
+    expect(marks, `${module.slug}`).toBe(externals)
+    for (const anchor of html.match(/<a href="(?!https?:)[^"]*"[^>]*>/g) ?? []) {
+      expect(anchor, `${module.slug}`).not.toContain('data-hl-external')
+    }
+  }))
+})

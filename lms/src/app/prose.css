@@ -1,0 +1,688 @@
+/* ===========================================================================
+   §6 — Long-form prose.
+
+   Everything here applies inside `.prose`, the 656px measure (§3.3). This is
+   where a senior reader spends the whole visit, so the rules are the spec's
+   exact numbers: 17px on a 1.7 leading, 20px between paragraphs, hairlines at
+   1px and structural rules at 1.5px, and a border radius of zero everywhere.
+
+   Three things this file refuses, because they are the tells (§11):
+   inline-code pills, a left bar on a blockquote, and a syntax theme with more
+   than four token colours.
+   =========================================================================== */
+
+@layer components {
+  .prose {
+    /* The layout owns the column; this is the default it inherits from §3.3.
+       At 1024–1279 the right rail collapses and §4.7 lets the measure grow, so
+       the layout raises `--hl-measure` rather than fighting a hard cap. */
+    max-width: var(--hl-measure, var(--width-prose));
+    min-width: 0;
+
+    font-family: var(--font-body);
+    font-size: var(--text-prose);
+    line-height: var(--text-prose--line-height);
+    color: var(--color-ink);
+    font-optical-sizing: auto;
+    overflow-wrap: break-word;
+  }
+
+  .prose > :first-child { margin-top: 0; }
+  .prose > :last-child { margin-bottom: 0; }
+
+  /* -- §6.1 Headings ------------------------------------------------------ */
+
+  .prose :is(h1, h2, h3, h4) {
+    font-family: var(--font-display);
+    color: var(--color-ink);
+    text-wrap: pretty;
+    position: relative;
+  }
+
+  /* The build strips the markdown h1 (B6.1), so this is for the sheet title the
+     page renders from frontmatter into the top of the column (§4.6, §5.5): the
+     16px gap, the structural rule, then 32px before the lead. */
+  .prose h1 {
+    font-size: var(--text-h1);
+    font-weight: 700;
+    letter-spacing: -0.020em;
+    line-height: var(--text-h1--line-height);
+    margin: 0 0 32px;
+    padding-bottom: 16px;
+    border-bottom: var(--stroke-struct) solid var(--color-line-strong);
+  }
+
+  .prose h2 {
+    /* The first line box of the heading, which is what a gutter mark has to
+       align its baseline against. */
+    --hl-line: calc(var(--text-h2) * var(--text-h2--line-height));
+    font-size: var(--text-h2);
+    font-weight: 600;
+    letter-spacing: -0.012em;
+    line-height: var(--text-h2--line-height);
+    margin: 56px 0 16px;
+  }
+
+  .prose h3 {
+    --hl-line: calc(var(--text-h3) * var(--text-h3--line-height));
+    font-size: var(--text-h3);
+    font-weight: 600;
+    letter-spacing: -0.010em;
+    line-height: var(--text-h3--line-height);
+    margin: 40px 0 12px;
+  }
+
+  .prose h4 {
+    font-size: var(--text-h4);
+    font-weight: 600;
+    letter-spacing: -0.008em;
+    line-height: var(--text-h4--line-height);
+    margin: 32px 0 8px;
+  }
+
+  /* Section marks. The numeral the build split off an `## VII. …` heading sits
+     in the gutter at x = -44px on its own 8px hairline tick at x = -20px — the
+     one motif §4.3 permits in the prose gutter. Non-Roman h2s get neither. */
+  .prose h2[data-mark]::before {
+    content: attr(data-mark) ".";
+    display: inline-block;
+    /* Spans the gutter from x = -44 to x = -12; the 12px right margin returns
+       the heading text to x = 0, so it starts flush at the measure however the
+       numeral is set. An inline-block on `vertical-align: baseline` gets the
+       baseline alignment from the two fonts' own metrics — no magic offset to
+       drift when the type scale moves. */
+    width: 32px;
+    margin-left: -44px;
+    margin-right: 12px;
+    vertical-align: baseline;
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0.06em;
+    color: var(--color-ink-muted);
+    /* The 8px baseline tick at x = -20, drawn on the mark's own box so it can
+       only ever sit on the mark's baseline. */
+    background-image: linear-gradient(var(--color-line), var(--color-line));
+    background-size: 8px var(--stroke-hair);
+    background-position: right bottom;
+    background-repeat: no-repeat;
+  }
+
+  /* The tick and the § anchor both want x = -20px. Only ever show one. */
+  .prose h2[data-mark]:hover::before {
+    background-image: none;
+  }
+
+  /* The heading anchor: revealed on hover, and always present for a keyboard
+     user the moment it takes focus (§9.6). */
+  .prose .hl-anchor {
+    position: absolute;
+    left: -20px;
+    top: 0;
+    height: var(--hl-line);
+    line-height: var(--hl-line);
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    letter-spacing: 0.06em;
+    color: var(--color-ink-faint);
+    text-decoration: none;
+    opacity: 0;
+  }
+
+  .prose :is(h2, h3):hover .hl-anchor,
+  .prose .hl-anchor:focus-visible {
+    opacity: 1;
+  }
+
+  .prose .hl-anchor:hover {
+    color: var(--color-ink-muted);
+  }
+
+  /* Below 1280 there is no gutter to hang a numeral in, so it moves inline as a
+     mono prefix with a 12px gap, and the baseline tick goes with the gutter. */
+  @media (max-width: 1279px) {
+    .prose h2[data-mark]::before {
+      width: auto;
+      margin-left: 0;
+      background-image: none;
+    }
+  }
+
+  /* At phone widths the gutter is 20px of page padding; an element at -20px
+     would sit on the viewport edge, and §11.10 is absolute about that. */
+  @media (max-width: 767px) {
+    .prose .hl-anchor {
+      display: none;
+    }
+  }
+
+  /* -- §6.2 Paragraphs ---------------------------------------------------- */
+
+  .prose p {
+    margin: 0 0 20px;
+    text-wrap: auto;
+    /* A 68ch measure rags badly against a 20-character term like
+       "Retrieval-Augmented", and this corpus is full of them. */
+    hyphens: auto;
+    hyphenate-limit-chars: 7 4 4;
+  }
+
+  /* The lead. Serif, because §3's three-voice rule has no exceptions: this is
+     still human argument, only larger and quieter. */
+  .prose p.hl-lead {
+    font-size: var(--text-h4);
+    line-height: 1.55;
+    color: var(--color-ink-muted);
+    hyphens: none;
+  }
+
+  /* 600, not 700. This content bolds a term in nearly every bullet, and Source
+     Serif at 700 spot-blots a paragraph. */
+  .prose strong {
+    font-weight: 600;
+  }
+
+  /* The true italic, never a synthesised oblique. */
+  .prose em {
+    font-style: italic;
+    font-synthesis: none;
+  }
+
+  .prose hr {
+    border: 0;
+    border-top: var(--stroke-hair) solid var(--color-line);
+    margin: 40px 0;
+  }
+
+  /* -- §6.3 Links --------------------------------------------------------- */
+
+  /* T3: ink text, a line-strong underline, and the accent only on hover or
+     focus. Module 9 carries 74 external links — 74 vermilion words would be
+     unreadable and would end `--color-accent` meaning "signed off". */
+  .prose a {
+    color: var(--color-ink);
+    text-decoration-line: underline;
+    text-decoration-color: var(--color-line-strong);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.12em;
+    text-decoration-skip-ink: auto;
+    transition: text-decoration-color 90ms linear;
+  }
+
+  .prose a:hover {
+    text-decoration-color: var(--color-accent);
+    text-decoration-thickness: 2px;
+  }
+
+  .prose a:focus-visible {
+    text-decoration-color: var(--color-accent);
+  }
+
+  .prose a.hl-anchor {
+    text-decoration: none;
+  }
+
+  /* inline-block so the link's own underline is not painted across the mark. */
+  .prose .hl-ext-mark {
+    display: inline-block;
+    margin-left: 2px;
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    color: var(--color-ink-faint);
+  }
+
+  /* -- §6.4 Lists --------------------------------------------------------- */
+
+  .prose :is(ul, ol) {
+    margin: 0 0 20px;
+    padding-left: 24px;
+    list-style: none;
+  }
+
+  .prose li {
+    position: relative;
+    /* Tighter than a paragraph: a list is not continuous prose. */
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+
+  .prose li:last-child {
+    margin-bottom: 0;
+  }
+
+  .prose li > :is(ul, ol) {
+    margin: 8px 0 0;
+  }
+
+  /* An en dash, not a disc. The marker column hangs at the measure's edge and
+     the item text is what indents. */
+  .prose ul > li::before {
+    content: "–";
+    position: absolute;
+    left: -24px;
+    width: 24px;
+    color: var(--color-ink-faint);
+  }
+
+  .prose li ul > li::before {
+    content: "·";
+  }
+
+  .prose ol {
+    counter-reset: hl-item;
+  }
+
+  .prose ol > li {
+    counter-increment: hl-item;
+  }
+
+  .prose ol > li::before {
+    content: counter(hl-item) ".";
+    position: absolute;
+    left: -24px;
+    width: 20px;
+    text-align: right;
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    line-height: inherit;
+    letter-spacing: 0.06em;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink-faint);
+  }
+
+  /* Task lists. §7.2 turns these into persisted checkboxes; until then they
+     stay `disabled`, which is the honest state — a tick that does not save is
+     worse than no tick. The square is already the one §7.2 specifies. */
+  .prose li.task-list-item::before {
+    content: none;
+  }
+
+  .prose li.task-list-item {
+    padding-left: 0;
+  }
+
+  .prose input[type="checkbox"] {
+    appearance: none;
+    position: absolute;
+    left: -24px;
+    top: 0.32em;
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    border: var(--stroke-hair) solid var(--color-line-strong);
+    border-radius: 0;
+    background: var(--color-paper);
+  }
+
+  /* -- §6.5 Tables, §6.9 images, §6.10 diagrams: the figure ---------------- */
+
+  .prose .hl-figure {
+    margin: 32px 0;
+  }
+
+  /* Rules top and bottom on a picture; a table closes itself with its own row
+     rules, so adding more would double them. */
+  .prose :is(.hl-image, .hl-diagram) {
+    border-top: var(--stroke-hair) solid var(--color-line-strong);
+    border-bottom: var(--stroke-hair) solid var(--color-line-strong);
+  }
+
+  /* The caption strip. It **is** the figcaption (§10.2), never a div. */
+  .prose .hl-cap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 28px;
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    line-height: var(--text-mark--line-height);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink-muted);
+  }
+
+  .prose .hl-table > .hl-cap {
+    border-bottom: var(--stroke-hair) solid var(--color-line-strong);
+  }
+
+  .prose :is(.hl-image, .hl-diagram) > .hl-cap {
+    border-top: var(--stroke-hair) solid var(--color-line-strong);
+  }
+
+  /* EXPAND / COPY — §5.10's button, borderless until hover. There is no
+     filled variant anywhere on this site. */
+  .prose :is(.hl-cap-action, .hl-code-copy) {
+    flex: none;
+    height: 24px;
+    padding: 0 8px;
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    line-height: 1;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+    background: none;
+    border: var(--stroke-hair) solid transparent;
+    border-radius: 0;
+    cursor: pointer;
+    transition: background-color 90ms linear, border-color 90ms linear;
+  }
+
+  .prose :is(.hl-cap-action, .hl-code-copy):hover {
+    color: var(--color-ink);
+    background: var(--color-cleared);
+    border-color: var(--color-line-strong);
+  }
+
+  .prose :is(.hl-cap-action, .hl-code-copy):active {
+    background: var(--color-sunken);
+    border-color: var(--color-line-cut);
+  }
+
+  /* Width classes. `--hl-break-left` / `--hl-break-right` say how much room
+     sits either side of the measure on this sheet; only the layout knows, so
+     only the layout sets them, on any ancestor. The `min()` is the guarantee: a
+     figure uses the room it was given and not one pixel more, so the page body
+     never scrolls horizontally however wide the content wants to be (§11.10),
+     and with the variables unset nothing breaks out at all. */
+  .prose .hl-figure[data-hl-width="wide"] {
+    width: min(var(--width-wide), calc(100% + var(--hl-break-right, 0px)));
+  }
+
+  .prose .hl-figure[data-hl-width="full"] {
+    margin-left: calc(-1 * var(--hl-break-left, 0px));
+    width: min(
+      var(--width-box),
+      calc(100% + var(--hl-break-left, 0px) + var(--hl-break-right, 0px))
+    );
+  }
+
+  /* Every wide thing scrolls inside its own container, in every case. */
+  .prose :is(.table-scroll, .hl-diagram-body) {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+
+  /* The overflow affordance: a 24px fade at the right edge, present only while
+     there is more to the right. `ProseEnhancements` sets the attribute; with no
+     JavaScript there is no fade, and nothing is hidden by its absence. */
+  .prose [data-hl-overflow="right"] {
+    mask-image: linear-gradient(to left, transparent, black 24px);
+  }
+
+  /* -- §6.5 Tables -------------------------------------------------------- */
+
+  .prose table {
+    width: 100%;
+    /* A table is never narrower than its width class: below that it scrolls
+       inside its own container rather than crushing verdict prose into three
+       words a line. At 390px every table scrolls, which is what §4.7 means by
+       "figures 100% width, keep their horizontal scrollers". */
+    min-width: var(--width-prose);
+    border-collapse: collapse;
+    /* Tables are data, not argument: condensed sans, never serif (§11.18). */
+    font-family: var(--font-display);
+    font-size: var(--text-ui);
+    line-height: 1.5;
+  }
+
+  .prose .hl-figure[data-hl-width="wide"] table {
+    min-width: var(--width-wide);
+  }
+
+  .prose .hl-figure[data-hl-width="full"] table {
+    min-width: var(--width-box);
+  }
+
+  .prose thead th {
+    padding: 10px 14px;
+    font-size: var(--text-micro);
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    text-align: left;
+    white-space: nowrap;
+    color: var(--color-ink-muted);
+    border-bottom: var(--stroke-struct) solid var(--color-line-strong);
+  }
+
+  .prose tbody :is(td, th) {
+    padding: 10px 14px;
+    text-align: left;
+    vertical-align: top;
+    color: var(--color-ink);
+    border-bottom: var(--stroke-hair) solid var(--color-line-strong);
+  }
+
+  .prose tbody td {
+    text-wrap: balance;
+  }
+
+  .prose tbody :is(td, th):first-child {
+    font-weight: 500;
+  }
+
+  /* No zebra striping — noise at six columns. No vertical rules, ever: they
+     make a table read as a spreadsheet. Hover is ground only (§9.2). */
+  .prose tbody tr {
+    transition: background-color 90ms linear;
+  }
+
+  .prose tbody tr:hover {
+    background: var(--color-cleared);
+  }
+
+  .prose table :is(p, ul, ol) {
+    margin: 0;
+  }
+
+  /* -- §6.6 Inline code --------------------------------------------------- */
+
+  /* No background fill. No border. No radius. No pill. Modules carry up to 75
+     inline-code spans; tinted chips turn dense prose into confetti. */
+  .prose :not(pre) > code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+    background: none;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    text-decoration: underline;
+    text-decoration-color: var(--color-line-strong);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+
+  .prose :is(td, th) :not(pre) > code {
+    font-size: var(--text-meta);
+  }
+
+  .prose :is(h1, h2, h3, h4) :not(pre) > code {
+    font-size: 0.92em;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  /* -- §6.7 Code blocks --------------------------------------------------- */
+
+  .prose .hl-code {
+    margin: 32px 0;
+    background: var(--color-sunken);
+    border: var(--stroke-hair) solid var(--color-line-strong);
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .prose .hl-code-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 28px;
+    padding: 0 8px 0 16px;
+    border-bottom: var(--stroke-hair) solid var(--color-line-strong);
+  }
+
+  .prose .hl-code-lang {
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    line-height: var(--text-mark--line-height);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+
+  .prose .hl-code pre {
+    margin: 0;
+    padding: 20px 16px;
+    overflow-x: auto;
+    background: none;
+    font-family: var(--font-mono);
+    font-size: var(--text-code);
+    line-height: var(--text-code--line-height);
+    color: var(--color-ink);
+    /* No line numbers: the longest block in the corpus is 30 lines and the
+       median is under 12. */
+    tab-size: 2;
+  }
+
+  .prose .hl-code code {
+    display: grid;
+    font-family: inherit;
+    font-size: inherit;
+    background: none;
+    border: none;
+    padding: 0;
+    text-decoration: none;
+  }
+
+  /* B8 — the dual theme, switched by a class and nothing else. Shiki wrote both
+     variants as custom properties on every span, so this is the whole of the
+     0ms theme switch for code (§9.2): no re-highlight, no JavaScript. */
+  .prose .hl-code code span {
+    color: var(--shiki-light);
+    font-weight: var(--shiki-light-font-weight, 400);
+    font-style: normal;
+  }
+
+  .dark .prose .hl-code code span {
+    color: var(--shiki-dark);
+    font-weight: var(--shiki-dark-font-weight, 400);
+  }
+
+  /* An untagged fence is program output, not source. No highlighting at all,
+     so input and output are visibly different objects. */
+  .prose .hl-code[data-language="output"] pre {
+    color: var(--color-ink-muted);
+  }
+
+  /* -- §6.8 Blockquotes and callouts -------------------------------------- */
+
+  /* A pull-rule, not a left bar. The left bar is the most exhausted pattern on
+     the web and it is the first thing this design refuses. */
+  .prose blockquote.hl-quote {
+    margin: 32px 0;
+    padding: 20px 0;
+    border-top: var(--stroke-hair) solid var(--color-line-strong);
+    border-bottom: var(--stroke-hair) solid var(--color-line-strong);
+    font-size: var(--text-h4);
+    line-height: 1.5;
+    font-style: italic;
+    color: var(--color-ink);
+    text-wrap: pretty;
+  }
+
+  .prose blockquote.hl-quote > :last-child {
+    margin-bottom: 0;
+  }
+
+  .prose blockquote[data-hl-labelled] {
+    padding: 0 0 20px;
+    border-top: 0;
+    font-size: var(--text-prose);
+    line-height: var(--text-prose--line-height);
+    font-style: normal;
+  }
+
+  .prose .hl-quote-label {
+    margin: 0 0 8px;
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    line-height: var(--text-mark--line-height);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+
+  .prose .hl-quote-body {
+    padding-top: 20px;
+    border-top: var(--stroke-hair) solid var(--color-line-strong);
+  }
+
+  .prose .hl-quote-body > :last-child {
+    margin-bottom: 0;
+  }
+
+  /* -- §6.9 Images -------------------------------------------------------- */
+
+  .prose img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .prose .hl-image img {
+    display: block;
+    margin: 0 auto;
+    /* No filter, no inversion in dark mode. A source image that is illegible
+       on a dark ground must be replaced, not filtered. */
+  }
+
+  /* -- §6.10 Diagram containers ------------------------------------------- */
+
+  .prose .hl-diagram {
+    background: var(--color-paper);
+  }
+
+  .prose .hl-diagram-body {
+    padding: 16px 0;
+  }
+
+  .prose .mermaid-source svg {
+    display: block;
+    margin: 0 auto;
+    height: auto;
+  }
+
+  /* The loading state: a drawn rectangle at the reserved height, in hidden-line
+     dashes because the geometry exists and is not on the surface yet. No
+     spinner, no skeleton shimmer, no mascot. */
+  .prose .hl-diagram-pending {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 160px;
+    margin: 0;
+    border: var(--stroke-hair) dashed var(--color-line-strong);
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+  }
+
+  /* -- §4.7 Responsive ---------------------------------------------------- */
+
+  @media (max-width: 767px) {
+    .prose {
+      font-size: 1rem;
+      line-height: 1.65;
+    }
+  }
+}

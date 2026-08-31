@@ -392,8 +392,11 @@
   }
 
   /* EXPAND / COPY — §5.10's button, borderless until hover. There is no
-     filled variant anywhere on this site. */
+     filled variant anywhere on this site. `position: relative` is here for the
+     hit area at the bottom of this file, which is absolute and would otherwise
+     resolve against the caption strip or the code header. */
   .prose :is(.hl-cap-action, .hl-code-copy) {
+    position: relative;
     flex: none;
     height: 24px;
     padding: 0 8px;
@@ -751,6 +754,20 @@
     .prose {
       font-size: 1rem;
       line-height: 1.65;
+    }
+
+    /* §10.4 — the 44 × 44 floor. MEASURED: `COPY` paints 47 × 24 and `EXPAND`
+       61.6 × 24, and their effective hit box was exactly the painted box. The
+       marks keep §5.10's 24px height; only the hit area grows. */
+    .prose :is(.hl-cap-action, .hl-code-copy)::after {
+      content: "";
+      position: absolute;
+      /* MEASURED: Tailwind's preflight makes these border-box and both carry a
+         transparent hairline border, so a hand-tuned `inset` resolves against a
+         padding box 2px smaller than the painted one and lands at 42 × 42. This
+         form does not care: it grows each axis to 44px and no further, whatever
+         the painted box measures. Painted geometry is unchanged. */
+      inset: min(0px, calc((100% - 44px) / 2));
     }
   }
 }

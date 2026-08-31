@@ -326,7 +326,12 @@
     .hl-icon-btn::after {
       content: "";
       position: absolute;
-      inset: -8px;
+      /* MEASURED: Tailwind's preflight makes these border-box and both carry a
+         transparent hairline border, so a hand-tuned `inset` resolves against a
+         padding box 2px smaller than the painted one and lands at 42 × 42. This
+         form does not care: it grows each axis to 44px and no further, whatever
+         the painted box measures. Painted geometry is unchanged. */
+      inset: min(0px, calc((100% - 44px) / 2));
     }
   }
 

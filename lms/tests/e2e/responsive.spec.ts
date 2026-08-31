@@ -216,6 +216,44 @@ for (const [name, path] of [['index', '/'], ['module 13', LONGEST.path]] as cons
   })
 }
 
+test('every control reaches the §10.4 touch floor below 768px', async ({ page }) => {
+  test.skip(page.viewportSize()!.width >= 768, '§10.4 sets the floor below 768')
+
+  await page.goto(LONGEST.path)
+  await page.waitForLoadState('networkidle')
+
+  // MEASURED: `COPY` painted 47 × 24 and `EXPAND` 61.6 × 24 with no hit area
+  // at all, and the two controls that did have one reached 42 × 42 — Tailwind's
+  // preflight makes them border-box and both carry a transparent hairline
+  // border, so a hand-tuned `inset` resolved against a padding box 2px smaller
+  // than the painted one.
+  const controls = await page
+    .locator('.hl-code-copy, .hl-cap-action, .hl-icon-btn, .hl-button')
+    .evaluateAll((nodes) => nodes.map((node) => {
+      const hit = getComputedStyle(node, '::after')
+      const painted = node.getBoundingClientRect()
+      return {
+        kind: (typeof node.className === 'string' ? node.className : '').split(' ')[0],
+        painted: [Math.round(painted.width), Math.round(painted.height)],
+        content: hit.content,
+        width: Number.parseFloat(hit.width),
+        height: Number.parseFloat(hit.height),
+        position: hit.position,
+      }
+    }))
+
+  expect(controls.length, 'sheet 13 still has controls to hit').toBeGreaterThan(3)
+  for (const control of controls) {
+    expect(control.content, `${control.kind} has no hit area`).not.toBe('none')
+    expect(control.position, `${control.kind}'s hit area is not positioned`)
+      .toBe('absolute')
+    expect(control.width, `${control.kind} is ${control.width}px wide to hit`)
+      .toBeGreaterThanOrEqual(44)
+    expect(control.height, `${control.kind} is ${control.height}px tall to hit`)
+      .toBeGreaterThanOrEqual(44)
+  }
+})
+
 test('the sheet gives up its zones in §4.7 order as the viewport narrows', async ({ page }) => {
   const width = page.viewportSize()!.width
   await page.goto(LONGEST.path) // an A0 sheet — the only format with three zones

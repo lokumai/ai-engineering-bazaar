@@ -1,0 +1,51 @@
+# Everything the deploy workflow will do, before it is allowed to do it.
+name: CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  legacy-docs:
+    name: MkDocs (strict)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install mkdocs-material
+      # Strict turns a broken link into a failure. The docs site is the only
+      # published home of the markdown until the LMS deploys beside it.
+      - run: mkdocs build --strict
+
+  lms:
+    name: LMS
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lms
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # §11.26: REVISION is each file's last-touching commit.
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: lms/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      # Includes the B9 contrast check (§10.1): a token edited so that a pair
+      # drops under its floor fails here, not in an audit six months later.
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: lms/playwright-report/
+          retention-days: 7

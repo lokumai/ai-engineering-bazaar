@@ -1,6 +1,8 @@
 site_name: AI Mini-Courses
 site_description: AI Engineering made simple, short, and useful.
-site_url: https://lokumai.github.io/ai-engineering-bazaar/
+# The LMS is the root site now; this one ships under /legacy/, so its canonical
+# links and its sitemap have to say so.
+site_url: https://lokumai.github.io/ai-engineering-bazaar/legacy/
 repo_url: https://github.com/lokumai/ai-engineering-bazaar
 repo_name: lokumai/ai-engineering-bazaar
 

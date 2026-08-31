@@ -1,0 +1,95 @@
+# One artifact, two sites.
+#
+#   /ai-engineering-bazaar/          the LMS (lms/, Next.js static export)
+#   /ai-engineering-bazaar/legacy/   the MkDocs site, unchanged
+#
+# Both read the same markdown in mini-courses/, so they have to be built from
+# the same commit or the two halves of the site disagree about the curriculum.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  # The GitHub Pages project path. The LMS is served from it directly, which is
+  # why it is also the LMS's basePath; anything else and every asset 404s.
+  BASE_PATH: /ai-engineering-bazaar
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # REVISION is the last commit that touched each module file (§11.26),
+          # so the module sheets are wrong without the full history.
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install mkdocs-material
+      - name: Build the legacy docs site
+        run: mkdocs build --strict --site-dir "$RUNNER_TEMP/legacy"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: lms/package-lock.json
+      - run: npm ci
+        working-directory: lms
+      - name: Build the LMS for its base path
+        run: npm run build
+        working-directory: lms
+        env:
+          LMS_BASE_PATH: ${{ env.BASE_PATH }}
+
+      - name: Assemble the Pages artifact
+        run: |
+          set -euo pipefail
+          rm -rf _site
+          mkdir -p _site
+          cp -r lms/out/. _site/
+          mkdir -p _site/legacy
+          cp -r "$RUNNER_TEMP/legacy/." _site/legacy/
+          # Without this, Pages runs Jekyll, Jekyll discards every path that
+          # starts with an underscore, _next/ disappears, and the site loads as
+          # unstyled HTML with a green build and no error anywhere.
+          touch _site/.nojekyll
+
+      - name: Fail before publishing if either site is missing
+        run: |
+          set -euo pipefail
+          test -d _site/_next
+          test -f _site/index.html
+          test -f _site/legacy/index.html
+          test -f _site/.nojekyll
+          # A basePath that did not reach assetPrefix builds cleanly and 404s
+          # every stylesheet, so check the emitted URLs, not just the files.
+          grep -q "$BASE_PATH/_next/" _site/index.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

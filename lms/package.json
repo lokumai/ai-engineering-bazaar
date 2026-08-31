@@ -8,6 +8,7 @@
     "prebuild": "node scripts/copy-course-images.mjs",
     "build": "next build",
     "test": "vitest run",
+    "test:e2e": "playwright test",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit"
   },
@@ -34,6 +35,7 @@
     "zod": "^4.5.4"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26.4.0",
     "@types/react": "^19.2.18",

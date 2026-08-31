@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { A0, A2, A4, CATEGORY_PATHS } from './sheets'
+import { A0, SHORT, A4, CATEGORY_PATHS } from './sheets'
 import { watchPage } from './watch'
 
 /**
@@ -18,7 +18,7 @@ const PAGES: [string, string][] = [
   ['drawing set', '/courses/'],
   ['category', CATEGORY_PATHS[1]],
   ['A0 sheet', A0.path],
-  ['A2 sheet', A2.path],
+  ['SHORT sheet', SHORT.path],
   ['A4 sheet', A4.path],
 ]
 

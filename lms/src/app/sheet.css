@@ -2,7 +2,7 @@
    §4.4–§4.7, §5.5–§5.7 — the module sheet.
 
    Three formats, chosen at build time and written onto the wrapper as
-   `data-format`: A0 assembly (three zones), A2 part (two zones, centred), A4
+   `data-format`: A0 the drawn sheet (three zones; two, centred, below 1280), A4
    detail (one column, no rails). An A4 sheet is not a degraded A0 — §4.5 gives
    it its own anatomy — so nothing here treats a format as a fallback.
 
@@ -96,21 +96,17 @@
       margin-inline: 0;
     }
 
-    /* A0, right rail collapsed (§4.7): 208 + 24 + 1fr, prose to 720px. */
+    /* A drawn sheet with its right rail collapsed (§4.7): 208 + 24 + 656 = 888,
+       centred in the 1152 box.
+       ------------------------------------------------------------------------
+       §4.7 used to grow the measure to 720px here, on the reasoning that the
+       collapsed rail had left width going spare. MEASURED, 720px at 17px Source
+       Serif 4 is **82 characters per line** — against the 68–72 that §3.2 picked
+       656px FOR, and past the 75 that ends the readable range. Widening a
+       measure because a rail left a hole is spending space because it is there,
+       and this system's answer to leftover width everywhere else is to centre.
+       So it centres. §4.7 is amended, and the 720px is gone. */
     .hl-sheet[data-format="A0"] {
-      grid-template-columns: var(--width-rail-l) minmax(0, 1fr);
-      --hl-measure: 720px;
-      --hl-break-left: 232px;
-    }
-
-    /* A2 between 1024 and 1279: 208 + 24 + 656 = 888, centred in the 1152 box.
-       This band is the whole of what still separates the two drawn formats, and
-       it is a real difference rather than a leftover: A0 above gives up its
-       right rail here and spends the reclaimed width on the measure (720px),
-       because a 4,868-word sheet has text to put in it. A 1,114-word sheet does
-       not, so it keeps §6's 656px and centres. From 1280px up they are
-       identical. */
-    .hl-sheet[data-format="A2"] {
       grid-template-columns: var(--width-rail-l) var(--width-prose);
       --hl-break-left: 232px;
     }
@@ -124,16 +120,14 @@
       grid-column: 1;
     }
 
-    .hl-sheet[data-format="A0"] > .hl-rail-left,
-    .hl-sheet[data-format="A2"] > .hl-rail-left {
+    .hl-sheet[data-format="A0"] > .hl-rail-left {
       display: block;
     }
 
     /* From here up a `full` figure really does break left, over the rail, so
        it gets the edge defined below. Set on the figure and not on the sheet:
        a `wide` figure has nowhere to break to until 1280. */
-    .hl-sheet[data-format="A0"] .hl-figure[data-hl-width="full"],
-    .hl-sheet[data-format="A2"] .hl-figure[data-hl-width="full"] {
+    .hl-sheet[data-format="A0"] .hl-figure[data-hl-width="full"] {
       --hl-figure-edge: var(--color-line-strong);
     }
   }
@@ -141,40 +135,27 @@
   @media (min-width: 1280px) {
     /* All three zones: 208 + 24 + 656 + 24 + 240 = 1152 exactly.
        ------------------------------------------------------------------------
-       **A2 shares this, and it did not used to.** §4.4 gave the right rail to
-       A0 alone, so the seven A2 sheets — all of Fundamentals — put their title
-       block in the horizontal strip under the h1 instead. Both formats have
-       always used the same 1152px box and the same 656px measure, so the only
-       thing that differed was where the metadata sat: the prose started at
-       x=588 on an A2 sheet and x=456 on an A0 one, and the text jumped 132px
-       sideways as a reader moved between them. A reader noticed and asked
-       whether every page was designed separately. Nothing is — there is one
-       page component for all 32 sheets and no per-module code anywhere — but
-       the format was making it look that way.
-
-       The measure is untouched by this: 656px either way, before and after.
-       What the third zone costs is the sheet's internal centring, which is what
-       makes the two agree.
-
-       A2 keeps its name and one real job, below. Collapsing it into A0 would
-       leave `sheetFormat` a second spelling of `status` — drawn is A0, draft is
-       A4 — and a field that restates another field is worse than a field with a
-       narrow remit. */
-    .hl-sheet[data-format="A0"],
-    .hl-sheet[data-format="A2"] {
+       Every DRAWN sheet, which it did not used to be. §4.4 gave the right rail
+       to sheets over 2,500 words only, so the seven shorter ones — all of
+       Fundamentals — put their title block in the strip under the h1 instead.
+       Both used the same box and the same measure, so the rail moved the
+       metadata and the prose with it: the text started at x=588 on a short sheet
+       and x=456 on a long one, and jumped 132px sideways as a reader moved
+       between two sheets of the same curriculum. One component renders all 32
+       and there is no per-module code anywhere, but the format was making the
+       set look hand-designed page by page. */
+    .hl-sheet[data-format="A0"] {
       grid-template-columns: var(--width-rail-l) var(--width-prose) var(--width-rail-r);
       --hl-measure: var(--width-prose);
       --hl-break-right: 264px;
     }
 
-    .hl-sheet[data-format="A0"] > .hl-rail-right,
-    .hl-sheet[data-format="A2"] > .hl-rail-right {
+    .hl-sheet[data-format="A0"] > .hl-rail-right {
       display: block;
     }
 
     /* …and from here up a `wide` figure breaks right, over the title block. */
-    .hl-sheet[data-format="A0"] .hl-figure[data-hl-width="wide"],
-    .hl-sheet[data-format="A2"] .hl-figure[data-hl-width="wide"] {
+    .hl-sheet[data-format="A0"] .hl-figure[data-hl-width="wide"] {
       --hl-figure-edge: var(--color-line-strong);
     }
   }

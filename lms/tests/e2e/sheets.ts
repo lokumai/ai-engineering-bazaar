@@ -12,8 +12,16 @@
  * page actually renders, which is what keeps the duplication honest.
  */
 
-/** §4.4 — the format the build picks from status and extent. */
-export type SheetFormat = 'A0' | 'A2' | 'A4'
+/**
+ * §4.4 — the anatomy the build picks from `status`.
+ *
+ * Two, not three. `SHORT` is gone: it differed from `A0` in where the metadata sat
+ * and nowhere else, which moved the prose 132px between two sheets of one
+ * curriculum, and the last rule holding them apart put 82 characters on a line
+ * where 656px was chosen for 68–72. `src/lib/content/derive.ts` carries the
+ * argument beside the type.
+ */
+export type SheetFormat = 'A0' | 'A4'
 
 export interface Sheet {
   /** Position in the set, 1..32. The prev/next chain walks this order. */
@@ -22,7 +30,7 @@ export interface Sheet {
   title: string
   category: string
   format: SheetFormat
-  /** `status: ready` — READY on the manifest, A0 or A2 on the sheet. */
+  /** `status: ready` — READY on the manifest, A0 on the sheet. */
   drawn: boolean
 }
 
@@ -43,13 +51,13 @@ function sheet(
 }
 
 export const SHEETS: readonly Sheet[] = [
-  sheet(1, '/courses/fundamentals/llms/', 'LLM Fundamentals', 'A2'),
-  sheet(2, '/courses/fundamentals/training/', 'Training LLMs', 'A2'),
-  sheet(3, '/courses/fundamentals/rag/', 'RAG & Embeddings', 'A2'),
-  sheet(4, '/courses/fundamentals/tools/', 'Tool Calling', 'A2'),
-  sheet(5, '/courses/fundamentals/memory/', 'Memory', 'A2'),
-  sheet(6, '/courses/fundamentals/agents/', 'AI Agents', 'A2'),
-  sheet(7, '/courses/fundamentals/multi-agent/', 'Multi-Agent Systems', 'A2'),
+  sheet(1, '/courses/fundamentals/llms/', 'LLM Fundamentals', 'A0'),
+  sheet(2, '/courses/fundamentals/training/', 'Training LLMs', 'A0'),
+  sheet(3, '/courses/fundamentals/rag/', 'RAG & Embeddings', 'A0'),
+  sheet(4, '/courses/fundamentals/tools/', 'Tool Calling', 'A0'),
+  sheet(5, '/courses/fundamentals/memory/', 'Memory', 'A0'),
+  sheet(6, '/courses/fundamentals/agents/', 'AI Agents', 'A0'),
+  sheet(7, '/courses/fundamentals/multi-agent/', 'Multi-Agent Systems', 'A0'),
   sheet(8, '/courses/intermediate/prompt-engineering/', 'Prompt Engineering', 'A0'),
   sheet(9, '/courses/intermediate/context-engineering/', 'Context Engineering', 'A0'),
   sheet(10, '/courses/intermediate/coding-agents-landscape/', 'Coding Agents: The Landscape', 'A0'),
@@ -92,7 +100,12 @@ export const CATEGORY_PATHS = [
 
 /** One sheet of each §4.4 format, for the tests that want a representative. */
 export const A0 = SHEETS[12] // 13 — Security, the widest prose on the site
-export const A2 = SHEETS[2] //  3 — RAG & Embeddings, the sheet with images
+/**
+ * A SHORT drawn sheet. It used to be the SHORT format's exemplar; it is now an A0
+ * like every other drawn sheet, and the name is kept because a dozen specs use
+ * it to mean "the short one with images" — which is still exactly what it is.
+ */
+export const SHORT = SHEETS[2] //  3 — RAG & Embeddings, the sheet with images
 export const A4 = SHEETS[19] // 20 — Advanced Multi-Agent
 
 export function sheetByModule(module: number): Sheet {

@@ -1,6 +1,6 @@
 import { type Page, expect, test } from '@playwright/test'
 import { contrastSamples, useTheme, worst } from './contrast'
-import { A0, A2, A4, CATEGORY_PATHS, SHEETS } from './sheets'
+import { A0, SHORT, A4, CATEGORY_PATHS, SHEETS } from './sheets'
 
 /**
  * §10.2–§10.3 and §9.6 — the floors only a real engine can confirm.
@@ -11,7 +11,7 @@ import { A0, A2, A4, CATEGORY_PATHS, SHEETS } from './sheets'
  * separate failures and all three are invisible to a DOM snapshot.
  */
 
-const PAGES = ['/', '/courses/', CATEGORY_PATHS[0], A2.path, A0.path, A4.path]
+const PAGES = ['/', '/courses/', CATEGORY_PATHS[0], SHORT.path, A0.path, A4.path]
 
 /** What has focus, described the way a keyboard user would recognise it. */
 function focusDescription(page: Page) {
@@ -175,7 +175,7 @@ const THEMES = ['light', 'dark'] as const
 
 test('code comments clear the text floor on the code ground (§6.7, T5)', async ({ page }) => {
   for (const theme of THEMES) {
-    await page.goto(A2.path)
+    await page.goto(SHORT.path)
     await useTheme(page, theme)
 
     // Leaf spans only: shiki nests a line wrapper around each row.
@@ -269,7 +269,7 @@ test('prev/next carries no text below the §10.4 floor (§5.7)', async ({ page }
 
 test('the § permalink is legible the frame it is revealed (§6.1)', async ({ page }) => {
   for (const theme of THEMES) {
-    await page.goto(A2.path)
+    await page.goto(SHORT.path)
     await useTheme(page, theme)
 
     const heading = page.locator('.prose h2').first()
@@ -298,7 +298,7 @@ test('the § permalink is legible the frame it is revealed (§6.1)', async ({ pa
 // ---------------------------------------------------------------------------
 
 test('a heading is named by its title, not by its permalink (§6.1)', async ({ page }) => {
-  await page.goto(A2.path)
+  await page.goto(SHORT.path)
 
   const headings = page.locator('.prose :is(h2, h3)')
   const count = await headings.count()

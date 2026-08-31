@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { A0, A2 } from './sheets'
+import { A0, SHORT } from './sheets'
 
 /**
  * §3.4 and §6.5 in the prose column: which type a run of content ends up set
@@ -14,7 +14,7 @@ import { A0, A2 } from './sheets'
 test('a caption strip stays 28px however long the author wrote (§6.5)', async ({ page }) => {
   // Module 3 carries the corpus's image captions — arbitrary-length authored
   // prose, which used to be set as an 11px tracked uppercase mono label.
-  await page.goto(A2.path)
+  await page.goto(SHORT.path)
 
   const strips = await page.evaluate(() =>
     [...document.querySelectorAll('.prose .hl-cap')].map((cap) => {

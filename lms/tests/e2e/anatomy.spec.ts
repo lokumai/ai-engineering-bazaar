@@ -1,5 +1,5 @@
 import { type Locator, type Page, expect, test } from '@playwright/test'
-import { A0, A2, A4 } from './sheets'
+import { A0, SHORT, A4 } from './sheets'
 
 /**
  * §4.4 — the three sheet formats, each rendering its own anatomy.
@@ -167,39 +167,43 @@ test.describe('A0 — the assembly sheet', () => {
   })
 })
 
-test.describe('A2 — the part sheet', () => {
+test.describe('A short drawn sheet — the same anatomy as a long one', () => {
   /**
-   * §4.4 gave the right rail to A0 alone, and this suite pinned that: "carries
-   * the horizontal title strip, NOT the panel". A reader asked why two sheets of
-   * the same curriculum looked structurally different, and the honest answer was
-   * that nothing is designed per page — one component renders all 32, with no
-   * per-module code anywhere — but the format was making it look that way.
+   * §4.4 used to split drawn sheets at 2,500 words: over it the A0 assembly with
+   * three zones and the title-block panel, under it the A2 part sheet with two
+   * zones and a horizontal strip. This suite pinned that — "carries the
+   * horizontal title strip, NOT the panel".
    *
-   * Both drawn formats have always used the same 1152px box and the same 656px
-   * measure, so the rail moved the metadata rather than the text: the prose
-   * started at x=588 on an A2 sheet and x=456 on an A0 one, and the text jumped
-   * 132px sideways as a reader moved between them. From 1280px up they now share
-   * the third zone, and the measure is untouched — 656px before and after.
+   * A reader asked why two sheets of the same curriculum looked structurally
+   * different, and whether every markdown file is designed separately. Nothing
+   * is: one component renders all 32 and a search of `src/` finds no per-module
+   * code at all. But the format was making it look that way, and it was not even
+   * about the text — both formats always used the same 1152px box and the same
+   * 656px measure, so the rail moved the metadata and the prose with it. The text
+   * started at x=588 on a short sheet and x=456 on a long one, jumping 132px
+   * sideways between them.
    */
-  test('carries the title-block panel, like every other drawn sheet', async ({ page }) => {
-    await page.goto(A2.path)
+  test('carries the title-block panel and the stamps, like every drawn sheet', async ({
+    page,
+  }) => {
+    await page.goto(SHORT.path)
 
-    const panel = page.locator('.hl-title-block')
-    await expect(panel).toBeVisible()
+    await expect(page.locator('.hl-title-block')).toBeVisible()
     await expect(page.locator('.hl-rail-right')).toBeVisible()
 
-    // The strip is still in the document as the sub-1280 fallback, and hidden
-    // here — so exactly one title block is ever on screen.
+    // The strip stays in the document as the sub-1280 fallback, hidden here, so
+    // exactly one title block is ever on screen.
     await expect(page.locator('.hl-title-strip')).not.toBeVisible()
 
-    // Three zones, the same arithmetic as A0: 208 + 24 + 656 + 24 + 240 = 1152.
+    // Three zones, the same arithmetic as the long sheet:
+    // 208 + 24 + 656 + 24 + 240 = 1152.
     await expect(page.locator('.hl-rail-left nav[aria-label="Sections"]')).toBeVisible()
     expect(await widthOf(page.locator('.hl-column'))).toBe(656)
     const drawing = await zones(page, ['.hl-rail-left', '.hl-column', '.hl-rail-right'])
     expect(drawing.width).toBe(1152)
     expect(drawing.leadIn).toBe(drawing.leadOut)
 
-    // §7.4 — and the stamps, which used to render only inside the A0 rail.
+    // §7.4 — the stamps used to render only inside the A0 rail.
     await expect(page.locator('.hl-stamp:visible')).not.toHaveCount(0)
 
     // …and none of the A4 furniture.
@@ -208,34 +212,33 @@ test.describe('A2 — the part sheet', () => {
   })
 
   /**
-   * The one thing that still separates the two drawn formats, and the reason A2
-   * keeps its name: between 1024 and 1279 A0 gives up its right rail and spends
-   * the reclaimed width on the measure, because a 4,868-word sheet has text to
-   * put in it. A 1,114-word sheet does not, so it keeps §6's 656px and centres.
+   * The last rule that separated the two drawn formats, measured and removed.
    *
-   * Collapsing A2 into A0 would leave `sheetFormat` a second spelling of
-   * `status` — drawn is A0, draft is A4 — and a field that restates another
-   * field is worse than a field with a narrow remit. This case is that remit.
+   * §4.7 grew the measure to 720px between 1024 and 1279 once the right rail
+   * collapsed, on the reasoning that the width was going spare. MEASURED, 720px
+   * at 17px Source Serif 4 is 82 characters per line — against the 68–72 that
+   * §3.2 chose 656px FOR, and past the 75 that ends the readable range. Widening
+   * a measure because a rail left a hole is spending space because it is there;
+   * this system centres leftover width everywhere else, so it centres here.
    */
-  test('keeps §6’s measure below 1280 where A0 widens to 720', async ({ page }) => {
+  test('holds §6’s measure below 1280, on a short sheet and a long one alike', async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 1100, height: 900 })
 
-    // `.prose`, not `.hl-column`: with the rail collapsed A0's grid track is
-    // `minmax(0, 1fr)` and the column takes the whole 820px remainder, while
-    // `--hl-measure` is what bounds the text inside it. The measure is the
-    // number §6 is about, and the column is just the box holding it.
-    await page.goto(A2.path)
-    await expect(page.locator('.hl-title-block')).not.toBeVisible()
-    expect(await widthOf(page.locator('.prose').first())).toBe(656)
+    for (const path of [SHORT.path, A0.path]) {
+      await page.goto(path)
 
-    await page.goto(A0.path)
-    await expect(page.locator('.hl-title-block')).not.toBeVisible()
-    expect(await widthOf(page.locator('.prose').first())).toBe(720)
+      // The rail is gone at this width, so both fall back to the strip — and
+      // both keep their stamps in it, which is the other hole this closed.
+      await expect(page.locator('.hl-title-block')).not.toBeVisible()
+      await expect(page.locator('.hl-title-strip')).toBeVisible()
+      await expect(page.locator('.hl-stamp:visible')).not.toHaveCount(0)
 
-    // Both fall back to the strip, and both keep their stamps there — the other
-    // hole this change closed, since the rail is gone at this width.
-    await expect(page.locator('.hl-title-strip')).toBeVisible()
-    await expect(page.locator('.hl-stamp:visible')).not.toHaveCount(0)
+      // `.prose`, not `.hl-column`: the column is the box, `--hl-measure` bounds
+      // the text inside it, and the measure is the number §6 is about.
+      expect(await widthOf(page.locator('.prose').first()), path).toBe(656)
+    }
   })
 })
 

@@ -4,7 +4,6 @@ import matter from 'gray-matter'
 import { describe, expect, it } from 'vitest'
 import { CATEGORIES } from '@/lib/content/categories'
 import {
-  A0_MIN_EXTENT,
   LANG_DISPLAY,
   TRANSLATION_RATIO,
   countDiagrams,
@@ -76,17 +75,17 @@ describe('extent', () => {
       .toBe(extent('# Module 13: Security') + extent('*Category: Intermediate — Module 13 (6 of 8 in this category)*'))
   })
 
-  it('puts the eight long-form modules above the A0 threshold', () => {
-    for (const n of numbers((n) => n >= 8 && n <= 15)) {
-      expect(measured(n), `module ${n}`).toBeGreaterThanOrEqual(A0_MIN_EXTENT)
-    }
-  })
-
-  it('puts the seven short ready modules below the A0 threshold', () => {
-    for (const n of numbers((n) => n <= 7)) {
-      expect(measured(n), `module ${n}`).toBeGreaterThan(0)
-      expect(measured(n), `module ${n}`).toBeLessThan(A0_MIN_EXTENT)
-    }
+  /**
+   * The 2,500-word threshold is gone with the A2 format (see `SheetFormat`), so
+   * this no longer gates a layout. The two bands are still a real fact about the
+   * corpus and worth pinning: the long-form modules are 3–6× the short ones, and
+   * the day that stops being true the reader's estimated durations are wrong too.
+   */
+  it('keeps the long-form modules an order of magnitude above the short ones', () => {
+    const short = numbers((n) => n <= 7).map(measured)
+    const long = numbers((n) => n >= 8 && n <= 15).map(measured)
+    expect(Math.min(...short)).toBeGreaterThan(0)
+    expect(Math.max(...short)).toBeLessThan(Math.min(...long))
   })
 
   it('leaves every stub under 200 words', () => {
@@ -107,12 +106,17 @@ describe('extent', () => {
 })
 
 describe('sheetFormat', () => {
-  it('gives a long ready module the A0 assembly sheet', () => {
-    expect(sheetFormat({ status: 'ready' }, A0_MIN_EXTENT)).toBe('A0')
-  })
-
-  it('gives a short ready module the A2 part sheet', () => {
-    expect(sheetFormat({ status: 'ready' }, A0_MIN_EXTENT - 1)).toBe('A2')
+  /**
+   * §4.4 is two anatomies now, and `SheetFormat`'s docblock carries the whole
+   * argument: A2 differed from A0 in where the metadata sat and nowhere else,
+   * which moved the prose 132px between two sheets of one curriculum, and the
+   * single rule that outlived the shared panel — a 720px measure below 1280 —
+   * measured 82 characters per line against the 68–72 that 656px was chosen for.
+   */
+  it('gives every drawn module the same anatomy, whatever its extent', () => {
+    expect(sheetFormat({ status: 'ready' }, 12)).toBe('A0')
+    expect(sheetFormat({ status: 'ready' }, 2_499)).toBe('A0')
+    expect(sheetFormat({ status: 'ready' }, 9_999)).toBe('A0')
   })
 
   it('gives a draft module the A4 detail sheet whatever its extent', () => {
@@ -120,17 +124,16 @@ describe('sheetFormat', () => {
     expect(sheetFormat({ status: 'draft' }, 9999)).toBe('A4')
   })
 
-  it('sizes the drawing set at 8 A0, 7 A2 and 17 A4 sheets', () => {
-    const tally = { A0: 0, A2: 0, A4: 0 }
+  it('sizes the drawing set at 15 drawn sheets and 17 drafts', () => {
+    const tally = { A0: 0, A4: 0 }
     for (const m of modules) tally[m.sheetFormat] += 1
-    expect(tally).toEqual({ A0: 8, A2: 7, A4: 17 })
+    expect(tally).toEqual({ A0: 15, A4: 17 })
   })
 
-  it('draws modules 8-15 at A0, 1-7 at A2 and 16-32 at A4', () => {
+  it('follows status and nothing else', () => {
     for (const m of modules) {
-      const n = m.frontmatter.module
-      const expected = n <= 7 ? 'A2' : n <= 15 ? 'A0' : 'A4'
-      expect(m.sheetFormat, `module ${n}`).toBe(expected)
+      const expected = m.frontmatter.status === 'ready' ? 'A0' : 'A4'
+      expect(m.sheetFormat, `module ${m.frontmatter.module}`).toBe(expected)
     }
   })
 })

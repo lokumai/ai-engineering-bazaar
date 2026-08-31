@@ -40,22 +40,27 @@ function factsFor(slug: string) {
 }
 
 describe('§4.4 — the format each sheet is drawn on', () => {
-  it('matches the spec\'s table exactly', () => {
-    const byFormat = { A0: [] as number[], A2: [] as number[], A4: [] as number[] }
+  /**
+   * Two anatomies, over the real corpus. §4.4 used to have three and split the
+   * drawn sheets at 2,500 words; `SheetFormat`'s docblock carries why that went.
+   * The short version: A2 differed from A0 in where the metadata sat and nowhere
+   * else, which moved the prose 132px between two sheets of one curriculum, and
+   * the last rule holding the two apart put 82 characters on a line where 656px
+   * was chosen for 68–72.
+   */
+  it("matches the spec's table exactly", () => {
+    const byFormat = { A0: [] as number[], A4: [] as number[] }
     for (const m of modules) byFormat[m.sheetFormat].push(m.frontmatter.module)
 
-    expect(byFormat.A0).toEqual([8, 9, 10, 11, 12, 13, 14, 15])
-    expect(byFormat.A2).toEqual([1, 2, 3, 4, 5, 6, 7])
-    expect(byFormat.A4).toEqual(
-      Array.from({ length: 17 }, (_, i) => i + 16),
-    )
+    expect(byFormat.A0).toEqual(Array.from({ length: 15 }, (_, i) => i + 1))
+    expect(byFormat.A4).toEqual(Array.from({ length: 17 }, (_, i) => i + 16))
   })
 
-  it('follows from status and extent alone, never from a hand override', () => {
+  it('follows from status alone, never from extent and never from a hand override', () => {
     for (const m of modules) {
-      const expected = m.frontmatter.status === 'draft'
-        ? 'A4'
-        : m.extent >= 2500 ? 'A0' : 'A2'
+      // Extent is deliberately not consulted. It was, and the threshold it fed
+      // is gone; asserting against it here would resurrect the split in a test.
+      const expected = m.frontmatter.status === 'draft' ? 'A4' : 'A0'
       expect(m.sheetFormat, m.slug).toBe(expected)
     }
   })

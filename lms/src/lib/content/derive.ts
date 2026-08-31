@@ -20,13 +20,34 @@ import { stripBuildFurniture, stripLeadIn } from './strip'
  * whole title block rests on it.
  */
 
-/** §4.4 — the format selector's one threshold. */
-export const A0_MIN_EXTENT = 2500
-
 /** §7.6 — a Turkish file counts as a translation at 40% of the English extent. */
 export const TRANSLATION_RATIO = 0.4
 
-export type SheetFormat = 'A0' | 'A2' | 'A4'
+/**
+ * §4.4 — the two page anatomies.
+ *
+ * **A2 is gone, and removing it was a consequence rather than a tidy-up.** §4.4
+ * split drawn sheets at 2,500 words: A0 got three zones and the title-block
+ * panel, A2 got two zones and a horizontal strip. Both always used the same
+ * 1152px box and the same 656px measure, so the split moved the metadata and the
+ * prose with it — the text started 132px further right on a short sheet than on
+ * a long one, and a reader asked whether every page was designed separately.
+ *
+ * What kept A2 alive after the panel was shared was one rule, and measuring it
+ * killed the rule too: §4.7 grew A0's measure to 720px between 1024 and 1279
+ * once the right rail collapsed, which is **82 characters per line at 17px
+ * Source Serif 4** — measured, against the 68–72 that §3.2 chose 656px FOR, and
+ * past the 75 that ends the readable range. Widening the measure because a rail
+ * left a hole is spending space because it is there; the system's own answer to
+ * leftover width is to centre, which is what A2 did. So A0 now keeps 656px at
+ * that band as well, the two formats became identical at every width, and the
+ * value that distinguished them had nothing left to say.
+ *
+ * `status` and `format` still answer different questions — whether the content
+ * is written, and which anatomy the page uses — and `data-format` stays named
+ * after the thing it controls.
+ */
+export type SheetFormat = 'A0' | 'A4'
 export type Lang = 'EN' | 'EN·TR'
 
 /** §5.5 prints the bilingual value spaced; the token itself stays unspaced. */
@@ -90,13 +111,20 @@ export function extent(body: string): number {
   return trimmed === '' ? 0 : trimmed.split(/\s+/).length
 }
 
-/** §4.4 — the sheet format, decided by status and extent alone. */
+/**
+ * §4.4 — the sheet anatomy.
+ *
+ * `words` is no longer consulted and is kept in the signature deliberately: it
+ * is what the removed 2,500-word threshold read, every caller already has it,
+ * and a parameter is cheaper to leave than an API break is to explain. See
+ * `SheetFormat` for why the threshold went.
+ */
 export function sheetFormat(
   frontmatter: { status: 'ready' | 'draft' },
   words: number,
 ): SheetFormat {
-  if (frontmatter.status === 'draft') return 'A4'
-  return words >= A0_MIN_EXTENT ? 'A0' : 'A2'
+  void words
+  return frontmatter.status === 'draft' ? 'A4' : 'A0'
 }
 
 /**

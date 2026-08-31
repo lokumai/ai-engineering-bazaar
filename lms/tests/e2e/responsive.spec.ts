@@ -1,5 +1,5 @@
 import { type Page, expect, test } from '@playwright/test'
-import { A2, A4, CATEGORY_PATHS, sheetByModule } from './sheets'
+import { SHORT, A4, CATEGORY_PATHS, sheetByModule } from './sheets'
 
 /**
  * §4.7's closing sentence, which is the only hard rule in the whole section:
@@ -27,7 +27,7 @@ const PAGES = [
   ['index', '/'],
   ['drawing set', '/courses/'],
   ['category', CATEGORY_PATHS[1]],
-  ['A2 sheet', A2.path],
+  ['SHORT sheet', SHORT.path],
   ['A4 sheet', A4.path],
   ['module 10', WIDEST.path],
   ['module 13', LONGEST.path],

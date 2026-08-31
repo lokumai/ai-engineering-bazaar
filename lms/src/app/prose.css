@@ -130,13 +130,24 @@
     opacity: 0;
   }
 
+  /* Revealed at `--color-ink-muted`, not at the resting `--color-ink-faint`.
+     §6.1 asked for ink-faint here, but the moment the control is on screen it
+     is a visible interactive element: 2.68:1 / 2.41:1 fails WCAG 1.4.11's 3:1
+     for a control's visual identifier, and §10.4 puts an 11px mark at
+     `ink-muted or better`. The floor wins over the component (§1). */
   .prose :is(h2, h3):hover .hl-anchor,
   .prose .hl-anchor:focus-visible {
     opacity: 1;
+    color: var(--color-ink-muted);
   }
 
-  .prose .hl-anchor:hover {
-    color: var(--color-ink-muted);
+  /* The second stage of the affordance: with the reveal already at ink-muted,
+     this has to go a step further or hovering the glyph paints nothing at all.
+     Written heading-and-anchor rather than as a bare `.hl-anchor:hover`, which
+     the reveal selector above outranks — and the two say the same thing, since
+     an anchor cannot be hovered without its heading being hovered too. */
+  .prose :is(h2, h3):hover .hl-anchor:hover {
+    color: var(--color-ink);
   }
 
   /* Below 1280 there is no gutter to hang a numeral in, so it moves inline as a

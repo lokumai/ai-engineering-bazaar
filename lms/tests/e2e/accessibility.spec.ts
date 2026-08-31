@@ -1,5 +1,6 @@
 import { type Page, expect, test } from '@playwright/test'
-import { A0, A2, A4, CATEGORY_PATHS } from './sheets'
+import { contrastSamples, useTheme, worst } from './contrast'
+import { A0, A2, A4, CATEGORY_PATHS, SHEETS } from './sheets'
 
 /**
  * §10.2–§10.3 and §9.6 — the floors only a real engine can confirm.
@@ -126,3 +127,98 @@ test('the schedule of parts and the manifest are named tables', async ({ page })
   await page.goto('/')
   await expect(page.locator('.hl-index caption')).not.toHaveText('')
 })
+
+// ---------------------------------------------------------------------------
+// §10.1 — contrast, measured off the painted pixels rather than off the tokens
+// ---------------------------------------------------------------------------
+
+const THEMES = ['light', 'dark'] as const
+
+/**
+ * The unit suite proves the *palette* clears §10.1. It cannot prove that a
+ * given run of text ended up in a token it was allowed to carry, and T5 —
+ * `--color-ink-faint` "may never be applied to text a user must read" — is a
+ * claim about text, not about a colour. These are the four places the audit
+ * found it applied to content, each measured against the ground it is actually
+ * painted on.
+ */
+
+test('code comments clear the text floor on the code ground (§6.7, T5)', async ({ page }) => {
+  for (const theme of THEMES) {
+    await page.goto(A2.path)
+    await useTheme(page, theme)
+
+    // Leaf spans only: shiki nests a line wrapper around each row.
+    const samples = (
+      await contrastSamples(page, '.hl-code pre code span:not(:has(span))')
+    ).filter((sample) => sample.text !== '')
+    expect(samples.length, 'no highlighted code on this sheet').toBeGreaterThan(20)
+
+    const low = worst(samples)
+    expect(
+      low.ratio,
+      `${theme}: "${low.text}" is ${low.ratio.toFixed(2)}:1 (${low.color} on ${low.background})`,
+    ).toBeGreaterThanOrEqual(4.5)
+  }
+})
+
+test('the schedule of parts announces its ITEM column legibly (§4.5)', async ({ page }) => {
+  for (const theme of THEMES) {
+    await page.goto(A4.path)
+    await useTheme(page, theme)
+
+    // Not `aria-hidden`, and the only text under a `<th scope="col">Item</th>`,
+    // so it is content: §10.4 puts an 11px mono mark at `ink-muted` or better.
+    await expect(page.locator('.hl-schedule-item').first()).not.toHaveAttribute('aria-hidden')
+    const samples = await contrastSamples(page, '.hl-schedule-item')
+    expect(samples.length).toBeGreaterThan(0)
+    const low = worst(samples)
+    expect(low.ratio, `${theme}: ITEM "${low.text}" at ${low.ratio.toFixed(2)}:1`)
+      .toBeGreaterThanOrEqual(4.5)
+  }
+})
+
+test('prev/next carries no text below the §10.4 floor (§5.7)', async ({ page }) => {
+  // Sheet 1 has no previous, so it prints the `— END OF SET` cell as well as a
+  // live one; both are 11px mono and both are read out.
+  for (const theme of THEMES) {
+    await page.goto(SHEETS[0].path)
+    await useTheme(page, theme)
+
+    const samples = await contrastSamples(
+      page,
+      '.hl-prevnext-sheet, .hl-prevnext-end, .hl-prevnext-title',
+    )
+    expect(samples.length).toBeGreaterThan(2)
+    const low = worst(samples)
+    expect(low.ratio, `${theme}: "${low.text}" at ${low.ratio.toFixed(2)}:1`)
+      .toBeGreaterThanOrEqual(4.5)
+  }
+})
+
+test('the § permalink is legible the frame it is revealed (§6.1)', async ({ page }) => {
+  for (const theme of THEMES) {
+    await page.goto(A2.path)
+    await useTheme(page, theme)
+
+    const heading = page.locator('.prose h2').first()
+    await heading.hover()
+
+    const anchor = heading.locator('.hl-anchor')
+    await expect(anchor).toHaveCSS('opacity', '1')
+
+    const [revealed] = await contrastSamples(page, '.prose h2:hover .hl-anchor')
+    expect(
+      revealed.ratio,
+      `${theme}: the revealed § is ${revealed.ratio.toFixed(2)}:1`,
+    ).toBeGreaterThanOrEqual(4.5)
+
+    // Two stages, or the control has no hover feedback of its own once the
+    // revealed state is already at `--color-ink-muted`.
+    await anchor.hover()
+    const [hovered] = await contrastSamples(page, '.prose .hl-anchor:hover')
+    expect(hovered.color, `${theme}: hovering the § changes nothing`).not.toBe(revealed.color)
+    expect(hovered.ratio).toBeGreaterThan(revealed.ratio)
+  }
+})
+

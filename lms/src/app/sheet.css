@@ -605,7 +605,13 @@
     line-height: var(--text-mark--line-height);
     letter-spacing: 0.06em;
     font-variant-numeric: tabular-nums;
-    color: var(--color-ink-faint);
+    /* §4.5 item 6 asked for `--color-ink-faint`. This is the only text in a
+       column headed `ITEM`, it is not `aria-hidden`, and at 11px mono it is
+       exactly what §10.4 rules out below `ink-muted` — 2.68:1 / 2.41:1. The
+       ordinal stays subordinate to `DESCRIPTION`, which is `--color-ink`, and
+       "not yet drawn" is still carried by the dashed tick below, which is line
+       type rather than colour. */
+    color: var(--color-ink-muted);
   }
 
   /* The hidden line: this item exists in the model and is not yet drawn. It is
@@ -700,8 +706,10 @@
     color: var(--color-ink-muted);
   }
 
+  /* Part of the link's accessible name — "← Previous sheet 2 Training LLMs" —
+     and 11px mono, so §10.4's floor applies (§5.7 asked for ink-faint). */
   .hl-prevnext-sheet {
-    color: var(--color-ink-faint);
+    color: var(--color-ink-muted);
   }
 
   .hl-prevnext-title {
@@ -725,7 +733,9 @@
      the symmetry is the information (§5.7). */
   .hl-prevnext-end {
     justify-content: center;
-    color: var(--color-ink-faint);
+    /* Same §10.4 floor as the sheet number above: `— END OF SET` is the cell's
+       only content, and it is the whole point of printing the cell. */
+    color: var(--color-ink-muted);
   }
 }
 

@@ -40,11 +40,21 @@ export interface CodeTokenRole {
 }
 
 /**
- * §6.7's table, verbatim. Everything not listed here falls through to the
- * theme's default foreground, which is `--color-ink`.
+ * §6.7's table, with one correction §10.1 forces on it. Everything not listed
+ * here falls through to the theme's default foreground, which is `--color-ink`.
+ *
+ * §6.7 originally named `--color-ink-faint` for the comment token. On the
+ * `--color-sunken` code ground that is 2.45:1 in light and 2.54:1 in dark, and
+ * T5 is a refusal: `--color-ink-faint` "may never be applied to text a user
+ * must read". A comment in a teaching corpus is content — `# Example vectors`
+ * is the line that explains the three below it — so the floor wins (§1) and
+ * the token is `--color-ink-muted`, 4.71:1 light / 6.36:1 dark. That is the
+ * same token §6.7 gives an untagged OUTPUT block, deliberately: the two are
+ * different block types carrying the same "quieter than the code" weight, and
+ * the language tag already tells them apart.
  */
 export const CODE_TOKEN_ROLES: readonly CodeTokenRole[] = [
-  { scope: ['comment', 'punctuation.definition.comment'], token: '--color-ink-faint' },
+  { scope: ['comment', 'punctuation.definition.comment'], token: '--color-ink-muted' },
   { scope: ['string', 'constant.other.symbol', 'punctuation.definition.string'], token: '--color-verify-ink' },
   { scope: ['keyword', 'storage', 'storage.type', 'keyword.operator'], token: '--color-ink', bold: true },
   { scope: ['constant.numeric', 'constant.language', 'constant.character'], token: '--color-accent-ink' },

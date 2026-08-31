@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { contrastRatio, relativeLuminance } from '@/lib/color/contrast'
-import { readDesignToken } from '@/lib/content/code-theme'
+import {
+  CODE_TOKEN_ROLES,
+  DEFAULT_TOKEN,
+  readDesignToken,
+} from '@/lib/content/code-theme'
 
 /**
  * Requirement B9 — the CI contrast check, §10.1.
@@ -66,6 +70,7 @@ const DARK: readonly Pair[] = [
   { foreground: 'ink', background: 'sunken', ratio: 16.01, floor: 4.5 },
   { foreground: 'ink-muted', background: 'paper', ratio: 6.00, floor: 4.5 },
   { foreground: 'ink-muted', background: 'cleared', ratio: 5.50, floor: 4.5 },
+  { foreground: 'ink-muted', background: 'sunken', ratio: 6.36, floor: 4.5 },
   { foreground: 'accent-ink', background: 'paper', ratio: 8.14, floor: 4.5 },
   { foreground: 'accent', background: 'paper', ratio: 6.63, floor: 3.0 },
   { foreground: 'line-strong', background: 'paper', ratio: 3.39, floor: 3.0 },
@@ -151,5 +156,38 @@ describe('the two failure modes §10.1 names', () => {
       )
       expect(ratio).toBeLessThan(3.0)
     }
+  })
+})
+
+/**
+ * §6.7's four tokens, against the ground §6.7 puts them on.
+ *
+ * The tables above pair a token with `paper` and `cleared`; a code block is
+ * `--color-sunken`, which is the darkest ground in light mode and therefore
+ * the tightest pairing on the site. §6.7 originally gave the comment token
+ * `--color-ink-faint`, which is 2.45:1 there — under half the floor, on real
+ * teaching prose (`# Add some code snippets with embeddings`). T5 forbids
+ * exactly that, and §1 gives the floor the last word over a component.
+ *
+ * The light pass has ~0.2 of headroom, so this check is not optional
+ * decoration: nudge `--color-ink-muted` a shade lighter and comments drop
+ * under 4.5 with nothing else on the site changing.
+ */
+describe('§6.7 syntax tokens on the code ground', () => {
+  const ground = (theme: Theme) => readDesignToken('--color-sunken')[theme]
+
+  it.each(
+    (['light', 'dark'] as const).flatMap((theme) =>
+      [...CODE_TOKEN_ROLES.map((role) => role.token), DEFAULT_TOKEN].map(
+        (token) => [theme, token] as const,
+      ),
+    ),
+  )('%s: %s clears 4.5:1 on --color-sunken', (theme, token) => {
+    expect(contrastRatio(readDesignToken(token)[theme], ground(theme))).toBeGreaterThanOrEqual(4.5)
+  })
+
+  it('never paints a comment in the decorative ink T5 refuses', () => {
+    const comment = CODE_TOKEN_ROLES.find((role) => role.scope.includes('comment'))
+    expect(comment?.token).not.toBe('--color-ink-faint')
   })
 })

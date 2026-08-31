@@ -1,3 +1,4 @@
+# Agent tooling, local only.
 .superpowers/
 .remember/
 docs/superpowers/
@@ -15,13 +16,23 @@ node_modules/
 .env.test
 .env.production
 
-site/
-.venv/
+# Next.js build output. `out/` is the static export that ships.
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# Written by `npm run prebuild` from the figures in mini-courses/.
+public/course-images/
+
+# Written and re-added by `next dev` on every run (Next 16 agent rules).
+AGENTS.md
+CLAUDE.md
+
+# Playwright
+test-results/
+playwright-report/
+
 # Playwright MCP session artifacts (console logs, page snapshots)
 .playwright-mcp/
-
-# LMS (Next.js) build output
-lms/.next/
-lms/out/
-lms/next-env.d.ts
-lms/*.tsbuildinfo
+docs/superpowers/

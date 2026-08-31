@@ -1,10 +1,9 @@
-# One artifact, two sites.
+# Build the site and publish it to GitHub Pages.
 #
-#   /ai-engineering-bazaar/          the LMS (lms/, Next.js static export)
-#   /ai-engineering-bazaar/legacy/   the MkDocs site, unchanged
+#   /ai-engineering-bazaar/   the Next.js static export, served from the root
 #
-# Both read the same markdown in mini-courses/, so they have to be built from
-# the same commit or the two halves of the site disagree about the curriculum.
+# The pages are generated from the markdown in mini-courses/, so the build has to
+# see the repository at one commit and with its full history.
 name: Deploy
 
 on:
@@ -22,8 +21,8 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  # The GitHub Pages project path. The LMS is served from it directly, which is
-  # why it is also the LMS's basePath; anything else and every asset 404s.
+  # The GitHub Pages project path. The site is served from it directly, which is
+  # why it is also the app's basePath; anything else and every asset 404s.
   BASE_PATH: /ai-engineering-bazaar
 
 jobs:
@@ -36,48 +35,36 @@ jobs:
           # so the module sheets are wrong without the full history.
           fetch-depth: 0
 
-      - uses: actions/setup-python@v7
-        with:
-          python-version: "3.12"
-      - run: pip install mkdocs-material
-      - name: Build the legacy docs site
-        run: mkdocs build --strict --site-dir "$RUNNER_TEMP/legacy"
-
       # v5 added automatic caching keyed off a `packageManager` field in
-      # package.json and v6 narrowed it to npm. `lms/package.json` declares no
-      # such field, so the explicit cache below is still the only one.
+      # package.json and v6 narrowed it to npm. `package.json` declares no such
+      # field, so the explicit cache below is still the only one.
       - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
-          cache-dependency-path: lms/package-lock.json
+          cache-dependency-path: package-lock.json
       - run: npm ci
-        working-directory: lms
-      - name: Build the LMS for its base path
+      - name: Build the site for its base path
         run: npm run build
-        working-directory: lms
         env:
-          LMS_BASE_PATH: ${{ env.BASE_PATH }}
+          SITE_BASE_PATH: ${{ env.BASE_PATH }}
 
       - name: Assemble the Pages artifact
         run: |
           set -euo pipefail
           rm -rf _site
           mkdir -p _site
-          cp -r lms/out/. _site/
-          mkdir -p _site/legacy
-          cp -r "$RUNNER_TEMP/legacy/." _site/legacy/
+          cp -r out/. _site/
           # Without this, Pages runs Jekyll, Jekyll discards every path that
           # starts with an underscore, _next/ disappears, and the site loads as
           # unstyled HTML with a green build and no error anywhere.
           touch _site/.nojekyll
 
-      - name: Fail before publishing if either site is missing
+      - name: Fail before publishing if the site is missing
         run: |
           set -euo pipefail
           test -d _site/_next
           test -f _site/index.html
-          test -f _site/legacy/index.html
           test -f _site/.nojekyll
           # A basePath that did not reach assetPrefix builds cleanly and 404s
           # every stylesheet, so check the emitted URLs, not just the files.
@@ -131,5 +118,3 @@ jobs:
           test -n "$href"
           echo "stylesheet: $href"
           curl -fsS -o /dev/null "${base%/ai-engineering-bazaar}${href}"
-          # And the MkDocs half, which travels in the same artifact.
-          curl -fsS -o /dev/null "$base/legacy/"

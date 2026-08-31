@@ -8,9 +8,12 @@
 # identical to anything. Twenty runs of this workflow existed before this line
 # and every one of them was a `pull_request`.
 #
-# Running here does not by itself stop a red commit from deploying: the two jobs
-# below have to be named as required checks on main's ruleset for that. The
-# ruleset requires a pull request today and requires no check to pass on it.
+# Running here does not by itself stop a red commit from deploying: `deploy.yml`
+# does not depend on this workflow, so what stops one is main's ruleset naming
+# the job below as a required status check. It does — which means the job's
+# `name:` is part of the repository's configuration and not free to edit: change
+# it without changing the ruleset and the required check simply never reports,
+# leaving every pull request unmergeable rather than failing loudly.
 name: CI
 
 on:
@@ -20,39 +23,23 @@ on:
   workflow_dispatch:
 
 jobs:
-  legacy-docs:
-    name: MkDocs (strict)
+  site:
+    name: Build and test
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
-        with:
-          python-version: "3.12"
-      - run: pip install mkdocs-material
-      # Strict turns a broken link into a failure. The docs site is the only
-      # published home of the markdown until the LMS deploys beside it.
-      - run: mkdocs build --strict
-
-  lms:
-    name: LMS
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: lms
     steps:
       - uses: actions/checkout@v7
         with:
           # §11.26: REVISION is each file's last-touching commit.
           fetch-depth: 0
       # v5 added automatic caching driven by a `packageManager` field in
-      # package.json, and v6 narrowed it to npm. `lms/package.json` declares no
-      # such field, so nothing here is cached twice or cached differently; the
+      # package.json, and v6 narrowed it to npm. `package.json` declares no such
+      # field, so nothing here is cached twice or cached differently; the
       # explicit `cache`/`cache-dependency-path` below is still what runs.
       - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
-          cache-dependency-path: lms/package-lock.json
+          cache-dependency-path: package-lock.json
       - run: npm ci
       - run: npm run typecheck
       # Includes the B9 contrast check (§10.1): a token edited so that a pair
@@ -69,5 +56,5 @@ jobs:
         if: failure()
         with:
           name: playwright-report
-          path: lms/playwright-report/
+          path: playwright-report/
           retention-days: 7

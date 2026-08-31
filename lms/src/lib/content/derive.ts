@@ -10,7 +10,7 @@ import type { Element } from 'hast'
 import { categoryBySlug } from './categories'
 import { CONTENT_ROOT } from './paths'
 import { moduleSlugFromFilename } from './slugs'
-import { stripBuildFurniture } from './strip'
+import { stripBuildFurniture, stripLeadIn } from './strip'
 
 /**
  * Requirement B6 — every value the module header block (§5.5) prints is
@@ -75,7 +75,11 @@ function scan(markdown: string): Line[] {
 }
 
 /**
- * §5.5 `EXTENT` — words in the module body after the B1 strip.
+ * §5.5 `EXTENT` — words in the module body after the B1 strip and the B6.1 /
+ * B6.2 lead-in strip. §5.5 spells the rule out: words counted "after stripping
+ * frontmatter, **the dek**, and the deleted progress rail". Callers hand this
+ * `stripLeadIn(body)`, never the raw body, or it counts the two lines the sheet
+ * never renders.
  *
  * Whitespace-separated tokens, which is how the corpus in Appendix A was
  * measured. Appendix A's own word counts are of the *whole file*, frontmatter
@@ -182,7 +186,7 @@ function extentOfFile(file: string): number {
   const cached = fileExtents.get(file)
   if (cached !== undefined) return cached
   const words = fs.existsSync(file)
-    ? extent(stripBuildFurniture(matter(fs.readFileSync(file, 'utf8')).content))
+    ? extent(stripLeadIn(stripBuildFurniture(matter(fs.readFileSync(file, 'utf8')).content)))
     : 0
   fileExtents.set(file, words)
   return words

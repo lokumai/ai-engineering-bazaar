@@ -37,7 +37,7 @@ describe('sheetRows — one row per sheet in the set (§4.8)', () => {
   })
 
   it('states extent as words and declared minutes on a drawn sheet', () => {
-    expect(rows[12].extent).toBe('4,883 W · 30 MIN')
+    expect(rows[12].extent).toBe('4,868 W · 30 MIN')
   })
 
   it('prints an em dash for the extent of a sheet that is not drawn', () => {

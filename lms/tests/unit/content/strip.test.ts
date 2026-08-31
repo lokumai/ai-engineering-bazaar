@@ -5,6 +5,7 @@ import { CATEGORIES } from '@/lib/content/categories'
 import { CONTENT_ROOT } from '@/lib/content/paths'
 import {
   stripBuildFurniture,
+  stripLeadIn,
   stripProgressSection,
   stripSequenceLinks,
 } from '@/lib/content/strip'
@@ -134,5 +135,46 @@ describe('stripBuildFurniture', () => {
     const before = fs.readFileSync(file, 'utf8')
     stripBuildFurniture(before)
     expect(fs.readFileSync(file, 'utf8')).toBe(before)
+  })
+})
+
+describe('stripLeadIn', () => {
+  it('drops the h1 the sheet renders from frontmatter instead (B6.1)', () => {
+    expect(stripLeadIn('# Module 13: Security\n\nProse.\n')).toBe('\nProse.\n')
+  })
+
+  it('drops the italic dek the title block already states (B6.2)', () => {
+    const md = '# Module 13: Security\n\n*Category: Intermediate — Module 13 (6 of 8 in this category)*\n\nProse.\n'
+    expect(stripLeadIn(md)).toBe('\n\nProse.\n')
+  })
+
+  it('drops the Turkish dek too, since the ratio compares both sides', () => {
+    const md = '# Modül 16: Gelişmiş UI\n\n*Kategori: Uzman — Modül 16*\n\nMetin.\n'
+    expect(stripLeadIn(md)).toBe('\n\nMetin.\n')
+  })
+
+  it('leaves a body with no h1 and no dek exactly as it found it', () => {
+    expect(stripLeadIn('Prose.\n\n## I. Section\n')).toBe('Prose.\n\n## I. Section\n')
+  })
+
+  it('never touches a later h1 or a later italic line', () => {
+    const md = '# One\n\nProse.\n\n# Two\n\n*Category: not the dek*\n'
+    expect(stripLeadIn(md)).toContain('# Two')
+    expect(stripLeadIn(md)).toContain('*Category: not the dek*')
+  })
+
+  it('does not mistake the lead paragraph for a dek', () => {
+    // Modules 1-7 run the h1 straight into prose, with no dek between them.
+    const md = '# Module 1: LLM Fundamentals\n\nWelcome to the first module!\n'
+    expect(stripLeadIn(md)).toContain('Welcome to the first module!')
+  })
+
+  it('strips exactly what the corpus puts above the lead paragraph', () => {
+    for (const file of everyModuleFile()) {
+      const raw = fs.readFileSync(file, 'utf8').replace(/^---\n[\s\S]*?\n---\n/, '')
+      const stripped = stripLeadIn(raw)
+      expect(stripped, file).not.toMatch(/^\s*#[ \t]/)
+      expect(stripped, file).not.toMatch(/^\s*\*(Category|Kategori):/)
+    }
   })
 })

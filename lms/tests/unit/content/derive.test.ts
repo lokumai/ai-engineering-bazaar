@@ -19,7 +19,7 @@ import {
 } from '@/lib/content/derive'
 import { loadAllModules } from '@/lib/content/loader'
 import { CONTENT_ROOT } from '@/lib/content/paths'
-import { stripBuildFurniture } from '@/lib/content/strip'
+import { stripBuildFurniture, stripLeadIn } from '@/lib/content/strip'
 
 const modules = loadAllModules()
 const byNumber = new Map(modules.map((m) => [m.frontmatter.module, m]))
@@ -29,6 +29,11 @@ const numbers = (predicate: (n: number) => boolean) =>
 /** The English body of a module, exactly as the loader now serves it. */
 function body(moduleNumber: number): string {
   return byNumber.get(moduleNumber)!.body
+}
+
+/** The extent that module's sheet actually prints. */
+function measured(moduleNumber: number): number {
+  return byNumber.get(moduleNumber)!.extent
 }
 
 describe('extent', () => {
@@ -42,37 +47,54 @@ describe('extent', () => {
   })
 
   it('counts module 1 at its measured extent', () => {
-    expect(extent(body(1))).toBe(1122)
+    expect(measured(1)).toBe(1114)
+  })
+
+  it('leaves out the h1 and the dek, which the sheet never renders', () => {
+    // §5.5: words "after stripping frontmatter, the dek, and the deleted
+    // progress rail". Every file in the corpus opens with an h1, so the
+    // printed extent is strictly below a naive count of the served body.
+    for (const m of modules) {
+      expect(m.extent, m.slug).toBe(extent(stripLeadIn(m.body)))
+      expect(m.extent, m.slug).toBeLessThan(extent(m.body))
+    }
+  })
+
+  it('drops the h1 alone where there is no dek, and both where there is', () => {
+    // Modules 1-7 run the h1 straight into the lead paragraph; 8-32 carry
+    // `*Category: … *` between the two.
+    expect(extent(body(1)) - measured(1)).toBe(extent('# Module 1: Large Language Model (LLM) Fundamentals'))
+    expect(extent(body(13)) - measured(13))
+      .toBe(extent('# Module 13: Security') + extent('*Category: Intermediate — Module 13 (6 of 8 in this category)*'))
   })
 
   it('puts the eight long-form modules above the A0 threshold', () => {
     for (const n of numbers((n) => n >= 8 && n <= 15)) {
-      expect(extent(body(n)), `module ${n}`).toBeGreaterThanOrEqual(A0_MIN_EXTENT)
+      expect(measured(n), `module ${n}`).toBeGreaterThanOrEqual(A0_MIN_EXTENT)
     }
   })
 
   it('puts the seven short ready modules below the A0 threshold', () => {
     for (const n of numbers((n) => n <= 7)) {
-      const words = extent(body(n))
-      expect(words, `module ${n}`).toBeGreaterThan(0)
-      expect(words, `module ${n}`).toBeLessThan(A0_MIN_EXTENT)
+      expect(measured(n), `module ${n}`).toBeGreaterThan(0)
+      expect(measured(n), `module ${n}`).toBeLessThan(A0_MIN_EXTENT)
     }
   })
 
   it('leaves every stub under 200 words', () => {
     for (const n of numbers((n) => n >= 16)) {
-      expect(extent(body(n)), `module ${n}`).toBeLessThan(200)
+      expect(measured(n), `module ${n}`).toBeLessThan(200)
     }
   })
 
   it('reproduces the measured band ranges', () => {
     const range = (lo: number, hi: number) => {
-      const words = numbers((n) => n >= lo && n <= hi).map((n) => extent(body(n)))
+      const words = numbers((n) => n >= lo && n <= hi).map(measured)
       return [Math.min(...words), Math.max(...words)]
     }
-    expect(range(1, 7)).toEqual([621, 1629])
-    expect(range(8, 15)).toEqual([3835, 4883])
-    expect(range(16, 32)).toEqual([53, 74])
+    expect(range(1, 7)).toEqual([615, 1620])
+    expect(range(8, 15)).toEqual([3817, 4868])
+    expect(range(16, 32)).toEqual([38, 58])
   })
 })
 

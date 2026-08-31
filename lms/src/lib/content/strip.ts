@@ -21,6 +21,10 @@ const SECTION_BREAK = /^#{1,2}[ \t]/
 /** The trailing sequence links, in both languages, module and category forms. */
 const SEQUENCE_LINK =
   /^\*\*(Previous|Next) (Module|Category):\*\*|^\*\*(Önceki|Sonraki) (Modül|Kategori):\*\*/
+/** B6.1 — the leading h1 the sheet renders from frontmatter instead. */
+const LEAD_H1 = /^#[ \t]+\S/
+/** B6.2 — the italic dek, in both languages the corpus is written in. */
+const LEAD_DEK = /^\*(Category|Kategori):\s.*\*$/
 
 /** Collapse the blank run a removal leaves behind at the end of the file. */
 function tidyTail(lines: string[]): string {
@@ -54,6 +58,33 @@ export function stripProgressSection(markdown: string): string {
 /** Drop the `**Previous Module:** …` / `**Next Module:** …` furniture lines. */
 export function stripSequenceLinks(markdown: string): string {
   return tidyTail(markdown.split('\n').filter((line) => !SEQUENCE_LINK.test(line)))
+}
+
+/**
+ * B6.1 / B6.2 on the markdown — the two lines `rehypeDropFirstH1` and
+ * `rehypeDropDek` delete from the rendered tree, so that a count taken here
+ * measures the same document the reader is shown.
+ *
+ * This is for **measurement only**. The body the loader serves keeps both
+ * lines and the removal happens once, at render time, on the AST: doing it
+ * twice would be two chances to disagree. §5.5 makes the distinction
+ * explicit — `EXTENT` is "words counted from the AST after stripping
+ * frontmatter, the dek, and the deleted progress rail" — and without this the
+ * printed extent counts 5–18 words no sheet ever puts on the page.
+ */
+export function stripLeadIn(markdown: string): string {
+  const lines = markdown.split('\n')
+  let at = 0
+  const nextContentLine = () => {
+    while (at < lines.length && lines[at].trim() === '') at += 1
+  }
+
+  nextContentLine()
+  if (at < lines.length && LEAD_H1.test(lines[at])) lines.splice(at, 1)
+  nextContentLine()
+  if (at < lines.length && LEAD_DEK.test(lines[at].trim())) lines.splice(at, 1)
+
+  return lines.join('\n')
 }
 
 /**

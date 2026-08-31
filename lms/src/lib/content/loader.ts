@@ -15,7 +15,7 @@ import { CONTENT_ROOT } from './paths'
 import { type Revision, revisionFor } from './revision'
 import { type ModuleFrontmatter, parseFrontmatter } from './schema'
 import { fullSlug, moduleSlugFromFilename } from './slugs'
-import { stripBuildFurniture } from './strip'
+import { stripBuildFurniture, stripLeadIn } from './strip'
 
 export interface CourseModule {
   /** `fundamentals/llms` — the identifier used across the app */
@@ -30,7 +30,7 @@ export interface CourseModule {
    * value below is measured from this string, never from the raw file.
    */
   body: string
-  /** §5.5 `EXTENT` — words in the stripped body */
+  /** §5.5 `EXTENT` — words in the body, less the h1 and dek the sheet drops */
   extent: number
   /** §4.4 — which of the three sheet formats this module is drawn on */
   sheetFormat: SheetFormat
@@ -92,7 +92,10 @@ export function loadAllModules(): CourseModule[] {
       const moduleSlug = moduleSlugFromFilename(filename)
       const slug = fullSlug(category.slug, moduleSlug)
       const body = stripBuildFurniture(parsed.content).trimStart()
-      const words = extent(body)
+      // The body keeps its h1 and its dek — `render.ts` drops them from the
+      // tree (B6.1, B6.2) — so the measurement drops them here rather than
+      // counting two lines the sheet never prints (§5.5).
+      const words = extent(stripLeadIn(body))
       modules.push({
         slug,
         moduleSlug,

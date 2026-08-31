@@ -3,7 +3,6 @@
 AI Engineering made simple, short, and useful.
 
 📖 **Read online:** [lokumai.github.io/ai-engineering-bazaar](https://lokumai.github.io/ai-engineering-bazaar/)
-— or the plain docs site at [/legacy/](https://lokumai.github.io/ai-engineering-bazaar/legacy/)
 
 A series of mini-courses from beginner to advanced to help you learn practical topics in modern AI engineering. Each course is short, easy to understand, and includes real-world examples, clear visuals, and extra reading materials. It is the fastest way to master what you actually need on the job.
 
@@ -28,23 +27,32 @@ A series of mini-courses from beginner to advanced to help you learn practical t
 
 1. ⚜️ [ADVANCED] ⚜️ If you want to become a rare, highly-skilled AI engineer, take the [Expert](mini-courses/3_expert/README.md) course to learn advanced topics.
 
-## Two sites, one set of markdown
+## The repository
 
-The courses are plain markdown in `mini-courses/`, and nothing below ever edits
-them — every transformation happens at build time. They are published twice:
+The courses are plain markdown in `mini-courses/`, and nothing else in this repository
+ever edits them — every transformation happens at build time. Everything at the
+repository root is the Next.js application that reads them:
 
-| Site | URL | Built from |
-| --- | --- | --- |
-| **LMS** — the course experience | <https://lokumai.github.io/ai-engineering-bazaar/> | `lms/` (Next.js, static export) |
-| **Docs** — the plain reference | <https://lokumai.github.io/ai-engineering-bazaar/legacy/> | `mkdocs.yml` (MkDocs Material) |
+| Path | What it is |
+| --- | --- |
+| `mini-courses/` | The courses. Plain markdown with YAML frontmatter, read-only to the build |
+| `src/` | The application — `app/` routes, `components/`, and `lib/` (content pipeline, learner record, learning paths, identity) |
+| `tests/` | `unit/` (Vitest), `corpus/` (the same checks against all 32 real modules), `e2e/` (Playwright, real Chrome) |
+| `scripts/` | `copy-course-images.mjs` (runs as `prebuild`), `serve-static.mjs` (serves `out/` for the e2e suite) |
 
-Both are built from the same commit and shipped in a single GitHub Pages
-artifact by `.github/workflows/deploy.yml`, with the LMS at the root and the
-docs site under `legacy/`.
+`npm run build` produces a static export in `out/`, which
+[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) publishes to GitHub Pages
+as the whole site.
+
+**The course cross-references are rewritten at build time.** A module that links to
+another with a relative markdown path — `[Module 13](13_security.md)` — has that href
+turned into the real route by `src/lib/content/links.ts`. An internal `.md` link the
+corpus cannot answer for **fails the build**, naming the file and the href, so a broken
+cross-reference cannot reach the published site.
 
 ## Your record lives in your browser
 
-The LMS keeps a learner record — which sheets you have signed off, your answers
+The site keeps a learner record — which sheets you have signed off, your answers
 to the quick checks, the primary sources you opened, the checklists you ran, and
 the GitHub repositories you register against each module. All of it is in
 `localStorage` on your own device. There are no accounts, no server and no
@@ -57,7 +65,7 @@ network calls at runtime, and none of it is ever sent anywhere.
 | `/profile/` | Your name, your drafter's mark, your role, your submittals, storage health, and export / import / erase |
 | `/path/` | An ordered route through the set for your role — which sheet to take next, and why that role reads it |
 | `/report/` | The `RECORD OF WORK` — one self-contained HTML file you keep |
-| `/legend/` | Sheet 00: what the line types mean, and what this LMS deliberately does not have |
+| `/legend/` | Sheet 00: what the line types mean, and what this site deliberately does not have |
 
 **Browser storage can be cleared without warning** — by you, by the browser, or
 by a private window, and Safari deletes it after seven days without a visit. So
@@ -80,7 +88,7 @@ them worth reading:
   written them — which caught seven real problems, including a claim about
   retrieval-correctness content that does not exist in the corpus and a route
   that promised vector-store operations no sheet covers. The quotation behind
-  each reason is kept in `lms/tests/fixtures/path-evidence.json`, and a test
+  each reason is kept in `tests/fixtures/path-evidence.json`, and a test
   checks all 123 of them against the source files on every run.
 - **17 of the 32 sheets are not written yet.** A route may point at one, because
   a roadmap that stops at the edge of today's content is a worse roadmap — but
@@ -150,37 +158,19 @@ none of it can drift out of date.
 
 ## Local development
 
-### LMS
-
 ```bash
-cd lms
 npm install
 npm run dev          # http://localhost:3000
-npm run build        # static export into lms/out/
+npm run build        # static export into out/
 ```
 
-`npm run dev` serves from the repository root path (`/`). The deployed build
-sets `LMS_BASE_PATH=/ai-engineering-bazaar`, which is what makes every asset URL
-resolve on GitHub Pages; to reproduce the deployed build locally:
+`npm run dev` serves from the repository root path (`/`). The deployed build sets
+`SITE_BASE_PATH=/ai-engineering-bazaar`, which is what makes every asset URL resolve on
+GitHub Pages; to reproduce the deployed build locally:
 
 ```bash
-cd lms
-LMS_BASE_PATH=/ai-engineering-bazaar npm run build
+SITE_BASE_PATH=/ai-engineering-bazaar npm run build
 ```
-
-### Docs site
-
-```bash
-# one-time setup
-python3 -m venv .venv
-.venv/bin/pip install mkdocs-material
-
-# run the local server
-.venv/bin/mkdocs serve
-```
-
-Then open http://127.0.0.1:8000 — the site live-reloads whenever you save a
-markdown file.
 
 ## Tests
 
@@ -188,57 +178,64 @@ Everything below runs on every pull request (`.github/workflows/ci.yml`), and
 all of it must pass before opening one.
 
 ```bash
-# From the repository root — broken links fail the strict build.
-.venv/bin/mkdocs build --strict
-
-cd lms
 npm run typecheck    # TypeScript, strict
 npm test             # Vitest: units, plus the whole-corpus render check
 npm run build        # the static export itself
 npm run test:e2e     # Playwright, real Chrome, three viewports
 ```
 
-`npm test` includes seven checks worth knowing about because they fail for
+`npm test` includes eight checks worth knowing about because they fail for
 reasons that are not a broken test:
 
-- **The corpus check** (`lms/tests/corpus/`) renders all 32 real modules rather
-  than a fixture, so a transform that works on a sample and dies on the content
-  fails here.
-- **The contrast check** (`lms/tests/unit/color/contrast.test.ts`) recomputes
-  every WCAG ratio published in §10.1 of the design spec from the live token
-  values in `lms/src/app/globals.css`. Change a colour and this fails until the
-  spec's table is re-derived to match.
-- **The stroke-weight check** (`lms/tests/unit/stroke-weights.test.ts`) fails on
-  any `border-width: var(--stroke-struct)`. Chrome floors a border width to a
-  whole pixel, so the middle line weight has to be *painted* — a gradient or a
-  height — not bordered. It caught this exact mistake twice while the record
-  layer was being built.
-- **The copy register** (`lms/tests/unit/copy-register.test.ts`) scans every
+- **The corpus check** (`tests/corpus/`) renders all 32 real modules rather than
+  a fixture, so a transform that works on a sample and dies on the content fails
+  here.
+- **The link gate** (`tests/corpus/links.test.ts`) resolves every internal
+  cross-reference in the corpus against the routes that exist, and asserts that
+  no rendered HTML anywhere contains a non-external `href` ending in `.md`. It
+  checks each path the app renders markdown on, the module body and the sheet's
+  summary panel and the category introductions, because a gate that covers only
+  the body once passed while four dead links were still shipping. Until this
+  repository became a single Next.js project it had no such gate: the check lived
+  in `mkdocs build --strict`, and it warned where this one fails the build.
+- **The contrast check** (`tests/unit/color/contrast.test.ts`) recomputes every
+  WCAG ratio published in §10.1 of the design spec from the live token values in
+  `src/app/globals.css`. Change a colour and this fails until the spec's table is
+  re-derived to match.
+- **The stroke-weight check** (`tests/unit/stroke-weights.test.ts`) fails on any
+  `border-width: var(--stroke-struct)`. Chrome floors a border width to a whole
+  pixel, so the middle line weight has to be *painted* — a gradient or a height —
+  not bordered. It caught this exact mistake twice while the record layer was
+  being built.
+- **The copy register** (`tests/unit/copy-register.test.ts`) scans every
   reader-visible string in the record and path layers — nine role blurbs and 123
   step reasons among them — for exclamation marks, praise, anthropomorphism,
   "just"/"simply"/"easy", "please"/"sorry" and confirmshaming. Comments are
   stripped first, because they quote every banned word while explaining why it is
   banned. It also bans a second spelling of a status: the register says
   `NOT DRAWN`, and `NOT YET DRAWN` fails, because both read as correct alone.
-- **The palette check** (`lms/tests/unit/color/lokum.test.ts`) recomputes all six
-  category hues from `lms/src/app/lokum.css`: 3:1 against three grounds in both
+- **The palette check** (`tests/unit/color/lokum.test.ts`) recomputes all six
+  category hues from `src/app/lokum.css`: 3:1 against three grounds in both
   themes at full and half chroma, in-gamut, mutually distinguishable, each state
   distinguishable from the others, and 20° clear of the accent pen. It also
   asserts the copy of those values inlined in the `RECORD OF WORK` matches the
   stylesheet, because that file has no stylesheet to import and its copy is the
   only one it has — a drifted hue there would be invisible.
-- **The path honesty check** (`lms/tests/unit/path/honesty.test.ts`) holds the
-  nine routes to §13.4.2: real slugs, no duplicates, prerequisite order,
-  denominators over written sheets only, and no unwritten sheet described as
-  though it teaches something. It found two defects that twelve independent
-  agents had passed.
-- **The path evidence check** (`lms/tests/unit/path/evidence.test.ts`) measures
-  each of the 123 reasons against the sheet it cites. Genuine citations score a
-  median of 100%; the same citations pointed at a different sheet score a median
-  of 33%. The test asserts both, so it cannot pass by being vacuous.
+- **The path honesty check** (`tests/unit/path/honesty.test.ts`) holds the nine
+  routes to §13.4.2: real slugs, no duplicates, prerequisite order, denominators
+  over written sheets only, and no unwritten sheet described as though it teaches
+  something. It found two defects that twelve independent agents had passed.
+- **The path evidence check** (`tests/unit/path/evidence.test.ts`) measures each
+  of the 123 reasons against the sheet it cites. Genuine citations score a median
+  of 100%; the same citations pointed at a different sheet score a median of 33%.
+  The test asserts both, so it cannot pass by being vacuous.
 
-First `npm run test:e2e` on a machine also needs the browser:
+The e2e suite launches real Google Chrome (`channel: 'chrome'`), not the bundled
+Chromium build. First run on a machine needs it installed:
 
 ```bash
-cd lms && npx playwright install chromium
+npx playwright install --with-deps chrome
 ```
+
+Set `E2E_CHANNEL=chromium` to fall back to the bundled build on a machine with no
+Chrome.

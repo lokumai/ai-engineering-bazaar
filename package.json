@@ -1,0 +1,50 @@
+{
+  "name": "ai-engineering-bazaar",
+  "version": "1.0.0",
+  "description": "Static site for the AI engineering mini-courses in mini-courses/, published at https://lokumai.github.io/ai-engineering-bazaar/.",
+  "scripts": {
+    "predev": "node scripts/copy-course-images.mjs",
+    "dev": "next dev",
+    "prebuild": "node scripts/copy-course-images.mjs",
+    "build": "next build",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "test:e2e:dev": "E2E_TARGET=dev playwright test",
+    "serve:out": "node scripts/serve-static.mjs out 3111"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.23",
+    "gray-matter": "^4.0.3",
+    "hast-util-to-string": "^3.0.1",
+    "mermaid": "^11.17.2",
+    "next": "^16.3.3",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "rehype-pretty-code": "^0.14.5",
+    "rehype-slug": "^6.0.0",
+    "rehype-stringify": "^10.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
+    "shiki": "^4.4.3",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.1.0",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.4.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.11"
+  }
+}

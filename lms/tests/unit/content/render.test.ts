@@ -136,6 +136,39 @@ describe('renderMarkdown — §6.1 heading anchors', () => {
     const { toc } = await renderMarkdown('## A section')
     expect(toc[0].text).toBe('A section')
   })
+
+  /**
+   * The anchor is a child of the heading, so without `aria-labelledby` the
+   * heading's name-from-contents swallows the anchor's label and every h2 and
+   * h3 announces itself twice: "A section Link to “A section”". ~20 headings a
+   * sheet across 15 drawn sheets, on the one control a screen-reader user
+   * navigates an 18,400px page with.
+   */
+  it('names a heading from its own title, not from its permalink', async () => {
+    const { html } = await renderMarkdown('## Why We Need RAG')
+    expect(html).toContain('<h2 id="why-we-need-rag" aria-labelledby="why-we-need-rag-title">')
+    expect(html).toContain('<span id="why-we-need-rag-title">Why We Need RAG</span>')
+    // The anchor keeps its own name; §6.1 and §10.3 require it to stay a
+    // labelled tab stop, so `aria-hidden` is not the fix.
+    expect(html).toContain('aria-label="Link to “Why We Need RAG”"')
+    expect(html).not.toContain('aria-hidden="true" class="hl-anchor"')
+  })
+
+  it('names an h3 the same way', async () => {
+    const { html } = await renderMarkdown('### A sub-section')
+    expect(html).toContain('<h3 id="a-sub-section" aria-labelledby="a-sub-section-title">')
+  })
+
+  it('never reuses an id a heading in the document already claimed', async () => {
+    // `## Slug` slugs to `slug`, and a sibling `## Slug title` slugs to
+    // `slug-title` — which is exactly the id the first heading's title span
+    // would otherwise take.
+    const { html } = await renderMarkdown('## Slug\n\n## Slug title')
+    const ids = [...html.matchAll(/id="([^"]+)"/g)].map((m) => m[1])
+    expect(new Set(ids).size).toBe(ids.length)
+    expect(ids).toContain('slug-title')
+    expect(ids).toContain('slug-title-2')
+  })
 })
 
 describe('renderMarkdown — B5 table width classes (§6.5)', () => {
@@ -190,6 +223,77 @@ describe('renderMarkdown — B5 table width classes (§6.5)', () => {
     expect(html).toContain('role="region"')
     expect(html).toContain('tabindex="0"')
     expect(html).toContain('aria-label="Table 11.1"')
+  })
+})
+
+/**
+ * A markdown pipe table ships one header row and no row headers, so a cell in
+ * TBL. 13.4's VERDICT column announces its column and nothing that says which
+ * defence it is the verdict on. `SheetIndex` already emits both scopes; this
+ * is the prose half catching up.
+ */
+describe('renderMarkdown — §10.2 table headers', () => {
+  const table = (columns: number) => {
+    const row = (head: string, rest: string) =>
+      `| ${[head, ...Array.from({ length: columns - 1 }, () => rest)].join(' | ')} |`
+    return `${row('h', 'h')}\n${row('-', '-')}\n${row('label', 'v')}`
+  }
+
+  it('scopes every column header, at any width', async () => {
+    for (const columns of [2, 3, 6]) {
+      const { html } = await renderMarkdown(table(columns))
+      expect(html.match(/<th scope="col"/g)).toHaveLength(columns)
+    }
+  })
+
+  it('promotes the first body cell of a three-column table to a row header', async () => {
+    const { html } = await renderMarkdown(table(3))
+    expect(html).toContain('<th scope="row">label</th>')
+  })
+
+  it('promotes every body row, not just the first', async () => {
+    const { html } = await renderMarkdown(
+      '| a | b | c |\n| - | - | - |\n| 1 | x | y |\n| 2 | x | y |\n| 3 | x | y |',
+    )
+    expect(html.match(/<th scope="row"/g)).toHaveLength(3)
+  })
+
+  it('promotes a transposed table whose first header cell is empty', async () => {
+    const { html } = await renderMarkdown('|  | a | b |\n| - | - | - |\n| rows | 1 | 2 |')
+    expect(html).toContain('<th scope="row">rows</th>')
+  })
+
+  /**
+   * A row header is repeated before every cell in its row. **MEASURED:** the
+   * corpus's 2-column tables include one in module 2 whose first column is a
+   * 180-character article excerpt; announcing that before each cell would be
+   * worse than announcing nothing.
+   */
+  it('leaves a two-column table alone — its first column is not a label', async () => {
+    const { html } = await renderMarkdown(table(2))
+    expect(html).not.toContain('scope="row"')
+    expect(html).toContain('<td>label</td>')
+  })
+})
+
+/**
+ * §6.4 / §7.7 — the site tracks no per-item state, so a GFM checkbox is inert
+ * decoration that was announcing itself as eight nameless, unchecked
+ * checkboxes down module 13's list. The item text is a sibling of the input,
+ * never a label, so there is no name to give it either.
+ */
+describe('renderMarkdown — §6.4 task lists', () => {
+  const list = '- [ ] No secrets in the system prompt\n- [ ] Tools are allow-listed'
+
+  it('takes the inert checkbox out of the accessibility tree', async () => {
+    const { html } = await renderMarkdown(list)
+    expect(html.match(/<input type="checkbox" disabled aria-hidden="true">/g)).toHaveLength(2)
+  })
+
+  it('leaves the item text, which is the actual content, untouched', async () => {
+    const { html } = await renderMarkdown(list)
+    expect(html).toContain('No secrets in the system prompt')
+    expect(html).toContain('class="task-list-item"')
   })
 })
 

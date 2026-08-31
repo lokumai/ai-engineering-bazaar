@@ -175,17 +175,54 @@ function rehypeCollectToc(sink: TocEntry[]) {
   }
 }
 
+/** Every `id` already in the tree, so a generated one can never collide. */
+function takenIds(tree: Root): Set<string> {
+  const ids = new Set<string>()
+  visit(tree, 'element', (node: Element) => {
+    const id = node.properties?.id
+    if (typeof id === 'string') ids.add(id)
+  })
+  return ids
+}
+
+function claimId(base: string, taken: Set<string>): string {
+  let id = base
+  for (let n = 2; taken.has(id); n += 1) id = `${base}-${n}`
+  taken.add(id)
+  return id
+}
+
 /**
  * §6.1 — the `§` anchor revealed on heading hover. Keyboard-focusable and
  * visible on focus; added after the TOC is collected so the mark never leaks
  * into a section title.
+ *
+ * The anchor is a *child* of the heading, which is what puts it at `x = -20px`
+ * in the heading's own positioning context and what makes `h2:hover` reveal
+ * it. That nesting has one cost the spec does not mention: a heading is named
+ * from its contents, so the anchor's `aria-label` concatenates onto the
+ * heading's accessible name and every h2 and h3 announces as
+ * "Why We Need RAG Link to “Why We Need RAG”". Heading navigation is how a
+ * screen-reader user skims an 18,400px sheet, and ~20 headings a sheet across
+ * 15 drawn sheets is ~300 doubled names.
+ *
+ * So the heading names itself from a span around its own title and the anchor
+ * keeps its own label. `aria-hidden` on the anchor would be the shorter fix
+ * and is refused: §6.1 requires it to be keyboard-focusable and visible on
+ * focus, and §10.3 requires every interactive element to be reachable by Tab.
  */
 function rehypeHeadingAnchors() {
   return (tree: Root) => {
+    const taken = takenIds(tree)
+
     visit(tree, 'element', (node: Element) => {
       if (node.tagName !== 'h2' && node.tagName !== 'h3') return
       const id = node.properties?.id
       if (typeof id !== 'string') return
+
+      const titleId = claimId(`${id}-title`, taken)
+      node.children = [element('span', { id: titleId }, node.children)]
+      node.properties['aria-labelledby'] = titleId
 
       node.children.push(
         element(
@@ -244,6 +281,50 @@ function columnCount(table: Element): number {
     widest = Math.max(widest, cells)
   })
   return widest
+}
+
+/**
+ * A markdown pipe table has exactly one header row and no row headers, so a
+ * cell in TBL. 13.4's VERDICT column announces its column and nothing that
+ * identifies its row. Below three columns the promotion is refused: the corpus
+ * has 2-column tables whose first cell is a 180-character article excerpt
+ * (module 2), and a row header is repeated before every cell in the row.
+ * **MEASURED:** at ≥3 columns all 252 pipe tables in the corpus are
+ * row-label-first, including the transposed ones whose first header cell is
+ * empty — there the first column is the attribute name, which is still the
+ * row's header.
+ *
+ * §6.5's "First column | weight 500" survives the promotion: `prose.css`
+ * already writes that rule as `.prose tbody :is(td, th):first-child`.
+ */
+const ROW_HEADER_MIN_COLUMNS = 3
+
+function rowsOf(table: Element, section: 'thead' | 'tbody'): Element[] {
+  const rows: Element[] = []
+  visit(table, 'element', (node: Element) => {
+    if (node.tagName !== section) return
+    for (const row of elementChildren(node)) {
+      if (row.tagName === 'tr') rows.push(row)
+    }
+  })
+  return rows
+}
+
+function applyTableHeaders(table: Element, columns: number): void {
+  for (const row of rowsOf(table, 'thead')) {
+    for (const cell of elementChildren(row)) {
+      if (cell.tagName === 'th') cell.properties = { ...cell.properties, scope: 'col' }
+    }
+  }
+
+  if (columns < ROW_HEADER_MIN_COLUMNS) return
+
+  for (const row of rowsOf(table, 'tbody')) {
+    const first = elementChildren(row)[0]
+    if (first?.tagName !== 'td') continue
+    first.tagName = 'th'
+    first.properties = { ...first.properties, scope: 'row' }
+  }
 }
 
 /** The caption strip. It **is** the `figcaption` (§10.2), never a `div`. */
@@ -377,6 +458,7 @@ function rehypeFigures(options: RenderOptions) {
       if (node.tagName === 'table') {
         tables += 1
         const columns = columnCount(node)
+        applyTableHeaders(node, columns)
         const name = label('TBL.', sheet, tables)
         parent.children[index] = element(
           'figure',
@@ -435,6 +517,34 @@ function rehypeBlockquotes() {
         element('p', { className: ['hl-quote-label'] }, [text(raw.slice(0, -1))]),
         element('div', { className: ['hl-quote-body'] }, node.children),
       ]
+    })
+  }
+}
+
+// ---------------------------------------------------------------------------
+// §6.4 task lists
+// ---------------------------------------------------------------------------
+
+/**
+ * §6.4 / §7.7 — a GFM `- [ ]` ships as a `disabled` checkbox, and this site
+ * tracks no per-item state, so it is inert decoration. It still entered the
+ * accessibility tree as a `checkbox` with no accessible name — the item text
+ * is a *sibling* text node, not a label — which is eight "checkbox, unchecked,
+ * dimmed" announcements down module 13's checklist, none of them naming the
+ * item they belong to. **MEASURED:** 8 exist in the corpus, all in module 13,
+ * and every one is unchecked, so hiding the input loses no state.
+ *
+ * `aria-hidden` on an element that is already `disabled` is safe: it is not
+ * focusable, so this cannot orphan focus inside a hidden subtree. The `li`'s
+ * own text is untouched and still read.
+ */
+function rehypeTaskListMarkers() {
+  return (tree: Root) => {
+    visit(tree, 'element', (node: Element, _index, parent) => {
+      if (node.tagName !== 'input' || node.properties?.type !== 'checkbox') return
+      if (node.properties?.disabled !== true) return
+      if (parent?.type !== 'element' || !classNames(parent).includes('task-list-item')) return
+      node.properties['aria-hidden'] = 'true'
     })
   }
 }
@@ -564,6 +674,7 @@ export async function renderMarkdown(
     .use(rehypeSlug)
     .use(rehypeCollectToc, toc)
     .use(rehypeHeadingAnchors)
+    .use(rehypeTaskListMarkers)
     .use(rehypeExternalLinks)
     // B8 — both variants, written as CSS custom properties on every token, so
     // flipping `.dark` re-themes the block with no re-highlight (§9.2).

@@ -222,3 +222,68 @@ test('the § permalink is legible the frame it is revealed (§6.1)', async ({ pa
   }
 })
 
+// ---------------------------------------------------------------------------
+// §10.2 — what the accessibility tree actually says
+// ---------------------------------------------------------------------------
+
+test('a heading is named by its title, not by its permalink (§6.1)', async ({ page }) => {
+  await page.goto(A2.path)
+
+  const headings = page.locator('.prose :is(h2, h3)')
+  const count = await headings.count()
+  expect(count).toBeGreaterThan(5)
+
+  for (let i = 0; i < count; i += 1) {
+    const heading = headings.nth(i)
+    const title = (await heading.locator('> span[id]').innerText()).trim()
+    // Not `toContain`: the failure this guards against is a *suffix*, so the
+    // name has to be the title and nothing else.
+    await expect(heading).toHaveAccessibleName(title)
+  }
+
+  // And the anchor is still a labelled tab stop — §6.1 requires it to be
+  // keyboard-focusable, so `aria-hidden` was never an option.
+  await expect(page.locator('.prose .hl-anchor').first()).toHaveAccessibleName(/^Link to /)
+})
+
+test('a data table of three or more columns announces its rows (§10.2)', async ({ page }) => {
+  await page.goto(A0.path)
+
+  const tables = await page.evaluate(() =>
+    [...document.querySelectorAll('.prose table')].map((table) => ({
+      columns: Math.max(
+        ...[...table.querySelectorAll('tr')].map((row) => row.children.length),
+      ),
+      headerScopes: [...table.querySelectorAll('thead th')].map((th) => th.getAttribute('scope')),
+      firstCells: [...table.querySelectorAll('tbody tr')].map((row) => ({
+        tag: row.children[0]?.tagName.toLowerCase() ?? '',
+        scope: row.children[0]?.getAttribute('scope') ?? null,
+      })),
+    })),
+  )
+
+  expect(tables.length).toBeGreaterThan(3)
+  for (const table of tables) {
+    expect(table.headerScopes.every((scope) => scope === 'col')).toBe(true)
+    if (table.columns < 3) continue
+    for (const cell of table.firstCells) {
+      expect(cell.tag).toBe('th')
+      expect(cell.scope).toBe('row')
+    }
+  }
+})
+
+test('inert task-list checkboxes stay out of the tree (§7.7)', async ({ page }) => {
+  await page.goto(A0.path)
+
+  // The site tracks no per-item state, so these are decoration. They still
+  // paint; they just no longer announce themselves as eight nameless
+  // checkboxes down a twelve-item checklist.
+  const boxes = page.locator('li.task-list-item > input[type="checkbox"]')
+  expect(await boxes.count()).toBeGreaterThan(0)
+  await expect(boxes.first()).toBeVisible()
+  await expect(page.getByRole('checkbox')).toHaveCount(0)
+
+  // The item text is the content and is untouched.
+  await expect(page.locator('li.task-list-item').first()).toHaveText(/\S/)
+})

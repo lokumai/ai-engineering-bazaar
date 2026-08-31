@@ -541,6 +541,14 @@
     text-underline-offset: 0.18em;
   }
 
+  /* §3.4 — inline code in a table cell is `text-meta` (13px). Two branches,
+     because a markdown pipe table emits `<td><code>` with the cell as the
+     code's *parent*: the descendant form alone needs `:not(pre)` to be a
+     proper descendant of the cell, which that shape can never satisfy, and
+     every cell fell through to the generic `0.9em` of a 14px cell instead.
+     The `:not(pre)` guard is kept on the descendant branch so a code *block*
+     nested in a cell still takes §6.7's size. */
+  .prose :is(td, th) > code,
   .prose :is(td, th) :not(pre) > code {
     font-size: var(--text-meta);
   }

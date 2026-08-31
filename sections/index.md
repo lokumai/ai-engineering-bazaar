@@ -22,8 +22,8 @@ rules — the short version:
    being clear.
 5. **Heavy on visuals.** Diagrams, mermaid charts, ASCII sketches, mind-maps, and the
    occasional meme. On most of these topics a picture beats a paragraph.
-6. **Links out at the end of every module.** We stay simple deliberately, so you finish
-   wanting more — then go read the sources yourself.
+6. **Links out at the end of every module.** The module gets you oriented; the links
+   take you as far as you want to go.
 7. **Only the topics that matter.** A cheatsheet of AI Engineering, not a book about it.
    Knowing what to leave out takes experience a search engine cannot give you.
 

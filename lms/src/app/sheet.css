@@ -122,6 +122,14 @@
     .hl-sheet[data-format="A2"] > .hl-rail-left {
       display: block;
     }
+
+    /* From here up a `full` figure really does break left, over the rail, so
+       it gets the edge defined below. Set on the figure and not on the sheet:
+       a `wide` figure has nowhere to break to until 1280. */
+    .hl-sheet[data-format="A0"] .hl-figure[data-hl-width="full"],
+    .hl-sheet[data-format="A2"] .hl-figure[data-hl-width="full"] {
+      --hl-figure-edge: var(--color-line-strong);
+    }
   }
 
   @media (min-width: 1280px) {
@@ -134,6 +142,11 @@
 
     .hl-sheet[data-format="A0"] > .hl-rail-right {
       display: block;
+    }
+
+    /* …and from here up a `wide` figure breaks right, over the title block. */
+    .hl-sheet[data-format="A0"] .hl-figure[data-hl-width="wide"] {
+      --hl-figure-edge: var(--color-line-strong);
     }
   }
 
@@ -151,6 +164,29 @@
     position: relative;
     z-index: 1;
     background: var(--color-paper);
+  }
+
+  /* What makes the overlay read as an overlay. Both grounds are
+     `--color-paper`, so a covered panel does not read as covered — it reads as
+     gone: MEASURED at 1440, the title block was completely absent behind the
+     5-column TBL. 13.4 and behind the wide mermaid figure, with no border, no
+     ground change and no cue that anything was underneath. A hairline down
+     each broken-out side says "a sheet laid over the panel". Top and bottom
+     already close themselves — a picture with its own rules, a table with its
+     row rules — so only the sides were missing.
+
+     Transparent unless the layout above says this figure really is breaking
+     out: a hairline down a figure sitting flush in the measure is a line that
+     means nothing (§1, third check). Painted on a pseudo-element rather than
+     as a border on the figure, because the width classes in prose.css are
+     `min(920px, …)` against a border-box and 2px of real border would put the
+     table inside into a 2px scroll it could never resolve. */
+  .hl-sheet .prose .hl-figure:is([data-hl-width="wide"], [data-hl-width="full"])::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-inline: var(--stroke-hair) solid var(--hl-figure-edge, transparent);
+    pointer-events: none;
   }
 
   /* -- §4.6 Eyebrow and sheet title -------------------------------------- */

@@ -89,6 +89,53 @@ test.describe('A0 — the assembly sheet', () => {
     expect(drawing.leadOut).toBe(0)
   })
 
+  test('a figure that covers a rail reads as covering it', async ({ page }) => {
+    await page.goto(A0.path)
+    await page.waitForLoadState('networkidle')
+
+    const figures = await page.locator('[data-hl-prose] .hl-figure').evaluateAll(
+      (nodes) => {
+        const column = document.querySelector('.hl-column')!.getBoundingClientRect()
+        return nodes.map((node) => {
+          const rect = node.getBoundingClientRect()
+          const edge = getComputedStyle(node, '::before')
+          // `content: none` means there is no pseudo-element at all, and its
+          // other properties are then the element's own inherited values.
+          const drawn = edge.content !== 'none'
+          return {
+            width: node.getAttribute('data-hl-width'),
+            breaksOut: rect.left < column.left - 1 || rect.right > column.right + 1,
+            edgeColor: drawn ? edge.borderLeftColor : 'rgba(0, 0, 0, 0)',
+            edgeWidth: drawn ? edge.borderLeftWidth : '0px',
+          }
+        })
+      },
+    )
+
+    // §6.5 gives a 5-column table 920px — "prose + gutter + right rail" — so
+    // the collision with the title block is designed, not accidental. What was
+    // missing was any sign of it: both grounds are `--color-paper`, so the
+    // panel underneath did not read as covered, it read as gone.
+    const broken = figures.filter((figure) => figure.breaksOut)
+    expect(broken.length, 'sheet 13 still has a figure that breaks the measure')
+      .toBeGreaterThan(0)
+
+    for (const figure of broken) {
+      expect(figure.edgeColor, `a ${figure.width} figure with no edge`)
+        .not.toBe('rgba(0, 0, 0, 0)')
+      // §2.2's hairline. Not the struct weight: this is a divider, not
+      // structure — the figure's own rules already close it top and bottom.
+      expect(figure.edgeWidth).toBe('1px')
+    }
+
+    // …and a figure that is not covering anything is not boxed in either: a
+    // hairline down a figure sitting flush in the measure means nothing (§1).
+    for (const figure of figures.filter((f) => !f.breaksOut)) {
+      expect(figure.edgeColor, `a flush ${figure.width} figure was boxed`)
+        .toBe('rgba(0, 0, 0, 0)')
+    }
+  })
+
   test('the spine follows the reader down the sheet', async ({ page }) => {
     await page.goto(A0.path)
 

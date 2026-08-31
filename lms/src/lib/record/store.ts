@@ -181,8 +181,24 @@ function askPersisted(): void {
     void navigator.storage
       .persisted()
       .then((granted) => {
+        // In memory only, and NOT through the reducer.
+        //
+        // `update` schedules a flush, so writing the grant here made merely
+        // LOADING a page put an envelope in storage. Two things were wrong with
+        // that. It breaks §12.13's own distinction: the boot script stamps
+        // `data-hl-record` from whatever storage holds at load, so from a
+        // reader's SECOND page view onward an envelope written by their first
+        // would have had the empty state tell them they had cleared a record
+        // they never made. And it wrote to a reader's device for a fact about
+        // their browser, before they had asked the site to remember anything.
+        //
+        // Nothing is lost. The grant is re-queried on every load and
+        // `storageReadout` reads this variable first, so the readout is the
+        // browser's current answer rather than a stored one that may have gone
+        // stale. `requestPersistence` still records it through the reducer,
+        // because that runs on the first sign-off — where a write is happening
+        // anyway, for work the reader actually did.
         queriedPersisted = granted
-        update((data) => setPersisted(data, granted))
         notify()
       })
       .catch(() => {

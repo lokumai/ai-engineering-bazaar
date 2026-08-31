@@ -76,20 +76,24 @@ async function storedData(page: Page): Promise<RecordData | null> {
 }
 
 /**
- * Waits until the record in storage is the store's own, then returns it.
+ * Waits until the store has read storage, then returns what is in it.
  *
- * A seeded envelope and the record the store holds are the same *record*, and
- * the store rewrites the key at its first change. That first change is always
- * the same one: §12.1.6's durability query landing. Waiting for `persisted` to
- * stop being null is therefore both the settling signal and a proof that the
- * value was QUERIED rather than assumed — without it, a comparison taken on the
- * line after `goto` can straddle that write and report a difference that is the
- * design working.
+ * The signal is the footer readout flipping to `data-hydrated="true"`, which is
+ * the store's own report that it has read the record and the page is showing it
+ * rather than the honest empty form the build shipped (§12.2).
+ *
+ * It used to wait on §12.1.6's durability query LANDING IN STORAGE instead. That
+ * write is gone on purpose: routing the queried grant through the reducer made
+ * merely loading a page put an envelope in storage, and the boot script stamps
+ * `data-hl-record` from whatever storage holds at load — so from a reader's
+ * second page view onward, an envelope written by their first would have had the
+ * empty state tell them they had cleared a record they never made (§12.13). With
+ * nothing written on load there is no write for a comparison to straddle, and
+ * waiting on the DOM is the better signal regardless: it is what the reader can
+ * see, not an inference from a side effect.
  */
 async function settled(page: Page): Promise<RecordData> {
-  await expect
-    .poll(async () => (await readRecord(page))?.data.meta.persisted ?? null)
-    .not.toBeNull()
+  await expect(page.locator('.hl-readout[data-hydrated="true"]').first()).toBeAttached()
   return (await storedData(page)) as RecordData
 }
 

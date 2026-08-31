@@ -4,6 +4,7 @@ import {
   firstPaint,
   hasRootClass,
   probeFirstPaint,
+  readRawRecord,
   readRecord,
   readoutCell,
   readoutCells,
@@ -976,4 +977,50 @@ test('prefs.charKeys off silences every character shortcut (§12.16, SC 2.1.4)',
   await expect(anyDialog(page)).toHaveCount(0)
   await expect(page.locator('.hl-pending')).toHaveCount(0)
   expect(await hasRootClass(page, 'dark')).toBe(false)
+})
+
+/**
+ * Found by bringing the built site up on a clean port and looking at what was in
+ * storage: merely LOADING a page wrote an envelope, because the passive
+ * `navigator.storage.persisted()` query went through the reducer and `update`
+ * schedules a flush.
+ *
+ * It is worth a test of its own because of what it silently costs. §12.13 tells
+ * "never started" apart from "cleared by you" by whether the boot script found
+ * an envelope at load — so from a reader's SECOND page view onward, an envelope
+ * written by their first would have had the empty state tell them they had
+ * cleared a record they never made. And it wrote to a reader's device for a fact
+ * about their browser, before they had asked the site to remember anything.
+ */
+test('reading the site writes nothing until the reader records something (§12.13)', async ({ page }) => {
+  const problems = watchPage(page)
+
+  await page.goto('/')
+  await page.waitForLoadState('networkidle')
+  // Give the store's 500ms trailing flush more than its window.
+  await page.waitForTimeout(1200)
+
+  const afterIndex = await readRawRecord(page)
+  expect(afterIndex, 'the index sheet wrote nothing').toBeNull()
+
+  await page.goto(A0.path)
+  await page.waitForLoadState('networkidle')
+  await page.waitForTimeout(1200)
+  expect(await readRawRecord(page), 'a module sheet wrote nothing').toBeNull()
+
+  // And the second load still reads as NEVER STARTED rather than CLEARED BY YOU.
+  await page.reload()
+  await page.waitForLoadState('networkidle')
+  expect(
+    await page.evaluate(() => document.documentElement.dataset.hlRecord ?? null),
+    'no record was found at load, so the empty state stays class 1',
+  ).toBeNull()
+
+  // The first real act does write, or the feature would not work at all.
+  await page.locator('[data-hl-signoff]').click()
+  await page.waitForTimeout(1200)
+  expect(await readRawRecord(page), 'signing off writes').not.toBeNull()
+
+  expect(problems.consoleErrors).toEqual([])
+  expect(problems.failedRequests).toEqual([])
 })

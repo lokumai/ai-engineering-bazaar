@@ -1,5 +1,4 @@
 import { categoryBySlug } from './categories'
-import { unfenced } from './lines'
 import { loadCategoryIntro } from './loader'
 
 /**
@@ -31,6 +30,18 @@ const CONTINUATION = /^[ \t]+\S/
 const FILE_LINK_LINE = /^\[[^\]]*\]\([^)]*\.md[^)]*\)[ \t]*$/
 /** The leading h1. */
 const H1 = /^#[ \t]+\S/
+/**
+ * A fence, of either marker, at any indent. `lines.ts`'s `unfenced` knows the
+ * same rule but *drops* what it finds, which is right for a scanner reading
+ * structure out of markdown and wrong here: this is the only caller that
+ * renders its output, so a fenced block is content to keep, verbatim.
+ */
+const FENCE = /^[ \t]*(`{3,}|~{3,})/
+
+/** The marker character an opening or closing fence uses, or null. */
+function fenceMarker(line: string): string | null {
+  return FENCE.exec(line)?.[1][0] ?? null
+}
 
 /** Collapse the blank runs a removal leaves behind. */
 function tidy(lines: string[]): string {
@@ -45,10 +56,19 @@ function tidy(lines: string[]): string {
  */
 export function stripCategoryManifest(markdown: string): string {
   const kept: string[] = []
+  let fence: string | null = null
   let seenH1 = false
   let inManifest = false
 
-  for (const line of unfenced(markdown)) {
+  for (const line of markdown.split('\n')) {
+    // Inside a fenced block nothing is markup: a `## Modules` line there is a
+    // code sample about a README, not this README's manifest.
+    if (fence !== null) {
+      kept.push(line)
+      if (fenceMarker(line) === fence) fence = null
+      continue
+    }
+
     if (!seenH1 && H1.test(line)) {
       seenH1 = true
       continue
@@ -69,6 +89,7 @@ export function stripCategoryManifest(markdown: string): string {
 
     if (FILE_LINK_LINE.test(line)) continue
 
+    fence = fenceMarker(line)
     kept.push(line)
   }
 

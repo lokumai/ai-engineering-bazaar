@@ -65,6 +65,47 @@ describe('stripCategoryManifest', () => {
     expect(stripCategoryManifest(fenced)).toContain('Kept.')
   })
 
+  it('keeps the fenced block itself, which is prose the page must render', () => {
+    // The scanner in `lines.ts` deletes a fence and everything in it, which is
+    // right for reading structure and silently wrong here: this is the one
+    // caller whose output is rendered.
+    const fenced = '# Ecosystem\n\nIntro.\n\n```bash\nnpm install\n```\n\nAfter.\n'
+    const stripped = stripCategoryManifest(fenced)
+    expect(stripped).toContain('```bash')
+    expect(stripped).toContain('npm install')
+    expect(stripped).toContain('Intro.')
+    expect(stripped).toContain('After.')
+  })
+
+  it('keeps a manifest-shaped line inside a fence, without keeping a real one', () => {
+    const fenced = [
+      '# Protocols',
+      '',
+      '```markdown',
+      '## Modules',
+      '',
+      '1. **Module 30**',
+      '- [30_protocols.md](30_protocols.md)',
+      '```',
+      '',
+      '## Modules',
+      '',
+      '1. **Module 30**',
+      '',
+      'Tail.',
+    ].join('\n')
+    const stripped = stripCategoryManifest(fenced)
+    expect(stripped.match(/## Modules/g)).toHaveLength(1)
+    expect(stripped).toContain('30_protocols.md')
+    expect(stripped).toContain('Tail.')
+  })
+
+  it('keeps a tilde fence the same way it keeps a backtick one', () => {
+    const fenced = '# Expert\n\n~~~\n## Modules\n~~~\n\nKept.\n'
+    expect(stripCategoryManifest(fenced)).toContain('## Modules')
+    expect(stripCategoryManifest(fenced)).toContain('Kept.')
+  })
+
   it('returns an empty string for a README that is only its manifest', () => {
     expect(stripCategoryManifest('# Protocols\n\n## Modules\n\n1. **Module 30**\n')).toBe('')
   })

@@ -49,8 +49,8 @@ ASCII sketches, mind-maps and the occasional meme carry things a paragraph canno
 
 ## 6. Every module links out
 
-Each topic is covered short and simple, then points you at further reading. The module
-gets you oriented; the links take you as far as you want to go.
+Each topic is covered short and simple, then points you at further reading. We stay
+simple deliberately, so you finish wanting more — then go read the sources yourself.
 
 ## 7. Only what matters
 

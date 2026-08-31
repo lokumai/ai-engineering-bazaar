@@ -8,21 +8,20 @@ A series of mini-courses from beginner to advanced to help you learn practical t
 
 ## Why This Is Valuable
 
-There is no shortage of AI content on the internet, so the only thing that justifies writing more of it is being different in a way that matters. The seven rules below are that difference. They are not style preferences — they are the reason the material is worth reading. 
+There is no shortage of AI content on the internet, so the only thing that justifies writing more of it is being different in a way that matters. The seven rules below are that difference. They are not style preferences — they are the reason the material is worth reading.
 
 1. **Human-written.** These topics are too new for reliable sources to exist yet, and
-  an LLM's knowledge cutoff predates most of them — so it searches the same imprecise  articles and repeats them back with confidence. This material comes from years of  real practice, including things that might not written down anywhere else.
+  an LLM's knowledge cutoff predates most of them — so it searches the same imprecise articles and repeats them back with confidence. This material comes from years of real practice, including things that might not be written down anywhere else.
 2. **Explained like a real conversation.** The way an AI engineer would answer you at a
   desk, in the vocabulary we actually use — not the way a textbook would.
 3. **Simple on purpose.** Plain language, no jargon or buzzwords, sometimes deliberately
   oversimplified. Easy to read even if English is not your first language.
 4. **Short — 5–10 minutes per module.** If you ever need to paste one of these files
-  into ChatGPT and ask for a summary, we failed. Concise, but never at the cost of
-   being clear.
+  into ChatGPT and ask for a summary, we failed.
 5. **Heavy on visuals.** Diagrams, mermaid charts, ASCII sketches, mind-maps, and the
   occasional meme. On most of these topics a picture beats a paragraph.
-6. **Links out at the end of every module.** The module gets you oriented; the links
-  take you as far as you want to go.
+6. **Links out at the end of every module.** We stay simple deliberately, so you finish
+  wanting more — then go read the sources yourself.
 7. **Only the topics that matter.** A cheatsheet of AI Engineering, not a book about it.
   Knowing what to leave out takes experience a search engine cannot give you.
 
@@ -31,14 +30,14 @@ There is no shortage of AI content on the internet, so the only thing that justi
 ## Structure
 
 
-| Category                                                              | Modules | Description                                                                                                               |
+| Category | Modules | Description |
 | --------------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------- |
-| [Fundamentals](sections/1_fundamentals/README.md)                     | 1-7     | LLMs, training, RAG, tools, memory, agents, multi-agent systems.**Start here.**                                           |
-| [Intermediate](sections/2_intermediate/README.md)                     | 8-15    | Prompt engineering, context engineering, coding agents, harness engineering, security, loop engineering, personal agents. |
-| [NOT READY] [Expert](sections/3_expert/README.md)                     | 16-24   | Advanced UI, architectures, tools, memory, multi-agent, prompting, context engineering, harness engineering, deployment.  |
-| [NOT READY] [Ecosystem](sections/4_ecosystem/README.md)               | 25-29   | Agent frameworks, inference providers, inference engines, UI design, observability.                                       |
-| [NOT READY] [Protocols & Specs](sections/5_protocols_specs/README.md) | 30      | A single reference of every protocol and spec mentioned across the series.                                                |
-| [NOT READY] [Optional](sections/6_optional/README.md)                 | 31-32   | Human-in-the-loop and runtime topics that round out the series.                                                           |
+| [Fundamentals](sections/1_fundamentals/README.md) | 1-7 | LLMs, training, RAG, tools, memory, agents, multi-agent systems.**Start here.** |
+| [Intermediate](sections/2_intermediate/README.md) | 8-15 | Prompt engineering, context engineering, coding agents, harness engineering, security, loop engineering, personal agents. |
+| [NOT READY] [Expert](sections/3_expert/README.md) | 16-24 | Advanced UI, architectures, tools, memory, multi-agent, prompting, context engineering, harness engineering, deployment. |
+| [NOT READY] [Ecosystem](sections/4_ecosystem/README.md) | 25-29 | Agent frameworks, inference providers, inference engines, UI design, observability. |
+| [NOT READY] [Protocols & Specs](sections/5_protocols_specs/README.md) | 30 | A single reference of every protocol and spec mentioned across the series. |
+| [NOT READY] [Optional](sections/6_optional/README.md) | 31-32 | Human-in-the-loop and runtime topics that round out the series. |
 
 
 

@@ -519,6 +519,14 @@
     border-bottom: var(--stroke-hair) solid var(--color-line);
   }
 
+  /* §7.4 — when the strip carries the stamp grid, its bottom margin moves to
+     the grid's container so the strip and its stamps sit as one block. Set
+     here rather than as a negative margin on the grid, so the number appears
+     once and in the rule that owns it. */
+  .hl-title-strip[data-stamps='true'] {
+    margin-bottom: 12px;
+  }
+
   .hl-title-strip-pair {
     display: flex;
     flex-direction: column;

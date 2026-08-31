@@ -123,23 +123,46 @@ export function Repositories({ slug }: { slug: string }) {
   return <>{record.sheets[slug]?.submittals.length ?? 0}</>
 }
 
-export function SheetStamps({ slug, fact }: { slug: string; fact: SheetStampFact }) {
+export function SheetStamps({
+  slug,
+  fact,
+  variant = 'block',
+}: {
+  slug: string
+  fact: SheetStampFact
+  /**
+   * §5.5's two title-block variants need two layouts for the same four stamps.
+   * `block` is the 240px right-rail panel: a hairline rule and a 2×2 grid,
+   * inset. `strip` is the full-width run under the h1, where four across is the
+   * natural fit and the panel's insets would be wrong.
+   *
+   * The variant only chooses a container. The stamps themselves are identical —
+   * one `Stamp` component, one `sheetStamps` derive — so the two surfaces cannot
+   * come to report different things, which is the same arrangement `Stamp`'s own
+   * docblock describes for its three call sites.
+   */
+  variant?: 'block' | 'strip'
+}) {
   const record = useRecord()
   const slots = sheetStamps(record, { sheets: [fact], categories: [], traces: 0 }, slug)
   if (slots.length === 0) return null
+
+  const grid = (
+    <ul className="hl-stamp-grid" aria-label="Approval stamps">
+      {slots.map((slot) => (
+        <li key={slot.id}>
+          <Stamp stamp={slot} size="slot" />
+        </li>
+      ))}
+    </ul>
+  )
+
+  if (variant === 'strip') return <div className="hl-title-strip-stamps">{grid}</div>
 
   return (
     // §5.5 — a hairline rule, then the grid, inset 12px. The rule is a real
     // border because it is a hairline: only `--stroke-struct` has to be painted
     // (globals.css), and `--stroke-hair` is already a whole pixel.
-    <div className="border-t border-line px-3 pb-3">
-      <ul className="hl-stamp-grid" aria-label="Approval stamps">
-        {slots.map((slot) => (
-          <li key={slot.id}>
-            <Stamp stamp={slot} size="slot" />
-          </li>
-        ))}
-      </ul>
-    </div>
+    <div className="border-t border-line px-3 pb-3">{grid}</div>
   )
 }

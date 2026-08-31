@@ -101,12 +101,23 @@ function printedRevision(page: Page) {
     .locator('dd')
 }
 
-/** §5.9's slot text, whitespace-normalised: `SIGN-OFF 0 OF 1`. */
+/**
+ * §5.9's slot text, whitespace-normalised: `SIGN-OFF 0 OF 1`.
+ *
+ * VISIBLE slots only. §7.4's grid now renders in both of §5.5's title-block
+ * variants, so an A0 sheet carries two of them: the right rail's panel, and the
+ * horizontal strip that stands in for it below 1280px. Exactly one is ever on
+ * screen — the strip is `xl:hidden`, which is `display: none` and therefore out
+ * of the accessibility tree as well — but both are in the DOM, and an unfiltered
+ * locator reported each stamp twice.
+ */
 function stampConditions(page: Page): Promise<string[]> {
   return page
     .locator('.hl-stamp-slot')
     .evaluateAll((slots) =>
-      slots.map((slot) => ((slot as HTMLElement).innerText ?? '').replace(/\s+/g, ' ').trim()),
+      slots
+        .filter((slot) => (slot as HTMLElement).checkVisibility())
+        .map((slot) => ((slot as HTMLElement).innerText ?? '').replace(/\s+/g, ' ').trim()),
     )
 }
 

@@ -264,10 +264,20 @@ export default async function ModuleSheetPage({
 
           {/* Variant B, in the column. On an A0 sheet it is the fallback the
               right rail leaves behind below 1280px (§4.7). */}
+          {/* §7.4 — the strip carries the stamps too, which closes two holes at
+              once: the seven A2 sheets (all of Fundamentals) never had a stamp
+              grid at all, and an A0 sheet below 1280px lost its grid when the
+              rail collapsed to this strip. On an A0 sheet at xl the strip is
+              hidden, so only one grid is ever on screen. */}
           <TitleStrip
             rows={titleStripRows(facts)}
             checkedBy={checkedBy}
             repositories={repositories}
+            stamps={
+              stampFact === null ? null : (
+                <SheetStamps slug={slug} fact={stampFact} variant="strip" />
+              )
+            }
             className={format === 'A0' ? 'xl:hidden' : undefined}
           />
 

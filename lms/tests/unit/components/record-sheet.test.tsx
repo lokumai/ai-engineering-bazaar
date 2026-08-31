@@ -142,6 +142,52 @@ describe('Repositories — §12.9’s title-block row', () => {
   })
 })
 
+describe('§7.4 — both title-block variants carry the stamps', () => {
+  /**
+   * The grid used to render only inside the A0 right rail, which left two holes
+   * a reader found by opening sheet 01: the seven A2 sheets — all of
+   * Fundamentals, the first seven anybody reads and signs — had no stamp grid at
+   * all, and an A0 sheet below 1280px lost its grid when the rail collapsed to
+   * the strip. Neither page lied; the SIGN-OFF control states its own state in
+   * words. But the sheets a beginner spends most time on summarised the least.
+   */
+  it('renders the same stamps in either variant', () => {
+    const grid = <SheetStamps slug={SLUG} fact={FACT} />
+    const strip = <SheetStamps slug={SLUG} fact={FACT} variant="strip" />
+
+    for (const markup of [renderToStaticMarkup(grid), renderToStaticMarkup(strip)]) {
+      expect(markup).toContain('hl-stamp-grid')
+      expect(markup).toContain('SIGN-OFF')
+    }
+  })
+
+  it('gives the strip its own container and the panel its inset rule', () => {
+    // One derive, one `Stamp`, two containers. The variant chooses a layout and
+    // never what the stamps say.
+    expect(renderToStaticMarkup(<SheetStamps slug={SLUG} fact={FACT} variant="strip" />))
+      .toContain('hl-title-strip-stamps')
+    expect(renderToStaticMarkup(<SheetStamps slug={SLUG} fact={FACT} />))
+      .not.toContain('hl-title-strip-stamps')
+  })
+
+  it('hands the strip’s bottom margin to the stamps when it has them', () => {
+    // `data-stamps` is what stops the strip's 32px pushing its own stamps away
+    // from it. Without the flag the strip is unchanged.
+    expect(renderToStaticMarkup(<TitleStrip rows={[]} stamps={<i />} />))
+      .toContain('data-stamps="true"')
+    expect(renderToStaticMarkup(<TitleStrip rows={[]} />)).not.toContain('data-stamps')
+  })
+
+  it('puts the stamps after the rows, never inside the list', () => {
+    // A `<div>` inside a `<dl>` between a `dt`/`dd` pair is valid; a stamp grid
+    // is not a term or a definition, so it belongs outside the list entirely.
+    const markup = renderToStaticMarkup(
+      <TitleStrip rows={[]} stamps={<i id="marker" />} />,
+    )
+    expect(markup.indexOf('</dl>')).toBeLessThan(markup.indexOf('id="marker"'))
+  })
+})
+
 describe('CheckedBy — §12.3.1', () => {
   it('prints an em dash on a sheet nobody has signed off', () => {
     expect(renderToStaticMarkup(<CheckedBy slug={SLUG} />)).toBe('—')

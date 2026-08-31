@@ -86,18 +86,34 @@ export function TitleStrip({
   rows,
   checkedBy,
   repositories,
+  stamps,
   className,
 }: {
   rows: readonly TitleBlockRow[]
-  /** §12.3.1 — the strip carries the row too. §5.5 gives it no stamp grid. */
+  /** §12.3.1 — the strip carries the row too. */
   checkedBy?: ReactNode
   /** §12.9 — and this one, for the same reason: it is a row, not a stamp. */
   repositories?: ReactNode
+  /**
+   * §7.4 — the approval stamps. **§5.5 used to give the strip none, and that
+   * left two holes.** The grid only ever rendered inside the A0 right rail, so
+   * the seven A2 sheets — all of Fundamentals, the first seven anybody reads and
+   * signs — showed no stamps at all, and an A0 sheet below 1280px lost them too
+   * when the rail collapsed to this strip. Neither page lied: the SIGN-OFF
+   * control states its own state in words. But the sheets a beginner spends
+   * most time on summarised the least, and the fallback dropped a panel it was
+   * supposed to be standing in for.
+   */
+  stamps?: ReactNode
   className?: string
 }) {
   return (
     <aside aria-label="Title block" className={className}>
-      <dl className="hl-title-strip">
+      {/* `data-stamps` moves the strip's own 32px bottom margin onto the stamp
+          container below it, so the two sit together as one block instead of
+          being pushed apart. Explicit, rather than a negative margin or a
+          `:has()` selector. */}
+      <dl className="hl-title-strip" data-stamps={stamps ? 'true' : undefined}>
         {rows.map((row) => (
           <div key={row.label} className="hl-title-strip-pair hl-mark">
             <dt>{row.label}</dt>
@@ -119,6 +135,7 @@ export function TitleStrip({
           </div>
         )}
       </dl>
+      {stamps}
     </aside>
   )
 }

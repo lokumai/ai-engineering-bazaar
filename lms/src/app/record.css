@@ -523,6 +523,23 @@
     width: auto;
   }
 
+  /* §5.5 Variant B — the same four stamps under the full-width title strip.
+     Two columns is right for a 240px panel and wrong here, where the strip is
+     ~910px and four across is the natural fit. `auto-fit` collapses the tracks
+     it cannot fill, so three stamps stretch to fill the row rather than leaving
+     a hole, and below about 620px it reflows to two columns and then one — the
+     same behaviour §4.7 asks of everything else in the header. */
+  .hl-title-strip-stamps {
+    /* The strip hands its 32px over (`[data-stamps]` below), so the two read as
+       one block. */
+    margin: 0 0 32px;
+  }
+
+  .hl-title-strip-stamps .hl-stamp-grid {
+    grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+    margin-top: 0;
+  }
+
   /* =========================================================================
      §4.8 column 9 — the SIGN-OFF squares, and channel A that fills them.
 

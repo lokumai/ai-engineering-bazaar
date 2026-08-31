@@ -93,6 +93,10 @@ Bu mesajlar sistemle her etkileşiminde üst üste birikir:
   yani ikinci turda model birinci turdaki her şeyi de okuyor.</em>
 </p>
 
+Bir HumanMessage ile ona cevap veren AIMessage'a birlikte **tur** denir. Düz bir LLM chat'inde
+aralarında hiçbir şey yoktur: prompt'u yollarsın, cevabı alırsın. Yukarıdaki figürde iki tur
+var.
+
 Bu stack'in, kimin konuştuğuna göre birkaç adı var: **context**, **working memory**,
 **message history** ya da **short-term memory**. Acele etme, short-term memory'nin kendi
 modülü var: [Modül 5: Memory](5_memory_tr.md).
@@ -114,14 +118,23 @@ Birçok üründen sızmış gerçek system prompt'ları burada okuyabilirsin:
 [system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks).
 
 Agent'lara geldiğimizde tanışacağın **iki mesaj türü daha** var. Agent, tool çağırabilen bir
-LLM'den başka bir şey değil; tool'lar da dış dünyadan gerçek veri getiren fonksiyonlar.
-Diyelim İstanbul'un hava durumunu sordun. Model bir **ToolCall** üretir, mesela
-`get_weather(city="Istanbul")`. Fonksiyon çalışır ve `34°C` döner; bu da **ToolResult** olarak
-geri gelir. İkisi de aynı message stack'e eklenir.
+LLM'den başka bir şey değil. Tool ise egzotik bir şey değil: sadece bir fonksiyon, genelde
+senin yazdığın düz bir Python fonksiyonu.
 
-Aklında tutmaya değer kısım: **ToolCall'ı LLM üretir, ama ToolResult'ı host makine üretir**,
-yani laptop'un ya da bir server, çünkü fonksiyonu asıl çalıştıran odur. Model ister; işi başka
-bir şey yapar.
+Diyelim İstanbul'un hava durumunu sordun. Model buna kendisi bakamaz, bu yüzden fonksiyonlardan
+birini çalıştırmak istediğini söyler: bir **ToolCall** üretir, mesela
+`get_weather(city="Istanbul")`. Python kurulu olan makine senin makinen, dolayısıyla fonksiyonu
+senin makinen çalıştırır, `34°C` sonucunu alır ve bunu modele **ToolResult** olarak verir. İki
+mesaj da aynı message stack'e eklenir.
+
+Yani aklında tutmaya değer kısım: **ToolCall'ı LLM üretir, ama ToolResult'ı host makine
+üretir**, yani laptop'un ya da bir server, çünkü fonksiyonu asıl çalıştıran odur. Model ister;
+işi başka bir şey yapar.
+
+Bir agent turunun içinde daha fazla şey olur. HumanMessage'ından sonra model, sana cevap vermek
+için bir tool'a ihtiyacı olup olmadığına karar verir. İhtiyacı varsa ToolCall ve ToolResult da
+context'e eklenir, ve model final cevabı ancak ondan sonra yazar. Bunların hepsi hâlâ **tek bir
+tur**: bir HumanMessage, varsa tool mesajları, ve sonda AIMessage.
 
 <p align="center">
   <img src="./images/agent-context.jpeg" alt="Bir agent'ın context'i" width="70%"><br>

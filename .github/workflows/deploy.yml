@@ -30,20 +30,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           # REVISION is the last commit that touched each module file (§11.26),
           # so the module sheets are wrong without the full history.
           fetch-depth: 0
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - run: pip install mkdocs-material
       - name: Build the legacy docs site
         run: mkdocs build --strict --site-dir "$RUNNER_TEMP/legacy"
 
-      - uses: actions/setup-node@v4
+      # v5 added automatic caching keyed off a `packageManager` field in
+      # package.json and v6 narrowed it to npm. `lms/package.json` declares no
+      # such field, so the explicit cache below is still the only one.
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -80,9 +83,18 @@ jobs:
           # every stylesheet, so check the emitted URLs, not just the files.
           grep -q "$BASE_PATH/_next/" _site/index.html
 
-      - uses: actions/upload-pages-artifact@v3
+      # `include-hidden-files` is LOAD-BEARING, and it is why this is v5 rather
+      # than v4. v4.0.0's release note: "hidden files (specifically dotfiles)
+      # will not be included in the artifact". The `.nojekyll` written above is a
+      # dotfile, and without it Pages runs Jekyll, Jekyll discards every path
+      # beginning with an underscore, `_next/` disappears, and the site publishes
+      # GREEN and renders as unstyled HTML. The guard above would not have caught
+      # it: it tests the directory before the upload, and the upload is what
+      # drops the file. v5 added this input for exactly this case.
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: _site
+          include-hidden-files: true
 
   deploy:
     needs: build
@@ -92,4 +104,32 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
+
+      # The build job's guard checks the directory it is about to upload, which
+      # cannot see anything the upload or Pages itself then does to it — and the
+      # two worst failures here are exactly of that kind: a dropped `.nojekyll`,
+      # and the Jekyll pass that then deletes `_next/`. Both publish GREEN. So
+      # the last word goes to the site that is actually live.
+      - name: Check the published site, not the artifact
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          set -euo pipefail
+          base="${PAGE_URL%/}"
+          # Pages serves the new commit within seconds, but not instantly.
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            if curl -fsS -o index.html "$base/"; then break; fi
+            echo "attempt $attempt: not serving yet"
+            sleep 6
+          done
+          test -s index.html
+          # The stylesheet the page actually asks for, then that same URL fetched.
+          # A Jekyll pass that ate `_next/` leaves the reference and removes the
+          # file, so the reference alone proves nothing.
+          href=$(grep -oE 'href="[^"]*/_next/static/[^"]+\.css"' index.html | head -1 | sed 's/^href="//; s/"$//')
+          test -n "$href"
+          echo "stylesheet: $href"
+          curl -fsS -o /dev/null "${base%/ai-engineering-bazaar}${href}"
+          # And the MkDocs half, which travels in the same artifact.
+          curl -fsS -o /dev/null "$base/legacy/"

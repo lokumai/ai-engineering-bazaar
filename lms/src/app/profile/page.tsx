@@ -1,18 +1,22 @@
 import type { Metadata } from 'next'
+import type { FaceLegendRow, FaceLegendRows } from '@/components/mascot/FaceLegend'
 import { DataPanel } from '@/components/record/DataPanel'
 import { IdentityPanel } from '@/components/record/IdentityPanel'
 import {
   CharKeysToggle,
+  IdentityMark,
   QuarantineNote,
   RawValues,
   StoragePanel,
   SubmittalRegister,
 } from '@/components/record/ProfilePanels'
 import { Readout } from '@/components/record/Readout'
+import { RolePanel } from '@/components/record/RolePanel'
 import { StampShelf } from '@/components/record/StampShelf'
 import { Uptime } from '@/components/record/Uptime'
 import { PageShell } from '@/components/shell/PageShell'
-import { curriculumFacts } from '@/lib/content/facts'
+import { CATEGORIES, type CategorySlug } from '@/lib/content/categories'
+import { curriculumFacts, type CurriculumFacts } from '@/lib/content/facts'
 
 export const metadata: Metadata = {
   title: 'Profile',
@@ -20,6 +24,42 @@ export const metadata: Metadata = {
     "The drafter's own record: identity, the readout, the submittal register, "
     + 'what this browser has stored, and the controls that export, import or '
     + 'erase it.',
+}
+
+/**
+ * §13.2 — the face legend's six rows, measured here because this is the side of
+ * §12.2's boundary that may read the corpus.
+ *
+ * **The denominator is DRAWN sheets in the category, not every sheet in it.**
+ * `FaceLegendRow.total` is documented as the sheets a reader could sign off, and
+ * a draft sheet carries no sign-off control at all (§12.4.1) — so a category
+ * that is entirely drafts has a total of 0, which the legend prints as
+ * `NOT DRAWN` rather than as `0/9` beside a face nobody can fill (§11.25).
+ *
+ * `signed` is `null` for every row: a numerator is reader state, it travels on
+ * channel B, and the build knows nothing about the reader. `IdentityMark`
+ * writes the counts in after its store has answered.
+ */
+function faceLegendRows(facts: CurriculumFacts): FaceLegendRows {
+  const drawn = new Map<string, number>()
+  for (const sheet of facts.sheets) {
+    if (!sheet.drawn) continue
+    drawn.set(sheet.category, (drawn.get(sheet.category) ?? 0) + 1)
+  }
+
+  // Keyed off CATEGORIES, which is the closed set `CategorySlug` is written
+  // from, so the map is total by construction and the legend cannot lose a face
+  // to a typo. Partial until the loop ends, because there is no way to name six
+  // keys at once without hand-listing them here as well.
+  const rows: Partial<Record<CategorySlug, FaceLegendRow>> = {}
+  for (const category of CATEGORIES) {
+    rows[category.slug] = {
+      title: category.title,
+      total: drawn.get(category.slug) ?? 0,
+      signed: null,
+    }
+  }
+  return rows as FaceLegendRows
 }
 
 /**
@@ -45,6 +85,12 @@ export const metadata: Metadata = {
  * the register all count from the corpus; nothing on this page is typed by hand,
  * including the numbers a reader would most expect to be.
  *
+ * **§13 adds nothing to the eight.** §13.12 gives this route LKM-01 at 160px,
+ * the role picker and the mark at 64px, and all three sit INSIDE section 1:
+ * §13.3 puts `role` in `RecordData.identity` beside the name and the mark, so
+ * they are one subject and one section, and the eight `hl-panel-title`s below
+ * are still §12.11's eight in §12.11's order.
+ *
  * §12.11's closing line is the whole reason the last three sections exist:
  * *control over the artefact is the mechanism of ownership, not decoration on
  * top of it.* Sections 6 and 7 are what make section 8 checkable — a reader can
@@ -52,6 +98,7 @@ export const metadata: Metadata = {
  */
 export default function ProfilePage() {
   const facts = curriculumFacts()
+  const legend = faceLegendRows(facts)
 
   return (
     <PageShell>
@@ -90,7 +137,25 @@ export default function ProfilePage() {
           </h2>
           <p className="hl-mark m-0 text-ink-faint">Checked by</p>
         </div>
+        {/* §13.2, §13.6, §13.12 — the mark at 160 with its face legend, and the
+            drafter's own mark at 64. Above the name field, because the drawing
+            is what the panel is about and the field is how it is changed. */}
+        <div className="mb-6">
+          <IdentityMark facts={facts} legend={legend} />
+        </div>
         <IdentityPanel />
+
+        {/* §13.3, §13.6 — INSIDE the identity panel rather than beside it, and
+            that placement is the schema's: §13.3 puts `role` in
+            `RecordData.identity`, next to the name and the mark, because it is
+            the same kind of thing — the reader's own statement about the
+            reader. It is a sub-head and not a ninth `hl-panel-title`, so
+            §12.11's eight sections stay eight and stay in §12.11's order. */}
+        <hr className="hl-rule-struct" aria-hidden="true" />
+        <h3 id="role" className="hl-mark m-0 text-ink">
+          Role and path
+        </h3>
+        <RolePanel />
       </section>
 
       {/* ---- 2 · READOUT -------------------------------------------------- */}

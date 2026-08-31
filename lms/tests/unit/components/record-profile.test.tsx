@@ -203,10 +203,12 @@ describe('§12.3.3 — the name field', () => {
 describe('§12.3.5 — the mark picker', () => {
   it('is a real radiogroup', () => {
     expect(MARK).toContain('role="radiogroup"')
-    expect(occurrences(MARK, /type="radio"/g)).toBe(7)
-    // One name across all seven: that is what gives arrow-key navigation and a
-    // single tab stop without a line of JavaScript.
-    expect(occurrences(MARK, /name="hl-mark"/g)).toBe(7)
+    // Eight since §13.14 appended `lokum` (§13.6). Derived from the vocabulary
+    // rather than written as a literal, so the next amendment moves it here.
+    expect(occurrences(MARK, /type="radio"/g)).toBe(MARKS.length)
+    // One name across all of them: that is what gives arrow-key navigation and
+    // a single tab stop without a line of JavaScript.
+    expect(occurrences(MARK, /name="hl-mark"/g)).toBe(MARKS.length)
   })
 
   it('is labelled by its own legend', () => {
@@ -214,9 +216,14 @@ describe('§12.3.5 — the mark picker', () => {
     expect(MARK).toContain(`<legend id="${labelled[1]}"`)
   })
 
-  it('offers the seeded mark plus §12.3.5’s six named glyphs, in its order', () => {
+  it('offers the seeded mark plus the seven named glyphs, in its order', () => {
     expect(MARK_PICKER_IDS).toEqual(['seeded', ...NAMED_MARK_IDS])
-    expect(MARK_PICKER_IDS).toEqual(['seeded', 'datum', 'section', 'weld', 'finish', 'centre', 'hex'])
+    // The literal is kept alongside the derived form on purpose: it is what
+    // catches a glyph being inserted into the middle of the list rather than
+    // appended, which would move a mark a reader had already chosen. §13.6's
+    // `lokum` is eighth for exactly that reason.
+    expect(MARK_PICKER_IDS)
+      .toEqual(['seeded', 'datum', 'section', 'weld', 'finish', 'centre', 'hex', 'lokum'])
     expect(MARKS.map((mark) => mark.id)).toEqual([...MARK_PICKER_IDS])
     for (const mark of MARKS) expect(MARK, mark.id).toContain(`>${mark.label}<`)
   })

@@ -2,8 +2,13 @@
  * §12.1.2 / §12.1.3 — the record's shape, its two storage keys, and the frozen
  * empty form the server renders.
  *
- * This module imports nothing, and neither does anything else in
- * `lib/record/`. That is not tidiness: `lib/content/derive.ts`, `loader.ts`,
+ * **The rule is that nothing in `lib/record/` imports from `lib/content/`** —
+ * not that nothing here imports at all. This file takes two type vocabularies
+ * from fs-free leaves (`MarkId` from `lib/identity/mark.ts`, `RoleId` from
+ * `lib/path/roles.ts`), which cross no boundary. The earlier wording said
+ * "imports nothing", which was already untrue when the first of those landed and
+ * would have read as licence to drop the rule that matters. That rule is not
+ * tidiness: `lib/content/derive.ts`, `loader.ts`,
  * `revision.ts` and `paths.ts` reach `node:fs`, a client leaf imports the
  * record store, and a single value carried across that line pulls `node:fs`
  * into the browser bundle and stops the build. `lib/content/rows.ts` is the
@@ -31,6 +36,23 @@ import { type MarkId, STORABLE_MARK_IDS } from '../identity/mark'
 
 export type { MarkId }
 export const MARK_IDS: readonly MarkId[] = STORABLE_MARK_IDS
+
+/**
+ * §13.3 — the reader's role.
+ *
+ * Same arrangement as `MarkId` above, for the same reason: `lib/path/roles.ts`
+ * is the module that knows what a role is offered as, so the union lives there
+ * and is re-exported here rather than restated. The `MarkId` docblock records
+ * what a second copy costs — two unions of the same name, differing values,
+ * compiling cleanly because nothing imported both — and one such incident is
+ * the whole budget.
+ *
+ * `roles.ts` imports nothing, so this crosses no boundary (§12.2).
+ */
+import { type RoleId, ROLE_IDS as PATH_ROLE_IDS } from '../path/roles'
+
+export type { RoleId }
+export const ROLE_IDS: readonly RoleId[] = PATH_ROLE_IDS
 
 /** §12.6 — self-report, unscored. `null` is `unknown`, a first-class value. */
 export interface QuizRecord {
@@ -76,6 +98,11 @@ export interface RecordData {
     markSeed: string | null
     /** The reader's override; null means "use markSeed". */
     mark: MarkId | null
+    /**
+     * §13.3 — one of the nine frozen ids, or `null` for "has not said". Never
+     * inferred: not from the name, not from which sheets have been signed off.
+     */
+    role: RoleId | null
   }
   sheets: { [slug: string]: SheetRecord }
   /** ISO dates (YYYY-MM-DD) on which anything was written. */
@@ -152,7 +179,7 @@ function deepFreeze<T>(value: T): T {
  * non-lying thing build-time HTML can claim about a reader it has never met.
  */
 export const EMPTY_RECORD: RecordData = deepFreeze<RecordData>({
-  identity: { name: null, markSeed: null, mark: null },
+  identity: { name: null, markSeed: null, mark: null, role: null },
   sheets: {},
   days: [],
   prefs: { charKeys: true },

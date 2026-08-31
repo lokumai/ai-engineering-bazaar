@@ -123,7 +123,7 @@ const READER = 'İlker Cevheri'
  * rather than a zero, which is the only way the enumeration can be checked.
  */
 const SEEDED: RecordSeed = {
-  identity: { name: READER, markSeed: 'a1b2c3d4', mark: null },
+  identity: { name: READER, markSeed: 'a1b2c3d4', mark: null, role: null },
   sheets: {
     'fundamentals/llms': {
       signedOff: '2026-07-01T08:00:00.000Z',

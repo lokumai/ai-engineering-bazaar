@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { CategoryMeter } from '@/components/course/CategoryMeter'
+import { CategoryTally } from '@/components/course/CategoryTally'
 import { SignOffMarks } from '@/components/record/SignOffMarks'
 import { CategoryBlock } from '@/components/sheet/CategoryBlock'
 import { SheetIndex } from '@/components/sheet/SheetIndex'
@@ -59,7 +61,22 @@ export default function DrawingSetPage() {
 
         return (
           <section key={category.slug} className="hl-band">
-            <div className="hl-band-head">
+            {/* §13.5 surface 1 — the subsystem's own standing, on its own
+                colour. `hl-cat-tint` resolves the hue to the structural line,
+                half chroma or full chroma from the class the boot script
+                stamped, and `hl-cat-rule` paints it down the leading edge
+                (channel A, §12.2). `ps-4` is the clearance the rule needs:
+                `hl-cat-rule` reserves its 1.5px in a transparent border and
+                paints inside the padding box, so without padding the rule
+                would sit under the block's first pixels.
+
+                There is no category card here and this does not introduce one
+                (§5.4, §11.2): the classes go on the band header that already
+                existed. */}
+            <div
+              className="hl-band-head hl-cat-tint hl-cat-rule ps-4"
+              data-cat={category.slug}
+            >
               {/* The band header is the section's heading: a screen reader
                   meets `SUBSYSTEM 02 · INTERMEDIATE` as an h2 and a link, not
                   as a decorative strip beside an unlabelled table. */}
@@ -71,7 +88,13 @@ export default function DrawingSetPage() {
                   ticks={ticksFrom(rows)}
                 />
               </h2>
-              <p className="hl-mark hl-band-meta">{coverageLabel(coverage)}</p>
+              <div className="flex flex-wrap items-end gap-x-6 gap-y-2">
+                <p className="hl-mark hl-band-meta">{coverageLabel(coverage)}</p>
+                {/* §13.1.4 — the meter never stands alone: it prints
+                    `n/m signed off` beside itself, and that count is what the
+                    hue reinforces rather than replaces. */}
+                <CategoryMeter category={category.slug} sheets={rows} />
+              </div>
             </div>
 
             <SheetIndex
@@ -85,6 +108,11 @@ export default function DrawingSetPage() {
 
       {/* §12.2 — one island for all six tables on the page. */}
       <SignOffMarks facts={curriculumFacts()} />
+
+      {/* §12.2 channel B — and one island for all six meters' counts, for the
+          same reason: the tables and the meters are server-rendered here, so
+          the count arrives after mount or not at all. */}
+      <CategoryTally facts={curriculumFacts()} />
     </PageShell>
   )
 }

@@ -22,6 +22,14 @@ import { ModuleRow, type RowColumn } from './ModuleRow'
  *
  * It sits where §4.8 puts it, after `STATUS`. `REQUIRES` is the column this
  * implementation added to §4.8's eight, so it is the one that stays at the end.
+ *
+ * §13.5 adds one thing to the table and it costs this component nothing: a
+ * drawn row's leading rule now takes its subsystem's flavour, painted into the
+ * transparent `--stroke-cut` border `.hl-row > :first-child` has always
+ * reserved. So no column changes width, the hand-computed 1060px `min-width`
+ * still sums, and the table still scrolls inside its own container rather than
+ * crushing the flexible column (§6.5, §11.10). `ModuleRow` carries the whole
+ * change, including why a draft row is left alone (§13.14's amended T6).
  */
 
 interface Column {

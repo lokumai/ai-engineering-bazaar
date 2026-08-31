@@ -115,11 +115,42 @@ function SignOffSquares({ row }: { row: SheetRow }) {
   )
 }
 
+/**
+ * §13.5 surface 2 — which subsystem's flavour this row's leading rule takes.
+ *
+ * Read off the slug's own first segment, exactly as `lib/record/boot.ts` reads
+ * it: the slug IS the identity (§12.1.3), the set has been renumbered before,
+ * and a second map from row to category is a second thing that can drift. No
+ * import is added for it, which matters here — `SheetFilters` is `'use client'`
+ * and pulls this component into the browser bundle (§12.2).
+ */
+function categoryOf(slug: string): string {
+  return slug.split('/')[0] ?? ''
+}
+
 export function ModuleRow({ row, column }: { row: SheetRow; column: RowColumn }) {
   const draft = !row.drawn
 
+  /**
+   * §13.5 surface 2 — the leading rule takes the subsystem's hue, resolved
+   * on channel A from `hl-cat-<slug>-started` / `-complete` (§12.2). The row
+   * already prints its own status in words in the `STATUS` cell and its
+   * number in the `#` cell, so the hue reports what the page's eyebrow count
+   * reports and carries nothing alone (SC 1.4.1, §13.1.4).
+   *
+   * **Drawn rows only, and that is T6 rather than taste.** A draft row's `#`
+   * cell already carries `--color-caution` as its hidden-line ink, and
+   * §13.14's amended T6 is that a category hue and a semantic token never
+   * appear on the same element — `.hl-row.hl-cat-tint > :first-child` would
+   * put both on that one cell. A sheet nobody has drawn can never be signed
+   * off either (§12.4.1), so it has nothing of its own to report here.
+   */
   return (
-    <tr className="hl-row" data-draft={draft ? '' : undefined}>
+    <tr
+      className={draft ? 'hl-row' : 'hl-row hl-cat-tint'}
+      data-cat={draft ? undefined : categoryOf(row.slug)}
+      data-draft={draft ? '' : undefined}
+    >
       <td
         className={`hl-mark hl-row-number${draft ? ' hl-hidden-y' : ''}`}
       >

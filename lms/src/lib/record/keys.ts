@@ -27,7 +27,7 @@
  */
 
 /** §12.16 — the five `g` destinations. `category` depends on the route. */
-export type NavTarget = 'dashboard' | 'index' | 'profile' | 'record' | 'category'
+export type NavTarget = 'dashboard' | 'index' | 'profile' | 'record' | 'path' | 'category'
 
 /**
  * What a resolved key asks the island to do. Three of these need page context
@@ -124,12 +124,21 @@ export interface Resolution {
   handled: boolean
 }
 
-/** §12.16 — the second key of the `g` mode, and the only five it accepts. */
+/**
+ * §12.16 — the second key of the `g` mode, and the only six it accepts.
+ *
+ * §13.14 amends §12.16 to six: `/path/` is a top-level route, and a route with
+ * no way to reach it is not shipped. It takes **`l`, for "learning path"**,
+ * because `p` has meant Profile since §12.16 and moving a bound key to make
+ * room for a newer page is how a reader's muscle memory gets spent on the
+ * implementer's convenience.
+ */
 const GO: ReadonlyMap<string, NavTarget> = new Map([
   ['d', 'dashboard'],
   ['i', 'index'],
   ['p', 'profile'],
   ['r', 'record'],
+  ['l', 'path'],
   ['c', 'category'],
 ])
 
@@ -213,6 +222,7 @@ export const ROUTES: Readonly<Record<Exclude<NavTarget, 'category'>, string>> = 
   dashboard: '/dashboard/',
   profile: '/profile/',
   record: '/report/',
+  path: '/path/',
 })
 
 /**
@@ -256,6 +266,7 @@ export const SHORTCUTS: readonly Shortcut[] = Object.freeze([
   { keys: 'g i', action: 'Index sheet', target: 'index' as NavTarget },
   { keys: 'g p', action: 'Profile', target: 'profile' as NavTarget },
   { keys: 'g r', action: 'Record', target: 'record' as NavTarget },
+  { keys: 'g l', action: 'Learning path', target: 'path' as NavTarget },
   { keys: 'g c', action: 'Current category', target: 'category' as NavTarget },
   { keys: '[ / ]', action: 'Previous / next sheet', target: null },
   { keys: 'j / k', action: 'Next / previous section', target: null },

@@ -7,6 +7,12 @@ import type { CategorySlug } from '@/lib/content/categories'
  * the design system's rule: what is built is solid, what is not yet built is
  * dashed. No face, no eyes, no limbs, no gradient, no voice — ever (§8.5).
  *
+ * **§13.2 granted the mark exactly one thing §8.5 used to deny it: colour.** A
+ * face may now carry its category's flat hue, on channel A, and nothing else
+ * moved — no face, no eyes, no mouth, no limbs, no gradient, no voice, and no
+ * animation or transition at any size in any variant (§9.1). A state change
+ * here is a repaint, not a tween.
+ *
  * A cube has six faces and this curriculum has six categories, so the mark is
  * not a logo standing next to a progress indicator; it *is* the indicator.
  * Everything a caller needs to decide what is drawn lives here, in plain data,
@@ -84,6 +90,29 @@ export const FACES: readonly Face[] = [
 ]
 
 /**
+ * §13.1.1, §13.9 — the six flavour names, in the same order as the faces.
+ *
+ * Held UPPERCASE as literals so no locale-dependent casing ever runs over
+ * them. Turkish casing is the trap: `toLocaleUpperCase('tr')` turns `i` into
+ * `İ`, and a name cased at render time is cased in whatever locale the
+ * renderer happened to be handed. Stored this way the question never arises.
+ * FISTIK is spelled correctly — the lower-case form is `fıstık`, and the
+ * uppercase of a dotless ı is the same glyph as an English capital I.
+ *
+ * They are proper nouns for colours, the way a paint chart names its colours,
+ * so §13.9 requires the English category title printed beside every one of
+ * them. `FaceLegend` is where that pairing happens.
+ */
+export const FLAVOURS = {
+  fundamentals: 'GÜL',
+  intermediate: 'FISTIK',
+  expert: 'LAVANTA',
+  ecosystem: 'NANE',
+  protocols: 'KAHVE',
+  optional: 'KAYMAK',
+} as const satisfies Record<CategorySlug, string>
+
+/**
  * An edge belongs to two faces, so it is drawn once and takes the higher of
  * their two states (`edgeStateOf`). Drawing each face as its own closed
  * rhombus instead would paint one hidden face's dashes over a shared solid
@@ -125,7 +154,17 @@ export const EDGES: readonly Edge[] = [
   defineEdge('C', 'Rp', 'hidden-y', ['F5', 'F6']),
 ]
 
-/** ISO 128 hidden line, at the pitch §8.1 fixes for this mark. */
+/**
+ * ISO 128 hidden line, at the pitch §8.1 fixes for this mark.
+ *
+ * In user units, so it scales with the drawing across §13.2's four sizes
+ * rather than being a second constant per size. That is deliberate and it is
+ * what ISO 128 asks for: a hidden line's dash length is a multiple of its line
+ * width, the line width here is also in user units, and both are enlarged
+ * together when the mark is. Pinning the pitch to device pixels instead would
+ * put thirty-one dashes on an 11-unit edge at 160px, which reads as a fine
+ * dotted line and no longer says "hidden geometry".
+ */
 export const HIDDEN_DASH = '2 2'
 
 /**
@@ -137,6 +176,7 @@ export const SUGAR: ReadonlyArray<Point> = [
   [11.9, 11.9], [17.2, 13.4], [14.0, 13.0],
 ]
 
+/** In user units, and so scaled from `size` by the viewBox — see HIDDEN_DASH. */
 export const SUGAR_R = 0.45
 
 /** §8.2 — three states, and only three. */
@@ -204,6 +244,26 @@ export function progressLabel(states: FaceStates): string {
 export function isTracked(progress: Lkm01Progress): boolean {
   return progress !== 0
 }
+
+/**
+ * §8.3, as §13.2 amends it — four sizes, five homes.
+ *
+ * | 28 | header | 96 | 404, RECORD OF WORK cover |
+ * | 128 | dashboard and path heroes | 160 | profile, and all 32 approved |
+ *
+ * A list rather than a union on the props type. The union would be enforcing
+ * the wrong thing: what matters is that the drawing is resolution-independent
+ * at any size — the geometry is in viewBox units and only the hatch pitch
+ * answers to the size at all — and a test measures the mark at other sizes to
+ * prove exactly that.
+ */
+export const LKM01_SIZES = [28, 96, 128, 160] as const
+
+/** The header size, and the size every weight in the drawing was drawn at. */
+export const LKM01_BASE_SIZE = 28
+
+/** §13.2 — at this size and above the mark is accompanied by `FaceLegend`. */
+export const LKM01_LEGEND_FROM = 96
 
 export interface HatchSpec {
   /** Distance between hatch lines, in user units. */

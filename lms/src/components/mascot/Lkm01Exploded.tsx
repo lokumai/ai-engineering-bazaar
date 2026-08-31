@@ -24,15 +24,32 @@ import {
  *
  * The caption is the accessible content — it is real text beside the drawing,
  * in the words §8.4 fixes — so the SVG itself is decorative and hidden (T5).
+ * §13.2 keeps it that way at every size: an accessible name that flips between
+ * the prerender and the hydrated render is itself a mismatch (§12.2, §12.18).
+ *
+ * **What §13.2 changed here, and what it did not.** §13.2 granted the mark
+ * colour, and this variant is the one place it cannot use it: the exploded
+ * drawing reports nobody's progress, so there is no category state for a hue to
+ * state and a hue with nothing behind it would be a page claiming something
+ * (§1). It stays ink on paper, and everything §8.5 forbids stays forbidden — no
+ * face, no eyes, no mouth, no limbs, no gradient, no voice, and no animation or
+ * transition at any size (§9.1). The two sanctioned moments now sit at two
+ * different sizes (§8.3 as amended): 96 on the 404 and the RECORD OF WORK
+ * cover, 160 in the all-32-approved state.
  */
 
-/** §8.3 — the exploded variant is drawn at 96px. */
+/**
+ * §8.3 — the exploded variant's default. 96 is the 404 and the RECORD OF WORK
+ * cover; the all-32-approved state passes 160 (§13.2's four sizes).
+ */
 const EXPLODED_SIZE = 96
 
 export interface Lkm01ExplodedProps {
   /** §8.4 fixes the wording; the two sanctioned uses each have their own. */
   caption: string
-  /** §8.3: 96. Overridable only so a test can measure it at another size. */
+  /** §8.3, as §13.2 amends it: 96 on the 404 and the report cover, 160 when
+      the whole set is approved. Every weight and the stipple are in viewBox
+      units, so the drawing enlarges rather than being re-tuned per size. */
   size?: number
   className?: string
 }
@@ -77,7 +94,14 @@ export function Lkm01Exploded({
               />
 
               {/* §8.1 — the powdered sugar belongs to the top face, so it
-                  travels with it rather than staying behind on the board. */}
+                  travels with it rather than staying behind on the board.
+
+                  It is NOT given §13.2's `.hl-sugar`, and that is the one
+                  deliberate departure in this file: that class paints the
+                  stipple `--color-paper`, which is correct over a face filled
+                  with its flavour and invisible over an unfilled one, and no
+                  face in this variant is ever filled. Sugar on the board reads
+                  as sugar only if it is drawn in ink here. */}
               {face.id === 'F1' && SUGAR.map(([cx, cy]) => (
                 <circle key={`${cx},${cy}`} cx={cx} cy={cy} r={SUGAR_R} fill="var(--color-ink-faint)" />
               ))}

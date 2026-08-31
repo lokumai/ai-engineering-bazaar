@@ -21,6 +21,29 @@ describe('the ladder', () => {
     })
   })
 
+  it('reads a Phase 2 envelope, which never carried a role, at role: null (§13.3)', () => {
+    // §13.3's widening: `role` was added without a rung, because the coercer
+    // already defaults a missing field and `null` is exactly what "has not
+    // said" means. This is the fixture the contract above asks for — the Phase 2
+    // shape written as a literal, not built from today's helpers.
+    const phase2 = {
+      identity: { name: 'Ada Lovelace', markSeed: 'a1b2c3d4', mark: 'weld' },
+      sheets: { 'fundamentals/llms': { signedOff: '2026-08-14T00:00:00.000Z', signedRevision: 'a1b2c3d' } },
+      days: ['2026-08-14'],
+      prefs: { charKeys: true },
+      meta: { lastExport: null, persisted: true },
+    }
+    const out = migrate(phase2, 1)
+    expect(out.identity).toEqual({
+      name: 'Ada Lovelace', markSeed: 'a1b2c3d4', mark: 'weld', role: null,
+    })
+    // Nothing else moved: a widening reads the old record, it does not rewrite it.
+    expect(out.sheets['fundamentals/llms'].signedOff).toBe('2026-08-14T00:00:00.000Z')
+    expect(out.days).toEqual(['2026-08-14'])
+    expect(SCHEMA_VERSION).toBe(1)
+    expect(MIGRATIONS).toEqual([])
+  })
+
   it('coerces on the way out, so the ladder always lands on the current shape', () => {
     expect(migrate(null, 1)).toEqual(EMPTY_RECORD)
     expect(migrate('junk', 1)).toEqual(EMPTY_RECORD)

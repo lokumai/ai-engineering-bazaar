@@ -227,7 +227,28 @@ export default async function ModuleSheetPage({
 
           {rail && <ContentsDrawer>{rail}</ContentsDrawer>}
 
-          <p className="hl-eyebrow hl-mark">{eyebrow(facts)}</p>
+          {/* §13.1.3 — THE READING PAGE TAKES NO CATEGORY HUE, and the first
+              draft of §13 was wrong to grant it one.
+
+              §13.12 gave this page a tinted header band, and it was built. Then
+              the rule above it settled the matter: a category hue may appear
+              ONLY on a surface that reports that category's progress, and it
+              may never be the sole carrier of what it reports (§13.1.4, SC
+              1.4.1). This page prints no statement of the subsystem's standing
+              anywhere — the eyebrow names the subsystem and the sheet's place
+              in the drawing set, and the sign-off control speaks for this sheet
+              alone. So a tinted rule here would have been chroma asserting
+              something about the reader that no text on the page said, and
+              satisfying 1.4.1 would have meant adding a second coloured element
+              to the one page §13.1.3 allows exactly one.
+
+              Both ways out were worse than leaving it: the page is where a
+              reader spends 95% of their time (§6), and neither a progress
+              readout nor a second band belongs in the middle of a drawing. The
+              band stays, in the structural line every other component uses. */}
+          <div className="pt-3">
+            <p className="hl-eyebrow hl-mark">{eyebrow(facts)}</p>
+          </div>
 
           {/* The sheet title lives in the frontmatter and the markdown h1 is
               stripped (B6.1), so the column's own h1 takes §6.1's rule: 16px,

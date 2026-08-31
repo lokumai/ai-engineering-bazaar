@@ -13,6 +13,7 @@
  *   `class="hl-signed-<n>"`               one per signed-off module number
  *   `class="hl-cat-<slug>-started"`       0 < approved < total in that category
  *   `class="hl-cat-<slug>-complete"`      approved >= total
+ *   `class="hl-role-<id>"`                the reader's role (§13.3)
  *   `data-hl-record="1"`                  a readable record exists
  *   `data-hl-storage="ok" | "blocked"`    tells empty state 1 from 4 (§12.13)
  *
@@ -28,14 +29,21 @@
  * `fundamentals`), which is why identity is the slug: no second map is needed
  * and no number can drift.
  *
+ * The nine role ids are embedded as build-time data and the stored value is
+ * matched against them before it reaches a class name. Interpolating a string
+ * lifted from Web Storage into `classList.add` would let a hand-edited record
+ * choose its own selector, and §12.1.3's rule is that a record read back out of
+ * storage is untrusted input wherever it is read — here included, where the only
+ * thing done with the value is to concatenate it into a class name.
+ *
  * ES5 only, and no library: this runs before anything has decided what the
  * bundle targets, in whatever browser the reader brought.
  */
 
-import { RECORD_STORAGE_KEY, SCHEMA_VERSION } from './schema'
+import { RECORD_STORAGE_KEY, ROLE_IDS, SCHEMA_VERSION } from './schema'
 
 /** Neither `<` nor a line separator may reach the inline script's text. */
-function embed(value: Record<string, number>): string {
+function embed(value: unknown): string {
   return JSON.stringify(value)
     .replace(/</g, '\\u003c')
     .replace(/>/g, '\\u003e')
@@ -54,7 +62,7 @@ export function recordBootScript(
   slugToModule: Record<string, number>,
 ): string {
   return `(function(){try{
-var T=${embed(categoryTotals)},M=${embed(slugToModule)};
+var T=${embed(categoryTotals)},M=${embed(slugToModule)},R=${embed(ROLE_IDS)};
 var r=document.documentElement;
 var isObj=function(v){return Object.prototype.toString.call(v)==="[object Object]"};
 var own=function(o,k){return Object.prototype.hasOwnProperty.call(o,k)};
@@ -67,9 +75,12 @@ var env=JSON.parse(raw);
 if(!isObj(env)||typeof env.schema!=="number"||env.schema<1||env.schema>${SCHEMA_VERSION})return;
 if(!isObj(env.data))return;
 r.setAttribute("data-hl-record","1");
+var counts={},k,c,i,n,rec,id,ro=null;
+id=env.data.identity;
+if(isObj(id)&&typeof id.role==="string"&&!bad(id.role)){for(i=0;i<R.length;i++){if(R[i]===id.role){ro=id.role;break}}}
+if(ro)r.classList.add("hl-role-"+ro);
 var sh=env.data.sheets;
 if(!isObj(sh))return;
-var counts={},k,c,i,n,rec;
 for(k in sh){
 if(!own(sh,k)||bad(k))continue;
 rec=sh[k];
@@ -87,8 +98,10 @@ r.classList.add("hl-cat-"+c+(n>0&&counts[c]>=n?"-complete":"-started"))}
 
 /**
  * The script with no build-time facts embedded. It still stamps
- * `data-hl-storage`, `data-hl-record` and the per-category `-started` classes,
- * which is exactly as much as can be known without measuring the corpus — the
- * sign-off marks and `-complete` need the factory.
+ * `data-hl-storage`, `data-hl-record`, `hl-role-<id>` and the per-category
+ * `-started` classes, which is exactly as much as can be known without
+ * measuring the corpus — the sign-off marks and `-complete` need the factory.
+ * The role does not: its vocabulary is frozen in `lib/path/roles.ts` rather than
+ * measured off the sheets.
  */
 export const RECORD_BOOT_SCRIPT: string = recordBootScript({}, {})

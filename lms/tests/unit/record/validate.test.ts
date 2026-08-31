@@ -127,7 +127,7 @@ describe('parseEnvelope — an understood envelope', () => {
       }),
     )
     expect(Object.keys(data).sort()).toEqual(['days', 'identity', 'meta', 'prefs', 'sheets'])
-    expect(Object.keys(data.identity).sort()).toEqual(['mark', 'markSeed', 'name'])
+    expect(Object.keys(data.identity).sort()).toEqual(['mark', 'markSeed', 'name', 'role'])
     expect(Object.keys(data.prefs)).toEqual(['charKeys'])
     expect(Object.keys(data.meta).sort()).toEqual(['lastExport', 'persisted'])
   })
@@ -162,6 +162,30 @@ describe('coercion — identity', () => {
     for (const mark of ['WELD', 'Weld', 'BOGUS', 7, null, {}, []]) {
       expect(ok(wrap({ identity: { mark } })).identity.mark).toBeNull()
     }
+  })
+
+  it('accepts only the nine frozen §13.3 role ids', () => {
+    for (const role of ['software-engineer', 'devops', 'data-engineer', 'data-analyst',
+      'analyst', 'qa', 'project-manager', 'dba', 'pre-sales']) {
+      expect(ok(wrap({ identity: { role } })).identity.role).toBe(role)
+    }
+    for (const role of ['QA', 'Qa', 'business-analyst', 'sre', '', 7, true, null, {}, []]) {
+      expect(ok(wrap({ identity: { role } })).identity.role).toBeNull()
+    }
+  })
+
+  it('reads an unknown role as ABSENT and never as the nearest one', () => {
+    // A hand-edited import and a retired id arrive by the same door, and the
+    // honest reading of both is that the reader has not said — which draws the
+    // §13.4.3 picker. Repairing `business-analyst` into `analyst` would print a
+    // job title the reader never chose and draw somebody else's path.
+    const data = ok(wrap({ identity: { name: 'A', role: 'business-analyst' } }))
+    expect(data.identity.role).toBeNull()
+    expect(data.identity.name).toBe('A')
+  })
+
+  it('omits the role entirely for a record that never carried one', () => {
+    expect(ok(wrap({ identity: { name: 'A' } })).identity.role).toBeNull()
   })
 })
 

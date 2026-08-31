@@ -54,7 +54,8 @@ network calls at runtime, and none of it is ever sent anywhere.
 | --- | --- |
 | A module sheet | Sign-off, the quick check, the checklist, and the submittal register |
 | `/dashboard/` | The whole set as a single-line dependency diagram, with the readout, the uptime strip and the stamp shelf |
-| `/profile/` | Your identity, your submittals, storage health, and export / import / erase |
+| `/profile/` | Your name, your drafter's mark, your role, your submittals, storage health, and export / import / erase |
+| `/path/` | An ordered route through the set for your role — which sheet to take next, and why that role reads it |
 | `/report/` | The `RECORD OF WORK` — one self-contained HTML file you keep |
 | `/legend/` | Sheet 00: what the line types mean, and what this LMS deliberately does not have |
 
@@ -63,6 +64,63 @@ by a private window, and Safari deletes it after seven days without a visit. So
 **export is a real feature, not a convenience**: `/profile/` writes your whole
 record to a JSON file, and the `RECORD OF WORK` embeds its own copy, so the
 document you keep is also the backup you can import into another browser.
+
+### A role, and the path that comes with it
+
+Tell `/profile/` what you do — **software engineer, DevOps, data engineer, data
+analyst, business analyst, QA, project manager, DBA or pre-sales** — and `/path/`
+draws an ordered route through the set for it. Each step names the sheet, what
+that role gets from it, and whether the sheet is written yet.
+
+Two things about those routes are worth knowing, because they are what makes
+them worth reading:
+
+- **Every reason is grounded in the sheet it points at.** They were written by
+  reading the 32 sheets, then audited against the files by readers who had not
+  written them — which caught seven real problems, including a claim about
+  retrieval-correctness content that does not exist in the corpus and a route
+  that promised vector-store operations no sheet covers. The quotation behind
+  each reason is kept in `lms/tests/fixtures/path-evidence.json`, and a test
+  checks all 123 of them against the source files on every run.
+- **17 of the 32 sheets are not written yet.** A route may point at one, because
+  a roadmap that stops at the edge of today's content is a worse roadmap — but
+  such a step says `NOT DRAWN`, links to nothing, and is **excluded from the
+  count**. A route with 12 written sheets and 2 planned ones reports `n of 12`,
+  never `n of 14`.
+
+A role is a statement you make, never a guess: nothing infers it from what you
+have read. And a path recommends an order — it gates nothing, every sheet stays
+reachable from the drawing set, and switching role loses nothing, because
+sign-offs are recorded against sheets.
+
+### Progress you can see
+
+Six subsystems, six colours, taken from the three stacked Turkish delight cubes
+of the [LokumAI](https://lokumai.github.io) mark: **GÜL** (rose), **FISTIK**
+(pistachio), **LAVANTA** (lavender), **NANE** (mint), **KAHVE** (coffee) and
+**KAYMAK** (clotted cream). Hue says which subsystem; chroma says how far you
+have got. An isometric cube shows three faces, so the brand's three lokums are
+the three you can see.
+
+Colour here is information, not decoration, and it is held to that:
+
+- It appears **only** on a surface that reports that subsystem's progress — a
+  face of the mark, a category card, a module row's leading rule, a meter, a path
+  step. The reading page itself takes none at all.
+- It is **never the only thing saying it.** Every meter prints its count beside
+  it, every step prints its state as a word, and the mark keeps its ISO 128 line
+  types. A test loads the site with `forced-colors: active` — every hue gone —
+  and checks each surface still reports its state.
+- Every one of the twelve values clears **3:1 against all three grounds in both
+  themes**, computed from the shipped stylesheet on every test run rather than
+  asserted. One lightness serves both themes, so there is nothing to drift.
+
+The meters are segmented — one cell per sheet, in order — rather than continuous
+bars. That is not a style choice: a bar's length is a computed number, and a
+computed number cannot reach CSS before the first paint, so a bar would have to
+appear after hydration. A cell per sheet is drawn from the stamp on `<html>`
+alone, is correct in frame one, and says more — *which* sheets are done, and
+which are still unwritten.
 
 ### The `RECORD OF WORK`
 
@@ -137,10 +195,10 @@ cd lms
 npm run typecheck    # TypeScript, strict
 npm test             # Vitest: units, plus the whole-corpus render check
 npm run build        # the static export itself
-npm run test:e2e     # Playwright, chromium — diagrams, keyboard, landmarks
+npm run test:e2e     # Playwright, real Chrome, three viewports
 ```
 
-`npm test` includes four checks worth knowing about because they fail for
+`npm test` includes seven checks worth knowing about because they fail for
 reasons that are not a broken test:
 
 - **The corpus check** (`lms/tests/corpus/`) renders all 32 real modules rather
@@ -156,10 +214,28 @@ reasons that are not a broken test:
   height — not bordered. It caught this exact mistake twice while the record
   layer was being built.
 - **The copy register** (`lms/tests/unit/copy-register.test.ts`) scans every
-  reader-visible string in the record layer for exclamation marks, praise,
-  anthropomorphism, "just"/"simply"/"easy", "please"/"sorry" and confirmshaming.
-  Comments are stripped first, because they quote every banned word while
-  explaining why it is banned.
+  reader-visible string in the record and path layers — nine role blurbs and 123
+  step reasons among them — for exclamation marks, praise, anthropomorphism,
+  "just"/"simply"/"easy", "please"/"sorry" and confirmshaming. Comments are
+  stripped first, because they quote every banned word while explaining why it is
+  banned. It also bans a second spelling of a status: the register says
+  `NOT DRAWN`, and `NOT YET DRAWN` fails, because both read as correct alone.
+- **The palette check** (`lms/tests/unit/color/lokum.test.ts`) recomputes all six
+  category hues from `lms/src/app/lokum.css`: 3:1 against three grounds in both
+  themes at full and half chroma, in-gamut, mutually distinguishable, each state
+  distinguishable from the others, and 20° clear of the accent pen. It also
+  asserts the copy of those values inlined in the `RECORD OF WORK` matches the
+  stylesheet, because that file has no stylesheet to import and its copy is the
+  only one it has — a drifted hue there would be invisible.
+- **The path honesty check** (`lms/tests/unit/path/honesty.test.ts`) holds the
+  nine routes to §13.4.2: real slugs, no duplicates, prerequisite order,
+  denominators over written sheets only, and no unwritten sheet described as
+  though it teaches something. It found two defects that twelve independent
+  agents had passed.
+- **The path evidence check** (`lms/tests/unit/path/evidence.test.ts`) measures
+  each of the 123 reasons against the sheet it cites. Genuine citations score a
+  median of 100%; the same citations pointed at a different sheet score a median
+  of 33%. The test asserts both, so it cannot pass by being vacuous.
 
 First `npm run test:e2e` on a machine also needs the browser:
 

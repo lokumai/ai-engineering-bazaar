@@ -1,8 +1,13 @@
 /**
- * §12.3.5 — the drafter's stamp. Not an avatar: a monochrome hairline approval
- * mark, 24 × 24, zero radius, `currentColor`, stroke-only geometry on a 7 × 7
- * unit grid. The same visual grammar as §5.9's approval stamp, so identity and
- * achievement share one vocabulary.
+ * §12.3.5, amended by §13.6 — the drafter's stamp. Not an avatar: a monochrome
+ * hairline approval mark, 24 × 24, zero radius, `currentColor`, stroke-only
+ * geometry on a 7 × 7 unit grid. The same visual grammar as §5.9's approval
+ * stamp, so identity and achievement share one vocabulary.
+ *
+ * §13.6 adds an eighth id, `lokum`, and changes nothing else: the mark is still
+ * stroke-only and still uncoloured, and §13.1's category hues do not reach it,
+ * because a category hue on a person's mark would say the person is a
+ * subsystem.
  *
  * What this module deliberately does NOT do, and why. §12.3.5 evaluated and
  * rejected `boring-avatars` (colour-palette-driven by construction), DiceBear
@@ -57,18 +62,32 @@ function polyline(points: ReadonlyArray<readonly [number, number]>): string {
     .join(' ')
 }
 
-export type MarkId = 'seeded' | 'datum' | 'section' | 'weld' | 'finish' | 'centre' | 'hex'
+export type MarkId =
+  | 'seeded'
+  | 'datum'
+  | 'section'
+  | 'weld'
+  | 'finish'
+  | 'centre'
+  | 'hex'
+  | 'lokum'
 
 /**
- * The six the reader may pick, in §12.3.5's order — `seeded` excluded because
- * it is not a choice of glyph, it is the absence of one: the record stores
+ * The seven the reader may pick, in §12.3.5's order with §13.6's `lokum`
+ * APPENDED. The order is a stored contract, not a presentation choice: the
+ * picker renders this list, and a reader who chose the sixth mark must still
+ * find that glyph in the sixth place. So the new one goes last, never into the
+ * middle where the brand would arguably prefer it.
+ *
+ * `seeded` is excluded because it is not a choice of glyph, it is the absence
+ * of one: the record stores
  * `mark: null` for it, and `markPaths('seeded', seed)` draws the minted
  * pattern. Both forms reach the same geometry, so a stored `'seeded'` from an
  * older or hand-edited record is accepted too rather than silently blanking
  * the mark.
  */
 export const NAMED_MARK_IDS: readonly MarkId[] = [
-  'datum', 'section', 'weld', 'finish', 'centre', 'hex',
+  'datum', 'section', 'weld', 'finish', 'centre', 'hex', 'lokum',
 ]
 
 /** Every id the record will accept on read, including the redundant `seeded`. */
@@ -76,9 +95,11 @@ export const STORABLE_MARK_IDS: readonly MarkId[] = ['seeded', ...NAMED_MARK_IDS
 
 /**
  * The picker list: the seeded mark the record mints, plus §12.3.5's six named
- * drafting glyphs in its order. Labels are in the uppercase readout register of
- * §12.14.1; the descriptions are sentence-case prose and name the real drafting
- * symbol, because that is the whole reason these six were chosen over shapes.
+ * drafting glyphs in its order and §13.6's `lokum` after them. Labels are in the
+ * uppercase readout register of §12.14.1; the descriptions are sentence-case
+ * prose and name the real drafting symbol, because that is the whole reason the
+ * six were chosen over shapes. LOKUM is the exception and says so: it names the
+ * brand's own construction rather than an ISO symbol.
  */
 export const MARKS: ReadonlyArray<{ id: MarkId; label: string; description: string }> = [
   {
@@ -119,10 +140,17 @@ export const MARKS: ReadonlyArray<{ id: MarkId; label: string; description: stri
     label: 'HEX',
     description: 'The LKM-01 face: the isometric cube as a hexagon and the visible Y.',
   },
+  {
+    id: 'lokum',
+    label: 'LOKUM',
+    description:
+      'Three squares climbing corner to corner: the brand’s three stacked lokums, ' +
+      'in outline and without a fill.',
+  },
 ]
 
 // ---------------------------------------------------------------------------
-// The five fixed drafting glyphs, plus HEX
+// The five fixed drafting glyphs, plus HEX and LOKUM
 // ---------------------------------------------------------------------------
 
 /**
@@ -130,8 +158,8 @@ export const MARKS: ReadonlyArray<{ id: MarkId; label: string; description: stri
  * instruction, so it would not itself fill anything — but keeping the geometry
  * open makes "stroke-only" a property of what this module emits rather than of
  * the attributes some future caller remembers to set, and it lets one test
- * assert it for all seven marks at once. Where a shape has to close, it closes
- * by returning to its first point (HEX) or by standing on a line that is
+ * assert it for all eight marks at once. Where a shape has to close, it closes
+ * by returning to its first point (HEX, LOKUM) or by standing on a line that is
  * already drawn (WELD's triangle).
  */
 
@@ -243,6 +271,60 @@ const HEX: readonly string[] = [
   polyline([HEX_POINTS.C, HEX_POINTS.Bp]),
 ]
 
+/**
+ * §13.6's LOKUM — the brand's three stacked cubes, in outline.
+ *
+ * `lokumai.github.io` stacks three Turkish delight cubes with a diagonal offset,
+ * each dusted with sugar. Two of those three properties survive the trip into a
+ * `d` string and one does not, and the honest thing is to draw only what
+ * survives:
+ *
+ *  - **The construction does.** Side 2 lattice units, stepped 2 units right and
+ *    2 up, three times: the chain spans the whole 3 … 21 lattice and each square
+ *    meets the next at a single corner. 2 units is the only side length that
+ *    both centres the stack and keeps the squares apart, because the offset has
+ *    to equal the side for corner contact and 2 · offset + side = 6.
+ *  - **Touching at a corner does.** Meeting at a point is a junction; a shared
+ *    RUN would draw one edge twice and read as a heavier line the drawing never
+ *    asked for. Stepping by the full side length is what makes the contact a
+ *    point.
+ *  - **The sugar does not.** The stipple is a field of dots, and a dot in a
+ *    stroke-only `d` string is a zero-length subpath that depends on the
+ *    caller's line cap to be visible at all. §11.25's rule is derived or absent,
+ *    so the sugar is absent here and the description does not claim it. It is
+ *    drawn where it can be drawn: `.hl-sugar` in `lokum.css`.
+ *
+ * The mark stays uncoloured, and there is no per-square hue. A category hue on a
+ * person's mark would say the person is a subsystem (§13.6).
+ */
+const LOKUM_SIDE = 2
+
+/** Lower-left, middle, upper-right: the stack read from the bottom up. */
+const LOKUM_ORIGINS: ReadonlyArray<readonly [number, number]> = [
+  [0, 4],
+  [2, 2],
+  [4, 0],
+]
+
+/** One square, closed by returning to its first corner exactly as HEX does. */
+function latticeSquare(column: number, row: number, side: number): string {
+  const x0 = at(column)
+  const y0 = at(row)
+  const x1 = at(column + side)
+  const y1 = at(row + side)
+  return polyline([
+    [x0, y0],
+    [x1, y0],
+    [x1, y1],
+    [x0, y1],
+    [x0, y0],
+  ])
+}
+
+const LOKUM: readonly string[] = LOKUM_ORIGINS.map(([column, row]) =>
+  latticeSquare(column, row, LOKUM_SIDE),
+)
+
 const NAMED: Readonly<Record<Exclude<MarkId, 'seeded'>, readonly string[]>> = {
   datum: DATUM,
   section: SECTION,
@@ -250,6 +332,7 @@ const NAMED: Readonly<Record<Exclude<MarkId, 'seeded'>, readonly string[]>> = {
   finish: FINISH,
   centre: CENTRE_MARK,
   hex: HEX,
+  lokum: LOKUM,
 }
 
 // ---------------------------------------------------------------------------
@@ -401,7 +484,7 @@ function seededSegments(seed: string): Segment[] {
 /**
  * §12.3.5 — the `d` strings for one mark, on a `0 0 24 24` viewBox.
  *
- * `seed` is consulted for `'seeded'` alone; the six named glyphs are fixed
+ * `seed` is consulted for `'seeded'` alone; the seven named glyphs are fixed
  * drawings and ignore it. Returns an EMPTY ARRAY, never a substitute glyph,
  * when there is nothing to draw: no seed yet (it is minted at the first
  * sign-off), a seed this code did not write, or an id it does not know. The

@@ -242,15 +242,18 @@ describe('routeFor — where each destination goes', () => {
 
 describe('the table the ? sheet prints (§12.16)', () => {
   it('lists every row of §12.16, in its order', () => {
+    // §13.14 amends §12.16: `g l` (Learning path) joins the `g` mode, after
+    // `g r` and before `g c` — `g c` stays last because it is the only one
+    // whose destination depends on where the reader already is.
     expect(SHORTCUTS.map((row) => row.keys)).toEqual([
-      'g d', 'g i', 'g p', 'g r', 'g c',
+      'g d', 'g i', 'g p', 'g r', 'g l', 'g c',
       '[ / ]', 'j / k', '.', 's', '?', 'Esc',
     ])
   })
 
   it('gives every g row a destination, so each is also a plain link', () => {
     const go = SHORTCUTS.filter((row) => row.keys.startsWith('g '))
-    expect(go).toHaveLength(5)
+    expect(go).toHaveLength(6)
     for (const row of go) expect(row.target, row.keys).not.toBeNull()
   })
 

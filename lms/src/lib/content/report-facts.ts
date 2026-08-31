@@ -24,6 +24,31 @@
  * Everything here is derived from the file (§11.25). Nothing is hand-maintained,
  * and the one value that is not a measurement — the assertion sentence — comes
  * from `criteria.ts`, which owns it for both the sheet and the document.
+ *
+ * ## §13.7 — what the cover and the role line needed from here, which was nothing
+ *
+ * §13.7 gave the document three things: LKM-01 at 96px with its faces filled
+ * from the record, a flavour ledger beside it, and the role with its path
+ * standing. None of them widened this shape, and that is worth stating rather
+ * than leaving a reader to wonder where the new field went:
+ *
+ *  - the **cover mark and the flavour ledger** need each subsystem's title, its
+ *    sheet count and how many of those sheets the record holds a sign-off for.
+ *    `categorySlug`, `categoryTitle` and `categoryOrder` are already on every
+ *    sheet fact, so the six standings are grouped out of the same rows the
+ *    ledger is printed from — one derivation, which is what stops the cover and
+ *    the ledger disagreeing (§11.25);
+ *  - the **six hue values** cannot come from here at all. They live in
+ *    `src/app/lokum.css`, the document has no stylesheet to import over
+ *    `file://`, and a colour is not a fact about the corpus;
+ *  - the **role and the path** come from the record and from `lib/path/`, which
+ *    is plain fs-free data that `report.ts` reads directly. Routing a path
+ *    through this module would mean the document's own honesty rule — the
+ *    denominator counts drawn steps only (§13.4.2) — had two places to live.
+ *
+ * So the one thing this file must keep doing is measuring `drawn` off the
+ * sheet's own frontmatter, because that flag is what every draft treatment in
+ * the document is drawn from.
  */
 
 import { checklistOf } from './checklist'

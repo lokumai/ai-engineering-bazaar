@@ -11,6 +11,11 @@
 /* §12 — every surface that carries reader state: sign-off, identity, the
    readout, the stamps, the diagram, the empty states, forced-colors, print. */
 @import "./record.css";
+/* §13 — the lokum palette: six category hues, the segmented meter, the path's
+   channel-A role rules. Imported AFTER record.css so that where both name
+   `.hl-face` the palette's state rules win on source order as well as on
+   specificity. */
+@import "./lokum.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 

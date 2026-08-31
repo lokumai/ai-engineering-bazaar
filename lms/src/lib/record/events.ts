@@ -29,6 +29,7 @@ import {
   emptySheetRecord,
   isSafeKey,
   type RecordData,
+  type RoleId,
   type SheetRecord,
   type Submittal,
 } from './schema'
@@ -137,6 +138,27 @@ export function setIdentity(
   if ('name' in patch) identity.name = patch.name ?? null
   if ('mark' in patch) identity.mark = patch.mark ?? null
   return stampDay({ ...data, identity }, now)
+}
+
+/**
+ * §13.3 — the reader's role, or `null` to clear it. The day is stamped like
+ * every other write (§7.3).
+ *
+ * **Changing a role is not destructive and gets no confirmation.** §12's SC
+ * 3.3.4 gate is for acts that lose something, and a path is a view over the
+ * corpus rather than a container: sign-offs are recorded against sheets, so
+ * switching from `qa` to `devops` leaves every one of them in place and the old
+ * path is re-drawable by choosing the old role again. Treating it as destructive
+ * would teach the reader that the two are connected, which is the thing §13.4.4
+ * says they are not.
+ *
+ * The role is never inferred, so there is deliberately no reducer here that
+ * derives one from the record; this function only ever writes what the reader
+ * picked.
+ */
+export function setRole(data: RecordData, role: RoleId | null, now: string): RecordData {
+  if (data.identity.role === role) return data
+  return stampDay({ ...data, identity: { ...data.identity, role } }, now)
 }
 
 /**

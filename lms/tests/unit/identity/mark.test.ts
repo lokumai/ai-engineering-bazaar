@@ -2,8 +2,19 @@ import { describe, expect, it } from 'vitest'
 import { MARKS, MARK_VIEW_BOX, markPaths, seedFrom, type MarkId } from '@/lib/identity/mark'
 import { POINTS } from '@/components/mascot/geometry'
 
-const IDS: readonly MarkId[] = ['seeded', 'datum', 'section', 'weld', 'finish', 'centre', 'hex']
-const NAMED: readonly MarkId[] = ['datum', 'section', 'weld', 'finish', 'centre', 'hex']
+/**
+ * The vocabulary, written out rather than imported, so that this file is the
+ * place a change to it has to be argued. §13.14 amends §12.3.5 from seven ids
+ * to eight; `lokum` is APPENDED, and the position matters — the picker renders
+ * this order, so a glyph inserted mid-list moves every mark after it under a
+ * reader who had already chosen one.
+ */
+const IDS: readonly MarkId[] = [
+  'seeded', 'datum', 'section', 'weld', 'finish', 'centre', 'hex', 'lokum',
+]
+const NAMED: readonly MarkId[] = [
+  'datum', 'section', 'weld', 'finish', 'centre', 'hex', 'lokum',
+]
 
 /** One lattice unit, in user units, on the 24 × 24 board (§12.3.5's 7 × 7 grid). */
 const UNIT = 3
@@ -86,7 +97,10 @@ describe('MARK_VIEW_BOX', () => {
 })
 
 describe('MARKS', () => {
-  it('is the seeded mark plus §12.3.5’s six named ones, in its order', () => {
+  it('is the seeded mark plus the seven named ones, in its order', () => {
+    // §13.14 amends §12.3.5's vocabulary from seven ids to eight: `lokum` is
+    // appended, never inserted, so a reader who chose the sixth glyph still
+    // finds it sixth. `IDS` is the shared literal, so this stays one edit.
     expect(MARKS.map((mark) => mark.id)).toEqual(IDS)
   })
 

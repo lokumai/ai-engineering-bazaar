@@ -27,7 +27,7 @@
  * DOM at all.
  */
 
-import { type RecordData } from './schema'
+import { ROLE_IDS, type RecordData } from './schema'
 
 /** The slice of `<html>` the stamps touch. */
 export interface StampRoot {
@@ -49,8 +49,15 @@ export interface StampFacts {
   slugToModule: Readonly<Record<string, number>>
 }
 
-/** The prefixes this module owns. Anything else on `<html>` is left alone. */
-const OWNED = /^hl-(?:signed-\d+|cat-[a-z0-9-]+-(?:started|complete))$/
+/**
+ * The prefixes this module owns. Anything else on `<html>` is left alone.
+ *
+ * `role-` joined the set with §13.3. It has to be owned, or a reader who
+ * changes role would carry both classes and `/path/` would draw two paths at
+ * once — the removal half of `stampRecordState` is the only thing that takes the
+ * previous one off.
+ */
+const OWNED = /^hl-(?:signed-\d+|cat-[a-z0-9-]+-(?:started|complete)|role-[a-z-]+)$/
 
 /**
  * The class set a record implies. Sorted, so two callers comparing results —
@@ -74,6 +81,15 @@ export function stampClassesFor(data: RecordData, facts: StampFacts): string[] {
     const module = facts.slugToModule[slug]
     if (typeof module === 'number') classes.push(`hl-signed-${module}`)
   }
+
+  // §13.3 — checked against the frozen nine rather than trusted from the type.
+  // The record reaching this function has been through `coerceRecordData` and
+  // cannot hold a stranger, but the boot script re-derives the same set from raw
+  // storage and has to check; validating in both keeps the cross-test comparing
+  // one rule instead of two, and a retired id then draws nothing on either side
+  // rather than a class no stylesheet answers to.
+  const role = data.identity.role
+  if (role !== null && ROLE_IDS.includes(role)) classes.push(`hl-role-${role}`)
 
   for (const [category, approved] of counts) {
     const total = facts.categoryTotals[category] ?? 0

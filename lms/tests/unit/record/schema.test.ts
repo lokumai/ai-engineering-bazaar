@@ -6,6 +6,7 @@ import {
   MAX_SUBMITTALS,
   RECORD_QUARANTINE_KEY,
   RECORD_STORAGE_KEY,
+  ROLE_IDS,
   SCHEMA_VERSION,
   emptySheetRecord,
 } from '@/lib/record/schema'
@@ -34,7 +35,7 @@ describe('the storage keys', () => {
 describe('EMPTY_RECORD', () => {
   it('is the honest empty form §12.2 Channel B renders on the server', () => {
     expect(EMPTY_RECORD).toEqual({
-      identity: { name: null, markSeed: null, mark: null },
+      identity: { name: null, markSeed: null, mark: null, role: null },
       sheets: {},
       days: [],
       prefs: { charKeys: true },
@@ -97,11 +98,26 @@ describe('emptySheetRecord', () => {
 })
 
 describe('the closed vocabularies', () => {
-  it('lists the six §12.3.5 drafting marks and nothing else', () => {
+  it('lists the seven drafting marks and nothing else', () => {
     // Owned by lib/identity/mark.ts and re-exported here; `seeded` is storable
     // but is not a glyph choice — the record writes `null` for it.
+    //
+    // §13.14 amends §12.3.5 from seven ids to eight. `lokum` is LAST, and that
+    // position is the contract: the picker renders this order, so a mark
+    // inserted mid-list would silently move every glyph after it under a
+    // reader who had already chosen one.
     expect([...MARK_IDS])
-      .toEqual(['seeded', 'datum', 'section', 'weld', 'finish', 'centre', 'hex'])
+      .toEqual(['seeded', 'datum', 'section', 'weld', 'finish', 'centre', 'hex', 'lokum'])
+  })
+
+  it('lists the nine §13.3 roles in their frozen order and nothing else', () => {
+    // Owned by lib/path/roles.ts and re-exported here, the same arrangement as
+    // MARK_IDS: the order is the order the §13.4.3 picker renders, and the ids
+    // are what key a stored record, so a rename orphans one.
+    expect([...ROLE_IDS]).toEqual([
+      'software-engineer', 'devops', 'data-engineer', 'data-analyst', 'analyst',
+      'qa', 'project-manager', 'dba', 'pre-sales',
+    ])
   })
 
   it('carries §12.4.4 and §12.9.1 as constants, not as magic numbers', () => {

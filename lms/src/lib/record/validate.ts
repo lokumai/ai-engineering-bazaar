@@ -34,12 +34,14 @@ import {
   EMPTY_RECORD,
   MARK_IDS,
   MAX_SUBMITTALS,
+  ROLE_IDS,
   SCHEMA_VERSION,
   isEmptySheetRecord,
   isSafeKey,
   type MarkId,
   type QuizRecord,
   type RecordData,
+  type RoleId,
   type SheetRecord,
   type Submittal,
 } from './schema'
@@ -142,6 +144,21 @@ function asDwell(value: unknown): number {
 
 function coerceMark(value: unknown): MarkId | null {
   return MARK_IDS.includes(value as MarkId) ? (value as MarkId) : null
+}
+
+/**
+ * §13.3 — one of the nine frozen ids, or nothing.
+ *
+ * An unknown id is ABSENT, never repaired into a neighbouring value. A record
+ * read back out of Web Storage is untrusted input (§12.1.3), and the two ways a
+ * stranger reaches this function are a hand-edited import and a role id this
+ * build has retired — in both cases the honest reading is that the reader has
+ * not said, which draws the §13.4.3 picker. Guessing `analyst` for a stored
+ * `business-analyst` would print a job title the reader never chose, and the id
+ * is also what keys `PATHS`, so a near miss would draw somebody else's path.
+ */
+function coerceRole(value: unknown): RoleId | null {
+  return ROLE_IDS.includes(value as RoleId) ? (value as RoleId) : null
 }
 
 function coerceQuiz(value: unknown): QuizRecord | null {
@@ -259,6 +276,7 @@ export function coerceRecordData(input: unknown): RecordData {
       name: typeof identity.name === 'string' ? identity.name : null,
       markSeed: asPattern(identity.markSeed, MARK_SEED),
       mark: coerceMark(identity.mark),
+      role: coerceRole(identity.role),
     },
     sheets: coerceSheets(data.sheets),
     days: coerceDays(data.days),

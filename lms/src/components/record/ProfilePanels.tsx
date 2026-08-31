@@ -1,7 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { FaceLegend, type FaceLegendRow, type FaceLegendRows } from '@/components/mascot/FaceLegend'
+import { Lkm01 } from '@/components/mascot/Lkm01'
+import type { CategorySlug } from '@/lib/content/categories'
 import { readRawStored, type RawStored } from '@/lib/record/erase'
+import { categoryProgress, type CurriculumFacts } from '@/lib/record/derive'
 import { setCharKeys } from '@/lib/record/events'
 import type { Submittal } from '@/lib/record/schema'
 import {
@@ -13,6 +17,7 @@ import {
   useRecord,
   useWriteState,
 } from '@/lib/record/store'
+import { DrafterStamp } from './DrafterStamp'
 
 /**
  * §12.11 items 5, 6 and 7, §12.1.2 and §12.16 — the four leaves the profile
@@ -125,6 +130,106 @@ export function QuarantineNote() {
         <p>{copy.note}</p>
       </div>
     </section>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// §13.2, §13.6 — the mark at 160, its legend, and the drafter's own mark at 64
+// ---------------------------------------------------------------------------
+
+/**
+ * The numerators, written over the build-time rows.
+ *
+ * `Object.keys` is the only cast here: the keys of a `Record<CategorySlug, …>`
+ * are `CategorySlug`s, which the type system knows and the standard library
+ * signature does not. Every row is rewritten, so a category the record has
+ * never seen reads as 0 signed off rather than keeping the `null` of its
+ * neighbour.
+ */
+function withSignedCounts(
+  legend: FaceLegendRows,
+  approved: Record<string, { approved: number; total: number }> | null,
+): FaceLegendRows {
+  const out: Record<CategorySlug, FaceLegendRow> = { ...legend }
+  for (const slug of Object.keys(out) as CategorySlug[]) {
+    out[slug] = {
+      ...out[slug],
+      signed: approved === null ? null : (approved[slug]?.approved ?? 0),
+    }
+  }
+  return out
+}
+
+/**
+ * §13.2, §13.6, §13.12 — the profile's identity drawing: LKM-01 at 160px with
+ * its face legend, and the drafter's mark at 64px beside it.
+ *
+ * **Two marks, and they report different things.** LKM-01 is a meter: six
+ * faces, six subsystems, and its fill arrives on channel A from the classes the
+ * boot script stamped, so it is correct in frame one with no React. The
+ * drafter's mark is an identity: stroke-only, monochrome, `currentColor`, and
+ * §13.6 keeps it uncoloured — a category hue on a person's mark would say the
+ * person is a subsystem.
+ *
+ * **The legend is what makes the drawing accessible** (§13.2). The SVG is
+ * `aria-hidden` at every size and in every state, because an accessible name
+ * that flips between the prerender and the hydrated render is itself a
+ * mismatch; at 96px and above the drawing is read by real text instead. The
+ * legend's denominators are measured from the corpus at build time and arrive
+ * as a prop (§12.2, R3: this island may not import `lib/content/`), and its
+ * numerators are channel B — `null` until the store has answered, which prints
+ * an em dash rather than a zero nobody measured (§11.25).
+ */
+export function IdentityMark({
+  facts,
+  legend,
+}: {
+  /**
+   * Measured from the corpus at build time and passed down as plain data:
+   * `lib/content/facts.ts` reaches `node:fs`, so a client leaf may never import
+   * it (§12.2).
+   */
+  facts: CurriculumFacts
+  /** Flavour titles and the drawn-sheet denominators, from the same build. */
+  legend: FaceLegendRows
+}) {
+  const record = useRecord()
+  const hydrated = useHydrated()
+
+  const rows = withSignedCounts(legend, hydrated ? categoryProgress(record, facts) : null)
+
+  return (
+    <div className="flex flex-wrap items-start gap-6">
+      {/* §13.2 — 160px is the profile's size. The faces take no props: face
+          state is channel A, and the stamp is on `<html>` before this renders. */}
+      <Lkm01 size={160} idPrefix="hl-profile" />
+
+      <div className="min-w-[16rem] flex-1">
+        <FaceLegend rows={rows} />
+      </div>
+
+      {/* §13.6 — the drafter's mark at 64px, uncoloured, with the label that
+          names it. `DrafterStamp` draws nothing at all before the seed is
+          minted (§11.25), so the readout says which state that is instead of
+          leaving an empty box unexplained. */}
+      <div>
+        <p className="hl-mark m-0 mb-2 text-ink-muted">Drafter's mark</p>
+        <DrafterStamp
+          mark={record.identity.mark}
+          seed={record.identity.markSeed}
+          size={64}
+        />
+        {record.identity.mark === null && record.identity.markSeed === null && (
+          // Nothing to draw, and the two reasons for that are different facts:
+          // before the store has answered nobody has looked, which is `--`, and
+          // after it has answered the seed is genuinely not minted yet. The
+          // stamp is minted at the first sign-off (§12.3.5) and never before.
+          <p className="hl-mark m-0 mt-1 text-ink-faint">
+            {hydrated ? 'NO SEED MINTED YET' : NO_READING}
+          </p>
+        )}
+      </div>
+    </div>
   )
 }
 

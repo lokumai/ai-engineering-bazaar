@@ -81,7 +81,13 @@ export interface SheetRecord {
 }
 
 export interface RecordData {
-  identity: { name: string | null; markSeed: string | null; mark: string | null }
+  identity: {
+    name: string | null
+    markSeed: string | null
+    mark: string | null
+    /** §13.3 — `null` is the whole of "has not said", and it is the default. */
+    role: string | null
+  }
   /** §12.1.3 — keyed by SLUG (`intermediate/security`), never by number. */
   sheets: { [slug: string]: SheetRecord }
   days: string[]
@@ -140,7 +146,7 @@ export function recordData(seed: RecordSeed = {}): RecordData {
     sheets[slug] = sheetRecord(sheet)
   }
   return {
-    identity: { name: null, markSeed: null, mark: null, ...seed.identity },
+    identity: { name: null, markSeed: null, mark: null, role: null, ...seed.identity },
     sheets,
     days: seed.days ?? [SEED_DAY],
     prefs: { charKeys: true, ...seed.prefs },

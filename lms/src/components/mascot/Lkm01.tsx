@@ -52,6 +52,26 @@ import {
  * mismatch, and §10.4 forbids an island being the sole carrier of anything: the
  * readout (§7.1) prints the same facts as real text, so nothing is lost.
  *
+ * **§13.2 granted the faces colour, and granted nothing else.** A face may now
+ * be filled with its category's flat hue — half chroma started, full chroma
+ * complete, and dormant is the structural line rather than a colour at all —
+ * and the fill arrives on channel A from `lokum.css`, so no colour value and
+ * no `style` attribute is written here. Everything else §8.5 forbids stays
+ * forbidden: no face, no eyes, no mouth, no limbs, no gradient, no voice, and
+ * no animation or transition at any size in any variant (§9.1). A state change
+ * is a repaint, not a tween. Hue is also never the carrier (SC 1.4.1, §13.1.4):
+ * §8.2's line types and the section hatch still say it, which is why
+ * `forced-colors` can drop every hue and the drawing still reads.
+ *
+ * **Four sizes** (§8.3 as amended by §13.2): 28 in the header, 96 on the 404
+ * and the RECORD OF WORK cover, 128 on the dashboard and path heroes, 160 on
+ * the profile and in the all-32-approved state. Nothing in the drawing is
+ * tuned to 28: the geometry, the dash pitch and the stipple are all in viewBox
+ * units, so they enlarge with the mark the way an enlarged drawing does, and
+ * the hatch — the one measure that does answer to the size — takes it from
+ * `hatchSpec`. At 96 and above the mark is read by `FaceLegend`, which is real
+ * text and is what carries the drawing to a reader who cannot see it.
+ *
  * Every stroke and fill is a `var(--…)` token or comes from `record.css`, never
  * a hex value: a theme switch is a custom-property swap and costs 0ms (§9.2).
  * It animates never, at any size, in any variant (§9.1), and it has no voice
@@ -69,8 +89,8 @@ const PAINT_ORDER: readonly Face[] = [
 
 export interface Lkm01Props {
   /**
-   * Retained for the callers §8.3 names — the 96px dashboard empty state and
-   * the header mark — and deliberately not drawn from.
+   * Retained for the callers §8.3 names — the header mark and the four larger
+   * homes §13.2 gave it — and deliberately not drawn from.
    *
    * Face state moved to channel A when §12.2 made this markup
    * state-independent, so nothing here reads this value: the same six faces are
@@ -80,7 +100,12 @@ export interface Lkm01Props {
    * before this component renders.
    */
   progress?: Lkm01Progress
-  /** Rendered size in px. §8.3: 28 in the header, 96 on the dashboard. */
+  /**
+   * Rendered size in px. §8.3 as §13.2 amends it: 28 header, 96 the 404 and the
+   * report cover, 128 the dashboard and path heroes, 160 the profile and the
+   * all-32-approved state — `LKM01_SIZES`. Left as `number` so a test can
+   * measure the drawing at a size no page uses.
+   */
   size?: number
   /** Scopes the hatch pattern ids when a page carries more than one mark. */
   idPrefix?: string
@@ -152,10 +177,24 @@ export function Lkm01({ size = 28, idPrefix = 'lkm01', className }: Lkm01Props) 
       ))}
 
       {/* §8.1 — powdered sugar: a drafting stipple on the top face, decorative
-          and nothing more, so it is hidden from assistive technology (T5). */}
+          and nothing more, so it is hidden from assistive technology (T5).
+
+          `.hl-sugar` is the class §13.2 fixes for it: sugar is sugar in every
+          flavour, so `lokum.css` paints it `--color-paper` and it needs no
+          state rule of its own. The `fill` attribute stays as the value before
+          any stylesheet has arrived — a presentation attribute is the weakest
+          declaration there is, so the class wins the moment `lokum.css` loads,
+          and it is a token rather than a colour value either way (§9.2). */}
       <g aria-hidden="true">
         {SUGAR.map(([cx, cy]) => (
-          <circle key={`${cx},${cy}`} cx={cx} cy={cy} r={SUGAR_R} fill="var(--color-ink-faint)" />
+          <circle
+            key={`${cx},${cy}`}
+            className="hl-sugar"
+            cx={cx}
+            cy={cy}
+            r={SUGAR_R}
+            fill="var(--color-ink-faint)"
+          />
         ))}
       </g>
     </svg>

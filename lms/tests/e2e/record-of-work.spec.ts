@@ -62,7 +62,9 @@ const MARK_SEED = 'a1b2c3d4'
  * row §12.12.9 lets the document spend the accent on.
  */
 const FULL_RECORD: RecordSeed = {
-  identity: { name: READER, markSeed: MARK_SEED, mark: null },
+  // §13.3's `role` is present and null: `coerceRecordData` defaults it on every
+  // read, so a fixture without it compares unequal to the record the page holds.
+  identity: { name: READER, markSeed: MARK_SEED, mark: null, role: null },
   sheets: {
     'fundamentals/llms': {
       signedOff: '2026-07-01T08:00:00.000Z',
@@ -700,7 +702,7 @@ test('§12.12.7 — a hostile name is text in the saved file, and the file still
   const HOSTILE = '</script><img src=x onerror=alert(1)>'
   const { html } = await generate(page, {
     ...FULL_RECORD,
-    identity: { name: HOSTILE, markSeed: MARK_SEED, mark: null },
+    identity: { name: HOSTILE, markSeed: MARK_SEED, mark: null, role: null },
   })
 
   // The bytes first. `</script` may appear exactly twice — closing the JSON

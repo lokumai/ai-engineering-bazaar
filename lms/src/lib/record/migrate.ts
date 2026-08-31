@@ -20,6 +20,16 @@
  * literal fixture in a test; do not build it by calling today's helpers, which
  * will have moved on.
  *
+ * **§13.3's `identity.role` is NOT a rung, and the ladder is still empty.**
+ * Adding a nullable field is a WIDENING, not a migration: `coerceRecordData`
+ * already drops unknown keys and defaults missing ones, so every Phase 2
+ * envelope reads back at schema 1 with `role: null` — which is exactly the
+ * value §13.3 gives to "has not said" — and so SCHEMA_VERSION stays at 1. A
+ * rung that writes a default the coercer already writes is a rung that can only
+ * introduce a difference between the two, so do not add one. The version
+ * increments when a field CHANGES SHAPE or MOVES, because that is the case the
+ * coercer cannot reconstruct from the payload alone.
+ *
  * The import of `coerceRecordData` from `./validate` is deliberate and the
  * cycle with it is benign: `parseEnvelope` calls `migrate` inside a function
  * body, `migrate` calls the coercer inside a function body, and neither module

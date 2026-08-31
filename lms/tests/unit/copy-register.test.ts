@@ -35,6 +35,14 @@ const SRC = path.resolve(process.cwd(), 'src')
  */
 const ROOTS: readonly string[] = [
   'components/record',
+  // §13 — the path is the largest single body of new reader-visible copy in the
+  // project: nine role blurbs and 126 step reasons, written by agents reading
+  // the sheets. Agent-written prose is exactly what this register exists for.
+  'components/path',
+  'app/path',
+  'lib/path',
+  // §13.5's two new course components print `signed off` and a `--` placeholder.
+  'components/course',
   'app/dashboard',
   'app/profile',
   'app/report',
@@ -188,6 +196,15 @@ const BANS: readonly Ban[] = [
     name: 'you forgot',
     pattern: /\byou forgot\b/i,
     why: 'GOV.UK: an error message never blames the reader.',
+  },
+  {
+    name: 'NOT YET DRAWN',
+    pattern: /\bNOT YET DRAWN\b/,
+    why: '§12.14.1 — the register has ONE word for this state and it is NOT DRAWN, used by the '
+      + 'manifest, the filter chip, the module row, the diagram and the report. §13 arrived with '
+      + '"NOT YET DRAWN" in its spec text, and a path step duly printed it, so one sheet read two '
+      + 'ways on two screens. A second spelling of a status is the drift this register exists to '
+      + 'stop, and it is worth a ban of its own because both forms read as correct in isolation.',
   },
 ]
 

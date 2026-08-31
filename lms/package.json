@@ -10,7 +10,9 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:e2e:dev": "E2E_TARGET=dev playwright test",
+    "serve:out": "node scripts/serve-static.mjs out 3111"
   },
   "keywords": [],
   "author": "",

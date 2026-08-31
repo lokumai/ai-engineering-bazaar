@@ -58,7 +58,20 @@
   /* ---- Selection ----------------------------------------------------- */
   --color-selection:    oklch(0.585 0.196 32 / 0.16);
 
-  /* ---- Line widths (ISO 128 quantisation) ---------------------------- */
+  /* ---- Line widths (ISO 128 quantisation) ----------------------------
+     MEASURED: Chrome floors every `border-*-width` and `outline-width` to a
+     whole CSS pixel — `border-top: 1.5px` computes to `1px` at DPR 1 and at
+     DPR 2 alike — so `--stroke-struct` used as a border paints as a hairline
+     and §2.2's middle weight disappears everywhere it is spent. `height`,
+     `width` and `background-size` are not floored, which is why
+     `.hl-rule-struct` has always painted at its stated weight.
+
+     So a structural rule is *painted*, not bordered: a one-stop gradient
+     carries the weight and the border stays, transparent, holding the layout
+     space the rule has always occupied. Never
+     `border: var(--stroke-struct) solid <a colour>` — that is the
+     1.5px-that-paints-1px this note exists to prevent (§1, first check), and
+     `tests/unit/stroke-weights.test.ts` fails the build on it. */
   --stroke-hair:   1px;      /* rules, dividers, hidden-line dashes        */
   --stroke-struct: 1.5px;    /* component outlines, active state           */
   --stroke-cut:    2px;      /* current section, selected node, focus ring */
@@ -304,9 +317,16 @@
     z-index: 60;
     padding: 8px 12px;
     clip-path: inset(50%);
-    background: var(--color-cleared);
     color: var(--color-ink);
-    border: var(--stroke-struct) solid var(--color-line-strong);
+    /* Painted, not bordered — see the note beside `--stroke-struct`. Four
+       one-stop gradients, one per edge, over the cleared ground. */
+    border: var(--stroke-struct) solid transparent;
+    background:
+      linear-gradient(var(--color-line-strong) 0 0) 0 0 / 100% var(--stroke-struct) no-repeat border-box,
+      linear-gradient(var(--color-line-strong) 0 0) 0 100% / 100% var(--stroke-struct) no-repeat border-box,
+      linear-gradient(var(--color-line-strong) 0 0) 0 0 / var(--stroke-struct) 100% no-repeat border-box,
+      linear-gradient(var(--color-line-strong) 0 0) 100% 0 / var(--stroke-struct) 100% no-repeat border-box,
+      var(--color-cleared);
     font-family: var(--font-mono);
     font-size: var(--text-mark);
     line-height: var(--text-mark--line-height);

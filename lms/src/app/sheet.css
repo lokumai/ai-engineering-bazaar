@@ -222,8 +222,14 @@
     width: min(304px, 88vw);
     overflow-y: auto;
     padding: 16px;
-    background: var(--color-cleared);
-    border-inline-end: var(--stroke-struct) solid var(--color-line-strong);
+    /* Painted, not bordered — see `--stroke-struct` in globals.css. The site
+       is LTR in both the languages it is written in, so inline-end is the
+       right edge and the gradient can name it physically. */
+    border-inline-end: var(--stroke-struct) solid transparent;
+    background:
+      linear-gradient(var(--color-line-strong) 0 0)
+      100% 0 / var(--stroke-struct) 100% no-repeat border-box
+      var(--color-cleared);
   }
 
   .hl-drawer-head {
@@ -413,7 +419,11 @@
     align-items: center;
     height: 24px;
     padding: 0 12px;
-    border-bottom: var(--stroke-struct) solid var(--color-line-strong);
+    /* Painted, not bordered — see `--stroke-struct` in globals.css. */
+    border-bottom: var(--stroke-struct) solid transparent;
+    background:
+      linear-gradient(var(--color-line-strong) 0 0)
+      0 100% / 100% var(--stroke-struct) no-repeat border-box;
     color: var(--color-ink-muted);
   }
 
@@ -504,7 +514,11 @@
     align-items: center;
     height: 24px;
     padding: 0 12px;
-    border-bottom: var(--stroke-struct) solid var(--color-line-strong);
+    /* Painted, not bordered — see `--stroke-struct` in globals.css. */
+    border-bottom: var(--stroke-struct) solid transparent;
+    background:
+      linear-gradient(var(--color-line-strong) 0 0)
+      0 100% / 100% var(--stroke-struct) no-repeat border-box;
     color: var(--color-ink-muted);
   }
 
@@ -584,7 +598,11 @@
     text-transform: uppercase;
     text-align: start;
     color: var(--color-ink-muted);
-    border-bottom: var(--stroke-struct) solid var(--color-line-strong);
+    /* Painted, not bordered — see `--stroke-struct` in globals.css. */
+    border-bottom: var(--stroke-struct) solid transparent;
+    background:
+      linear-gradient(var(--color-line-strong) 0 0)
+      0 100% / 100% var(--stroke-struct) no-repeat border-box;
   }
 
   .hl-schedule th:first-child {
@@ -646,7 +664,11 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     margin: 32px 0 64px;
-    border-top: var(--stroke-struct) solid var(--color-line-strong);
+    /* Painted, not bordered — see `--stroke-struct` in globals.css. */
+    border-top: var(--stroke-struct) solid transparent;
+    background:
+      linear-gradient(var(--color-line-strong) 0 0)
+      0 0 / 100% var(--stroke-struct) no-repeat border-box;
   }
 
   .hl-prevnext > * + * {

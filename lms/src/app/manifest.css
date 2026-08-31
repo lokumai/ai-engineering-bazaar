@@ -121,7 +121,11 @@
     text-align: start;
     white-space: nowrap;
     color: var(--color-ink-muted);
-    border-bottom: var(--stroke-struct) solid var(--color-line-strong);
+    /* Painted, not bordered — see `--stroke-struct` in globals.css. */
+    border-bottom: var(--stroke-struct) solid transparent;
+    background:
+      linear-gradient(var(--color-line-strong) 0 0)
+      0 100% / 100% var(--stroke-struct) no-repeat border-box;
   }
 
   /* -- §5.3 — the module row --------------------------------------------- */
@@ -348,16 +352,33 @@
   }
 
   /* The rule that appears under the gauge on hover. Always present, always
-     1.5px, transparent until hovered: nothing moves (§11.32). */
+     1.5px, transparent until hovered: nothing moves (§11.32).
+
+     Drawn on a pseudo-element rather than as a border for two reasons. A
+     1.5px border paints at 1px (see the note beside `--stroke-struct` in
+     globals.css), and §9.2 grants a hover only `background-color` and
+     `border-color` — a painted gradient can carry the weight but cannot
+     transition its colour, and a pseudo-element's `background-color` can do
+     both. It is the same shape `a.hl-prevnext-cell::after` already uses. */
   .hl-category-gauge {
+    position: relative;
     display: block;
-    padding-bottom: 6px;
-    border-bottom: var(--stroke-struct) solid transparent;
-    transition: border-color 90ms linear;
+    /* 6px of clearance under the gauge, then the rule. */
+    padding-bottom: calc(6px + var(--stroke-struct));
   }
 
-  .hl-category:hover .hl-category-gauge {
-    border-bottom-color: var(--color-line-cut);
+  .hl-category-gauge::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: var(--stroke-struct);
+    background-color: transparent;
+    transition: background-color 90ms linear;
+  }
+
+  .hl-category:hover .hl-category-gauge::after {
+    background-color: var(--color-line-cut);
   }
 
   /* -- The subsystem bands on the drawing-set page ----------------------- */

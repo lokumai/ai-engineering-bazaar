@@ -49,7 +49,12 @@
     line-height: var(--text-h1--line-height);
     margin: 0 0 32px;
     padding-bottom: 16px;
-    border-bottom: var(--stroke-struct) solid var(--color-line-strong);
+    /* Painted, not bordered — see the note beside `--stroke-struct` in
+       globals.css. The transparent border keeps the rule's layout space. */
+    border-bottom: var(--stroke-struct) solid transparent;
+    background:
+      linear-gradient(var(--color-line-strong) 0 0)
+      0 100% / 100% var(--stroke-struct) no-repeat border-box;
   }
 
   .prose h2 {
@@ -457,7 +462,11 @@
     text-align: left;
     white-space: nowrap;
     color: var(--color-ink-muted);
-    border-bottom: var(--stroke-struct) solid var(--color-line-strong);
+    /* Painted, not bordered — see `--stroke-struct` in globals.css. */
+    border-bottom: var(--stroke-struct) solid transparent;
+    background:
+      linear-gradient(var(--color-line-strong) 0 0)
+      0 100% / 100% var(--stroke-struct) no-repeat border-box;
   }
 
   .prose tbody :is(td, th) {

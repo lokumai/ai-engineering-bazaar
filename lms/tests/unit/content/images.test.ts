@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { imageBaseFor } from '@/lib/content/images'
+import { href } from '@/lib/url'
 
 describe('imageBaseFor', () => {
   const original = process.env.NEXT_PUBLIC_LMS_BASE_PATH
@@ -14,5 +15,25 @@ describe('imageBaseFor', () => {
     process.env.NEXT_PUBLIC_LMS_BASE_PATH = '/ai-engineering-bazaar/lms'
     expect(imageBaseFor('fundamentals'))
       .toBe('/ai-engineering-bazaar/lms/course-images/fundamentals')
+  })
+
+  /**
+   * An `<img src>` is not a `<Link href>`: the router prefixes the second and
+   * not the first, which is the distinction `lib/url.ts` is written down for.
+   * This is the site's only non-router URL, so it is the only place that rule
+   * can be got wrong — and it was building the prefix inline, which meant the
+   * nine tests around `href()` were guarding a function nothing called.
+   */
+  it('resolves through href(), so the base-path rule lives in one place', () => {
+    for (const basePath of ['', '/lms', '/ai-engineering-bazaar/lms']) {
+      process.env.NEXT_PUBLIC_LMS_BASE_PATH = basePath
+      expect(imageBaseFor('intermediate'), basePath)
+        .toBe(href('/course-images/intermediate'))
+    }
+  })
+
+  it('prefixes the base path exactly once', () => {
+    process.env.NEXT_PUBLIC_LMS_BASE_PATH = '/lms'
+    expect(imageBaseFor('expert').match(/\/lms\//g)).toHaveLength(1)
   })
 })

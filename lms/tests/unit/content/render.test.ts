@@ -305,13 +305,30 @@ describe('renderMarkdown — §6.9 images', () => {
     expect(html).not.toContain('<p><img')
   })
 
-  it('prefers the author\'s italic caption line to the alt text', async () => {
+  // §6.5 fixes the strip at 28px carrying a short label, and an `<em>` under
+  // an image is arbitrary-length descriptive prose — 335 characters in module
+  // 5. So the two go to different places: the alt names the plate, the
+  // sentence is set below it in the meta voice.
+  it('labels the strip with the alt and sets the italic line below it', async () => {
     const { html } = await renderMarkdown(
       '![Agent Analogy](./images/a.png)  \n*LLM as brain, agent as body!*',
       { sheet: 6 },
     )
-    expect(html).toContain('FIG. 6.1 — LLM as brain, agent as body!')
+    expect(html).toContain('<span class="hl-cap-label">FIG. 6.1 — Agent Analogy</span>')
+    expect(html).toContain('<p class="hl-cap-note">LLM as brain, agent as body!</p>')
     expect(html).toContain('alt="Agent Analogy"')
+  })
+
+  // Two images under one h2 is module 6's shape; the section heading would
+  // have printed the same label on both.
+  it('falls back to the section heading only where there is no alt', async () => {
+    const { html } = await renderMarkdown(
+      '## I. Defining the Agent\n\n![](./images/a.png)\n*A sentence.*',
+      { sheet: 6 },
+    )
+    expect(html).toContain(
+      '<span class="hl-cap-label">FIG. 6.1 — Defining the Agent</span>',
+    )
   })
 
   it('shares one figure counter with the diagrams, in document order', async () => {

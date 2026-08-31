@@ -336,13 +336,20 @@
     border-bottom: var(--stroke-hair) solid var(--color-line-strong);
   }
 
-  /* The caption strip. It **is** the figcaption (§10.2), never a div. */
+  /* The caption strip. It **is** the figcaption (§10.2), never a div.
+
+     §6.5 and §6.10 B5 fix the strip at 28px carrying a short label, so the
+     28px lives on the label row and an image's authored description wraps to
+     its own line underneath. Before the split, a 335-character `<em>` set as
+     an 11px tracked uppercase mono label made the strip 65px at 1440 and 129px
+     at 390 — five lines of shouting where §6.9 asked for a plate number. */
   .prose .hl-cap {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    min-height: 28px;
+    column-gap: 12px;
+    row-gap: 0;
     font-family: var(--font-mono);
     font-size: var(--text-mark);
     line-height: var(--text-mark--line-height);
@@ -350,6 +357,30 @@
     text-transform: uppercase;
     font-variant-numeric: tabular-nums;
     color: var(--color-ink-muted);
+  }
+
+  .prose .hl-cap-label {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    min-height: 28px;
+  }
+
+  /* The author's sentence about the picture. Not a label: display sans at
+     `text-meta`, sentence case, no tracking (§3.2's meta line). It is the same
+     ink as the strip and it sits inside the figure's own rules, so it reads as
+     part of the plate rather than as a paragraph that lost its column. */
+  .prose .hl-cap-note {
+    flex: 1 0 100%;
+    margin: 0 0 12px;
+    font-family: var(--font-display);
+    font-size: var(--text-meta);
+    line-height: var(--text-meta--line-height);
+    letter-spacing: 0;
+    text-transform: none;
+    font-variant-numeric: normal;
+    color: var(--color-ink-muted);
+    text-wrap: pretty;
   }
 
   .prose .hl-table > .hl-cap {

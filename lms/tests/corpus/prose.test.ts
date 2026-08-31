@@ -141,6 +141,43 @@ describe('B5 — every table and figure is width-classed and scrollable', () => 
     const captions = (html.match(/<figcaption class="hl-cap"/g) ?? []).length
     expect(captions, `${module.slug}`).toBe(figures)
   }))
+
+  /**
+   * §6.5 and §6.10 B5 give the caption strip 28px and a short label. What used
+   * to go in it was whatever the author wrote in italics under the image —
+   * 335 characters on module 5, which set as 11px tracked uppercase mono made
+   * the strip 129px tall at 390px. The label is now a *name* — the alt, or the
+   * section heading — and the sentence is a separate line, so the length is
+   * bounded by what a heading is rather than by a character-count heuristic.
+   *
+   * This is the guard on that bound, and the bound is derived, not chosen.
+   * MEASURED: 11px IBM Plex Mono at +0.06em is 7.26px per character, so the
+   * 656px measure (§3.3) holds 90 characters on one line. The longest label in
+   * the corpus today is 84 — an h3 on module 10 — and every sentence that used
+   * to reach the strip was over 200.
+   */
+  const LABEL_MAX = 90
+
+  it('keeps every caption label short enough for a 28px strip (§6.5)', forEachModule((module, { html }) => {
+    const labels = [...html.matchAll(/<span class="hl-cap-label">([^<]*)<\/span>/g)]
+      .map((match) => match[1])
+    for (const text of labels) {
+      expect(text.length, `${module.slug}: "${text}"`).toBeLessThanOrEqual(LABEL_MAX)
+    }
+  }))
+
+  it('sets an image\'s authored sentence below the strip, not in it', async () => {
+    const all = await renderAll()
+    const notes = [...modules].flatMap((module) =>
+      [...(all.get(module.slug)?.html ?? '').matchAll(
+        /<p class="hl-cap-note">([^<]*)<\/p>/g,
+      )].map((match) => match[1]),
+    )
+    // MEASURED: 8 images in the corpus, 7 of them with an `<em>` line under
+    // them (module 1's context-window image has none).
+    expect(notes.length).toBeGreaterThanOrEqual(6)
+    expect(Math.max(...notes.map((note) => note.length))).toBeGreaterThan(200)
+  })
 })
 
 describe('B3 — no hardcoded colour reaches the browser', () => {

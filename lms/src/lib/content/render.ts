@@ -327,10 +327,31 @@ function applyTableHeaders(table: Element, columns: number): void {
   }
 }
 
-/** The caption strip. It **is** the `figcaption` (§10.2), never a `div`. */
-function caption(number: string, title: string | null, action?: Element): Element {
-  const children: ElementContent[] = [text(title ? `${number} — ${title}` : number)]
-  if (action) children.push(action)
+/**
+ * The caption strip. It **is** the `figcaption` (§10.2), never a `div`.
+ *
+ * §6.5 and §6.10 B5 both fix the strip at 28px carrying a short label, so the
+ * label is the only thing in it. `note` is the other half of an image caption:
+ * **MEASURED**, the corpus writes an `<em>` sentence under an image (3_rag.md,
+ * 5_memory.md) running to 335 characters, and set as an 11px tracked uppercase
+ * mono label it broke the 28px strip on 15 of 37 captions at 390px and reached
+ * 129px on one. A sentence is not a label; it goes on its own line below the
+ * strip, in the meta voice, and the strip stays 28px by construction.
+ */
+function caption(
+  number: string,
+  title: string | null,
+  extra: { action?: Element; note?: string | null } = {},
+): Element {
+  const children: ElementContent[] = [
+    element('span', { className: ['hl-cap-label'] }, [
+      text(title ? `${number} — ${title}` : number),
+    ]),
+  ]
+  if (extra.action) children.push(extra.action)
+  if (extra.note) {
+    children.push(element('p', { className: ['hl-cap-note'] }, [text(extra.note)]))
+  }
   return element('figcaption', { className: ['hl-cap'] }, children)
 }
 
@@ -351,10 +372,19 @@ function scrollRegion(
 /**
  * A `<p>` that exists only to carry an image: the image itself, optionally a
  * hard break and an italic caption line, and nothing else. The corpus writes
- * captions that way in module 6, so the `<em>` becomes the figure caption
- * rather than a stray line of italics under a rule.
+ * captions that way in modules 3, 4, 5 and 6, so the `<em>` is picked up here
+ * rather than left as a stray line of italics under a rule.
+ *
+ * The two halves go to different places. `label` — the author's alt text — is
+ * the figure's short name and takes the 28px strip; it is per-image, where the
+ * section heading a diagram or a table falls back to is not (module 6 carries
+ * two images under one h2, and both would have printed the same label). `note`
+ * is the `<em>` sentence, which is descriptive prose of no bounded length and
+ * is set below the strip.
  */
-function imageParagraph(node: Element): { image: Element; caption: string | null } | null {
+function imageParagraph(
+  node: Element,
+): { image: Element; label: string | null; note: string | null } | null {
   if (node.tagName !== 'p') return null
 
   let image: Element | null = null
@@ -376,8 +406,12 @@ function imageParagraph(node: Element): { image: Element; caption: string | null
 
   if (!image) return null
   const alt = image.properties?.alt
-  const fallback = typeof alt === 'string' && alt.trim() !== '' ? alt.trim() : null
-  return { image, caption: em ? hastToString(em).trim() : fallback }
+  const note = em ? hastToString(em).trim() : null
+  return {
+    image,
+    label: typeof alt === 'string' && alt.trim() !== '' ? alt.trim() : null,
+    note: note === '' ? null : note,
+  }
 }
 
 /**
@@ -427,15 +461,13 @@ function rehypeFigures(options: RenderOptions) {
           { className: ['hl-figure', 'hl-diagram'], 'data-hl-width': 'prose' },
           [
             scrollRegion('hl-diagram-body', name.replace('FIG.', 'Figure'), [marker]),
-            caption(
-              name,
-              section,
-              element(
+            caption(name, section, {
+              action: element(
                 'button',
                 { type: 'button', className: ['hl-cap-action'], 'data-hl-expand': '' },
                 [text('Expand')],
               ),
-            ),
+            }),
           ],
         )
         return [SKIP, index + 1]
@@ -449,7 +481,7 @@ function rehypeFigures(options: RenderOptions) {
         parent.children[index] = element(
           'figure',
           { className: ['hl-figure', 'hl-image'], 'data-hl-width': 'prose' },
-          [image.image, caption(name, image.caption)],
+          [image.image, caption(name, image.label ?? section, { note: image.note })],
         )
         return [SKIP, index + 1]
       }

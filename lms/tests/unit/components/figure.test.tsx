@@ -33,7 +33,9 @@ describe('the contract with render.ts', () => {
 
     expect(FIGURE_SELECTORS.EXPAND).toBe('[data-hl-prose] [data-hl-expand]')
     expect(html).toContain('data-hl-expand')
-    expect(html).toContain('<figcaption class="hl-cap">FIG. 13.1')
+    expect(html).toContain(
+      '<figcaption class="hl-cap"><span class="hl-cap-label">FIG. 13.1',
+    )
   })
 
   it('hands the island a source with no colour literal left in it (B2/B3)', async () => {

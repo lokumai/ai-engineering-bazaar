@@ -43,11 +43,17 @@ describe('§4.8 — the index table lists the set, and only the set', () => {
     }
   })
 
-  it('never prints a zero where it means "nobody counted this"', () => {
+  it('dashes a count only where nobody took it, and prints it where they did', () => {
+    // The dash means "not counted", so it belongs to the sheets that are not
+    // drawn — never to a drawn sheet whose true count is zero. Modules 2, 4
+    // and 5 are ready and cite nothing, and `0` is what they say.
     for (const row of rows) {
-      expect(row.sources, row.title).not.toBe('0')
+      if (row.drawn) expect(row.sources, row.title).toMatch(/^\d+$/)
+      else expect(row.sources, row.title).toBe('—')
       expect(row.requires, row.title).not.toBe('')
     }
+    expect(rows.filter((row) => row.sources === '0').map((row) => row.module))
+      .toEqual([2, 4, 5])
   })
 
   it('marks exactly the seven sheets §7.6 names as bilingual', () => {

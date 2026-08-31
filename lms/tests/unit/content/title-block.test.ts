@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { countDiagrams, countImages, countTables } from '@/lib/content/derive'
 import { loadAllModules, loadModule } from '@/lib/content/loader'
 import { moduleGraph } from '@/lib/content/edges'
 import { positionOf, sheetCount } from '@/lib/content/curriculum'
@@ -44,7 +45,7 @@ const NOT_DRAWN: SheetFacts = {
   sources: 0,
   requires: [],
   feeds: [],
-  lang: 'EN·TR',
+  lang: 'EN',
 }
 
 function value(rows: ReturnType<typeof titleBlockRows>, label: string): string | undefined {
@@ -134,6 +135,19 @@ describe('titleBlockRows — the drawn sheet', () => {
   })
 })
 
+describe('titleBlockRows — a drawn sheet that cites nothing', () => {
+  // Modules 2, 4 and 5 are `status: ready` and carry no external link at all.
+  const rows = titleBlockRows({ ...DRAWN, sources: 0, diagrams: 1, tables: 0 })
+
+  it('prints the zero it counted, not the dash that means "nobody counted"', () => {
+    expect(value(rows, 'SOURCES')).toBe('0')
+  })
+
+  it('prints a figures row with a zero term in it for the same reason', () => {
+    expect(value(rows, 'FIGURES')).toBe('1 DIAG · 0 TBL')
+  })
+})
+
 describe('titleBlockRows — the sheet that is not drawn', () => {
   const rows = titleBlockRows(NOT_DRAWN)
 
@@ -141,15 +155,21 @@ describe('titleBlockRows — the sheet that is not drawn', () => {
     expect(value(rows, 'EXTENT')).toBe('—')
   })
 
-  it('prints an em dash for every count that is zero', () => {
+  it('dashes every row §4.5 dashes on the draft strip', () => {
     expect(value(rows, 'FIGURES')).toBe('—')
     expect(value(rows, 'SOURCES')).toBe('—')
     expect(value(rows, 'REQUIRES')).toBe('—')
     expect(value(rows, 'FEEDS')).toBe('—')
   })
 
-  it('still prints the language it really has', () => {
-    expect(value(rows, 'LANG')).toBe('EN · TR')
+  it('dashes them on status, not on a zero that happens to coincide', () => {
+    const counted = titleBlockRows({ ...NOT_DRAWN, diagrams: 2, tables: 1, sources: 9 })
+    expect(value(counted, 'FIGURES')).toBe('—')
+    expect(value(counted, 'SOURCES')).toBe('—')
+  })
+
+  it('prints LANG EN, the value §4.5 item 4 spells out', () => {
+    expect(value(rows, 'LANG')).toBe('EN')
   })
 })
 
@@ -197,9 +217,41 @@ describe('sheetFacts, over the real corpus', () => {
   })
 
   it('counts tables separately from diagrams', () => {
-    const security = facts('intermediate/security')
-    expect(security.tables).toBeGreaterThan(0)
-    expect(security.diagrams).toBe(loadModule('intermediate/security')?.figures)
+    const security = loadModule('intermediate/security')!
+    expect(facts(security.slug).tables).toBe(countTables(security.body))
+    expect(facts(security.slug).diagrams).toBe(countDiagrams(security.body))
+  })
+
+  it('keeps images out of the DIAG term §5.5 spells out', () => {
+    // Module 6 has one mermaid diagram and four images. `1 DIAG` is the true
+    // statement; `5 DIAG` was the loader's diagrams-plus-images sum wearing
+    // the wrong label.
+    const agents = loadModule('fundamentals/agents')!
+    expect(countDiagrams(agents.body)).toBe(1)
+    expect(countImages(agents.body)).toBe(4)
+    expect(facts(agents.slug).diagrams).toBe(1)
+
+    const row = titleBlockRows(facts(agents.slug)).find((r) => r.label === 'FIGURES')
+    expect(row?.value).toBe('1 DIAG · 1 TBL')
+  })
+
+  it('prints a FIGURES row no drawn sheet can inflate', () => {
+    for (const module of loadAllModules().filter((m) => m.frontmatter.status === 'ready')) {
+      const row = titleBlockRows(facts(module.slug)).find((r) => r.label === 'FIGURES')
+      expect(row?.value, module.slug)
+        .toBe(`${countDiagrams(module.body)} DIAG · ${countTables(module.body)} TBL`)
+    }
+  })
+
+  it('prints the source count every drawn sheet really has, zero included', () => {
+    const zeroes = loadAllModules().filter(
+      (m) => m.frontmatter.status === 'ready' && m.sources === 0,
+    )
+    expect(zeroes.map((m) => m.frontmatter.module)).toEqual([2, 4, 5])
+    for (const module of zeroes) {
+      const row = titleBlockRows(facts(module.slug)).find((r) => r.label === 'SOURCES')
+      expect(row?.value, module.slug).toBe('0')
+    }
   })
 
   it('leaves every draft sheet with nothing to print but its revision', () => {

@@ -152,6 +152,11 @@ describe('countDiagrams', () => {
     const total = modules.reduce((sum, m) => sum + countDiagrams(m.body), 0)
     expect(total).toBe(21)
   })
+
+  it('does not absorb module 6\'s four images into its one diagram', () => {
+    expect(countDiagrams(body(6))).toBe(1)
+    expect(countImages(body(6))).toBe(4)
+  })
 })
 
 describe('countImages', () => {

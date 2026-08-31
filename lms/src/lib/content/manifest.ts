@@ -31,10 +31,6 @@ function pad2(n: number): string {
   return String(n).padStart(2, '0')
 }
 
-function count(n: number): string {
-  return n === 0 ? DASH : String(n)
-}
-
 let rowCache: SheetRow[] | null = null
 
 /** The whole set, in sheet order — the order the set is numbered in. */
@@ -65,7 +61,10 @@ export function sheetRows(): SheetRow[] {
       extent: drawn
         ? `${thousands(sheet.extent)} W · ${sheet.frontmatter.duration} MIN`
         : DASH,
-      sources: count(sheet.sources),
+      // Gated on `drawn`, not on zero, for the reason §5.5 gives: a dash means
+      // nobody counted, and on a drawn sheet somebody did. Modules 2, 4 and 5
+      // cite nothing, and `0` is the true statement about them.
+      sources: drawn ? String(sheet.sources) : DASH,
       lang: LANG_DISPLAY[sheet.lang],
       bilingual: sheet.lang === 'EN·TR',
       requires: requires.length === 0 ? DASH : requires.join(', '),

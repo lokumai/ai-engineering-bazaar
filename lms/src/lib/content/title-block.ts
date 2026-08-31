@@ -1,5 +1,5 @@
 import type { SheetPosition } from './curriculum'
-import { LANG_DISPLAY, type Lang, countTables } from './derive'
+import { LANG_DISPLAY, type Lang, countDiagrams, countTables } from './derive'
 import type { CourseModule } from './loader'
 import type { Revision } from './revision'
 
@@ -27,7 +27,12 @@ export interface SheetFacts {
   status: 'ready' | 'draft'
   extent: number
   duration: number
-  /** Real figures: mermaid diagrams plus images, the rail already stripped. */
+  /**
+   * §5.5 `FIGURES`, first term — mermaid diagrams, the rail already stripped.
+   * Images are figures too and §6.9 draws them in the same component, but the
+   * row is spelled `<n> DIAG · <n> TBL` and `DIAG` is not somewhere to hide
+   * four images: module 6 has one diagram and four of them.
+   */
   diagrams: number
   tables: number
   sources: number
@@ -61,10 +66,6 @@ function list(modules: readonly number[]): string {
   return modules.length === 0 ? DASH : modules.join(', ')
 }
 
-function count(n: number): string {
-  return n === 0 ? DASH : String(n)
-}
-
 /** Map a loaded module and its graph edges onto the facts the header prints. */
 export function sheetFacts(
   module: CourseModule,
@@ -84,9 +85,7 @@ export function sheetFacts(
     status: module.frontmatter.status,
     extent: module.extent,
     duration: module.frontmatter.duration,
-    // The loader's `figures` is already diagrams + images, and §6.9 wraps an
-    // image in the same figure component as a diagram, so it is one count.
-    diagrams: module.figures,
+    diagrams: countDiagrams(module.body),
     tables: countTables(module.body),
     sources: module.sources,
     requires: context.requires,
@@ -113,10 +112,16 @@ export function sheetLabel(facts: SheetFacts): string {
 /**
  * §5.5 Variant A — the twelve rows of the title block, in the spec's order.
  *
- * `EXTENT` is the one row a draft sheet cannot fill. Its words are the
- * schedule of parts, which the sheet already prints in full, and its duration
- * is undeclared; `92 W · 0 MIN` would be an estimate of how long it takes to
- * read a drawing that does not exist. §4.5 prints an em dash and so do we.
+ * `EXTENT`, `FIGURES` and `SOURCES` are the three rows a draft sheet cannot
+ * fill, and §4.5 item 4 dashes all three. Its words are the schedule of parts,
+ * which the sheet already prints in full, and its duration is undeclared;
+ * `92 W · 0 MIN` would be an estimate of how long it takes to read a drawing
+ * that does not exist.
+ *
+ * The gate is `status`, never a zero. A dash is the honest rendering of
+ * "nobody counted this", and on a *drawn* sheet somebody did: modules 2, 4 and
+ * 5 cite no external source at all, and `SOURCES 0` is the true statement
+ * about them where `SOURCES —` claims the count was never taken.
  */
 export function titleBlockRows(facts: SheetFacts): TitleBlockRow[] {
   const drawn = facts.status === 'ready'
@@ -134,11 +139,9 @@ export function titleBlockRows(facts: SheetFacts): TitleBlockRow[] {
     },
     {
       label: 'FIGURES',
-      value: facts.diagrams + facts.tables === 0
-        ? DASH
-        : `${facts.diagrams} DIAG · ${facts.tables} TBL`,
+      value: drawn ? `${facts.diagrams} DIAG · ${facts.tables} TBL` : DASH,
     },
-    { label: 'SOURCES', value: count(facts.sources) },
+    { label: 'SOURCES', value: drawn ? String(facts.sources) : DASH },
     { label: 'REQUIRES', value: list(facts.requires) },
     { label: 'FEEDS', value: list(facts.feeds) },
     { label: 'REVISION', value: facts.revision?.hash ?? DASH, preserveCase: true },

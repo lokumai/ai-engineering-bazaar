@@ -46,9 +46,12 @@ describe('sheetRows — one row per sheet in the set (§4.8)', () => {
     expect(rows[16].extent).toBe('—')
   })
 
-  it('counts sources, and prints an em dash rather than a zero', () => {
+  it('counts sources, and dashes only the sheets nobody counted', () => {
+    // Module 13 cites 23; module 2 is drawn and cites nothing, which is `0`,
+    // not the dash that means the count was never taken; module 17 is a stub.
     expect(rows[12].sources).toBe('23')
-    expect(rows[1].sources).toBe('—')
+    expect(rows[1].sources).toBe('0')
+    expect(rows[16].sources).toBe('—')
   })
 
   it('prints the language coverage the corpus actually has', () => {

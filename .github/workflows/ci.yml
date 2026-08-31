@@ -1,8 +1,22 @@
 # Everything the deploy workflow will do, before it is allowed to do it.
+#
+# `push: main` is not redundant with `pull_request`, and its absence was a real
+# gap: `deploy.yml` fires on every push to main and does not depend on this
+# workflow, so nothing re-ran the tests against the commit that actually ships.
+# A squash-merge produces a commit no CI run has ever seen — usually identical in
+# content to the branch tip, but not necessarily, and a direct push is not
+# identical to anything. Twenty runs of this workflow existed before this line
+# and every one of them was a `pull_request`.
+#
+# Running here does not by itself stop a red commit from deploying: the two jobs
+# below have to be named as required checks on main's ruleset for that. The
+# ruleset requires a pull request today and requires no check to pass on it.
 name: CI
 
 on:
   pull_request:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -10,8 +24,8 @@ jobs:
     name: MkDocs (strict)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - run: pip install mkdocs-material
@@ -26,11 +40,15 @@ jobs:
       run:
         working-directory: lms
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           # §11.26: REVISION is each file's last-touching commit.
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+      # v5 added automatic caching driven by a `packageManager` field in
+      # package.json, and v6 narrowed it to npm. `lms/package.json` declares no
+      # such field, so nothing here is cached twice or cached differently; the
+      # explicit `cache`/`cache-dependency-path` below is still what runs.
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: npm
@@ -47,7 +65,7 @@ jobs:
       # Chrome already.
       - run: npx playwright install --with-deps chrome
       - run: npm run test:e2e
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: playwright-report

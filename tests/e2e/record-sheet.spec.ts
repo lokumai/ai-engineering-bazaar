@@ -229,11 +229,31 @@ test('a seeded record stamps <html> inside the first frame (§12.2 channel A)', 
   expect(painted!.storage).toBe('ok')
 
   // And the reading is genuinely pre-React, which is what makes the three above
-  // mean anything: in this same frame channel B has not run, so the readout is
-  // still `data-hydrated="false"` and the sign-off control still says
-  // `aria-pressed="false"` about a sheet the stored record says is signed off.
-  // An effect that added these classes could not have got there first.
-  expect(painted!.hydrated).toBe('false')
+  // mean anything: in this same frame channel B has not run, so the sign-off
+  // control still says `aria-pressed="false"` about a sheet the stored record
+  // says is signed off. An effect that added these classes could not have got
+  // there first.
+  //
+  // Stated as what would FALSIFY channel A rather than as a positive reading,
+  // and the difference is not pedantry. `hydrated` comes off `.hl-readout`,
+  // which sits 82.5 KB into a 211 KB document, while the probe fires on the
+  // first `requestAnimationFrame` — so the browser can paint, and this can run,
+  // before that element has been parsed at all. MEASURED: serving the document
+  // in two chunks 400 ms apart makes this read `null` on a build of `main` just
+  // as readily as on any later one, and a loaded CI runner produces the same
+  // condition for free — which is exactly how it first showed up, on a run that
+  // took 4.7 minutes where its predecessors took 3.8. `null` there is not a
+  // weaker channel A, it is a stronger one: nothing had rendered the readout,
+  // so nothing could have populated it. The only reading that contradicts
+  // §12.2 is a readout that has already published `true`.
+  expect(painted!.hydrated).not.toBe('true')
+  // The corroboration the line above declines to race for, taken where there is
+  // no race: `data-hydrated` is a real two-state signal, so the `false` the
+  // prerender ships is a state the page leaves rather than one it never had.
+  // Without this, `not.toBe('true')` would also pass against an attribute that
+  // is hardcoded and means nothing.
+  await waitForHydratedReadout(page)
+  await expect(page.locator('footer .hl-readout')).toHaveAttribute('data-hydrated', 'true')
   await expect(signOff(page)).toHaveCount(0)
   await expect(signedOff(page)).toBeVisible()
 })

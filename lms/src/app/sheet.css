@@ -103,7 +103,13 @@
       --hl-break-left: 232px;
     }
 
-    /* A2: 208 + 24 + 656 = 888, centred in the 1152 box. */
+    /* A2 between 1024 and 1279: 208 + 24 + 656 = 888, centred in the 1152 box.
+       This band is the whole of what still separates the two drawn formats, and
+       it is a real difference rather than a leftover: A0 above gives up its
+       right rail here and spends the reclaimed width on the measure (720px),
+       because a 4,868-word sheet has text to put in it. A 1,114-word sheet does
+       not, so it keeps §6's 656px and centres. From 1280px up they are
+       identical. */
     .hl-sheet[data-format="A2"] {
       grid-template-columns: var(--width-rail-l) var(--width-prose);
       --hl-break-left: 232px;
@@ -133,19 +139,42 @@
   }
 
   @media (min-width: 1280px) {
-    /* A0, all three zones: 208 + 24 + 656 + 24 + 240 = 1152 exactly. */
-    .hl-sheet[data-format="A0"] {
+    /* All three zones: 208 + 24 + 656 + 24 + 240 = 1152 exactly.
+       ------------------------------------------------------------------------
+       **A2 shares this, and it did not used to.** §4.4 gave the right rail to
+       A0 alone, so the seven A2 sheets — all of Fundamentals — put their title
+       block in the horizontal strip under the h1 instead. Both formats have
+       always used the same 1152px box and the same 656px measure, so the only
+       thing that differed was where the metadata sat: the prose started at
+       x=588 on an A2 sheet and x=456 on an A0 one, and the text jumped 132px
+       sideways as a reader moved between them. A reader noticed and asked
+       whether every page was designed separately. Nothing is — there is one
+       page component for all 32 sheets and no per-module code anywhere — but
+       the format was making it look that way.
+
+       The measure is untouched by this: 656px either way, before and after.
+       What the third zone costs is the sheet's internal centring, which is what
+       makes the two agree.
+
+       A2 keeps its name and one real job, below. Collapsing it into A0 would
+       leave `sheetFormat` a second spelling of `status` — drawn is A0, draft is
+       A4 — and a field that restates another field is worse than a field with a
+       narrow remit. */
+    .hl-sheet[data-format="A0"],
+    .hl-sheet[data-format="A2"] {
       grid-template-columns: var(--width-rail-l) var(--width-prose) var(--width-rail-r);
       --hl-measure: var(--width-prose);
       --hl-break-right: 264px;
     }
 
-    .hl-sheet[data-format="A0"] > .hl-rail-right {
+    .hl-sheet[data-format="A0"] > .hl-rail-right,
+    .hl-sheet[data-format="A2"] > .hl-rail-right {
       display: block;
     }
 
     /* …and from here up a `wide` figure breaks right, over the title block. */
-    .hl-sheet[data-format="A0"] .hl-figure[data-hl-width="wide"] {
+    .hl-sheet[data-format="A0"] .hl-figure[data-hl-width="wide"],
+    .hl-sheet[data-format="A2"] .hl-figure[data-hl-width="wide"] {
       --hl-figure-edge: var(--color-line-strong);
     }
   }

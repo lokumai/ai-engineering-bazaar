@@ -168,36 +168,74 @@ test.describe('A0 — the assembly sheet', () => {
 })
 
 test.describe('A2 — the part sheet', () => {
-  test('carries the horizontal title strip, not the panel', async ({ page }) => {
+  /**
+   * §4.4 gave the right rail to A0 alone, and this suite pinned that: "carries
+   * the horizontal title strip, NOT the panel". A reader asked why two sheets of
+   * the same curriculum looked structurally different, and the honest answer was
+   * that nothing is designed per page — one component renders all 32, with no
+   * per-module code anywhere — but the format was making it look that way.
+   *
+   * Both drawn formats have always used the same 1152px box and the same 656px
+   * measure, so the rail moved the metadata rather than the text: the prose
+   * started at x=588 on an A2 sheet and x=456 on an A0 one, and the text jumped
+   * 132px sideways as a reader moved between them. From 1280px up they now share
+   * the third zone, and the measure is untouched — 656px before and after.
+   */
+  test('carries the title-block panel, like every other drawn sheet', async ({ page }) => {
     await page.goto(A2.path)
 
-    const strip = page.locator('.hl-title-strip')
-    await expect(strip).toBeVisible()
-    await expect(strip.locator('.hl-title-strip-pair')).not.toHaveCount(0)
+    const panel = page.locator('.hl-title-block')
+    await expect(panel).toBeVisible()
+    await expect(page.locator('.hl-rail-right')).toBeVisible()
 
-    // It sits beneath the h1, which is the whole point of the variant (§5.5).
-    const h1Box = await page.locator('main h1').boundingBox()
-    const stripBox = await strip.boundingBox()
-    expect(stripBox!.y).toBeGreaterThan(h1Box!.y)
+    // The strip is still in the document as the sub-1280 fallback, and hidden
+    // here — so exactly one title block is ever on screen.
+    await expect(page.locator('.hl-title-strip')).not.toBeVisible()
 
-    // No third zone: an A2 sheet is two zones centred in the 1152 box (§4.4).
-    await expect(page.locator('.hl-rail-right')).toHaveCount(0)
-    await expect(page.locator('.hl-title-block')).toHaveCount(0)
-
-    // It is a drawn sheet, so it keeps the spine and the prose.
+    // Three zones, the same arithmetic as A0: 208 + 24 + 656 + 24 + 240 = 1152.
     await expect(page.locator('.hl-rail-left nav[aria-label="Sections"]')).toBeVisible()
     expect(await widthOf(page.locator('.hl-column'))).toBe(656)
-
-    // 208 + 24 + 656 = 888, centred in the 1152 box: the leftover space is
-    // equal either side, which is the half of §4.4 that a width alone misses.
-    const drawing = await zones(page, ['.hl-rail-left', '.hl-column'])
-    expect(drawing.width).toBe(888)
+    const drawing = await zones(page, ['.hl-rail-left', '.hl-column', '.hl-rail-right'])
+    expect(drawing.width).toBe(1152)
     expect(drawing.leadIn).toBe(drawing.leadOut)
-    expect(drawing.leadIn).toBe(132)
+
+    // §7.4 — and the stamps, which used to render only inside the A0 rail.
+    await expect(page.locator('.hl-stamp:visible')).not.toHaveCount(0)
 
     // …and none of the A4 furniture.
     await expect(page.locator('.hl-status-band')).toHaveCount(0)
     await expect(page.locator('.hl-schedule')).toHaveCount(0)
+  })
+
+  /**
+   * The one thing that still separates the two drawn formats, and the reason A2
+   * keeps its name: between 1024 and 1279 A0 gives up its right rail and spends
+   * the reclaimed width on the measure, because a 4,868-word sheet has text to
+   * put in it. A 1,114-word sheet does not, so it keeps §6's 656px and centres.
+   *
+   * Collapsing A2 into A0 would leave `sheetFormat` a second spelling of
+   * `status` — drawn is A0, draft is A4 — and a field that restates another
+   * field is worse than a field with a narrow remit. This case is that remit.
+   */
+  test('keeps §6’s measure below 1280 where A0 widens to 720', async ({ page }) => {
+    await page.setViewportSize({ width: 1100, height: 900 })
+
+    // `.prose`, not `.hl-column`: with the rail collapsed A0's grid track is
+    // `minmax(0, 1fr)` and the column takes the whole 820px remainder, while
+    // `--hl-measure` is what bounds the text inside it. The measure is the
+    // number §6 is about, and the column is just the box holding it.
+    await page.goto(A2.path)
+    await expect(page.locator('.hl-title-block')).not.toBeVisible()
+    expect(await widthOf(page.locator('.prose').first())).toBe(656)
+
+    await page.goto(A0.path)
+    await expect(page.locator('.hl-title-block')).not.toBeVisible()
+    expect(await widthOf(page.locator('.prose').first())).toBe(720)
+
+    // Both fall back to the strip, and both keep their stamps there — the other
+    // hole this change closed, since the rail is gone at this width.
+    await expect(page.locator('.hl-title-strip')).toBeVisible()
+    await expect(page.locator('.hl-stamp:visible')).not.toHaveCount(0)
   })
 })
 

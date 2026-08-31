@@ -278,7 +278,7 @@ export default async function ModuleSheetPage({
                 <SheetStamps slug={slug} fact={stampFact} variant="strip" />
               )
             }
-            className={format === 'A0' ? 'xl:hidden' : undefined}
+            className={drawn ? 'xl:hidden' : undefined}
           />
 
           <Objectives items={sheet.frontmatter.objectives} />
@@ -335,7 +335,14 @@ export default async function ModuleSheetPage({
           )}
         </div>
 
-        {format === 'A0' && (
+        {/* §4.4 — the right rail belongs to every DRAWN sheet, not to A0 alone.
+            `sheet.css` carries the reasoning: both drawn formats have always
+            used the same 1152px box and the same 656px measure, so giving the
+            rail to A0 only moved the metadata rather than the text, and the
+            prose jumped 132px sideways between two sheets of the same
+            curriculum. A draft has no rail because it has no title block panel
+            and nothing to put in one (§4.5). */}
+        {drawn && (
           <div className="hl-rail-right">
             <TitleBlock
               rows={titleBlockRows(facts)}

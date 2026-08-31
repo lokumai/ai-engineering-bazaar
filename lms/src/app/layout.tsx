@@ -35,7 +35,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteHeader />
         <main id="main" className="flex-1 pt-10 pb-16">
           <RegistrationMarks edge="top" />
-          <div className="mx-auto w-full max-w-[var(--width-shell)] px-6">{children}</div>
+          {/* §4.7 — 24px of side padding, dropping to 20px below 768px. */}
+          <div className="mx-auto w-full max-w-[var(--width-shell)] px-5 md:px-6">
+            {children}
+          </div>
           <RegistrationMarks edge="bottom" className="mt-16" />
         </main>
         <SiteFooter />

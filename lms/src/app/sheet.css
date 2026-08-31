@@ -1,0 +1,737 @@
+/* ===========================================================================
+   §4.4–§4.7, §5.5–§5.7 — the module sheet.
+
+   Three formats, chosen at build time and written onto the wrapper as
+   `data-format`: A0 assembly (three zones), A2 part (two zones, centred), A4
+   detail (one column, no rails). An A4 sheet is not a degraded A0 — §4.5 gives
+   it its own anatomy — so nothing here treats a format as a fallback.
+
+   Two things repeat and are worth naming up front. Every rule is one of three
+   quantised weights (`--stroke-hair` 1px, `--stroke-struct` 1.5px,
+   `--stroke-cut` 2px) and nothing is between them. And "not yet drawn" is an
+   ISO 128 hidden line — `3 2` dashes — which CSS cannot express as a border,
+   so it is drawn as a repeating gradient at exactly 3px on, 2px off.
+   =========================================================================== */
+
+@layer components {
+  /* -- The hidden line ----------------------------------------------------
+     A 1px rule dashed 3 on / 2 off, in whichever direction is asked for.
+     `border-style: dashed` is the browser's own pattern and would put an
+     arbitrary, unmeasured dash into a system whose whole claim is that every
+     line means something. */
+
+  .hl-hidden-x {
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--hl-hidden-ink, var(--color-line-strong)) 0 3px,
+      transparent 3px 5px
+    );
+    background-repeat: repeat-x;
+    background-size: 100% var(--stroke-hair);
+  }
+
+  .hl-hidden-y {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      var(--hl-hidden-ink, var(--color-line-strong)) 0 3px,
+      transparent 3px 5px
+    );
+    background-repeat: repeat-y;
+    background-size: var(--stroke-hair) 100%;
+  }
+
+  /* -- §4.4 / §4.7 The sheet grid ---------------------------------------- */
+
+  .hl-sheet {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-content: center;
+  }
+
+  /* Below 1024 there is one column: the rails are in the drawer (§4.7). */
+  .hl-sheet > .hl-rail-left,
+  .hl-sheet > .hl-rail-right {
+    display: none;
+  }
+
+  .hl-sheet > .hl-column {
+    grid-column: 1;
+    width: 100%;
+    max-width: var(--width-prose);
+    margin-inline: auto;
+    min-width: 0;
+  }
+
+  /* Everything in the column obeys the measure the format gives it, so the
+     strip, the schedule and the prev/next stay aligned with the prose. */
+  .hl-sheet > .hl-column > * {
+    max-width: var(--hl-measure, var(--width-prose));
+  }
+
+  .hl-rail-left,
+  .hl-rail-right {
+    position: sticky;
+    top: 80px;
+    align-self: start;
+  }
+
+  .hl-rail-left {
+    grid-column: 1;
+    width: var(--width-rail-l);
+  }
+
+  .hl-rail-right {
+    grid-column: 3;
+    width: var(--width-rail-r);
+  }
+
+  @media (min-width: 1024px) {
+    .hl-sheet {
+      column-gap: 24px;
+    }
+
+    .hl-sheet > .hl-column {
+      grid-column: 2;
+      max-width: none;
+      margin-inline: 0;
+    }
+
+    /* A0, right rail collapsed (§4.7): 208 + 24 + 1fr, prose to 720px. */
+    .hl-sheet[data-format="A0"] {
+      grid-template-columns: var(--width-rail-l) minmax(0, 1fr);
+      --hl-measure: 720px;
+      --hl-break-left: 232px;
+    }
+
+    /* A2: 208 + 24 + 656 = 888, centred in the 1152 box. */
+    .hl-sheet[data-format="A2"] {
+      grid-template-columns: var(--width-rail-l) var(--width-prose);
+      --hl-break-left: 232px;
+    }
+
+    /* A4: one column, 656 centred. No rails, at any width. */
+    .hl-sheet[data-format="A4"] {
+      grid-template-columns: var(--width-prose);
+    }
+
+    .hl-sheet[data-format="A4"] > .hl-column {
+      grid-column: 1;
+    }
+
+    .hl-sheet[data-format="A0"] > .hl-rail-left,
+    .hl-sheet[data-format="A2"] > .hl-rail-left {
+      display: block;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    /* A0, all three zones: 208 + 24 + 656 + 24 + 240 = 1152 exactly. */
+    .hl-sheet[data-format="A0"] {
+      grid-template-columns: var(--width-rail-l) var(--width-prose) var(--width-rail-r);
+      --hl-measure: var(--width-prose);
+      --hl-break-right: 264px;
+    }
+
+    .hl-sheet[data-format="A0"] > .hl-rail-right {
+      display: block;
+    }
+  }
+
+  /* §6.5 / B5 — a figure that breaks out of the measure "simply overlays the
+     rail's horizontal band with a --color-paper ground". Two things make that
+     true: the ground itself, and painting above the rails, which are sticky
+     and therefore already in the positioned layer whatever the DOM order says.
+     Without both, a 6-column table at 1152px is transparent and the left
+     rail's section list reads straight through it.
+
+     §6.5 designs this collision rather than avoiding it: a 5-column figure is
+     920px, which it defines as "prose + gutter + right rail". A rail that is
+     briefly covered and comes back is the cost of a table that can be read. */
+  .hl-sheet .prose .hl-figure {
+    position: relative;
+    z-index: 1;
+    background: var(--color-paper);
+  }
+
+  /* -- §4.6 Eyebrow and sheet title -------------------------------------- */
+
+  .hl-eyebrow {
+    margin: 0 0 12px;
+    color: var(--color-ink-muted);
+  }
+
+  /* §6.1 gives the h1 16px, a structural rule, then 32px. The last 32px has to
+     live on the wrapper: inside `.prose` the h1 is the only child, and
+     `.prose > :last-child` zeroes its bottom margin. */
+  .hl-sheet-title {
+    margin-bottom: 32px;
+  }
+
+  /* -- §4.7 The contents control, 768–1023 and below ---------------------- */
+
+  .hl-subheader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  @media (min-width: 1024px) {
+    .hl-subheader {
+      display: none;
+    }
+  }
+
+  /* §5.10 — the one button shape on this site. There is no filled variant. */
+  .hl-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    height: 32px;
+    padding: 0 12px;
+    border: var(--stroke-hair) solid var(--color-line-strong);
+    background: var(--color-paper);
+    color: var(--color-ink);
+    transition: background-color 90ms linear, border-color 90ms linear;
+  }
+
+  .hl-button:hover {
+    background: var(--color-cleared);
+    border-color: var(--color-line-cut);
+  }
+
+  .hl-button:active {
+    background: var(--color-sunken);
+    border-color: var(--color-line-cut);
+  }
+
+  /* The drawer. Radix traps focus and restores it (§10.3); nothing animates
+     — §9.4 permits three animations and this is not one of them. */
+  .hl-drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: var(--color-paper);
+    opacity: 0.72;
+  }
+
+  .hl-drawer {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: 0;
+    z-index: 51;
+    width: min(304px, 88vw);
+    overflow-y: auto;
+    padding: 16px;
+    background: var(--color-cleared);
+    border-inline-end: var(--stroke-struct) solid var(--color-line-strong);
+  }
+
+  .hl-drawer-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 32px;
+    margin-bottom: 16px;
+    color: var(--color-ink-muted);
+  }
+
+  /* §10.4 — a 44 × 44 minimum target below 768px. The mark stays 32px tall;
+     only the hit area grows, so the control still reads as drawn. */
+  @media (max-width: 767px) {
+    .hl-button::after {
+      content: "";
+      position: absolute;
+      inset: -6px;
+    }
+  }
+
+  /* -- §5.6 Table of contents — which is the section spine (§4.6) --------- */
+
+  .hl-toc {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .hl-toc-entry {
+    position: relative;
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr);
+    column-gap: 6px;
+    align-items: baseline;
+    min-height: 28px;
+    padding: 4px 0 4px 16px;
+    color: var(--color-ink-muted);
+    font-family: var(--font-display);
+    font-size: var(--text-meta);
+    line-height: var(--text-meta--line-height);
+    text-align: start;
+    width: 100%;
+    transition: color 90ms linear;
+  }
+
+  /* The spine: a 2px line at the rail's left edge, one segment per row, so the
+     row in view can switch its own segment to the cut-plane weight. It tracks
+     scroll position and nothing else — never accent, never completion (§5.8). */
+  .hl-toc-entry::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-line);
+  }
+
+  .hl-toc-entry:hover {
+    color: var(--color-ink);
+  }
+
+  .hl-toc-entry[aria-current="true"] {
+    color: var(--color-ink);
+  }
+
+  .hl-toc-entry[aria-current="true"]::before {
+    background: var(--color-line-cut);
+  }
+
+  /* The current row's tick, 6px into the gutter. */
+  .hl-toc-entry[aria-current="true"]::after {
+    content: "";
+    position: absolute;
+    left: -6px;
+    top: 50%;
+    width: 6px;
+    height: 2px;
+    background: var(--color-line-cut);
+  }
+
+  /* The numeral hangs in a fixed 24px column, right-aligned so a four-glyph
+     `VIII` overflows left into the 16px the spine already stands clear of —
+     never right, into the section title. This is the same treatment §6.4 gives
+     an ordered-list marker, for the same reason. */
+  .hl-toc-mark {
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    letter-spacing: 0.06em;
+    text-align: right;
+    white-space: nowrap;
+    color: var(--color-ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hl-toc-text {
+    text-wrap: pretty;
+  }
+
+  /* -- §4.6 The dependency block ----------------------------------------- */
+
+  .hl-rail-rule {
+    height: var(--stroke-hair);
+    margin: 24px 0;
+    background: var(--color-line);
+    border: 0;
+  }
+
+  .hl-dep-row {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 8px;
+    align-items: baseline;
+    padding: 4px 0;
+  }
+
+  .hl-dep-label {
+    color: var(--color-ink-muted);
+  }
+
+  .hl-dep-values {
+    font-family: var(--font-display);
+    font-size: var(--text-meta);
+    line-height: var(--text-meta--line-height);
+    color: var(--color-ink-muted);
+  }
+
+  /* A link to a sheet that is not yet drawn is drawn as a hidden line. */
+  .hl-dep-values a[data-draft] {
+    text-decoration: none;
+    padding-bottom: 2px;
+    --hl-hidden-ink: var(--color-line-strong);
+    background-position: 0 100%;
+  }
+
+  .hl-dep-values a[data-draft]:hover,
+  .hl-dep-values a[data-draft]:focus-visible {
+    --hl-hidden-ink: var(--color-accent);
+  }
+
+  /* §10.4 again. Below 768px the rail's controls exist only inside the drawer,
+     so only the drawer's copies grow to the 44px floor: the 28px spine row of
+     §5.6 is a pointer-width measurement and it keeps that width where a
+     pointer is what reaches it. */
+  @media (max-width: 767px) {
+    .hl-drawer .hl-toc-entry {
+      min-height: 44px;
+    }
+
+    .hl-drawer .hl-dep-row {
+      align-items: center;
+      padding: 0;
+    }
+
+    .hl-drawer .hl-dep-values {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .hl-drawer .hl-dep-values a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      min-height: 44px;
+    }
+
+    /* The separator is a comma between two inline numbers; between two 44px
+       targets it is noise. */
+    .hl-drawer .hl-dep-values [aria-hidden="true"] {
+      display: none;
+    }
+  }
+
+  /* -- §5.5 Variant A — the title block ---------------------------------- */
+
+  .hl-title-block {
+    background: var(--color-cleared);
+    border: var(--stroke-hair) solid var(--color-line-strong);
+  }
+
+  .hl-title-block-head {
+    display: flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 12px;
+    border-bottom: var(--stroke-struct) solid var(--color-line-strong);
+    color: var(--color-ink-muted);
+  }
+
+  .hl-title-block-rows {
+    margin: 0;
+    padding: 0;
+  }
+
+  .hl-title-block-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    height: 22px;
+    padding: 0 12px;
+  }
+
+  .hl-title-block-row > dt {
+    flex: 0 0 auto;
+    color: var(--color-ink-muted);
+  }
+
+  .hl-title-block-row > dd {
+    flex: 1 1 auto;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: right;
+    color: var(--color-ink);
+  }
+
+  /* -- §5.5 Variant B — the title strip ----------------------------------- */
+
+  .hl-title-strip {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 24px;
+    row-gap: 8px;
+    margin: 0 0 32px;
+    padding: 12px 0;
+    border-top: var(--stroke-hair) solid var(--color-line);
+    border-bottom: var(--stroke-hair) solid var(--color-line);
+  }
+
+  .hl-title-strip-pair {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hl-title-strip-pair > dt {
+    color: var(--color-ink-muted);
+  }
+
+  .hl-title-strip-pair > dd {
+    margin: 0;
+    color: var(--color-ink);
+  }
+
+  /* §4.7 — below 768 the strip becomes a two-column list. */
+  @media (max-width: 767px) {
+    .hl-title-strip {
+      display: grid;
+      grid-template-columns: max-content minmax(0, 1fr);
+      column-gap: 16px;
+      row-gap: 4px;
+    }
+
+    .hl-title-strip-pair {
+      display: contents;
+    }
+
+    .hl-title-strip-pair > dd {
+      text-align: right;
+    }
+  }
+
+  /* -- §5.5 Objectives ---------------------------------------------------- */
+
+  .hl-objectives {
+    margin: 0 0 32px;
+    background: var(--color-cleared);
+    border: var(--stroke-hair) solid var(--color-line-strong);
+  }
+
+  .hl-objectives-head {
+    display: flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 12px;
+    border-bottom: var(--stroke-struct) solid var(--color-line-strong);
+    color: var(--color-ink-muted);
+  }
+
+  .hl-objectives-list {
+    list-style: none;
+    margin: 0;
+    padding: 8px 12px;
+  }
+
+  .hl-objectives-item {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr);
+    gap: 8px;
+    padding: 4px 0;
+    font-family: var(--font-display);
+    font-size: var(--text-ui);
+    line-height: var(--text-ui--line-height);
+    color: var(--color-ink);
+  }
+
+  .hl-objectives-item > span:first-child {
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    letter-spacing: 0.06em;
+    color: var(--color-ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* -- §4.5 item 1 — the status band -------------------------------------- */
+
+  .hl-status-band {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    height: 40px;
+    margin-bottom: 24px;
+    padding: 0 12px;
+    background: var(--color-caution-wash);
+    border-top: var(--stroke-hair) solid var(--color-caution);
+    border-bottom: var(--stroke-hair) solid var(--color-caution);
+    color: var(--color-caution-ink);
+  }
+
+  /* -- §4.5 item 5 — the one descriptive sentence ------------------------- */
+
+  .hl-summary {
+    margin: 0 0 40px;
+    font-family: var(--font-body);
+    font-size: var(--text-prose);
+    line-height: var(--text-prose--line-height);
+    color: var(--color-ink);
+    text-wrap: pretty;
+  }
+
+  /* -- §4.5 item 6 — the schedule of parts -------------------------------- */
+
+  .hl-schedule {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  .hl-schedule caption {
+    padding-bottom: 12px;
+    text-align: start;
+    color: var(--color-ink-muted);
+  }
+
+  .hl-schedule th {
+    padding: 10px 14px 10px 12px;
+    font-family: var(--font-display);
+    font-size: var(--text-micro);
+    line-height: var(--text-micro--line-height);
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    text-align: start;
+    color: var(--color-ink-muted);
+    border-bottom: var(--stroke-struct) solid var(--color-line-strong);
+  }
+
+  .hl-schedule th:first-child {
+    width: 48px;
+  }
+
+  .hl-schedule td {
+    height: 40px;
+    padding: 8px 14px 8px 12px;
+    border-bottom: var(--stroke-hair) solid var(--color-line);
+    vertical-align: middle;
+  }
+
+  .hl-schedule-item {
+    position: relative;
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    line-height: var(--text-mark--line-height);
+    letter-spacing: 0.06em;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink-faint);
+  }
+
+  /* The hidden line: this item exists in the model and is not yet drawn. It is
+     line *type* that carries that, not colour — a hidden line on a real sheet
+     is the same ink as every other line — so it takes `--color-line-strong`
+     and leaves `--color-caution` to the status band, which says it in words. */
+  .hl-schedule-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    margin-top: -10px;
+    width: var(--stroke-hair);
+    height: 20px;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      var(--color-line-strong) 0 3px,
+      transparent 3px 5px
+    );
+  }
+
+  .hl-schedule-description {
+    font-family: var(--font-display);
+    font-size: var(--text-ui);
+    line-height: var(--text-ui--line-height);
+    color: var(--color-ink);
+  }
+
+  /* -- §5.7 Prev / next --------------------------------------------------- */
+
+  .hl-prevnext {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 32px 0 64px;
+    border-top: var(--stroke-struct) solid var(--color-line-strong);
+  }
+
+  .hl-prevnext > * + * {
+    border-left: var(--stroke-hair) solid var(--color-line);
+  }
+
+  .hl-prevnext-cell {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: 72px;
+    padding: 16px;
+    transition: background-color 90ms linear;
+  }
+
+  a.hl-prevnext-cell:hover {
+    background-color: var(--color-cleared);
+  }
+
+  a.hl-prevnext-cell:focus-visible {
+    outline-offset: -2px;
+  }
+
+  /* The bottom rule that appears under the hovered cell only. It is painted as
+     a background, not a border, so the cell does not change size. */
+  a.hl-prevnext-cell::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: var(--stroke-struct);
+    background-color: transparent;
+    transition: background-color 90ms linear;
+  }
+
+  a.hl-prevnext-cell:hover::after {
+    background-color: var(--color-line-cut);
+  }
+
+  /* A target that is not drawn gets a hidden line, instantly — a dash pattern
+     is not a colour and has nothing to fade between (§9.2). */
+  a.hl-prevnext-cell[data-draft]:hover::after {
+    background-color: transparent;
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--color-line-cut) 0 3px,
+      transparent 3px 5px
+    );
+  }
+
+  .hl-prevnext-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--color-ink-muted);
+  }
+
+  .hl-prevnext-sheet {
+    color: var(--color-ink-faint);
+  }
+
+  .hl-prevnext-title {
+    font-family: var(--font-display);
+    font-size: var(--text-ui);
+    line-height: var(--text-ui--line-height);
+    font-weight: 500;
+    color: var(--color-ink);
+    text-wrap: pretty;
+  }
+
+  a.hl-prevnext-cell[data-draft] .hl-prevnext-title {
+    color: var(--color-ink-muted);
+  }
+
+  .hl-prevnext-tag {
+    color: var(--color-caution-ink);
+  }
+
+  /* Sheet 1 has no previous and sheet 32 has no next. The cell still prints:
+     the symmetry is the information (§5.7). */
+  .hl-prevnext-end {
+    justify-content: center;
+    color: var(--color-ink-faint);
+  }
+}
+
+/* An anchored heading must clear the 56px sticky header plus the 24px the
+   rails already stand clear of it (§5.1, §4.6). Unlayered so it is not
+   outranked by the prose rules it applies to. */
+.hl-sheet [id] {
+  scroll-margin-top: 80px;
+}

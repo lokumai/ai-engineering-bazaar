@@ -2,6 +2,8 @@
 /* §6 — the prose column, in its own file because it is the largest single
    section of the spec and the one a reader spends 95% of their time inside. */
 @import "./prose.css";
+/* §4.4–§4.7 and §5.5–§5.7 — the three sheet formats and their chrome. */
+@import "./sheet.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 

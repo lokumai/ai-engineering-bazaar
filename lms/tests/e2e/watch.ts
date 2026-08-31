@@ -19,18 +19,15 @@ export interface PageProblems {
 }
 
 /**
- * What is not the product's fault, and one thing that is.
+ * What is not the product's fault.
  *
  * `next dev` streams a websocket for fast refresh and tears it down on
  * navigation. That says nothing about the shipped site.
  *
- * `/favicon.ico` is different: it is a real 404, on every page, and it is the
- * only one the site has. The app directory ships no `icon` file, so Chrome's
- * automatic request for the tab icon misses and every page logs a console
- * error for it. It is filtered here rather than left to fail all forty-odd
- * page checks with the same message — it is reported as a product bug, and
- * `favicon.spec.ts` is the one test that states it. Delete both the moment an
- * icon lands.
+ * Nothing else is filtered. `/favicon.ico` was, for as long as the app shipped
+ * no icon file and Chrome's automatic request for one 404'd on every page; that
+ * filter is gone with the gap, so a missing icon now fails every page check
+ * here as well as `favicon.spec.ts`.
  */
 const HARNESS_NOISE = [
   /\/_next\/webpack-hmr/,
@@ -38,11 +35,8 @@ const HARNESS_NOISE = [
   /^wss:\/\//,
 ]
 
-/** The known product gap, tracked by its own test. */
-const KNOWN_GAP = [/\/favicon\.ico$/]
-
 function ignored(url: string): boolean {
-  return [...HARNESS_NOISE, ...KNOWN_GAP].some((pattern) => pattern.test(url))
+  return HARNESS_NOISE.some((pattern) => pattern.test(url))
 }
 
 /**

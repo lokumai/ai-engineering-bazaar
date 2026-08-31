@@ -41,7 +41,11 @@ jobs:
       # drops under its floor fails here, not in an audit six months later.
       - run: npm test
       - run: npm run build
-      - run: npx playwright install --with-deps chromium
+      # `chrome`, not `chromium`: playwright.config.ts runs the suite on real
+      # Google Chrome via `channel: 'chrome'`, and installing the bundled
+      # Chromium instead only passes because the runner image happens to ship
+      # Chrome already.
+      - run: npx playwright install --with-deps chrome
       - run: npm run test:e2e
       - uses: actions/upload-artifact@v4
         if: failure()

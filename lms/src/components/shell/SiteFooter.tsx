@@ -34,11 +34,19 @@ export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
   return (
     <footer role="contentinfo" className="border-t border-line-strong bg-paper">
       <div className="mx-auto w-full max-w-[var(--width-shell)] px-6">
+        {/* §5.2 row 1 — the three-part flex, which is what puts the sheet
+            label left, the revision centre and the readout right. With the
+            readout absent (there is no reader state to count — §1, §7.2) the
+            two survivors take the two ends, which is the same flex doing the
+            same thing. */}
         <div className="flex h-10 items-center justify-between gap-4">
           <SheetLabel sheet={sheet} />
 
+          {/* §3.4 — a machine-derived value never wraps. At 390px the row is
+              342px wide and `SHEET 13 OF 32` broken after the number reads as
+              two facts instead of one. */}
           {revision && (
-            <span className="hl-mark text-ink-muted">
+            <span className="hl-mark whitespace-nowrap text-ink-muted">
               Rev <span className="normal-case">{revision.hash}</span>
               <span aria-hidden="true"> · </span>
               {revision.date}
@@ -46,7 +54,7 @@ export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
           )}
 
           {readout && (
-            <span className="hl-mark text-ink-muted">
+            <span className="hl-mark whitespace-nowrap text-ink-muted">
               {readout.map((entry, i) => (
                 <span key={entry.label}>
                   {i > 0 && (

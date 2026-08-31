@@ -18,7 +18,9 @@ export function SheetLabel({ sheet }: { sheet?: string | null }) {
   if (!label) return null
 
   return (
-    <span className="hl-mark text-ink-muted">
+    // §3.4 — a machine-derived value never wraps: at 390px `SHEET 13 OF 32`
+    // broken after the number reads as two facts instead of one.
+    <span className="hl-mark whitespace-nowrap text-ink-muted">
       {markTokens(label).map((token, i) => (
         <span key={i} className={token.value ? 'text-ink' : undefined}>
           {token.text}

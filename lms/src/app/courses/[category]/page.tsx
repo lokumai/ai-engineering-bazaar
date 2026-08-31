@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { Prose } from '@/components/course/Prose'
 import { SheetIndex } from '@/components/sheet/SheetIndex'
 import { TickGauge, ticksFrom } from '@/components/sheet/TickGauge'
+import { PageShell } from '@/components/shell/PageShell'
 import { CATEGORIES, categoryBySlug } from '@/lib/content/categories'
 import { categoryIntro } from '@/lib/content/intro'
 import { categoryEyebrow, categoryRows } from '@/lib/content/manifest'
@@ -60,7 +61,7 @@ export default async function CategoryPage({
   const notes = intro === null ? null : await renderMarkdown(intro)
 
   return (
-    <>
+    <PageShell>
       <p className="hl-eyebrow hl-mark">{categoryEyebrow(category)}</p>
 
       <h1 className="hl-listing-title">{category.title}</h1>
@@ -86,6 +87,6 @@ export default async function CategoryPage({
           <Prose html={notes.html} />
         </section>
       )}
-    </>
+    </PageShell>
   )
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { CategoryBlock } from '@/components/sheet/CategoryBlock'
 import { SheetIndex } from '@/components/sheet/SheetIndex'
+import { PageShell } from '@/components/shell/PageShell'
 import { ticksFrom } from '@/components/sheet/TickGauge'
 import {
   categoryRows,
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
  */
 export default function DrawingSetPage() {
   return (
-    <>
+    <PageShell>
       <p className="hl-eyebrow hl-mark">{setEyebrow()}</p>
 
       <h1 className="hl-listing-title">Drawing set</h1>
@@ -74,6 +75,6 @@ export default function DrawingSetPage() {
           </section>
         )
       })}
-    </>
+    </PageShell>
   )
 }

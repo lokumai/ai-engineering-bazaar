@@ -2,13 +2,14 @@ import { categoryBySlug } from './content/categories'
 
 /**
  * The header breadcrumb and the footer's sheet label are the only two pieces
- * of the shell that change per page, and the shell is rendered once in the
+ * of the shell that change per page, and the header is rendered once in the
  * root layout — where no page data is in scope. So they are derived from the
  * route itself, which is a fact, rather than guessed at.
  *
  * What a route cannot tell us, these functions refuse to invent: a module's
  * sheet number lives in the content, so `sheetLabelFor` returns null on a
- * module page and the module page passes the real number in (spec §5.2).
+ * module page and the module page passes the real number to `PageShell`, which
+ * hands it to the footer (spec §5.2).
  */
 
 export interface Crumb {

@@ -9,6 +9,7 @@ import { ScheduleOfParts } from '@/components/sheet/ScheduleOfParts'
 import { SheetRail } from '@/components/sheet/SheetRail'
 import { StatusBand } from '@/components/sheet/StatusBand'
 import { TitleBlock, TitleStrip } from '@/components/sheet/TitleBlock'
+import { PageShell } from '@/components/shell/PageShell'
 import {
   moduleByNumber,
   neighbours,
@@ -24,6 +25,7 @@ import { scheduleOfParts, summarySentence } from '@/lib/content/schedule'
 import {
   eyebrow,
   sheetFacts,
+  sheetLabel,
   titleBlockRows,
   titleStripRows,
 } from '@/lib/content/title-block'
@@ -158,49 +160,53 @@ export default async function ModuleSheetPage({
   const { previous, next } = neighbours(slug)
 
   return (
-    <div className="hl-sheet" data-format={format}>
-      {rail && <div className="hl-rail-left">{rail}</div>}
+    // §5.2 — the footer's own row of facts, which only this page knows: the
+    // sheet's number in the set, and the commit that last touched its file.
+    <PageShell sheet={sheetLabel(facts)} revision={sheet.revision}>
+      <div className="hl-sheet" data-format={format}>
+        {rail && <div className="hl-rail-left">{rail}</div>}
 
-      <div className="hl-column">
-        {format === 'A4' && <StatusBand />}
+        <div className="hl-column">
+          {format === 'A4' && <StatusBand />}
 
-        {rail && <ContentsDrawer>{rail}</ContentsDrawer>}
+          {rail && <ContentsDrawer>{rail}</ContentsDrawer>}
 
-        <p className="hl-eyebrow hl-mark">{eyebrow(facts)}</p>
+          <p className="hl-eyebrow hl-mark">{eyebrow(facts)}</p>
 
-        {/* The sheet title lives in the frontmatter and the markdown h1 is
-            stripped (B6.1), so the column's own h1 takes §6.1's rule: 16px,
-            a structural line, then 32px. */}
-        <div className="prose hl-sheet-title">
-          <h1>{sheet.frontmatter.title}</h1>
+          {/* The sheet title lives in the frontmatter and the markdown h1 is
+              stripped (B6.1), so the column's own h1 takes §6.1's rule: 16px,
+              a structural line, then 32px. */}
+          <div className="prose hl-sheet-title">
+            <h1>{sheet.frontmatter.title}</h1>
+          </div>
+
+          {/* Variant B, in the column. On an A0 sheet it is the fallback the
+              right rail leaves behind below 1280px (§4.7). */}
+          <TitleStrip
+            rows={titleStripRows(facts)}
+            className={format === 'A0' ? 'xl:hidden' : undefined}
+          />
+
+          <Objectives items={sheet.frontmatter.objectives} />
+
+          {drawn && rendered ? (
+            <Prose html={rendered.html} />
+          ) : (
+            <>
+              {summary && <p className="hl-summary">{summary}</p>}
+              <ScheduleOfParts parts={scheduleOfParts(sheet.body)} />
+            </>
+          )}
+
+          <PrevNext previous={target(previous)} next={target(next)} />
         </div>
 
-        {/* Variant B, in the column. On an A0 sheet it is the fallback the
-            right rail leaves behind below 1280px (§4.7). */}
-        <TitleStrip
-          rows={titleStripRows(facts)}
-          className={format === 'A0' ? 'xl:hidden' : undefined}
-        />
-
-        <Objectives items={sheet.frontmatter.objectives} />
-
-        {drawn && rendered ? (
-          <Prose html={rendered.html} />
-        ) : (
-          <>
-            {summary && <p className="hl-summary">{summary}</p>}
-            <ScheduleOfParts parts={scheduleOfParts(sheet.body)} />
-          </>
+        {format === 'A0' && (
+          <div className="hl-rail-right">
+            <TitleBlock rows={titleBlockRows(facts)} />
+          </div>
         )}
-
-        <PrevNext previous={target(previous)} next={target(next)} />
       </div>
-
-      {format === 'A0' && (
-        <div className="hl-rail-right">
-          <TitleBlock rows={titleBlockRows(facts)} />
-        </div>
-      )}
-    </div>
+    </PageShell>
   )
 }

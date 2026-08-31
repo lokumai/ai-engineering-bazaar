@@ -1,5 +1,6 @@
 import { CategoryBlock } from '@/components/sheet/CategoryBlock'
 import { SheetFilters } from '@/components/sheet/SheetFilters'
+import { PageShell } from '@/components/shell/PageShell'
 import { ticksFrom } from '@/components/sheet/TickGauge'
 import { categoryRows, indexStatement, sheetRows, subsystems } from '@/lib/content/manifest'
 import { SITE_NAME } from '@/lib/site'
@@ -27,7 +28,7 @@ export default function IndexSheet() {
   const rows = sheetRows()
 
   return (
-    <>
+    <PageShell>
       <h1 className="hl-index-title">{SITE_NAME}</h1>
 
       <div className="hl-statement">
@@ -62,6 +63,6 @@ export default function IndexSheet() {
           ))}
         </ul>
       </section>
-    </>
+    </PageShell>
   )
 }

@@ -179,6 +179,38 @@ export function carriesCheckedBy(facts: SheetFacts): boolean {
   return facts.status === 'ready'
 }
 
+/**
+ * §12.9 — the fourteenth row: how many repositories the reader has registered
+ * against this sheet.
+ *
+ * It exists because of a defect a reader found. They registered three
+ * repositories, the register beneath the sheet said `3 OF 3`, and the title
+ * block — the panel that summarises everything about the sheet — did not mention
+ * them anywhere. Meanwhile the exported RECORD OF WORK has always printed
+ * `REPOSITORIES n`, so the artefact knew something the sheet it came from would
+ * not say.
+ *
+ * **A row, and not a stamp slot.** The obvious place looked like §7.4's stamp
+ * grid, which is already where reader state lives in this block, and it was
+ * built there first. `Stamp` can print `n OF m` or `APPROVED` and nothing else,
+ * so a register at its cap rendered `SUBMITTAL APPROVED` — and filling a
+ * register to its storage limit approves nothing. Every stamp reads as a
+ * completed inspection record (§12.5.4); a repository count is a measurement,
+ * which is precisely what the rows above are.
+ *
+ * It follows `CHECKED BY` in being a channel-B row (§12.2): the label and
+ * whether the row exists are build-time facts and live here, while the value is
+ * a component, because the build cannot know who is reading. And like
+ * `CHECKED BY` a draft sheet has none — a sheet nobody has drawn has no
+ * submittal register to report (§12.9.1).
+ */
+export const REPOSITORIES_LABEL = 'REPOSITORIES'
+
+/** §12.9 — whether this sheet carries the `REPOSITORIES` row at all. */
+export function carriesRepositories(facts: SheetFacts): boolean {
+  return facts.status === 'ready'
+}
+
 /** The six rows §4.5 item 4 gives a draft sheet's strip, in its order. */
 const DRAFT_STRIP = ['EXTENT', 'FIGURES', 'SOURCES', 'REQUIRES', 'LANG', 'REVISION']
 

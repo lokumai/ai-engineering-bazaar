@@ -1,5 +1,9 @@
 import type { ReactNode } from 'react'
-import { CHECKED_BY_LABEL, type TitleBlockRow } from '@/lib/content/title-block'
+import {
+  CHECKED_BY_LABEL,
+  REPOSITORIES_LABEL,
+  type TitleBlockRow,
+} from '@/lib/content/title-block'
 
 /**
  * §5.5 — the module header block, in its two variants.
@@ -36,11 +40,14 @@ function Value({ row }: { row: TitleBlockRow }) {
 export function TitleBlock({
   rows,
   checkedBy,
+  repositories,
   stamps,
 }: {
   rows: readonly TitleBlockRow[]
   /** §12.3.1 — the reader's own row. Omitted or null, the row is absent. */
   checkedBy?: ReactNode
+  /** §12.9 — the register's count. Omitted or null, the row is absent. */
+  repositories?: ReactNode
   /** §7.4 — the 2×2 approval stamp grid, which renders itself or nothing. */
   stamps?: ReactNode
 }) {
@@ -62,6 +69,12 @@ export function TitleBlock({
             <dd>{checkedBy}</dd>
           </div>
         )}
+        {repositories !== undefined && repositories !== null && (
+          <div className="hl-title-block-row hl-mark">
+            <dt>{REPOSITORIES_LABEL}</dt>
+            <dd>{repositories}</dd>
+          </div>
+        )}
       </dl>
       {stamps}
     </aside>
@@ -72,11 +85,14 @@ export function TitleBlock({
 export function TitleStrip({
   rows,
   checkedBy,
+  repositories,
   className,
 }: {
   rows: readonly TitleBlockRow[]
   /** §12.3.1 — the strip carries the row too. §5.5 gives it no stamp grid. */
   checkedBy?: ReactNode
+  /** §12.9 — and this one, for the same reason: it is a row, not a stamp. */
+  repositories?: ReactNode
   className?: string
 }) {
   return (
@@ -94,6 +110,12 @@ export function TitleStrip({
           <div className="hl-title-strip-pair hl-mark">
             <dt>{CHECKED_BY_LABEL}</dt>
             <dd>{checkedBy}</dd>
+          </div>
+        )}
+        {repositories !== undefined && repositories !== null && (
+          <div className="hl-title-strip-pair hl-mark">
+            <dt>{REPOSITORIES_LABEL}</dt>
+            <dd>{repositories}</dd>
           </div>
         )}
       </dl>

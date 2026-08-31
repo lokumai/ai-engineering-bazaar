@@ -359,7 +359,14 @@ export function stamps(data: RecordData, facts: CurriculumFacts): Stamp[] {
   const openedSources = distinctSources(data)
   out.push({
     id: 'sources-100',
-    label: `SOURCES · ${SOURCES_STAMP_THRESHOLD}`,
+    // "OPENED" is load-bearing, not decoration. The title block prints a
+    // `SOURCES` row two inches away that counts the citations ON the sheet — a
+    // fact about the drawing, true for everybody — while this counts the ones
+    // THIS READER followed. A reader read `SOURCES 0 OF 5` beside `SOURCES 23`
+    // and reasonably concluded the meter was broken. The report, the erase
+    // dialog, the legend and `SourceTracking` all say "sources opened" already;
+    // the stamps were the only place that shortened it.
+    label: `SOURCES OPENED · ${SOURCES_STAMP_THRESHOLD}`,
     earned: null,
     threshold: SOURCES_STAMP_THRESHOLD,
     current: openedSources,
@@ -442,10 +449,29 @@ export function sheetStamps(data: RecordData, facts: CurriculumFacts, slug: stri
     })
   }
 
+  /**
+   * §12.9 — THE REGISTER IS NOT A STAMP, and a first attempt made it one.
+   *
+   * The complaint that started this was real: a reader registered three
+   * repositories, the register said `3 OF 3`, and the title block beside it never
+   * mentioned them — while the exported RECORD OF WORK printed `REPOSITORIES n`
+   * all along. But the fix is a title-block ROW (`Repositories` in
+   * `components/record/CheckedBy.tsx`), not a slot here, and the stamp grid says
+   * why itself: `Stamp` can print `n OF m` or `APPROVED`, nothing else, so a
+   * register at its cap of three rendered `SUBMITTAL APPROVED`. Filling a
+   * register to its storage limit approves nothing. §12.5.4 keeps every stamp
+   * reading as a completed inspection record; a repository count is not an
+   * inspection, which is also why `manifest.ts`'s `SIGN-OFF` column leaves it out
+   * and why §12.5.1's XP has no submittal multiplicand.
+   */
+
   if (fact.sources >= SHEET_SOURCES_THRESHOLD) {
     out.push({
       id: 'SOURCES',
-      label: 'SOURCES',
+      // The id is the DOM contract `SignOffMarks` matches on (§7.4's slot
+      // attribute), so it stays; only the printed label changes. See the
+      // `sources-100` note above for why.
+      label: 'SOURCES OPENED',
       earned: null,
       threshold: SHEET_SOURCES_THRESHOLD,
       current: distinctSources(data, new Set([slug])),

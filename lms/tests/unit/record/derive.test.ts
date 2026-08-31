@@ -24,7 +24,7 @@ import {
   setQuizAnswer,
   signOff,
 } from '@/lib/record/events'
-import { EMPTY_RECORD, type RecordData, type Submittal } from '@/lib/record/schema'
+import { EMPTY_RECORD, MAX_SUBMITTALS, type RecordData, type Submittal } from '@/lib/record/schema'
 
 const NOW = '2026-08-31T09:15:00.000Z'
 const TODAY = '2026-08-31'
@@ -385,7 +385,10 @@ describe('stamps — the nine set-level stamps', () => {
     expect(shelf[0].label).toBe('SUBSYSTEM 01 · FUNDAMENTALS')
     expect(shelf[4].label).toBe('SUBSYSTEM 05 · PROTOCOLS')
     expect(shelf[6].label).toBe('FULL SET')
-    expect(shelf[7].label).toBe('SOURCES · 100')
+    // "OPENED", because the title block prints its own `SOURCES` row counting
+    // the citations ON a sheet. A reader read the two side by side and took the
+    // stamp for a broken meter.
+    expect(shelf[7].label).toBe('SOURCES OPENED · 100')
     expect(shelf[8].label).toBe('BILINGUAL')
   })
 
@@ -669,5 +672,27 @@ describe('the corpus these numbers are derived from', () => {
     expect(stamps(EMPTY_RECORD, measured)[6].reason).toBe('15 OF 32 SHEETS DRAWN')
     // §12.8 — the per-sheet distinct sums the header prints.
     expect(measured.sheets.reduce((sum, sheet) => sum + sheet.sources, 0)).toBe(209)
+  })
+})
+
+describe('§12.9 — the register is not a stamp', () => {
+  /**
+   * A first attempt put a `SUBMITTAL` slot in the title block's stamp grid. It
+   * worked and it said the wrong thing: `Stamp` prints `n OF m` or `APPROVED`
+   * and nothing else, so a register at its cap of three rendered
+   * `SUBMITTAL APPROVED`. Filling a register to its storage limit approves
+   * nothing (§12.5.4). The count is a title-block ROW instead — see
+   * `tests/unit/components/record-sheet.test.tsx` — and this case is what stops
+   * the slot coming back.
+   */
+  it('adds no slot for the register, however many are registered', () => {
+    let data: RecordData = EMPTY_RECORD
+    for (let index = 0; index < MAX_SUBMITTALS; index += 1) {
+      data = addSubmittal(data, slugOf(13), submittal(`repo-${index}`), NOW)
+    }
+    expect(data.sheets[slugOf(13)]?.submittals).toHaveLength(MAX_SUBMITTALS)
+    expect(sheetStamps(data, facts(), slugOf(13)).map((stamp) => stamp.id)).toEqual([
+      'SIGN-OFF', 'QUIZ', 'CHECKLIST', 'SOURCES',
+    ])
   })
 })

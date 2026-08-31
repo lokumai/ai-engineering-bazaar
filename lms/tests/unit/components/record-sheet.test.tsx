@@ -1,6 +1,13 @@
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import { CheckedBy, SheetStamps, type SheetStampFact } from '@/components/record/CheckedBy'
+import {
+  CheckedBy,
+  Repositories,
+  SheetStamps,
+  type SheetStampFact,
+} from '@/components/record/CheckedBy'
 import { DrafterStamp } from '@/components/record/DrafterStamp'
 import { QuickCheck } from '@/components/record/QuickCheck'
 import { SignOff } from '@/components/record/SignOff'
@@ -8,7 +15,12 @@ import { SourceTracking } from '@/components/record/SourceTracking'
 import { Submittal, SubmittalEntry } from '@/components/record/Submittal'
 import { TitleBlock, TitleStrip } from '@/components/sheet/TitleBlock'
 import { SIGN_OFF_ASSERTION, type SignOffCriteria } from '@/lib/content/criteria'
-import { type SheetFacts, carriesCheckedBy } from '@/lib/content/title-block'
+import {
+  REPOSITORIES_LABEL,
+  type SheetFacts,
+  carriesCheckedBy,
+  carriesRepositories,
+} from '@/lib/content/title-block'
 import { parseRepo } from '@/lib/identity/github'
 import { addSubmittal } from '@/lib/record/events'
 import { EMPTY_RECORD } from '@/lib/record/schema'
@@ -73,6 +85,62 @@ const FACT: SheetStampFact = {
 function words(markup: string): string {
   return markup.replace(/<[^>]*>/g, ' ')
 }
+
+describe('Repositories — §12.9’s title-block row', () => {
+  /**
+   * The row exists because a reader found its absence. They registered three
+   * repositories, the register beneath the sheet said `3 OF 3`, and the title
+   * block — the panel that summarises the sheet — mentioned them nowhere, while
+   * the exported RECORD OF WORK had been printing `REPOSITORIES n` all along.
+   */
+  it('prints an em dash before a record has been read', () => {
+    // Not `0`. §11.25's dash is "this count was never taken", which is exactly
+    // true of a page prerendered before the reader existed. `0` would claim a
+    // reading nobody took.
+    expect(renderToStaticMarkup(<Repositories slug={SLUG} />)).toBe('—')
+  })
+
+  it('is a row on a drawn sheet and absent from a draft', () => {
+    // The same gate as CHECKED BY: a sheet nobody has drawn has no register to
+    // report, because it has no sign-off control either (§12.4.1, §12.9.1).
+    expect(carriesRepositories(DRAWN)).toBe(true)
+    expect(carriesRepositories({ ...DRAWN, status: 'draft' })).toBe(false)
+    // The same gate as its sibling, asserted together so they cannot drift.
+    expect(carriesRepositories(DRAWN)).toBe(carriesCheckedBy(DRAWN))
+  })
+
+  it('appears in both title-block variants when a value is passed', () => {
+    for (const markup of [
+      renderToStaticMarkup(<TitleBlock rows={[]} repositories={<>2</>} />),
+      renderToStaticMarkup(<TitleStrip rows={[]} repositories={<>2</>} />),
+    ]) {
+      expect(markup).toContain(REPOSITORIES_LABEL)
+      expect(words(markup)).toMatch(/REPOSITORIES\s+2/)
+    }
+  })
+
+  it('leaves the row out entirely when there is none, never hollow', () => {
+    for (const markup of [
+      renderToStaticMarkup(<TitleBlock rows={[]} repositories={null} />),
+      renderToStaticMarkup(<TitleStrip rows={[]} repositories={null} />),
+      renderToStaticMarkup(<TitleBlock rows={[]} />),
+    ]) {
+      expect(markup).not.toContain(REPOSITORIES_LABEL)
+    }
+  })
+
+  /**
+   * The first attempt put this in §7.4's stamp grid instead. `Stamp` prints
+   * `n OF m` or `APPROVED` and nothing else, so a register at its cap of three
+   * rendered `SUBMITTAL APPROVED` — and filling a register to its storage limit
+   * approves nothing (§12.5.4). `derive.test.ts` pins the slot's absence; this
+   * pins that the row says a number and never a verdict.
+   */
+  it('states a count and claims nothing', () => {
+    const markup = renderToStaticMarkup(<TitleBlock rows={[]} repositories={<>3</>} />)
+    expect(markup).not.toMatch(/APPROVED|SIGNED|COMPLETE/i)
+  })
+})
 
 describe('CheckedBy — §12.3.1', () => {
   it('prints an em dash on a sheet nobody has signed off', () => {
@@ -219,6 +287,43 @@ describe('Submittal — §12.9', () => {
   it('offers the form, with the repository field named in words', () => {
     expect(markup).toContain('hl-submittal-form')
     expect(markup).toContain('Repository')
+  })
+
+  /**
+   * §12.9.3 — a reader typed "project added" into COMMIT and was told, only
+   * after submitting, that it wanted hexadecimal characters. REPOSITORY had
+   * carried a format example since §12.9 and COMMIT carried nothing, so the
+   * only way to learn the format was to get it wrong — and the field directly
+   * below COMMIT is free text, which makes typing a message there the natural
+   * reading rather than a careless one.
+   */
+  it('states the commit format BEFORE the reader can get it wrong', () => {
+    expect(words(markup)).toMatch(/7 to 40 hexadecimal characters/)
+    // An example as well as the rule, exactly as the repository field does.
+    expect(words(markup)).toMatch(/a1b2c3d/)
+  })
+
+  it('gives both format hints their own describing element', () => {
+    // Two hints, two ids, both wired: a hint the field does not point at is a
+    // hint a screen reader never reaches.
+    const described = [...markup.matchAll(/aria-describedby="([^"]+)"/g)].map((m) => m[1])
+    const ids = [...markup.matchAll(/class="hl-field-hint[^"]*" id="([^"]+)"/g)].map((m) => m[1])
+    expect(ids).toHaveLength(2)
+    for (const id of ids) {
+      expect(described.some((value) => value.split(/\s+/).includes(id)), id).toBe(true)
+    }
+  })
+
+  it('keeps the hint and the error saying the same thing', () => {
+    // One string, used twice. The rule used to live only inside the error
+    // branch, which is exactly how the hint came to be missing.
+    const rule = '7 to 40 hexadecimal characters'
+    const source = readFileSync(
+      join(import.meta.dirname, '../../../src/components/record/Submittal.tsx'),
+      'utf8',
+    )
+    expect(source.match(new RegExp(rule, 'g')) ?? []).toHaveLength(1)
+    expect(source).toContain('COMMIT_RULE')
   })
 
   it('does not let the browser write the copy (§12.14.1)', () => {

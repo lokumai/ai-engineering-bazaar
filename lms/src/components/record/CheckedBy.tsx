@@ -93,6 +93,36 @@ export type SheetStampFact = CurriculumFacts['sheets'][number]
  * module page's client payload to look one of them up would be weight for
  * nothing (§12.2's note on keeping the bridge small).
  */
+/**
+ * §12.9 — the `REPOSITORIES` row's value: how many the reader has registered
+ * against this sheet.
+ *
+ * Why the row exists at all is in `lib/content/title-block.ts`, beside its
+ * label: a reader registered three repositories and nothing in the title block
+ * said so. Why it is a row rather than a stamp slot is there too.
+ *
+ * Three readings, and the difference between the first two matters:
+ *
+ * | state                        | prints |
+ * |------------------------------|--------|
+ * | no record read yet            | `—`    |
+ * | read, nothing registered      | `0`    |
+ * | read, n registered            | `n`    |
+ *
+ * `—` is §11.25's "this count was never taken", which is exactly true of a page
+ * prerendered before the reader existed. `0` is a count that WAS taken and came
+ * to zero. The `SOURCES` row two lines up makes the same distinction for the
+ * same reason and its docblock says so: `SOURCES 0` is the true statement about
+ * a sheet citing nothing, where `SOURCES —` claims nobody counted.
+ */
+export function Repositories({ slug }: { slug: string }) {
+  const record = useRecord()
+  const hydrated = useHydrated()
+
+  if (!hydrated) return <>—</>
+  return <>{record.sheets[slug]?.submittals.length ?? 0}</>
+}
+
 export function SheetStamps({ slug, fact }: { slug: string; fact: SheetStampFact }) {
   const record = useRecord()
   const slots = sheetStamps(record, { sheets: [fact], categories: [], traces: 0 }, slug)

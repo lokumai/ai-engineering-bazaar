@@ -38,6 +38,15 @@ import { nowIso, update, useRecord } from '@/lib/record/store'
 /** §12.1.3 — a one-line note, capped in graphemes rather than UTF-16 units. */
 const MAX_NOTE_GRAPHEMES = 200
 
+/**
+ * §12.9.3's rule for the commit field, in one string used twice: as the hint
+ * under the field, and inside the error when the field is wrong. One source, so
+ * the two statements cannot come to disagree — which is the whole reason the
+ * hint was missing in the first place, since the rule only existed inside the
+ * error branch.
+ */
+const COMMIT_RULE = '7 to 40 hexadecimal characters'
+
 type Field = 'repo' | 'commit'
 
 /**
@@ -107,6 +116,7 @@ export function Submittal({ slug }: { slug: string }) {
   const key = slug.replace(/[^A-Za-z0-9]+/g, '-')
   const headId = `hl-submittal-${key}`
   const repoHintId = `${headId}-repo-hint`
+  const commitHintId = `${headId}-commit-hint`
   const errorId = `${headId}-error`
 
   function clear(field: Field): void {
@@ -135,7 +145,7 @@ export function Submittal({ slug }: { slug: string }) {
     const typed = commit.trim()
     const hash = typed === '' ? null : parseCommit(typed)
     if (typed !== '' && hash === null) {
-      setError({ field: 'commit', message: 'Enter the commit as 7 to 40 hexadecimal characters' })
+      setError({ field: 'commit', message: `Enter the commit as ${COMMIT_RULE}` })
       return
     }
 
@@ -213,24 +223,40 @@ export function Submittal({ slug }: { slug: string }) {
             </span>
           </div>
 
-          <label className="hl-field" data-invalid={error?.field === 'commit' ? 'true' : 'false'}>
-            <span className="hl-field-label">
-              Commit
-              <span className="hl-field-optional">Optional</span>
+          {/* The hint is not decoration, and its absence was a real defect.
+              REPOSITORY has carried an example since §12.9 and COMMIT carried
+              nothing, so the only way to learn this field's format was to get
+              it wrong — and the field directly below it is free text, which
+              makes typing a message here the natural mistake rather than a
+              careless one. A reader did exactly that. An example plus the rule
+              costs one line and removes the guess. */}
+          <div>
+            <label className="hl-field" data-invalid={error?.field === 'commit' ? 'true' : 'false'}>
+              <span className="hl-field-label">
+                Commit
+                <span className="hl-field-optional">Optional</span>
+              </span>
+              <input
+                type="text"
+                value={commit}
+                onChange={(event) => {
+                  setCommit(event.target.value)
+                  clear('commit')
+                }}
+                autoComplete="off"
+                autoCapitalize="off"
+                spellCheck={false}
+                aria-describedby={
+                  error?.field === 'commit' ? `${commitHintId} ${errorId}` : commitHintId
+                }
+              />
+            </label>
+            {/* The same words the error uses, so the two cannot drift apart and
+                a reader who reads the rule twice reads it once. */}
+            <span className="hl-field-hint block" id={commitHintId}>
+              {`a1b2c3d — ${COMMIT_RULE}`}
             </span>
-            <input
-              type="text"
-              value={commit}
-              onChange={(event) => {
-                setCommit(event.target.value)
-                clear('commit')
-              }}
-              autoComplete="off"
-              autoCapitalize="off"
-              spellCheck={false}
-              aria-describedby={error?.field === 'commit' ? errorId : undefined}
-            />
-          </label>
+          </div>
 
           <label className="hl-field">
             <span className="hl-field-label">

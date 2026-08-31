@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Prose } from '@/components/course/Prose'
-import { CheckedBy, SheetStamps } from '@/components/record/CheckedBy'
+import { CheckedBy, Repositories, SheetStamps } from '@/components/record/CheckedBy'
 import { QuickCheck } from '@/components/record/QuickCheck'
 import { SignOff } from '@/components/record/SignOff'
 import { ChecklistIsland } from '@/components/record/ChecklistIsland'
@@ -33,6 +33,7 @@ import { renderMarkdown } from '@/lib/content/render'
 import { scheduleOfParts, summarySentence } from '@/lib/content/schedule'
 import {
   carriesCheckedBy,
+  carriesRepositories,
   eyebrow,
   sheetFacts,
   sheetLabel,
@@ -185,6 +186,10 @@ export default async function ModuleSheetPage({
 
   // §12.3.1 — absent on a draft: a sheet nobody has drawn cannot be checked.
   const checkedBy = carriesCheckedBy(facts) ? <CheckedBy slug={slug} /> : null
+  // §12.9 — the register's count, in the block that summarises the sheet. A
+  // reader registered three repositories and this panel said nothing about
+  // them; `title-block.ts` carries the rest of the reasoning beside the label.
+  const repositories = carriesRepositories(facts) ? <Repositories slug={slug} /> : null
 
   // A4 sheets render no prose: §4.5's body is one sentence and a schedule, and
   // the markdown holds nothing else once the h1, the dek, the placeholder note
@@ -262,6 +267,7 @@ export default async function ModuleSheetPage({
           <TitleStrip
             rows={titleStripRows(facts)}
             checkedBy={checkedBy}
+            repositories={repositories}
             className={format === 'A0' ? 'xl:hidden' : undefined}
           />
 
@@ -324,6 +330,7 @@ export default async function ModuleSheetPage({
             <TitleBlock
               rows={titleBlockRows(facts)}
               checkedBy={checkedBy}
+              repositories={repositories}
               stamps={stampFact === null ? null : <SheetStamps slug={slug} fact={stampFact} />}
             />
           </div>

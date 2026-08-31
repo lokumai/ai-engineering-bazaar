@@ -69,12 +69,20 @@ const EMPTY_READOUT = [`Signed off 00/${SHEETS.length}`, 'XP 0', 'Class —', 'I
 /** §12.2 — what it prints before the store has answered at all. */
 const NO_READING = [`Signed off --/${SHEETS.length}`, 'XP --', 'Class --', '-- at --']
 
-/** §7.4 / §5.9 — sheet 13's four slots, every one at zero against its real threshold. */
+/**
+ * §7.4 / §5.9 — sheet 13's four slots, every one at zero against its real
+ * threshold.
+ *
+ * `SOURCES OPENED`, not `SOURCES`: the title block prints its own `SOURCES` row
+ * counting the citations ON the sheet, and a reader read the two side by side
+ * and took the stamp for a broken meter. Seven other places in the project
+ * already said "sources opened"; the stamps were the outlier.
+ */
 const EMPTY_STAMPS = [
   'SIGN-OFF 0 OF 1',
   'QUIZ 0 OF 1',
   'CHECKLIST 0 OF 8',
-  'SOURCES 0 OF 5',
+  'SOURCES OPENED 0 OF 5',
 ]
 
 /** Both §12.3.1 rows: the A0 right-rail title block, and the strip below the h1. */
@@ -1023,4 +1031,81 @@ test('reading the site writes nothing until the reader records something (§12.1
 
   expect(problems.consoleErrors).toEqual([])
   expect(problems.failedRequests).toEqual([])
+})
+
+/**
+ * §12.9 — the register, and the title block that now reports it.
+ *
+ * A reader registered three repositories and told us the title block never
+ * mentioned them. It did not: the register said `3 OF 3` under the sheet and
+ * the panel beside it had no row for them, while the exported RECORD OF WORK
+ * had been printing `REPOSITORIES n` all along. These two cases are the round
+ * trip that was missing — type it in, and read it back out of the panel.
+ */
+test('§12.9 — registering a repository reaches the title block’s own row', async ({ page }) => {
+  await page.goto(SHEET.path)
+
+  const row = page
+    .locator('.hl-title-block-row, .hl-title-strip-pair')
+    .filter({ has: page.locator('dt', { hasText: /^REPOSITORIES$/ }) })
+    .locator('dd')
+    .first()
+
+  // Nothing read yet, and nothing registered: a count that was taken and came
+  // to zero, not §11.25's dash for a count nobody took.
+  await expect(row).toHaveText('0')
+
+  // Scoped to the form on purpose: the site header's GitHub icon also carries
+  // `aria-label="Repository"`, so an unscoped lookup matches a link and a field.
+  // Worth knowing rather than working around — see the note on the second case.
+  const form = page.locator('.hl-submittal-form')
+  await form.getByLabel('Repository').fill('https://github.com/libredb/libredb-studio')
+  await page.getByRole('button', { name: 'REGISTER' }).click()
+
+  await expect(row).toHaveText('1')
+
+  // And it survives a reload, because it is read from the record rather than
+  // held in the form's state.
+  await page.reload()
+  await expect(row).toHaveText('1')
+})
+
+test('§12.9.3 — the commit field states its format before it is typed in', async ({ page }) => {
+  await page.goto(SHEET.path)
+
+  /**
+   * Everything here is scoped to the form. The header's repository icon is
+   * labelled `Repository` too, which makes an unscoped `getByLabel` ambiguous —
+   * and that ambiguity is real for a screen reader as well, not just for this
+   * test: one page, two controls, one name. Recorded here because it is a
+   * pre-existing smell in the shell rather than anything §12.9 introduced.
+   */
+  const form = page.locator('.hl-submittal-form')
+  const commit = form.getByLabel(/^Commit/)
+  const hintId = await commit.getAttribute('aria-describedby')
+  expect(hintId).not.toBeNull()
+
+  // Visible, not merely present: the whole defect was that the rule existed
+  // only inside the error branch, so a reader met it after failing.
+  const hint = page.locator(`#${hintId?.split(/\s+/)[0]}`)
+  await expect(hint).toBeVisible()
+  await expect(hint).toContainText('7 to 40 hexadecimal characters')
+
+  // And the error, when it comes, says the same thing rather than a second
+  // wording of it.
+  await form.getByLabel('Repository').fill('https://github.com/libredb/libredb-studio')
+  await commit.fill('project added')
+  await page.getByRole('button', { name: 'REGISTER' }).click()
+
+  const error = page.locator('.hl-field-error')
+  await expect(error).toContainText('7 to 40 hexadecimal characters')
+
+  // Nothing was registered, so the title block's count did not move.
+  await expect(
+    page
+      .locator('.hl-title-block-row, .hl-title-strip-pair')
+      .filter({ has: page.locator('dt', { hasText: /^REPOSITORIES$/ }) })
+      .locator('dd')
+      .first(),
+  ).toHaveText('0')
 })

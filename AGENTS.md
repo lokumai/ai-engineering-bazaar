@@ -1,6 +1,6 @@
 # Working agreement
 
-Rules for any AI assistant working in this repo. **This file is live** — see
+Rules for any AI assistant working in this repo. **This file is live**, see
 [Keeping this file current](#keeping-this-file-current) at the bottom.
 
 `AGENTS.md` is an identical copy. Change one, change both.
@@ -15,7 +15,7 @@ every module links out · only what matters.
 ## How we work together
 
 **The author writes, you shape.** Amirkia supplies the explanation, the structure and the
-references. Whatever arrives in chat is **raw material, not copy** — rough notes written between
+references. Whatever arrives in chat is **raw material, not copy**, rough notes written between
 the two of you. Turn it into something written for the reader; do not paste it in as it stands.
 
 **Never invent content to fill a gap.** If the draft is missing a fact, a number or a link, mark
@@ -30,7 +30,7 @@ caveats. If something genuinely seems missing, say so in one line *outside* the 
 
 **But do correct what is wrong.** Broken heading hierarchies, arithmetic that does not add up,
 dead cross-references, a diagram that misrepresents the mechanism, an image whose caption does
-not match what it shows — fix these and say plainly what you changed. Verify numbers in the
+not match what it shows: fix these and say plainly what you changed. Verify numbers in the
 draft rather than passing them through. The line is: **correct what is wrong, add nothing that
 was not asked.**
 
@@ -41,11 +41,14 @@ was not asked.**
 - **Public files are written for readers**, not for the two of you. No mention of drafts,
   workflow, AI assistance, or internal directory paths.
 - **First person:** "me" for the author, "we" for the project. Never a bare "I".
+- **No em dashes.** Never use `—` as punctuation. Use a colon, a comma, parentheses, or split
+  the sentence in two. This applies to English and Turkish, to captions and list items, and to
+  the working files as well as the modules.
 - **Plain English.** Short sentences, common words, readable by a non-native speaker. Not a
-  textbook — no Roman-numeral outlines or lettered subsections.
+  textbook, so no Roman-numeral outlines or lettered subsections.
 - **The test is depth, not word count.** Every part must stay simple and high-level; a module
   that covers a lot is fine as long as no single part dives into detail. Do not trim a module,
-  or flag it as too long, just because the total word count is above some number — going deep
+  or flag it as too long, just because the total word count is above some number. Going deep
   is what breaks the rule, not going wide.
 - **Every module ends with links out** and a short References list built from the links actually
   used in the text.
@@ -72,7 +75,7 @@ renders markdown.
 audiences. **Change one, update the other in the same commit.** The transform from README to
 index:
 
-- drop the "Read online" line — it is self-referential on the site
+- drop the "Read online" line, since it is self-referential on the site
 - strip the `sections/` prefix from link paths, since `index.md` lives inside it
 - make the `MANIFEST.md` link an absolute GitHub URL, because it sits outside `docs_dir`
 - keep the Contributing section at the end of `index.md`
@@ -86,13 +89,13 @@ translated only once the English is final, so each module is translated once.
 
 One visual system for the whole project. Templates:
 
-- `assets/empty-context-template.jpeg` — the three-column layout: USER | CONTEXT | LLM. Ships
+- `assets/empty-context-template.jpeg`: the three-column layout, USER | CONTEXT | LLM. Ships
   with **no arrows**; the prompt draws them.
-- `assets/context-style-template.jpeg` — the component style sheet.
+- `assets/context-style-template.jpeg`: the component style sheet.
 
 Ready-made prompts: `sections/scratchpad/diagrams/three-column-template-prompts.md`.
 
-**Palette — do not invent colors:**
+**Palette (do not invent colors):**
 
 | Box | Hex | Outline |
 | --- | --- | --- |
@@ -106,19 +109,19 @@ Ready-made prompts: `sections/scratchpad/diagrams/three-column-template-prompts.
 | LLM | `#D4691E` orange | solid |
 | User | `#6E6E6E` grey | solid |
 
-Both AI variants are green — same author, same hue — separated by dash and stroke weight. Only
+Both AI variants are green, same author and same hue, separated by dash and stroke weight. Only
 message boxes get the light hand-scribbled fill; the User box, the Context container and the LLM
 box stay outline only.
 
 **The arrow rule:** an arrow means *someone wrote this message*. It starts at the USER box or the
 LLM box and ends on one specific message box. The LLM emits the Tool Call; the host machine
-produces the Tool Result. There is **no arrow for the context being sent to the model** — both
+produces the Tool Result. There is **no arrow for the context being sent to the model**, because both
 sides can see the whole board, so nothing moves.
 
 **Writing image-gen prompts:**
 
-- The author pastes the template images. Refer to them by what they show — "the attached empty
-  three-column diagram", "the attached style sheet" — never as numbered references.
+- The author pastes the template images. Refer to them by what they show, such as "the attached empty
+  three-column diagram" or "the attached style sheet". Never use numbered references.
 - Say what to draw. Do not list what not to draw; the model draws what you say.
 - Finished images go in `sections/<category>/images/`. `assets/` is outside `docs_dir` and never
   publishes.
@@ -137,28 +140,28 @@ cross-references like "module X".
 ## Repo map
 
 ```
-MANIFEST.md              the seven rules — the contract
+MANIFEST.md              the seven rules, the contract
 README.md                GitHub landing page
 CLAUDE.md / AGENTS.md    this file
 mkdocs.yml               docs_dir: sections
 assets/                  diagram source templates (not published)
 sections/
-  index.md               site homepage — mirrors README.md
+  index.md               site homepage, mirrors README.md
   1_fundamentals/        modules 1–7   (improved in place)
   2_intermediate/        modules 8–15  (being rewritten from scratch)
   3_expert/              modules 16–24 (draft)
   4_ecosystem/           modules 25–29 (draft)
   5_protocols_specs/     module 30     (draft)
   6_optional/            modules 31–32 (draft)
-  scratchpad/            research notes and diagram prompts — never published
+  scratchpad/            research notes and diagram prompts, never published
 ```
 
 The notes under `sections/scratchpad/research/` are raw material for facts and sources. Their
-dense, citation-heavy style is what the rewrite is replacing — do not copy it.
+dense, citation-heavy style is what the rewrite is replacing, so do not copy it.
 
 ## Keeping this file current
 
-**This file and `AGENTS.md` are live documents.** When a conversation settles a new rule — a
-naming decision, a palette change, a preference about how something should read — add it here in
+**This file and `AGENTS.md` are live documents.** When a conversation settles a new rule, whether
+a naming decision, a palette change, or a preference about how something should read, add it here in
 the same session, in both files, and keep it short. When a rule here turns out to be wrong,
 correct it rather than working around it.

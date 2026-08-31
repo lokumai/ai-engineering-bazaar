@@ -1,3 +1,5 @@
+import { unfenced } from './lines'
+
 /**
  * §4.5 — the two pieces of content an A4 detail sheet is made of.
  *
@@ -21,28 +23,6 @@ const ITEM = /^[ \t]*[-*+][ \t]+(.+?)[ \t]*$/
 const ITALIC_LINE = /^\*[^*].*\*$/
 /** An ATX heading of any level. */
 const HEADING = /^#{1,6}[ \t]/
-/** A fence, so nothing inside a code block is mistaken for content. */
-const FENCE = /^[ \t]*(`{3,}|~{3,})/
-
-/** The source's lines, with everything inside a fenced code block dropped. */
-function unfenced(markdown: string): string[] {
-  const out: string[] = []
-  let fence: string | null = null
-
-  for (const line of markdown.split('\n')) {
-    const match = FENCE.exec(line)
-    if (match) {
-      const marker = match[1][0]
-      if (fence === null) fence = marker
-      else if (fence === marker) fence = null
-      continue
-    }
-    if (fence === null) out.push(line)
-  }
-
-  return out
-}
-
 /**
  * §4.5 item 6 — the topics list, in source order. Empty for a sheet that has
  * no schedule, which is every drawn sheet: this is the draft format's content,

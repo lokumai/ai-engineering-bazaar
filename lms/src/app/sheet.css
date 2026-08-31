@@ -27,7 +27,7 @@
       transparent 3px 5px
     );
     background-repeat: repeat-x;
-    background-size: 100% var(--stroke-hair);
+    background-size: 100% var(--hl-hidden-weight, var(--stroke-hair));
   }
 
   .hl-hidden-y {
@@ -37,7 +37,7 @@
       transparent 3px 5px
     );
     background-repeat: repeat-y;
-    background-size: var(--stroke-hair) 100%;
+    background-size: var(--hl-hidden-weight, var(--stroke-hair)) 100%;
   }
 
   /* -- §4.4 / §4.7 The sheet grid ---------------------------------------- */

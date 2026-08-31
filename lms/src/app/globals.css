@@ -4,6 +4,8 @@
 @import "./prose.css";
 /* §4.4–§4.7 and §5.5–§5.7 — the three sheet formats and their chrome. */
 @import "./sheet.css";
+/* §4.8–§4.9, §5.3–§5.4, §7.5 — the index sheet and the listing pages. */
+@import "./manifest.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 

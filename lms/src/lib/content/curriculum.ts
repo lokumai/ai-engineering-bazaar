@@ -77,6 +77,11 @@ export function sheetPath(module: CourseModule): string {
   return `/courses/${module.category.slug}/${module.moduleSlug}/`
 }
 
+/** The subsystem's own page. Same rule as `sheetPath`: app-relative, slashed. */
+export function categoryPath(category: Category): string {
+  return `/courses/${category.slug}/`
+}
+
 /** The sheet a dependency edge names. Edges carry numbers, not slugs. */
 export function moduleByNumber(module: number): CourseModule | undefined {
   return loadAllModules().find((m) => m.frontmatter.module === module)

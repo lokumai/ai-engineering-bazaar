@@ -21,8 +21,26 @@ function segmentsOf(pathname: string): string[] {
   return pathname.split('/').filter(Boolean)
 }
 
+/**
+ * The one route segment that is a real page but not a category: `/courses/`
+ * is the drawing set, listed by subsystem. Without this it would trail as the
+ * literal URL segment, which names a directory rather than a page.
+ */
+const SET_SEGMENT = 'courses'
+
+const ROUTE_TITLES: Record<string, string> = { [SET_SEGMENT]: 'Drawing set' }
+
 function titleFor(segment: string): string {
-  return categoryBySlug(segment)?.title ?? segment.replaceAll('-', ' ')
+  return ROUTE_TITLES[segment]
+    ?? categoryBySlug(segment)?.title
+    ?? segment.replaceAll('-', ' ')
+}
+
+function subsystemLabel(slug: string): string {
+  const category = categoryBySlug(slug)
+  return category
+    ? `SUBSYSTEM ${String(category.order).padStart(2, '0')}`
+    : titleFor(slug).toUpperCase()
 }
 
 export function breadcrumbFor(pathname: string): Crumb[] {
@@ -43,12 +61,17 @@ export function breadcrumbFor(pathname: string): Crumb[] {
 export function sheetLabelFor(pathname: string): string | null {
   const segments = segmentsOf(pathname)
   if (segments.length === 0) return 'INDEX SHEET'
+
+  if (segments[0] === SET_SEGMENT) {
+    const rest = segments.slice(1)
+    if (rest.length === 0) return titleFor(SET_SEGMENT).toUpperCase()
+    // Two segments past `/courses/` is a module sheet, and its number is a
+    // fact about the content, not about the route.
+    return rest.length === 1 ? subsystemLabel(rest[0]) : null
+  }
+
   if (segments.length > 1) return null
-
-  const category = categoryBySlug(segments[0])
-  if (!category) return segments[0].replaceAll('-', ' ').toUpperCase()
-
-  return `SUBSYSTEM ${String(category.order).padStart(2, '0')}`
+  return subsystemLabel(segments[0])
 }
 
 /** A chrome label split into its words and its machine-derived values. */

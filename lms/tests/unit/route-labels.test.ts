@@ -31,6 +31,22 @@ describe('breadcrumbFor', () => {
       { label: 'dashboard', href: null },
     ])
   })
+
+  it('names the drawing set, which is a page and not a bare URL segment', () => {
+    expect(breadcrumbFor('/courses/')).toEqual([
+      { label: 'Index', href: '/' },
+      { label: 'Drawing set', href: null },
+    ])
+  })
+
+  it('trails the real module route through both of its parents', () => {
+    expect(breadcrumbFor('/courses/intermediate/security/')).toEqual([
+      { label: 'Index', href: '/' },
+      { label: 'Drawing set', href: '/courses/' },
+      { label: 'Intermediate', href: '/courses/intermediate/' },
+      { label: 'security', href: null },
+    ])
+  })
 })
 
 describe('sheetLabelFor', () => {
@@ -49,6 +65,19 @@ describe('sheetLabelFor', () => {
 
   it('returns nothing for a module page, whose sheet number comes from content', () => {
     expect(sheetLabelFor('/intermediate/ai-security/')).toBeNull()
+  })
+
+  it('names the drawing set', () => {
+    expect(sheetLabelFor('/courses/')).toBe('DRAWING SET')
+  })
+
+  it('numbers a subsystem at the route the site actually serves it from', () => {
+    expect(sheetLabelFor('/courses/fundamentals/')).toBe('SUBSYSTEM 01')
+    expect(sheetLabelFor('/courses/protocols/')).toBe('SUBSYSTEM 05')
+  })
+
+  it('still returns nothing for a module page under that route', () => {
+    expect(sheetLabelFor('/courses/intermediate/security/')).toBeNull()
   })
 })
 

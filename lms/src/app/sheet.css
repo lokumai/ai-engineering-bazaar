@@ -321,6 +321,15 @@
     font-family: var(--font-mono);
     font-size: var(--text-mark);
     letter-spacing: 0.06em;
+    /* `text-align` decides where a line box sits when there is room to spare;
+       it has no say once the content over-constrains it, and then the overflow
+       goes in the inline-end direction. MEASURED: `VIII` is 29px of ink in a
+       24px track, so right-alignment alone put five of those pixels straight
+       into the section title — `VIIIMaking it part of the SDLC` on five of the
+       fifteen drawn sheets. `direction: rtl` moves inline-end to the left, so
+       the overflow goes into the 16px the entry already stands clear of. The
+       numerals are one run of neutral Latin letters and still read VIII. */
+    direction: rtl;
     text-align: right;
     white-space: nowrap;
     color: var(--color-ink-faint);

@@ -85,20 +85,33 @@
     margin: 32px 0 8px;
   }
 
-  /* Section marks. The numeral the build split off an `## VII. …` heading sits
-     in the gutter at x = -44px on its own 8px hairline tick at x = -20px — the
-     one motif §4.3 permits in the prose gutter. Non-Roman h2s get neither. */
+  /* Section marks. The numeral the build split off an `## VII. …` heading, set
+     inline as a `text-mark` mono prefix with a 12px gap. Non-Roman h2s get
+     none rather than an invented one.
+
+     §6.1 hangs it in the left gutter instead, at x = -44px on its own 8px
+     hairline tick, and moves it inline only below 1280px. That position and
+     §4.1's zone arithmetic cannot both hold. MEASURED at 1440: 208 + 24 + 656
+     + 24 + 240 = 1152, which §4.1 says "must add to 1152 exactly", puts the
+     prose column at x = 376 and the left rail's track at 144–352 — a 24px
+     gutter. A 32px box at margin-left -44px spans 332–364, so 20px of it
+     stands inside the rail's track, and the rail is sticky: its contents list
+     swept through all nine numerals as the reader scrolled, `I.` reading as a
+     row of the dependency block at the top of the sheet. Nor is there a
+     narrower box that fits — `VIII.` is 36px of ink at 11px mono, half as wide
+     again as the gutter it would have to sit in.
+
+     So §4.1's arithmetic wins over §6.1's position, and the numeral takes the
+     rendering §6.1 itself defines for a sheet with no gutter to hang it in.
+     The baseline tick goes with it: it was drawn on the numeral's own box. The
+     gutter still carries the `§` anchor at x = -20px, which does fit. */
   .prose h2[data-mark]::before {
     content: attr(data-mark) ".";
     display: inline-block;
-    /* Spans the gutter from x = -44 to x = -12; the 12px right margin returns
-       the heading text to x = 0, so it starts flush at the measure however the
-       numeral is set. An inline-block on `vertical-align: baseline` gets the
-       baseline alignment from the two fonts' own metrics — no magic offset to
-       drift when the type scale moves. */
-    width: 32px;
-    margin-left: -44px;
     margin-right: 12px;
+    /* An inline-block on `vertical-align: baseline` gets its alignment from
+       the two fonts' own metrics — no magic offset to drift when the type
+       scale moves. */
     vertical-align: baseline;
     font-family: var(--font-mono);
     font-size: var(--text-mark);
@@ -106,17 +119,6 @@
     line-height: 1;
     letter-spacing: 0.06em;
     color: var(--color-ink-muted);
-    /* The 8px baseline tick at x = -20, drawn on the mark's own box so it can
-       only ever sit on the mark's baseline. */
-    background-image: linear-gradient(var(--color-line), var(--color-line));
-    background-size: 8px var(--stroke-hair);
-    background-position: right bottom;
-    background-repeat: no-repeat;
-  }
-
-  /* The tick and the § anchor both want x = -20px. Only ever show one. */
-  .prose h2[data-mark]:hover::before {
-    background-image: none;
   }
 
   /* The heading anchor: revealed on hover, and always present for a keyboard
@@ -153,16 +155,6 @@
      an anchor cannot be hovered without its heading being hovered too. */
   .prose :is(h2, h3):hover .hl-anchor:hover {
     color: var(--color-ink);
-  }
-
-  /* Below 1280 there is no gutter to hang a numeral in, so it moves inline as a
-     mono prefix with a 12px gap, and the baseline tick goes with the gutter. */
-  @media (max-width: 1279px) {
-    .prose h2[data-mark]::before {
-      width: auto;
-      margin-left: 0;
-      background-image: none;
-    }
   }
 
   /* At phone widths the gutter is 20px of page padding; an element at -20px

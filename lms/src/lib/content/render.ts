@@ -9,6 +9,7 @@ import { SKIP, visit } from 'unist-util-visit'
 import { toString as hastToString } from 'hast-util-to-string'
 import type { Element, ElementContent, Root, RootContent, Text } from 'hast'
 import { widthForColumns } from '@/lib/figure/width'
+import type { ChecklistItem } from './checklist'
 import { codeThemes } from './code-theme'
 import { DIAGRAM_HEADING } from './lines'
 import { assertNoRawHex, remapMermaidFills } from './mermaid'
@@ -24,6 +25,18 @@ export interface TocEntry {
 export interface RenderedMarkdown {
   html: string
   toc: TocEntry[]
+  /**
+   * §12.7 — the sheet's `- [ ]` items, in document order, keyed by their index
+   * within the sheet. Empty on the 31 sheets that have none.
+   *
+   * This is the authoritative hook §12.7 names: GFM only makes a task item when
+   * `[ ]` opens the list item's first paragraph, and the hast tree is where that
+   * decision has already been made. `checklistOf` reads the same fact off the
+   * raw lines because it has to answer for all 32 sheets synchronously, inside
+   * `curriculumFacts()`; §12.7 requires the two to be cross-tested against each
+   * other, and `tests/unit/content/render-record.test.ts` does that per sheet.
+   */
+  checklist: ChecklistItem[]
 }
 
 export interface RenderOptions {
@@ -111,6 +124,60 @@ function rehypeDropDek() {
     if (!DEK.test(hastToString(inner[0]))) return
 
     tree.children.splice(index, 1)
+  }
+}
+
+/**
+ * §12.6 trap 1 — the self-check paragraph, lifted out of the tree.
+ *
+ * The question is a bold *inline* run opening a paragraph — `**Quick Check**:
+ * <question>` — not a heading, so `sectionTitles`, `topicsFor` and the TOC are
+ * all blind to it. It is already rendered inside `<Prose>`, so mounting §12.6's
+ * component without removing it here prints the question **twice on all 15
+ * drawn sheets**. Same removal, same reason and same shape as `rehypeDropDek`:
+ * one statement of a fact, in the place that owns it.
+ *
+ * Two labels, not one (§12.6, corrected by implementation): thirteen sheets say
+ * `**Quick Check**` and sheet 1 says `**Quiz Yourself**` — the same shape, in
+ * the same position, doing the same job, under a name the author happened to
+ * type differently that day. `quickcheck.ts` accepts both, so this must too, or
+ * sheet 1 would print its question twice while its fourteen siblings printed
+ * theirs once.
+ *
+ * **Pipeline position, and which side of what.** It sits AFTER
+ * `rehypeDropFirstH1` and `rehypeDropDek` — all three are the same kind of
+ * removal, and those two operate on the head of the document where this
+ * paragraph never is. It sits BEFORE `rehypeLeadParagraph`, `rehypeFigures` and
+ * `rehypeSlug`/`rehypeCollectToc`, and the first two are load-bearing: the lead
+ * class would otherwise be spent on a paragraph that is about to be deleted, and
+ * a figure inside the removed paragraph would consume a `FIG. n.n` number and
+ * leave a gap in the sequence. Nothing downstream needs to see it.
+ *
+ * Only the FIRST match is removed, which mirrors `quickCheckOf`: no sheet
+ * carries two, and a sheet that grew a second would be an authoring error
+ * rather than two questions to ask.
+ */
+const SELF_CHECK_LABELS: readonly string[] = ['Quick Check', 'Quiz Yourself']
+
+/** A `<p>` whose first run is the self-check label, followed by its colon. */
+function opensSelfCheck(node: Element): boolean {
+  if (node.tagName !== 'p') return false
+  const inner = node.children.filter((child) => !isBlank(child))
+  const lead = inner[0]
+  if (!isElement(lead) || lead.tagName !== 'strong') return false
+  if (!SELF_CHECK_LABELS.includes(hastToString(lead).trim())) return false
+  // The colon is part of the authored form, and requiring it is what keeps this
+  // in step with `quickCheckOf`'s own pattern rather than beside it.
+  const rest = inner[1]
+  return rest?.type === 'text' && /^[ \t]*:/.test(rest.value)
+}
+
+function rehypeDropSelfCheck() {
+  return (tree: Root) => {
+    const index = tree.children.findIndex(
+      (child) => isElement(child) && opensSelfCheck(child),
+    )
+    if (index !== -1) tree.children.splice(index, 1)
   }
 }
 
@@ -576,6 +643,50 @@ function rehypeBlockquotes() {
  * focusable, so this cannot orphan focus inside a hidden subtree. The `li`'s
  * own text is untouched and still read.
  */
+/**
+ * §12.7 — the checklist items, out through the established sink.
+ *
+ * The same shape as `rehypeCollectToc`: the plugin is handed the array it
+ * fills, so the data leaves the pipeline without a module-level variable and
+ * without a second parse of the same file.
+ *
+ * **The inert list stays in the prose.** §6.4/§7.7's `disabled aria-hidden`
+ * checkbox is what the sheet renders today, and this exposes the items so
+ * §12.7's live control can replace it — it does not do the replacing. Removing
+ * the list here would take sheet 13's eight items off the sheet, in the middle
+ * of the section that explains them, and leave nothing in their place until
+ * something mounts `Checklist`.
+ *
+ * **Pipeline position.** BEFORE `rehypeExternalLinks`, which is load-bearing:
+ * that plugin appends a `↗` mark inside every external anchor, and `↗` would
+ * then be part of the recorded item text. Also before `rehypePrettyCode`, for
+ * the same class of reason. Either side of `rehypeTaskListMarkers` would do —
+ * that one only sets an attribute — so it is placed beside it, because the two
+ * read the same markup for the same section of the spec.
+ *
+ * One index space per sheet, not one per list: `visit` walks in document order,
+ * so sheet 13's two groups either side of a paragraph number 0–7 straight
+ * through, which is the key the reader's ticks are stored under (§12.7).
+ */
+function rehypeCollectChecklist(sink: ChecklistItem[]) {
+  return (tree: Root) => {
+    visit(tree, 'element', (node: Element) => {
+      if (node.tagName !== 'li' || !classNames(node).includes('task-list-item')) return
+      // The checkbox contributes no text and the item's own text is a sibling
+      // of it, which is exactly why §6.4 could not give the input a name.
+      const text = hastToString(node).trim()
+      if (text === '') return
+      const index = sink.length
+      // Emitted, not recounted: `ChecklistIsland` reads this attribute rather
+      // than numbering the boxes itself, so the key a tick is stored under is
+      // by construction the key `checklistOf` reported. Two independent counts
+      // over the same markup is how they start disagreeing (§12.7).
+      node.properties = { ...node.properties, 'data-hl-check': String(index) }
+      sink.push({ index, text })
+    })
+  }
+}
+
 function rehypeTaskListMarkers() {
   return (tree: Root) => {
     visit(tree, 'element', (node: Element, _index, parent) => {
@@ -702,6 +813,7 @@ export async function renderMarkdown(
   options: RenderOptions = {},
 ): Promise<RenderedMarkdown> {
   const toc: TocEntry[] = []
+  const checklist: ChecklistItem[] = []
 
   const file = await unified()
     .use(remarkParse)
@@ -709,6 +821,8 @@ export async function renderMarkdown(
     .use(remarkRehype)
     .use(rehypeDropFirstH1)
     .use(rehypeDropDek)
+    // §12.6 — before the lead class is spent and before figures are numbered.
+    .use(rehypeDropSelfCheck)
     .use(rehypeLeadParagraph)
     .use(rehypeSectionMarks)
     .use(rehypeRewriteImages, options.imageBase)
@@ -717,6 +831,8 @@ export async function renderMarkdown(
     .use(rehypeSlug)
     .use(rehypeCollectToc, toc)
     .use(rehypeHeadingAnchors)
+    // §12.7 — before `rehypeExternalLinks` appends its `↗` to the item text.
+    .use(rehypeCollectChecklist, checklist)
     .use(rehypeTaskListMarkers)
     .use(rehypeExternalLinks)
     // B8 — both variants, written as CSS custom properties on every token, so
@@ -729,5 +845,5 @@ export async function renderMarkdown(
   const html = String(file)
   assertNoRawHex(html, options.sheet === undefined ? 'prose' : `sheet ${options.sheet}`)
 
-  return { html, toc }
+  return { html, toc, checklist }
 }

@@ -1,0 +1,1456 @@
+/* ===========================================================================
+   §12 — THE RECORD. Every surface that carries reader state.
+
+   Three rules govern this file and none of them is negotiable.
+
+   ONE — line type carries state before colour ever does (§12.10.4, §12.17).
+   Solid means drawn or signed off; ISO 128 `3 2` dashed means not yet. The
+   accent is redundant reinforcement, never the sole carrier, which is what
+   satisfies SC 1.4.1 and is also the entire reason this file survives
+   forced-colors mode and a black-and-white printer without a fallback design.
+
+   TWO — a structural weight is PAINTED, never bordered. Chrome floors every
+   `border-*-width` and `outline-width` to a whole CSS pixel, so
+   `border: var(--stroke-struct) solid …` paints a 1px hairline at every DPR and
+   §2.2's middle weight silently disappears. `height`, `width` and
+   `background-size` are not floored. The four-one-stop-gradient form in
+   `.skip-link` (globals.css) is the house pattern; `tests/unit/stroke-weights.test.ts`
+   fails the build on the bordered form.
+
+   THREE — reader state arrives on one of two channels (§12.2) and this file is
+   the whole of channel A. Anything CSS can carry is carried here, driven by the
+   classes the pre-paint boot script stamps on <html>, so the mark is correct in
+   frame one with no React and nothing to hydrate. Anything CSS cannot carry —
+   a name, a count, a date — renders its honest empty form on the server and is
+   filled in post-mount. There is no third option, and reading storage during
+   render is the bug this arrangement exists to make impossible.
+   =========================================================================== */
+
+@layer components {
+
+  /* =========================================================================
+     §5.10 — buttons, everywhere on this site.
+
+     32px tall, mono, uppercase, hairline bordered, paper ground. There is no
+     filled variant and there cannot be one: a vermilion button would destroy
+     T1, under which the accent means "signed off" and nothing else. A primary
+     action is distinguished by position and by what it says, not by fill.
+     ======================================================================== */
+
+  .hl-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 12px;
+    border: var(--stroke-hair) solid var(--color-line-strong);
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    line-height: 1;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-align: center;
+    cursor: pointer;
+    /* §9.2 — the only two properties any hover may transition. */
+    transition: background-color 90ms linear, border-color 90ms linear;
+  }
+
+  .hl-btn:hover:not(:disabled):not([aria-disabled="true"]) {
+    background: var(--color-cleared);
+    border-color: var(--color-line-cut);
+  }
+
+  .hl-btn:active:not(:disabled):not([aria-disabled="true"]) {
+    background: var(--color-sunken);
+  }
+
+  /* §5-universal — disabled loses colour, never opacity. An opacity ramp makes
+     every glyph inside it fail contrast at once; a token swap does not. */
+  .hl-btn:disabled,
+  .hl-btn[aria-disabled="true"] {
+    color: var(--color-ink-faint);
+    border-color: var(--color-line);
+    cursor: not-allowed;
+  }
+
+  /* The signed state. Accent is legitimate here and only here: this button's
+     pressed state IS "signed off" (T1). The 2px left edge repeats the §5.8
+     approved-node vocabulary so the same fact looks the same everywhere. */
+  .hl-btn[aria-pressed="true"] {
+    border-color: var(--color-accent);
+    border-left-width: var(--stroke-cut);
+    background: var(--color-accent-wash);
+    color: var(--color-accent-ink);
+  }
+
+  /* §12.15 — the one destructive control. Still not filled. `--color-fault` is
+     permitted under T6 as a status carrier, and "this erases everything" is a
+     status. The real guard is the typed confirmation, not the colour. */
+  .hl-btn-danger {
+    border-color: var(--color-fault);
+    color: var(--color-fault-ink);
+  }
+
+  .hl-btn-danger:hover:not(:disabled):not([aria-disabled="true"]) {
+    background: var(--color-fault-wash);
+    border-color: var(--color-fault);
+  }
+
+  /* =========================================================================
+     §12.4 — the sign-off block.
+
+     It sits ABOVE the content, beside the criteria it asserts, because a
+     completion switch a reader meets after scrolling past everything is a
+     switch about a thing they have already left. Moodle moved both to the top
+     of the activity for the same reason.
+     ======================================================================== */
+
+  .hl-signoff {
+    margin: 0 0 32px;
+    border: var(--stroke-hair) solid var(--color-line-strong);
+    background: var(--color-cleared);
+  }
+
+  .hl-signoff-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 28px;
+    padding: 4px 12px;
+    /* Painted, not bordered: this is the block's one structural rule. */
+    background:
+      linear-gradient(var(--color-line-strong) 0 0) 0 100% / 100% var(--stroke-hair) no-repeat,
+      transparent;
+    color: var(--color-ink-muted);
+  }
+
+  .hl-signoff-body {
+    padding: 12px;
+  }
+
+  /* The criteria. Not a promise and not a boast — the list the reader is
+     asserting against, printed so the assertion means something (§12.4.1). */
+  .hl-signoff-criteria {
+    margin: 0 0 12px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hl-signoff-criteria li {
+    position: relative;
+    margin: 0 0 4px;
+    padding-left: 18px;
+    font-family: var(--font-display);
+    font-size: var(--text-meta);
+    line-height: 1.5;
+    color: var(--color-ink-muted);
+  }
+
+  /* A 6px leader dash, not a bullet and not a tick. A tick would claim the
+     criterion was met; a leader only points at it. */
+  .hl-signoff-criteria li::before {
+    content: "";
+    position: absolute;
+    top: 0.62em;
+    left: 0;
+    width: 8px;
+    height: var(--stroke-hair);
+    background: var(--color-line-strong);
+  }
+
+  .hl-signoff-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* §12.4.3 — revision drift. A fact, in muted ink. Deliberately NOT a caution
+     colour: the sheet changing after you signed it is not an error, and
+     dressing it as one would tell the reader they did something wrong. */
+  .hl-signoff-drift {
+    margin: 8px 0 0;
+    color: var(--color-ink-muted);
+  }
+
+  /* §12.1.4 — the write failed and the UI must say so rather than keep
+     claiming the state. This is a status carrier, so T6 permits the colour. */
+  .hl-not-saved {
+    margin: 8px 0 0;
+    color: var(--color-fault-ink);
+  }
+
+  /* =========================================================================
+     §12.3.5 — the drafter's stamp.
+
+     24 × 24, zero radius, stroke-only, `currentColor`. It inherits ink from its
+     context and carries no colour of its own, which is what keeps it out of
+     T1's way and what makes it survive forced-colors untouched.
+     ======================================================================== */
+
+  .hl-mark-stamp {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: var(--color-ink-muted);
+  }
+
+  .hl-mark-stamp svg {
+    display: block;
+    width: 24px;
+    height: 24px;
+    /* Every path in the generated geometry is open (§12.3.5) — a fill here
+       would read as a solid blob at 24px and lose the drafting register. */
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1;
+    stroke-linecap: square;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* The identity line: stamp, then initials, then the name as typed. */
+  .hl-identity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hl-identity-initials {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: 0.06em;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink);
+  }
+
+  /* §12.3.4 — the full name, never truncated in the store, and bidi-isolated
+     so an RTL name cannot reorder the punctuation around it. */
+  .hl-identity-name {
+    min-width: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-ui);
+    color: var(--color-ink);
+    overflow-wrap: anywhere;
+  }
+
+  /* =========================================================================
+     §12.3.3 — the name field. One field, a visible label, no placeholder
+     standing in for one.
+     ======================================================================== */
+
+  .hl-field {
+    display: block;
+    max-width: 420px;
+  }
+
+  .hl-field-label {
+    display: block;
+    margin: 0 0 4px;
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+
+  /* "Optional" in words, never by the absence of an asterisk. Testing shows
+     marking only the required fields makes readers mistake the optional ones
+     for required, and marking only the optional ones still leaves a third
+     hitting validation errors — so the state is stated outright. */
+  .hl-field-optional {
+    margin-left: 6px;
+    color: var(--color-ink-faint);
+  }
+
+  .hl-field input {
+    display: block;
+    width: 100%;
+    height: 36px;
+    padding: 0 10px;
+    border: var(--stroke-hair) solid var(--color-line-strong);
+    border-radius: 0;
+    background: var(--color-sunken);
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: var(--text-ui);
+    transition: border-color 90ms linear;
+  }
+
+  .hl-field input:hover {
+    border-color: var(--color-line-cut);
+  }
+
+  .hl-field-hint {
+    margin: 6px 0 0;
+    font-family: var(--font-display);
+    font-size: var(--text-meta);
+    line-height: 1.5;
+    color: var(--color-ink-muted);
+  }
+
+  /* Validation is on submit only, and the error clears the moment the input
+     becomes valid. Never per keystroke. */
+  .hl-field-error {
+    margin: 6px 0 0;
+    font-family: var(--font-display);
+    font-size: var(--text-meta);
+    color: var(--color-fault-ink);
+  }
+
+  .hl-field[data-invalid="true"] input {
+    border-color: var(--color-fault);
+    border-left-width: var(--stroke-cut);
+  }
+
+  /* =========================================================================
+     §7.1 — the readout strip.
+
+     A tmux statusline, not a profile header. Labels muted, values in ink,
+     tabular so a changing digit never shifts the line. No icons. Values snap;
+     they never count up, never roll, never animate (§9.1).
+     ======================================================================== */
+
+  .hl-readout {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 8px;
+    min-height: 28px;
+    padding: 4px 0;
+    /* Two painted rules, top and bottom, at the hairline weight. */
+    background:
+      linear-gradient(var(--color-line-strong) 0 0) 0 0 / 100% var(--stroke-hair) no-repeat,
+      linear-gradient(var(--color-line-strong) 0 0) 0 100% / 100% var(--stroke-hair) no-repeat,
+      transparent;
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink-muted);
+  }
+
+  .hl-readout-value {
+    color: var(--color-ink);
+  }
+
+  /* §12.5.2 — TO GO leads. For a high-commitment reader, remaining-actions
+     feedback raises aspiration more than present position does, and the number
+     of undrawn sheets is the honest headline for a curriculum still being
+     written. It gets ink weight; the Roman numeral stays quiet. */
+  .hl-readout-togo {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+
+  .hl-readout-sep {
+    color: var(--color-ink-faint);
+  }
+
+  /* Post-mount channel B has not filled this in yet. `--` is the instrument
+     convention for "no reading", and it is true at that instant. */
+  .hl-readout[data-hydrated="false"] .hl-readout-value {
+    color: var(--color-ink-faint);
+  }
+
+  /* =========================================================================
+     §7.3 — UPTIME. Fourteen ticks, one per day.
+
+     No flame, no modal, no notification, no loss-aversion copy anywhere near
+     it. A visible gap where a day was missed is the entire message, and an
+     empty strip is never rendered as a deficit.
+     ======================================================================== */
+
+  .hl-uptime {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 14px;
+  }
+
+  .hl-uptime-tick {
+    width: 6px;
+    height: 14px;
+    background: var(--color-ink);
+  }
+
+  /* An inactive day is a hairline, not an empty box — an outline would read as
+     a slot waiting to be filled, which is a nudge. */
+  .hl-uptime-tick[data-active="false"] {
+    width: var(--stroke-hair);
+    margin: 0 2.5px;
+    background: var(--color-line-strong);
+  }
+
+  .hl-uptime-tick[data-today="true"] {
+    box-shadow: 0 3px 0 0 var(--color-line-cut);
+  }
+
+  /* =========================================================================
+     §7.5 — the discrete tick gauge. N ticks, N being the real module count.
+
+     Five of eight ticks tells a reader something. A 63%-full pill does not, and
+     §11.35 forbids it anyway.
+     ======================================================================== */
+
+  .hl-gauge {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    height: 12px;
+  }
+
+  .hl-gauge-tick {
+    width: 4px;
+    height: 12px;
+    background: var(--color-line-strong);
+  }
+
+  .hl-gauge-tick[data-state="approved"] {
+    background: var(--color-accent);
+  }
+
+  /* Not drawn: a hairline with the ISO 128 dash, drawn as a repeating gradient
+     because a 1px column cannot carry a border-dasharray. */
+  .hl-gauge-tick[data-state="undrawn"] {
+    width: var(--stroke-hair);
+    margin: 0 1.5px;
+    background: repeating-linear-gradient(
+      to bottom,
+      var(--color-line-strong) 0 3px,
+      transparent 3px 5px
+    );
+  }
+
+  /* =========================================================================
+     §5.9 — the approval stamp.
+
+     A rubber stamp on paper, not a badge, not a ribbon, not a starburst. No
+     gradient, no gloss, no metal, no tier colour, no rarity. A locked stamp
+     always states its exact threshold and its live count, which is the single
+     rule that keeps thirteen stamps from being thirteen trophies: a stamp that
+     reads as a completed inspection record is information, and a stamp that
+     reads as a prize is a reward the reader now expects.
+     ======================================================================== */
+
+  .hl-stamp {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    box-sizing: border-box;
+    padding: 4px 8px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    line-height: 1.25;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+    /* The empty slot: a `2 2` dashed hairline rectangle, no fill. Drawn with an
+       SVG-free repeating gradient on all four edges so the dash survives at any
+       size and needs no extra element. */
+    background:
+      repeating-linear-gradient(to right, var(--color-line-strong) 0 2px, transparent 2px 4px) 0 0 / 100% var(--stroke-hair) no-repeat,
+      repeating-linear-gradient(to right, var(--color-line-strong) 0 2px, transparent 2px 4px) 0 100% / 100% var(--stroke-hair) no-repeat,
+      repeating-linear-gradient(to bottom, var(--color-line-strong) 0 2px, transparent 2px 4px) 0 0 / var(--stroke-hair) 100% no-repeat,
+      repeating-linear-gradient(to bottom, var(--color-line-strong) 0 2px, transparent 2px 4px) 100% 0 / var(--stroke-hair) 100% no-repeat,
+      transparent;
+    transition: background-color 90ms linear;
+  }
+
+  .hl-stamp-slot   { width: 114px; min-height: 34px; }   /* title block, 2×2  */
+  .hl-stamp-set    { width: 168px; min-height: 44px; }   /* dashboard shelf   */
+
+  .hl-stamp-name  { color: var(--color-ink-muted); }
+  .hl-stamp-cond  { color: var(--color-ink-faint); }
+
+  /* Earned. Rotated a degree and a half, at 0.88 opacity on the stroke, with
+     the accent wash behind it. The `--stroke-struct` edge is painted for the
+     reason at the top of this file. */
+  .hl-stamp[data-earned="true"] {
+    background:
+      linear-gradient(var(--color-accent) 0 0) 0 0 / 100% var(--stroke-struct) no-repeat,
+      linear-gradient(var(--color-accent) 0 0) 0 100% / 100% var(--stroke-struct) no-repeat,
+      linear-gradient(var(--color-accent) 0 0) 0 0 / var(--stroke-struct) 100% no-repeat,
+      linear-gradient(var(--color-accent) 0 0) 100% 0 / var(--stroke-struct) 100% no-repeat,
+      var(--color-accent-wash);
+    color: var(--color-accent-ink);
+    rotate: -1.5deg;
+  }
+
+  .hl-stamp[data-earned="true"] .hl-stamp-name,
+  .hl-stamp[data-earned="true"] .hl-stamp-cond {
+    color: var(--color-accent-ink);
+  }
+
+  /* Unattainable because the curriculum is unwritten, not because the reader is
+     behind. Honest, and never hidden (§5.9). */
+  .hl-stamp[data-attainable="false"] .hl-stamp-cond {
+    color: var(--color-caution-ink);
+  }
+
+  .hl-stamp-shelf {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* The 2×2 grid in the title block. §7.4: on a sheet with no checklist the
+     slot is ABSENT, not empty — never show an unattainable empty slot — so this
+     grid legitimately renders three cells, or two. */
+  .hl-stamp-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hl-stamp-grid .hl-stamp {
+    width: auto;
+  }
+
+  /* =========================================================================
+     §4.8 column 9 — the SIGN-OFF squares, and channel A that fills them.
+
+     14 × 14, no text, the slot name on `title`. Deliberately NOT interactive:
+     `.hl-row-link::after` covers the whole row with `inset: 0` so a control
+     here would be unclickable, and making the cell clickable would give the row
+     a second tab stop against §10.3's stated invariant. Signing off happens on
+     the sheet, which is the only place the criteria are stated anyway.
+     ======================================================================== */
+
+  .hl-signoff-cell {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .hl-signoff-square {
+    box-sizing: border-box;
+    width: 14px;
+    height: 14px;
+    border: var(--stroke-hair) solid var(--color-line-strong);
+    background: transparent;
+  }
+
+  /* Not drawn — the same ISO 128 hidden line the rest of the set uses. */
+  .hl-signoff-square[data-drawn="false"] {
+    border-style: dashed;
+    border-color: var(--color-line-strong);
+  }
+
+  /* The signed square. Filled through channel B (§12.2) — the server renders
+     every square unsigned, which is the honest thing the build knows, and the
+     store fills them in after mount.
+
+     Channel A is deliberately NOT used here. It would need one CSS rule per
+     module, because a selector cannot compare an attribute on <html> against an
+     attribute on a descendant, and thirty-two generated rules to remove one
+     frame of flicker on a table of 14px squares is a bad trade. The surfaces
+     that ARE on channel A are the ones present on every page and looked at on
+     every page: the mascot's six faces and the category gauges, below. */
+  /* Painted, not bordered — see the note at the top of this file. The border
+     stays, transparent, holding the same 1px of layout space the unsigned
+     square occupied, so a row does not shift by 2px when it is signed off. */
+  .hl-signoff-square[data-signed="true"] {
+    border-color: transparent;
+    background:
+      linear-gradient(var(--color-accent) 0 0) 0 0 / 100% var(--stroke-struct) no-repeat border-box,
+      linear-gradient(var(--color-accent) 0 0) 0 100% / 100% var(--stroke-struct) no-repeat border-box,
+      linear-gradient(var(--color-accent) 0 0) 0 0 / var(--stroke-struct) 100% no-repeat border-box,
+      linear-gradient(var(--color-accent) 0 0) 100% 0 / var(--stroke-struct) 100% no-repeat border-box,
+      var(--color-accent-wash);
+  }
+
+  /* ---- Channel A (§12.2) — the six category faces, correct in frame one ----
+
+     The pre-paint boot script stamps `hl-cat-<slug>-started` / `-complete` on
+     <html>. Six categories and two reachable states is twelve rules, written
+     out once, and it buys the two surfaces that appear on all 44 pages: the
+     mascot in the header and every tick gauge.
+
+     This is what keeps the header mark from repainting on every single load.
+     `Lkm01`'s markup is state-INDEPENDENT by §12.2 — both hatch patterns always
+     emitted, edges always in fixed order — precisely so that its state can live
+     here instead of in React, where a state-dependent child list would be a
+     structural hydration mismatch and React 19 would discard and re-render the
+     subtree every time. ---------------------------------------------------- */
+
+  .hl-face          { stroke: var(--color-line); stroke-width: var(--stroke-hair); fill: none; }
+  .hl-face-hatch    { display: none; }
+
+  /* `started` — the subsystem is under way. Ink, at the structural weight; no
+     fill, because a started subsystem is not a finished one. */
+  html.hl-cat-fundamentals-started    .hl-face[data-cat="fundamentals"],
+  html.hl-cat-intermediate-started    .hl-face[data-cat="intermediate"],
+  html.hl-cat-expert-started          .hl-face[data-cat="expert"],
+  html.hl-cat-ecosystem-started       .hl-face[data-cat="ecosystem"],
+  html.hl-cat-protocols-started       .hl-face[data-cat="protocols"],
+  html.hl-cat-optional-started        .hl-face[data-cat="optional"] {
+    stroke: var(--color-ink);
+    stroke-width: var(--stroke-struct);
+  }
+
+  /* `complete` — every sheet in the subsystem signed off. The annotation pen,
+     and 45° section hatching, which is the one place T1's accent is earned. */
+  html.hl-cat-fundamentals-complete   .hl-face[data-cat="fundamentals"],
+  html.hl-cat-intermediate-complete   .hl-face[data-cat="intermediate"],
+  html.hl-cat-expert-complete         .hl-face[data-cat="expert"],
+  html.hl-cat-ecosystem-complete      .hl-face[data-cat="ecosystem"],
+  html.hl-cat-protocols-complete      .hl-face[data-cat="protocols"],
+  html.hl-cat-optional-complete       .hl-face[data-cat="optional"] {
+    stroke: var(--color-accent);
+    stroke-width: var(--stroke-struct);
+  }
+
+  html.hl-cat-fundamentals-complete   .hl-face-hatch[data-cat="fundamentals"],
+  html.hl-cat-intermediate-complete   .hl-face-hatch[data-cat="intermediate"],
+  html.hl-cat-expert-complete         .hl-face-hatch[data-cat="expert"],
+  html.hl-cat-ecosystem-complete      .hl-face-hatch[data-cat="ecosystem"],
+  html.hl-cat-protocols-complete      .hl-face-hatch[data-cat="protocols"],
+  html.hl-cat-optional-complete       .hl-face-hatch[data-cat="optional"] {
+    display: block;
+  }
+
+  /* =========================================================================
+     §7.2 — checklists. The 8 items on sheet 13 become a tool an architect runs
+     against their own repository, which is worth more than every XP point on
+     the site.
+     ======================================================================== */
+
+  .hl-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 4px 0;
+  }
+
+  .hl-check input[type="checkbox"] {
+    appearance: none;
+    flex: none;
+    box-sizing: border-box;
+    width: 14px;
+    height: 14px;
+    /* §10.4 asks for a 44px target below 768px and SC 2.5.8 for 24px
+       everywhere. The painted square stays 14px; the hit area grows through the
+       label, which wraps it. */
+    margin: 5px 0 0;
+    border: var(--stroke-hair) solid var(--color-line-strong);
+    border-radius: 0;
+    background: var(--color-paper);
+    cursor: pointer;
+    transition: background-color 90ms linear, border-color 90ms linear;
+  }
+
+  /* Painted, not bordered, for the reason at the top of this file — and the
+     transparent border keeps the 14px box exactly 14px, so ticking an item does
+     not nudge its label. */
+  .hl-check input[type="checkbox"]:checked {
+    border-color: transparent;
+    background:
+      linear-gradient(var(--color-accent) 0 0) 0 0 / 100% var(--stroke-struct) no-repeat border-box,
+      linear-gradient(var(--color-accent) 0 0) 0 100% / 100% var(--stroke-struct) no-repeat border-box,
+      linear-gradient(var(--color-accent) 0 0) 0 0 / var(--stroke-struct) 100% no-repeat border-box,
+      linear-gradient(var(--color-accent) 0 0) 100% 0 / var(--stroke-struct) 100% no-repeat border-box,
+      var(--color-accent-wash);
+  }
+
+  /* The tick, drawn rather than typeset. `stroke-dasharray`/`offset` over 180ms
+     is one of the three animations §9.4 permits, and it collapses to an instant
+     state swap under `prefers-reduced-motion` via the global rule. */
+  .hl-check-tick {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    pointer-events: none;
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 1.75;
+    stroke-linecap: square;
+    stroke-dasharray: 16;
+    stroke-dashoffset: 16;
+  }
+
+  .hl-check input:checked ~ .hl-check-tick {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 180ms linear;
+  }
+
+  .hl-check-label {
+    font-family: var(--font-body);
+    font-size: var(--text-prose);
+    line-height: 1.6;
+    color: var(--color-ink);
+    cursor: pointer;
+  }
+
+  /* Ticked text goes muted. NO strikethrough — a struck-through line reads as
+     cancelled, and a completed check is the opposite of cancelled. */
+  .hl-check input:checked ~ .hl-check-label {
+    color: var(--color-ink-muted);
+    text-decoration: none;
+  }
+
+  .hl-check-wrap {
+    position: relative;
+  }
+
+  /* ---- §12.7 in the prose ------------------------------------------------
+     The one real checklist in the corpus sits mid-section inside `<Prose>`, so
+     it is upgraded in place by `ChecklistIsland` rather than replaced by a
+     component (moving those eight items to the bottom of the sheet would take
+     them away from the paragraphs that explain them). These rules are therefore
+     keyed on the markup remark-gfm emits, not on `.hl-check`.
+
+     Painted, not bordered, for the reason at the top of this file — and the
+     transparent border keeps the box exactly its emitted size, so ticking an
+     item does not nudge its own label. ---------------------------------------- */
+
+  li.task-list-item > input[type="checkbox"]:not([disabled]) {
+    cursor: pointer;
+  }
+
+  li.task-list-item > input[type="checkbox"]:checked {
+    border-color: transparent;
+    background:
+      linear-gradient(var(--color-accent) 0 0) 0 0 / 100% var(--stroke-struct) no-repeat border-box,
+      linear-gradient(var(--color-accent) 0 0) 0 100% / 100% var(--stroke-struct) no-repeat border-box,
+      linear-gradient(var(--color-accent) 0 0) 0 0 / var(--stroke-struct) 100% no-repeat border-box,
+      linear-gradient(var(--color-accent) 0 0) 100% 0 / var(--stroke-struct) 100% no-repeat border-box,
+      var(--color-accent-wash);
+  }
+
+  /* Ticked text goes muted. NO strikethrough (§7.2): a struck-through line
+     reads as cancelled, and a completed check is the opposite of cancelled. */
+  li.task-list-item[data-ticked="true"] {
+    color: var(--color-ink-muted);
+    text-decoration: none;
+  }
+
+  /* =========================================================================
+     §5.10 / §12.6 — the Quick Check.
+
+     Nothing is revealed until an answer has been written. A reveal-before-
+     attempt control destroys the retrieval effect, which is the one mechanism
+     here that the evidence strongly supports — and what it reveals is the
+     sheet's own authored Summary, named as exactly that, because no model
+     answer exists anywhere in this corpus.
+     ======================================================================== */
+
+  .hl-quiz {
+    margin: 32px 0;
+    border: var(--stroke-hair) solid var(--color-line-strong);
+    background: var(--color-cleared);
+  }
+
+  .hl-quiz-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 28px;
+    padding: 4px 12px;
+    background:
+      linear-gradient(var(--color-line-strong) 0 0) 0 100% / 100% var(--stroke-hair) no-repeat,
+      transparent;
+    color: var(--color-ink-muted);
+  }
+
+  .hl-quiz-award {
+    color: var(--color-ink-faint);
+  }
+
+  .hl-quiz-body {
+    padding: 12px;
+  }
+
+  .hl-quiz-question {
+    margin: 0 0 12px;
+    font-family: var(--font-body);
+    font-size: var(--text-prose);
+    line-height: 1.7;
+    color: var(--color-ink);
+  }
+
+  .hl-quiz textarea {
+    display: block;
+    width: 100%;
+    padding: 8px 10px;
+    border: var(--stroke-hair) solid var(--color-line-strong);
+    border-radius: 0;
+    background: var(--color-sunken);
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: var(--text-ui);
+    line-height: 1.5;
+    resize: vertical;
+  }
+
+  .hl-quiz-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 12px 0 0;
+  }
+
+  /* The revealed Summary, behind a painted hairline. Labelled the sheet's own
+     summary, never "the answer". */
+  .hl-quiz-reveal {
+    margin: 12px 0 0;
+    padding: 12px 0 0;
+    background:
+      linear-gradient(var(--color-line) 0 0) 0 0 / 100% var(--stroke-hair) no-repeat,
+      transparent;
+  }
+
+  .hl-quiz-reveal-label {
+    margin: 0 0 8px;
+    color: var(--color-ink-muted);
+  }
+
+  /* Self-assessment, stated as such. No score, no grade, no stars, no
+     "Nice try", no mascot, no confetti, no sound. */
+  .hl-quiz-note {
+    margin: 12px 0 0;
+    color: var(--color-ink-muted);
+  }
+
+  /* =========================================================================
+     §12.9 — the SUBMITTAL register. The strongest evidence this system will
+     ever hold, and the only content in it a third party can check.
+     ======================================================================== */
+
+  .hl-submittal {
+    margin: 32px 0;
+  }
+
+  .hl-submittal-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 8px;
+    color: var(--color-ink-muted);
+  }
+
+  .hl-submittal-list {
+    margin: 0 0 12px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hl-submittal-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 12px;
+    border: var(--stroke-hair) solid var(--color-line-strong);
+    background: var(--color-cleared);
+  }
+
+  .hl-submittal-item + .hl-submittal-item {
+    margin-top: 6px;
+  }
+
+  /* The repository, printed as the reconstructed URL and never as the input, so
+     the label can never lie about where the link goes (§12.9.2). Full text, not
+     shortened, so it survives being printed. */
+  .hl-submittal-repo {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    color: var(--color-ink);
+    overflow-wrap: anywhere;
+  }
+
+  .hl-submittal-note {
+    margin: 4px 0 0;
+    font-family: var(--font-display);
+    font-size: var(--text-meta);
+    line-height: 1.5;
+    color: var(--color-ink-muted);
+  }
+
+  /* The commit hash, with its disclaimer never far from it: supplied by the
+     reader, not fetched and not verified by this application. */
+  .hl-submittal-commit {
+    margin: 4px 0 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    letter-spacing: 0.06em;
+    color: var(--color-ink-faint);
+  }
+
+  /* An empty register is a hairline slot with a statement, never a nag. */
+  .hl-submittal-empty {
+    padding: 10px 12px;
+    background:
+      repeating-linear-gradient(to right, var(--color-line-strong) 0 2px, transparent 2px 4px) 0 0 / 100% var(--stroke-hair) no-repeat,
+      repeating-linear-gradient(to right, var(--color-line-strong) 0 2px, transparent 2px 4px) 0 100% / 100% var(--stroke-hair) no-repeat,
+      repeating-linear-gradient(to bottom, var(--color-line-strong) 0 2px, transparent 2px 4px) 0 0 / var(--stroke-hair) 100% no-repeat,
+      repeating-linear-gradient(to bottom, var(--color-line-strong) 0 2px, transparent 2px 4px) 100% 0 / var(--stroke-hair) 100% no-repeat,
+      transparent;
+    color: var(--color-ink-faint);
+  }
+
+  .hl-submittal-form {
+    display: grid;
+    gap: 8px;
+    max-width: var(--width-prose);
+  }
+
+  /* =========================================================================
+     §12.13 — empty states. Four classes, one shape.
+
+     Three lines and no more: a status readout, a learning cue naming what will
+     occupy the space, and exactly one path out. No illustration. No mascot —
+     §8.5 forbids it waving from an empty state, and the dashboard's own empty
+     state is one unenergized cube, not a friendly one.
+     ======================================================================== */
+
+  .hl-empty {
+    display: grid;
+    gap: 8px;
+    max-width: var(--width-prose);
+    padding: 16px;
+    border: var(--stroke-hair) solid var(--color-line-strong);
+    background: var(--color-cleared);
+  }
+
+  .hl-empty-status {
+    color: var(--color-ink);
+  }
+
+  .hl-empty-cue {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-meta);
+    line-height: 1.5;
+    color: var(--color-ink-muted);
+  }
+
+  .hl-empty-path {
+    justify-self: start;
+  }
+
+  /* §12.1.7 — the durability disclosure. Note-block text, not a banner: no
+     dismiss, no icon, no caution colour. Escalating a routine architectural
+     fact to alarm styling overstates it and spends the alarm budget the erase
+     dialog needs. */
+  .hl-note {
+    max-width: var(--width-prose);
+    margin: 24px 0;
+    padding: 0 0 0 12px;
+    /* One painted structural rule down the left edge — a drawing's note block. */
+    background:
+      linear-gradient(var(--color-line-strong) 0 0) 0 0 / var(--stroke-struct) 100% no-repeat,
+      transparent;
+  }
+
+  .hl-note p {
+    margin: 0 0 4px;
+    font-family: var(--font-display);
+    font-size: var(--text-meta);
+    line-height: 1.55;
+    color: var(--color-ink-muted);
+  }
+
+  .hl-note p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* =========================================================================
+     §12.15 — the erase dialog. The one place on this site with a confirmation,
+     which is exactly why there are none anywhere else.
+     ======================================================================== */
+
+  .hl-dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    /* Paper at 72%, and NO backdrop blur — blur is the SaaS tell (§5.11). */
+    background: color-mix(in oklab, var(--color-paper) 72%, transparent);
+  }
+
+  .hl-dialog {
+    position: fixed;
+    top: 15vh;
+    left: 50%;
+    z-index: 51;
+    translate: -50% 0;
+    box-sizing: border-box;
+    width: min(560px, calc(100vw - 32px));
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 0;
+    border: var(--stroke-hair) solid var(--color-line-strong);
+    background: var(--color-cleared);
+    box-shadow: var(--shadow-pop);
+  }
+
+  .hl-dialog-head {
+    display: flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 4px 16px;
+    background:
+      linear-gradient(var(--color-line-strong) 0 0) 0 100% / 100% var(--stroke-hair) no-repeat,
+      transparent;
+    color: var(--color-ink-muted);
+  }
+
+  .hl-dialog-body {
+    padding: 16px;
+  }
+
+  .hl-dialog-title {
+    margin: 0 0 12px;
+    font-family: var(--font-display);
+    font-size: var(--text-h4);
+    line-height: 1.35;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  /* The dialog enumerates what will actually be destroyed. "Are you sure?" is
+     not a question a reader can answer; "7 sheet states, 1 name, 3 submittals"
+     is. */
+  .hl-dialog-tally {
+    margin: 0 0 12px;
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+
+  .hl-dialog-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 16px 0 0;
+  }
+
+  /* The shortcut sheet (§12.16 `?`) reuses the dialog frame and adds nothing. */
+  .hl-keys {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .hl-keys td {
+    padding: 4px 8px 4px 0;
+    color: var(--color-ink-muted);
+  }
+
+  .hl-keys td:first-child {
+    width: 96px;
+    color: var(--color-ink);
+  }
+
+  /* §12.16 — the `g` prefix is a mode, not a race, and the pending state is
+     visible so nothing depends on keystroke timing. */
+  .hl-pending {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 45;
+    padding: 4px 8px;
+    border: var(--stroke-hair) solid var(--color-line-strong);
+    background: var(--color-cleared);
+    color: var(--color-ink);
+  }
+
+  /* =========================================================================
+     §4.10 — the dashboard's single-line diagram.
+
+     Right angles with 3px corners, PCB-style. Never béziers: curves are
+     organic, and traces are engineered. The 3px corner is the only non-zero
+     radius in the entire system.
+     ======================================================================== */
+
+  .hl-diagram {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .hl-node rect {
+    fill: none;
+    stroke: var(--color-line-strong);
+    stroke-width: 1;
+  }
+
+  .hl-node text {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    fill: var(--color-ink-muted);
+  }
+
+  /* Not drawn. The dash is the primary signal and it is the same `3 2` the
+     index rows, the prev/next chain and the schedule of parts all use. */
+  .hl-node[data-state="draft"] rect {
+    stroke-dasharray: 3 2;
+  }
+
+  .hl-node[data-state="draft"] text { fill: var(--color-ink-faint); }
+
+  .hl-node[data-state="unread"] text { fill: var(--color-ink-muted); }
+
+  .hl-node[data-state="started"] rect {
+    stroke: var(--color-line-cut);
+    stroke-width: 1.5;
+  }
+
+  .hl-node[data-state="started"] text { fill: var(--color-ink); }
+
+  .hl-node[data-state="signed"] rect {
+    stroke: var(--color-accent);
+    stroke-width: 1.5;
+    fill: var(--color-accent-wash);
+  }
+
+  .hl-node[data-state="signed"] text { fill: var(--color-accent-ink); }
+
+  /* The 2px left edge that repeats the §5.8 approved vocabulary. */
+  .hl-node-edge { stroke: var(--color-accent); stroke-width: 2; }
+
+  /* A sequence rail is the band's spine, not a dependency: always drawn, never
+     energized, never accent. */
+  .hl-rail  { stroke: var(--color-line); stroke-width: 1; fill: none; }
+
+  .hl-trace { stroke: var(--color-line-strong); stroke-width: 1; fill: none; }
+
+  .hl-trace[data-live="true"] { stroke: var(--color-accent); stroke-width: 1.5; }
+
+  /* A cross-reference is a suggestion, not a dependency, so it is dashed. */
+  .hl-trace[data-kind="see-also"] {
+    stroke: var(--color-ink-faint);
+    stroke-dasharray: 3 2;
+  }
+
+  .hl-trace[data-kind="see-also"][data-live="true"] {
+    stroke: var(--color-accent);
+    stroke-width: 1;
+  }
+
+  /* §12.10.2 — one tab stop, a roving tabindex, and a focus ring drawn INSIDE
+     the SVG. The UA outline on a <g> is unreliable, and building to the AAA
+     numbers (the area of a 2px perimeter at ≥3:1 against both states) is cheap
+     here and removes the ambiguity. */
+  .hl-node:focus { outline: none; }
+
+  .hl-node:focus-visible { outline: none; }
+
+  .hl-node-focus { display: none; }
+
+  .hl-node:focus-visible .hl-node-focus {
+    display: block;
+    fill: none;
+    stroke: var(--color-focus);
+    stroke-width: 2;
+  }
+
+  .hl-diagram-title,
+  .hl-diagram-legend {
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+
+  /* §12.10.3 — the table equivalent. Always in the DOM, revealed by a labelled
+     disclosure, forced visible in print. Never `display: none` when collapsed:
+     it is the only form in which a reader can verify the dependency claims. */
+  .hl-diagram-table {
+    margin: 12px 0 0;
+  }
+
+  .hl-diagram-table summary {
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+    cursor: pointer;
+  }
+
+  /* =========================================================================
+     §12.11 — the profile sheet's sections.
+     ======================================================================== */
+
+  .hl-panel {
+    margin: 0 0 32px;
+  }
+
+  .hl-panel-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 12px;
+    padding: 0 0 4px;
+    background:
+      linear-gradient(var(--color-line-strong) 0 0) 0 100% / 100% var(--stroke-hair) no-repeat,
+      transparent;
+  }
+
+  .hl-panel-title {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+
+  /* A definition grid for machine-derived pairs — storage state, byte counts,
+     timestamps. Tabular, so a changing digit never shifts the column. */
+  .hl-defs {
+    display: grid;
+    grid-template-columns: minmax(0, 160px) minmax(0, 1fr);
+    gap: 4px 16px;
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hl-defs dt { color: var(--color-ink-muted); }
+  .hl-defs dd { margin: 0; color: var(--color-ink); }
+
+  /* The raw stored values, verbatim. The cheapest possible proof that §1's rule
+     extends all the way down to the storage layer. */
+  .hl-raw {
+    max-height: 320px;
+    margin: 8px 0 0;
+    overflow: auto;
+    padding: 8px;
+    border: var(--stroke-hair) solid var(--color-line-strong);
+    background: var(--color-sunken);
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    color: var(--color-ink-muted);
+  }
+}
+
+/* ===========================================================================
+   §12.17 — forced-colors.
+
+   Baseline since September 2022, so this is a real audience and not a
+   hypothesis. The mode overrides colour, background-color, border-color,
+   outline-color and SVG fill/stroke, forces box-shadow and text-shadow to none,
+   and forces non-URL background-image to none — which deletes the accent AND
+   every painted rule in this file, because a one-stop gradient IS a
+   background-image.
+
+   So state is re-expressed with system colour keywords, which are honoured in
+   place of the forced value. `forced-color-adjust: none` is never used: it
+   would opt out of the reader's own explicit choice. Nothing is lost, because
+   line type and text already carry every state (§12.10.4).
+   =========================================================================== */
+
+@media (forced-colors: active) {
+  .hl-btn {
+    border: 1px solid ButtonBorder;
+    background: ButtonFace;
+    color: ButtonText;
+  }
+
+  .hl-btn[aria-pressed="true"] {
+    border: 2px solid Highlight;
+    background: Canvas;
+    color: CanvasText;
+  }
+
+  .hl-btn:disabled,
+  .hl-btn[aria-disabled="true"] {
+    color: GrayText;
+    border-color: GrayText;
+  }
+
+  /* Every painted rule is gone, so the border comes back as a real border. */
+  .hl-signoff,
+  .hl-quiz,
+  .hl-empty,
+  .hl-dialog,
+  .hl-submittal-item,
+  .hl-raw {
+    border: 1px solid CanvasText;
+  }
+
+  .hl-signoff-head,
+  .hl-quiz-head,
+  .hl-dialog-head,
+  .hl-panel-head,
+  .hl-readout {
+    border-bottom: 1px solid CanvasText;
+    background: Canvas;
+  }
+
+  .hl-note {
+    border-left: 2px solid CanvasText;
+    background: Canvas;
+  }
+
+  .hl-stamp {
+    border: 1px dashed CanvasText;
+    background: Canvas;
+    color: CanvasText;
+  }
+
+  .hl-stamp[data-earned="true"] {
+    border: 2px solid Highlight;
+  }
+
+  .hl-stamp-name,
+  .hl-stamp-cond,
+  .hl-stamp[data-earned="true"] .hl-stamp-name,
+  .hl-stamp[data-earned="true"] .hl-stamp-cond {
+    color: CanvasText;
+  }
+
+  .hl-signoff-square {
+    border: 1px solid CanvasText;
+    background: Canvas;
+  }
+
+  .hl-signoff-square[data-drawn="false"] { border-style: dashed; }
+
+  .hl-signoff-square[data-signed="true"],
+  .hl-is-signed {
+    border: 2px solid Highlight;
+    background: Highlight;
+  }
+
+  .hl-uptime-tick { background: CanvasText; }
+  .hl-uptime-tick[data-active="false"] { background: GrayText; }
+
+  .hl-gauge-tick { background: GrayText; }
+  .hl-gauge-tick[data-state="approved"] { background: Highlight; }
+  .hl-gauge-tick[data-state="undrawn"] { background: GrayText; }
+
+  /* SVG fill and stroke are overridden too, so the diagram is restated
+     wholesale. The dash arrays survive — which is exactly why line type, not
+     colour, was made the primary signal. */
+  .hl-node rect { stroke: CanvasText; fill: Canvas; }
+  .hl-node text { fill: CanvasText; }
+  .hl-node[data-state="draft"] text { fill: GrayText; }
+  .hl-node[data-state="signed"] rect { stroke: Highlight; stroke-width: 2; fill: Canvas; }
+  .hl-node[data-state="signed"] text { fill: CanvasText; }
+  .hl-node-edge { stroke: Highlight; }
+  .hl-rail,
+  .hl-trace { stroke: CanvasText; }
+  .hl-trace[data-live="true"] { stroke: Highlight; stroke-width: 2; }
+  .hl-trace[data-kind="see-also"] { stroke: GrayText; }
+  .hl-node:focus-visible .hl-node-focus { stroke: Highlight; }
+
+  .hl-check input[type="checkbox"] {
+    border: 1px solid CanvasText;
+    background: Canvas;
+  }
+
+  .hl-check input[type="checkbox"]:checked,
+  li.task-list-item > input[type="checkbox"]:checked {
+    border: 2px solid Highlight;
+    background: Canvas;
+  }
+
+  .hl-check-tick { stroke: Highlight; }
+
+  .hl-dialog-backdrop { background: Canvas; }
+
+  .hl-field input { border: 1px solid CanvasText; background: Field; color: FieldText; }
+  .hl-field[data-invalid="true"] input { border: 2px solid CanvasText; }
+}
+
+/* ===========================================================================
+   §12.12.8 — print.
+
+   `size` and `margin` are the only @page descriptors any browser implements, so
+   they are the whole reliable surface. Both `break-inside` and its
+   `page-break-inside` alias ship, as free insurance.
+
+   Nothing here relies on `print-color-adjust` holding: there is no guarantee it
+   does anything, the reader can override it, and each engine decides for
+   itself. The page must be legible in pure black on white — which the
+   drawing-set identity gives for nothing, because line type and text already
+   carry every state.
+   =========================================================================== */
+
+@page {
+  size: A4;
+  margin: 14mm 12mm;
+}
+
+@media print {
+  .hl-signoff-actions,
+  .hl-submittal-form,
+  .hl-quiz-actions,
+  .hl-dialog-actions,
+  .hl-pending,
+  .hl-empty-path,
+  .hl-no-print {
+    display: none !important;
+  }
+
+  .hl-signoff,
+  .hl-quiz,
+  .hl-panel,
+  .hl-submittal-item,
+  .hl-stamp,
+  .hl-empty {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* The table equivalent of the diagram is forced open: on paper the SVG cannot
+     be explored, so the table is the only readable form of the graph. */
+  .hl-diagram-table[open],
+  .hl-diagram-table {
+    display: block;
+  }
+
+  .hl-diagram-table > *:not(summary) {
+    display: block !important;
+  }
+
+  /* An unbounded height would push the diagram onto its own page and leave the
+     preceding one two-thirds empty. */
+  .hl-diagram {
+    max-height: 160mm;
+  }
+
+  .hl-raw {
+    max-height: none;
+    overflow: visible;
+  }
+}

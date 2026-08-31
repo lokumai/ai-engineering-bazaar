@@ -1,6 +1,12 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Prose } from '@/components/course/Prose'
+import { CheckedBy, SheetStamps } from '@/components/record/CheckedBy'
+import { QuickCheck } from '@/components/record/QuickCheck'
+import { SignOff } from '@/components/record/SignOff'
+import { ChecklistIsland } from '@/components/record/ChecklistIsland'
+import { SourceTracking } from '@/components/record/SourceTracking'
+import { Submittal } from '@/components/record/Submittal'
 import { ContentsDrawer } from '@/components/sheet/ContentsDrawer'
 import type { DependencyRelation, SheetLink } from '@/components/sheet/DependencyBlock'
 import { Objectives } from '@/components/sheet/Objectives'
@@ -17,12 +23,16 @@ import {
   sheetCount,
   sheetPath,
 } from '@/lib/content/curriculum'
+import { signOffCriteria } from '@/lib/content/criteria'
 import { moduleGraph } from '@/lib/content/edges'
+import { curriculumFacts } from '@/lib/content/facts'
 import { imageBaseFor } from '@/lib/content/images'
 import { type CourseModule, loadAllModules, loadModule } from '@/lib/content/loader'
+import { quickCheckOf, summarySection } from '@/lib/content/quickcheck'
 import { renderMarkdown } from '@/lib/content/render'
 import { scheduleOfParts, summarySentence } from '@/lib/content/schedule'
 import {
+  carriesCheckedBy,
   eyebrow,
   sheetFacts,
   sheetLabel,
@@ -44,9 +54,18 @@ import {
  * A0; on seventeen of the thirty-two sheets it is the design.
  *
  * Every number the page prints — extent, figures, sources, revision, language,
- * position, the size of the set — is derived (§11.25). Nothing on this page is
- * a claim about the reader (§1): the spine tracks scroll, not completion, and
- * the stamp slots that would carry reader state are absent rather than empty.
+ * position, the size of the set — is derived (§11.25). The spine still tracks
+ * scroll and not completion; §12 adds the surfaces that do carry reader state,
+ * and every one of them is an island under §12.2's two-channel rule: the server
+ * renders the honest empty form — `SIGN OFF` unpressed, `CHECKED BY —`, an
+ * empty answer, every stamp slot at zero against its real threshold — and the
+ * record fills it in after the hydration commit. Nothing here reads storage
+ * during render, and nothing claims a state the build could not know.
+ *
+ * **A draft sheet gets none of it** (§12.4.1): no sign-off control, no Quick
+ * Check, no submittal register, no `CHECKED BY` row, no stamp slots. It awards
+ * nothing and cannot be signed, and that is what keeps every denominator on the
+ * site honest.
  */
 
 interface RouteParams {
@@ -130,6 +149,43 @@ export default async function ModuleSheetPage({
   const format = sheet.sheetFormat
   const drawn = format !== 'A4'
 
+  // §12.4.1 — the criteria the reader is asserting against, which are the
+  // sheet's own declared objectives plus one sentence naming who is asserting.
+  const criteria = drawn ? signOffCriteria(slug) : null
+
+  // §12.6 trap 2 — the component keys on the extractor returning non-null,
+  // never on `status === 'ready'`. That all 15 drawn sheets happen to ask
+  // something is a measurement of the corpus today, not a rule.
+  const quickCheck = drawn ? quickCheckOf(sheet.body) : null
+  const summaryMarkdown = quickCheck === null ? null : summarySection(sheet.body)
+  // §12.6 item 3 — the sheet's own authored `## Summary`, rendered by the same
+  // pipeline as the prose so it is typeset as prose. Deliberately WITHOUT the
+  // sheet number: a summary that one day carries a table would then be numbered
+  // `TBL. 1` in its own sequence rather than colliding with the prose's
+  // `TBL. 13.1`, and two figures with one number is the lie to avoid. The
+  // extractor has already removed the question from it, so the reader's own
+  // answer is never printed above the question again.
+  const summaryHtml =
+    summaryMarkdown === null
+      ? null
+      : (
+          await renderMarkdown(summaryMarkdown, {
+            imageBase: imageBaseFor(sheet.category.slug),
+          })
+        ).html
+
+  // §7.4 — which stamp slots this sheet has is a fact about the corpus, so it
+  // is measured here; how full they are is reader state and is filled in by the
+  // island (§12.2). One sheet's facts, not the whole set's: `sheetStamps` reads
+  // nothing else, and serialising 32 sheets into every page to look one of them
+  // up would be payload for nothing.
+  const stampFact = drawn
+    ? (curriculumFacts().sheets.find((entry) => entry.slug === slug) ?? null)
+    : null
+
+  // §12.3.1 — absent on a draft: a sheet nobody has drawn cannot be checked.
+  const checkedBy = carriesCheckedBy(facts) ? <CheckedBy slug={slug} /> : null
+
   // A4 sheets render no prose: §4.5's body is one sentence and a schedule, and
   // the markdown holds nothing else once the h1, the dek, the placeholder note
   // and the deleted progress rail are accounted for.
@@ -184,10 +240,24 @@ export default async function ModuleSheetPage({
               right rail leaves behind below 1280px (§4.7). */}
           <TitleStrip
             rows={titleStripRows(facts)}
+            checkedBy={checkedBy}
             className={format === 'A0' ? 'xl:hidden' : undefined}
           />
 
           <Objectives items={sheet.frontmatter.objectives} />
+
+          {/* §12.4.1 — ABOVE the content, beside the stated criteria. A
+              completion switch a reader meets after scrolling past everything
+              is a switch about a thing they have already left, which is why
+              Moodle moved both to the top of the activity. */}
+          {criteria !== null && (
+            <SignOff
+              slug={slug}
+              criteria={criteria}
+              revision={sheet.revision?.hash ?? null}
+              drawn={drawn}
+            />
+          )}
 
           {drawn && rendered ? (
             <Prose html={rendered.html} />
@@ -198,12 +268,43 @@ export default async function ModuleSheetPage({
             </>
           )}
 
+          {/* §12.6 — the retrieval attempt, and the sheet's own summary as the
+              one authored thing that stands in for the model answer this corpus
+              does not contain. */}
+          {quickCheck !== null && (
+            <QuickCheck
+              slug={slug}
+              question={quickCheck.question}
+              summaryHtml={summaryHtml}
+            />
+          )}
+
+          {/* §12.9.1 — at the end of every ready sheet, before `PrevNext`. The
+              only content in the whole record a third party can check. */}
+          {drawn && <Submittal slug={slug} />}
+
           <PrevNext previous={target(previous)} next={target(next)} />
+
+          {/* §12.8 — one delegated listener for the whole document, mounted
+              once. Evidence, not currency: no XP, no click counting. */}
+          {drawn && <SourceTracking slug={slug} />}
+          {/* §12.7 — the checklist is upgraded where it already stands, inside
+              the section that explains it, rather than lifted out and stacked
+              below the prose. Mounted only where there is one: one sheet in the
+              corpus has items, and an island that finds nothing is a wasted
+              mount on the other fourteen. */}
+          {drawn && rendered !== null && rendered.checklist.length > 0 && (
+            <ChecklistIsland slug={slug} />
+          )}
         </div>
 
         {format === 'A0' && (
           <div className="hl-rail-right">
-            <TitleBlock rows={titleBlockRows(facts)} />
+            <TitleBlock
+              rows={titleBlockRows(facts)}
+              checkedBy={checkedBy}
+              stamps={stampFact === null ? null : <SheetStamps slug={slug} fact={stampFact} />}
+            />
           </div>
         )}
       </div>

@@ -3,7 +3,7 @@ import path from 'node:path'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { Lkm01 } from '@/components/mascot/Lkm01'
-import { EDGES, FACES, SUGAR } from '@/components/mascot/geometry'
+import { FACES, SUGAR, type Lkm01Progress } from '@/components/mascot/geometry'
 
 const MASCOT_SRC = path.resolve(process.cwd(), 'src', 'components', 'mascot')
 
@@ -20,17 +20,29 @@ function tagsOf(markup: string, tag: string): Array<Record<string, string>> {
   return out
 }
 
-function edge(markup: string, id: string): Record<string, string> {
-  const found = tagsOf(markup, 'path').find((a) => a['data-edge'] === id)
-  if (!found) throw new Error(`no edge ${id} in the rendered mark`)
+function facesOf(markup: string): Array<Record<string, string>> {
+  return tagsOf(markup, 'path').filter((a) => a['data-face'])
+}
+
+function face(markup: string, id: string): Record<string, string> {
+  const found = facesOf(markup).find((a) => a['data-face'] === id)
+  if (!found) throw new Error(`no face ${id} in the rendered mark`)
   return found
 }
 
-/** The four edges that bound F1 TOP — the Fundamentals face. */
-const F1_EDGES = ['T-R', 'C-R', 'C-L', 'L-T']
+/** A reading in which every one of the six subsystems is finished. */
+const ALL_COMPLETE: Lkm01Progress = Object.fromEntries(
+  FACES.map((f) => [f.category, { approved: 1, total: 1 }]),
+)
+
+/** One subsystem under way, four undrawn, one finished. */
+const MIXED: Lkm01Progress = {
+  fundamentals: { approved: 3, total: 7 },
+  protocols: { approved: 1, total: 1 },
+}
 
 describe('Lkm01 — the mark itself', () => {
-  const markup = renderToStaticMarkup(<Lkm01 progress={0} />)
+  const markup = renderToStaticMarkup(<Lkm01 />)
 
   it('draws on the 0 0 32 32 viewBox at the §8.3 header size', () => {
     const svg = tagsOf(markup, 'svg')[0]
@@ -39,178 +51,147 @@ describe('Lkm01 — the mark itself', () => {
     expect(svg.height).toBe('28')
   })
 
-  it('names its state for a screen reader, in the §8.3 form', () => {
-    const svg = tagsOf(
-      renderToStaticMarkup(<Lkm01 progress={{ fundamentals: { approved: 1, total: 7 } }} />),
-      'svg',
-    )[0]
-    expect(svg.role).toBe('img')
-    expect(svg['aria-label']).toBe('Progress: 1 of 6 subsystems started')
-  })
-
-  it('claims no progress reading when there is no progress store (§1)', () => {
-    // `progress={0}` means "nothing can record an approval yet", not "this
-    // reader has approved nothing". Announcing an empty progress record would
-    // tell a screen-reader user about a feature the site does not have, so the
-    // untracked mark paints and stays out of the accessibility tree — the same
-    // resolution §7.2 reaches for the inert task lists.
-    const svg = tagsOf(markup, 'svg')[0]
-    expect(svg['aria-hidden']).toBe('true')
-    expect(svg.role).toBeUndefined()
-    expect(svg['aria-label']).toBeUndefined()
-    expect(markup).not.toContain('Progress:')
-  })
-
-  it('draws all twelve edges of the cube', () => {
-    const drawn = tagsOf(markup, 'path')
-      .filter((a) => a['data-edge'])
-      .map((a) => a['data-edge'])
-    expect(new Set(drawn)).toEqual(new Set(EDGES.map((e) => e.id)))
-  })
-
   it('scales to any size on the same geometry', () => {
-    const svg = tagsOf(renderToStaticMarkup(<Lkm01 progress={0} size={96} />), 'svg')[0]
+    const svg = tagsOf(renderToStaticMarkup(<Lkm01 size={96} />), 'svg')[0]
     expect(svg.width).toBe('96')
     expect(svg.viewBox).toBe('0 0 32 32')
   })
+
+  it('draws all six faces, each named for the subsystem it meters', () => {
+    const drawn = facesOf(markup)
+    expect(drawn).toHaveLength(FACES.length)
+    for (const f of FACES) expect(face(markup, f.id)['data-cat'], f.id).toBe(f.category)
+    expect(face(markup, 'F1').d).toBe(FACES[0].path)
+  })
 })
 
-describe('face states — §8.2', () => {
-  const dormant = renderToStaticMarkup(<Lkm01 progress={0} />)
-  const started = renderToStaticMarkup(
-    <Lkm01 progress={{ fundamentals: { approved: 1, total: 7 } }} />,
-  )
-  const complete = renderToStaticMarkup(
-    <Lkm01 progress={{ fundamentals: { approved: 7, total: 7 } }} />,
-  )
+/**
+ * §12.2 — the whole guarantee of this slice's highest-risk change.
+ *
+ * The mark is channel A: the pre-paint boot script stamps `<html>` and
+ * `record.css` draws the faces. If the markup varied with the reading, the
+ * prerendered header and the hydrated header would disagree structurally, and
+ * React 19 answers that by discarding and re-rendering the subtree — a logged
+ * recoverable error and a visible repaint of the header on every load.
+ */
+describe('state independence — §12.2', () => {
+  it('emits byte-identical markup for no reading and for a finished set', () => {
+    const empty = renderToStaticMarkup(<Lkm01 progress={0} />)
+    const full = renderToStaticMarkup(<Lkm01 progress={ALL_COMPLETE} />)
+    const mixed = renderToStaticMarkup(<Lkm01 progress={MIXED} />)
+    const omitted = renderToStaticMarkup(<Lkm01 />)
 
-  it('renders three genuinely different drawings', () => {
-    expect(new Set([dormant, started, complete]).size).toBe(3)
+    expect(full).toBe(empty)
+    expect(mixed).toBe(empty)
+    expect(omitted).toBe(empty)
   })
 
-  it('draws a dormant face as a hairline in the decorative line weight', () => {
-    for (const id of F1_EDGES) {
-      expect(edge(dormant, id)['data-state'], id).toBe('dormant')
-      expect(edge(dormant, id).stroke, id).toBe('var(--color-line)')
-      expect(edge(dormant, id)['stroke-width'], id).toBe('var(--stroke-hair)')
+  it('is aria-hidden in every state, and names no progress to anybody', () => {
+    for (const progress of [0, MIXED, ALL_COMPLETE] as Lkm01Progress[]) {
+      const markup = renderToStaticMarkup(<Lkm01 progress={progress} />)
+      const svg = tagsOf(markup, 'svg')[0]
+      expect(svg['aria-hidden']).toBe('true')
+      expect(svg.role).toBeUndefined()
+      expect(svg['aria-label']).toBeUndefined()
+      expect(markup).not.toContain('Progress:')
     }
   })
 
-  it('inks a started face at the structural weight', () => {
-    for (const id of F1_EDGES) {
-      expect(edge(started, id)['data-state'], id).toBe('started')
-      expect(edge(started, id).stroke, id).toBe('var(--color-ink)')
-      expect(edge(started, id)['stroke-width'], id).toBe('var(--stroke-struct)')
+  it('leaves both hatch patterns in place whatever the reader has signed off', () => {
+    for (const progress of [0, ALL_COMPLETE] as Lkm01Progress[]) {
+      const markup = renderToStaticMarkup(<Lkm01 progress={progress} />)
+      expect(tagsOf(markup, 'pattern')).toHaveLength(2)
+      expect(tagsOf(markup, 'path').filter((a) => a['data-hatch'])).toHaveLength(6)
     }
   })
 
-  it('energizes a complete face in the annotation pen', () => {
-    for (const id of F1_EDGES) {
-      expect(edge(complete, id)['data-state'], id).toBe('complete')
-      expect(edge(complete, id).stroke, id).toBe('var(--color-accent)')
-      expect(edge(complete, id)['stroke-width'], id).toBe('var(--stroke-struct)')
+  it('carries no state on the faces — every weight and colour is CSS (§12.2)', () => {
+    for (const drawn of facesOf(renderToStaticMarkup(<Lkm01 progress={ALL_COMPLETE} />))) {
+      expect(drawn.class).toBe('hl-face')
+      expect(drawn.stroke, drawn['data-face']).toBeUndefined()
+      expect(drawn['stroke-width'], drawn['data-face']).toBeUndefined()
+      expect(drawn.fill, drawn['data-face']).toBe('none')
     }
   })
 
-  it('leaves the other five faces exactly where they were', () => {
-    // R-Rp bounds F3 and F5 — neither of which Fundamentals touches.
-    expect(edge(started, 'R-Rp')['data-state']).toBe('dormant')
-    expect(edge(complete, 'R-Rp')['data-state']).toBe('dormant')
+  it('hands every face and every hatch to record.css by class and category', () => {
+    const markup = renderToStaticMarkup(<Lkm01 />)
+    for (const f of FACES) {
+      const hatch = tagsOf(markup, 'path').find((a) => a['data-hatch'] === f.id)
+      expect(hatch?.class, f.id).toBe('hl-face-hatch')
+      expect(hatch?.['data-cat'], f.id).toBe(f.category)
+    }
+  })
+})
+
+describe('line types — §8.1, §8.2', () => {
+  const markup = renderToStaticMarkup(<Lkm01 />)
+
+  it('paints the hidden faces first, so a solid edge is never overdrawn dashed', () => {
+    // Every hexagon edge divides a visible face from a hidden one, so painting
+    // the visible three last is what keeps the silhouette solid in every state.
+    expect(facesOf(markup).map((a) => a['data-face'])).toEqual(['F4', 'F5', 'F6', 'F1', 'F2', 'F3'])
   })
 
-  it('gives a shared edge the higher of its two faces', () => {
-    // C-L bounds F1 (complete) and F2 (dormant): the annotation pen wins.
-    const mixed = renderToStaticMarkup(
-      <Lkm01 progress={{ fundamentals: { approved: 7, total: 7 } }} />,
-    )
-    expect(edge(mixed, 'C-L')['data-state']).toBe('complete')
-  })
-
-  it('never changes an edge from solid to dashed, in any state', () => {
-    const hidden = EDGES.filter((e) => e.kind === 'hidden-y').map((e) => e.id)
-    for (const markup of [dormant, started, complete]) {
-      for (const e of EDGES) {
-        const dash = edge(markup, e.id)['stroke-dasharray']
-        expect(dash, e.id).toBe(hidden.includes(e.id) ? '2 2' : undefined)
+  it('keeps a visible face solid and a hidden face dashed, in every state', () => {
+    for (const progress of [0, MIXED, ALL_COMPLETE] as Lkm01Progress[]) {
+      const drawing = renderToStaticMarkup(<Lkm01 progress={progress} />)
+      for (const f of FACES) {
+        const dash = face(drawing, f.id)['stroke-dasharray']
+        expect(dash, f.id).toBe(f.visible ? undefined : '2 2')
       }
-    }
-  })
-
-  it('fills nothing until a category is finished', () => {
-    for (const markup of [dormant, started]) {
-      expect(markup).not.toContain('<pattern')
-      expect(markup).not.toContain('url(#')
     }
   })
 })
 
 describe('hatching — §8.2', () => {
-  const complete = renderToStaticMarkup(
-    <Lkm01 progress={{ fundamentals: { approved: 7, total: 7 } }} />,
-  )
+  const markup = renderToStaticMarkup(<Lkm01 />)
 
-  it('hatches the completed face at 88% in the annotation pen', () => {
-    const f1 = FACES.find((f) => f.id === 'F1')!
-    const face = tagsOf(complete, 'path').find((a) => a['data-face'] === 'F1')!
-    expect(face.d).toBe(f1.path)
-    expect(face.fill).toMatch(/^url\(#/)
-    expect(face['fill-opacity']).toBe('0.88')
+  it('fills each face from the pattern its visibility calls for, at 88%', () => {
+    for (const f of FACES) {
+      const hatch = tagsOf(markup, 'path').find((a) => a['data-hatch'] === f.id)!
+      expect(hatch.d, f.id).toBe(f.path)
+      expect(hatch.fill, f.id).toMatch(f.visible ? /-hatch-visible\)$/ : /-hatch-hidden\)$/)
+      expect(hatch['fill-opacity'], f.id).toBe('0.88')
+    }
   })
 
-  it('hatches only the faces that are finished', () => {
-    const hatched = tagsOf(complete, 'path').filter((a) => a['data-face'])
-    expect(hatched.map((a) => a['data-face'])).toEqual(['F1'])
+  it('opposes the two directions, +45° visible and −45° hidden', () => {
+    expect(tagsOf(markup, 'pattern').map((p) => p.patternTransform))
+      .toEqual(['rotate(45)', 'rotate(-45)'])
   })
 
-  it('lays a visible face at +45°, pitch 3, stroke 0.5 at header size', () => {
-    const pattern = tagsOf(complete, 'pattern')[0]
+  it('lays pitch 3, stroke 0.5 at header size', () => {
+    const pattern = tagsOf(markup, 'pattern')[0]
     expect(pattern.patternUnits).toBe('userSpaceOnUse')
-    expect(pattern.patternTransform).toBe('rotate(45)')
     expect(pattern.width).toBe('3')
     expect(pattern.height).toBe('3')
-    expect(tagsOf(complete, 'line')[0]['stroke-width']).toBe('0.5')
+    expect(tagsOf(markup, 'line')[0]['stroke-width']).toBe('0.5')
   })
 
   it('opens the pitch to 4 and the stroke to 0.75 above 32px', () => {
-    const big = renderToStaticMarkup(
-      <Lkm01 progress={{ fundamentals: { approved: 7, total: 7 } }} size={96} />,
-    )
+    const big = renderToStaticMarkup(<Lkm01 size={96} />)
     expect(tagsOf(big, 'pattern')[0].width).toBe('4')
     expect(tagsOf(big, 'line')[0]['stroke-width']).toBe('0.75')
   })
 
-  it('opposes the hatch direction on a hidden face', () => {
-    const back = renderToStaticMarkup(
-      <Lkm01 progress={{ protocols: { approved: 1, total: 1 } }} />,
-    )
-    const pattern = tagsOf(back, 'pattern')[0]
-    expect(pattern.patternTransform).toBe('rotate(-45)')
-    // F5 BACK-RIGHT is hidden geometry: its own Y edges stay dashed while lit.
-    expect(edge(back, 'C-T')['data-state']).toBe('complete')
-    expect(edge(back, 'C-T')['stroke-dasharray']).toBe('2 2')
-  })
-
-  it('crosshatches the overlaps once the whole set is approved', () => {
-    const all = Object.fromEntries(
-      FACES.map((f) => [f.category, { approved: 1, total: 1 }]),
-    )
-    const full = renderToStaticMarkup(<Lkm01 progress={all} />)
-    const directions = tagsOf(full, 'pattern').map((p) => p.patternTransform)
-    expect(new Set(directions)).toEqual(new Set(['rotate(45)', 'rotate(-45)']))
-    expect(tagsOf(full, 'path').filter((a) => a['data-face'])).toHaveLength(6)
-  })
-
   it('scopes its pattern ids so two marks on one page cannot collide', () => {
-    const other = renderToStaticMarkup(
-      <Lkm01 progress={{ fundamentals: { approved: 7, total: 7 } }} idPrefix="stamp" />,
-    )
+    const other = renderToStaticMarkup(<Lkm01 idPrefix="stamp" />)
     expect(tagsOf(other, 'pattern')[0].id).toContain('stamp')
-    expect(tagsOf(other, 'pattern')[0].id).not.toBe(tagsOf(complete, 'pattern')[0].id)
+    expect(tagsOf(other, 'pattern')[0].id).not.toBe(tagsOf(markup, 'pattern')[0].id)
+  })
+
+  it('scopes them by size too, because the pitch answers to the size', () => {
+    // The 28px header mark and the 96px dashboard mark sit on one page in
+    // §8.3's own table; with one id between them every reference would resolve
+    // to whichever pattern came first.
+    const big = renderToStaticMarkup(<Lkm01 size={96} />)
+    expect(tagsOf(big, 'pattern')[0].id).not.toBe(tagsOf(markup, 'pattern')[0].id)
   })
 })
 
 describe('powdered sugar — §8.1', () => {
-  const markup = renderToStaticMarkup(<Lkm01 progress={0} />)
+  const markup = renderToStaticMarkup(<Lkm01 />)
 
   it('stipples seven decorative dots on the top face', () => {
     const dots = tagsOf(markup, 'circle')
@@ -227,10 +208,8 @@ describe('powdered sugar — §8.1', () => {
 })
 
 describe('re-theming', () => {
-  it('paints every stroke and fill through a custom property, so a theme switch costs 0ms', () => {
-    const markup = renderToStaticMarkup(
-      <Lkm01 progress={{ fundamentals: { approved: 7, total: 7 } }} size={96} />,
-    )
+  it('paints every colour through a custom property, so a theme switch costs 0ms', () => {
+    const markup = renderToStaticMarkup(<Lkm01 size={96} />)
     const painted = [
       ...tagsOf(markup, 'path'),
       ...tagsOf(markup, 'circle'),
@@ -247,12 +226,10 @@ describe('re-theming', () => {
   })
 
   it('renders no hex colour at any progress state', () => {
-    const states = [
-      renderToStaticMarkup(<Lkm01 progress={0} />),
-      renderToStaticMarkup(<Lkm01 progress={{ fundamentals: { approved: 1, total: 7 } }} />),
-      renderToStaticMarkup(<Lkm01 progress={{ fundamentals: { approved: 7, total: 7 } }} />),
-    ]
-    for (const markup of states) expect(markup).not.toMatch(HEX)
+    const states = [0, MIXED, ALL_COMPLETE] as Lkm01Progress[]
+    for (const progress of states) {
+      expect(renderToStaticMarkup(<Lkm01 progress={progress} />)).not.toMatch(HEX)
+    }
   })
 
   it('carries no hex colour anywhere in the component source', () => {

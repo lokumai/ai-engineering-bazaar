@@ -99,10 +99,15 @@
 
   .hl-index {
     width: 100%;
-    /* The sum of the column widths, with 240px for the flexible one. Below
-       this the table scrolls rather than crushing a sheet title into three
-       words a line. */
-    min-width: 988px;
+    /* The sum of the column widths, with 240px for the flexible one — nine of
+       them since §12.18 (48 / 240 / 168 / 152 / 88 / 80 / 116 / 72 / 96).
+       Below this the table scrolls rather than crushing a sheet title into
+       three words a line. It is a HAND-COMPUTED sum against
+       `table-layout: fixed`, so it moves in the same commit as `columnsFor`:
+       add a column without raising it and the flexible column is crushed
+       instead of the table scrolling, which breaks §6.5's overflow contract
+       and §11.10's promise that the page body never scrolls sideways. */
+    min-width: 1060px;
     table-layout: fixed;
     border-collapse: collapse;
     /* Tables are data, not argument: condensed sans, never serif (§11.18). */
@@ -263,6 +268,28 @@
      dashed and the cell already reads NOT DRAWN. */
   .hl-row[data-draft] .hl-row-status {
     color: var(--color-caution-ink);
+  }
+
+  /* -- §4.8 column 9 — the SIGN-OFF cell --------------------------------- */
+
+  /* The squares themselves are record.css's: it owns every mark the record
+     draws, in one place, so that a mark cannot mean one thing on a sheet and
+     another in the manifest. What belongs here is the cell that holds them.
+
+     This is the one column whose cells do not take §5.3's `14px` inline
+     padding. §12.18 sets the table's `min-width` at 1060px and 1060 − 988 is
+     72px, so 72px is what this column costs; four 14px squares with
+     record.css's 4px gaps are 68px wide, and `SIGN-OFF` at `text-micro` 600
+     `+0.07em` is close to the same, while §5.3's padding would leave 44px for
+     both. The choice is 2px of padding or a wrapped header and a fourth square
+     outside its cell.
+
+     `.hl-row > …` and `.hl-index .…` because `.hl-row > :is(td, th)` and
+     `.hl-index thead th` are more specific than a bare class (`:is()` takes
+     the specificity of its most specific argument). */
+  .hl-index .hl-index-signoff,
+  .hl-row > .hl-row-signoff {
+    padding-inline: 2px;
   }
 
   /* -- §4.8 item 5 — the filter chips ------------------------------------ */

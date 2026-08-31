@@ -1,19 +1,30 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
+import { SIGN_OFF_SELECTORS, SignOffMarks } from '@/components/record/SignOffMarks'
 import { CategoryBlock } from '@/components/sheet/CategoryBlock'
 import { ModuleRow } from '@/components/sheet/ModuleRow'
+import { NoMatch, SheetFilters } from '@/components/sheet/SheetFilters'
 import { SheetIndex } from '@/components/sheet/SheetIndex'
 import { TickGauge } from '@/components/sheet/TickGauge'
 import type { SheetRow } from '@/lib/content/rows'
+import { sheetStamps, type CurriculumFacts } from '@/lib/record/derive'
+import { EMPTY_RECORD } from '@/lib/record/schema'
 
 /**
  * §5.3, §5.4, §7.5 — the three components the two listing pages are built
- * from, and the table that holds them.
+ * from, the table that holds them, and §4.8's ninth column.
+ *
+ * Every assertion here is on the SERVER markup, which for anything the record
+ * touches is the honest empty first frame (§12.2, §12.14.2): unsigned squares,
+ * `ALL` active, thirty-two rows. Real storage, a real click and the island's
+ * repaint are Playwright's, in a real browser.
  */
 
 const DRAWN: SheetRow = {
   module: 13,
   number: '13',
+  slug: 'intermediate/security',
+  slots: ['SIGN-OFF', 'QUIZ', 'CHECKLIST', 'SOURCES'],
   title: 'Security',
   path: '/courses/intermediate/security/',
   drawn: true,
@@ -30,6 +41,9 @@ const DRAWN: SheetRow = {
 const DASHED: SheetRow = {
   module: 17,
   number: '17',
+  slug: 'expert/advanced-architectures',
+  // A sheet nobody has drawn supplies no slot at all (§11.28, §5.9).
+  slots: [],
   title: 'Advanced Architectures',
   path: '/courses/expert/advanced-architectures/',
   drawn: false,
@@ -93,8 +107,46 @@ describe('ModuleRow — the index row (§5.3)', () => {
     expect(topics).not.toContain('Expert')
   })
 
-  it('claims nothing about the reader: no sign-off, no completion, no score', () => {
-    expect(drawn).not.toMatch(/complete|approved|sign-off|progress|xp/i)
+  it('draws the sign-off squares this sheet supplies, and only those (§5.9)', () => {
+    expect(drawn.match(/hl-signoff-square/g)).toHaveLength(4)
+    for (const slot of ['SIGN-OFF', 'QUIZ', 'CHECKLIST', 'SOURCES']) {
+      expect(drawn).toContain(`data-hl-slot="${slot}"`)
+      expect(drawn).toContain(`title="${slot}"`)
+    }
+  })
+
+  it('draws every square unsigned: the build has met no reader (§12.2)', () => {
+    expect(drawn.match(/data-signed="false"/g)).toHaveLength(4)
+    expect(drawn).not.toContain('data-signed="true"')
+  })
+
+  it('names the sheet by slug for the island, never by number (§12.1.3)', () => {
+    expect(drawn).toContain('data-hl-signoff-cell="intermediate/security"')
+    expect(drawn).not.toContain('data-hl-signoff-cell="13"')
+    // §12.16's `s` shortcut clicks `[data-hl-signoff]` — the sheet's sign-off
+    // CONTROL. There is no control in this cell, so it must not answer that
+    // selector; an attribute selector matches a whole attribute name.
+    expect(drawn).not.toMatch(/data-hl-signoff=/)
+  })
+
+  it('draws an undrawn sheet one hidden-line square and no slug to look up', () => {
+    expect(dashed.match(/hl-signoff-square/g)).toHaveLength(1)
+    expect(dashed).toContain('data-drawn="false"')
+    expect(dashed).not.toContain('data-hl-signoff-cell')
+    expect(dashed).not.toContain('data-hl-slot')
+  })
+
+  it('puts no control in the sign-off cell: the row stays one tab stop (§10.3)', () => {
+    // `.hl-row-link::after` covers the row with `inset: 0`, so a control here
+    // would be unclickable and would add a second tab stop.
+    expect(drawn.match(/<a /g)).toHaveLength(1)
+    expect(drawn).not.toContain('<button')
+    expect(drawn).not.toContain('<input')
+    expect(drawn).not.toContain('tabindex')
+  })
+
+  it('claims no reader state the build cannot know: no score, no percentage', () => {
+    expect(drawn).not.toMatch(/complete|approved|progress|xp|%/i)
   })
 })
 
@@ -109,7 +161,10 @@ describe('SheetIndex — the manifest table (§4.8 item 4)', () => {
     // Authored in sentence case and uppercased in CSS (§3.2): a screen
     // reader spells out a word written in capitals.
     expect(headers).toEqual([
-      '#', 'Sheet', 'Subsystem', 'Extent', 'Sources', 'Lang', 'Status', 'Requires',
+      '#', 'Sheet', 'Subsystem', 'Extent', 'Sources', 'Lang', 'Status',
+      // §12.18's ninth column, where §4.8 puts it: after STATUS. REQUIRES is
+      // the column this implementation added, so it is the one at the end.
+      'Sign-off', 'Requires',
     ])
   })
 
@@ -218,5 +273,120 @@ describe('CategoryBlock — the subsystem block (§5.4)', () => {
   it('says its coverage in words, not in the gauge alone (§10.4)', () => {
     expect(live).toContain('aria-label="2 sheets, 2 drawn"')
     expect(undrawn).toContain('aria-label="2 sheets, 0 drawn"')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// §4.8 item 5 / §12.13 / §12.18 — the chips, and the island behind column 9
+// ---------------------------------------------------------------------------
+
+const FACTS: CurriculumFacts = {
+  sheets: [
+    {
+      slug: 'intermediate/security',
+      module: 13,
+      category: 'intermediate',
+      drawn: true,
+      hasQuickCheck: true,
+      checklistItems: 8,
+      sources: 23,
+    },
+    {
+      slug: 'expert/advanced-architectures',
+      module: 17,
+      category: 'expert',
+      drawn: false,
+      hasQuickCheck: false,
+      checklistItems: 0,
+      sources: 0,
+    },
+  ],
+  categories: [
+    { slug: 'intermediate', total: 1 },
+    { slug: 'expert', total: 1 },
+  ],
+  traces: 0,
+}
+
+describe('SheetFilters — the chip row (§4.8 item 5, §12.18)', () => {
+  const markup = renderToStaticMarkup(
+    <SheetFilters rows={[DRAWN, DASHED]} label="The drawing set" />,
+  )
+
+  it('offers §4.8\'s four chips and §12.18\'s two, in that order', () => {
+    const labels = [...markup.matchAll(/hl-chip"[^>]*>([^<]*)</g)].map((m) => m[1])
+    expect(labels).toEqual([
+      'ALL', 'READY', 'NOT DRAWN', 'EN · TR', 'SIGNED OFF', 'UNSIGNED',
+    ])
+  })
+
+  it('opens with ALL active, and with every row rendered (§12.2)', () => {
+    expect(markup.match(/aria-pressed="true"/g)).toHaveLength(1)
+    expect(markup).toMatch(/aria-pressed="true"[^>]*>ALL</)
+    // Two rows and the header row: the prerender narrows nothing, because a
+    // reader-state filter active on load would change the row count between
+    // the server render and the first client render.
+    expect(markup.match(/<tr/g)).toHaveLength(3)
+  })
+
+  it('announces the count itself in a live region (SC 4.1.3, §12.13)', () => {
+    expect(markup).toContain('role="status"')
+    expect(markup).not.toContain('aria-live')
+    expect(markup).toMatch(/Showing <span[^>]*>2<\/span> of <span[^>]*>2<\/span>/)
+  })
+
+  it('renders the whole set with no record to read', () => {
+    expect(markup).toContain('Security')
+    expect(markup).toContain('Advanced Architectures')
+    expect(markup).not.toContain('NO SHEETS MATCH FILTER')
+  })
+})
+
+describe('NoMatch — §12.13 class 3', () => {
+  const markup = renderToStaticMarkup(<NoMatch total={32} onClear={() => {}} />)
+
+  it('states the count and offers exactly one path out', () => {
+    expect(markup).toContain('NO SHEETS MATCH FILTER — 0 of 32')
+    expect(markup).toContain('Clear the filter')
+    expect(markup.match(/<button/g)).toHaveLength(1)
+    expect(markup).not.toContain('<a ')
+  })
+
+  it('carries no illustration and no mascot (§8.5)', () => {
+    expect(markup).not.toContain('<svg')
+    expect(markup).not.toContain('<img')
+  })
+
+  it('does not disable or hide anything to say it (§12.13)', () => {
+    expect(markup).not.toContain('disabled')
+    expect(markup).not.toContain('hidden')
+  })
+})
+
+describe('SignOffMarks — the island that fills column 9 (§12.2)', () => {
+  it('adds nothing to the served HTML: the squares are already drawn', () => {
+    expect(renderToStaticMarkup(<SignOffMarks facts={FACTS} />)).toBe('')
+  })
+
+  it('looks for the markers ModuleRow actually emits', () => {
+    const row = renderToStaticMarkup(<ModuleRow row={DRAWN} column="subsystem" />)
+
+    expect(SIGN_OFF_SELECTORS.CELLS).toBe('[data-hl-signoff-cell]')
+    expect(SIGN_OFF_SELECTORS.SQUARES).toBe('[data-hl-slot]')
+    expect(SIGN_OFF_SELECTORS.SIGNED).toBe('data-signed')
+    expect(row).toContain('data-hl-signoff-cell=')
+    expect(row).toContain('data-hl-slot=')
+    expect(row).toContain('data-signed="false"')
+  })
+
+  it('asks sheetStamps for the same slots the row drew, so neither invents one', () => {
+    // The row's `slots` come from `sheetStamps` at build time and the island
+    // reads the same function at run time; this pins the two together.
+    expect(DRAWN.slots).toEqual(
+      sheetStamps(EMPTY_RECORD, FACTS, DRAWN.slug).map((stamp) => stamp.id),
+    )
+    expect(DASHED.slots).toEqual(
+      sheetStamps(EMPTY_RECORD, FACTS, DASHED.slug).map((stamp) => stamp.id),
+    )
   })
 })

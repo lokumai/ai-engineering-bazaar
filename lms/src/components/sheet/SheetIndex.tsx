@@ -14,11 +14,14 @@ import { ModuleRow, type RowColumn } from './ModuleRow'
  * already does with every wide table on the site and what §10.3 asks for — the
  * page body never scrolls horizontally (§11.10).
  *
- * §4.8's ninth column, `SIGN-OFF`, is absent rather than empty. Its four
- * stamp squares are sign-off state, a stamp states a live count (§5.9), and
- * there is no reader state in this slice to count: thirty-two rows of four
- * squares that can never fill would be exactly the claim §1's second question
- * forbids. The title block makes the same refusal for the same reason (§5.5).
+ * §4.8's ninth column, `SIGN-OFF`, is here now that there is a record for it to
+ * read: `ModuleRow` draws the squares in the unsigned state and one island fills
+ * them after mount (§12.2, §12.18). It carries no interactive control, which is
+ * a consequence of the stretched row link rather than a shortcut — see
+ * `SignOffSquares`.
+ *
+ * It sits where §4.8 puts it, after `STATUS`. `REQUIRES` is the column this
+ * implementation added to §4.8's eight, so it is the one that stays at the end.
  */
 
 interface Column {
@@ -26,6 +29,8 @@ interface Column {
   label: string
   /** §4.8's width, in px. `null` is the one column that takes what is left. */
   width: number | null
+  /** Set only where a column needs a cell rule of its own (see `signoff`). */
+  className?: string
 }
 
 /**
@@ -52,6 +57,15 @@ interface Column {
  * values and the padding is §5.3's — so the columns take the room they need
  * (152, 116, 80) out of the flexible one, which still has 404px for a 29
  * character title. Every other width here is §4.8's, unchanged.
+ *
+ * `SIGN-OFF` is 72px, not §4.8's 96: §12.18 sets the table's `min-width` at
+ * 1060px, that constant is the hand-computed sum of these widths with 240px for
+ * the flexible one, and 1060 − 988 is what the ninth column may cost. The two
+ * numbers have to move together or `table-layout: fixed` crushes the flexible
+ * column instead of scrolling the table, which is §6.5's contract and §11.10's
+ * promise that the page body never scrolls sideways. 72px is enough: four 14px
+ * squares with record.css's 4px gaps are 68px wide, and the cells give up
+ * §5.3's inline padding to hold them (`.hl-row-signoff` in manifest.css).
  */
 function columnsFor(column: RowColumn): Column[] {
   const topics = column === 'topics'
@@ -68,6 +82,12 @@ function columnsFor(column: RowColumn): Column[] {
     { key: 'sources', label: 'Sources', width: 88 },
     { key: 'lang', label: 'Lang', width: 80 },
     { key: 'status', label: 'Status', width: 116 },
+    {
+      key: 'signoff',
+      label: 'Sign-off',
+      width: 72,
+      className: 'hl-index-signoff',
+    },
     { key: 'requires', label: 'Requires', width: 96 },
   ]
 }
@@ -93,7 +113,7 @@ export function SheetIndex({
       tabIndex={0}
       aria-label={label}
       // §6.5's overflow fade, measured by `Affordances` in the shell. At 390px
-      // this table is 988px wide in a 350px box and four of its columns are
+      // this table is 1060px wide in a 350px box and five of its columns are
       // off-screen; without the cue nothing says so.
       data-hl-scroller=""
     >
@@ -110,7 +130,7 @@ export function SheetIndex({
         <thead>
           <tr>
             {columns.map((col) => (
-              <th key={col.key} scope="col">
+              <th key={col.key} scope="col" className={col.className}>
                 {col.label}
               </th>
             ))}

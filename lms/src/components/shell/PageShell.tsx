@@ -1,3 +1,5 @@
+import { Readout } from '@/components/record/Readout'
+import { curriculumFacts } from '@/lib/content/facts'
 import { RegistrationMarks } from './RegistrationMarks'
 import { type Revision, SiteFooter } from './SiteFooter'
 
@@ -14,6 +16,14 @@ import { type Revision, SiteFooter } from './SiteFooter'
  * Both parts are here together on purpose. A page that forgets the shell loses
  * its `<main>` as well as its footer, which `accessibility.spec.ts` fails
  * loudly on (§10.2); losing only the footer would be silent.
+ *
+ * **The compact readout is measured here, not passed in** (§5.2, §7.1). This is
+ * a server component, so it may read the corpus: `curriculumFacts()` reaches
+ * `node:fs`, which is exactly why no client leaf may import it (§12.2), and the
+ * counts cross into `Readout` as serialised props. Every page gets the readout
+ * without knowing it exists, which is what §7.1 asks for — the compact form
+ * lives in the footer on every page — and it is why none of the four routes
+ * that render this shell had to change.
  */
 export function PageShell({
   children,
@@ -26,6 +36,8 @@ export function PageShell({
   /** §5.2, §11.26 — this file's last-touching commit, never repo HEAD. */
   revision?: Revision | null
 }) {
+  const facts = curriculumFacts()
+
   return (
     <>
       {/* §10.2 — the skip link's target. `tabIndex={-1}` so the fragment can
@@ -41,7 +53,11 @@ export function PageShell({
         <RegistrationMarks edge="bottom" className="mt-16" />
       </main>
 
-      <SiteFooter sheet={sheet} revision={revision} />
+      <SiteFooter
+        sheet={sheet}
+        revision={revision}
+        readout={<Readout variant="compact" facts={facts} />}
+      />
     </>
   )
 }

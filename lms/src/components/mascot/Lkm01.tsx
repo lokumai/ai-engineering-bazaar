@@ -1,17 +1,11 @@
 import {
-  EDGES,
   FACES,
   HIDDEN_DASH,
   SUGAR,
   SUGAR_R,
   VIEW_BOX,
-  byState,
-  edgeStateOf,
-  faceStatesFor,
   hatchSpec,
-  isTracked,
-  progressLabel,
-  type FaceState,
+  type Face,
   type HatchSpec,
   type Lkm01Progress,
 } from './geometry'
@@ -26,43 +20,66 @@ import {
  * faces at once, the other three are drawn as hidden geometry — correct ISO 128
  * practice, and the reason all six read simultaneously.
  *
- * Every stroke and fill is a `var(--…)` token, never a hex value: a theme
- * switch is a custom-property swap and costs 0ms (§9.2). It animates never, at
- * any size, in any variant (§9.1), and it has no voice (§8.5).
+ * **The markup is state-INDEPENDENT, and that is required rather than merely
+ * nicer (§12.2).** A static export prerenders this header once, for every
+ * reader, so reader state can only arrive on one of two channels. This mark is
+ * channel A: the pre-paint boot script (`lib/record/boot.ts`) stamps
+ * `hl-cat-<slug>-started` / `-complete` on `<html>`, and the twelve rules in
+ * `record.css` draw the faces from it. Zero React, zero hydration, correct in
+ * frame one.
  *
- * Where §8.1 and §8.2 meet, §8.2 governs. §8.1 fixes the geometry, the line
- * types and the reference rendering; §8.2 is explicit that a face's weight and
- * colour answer to its state while its solid/dashed treatment never changes.
- * So the ink named in §8.1 is what the cube looks like once a subsystem is
- * under way, and an untouched cube is the same drawing at hairline weight —
- * the "unenergized" cube §8.3 asks for on the empty state.
+ * What that buys, precisely. The earlier version re-sorted `EDGES` by state and
+ * emitted `<defs>` only when some face was complete, so its child list depended
+ * on state; React 19 answers a *structural* hydration mismatch by discarding
+ * and re-rendering the subtree, which is a logged recoverable error and a
+ * visible repaint of the header on every single load. So both hatch patterns
+ * are always in `<defs>`, the faces are always all six, and their order is
+ * fixed.
  *
- * **The name it takes depends on whether it has a state to report.** Given a
- * real reading it is `role="img"` named in §8.3's form, so nothing is lost to a
- * reader who cannot see it (§10.4). Given `0` there is no progress store to
- * read, every face is dormant for that reason alone, and the mark conveys
- * nothing a reader could act on — so it paints and carries `aria-hidden`,
- * rather than telling assistive technology about an empty progress record the
- * site cannot keep. That is the same resolution §7.2 reaches for the inert task
- * lists: an element that cannot yet back its state still draws, it just stops
- * announcing itself. §1 forbids the alternative, and the header already applies
- * it by withholding the search trigger and the language toggle.
+ * **The order is by visibility, not by state, and it carries §8.2's one
+ * invariant.** An edge belongs to two faces; the three hidden faces are painted
+ * first and the three visible ones over them, so every hexagon edge — each of
+ * which divides a visible face from a hidden one — ends up drawn by its visible
+ * face and stays solid, while the hidden Y, whose two faces are both behind the
+ * cube, keeps its `2 2` dashes. That is §8.1's line types in every state, which
+ * is what §8.2 fixes. What it gives up is the old arbitration where a shared
+ * edge took the *higher* of its two faces' states: with state in CSS there is
+ * no expression that can compare two faces, and the hatch fill — not a 1px
+ * shared edge at 28px — is what actually reports a completed subsystem.
+ *
+ * **It is `aria-hidden` in every state (§12.2, §12.18).** An accessible name
+ * that flips between the prerender and the hydrated render is itself a
+ * mismatch, and §10.4 forbids an island being the sole carrier of anything: the
+ * readout (§7.1) prints the same facts as real text, so nothing is lost.
+ *
+ * Every stroke and fill is a `var(--…)` token or comes from `record.css`, never
+ * a hex value: a theme switch is a custom-property swap and costs 0ms (§9.2).
+ * It animates never, at any size, in any variant (§9.1), and it has no voice
+ * (§8.5).
  */
 
-/** §8.2 — the three face states, and the two things that answer to them. */
-const EDGE_INK: Record<FaceState, { stroke: string; width: string }> = {
-  dormant: { stroke: 'var(--color-line)', width: 'var(--stroke-hair)' },
-  started: { stroke: 'var(--color-ink)', width: 'var(--stroke-struct)' },
-  complete: { stroke: 'var(--color-accent)', width: 'var(--stroke-struct)' },
-}
+/**
+ * §8.2's line types, laid down hidden-first. Fixed at module scope so it is
+ * plainly a property of the geometry rather than something a render decides.
+ */
+const PAINT_ORDER: readonly Face[] = [
+  ...FACES.filter((face) => !face.visible),
+  ...FACES.filter((face) => face.visible),
+]
 
 export interface Lkm01Props {
   /**
-   * Approved sheets per category, or `0` for a reader with none. The mark
-   * claims nothing this value does not say (§1): four of six categories
-   * contain no drawn sheets today and read as dormant for that reason alone.
+   * Retained for the callers §8.3 names — the 96px dashboard empty state and
+   * the header mark — and deliberately not drawn from.
+   *
+   * Face state moved to channel A when §12.2 made this markup
+   * state-independent, so nothing here reads this value: the same six faces are
+   * emitted for every progress reading, and `record.css` decides what each one
+   * looks like from the classes the boot script stamped. A caller that has a
+   * reading and wants it drawn has already got it — the stamp is on `<html>`
+   * before this component renders.
    */
-  progress: Lkm01Progress
+  progress?: Lkm01Progress
   /** Rendered size in px. §8.3: 28 in the header, 96 on the dashboard. */
   size?: number
   /** Scopes the hatch pattern ids when a page carries more than one mark. */
@@ -70,64 +87,67 @@ export interface Lkm01Props {
   className?: string
 }
 
-export function Lkm01({ progress, size = 28, idPrefix = 'lkm01', className }: Lkm01Props) {
-  const states = faceStatesFor(progress)
+export function Lkm01({ size = 28, idPrefix = 'lkm01', className }: Lkm01Props) {
   const hatch = hatchSpec(size)
-  const tracked = isTracked(progress)
-
-  const approved = FACES.filter((face) => states[face.id] === 'complete')
-  const hatchVisible = approved.some((face) => face.visible)
-  const hatchHidden = approved.some((face) => !face.visible)
-  const hatchId = (visible: boolean) => `${idPrefix}-hatch-${visible ? 'visible' : 'hidden'}`
-
-  // Ascending by state, so where a dormant edge meets an energized one the
-  // energized stroke is laid last and owns the vertex.
-  const edges = EDGES.map((edge) => ({ edge, state: edgeStateOf(states, edge) }))
-    .sort((a, b) => byState(a.state, b.state))
+  /**
+   * The size is in the id as well as the prefix. §8.2 opens the hatch pitch
+   * above 32px, so a page holding the 28px header mark and a 96px mark would
+   * otherwise have two `<pattern id="lkm01-hatch-visible">` in one document and
+   * every reference would resolve to whichever came first.
+   */
+  const hatchId = (visible: boolean) =>
+    `${idPrefix}-${size}-hatch-${visible ? 'visible' : 'hidden'}`
 
   return (
     <svg
       width={size}
       height={size}
       viewBox={VIEW_BOX}
-      {...(tracked
-        ? { role: 'img' as const, 'aria-label': progressLabel(states) }
-        : { 'aria-hidden': true })}
+      aria-hidden="true"
+      focusable="false"
       className={className}
     >
-      {(hatchVisible || hatchHidden) && (
-        <defs>
-          {/*
-            §8.2 — 45° hairline section hatching, opposed between visible and
-            hidden faces. That is real drafting practice for adjacent sectioned
-            parts, it keeps the overlapping projection regions legible, and it
-            is why a fully approved set crosshatches where the faces overlap.
-          */}
-          {hatchVisible && <Hatch id={hatchId(true)} angle={45} spec={hatch} />}
-          {hatchHidden && <Hatch id={hatchId(false)} angle={-45} spec={hatch} />}
-        </defs>
-      )}
+      {/*
+        §8.2 — 45° hairline section hatching, opposed between visible and
+        hidden faces. That is real drafting practice for adjacent sectioned
+        parts, it keeps the overlapping projection regions legible, and it is
+        why a fully approved set crosshatches where the faces overlap. Both
+        patterns are emitted whatever the reader has signed off: an unused
+        `<pattern>` paints nothing, and a conditional one paints a hydration
+        mismatch (§12.2).
+      */}
+      <defs>
+        <Hatch id={hatchId(true)} angle={45} spec={hatch} />
+        <Hatch id={hatchId(false)} angle={-45} spec={hatch} />
+      </defs>
 
-      {approved.map((face) => (
+      {/* The fills, under the outlines. `.hl-face-hatch` is `display: none`
+          until the subsystem's every sheet is signed off. */}
+      {PAINT_ORDER.map((face) => (
         <path
-          key={face.id}
-          data-face={face.id}
+          key={`hatch-${face.id}`}
+          className="hl-face-hatch"
+          data-cat={face.category}
+          data-hatch={face.id}
           d={face.path}
           fill={`url(#${hatchId(face.visible)})`}
           fillOpacity={0.88}
         />
       ))}
 
-      {edges.map(({ edge, state }) => (
+      {/* The outlines. No `stroke` and no `stroke-width` here on purpose: those
+          are the state, and the state is channel A's (§12.2). `fill="none"` is
+          not — an SVG path fills black by default, and the mark must not be six
+          black rhombi in the frame before a stylesheet arrives. */}
+      {PAINT_ORDER.map((face) => (
         <path
-          key={edge.id}
-          data-edge={edge.id}
-          data-state={state}
-          d={edge.path}
+          key={face.id}
+          className="hl-face"
+          data-cat={face.category}
+          data-face={face.id}
+          d={face.path}
           fill="none"
-          stroke={EDGE_INK[state].stroke}
-          strokeWidth={EDGE_INK[state].width}
-          strokeDasharray={edge.kind === 'hidden-y' ? HIDDEN_DASH : undefined}
+          strokeDasharray={face.visible ? undefined : HIDDEN_DASH}
         />
       ))}
 

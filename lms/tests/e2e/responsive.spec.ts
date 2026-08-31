@@ -43,7 +43,7 @@ const PAGES = [
  * horizontal scroller.
  *
  * That exclusion is the design, not a let-off. §4.7 says wide content scrolls
- * *inside its own container*, so a 988px table inside an `overflow-x: auto`
+ * *inside its own container*, so a 1060px table inside an `overflow-x: auto`
  * region is the rule being kept; the same table with no such ancestor is the
  * rule being broken. `the widest table scrolls inside its own container`
  * below asserts the other half, that those containers really are scrolling.
@@ -175,7 +175,7 @@ test('the manifest table scrolls inside its region rather than the page', async 
  * `scrollWidth > clientWidth` and removed at the right end".
  *
  * It used to be scoped to `[data-hl-prose]`, which left out the two scrollers
- * that need it most: the index sheet's 988px manifest table, which is the
+ * that need it most: the index sheet's 1060px manifest table, which is the
  * site's primary navigation surface and sits outside the prose column, and
  * every code block, which §6.7 gives `overflow-x: auto` and no cue at all. At
  * 390px that meant four columns of the manifest and half of every code fence
@@ -229,7 +229,13 @@ test('every control reaches the §10.4 touch floor below 768px', async ({ page }
   // than the painted one.
   const controls = await page
     .locator('.hl-code-copy, .hl-cap-action, .hl-icon-btn, .hl-button')
-    .evaluateAll((nodes) => nodes.map((node) => {
+    // A control the reader cannot reach has no floor to meet. §12 added a
+    // `Keyboard shortcuts` trigger that is `display: none` below 768px — a
+    // table of keystrokes is a control for a device with keys — and an
+    // undisplayed element's pseudo has no used width, so measuring it yields
+    // `auto` and then `NaN`. Filter first, and assert below that something
+    // survived, so this can never become a scan of nothing.
+    .evaluateAll((nodes) => nodes.filter((node) => node.checkVisibility()).map((node) => {
       const hit = getComputedStyle(node, '::after')
       const painted = node.getBoundingClientRect()
       return {

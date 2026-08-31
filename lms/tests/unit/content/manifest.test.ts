@@ -92,17 +92,26 @@ describe('sheetRows — one row per sheet in the set (§4.8)', () => {
 })
 
 describe('the filter chips (§4.8 item 5)', () => {
-  it('offers exactly the four the spec names, in its order', () => {
+  it('offers §4.8\'s four names in its order, then §12.18\'s two', () => {
     expect(FILTERS.map((filter) => filter.label))
-      .toEqual(['ALL', 'READY', 'NOT DRAWN', 'EN · TR'])
+      .toEqual(['ALL', 'READY', 'NOT DRAWN', 'EN · TR', 'SIGNED OFF', 'UNSIGNED'])
   })
 
-  it('selects on facts about the sheet, never on reader state', () => {
+  it('selects on facts about the sheet, or says it does not (§12.2)', () => {
     expect(applyFilter(rows, 'all')).toHaveLength(32)
     expect(applyFilter(rows, 'ready')).toHaveLength(15)
     expect(applyFilter(rows, 'not-drawn')).toHaveLength(17)
     // §7.6: the seven sheets whose Turkish is a real translation.
     expect(applyFilter(rows, 'bilingual')).toHaveLength(7)
+    // §12.18's two chips select on the record, and say so in `basis`. With no
+    // record — the server, and the first client render — they narrow nothing
+    // and everything respectively, which is what keeps `ALL` the only chip
+    // that may be active on load (§12.2).
+    for (const id of ['signed', 'unsigned']) {
+      expect(FILTERS.find((filter) => filter.id === id)?.basis).toBe('record')
+    }
+    expect(applyFilter(rows, 'signed')).toHaveLength(0)
+    expect(applyFilter(rows, 'unsigned')).toHaveLength(32)
   })
 
   it('keeps the set in sheet order — filtering never re-sorts', () => {

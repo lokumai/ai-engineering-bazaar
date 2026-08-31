@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
+import { SignOffMarks } from '@/components/record/SignOffMarks'
 import { CategoryBlock } from '@/components/sheet/CategoryBlock'
 import { SheetIndex } from '@/components/sheet/SheetIndex'
 import { PageShell } from '@/components/shell/PageShell'
 import { ticksFrom } from '@/components/sheet/TickGauge'
+import { curriculumFacts } from '@/lib/content/facts'
 import {
   categoryRows,
   coverageLabel,
@@ -31,6 +33,11 @@ export const metadata: Metadata = {
  * It is also where the six subsystem pages are reached from, and where the
  * shape of the set is legible at a glance: two bands solid, four bands dashed
  * from end to end.
+ *
+ * This page renders `SheetIndex` server-only — no filter chips, so no client
+ * component above it — which is precisely why the ninth column's squares are
+ * filled by one document-level island and not by a hook inside the table
+ * (§12.2). A hook there would work on `/` and fail this page's static export.
  */
 export default function DrawingSetPage() {
   return (
@@ -75,6 +82,9 @@ export default function DrawingSetPage() {
           </section>
         )
       })}
+
+      {/* §12.2 — one island for all six tables on the page. */}
+      <SignOffMarks facts={curriculumFacts()} />
     </PageShell>
   )
 }

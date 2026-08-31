@@ -8,6 +8,9 @@
 @import "./manifest.css";
 /* §6.10 B5 — the figure EXPAND overlay, which Radix portals outside .prose. */
 @import "./figure.css";
+/* §12 — every surface that carries reader state: sign-off, identity, the
+   readout, the stamps, the diagram, the empty states, forced-colors, print. */
+@import "./record.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 

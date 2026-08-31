@@ -151,6 +151,34 @@ export function titleBlockRows(facts: SheetFacts): TitleBlockRow[] {
   ]
 }
 
+/**
+ * §12.3.1 — the thirteenth row. **The reader takes `CHECKED BY`.**
+ *
+ * A title block carries `DRAWN BY` and `CHECKED BY`; `DRAWN BY  LKM-01` stays
+ * exactly as §8.5 requires, and the other field is the reader's. This is not a
+ * metaphor stretched to fit: the reader's entire activity on this site is
+ * approving sheets, and §7.4 already puts reader state in the title block as
+ * the stamp grid.
+ *
+ * It is **not** a thirteenth entry in `titleBlockRows`, and that is a type
+ * decision rather than a stylistic one. Every row there is a `string` measured
+ * from the file, the frontmatter or git; who is reading is none of those and
+ * cannot be known at build time (§12.2). So the row's value arrives as a
+ * component — `CheckedBy`, on channel B — and what this module owns is the two
+ * halves of it that ARE build-time facts: the label, and whether the row exists
+ * at all.
+ *
+ * A draft sheet has **no such row** (§12.3.1) — absent, not `—`: a sheet nobody
+ * has drawn cannot be checked, and it has no sign-off control to produce a
+ * checker with either (§12.4.1).
+ */
+export const CHECKED_BY_LABEL = 'CHECKED BY'
+
+/** §12.3.1 — whether this sheet carries the `CHECKED BY` row at all. */
+export function carriesCheckedBy(facts: SheetFacts): boolean {
+  return facts.status === 'ready'
+}
+
 /** The six rows §4.5 item 4 gives a draft sheet's strip, in its order. */
 const DRAFT_STRIP = ['EXTENT', 'FIGURES', 'SOURCES', 'REQUIRES', 'LANG', 'REVISION']
 

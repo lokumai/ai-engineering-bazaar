@@ -174,6 +174,29 @@ export function countSources(body: string): number {
   return new Set(externalLinks(body)).size
 }
 
+/**
+ * §12.8 — the same links, deduped, in first-appearance order.
+ *
+ * `externalLinks` returns *occurrences* (397 corpus-wide) where the `SOURCES`
+ * count and the reader's `sources` record hold *distinct* URLs (209). A UI
+ * listing the occurrences beside the header's number looks broken on any sheet
+ * that cites a URL twice, so the list a reader is shown and the number beside
+ * it are derived here from one function rather than two.
+ *
+ * It delegates rather than re-scanning. A regex-based scraper disagrees with
+ * the rendered page on sheets 10, 11 and 15 — a `curl https://…` inside a
+ * ```bash fence and a bare host inside backticks are text about a URL, not
+ * links a reader can open — which is what `externalLinks`'s own tests pin.
+ *
+ * First-appearance order, because §12.8 reprints the list as "the actual
+ * reading surface of the curriculum" and document order is the only ordering
+ * the sheet itself asserts. `Set` preserves insertion order, so this is that
+ * order and not an alphabetical rearrangement of it.
+ */
+export function distinctExternalLinks(body: string): string[] {
+  return [...new Set(externalLinks(body))]
+}
+
 /** §7.6 — the rule, in one line, with no division by zero. */
 export function langFromExtents(en: number, tr: number): Lang {
   if (en <= 0 || tr <= 0) return 'EN'

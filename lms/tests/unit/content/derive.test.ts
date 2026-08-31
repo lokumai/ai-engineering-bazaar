@@ -12,6 +12,7 @@ import {
   countImages,
   countSources,
   countTables,
+  distinctExternalLinks,
   extent,
   externalLinks,
   langCoverage,
@@ -269,6 +270,76 @@ describe('externalLinks / countSources', () => {
     expect(countSources(body(10))).toBe(30)
     expect(countSources(body(11))).toBe(15)
     expect(countSources(body(15))).toBe(16)
+  })
+})
+
+describe('distinctExternalLinks', () => {
+  it('keeps one entry per URL, in first-appearance order', () => {
+    const md = '[a](https://b.example) [b](https://a.example) [c](https://b.example)'
+    expect(distinctExternalLinks(md)).toEqual(['https://b.example', 'https://a.example'])
+  })
+
+  it('is empty where the body cites nothing openable', () => {
+    expect(distinctExternalLinks('[a](../1_fundamentals/1_llms.md) [b](#section)')).toEqual([])
+  })
+
+  it('sees exactly what `externalLinks` sees, and nothing a scraper would add', () => {
+    // §12.8 forbids a second URL scraper. Delegating is what keeps the list
+    // and the printed count answering the same question: a `curl` target in a
+    // fence and a host in backticks are in neither.
+    const md = 'Run `curl https://a.example`\n\n```bash\ncurl https://b.example\n```\n\n'
+      + '[c](https://c.example) and https://c.example again.'
+    expect(distinctExternalLinks(md)).toEqual(['https://c.example'])
+  })
+
+  it('is the occurrence list with the repeats removed, on every sheet', () => {
+    for (const m of modules) {
+      expect(distinctExternalLinks(m.body), m.slug).toEqual([...new Set(externalLinks(m.body))])
+      expect(distinctExternalLinks(m.body).length, m.slug)
+        .toBeLessThanOrEqual(externalLinks(m.body).length)
+    }
+  })
+
+  it('agrees with `countSources` sheet by sheet', () => {
+    // §12.8: the list a reader is shown and the number beside it must dedupe
+    // identically, or the sheet contradicts itself.
+    for (const m of modules) {
+      expect(distinctExternalLinks(m.body).length, m.slug).toBe(countSources(m.body))
+      expect(distinctExternalLinks(m.body).length, m.slug).toBe(m.sources)
+    }
+  })
+
+  it('reproduces the 209 distinct sources, and the three sheets that quoted URLs', () => {
+    const total = modules.reduce((sum, m) => sum + distinctExternalLinks(m.body).length, 0)
+    expect(total).toBe(209)
+    expect(distinctExternalLinks(body(10))).toHaveLength(30)
+    expect(distinctExternalLinks(body(11))).toHaveLength(15)
+    expect(distinctExternalLinks(body(15))).toHaveLength(16)
+  })
+
+  it('lists 397 occurrences but 209 sources across the corpus', () => {
+    // The gap is the point: 188 repeat citations. §12.8 records that a UI
+    // listing occurrences beside the header count looks wrong on any sheet
+    // that cites a URL twice.
+    const occurrences = modules.reduce((sum, m) => sum + externalLinks(m.body).length, 0)
+    const distinct = modules.reduce((sum, m) => sum + distinctExternalLinks(m.body).length, 0)
+    expect({ occurrences, distinct }).toEqual({ occurrences: 397, distinct: 209 })
+  })
+
+  it('cites nothing at all on any of the seventeen undrawn sheets', () => {
+    for (const n of numbers((n) => n >= 16)) {
+      expect(distinctExternalLinks(body(n)), `module ${n}`).toEqual([])
+    }
+  })
+
+  it('returns absolute http(s) URLs only, ready to print in full', () => {
+    // §12.12.2 prints the full URL so it survives print; nothing here may be
+    // a fragment or a relative path.
+    for (const m of modules) {
+      for (const url of distinctExternalLinks(m.body)) {
+        expect(url, `${m.slug}: ${url}`).toMatch(/^https?:\/\/\S+$/)
+      }
+    }
   })
 })
 

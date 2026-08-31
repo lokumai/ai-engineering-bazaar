@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Prose } from '@/components/course/Prose'
+import { SignOffMarks } from '@/components/record/SignOffMarks'
 import { SheetIndex } from '@/components/sheet/SheetIndex'
 import { TickGauge, ticksFrom } from '@/components/sheet/TickGauge'
 import { PageShell } from '@/components/shell/PageShell'
 import { CATEGORIES, categoryBySlug } from '@/lib/content/categories'
+import { curriculumFacts } from '@/lib/content/facts'
 import { categoryIntro } from '@/lib/content/intro'
 import { categoryEyebrow, categoryRows } from '@/lib/content/manifest'
 import { renderMarkdown } from '@/lib/content/render'
@@ -78,6 +80,10 @@ export default async function CategoryPage({
         column="topics"
         label={`${category.title}, ${plural(rows.length, 'sheet')}`}
       />
+
+      {/* §12.2 — the table above is server-only here, so the ninth column's
+          squares are filled by this one island after mount. */}
+      <SignOffMarks facts={curriculumFacts()} />
 
       {notes && (
         <section className="hl-notes" aria-labelledby="general-notes">

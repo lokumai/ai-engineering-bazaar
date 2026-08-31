@@ -102,7 +102,7 @@ test('the header tab order runs left to right and stops at the repo link', async
   await page.goto(A0.path)
 
   const order: string[] = []
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < 16; i++) {
     await page.keyboard.press('Tab')
     const focused = await focusDescription(page)
     if (!focused) break
@@ -344,17 +344,36 @@ test('a data table of three or more columns announces its rows (§10.2)', async 
   }
 })
 
-test('inert task-list checkboxes stay out of the tree (§7.7)', async ({ page }) => {
+test('task-list checkboxes are real, named, and persist (§12.7)', async ({ page }) => {
   await page.goto(A0.path)
 
-  // The site tracks no per-item state, so these are decoration. They still
-  // paint; they just no longer announce themselves as eight nameless
-  // checkboxes down a twelve-item checklist.
+  // Until §12.7 there was no per-item state to hold, so these boxes were
+  // decoration: painted, `disabled`, and `aria-hidden` precisely so they did
+  // not announce themselves as eight nameless checkboxes down a checklist.
+  // `ChecklistIsland` upgrades them after mount, and a real control has to be
+  // in the tree and has to have a name.
   const boxes = page.locator('li.task-list-item > input[type="checkbox"]')
   expect(await boxes.count()).toBeGreaterThan(0)
   await expect(boxes.first()).toBeVisible()
-  await expect(page.getByRole('checkbox')).toHaveCount(0)
+  await expect(boxes.first()).toBeEnabled()
+
+  // §6.4's problem, now solved rather than avoided: the item's text is a
+  // SIBLING of the box, so it contributes nothing to the accessible name and
+  // the island has to supply one.
+  const named = page.getByRole('checkbox')
+  expect(await named.count()).toBe(await boxes.count())
+  for (const box of await named.all()) {
+    const name = await box.getAttribute('aria-label')
+    expect((name ?? '').trim().length).toBeGreaterThan(4)
+  }
 
   // The item text is the content and is untouched.
   await expect(page.locator('li.task-list-item').first()).toHaveText(/\S/)
+
+  // And a tick survives a reload, which is the whole point of persisting it.
+  await named.first().check()
+  await expect(page.locator('li.task-list-item').first())
+    .toHaveAttribute('data-ticked', 'true')
+  await page.reload()
+  await expect(page.getByRole('checkbox').first()).toBeChecked()
 })

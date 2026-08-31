@@ -4,11 +4,24 @@
  * donut (§11.35). Five of eight ticks tells you something; a 63%-full pill
  * does not.
  *
- * Today every tick is either `drawn` or `not-drawn`, because those are facts
- * about the drawing set. `approved` is a fact about a reader and there is no
- * reader state in this slice, so nothing on this site emits it yet — the state
- * exists here because §7.5 gives the gauge three states and the accent is what
- * the third one means (T1), not because anything currently claims it.
+ * **Hook-free, and it has to stay that way.** This renders inside `SheetIndex`
+ * and `CategoryBlock`, and those run in two regimes at once: `SheetFilters` is
+ * `'use client'` and imports `SheetIndex`, so on `/` this component is already
+ * in the browser, while `/courses/` and `/courses/[category]/` render the
+ * identical components **server-only**. A hook added here works on `/` and
+ * fails the static export of the other two (§12.2, "where hooks may not go").
+ *
+ * So the third state arrives as data, never as a subscription. `approved` is a
+ * fact about a reader, and the callers that know one — the dashboard's band
+ * headers, inside `Diagram`'s client island — pass it in. The listing pages,
+ * which are prerendered once for everybody, pass `drawn` and `not-drawn`, which
+ * are facts about the drawing set and true in every frame.
+ *
+ * Each tick also carries `data-state`, so the state is in the markup and not
+ * only in a fill: it is what a Playwright assertion reads, what a channel-A
+ * rule can select on if the sign-off marks ever move to CSS, and the reason the
+ * gauge is not a colour-only signal (§12.10.4). The not-drawn tick keeps the
+ * ISO 128 `3 2` dash as its primary carrier either way.
  */
 
 export type TickState = 'approved' | 'drawn' | 'not-drawn'
@@ -19,9 +32,26 @@ const GAP = 3
 const HEIGHT = 12
 const PITCH = TICK + GAP
 
-/** The one mapping the listing pages need, kept where the states live. */
-export function ticksFrom(rows: readonly { drawn: boolean }[]): TickState[] {
-  return rows.map((row) => (row.drawn ? 'drawn' : 'not-drawn'))
+/** The strip's width at a given tick count. Exported so no caller re-derives it. */
+export function gaugeWidth(count: number): number {
+  return count <= 0 ? 0 : count * PITCH - GAP
+}
+
+/**
+ * The one mapping the listing pages need, kept where the states live.
+ *
+ * `approved` is optional and absent on `SheetRow`, so the listing pages get the
+ * two-state gauge they had; a caller holding reader state sets it and gets the
+ * third. §7.5's accent means "signed off" and nothing else (T1), so a row that
+ * does not know cannot claim it.
+ */
+export function ticksFrom(
+  rows: readonly { drawn: boolean; approved?: boolean }[],
+): TickState[] {
+  return rows.map((row) => {
+    if (row.approved === true) return 'approved'
+    return row.drawn ? 'drawn' : 'not-drawn'
+  })
 }
 
 export function TickGauge({
@@ -40,7 +70,7 @@ export function TickGauge({
 }) {
   if (ticks.length === 0) return null
 
-  const width = ticks.length * PITCH - GAP
+  const width = gaugeWidth(ticks.length)
 
   return (
     <svg
@@ -59,6 +89,7 @@ export function TickGauge({
           // 1px, dashed 3 2 — a hairline, never an empty box.
           <line
             key={i}
+            data-state={tick}
             x1={i * PITCH + TICK / 2}
             y1={0}
             x2={i * PITCH + TICK / 2}
@@ -70,6 +101,7 @@ export function TickGauge({
         ) : (
           <rect
             key={i}
+            data-state={tick}
             x={i * PITCH}
             y={0}
             width={TICK}

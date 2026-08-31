@@ -42,6 +42,46 @@ Both are built from the same commit and shipped in a single GitHub Pages
 artifact by `.github/workflows/deploy.yml`, with the LMS at the root and the
 docs site under `legacy/`.
 
+## Your record lives in your browser
+
+The LMS keeps a learner record — which sheets you have signed off, your answers
+to the quick checks, the primary sources you opened, the checklists you ran, and
+the GitHub repositories you register against each module. All of it is in
+`localStorage` on your own device. There are no accounts, no server and no
+network calls at runtime, and none of it is ever sent anywhere.
+
+| Screen | What it is |
+| --- | --- |
+| A module sheet | Sign-off, the quick check, the checklist, and the submittal register |
+| `/dashboard/` | The whole set as a single-line dependency diagram, with the readout, the uptime strip and the stamp shelf |
+| `/profile/` | Your identity, your submittals, storage health, and export / import / erase |
+| `/report/` | The `RECORD OF WORK` — one self-contained HTML file you keep |
+| `/legend/` | Sheet 00: what the line types mean, and what this LMS deliberately does not have |
+
+**Browser storage can be cleared without warning** — by you, by the browser, or
+by a private window, and Safari deletes it after seven days without a visit. So
+**export is a real feature, not a convenience**: `/profile/` writes your whole
+record to a JSON file, and the `RECORD OF WORK` embeds its own copy, so the
+document you keep is also the backup you can import into another browser.
+
+### The `RECORD OF WORK`
+
+One HTML file, generated in your browser, that works offline from `file://`
+years later with no network and no server. It is deliberately **not** a
+certificate: there is no issuing authority, no signature and nothing to verify,
+and the document says so above the fold rather than in a footer. What it carries
+instead is evidence — the sheets you signed and when, against which revision of
+each sheet, your quick-check answers reproduced in full, the sources you opened,
+and the repositories you built, each with the commit hash you supplied. It ends
+with instructions addressed to whoever is reading it, on how to check the parts
+that can be checked and to ignore the parts that cannot.
+
+**Nothing on any page claims a state that is not true of you right now.** The
+prerendered HTML has never met you, so it renders the honest empty form — every
+sheet dashed, every readout at `--` — and your own record fills it in after the
+page loads. A sheet is signed off because you said so, never because the site
+inferred it from a scroll position or a timer.
+
 **Module frontmatter is validated at build time.** A `status: ready` module
 without a `summary`, without at least two `objectives`, or without a positive
 `duration` fails the build with the file name and the offending field — it does
@@ -100,7 +140,7 @@ npm run build        # the static export itself
 npm run test:e2e     # Playwright, chromium — diagrams, keyboard, landmarks
 ```
 
-`npm test` includes two checks worth knowing about because they fail for
+`npm test` includes four checks worth knowing about because they fail for
 reasons that are not a broken test:
 
 - **The corpus check** (`lms/tests/corpus/`) renders all 32 real modules rather
@@ -110,6 +150,16 @@ reasons that are not a broken test:
   every WCAG ratio published in §10.1 of the design spec from the live token
   values in `lms/src/app/globals.css`. Change a colour and this fails until the
   spec's table is re-derived to match.
+- **The stroke-weight check** (`lms/tests/unit/stroke-weights.test.ts`) fails on
+  any `border-width: var(--stroke-struct)`. Chrome floors a border width to a
+  whole pixel, so the middle line weight has to be *painted* — a gradient or a
+  height — not bordered. It caught this exact mistake twice while the record
+  layer was being built.
+- **The copy register** (`lms/tests/unit/copy-register.test.ts`) scans every
+  reader-visible string in the record layer for exclamation marks, praise,
+  anthropomorphism, "just"/"simply"/"easy", "please"/"sorry" and confirmshaming.
+  Comments are stripped first, because they quote every banned word while
+  explaining why it is banned.
 
 First `npm run test:e2e` on a machine also needs the browser:
 

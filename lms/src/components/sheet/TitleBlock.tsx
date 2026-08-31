@@ -1,4 +1,5 @@
-import type { TitleBlockRow } from '@/lib/content/title-block'
+import type { ReactNode } from 'react'
+import { CHECKED_BY_LABEL, type TitleBlockRow } from '@/lib/content/title-block'
 
 /**
  * §5.5 — the module header block, in its two variants.
@@ -12,10 +13,17 @@ import type { TitleBlockRow } from '@/lib/content/title-block'
  * and up. Variant B is the horizontal strip every other sheet gets, and the
  * one an A0 sheet falls back to when the right rail collapses (§4.7).
  *
- * The 2×2 approval-stamp grid §5.5 puts under Variant A is deliberately absent
- * rather than empty: a stamp slot states a live count (§5.9, §7.4) and there
- * is no reader state in this slice to count. An empty box that says `READ` is
- * a claim about a reader nobody has met.
+ * **Both stay SERVER components** (§12.2). The two things on the block that
+ * belong to the reader — §12.3.1's `CHECKED BY` value and §7.4's stamp grid —
+ * arrive as already-rendered children, so the twelve derived rows keep being
+ * measured on the server and only the reader's own state is mounted as an
+ * island. That is the same arrangement as `SiteFooter` → `SheetLabel` and
+ * `SheetRail` → `SectionSpine`.
+ *
+ * Both slots are **absent when they are empty**, not rendered hollow (§11.25,
+ * §5.9): a draft sheet has no `CHECKED BY` row at all, and a sheet with no
+ * stamp slots has no grid. An empty box that says `READ` is a claim about a
+ * reader nobody has met.
  */
 
 function Value({ row }: { row: TitleBlockRow }) {
@@ -25,7 +33,17 @@ function Value({ row }: { row: TitleBlockRow }) {
 }
 
 /** Variant A — the title block, A0 right rail, 240px, sticky at `top: 80px`. */
-export function TitleBlock({ rows }: { rows: readonly TitleBlockRow[] }) {
+export function TitleBlock({
+  rows,
+  checkedBy,
+  stamps,
+}: {
+  rows: readonly TitleBlockRow[]
+  /** §12.3.1 — the reader's own row. Omitted or null, the row is absent. */
+  checkedBy?: ReactNode
+  /** §7.4 — the 2×2 approval stamp grid, which renders itself or nothing. */
+  stamps?: ReactNode
+}) {
   return (
     <aside aria-label="Title block" className="hl-title-block">
       <div className="hl-title-block-head hl-mark">Title block</div>
@@ -38,7 +56,14 @@ export function TitleBlock({ rows }: { rows: readonly TitleBlockRow[] }) {
             </dd>
           </div>
         ))}
+        {checkedBy !== undefined && checkedBy !== null && (
+          <div className="hl-title-block-row hl-mark">
+            <dt>{CHECKED_BY_LABEL}</dt>
+            <dd>{checkedBy}</dd>
+          </div>
+        )}
       </dl>
+      {stamps}
     </aside>
   )
 }
@@ -46,9 +71,12 @@ export function TitleBlock({ rows }: { rows: readonly TitleBlockRow[] }) {
 /** Variant B — the same rows as a strip beneath the h1 and its rule. */
 export function TitleStrip({
   rows,
+  checkedBy,
   className,
 }: {
   rows: readonly TitleBlockRow[]
+  /** §12.3.1 — the strip carries the row too. §5.5 gives it no stamp grid. */
+  checkedBy?: ReactNode
   className?: string
 }) {
   return (
@@ -62,6 +90,12 @@ export function TitleStrip({
             </dd>
           </div>
         ))}
+        {checkedBy !== undefined && checkedBy !== null && (
+          <div className="hl-title-strip-pair hl-mark">
+            <dt>{CHECKED_BY_LABEL}</dt>
+            <dd>{checkedBy}</dd>
+          </div>
+        )}
       </dl>
     </aside>
   )

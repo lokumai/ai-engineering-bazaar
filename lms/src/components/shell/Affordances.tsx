@@ -10,7 +10,7 @@ import { COPIED_MS, overflowState } from '@/lib/affordance'
  *
  * Both are enhancements on markup the build already emitted, so this mounts
  * once per document — from the shell, not from the prose column. Scoping it to
- * `.prose` was the bug: the index sheet's own 988px manifest table (§4.8) sits
+ * `.prose` was the bug: the index sheet's own 1060px manifest table (§4.8) sits
  * outside `[data-hl-prose]`, is the site's primary navigation surface, and at
  * 390px hid `STATUS`, `LANG`, `EXTENT` and `SOURCES` with no cue that it
  * scrolled at all.

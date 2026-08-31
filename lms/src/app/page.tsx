@@ -1,7 +1,9 @@
+import { SignOffMarks } from '@/components/record/SignOffMarks'
 import { CategoryBlock } from '@/components/sheet/CategoryBlock'
 import { SheetFilters } from '@/components/sheet/SheetFilters'
 import { PageShell } from '@/components/shell/PageShell'
 import { ticksFrom } from '@/components/sheet/TickGauge'
+import { curriculumFacts } from '@/lib/content/facts'
 import { categoryRows, indexStatement, sheetRows, subsystems } from '@/lib/content/manifest'
 import { SITE_NAME } from '@/lib/site'
 
@@ -16,10 +18,15 @@ import { SITE_NAME } from '@/lib/site'
  * in the statement are spelled out from `setSummary()`, not typed; each row's
  * extent, sources and language coverage come off the file; the seventeen
  * sheets that are not drawn carry an ISO 128 hidden line down the `#` cell and
- * the words `NOT DRAWN` beside a dashed tick. Nothing on this page is a claim
- * about the reader, because there is no reader state to claim: no percentage,
- * no "continue where you left off", no completion tick, and no `SIGN-OFF`
- * column of squares that can never fill (§1, §5.9).
+ * the words `NOT DRAWN` beside a dashed tick.
+ *
+ * Exactly one column is a claim about the reader — the ninth, `SIGN-OFF`
+ * (§12.18) — and the build does not make it. Every square is drawn unsigned,
+ * because that is the only thing a page prerendered once for everybody can
+ * truthfully say about a reader it has never met; `SignOffMarks` fills them
+ * from this browser's record after mount (§12.2 channel B). What the page still
+ * refuses is unchanged: no percentage (§11.35), no fourth progress surface
+ * (§11.38), and no number that was not measured from the corpus (§11.25).
  *
  * The 56px `text-index` step is used here, once, on the h1 — and nowhere else
  * on the site (§3.2).
@@ -40,6 +47,11 @@ export default function IndexSheet() {
       <hr className="hl-rule-struct" aria-hidden="true" />
 
       <SheetFilters rows={rows} label="The drawing set, every sheet" />
+
+      {/* §12.2 — one island per document, mounted from the page rather than
+          from the row, so that thirty-two rows stay hook-free and the
+          server-only listing pages keep rendering the identical components. */}
+      <SignOffMarks facts={curriculumFacts()} />
 
       {/* §5.4 calls this block "the category link on the index", and this is
           where it lives: below the manifest, because a set's index is its

@@ -1,8 +1,11 @@
+import { sheetStamps } from '../record/derive'
+import { EMPTY_RECORD } from '../record/schema'
 import { plural } from '../text'
 import { CATEGORIES, type Category } from './categories'
 import { categoryPath, sheetPath } from './curriculum'
 import { LANG_DISPLAY } from './derive'
 import { moduleGraph } from './edges'
+import { curriculumFacts } from './facts'
 import { loadAllModules } from './loader'
 import type { SheetRow } from './rows'
 import { thousands } from './title-block'
@@ -22,6 +25,12 @@ import { topicsFor } from './topics'
  * The counts in §4.8's own statement copy are derived here too. "Fifteen are
  * drawn" is a measurement of the repository, and §11.25 does not make an
  * exception for a number that happens to be spelled out in words.
+ *
+ * §4.8's ninth column does not change that. `slots` names the sign-off slots a
+ * sheet SUPPLIES — which is a property of the drawing, exactly like its extent
+ * and its sources — and never which of them a reader has filled. The filling is
+ * §12.2 channel B's job, after mount, in one island; nothing here has an
+ * opinion about it.
  */
 
 /** The one value a row prints when it has nothing true to print. */
@@ -38,6 +47,7 @@ export function sheetRows(): SheetRow[] {
   if (rowCache) return rowCache
 
   const graph = moduleGraph()
+  const facts = curriculumFacts()
 
   rowCache = loadAllModules().map((sheet) => {
     const drawn = sheet.frontmatter.status === 'ready'
@@ -46,6 +56,7 @@ export function sheetRows(): SheetRow[] {
     return {
       module: sheet.frontmatter.module,
       number: pad2(sheet.frontmatter.module),
+      slug: sheet.slug,
       title: sheet.frontmatter.title,
       path: sheetPath(sheet),
       drawn,
@@ -69,6 +80,13 @@ export function sheetRows(): SheetRow[] {
       bilingual: sheet.lang === 'EN·TR',
       requires: requires.length === 0 ? DASH : requires.join(', '),
       topics: topicsFor({ status: sheet.frontmatter.status, body: sheet.body }),
+      // §4.8 column 9. Taken from `sheetStamps` rather than re-derived from
+      // the same three facts, because the island that fills the squares asks
+      // `sheetStamps` which slots exist: two derivations of one slot set would
+      // eventually draw a square nothing can ever fill. EMPTY_RECORD is passed
+      // to make the independence explicit — the slot SET is a function of the
+      // corpus alone, and only `current` moves with the reader.
+      slots: sheetStamps(EMPTY_RECORD, facts, sheet.slug).map((stamp) => stamp.id),
     }
   })
 

@@ -18,7 +18,7 @@ read the same weak articles, then repeat them back to you with confidence. They 
 the story of a topic: when it showed up, what it replaced, which idea won. That story is
 often the thing that makes a topic finally make sense.
 
-So the writing here comes from a working AI engineer — me — after years of building this
+So the writing here comes from working AI engineers — us — after years of building this
 in production. Some of it is not written down anywhere else. If good sources already
 existed, we would just link to them and save you the trouble.
 
@@ -42,15 +42,17 @@ make you read a line twice.
 
 ## 5. Pictures do a lot of the work
 
-Most of these ideas get easy the moment you see them drawn. So expect diagrams, charts,
-simple sketches, and now and then a meme. A picture often explains more than a paragraph
-does.
+A picture is worth a thousand words, and most of these ideas get easy the moment you see
+them drawn. So expect diagrams, charts, simple sketches, and now and then a meme.
 
 ## 6. Every module points you somewhere next
 
-Each topic is kept short and simple, then links out to more. That is on purpose. We want
-you to finish a page still wanting more, and then go read the source yourself. Nobody
-really learns something they were pushed into.
+Each topic is kept short and simple, then links out to more.
+
+That is on purpose. In the world of Reels and TikTok, attention is short and nobody
+pushes through something just because they were told to read it. People only really
+learn what they wanted to learn in the first place. So a page is written to leave you
+curious instead of full, and the links are there for the moment you want more.
 
 ## 7. We only cover what matters
 

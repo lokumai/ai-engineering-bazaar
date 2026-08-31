@@ -6,35 +6,28 @@ A series of mini-courses from beginner to advanced to help you learn practical t
 
 ## Why This Is Valuable
 
-There is no shortage of AI content on the internet, so the only thing that justifies writing more of it is being different in a way that matters. The seven rules below are that difference. They are not style preferences — they are the reason the material is worth reading.
+The internet already has plenty of AI content. Adding more only makes sense if it is different in a way that actually helps you. These seven rules are that difference. They are not writing preferences — they are the reason this is worth your time.
 
-1. **Human-written.** These topics are too new for reliable sources to exist yet, and
-  an LLM's knowledge cutoff predates most of them — so it searches the same imprecise articles and repeats them back with confidence. This material comes from years of real practice, including things that might not be written down anywhere else.
-2. **Explained like a real conversation.** The way an AI engineer would answer you at a
-  desk, in the vocabulary we actually use — not the way a textbook would.
-3. **Simple on purpose.** Plain language, no jargon or buzzwords, sometimes deliberately
-  oversimplified. Easy to read even if English is not your first language.
-4. **Short — 5–10 minutes per module.** If you ever need to paste one of these files
-  into ChatGPT and ask for a summary, we failed.
-5. **Heavy on visuals.** Diagrams, mermaid charts, ASCII sketches, mind-maps, and the
-  occasional meme. On most of these topics a picture beats a paragraph.
-6. **Links out at the end of every module.** We stay simple deliberately, so you finish
-  wanting more — then go read the sources yourself.
-7. **Only the topics that matter.** A cheatsheet of AI Engineering, not a book about it.
-  Knowing what to leave out takes experience a search engine cannot give you.
+1. **A human writes it.** Most of what we cover is new, so good sources barely exist and a lot of what you find online is guesswork. AI tools were trained before much of it existed, so they read those same weak articles and repeat them back with confidence. This comes from a working AI engineer, after years of building it in production.
+2. **It sounds like a person talking.** Ask an engineer this question in real life and you get a straight answer, in normal words. That is how it is written here.
+3. **It stays simple.** Plain language, no jargon, no buzzwords. Sometimes we oversimplify on purpose. Easy to read even if English is not your first language.
+4. **Five to ten minutes per module.** If you ever feel the need to paste one of these pages into ChatGPT and ask for a summary, we failed.
+5. **Pictures do a lot of the work.** A picture is worth a thousand words, so expect diagrams, charts, simple sketches, and now and then a meme.
+6. **Every module points you somewhere next.** Each topic is kept short on purpose, then links out to more. In the world of Reels and TikTok, attention is short and nobody pushes through something just because they were told to read it — people only really learn what they wanted to learn. So a page is written to leave you curious instead of full, and the links are there for the moment you want more.
+7. **We only cover what matters.** A cheatsheet for AI engineering, not a textbook. Knowing what to leave out comes from building things, not from searching.
 
 📜 Full version: **[MANIFEST.md](https://github.com/lokumai/ai-engineering-bazaar/blob/main/MANIFEST.md)**
 
 ## Structure
 
-| Category | Modules | Description |
+| Category                                                              | Modules | Description                                                                                                               |
 | --------------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------- |
-| [Fundamentals](1_fundamentals/README.md) | 1-7 | LLMs, training, RAG, tools, memory, agents, multi-agent systems.**Start here.** |
-| [Intermediate](2_intermediate/README.md) | 8-15 | Prompt engineering, context engineering, coding agents, harness engineering, security, loop engineering, personal agents. |
-| [NOT READY] [Expert](3_expert/README.md) | 16-24 | Advanced UI, architectures, tools, memory, multi-agent, prompting, context engineering, harness engineering, deployment. |
-| [NOT READY] [Ecosystem](4_ecosystem/README.md) | 25-29 | Agent frameworks, inference providers, inference engines, UI design, observability. |
-| [NOT READY] [Protocols & Specs](5_protocols_specs/README.md) | 30 | A single reference of every protocol and spec mentioned across the series. |
-| [NOT READY] [Optional](6_optional/README.md) | 31-32 | Human-in-the-loop and runtime topics that round out the series. |
+| [Fundamentals](1_fundamentals/README.md)                     | 1-7     | LLMs, training, RAG, tools, memory, agents, multi-agent systems.**Start here.**                                           |
+| [Intermediate](2_intermediate/README.md)                     | 8-15    | Prompt engineering, context engineering, coding agents, harness engineering, security, loop engineering, personal agents. |
+| [NOT READY] [Expert](3_expert/README.md)                     | 16-24   | Advanced UI, architectures, tools, memory, multi-agent, prompting, context engineering, harness engineering, deployment.  |
+| [NOT READY] [Ecosystem](4_ecosystem/README.md)               | 25-29   | Agent frameworks, inference providers, inference engines, UI design, observability.                                       |
+| [NOT READY] [Protocols & Specs](5_protocols_specs/README.md) | 30      | A single reference of every protocol and spec mentioned across the series.                                                |
+| [NOT READY] [Optional](6_optional/README.md)                 | 31-32   | Human-in-the-loop and runtime topics that round out the series.                                                           |
 
 ### How to Use
 

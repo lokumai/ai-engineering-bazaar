@@ -6,6 +6,8 @@
 @import "./sheet.css";
 /* §4.8–§4.9, §5.3–§5.4, §7.5 — the index sheet and the listing pages. */
 @import "./manifest.css";
+/* §6.10 B5 — the figure EXPAND overlay, which Radix portals outside .prose. */
+@import "./figure.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 

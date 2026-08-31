@@ -8,6 +8,7 @@ import { unified } from 'unified'
 import { SKIP, visit } from 'unist-util-visit'
 import { toString as hastToString } from 'hast-util-to-string'
 import type { Element, ElementContent, Root, RootContent, Text } from 'hast'
+import { widthForColumns } from '@/lib/figure/width'
 import { codeThemes } from './code-theme'
 import { assertNoRawHex, remapMermaidFills } from './mermaid'
 
@@ -227,21 +228,11 @@ function rehypeRewriteImages(imageBase?: string) {
 // ---------------------------------------------------------------------------
 
 /**
- * §6.5 — the width class, decided by column count at build time.
- *
- * **MEASURED:** the widest table in the corpus is 6 columns (module 11) and the
- * longest is 58 pipe-rows (module 10). Six columns of prose-heavy verdict cells
- * inside a 656px measure is unreadable; six columns allowed to size themselves
- * would blow the page's horizontal scroll. So the table is classed here and
- * scrolls inside its own container in every case.
+ * §6.5 / B5 — the width class, decided by column count at build time. The rule
+ * itself lives in `@/lib/figure/width`, where the diagram island reads the
+ * other half of it: the two share the same three layout tracks and must not
+ * drift apart.
  */
-export type FigureWidth = 'prose' | 'wide' | 'full'
-
-export function widthForColumns(columns: number): FigureWidth {
-  if (columns >= 6) return 'full'
-  if (columns === 5) return 'wide'
-  return 'prose'
-}
 
 function columnCount(table: Element): number {
   let widest = 0

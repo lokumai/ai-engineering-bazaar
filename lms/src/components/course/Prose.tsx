@@ -1,3 +1,4 @@
+import { MermaidFigure } from '@/components/figure/MermaidFigure'
 import { ProseEnhancements } from './ProseEnhancements'
 
 /**
@@ -20,6 +21,9 @@ export function Prose({ html, className }: { html: string; className?: string })
         dangerouslySetInnerHTML={{ __html: html }}
       />
       <ProseEnhancements />
+      {/* §6.10 — the diagram island. It reads the page before it imports
+          anything, so prose with no figures never fetches mermaid. */}
+      <MermaidFigure />
     </>
   )
 }

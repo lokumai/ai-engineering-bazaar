@@ -20,10 +20,14 @@ describe('remapMermaidFills', () => {
     expect(out).toContain('class B verify')
   })
 
-  it('styles each class from design tokens, never a literal colour', () => {
+  // The colours live in `MERMAID_THEME_CSS` (B4), not here: mermaid's classDef
+  // grammar rejects `fill:var(--color-fault-wash)` on the `(`, and a parse
+  // error blanks the figure. What survives in the source is the class binding.
+  it('declares each class at the hairline weight and no colour at all', () => {
     const out = remapMermaidFills(RAIL)
-    expect(out).toContain('classDef fault fill:var(--color-fault-wash),stroke:var(--color-fault)')
-    expect(out).toContain('classDef verify fill:var(--color-verify-wash),stroke:var(--color-verify)')
+    expect(out).toContain('classDef fault stroke-width:1px')
+    expect(out).toContain('classDef verify stroke-width:1px')
+    expect(out).not.toMatch(/classDef[^\n]*(fill|stroke):(?!-)/)
   })
 
   it('groups nodes that share a class into one statement', () => {

@@ -36,8 +36,18 @@ const STYLE_FILL = /^(\s*)style\s+(\S+)\s+fill:\s*(#[0-9A-Fa-f]{3,8})\s*;?\s*$/
 /** §6.10 B3's assertion, verbatim. */
 const RAW_FILL = /fill:\s*#[0-9A-Fa-f]{3,8}/
 
+/**
+ * The class is declared, and styled from the tokens in `MERMAID_THEME_CSS`
+ * (B4) — which is what §6.10 means by "the site styles those classes with
+ * tokens", and the only place the styling *can* live: mermaid's `classDef`
+ * grammar takes CSS declarations but not CSS functions, so
+ * `fill:var(--color-fault-wash)` is a parse error on the `(` and a parse error
+ * blanks the figure. What the classDef carries instead is the one thing about
+ * these four classes that is not a colour and is true of every rule on the
+ * sheet: §2.2's hairline weight.
+ */
 function classDef(name: string): string {
-  return `classDef ${name} fill:var(--color-${name}-wash),stroke:var(--color-${name})`
+  return `classDef ${name} stroke-width:1px`
 }
 
 /**

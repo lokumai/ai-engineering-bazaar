@@ -660,6 +660,28 @@
     height: auto;
   }
 
+  /* §6.10 B5 — EXPAND is drawn only once the island has something to magnify.
+     Until the SVG exists the control cannot do its job, and a button that
+     claims a capability it does not have fails §1's second question. */
+  .prose .hl-diagram:not([data-hl-ready]) .hl-cap-action {
+    display: none;
+  }
+
+  /* The fallback. A diagram that will not parse must never blank the sheet, so
+     the figure shows the source — which is what a plain markdown viewer would
+     have shown, and enough for a reader to see what was meant. */
+  .prose .hl-diagram-fallback {
+    margin: 0;
+    padding: 12px 16px;
+    overflow-x: auto;
+    background: var(--color-sunken);
+    font-family: var(--font-mono);
+    font-size: var(--text-code);
+    line-height: var(--text-code--line-height);
+    color: var(--color-ink);
+    white-space: pre;
+  }
+
   /* The loading state: a drawn rectangle at the reserved height, in hidden-line
      dashes because the geometry exists and is not on the surface yet. No
      spinner, no skeleton shimmer, no mascot. */

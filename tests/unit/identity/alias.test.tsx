@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
+import { ACCOUNT_DOOR_COUNT } from '@/lib/auth/doors'
 import AliasPage from '@/app/sign-in/alias/page'
 import { AliasSheet, aliasFrom, storedMark } from '@/components/identity/AliasSheet'
 import { MARKS, NAMED_MARK_IDS, STORABLE_MARK_IDS } from '@/lib/identity/mark'
@@ -36,7 +37,7 @@ import { ALIAS_SCOPE, NAME_SCOPE } from '@/lib/record/scope'
  *     the record that prints as nothing at all.
  */
 
-const SHEET = renderToStaticMarkup(<AliasSheet />)
+const SHEET = renderToStaticMarkup(<AliasSheet accountDoors={ACCOUNT_DOOR_COUNT} />)
 const PAGE = renderToStaticMarkup(<AliasPage />)
 
 /** The rendered text alone: attribute names are not copy (§12.14.1). */
@@ -197,10 +198,40 @@ describe('§15.4.4 — the route renders with no environment', () => {
     return [...source.matchAll(/from '([^']+)'/g)].map(([, from]) => from)
   }
 
+  /**
+   * The one `@/lib/auth` module this route may reach, and why the exception is
+   * safe to make.
+   *
+   * §15.4.4's claim is about ENVIRONMENT: no supabase client, no session, no
+   * fetch, so the exported document is a heading, a field and eight radios
+   * produced in node with nothing configured. `lib/auth/doors.ts` is the table
+   * of what each sign-in door does, and it satisfies that claim absolutely —
+   * `tests/unit/auth/doors.test.ts` reads its source and asserts it imports
+   * NOTHING AT ALL, which is a stronger property than this ban tests for.
+   *
+   * The allowance is re-checked here rather than taken on trust, because the two
+   * files can drift: the moment `doors.ts` grows an import, this route stops
+   * being provably environment-free and the exception has to go with it.
+   */
+  const DOORS = '@/lib/auth/doors'
+
+  it(`${DOORS} is the exception, and it holds only while that module is a leaf`, () => {
+    const from = imports(sourceOf('src/lib/auth/doors.ts'))
+    expect(from, `${DOORS} grew an import — the allowance below is void`).toEqual([])
+  })
+
   for (const file of FILES) {
     it(`${file} imports no supabase module and no session`, () => {
       const from = imports(sourceOf(file))
-      expect(from.filter((id) => /supabase|@\/lib\/auth/.test(id))).toEqual([])
+      const banned = from
+        .filter((id) => /supabase|@\/lib\/auth/.test(id))
+        .filter((id) => id !== DOORS)
+      expect(banned).toEqual([])
+
+      // The ban still bans the module the route must never see, whatever else
+      // is allowed past it: a narrowed guard that stopped catching `session`
+      // would be worse than no guard, because it would still read as one.
+      expect(from).not.toContain('@/lib/auth/session')
     })
   }
 

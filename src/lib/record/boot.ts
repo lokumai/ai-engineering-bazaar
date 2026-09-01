@@ -36,12 +36,21 @@
  * source string handed to the browser inside `<head>`, so it cannot import
  * `carriesNothing` — there is no module graph yet when it runs. What binds the
  * two copies is `tests/unit/record/boot.test.ts`, which runs the emitted script
- * against records built by the typed helpers and compares the stamp to
- * `carriesNothing`'s own answer; a change to either that the other does not
- * match fails there. The inlined form is deliberately loose where the typed one
- * is exact (`!=null` rather than `=== null`, truthiness rather than `=== 0`),
- * because a hand-edited record reaches it with fields missing and §12.1.3 says
- * it must not throw.
+ * against raw payloads and compares the stamp to
+ * `carriesNothing(coerceRecordData(raw))`; a change to either that the other
+ * does not match fails there.
+ *
+ * **The gate validates SHAPE, and the loose version of it was a defect.** It
+ * read `!=null` and truthiness, on the reasoning that a hand-edited record
+ * arrives with fields missing and §12.1.3 says this script must not throw —
+ * which confused not throwing with accepting. These checks run on RAW storage,
+ * before `coerceRecordData`, so `{identity:{name:7}}`, an unknown `mark`, `days`
+ * as an object and more besides stamped a record the parser then threw away: the
+ * home screen chose "Where you left off" and the record behind it was empty.
+ * Seven such shapes were measured. Every field this gate inspects is now checked
+ * against the rule the coercer applies to it — the same patterns, the same id
+ * lists, the same real-calendar-day round trip — and being strict is what does
+ * not throw, because each helper answers 0 for anything it does not recognise.
  *
  * It needs the per-category totals and the slug → module-number map, both of
  * which are build-time facts, so the export is a FACTORY: a layout measures the
@@ -63,7 +72,7 @@
  * bundle targets, in whatever browser the reader brought.
  */
 
-import { RECORD_STORAGE_KEY, ROLE_IDS, SCHEMA_VERSION } from './schema'
+import { MARK_IDS, RECORD_STORAGE_KEY, ROLE_IDS, SCHEMA_VERSION } from './schema'
 
 /** Neither `<` nor a line separator may reach the inline script's text. */
 function embed(value: unknown): string {
@@ -85,12 +94,33 @@ export function recordBootScript(
   slugToModule: Record<string, number>,
 ): string {
   return `(function(){try{
-var T=${embed(categoryTotals)},M=${embed(slugToModule)},R=${embed(ROLE_IDS)};
+var T=${embed(categoryTotals)},M=${embed(slugToModule)},R=${embed(ROLE_IDS)},MK=${embed(MARK_IDS)};
 var r=document.documentElement;
 var isObj=function(v){return Object.prototype.toString.call(v)==="[object Object]"};
 var own=function(o,k){return Object.prototype.hasOwnProperty.call(o,k)};
-var bad=function(k){return !k||k==="__proto__"||k==="constructor"||k==="prototype"};
-var any=function(v){var q;if(!v||typeof v!=="object")return 0;for(q in v){if(own(v,q))return 1}return 0};
+var bad=function(k){return !k||k.length>200||k==="__proto__"||k==="constructor"||k==="prototype"};
+var arr=function(v){return Object.prototype.toString.call(v)==="[object Array]"};
+var G=/^[A-Za-z0-9._-]{1,100}$/,H=/^[0-9a-f]{4,40}$/,S=/^[0-9a-f]{8}$/;
+var pat=function(v,re){return typeof v==="string"&&re.test(v)?1:0};
+var fin=function(x){return x===x&&isFinite(x)?1:0};
+var realDay=function(t){var dt=new Date(t+"T00:00:00.000Z"),ms=dt.getTime();
+return fin(ms)&&dt.toISOString().slice(0,10)===t?1:0};
+var day=function(v){return pat(v,/^\\d{4}-\\d{2}-\\d{2}$/)&&realDay(v)?1:0};
+var inst=function(v){if(!pat(v,/^\\d{4}-\\d{2}-\\d{2}(?:[T ][\\d:.+\\-Z]{1,20})?$/))return 0;
+return realDay(v.slice(0,10))&&fin(Date.parse(v))?1:0};
+var inL=function(L,v){for(var j=0;j<L.length;j++){if(L[j]===v)return 1}return 0};
+var someDay=function(a){for(var j=0;j<a.length;j++){if(day(a[j]))return 1}return 0};
+var someSrc=function(a){if(!arr(a))return 0;for(var j=0;j<a.length;j++){if(pat(a[j],/^https?:\\/\\//i))return 1}return 0};
+var someSub=function(a){if(!arr(a))return 0;var e;for(var j=0;j<a.length;j++){e=a[j];
+if(isObj(e)&&pat(e.owner,G)&&pat(e.repo,G))return 1}return 0};
+var ticked=function(o){if(!isObj(o))return 0;var q;for(q in o){
+if(own(o,q)&&!bad(q)&&/^\\d{1,4}$/.test(q)&&o[q]===true)return 1}return 0};
+var quiz=function(q){if(!isObj(q))return 0;
+if(typeof q.answer==="string"&&q.answer.replace(/^\\s+|\\s+$/g,"")!=="")return 1;
+return q.assessed==="matched"||q.assessed==="missed"?1:0};
+var dwell=function(v){return typeof v==="number"&&fin(v)&&Math.round(v)>0?1:0};
+var kept=function(rec){return inst(rec.signedOff)||pat(rec.signedRevision,H)||rec.reachedEnd===true
+||dwell(rec.dwellSeconds)||quiz(rec.quiz)||ticked(rec.checklist)||someSrc(rec.sources)||someSub(rec.submittals)?1:0};
 var raw=null,ok=1;
 try{raw=window.localStorage.getItem(${JSON.stringify(RECORD_STORAGE_KEY)})}catch(e){ok=0}
 r.setAttribute("data-hl-storage",ok?"ok":"blocked");
@@ -100,15 +130,15 @@ if(!isObj(env)||typeof env.schema!=="number"||env.schema<1||env.schema>${SCHEMA_
 var d=env.data;
 if(!isObj(d))return;
 var counts={},k,c,i,n,rec,id,ro=null,sh=d.sheets,has=0;
-if(any(d.days))has=1;
-if(isObj(d.meta)&&d.meta.lastExport!=null)has=1;
+if(arr(d.days)&&someDay(d.days))has=1;
+if(isObj(d.meta)&&inst(d.meta.lastExport))has=1;
 id=d.identity;
-if(isObj(id)&&(id.name!=null||id.markSeed!=null||id.mark!=null||id.role!=null))has=1;
+if(isObj(id)&&(typeof id.name==="string"||pat(id.markSeed,S)||inL(MK,id.mark)||inL(R,id.role)))has=1;
 if(!has&&isObj(sh)){for(k in sh){
 if(!own(sh,k)||bad(k))continue;
 rec=sh[k];
 if(!isObj(rec))continue;
-if(rec.signedOff!=null||rec.signedRevision!=null||rec.reachedEnd||rec.dwellSeconds||rec.quiz!=null||any(rec.checklist)||any(rec.sources)||any(rec.submittals)){has=1;break}}}
+if(kept(rec)){has=1;break}}}
 if(!has)return;
 r.setAttribute("data-hl-record","1");
 if(isObj(id)&&typeof id.role==="string"&&!bad(id.role)){for(i=0;i<R.length;i++){if(R[i]===id.role){ro=id.role;break}}}

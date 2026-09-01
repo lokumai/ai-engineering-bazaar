@@ -39,3 +39,37 @@ export const NOT_MEASURED = '—'
 export function plural(n: number, singular: string, many = `${singular}s`): string {
   return `${n} ${n === 1 ? singular : many}`
 }
+
+// ---------------------------------------------------------------------------
+// Counts, as a sentence spells them
+// ---------------------------------------------------------------------------
+
+const ONES = [
+  'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight',
+  'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen',
+  'sixteen', 'seventeen', 'eighteen', 'nineteen',
+]
+
+const TENS = [
+  '', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty',
+  'ninety',
+]
+
+/**
+ * A count as a sentence spells it. Past ninety-nine it gives up and returns the
+ * digits: a wrong word is a lie, and a numeral in a sentence is only ugly.
+ *
+ * It lived in `lib/content/manifest.ts`, which reaches `node:fs`, so the two
+ * surfaces that print a spelt count of something other than sheets could not
+ * reach it — and a client island never can (§12.2). §15.5.2's account-door
+ * count is one of those, and the alternative was a second table of number
+ * words on a screen whose whole argument is that its numbers are derived.
+ */
+export function numberWord(n: number): string {
+  if (!Number.isInteger(n) || n < 0 || n > 99) return String(n)
+  if (n < 20) return ONES[n]
+
+  const tens = TENS[Math.floor(n / 10)]
+  const ones = n % 10
+  return ones === 0 ? tens : `${tens}-${ONES[ones]}`
+}

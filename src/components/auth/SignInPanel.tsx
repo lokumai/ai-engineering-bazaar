@@ -9,6 +9,7 @@ import {
   RETURN_PARAM,
   ALL_PROVIDERS,
   SIGN_IN_PROVIDERS,
+  carriesEmailIdentity,
   parseProviderAvailability,
   type ProviderAvailability,
   callbackUrl,
@@ -191,6 +192,29 @@ export function SignInPanel() {
   }
 
   if (view.status === 'signedIn') {
+    /**
+     * §14.5 — the reader `/join/` sends here, and why this branch grew a
+     * control.
+     *
+     * `unprovenMailbox` can only happen while signed in, and its copy told the
+     * reader to add an email sign-in and pointed at this sheet. This sheet
+     * answered "Already signed in" and offered a link back to `/profile/`: the
+     * one reader who needed something from `/sign-in/` was the one reader it
+     * had nothing for, and the trail `/join/ → /sign-in/ → /profile/` closed on
+     * itself.
+     *
+     * **What is offered, and what was rejected.** `auth.linkIdentity` would add
+     * the identity to this account in one press, and it is rejected: it needs
+     * manual linking enabled in the project, this build cannot detect whether
+     * it is, and `lib/org/join.ts`'s own rule forbids a control whose only
+     * outcome may be an error. So the offer is the one thing that works on any
+     * deployment — sign out, and the email door below is reachable. What that
+     * lands on is stated rather than promised: whether the address arrives back
+     * on this same account is the provider's linking behaviour, which this site
+     * neither sets nor can read.
+     */
+    const needsMailbox = !carriesEmailIdentity(view.user)
+
     return (
       <section className="hl-panel" aria-labelledby="hl-signin-state">
         <div className="hl-panel-head">
@@ -205,6 +229,25 @@ export function SignInPanel() {
           This browser already holds a session. The profile sheet shows whose it
           is, what it is connected to, and how to sign out of it.
         </p>
+
+        {needsMailbox && (
+          <div className="mb-4" data-hl-needs-mailbox="1">
+            <p className="hl-mark mt-0 mb-2 text-ink">NO EMAIL SIGN-IN ON THIS ACCOUNT</p>
+            <p className="mt-0 mb-3 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+              Both routes into an organisation ask for a sign-in by email that
+              the mail service completed, and this session carries none. Nothing
+              on this site adds one to an account that already exists. Signing
+              out of this browser puts the email door below within reach;
+              whether the address then arrives back on this same account is the
+              provider&rsquo;s own linking behaviour, which this site does not
+              set.
+            </p>
+            <button type="button" className="hl-btn" onClick={() => void session?.signOut()}>
+              Sign out of this browser
+            </button>
+          </div>
+        )}
+
         <p className="m-0 font-display text-meta">
           <Link href="/profile/">Open the profile sheet</Link>
         </p>

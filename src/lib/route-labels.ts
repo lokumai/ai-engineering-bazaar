@@ -76,6 +76,19 @@ const ROUTE_TITLES: Record<string, string> = {
 }
 
 /**
+ * The register's route and its name, for the pages that link to it in prose.
+ *
+ * §15.1 moved the manifest and left `not-found.tsx` pointing a link labelled
+ * `Index` at `/`, one line under a sentence promising the index — so the 404's
+ * one way out opened the home screen instead. The export link gate cannot see
+ * that class of defect: `/` resolves, and a link to the wrong existing page is
+ * indistinguishable from a link to the right one. The only defence is that the
+ * href and the label have a single author, which is what these two are.
+ */
+export const INDEX_ROUTE = `/${INDEX_SEGMENT}/`
+export const INDEX_TITLE = ROUTE_TITLES[INDEX_SEGMENT]
+
+/**
  * Ancestor paths that exist in the URL but were never exported as a page.
  *
  * **MEASURED, by `scripts/check-links-out.mjs` on its first run:** exactly one

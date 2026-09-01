@@ -26,7 +26,13 @@
  *    sub-second window is a conformance risk as well as a usability one.
  */
 
-/** §12.16 — the five `g` destinations. `category` depends on the route. */
+/**
+ * The `g` destinations. §12.16 named five, §13.14 added `path` and §15.1 added
+ * `home`; the count is not restated here because the union below is the list,
+ * and a number in a comment beside it is a second author for the same fact that
+ * went stale on the first amendment. The second-key map at `GO` carries the
+ * amendments and their reasons. `category` depends on the route.
+ */
 export type NavTarget =
   | 'dashboard' | 'home' | 'index' | 'profile' | 'record' | 'path' | 'category'
 

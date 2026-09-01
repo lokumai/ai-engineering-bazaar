@@ -55,8 +55,23 @@
  *     will this door ask of me.
  */
 
-/** The four rows, in §15.5.1's order — ascending cost to the reader. */
-export type DoorId = 'none' | 'alias' | 'emailLink' | 'github'
+/**
+ * The rows, in §15.5.1's order.
+ *
+ * **`google` was missing, and its absence was reachable.**
+ * `SIGN_IN_PROVIDERS` carries three provider buttons, `SignInPanel` renders the
+ * Google one whenever `available.google` is true, and `ALL_PROVIDERS` — which
+ * sets it true — is the FALLBACK when the settings probe cannot be read. So a
+ * deployment with an unreadable probe offered a third account door on a page
+ * whose heading said there were two and whose table explained the consequences
+ * of the other two only. The count is now derived from `needsAccount` below and
+ * `tests/unit/auth/doors.test.ts` binds this union to `SIGN_IN_PROVIDERS`, so a
+ * provider cannot be added to the panel without a row here.
+ *
+ * `google` sits beside `github` rather than after `emailLink`, because it is the
+ * same door at the same price minus the one thing GitHub brings.
+ */
+export type DoorId = 'none' | 'alias' | 'emailLink' | 'github' | 'google'
 
 /** The six columns. Each one is a consequence a reader can act on. */
 export type ConsequenceId =
@@ -159,6 +174,15 @@ export interface DoorRow {
   id: DoorId
   /** The row heading, as the table's leftmost cell prints it. */
   label: string
+  /**
+   * Whether this door creates an account.
+   *
+   * A field and not a list of ids elsewhere, so the count on `/sign-in/` and
+   * the count in the alias island's link both come from the rows themselves.
+   * The heading used to type the number, and it was wrong the moment a third
+   * account door became reachable.
+   */
+  needsAccount: boolean
   cells: Readonly<Record<ConsequenceId, Answer>>
 }
 
@@ -176,6 +200,7 @@ export const DOOR_ROWS: readonly DoorRow[] = Object.freeze([
   Object.freeze({
     id: 'none' as const,
     label: 'No name',
+    needsAccount: false,
     cells: Object.freeze({
       keptInThisBrowser: 'yes' as const,
       survivesThisBrowser: 'no' as const,
@@ -188,6 +213,7 @@ export const DOOR_ROWS: readonly DoorRow[] = Object.freeze([
   Object.freeze({
     id: 'alias' as const,
     label: 'Alias',
+    needsAccount: false,
     cells: Object.freeze({
       keptInThisBrowser: 'yes' as const,
       survivesThisBrowser: 'no' as const,
@@ -200,6 +226,7 @@ export const DOOR_ROWS: readonly DoorRow[] = Object.freeze([
   Object.freeze({
     id: 'emailLink' as const,
     label: 'Email link',
+    needsAccount: true,
     cells: Object.freeze({
       keptInThisBrowser: 'yes' as const,
       survivesThisBrowser: 'yes' as const,
@@ -212,6 +239,7 @@ export const DOOR_ROWS: readonly DoorRow[] = Object.freeze([
   Object.freeze({
     id: 'github' as const,
     label: 'GitHub',
+    needsAccount: true,
     cells: Object.freeze({
       keptInThisBrowser: 'yes' as const,
       survivesThisBrowser: 'yes' as const,
@@ -221,7 +249,37 @@ export const DOOR_ROWS: readonly DoorRow[] = Object.freeze([
       needsProvenMailbox: 'no' as const,
     }),
   }),
+  /**
+   * The row that was missing.
+   *
+   * Identical to GitHub except the one column GitHub exists for.
+   * `githubLoginOf` (`lib/auth/session.ts`) finds the identity whose provider
+   * is literally `github`, and `profileRowFor` writes `profiles.github_login`
+   * from nothing else, so a Google account leaves that column null and
+   * `classifySubmittals` reads its submittals as `unattributable` — the same
+   * `no` the email row gets, for the same reason.
+   *
+   * `joinByDomain` is `no` and `needsProvenMailbox` is `no` for the reason the
+   * GitHub row carries: `0005` asks for `app_metadata.providers ? 'email'`, and
+   * an OAuth provider is not that clause however well it knows the address.
+   */
+  Object.freeze({
+    id: 'google' as const,
+    label: 'Google',
+    needsAccount: true,
+    cells: Object.freeze({
+      keptInThisBrowser: 'yes' as const,
+      survivesThisBrowser: 'yes' as const,
+      managersCanRead: 'in-your-orgs' as const,
+      verifiedSubmittal: 'no' as const,
+      joinByDomain: 'no' as const,
+      needsProvenMailbox: 'no' as const,
+    }),
+  }),
 ])
+
+/** How many doors create an account. Counted, so no heading types it. */
+export const ACCOUNT_DOOR_COUNT = DOOR_ROWS.filter((row) => row.needsAccount).length
 
 /** The row for one door, or `undefined` for an id no table row covers. */
 export function doorRow(id: DoorId): DoorRow | undefined {

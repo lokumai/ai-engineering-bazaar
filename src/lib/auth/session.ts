@@ -80,6 +80,23 @@ export interface SessionUser {
   githubLogin: string | null
   /** `github` · `google` · `email` · whatever else a future deploy enables. */
   provider: string | null
+  /**
+   * EVERY provider on the account, not just the first.
+   *
+   * The fifth field this interface's own note warns against adding, and it is
+   * here because a panel needed a fact about the token rather than about a
+   * `profiles` row: `/join/`'s `unprovenMailbox` state told a signed-in reader
+   * to add an email sign-in and sent them to `/sign-in/`, which answered
+   * "Already signed in" and offered nothing — the one reader who needed a
+   * different sheet was sent to a sheet that could not help. Telling them
+   * anything true requires knowing whether this session already carries the
+   * email identity, and `provider` cannot answer it: it names identity zero, so
+   * a GitHub account that later linked an email still reads `github`.
+   *
+   * `mailboxProven` (`lib/org/join.ts`) asks the same question of the same array
+   * for the same reason `0005` does.
+   */
+  providers: readonly string[]
 }
 
 /**
@@ -176,6 +193,48 @@ export function providerOf(user: RawUser): string | null {
   return identities[0]?.provider ?? null
 }
 
+/**
+ * Every provider on the account, deduplicated, in identity order.
+ *
+ * Read from `identities` and never from `app_metadata.providers`, even though
+ * that is the array `0005` tests: `app_metadata` is not on `RawUser` here, and
+ * a panel deciding what to OFFER may read the browser's own copy — it is the
+ * database, not this function, that decides what a policy accepts. The values
+ * are whatever the provider called itself, unnormalised, because a provider
+ * this build has never heard of must still appear rather than be dropped.
+ */
+export function providersOf(user: RawUser): readonly string[] {
+  const seen: string[] = []
+  for (const identity of user.identities ?? []) {
+    const name = identity.provider
+    if (typeof name === 'string' && name !== '' && !seen.includes(name)) seen.push(name)
+  }
+  return seen
+}
+
+/**
+ * The provider name `0005`'s two `memberships` insert policies look for.
+ *
+ * Stated once and shared, so the panel that OFFERS a way past the clause and
+ * the module that explains the clause cannot come to mean different strings.
+ * `lib/org/join.ts`'s `EMAIL_PROVIDER` is this constant — it used to be a second
+ * copy, and two copies of a provider name is the arrangement that let the screen
+ * and the database disagree about verification (§14.14.5).
+ */
+export const EMAIL_IDENTITY = 'email'
+
+/**
+ * Does this session already carry the email identity?
+ *
+ * The question `/sign-in/` has to answer before it can say anything true to a
+ * signed-in reader sent there by `/join/`. Deliberately about the session and
+ * not about `profiles`: it decides what to OFFER, and an offer may be wrong in
+ * the safe direction — the database is what refuses.
+ */
+export function carriesEmailIdentity(user: SessionUser): boolean {
+  return user.providers.includes(EMAIL_IDENTITY)
+}
+
 /** The projection every panel receives. Total, and never throws on a partial row. */
 export function describeSessionUser(user: RawUser): SessionUser {
   return {
@@ -183,6 +242,7 @@ export function describeSessionUser(user: RawUser): SessionUser {
     email: typeof user.email === 'string' && user.email !== '' ? user.email : null,
     githubLogin: githubLoginOf(user),
     provider: providerOf(user),
+    providers: providersOf(user),
   }
 }
 

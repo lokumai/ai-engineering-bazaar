@@ -33,7 +33,9 @@
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { ALL_PROVIDERS, SIGN_IN_PROVIDERS } from '@/lib/auth/session'
 import {
+  ACCOUNT_DOOR_COUNT,
   ANSWER_WORDS,
   DOOR_CONSEQUENCES,
   DOOR_ROWS,
@@ -47,8 +49,8 @@ import { emptySheetRecord, type SheetRecord, type Submittal } from '@/lib/record
 
 const ANSWERS: readonly Answer[] = ['yes', 'no', 'in-your-orgs']
 
-/** The two doors that open an account, named once so the tests read as claims. */
-const ACCOUNT_DOORS: readonly DoorId[] = ['emailLink', 'github']
+/** The doors that open an account, named once so the tests read as claims. */
+const ACCOUNT_DOORS: readonly DoorId[] = ['emailLink', 'github', 'google']
 
 /**
  * What `profiles.github_login` holds after each door.
@@ -64,6 +66,10 @@ const GITHUB_LOGIN: Readonly<Record<DoorId, string | null>> = {
   alias: null,
   emailLink: null,
   github: 'cevheri',
+  // `githubLoginOf` matches `identity.provider === 'github'` literally, so
+  // another OAuth provider leaves the column null however well it knows the
+  // reader — which is the whole of the Google row's difference from GitHub's.
+  google: null,
 }
 
 /**
@@ -77,6 +83,7 @@ const PROVIDERS: Readonly<Record<DoorId, readonly string[]>> = {
   alias: [],
   emailLink: ['email'],
   github: ['github'],
+  google: ['google'],
 }
 
 /** A signed-off sheet carrying one submittal owned by `owner`. */
@@ -119,8 +126,52 @@ function cellsFor(id: DoorId): Readonly<Record<ConsequenceId, Answer>> {
 }
 
 describe('§15.5.2 — the table is one constant', () => {
-  it('has the four doors of §15.5.1, in ascending order of cost', () => {
-    expect(DOOR_ROWS.map((row) => row.id)).toEqual(['none', 'alias', 'emailLink', 'github'])
+  it('has the doors of §15.5.1 in order, with the two OAuth doors adjacent', () => {
+    expect(DOOR_ROWS.map((row) => row.id)).toEqual([
+      'none', 'alias', 'emailLink', 'github', 'google',
+    ])
+  })
+
+  /**
+   * The guard for the defect this row was added to fix.
+   *
+   * `SIGN_IN_PROVIDERS` is what `SignInPanel` renders buttons from, and
+   * `ALL_PROVIDERS` — every provider true — is the value it falls back to when
+   * the settings probe cannot be read, so every provider in that list is
+   * reachable on some deployment. The table said there were two account doors
+   * while the list held three, and nothing failed: the two constants live in
+   * different modules and neither knew about the other.
+   *
+   * Asserted in both directions. A provider with no row is the defect that
+   * shipped; a row with no provider would be a door the panel cannot open,
+   * which is the mirror-image lie.
+   */
+  it('covers every provider the panel can render, and no more', () => {
+    const doorFor: Readonly<Record<string, DoorId>> = {
+      github: 'github',
+      google: 'google',
+      email: 'emailLink',
+    }
+
+    const provided = SIGN_IN_PROVIDERS.map((provider) => {
+      const door = doorFor[provider.id]
+      expect(door, `no door mapped for provider ${provider.id}`).toBeDefined()
+      return door
+    })
+
+    // Non-vacuity: the fallback really does turn all of them on.
+    expect(Object.values(ALL_PROVIDERS).every(Boolean)).toBe(true)
+    expect(provided.length).toBeGreaterThan(1)
+
+    for (const door of provided) {
+      expect(doorRow(door), `provider door ${door} has no table row`).toBeDefined()
+      expect(doorRow(door)?.needsAccount).toBe(true)
+    }
+
+    // And the count the two headings print comes from these rows.
+    expect(ACCOUNT_DOOR_COUNT).toBe(provided.length)
+    expect(DOOR_ROWS.filter((row) => row.needsAccount).map((row) => row.id).sort())
+      .toEqual([...provided].sort())
   })
 
   it('has six consequences, each id used once', () => {

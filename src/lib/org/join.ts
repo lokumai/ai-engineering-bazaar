@@ -34,6 +34,7 @@
  * access it would not have granted.
  */
 
+import { EMAIL_IDENTITY } from '@/lib/auth/session'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
 /**
@@ -78,7 +79,15 @@ export interface JoinIdentity {
  * Possession of the mailbox is the proof; the address written on the account is
  * only a claim about it.
  */
-const EMAIL_PROVIDER = 'email'
+/**
+ * The provider name both `0005` policies test for.
+ *
+ * Taken from `lib/auth/session.ts` rather than spelt again: `SignInPanel` now
+ * decides what to OFFER from the same string this module decides what to REFUSE
+ * from, and two copies of it is exactly the arrangement that let the screen and
+ * the database disagree about verification in the first place (§14.14.5).
+ */
+const EMAIL_PROVIDER = EMAIL_IDENTITY
 
 /**
  * Whether this account carries the proof both `insert` policies ask for.
@@ -412,6 +421,16 @@ export function disclosureStatements(orgName: string, otherOrgCount: number): re
  * clause in `0005`, and it names the invited route explicitly: that policy
  * carries the identical clause, and a reader told only about the domain route
  * would reasonably expect an invitation to be the way round it.
+ *
+ * **This detail once promised a fix nothing performed.** It read "Adding an
+ * email sign-in to this account… is what opens both" and sent the reader to
+ * `/sign-in/`, which — the state being reachable only while signed in — showed
+ * them "Already signed in" and a link back to `/profile/`. A closed trail, from
+ * the module whose own rule is that a control whose only outcome is an error
+ * must not be offered; a sentence promising an action that exists nowhere is
+ * the same defect with no button to grep for. `SignInPanel` now names the limit
+ * and offers the sign-out, and this detail says what that sheet actually holds
+ * rather than what a reader would have to find on it.
  */
 export function noEmailCopy(
   why: NoEmailReason,
@@ -440,8 +459,10 @@ export function noEmailCopy(
           + 'sign-in, so the address is a claim nobody outside that provider '
           + 'has stood behind, and the database refuses the membership row on '
           + 'both routes — an invitation entered by a manager is not a way '
-          + 'round it. Adding an email sign-in to this account, and opening the '
-          + 'link sent to that address, is what opens both.',
+          + 'round it. Nothing on this site adds an email sign-in to an account '
+          + 'that already exists; the sign-in sheet names that limit and holds '
+          + 'the sign-out this browser needs before the email door is in '
+          + 'reach.',
         link: { href: '/sign-in/', label: 'The sign-in sheet' },
       }
     case 'malformed':

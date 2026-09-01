@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { AliasSheet } from '@/components/identity/AliasSheet'
+import { ACCOUNT_DOOR_COUNT } from '@/lib/auth/doors'
 import { PageShell } from '@/components/shell/PageShell'
 import { ALIAS_SCOPE } from '@/lib/record/scope'
 
@@ -59,7 +60,7 @@ export default function AliasPage() {
 
       <hr className="hl-rule-struct" aria-hidden="true" />
 
-      <AliasSheet />
+      <AliasSheet accountDoors={ACCOUNT_DOOR_COUNT} />
     </PageShell>
   )
 }

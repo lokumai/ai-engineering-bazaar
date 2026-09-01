@@ -3,7 +3,13 @@ import Link from 'next/link'
 import { SessionProvider } from '@/components/auth/SessionProvider'
 import { SignInPanel } from '@/components/auth/SignInPanel'
 import { PageShell } from '@/components/shell/PageShell'
-import { ANSWER_WORDS, DOOR_CONSEQUENCES, DOOR_ROWS } from '@/lib/auth/doors'
+import {
+  ACCOUNT_DOOR_COUNT,
+  ANSWER_WORDS,
+  DOOR_CONSEQUENCES,
+  DOOR_ROWS,
+} from '@/lib/auth/doors'
+import { numberWord } from '@/lib/text'
 import { ALIAS_SCOPE } from '@/lib/record/scope'
 
 export const metadata: Metadata = {
@@ -165,8 +171,13 @@ export default function SignInPage() {
           off still gets them. */}
       <section className="hl-panel" aria-labelledby="hl-door-accounts">
         <div className="hl-panel-head">
+          {/* Counted, never typed. This heading said "two" while
+              `SIGN_IN_PROVIDERS` carried three provider buttons and
+              `ALL_PROVIDERS` turned the third on whenever the settings probe
+              could not be read — so the page contradicted the panel under it in
+              a state a deployment can actually be in (§11.25). */}
           <h2 id="hl-door-accounts" className="hl-panel-title">
-            The two account doors
+            The {numberWord(ACCOUNT_DOOR_COUNT)} account doors
           </h2>
           <p className="hl-mark m-0 text-ink-faint">A COPY OFF THIS BROWSER</p>
         </div>
@@ -185,9 +196,17 @@ export default function SignInPage() {
           press, and it brings along the handle a roster prints and a submittal
           is checked against. Its limit: GitHub hands this site no address it
           can prove, so joining an organisation by its email domain does not
-          work under a GitHub-only account. Adding an email identity and opening
-          the link is what opens that door, and the same holds for any other
-          provider button this deployment offers.
+          work under a GitHub-only account.
+        </p>
+
+        <p className="m-0 mt-3 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
+          <span className="hl-mark text-ink">CONTINUE WITH GOOGLE</span> — one
+          press, and the copy off this browser that any account gives. It is the
+          GitHub door without the handle: no address this site can prove, so no
+          domain join, and no repository owner to compare a submittal against,
+          so a submittal recorded under it stays a typed claim. The table below
+          prints the difference as a row rather than leaving it to this
+          paragraph.
         </p>
       </section>
 

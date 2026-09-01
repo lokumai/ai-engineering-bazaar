@@ -260,7 +260,35 @@ describe('§14.5 — no address in the JWT', () => {
     // An invitation is guarded by the identical clause; a reader told only
     // about the domain route would expect one to be the way round it.
     expect(detail).toContain('invitation')
-    expect(detail).toContain('Adding an email sign-in')
+  })
+
+  /**
+   * The regression this pins.
+   *
+   * The detail promised "Adding an email sign-in to this account… is what opens
+   * both" and linked to `/sign-in/`. `unprovenMailbox` is only reachable while
+   * signed in, and `SignInPanel` answers a live session with "Already signed
+   * in" — so the promised action existed on no sheet, and the link led back to
+   * `/profile/`. The rule this module states for buttons ("no control whose
+   * only outcome is an error") applies to a sentence naming an action just as
+   * much, and nothing greps an English sentence.
+   *
+   * Asserted as the absence of the promise AND the presence of what replaced
+   * it, because dropping the sentence alone would leave the reader with a limit
+   * and no next step.
+   */
+  it('promises no action that no control performs (§14.5)', () => {
+    const detail = noEmailCopy('unprovenMailbox').detail
+
+    // The promise, in the shapes it could come back as.
+    expect(detail).not.toMatch(/Adding an email sign-in to this account/i)
+    expect(detail).not.toMatch(/is what opens both/i)
+
+    // What the sheet at the end of the link actually holds. `SignInPanel`'s
+    // signed-in branch names the limit and renders the sign-out; those two
+    // words are the contract between this copy and that component.
+    expect(detail).toMatch(/adds an email sign-in to an account that already exists/i)
+    expect(detail).toMatch(/sign-out/i)
   })
 })
 

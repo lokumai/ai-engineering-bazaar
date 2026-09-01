@@ -9,6 +9,7 @@ import {
   seedRecord,
   signedSheet,
   slugOf,
+  waitForRecord,
 } from './record'
 import { A0, INDEX_SHEET, SHEETS } from './sheets'
 import { watchPage } from './watch'
@@ -355,6 +356,61 @@ for (const state of ['clean', 'with a record'] as const) {
     expect(title).not.toMatch(/\b(you|your|welcome|back|resume|continue|left off)\b/i)
   })
 }
+
+// ---------------------------------------------------------------------------
+// §15.2.1 — the state switch after a client transition
+// ---------------------------------------------------------------------------
+
+/**
+ * The reader who becomes a returning reader DURING the visit.
+ *
+ * MEASURED before this: a clean browser opened `/`, saved an alias on
+ * `/sign-in/alias/`, pressed Home, and got the first-visit document —
+ * `data-hl-record` absent, `.hl-home-new` visible — correct only after a full
+ * reload. `boot.ts` was the attribute's only writer and `stampRecordState`
+ * explicitly left it alone; the reason recorded for that justified never
+ * REMOVING it (§12.13's CLEARED BY YOU) and said nothing about setting it. Every
+ * navigation on this site is a client transition, so "whatever was true at load"
+ * was the whole session.
+ *
+ * The route is a real one and taken through real controls: type a name, keep it,
+ * then follow a link a reader can see. Seeding storage and reloading would test
+ * the boot script again, which was never the half that was broken.
+ */
+test('a first write during the visit reaches the home screen without a reload (§15.2.1)', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await expect(page.locator('.hl-home-new').first()).toBeVisible()
+  await expect(page.locator('html')).not.toHaveAttribute('data-hl-record', '1')
+
+  // The write, through the control the reader would use.
+  await page.goto('/sign-in/alias/')
+  await page.getByRole('textbox').first().fill('Ada')
+  await page.getByRole('button', { name: /keep this alias/i }).click()
+  await waitForRecord(
+    page,
+    (envelope) => envelope?.data.identity.name === 'Ada',
+    'the alias',
+  )
+
+  // Home the way a reader gets there: a link, not a reload.
+  // The breadcrumb, which is where a reader on this route sees a way back.
+  await page
+    .getByRole('navigation', { name: 'Drawing set' })
+    .getByRole('link', { name: 'Home', exact: true })
+    .click()
+  await expect(page).toHaveURL(/\/$/)
+
+  await expect(page.locator('html')).toHaveAttribute('data-hl-record', '1')
+  await expect(page.locator('.hl-home-resume').first()).toBeVisible()
+  await expect(page.locator('.hl-home-new').first()).toBeHidden()
+
+  // And it survives the reload, i.e. the two stampers agree rather than one
+  // undoing the other.
+  await page.reload()
+  await expect(page.locator('.hl-home-resume').first()).toBeVisible()
+})
 
 // ---------------------------------------------------------------------------
 // §15.3.1, §10.4 — every meter cell states its own size in text

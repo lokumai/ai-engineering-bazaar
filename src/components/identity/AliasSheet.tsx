@@ -16,6 +16,7 @@ import {
 import { setIdentity } from '@/lib/record/events'
 import { NAME_SCOPE } from '@/lib/record/scope'
 import { nowIso, update, useHydrated, useRecord } from '@/lib/record/store'
+import { numberWord } from '@/lib/text'
 
 /**
  * §15.4 — `/sign-in/alias/`, the one island the alias route mounts.
@@ -110,7 +111,19 @@ function optionFor(id: MarkId): { id: MarkId; label: string; description: string
   return MARKS.find((option) => option.id === id) ?? { id, label: id, description: '' }
 }
 
-export function AliasSheet() {
+/**
+ * @param accountDoors how many of `/sign-in/`'s doors create an account,
+ *   measured from `DOOR_ROWS` by the server page above.
+ *
+ *   A prop and not an import. `tests/unit/identity/alias.test.tsx` bans every
+ *   `@/lib/auth` import from this island outright — §15.4.4's claim is that this
+ *   route renders with no environment — and `lib/auth/doors.ts` would satisfy
+ *   the spirit of that ban while breaking its letter. A blanket rule that is
+ *   easy to check is worth more here than the convenience of reading the
+ *   constant directly, and the page one level up is already a server component
+ *   holding it.
+ */
+export function AliasSheet({ accountDoors }: { accountDoors: number }) {
   const record = useRecord()
   const hydrated = useHydrated()
 
@@ -322,8 +335,12 @@ export function AliasSheet() {
             first eight characters of a user id.
           </p>
           <p>
+            {/* Counted, for the reason the heading on `/sign-in/` is: a third
+                account door is reachable whenever the provider probe cannot be
+                read, and this link named two. */}
             <Link href="/sign-in/">
-              The two account doors, and what each one adds
+              The {numberWord(accountDoors)} account doors, and what each one
+              adds
             </Link>
             .
           </p>

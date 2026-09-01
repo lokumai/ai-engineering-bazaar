@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
+import { numberWord } from '@/lib/text'
 import { categoryBySlug } from '@/lib/content/categories'
 import {
   categoryEyebrow,
   categorySummary,
   durationLabel,
   indexStatement,
-  numberWord,
   setEyebrow,
   setSummary,
   sheetRows,

@@ -72,7 +72,7 @@ const url = env.NEXT_PUBLIC_SUPABASE_URL ?? ''
 // Both names are accepted: Supabase renamed `anon` to `publishable` in 2025 and
 // new dashboards show only the new one. Neither is a secret (§14.10).
 const anon =
-  env.NEXT_PUBLIC_SUPABASE_ANON_KEY || env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || ''
+  env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 const secret = env.SUPABASE_SERVICE_ROLE_KEY ?? ''
 const dbUrl = env.SUPABASE_DB_URL ?? ''
 

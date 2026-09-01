@@ -60,6 +60,11 @@ jobs:
           # password are NOT here and never should be — a build that emits static
           # files has no business holding either.
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          # Supabase's own name for this value since 2025. The legacy
+          # NEXT_PUBLIC_SUPABASE_ANON_KEY is still read as a fallback, so an
+          # existing secret under the old name keeps working — which is why this
+          # line can be added before the secret is renamed, not after.
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           # A repository VARIABLE, not a secret, and deliberately: this is the
           # kill switch, and it is worth being able to flip it from the GitHub UI

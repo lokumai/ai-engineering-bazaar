@@ -186,7 +186,7 @@ The account layer is off unless it is configured. With no `.env.local` the site
 builds and runs exactly as it did before it existed.
 
 ```bash
-cp .env.local.example .env.local     # then fill in the three values
+cp .env.local.example .env.local     # then fill in the values
 node scripts/check-supabase.mjs      # shape + live checks, prints no secrets
 ```
 

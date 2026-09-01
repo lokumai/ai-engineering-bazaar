@@ -53,7 +53,7 @@ export function accountsEnv(): AccountsEnv | null {
     if (eq !== -1) env[t.slice(0, eq)] = t.slice(eq + 1).trim()
   }
   const url = env.NEXT_PUBLIC_SUPABASE_URL
-  const anon = env.NEXT_PUBLIC_SUPABASE_ANON_KEY || env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+  const anon = env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   const secret = env.SUPABASE_SERVICE_ROLE_KEY
   const db = env.SUPABASE_DB_URL
   if (!url || !anon || !secret || !db) return null

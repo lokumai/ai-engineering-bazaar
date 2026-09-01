@@ -48,7 +48,7 @@ for (const line of readFileSync('.env.local', 'utf8').split('\n')) {
   if (eq !== -1) env[t.slice(0, eq)] = t.slice(eq + 1).trim()
 }
 const URL_ = env.NEXT_PUBLIC_SUPABASE_URL
-const ANON = env.NEXT_PUBLIC_SUPABASE_ANON_KEY || env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+const ANON = env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const SECRET = env.SUPABASE_SERVICE_ROLE_KEY
 const DB = env.SUPABASE_DB_URL
 if (!URL_ || !ANON || !SECRET || !DB) {

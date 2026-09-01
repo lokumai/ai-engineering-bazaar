@@ -52,7 +52,7 @@ export function supabaseBrowser(): SupabaseClient | null {
   const env = supabaseEnv()
   if (env.kind !== 'ready') return null
 
-  cached = createClient(env.url, env.anonKey, {
+  cached = createClient(env.url, env.publishableKey, {
     auth: {
       // PKCE, not the implicit flow (which is still supabase-js's default).
       // The implicit flow puts the access token in the URL fragment, where it

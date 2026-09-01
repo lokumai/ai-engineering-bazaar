@@ -47,6 +47,24 @@
  */
 export interface RawSupabaseEnv {
   url: string | undefined
+  /**
+   * Supabase's own name for this value, and the one its dashboard now shows.
+   * It is `sb_publishable_…`.
+   */
+  publishableKey: string | undefined
+  /**
+   * The legacy name, accepted so an existing deployment keeps working.
+   *
+   * Supabase renamed `anon` to `publishable` in 2025 and is retiring the legacy
+   * JWT keys. Both names are read because this project's own variable was
+   * called `ANON_KEY` while already holding a publishable key — a label that
+   * says "you are using the deprecated key" about a value that is the
+   * recommended one. Renaming it without a fallback would have meant a deploy
+   * that silently loses its backend the moment the old secret stops being read.
+   *
+   * The VALUE is the same either way and neither is a secret: the security
+   * boundary is row-level security in Postgres (see SECURITY.md).
+   */
   anonKey: string | undefined
   authEnabled: string | undefined
 }
@@ -66,7 +84,11 @@ export interface RawSupabaseEnv {
 export type SupabaseUnavailable = 'flagOff' | 'missingUrl' | 'missingKey' | 'malformedUrl'
 
 export type SupabaseEnv =
-  | { kind: 'ready'; url: string; anonKey: string }
+  /**
+   * `publishableKey` is the field name, matching Supabase's own vocabulary.
+   * Callers pass it straight to `createClient` as the second argument.
+   */
+  | { kind: 'ready'; url: string; publishableKey: string }
   | { kind: 'unavailable'; why: SupabaseUnavailable }
 
 /**
@@ -118,10 +140,12 @@ export function resolveSupabaseEnv(raw: RawSupabaseEnv): SupabaseEnv {
   if (url === null) return { kind: 'unavailable', why: 'missingUrl' }
   if (!isUsableUrl(url)) return { kind: 'unavailable', why: 'malformedUrl' }
 
-  const anonKey = present(raw.anonKey)
-  if (anonKey === null) return { kind: 'unavailable', why: 'missingKey' }
+  // Preferred name first, legacy second. A deployment that still sets only
+  // `NEXT_PUBLIC_SUPABASE_ANON_KEY` keeps working unchanged.
+  const publishableKey = present(raw.publishableKey) ?? present(raw.anonKey)
+  if (publishableKey === null) return { kind: 'unavailable', why: 'missingKey' }
 
-  return { kind: 'ready', url, anonKey }
+  return { kind: 'ready', url, publishableKey }
 }
 
 /**
@@ -142,6 +166,10 @@ export function resolveSupabaseEnv(raw: RawSupabaseEnv): SupabaseEnv {
 export function supabaseEnv(): SupabaseEnv {
   return resolveSupabaseEnv({
     url: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    // Both written out as literal member expressions, because Next substitutes
+    // exactly this form textually. A loop over names, or `process.env[name]`,
+    // compiles to a lookup on an object that does not exist in the browser.
+    publishableKey: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
     anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     authEnabled: process.env.NEXT_PUBLIC_AUTH_ENABLED,
   })

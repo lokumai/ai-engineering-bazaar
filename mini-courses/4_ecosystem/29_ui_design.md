@@ -1,13 +1,13 @@
 ---
-module: 28
+module: 29
 title: "UI Design"
 category: ecosystem
 status: draft
 ---
 
-# Module 28: UI Design
+# Module 29: UI Design
 
-*Category: Ecosystem — Module 28 (4 of 5 in this category)*
+*Category: Ecosystem — Module 29 (4 of 6 in this category)*
 
 *(Placeholder module — a short overview for now; full lesson content is coming soon.)*
 
@@ -23,15 +23,16 @@ Tools and practices for designing agent-facing or agent-built interfaces.
 
 ```mermaid
 graph LR
-    A[25: Agent Frameworks] --> B[26: Inference Providers]
-    B --> C[27: Inference Engines]
-    C --> D[28: UI Design]
-    D --> E[29: Observability]
+    A[26: Agent Frameworks] --> B[27: Inference Providers]
+    B --> C[28: Inference Engines]
+    C --> D[29: UI Design]
+    D --> E[30: Observability]
+    E --> F[31: Choosing a Tech Stack]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
     style D fill:#FFFF00
 ```
 
-**Previous Module:** [Module 27: Inference Engines](27_inference_engines.md)
-**Next Module:** [Module 29: Observability](29_observability.md)
+**Previous Module:** [Module 28: Inference Engines](28_inference_engines.md)
+**Next Module:** [Module 30: Observability](30_observability.md)

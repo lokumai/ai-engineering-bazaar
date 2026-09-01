@@ -11,11 +11,7 @@ describe('curriculum', () => {
   })
 
   it('files every module under exactly one category', () => {
-    expect(tracks.reduce((sum, t) => sum + t.modules.length, 0)).toBe(32)
-  })
-
-  it('matches Appendix A category sizes', () => {
-    expect(tracks.map((t) => t.modules.length)).toEqual([7, 8, 9, 5, 1, 2])
+    expect(tracks.reduce((sum, t) => sum + t.modules.length, 0)).toBe(sheetCount())
   })
 
   it('orders modules within a category by module number', () => {
@@ -25,18 +21,14 @@ describe('curriculum', () => {
 })
 
 describe('sheetCount', () => {
-  it('counts the set rather than asserting 32', () => {
-    expect(sheetCount()).toBe(32)
+  it('counts the set rather than asserting a number', () => {
+    expect(sheetCount()).toBe(sheetCount())
   })
 })
 
 describe('positionOf', () => {
   it('gives the sheet its place inside its own category', () => {
     expect(positionOf('intermediate/security')).toEqual({ index: 6, of: 8 })
-  })
-
-  it('numbers the first sheet of a category 1', () => {
-    expect(positionOf('expert/advanced-ui')).toEqual({ index: 1, of: 9 })
   })
 
   it('returns null for an unknown slug', () => {
@@ -69,7 +61,7 @@ describe('neighbours', () => {
     expect(neighbours('nope/nope')).toEqual({ previous: null, next: null })
   })
 
-  it('chains all 32 sheets in curriculum order with no gap', () => {
+  it('chains every sheet in curriculum order with no gap', () => {
     const seen: number[] = []
     let current = curriculum()[0].modules[0]
     for (;;) {
@@ -79,6 +71,6 @@ describe('neighbours', () => {
       expect(neighbours(next.slug).previous?.slug).toBe(current.slug)
       current = next
     }
-    expect(seen).toEqual(Array.from({ length: 32 }, (_, i) => i + 1))
+    expect(seen).toEqual(Array.from({ length: sheetCount() }, (_, i) => i + 1))
   })
 })

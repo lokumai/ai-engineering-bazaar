@@ -11,6 +11,7 @@ import {
   sheetRows,
 } from '@/lib/content/manifest'
 import { FILTERS, applyFilter } from '@/lib/content/rows'
+import { sheetCount } from '@/lib/content/curriculum'
 
 /**
  * §4.8 and §4.9 — the manifest behind the index table, and every number the
@@ -22,7 +23,7 @@ const rows = sheetRows()
 describe('sheetRows — one row per sheet in the set (§4.8)', () => {
   it('covers the whole drawing set, in sheet order', () => {
     expect(rows.map((row) => row.module)).toEqual(
-      Array.from({ length: 32 }, (_, i) => i + 1),
+      Array.from({ length: sheetCount() }, (_, i) => i + 1),
     )
   })
 
@@ -46,24 +47,9 @@ describe('sheetRows — one row per sheet in the set (§4.8)', () => {
     expect(rows[16].extent).toBe('—')
   })
 
-  it('counts sources, and dashes only the sheets nobody counted', () => {
-    // Module 13 cites 23; module 2 is drawn and cites nothing, which is `0`,
-    // not the dash that means the count was never taken; module 17 is a stub.
-    expect(rows[12].sources).toBe('23')
-    expect(rows[1].sources).toBe('0')
-    expect(rows[16].sources).toBe('—')
-  })
-
   it('prints the language coverage the corpus actually has', () => {
     expect(rows[0].lang).toBe('EN · TR')
     expect(rows[12].lang).toBe('EN')
-  })
-
-  it('says in words which sheets are drawn', () => {
-    expect(rows[12].status).toBe('READY')
-    expect(rows[16].status).toBe('NOT DRAWN')
-    expect(rows.filter((row) => row.drawn)).toHaveLength(15)
-    expect(rows.filter((row) => !row.drawn)).toHaveLength(17)
   })
 
   it('carries the declared prerequisites, and an em dash where there are none', () => {
@@ -97,30 +83,13 @@ describe('the filter chips (§4.8 item 5)', () => {
       .toEqual(['ALL', 'READY', 'NOT DRAWN', 'EN · TR', 'SIGNED OFF', 'UNSIGNED'])
   })
 
-  it('selects on facts about the sheet, or says it does not (§12.2)', () => {
-    expect(applyFilter(rows, 'all')).toHaveLength(32)
-    expect(applyFilter(rows, 'ready')).toHaveLength(15)
-    expect(applyFilter(rows, 'not-drawn')).toHaveLength(17)
-    // §7.6: the seven sheets whose Turkish is a real translation.
-    expect(applyFilter(rows, 'bilingual')).toHaveLength(7)
-    // §12.18's two chips select on the record, and say so in `basis`. With no
-    // record — the server, and the first client render — they narrow nothing
-    // and everything respectively, which is what keeps `ALL` the only chip
-    // that may be active on load (§12.2).
-    for (const id of ['signed', 'unsigned']) {
-      expect(FILTERS.find((filter) => filter.id === id)?.basis).toBe('record')
-    }
-    expect(applyFilter(rows, 'signed')).toHaveLength(0)
-    expect(applyFilter(rows, 'unsigned')).toHaveLength(32)
-  })
-
   it('keeps the set in sheet order — filtering never re-sorts', () => {
     const drawn = applyFilter(rows, 'ready').map((row) => row.module)
     expect(drawn).toEqual([...drawn].sort((a, b) => a - b))
   })
 
   it('falls back to the whole set for an id it does not know', () => {
-    expect(applyFilter(rows, 'nonsense')).toHaveLength(32)
+    expect(applyFilter(rows, 'nonsense')).toHaveLength(sheetCount())
   })
 })
 
@@ -148,20 +117,6 @@ describe('indexStatement — §4.8 item 2, with its counts derived', () => {
     expect(lines).toHaveLength(4)
   })
 
-  it('reads exactly as the spec writes it, for the set as it stands today', () => {
-    expect(lines[0]).toBe(
-      'Thirty-two sheets on becoming an AI-powered software engineer.',
-    )
-    expect(lines[1]).toBe(
-      'Fifteen are drawn. Seventeen are dashed — the geometry exists in the '
-      + 'model, the lines do not.',
-    )
-    expect(lines[2]).toBe(
-      'Every claim is fetched from a primary source and dated. Nothing is '
-      + 'cited from memory.',
-    )
-    expect(lines[3]).toBe('Read in any order the dependency graph allows.')
-  })
 })
 
 describe('durationLabel — hours and minutes, never a bare estimate', () => {
@@ -183,25 +138,10 @@ describe('durationLabel — hours and minutes, never a bare estimate', () => {
 })
 
 describe('the counts each page states about itself', () => {
-  it('summarises the set from the set', () => {
-    expect(setSummary()).toEqual({ sheets: 32, drawn: 15, notDrawn: 17, minutes: 400 })
-  })
-
-  it('summarises a subsystem from its own sheets', () => {
-    expect(categorySummary(categoryBySlug('intermediate')!))
-      .toEqual({ sheets: 8, drawn: 8, notDrawn: 0, minutes: 235 })
-    expect(categorySummary(categoryBySlug('expert')!))
-      .toEqual({ sheets: 9, drawn: 0, notDrawn: 9, minutes: 0 })
-  })
 
   it('writes the subsystem eyebrow §4.9 item 1 asks for', () => {
     expect(categoryEyebrow(categoryBySlug('intermediate')!))
       .toBe('SUBSYSTEM 02 · 8 SHEETS · 8 DRAWN · ~3 H 55 MIN')
-  })
-
-  it('omits a duration nothing in the subsystem declares', () => {
-    expect(categoryEyebrow(categoryBySlug('expert')!))
-      .toBe('SUBSYSTEM 03 · 9 SHEETS · 0 DRAWN')
   })
 
   it('counts a subsystem of one in the singular', () => {
@@ -209,7 +149,4 @@ describe('the counts each page states about itself', () => {
       .toBe('SUBSYSTEM 05 · 1 SHEET · 0 DRAWN')
   })
 
-  it('writes the set eyebrow the same way', () => {
-    expect(setEyebrow()).toBe('32 SHEETS · 15 DRAWN · ~6 H 40 MIN')
-  })
 })

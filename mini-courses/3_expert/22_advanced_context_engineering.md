@@ -7,7 +7,7 @@ status: draft
 
 # Module 22: Advanced Context Engineering
 
-*Category: Expert — Module 22 (7 of 9 in this category)*
+*Category: Expert — Module 22 (7 of 10 in this category)*
 
 *(Placeholder module — a short overview for now; full lesson content is coming soon.)*
 
@@ -32,6 +32,7 @@ graph LR
     F --> G[22: Adv. Context Eng.]
     G --> H[23: Adv. Harness Eng.]
     H --> I[24: Advanced Deployment]
+    I --> J[25: Advanced Training]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90

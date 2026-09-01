@@ -257,14 +257,14 @@ export const PATHS: readonly LearningPath[] = [
       },
       {
         slug: 'ecosystem/observability',  // draft
-        module: 29,
+        module: 30,
         tier: 'context',
         reason:
           'Planned coverage of LangSmith, LangFuse and trace-analyzer agents; the sheet holds a topic list until it is written',
       },
       {
         slug: 'optional/runtime',  // draft
-        module: 32,
+        module: 34,
         tier: 'context',
         reason:
           'Slated for checkpoints, fault tolerance and time travel across long failure-prone runs; no lesson content there yet',
@@ -375,7 +375,7 @@ export const PATHS: readonly LearningPath[] = [
       },
       {
         slug: 'ecosystem/observability',  // draft
-        module: 29,
+        module: 30,
         tier: 'context',
         reason:
           'Not written yet. The topic list names LangSmith, LangFuse and trace-analyzer agents as the planned tracing coverage',
@@ -479,7 +479,7 @@ export const PATHS: readonly LearningPath[] = [
       },
       {
         slug: 'ecosystem/observability',  // draft
-        module: 29,
+        module: 30,
         tier: 'context',
         reason:
           'Still an outline. Planned coverage names LangSmith, LangFuse and trace-analyzer agents for inspecting what a query agent did',
@@ -569,7 +569,7 @@ export const PATHS: readonly LearningPath[] = [
       },
       {
         slug: 'optional/human-in-the-loop',  // draft
-        module: 31,
+        module: 33,
         tier: 'context',
         reason:
           'A placeholder today, listing interrupt and steering as its planned topics; hold it as a roadmap marker for keeping a person in control',
@@ -666,14 +666,14 @@ export const PATHS: readonly LearningPath[] = [
       },
       {
         slug: 'ecosystem/observability',  // draft
-        module: 29,
+        module: 30,
         tier: 'context',
         reason:
           'A draft placeholder, not yet readable; it is planned to cover LangSmith, LangFuse and trace-analyzer agents',
       },
       {
         slug: 'optional/runtime',  // draft
-        module: 32,
+        module: 34,
         tier: 'context',
         reason:
           'Still a draft with only a topic list; checkpoints, fault tolerance and time travel are planned, which is where replaying a run belongs',
@@ -777,14 +777,14 @@ export const PATHS: readonly LearningPath[] = [
       },
       {
         slug: 'optional/human-in-the-loop',  // draft
-        module: 31,
+        module: 33,
         tier: 'context',
         reason:
           'A placeholder for now: planned to cover interrupt and steering, with only the topic list on the page today',
       },
       {
         slug: 'ecosystem/observability',  // draft
-        module: 29,
+        module: 30,
         tier: 'context',
         reason:
           'Not yet written: the roadmap names LangSmith, LangFuse and trace-analyzer agents as the planned coverage',
@@ -881,7 +881,7 @@ export const PATHS: readonly LearningPath[] = [
       },
       {
         slug: 'ecosystem/observability',  // draft
-        module: 29,
+        module: 30,
         tier: 'context',
         reason:
           'Still a draft: LangSmith, LangFuse and trace-analyzer agents are listed as planned topics, where audit-trail material will land',
@@ -971,21 +971,21 @@ export const PATHS: readonly LearningPath[] = [
       },
       {
         slug: 'ecosystem/agent-frameworks',  // draft
-        module: 25,
+        module: 26,
         tier: 'context',
         reason:
           'Planned as a tour of build-side frameworks — LangChain, CrewAI, smolagents, PydanticAI — and is a topic list today, not a lesson',
       },
       {
         slug: 'ecosystem/inference-providers',  // draft
-        module: 26,
+        module: 27,
         tier: 'context',
         reason:
           'Planned to cover the hosted serving options a deal turns on — OpenRouter, OpenAI, Google AI Studio; the sheet is not written yet',
       },
       {
         slug: 'protocols/protocols-reference',  // draft
-        module: 30,
+        module: 32,
         tier: 'context',
         reason:
           'Planned as one page collecting the protocols named across the series plus NLWeb, UCP and AP2; nothing readable there yet',

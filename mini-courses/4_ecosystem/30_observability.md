@@ -1,13 +1,13 @@
 ---
-module: 29
+module: 30
 title: "Observability"
 category: ecosystem
 status: draft
 ---
 
-# Module 29: Observability
+# Module 30: Observability
 
-*Category: Ecosystem — Module 29 (5 of 5 in this category)*
+*Category: Ecosystem — Module 30 (5 of 6 in this category)*
 
 *(Placeholder module — a short overview for now; full lesson content is coming soon.)*
 
@@ -22,10 +22,11 @@ Watching what your agents actually do — every prompt, tool call, and decision 
 
 ```mermaid
 graph LR
-    A[25: Agent Frameworks] --> B[26: Inference Providers]
-    B --> C[27: Inference Engines]
-    C --> D[28: UI Design]
-    D --> E[29: Observability]
+    A[26: Agent Frameworks] --> B[27: Inference Providers]
+    B --> C[28: Inference Engines]
+    C --> D[29: UI Design]
+    D --> E[30: Observability]
+    E --> F[31: Choosing a Tech Stack]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
@@ -33,5 +34,5 @@ graph LR
     style E fill:#FFFF00
 ```
 
-**Previous Module:** [Module 28: UI Design](28_ui_design.md)
-**Next Module:** [Protocols & Specs — Module 30: Protocols Reference](../5_protocols_specs/30_protocols_reference.md)
+**Previous Module:** [Module 29: UI Design](29_ui_design.md)
+**Next Module:** [Module 31: Choosing a Tech Stack](31_choosing_tech_stack.md)

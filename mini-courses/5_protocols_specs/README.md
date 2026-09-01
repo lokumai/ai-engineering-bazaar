@@ -4,8 +4,8 @@ A single reference collecting every protocol and spec mentioned across the serie
 
 ## Modules
 
-30. **Module 30: Protocols Reference**
-   - English: [30_protocols_reference.md](30_protocols_reference.md)
-   - Turkish: [30_protocols_reference_tr.md](30_protocols_reference_tr.md)
+32. **Module 32: Protocols Reference**
+   - English: [32_protocols_reference.md](32_protocols_reference.md)
+   - Turkish: [32_protocols_reference_tr.md](32_protocols_reference_tr.md)
 
 [← Back to overview](../index.md)

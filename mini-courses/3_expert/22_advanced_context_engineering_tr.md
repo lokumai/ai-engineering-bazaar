@@ -1,6 +1,6 @@
 # Module 22: İleri Seviye Context Engineering
 
-*Kategori: Expert — Modül 22 (bu kategoride 7/9)*
+*Kategori: Expert — Modül 22 (bu kategoride 7/10)*
 
 *(Bu bir placeholder modül — şimdilik kısa bir özet; tam ders içeriği yakında geliyor.)*
 
@@ -25,6 +25,7 @@ graph LR
     F --> G[22: Adv. Context Eng.]
     G --> H[23: Adv. Harness Eng.]
     H --> I[24: Advanced Deployment]
+    I --> J[25: Advanced Training]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90

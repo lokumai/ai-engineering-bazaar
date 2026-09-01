@@ -1,13 +1,13 @@
 ---
-module: 32
+module: 34
 title: "Runtime"
 category: optional
 status: draft
 ---
 
-# Module 32: Runtime
+# Module 34: Runtime
 
-*Category: Optional — Module 32 (2 of 2 in this category)*
+*Category: Optional — Module 34 (2 of 2 in this category)*
 
 *(Placeholder module — a short overview for now; full lesson content is coming soon.)*
 
@@ -22,9 +22,9 @@ The infrastructure question of running agents reliably over long, failure-prone 
 
 ```mermaid
 graph LR
-    A[31: Human-in-the-Loop] --> B[32: Runtime]
+    A[33: Human-in-the-Loop] --> B[34: Runtime]
     style A fill:#90EE90
     style B fill:#FFFF00
 ```
 
-**Previous Module:** [Module 31: Human-in-the-Loop](31_human_in_the_loop.md)
+**Previous Module:** [Module 33: Human-in-the-Loop](33_human_in_the_loop.md)

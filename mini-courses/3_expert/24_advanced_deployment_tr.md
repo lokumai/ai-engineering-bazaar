@@ -1,6 +1,6 @@
 # Module 24: İleri Seviye Deployment
 
-*Kategori: Expert — Modül 24 (bu kategoride 9/9)*
+*Kategori: Expert — Modül 24 (bu kategoride 9/10)*
 
 *(Bu bir placeholder modül — şimdilik kısa bir özet; tam ders içeriği yakında geliyor.)*
 
@@ -22,6 +22,7 @@ graph LR
     F --> G[22: Adv. Context Eng.]
     G --> H[23: Adv. Harness Eng.]
     H --> I[24: Advanced Deployment]
+    I --> J[25: Advanced Training]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
@@ -34,4 +35,4 @@ graph LR
 ```
 
 **Önceki Modül:** [Modül 23: İleri Seviye Harness Engineering](23_advanced_harness_engineering_tr.md)
-**Sonraki Modül:** [Ecosystem — Modül 25: Agent Framework'leri](../4_ecosystem/25_agent_frameworks_tr.md)
+**Sonraki Modül:** [Modül 25: İleri Seviye Training](25_advanced_training_tr.md)

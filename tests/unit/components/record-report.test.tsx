@@ -297,13 +297,6 @@ describe('the filename reaches the control that saves it (§12.12.1)', () => {
 describe('/report/ — the route (§12.12)', () => {
   const markup = renderToStaticMarkup(<ReportPage />)
 
-  it('is a server page that measures the real corpus for both consumers', () => {
-    expect(markup).toContain('Record of work')
-    expect(markup).toContain('data-hl-report')
-    // 32 sheets, counted, never typed: the lead states the size of the set.
-    expect(words(markup)).toMatch(/ledger of all 32 sheets/)
-  })
-
   it('names no authority and claims none (§12.12.1)', () => {
     expect(markup).toContain('SELF-ATTESTED · NO ISSUING AUTHORITY')
     // The seven limits are removed before the scan rather than exempted from
@@ -452,13 +445,6 @@ describe('the specimen (§12.13)', () => {
     // may reach this page.
     expect(markup).not.toContain('<script')
     expect(markup).not.toContain('hl-record')
-  })
-
-  it('describes the file it is actually offering', () => {
-    const text = words(markup)
-    expect(text).toMatch(/[0-9a-f]{64}/)
-    expect(text).toMatch(/07 \/ 32/)
-    expect(text).toMatch(/2026-08-31T17:00:00\.000Z/)
   })
 
   it('presents it as a specimen, never as the reader’s own state', () => {

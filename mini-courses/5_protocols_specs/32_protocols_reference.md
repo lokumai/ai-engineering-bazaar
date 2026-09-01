@@ -1,13 +1,13 @@
 ---
-module: 30
+module: 32
 title: "Protocols Reference"
 category: protocols
 status: draft
 ---
 
-# Module 30: Protocols Reference
+# Module 32: Protocols Reference
 
-*Category: Protocols & Specs — Module 30 (1 of 1 in this category)*
+*Category: Protocols & Specs — Module 32 (1 of 1 in this category)*
 
 *(Placeholder module — a short overview for now; full lesson content is coming soon.)*
 
@@ -23,9 +23,9 @@ A single reference page collecting every protocol mentioned across the series (M
 
 ```mermaid
 graph LR
-    A[30: Protocols Reference]
+    A[32: Protocols Reference]
     style A fill:#FFFF00
 ```
 
-**Previous Module:** [Ecosystem — Module 29: Observability](../4_ecosystem/29_observability.md)
-**Next Module:** [Optional — Module 31: Human-in-the-Loop](../6_optional/31_human_in_the_loop.md)
+**Previous Module:** [Ecosystem, Module 31: Choosing a Tech Stack](../4_ecosystem/31_choosing_tech_stack.md)
+**Next Module:** [Optional — Module 33: Human-in-the-Loop](../6_optional/33_human_in_the_loop.md)

@@ -1,6 +1,6 @@
-# Module 32: Runtime
+# Module 34: Runtime
 
-*Kategori: Optional — Modül 32 (bu kategoride 2/2)*
+*Kategori: Optional — Modül 34 (bu kategoride 2/2)*
 
 *(Bu bir placeholder modül — şimdilik kısa bir özet; tam ders içeriği yakında geliyor.)*
 
@@ -15,9 +15,9 @@ Agent'ları uzun ve hataya açık görevler boyunca güvenilir şekilde çalış
 
 ```mermaid
 graph LR
-    A[31: Human-in-the-Loop] --> B[32: Runtime]
+    A[33: Human-in-the-Loop] --> B[34: Runtime]
     style A fill:#90EE90
     style B fill:#FFFF00
 ```
 
-**Önceki Modül:** [Modül 31: Human-in-the-Loop](31_human_in_the_loop_tr.md)
+**Önceki Modül:** [Modül 33: Human-in-the-Loop](33_human_in_the_loop_tr.md)

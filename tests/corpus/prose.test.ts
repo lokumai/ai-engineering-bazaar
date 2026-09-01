@@ -4,6 +4,7 @@ import { type CourseModule, loadAllModules } from '@/lib/content/loader'
 import { DIAGRAM_HEADING } from '@/lib/content/lines'
 import { type RenderedMarkdown, renderMarkdown } from '@/lib/content/render'
 import { sectionTitles } from '@/lib/content/topics'
+import { sheetCount } from '@/lib/content/curriculum'
 
 /**
  * The render pipeline, run against the real corpus rather than fixtures.
@@ -48,13 +49,13 @@ function forEachModule(
 }
 
 describe('the corpus renders', () => {
-  it('finds all 32 sheets', () => {
-    expect(modules).toHaveLength(32)
+  it('finds every sheet in the set', () => {
+    expect(modules).toHaveLength(sheetCount())
   })
 
   it('renders every one of them without throwing', async () => {
     const all = await renderAll()
-    expect(all.size).toBe(32)
+    expect(all.size).toBe(sheetCount())
     for (const [slug, output] of all) {
       expect(output.html.length, `${slug} rendered empty`).toBeGreaterThan(0)
     }

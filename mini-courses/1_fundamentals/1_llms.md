@@ -302,6 +302,8 @@ Worth reading, to see how much effort goes into production prompts:
 
 - [System prompts of AI tools](https://github.com/x1xhlol/system-prompts-and-models-of-ai-tools)
 - [System prompt leaks](https://github.com/asgeirtj/system_prompts_leaks)
+- [Large Language Models explained briefly](https://youtu.be/LPZh9BOjkQs?si=8kH-lzHbfHRL1_8h): a video walk
+  through the same ground, if you would rather watch than read
 - [Leaked system prompts](https://github.com/jujumilk3/leaked-system-prompts)
 
 ## Where this fits in the series
@@ -334,5 +336,7 @@ all, in one way or another, answers to the question: *what do we put on that lim
 - [Google AI Studio](https://aistudio.google.com/): free-tier API keys
 - [OpenRouter](https://openrouter.ai/): one key for many providers
 - [System prompt leaks](https://github.com/asgeirtj/system_prompts_leaks)
+- [Large Language Models explained briefly](https://youtu.be/LPZh9BOjkQs?si=8kH-lzHbfHRL1_8h): a video walk
+  through the same ground, if you would rather watch than read
 
 **Next Module:** [Module 2: Training LLMs](2_training.md)

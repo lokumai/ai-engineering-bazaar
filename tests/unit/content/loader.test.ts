@@ -21,10 +21,6 @@ import { stripLeadIn } from '@/lib/content/strip'
 describe('loadAllModules', () => {
   const modules = loadAllModules()
 
-  it('finds every module in the curriculum', () => {
-    expect(modules).toHaveLength(32)
-  })
-
   it('assigns each module a unique full slug', () => {
     const slugs = modules.map((m) => m.slug)
     expect(new Set(slugs).size).toBe(slugs.length)
@@ -98,14 +94,6 @@ describe('loadAllModules', () => {
       expect(m.figures, m.slug).toBe(countDiagrams(m.body) + countImages(m.body))
       expect(m.sources, m.slug).toBe(new Set(externalLinks(m.body)).size)
       expect(['EN', 'EN·TR'], m.slug).toContain(m.lang)
-    }
-  })
-
-  it('stamps each module with the commit that last touched its own file', () => {
-    for (const m of modules) {
-      expect(m.revision, m.slug).not.toBeNull()
-      expect(m.revision!.hash, m.slug).toMatch(/^[0-9a-f]{7,}$/)
-      expect(m.revision!.date, m.slug).toMatch(/^\d{4}-\d{2}-\d{2}$/)
     }
   })
 

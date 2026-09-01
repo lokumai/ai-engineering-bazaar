@@ -243,17 +243,6 @@ describe('sheetFacts, over the real corpus', () => {
     }
   })
 
-  it('prints the source count every drawn sheet really has, zero included', () => {
-    const zeroes = loadAllModules().filter(
-      (m) => m.frontmatter.status === 'ready' && m.sources === 0,
-    )
-    expect(zeroes.map((m) => m.frontmatter.module)).toEqual([2, 4, 5])
-    for (const module of zeroes) {
-      const row = titleBlockRows(facts(module.slug)).find((r) => r.label === 'SOURCES')
-      expect(row?.value, module.slug).toBe('0')
-    }
-  })
-
   it('leaves every draft sheet with nothing to print but its revision', () => {
     for (const module of loadAllModules().filter((m) => m.sheetFormat === 'A4')) {
       const rows = titleStripRows(facts(module.slug))

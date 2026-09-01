@@ -1,6 +1,6 @@
 # Module 16: İleri Seviye UI
 
-*Kategori: Expert — Modül 16 (bu kategoride 1/9)*
+*Kategori: Expert — Modül 16 (bu kategoride 1/10)*
 
 *(Bu bir placeholder modül — şimdilik kısa bir özet; tam ders içeriği yakında geliyor.)*
 
@@ -28,6 +28,7 @@ graph LR
     F --> G[22: Adv. Context Eng.]
     G --> H[23: Adv. Harness Eng.]
     H --> I[24: Advanced Deployment]
+    I --> J[25: Advanced Training]
     style A fill:#FFFF00
 ```
 

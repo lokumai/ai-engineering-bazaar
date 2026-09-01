@@ -40,4 +40,8 @@ Deeper, more specialized topics for pushing agent systems further: advanced UI, 
    - English: [24_advanced_deployment.md](24_advanced_deployment.md)
    - Turkish: [24_advanced_deployment_tr.md](24_advanced_deployment_tr.md)
 
+25. **Module 25: Advanced Training**
+   - English: [25_advanced_training.md](25_advanced_training.md)
+   - Turkish: [25_advanced_training_tr.md](25_advanced_training_tr.md)
+
 [← Back to overview](../index.md)

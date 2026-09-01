@@ -1,6 +1,6 @@
-# Module 29: Observability (Gözlemlenebilirlik)
+# Module 30: Observability (Gözlemlenebilirlik)
 
-*Kategori: Ecosystem — Modül 29 (bu kategoride 5/5)*
+*Kategori: Ecosystem — Modül 30 (bu kategoride 5/6)*
 
 *(Bu bir placeholder modül — şimdilik kısa bir özet; tam ders içeriği yakında geliyor.)*
 
@@ -15,10 +15,11 @@ Agent'larının gerçekte ne yaptığını izlemek—yol boyunca her prompt, too
 
 ```mermaid
 graph LR
-    A[25: Agent Frameworks] --> B[26: Inference Providers]
-    B --> C[27: Inference Engines]
-    C --> D[28: UI Design]
-    D --> E[29: Observability]
+    A[26: Agent Frameworks] --> B[27: Inference Providers]
+    B --> C[28: Inference Engines]
+    C --> D[29: UI Design]
+    D --> E[30: Observability]
+    E --> F[31: Choosing a Tech Stack]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
@@ -26,5 +27,5 @@ graph LR
     style E fill:#FFFF00
 ```
 
-**Önceki Modül:** [Modül 28: UI Tasarımı](28_ui_design_tr.md)
-**Sonraki Modül:** [Protocols & Specs — Modül 30: Protokol Referansı](../5_protocols_specs/30_protocols_reference_tr.md)
+**Önceki Modül:** [Modül 29: UI Tasarımı](29_ui_design_tr.md)
+**Sonraki Modül:** [Modül 31: Tech Stack Seçimi](31_choosing_tech_stack_tr.md)

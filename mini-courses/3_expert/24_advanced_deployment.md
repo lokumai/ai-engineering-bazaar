@@ -7,7 +7,7 @@ status: draft
 
 # Module 24: Advanced Deployment
 
-*Category: Expert — Module 24 (9 of 9 in this category)*
+*Category: Expert — Module 24 (9 of 10 in this category)*
 
 *(Placeholder module — a short overview for now; full lesson content is coming soon.)*
 
@@ -29,6 +29,7 @@ graph LR
     F --> G[22: Adv. Context Eng.]
     G --> H[23: Adv. Harness Eng.]
     H --> I[24: Advanced Deployment]
+    I --> J[25: Advanced Training]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
@@ -41,4 +42,4 @@ graph LR
 ```
 
 **Previous Module:** [Module 23: Advanced Harness Engineering](23_advanced_harness_engineering.md)
-**Next Module:** [Ecosystem — Module 25: Agent Frameworks](../4_ecosystem/25_agent_frameworks.md)
+**Next Module:** [Module 25: Advanced Training](25_advanced_training.md)

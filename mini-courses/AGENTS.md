@@ -161,10 +161,10 @@ mini-courses/            the authored corpus, and all this file governs
   index.md               site homepage, mirrors README.md
   1_fundamentals/        modules 1-7   (improved in place)
   2_intermediate/        modules 8-15  (being rewritten from scratch)
-  3_expert/              modules 16-24 (draft)
-  4_ecosystem/           modules 25-29 (draft)
-  5_protocols_specs/     module 30     (draft)
-  6_optional/            modules 31-32 (draft)
+  3_expert/              modules 16-25 (draft)
+  4_ecosystem/           modules 26-31 (draft)
+  5_protocols_specs/     module 32     (draft)
+  6_optional/            modules 33-34 (draft)
   scratchpad/            research notes and diagram prompts, never published
 src/ tests/ scripts/     the Next.js app that renders the corpus (not ours)
 ```

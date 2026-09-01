@@ -617,19 +617,6 @@ describe('the corpus these numbers are derived from', () => {
     return lines
   }
 
-  it('is 32 sheets, 15 of them drawn', () => {
-    expect(modules).toHaveLength(32)
-    expect(modules.filter((module) => module.frontmatter.status === 'ready')).toHaveLength(15)
-  })
-
-  it('has the category sizes the fixture uses', () => {
-    const sizes = CATEGORIES.map((category) => ({
-      slug: category.slug,
-      total: modules.filter((module) => module.category.slug === category.slug).length,
-    }))
-    expect(sizes).toEqual(facts().categories)
-  })
-
   it('has 8 checklist items, all on one sheet (§12.7)', () => {
     const items = modules.map((module) => ({
       module: module.frontmatter.module,

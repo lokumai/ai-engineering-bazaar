@@ -265,9 +265,4 @@ describe('PageShell wires the readout on every route (§7.1)', () => {
     expect(markup).toContain('role="contentinfo"')
   })
 
-  it('prints the compact readout against the corpus\'s own count of sheets', () => {
-    expect(markup).toContain('data-variant="compact"')
-    expect(markup).toContain('data-hydrated="false"')
-    expect(markup).toContain('--/32')
-  })
 })

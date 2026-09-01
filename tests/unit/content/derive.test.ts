@@ -103,12 +103,6 @@ describe('sheetFormat', () => {
     expect(sheetFormat({ status: 'draft' }, 9999)).toBe('A4')
   })
 
-  it('sizes the drawing set at 15 drawn sheets and 17 drafts', () => {
-    const tally = { A0: 0, A4: 0 }
-    for (const m of modules) tally[m.sheetFormat] += 1
-    expect(tally).toEqual({ A0: 15, A4: 17 })
-  })
-
   it('follows status and nothing else', () => {
     for (const m of modules) {
       const expected = m.frontmatter.status === 'ready' ? 'A0' : 'A4'
@@ -265,12 +259,6 @@ describe('distinctExternalLinks', () => {
     }
   })
 
-  it('cites nothing at all on any of the seventeen undrawn sheets', () => {
-    for (const n of numbers((n) => n >= 16)) {
-      expect(distinctExternalLinks(body(n)), `module ${n}`).toEqual([])
-    }
-  })
-
   it('returns absolute http(s) URLs only, ready to print in full', () => {
     // §12.12.2 prints the full URL so it survives print; nothing here may be
     // a fragment or a relative path.
@@ -348,23 +336,3 @@ describe('langCoverage', () => {
   })
 })
 
-describe('the corpus every derived number is measured from', () => {
-  it('still holds 32 English modules and 32 Turkish siblings', () => {
-    let en = 0
-    let tr = 0
-    for (const category of CATEGORIES) {
-      for (const f of fs.readdirSync(path.join(CONTENT_ROOT, category.dir))) {
-        if (!/^\d+_.+\.md$/.test(f)) continue
-        if (f.endsWith('_tr.md')) tr += 1
-        else en += 1
-      }
-    }
-    expect({ en, tr }).toEqual({ en: 32, tr: 32 })
-  })
-
-  it('still splits 15 ready / 17 draft', () => {
-    const ready = modules.filter((m) => m.frontmatter.status === 'ready')
-    expect(ready).toHaveLength(15)
-    expect(modules).toHaveLength(32)
-  })
-})

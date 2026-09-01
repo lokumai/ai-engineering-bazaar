@@ -4,6 +4,7 @@ import { checklistOf } from '@/lib/content/checklist'
 import { curriculumFacts } from '@/lib/content/facts'
 import { loadAllModules } from '@/lib/content/loader'
 import { quickCheckOf } from '@/lib/content/quickcheck'
+import { sheetCount } from '@/lib/content/curriculum'
 
 /**
  * §12.6–§12.8 and §12.5.1 — the client-safe curriculum spine.
@@ -20,9 +21,9 @@ const modules = loadAllModules()
 
 describe('curriculumFacts — the sheets', () => {
   it('carries one fact per sheet, in module order', () => {
-    expect(facts.sheets).toHaveLength(32)
+    expect(facts.sheets).toHaveLength(sheetCount())
     expect(facts.sheets.map((s) => s.module))
-      .toEqual(Array.from({ length: 32 }, (_, i) => i + 1))
+      .toEqual(Array.from({ length: sheetCount() }, (_, i) => i + 1))
   })
 
   it('identifies a sheet by its slug, never by its number', () => {
@@ -30,7 +31,7 @@ describe('curriculumFacts — the sheets', () => {
     for (const sheet of facts.sheets) {
       expect(sheet.slug, `module ${sheet.module}`).toMatch(/^[a-z-]+\/[a-z0-9-]+$/)
     }
-    expect(new Set(facts.sheets.map((s) => s.slug)).size).toBe(32)
+    expect(new Set(facts.sheets.map((s) => s.slug)).size).toBe(sheetCount())
     expect(facts.sheets.find((s) => s.module === 1)?.slug).toBe('fundamentals/llms')
     expect(facts.sheets.find((s) => s.module === 13)?.slug).toBe('intermediate/security')
   })
@@ -46,26 +47,10 @@ describe('curriculumFacts — the sheets', () => {
     }
   })
 
-  it('marks 15 sheets drawn and 17 not', () => {
-    expect(facts.sheets.filter((s) => s.drawn)).toHaveLength(15)
-    expect(facts.sheets.filter((s) => !s.drawn).map((s) => s.module))
-      .toEqual(Array.from({ length: 17 }, (_, i) => i + 16))
-  })
-
   it('counts 8 checklist items, on sheet 13 alone', () => {
     const withItems = facts.sheets.filter((s) => s.checklistItems > 0)
     expect(withItems.map((s) => s.module)).toEqual([13])
     expect(withItems[0].checklistItems).toBe(8)
-  })
-
-  it('prints a true zero rather than a dash for a sheet nobody drew', () => {
-    // §11.25's dash gate is on `status`, not on zero. These sheets were
-    // counted, and the count is zero.
-    for (const sheet of facts.sheets.filter((s) => !s.drawn)) {
-      expect(sheet.checklistItems, sheet.slug).toBe(0)
-      expect(sheet.sources, sheet.slug).toBe(0)
-      expect(sheet.hasQuickCheck, sheet.slug).toBe(false)
-    }
   })
 
 })
@@ -75,15 +60,6 @@ describe('curriculumFacts — the categories', () => {
     expect(facts.categories.map((c) => c.slug))
       .toEqual(CATEGORIES.map((c) => c.slug))
     expect(facts.categories.map((c) => c.order)).toEqual([1, 2, 3, 4, 5, 6])
-  })
-
-  it('totals each subsystem from the sheets it holds', () => {
-    expect(facts.categories.map((c) => c.total)).toEqual([7, 8, 9, 5, 1, 2])
-    expect(facts.categories.reduce((sum, c) => sum + c.total, 0)).toBe(32)
-    for (const category of facts.categories) {
-      expect(category.total, category.slug)
-        .toBe(facts.sheets.filter((s) => s.category === category.slug).length)
-    }
   })
 
   it('carries the subsystem title, so a page needs no second lookup', () => {

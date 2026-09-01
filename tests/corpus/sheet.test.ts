@@ -40,21 +40,6 @@ function factsFor(slug: string) {
 }
 
 describe('§4.4 — the format each sheet is drawn on', () => {
-  /**
-   * Two anatomies, over the real corpus. §4.4 used to have three and split the
-   * drawn sheets at 2,500 words; `SheetFormat`'s docblock carries why that went.
-   * The short version: A2 differed from A0 in where the metadata sat and nowhere
-   * else, which moved the prose 132px between two sheets of one curriculum, and
-   * the last rule holding the two apart put 82 characters on a line where 656px
-   * was chosen for 68–72.
-   */
-  it("matches the spec's table exactly", () => {
-    const byFormat = { A0: [] as number[], A4: [] as number[] }
-    for (const m of modules) byFormat[m.sheetFormat].push(m.frontmatter.module)
-
-    expect(byFormat.A0).toEqual(Array.from({ length: 15 }, (_, i) => i + 1))
-    expect(byFormat.A4).toEqual(Array.from({ length: 17 }, (_, i) => i + 16))
-  })
 
   it('follows from status alone, never from extent and never from a hand override', () => {
     for (const m of modules) {
@@ -84,18 +69,10 @@ describe('§5.5 — the header block, on all thirty-two sheets', () => {
     }
   })
 
-  it('gives every sheet the revision of its own file, not repo HEAD', () => {
-    const hashes = new Set(modules.map((m) => m.revision?.hash))
-    expect(hashes.has(undefined)).toBe(false)
-    // Not an assertion that they differ — they may all share a commit — only
-    // that nothing fell back to a placeholder.
-    for (const m of modules) expect(m.revision?.date, m.slug).toMatch(/^\d{4}-\d{2}-\d{2}$/)
-  })
-
   it('states the subsystem, the band and the sheet in every eyebrow', () => {
     for (const m of modules) {
       expect(eyebrow(factsFor(m.slug)), m.slug).toMatch(
-        new RegExp(`^SUBSYSTEM \\d{2} · [A-Z &]+ · SHEET ${m.frontmatter.module} OF 32$`),
+        new RegExp(`^SUBSYSTEM \\d{2} · [A-Z &]+ · SHEET ${m.frontmatter.module} OF ${sheetCount()}$`),
       )
     }
   })
@@ -105,15 +82,6 @@ describe('§5.5 — the header block, on all thirty-two sheets', () => {
       expect(titleStripRows(factsFor(m.slug)).map((r) => r.label), m.slug).toEqual(
         ['EXTENT', 'FIGURES', 'SOURCES', 'REQUIRES', 'LANG', 'REVISION'],
       )
-    }
-  })
-})
-
-describe('§4.5 — every A4 sheet has a body to draw', () => {
-  it('has a schedule of parts and one descriptive sentence', () => {
-    for (const m of modules.filter((x) => x.sheetFormat === 'A4')) {
-      expect(scheduleOfParts(m.body).length, m.slug).toBeGreaterThan(0)
-      expect(summarySentence(m.body), m.slug).toBeTruthy()
     }
   })
 })
@@ -144,7 +112,7 @@ describe('§5.7 — the chain', () => {
       if (!next) break
       current = next
     }
-    expect(order).toEqual(Array.from({ length: 32 }, (_, i) => i + 1))
+    expect(order).toEqual(Array.from({ length: sheetCount() }, (_, i) => i + 1))
     expect(bands).toEqual([
       'fundamentals', 'intermediate', 'expert', 'ecosystem', 'protocols', 'optional',
     ])

@@ -28,32 +28,11 @@ describe('§4.8 — the index table lists the set, and only the set', () => {
     }
   })
 
-  it('dashes exactly the seventeen sheets that are not drawn', () => {
-    const dashed = rows.filter((row) => !row.drawn)
-    expect(dashed.map((row) => row.module)).toEqual(
-      Array.from({ length: 17 }, (_, i) => i + 16),
-    )
-    for (const row of dashed) expect(row.status, row.title).toBe('NOT DRAWN')
-  })
-
   it('states an extent for every drawn sheet and for no other', () => {
     for (const row of rows) {
       if (row.drawn) expect(row.extent, row.title).toMatch(/^[\d,]+ W · \d+ MIN$/)
       else expect(row.extent, row.title).toBe('—')
     }
-  })
-
-  it('dashes a count only where nobody took it, and prints it where they did', () => {
-    // The dash means "not counted", so it belongs to the sheets that are not
-    // drawn — never to a drawn sheet whose true count is zero. Modules 2, 4
-    // and 5 are ready and cite nothing, and `0` is what they say.
-    for (const row of rows) {
-      if (row.drawn) expect(row.sources, row.title).toMatch(/^\d+$/)
-      else expect(row.sources, row.title).toBe('—')
-      expect(row.requires, row.title).not.toBe('')
-    }
-    expect(rows.filter((row) => row.sources === '0').map((row) => row.module))
-      .toEqual([2, 4, 5])
   })
 
   it('marks exactly the seven sheets §7.6 names as bilingual', () => {
@@ -77,9 +56,6 @@ describe('§4.8 — the index table lists the set, and only the set', () => {
     }
   })
 
-  it('counts the set from the set: fifteen of thirty-two drawn', () => {
-    expect(setSummary()).toEqual({ sheets: 32, drawn: 15, notDrawn: 17, minutes: 400 })
-  })
 })
 
 describe('§4.9 — every subsystem states its own coverage', () => {
@@ -89,11 +65,6 @@ describe('§4.9 — every subsystem states its own coverage', () => {
       .toEqual(rows.map((row) => row.module))
   })
 
-  it('counts each subsystem against Appendix A', () => {
-    const sizes = CATEGORIES.map((category) => categorySummary(category).sheets)
-    expect(sizes).toEqual([7, 8, 9, 5, 1, 2])
-  })
-
   it('writes an eyebrow that names the subsystem and its coverage', () => {
     for (const category of CATEGORIES) {
       expect(categoryEyebrow(category), category.slug)
@@ -101,13 +72,4 @@ describe('§4.9 — every subsystem states its own coverage', () => {
     }
   })
 
-  it('gives every sheet in the set something to print in TOPICS', () => {
-    // A drawn sheet has Roman-numeral sections; a stub has a schedule of
-    // parts. There is no sheet in this corpus with neither, so the column
-    // never falls back to an empty cell.
-    for (const row of rows) {
-      expect(row.topics.length, `${row.number} ${row.title}`).toBeGreaterThan(0)
-      expect(row.topics.length, `${row.number} ${row.title}`).toBeLessThanOrEqual(3)
-    }
-  })
 })

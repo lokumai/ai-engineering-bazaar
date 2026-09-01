@@ -29,6 +29,7 @@
 21) advanced_context_engineering (Superpowers, SpecKit, GSD, AgentOS, Claude Native Plan Goals Ultrathink Playground)
 22) advanced_harness_engineering (harness profiles, system prompts, changing tool names)
 23) advanced_deployment (agent server, langchain agent protocol) 
+24) advanced_training (self-supervised learning in pre-training, post-training, RL and RLHF, preference alignment, DPO, PPO, GRPO, knowledge distillation)
 
 === Ecosystem ===
 24) agent_fameworks (langchain, agno, crewAI, smolagents, mastra, voltagent, pydanticAI)
@@ -36,6 +37,7 @@
 26) inference_engines (Ollama, LMStudio, OpenWebUI, llama.cpp, TensorRT, llm-d, )
 27) ui_design (Stitch, Claude Design, Design Systems, DESIGN.md)
 28) observability (LangSmith, LangFuse, Trace Analyzer Agent)
+29) chosing_tech_stack
 
 === Protocols & Specs ===
 28) protocols_reference (all mentioned and also NLWeb, UCP, AP2) 

@@ -159,7 +159,9 @@
   html.hl-signed-29 .hl-seg[data-module="29"],
   html.hl-signed-30 .hl-seg[data-module="30"],
   html.hl-signed-31 .hl-seg[data-module="31"],
-  html.hl-signed-32 .hl-seg[data-module="32"] {
+  html.hl-signed-32 .hl-seg[data-module="32"],
+  html.hl-signed-33 .hl-seg[data-module="33"],
+  html.hl-signed-34 .hl-seg[data-module="34"] {
     background: var(--hl-cat);
     border-color: var(--hl-cat);
   }

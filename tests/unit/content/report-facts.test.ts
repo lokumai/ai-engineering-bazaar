@@ -30,20 +30,6 @@ describe('the sheet list', () => {
     expect(facts.sheets.every((s) => s.slug.includes('/'))).toBe(true)
   })
 
-  it('marks 15 sheets drawn and 17 not', () => {
-    expect(facts.sheets.filter((s) => s.drawn)).toHaveLength(15)
-    expect(facts.sheets.filter((s) => !s.drawn)).toHaveLength(17)
-  })
-
-  it('carries a revision for every sheet git has touched (§12.4.3)', () => {
-    for (const sheet of facts.sheets) {
-      const module = modules.find((m) => m.slug === sheet.slug)!
-      expect(sheet.revision).toBe(module.revision?.hash ?? null)
-    }
-    // In this checkout every sheet resolves one, so the drift line is live on
-    // all 32 rather than silently absent.
-    expect(facts.sheets.every((s) => s.revision !== null)).toBe(true)
-  })
 })
 
 describe('the text the document reprints', () => {

@@ -287,6 +287,8 @@ Production prompt'larına ne kadar emek gittiğini görmek için okumaya değer:
 
 - [AI araçlarının system prompt'ları](https://github.com/x1xhlol/system-prompts-and-models-of-ai-tools)
 - [System prompt sızıntıları](https://github.com/asgeirtj/system_prompts_leaks)
+- [Large Language Models explained briefly](https://youtu.be/LPZh9BOjkQs?si=8kH-lzHbfHRL1_8h): aynı
+  konuları anlatan bir video, okumak yerine izlemek istersen
 - [Sızmış system prompt'lar](https://github.com/jujumilk3/leaked-system-prompts)
 
 ## Bu serinin neresindeyiz

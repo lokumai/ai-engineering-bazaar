@@ -115,11 +115,21 @@ title: two guessed titles this session were both wrong. On a project whose whole
 machine-written content on these topics is unreliable, a wrong number or a mislabelled source is
 the one unforgivable defect.
 
+**Make an earlier module pay off in a later one.** Module 3's retrieval pipeline reappears in
+Module 4 as a tool, with the note that letting the model decide *when* to retrieve is most of what
+separates a RAG app from an agent. Module 1's `read_file(path)` tool schema reappears in Module 4's
+system prompt. These callbacks are what make the set a series rather than seven articles, and they
+cost one sentence each.
+
 **Cut the filler.** No greetings, no "Keep going 🚀", no "Quiz Yourself", no telling the reader how
 valuable the material is.
 
 **End with links out**, and build the References list only from links actually used in the text,
 each with a few words on why it is worth opening.
+
+**API examples use the OpenAI and OpenRouter-compatible shape**, because Module 1 points readers at
+OpenRouter and they could actually run what they read. Add one line noting field names differ
+slightly between providers while the shape does not.
 
 ## Translating a module
 
@@ -211,8 +221,24 @@ npm run build     # the Next.js build that ships
 CI runs `npm run typecheck`, `npm test`, `npm run build` and the Playwright suite. The content
 checks live in `src/lib/content/`, so a broken cross-reference in a module fails `npm test`.
 
-Also check: no leftover `NEED` markers you meant to fill, and no placeholder
-cross-references like "module X".
+**A green suite is not proof the page is right.** When you change *how* content is authored, rather
+than what it says, look at the static export:
+
+```bash
+grep -rl "my-new-figure" out/courses/    # is it actually on a page?
+```
+
+That is how the missing-images defect was caught, and only after typecheck, 1948 tests and the
+build had all passed. Tests check what someone thought to check; the export is what ships.
+
+**If the suite fails, run `git status` before assuming it was you.** The author edits these files
+while you work. Twice this has been the real cause: a save that silently dropped a section, and a
+frontmatter fence broken into `## module: 3` with the closing `---` deleted, which took 31 test
+files down. A file carrying `NOTE:` or bracketed markers is the author's live draft: fix only the
+structural breakage, leave every marker untouched, and say what you fixed.
+
+Also check: every module ends with a References section, no leftover `NEED` markers you meant to
+fill, and no placeholder cross-references like "module X".
 
 ## Repo map
 

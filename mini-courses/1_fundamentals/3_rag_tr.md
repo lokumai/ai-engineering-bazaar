@@ -1,265 +1,235 @@
-# Module 3: Retrieval-Augmented Generation (RAG) ve Vector Embeddings
+# Module 3: Retrieval-Augmented Generation (RAG)
 
-Tekrar merhaba! Modül 1 ve 2'de LLM'lerin temellerini ve fine-tuning ile nasıl özelleştirildiklerini öğrendik. Şimdi, LLM'ine kodunu hatırlayan bir "süper beyin" verdiğini hayal et. İşte RAG bu! LLM'lerin projelerin gibi spesifik şeyler hakkında soru cevaplamasına yardımcı olur. Eğlenceli görsellerle adım adım öğrenelim.
+Modül 1 sana context window'u verdi: modelin çalışma masası, ve üstündeki her şeyin oraya sığması
+gerekiyor. Modül 2 fine-tuning'i verdi: modelin kendisini değiştirmek. Bu modül üçüncü seçenekle
+ilgili, ve en sık uzanacağın seçenek bu.
 
-## I. Neden RAG'a İhtiyacımız Var?
+## RAG neden var
 
-### A. Context Window Sınırlaması
+Faydalı verin var. Kendi codebase'in, şirketinin dokümanları, bir klasör dolusu sözleşme, yıllarca
+birikmiş support ticket'ları. Bir context window'a sığandan çok daha fazlası, ve window katı bir
+sınır.
 
-LLM'lerin "hafıza limiti" var, buna context window denir. Tüm kod tabanını bir seferde okuyamaz veya özel detayları bilemez. RAG olmadan, LLM'ler yanlış tahmin edebilir veya bilgi uydurabilir.
+Ama işin özü şu: **tek bir soru için hepsine ihtiyacın yok.** Bir vendor sözleşmesindeki fesih
+maddesini soran kişiye diğer iki yüz sözleşme gerekmiyor. Ona tek bir madde gerekiyor.
 
-### B. RAG Nedir?
+Bütün fikir bu. Veriyi modelin dışında tut, ve bir soru geldiğinde sadece onu cevaplayan parçaları
+getirip context'e koy. **Retrieval-Augmented Generation** bunun adı: önce getir (retrieve), sonra
+üret (generate).
 
-RAG, Retrieval-Augmented Generation'ın kısaltması. Context window sınırlarını aşmak için verilerinden ilgili bilgileri çekerek LLM'lere yardımcı olur.
+### Masaüstü ve kütüphane
 
-**Nasıl çalışır**: Metni vector embeddings'e (sayılara) çevirmek için encoder modeller kullan. ChromaDB, Milvus, Weaviate, Pinecone, FAISS gibi vector DB'lerde sakla. Sorunu vektörlere çevir, benzer olanları (cosine similarity) bul, en iyi sonuçları LLM'ye ver.
+Bunu kafanda şöyle tut.
 
-![Naive RAG](./images/rag.png)
-*Temel ("naive") RAG akışı: query aynı anda iki yere gider—vector store index'te arama yapmak için bir embedding model üzerinden, ve o aramanın döndürdüğü context ile birlikte doğrudan LLM'ye.*
+**Modelin weight'leri bir kütüphane.** Kocaman, ve pre-training'de öğrendiği her şey bir yerlerde
+içinde. **Context window ise senin masaüstün.** Küçük, ve üstüne ne koyarsan tam önünde duruyor.
 
-**Neden harika?** Yanlış cevapları durdurur ve LLM'lerin gerçek kod gerçeklerini kullanmasını sağlar.
+Kocaman bir kütüphaneden bir şey hatırlamak zor ve güvenilmez. Masanın üstünde açık duran bir
+sayfayı okumak kolay ve kesin.
 
-ASCII Art:
-```
-Soru: "X fonksiyonu ne yapıyor?"
-Bul: [Kodda Bak] -> [X Fonksiyonunu Al]
-Ekle: Soru + X Fonksiyonu = Daha İyi Soru
-Cevap: LLM gerçeği söyler!
-```
+RAG, masaya hangi sayfaların konacağını seçmek demek.
 
-**Sadece kod değil!** Aynı numara her tür metin için çalışır. Bir klasör dolusu hukuki sözleşmen olduğunu düşün. Biri "Acme tedarikçi sözleşmesindeki fesih ihbar süresi ne?" diye sorsun. LLM hafızasından tahmin etmeye çalışmak yerine, RAG tüm sözleşmelerinde arama yapar, soruyu cevaplayan tam maddeyi bulur, ve sadece o maddeyi LLM'ye verir.
+<p align="center">
+  <img src="./images/rag.png" alt="Naive RAG akışı" width="70%"><br>
+  <em>Temel, "naive" RAG akışı. Query aynı anda iki yere gidiyor: vector store index'inde arama
+  yapmak için bir embedding model'e, ve o aramanın context olarak döndürdüğü şeyle birlikte doğrudan
+  LLM'e.</em>
+</p>
 
-## II. Vector Embeddings: Sihirli Sayılar
-
-### A. Embeddings Nedir?
-
-Embeddings, metin veya kodu "tanımlayan" sayı listeleri. Kodun "parmak izi" gibi düşün. Özel bir model (encoder) kelimeleri bu sayılara çevirir.
-
-### B. Nasıl Yardımcı Olur?
-
-Benzer kod benzer sayılara sahip olur. Şehirdeki komşular gibi—yakın adresler benzer yerler demek.
-
-İki parmak izinin ne kadar yakın olduğunu "cosine similarity" ile kontrol ederiz. Yüksek puan = çok benzer!
-
-**Vector Üretimi**: Encoder modeller bu vektörleri oluşturur.
-
-Örnek:
-```
-Kod 1: "def add(a, b): return a + b" -> Sayılar: [0.1, 0.8, ...]
-Kod 2: "def sum(x, y): return x + y" -> Sayılar: [0.1, 0.7, ...]
-Yakın sayılar = Benzer kod!
-```
-
-Bu, hukuki metinler için de geçerli—embeddings kelimeleri değil, *anlamı* yakalar:
-```
-Madde A: "Tedarikçi, bu Sözleşmeyi 30 gün önceden yazılı bildirimle feshedebilir." -> Sayılar: [0.2, 0.6, ...]
-Madde B: "Taraflardan biri, Sözleşmeyi 30 günlük bir bildirim süresiyle sona erdirebilir." -> Sayılar: [0.2, 0.55, ...]
-Yakın sayılar = İfadeler tamamen farklı olsa bile aynı anlam!
-```
-
-## III. Embeddings Saklama: Vector Veritabanları
-
-### A. Ne Yaparlar?
-
-Vector DB'ler milyonlarca parmak izi için özel depolardır. Sayıları saklar ve orijinal koda bağlar.
-
-Akıllı matematikle süper hızlı arama yaparlar.
-
-**Sorgulama**: Sorguyu vektöre çevir, DB'de en benzer olanları (cosine similarity) ara, LLM'ye döndür.
-
-### B. Popüler Olanlar
-
-**Ücretsiz ve Yerel**:
-- ChromaDB: Başlangıç seviyesindekiler için kolay.
-- Milvus: Daha büyük projeler için.
-- FAISS: Hafızada hızlı aramalar.
-
-**Çevrimiçi Servisler**:
-- Pinecone: Basit ve yönetilen.
-- Weaviate: Veri organize etmek için iyi.
-
-## IV. RAG Süreci: Adım Adım
-
-### A. Kurulum (Indexing)
-
-1. Kaynak verini yükle—kod dosyaları, hukuki dokümanlar (sözleşmeler, politikalar), PDF'ler veya herhangi bir metin.
-2. Küçük parçalara böl (cümleler, fonksiyonlar veya sözleşme maddeleri gibi).
-3. Parçaları parmak izlerine (embeddings) çevir.
-4. Vector DB'de sakla.
-
-### B. Soru Cevaplama (Querying)
-
-1. Kullanıcının sorusunu al.
-2. Soruyu parmak izine çevir.
-3. DB'de en yakın parmak izlerini ara (en iyi eşleşmeler).
-4. O eşleşmelerden gerçek kodu al.
-5. Kodu soruya ekle LLM için.
-6. LLM ekstra bilgiyle cevap verir.
-
-## V. Araçlar ve Gerçek Kullanımlar
-
-### A. Kolay RAG Araçları
-
-- **Haystack** ([haystack.deepset.ai](https://haystack.deepset.ai/)): Hazır parçalarla RAG sistemleri inşa et.
-- **LlamaIndex** ([llamaindex.ai](https://www.llamaindex.ai/)): LLM'leri verilerine kolay bağla.
-
-**Basit Örnekler**:
-
-ChromaDB için ([github.com/chroma-core/chroma](https://github.com/chroma-core/chroma)):
-```python
-import chromadb
-client = chromadb.Client()
-collection = client.create_collection("code_chunks")
-
-# Bazı kod parçalarını embeddings ile ekle (embeddings önceden hesaplanmış varsay)
-documents = ["def add(a, b): return a + b", "def multiply(x, y): return x * y"]
-ids = ["func1", "func2"]
-embeddings = [[0.1, 0.2, ...], [0.3, 0.4, ...]]  # Örnek vektörler
-
-collection.add(
-    documents=documents,
-    embeddings=embeddings,
-    ids=ids
-)
-
-# Benzer kod için sorgula
-query_embedding = [0.1, 0.2, ...]  # "add function" için vektör
-results = collection.query(
-    query_embeddings=[query_embedding],
-    n_results=1
-)
-print(results['documents'])  # En benzer kodu alır
-```
-
-Aynı kod, kod parçaları yerine dokümanlar için de çalışır—burada bir hukuki sözleşme setinden bilgi çekiyor:
-```python
-import chromadb
-client = chromadb.Client()
-collection = client.create_collection("legal_clauses")
-
-# Bir hukuki doküman setinden (iki farklı sözleşme) maddeleri embeddings ile ekle
-documents = [
-    "Tedarikçi, bu Sözleşmeyi 30 gün önceden yazılı bildirimle feshedebilir.",
-    "Taraflardan biri, Sözleşmeyi 30 günlük bir bildirim süresiyle sona erdirebilir.",
-    "Bu Sözleşme, Delaware Eyaleti yasalarına tabidir.",
-]
-ids = ["sozlesme_A_madde_12", "sozlesme_B_madde_7", "sozlesme_A_madde_20"]
-embeddings = [[0.2, 0.6, ...], [0.2, 0.55, ...], [0.9, 0.1, ...]]  # Örnek vektörler
-
-collection.add(
-    documents=documents,
-    embeddings=embeddings,
-    ids=ids
-)
-
-# Soru: "Sözleşmeyi feshetmek için bildirim süresi nedir?"
-query_embedding = [0.2, 0.58, ...]  # Soru için vektör
-results = collection.query(
-    query_embeddings=[query_embedding],
-    n_results=2
-)
-print(results['documents'])  # Yasal madde değil, iki fesih bildirimi maddesini döndürür
-```
-
-Haystack için ([haystack.deepset.ai](https://haystack.deepset.ai/)):
-```python
-from haystack import Pipeline
-from haystack.components.builders import PromptBuilder
-from haystack.components.generators import OpenAIGenerator
-
-# Basit pipeline: Al ve üret
-pipeline = Pipeline()
-pipeline.add_component("retriever", InMemoryBM25Retriever(document_store=doc_store))
-pipeline.add_component("prompt_builder", PromptBuilder(template="Cevap: {{documents}} {{query}}"))
-pipeline.add_component("generator", OpenAIGenerator())
-
-pipeline.connect("retriever", "prompt_builder")
-pipeline.connect("prompt_builder", "generator")
-
-# Sorguyu çalıştır
-result = pipeline.run({"retriever": {"query": "Add nasıl çalışır?"}})
-```
-
-LlamaIndex için ([llamaindex.ai](https://www.llamaindex.ai/)):
-```python
-from llama_index import VectorStoreIndex, SimpleDirectoryReader
-
-# Klasörden belgeleri yükle
-documents = SimpleDirectoryReader("data").load_data()
-index = VectorStoreIndex.from_documents(documents)
-
-# Sorgu motoru oluştur
-query_engine = index.as_query_engine()
-
-# Soru sor
-response = query_engine.query("Add fonksiyonu nedir?")
-print(response)
-```
-
-FAISS için ([github.com/facebookresearch/faiss](https://github.com/facebookresearch/faiss)):
-```python
-import faiss
-import numpy as np
-# İndeks oluştur
-index = faiss.IndexFlatL2(128)  # 128-boyutlu vektörler
-# Vektörleri ekle
-vectors = np.random.random((100, 128)).astype('float32')
-index.add(vectors)
-# Ara
-query = np.random.random((1, 128)).astype('float32')
-distances, indices = index.search(query, 5)
-```
-
-### B. Projelerin İçin
-
-- Tutorial Yapıcı: Açıklamak için kod parçaları bul.
-- Chatbot: Sorular için tam kodu al.
-
-**Kullanımlar ve Kullanım Alanları**: RAG, kod tabanları, hukuki dokümanlar ve sözleşmeler, politikalar veya herhangi büyük bir metin koleksiyonu üzerinde Q&A için harika. Haystack ve LlamaIndex gibi kütüphaneler örneklerle hazır RAG sunar.
-
-## Mermaid Diyagramı: RAG İş Başında
-
-RAG'nin en iyi kod parçasını nasıl seçtiğini gör:
-
-```mermaid
-graph TD
-    A[Kullanıcı Sorar: Add fonksiyonu nasıl çalışır?] --> B[Soruyu Sayılara Çevir]
-    B --> C[Veritabanında Ara]
-    C --> D["Parça 1: def multiply... Eşleşme: 60%"]
-    C --> E["Parça 2: def add(a,b): return a+b Eşleşme: 90%"]
-    C --> F["Parça 3: def subtract... Eşleşme: 50%"]
-    E --> G[En İyisini Seç: Parça 2]
-    G --> H[Prompt'a Ekle: Soru + Parça 2]
-    H --> I[LLM Düşünür ve Cevap Verir]
-```
-
-Aynı akış hukuki dokümanlar için de çalışır: "kod parçaları"nı "sözleşme maddeleri" ile değiştir, süreç aynıdır—soruyu vektöre çevir, elindeki her sözleşmede ara, ve LLM'ye tüm sözleşmeleri context'e tıkıştırmak yerine sadece eşleşen maddeyi ver.
-
-## VI. Neden Bu Dokümanlarla Modeli Doğrudan Fine-tune Etmiyoruz?
-
-Şunu merak edebilirsin: Modül 2'de fine-tuning'i zaten öğrendik—o zaman neden embeddings ve vector veritabanlarıyla uğraşmak yerine, modeli doğrudan kendi hukuki dokümanlarımız veya kod tabanımız üzerinde fine-tune etmiyoruz?
-
-Bu tür veriler için RAG'ın genelde neden kazandığı:
-
-- **Bazı veriler sürekli değişir, veya canlıdır (live).** Kod tabanın her gün yeni commit'ler alır. Hukuki dokümanlar değiştirilir, yeni sözleşmeler imzalanır, politikalar güncellenir. Fine-tuning saatler veya günler sürer ve gerçek para tutar—bir dosya her değiştiğinde modeli yeniden eğitmek gerçekçi değil.
-- **LLM zaten milyarlarca doküman üzerinde eğitilmiş.** Pre-training sırasında model zaten devasa miktarda metin görmüş. Diyelim 100 sayfalık bir hukuki sözleşme üzerinde fine-tune ettin—bu doküman, modelin öğrendiği her şeyin arasına karışır. Fine-tune edilmiş bir modelin senin dokümanındaki detayları, pre-training'de gördüğü başka bir şeyle karıştırması ("yanlış hatırlaması") kolaydır, çünkü senin 100 sayfan, parametrelerin oluşturduğu okyanusta küçük bir damla.
-- **RAG güncellemeleri ucuz; fine-tuning güncellemeleri değil.** Dokümanların veya kod tabanın değiştiğinde, RAG sadece değişen kısımları yeniden embed edip yeniden indexlemeye ihtiyaç duyar—hızlı ve ucuz bir işlem. Fine-tuning'i tekrar yapmak ise başka bir maliyetli eğitim çalışması demek.
-- **RAG cevabı doğrudan modelin önüne koyar.** RAG ile, o spesifik soru için ilgili tam madde veya fonksiyon, LLM'in context window'una doğrudan yerleştirilir—model onu, ağırlıklarına gömülü milyarlarca doküman arasından "hatırlamaya" çalışmak zorunda kalmaz. Sadece, tam önünde, açık bir kitap gibi okur—eğitim sırasında yarım öğrendiği bir şeyi hatırlamaya çalışmak yerine.
-
-Kısacası: **fine-tuning, modelin *bildiği* şeyi değiştirir (ağırlıklarına gömülür); RAG, modelin *gördüğü* şeyi değiştirir (soru sorduğun anda context'ine beslenir).** Kod tabanları ve hukuki arşivler gibi hızlı değişen veya devasa doküman setleri için RAG neredeyse her zaman daha ucuz ve daha güvenilir bir seçimdir.
-
-## Eğitim İlerlemesi
-
-Seride neredeyiz:
+## RAG'in yaptığı şey, dört adımda
 
 ```mermaid
 graph LR
-    A[Module 1: LLMs] --> B[Module 2: Training]
-    B --> C[Module 3: RAG]
-    C --> D[Module 4: Tools]
-    D --> E[Module 5: Memory]
-    E --> F[Module 6: Agents]
-    F --> G[Module 7: Multi-Agent]
+    A["Soru: function X ne yapıyor?"] --> B["Verinde ara"]
+    B --> C["Bul: function X'in kodu"]
+    C --> D["Soru + function X, context'te birlikte"]
+    D --> E["LLM gördüğü şeyden cevaplıyor"]
+```
+
+Aynı numara metinden oluşan her şey için geçerli, sadece kod için değil. Diyelim bir klasör dolusu
+sözleşmen var ve biri "Acme vendor sözleşmesindeki fesih ihbar süresi nedir?" diye soruyor. Model
+hafızasından tahmin etmek yerine, RAG elindeki bütün sözleşmelerde arama yapıyor, soruyu
+cevaplayan maddeyi buluyor, ve modele sadece o maddeyi veriyor.
+
+Altındaki mekanizma: bir encoder model kullanarak metni vector embedding'lere çevir, onları bir
+vector database'de tut, sonra soruyu da vector'e çevirip en yakın eşleşmeleri bul.
+
+## Embedding'ler: anlam taşıyan sayılar
+
+Embedding, bir metin parçasını tarif eden bir sayı listesi. Onu bir parmak izi gibi düşün. Özel bir
+model, bir encoder, onu üretiyor.
+
+Faydalı özellik şu: **benzer anlam benzer sayılar veriyor.** Bir şehirdeki adresler gibi: yakın
+adresler yakın yerler demek. İki parmak izinin ne kadar yakın olduğunu **cosine similarity** ile
+ölçüyoruz, ve yüksek skor çok benzer demek.
+
+Bunun klasik resmi dört kelime kullanıyor:
+
+<p align="center">
+  <img src="./images/vector-king-queen.png" alt="king, queen, man ve woman kelimelerinin uzaydaki vector'leri" width="70%"><br>
+  <em>Dört kelime dört vector'e dönüşüyor, ve o vector'ler uzayda birer konuma dönüşüyor. "king",
+  "queen"in yanına, "man" da "woman"ın yanına düşüyor. Şimdi iki oka bak: paralel duruyorlar, yani
+  king'den queen'e giden adım, man'den woman'a giden adımın aynısı. Anlam geometriye dönüşmüş.</em>
+</p>
+
+O paralellik bir saniyelik dikkatini hak ediyor, çünkü sayıları bir arama tablosundan fazlası yapan
+şey o. Embedding sadece benzer şeyleri yan yana koymadı, aralarındaki *ilişkiyi* de tutarlı bir yöne
+yerleştirdi.
+
+Dürüst bir basitleştirme: resim sayfaya sığsın diye üç boyut çiziyor. Gerçek embedding'lerin
+yüzlerce ya da binlerce boyutu var, ki cosine similarity ile ölçüyor olmamızın sebebi tam olarak bu,
+gözle bakmıyoruz.
+
+```mermaid
+graph LR
+    A["Kod 1<br/>def add(a, b): return a + b"] -->|encode| M{Embedding model}
+    B["Kod 2<br/>def sum(x, y): return x + y"] -->|encode| M
+    M --> V1["Vector 1<br/>[0.1, 0.8, ...]"]
+    M --> V2["Vector 2<br/>[0.1, 0.7, ...]"]
+```
+
+İki farklı function, ve sayılar birbirine yakın çıkıyor. Bütün olay o yakınlık: birini sorarak
+diğerini bulmanı sağlayan şey bu.
+
+Önemli olan kısım, bunun eşleşen kelimeleri değil *anlamı* yakalaması:
+
+```mermaid
+graph LR
+    A["Madde A<br/>The Vendor may terminate this Agreement<br/>upon 30 days written notice."] -->|encode| M{Embedding model}
+    B["Madde B<br/>Either party may end this Contract<br/>with a 30-day notice period."] -->|encode| M
+    M --> V1["Vector 1<br/>[0.2, 0.60, ...]"]
+    M --> V2["Vector 2<br/>[0.2, 0.55, ...]"]
+```
+
+Aynı anlam, neredeyse hiç ortak kelime yok, ve vector'ler yine yan yana düşüyor.
+
+Keyword arama Madde B'yi bu yüzden kaçırırdı, retrieval ise buluyor.
+
+## Embedding'ler nerede yaşar: vector database'ler
+
+Bir vector database milyonlarca parmak izini saklıyor, her birini orijinal metne bağlı tutuyor, ve
+onları hızlıca arıyor. Ona bir query vector'ü veriyorsun, en yakın N tanesini döndürüyor, sen de
+onları LLM'e geçiriyorsun.
+
+**Ücretsiz ve local:**
+
+- **ChromaDB**: başlamak için en kolayı.
+- **Milvus**: daha büyük projeler için.
+- **FAISS**: bellek içinde çok hızlı arama.
+
+**Yönetilen servisler:**
+
+- **Pinecone**: basit ve hosted.
+- **Weaviate**: verinin korunmaya değer bir yapısı olduğunda iyi.
+
+## RAG süreci, adım adım
+
+**Kurulum, bir kez ve sonra veri değiştikçe:**
+
+1. Kaynak verini yükle: kod dosyaları, sözleşmeler, politikalar, PDF'ler, her türlü metin.
+2. Küçük chunk'lara böl; bir function, bir paragraf ya da bir sözleşme maddesi gibi.
+3. Her chunk'ı bir embedding'e çevir.
+4. Onları bir vector database'de sakla.
+
+**Cevaplama, her soru için:**
+
+1. Kullanıcının sorusunu al.
+2. Onu bir embedding'e çevir.
+3. Database'de en yakın chunk'ları ara.
+4. O chunk'ların gerçek metnini çek.
+5. O metni soruyla birlikte context'e koy.
+6. LLM artık görebildiği şeyden cevaplıyor.
+
+```mermaid
+graph TD
+    A["Kullanıcı soruyor: add function nasıl çalışıyor?"] --> B["Soru vector'e dönüşüyor"]
+    B --> C["Database'de ara"]
+    C --> D["Chunk 1: def multiply... 60%"]
+    C --> E["Chunk 2: def add(a,b): return a+b  90%"]
+    C --> F["Chunk 3: def subtract... 50%"]
+    E --> G["En iyi eşleşme: chunk 2"]
+    G --> H["Context: soru + chunk 2"]
+    H --> I["LLM cevaplıyor"]
+```
+
+"Kod chunk'ları" yerine "sözleşme maddeleri" koy, akış birebir aynı.
+
+## Araçlar
+
+Retrieval loop'unu neredeyse hiç kendin yazmayacaksın. Bir seviye seç, gerisini başka bir şey
+yapsın:
+
+- **[LlamaIndex](https://www.llamaindex.ai/)**: en üst seviye. Bir klasöre yönlendir, soruyu sor,
+  cevabı al. Chunk'lama, embedding, saklama ve getirmeyi o hallediyor.
+- **[Haystack](https://haystack.deepset.ai/)**: her adımı görmek ve değiştirmek istediğinde
+  pipeline'ı hazır parçalardan kur.
+- **[ChromaDB](https://github.com/chroma-core/chroma)**: metnini embedding'inin yanında saklayan bir
+  vector database, böylece arama sana orijinal chunk'ı geri veriyor.
+- **[FAISS](https://github.com/facebookresearch/faiss)**: sadece arama katmanı, başka bir şey değil.
+  Çok hızlı, ve sadece sayılardan haberi var.
+
+Aşağıda FAISS var; gösterilmeye değer en küçük şey bu, çünkü yukarıdaki bütün seçeneklerin
+sardığı ham mekanizma tam olarak bu:
+
+```python
+import faiss
+import numpy as np
+
+index = faiss.IndexFlatL2(128)                              # 128 boyutlu vector'ler
+index.add(np.random.random((100, 128)).astype('float32'))   # senin 100 chunk embedding'in
+
+query = np.random.random((1, 128)).astype('float32')        # soru, embed edilmiş hali
+distances, indices = index.search(query, 5)                 # en yakın beş chunk
+```
+
+Bu arama adımı, ve sadece arama adımı. FAISS sana pozisyonları döndürüyor, dolayısıyla orijinal
+metni bir yerde tutup index'e göre bakmak sana kalıyor. Yukarıdaki araçlar tam olarak bu kayıt
+tutma işinden seni kurtarmak için var: metni vector ile birlikte saklıyorlar ve sana chunk'ın
+kendisini veriyorlar.
+
+## Peki neden modeli kendi dokümanlarınla fine-tune etmiyoruz?
+
+Fine-tuning'i Modül 2'de öğrendin, dolayısıyla akla gelen soru bu. Embedding'ler ve bir database'le
+neden uğraşalım?
+
+**Çünkü şirketinin bilgisi canlı, fine-tuning ise bir enstantane.** Codebase'ine her gün commit
+geliyor. Sözleşmeler tadil ediliyor, yenileri imzalanıyor, politikalar değişiyor. Fine-tuning
+saatler ya da günler sürüyor ve gerçek para tutuyor, ve her dosya değiştiğinde bunu yeniden
+çalıştıramazsın. Şirketinin dokümanlarını tutması için bir modeli fine-tune etmek, canlı bir
+problemi bir fotoğrafla çözmeye çalışmak demek.
+
+**Çünkü fine-tuning veri için değil, görev için.** Bir modele bir *davranış* öğretmekte iyi:
+şöyle özetle, hep bu formatta cevapla, şu kategorilere ayır. Ama *bilgi* öğretmekte kötü, çünkü
+senin yüz sayfan, modelin okuduğu her şeyi barındıran milyarlarca parameter'ın arasına düşüyor, ve
+fine-tune edilmiş bir modelin senin detaylarını pre-training'den yarım hatırladığı bir şeyle
+bulandırması çok kolay.
+
+**Çünkü hareketli bir hedefle yarışıyorsun.** Diyelim bir ay boyunca kendi görevin için bir modeli
+fine-tune ettin. İşin bittiğinde sıradaki frontier model çıkmış oluyor; sende olmayan kaynaklara
+sahip bir lab tarafından eğitilmiş, ve muhtemelen senin bir önceki jenerasyondan fine-tune
+ettiğinden, kutudan çıktığı gibi senin görevinde daha iyi. O yarış kazanılabilir değil, ve RAG o
+yarışa hiç girmiyor.
+
+**Çünkü retrieval cevabı modelin önüne koyuyor.** Masaüstü ve kütüphaneye dön. Fine-tuning,
+dokümanlarını milyarlarca kitaplık bir kütüphanenin bir yerine yerleştirip modelin doğru rafı
+hatırlamasını ummak. RAG ise ihtiyacın olan tek sayfayı, soru sorulduğu anda, masanın üstüne açık
+olarak koyuyor.
+
+Tek satırla: **fine-tuning modelin *bildiğini* değiştiriyor; RAG modelin *gördüğünü*.**
+
+Şunu da söylemek lazım: bu bir ya-ya-da değil. Modeli nasıl davranması gerektiği için fine-tune
+edip, ne bilmesi gerektiği için RAG kullanabilirsin, ve bu kombinasyon production'da yaygın.
+
+## Bu serinin neresindeyiz
+
+```mermaid
+graph LR
+    A[1. LLMs] --> B[2. Training]
+    B --> C[3. RAG]
+    C --> D[4. Tools]
+    D --> E[5. Memory]
+    E --> F[6. Agents]
+    F --> G[7. Multi-Agent]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#FFFF00
@@ -267,11 +237,28 @@ graph LR
 
 ## Özet
 
-RAG, LLM'leri kod ve doküman bilginle güçlendirir. Embeddings, DB'ler ve adımları biliyorsun. ChromaDB ile pratik yap!
+RAG verini modelin dışında tutuyor ve her soru için sadece ilgili parçayı getiriyor. Metin
+embedding'lere dönüşüyor, embedding'ler bir vector database'de yaşıyor, ve bir soru eşleşmelerini
+benzerlik üzerinden buluyor.
 
-**Hızlı Kontrol**: 3 RAG adımını söyle. Embeddings neden faydalı? RAG'ı güncellemek neden genelde fine-tuning'den daha ucuz?
+Ayrımı hatırla. Weight'ler kütüphane, context ise masa. Fine-tuning kütüphaneyi yeniden diziyor;
+RAG masaya ne konacağını seçiyor.
 
-Devam et! 🚀
+Sırada tools var, yani modelin okumayı bırakıp yapmaya başlaması.
+
+**Hızlı Kontrol**: RAG ile bir soruyu cevaplamanın dört adımı nedir, embedding'ler soruyla hiç
+ortak kelimesi olmayan bir maddeyi neden buluyor, ve bir RAG index'ini güncellemek neden yeniden
+fine-tune etmekten daha ucuz?
+
+## Kaynaklar
+
+- [RAG vs fine-tuning](https://www.redhat.com/en/topics/ai/rag-vs-fine-tuning): Red Hat'in karşılaştırması, yukarıdaki bölümün uzun hali
+- [What is RAG?](https://youtube.com/shorts/KBRvB_NDY-o?si=DIUHt8lihi0EzgxT): bütün fikir, kısa bir videoda
+- [Fine-Tuning vs RAG: Why Not Both?](https://youtube.com/shorts/24jqSMs10zE?si=zuhAbSZcFGkTKVfI): ikisini birlikte kullanmak üzerine
+- [Haystack](https://haystack.deepset.ai/): hazır parçalardan RAG pipeline'ları
+- [LlamaIndex](https://www.llamaindex.ai/): bir LLM'i kendi verine bağlamak
+- [ChromaDB](https://github.com/chroma-core/chroma): başlamak için en kolay vector database
+- [FAISS](https://github.com/facebookresearch/faiss): arama katmanı, tek başına
 
 **Önceki Modül:** [Modül 2: Training LLMs](2_training_tr.md)
 **Sonraki Modül:** [Modül 4: LLM Tool Calling](4_tools_tr.md)

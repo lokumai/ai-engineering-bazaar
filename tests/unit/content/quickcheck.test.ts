@@ -85,15 +85,6 @@ describe('quickCheckOf', () => {
     }
   })
 
-  it('reads the question verbatim off two sheets', () => {
-    expect(quickCheckOf(body(6))).toEqual({ question: "What's the agent loop?" })
-    expect(quickCheckOf(body(3))).toEqual({
-      question:
-        'Name the 3 RAG steps. Why are embeddings useful? '
-        + 'Why is updating RAG usually cheaper than fine-tuning?',
-    })
-  })
-
   it('never returns an empty question', () => {
     for (const m of withQuickCheck) {
       expect(quickCheckOf(m.body)!.question.length, m.slug).toBeGreaterThan(10)
@@ -110,15 +101,6 @@ describe('quickCheckOf', () => {
     }
   })
 
-  it('carries no authored model answer to reveal — there is none in the corpus', () => {
-    // Greps for `**Answer`, `Model answer`, `Cevap` and `<details>` return
-    // nothing across the 32 English sheets, which is why §12.6 withdraws
-    // §5.10's `REVEAL MODEL ANSWER` and there is no field for one here.
-    for (const m of modules) {
-      expect(m.body, m.slug).not.toMatch(/\*\*Answer|Model answer|<details>/i)
-    }
-    expect(Object.keys(quickCheckOf(body(3))!)).toEqual(['question'])
-  })
 })
 
 describe('summarySection', () => {
@@ -159,16 +141,6 @@ describe('summarySection', () => {
       expect(summarySection(m.body), m.slug)
         .not.toContain(quickCheckOf(m.body)!.question)
     }
-  })
-
-  it('reproduces sheet 3\'s summary verbatim, encouragement and all', () => {
-    // The trailing `Keep going! 🚀` is the author's, not the site's: §12.14.1
-    // governs new UI copy, and this string is quoted content that already
-    // renders in `<Prose>` further up the same sheet.
-    expect(summarySection(body(3))).toBe(
-      'RAG boosts LLMs with your code and document knowledge. You now know '
-      + 'embeddings, DBs, and the steps. Try ChromaDB for practice!\n\nKeep going! 🚀',
-    )
   })
 
   it('works on the raw file, sequence links included', () => {

@@ -69,6 +69,67 @@ Use the `width` attribute rather than inline `style`, because GitHub strips `sty
 renders markdown.
 
 
+## How a module gets written
+
+Practices settled while writing modules 1 to 3. They are not style garnish, they are what makes a
+module land.
+
+**Open by connecting, then name the one idea.** The first lines say what the previous module
+established and what this one adds. No greetings, no "welcome", no "in this module we will".
+
+**Figures carry the argument, they never decorate.** Put a figure where the reader needs it, not
+at the end of the section. If a figure is good enough to change what the section should say, then
+restructure the section: the training-network figure became the opening of module 2 because it
+answers "what does training change", which the draft never asked. The caption says something the
+picture cannot say for itself: the mechanism, the one thing to notice, or the consequence. A
+caption that restates the alt text is wasted.
+
+**Answer the misconception the material just invited.** Immediately, in one or two sentences. The
+three-dimensional embedding picture gets "real embeddings have hundreds of dimensions". PEFT gets
+"do not confuse this with quantization". A figure labelled "unsupervised" gets the note that the
+precise term is self-supervised. Silence here is how a simple explanation becomes a wrong one.
+
+**One analogy per hard idea, then call it back.** The context window is a desktop and the weights
+are a library: introduced once, used again in the fine-tuning comparison, and again in the summary.
+Repeating one analogy builds a reader's model. Stacking three analogies destroys it.
+
+**Defer depth with a real link, never with a vague promise.** Introduce a term plainly and point at
+the module that owns it. Advanced asides belong in a `> **NOTE...**` blockquote so the main line
+stays simple for the reader who does not want the detour.
+
+**Mermaid, never ASCII art.** And remember a mermaid node cannot hold a punchline, so whatever the
+old ASCII block said in its last line becomes a sentence after the diagram.
+
+**One code sample, at the rawest useful level.** Show the mechanic once and list the tools that
+wrap it, ordered by how much they do for you. Four samples of the same idea in four libraries is
+padding. Every fence gets a language tag, which the build requires.
+
+**Verify, do not pass through.** Check the arithmetic in the draft: a 32B model at 16-bit is about
+64 GB, and the draft saying 44 GB had to be fixed. Fetch every external link and use its real
+title: two guessed titles this session were both wrong. On a project whose whole premise is that
+machine-written content on these topics is unreliable, a wrong number or a mislabelled source is
+the one unforgivable defect.
+
+**Cut the filler.** No greetings, no "Keep going 🚀", no "Quiz Yourself", no telling the reader how
+valuable the material is.
+
+**End with links out**, and build the References list only from links actually used in the text,
+each with a few words on why it is worth opening.
+
+## Translating a module
+
+Write the Turkish only once the English is final, then:
+
+- **Mirror the structure exactly** and check it: heading counts, figures, mermaid blocks, code
+  blocks. Those counts are what prove nothing was dropped.
+- **Technical vocabulary stays English**, inflected with Turkish suffixes: `context'in`,
+  `parameter'lar`, `weight'ler`, `chunk'ları`. Translate the ordinary words around them.
+- **Translate a teaching example, keep a data example.** "The capital of Turkey" becomes
+  "Türkiye'nin başkenti", because that example only works if the reader completes the sentence in
+  their own head. The article-and-summary pairs stay in English, because they are a record of what
+  a model was actually shown and produced.
+- Turkish runs roughly 20% shorter than the English. That is the language, not missing content.
+
 ## Two files that move together
 
 `README.md` (GitHub) and `mini-courses/index.md` (published site) are the same page for two

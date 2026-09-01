@@ -256,6 +256,26 @@ graph LR
     D --> E
 ```
 
+## When not to fine-tune
+
+Most people who think they need fine-tuning do not, so it is worth knowing the three cases where
+the answer is no.
+
+**Do not fine-tune to teach a model your company's knowledge.** That knowledge is alive: the
+codebase gets commits, contracts get amended, policies change. Fine-tuning is a snapshot, and it
+takes hours and real money, so you cannot rerun it every time a file changes. What you want there
+is retrieval, which is [Module 3: RAG](3_rag.md).
+
+**Fine-tune for tasks, not for facts.** It is good at teaching a *behaviour*, like summarising in a
+particular shape or classifying into your categories. It is poor at teaching *facts*, because your
+few hundred pages land among billions of parameters holding everything else the model ever read.
+
+**And remember what you are racing.** Spend a month fine-tuning a model for your task, and by the
+time you are finished the next frontier model is out, trained by a lab with resources you do not
+have, and it is quite possibly better at your task out of the box than your fine-tune of the
+previous generation. Fine-tuning still wins when the task is genuinely yours and genuinely narrow.
+It loses when you are trying to out-train the labs.
+
 ## What is Hugging Face?
 
 Both code examples above imported from it, so it is worth one paragraph.

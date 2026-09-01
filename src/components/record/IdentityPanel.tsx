@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { NAME_SCOPE, RECORD_SCOPE } from '@/lib/record/scope'
 import {
   MAX_NAME_GRAPHEMES,
   countGraphemes,
@@ -91,7 +92,10 @@ export function IdentityPanel() {
       setError(true)
       return
     }
-    update((data) => setIdentity(data, { name: clean }, nowIso()))
+    update((data) => setIdentity(data, { name: clean }, nowIso()), {
+      kind: 'setIdentity',
+      payload: { named: true },
+    })
     setEdited(false)
     setSaved(true)
   }
@@ -103,7 +107,10 @@ export function IdentityPanel() {
    * export carries the name has to have one.
    */
   function onRemove(): void {
-    update((data) => setIdentity(data, { name: null }, nowIso()))
+    update((data) => setIdentity(data, { name: null }, nowIso()), {
+      kind: 'setIdentity',
+      payload: { named: false },
+    })
     setDraft('')
     setEdited(false)
     setError(false)
@@ -176,9 +183,7 @@ export function IdentityPanel() {
             storage is not a transmission; the export is precisely where that
             stops being true, and the reader is the one who crosses the line. */}
         <p className="hl-field-hint" id="hl-name-hint">
-          Stored in this browser only. Never sent anywhere. The report you export
-          contains this name — once you send that file to someone, the name has
-          left your device.
+          {NAME_SCOPE}
         </p>
 
         {/* GOV.UK register: imperative, and it describes the fix. No "please",
@@ -223,7 +228,7 @@ export function IdentityPanel() {
           routine architectural fact to alarm styling both overstates it and
           spends the alarm budget the erase dialog needs (§12.15). */}
       <div className="hl-note">
-        <p>Your record is stored in this browser only. It is never sent anywhere.</p>
+        <p>{RECORD_SCOPE}</p>
         <p>
           Browser storage can be cleared without warning — by you, by the
           browser, or by a private window. Safari deletes it after seven days

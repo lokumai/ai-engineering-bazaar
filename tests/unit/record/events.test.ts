@@ -14,6 +14,7 @@ import {
   setChecklistItem,
   setIdentity,
   setPersisted,
+  filesAttempt,
   setQuizAnswer,
   signOff,
   unsign,
@@ -224,6 +225,47 @@ describe('setChecklistItem', () => {
     const untouched = frozen()
     expect(setChecklistItem(untouched, SLUG, 0, false, NOW)).toBe(untouched)
   })
+})
+
+/**
+ * §14.8.1 rule 2 — what the LOG counts, which is not what the envelope keeps.
+ *
+ * This predicate replaced filing a row from the textarea's `onChange`. That
+ * filed one `learner_event` per KEYSTROKE, which had three consequences worth
+ * pinning here so none of them can come back:
+ *
+ *  1. `docs/manager-queries.md` documents `setQuizAnswer` as "one row per
+ *     attempt". It was one row per character.
+ *  2. `attention.ts` flags `quizFailing` at `attempts >= QUIZ_ATTEMPTS` (3), so
+ *     any answer longer than two characters cleared the threshold and the flag
+ *     collapsed into "assessed missed" — the count did nothing.
+ *  3. Every intermediate draft, including text written and then deleted,
+ *     landed in a table with NO delete policy while the reader belongs to an
+ *     organisation. It could never be taken back.
+ */
+describe('filesAttempt — one row per attempt, not per keystroke', () => {
+  it('files nothing for a session that changed nothing', () => {
+    expect(filesAttempt('a vector store', 'a vector store')).toBe(false)
+  })
+
+  it('files nothing when the field was never focused', () => {
+    expect(filesAttempt(null, 'a vector store')).toBe(false)
+    expect(filesAttempt(null, '')).toBe(false)
+  })
+
+  it('files nothing for an answer emptied back to nothing (§11.25)', () => {
+    // A withdrawal, not a zero-length try — and `setQuizAnswer` drops the quiz
+    // record in this case, so a row would outlive the state it describes.
+    expect(filesAttempt('a vector store', '')).toBe(false)
+    expect(filesAttempt('a vector store', '   \n ')).toBe(false)
+  })
+
+  it('files one row for one editing session, whatever was typed in it', () => {
+    expect(filesAttempt('', 'a')).toBe(true)
+    expect(filesAttempt('', 'a vector store returns neighbours')).toBe(true)
+    expect(filesAttempt('a first try', 'a second, better try')).toBe(true)
+  })
+
 })
 
 describe('setQuizAnswer and assessQuiz', () => {

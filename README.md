@@ -6,6 +6,10 @@ AI Engineering made simple, short, and useful.
 
 A series of mini-courses from beginner to advanced to help you learn practical topics in modern AI engineering. Each course is short, easy to understand, and includes real-world examples, clear visuals, and extra reading materials. It is the fastest way to master what you actually need on the job.
 
+[`ARCHITECTURE.md`](ARCHITECTURE.md) is the map: what this repository is, the six
+rules that explain why the code looks the way it does, the build, the runtime
+layers, and where to read next. Start there if you are new to it.
+
 ## Structure
 
 | Category                                                         | Modules | Description                                                                                                               |
@@ -55,8 +59,16 @@ cross-reference cannot reach the published site.
 The site keeps a learner record — which sheets you have signed off, your answers
 to the quick checks, the primary sources you opened, the checklists you ran, and
 the GitHub repositories you register against each module. All of it is in
-`localStorage` on your own device. There are no accounts, no server and no
-network calls at runtime, and none of it is ever sent anywhere.
+`localStorage` on your own device, and signed out it goes nowhere else: no
+account, no network call at runtime.
+
+Signing in is **optional and nothing is gated behind it**. Every sheet, every
+quick check and every sign-off works exactly the same signed out. What an
+account adds is that the record survives a cleared cache, a second machine and a
+lost laptop — and that a submittal can be shown as verified rather than merely
+typed. When you sign in, the record already in this browser is not discarded: it
+is merged with the account's field by field, a sign-off is never taken back, and
+the site tells you in numbers what it did.
 
 | Screen | What it is |
 | --- | --- |
@@ -172,6 +184,55 @@ GitHub Pages; to reproduce the deployed build locally:
 SITE_BASE_PATH=/ai-engineering-bazaar npm run build
 ```
 
+### Accounts and organisations (optional)
+
+The account layer is off unless it is configured. With no `.env.local` the site
+builds and runs exactly as it did before it existed.
+
+```bash
+cp .env.local.example .env.local     # then fill in the values
+node scripts/check-supabase.mjs      # shape + live checks, prints no secrets
+```
+
+Then apply the schema — ten tables, twenty-three row-level-security policies,
+no database functions and no views, so the schema is portable Postgres:
+
+```bash
+psql "$SUPABASE_DB_URL" -f supabase/migrations/0001_phase4_schema.sql
+psql "$SUPABASE_DB_URL" -f supabase/migrations/0002_phase4_rls.sql
+psql "$SUPABASE_DB_URL" -f supabase/migrations/0003_phase4_erase.sql
+psql "$SUPABASE_DB_URL" -f supabase/migrations/0004_phase4_verified_email.sql
+psql "$SUPABASE_DB_URL" -f supabase/migrations/0005_phase4_provider_verified.sql
+node scripts/test-rls.mjs            # 35 checks, real JWTs, real PostgREST
+```
+
+[`docs/auth-flow.md`](docs/auth-flow.md) explains sign-in, sessions, the claim,
+joining an organisation and who is allowed to read what — with diagrams, all of
+them rendered in real Chrome by `node scripts/check-mermaid.mjs docs/*.md` before
+being committed.
+
+[`docs/data-flow.md`](docs/data-flow.md) covers the other half: where the record
+lives, the two channels that read it, the single write path, the four ways storage
+can fail honestly, what crosses the network and what never does, and how two
+devices reconcile.
+
+[`docs/manager-queries.md`](docs/manager-queries.md) documents every table and
+column, how they join, and SQL for the questions a manager asks — a roster, who
+needs attention and why, quiz attempts, submittal verification, assignments
+behind schedule. Every query in it was run against the live schema.
+
+`NEXT_PUBLIC_AUTH_ENABLED` is a kill switch and it defaults to **off**. It
+matters because `lokumai.github.io` is one origin shared with every other project
+site published under that account — an origin is a scheme/host/port tuple and
+excludes the path — so a session token in `localStorage` there is readable by any
+sibling site, and `basePath` isolates nothing.
+
+That exposure is currently an **accepted risk**: the team is small and is also
+the entire audience. [`SECURITY.md`](SECURITY.md) records the decision, how the
+exposure actually works, and the four conditions that turn a custom domain from a
+preference into a blocker. Read it before enabling accounts for anyone outside
+this team.
+
 ## Tests
 
 Everything below runs on every pull request (`.github/workflows/ci.yml`), and
@@ -182,6 +243,15 @@ npm run typecheck    # TypeScript, strict
 npm test             # Vitest: units, plus the whole-corpus render check
 npm run build        # the static export itself
 npm run test:e2e     # Playwright, real Chrome, three viewports
+```
+
+Two suites need credentials and skip cleanly without them, so a clone with no
+`.env.local` still runs everything green:
+
+```bash
+node scripts/test-rls.mjs                                   # the RLS policies
+NEXT_PUBLIC_AUTH_ENABLED=true npm run build                 # then, against it:
+E2E_ACCOUNTS=1 npx playwright test accounts.spec.ts         # the account flows
 ```
 
 `npm test` includes eight checks worth knowing about because they fail for

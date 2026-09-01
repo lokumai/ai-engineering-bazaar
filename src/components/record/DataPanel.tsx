@@ -2,11 +2,15 @@
 
 import { useEffect, useState } from 'react'
 import {
+  REMOTE_ERASE_FAILED,
   UNDO_CLOSED,
   eraseStored,
   readRawStored,
   restoreStoredQuarantine,
+  eraseRemote,
+  remoteEraseNote,
   undoLabel,
+  type RemoteEraseOutcome,
   undoSecondsLeft,
 } from '@/lib/record/erase'
 import { markActivity, markExported } from '@/lib/record/events'
@@ -20,6 +24,8 @@ import {
   snapshot,
   update,
   useHydrated,
+  eraseAccountCopy,
+  hasAccountCopy,
 } from '@/lib/record/store'
 import { EraseDialog } from './EraseDialog'
 
@@ -124,6 +130,13 @@ export function DataPanel() {
     at: number
   } | null>(null)
   const [erasedAt, setErasedAt] = useState<number | null>(null)
+  /**
+   * §14.6 — what happened to the account's copy, or null while signed out.
+   * Held rather than assumed: a refused delete and a dropped connection are
+   * indistinguishable from here, so the reader is told the copy MAY remain
+   * rather than being told either way.
+   */
+  const [remoteErase, setRemoteErase] = useState<RemoteEraseOutcome | null>(null)
   const [left, setLeft] = useState(0)
 
   /**
@@ -251,6 +264,14 @@ export function DataPanel() {
     eraseStored()
     setImported({ kind: 'idle' })
     setExported(null)
+
+    // §14.6 — and only now. `eraseAccountCopy` settles the push this erase just
+    // queued before it deletes, so the row cannot be recreated by a flush that
+    // lands a moment later. Fire-and-forget: §12.2's rule is that a local write
+    // never waits for the network, and an erase is the write that can least
+    // afford to.
+    setRemoteErase(null)
+    void eraseRemote(hasAccountCopy() ? () => eraseAccountCopy() : null).then(setRemoteErase)
   }
 
   function onUndo(): void {
@@ -379,6 +400,19 @@ export function DataPanel() {
             <p className="hl-mark m-0 text-ink">
               {undo !== null && left > 0 ? undoLabel(left) : UNDO_CLOSED}
             </p>
+            {/* §14.6 — said only when it needs saying. `remoteEraseNote`
+                returns null for `deleted` and for `signed-out`: a delete that
+                worked is what the dialog already promised, and warning a
+                signed-out reader about an account copy sends them chasing a
+                row that never existed. */}
+            {remoteErase !== null && remoteEraseNote(remoteErase) !== null && (
+              <>
+                <p className="hl-mark mt-1 mb-0 text-ink">{REMOTE_ERASE_FAILED}</p>
+                <p className="mt-1 mb-0 font-display text-meta leading-normal text-ink-muted">
+                  {remoteEraseNote(remoteErase)}
+                </p>
+              </>
+            )}
             <p className="mt-1 mb-0 font-display text-meta leading-normal text-ink-muted">
               The sign-off marks drawn before this page loaded stay on screen
               until the page is reloaded: they are painted by the boot script,

@@ -59,7 +59,11 @@ export function SourceTracking({ slug }: { slug: string }) {
       // somehow carried the attribute records nothing.
       const href = anchor.getAttribute('href')
       if (href === null) return
-      update((data) => recordSourceOpened(data, slug, href, nowIso()))
+      update((data) => recordSourceOpened(data, slug, href, nowIso()), {
+      kind: 'recordSourceOpened',
+      sheetSlug: slug,
+      payload: { href },
+    })
     }
 
     document.addEventListener('click', onClick)

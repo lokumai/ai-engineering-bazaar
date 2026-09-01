@@ -25,10 +25,6 @@ next-env.d.ts
 # Written by `npm run prebuild` from the figures in mini-courses/.
 public/course-images/
 
-# Written and re-added by `next dev` on every run (Next 16 agent rules).
-AGENTS.md
-CLAUDE.md
-
 # Playwright
 test-results/
 playwright-report/
@@ -36,3 +32,13 @@ playwright-report/
 # Playwright MCP session artifacts (console logs, page snapshots)
 .playwright-mcp/
 docs/superpowers/
+
+# A loose file holding a Supabase personal access token. Ignored because it
+# exists: removing this line once staged the token itself, and the only thing
+# that caught it was a grep over the staged diff.
+supabase-access-tokens
+
+# Supabase CLI working state. The schema in supabase/migrations/ IS committed —
+# it is the whole of §14.2 and §14.4 and nothing else describes them.
+supabase/.temp/
+supabase/.branches/

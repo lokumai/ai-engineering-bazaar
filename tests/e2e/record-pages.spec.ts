@@ -508,14 +508,18 @@ test('§12.10.6 — CONTINUE is absent when there is no next sheet', async ({ pa
 // §12.11 — THE PROFILE SHEET
 // ===========================================================================
 
-test('§12.11 — the profile sheet prints all nine sections, in order', async ({ page }) => {
+test('§12.11 — the profile sheet prints all eleven sections, in order', async ({ page }) => {
   const problems = watchPage(page)
   await seedRecord(page, SEEDED)
   await page.goto('/profile/')
 
   // §12.11 enumerates eight; the ninth is §12.16's SC 2.1.4 off switch, which
-  // needs a home a reader can reach without using a shortcut. Order is part of
-  // the specification, so the ids are compared as a sequence.
+  // needs a home a reader can reach without using a shortcut. The tenth is
+  // §14.7's account panel, placed immediately BEFORE storage and not after it:
+  // one says where the record is kept and the other says how reliably this
+  // browser will keep it, and a reader deciding whether they need an account is
+  // reading those two answers together. Order is part of the specification, so
+  // the ids are compared as a sequence.
   expect(
     await page
       .locator('main section.hl-panel h2.hl-panel-title')
@@ -526,6 +530,11 @@ test('§12.11 — the profile sheet prints all nine sections, in order', async (
     'uptime',
     'stamps',
     'submittals',
+    // §14.7's two, contributed by `AuthPanels` as its own panels rather than
+    // wrapped in one: the account, and the organisations that account belongs
+    // to. Their ids are the component's own.
+    'hl-account-head',
+    'hl-orgs-head',
     'storage',
     'raw',
     'data',

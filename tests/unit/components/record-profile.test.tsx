@@ -1,4 +1,5 @@
 import { renderToStaticMarkup } from 'react-dom/server'
+import { RECORD_SCOPE } from '@/lib/record/scope'
 import { describe, expect, it } from 'vitest'
 import ProfilePage from '@/app/profile/page'
 import { DataPanel, printedDigestFrom } from '@/components/record/DataPanel'
@@ -84,7 +85,11 @@ describe('§12.2 — the honest empty first frame of every panel', () => {
 
   it('carries §12.1.7’s three flat lines, as a note block and not a banner', () => {
     const text = words(IDENTITY)
-    expect(text).toContain('Your record is stored in this browser only. It is never sent anywhere.')
+    // §14 moved this sentence into `lib/record/scope.ts` and made it true again:
+    // Phase 4 sends the record to `record_state`, so "never sent anywhere" was
+    // false the moment the sync landed. Asserted through the constant rather
+    // than as a literal, so the copy and its one definition cannot drift.
+    expect(text).toContain(words(RECORD_SCOPE))
     expect(text).toContain('Safari deletes it after seven days without a visit.')
     expect(text).toContain('Export your record to a file to keep it.')
     // Not dismissible, no icon, no caution colour: a note, one painted rule.
@@ -325,9 +330,15 @@ describe('§12.15 — the erase dialog', () => {
     expect(ERASE_COPY.export).toBe('EXPORT YOUR RECORD')
   })
 
-  it('describes the scope without claiming anything about other devices', () => {
+  it('describes the scope, including the copy the account holds (§14.6)', () => {
     expect(ERASE_COPY.scope).toContain('the copy set aside')
-    expect(ERASE_COPY.scope).toContain('the record was never sent anywhere')
+    // The old assertion pinned 'the record was never sent anywhere', which
+    // Phase 4 made false: §14.7 sends the record to `record_state`. A test that
+    // holds a lie in place is worse than an absent one, because it defends it.
+    expect(ERASE_COPY.scope).not.toContain('never sent anywhere')
+    expect(ERASE_COPY.scope).toContain('account')
+    // §14.6's third row: an organisation's history is not erasable from here.
+    expect(ERASE_COPY.history).toMatch(/organisation/i)
   })
 })
 
@@ -393,7 +404,7 @@ describe('§12.11 — the page itself: eight sections, in order', () => {
     expect(PAGE).toContain('Profile')
   })
 
-  it('renders §12.11’s eight sections in §12.11’s order, then the keyboard switch', () => {
+  it('renders §12.11’s eight sections in order, then §14.7’s two, then the keyboard switch', () => {
     const titles = [...PAGE.matchAll(/class="hl-panel-title">([^<]+)</g)].map(([, t]) => t)
     expect(titles).toEqual([
       'Identity',
@@ -401,6 +412,12 @@ describe('§12.11 — the page itself: eight sections, in order', () => {
       'Uptime',
       'Stamps',
       'Submittal register',
+      // §14.7 — contributed by `AuthPanels` as its own two panels rather than
+      // wrapped in one, and placed immediately BEFORE storage: one says where
+      // the record is kept, the other how reliably this browser will keep it,
+      // and a reader deciding whether they want an account reads them together.
+      'Account',
+      'Organisations',
       'Storage',
       'Stored values',
       'Data',
@@ -409,7 +426,19 @@ describe('§12.11 — the page itself: eight sections, in order', () => {
   })
 
   it('gives every section a heading its landmark is labelled by', () => {
-    for (const id of ['identity', 'readout', 'uptime', 'stamps', 'submittals', 'storage', 'raw', 'data', 'keyboard']) {
+    for (const id of [
+      'identity',
+      'readout',
+      'uptime',
+      'stamps',
+      'submittals',
+      'hl-account-head',
+      'hl-orgs-head',
+      'storage',
+      'raw',
+      'data',
+      'keyboard',
+    ]) {
       expect(PAGE, id).toContain(`aria-labelledby="${id}"`)
       expect(PAGE, id).toContain(`id="${id}"`)
     }

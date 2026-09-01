@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import type { FaceLegendRow, FaceLegendRows } from '@/components/mascot/FaceLegend'
+import { AuthPanels } from '@/components/auth/AuthPanels'
 import { DataPanel } from '@/components/record/DataPanel'
 import { IdentityPanel } from '@/components/record/IdentityPanel'
 import {
@@ -214,6 +215,22 @@ export default function ProfilePage() {
       </section>
 
       {/* ---- 6 · STORAGE -------------------------------------------------- */}
+      {/* ---- ACCOUNT (§14.7) ----------------------------------------------
+          Placed immediately before Storage, and the order is the argument: this
+          panel says WHERE the record is kept and Storage says how reliably the
+          browser will keep it. A reader deciding whether they need an account is
+          reading those two answers together.
+
+          Rendered bare, with no wrapping section: `AuthPanels` brings its own
+          two `hl-panel` blocks (the account and its organisations), and a
+          wrapper would print a third panel title above them.
+
+          This is the seam three reviewers found missing. `AuthPanels` was
+          exported and mounted nowhere, so the whole account layer was
+          unreachable from the site — signing in worked and then had no page to
+          report itself on. */}
+      <AuthPanels />
+
       <section className="hl-panel" aria-labelledby="storage">
         <div className="hl-panel-head">
           <h2 id="storage" className="hl-panel-title">

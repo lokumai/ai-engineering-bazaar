@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import {
   classOf,
   signedCount,
@@ -7,7 +8,7 @@ import {
   xp,
   type CurriculumFacts,
 } from '@/lib/record/derive'
-import { nowIso, useHydrated, useRecord } from '@/lib/record/store'
+import { nowIso, useHydrated, useRecord, useSyncState } from '@/lib/record/store'
 
 /**
  * §7.1, §12.5.2 — the readout strip. A tmux statusline or a lab instrument,
@@ -43,6 +44,23 @@ import { nowIso, useHydrated, useRecord } from '@/lib/record/store'
  * what lets to-date and to-go coexist truthfully; one percentage silently picks
  * a frame for the reader. Values snap — no count-up, no roll, no odometer
  * (§7.1, §9.1).
+ *
+ * **§14.7.3 — `data-sync`, the fourth attribute.** `off` / `synced` /
+ * `pending` / `failed`, and it is a CLAIM in exactly the sense
+ * `data-hydrated` is: `off` means nothing is being asserted about a server, and
+ * it is what the server render and the first client render both produce, so the
+ * attribute costs `data-hydrated` nothing — the Playwright check that reads
+ * `data-hydrated` at first paint sees the same two values it always did.
+ *
+ * Only `failed` is given VISIBLE copy, and that is deliberate on both counts.
+ * §14.7.3 writes copy for one state — `NOT SYNCED · EXPORT YOUR RECORD` —
+ * because that is the state where the only copy of the record is still in this
+ * browser and §12.15's export is the reader's move. `pending` is sub-second and
+ * clears on the same throttle as a `localStorage` write, so a cell for it would
+ * appear and vanish on every burst of keystrokes: motion §9.1 does not allow
+ * and information the reader cannot act on. `synced` and `off` are answered by
+ * the attribute, and by the account sheet, which is where a durability claim
+ * belongs.
  */
 
 /** §7.1 — the compact three-value form lives in the footer on every page. */
@@ -109,6 +127,7 @@ function Cell({
 export function Readout({ variant, facts, traces = null, className }: ReadoutProps) {
   const data = useRecord()
   const hydrated = useHydrated()
+  const sync = useSyncState()
 
   const counts = signedCount(data, facts)
   const points = xp(data, facts)
@@ -175,6 +194,31 @@ export function Readout({ variant, facts, traces = null, className }: ReadoutPro
     cells.push(<Cell key="next" label={`${rank.next.numeral} at`} value={String(rank.next.at)} />)
   }
 
+  /**
+   * §14.7.3 — the push did not land, so the strip says so and puts the export
+   * beside it rather than a route away from it. `.hl-not-saved`'s fault ink is
+   * borrowed as a utility rather than the class itself: that class carries a
+   * `margin-top` written for a block under a control, and inside a 40px flex
+   * row it would push the line off its baseline. §12.10.4 — the colour is not
+   * alone; the words carry the state.
+   *
+   * `role="status"` and not the `role="alert"` `SignOff` uses for a refused
+   * `localStorage` write. That one answers a gesture the reader just made; this
+   * is ambient chrome on all 32 sheets, and an assertive region here would
+   * interrupt on every client navigation for a fact that has not changed.
+   */
+  if (sync === 'failed') {
+    cells.push(
+      <span key="sync" role="status" className="whitespace-nowrap">
+        <span className="hl-readout-value text-fault-ink">Not synced</span>
+        <span aria-hidden="true" className="hl-readout-sep">{' · '}</span>
+        <Link href="/profile/" className="hl-link hl-no-print">
+          Export your record
+        </Link>
+      </span>,
+    )
+  }
+
   return (
     <div
       className={[
@@ -190,6 +234,7 @@ export function Readout({ variant, facts, traces = null, className }: ReadoutPro
         .join(' ')}
       data-variant={variant}
       data-hydrated={hydrated ? 'true' : 'false'}
+      data-sync={sync}
     >
       {/* Every cell and every separator is its own flex child: §7.1's `gap: 0
           8px` is what spaces them, and the strip wraps between values rather

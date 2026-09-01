@@ -1,86 +1,116 @@
-# Module 5: Memory — Parametric, Working (Short-Term) ve Long-Term
+# Module 5: Memory
 
-Tekrar merhaba! LLM'leri, training'i, RAG'ı ve tool'ları öğrendik. Agent'lara geçmeden önce, şimdiye kadar yaptığımız her şeyin altında sessizce yatan bir fikir var: LLM'ler kendi başlarına hiçbir şeyi hatırlamıyor. Ayrıca tek bir "hafıza" türü de yok—üç tür var, ve çok farklı davranıyorlar. Hadi tek tek inceleyelim.
+Agent'lara geçmeden önce, buraya kadar anlattığımız her şeyin sessizce altında duran bir fikir: bir
+LLM kendi başına hiçbir şey hatırlamıyor. Ve "memory" tek bir şey değil. Üç türü var, farklı
+yerlerde yaşıyorlar, ve birbirlerine hiç benzemiyorlar.
 
-## I. Üç Tür Hafıza
+## Üç tür memory
 
-- **Parametric memory** (offline / kalıcı) — training veya fine-tuning sırasında modelin ağırlıklarına gömülen bilgi.
-- **Short-term memory**, diğer adıyla **working memory** (online / geçici) — şu anda LLM'in context window'unun içinde oturan her şey.
-- **Long-term memory** (online / geçici) — modelin dışında saklanan, geçmiş konuşmaların/dokümanların bir özeti veya indeksi, ve gerektiğinde working memory'ye geri getirilir.
+- **Parametric memory** (offline, kalıcı): training ya da fine-tuning sırasında modelin
+  weight'lerine gömülmüş bilgi.
+- **Short-term memory**, diğer adıyla **working memory** (online, geçici): şu anda LLM'in context
+  window'unun içinde duran her şey.
+- **Long-term memory** (online, geçici): geçmiş konuşmaların ve dokümanların bir özeti ya da
+  index'i; modelin dışında saklanıyor ve gerektiğinde working memory'ye geri getiriliyor.
 
-Şimdi tek tek bakalım.
+Sırayla bakalım.
 
-## II. Parametric Memory: Ağırlıklara Gömülü Olan
+## Parametric memory: weight'lere gömülü olan
 
-Modül 2'yi hatırla, modelleri train ve fine-tune ettiğimiz yer. Bir modeli, diyelim ki bir yığın hukuki doküman üzerinde fine-tune ettiğinde, o bilgi modelin ağırlıklarına (parametrelerine) kalıcı olarak kaydedilir.
+Modül 2'yi hatırla, modelleri eğittiğimiz ve fine-tune ettiğimiz yer. Bir modeli diyelim bir yığın
+hukuki dokümanla fine-tune ettiğinde, o bilgi modelin weight'lerinin (parameter'larının) içinde
+kalıcı olarak saklanıyor.
 
-- **Kalıcı**: oturum bittiğinde kaybolmaz, ve her çağrıda yeniden göndermene gerek yok—sadece modelin *içinde*.
-- **Ölçekte hassas değil**: sorun şu ki modelin ağırlıkları devasa miktarda bilgi tutuyor—milyarlarca dokümanın karşılığı. Senin spesifik dokümanını bunların hepsinin arasına tıkıştırmak, modelin onu *tam olarak* ezberlemesini ve geri getirmesini zorlaştırıyor.
+- **Kalıcı**: session bittiğinde kaybolmuyor, ve her çağrıda yeniden göndermen gerekmiyor. Zaten
+  modelin *içinde*.
+- **Ölçekte belirsiz**: sorun şu ki bir modelin weight'leri devasa miktarda bilgi tutuyor,
+  milyarlarca doküman değerinde. Senin belirli dokümanını bunların arasına tıkıştırmak, modelin onu
+  *tam olarak* ezberleyip geri getirmesini zorlaştırıyor.
 
-Bunu 1000 kitap okumuş bir insan gibi düşün. Genel olarak o kitapların ne hakkında olduğunu bilir, ama ondan 537. kitabın 214. sayfasını kelimesi kelimesine alıntılamasını istersen zorlanır—bilgi orada bir yerde, ama tam olarak geri getirilebilir değil.
+Bunu 1.000 kitap okumuş bir insan gibi düşün. O kitapların genel olarak neyle ilgili olduğunu bilir,
+ama ondan 537 numaralı kitabın 214. sayfasını kelime kelime alıntılamasını istersen zorlanır. Bilgi
+bir yerlerde içinde, ama tam olarak geri getirilebilir değil.
 
-## III. Short-Term Memory (diğer adıyla Working Memory): Şu Anda Context'te Olan
+## Working memory: şu anda context'te olan
 
-Bu hafızaya gerçekten ne olduğunu söylemek gerekirse: **working memory**. Bu, LLM'in şu anda aktif olarak "üzerinde çalıştığı" hafıza—yani şu anda context window'unun içinde oturan metin, tam olarak bu.
+Bu memory'yi gerçekte ne olduğuyla adlandırmaya değer: **working memory**. LLM'in tam bu anda
+aktif olarak "üzerinde çalıştığı" memory, yani şu anda context window'unun içinde duran metin.
 
-1000-kitap analojisine geri dönelim: working memory, aynı kişi ama şimdi *tam olarak gözlerinin önünde açık tek bir kitabı* var. Okuduğu her şeyin bulanık bir hafızasından bir şey hatırlamaya çalışmasına gerek yok—doğrudan okuyabilir. Bu yüzden LLM'ler working memory ile parametric memory'den çok daha iyi performans gösterir: bilgi milyarlarca başka dokümanın arasına gömülü değil, tam önlerinde.
+1.000 kitap analojisiyle karşılaştır: working memory, aynı insanın *tam gözlerinin önünde açık
+duran belirli bir kitabı* olması gibi. Okuduğu her şeyin puslu hafızasından bir şey hatırlaması
+gerekmiyor, doğrudan okuyabiliyor. LLM'lerin working memory ile parametric memory'ye göre çok daha
+iyi iş çıkarmasının sebebi bu: bilgi milyarlarca başka dokümanın arasına gömülü değil, tam
+önlerinde.
 
-**Sorun şu**: working memory boyut olarak sınırlı (örn. 200K veya 1M token) ve dolabilir. Ve yeni bir oturum başlattığın anda—yeni bir Claude Code veya ChatGPT konuşması açtığında—kaybolur. Her yeni oturum tamamen boş bir context window ile başlar, çünkü LLM'in kendisi oturumlar arasında hiçbir durum (state) tutmaz.
+**Ama bir sorun var**: working memory'nin boyutu sınırlı (mesela 200K ya da 1M token) ve dolabiliyor.
+Ve yeni bir session başlattığın anda, yeni bir Claude Code ya da ChatGPT konuşması açtığında, gitti.
+Her yeni session tamamen boş bir context window ile başlıyor, çünkü LLM session'lar arasında kendine
+ait hiçbir state tutmuyor.
 
-### LLM'ler Generation Sırasında Stateless'tir
+### Bir LLM generation sırasında stateless
 
-Önemli bir ayrım: LLM'ler **generation sırasında** stateless'tir (bu, parametric memory'yi üreten tek seferlik bir süreç olan training'den farklı). Generation sırasında—yani sana her yanıt verdiğinde—model kendi başına hiçbir şey kaydetmez. Gönderdiğin her mesaj, teknik olarak, LLM'e yeni ve bağımsız bir çağrıdır, sanki yeni bir oturummuş gibi, çünkü LLM'in kendisi konuşmanın hiçbir durumunu tutmaz.
+Önemli bir ayrım: LLM'ler **generation sırasında** stateless (bu, parametric memory'yi üreten tek
+seferlik bir süreç olan training'den farklı bir şey). Generation sırasında, yani sana her cevap
+verişinde, model kendi başına hiçbir şey kaydetmiyor. Gönderdiğin her mesaj, teknik olarak yepyeni
+ve bağımsız bir LLM çağrısı; sanki yeni bir session gibi, çünkü LLM konuşmanın state'ini kendisi
+tutmuyor.
 
-O zaman bu nasıl sürekli bir konuşma gibi hissettiriyor? Çünkü *biz* onu taklit ediyoruz. Şimdiye kadar değişilen her mesajın büyüyen bir stack'ini (yığınını) tutuyoruz, ve her yeni bir şey olduğunda—sen bir mesaj gönderdiğinde veya LLM bir yanıt ürettiğinde—onu bu stack'e ekliyoruz, ve sonra **tüm stack'i** bir sonraki çağrıda LLM'e geri gönderiyoruz.
+O zaman nasıl kesintisiz bir konuşma gibi geliyor? Çünkü *biz* öyle gösteriyoruz. O ana kadar
+alışverişi yapılmış her mesajın büyüyen bir yığınını tutuyoruz, ve yeni bir şey olduğunda (senin bir
+mesaj göndermen ya da LLM'in bir cevap üretmesi) onu bu yığına ekliyoruz, ve sonraki çağrıda
+**yığının tamamını** LLM'e geri gönderiyoruz.
 
-ASCII Art:
-```
-Stack: []
-Sen: "Merhaba, ben Aylin"              -->  ekle  -->  Stack: [Human: "Merhaba, ben Aylin"]
-                                                        TÜM stack'i LLM'e gönder
-LLM üretir: "Merhaba Aylin!"           -->  ekle  -->  Stack: [Human: "Merhaba, ben Aylin", AI: "Merhaba Aylin!"]
+![The stack that is working memory](./images/llm-context.jpeg)  
+*Bu yığın working memory'nin kendisi. Sen bir mesaj yazıyorsun, model bir tane geri yazıyor, ve hiçbir şey silinmiyor. İkinci turda model birinci turdaki her şeyi yeniden okuyor, çünkü her çağrıda gönderilen şey bu container'ın tamamı.*
 
-Sen: "Adım ne?"                        -->  ekle  -->  Stack: [..., Human: "Adım ne?"]
-                                                        TÜM stack'i LLM'e gönder
-LLM üretir: "Adın Aylin."              -->  ekle  -->  Stack: [..., AI: "Adın Aylin."]
-```
+Dikkat et: her çağrı yığının *tamamını* gönderiyor, sadece en yeni mesajı değil, çünkü LLM önceki
+çağrıdan kendi başına hiçbir şey hatırlamıyor. Buradaki "memory" gerçekte, ona her seferinde her
+şeyi yeniden göstermemizden başka bir şey değil.
 
-Her çağrının sadece en yeni mesajı değil, *tüm* stack'i gönderdiğine dikkat et—çünkü LLM önceki çağrıdan kendi başına hiçbir şey hatırlamıyor. Buradaki "hafıza", aslında bizim ona her seferinde her şeyi yeniden göstermemizden ibaret.
+![Short-Term vs Long-Term Memory](./images/short-vs-long-memory.png)  
+*Short-term (working) memory, Human ve AI mesajlarının bu büyüyen yığını. Long-term memory ise bu yığının session'lar arasında içine kaydedildiği ve içinden geri getirildiği ayrı bir store. "Checkpointer" ve "Store" etiketleri LangGraph framework'ünden geliyor; başka framework'ler aynı fikir için başka isimler kullanıyor.*
 
-![Kısa Süreli ve Uzun Süreli Hafıza](./images/short-vs-long-memory.png)
-*Short-term (working) memory, sadece bu büyüyen Human/AI mesaj stack'i. Long-term memory ise, bu stack'in oturumlar arasında kaydedildiği (ve geri getirildiği) ayrı bir store. ("Checkpointer" ve "Store" etiketleri burada LangGraph framework'ünden geliyor—farklı framework'ler aynı fikir için farklı isimler kullanır.)*
+## Long-term memory: session'lar arasında hatırlamak
 
-## IV. Long-Term Memory: Oturumlar Arasında Hatırlamak
+Buna daha sonra, Expert track'teki [İleri Seviye Memory](../3_expert/19_advanced_memory_tr.md)
+modülünde çok daha derin ineceğiz. Şimdilik temel fikir şu.
 
-Bunu daha derinlemesine, ileride Expert seviyesindeki Advanced Memory modülünde işleyeceğiz—ama şimdilik temel fikir şu.
+Bazen, working memory'nin session bittiğinde yok olmasına izin vermek yerine, onun bir özetini ya da
+index'ini modelin dışında bir yere kaydediyoruz. Daha sonra, tamamen farklı bir session'da, o
+kaydedilmiş bilgi gerçekten ihtiyaç duyulduğunda working memory'ye geri çekilebiliyor, genelde RAG
+(Modül 3) kullanılarak.
 
-Bazen, bir oturum bittiğinde working memory'nin sadece kaybolmasına izin vermek yerine, onun bir özetini veya indeksini modelin dışında bir yere kaydederiz. Daha sonra, tamamen farklı bir oturumda, o kaydedilmiş bilgi gerçekten gerektiğinde working memory'ye geri çekilebilir—genellikle RAG (Modül 3) kullanılarak.
+**Örnek**: diyelim bir session'da ChatGPT'ye 5 PDF yükledin, sonra daha sonra yepyeni bir session
+başlatıp o PDF'ler hakkında bir soru sordun. ChatGPT yine cevaplayabilir. Modelin onları
+weight'lerinde "hatırlaması"ndan (parametric memory) değil, ve yeni session'ın boş context
+window'unda duruyor olmalarından (working memory) da değil, o PDF'leri önceki session sırasında
+index'lediği ve şimdi onlar hakkında sorduğunda ilgili parçaları context'e geri getirebildiği için.
 
-**Örnek**: ChatGPT'de bir oturumda 5 PDF yüklediğini, sonra daha sonra yepyeni bir oturum başlattığını ve o PDF'ler hakkında bir soru sorduğunu düşün. ChatGPT hâlâ cevap verebilir—model onları ağırlıklarında "hatırladığı" için değil (parametric memory), ve yeni oturumun boş context window'unda oturdukları için de değil (working memory)—ama önceki oturumda o PDF'leri otomatik olarak indekslediği, ve şimdi onlar hakkında tekrar sorduğunda ilgili kısımları context'e geri getirebildiği için.
+## Hepsini bir araya koyalım
 
-## V. Hepsini Bir Araya Getirmek
-
-| | Parametric | Working (Short-Term) | Long-Term |
+| | Parametric | Working (short-term) | Long-term |
 |---|---|---|---|
-| Nerede saklanır | Model ağırlıkları | Context window | Harici depolama (DB, vector store, dosyalar) |
-| Kalıcılık | Kalıcı | Geçici—oturum bitince veya context dolunca kaybolur | Oturumlar arasında kalıcı |
-| Hassasiyet | Bulanık—milyarlarca doküman arasından tam olarak hatırlamak zor | Çok hassas—LLM onu doğrudan okur | Context'e geri getirildiğinde hassas |
-| Nasıl oluşur | Training / fine-tuning (Modül 2) | Büyüyen bir mesaj stack'i | Açık kayıt + geri getirme, genellikle RAG ile (Modül 3) |
-| Analoji | 1000 kitap okumuş biri | Tam önünde açık bir kitap okuyan biri | Birinin kendi notları, sonra bakılan |
+| Nerede saklanıyor | Model weight'leri | Context window | Dış depolama (DB, vector store, dosyalar) |
+| Kalıcılık | Kalıcı | Geçici, session bitince ya da context dolunca gidiyor | Session'lar arasında kalıyor |
+| Kesinlik | Puslu, milyarlarca doküman arasından tam hatırlamak zor | Çok kesin, LLM doğrudan okuyor | Context'e geri getirildiğinde kesin |
+| Nasıl oluşuyor | Training / fine-tuning (Modül 2) | Büyüyen bir mesaj yığını | Açık kaydetme + geri getirme, genelde RAG ile (Modül 3) |
+| Analoji | 1.000 kitap okumuş biri | Tam önünde açık bir kitap okuyan biri | Birinin kendi notları, sonra bakılan |
 
-Çıkarılacak sonuç: **LLM'in kendi hafızası yok—parametric memory training'in ağırlıklara gömdüğü şey, working memory uygulamanın şu anda ona gösterdiği şey, ve long-term memory uygulamanın kaydedip sonra geri getirdiği şey.**
+Özet olarak: **LLM'in kendine ait bir memory'si yok. Parametric memory, training'in weight'lere
+gömdüğü şey; working memory, uygulamanın ona şu anda gösterdiği şey; long-term memory ise
+uygulamanın kaydedip sonra geri getirdiği şey.**
 
-## Mermaid Diyagramı: Working Memory Gerçekte Nerede Yaşıyor
+## Working memory gerçekte nerede yaşıyor
 
 ```mermaid
 graph TD
-    A[Uygulaman] -->|tüm mesaj stack'ini yeniden gönderir| B[Context Window = Working Memory]
+    A[Uygulaman] -->|mesaj yığınının tamamını yeniden gönderir| B[Context Window = Working Memory]
     B --> C[LLM: generation sırasında stateless]
-    C -->|yanıt| A
-    A -->|yanıtı stack'e ekler| A
+    C -->|cevap| A
+    A -->|cevabı yığına ekler| A
 ```
 
-## Eğitim İlerlemesi
+## Bu serinin neresindeyiz
 
 ```mermaid
 graph LR
@@ -99,11 +129,21 @@ graph LR
 
 ## Özet
 
-Üç tür hafıza var, ve birbirlerinin yerine geçmiyorlar: **parametric memory** (kalıcı, ama ölçekte bulanık, training tarafından gömülü), **working memory** (hassas ama geçici—her çağrıda yeniden gönderilen büyüyen bir mesaj stack'i), ve **long-term memory** (modelin dışında kaydedilir ve gerektiğinde working memory'ye geri getirilir, genellikle RAG ile). Sırada: bu aynı working memory'ye yaslanarak plan yapan ve birçok adımda eylemde bulunan agent'lar.
+Üç tür memory var ve birbirlerinin yerine geçmiyorlar: **parametric memory** (kalıcı, ama ölçekte
+puslu, training tarafından gömülmüş), **working memory** (kesin ama geçici, her çağrıda yeniden
+gönderilen büyüyen bir mesaj yığını), ve **long-term memory** (modelin dışında kaydedilip
+gerektiğinde working memory'ye geri getirilen, genelde RAG ile). Sırada agent'lar var; çok adımlı
+plan yapmak ve iş yapmak için tam bu working memory'ye yaslanıyorlar.
 
-**Hızlı Kontrol**: Üç tür hafıza nedir? Parametric memory kalıcı olduğu halde neden hassas değil? Short-term memory'ye neden "working memory" diyoruz? Long-term memory'deki bilgi LLM'in context'ine nasıl geri döner?
+**Hızlı Kontrol**: üç memory türü nedir? Parametric memory kalıcı olduğu hâlde neden belirsiz?
+Short-term memory'ye neden "working memory" diyoruz? Long-term memory'deki bilgi LLM'in context'ine
+nasıl geri dönüyor?
 
-Devam et! 🚀
+## Kaynaklar
+
+- [The three memory types every LLM developer must know](https://medium.com/@sahilnanga4/the-three-memory-types-every-llm-developer-must-know-3358c26fdff3): aynı ayrım, başka bir açıdan
+- [Modül 3: RAG](3_rag_tr.md): long-term memory'nin working memory'ye nasıl geri getirildiği
+- [Modül 19: İleri Seviye Memory](../3_expert/19_advanced_memory_tr.md): bunun devamı
 
 **Önceki Modül:** [Modül 4: LLM Tool Calling](4_tools_tr.md)
-**Sonraki Modül:** [Modül 6: AI Agents: Tek Çağrıdan Çok Adımlı Akıl Yürütmeye](6_agents_tr.md)
+**Sonraki Modül:** [Modül 6: AI Agent'ları](6_agents_tr.md)

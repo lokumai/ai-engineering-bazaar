@@ -49,7 +49,8 @@ for (const sheet of SHEETS) {
 }
 
 const LISTINGS: readonly [string, string][] = [
-  ['/', 'INDEX SHEET'],
+  ['/', 'HOME'],
+  ['/sheets/', 'SHEET INDEX'],
   ['/courses/', 'DRAWING SET'],
   [CATEGORY_PATHS[1], 'SUBSYSTEM 02'],
 ]

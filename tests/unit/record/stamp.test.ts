@@ -118,8 +118,22 @@ describe('the two stampers agree', () => {
     // from the inside; only the load can tell them apart.
     expect(runBootScript(signed('intermediate/security')).getAttribute('data-hl-record'))
       .toBe('1')
-    // A readable envelope with no sign-offs in it is still a record.
-    expect(runBootScript(EMPTY_RECORD).getAttribute('data-hl-record')).toBe('1')
+    // §15.11 — but a readable envelope is not automatically a reader. An
+    // envelope that `carriesNothing()` gets NO stamp, because the home screen
+    // now swaps a whole document on this attribute: the old rule handed
+    // "Where you left off", a resume block and a continue control to anyone
+    // whose storage held a record with only `prefs` in it, which the store
+    // writes on a first theme click. The attribute still answers "was there
+    // something in storage at load", and §12.13's class 1 / class 2 split
+    // survives intact — a reader whose record carried something is stamped at
+    // load and keeps the `1` through an erase, so CLEARED BY YOU is still
+    // distinguishable from NEVER STARTED.
+    expect(runBootScript(EMPTY_RECORD).getAttribute('data-hl-record')).toBeNull()
+    // And the line the gate must not cross: an identity the reader typed is
+    // something, even with nothing signed off. A sign-off is not the only
+    // evidence of a reader.
+    expect(runBootScript(setRole(EMPTY_RECORD, 'qa', AT)).getAttribute('data-hl-record'))
+      .toBe('1')
 
     const root = fakeRoot()
     stampRecordState(root, signed('intermediate/security'), FACTS)

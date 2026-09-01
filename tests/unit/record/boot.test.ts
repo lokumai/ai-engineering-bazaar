@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import { RECORD_BOOT_SCRIPT, recordBootScript } from '@/lib/record/boot'
-import { RECORD_STORAGE_KEY, SCHEMA_VERSION } from '@/lib/record/schema'
+import {
+  EMPTY_RECORD,
+  RECORD_STORAGE_KEY,
+  SCHEMA_VERSION,
+  carriesNothing,
+  emptySheetRecord,
+  type RecordData,
+  type SheetRecord,
+} from '@/lib/record/schema'
 
 /** The corpus's six categories, as a layout would pass them in. */
 const TOTALS = { fundamentals: 7, intermediate: 8, expert: 9, ecosystem: 5, protocols: 1, optional: 2 }
@@ -186,5 +194,78 @@ describe('the marks CSS draws from (§12.2 Channel A)', () => {
     expect(stamped.attributes.get('data-hl-storage')).toBe('ok')
     // No module map, so no sign-off marks; the category still reads as started.
     expect([...stamped.classes]).toEqual(['hl-cat-fundamentals-started'])
+  })
+})
+
+/**
+ * §15.11 — the boot script's `carriesNothing` rule, cross-tested against the
+ * typed one.
+ *
+ * `data-hl-record` is the whole of the home screen's decision (`app/home.css`),
+ * so before this the stamp went on for any parseable envelope: a reader whose
+ * record held nothing but `prefs` — which the store writes on a first theme
+ * click — was shown "Where you left off" and a continue control for a sheet
+ * they had never opened. The boot script cannot import `carriesNothing`, so the
+ * rule is written twice; these cases are the only thing keeping the two copies
+ * honest, and they assert the stamp against `carriesNothing`'s own answer
+ * rather than against a hand-written expectation.
+ */
+describe('data-hl-record only goes on a record that carries something (§15.11)', () => {
+  const script = recordBootScript(TOTALS, MODULES)
+
+  const withSheet = (sheet: Partial<SheetRecord>): RecordData => ({
+    ...EMPTY_RECORD,
+    sheets: { 'fundamentals/llms': { ...emptySheetRecord(), ...sheet } },
+  })
+
+  const CASES: ReadonlyArray<[string, RecordData]> = [
+    ['a freshly minted record, which is what a migration stamp leaves behind', EMPTY_RECORD],
+    ['a record holding only a preference', { ...EMPTY_RECORD, prefs: { charKeys: false } }],
+    ['a record holding only an empty sheet entry', withSheet({})],
+    ['a name the reader typed', { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, name: 'Ada' } }],
+    ['a mark seed', { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, markSeed: 'a1b2c3d4' } }],
+    ['a role the reader chose', { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, role: 'qa' } }],
+    ['a day on which something was written', { ...EMPTY_RECORD, days: ['2026-08-31'] }],
+    ['an export the reader took', { ...EMPTY_RECORD, meta: { lastExport: '2026-08-31T09:00:00.000Z', persisted: null } }],
+    ['a sheet reached the end of', withSheet({ reachedEnd: true })],
+    ['dwell on a sheet and nothing else', withSheet({ dwellSeconds: 41 })],
+    ['one checklist box', withSheet({ checklist: { 'a-1': true } })],
+    ['one source opened', withSheet({ sources: ['https://example.invalid/paper'] })],
+    ['a sheet signed off', withSheet({ signedOff: '2026-08-14T09:00:00.000Z' })],
+  ]
+
+  for (const [name, data] of CASES) {
+    it(`agrees with carriesNothing for: ${name}`, () => {
+      const stamped = run(script, { stored: envelope(data) })
+      expect(stamped.attributes.get('data-hl-storage')).toBe('ok')
+      expect(stamped.attributes.has('data-hl-record')).toBe(!carriesNothing(data))
+    })
+  }
+
+  it('still tells empty state 1 from 4 when the record carries nothing (§12.13)', () => {
+    // The storage stamp is not conditional on the record: a reader whose
+    // storage is blocked must be told so even with nothing recorded.
+    const blocked = run(script, { stored: envelope(EMPTY_RECORD), getterThrows: true })
+    expect(blocked.attributes.get('data-hl-storage')).toBe('blocked')
+    expect(blocked.attributes.has('data-hl-record')).toBe(false)
+  })
+
+  it('draws no class for a role on a record that carries nothing else, but does stamp it', () => {
+    const data: RecordData = { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, role: 'qa' } }
+    const stamped = run(script, { stored: envelope(data) })
+    expect(stamped.attributes.get('data-hl-record')).toBe('1')
+    expect([...stamped.classes]).toEqual(['hl-role-qa'])
+  })
+
+  it('does not throw on a hand-edited record whose fields are the wrong shape', () => {
+    for (const data of [
+      { days: 'today', identity: 'me', meta: 7, sheets: { 'fundamentals/llms': 'signed' } },
+      { days: {}, identity: {}, meta: {}, sheets: {} },
+      { sheets: { 'fundamentals/llms': { checklist: 'yes', sources: 3, submittals: null } } },
+    ]) {
+      const stamped = run(script, { stored: envelope(data) })
+      expect(stamped.attributes.get('data-hl-storage')).toBe('ok')
+      expect(stamped.attributes.has('data-hl-record')).toBe(false)
+    }
   })
 })

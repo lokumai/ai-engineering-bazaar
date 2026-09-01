@@ -85,6 +85,20 @@ export const SHEETS: readonly Sheet[] = [
   sheet(32, '/courses/optional/runtime/', 'Runtime', 'A4'),
 ]
 
+/**
+ * §15.1 — where the flat manifest lives.
+ *
+ * Stated once, here, because eight spec files assert against that table and
+ * before this constant existed all eight had `'/'` typed into them. The route
+ * moved when `/` became the home screen, and the suite went red in 29 places
+ * that were all the same fact. A second move should cost one line.
+ *
+ * It is NOT derived from the app's router: a suite that reads the route from the
+ * code it is testing cannot notice the route changing. This is a claim about the
+ * URL a reader visits, kept next to the claims about what they find there.
+ */
+export const INDEX_SHEET = '/sheets/'
+
 export const SHEET_COUNT = SHEETS.length
 export const DRAWN_COUNT = SHEETS.filter((s) => s.drawn).length
 export const NOT_DRAWN_COUNT = SHEET_COUNT - DRAWN_COUNT

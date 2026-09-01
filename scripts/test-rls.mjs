@@ -35,7 +35,7 @@ import { readFileSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
 import { createClient } from '@supabase/supabase-js'
 
-const E = ''
+const E = '\u001b'
 const PASS = `${E}[32m✓${E}[0m`
 const FAIL = `${E}[31m✗${E}[0m`
 

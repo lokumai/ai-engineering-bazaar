@@ -48,6 +48,26 @@ jobs:
         run: npm run build
         env:
           SITE_BASE_PATH: ${{ env.BASE_PATH }}
+          # §14 — the account layer's three build-time constants. Next performs a
+          # TEXTUAL substitution of `process.env.NEXT_PUBLIC_*`, so these are
+          # baked into the bundle here and cannot be changed after the fact
+          # without another deploy.
+          #
+          # The URL and the publishable key are public by design (§14.10): the
+          # security boundary is row-level security in Postgres, not the key.
+          # They are repository secrets only so they are configured in one place,
+          # not because exposure would matter. The service key and the database
+          # password are NOT here and never should be — a build that emits static
+          # files has no business holding either.
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          # A repository VARIABLE, not a secret, and deliberately: this is the
+          # kill switch, and it is worth being able to flip it from the GitHub UI
+          # without a commit. Read SECURITY.md before turning it on for anyone
+          # outside this team — `lokumai.github.io` is one origin shared with
+          # every Pages site under this account, so the session token it stores
+          # is readable by any sibling page.
+          NEXT_PUBLIC_AUTH_ENABLED: ${{ vars.NEXT_PUBLIC_AUTH_ENABLED }}
 
       - name: Assemble the Pages artifact
         run: |
@@ -61,6 +81,8 @@ jobs:
           touch _site/.nojekyll
 
       - name: Fail before publishing if the site is missing
+        env:
+          AUTH_ENABLED: ${{ vars.NEXT_PUBLIC_AUTH_ENABLED }}
         run: |
           set -euo pipefail
           test -d _site/_next
@@ -69,6 +91,26 @@ jobs:
           # A basePath that did not reach assetPrefix builds cleanly and 404s
           # every stylesheet, so check the emitted URLs, not just the files.
           grep -q "$BASE_PATH/_next/" _site/index.html
+
+          # §14 — and the account layer's config, checked the same way and for
+          # the same reason. A missing or misspelled variable does not fail the
+          # build: `env.ts` resolves it to `flagOff` and the site publishes GREEN
+          # with the sign-in page politely saying accounts are not enabled. That
+          # is correct behaviour for a deployment that meant it, and a silent
+          # regression for one that did not, so the intent is asserted here
+          # rather than inferred from a page nobody reads.
+          if [ "$AUTH_ENABLED" = "true" ]; then
+            if grep -q "ACCOUNTS NOT ENABLED YET" _site/sign-in/index.html; then
+              echo "AUTH_ENABLED is true but the sign-in page renders the disabled state."
+              echo "The URL or the publishable key did not reach the build."
+              exit 1
+            fi
+            echo "accounts: enabled, and the sign-in page agrees"
+          else
+            test -f _site/sign-in/index.html
+            grep -q "ACCOUNTS NOT ENABLED YET" _site/sign-in/index.html
+            echo "accounts: disabled, and the sign-in page says so"
+          fi
 
       # `include-hidden-files` is LOAD-BEARING, and it is why this is v5 rather
       # than v4. v4.0.0's release note: "hidden files (specifically dotfiles)

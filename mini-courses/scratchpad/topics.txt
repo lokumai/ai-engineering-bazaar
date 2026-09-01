@@ -24,7 +24,7 @@
 16) advanced_architectures (THREAD, ReAct, CodeAct, RLM, Dynamic Workflows)
 17) advanced_tools(RAG vs Agentic Search, JSON vs CLI tools, Frotend Tools, Code Mode, Tool Chaining)
 18) advanced_memory(Long-term memory using Cognee and MemSearch and Hindsight, Agent Dreaming, Agent KnowledgeBase, Entire Provenance)
-19) advanced_multiagent (A2A, Multi-agent coordination context delegation vs subagent context delegation vs messaging pool)
+19) advanced_multiagent (A2A, Multi-agent coordination context delegation (handoff) vs subagent context delegation vs messaging pool)
 20) advanced_prompting (Reflextion, Tree of Thought, LLM Consul, caveman, ponytail)
 21) advanced_context_engineering (Superpowers, SpecKit, GSD, AgentOS, Claude Native Plan Goals Ultrathink Playground)
 22) advanced_harness_engineering (harness profiles, system prompts, changing tool names)

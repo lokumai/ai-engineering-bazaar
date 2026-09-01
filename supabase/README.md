@@ -157,13 +157,13 @@ granting authority is not the application's job. From the SQL editor, as
 
 ```sql
 insert into orgs (name, join_domain)
-values ('dnext-technology', 'dnext-technology.com');
+values ('intellica', 'intellica.net');
 
 insert into org_manager (org_id, user_id)
 select o.id, u.id
 from orgs o, auth.users u
-where o.join_domain = 'dnext-technology.com'
-  and u.email = 'someone@dnext-technology.com';
+where o.join_domain = 'intellica.net'
+  and u.email = 'someone@intellica.net';
 ```
 
 Members are **not** inserted here. §14.5 requires the user to insert their own

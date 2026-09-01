@@ -25,10 +25,6 @@ next-env.d.ts
 # Written by `npm run prebuild` from the figures in mini-courses/.
 public/course-images/
 
-# Written and re-added by `next dev` on every run (Next 16 agent rules).
-AGENTS.md
-CLAUDE.md
-
 # Playwright
 test-results/
 playwright-report/

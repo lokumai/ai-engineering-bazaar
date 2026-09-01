@@ -151,6 +151,19 @@ export function supabaseEnv(): SupabaseEnv {
  * §14.1 — the single question the UI asks: may any auth affordance render at
  * all? A component must never answer it by testing for the key itself, or the
  * kill switch acquires a second, weaker definition.
+ *
+ * **Why the switch exists, and why it is not merely a rollout convenience.**
+ * `lokumai.github.io` is ONE origin — scheme, host and port, never the path —
+ * shared with every other GitHub Pages site published under that account. They
+ * therefore share one `localStorage`, so a session token written there is
+ * readable by any sibling page running in the reader's own browser. Turning this
+ * on is turning that exposure on.
+ *
+ * The project owner has accepted that risk for the current pre-release team, and
+ * `SECURITY.md` records the decision, the mechanism, and the four conditions
+ * that end it — the first being any organisation from outside this team joining,
+ * because that data is not ours to accept a risk on behalf of. Read that file
+ * before flipping this in a deploy workflow.
  */
 export function isAuthEnabled(env: SupabaseEnv = supabaseEnv()): boolean {
   return env.kind === 'ready'

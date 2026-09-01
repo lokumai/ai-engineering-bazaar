@@ -200,12 +200,17 @@ psql "$SUPABASE_DB_URL" -f supabase/migrations/0003_phase4_erase.sql
 node scripts/test-rls.mjs            # 31 checks, real JWTs, real PostgREST
 ```
 
-`NEXT_PUBLIC_AUTH_ENABLED` is a kill switch and it defaults to **off**. It stays
-off until the site is served from its own domain: `lokumai.github.io` is one
-origin shared with every other project site published under that account — an
-origin is a scheme/host/port tuple and excludes the path — so a session token in
-`localStorage` there is readable by any sibling site. `basePath` isolates
-nothing.
+`NEXT_PUBLIC_AUTH_ENABLED` is a kill switch and it defaults to **off**. It
+matters because `lokumai.github.io` is one origin shared with every other project
+site published under that account — an origin is a scheme/host/port tuple and
+excludes the path — so a session token in `localStorage` there is readable by any
+sibling site, and `basePath` isolates nothing.
+
+That exposure is currently an **accepted risk**: the team is small and is also
+the entire audience. [`SECURITY.md`](SECURITY.md) records the decision, how the
+exposure actually works, and the four conditions that turn a custom domain from a
+preference into a blocker. Read it before enabling accounts for anyone outside
+this team.
 
 ## Tests
 

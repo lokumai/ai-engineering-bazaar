@@ -33,7 +33,13 @@ test.describe('§14.1 accounts are switched off', () => {
 
   test('/sign-in/ says so, and offers no provider', async ({ page }) => {
     await page.goto('/sign-in/')
-    await expect(page.getByText('ACCOUNTS NOT ENABLED YET')).toBeVisible()
+    await expect(
+      page.getByText('ACCOUNTS NOT ENABLED YET'),
+      'the build under test has accounts ENABLED. `next build` reads .env.local, '
+        + 'so a local NEXT_PUBLIC_AUTH_ENABLED=true produces a build these '
+        + 'assertions are the opposite of. Set it back to false, or run the '
+        + 'accounts suite instead: E2E_ACCOUNTS=1 npx playwright test accounts.spec.ts',
+    ).toBeVisible()
 
     // The page still has to be useful: §14.13's honesty requirement is that it
     // says what DOES work, not merely what does not. Named exactly — the page

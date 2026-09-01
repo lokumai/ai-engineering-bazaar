@@ -498,6 +498,54 @@ export function describeAuthError(params: {
  * truth rather than watched a spinner forever. §1: after this, the page states
  * that it does not know, and offers the way out.
  */
+/**
+ * §14.7 — which sign-in methods this PROJECT actually has, read from Supabase's
+ * own public settings endpoint (`/auth/v1/settings`).
+ *
+ * THE REASON THIS EXISTS. `SignInPanel` used to offer all three unconditionally,
+ * because the code for all three is there. But a provider also has to be
+ * configured in the Supabase project, and until it is, pressing its button
+ * produces an error from the server. §14.1's own argument against a dead
+ * affordance applies to itself: a button that cannot work is worse than no
+ * button, because the reader blames themselves.
+ *
+ * The endpoint is unauthenticated and lists every provider Supabase supports as
+ * a boolean, so the panel can offer exactly what exists. It costs one request on
+ * one page.
+ *
+ * `null` on anything unparseable, and the caller then FAILS OPEN — offers
+ * everything. That direction is deliberate: hiding a provider that works would
+ * lock a reader out of an account they could have had, while offering one that
+ * does not leaves them with an error message that is already drawn. Refusing to
+ * guess is right when guessing costs data; here it costs a sign-in.
+ */
+export interface ProviderAvailability {
+  github: boolean
+  google: boolean
+  email: boolean
+}
+
+export function parseProviderAvailability(input: unknown): ProviderAvailability | null {
+  if (typeof input !== 'object' || input === null) return null
+  const external = (input as { external?: unknown }).external
+  if (typeof external !== 'object' || external === null) return null
+  const flag = (name: string): boolean | null => {
+    const value = (external as Record<string, unknown>)[name]
+    return typeof value === 'boolean' ? value : null
+  }
+  const github = flag('github')
+  const google = flag('google')
+  const email = flag('email')
+  // All three have to be readable. A payload that answers for one provider and
+  // not another is a shape this code does not understand, and guessing the rest
+  // would hide a working provider on the strength of a partial answer.
+  if (github === null || google === null || email === null) return null
+  return { github, google, email }
+}
+
+/** Every provider, for the fail-open path and for a build with no probe yet. */
+export const ALL_PROVIDERS: ProviderAvailability = { github: true, google: true, email: true }
+
 export const CALLBACK_TIMEOUT_MS = 10_000
 
 /**

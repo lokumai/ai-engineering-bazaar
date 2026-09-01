@@ -1,12 +1,16 @@
 'use client'
 
 import Link from 'next/link'
+import { supabaseEnv } from '@/lib/supabase/env'
 import { useEffect, useState } from 'react'
 import { useSession } from '@/components/auth/SessionProvider'
 import {
   DEFAULT_RETURN_PATH,
   RETURN_PARAM,
+  ALL_PROVIDERS,
   SIGN_IN_PROVIDERS,
+  parseProviderAvailability,
+  type ProviderAvailability,
   callbackUrl,
   isPlausibleEmail,
   sanitiseReturnPath,
@@ -108,10 +112,40 @@ export function SignInPanel() {
   const [email, setEmail] = useState('')
   const [emailInvalid, setEmailInvalid] = useState(false)
   const [phase, setPhase] = useState<Phase>({ kind: 'idle' })
+  /**
+   * §14.7 — which providers this project actually has. `null` while the answer
+   * is in flight, which is a state the panel SAYS rather than papering over
+   * (§11.25): offering three buttons and then removing two is worse than
+   * spending a moment not offering any.
+   */
+  const [available, setAvailable] = useState<ProviderAvailability | null>(null)
 
   useEffect(() => {
     const asked = new URLSearchParams(window.location.search).get(RETURN_PARAM)
     setReturnPath(sanitiseReturnPath(asked))
+  }, [])
+
+  useEffect(() => {
+    const env = supabaseEnv()
+    if (env.kind !== 'ready') return
+    let cancelled = false
+    // Unauthenticated, and one request on one page. `apikey` is still sent
+    // because PostgREST's gateway wants it on every route.
+    void fetch(`${env.url}/auth/v1/settings`, { headers: { apikey: env.publishableKey } })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((body) => {
+        if (cancelled) return
+        // Fail open: an unreadable answer must not hide a provider that works.
+        // Being locked out of an account you could have had is a worse outcome
+        // than a button whose error message is already drawn.
+        setAvailable(parseProviderAvailability(body) ?? ALL_PROVIDERS)
+      })
+      .catch(() => {
+        if (!cancelled) setAvailable(ALL_PROVIDERS)
+      })
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const view = session?.view ?? { status: 'unknown' as const }
@@ -242,33 +276,51 @@ export function SignInPanel() {
         <p className="hl-mark m-0 text-ink-faint">OPTIONAL · THE SITE WORKS WITHOUT IT</p>
       </div>
 
-      {/* §14.8.2's argument, in one line, above the button it argues for. */}
-      <p className="mt-0 mb-4 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
-        {github.note}
-      </p>
+      {/* §14.8.2's argument, in one line, above the button it argues for — and
+          only when that button is there. The sentence is about what a GitHub
+          sign-in buys; printing it over a deployment that has no GitHub
+          sign-in describes a capability the reader cannot reach. */}
+      {available?.github !== false && (
+        <p className="mt-0 mb-4 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+          {github.note}
+        </p>
+      )}
 
-      <div className="flex flex-wrap gap-2">
-        <button
-          type="button"
-          className="hl-btn"
-          onClick={() => void start('github')}
-          disabled={busy}
-        >
-          {phase.kind === 'working' && phase.provider === 'github'
-            ? 'Opening GitHub…'
-            : github.label}
-        </button>
-        <button
-          type="button"
-          className="hl-btn"
-          onClick={() => void start('google')}
-          disabled={busy}
-        >
-          {phase.kind === 'working' && phase.provider === 'google'
-            ? 'Opening Google…'
-            : google.label}
-        </button>
-      </div>
+      {available === null ? (
+        <p className="hl-mark m-0 text-ink-faint">CHECKING WHICH METHODS THIS SITE OFFERS</p>
+      ) : (
+        <div className="flex flex-wrap gap-2">
+          {available.github && (
+            <button
+              type="button"
+              className="hl-btn"
+              onClick={() => void start('github')}
+              disabled={busy}
+            >
+              {phase.kind === 'working' && phase.provider === 'github'
+                ? 'Opening GitHub…'
+                : github.label}
+            </button>
+          )}
+          {available.google && (
+            <button
+              type="button"
+              className="hl-btn"
+              onClick={() => void start('google')}
+              disabled={busy}
+            >
+              {phase.kind === 'working' && phase.provider === 'google'
+                ? 'Opening Google…'
+                : google.label}
+            </button>
+          )}
+          {!available.github && !available.google && (
+            <p className="hl-mark m-0 text-ink-faint">
+              NO PROVIDER SIGN-IN ON THIS DEPLOYMENT · USE THE EMAIL LINK BELOW
+            </p>
+          )}
+        </div>
+      )}
 
       <hr className="hl-rule-struct my-6" aria-hidden="true" />
 

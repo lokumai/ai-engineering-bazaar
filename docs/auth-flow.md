@@ -30,25 +30,52 @@ reaching it takes a deliberate click on a screen that says so first.
 
 ## 2 · Signing in
 
-Three providers. GitHub is offered first because it is the only one that lets a
-submittal be shown as *verified* rather than merely typed — the site compares a
-submittal's `owner` against the GitHub login on the account.
+Three methods are implemented: GitHub, Google and an emailed link. **The panel
+offers only the ones the Supabase project actually has**, read at runtime from
+Supabase's own public `/auth/v1/settings`.
+
+That check is not decoration. A provider needs code *and* configuration, and
+before it existed the panel offered all three unconditionally — so on a project
+with GitHub switched off, pressing its button produced a server error and the
+reader had no way to know it was never going to work. §14.1's argument about the
+kill switch applies to itself: a button that cannot work is worse than no button,
+because the reader blames themselves.
+
+If the probe cannot be read, the panel **fails open** and offers everything.
+Hiding a provider that works would lock a reader out of an account they could
+have had; offering one that does not leaves them an error the panel already
+draws.
+
+> **Enabled in the `lokumai` project today: the email link only.** GitHub and
+> Google are implemented and switched off (`external_github_enabled: false`), so
+> their buttons do not render and section 2a below describes a path this
+> deployment does not currently take. Turning either on is a dashboard job:
+> create an OAuth app, set the callback to
+> `https://<project-ref>.supabase.co/auth/v1/callback`, paste the client id and
+> secret into Authentication → Providers. Nothing in this repository changes.
+>
+> Enabling GitHub also switches on submittal verification (§14.8.2):
+> `profiles.github_login` starts being written, and the manager's evidence
+> column can resolve. Until then every submittal reads as unattributable.
 
 ```mermaid
 flowchart TD
     S["/sign-in/"] --> Q{"NEXT_PUBLIC_AUTH_ENABLED?"}
     Q -->|"off"| OFF["'ACCOUNTS NOT ENABLED YET'<br/>no buttons, no network"]
-    Q -->|"on"| P{"which provider"}
-    P -->|"GitHub"| OA["OAuth + PKCE"]
-    P -->|"Google"| OA
-    P -->|"email link"| ML["magic link sent"]
+    Q -->|"on"| PROBE["GET /auth/v1/settings<br/>which providers exist?"]
+    PROBE -->|"unreadable"| ALL["fail open: offer all three"]
+    PROBE --> P{"offer only what is enabled"}
+    ALL --> P
+    P -->|"GitHub (off today)"| OA["OAuth + PKCE"]
+    P -->|"Google (off today)"| OA
+    P -->|"email link"| ML["link sent to the address"]
     OA --> CB["/auth/callback/"]
     ML --> CB
     CB --> SESS["session in localStorage"]
     SESS --> CLAIM["the claim runs<br/>see section 4"]
 ```
 
-### 2a · OAuth, the ordinary path
+### 2a · OAuth — implemented, not enabled in this project
 
 There is no server in this site, so the code is exchanged in the browser. PKCE
 is what makes that safe: the token never appears in a URL.
@@ -83,10 +110,10 @@ says so rather than spinning for ever.
 
 ### 2b · An emailed link opened on another device
 
-This case is the common one and it needs its own path. The `code_verifier` lives
-in the browser that *asked*; people request a link on a laptop and tap it on a
-phone. That browser has no verifier, so Supabase hands the session over whole,
-in the URL fragment, and there is no code to exchange.
+The path this deployment actually uses today, and the common one anywhere: the
+`code_verifier` lives in the browser that *asked*, and people request a link on a
+laptop and tap it on a phone. That browser has no verifier, so Supabase hands the
+session over whole, in the URL fragment, and there is no code to exchange.
 
 ```mermaid
 sequenceDiagram
@@ -392,6 +419,7 @@ the schema originally made impossible for anybody.
 | Session shape, callback plan | `src/lib/auth/session.ts` |
 | Session as React context | `src/components/auth/SessionProvider.tsx` |
 | Sign-in and callback UI | `src/components/auth/SignInPanel.tsx`, `AuthPanels.tsx` |
+| Which providers exist | `parseProviderAvailability` in `src/lib/auth/session.ts` |
 | **The seam** — where it is all joined | `src/components/record/AccountSync.tsx` |
 | Sync state machine | `src/lib/record/sync.ts` |
 | Merge rules | `src/lib/record/merge.ts` |

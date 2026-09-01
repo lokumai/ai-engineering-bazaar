@@ -25,7 +25,9 @@ import {
   describeSessionUser,
   githubLoginOf,
   isPlausibleEmail,
+  ALL_PROVIDERS,
   isSessionUsable,
+  parseProviderAvailability,
   parseCallbackUrl,
   planCallback,
   providerOf,
@@ -424,5 +426,36 @@ describe('the constants a panel must not re-type', () => {
 
   it('returns readers to the sheet that actually holds their record', () => {
     expect(DEFAULT_RETURN_PATH).toBe('/profile/')
+  })
+})
+
+describe('parseProviderAvailability — offer only what the project has', () => {
+  it('reads the three providers this site can use', () => {
+    // The real shape, trimmed: Supabase lists every provider it supports.
+    expect(
+      parseProviderAvailability({
+        external: { github: false, google: false, email: true, apple: false, phone: false },
+      }),
+    ).toEqual({ github: false, google: false, email: true })
+  })
+
+  it('returns null for a payload it cannot read, so the caller fails open', () => {
+    // Fail-open is the point: hiding a provider that works locks a reader out of
+    // an account they could have had, while offering one that does not leaves
+    // them an error the panel already draws.
+    for (const bad of [null, undefined, 0, 'x', {}, { external: null }, { external: 'x' }]) {
+      expect(parseProviderAvailability(bad)).toBeNull()
+    }
+  })
+
+  it('returns null when one provider is missing rather than assuming it', () => {
+    // A payload that answers for github and not google is a shape this code does
+    // not understand. Guessing the rest would hide a working provider on the
+    // strength of a partial answer.
+    expect(parseProviderAvailability({ external: { github: true, email: true } })).toBeNull()
+  })
+
+  it('ALL_PROVIDERS is what fail-open means', () => {
+    expect(ALL_PROVIDERS).toEqual({ github: true, google: true, email: true })
   })
 })

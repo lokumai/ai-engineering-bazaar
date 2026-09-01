@@ -57,16 +57,46 @@ test.describe('§14 accounts, organisations and the record that outlives a brows
 
   // -- §14.7 sign-in --------------------------------------------------------
 
-  test('the sign-in sheet offers the three providers §14.7 names', async ({ page }) => {
+  test('the sign-in sheet offers exactly the providers this project has', async ({ page }) => {
+    // Asserted against Supabase's own public settings rather than against a
+    // fixed list of three. A provider needs code AND configuration, and the
+    // panel used to offer all three unconditionally — so on a project with
+    // GitHub switched off, pressing its button produced a server error and the
+    // reader had no way to know it was never going to work. §14.1's own
+    // argument applies to itself: a button that cannot work is worse than none.
+    const settings = await fetch(`${env!.url}/auth/v1/settings`, {
+      headers: { apikey: env!.anon },
+    }).then((r) => r.json())
+    const enabled = settings.external as Record<string, boolean>
+
     await page.goto('/sign-in/')
     await expect(page.getByText('ACCOUNTS NOT ENABLED YET')).toHaveCount(0)
 
-    // GitHub first, and the page says why: §14.8.2's submittal verification is
-    // the thing only a GitHub session can unlock.
-    const github = page.getByRole('button', { name: /github/i })
-    await expect(github).toBeVisible()
-    await expect(page.getByRole('button', { name: /google/i })).toBeVisible()
+    // The probe is in flight on first paint; the panel says so rather than
+    // flashing buttons it is about to remove.
+    await expect(page.getByText('CHECKING WHICH METHODS THIS SITE OFFERS')).toHaveCount(0, {
+      timeout: 15_000,
+    })
+
+    for (const [provider, pattern] of [
+      ['github', /github/i],
+      ['google', /google/i],
+    ] as const) {
+      const button = page.getByRole('button', { name: pattern })
+      if (enabled[provider]) await expect(button).toBeVisible()
+      else await expect(button, `${provider} is off in this project`).toHaveCount(0)
+    }
+
+    // The email link is the one this project always has, and the only one the
+    // account tests themselves use.
+    expect(enabled.email, 'the email provider is off — the suite cannot sign in').toBe(true)
     await expect(page.getByRole('button', { name: /link|email/i }).first()).toBeVisible()
+
+    // And when no provider sign-in exists at all, the panel says that too,
+    // instead of leaving an empty row where two buttons used to be.
+    if (!enabled.github && !enabled.google) {
+      await expect(page.getByText(/NO PROVIDER SIGN-IN ON THIS DEPLOYMENT/i)).toBeVisible()
+    }
   })
 
   test('a magic link signs the reader in and lands them back on the site', async ({

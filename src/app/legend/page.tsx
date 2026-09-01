@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { RECORD_SCOPE } from '@/lib/record/scope'
+import { AFFILIATION, LICENCE_LABEL } from '@/lib/site'
 import Link from 'next/link'
 import { Lkm01 } from '@/components/mascot/Lkm01'
 import { PageShell } from '@/components/shell/PageShell'
@@ -29,7 +30,9 @@ export const metadata: Metadata = {
  *
  * Four blocks, in this order, because that is the order the questions arrive
  * in: what am I looking at · where is my work kept · what is not here · show me
- * the artefact.
+ * the artefact. The mark and the colophon close it: who drew this, and who
+ * publishes it. Both are provenance, and provenance belongs at the end of a
+ * sheet rather than in front of the reader's first question.
  *
  * **A server page, and hook-free on purpose.** Every mark below is drawn in a
  * fixed state — this is a key, not a readout — so there is nothing here for
@@ -390,6 +393,53 @@ export default function LegendPage() {
             curriculum.
           </p>
         </div>
+      </section>
+
+      {/* ---- 6 · the colophon --------------------------------------------- */}
+      {/*
+        Who publishes this, and what that organisation belongs to.
+
+        A colophon and not a marketing block, and the distinction is the whole
+        design: the footer names these three on every page, so a reader who
+        wants the relationship has somewhere to look it up — once, at the end of
+        the sheet that already answers "what am I looking at". Nothing here
+        praises anybody, because §12.14.1's register scans this route and
+        because a curriculum that spends its credibility on a slogan has less of
+        it left for the sheets.
+
+        The rows are `AFFILIATION`, in order. The order is the claim (§4), which
+        is why neither this file nor the footer keeps a list of its own.
+      */}
+      <section className="hl-panel" aria-labelledby="hl-legend-colophon">
+        <div className="hl-panel-head">
+          <h2 id="hl-legend-colophon" className="hl-panel-title">
+            Colophon
+          </h2>
+          <p className="hl-mark m-0 text-ink-faint">Who publishes this</p>
+        </div>
+
+        <dl className="m-0 max-w-[var(--width-prose)]">
+          {AFFILIATION.map((affiliate) => (
+            <div
+              key={affiliate.name}
+              className="flex items-baseline justify-between gap-4 border-b border-line py-2 last:border-b-0"
+            >
+              <dt className="hl-mark flex-none text-ink-muted">{affiliate.role}</dt>
+              <dd className="m-0 font-display text-meta text-ink">
+                <a className="hl-link" href={affiliate.url}>
+                  {affiliate.name}
+                </a>
+              </dd>
+            </div>
+          ))}
+        </dl>
+
+        <p className="mt-4 mb-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+          The chain reads outward. LokumAI publishes this site and is part of
+          Intellica; Intellica is a PIA Group company. The curriculum itself is
+          open source under the {LICENCE_LABEL}, and the sheets carry no
+          endorsement from any of the three.
+        </p>
       </section>
     </PageShell>
   )

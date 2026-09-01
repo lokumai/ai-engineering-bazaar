@@ -386,7 +386,13 @@ test('channel A stays true across a client transition (§12.2)', async ({ page }
   expect(await hasRootClass(page, `hl-cat-${OTHER.category}-started`)).toBe(false)
 
   // Two `<Link>` hops into another subsystem, with no document load between.
-  await page.getByRole('link', { name: /^Lokum/ }).click()
+  //
+  // Scoped to the banner. `getByRole('link', { name: /^Lokum/ })` on the whole
+  // page meant the wordmark for as long as it was the only link whose name
+  // began that way; the footer's `LokumAI` made it two and the strict-mode
+  // violation was the locator's looseness surfacing, not a regression. What
+  // this hop needs is the home link in the header, so that is what it asks for.
+  await page.getByRole('banner').getByRole('link', { name: /^Lokum/ }).click()
   await page.locator(`.hl-index tbody a[href$="${OTHER.path}"]`).click()
   await expect(page.locator('main h1')).toHaveText(OTHER.title)
   expect(await documentLoads(page), 'the router did a full page load').toBe(1)

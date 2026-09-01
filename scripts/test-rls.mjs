@@ -399,33 +399,44 @@ try {
     asLoner.from('memberships').insert({ org_id: fx.orgA, user_id: fx.ids.loner })
   )
 
-  console.log('\n§14.5 — an UNVERIFIED address may not join (0004)')
+  console.log('\n§14.5 — only a proven mailbox may join by domain (0005)')
 
-  // The one assertion in this suite that does NOT go through PostgREST, and the
-  // reason is that the input cannot be produced through it: Supabase issues no
-  // session for an unconfirmed email, so there is no way to hold a real JWT
-  // whose `email_verified` is false. The case that matters is OAuth — GitHub
-  // will report a primary address it has not verified, and Supabase then issues
-  // a session for a real account with an unproven address.
+  // The one block in this suite that does NOT go through PostgREST, and the
+  // reason is that the input cannot be produced through it: this project issues
+  // no session for an unconfirmed email, so there is no way to hold a real JWT
+  // from an account whose address was never proven. The case that matters is
+  // OAuth - a provider hands over an address along with its own opinion of
+  // whether it checked it, and GitHub will report a primary address it has not.
   //
   // So the POLICY EXPRESSION is evaluated directly, against claims set the way
   // PostgREST sets them. It exercises the same `with check` clause; what it does
   // not exercise is the transport, which the positive cases above cover.
+  //
+  // THE PREVIOUS VERSION OF THIS BLOCK IS WHY 0004 SHIPPED BROKEN. It set a
+  // top-level `email_verified` claim and asserted the policy read it. Supabase
+  // issues no such claim - MEASURED, the full set is iss, sub, aud, exp, iat,
+  // email, phone, app_metadata, user_metadata, role, aal, amr, session_id,
+  // is_anonymous - so the test proved a branch production could never reach,
+  // while the branch it DID reach read user-writable `user_metadata`. A fixture
+  // that invents its input can only ever confirm the invention.
+  //
+  // The claims below are the shape a real token has. `app_metadata` is
+  // server-controlled: MEASURED, a raw `PUT /auth/v1/user` carrying it answers
+  // 403 and the token is unchanged.
   {
     const domain = DOMAIN_A
     const uid = fx.ids.loner
     const org = fx.orgA
-    const claims = (verified) =>
+    const claims = (providers, tamperedMetadata) =>
       JSON.stringify({
         sub: uid,
         role: 'authenticated',
         email: `probe@${domain}`,
-        email_verified: verified,
+        app_metadata: providers === null ? {} : { provider: providers[0], providers },
+        user_metadata: { email_verified: tamperedMetadata },
       })
 
-    // First prove the fixture is right: with a verified claim the insert lands.
-    // Without this, a policy that refused EVERYTHING would pass the real test.
-    const tryJoin = (verified) => {
+    const tryJoin = (providers, tamperedMetadata = false) => {
       try {
         // The delete runs as the owner, BEFORE the role switch: by this point in
         // the suite the loner has already joined through the invite path, and a
@@ -434,7 +445,7 @@ try {
         sql(`begin;
              delete from memberships where org_id = '${org}' and user_id = '${uid}';
              set local role authenticated;
-             set local request.jwt.claims = '${claims(verified)}';
+             set local request.jwt.claims = '${claims(providers, tamperedMetadata)}';
              insert into memberships (org_id, user_id) values ('${org}', '${uid}');
              rollback;`)
         return 'allowed'
@@ -444,14 +455,29 @@ try {
       }
     }
 
-    // Called once each: the positive case is what proves the negative one is a
-    // policy decision rather than a policy that refuses everything.
-    const withVerified = tryJoin(true)
-    const withoutVerified = tryJoin(false)
-    record('a verified address on the join domain IS allowed', withVerified === 'allowed',
-      withVerified === 'allowed' ? '' : `got ${withVerified}`)
-    record('an UNVERIFIED address on the same domain is refused', withoutVerified === 'refused',
-      withoutVerified === 'refused' ? '' : `got ${withoutVerified} - a claimed address was enough`)
+    // The positive case first: without it, a policy that refused EVERYTHING
+    // would pass every assertion below it.
+    const proven = tryJoin(['email'])
+    record('a mailbox-proven address on the join domain IS allowed', proven === 'allowed',
+      proven === 'allowed' ? '' : `got ${proven}`)
+
+    const oauthOnly = tryJoin(['github'])
+    record('an OAuth-only account on the same domain is refused', oauthOnly === 'refused',
+      oauthOnly === 'refused' ? '' : `got ${oauthOnly} - a provider's word was enough`)
+
+    // The regression guard. This is the exact bypass 0004 permitted, proven
+    // end to end against this project: refused, then `updateUser({ data: {
+    // email_verified: true } })`, then admitted.
+    const tampered = tryJoin(['github'], true)
+    record('rewriting user_metadata.email_verified does not buy a join',
+      tampered === 'refused',
+      tampered === 'refused' ? '' : `got ${tampered} - the joiner can still forge the guard`)
+
+    // A token shape this policy does not recognise must not be the one that
+    // gets in.
+    const noMetadata = tryJoin(null)
+    record('a token with no app_metadata is refused', noMetadata === 'refused',
+      noMetadata === 'refused' ? '' : `got ${noMetadata}`)
   }
 
   console.log('\n§14.4.1 / §14.4.4 — what the client may never do')

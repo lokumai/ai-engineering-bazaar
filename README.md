@@ -201,7 +201,9 @@ no database functions and no views, so the schema is portable Postgres:
 psql "$SUPABASE_DB_URL" -f supabase/migrations/0001_phase4_schema.sql
 psql "$SUPABASE_DB_URL" -f supabase/migrations/0002_phase4_rls.sql
 psql "$SUPABASE_DB_URL" -f supabase/migrations/0003_phase4_erase.sql
-node scripts/test-rls.mjs            # 31 checks, real JWTs, real PostgREST
+psql "$SUPABASE_DB_URL" -f supabase/migrations/0004_phase4_verified_email.sql
+psql "$SUPABASE_DB_URL" -f supabase/migrations/0005_phase4_provider_verified.sql
+node scripts/test-rls.mjs            # 35 checks, real JWTs, real PostgREST
 ```
 
 [`docs/auth-flow.md`](docs/auth-flow.md) explains sign-in, sessions, the claim,

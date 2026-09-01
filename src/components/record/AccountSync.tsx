@@ -10,7 +10,7 @@ import { selectAttention } from '@/lib/record/attention'
 import { claimMerge, summariseClaim, type ClaimSummary as ClaimSummaryData } from '@/lib/record/claim'
 import { migrate } from '@/lib/record/migrate'
 import { buildProgress } from '@/lib/record/progress'
-import { SCHEMA_VERSION, type RecordData } from '@/lib/record/schema'
+import { carriesNothing, SCHEMA_VERSION, type RecordData } from '@/lib/record/schema'
 import { attachSync, nowIso, snapshot, update } from '@/lib/record/store'
 import { createSync } from '@/lib/record/sync'
 import type { RemoteEnvelope } from '@/lib/record/wire'
@@ -132,12 +132,65 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
         if (cancelled) return
 
         if (outcome.kind === 'merged') {
-          // The account's record is now folded into this device's. Writing it
-          // through `update` is what puts it in `localStorage`, which is what
-          // makes the next reload — and Channel A's pre-paint stamp — correct
-          // without a network call.
-          update(() => outcome.record)
-          setSummary(summariseClaim(outcome.local, outcome.remote, outcome.record))
+          /*
+            The account's record is folded into this device's. Writing it through
+            `update` is what puts it in `localStorage`, which is what makes the
+            next reload — and Channel A's pre-paint stamp — correct with no
+            network call.
+
+            THE MERGE IS RECOMPUTED HERE, against `snapshot()`, and this line
+            used to be `update(() => outcome.record)`. That discarded whatever
+            the reader did while `claim()` was in flight, and `claim()` is two
+            network round trips — read the row, then push — with the record
+            layer mounted and interactive the whole time. A checklist tick or a
+            sign-off made in that window was in the store and not in
+            `outcome.record`, and the replacement reverted it in front of the
+            reader.
+
+            It is not a rare window either: this effect runs on EVERY mount with
+            a session, so every page load with an existing account row takes the
+            `merged` branch.
+
+            `claimMerge` is pure and deterministic, so when nothing moved this
+            computes exactly `outcome.record` and the common case is unchanged.
+            `snapshot()` and `update` are both synchronous with nothing awaited
+            between them, so there is no second window here.
+
+            The summary is built from the SAME local record that was merged, not
+            from `outcome.local` — otherwise a claim that folded in a late
+            sign-off would report a count that no longer described anything.
+          */
+          const local = snapshot()
+
+          /*
+            AN ERASE THAT HAPPENED DURING THE CLAIM WINS.
+
+            Found by the §14.6 test in `accounts.spec.ts`, and present before
+            this branch was touched. `claim()` reads the account's row and
+            pushes; §12.15's erase is reachable throughout, and the reader can
+            complete it — `record_state` deleted and all — while the claim is in
+            flight. The claim then resolves holding a merge built from the row it
+            read BEFORE the delete, writes it to `localStorage`, marks the record
+            pending and pushes it. MEASURED: the row came back carrying the
+            sheets the reader had just erased.
+
+            The merge cannot tell the two cases apart on its own. Merging an
+            empty local record with a populated remote one correctly yields the
+            remote's content — that is exactly what an account is for on a
+            second, empty browser. What distinguishes an erase is the
+            TRANSITION: the record carried something when the claim started and
+            carries nothing now. Nothing else empties a record.
+
+            So this returns without writing and without a summary. There is no
+            reader to inform: they asked for the record to go, the dialog told
+            them what happened to each half, and a claim summary describing a
+            record that no longer exists would contradict it.
+          */
+          if (carriesNothing(local) && !carriesNothing(outcome.local)) return
+
+          const merged = claimMerge(local, outcome.remote)
+          update(() => merged)
+          setSummary(summariseClaim(local, outcome.remote, merged))
           return
         }
 

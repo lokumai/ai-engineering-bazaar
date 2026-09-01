@@ -135,12 +135,47 @@ creates the user and returns **no session**; signing in then answers
 no JWT satisfies any policy. The emailed link is the proof, and the link goes to
 the real mailbox.
 
-Both join policies additionally require the session's address to be **verified**
-(`0004_phase4_verified_email.sql`), not merely present. The email path already
-guaranteed that; the OAuth path did not. A provider hands over an address along
-with its own opinion of whether it checked it, and GitHub will report a primary
-address it has not verified — a real account with an unproven address. Without
-this clause, that would have been enough to join an organisation.
+Both join policies additionally require the session to carry an **email
+identity** — `app_metadata.providers` must contain `email`
+(`0005_phase4_provider_verified.sql`). With autoconfirm off, GoTrue completes
+that identity only when somebody opened the mailbox and followed the link, so it
+is the token's record of the one thing that actually proves an address.
+
+### The first version of this guard was forgeable
+
+`0004_phase4_verified_email.sql` asked for `email_verified` and is superseded. It
+is kept in the tree so an applied database can be brought forward, but **applying
+0004 without 0005 leaves the guard bypassable by the person it guards against.**
+
+Two measurements, both against this project:
+
+- A Supabase access token carries **no top-level `email_verified` claim**. The
+  full set is `iss, sub, aud, exp, iat, email, phone, app_metadata,
+  user_metadata, role, aal, amr, session_id, is_anonymous`. So 0004's
+  `coalesce` always fell through its first term.
+- What it fell through to was `user_metadata`, which the signed-in user writes
+  with `auth.updateUser({ data })`. End to end, with an account whose address
+  the provider had not vouched for: join **refused**, then
+  `updateUser({ email_verified: true })` **accepted**, then join **admitted**.
+
+It was latent rather than live only because this project has one enabled provider
+(email) and autoconfirm off, so a session cannot exist for an address whose
+mailbox was never opened. Enabling GitHub or Google would have made it live
+silently, while 0004's own comment claimed that case was covered.
+
+`app_metadata` is not the same kind of field. Measured: a raw
+`PUT /auth/v1/user` carrying `app_metadata` answers **403** and the token is
+unchanged; supabase-js exposes no client path to it. Only the service role and
+GoTrue write it.
+
+**The rule this leaves behind: an authorisation decision must read a field the
+party being authorised cannot write.** `email_verified` was the right question.
+Reading it from `user_metadata` turned the answer into a formality.
+
+The cost is stated rather than discovered later: an account with only an OAuth
+identity cannot join by domain, however confidently the provider reports the
+address. It is invited by address through `pending_invites`, or it links an email
+identity and proves the mailbox like everybody else.
 
 A missing claim counts as unverified. A token shape the policy does not
 recognise must not be the one that gets in.
@@ -171,7 +206,10 @@ Stated so that a future audit does not have to re-derive it.
 - **A manager can read their organisation and can never write to it.** The only
   writer of a record is its owner. Asserted in the RLS suite.
 - **`learner_event` takes no `update` and no `delete`** while an organisation
-  holds it. A client cannot rewrite or erase history it has filed.
+  holds it. A client cannot rewrite or erase history it has filed. When no
+  organisation holds it, the owner may delete it and the erase now does
+  (`0003` plus `RemoteRecordStore.deleteHistory`); RLS expresses the difference
+  as a row filter, so a member's attempt removes nothing and raises nothing.
 - **The publishable key is public by design.** Do not "fix" it into a secret;
   doing so would imply a boundary that is not there and distract from the one
   that is.
@@ -190,8 +228,8 @@ Stated so that a future audit does not have to re-derive it.
 - A loose `supabase-access-tokens` file in the repository root is also ignored.
   It is safer in `.env.local`; `.gitignore` should not be the only thing
   standing between a personal access token and a public repository.
-- Only `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` belong in
-  GitHub Actions secrets used by the deploy workflow. The service key has no
+- Only `NEXT_PUBLIC_SUPABASE_URL` and the publishable key belong in GitHub
+  Actions secrets used by the deploy workflow. The service key has no
   business in a build that produces static files.
 - `node scripts/check-supabase.mjs` verifies local configuration and prints no
   secret values — prefer it over echoing variables.
@@ -203,3 +241,11 @@ Stated so that a future audit does not have to re-derive it.
 | Session token and `hl-record` readable by any page on `lokumai.github.io` | Small team, same team is the whole audience, no external organisation onboarded, one site on the account | A custom domain, before any of the four triggers above |
 | `profiles.github_login` is written by the client | RLS cannot restrict a single column, and §14.8.2 treats it as evidence. A reader could claim a login that is not theirs | Moving the write server-side, or a signed claim from the provider |
 | A member can leave an organisation and then erase their event history | Deliberate: the disclosure at `/join/` is a bargain the reader struck, and withdrawing from it should not leave a copy they can no longer see | Nothing planned; revisit if a compliance requirement says otherwise |
+
+This row was **aspirational until `deleteHistory` existed**. `0003` shipped the
+policy that permits the delete and nothing in the application ever attempted it,
+so the history stayed behind for everyone — including a reader who had never
+joined anything, which is §14.6's first row and the case the migration was
+written for. A policy no caller exercises is indistinguishable from a policy that
+is not there, and the accepted-risk table above described a capability the code
+did not have.

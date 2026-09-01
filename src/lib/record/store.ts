@@ -26,6 +26,7 @@
 import { useSyncExternalStore } from 'react'
 import { setPersisted } from './events'
 import {
+  carriesNothing,
   EMPTY_RECORD,
   RECORD_STORAGE_KEY,
   SCHEMA_VERSION,
@@ -42,7 +43,7 @@ import { readRecord, safeStorage, writeRecord, type RecordStorage } from './stor
  * build with no backend never even evaluates `sync.ts`.
  */
 import type { Sync, SyncState } from './sync'
-import type { EventKind, RemoteDeleteReceipt, RemoteRecordStore } from './wire'
+import type { EventKind, RemoteEraseReceipt, RemoteRecordStore } from './wire'
 
 import { envelopeTextFrom, parseEnvelope, type ParseResult } from './validate'
 
@@ -100,22 +101,57 @@ function stampStorage(state: 'ok' | 'blocked'): void {
   }
 }
 
+/**
+ * Take a record another tab produced (§12.1.5).
+ *
+ * `push` is false on ONE path and the distinction is a §14.6 correctness rule,
+ * not a preference: the key was REMOVED rather than rewritten.
+ *
+ * §12.1.5 crossing §14.7.3. For a rewrite, the record arrived from another tab
+ * of this same browser, so from the account's point of view it is a local write
+ * and this tab has no way to learn whether the tab that made it got it through.
+ * The alternatives were both worse: saying nothing leaves this footer claiming
+ * `synced` for a record the server may not hold, and marking `pending` without
+ * pushing leaves a claim that a send is owed which nothing will ever perform.
+ * So it is pushed, and the cost — the same envelope upserted by two tabs — is
+ * one idempotent request against a page that would otherwise lie.
+ *
+ * A REMOVAL is the opposite case, and pushing on it UNDID AN ERASE. The
+ * sequence: the reader erases in tab A, `eraseAccountCopy` settles tab A's
+ * queue and deletes `record_state`, and meanwhile tab B's `storage` handler
+ * sees `newValue === null`, adopts the empty record and pushes it. Tab B's push
+ * is independent of tab A's ordering, so it can land after the delete and
+ * recreate the row — an empty one, which is worse than a stale one because it
+ * looks like a record. The dialog had already reported the account copy
+ * removed.
+ *
+ * No coordination, no tombstone, no message: a sibling tab pushing an empty
+ * envelope is never the right act. Either the tab that removed the key owns the
+ * account-side erase and performs it, or nothing removed it deliberately (a
+ * cleared `localStorage`, a private window closing) and the account copy is
+ * meant to survive — that is the whole point of having one.
+ *
+ * No `savedAt` is passed on either path: the instant this tab holds belongs to a
+ * record it did not write, and a push stamping its own instant is the truthful
+ * reading — this device is sending this record now.
+ */
 function adopt(data: RecordData): void {
   current = data
   notify()
-  // §12.1.5 crossing §14.7.3. The record arrived from another tab of this same
-  // browser, so from the account's point of view it is a local write and this
-  // tab has no way to learn whether the tab that made it got it through. The
-  // alternatives were both worse: saying nothing leaves this footer claiming
-  // `synced` for a record the server may not hold, and marking `pending`
-  // without pushing leaves a claim that a send is owed which nothing will ever
-  // perform. So it is pushed, and the cost — the same envelope upserted by two
-  // tabs — is one idempotent request against a page that would otherwise lie.
-  //
-  // No `savedAt` is passed: on the removal path (`clear()`, or an erase in
-  // another tab) the instant this tab is holding belongs to a record that no
-  // longer exists, and the push stamping its own instant is the truthful
-  // reading — this device is sending this record now.
+  // `carriesNothing` and not "was the key removed", which was the first attempt
+  // at this and closed the wrong door. `DataPanel` writes the empty record and
+  // FLUSHES it before removing the key, so a sibling tab's first news of an
+  // erase is a valid empty envelope — a rewrite, not a removal — and it pushed
+  // that. MEASURED: the account row came back, holding an empty record, after
+  // the dialog had reported it removed.
+  if (carriesNothing(data)) {
+    // And the same invalidation the erasing tab performs on itself: THIS tab may
+    // have its own claim in flight, reading a row the other tab is deleting. It
+    // would write that row back and push it, and no amount of not-pushing an
+    // empty record here would stop it.
+    sync?.abandonClaim()
+    return
+  }
   pushToAccount()
 }
 
@@ -213,12 +249,31 @@ export function hasAccountCopy(): boolean {
  * silent success — there is no account copy to remove, and `eraseRemote` is
  * handed `null` in that case rather than this function.
  */
-export async function eraseAccountCopy(): Promise<RemoteDeleteReceipt> {
+export async function eraseAccountCopy(): Promise<RemoteEraseReceipt> {
   const port = remotePort
-  if (port === null) return { rows: 0 }
+  if (port === null) return { rows: 0, historyRows: 0 }
   flush()
   if (sync !== null) await sync.push()
-  return port.deleteRecord()
+
+  // Any claim still reading the account's row is invalidated FIRST, before
+  // anything is deleted. A claim that resumes after the delete would write the
+  // row it read back into this machine and push it, recreating exactly what the
+  // reader asked to remove — and it would do so intermittently, which is worse
+  // than doing it always.
+  sync?.abandonClaim()
+
+  // `record_state` first: it is the half the dialog's copy promises, so if only
+  // one of the two can happen it should be that one.
+  const record = await port.deleteRecord()
+
+  // Then §14.6 row 1. This call is why `0003_phase4_erase.sql` exists, and its
+  // absence is why that migration shipped as a policy nothing exercised. A
+  // throw here propagates: it means part of what the account holds did not go,
+  // and a reader who asked for everything to be removed is owed that rather
+  // than a quiet "deleted".
+  const history = await port.deleteHistory()
+
+  return { rows: record.rows, historyRows: history.rows }
 }
 
 /** §14.7.3 — `off` until an instance says otherwise. Never a guess. */
@@ -342,6 +397,9 @@ function scheduleFlush(): void {
 function onStorage(event: StorageEvent): void {
   if (event.key !== null && event.key !== RECORD_STORAGE_KEY) return
   if (event.key === null || event.newValue === null) {
+    // The key is gone: an erase, or storage cleared under this tab. `adopt`
+    // declines to push an empty record, which is what keeps this from undoing
+    // the erase the other tab is performing.
     adopt(EMPTY_RECORD)
     return
   }

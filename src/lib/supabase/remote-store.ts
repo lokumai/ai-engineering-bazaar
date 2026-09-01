@@ -288,5 +288,22 @@ export function createRemoteRecordStore(
 
       return { rows: data?.length ?? 0 }
     },
+
+    async deleteHistory(): Promise<RemoteDeleteReceipt> {
+      // §14.6 row 1, via `0003_phase4_erase.sql`. `.select()` for the same
+      // reason as above, and here the count is not merely diagnostic: it is the
+      // only thing that distinguishes "the history is gone" from "an
+      // organisation holds it", because the policy expresses that distinction as
+      // a row filter rather than an error.
+      const { data, error } = await client
+        .from(LEARNER_EVENT)
+        .delete()
+        .eq('user_id', userId)
+        .select('id')
+
+      if (error) fail(`${LEARNER_EVENT} delete`, error)
+
+      return { rows: data?.length ?? 0 }
+    },
   }
 }

@@ -152,6 +152,13 @@ export interface SyncSnapshot {
 /** §14.7.4 — what claiming an anonymous record turned out to be. */
 export type ClaimOutcome =
   | { kind: 'off'; record: RecordData }
+  /**
+   * §14.6 — the account's row was removed while this claim was reading it, so
+   * the claim writes nothing and pushes nothing. There is nothing to tell the
+   * reader: they asked for the record to go and the erase dialog already
+   * reported what happened to each half.
+   */
+  | { kind: 'abandoned'; record: RecordData; state: SyncState }
   /** No row on the server: the local envelope is pushed as-is. */
   | { kind: 'adopted'; record: RecordData; state: SyncState }
   /** A row existed; `record` is `merge(local, remote)` (§14.7.2). */
@@ -215,6 +222,23 @@ export interface Sync {
   push(): Promise<SyncState>
   /** §14.7.4. */
   claim(): Promise<ClaimOutcome>
+  /**
+   * §14.6 — invalidate any claim currently in flight.
+   *
+   * A claim reads the account's row and then writes a merge of it into this
+   * machine. An erase landing between those two steps made the write a
+   * RESURRECTION: `record` was replaced by a merge computed from a row that no
+   * longer exists, and the push that follows recreated it. MEASURED, and
+   * intermittently — the erase's own `push()` is gated on `claimed`, which the
+   * in-flight claim has not yet set, so it sent nothing and deleted, and the
+   * claim then pushed the pre-erase record over the deletion.
+   *
+   * `claimed` is set to true here, deliberately. It guards against sending
+   * before the account's row has been read, and after an erase there is no row
+   * left to lose — so an ordinary write made afterwards should push as usual
+   * rather than wait for a claim that will not come.
+   */
+  abandonClaim(): void
 }
 
 export function createSync(deps: SyncDeps): Sync {
@@ -301,6 +325,12 @@ export function createSync(deps: SyncDeps): Sync {
    * overwrite is not.
    */
   let claimed = false
+  /**
+   * Which claim is current. Incremented by `claim` on entry and by
+   * `abandonClaim`, so a claim resuming after an await can tell whether the
+   * world it read still exists.
+   */
+  let claimToken = 0
 
   async function attempt(): Promise<SyncState> {
     const port = remote
@@ -440,9 +470,16 @@ export function createSync(deps: SyncDeps): Sync {
 
     push,
 
+    abandonClaim() {
+      claimToken += 1
+      claimed = true
+    },
+
     async claim() {
       const port = remote
       if (port === null) return { kind: 'off', record }
+
+      const token = (claimToken += 1)
 
       let row: RemoteEnvelope | null
       try {
@@ -451,6 +488,12 @@ export function createSync(deps: SyncDeps): Sync {
         signal({ kind: 'readFailed' })
         return { kind: 'unreadable', record, state }
       }
+
+      // The one check that makes this claim's write safe: the row was read
+      // BEFORE the await returned, and an erase may have removed it since. Every
+      // line below either replaces `record` or pushes it, and both would undo
+      // the erase.
+      if (token !== claimToken) return { kind: 'abandoned', record, state }
 
       if (row === null) {
         const local = record

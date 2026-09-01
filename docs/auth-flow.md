@@ -150,12 +150,14 @@ timed out on a sign-in that had succeeded.
 flowchart LR
     T["access token<br/>(JWT)"] --> C1["sub — the user id"]
     T --> C2["email"]
-    T --> C3["email_verified"]
-    T --> C4["role: authenticated"]
+    T --> C3["app_metadata.providers<br/>server-controlled"]
+    T --> C4["user_metadata<br/>THE USER WRITES THIS"]
+    T --> C5["role: authenticated"]
 
     C1 --> U["auth.uid() in every policy"]
     C2 --> J["matched against join_domain<br/>and pending_invites"]
-    C3 --> V["required to join<br/>a claimed address is not enough"]
+    C3 --> V["must contain email —<br/>the mailbox was proven"]
+    C4 --> X["never an authorisation input"]
 ```
 
 A session is treated as usable until **30 seconds before** its stated expiry.
@@ -303,11 +305,27 @@ signInWithPassword(same address)     →  "Email not confirmed", no session
 No session means no JWT, and no JWT satisfies any policy. **Possession of the
 mailbox is the verification** and the emailed link is the proof.
 
-Both join policies additionally require the `email_verified` claim, which closes
-the OAuth case: a provider hands over an address along with its own opinion of
-whether it checked it, and GitHub will report a primary address it has not
-verified. See [`../SECURITY.md`](../SECURITY.md), including the warning never to
-enable Supabase's autoconfirm while `join_domain` is in use.
+Both join policies additionally require `app_metadata.providers` to contain
+`email` — that is, an email identity was completed for this account, which with
+autoconfirm off means somebody opened the mailbox and followed the link.
+
+**This is the second attempt at that clause, and the first one was forgeable.**
+`0004` asked for `email_verified`, which was the right question read from the
+wrong field: a Supabase access token carries no top-level `email_verified` claim
+at all, so the check always fell through to `user_metadata` — and the signed-in
+user writes `user_metadata` through `auth.updateUser()`. It was proven end to
+end against this project: the join was refused, one `updateUser` call later it
+was admitted. `0005` reads `app_metadata` instead, which a raw
+`PUT /auth/v1/user` cannot touch (403).
+
+The cost is stated rather than hidden: an account with only an OAuth identity
+cannot join by domain, however loudly the provider vouches for the address. Such
+a reader is invited by address through `pending_invites`, or links an email
+identity and proves the mailbox like everybody else.
+
+See [`../SECURITY.md`](../SECURITY.md), including the warning never to enable
+Supabase's autoconfirm while `join_domain` is in use — that setting is the one
+assumption every version of this clause rests on.
 
 ---
 

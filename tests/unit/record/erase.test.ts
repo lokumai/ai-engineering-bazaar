@@ -367,6 +367,26 @@ describe('§14.6 — erasing the copy the account holds', () => {
   })
 
   /**
+   * §14.6 row 1, which `0003_phase4_erase.sql` was written for and which no code
+   * performed until `deleteHistory` existed.
+   *
+   * The receipt reports the two halves separately because a single total cannot
+   * tell "nothing was there" from "an organisation's claim kept it". Zero
+   * history rows is not a failure and must not reach the reader as one: RLS
+   * filters the delete, so a member's attempt removes nothing and reports no
+   * error, which is §14.6's second row working exactly as designed.
+   */
+  it('reports the record and the history separately (§14.6)', async () => {
+    const noOrg = await eraseRemote(async () => ({ error: null, rows: 1, historyRows: 12 }))
+    expect(noOrg).toEqual({ kind: 'deleted' })
+
+    // A member: the log survives, and the erase still succeeded.
+    const member = await eraseRemote(async () => ({ error: null, rows: 1, historyRows: 0 }))
+    expect(member).toEqual({ kind: 'deleted' })
+    expect(remoteEraseNote(member)).toBeNull()
+  })
+
+  /**
    * The two halves of the report, and why they share one sentence: from a
    * browser, a refused delete and a dropped connection are the same fact — the
    * local erase happened and the account copy may still be there.

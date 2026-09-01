@@ -151,6 +151,26 @@ export interface RemoteRecordStore {
    * refuses. What removes it is closing the account, by cascade.
    */
   deleteRecord(): Promise<RemoteDeleteReceipt>
+
+  /**
+   * §14.6 row 1 — remove this account's `learner_event` rows.
+   *
+   * `0003_phase4_erase.sql` exists for exactly this call and, until it was
+   * added, NOTHING MADE IT. The migration's own comment says §14.6's first row
+   * ("not in any org: record_state deleted, learner_event deleted") was
+   * unperformable without the policy — and it stayed unperformable with it,
+   * because no code ever attempted the delete. A policy no caller exercises is
+   * indistinguishable from a policy that is not there.
+   *
+   * The policy permits the delete only while no membership row exists, and RLS
+   * FILTERS `delete`: a member's attempt resolves with no error and removes
+   * nothing. So `{ rows: 0 }` here is the ORDINARY, DESIGNED answer for a reader
+   * who belongs to an organisation, and never a failure — §14.6's second row is
+   * that the organisation keeps the log. The caller therefore reads a non-zero
+   * count as "the history went" and zero as "somebody holds it", with no
+   * membership query needed on the client to tell them apart.
+   */
+  deleteHistory(): Promise<RemoteDeleteReceipt>
 }
 
 /**
@@ -169,4 +189,19 @@ export interface RemoteRecordStore {
  */
 export interface RemoteDeleteReceipt {
   rows: number
+}
+
+/**
+ * What an account-side erase did, both halves.
+ *
+ * `rows` is `record_state` — the half §12.15's dialog promises. `historyRows` is
+ * `learner_event`, where zero is the DESIGNED answer for a reader an
+ * organisation holds (§14.6 row 2) and a positive count means §14.6 row 1 was
+ * performed. They are separate numbers because they answer separate questions
+ * and a single total could not distinguish "nothing was there" from "somebody
+ * else's claim kept it".
+ */
+export interface RemoteEraseReceipt {
+  rows: number
+  historyRows: number
 }

@@ -53,11 +53,24 @@ export const NAME_SCOPE =
  * (§14.7.3 — a local write never waits for the network), and describing the
  * account as holding the record rather than a copy of it would misstate which
  * one wins.
+ *
+ * **It used to open "Signed out, it goes nowhere else", and that sentence had
+ * to go.** Read as "no request leaves while you are signed out" it was true.
+ * Read the way a reader reads it — as the state of affairs when signed out — it
+ * said the opposite of the fact that matters: a reader who signs in and then
+ * signs out still has a copy in the account, still readable by their
+ * organisation's managers, and signing out removes none of it. A sentence that
+ * is only true under the author's reading is a sentence that misinforms.
+ *
+ * So the shape is stated as a sequence of states instead of a pair of modes:
+ * no account, then signing in, then what persists. The last clause is the one
+ * the old wording lost, and it names the only thing that removes the copy.
  */
 export const RECORD_SCOPE =
-  'Your record is kept in this browser. Signed out, it goes nowhere else. Signed ' +
-  'in, a copy is kept in your account so it survives this browser, and the ' +
-  'managers of any organisation you have joined can read it.'
+  'Your record is kept in this browser. With no account it stays here. Signing ' +
+  'in puts a copy in your account so it survives this browser, where the ' +
+  'managers of any organisation you have joined can read it; that copy stays ' +
+  'until you erase it, and signing out does not remove it.'
 
 /**
  * The half of the old sentence that is still true, for the export affordance.

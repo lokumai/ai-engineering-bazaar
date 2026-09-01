@@ -71,6 +71,12 @@ function fakeRemote(row: RemoteEnvelope | null = null) {
       stored = null
       return { rows: removed }
     },
+    async deleteHistory() {
+      // Same: the erase is not this module's path. `appended` is left alone so a
+      // test that reached here by accident still shows what it had queued.
+      deleted += 1
+      return { rows: appended.length }
+    },
   }
 
   return {

@@ -89,7 +89,7 @@ write to it.
 |---|---|---|---|
 | `id` | `uuid` | no | `gen_random_uuid()` |
 | `name` | `text` | no | Shown on the join screen |
-| `join_domain` | `text` | yes | **Unique.** e.g. `intellica.net`. Anyone whose **verified** address is on this domain **can** join — they still have to click. Verified means the mailbox was proven: an unconfirmed address gets no session at all, and both join policies additionally require the `email_verified` claim, which closes the OAuth case where a provider reports an address it has not checked. Null means invite-only, and several organisations may be null at once. |
+| `join_domain` | `text` | yes | **Unique.** e.g. `intellica.net`. Anyone whose **verified** address is on this domain **can** join — they still have to click. Verified means the mailbox was proven: an unconfirmed address gets no session at all, and both join policies additionally require `app_metadata.providers` to contain `email` — a server-controlled field, unlike the `user_metadata` an earlier version of the policy read and the signed-in user can rewrite. An account with only an OAuth identity therefore cannot join by domain; invite it by address instead. Null means invite-only, and several organisations may be null at once. |
 | `created_at` | `timestamptz` | no | |
 
 No insert or update policy: creating an organisation is a by-hand operation.

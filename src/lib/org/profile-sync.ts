@@ -28,7 +28,6 @@
 
 import { STORABLE_MARK_IDS, type MarkId } from '@/lib/identity/mark'
 import { sanitiseName } from '@/lib/identity/name'
-import { githubLoginOf, type RawUser } from '@/lib/auth/session'
 import { ROLE_IDS, type RecordData, type RoleId } from '@/lib/record/schema'
 
 /** §14.2.1's table name, written once so a typo cannot become a second table. */
@@ -128,9 +127,26 @@ const MARK_SEED = /^[0-9a-f]{8}$/
  * already-sanitised name costs nothing and covers a record written by an older
  * bundle.
  */
+/**
+ * What this function needs from a session, and nothing else.
+ *
+ * Deliberately NOT `RawUser`. `RawUser` declares `identities` optional, which
+ * made the projected `SessionUser` — which has no identities at all — an
+ * acceptable argument that silently produced a row with no `github_login`. A
+ * parameter type that accepts an insufficient value is not a type check.
+ *
+ * `SessionUser` satisfies this structurally, so the island passes what it has
+ * and a `RawUser` has to go through `describeSessionUser` first, which is where
+ * `githubLoginOf`'s rules about what counts as evidence live.
+ */
+export interface ProfileSubject {
+  id: string
+  githubLogin: string | null
+}
+
 export function profileRowFor(
   identity: RecordData['identity'],
-  authUser: RawUser,
+  authUser: ProfileSubject,
 ): ProfileRow | null {
   // §14.4.4 — a row keyed by nobody is not writable and not meaningful. This
   // cannot happen through supabase-js, which is why it is checked: the same
@@ -156,8 +172,23 @@ export function profileRowFor(
     row.role_id = identity.role
   }
 
-  const login = githubLoginOf(authUser)
-  if (login !== null && login.trim() !== '') row.github_login = login.trim()
+  // ALREADY RESOLVED by `describeSessionUser`, never re-derived here.
+  //
+  // This function used to call `githubLoginOf(authUser)` itself, and the effect
+  // was that `github_login` was NEVER written in production. The caller has a
+  // `SessionUser` — the projection every panel receives — which keeps
+  // `githubLogin` and discards `identities`; `githubLoginOf` reads `identities`,
+  // found none, and returned null every time. It typechecked because `RawUser`
+  // declares `identities` optional, so the projection satisfied the parameter
+  // while carrying nothing it needed.
+  //
+  // §14.8.2's evidence column compares `Submittal.owner` against
+  // `profiles.github_login`, so the column being permanently absent meant no
+  // submittal could ever resolve as attributable. Taking the resolved value is
+  // what closes the boundary: there is now nothing for a caller to hand over
+  // that looks sufficient and is not.
+  const login = authUser.githubLogin
+  if (typeof login === 'string' && login.trim() !== '') row.github_login = login.trim()
 
   // Nothing but the key: §11.25 again. Say nothing rather than say blank.
   return Object.keys(row).length > 1 ? row : null

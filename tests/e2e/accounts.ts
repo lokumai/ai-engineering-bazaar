@@ -68,8 +68,8 @@ export interface Fixture {
   admin: SupabaseClient
   env: AccountsEnv
   orgId: string
-  ids: Record<'learner' | 'colleague' | 'manager' | 'outsider', string>
-  emails: Record<'learner' | 'colleague' | 'manager' | 'outsider', string>
+  ids: Record<'learner' | 'colleague' | 'manager' | 'outsider' | 'eraser', string>
+  emails: Record<'learner' | 'colleague' | 'manager' | 'outsider' | 'eraser', string>
 }
 
 export const EMAILS = {
@@ -77,6 +77,16 @@ export const EMAILS = {
   colleague: `${PREFIX}colleague@${DOMAIN}`,
   manager: `${PREFIX}manager@${DOMAIN}`,
   outsider: `${PREFIX}outsider@${DOMAIN}`,
+  /**
+   * §14.6's own user, in no organisation, signed in ONCE.
+   *
+   * The erase test cannot share `outsider`: it signs in, erases, and the erase
+   * clears this browser — and a later test signing the same reader in again then
+   * failed in `signInByLink` waiting for a session that never settled. A test
+   * that destroys state needs a subject nothing else reads, and saying so in the
+   * fixture is cheaper than the half hour it costs to rediscover.
+   */
+  eraser: `${PREFIX}eraser@${DOMAIN}`,
 } as const
 
 export function makeAdmin(env: AccountsEnv): SupabaseClient {
@@ -108,7 +118,8 @@ export async function cleanup(env: AccountsEnv, admin: SupabaseClient): Promise<
 }
 
 /**
- * One org, three members (one of them its manager), and one outsider.
+ * One org, three members (one of them its manager), one outsider, and §14.6's
+ * own subject.
  *
  * The colleague exists so that "a manager sees the whole org" and "a learner
  * sees only themselves" are different numbers. Without a second member both
@@ -164,30 +175,64 @@ export async function signInByLink(
   email: string,
   baseURL: string
 ): Promise<void> {
-  const { data, error } = await fixture.admin.auth.admin.generateLink({
-    type: 'magiclink',
-    email,
-    options: { redirectTo: `${baseURL}/auth/callback/` },
-  })
-  if (error) throw new Error(`generateLink ${email}: ${error.message}`)
-  const link = data.properties?.action_link
-  if (!link) throw new Error(`generateLink ${email}: no action_link`)
+  /*
+    ONE RETRY, with a fresh link.
 
-  await page.goto(link)
-  // The callback exchanges the code and then returns the reader to the site, so
-  // waiting for a session in storage is what "signed in" actually means here.
-  await page.waitForFunction(
-    () => {
-      try {
-        return Object.keys(window.localStorage).some(
-          (k) => k.startsWith('sb-') && k.endsWith('-auth-token')
-        )
-      } catch {
-        return false
-      }
-    },
-    undefined,
-    { timeout: 30_000 }
+    A magic link is single-use and its verification is a redirect chain through
+    GoTrue: link -> /auth/v1/verify -> the callback route -> `setSession`. Any
+    hop can be dropped, and when it is, the session never appears and the wait
+    below burns its whole budget. MEASURED over repeated runs of this suite: the
+    stall is rare, is not specific to any test, and lands on whichever sign-in
+    happens to hit it — it took out the manager test, the quiz test and the erase
+    test on different runs. In `serial` mode one such stall reports as a failure
+    plus a row of "did not run", so the test that gets blamed is chosen by
+    timing rather than by what it asserts.
+
+    A retry is honest here in a way that a longer timeout would not be. It is
+    the same act performed again — sign this reader in — with a new link,
+    because the first one is spent. It does not weaken any assertion: no test
+    below asserts anything about how many links were minted, and a second stall
+    still fails, loudly, naming the reader.
+  */
+  const attempt = async (): Promise<boolean> => {
+    const { data, error } = await fixture.admin.auth.admin.generateLink({
+      type: 'magiclink',
+      email,
+      options: { redirectTo: `${baseURL}/auth/callback/` },
+    })
+    if (error) throw new Error(`generateLink ${email}: ${error.message}`)
+    const link = data.properties?.action_link
+    if (!link) throw new Error(`generateLink ${email}: no action_link`)
+
+    await page.goto(link)
+    // The callback exchanges the code and then returns the reader to the site,
+    // so waiting for a session in storage is what "signed in" actually means.
+    try {
+      await page.waitForFunction(
+        () => {
+          try {
+            return Object.keys(window.localStorage).some(
+              (k) => k.startsWith('sb-') && k.endsWith('-auth-token')
+            )
+          } catch {
+            return false
+          }
+        },
+        undefined,
+        { timeout: 12_000 }
+      )
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  if (await attempt()) return
+  if (await attempt()) return
+  throw new Error(
+    `signInByLink ${email}: no session after two links. The callback did not `
+    + 'settle — check that redirectTo is on the project allow list and that '
+    + 'NEXT_PUBLIC_AUTH_ENABLED was true for this build.'
   )
 }
 

@@ -1,9 +1,15 @@
 # Supabase setup — §14 (accounts and orgs)
 
 The server side of [§14](../docs/superpowers/specs/2026-09-01-lms-phase4-accounts-and-orgs-design.md):
-ten tables and twenty-two RLS policies. No Edge Functions, no RPC, no views, no
-triggers (§14.0 decision 8) — everything here is plain Postgres and moves to any
-Postgres.
+ten tables and twenty-three RLS policies. No Edge Functions, no RPC, no views,
+no triggers (§14.0 decision 8) — everything here is plain Postgres and moves to
+any Postgres.
+
+The total is twenty-three and not the twenty-two 0002 creates: 0003 adds the one
+`delete` policy on `learner_event`, and 0005 replaces two of 0002's rather than
+adding any. COUNTED against the live project — `select count(*) from pg_policies
+where schemaname = 'public'` — because a figure in a README is the kind of thing
+that is right on the day it is written.
 
 The site is local-first (§14): `localStorage` is the source of the record and
 this database is a replica and a query surface. A project that has not been set
@@ -16,7 +22,8 @@ up yet degrades the account and panel features; it never stops anyone reading.
 | 1 | `migrations/0001_phase4_schema.sql` | §14.2 — the ten tables and the two indexes |
 | 2 | `migrations/0002_phase4_rls.sql` | §14.4 — `enable row level security` on all ten, then the 22 policies |
 | 3 | `migrations/0003_phase4_erase.sql` | §14.6 — the one `delete` policy on `learner_event`, for a reader who belongs to no organisation. Without it §14.6's first row is unperformable by anyone |
-| 4 | `migrations/0004_phase4_verified_email.sql` | §14.5 — replaces the two join policies so they require a **verified** address, not merely a claimed one. Closes the OAuth case where a provider reports an address it has not checked |
+| 4 | `migrations/0004_phase4_verified_email.sql` | §14.5 — required a **verified** address rather than a claimed one. **Superseded by 0005 and kept only so an applied database can be brought forward.** It read `email_verified`, which no Supabase token carries at the top level, so the check always fell through to `user_metadata` — a field the signed-in user writes. Applying 0004 alone leaves the guard forgeable |
+| 5 | `migrations/0005_phase4_provider_verified.sql` | §14.5 — replaces both join policies again, reading `app_metadata.providers` instead. That field is server-controlled: a raw `PUT /auth/v1/user` carrying it answers 403. Requires the address to have been proven by an emailed link |
 
 **Order is not optional.** Between step 1 and step 2 the tables exist with RLS
 off, which means any client holding the anon key can read and write every row.
@@ -108,7 +115,7 @@ Expected:
 | assignment_sheets | t | 2 |
 | assignment_targets | t | 2 |
 | assignments | t | 2 |
-| learner_event | t | 3 |
+| learner_event | t | 4 |
 | memberships | t | 5 |
 | org_manager | t | 1 |
 | orgs | t | 1 |

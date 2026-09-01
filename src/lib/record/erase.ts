@@ -245,13 +245,23 @@ export function restoreStoredQuarantine(raw: string | null): void {
  *   in an org                record_state deleted   learner_event SURVIVES
  *   account closed entirely  both deleted, by `on delete cascade`
  *
- * What the CLIENT can actually perform is row-independent and narrower than
- * that table reads: `0002_phase4_rls.sql` gives `record_state` an owner policy
- * `for all`, so deleting one's own row is permitted, and gives `learner_event`
- * NO delete policy at all, deliberately — the client cannot erase an
- * organisation's training log. So the client deletes exactly one row, and the
- * event log goes only when the account goes. That is why the dialog's copy
- * promises the account COPY and never the history: see `ERASE_ORG_HISTORY`.
+ * What the CLIENT can perform is all three rows, and this comment used to say
+ * otherwise. `0002_phase4_rls.sql` gives `record_state` an owner policy `for
+ * all`, so deleting one's own row is permitted. It gave `learner_event` no
+ * delete policy at all — and `0003_phase4_erase.sql` added one, narrow: a
+ * reader may delete their own event rows while NO organisation holds them.
+ *
+ * The paragraph that stood here described 0002's world and survived 0003
+ * unchanged, so this file and that migration contradicted each other about
+ * whether the policy existed; meanwhile no code called the delete, so the row
+ * 0003 was written to make performable stayed unperformable. Both are fixed:
+ * the port has `deleteHistory`, `eraseAccountCopy` calls it, and the receipt
+ * carries what each half removed.
+ *
+ * RLS filters `delete`, so a member's attempt removes nothing and reports no
+ * error. Zero history rows is therefore §14.6's second row working, never a
+ * failure, and the dialog keeps saying what it always said about an
+ * organisation's log: see `ERASE_ORG_HISTORY`.
  *
  * PORT-SHAPED, for the reason `storage.ts` states for `RecordStorage`: this
  * module imports no supabase-js, knows nothing about a session, and stays
@@ -416,9 +426,9 @@ export const REMOTE_ERASE_FAILED = 'ERASED HERE · ACCOUNT COPY MAY REMAIN'
  * asserting either would be a page claiming a server state it cannot see.
  */
 export const REMOTE_ERASE_FAILED_NOTE =
-  'The record is gone from this browser. The delete of the copy your account '
-  + 'holds did not go through, so it may still be there. Erasing again while '
-  + 'signed in retries it; closing your account removes it for certain.'
+  'The record is gone from this browser. The delete of what your account holds '
+  + 'did not go through, so it may still be there. Erasing again while signed '
+  + 'in retries it; closing your account removes it for certain.'
 
 /**
  * What to print for an outcome, or null when the standing copy already said

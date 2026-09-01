@@ -44,7 +44,18 @@ const ENABLED = process.env.E2E_ACCOUNTS === '1' && env !== null
 
 test.describe('§14 accounts, organisations and the record that outlives a browser', () => {
   test.skip(!ENABLED, 'needs E2E_ACCOUNTS=1 and a filled .env.local')
-  test.describe.configure({ mode: 'serial' })
+  /**
+   * Serial, and 60s per test rather than Playwright's 30.
+   *
+   * Every test here waits on real Supabase round trips, and two of them add a
+   * deliberate settle — one delays the claim's read to open a window, one waits
+   * out a push that must NOT arrive. A 30s budget fits those on a quiet network
+   * and not on a slow one, and in serial mode the first timeout takes the rest of
+   * the suite with it as "did not run": the failure that shows is then a timing
+   * accident rather than the assertion anyone wrote. The budget is stated here
+   * because the waits are deliberate, not because the tests are slow.
+   */
+  test.describe.configure({ mode: 'serial', timeout: 60_000 })
 
   let fixture: Fixture
 
@@ -296,6 +307,124 @@ test.describe('§14 accounts, organisations and the record that outlives a brows
     const logged = JSON.stringify(rows.map((row) => row.payload))
     expect(logged).not.toContain('guardrail')
     expect(logged).not.toContain('nonzero')
+  })
+
+  /**
+   * §14.7.4 — a write made WHILE the claim is in flight survives it.
+   *
+   * `claim()` is two network round trips: read the account's row, then push the
+   * merge. The record layer is mounted and interactive for the whole of it, and
+   * the branch that lands the merge used to be `update(() => outcome.record)` —
+   * a replacement with a value computed before the reader touched anything. A
+   * sign-off made in that window was reverted in front of them.
+   *
+   * The window is made deterministic rather than raced for: the account's read
+   * is delayed at the network, and the sign-off happens inside the delay. This
+   * effect runs on every mount with a session, so what the delay widens is an
+   * ordinary page load, not an exotic state.
+   */
+  test('a sign-off made while the claim is in flight is not reverted §14.7.4', async ({
+    page,
+    baseURL,
+  }) => {
+    await signInByLink(page, fixture, fixture.emails.colleague, baseURL!)
+
+    // Only the claim's READ is delayed. A blanket delay would also hold up the
+    // push and the log append, and then nothing would distinguish "the write
+    // survived" from "the write never left".
+    await page.route(
+      (url) => url.pathname.endsWith('/record_state') && url.searchParams.has('select'),
+      async (route) => {
+        if (route.request().method() !== 'GET') return route.continue()
+        await new Promise((resolve) => setTimeout(resolve, 2_500))
+        return route.continue()
+      },
+    )
+
+    const SHEET = '/courses/intermediate/context-engineering/'
+    await page.goto(SHEET)
+    await waitForHydratedReadout(page)
+
+    // Inside the delay: the claim has not resolved, so `outcome.record` — if it
+    // were applied as a replacement — cannot know about this.
+    await page.getByRole('button', { name: 'SIGN OFF', exact: true }).click()
+    await expect(page.getByRole('button', { name: /^SIGNED OFF / })).toBeVisible()
+
+    // Past the delay, so the merge has landed and written to localStorage.
+    await page.waitForTimeout(4_000)
+    await expect(page.getByRole('button', { name: /^SIGNED OFF / })).toBeVisible()
+
+    // And it is in the record, not merely on the screen: a reload reads
+    // localStorage, which is what the merge wrote.
+    await page.unroute(
+      (url) => url.pathname.endsWith('/record_state') && url.searchParams.has('select'),
+    )
+    await page.reload()
+    await waitForHydratedReadout(page)
+    await expect(page.getByRole('button', { name: /^SIGNED OFF / })).toBeVisible()
+  })
+
+  /**
+   * §14.6 — the erase removes both halves, and a second tab does not undo it.
+   *
+   * Two defects in one flow, because they are one flow:
+   *
+   *  - `learner_event` was never deleted by anything. `0003_phase4_erase.sql`
+   *    shipped the policy that permits it for a reader no organisation holds —
+   *    §14.6's first row — and no code ever called it, so the history stayed
+   *    behind for everybody.
+   *  - The local erase removes the storage key, every other open tab's
+   *    `storage` handler saw `newValue === null`, adopted the empty record and
+   *    PUSHED it. That push is independent of this tab's ordering, so it could
+   *    land after the delete and recreate `record_state` — while the dialog had
+   *    already reported the account copy removed.
+   *
+   * `eraser` is its own fixture user, in no organisation — the only case in
+   * which the history is theirs to remove. It is not `outsider`, because this
+   * test destroys the browser it runs in and a later test signing the same
+   * reader in again failed waiting for a session.
+   */
+  test('an erase removes the history too, and a second tab does not undo it §14.6', async ({
+    page,
+    context,
+    baseURL,
+  }) => {
+    await signInByLink(page, fixture, fixture.emails.eraser, baseURL!)
+
+    // Something to erase, in both tables.
+    await page.goto('/courses/intermediate/loop-engineering/')
+    await waitForHydratedReadout(page)
+    await page.getByRole('button', { name: 'SIGN OFF', exact: true }).click()
+    await expect(page.getByRole('button', { name: /^SIGNED OFF / })).toBeVisible()
+    await expect
+      .poll(() => serverRecord(fixture, fixture.ids.eraser), { timeout: 20_000 })
+      .not.toBeNull()
+    await expect
+      .poll(() => serverEventKinds(fixture, fixture.ids.eraser), { timeout: 20_000 })
+      .toContain('signOff')
+
+    // The second tab, in the SAME context: same origin, same localStorage, so
+    // its `storage` handler fires on the erase. This is the tab that used to
+    // recreate the row.
+    const sibling = await context.newPage()
+    await sibling.goto('/dashboard/')
+    await sibling.waitForTimeout(1_000)
+
+    await page.goto('/profile/')
+    await waitForHydratedReadout(page)
+    await page.getByRole('button', { name: 'ERASE ALL LOCAL DATA' }).click()
+    const dialog = page.locator('[role="dialog"]')
+    await dialog.getByLabel('Type ERASE to confirm').fill('ERASE')
+    await dialog.getByRole('button', { name: 'Erase all data' }).click()
+
+    // Long enough for a sibling push to have landed if one were made: the
+    // storage event is synchronous and the push follows it immediately.
+    await page.waitForTimeout(5_000)
+
+    expect(await serverRecord(fixture, fixture.ids.eraser)).toBeNull()
+    expect(await serverEventKinds(fixture, fixture.ids.eraser)).toEqual([])
+
+    await sibling.close()
   })
 
   // -- §14.8 the panel ------------------------------------------------------

@@ -191,6 +191,36 @@ export const EMPTY_RECORD: RecordData = deepFreeze<RecordData>({
  * rule needs this in two places: the validator drops such a record on read, and
  * the §12.15 erase dialog must not enumerate a sheet state that holds nothing.
  */
+/**
+ * Does this record carry nothing the reader made?
+ *
+ * Used by the cross-tab path to decide whether a record is worth sending to an
+ * account, and the rule it serves is narrow: **a tab never pushes an empty
+ * record.** An empty envelope cannot inform an account of anything, and there
+ * are exactly two ways one arrives — the reader erased, or storage was cleared
+ * under this tab. In the first case the erasing tab performs the account-side
+ * delete itself; in the second the account copy is the thing that is supposed to
+ * survive.
+ *
+ * Without the rule an erase could be undone by a tab that had nothing to do with
+ * it: `DataPanel` writes the empty record, flushes it, and only then removes the
+ * key, so every other open tab sees a VALID EMPTY ENVELOPE, adopts it, and
+ * pushes — a push that races the delete and can land after it, recreating a row
+ * that then looks like a record rather than a leftover.
+ *
+ * `prefs` is deliberately not consulted. A reader who toggled a keyboard
+ * preference has made no record, and treating that as content would send an
+ * otherwise-empty envelope for the sake of one boolean.
+ */
+export function carriesNothing(data: RecordData): boolean {
+  if (data.days.length > 0) return false
+  if (data.meta.lastExport !== null) return false
+  const identity = data.identity
+  if (identity.name !== null || identity.markSeed !== null) return false
+  if (identity.mark !== null || identity.role !== null) return false
+  return Object.values(data.sheets).every(isEmptySheetRecord)
+}
+
 export function isEmptySheetRecord(sheet: SheetRecord): boolean {
   return (
     sheet.signedOff === null &&

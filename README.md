@@ -200,6 +200,11 @@ psql "$SUPABASE_DB_URL" -f supabase/migrations/0003_phase4_erase.sql
 node scripts/test-rls.mjs            # 31 checks, real JWTs, real PostgREST
 ```
 
+[`docs/auth-flow.md`](docs/auth-flow.md) explains sign-in, sessions, the claim,
+joining an organisation and who is allowed to read what — with diagrams, all of
+them rendered in real Chrome by `node scripts/check-mermaid.mjs docs/*.md` before
+being committed.
+
 [`docs/manager-queries.md`](docs/manager-queries.md) documents every table and
 column, how they join, and SQL for the questions a manager asks — a roster, who
 needs attention and why, quiz attempts, submittal verification, assignments

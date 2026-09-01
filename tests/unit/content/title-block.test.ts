@@ -223,16 +223,18 @@ describe('sheetFacts, over the real corpus', () => {
   })
 
   it('keeps images out of the DIAG term §5.5 spells out', () => {
-    // Module 6 has one mermaid diagram and four images. `1 DIAG` is the true
-    // statement; `5 DIAG` was the loader's diagrams-plus-images sum wearing
-    // the wrong label.
+    // Module 6 carries images alongside its diagrams, which is what makes it the
+    // sheet worth measuring on. The totals are derived, because they are facts
+    // about today's prose; the claim is that the DIAG term counts diagrams only,
+    // where the bug reported diagrams plus images under that label.
     const agents = loadModule('fundamentals/agents')!
-    expect(countDiagrams(agents.body)).toBe(1)
-    expect(countImages(agents.body)).toBe(4)
-    expect(facts(agents.slug).diagrams).toBe(1)
+    const diagrams = countDiagrams(agents.body)
+    const tables = countTables(agents.body)
+    expect(countImages(agents.body)).toBeGreaterThan(0)
+    expect(facts(agents.slug).diagrams).toBe(diagrams)
 
     const row = titleBlockRows(facts(agents.slug)).find((r) => r.label === 'FIGURES')
-    expect(row?.value).toBe('1 DIAG · 1 TBL')
+    expect(row?.value).toBe(`${diagrams} DIAG · ${tables} TBL`)
   })
 
   it('prints a FIGURES row no drawn sheet can inflate', () => {

@@ -125,9 +125,16 @@ describe('countDiagrams', () => {
     expect(countDiagrams(raw)).toBe(0)
   })
 
-  it('does not absorb module 6\'s four images into its one diagram', () => {
-    expect(countDiagrams(body(6))).toBe(1)
-    expect(countImages(body(6))).toBe(4)
+  it('counts images and diagrams separately, never summing them', () => {
+    // The counts themselves are facts about today's prose, so they are derived.
+    // What is asserted is the behaviour the bug had wrong: adding an image must
+    // not move the diagram count. Module 6 is the sheet that carries several
+    // images alongside its diagrams, so it is the one worth measuring on.
+    const raw = body(6)
+    const diagrams = countDiagrams(raw)
+    expect(countImages(raw)).toBeGreaterThan(0)
+    expect(diagrams).toBeGreaterThan(0)
+    expect(countDiagrams(`${raw}\n![an extra image](extra.png)\n`)).toBe(diagrams)
   })
 })
 

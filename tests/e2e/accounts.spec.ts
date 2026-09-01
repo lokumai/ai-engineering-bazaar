@@ -7,6 +7,7 @@ import {
   makeAdmin,
   seed,
   serverEventKinds,
+  serverEvents,
   serverRecord,
   signInByLink,
   type Fixture,
@@ -215,6 +216,86 @@ test.describe('§14 accounts, organisations and the record that outlives a brows
     await expect
       .poll(() => serverEventKinds(fixture, fixture.ids.colleague), { timeout: 20_000 })
       .toContain('signOff')
+  })
+
+  /**
+   * §14.8.1 rule 2 — ONE row per attempt, measured with real keystrokes.
+   *
+   * This row used to be filed from the textarea's `onChange`, so it was one row
+   * per CHARACTER. `pressSequentially` types the answer the way a reader does,
+   * which is the only way to tell the two apart: a test that sets the value in
+   * one go would have passed against the defect.
+   *
+   * Two assertions, because the defect had two halves. The count is the
+   * cheap one. The absence of the answer text is the one that mattered:
+   * `learner_event` has no delete policy while the reader belongs to an
+   * organisation, so a draft filed there could never be retracted — including
+   * text written and then deleted.
+   */
+  test('a typed quiz answer files ONE attempt, and no answer text §14.8.1', async ({
+    page,
+    baseURL,
+  }) => {
+    await signInByLink(page, fixture, fixture.emails.colleague, baseURL!)
+    await page.goto('/courses/intermediate/harness-engineering/')
+    await waitForHydratedReadout(page)
+
+    const DRAFT = 'the hook exits nonzero'
+    const ANSWER = 'a broken guardrail must fail closed, and be tested as a guardrail'
+    const box = page.getByLabel('YOUR ANSWER')
+
+    await box.click()
+    // A draft, then all of it deleted: the text a reader most wants back, and
+    // the case the keystroke handler filed 23 unretractable rows for.
+    await box.pressSequentially(DRAFT, { delay: 4 })
+    await box.press('Control+a')
+    await box.press('Backspace')
+    await box.pressSequentially(ANSWER, { delay: 4 })
+    // The attempt boundary: focus leaves the field.
+    await page.keyboard.press('Tab')
+
+    const attempts = async () =>
+      (await serverEvents(fixture, fixture.ids.colleague))
+        .filter((row) => row.kind === 'setQuizAnswer').length
+
+    /*
+      The envelope FIRST, and the order is the whole reason this test is not
+      vacuous.
+
+      `expect.poll(attempts).toBe(1)` was the obvious way to write the count
+      assertion and it protected nothing: MEASURED against a deliberately
+      restored per-keystroke handler, it passed. A poll succeeds on its first
+      matching observation, and a count climbing 1, 2, 3 … is momentarily 1. The
+      assertion was watching a growing quantity for a value it was guaranteed to
+      pass through.
+
+      So the wait is anchored to something that arrives ONCE and settles: the
+      answer itself, in `record_state`. When the envelope holds the whole
+      answer, every keystroke has been through the throttled flush, and the row
+      count can be read as a total rather than sampled as it grows.
+    */
+    await expect
+      .poll(async () => {
+        const record = await serverRecord(fixture, fixture.ids.colleague)
+        const sheets = record?.data.sheets as Record<string, { quiz?: { answer?: string } }>
+        return sheets?.['intermediate/harness-engineering']?.quiz?.answer ?? null
+      }, { timeout: 20_000 })
+      .toBe(ANSWER)
+
+    // One flush interval past the last write, because the log rides the same
+    // timer as the envelope and a row queued behind it would otherwise be
+    // counted after this test had already read the total.
+    await page.waitForTimeout(2_000)
+
+    expect(await attempts()).toBe(1)
+
+    // Nothing the reader typed reached the log — neither the answer nor the
+    // draft they deleted. The envelope carries the answer, where they can
+    // overwrite it and erase it; the log carries the act, where they cannot.
+    const rows = await serverEvents(fixture, fixture.ids.colleague)
+    const logged = JSON.stringify(rows.map((row) => row.payload))
+    expect(logged).not.toContain('guardrail')
+    expect(logged).not.toContain('nonzero')
   })
 
   // -- §14.8 the panel ------------------------------------------------------

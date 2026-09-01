@@ -215,6 +215,38 @@ export function setChecklistItem(
 }
 
 /**
+ * §14.8.1 rule 2 — is this editing session an attempt worth a log row?
+ *
+ * Pure, and separated from `QuickCheck` for the reason §5 gives for every
+ * decision in this codebase: what counts as an attempt is a rule, the textarea
+ * is a binding, and only one of the two can be tested without a browser.
+ *
+ * `openedWith` is the answer as it stood when the reader took the field, and
+ * `null` means the field was never focused. Three refusals, each one a thing a
+ * reader plainly did not do:
+ *
+ *  - **Never focused.** Nothing to file; a blur without a focus is a stray
+ *    event, not a try.
+ *  - **Unchanged.** Opening a saved answer, reading it and tabbing away is
+ *    reading, and filing a row for it would inflate the very tally §14.8.1's
+ *    `quizFailing` flag is thresholded on.
+ *  - **Emptied.** Deleting an answer is a withdrawal. §11.25's rule is that an
+ *    absence is recorded as an absence, never as a zero-length attempt — and
+ *    `setQuizAnswer` drops the quiz record entirely in that case, so a row here
+ *    would describe a state the envelope no longer holds.
+ *
+ * The comparison is against the value at FOCUS, not against the last row filed.
+ * A ref seeded from the record cannot do this job: the first frame of a static
+ * export always has an empty answer (§12.2), so it would read hydration itself
+ * as an edit and file a row nobody made.
+ */
+export function filesAttempt(openedWith: string | null, value: string): boolean {
+  if (openedWith === null) return false
+  if (value === openedWith) return false
+  return value.trim() !== ''
+}
+
+/**
  * §12.6 — the retrieval attempt, persisted per sheet. An answer emptied back to
  * nothing drops the record instead of leaving an empty one behind, which keeps
  * the in-memory shape identical to what the validator would read back.

@@ -42,7 +42,7 @@ import { readRecord, safeStorage, writeRecord, type RecordStorage } from './stor
  * build with no backend never even evaluates `sync.ts`.
  */
 import type { Sync, SyncState } from './sync'
-import type { EventKind, RemoteRecordStore } from './wire'
+import type { EventKind, RemoteDeleteReceipt, RemoteRecordStore } from './wire'
 
 import { envelopeTextFrom, parseEnvelope, type ParseResult } from './validate'
 
@@ -205,13 +205,20 @@ export function hasAccountCopy(): boolean {
  * Throws on failure, because the caller is `eraseRemote` in `erase.ts`, whose
  * whole job is to turn that into the one thing the reader can act on: the local
  * erase happened, the account copy may still be there.
+ *
+ * The receipt is RETURNED rather than discarded, and that is the difference
+ * between reporting the erase and asserting it: a delete filtered away by RLS
+ * resolves without an error and removes nothing, so the row count is the only
+ * observation either side of this call has. `{ rows: 0 }` with no port is not a
+ * silent success — there is no account copy to remove, and `eraseRemote` is
+ * handed `null` in that case rather than this function.
  */
-export async function eraseAccountCopy(): Promise<void> {
+export async function eraseAccountCopy(): Promise<RemoteDeleteReceipt> {
   const port = remotePort
-  if (port === null) return
+  if (port === null) return { rows: 0 }
   flush()
   if (sync !== null) await sync.push()
-  await port.deleteRecord()
+  return port.deleteRecord()
 }
 
 /** §14.7.3 — `off` until an instance says otherwise. Never a guess. */
@@ -506,6 +513,29 @@ export function update(fn: (data: RecordData) => RecordData, event?: RecordEvent
   if (event !== undefined) {
     sync?.enqueue(event.kind, event.sheetSlug ?? null, event.payload, nowIso())
   }
+}
+
+/**
+ * §14.2.3 — file a log row for an act that changed no data.
+ *
+ * `update` files its row as a side effect of a write, and returns early when
+ * the reducer produced no change — correct there, because an act that moved
+ * nothing is not an act. But some acts ARE the act while leaving the envelope
+ * exactly as it was: an attempt boundary is one. `QuickCheck` writes every
+ * keystroke through `update` and files ONE row when the reader leaves the
+ * field, and by then the data has long since changed.
+ *
+ * Deliberately not an overload of `update` with an identity reducer. That would
+ * work by relying on `next === current` NOT short-circuiting the enqueue, which
+ * is the opposite of what that branch is for, and the next reader of either
+ * function would have to hold both meanings at once.
+ *
+ * `enqueue` returns null while signed out, so this costs nothing in the common
+ * case and nothing about the record depends on the row existing.
+ */
+export function logEvent(event: RecordEvent): void {
+  start()
+  sync?.enqueue(event.kind, event.sheetSlug ?? null, event.payload, nowIso())
 }
 
 /**

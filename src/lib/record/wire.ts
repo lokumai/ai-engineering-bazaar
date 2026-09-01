@@ -150,5 +150,23 @@ export interface RemoteRecordStore {
    * a port method offering to remove it would be a promise the database
    * refuses. What removes it is closing the account, by cascade.
    */
-  deleteRecord(): Promise<void>
+  deleteRecord(): Promise<RemoteDeleteReceipt>
+}
+
+/**
+ * What a delete actually did, which is not answerable from its error alone.
+ *
+ * **A delete refused by row-level security resolves with `error: null` and
+ * removes nothing.** RLS is a filter on `UPDATE` and `DELETE`, not a gate: only
+ * `INSERT` raises. So "no error" means the statement ran, never that a row is
+ * gone, and a port returning `void` gave its caller no way to tell the
+ * difference — §12.15's dialog then stood by its promise that the account copy
+ * was removed over a row that might still be there.
+ *
+ * `rows` is what the server reports it removed. Zero is neither an error nor a
+ * success: it is the answer "nothing matched", and the reader is entitled to be
+ * told that rather than reassured.
+ */
+export interface RemoteDeleteReceipt {
+  rows: number
 }

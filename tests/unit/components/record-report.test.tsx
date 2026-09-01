@@ -393,10 +393,6 @@ describe('SHEET 00 — the legend (§12.13)', () => {
     'Instructor grading',
     'Peer assessment',
     'Discussion',
-    'Cohorts',
-    'Enrolment',
-    'Accounts',
-    'Cross-device sync',
     'Any cohort or aggregate figure',
     'Leaderboards',
     'Social sharing',
@@ -407,13 +403,35 @@ describe('SHEET 00 — the legend (§12.13)', () => {
     expect(words(markup)).toContain(item)
   })
 
-  it('separates the deferred from the impossible', () => {
+  /**
+   * `Accounts` and `Cross-device sync` used to be asserted in the list above,
+   * and this test is what that assertion became.
+   *
+   * §14 built both. The page went on listing them as impossible, and THIS FILE
+   * held the list in place — a test that pins reader-visible copy is exactly as
+   * capable of preserving a falsehood as of preventing one, and here it did.
+   * So the assertion is inverted rather than deleted: the two names must not
+   * appear as absences, and the sentence that says they exist must be present.
+   */
+  it('does not list a shipped feature as one that cannot exist (§1)', () => {
     const text = words(markup)
-    expect(text).toMatch(/Deferred to a following slice/)
-    expect(text).toMatch(/Impossible without a backend/)
-    expect(text.indexOf('Deferred to a following slice')).toBeLessThan(
-      text.indexOf('Impossible without a backend'),
-    )
+    const absences = text.slice(text.indexOf('What this site does not have'))
+    expect(absences).not.toMatch(/^\s*Accounts\s*$/m)
+    expect(absences).not.toContain('Cross-device sync')
+    expect(text).toContain('Accounts and cross-device sync are not on either list: they exist')
+  })
+
+  it('separates the deferred from the impossible from the refused', () => {
+    const text = words(markup)
+    const deferred = text.indexOf('Deferred to a following slice')
+    const nobody = text.indexOf('Nobody here can do these')
+    const refused = text.indexOf('Refused, not missing')
+    expect(deferred).toBeGreaterThan(-1)
+    expect(nobody).toBeGreaterThan(deferred)
+    // The order carries the argument: what is coming, what nobody can do, and
+    // what this site declines to do. Collapsing the last two would hide a
+    // decision behind an impossibility.
+    expect(refused).toBeGreaterThan(nobody)
   })
 
   it('links to the specimen, which is the fourth block', () => {

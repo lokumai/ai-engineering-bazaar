@@ -281,11 +281,23 @@ export type RemoteRecordDeleter = () => Promise<unknown>
  *    "the account copy may remain" would be chasing a row that never existed.
  *  - `deleted` — the row is gone. The dialog's standing copy already said this
  *    would happen, so there is nothing extra to say.
- *  - `failed` — the local erase HAS ALREADY HAPPENED and cannot be undone
+ *  - `failed` — either the server reported an error, or it reported removing
+ *    nothing. The local erase HAS ALREADY HAPPENED and cannot be undone
  *    beyond §12.15's ten-second window, so this outcome can never be retried
  *    into silence. It must be stated. `reason` is for the reader-facing detail
  *    line and for a report, never for a decision.
  */
+/**
+ * The `reason` for a delete the server accepted while removing no row.
+ *
+ * Lower case and no terminal period, because it is composed into a sentence
+ * rather than printed as a readout, and it states the observation instead of
+ * naming a cause: from the browser, an RLS refusal and a row that was never
+ * there produce the identical answer, and guessing between them would be
+ * §11.25's exact prohibition.
+ */
+export const NOTHING_REMOVED = 'the server removed no row'
+
 export type RemoteEraseOutcome =
   | { kind: 'signed-out' }
   | { kind: 'deleted' }
@@ -308,10 +320,14 @@ export function eraseFailureReason(thrown: unknown): string {
 /**
  * A resolved PostgREST response carrying an error, which is the trap this
  * whole check exists for: **PostgREST reports failure in the RESOLVED VALUE,
- * not by rejecting.** A `.delete()` refused by RLS or dropped by the network
- * resolves happily with `{ error }`, so an `eraseRemote` that trusted a
- * resolution would print "removed from your account" over a row that is still
- * there — precisely the §1 failure this section was written to fix.
+ * not by rejecting.** A `.delete()` dropped by the network resolves happily
+ * with `{ error }`, so an `eraseRemote` that trusted a resolution would print
+ * "removed from your account" over a row that is still there — precisely the
+ * §1 failure this section was written to fix.
+ *
+ * An RLS refusal does not even do that much: it resolves with `error: null` and
+ * removes nothing, because RLS FILTERS `delete` and only `insert` raises. No
+ * error inspection can catch that one, which is what `resolvedRows` is for.
  *
  * `remote-store.ts` funnels its own calls through a `fail()` helper for the
  * same reason. This is the belt to that braces: a caller who passes the
@@ -326,6 +342,22 @@ function resolvedError(value: unknown): string | null {
     return eraseFailureReason(new Error(String((error as { message?: unknown }).message ?? '')))
   }
   return eraseFailureReason(error)
+}
+
+/**
+ * How many rows the delete reports removing, or `null` from a deleter that does
+ * not say.
+ *
+ * Absent is not treated as zero. A `RemoteRecordStore` always returns a receipt
+ * (`RemoteDeleteReceipt`), so the only callers that report nothing are test
+ * doubles standing in for a port, and reading their silence as "nothing was
+ * deleted" would make every such test assert a failure it did not arrange.
+ * Production cannot reach that branch, because the type will not let it.
+ */
+function resolvedRows(value: unknown): number | null {
+  if (typeof value !== 'object' || value === null) return null
+  const rows = (value as { rows?: unknown }).rows
+  return typeof rows === 'number' ? rows : null
 }
 
 /**
@@ -350,6 +382,14 @@ export async function eraseRemote(
     const resolved = await deleter()
     const reported = resolvedError(resolved)
     if (reported !== null) return { kind: 'failed', reason: reported }
+    // The row count, and the reason this is not an `if (error)` and done. A
+    // delete filtered away by RLS resolves with no error and removes nothing,
+    // so a resolution is evidence that the statement RAN and never evidence
+    // that the row is gone. Zero rows after a push that just wrote one is not a
+    // success to report quietly: the reader is told the account copy may remain,
+    // which is the same thing they are told when the connection drops, because
+    // from here the two are the same fact.
+    if (resolvedRows(resolved) === 0) return { kind: 'failed', reason: NOTHING_REMOVED }
     return { kind: 'deleted' }
   } catch (thrown) {
     return { kind: 'failed', reason: eraseFailureReason(thrown) }

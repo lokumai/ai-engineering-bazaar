@@ -237,7 +237,7 @@ the only place a withdrawn submittal or a failed quiz attempt survives.
 |---|---|
 | `signOff` | `{ "revision": "f60e2d2" }` |
 | `unsign` | `{}` |
-| `setQuizAnswer` | `{ "answer": "b" }` — **one row per attempt** |
+| `setQuizAnswer` | `{}` — **one row per attempt.** The answer text is not here; see below |
 | `assessQuiz` | `{ "assessed": "matched" \| "missed" }` |
 | `setChecklistItem` | `{ "index": 3, "ticked": true }` |
 | `recordSourceOpened` | `{ "href": "https://…" }` |
@@ -251,6 +251,20 @@ the only place a withdrawn submittal or a failed quiz attempt survives.
 `dwellSeconds`, activity marks, export marks and preference changes are
 deliberately **not** logged: they are in the envelope already and would drown
 the log.
+
+**Where the answer text is, and why it is not here.** `record_state` holds the
+latest answer to every quick check; this table holds only the fact that an
+attempt happened, and when. That split is deliberate rather than an oversight,
+because the two places have different powers: a reader can overwrite the answer
+in the envelope and can erase the envelope outright, and no client may delete a
+`learner_event` row while they belong to an organisation. Text filed here could
+never be taken back — including a draft written and then deleted. So the log
+records the act and the envelope records the answer.
+
+An attempt is one editing session that changed the answer: the row is filed when
+the reader leaves the field, not per keystroke. A reader who opens a saved
+answer, reads it and moves on files nothing, and neither does one who clears the
+field — an emptied answer is a withdrawal, not a zero-length try.
 
 ### `assignments`, `assignment_sheets`, `assignment_targets`
 

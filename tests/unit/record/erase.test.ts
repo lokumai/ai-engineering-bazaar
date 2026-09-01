@@ -15,6 +15,7 @@ import {
   REMOTE_ERASE_FAILED_NOTE,
   eraseFailureReason,
   eraseRemote,
+  NOTHING_REMOVED,
   rawStoredFrom,
   remoteEraseNote,
   restoreQuarantine,
@@ -332,6 +333,53 @@ describe('§14.6 — erasing the copy the account holds', () => {
   it('accepts a PostgREST response whose error is null', async () => {
     expect(await eraseRemote(async () => ({ error: null, data: null, count: 1 })))
       .toEqual({ kind: 'deleted' })
+  })
+
+  /**
+   * The failure no error inspection can catch.
+   *
+   * RLS FILTERS `delete` — only `insert` raises — so a delete the policy
+   * refuses resolves with `error: null` and removes nothing. Before the port
+   * returned a row count there was no observation to test here at all, and this
+   * case took the same branch as a successful delete: the dialog's standing
+   * copy promised the account copy was removed, and said nothing more.
+   */
+  it('treats a delete that removed NO ROW as a failure (§14.6)', async () => {
+    const outcome = await eraseRemote(async () => ({ error: null, rows: 0 }))
+    expect(outcome).toEqual({ kind: 'failed', reason: NOTHING_REMOVED })
+  })
+
+  it('reports the row gone when the receipt says one went', async () => {
+    expect(await eraseRemote(async () => ({ error: null, rows: 1 })))
+      .toEqual({ kind: 'deleted' })
+  })
+
+  /**
+   * A deleter that reports no count is a test double, not a port: the
+   * `RemoteRecordStore` type requires a receipt. Silence must not read as zero,
+   * or every double above would be asserting a failure it never arranged.
+   */
+  it('does not read a missing row count as zero', async () => {
+    expect(await eraseRemote(async () => undefined)).toEqual({ kind: 'deleted' })
+    expect(await eraseRemote(async () => ({ error: null }))).toEqual({ kind: 'deleted' })
+    expect(await eraseRemote(async () => ({ error: null, rows: 'none' })))
+      .toEqual({ kind: 'deleted' })
+  })
+
+  /**
+   * The two halves of the report, and why they share one sentence: from a
+   * browser, a refused delete and a dropped connection are the same fact — the
+   * local erase happened and the account copy may still be there.
+   */
+  it('says the same thing to the reader for both ways of not deleting', async () => {
+    const refused = await eraseRemote(async () => ({ error: null, rows: 0 }))
+    const dropped = await eraseRemote(async () => { throw new Error('network') })
+    expect(remoteEraseNote(refused)).toBe(remoteEraseNote(dropped))
+    expect(remoteEraseNote(refused)).not.toBeNull()
+    // And a delete that DID go through adds nothing: the dialog already
+    // promised it, and a line confirming a kept promise trains a reader to
+    // stop reading these lines.
+    expect(remoteEraseNote({ kind: 'deleted' })).toBeNull()
   })
 
   it('reports a thrown non-Error as what it actually was', async () => {

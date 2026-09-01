@@ -31,7 +31,13 @@
  * told about.
  */
 
-import type { LearnerEvent, Progress, RemoteEnvelope, RemoteRecordStore } from '@/lib/record/wire'
+import type {
+  LearnerEvent,
+  Progress,
+  RemoteDeleteReceipt,
+  RemoteEnvelope,
+  RemoteRecordStore,
+} from '@/lib/record/wire'
 import { parseEnvelope } from '@/lib/record/validate'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
@@ -256,18 +262,31 @@ export function createRemoteRecordStore(
       if (error) fail(`${LEARNER_EVENT} append`, error)
     },
 
-    async deleteRecord(): Promise<void> {
+    async deleteRecord(): Promise<RemoteDeleteReceipt> {
       // §14.6 — `record_state` only. The owner's policy is `for all`, so this
       // is permitted; `learner_event` has no delete policy for anyone, which is
       // the design and not an omission (§14.4.3).
       //
-      // A delete refused by RLS RESOLVES rather than rejecting — it simply
-      // matches no rows — so an absent `error` is not proof the row is gone.
-      // That is why the caller in `erase.ts` inspects the outcome and the copy
-      // says the account copy MAY remain rather than asserting it does not.
-      const { error } = await client.from(RECORD_STATE).delete().eq('user_id', userId)
+      // `.select()` is the whole point of this line, not a flourish. A delete
+      // refused by RLS RESOLVES with `error: null` and removes NOTHING — RLS
+      // filters `DELETE`, and only `INSERT` raises — so an absent error is not
+      // proof the row is gone. Without the returning clause there is no
+      // observation to report and every caller has to assume the optimistic
+      // answer, which is how §12.15's dialog came to stand by its promise over
+      // a row that may have survived.
+      //
+      // `user_id` and not `*`: the caller needs a COUNT, and shipping the whole
+      // envelope back for a row that is being destroyed is bandwidth spent on
+      // data nobody reads.
+      const { data, error } = await client
+        .from(RECORD_STATE)
+        .delete()
+        .eq('user_id', userId)
+        .select('user_id')
 
       if (error) fail(`${RECORD_STATE} delete`, error)
+
+      return { rows: data?.length ?? 0 }
     },
   }
 }

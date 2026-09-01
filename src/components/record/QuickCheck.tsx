@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { XP_QUIZ } from '@/lib/record/derive'
-import { assessQuiz, setQuizAnswer } from '@/lib/record/events'
-import { nowIso, update, useRecord } from '@/lib/record/store'
+import { assessQuiz, filesAttempt, setQuizAnswer } from '@/lib/record/events'
+import { logEvent, nowIso, update, useRecord } from '@/lib/record/store'
 
 /**
  * §12.6 — the Quick Check, and the documented deviation from §5.10.
@@ -50,6 +50,18 @@ export function QuickCheck({
 }) {
   const record = useRecord()
   const [pressed, setPressed] = useState(false)
+  /**
+   * The answer as it stood when the reader took the field, or null while the
+   * field is not being edited.
+   *
+   * Compared on blur rather than against the last row filed, because that is
+   * the question being asked: did THIS editing session change anything. A
+   * reader who focuses a saved answer, reads it and tabs away has attempted
+   * nothing, and a ref seeded from the record could not tell — the first render
+   * of a static export always has an empty answer (§12.2, channel B), so it
+   * would read the hydration itself as an edit and file a row nobody made.
+   */
+  const openedWith = useRef<string | null>(null)
 
   const quiz = record.sheets[slug]?.quiz ?? null
   const answer = quiz?.answer ?? ''
@@ -65,6 +77,27 @@ export function QuickCheck({
   // self-assessment stands on the attempt alone rather than waiting for a
   // reveal that cannot happen (§11.25 — absent, not a button over nothing).
   const offerAssess = attempted && (!comparable || pressed || assessed !== null)
+
+  /**
+   * One row per attempt (§14.8.1 rule 2), filed when an editing session that
+   * changed the answer ends.
+   *
+   * No `answer` in the payload. The manager panel reads three columns and no
+   * payload at all (`lib/org/queries.ts`), the envelope already carries the
+   * latest answer where the reader can overwrite or erase it, and the log is
+   * the one place they cannot — so the text belongs in the envelope and the
+   * ACT belongs here.
+   *
+   * Which sessions count is `filesAttempt`, in `events.ts`, because that is a
+   * rule and this is a binding (§5). The ref is cleared either way: a blur
+   * closes the session whether or not it filed anything.
+   */
+  const fileAttempt = (value: string) => {
+    const opened = openedWith.current
+    openedWith.current = null
+    if (!filesAttempt(opened, value)) return
+    logEvent({ kind: 'setQuizAnswer', sheetSlug: slug })
+  }
 
   const key = slug.replace(/[^A-Za-z0-9]+/g, '-')
   const headId = `hl-quiz-${key}`
@@ -84,15 +117,37 @@ export function QuickCheck({
           <textarea
             rows={4}
             value={answer}
+            /* The local write, every keystroke. It costs nothing over the
+               network: the record is in memory and §12.1.4's flush is
+               throttled, so typing never waits on storage — and the envelope
+               keeps only the latest answer however many times it is edited. */
             onChange={(event) =>
-              update((data) => setQuizAnswer(data, slug, event.target.value, nowIso()), {
-      // §14.8.1 rule 2 counts ATTEMPTS, so every answer is a row — not only the
-      // last one, which is all the envelope keeps.
-      kind: 'setQuizAnswer',
-      sheetSlug: slug,
-      payload: { answer: event.target.value },
-    })
+              update((data) => setQuizAnswer(data, slug, event.target.value, nowIso()))
             }
+            /* The LOG row, once per attempt, and `onBlur` is what an attempt
+               turns out to be: the reader stopped writing and left the field.
+
+               It used to be filed from `onChange`. That is the same handler,
+               so it read as the same event, and it was not: an attempt is a
+               unit of INTENT and a keystroke is a unit of CHANGE. Filing one
+               row per keystroke made `docs/manager-queries.md`'s own table
+               ("one row per attempt") false, and it filed every intermediate
+               draft — including text the reader wrote and then deleted.
+
+               That last part is why this is a defect and not an inefficiency.
+               `learner_event` has NO delete policy while the person belongs to
+               an organisation (§14.4.3, SECURITY.md) — by design, because a
+               withdrawn submittal has to survive. So a draft filed there can
+               never be retracted, while the answer in `record_state` can be
+               overwritten and erased. Keystroke rows put the one kind of text a
+               reader might want back into the one place it cannot be taken
+               from, and a manager timeline query prints them verbatim.
+
+               It also lost real events. `sync.ts` caps the queue at
+               MAX_QUEUED_EVENTS and drops from the FRONT, so a long answer
+               typed offline could evict a queued `signOff`. */
+            onFocus={() => { openedWith.current = answer }}
+            onBlur={() => fileAttempt(answer)}
           />
         </label>
 

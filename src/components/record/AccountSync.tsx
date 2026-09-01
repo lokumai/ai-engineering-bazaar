@@ -167,7 +167,27 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
       void client
         .from(PROFILES_TABLE)
         .upsert(row, { onConflict: 'id' })
-        .then(() => undefined)
+        .then(({ error }) => {
+          // The result is DISCARDED, and that is the decision rather than an
+          // omission — but it is read first, because discarding a value you
+          // never looked at and discarding one you did are different acts and
+          // only one of them survives review.
+          //
+          // Nothing here can act on a failure. The local record is already
+          // authoritative, the sync machine does not depend on this row, and
+          // the manager panel renders an absent profile honestly (`USER
+          // 1a2b3c4d`), so the outcome is a degraded display and never a lost
+          // fact. Retrying would mean a queue, a backoff and a second thing
+          // that can be owed — for a row that is rewritten on the next sign-in
+          // anyway.
+          //
+          // NOT a missing `.catch`: `PostgrestBuilder` sets
+          // `shouldThrowOnError` false by default and catches fetch failures
+          // itself, resolving with `{ error }`. There is no rejection to
+          // handle, so adding a `.catch` here would guard a path the library
+          // does not take.
+          void error
+        })
     }
 
     return () => {

@@ -67,7 +67,9 @@ function fakeRemote(row: RemoteEnvelope | null = null) {
       // wait for the network — so this exists to satisfy the port and to record
       // that no test here should be reaching it.
       deleted += 1
+      const removed = stored === null ? 0 : 1
       stored = null
+      return { rows: removed }
     },
   }
 

@@ -213,3 +213,24 @@ export async function serverEventKinds(fixture: Fixture, userId: string): Promis
   if (error) throw new Error(`serverEventKinds: ${error.message}`)
   return (data ?? []).map((r) => r.kind as string)
 }
+
+/**
+ * The log rows with their payloads, for the assertions `serverEventKinds`
+ * cannot make.
+ *
+ * A kind alone cannot answer either question §14.8.1 raises about the quick
+ * check: how MANY rows one attempt files, and whether the answer text is in
+ * them. Both are properties of the payload and the row count, so this returns
+ * the rows.
+ */
+export async function serverEvents(
+  fixture: Fixture,
+  userId: string,
+): Promise<{ kind: string; payload: Record<string, unknown> }[]> {
+  const { data, error } = await fixture.admin
+    .from('learner_event')
+    .select('kind, payload')
+    .eq('user_id', userId)
+  if (error) throw new Error(`serverEvents: ${error.message}`)
+  return (data ?? []) as { kind: string; payload: Record<string, unknown> }[]
+}

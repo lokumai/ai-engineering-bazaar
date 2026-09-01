@@ -258,7 +258,7 @@ the log.
 |---|---|---|---|
 | `id` | `uuid` | no | |
 | `org_id` | `uuid` | no | → `orgs.id`, cascade |
-| `created_by` | `uuid` | no | → `auth.users.id`, **no cascade** — an organisation's assignment must not vanish with its author |
+| `created_by` | `uuid` | no | → `auth.users.id`, **no cascade** — an organisation's assignment must not vanish with its author. This makes the author's account undeletable while the assignment exists; see **Removing a person**. |
 | `title` | `text` | no | |
 | `note` | `text` | yes | |
 | `due_at` | `timestamptz` | yes | Null = no deadline, so nothing is ever overdue |
@@ -592,6 +592,37 @@ from org_manager g join orgs o on o.id = g.org_id
 order by o.name, u.email;
 ```
 
+### Removing a person
+
 Removing a member's `memberships` row ends a manager's future visibility, not
 their past: `learner_event` rows remain, and only closing the account removes
 them.
+
+Closing the account itself cascades through `profiles`, `record_state`,
+`learner_event`, `memberships`, `org_manager` and `assignment_targets` — but
+**not** through `assignments.created_by`, which has no cascade on purpose. So:
+
+> **A person who created an assignment cannot be deleted while it exists.** The
+> delete is refused, and Supabase's admin API returns the error rather than
+> throwing, so a cleanup script that does not check the result will report
+> success and leave the account behind.
+
+This was found the hard way while validating this document: a fixture user who
+had authored an assignment survived its own teardown. Delete or reassign the
+assignment first:
+
+```sql
+-- What is standing in the way.
+select a.id, a.title, o.name as org
+from assignments a join orgs o on o.id = a.org_id
+where a.created_by = :user;
+
+-- Either hand it to another manager of the same organisation...
+update assignments set created_by = :new_owner where created_by = :user;
+
+-- ...or remove it, which cascades to its sheets and targets.
+delete from assignments where created_by = :user;
+```
+
+Reassigning is usually right: the assignment is the organisation's, and its
+author leaving does not make it less due.

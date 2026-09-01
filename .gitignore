@@ -26,8 +26,10 @@ next-env.d.ts
 public/course-images/
 
 # Written and re-added by `next dev` on every run (Next 16 agent rules).
-AGENTS.md
-CLAUDE.md
+# Anchored to the root on purpose: the working agreement in mini-courses/ is
+# authored, committed content and must not be swept up by these patterns.
+/AGENTS.md
+/CLAUDE.md
 
 # Playwright
 test-results/

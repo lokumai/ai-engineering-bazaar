@@ -64,6 +64,20 @@ graph TD
 loop breaks because the model stopped asking for tools. The absence of a tool call *is* the
 termination condition, and the text it produced instead is the answer.
 
+### How much of the deciding you hand over
+
+"Agent" is not a yes or no. It is a question of how much of the deciding you hand to the model.
+
+At one end is a plain LLM call: you decide everything, it just writes text. In the middle are
+**fixed workflows**, sometimes called state machines, where *you* wrote the steps and their order
+and the model only fills in each step. At the other end is a real agent, where the model chooses
+the steps, the tools and when to stop.
+
+Most production systems are not at the far end, and that is usually the right call. Less autonomy
+means fewer ways to go wrong. LangChain's
+[what is an agent](https://www.langchain.com/blog/what-is-an-agent) walks that spectrum properly,
+and it is worth reading before you decide how much rope to hand over.
+
 ## Where the loop actually runs
 
 This is the part worth being precise about, because it is where people imagine the model doing
@@ -193,6 +207,7 @@ Next: what happens when one agent becomes several.
 
 - [LLM agents](https://www.promptingguide.ai/research/llm-agents): a fuller survey of the same idea
 - [Agent components](https://www.promptingguide.ai/agents/components): the pieces, broken out one by one
+- [What is an agent?](https://www.langchain.com/blog/what-is-an-agent): agents, workflows and state machines placed on one autonomy spectrum
 - [smolagents](https://github.com/huggingface/smolagents): the framework used above
 - [Module 4: Tool Calling](4_tools.md): where the tool schema comes from
 - [Module 5: Memory](5_memory.md): the message stack the loop keeps growing

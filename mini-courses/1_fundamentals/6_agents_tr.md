@@ -49,6 +49,21 @@ graph TD
 Loop, model tool istemeyi bıraktığı için kırılıyor. Bir tool call'ın yokluğu, sonlanma koşulunun
 *kendisi*, ve onun yerine ürettiği metin de cevap.
 
+### Karar vermenin ne kadarını devrediyorsun
+
+"Agent" bir evet ya da hayır değil. Modele karar vermenin ne kadarını devrettiğinle ilgili bir
+soru.
+
+Bir uçta düz bir LLM çağrısı var: her şeye sen karar veriyorsun, o sadece metin yazıyor. Ortada
+**sabit workflow'lar**, bazen state machine de deniyor: adımları ve sıralarını *sen* yazdın, model
+sadece her adımı dolduruyor. Diğer uçta gerçek bir agent var: adımları, tool'ları ve ne zaman
+duracağını model seçiyor.
+
+Production sistemlerinin çoğu en uçta değil, ve bu genelde doğru karar. Daha az autonomy, ters
+gidebilecek daha az yol demek. LangChain'in
+[what is an agent](https://www.langchain.com/blog/what-is-an-agent) yazısı bu spektrumu düzgün
+anlatıyor, ve ne kadar ip vereceğine karar vermeden önce okumaya değer.
+
 ## Loop gerçekte nerede çalışıyor
 
 Bu kısımda net olmaya değer, çünkü insanların modele yapamayacağı şeyleri yaptırdığını hayal ettiği
@@ -181,6 +196,7 @@ Sırada bir agent'ın birden fazlaya dönüşmesi var.
 
 - [LLM agents](https://www.promptingguide.ai/research/llm-agents): aynı fikrin daha geniş bir incelemesi
 - [Agent components](https://www.promptingguide.ai/agents/components): parçalar, tek tek ayrılmış hâlde
+- [What is an agent?](https://www.langchain.com/blog/what-is-an-agent): agent'lar, workflow'lar ve state machine'ler tek bir autonomy spektrumunda
 - [smolagents](https://github.com/huggingface/smolagents): yukarıda kullanılan framework
 - [Modül 4: Tool Calling](4_tools_tr.md): tool schema'sının nereden geldiği
 - [Modül 5: Memory](5_memory_tr.md): loop'un büyütmeye devam ettiği mesaj yığını

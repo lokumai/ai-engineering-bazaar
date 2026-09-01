@@ -16,6 +16,11 @@ Agent-to-Agent protocols and coordination patterns beyond the Manager-Worker set
 **Topics this module will cover**:
 - A2A
 - Context delegation vs. subagent context delegation vs. messaging pool
+- Shared context against isolated context, and what each costs
+- Coordination failures, and how they are detected
+
+**References to start from**:
+- [Multi-agent systems](https://docs.langchain.com/oss/python/langchain/multi-agent)
 
 ## Tutorial Progress
 

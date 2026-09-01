@@ -162,6 +162,41 @@ index:
 Modules are written and finalized in **English first**. The Turkish `*_tr.md` files are
 translated only once the English is final, so each module is translated once.
 
+## Where a visual comes from
+
+Rule 5 of the manifest says pictures do a lot of the work, so a module without one is usually
+unfinished. There are four places to get one, roughly in order of how much work they cost.
+
+**1. Reuse a figure that already exists.** The cheapest and often the best. `agent-context.jpeg` was
+drawn for Module 4 and reused in Module 6 for one pass of the loop; `llm-context.jpeg` was drawn for
+Module 1 and reused in Module 5 as the message stack. A figure the reader has seen before does
+double duty: it teaches the new point and reminds them of the old one.
+
+**2. Draw one with the project templates.** For anything about context, messages, tools or agents,
+use the three-column system: `assets/empty-context-template.jpeg` and
+`assets/context-style-template.jpeg`, with ready-made prompts in
+`mini-courses/scratchpad/diagrams/`. Generated images go to the author to run, not to a tool here.
+
+**3. Mermaid, for anything that is a flow or a decision.** No generation step, renders on the site
+and on GitHub, and free to edit later. Default to this over a generated image when the content is a
+sequence, a branch or a small graph.
+
+**4. Search for one.** Entirely legitimate and often faster than drawing:
+
+- **Google Images** or a web search for an existing diagram of a standard idea. The king-and-queen
+  embedding picture and the pre-training-versus-fine-tuning diagram both came this way.
+- **An article** with a good figure, which also gives the module a reference worth linking.
+- **YouTube**, including **Shorts**, for a video that explains something better than prose will.
+  Always fetch the real title rather than guessing it.
+- **Memes and brain rot.** Not decoration, and not a joke at the reader's expense: a good meme
+  compresses an argument. Module 6 carries three, and each one states a different claim the prose
+  then unpacks. If a meme is doing that work, it earns its place.
+
+**Whatever the source, the caption still has to say something the picture cannot.** A found image
+with a caption that only names it is worse than no image. And check what the picture actually shows
+before writing about it: a figure labelled "unsupervised" needed a note that the precise term is
+self-supervised, and three memes in Module 6 had captions that threw their arguments away.
+
 ## Diagrams
 
 One visual system for the whole project. Templates:

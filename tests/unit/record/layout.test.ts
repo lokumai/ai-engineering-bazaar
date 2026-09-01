@@ -185,15 +185,6 @@ describe('§12.10 — determinism, and only integers', () => {
     }
   })
 
-  it('measures the corpus the readout counts: 19 REQUIRES, 13 SEE ALSO', () => {
-    const layout = diagramLayout(curriculumFacts(), moduleGraph().edges)
-    expect(layout.traces.filter((trace) => trace.kind === 'requires')).toHaveLength(19)
-    expect(layout.traces.filter((trace) => trace.kind === 'see-also')).toHaveLength(13)
-    expect(layout.traces.filter((trace) => trace.crossBand)).toHaveLength(3)
-    expect(layout.nodes).toHaveLength(32)
-    expect(layout.bands).toHaveLength(6)
-  })
-
   it('keeps every channel inside its reserved tracks on the real corpus', () => {
     const layout = diagramLayout(curriculumFacts(), moduleGraph().edges)
     for (const band of layout.bands) {

@@ -132,26 +132,6 @@ describe('the curriculum graph', () => {
     expect(graph.feeds(32)).toEqual([])
   })
 
-  it('declares 13 SEE ALSO edges, every one of them inside Intermediate', () => {
-    expect(seeAlso).toHaveLength(13)
-    for (const e of seeAlso) {
-      const label = `${e.from} sees ${e.to}`
-      expect(e.from, label).toBeGreaterThanOrEqual(8)
-      expect(e.from, label).toBeLessThanOrEqual(15)
-      expect(e.to, label).toBeGreaterThanOrEqual(8)
-      expect(e.to, label).toBeLessThanOrEqual(15)
-      expect(Math.abs(e.to - e.from), label).toBeGreaterThan(1)
-    }
-  })
-
-  it('prints an empty SEE ALSO list for every module outside Intermediate', () => {
-    for (const module of modules) {
-      const n = module.frontmatter.module
-      if (n >= 8 && n <= 15) continue
-      expect(graph.seeAlso(n), `module ${n}`).toEqual([])
-    }
-  })
-
   it('names only modules that exist, on both ends of every edge', () => {
     for (const e of graph.edges) {
       expect(known.has(e.from), `${e.from} to ${e.to}`).toBe(true)

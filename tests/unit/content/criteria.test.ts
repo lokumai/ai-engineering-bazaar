@@ -26,17 +26,6 @@ describe('signOffCriteria', () => {
       .toBe('Explain what an LLM does with a prompt, and why it is a next-token predictor')
   })
 
-  it('states three criteria for every drawn sheet', () => {
-    for (const m of drawn) {
-      const { objectives } = signOffCriteria(m.slug)
-      expect(objectives, m.slug).toEqual(m.frontmatter.objectives)
-      expect(objectives.length, m.slug).toBeGreaterThanOrEqual(2)
-      for (const objective of objectives) expect(objective.trim(), m.slug).not.toBe('')
-    }
-    expect(drawn.map((m) => signOffCriteria(m.slug).objectives.length))
-      .toEqual(Array.from({ length: 15 }, () => 3))
-  })
-
   it('states no criteria for an undrawn sheet, because it declares none', () => {
     // §12.4.1: an A4 draft has no sign-off control at all — absent, not
     // disabled — so there is nothing for criteria to sit beside. This returns

@@ -62,8 +62,12 @@ describe('the corpus cross-references itself', () => {
    * input is a comment rather than a test. Two shapes only — `NAME.md` and
    * `../DIR/NAME.md`.
    */
-  it('writes 163 internal markdown links, in two shapes', () => {
-    expect(links).toHaveLength(163)
+  it('writes every internal markdown link in one of two shapes', () => {
+    // The corpus is edited daily, so the count is not asserted: a link total is
+    // a fact about today's prose, not about the resolver. What is asserted is
+    // that the set is non-empty (an extractor that stopped working would make
+    // every loop below vacuous) and that every link it finds has a legal shape.
+    expect(links.length).toBeGreaterThan(0)
     for (const { source, href } of links) {
       expect(href, `${source} -> ${href}`)
         .toMatch(/^(?:\.\.\/[^/]+\/)?[^/]+\.md(?:#.*)?$/)
@@ -153,8 +157,9 @@ describe('the rendered sheets carry no file paths', () => {
   it('renders every path the app renders', () => {
     const kinds = (suffix: string) => pages.filter((p) => p.where.endsWith(suffix)).length
     expect(kinds('body')).toBe(loadAllModules().length)
-    expect(kinds('summary')).toBe(15)
     expect(kinds('introduction')).toBe(CATEGORIES.length)
+    // No assertion on the summary count: a `## Summary` section is optional
+    // authoring, so how many sheets carry one changes as modules are written.
   })
 
   /**

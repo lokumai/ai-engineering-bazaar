@@ -126,6 +126,14 @@ sides can see the whole board, so nothing moves.
 - Finished images go in `mini-courses/<category>/images/`. `assets/` is outside the corpus and
   never publishes.
 
+## Starting a new module
+
+Copy `mini-courses/_module_template.md`. It carries the required YAML frontmatter with every
+field explained, and an annotated body showing every structure the renderer understands:
+figures, mermaid, tables, tagged code, cross-references, the optional Quick Check and
+checklist, and the sequence link the app strips. It is never loaded as a module itself,
+because the loader only reads the six category directories.
+
 ## Checks before you call something done
 
 ```bash

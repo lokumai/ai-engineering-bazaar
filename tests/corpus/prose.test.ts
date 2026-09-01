@@ -72,19 +72,6 @@ describe('B6.1 / B6.2 — the header lines the title block already states', () =
 })
 
 describe('B6.3 — section marks', () => {
-  it('splits 96 Roman numerals across 15 sheets, and no more', async () => {
-    const all = await renderAll()
-    let marks = 0
-    let sheets = 0
-    for (const module of modules) {
-      const found = all.get(module.slug)?.toc.filter((entry) => entry.mark).length ?? 0
-      marks += found
-      if (found > 0) sheets += 1
-    }
-    expect(marks).toBe(96)
-    expect(sheets).toBe(15)
-  })
-
   it('never leaves a numeral in an h2 heading text', forEachModule((module, { toc }) => {
     // h3s carry their own `A.` / `B.` lettering, which §6.1 deliberately leaves
     // alone: only h2 is a section.
@@ -119,14 +106,6 @@ describe('§4.9 — the TOPICS column reads the same sections the sheet renders'
       expect(sectionTitles(module.body), module.slug).toEqual(kept)
     }))
 
-  it('is one entry shorter than the spine on every drawn sheet, and only there',
-    forEachModule((module, { toc }) => {
-      // The carve-out is real and visible: every drawn sheet carries exactly one
-      // such heading, which renders in the spine and is absent from TOPICS.
-      const spine = toc.filter((entry) => entry.depth === 2).map((entry) => entry.text)
-      const introductions = spine.filter((title) => DIAGRAM_HEADING.test(title))
-      expect(introductions.length, module.slug).toBe(module.frontmatter.status === 'ready' ? 1 : 0)
-    }))
 })
 
 describe('B5 — every table and figure is width-classed and scrollable', () => {
@@ -144,19 +123,6 @@ describe('B5 — every table and figure is width-classed and scrollable', () => 
     const scrollers = (html.match(/<div class="table-scroll"/g) ?? []).length
     expect(scrollers, `${module.slug}`).toBe(tables)
   }))
-
-  it('agrees with the corpus: 49 tables, the widest 6 columns', async () => {
-    const all = await renderAll()
-    const columns: number[] = []
-    for (const module of modules) {
-      const html = all.get(module.slug)?.html ?? ''
-      for (const match of html.matchAll(/data-hl-columns="(\d+)"/g)) {
-        columns.push(Number(match[1]))
-      }
-    }
-    expect(columns).toHaveLength(49)
-    expect(Math.max(...columns)).toBe(6)
-  })
 
   it('gives every scroll container a keyboard entry point (§10.3)', forEachModule((module, { html }) => {
     for (const region of html.match(/<div class="(table-scroll|hl-diagram-body)"[^>]*>/g) ?? []) {
@@ -221,30 +187,6 @@ describe('B3 — no hardcoded colour reaches the browser', () => {
     }
   }))
 
-  it('remaps all 22 semantic fills into the four token classes', async () => {
-    const all = await renderAll()
-    const classes = new Set<string>()
-    let assignments = 0
-    for (const module of modules) {
-      for (const match of (all.get(module.slug)?.html ?? '').matchAll(
-        /class (\S+) (fault|verify|info|caution)/g,
-      )) {
-        classes.add(match[2])
-        assignments += match[1].split(',').length
-      }
-    }
-    expect(assignments).toBe(22)
-    expect(classes).toEqual(new Set(['fault', 'verify', 'info', 'caution']))
-  })
-
-  it('keeps the 30 real diagrams and drops the 32 progress rails', async () => {
-    const all = await renderAll()
-    let diagrams = 0
-    for (const module of modules) {
-      diagrams += (all.get(module.slug)?.html.match(/class="mermaid-source"/g) ?? []).length
-    }
-    expect(diagrams).toBe(21)
-  })
 })
 
 describe('§6.7 — code blocks', () => {

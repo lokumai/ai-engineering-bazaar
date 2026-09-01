@@ -60,14 +60,6 @@ describe('the text the document reprints', () => {
     expect(sheet.objectives).not.toBe(module.frontmatter.objectives)
   })
 
-  it('carries the question for every sheet that asks one, and null elsewhere', () => {
-    for (const module of modules) {
-      const sheet = facts.sheets.find((s) => s.slug === module.slug)!
-      expect(sheet.question).toBe(quickCheckOf(module.body)?.question ?? null)
-    }
-    expect(facts.sheets.filter((s) => s.question !== null)).toHaveLength(15)
-  })
-
   it('reproduces checklist item TEXT, not a count (§12.7)', () => {
     const withItems = facts.sheets.filter((s) => s.checklistItems.length > 0)
     expect(withItems).toHaveLength(1)

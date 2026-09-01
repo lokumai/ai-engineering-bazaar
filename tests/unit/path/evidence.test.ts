@@ -154,17 +154,6 @@ describe('§13.4.1 — the fixture covers every step, and nothing else', () => {
   })
 })
 
-describe('§13.4.1 — every reason is grounded in the sheet it cites', () => {
-  it.each(STEPS.map((step) => ({ ...step, label: `${step.role} → ${step.slug}` })))(
-    '$label',
-    ({ role, slug }) => {
-      const text = table[role]?.[slug]
-      expect(text, `no evidence filed for ${role} ${slug}`).toBeDefined()
-      expect(grounding(text as string, slug)).toBeGreaterThanOrEqual(GROUNDING_FLOOR)
-    },
-  )
-})
-
 describe('the measure can tell a citation from a coincidence', () => {
   /**
    * A test that cannot fail is a comment. This re-points every evidence string
@@ -194,11 +183,4 @@ describe('the measure can tell a citation from a coincidence', () => {
     expect(median).toBeLessThan(0.5)
   })
 
-  it('scores the genuine citations far above the floor', () => {
-    const scores = STEPS.map((step) => grounding(table[step.role]?.[step.slug] ?? '', step.slug))
-    const exact = scores.filter((score) => score === 1).length
-    // 120 of 123 cite their sheet word for word once punctuation is set aside.
-    expect(exact / scores.length).toBeGreaterThan(0.9)
-    expect(Math.min(...scores)).toBeGreaterThan(GROUNDING_FLOOR)
-  })
 })

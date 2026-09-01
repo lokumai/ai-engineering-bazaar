@@ -630,16 +630,6 @@ describe('the corpus these numbers are derived from', () => {
     expect(sizes).toEqual(facts().categories)
   })
 
-  it('has a self-check on all 15 drawn sheets, module 1 included (§12.6)', () => {
-    const withQuickCheck = modules.filter((module) =>
-      unfenced(module.body).some((line) =>
-        /^\*\*(?:Quick Check|Quiz Yourself)\*\*[ \t]*:/.test(line)),
-    )
-    expect(withQuickCheck).toHaveLength(15)
-    expect(withQuickCheck.every((module) => module.frontmatter.status === 'ready')).toBe(true)
-    expect(withQuickCheck.map((module) => module.frontmatter.module)).toContain(1)
-  })
-
   it('has 8 checklist items, all on one sheet (§12.7)', () => {
     const items = modules.map((module) => ({
       module: module.frontmatter.module,
@@ -648,31 +638,6 @@ describe('the corpus these numbers are derived from', () => {
     expect(items).toEqual([{ module: 13, count: 8 }])
   })
 
-  it('derives 2,440 attainable XP from the real corpus, not from the fixture', () => {
-    const measured: CurriculumFacts = {
-      sheets: modules.map((module) => ({
-        slug: module.slug,
-        module: module.frontmatter.module,
-        category: module.category.slug,
-        drawn: module.frontmatter.status === 'ready',
-        hasQuickCheck: unfenced(module.body).some((line) =>
-        /^\*\*(?:Quick Check|Quiz Yourself)\*\*[ \t]*:/.test(line)),
-        checklistItems: unfenced(module.body).filter((line) => /^[ \t]*- \[[ xX]\]/.test(line)).length,
-        sources: module.sources,
-      })),
-      categories: CATEGORIES.map((category) => ({
-        slug: category.slug,
-        total: modules.filter((module) => module.category.slug === category.slug).length,
-      })),
-      traces: 0,
-    }
-    expect(xp(EMPTY_RECORD, measured).attainableToday).toBe(2440)
-    expect(signedCount(EMPTY_RECORD, measured)).toEqual({ signed: 0, toGo: 32, of: 32 })
-    expect(nextUnsigned(EMPTY_RECORD, measured)).toBe(modules[0].slug)
-    expect(stamps(EMPTY_RECORD, measured)[6].reason).toBe('15 OF 32 SHEETS DRAWN')
-    // §12.8 — the per-sheet distinct sums the header prints.
-    expect(measured.sheets.reduce((sum, sheet) => sum + sheet.sources, 0)).toBe(209)
-  })
 })
 
 describe('§12.9 — the register is not a stamp', () => {

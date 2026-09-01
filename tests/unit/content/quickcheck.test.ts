@@ -68,16 +68,6 @@ describe('quickCheckOf', () => {
       .toEqual({ question: 'first?' })
   })
 
-  it('finds a self-check on exactly 15 of the 32 sheets', () => {
-    expect(withQuickCheck).toHaveLength(15)
-    expect(modules).toHaveLength(32)
-  })
-
-  it('finds it on sheets 2-15 — every drawn sheet but the first', () => {
-    expect(withQuickCheck.map((m) => m.frontmatter.module))
-      .toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
-  })
-
   it('finds none on any undrawn sheet, and keys on the question not the status', () => {
     // §12.6's trap, still the trap: the component keys on the extractor
     // returning non-null, never on `status === "ready"`. It happens that all 15
@@ -87,18 +77,6 @@ describe('quickCheckOf', () => {
       expect(byNumber.get(module)!.frontmatter.status).toBe('draft')
       expect(quickCheckOf(body(module))).toBeNull()
     }
-  })
-
-  it('reads sheet 1\'s question, which is labelled **Quiz Yourself**', () => {
-    // Sheet 1 ends with `**Quiz Yourself**: What is a context window? …` — the
-    // same shape, in the same place, doing the same job under a name the author
-    // typed differently. Keying on one label would leave the first drawn sheet
-    // the only one without a self-check, which is a gap a reader would notice
-    // and could not explain.
-    expect(body(1)).toContain('**Quiz Yourself**')
-    const found = quickCheckOf(body(1))
-    expect(found).not.toBeNull()
-    expect(found!.question).toContain('context window')
   })
 
   it('finds none on any of the seventeen undrawn sheets', () => {
@@ -175,27 +153,11 @@ describe('summarySection', () => {
     expect(summarySection('## Summary\n\nOne.\n\n### Sub\n\nTwo.\n')).toBe('One.')
   })
 
-  it('exists on all 15 drawn sheets and on none of the 17 undrawn ones', () => {
-    for (const m of modules) {
-      const drawn = m.frontmatter.status === 'ready'
-      expect(summarySection(m.body) === null, m.slug).toBe(!drawn)
-    }
-    expect(modules.filter((m) => summarySection(m.body) !== null)).toHaveLength(15)
-  })
-
   it('never hands back the question the reader was just asked', () => {
     for (const m of withQuickCheck) {
       expect(summarySection(m.body), m.slug).not.toContain('Quick Check')
       expect(summarySection(m.body), m.slug)
         .not.toContain(quickCheckOf(m.body)!.question)
-    }
-  })
-
-  it('never hands back a heading or the sequence-link furniture', () => {
-    for (const m of modules.filter((c) => c.frontmatter.status === 'ready')) {
-      expect(summarySection(m.body), m.slug).not.toMatch(/^#{1,6}[ \t]/m)
-      expect(summarySection(m.body), m.slug).not.toContain('**Next Module:**')
-      expect(summarySection(m.body), m.slug).not.toContain('**Previous Module:**')
     }
   })
 

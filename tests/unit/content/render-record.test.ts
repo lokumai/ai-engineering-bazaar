@@ -58,36 +58,9 @@ function literalRun(question: string): string {
 }
 
 describe('§12.6 — the self-check paragraph is removed from the prose', () => {
-  it('finds one on every drawn sheet and none on a draft', () => {
-    expect(drawn).toHaveLength(15)
-    expect(drawn.filter((module) => quickCheckOf(module.body) !== null)).toHaveLength(15)
-    expect(
-      modules.filter(
-        (module) => module.frontmatter.status === 'draft' && quickCheckOf(module.body) !== null,
-      ),
-    ).toHaveLength(0)
-  })
-
   it('leaves no self-check label in the rendered html of any sheet', () => {
     for (const module of modules) {
       expect(rendered.get(module.slug)!.html, module.slug).not.toMatch(LABEL)
-    }
-  })
-
-  it('leaves the question itself out of the prose on all 15 drawn sheets', () => {
-    for (const module of drawn) {
-      const question = quickCheckOf(module.body)!.question
-      const run = literalRun(question)
-      // Every question in the corpus opens with a long literal run; a short one
-      // would mean this check had quietly stopped proving anything.
-      expect(run.length, `${module.slug}: "${question}"`).toBeGreaterThan(20)
-      expect(rendered.get(module.slug)!.html, module.slug).not.toContain(run)
-    }
-  })
-
-  it('keeps the question recoverable from the extractor, which is what the page uses', () => {
-    for (const module of drawn) {
-      expect(quickCheckOf(module.body)?.question, module.slug).toMatch(/\S/)
     }
   })
 

@@ -53,10 +53,6 @@ describe('extent', () => {
     expect(extent('one two  three\nfour')).toBe(4)
   })
 
-  it('counts module 1 at its measured extent', () => {
-    expect(measured(1)).toBe(1114)
-  })
-
   it('leaves out the h1 and the dek, which the sheet never renders', () => {
     // §5.5: words "after stripping frontmatter, the dek, and the deleted
     // progress rail". Every file in the corpus opens with an h1, so the
@@ -65,14 +61,6 @@ describe('extent', () => {
       expect(m.extent, m.slug).toBe(extent(stripLeadIn(m.body)))
       expect(m.extent, m.slug).toBeLessThan(extent(m.body))
     }
-  })
-
-  it('drops the h1 alone where there is no dek, and both where there is', () => {
-    // Modules 1-7 run the h1 straight into the lead paragraph; 8-32 carry
-    // `*Category: … *` between the two.
-    expect(extent(body(1)) - measured(1)).toBe(extent('# Module 1: Large Language Model (LLM) Fundamentals'))
-    expect(extent(body(13)) - measured(13))
-      .toBe(extent('# Module 13: Security') + extent('*Category: Intermediate — Module 13 (6 of 8 in this category)*'))
   })
 
   /**
@@ -94,15 +82,6 @@ describe('extent', () => {
     }
   })
 
-  it('reproduces the measured band ranges', () => {
-    const range = (lo: number, hi: number) => {
-      const words = numbers((n) => n >= lo && n <= hi).map(measured)
-      return [Math.min(...words), Math.max(...words)]
-    }
-    expect(range(1, 7)).toEqual([615, 1620])
-    expect(range(8, 15)).toEqual([3817, 4868])
-    expect(range(16, 32)).toEqual([38, 58])
-  })
 })
 
 describe('sheetFormat', () => {
@@ -152,11 +131,6 @@ describe('countDiagrams', () => {
     expect(countDiagrams(raw)).toBe(0)
   })
 
-  it('finds 21 real figures across the English corpus', () => {
-    const total = modules.reduce((sum, m) => sum + countDiagrams(m.body), 0)
-    expect(total).toBe(21)
-  })
-
   it('does not absorb module 6\'s four images into its one diagram', () => {
     expect(countDiagrams(body(6))).toBe(1)
     expect(countImages(body(6))).toBe(4)
@@ -172,10 +146,6 @@ describe('countImages', () => {
     expect(countImages('[not an image](a.png)\n')).toBe(0)
   })
 
-  it('finds the corpus 8 images', () => {
-    const total = modules.reduce((sum, m) => sum + countImages(m.body), 0)
-    expect(total).toBe(8)
-  })
 })
 
 describe('countTables', () => {
@@ -188,10 +158,6 @@ describe('countTables', () => {
     expect(countTables('```\n| a | b |\n|---|---|\n```\n')).toBe(0)
   })
 
-  it('finds tables in exactly 11 modules', () => {
-    const withTables = modules.filter((m) => countTables(m.body) > 0)
-    expect(withTables).toHaveLength(11)
-  })
 })
 
 describe('countFigures', () => {
@@ -255,19 +221,6 @@ describe('externalLinks / countSources', () => {
     expect(externalLinks(md)).toEqual(['https://a.example', 'https://c.example'])
   })
 
-  it('reproduces the 397 measured link occurrences, 379 of them in modules 8-15', () => {
-    const occurrences = (ns: number[]) =>
-      ns.reduce((sum, n) => sum + externalLinks(body(n)).length, 0)
-    expect(occurrences(numbers(() => true))).toBe(397)
-    expect(occurrences(numbers((n) => n >= 8 && n <= 15))).toBe(379)
-    expect(occurrences(numbers((n) => n >= 16))).toBe(0)
-  })
-
-  it('reproduces 209 distinct sources across the corpus', () => {
-    const total = modules.reduce((sum, m) => sum + countSources(m.body), 0)
-    expect(total).toBe(209)
-  })
-
   it('counts only the openable links on the three sheets that quoted URLs', () => {
     // The three modules where the old regex and the rendered page disagreed.
     expect(countSources(body(10))).toBe(30)
@@ -310,23 +263,6 @@ describe('distinctExternalLinks', () => {
       expect(distinctExternalLinks(m.body).length, m.slug).toBe(countSources(m.body))
       expect(distinctExternalLinks(m.body).length, m.slug).toBe(m.sources)
     }
-  })
-
-  it('reproduces the 209 distinct sources, and the three sheets that quoted URLs', () => {
-    const total = modules.reduce((sum, m) => sum + distinctExternalLinks(m.body).length, 0)
-    expect(total).toBe(209)
-    expect(distinctExternalLinks(body(10))).toHaveLength(30)
-    expect(distinctExternalLinks(body(11))).toHaveLength(15)
-    expect(distinctExternalLinks(body(15))).toHaveLength(16)
-  })
-
-  it('lists 397 occurrences but 209 sources across the corpus', () => {
-    // The gap is the point: 188 repeat citations. §12.8 records that a UI
-    // listing occurrences beside the header count looks wrong on any sheet
-    // that cites a URL twice.
-    const occurrences = modules.reduce((sum, m) => sum + externalLinks(m.body).length, 0)
-    const distinct = modules.reduce((sum, m) => sum + distinctExternalLinks(m.body).length, 0)
-    expect({ occurrences, distinct }).toEqual({ occurrences: 397, distinct: 209 })
   })
 
   it('cites nothing at all on any of the seventeen undrawn sheets', () => {

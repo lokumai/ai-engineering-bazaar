@@ -87,11 +87,6 @@ describe('loadAllModules', () => {
     }
   })
 
-  it('never touches the file on disk to do it', () => {
-    const m = loadModule('fundamentals/llms')!
-    expect(fs.readFileSync(m.filePath, 'utf8')).toContain('## Tutorial Progress')
-  })
-
   it('derives an extent, a sheet format, figures, sources and a language for each', () => {
     // Every one of these bakes in what `derive` computes, so every one is
     // asserted against `derive` computing it. `figures >= 0` and

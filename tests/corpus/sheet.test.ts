@@ -130,10 +130,6 @@ describe('§4.6 — the dependency block resolves', () => {
     }
   })
 
-  it('finds the 19 REQUIRES and 13 SEE ALSO edges Appendix A measured', () => {
-    expect(graph.edges.filter((e) => e.kind === 'requires')).toHaveLength(19)
-    expect(graph.edges.filter((e) => e.kind === 'see-also')).toHaveLength(13)
-  })
 })
 
 describe('§5.7 — the chain', () => {

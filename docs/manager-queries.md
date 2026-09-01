@@ -89,7 +89,7 @@ write to it.
 |---|---|---|---|
 | `id` | `uuid` | no | `gen_random_uuid()` |
 | `name` | `text` | no | Shown on the join screen |
-| `join_domain` | `text` | yes | **Unique.** e.g. `intellica.net`. Anyone whose verified email is on this domain **can** join — they still have to click. Null means invite-only, and several organisations may be null at once. |
+| `join_domain` | `text` | yes | **Unique.** e.g. `intellica.net`. Anyone whose **verified** address is on this domain **can** join — they still have to click. Verified means the mailbox was proven: an unconfirmed address gets no session at all, and both join policies additionally require the `email_verified` claim, which closes the OAuth case where a provider reports an address it has not checked. Null means invite-only, and several organisations may be null at once. |
 | `created_at` | `timestamptz` | no | |
 
 No insert or update policy: creating an organisation is a by-hand operation.
@@ -566,7 +566,10 @@ order by abs(extract(epoch from (r.updated_at - r.saved_at))) desc;
 Neither of these has a policy that allows it from the app, deliberately.
 
 ```sql
--- A new organisation, with automatic joining for its own email domain.
+-- A new organisation, with automatic joining for its own email domain. Only put
+-- a domain here that you control: it is a standing invitation to anyone holding
+-- a verified address on it. For a domain you do not control, leave it null and
+-- use pending_invites.
 -- `join_domain` is unique, so this is written to be safe to re-run: without the
 -- conflict clause a second attempt fails on `orgs_join_domain_key` rather than
 -- doing nothing.

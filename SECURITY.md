@@ -123,6 +123,42 @@ Any one of these makes it a blocker rather than a preference:
 Until then, the honest description is: a known, bounded risk, accepted
 deliberately by a team that is also the entire audience.
 
+## Joining an organisation by email domain
+
+`orgs.join_domain` lets anyone whose address is on that domain join. The
+question that matters is what stops somebody typing an address they do not own.
+
+**The answer is possession of the mailbox, and it was tested rather than
+assumed.** Signing up as `fake.email@intellica.net` with the publishable key
+creates the user and returns **no session**; signing in then answers
+`Email not confirmed` and also returns no session. No session means no JWT, and
+no JWT satisfies any policy. The emailed link is the proof, and the link goes to
+the real mailbox.
+
+Both join policies additionally require the session's address to be **verified**
+(`0004_phase4_verified_email.sql`), not merely present. The email path already
+guaranteed that; the OAuth path did not. A provider hands over an address along
+with its own opinion of whether it checked it, and GitHub will report a primary
+address it has not verified — a real account with an unproven address. Without
+this clause, that would have been enough to join an organisation.
+
+A missing claim counts as unverified. A token shape the policy does not
+recognise must not be the one that gets in.
+
+> **Never enable Supabase's email autoconfirm while `join_domain` is in use.**
+> Autoconfirm makes the server treat every address as confirmed without checking
+> anything, so `email_verified` becomes `true` for an address nobody proved, and
+> the policy above cannot tell the difference. Anyone could then join by typing
+> an address on the domain. The setting is `Authentication → Providers → Email →
+> Confirm email`; it must stay **on** (that is, autoconfirm off).
+>
+> This is worth stating because turning it off is a tempting shortcut for
+> testing. The account tests do not need it: they mint links with the service
+> key instead.
+
+If a domain is not under your control, do not put it in `join_domain` — use
+`pending_invites` and name addresses one at a time.
+
 ## What is already sound
 
 Stated so that a future audit does not have to re-derive it.

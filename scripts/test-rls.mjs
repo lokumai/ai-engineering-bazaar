@@ -399,6 +399,61 @@ try {
     asLoner.from('memberships').insert({ org_id: fx.orgA, user_id: fx.ids.loner })
   )
 
+  console.log('\n§14.5 — an UNVERIFIED address may not join (0004)')
+
+  // The one assertion in this suite that does NOT go through PostgREST, and the
+  // reason is that the input cannot be produced through it: Supabase issues no
+  // session for an unconfirmed email, so there is no way to hold a real JWT
+  // whose `email_verified` is false. The case that matters is OAuth — GitHub
+  // will report a primary address it has not verified, and Supabase then issues
+  // a session for a real account with an unproven address.
+  //
+  // So the POLICY EXPRESSION is evaluated directly, against claims set the way
+  // PostgREST sets them. It exercises the same `with check` clause; what it does
+  // not exercise is the transport, which the positive cases above cover.
+  {
+    const domain = DOMAIN_A
+    const uid = fx.ids.loner
+    const org = fx.orgA
+    const claims = (verified) =>
+      JSON.stringify({
+        sub: uid,
+        role: 'authenticated',
+        email: `probe@${domain}`,
+        email_verified: verified,
+      })
+
+    // First prove the fixture is right: with a verified claim the insert lands.
+    // Without this, a policy that refused EVERYTHING would pass the real test.
+    const tryJoin = (verified) => {
+      try {
+        // The delete runs as the owner, BEFORE the role switch: by this point in
+        // the suite the loner has already joined through the invite path, and a
+        // primary-key collision would read as a refusal the policy never made.
+        // Everything is rolled back, so the fixture is untouched either way.
+        sql(`begin;
+             delete from memberships where org_id = '${org}' and user_id = '${uid}';
+             set local role authenticated;
+             set local request.jwt.claims = '${claims(verified)}';
+             insert into memberships (org_id, user_id) values ('${org}', '${uid}');
+             rollback;`)
+        return 'allowed'
+      } catch (err) {
+        const message = String(err.message)
+        return /row-level security/i.test(message) ? 'refused' : `error: ${message}`
+      }
+    }
+
+    // Called once each: the positive case is what proves the negative one is a
+    // policy decision rather than a policy that refuses everything.
+    const withVerified = tryJoin(true)
+    const withoutVerified = tryJoin(false)
+    record('a verified address on the join domain IS allowed', withVerified === 'allowed',
+      withVerified === 'allowed' ? '' : `got ${withVerified}`)
+    record('an UNVERIFIED address on the same domain is refused', withoutVerified === 'refused',
+      withoutVerified === 'refused' ? '' : `got ${withoutVerified} - a claimed address was enough`)
+  }
+
   console.log('\n§14.4.1 / §14.4.4 — what the client may never do')
 
   await expectRefused(

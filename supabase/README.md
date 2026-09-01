@@ -15,6 +15,8 @@ up yet degrades the account and panel features; it never stops anyone reading.
 |---|------|--------------|
 | 1 | `migrations/0001_phase4_schema.sql` | §14.2 — the ten tables and the two indexes |
 | 2 | `migrations/0002_phase4_rls.sql` | §14.4 — `enable row level security` on all ten, then the 22 policies |
+| 3 | `migrations/0003_phase4_erase.sql` | §14.6 — the one `delete` policy on `learner_event`, for a reader who belongs to no organisation. Without it §14.6's first row is unperformable by anyone |
+| 4 | `migrations/0004_phase4_verified_email.sql` | §14.5 — replaces the two join policies so they require a **verified** address, not merely a claimed one. Closes the OAuth case where a provider reports an address it has not checked |
 
 **Order is not optional.** Between step 1 and step 2 the tables exist with RLS
 off, which means any client holding the anon key can read and write every row.
@@ -40,6 +42,9 @@ code until the custom domain resolves.
 2. Paste the whole of `migrations/0001_phase4_schema.sql`. Run. Expect
    `Success. No rows returned`.
 3. New query. Paste the whole of `migrations/0002_phase4_rls.sql`. Run.
+4. New query. Paste `migrations/0003_phase4_erase.sql`. Run.
+5. New query. Paste `migrations/0004_phase4_verified_email.sql`. Run. It drops
+   and recreates two policies, so it is safe to re-apply.
 4. Verify (below).
 
 Paste each file **whole**. Both are single scripts and the SQL editor runs a
@@ -57,6 +62,8 @@ export SUPABASE_DB_URL='postgresql://postgres:<password>@db.<ref>.supabase.co:54
 
 psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/0001_phase4_schema.sql
 psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/0002_phase4_rls.sql
+psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/0003_phase4_erase.sql
+psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/0004_phase4_verified_email.sql
 ```
 
 `-v ON_ERROR_STOP=1` matters: without it `psql` carries on past a failed
@@ -66,7 +73,9 @@ worked. Wrap a run in a transaction if you want all-or-nothing:
 ```sh
 psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 --single-transaction \
   -f supabase/migrations/0001_phase4_schema.sql \
-  -f supabase/migrations/0002_phase4_rls.sql
+  -f supabase/migrations/0002_phase4_rls.sql \
+  -f supabase/migrations/0003_phase4_erase.sql \
+  -f supabase/migrations/0004_phase4_verified_email.sql
 ```
 
 Keep the password out of your shell history — prefer `.pgpass` or reading it

@@ -2,14 +2,17 @@ import { mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { type Page, expect, test } from '@playwright/test'
+import { REGISTER_ROWS } from '@/app/profile/page'
 import {
   QUARANTINE_KEY,
   RECORD_KEY,
   type RecordData,
   type RecordSeed,
   type SheetSeed,
+  openRegisterRow,
   readRawRecord,
   readRecord,
+  registerReading,
   seedRecord,
   slugOf,
 } from './record'
@@ -508,45 +511,375 @@ test('§12.10.6 — CONTINUE is absent when there is no next sheet', async ({ pa
 // §12.11 — THE PROFILE SHEET
 // ===========================================================================
 
-test('§12.11 — the profile sheet prints all eleven sections, in order', async ({ page }) => {
+/**
+ * §16.4 — the register, from the outside.
+ *
+ * **What these three tests replace.** One assertion pinned the eleven panel ids
+ * as an ordered sequence off `main section.hl-panel h2.hl-panel-title`. §16
+ * folded nine of those panels into `<details>` rows and moved two into the
+ * drafter block, so that selector now matches a different set of things and the
+ * sequence it pinned no longer exists. Order is still part of the
+ * specification, so it is still asserted as a sequence — against
+ * `REGISTER_ROWS`, the table the page renders from, rather than against a
+ * second hand-typed copy of it that could agree with a broken page.
+ *
+ * **Importing that table is a deliberate exception to this suite's own rule.**
+ * `sheets.ts` and `alias.spec.ts`'s `MARK_ORDER` are typed out because a
+ * fixture derived from the code under test can only prove the code agrees with
+ * itself. The ids here are the opposite case: they are not a claim about what
+ * the register SHOULD hold, they are the identifiers roughly twenty assertions
+ * in this suite already address by name (`section[aria-labelledby="storage"]`
+ * and its four siblings) and that two in-tree links point at. A second copy of
+ * that list in a spec file would drift from the page silently, and the
+ * consequence of drift is not a red test — it is a dead anchor that no gate
+ * catches. What is asserted independently is the SHAPE: ten rows, all closed,
+ * each stating a reading, the drafter block the only thing open.
+ */
+
+/** §16.4.2's house spelling for "no reading taken yet". */
+const NO_READING = '--'
+
+/**
+ * §16.4.1 — what a summary line is allowed to say: a count, `--`, or a named
+ * state. Never nothing, and never a sentence of prose.
+ *
+ * Three alternatives rather than one regular expression, because they are three
+ * different claims and a failure should say which one it is. The reading is read
+ * with `innerText`, so `.hl-register-reading`'s `text-transform: uppercase` has
+ * already been applied — the components write `Software Engineer` and the reader
+ * sees `SOFTWARE ENGINEER`, which is why the named-state branch is an uppercase
+ * test and prose fails it.
+ */
+function isReading(text: string): boolean {
+  if (text === NO_READING) return true
+  if (/\d/.test(text)) return true
+  return /^[A-Z][A-Z0-9 ·'’,./()+-]*$/.test(text)
+}
+
+interface RowSnapshot {
+  /** The summary reading, as the reader sees it. */
+  reading: string
+  /**
+   * Everything the row's body states, whether the row is open or closed.
+   *
+   * Text alone is not enough and the reason is `keyboard`: its body is a
+   * checkbox and a paragraph, so switching single-character keys off changes
+   * what the row reports without changing one character of its text. So the
+   * signature carries the body's text AND the state of every control and every
+   * accessible name in it — `checked`, `aria-label`, `data-active`,
+   * `data-state`. A closed `<details>` keeps its subtree in the DOM and its
+   * islands mounted, so all of it can be read without opening anything, which
+   * is what lets these tests compare two loads rather than nine gestures.
+   */
+  body: string
+}
+
+function registerSnapshot(page: Page): Promise<Record<string, RowSnapshot>> {
+  return page.evaluate(() => {
+    const out: Record<string, { reading: string; body: string }> = {}
+    for (const row of document.querySelectorAll('section.hl-register-row')) {
+      const id = row.getAttribute('aria-labelledby') ?? ''
+      const reading = row.querySelector('.hl-register-reading') as HTMLElement | null
+      const body = row.querySelector('.hl-register-body')
+      const parts = [(body?.textContent ?? '').replace(/\s+/g, ' ').trim()]
+      const stateful = body?.querySelectorAll(
+        'input, [aria-label], [data-active], [data-state], [data-hl-selected]',
+      )
+      for (const node of stateful ?? []) {
+        parts.push(
+          [
+            node.tagName,
+            node.getAttribute('type') ?? '',
+            node.getAttribute('value') ?? '',
+            node.getAttribute('aria-label') ?? '',
+            node.getAttribute('data-active') ?? '',
+            node.getAttribute('data-state') ?? '',
+            node instanceof HTMLInputElement ? String(node.checked) : '',
+          ].join(':'),
+        )
+      }
+      out[id] = { reading: (reading?.innerText ?? '').trim(), body: parts.join('\n') }
+    }
+    return out
+  })
+}
+
+/**
+ * The register once it has stopped changing.
+ *
+ * Every reading is channel B (§12.2): the prerendered summary prints `--`, the
+ * store answers after the hydration commit, and two of the readings —
+ * `STORED VALUES` and `STORAGE` — land later still, from an effect and from
+ * `navigator.storage`. A snapshot taken on the line after `goto` compares one
+ * page mid-hydration with another and reports a difference that is the design
+ * working. So the whole register is read repeatedly until two consecutive reads
+ * agree, which is a property of the page rather than a list of strings to wait
+ * for.
+ */
+async function settledRegister(page: Page): Promise<Record<string, RowSnapshot>> {
+  await expect(page.locator('.hl-readout[data-hydrated="true"]').first()).toBeAttached()
+
+  let previous = ''
+  let snapshot: Record<string, RowSnapshot> = {}
+  await expect
+    .poll(
+      async () => {
+        snapshot = await registerSnapshot(page)
+        const now = JSON.stringify(snapshot)
+        const settled = now === previous
+        previous = now
+        return settled
+      },
+      { message: 'the register never stopped changing' },
+    )
+    .toBe(true)
+
+  return snapshot
+}
+
+test('§16.4 — the drafter block arrives open, and every register row arrives closed', async ({
+  page,
+}) => {
   const problems = watchPage(page)
   await seedRecord(page, SEEDED)
   await page.goto('/profile/')
 
-  // §12.11 enumerates eight; the ninth is §12.16's SC 2.1.4 off switch, which
-  // needs a home a reader can reach without using a shortcut. The tenth is
-  // §14.7's account panel, placed immediately BEFORE storage and not after it:
-  // one says where the record is kept and the other says how reliably this
-  // browser will keep it, and a reader deciding whether they need an account is
-  // reading those two answers together. Order is part of the specification, so
-  // the ids are compared as a sequence.
-  expect(
-    await page
-      .locator('main section.hl-panel h2.hl-panel-title')
-      .evaluateAll((nodes) => nodes.map((node) => node.id)),
-  ).toEqual([
-    'identity',
-    'readout',
-    'uptime',
-    'stamps',
-    'submittals',
-    // §14.7's two, contributed by `AuthPanels` as its own panels rather than
-    // wrapped in one: the account, and the organisations that account belongs
-    // to. Their ids are the component's own.
-    'hl-account-head',
-    'hl-orgs-head',
-    'storage',
-    'raw',
-    'data',
-    'keyboard',
-  ])
+  // §16.1 — the one block that arrives open, and it is open because it is not a
+  // disclosure at all: both of the controls a reader comes here for are on
+  // screen with nothing clicked. `IdentityPanel`'s field and §16.2's mark row
+  // are asserted rather than the box, because they are what "open" is for.
+  await expect(page.locator('h2#drafter')).toBeVisible()
+  await expect(page.getByRole('textbox', { name: /Name or initials/ })).toBeVisible()
+  await expect(page.locator('label[data-hl-mark]').first()).toBeVisible()
+  // …and it is not itself inside a fold, which is the other half of "open".
+  await expect(page.locator('details .hl-drafter')).toHaveCount(0)
 
-  // §12.1.2's quarantine note renders nothing when there is nothing to report,
-  // which is why the eight above are exactly eight and not nine plus a banner.
+  const rows = page.locator('main section.hl-register-row')
+  await expect(rows).toHaveCount(REGISTER_ROWS.length)
+
+  const state = await rows.evaluateAll((nodes) =>
+    nodes.map((node) => ({
+      row: node.getAttribute('aria-labelledby'),
+      // The `h2` lives inside the `<summary>` so the panel's id stays on a
+      // heading at the level it already occupied (§16.7).
+      heading: node.querySelector(':scope > details > summary > h2')?.id ?? null,
+      open: node.querySelector(':scope > details')?.hasAttribute('open') ?? null,
+    })),
+  )
+
+  // Order is part of the specification (§16.4), so the ids are compared as a
+  // sequence, and the heading ids are compared to the same sequence: a row
+  // named by an id that is not on a heading is a dead anchor.
+  const expected = REGISTER_ROWS.map((row) => row.id)
+  expect(state.map((row) => row.row)).toEqual(expected)
+  expect(state.map((row) => row.heading)).toEqual(expected)
+
+  // §16.4.3 — which rows were open is not remembered, so every load is every
+  // row closed. Reported as the offending rows rather than as a count.
+  expect(state.filter((row) => row.open !== false).map((row) => row.row)).toEqual([])
+
+  // §12.1.2's quarantine note renders nothing when there is nothing to report.
   await expect(page.getByText('NOT READ', { exact: false })).toHaveCount(0)
 
   expect(problems.consoleErrors).toEqual([])
   expect(problems.failedRequests).toEqual([])
+})
+
+test('§16.4.1 — every closed row states a reading, and not one of them is blank', async ({
+  page,
+}) => {
+  await seedRecord(page, SEEDED)
+  await page.goto('/profile/')
+
+  const snapshot = await settledRegister(page)
+
+  // A property over whatever the page rendered, not a list of expected strings:
+  // the point of §16.4.1 is that no row may be foldable without reporting
+  // something, and a list would have to be rewritten by whoever breaks it.
+  expect(Object.keys(snapshot).sort()).toEqual(REGISTER_ROWS.map((row) => row.id).sort())
+  for (const { id } of REGISTER_ROWS) {
+    const reading = snapshot[id].reading
+    expect(reading, `${id} states nothing while closed`).not.toBe('')
+    expect(isReading(reading), `${id}'s reading is prose, not a reading: "${reading}"`).toBe(true)
+  }
+})
+
+// ---------------------------------------------------------------------------
+// §16.4.1 — the property the redesign is paid for with
+// ---------------------------------------------------------------------------
+
+/** Today, in UTC, which is the basis `store.ts` stamps `days` in (§12.1.4). */
+const TODAY = new Date().toISOString().slice(0, 10)
+
+function daysBack(count: number): string {
+  return new Date(Date.parse(`${TODAY}T00:00:00.000Z`) - count * 86_400_000)
+    .toISOString()
+    .slice(0, 10)
+}
+
+/** A record that has recorded nothing at all beyond a name. */
+const NOTHING_RECORDED: RecordSeed = { identity: { name: READER }, days: [] }
+
+/**
+ * The opposite record, and it is maximal on purpose: every drawn sheet signed
+ * off, a submittal filed, a role stated, three of the last fourteen days
+ * recorded, and single-character keys switched off. Every row that reports
+ * reader state reports something different here than it does above, which is
+ * what makes the comparison below able to fail.
+ *
+ * Every drawn sheet rather than three, because §7.4's subsystem stamps are only
+ * earned when a whole category is signed off: with three sheets signed the
+ * stamps row reads `0 OF 9 EARNED` in both records while its body's live counts
+ * move, and the gate below would then have nothing to say about the one row
+ * whose body says most.
+ */
+const EVERYTHING_RECORDED: RecordSeed = (() => {
+  const sheets: Record<string, SheetSeed> = {}
+  for (const sheet of SHEETS) {
+    if (!sheet.drawn) continue
+    sheets[slugOf(sheet)] = {
+      signedOff: '2026-08-11T15:45:00.000Z',
+      signedRevision: 'cd34ef5',
+      reachedEnd: true,
+      sources: ['https://owasp.org/www-project-top-10-for-large-language-model-applications/'],
+    }
+  }
+  sheets['intermediate/security'] = {
+    ...sheets['intermediate/security'],
+    submittals: [
+      {
+        owner: 'cevheri',
+        repo: 'hidden-line',
+        url: 'https://github.com/cevheri/hidden-line',
+        commit: '9f2c1ab',
+        note: 'A prompt-injection harness for the sheet 13 criteria.',
+        at: '2026-08-11T16:00:00.000Z',
+      },
+    ],
+  }
+  return {
+    identity: { name: READER, markSeed: 'a1b2c3d4', mark: 'datum', role: 'software-engineer' },
+    sheets,
+    days: [daysBack(2), daysBack(1), TODAY],
+    prefs: { charKeys: false },
+  }
+})()
+
+test('§16.4.1 — a fold removes prose and never a fact: the reading is the same open as closed', async ({
+  page,
+}) => {
+  await seedRecord(page, EVERYTHING_RECORDED)
+  await page.goto('/profile/')
+
+  const closed = await settledRegister(page)
+
+  // Every row, opened one at a time, and the claim is per row: the reading it
+  // printed while folded is the reading it prints unfolded. This is §16.4.1
+  // stated as an equality rather than as an expectation about any particular
+  // number — the fold is a visual operation and a fact may not depend on it.
+  for (const { id } of REGISTER_ROWS) {
+    await openRegisterRow(page, id)
+    const reading = registerReading(page, id)
+    // Still on screen, and still the same words: a row that dropped its
+    // reading on opening would have made the closed line a teaser.
+    await expect(reading, `${id} hides its reading when opened`).toBeVisible()
+    expect(
+      (await reading.innerText()).trim(),
+      `${id}'s reading changed when the row was opened`,
+    ).toBe(closed[id].reading)
+  }
+
+  // And opening ten rows changed no reading anywhere: the readings after the
+  // ten gestures are the readings from before them, as a whole register.
+  const opened = await registerSnapshot(page)
+  expect(
+    Object.fromEntries(Object.entries(opened).map(([id, row]) => [id, row.reading])),
+    'a reading moved while rows were being opened',
+  ).toEqual(Object.fromEntries(Object.entries(closed).map(([id, row]) => [id, row.reading])))
+})
+
+test('§16.4.1 / §16.4.2 — a summary reading comes from the body it summarises, and it counts the record', async ({
+  page,
+  browser,
+}) => {
+  /**
+   * The gate hazard H-A2 was written for, and it is the one nothing in this
+   * suite tested: **a closed row's summary reports the fact its body reports,
+   * out of the same record.**
+   *
+   * It is asserted by moving the record, not by comparing two strings. A
+   * summary reading and its body print the same fact in different notations —
+   * `3 OF 34 SIGNED OFF` beside a strip reading `03/34`, `1 KEYS · 1,412 BYTES`
+   * beside the bytes themselves — so a containment test would have had to know
+   * every row's notation, which is the list of expected strings §16.4.2 exists
+   * to avoid. What both notations DO share is their source. So the register is
+   * read twice, over two records at opposite extremes, and two implications are
+   * asserted over every row the page rendered:
+   *
+   *  1. **A reading that moved must have a body that moved.** A summary may not
+   *     report a fact its own body does not state; this is what fails if a
+   *     reading is computed from a second selector of its own (§16.4.2's
+   *     "no new derivation").
+   *  2. **A reading that counts must count the reader's record.** Any row whose
+   *     reading carries a digit in either record must print a different reading
+   *     in the two, which is what fails if a count is hard-coded, frozen at the
+   *     prerendered `--`, or read from the wrong record.
+   *
+   * The converse of 1 is deliberately NOT asserted. A body may state more than
+   * its summary — the stamp shelf prints a live count against every locked
+   * stamp while the summary reports only how many are earned — and §16.4.1 asks
+   * for THE reading the panel exists to report, not for all of them.
+   *
+   * Two contexts rather than one page reloaded, because `seedRecord` writes only
+   * when the key is absent (which is what makes it a seed) and both records have
+   * to arrive before channel A runs.
+   */
+  await seedRecord(page, NOTHING_RECORDED)
+  await page.goto('/profile/')
+  const thin = await settledRegister(page)
+
+  const second = await browser.newContext()
+  const rich = await (async () => {
+    const other = await second.newPage()
+    try {
+      await seedRecord(other, EVERYTHING_RECORDED)
+      await other.goto('/profile/')
+      return await settledRegister(other)
+    } finally {
+      await second.close()
+    }
+  })()
+
+  expect(Object.keys(rich).sort()).toEqual(Object.keys(thin).sort())
+
+  // Not vacuous: if both loads had rendered the prerendered `--` everywhere,
+  // every row below would pass with nothing to say.
+  expect(
+    Object.values(thin).filter((row) => row.reading === NO_READING).length,
+    'the thin register never left the prerendered dash',
+  ).toBeLessThan(REGISTER_ROWS.length)
+
+  for (const { id } of REGISTER_ROWS) {
+    const readingMoved = thin[id].reading !== rich[id].reading
+    const bodyMoved = thin[id].body !== rich[id].body
+
+    if (readingMoved) {
+      expect(
+        bodyMoved,
+        `${id}: the summary reading changed from "${thin[id].reading}" to `
+          + `"${rich[id].reading}" while nothing in its own body changed, so the `
+          + 'summary is reading something the body does not state (§16.4.2)',
+      ).toBe(true)
+    }
+
+    if (/\d/.test(thin[id].reading) || /\d/.test(rich[id].reading)) {
+      expect(
+        readingMoved,
+        `${id}: a counted reading printed "${rich[id].reading}" for both an empty `
+          + 'record and a fully signed-off one, so it is not counting the record',
+      ).toBe(true)
+    }
+  }
 })
 
 test('§12.1.6 — STORAGE prints the answer the browser gave, never an assumption', async ({
@@ -554,6 +887,10 @@ test('§12.1.6 — STORAGE prints the answer the browser gave, never an assumpti
 }) => {
   await seedRecord(page, SEEDED)
   await page.goto('/profile/')
+  // §16.4 — the `<dl>` this test reads is in the storage row's body, and the
+  // computed `border-style` it takes off one `<dd>` is only a used value while
+  // that body is rendered (hazard H-A).
+  await openRegisterRow(page, 'storage')
 
   const STORAGE = 'section[aria-labelledby="storage"]'
 
@@ -664,6 +1001,9 @@ test('§12.15 — the erase dialog names its scope and enumerates the real count
 }) => {
   await seedRecord(page, SEEDED)
   await page.goto('/profile/')
+  // §16.4 — `ERASE ALL LOCAL DATA` is inside the `data` row, and a closed row
+  // has no rendered box for `click()` to reach (hazard H-A).
+  await openRegisterRow(page, 'data')
 
   await page.getByRole('button', { name: 'ERASE ALL LOCAL DATA' }).click()
   const dialog = page.locator(DIALOG)
@@ -708,6 +1048,9 @@ test('§12.15 — the erase dialog names its scope and enumerates the real count
 test('§12.15 — the danger button is gated on the typed word', async ({ page }) => {
   await seedRecord(page, SEEDED)
   await page.goto('/profile/')
+  // §16.4 — `ERASE ALL LOCAL DATA` is inside the `data` row, and a closed row
+  // has no rendered box for `click()` to reach (hazard H-A).
+  await openRegisterRow(page, 'data')
   await page.getByRole('button', { name: 'ERASE ALL LOCAL DATA' }).click()
 
   const dialog = page.locator(DIALOG)
@@ -753,6 +1096,9 @@ test('§12.15 — the gate is the WORD, deliberately trimmed and case-folded', a
    */
   await seedRecord(page, SEEDED)
   await page.goto('/profile/')
+  // §16.4 — `ERASE ALL LOCAL DATA` is inside the `data` row, and a closed row
+  // has no rendered box for `click()` to reach (hazard H-A).
+  await openRegisterRow(page, 'data')
   await page.getByRole('button', { name: 'ERASE ALL LOCAL DATA' }).click()
 
   const dialog = page.locator(DIALOG)
@@ -769,6 +1115,9 @@ test('§12.15 — a confirmed erase removes both keys and offers a working UNDO'
   await seedRecord(page, SEEDED)
   await seedQuarantine(page, QUARANTINED)
   await page.goto('/profile/')
+  // §16.4 — `ERASE ALL LOCAL DATA` is inside the `data` row, and a closed row
+  // has no rendered box for `click()` to reach (hazard H-A).
+  await openRegisterRow(page, 'data')
 
   const before = await settled(page)
 
@@ -809,6 +1158,9 @@ test('§12.4.1 / §12.15 — the erase dialog is the only confirmation on the si
 }) => {
   await seedRecord(page, SEEDED)
   await page.goto('/profile/')
+  // §16.4 — `EXPORT YOUR RECORD` is inside the `data` row, and a closed row has
+  // no rendered box for `click()` to reach (hazard H-A).
+  await openRegisterRow(page, 'data')
 
   // Every other control commits immediately. Crying wolf is how a reader
   // learns to auto-confirm the one dialog that matters, so the export — which
@@ -907,7 +1259,12 @@ test('§12.15 — export, erase, import: the record comes back identical', async
   await seedRecord(page, SEEDED)
   await installSaveProbe(page)
   await page.goto('/profile/')
-  await expect(page.locator('section[aria-labelledby="storage"]')).toBeVisible()
+  // §16.4, hazard H-A — this used to wait on the storage panel being visible,
+  // which a closed row's `<section>` still is: only its body is unrendered. Both
+  // rows this test drives are opened instead, and opening the storage row IS the
+  // wait — `openRegisterRow` returns once the body is on screen.
+  await openRegisterRow(page, 'storage')
+  await openRegisterRow(page, 'data')
 
   expect(await page.evaluate(() => 'showSaveFilePicker' in window)).toBe(false)
 
@@ -993,6 +1350,9 @@ test('§12.12.6 — the importer accepts the RECORD OF WORK .html and matches it
   expect(inFile.data).toEqual(generatedFrom)
 
   await page.goto('/profile/')
+  // §16.4 — `ERASE ALL LOCAL DATA` is inside the `data` row, and a closed row
+  // has no rendered box for `click()` to reach (hazard H-A).
+  await openRegisterRow(page, 'data')
   await page.getByRole('button', { name: 'ERASE ALL LOCAL DATA' }).click()
   await page.locator(DIALOG).getByLabel('Type ERASE to confirm').fill('ERASE')
   await page.locator(DIALOG).getByRole('button', { name: 'Erase all data' }).click()
@@ -1022,6 +1382,9 @@ test('§12.15 — an unreadable file changes nothing, and each state has its own
 }) => {
   await seedRecord(page, SEEDED)
   await page.goto('/profile/')
+  // §16.4 — the import readouts below are `toBeVisible()` assertions, and the
+  // input and its status live in the `data` row (hazard H-A).
+  await openRegisterRow(page, 'data')
   const before = await settled(page)
   const input = page.getByLabel('Import a record from a file')
   const panel = page.locator('section[aria-labelledby="data"]')

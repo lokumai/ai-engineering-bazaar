@@ -123,6 +123,46 @@ export const HOME_SCOPE =
   'worked; it stays here until you move it.'
 
 /**
+ * Where the name in the field came from, when this browser put it there rather
+ * than the reader (§16.3).
+ *
+ * ## Why the sentence is here
+ *
+ * This module's header records how four copies of one claim came to be four
+ * different claims, and this is the same species: the name's provenance is
+ * asserted by the panel that prints the field, and it would be asserted again
+ * by any later screen that shows the alias. One author, one wording.
+ *
+ * ## Why it exists at all
+ *
+ * §16.3's second constraint. A silent write is the failure mode: the reader
+ * signs in with a magic link, returns to the profile sheet, finds `ada` in a
+ * field they never filled in, and has no way to tell a guess from something
+ * they typed months ago on another device. The record would be telling them a
+ * fact about themselves that it invented. So the offer is visible and it says
+ * where it came from.
+ *
+ * ## What it does not say
+ *
+ * The address. §16.3's fourth constraint: the local part is offered as a name,
+ * and printing the whole address under a field — beside a stamp that appears on
+ * every sheet the reader exports — would put a mailbox on a drawing. "The
+ * address you signed in with" identifies it without reproducing it.
+ *
+ * ## Why a readout and not prose
+ *
+ * §12.14.1's two registers: prose explains, a readout states. This states —
+ * uppercase mono, `·`-separated, no terminal period, the same shape as
+ * `MARK · DATUM`. **The rejected wording was `TAKEN FROM YOUR EMAIL ADDRESS`**:
+ * it describes a field the reader did not fill in, whereas an act they
+ * performed ("signed in with") is the thing that explains how the site knows.
+ * The second half is imperative and names the control, because a note saying
+ * only where a value came from leaves the reader looking for the way out of it.
+ */
+export const NAME_FROM_ADDRESS =
+  'TAKEN FROM THE ADDRESS YOU SIGNED IN WITH · CHANGE IT IN THE FIELD ABOVE'
+
+/**
  * What an alias is and is not, on `/sign-in/alias/` (§15.4).
  *
  * This is the one screen where a reader can mistake a name for a proof, so the

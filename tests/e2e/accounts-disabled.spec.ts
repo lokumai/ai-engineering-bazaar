@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { type Page, expect, test } from '@playwright/test'
 
 import { RECORD_KEY, seedRecord, waitForHydratedReadout } from './record'
 
@@ -28,6 +28,27 @@ import { RECORD_KEY, seedRecord, waitForHydratedReadout } from './record'
 
 const AUTH_ON = process.env.E2E_ACCOUNTS === '1'
 
+/**
+ * No door on this page, by every name a door goes by.
+ *
+ * The email field is asserted as well as the three buttons, and it is the more
+ * useful half: a control that cannot work is worse than no control, and a text
+ * field that swallows an address and does nothing with it is exactly that. The
+ * route is named in the failure because this now runs over more than one.
+ */
+async function expectNoDoor(page: Page, route: string): Promise<void> {
+  for (const door of [/github/i, /google/i, /email link/i, /magic link/i]) {
+    await expect(
+      page.getByRole('button', { name: door }),
+      `${route} offers a ${String(door)} door with accounts disabled`,
+    ).toHaveCount(0)
+  }
+  await expect(
+    page.locator('input[type="email"]'),
+    `${route} offers an email field with accounts disabled`,
+  ).toHaveCount(0)
+}
+
 test.describe('§14.1 accounts are switched off', () => {
   test.skip(AUTH_ON, 'this build has NEXT_PUBLIC_AUTH_ENABLED=true')
 
@@ -48,10 +69,43 @@ test.describe('§14.1 accounts are switched off', () => {
       page.getByRole('link', { name: 'Go to the profile sheet', exact: true })
     ).toBeVisible()
 
-    // No provider control of any kind.
-    for (const provider of [/github/i, /google/i, /email link/i, /magic link/i]) {
-      await expect(page.getByRole('button', { name: provider })).toHaveCount(0)
-    }
+    // No provider control of any kind. Two routes render one now (§16.1), and
+    // each asserts it where a reader would meet it; the shared helper is what
+    // keeps the two bans the same ban.
+    await expectNoDoor(page, '/sign-in/')
+  })
+
+  test('/profile/ says so too, and its drafter block offers no door', async ({ page }) => {
+    /**
+     * §16.1 — the constraint on half B of the drafter block, and the test that
+     * fails first if it is broken.
+     *
+     * §16 moved the sign-in controls onto `/profile/`, inside a block that is
+     * open on arrival: before §16 the only page that could offer a door was
+     * `/sign-in/`, and the ban above was scoped to that route accordingly. The
+     * block renders `SignInPanel` in `inline` chrome rather than writing a
+     * second sign-in form (§16.1.1, §11.38), so the flag is still read in one
+     * place — but `chrome` reaching into the state machine, or the block
+     * branching on the session itself, would put an email field and two provider
+     * buttons on the profile sheet of a deployment that has no backend. That is
+     * §14.1's worst outcome: a control that cannot work, on the page a reader
+     * with no account is sent to.
+     */
+    await seedRecord(page, { identity: { name: 'Ada Lovelace', markSeed: '0123abcd' } })
+    await page.goto('/profile/')
+    await waitForHydratedReadout(page)
+
+    // The state, in the words of the state it is in — the same single spelling
+    // `/sign-in/` prints, from the same author.
+    await expect(page.getByText('ACCOUNTS NOT ENABLED YET')).toBeVisible()
+
+    await expectNoDoor(page, '/profile/')
+
+    // And the half is not merely empty: it says what does work without one,
+    // which is §14.13's honesty requirement applied to the block.
+    await expect(page.locator('section[aria-labelledby="hl-account-head"]')).toContainText(
+      /without an account/i,
+    )
   })
 
   test('no page opens a connection to the project', async ({ page }) => {

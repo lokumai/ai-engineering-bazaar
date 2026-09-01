@@ -280,7 +280,23 @@ export function coerceRecordData(input: unknown): RecordData {
     },
     sheets: coerceSheets(data.sheets),
     days: coerceDays(data.days),
-    prefs: { charKeys: asBoolean(prefs.charKeys, EMPTY_RECORD.prefs.charKeys) },
+    prefs: {
+      charKeys: asBoolean(prefs.charKeys, EMPTY_RECORD.prefs.charKeys),
+      /**
+       * §16.3. A string stays, everything else — a number, a boolean, an
+       * object, an absent key, the empty string — becomes null, which is the
+       * value that means "no account has named this record" and so is the only
+       * safe default: a wrong-typed flag coerced to a truthy id would suppress
+       * an offer for an account that never made one. `asString` refuses `''`
+       * for the same reason it does everywhere else here — an empty id compares
+       * unequal to every real account id, so storing one would leave the seam
+       * re-offering for ever.
+       *
+       * A record written before this field existed reads back with null and
+       * needs no rung on the migration ladder; see `migrate.ts` on widening.
+       */
+      aliasNamedFor: asString(prefs.aliasNamedFor),
+    },
     meta: {
       lastExport: asInstant(meta.lastExport),
       persisted: asTriState(meta.persisted),

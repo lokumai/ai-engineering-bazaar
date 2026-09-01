@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { NAME_SCOPE, RECORD_SCOPE } from '@/lib/record/scope'
+import { SessionProvider, useSession } from '@/components/auth/SessionProvider'
+import { NAME_FROM_ADDRESS, NAME_SCOPE, RECORD_SCOPE } from '@/lib/record/scope'
+import { aliasFromEmail } from '@/lib/identity/alias-offer'
 import {
   MAX_NAME_GRAPHEMES,
   countGraphemes,
@@ -11,7 +13,6 @@ import {
 import { setIdentity } from '@/lib/record/events'
 import { nowIso, update, useHydrated, useRecord } from '@/lib/record/store'
 import { DrafterStamp } from './DrafterStamp'
-import { MarkPicker } from './MarkPicker'
 
 /**
  * §12.11 item 1, §12.3 — the drafter's own identity: the stamp, the name as it
@@ -32,6 +33,16 @@ import { MarkPicker } from './MarkPicker'
  * either from a rename would retroactively alter a signed artefact. The panel
  * states that outright rather than leaving the reader to test it.
  *
+ * **§16.2.2 took the mark picker out of this panel, and that is the one change
+ * §16 makes to it.** `MarkPicker` was rendered here, and §16.1 renders it once
+ * in the drafter block's half A so that the role's offer can be passed to it —
+ * `offeredMark` resolves against the role, which this panel does not read. Two
+ * call sites would have put two `data-hl-mark` groups and two `#hl-mark-legend`
+ * ids on `/profile/`, which is §11.38's breach and an ambiguous anchor. The
+ * field, its `SAVE NAME` button and `.hl-identity-initials` all stay here,
+ * whole and unreworded: two e2e specs locate them by accessible name and read a
+ * computed style off the initials.
+ *
  * §12.2 channel B throughout: `useRecord()` returns the frozen `EMPTY_RECORD`
  * on the server and in the first client render, so the prerendered panel prints
  * `NO NAME ON RECORD` with no stamp beside it — which is the only thing
@@ -44,7 +55,43 @@ import { MarkPicker } from './MarkPicker'
 /** §12.3.2 — never a placeholder person. The absence is the information. */
 const NO_NAME = 'NO NAME ON RECORD'
 
+/**
+ * §16.3 — the provenance note's id, so the field is DESCRIBED by it rather than
+ * merely followed by it. A reader on a screen reader meets the value in the
+ * field before the line under it, and "where did this name come from" is a
+ * question about the value.
+ */
+const SOURCE_HINT = 'hl-name-source'
+
+/**
+ * §16.3 — the panel carries its own `SessionProvider`, and that is a decision
+ * rather than boilerplate.
+ *
+ * The note under the field is only true while the stored name is still the one
+ * taken from THIS account's address, so the panel has to see the session.
+ * MEASURED: on `/profile/` there is no provider above this component —
+ * `layout.tsx:107-109` wraps `AccountSync` alone and `AuthPanels` brings its own
+ * further down the page — so `useSession()` here returns null and the note could
+ * never appear. **The rejected alternative was to require the caller to wrap
+ * it**: a note whose visibility depends on an ancestor a different file owns is
+ * a note that silently stops rendering the next time the page is reassembled,
+ * and nothing in the unit suite can see that happen.
+ *
+ * Nesting costs nothing. `SessionProvider`'s own header records why: one cached
+ * client, one refresh timer, one storage key, however many providers — which is
+ * the same allowance `AuthPanels` already takes so that a page needs one tag.
+ * With no backend configured the provider builds no client at all, so
+ * `accounts-disabled.spec.ts`'s zero-request sweep over `/profile/` is unmoved.
+ */
 export function IdentityPanel() {
+  return (
+    <SessionProvider>
+      <IdentityFields />
+    </SessionProvider>
+  )
+}
+
+function IdentityFields() {
   const record = useRecord()
   const hydrated = useHydrated()
 
@@ -67,6 +114,31 @@ export function IdentityPanel() {
   }, [stored, edited])
 
   const initials = stored === null ? null : initialsOf(stored)
+
+  /**
+   * §16.3 — is this name still the one the account's address supplied?
+   *
+   * Two facts have to hold, and the second is what makes the line disappear at
+   * the right moment. `prefs.aliasNamedFor` says the offer was made to THIS
+   * account (`AccountSync.aliasNameFor` is its only writer and never clears it,
+   * which is what makes `REMOVE NAME` final). But the flag alone would leave the
+   * note standing over a name the reader had since typed, and the note would
+   * then be false — so the stored name is compared against the offer itself.
+   * `aliasFromEmail` is the single author of that string, so the comparison
+   * cannot drift from the write.
+   *
+   * `session` is null when no provider is mounted and the view is `unknown`
+   * until an effect has run, so the note is absent in the prerendered HTML and
+   * in the first client render — §12.2 channel B, the same discipline as the
+   * name itself.
+   */
+  const session = useSession()
+  const view = session?.view
+  const fromAddress =
+    view?.status === 'signedIn' &&
+    record.prefs.aliasNamedFor === view.user.id &&
+    stored !== null &&
+    stored === aliasFromEmail(view.user.email)
 
   function onChange(event: React.ChangeEvent<HTMLInputElement>): void {
     const next = event.target.value
@@ -175,9 +247,24 @@ export function IdentityPanel() {
             autoCapitalize="off"
             spellCheck={false}
             dir="auto"
-            aria-describedby={error ? 'hl-name-hint hl-name-error' : 'hl-name-hint'}
+            // In document order, so the announcement matches the page: where
+            // the value came from, then where it goes, then what to fix.
+            aria-describedby={[
+              ...(fromAddress ? [SOURCE_HINT] : []),
+              'hl-name-hint',
+              ...(error ? ['hl-name-error'] : []),
+            ].join(' ')}
           />
         </label>
+
+        {/* §16.3 — where the value in the field above came from, printed only
+            while it is still true of that value. One author (`scope.ts`), and
+            never the address itself. */}
+        {fromAddress && (
+          <p className="hl-mark m-0 text-ink-muted" id={SOURCE_HINT}>
+            {NAME_FROM_ADDRESS}
+          </p>
+        )}
 
         {/* §12.1.7 — the boundary that actually matters. Reading your own local
             storage is not a transmission; the export is precisely where that
@@ -220,8 +307,6 @@ export function IdentityPanel() {
         not change the dates sheets were signed off on, and it does not change
         the mark: both are records of something that already happened.
       </p>
-
-      <MarkPicker />
 
       {/* §12.1.7 — three flat lines: mechanism, risk, mitigation. A note block,
           not a banner: no dismiss, no icon, no caution colour. Escalating a

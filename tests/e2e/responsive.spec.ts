@@ -36,6 +36,13 @@ const PAGES = [
   ['A4 sheet', A4.path],
   ['module 10', WIDEST.path],
   ['module 13', LONGEST.path],
+  // §16, hazard H-O — `/profile/` was never loaded below 1440 by any spec, and
+  // §16.1's drafter block is the site's first two-column block outside a module
+  // sheet: a 168px drawing column beside a form, a register whose summary is a
+  // three-column grid, and an eight-cell mark row that has to wrap at 390. It is
+  // here as a general property (the document never scrolls sideways) rather than
+  // as a string match, which is what the rest of this list is for.
+  ['profile sheet', '/profile/'],
 ] as const
 
 /**
@@ -280,22 +287,36 @@ test('the home screen cannot be nudged sideways at any width', async ({ page }) 
 test('the mark options reach the §10.4 touch floor below 768px', async ({ page }) => {
   test.skip(page.viewportSize()!.width >= 768, '§10.4 sets the floor below 768')
 
-  await page.goto('/sign-in/alias/')
-  await page.waitForLoadState('networkidle')
+  // §16.2.2 — one picker, three call sites, and two of them are routes a reader
+  // reaches on a phone. `/sign-in/alias/` is the first-run screen this test was
+  // written for; `/profile/` renders the same component at its default prefix
+  // inside the drafter block, and it is the one that changed — the floor is now
+  // stated once in `profile.css` as an unconditional `min-height` on the cell
+  // rather than by `max-md:min-h-11` on this screen's own label, so a
+  // measurement on one route no longer says anything about the other.
+  for (const route of ['/sign-in/alias/', '/profile/']) {
+    await page.goto(route)
+    await page.waitForLoadState('networkidle')
 
-  const options = await page
-    .locator('label[data-hl-mark]')
-    .evaluateAll((nodes) => nodes.map((node) => ({
-      mark: node.getAttribute('data-hl-mark'),
-      height: Math.round(node.getBoundingClientRect().height),
-    })))
+    const options = await page
+      .locator('label[data-hl-mark]')
+      .evaluateAll((nodes) => nodes.map((node) => ({
+        mark: node.getAttribute('data-hl-mark'),
+        height: Math.round(node.getBoundingClientRect().height),
+      })))
 
-  // Asserted, not assumed: a picker that rendered nothing would otherwise pass
-  // a loop over an empty list. Eight is the whole vocabulary — `seeded` plus the
-  // seven named glyphs — and `alias.spec.ts` pins the order.
-  expect(options.length, 'the alias picker still renders its options').toBe(8)
-  for (const option of options) {
-    expect(option.height, `${option.mark} is under the touch floor`).toBeGreaterThanOrEqual(44)
+    // Asserted, not assumed: a picker that rendered nothing would otherwise pass
+    // a loop over an empty list. Eight is the whole vocabulary — `seeded` plus the
+    // seven named glyphs — and `alias.spec.ts` pins the order. Exactly eight is
+    // also hazard H-C: `data-hl-mark` on a wrapper as well as on the label makes
+    // this sixteen, and the picker would still look right.
+    expect(options.length, `${route} no longer renders eight mark options`).toBe(8)
+    for (const option of options) {
+      expect(
+        option.height,
+        `${option.mark} is under the touch floor on ${route}`,
+      ).toBeGreaterThanOrEqual(44)
+    }
   }
 })
 

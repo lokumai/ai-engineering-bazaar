@@ -4,10 +4,13 @@ import { useEffect, useState } from 'react'
 
 import { useSession } from '@/components/auth/SessionProvider'
 import { ClaimSummary } from '@/components/record/ClaimSummary'
+import { carriesEmailIdentity, type SessionUser } from '@/lib/auth/session'
 import type { CurriculumFacts } from '@/lib/content/facts'
+import { aliasFromEmail } from '@/lib/identity/alias-offer'
 import { PROFILES_TABLE, profileRowFor } from '@/lib/org/profile-sync'
 import { selectAttention } from '@/lib/record/attention'
 import { claimMerge, summariseClaim, type ClaimSummary as ClaimSummaryData } from '@/lib/record/claim'
+import { noteAliasNamed, setIdentity } from '@/lib/record/events'
 import { migrate } from '@/lib/record/migrate'
 import { buildProgress } from '@/lib/record/progress'
 import { carriesNothing, SCHEMA_VERSION, type RecordData } from '@/lib/record/schema'
@@ -126,6 +129,66 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
 
     let cancelled = false
 
+    /**
+     * Bound to a new const so the narrowing above survives into the closure
+     * below: TypeScript does not carry a narrowing of an outer binding into a
+     * hoisted function declaration, and the alternative is a `!` that would
+     * outlive the reason it was safe. `SessionProvider` records the same thing
+     * about `client.auth`.
+     */
+    const account: SessionUser = user
+
+    /**
+     * §16.3 — the alias, named from the address, ONCE.
+     *
+     * ## Why it is here and not in `SignInPanel`
+     *
+     * §16.3.1's rejected alternative was the sign-in panel, and the reason it
+     * loses is that the panel cannot answer the question the offer depends on:
+     * whether this record already carries a name. At the moment the door is
+     * opened the record has not been claimed, so the account's own name has not
+     * arrived yet and a panel deciding "the name is empty" would be deciding it
+     * against a record that is about to be overwritten. This closure runs after
+     * the claim resolved, which is the first instant the answer is stable.
+     *
+     * ## Why the reducer re-asks rather than trusting a value computed above
+     *
+     * MEASURED (hazard 8): `mergeIdentity` gives the ACCOUNT's identity
+     * precedence (`merge.ts:289-324`, and `blank()` there treats a
+     * whitespace-only remote name as empty), so `identity.name` can go from
+     * null to the account's name inside the very `update` two lines above this
+     * call. Any read taken before the claim resolved is therefore stale by
+     * construction. `update`'s reducer is handed `current` — fresher than even a
+     * `snapshot()` taken on the line before, with no window at all between the
+     * decision and the write — so the guards are evaluated inside it and the
+     * name and the flag land in ONE reduction. A half-written state (named, not
+     * flagged) would re-offer on the next `TOKEN_REFRESHED` and overwrite a name
+     * the reader had since edited.
+     *
+     * ## Why it is not called on `unreadable`
+     *
+     * An unreadable row may hold a name. Naming from the address would put a
+     * name on screen that the next successful claim replaces with the account's
+     * — §12.13's rule against a readout that changes under the reader — and
+     * `unreadable` deliberately leaves the machine `pending`, so nothing is
+     * being decided about that row yet.
+     */
+    function nameAliasFromAccount(): void {
+      const now = nowIso()
+      update(
+        (data) => {
+          const offered = aliasNameFor(data, account)
+          if (offered === null) return data
+          return noteAliasNamed(setIdentity(data, { name: offered }, now), account.id, now)
+        },
+        // §14.2.3 — the log row says what the act WAS, and this act is not the
+        // reader typing a name. `setIdentity` is the only kind `wire.ts` has for
+        // a name (and adding one there is not this section's change), so the
+        // payload carries the distinction instead.
+        { kind: 'setIdentity', payload: { named: true, fromEmail: true } },
+      )
+    }
+
     void instance
       .claim()
       .then((outcome) => {
@@ -191,11 +254,18 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
           const merged = claimMerge(local, outcome.remote)
           update(() => merged)
           setSummary(summariseClaim(local, outcome.remote, merged))
+          // AFTER the merge is written, never before: the account's name wins
+          // over this device's, so "this record has no name" is only true of
+          // the merged record.
+          nameAliasFromAccount()
           return
         }
 
         if (outcome.kind === 'adopted') {
           setSummary(summariseClaim(outcome.record, null, outcome.record))
+          // No row existed, so nothing can arrive to contradict the offer. This
+          // is the first-sign-in case §16.3 is mostly about.
+          nameAliasFromAccount()
         }
 
         // `unreadable` and `off` say nothing to the reader here. `unreadable`
@@ -275,6 +345,61 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
       </button>
     </div>
   )
+}
+
+/**
+ * §16.3 — may this record be named from the address, and with what?
+ *
+ * Pure, exported and separated from the closure that writes it for one reason:
+ * every constraint §16.3 places on the offer is a decision about a record and a
+ * session, and both are values. The seam around it owns WHEN (after the claim
+ * resolves) and HOW (one reduction); this owns WHETHER. That is what lets
+ * `tests/unit/record/alias-naming.test.ts` pin all four answers in node with no
+ * store, no clock, no session and no supabase client.
+ *
+ * The three guards it holds, each against the failure it was measured to stop:
+ *
+ * 1. **The name must be absent.** §16.3's first constraint. `!== null` rather
+ *    than a blank-aware check (`merge.ts`'s `blank()`) on purpose: every writer
+ *    of `identity.name` puts `sanitiseName`'s output there, which is never
+ *    whitespace-only, and `mergeIdentity` corrects a remote `''` to the local
+ *    value at the source. A record holding `' '` is therefore only reachable by
+ *    hand-editing `localStorage`, and the stricter test can only ever DECLINE to
+ *    offer — the failure direction that costs the reader a pre-filled field
+ *    rather than the name they typed.
+ *
+ * 2. **The session must carry the email identity.** An OAuth account that hides
+ *    its address yields `email: null`, so `aliasFromEmail` would return null
+ *    anyway — and both stops are kept, because they answer different questions.
+ *    This one says the offer has no standing here at all; the null return says
+ *    there was no usable name in the address. A GitHub account whose token
+ *    happens to expose a `noreply` address is refused by the first, which is the
+ *    case the second cannot see.
+ *
+ * 3. **Once per account.** `prefs.aliasNamedFor` is the durable record of the
+ *    offer having been made, and it is what makes `REMOVE NAME` final: §16.3's
+ *    third constraint says clearing the alias is a decision, and re-offering
+ *    would overrule it. It also closes hazard 7 — `AccountSync`'s effect deps
+ *    are `[userId, user, facts]` and `user` is a NEW OBJECT on every `setView`,
+ *    so `INITIAL_SESSION`, `TOKEN_REFRESHED`, a cross-tab sign-in and
+ *    `refresh()` each re-run the claim. Without a flag in the record the offer
+ *    would fire on every one of them, and every one after the reader cleared
+ *    the field would put the address back.
+ *
+ * The flag is compared to `user.id` and not to a boolean so that a SECOND
+ * account signing in at this browser is offered its own name once. §14's whole
+ * position is that the record belongs to the browser and the account is a copy;
+ * a boolean would let the first account's offer silence the second's.
+ *
+ * `prefs` is local-wins in `mergeRecords` (`merge.ts:377`), so this flag never
+ * travels to a second browser — which is why guard 1 and not this one is what
+ * stops a second browser re-offering over a name that arrived from the account.
+ */
+export function aliasNameFor(data: RecordData, user: SessionUser): string | null {
+  if (data.identity.name !== null) return null
+  if (!carriesEmailIdentity(user)) return null
+  if (data.prefs.aliasNamedFor === user.id) return null
+  return aliasFromEmail(user.email)
 }
 
 /**

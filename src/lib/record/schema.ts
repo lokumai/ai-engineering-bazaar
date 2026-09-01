@@ -107,8 +107,28 @@ export interface RecordData {
   sheets: { [slug: string]: SheetRecord }
   /** ISO dates (YYYY-MM-DD) on which anything was written. */
   days: string[]
-  /** §12.16 — character-key shortcuts, default true for this audience. */
-  prefs: { charKeys: boolean }
+  prefs: {
+    /** §12.16 — character-key shortcuts, default true for this audience. */
+    charKeys: boolean
+    /**
+     * §16.3 — the account id whose address the alias was offered from, or
+     * `null` for "no account has named this record".
+     *
+     * It lives in `prefs` and not in `identity` because it is not a fact about
+     * the reader; it is this browser's note that one offer has already been
+     * made, and `prefs` is the field `carriesNothing` ignores (see below) and
+     * that `mergeRecords` resolves local-wins. Both of those are the behaviour
+     * this flag needs: an offer already declined must not travel to a browser
+     * that would then re-offer, and the flag must never make an erased record
+     * look like a record.
+     *
+     * The id, rather than a boolean, because the question the seam asks is
+     * "has THIS account already offered?" — a second account signing into the
+     * same browser is a different reader making a first offer, and a boolean
+     * could not tell the two apart. `noteAliasNamed` is its only writer.
+     */
+    aliasNamedFor: string | null
+  }
   meta: { lastExport: string | null; persisted: boolean | null }
 }
 
@@ -182,7 +202,7 @@ export const EMPTY_RECORD: RecordData = deepFreeze<RecordData>({
   identity: { name: null, markSeed: null, mark: null, role: null },
   sheets: {},
   days: [],
-  prefs: { charKeys: true },
+  prefs: { charKeys: true, aliasNamedFor: null },
   meta: { lastExport: null, persisted: null },
 })
 
@@ -211,6 +231,14 @@ export const EMPTY_RECORD: RecordData = deepFreeze<RecordData>({
  * `prefs` is deliberately not consulted. A reader who toggled a keyboard
  * preference has made no record, and treating that as content would send an
  * otherwise-empty envelope for the sake of one boolean.
+ *
+ * §16.3's `prefs.aliasNamedFor` is the case that makes the rule load-bearing
+ * rather than tidy. That flag is written from an ACCOUNT, moments after a
+ * sign-in, so a record the reader erased can still carry it — and if it counted
+ * as content, the erasing tab's `DataPanel` write would leave every other open
+ * tab holding a valid non-empty envelope to push, racing the account-side
+ * delete and recreating the row. Nothing may ever be added to `prefs` that this
+ * function then consults.
  */
 export function carriesNothing(data: RecordData): boolean {
   if (data.days.length > 0) return false

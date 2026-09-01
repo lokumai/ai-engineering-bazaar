@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-import { seedRecord, signedSheet, waitForHydratedReadout } from './record'
+import { openRegisterRow, seedRecord, signedSheet, waitForHydratedReadout } from './record'
 import {
   accountsEnv,
   cleanup,
@@ -412,6 +412,9 @@ test.describe('§14 accounts, organisations and the record that outlives a brows
 
     await page.goto('/profile/')
     await waitForHydratedReadout(page)
+    // §16.4 — the erase control is in the `data` register row, closed on
+    // arrival, and `click()` needs a rendered box (hazard H-A).
+    await openRegisterRow(page, 'data')
     await page.getByRole('button', { name: 'ERASE ALL LOCAL DATA' }).click()
     const dialog = page.locator('[role="dialog"]')
     await dialog.getByLabel('Type ERASE to confirm').fill('ERASE')

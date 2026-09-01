@@ -1,14 +1,24 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useSession } from '@/components/auth/SessionProvider'
 import { FaceLegend, type FaceLegendRow, type FaceLegendRows } from '@/components/mascot/FaceLegend'
 import { Lkm01 } from '@/components/mascot/Lkm01'
 import type { CategorySlug } from '@/lib/content/categories'
+import { MARKS } from '@/lib/identity/mark'
+import { roleById } from '@/lib/path/roles'
 import { readRawStored, type RawStored } from '@/lib/record/erase'
-import { categoryProgress, type CurriculumFacts } from '@/lib/record/derive'
+import {
+  categoryProgress,
+  signedCount,
+  stamps,
+  uptime,
+  type CurriculumFacts,
+} from '@/lib/record/derive'
 import { setCharKeys } from '@/lib/record/events'
 import type { Submittal } from '@/lib/record/schema'
 import {
+  nowIso,
   quarantineReason,
   recordSavedAt,
   storageReadout,
@@ -17,7 +27,7 @@ import {
   useRecord,
   useWriteState,
 } from '@/lib/record/store'
-import { DrafterStamp } from './DrafterStamp'
+import { NO_SEED_MINTED } from './MarkPicker'
 
 /**
  * §12.11 items 5, 6 and 7, §12.1.2 and §12.16 — the four leaves the profile
@@ -134,7 +144,7 @@ export function QuarantineNote() {
 }
 
 // ---------------------------------------------------------------------------
-// §13.2, §13.6 — the mark at 160, its legend, and the drafter's own mark at 64
+// §16.1 — the drawing in the drafter block, and §13.2's legend under Readout
 // ---------------------------------------------------------------------------
 
 /**
@@ -161,26 +171,99 @@ function withSignedCounts(
 }
 
 /**
- * §13.2, §13.6, §13.12 — the profile's identity drawing: LKM-01 at 160px with
- * its face legend, and the drafter's mark at 64px beside it.
+ * §16.1 — the drafter block's left cell: LKM-01, and under it the two facts the
+ * deleted definition list was describing instead of printing.
  *
- * **Two marks, and they report different things.** LKM-01 is a meter: six
- * faces, six subsystems, and its fill arrives on channel A from the classes the
- * boot script stamped, so it is correct in frame one with no React. The
- * drafter's mark is an identity: stroke-only, monochrome, `currentColor`, and
- * §13.6 keeps it uncoloured — a category hue on a person's mark would say the
- * person is a subsystem.
+ * **This is what `IdentityMark` was, split in two, and the split is the
+ * measurement.** §16.0 counted the old panel: five `<dt>`/`<dd>` pairs of prose
+ * about alias, mark, seed, account and organisation, with none of the five
+ * values printed anywhere near them — 1260 words in `<main>` before an island
+ * mounted, and the two controls a reader actually came for ~700 words apart. So
+ * the prose goes and the values arrive: `MARK · DATUM` and `SEED · 4F9C2A17`,
+ * two mono lines, one drawing.
  *
- * **The legend is what makes the drawing accessible** (§13.2). The SVG is
- * `aria-hidden` at every size and in every state, because an accessible name
- * that flips between the prerender and the hydrated render is itself a
- * mismatch; at 96px and above the drawing is read by real text instead. The
- * legend's denominators are measured from the corpus at build time and arrive
- * as a prop (§12.2, R3: this island may not import `lib/content/`), and its
- * numerators are channel B — `null` until the store has answered, which prints
- * an em dash rather than a zero nobody measured (§11.25).
+ * **Why the two are separate lines rather than one "your mark" row.** The mark
+ * is a choice and is reversible; the seed is minted once at the first sign-off,
+ * is never regenerated and is not derived from the alias. Printed as one field a
+ * reader would reasonably expect a rename to redraw every sheet they had already
+ * signed. Two lines let them see on screen that it does not — which is the one
+ * thing the deleted list was right about, and the only part of it worth keeping.
+ *
+ * **The face legend is not here any more.** It reports the six subsystems, which
+ * is the Readout row's subject rather than the drafter's, and `.hl-drafter-mark`
+ * is a 168px column measured to the width of the two mono lines (§16.1's own
+ * geometry) — a legend with a `min-w-[16rem]` table in it would have forced that
+ * column open and taken the drafter block sideways at 1024px, which is the one
+ * failure `responsive.spec.ts` treats as general. It moves to `SubsystemLegend`,
+ * below, and is rendered in the register's Readout row beside the strip that
+ * counts the same sheets.
+ *
+ * The 64px `DrafterStamp` that used to sit beside the legend is gone too, and
+ * for a plainer reason: the mark row in the same box now draws all eight glyphs
+ * at once with the chosen one marked, so a ninth copy of the chosen glyph was
+ * reporting a fact already on screen twice over.
+ *
+ * §12.2 channel B: both readings are reader state, so both print `--` until the
+ * store has answered. `NO_SEED_MINTED` is imported rather than retyped — §16.6
+ * measured that string in three places and this is the fourth, and
+ * `SEED · NOT MINTED YET` would be a second spelling of one status.
  */
-export function IdentityMark({
+export function DrafterMark() {
+  const record = useRecord()
+  const hydrated = useHydrated()
+
+  const chosen = MARKS.find((option) => option.id === (record.identity.mark ?? 'seeded'))
+  const seed = record.identity.markSeed
+
+  return (
+    <>
+      {/* §13.2 — 132px in the drafter block's column. The faces take no props:
+          face state is channel A, and the stamp is on `<html>` before this
+          renders. */}
+      <Lkm01 size={132} idPrefix="hl-profile" />
+
+      <p className="hl-drafter-line">
+        <b>MARK</b> · {hydrated && chosen !== undefined ? chosen.label : NO_READING}
+      </p>
+
+      {!hydrated ? (
+        <p className="hl-drafter-line">
+          <b>SEED</b> · {NO_READING}
+        </p>
+      ) : seed === null ? (
+        // Not `SEED · <absence>`: the site has one spelling of this state and it
+        // is a whole sentence, so the label is dropped rather than the string
+        // rewritten to fit the pattern (§16.6).
+        <p className="hl-drafter-line">{NO_SEED_MINTED}</p>
+      ) : (
+        <p className="hl-drafter-line">
+          <b>SEED</b> · {seed}
+        </p>
+      )}
+    </>
+  )
+}
+
+/**
+ * §13.2 — the six faces read as real text, in the register row whose subject is
+ * the same count.
+ *
+ * **The legend is what makes the drawing accessible.** The SVG is `aria-hidden`
+ * at every size and in every state, because an accessible name that flips
+ * between the prerender and the hydrated render is itself a mismatch; at 96px
+ * and above the drawing is read by this table instead. Its denominators are
+ * measured from the corpus at build time and arrive as a prop (§12.2, R3: this
+ * island may not import `lib/content/`), and its numerators are channel B —
+ * `null` until the store has answered, which prints an em dash rather than a
+ * zero nobody measured (§11.25).
+ *
+ * It is inside a closed register row, and that is sound rather than a
+ * concession: a `<details>` body stays in the DOM, so find-in-page opens the row
+ * on a match and a screen reader reaches it by heading. §16.4.1's rule is about
+ * the READING, and the reading this row prints while closed is the sheet count
+ * the strip above the legend reports.
+ */
+export function SubsystemLegend({
   facts,
   legend,
 }: {
@@ -198,39 +281,7 @@ export function IdentityMark({
 
   const rows = withSignedCounts(legend, hydrated ? categoryProgress(record, facts) : null)
 
-  return (
-    <div className="flex flex-wrap items-start gap-6">
-      {/* §13.2 — 160px is the profile's size. The faces take no props: face
-          state is channel A, and the stamp is on `<html>` before this renders. */}
-      <Lkm01 size={160} idPrefix="hl-profile" />
-
-      <div className="min-w-[16rem] flex-1">
-        <FaceLegend rows={rows} />
-      </div>
-
-      {/* §13.6 — the drafter's mark at 64px, uncoloured, with the label that
-          names it. `DrafterStamp` draws nothing at all before the seed is
-          minted (§11.25), so the readout says which state that is instead of
-          leaving an empty box unexplained. */}
-      <div>
-        <p className="hl-mark m-0 mb-2 text-ink-muted">Drafter's mark</p>
-        <DrafterStamp
-          mark={record.identity.mark}
-          seed={record.identity.markSeed}
-          size={64}
-        />
-        {record.identity.mark === null && record.identity.markSeed === null && (
-          // Nothing to draw, and the two reasons for that are different facts:
-          // before the store has answered nobody has looked, which is `--`, and
-          // after it has answered the seed is genuinely not minted yet. The
-          // stamp is minted at the first sign-off (§12.3.5) and never before.
-          <p className="hl-mark m-0 mt-1 text-ink-faint">
-            {hydrated ? 'NO SEED MINTED YET' : NO_READING}
-          </p>
-        )}
-      </div>
-    </div>
-  )
+  return <FaceLegend rows={rows} />
 }
 
 // ---------------------------------------------------------------------------
@@ -470,7 +521,14 @@ export function StoragePanel() {
 // ---------------------------------------------------------------------------
 
 /**
- * §12.11 item 7 — the stored strings, verbatim, in a `<details>`.
+ * §12.11 item 7 — the stored strings, verbatim.
+ *
+ * **§16.4 unwrapped the disclosure this used to be.** It shipped as a
+ * `<details>` inside `section[aria-labelledby="raw"]`, and its register row is
+ * now itself a `<details>`: nesting them would have made the bytes two clicks
+ * away and given the row two chevrons, one of which does nothing until the other
+ * has been used. The row is the disclosure; the summary the row replaced said
+ * `The raw stored values`, which is the row's own name.
  *
  * **The cheapest possible proof that §1's rule extends all the way down to the
  * storage layer.** Every other panel on this page is this application telling
@@ -493,12 +551,8 @@ export function RawValues() {
   }, [record, write])
 
   return (
-    <details>
-      <summary className="cursor-pointer font-mono text-mark uppercase tracking-[0.06em] text-ink-muted">
-        The raw stored values
-      </summary>
-
-      <p className="mt-2 mb-0 font-display text-meta leading-normal text-ink-muted">
+    <div>
+      <p className="mt-0 mb-0 font-display text-meta leading-normal text-ink-muted">
         Exactly what is in this browser's storage, unchanged. Two keys: the
         record, and the copy set aside if a payload could not be read.
       </p>
@@ -512,7 +566,7 @@ export function RawValues() {
       <pre className="hl-raw">
         {raw === null ? NO_READING : (raw.quarantine ?? 'NO VALUE STORED UNDER THIS KEY')}
       </pre>
-    </details>
+    </div>
   )
 }
 
@@ -562,4 +616,227 @@ export function CharKeysToggle() {
       </p>
     </div>
   )
+}
+
+// ---------------------------------------------------------------------------
+// §16.4.1 — the readings the closed rows print
+// ---------------------------------------------------------------------------
+
+/**
+ * §16.4.1 — the one difficult rule in the register, implemented as nine small
+ * components rather than as nine numbers computed in the page.
+ *
+ * **The rule.** A closed row prints the reading the panel exists to report.
+ * Folding removes prose, never a fact — the same contract §10.4 put on the
+ * silent indicator, where the line under the gauge writes its reading.
+ *
+ * **Every reading comes from the selector its own body already uses** (§16.4.2,
+ * §11.25, §14.9). `signedCount`, `uptime`, `stamps`, `roleById`,
+ * `storageReadout` and `readRawStored` are called here with the same arguments
+ * `Readout`, `Uptime`, `StampShelf`, `RolePanel`, `StoragePanel` and `RawValues`
+ * call them with, so a summary cannot drift from the body it summarises. The
+ * rejected alternative was one `registerReadings(record, facts)` helper
+ * returning nine strings: it would have been a tenth derivation of nine facts,
+ * and the first time one of the panels changed its own selector the summary
+ * would have gone on printing the old answer.
+ *
+ * **Why components and not strings.** Every one of these is reader state, so it
+ * belongs on channel B (§12.2): `useRecord()` returns the frozen `EMPTY_RECORD`
+ * on the server and in the first client render, and the prerendered summary
+ * prints `--`. That is the house spelling for "no reading taken yet" — the same
+ * one `Readout` and `CategoryMeter` print — and it is correct rather than a gap.
+ * A string computed in the server page could only ever have been a guess about
+ * a reader the build has never met.
+ *
+ * **The readings are asserted in a component test, not by the copy register.**
+ * `copy-register.test.ts` cannot see a JSX run containing `{…}`, which is what
+ * every one of these is, so none of these strings is scanned by it (hazard H-I).
+ * They are uppercase, mono, terminal-period-free and reuse the spelling their
+ * own panel already ships for the same status.
+ */
+
+/**
+ * §16.4.2's escape hatch, in the two shapes it takes.
+ *
+ * `NO_READING` above is "nobody has looked yet". This one is different: the row
+ * has no selector to read at all, so it prints its subject rather than inventing
+ * a number (§16.4.2's closing sentence). Export/import/erase is the only such
+ * row — there is no count of "how exportable" a record is — and the words are
+ * §16.4.1's own for it.
+ */
+export const DATA_READING = 'YOUR COPY OF THE RECORD'
+
+/**
+ * `RolePanel`'s spelling of an absent role, repeated here and nowhere else.
+ *
+ * It is a repeat rather than an import because `RolePanel` holds it as a private
+ * `const` and that file is not this task's to change. The one-spelling rule
+ * (§16.6) is about the STRING, and this is the same string; a second spelling —
+ * `NONE CHOSEN`, which is what the row was first drafted with — would have been
+ * the failure. Worth collapsing to one author the next time `RolePanel` is
+ * opened.
+ */
+const NO_ROLE = 'NO ROLE ON RECORD'
+
+/** `SubmittalRegister`'s own words for an empty register, for the same reason. */
+const NO_SUBMITTAL = 'NO SUBMITTAL REGISTERED'
+
+/** `AccountPanel`'s two session spellings, for the same reason (§16.6). */
+const NOT_SIGNED_IN = 'NOT SIGNED IN'
+const ACCOUNTS_OFF = 'ACCOUNTS NOT ENABLED'
+
+/** §7.1 — the same `signedCount` the strip in this row's body counts with. */
+export function ReadoutReading({ facts }: { facts: CurriculumFacts }) {
+  const record = useRecord()
+  const hydrated = useHydrated()
+  const counts = signedCount(record, facts)
+
+  return <>{hydrated ? `${counts.signed} OF ${counts.of} SIGNED OFF` : NO_READING}</>
+}
+
+/**
+ * §7.3 — days recorded in the window, counted off the same `uptime` reading the
+ * strip of ticks in this row's body draws, and read the way its `aria-label`
+ * reads it rather than as a streak. The clock is read only once the store has
+ * answered: UTC, the basis `store.ts` writes days in, so the reading cannot
+ * change on a flight.
+ */
+export function UptimeReading() {
+  const record = useRecord()
+  const hydrated = useHydrated()
+  if (!hydrated) return <>{NO_READING}</>
+
+  const reading = uptime(record, nowIso().slice(0, 10))
+  const active = reading.days.filter((day) => day.active).length
+  return <>{`${active} OF LAST ${reading.days.length} DAYS`}</>
+}
+
+/**
+ * §7.4 — earned of however many stamps the shelf holds. The denominator is
+ * `stamps().length`, never the numeral nine: the shelf is built from the
+ * corpus's categories, so a typed count would be a second author of a number the
+ * array already carries (§11.25).
+ */
+export function StampsReading({ facts }: { facts: CurriculumFacts }) {
+  const record = useRecord()
+  const hydrated = useHydrated()
+  const shelf = stamps(record, facts)
+  const earned = shelf.filter((stamp) => stamp.earned !== null).length
+
+  return <>{hydrated ? `${earned} OF ${shelf.length} EARNED` : NO_READING}</>
+}
+
+/**
+ * §12.9.1 — filed submittals, counted over the same sheets the table in this
+ * row's body walks, in the same order and through the same lookup. An empty
+ * register prints the words the body prints, not `0 FILED`: a zero here would be
+ * a second spelling of a state the body already names.
+ */
+export function SubmittalReading({ sheets }: { sheets: readonly RegisterSheet[] }) {
+  const record = useRecord()
+  const hydrated = useHydrated()
+  if (!hydrated) return <>{NO_READING}</>
+
+  let filed = 0
+  for (const sheet of sheets) filed += record.sheets[sheet.slug]?.submittals.length ?? 0
+  return <>{filed === 0 ? NO_SUBMITTAL : `${filed} FILED`}</>
+}
+
+/**
+ * §13.3 — the role the reader stated, resolved through the same `roleById` this
+ * row's body resolves it with, so an id no role answers to reads as absent in
+ * both places rather than as a label in one of them.
+ */
+export function RoleReading() {
+  const record = useRecord()
+  const hydrated = useHydrated()
+  const role = roleById(record.identity.role)
+
+  if (!hydrated) return <>{NO_READING}</>
+  // Not upper-cased here: `.hl-register-reading` cases it in CSS, and the body
+  // prints `role.label` verbatim, so the two stay the same string — which is
+  // what §16.4.1's gate compares.
+  return <>{role === undefined ? NO_ROLE : role.label}</>
+}
+
+/**
+ * §14.5 — the session, which is as far as a reading can honestly go here.
+ *
+ * **This row is §16.4.2's last sentence in practice.** The membership count
+ * lives in `OrgMembershipPanel`'s own `useState`, behind a PostgREST select that
+ * is filtered by `user_id`; there is no selector outside that panel to read it
+ * from, and querying again from the summary would be a second round trip
+ * reporting a number the row below it is already fetching — a new derivation,
+ * which §16.4.2 forbids. So the reading states the session, which the panel's
+ * own body reads from exactly this selector, and for a signed-in reader it
+ * prints the row's subject rather than a count it has not been told.
+ *
+ * `NONE JOINED`, which the plan drafted, is deliberately not used: the body's
+ * spelling of that state is `NOT A MEMBER OF ANY ORGANISATION`, so a second one
+ * would fail §16.6's one-spelling rule with the first one on the same screen.
+ *
+ * Requires a `SessionProvider` above it — the register row that carries it
+ * supplies one. With none, `useSession()` is null and this prints `--`, which is
+ * true of a page that is not tracking a session.
+ */
+export function OrgReading() {
+  const session = useSession()
+  const status = session?.view.status ?? 'unknown'
+
+  if (status === 'unknown') return <>{NO_READING}</>
+  if (status === 'disabled') return <>{ACCOUNTS_OFF}</>
+  if (status === 'signedOut') return <>{NOT_SIGNED_IN}</>
+  return <>ORGANISATIONS THIS ACCOUNT HAS JOINED</>
+}
+
+/**
+ * §12.1.6 — the answer `navigator.storage.persisted()` gave, which is the first
+ * `<dd>` in this row's body and the same call. `UNKNOWN` where it has not
+ * answered: a value that was never queried is not a value.
+ */
+export function StorageReading() {
+  const hydrated = useHydrated()
+  return <>{hydrated ? storageReadout() : NO_READING}</>
+}
+
+/**
+ * §12.11 item 7 — how many of the two keys hold a value, and how many bytes they
+ * hold between them, from the same `readRawStored()` the body prints verbatim.
+ *
+ * The bytes are `String.length` on the stored strings — UTF-16 code units rather
+ * than encoded bytes, which is what a browser's storage quota is charged in and
+ * what `StoragePanel` labels an approximation for the same reason. It is read in
+ * an effect keyed on the record and the write state, exactly as the body reads
+ * it, so an erase or an import moves both at once.
+ */
+export function StoredValuesReading() {
+  const record = useRecord()
+  const write = useWriteState()
+  const [raw, setRaw] = useState<RawStored | null>(null)
+
+  useEffect(() => {
+    setRaw(readRawStored())
+  }, [record, write])
+
+  if (raw === null) return <>{NO_READING}</>
+
+  const held = [raw.record, raw.quarantine].filter((value) => value !== null)
+  const bytes = held.reduce((total, value) => total + value.length, 0)
+  return <>{`${held.length} KEYS · ${group(bytes)} BYTES`}</>
+}
+
+/**
+ * §12.16 — the switch's own position, read off `prefs.charKeys` like the
+ * checkbox in this row's body.
+ *
+ * **No `--` gate, and that is deliberate.** `EMPTY_RECORD.prefs.charKeys` is
+ * `true`, so the prerender prints `CHARACTER KEYS ON` — which is not a guess
+ * about the reader but a statement about the default, and the default really is
+ * on. A reader who turned them off sees the reading flip once after the
+ * hydration commit, which is the same honest behaviour `CharKeysToggle`'s own
+ * header records for the checkbox beside it.
+ */
+export function CharKeysReading() {
+  const record = useRecord()
+  return <>{record.prefs.charKeys ? 'CHARACTER KEYS ON' : 'CHARACTER KEYS OFF'}</>
 }

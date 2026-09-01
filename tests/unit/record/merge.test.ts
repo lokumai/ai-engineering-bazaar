@@ -255,8 +255,8 @@ describe('quiz — the further state wins (§14.7.2)', () => {
 
 describe('prefs — local wins (§14.7.2)', () => {
   it('keeps the device preference', () => {
-    const local = record({ prefs: { charKeys: false } })
-    const remote = record({ prefs: { charKeys: true }, days: ['2026-08-01'] })
+    const local = record({ prefs: { charKeys: false, aliasNamedFor: null } })
+    const remote = record({ prefs: { charKeys: true, aliasNamedFor: null }, days: ['2026-08-01'] })
     expect(mergeRecords(local, remote).prefs.charKeys).toBe(false)
     expect(mergeRecords(remote, local).prefs.charKeys).toBe(true)
   })
@@ -410,7 +410,7 @@ describe('the properties §14.2.3 relies on', () => {
     const skewed = record({
       ...RIGHT,
       identity: { name: null, markSeed: '99999999', mark: 'hex', role: null },
-      prefs: { charKeys: false },
+      prefs: { charKeys: false, aliasNamedFor: null },
     })
     expect(mergeRecords(LEFT, skewed).sheets).toEqual(mergeRecords(skewed, LEFT).sheets)
     expect(mergeRecords(LEFT, skewed).days).toEqual(mergeRecords(skewed, LEFT).days)

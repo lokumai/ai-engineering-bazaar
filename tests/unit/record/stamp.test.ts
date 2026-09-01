@@ -285,7 +285,11 @@ describe('data-hl-record after mount (§15.2.1, §12.13)', () => {
 
     // A preference is not something the reader recorded (§15.11), and it is what
     // the store writes on a first theme click.
-    stampRecordState(root, { ...EMPTY_RECORD, prefs: { charKeys: false } }, FACTS)
+    stampRecordState(
+      root,
+      { ...EMPTY_RECORD, prefs: { charKeys: false, aliasNamedFor: null } },
+      FACTS,
+    )
     expect(root.getAttribute('data-hl-record')).toBeNull()
   })
 

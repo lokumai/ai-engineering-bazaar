@@ -364,6 +364,36 @@ export function observeReachedEnd(data: RecordData, slug: string, now: string): 
 }
 
 /**
+ * §16.3 — records that the alias has been offered from `userId`'s address, and
+ * writes NOTHING else. The name itself is `setIdentity`'s to write; the seam
+ * calls both inside one store update so a half-written state cannot exist.
+ *
+ * This is the only writer of `prefs.aliasNamedFor`, and that single-door rule is
+ * what makes clearing the name final: the seam offers when the flag does not
+ * name the current account, so an offer that has been recorded is never made
+ * twice — including on the `TOKEN_REFRESHED`, `INITIAL_SESSION` and cross-tab
+ * sign-in events that remint the session object and re-run the effect. A guard
+ * held in component state instead would be reset by every one of them; that was
+ * the measured failure this field exists to remove.
+ *
+ * The day is stamped like every other write (§7.3): the reader signed in, which
+ * is something they did.
+ *
+ * Two ways out return `data` itself, per this file's rule 3. An id that already
+ * matches means the offer is already recorded, so there is nothing to write and
+ * no day to stamp for it. A blank id is refused rather than stored: the empty
+ * string compares unequal to every real account id, so a record carrying one
+ * would be re-offered on every load — and `coerceRecordData` would drop it back
+ * to null on the next read anyway, which would make the in-memory record differ
+ * from what storage returns.
+ */
+export function noteAliasNamed(data: RecordData, userId: string, now: string): RecordData {
+  if (userId.trim() === '') return data
+  if (data.prefs.aliasNamedFor === userId) return data
+  return stampDay({ ...data, prefs: { ...data.prefs, aliasNamedFor: userId } }, now)
+}
+
+/**
  * §12.16 — SC 2.1.4's off switch for single-character shortcuts. Default on for
  * this audience; modifier shortcuts keep working when it is off.
  */

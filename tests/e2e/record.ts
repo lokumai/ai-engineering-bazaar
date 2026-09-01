@@ -91,7 +91,18 @@ export interface RecordData {
   /** §12.1.3 — keyed by SLUG (`intermediate/security`), never by number. */
   sheets: { [slug: string]: SheetRecord }
   days: string[]
-  prefs: { charKeys: boolean }
+  /**
+   * §16.3 — `aliasNamedFor` is stated here for the same reason §13.3's
+   * `identity.role` is: a nullable addition is a WIDENING, not a migration
+   * (`migrate.ts`'s header), so `coerceRecordData` defaults it and every
+   * record the app HOLDS carries the key. A seed that omitted it would put a
+   * shape in storage that the store never writes, and the three §12.12.6 /
+   * §12.15 round trips compare raw storage against a record that went through
+   * the store — they read as data loss when the only difference is a key the
+   * seed forgot. Measured: omitting it made those three specs red while the
+   * app was correct.
+   */
+  prefs: { charKeys: boolean; aliasNamedFor: string | null }
   meta: { lastExport: string | null; persisted: boolean | null }
 }
 
@@ -149,7 +160,7 @@ export function recordData(seed: RecordSeed = {}): RecordData {
     identity: { name: null, markSeed: null, mark: null, role: null, ...seed.identity },
     sheets,
     days: seed.days ?? [SEED_DAY],
-    prefs: { charKeys: true, ...seed.prefs },
+    prefs: { charKeys: true, aliasNamedFor: null, ...seed.prefs },
     meta: { lastExport: null, persisted: null, ...seed.meta },
   }
 }
@@ -477,3 +488,54 @@ export function sheetBySlug(slug: string): Sheet {
 export const CATEGORY_SLUGS: readonly string[] = [
   ...new Set(SHEETS.map((sheet) => sheet.category)),
 ]
+
+// ---------------------------------------------------------------------------
+// §16.4 — the register, opened
+// ---------------------------------------------------------------------------
+
+/**
+ * Opens the register row whose heading id is `id`, and returns its body once
+ * the browser is actually rendering it.
+ *
+ * **Why every spec needs this and none of them needed anything like it before.**
+ * §16.4 folded nine of `/profile/`'s eleven panels into closed `<details>`
+ * rows. A closed row's subtree is still in the DOM, so `textContent`,
+ * `page.evaluate` and `setInputFiles` are unaffected — MEASURED as the reason
+ * the storage readouts and the import input needed no change at all. What does
+ * not survive is anything that requires a rendered box: `click()` waits for the
+ * element to be visible and stable, and `toBeVisible()` is that assertion by
+ * definition. So `ERASE ALL LOCAL DATA`, `EXPORT YOUR RECORD` and every import
+ * readout now sit behind one gesture, and the gesture is written once here
+ * rather than nine times as `page.locator(...).click()` on a summary.
+ *
+ * **It is idempotent, and that is the point of reading `open` first.** Several
+ * tests open the same row twice — an erase followed by an import, a reload in
+ * the middle of a round trip — and `<summary>` is a toggle: a second click
+ * would CLOSE the row and the next assertion would fail somewhere far from the
+ * cause. Reading `details.open` and clicking only when it is false makes the
+ * call safe to repeat and safe to put in a helper another spec composes.
+ *
+ * The row is addressed by `aria-labelledby`, not by position: the ids are
+ * verbatim from the panels these rows replaced (`storage`, `raw`, `data`,
+ * `submittals`, `hl-orgs-head`) and §16.4's order is asserted on its own, in
+ * `record-pages.spec.ts`, rather than assumed here by every caller.
+ */
+export async function openRegisterRow(page: Page, id: string): Promise<Locator> {
+  const row = page.locator(`section.hl-register-row[aria-labelledby="${id}"]`)
+  const fold = row.locator('details.hl-register-fold')
+  const body = fold.locator('.hl-register-body')
+
+  await expect(fold, `no register row is labelled by "${id}"`).toHaveCount(1)
+  if (!(await fold.evaluate((node) => (node as HTMLDetailsElement).open))) {
+    await fold.locator('summary.hl-register-summary').click()
+  }
+  await expect(body).toBeVisible()
+  return body
+}
+
+/** One register row's summary reading (§16.4.1), addressed by its heading id. */
+export function registerReading(page: Page, id: string): Locator {
+  return page.locator(
+    `section.hl-register-row[aria-labelledby="${id}"] .hl-register-reading`,
+  )
+}

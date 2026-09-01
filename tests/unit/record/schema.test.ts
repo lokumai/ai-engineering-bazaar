@@ -38,7 +38,10 @@ describe('EMPTY_RECORD', () => {
       identity: { name: null, markSeed: null, mark: null, role: null },
       sheets: {},
       days: [],
-      prefs: { charKeys: true },
+      // §16.3 widened `prefs`: `aliasNamedFor` is null here because no account
+      // has named this record, which is the only thing a build can know about a
+      // reader it has never met.
+      prefs: { charKeys: true, aliasNamedFor: null },
       meta: { lastExport: null, persisted: null },
     })
   })

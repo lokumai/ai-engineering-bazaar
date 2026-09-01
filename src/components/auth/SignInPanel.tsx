@@ -107,7 +107,92 @@ type Phase =
   | { kind: 'sent'; email: string }
   | { kind: 'failed'; message: string }
 
-export function SignInPanel() {
+/**
+ * §16.1.1 — where an auth panel is being drawn, and the only prop that answers
+ * it.
+ *
+ * `panel` is the shape shipped since §14.7: an `hl-panel` section with its own
+ * `h2` and the head's mono readout. `inline` is what §16's drafter block needs —
+ * that block already carries the heading of the half these panels sit in, so a
+ * second heading inside it would nest an `h2` under an `h3` and read as a panel
+ * inside a panel.
+ *
+ * **The rejected alternative was writing a second sign-in form inside the
+ * block.** §11.38 forbids a second implementation, and §16.0 is the measurement
+ * that settles it: the mark picker had been written three times on one page and
+ * all three copies had drifted apart. Writing a state twice is writing it wrong
+ * twice — and this panel holds five shapes over four `SessionView` statuses,
+ * with `unknown` never collapsed into `signedOut`.
+ *
+ * So `chrome` reaches the wrapper and the heading, and one narrow third thing:
+ * **the cross-references that point at `/profile/` are dropped in `inline`
+ * chrome, because inline chrome only ever renders inside `/profile/`.** A link
+ * offering to take the reader to the sheet they are reading is a page saying
+ * something untrue about itself, which costs more than the sentence is worth.
+ * Nothing else moves: no readout, no error copy, no `needsMailbox` block, and
+ * the same children reach `AuthShell` in both chromes.
+ */
+export type AuthChrome = 'panel' | 'inline'
+
+/**
+ * The wrapper and the heading, in one place for the three panels that take a
+ * chrome: `SignInPanel` here, `AccountPanel` and `OrgMembershipPanel` next
+ * door.
+ * `CallbackPanel` keeps its own section: it is a whole page's body and is never
+ * drawn inside another block.
+ *
+ * **Why `inline` emits no id at all.**
+ * `hl-account-head` and `hl-orgs-head` are addressed by roughly twenty
+ * assertions and by one in-page anchor, so they have to keep resolving. They
+ * cannot keep resolving from here: in §16's layout the organisation panel's
+ * body sits inside a register row whose own `h2` carries `hl-orgs-head`, and a
+ * second element with that id makes the anchor ambiguous rather than
+ * redundant — the browser jumps to whichever comes first in the document. So in
+ * `inline` chrome the CALLER owns the heading and its id: the register row
+ * carries `hl-orgs-head`, and the drafter block's half-B `h3` carries
+ * `hl-account-head`. Every id keeps exactly one author.
+ *
+ * The head's mono readout is passed separately from the heading because it is a
+ * reading, not chrome (§16.4.1): it survives in both shapes, where the `h2`
+ * does not.
+ */
+export function AuthShell({
+  chrome,
+  headingId,
+  heading,
+  mark,
+  children,
+}: {
+  chrome: AuthChrome
+  /** The `h2`'s id in `panel` chrome. Never emitted in `inline` chrome. */
+  headingId: string
+  heading: string
+  mark?: React.ReactNode
+  children: React.ReactNode
+}) {
+  if (chrome === 'inline') {
+    return (
+      <>
+        {mark}
+        {children}
+      </>
+    )
+  }
+
+  return (
+    <section className="hl-panel" aria-labelledby={headingId}>
+      <div className="hl-panel-head">
+        <h2 id={headingId} className="hl-panel-title">
+          {heading}
+        </h2>
+        {mark}
+      </div>
+      {children}
+    </section>
+  )
+}
+
+export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
   const session = useSession()
   const [returnPath, setReturnPath] = useState<string>(DEFAULT_RETURN_PATH)
   const [email, setEmail] = useState('')
@@ -154,20 +239,17 @@ export function SignInPanel() {
   if (view.status === 'disabled') {
     const copy = UNAVAILABLE_COPY[view.why]
     return (
-      <section className="hl-panel" aria-labelledby="hl-signin-state">
-        <div className="hl-panel-head">
-          <h2 id="hl-signin-state" className="hl-panel-title">
-            Accounts
-          </h2>
-        </div>
+      <AuthShell chrome={chrome} headingId="hl-signin-state" heading="Accounts">
         <p className="hl-mark m-0 text-ink-muted">{copy.readout}</p>
         <div className="hl-note">
           <p>{copy.note}</p>
         </div>
-        <p className="mt-4 mb-0 font-display text-meta text-ink-muted">
-          <Link href="/profile/">Go to the profile sheet</Link>
-        </p>
-      </section>
+        {chrome === 'panel' && (
+          <p className="mt-4 mb-0 font-display text-meta text-ink-muted">
+            <Link href="/profile/">Go to the profile sheet</Link>
+          </p>
+        )}
+      </AuthShell>
     )
   }
 
@@ -178,16 +260,11 @@ export function SignInPanel() {
    */
   if (view.status === 'unknown') {
     return (
-      <section className="hl-panel" aria-labelledby="hl-signin-state">
-        <div className="hl-panel-head">
-          <h2 id="hl-signin-state" className="hl-panel-title">
-            Accounts
-          </h2>
-        </div>
+      <AuthShell chrome={chrome} headingId="hl-signin-state" heading="Accounts">
         <p className="hl-mark m-0 text-ink-muted" aria-live="polite">
           CHECKING WHETHER THIS BROWSER IS SIGNED IN
         </p>
-      </section>
+      </AuthShell>
     )
   }
 
@@ -216,19 +293,22 @@ export function SignInPanel() {
     const needsMailbox = !carriesEmailIdentity(view.user)
 
     return (
-      <section className="hl-panel" aria-labelledby="hl-signin-state">
-        <div className="hl-panel-head">
-          <h2 id="hl-signin-state" className="hl-panel-title">
-            Already signed in
-          </h2>
+      <AuthShell
+        chrome={chrome}
+        headingId="hl-signin-state"
+        heading="Already signed in"
+        mark={
           <p className="hl-mark m-0 text-ink-faint">
             {view.user.githubLogin ?? view.user.email ?? 'SESSION ACTIVE'}
           </p>
-        </div>
-        <p className="mt-0 mb-4 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
-          This browser already holds a session. The profile sheet shows whose it
-          is, what it is connected to, and how to sign out of it.
-        </p>
+        }
+      >
+        {chrome === 'panel' && (
+          <p className="mt-0 mb-4 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+            This browser already holds a session. The profile sheet shows whose
+            it is, what it is connected to, and how to sign out of it.
+          </p>
+        )}
 
         {needsMailbox && (
           <div className="mb-4" data-hl-needs-mailbox="1">
@@ -248,10 +328,12 @@ export function SignInPanel() {
           </div>
         )}
 
-        <p className="m-0 font-display text-meta">
-          <Link href="/profile/">Open the profile sheet</Link>
-        </p>
-      </section>
+        {chrome === 'panel' && (
+          <p className="m-0 font-display text-meta">
+            <Link href="/profile/">Open the profile sheet</Link>
+          </p>
+        )}
+      </AuthShell>
     )
   }
 
@@ -311,14 +393,12 @@ export function SignInPanel() {
   const magic = SIGN_IN_PROVIDERS[2]
 
   return (
-    <section className="hl-panel" aria-labelledby="hl-signin-state">
-      <div className="hl-panel-head">
-        <h2 id="hl-signin-state" className="hl-panel-title">
-          Sign in
-        </h2>
-        <p className="hl-mark m-0 text-ink-faint">OPTIONAL · THE SITE WORKS WITHOUT IT</p>
-      </div>
-
+    <AuthShell
+      chrome={chrome}
+      headingId="hl-signin-state"
+      heading="Sign in"
+      mark={<p className="hl-mark m-0 text-ink-faint">OPTIONAL · THE SITE WORKS WITHOUT IT</p>}
+    >
       {/* §14.8.2's argument, in one line, above the button it argues for — and
           only when that button is there. The sentence is about what a GitHub
           sign-in buys; printing it over a deployment that has no GitHub
@@ -365,7 +445,7 @@ export function SignInPanel() {
         </div>
       )}
 
-      <hr className="hl-rule-struct my-6" aria-hidden="true" />
+      <hr className="hl-rule-struct mt-6 mb-6" aria-hidden="true" />
 
       <form className="hl-submittal-form" onSubmit={(event) => void sendLink(event)} noValidate>
         <label className="hl-field" data-invalid={emailInvalid ? 'true' : 'false'}>
@@ -436,6 +516,6 @@ export function SignInPanel() {
           you take it.
         </p>
       </div>
-    </section>
+    </AuthShell>
   )
 }

@@ -3,11 +3,8 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { DrafterStamp } from '@/components/record/DrafterStamp'
-import {
-  MARKS,
-  STORABLE_MARK_IDS,
-  type MarkId,
-} from '@/lib/identity/mark'
+import { MarkPicker } from '@/components/record/MarkPicker'
+import { MARKS, type MarkId } from '@/lib/identity/mark'
 import {
   MAX_NAME_GRAPHEMES,
   countGraphemes,
@@ -28,22 +25,24 @@ import { numberWord } from '@/lib/text'
  * second writer of the same two fields is how the two screens start disagreeing
  * about what an empty name means.
  *
- * **Why this is not `MarkPicker` with a name field beside it.** `MarkPicker` is
- * an EDIT on a record that already exists: every click writes immediately, which
- * is right on the profile sheet where there is no submit and no draft. Here both
- * fields are one uncommitted draft behind one control, and a picker that had
- * already written the mark would make `KEEP THIS ALIAS` a button that claims an
- * act it did not perform (§1) — the reader would have kept half the alias by
- * looking at it. So the draft is local state and the write happens once, on
- * submit. What is NOT duplicated is the vocabulary: the options are
- * `STORABLE_MARK_IDS` itself, the labels and the prose come from `MARKS`, and
- * the geometry comes from `markPaths` through `DrafterStamp`.
+ * **The picker is `MarkPicker`, in controlled mode** (§16.2.2). This screen used
+ * to draw its own eight radios, and the argument for that was real: `MarkPicker`
+ * wrote on every click, which is right on the profile sheet where there is no
+ * submit, and a picker that had already written the mark would make `KEEP THIS
+ * ALIAS` a button claiming an act it did not perform (§1) — the reader would
+ * have kept half the alias by looking at it. §16.0 then measured what that
+ * argument had cost: three implementations of one control, one of which
+ * (`RolePanel`'s) rendered a few hundred pixels from another. So the mode became
+ * a prop instead of a component. Passing `value` puts the draft here, where
+ * submit already lives, and the shared row writes nothing at all — the same
+ * guarantee, with one author for the eight options, the labels, the order and
+ * the seed's absence.
  *
  * **The order is the stored contract.** `mark.ts` records it: a reader who chose
- * the sixth mark must still find that glyph in the sixth place. So the picker
- * maps over `STORABLE_MARK_IDS` in order and neither sorts, filters nor appends
- * — `tests/unit/identity/alias.test.tsx` pins the rendered order against that
- * array, so a reshuffle fails rather than ships.
+ * the sixth mark must still find that glyph in the sixth place. `MarkPicker`
+ * maps `MARKS` in order and neither sorts, filters nor appends —
+ * `tests/unit/identity/alias.test.tsx` pins the rendered order against
+ * `STORABLE_MARK_IDS`, so a reshuffle fails rather than ships.
  *
  * **The artefact is on screen while it is being made** (§15.4.3). The preview is
  * built from `.hl-title-block`, the same block a sheet prints, because the
@@ -75,13 +74,6 @@ const UNSIGNED = 'UNSIGNED'
 
 /** §15.4.3 — printed on the stamp, in caution ink, in every draft state. */
 const UNVERIFIED = 'UNVERIFIED'
-
-/**
- * The seeded pattern before the seed is minted. Character for character the
- * string `MarkPicker` prints for the same state; the two screens describe one
- * absence, so they say it with one sentence.
- */
-const NO_SEED = 'NO SEED MINTED YET'
 
 /** The preview draws the mark at 48px, twice the 24px `.hl-mark-stamp` fixes. */
 const PREVIEW_SIZE = 48
@@ -235,73 +227,20 @@ export function AliasSheet({ accountDoors }: { accountDoors: number }) {
             </p>
           )}
 
-          {/* Native radios inside `role="radiogroup"`, for `MarkPicker`'s
-              reasons: arrow-key navigation, one tab stop, the platform's own
-              forced-colors rendering, and a checked state the browser draws
-              rather than a `box-shadow` that forced-colors deletes. The
-              explicit role overrides `<fieldset>`'s implicit `group`. */}
-          <fieldset
-            role="radiogroup"
-            aria-labelledby="hl-alias-mark-legend"
-            className="m-0 border-0 p-0"
-          >
-            <legend id="hl-alias-mark-legend" className="hl-field-label">
-              Approval mark
-            </legend>
-
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {STORABLE_MARK_IDS.map((id) => {
-                const option = optionFor(id)
-                return (
-                  <label
-                    key={id}
-                    /* §10.4 — the 44px target, MEASURED as missing by 2px: at
-                       390px this row came to 42 (`p-2` twice, a 24px stamp, a
-                       hairline on each edge), and nothing was failing on it.
-                       `min-h-11` is `RolePicker`'s spelling of the same floor
-                       and `max-md:` is where `.hl-icon-btn` applies it, so the
-                       floor lands below 768px only: `items-center` absorbs the
-                       two spare pixels, so the stamp and the label do not move
-                       and the drawn grid above 768px is untouched. */
-                    className="flex max-md:min-h-11 items-center gap-2 border border-line-strong bg-cleared p-2"
-                    data-hl-mark={id}
-                    data-hl-selected={chosen === id ? 'true' : 'false'}
-                  >
-                    <input
-                      type="radio"
-                      name="hl-alias-mark"
-                      value={id}
-                      checked={chosen === id}
-                      onChange={() => {
-                        setChosen(id)
-                        setTouchedMark(true)
-                        setSaved(false)
-                      }}
-                      // record.css authors no radio rule and this file may not
-                      // add one, so the control keeps its native appearance and
-                      // takes the accent through `accent-color`.
-                      style={{ accentColor: 'var(--color-accent)' }}
-                      className="h-[14px] w-[14px] shrink-0"
-                    />
-                    <DrafterStamp mark={storedMark(id)} seed={seed} />
-                    <span className="hl-mark text-ink">{option.label}</span>
-                  </label>
-                )
-              })}
-            </div>
-
-            {/* The chosen option describes itself, from `MARKS`. Enumerating
-                the eight here would give one vocabulary two authors, and the
-                count in a sentence like "seven are drafting symbols" is a count
-                nobody measured. */}
-            <p className="mt-2 mb-0 font-display text-meta leading-normal text-ink-muted">
-              {selected.description}
-            </p>
-
-            {chosen === 'seeded' && seed === null && (
-              <p className="hl-mark m-0 mt-1 text-ink-faint">{NO_SEED}</p>
-            )}
-          </fieldset>
+          {/* §16.2.2 — the shared row, controlled: `value` makes it report
+              and write nothing, so the only write on this screen is the submit
+              below. `idPrefix` keeps the radio group's name, its legend id and
+              its description id exactly as they were, which is what lets every
+              existing selector for this screen go on resolving. */}
+          <MarkPicker
+            idPrefix="hl-alias-mark"
+            value={chosen}
+            onChoose={(id) => {
+              setChosen(id)
+              setTouchedMark(true)
+              setSaved(false)
+            }}
+          />
 
           {/* §15.4.5 — two controls of one weight. Both are `.hl-btn`, the same
               height and the same border, and the exit is beside the keep rather

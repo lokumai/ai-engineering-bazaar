@@ -1,13 +1,15 @@
 import { renderToStaticMarkup } from 'react-dom/server'
-import { RECORD_SCOPE } from '@/lib/record/scope'
+import { NAME_FROM_ADDRESS, RECORD_SCOPE } from '@/lib/record/scope'
 import { describe, expect, it } from 'vitest'
-import ProfilePage from '@/app/profile/page'
+import ProfilePage, { REGISTER_ROWS } from '@/app/profile/page'
 import { DataPanel, printedDigestFrom } from '@/components/record/DataPanel'
+import { DrafterBlock } from '@/components/record/DrafterBlock'
 import { ERASE_COPY, EraseDialog } from '@/components/record/EraseDialog'
 import { IdentityPanel } from '@/components/record/IdentityPanel'
-import { MARK_PICKER_IDS, MarkPicker } from '@/components/record/MarkPicker'
+import { MARK_PICKER_IDS, MarkPicker, NO_SEED_MINTED } from '@/components/record/MarkPicker'
 import {
   CharKeysToggle,
+  DATA_READING,
   QuarantineNote,
   RawValues,
   StoragePanel,
@@ -15,7 +17,9 @@ import {
   SubmittalRegister,
   repoUrl,
 } from '@/components/record/ProfilePanels'
+import { offeredMark } from '@/components/record/RolePanel'
 import { MARKS, NAMED_MARK_IDS } from '@/lib/identity/mark'
+import { ROLES } from '@/lib/path/roles'
 import { ERASE_WORD, eraseTallySentence } from '@/lib/record/erase'
 
 /**
@@ -62,6 +66,55 @@ const ERASE_TRIGGER = renderToStaticMarkup(
   <EraseDialog onConfirm={() => {}} onExport={() => {}} />,
 )
 const PAGE = renderToStaticMarkup(<ProfilePage />)
+const DRAFTER = renderToStaticMarkup(<DrafterBlock />)
+
+/**
+ * §16.2 — the picker with an offer on it, and the two shapes that offer takes.
+ *
+ * `weld` is offered but not selected, which is the state a reader with a role
+ * and a chosen mark is in: the marker has to be visible on a cell the selection
+ * is not on. `seeded` is offered AND selected, which is the only way a static
+ * render can reach the shared description line's offer clause — the line prints
+ * the pointed-at option, else the focused one, else the selection, and there is
+ * no pointer and no focus without a DOM.
+ */
+const MARK_OFFERED = renderToStaticMarkup(<MarkPicker offered="weld" />)
+const MARK_OFFERED_SEEDED = renderToStaticMarkup(<MarkPicker offered="seeded" />)
+
+/**
+ * Every text node in `markup` that is a readout: uppercase mono, in the register
+ * of §12.14.1's second column. Measured rather than listed, so a readout added
+ * anywhere on this page is scanned by the property below without being enrolled
+ * in it by hand.
+ *
+ * The filter is "has letters and none of them are lower case", which is exactly
+ * what makes a string a readout on this site; `--`, the numerals and the mark
+ * glyphs' `d` attributes fall out because they are attributes, not text.
+ */
+/** The shared description line's own content, by the id every radio points at. */
+function noteLineOf(markup: string): string {
+  const found = /class="hl-markrow-note" id="[^"]*">(.*?)<\/p>/.exec(markup)
+  expect(found, 'the shared description line').not.toBeNull()
+  return (found as RegExpExecArray)[1]
+}
+
+/**
+ * One register row's closed line, located by the id on its `h2`. The row is a
+ * `<summary>`, so this is exactly the text a reader sees before opening
+ * anything — which is what §16.4.1 is a rule about.
+ */
+function summaryOf(markup: string, id: string): string {
+  const found = new RegExp(`<summary[^>]*><h2 id="${id}"[\\s\\S]*?</summary>`).exec(markup)
+  expect(found, id).not.toBeNull()
+  return (found as RegExpExecArray)[0]
+}
+
+function readouts(markup: string): string[] {
+  return words(markup)
+    .split(/\s{2,}/)
+    .map((run) => run.trim())
+    .filter((run) => /[A-ZÇĞİÖŞÜ]/.test(run) && !/[a-zçğıöşü]/.test(run) && run.length >= 3)
+}
 
 describe('§12.2 — the honest empty first frame of every panel', () => {
   it('names the absence of a name rather than inventing one (§12.3.2)', () => {
@@ -238,11 +291,43 @@ describe('§12.3.5 — the mark picker', () => {
     expect(MARK).toContain('data-hl-mark="seeded" data-hl-selected="true"')
   })
 
-  it('describes each option outside its label, so the name is the label alone', () => {
-    for (const mark of MARKS) {
-      expect(MARK, mark.id).toContain(`aria-describedby="hl-mark-${mark.id}-desc"`)
-      expect(MARK, mark.id).toContain(`id="hl-mark-${mark.id}-desc"`)
-    }
+  /**
+   * §16.2, hazard H-E — the eight `aria-describedby` pairs this used to pin are
+   * gone, and their absence is the change rather than a regression.
+   *
+   * The old assertion pinned `aria-describedby="hl-mark-<id>-desc"` and a
+   * matching `id` for each of the eight options: eight descriptions rendered at
+   * once, which is what §16.0 measured as the reason the page's two real
+   * controls sat ~700 words apart. §16.2 keeps every description — `MARKS` still
+   * carries all eight and `mark.test.ts` still guarantees it — and prints
+   * whichever one the reader is pointing at in ONE line below the row. So the
+   * property is re-expressed at the level it now holds: one group, one shared
+   * description, and that description element present in the document rather
+   * than pointed at and missing, which is the failure an `aria-describedby` can
+   * have without any visible symptom.
+   */
+  it('describes the whole group through one line that exists in the document', () => {
+    const described = [...MARK.matchAll(/aria-describedby="([^"]+)"/g)].map(([, id]) => id)
+    // One per radio, and all of them the same id: eight ids would be eight
+    // paragraphs in the accessibility tree of the control built to stop having
+    // eight.
+    expect(described).toHaveLength(MARKS.length)
+    expect(new Set(described).size).toBe(1)
+    expect(MARK, described[0]).toContain(`id="${described[0]}"`)
+    // And it is not pointed at an empty element: the line prints the option the
+    // group is currently on, which on the prerender is the record's default.
+    const line = new RegExp(`id="${described[0]}"[^>]*>(.*?)</p>`).exec(MARK) as RegExpExecArray
+    const seeded = MARKS.find((mark) => mark.id === 'seeded') as (typeof MARKS)[number]
+    expect(words(line[1])).toContain(seeded.description)
+    expect(words(line[1])).toContain(seeded.label)
+  })
+
+  it('keeps all eight descriptions in the vocabulary, one of them on screen', () => {
+    // The descriptions were MOVED, not deleted. Asserted against `MARKS` because
+    // that is where they live; the row renders one at a time by design.
+    for (const mark of MARKS) expect(mark.description.trim().length).toBeGreaterThan(0)
+    const shown = MARKS.filter((mark) => words(MARK).includes(mark.description))
+    expect(shown).toHaveLength(1)
   })
 
   it('has no control that mints a mark: the seed is never regenerated', () => {
@@ -254,7 +339,67 @@ describe('§12.3.5 — the mark picker', () => {
   })
 
   it('says the seed does not exist yet rather than drawing a substitute for it', () => {
-    expect(words(MARK)).toContain('NO SEED MINTED YET')
+    expect(words(MARK)).toContain(NO_SEED_MINTED)
+  })
+})
+
+/**
+ * §16.2.1, §13.6 — the role's offer, which is now one marked cell rather than a
+ * second copy of the whole picker.
+ *
+ * The hazard this closes: `MarkOffer` was deleted, and with it the two confirm
+ * buttons and the eight duplicate cards. What has to survive is the guarantee
+ * §13.6 was built for — an offer writes nothing — plus the thing a deleted
+ * component can silently take with it: the offer being READABLE. A tint on one
+ * cell is not a marking (§2.2's colour rule and §16.2.3), so the words are
+ * asserted, not the attribute alone.
+ *
+ * The offer is resolved through `offeredMark` for every role in `ROLES` rather
+ * than for one hand-picked role, so a role whose `suggestedMark` stops naming a
+ * drawable glyph is caught here. `roles.ts` types that field as `string`
+ * precisely because it imports nothing, which makes this boundary the only
+ * place it is checked.
+ */
+describe('§16.2.1 — the offered mark is a marking, and it is words', () => {
+  it.each(ROLES.map((role) => [role.id, role] as const))(
+    '%s: exactly one cell carries the offer, and it is the mark the role names',
+    (_id, role) => {
+      const offered = offeredMark(role)
+      // Every role in the set offers a mark the geometry can draw; a null here
+      // would mean `suggestedMark` names a glyph that does not exist.
+      expect(offered).toBe(role.suggestedMark)
+      const markup = renderToStaticMarkup(<MarkPicker offered={offered} />)
+
+      const marked = [...markup.matchAll(/data-hl-mark="([^"]+)" data-hl-selected="[^"]*" data-hl-offered="true"/g)]
+      expect(marked).toHaveLength(1)
+      expect(marked[0][1]).toBe(offered)
+    },
+  )
+
+  it('states the offer in words inside the offered cell, never as a tint alone', () => {
+    expect(occurrences(MARK_OFFERED, /OFFERED FOR YOUR ROLE/g)).toBe(1)
+    // Inside the cell the words are aria-hidden, because a label's accessible
+    // name is computed from its whole content and §16.2.3 fixes that name at
+    // the mark's own name. The fact reaches a screen reader through the shared
+    // description instead — which is the second shape asserted below.
+    expect(MARK_OFFERED).toMatch(/class="hl-markrow-offered" aria-hidden="true">OFFERED FOR YOUR ROLE</)
+  })
+
+  it('carries the offer into the shared description, which is not aria-hidden', () => {
+    const note = /class="hl-markrow-note" id="[^"]*">(.*?)<\/p>/.exec(
+      MARK_OFFERED_SEEDED,
+    ) as RegExpExecArray
+    expect(words(note[1])).toContain('OFFERED FOR YOUR ROLE')
+    expect(note[1]).not.toContain('aria-hidden')
+  })
+
+  it('marks nothing at all when no role is on record (§11.25)', () => {
+    // The prerendered page: `EMPTY_RECORD.identity.role` is null, so there is
+    // no offer to make and no cell is marked. A glyph marked as offered by
+    // nobody would be worse than an unmarked row.
+    expect(MARK).not.toContain('data-hl-offered')
+    expect(PAGE).not.toContain('data-hl-offered')
+    expect(words(PAGE)).not.toContain('OFFERED FOR YOUR ROLE')
   })
 })
 
@@ -398,50 +543,129 @@ describe('§12.1.6, §11.35 — the storage panel prints bytes and nothing else'
   })
 })
 
-describe('§12.11 — the page itself: eight sections, in order', () => {
+/**
+ * §16.1, §16.4 — the page itself: one open block, then one register.
+ *
+ * **What the two assertions below replaced, and why they are not a list any
+ * more.** Both pinned the eleven panels as a hand-typed sequence: eleven
+ * `hl-panel-title` strings in order, and the same eleven ids again as a second
+ * literal. §16 folds nine of those panels into register rows, so a list would
+ * have had to be retyped — and a list retyped is a second author of an order the
+ * page already holds. `REGISTER_ROWS` is exported from `profile/page.tsx` for
+ * exactly this reason (hazard H-P): the page maps over that array, so what
+ * ships and what is asserted are the same array in the same order.
+ *
+ * **The order is still ORDERED.** §16.4 fixes the sequence — Readout, Uptime,
+ * Stamps, Submittal register, Role and path, Organisation, Storage, Stored
+ * values, Export/import/erase, Keyboard — because a reader who has been here
+ * before finds a row by where it sits. `toEqual` over an array, never a set.
+ */
+describe('§16.1, §16.4 — the page itself: the drafter block, then the register', () => {
   it('prints its own chord beside its title (§12.16)', () => {
     expect(PAGE).toContain('>G P<')
     expect(PAGE).toContain('Profile')
   })
 
-  it('renders §12.11’s eight sections in order, then §14.7’s two, then the keyboard switch', () => {
-    const titles = [...PAGE.matchAll(/class="hl-panel-title">([^<]+)</g)].map(([, t]) => t)
-    expect(titles).toEqual([
-      'Identity',
-      'Readout',
-      'Uptime',
-      'Stamps',
-      'Submittal register',
-      // §14.7 — contributed by `AuthPanels` as its own two panels rather than
-      // wrapped in one, and placed immediately BEFORE storage: one says where
-      // the record is kept, the other how reliably this browser will keep it,
-      // and a reader deciding whether they want an account reads them together.
-      'Account',
-      'Organisations',
-      'Storage',
-      'Stored values',
-      'Data',
-      'Keyboard',
-    ])
+  it('renders exactly REGISTER_ROWS, in exactly that order', () => {
+    const rows = [...PAGE.matchAll(/<h2 id="([^"]+)" class="hl-register-name">([^<]+)</g)]
+      .map(([, id, name]) => ({ id, name }))
+    expect(rows).toEqual(REGISTER_ROWS.map(({ id, name }) => ({ id, name })))
+    // A row is a `<details>` and there are no others on this page, so the count
+    // is also the count of folds — a row rendered outside the register, or a
+    // row in the table and not rendered, moves one of these two numbers.
+    expect(occurrences(PAGE, /<details/g)).toBe(REGISTER_ROWS.length)
   })
 
-  it('gives every section a heading its landmark is labelled by', () => {
-    for (const id of [
-      'identity',
-      'readout',
-      'uptime',
-      'stamps',
-      'submittals',
-      'hl-account-head',
-      'hl-orgs-head',
-      'storage',
-      'raw',
-      'data',
-      'keyboard',
-    ]) {
-      expect(PAGE, id).toContain(`aria-labelledby="${id}"`)
-      expect(PAGE, id).toContain(`id="${id}"`)
+  it('opens with the drafter block and closes every register row', () => {
+    // §16.4: the rows are always closed on arrival. `<details open>` is the
+    // single-attribute mutation this catches.
+    expect(PAGE).not.toContain('<details open')
+    expect(PAGE.indexOf('id="drafter"')).toBeGreaterThan(-1)
+    expect(PAGE.indexOf('id="drafter"')).toBeLessThan(PAGE.indexOf('id="register"'))
+    expect(PAGE.indexOf('id="register"')).toBeLessThan(PAGE.indexOf('<details'))
+  })
+
+  it('resolves every aria-labelledby against an id in the same document', () => {
+    // The link gate cannot see a dead in-page anchor (§16.9's last row), so the
+    // whole page is checked rather than the ten ids that used to be listed:
+    // every name reference on the sheet, wherever it came from.
+    const named = new Set([...PAGE.matchAll(/aria-labelledby="([^"]+)"/g)].map(([, id]) => id))
+    expect(named.size).toBeGreaterThanOrEqual(REGISTER_ROWS.length)
+    for (const id of named) expect(PAGE, id).toContain(`id="${id}"`)
+  })
+
+  it('gives every heading id exactly one reference, so no anchor is ambiguous', () => {
+    // Hazard 2's other half. `hl-orgs-head` and `hl-account-head` are pointed at
+    // from elsewhere in the tree, and `AuthShell` drops both in inline chrome so
+    // that the register row and the drafter half own them. Two elements carrying
+    // one id is not redundancy: the browser jumps to whichever comes first.
+    const headings = [...PAGE.matchAll(/<h[123] id="([^"]+)"/g)].map(([, id]) => id)
+    expect(headings.length).toBeGreaterThan(REGISTER_ROWS.length)
+    for (const id of headings) {
+      expect(occurrences(PAGE, new RegExp(`id="${id}"`, 'g')), id).toBe(1)
+      expect(occurrences(PAGE, new RegExp(`aria-labelledby="${id}"`, 'g')), id).toBe(1)
     }
+  })
+
+  /**
+   * §16.4.1 — the rule that makes folding honest, at the level a suite with no
+   * DOM can hold it: the reading is real text on the closed summary.
+   *
+   * `RegisterRow` throws on a blank reading and `register.test.tsx` pins that
+   * guard; what this adds is that the ASSEMBLED page passes one to every row.
+   * The e2e suite carries the other half — that the closed reading equals the
+   * one the opened body prints — because that needs a browser.
+   */
+  it('states a reading on every closed row (§16.4.1)', () => {
+    for (const { id } of REGISTER_ROWS) {
+      const summary = summaryOf(PAGE, id)
+      const reading = /class="hl-register-reading">([\s\S]*?)<\/span>/.exec(summary)
+      expect(reading, id).not.toBeNull()
+      expect(words((reading as RegExpExecArray)[1]).trim(), id).not.toBe('')
+    }
+  })
+
+  /**
+   * §16.8 gate 2, stated on the assembled page rather than on the component.
+   *
+   * The mark picker's own contract is pinned above, against `<MarkPicker />` in
+   * isolation; that says nothing about how many times the PAGE renders it, and
+   * §16.0's first measured finding was that the old sheet drew the same eight
+   * options twice with a third copy on `/sign-in/alias/`. So the property is a
+   * count over the whole sheet: `data-hl-mark` appears once per mark and no
+   * more, on a `<label>` (hazard H-C — `responsive.spec.ts` counts exactly
+   * those and a copy on an inner wrapper makes it sixteen), in the order
+   * `MARK_PICKER_IDS` fixes.
+   *
+   * A second radiogroup is caught today by the seed line being said twice
+   * (§16.6, below) and by a strict-mode locator violation in
+   * `colour-not-alone.spec.ts` — both real, both indirect: a future variant
+   * that suppressed the seed line would slip past the first, and the second
+   * lives in a suite that only runs after a build. Measured by mutation: a
+   * second `<MarkPicker>` in `DrafterBlock` took `data-hl-mark` from 8 to 16
+   * and `role="radiogroup"` from 2 to 3 while this file was otherwise green.
+   *
+   * `role="radiogroup"` is NOT asserted as one: the page carries two by design
+   * — the mark row and §13.3's role picker, which `path.spec.ts:48` pins at
+   * nine options and hazard H-N keeps to a single group.
+   */
+  it('draws the mark picker once and only once on the whole sheet (§16.2.2)', () => {
+    const marks = [...PAGE.matchAll(/<label[^>]*data-hl-mark="([^"]+)"/g)].map(([, id]) => id)
+    expect(marks).toEqual([...MARK_PICKER_IDS])
+    // Every occurrence of the attribute is one of those labels: a nested copy
+    // would raise this count without changing the list above.
+    expect(occurrences(PAGE, /data-hl-mark=/g)).toBe(MARK_PICKER_IDS.length)
+    // One radio group name behind them, so there is one tab stop and one
+    // selection for the whole sheet.
+    expect(occurrences(PAGE, /name="hl-mark"/g)).toBe(MARK_PICKER_IDS.length)
+  })
+
+  it('keeps one h1 and puts the block above the register in the outline (§16.7)', () => {
+    expect(occurrences(PAGE, /<h1/g)).toBe(1)
+    // The block is an h2 with two h3 halves; every register row is an h2. No h4
+    // anywhere, because nothing on this sheet is three levels deep.
+    expect(occurrences(PAGE, /<h3/g)).toBe(2)
+    expect(PAGE).not.toContain('<h4')
   })
 
   it('omits TRACES, which only the dashboard can count (§11.25)', () => {
@@ -477,6 +701,32 @@ describe('§12.14.1 — the copy register, over every string this task authors',
     // The decline label is exempted from the first-person ban alone, below,
     // and is scanned for everything else here.
     ['ERASE_COPY', Object.values(ERASE_COPY).join(' \n ')],
+
+    /*
+     * §16's new reader-visible surfaces, and hazard H-I is the whole reason they
+     * are enrolled here rather than left to `copy-register.test.ts`.
+     *
+     * That scanner is blind to three things: a template literal, a JSX run
+     * containing `{…}`, and multi-line JSX text (`copy-register.test.ts:115-168`).
+     * Every reading the register prints is built as `{`${n} OF ${total} …`}` and
+     * every summary line is a JSX run with a component in it, so NONE of them is
+     * scanned by the copy register — this array is the only place they are read
+     * at all. A surface added to §16 and not added here silently stops being
+     * checked, which is how §16.6's two spelling debts would come back.
+     */
+    ['DrafterBlock', words(DRAFTER)],
+    ['MarkPicker shared description line', words(noteLineOf(MARK))],
+    ['MarkPicker with an offer', words(MARK_OFFERED)],
+    ['MarkPicker description line, offer clause', words(noteLineOf(MARK_OFFERED_SEEDED))],
+    // §16.3's provenance note, from its single author (`lib/record/scope.ts`).
+    // Reachable only in a signed-in session, so no rendered markup on this page
+    // carries it and the constant is the surface.
+    ['NAME_FROM_ADDRESS', NAME_FROM_ADDRESS],
+    ['DATA_READING', DATA_READING],
+    // And every closed row's own line: the name and the reading it states.
+    ...REGISTER_ROWS.map(
+      ({ id }): [string, string] => [`register row ${id}`, words(summaryOf(PAGE, id))],
+    ),
   ]
 
   const FIRST_PERSON = /\b(?:I|I'm|I've|we|we'll|we've|my|our)\b/i
@@ -533,13 +783,44 @@ describe('§12.14.1 — the copy register, over every string this task authors',
     expect(ERASE_COPY.decline).toBe('Keep my data')
   })
 
-  /** §12.14.1 — a readout is uppercase mono with NO terminal period. */
-  it.each([
-    ['NO NAME ON RECORD', IDENTITY],
-    ['NO SUBMITTAL REGISTERED', REGISTER],
-    ['NO SEED MINTED YET', MARK],
-  ])('%s ends without a full stop', (readout, markup) => {
-    expect(markup).toContain(`>${readout}<`)
-    expect(readout.endsWith('.')).toBe(false)
+  /**
+   * §12.14.1 — a readout is uppercase mono with NO terminal period, and §16.6 —
+   * one spelling per status.
+   *
+   * **What this replaced.** Three named pairs, one of which was
+   * `['NO SEED MINTED YET', MARK]`: the string was asserted inside the mark
+   * picker's markup, and §16.1 prints the same string under the drawing from the
+   * same author, so a fixed pair pins the wrong thing — it would keep passing
+   * while the drawing printed a second spelling beside it. Both halves are now
+   * page-wide properties over what the sheet actually renders.
+   *
+   * The readouts are MEASURED off the markup (`readouts`) rather than listed, so
+   * this scans the ones §16 added — the register's ten summary readings, the
+   * drawing's two mono lines, the drafter halves' marks — without any of them
+   * being enrolled by hand.
+   */
+  it('ends every readout on the sheet without a full stop', () => {
+    const found = readouts(PAGE)
+    // A floor, so a broken extractor reads as a failure rather than as a page
+    // with nothing to check: every register row prints one, at least.
+    expect(found.length).toBeGreaterThan(REGISTER_ROWS.length)
+    for (const readout of found) expect(readout, readout).not.toMatch(/\.$/)
+    // The three the old fixed list named are still among them, so the property
+    // did not become weaker than the assertion it replaced.
+    for (const readout of ['NO NAME ON RECORD', 'NO SUBMITTAL REGISTERED', NO_SEED_MINTED]) {
+      expect(found, readout).toContain(readout)
+    }
+  })
+
+  it('states the absence of the seed exactly once on the screen (§16.6)', () => {
+    // Two authors, one string: `MarkPicker` prints it under the row and
+    // `DrafterMark` prints it under the drawing when the record has hydrated and
+    // carries no seed. On the prerender the drawing prints `SEED · --` — it has
+    // not read the record yet — so the sheet states the absence once. Twice
+    // would be one status said twice on one screen; a second SPELLING would be
+    // §16.6's failure, and this catches both.
+    expect(occurrences(PAGE, new RegExp(NO_SEED_MINTED, 'g'))).toBe(1)
+    expect(words(PAGE)).not.toMatch(/SEED · NOT MINTED/)
+    expect(words(PAGE)).not.toMatch(/NO SEED YET|SEED NOT MINTED/)
   })
 })

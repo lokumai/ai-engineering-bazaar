@@ -1,15 +1,12 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
 import { RolePicker } from '@/components/path/RolePicker'
 import { MARKS, type MarkId } from '@/lib/identity/mark'
 import { pathStanding } from '@/lib/path/derive'
 import { drawnCount, pathFor } from '@/lib/path/paths'
 import { roleById, type Role } from '@/lib/path/roles'
-import { setIdentity } from '@/lib/record/events'
-import { nowIso, update, useHydrated, useRecord } from '@/lib/record/store'
-import { DrafterStamp } from './DrafterStamp'
+import { useHydrated, useRecord } from '@/lib/record/store'
 
 /**
  * §13.3, §13.6 — the role the reader has stated, the standing of the path that
@@ -30,12 +27,18 @@ import { DrafterStamp } from './DrafterStamp'
  * destructive acts, and a dialog here would teach the reader that this control
  * costs something.
  *
- * **The suggested mark is an offer, and the offer is the whole of §13.6.** A
- * role names a drafting symbol that suits the work, the picker below is
- * PREFILLED with it and states why, and nothing reaches the record until the
- * reader confirms. A silent write would leave the record claiming a choice the
- * reader never made, one panel above the readout that prints it — §1's failure
- * with the evidence against it on the same screen.
+ * **The suggested mark is an offer, and §16.2.1 moved where the offer is
+ * drawn.** §13.6 was implemented here as `MarkOffer`: a second complete copy of
+ * the eight-option picker, prefilled, with `SET THIS MARK` and `LEAVE THE MARK
+ * AS IT IS` beneath it. §16.0 measured the result — the same control rendered
+ * twice on `/profile/`, a few hundred pixels apart — and the offer is now one
+ * `data-hl-offered` cell on the single shared row in the drafter block, with
+ * `offeredMark` exported for the block above to pass down. §13.6's guarantee is
+ * not weakened by that, it is strengthened: there is no longer a confirm step to
+ * write anything, because an offer is a marking and the reader's own click on a
+ * glyph is the only write. What stays here is `role.markRationale`, as one line
+ * of prose — it was shipped as real text on purpose, so a reader can read the
+ * reasoning and disagree with it, and a comment would have hidden it.
  *
  * §12.2 channel B throughout: every value here is text or a computed count, so
  * none of it can travel on the pre-paint script. `useRecord()` returns the
@@ -62,30 +65,27 @@ const NO_READING = '--'
  * rather than trusted. `Role.suggestedMark` is typed `string` because
  * `lib/path/roles.ts` imports nothing (§12.2), so this is the boundary where it
  * becomes a `MarkId` or becomes nothing: an id no mark answers to yields no
- * offer at all, which is the §11.25 outcome, instead of a picker prefilled with
- * a glyph that cannot be drawn.
+ * offer at all, which is the §11.25 outcome, instead of a row marked with a
+ * glyph that cannot be drawn.
+ *
+ * Exported by §16.2.1: the offer is drawn on the drafter block's shared mark
+ * row, so the resolution stays here — one boundary, next to the panel that owns
+ * the role — and the id travels up as a prop rather than being resolved a second
+ * time by whoever renders the row.
  */
-function offeredMark(role: Role): MarkId | null {
+export function offeredMark(role: Role): MarkId | null {
   const offered = MARKS.find((mark) => mark.id === role.suggestedMark)
   return offered === undefined ? null : offered.id
 }
 
 export function RolePanel() {
   const record = useRecord()
-  const hydrated = useHydrated()
 
   const role = roleById(record.identity.role)
 
   return (
     <div className="grid gap-4">
       {role === undefined ? <RoleEmpty /> : <RoleStanding role={role} />}
-
-      {/* §13.6 — rendered only where it can be an offer: a role on record and
-          no mark chosen. It is the last thing in the panel because it follows
-          from the choice above it. */}
-      {role !== undefined && record.identity.mark === null && hydrated && (
-        <MarkOffer role={role} />
-      )}
     </div>
   )
 }
@@ -128,6 +128,11 @@ function RoleStanding({ role }: { role: Role }) {
   const record = useRecord()
   const hydrated = useHydrated()
 
+  // The offer's label, resolved through `offeredMark` so the id is checked
+  // against the mark set once, in the one place that does it (§11.25).
+  const suggested = offeredMark(role)
+  const offered = MARKS.find((mark) => mark.id === suggested)
+
   const path = pathFor(role.id)
   const drawn = path === undefined ? null : drawnCount(path)
   const standing = path === undefined ? null : pathStanding(path, record)
@@ -157,6 +162,17 @@ function RoleStanding({ role }: { role: Role }) {
       </dl>
 
       <p className="m-0 font-display text-meta leading-normal text-ink">{role.blurb}</p>
+
+      {/* §13.6, §16.2.1 — the reasoning behind the offered mark, kept as one
+          line of reader-visible prose where the role is stated, and marked as an
+          offer on the shared mark row rather than drawn again here. Nothing on
+          this line is on record: an offer is a marking, and the only write is
+          the reader's own click on a glyph. */}
+      {offered !== undefined && (
+        <p className="m-0 font-display text-meta leading-normal text-ink-muted">
+          {`The mark offered for this role is ${offered.label}. ${role.markRationale} It is marked as the offer on the mark row above, and an offer writes nothing: the mark on record is whichever glyph is chosen there.`}
+        </p>
+      )}
 
       {/* §13.4.2 — stated where the two numbers sit, so the denominator cannot
           be misread as the length of the list. */}
@@ -189,129 +205,5 @@ function RoleStanding({ role }: { role: Role }) {
         <RolePicker />
       </details>
     </>
-  )
-}
-
-/**
- * §13.6 — the mark the role offers: prefilled, visible, changeable, and written
- * only when the reader confirms.
- *
- * The role names a drafting symbol because the symbol means something about the
- * work — `weld` joins two things so the joint carries load, `finish` says a
- * surface was inspected — and `markRationale` is shipped as real text rather
- * than left in a comment so the reader can read the reasoning and disagree with
- * it. The prefill is a local `useState` seeded from the role, so the record is
- * untouched until `SET THIS MARK`, and `LEAVE THE MARK AS IT IS` writes nothing
- * at all.
- *
- * **Confirming the seeded option settles the offer without writing anything,
- * and that is correct rather than a shortcut.** §12.1.3 stores the seeded
- * pattern as `mark: null` — "use `markSeed`" — so "seeded" and "nothing chosen"
- * are the same stored value by design, and two of the nine roles offer exactly
- * that. `setIdentity` is still called for the audit trail every other write
- * gets, and the offer then stands down for this visit rather than reappearing
- * to ask a question the reader has answered.
- */
-function MarkOffer({ role }: { role: Role }) {
-  const record = useRecord()
-  const suggested = offeredMark(role)
-
-  const [choice, setChoice] = useState<MarkId | null>(null)
-  const [settled, setSettled] = useState(false)
-
-  if (suggested === null || settled) return null
-
-  // The prefill: the role's own offer until the reader picks something else.
-  const selected: MarkId = choice ?? suggested
-
-  function confirm(): void {
-    update(
-      (data) => setIdentity(data, { mark: selected === 'seeded' ? null : selected }, nowIso()),
-      { kind: 'setIdentity', payload: { mark: selected === 'seeded' ? null : selected } },
-    )
-    setSettled(true)
-  }
-
-  return (
-    <div className="border border-line-strong bg-cleared p-3">
-      <p className="hl-mark m-0 text-ink">NO MARK CHOSEN</p>
-
-      <p className="mt-1 mb-0 font-display text-meta leading-normal text-ink-muted">
-        {`This mark is the one offered to a ${role.label}. ${role.markRationale}`}
-      </p>
-
-      <fieldset
-        role="radiogroup"
-        aria-labelledby="hl-role-mark-legend"
-        className="mt-3 mb-0 border-0 p-0"
-      >
-        <legend id="hl-role-mark-legend" className="hl-field-label">
-          Approval mark offered for this role
-        </legend>
-
-        <div className="grid gap-2 sm:grid-cols-2">
-          {MARKS.map((option) => {
-            const descriptionId = `hl-role-mark-${option.id}-desc`
-            // The seeded option draws the minted pattern; a named one draws its
-            // glyph, which needs no seed at all.
-            const mark = option.id === 'seeded' ? null : option.id
-            return (
-              <div
-                key={option.id}
-                className="border border-line-strong bg-paper p-3"
-                data-hl-mark={option.id}
-                data-hl-selected={selected === option.id ? 'true' : 'false'}
-                data-hl-offered={option.id === suggested ? 'true' : 'false'}
-              >
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    name="hl-role-mark"
-                    value={option.id}
-                    checked={selected === option.id}
-                    onChange={() => setChoice(option.id)}
-                    aria-describedby={descriptionId}
-                    // Native appearance, accent through `accent-color`, for the
-                    // reason `MarkPicker` records: a hand-painted box carries
-                    // its checked state in a shadow, and forced-colors deletes
-                    // every shadow on the page.
-                    style={{ accentColor: 'var(--color-accent)' }}
-                    className="h-[14px] w-[14px] shrink-0"
-                  />
-                  <DrafterStamp mark={mark} seed={record.identity.markSeed} />
-                  <span className="hl-mark text-ink">{option.label}</span>
-                </label>
-                <p
-                  id={descriptionId}
-                  className="mt-1 mb-0 font-display text-meta leading-normal text-ink-muted"
-                >
-                  {option.description}
-                </p>
-                {option.id === suggested && (
-                  <p className="hl-mark m-0 mt-1 text-ink-muted">OFFERED FOR THIS ROLE</p>
-                )}
-              </div>
-            )
-          })}
-        </div>
-      </fieldset>
-
-      <div className="hl-signoff-actions mt-3">
-        <button type="button" className="hl-btn" onClick={confirm}>
-          SET THIS MARK
-        </button>
-        <button type="button" className="hl-btn" onClick={() => setSettled(true)}>
-          LEAVE THE MARK AS IT IS
-        </button>
-      </div>
-
-      {/* §13.6 — the state of the offer, stated. Nothing above this line has
-          reached the record. */}
-      <p className="mt-2 mb-0 font-display text-meta leading-normal text-ink-muted">
-        Nothing here is on record until you set it. The mark can be changed
-        afterwards in the identity panel above, and changing it does not change
-        the dates sheets were signed off on.
-      </p>
-    </div>
   )
 }

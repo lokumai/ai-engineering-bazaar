@@ -6,6 +6,10 @@ AI Engineering made simple, short, and useful.
 
 A series of mini-courses from beginner to advanced to help you learn practical topics in modern AI engineering. Each course is short, easy to understand, and includes real-world examples, clear visuals, and extra reading materials. It is the fastest way to master what you actually need on the job.
 
+[`ARCHITECTURE.md`](ARCHITECTURE.md) is the map: what this repository is, the six
+rules that explain why the code looks the way it does, the build, the runtime
+layers, and where to read next. Start there if you are new to it.
+
 ## Structure
 
 | Category                                                         | Modules | Description                                                                                                               |

@@ -200,6 +200,11 @@ psql "$SUPABASE_DB_URL" -f supabase/migrations/0003_phase4_erase.sql
 node scripts/test-rls.mjs            # 31 checks, real JWTs, real PostgREST
 ```
 
+[`docs/manager-queries.md`](docs/manager-queries.md) documents every table and
+column, how they join, and SQL for the questions a manager asks — a roster, who
+needs attention and why, quiz attempts, submittal verification, assignments
+behind schedule. Every query in it was run against the live schema.
+
 `NEXT_PUBLIC_AUTH_ENABLED` is a kill switch and it defaults to **off**. It
 matters because `lokumai.github.io` is one origin shared with every other project
 site published under that account — an origin is a scheme/host/port tuple and

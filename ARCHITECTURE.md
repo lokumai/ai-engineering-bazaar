@@ -27,7 +27,7 @@ mini-courses/*.md  ──build──▶  static export  ──▶  the reader's 
                                                           ▼
                                                   Supabase: tables + RLS
                                                           │
-                                                    manager panel · Metabase
+                                                    manager panel · Analytics
 ```
 
 | | |

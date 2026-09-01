@@ -177,9 +177,38 @@ use the three-column system: `assets/empty-context-template.jpeg` and
 `assets/context-style-template.jpeg`, with ready-made prompts in
 `mini-courses/scratchpad/diagrams/`. Generated images go to the author to run, not to a tool here.
 
-**3. Mermaid, for anything that is a flow or a decision.** No generation step, renders on the site
-and on GitHub, and free to edit later. Default to this over a generated image when the content is a
-sequence, a branch or a small graph.
+**3. Mermaid, and not always a flowchart.** No generation step, renders on the site and on GitHub,
+and free to edit later. Default to it over a generated image whenever the content has a shape
+mermaid already knows.
+
+**Pick the type from the shape of the idea, not out of habit.** The corpus reaches for
+`graph LR` almost every time, and several of those would read better as something else. Mermaid
+11.17 is what ships, so all of these are available:
+
+| The idea is | Use |
+| --- | --- |
+| A flow, a branch, a pipeline | `flowchart` / `graph` |
+| Actors exchanging messages over time | `sequenceDiagram` |
+| A breakdown of a topic into parts | `mindmap` |
+| How a topic evolved, what replaced what | `timeline` |
+| Things that are in one state until an event moves them | `stateDiagram-v2` |
+| Proportions of a whole | `pie` |
+| Options compared on two axes | `quadrantChart` |
+| Entities and how they relate | `erDiagram` |
+| A measurement against another | `xychart-beta` |
+
+Two of those matter especially here. **`sequenceDiagram`** is the honest shape for anything where a
+user, a host and a model take turns, which is most of Fundamentals. And **`timeline`** answers rule
+1 of the manifest directly: a model cannot tell a reader when an idea appeared or what it replaced,
+so a timeline is a picture only a human can draw.
+
+Anything ending in `-beta` works but its syntax can still move, so prefer a stable type where one
+fits.
+
+**No colour literals in mermaid.** A test asserts no `#hex` survives into a rendered diagram. The
+pipeline rewrites `style NODE fill:#HEX` into themed classes, but only for nine specific hexes it
+knows (`#90EE90`, `#FFFF00`, `#FFB6C1` and six more). Any other colour fails the build. The safe
+move is to use no colour at all and let structure carry the meaning.
 
 **4. Search for one.** Entirely legitimate and often faster than drawing:
 

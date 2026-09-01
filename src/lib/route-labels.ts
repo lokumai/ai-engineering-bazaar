@@ -63,7 +63,50 @@ function segmentsOf(pathname: string): string[] {
  */
 const SET_SEGMENT = 'courses'
 
-const ROUTE_TITLES: Record<string, string> = { [SET_SEGMENT]: 'Drawing set' }
+/**
+ * §15.1 — the flat manifest's own segment. `/` is the home screen now, and the
+ * thirty-two-row register moved here, so the trail needs a name for it or it
+ * prints the bare directory `sheets`.
+ */
+const INDEX_SEGMENT = 'sheets'
+
+const ROUTE_TITLES: Record<string, string> = {
+  [SET_SEGMENT]: 'Drawing set',
+  [INDEX_SEGMENT]: 'Sheet index',
+}
+
+/**
+ * Ancestor paths that exist in the URL but were never exported as a page.
+ *
+ * **MEASURED, by `scripts/check-links-out.mjs` on its first run:** of 2313
+ * internal links across 54 exported documents, exactly one pointed at nothing —
+ * `href="/auth/"`, on the callback page. The trail gives every ancestor segment
+ * an href, and `/auth/` is a directory holding `callback/` with no page of its
+ * own, so the one crumb above a reader mid-sign-in led to a 404.
+ *
+ * The alternative was to drop the segment from the trail entirely. It is
+ * rejected because the label is doing real work: a reader landing on the
+ * callback page should see where they are. A crumb with no href is exactly the
+ * shape this module already uses for "this is the current page" — it reads as
+ * position, not as a link that failed.
+ *
+ * A set of paths and not a heuristic: guessing which segments have pages from
+ * the URL is how the defect arrived. Each entry is a claim that the export
+ * contains no such document, and NOTHING CHECKS THAT CLAIM: the link gate reads
+ * the links a page renders, so a crumb this set has silently un-linked emits no
+ * link for it to find. An entry that becomes wrong — a page added at
+ * `/auth/` — costs a reader a crumb that no longer navigates, and only
+ * `tests/unit/route-labels.test.ts` will say so.
+ */
+const WITHOUT_A_PAGE: ReadonlySet<string> = new Set(['/auth/'])
+
+/**
+ * What `/` is called in the trail. §15.1 renamed it: the root of every path on
+ * this site used to be the index sheet, and the trail said so; the register
+ * moved to `/sheets/` and `/` became the home screen, so the first crumb had to
+ * follow or it would name a page that is one click further on.
+ */
+const ROOT_CRUMB = 'Home'
 
 function titleFor(segment: string): string {
   return ROUTE_TITLES[segment]
@@ -84,18 +127,19 @@ function subsystemLabel(slug: string): string {
  */
 export function breadcrumbFor(pathname: string, segment: string | null = null): Crumb[] {
   if (segment === NOT_FOUND_SEGMENT) {
-    return [{ label: 'Index', href: '/' }, { label: NOT_FOUND_TITLE, href: null }]
+    return [{ label: ROOT_CRUMB, href: '/' }, { label: NOT_FOUND_TITLE, href: null }]
   }
 
   const segments = segmentsOf(pathname)
-  if (segments.length === 0) return [{ label: 'Index', href: null }]
+  if (segments.length === 0) return [{ label: ROOT_CRUMB, href: null }]
 
-  const crumbs: Crumb[] = [{ label: 'Index', href: '/' }]
+  const crumbs: Crumb[] = [{ label: ROOT_CRUMB, href: '/' }]
   segments.forEach((segment, i) => {
     const last = i === segments.length - 1
+    const path = `/${segments.slice(0, i + 1).join('/')}/`
     crumbs.push({
       label: titleFor(segment),
-      href: last ? null : `/${segments.slice(0, i + 1).join('/')}/`,
+      href: last || WITHOUT_A_PAGE.has(path) ? null : path,
     })
   })
   return crumbs
@@ -103,7 +147,10 @@ export function breadcrumbFor(pathname: string, segment: string | null = null): 
 
 export function sheetLabelFor(pathname: string): string | null {
   const segments = segmentsOf(pathname)
-  if (segments.length === 0) return 'INDEX SHEET'
+  // §15.1 — `/` is the home screen. `INDEX SHEET` moved with the register it
+  // named, to `/sheets/`, where the last branch of this function derives it
+  // from `ROUTE_TITLES`.
+  if (segments.length === 0) return 'HOME'
 
   if (segments[0] === SET_SEGMENT) {
     const rest = segments.slice(1)

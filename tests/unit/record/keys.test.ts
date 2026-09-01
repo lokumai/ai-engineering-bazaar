@@ -220,8 +220,11 @@ describe('routeFor — where each destination goes', () => {
     for (const path of Object.values(ROUTES)) expect(path.endsWith('/')).toBe(true)
   })
 
-  it('resolves the four fixed destinations', () => {
-    expect(routeFor('index', '/courses/intermediate/security/')).toBe('/')
+  it('resolves the five fixed destinations', () => {
+    // §15.1 — `index` follows the register it names: the flat manifest is at
+    // `/sheets/` now, and `/` is the home screen `home` goes to.
+    expect(routeFor('index', '/courses/intermediate/security/')).toBe('/sheets/')
+    expect(routeFor('home', '/courses/intermediate/security/')).toBe('/')
     expect(routeFor('dashboard', '/')).toBe('/dashboard/')
     expect(routeFor('profile', '/')).toBe('/profile/')
     expect(routeFor('record', '/')).toBe('/report/')
@@ -245,15 +248,18 @@ describe('the table the ? sheet prints (§12.16)', () => {
     // §13.14 amends §12.16: `g l` (Learning path) joins the `g` mode, after
     // `g r` and before `g c` — `g c` stays last because it is the only one
     // whose destination depends on where the reader already is.
+    // §15.1 amends it again: `g h` (Home) joins ahead of `g i`, because the
+    // front door is now a page of its own and `g i` kept the register it has
+    // always named. `g c` stays last for the reason above.
     expect(SHORTCUTS.map((row) => row.keys)).toEqual([
-      'g d', 'g i', 'g p', 'g r', 'g l', 'g c',
+      'g d', 'g h', 'g i', 'g p', 'g r', 'g l', 'g c',
       '[ / ]', 'j / k', '.', 's', '?', 'Esc',
     ])
   })
 
   it('gives every g row a destination, so each is also a plain link', () => {
     const go = SHORTCUTS.filter((row) => row.keys.startsWith('g '))
-    expect(go).toHaveLength(6)
+    expect(go).toHaveLength(7)
     for (const row of go) expect(row.target, row.keys).not.toBeNull()
   })
 

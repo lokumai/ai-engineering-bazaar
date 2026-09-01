@@ -27,7 +27,8 @@
  */
 
 /** §12.16 — the five `g` destinations. `category` depends on the route. */
-export type NavTarget = 'dashboard' | 'index' | 'profile' | 'record' | 'path' | 'category'
+export type NavTarget =
+  | 'dashboard' | 'home' | 'index' | 'profile' | 'record' | 'path' | 'category'
 
 /**
  * What a resolved key asks the island to do. Three of these need page context
@@ -125,16 +126,24 @@ export interface Resolution {
 }
 
 /**
- * §12.16 — the second key of the `g` mode, and the only six it accepts.
+ * §12.16 — the second key of the `g` mode, and the only seven it accepts.
  *
  * §13.14 amends §12.16 to six: `/path/` is a top-level route, and a route with
  * no way to reach it is not shipped. It takes **`l`, for "learning path"**,
  * because `p` has meant Profile since §12.16 and moving a bound key to make
  * room for a newer page is how a reader's muscle memory gets spent on the
  * implementer's convenience.
+ *
+ * §15.1 amends it to seven, and this one is a correction rather than an
+ * addition. `g i` has meant "index sheet" since §12.16 and it went to `/`; the
+ * flat register now lives at `/sheets/`, so `i` follows the page it names and
+ * the new front door takes **`h`, unbound until now**. Leaving `g i` on `/`
+ * would have kept the keystroke and broken the promise — the shortcut sheet
+ * prints the word `index` beside it, and it would have gone somewhere else.
  */
 const GO: ReadonlyMap<string, NavTarget> = new Map([
   ['d', 'dashboard'],
+  ['h', 'home'],
   ['i', 'index'],
   ['p', 'profile'],
   ['r', 'record'],
@@ -218,7 +227,8 @@ export function expirePending(state: KeyState): KeyState {
  * it did not need.
  */
 export const ROUTES: Readonly<Record<Exclude<NavTarget, 'category'>, string>> = Object.freeze({
-  index: '/',
+  home: '/',
+  index: '/sheets/',
   dashboard: '/dashboard/',
   profile: '/profile/',
   record: '/report/',
@@ -263,7 +273,8 @@ export interface Shortcut {
 
 export const SHORTCUTS: readonly Shortcut[] = Object.freeze([
   { keys: 'g d', action: 'Dashboard', target: 'dashboard' as NavTarget },
-  { keys: 'g i', action: 'Index sheet', target: 'index' as NavTarget },
+  { keys: 'g h', action: 'Home', target: 'home' as NavTarget },
+  { keys: 'g i', action: 'Sheet index', target: 'index' as NavTarget },
   { keys: 'g p', action: 'Profile', target: 'profile' as NavTarget },
   { keys: 'g r', action: 'Record', target: 'record' as NavTarget },
   { keys: 'g l', action: 'Learning path', target: 'path' as NavTarget },

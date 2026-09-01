@@ -10,23 +10,23 @@ import {
 
 describe('breadcrumbFor', () => {
   it('shows the index as the current page at the root', () => {
-    expect(breadcrumbFor('/')).toEqual([{ label: 'Index', href: null }])
+    expect(breadcrumbFor('/')).toEqual([{ label: 'Home', href: null }])
   })
 
   it('tolerates a pathname with no trailing slash', () => {
-    expect(breadcrumbFor('')).toEqual([{ label: 'Index', href: null }])
+    expect(breadcrumbFor('')).toEqual([{ label: 'Home', href: null }])
   })
 
   it('names a category from the category map, not from the slug', () => {
     expect(breadcrumbFor('/protocols/')).toEqual([
-      { label: 'Index', href: '/' },
+      { label: 'Home', href: '/' },
       { label: 'Protocols & Specs', href: null },
     ])
   })
 
   it('links back through the category on a module page', () => {
     expect(breadcrumbFor('/intermediate/ai-security/')).toEqual([
-      { label: 'Index', href: '/' },
+      { label: 'Home', href: '/' },
       { label: 'Intermediate', href: '/intermediate/' },
       { label: 'ai security', href: null },
     ])
@@ -34,21 +34,21 @@ describe('breadcrumbFor', () => {
 
   it('labels a non-category page from its own segment', () => {
     expect(breadcrumbFor('/dashboard/')).toEqual([
-      { label: 'Index', href: '/' },
+      { label: 'Home', href: '/' },
       { label: 'dashboard', href: null },
     ])
   })
 
   it('names the drawing set, which is a page and not a bare URL segment', () => {
     expect(breadcrumbFor('/courses/')).toEqual([
-      { label: 'Index', href: '/' },
+      { label: 'Home', href: '/' },
       { label: 'Drawing set', href: null },
     ])
   })
 
   it('trails the real module route through both of its parents', () => {
     expect(breadcrumbFor('/courses/intermediate/security/')).toEqual([
-      { label: 'Index', href: '/' },
+      { label: 'Home', href: '/' },
       { label: 'Drawing set', href: '/courses/' },
       { label: 'Intermediate', href: '/courses/intermediate/' },
       { label: 'security', href: null },
@@ -74,7 +74,7 @@ describe('breadcrumbFor on the not-found route', () => {
 
   it('names the page rather than the URL that was asked for', () => {
     expect(breadcrumbFor('/404/', NOT_FOUND_SEGMENT)).toEqual([
-      { label: 'Index', href: '/' },
+      { label: 'Home', href: '/' },
       { label: NOT_FOUND_TITLE, href: null },
     ])
   })
@@ -93,7 +93,7 @@ describe('breadcrumbFor on the not-found route', () => {
   it('leaves every other route to the pathname', () => {
     for (const segment of [null, 'courses', '__PAGE__']) {
       expect(breadcrumbFor('/courses/', segment)).toEqual([
-        { label: 'Index', href: '/' },
+        { label: 'Home', href: '/' },
         { label: 'Drawing set', href: null },
       ])
     }
@@ -112,7 +112,9 @@ describe('NOT_FOUND_SHEET_LABEL', () => {
 
 describe('sheetLabelFor', () => {
   it('names the index sheet', () => {
-    expect(sheetLabelFor('/')).toBe('INDEX SHEET')
+    expect(sheetLabelFor('/')).toBe('HOME')
+    // §15.1 — the register moved, and its label went with it.
+    expect(sheetLabelFor('/sheets/')).toBe('SHEET INDEX')
   })
 
   it('numbers a category by its position in the drawing set', () => {
@@ -139,6 +141,31 @@ describe('sheetLabelFor', () => {
 
   it('still returns nothing for a module page under that route', () => {
     expect(sheetLabelFor('/courses/intermediate/security/')).toBeNull()
+  })
+})
+
+describe('an ancestor segment with no page of its own (§15.1)', () => {
+  /**
+   * MEASURED by `scripts/check-links-out.mjs` on its first run: of 2313 internal
+   * links in the export, exactly one resolved to nothing — `/auth/`, the crumb
+   * above a reader mid-sign-in. `/auth/` is a directory holding `callback/` and
+   * was never exported as a page, and the trail linked every ancestor.
+   *
+   * This is the only guard on `WITHOUT_A_PAGE`. The link gate cannot see it: an
+   * un-linked crumb emits no href, so there is nothing in the export for the
+   * gate to follow. If someone deletes the set, this test is what goes red.
+   */
+  it('names the segment but does not link it', () => {
+    expect(breadcrumbFor('/auth/callback/')).toEqual([
+      { label: 'Home', href: '/' },
+      { label: 'auth', href: null },
+      { label: 'callback', href: null },
+    ])
+  })
+
+  it('still links an ancestor that does have a page', () => {
+    const crumbs = breadcrumbFor('/courses/fundamentals/')
+    expect(crumbs[1]).toEqual({ label: 'Drawing set', href: '/courses/' })
   })
 })
 

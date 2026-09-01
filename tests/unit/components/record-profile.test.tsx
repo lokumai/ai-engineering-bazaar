@@ -404,7 +404,7 @@ describe('§12.11 — the page itself: eight sections, in order', () => {
     expect(PAGE).toContain('Profile')
   })
 
-  it('renders §12.11’s eight sections in §12.11’s order, then the keyboard switch', () => {
+  it('renders §12.11’s eight sections in order, then §14.7’s two, then the keyboard switch', () => {
     const titles = [...PAGE.matchAll(/class="hl-panel-title">([^<]+)</g)].map(([, t]) => t)
     expect(titles).toEqual([
       'Identity',
@@ -412,6 +412,12 @@ describe('§12.11 — the page itself: eight sections, in order', () => {
       'Uptime',
       'Stamps',
       'Submittal register',
+      // §14.7 — contributed by `AuthPanels` as its own two panels rather than
+      // wrapped in one, and placed immediately BEFORE storage: one says where
+      // the record is kept, the other how reliably this browser will keep it,
+      // and a reader deciding whether they want an account reads them together.
+      'Account',
+      'Organisations',
       'Storage',
       'Stored values',
       'Data',
@@ -420,7 +426,19 @@ describe('§12.11 — the page itself: eight sections, in order', () => {
   })
 
   it('gives every section a heading its landmark is labelled by', () => {
-    for (const id of ['identity', 'readout', 'uptime', 'stamps', 'submittals', 'storage', 'raw', 'data', 'keyboard']) {
+    for (const id of [
+      'identity',
+      'readout',
+      'uptime',
+      'stamps',
+      'submittals',
+      'hl-account-head',
+      'hl-orgs-head',
+      'storage',
+      'raw',
+      'data',
+      'keyboard',
+    ]) {
       expect(PAGE, id).toContain(`aria-labelledby="${id}"`)
       expect(PAGE, id).toContain(`id="${id}"`)
     }

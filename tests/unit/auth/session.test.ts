@@ -260,11 +260,60 @@ describe('parseCallbackUrl — the query AND the fragment', () => {
     const params = parseCallbackUrl('https://x.test/auth/callback/')
     expect(params).toEqual({
       code: null,
+      // §14.7 — the implicit pair Supabase returns when the browser opening the
+      // link is not the one that asked for it.
+      accessToken: null,
+      refreshToken: null,
       error: null,
       errorCode: null,
       errorDescription: null,
       returnPath: DEFAULT_RETURN_PATH,
     })
+  })
+
+  it('reads the implicit pair out of the fragment (§14.7)', () => {
+    // MEASURED against a real project: `flowType: 'pkce'` does not make every
+    // return trip a PKCE one. The verifier lives in the browser that ASKED, and
+    // an emailed link is very often opened somewhere else — requested on a
+    // laptop, tapped on a phone. Supabase then redirects with the tokens in the
+    // fragment instead of a code, and before this the callback waited for a
+    // code that was never coming and timed out on a sign-in that had succeeded.
+    const params = parseCallbackUrl(
+      'https://x.test/auth/callback/#access_token=at-123&refresh_token=rt-456'
+        + '&expires_in=3600&token_type=bearer&type=magiclink',
+    )
+    expect(params.code).toBeNull()
+    expect(params.accessToken).toBe('at-123')
+    expect(params.refreshToken).toBe('rt-456')
+
+    const plan = planCallback(
+      'https://x.test/auth/callback/#access_token=at-123&refresh_token=rt-456',
+    )
+    expect(plan).toEqual({
+      kind: 'adopt',
+      accessToken: 'at-123',
+      refreshToken: 'rt-456',
+      returnPath: DEFAULT_RETURN_PATH,
+    })
+  })
+
+  it('half a pair is not a session: one token alone plans nothing', () => {
+    // A fragment carrying only an access token cannot be adopted — `setSession`
+    // needs both, and adopting with a missing refresh token would produce a
+    // session that dies at the first refresh with no way to explain itself.
+    expect(planCallback('https://x.test/auth/callback/#access_token=at-123').kind).toBe(
+      'nothing',
+    )
+    expect(planCallback('https://x.test/auth/callback/#refresh_token=rt-456').kind).toBe(
+      'nothing',
+    )
+  })
+
+  it('a code wins over a fragment pair: the exchange leaves no token in the URL', () => {
+    expect(
+      planCallback('https://x.test/auth/callback/?code=abc#access_token=at&refresh_token=rt')
+        .kind,
+    ).toBe('await')
   })
 
   it('does not throw on an unparseable href', () => {

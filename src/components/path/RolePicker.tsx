@@ -106,7 +106,7 @@ export function RolePicker({ role = null, idPrefix = 'hl-role' }: RolePickerProp
   const statusId = `${idPrefix}-standing`
 
   function choose(id: RoleId): void {
-    update((data) => setRole(data, id, nowIso()))
+    update((data) => setRole(data, id, nowIso()), { kind: 'setRole', payload: { role: id } })
     setChosen(true)
   }
 

@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { AccountSync } from '@/components/record/AccountSync'
+import { SessionProvider } from '@/components/auth/SessionProvider'
 import { Affordances } from '@/components/shell/Affordances'
 import { SiteHeader } from '@/components/shell/SiteHeader'
 import { curriculumFacts } from '@/lib/content/facts'
@@ -86,6 +88,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             never reloads the document and the mascot would otherwise freeze at
             whatever was signed off when the page loaded. */}
         <RecordStateSync facts={stampFacts} />
+        {/* §14.7 — THE SEAM, mounted once per document.
+            The session and the record's sync are document-level concerns, not
+            page-level ones: a sign-off happens on a sheet, so a sync that lived
+            on `/profile/` would only reach the account when the reader visited
+            the page that has nothing to do with the work. Every navigation here
+            is a client transition, so once per document is once per session.
+
+            `facts` is passed whole rather than trimmed. MEASURED: 6.3 KB of
+            flight data against a 2.9 KB hand-trimmed subset, on pages that are
+            already 200 KB. The 3.4 KB buys `buildProgress` the exact
+            `CurriculumFacts` `derive.ts` takes, so §14.9's one-arithmetic rule
+            holds with no projection to keep in step.
+
+            Inert when `NEXT_PUBLIC_AUTH_ENABLED` is off (§14.1): the provider
+            resolves to `disabled` and the island's effect returns before it
+            builds a client, so nothing is fetched and nothing is rendered. */}
+        <SessionProvider>
+          <AccountSync facts={facts} />
+        </SessionProvider>
       </body>
     </html>
   )

@@ -225,8 +225,9 @@ function MarkOffer({ role }: { role: Role }) {
   const selected: MarkId = choice ?? suggested
 
   function confirm(): void {
-    update((data) =>
-      setIdentity(data, { mark: selected === 'seeded' ? null : selected }, nowIso()),
+    update(
+      (data) => setIdentity(data, { mark: selected === 'seeded' ? null : selected }, nowIso()),
+      { kind: 'setIdentity', payload: { mark: selected === 'seeded' ? null : selected } },
     )
     setSettled(true)
   }

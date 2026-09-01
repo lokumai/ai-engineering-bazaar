@@ -85,7 +85,13 @@ export function QuickCheck({
             rows={4}
             value={answer}
             onChange={(event) =>
-              update((data) => setQuizAnswer(data, slug, event.target.value, nowIso()))
+              update((data) => setQuizAnswer(data, slug, event.target.value, nowIso()), {
+      // §14.8.1 rule 2 counts ATTEMPTS, so every answer is a row — not only the
+      // last one, which is all the envelope keeps.
+      kind: 'setQuizAnswer',
+      sheetSlug: slug,
+      payload: { answer: event.target.value },
+    })
             }
           />
         </label>
@@ -102,7 +108,12 @@ export function QuickCheck({
                 type="button"
                 className="hl-btn"
                 aria-pressed={assessed === 'matched'}
-                onClick={() => update((data) => assessQuiz(data, slug, 'matched', nowIso()))}
+                onClick={() => update((data) => assessQuiz(data, slug, 'matched', nowIso()), {
+              kind: 'assessQuiz',
+              sheetSlug: slug,
+              payload: { assessed: 'matched' },
+            })
+          }
               >
                 MATCHED
               </button>
@@ -110,7 +121,12 @@ export function QuickCheck({
                 type="button"
                 className="hl-btn"
                 aria-pressed={assessed === 'missed'}
-                onClick={() => update((data) => assessQuiz(data, slug, 'missed', nowIso()))}
+                onClick={() => update((data) => assessQuiz(data, slug, 'missed', nowIso()), {
+              kind: 'assessQuiz',
+              sheetSlug: slug,
+              payload: { assessed: 'missed' },
+            })
+          }
               >
                 DID NOT MATCH
               </button>

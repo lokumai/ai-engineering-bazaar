@@ -1,0 +1,284 @@
+import { expect, test } from '@playwright/test'
+
+import { seedRecord, signedSheet, waitForHydratedReadout } from './record'
+import {
+  accountsEnv,
+  cleanup,
+  makeAdmin,
+  seed,
+  serverEventKinds,
+  serverRecord,
+  signInByLink,
+  type Fixture,
+} from './accounts'
+
+/**
+ * §14 — the whole feature, in real Chrome against a real Supabase project.
+ *
+ * ## What only this file can answer
+ *
+ * The unit suite proves `mergeRecords` merges and `sync.ts` transitions. Neither
+ * can prove the thing the reader was actually promised: that a record survives
+ * the browser it was made in. That claim spans a real session, a real RLS
+ * policy, a real static export and a second empty browser profile, and it is
+ * false in a dozen ways that every layer in isolation reports as fine.
+ *
+ * ## Gate
+ *
+ * Requires a build made with `NEXT_PUBLIC_AUTH_ENABLED=true` and a filled
+ * `.env.local`. `E2E_ACCOUNTS=1` asserts the first; the second is checked and
+ * skipped rather than failed, so a clone with no credentials still runs the
+ * suite green — the credentials are not in the repository and never will be.
+ *
+ * ## Serial
+ *
+ * One organisation, four accounts, one database. These tests share that state
+ * on purpose: "a manager sees three records" is only a real claim if three
+ * records exist, and building a private org per test would test a shape no
+ * deployment has.
+ */
+
+const env = accountsEnv()
+const ENABLED = process.env.E2E_ACCOUNTS === '1' && env !== null
+
+test.describe('§14 accounts, organisations and the record that outlives a browser', () => {
+  test.skip(!ENABLED, 'needs E2E_ACCOUNTS=1 and a filled .env.local')
+  test.describe.configure({ mode: 'serial' })
+
+  let fixture: Fixture
+
+  test.beforeAll(async () => {
+    fixture = await seed(env!)
+  })
+
+  test.afterAll(async () => {
+    if (env) await cleanup(env, makeAdmin(env))
+  })
+
+  // -- §14.7 sign-in --------------------------------------------------------
+
+  test('the sign-in sheet offers the three providers §14.7 names', async ({ page }) => {
+    await page.goto('/sign-in/')
+    await expect(page.getByText('ACCOUNTS NOT ENABLED YET')).toHaveCount(0)
+
+    // GitHub first, and the page says why: §14.8.2's submittal verification is
+    // the thing only a GitHub session can unlock.
+    const github = page.getByRole('button', { name: /github/i })
+    await expect(github).toBeVisible()
+    await expect(page.getByRole('button', { name: /google/i })).toBeVisible()
+    await expect(page.getByRole('button', { name: /link|email/i }).first()).toBeVisible()
+  })
+
+  test('a magic link signs the reader in and lands them back on the site', async ({
+    page,
+    baseURL,
+  }) => {
+    await signInByLink(page, fixture, fixture.emails.learner, baseURL!)
+
+    // The callback must not leave the reader on a Supabase error page or on a
+    // blank screen: §14.7 requires it to return them to the site.
+    await page.goto('/profile/')
+    await waitForHydratedReadout(page)
+    await expect(page.getByText(fixture.emails.learner, { exact: false })).toBeVisible()
+  })
+
+  // -- §14.7.4 the claim ----------------------------------------------------
+
+  test('an anonymous record is claimed, summarised, and pushed', async ({ page, baseURL }) => {
+    // Two signed sheets made before this browser had ever heard of an account.
+    await seedRecord(page, {
+      identity: { name: 'Ada Lovelace', markSeed: '0123abcd' },
+      sheets: {
+        // Category-prefixed, because that is what `derive.ts` iterates and
+        // what the routes are: a bare module slug matches no sheet, so
+        // `signedCount` would count zero and `progress.signedOff` would read 0
+        // for a record with two signatures in it.
+        'intermediate/harness-engineering': signedSheet('f60e2d2'),
+        'intermediate/coding-agents': signedSheet('f60e2d2'),
+      },
+    })
+    await page.goto('/')
+    await waitForHydratedReadout(page)
+
+    await signInByLink(page, fixture, fixture.emails.learner, baseURL!)
+    await page.goto('/profile/')
+    await waitForHydratedReadout(page)
+
+    // §14.7.4 — the reader is TOLD what happened to their own record. The
+    // account held nothing, so this is the `adopted` outcome.
+    await expect(page.getByText('NO RECORD IN ACCOUNT')).toBeVisible()
+
+    // §14.7.3 — and the footer stops claiming nothing once the push lands.
+    await expect
+      .poll(() => page.locator('footer .hl-readout').getAttribute('data-sync'), {
+        timeout: 20_000,
+        message: 'the readout never reached a settled sync state',
+      })
+      .toBe('synced')
+
+    // The server actually holds it. Read past RLS, because the assertion is
+    // about the row existing, not about who may see it.
+    await expect
+      .poll(async () => {
+        const row = await serverRecord(fixture, fixture.ids.learner)
+        return Object.keys((row?.data?.sheets as Record<string, unknown>) ?? {}).length
+      }, { timeout: 20_000 })
+      .toBe(2)
+
+    const row = await serverRecord(fixture, fixture.ids.learner)
+    const sheets = row!.data.sheets as Record<string, { signedOff: string | null }>
+    expect(sheets['intermediate/harness-engineering'].signedOff).not.toBeNull()
+    expect(sheets['intermediate/coding-agents'].signedOff).not.toBeNull()
+
+    // §14.9 — the stored progress is derive.ts's own output, not SQL's guess.
+    expect(row!.progress).toMatchObject({ signedOff: 2 })
+    expect(typeof (row!.progress as { ratio: number }).ratio).toBe('number')
+  })
+
+  test('THE PROMISE: the record reaches a second, empty browser', async ({ browser, baseURL }) => {
+    // A brand-new context is a different browser profile: empty localStorage,
+    // no session, nothing carried over. This is the claim the whole phase was
+    // built to make, and the only test that can falsify it.
+    const fresh = await browser.newContext()
+    const page = await fresh.newPage()
+    try {
+      await page.goto('/')
+      const before = await page.evaluate(() => window.localStorage.getItem('hl-record'))
+      expect(before, 'the fresh context was not empty').toBeNull()
+
+      await signInByLink(page, fixture, fixture.emails.learner, baseURL!)
+      await page.goto('/profile/')
+      await waitForHydratedReadout(page)
+
+      await expect
+        .poll(
+          () => page.evaluate(() => window.localStorage.getItem('hl-record') ?? ''),
+          { timeout: 20_000, message: 'the account record never arrived in the new browser' }
+        )
+        .toContain('intermediate/harness-engineering')
+
+      // Not merely present — the sign-off survived the round trip.
+      const restored = await page.evaluate(() => window.localStorage.getItem('hl-record') ?? '')
+      const parsed = JSON.parse(restored) as {
+        data: { sheets: Record<string, { signedOff: string | null }> }
+      }
+      expect(parsed.data.sheets['intermediate/harness-engineering'].signedOff).not.toBeNull()
+      expect(parsed.data.sheets['intermediate/coding-agents'].signedOff).not.toBeNull()
+    } finally {
+      await fresh.close()
+    }
+  })
+
+  test('a sign-off made while signed in is appended to the log §14.2.3', async ({
+    page,
+    baseURL,
+  }) => {
+    await seedRecord(page, { identity: { name: 'Ada Lovelace', markSeed: '0123abcd' } })
+    await signInByLink(page, fixture, fixture.emails.colleague, baseURL!)
+
+    await page.goto('/courses/intermediate/harness-engineering/')
+    await waitForHydratedReadout(page)
+    await page.getByRole('button', { name: 'SIGN OFF', exact: true }).click()
+    await expect(page.getByRole('button', { name: /^SIGNED OFF / })).toBeVisible()
+
+    // The event name IS the reducer name (§14.2.3) - no translation layer.
+    await expect
+      .poll(() => serverEventKinds(fixture, fixture.ids.colleague), { timeout: 20_000 })
+      .toContain('signOff')
+  })
+
+  // -- §14.8 the panel ------------------------------------------------------
+
+  test('a manager sees the whole organisation, claim and evidence apart', async ({
+    page,
+    baseURL,
+  }) => {
+    await signInByLink(page, fixture, fixture.emails.manager, baseURL!)
+    await page.goto('/team/')
+
+    // §11.25 - the page says nothing until the query answers.
+    await expect(page.getByRole('table')).toBeVisible({ timeout: 20_000 })
+
+    // §14.8.2 - two columns, never merged into one tick.
+    await expect(page.getByRole('columnheader', { name: /claim/i })).toBeVisible()
+    await expect(page.getByRole('columnheader', { name: /evidence/i })).toBeVisible()
+
+    // Three members: the manager and two colleagues.
+    await expect(page.getByRole('row')).toHaveCount(4) // header + 3
+
+    // §14.8.2 / blocker 7 — a NAME, not a uuid. `profiles` was written by
+    // nobody before this phase's fix, so every member printed as `USER
+    // 1a2b3c4d` and every submittal classified as unattributable for ever.
+    //
+    // The name shown is the one in the RECORD, not the fixture's: the session
+    // island upserts `profiles.display_name` from `identity.name`, so the two
+    // learners who signed in carrying a seeded record read as that record's
+    // name. The manager never seeded one, and `profileRowFor` declines to write
+    // a row with nothing in it (§11.25's absent-not-empty rule), so the
+    // fixture's own value survives for them. Both facts are asserted, because
+    // together they prove the write happened AND that it did not overwrite with
+    // emptiness.
+    await expect(page.getByText(/^USER [0-9a-f]{8}$/)).toHaveCount(0)
+    await expect(page.getByText('Ada Lovelace').first()).toBeVisible()
+    await expect(page.getByText('E2E Manager')).toBeVisible()
+  })
+
+  test('a non-manager is told they are not one, not shown an empty table', async ({
+    page,
+    baseURL,
+  }) => {
+    await signInByLink(page, fixture, fixture.emails.learner, baseURL!)
+    await page.goto('/team/')
+
+    // §11.25 again, from the other side: an empty result from RLS is a fact
+    // about the reader's role, and printing an empty roster would state
+    // something else entirely.
+    // Both halves, asserted separately: the readout mark and the sentence that
+    // explains it. §11.25's rule is that a state is named AND said, so a test
+    // that matched either loosely would pass against a page carrying only one.
+    await expect(page.getByText('NOT A MANAGER', { exact: true })).toBeVisible({
+      timeout: 20_000,
+    })
+    await expect(page.getByText(/You are not a manager of an organisation/)).toBeVisible()
+    await expect(page.getByRole('table')).toHaveCount(0)
+  })
+
+  // -- §14.5 joining --------------------------------------------------------
+
+  test('the join sheet discloses before it offers, and the reader joins', async ({
+    page,
+    baseURL,
+  }) => {
+    await signInByLink(page, fixture, fixture.emails.outsider, baseURL!)
+    await page.goto('/join/')
+
+    // The outsider's address is on the org's join_domain, so path 1 applies.
+    const joinButton = page.getByRole('button', { name: /join/i }).first()
+    await expect(joinButton).toBeVisible({ timeout: 20_000 })
+
+    // §14.5.1 - the three statements, and the button BELOW them. Position is
+    // the requirement, not merely presence: a disclosure under the control has
+    // already failed.
+    const disclosure = page.getByText(/read the same record|whole record|entire record/i).first()
+    await expect(disclosure).toBeVisible()
+    const disclosureBox = await disclosure.boundingBox()
+    const buttonBox = await joinButton.boundingBox()
+    expect(disclosureBox!.y, 'the disclosure must sit above the control').toBeLessThan(buttonBox!.y)
+
+    // And erasing later does not erase the organisation's copy (§14.6).
+    await expect(page.getByText(/does not withdraw the history|already holds/i)).toBeVisible()
+
+    await joinButton.click()
+
+    // The row the READER wrote - §14.5's consent mechanism.
+    await expect
+      .poll(async () => {
+        const { data } = await fixture.admin
+          .from('memberships')
+          .select('user_id')
+          .eq('user_id', fixture.ids.outsider)
+        return data?.length ?? 0
+      }, { timeout: 20_000, message: 'the membership row was never written' })
+      .toBe(1)
+  })
+})

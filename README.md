@@ -55,8 +55,16 @@ cross-reference cannot reach the published site.
 The site keeps a learner record — which sheets you have signed off, your answers
 to the quick checks, the primary sources you opened, the checklists you ran, and
 the GitHub repositories you register against each module. All of it is in
-`localStorage` on your own device. There are no accounts, no server and no
-network calls at runtime, and none of it is ever sent anywhere.
+`localStorage` on your own device, and signed out it goes nowhere else: no
+account, no network call at runtime.
+
+Signing in is **optional and nothing is gated behind it**. Every sheet, every
+quick check and every sign-off works exactly the same signed out. What an
+account adds is that the record survives a cleared cache, a second machine and a
+lost laptop — and that a submittal can be shown as verified rather than merely
+typed. When you sign in, the record already in this browser is not discarded: it
+is merged with the account's field by field, a sign-off is never taken back, and
+the site tells you in numbers what it did.
 
 | Screen | What it is |
 | --- | --- |
@@ -172,6 +180,33 @@ GitHub Pages; to reproduce the deployed build locally:
 SITE_BASE_PATH=/ai-engineering-bazaar npm run build
 ```
 
+### Accounts and organisations (optional)
+
+The account layer is off unless it is configured. With no `.env.local` the site
+builds and runs exactly as it did before it existed.
+
+```bash
+cp .env.local.example .env.local     # then fill in the three values
+node scripts/check-supabase.mjs      # shape + live checks, prints no secrets
+```
+
+Then apply the schema — ten tables, twenty-three row-level-security policies,
+no database functions and no views, so the schema is portable Postgres:
+
+```bash
+psql "$SUPABASE_DB_URL" -f supabase/migrations/0001_phase4_schema.sql
+psql "$SUPABASE_DB_URL" -f supabase/migrations/0002_phase4_rls.sql
+psql "$SUPABASE_DB_URL" -f supabase/migrations/0003_phase4_erase.sql
+node scripts/test-rls.mjs            # 31 checks, real JWTs, real PostgREST
+```
+
+`NEXT_PUBLIC_AUTH_ENABLED` is a kill switch and it defaults to **off**. It stays
+off until the site is served from its own domain: `lokumai.github.io` is one
+origin shared with every other project site published under that account — an
+origin is a scheme/host/port tuple and excludes the path — so a session token in
+`localStorage` there is readable by any sibling site. `basePath` isolates
+nothing.
+
 ## Tests
 
 Everything below runs on every pull request (`.github/workflows/ci.yml`), and
@@ -182,6 +217,15 @@ npm run typecheck    # TypeScript, strict
 npm test             # Vitest: units, plus the whole-corpus render check
 npm run build        # the static export itself
 npm run test:e2e     # Playwright, real Chrome, three viewports
+```
+
+Two suites need credentials and skip cleanly without them, so a clone with no
+`.env.local` still runs everything green:
+
+```bash
+node scripts/test-rls.mjs                                   # the RLS policies
+NEXT_PUBLIC_AUTH_ENABLED=true npm run build                 # then, against it:
+E2E_ACCOUNTS=1 npx playwright test accounts.spec.ts         # the account flows
 ```
 
 `npm test` includes eight checks worth knowing about because they fail for

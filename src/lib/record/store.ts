@@ -33,6 +33,17 @@ import {
   type RecordData,
 } from './schema'
 import { readRecord, safeStorage, writeRecord, type RecordStorage } from './storage'
+/**
+ * §14.7.4 — TYPE-only, deliberately. This module must not construct a `Sync`:
+ * doing so would put `createSync`'s dependencies — and through them the
+ * Supabase client — on the import path of every page that prints a readout,
+ * and §14.7.1's whole arrangement is that the network is reachable from one
+ * island and nowhere else. The instance is handed in by `attachSync`, so a
+ * build with no backend never even evaluates `sync.ts`.
+ */
+import type { Sync, SyncState } from './sync'
+import type { EventKind, RemoteRecordStore } from './wire'
+
 import { envelopeTextFrom, parseEnvelope, type ParseResult } from './validate'
 
 export type WriteState = 'saved' | 'quota' | 'blocked' | 'too-large' | 'pending'
@@ -92,6 +103,167 @@ function stampStorage(state: 'ok' | 'blocked'): void {
 function adopt(data: RecordData): void {
   current = data
   notify()
+  // §12.1.5 crossing §14.7.3. The record arrived from another tab of this same
+  // browser, so from the account's point of view it is a local write and this
+  // tab has no way to learn whether the tab that made it got it through. The
+  // alternatives were both worse: saying nothing leaves this footer claiming
+  // `synced` for a record the server may not hold, and marking `pending`
+  // without pushing leaves a claim that a send is owed which nothing will ever
+  // perform. So it is pushed, and the cost — the same envelope upserted by two
+  // tabs — is one idempotent request against a page that would otherwise lie.
+  //
+  // No `savedAt` is passed: on the removal path (`clear()`, or an erase in
+  // another tab) the instant this tab is holding belongs to a record that no
+  // longer exists, and the push stamping its own instant is the truthful
+  // reading — this device is sending this record now.
+  pushToAccount()
+}
+
+// --- the account (§14.7.3, §14.7.4) ------------------------------------------
+
+/**
+ * §14.7.4 — the seam, and the only thing this file knows about the network.
+ *
+ * The sync instance is created by whichever island signed the reader in (it
+ * owns the port, the clock and the id minting), and handed here so that the
+ * ordinary write path can mark it `pending`. Nothing above this line changes:
+ * `getServerSnapshot` still returns the frozen singleton, the in-memory record
+ * is still authoritative whatever storage or the network does, and the local
+ * write is still synchronous. §14.7.3's rule and §12.1.4's rule are the same
+ * rule — a write never waits for a slower layer, and the page never claims a
+ * state that layer has not reached.
+ */
+let sync: Sync | null = null
+let detachSync: (() => void) | null = null
+
+/**
+ * §14.6 — the port, kept beside the machine so the erase has ONE way to reach
+ * the account's row.
+ *
+ * `Sync` deliberately does not expose its port: everything it does with it is
+ * its own business. The erase is the exception, and it is an exception on
+ * purpose rather than an oversight — deleting the account's copy is not a sync
+ * operation. It is not owed, not retried, not throttled and not idempotent in
+ * the way a push is. Handing `EraseDialog` a raw Supabase client instead would
+ * put a second set of column names and a second user scoping in a component,
+ * which is exactly what `RemoteRecordStore` exists to prevent.
+ */
+let remotePort: RemoteRecordStore | null = null
+
+/**
+ * A SECOND listener set, not the record's.
+ *
+ * The sync state changes without the record changing (a push landing, a push
+ * failing) and the record changes without the sync state changing, so folding
+ * them into one set would re-render every readout on the page for a footer
+ * attribute — and would make `notify` fire twice for one act, which §12.2's
+ * identity-equality discipline exists to avoid.
+ */
+const syncListeners = new Set<() => void>()
+
+function notifySyncListeners(): void {
+  for (const listener of [...syncListeners]) listener()
+}
+
+/**
+ * Installs (or, with `null`, removes) the sync instance.
+ *
+ * The caller constructs it with `initial: snapshot()`; nothing is written or
+ * pushed from here, because attaching is not an event in the reader's record —
+ * `Sync.signIn` and `Sync.claim` are, and they belong to the caller that knows
+ * which account was signed in to (§14.7.4).
+ */
+export function attachSync(instance: Sync | null, port: RemoteRecordStore | null = null): void {
+  detachSync?.()
+  detachSync = null
+  sync = instance
+  remotePort = instance === null ? null : port
+  if (instance !== null) detachSync = instance.subscribe(notifySyncListeners)
+  notifySyncListeners()
+}
+
+/** True when there is an account copy for §14.6's erase to remove. */
+export function hasAccountCopy(): boolean {
+  return remotePort !== null
+}
+
+/**
+ * §14.6 — removes the account's copy of the envelope.
+ *
+ * THE ORDERING IS THE WHOLE FUNCTION. The local erase has already run by the
+ * time this is called, and it went through `update`, which marks the sync
+ * `pending` and schedules a throttled flush. Delete first and that flush lands
+ * afterwards, recreating the row this call was asked to remove — and the reader
+ * has already been told it was gone. So the pending push is settled first, and
+ * only then is the row deleted; nothing is owed after that, so nothing
+ * recreates it.
+ *
+ * `learner_event` is untouched. §14.4.3 gives that table no delete policy for
+ * anyone, which is §14.6's second row working as designed: an organisation's
+ * training history is not erasable from a browser, and the dialog says so.
+ *
+ * Throws on failure, because the caller is `eraseRemote` in `erase.ts`, whose
+ * whole job is to turn that into the one thing the reader can act on: the local
+ * erase happened, the account copy may still be there.
+ */
+export async function eraseAccountCopy(): Promise<void> {
+  const port = remotePort
+  if (port === null) return
+  flush()
+  if (sync !== null) await sync.push()
+  await port.deleteRecord()
+}
+
+/** §14.7.3 — `off` until an instance says otherwise. Never a guess. */
+export function syncState(): SyncState {
+  return sync?.state() ?? 'off'
+}
+
+export function subscribeSyncState(listener: () => void): () => void {
+  syncListeners.add(listener)
+  start()
+  return () => {
+    syncListeners.delete(listener)
+  }
+}
+
+/**
+ * §14.7.3 — the four values, subscribed, for the footer readout.
+ *
+ * `off` on the server and in the first client render: a static export is built
+ * before the reader has an account, so "nothing is being asserted about a
+ * server" is the only true thing build-time HTML can say. It is also a constant
+ * the server and the first client render compute identically, which is the one
+ * rule this file has (§12.2).
+ */
+export function useSyncState(): SyncState {
+  return useSyncExternalStore(
+    subscribeSyncState,
+    () => syncState(),
+    () => 'off' as SyncState,
+  )
+}
+
+/**
+ * Hands the current record to the account layer and lets it try.
+ *
+ * `localWrite` first, always: it records what is now authoritative and that a
+ * push is owed, so an attempt that fails leaves `failed` beside a record the
+ * store still holds. Nothing is awaited and nothing is returned — a caller
+ * cannot accidentally make the local write depend on the network, which is
+ * §12.1.4's rule and §14.7.3's rule stated once.
+ */
+function pushToAccount(at?: string): void {
+  if (sync === null) return
+  sync.localWrite(current, at)
+  void sync.push().then(
+    () => undefined,
+    () => {
+      // `sync.ts` owns what a rejection means and has already recorded it.
+      // Swallowed here only so a rejected push cannot become an unhandled
+      // rejection in a reader's console.
+    },
+  )
 }
 
 // --- the flush ---------------------------------------------------------------
@@ -122,6 +294,23 @@ function flushNow(): void {
     // A closed channel is not an error worth propagating.
   }
   notify()
+  /**
+   * §14.7.3 — the push rides the flush, and it rides it LAST.
+   *
+   * The throttle §12.1.4 already installed is exactly the debounce a network
+   * write wants: one send per burst of ticks and keystrokes rather than one per
+   * reducer. Being here also fixes the ordering that matters — the local copy
+   * has been attempted first, so the account never holds a state this browser
+   * never tried to keep.
+   *
+   * `at` is passed whether or not storage accepted the value, so the envelope
+   * on the server carries the same `savedAt` as the one on disk. When storage
+   * REFUSED, that instant matters more rather than less: the server's copy is
+   * then the only durable one, and giving it a different timestamp from the
+   * export the reader was just told to take would make two copies of one record
+   * disagree about when it was written.
+   */
+  pushToAccount(at)
 }
 
 function scheduleFlush(): void {
@@ -300,13 +489,48 @@ export function useHydrated(): boolean {
  * throttled flush. The in-memory store is authoritative (§12.1.4): the UI never
  * waits on storage, and a reducer that changed nothing costs nothing.
  */
-export function update(fn: (data: RecordData) => RecordData): void {
+export function update(fn: (data: RecordData) => RecordData, event?: RecordEvent): void {
   start()
   const next = fn(current)
   if (next === current) return
   current = next
   notify()
   scheduleFlush()
+  // §14.7.3 — the account is told a write happened, and nothing here waits for
+  // it. `localWrite` is synchronous bookkeeping: it marks `pending` so the
+  // footer stops claiming `synced` the instant the record moves ahead of the
+  // server, which is a whole flush interval before the send is attempted.
+  sync?.localWrite(current)
+  // §14.2.3 — and the log row, when the caller named one. `enqueue` returns
+  // null while signed out, which is the common case and costs nothing.
+  if (event !== undefined) {
+    sync?.enqueue(event.kind, event.sheetSlug ?? null, event.payload, nowIso())
+  }
+}
+
+/**
+ * §14.2.3 — what a write WAS, named by the only code that can know.
+ *
+ * The envelope records the state after; the log records the act. Those are
+ * different questions and the second one cannot be recovered from the first:
+ * three quiz attempts and one lucky answer leave the same record behind, and
+ * §14.8.1's second attention rule is defined on exactly that difference.
+ *
+ * The alternative considered and rejected was inferring the event by diffing
+ * the record before and after inside `update`. That would put a SECOND
+ * definition of "what happened" beside `events.ts`, computed by a different
+ * mechanism, and the two would drift the first time a reducer touched a field
+ * the differ did not know about. So the caller names it: the component that
+ * chose the reducer is the one place the act is already known.
+ *
+ * `kind` is `EventKind`, whose members are the exported function names in
+ * `events.ts` — rename one there and this stops compiling, which is the point.
+ */
+export interface RecordEvent {
+  kind: EventKind
+  /** Null for a record-wide act: identity, role, preferences. */
+  sheetSlug?: string | null
+  payload?: Readonly<Record<string, unknown>>
 }
 
 /** The record as it stands, for an event handler that is not a component. */

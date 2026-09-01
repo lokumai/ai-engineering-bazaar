@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import {
+  ERASE_CLOSE_ACCOUNT,
+  ERASE_ORG_HISTORY,
+  ERASE_SCOPE,
   ERASE_WORD,
   NOTHING_RECORDED,
   UNDO_CLOSED,
@@ -8,7 +11,12 @@ import {
   confirmsErase,
   eraseTallyLines,
   eraseTallySentence,
+  REMOTE_ERASE_FAILED,
+  REMOTE_ERASE_FAILED_NOTE,
+  eraseFailureReason,
+  eraseRemote,
   rawStoredFrom,
+  remoteEraseNote,
   restoreQuarantine,
   undoAvailable,
   undoLabel,
@@ -270,5 +278,135 @@ describe('§12.11 item 7 / §12.15 — the two keys, read raw and removed', () =
     box.failSet()
     expect(() => restoreQuarantine(box.storage, 'aside')).not.toThrow()
     expect(() => restoreQuarantine(null, 'aside')).not.toThrow()
+  })
+})
+
+/**
+ * §14.6 — the account copy, adversarially.
+ *
+ * The whole point of `eraseRemote` taking the delete as an argument is that
+ * these four situations are reachable in node with no client, no session and no
+ * network: it worked, it rejected, it resolved with a PostgREST error, and
+ * there was nobody signed in. The fourth is not an edge case — `/profile/`
+ * works with no account at all (§14.0).
+ */
+describe('§14.6 — erasing the copy the account holds', () => {
+  it('reports the row gone when the delete resolves', async () => {
+    let calls = 0
+    const outcome = await eraseRemote(async () => { calls += 1 })
+    expect(outcome).toEqual({ kind: 'deleted' })
+    expect(calls).toBe(1)
+  })
+
+  it('says signed-out, and never calls anything, when there is no session', async () => {
+    // A signed-out reader has no `record_state` row, so there is nothing to
+    // warn them about. Reporting a failure here would send them looking for a
+    // copy that never existed.
+    expect(await eraseRemote(null)).toEqual({ kind: 'signed-out' })
+  })
+
+  it('never throws at a reader whose local data is already gone', async () => {
+    const outcome = await eraseRemote(async () => {
+      throw new Error('permission denied for table record_state')
+    })
+    expect(outcome).toEqual({
+      kind: 'failed',
+      reason: 'permission denied for table record_state',
+    })
+  })
+
+  it('treats a RESOLVED PostgREST error as a failure, not a success', async () => {
+    // The trap this check exists for: `.delete()` refused by RLS resolves with
+    // `{ error }` rather than rejecting, and a page that trusted the resolution
+    // would print "removed from your account" over a row still sitting there.
+    const outcome = await eraseRemote(async () => ({
+      error: { message: 'new row violates row-level security policy', code: '42501' },
+      data: null,
+    }))
+    expect(outcome.kind).toBe('failed')
+    if (outcome.kind === 'failed') {
+      expect(outcome.reason).toBe('new row violates row-level security policy')
+    }
+  })
+
+  it('accepts a PostgREST response whose error is null', async () => {
+    expect(await eraseRemote(async () => ({ error: null, data: null, count: 1 })))
+      .toEqual({ kind: 'deleted' })
+  })
+
+  it('reports a thrown non-Error as what it actually was', async () => {
+    const outcome = await eraseRemote(async () => { throw 'offline' })
+    expect(outcome).toEqual({ kind: 'failed', reason: 'offline' })
+  })
+
+  it('admits an absent reason rather than inventing one (§11.25)', () => {
+    expect(eraseFailureReason(new Error(''))).toBe('no reason reported')
+    expect(eraseFailureReason(new Error('  \n '))).toBe('no reason reported')
+    expect(eraseFailureReason(new Error(' timeout '))).toBe('timeout')
+  })
+
+  it('speaks only when the delete did not go through', () => {
+    expect(remoteEraseNote({ kind: 'deleted' })).toBeNull()
+    expect(remoteEraseNote({ kind: 'signed-out' })).toBeNull()
+    expect(remoteEraseNote({ kind: 'failed', reason: 'timeout' }))
+      .toBe(REMOTE_ERASE_FAILED_NOTE)
+  })
+
+  it('says the local half succeeded and the account half may not have', () => {
+    // ERASED HERE, not ERASED: the reader is deciding what to do next and has
+    // to know which half is outstanding. Readout register — uppercase, no
+    // terminal period (§12.14.1).
+    expect(REMOTE_ERASE_FAILED).toBe('ERASED HERE · ACCOUNT COPY MAY REMAIN')
+    expect(REMOTE_ERASE_FAILED).toBe(REMOTE_ERASE_FAILED.toUpperCase())
+    expect(REMOTE_ERASE_FAILED).not.toMatch(/\.$/)
+
+    // "may still be there", never "remains": a refused delete and a dropped
+    // connection are indistinguishable from the browser, and asserting either
+    // would be the page claiming a server state it cannot see (§1).
+    expect(REMOTE_ERASE_FAILED_NOTE).toContain('gone from this browser')
+    expect(REMOTE_ERASE_FAILED_NOTE).toContain('did not go through')
+    expect(REMOTE_ERASE_FAILED_NOTE).toContain('may still be there')
+    expect(REMOTE_ERASE_FAILED_NOTE).toMatch(/closing your account/i)
+  })
+})
+
+/**
+ * §14.6, §1 — the disclosure. Three rows, three promises, and none of the
+ * three may be missing from the screen that performs the deletion.
+ */
+describe('§14.6 — the copy states all three rows of the table', () => {
+  const all = `${ERASE_SCOPE} ${ERASE_ORG_HISTORY} ${ERASE_CLOSE_ACCOUNT}`
+
+  it('row 1 and row 2, first column: this browser AND the account copy', () => {
+    expect(ERASE_SCOPE).toContain('from this browser')
+    expect(ERASE_SCOPE).toContain('the copy your account holds')
+    // §12.1.2's set-aside copy is the reader's data too, and the sentence has
+    // said so since §12.15. It still does.
+    expect(ERASE_SCOPE).toContain('the copy set aside')
+  })
+
+  it('row 2, second column: the organisation history SURVIVES', () => {
+    expect(ERASE_ORG_HISTORY).toContain('is not removed')
+    expect(ERASE_ORG_HISTORY).toMatch(/organisation/)
+  })
+
+  it('row 3: closing the account is the only thing that removes the history', () => {
+    expect(ERASE_CLOSE_ACCOUNT).toMatch(/^Only closing your account/)
+  })
+
+  it('no longer claims the record was never sent anywhere', () => {
+    // The Phase 3 sentence. True then, false the moment `record_state`
+    // existed, and the defect §14.6 was written to close.
+    expect(all).not.toMatch(/never sent anywhere/i)
+    expect(all).not.toMatch(/nothing anywhere else/i)
+    expect(all).not.toMatch(/nothing is uploaded/i)
+  })
+
+  it('promises no deletion of the log the client has no policy to delete', () => {
+    // `learner_event` has no delete policy in `0002_phase4_rls.sql`, on
+    // purpose. So the copy must not offer to remove the history — only to say
+    // it stays, and how it ends.
+    expect(all).not.toMatch(/removes (the |your )?(training )?history/i)
+    expect(all).not.toMatch(/erases (the |your )?(training )?history/i)
   })
 })

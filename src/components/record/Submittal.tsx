@@ -95,7 +95,15 @@ export function SubmittalEntry({
         type="button"
         className="hl-btn hl-no-print"
         aria-label={`Remove ${entry.url}`}
-        onClick={() => update((data) => removeSubmittal(data, slug, index))}
+        onClick={() => update((data) => removeSubmittal(data, slug, index), {
+              // The act the envelope cannot keep: after this the row is simply
+              // gone, and §14.6's organisation history is the only place a
+              // withdrawn submittal survives.
+              kind: 'removeSubmittal',
+              sheetSlug: slug,
+              payload: { index },
+            })
+          }
       >
         REMOVE
       </button>
@@ -156,6 +164,14 @@ export function Submittal({ slug }: { slug: string }) {
         { owner: parsed.owner, repo: parsed.repo, url: parsed.url, commit: hash, note: note.trim(), at: '' },
         nowIso(),
       ),
+      {
+        // §14.8.2 — the strongest evidence the record holds, and the only
+        // content a third party can check. `owner` is what the panel compares
+        // against `profiles.github_login` to mark it verified or mismatched.
+        kind: 'addSubmittal',
+        sheetSlug: slug,
+        payload: { owner: parsed.owner, repo: parsed.repo, commit: hash },
+      },
     )
     setRepo('')
     setCommit('')

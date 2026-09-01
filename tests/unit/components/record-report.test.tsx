@@ -1,4 +1,5 @@
 import { renderToStaticMarkup } from 'react-dom/server'
+import { RECORD_SCOPE } from '@/lib/record/scope'
 import { describe, expect, it } from 'vitest'
 import {
   DocumentDownload,
@@ -365,9 +366,10 @@ describe('SHEET 00 — the legend (§12.13)', () => {
 
   it('carries §12.1.7’s three lines as a note block, not a banner', () => {
     const text = words(markup)
-    expect(text).toContain(
-      'Your record is stored in this browser only. It is never sent anywhere.',
-    )
+    // §14 — through the constant, for the reason `scope.ts` states: this
+    // sentence is carried into the exported RECORD OF WORK, a file the reader
+    // keeps, so a false version of it outlives the page that printed it.
+    expect(text).toContain(words(RECORD_SCOPE))
     expect(text).toMatch(/Browser storage can be cleared without warning/)
     expect(text).toMatch(/Safari deletes it after seven days without a visit/)
     expect(text).toContain('Export your record to a file to keep it.')

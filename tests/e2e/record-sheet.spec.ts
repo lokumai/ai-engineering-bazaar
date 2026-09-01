@@ -1,4 +1,5 @@
 import { type Page, expect, test } from '@playwright/test'
+import { NAME_SCOPE } from '@/lib/record/scope'
 import {
   documentLoads,
   firstPaint,
@@ -573,12 +574,15 @@ test('the name is asked for inline at the first sign-off (§12.3.2, §12.3.3)', 
   await expect(field).toHaveAttribute('spellcheck', 'false')
   await expect(field).toHaveAttribute('dir', 'auto')
 
-  // §12.1.7 — the boundary that actually matters, in the reader's own hands:
-  // reading your own local storage is not a transmission, and the export is
-  // precisely where that stops being true.
-  await expect(form.locator('.hl-field-hint')).toHaveText(
-    /Stored in this browser only\. Never sent anywhere\..*the name has left your device\.$/,
-  )
+  // §12.1.7 — the boundary that actually matters, in the reader's own hands.
+  //
+  // The old assertion pinned "Never sent anywhere", which §14 made false: the
+  // name now reaches `record_state`, and `profiles.display_name` besides. The
+  // sentence lives in `lib/record/scope.ts` so that the promise and the
+  // behaviour cannot drift, and it is asserted through the constant here for
+  // the same reason. What has NOT changed is the clause the section is about:
+  // the export is where the name leaves the reader's device by their own hand.
+  await expect(form.locator('.hl-field-hint')).toHaveText(NAME_SCOPE)
 
   // §12.3.2 — genuinely skippable, and stated as a control rather than implied
   // by a dismissal.

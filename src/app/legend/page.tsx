@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { RECORD_SCOPE } from '@/lib/record/scope'
 import Link from 'next/link'
 import { Lkm01 } from '@/components/mascot/Lkm01'
 import { PageShell } from '@/components/shell/PageShell'
@@ -276,7 +277,7 @@ export default function LegendPage() {
           one has read the other.
         */}
         <div className="hl-note">
-          <p>Your record is stored in this browser only. It is never sent anywhere.</p>
+          <p>{RECORD_SCOPE}</p>
           <p>
             Browser storage can be cleared without warning — by you, by the
             browser, or by a private window. Safari deletes it after seven days

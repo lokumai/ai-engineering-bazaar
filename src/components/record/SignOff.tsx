@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { NAME_SCOPE } from '@/lib/record/scope'
 import { useState } from 'react'
 import type { SignOffCriteria } from '@/lib/content/criteria'
 import { seedFrom } from '@/lib/identity/mark'
@@ -109,7 +110,7 @@ export function SignOff({
 
   function onToggle(): void {
     if (signedOff !== null) {
-      update((data) => unsign(data, slug))
+      update((data) => unsign(data, slug), { kind: 'unsign', sheetSlug: slug })
       return
     }
 
@@ -117,11 +118,19 @@ export function SignOff({
     // The seed is minted once and never regenerated, so its absence is the
     // honest test for "this is the first sign-off" (§12.3.5).
     const first = record.identity.markSeed === null
-    update((data) => signOff(data, slug, revision, now))
+    update((data) => signOff(data, slug, revision, now), {
+      // §12.4.3's drift line needs the revision the reader signed AGAINST, and
+      // the log is where a later un-sign-and-re-sign stays visible.
+      kind: 'signOff',
+      sheetSlug: slug,
+      payload: { revision },
+    })
     if (!first) return
 
     const seed = mintSeed()
-    if (seed !== null) update((data) => mintMarkSeed(data, seed, now))
+    if (seed !== null) {
+      update((data) => mintMarkSeed(data, seed, now), { kind: 'mintMarkSeed' })
+    }
     // §12.1.6 — called once, on a genuine user gesture. A `false` answer is
     // normal, not an error, and the store records the queried value.
     void requestPersistence()
@@ -154,7 +163,10 @@ export function SignOff({
       setNameError(true)
       return
     }
-    update((data) => setIdentity(data, { name: clean }, nowIso()))
+    update((data) => setIdentity(data, { name: clean }, nowIso()), {
+      kind: 'setIdentity',
+      payload: { named: true },
+    })
     setPrompting(false)
   }
 
@@ -216,7 +228,7 @@ export function SignOff({
             <button
               type="button"
               className="hl-btn"
-              onClick={() => update((data) => unsign(data, slug))}
+              onClick={() => update((data) => unsign(data, slug), { kind: 'unsign', sheetSlug: slug })}
             >
               UNSIGN
             </button>
@@ -295,8 +307,7 @@ export function SignOff({
                 where that stops being true, and the reader is the one who
                 crosses the line. */}
             <p className="hl-field-hint" id={hintId}>
-              Stored in this browser only. Never sent anywhere. The report you export contains
-              this name — once you send that file to someone, the name has left your device.
+              {NAME_SCOPE}
             </p>
 
             {nameError && (

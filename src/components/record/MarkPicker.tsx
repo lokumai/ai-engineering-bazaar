@@ -52,7 +52,10 @@ export function MarkPicker({ idPrefix = 'hl-mark' }: { idPrefix?: string }) {
   const legendId = `${idPrefix}-legend`
 
   function choose(id: MarkId): void {
-    update((data) => setIdentity(data, { mark: id === 'seeded' ? null : id }, nowIso()))
+    update((data) => setIdentity(data, { mark: id === 'seeded' ? null : id }, nowIso()), {
+      kind: 'setIdentity',
+      payload: { mark: id === 'seeded' ? null : id },
+    })
   }
 
   return (

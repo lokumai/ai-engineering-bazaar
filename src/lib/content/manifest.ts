@@ -1,4 +1,5 @@
 import { sheetStamps } from '../record/derive'
+import { NOT_MEASURED } from '../text'
 import { EMPTY_RECORD } from '../record/schema'
 import { plural } from '../text'
 import { CATEGORIES, type Category } from './categories'
@@ -34,7 +35,7 @@ import { topicsFor } from './topics'
  */
 
 /** The one value a row prints when it has nothing true to print. */
-const DASH = '—'
+const DASH = NOT_MEASURED
 
 function pad2(n: number): string {
   return String(n).padStart(2, '0')

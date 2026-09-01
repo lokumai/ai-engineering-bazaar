@@ -8,6 +8,7 @@ import {
   decideJoin,
   disclosureStatements,
   identityFromUser,
+  joinFailureCopy,
   noEmailCopy,
   type JoinAttempt,
   type JoinFailure,
@@ -52,6 +53,13 @@ import { supabaseEnv, type SupabaseUnavailable } from '@/lib/supabase/env'
  * All the deciding happens in `lib/org/join.ts`, which is why it is testable in
  * node (§12.14.2, §14.12): this file arranges elements and owns no rule about
  * who may join what.
+ *
+ * **The refusal copy moved out of this file for the same reason.** It was a
+ * local `failureCopy` explaining a 42501 as a changed domain or a withdrawn
+ * invitation, and it went on saying that after `0005` made a proven mailbox the
+ * first clause of both `insert` policies — a claim about the schema, sitting in
+ * a component no node test reads. `joinFailureCopy` now holds it beside the
+ * classifier and the policy comment, where a test does.
  */
 
 type PanelState =
@@ -82,24 +90,6 @@ function unavailableCopy(why: SupabaseUnavailable): { status: string; detail: st
       + 'key it needs is absent or unreadable, so no question can be put to the '
       + 'server. This is a deployment fault rather than a state of your '
       + 'account. Nothing else on the site depends on it.',
-  }
-}
-
-/** §14.4.2 — what a refused insert means, from the code rather than the prose. */
-function failureCopy(failure: JoinFailure, orgName: string): string {
-  switch (failure) {
-    case 'duplicate':
-      return `The membership row for ${orgName} was already there. `
-        + 'The list below is the state after re-reading it.'
-    case 'refused':
-      return `The database refused the row for ${orgName}. Neither route `
-        + 'applied at the moment of writing: the organisation domain is no '
-        + 'longer the domain on your account, or the invitation was withdrawn '
-        + 'between this screen being read and the control being used.'
-    case 'unknown':
-      return `The row for ${orgName} was not written, and the reason given is `
-        + 'not one this screen can interpret. Nothing was recorded, in this '
-        + 'browser or on the server.'
   }
 }
 
@@ -168,7 +158,7 @@ function OfferBlock({
           <div className="mt-3" role="alert">
             <p className="hl-mark m-0 text-ink">ROW NOT WRITTEN</p>
             <p className="m-0 mt-1 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
-              {failureCopy(failure.failure, offer.org.name)}
+              {joinFailureCopy(failure.failure, offer.org.name)}
             </p>
             {failure.message !== '' && <p className="hl-raw">{failure.message}</p>}
           </div>
@@ -447,15 +437,17 @@ export function JoinPanel() {
         const copy = noEmailCopy(join.why)
         return (
           <Statement status={copy.status} detail={copy.detail}>
-            {/* §14.5.1's named known gap — a GitHub account whose address is
-                private carries no `email` claim, so NEITHER route can ever
-                match and retrying cannot help. This reader is signed in, so
-                `/profile/` is the sheet that can actually show them what
-                identity this browser holds; it is the page the copy in
-                `noEmailCopy` names. */}
+            {/* The sheet comes from `noEmailCopy` rather than being fixed
+                here, because the three reasons do not share one. Two are about
+                the address on the account and are read on `/profile/`; the
+                third is about which sign-ins the account carries, which
+                `/profile/` does not show — this link was hard-coded to
+                `/profile/` for all three, so the reader whose account had no
+                email sign-in was sent to the one sheet that cannot say so, and
+                the copy naming the sheet could drift from the link beside it. */}
             <p className="hl-empty-path m-0">
-              <Link href="/profile/" className="hl-link">
-                Your profile sheet
+              <Link href={copy.link.href} className="hl-link">
+                {copy.link.label}
               </Link>
             </p>
           </Statement>

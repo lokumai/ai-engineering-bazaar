@@ -1,4 +1,5 @@
 import type { SheetPosition } from './curriculum'
+import { NOT_MEASURED } from '../text'
 import { LANG_DISPLAY, type Lang, countDiagrams, countTables } from './derive'
 import type { CourseModule } from './loader'
 import type { Revision } from './revision'
@@ -15,7 +16,7 @@ import type { Revision } from './revision'
  */
 
 /** The one value the sheet prints when it has nothing true to print. */
-const DASH = '—'
+const DASH = NOT_MEASURED
 
 export interface SheetFacts {
   module: number

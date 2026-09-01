@@ -14,11 +14,34 @@
  *   `class="hl-cat-<slug>-started"`       0 < approved < total in that category
  *   `class="hl-cat-<slug>-complete"`      approved >= total
  *   `class="hl-role-<id>"`                the reader's role (§13.3)
- *   `data-hl-record="1"`                  a readable record exists
+ *   `data-hl-record="1"`                  a record CARRYING SOMETHING exists
  *   `data-hl-storage="ok" | "blocked"`    tells empty state 1 from 4 (§12.13)
  *
  * The whole body is inside try/catch and does nothing on failure, which lands
  * the page in the honest empty state rather than a half-drawn one.
+ *
+ * §15.11 — `data-hl-record` is the ONLY thing choosing between the home
+ * screen's two halves (`app/home.css`), so stamping it for any parseable
+ * envelope was a page that lied: an envelope holding nothing but `prefs`, or
+ * nothing but a migration stamp, is written by the store on a reader's first
+ * theme click, and that reader was then shown "Where you left off" and a
+ * continue control for a sheet they had never opened. The stamp now waits on
+ * the same rule `schema.ts`'s `carriesNothing` applies — no day recorded, no
+ * `meta.lastExport`, no identity field, and every sheet record empty by
+ * `isEmptySheetRecord` — and an identity field alone is enough, because a name,
+ * a mark or a role is something the reader put there.
+ *
+ * That rule is therefore written twice, which §12.1's one-definition rule
+ * otherwise forbids. The duplication is forced: this file's product is an ES5
+ * source string handed to the browser inside `<head>`, so it cannot import
+ * `carriesNothing` — there is no module graph yet when it runs. What binds the
+ * two copies is `tests/unit/record/boot.test.ts`, which runs the emitted script
+ * against records built by the typed helpers and compares the stamp to
+ * `carriesNothing`'s own answer; a change to either that the other does not
+ * match fails there. The inlined form is deliberately loose where the typed one
+ * is exact (`!=null` rather than `=== null`, truthiness rather than `=== 0`),
+ * because a hand-edited record reaches it with fields missing and §12.1.3 says
+ * it must not throw.
  *
  * It needs the per-category totals and the slug → module-number map, both of
  * which are build-time facts, so the export is a FACTORY: a layout measures the
@@ -67,19 +90,29 @@ var r=document.documentElement;
 var isObj=function(v){return Object.prototype.toString.call(v)==="[object Object]"};
 var own=function(o,k){return Object.prototype.hasOwnProperty.call(o,k)};
 var bad=function(k){return !k||k==="__proto__"||k==="constructor"||k==="prototype"};
+var any=function(v){var q;if(!v||typeof v!=="object")return 0;for(q in v){if(own(v,q))return 1}return 0};
 var raw=null,ok=1;
 try{raw=window.localStorage.getItem(${JSON.stringify(RECORD_STORAGE_KEY)})}catch(e){ok=0}
 r.setAttribute("data-hl-storage",ok?"ok":"blocked");
 if(!ok||!raw)return;
 var env=JSON.parse(raw);
 if(!isObj(env)||typeof env.schema!=="number"||env.schema<1||env.schema>${SCHEMA_VERSION})return;
-if(!isObj(env.data))return;
+var d=env.data;
+if(!isObj(d))return;
+var counts={},k,c,i,n,rec,id,ro=null,sh=d.sheets,has=0;
+if(any(d.days))has=1;
+if(isObj(d.meta)&&d.meta.lastExport!=null)has=1;
+id=d.identity;
+if(isObj(id)&&(id.name!=null||id.markSeed!=null||id.mark!=null||id.role!=null))has=1;
+if(!has&&isObj(sh)){for(k in sh){
+if(!own(sh,k)||bad(k))continue;
+rec=sh[k];
+if(!isObj(rec))continue;
+if(rec.signedOff!=null||rec.signedRevision!=null||rec.reachedEnd||rec.dwellSeconds||rec.quiz!=null||any(rec.checklist)||any(rec.sources)||any(rec.submittals)){has=1;break}}}
+if(!has)return;
 r.setAttribute("data-hl-record","1");
-var counts={},k,c,i,n,rec,id,ro=null;
-id=env.data.identity;
 if(isObj(id)&&typeof id.role==="string"&&!bad(id.role)){for(i=0;i<R.length;i++){if(R[i]===id.role){ro=id.role;break}}}
 if(ro)r.classList.add("hl-role-"+ro);
-var sh=env.data.sheets;
 if(!isObj(sh))return;
 for(k in sh){
 if(!own(sh,k)||bad(k))continue;

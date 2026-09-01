@@ -33,6 +33,25 @@ export const metadata: Metadata = {
  * and this page is still a valid, complete, prerendered page — which is the
  * §14.1 requirement that the kill switch cost the rest of the site nothing.
  *
+ * **§15.8 — the un-aliased row is explained, never hidden.** `memberLabel` falls
+ * back to `USER 1a2b3c4d` for a member who has kept no alias, and the temptation
+ * is to suppress that row or to substitute something friendlier. Both would cost
+ * more than they save: a suppressed row hides a member of the manager's own
+ * organisation, and a substituted name is the panel inventing a fact about a
+ * person. So the row stands and the note below the roster says what the label is
+ * and what changes it. That note is also the strongest argument for §15.4's
+ * alias sheet — a reader who has seen their own row read as eight hex characters
+ * knows exactly what keeping an alias buys, and hiding the row would hide the
+ * argument.
+ *
+ * **What this page does not print, and why the absence is stated rather than
+ * left to be noticed.** No rank, no comparison between two members, no
+ * organisation average. §14.8 is a panel for finding a person who is stuck, and
+ * every one of those three turns a count into a standing: an average makes the
+ * denominator a target, a rank makes a colleague the denominator. The limits
+ * list below says so, because a manager who does not find a rank will otherwise
+ * assume the panel has not finished loading it.
+ *
  * **There is no `/team/[user]/`.** §14.8: `generateStaticParams` runs at build
  * time and users exist only afterwards, so a per-user route cannot be
  * generated. `?u=<uuid>` and an in-page panel are the whole answer, and the
@@ -68,6 +87,27 @@ export default function TeamPage() {
 
       <TeamTable facts={facts} />
 
+      {/* §15.8 — the row that reads `USER 1a2b3c4d`. It is the one cell on this
+          screen a manager is likely to read as a fault in the panel, and the
+          answer is a property of the record rather than of this page. */}
+      <div className="hl-note">
+        <p className="hl-mark m-0 text-ink">Why a row reads USER and eight characters</p>
+        <p className="m-0 mt-1 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
+          A member is named by the alias they typed for themselves. Where nobody
+          has typed one, the row prints the first eight characters of the account
+          id and stays in the roster: a row removed for want of a name would hide
+          a member of your organisation, and a name supplied by this panel would
+          be a fact about a person that nobody asserted. The label changes when
+          that member keeps an alias on the{' '}
+          <Link href="/sign-in/alias/" className="hl-link">
+            alias sheet
+          </Link>{' '}
+          and their next push reaches the server. Nothing else about the row
+          depends on it — the progress, the claim and the evidence are read the
+          same way with or without a name.
+        </p>
+      </div>
+
       <section className="hl-panel" aria-labelledby="hl-team-limits">
         <div className="hl-panel-head">
           <h2 id="hl-team-limits" className="hl-panel-title">
@@ -95,11 +135,23 @@ export default function TeamPage() {
           </li>
           <li className="py-1">
             Records are local-first. A member with no server copy has not
-            necessarily done nothing; their device may simply never have pushed.
+            necessarily done nothing; their device may never have pushed one.
           </li>
           <li className="py-1">
             Attention flags are three fixed rules over dates and counts. They
             describe a record, not a person.
+          </li>
+          <li className="py-1">
+            Every cell is a count or a date about one member. There is no rank,
+            no comparison between two members, and no average for the
+            organisation — a count against the drawing set is what this panel
+            holds, and it is all it holds.
+          </li>
+          <li className="py-1">
+            The quiz cells carry whether an answer was compared with the
+            sheet&rsquo;s summary and what the member concluded from it. The text
+            they wrote is in the record their browser pushed; no column on this
+            screen prints it.
           </li>
         </ul>
 

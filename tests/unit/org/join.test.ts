@@ -16,6 +16,8 @@ import {
   disclosureStatements,
   emailDomain,
   identityFromUser,
+  joinFailureCopy,
+  mailboxProven,
   noEmailCopy,
   type JoinIdentity,
   type JoinableOrg,
@@ -39,8 +41,19 @@ const ACME: JoinableOrg = {
   joinDomain: 'acme.example',
 }
 
-function reader(email: string | null, verified = true): JoinIdentity {
-  return { userId: 'user-1', email, emailVerified: verified }
+/**
+ * A reader with the proof both `0005` policies open with, unless a test says
+ * otherwise. `providers: ['email']` rather than a boolean, because the boolean
+ * this fixture used to carry (`emailVerified`) was the defect: it was true for
+ * an OAuth-only account, and the policy clause is never true for one.
+ */
+function reader(email: string | null, providers: readonly string[] = ['email']): JoinIdentity {
+  return { userId: 'user-1', email, providers }
+}
+
+/** A GitHub-only account: an address, and nothing that proves the mailbox. */
+function oauthOnly(email: string | null): JoinIdentity {
+  return { userId: 'user-1', email, providers: ['github'] }
 }
 
 describe('emailDomain — agrees with split_part, or the offer is refused', () => {
@@ -144,9 +157,14 @@ describe('§14.5 — no address in the JWT', () => {
     expect(state).toEqual({ kind: 'noEmail', why: 'missing', alreadyMember: [] })
   })
 
-  it('refuses an unconfirmed address even though §14.4.2 would accept it', () => {
+  // This block replaces a test that asserted the OPPOSITE of §14.4.2 as `0005`
+  // wrote it: it pinned `emailVerified: false` to `why: 'unverified'` and left
+  // the far commoner case — verified by an OAuth provider, no email identity —
+  // asserting that the offer WAS made. Both `insert` policies open with
+  // `app_metadata -> 'providers' ? 'email'`, so that offer was refused 42501.
+  it('offers nothing when the provider list carries no email identity', () => {
     const state = decideJoin({
-      identity: reader('a@dnext-technology.com', false),
+      identity: reader('a@dnext-technology.com', []),
       orgs: [DNEXT],
       invitedOrgIds: [],
       memberOrgIds: [],
@@ -154,7 +172,41 @@ describe('§14.5 — no address in the JWT', () => {
 
     expect(state.kind).toBe('noEmail')
     if (state.kind !== 'noEmail') return
-    expect(state.why).toBe('unverified')
+    expect(state.why).toBe('unprovenMailbox')
+  })
+
+  it('refuses a domain join to an OAuth account whose provider vouches for the address', () => {
+    const state = decideJoin({
+      identity: oauthOnly('a@dnext-technology.com'),
+      orgs: [DNEXT],
+      invitedOrgIds: [],
+      memberOrgIds: [],
+    })
+
+    expect(state.kind).toBe('noEmail')
+    if (state.kind !== 'noEmail') return
+    expect(state.why).toBe('unprovenMailbox')
+  })
+
+  it('refuses the INVITED route too, since `0005` guards both with one clause', () => {
+    const state = decideJoin({
+      identity: oauthOnly('someone@gmail.com'),
+      orgs: [LOKUM],
+      invitedOrgIds: [LOKUM.id],
+      memberOrgIds: [],
+    })
+
+    expect(state.kind).toBe('noEmail')
+    if (state.kind !== 'noEmail') return
+    expect(state.why).toBe('unprovenMailbox')
+  })
+
+  it('reads the clause itself, so one account cannot answer two ways', () => {
+    expect(mailboxProven(reader('a@dnext-technology.com'))).toBe(true)
+    expect(mailboxProven({ userId: 'u', email: 'a@b.com', providers: ['github', 'email'] }))
+      .toBe(true)
+    expect(mailboxProven(oauthOnly('a@b.com'))).toBe(false)
+    expect(mailboxProven({ userId: 'u', email: 'a@b.com', providers: [] })).toBe(false)
   })
 
   it('separates an address with no domain part from an absent one', () => {
@@ -183,12 +235,60 @@ describe('§14.5 — no address in the JWT', () => {
   })
 
   it('gives every reason its own actionable copy, in three distinct states', () => {
-    const reasons = (['missing', 'unverified', 'malformed'] as const).map(noEmailCopy)
+    const reasons = (['missing', 'unprovenMailbox', 'malformed'] as const).map(noEmailCopy)
     expect(new Set(reasons.map((copy) => copy.status)).size).toBe(3)
     for (const copy of reasons) {
       expect(copy.status).toBe(copy.status.toUpperCase())
       expect(copy.detail.length).toBeGreaterThan(60)
     }
+  })
+
+  // The link used to be hard-coded to `/profile/` in the component for all
+  // three reasons. `/profile/` prints the address on the account and says
+  // nothing about which sign-ins it carries, so the one reader who needed
+  // another sheet was sent to the page that cannot answer.
+  it('sends the unproven mailbox to the sign-in sheet and the rest to the profile sheet', () => {
+    expect(noEmailCopy('unprovenMailbox').link.href).toBe('/sign-in/')
+    expect(noEmailCopy('missing').link.href).toBe('/profile/')
+    expect(noEmailCopy('malformed').link.href).toBe('/profile/')
+  })
+
+  it('states the mailbox requirement, both routes, and the way in', () => {
+    const detail = noEmailCopy('unprovenMailbox').detail
+    expect(detail).toContain('Both routes')
+    expect(detail).toContain('sign-in by email')
+    // An invitation is guarded by the identical clause; a reader told only
+    // about the domain route would expect one to be the way round it.
+    expect(detail).toContain('invitation')
+  })
+
+  /**
+   * The regression this pins.
+   *
+   * The detail promised "Adding an email sign-in to this account… is what opens
+   * both" and linked to `/sign-in/`. `unprovenMailbox` is only reachable while
+   * signed in, and `SignInPanel` answers a live session with "Already signed
+   * in" — so the promised action existed on no sheet, and the link led back to
+   * `/profile/`. The rule this module states for buttons ("no control whose
+   * only outcome is an error") applies to a sentence naming an action just as
+   * much, and nothing greps an English sentence.
+   *
+   * Asserted as the absence of the promise AND the presence of what replaced
+   * it, because dropping the sentence alone would leave the reader with a limit
+   * and no next step.
+   */
+  it('promises no action that no control performs (§14.5)', () => {
+    const detail = noEmailCopy('unprovenMailbox').detail
+
+    // The promise, in the shapes it could come back as.
+    expect(detail).not.toMatch(/Adding an email sign-in to this account/i)
+    expect(detail).not.toMatch(/is what opens both/i)
+
+    // What the sheet at the end of the link actually holds. `SignInPanel`'s
+    // signed-in branch names the limit and renders the sign-out; those two
+    // words are the contract between this copy and that component.
+    expect(detail).toMatch(/adds an email sign-in to an account that already exists/i)
+    expect(detail).toMatch(/sign-out/i)
   })
 })
 
@@ -261,28 +361,44 @@ describe('§14.5 — an organisation that matches nothing', () => {
 })
 
 describe('identityFromUser', () => {
-  it('accepts Supabase confirmation', () => {
+  it('carries the provider list out of app_metadata verbatim', () => {
     expect(
       identityFromUser({
         id: 'u1',
         email: 'a@dnext-technology.com',
-        email_confirmed_at: '2026-09-01T10:00:00.000Z',
+        app_metadata: { provider: 'email', providers: ['email'] },
       }),
-    ).toEqual({ userId: 'u1', email: 'a@dnext-technology.com', emailVerified: true })
+    ).toEqual({ userId: 'u1', email: 'a@dnext-technology.com', providers: ['email'] })
   })
 
-  it('accepts the provider claim when Supabase stamped nothing', () => {
+  // The measurement in `0005`'s header: `updateUser({ email_verified: true })`
+  // is ACCEPTED and the next token carries the rewritten claim, while a raw PUT
+  // of `app_metadata` answers 403. Reading the first field let the reader
+  // decide whether the reader was verified.
+  it('ignores user_metadata.email_verified, which the reader can write', () => {
     const identity = identityFromUser({
       id: 'u1',
       email: 'a@dnext-technology.com',
       user_metadata: { email_verified: true },
+      app_metadata: { providers: ['github'] },
     })
-    expect(identity?.emailVerified).toBe(true)
+    expect(identity?.providers).toEqual(['github'])
+    expect(mailboxProven(identity as JoinIdentity)).toBe(false)
+  })
+
+  it('ignores email_confirmed_at, which answers a question no policy asks', () => {
+    const identity = identityFromUser({
+      id: 'u1',
+      email: 'a@dnext-technology.com',
+      email_confirmed_at: '2026-09-01T10:00:00.000Z',
+      app_metadata: { providers: ['github'] },
+    })
+    expect(mailboxProven(identity as JoinIdentity)).toBe(false)
   })
 
   it('reports a GitHub account with a private address as carrying none', () => {
-    const identity = identityFromUser({ id: 'u1', user_metadata: { email_verified: true } })
-    expect(identity).toEqual({ userId: 'u1', email: null, emailVerified: true })
+    const identity = identityFromUser({ id: 'u1', app_metadata: { providers: ['github'] } })
+    expect(identity).toEqual({ userId: 'u1', email: null, providers: ['github'] })
     expect(decideJoin({
       identity: identity as JoinIdentity,
       orgs: [DNEXT],
@@ -295,8 +411,15 @@ describe('identityFromUser', () => {
     expect(identityFromUser(null)).toBeNull()
     expect(identityFromUser({})).toBeNull()
     expect(identityFromUser({ id: '   ' })).toBeNull()
-    expect(identityFromUser({ id: 'u1', email: 'a@b.com', user_metadata: 'nope' })?.emailVerified)
-      .toBe(false)
+    // An unreadable or absent list is an EMPTY list: `0005` refuses such an
+    // account, and so must the screen. Inventing `['email']` here would be the
+    // offer-then-42501 this module exists to avoid.
+    expect(identityFromUser({ id: 'u1', email: 'a@b.com', app_metadata: 'nope' })?.providers)
+      .toEqual([])
+    expect(identityFromUser({ id: 'u1', email: 'a@b.com' })?.providers).toEqual([])
+    expect(
+      identityFromUser({ id: 'u1', app_metadata: { providers: ['email', 7, null] } })?.providers,
+    ).toEqual(['email'])
   })
 })
 
@@ -342,7 +465,7 @@ describe('§14.5.1 — the disclosure debt', () => {
     const text = [
       ...statements,
       ...disclosureStatements('Acme Rail', 3),
-      ...(['missing', 'unverified', 'malformed'] as const).flatMap((why) => {
+      ...(['missing', 'unprovenMailbox', 'malformed'] as const).flatMap((why) => {
         const copy = noEmailCopy(why)
         return [copy.status, copy.detail]
       }),
@@ -359,6 +482,26 @@ describe('classifyJoinError — from the code, never the message', () => {
   it('separates a duplicate row from a refused one', () => {
     expect(classifyJoinError({ code: '23505' })).toBe('duplicate')
     expect(classifyJoinError({ code: '42501' })).toBe('refused')
+  })
+
+  it('explains a refusal by the clause the reader cannot see on the screen', () => {
+    const copy = joinFailureCopy('refused', 'dnext-technology')
+    // The previous copy named only a changed domain and a withdrawn
+    // invitation, both temporary, and omitted the permanent cause `0005` made
+    // the first clause of both policies.
+    expect(copy).toContain('email sign-in')
+    expect(copy).toContain('dnext-technology')
+    expect(copy).not.toContain('withdrawn')
+  })
+
+  it('keeps the three failures in three distinct sentences', () => {
+    const copies = (['duplicate', 'refused', 'unknown'] as const)
+      .map((failure) => joinFailureCopy(failure, 'Acme Rail'))
+    expect(new Set(copies).size).toBe(3)
+    for (const copy of copies) {
+      expect(copy).toContain('Acme Rail')
+      expect(copy).not.toMatch(/!|\bjust\b|\bsimply\b|\beasy\b|\bplease\b|\bsorry\b/i)
+    }
   })
 
   it('reports anything else as unknown rather than guessing', () => {

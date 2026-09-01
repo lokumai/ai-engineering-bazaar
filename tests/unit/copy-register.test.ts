@@ -50,6 +50,18 @@ const ROOTS: readonly string[] = [
   'lib/record',
   'lib/identity',
   'lib/content/criteria.ts',
+  // §15 — the front matter. Every root below carries reader-visible prose this
+  // phase either wrote or rewrote, and none of it was scanned before: the home
+  // screen is the largest new block of copy in the project since §13's path,
+  // and the three identity surfaces are where a name could be mistaken for a
+  // proof, which is exactly the kind of claim the register guards.
+  'components/home',
+  'components/identity',
+  'app/sign-in',
+  'app/join',
+  'app/team',
+  'app/sheets',
+  'lib/auth',
 ]
 
 function walk(target: string): string[] {

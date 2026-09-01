@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import { RECORD_BOOT_SCRIPT, recordBootScript } from '@/lib/record/boot'
-import { RECORD_STORAGE_KEY, SCHEMA_VERSION } from '@/lib/record/schema'
+import { coerceRecordData } from '@/lib/record/validate'
+import {
+  EMPTY_RECORD,
+  RECORD_STORAGE_KEY,
+  SCHEMA_VERSION,
+  carriesNothing,
+  emptySheetRecord,
+  type RecordData,
+  type SheetRecord,
+} from '@/lib/record/schema'
 
 /** The corpus's six categories, as a layout would pass them in. */
 const TOTALS = { fundamentals: 7, intermediate: 8, expert: 9, ecosystem: 5, protocols: 1, optional: 2 }
@@ -186,5 +195,141 @@ describe('the marks CSS draws from (§12.2 Channel A)', () => {
     expect(stamped.attributes.get('data-hl-storage')).toBe('ok')
     // No module map, so no sign-off marks; the category still reads as started.
     expect([...stamped.classes]).toEqual(['hl-cat-fundamentals-started'])
+  })
+})
+
+/**
+ * §15.11 — the boot script's rule, cross-tested against the pair that decides
+ * what the application actually holds.
+ *
+ * `data-hl-record` is the whole of the home screen's decision (`app/home.css`),
+ * so before this the stamp went on for any parseable envelope: a reader whose
+ * record held nothing but `prefs` — which the store writes on a first theme
+ * click — was shown "Where you left off" and a continue control for a sheet
+ * they had never opened.
+ *
+ * **The pair matters, and the first version of these cases had it wrong.** They
+ * compared the stamp to `carriesNothing(data)` over typed `RecordData`, so every
+ * input was already well-shaped and the whole malformed axis went untested — and
+ * the boot script's presence checks run on RAW storage, before
+ * `coerceRecordData`. Measured: seven shapes stamped while the coercer discarded
+ * the value, among them `identity.name` as a number, an unknown `mark`, and
+ * `days` as an object. A record read back out of storage is untrusted input
+ * (§12.1.3) and the gate was applying weaker rules than the parser it guards.
+ *
+ * So the invariant is `stamp ⟺ !carriesNothing(coerceRecordData(raw))`, asserted
+ * over well-formed AND malformed input, and the malformed half is what the boot
+ * script's shape helpers exist for. The rule is still written twice — an inline
+ * script has no module graph to import from — and these cases are the only thing
+ * keeping the two copies honest.
+ */
+describe('data-hl-record only goes on a record that carries something (§15.11)', () => {
+  const script = recordBootScript(TOTALS, MODULES)
+
+  const withSheet = (sheet: Partial<SheetRecord>): RecordData => ({
+    ...EMPTY_RECORD,
+    sheets: { 'fundamentals/llms': { ...emptySheetRecord(), ...sheet } },
+  })
+
+  const CASES: ReadonlyArray<[string, RecordData]> = [
+    ['a freshly minted record, which is what a migration stamp leaves behind', EMPTY_RECORD],
+    ['a record holding only a preference', { ...EMPTY_RECORD, prefs: { charKeys: false } }],
+    ['a record holding only an empty sheet entry', withSheet({})],
+    ['a name the reader typed', { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, name: 'Ada' } }],
+    ['a mark seed', { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, markSeed: 'a1b2c3d4' } }],
+    ['a role the reader chose', { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, role: 'qa' } }],
+    ['a day on which something was written', { ...EMPTY_RECORD, days: ['2026-08-31'] }],
+    ['an export the reader took', { ...EMPTY_RECORD, meta: { lastExport: '2026-08-31T09:00:00.000Z', persisted: null } }],
+    ['a sheet reached the end of', withSheet({ reachedEnd: true })],
+    ['dwell on a sheet and nothing else', withSheet({ dwellSeconds: 41 })],
+    ['one checklist box', withSheet({ checklist: { '7': true } })],
+    ['one source opened', withSheet({ sources: ['https://example.invalid/paper'] })],
+    ['a sheet signed off', withSheet({ signedOff: '2026-08-14T09:00:00.000Z' })],
+  ]
+
+  /**
+   * The malformed half: raw payloads the store could never have written, which
+   * is exactly what a hand-edited `localStorage` value is. Typed as `unknown`
+   * because that is what the boot script receives; every expectation comes from
+   * `coerceRecordData`, so none of them is hand-written.
+   */
+  const MALFORMED: ReadonlyArray<[string, unknown]> = [
+    ['a name that is a number', { identity: { name: 7 } }],
+    ['a name that is the empty string, which the coercer keeps', { identity: { name: '' } }],
+    ['a mark seed of the wrong shape', { identity: { markSeed: 'not-a-seed!!' } }],
+    ['a mark outside the stored vocabulary', { identity: { mark: 'banana' } }],
+    ['a role outside the nine', { identity: { role: 'wizard' } }],
+    ['days as an object rather than an array', { days: { nope: 1 } }],
+    ['days holding a date that never happened', { days: ['2026-02-31'] }],
+    ['days holding one real day among rubbish', { days: [null, 'x', '2026-08-31'] }],
+    ['lastExport that is not a date', { meta: { lastExport: 'yesterday' } }],
+    ['lastExport on an impossible day', { meta: { lastExport: '2026-02-31T09:00:00.000Z' } }],
+    ['dwell as a string', { sheets: { 'fundamentals/llms': { dwellSeconds: 'lots' } } }],
+    ['dwell that rounds to nothing', { sheets: { 'fundamentals/llms': { dwellSeconds: 0.2 } } }],
+    ['dwell that rounds to a second', { sheets: { 'fundamentals/llms': { dwellSeconds: 0.7 } } }],
+    ['reachedEnd as a truthy string', { sheets: { 'fundamentals/llms': { reachedEnd: 'yes' } } }],
+    ['a checklist key that is not an index', { sheets: { 'fundamentals/llms': { checklist: { 'a-1': true } } } }],
+    ['a checklist index stored false', { sheets: { 'fundamentals/llms': { checklist: { '7': false } } } }],
+    ['a source that is not a URL', { sheets: { 'fundamentals/llms': { sources: ['ftp://x/y'] } } }],
+    ['sources as an object', { sheets: { 'fundamentals/llms': { sources: { '0': 'https://x/y' } } } }],
+    ['a submittal with no repo', { sheets: { 'fundamentals/llms': { submittals: [{ owner: 'a' }] } } }],
+    ['a submittal with both segments', { sheets: { 'fundamentals/llms': { submittals: [{ owner: 'a', repo: 'b' }] } } }],
+    ['a quiz holding neither an answer nor an assessment', { sheets: { 'fundamentals/llms': { quiz: { answer: '  ' } } } }],
+    ['a quiz holding an assessment', { sheets: { 'fundamentals/llms': { quiz: { assessed: 'missed' } } } }],
+    ['a signedRevision too short to be a hash', { sheets: { 'fundamentals/llms': { signedRevision: 'abc' } } }],
+    ['a sheet key over the safe length', { sheets: { ['f/' + 'x'.repeat(250)]: { reachedEnd: true } } }],
+    ['sheets as an array', { sheets: [{ reachedEnd: true }] }],
+  ]
+
+  const both: ReadonlyArray<[string, unknown]> = [...CASES, ...MALFORMED]
+
+  for (const [name, data] of both) {
+    it(`agrees with the coercer for: ${name}`, () => {
+      const stamped = run(script, { stored: envelope(data) })
+      expect(stamped.attributes.get('data-hl-storage')).toBe('ok')
+      expect(stamped.attributes.has('data-hl-record'))
+        .toBe(!carriesNothing(coerceRecordData(data)))
+    })
+  }
+
+  /**
+   * Non-vacuity for the block above: a case list that happened to be all-`false`
+   * would pass against a gate that never stamps, and all-`true` against one that
+   * always does. Both answers have to appear, on both halves of the list.
+   */
+  it('has cases on both sides of the answer, well-formed and malformed alike', () => {
+    const kept = (data: unknown) => !carriesNothing(coerceRecordData(data))
+    for (const half of [CASES, MALFORMED]) {
+      const answers = half.map(([, data]) => kept(data))
+      expect(answers).toContain(true)
+      expect(answers).toContain(false)
+    }
+  })
+
+  it('still tells empty state 1 from 4 when the record carries nothing (§12.13)', () => {
+    // The storage stamp is not conditional on the record: a reader whose
+    // storage is blocked must be told so even with nothing recorded.
+    const blocked = run(script, { stored: envelope(EMPTY_RECORD), getterThrows: true })
+    expect(blocked.attributes.get('data-hl-storage')).toBe('blocked')
+    expect(blocked.attributes.has('data-hl-record')).toBe(false)
+  })
+
+  it('draws no class for a role on a record that carries nothing else, but does stamp it', () => {
+    const data: RecordData = { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, role: 'qa' } }
+    const stamped = run(script, { stored: envelope(data) })
+    expect(stamped.attributes.get('data-hl-record')).toBe('1')
+    expect([...stamped.classes]).toEqual(['hl-role-qa'])
+  })
+
+  it('does not throw on a hand-edited record whose fields are the wrong shape', () => {
+    for (const data of [
+      { days: 'today', identity: 'me', meta: 7, sheets: { 'fundamentals/llms': 'signed' } },
+      { days: {}, identity: {}, meta: {}, sheets: {} },
+      { sheets: { 'fundamentals/llms': { checklist: 'yes', sources: 3, submittals: null } } },
+    ]) {
+      const stamped = run(script, { stored: envelope(data) })
+      expect(stamped.attributes.get('data-hl-storage')).toBe('ok')
+      expect(stamped.attributes.has('data-hl-record')).toBe(false)
+    }
   })
 })

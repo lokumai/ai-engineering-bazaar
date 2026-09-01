@@ -1,7 +1,12 @@
 import Link from 'next/link'
 import { Lkm01Exploded } from '@/components/mascot/Lkm01Exploded'
 import { PageShell } from '@/components/shell/PageShell'
-import { NOT_FOUND_SHEET_LABEL, NOT_FOUND_TITLE } from '@/lib/route-labels'
+import {
+  INDEX_ROUTE,
+  INDEX_TITLE,
+  NOT_FOUND_SHEET_LABEL,
+  NOT_FOUND_TITLE,
+} from '@/lib/route-labels'
 
 export const metadata = { title: NOT_FOUND_TITLE }
 
@@ -37,9 +42,13 @@ export default function NotFound() {
 
       <hr className="hl-rule-struct" aria-hidden="true" />
 
+      {/* §15.1 — the register moved, and this link did not follow it: labelled
+          `Index`, pointed at `/`, one line under a sentence promising the index,
+          it opened the home screen. Both halves come from `route-labels` now, so
+          the label cannot name one page while the href opens another. */}
       <p className="hl-mark">
-        <Link className="hl-link" href="/">
-          Index
+        <Link className="hl-link" href={INDEX_ROUTE}>
+          {INDEX_TITLE}
         </Link>
       </p>
     </PageShell>

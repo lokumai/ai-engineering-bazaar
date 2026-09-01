@@ -27,7 +27,13 @@ import { readFileSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
 import { createClient } from '@supabase/supabase-js'
 
-const E = ''
+/**
+ * The ESC byte, spelt as an escape rather than written as the byte itself.
+ * Both work; only one is readable. Held raw, this line displays as `const E =
+ * ''` in every terminal and diff, and it has now been read as an empty string
+ * — i.e. as the bug `test-rls.mjs` really had — by two reviewers in a row.
+ */
+const E = '\u001b'
 const PASS = `${E}[32m✓${E}[0m`
 const FAIL = `${E}[31m✗${E}[0m`
 const WARN = `${E}[33m!${E}[0m`

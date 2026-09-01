@@ -17,7 +17,7 @@ import {
   waitForRecord,
   waitForSheet,
 } from './record'
-import { A0, SHEETS, sheetByModule } from './sheets'
+import { A0, INDEX_SHEET, SHEETS, sheetByModule } from './sheets'
 import { watchPage } from './watch'
 
 /**
@@ -370,6 +370,13 @@ test('the mascot is aria-hidden and byte-identical in every state (§12.2, §12.
  * which the assertion at the end means anything: if the router had done a full
  * load, the boot script would have re-stamped `<html>` and the test would pass
  * while the bug was still there.
+ *
+ * §15.2.1 raised the stakes: the route this run passes through is now the home
+ * screen, whose *visible* half is chosen by nothing but the `data-hl-record`
+ * this same stamp carries. So the hop through `/` reads the two blocks' computed
+ * display as well as the class list — on a document the router built rather than
+ * the browser loaded, which is the only place a stamp that survives a fresh load
+ * and nothing else would show.
  */
 test('channel A stays true across a client transition (§12.2)', async ({ page }) => {
   const problems = watchPage(page)
@@ -385,7 +392,12 @@ test('channel A stays true across a client transition (§12.2)', async ({ page }
   expect(await hasRootClass(page, `hl-cat-${SHEET.category}-started`)).toBe(true)
   expect(await hasRootClass(page, `hl-cat-${OTHER.category}-started`)).toBe(false)
 
-  // Two `<Link>` hops into another subsystem, with no document load between.
+  // Three `<Link>` hops into another subsystem, with no document load between:
+  // the sheet to the home screen, the home screen to the manifest at
+  // `INDEX_SHEET`, and the manifest into the other subsystem's sheet. It was two
+  // until §15.1 moved the flat table off `/`; the hop through the home screen is
+  // kept rather than routed around, because that is the page whose content the
+  // stamp now chooses.
   //
   // Scoped to the banner. `getByRole('link', { name: /^Lokum/ })` on the whole
   // page meant the wordmark for as long as it was the only link whose name
@@ -393,6 +405,20 @@ test('channel A stays true across a client transition (§12.2)', async ({ page }
   // violation was the locator's looseness surfacing, not a regression. What
   // this hop needs is the home link in the header, so that is what it asks for.
   await page.getByRole('banner').getByRole('link', { name: /^Lokum/ }).click()
+  await expect(page.locator('h1.hl-index-title')).toBeVisible()
+
+  // §15.2.1 — the stamp, read as the reader meets it. Both blocks are in the
+  // DOM of a document the router assembled client-side; `home.css` shows the
+  // resume half only while `<html>` still carries `data-hl-record="1"`, so a
+  // stamp lost in the transition would leave the returning reader on the
+  // first-visit page. Asserting the hidden half too: a rule that showed both
+  // would satisfy a bare "resume is visible" check.
+  await expect(page.locator('html')).toHaveAttribute('data-hl-record', '1')
+  await expect(page.locator('.hl-home-resume')).toBeVisible()
+  await expect(page.locator('.hl-home-new')).toBeHidden()
+
+  await page.locator('.hl-home-resume').getByRole('link', { name: 'Sheet index' }).click()
+  await expect(page).toHaveURL(new RegExp(`${INDEX_SHEET}$`))
   await page.locator(`.hl-index tbody a[href$="${OTHER.path}"]`).click()
   await expect(page.locator('main h1')).toHaveText(OTHER.title)
   expect(await documentLoads(page), 'the router did a full page load').toBe(1)

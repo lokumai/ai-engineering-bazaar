@@ -96,6 +96,13 @@ function faceLegendRows(facts: CurriculumFacts): FaceLegendRows {
  * *control over the artefact is the mechanism of ownership, not decoration on
  * top of it.* Sections 6 and 7 are what make section 8 checkable — a reader can
  * read the bytes, then decide what to do with them.
+ *
+ * **§15.6 changes the opening and nothing else.** Section 1 becomes a card: the
+ * drawing on one side, the five fields the record keeps about the reader on the
+ * other, and three controls that name where each one is changed. The seven
+ * panels below keep their order and their copy, because §15.6 asks for an
+ * opening, not a rebuild, and every one of those panels is the single
+ * implementation of something (§14.9, §11.38).
  */
 export default function ProfilePage() {
   const facts = curriculumFacts()
@@ -138,13 +145,113 @@ export default function ProfilePage() {
           </h2>
           <p className="hl-mark m-0 text-ink-faint">Checked by</p>
         </div>
-        {/* §13.2, §13.6, §13.12 — the mark at 160 with its face legend, and the
-            drafter's own mark at 64. Above the name field, because the drawing
-            is what the panel is about and the field is how it is changed. */}
-        <div className="mb-6">
+        {/*
+          §15.6 — the identity card: the drawing beside the five fields, with
+          the three controls under them.
+
+          **The five values themselves are not printed here, and cannot be.**
+          Alias, mark, seed, account and organisation are all channel B (§12.2):
+          this page is prerendered once for a reader it has never met, so a
+          server-rendered value would either be blank forever or be a guess. The
+          leaves that hold those values are already on the card and already
+          read the record — `IdentityMark` draws the chosen mark and says
+          `NO SEED MINTED YET` when there is no seed, `IdentityPanel` prints the
+          alias as `CHECKED BY` and edits it, and `AccountPanel` /
+          `OrgMembershipPanel` below read the session. What the definition list
+          adds is the one thing no pair of values could show: **which field is a
+          choice and which is a record of a past act.**
+
+          That distinction is the point of the whole list. `identity.mark` is
+          chosen from the picker and is reversible; `identity.markSeed` is minted
+          once at the first sign-off, is never regenerated, and is **not derived
+          from the alias** — which is exactly why renaming yourself leaves every
+          sheet already signed off drawn as it was. Printed as one row, "your
+          mark", the two would read as one field, and a reader would reasonably
+          expect a rename to redraw their signed sheets.
+
+          The list is `.hl-defs`, whose uppercase mono is right for the labels
+          and wrong for a sentence, so each `dd` takes the case-and-face
+          override `ReportPanel` uses on its filename cell for the same reason.
+
+          The three controls are links, not buttons, and each one goes to the
+          control that actually performs the change — the alias field and the
+          mark picker in this same section, and the account panel that owns the
+          session. §1's rule cuts both ways here: a button labelled `Sign out`
+          that could only scroll would be a label claiming an act it does not
+          perform, so the label names the destination instead.
+        */}
+        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)]">
+          {/* §13.2, §13.6, §13.12 — the mark at 160 with its face legend, and
+              the drafter's own mark at 64. Above the name field, because the
+              drawing is what the panel is about and the field is how it is
+              changed. */}
           <IdentityMark facts={facts} legend={legend} />
+
+          <div>
+            <p className="hl-mark m-0 mb-2 text-ink-muted">Identity fields</p>
+            <dl className="hl-defs">
+              <dt>Alias</dt>
+              <dd className="font-display text-meta leading-normal normal-case tracking-normal">
+                The name printed as CHECKED BY on every sheet you sign off, and
+                in anything you export. The field below sets it and clears it.
+              </dd>
+
+              <dt>Mark</dt>
+              <dd className="font-display text-meta leading-normal normal-case tracking-normal">
+                The glyph you chose from the picker below. A choice, and
+                reversible: changing it changes nothing already recorded.
+              </dd>
+
+              <dt>Seed</dt>
+              <dd className="font-display text-meta leading-normal normal-case tracking-normal">
+                Eight characters minted once with this record, at the first
+                sign-off. Never regenerated, and never derived from the alias —
+                which is why renaming yourself leaves every sheet already signed
+                off exactly as it was drawn.
+              </dd>
+
+              <dt>Account</dt>
+              <dd className="font-display text-meta leading-normal normal-case tracking-normal">
+                Where the second copy of the record is kept once you have signed
+                in. The account panel below reads the session, and holds the
+                sign-out control.
+              </dd>
+
+              <dt>Organisation</dt>
+              <dd className="font-display text-meta leading-normal normal-case tracking-normal">
+                Which organisations this account has joined. Managers of each of
+                them can read the copy in the account, and signing out does not
+                remove it.
+              </dd>
+            </dl>
+
+            <div className="hl-signoff-actions mt-4">
+              <a className="hl-btn" href="#hl-identity-fields">
+                Change alias
+              </a>
+              {/* `MarkPicker`'s own legend id, at its default prefix: the
+                  picker is rendered by `IdentityPanel` one rule below. */}
+              <a className="hl-btn" href="#hl-mark-legend">
+                Change mark
+              </a>
+              {/* `AccountPanel`'s heading id. It is present in every session
+                  state, including `ACCOUNTS NOT ENABLED`, so the target cannot
+                  go missing under the flag (§14.1). */}
+              <a className="hl-btn" href="#hl-account-head">
+                Account and sign-out
+              </a>
+            </div>
+          </div>
         </div>
-        <IdentityPanel />
+
+        <hr className="hl-rule-struct" aria-hidden="true" />
+
+        {/* The id is this page's, not the panel's: the card links to the field
+            that changes the alias, and `IdentityPanel` is a client leaf this
+            page composes rather than owns. */}
+        <div id="hl-identity-fields">
+          <IdentityPanel />
+        </div>
 
         {/* §13.3, §13.6 — INSIDE the identity panel rather than beside it, and
             that placement is the schema's: §13.3 puts `role` in

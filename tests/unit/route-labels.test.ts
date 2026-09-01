@@ -1,5 +1,8 @@
+import { readdirSync } from 'node:fs'
+import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import {
+  WITHOUT_A_PAGE,
   NOT_FOUND_SEGMENT,
   NOT_FOUND_SHEET_LABEL,
   NOT_FOUND_TITLE,
@@ -10,23 +13,23 @@ import {
 
 describe('breadcrumbFor', () => {
   it('shows the index as the current page at the root', () => {
-    expect(breadcrumbFor('/')).toEqual([{ label: 'Index', href: null }])
+    expect(breadcrumbFor('/')).toEqual([{ label: 'Home', href: null }])
   })
 
   it('tolerates a pathname with no trailing slash', () => {
-    expect(breadcrumbFor('')).toEqual([{ label: 'Index', href: null }])
+    expect(breadcrumbFor('')).toEqual([{ label: 'Home', href: null }])
   })
 
   it('names a category from the category map, not from the slug', () => {
     expect(breadcrumbFor('/protocols/')).toEqual([
-      { label: 'Index', href: '/' },
+      { label: 'Home', href: '/' },
       { label: 'Protocols & Specs', href: null },
     ])
   })
 
   it('links back through the category on a module page', () => {
     expect(breadcrumbFor('/intermediate/ai-security/')).toEqual([
-      { label: 'Index', href: '/' },
+      { label: 'Home', href: '/' },
       { label: 'Intermediate', href: '/intermediate/' },
       { label: 'ai security', href: null },
     ])
@@ -34,21 +37,21 @@ describe('breadcrumbFor', () => {
 
   it('labels a non-category page from its own segment', () => {
     expect(breadcrumbFor('/dashboard/')).toEqual([
-      { label: 'Index', href: '/' },
+      { label: 'Home', href: '/' },
       { label: 'dashboard', href: null },
     ])
   })
 
   it('names the drawing set, which is a page and not a bare URL segment', () => {
     expect(breadcrumbFor('/courses/')).toEqual([
-      { label: 'Index', href: '/' },
+      { label: 'Home', href: '/' },
       { label: 'Drawing set', href: null },
     ])
   })
 
   it('trails the real module route through both of its parents', () => {
     expect(breadcrumbFor('/courses/intermediate/security/')).toEqual([
-      { label: 'Index', href: '/' },
+      { label: 'Home', href: '/' },
       { label: 'Drawing set', href: '/courses/' },
       { label: 'Intermediate', href: '/courses/intermediate/' },
       { label: 'security', href: null },
@@ -74,7 +77,7 @@ describe('breadcrumbFor on the not-found route', () => {
 
   it('names the page rather than the URL that was asked for', () => {
     expect(breadcrumbFor('/404/', NOT_FOUND_SEGMENT)).toEqual([
-      { label: 'Index', href: '/' },
+      { label: 'Home', href: '/' },
       { label: NOT_FOUND_TITLE, href: null },
     ])
   })
@@ -93,7 +96,7 @@ describe('breadcrumbFor on the not-found route', () => {
   it('leaves every other route to the pathname', () => {
     for (const segment of [null, 'courses', '__PAGE__']) {
       expect(breadcrumbFor('/courses/', segment)).toEqual([
-        { label: 'Index', href: '/' },
+        { label: 'Home', href: '/' },
         { label: 'Drawing set', href: null },
       ])
     }
@@ -112,7 +115,9 @@ describe('NOT_FOUND_SHEET_LABEL', () => {
 
 describe('sheetLabelFor', () => {
   it('names the index sheet', () => {
-    expect(sheetLabelFor('/')).toBe('INDEX SHEET')
+    expect(sheetLabelFor('/')).toBe('HOME')
+    // §15.1 — the register moved, and its label went with it.
+    expect(sheetLabelFor('/sheets/')).toBe('SHEET INDEX')
   })
 
   it('numbers a category by its position in the drawing set', () => {
@@ -142,6 +147,73 @@ describe('sheetLabelFor', () => {
   })
 })
 
+describe('an ancestor segment with no page of its own (§15.1)', () => {
+  /**
+   * MEASURED by `scripts/check-links-out.mjs` on its first run: exactly one
+   * internal link in the export resolved to nothing — `/auth/`, the crumb above
+   * a reader mid-sign-in. `/auth/` is a directory holding `callback/` and was
+   * never exported as a page, and the trail linked every ancestor.
+   *
+   * The cases below assert the trail. They are not a guard on the set: they
+   * expect `href: null`, which is what a stale entry also produces, so they
+   * stay green in exactly the direction that hurts a reader — a page added at
+   * `/auth/` and this set not updated. `WITHOUT_A_PAGE` is guarded by the
+   * router-tree case that follows them, which reads the filesystem instead.
+   */
+  it('names the segment but does not link it', () => {
+    expect(breadcrumbFor('/auth/callback/')).toEqual([
+      { label: 'Home', href: '/' },
+      { label: 'auth', href: null },
+      { label: 'callback', href: null },
+    ])
+  })
+
+  it('still links an ancestor that does have a page', () => {
+    const crumbs = breadcrumbFor('/courses/fundamentals/')
+    expect(crumbs[1]).toEqual({ label: 'Drawing set', href: '/courses/' })
+  })
+
+  /**
+   * The guard the docblock on `WITHOUT_A_PAGE` names, and the reason the set is
+   * exported. Every entry is a claim about the router tree — "no document is
+   * exported here" — and neither the link gate nor a `breadcrumbFor` assertion
+   * can check it: an un-linked crumb emits no href, so the export carries no
+   * evidence either way, and a trail assertion agrees with whatever the set
+   * happens to say. So this reads `src/app` directly.
+   *
+   * Route groups are stripped, because `(group)` is a directory that adds no
+   * URL segment: a page at `src/app/(shell)/auth/page.tsx` serves `/auth/` and
+   * would otherwise slip past.
+   */
+  it('holds no path that the router actually exports a page for', () => {
+    const APP = path.resolve(process.cwd(), 'src/app')
+
+    const routes = (dir: string, url: string): string[] => {
+      const out: string[] = []
+      for (const entry of readdirSync(dir, { withFileTypes: true })) {
+        if (entry.isDirectory()) {
+          // A route group contributes no URL segment; `_private` contributes no route.
+          if (entry.name.startsWith('_')) continue
+          const grouped = entry.name.startsWith('(') && entry.name.endsWith(')')
+          out.push(...routes(path.join(dir, entry.name), grouped ? url : `${url}${entry.name}/`))
+        } else if (/^page\.tsx?$/.test(entry.name)) {
+          out.push(url)
+        }
+      }
+      return out
+    }
+
+    const exported = new Set(routes(APP, '/'))
+    // The walk has to be finding something, or the assertion below is vacuous.
+    expect(exported.has('/')).toBe(true)
+    expect(exported.has('/auth/callback/')).toBe(true)
+
+    for (const claimed of WITHOUT_A_PAGE) {
+      expect(exported.has(claimed), `${claimed} has a page, so the crumb should link`).toBe(false)
+    }
+  })
+})
+
 describe('markTokens', () => {
   it('separates the machine-derived values from the label words', () => {
     expect(markTokens('SHEET 13 OF 32')).toEqual([
@@ -160,7 +232,12 @@ describe('markTokens', () => {
   })
 
   it('returns a label with no values as a single word token', () => {
-    expect(markTokens('INDEX SHEET')).toEqual([{ text: 'INDEX SHEET', value: false }])
+    // A label the site actually prints. `INDEX SHEET` stood here until §15.1
+    // moved the register: `sheetLabelFor` returns `HOME` and `SHEET INDEX`
+    // today and nothing anywhere renders the old string, so the case was
+    // tokenising a fixture rather than a label.
+    expect(sheetLabelFor('/sheets/')).toBe('SHEET INDEX')
+    expect(markTokens('SHEET INDEX')).toEqual([{ text: 'SHEET INDEX', value: false }])
   })
 
   it('returns nothing for an empty label', () => {

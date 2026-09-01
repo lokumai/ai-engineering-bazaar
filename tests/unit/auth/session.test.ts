@@ -22,8 +22,11 @@ import {
   SIGN_IN_PROVIDERS,
   callbackUrl,
   describeAuthError,
+  carriesEmailIdentity,
   describeSessionUser,
+  EMAIL_IDENTITY,
   githubLoginOf,
+  providersOf,
   isPlausibleEmail,
   ALL_PROVIDERS,
   isSessionUsable,
@@ -164,14 +167,20 @@ describe('describeSessionUser', () => {
     expect(describeSessionUser({ id: 'u', email: '' }).email).toBeNull()
   })
 
-  it('projects the four fields and nothing else', () => {
+  it('projects the five fields and nothing else', () => {
     expect(
       describeSessionUser({
         id: 'u',
         email: 'a@b.co',
         identities: [{ provider: 'github', identity_data: { user_name: 'x' } }],
       }),
-    ).toEqual({ id: 'u', email: 'a@b.co', githubLogin: 'x', provider: 'github' })
+    ).toEqual({
+      id: 'u',
+      email: 'a@b.co',
+      githubLogin: 'x',
+      provider: 'github',
+      providers: ['github'],
+    })
   })
 })
 
@@ -457,5 +466,58 @@ describe('parseProviderAvailability — offer only what the project has', () => 
 
   it('ALL_PROVIDERS is what fail-open means', () => {
     expect(ALL_PROVIDERS).toEqual({ github: true, google: true, email: true })
+  })
+})
+
+
+/**
+ * §14.5 — the field `/sign-in/` needed before it could say anything true.
+ *
+ * `provider` names identity ZERO, which is why it could not answer the
+ * question: a GitHub account that later linked an email still reads `github`,
+ * and the panel used that to decide nothing at all — it showed every signed-in
+ * reader the same "Already signed in" page, including the one `/join/` had just
+ * sent there to add an email sign-in.
+ */
+describe('providersOf — every identity, not the first (§14.5)', () => {
+  it('lists them in identity order', () => {
+    expect(providersOf({
+      id: 'u',
+      identities: [{ provider: 'github' }, { provider: 'email' }],
+    })).toEqual(['github', 'email'])
+  })
+
+  it('is not answerable from `provider`, which names only the first', () => {
+    const linked = { id: 'u', identities: [{ provider: 'github' }, { provider: 'email' }] }
+    expect(providerOf(linked)).toBe('github')
+    expect(carriesEmailIdentity(describeSessionUser(linked))).toBe(true)
+  })
+
+  it('deduplicates, and drops neither an unknown provider nor its order', () => {
+    expect(providersOf({
+      id: 'u',
+      identities: [{ provider: 'saml' }, { provider: 'github' }, { provider: 'saml' }],
+    })).toEqual(['saml', 'github'])
+  })
+
+  it('is empty for a user with no identities at all', () => {
+    expect(providersOf({ id: 'u' })).toEqual([])
+    expect(carriesEmailIdentity(describeSessionUser({ id: 'u' }))).toBe(false)
+  })
+
+  it('reads false for the OAuth-only account that /join/ turns away', () => {
+    const oauthOnly = describeSessionUser({
+      id: 'u',
+      email: 'a@dnext-technology.com',
+      identities: [{ provider: 'google' }],
+    })
+    // The address is present and the mailbox is unproven — the exact state
+    // `mailboxProven` reports as `unprovenMailbox`.
+    expect(oauthOnly.email).toBe('a@dnext-technology.com')
+    expect(carriesEmailIdentity(oauthOnly)).toBe(false)
+  })
+
+  it('names the provider `0005` asks for, so two modules cannot spell it apart', () => {
+    expect(EMAIL_IDENTITY).toBe('email')
   })
 })

@@ -8,7 +8,7 @@ import {
   slugOf,
   waitForHydratedReadout,
 } from './record'
-import { A0, DRAWN_COUNT, SHEETS, SHEET_COUNT, sheetByModule } from './sheets'
+import { A0, DRAWN_COUNT, INDEX_SHEET, SHEETS, SHEET_COUNT, sheetByModule } from './sheets'
 import { watchPage } from './watch'
 
 /**
@@ -40,6 +40,12 @@ import { watchPage } from './watch'
  * 4. **The ninth column widened the table** (§12.18: `min-width` 988 → 1060).
  *    §4.7's one hard rule is that the page body never scrolls horizontally at
  *    any width, and a painted square is a different box from an empty one.
+ *
+ * The manifest was `/` until §15 gave the front door to the home screen; it is
+ * `INDEX_SHEET` now, and every navigation and every request in this file reads
+ * that constant rather than typing the route, so a second move costs one line
+ * in `sheets.ts` (§15.1). Nothing else here changed: the column, the chips and
+ * the two channels are the same claims about the same table.
  */
 
 /** Sheet 13 — the only sheet with all four slots, so the widest cell (§12.7). */
@@ -65,7 +71,7 @@ const chip = (page: Page, label: string) => page.getByRole('button', { name: lab
 test('the ninth column is SIGN-OFF, and its squares are 14 × 14 (§4.8, §12.18)', async ({
   page,
 }) => {
-  await page.goto('/')
+  await page.goto(INDEX_SHEET)
 
   const headers = page.locator('.hl-index thead th')
   await expect(headers).toHaveCount(9)
@@ -92,7 +98,7 @@ test('the ninth column is SIGN-OFF, and its squares are 14 × 14 (§4.8, §12.18
 test('nothing in the sign-off column is interactive or announced (§4.8, §10.3, §10.4)', async ({
   page,
 }) => {
-  await page.goto('/')
+  await page.goto(INDEX_SHEET)
 
   // §12.18 — a control here would sit under `.hl-row-link`'s stretched
   // pseudo-element, unclickable, and lifting it out would add a second tab stop
@@ -129,7 +135,7 @@ test('a seeded record paints the squares its record has earned (§12.2 channel B
       [SEEDED_SLUG]: signedSheet('b7225f8', { quiz: { answer: 'a', assessed: 'matched', at: '' } }),
     },
   })
-  await page.goto('/')
+  await page.goto(INDEX_SHEET)
 
   // `sheetStamps` decides what is filled — the same function the manifest asked
   // which squares to draw — so a square is filled when its slot's count has
@@ -160,7 +166,7 @@ test('pressing a filter chip and returning to ALL keeps the squares painted (§1
   page,
 }) => {
   await seedRecord(page, { sheets: { [SEEDED_SLUG]: signedSheet('b7225f8') } })
-  await page.goto('/')
+  await page.goto(INDEX_SHEET)
   const painted = slotState(page, SEEDED_SLUG, 'SIGN-OFF')
   await expect(painted).toHaveAttribute('data-signed', 'true')
 
@@ -193,7 +199,7 @@ test('the SIGNED OFF and UNSIGNED chips filter on the reader’s own assertions 
   await seedRecord(page, {
     sheets: Object.fromEntries(signed.map((sheet) => [slugOf(sheet), signedSheet('b7225f8')])),
   })
-  await page.goto('/')
+  await page.goto(INDEX_SHEET)
   await waitForHydratedReadout(page)
 
   await chip(page, 'SIGNED OFF').click()
@@ -214,7 +220,7 @@ test('the count of what is shown is announced, not implied (§12.13, SC 4.1.3)',
   page,
 }) => {
   await seedRecord(page, { sheets: { [SEEDED_SLUG]: signedSheet('b7225f8') } })
-  await page.goto('/')
+  await page.goto(INDEX_SHEET)
   await waitForHydratedReadout(page)
 
   // One region, rendered in both states, so the announcement comes from an
@@ -250,12 +256,12 @@ test('ALL is active on load and the first client render emits the prerender’s 
     sheets: { [SEEDED_SLUG]: signedSheet('b7225f8'), [slugOf(sheetByModule(3))]: signedSheet(null) },
   })
 
-  const served = await (await page.request.get('/')).text()
+  const served = await (await page.request.get(INDEX_SHEET)).text()
   const tbody = served.slice(served.indexOf('<tbody'), served.indexOf('</tbody>'))
   const prerendered = (tbody.match(/<tr/g) ?? []).length
   expect(prerendered).toBe(SHEET_COUNT)
 
-  await page.goto('/')
+  await page.goto(INDEX_SHEET)
   await waitForHydratedReadout(page)
 
   await expect(chip(page, 'ALL')).toHaveAttribute('aria-pressed', 'true')
@@ -278,7 +284,7 @@ test('the boot script stamps the index before its first paint too (§12.2 channe
 }) => {
   await seedRecord(page, { sheets: { [SEEDED_SLUG]: signedSheet('b7225f8') } })
   await probeFirstPaint(page)
-  await page.goto('/')
+  await page.goto(INDEX_SHEET)
 
   // The index is where the six tick gauges and the mascot are read at once, so
   // it is the page a frame of unstamped `<html>` would be most visible on.
@@ -325,7 +331,7 @@ for (const [width, height] of WIDTHS) {
       ),
     })
     await page.setViewportSize({ width, height })
-    await page.goto('/')
+    await page.goto(INDEX_SHEET)
     // Every drawn sheet signed off, so every fillable square in the column is
     // painted — the widest the column can ever be.
     await expect(slotState(page, SEEDED_SLUG, 'SIGN-OFF')).toHaveAttribute('data-signed', 'true')

@@ -1,133 +1,250 @@
 # Module 4: LLM Tool Calling
 
-Merhaba! Modüller 1, 2 ve 3'te LLM'ler, fine-tuning ve RAG'ı öğrendik. Şimdi, LLM'leri dosya okumak veya komut çalıştırmak gibi gerçek eylemler yapması için yapalım. Bu "tool calling"—LLM'lere dünya ile etkileşim kurma süper gücü vermek. Daha detaylı keşfedelim!
+Modül 1'den 3'e kadar bir modelin ne olduğunu, nasıl eğitildiğini ve kendi verini onun önüne nasıl
+koyacağını anlattık. Bunların hepsi hâlâ okumak. Bu modül, bir modelin *yapmaya* başladığı yer: bir
+dosya okumak, bir komut çalıştırmak, bir API çağırmak.
 
-## I. LLM Tool Nedir?
+Her agent'ın altındaki mekanizma bu, dolayısıyla tam olarak doğru anlamaya değer.
 
-![LLM ve Tool'lar](./images/tools.jpg)
-*Tool'lar, bir LLM'nin kendi kafasının dışına çıkma yöntemidir—web'de arama yapmak, matematik yapmak, kod çalıştırmak—ve bir cevapla geri dönmek.*
+## Tool nedir
 
-Bir **tool**, kodda yazdığın bir fonksiyon. Normal bir Python fonksiyonu, isim, girişler ve çıkışlar var. LLM onu doğrudan çalıştırmaz—kullanıcının ne dediğine göre, LLM hangi tool'u çağırması gerektiğini karar verir ve doğru girişleri sağlar.
+![An LLM reaching out through tools](./images/tools.jpg)  
+*Tool'lar, bir modelin kendi kafasının dışına uzanma yolu: web'de arama, matematik, kod çalıştırma, ve sonra bir cevapla geri dönme.*
 
-Örneğin, `read_file(filename)` gibi bir tool tanımlarsın. LLM tool'un açıklamasını görür ve kullanıcı "main.py dosyasını oku" derse, LLM onu `filename="main.py"` ile çağırır.
+**Tool**, senin yazdığın bir fonksiyondan başka bir şey değil. Adı, birkaç input'u ve bir dönüş
+değeri olan sıradan bir Python fonksiyonu. Özel hiçbir yanı yok.
 
-ASCII Art:
+İnsanların yanlış anladığı kısım şu: **model senin fonksiyonunu asla çalıştırmıyor.**
+Çalıştıramaz, bilgisayarı yok. Yapabildiği tek şey, "`read_file`'ı `filename="main.py"` ile
+çağırmak istiyorum" diyen bir mesaj üretmek. Senin tarafındaki bir şey o mesajı okuyor, fonksiyonu
+çalıştırıyor ve dönüş değerini geri veriyor.
+
+## Bir tool call etrafında context nasıl büyür
+
+Modül 1 context'i bir mesaj yığını olarak tanıtmıştı. Bir tool call o yığına iki yeni tür ekliyor,
+ve bütün akış tek bir resimde:
+
+![The context of a single tool call](./images/context-tool-call.jpeg)  
+*Tek bir tool call, sırayla. Tool, kimse konuşmadan önce system prompt'ta tanımlanıyor. Sonra sen soruyorsun, LLM bir Tool Call yazıyor, host makine onu çalıştırıp Tool Result'ı yazıyor, ve LLM bunu okuyup cevabı yazıyor.*
+
+Dört oku takip et, çünkü kimin ne yazdığı önemli:
+
+1. **Sen** Human Message'ı yazıyorsun.
+2. **LLM** Tool Call'ı yazıyor. İstiyor, yapmıyor.
+3. **Host makine** Tool Result'ı yazıyor. Python'un kurulu olduğu ve okunacak bir dosya sisteminin
+   bulunduğu yer senin laptop'un ya da senin sunucun.
+4. **LLM** artık o sonucu da içeren bütün context'i okuyup cevabı yazıyor.
+
+İki yeni mesaj da context'te kalıyor. Bir agent'ın context'inin bir chat'ten çok daha hızlı
+büyümesinin sebebi bu: tek bir tur, iki mesaj yerine birkaç mesaj ekleyebiliyor.
+
+## Tool'lar neden var
+
+Bir model sabit veri üzerinde eğitiliyor, dolayısıyla kendi başına ne yeni bir şey bilebiliyor ne
+de bir şeyi değiştirebiliyor. Tool'lar iki sınırı da kaldırıyor.
+
+**Web'de arama yapamaz.** O yüzden bir query alıp arama motoruna soran ve sonuçları döndüren bir
+fonksiyon yazıyorsun. Artık yapabiliyor.
+
+**Dosyalarını okuyamaz.** O yüzden bir dosya adı alıp içeriğini döndüren bir fonksiyon yazıyorsun.
+Artık kodunu görebiliyor.
+
+Tool'lar olmadan bir model bir chatbot. Tool'larla birlikte bir agent.
+
+## Schema'yı sen yazmıyorsun, framework yazıyor
+
+İnsanları şaşırtan kısım burası.
+
+Modelin bir tool seçebilmesi için, o tool'un var olduğunun, ne yaptığının ve hangi argümanları
+aldığının ona söylenmesi gerekiyor. Bu tarife **tool schema** deniyor, ve JSON.
+
+O JSON'ı neredeyse hiç sen yazmıyorsun. Sıradan bir fonksiyon yazıyorsun ve schema'yı ondan
+framework'ün üretmesine bırakıyorsun:
+
+```python
+@tool
+def get_weather(city: str) -> str:
+    """Get the current temperature for a city."""
+    return requests.get(f"https://api.example.com/weather?city={city}").text
 ```
-Tool Tanımı: def read_file(filename): ...
-Kullanıcı: "main.py'yi oku"
-LLM: "'main.py' ile read_file çağır"
-Tool Çalışır: Dosya içeriğini döndürür
-LLM: "Dosya diyor ki: ..."
+
+O tek decorator'dan framework şunları okuyor:
+
+- **name**, fonksiyonun adından: `get_weather`
+- **description**, docstring'den
+- **parameters**, type hint'lerden; yani `city: str` zorunlu bir string oluyor
+
+Sonra bu schema'yı isteğinle birlikte gönderiyor, ve model onu en başta, system prompt'un yanında
+alıyor. Sen fonksiyonu kaydediyorsun; tesisat senin yazacağın şey değil.
+
+**Yani name ve description dokümantasyon değil. Arayüzün kendisi.** Model hangi tool'a uzanacağına
+karar verirken elindeki tek şey onlar. `get_data` adında ve "gets data" docstring'i olan bir
+fonksiyon yanlış anlarda seçilir, doğru anlarda atlanır, ve bunu hiçbir prompt düzeltmez. Tool'a ne
+yaptığını anlatan bir isim ver, ve docstring'i seçim yapmak zorunda olan model için yaz.
+
+## Gerçek bir tool call, baştan sona
+
+Tarif yeter. Aşağıda bir weather tool ile gerçek bir alışveriş var.
+
+### Modelin aldığı şey
+
+Talimatlar ve tool schema birlikte geliyor. API'da ayrı field'lar, ama modelin bakış açısından
+context'in tepesindeki tek bir blok:
+
+```text
+SYSTEM
+You are a helpful assistant with access to tools.
+Answer the user's question. If you need information you do not have, call a
+tool instead of guessing. Never invent a weather reading.
+
+TOOLS
+get_weather
+  Get the current temperature for a city.
+  city (string, required) - The city name, for example "Istanbul"
 ```
 
-## II. Tool Calling Neden Önemli ve Faydalı?
+O okunabilir blok, framework'ün ürettiği schema. Hat üzerinde şöyle görünüyor:
 
-### A. LLM Sınırlamaları
+```json
+{
+  "type": "function",
+  "function": {
+    "name": "get_weather",
+    "description": "Get the current temperature for a city.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "city": {
+          "type": "string",
+          "description": "The city name, for example \"Istanbul\""
+        }
+      },
+      "required": ["city"]
+    }
+  }
+}
+```
 
-LLM'ler sabit veriler üzerinde eğitilir, yani bilgileri sınırlı. Canlı bilgi alamaz veya dünya ile etkileşim kuramaz.
+Dikkat et: hem description hem parameter description'ı, senin Python'da yazdığın şeylerden geldi.
 
-### B. Yetenekleri Genişletme
+### Senin sorduğun şey
 
-Tool'lar bunu düzeltir! LLM'lere gerçek zamanlı bilgi erişimi veya eylemler yapma izni verirler.
+```text
+USER
+What's the weather in Istanbul right now?
+```
 
-**Örnek 1: Web Arama**
-LLM'ler interneti arayamaz. Ama bir sorgu alan ve web arama motorlarında (Google gibi) çalıştıran bir tool yazabilirsin. Böylece LLM internete erişebilir.
+### Modelin ürettiği şey
 
-**Örnek 2: Kod Erişimi**
-LLM'ler yerel dosyalarını okuyamaz. Ama bir dosya adı alan ve içeriği döndüren tool ile, LLM kodunu "görebilir".
+Düz metin değil. Bu:
 
-Tool'lar LLM'leri aktif yardımcılar yapar, pasif chatbot'lar değil.
+```json
+{
+  "role": "assistant",
+  "content": null,
+  "tool_calls": [
+    {
+      "id": "call_9k2m4Xq7",
+      "type": "function",
+      "function": {
+        "name": "get_weather",
+        "arguments": "{\"city\":\"Istanbul\"}"
+      }
+    }
+  ]
+}
+```
 
-## III. Kullanım Alanları ve Tool Örnekleri
+Fark edilmeye değer üç şey. `content` boş, çünkü model henüz cevaplamadı, sordu. Bir `id` var, ki
+sonucun tam olarak bu çağrıyla eşleştirilmesini sağlayan şey o. Ve `arguments` bir JSON *string*'i,
+JSON object'i değil, ki bu neredeyse herkesi bir kez yakalıyor.
 
-Tool'lar ihtiyaçlara göre birçok şey yapabilir. LLM'ler için birçok tool kullanılabilir, örneğin:
+### Host makinenin yaptığı şey
 
-*(Aşağıdaki her fonksiyonun üstündeki `@tool` decorator'ına dikkat et. Çoğu agent framework'ünde — bir sonraki modülde kullanacağımız smolagents gibi — bir fonksiyonu LLM'nin çağırabileceği bir tool'a dönüştürmek için tek gereken bu decorator. Ekstra bir kayıt adımına gerek yok.)*
+Bu mesaj, framework'ün devraldığı yer. Argümanları parse ediyor, `get_weather` adıyla kayıtlı
+Python fonksiyonunu buluyor ve onu çağırıyor:
 
-- **E-posta Gönderme**:
-  ```python
-  import smtplib
-  @tool
-  def send_email(to, subject, body):
-      # SMTP kurulumu
-      server = smtplib.SMTP('smtp.example.com')
-      server.sendmail('from@example.com', to, f'Subject: {subject}\n\n{body}')
-      server.quit()
-  ```
+```python
+get_weather(city="Istanbul")   # -> '{"city":"Istanbul","temp_c":34,"conditions":"clear"}'
+```
 
-- **Terminal Erişimi**:
-  ```python
-  import subprocess
-  @tool
-  def run_command(command):
-      result = subprocess.run(command, shell=True, capture_output=True, text=True)
-      return result.stdout
-  ```
+Dönüş değeri, çağrıdaki `id` ile etiketlenmiş yeni bir mesaj olarak konuşmaya geri giriyor:
 
-- **Zaman Alma**:
-  ```python
-  import datetime
-  @tool
-  def get_current_time():
-      return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-  ```
+```json
+{
+  "role": "tool",
+  "tool_call_id": "call_9k2m4Xq7",
+  "content": "{\"city\":\"Istanbul\",\"temp_c\":34,\"conditions\":\"clear\"}"
+}
+```
 
-- **Veritabanı Sorguları**:
-  ```python
-  import sqlite3
-  @tool
-  def query_db(sql):
-      conn = sqlite3.connect('database.db')
-      cursor = conn.cursor()
-      cursor.execute(sql)
-      results = cursor.fetchall()
-      conn.close()
-      return results
-  ```
+### Modelin cevapladığı şey
 
-- **Vector DB Sorguları**:
-  ```python
-  @tool
-  def query_vector_db(query):
-      # RAG gibi
-      embedding = encode(query)
-      results = vector_db.search(embedding, top_k=5)
-      return results
-  ```
+Şimdi bütün context modele geri gidiyor: system prompt, senin sorun, kendi tool call'ı, ve sonuç.
+Hepsini okuyup şunu yazıyor:
 
-Projelerin için read_file, run_shell ve query_vector_db gibi tool'lar kod görevleri için anahtar.
+```text
+ASSISTANT
+It's currently 34°C and clear in Istanbul.
+```
 
-## IV. Projeler İçin Tool'lar Neden Önemli?
+Bütün mekanizma bu. Kuracağın her agent, bu döngünün tekrarı.
 
-Tool'lar LLM'leri akıllı asistanlara dönüştürür ki:
-- Karmaşık görevleri adım adım halleder.
-- Dosyalara erişir, kod çalıştırır, web arar.
-- Projeleri etkileşimli ve güçlü yapar.
+Field isimleri sağlayıcılar arasında biraz farklılık gösteriyor, ama şekil değişmiyor: senin
+yazmadığın bir schema, modelin ürettiği bir çağrı, senin yaptığın bir çalıştırma, ve geri verdiğin
+bir sonuç.
 
-Tool olmadan LLM'ler sadece chatbot'lar. Tool ile agent'lar!
+## İnsanların gerçekten yazdığı tool'lar
 
-## Mermaid Diyagramı: Tool Calling Akışı
+Fonksiyon olarak yazabildiğin her şey bir tool olabilir. Birkaç gerçek örnek:
+
+```python
+@tool
+def run_command(command: str) -> str:
+    """Run a shell command and return its output."""
+    return subprocess.run(command, shell=True, capture_output=True, text=True).stdout
+
+@tool
+def get_current_time() -> str:
+    """Get the current date and time."""
+    return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+@tool
+def query_db(sql: str) -> list:
+    """Run a read-only SQL query against the application database."""
+    with sqlite3.connect('database.db') as conn:
+        return conn.execute(sql).fetchall()
+
+@tool
+def search_docs(query: str) -> list:
+    """Find the most relevant documentation passages for a question."""
+    return vector_db.search(encode(query), top_k=5)
+```
+
+Sondakine bir kez daha bakmaya değer: bu, Modül 3'teki RAG pipeline'ının tool'a dönüşmüş hali.
+Artık *ne zaman* retrieval yapılacağına sen her soruda karar vermiyorsun, model karar veriyor. Bir
+RAG uygulamasını bir agent'tan ayıran şeyin büyük kısmı bu küçük kayma.
 
 ```mermaid
 graph TD
-    A[Kullanıcı Soru Sorar] --> B[LLM Düşünür: Tool Gerekli Mi?]
-    B -->|Evet| C[LLM Argümanlarla Tool Çağırır]
-    C --> D[Host Tool Fonksiyonunu Çalıştırır]
-    D --> E[Tool Sonucu Döndürür]
-    E --> F[LLM Sonucu Cevap İçin Kullanır]
-    B -->|Hayır| F
+    A["Kullanıcı bir soru soruyor"] --> B{"Tool gerekiyor mu?"}
+    B -->|hayır| F["LLM doğrudan cevaplıyor"]
+    B -->|evet| C["LLM bir Tool Call yazıyor"]
+    C --> D["Host fonksiyonu çalıştırıyor"]
+    D --> E["Sonuç context'e giriyor"]
+    E --> F
 ```
 
-## Eğitim İlerlemesi
+## Bu serinin neresindeyiz
 
 ```mermaid
 graph LR
-    A[Module 1: LLMs] --> B[Module 2: Training]
-    B --> C[Module 3: RAG]
-    C --> D[Module 4: Tools]
-    D --> E[Module 5: Memory]
-    E --> F[Module 6: Agents]
-    F --> G[Module 7: Multi-Agent]
+    A[1. LLMs] --> B[2. Training]
+    B --> C[3. RAG]
+    C --> D[4. Tools]
+    D --> E[5. Memory]
+    E --> F[6. Agents]
+    F --> G[7. Multi-Agent]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
@@ -136,11 +253,22 @@ graph LR
 
 ## Özet
 
-Tool'lar LLM'lerin gerçek dünyada eylem yapmasını sağlar. Ne olduklarını, neden faydalı olduklarını ve örnekleri öğrendin. Sonra agent'lar her şeyi birleştirir!
+Tool, senin yazdığın bir fonksiyon. Model onu çalıştıramaz, o yüzden bir Tool Call üretiyor ve
+fonksiyonu senin makinen çalıştırıp bir Tool Result geri veriyor. İkisi de context'e düşüyor, ki
+agent context'lerinin hızlı büyümesinin sebebi bu.
 
-**Hızlı Kontrol**: LLM'ler neden tool'lara ihtiyaç duyar?
+Schema'yı sen yazmıyorsun; framework'ün onu fonksiyondan, docstring'inden ve type hint'lerinden
+üretiyor. Bu da name ve docstring'i asıl arayüz yapıyor: model neye uzanacağına karar verirken
+elinde olan tek şey onlar.
 
-Öğrenmeye devam et! 🚀
+Sırada memory var, ve context dolarken bütün bu mesajlara ne olduğu.
+
+**Hızlı Kontrol**: bir tool'u kim çalıştırıyor, model mi host mu, ve bir tool'un docstring'i neden
+implementasyonundan daha çok önemli?
+
+## Kaynaklar
+
+- [Mastering LLM tool calling](https://machinelearningmastery.com/mastering-llm-tool-calling-the-complete-framework-for-connecting-models-to-the-real-world/): bütün çerçeve, hat formatının burada ihtiyaç duyduğumuzdan fazlasıyla
 
 **Önceki Modül:** [Modül 3: Retrieval-Augmented Generation (RAG)](3_rag_tr.md)
 **Sonraki Modül:** [Modül 5: Memory](5_memory_tr.md)

@@ -30,12 +30,8 @@ random too.
 Training means feeding it text and nudging those numbers, over and over, until its guesses
 stop being random and start being right.
 
-<p align="center">
-  <img src="./images/training-network.jpg" alt="An untrained network next to a trained one" width="70%"><br>
-  <em>The same network before and after training. Given "The students opened their", the random
-  weights on the left produce "Sun", and the learned weights on the right produce "Laptops".
-  Nothing about the shape changed, only the numbers inside it.</em>
-</p>
+![An untrained network next to a trained one](./images/training-network.jpg)  
+*The same network before and after training. Given "The students opened their", the random weights on the left produce "Sun", and the learned weights on the right produce "Laptops". Nothing about the shape changed, only the numbers inside it.*
 
 That is the whole trick. Training does not add rules or facts in any form you could go and
 read. It only adjusts numbers, and the knowledge ends up spread across billions of them. Which
@@ -81,13 +77,8 @@ on a small, task-specific dataset, so it gets good at one particular job.
 
 The clearest way to see the difference is the data each step eats:
 
-<p align="center">
-  <img src="./images/pretrain-vs-finetune.png" alt="Pre-training versus fine-tuning" width="70%"><br>
-  <em>Pre-training takes a pile of unlabelled text and no human in the loop, and produces
-  general abilities like completing and understanding text. Fine-tuning takes pairs a human
-  wrote, a prompt and the response it should get, and buys specific abilities like
-  classification or question answering.</em>
-</p>
+![Pre-training versus fine-tuning](./images/pretrain-vs-finetune.png)  
+*Pre-training takes a pile of unlabelled text and no human in the loop, and produces general abilities like completing and understanding text. Fine-tuning takes pairs a human wrote, a prompt and the response it should get, and buys specific abilities like classification or question answering.*
 
 So, in one line each:
 

@@ -103,12 +103,8 @@ Three kinds of message make up a normal chat:
 
 These messages stack up every time you interact with the system:
 
-<p align="center">
-  <img src="./images/llm-context.jpeg" alt="The context of a plain LLM chat" width="70%"><br>
-  <em>Two turns of a plain chat: two Human Messages and two AI Messages. Nothing is ever
-  removed, so on the second turn the model is reading everything from the first one as
-  well.</em>
-</p>
+![The context of a plain LLM chat](./images/llm-context.jpeg)  
+*Two turns of a plain chat: two Human Messages and two AI Messages. Nothing is ever removed, so on the second turn the model is reading everything from the first one as well.*
 
 One HumanMessage plus the AIMessage that answers it is called a **turn**. In a plain LLM chat
 there is nothing in between: you send the prompt, you get the reply. The figure above is two
@@ -122,11 +118,8 @@ The SystemMessage is worth a closer look, because it is not one plain blob of te
 normally holds the behaviour instructions *and* the **tool schemas**, meaning the list of
 tools the model is allowed to call, with their names and arguments:
 
-<p align="center">
-  <img src="./images/system-prompt-context.jpeg" alt="Inside the system prompt" width="70%"><br>
-  <em>Inside a system prompt: the behaviour instructions, the tool schemas, and sometimes a
-  block of static reference text. All of it sits at the very top of the context.</em>
-</p>
+![Inside the system prompt](./images/system-prompt-context.jpeg)  
+*Inside a system prompt: the behaviour instructions, the tool schemas, and sometimes a block of static reference text. All of it sits at the very top of the context.*
 
 In the API the tool schemas are a separate field rather than part of the system text, but
 the model receives them as one block up front, so it is fair to picture them together.
@@ -153,12 +146,8 @@ a tool to answer you. If it does, the ToolCall and the ToolResult get added to t
 well, and only then does the model write the final answer. All of that is still **one turn**:
 a HumanMessage, any tool messages, and the AIMessage at the end.
 
-<p align="center">
-  <img src="./images/agent-context.jpeg" alt="The context of an agent" width="70%"><br>
-  <em>A single turn of an agent: you prompt, the AI thinks, the AI calls a tool, then the AI
-  answers. Watch who writes what: the LLM produces the thinking, the Tool Call and the answer,
-  while the Tool Result comes from the host machine that runs the function.</em>
-</p>
+![The context of an agent](./images/agent-context.jpeg)  
+*A single turn of an agent: you prompt, the AI thinks, the AI calls a tool, then the AI answers. Watch who writes what: the LLM produces the thinking, the Tool Call and the answer, while the Tool Result comes from the host machine that runs the function.*
 
 That split is the whole basis of how agents work, and we come back to it in
 [Module 4: Tools](4_tools.md) and [Module 6: Agents](6_agents.md).

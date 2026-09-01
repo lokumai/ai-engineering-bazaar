@@ -14,12 +14,8 @@ rastgeledir.
 Training, ona metin vermek ve bu sayıları tekrar tekrar oynatmak demek; ta ki tahminleri rastgele
 olmayı bırakıp doğru olmaya başlayana kadar.
 
-<p align="center">
-  <img src="./images/training-network.jpg" alt="Eğitilmemiş bir network ile eğitilmiş olanı yan yana" width="70%"><br>
-  <em>Aynı network, training'den önce ve sonra. "The students opened their" verildiğinde, soldaki
-  rastgele weight'ler "Sun" üretiyor, sağdaki öğrenilmiş weight'ler ise "Laptops" üretiyor.
-  Şeklinde hiçbir şey değişmedi, sadece içindeki sayılar değişti.</em>
-</p>
+![Eğitilmemiş bir network ile eğitilmiş olanı yan yana](./images/training-network.jpg)  
+*Aynı network, training'den önce ve sonra. "The students opened their" verildiğinde, soldaki rastgele weight'ler "Sun" üretiyor, sağdaki öğrenilmiş weight'ler ise "Laptops" üretiyor. Şeklinde hiçbir şey değişmedi, sadece içindeki sayılar değişti.*
 
 Bütün numara bu. Training modele okuyabileceğin türden kural ya da bilgi eklemez. Sadece sayıları
 ayarlar, ve bilgi milyarlarca sayının arasına yayılmış olarak ortaya çıkar. Andrej Karpathy'nin
@@ -64,13 +60,8 @@ modelinden başlayıp **fine-tune** edebilirsin.
 
 Farkı görmenin en net yolu, her adımın yediği veriye bakmak:
 
-<p align="center">
-  <img src="./images/pretrain-vs-finetune.png" alt="Pre-training ile fine-tuning karşılaştırması" width="70%"><br>
-  <em>Pre-training, label'lanmamış bir metin yığınını ve döngüde hiç insan olmadan alıyor, ve
-  metni tamamlamak ya da anlamak gibi genel yetenekler üretiyor. Fine-tuning ise bir insanın
-  yazdığı çiftleri, bir prompt ve alması gereken response'u alıyor, ve classification ya da
-  question answering gibi belirli yetenekler satın alıyor.</em>
-</p>
+![Pre-training ile fine-tuning karşılaştırması](./images/pretrain-vs-finetune.png)  
+*Pre-training, label'lanmamış bir metin yığınını ve döngüde hiç insan olmadan alıyor, ve metni tamamlamak ya da anlamak gibi genel yetenekler üretiyor. Fine-tuning ise bir insanın yazdığı çiftleri, bir prompt ve alması gereken response'u alıyor, ve classification ya da question answering gibi belirli yetenekler satın alıyor.*
 
 Yani, tek satırla:
 

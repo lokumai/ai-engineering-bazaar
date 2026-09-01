@@ -29,12 +29,8 @@ sayfayı okumak kolay ve kesin.
 
 RAG, masaya hangi sayfaların konacağını seçmek demek.
 
-<p align="center">
-  <img src="./images/rag.png" alt="Naive RAG akışı" width="70%"><br>
-  <em>Temel, "naive" RAG akışı. Query aynı anda iki yere gidiyor: vector store index'inde arama
-  yapmak için bir embedding model'e, ve o aramanın context olarak döndürdüğü şeyle birlikte doğrudan
-  LLM'e.</em>
-</p>
+![Naive RAG akışı](./images/rag.png)  
+*Temel, "naive" RAG akışı. Query aynı anda iki yere gidiyor: vector store index'inde arama yapmak için bir embedding model'e, ve o aramanın context olarak döndürdüğü şeyle birlikte doğrudan LLM'e.*
 
 ## RAG'in yaptığı şey, dört adımda
 
@@ -65,12 +61,8 @@ adresler yakın yerler demek. İki parmak izinin ne kadar yakın olduğunu **cos
 
 Bunun klasik resmi dört kelime kullanıyor:
 
-<p align="center">
-  <img src="./images/vector-king-queen.png" alt="king, queen, man ve woman kelimelerinin uzaydaki vector'leri" width="70%"><br>
-  <em>Dört kelime dört vector'e dönüşüyor, ve o vector'ler uzayda birer konuma dönüşüyor. "king",
-  "queen"in yanına, "man" da "woman"ın yanına düşüyor. Şimdi iki oka bak: paralel duruyorlar, yani
-  king'den queen'e giden adım, man'den woman'a giden adımın aynısı. Anlam geometriye dönüşmüş.</em>
-</p>
+![King, queen, man ve woman kelimelerinin uzaydaki vector'leri](./images/vector-king-queen.png)  
+*Dört kelime dört vector'e dönüşüyor, ve o vector'ler uzayda birer konuma dönüşüyor. "king", "queen"in yanına, "man" da "woman"ın yanına düşüyor. Şimdi iki oka bak: paralel duruyorlar, yani king'den queen'e giden adım, man'den woman'a giden adımın aynısı. Anlam geometriye dönüşmüş.*
 
 O paralellik bir saniyelik dikkatini hak ediyor, çünkü sayıları bir arama tablosundan fazlası yapan
 şey o. Embedding sadece benzer şeyleri yan yana koymadı, aralarındaki *ilişkiyi* de tutarlı bir yöne

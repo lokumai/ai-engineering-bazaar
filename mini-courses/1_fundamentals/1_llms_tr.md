@@ -87,11 +87,8 @@ Normal bir chat'i üç tür mesaj oluşturur:
 
 Bu mesajlar sistemle her etkileşiminde üst üste birikir:
 
-<p align="center">
-  <img src="./images/llm-context.jpeg" alt="Düz bir LLM chat'inin context'i" width="70%"><br>
-  <em>Düz bir chat'in iki turu: iki Human Message ve iki AI Message. Hiçbir şey silinmez,
-  yani ikinci turda model birinci turdaki her şeyi de okuyor.</em>
-</p>
+![Düz bir LLM chat'inin context'i](./images/llm-context.jpeg)  
+*Düz bir chat'in iki turu: iki Human Message ve iki AI Message. Hiçbir şey silinmez, yani ikinci turda model birinci turdaki her şeyi de okuyor.*
 
 Bir HumanMessage ile ona cevap veren AIMessage'a birlikte **tur** denir. Düz bir LLM chat'inde
 aralarında hiçbir şey yoktur: prompt'u yollarsın, cevabı alırsın. Yukarıdaki figürde iki tur
@@ -105,11 +102,8 @@ SystemMessage'a daha yakından bakmaya değer, çünkü tek parça düz bir meti
 davranış instruction'larını *ve* **tool schema**'larını, yani modelin çağırmasına izin verilen
 tool'ların listesini, isimleri ve argümanlarıyla birlikte tutar:
 
-<p align="center">
-  <img src="./images/system-prompt-context.jpeg" alt="System prompt'un içi" width="70%"><br>
-  <em>Bir system prompt'un içi: davranış instruction'ları, tool schema'ları ve bazen bir blok
-  static reference metni. Hepsi context'in en tepesinde durur.</em>
-</p>
+![System prompt'un içi](./images/system-prompt-context.jpeg)  
+*Bir system prompt'un içi: davranış instruction'ları, tool schema'ları ve bazen bir blok static reference metni. Hepsi context'in en tepesinde durur.*
 
 API tarafında tool schema'lar system metninin parçası değil, ayrı bir field'dır; ama model
 onları en başta tek blok olarak alır, dolayısıyla birlikte düşünmek yanlış olmaz.
@@ -136,12 +130,8 @@ için bir tool'a ihtiyacı olup olmadığına karar verir. İhtiyacı varsa Tool
 context'e eklenir, ve model final cevabı ancak ondan sonra yazar. Bunların hepsi hâlâ **tek bir
 tur**: bir HumanMessage, varsa tool mesajları, ve sonda AIMessage.
 
-<p align="center">
-  <img src="./images/agent-context.jpeg" alt="Bir agent'ın context'i" width="70%"><br>
-  <em>Bir agent'ın tek turu: sen prompt yazarsın, AI düşünür, AI tool çağırır, sonra AI
-  cevaplar. Kimin ne yazdığına dikkat et: thinking'i, Tool Call'ı ve cevabı LLM üretir; Tool
-  Result ise fonksiyonu çalıştıran host makineden gelir.</em>
-</p>
+![Bir agent'ın context'i](./images/agent-context.jpeg)  
+*Bir agent'ın tek turu: sen prompt yazarsın, AI düşünür, AI tool çağırır, sonra AI cevaplar. Kimin ne yazdığına dikkat et: thinking'i, Tool Call'ı ve cevabı LLM üretir; Tool Result ise fonksiyonu çalıştıran host makineden gelir.*
 
 Bu ayrım agent'ların nasıl çalıştığının temeli; [Modül 4: Tools](4_tools_tr.md) ve
 [Modül 6: Agents](6_agents_tr.md) modüllerinde geri döneceğiz.

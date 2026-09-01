@@ -46,13 +46,13 @@ Body rules that matter, all from `MANIFEST.md`:
 
 ## Figures
 
-Images are HTML, never markdown, so the width is controllable. Roughly 70%,
-centred, caption inside the same block:
+Images are markdown, never raw HTML. Image line, two trailing spaces, then the
+caption in italics. The app turns this into a numbered figure with a caption
+label, and it strips raw HTML out entirely, so a hand-written `<img>` tag will
+not appear on the site.
 
-<p align="center">
-  <img src="./images/example-diagram.jpeg" alt="short description" width="70%"><br>
-  <em>One or two lines saying something the picture cannot say on its own.</em>
-</p>
+![Short title](./images/example-diagram.jpeg)  
+*One or two lines saying something the picture cannot say on its own.*
 
 Diagrams follow the project's one visual system. Templates live in `assets/`,
 ready-made prompts in `scratchpad/diagrams/`. Finished images go in

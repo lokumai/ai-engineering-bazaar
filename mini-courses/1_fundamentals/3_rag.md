@@ -45,12 +45,8 @@ the desk in front of you is easy and exact.
 
 RAG is choosing which pages to put on the desk.
 
-<p align="center">
-  <img src="./images/rag.png" alt="The naive RAG flow" width="70%"><br>
-  <em>The basic "naive" RAG flow. The query goes two places at once: through an embedding model to
-  search the vector store index, and straight to the LLM alongside whatever that search returned
-  as context.</em>
-</p>
+![The naive RAG flow](./images/rag.png)  
+*The basic "naive" RAG flow. The query goes two places at once: through an embedding model to search the vector store index, and straight to the LLM alongside whatever that search returned as context.*
 
 ## What RAG does, in four steps
 
@@ -81,13 +77,8 @@ similarity**, and a high score means very similar.
 
 The classic picture of this uses four words:
 
-<p align="center">
-  <img src="./images/vector-king-queen.png" alt="king, queen, man and woman as vectors in space" width="70%"><br>
-  <em>Four words become four vectors, and those vectors become positions in space. "king" lands
-  near "queen" and "man" near "woman". Now look at the two arrows: they are parallel, so the step
-  from king to queen is the same move as the step from man to woman. Meaning has turned into
-  geometry.</em>
-</p>
+![King, queen, man and woman as vectors in space](./images/vector-king-queen.png)  
+*Four words become four vectors, and those vectors become positions in space. "king" lands near "queen" and "man" near "woman". Now look at the two arrows: they are parallel, so the step from king to queen is the same move as the step from man to woman. Meaning has turned into geometry.*
 
 That parallel is worth a second of your attention, because it is what makes the numbers more than
 a lookup table. The embedding did not just place similar things together, it placed the

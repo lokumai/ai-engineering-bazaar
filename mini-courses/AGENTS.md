@@ -55,18 +55,23 @@ was not asked.**
 - **Keep the author's rhetorical turns.** Trim repetition and self-praise; keep the arguments and
   the punchy phrasings.
 
-**Images use HTML, not markdown**, so the width can be controlled. Roughly 70% of full size,
-centred, caption inside the same block:
+**Images use markdown, never raw HTML.** The image line, two trailing spaces, then the caption in
+italics on the next line:
 
-```html
-<p align="center">
-  <img src="./images/my-diagram.jpeg" alt="short description" width="70%"><br>
-  <em>One or two lines saying something the picture cannot say on its own.</em>
-</p>
+```markdown
+![Short title](./images/my-diagram.jpeg)  
+*One or two lines saying something the picture cannot say on its own.*
 ```
 
-Use the `width` attribute rather than inline `style`, because GitHub strips `style` when it
-renders markdown.
+This matters more than it looks. The app turns that into a real `<figure>`: it numbers it
+(`FIG. 4.2`), uses the alt text as the caption label, puts the italic line in a `<p
+class="hl-cap-note">`, applies a width class, and rewrites the path to the copied
+`/course-images/` location. **Raw HTML is stripped out of the markdown entirely**, so an
+`<img>` tag written by hand does not render on the published site at all. It was tried, and eight
+figures silently disappeared from the site while still showing on GitHub.
+
+So the alt text is not just accessibility text, it is the printed figure label: give it a short
+title, capitalised.
 
 
 ## How a module gets written

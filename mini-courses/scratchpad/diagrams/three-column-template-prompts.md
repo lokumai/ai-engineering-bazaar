@@ -155,6 +155,42 @@ so the reader meets the same color where tools are declared and where they are c
 
 ---
 
+## Prompt E — a tool call, with real content
+
+For Module 4, replacing the ASCII walkthrough of `read_file`. Same layout as Prompt B, but the
+boxes carry the actual text so the reader follows one concrete call, and the numbered arrows are
+what show the context growing: box 1 is there before anyone speaks, and 2 to 5 arrive in that
+order.
+
+> Two images are attached: an empty three-column diagram, and a style sheet of message boxes.
+>
+> Reproduce the empty three-column diagram exactly, same cream background and texture, canvas,
+> three columns, dashed dividers, handwritten headings, grey User box with stick figure, blue
+> Context container, orange LLM box with brain doodle, same hand-drawn double-stroke line quality.
+>
+> The CONTEXT container holds five stacked boxes instead of five placeholder slots, drawn in the
+> style of the style sheet. Each box has its type written small at its top left in the box's own
+> outline colour, and its content below that in larger black handwriting:
+>
+> 1. "System Prompt" in grey (#7B7B7B), content: `read_file(filename)`
+> 2. "Human Message" in brick red (#C0392B), content: Read main.py
+> 3. "Tool Call" in light purple (#A87FE0), content: `read_file("main.py")`
+> 4. "Tool Result" in dark purple (#6A2CA0), content: `print("hello")`
+> 5. "AI Message" in deep green (#1B6E52), thicker outline, content: main.py prints hello.
+>
+> Give each message box a light uneven hand-scribbled fill in its own colour, strongest on the
+> System Prompt box. The User box, the blue Context container and the LLM box stay outline only.
+>
+> Draw four thin solid hand-drawn black arrows, each with a small circled number beside it:
+>
+> 1. USER box → box 2 "Human Message"
+> 2. LLM box → box 3 "Tool Call"
+> 3. box 3 "Tool Call" → box 4 "Tool Result", a short arrow straight down inside the blue
+>    container, labelled "host runs the tool" in small handwritten black
+> 4. LLM box → box 5 "AI Message"
+
+---
+
 ## Variants from the same base
 
 Keep the layout untouched, change only the centre stack:

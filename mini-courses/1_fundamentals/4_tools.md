@@ -3,145 +3,266 @@ module: 4
 title: "Tool Calling"
 category: fundamentals
 status: ready
-duration: 20
-summary: "How a model reaches outside itself — the mechanism underneath every agent."
+duration: 25
+summary: "How a model reaches outside itself, the mechanism underneath every agent."
 objectives:
   - "Explain how a model requests a tool call, and who actually executes it"
-  - "Describe what a tool schema must contain"
+  - "Describe what a tool schema contains, and where it comes from"
+  - "Explain why a tool's name and description decide whether it gets used"
+  - "Follow one real tool call through the request and the response"
   - "Identify tasks that need a tool rather than more prompting"
 prerequisites: [1]
 ---
 
 # Module 4: LLM Tool Calling
 
-Hi! Modules 1, 2, and 3 covered LLMs, fine-tuning, and RAG. Now, let's make LLMs do real actions, like reading files or running commands. This is "tool calling"—giving LLMs superpowers to interact with the world. Let's explore in more detail!
+Modules 1 to 3 covered what a model is, how it was trained, and how to put your own data in front
+of it. All of that is still reading. This module is where a model starts *doing*: reading a file,
+running a command, calling an API.
 
-## I. What is an LLM Tool?
+This is the mechanism underneath every agent, so it is worth getting exactly right.
 
-![LLM and Tools](./images/tools.jpg)
-*Tools are how an LLM reaches outside its own head — searching the web, doing math, running code — and reports back with an answer.*
+## What a tool is
 
-A **tool** is just a function that you write in code. It's a normal Python function with a name, inputs, and outputs. The LLM doesn't run it directly—instead, based on what the user asks, the LLM decides if it needs to call one of your tools and provides the right inputs.
+![An LLM reaching out through tools](./images/tools.jpg)  
+*Tools are how a model reaches outside its own head, searching the web, doing maths, running code, and comes back with an answer.*
 
-For example, you define a tool like `read_file(filename)`. The LLM sees the tool's description and, if the user says "Read the main.py file," the LLM calls it with `filename="main.py"`.
+A **tool** is just a function you write. An ordinary Python function with a name, some inputs and
+a return value. Nothing special about it.
 
-ASCII Art:
+The part people get wrong: **the model never runs your function.** It cannot. It has no computer.
+All it can do is emit a message that says "I would like to call `read_file` with
+`filename="main.py"`". Something on your side reads that message, runs the function, and hands the
+return value back.
+
+## How the context grows around a tool call
+
+Module 1 introduced the context as a stack of messages. A tool call adds two new kinds to that
+stack, and this is the whole flow in one picture:
+
+![The context of a single tool call](./images/context-tool-call.jpeg)  
+*One tool call, in order. The tool is declared in the system prompt before anyone speaks. Then you ask, the LLM writes a Tool Call, the host machine runs it and writes the Tool Result, and the LLM reads that and writes the answer.*
+
+Follow the four arrows, because the authorship matters:
+
+1. **You** write the Human Message.
+2. **The LLM** writes the Tool Call. It is asking, not doing.
+3. **The host machine** writes the Tool Result. Your laptop or your server is what actually has
+   Python installed and a filesystem to read.
+4. **The LLM** reads the whole context, now including that result, and writes the answer.
+
+Both new messages stay in the context. That is why an agent's context grows so much faster than a
+chat's: one turn can add several messages instead of two.
+
+## Why tools exist
+
+A model is trained on fixed data, so on its own it cannot know anything new or change anything.
+Tools remove both limits.
+
+**It cannot search the web.** So you write a function that takes a query, calls a search engine and
+returns the results. Now it can.
+
+**It cannot read your files.** So you write a function that takes a filename and returns the
+contents. Now it can see your code.
+
+Without tools a model is a chatbot. With tools it is an agent.
+
+## You do not write the schema, the framework does
+
+Here is the part that surprises people.
+
+For the model to choose a tool, it has to be told the tool exists, what it does and what arguments
+it takes. That description is the **tool schema**, and it is JSON.
+
+You almost never write that JSON. You write a normal function and let your framework generate the
+schema from it:
+
+```python
+@tool
+def get_weather(city: str) -> str:
+    """Get the current temperature for a city."""
+    return requests.get(f"https://api.example.com/weather?city={city}").text
 ```
-Tool Definition: def read_file(filename): ...
-User: "Read main.py"
-LLM: "Call read_file with 'main.py'"
-Tool Runs: Returns file content
-LLM: "File says: ..."
+
+From that one decorator, the framework reads:
+
+- the **name** from the function name, `get_weather`
+- the **description** from the docstring
+- the **parameters** from the type hints, so `city: str` becomes a required string
+
+It then sends that schema along with your request, and the model receives it up front, next to the
+system prompt. You register the function; the plumbing is not yours to write.
+
+**Which means the name and the description are not documentation. They are the interface.** They
+are the only thing the model has to go on when it decides which tool to reach for. A function
+called `get_data` with the docstring "gets data" will be picked at the wrong moments and skipped at
+the right ones, and no amount of prompting fixes that. Name the tool for what it does, and write
+the docstring for the model that has to choose.
+
+## One real tool call, end to end
+
+Enough description. Here is an actual exchange with a weather tool.
+
+### What the model receives
+
+The instructions and the tool schema arrive together. In the API they are separate fields, but from
+the model's point of view it is one block at the top of the context:
+
+```text
+SYSTEM
+You are a helpful assistant with access to tools.
+Answer the user's question. If you need information you do not have, call a
+tool instead of guessing. Never invent a weather reading.
+
+TOOLS
+get_weather
+  Get the current temperature for a city.
+  city (string, required) - The city name, for example "Istanbul"
 ```
 
-## II. Why Tool Calling is Important and Useful
+That readable block is the schema the framework generated. On the wire it looks like this:
 
-### A. LLM Limitations
+```json
+{
+  "type": "function",
+  "function": {
+    "name": "get_weather",
+    "description": "Get the current temperature for a city.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "city": {
+          "type": "string",
+          "description": "The city name, for example \"Istanbul\""
+        }
+      },
+      "required": ["city"]
+    }
+  }
+}
+```
 
-LLMs are trained on fixed data, so their knowledge is limited. They can't get live info or interact with the world.
+Notice that the description and the parameter description both came from things you wrote in
+Python.
 
-### B. Expanding Capabilities
+### What you ask
 
-Tools fix this! They let LLMs access real-time info or perform actions.
+```text
+USER
+What's the weather in Istanbul right now?
+```
 
-**Example 1: Web Search**
-LLMs can't search the internet. But you can write a tool (a function) that accepts a query and runs it in web search engines (like Google). This way, the LLM can access the internet.
+### What the model generates
 
-**Example 2: Code Access**
-LLMs can't read your local files. But with a tool that takes a filename and returns the content, the LLM can "see" your code.
+Not prose. This:
 
-Tools make LLMs active helpers, not just passive chatbots.
+```json
+{
+  "role": "assistant",
+  "content": null,
+  "tool_calls": [
+    {
+      "id": "call_9k2m4Xq7",
+      "type": "function",
+      "function": {
+        "name": "get_weather",
+        "arguments": "{\"city\":\"Istanbul\"}"
+      }
+    }
+  ]
+}
+```
 
-## III. Use Cases and Examples of Tools
+Three things worth noticing. `content` is empty, because the model has not answered yet, it has
+asked. There is an `id`, which is how the result gets matched back to this specific call. And
+`arguments` is a **string** containing JSON, not a JSON object, which catches almost everyone once.
 
-Tools can do many things based on needs. Numerous tools can be used for LLMs, such as:
+### What the host machine does
 
-*(Notice the `@tool` decorator above each function below. In most agent frameworks — like smolagents, which we'll use in the next module — that single decorator is all it takes to register a plain function as a tool the LLM can call. No extra registration step needed.)*
+This message is where the framework takes over. It parses the arguments, finds the Python function
+registered under `get_weather`, and calls it:
 
-- **Sending Emails**:
-  ```python
-  import smtplib
-  @tool
-  def send_email(to, subject, body):
-      # SMTP setup
-      server = smtplib.SMTP('smtp.example.com')
-      server.sendmail('from@example.com', to, f'Subject: {subject}\n\n{body}')
-      server.quit()
-  ```
+```python
+get_weather(city="Istanbul")   # -> '{"city":"Istanbul","temp_c":34,"conditions":"clear"}'
+```
 
-- **Terminal Access**:
-  ```python
-  import subprocess
-  @tool
-  def run_command(command):
-      result = subprocess.run(command, shell=True, capture_output=True, text=True)
-      return result.stdout
-  ```
+The return value goes back into the conversation as a new message, tagged with the `id` from the
+call:
 
-- **Getting Time**:
-  ```python
-  import datetime
-  @tool
-  def get_current_time():
-      return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-  ```
+```json
+{
+  "role": "tool",
+  "tool_call_id": "call_9k2m4Xq7",
+  "content": "{\"city\":\"Istanbul\",\"temp_c\":34,\"conditions\":\"clear\"}"
+}
+```
 
-- **Database Queries**:
-  ```python
-  import sqlite3
-  @tool
-  def query_db(sql):
-      conn = sqlite3.connect('database.db')
-      cursor = conn.cursor()
-      cursor.execute(sql)
-      results = cursor.fetchall()
-      conn.close()
-      return results
-  ```
+### What the model answers
 
-- **Vector DB Queries**:
-  ```python
-  @tool
-  def query_vector_db(query):
-      # Similar to RAG
-      embedding = encode(query)
-      results = vector_db.search(embedding, top_k=5)
-      return results
-  ```
+Now the whole context goes back to the model: system prompt, your question, its own tool call, and
+the result. It reads all of it and writes:
 
-For your projects, tools like read_file, run_shell, and query_vector_db are key for code tasks.
+```text
+ASSISTANT
+It's currently 34°C and clear in Istanbul.
+```
 
-## IV. Why Tools Matter for Projects
+That is the entire mechanism. Every agent you will ever build is this loop, repeated.
 
-Tools turn LLMs into smart assistants that:
-- Handle complex tasks step by step.
-- Access files, run code, search web.
-- Make projects interactive and powerful.
+The exact field names differ a little between providers, but the shape does not: a schema you did
+not write, a call the model emits, an execution you perform, a result you hand back.
 
-Without tools, LLMs are just chatbots. With tools, they're agents!
+## Tools people actually write
 
-## Mermaid Diagram: Tool Calling Flow
+Anything you can write as a function can be a tool. A few real ones:
+
+```python
+@tool
+def run_command(command: str) -> str:
+    """Run a shell command and return its output."""
+    return subprocess.run(command, shell=True, capture_output=True, text=True).stdout
+
+@tool
+def get_current_time() -> str:
+    """Get the current date and time."""
+    return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+@tool
+def query_db(sql: str) -> list:
+    """Run a read-only SQL query against the application database."""
+    with sqlite3.connect('database.db') as conn:
+        return conn.execute(sql).fetchall()
+
+@tool
+def search_docs(query: str) -> list:
+    """Find the most relevant documentation passages for a question."""
+    return vector_db.search(encode(query), top_k=5)
+```
+
+That last one is worth a second look: it is the RAG pipeline from Module 3, turned into a tool. The
+model now decides *when* to retrieve instead of you retrieving on every question. That small shift
+is most of what separates a RAG app from an agent.
 
 ```mermaid
 graph TD
-    A[User Asks Question] --> B[LLM Thinks: Need Tool?]
-    B -->|Yes| C[LLM Calls Tool with Args]
-    C --> D[Host Runs Tool Function]
-    D --> E[Tool Returns Result]
-    E --> F[LLM Uses Result to Answer]
-    B -->|No| F
+    A["User asks a question"] --> B{"Does it need a tool?"}
+    B -->|no| F["LLM answers directly"]
+    B -->|yes| C["LLM writes a Tool Call"]
+    C --> D["Host runs the function"]
+    D --> E["Result goes into the context"]
+    E --> F
 ```
 
-## Tutorial Progress
+## Where this fits in the series
 
 ```mermaid
 graph LR
-    A[Module 1: LLMs] --> B[Module 2: Training]
-    B --> C[Module 3: RAG]
-    C --> D[Module 4: Tools]
-    D --> E[Module 5: Memory]
-    E --> F[Module 6: Agents]
-    F --> G[Module 7: Multi-Agent]
+    A[1. LLMs] --> B[2. Training]
+    B --> C[3. RAG]
+    C --> D[4. Tools]
+    D --> E[5. Memory]
+    E --> F[6. Agents]
+    F --> G[7. Multi-Agent]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
@@ -150,11 +271,22 @@ graph LR
 
 ## Summary
 
-Tools let LLMs act in the real world. You learned what they are, why they're useful, and examples. Next, agents combine everything!
+A tool is a function you write. The model cannot run it, so it emits a Tool Call and your machine
+runs the function and hands back a Tool Result. Both land in the context, which is why agent
+contexts grow fast.
 
-**Quick Check**: Why do LLMs need tools?
+You do not write the schema, your framework generates it from the function, its docstring and its
+type hints. Which makes the name and the docstring the real interface: they are all the model has
+when it decides what to reach for.
 
-Keep learning! 🚀
+Next: memory, and what happens to all these messages as the context fills up.
+
+**Quick Check**: who executes a tool, the model or the host, and why does a tool's docstring
+matter more than its implementation?
+
+## References
+
+- [Mastering LLM tool calling](https://machinelearningmastery.com/mastering-llm-tool-calling-the-complete-framework-for-connecting-models-to-the-real-world/): the full framework, with more of the wire format than we needed here
 
 **Previous Module:** [Module 3: Retrieval-Augmented Generation (RAG)](3_rag.md)
 **Next Module:** [Module 5: Memory](5_memory.md)

@@ -1,3 +1,10 @@
+---
+module: 23
+title: "Advanced Harness Engineering"
+category: expert
+status: draft
+---
+
 # Module 23: Advanced Harness Engineering
 
 *Category: Expert — Module 23 (8 of 9 in this category)*

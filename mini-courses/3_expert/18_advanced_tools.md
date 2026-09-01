@@ -1,3 +1,10 @@
+---
+module: 18
+title: "Advanced Tools"
+category: expert
+status: draft
+---
+
 # Module 18: Advanced Tools
 
 *Category: Expert — Module 18 (3 of 9 in this category)*

@@ -1,3 +1,17 @@
+---
+module: 12
+title: "Harness Engineering"
+category: intermediate
+status: ready
+duration: 30
+summary: "The runtime around the agent: guardrails, hooks, sandboxes, and how much autonomy to grant."
+objectives:
+  - "Define what a harness is and what it is responsible for"
+  - "Explain why hooks are the only deterministic control point"
+  - "Place a task on the autonomy ladder and justify the placement"
+prerequisites: [11]
+---
+
 # Module 12: Harness Engineering
 
 *Category: Intermediate — Module 12 (5 of 8 in this category)*

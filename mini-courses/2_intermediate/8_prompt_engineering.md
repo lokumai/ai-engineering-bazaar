@@ -1,3 +1,17 @@
+---
+module: 8
+title: "Prompt Engineering"
+category: intermediate
+status: ready
+duration: 30
+summary: "What survived from early prompt advice, what is now folklore, and what actually moves output quality."
+objectives:
+  - "Separate current prompting practice from obsolete advice"
+  - "Apply the one layout rule that reliably helps"
+  - "Produce machine-readable output on purpose"
+prerequisites: [1]
+---
+
 # Module 8: Prompt Engineering
 
 *Category: Intermediate — Module 8 (1 of 8 in this category)*

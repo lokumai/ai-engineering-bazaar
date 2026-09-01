@@ -1,3 +1,10 @@
+---
+module: 24
+title: "Advanced Deployment"
+category: expert
+status: draft
+---
+
 # Module 24: Advanced Deployment
 
 *Category: Expert — Module 24 (9 of 9 in this category)*

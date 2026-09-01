@@ -1,3 +1,10 @@
+---
+module: 30
+title: "Protocols Reference"
+category: protocols
+status: draft
+---
+
 # Module 30: Protocols Reference
 
 *Category: Protocols & Specs — Module 30 (1 of 1 in this category)*

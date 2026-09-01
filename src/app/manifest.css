@@ -1,0 +1,479 @@
+/* ===========================================================================
+   §4.8, §4.9, §5.3, §5.4, §7.5 — the index sheet, the listing pages, and the
+   three components they are built from.
+
+   Two rules govern everything here. Every rule on the page is one of the three
+   quantised weights (`--stroke-hair` 1px, `--stroke-struct` 1.5px,
+   `--stroke-cut` 2px) and nothing sits between them. And "not yet drawn" is an
+   ISO 128 hidden line — 3 on, 2 off — which is the same signal here, in the
+   prev/next chain, in the schedule of parts and on the dashboard, because a
+   line type that means one thing in one place and another somewhere else means
+   nothing anywhere.
+   =========================================================================== */
+
+@layer components {
+  /* -- §4.8 items 1–3 — the head of the index sheet ---------------------- */
+
+  /* The one and only use of the 56px step on this site (§3.2). Uppercased in
+     CSS rather than in the source: a screen reader spells out a word written
+     in capitals, and the site's name is not an initialism. */
+  .hl-index-title {
+    margin: 0 0 24px;
+    font-family: var(--font-display);
+    font-size: var(--text-index);
+    line-height: var(--text-index--line-height);
+    font-weight: 700;
+    letter-spacing: -0.022em;
+    text-transform: uppercase;
+    text-wrap: pretty;
+    color: var(--color-ink);
+  }
+
+  /* Four lines, not four paragraphs: they are one statement, and 20px of
+     paragraph spacing between them would make them four claims (§3.3). Each
+     is still its own <p> so a screen reader pauses where a reader does. */
+  .hl-statement {
+    max-width: var(--width-prose);
+    margin: 0 0 24px;
+  }
+
+  .hl-statement p {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--text-prose);
+    line-height: var(--text-prose--line-height);
+    color: var(--color-ink);
+    /* §3.3 — `pretty` is for headings and blockquotes; a paragraph takes
+       `auto`, here and in the prose column. */
+    text-wrap: auto;
+  }
+
+  .hl-rule-struct {
+    height: var(--stroke-struct);
+    margin: 0 0 32px;
+    background: var(--color-line-strong);
+    border: 0;
+  }
+
+  /* -- §4.9 items 1–4 — the head of a listing page ----------------------- */
+
+  .hl-listing-title {
+    margin: 0 0 16px;
+    font-family: var(--font-display);
+    font-size: var(--text-h1);
+    line-height: var(--text-h1--line-height);
+    font-weight: 700;
+    letter-spacing: -0.020em;
+    text-wrap: pretty;
+    color: var(--color-ink);
+  }
+
+  .hl-lead {
+    max-width: var(--width-prose);
+    margin: 0 0 24px;
+    font-family: var(--font-body);
+    font-size: var(--text-prose);
+    line-height: var(--text-prose--line-height);
+    text-wrap: auto;
+    color: var(--color-ink);
+  }
+
+  .hl-listing-gauge {
+    display: block;
+    margin: 0 0 24px;
+  }
+
+  /* -- §4.8 item 4 — the index table ------------------------------------- */
+
+  /* Every wide thing scrolls inside its own container, in every case: the page
+     body never scrolls horizontally (§11.10). Keyboard-reachable, because a
+     scroll container a keyboard cannot reach is unusable (§10.3). */
+  .hl-index-scroll {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+
+  .hl-index-scroll:focus-visible {
+    outline-offset: -2px;
+  }
+
+  .hl-index {
+    width: 100%;
+    /* The sum of the column widths, with 240px for the flexible one — nine of
+       them since §12.18 (48 / 240 / 168 / 152 / 88 / 80 / 116 / 72 / 96).
+       Below this the table scrolls rather than crushing a sheet title into
+       three words a line. It is a HAND-COMPUTED sum against
+       `table-layout: fixed`, so it moves in the same commit as `columnsFor`:
+       add a column without raising it and the flexible column is crushed
+       instead of the table scrolling, which breaks §6.5's overflow contract
+       and §11.10's promise that the page body never scrolls sideways. */
+    min-width: 1060px;
+    table-layout: fixed;
+    border-collapse: collapse;
+    /* Tables are data, not argument: condensed sans, never serif (§11.18). */
+    font-family: var(--font-display);
+    font-size: var(--text-ui);
+    line-height: var(--text-ui--line-height);
+  }
+
+  .hl-index thead th {
+    padding: 10px 14px;
+    font-size: var(--text-micro);
+    line-height: var(--text-micro--line-height);
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    text-align: start;
+    white-space: nowrap;
+    color: var(--color-ink-muted);
+    /* Painted, not bordered — see `--stroke-struct` in globals.css. */
+    border-bottom: var(--stroke-struct) solid transparent;
+    background:
+      linear-gradient(var(--color-line-strong) 0 0)
+      0 100% / 100% var(--stroke-struct) no-repeat border-box;
+  }
+
+  /* -- §5.3 — the module row --------------------------------------------- */
+
+  .hl-row {
+    /* The containing block for the stretched link that covers the row. */
+    position: relative;
+    background: var(--color-paper);
+    transition: background-color 90ms linear;
+  }
+
+  .hl-row > :is(td, th) {
+    height: 52px;
+    padding: 10px 14px;
+    text-align: start;
+    vertical-align: middle;
+    font-weight: 400;
+    color: var(--color-ink);
+    /* No zebra striping, no vertical rules, ever (§6.5). */
+    border-bottom: var(--stroke-hair) solid var(--color-line-strong);
+    border-top: 0;
+  }
+
+  /* The 2px cut-plane line §5.3 puts down the left edge on hover. It is a
+     border that is always there and only changes colour, so the row does not
+     move under the cursor (§11.32) and only `border-color` transitions
+     (§9.2). Not accent: accent means complete, and hover is not (T1). */
+  .hl-row > :first-child {
+    border-left: var(--stroke-cut) solid transparent;
+    transition: border-color 90ms linear;
+  }
+
+  .hl-row:hover {
+    background: var(--color-cleared);
+  }
+
+  .hl-row:hover > :first-child {
+    border-left-color: var(--color-line-cut);
+  }
+
+  /* Written `.hl-row > …` because `.hl-row > :is(td, th)` above is (0,1,1) —
+     `:is()` takes the specificity of its most specific argument — and a bare
+     `.hl-row-number` at (0,1,0) loses to it. Unqualified, both quiet columns
+     silently painted at full `--color-ink` and the row had no hierarchy left.
+
+     §4.8 asks for `--color-ink-faint` here. This is the only text in a column
+     headed `#`, it is not `aria-hidden`, and at 11px mono it is exactly what
+     §10.4 rules out below `ink-muted` — 2.69:1 / 2.40:1, and T5 refuses the
+     decorative ink on content a reader has to read. Same call, same reason, as
+     the `ITEM` column of §4.5's schedule of parts (`.hl-schedule-item`). The
+     number stays subordinate to the sheet title by size and family: 11px mono
+     against 14px display at weight 500. */
+  .hl-row > .hl-row-number {
+    color: var(--color-ink-muted);
+  }
+
+  /* §4.8 — a draft row's `#` cell carries a 3 2 dashed left border, 1.5px, in
+     `--color-caution`, full row height. It is the same hidden line the sheet
+     itself draws, at the width the row can carry. */
+  .hl-row[data-draft] .hl-row-number {
+    --hl-hidden-ink: var(--color-caution);
+    --hl-hidden-weight: var(--stroke-struct);
+  }
+
+  .hl-row-title {
+    /* §5.3 — the first data column is weight 500. */
+    font-weight: 500;
+  }
+
+  .hl-row-link {
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+
+  /* The whole row is one link target: Tab reaches it once, Enter opens it. */
+  .hl-row-link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  /* The ring is relocated to the stretched element, never removed: §5.3 wants
+     it around the row at `-2px`, and left on the anchor it would wrap the
+     title text instead. */
+  .hl-row-link:focus-visible {
+    outline: none;
+  }
+
+  .hl-row-link:focus-visible::after {
+    outline: var(--stroke-cut) solid var(--color-focus);
+    outline-offset: -2px;
+  }
+
+  /* §4.8 `SUBSYSTEM` / §4.9 `TOPICS`, at 5.13:1 — quieter than the sheet title
+     beside it, which is the whole job of the column. `.hl-row > …` for the
+     same cascade reason as `#` above. */
+  .hl-row > .hl-row-context {
+    font-size: var(--text-meta);
+    line-height: var(--text-meta--line-height);
+    color: var(--color-ink-muted);
+  }
+
+  /* §4.9 `TOPICS` — one line, because §4.9's own arithmetic (9 × 52 + 52 =
+     520px) puts the category page's rows at 52px, and three stacked lines of
+     13px do not fit inside one. What does not fit is truncated rather than
+     wrapped: the sheet itself prints every section it has. */
+  .hl-row-topics {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  /* A machine-derived value never wraps: `5,008 W · 30 MIN` broken after the
+     separator reads as two facts instead of one (§3.4). */
+  .hl-row-value {
+    color: var(--color-ink);
+    white-space: nowrap;
+  }
+
+  .hl-row-status {
+    color: var(--color-ink);
+    white-space: nowrap;
+  }
+
+  /* Tailwind's reset makes every svg a block, which would put the tick on its
+     own line above the word it belongs to. */
+  .hl-row-tick {
+    display: inline-block;
+    vertical-align: middle;
+    margin-inline-end: 8px;
+  }
+
+  /* Line type first, colour second, words always (§10.4): the tick is already
+     dashed and the cell already reads NOT DRAWN. */
+  .hl-row[data-draft] .hl-row-status {
+    color: var(--color-caution-ink);
+  }
+
+  /* -- §4.8 column 9 — the SIGN-OFF cell --------------------------------- */
+
+  /* The squares themselves are record.css's: it owns every mark the record
+     draws, in one place, so that a mark cannot mean one thing on a sheet and
+     another in the manifest. What belongs here is the cell that holds them.
+
+     This is the one column whose cells do not take §5.3's `14px` inline
+     padding. §12.18 sets the table's `min-width` at 1060px and 1060 − 988 is
+     72px, so 72px is what this column costs; four 14px squares with
+     record.css's 4px gaps are 68px wide, and `SIGN-OFF` at `text-micro` 600
+     `+0.07em` is close to the same, while §5.3's padding would leave 44px for
+     both. The choice is 2px of padding or a wrapped header and a fourth square
+     outside its cell.
+
+     `.hl-row > …` and `.hl-index .…` because `.hl-row > :is(td, th)` and
+     `.hl-index thead th` are more specific than a bare class (`:is()` takes
+     the specificity of its most specific argument). */
+  .hl-index .hl-index-signoff,
+  .hl-row > .hl-row-signoff {
+    padding-inline: 2px;
+  }
+
+  /* -- §4.8 item 5 — the filter chips ------------------------------------ */
+
+  .hl-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .hl-chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* Selected: the same 2px cut-plane line the palette puts down the left of a
+     selected row, plus the cleared ground. Painted as a background rather than
+     a border so the chip does not change size and does not sit at rest with
+     one edge missing. There is no filled variant anywhere on this site, and a
+     vermilion chip would destroy T1. */
+  .hl-chip[aria-pressed="true"] {
+    border-color: var(--color-line-cut);
+    background-color: var(--color-cleared);
+    background-image: linear-gradient(
+      to right,
+      var(--color-line-cut) 0 var(--stroke-cut),
+      transparent var(--stroke-cut)
+    );
+  }
+
+  .hl-chip-count {
+    margin: 0;
+    color: var(--color-ink-muted);
+  }
+
+  .hl-chip-count-value {
+    color: var(--color-ink);
+  }
+
+  /* -- §5.4 — the category block ----------------------------------------- */
+
+  .hl-subsystems {
+    margin-top: 48px;
+  }
+
+  .hl-subsystems-head {
+    margin: 0 0 16px;
+    font-weight: 400;
+    color: var(--color-ink-muted);
+  }
+
+  /* Six 176px blocks across the 1152 box, wrapping to two and then to one.
+     `1fr` as the max rather than 176px on purpose: auto-fit counts tracks
+     against the maximum, so a 176px cap yields five columns and a widow. The
+     block's own max-width holds the 176. */
+  .hl-subsystem-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(152px, 1fr));
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Three stacked lines in a 176px column. No border, no ground, no card. */
+  .hl-category {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-width: 176px;
+    text-decoration: none;
+  }
+
+  .hl-category-order {
+    color: var(--color-ink-muted);
+  }
+
+  .hl-category-name {
+    font-family: var(--font-display);
+    font-size: var(--text-micro);
+    line-height: var(--text-micro--line-height);
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+    transition: color 90ms linear;
+  }
+
+  /* §5.4, "no sheets drawn": the name is muted and every tick in the gauge is
+     a dashed hairline. Four of the six subsystems are in that state and the
+     block says so rather than looking finished. */
+  .hl-category[data-undrawn] .hl-category-name {
+    color: var(--color-ink-muted);
+  }
+
+  .hl-category:hover .hl-category-name {
+    color: var(--color-ink);
+  }
+
+  /* The rule that appears under the gauge on hover. Always present, always
+     1.5px, transparent until hovered: nothing moves (§11.32).
+
+     Drawn on a pseudo-element rather than as a border for two reasons. A
+     1.5px border paints at 1px (see the note beside `--stroke-struct` in
+     globals.css), and §9.2 grants a hover only `background-color` and
+     `border-color` — a painted gradient can carry the weight but cannot
+     transition its colour, and a pseudo-element's `background-color` can do
+     both. It is the same shape `a.hl-prevnext-cell::after` already uses. */
+  .hl-category-gauge {
+    position: relative;
+    display: block;
+    /* 6px of clearance under the gauge, then the rule. */
+    padding-bottom: calc(6px + var(--stroke-struct));
+  }
+
+  .hl-category-gauge::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: var(--stroke-struct);
+    background-color: transparent;
+    transition: background-color 90ms linear;
+  }
+
+  .hl-category:hover .hl-category-gauge::after {
+    background-color: var(--color-line-cut);
+  }
+
+  /* -- The subsystem bands on the drawing-set page ----------------------- */
+
+  .hl-band {
+    margin-top: 48px;
+  }
+
+  .hl-band-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px 24px;
+    margin-bottom: 16px;
+  }
+
+  /* The band header is the section's heading; the block inside carries all of
+     its type, so the h2 contributes structure and nothing else. */
+  .hl-band-title {
+    margin: 0;
+    font: inherit;
+  }
+
+  .hl-band-meta {
+    margin: 0;
+    color: var(--color-ink-muted);
+  }
+
+  /* -- §4.9 — the subsystem's own prose ---------------------------------- */
+
+  .hl-notes {
+    max-width: var(--width-prose);
+    margin-top: 48px;
+  }
+
+  .hl-notes-head {
+    margin: 0 0 12px;
+    font-weight: 400;
+    color: var(--color-ink-muted);
+  }
+
+  /* §4.7 — below 768px the page keeps 20px of side padding and the table
+     keeps its own scroller. The chips stack rather than stretch. */
+  @media (max-width: 767px) {
+    .hl-index-title {
+      font-size: var(--text-h1);
+      line-height: var(--text-h1--line-height);
+      letter-spacing: -0.020em;
+    }
+
+    .hl-chips {
+      justify-content: flex-start;
+    }
+  }
+}

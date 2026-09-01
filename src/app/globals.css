@@ -1,0 +1,384 @@
+@import "tailwindcss";
+/* §6 — the prose column, in its own file because it is the largest single
+   section of the spec and the one a reader spends 95% of their time inside. */
+@import "./prose.css";
+/* §4.4–§4.7 and §5.5–§5.7 — the three sheet formats and their chrome. */
+@import "./sheet.css";
+/* §4.8–§4.9, §5.3–§5.4, §7.5 — the index sheet and the listing pages. */
+@import "./manifest.css";
+/* §6.10 B5 — the figure EXPAND overlay, which Radix portals outside .prose. */
+@import "./figure.css";
+/* §12 — every surface that carries reader state: sign-off, identity, the
+   readout, the stamps, the diagram, the empty states, forced-colors, print. */
+@import "./record.css";
+/* §13 — the lokum palette: six category hues, the segmented meter, the path's
+   channel-A role rules. Imported AFTER record.css so that where both name
+   `.hl-face` the palette's state rules win on source order as well as on
+   specificity. */
+@import "./lokum.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------------------
+   Design tokens — spec §2.2. Plain `@theme`, never `@theme inline`: utilities
+   must compile to `var(--color-…)` references so the dark override in §2.3
+   re-themes them without regenerating a single utility class.
+   --------------------------------------------------------------------------- */
+
+@theme {
+  /* ---- Grounds ------------------------------------------------------- */
+  --color-paper:        oklch(0.976 0.004 85);   /* page ground, warm bond  */
+  --color-cleared:      oklch(0.995 0.002 85);   /* raised: panels, cards   */
+  --color-sunken:       oklch(0.945 0.005 85);   /* recessed: code, inputs  */
+
+  /* ---- Ink ----------------------------------------------------------- */
+  --color-ink:          oklch(0.22  0.012 250);
+  --color-ink-muted:    oklch(0.52  0.010 250);
+  --color-ink-faint:    oklch(0.68  0.008 250);  /* DECORATIVE ONLY (T5)    */
+
+  /* ---- Line weights (colour) ----------------------------------------- */
+  --color-line:         oklch(0.86  0.006 250);  /* DECORATIVE ONLY (T4)    */
+  --color-line-strong:  oklch(0.64  0.010 250);  /* structural, ≥3:1        */
+  --color-line-cut:     oklch(0.42  0.010 250);  /* cut plane / current     */
+
+  /* ---- The annotation pen -------------------------------------------- */
+  --color-accent:       oklch(0.585 0.196 32);   /* fill/stroke only (T1)   */
+  --color-accent-ink:   oklch(0.50  0.19  32);   /* accent as text (T2)     */
+  --color-accent-wash:  oklch(0.585 0.196 32 / 0.08);
+
+  /* ---- Semantics: diagrams + status ticks only (T6) ------------------- */
+  --color-caution:      oklch(0.72  0.13  75);   /* draft / not yet drawn   */
+  --color-caution-ink:  oklch(0.52  0.12  70);
+  --color-caution-wash: oklch(0.72  0.13  75 / 0.14);
+  --color-verify:       oklch(0.60  0.09  165);  /* trusted / verified      */
+  --color-verify-ink:   oklch(0.48  0.09  165);
+  --color-verify-wash:  oklch(0.60  0.09  165 / 0.12);
+  --color-fault:        oklch(0.50  0.16  12);   /* untrusted / danger      */
+  --color-fault-ink:    oklch(0.44  0.17  12);
+  --color-fault-wash:   oklch(0.50  0.16  12 / 0.10);
+  --color-info:         oklch(0.53  0.11  245);  /* neutral annotation      */
+  --color-info-ink:     oklch(0.47  0.11  245);
+  --color-info-wash:    oklch(0.53  0.11  245 / 0.12);
+
+  /* ---- Focus --------------------------------------------------------- */
+  --color-focus:        oklch(0.585 0.196 32);
+
+  /* ---- Selection ----------------------------------------------------- */
+  --color-selection:    oklch(0.585 0.196 32 / 0.16);
+
+  /* ---- Line widths (ISO 128 quantisation) ----------------------------
+     MEASURED: Chrome floors every `border-*-width` and `outline-width` to a
+     whole CSS pixel — `border-top: 1.5px` computes to `1px` at DPR 1 and at
+     DPR 2 alike — so `--stroke-struct` used as a border paints as a hairline
+     and §2.2's middle weight disappears everywhere it is spent. `height`,
+     `width` and `background-size` are not floored, which is why
+     `.hl-rule-struct` has always painted at its stated weight.
+
+     So a structural rule is *painted*, not bordered: a one-stop gradient
+     carries the weight and the border stays, transparent, holding the layout
+     space the rule has always occupied. Never
+     `border: var(--stroke-struct) solid <a colour>` — that is the
+     1.5px-that-paints-1px this note exists to prevent (§1, first check), and
+     `tests/unit/stroke-weights.test.ts` fails the build on it. */
+  --stroke-hair:   1px;      /* rules, dividers, hidden-line dashes        */
+  --stroke-struct: 1.5px;    /* component outlines, active state           */
+  --stroke-cut:    2px;      /* current section, selected node, focus ring */
+  --dash-hidden:   3 2;      /* ISO 128 hidden line — draft status         */
+  --dash-axis:     6 2 1 2;  /* chain-dot — axis / centre line             */
+  --dash-leader:   2 2;      /* leader lines, empty stamp slots            */
+
+  /* ---- Spacing: 4px base --------------------------------------------- */
+  --spacing: 4px;
+
+  /* ---- Radius: zero, everywhere (T7) --------------------------------- */
+  --radius-none: 0px;
+  --radius-xs:   0px;
+  --radius-sm:   0px;
+  --radius-md:   0px;
+  --radius-lg:   0px;
+  --radius-xl:   0px;
+  --radius-2xl:  0px;
+  --radius-3xl:  0px;
+  --radius-4xl:  0px;
+
+  /* ---- Type families (wired to next/font/google in §3.1) ------------- */
+  --font-display: var(--font-plex-condensed), "IBM Plex Sans Condensed",
+                  "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-body:    var(--font-source-serif), "Source Serif 4", Charter,
+                  "Bitstream Charter", Georgia, serif;
+  --font-mono:    var(--font-plex-mono), "IBM Plex Mono", ui-monospace,
+                  "SF Mono", "Cascadia Mono", Menlo, monospace;
+
+  /* ---- Type scale: 11 steps, named by role (§3.2) -------------------- */
+  --text-mark:   0.6875rem;  --text-mark--line-height:   1.45;  /* 11px */
+  --text-micro:  0.75rem;    --text-micro--line-height:  1.45;  /* 12px */
+  --text-meta:   0.8125rem;  --text-meta--line-height:   1.45;  /* 13px */
+  --text-ui:     0.875rem;   --text-ui--line-height:     1.5;   /* 14px */
+  --text-code:   0.9375rem;  --text-code--line-height:   1.55;  /* 15px */
+  --text-prose:  1.0625rem;  --text-prose--line-height:  1.7;   /* 17px */
+  --text-h4:     1.25rem;    --text-h4--line-height:     1.35;  /* 20px */
+  --text-h3:     1.5rem;     --text-h3--line-height:     1.3;   /* 24px */
+  --text-h2:     1.875rem;   --text-h2--line-height:     1.2;   /* 30px */
+  --text-h1:     2.625rem;   --text-h1--line-height:     1.12;  /* 42px */
+  --text-index:  3.5rem;     --text-index--line-height:  1.05;  /* 56px */
+
+  /* ---- Layout tracks (§4) -------------------------------------------- */
+  --width-shell:  1200px;    /* page max-width incl. 24px padding each side */
+  --width-box:    1152px;    /* content box                                 */
+  --width-rail-l: 208px;
+  --width-rail-r: 240px;
+  --width-prose:  656px;
+  --width-wide:   920px;     /* prose + gutter + right rail                 */
+  --width-palette: 640px;
+
+  /* ---- The only shadow in the system --------------------------------- */
+  --shadow-pop: 0 24px 48px -24px oklch(0.22 0.012 250 / 0.12);
+}
+
+/* ---------------------------------------------------------------------------
+   Dark override — spec §2.3. A CAD viewport at night: graphite-blue-black.
+   Never navy, never #000 — 1px hairlines halate against true black, which is
+   also why --color-ink is 0.93 and not 1.0.
+
+   Elevation stays inverted in both themes (§2.4): `cleared` is LIGHTER than
+   `paper`, because a title block is an area of cleared paper. The gap is only
+   1.06:1 light / 1.09:1 dark on purpose — a panel is defined by its
+   line-strong border and its registration marks, never by its fill.
+   --------------------------------------------------------------------------- */
+
+@layer base {
+  .dark {
+    --color-paper:        oklch(0.185 0.008 255);
+    --color-cleared:      oklch(0.225 0.009 255);
+    --color-sunken:       oklch(0.150 0.008 255);
+
+    --color-ink:          oklch(0.93  0.006 250);
+    --color-ink-muted:    oklch(0.66  0.010 250);
+    --color-ink-faint:    oklch(0.44  0.010 255);
+
+    --color-line:         oklch(0.31  0.010 255);
+    --color-line-strong:  oklch(0.52  0.012 255);
+    --color-line-cut:     oklch(0.62  0.012 255);
+
+    --color-accent:       oklch(0.705 0.172 36);
+    --color-accent-ink:   oklch(0.76  0.15  36);
+    --color-accent-wash:  oklch(0.705 0.172 36 / 0.14);
+
+    --color-caution:      oklch(0.79  0.13  78);
+    --color-caution-ink:  oklch(0.82  0.12  78);
+    --color-caution-wash: oklch(0.79  0.13  78 / 0.16);
+    --color-verify:       oklch(0.72  0.10  168);
+    --color-verify-ink:   oklch(0.78  0.10  168);
+    --color-verify-wash:  oklch(0.72  0.10  168 / 0.14);
+    --color-fault:        oklch(0.63  0.17  15);
+    --color-fault-ink:    oklch(0.70  0.16  15);
+    --color-fault-wash:   oklch(0.63  0.17  15 / 0.14);
+    --color-info:         oklch(0.70  0.11  245);
+    --color-info-ink:     oklch(0.76  0.10  245);
+    --color-info-wash:    oklch(0.70  0.11  245 / 0.14);
+
+    --color-focus:        oklch(0.705 0.172 36);
+    --color-selection:    oklch(0.705 0.172 36 / 0.22);
+
+    --shadow-pop: 0 24px 48px -24px oklch(0 0 0 / 0.5);
+  }
+
+  html { color-scheme: light; }
+  html.dark { color-scheme: dark; }
+
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    /* The whole reason for Source Serif 4 over Charter (§3.1): 17px prose gets
+       the text cut, the 56px index title gets the display cut, automatically. */
+    font-optical-sizing: auto;
+    font-size: var(--text-prose);
+    line-height: var(--text-prose--line-height);
+  }
+
+  ::selection { background: var(--color-selection); }
+
+  /* Theme switching is 0ms (§9). This class is added for exactly one frame. */
+  .disable-transitions,
+  .disable-transitions *,
+  .disable-transitions *::before,
+  .disable-transitions *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  /* §10.4 — two overrides, nothing else: the decorative line weight is raised
+     to the structural one, and the decorative ink to the muted one. */
+  @media (prefers-contrast: more) {
+    :root {
+      --color-line:      oklch(0.64 0.010 250);
+      --color-ink-faint: oklch(0.52 0.010 250);
+    }
+    .dark {
+      --color-line:      oklch(0.52 0.012 255);
+      --color-ink-faint: oklch(0.66 0.010 250);
+    }
+  }
+
+  /* §9.6 — one focus treatment, everywhere, no exceptions. Instant: a fading
+     focus ring is a keyboard user's enemy. Inside a table row the offset goes
+     to -2px so the ring stays within the row's bounds. */
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+    transition: none;
+  }
+  :focus:not(:focus-visible) { outline: none; }
+
+  /* `main` carries `tabindex="-1"` so the skip link's fragment target can hold
+     focus (§10.2, §10.3). A browser that lands focus there after a keypress
+     leaves it matching `:focus-visible`, which would ring the entire main
+     region in 2px of vermilion — a focus ring around a whole page is noise,
+     not an affordance. Specificity (0,1,1) beats the bare rule above without
+     `!important`; §9.6's one focus treatment still applies to everything a
+     keyboard actually tabs to. */
+  main:focus { outline: none; }
+
+  /* §9.3 — the one page-load animation: opacity absorbs the font swap on the
+     main column. Not a reveal; nothing is staggered; nothing else joins in.
+     No fill mode, so a browser that ignores it still paints the page. */
+  @keyframes hl-absorb { from { opacity: 0; } }
+
+  main { animation: hl-absorb 160ms linear; }
+}
+
+/* ---------------------------------------------------------------------------
+   Shell primitives. Four classes, each one a rule from the spec that repeats
+   often enough that spelling it out per element would invite drift.
+   --------------------------------------------------------------------------- */
+
+@layer components {
+  /* §9.2 — the only permitted hover transition, on the only two permitted
+     properties. No transform, no shadow, no opacity, no lift, no scale. */
+  .hl-hover {
+    transition: background-color 90ms linear, border-color 90ms linear;
+  }
+
+  /* §6.5 — the overflow affordance: a 24px fade at the right edge of anything
+     that scrolls sideways, present only while `scrollWidth > clientWidth` and
+     removed at the right end. `Affordances` sets the attribute on every
+     `[data-hl-scroller]`; §6.5 writes the rule for a table, §6.10 B5 reuses it
+     for a diagram, and a code block that clips mid-token beside a table that
+     fades is one page saying two things. With no JavaScript there is no fade,
+     and nothing is hidden by its absence (§10.4 — the fade is never the sole
+     carrier of anything; the container still scrolls and still says so to a
+     screen reader).
+
+     Suspended while the container has focus. §10.3 makes every scroller a tab
+     stop and §9.6 rings it at `outline-offset: -2px`, so the mask would fade
+     the right-hand side of that ring away exactly when a keyboard reader needs
+     it. The ring wins; the fade comes back when focus leaves. */
+  [data-hl-overflow="right"] {
+    mask-image: linear-gradient(to left, transparent, black 24px);
+  }
+
+  [data-hl-overflow="right"]:focus-visible {
+    mask-image: none;
+  }
+
+  /* §3.4 — any machine-derived value in chrome. Always uppercase, always
+     tabular: a readout whose digits shift width is not an instrument. */
+  .hl-mark {
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    line-height: var(--text-mark--line-height);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* T3 / §6.3 — link text is ink, never accent. Only the underline goes
+     accent, and only on hover or focus. The one transition §6.3 grants a
+     link is 90ms linear on the decoration colour. */
+  .hl-link {
+    color: var(--color-ink);
+    text-decoration-line: underline;
+    text-decoration-color: var(--color-line-strong);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.12em;
+    text-decoration-skip-ink: auto;
+    transition: text-decoration-color 90ms linear;
+  }
+  .hl-link:hover {
+    text-decoration-color: var(--color-accent);
+    text-decoration-thickness: 2px;
+  }
+  .hl-link:focus-visible { text-decoration-color: var(--color-accent); }
+
+  /* §5.1 — every header icon button: 28 × 28, zero radius, no border at rest,
+     a hairline on hover. */
+  .hl-icon-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    color: var(--color-ink-muted);
+    border: var(--stroke-hair) solid transparent;
+    transition: background-color 90ms linear, border-color 90ms linear;
+  }
+  .hl-icon-btn:hover {
+    color: var(--color-ink);
+    border-color: var(--color-line-strong);
+  }
+  /* §10.4 — 44 × 44 minimum target below 768px. The mark stays 28px; only the
+     hit area grows, so the header still reads as drawn. */
+  @media (max-width: 767px) {
+    .hl-icon-btn::after {
+      content: "";
+      position: absolute;
+      /* MEASURED: Tailwind's preflight makes these border-box and both carry a
+         transparent hairline border, so a hand-tuned `inset` resolves against a
+         padding box 2px smaller than the painted one and lands at 42 × 42. This
+         form does not care: it grows each axis to 44px and no further, whatever
+         the painted box measures. Painted geometry is unchanged. */
+      inset: min(0px, calc((100% - 44px) / 2));
+    }
+  }
+
+  /* §9.6 — the first focusable element on every page. Hidden until focused,
+     never removed, never animated. */
+  .skip-link {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 60;
+    padding: 8px 12px;
+    clip-path: inset(50%);
+    color: var(--color-ink);
+    /* Painted, not bordered — see the note beside `--stroke-struct`. Four
+       one-stop gradients, one per edge, over the cleared ground. */
+    border: var(--stroke-struct) solid transparent;
+    background:
+      linear-gradient(var(--color-line-strong) 0 0) 0 0 / 100% var(--stroke-struct) no-repeat border-box,
+      linear-gradient(var(--color-line-strong) 0 0) 0 100% / 100% var(--stroke-struct) no-repeat border-box,
+      linear-gradient(var(--color-line-strong) 0 0) 0 0 / var(--stroke-struct) 100% no-repeat border-box,
+      linear-gradient(var(--color-line-strong) 0 0) 100% 0 / var(--stroke-struct) 100% no-repeat border-box,
+      var(--color-cleared);
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    line-height: var(--text-mark--line-height);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .skip-link:focus { clip-path: none; }
+}
+
+/* §9.5 — all three permitted animations collapse to instant state swaps.
+   Nothing is lost: none of them carries information the still frame does not.
+   Unlayered on purpose, so it outranks every normal declaration above. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,3 +1,10 @@
+---
+module: 26
+title: "Inference Providers"
+category: ecosystem
+status: draft
+---
+
 # Module 26: Inference Providers
 
 *Category: Ecosystem — Module 26 (2 of 5 in this category)*

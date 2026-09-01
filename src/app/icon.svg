@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="LKM-01">
+  <title>LKM-01</title>
+  <!--
+    Spec 8.3, the favicon variant of LKM-01: hexagon outline plus the visible
+    Y, stroke-width 2, no hidden lines, no sugar, no hatching. The Y-in-hexagon
+    reads at 16px, which the full mark does not.
+
+    A favicon is painted by the browser chrome, outside the document, so it
+    cannot reach the ink token and it cannot see the site's own theme class.
+    8.3 says "baked to a static hex per theme" for that reason: these two
+    literals are the light and dark ink tokens from globals.css converted by
+    oklchToHex, and tests/unit/mascot/icon.test.ts fails the moment either
+    token moves or the geometry drifts from geometry.ts. The only theme signal
+    a favicon has is the OS preference, so that is what selects between them.
+
+    A metadata file route rather than public/favicon.ico: files under public/
+    are copied verbatim and are not base-path aware, and this site is served
+    from a sub-path (see lib/url.ts).
+  -->
+  <style>
+    path { fill: none; stroke: #161B20; stroke-width: 2 }
+    @media (prefers-color-scheme: dark) { path { stroke: #E5E8EC } }
+  </style>
+  <path d="M16 5 L25.53 10.5 L25.53 21.5 L16 27 L6.47 21.5 L6.47 10.5 Z" />
+  <path d="M16 16 L6.47 10.5 M16 16 L25.53 10.5 M16 16 L16 27" />
+</svg>

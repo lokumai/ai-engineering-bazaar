@@ -1,3 +1,17 @@
+---
+module: 10
+title: "Coding Agents: The Landscape"
+category: intermediate
+status: ready
+duration: 25
+summary: "The coding-agent field as it stands, and a way to choose that does not rest on leaderboards."
+objectives:
+  - "Identify the dimensions along which coding agents actually differ"
+  - "Explain why benchmark scores are a poor selection criterion"
+  - "Choose a coding agent by eliminating on constraints"
+prerequisites: [6]
+---
+
 # Module 10: Coding Agents: The Landscape
 
 *Category: Intermediate — Module 10 (3 of 8 in this category)*

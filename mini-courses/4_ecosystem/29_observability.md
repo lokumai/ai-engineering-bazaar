@@ -1,3 +1,10 @@
+---
+module: 29
+title: "Observability"
+category: ecosystem
+status: draft
+---
+
 # Module 29: Observability
 
 *Category: Ecosystem — Module 29 (5 of 5 in this category)*

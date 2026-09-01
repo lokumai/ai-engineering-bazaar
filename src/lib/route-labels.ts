@@ -78,11 +78,15 @@ const ROUTE_TITLES: Record<string, string> = {
 /**
  * Ancestor paths that exist in the URL but were never exported as a page.
  *
- * **MEASURED, by `scripts/check-links-out.mjs` on its first run:** of 2313
- * internal links across 54 exported documents, exactly one pointed at nothing —
- * `href="/auth/"`, on the callback page. The trail gives every ancestor segment
- * an href, and `/auth/` is a directory holding `callback/` with no page of its
- * own, so the one crumb above a reader mid-sign-in led to a 404.
+ * **MEASURED, by `scripts/check-links-out.mjs` on its first run:** exactly one
+ * internal link in the whole export pointed at nothing — `href="/auth/"`, on
+ * the callback page. The trail gives every ancestor segment an href, and
+ * `/auth/` is a directory holding `callback/` with no page of its own, so the
+ * one crumb above a reader mid-sign-in led to a 404. (The denominator moves
+ * with the corpus and is not restated here: that run saw 54 documents, and the
+ * export this section finished with carries 2408 internal links across 56. A
+ * number written into a comment is a measurement of a tree that no longer
+ * exists.)
  *
  * The alternative was to drop the segment from the trail entirely. It is
  * rejected because the label is doing real work: a reader landing on the
@@ -91,14 +95,20 @@ const ROUTE_TITLES: Record<string, string> = {
  * position, not as a link that failed.
  *
  * A set of paths and not a heuristic: guessing which segments have pages from
- * the URL is how the defect arrived. Each entry is a claim that the export
- * contains no such document, and NOTHING CHECKS THAT CLAIM: the link gate reads
- * the links a page renders, so a crumb this set has silently un-linked emits no
- * link for it to find. An entry that becomes wrong — a page added at
- * `/auth/` — costs a reader a crumb that no longer navigates, and only
- * `tests/unit/route-labels.test.ts` will say so.
+ * the URL is how the defect arrived. Each entry is a claim about the router
+ * tree, and the link gate cannot check it in either direction — an un-linked
+ * crumb emits no href, so there is nothing in the export for the gate to
+ * follow. Both directions fail silently on their own: an entry deleted while
+ * `/auth/` still has no page puts the 404 back, and an entry left here after a
+ * page is added at `/auth/` costs a reader a crumb that no longer navigates.
+ *
+ * So the claim is checked against the filesystem instead.
+ * `tests/unit/route-labels.test.ts` globs `src/app/**` and fails if any path in
+ * this set has a `page.tsx` — which is why the set is exported. It reads the
+ * router tree rather than the trail, because a test that only asserts
+ * `breadcrumbFor`'s output agrees with whatever this set happens to say.
  */
-const WITHOUT_A_PAGE: ReadonlySet<string> = new Set(['/auth/'])
+export const WITHOUT_A_PAGE: ReadonlySet<string> = new Set(['/auth/'])
 
 /**
  * What `/` is called in the trail. §15.1 renamed it: the root of every path on

@@ -357,6 +357,55 @@ for (const state of ['clean', 'with a record'] as const) {
 }
 
 // ---------------------------------------------------------------------------
+// §15.3.1, §10.4 — every meter cell states its own size in text
+// ---------------------------------------------------------------------------
+
+/**
+ * The gauges in the resume block are all `aria-hidden`, so the line under each
+ * one is the only statement of its reading — which is the single condition
+ * §10.4 allows a gauge to be silent under. A drawn subsystem gets that number
+ * from `CategoryTally`; a subsystem with nothing drawn takes `UnsignableMeter`,
+ * which printed `— signed off · NOT DRAWN` and no size at all, so one cell in
+ * the list named a subsystem and measured nothing.
+ *
+ * Asserted as the general property rather than as the one string, because the
+ * failure is "a cell with no number in it" and either branch can regress into
+ * it. The `NOT DRAWN` half is asserted separately, since that is the branch
+ * this section changed and the one the corpus can empty: when the last
+ * subsystem is drawn there will be no such cell, and the count below is what
+ * says so out loud instead of passing silently.
+ */
+test('no meter cell names a subsystem without measuring it (§15.3.1, §10.4)', async ({
+  page,
+}) => {
+  await seedOneSignOff(page)
+  await page.goto('/')
+
+  const cells = page.locator('.hl-home-meters > li')
+  const total = await cells.count()
+  expect(total).toBeGreaterThan(0)
+
+  for (let i = 0; i < total; i++) {
+    const text = (await cells.nth(i).innerText()).replace(/\s+/g, ' ').trim()
+    expect(text, `cell ${i} states no number`).toMatch(/\d/)
+  }
+
+  // The branch this section changed. `plural` and not a typed word: protocols &
+  // specs is a subsystem of one, and `1 sheets` would be a typed word
+  // contradicting the measured number beside it (§11.25).
+  const undrawn = page.locator('.hl-home-meters > li', { hasText: 'NOT DRAWN' })
+  const dashed = await undrawn.count()
+  expect(dashed, 'no undrawn subsystem left to check — retire this half').toBeGreaterThan(0)
+
+  for (let i = 0; i < dashed; i++) {
+    const text = (await undrawn.nth(i).innerText()).replace(/\s+/g, ' ').trim()
+    // Case-insensitive: `.hl-mark` uppercases in CSS, so `innerText` reads
+    // `SIGNED OFF · 9 SHEETS`. The words are what is pinned, not the casing.
+    expect(text).toMatch(/signed off · (\d+ sheets|1 sheet), NOT DRAWN/i)
+  }
+})
+
+// ---------------------------------------------------------------------------
 // §15.2.4, §15.1 — where the door leads
 // ---------------------------------------------------------------------------
 

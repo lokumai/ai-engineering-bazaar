@@ -6,7 +6,7 @@ import { ContinueLine } from '@/components/record/Diagram'
 import { Readout } from '@/components/record/Readout'
 import { Uptime } from '@/components/record/Uptime'
 import type { CategorySlug } from '@/lib/content/categories'
-import { NOT_MEASURED } from '@/lib/text'
+import { NOT_MEASURED, plural } from '@/lib/text'
 import { ROLES } from '@/lib/path/roles'
 import type { CurriculumFacts } from '@/lib/record/derive'
 
@@ -281,6 +281,18 @@ export function Resume({ facts, subsystems }: ResumeProps) {
  * sheet nobody has written could otherwise fill one here (§12.1.3 — a record
  * read back out of storage is untrusted input). With no number to match, these
  * segments cannot fill, which is the truth about them.
+ *
+ * **The line prints the count, and that is §10.4 and not symmetry.** The gauge
+ * above it is `aria-hidden`, so the sentence under it is the only statement of
+ * its reading — the condition under which a gauge may be silent at all. Without
+ * the count this subsystem was the one cell in the list with no size: every
+ * drawn subsystem gets `approved/total` from `CategoryTally`, so a reader met
+ * five numbered meters and one that named a subsystem and measured nothing.
+ * `plural` rather than a written-in `sheets`, because protocols & specs is a
+ * subsystem of one and `1 sheets` is a typed word contradicting the measured
+ * number beside it (§11.25). The dashboard's copy of this component reached the
+ * same line from the same argument; the two now read alike because the reason
+ * is shared, not to make them match.
  */
 function UnsignableMeter({ slug, sheets }: ResumeSubsystem) {
   if (sheets.length === 0) return null
@@ -293,7 +305,7 @@ function UnsignableMeter({ slug, sheets }: ResumeSubsystem) {
         ))}
       </div>
       <p className="hl-mark m-0 mt-1 text-ink-muted">
-        {DASH} signed off · NOT DRAWN
+        {DASH} signed off · {plural(sheets.length, 'sheet')}, NOT DRAWN
       </p>
     </div>
   )

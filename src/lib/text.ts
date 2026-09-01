@@ -18,11 +18,17 @@
  * It is an em dash and not `0`: a sheet nobody has drawn has no count, and
  * printing zero would state a measurement where none was taken (§11.25).
  *
- * Those three take it from here. Other modules still hold their own literal —
- * `record/report.ts`, `components/path/PathSteps.tsx`,
- * `components/team/TeamTable.tsx` — and are deliberately left alone: they
- * predate this constant and converting them is not this phase's work. A reader
- * of this note should not assume the glyph has one author site-wide yet.
+ * Those three take it from here, and no more than those three. **This constant
+ * is not yet the glyph's only author site-wide** — eight further modules still
+ * write it inline, across `lib/record/`, `app/dashboard/` and the `record`,
+ * `team` and `path` component sets. They predate this constant and converting
+ * them is not this phase's work.
+ *
+ * That count is the whole of what this note claims, deliberately: the earlier
+ * version named three files as though the list were complete, and it was short
+ * by five — including the two that a reviewer then read as covered. A list of
+ * call sites in a comment rots on the first move; the set is one command,
+ * `grep -rl "'—'" src/`, and that is the authority.
  */
 export const NOT_MEASURED = '—'
 

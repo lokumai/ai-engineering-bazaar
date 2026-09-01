@@ -18,7 +18,7 @@ The internet already has plenty of AI content. Adding more only makes sense if i
 6. **Every module points you somewhere next.** Each topic is kept short on purpose, then links out to more. In the world of Reels and TikTok, attention is short and nobody pushes through something just because they were told to read it, and people only really learn what they wanted to learn. So a page is written to leave you curious instead of full, and the links are there for the moment you want more.
 7. **We only cover what matters.** A cheatsheet for AI engineering, not a textbook. Knowing what to leave out comes from building things, not from searching.
 
-📜 Full version: **[MANIFEST.md](MANIFEST.md)**
+📜 Full version: **[MANIFEST.md](mini-courses/MANIFEST.md)** · 🧭 Where this is going: **[ROADMAP.md](mini-courses/ROADMAP.md)**
 
 ## Structure
 

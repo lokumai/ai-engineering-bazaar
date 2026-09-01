@@ -7,7 +7,7 @@ Rules for any AI assistant working in this repo. **This file is live**, see
 
 ## Read first
 
-`MANIFEST.md` at the root is the contract for everything under `mini-courses/`. Read it before
+`MANIFEST.md`, beside this file, is the contract for everything under `mini-courses/`. Read it before
 writing or editing any course content. Its seven rules in short: human-written · sounds like a
 person talking · stays simple · five to ten minutes per module · pictures do a lot of the work ·
 every module links out · only what matters.
@@ -77,7 +77,8 @@ index:
 
 - drop the "Read online" line, since it is self-referential on the site
 - strip the `mini-courses/` prefix from link paths, since `index.md` lives inside it
-- make the `MANIFEST.md` link an absolute GitHub URL, because it sits outside `mini-courses/`
+- keep the `MANIFEST.md` and `ROADMAP.md` links relative in both, since both files sit inside
+  `mini-courses/`
 - keep the Contributing section at the end of `index.md`
 
 ## Language
@@ -150,11 +151,13 @@ cross-references like "module X".
 ## Repo map
 
 ```
-MANIFEST.md              the seven rules, the contract
 README.md                GitHub landing page
 assets/                  diagram source templates (not published)
 mini-courses/            the authored corpus, and all this file governs
+  MANIFEST.md            the seven rules, the contract
+  ROADMAP.md             the order we intend to build in
   CLAUDE.md / AGENTS.md  this file
+  _module_template.md    copy this to start a module
   index.md               site homepage, mirrors README.md
   1_fundamentals/        modules 1-7   (improved in place)
   2_intermediate/        modules 8-15  (being rewritten from scratch)
@@ -166,8 +169,8 @@ mini-courses/            the authored corpus, and all this file governs
 src/ tests/ scripts/     the Next.js app that renders the corpus (not ours)
 ```
 
-The app is a colleague's work. **Our side of the line is `mini-courses/`**, plus `MANIFEST.md`
-and the README sections that describe the course. Do not edit the app to accommodate the
+The app is a colleague's work. **Our side of the line is `mini-courses/`**, plus the
+README sections that describe the course. Do not edit the app to accommodate the
 content; the content is plain markdown and the app reads it as authored.
 
 The notes under `mini-courses/scratchpad/research/` are raw material for facts and sources. Their

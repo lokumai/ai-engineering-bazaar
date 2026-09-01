@@ -1,6 +1,6 @@
 # Research Dossier — Module 9: Context Engineering (Intermediate)
 
-Prepared 2026-08-25 for `sections/2_intermediate/9_context_engineering.md`.
+Prepared 2026-08-25 for `mini-courses/2_intermediate/9_context_engineering.md`.
 **Every URL cited below was fetched on 2026-08-25 and confirmed to contain the claim** — see the [Link Verification Log](#link-verification-log) at the end. Anything not fetched is marked `[LINK-UNVERIFIED]`.
 Target: ~150–280 lines, friendly second-person, tables, mermaid, short snippets, Quick Check, prev/next.
 

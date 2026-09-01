@@ -1,6 +1,6 @@
 # Supplement to Module 12 Dossier — §4.5 Agent-specific attack classes
 
-**Prepared:** 2026-08-25 · **Supplements:** `sections/scratchpad/research/12_security.md` §4.5
+**Prepared:** 2026-08-25 · **Supplements:** `mini-courses/scratchpad/research/12_security.md` §4.5
 **Framing:** DEFENSIVE. Attack *classes* only — mechanism, why it works, what stops it. No payloads, no operational tooling.
 **Vocabulary:** reuses the dossier's §2 terms (*indirect prompt injection*, *confused deputy*, *hidden context*, *guardrail vs sandbox*, *trust tiers*) and §1/§3 category IDs (`LLM01:2026`…`LLM10:2026`, `ASI01`–`ASI10`, `MCP01`–`MCP10`, ATLAS `AML.T…`). Category IDs are **not re-derived** here.
 

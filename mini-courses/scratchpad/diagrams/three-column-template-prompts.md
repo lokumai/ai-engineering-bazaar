@@ -171,4 +171,4 @@ A small laptop icon under the LLM box would fix that if you ever want it.
 ## Where finished images go
 
 `assets/` is outside `docs_dir`, so those are source templates only. Finished diagrams go in
-`sections/<category>/images/`.
+`mini-courses/<category>/images/`.

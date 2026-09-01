@@ -7,7 +7,7 @@ Rules for any AI assistant working in this repo. **This file is live**, see
 
 ## Read first
 
-`MANIFEST.md` at the root is the contract for everything under `sections/`. Read it before
+`MANIFEST.md` at the root is the contract for everything under `mini-courses/`. Read it before
 writing or editing any course content. Its seven rules in short: human-written · sounds like a
 person talking · stays simple · five to ten minutes per module · pictures do a lot of the work ·
 every module links out · only what matters.
@@ -71,13 +71,13 @@ renders markdown.
 
 ## Two files that move together
 
-`README.md` (GitHub) and `sections/index.md` (published site) are the same page for two
+`README.md` (GitHub) and `mini-courses/index.md` (published site) are the same page for two
 audiences. **Change one, update the other in the same commit.** The transform from README to
 index:
 
 - drop the "Read online" line, since it is self-referential on the site
-- strip the `sections/` prefix from link paths, since `index.md` lives inside it
-- make the `MANIFEST.md` link an absolute GitHub URL, because it sits outside `docs_dir`
+- strip the `mini-courses/` prefix from link paths, since `index.md` lives inside it
+- make the `MANIFEST.md` link an absolute GitHub URL, because it sits outside `mini-courses/`
 - keep the Contributing section at the end of `index.md`
 
 ## Language
@@ -93,7 +93,7 @@ One visual system for the whole project. Templates:
   with **no arrows**; the prompt draws them.
 - `assets/context-style-template.jpeg`: the component style sheet.
 
-Ready-made prompts: `sections/scratchpad/diagrams/three-column-template-prompts.md`.
+Ready-made prompts: `mini-courses/scratchpad/diagrams/three-column-template-prompts.md`.
 
 **Palette (do not invent colors):**
 
@@ -123,16 +123,18 @@ sides can see the whole board, so nothing moves.
 - The author pastes the template images. Refer to them by what they show, such as "the attached empty
   three-column diagram" or "the attached style sheet". Never use numbered references.
 - Say what to draw. Do not list what not to draw; the model draws what you say.
-- Finished images go in `sections/<category>/images/`. `assets/` is outside `docs_dir` and never
-  publishes.
+- Finished images go in `mini-courses/<category>/images/`. `assets/` is outside the corpus and
+  never publishes.
 
 ## Checks before you call something done
 
 ```bash
-.venv/bin/mkdocs build --strict     # CI runs this; broken links fail the build
+npm test          # vitest, includes the content and internal-link checks
+npm run build     # the Next.js build that ships
 ```
 
-`docs_dir` is `sections/`. Anything at the repo root is not part of the site.
+CI runs `npm run typecheck`, `npm test`, `npm run build` and the Playwright suite. The content
+checks live in `src/lib/content/`, so a broken cross-reference in a module fails `npm test`.
 
 Also check: no leftover `NEED` markers you meant to fill, and no placeholder
 cross-references like "module X".
@@ -142,21 +144,25 @@ cross-references like "module X".
 ```
 MANIFEST.md              the seven rules, the contract
 README.md                GitHub landing page
-CLAUDE.md / AGENTS.md    this file
-mkdocs.yml               docs_dir: sections
 assets/                  diagram source templates (not published)
-sections/
+mini-courses/            the authored corpus, and all this file governs
+  CLAUDE.md / AGENTS.md  this file
   index.md               site homepage, mirrors README.md
-  1_fundamentals/        modules 1–7   (improved in place)
-  2_intermediate/        modules 8–15  (being rewritten from scratch)
-  3_expert/              modules 16–24 (draft)
-  4_ecosystem/           modules 25–29 (draft)
+  1_fundamentals/        modules 1-7   (improved in place)
+  2_intermediate/        modules 8-15  (being rewritten from scratch)
+  3_expert/              modules 16-24 (draft)
+  4_ecosystem/           modules 25-29 (draft)
   5_protocols_specs/     module 30     (draft)
-  6_optional/            modules 31–32 (draft)
+  6_optional/            modules 31-32 (draft)
   scratchpad/            research notes and diagram prompts, never published
+src/ tests/ scripts/     the Next.js app that renders the corpus (not ours)
 ```
 
-The notes under `sections/scratchpad/research/` are raw material for facts and sources. Their
+The app is a colleague's work. **Our side of the line is `mini-courses/`**, plus `MANIFEST.md`
+and the README sections that describe the course. Do not edit the app to accommodate the
+content; the content is plain markdown and the app reads it as authored.
+
+The notes under `mini-courses/scratchpad/research/` are raw material for facts and sources. Their
 dense, citation-heavy style is what the rewrite is replacing, so do not copy it.
 
 ## Keeping this file current

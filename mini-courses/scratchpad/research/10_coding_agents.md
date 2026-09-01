@@ -1,6 +1,6 @@
 # Research Dossier — Module 10: Coding Agents
 
-**Researched:** 2026-08-25 · **For:** `sections/2_intermediate/10_coding_agents.md` (INTERMEDIATE)
+**Researched:** 2026-08-25 · **For:** `mini-courses/2_intermediate/10_coding_agents.md` (INTERMEDIATE)
 **Scope locked by the stub:** Slash Commands · Skills · AGENTS.md · Subagents · Hooks · MCP · Plugins
 
 **Citation policy in this dossier:** every non-obvious factual claim carries an inline link to a page I
@@ -1134,7 +1134,7 @@ untrusted"*, [MCP spec](https://modelcontextprotocol.io/specification/latest)); 
 `permissions.deny`; workspace trust; secrets in `.mcp.json`.
 **Defer to Module 13 (Loop Engineering):** `Stop`-hook-driven autonomous loops, self-verifying agents.
 **Module 22:** ⚠️ **decision needed** — the brief says to defer material to Module 22, but
-`sections/2_intermediate/README.md` lists only Modules 8–14 and no Module 22 file exists in the
+`mini-courses/2_intermediate/README.md` lists only Modules 8–14 and no Module 22 file exists in the
 repo. Confirm what it covers before writing any forward reference.
 
 ---

@@ -1,9 +1,9 @@
 # Research Dossier — Module 8: Prompt Engineering (Intermediate)
 
-**Repo:** github.com/lokumai/ai-minicourses · **Target file:** `sections/2_intermediate/8_prompt_engineering.md`
+**Repo:** github.com/lokumai/ai-minicourses · **Target file:** `mini-courses/2_intermediate/8_prompt_engineering.md`
 **Research date:** 2026-08-25 · All links in this dossier were fetched and verified on 2026-08-25 (see §12 Link Verification Log)
 **Audience:** professional software engineers, new to agent tooling, post-Fundamentals
-**House style:** `sections/1_fundamentals/6_agents.md` — friendly 2nd person, short sections, tables, mermaid, runnable snippets, Quick Check, prev/next links, ~150–280 lines
+**House style:** `mini-courses/1_fundamentals/6_agents.md` — friendly 2nd person, short sections, tables, mermaid, runnable snippets, Quick Check, prev/next links, ~150–280 lines
 
 > ## ⚠️ READ THIS FIRST — the single biggest risk for this module
 >

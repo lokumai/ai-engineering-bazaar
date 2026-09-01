@@ -320,4 +320,4 @@ yaşadığını, ve bir modeli local'de ya da cloud'da nasıl çalıştıracağ�
 - [OpenRouter](https://openrouter.ai/): birçok provider için tek key
 - [System prompt sızıntıları](https://github.com/asgeirtj/system_prompts_leaks)
 
-**Sonraki modül:** [Modül 2: LLM Training](2_training_tr.md)
+**Sonraki Modül:** [Modül 2: LLM Training](2_training_tr.md)

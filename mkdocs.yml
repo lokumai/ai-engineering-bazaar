@@ -4,10 +4,12 @@ site_url: https://lokumai.github.io/ai-engineering-bazaar/
 repo_url: https://github.com/lokumai/ai-engineering-bazaar
 repo_name: lokumai/ai-engineering-bazaar
 
-docs_dir: sections
+docs_dir: mini-courses
 
 exclude_docs: |
   scratchpad/
+  CLAUDE.md
+  AGENTS.md
 
 not_in_nav: |
   *_tr.md

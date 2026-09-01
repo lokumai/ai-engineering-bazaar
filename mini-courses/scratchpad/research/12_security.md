@@ -1,6 +1,6 @@
 # Research Dossier — Module 12: Security (GenAI / Agent Security)
 
-**Prepared:** 2026-08-25 · **For:** `sections/2_intermediate/12_security.md` (INTERMEDIATE, professional devs, post-Fundamentals)
+**Prepared:** 2026-08-25 · **For:** `mini-courses/2_intermediate/12_security.md` (INTERMEDIATE, professional devs, post-Fundamentals)
 **Framing:** DEFENSIVE. Understand the attack class well enough to test for it and defend against it. Attack *classes* explained conceptually; no payloads, no operational tooling.
 **Status:** COMPLETE — the gaps this file originally listed as PARTIAL / NOT STARTED were closed on 2026-08-25 by three supplement files, which are part of this dossier and must be read with it:
 > - `12_supp_attacks.md` — fills §4.5 (agent attack classes, 11 NVD-verified CVEs, MCP tool poisoning, supply chain, exfiltration, denial-of-wallet).

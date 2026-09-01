@@ -5,7 +5,7 @@
 
 ## Goal
 
-Fill in the 7 placeholder modules of `sections/2_intermediate/` with real content.
+Fill in the 7 placeholder modules of `mini-courses/2_intermediate/` with real content.
 Repo mission: teach working software engineers to become **AI-powered software engineers** —
 making the classic SDLC (requirements → design → implement → test → review → deploy → operate)
 AI-powered, so they ship fast, high-quality, secure, tested software using today's LLM/agent tooling.
@@ -40,7 +40,7 @@ These topics are mostly <12 months old. Model memory is NOT a source.
 
 ## House style to match
 
-Read `sections/1_fundamentals/6_agents.md` before writing any module. Pattern:
+Read `mini-courses/1_fundamentals/6_agents.md` before writing any module. Pattern:
 friendly second-person tone, short sections, comparison tables, mermaid diagrams,
 short runnable code snippets, a "Quick Check" question, prev/next module links.
 Note `mkdocs.yml` renders mermaid via `pymdownx.superfences` custom fences, and

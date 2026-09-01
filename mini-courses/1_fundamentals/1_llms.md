@@ -1,3 +1,19 @@
+---
+module: 1
+title: "LLM Fundamentals"
+category: fundamentals
+status: ready
+duration: 25
+summary: "What a language model actually does, what the context window costs you, and which knobs change its output."
+objectives:
+  - "Explain what an LLM does with a prompt, and why it is a next-token predictor"
+  - "Describe the context window and why it is the limit that shapes everything else"
+  - "Name the message types a context is built from, and who writes each one"
+  - "Explain what a turn is, in a plain chat and in an agent"
+  - "Choose between running a model locally and calling a cloud provider"
+prerequisites: []
+---
+
 # Module 1: LLM Fundamentals
 
 Everything else in this series sits on top of this module. An LLM is a simple thing to
@@ -319,4 +335,4 @@ all, in one way or another, answers to the question: *what do we put on that lim
 - [OpenRouter](https://openrouter.ai/): one key for many providers
 - [System prompt leaks](https://github.com/asgeirtj/system_prompts_leaks)
 
-**Next module:** [Module 2: Training LLMs](2_training.md)
+**Next Module:** [Module 2: Training LLMs](2_training.md)

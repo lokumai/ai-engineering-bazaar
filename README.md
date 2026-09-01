@@ -205,6 +205,11 @@ joining an organisation and who is allowed to read what — with diagrams, all o
 them rendered in real Chrome by `node scripts/check-mermaid.mjs docs/*.md` before
 being committed.
 
+[`docs/data-flow.md`](docs/data-flow.md) covers the other half: where the record
+lives, the two channels that read it, the single write path, the four ways storage
+can fail honestly, what crosses the network and what never does, and how two
+devices reconcile.
+
 [`docs/manager-queries.md`](docs/manager-queries.md) documents every table and
 column, how they join, and SQL for the questions a manager asks — a roster, who
 needs attention and why, quiz attempts, submittal verification, assignments

@@ -404,3 +404,30 @@ describe('no signed-off sheet is lost in either direction', () => {
     expect(Object.keys(account.sheets)).toHaveLength(3)
   })
 })
+
+describe('§17.3 — the identity lines report a change, never a provenance', () => {
+  it('says nothing about a name both sides already agreed on', () => {
+    const both = record({
+      sheets: { a: sheet({ signedOff: AT }) },
+      identity: { name: 'Ada Lovelace', markSeed: null, mark: null, role: 'qa' },
+    })
+    const lines = claimSummaryLines(summariseClaim(both, both, both))
+
+    // MEASURED before this gate existed: this line printed on every page load,
+    // for a name that had not moved.
+    expect(lines.join(' ')).not.toContain('the one your account holds')
+  })
+
+  it('says it once when the account replaced this browser name', () => {
+    const local = record({
+      sheets: { a: sheet({ signedOff: AT }) },
+      identity: { name: 'Ada L.', markSeed: null, mark: null, role: null },
+    })
+    const account = record({
+      sheets: { a: sheet({ signedOff: AT }) },
+      identity: { name: 'Ada Lovelace', markSeed: null, mark: null, role: null },
+    })
+    const lines = claimSummaryLines(summariseClaim(local, account, account))
+    expect(lines).toContain('The name on the record is the one your account holds.')
+  })
+})

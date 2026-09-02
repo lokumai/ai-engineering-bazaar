@@ -116,6 +116,20 @@ export interface ClaimIdentityOutcome {
    * may let happen quietly (§1). False here is what puts a line in the summary.
    */
   markChanged: boolean
+  /**
+   * §17.2 — did the NAME this browser held change?
+   *
+   * `name` above is a provenance and cannot answer this: `sourceOf` reports the
+   * account whenever the merged value equals the account's, which on every page
+   * load after the first sign-in is true of a name neither side moved. MEASURED:
+   * the shipped summary printed "the one your account holds" on every reload.
+   * This is `markChanged`'s shape — a comparison against what THIS browser had,
+   * and false where it had nothing, because a name arriving where there was none
+   * is an arrival that `signed`/`outcome` already report.
+   */
+  nameChanged: boolean
+  /** §17.2 — the same test for `role`. A role the reader never stated cannot change. */
+  roleChanged: boolean
 }
 
 /**
@@ -261,6 +275,8 @@ export function summariseClaim(
       markChanged:
         !blank(local.identity.markSeed) &&
         merged.identity.markSeed !== local.identity.markSeed,
+      nameChanged: !blank(local.identity.name) && merged.identity.name !== local.identity.name,
+      roleChanged: local.identity.role !== null && merged.identity.role !== local.identity.role,
     },
   }
 }
@@ -299,6 +315,11 @@ export const CLAIM_COPY = {
   mergedTitle: 'Two records were merged.',
   nothingDeleted: 'Nothing was deleted.',
   export: 'EXPORT YOUR RECORD',
+  /** §17.6 — the one spelling of "this browser has not met an account". */
+  noClaim: 'NO CLAIM ON RECORD',
+  moved: 'MOVED INTO YOUR ACCOUNT',
+  merged: 'MERGED',
+  lost: 'LOST',
 } as const
 
 function count(n: number, singular: string, plural: string): string {
@@ -377,10 +398,10 @@ export function claimSummaryLines(summary: ClaimSummary): string[] {
       + 'browser’s.',
     )
   }
-  if (summary.identity.name === 'account' && summary.outcome === 'merged') {
+  if (summary.identity.nameChanged) {
     lines.push('The name on the record is the one your account holds.')
   }
-  if (summary.identity.role === 'account' && summary.outcome === 'merged') {
+  if (summary.identity.roleChanged) {
     lines.push('The path role on the record is the one your account holds.')
   }
 
@@ -396,4 +417,62 @@ export function claimSummarySentence(summary: ClaimSummary): string {
  *  condition under which the export affordance belongs beside it (§12.15). */
 export function claimNeedsExport(summary: ClaimSummary): boolean {
   return summary.droppedSignatures.length > 0 || summary.droppedSubmittals.length > 0
+}
+
+/**
+ * §17.1 — the last newsworthy claim, as the record keeps it.
+ *
+ * The WHOLE summary and not a projection of it, so the register's fold can print
+ * `claimSummaryLines` unchanged. The dropped lists are bounded: `droppedSignatures`
+ * is an invariant-empty array (§14.7.2 makes a signature monotone) and
+ * `droppedSubmittals` is bounded by §12.9.1's per-sheet cap.
+ */
+export interface ClaimReceipt {
+  /** When the claim resolved. The caller's clock, passed in (§1). */
+  at: string
+  summary: ClaimSummary
+}
+
+/**
+ * §17.2 — did this claim move anything, or is it the steady state?
+ *
+ * Every term is a CHANGE test. The one that is not available here — "the account
+ * supplied the name" — was measured to be true on every page load, which is what
+ * made the shipped panel a notice with no news (§17.0, Bulgu 1 and 2).
+ *
+ * Called by the seam before it writes: a claim that is not news writes nothing,
+ * which is also why signing in and reloading no longer rewrites the record on
+ * every document load.
+ */
+export function claimIsNews(summary: ClaimSummary): boolean {
+  if (summary.outcome === 'adopted') return true
+  if (summary.signed.merged > summary.signed.shared) return true
+  if (summary.submittals.merged > summary.submittals.shared) return true
+  if (summary.identity.markChanged) return true
+  if (summary.identity.nameChanged) return true
+  if (summary.identity.roleChanged) return true
+  return summary.droppedSignatures.length > 0 || summary.droppedSubmittals.length > 0
+}
+
+/**
+ * §16.4.2, §17.6 — the receipt as one reading, for BOTH surfaces that print it.
+ *
+ * One function and not two, because the arrival line and the register row report
+ * the same fact and §16.4.2's rule is that a summary reading comes from the
+ * selector its body already uses. A second implementation here is exactly the
+ * drift that rule exists to prevent.
+ *
+ * `LOST` covers a dropped signature and a dropped submittal together: to the
+ * reader both are a record that is not there any more, and which one it was is
+ * what the fold's body says.
+ */
+export function claimReceiptReading(receipt: ClaimReceipt | null): string {
+  if (receipt === null) return CLAIM_COPY.noClaim
+
+  const { summary } = receipt
+  if (summary.outcome === 'adopted') {
+    return `${summary.signed.merged} ${CLAIM_COPY.moved}`
+  }
+  const lost = summary.droppedSignatures.length + summary.droppedSubmittals.length
+  return `${summary.signed.merged} ${CLAIM_COPY.merged} · ${lost} ${CLAIM_COPY.lost}`
 }

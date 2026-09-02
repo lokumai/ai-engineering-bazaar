@@ -533,3 +533,62 @@ describe('envelopeTextFrom — the importer accepts the report as well as the JS
     expect(envelopeTextFrom('')).toBeNull()
   })
 })
+
+describe('§17.3 — meta.lastClaim is a widening, and a defensive read', () => {
+  const RECEIPT = {
+    at: '2026-09-02T11:17:00.000Z',
+    summary: {
+      outcome: 'merged',
+      signed: { here: 1, account: 1, shared: 0, merged: 2 },
+      submittals: { here: 0, account: 0, shared: 0, merged: 0 },
+      droppedSignatures: [],
+      droppedSubmittals: [],
+      identity: {
+        name: 'account',
+        markSeed: 'account',
+        role: 'absent',
+        markChanged: false,
+        nameChanged: false,
+        roleChanged: false,
+      },
+    },
+  }
+
+  it('defaults to null, so a record written before the field still loads', () => {
+    const data = coerceRecordData({ identity: { name: 'Ada' }, meta: { lastExport: null } })
+    expect(data.meta.lastClaim).toBeNull()
+    expect(data.identity.name).toBe('Ada')
+  })
+
+  it('keeps a well-formed receipt verbatim', () => {
+    const data = coerceRecordData({ meta: { lastClaim: RECEIPT } })
+    expect(data.meta.lastClaim).toEqual(RECEIPT)
+  })
+
+  it('drops a receipt with an unrecognised outcome, and keeps the record', () => {
+    const data = coerceRecordData({
+      identity: { name: 'Ada' },
+      meta: { lastClaim: { ...RECEIPT, summary: { ...RECEIPT.summary, outcome: 'invented' } } },
+    })
+    expect(data.meta.lastClaim).toBeNull()
+    expect(data.identity.name).toBe('Ada')
+  })
+
+  it('drops a receipt whose instant is not one, and one whose counts are not numbers', () => {
+    expect(coerceRecordData({ meta: { lastClaim: { ...RECEIPT, at: 'yesterday' } } })
+      .meta.lastClaim).toBeNull()
+    expect(coerceRecordData({
+      meta: {
+        lastClaim: {
+          ...RECEIPT,
+          summary: { ...RECEIPT.summary, signed: { here: 'two', account: 1, shared: 0, merged: 2 } },
+        },
+      },
+    }).meta.lastClaim).toBeNull()
+  })
+
+  it('drops a receipt that is not an object at all', () => {
+    expect(coerceRecordData({ meta: { lastClaim: 'yes' } }).meta.lastClaim).toBeNull()
+    expect(coerceRecordData({ meta: { lastClaim: [] } }).meta.lastClaim).toBeNull()
+  })
+})

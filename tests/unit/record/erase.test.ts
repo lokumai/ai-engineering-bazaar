@@ -15,6 +15,7 @@ import {
   REMOTE_ERASE_FAILED_NOTE,
   eraseFailureReason,
   eraseRemote,
+  erasedRecord,
   NOTHING_REMOVED,
   rawStoredFrom,
   remoteEraseNote,
@@ -477,4 +478,40 @@ describe('§14.6 — the copy states all three rows of the table', () => {
     expect(all).not.toMatch(/removes (the |your )?(training )?history/i)
     expect(all).not.toMatch(/erases (the |your )?(training )?history/i)
   })
+})
+
+it('§17.3 — an erase drops the claim receipt', () => {
+  const held = {
+    ...EMPTY_RECORD,
+    identity: { ...EMPTY_RECORD.identity, name: 'Ada Lovelace' },
+    prefs: { ...EMPTY_RECORD.prefs, aliasNamedFor: 'user-abc-123' },
+    meta: {
+      ...EMPTY_RECORD.meta,
+      lastClaim: {
+        at: '2026-09-02T11:17:00.000Z',
+        summary: {
+          outcome: 'merged' as const,
+          signed: { here: 1, account: 1, shared: 1, merged: 1 },
+          submittals: { here: 0, account: 0, shared: 0, merged: 0 },
+          droppedSignatures: [],
+          droppedSubmittals: [],
+          identity: {
+            name: 'account' as const,
+            markSeed: 'absent' as const,
+            role: 'absent' as const,
+            markChanged: false,
+            nameChanged: false,
+            roleChanged: false,
+          },
+        },
+      },
+    },
+  }
+  const after = erasedRecord(held)
+
+  // §12.15's panel prints NO VALUE STORED UNDER THIS KEY after the act; a
+  // receipt naming what was merged would contradict it.
+  expect(after.meta.lastClaim).toBeNull()
+  // And the alias decision still survives, which is the case §16.3 needs.
+  expect(after.prefs.aliasNamedFor).toBe('user-abc-123')
 })

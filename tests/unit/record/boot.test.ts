@@ -242,7 +242,7 @@ describe('data-hl-record only goes on a record that carries something (§15.11)'
     ['a mark seed', { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, markSeed: 'a1b2c3d4' } }],
     ['a role the reader chose', { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, role: 'qa' } }],
     ['a day on which something was written', { ...EMPTY_RECORD, days: ['2026-08-31'] }],
-    ['an export the reader took', { ...EMPTY_RECORD, meta: { lastExport: '2026-08-31T09:00:00.000Z', persisted: null } }],
+    ['an export the reader took', { ...EMPTY_RECORD, meta: { lastExport: '2026-08-31T09:00:00.000Z', persisted: null, lastClaim: null } }],
     ['a sheet reached the end of', withSheet({ reachedEnd: true })],
     ['dwell on a sheet and nothing else', withSheet({ dwellSeconds: 41 })],
     ['one checklist box', withSheet({ checklist: { '7': true } })],

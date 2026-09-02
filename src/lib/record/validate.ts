@@ -28,6 +28,7 @@
  * two escapers of §12.12.7 — removing the sink, not fencing the input.
  */
 
+import type { ClaimIdentitySource, ClaimReceipt, ClaimSummary } from './claim'
 import { migrate } from './migrate'
 import {
   DWELL_CAP_SECONDS,
@@ -261,6 +262,75 @@ function coerceDays(value: unknown): string[] {
 }
 
 /**
+ * §17.3 — the stored receipt, read the way §12.12 reads everything: a bad field
+ * loses the field and never the record.
+ *
+ * Structural rather than schema-versioned, because the receipt is a projection of
+ * a type this module cannot import a validator for. Every count is checked, so a
+ * hand-edited file cannot put a string where the register prints a number.
+ */
+function asClaimReceipt(value: unknown): ClaimReceipt | null {
+  if (!isRecordObject(value)) return null
+  const at = asInstant(value.at)
+  if (at === null) return null
+  if (!isRecordObject(value.summary)) return null
+
+  const summary = value.summary
+  if (summary.outcome !== 'merged' && summary.outcome !== 'adopted') return null
+
+  const counts = (input: unknown): ClaimSummary['signed'] | null => {
+    if (!isRecordObject(input)) return null
+    const keys = ['here', 'account', 'shared', 'merged'] as const
+    if (!keys.every((key) => Number.isFinite(input[key]))) return null
+    return {
+      here: input.here as number,
+      account: input.account as number,
+      shared: input.shared as number,
+      merged: input.merged as number,
+    }
+  }
+  const signed = counts(summary.signed)
+  const submittals = counts(summary.submittals)
+  if (signed === null || submittals === null) return null
+
+  const slugs = (input: unknown): string[] | null =>
+    Array.isArray(input) && input.every((item) => typeof item === 'string')
+      ? [...(input as string[])]
+      : null
+  const droppedSignatures = slugs(summary.droppedSignatures)
+  const droppedSubmittals = slugs(summary.droppedSubmittals)
+  if (droppedSignatures === null || droppedSubmittals === null) return null
+
+  if (!isRecordObject(summary.identity)) return null
+  const identity = summary.identity
+  const source = (input: unknown): ClaimIdentitySource | null =>
+    input === 'account' || input === 'local' || input === 'absent' ? input : null
+  const name = source(identity.name)
+  const markSeed = source(identity.markSeed)
+  const role = source(identity.role)
+  if (name === null || markSeed === null || role === null) return null
+
+  return {
+    at,
+    summary: {
+      outcome: summary.outcome,
+      signed,
+      submittals,
+      droppedSignatures,
+      droppedSubmittals,
+      identity: {
+        name,
+        markSeed,
+        role,
+        markChanged: asBoolean(identity.markChanged, false),
+        nameChanged: asBoolean(identity.nameChanged, false),
+        roleChanged: asBoolean(identity.roleChanged, false),
+      },
+    },
+  }
+}
+
+/**
  * Total: every input, including a symbol, a function or `undefined`, produces a
  * record. The result is always a fresh mutable object — never the frozen
  * EMPTY_RECORD singleton, which a reducer would then be unable to build on.
@@ -300,6 +370,7 @@ export function coerceRecordData(input: unknown): RecordData {
     meta: {
       lastExport: asInstant(meta.lastExport),
       persisted: asTriState(meta.persisted),
+      lastClaim: asClaimReceipt(meta.lastClaim),
     },
   }
 }

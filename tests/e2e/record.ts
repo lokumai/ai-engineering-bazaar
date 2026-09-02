@@ -103,7 +103,33 @@ export interface RecordData {
    * app was correct.
    */
   prefs: { charKeys: boolean; aliasNamedFor: string | null }
-  meta: { lastExport: string | null; persisted: boolean | null }
+  /**
+   * §17.3 — `lastClaim` is typed out the same structural way as everything
+   * else here (see the module docblock): a shape drift in `lib/record/claim.ts`
+   * that the migration ladder was supposed to catch should fail a browser test.
+   */
+  meta: { lastExport: string | null; persisted: boolean | null; lastClaim: ClaimReceipt | null }
+}
+
+export type ClaimIdentitySource = 'account' | 'local' | 'absent'
+
+export interface ClaimReceipt {
+  at: string
+  summary: {
+    outcome: 'merged' | 'adopted'
+    signed: { here: number; account: number; shared: number; merged: number }
+    submittals: { here: number; account: number; shared: number; merged: number }
+    droppedSignatures: string[]
+    droppedSubmittals: string[]
+    identity: {
+      name: ClaimIdentitySource
+      markSeed: ClaimIdentitySource
+      role: ClaimIdentitySource
+      markChanged: boolean
+      nameChanged: boolean
+      roleChanged: boolean
+    }
+  }
 }
 
 export interface Envelope {
@@ -161,7 +187,7 @@ export function recordData(seed: RecordSeed = {}): RecordData {
     sheets,
     days: seed.days ?? [SEED_DAY],
     prefs: { charKeys: true, aliasNamedFor: null, ...seed.prefs },
-    meta: { lastExport: null, persisted: null, ...seed.meta },
+    meta: { lastExport: null, persisted: null, lastClaim: null, ...seed.meta },
   }
 }
 

@@ -299,15 +299,14 @@ describe('langFromExtents', () => {
 })
 
 describe('langCoverage', () => {
-  it('marks modules 1-7 bilingual — their Turkish is a real translation', () => {
-    for (const n of numbers((n) => n <= 7)) {
-      expect(langCoverage(byNumber.get(n)!.slug), `module ${n}`).toBe('EN·TR')
-    }
-  })
-
-  it('marks modules 8-15 English-only — their Turkish is a 50-90 word placeholder', () => {
-    for (const n of numbers((n) => n >= 8 && n <= 15)) {
-      expect(langCoverage(byNumber.get(n)!.slug), `module ${n}`).toBe('EN')
+  it('badges a drawn sheet bilingual exactly when its Turkish is a real translation', () => {
+    // Which sheets are translated moves every time one of them is, so the set
+    // is not listed here. The rule is: a real translation earns the badge and a
+    // placeholder does not, and the extents are measured off the files in this
+    // file rather than taken from the module.
+    for (const n of numbers((n) => byNumber.get(n)!.frontmatter.status === 'ready')) {
+      expect(langCoverage(byNumber.get(n)!.slug), `module ${n}`)
+        .toBe(langFromExtents(extent(body(n)), trExtent(n)))
     }
   })
 
@@ -329,9 +328,12 @@ describe('langCoverage', () => {
     },
   )
 
-  it('leaves exactly the seven sheets §7.6 names bilingual', () => {
-    expect(modules.filter((m) => m.lang === 'EN·TR').map((m) => m.frontmatter.module))
-      .toEqual([1, 2, 3, 4, 5, 6, 7])
+  it('leaves every draft sheet English-only, however its Turkish measures', () => {
+    // The general form of the 16-32 case above: a schedule of parts is not a
+    // drawing in either language, so no draft sheet may carry the badge.
+    for (const m of modules.filter((sheet) => sheet.lang === 'EN·TR')) {
+      expect(m.frontmatter.status, m.slug).toBe('ready')
+    }
   })
 
   it('returns EN for a slug no module claims', () => {

@@ -58,7 +58,7 @@ export interface QuickCheck {
  *
  * MEASURED across `mini-courses/`: 16 `**Quick Check**` (14 in loaded modules,
  * 2 in `scratchpad/`, which neither site publishes), 1 `**Quiz Yourself**`
- * (sheet 1), 6 `**Hızlı Kontrol**` (all in `_tr.md` siblings, which the loader
+ * (sheet 1), 7 `**Hızlı Kontrol**` (all in `_tr.md` siblings, which the loader
  * never reads — see the note on the Turkish form below).
  */
 const QUICK_CHECK = /^\*\*(?:Quick Check|Quiz Yourself)\*\*[ \t]*:[ \t]*(.*)$/

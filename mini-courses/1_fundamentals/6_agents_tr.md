@@ -59,6 +59,9 @@ Bir uçta düz bir LLM çağrısı var: her şeye sen karar veriyorsun, o sadece
 sadece her adımı dolduruyor. Diğer uçta gerçek bir agent var: adımları, tool'ları ve ne zaman
 duracağını model seçiyor.
 
+![Three points on the autonomy spectrum](./images/llm-tool-agent-compare.png)  
+*Üç panelde de aynı model var. Değişen şey modelin kaç kez çağrıldığı ve sonraki adımı kimin seçtiği: ilk ikisinde sen, üçüncüsünde modelin kendisi.*
+
 Production sistemlerinin çoğu en uçta değil, ve bu genelde doğru karar. Daha az autonomy, ters
 gidebilecek daha az yol demek. LangChain'in
 [what is an agent](https://www.langchain.com/blog/what-is-an-agent) yazısı bu spektrumu düzgün

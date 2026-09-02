@@ -73,6 +73,9 @@ At one end is a plain LLM call: you decide everything, it just writes text. In t
 and the model only fills in each step. At the other end is a real agent, where the model chooses
 the steps, the tools and when to stop.
 
+![Three points on the autonomy spectrum](./images/llm-tool-agent-compare.png)  
+*The same model sits in all three panels. What changes is how many times it gets called and who picks the next step: you, in the first two, and the model itself in the third.*
+
 Most production systems are not at the far end, and that is usually the right call. Less autonomy
 means fewer ways to go wrong. LangChain's
 [what is an agent](https://www.langchain.com/blog/what-is-an-agent) walks that spectrum properly,

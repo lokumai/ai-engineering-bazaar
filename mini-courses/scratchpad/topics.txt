@@ -32,15 +32,15 @@
 24) advanced_training (self-supervised learning in pre-training, post-training, RL and RLHF, preference alignment, DPO, PPO, GRPO, knowledge distillation)
 
 === Ecosystem ===
-24) agent_fameworks (langchain, agno, crewAI, smolagents, mastra, voltagent, pydanticAI)
-25) inference_providers (OpenRouter, OpenAI, AI Studio, )
-26) inference_engines (Ollama, LMStudio, OpenWebUI, llama.cpp, TensorRT, llm-d, )
-27) ui_design (Stitch, Claude Design, Design Systems, DESIGN.md)
-28) observability (LangSmith, LangFuse, Trace Analyzer Agent)
-29) chosing_tech_stack
+25) agent_fameworks (langchain, agno, crewAI, smolagents, mastra, voltagent, pydanticAI)
+26) inference_providers (OpenRouter, OpenAI, AI Studio, )
+27) inference_engines (Ollama, LMStudio, OpenWebUI, llama.cpp, TensorRT, llm-d, )
+28) ui_design (Stitch, Claude Design, Design Systems, DESIGN.md)
+29) observability (LangSmith, LangFuse, Trace Analyzer Agent)
+30) chosing_tech_stack
 
 === Protocols & Specs ===
-28) protocols_reference (all mentioned and also NLWeb, UCP, AP2) 
+31) protocols_reference (all mentioned and also NLWeb, UCP, AP2) 
 
 === Optional ===
 Human-in-the-Lopp (Interrupt, Steering)

@@ -72,7 +72,7 @@ Dikkat et: her çağrı yığının *tamamını* gönderiyor, sadece en yeni mes
 
 ## Long-term memory: session'lar arasında hatırlamak
 
-Buna daha sonra, Expert track'teki [İleri Seviye Memory](../3_expert/19_advanced_memory_tr.md)
+Buna daha sonra, Expert track'teki [İleri Seviye Memory](../3_expert/18_advanced_memory_tr.md)
 modülünde çok daha derin ineceğiz. Şimdilik temel fikir şu.
 
 Bazen, working memory'nin session bittiğinde yok olmasına izin vermek yerine, onun bir özetini ya da
@@ -143,7 +143,7 @@ nasıl geri dönüyor?
 
 - [The three memory types every LLM developer must know](https://medium.com/@sahilnanga4/the-three-memory-types-every-llm-developer-must-know-3358c26fdff3): aynı ayrım, başka bir açıdan
 - [Modül 3: RAG](3_rag_tr.md): long-term memory'nin working memory'ye nasıl geri getirildiği
-- [Modül 19: İleri Seviye Memory](../3_expert/19_advanced_memory_tr.md): bunun devamı
+- [Modül 18: İleri Seviye Memory](../3_expert/18_advanced_memory_tr.md): bunun devamı
 
 **Önceki Modül:** [Modül 4: LLM Tool Calling](4_tools_tr.md)
 **Sonraki Modül:** [Modül 6: AI Agent'ları](6_agents_tr.md)

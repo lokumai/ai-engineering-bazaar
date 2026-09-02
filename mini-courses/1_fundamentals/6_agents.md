@@ -167,7 +167,7 @@ result = agent.run("Read main.py and summarise it")
 That is a complete agent. Notice what is *not* there: no loop, no tool-call parsing, no message
 stack, no system prompt. `CodeAgent` is doing all of it, and `agent.run` is the loop.
 
-Other frameworks solve the same problem with different shapes, and Module 26 compares them:
+Other frameworks solve the same problem with different shapes, and Module 25 compares them:
 [LangChain](https://github.com/langchain-ai/langchain),
 [crewAI](https://github.com/crewAIInc/crewAI),
 [AutoGen](https://github.com/microsoft/autogen).

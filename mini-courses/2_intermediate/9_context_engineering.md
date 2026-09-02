@@ -14,7 +14,7 @@ prerequisites: [5, 8]
 
 # Module 9: Context Engineering
 
-*Category: Intermediate — Module 9 (2 of 8 in this category)*
+*Category: Intermediate — Module 9 (2 of 7 in this category)*
 
 [Module 5](../1_fundamentals/5_memory.md) showed you that "memory" is really just a growing stack of messages you re-send on every call. [Module 8](8_prompt_engineering.md) showed you how to write one good instruction. This module is about what happens when that stack gets long: the window is finite, it degrades *before* it is full, and something has to decide — every single turn — what still deserves a seat in it. That decision is your job now.
 
@@ -109,7 +109,7 @@ Everything practical reduces to four moves. LangChain frames them as **write / s
 
 The API's memory tool encodes the mindset in its own injected instruction: *"ASSUME INTERRUPTION: Your context window might be reset at any moment, so you risk losing any progress that is not recorded in your memory directory"* ([Memory tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool)).
 
-**When it backfires:** stale and bloated notes. A wrong fact written once is re-read every session. Timestamp your notes and expire the ones nothing has touched — and mind the index limits: Claude Code's auto-memory `MEMORY.md` loads only the first **200 lines or 25KB, whichever comes first**, and anything past that is silently dropped on the next load ([How Claude remembers your project](https://code.claude.com/docs/en/memory)). Deeper memory architectures are Module 19's job.
+**When it backfires:** stale and bloated notes. A wrong fact written once is re-read every session. Timestamp your notes and expire the ones nothing has touched — and mind the index limits: Claude Code's auto-memory `MEMORY.md` loads only the first **200 lines or 25KB, whichever comes first**, and anything past that is silently dropped on the next load ([How Claude remembers your project](https://code.claude.com/docs/en/memory)). Deeper memory architectures are Module 18's job.
 
 ### 3. Isolate — spawn a subagent
 
@@ -124,7 +124,7 @@ What surprises people: **a subagent does not inherit what you know.** It gets it
 - **Shared context work.** Cognition's argument is the essential counterweight: "Actions carry implicit decisions, and conflicting decisions carry bad results." Parallel agents can't see each other's traces, so they produce incompatible work; a single-threaded linear agent plus deliberate compression is the safer default ([Don't Build Multi-Agents, 2025-06-12](https://cognition.com/blog/dont-build-multi-agents)). Claude Code's docs agree — use the main conversation when phases share significant context, when the task needs frequent back-and-forth, for quick targeted edits, or when latency matters ([Subagents](https://code.claude.com/docs/en/sub-agents)).
 - **Cost.** Agent teams use "approximately 7x more tokens than standard sessions when teammates run in plan mode" ([Manage costs effectively](https://code.claude.com/docs/en/costs)); LangChain cites Cognition reporting up to **15×** more tokens for multi-agent versus chat ([LangChain, 2025-07-02](https://www.langchain.com/blog/context-engineering-for-agents)).
 
-The honest rule: delegate **read-heavy, self-contained questions** ("investigate how token refresh works"). Keep **decisions** in the main thread. Orchestration topologies are [Module 14](14_loop_engineering.md)'s territory.
+The honest rule: delegate **read-heavy, self-contained questions** ("investigate how token refresh works"). Keep **decisions** in the main thread. Orchestration topologies are [Module 12](12_loop_engineering.md)'s territory.
 
 ### 4. Anchor — an explicit plan or TODO file
 
@@ -167,7 +167,7 @@ resp = client.beta.messages.create(
 print(resp.context_management.applied_edits)  # cleared_tool_uses, cleared_input_tokens
 ```
 
-Anthropic's own docs note that for most cases you should prefer **server-side compaction** over hand-rolled tool clearing ([Context editing](https://platform.claude.com/docs/en/build-with-claude/context-editing)). Tuning these knobs belongs to [Module 12](12_harness_engineering.md) and Module 22.
+Anthropic's own docs note that for most cases you should prefer **server-side compaction** over hand-rolled tool clearing ([Context editing](https://platform.claude.com/docs/en/build-with-claude/context-editing)). Tuning these knobs belongs to [Module 11](11_harness_engineering.md) and Module 21.
 
 ## VII. When Context Goes Bad
 
@@ -242,7 +242,7 @@ Every session starts near-empty and re-derives its state from three durable arti
 ### Cheap wins, in order of payoff
 
 1. **Scope your requests.** "Fix the token-refresh bug in `src/auth/`" beats "improve the codebase" — vague requests trigger broad scanning, and unbounded "investigate this" is how you read hundreds of files by accident ([Manage costs effectively](https://code.claude.com/docs/en/costs), [Best practices](https://code.claude.com/docs/en/best-practices)).
-2. **Filter verbose tool output before it lands.** A `PreToolUse` hook that greps a test run for failures reduces "context from tens of thousands of tokens to hundreds" ([Manage costs effectively](https://code.claude.com/docs/en/costs)). Hooks are [Module 12](12_harness_engineering.md).
+2. **Filter verbose tool output before it lands.** A `PreToolUse` hook that greps a test run for failures reduces "context from tens of thousands of tokens to hundreds" ([Manage costs effectively](https://code.claude.com/docs/en/costs)). Hooks are [Module 11](11_harness_engineering.md).
 3. **Prefer CLI tools to MCP servers** where you can — `gh`, `aws`, `gcloud` "don't add any per-tool listing" cost, and `/mcp` disables the servers you aren't using ([Manage costs effectively](https://code.claude.com/docs/en/costs)).
 4. **Trust agentic search for code.** On a 116-question LongMemEval subset, "grep generally yields higher accuracy than vector retrieval" — though "overall scores still depend strongly on which harness and tool-calling style is used" ([Is Grep All You Need?, arXiv:2605.15184](https://arxiv.org/abs/2605.15184)). You do not need to index your repo before your agent is useful.
 
@@ -310,4 +310,4 @@ The context window is an attention budget that degrades as you spend it, not a b
 - [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) — Claude Platform Docs. The `tools → system → messages` prefix hierarchy, and where to put a `cache_control` breakpoint.
 
 **Previous Module:** [Module 8: Prompt Engineering](8_prompt_engineering.md)
-**Next Module:** [Module 10: Coding Agents: The Landscape](10_coding_agents_landscape.md)
+**Next Module:** [Module 10: Coding Agents: Extending Them](10_coding_agents.md)

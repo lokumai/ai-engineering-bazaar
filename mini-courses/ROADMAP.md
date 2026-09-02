@@ -43,7 +43,7 @@ selection has something real to work from.
 
 ## 4. Advanced material
 
-Modules 16 to 24, the Expert track. This waits for the Intermediate tier deliberately: the
+Modules 15 to 24, the Expert track. This waits for the Intermediate tier deliberately: the
 advanced modules assume the vocabulary the earlier ones establish, and writing them first
 would mean writing them twice.
 
@@ -55,7 +55,7 @@ this. What exactly we take from it is still to be decided.
 
 ## 6. The remaining material
 
-Ecosystem, Protocols and Specs, and the optional modules. Modules 25 to 32.
+Ecosystem, Protocols and Specs, and the optional modules. Modules 24 to 32.
 
 ## 7. Generative and agentic UI
 

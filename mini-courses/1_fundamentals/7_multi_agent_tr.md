@@ -80,7 +80,7 @@ Bu da her multi-agent tasarımının altındaki seçime götürüyor: agent'lar 
 
 İkisi de production'da kullanılıyor, ve bu seçim tasarımın geri kalan neredeyse her şeyini
 belirliyor. Kendi başına ele alınmayı hak edecek kadar derin, o yüzden
-[Modül 20: İleri Seviye Multi-Agent](../3_expert/20_advanced_multiagent_tr.md) modülünde geri
+[Modül 19: İleri Seviye Multi-Agent](../3_expert/19_advanced_multiagent_tr.md) modülünde geri
 döneceğiz.
 
 ## Duyacağın diğer mimariler
@@ -175,7 +175,7 @@ context arasındaki fark ne?
 - [LangGraph multi-agent concepts](https://langchain-ai.github.io/langgraph/concepts/multi_agent/): supervisor, network ve diğerleri, kodla birlikte
 - [What is an agent?](https://www.langchain.com/blog/what-is-an-agent): burada yeniden okumaya değer, çünkü bir supervisor da autonomy hakkında bir karar
 - [Modül 6: AI Agents](6_agents_tr.md): bütün bunların kurulduğu tek loop
-- [Modül 20: İleri Seviye Multi-Agent](../3_expert/20_advanced_multiagent_tr.md): shared ve isolated context, ve agent-to-agent protokolleri
+- [Modül 19: İleri Seviye Multi-Agent](../3_expert/19_advanced_multiagent_tr.md): shared ve isolated context, ve agent-to-agent protokolleri
 
 **Önceki Modül:** [Modül 6: AI Agents](6_agents_tr.md)
 

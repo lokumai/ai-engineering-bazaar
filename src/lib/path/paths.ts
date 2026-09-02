@@ -131,22 +131,15 @@ export const PATHS: readonly LearningPath[] = [
           'The four levers (compress, offload, isolate, anchor) and what belongs in CLAUDE.md when an agent works your repo',
       },
       {
-        slug: 'intermediate/coding-agents-landscape',
-        module: 10,
-        tier: 'core',
-        reason:
-          'Choosing an agent on constraints: permission and sandbox defaults, cost shape, exit cost, headless CI use, rather than leaderboards',
-      },
-      {
         slug: 'intermediate/coding-agents',
-        module: 11,
+        module: 10,
         tier: 'core',
         reason:
           'The six extension points (instruction files, skills, subagents, hooks, MCP servers, plugins) and a decision table for picking one',
       },
       {
         slug: 'intermediate/harness-engineering',
-        module: 12,
+        module: 11,
         tier: 'core',
         reason:
           'Reliability lives in the program around the model: the hook contract, the isolation ladder, and placing a task on the autonomy ladder',
@@ -160,21 +153,21 @@ export const PATHS: readonly LearningPath[] = [
       },
       {
         slug: 'intermediate/loop-engineering',
-        module: 14,
+        module: 12,
         tier: 'core',
         reason:
           'Workflow or autonomous agent, which composition pattern fits the task shape, and a verifier ladder with rubric evals wired into CI',
       },
       {
         slug: 'expert/advanced-architectures',  // draft
-        module: 17,
+        module: 16,
         tier: 'context',
         reason:
           'A draft sheet with no lesson yet; planned to cover ReAct, CodeAct and dynamic workflows as loop shapes beyond Observe-Decide-Act',
       },
       {
         slug: 'expert/advanced-harness-engineering',  // draft
-        module: 23,
+        module: 22,
         tier: 'context',
         reason:
           'A draft sheet with no lesson yet; planned to cover harness profiles, system prompts, and reshaping tools for a given context',
@@ -207,22 +200,15 @@ export const PATHS: readonly LearningPath[] = [
           'The observe-decide-act loop and what ends it; termination is what a pipeline step depends on',
       },
       {
-        slug: 'intermediate/coding-agents-landscape',
-        module: 10,
-        tier: 'core',
-        reason:
-          'Compares permission and sandbox defaults across tools and gives headless CI invocations, including --bare and API-key auth',
-      },
-      {
         slug: 'intermediate/coding-agents',
-        module: 11,
+        module: 10,
         tier: 'core',
         reason:
           'Hooks are the deterministic control point: 31 lifecycle events, with PreToolUse able to block a tool before it runs',
       },
       {
         slug: 'intermediate/harness-engineering',
-        module: 12,
+        module: 11,
         tier: 'core',
         reason:
           'The isolation ladder rates worktree, bubblewrap, Docker, gVisor and Firecracker on strength, setup cost and overhead',
@@ -236,7 +222,7 @@ export const PATHS: readonly LearningPath[] = [
       },
       {
         slug: 'intermediate/loop-engineering',
-        module: 14,
+        module: 12,
         tier: 'core',
         reason:
           'Gives the blocking per-PR gate and the nightly regression run, with pass rate, mean tool calls, tokens and wall-clock tracked',
@@ -250,28 +236,28 @@ export const PATHS: readonly LearningPath[] = [
       },
       {
         slug: 'intermediate/personal-agents',
-        module: 15,
+        module: 14,
         tier: 'supporting',
         reason:
           'Ops detail for unattended runs: --timeout-seconds, script tool budgets, failure alerts, and a supervised service over a while-true loop',
       },
       {
         slug: 'ecosystem/observability',  // draft
-        module: 30,
+        module: 29,
         tier: 'context',
         reason:
           'Planned coverage of LangSmith, LangFuse and trace-analyzer agents; the sheet holds a topic list until it is written',
       },
       {
         slug: 'optional/runtime',  // draft
-        module: 34,
+        module: 33,
         tier: 'context',
         reason:
           'Slated for checkpoints, fault tolerance and time travel across long failure-prone runs; no lesson content there yet',
       },
       {
         slug: 'expert/advanced-deployment',  // draft
-        module: 24,
+        module: 23,
         tier: 'context',
         reason:
           'Earmarked for agent servers and the LangChain Agent Protocol, the production-service shape; still an outline only',
@@ -340,7 +326,7 @@ export const PATHS: readonly LearningPath[] = [
       },
       {
         slug: 'intermediate/harness-engineering',
-        module: 12,
+        module: 11,
         tier: 'supporting',
         reason:
           'Hooks and the isolation ladder give deterministic gates on tool calls, so an agent cannot write to a production store unreviewed',
@@ -354,28 +340,28 @@ export const PATHS: readonly LearningPath[] = [
       },
       {
         slug: 'intermediate/loop-engineering',
-        module: 14,
+        module: 12,
         tier: 'core',
         reason:
           'A verifier ladder and a rubric-eval cookbook for agent-authored changes, with deterministic gates in CI before any judge call',
       },
       {
         slug: 'expert/advanced-tools',  // draft
-        module: 18,
+        module: 17,
         tier: 'context',
         reason:
           'Still a draft topic list. It marks where the planned comparison of RAG against agentic search will sit once written',
       },
       {
         slug: 'expert/advanced-memory',  // draft
-        module: 19,
+        module: 18,
         tier: 'context',
         reason:
           'A draft outline only. It lists the long-term memory systems planned for later coverage, including Cognee and entire provenance',
       },
       {
         slug: 'ecosystem/observability',  // draft
-        module: 30,
+        module: 29,
         tier: 'context',
         reason:
           'Not written yet. The topic list names LangSmith, LangFuse and trace-analyzer agents as the planned tracing coverage',
@@ -451,7 +437,7 @@ export const PATHS: readonly LearningPath[] = [
       },
       {
         slug: 'intermediate/loop-engineering',
-        module: 14,
+        module: 12,
         tier: 'supporting',
         reason:
           'The verifier ladder ranks rules and linters above an LLM judge, which is how a generated query gets checked before its numbers travel',
@@ -465,21 +451,21 @@ export const PATHS: readonly LearningPath[] = [
       },
       {
         slug: 'intermediate/personal-agents',
-        module: 15,
+        module: 14,
         tier: 'context',
         reason:
           'Turns a recurring report into a scheduled run: cron and --at triggers, a delivery channel, and alerting for a job that dies silently',
       },
       {
         slug: 'expert/advanced-tools',  // draft
-        module: 18,
+        module: 17,
         tier: 'context',
         reason:
           'A draft outline only. Its topic list promises RAG versus agentic search, and JSON versus CLI tools, once the module is written',
       },
       {
         slug: 'ecosystem/observability',  // draft
-        module: 30,
+        module: 29,
         tier: 'context',
         reason:
           'Still an outline. Planned coverage names LangSmith, LangFuse and trace-analyzer agents for inspecting what a query agent did',
@@ -562,14 +548,14 @@ export const PATHS: readonly LearningPath[] = [
       },
       {
         slug: 'intermediate/loop-engineering',
-        module: 14,
+        module: 12,
         tier: 'core',
         reason:
           'The Verifier Ladder holds that a model cannot grade itself, and the rubric cookbook starts from about 20 real cases with binary labels',
       },
       {
         slug: 'optional/human-in-the-loop',  // draft
-        module: 33,
+        module: 32,
         tier: 'context',
         reason:
           'A placeholder today, listing interrupt and steering as its planned topics; hold it as a roadmap marker for keeping a person in control',
@@ -630,22 +616,15 @@ export const PATHS: readonly LearningPath[] = [
           'Four named failure modes — poisoning, distraction, confusion, clash — give you a defect taxonomy instead of guesswork',
       },
       {
-        slug: 'intermediate/coding-agents-landscape',
-        module: 10,
-        tier: 'supporting',
-        reason:
-          'Test setup lives in the permission and sandbox defaults row, plus the headless and CI recipes that make an agent a build step',
-      },
-      {
         slug: 'intermediate/coding-agents',
-        module: 11,
+        module: 10,
         tier: 'supporting',
         reason:
           'Hooks are named here as the only deterministic control point, with a protect-migrations script you can run against a real agent',
       },
       {
         slug: 'intermediate/harness-engineering',
-        module: 12,
+        module: 11,
         tier: 'core',
         reason:
           'The hook exit-code table and the fail-open versus fail-closed comparison show whether a broken check becomes an allow',
@@ -659,21 +638,21 @@ export const PATHS: readonly LearningPath[] = [
       },
       {
         slug: 'intermediate/loop-engineering',
-        module: 14,
+        module: 12,
         tier: 'core',
         reason:
           'The verifier ladder and the rubric cookbook — a golden set of about 20 cases, deterministic gates, R1-R7, calibrate before you trust',
       },
       {
         slug: 'ecosystem/observability',  // draft
-        module: 30,
+        module: 29,
         tier: 'context',
         reason:
           'A draft placeholder, not yet readable; it is planned to cover LangSmith, LangFuse and trace-analyzer agents',
       },
       {
         slug: 'optional/runtime',  // draft
-        module: 34,
+        module: 33,
         tier: 'context',
         reason:
           'Still a draft with only a topic list; checkpoints, fault tolerance and time travel are planned, which is where replaying a run belongs',
@@ -741,22 +720,15 @@ export const PATHS: readonly LearningPath[] = [
           'Context rot and the prompt-caching cost lever explain why long runs degrade and where token spend actually goes',
       },
       {
-        slug: 'intermediate/coding-agents-landscape',
-        module: 10,
-        tier: 'core',
-        reason:
-          'Carries the planning figure to quote — around 13 dollars per developer per active day — and the METR study measuring experts 19% slower',
-      },
-      {
         slug: 'intermediate/coding-agents',
-        module: 11,
+        module: 10,
         tier: 'supporting',
         reason:
           'Names the six extension mechanisms and gives a decision table, so a hooks, skills or MCP request can be scoped honestly',
       },
       {
         slug: 'intermediate/harness-engineering',
-        module: 12,
+        module: 11,
         tier: 'core',
         reason:
           'The autonomy ladder, rungs 1 to 6, is the artifact for deciding how much freedom a given task gets',
@@ -770,21 +742,21 @@ export const PATHS: readonly LearningPath[] = [
       },
       {
         slug: 'intermediate/loop-engineering',
-        module: 14,
+        module: 12,
         tier: 'core',
         reason:
           'The verifier ladder answers who checks agent output: defined rules and linters first, LLM as judge last',
       },
       {
         slug: 'optional/human-in-the-loop',  // draft
-        module: 33,
+        module: 32,
         tier: 'context',
         reason:
           'A placeholder for now: planned to cover interrupt and steering, with only the topic list on the page today',
       },
       {
         slug: 'ecosystem/observability',  // draft
-        module: 30,
+        module: 29,
         tier: 'context',
         reason:
           'Not yet written: the roadmap names LangSmith, LangFuse and trace-analyzer agents as the planned coverage',
@@ -838,22 +810,15 @@ export const PATHS: readonly LearningPath[] = [
           'The observe-decide-act loop repeats tool calls without asking again, so one granted query right is exercised many times per task',
       },
       {
-        slug: 'intermediate/coding-agents-landscape',
-        module: 10,
-        tier: 'supporting',
-        reason:
-          'Compares the permission and sandbox defaults each coding agent ships, the row to read before one holds a connection string',
-      },
-      {
         slug: 'intermediate/coding-agents',
-        module: 11,
+        module: 10,
         tier: 'core',
         reason:
           'Carries the checked-in .mcp.json postgres server example, where DATABASE_URL arrives through an env var rather than inline',
       },
       {
         slug: 'intermediate/harness-engineering',
-        module: 12,
+        module: 11,
         tier: 'core',
         reason:
           'The worked example is a PreToolUse hook keeping migrations/ human-only, with deny rules evaluated deny then ask then allow',
@@ -867,21 +832,21 @@ export const PATHS: readonly LearningPath[] = [
       },
       {
         slug: 'intermediate/personal-agents',
-        module: 15,
+        module: 14,
         tier: 'supporting',
         reason:
           'Gives a secrets baseline: chmod 600 on credential files, plus a list of what an agent never gets, production credentials included',
       },
       {
         slug: 'expert/advanced-memory',  // draft
-        module: 19,
+        module: 18,
         tier: 'context',
         reason:
           'Roadmap only, no lesson content yet: the planned topics name Cognee, Agent KnowledgeBase and Entire Provenance',
       },
       {
         slug: 'ecosystem/observability',  // draft
-        module: 30,
+        module: 29,
         tier: 'context',
         reason:
           'Still a draft: LangSmith, LangFuse and trace-analyzer agents are listed as planned topics, where audit-trail material will land',
@@ -949,15 +914,8 @@ export const PATHS: readonly LearningPath[] = [
           'The obsolete-advice and folklore tables keep demo claims current, including where explicit chain-of-thought buys close to nothing',
       },
       {
-        slug: 'intermediate/coding-agents-landscape',
-        module: 10,
-        tier: 'core',
-        reason:
-          'The tool landscape and the constraint-keyed choosing framework, plus why a benchmark score names a harness-model pair',
-      },
-      {
         slug: 'intermediate/harness-engineering',
-        module: 12,
+        module: 11,
         tier: 'supporting',
         reason:
           'The autonomy ladder, rung 1 to rung 6, is what to show when a customer asks who holds the boundary around a running agent',
@@ -971,21 +929,21 @@ export const PATHS: readonly LearningPath[] = [
       },
       {
         slug: 'ecosystem/agent-frameworks',  // draft
-        module: 26,
+        module: 25,
         tier: 'context',
         reason:
           'Planned as a tour of build-side frameworks — LangChain, CrewAI, smolagents, PydanticAI — and is a topic list today, not a lesson',
       },
       {
         slug: 'ecosystem/inference-providers',  // draft
-        module: 27,
+        module: 26,
         tier: 'context',
         reason:
           'Planned to cover the hosted serving options a deal turns on — OpenRouter, OpenAI, Google AI Studio; the sheet is not written yet',
       },
       {
         slug: 'protocols/protocols-reference',  // draft
-        module: 32,
+        module: 31,
         tier: 'context',
         reason:
           'Planned as one page collecting the protocols named across the series plus NLWeb, UCP and AP2; nothing readable there yet',

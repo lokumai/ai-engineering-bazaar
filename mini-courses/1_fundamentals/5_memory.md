@@ -58,7 +58,7 @@ Notice that every call sends the *whole* stack, not just the newest message, bec
 
 ## Long-term memory: remembering across sessions
 
-We go much deeper on this later, in the Expert track's [Advanced Memory](../3_expert/19_advanced_memory.md) module. Here is the basic idea for now.
+We go much deeper on this later, in the Expert track's [Advanced Memory](../3_expert/18_advanced_memory.md) module. Here is the basic idea for now.
 
 Sometimes, instead of just letting working memory disappear when a session ends, we save a summary or an index of it somewhere outside the model. Later, in a completely different session, that saved information can be pulled back into working memory when it is actually needed, often using RAG (Module 3).
 
@@ -114,7 +114,7 @@ There are three kinds of memory, and they're not interchangeable: **parametric m
 
 - [The three memory types every LLM developer must know](https://medium.com/@sahilnanga4/the-three-memory-types-every-llm-developer-must-know-3358c26fdff3): the same split, from another angle
 - [Module 3: RAG](3_rag.md): how long-term memory gets retrieved back into working memory
-- [Module 19: Advanced Memory](../3_expert/19_advanced_memory.md): where this goes next
+- [Module 18: Advanced Memory](../3_expert/18_advanced_memory.md): where this goes next
 
 **Previous Module:** [Module 4: LLM Tool Calling](4_tools.md)
 **Next Module:** [Module 6: AI Agents: From Single Call to Multi-Step Reasoning](6_agents.md)

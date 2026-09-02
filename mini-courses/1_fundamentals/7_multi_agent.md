@@ -95,7 +95,7 @@ or does each work in its own **isolated** one?
 
 Both are used in production, and the choice drives almost everything else about the design. It has
 enough depth to deserve its own treatment, so we come back to it in
-[Module 20: Advanced Multi-Agent](../3_expert/20_advanced_multiagent.md).
+[Module 19: Advanced Multi-Agent](../3_expert/19_advanced_multiagent.md).
 
 ## Other architectures you will hear about
 
@@ -189,7 +189,7 @@ difference between shared and isolated context?
 - [LangGraph multi-agent concepts](https://langchain-ai.github.io/langgraph/concepts/multi_agent/): supervisor, network and the rest, with code
 - [What is an agent?](https://www.langchain.com/blog/what-is-an-agent): worth rereading here, since a supervisor is a decision about autonomy
 - [Module 6: AI Agents](6_agents.md): the single loop all of this is built from
-- [Module 20: Advanced Multi-Agent](../3_expert/20_advanced_multiagent.md): shared and isolated context, and agent-to-agent protocols
+- [Module 19: Advanced Multi-Agent](../3_expert/19_advanced_multiagent.md): shared and isolated context, and agent-to-agent protocols
 
 **Previous Module:** [Module 6: AI Agents](6_agents.md)
 

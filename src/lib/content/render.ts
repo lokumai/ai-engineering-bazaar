@@ -62,8 +62,7 @@ export interface RenderOptions {
    * a table would otherwise be numbered into the body's sequence and collide
    * with a table the reader has already met. **MEASURED:** rendering the
    * summary with neither option shipped four unrewritten `.md` hrefs, on
-   * `intermediate/coding-agents`, `coding-agents-landscape` and
-   * `personal-agents`.
+   * `intermediate/coding-agents` and `personal-agents`.
    */
   excerptOf?: number
 }

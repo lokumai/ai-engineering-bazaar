@@ -48,7 +48,7 @@ Sonuç **genel amaçlı** bir model: birçok şeyde iyi, hiçbir şeyde uzman de
 > orada olan kelimeyle karşılaştırarak elde ediyor; yani veri kendi kendini label'lıyor. Buna
 > **self-supervised learning** deniyor, ve diyagramlar bunu genelde "unsupervised" olarak
 > etiketliyor. Konuya doğru düzgün olarak
-> [Modül 25: İleri Seviye Training](../3_expert/25_advanced_training_tr.md) modülünde dönüyoruz.
+> [Modül 24: İleri Seviye Training](../3_expert/24_advanced_training_tr.md) modülünde dönüyoruz.
 
 ## Pre-training ve fine-tuning, yan yana
 

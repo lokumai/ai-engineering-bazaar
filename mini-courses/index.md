@@ -23,11 +23,11 @@ The internet already has plenty of AI content. Adding more only makes sense if i
 | Category                                                              | Modules | Description                                                                                                               |
 | --------------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------- |
 | [Fundamentals](1_fundamentals/README.md)                     | 1-7     | LLMs, training, RAG, tools, memory, agents, multi-agent systems.**Start here.**                                           |
-| [Intermediate](2_intermediate/README.md)                     | 8-15    | Prompt engineering, context engineering, coding agents, harness engineering, security, loop engineering, personal agents. |
-| [NOT READY] [Expert](3_expert/README.md)                     | 16-25   | Advanced UI, architectures, tools, memory, multi-agent, prompting, context engineering, harness engineering, deployment, training.  |
-| [NOT READY] [Ecosystem](4_ecosystem/README.md)               | 26-31   | Agent frameworks, inference providers, inference engines, UI design, observability, choosing a tech stack.                                       |
-| [NOT READY] [Protocols & Specs](5_protocols_specs/README.md) | 32      | A single reference of every protocol and spec mentioned across the series.                                                |
-| [NOT READY] [Optional](6_optional/README.md)                 | 33-34   | Human-in-the-loop and runtime topics that round out the series.                                                           |
+| [Intermediate](2_intermediate/README.md)                     | 8-14    | Prompt engineering, context engineering, coding agents, harness engineering, security, loop engineering, personal agents. |
+| [NOT READY] [Expert](3_expert/README.md)                     | 15-24   | Advanced UI, architectures, tools, memory, multi-agent, prompting, context engineering, harness engineering, deployment, training.  |
+| [NOT READY] [Ecosystem](4_ecosystem/README.md)               | 25-30   | Agent frameworks, inference providers, inference engines, UI design, observability, choosing a tech stack.                                       |
+| [NOT READY] [Protocols & Specs](5_protocols_specs/README.md) | 31      | A single reference of every protocol and spec mentioned across the series.                                                |
+| [NOT READY] [Optional](6_optional/README.md)                 | 32-33   | Human-in-the-loop and runtime topics that round out the series.                                                           |
 
 ### How to Use
 

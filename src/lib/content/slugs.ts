@@ -3,10 +3,10 @@ import type { CategorySlug } from './categories'
 const FILENAME = /^(\d+)_(.+)\.md$/
 
 /**
- * `10_coding_agents_landscape.md` -> `coding-agents-landscape`.
- * The number is dropped on purpose: modules have been renumbered before
- * (module 10 was split out of the old coding-agents module), so a number is
- * not a stable identifier. The name is.
+ * `11_harness_engineering.md` -> `harness-engineering`.
+ * The number is dropped on purpose: modules have been renumbered twice already
+ * (once when a landscape sheet was split out of the coding-agents module, again
+ * when it was dropped), so a number is not a stable identifier. The name is.
  */
 export function moduleSlugFromFilename(filename: string): string {
   const match = FILENAME.exec(filename)

@@ -160,8 +160,7 @@
   html.hl-signed-30 .hl-seg[data-module="30"],
   html.hl-signed-31 .hl-seg[data-module="31"],
   html.hl-signed-32 .hl-seg[data-module="32"],
-  html.hl-signed-33 .hl-seg[data-module="33"],
-  html.hl-signed-34 .hl-seg[data-module="34"] {
+  html.hl-signed-33 .hl-seg[data-module="33"] {
     background: var(--hl-cat);
     border-color: var(--hl-cat);
   }
@@ -350,8 +349,7 @@
   html.hl-signed-11 .hl-step[data-module="11"] .hl-step-tick,
   html.hl-signed-12 .hl-step[data-module="12"] .hl-step-tick,
   html.hl-signed-13 .hl-step[data-module="13"] .hl-step-tick,
-  html.hl-signed-14 .hl-step[data-module="14"] .hl-step-tick,
-  html.hl-signed-15 .hl-step[data-module="15"] .hl-step-tick {
+  html.hl-signed-14 .hl-step[data-module="14"] .hl-step-tick {
     display: inline;
     color: var(--color-accent-ink);   /* T2 — accent as TEXT is `-ink` only. */
   }
@@ -395,8 +393,7 @@
   html.hl-signed-11 .hl-seg[data-module="11"],
   html.hl-signed-12 .hl-seg[data-module="12"],
   html.hl-signed-13 .hl-seg[data-module="13"],
-  html.hl-signed-14 .hl-seg[data-module="14"],
-  html.hl-signed-15 .hl-seg[data-module="15"] {
+  html.hl-signed-14 .hl-seg[data-module="14"] {
     /* Filled with the system colour, so "signed off" is still a filled cell
        against an empty one — a difference in fill, not in hue. */
     background: CanvasText;

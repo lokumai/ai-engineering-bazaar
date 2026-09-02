@@ -155,7 +155,7 @@ result = agent.run("Read main.py and summarise it")
 Bu tam bir agent. Orada *olmayan* şeye dikkat et: loop yok, tool call parse etme yok, mesaj yığını
 yok, system prompt yok. Hepsini `CodeAgent` yapıyor, ve `agent.run` de loop'un kendisi.
 
-Başka framework'ler aynı problemi farklı şekillerde çözüyor, ve Modül 26 onları karşılaştırıyor:
+Başka framework'ler aynı problemi farklı şekillerde çözüyor, ve Modül 25 onları karşılaştırıyor:
 [LangChain](https://github.com/langchain-ai/langchain),
 [crewAI](https://github.com/crewAIInc/crewAI),
 [AutoGen](https://github.com/microsoft/autogen).

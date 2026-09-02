@@ -9,14 +9,14 @@ objectives:
   - "Explain why prompt injection remains unsolved"
   - "Distinguish prompt injection from jailbreaking"
   - "Rate common guardrails honestly, and place security in the SDLC"
-prerequisites: [12]
+prerequisites: [11]
 ---
 
 # Module 13: Security
 
-*Category: Intermediate — Module 13 (6 of 8 in this category)*
+*Category: Intermediate — Module 13 (6 of 7 in this category)*
 
-Your coding agent reads text an attacker can write, takes actions with your credentials, and can talk to the internet. That combination is not a bug you can patch — it is the product, and the field has no reliable fix for it. This module is about thinking like the adversary. [Module 12](12_harness_engineering.md) taught the mechanism — hooks, permission rules, sandboxes; here we ask the question it never asks: *what happens when someone is trying to break this?*
+Your coding agent reads text an attacker can write, takes actions with your credentials, and can talk to the internet. That combination is not a bug you can patch — it is the product, and the field has no reliable fix for it. This module is about thinking like the adversary. [Module 11](11_harness_engineering.md) taught the mechanism — hooks, permission rules, sandboxes; here we ask the question it never asks: *what happens when someone is trying to break this?*
 
 ## I. What is actually different about an agent
 
@@ -197,7 +197,7 @@ The answer is not nihilism, though. Apply the *same* adaptive methodology to a d
 | **Default-deny egress allowlist enforced by the sandbox proxy** | The exfiltration leg | Exfiltration *to an allowed host* — e.g. into a public PR | Low–medium | **Very high value, commonly skipped** |
 | **OS-enforced sandbox (filesystem + network)** | Blast radius of executed code, including child processes | The model doing something bad inside the sandbox | Low, once configured | **Deterministic. Ship it.** |
 | **Human approval on irreversible actions** | Catastrophic single actions | Approval fatigue; invisible characters making displayed ≠ executed | High human cost | **Necessary, degrades at volume. Show the rendered action, not a summary.** |
-| **Architectural patterns** (plan-then-execute, dual LLM, context minimization, CaMeL) | Untrusted input triggering consequential actions at all | Anything outside the modelled flows; general-purpose agents | High | **The principled answer.** See [arXiv:2506.08837](https://arxiv.org/abs/2506.08837) and [Module 23](../3_expert/23_advanced_harness_engineering.md) |
+| **Architectural patterns** (plan-then-execute, dual LLM, context minimization, CaMeL) | Untrusted input triggering consequential actions at all | Anything outside the modelled flows; general-purpose agents | High | **The principled answer.** See [arXiv:2506.08837](https://arxiv.org/abs/2506.08837) and [Module 22](../3_expert/22_advanced_harness_engineering.md) |
 | **Stripping invisible Unicode at ingest and render** | Tag-block, variation-selector and zero-width smuggling | Visible-text payloads | Very low | **Free win. Ship it today.** |
 | **Input/output classifiers** | A large fraction of *known* attack distributions | Adaptive attackers, character injection, unseen attack families | Low–medium | **Buy time and telemetry, not safety. Never the only layer.** |
 | **"Ignore injected instructions" in the system prompt** | Accidental cases | Anyone who can infer the prompt — assume they can | ~0 | **Security theater if it is your primary control** |
@@ -215,7 +215,7 @@ The highest-leverage lines of configuration here are an egress allowlist the OS 
 }
 ```
 
-Claude Code pre-allows no domains by default; setting `network.strictAllowlist` to `true` makes it deny rather than prompt, which is what you want in CI. Module 11 covers building this; [Module 24](../3_expert/24_advanced_deployment.md) covers operating it at organisation scale.
+Claude Code pre-allows no domains by default; setting `network.strictAllowlist` to `true` makes it deny rather than prompt, which is what you want in CI. Module 10 covers building this; [Module 23](../3_expert/23_advanced_deployment.md) covers operating it at organisation scale.
 
 ## VIII. Making it part of the SDLC
 
@@ -312,5 +312,5 @@ An agent is a different security problem because it reads untrusted data, acts w
 - [Claude Code security](https://code.claude.com/docs/en/security) and [sandboxing](https://code.claude.com/docs/en/sandboxing) — Anthropic. The permission model, OS-enforced sandbox and egress allowlist you will actually configure.
 - [promptfoo CI/CD integration](https://www.promptfoo.dev/docs/integrations/ci-cd/) — promptfoo. The only vendor-published red-team-in-CI recipe in this space. Its plugin set — indirect prompt injection, data exfiltration, MCP — maps closely onto this module.
 
-**Previous Module:** [Module 12: Harness Engineering](12_harness_engineering.md)
-**Next Module:** [Module 14: Loop Engineering](14_loop_engineering.md)
+**Previous Module:** [Module 11: Harness Engineering](11_harness_engineering.md)
+**Next Module:** [Module 12: Loop Engineering](12_loop_engineering.md)

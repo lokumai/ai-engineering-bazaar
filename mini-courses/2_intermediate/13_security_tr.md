@@ -1,6 +1,6 @@
 # Module 13: Güvenlik (Security)
 
-*Kategori: Intermediate — Modül 13 (bu kategoride 6/8)*
+*Kategori: Intermediate — Modül 13 (bu kategoride 6/7)*
 
 *(Bu bir placeholder modül — şimdilik kısa bir özet; tam ders içeriği yakında geliyor.)*
 
@@ -31,5 +31,5 @@ graph LR
     style F fill:#FFFF00
 ```
 
-**Önceki Modül:** [Modül 12: Harness Engineering](12_harness_engineering_tr.md)
-**Sonraki Modül:** [Modül 14: Loop Engineering](14_loop_engineering_tr.md)
+**Önceki Modül:** [Modül 11: Harness Engineering](11_harness_engineering_tr.md)
+**Sonraki Modül:** [Modül 12: Loop Engineering](12_loop_engineering_tr.md)

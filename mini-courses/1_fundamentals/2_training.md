@@ -65,7 +65,7 @@ The result is a **general-purpose** model: good at many things, specialised in n
 > checking its guess against the word that was actually there, which means the data labels
 > itself. This is called **self-supervised learning**, and diagrams often label it
 > "unsupervised" instead. We come back to it properly in
-> [Module 25: Advanced Training](../3_expert/25_advanced_training.md).
+> [Module 24: Advanced Training](../3_expert/24_advanced_training.md).
 
 ## Pre-training and fine-tuning, side by side
 

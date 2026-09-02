@@ -1,6 +1,6 @@
 # Module 9: Context Engineering
 
-*Kategori: Intermediate — Modül 9 (bu kategoride 2/8)*
+*Kategori: Intermediate — Modül 9 (bu kategoride 2/7)*
 
 *(Bu bir placeholder modül — şimdilik kısa bir özet; tam ders içeriği yakında geliyor.)*
 
@@ -28,4 +28,4 @@ graph LR
 ```
 
 **Önceki Modül:** [Modül 8: Prompt Engineering](8_prompt_engineering_tr.md)
-**Sonraki Modül:** [Modül 10: Coding Agent'lar: Ekosistem](10_coding_agents_landscape_tr.md)
+**Sonraki Modül:** [Modül 10: Coding Agent'lar: Genişletme](10_coding_agents_tr.md)

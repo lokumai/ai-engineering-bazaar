@@ -594,24 +594,31 @@ test.describe('§14 accounts, organisations and the record that outlives a brows
     await expect(page.locator('.hl-claim-shell')).toHaveCount(0)
     await expect(page.getByRole('button', { name: 'DISMISS' })).toHaveCount(0)
 
-    // In the column, not against the viewport edge, and not clipped.
+    // In the column's content box, not against the viewport edge, and not clipped.
+    // The reference is the content box deliberately: the column div carries
+    // `px-5 md:px-6`, and a bounding rect includes padding, so comparing against
+    // its border-box edge would be off by exactly that padding on both sides.
     const geometry = await page.evaluate(() => {
       const line = document.querySelector('.hl-receipt') as HTMLElement
       const column = line.parentElement as HTMLElement
       const main = document.querySelector('main') as HTMLElement
+      const box = column.getBoundingClientRect()
+      const style = getComputedStyle(column)
       return {
         lineLeft: line.getBoundingClientRect().left,
-        columnLeft: column.getBoundingClientRect().left,
         lineRight: line.getBoundingClientRect().right,
-        columnRight: column.getBoundingClientRect().right,
+        contentLeft: box.left + Number.parseFloat(style.paddingLeft),
+        contentRight: box.right - Number.parseFloat(style.paddingRight),
         insideMain: main.contains(line),
         scrollWidth: document.documentElement.scrollWidth,
         clientWidth: document.documentElement.clientWidth,
       }
     })
     expect(geometry.insideMain, 'the receipt belongs to the page, not to the body').toBe(true)
-    expect(geometry.lineLeft).toBeCloseTo(geometry.columnLeft, 0)
-    expect(geometry.lineRight).toBeCloseTo(geometry.columnRight, 0)
+    expect(geometry.lineLeft).toBeCloseTo(geometry.contentLeft, 0)
+    expect(geometry.lineRight).toBeCloseTo(geometry.contentRight, 0)
+    // The defect this replaces sat at x: 0 with the full viewport width.
+    expect(geometry.lineLeft).toBeGreaterThan(0)
     expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.clientWidth + 1)
   })
 })

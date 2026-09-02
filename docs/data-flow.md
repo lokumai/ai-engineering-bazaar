@@ -71,10 +71,19 @@ flowchart LR
     D --> SH["sheets<br/>keyed by category/slug"]
     D --> DY["days<br/>dates anything was written"]
     D --> PF["prefs"]
-    D --> MT["meta<br/>lastExport · persisted"]
+    D --> MT["meta<br/>lastExport · persisted · lastClaim"]
 
     SH --> SR["per sheet:<br/>signedOff · signedRevision<br/>quiz · checklist<br/>sources · submittals<br/>reachedEnd · dwellSeconds"]
 ```
+
+`meta.lastClaim` holds the last claim that **moved something** — the counts,
+the identity outcome and the instant, as `summariseClaim` reported them.
+`events.noteClaim` is its only writer and it writes only when `claimIsNews`
+holds, so signing in and then reloading does not rewrite it. `mergeRecords`
+resolves `meta` local-wins, which makes the receipt a fact about THIS browser:
+a second browser signing into the same account never prints a merge that
+happened in the first one. An erase drops it; `carriesNothing` does not consult
+it, so a receipt alone is not a record.
 
 Sizes and caps, all of them named constants rather than numbers in a condition:
 

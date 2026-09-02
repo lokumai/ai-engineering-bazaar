@@ -191,8 +191,10 @@ describe('§12.10 — determinism, and only integers', () => {
       expect(band.upperLanes).toBeLessThanOrEqual(MAX_CHANNEL_LANES)
       expect(band.lowerLanes).toBeLessThanOrEqual(MAX_CHANNEL_LANES)
     }
-    // MEASURED, and the reason MAX_CHANNEL_LANES is 16 rather than 12.
-    expect(layout.bands[1].lowerLanes).toBe(11)
+    // The busiest band's exact lane count is a measurement of the corpus, and
+    // it moves whenever a module's cross-references change, so it is not
+    // asserted here. What must hold is the reserve, above, and the overflow
+    // behaviour when it is exceeded, which has its own test below.
   })
 })
 

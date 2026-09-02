@@ -190,17 +190,24 @@ mermaid already knows.
 | A flow, a branch, a pipeline | `flowchart` / `graph` |
 | Actors exchanging messages over time | `sequenceDiagram` |
 | A breakdown of a topic into parts | `mindmap` |
-| How a topic evolved, what replaced what | `timeline` |
+| How a topic evolved, what replaced what | `graph TD`, one node per era (see the warning below) |
 | Things that are in one state until an event moves them | `stateDiagram-v2` |
 | Proportions of a whole | `pie` |
 | Options compared on two axes | `quadrantChart` |
 | Entities and how they relate | `erDiagram` |
 | A measurement against another | `xychart-beta` |
 
-Two of those matter especially here. **`sequenceDiagram`** is the honest shape for anything where a
-user, a host and a model take turns, which is most of Fundamentals. And **`timeline`** answers rule
-1 of the manifest directly: a model cannot tell a reader when an idea appeared or what it replaced,
-so a timeline is a picture only a human can draw.
+**`sequenceDiagram`** matters especially here: it is the honest shape for anything where a user, a
+host and a model take turns, which is most of Fundamentals.
+
+**Do not use `timeline`.** It parses and renders, but mermaid's own theme paints its period and
+event blocks with bright inline colours (orange, magenta, yellow) that the site's tokens never
+reach, so the figure ignores the design system and stays bright in dark mode. It also grows wide
+enough to clip. This was tried in Module 8 and replaced. A story over time is better told as a
+`graph TD` with one node per era and the events inside the node, which themes correctly and reads
+top to bottom as chronological. The manifest-rule-1 point still stands, though: a model cannot tell
+a reader when an idea appeared or what it replaced, so the *content* of that figure is one only a
+human can supply.
 
 Anything ending in `-beta` works but its syntax can still move, so prefer a stable type where one
 fits.

@@ -126,6 +126,14 @@ export interface RecordData {
      * "has THIS account already offered?" — a second account signing into the
      * same browser is a different reader making a first offer, and a boolean
      * could not tell the two apart. `noteAliasNamed` is its only writer.
+     *
+     * ONE SLOT, and it defers the collision rather than removing it. REPORTED BY
+     * REVIEW: A clears the name, B signs in and takes the slot, B clears the
+     * name, A signs back in — the slot now reads B, so A's removal is re-offered
+     * over. A set of settled accounts is what would close it, and that is a
+     * schema widening with its own bounded-cleanup question; filed as §16.11
+     * rather than carried in here, because it needs two accounts in one browser
+     * and four acts to reach, and the one-account case it was built for holds.
      */
     aliasNamedFor: string | null
   }

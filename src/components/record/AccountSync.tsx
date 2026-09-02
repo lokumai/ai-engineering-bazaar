@@ -85,6 +85,14 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
       return
     }
 
+    /**
+     * Bound after the null check for the same reason as `account` below: a
+     * narrowing of an outer binding does not reach into a hoisted function
+     * declaration, and `pushProfileRow` is one. The alternative is a `!` that
+     * would outlive the check that made it safe.
+     */
+    const db = client
+
     const port = createRemoteRecordStore(client, userId)
     const instance = createSync({
       // §14.7.2's rules. `claimMerge` and not `mergeRecords` because it is the
@@ -137,6 +145,64 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
      * about `client.auth`.
      */
     const account: SessionUser = user
+
+    /**
+     * §14.8.2 — the profiles row. Without it `loadProfiles` returns nothing,
+     * every member of every org prints as `USER 1a2b3c4d`, and every submittal
+     * classifies as unattributable for ever: the evidence column can never
+     * resolve. Fire-and-forget on purpose — a failed profile write must not stop
+     * a record from syncing, and the panel already renders an absent profile
+     * honestly.
+     *
+     * ## Why it is a function, and called twice
+     *
+     * MEASURED: this ran once, synchronously, on the line after `claim()` was
+     * STARTED — so it read the identity as it stood before the claim resolved.
+     * On a first email sign-in the record is empty at that instant,
+     * `profileRowFor` omits `display_name` (`profile-sync.ts:159-160`), and the
+     * name §16.3 derives from the address a round trip later never reached the
+     * column. Managers saw `USER 1a2b3c4d` for the whole of that session, and it
+     * healed only on the next mount.
+     *
+     * The immediate push is KEPT rather than moved behind the claim: a hung
+     * claim would otherwise mean no profile row at all, and this row is display
+     * data that has no reason to wait on two round trips. `decideAliasFromAccount`
+     * calls it a second time when — and only when — it actually wrote a name.
+     * `upsert` on the primary key is idempotent, so the second call costs one
+     * request in the first-sign-in case and nothing in any other.
+     *
+     * It takes the identity from `snapshot()` at call time and never from a
+     * closure, because the whole defect was a row built from a stale read.
+     */
+    function pushProfileRow(): void {
+      const row = profileRowFor(snapshot().identity, account)
+      if (row === null) return
+      void db
+        .from(PROFILES_TABLE)
+        .upsert(row, { onConflict: 'id' })
+        .then(({ error }) => {
+          // The result is DISCARDED, and that is the decision rather than an
+          // omission — but it is read first, because discarding a value you
+          // never looked at and discarding one you did are different acts and
+          // only one of them survives review.
+          //
+          // Nothing here can act on a failure. The local record is already
+          // authoritative, the sync machine does not depend on this row, and
+          // the manager panel renders an absent profile honestly (`USER
+          // 1a2b3c4d`), so the outcome is a degraded display and never a lost
+          // fact. Retrying would mean a queue, a backoff and a second thing
+          // that can be owed — for a row that is rewritten on the next sign-in
+          // anyway.
+          //
+          // NOT a missing `.catch`: `PostgrestBuilder` sets
+          // `shouldThrowOnError` false by default and catches fetch failures
+          // itself, resolving with `{ error }`. There is no rejection to
+          // handle, so adding a `.catch` here would guard a path the library
+          // does not take.
+          void error
+        })
+    }
+
 
     /**
      * §16.3 — the alias, decided from the address, ONCE.
@@ -209,6 +275,9 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
       // there is a `wire.ts` change both halves compile against, not this fix.
       if (named !== null) {
         logEvent({ kind: 'setIdentity', payload: { named: true, fromEmail: true } })
+        // The row built before the claim carried no `display_name`, because at
+        // that instant the record had no name. See `pushProfileRow`.
+        pushProfileRow()
       }
     }
 
@@ -302,39 +371,12 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
         // console.
       })
 
-    // §14.8.2 — the profiles row. Without it `loadProfiles` returns nothing,
-    // every member of every org prints as `USER 1a2b3c4d`, and every submittal
-    // classifies as unattributable for ever: the evidence column can never
-    // resolve. Fire-and-forget on purpose — a failed profile write must not
-    // stop a record from syncing, and the panel already renders an absent
-    // profile honestly.
-    const row = profileRowFor(snapshot().identity, user)
-    if (row !== null) {
-      void client
-        .from(PROFILES_TABLE)
-        .upsert(row, { onConflict: 'id' })
-        .then(({ error }) => {
-          // The result is DISCARDED, and that is the decision rather than an
-          // omission — but it is read first, because discarding a value you
-          // never looked at and discarding one you did are different acts and
-          // only one of them survives review.
-          //
-          // Nothing here can act on a failure. The local record is already
-          // authoritative, the sync machine does not depend on this row, and
-          // the manager panel renders an absent profile honestly (`USER
-          // 1a2b3c4d`), so the outcome is a degraded display and never a lost
-          // fact. Retrying would mean a queue, a backoff and a second thing
-          // that can be owed — for a row that is rewritten on the next sign-in
-          // anyway.
-          //
-          // NOT a missing `.catch`: `PostgrestBuilder` sets
-          // `shouldThrowOnError` false by default and catches fetch failures
-          // itself, resolving with `{ error }`. There is no rejection to
-          // handle, so adding a `.catch` here would guard a path the library
-          // does not take.
-          void error
-        })
-    }
+    // §14.8.2 — pushed straight away, before the claim has settled, because a
+    // manager's display is not worth waiting two network round trips for and the
+    // row is rewritten on the next sign-in anyway. The one identity this cannot
+    // see is a name §16.3 is about to derive from the address, which is why
+    // `decideAliasFromAccount` pushes again when it writes one.
+    pushProfileRow()
 
     return () => {
       cancelled = true

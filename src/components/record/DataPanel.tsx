@@ -262,8 +262,12 @@ export function DataPanel() {
     // erase must NOT reset, and it owns the argument for why. This panel does
     // not sign the reader out, so a flag reset here would let the next claim
     // re-decide the alias offer and write the reader's name back into the record
-    // they just erased. What the erase promises and why carrying that flag keeps
-    // the promise is written down there, beside the alternative it rejects.
+    // they just erased, in this tab, while the reader is still looking at it.
+    //
+    // FOR THIS TAB is the whole of the claim: `eraseStored()` two lines down
+    // removes the key this record is written to, so the flag does not outlive
+    // the load. `erase.ts` states that limit and argues why a tombstone that DID
+    // outlive it would cost more than it buys.
     update((data) => erasedRecord(data))
     // Immediate, then the keys go: the flush clears the pending write, so
     // nothing rewrites the key half a second after it was removed.

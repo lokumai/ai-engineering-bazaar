@@ -517,6 +517,31 @@ export const ERASE_CLOSE_ACCOUNT =
  * `tests/unit/record/alias-naming.test.ts` pins the choice: it asserts the flag
  * SURVIVES, and it fails under the reset.
  *
+ * ## Where the flag stops reaching, and why it is allowed to stop
+ *
+ * REPORTED BY REVIEW, and true: this carries the flag in the RECORD, and
+ * `eraseStored()` removes the key that record is written to a line later. So the
+ * flag holds for as long as this tab stays loaded — which covers the undo window
+ * and the rest of the session — and no longer. On the next load `store.start()`
+ * reads `EMPTY_RECORD`, the flag is null, and a still-signed-in account is
+ * offered the address again. A second tab, which replaces its state when it
+ * receives the removal event, reaches the same place.
+ *
+ * That is the limit and not an oversight, because the durable version of this
+ * flag is a durable fact about the reader. §12.15's panel prints
+ * `NO VALUE STORED UNDER THIS KEY` after the act; a tombstone that survived
+ * would be an account id sitting under a key that says it holds nothing, or a
+ * third key the panel would then have to enumerate and erase — which returns the
+ * question to where it started.
+ *
+ * And the behaviour it leaves is defensible on its own terms: a browser that
+ * holds no record, met by an account, is precisely the first-sign-in case §16.3
+ * exists for. What the flag has to prevent is the offer overruling a decision
+ * inside a record that still exists — a reader who cleared their name, or who
+ * erased and kept working — and it prevents both. `alias-naming.test.ts` pins
+ * the boundary in both directions: the flag survives the erase, and a reload
+ * after it offers again.
+ *
  * `charKeys` is deliberately NOT carried across. It is a §12.16 preference with
  * a visible control and a printed readout, so a reader can see what it is and
  * change it; the alias flag has no control at all, which is why losing it is

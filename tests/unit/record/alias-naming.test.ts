@@ -226,7 +226,7 @@ describe('§12.15 + §16.3 — what an erase leaves of the decision', () => {
     expect(carriesNothing(erased)).toBe(true)
   })
 
-  it('does not re-decide the alias after an erase, so no name comes back', () => {
+  it('does not re-decide the alias for as long as the erased record is held', () => {
     const erased = erasedRecord(settle(EMPTY_RECORD, reader()))
     expect(erased.identity.name).toBeNull()
     expect(erased.prefs.aliasNamedFor).toBe(ID)
@@ -235,6 +235,25 @@ describe('§12.15 + §16.3 — what an erase leaves of the decision', () => {
     // record the reader had just erased.
     expect(settle(erased, reader())).toBe(erased)
     expect(settle(erased, reader()).days).toEqual([])
+  })
+
+  /**
+   * The other half of the same fact, and the reason the case above is worded
+   * "for as long as the erased record is held". REPORTED BY REVIEW: the flag
+   * rides in the RECORD, and `DataPanel` calls `eraseStored()` a line after it
+   * writes that record — so the tombstone does not survive the load. This is
+   * asserted rather than left unstated: a limit nobody wrote down reads, later,
+   * as a guarantee.
+   *
+   * `erase.ts` carries the argument for accepting it. In short: a durable
+   * tombstone is a durable fact about the reader, and §12.15's panel prints
+   * `NO VALUE STORED UNDER THIS KEY` after the act.
+   */
+  it('offers again once the record itself is gone, which is what a reload sees', () => {
+    // `store.start()` reads the frozen empty record when no key is there, so
+    // that constant IS the next load.
+    expect(EMPTY_RECORD.prefs.aliasNamedFor).toBeNull()
+    expect(aliasDecision(EMPTY_RECORD, reader())?.name).toBe('ada')
   })
 
   it('still offers to a different account after an erase', () => {
@@ -330,6 +349,82 @@ describe('§16.3.1 — where the naming is allowed to happen', () => {
     // identity would describe an act nobody performed.
     expect(SEAM).toContain('if (named !== null) {')
     expect(SEAM).toContain("logEvent({ kind: 'setIdentity', payload: { named: true, fromEmail: true } })")
+  })
+})
+
+/**
+ * §14.8.2 + §16.3 — the profiles row and the name the address supplied.
+ *
+ * MEASURED, and reported by review: the row was built once, on the statement
+ * after `claim()` was STARTED, from `snapshot().identity`. On a first email
+ * sign-in the record is empty at that instant, so `profileRowFor` omitted
+ * `display_name` (`profile-sync.ts:159-160`) and the name derived from the
+ * address a round trip later never reached the column. Every manager panel
+ * printed `USER 1a2b3c4d` for that whole session.
+ *
+ * This is an ordering property of the seam, so it is pinned the way §16.3.1's
+ * ordering guards are pinned — by reading the source. The value half is already
+ * covered: `tests/unit/org/profile-sync.test.ts` asserts that a named identity
+ * produces `display_name`, which is exactly why a row built from the wrong
+ * identity was invisible to it.
+ */
+describe('§14.8.2 — when the profile row is pushed', () => {
+  it('builds the row at call time and never from a closure', () => {
+    // The defect in one line: a row built once, from a read taken before the
+    // claim resolved. `snapshot()` inside the function is what makes the second
+    // call see the name the first could not.
+    expect(SEAM).toContain('const row = profileRowFor(snapshot().identity, account)')
+    // Exactly one author of the row. A second `profileRowFor` call is a second
+    // place that can be built from a stale identity.
+    expect(occurrences(SEAM, /\bprofileRowFor\(/g)).toBe(1)
+  })
+
+  /**
+   * `decideAliasFromAccount` is DECLARED above the claim and the immediate push
+   * sits below it, so file order alone cannot say which call is which. The
+   * decider's own body is delimited instead.
+   */
+  const decider = (): [number, number] => {
+    const from = SEAM.indexOf('function decideAliasFromAccount(): void {')
+    const to = SEAM.indexOf('void instance', from)
+    expect(from).toBeGreaterThan(-1)
+    expect(to).toBeGreaterThan(from)
+    return [from, to]
+  }
+
+  it('pushes again, and only, when a name was actually written', () => {
+    const [from, to] = decider()
+    const wrote = SEAM.indexOf("logEvent({ kind: 'setIdentity'")
+    expect(wrote).toBeGreaterThan(from)
+    expect(wrote).toBeLessThan(to)
+
+    const calls = [...SEAM.matchAll(/^\s*pushProfileRow\(\)$/gm)].map(
+      (call) => call.index as number,
+    )
+    // Two: the immediate one, which keeps a hung claim from costing the row
+    // altogether, and the one inside the `named !== null` branch.
+    expect(calls).toHaveLength(2)
+    const deferred = calls.filter((at) => at > from && at < to)
+    expect(deferred).toHaveLength(1)
+    // Inside the branch, not merely inside the function: a push on the flag-only
+    // reduction would be a request for a row nothing changed in.
+    expect(deferred[0]).toBeGreaterThan(wrote)
+  })
+
+  it('still pushes without waiting for the claim', () => {
+    // Moving the immediate push behind the claim would mean a claim that never
+    // resolves costs the row entirely — a manager display traded for a name the
+    // next mount would have supplied anyway.
+    const [from, to] = decider()
+    const outside = [...SEAM.matchAll(/^\s*pushProfileRow\(\)$/gm)]
+      .map((call) => call.index as number)
+      .filter((at) => at < from || at > to)
+    expect(outside).toHaveLength(1)
+    // After the claim is STARTED is fine and is where it stands; inside its
+    // `.then` is not. Indentation is the instrument: the effect body is four
+    // spaces and every callback in this file is deeper, so a push moved into
+    // the claim's continuation cannot keep this depth.
+    expect(SEAM).toMatch(/\n {4}pushProfileRow\(\)\n/)
   })
 })
 

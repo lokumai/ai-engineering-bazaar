@@ -83,7 +83,7 @@ function faceLegendRows(facts: CurriculumFacts): FaceLegendRows {
  * **Exported because the order is part of the specification and a test has to be
  * able to read it** (hazard H-P). The unit suite is `renderToStaticMarkup` with
  * no DOM, no Testing Library and no clicking, so the only things it can assert
- * are markup and constants; a hand-typed list of ten ids in a test file is a
+ * are markup and constants; a hand-typed list of eleven ids in a test file is a
  * second author of this table and would drift from it silently. The rendering
  * below maps over exactly this array, so what ships and what the test reads are
  * the same array in the same order — the two id-sequence assertions that pinned
@@ -181,7 +181,7 @@ export default function ProfilePage() {
   /**
    * The reading and the body for each row in `REGISTER_ROWS`, keyed by its id.
    *
-   * A record keyed by the id union rather than ten inline `<RegisterRow>`
+   * A record keyed by the id union rather than eleven inline `<RegisterRow>`
    * blocks, for one reason: the type makes a row that is in the table and not
    * rendered — or rendered and not in the table — a compile error rather than a
    * page that quietly lost a panel. `needsSession` is on the row rather than in

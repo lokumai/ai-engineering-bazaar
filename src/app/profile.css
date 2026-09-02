@@ -253,10 +253,10 @@
   }
 
   /* =========================================================================
-     §16.4 — the register. Ten rows, all closed, each stating its reading.
+     §16.4 — the register. Eleven rows, all closed, each stating its reading.
      ======================================================================== */
 
-  /* One instrument, not ten stacked panels: the outer hairline is the box, and
+  /* One instrument, not eleven stacked panels: the outer hairline is the box, and
      the grid's gap is a hairline of `--color-line` showing through between
      rows. A `border-bottom` per row (the mockup's construction) needs a
      `:last-child` exception and paints a double line wherever a row is

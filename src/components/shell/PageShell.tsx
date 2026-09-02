@@ -1,3 +1,4 @@
+import { ClaimReceipt } from '@/components/record/ClaimReceipt'
 import { Readout } from '@/components/record/Readout'
 import { curriculumFacts } from '@/lib/content/facts'
 import { RegistrationMarks } from './RegistrationMarks'
@@ -48,6 +49,11 @@ export function PageShell({
         <RegistrationMarks edge="top" />
         {/* §4.7 — 24px of side padding, dropping to 20px below 768px. */}
         <div className="mx-auto w-full max-w-[var(--width-shell)] px-5 md:px-6">
+          {/* §17.6 — the claim receipt, in the column and above the page's own
+              content, because it is news about the reader's record and not part
+              of whatever page they happened to land on. Renders nothing in the
+              prerender and nothing on a document where no claim was news. */}
+          <ClaimReceipt />
           {children}
         </div>
         <RegistrationMarks edge="bottom" className="mt-16" />

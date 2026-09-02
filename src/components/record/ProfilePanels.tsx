@@ -258,11 +258,19 @@ export function DrafterMark() {
  * `null` until the store has answered, which prints an em dash rather than a
  * zero nobody measured (§11.25).
  *
- * It is inside a closed register row, and that is sound rather than a
- * concession: a `<details>` body stays in the DOM, so find-in-page opens the row
- * on a match and a screen reader reaches it by heading. §16.4.1's rule is about
- * the READING, and the reading this row prints while closed is the sheet count
- * the strip above the legend reports.
+ * It is inside a register row that starts closed, and the fold's cost is real
+ * rather than argued away. **MEASURED** (2026-09-02, the built export served on
+ * :3111, Chrome over CDP `Accessibility.getFullAXTree`): with the row closed the
+ * accessibility tree holds 0 table, row or cell nodes for this legend; with it
+ * open, 29. Chrome hides a closed `<details>` body with
+ * `content-visibility: hidden` on `::details-content`, which takes the subtree
+ * out of the tree rather than leaving it there for a reader to find. What is
+ * exposed while closed is the row itself: the `<h2>` inside the `<summary>` is a
+ * level-2 heading (`READOUT`) and the summary is a disclosure named
+ * `READOUT 0 OF 32 SIGNED OFF`, so the AGGREGATE reading §16.4.1 asks for is
+ * available in both states. The per-subsystem counts are two steps away for
+ * every reader alike — assistive technology and sighted — and that is the price
+ * of the fold, stated here.
  */
 export function SubsystemLegend({
   facts,

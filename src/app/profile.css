@@ -121,23 +121,6 @@
     margin: 0 0 10px;
   }
 
-  /* A field and its buttons on one line while there is room, stacked when
-     there is not, and the buttons aligned to the field's own baseline rather
-     than to the block's — the label above the field would otherwise push the
-     controls out of line with it. */
-  .hl-drafter-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    gap: 8px;
-  }
-
-  .hl-drafter-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
   /* There is deliberately no `.hl-drafter-note` here. One was written for
      §16.3's provenance line, applied by nothing, and its comment quoted the
      wording `scope.ts` records as the REJECTED one rather than the string that

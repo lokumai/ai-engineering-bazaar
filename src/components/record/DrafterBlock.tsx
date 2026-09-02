@@ -148,7 +148,21 @@ export function DrafterBlock() {
                 <h3 id="identity" className="hl-panel-title">
                   In this browser
                 </h3>
-                <p className="hl-mark m-0 text-ink-faint">Local only</p>
+                {/* Not "Local only": `IdentityPanel` prints `NAME_SCOPE` two
+                    lines below this readout, and `AccountSync.pushProfileRow`
+                    upserts the record's identity into `profiles` for every
+                    signed-in reader — so "local only" and the sentence under it
+                    contradicted each other on one screen. The register bans a
+                    word, not a falsehood, which is why nothing failed.
+                    `/sign-in/`'s "LOCAL ONLY · …" readouts stay, because those
+                    describe an act (that form sends nothing) rather than the
+                    data. This names reach the way `RECORD_SCOPE` argues it: the
+                    browser holds the authoritative copy, the account a second
+                    one, and both readouts are then true in either session
+                    state. `/legend/`'s storage disclosure sits over the same
+                    `RECORD_SCOPE` paragraph and carries this same spelling, so
+                    one status is worded one way site-wide. */}
+                <p className="hl-mark m-0 text-ink-faint">This browser’s copy</p>
               </div>
 
               <IdentityPanel />

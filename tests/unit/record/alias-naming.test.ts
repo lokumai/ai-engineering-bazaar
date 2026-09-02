@@ -334,7 +334,10 @@ describe('§16.3.1 — where the naming is allowed to happen', () => {
     )
     expect(eraseGuard).toBeGreaterThan(-1)
 
-    const calls = [...SEAM.matchAll(/^\s*decideAliasFromAccount\(\)/gm)]
+    // Call sites, and the lookahead is what excludes the declaration: since
+    // the decider returns whether it wrote a name, `(): boolean` contains `()`
+    // too, and both real calls read the value so neither starts its line.
+    const calls = [...SEAM.matchAll(/decideAliasFromAccount\(\)(?!:)/g)]
     // One per claim outcome that settles what the account holds: `merged` and
     // `adopted`. `unreadable` and `off` decide nothing about the row yet.
     expect(calls).toHaveLength(2)
@@ -385,30 +388,52 @@ describe('§14.8.2 — when the profile row is pushed', () => {
    * decider's own body is delimited instead.
    */
   const decider = (): [number, number] => {
-    const from = SEAM.indexOf('function decideAliasFromAccount(): void {')
+    const from = SEAM.indexOf('function decideAliasFromAccount(): boolean {')
     const to = SEAM.indexOf('void instance', from)
     expect(from).toBeGreaterThan(-1)
     expect(to).toBeGreaterThan(from)
     return [from, to]
   }
 
-  it('pushes again, and only, when a name was actually written', () => {
+  it('pushes again from each claim branch, and only when the row moved', () => {
     const [from, to] = decider()
     const wrote = SEAM.indexOf("logEvent({ kind: 'setIdentity'")
     expect(wrote).toBeGreaterThan(from)
     expect(wrote).toBeLessThan(to)
 
-    const calls = [...SEAM.matchAll(/^\s*pushProfileRow\(\)$/gm)].map(
-      (call) => call.index as number,
+    // The decider does not push at all: the caller does, once, because the
+    // merge can have moved the identity in the same tick and one row wants one
+    // writer.
+    expect(SEAM.slice(from, to)).not.toContain('pushProfileRow()')
+    expect(SEAM.slice(from, to)).toContain('return true')
+
+    // Both claim branches, and both conditional: an unconditional push here
+    // would be a request on every mount, and no push at all is F2.
+    expect(SEAM).toContain(
+      'if (named || identityMovedForProfile(local.identity, merged.identity)) pushProfileRow()',
     )
-    // Two: the immediate one, which keeps a hung claim from costing the row
-    // altogether, and the one inside the `named !== null` branch.
-    expect(calls).toHaveLength(2)
-    const deferred = calls.filter((at) => at > from && at < to)
-    expect(deferred).toHaveLength(1)
-    // Inside the branch, not merely inside the function: a push on the flag-only
-    // reduction would be a request for a row nothing changed in.
-    expect(deferred[0]).toBeGreaterThan(wrote)
+    expect(SEAM).toContain('if (decideAliasFromAccount()) pushProfileRow()')
+  })
+
+  /**
+   * F2, REPORTED BY REVIEW. `mergeIdentity` gives the account's identity
+   * precedence, so a browser that typed `Ada` against an account row carrying
+   * `Bob` pushed `Ada`, merged `Bob` into the record, and left the row saying
+   * `Ada` for the whole session — the offer writes no name over a record that
+   * already has one, so nothing re-pushed. The comparison is the guard, and it
+   * has to cover every field the row prints: a merge that moved `mark` or
+   * `markSeed` alone changes what a manager panel draws.
+   */
+  it('compares every identity field the row is built from', () => {
+    const guard = SEAM.slice(SEAM.indexOf('function identityMovedForProfile('))
+    const body = guard.slice(0, guard.indexOf('\n}\n'))
+    for (const field of ['name', 'markSeed', 'mark', 'role']) {
+      expect(body).toContain(`before.${field} !== after.${field}`)
+    }
+    // Reference equality is the mistake it replaces: `mergeRecords` returns
+    // `local` itself only when the WHOLE record is unchanged, so a merge that
+    // folded in one sheet allocates an identity of equal values.
+    expect(body).not.toMatch(/\bbefore !== after\b/)
   })
 
   it('still pushes without waiting for the claim', () => {

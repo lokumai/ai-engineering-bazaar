@@ -154,7 +154,7 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
      * a record from syncing, and the panel already renders an absent profile
      * honestly.
      *
-     * ## Why it is a function, and called twice
+     * ## Why it is a function, and where it is called from
      *
      * MEASURED: this ran once, synchronously, on the line after `claim()` was
      * STARTED — so it read the identity as it stood before the claim resolved.
@@ -164,12 +164,34 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
      * column. Managers saw `USER 1a2b3c4d` for the whole of that session, and it
      * healed only on the next mount.
      *
-     * The immediate push is KEPT rather than moved behind the claim: a hung
-     * claim would otherwise mean no profile row at all, and this row is display
-     * data that has no reason to wait on two round trips. `decideAliasFromAccount`
-     * calls it a second time when — and only when — it actually wrote a name.
-     * `upsert` on the primary key is idempotent, so the second call costs one
-     * request in the first-sign-in case and nothing in any other.
+     * Three call sites, each answering a different question:
+     *
+     * 1. **Immediately, before the claim has settled.** KEPT rather than moved
+     *    behind the claim: a hung claim would otherwise mean no profile row at
+     *    all, and this row is display data that has no reason to wait on two
+     *    network round trips.
+     * 2. **The `merged` branch, when the merge moved the identity.** REPORTED BY
+     *    REVIEW, and the same defect one layer along: `mergeIdentity` gives the
+     *    ACCOUNT's identity precedence (`merge.ts:313-324`), so this browser can
+     *    have typed `Ada` while the account's row carries `Bob` from another
+     *    device. The immediate push upserted `Ada`, `update(() => merged)` then
+     *    wrote `Bob` into the record, and §16.3 decided to write no name at all
+     *    because the record already carried one — so nothing re-pushed and the
+     *    row read `Ada` for the rest of the session. Managers read that row
+     *    (§14.8.2).
+     * 3. **The `adopted` branch.** There was no account row to move the
+     *    identity, so the only thing that can have changed the row is a name
+     *    §16.3 derived from the address.
+     *
+     * Each of sites 2 and 3 is ONE call, not one per writer. Site 2 ORs the
+     * decider's answer with `identityMovedForProfile`, so a merge that moved the
+     * identity and an offer that wrote a name still cost a single request; site
+     * 3 has no account row, so no identity the claim could have moved, and the
+     * decider's answer is the whole condition there. It is a condition and not
+     * an unconditional second push because the common case is a mount where
+     * nothing moved at all, and `upsert` is idempotent — which makes a
+     * needlessly narrow condition the expensive mistake and a needlessly wide
+     * one merely a wasted request.
      *
      * It takes the identity from `snapshot()` at call time and never from a
      * closure, because the whole defect was a row built from a stale read.
@@ -242,6 +264,14 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
      * typed a name, signed in, and then cleared it was renamed from their address
      * on the next mount — see `aliasDecision`'s docblock for the reproduction.
      *
+     * ## Why it returns whether it wrote a name
+     *
+     * The profiles row is pushed by the CALLER and not from in here, because a
+     * merge can move the identity in the same tick (see `pushProfileRow`) and
+     * two writers of one row means two requests for one final value. This
+     * reports only what this write did; the caller owns whether the row still
+     * describes the record.
+     *
      * ## Why it is not called on `unreadable`
      *
      * An unreadable row may hold a name. Naming from the address would put a
@@ -250,7 +280,7 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
      * `unreadable` deliberately leaves the machine `pending`, so nothing is
      * being decided about that row yet.
      */
-    function decideAliasFromAccount(): void {
+    function decideAliasFromAccount(): boolean {
       const now = nowIso()
       let named: string | null = null
       update((data) => {
@@ -275,10 +305,9 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
       // there is a `wire.ts` change both halves compile against, not this fix.
       if (named !== null) {
         logEvent({ kind: 'setIdentity', payload: { named: true, fromEmail: true } })
-        // The row built before the claim carried no `display_name`, because at
-        // that instant the record had no name. See `pushProfileRow`.
-        pushProfileRow()
+        return true
       }
+      return false
     }
 
     void instance
@@ -349,15 +378,22 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
           // AFTER the merge is written, never before: the account's name wins
           // over this device's, so "this record has no name" is only true of
           // the merged record.
-          decideAliasFromAccount()
+          const named = decideAliasFromAccount()
+          // ONE push, after both writers have had their say — the merge, which
+          // can have replaced the name, seed, mark or role the row prints, and
+          // the offer, which can have supplied a name neither record had. See
+          // `pushProfileRow` for the `Ada`/`Bob` case this closes.
+          if (named || identityMovedForProfile(local.identity, merged.identity)) pushProfileRow()
           return
         }
 
         if (outcome.kind === 'adopted') {
           setSummary(summariseClaim(outcome.record, null, outcome.record))
           // No row existed, so nothing can arrive to contradict the offer. This
-          // is the first-sign-in case §16.3 is mostly about.
-          decideAliasFromAccount()
+          // is the first-sign-in case §16.3 is mostly about, and the same
+          // pattern as the branch above with one term dropped: no account row
+          // means no identity the claim could have moved.
+          if (decideAliasFromAccount()) pushProfileRow()
         }
 
         // `unreadable` and `off` say nothing to the reader here. `unreadable`
@@ -373,9 +409,10 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
 
     // §14.8.2 — pushed straight away, before the claim has settled, because a
     // manager's display is not worth waiting two network round trips for and the
-    // row is rewritten on the next sign-in anyway. The one identity this cannot
-    // see is a name §16.3 is about to derive from the address, which is why
-    // `decideAliasFromAccount` pushes again when it writes one.
+    // row is rewritten on the next sign-in anyway. The identity this cannot see
+    // is the one the claim is about to settle — a name derived from the address,
+    // or the account's own identity winning the merge — which is why each claim
+    // branch pushes again once it knows.
     pushProfileRow()
 
     return () => {
@@ -409,6 +446,33 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
         DISMISS
       </button>
     </div>
+  )
+}
+
+/**
+ * §14.8.2 — did the claim move anything the profiles row prints?
+ *
+ * All four of `identity`'s fields, because `profileRowFor` reads all four
+ * (`profile-sync.ts`) and `mergeIdentity` can move every one of them
+ * (`merge.ts:313-324`). It is a field-by-field comparison and not
+ * `before !== after`: `mergeRecords` returns `local` itself only when the WHOLE
+ * record is unchanged (`merge.ts:390`), so a merge that folded in one sheet
+ * allocates a fresh identity of equal values, and reference equality would send
+ * a request on almost every mount — the cost this condition exists to avoid.
+ *
+ * Not exported and not in `profile-sync.ts`: it answers a question about two
+ * moments in this seam's own control flow, and `profile-sync.ts` builds a row
+ * from one identity and knows nothing of a previous one.
+ */
+function identityMovedForProfile(
+  before: RecordData['identity'],
+  after: RecordData['identity'],
+): boolean {
+  return (
+    before.name !== after.name ||
+    before.markSeed !== after.markSeed ||
+    before.mark !== after.mark ||
+    before.role !== after.role
   )
 }
 

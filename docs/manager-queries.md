@@ -184,7 +184,8 @@ One row per person. The row *is* the same envelope the browser keeps.
     }
   },
   "days":  ["2026-08-14"],          // dates anything was written
-  "prefs": { "charKeys": true },
+  "prefs": { "charKeys": true,
+             "aliasNamedFor": null },  // account whose address the alias was offered from
   "meta":  { "lastExport": null, "persisted": true }
 }
 ```

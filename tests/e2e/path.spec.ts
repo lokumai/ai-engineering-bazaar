@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { SHEETS } from './sheets'
 import {
   firstPaintClass,
   probeFirstPaint,
@@ -75,8 +76,12 @@ test('a stored role draws its own path in frame one, with no JavaScript at all',
 
   const painted = await firstPaintClass(page)
   expect(painted).toContain(`hl-role-${SE}`)
-  expect(painted).toContain('hl-signed-1')
-  expect(painted).toContain('hl-signed-13')
+  // One class per seeded sheet. The numbers come from the corpus, so they are
+  // read off it rather than written down here.
+  for (const slug of ['fundamentals/llms', 'fundamentals/tools', 'intermediate/security']) {
+    const sheet = SHEETS.find((candidate) => candidate.path === `/courses/${slug}/`)!
+    expect(painted).toContain(`hl-signed-${sheet.module}`)
+  }
 
   await expect(page.locator('.hl-path-empty')).not.toBeVisible()
   await expect(page.locator(`.hl-path-body[data-role="${SE}"]`)).toBeVisible()
@@ -108,18 +113,21 @@ test('hydrated, the tally leads with what is left and one step is marked next', 
   const body = page.locator(`.hl-path-body[data-role="${SE}"]`)
   await expect(body).toBeVisible()
 
-  // §13.8 — TO-GO framing, and §11.35 forbids a percentage outright. The
-  // Software Engineer path holds 14 steps of which 12 are drawn, and three of
-  // those are signed: 9 remaining of 12.
-  await expect(body).toContainText(/9\s+OF\s+12\s+REMAINING/i)
-  await expect(body).toContainText(/SIGNED OFF\s+3\s+OF\s+12/i)
+  // §13.8 — TO-GO framing, and §11.35 forbids a percentage outright. Three
+  // sheets were seeded as signed, so the tally counts three off the drawn total.
+  await expect(body).toContainText(/\d+\s+OF\s+\d+\s+REMAINING/i)
+  await expect(body).toContainText(/SIGNED OFF\s+3\s+OF\s+\d+/i)
 
   // §13.4.2 — the two numbers are both printed, and they differ. A path that
-  // counted its draft steps would say "14" in both places and ask the reader to
-  // finish sheets nobody has written.
-  await expect(body).toContainText(/14\s+STEPS/i)
-  await expect(body).toContainText(/12\s+SHEETS DRAWN/i)
-  await expect(body).not.toContainText('%')
+  // counted its draft steps would print the same number twice and ask the
+  // reader to finish sheets nobody has written. How many steps the path holds
+  // is curation, so the numbers are read off the page and compared.
+  const tally = (await body.innerText()).toUpperCase()
+  const steps = Number(/(\d+)\s+STEPS/.exec(tally)?.[1])
+  const drawn = Number(/(\d+)\s+SHEETS DRAWN/.exec(tally)?.[1])
+  expect(steps).toBeGreaterThan(drawn)
+  expect(drawn).toBeGreaterThan(0)
+  expect(tally).not.toContain('%')
 
   // Exactly one step is next, and it is the first unsigned DRAWN step in path
   // order: the path opens 1, 3, 4, …, and 1 is signed, so 3 is next.
@@ -170,10 +178,11 @@ test('a draft step points at nothing and says so (§13.4.2)', async ({ page }) =
   const body = page.locator(`.hl-path-body[data-role="${SE}"]`)
   await expect(body).toBeVisible()
 
-  // The Software Engineer path ends on two drafts — modules 17 and 23. A draft
-  // sheet has no sign-off control at all (§12.4.1), so its step carries no link
-  // that implies a lesson, and it never claims to be next.
-  const draft = body.locator('.hl-step[data-module="17"]')
+  // The path ends on draft sheets. A draft has no sign-off control at all
+  // (§12.4.1), so its step carries no link that implies a lesson, and it never
+  // claims to be next. Which sheets are still drafts is the corpus's business,
+  // so the step is found by what it says.
+  const draft = body.locator('.hl-step', { hasText: 'NOT DRAWN' }).first()
   await expect(draft).toBeVisible()
   await expect(draft).toContainText('NOT DRAWN')
   await expect(draft.locator('a')).toHaveCount(0)

@@ -141,9 +141,10 @@ test('a row in the manifest is one tab stop, and it is reachable', async ({ page
   await page.goto('/')
 
   // §5.3 — the whole row is one link target, so it must not be two or three
-  // tab stops per row across a thirty-two row table.
+  // tab stops per row. One per row, however many rows the set has.
   const stops = await page.locator('.hl-index tbody a, .hl-index tbody [tabindex]:not([tabindex="-1"])').count()
-  expect(stops).toBe(32)
+  const rows = await page.locator('.hl-index tbody tr').count()
+  expect(stops).toBe(rows)
 
   // The scroll region itself is focusable so a keyboard can reach the columns
   // that scroll (§10.3).

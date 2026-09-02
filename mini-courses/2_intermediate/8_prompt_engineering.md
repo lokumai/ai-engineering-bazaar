@@ -52,10 +52,16 @@ network.
 Inside that network are neurons, and a prompt decides which ones fire. Some activate strongly, some
 weakly, some not at all. Change the words and you change that pattern, which changes the output.
 
+![Which neurons light up](./images/neurons-activation.jpeg)  
+*The weights are identical in both cases. A prompt only decides which of them get used, which is why the same model answers an arithmetic question with one part of itself and a painting question with another.*
+
 Think of a DJ mixer. Volume, bass, echo, one knob each. The DJ never swaps the hardware, they move
 the knobs, listen, and move them again until the room sounds right. Your prompt is a setting of
 those knobs, and prompt engineering is writing the text that turns up the parts of the network you
 need for this job.
+
+![Turning the knobs](./images/prompt-mixer.jpeg)  
+*Every knob here is something this module covers. None of them has a panel you can reach: the prompt text is the only thing that moves them.*
 
 The knobs, though, are unlabelled and out of reach, and text is your only handle on them. Which is
 why this work is experimental rather than theoretical, and why nobody can hand you the correct
@@ -96,7 +102,7 @@ graph TD
 
 That is why this module only covers what is genuinely useful in a daily AI engineering job. The
 sophisticated end of the subject lives in
-[Module 21: Advanced Prompting](../3_expert/21_advanced_prompting.md).
+[Module 20: Advanced Prompting](../3_expert/20_advanced_prompting.md).
 
 When you want the full catalogue rather than the useful subset, the [Prompt Engineering
 Guide](https://www.promptingguide.ai/) has it. And treat what follows as starting points, not a
@@ -473,7 +479,7 @@ and what does a role prompt actually change?
 - [Stop Overthinking: A Survey on Efficient Reasoning for Large Language Models](https://arxiv.org/abs/2503.16419): the overthinking literature in one place
 - [When "A Helpful Assistant" Is Not Really Helpful](https://arxiv.org/abs/2311.10054): the study that took the shine off persona prompts
 - [System prompt leaks](https://github.com/asgeirtj/system_prompts_leaks): production system prompts, captured verbatim
-- [Module 21: Advanced Prompting](../3_expert/21_advanced_prompting.md): the techniques this module deliberately skipped
+- [Module 20: Advanced Prompting](../3_expert/20_advanced_prompting.md): the techniques this module deliberately skipped
 
 **Previous Module:** [Fundamentals - Module 7: Multi-Agent](../1_fundamentals/7_multi_agent.md)
 **Next Module:** [Module 9: Context Engineering](9_context_engineering.md)

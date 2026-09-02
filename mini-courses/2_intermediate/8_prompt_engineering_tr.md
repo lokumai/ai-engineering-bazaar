@@ -36,10 +36,16 @@ O network'ün içinde neuron'lar var, ve hangilerinin ateşleneceğine prompt ka
 güçlü aktive oluyor, bazıları zayıf, bazıları hiç. Kelimeleri değiştirdiğinde o deseni
 değiştiriyorsun, o da output'u değiştiriyor.
 
+![Which neurons light up](./images/neurons-activation.jpeg)  
+*İki durumda da weight'ler aynı. Prompt sadece hangilerinin kullanılacağına karar veriyor; aynı modelin bir aritmetik sorusunu kendisinin bir parçasıyla, bir resim sorusunu başka bir parçasıyla cevaplamasının sebebi bu.*
+
 Bir DJ mixer'ı düşün. Volume, bass, echo, her birine bir düğme. DJ donanımı hiç değiştirmiyor,
 düğmeleri çeviriyor, dinliyor, ve oda doğru duyulana kadar tekrar çeviriyor. Senin prompt'un o
 düğmelerin bir ayarı, ve prompt engineering de network'ün bu iş için ihtiyacın olan kısımlarını
 yükselten metni yazmak.
+
+![Turning the knobs](./images/prompt-mixer.jpeg)  
+*Buradaki her düğme bu modülün kapsadığı bir şey. Hiçbirinin elini uzatabileceğin bir paneli yok: onları oynatan tek şey prompt metni.*
 
 Ama o düğmelerin etiketi yok ve elin onlara yetişmiyor; onlara olan tek tutamacın metin. Bu işin
 teorik değil deneysel olmasının sebebi bu, ve senin görevin için doğru prompt'u kimsenin eline
@@ -82,7 +88,7 @@ graph TD
 
 Bu modülün sadece günlük AI engineering işinde gerçekten faydalı olanı kapsamasının sebebi bu.
 Konunun sofistike ucu
-[Modül 21: Advanced Prompting](../3_expert/21_advanced_prompting_tr.md) içinde yaşıyor.
+[Modül 20: Advanced Prompting](../3_expert/20_advanced_prompting_tr.md) içinde yaşıyor.
 
 Faydalı alt kümesi değil de bütün katalog istiyorsan, [Prompt Engineering
 Guide](https://www.promptingguide.ai/) onu veriyor. Ve aşağıdakileri bir müfredat değil, başlangıç
@@ -463,7 +469,7 @@ bir role prompt'u gerçekte neyi değiştiriyor?
 - [Stop Overthinking: A Survey on Efficient Reasoning for Large Language Models](https://arxiv.org/abs/2503.16419): aşırı düşünme literatürü tek yerde
 - [When "A Helpful Assistant" Is Not Really Helpful](https://arxiv.org/abs/2311.10054): persona prompt'larının cazibesini alan çalışma
 - [System prompt leaks](https://github.com/asgeirtj/system_prompts_leaks): production system prompt'ları, birebir toplanmış
-- [Modül 21: Advanced Prompting](../3_expert/21_advanced_prompting_tr.md): bu modülün kasten atladığı teknikler
+- [Modül 20: Advanced Prompting](../3_expert/20_advanced_prompting_tr.md): bu modülün kasten atladığı teknikler
 
 **Önceki Modül:** [Fundamentals - Modül 7: Multi-Agent](../1_fundamentals/7_multi_agent_tr.md)
 **Sonraki Modül:** [Modül 9: Context Engineering](9_context_engineering_tr.md)

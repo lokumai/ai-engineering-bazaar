@@ -18,8 +18,28 @@ import { offeredMark } from './RolePanel'
  * twenty form controls. The two things a reader comes to this sheet to do —
  * name themselves, and connect the record to an account — sat about 700 words
  * apart, in panels one and nine. This block is both of them in one box, and
- * everything else on the page folds into the register below it. The measured
- * opening after the change is 163 words.
+ * everything else on the page folds into the register below it.
+ *
+ * §16.0 also names an opening of **163 words**, and that number is the approved
+ * mockup's — `docs/superpowers/mockups/profile-v2.html`, whose halves hold five
+ * controls and no `NAME_SCOPE`, no `RECORD_SCOPE`, no five-state sign-in panel.
+ * It is the target this block was drawn against, not a property of the shipped
+ * page, and a maintainer who reads it as one will "fix" a regression that never
+ * happened. The shipped figures, measured the way §16.0 measured its 1260 —
+ * `renderToStaticMarkup(<ProfilePage />)`, no island mounted, tags stripped,
+ * tokens containing a letter or digit counted:
+ *
+ * | Measurement | Words |
+ * | --- | --- |
+ * | `<main>`, every fold's body included | 999 |
+ * | `<main>` as it opens, closed folds' bodies excluded | 398 |
+ * | this block alone | 317 |
+ *
+ * So the reader's first screen is 398 words rather than 1260, and 317 of them
+ * are the two things they came to do. The gap to the mockup's 163 is copy the
+ * mockup never carried: the field hints and the scope sentences that state where
+ * the record goes, which §12.1.7 requires next to the control and which are
+ * therefore not the register's to hide.
  *
  * **One box, two halves, and the half rule is an argument rather than a
  * layout.** Both halves answer one question — how this record is recognised —
@@ -31,9 +51,11 @@ import { offeredMark } from './RolePanel'
  * hairline while claiming to be a rule.
  *
  * **Each half is a `<section aria-labelledby>` rather than a `<div>`**, which
- * costs nothing and keeps two ids resolving on headings at the level they
- * already occupied: `identity`, and `hl-account-head`. The second one is the
- * reason this matters — `AuthShell` in `inline` chrome deliberately emits no
+ * costs nothing and keeps two ids resolving: `identity`, and `hl-account-head`.
+ * Both moved from an `h2` to an `h3` here, because §16.7 gives the block the
+ * `h2` and each half an `h3`; what has to survive a heading level is the
+ * fragment, and both `#identity` and `#hl-account-head` still land on a heading
+ * that names the same thing. The second one is the reason this matters — `AuthShell` in `inline` chrome deliberately emits no
  * heading and no id (its own header explains why: two elements with
  * `hl-account-head` would make the anchor ambiguous rather than redundant), so
  * the caller owns that id, and the caller is this file.

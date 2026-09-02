@@ -14,7 +14,7 @@ import { noteAliasNamed, setIdentity } from '@/lib/record/events'
 import { migrate } from '@/lib/record/migrate'
 import { buildProgress } from '@/lib/record/progress'
 import { carriesNothing, SCHEMA_VERSION, type RecordData } from '@/lib/record/schema'
-import { attachSync, nowIso, snapshot, update } from '@/lib/record/store'
+import { attachSync, logEvent, nowIso, snapshot, update } from '@/lib/record/store'
 import { createSync } from '@/lib/record/sync'
 import type { RemoteEnvelope } from '@/lib/record/wire'
 import { createRemoteRecordStore } from '@/lib/supabase/remote-store'
@@ -139,7 +139,7 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
     const account: SessionUser = user
 
     /**
-     * §16.3 — the alias, named from the address, ONCE.
+     * §16.3 — the alias, decided from the address, ONCE.
      *
      * ## Why it is here and not in `SignInPanel`
      *
@@ -162,8 +162,19 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
      * `snapshot()` taken on the line before, with no window at all between the
      * decision and the write — so the guards are evaluated inside it and the
      * name and the flag land in ONE reduction. A half-written state (named, not
-     * flagged) would re-offer on the next `TOKEN_REFRESHED` and overwrite a name
+     * flagged) would re-decide on the next `TOKEN_REFRESHED` and overwrite a name
      * the reader had since edited.
+     *
+     * ## Why the flag is written even when no name is
+     *
+     * This is the F1 repair, and it is the reason the pure function returns a
+     * DECISION rather than a name: `aliasDecision` is non-null whenever the
+     * question has been settled for this account, including the case where the
+     * record already carries a name and the answer is "write nothing". Writing
+     * the flag then is what makes a later `REMOVE NAME` final. The old code
+     * returned before `noteAliasNamed` in exactly that case, so a reader who had
+     * typed a name, signed in, and then cleared it was renamed from their address
+     * on the next mount — see `aliasDecision`'s docblock for the reproduction.
      *
      * ## Why it is not called on `unreadable`
      *
@@ -173,20 +184,32 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
      * `unreadable` deliberately leaves the machine `pending`, so nothing is
      * being decided about that row yet.
      */
-    function nameAliasFromAccount(): void {
+    function decideAliasFromAccount(): void {
       const now = nowIso()
-      update(
-        (data) => {
-          const offered = aliasNameFor(data, account)
-          if (offered === null) return data
-          return noteAliasNamed(setIdentity(data, { name: offered }, now), account.id, now)
-        },
-        // §14.2.3 — the log row says what the act WAS, and this act is not the
-        // reader typing a name. `setIdentity` is the only kind `wire.ts` has for
-        // a name (and adding one there is not this section's change), so the
-        // payload carries the distinction instead.
-        { kind: 'setIdentity', payload: { named: true, fromEmail: true } },
-      )
+      let named: string | null = null
+      update((data) => {
+        const decision = aliasDecision(data, account)
+        if (decision === null) return data
+        named = decision.name
+        const withName =
+          decision.name === null ? data : setIdentity(data, { name: decision.name }, now)
+        return noteAliasNamed(withName, account.id, now)
+      })
+      // §14.2.3 — the log row says what the act WAS, and this act is not the
+      // reader typing a name. `setIdentity` is the only kind `wire.ts` has for a
+      // name (and adding one there is not this section's change), so the payload
+      // carries the distinction instead.
+      //
+      // Filed AFTER the write and only when a name was actually written, which
+      // is why it is `logEvent` and not `update`'s event argument: that argument
+      // is fixed at the call site, and since the F1 repair this reduction can
+      // land the flag ALONE. A `setIdentity` row for a write that set no
+      // identity would be a log entry describing an act nobody performed, and
+      // `EventKind` has no member for "the offer was decided" — inventing one
+      // there is a `wire.ts` change both halves compile against, not this fix.
+      if (named !== null) {
+        logEvent({ kind: 'setIdentity', payload: { named: true, fromEmail: true } })
+      }
     }
 
     void instance
@@ -257,7 +280,7 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
           // AFTER the merge is written, never before: the account's name wins
           // over this device's, so "this record has no name" is only true of
           // the merged record.
-          nameAliasFromAccount()
+          decideAliasFromAccount()
           return
         }
 
@@ -265,7 +288,7 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
           setSummary(summariseClaim(outcome.record, null, outcome.record))
           // No row existed, so nothing can arrive to contradict the offer. This
           // is the first-sign-in case §16.3 is mostly about.
-          nameAliasFromAccount()
+          decideAliasFromAccount()
         }
 
         // `unreadable` and `off` say nothing to the reader here. `unreadable`
@@ -348,58 +371,104 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
 }
 
 /**
- * §16.3 — may this record be named from the address, and with what?
+ * §16.3 — has this account's offer been settled, and did it yield a name?
  *
  * Pure, exported and separated from the closure that writes it for one reason:
  * every constraint §16.3 places on the offer is a decision about a record and a
  * session, and both are values. The seam around it owns WHEN (after the claim
  * resolves) and HOW (one reduction); this owns WHETHER. That is what lets
- * `tests/unit/record/alias-naming.test.ts` pin all four answers in node with no
+ * `tests/unit/record/alias-naming.test.ts` pin every answer in node with no
  * store, no clock, no session and no supabase client.
  *
- * The three guards it holds, each against the failure it was measured to stop:
+ * ## What this used to be, and the defect that changed it
  *
- * 1. **The name must be absent.** §16.3's first constraint. `!== null` rather
- *    than a blank-aware check (`merge.ts`'s `blank()`) on purpose: every writer
- *    of `identity.name` puts `sanitiseName`'s output there, which is never
- *    whitespace-only, and `mergeIdentity` corrects a remote `''` to the local
- *    value at the source. A record holding `' '` is therefore only reachable by
- *    hand-editing `localStorage`, and the stricter test can only ever DECLINE to
- *    offer — the failure direction that costs the reader a pre-filled field
- *    rather than the name they typed.
+ * It was `aliasNameFor`, returning the name to write or null, and its FIRST
+ * guard was `if (data.identity.name !== null) return null`. The docblock claimed
+ * `prefs.aliasNamedFor` "is what makes REMOVE NAME final". It was not, and two
+ * reviewers reproduced the same three lines:
  *
- * 2. **The session must carry the email identity.** An OAuth account that hides
+ *     typed   = setIdentity(EMPTY_RECORD, { name: 'Bob' })  -> null, flag unset
+ *     cleared = setIdentity(typed, { name: null })          -> flag STILL unset
+ *     aliasNameFor(cleared, { email: 'ada@example.com' })   -> 'ada'
+ *
+ * The flag recorded that an offer had been **taken**, never that one had been
+ * **decided**: a reader whose record already carried a name when they signed in
+ * returned at guard 1, so `noteAliasNamed` was never reached and nothing durable
+ * said the question had been asked. Clear the name afterwards — an explicit
+ * `REMOVE NAME`, §16.3's third constraint calls it a decision — and the next
+ * claim wrote the local part of the address over it. One reload is enough: the
+ * effect runs on EVERY mount with a session (see the `merged` branch above).
+ *
+ * So the shape changed with the meaning. **Decide once, not take once.** A
+ * non-null return means "record the decision for this account"; `name` is what
+ * the address yielded, and null there means the decision was to write no name —
+ * because the record already carries one, or because the address has no usable
+ * local part. Either way the flag lands, and the question is never re-asked.
+ *
+ * The guards, each against the failure it was measured to stop:
+ *
+ * 1. **The session must carry the email identity.** An OAuth account that hides
  *    its address yields `email: null`, so `aliasFromEmail` would return null
  *    anyway — and both stops are kept, because they answer different questions.
- *    This one says the offer has no standing here at all; the null return says
+ *    This one says the offer has no standing here at all; a null `name` says
  *    there was no usable name in the address. A GitHub account whose token
  *    happens to expose a `noreply` address is refused by the first, which is the
- *    case the second cannot see.
+ *    case the second cannot see. It is the one guard that returns NOTHING rather
+ *    than a decision: an account that never had an address to offer from has
+ *    nothing to record, and a flag written for it would silence a later session
+ *    of the same account that does carry the address.
  *
- * 3. **Once per account.** `prefs.aliasNamedFor` is the durable record of the
- *    offer having been made, and it is what makes `REMOVE NAME` final: §16.3's
- *    third constraint says clearing the alias is a decision, and re-offering
- *    would overrule it. It also closes hazard 7 — `AccountSync`'s effect deps
- *    are `[userId, user, facts]` and `user` is a NEW OBJECT on every `setView`,
- *    so `INITIAL_SESSION`, `TOKEN_REFRESHED`, a cross-tab sign-in and
- *    `refresh()` each re-run the claim. Without a flag in the record the offer
- *    would fire on every one of them, and every one after the reader cleared
- *    the field would put the address back.
+ * 2. **Once per account.** `prefs.aliasNamedFor` is the durable record that the
+ *    question has been settled, and it is now what actually makes `REMOVE NAME`
+ *    final. It also closes hazard 7 — `AccountSync`'s effect deps are
+ *    `[userId, user, facts]` and `user` is a NEW OBJECT on every `setView`, so
+ *    `INITIAL_SESSION`, `TOKEN_REFRESHED`, a cross-tab sign-in and `refresh()`
+ *    each re-run the claim. Without a flag in the record the offer would fire on
+ *    every one of them.
+ *
+ * 3. **A name already on the record is never overwritten** — §16.3's first
+ *    constraint, and it is now a `name: null` and not an early return, which is
+ *    the whole fix. `!== null` rather than a blank-aware check (`merge.ts`'s
+ *    `blank()`) on purpose: every writer of `identity.name` puts `sanitiseName`'s
+ *    output there, which is never whitespace-only, and `mergeIdentity` corrects a
+ *    remote `''` to the local value at the source. A record holding `' '` is
+ *    therefore only reachable by hand-editing `localStorage`, and the stricter
+ *    test can only ever DECLINE to write a name — the failure direction that
+ *    costs the reader a pre-filled field rather than the name they typed.
  *
  * The flag is compared to `user.id` and not to a boolean so that a SECOND
  * account signing in at this browser is offered its own name once. §14's whole
  * position is that the record belongs to the browser and the account is a copy;
- * a boolean would let the first account's offer silence the second's.
+ * a boolean would let the first account's decision silence the second's.
  *
  * `prefs` is local-wins in `mergeRecords` (`merge.ts:377`), so this flag never
- * travels to a second browser — which is why guard 1 and not this one is what
- * stops a second browser re-offering over a name that arrived from the account.
+ * travels to a second browser — which is why guard 3, and not guard 2, is what
+ * stops a second browser writing a name over one that arrived from the account.
+ *
+ * ## What the widened flag costs, and why it is the right side to fail on
+ *
+ * `IdentityPanel`'s `TAKEN FROM THE ADDRESS YOU SIGNED IN WITH` note is gated on
+ * the flag AND on the stored name still equalling `aliasFromEmail`'s output. The
+ * flag now also covers a reader who TYPED their name before signing in, so a
+ * reader whose typed name happens to be exactly the local part of their own
+ * address (`ada` for `ada@example.com`) now sees that note over a name they
+ * chose. That imprecision is in the gate rather than in this function: it
+ * compares the VALUE against the offer and has never held provenance, so the
+ * same note already appeared for a reader who retyped the offered name after
+ * changing it. The alternative is the defect above — an address written over an
+ * explicit `REMOVE NAME`, which destroys a decision rather than mislabelling a
+ * string the reader can see and change from the control the note names.
  */
-export function aliasNameFor(data: RecordData, user: SessionUser): string | null {
-  if (data.identity.name !== null) return null
+export interface AliasDecision {
+  /** The name to write, or null to record the decision and write no name. */
+  name: string | null
+}
+
+export function aliasDecision(data: RecordData, user: SessionUser): AliasDecision | null {
   if (!carriesEmailIdentity(user)) return null
   if (data.prefs.aliasNamedFor === user.id) return null
-  return aliasFromEmail(user.email)
+  if (data.identity.name !== null) return { name: null }
+  return { name: aliasFromEmail(user.email) }
 }
 
 /**

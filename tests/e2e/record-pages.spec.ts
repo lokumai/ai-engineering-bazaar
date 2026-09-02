@@ -16,7 +16,7 @@ import {
   seedRecord,
   slugOf,
 } from './record'
-import { CATEGORY_PATHS, SHEETS, SHEET_COUNT, sheetByModule } from './sheets'
+import { CATEGORY_PATHS, DRAWN_COUNT, SHEETS, SHEET_COUNT, sheetByModule } from './sheets'
 import { watchPage } from './watch'
 
 /**
@@ -880,6 +880,176 @@ test('§16.4.1 / §16.4.2 — a summary reading comes from the body it summarise
       ).toBe(true)
     }
   }
+})
+
+/**
+ * §16.4.1 — the notation each row reads in, pinned per row at two fixed seeds.
+ *
+ * **This gate exists because the two implications above were MEASURED to be
+ * blind to the one defect that would make folding dishonest.** A reviewer
+ * swapped `uptime`'s reading with `stamps`', hard-coded `StorageReading` to
+ * `PERSISTENT · QUERIED` with its hydration gate dropped, made `RoleReading`
+ * return `NO ROLE ON RECORD` unconditionally and inverted `CharKeysReading` —
+ * four readings lying at once, one of them asserting persistence the browser was
+ * never asked about — and the whole suite stayed green: 2782 unit tests, 365 e2e
+ * tests, byte-identical to the clean baseline. Reproduced here before this test
+ * was written: with those four mutations in the tree, `record-pages.spec.ts` ran
+ * 25/25 green.
+ *
+ * **Why the implications cannot see it.** They are one-way. "A reading that
+ * moved must have a body that moved" is satisfied by a swap — both readings move
+ * and both bodies move — and it says nothing at all about a reading with no
+ * digits in it, which is four of the ten rows. `isReading` only asks for a
+ * count, a dash or an upper-case phrase, so `PERSISTENT · QUERIED` is a
+ * well-formed reading of a fact nobody looked up.
+ *
+ * **What is asserted, and what is deliberately not.** For each row, at each of
+ * the two seeds, the expected reading, verbatim. The table pins the row's
+ * NOTATION to its SUBJECT — `OF LAST 14 DAYS` is the uptime row's phrase and
+ * nowhere else's — which is what a swap breaks and what a hard-coded value
+ * breaks. It does not claim to know any row's notation in general: it is ten
+ * literals at two seeds this file authored, and a reading may change its wording
+ * freely as long as whoever changes it says so here.
+ *
+ * Digits are written out only where this suite has its own authority for the
+ * number: `sheets.ts`'s hand-typed drawing set gives the readout's numerator and
+ * denominator, and the seeds below state their own days and submittals. Where the
+ * number is a measurement of the corpus's internals or of the browser — how many
+ * stamps the shelf holds, how many bytes a record occupies — `#` stands for one
+ * group-separated number, because a literal there would be this file guessing at
+ * a fact it cannot check. Those are exactly the rows the "a counted reading must
+ * count the record" implication above already covers.
+ *
+ * **A new row cannot skip this table.** `satisfies Record<RegisterRowId, …>`
+ * makes a row added to `REGISTER_ROWS` without an entry here a `tsc` failure,
+ * and `npm run typecheck` is the first gate in CI; the key-set assertion in the
+ * test repeats it at runtime for anyone reading a red test rather than a red
+ * compile.
+ */
+type RowId = (typeof REGISTER_ROWS)[number]['id']
+
+/** The four answers `storageReadout()` is typed to return, and no fifth. */
+const STORAGE_ANSWERS = /^(PERSISTENT|BEST-EFFORT|UNAVAILABLE|UNKNOWN)$/
+
+const EXPECTED_READINGS = {
+  readout: {
+    thin: `0 OF ${SHEET_COUNT} SIGNED OFF`,
+    // Every drawn sheet is signed off in the rich seed; the denominator is the
+    // whole set, drawn or not, which is what the strip counts against.
+    rich: `${DRAWN_COUNT} OF ${SHEET_COUNT} SIGNED OFF`,
+  },
+  // 14 is §7.3's window, which the strip in this row's body draws as fourteen
+  // ticks; the numerator is the seed's own day list.
+  uptime: {
+    thin: '0 OF LAST 14 DAYS',
+    rich: `${(EVERYTHING_RECORDED.days ?? []).length} OF LAST 14 DAYS`,
+  },
+  stamps: { thin: '0 OF # EARNED', rich: '# OF # EARNED' },
+  submittals: { thin: 'NO SUBMITTAL REGISTERED', rich: '1 FILED' },
+  // `SOFTWARE ENGINEER` is `roles.ts`'s label for the seeded `software-engineer`,
+  // upper-cased by `.hl-register-reading` rather than by the component.
+  role: { thin: 'NO ROLE ON RECORD', rich: 'SOFTWARE ENGINEER' },
+  // The default build ships accounts off, and this is the one spelling of that
+  // status (§16.6) — so this row also pins the wording the four surfaces in the
+  // fold share.
+  'hl-orgs-head': { thin: 'ACCOUNTS NOT ENABLED YET', rich: 'ACCOUNTS NOT ENABLED YET' },
+  storage: { thin: STORAGE_ANSWERS, rich: STORAGE_ANSWERS },
+  // One key: the record's. The quarantine key is absent in both seeds, and a
+  // second key appearing here would be a payload no reader asked for.
+  raw: { thin: '1 KEYS · # BYTES', rich: '1 KEYS · # BYTES' },
+  data: { thin: 'YOUR COPY OF THE RECORD', rich: 'YOUR COPY OF THE RECORD' },
+  keyboard: { thin: 'CHARACTER KEYS ON', rich: 'CHARACTER KEYS OFF' },
+} as const satisfies Record<RowId, { thin: string | RegExp; rich: string | RegExp }>
+
+/**
+ * The table's entries as anchored patterns: a literal becomes an equality test,
+ * `#` becomes one group-separated number. Escaped rather than interpolated, so
+ * the `·` and the `-` in `BEST-EFFORT` are characters and not syntax.
+ */
+function readingPattern(expected: string | RegExp): RegExp {
+  if (expected instanceof RegExp) return expected
+  return new RegExp(
+    `^${expected
+      .split('#')
+      .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+      .join('\\d{1,3}(?:,\\d{3})*')}$`,
+  )
+}
+
+test('§16.4.1 — each row reads in its own notation, and the notation is pinned to the subject', async ({
+  page,
+  browser,
+}) => {
+  // Two contexts for the same reason the test above uses two: `seedRecord` only
+  // writes when the key is absent, and both records have to be there before
+  // channel A runs.
+  await seedRecord(page, NOTHING_RECORDED)
+  await page.goto('/profile/')
+  const thin = await settledRegister(page)
+
+  const second = await browser.newContext()
+  const rich = await (async () => {
+    const other = await second.newPage()
+    try {
+      await seedRecord(other, EVERYTHING_RECORDED)
+      await other.goto('/profile/')
+      return await settledRegister(other)
+    } finally {
+      await second.close()
+    }
+  })()
+
+  // The compile-time guarantee, restated where a failing run can print it.
+  expect(
+    Object.keys(EXPECTED_READINGS).sort(),
+    'a register row has no expected reading in EXPECTED_READINGS',
+  ).toEqual(REGISTER_ROWS.map((row) => row.id).sort())
+
+  for (const { id } of REGISTER_ROWS) {
+    const expected = EXPECTED_READINGS[id]
+    expect(
+      thin[id].reading,
+      `${id}: an empty record reads "${thin[id].reading}", not "${String(expected.thin)}"`,
+    ).toMatch(readingPattern(expected.thin))
+    expect(
+      rich[id].reading,
+      `${id}: a full record reads "${rich[id].reading}", not "${String(expected.rich)}"`,
+    ).toMatch(readingPattern(expected.rich))
+  }
+
+  /**
+   * The one row whose reading is an environment answer rather than a count gets
+   * the stronger claim available to it: the summary is the same string its own
+   * body's first `<dd>` prints, from the same call, in the same notation. That is
+   * what fails on a reading hard-coded to a value nothing queried.
+   *
+   * Both are read in ONE `evaluate`, after waiting for the browser to answer,
+   * and the reason is a race this assertion measured: `navigator.storage
+   * .persisted()` resolves after `settledRegister` has already seen two equal
+   * snapshots, so the snapshot above holds `UNKNOWN` while the live page holds
+   * `BEST-EFFORT` — both true, half a frame apart. Comparing the snapshot to a
+   * later read of the body reported a drift that was only elapsed time, which is
+   * why `UNKNOWN` is one of the four answers the table admits for this row.
+   */
+  const STORAGE_ROW = 'section[aria-labelledby="storage"]'
+  await expect
+    .poll(() => definition(page, STORAGE_ROW, 'Storage'))
+    .toMatch(/^(PERSISTENT|BEST-EFFORT|UNAVAILABLE)$/)
+
+  const storage = await page.evaluate((scope) => {
+    const root = document.querySelector(scope) as HTMLElement
+    const reading = (root.querySelector('.hl-register-reading') as HTMLElement).innerText.trim()
+    let body = ''
+    for (const dt of root.querySelectorAll('dt')) {
+      if ((dt.textContent ?? '').trim().toLowerCase() !== 'storage') continue
+      body = ((dt.nextElementSibling as HTMLElement | null)?.textContent ?? '').trim()
+    }
+    return { reading, body }
+  }, STORAGE_ROW)
+
+  expect(storage.body, 'the STORAGE reading is not the answer its own body prints').toBe(
+    storage.reading,
+  )
 })
 
 test('§12.1.6 — STORAGE prints the answer the browser gave, never an assumption', async ({

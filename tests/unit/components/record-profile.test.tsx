@@ -91,6 +91,26 @@ const MARK_OFFERED_SEEDED = renderToStaticMarkup(<MarkPicker offered="seeded" />
  * what makes a string a readout on this site; `--`, the numerals and the mark
  * glyphs' `d` attributes fall out because they are attributes, not text.
  */
+/**
+ * §16.2.1's one spelling of the offer, repeated here because `MarkPicker` holds
+ * it as a private `const`. The assertions below are about WHERE it appears, so
+ * they need the string; a second spelling would fail them, which is the point.
+ */
+const OFFER = 'OFFERED FOR YOUR ROLE'
+
+/**
+ * One mark cell's markup, from its own `<label>` to that label's close.
+ *
+ * The cells never nest, so the close is the next one — which is what lets a
+ * property be stated about the CONTENT of one cell rather than about the row as
+ * a whole. That distinction is the whole of F8.
+ */
+function cellOf(markup: string, id: string): string {
+  const found = new RegExp(`<label[^>]*data-hl-mark="${id}"[\\s\\S]*?</label>`).exec(markup)
+  expect(found, `the ${id} cell`).not.toBeNull()
+  return (found as RegExpExecArray)[0]
+}
+
 /** The shared description line's own content, by the id every radio points at. */
 function noteLineOf(markup: string): string {
   const found = /class="hl-markrow-note" id="[^"]*">(.*?)<\/p>/.exec(markup)
@@ -376,13 +396,61 @@ describe('§16.2.1 — the offered mark is a marking, and it is words', () => {
     },
   )
 
-  it('states the offer in words inside the offered cell, never as a tint alone', () => {
-    expect(occurrences(MARK_OFFERED, /OFFERED FOR YOUR ROLE/g)).toBe(1)
-    // Inside the cell the words are aria-hidden, because a label's accessible
-    // name is computed from its whole content and §16.2.3 fixes that name at
-    // the mark's own name. The fact reaches a screen reader through the shared
-    // description instead — which is the second shape asserted below.
-    expect(MARK_OFFERED).toMatch(/class="hl-markrow-offered" aria-hidden="true">OFFERED FOR YOUR ROLE</)
+  /**
+   * F8, and it is a rewrite rather than a repair.
+   *
+   * **What the old pair of assertions claimed, and why it was not enough.** They
+   * counted `OFFERED FOR YOUR ROLE` once anywhere in the row and then pinned the
+   * span that carried it — so the words and the marked cell were each asserted
+   * to EXIST, and nothing asserted they were the same cell. Measured: the marking
+   * could sit on `weld` while the only words in the row spoke about `datum`, and
+   * both assertions stayed green. The claim worth making is the one the defect
+   * broke — the reader who meets the dashes can read what they mean — so it is
+   * asserted as a relation between the marked cell and the element that cell is
+   * DESCRIBED BY, which is the path §16.2.3 leaves the words on after the in-cell
+   * span was deleted for height (`MarkPicker`'s header carries that measurement).
+   *
+   * The exclusivity half is the other thing the old count did not say: the offer
+   * is stated once in the whole row, so a second author of that clause — an
+   * in-cell label reintroduced, a per-option hidden description — fails here.
+   */
+  it('states the offer in words in the element the offered cell is described by', () => {
+    // Offered and selected, which is the only static render whose description
+    // line is on the offered option at all (see `MARK_OFFERED_SEEDED` above).
+    const cell = cellOf(MARK_OFFERED_SEEDED, 'seeded')
+    expect(cell).toContain('data-hl-offered="true"')
+
+    // Not "some element with the words in it": the element THIS cell's own radio
+    // names as its description.
+    const noteId = (/aria-describedby="([^"]+)"/.exec(cell) as RegExpExecArray)[1]
+    expect(noteLineOf(MARK_OFFERED_SEEDED)).toBe(
+      (new RegExp(`id="${noteId}">(.*?)</p>`).exec(MARK_OFFERED_SEEDED) as RegExpExecArray)[1],
+    )
+    expect(words(noteLineOf(MARK_OFFERED_SEEDED))).toContain(OFFER)
+
+    // Once in the row, and it is that line: nothing else claims the offer.
+    expect(occurrences(MARK_OFFERED_SEEDED, new RegExp(OFFER, 'g'))).toBe(1)
+  })
+
+  it('puts no words of its own in the offered cell, so every cell is one line', () => {
+    // §16.2.3 — the cell's accessible name has to stay the mark's own name, and
+    // three uppercase mono words in a 54px column took all eight cells from 53px
+    // to 110px. So the marking inside the cell is the attribute and nothing else.
+    expect(occurrences(MARK_OFFERED, /data-hl-offered="true"/g)).toBe(1)
+    for (const id of MARK_PICKER_IDS) {
+      const cell = cellOf(MARK_OFFERED, id)
+      const label = MARKS.find((mark) => mark.id === id) as (typeof MARKS)[number]
+      // The whole of the cell's text, not merely "does not contain the offer":
+      // any word added inside a cell — a badge, a count, a second name — shows
+      // up here, and every cell's content is one line for every reader.
+      expect(words(cell).replace(/\s+/g, ' ').trim(), id).toBe(label.label)
+      expect(cell, id).not.toContain(OFFER)
+    }
+    // The row with an offer on an unselected cell says the words nowhere at all:
+    // the line describes the option in play, and this render has no pointer and
+    // no focus, so it is describing the selection (§16.2's accepted cost, which
+    // `MarkPicker`'s header records and `RolePanel` covers without interaction).
+    expect(occurrences(MARK_OFFERED, new RegExp(OFFER, 'g'))).toBe(0)
   })
 
   it('carries the offer into the shared description, which is not aria-hidden', () => {

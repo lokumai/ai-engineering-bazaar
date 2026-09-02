@@ -52,6 +52,28 @@ import { href } from '@/lib/url'
 const CALLBACK_ROUTE = '/auth/callback/'
 
 /**
+ * §16.6 — the one spelling of "this deployment has no sign-in", with one author.
+ *
+ * **What the old code claimed, and why it was wrong.** Three surfaces wrote this
+ * status independently: this panel's `flagOff` readout said
+ * `ACCOUNTS NOT ENABLED YET`, `AccountPanel`'s Session row said
+ * `ACCOUNTS NOT ENABLED`, and the register summary in `ProfilePanels.tsx` kept a
+ * third private copy of the shorter one. Each copy was defensible while the
+ * panels lived on `/sign-in/` and `/profile/` respectively; §16 put them in one
+ * box, so on the shipped default (`NEXT_PUBLIC_AUTH_ENABLED` unset) the drafter
+ * block printed both spellings five lines apart — the `NOT DRAWN` /
+ * `NOT YET DRAWN` shape `copy-register.test.ts` bans, and the shape that put
+ * four wrong copies in `scope.ts`'s header.
+ *
+ * The longer spelling is the one kept, following §16.6's `NO SEED MINTED YET`
+ * precedent: it is what `chrome.test.tsx`, both accounts e2e specs and
+ * `docs/auth-flow.md` already read, and §14.1's argument below is that a
+ * flag-off build is a plan rather than a fault — which is the word `YET` doing
+ * work, not decoration.
+ */
+export const ACCOUNTS_NOT_ENABLED = 'ACCOUNTS NOT ENABLED YET'
+
+/**
  * §12.13, §14.1 — what a build with no accounts says, in the words of the state
  * it is actually in.
  *
@@ -64,7 +86,7 @@ const CALLBACK_ROUTE = '/auth/callback/'
  */
 const UNAVAILABLE_COPY = {
   flagOff: {
-    readout: 'ACCOUNTS NOT ENABLED YET',
+    readout: ACCOUNTS_NOT_ENABLED,
     note:
       'Sign-in is not switched on for this deployment. Everything on this site '
       + 'works without an account: your record is kept in this browser, and the '

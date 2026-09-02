@@ -95,9 +95,40 @@ test.describe('§14.1 accounts are switched off', () => {
     await page.goto('/profile/')
     await waitForHydratedReadout(page)
 
-    // The state, in the words of the state it is in — the same single spelling
-    // `/sign-in/` prints, from the same author.
-    await expect(page.getByText('ACCOUNTS NOT ENABLED YET')).toBeVisible()
+    /**
+     * The state, in the words of the state it is in — the same single spelling
+     * `/sign-in/` prints, from the same author.
+     *
+     * **Scoped and counted, and that is §16.4.1's contract rather than a way
+     * around strict mode.** Before §16 this string appeared exactly once on
+     * `/profile/`, so one unscoped `getByText` was unambiguous. §16 gave every
+     * fold the duty of stating its own reading while closed, and four surfaces
+     * now report this one status: the drafter block's inline readout, the account
+     * panel's `Session` line, the organisation row's closed summary and that
+     * row's body. Weakening the wording to make one match again would delete the
+     * reading a closed row exists to print.
+     *
+     * So what is asserted is where it is READ — visibly, in the block a reader
+     * arrives at, and on the organisation row's own summary line — plus the rule
+     * that repetition may not become divergence: every occurrence of the status
+     * anywhere in `<main>` is this spelling, which is what fails if a fifth
+     * surface prints `ACCOUNTS NOT ENABLED` or `… IN THIS BUILD` (§16.6).
+     */
+    const OFF = 'ACCOUNTS NOT ENABLED YET'
+    await expect(
+      page.locator('section[aria-labelledby="hl-account-head"]').getByText(OFF).first(),
+    ).toBeVisible()
+    await expect(
+      page.locator('section[aria-labelledby="hl-orgs-head"] .hl-register-reading'),
+    ).toHaveText(OFF)
+
+    const main = (await page.locator('main').textContent()) ?? ''
+    const said = (needle: string): number => main.split(needle).length - 1
+    expect(said(OFF), 'the status is read on four surfaces (§16.4.1)').toBe(4)
+    expect(
+      said('ACCOUNTS NOT ENABLED'),
+      'a second spelling of one status is on the page (§16.6)',
+    ).toBe(said(OFF))
 
     await expectNoDoor(page, '/profile/')
 

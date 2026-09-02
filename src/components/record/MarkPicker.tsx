@@ -71,11 +71,36 @@ import { DrafterStamp } from './DrafterStamp'
  * eight paragraphs back in the accessibility tree of a control whose whole
  * purpose here was to stop having eight.
  *
- * **`OFFERED FOR YOUR ROLE` is `aria-hidden` inside its cell** and real text in
- * the shared line. §16.2.3 fixes the accessible name of every option at the
- * mark's own name, and a label's name is computed from its whole content, so an
- * offer printed plainly in the cell would rename the option. The fact still
- * reaches a screen reader — through the description, where it belongs.
+ * **The offer is a dashed outline on the cell plus words in the shared line —
+ * never a label inside the cell.** The first implementation printed
+ * `OFFERED FOR YOUR ROLE` inside the 54px cell as an `aria-hidden` span, and
+ * that claim ("the cell can carry the words silently") was wrong twice.
+ * Measured: three uppercase mono words in a 54px column wrap to four lines and
+ * take every one of the eight cells from 53px to 110px tall, so the compact row
+ * — the whole reason §16.2 exists — became taller than the eight-card grid it
+ * replaced for exactly the readers who have a role on record. And the span was
+ * dead weight in the accessibility tree's place too: `aria-hidden` content
+ * inside a `<label>` still cannot be read, while §16.2.3 needs the accessible
+ * name to stay the mark's own name. So the cell carries §12.4.1's dashed
+ * leader-line rule ("proposed, not drawn", drawn in `profile.css` by
+ * `[data-hl-offered]`) and nothing else, and the row's height is the same for
+ * every reader.
+ *
+ * **How the words survive**, which is what SC 1.4.1 and §16.2.3 actually ask —
+ * an outline alone is not a marking:
+ *
+ * 1. The shared description line appends `· OFFERED FOR YOUR ROLE` whenever the
+ *    option it is describing is the offered one, and that line is real text in
+ *    no `aria-hidden` subtree.
+ * 2. Every radio's `aria-describedby` points at that line, so the words are in
+ *    the offered radio's own description the moment it takes focus — which is
+ *    how a keyboard or screen-reader user arrives at a radio in a group whose
+ *    only tab stop is the selection.
+ * 3. Pointing at the cell prints the same clause, so the sighted reader who
+ *    hovers the dashes reads them in words.
+ * 4. `RolePanel`, in the register's `Role and path` fold, names the offered mark
+ *    and states that it is marked on this row — the one place that says it
+ *    without any interaction at all.
  *
  * §12.2 channel B: `useRecord()` returns the frozen `EMPTY_RECORD` on the
  * server and in the first client render, whose `mark` is null — so the
@@ -94,7 +119,11 @@ import { DrafterStamp } from './DrafterStamp'
  */
 export const NO_SEED_MINTED = 'NO SEED MINTED YET'
 
-/** §16.2.1 — printed on the offered cell, and in the description line. */
+/**
+ * §16.2.1 — the offer's one spelling, printed in the shared description line.
+ * The cell itself carries the dashed rule; see the header for why the words are
+ * not repeated inside it.
+ */
 const OFFERED = 'OFFERED FOR YOUR ROLE'
 
 export function MarkPicker({
@@ -164,7 +193,9 @@ export function MarkPicker({
               data-hl-selected={selected === option.id ? 'true' : 'false'}
               /* Present only on the offered cell, so `[data-hl-offered]`
                  locates it without a value test — an offer is a mark on one
-                 cell, not a state every cell carries. */
+                 cell, not a state every cell carries. It is also the whole of
+                 the offer inside the cell: the stylesheet draws the dashed
+                 rule from it, and the words are in the line below the row. */
               data-hl-offered={offered === option.id ? 'true' : undefined}
               onMouseEnter={() => setPointed(option.id)}
             >
@@ -189,18 +220,15 @@ export function MarkPicker({
               />
               <DrafterStamp mark={mark} seed={seed} />
               <span className="hl-markrow-name">{option.label}</span>
-              {offered === option.id && (
-                <span className="hl-markrow-offered" aria-hidden="true">
-                  {OFFERED}
-                </span>
-              )}
             </label>
           )
         })}
       </div>
 
-      {/* One line for eight options. `min-height` in the stylesheet holds its
-          space, so arrowing across the row moves nothing below it. */}
+      {/* One line for eight options, and the only place the offer is stated in
+          words (§16.2.1). `min-height` in the stylesheet holds its space, so
+          arrowing across the row moves nothing below it — including when the
+          offered option's extra clause appears. */}
       <p className="hl-markrow-note" id={noteId}>
         {described !== undefined && (
           <>

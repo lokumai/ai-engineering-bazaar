@@ -9,7 +9,11 @@ import {
   type CallbackPlan,
   planCallback,
 } from '@/lib/auth/session'
-import { AuthShell, type AuthChrome } from '@/components/auth/SignInPanel'
+import {
+  ACCOUNTS_NOT_ENABLED,
+  AuthShell,
+  type AuthChrome,
+} from '@/components/auth/SignInPanel'
 import { supabaseBrowser } from '@/lib/supabase/client'
 
 /**
@@ -103,7 +107,7 @@ export function AccountPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
         <dt>Session</dt>
         <dd aria-live="polite">
           {view.status === 'unknown' && 'CHECKING'}
-          {view.status === 'disabled' && <Unsigned>ACCOUNTS NOT ENABLED</Unsigned>}
+          {view.status === 'disabled' && <Unsigned>{ACCOUNTS_NOT_ENABLED}</Unsigned>}
           {view.status === 'signedOut' && <Unsigned>NOT SIGNED IN</Unsigned>}
           {view.status === 'signedIn' && 'SIGNED IN'}
         </dd>
@@ -278,8 +282,30 @@ export function OrgMembershipPanel({ chrome = 'panel' }: { chrome?: AuthChrome }
       mark={<p className="hl-mark m-0 text-ink-faint">READ ONLY IN THIS REVISION</p>}
     >
       {status !== 'signedIn' ? (
+        /**
+         * §16.4.1 — three statuses, because the summary that folds this body
+         * has three and a fold may not contradict the line that was folded.
+         *
+         * **What the old code claimed.** It read the reader as either
+         * `unknown` or signed out, so on the shipped default — accounts off —
+         * this body printed `NOT SIGNED IN · NO MEMBERSHIP TO REPORT` while the
+         * register row it sits in summarised the same state as
+         * `ACCOUNTS NOT ENABLED YET`. Both sentences were defensible alone and
+         * together they were a contradiction: nobody is signed out of a
+         * deployment that has no sign-in, and opening the row disagreed with
+         * the row.
+         *
+         * The disabled string is imported rather than retyped for the reason
+         * `ACCOUNTS_NOT_ENABLED`'s own header gives: the summary above reads
+         * from that same author, so the two cannot drift into a second
+         * spelling.
+         */
         <p className="hl-mark m-0 text-ink-muted">
-          {status === 'unknown' ? 'CHECKING' : 'NOT SIGNED IN · NO MEMBERSHIP TO REPORT'}
+          {status === 'unknown'
+            ? 'CHECKING'
+            : status === 'disabled'
+              ? ACCOUNTS_NOT_ENABLED
+              : 'NOT SIGNED IN · NO MEMBERSHIP TO REPORT'}
         </p>
       ) : state.kind === 'loading' || state.kind === 'idle' ? (
         <p className="hl-mark m-0 text-ink-muted" aria-live="polite">

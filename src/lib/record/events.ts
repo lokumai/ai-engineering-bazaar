@@ -364,17 +364,29 @@ export function observeReachedEnd(data: RecordData, slug: string, now: string): 
 }
 
 /**
- * §16.3 — records that the alias has been offered from `userId`'s address, and
+ * §16.3 — records that the alias question has been SETTLED for `userId`, and
  * writes NOTHING else. The name itself is `setIdentity`'s to write; the seam
  * calls both inside one store update so a half-written state cannot exist.
  *
+ * **Settled, not taken**, and the difference is the F1 defect. This function was
+ * unchanged by that repair; what changed is the seam's rule for reaching it.
+ * `AccountSync.aliasDecision` used to return early when the record already
+ * carried a name, so the flag was written only where an offer was ACCEPTED, and
+ * a reader who had typed a name before signing in never got one. Clearing the
+ * name then left nothing in the record saying the question had been asked, and
+ * the next claim wrote the address over an explicit `REMOVE NAME`. The seam now
+ * calls this whenever the decision is made — including the decision to write no
+ * name — which is what makes the guard below mean what its name says.
+ *
  * This is the only writer of `prefs.aliasNamedFor`, and that single-door rule is
- * what makes clearing the name final: the seam offers when the flag does not
- * name the current account, so an offer that has been recorded is never made
- * twice — including on the `TOKEN_REFRESHED`, `INITIAL_SESSION` and cross-tab
+ * what makes clearing the name final: the seam decides only when the flag does
+ * not name the current account, so a decision that has been recorded is never
+ * re-taken — including on the `TOKEN_REFRESHED`, `INITIAL_SESSION` and cross-tab
  * sign-in events that remint the session object and re-run the effect. A guard
  * held in component state instead would be reset by every one of them; that was
- * the measured failure this field exists to remove.
+ * the measured failure this field exists to remove. `erase.ts`'s `erasedRecord`
+ * is the other side of the same rule: the §12.15 erase carries this field across
+ * rather than resetting it, because a reset is a second, silent writer.
  *
  * The day is stamped like every other write (§7.3): the reader signed in, which
  * is something they did.

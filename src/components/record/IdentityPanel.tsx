@@ -119,13 +119,30 @@ function IdentityFields() {
    * §16.3 — is this name still the one the account's address supplied?
    *
    * Two facts have to hold, and the second is what makes the line disappear at
-   * the right moment. `prefs.aliasNamedFor` says the offer was made to THIS
-   * account (`AccountSync.aliasNameFor` is its only writer and never clears it,
-   * which is what makes `REMOVE NAME` final). But the flag alone would leave the
-   * note standing over a name the reader had since typed, and the note would
-   * then be false — so the stored name is compared against the offer itself.
-   * `aliasFromEmail` is the single author of that string, so the comparison
-   * cannot drift from the write.
+   * the right moment. `prefs.aliasNamedFor` says the alias question has been
+   * settled for THIS account. Its only writer is `events.noteAliasNamed`, which
+   * never clears it, and that is what makes `REMOVE NAME` final;
+   * `AccountSync.aliasDecision` — named here in an earlier version as the writer
+   * — writes nothing at all, being a pure predicate over a record and a session.
+   * The distinction matters to anyone changing this gate: the seam calls the
+   * predicate inside one `update` and the reducer is what lands the field, so the
+   * flag cannot be found by searching for assignments in this layer.
+   *
+   * But the flag alone would leave the note standing over a name the reader had
+   * since typed, and the note would then be false — so the stored name is
+   * compared against the offer itself. `aliasFromEmail` is the single author of
+   * that string, so the comparison cannot drift from the write.
+   *
+   * That comparison is a test of the VALUE and never of its provenance, which is
+   * a known imprecision and not an oversight: a reader who types the local part
+   * of their own address by hand sees this note over a name they chose. It reads
+   * `CHANGE IT IN THE FIELD ABOVE` and the field is directly above it, so the
+   * cost is a sentence too many rather than a value the reader cannot reach.
+   * §16.3's F1 repair widened the set of records carrying the flag (it now also
+   * covers a record that already had a name when the account signed in), so this
+   * case is reachable by more readers than before; the alternative was a flag
+   * that failed to make `REMOVE NAME` final, which loses a decision instead of
+   * mislabelling a string.
    *
    * `session` is null when no provider is mounted and the view is `unknown`
    * until an effect has run, so the note is absent in the prerendered HTML and

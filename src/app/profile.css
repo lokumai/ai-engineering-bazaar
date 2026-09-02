@@ -138,19 +138,15 @@
     gap: 8px;
   }
 
-  /* The mono note under a control: where a value came from, what a door does.
-     §16.3's `TAKEN FROM YOUR EMAIL ADDRESS · CHANGE IT IF YOU LIKE` is set in
-     this class, and it is mono because the claim is about the record's
-     provenance and not prose about it. */
-  .hl-drafter-note {
-    margin: 6px 0 0;
-    font-family: var(--font-mono);
-    font-size: var(--text-mark);
-    line-height: 1.5;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--color-ink-muted);
-  }
+  /* There is deliberately no `.hl-drafter-note` here. One was written for
+     §16.3's provenance line, applied by nothing, and its comment quoted the
+     wording `scope.ts` records as the REJECTED one rather than the string that
+     ships — `NAME_FROM_ADDRESS`, which `IdentityPanel` sets with the site-wide
+     `.hl-mark` utilities that already give a mono uppercase readout. A rule
+     describing a string the site does not print is worse than no comment, and a
+     second definition of `.hl-mark`'s geometry is the drift §11.38 forbids. If
+     that line ever needs geometry of its own it goes here, under the name
+     `NAME_FROM_ADDRESS`, which is the one place its text is authored. */
 
   /* =========================================================================
      §16.2 — the compact mark row. Eight cells, one line, and the eight
@@ -238,21 +234,21 @@
      own two buttons to a mark on one cell. Nothing is written by an offer, so
      it may not look like a selection: no wash, no inset rule, a dashed rule
      instead — the leader-line dash the set already reads as "proposed, not
-     drawn" (§12.4.1). */
+     drawn" (§12.4.1).
+
+     This dashed rule is now the whole of the offer inside the cell. A
+     `.hl-markrow-offered` label used to print `OFFERED FOR YOUR ROLE` in the
+     cell as well; three uppercase mono words in a 54px column wrap to four
+     lines and took all eight cells from 53px to 110px tall, which is the
+     opposite of what a compact row is for. The words moved to
+     `.hl-markrow-note`, which is the line every radio's `aria-describedby`
+     already points at, so the offer is still readable as words and not as an
+     outline alone (SC 1.4.1); `MarkPicker`'s header records the four paths
+     they reach a reader by. An outline rather than a border because the cells
+     sit in a hairline grid and a border would move the glyph. */
   .hl-markrow-cell[data-hl-offered="true"] {
     outline: var(--stroke-hair) dashed var(--color-line-cut);
     outline-offset: -3px;
-  }
-
-  .hl-markrow-offered {
-    display: block;
-    font-family: var(--font-mono);
-    font-size: var(--text-mark);
-    line-height: 1.2;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    text-align: center;
-    color: var(--color-accent-ink);
   }
 
   /* The one description line for all eight options (§16.7): pointed at by the
@@ -509,6 +505,21 @@
 
   .hl-register-fold > *:not(summary) {
     display: block !important;
+  }
+
+  /* The rule above cannot open a closed fold on its own, and the first version
+     of this block claimed it could. Chrome does not lay a closed `<details>`'
+     children out at all — since the UA sheet moved that to
+     `content-visibility: hidden` on the `::details-content` pseudo-element,
+     `display` on the children is not the property doing the hiding — so paper
+     came out as ten summary lines with no bodies, which is the exact opposite
+     of §12.18's rule that on paper the fold is a deletion rather than a
+     control. Unwrapping the pseudo-element is what actually reveals them; the
+     `display` rule stays for engines that have no `::details-content`, where it
+     is the thing that works. */
+  .hl-register-fold::details-content {
+    content-visibility: visible;
+    block-size: auto;
   }
 
   .hl-register-row,

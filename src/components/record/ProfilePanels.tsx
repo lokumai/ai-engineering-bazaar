@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useSession } from '@/components/auth/SessionProvider'
+import { ACCOUNTS_NOT_ENABLED } from '@/components/auth/SignInPanel'
 import { FaceLegend, type FaceLegendRow, type FaceLegendRows } from '@/components/mascot/FaceLegend'
 import { Lkm01 } from '@/components/mascot/Lkm01'
 import type { CategorySlug } from '@/lib/content/categories'
@@ -21,10 +22,10 @@ import {
   nowIso,
   quarantineReason,
   recordSavedAt,
-  storageReadout,
   update,
   useHydrated,
   useRecord,
+  useStorageReadout,
   useWriteState,
 } from '@/lib/record/store'
 import { NO_SEED_MINTED } from './MarkPicker'
@@ -431,6 +432,7 @@ export function SubmittalRegister({ sheets }: { sheets: readonly RegisterSheet[]
 export function StoragePanel() {
   const record = useRecord()
   const hydrated = useHydrated()
+  const answer = useStorageReadout()
   const write = useWriteState()
   const [bytes, setBytes] = useState<number | null>(null)
   const [asked, setAsked] = useState(false)
@@ -470,7 +472,9 @@ export function StoragePanel() {
     }
   }, [record, write])
 
-  const state = hydrated ? storageReadout() : null
+  // The same subscription the closed row's summary reads, so the two cannot
+  // print different answers at one instant (see `StorageReading`).
+  const state = hydrated ? answer : null
   const savedAt = hydrated ? recordSavedAt() : null
   const lastExport = record.meta.lastExport
 
@@ -681,9 +685,8 @@ const NO_ROLE = 'NO ROLE ON RECORD'
 /** `SubmittalRegister`'s own words for an empty register, for the same reason. */
 const NO_SUBMITTAL = 'NO SUBMITTAL REGISTERED'
 
-/** `AccountPanel`'s two session spellings, for the same reason (§16.6). */
+/** `AccountPanel`'s spelling of a signed-out session, for the same reason. */
 const NOT_SIGNED_IN = 'NOT SIGNED IN'
-const ACCOUNTS_OFF = 'ACCOUNTS NOT ENABLED'
 
 /** §7.1 — the same `signedCount` the strip in this row's body counts with. */
 export function ReadoutReading({ facts }: { facts: CurriculumFacts }) {
@@ -784,7 +787,18 @@ export function OrgReading() {
   const status = session?.view.status ?? 'unknown'
 
   if (status === 'unknown') return <>{NO_READING}</>
-  if (status === 'disabled') return <>{ACCOUNTS_OFF}</>
+  /**
+   * §16.6 — imported, where this row used to hold a private
+   * `ACCOUNTS_OFF = 'ACCOUNTS NOT ENABLED'`.
+   *
+   * The comment above that const claimed it was `AccountPanel`'s own spelling
+   * repeated, which is how the other locals here are justified. It was not: the
+   * panels this row folds print `ACCOUNTS NOT ENABLED YET`, so the repeat was a
+   * second spelling of one status — and after §16 both spellings landed in the
+   * same box, five lines apart. `SignInPanel.tsx` is now the single author and
+   * records the argument for keeping the longer form.
+   */
+  if (status === 'disabled') return <>{ACCOUNTS_NOT_ENABLED}</>
   if (status === 'signedOut') return <>{NOT_SIGNED_IN}</>
   return <>ORGANISATIONS THIS ACCOUNT HAS JOINED</>
 }
@@ -793,10 +807,21 @@ export function OrgReading() {
  * §12.1.6 — the answer `navigator.storage.persisted()` gave, which is the first
  * `<dd>` in this row's body and the same call. `UNKNOWN` where it has not
  * answered: a value that was never queried is not a value.
+ *
+ * **`useStorageReadout()` rather than `storageReadout()`, and the difference was
+ * measured.** The plain call claimed that reading the module's answer at render
+ * time was enough; it was not, because the grant arrives after the hydration
+ * commit and is deliberately never written through the reducer, so nothing this
+ * component subscribed to ever changed again. With the row closed and Chrome
+ * having answered, the body printed `BEST-EFFORT` while this line printed
+ * `UNKNOWN`, simultaneously — caught by §16.4.1's per-row gate, which compares
+ * the two at one instant. The hook's header in `store.ts` carries the
+ * measurement; both readings now come from one subscription.
  */
 export function StorageReading() {
   const hydrated = useHydrated()
-  return <>{hydrated ? storageReadout() : NO_READING}</>
+  const answer = useStorageReadout()
+  return <>{hydrated ? answer : NO_READING}</>
 }
 
 /**

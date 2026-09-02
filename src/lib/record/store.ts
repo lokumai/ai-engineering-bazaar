@@ -688,7 +688,42 @@ export async function requestPersistence(): Promise<boolean | null> {
  * may be shown as bytes labelled an approximation, and never as a percentage,
  * gauge, ring or fill bar.
  */
-export function storageReadout(): 'PERSISTENT' | 'BEST-EFFORT' | 'UNAVAILABLE' | 'UNKNOWN' {
+export type StorageReadout = 'PERSISTENT' | 'BEST-EFFORT' | 'UNAVAILABLE' | 'UNKNOWN'
+
+/**
+ * The same answer, subscribed — and the reason it had to exist was MEASURED.
+ *
+ * `askPersisted()` resolves after the hydration commit and records the grant in
+ * a module variable, then `notify()`s. A component that merely CALLS
+ * `storageReadout()` re-renders only if something else it subscribes to also
+ * changed, and the grant is deliberately not written through the reducer (see
+ * `askPersisted`), so the record never moves. `StoragePanel` got away with it by
+ * accident: its `estimate()` effect calls `setAsked(true)`, and that re-render
+ * happened to land after the grant arrived. `StorageReading` — §16.4.1's closed
+ * summary for the same row — subscribed to nothing at all, so it froze at the
+ * value it read in the commit.
+ *
+ * Measured, on the register gate `record-pages.spec.ts` now carries: with the
+ * storage row closed and the browser having answered, the body's `<dd>` printed
+ * `BEST-EFFORT` while the summary one line above it printed `UNKNOWN`, at the
+ * same instant. Two readings of one fact, contradicting each other on the same
+ * screen, which is §1's failure with the evidence against it in view.
+ *
+ * The snapshot is a string, so it is stable by value and a `notify()` that did
+ * not change the answer costs no render. The server snapshot is `UNKNOWN`
+ * because a build has queried nothing; both call sites still gate on
+ * `useHydrated()` and print `--` in the prerender, which is the difference
+ * between "not queried" and "queried, no answer".
+ */
+export function useStorageReadout(): StorageReadout {
+  return useSyncExternalStore(
+    subscribe,
+    () => storageReadout(),
+    () => 'UNKNOWN' as StorageReadout,
+  )
+}
+
+export function storageReadout(): StorageReadout {
   if ((started && storage === null) || lastWrite === 'blocked') return 'UNAVAILABLE'
   const answer = queriedPersisted ?? current.meta.persisted
   if (answer === true) return 'PERSISTENT'

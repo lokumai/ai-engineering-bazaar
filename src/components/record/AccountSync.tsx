@@ -58,11 +58,14 @@ import { supabaseBrowser } from '@/lib/supabase/client'
  *
  * ## What it does NOT do
  *
- * It renders nothing at all unless a claim has something to tell the reader.
- * It never blocks a local write, never delays first paint, and holds no state
- * the record depends on — §12.2's Channel B discipline, unchanged. If Supabase
- * is not configured, or `NEXT_PUBLIC_AUTH_ENABLED` is off, or nobody is signed
- * in, the effect returns immediately and this component is inert.
+ * It renders nothing, ever (§17.5). What the reader is told lives in
+ * `ClaimReceipt` — the arrival line `PageShell` puts in the page column — and
+ * in `/profile/`'s `Last claim` fold. Both read `meta.lastClaim`, which this
+ * file is the only writer of. It never blocks a local write, never delays
+ * first paint, and holds no state the record depends on — §12.2's Channel B
+ * discipline, unchanged. If Supabase is not configured, or
+ * `NEXT_PUBLIC_AUTH_ENABLED` is off, or nobody is signed in, the effect
+ * returns immediately and this component is inert.
  */
 export function AccountSync({ facts }: { facts: CurriculumFacts }) {
   const session = useSession()
@@ -94,6 +97,11 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
       // returns the footer to `off`, which is the only true thing to say about
       // a server when there is no session (§14.7.3).
       attachSync(null)
+      // Signing out is not a navigation, so the announce flag has no other
+      // way to fall — the route-change effect above only clears it on a
+      // pathname change. A line about a claim that belonged to a session the
+      // reader has just left should not stay on screen.
+      clearClaimAnnounce()
       return
     }
 

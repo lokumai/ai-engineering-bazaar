@@ -71,7 +71,9 @@ describe('extent', () => {
    */
   it('keeps the long-form modules an order of magnitude above the short ones', () => {
     const short = numbers((n) => n <= 7).map(measured)
-    const long = numbers((n) => n >= 8 && n <= 15).map(measured)
+    const long = numbers(
+      (n) => n >= 8 && byNumber.get(n)!.frontmatter.status === 'ready',
+    ).map(measured)
     expect(Math.min(...short)).toBeGreaterThan(0)
     expect(Math.max(...short)).toBeLessThan(Math.min(...long))
   })
@@ -211,8 +213,8 @@ describe('externalLinks / countSources', () => {
   })
 
   it('does not count a URL inside an inline code span', () => {
-    // 10_coding_agents_landscape.md:59 writes the installer host in
-    // backticks; `unfenced()` would still have counted it, which is why this
+    // The dropped landscape sheet wrote an installer host in backticks;
+    // `unfenced()` would still have counted it, which is why this
     // reads anchors off the parsed tree rather than lines of markdown.
     expect(externalLinks('the host is `https://hermes-agent.example/install.sh`')).toEqual([])
   })
@@ -222,11 +224,10 @@ describe('externalLinks / countSources', () => {
     expect(externalLinks(md)).toEqual(['https://a.example', 'https://c.example'])
   })
 
-  it('counts only the openable links on the three sheets that quoted URLs', () => {
-    // The three modules where the old regex and the rendered page disagreed.
-    expect(countSources(body(10))).toBe(30)
-    expect(countSources(body(11))).toBe(15)
-    expect(countSources(body(15))).toBe(16)
+  it('counts only the openable links on the sheets that quoted URLs', () => {
+    // The two modules where the old regex and the rendered page disagreed.
+    expect(countSources(body(10))).toBe(15)
+    expect(countSources(body(14))).toBe(16)
   })
 })
 

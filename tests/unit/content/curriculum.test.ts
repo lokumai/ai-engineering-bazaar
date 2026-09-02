@@ -15,8 +15,10 @@ describe('curriculum', () => {
   })
 
   it('orders modules within a category by module number', () => {
-    expect(tracks[1].modules.map((m) => m.frontmatter.module))
-      .toEqual([8, 9, 10, 11, 12, 13, 14, 15])
+    for (const track of tracks) {
+      const numbers = track.modules.map((m) => m.frontmatter.module)
+      expect(numbers, track.category.slug).toEqual([...numbers].sort((a, b) => a - b))
+    }
   })
 })
 
@@ -28,7 +30,14 @@ describe('sheetCount', () => {
 
 describe('positionOf', () => {
   it('gives the sheet its place inside its own category', () => {
-    expect(positionOf('intermediate/security')).toEqual({ index: 6, of: 8 })
+    // Position and category size both move with the curriculum, so both are
+    // read off it: what must hold is that they agree.
+    for (const track of curriculum()) {
+      track.modules.forEach((sheet, index) => {
+        expect(positionOf(sheet.slug), sheet.slug)
+          .toEqual({ index: index + 1, of: track.modules.length })
+      })
+    }
   })
 
   it('returns null for an unknown slug', () => {
@@ -50,7 +59,7 @@ describe('neighbours', () => {
   })
 
   it('links backwards across a category boundary', () => {
-    expect(neighbours('expert/advanced-ui').previous?.frontmatter.module).toBe(15)
+    expect(neighbours('expert/advanced-ui').previous?.frontmatter.module).toBe(14)
   })
 
   it('gives no next for the last sheet of the set', () => {

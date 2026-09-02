@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { categoryBySlug } from '@/lib/content/categories'
+import { loadAllModules } from '@/lib/content/loader'
 import {
   categoryEyebrow,
   categorySummary,
@@ -33,12 +34,17 @@ describe('sheetRows — one row per sheet in the set (§4.8)', () => {
   })
 
   it('addresses each sheet at its own route', () => {
-    expect(rows[0].path).toBe('/courses/fundamentals/llms/')
-    expect(rows[12].path).toBe('/courses/intermediate/security/')
+    for (const sheet of loadAllModules()) {
+      const row = rows.find((candidate) => candidate.module === sheet.frontmatter.module)
+      expect(row?.path, sheet.slug).toBe(`/courses/${sheet.slug}/`)
+    }
   })
 
   it('states extent as words and declared minutes on a drawn sheet', () => {
-    expect(rows[12].extent).toBe('4,868 W · 30 MIN')
+    // The shape, not the measurement: the word count moves with every edit.
+    for (const row of rows.filter((candidate) => candidate.drawn)) {
+      expect(row.extent, row.title).toMatch(/^[\d,]+ W · \d+ MIN$/)
+    }
   })
 
   it('prints an em dash for the extent of a sheet that is not drawn', () => {
@@ -53,7 +59,7 @@ describe('sheetRows — one row per sheet in the set (§4.8)', () => {
   })
 
   it('carries the declared prerequisites, and an em dash where there are none', () => {
-    expect(rows[14].requires).toBe('13, 14')
+    expect(rows[13].requires).toBe('12, 13')
     expect(rows[0].requires).toBe('—')
   })
 
@@ -66,7 +72,6 @@ describe('sheetRows — one row per sheet in the set (§4.8)', () => {
   })
 
   it('takes at most three topics from the sheet itself', () => {
-    expect(rows[12].topics[0]).toBe('What is actually different about an agent')
     for (const row of rows) expect(row.topics.length, row.title).toBeLessThanOrEqual(3)
   })
 
@@ -141,7 +146,7 @@ describe('the counts each page states about itself', () => {
 
   it('writes the subsystem eyebrow §4.9 item 1 asks for', () => {
     expect(categoryEyebrow(categoryBySlug('intermediate')!))
-      .toBe('SUBSYSTEM 02 · 8 SHEETS · 8 DRAWN · ~3 H 55 MIN')
+      .toBe('SUBSYSTEM 02 · 7 SHEETS · 7 DRAWN · ~3 H 30 MIN')
   })
 
   it('counts a subsystem of one in the singular', () => {

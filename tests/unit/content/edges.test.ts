@@ -109,8 +109,13 @@ describe('the curriculum graph', () => {
   const requires = graph.edges.filter((e) => e.kind === 'requires')
   const seeAlso = graph.edges.filter((e) => e.kind === 'see-also')
 
-  it('declares 19 REQUIRES edges', () => {
-    expect(requires).toHaveLength(19)
+  it('declares one REQUIRES edge per prerequisite in the corpus', () => {
+    // The count moves whenever a sheet's prerequisites do, so it is summed off
+    // the frontmatter rather than pinned.
+    const declared = modules.reduce(
+      (total, sheet) => total + sheet.frontmatter.prerequisites.length, 0)
+    expect(declared).toBeGreaterThan(0)
+    expect(requires).toHaveLength(declared)
   })
 
   it('crosses a band boundary exactly three times, at 1-8, 5-9 and 6-10', () => {
@@ -124,12 +129,13 @@ describe('the curriculum graph', () => {
       expect(graph.feeds(e.from), `${e.from} feeds ${e.to}`).toContain(e.to)
     }
     expect(graph.feeds(1)).toEqual([2, 3, 4, 5, 8])
-    expect(graph.requires(15)).toEqual([13, 14])
+    expect(graph.requires(14)).toEqual([12, 13])
   })
 
-  it('leaves module 1 requiring nothing and module 32 feeding nothing', () => {
+  it('leaves the first sheet requiring nothing and the last feeding nothing', () => {
+    const last = Math.max(...known)
     expect(graph.requires(1)).toEqual([])
-    expect(graph.feeds(32)).toEqual([])
+    expect(graph.feeds(last)).toEqual([])
   })
 
   it('names only modules that exist, on both ends of every edge', () => {

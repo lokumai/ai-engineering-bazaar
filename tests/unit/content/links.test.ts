@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { courseLinkFor, isCourseLink, sheetSource } from '@/lib/content/links'
+import { loadAllModules } from '@/lib/content/loader'
 
 /**
  * The corpus' own cross-references, as routes.
@@ -29,11 +30,11 @@ describe('courseLinkFor', () => {
   })
 
   it('drops the numeric prefix, because the number is not the identifier', () => {
-    // `slugs.ts` owns this rule: module 10 was split out of the old coding-agents
-    // module, so the corpus has been renumbered before and will be again.
+    // `slugs.ts` owns this rule: the corpus has been renumbered twice already,
+    // most recently when the landscape sheet was dropped, and will be again.
     process.env.NEXT_PUBLIC_SITE_BASE_PATH = ''
-    expect(courseLinkFor('10_coding_agents_landscape.md', HARNESS))
-      .toBe('/courses/intermediate/coding-agents-landscape/')
+    expect(courseLinkFor('11_harness_engineering.md', HARNESS))
+      .toBe('/courses/intermediate/harness-engineering/')
   })
 
   /**
@@ -122,8 +123,12 @@ describe('courseLinkFor', () => {
 
 describe('sheetSource', () => {
   it('names the file a numbered sheet was loaded from', () => {
-    expect(sheetSource(13)).toBe('2_intermediate/13_security.md')
-    expect(sheetSource(1)).toBe('1_fundamentals/1_llms.md')
+    // The path is derived from the sheet, not transcribed: renumbering the
+    // corpus must not fail this.
+    for (const module of loadAllModules()) {
+      expect(sheetSource(module.frontmatter.module), module.slug)
+        .toMatch(new RegExp(`^\\d_[a-z_]+/${module.frontmatter.module}_[a-z0-9_]+\\.md$`))
+    }
   })
 
   it('returns null for a number no sheet carries', () => {

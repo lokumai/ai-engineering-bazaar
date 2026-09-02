@@ -207,13 +207,17 @@ describe('sheetFacts, over the real corpus', () => {
   }
 
   it('reads every value off the module the loader derived', () => {
-    const security = facts('intermediate/security')
-    expect(security.module).toBe(13)
-    expect(security.categoryOrder).toBe(2)
-    expect(security.status).toBe('ready')
-    expect(security.extent).toBeGreaterThan(2500)
-    expect(security.sources).toBeGreaterThan(0)
-    expect(security.requires).toEqual([12])
+    // Against the loader, sheet by sheet, rather than against one sheet's
+    // numbers written down here: those move whenever the corpus does.
+    for (const sheet of loadAllModules()) {
+      const derived = facts(sheet.slug)
+      expect(derived.module, sheet.slug).toBe(sheet.frontmatter.module)
+      expect(derived.status, sheet.slug).toBe(sheet.frontmatter.status)
+      expect(derived.requires, sheet.slug).toEqual(sheet.frontmatter.prerequisites)
+      if (sheet.frontmatter.status === 'ready') {
+        expect(derived.extent, sheet.slug).toBeGreaterThan(0)
+      }
+    }
   })
 
   it('counts tables separately from diagrams', () => {

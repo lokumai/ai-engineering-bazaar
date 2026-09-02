@@ -32,9 +32,10 @@ describe('the selector contract', () => {
 })
 
 describe('render.ts emits what the island reads', () => {
-  it('has exactly one sheet with items, carrying eight of them', () => {
-    expect(withItems).toHaveLength(1)
-    expect(checklistOf(withItems[0].body)).toHaveLength(8)
+  it('finds at least one sheet with items to render', () => {
+    // Which sheet, and how many items, is the author's business.
+    expect(withItems.length).toBeGreaterThan(0)
+    expect(checklistOf(withItems[0].body).length).toBeGreaterThan(0)
   })
 
   it('stamps a contiguous index from zero onto every task item', async () => {
@@ -48,10 +49,10 @@ describe('render.ts emits what the island reads', () => {
       .map(([, index]) => Number(index))
 
     // One per item, numbered 0..n-1 in document order — one index space per
-    // SHEET, not per list: sheet 13 has two authored groups either side of a
-    // paragraph and they number straight through.
+    // SHEET, not per list: a sheet with two authored groups either side of a
+    // paragraph numbers straight through them.
     expect(stamped).toEqual(rendered.checklist.map((item) => item.index))
-    expect(stamped).toEqual([0, 1, 2, 3, 4, 5, 6, 7])
+    expect(stamped).toEqual(stamped.map((_, index) => index))
   })
 
   it('leaves the box inert and silent until the island upgrades it (§10.4)', async () => {

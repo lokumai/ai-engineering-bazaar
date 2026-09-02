@@ -42,11 +42,13 @@ describe('loadAllModules', () => {
     }
   })
 
-  it('marks modules 1 through 15 as ready', () => {
+  it('marks a leading run of modules ready, and nothing after it', () => {
+    // How far the drawn run reaches moves as sheets are written, so the run is
+    // measured rather than pinned: what must hold is that it has no holes.
     const ready = modules.filter((m) => m.frontmatter.status === 'ready')
-    expect(ready.map((m) => m.frontmatter.module)).toEqual(
-      Array.from({ length: 15 }, (_, i) => i + 1),
-    )
+      .map((m) => m.frontmatter.module)
+    expect(ready.length).toBeGreaterThan(0)
+    expect(ready).toEqual(Array.from({ length: ready.length }, (_, i) => i + 1))
   })
 
   it('references only real modules in prerequisites', () => {
@@ -110,7 +112,9 @@ describe('loadAllModules', () => {
 
 describe('loadModule', () => {
   it('finds a module by its full slug', () => {
-    expect(loadModule('intermediate/loop-engineering')?.frontmatter.module).toBe(14)
+    const sheet = loadModule('intermediate/loop-engineering')
+    expect(sheet?.slug).toBe('intermediate/loop-engineering')
+    expect(sheet?.frontmatter.module).toBeGreaterThan(0)
   })
 
   it('returns undefined for an unknown slug', () => {

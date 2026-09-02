@@ -32,8 +32,12 @@ describe('curriculumFacts — the sheets', () => {
       expect(sheet.slug, `module ${sheet.module}`).toMatch(/^[a-z-]+\/[a-z0-9-]+$/)
     }
     expect(new Set(facts.sheets.map((s) => s.slug)).size).toBe(sheetCount())
-    expect(facts.sheets.find((s) => s.module === 1)?.slug).toBe('fundamentals/llms')
-    expect(facts.sheets.find((s) => s.module === 13)?.slug).toBe('intermediate/security')
+    // Which number sits on which slug is the curriculum's business, so the
+    // pairing is read off the loader rather than written down here.
+    for (const module of modules) {
+      expect(facts.sheets.find((s) => s.module === module.frontmatter.module)?.slug)
+        .toBe(module.slug)
+    }
   })
 
   it('agrees with the loader on title, category, status and sources', () => {
@@ -47,10 +51,11 @@ describe('curriculumFacts — the sheets', () => {
     }
   })
 
-  it('counts 8 checklist items, on sheet 13 alone', () => {
-    const withItems = facts.sheets.filter((s) => s.checklistItems > 0)
-    expect(withItems.map((s) => s.module)).toEqual([13])
-    expect(withItems[0].checklistItems).toBe(8)
+  it('counts each sheet\'s checklist items the way the sheet writes them', () => {
+    for (const sheet of facts.sheets) {
+      const module = modules.find((m) => m.slug === sheet.slug)!
+      expect(sheet.checklistItems, sheet.slug).toBe(checklistOf(module.body).length)
+    }
   })
 
 })

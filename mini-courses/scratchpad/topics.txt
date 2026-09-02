@@ -14,8 +14,8 @@
 9) context engineering (context summarization, persistent memory or context offloading or long-term memory, Subagents, TODO or Explicit Planning, Deep Agents)
 10) coding_agents (Slash Commands, Skills, AGENTS.md, Subagents, hooks, MCP, Plugins)
 11) harness_engineering (includes guardrails, hooks, sandboxes, etc)
-12) security (Jailbreaking, White-box, Black-box, Guardrails)
-13) loop_engineering (Agent Teams, Dynamic Workflows, Rubric Evals)
+12) loop_engineering (Agent Teams, Dynamic Workflows, Rubric Evals)
+13) security (Jailbreaking, White-box, Black-box, Guardrails)
 14) personal_agents (Opeclaw, Hermes Agent, Moltbook)
 
 

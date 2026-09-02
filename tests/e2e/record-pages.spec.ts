@@ -762,6 +762,32 @@ const EVERYTHING_RECORDED: RecordSeed = (() => {
     sheets,
     days: [daysBack(2), daysBack(1), TODAY],
     prefs: { charKeys: false },
+    meta: {
+      lastExport: null,
+      persisted: null,
+      // §17.7 — a receipt in the rich seed, so the row's notation is pinned in
+      // BOTH states. Without it the row reads NO CLAIM ON RECORD at both seeds
+      // and a frozen reading would pass the table — the exact vacuity this
+      // gate exists to close.
+      lastClaim: {
+        at: '2026-08-11T15:44:00.000Z',
+        summary: {
+          outcome: 'merged',
+          signed: { here: 2, account: 3, shared: 1, merged: 4 },
+          submittals: { here: 1, account: 0, shared: 0, merged: 1 },
+          droppedSignatures: [],
+          droppedSubmittals: [],
+          identity: {
+            name: 'account',
+            markSeed: 'account',
+            role: 'local',
+            markChanged: false,
+            nameChanged: true,
+            roleChanged: false,
+          },
+        },
+      },
+    },
   }
 })()
 
@@ -953,6 +979,9 @@ const EXPECTED_READINGS = {
   // status (§16.6) — so this row also pins the wording the four surfaces in the
   // fold share.
   'hl-orgs-head': { thin: 'ACCOUNTS NOT ENABLED YET', rich: 'ACCOUNTS NOT ENABLED YET' },
+  // §17.6's notation. The thin seed has met no account; the rich seed carries a
+  // merge of four with nothing lost.
+  claim: { thin: 'NO CLAIM ON RECORD', rich: '4 MERGED · 0 LOST' },
   storage: { thin: STORAGE_ANSWERS, rich: STORAGE_ANSWERS },
   // One key: the record's. The quarantine key is absent in both seeds, and a
   // second key appearing here would be a payload no reader asked for.

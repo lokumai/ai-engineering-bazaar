@@ -7,6 +7,8 @@ import { DrafterBlock } from '@/components/record/DrafterBlock'
 import {
   CharKeysReading,
   CharKeysToggle,
+  ClaimPanel,
+  ClaimReading,
   DATA_READING,
   OrgReading,
   QuarantineNote,
@@ -106,6 +108,7 @@ export const REGISTER_ROWS = [
   { id: 'submittals', name: 'Submittal register' },
   { id: 'role', name: 'Role and path' },
   { id: 'hl-orgs-head', name: 'Organisation' },
+  { id: 'claim', name: 'Last claim' },
   { id: 'storage', name: 'Storage' },
   { id: 'raw', name: 'Stored values' },
   { id: 'data', name: 'Export, import, erase' },
@@ -120,7 +123,7 @@ type RegisterRowId = (typeof REGISTER_ROWS)[number]['id']
 
 /**
  * §12.11, rewritten by §16 — the profile sheet: one open drafter block, and one
- * register of ten closed rows.
+ * register of eleven closed rows.
  *
  * **A server page, and that is load-bearing rather than incidental** — the same
  * shape as `/dashboard/`. It measures the corpus with `curriculumFacts()`,
@@ -233,6 +236,12 @@ export default function ProfilePage() {
       body: <OrgMembershipPanel chrome="inline" />,
       needsSession: true,
     },
+
+    /* §17.7 — what this browser and the account last exchanged. Beside the
+       organisation row because both are facts about the account meeting this
+       browser; the receipt is local by construction (§17.1), so it reports this
+       browser's history and never another device's. */
+    claim: { reading: <ClaimReading />, body: <ClaimPanel /> },
 
     /* §12.1.6 — queried, never assumed, and bytes are never a percentage. */
     storage: { reading: <StorageReading />, body: <StoragePanel /> },

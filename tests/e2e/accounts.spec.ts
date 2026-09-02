@@ -579,8 +579,7 @@ test.describe('§14 accounts, organisations and the record that outlives a brows
     // The record the reader can check still says what happened, permanently.
     await page.goto('/profile/')
     await waitForHydratedReadout(page)
-    // Task 7
-    // await expect(registerReading(page, 'claim')).toContainText('MOVED INTO YOUR ACCOUNT')
+    await expect(registerReading(page, 'claim')).toContainText('MOVED INTO YOUR ACCOUNT')
   })
 
   test('the dismissible shell and its button are gone §17.1', async ({ page, baseURL }) => {

@@ -126,10 +126,22 @@ describe('parseEnvelope — an understood envelope', () => {
         nope: 2,
       }),
     )
-    expect(Object.keys(data).sort()).toEqual(['days', 'identity', 'meta', 'prefs', 'sheets'])
-    expect(Object.keys(data.identity).sort()).toEqual(['mark', 'markSeed', 'name', 'role'])
-    expect(Object.keys(data.prefs)).toEqual(['charKeys'])
-    expect(Object.keys(data.meta).sort()).toEqual(['lastExport', 'persisted'])
+    // The point is unchanged — `evil`, `theme`, `tokens` and `nope` are all
+    // gone — but the key set is read off `EMPTY_RECORD` rather than typed a
+    // second time here. The old assertion pinned the four literal lists, and
+    // §16.3's `prefs.aliasNamedFor` is what made that a liability: widening the
+    // shape in `schema.ts` failed this test for the shape being correct. The
+    // frozen empty record is the schema's one statement of its own key set, so
+    // an unknown key still dies and a NEW key does not have to be typed twice.
+    expect(Object.keys(data).sort()).toEqual(Object.keys(EMPTY_RECORD).sort())
+    expect(Object.keys(data.identity).sort()).toEqual(Object.keys(EMPTY_RECORD.identity).sort())
+    expect(Object.keys(data.prefs).sort()).toEqual(Object.keys(EMPTY_RECORD.prefs).sort())
+    expect(Object.keys(data.meta).sort()).toEqual(Object.keys(EMPTY_RECORD.meta).sort())
+    // And the keys that were smuggled in are named, so the test still fails if
+    // the coercion started copying its input wholesale.
+    for (const smuggled of ['nope', 'evil', 'theme', 'tokens']) {
+      expect(JSON.stringify(data), smuggled).not.toContain(smuggled)
+    }
   })
 })
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import {
   REMOTE_ERASE_FAILED,
   UNDO_CLOSED,
+  erasedRecord,
   eraseStored,
   readRawStored,
   restoreStoredQuarantine,
@@ -15,7 +16,7 @@ import {
 } from '@/lib/record/erase'
 import { markActivity, markExported } from '@/lib/record/events'
 import { canonicalRecordJson } from '@/lib/record/report'
-import { EMPTY_RECORD, SCHEMA_VERSION, type RecordData } from '@/lib/record/schema'
+import { SCHEMA_VERSION, type RecordData } from '@/lib/record/schema'
 import {
   exportJson,
   flush,
@@ -257,7 +258,17 @@ export function DataPanel() {
     setUndo({ data: snapshot(), quarantine: readRawStored().quarantine, at })
     setErasedAt(at)
     setLeft(undoSecondsLeft(at, at))
-    update(() => EMPTY_RECORD)
+    // §16.3 — `erasedRecord` and not `EMPTY_RECORD`: it owns the one field an
+    // erase must NOT reset, and it owns the argument for why. This panel does
+    // not sign the reader out, so a flag reset here would let the next claim
+    // re-decide the alias offer and write the reader's name back into the record
+    // they just erased, in this tab, while the reader is still looking at it.
+    //
+    // FOR THIS TAB is the whole of the claim: `eraseStored()` two lines down
+    // removes the key this record is written to, so the flag does not outlive
+    // the load. `erase.ts` states that limit and argues why a tombstone that DID
+    // outlive it would cost more than it buys.
+    update((data) => erasedRecord(data))
     // Immediate, then the keys go: the flush clears the pending write, so
     // nothing rewrites the key half a second after it was removed.
     flush()

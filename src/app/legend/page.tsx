@@ -280,7 +280,7 @@ export default function LegendPage() {
           <h2 id="hl-legend-storage" className="hl-panel-title">
             Where your record is
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">This browser only</p>
+          <p className="hl-mark m-0 text-ink-faint">This browser’s copy</p>
         </div>
 
         {/*

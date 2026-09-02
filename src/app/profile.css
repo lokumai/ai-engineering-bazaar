@@ -1,0 +1,517 @@
+/* ===========================================================================
+   §16 — the drafter block and the register: /profile/, rebuilt.
+
+   Owned by Task 1. Every class the profile sheet's new chrome needs lives
+   here and nowhere else, so that one file answers "what does this screen
+   look like" and no other stylesheet has to be consulted.
+
+   Three rules govern this file, and the first two are inherited.
+
+   ONE — a structural weight is PAINTED, never bordered. Chrome floors every
+   `border-*-width` to a whole CSS pixel, so `border: var(--stroke-struct)`
+   paints a hairline and §2.2's middle weight disappears. Anything at 1.5px
+   or 2px here is a one-stop gradient or a height, which is what
+   `tests/unit/stroke-weights.test.ts` fails the build for abandoning.
+
+   TWO — the accent pen is not spent on emphasis. Under T1 the accent means
+   "signed off" and, inside the mark row, "this is the one you chose". It is
+   never a decoration on a heading or a rule.
+
+   THREE — the register's closed row is a reading, not a teaser. Nothing in
+   this file may hide a summary line's text at any width: it wraps, it
+   scrolls, it never truncates to an ellipsis. A closed row that cannot be
+   read is §16.4.1 broken in CSS rather than in TSX.
+
+   ---------------------------------------------------------------------------
+   Two things a later reader will look for and not find, on purpose.
+
+   No `:has()`. This is the first stylesheet on the site that would have
+   wanted it — the selected mark cell is styled from its own radio's state —
+   and the mark row carries `data-hl-selected` on every cell already, put
+   there for `tests/e2e/alias.spec.ts`'s sequence assertion. Styling from the
+   attribute the tests read means the paint and the assertion cannot disagree;
+   styling from `:has(input:checked)` would have given the same picture from a
+   second source of truth.
+
+   No transition on the chevron. The mockup rotated it over 120ms. A rotation
+   is one more thing to suppress under `prefers-reduced-motion`, and the
+   character is already two different glyphs' worth of information away from
+   the state that matters, which `<details>` publishes to the platform.
+   =========================================================================== */
+
+@layer components {
+  /* =========================================================================
+     §16.1 — the drafter block. One box, two halves, and the only thing on
+     this page that arrives open.
+     ======================================================================== */
+
+  /* Hairline bordered: 1px is a weight a border can carry honestly (rule ONE
+     constrains 1.5px, not this). */
+  .hl-drafter {
+    margin: 0 0 24px;
+    border: var(--stroke-hair) solid var(--color-line-strong);
+    background: var(--color-cleared);
+  }
+
+  /* The drawing's column is fixed at 168px because LKM-01 is drawn at 132px
+     and the two mono lines under it are set in the mark register: a fluid
+     column would rewrap `SEED · 4F9C2A17` at some widths and not others, and
+     that line is a fact about the record rather than a caption. The gap is a
+     hairline of `--color-line` showing through, the same construction
+     `.hl-home-cards` uses, so no cell can lose an edge at a wrap. */
+  .hl-drafter-grid {
+    display: grid;
+    grid-template-columns: 168px minmax(0, 1fr);
+    gap: var(--stroke-hair);
+    background: var(--color-line);
+  }
+
+  .hl-drafter-mark,
+  .hl-drafter-body {
+    padding: 18px;
+    background: var(--color-cleared);
+  }
+
+  .hl-drafter-mark {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  /* `MARK · DATUM` and `SEED · 4F9C2A17` — or `NO SEED MINTED YET`, which is
+     the site's single spelling of that state (§16.6). Tabular figures so a
+     minted seed and an absent one occupy the same column. */
+  .hl-drafter-line {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    line-height: var(--text-mark--line-height);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink-muted);
+    overflow-wrap: anywhere;
+  }
+
+  .hl-drafter-line b {
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  /* §16.1's half rule, and it is an argument rather than a decoration: the two
+     halves are one subject — how this record is recognised — at two ranges.
+     A hairline would have read as "two unrelated panels stacked"; the
+     structural weight says "two halves of one box". Painted at the top edge of
+     the second half, because rule ONE means a 1.5px `border-top` would paint
+     1px and say `hairline` instead. */
+  .hl-drafter-half + .hl-drafter-half {
+    margin-top: 16px;
+    padding-top: 16px;
+    background:
+      linear-gradient(var(--color-line-strong) 0 0) 0 0 / 100% var(--stroke-struct) no-repeat,
+      transparent;
+  }
+
+  .hl-drafter-halfhead {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 10px;
+  }
+
+  /* There is deliberately no `.hl-drafter-note` here. One was written for
+     §16.3's provenance line, applied by nothing, and its comment quoted the
+     wording `scope.ts` records as the REJECTED one rather than the string that
+     ships — `NAME_FROM_ADDRESS`, which `IdentityPanel` sets with the site-wide
+     `.hl-mark` utilities that already give a mono uppercase readout. A rule
+     describing a string the site does not print is worse than no comment, and a
+     second definition of `.hl-mark`'s geometry is the drift §11.38 forbids. If
+     that line ever needs geometry of its own it goes here, under the name
+     `NAME_FROM_ADDRESS`, which is the one place its text is authored. */
+
+  /* =========================================================================
+     §16.2 — the compact mark row. Eight cells, one line, and the eight
+     paragraphs it replaces reduced to one line under the row.
+
+     The DOM contract this file styles from, so that Task 2 and this stylesheet
+     cannot drift: each cell is a `<label class="hl-markrow-cell">` carrying
+     `data-hl-mark` and `data-hl-selected`, and its first child is the native
+     radio, followed by the glyph, followed by `.hl-markrow-name`. The focus
+     ring is drawn on the name because the radio itself is transparent, and a
+     sibling selector is the only way to reach it without `:has()`.
+     ======================================================================== */
+
+  .hl-markrow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--stroke-hair);
+    width: fit-content;
+    max-width: 100%;
+    border: var(--stroke-hair) solid var(--color-line);
+    background: var(--color-line);
+  }
+
+  /* 54px × 8 is 432px + gaps, so the row wraps to two lines at 390 and that is
+     accepted (§16.9). 44px is the touch floor, unconditional rather than
+     inside a media query: a 54px cell already clears it at every width, so
+     stating it here documents the floor instead of hiding it behind a
+     breakpoint that nobody would think to check. */
+  .hl-markrow-cell {
+    display: grid;
+    place-items: center;
+    gap: 4px;
+    width: 54px;
+    min-height: 44px;
+    padding: 7px 4px 5px;
+    background: var(--color-cleared);
+    cursor: pointer;
+  }
+
+  .hl-markrow-cell:hover {
+    background: var(--color-paper);
+  }
+
+  /* Never `display: none` and never `visibility: hidden`: both take the
+     control out of the tab order, and this row's whole keyboard behaviour —
+     one tab stop, arrows between the options — is the native radio group's.
+     `accent-color` is set in the component, not here, for the reason
+     `MarkPicker` records: forced-colors overrides it correctly. */
+  .hl-markrow-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .hl-markrow-name {
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    line-height: 1.2;
+    letter-spacing: 0.06em;
+    text-align: center;
+    color: var(--color-ink-muted);
+  }
+
+  .hl-markrow-input:focus-visible ~ .hl-markrow-name {
+    outline: var(--stroke-cut) solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* §16.2.3 — three carriers for one state, because colour is never alone
+     (SC 1.4.1): the wash, a 1.5px inset rule, and a weight change on the
+     label. The inset shadow is how the struct weight is spent on a four-sided
+     rule — a border would floor it to 1px and lose the distinction from the
+     hairline grid the cells sit in. */
+  .hl-markrow-cell[data-hl-selected="true"] {
+    background: var(--color-accent-wash);
+    box-shadow: inset 0 0 0 var(--stroke-struct) var(--color-accent);
+  }
+
+  .hl-markrow-cell[data-hl-selected="true"] .hl-markrow-name {
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  /* §16.2.1 — the role's offer, reduced from a second complete picker with its
+     own two buttons to a mark on one cell. Nothing is written by an offer, so
+     it may not look like a selection: no wash, no inset rule, a dashed rule
+     instead — the leader-line dash the set already reads as "proposed, not
+     drawn" (§12.4.1).
+
+     This dashed rule is now the whole of the offer inside the cell. A
+     `.hl-markrow-offered` label used to print `OFFERED FOR YOUR ROLE` in the
+     cell as well; three uppercase mono words in a 54px column wrap to four
+     lines and took all eight cells from 53px to 110px tall, which is the
+     opposite of what a compact row is for. The words moved to
+     `.hl-markrow-note`, which is the line every radio's `aria-describedby`
+     already points at, so the offer is still readable as words and not as an
+     outline alone (SC 1.4.1); `MarkPicker`'s header records the four paths
+     they reach a reader by. An outline rather than a border because the cells
+     sit in a hairline grid and a border would move the glyph. */
+  .hl-markrow-cell[data-hl-offered="true"] {
+    outline: var(--stroke-hair) dashed var(--color-line-cut);
+    outline-offset: -3px;
+  }
+
+  /* The one description line for all eight options (§16.7): pointed at by the
+     focused radio's `aria-describedby`, and never an `aria-live` region — a
+     region that speaks on every arrow key is noise. `min-height` holds its
+     space so the row below does not jump as the reader arrows across. */
+  .hl-markrow-note {
+    min-height: 2.8em;
+    margin: 6px 0 0;
+    font-family: var(--font-display);
+    font-size: var(--text-meta);
+    line-height: 1.55;
+    color: var(--color-ink-muted);
+  }
+
+  .hl-markrow-note b {
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  /* =========================================================================
+     §16.4 — the register. Ten rows, all closed, each stating its reading.
+     ======================================================================== */
+
+  /* One instrument, not ten stacked panels: the outer hairline is the box, and
+     the grid's gap is a hairline of `--color-line` showing through between
+     rows. A `border-bottom` per row (the mockup's construction) needs a
+     `:last-child` exception and paints a double line wherever a row is
+     inserted; a gap cannot. */
+  .hl-register {
+    display: grid;
+    gap: var(--stroke-hair);
+    margin: 0 0 32px;
+    border: var(--stroke-hair) solid var(--color-line-strong);
+    background: var(--color-line);
+  }
+
+  .hl-register-row {
+    background: var(--color-cleared);
+  }
+
+  /* Three columns: the name, its reading, and the chevron. The reading takes
+     the space it needs and the name takes the rest, so a long reading is never
+     the thing that gets cut — rule THREE. `align-items: baseline` sets the
+     mono name and the mono reading on one line even though they differ in
+     weight. */
+  .hl-register-summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto 18px;
+    align-items: baseline;
+    gap: 6px 12px;
+    padding: 11px 14px;
+    cursor: pointer;
+    /* §16.4.4 — the native marker goes with `list-style`, never with
+       `display: none` on the summary, which costs Safari its click target. */
+    list-style: none;
+  }
+
+  .hl-register-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .hl-register-summary:hover {
+    background: var(--color-paper);
+  }
+
+  .hl-register-summary:focus-visible {
+    outline: var(--stroke-cut) solid var(--color-accent);
+    outline-offset: -2px;
+  }
+
+  .hl-register-name {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    line-height: 1.45;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+
+  /* Tabular figures, because these are the counts the panels exist to report
+     and a changing digit may not shift the column. Wraps rather than
+     truncates: the reading is the row's whole justification for being closed
+     (§16.4.1), so `text-overflow: ellipsis` is banned here by rule THREE. */
+  .hl-register-reading {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    line-height: 1.45;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink-muted);
+    overflow-wrap: anywhere;
+  }
+
+  .hl-register-chev {
+    justify-self: end;
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    color: var(--color-ink-muted);
+  }
+
+  /* The open row is marked with a 2px cut-plane rule down its left edge and no
+     colour at all — the same substitution `.hl-home-card-lead` made (rule
+     TWO). Painted, per rule ONE, and on the summary rather than the section so
+     that it reads as a bracket over the row's own head. */
+  .hl-register-fold[open] > .hl-register-summary {
+    background:
+      linear-gradient(var(--color-line-cut) 0 0) 0 0 / var(--stroke-cut) 100% no-repeat,
+      linear-gradient(var(--color-line) 0 0) 0 100% / 100% var(--stroke-hair) no-repeat,
+      var(--color-cleared);
+  }
+
+  .hl-register-fold[open] > .hl-register-summary:hover {
+    background:
+      linear-gradient(var(--color-line-cut) 0 0) 0 0 / var(--stroke-cut) 100% no-repeat,
+      linear-gradient(var(--color-line) 0 0) 0 100% / 100% var(--stroke-hair) no-repeat,
+      var(--color-paper);
+  }
+
+  .hl-register-body {
+    padding: 14px;
+  }
+
+  /* A panel body written for its own `.hl-panel` wrapper carries a 32px bottom
+     margin on its last block; inside a row that is 32px of nothing above the
+     next row's summary. */
+  .hl-register-body > :last-child {
+    margin-bottom: 0;
+  }
+
+  /* §4.7, §11.10 — 1024 and below. The drawing column stacks above the two
+     halves rather than shrinking: 168px is the width the two mono lines are
+     set to, and a 132px drawing beside a 200px form is neither. */
+  @media (max-width: 1023px) {
+    .hl-drafter-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  /* 767 and below the summary becomes two lines — name and chevron, then the
+     reading under them. The alternative was letting the three-column grid
+     wrap, which puts a two-word reading in a 60px column and stacks it
+     letter by letter. The reading is never dropped, only moved.
+
+     All three children are placed EXPLICITLY, and that is not tidiness. With
+     only the reading and the chevron placed, auto-placement runs its
+     definite-row pass first (the chevron, `grid-row: 1`, takes column 1) and
+     the fully-auto name lands in what is left of row 1 — the 18px chevron
+     column. Measured at 390px: `Readout` was given an 18px box it needs 57px
+     for, and the document scrolled 45px sideways with no element whose own
+     rect passed the viewport, which is why `responsive.spec.ts` reported an
+     overflow and no offender. */
+  @media (max-width: 767px) {
+    .hl-register-summary {
+      grid-template-columns: minmax(0, 1fr) 18px;
+    }
+
+    .hl-register-name {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .hl-register-chev {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .hl-register-reading {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+}
+
+/* ===========================================================================
+   §12.17, §16.7 — forced-colors.
+
+   Every painted rule in this file is a `background-image` and every state
+   shadow is a `box-shadow`, and the mode forces both to `none`: the drafter
+   block's half rule, the open row's cut line, the hairline grids and the
+   selected mark cell's inset rule all disappear at once. They come back as
+   real borders at system colours, which are honoured in place of the forced
+   value.
+
+   The one place where restoring a border is not enough is the mark row. The
+   selected cell's three carriers are a wash, a shadow and a font weight;
+   forced-colors deletes the first two, and the third is not a state a reader
+   can be asked to infer. So the native radio — hidden at every other width
+   because the glyph and its name are the control — is brought back into view
+   here, and the selection is read from the platform's own control. That is
+   §16.2.3's promise, and it is the reason the input is `opacity: 0` rather
+   than `display: none`: an invisible control can be shown again, a
+   non-rendered one cannot.
+
+   `forced-color-adjust` is never used: it would opt out of the reader's own
+   explicit choice.
+   =========================================================================== */
+
+@media (forced-colors: active) {
+  .hl-drafter,
+  .hl-register,
+  .hl-register-row,
+  .hl-markrow-cell {
+    border: 1px solid CanvasText;
+    background: Canvas;
+  }
+
+  .hl-drafter-grid,
+  .hl-markrow {
+    background: Canvas;
+  }
+
+  .hl-drafter-mark,
+  .hl-drafter-body {
+    border: 1px solid CanvasText;
+  }
+
+  .hl-drafter-half + .hl-drafter-half {
+    border-top: 2px solid CanvasText;
+  }
+
+  .hl-register-fold[open] > .hl-register-summary {
+    border-left: 2px solid Highlight;
+  }
+
+  .hl-markrow-cell[data-hl-selected="true"] {
+    border: 2px solid Highlight;
+  }
+
+  .hl-markrow-input {
+    position: static;
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+/* ===========================================================================
+   §12.18 — print.
+
+   A closed row on paper is a row nobody can open, so every register row is
+   forced open, exactly as `record.css` does for `.hl-diagram-table`: on paper
+   the fold is not a control, it is a deletion. The chevron goes, because it
+   points at an interaction that no longer exists.
+   =========================================================================== */
+
+@media print {
+  .hl-register-fold,
+  .hl-register-fold[open] {
+    display: block;
+  }
+
+  .hl-register-fold > *:not(summary) {
+    display: block !important;
+  }
+
+  /* The rule above cannot open a closed fold on its own, and the first version
+     of this block claimed it could. Chrome does not lay a closed `<details>`'
+     children out at all — since the UA sheet moved that to
+     `content-visibility: hidden` on the `::details-content` pseudo-element,
+     `display` on the children is not the property doing the hiding — so paper
+     came out as ten summary lines with no bodies, which is the exact opposite
+     of §12.18's rule that on paper the fold is a deletion rather than a
+     control. Unwrapping the pseudo-element is what actually reveals them; the
+     `display` rule stays for engines that have no `::details-content`, where it
+     is the thing that works. */
+  .hl-register-fold::details-content {
+    content-visibility: visible;
+    block-size: auto;
+  }
+
+  .hl-register-row,
+  .hl-drafter {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .hl-register-chev {
+    display: none !important;
+  }
+}

@@ -9,6 +9,11 @@ import {
   type CallbackPlan,
   planCallback,
 } from '@/lib/auth/session'
+import {
+  ACCOUNTS_NOT_ENABLED,
+  AuthShell,
+  type AuthChrome,
+} from '@/components/auth/SignInPanel'
 import { supabaseBrowser } from '@/lib/supabase/client'
 
 /**
@@ -70,44 +75,39 @@ function Unsigned({ children }: { children: string }) {
  * panel that printed it as verified would be the first crack in the one
  * mechanism §14.8.2 builds.
  */
-export function AccountPanel() {
+export function AccountPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
   const session = useSession()
 
   if (session === null) {
     // A wiring bug, said out loud rather than rendered as a reader-facing
     // state. `SessionProvider` records why this is not a permanent "checking".
     return (
-      <section className="hl-panel" aria-labelledby="hl-account-head">
-        <div className="hl-panel-head">
-          <h2 id="hl-account-head" className="hl-panel-title">
-            Account
-          </h2>
-        </div>
+      <AuthShell chrome={chrome} headingId="hl-account-head" heading="Account">
         <p className="hl-mark m-0 text-ink-muted">NO SESSION IS BEING TRACKED ON THIS PAGE</p>
-      </section>
+      </AuthShell>
     )
   }
 
   const { view, error, signOut } = session
 
   return (
-    <section className="hl-panel" aria-labelledby="hl-account-head">
-      <div className="hl-panel-head">
-        <h2 id="hl-account-head" className="hl-panel-title">
-          Account
-        </h2>
+    <AuthShell
+      chrome={chrome}
+      headingId="hl-account-head"
+      heading="Account"
+      mark={
         <p className="hl-mark m-0 text-ink-faint">
           {view.status === 'signedIn'
             ? 'RECORD CONNECTED TO AN ACCOUNT'
             : 'THIS BROWSER ONLY'}
         </p>
-      </div>
-
+      }
+    >
       <dl className="hl-defs">
         <dt>Session</dt>
         <dd aria-live="polite">
           {view.status === 'unknown' && 'CHECKING'}
-          {view.status === 'disabled' && <Unsigned>ACCOUNTS NOT ENABLED</Unsigned>}
+          {view.status === 'disabled' && <Unsigned>{ACCOUNTS_NOT_ENABLED}</Unsigned>}
           {view.status === 'signedOut' && <Unsigned>NOT SIGNED IN</Unsigned>}
           {view.status === 'signedIn' && 'SIGNED IN'}
         </dd>
@@ -166,13 +166,13 @@ export function AccountPanel() {
       {error !== null && (
         <div className="hl-note" role="alert">
           <p>
-            The account could not be read just now, so this panel is not
-            claiming to know its state. Nothing was changed.
+            The account could not be read, so this panel is not claiming to
+            know its state. Nothing was changed.
           </p>
           <p className="hl-mark text-ink-muted">REPORTED · {error}</p>
         </div>
       )}
-    </section>
+    </AuthShell>
   )
 }
 
@@ -229,7 +229,7 @@ type MembershipState =
  * from here; it could only ever have been reported, which under §1 is the
  * failure that matters.
  */
-export function OrgMembershipPanel() {
+export function OrgMembershipPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
   const session = useSession()
   const [state, setState] = useState<MembershipState>({ kind: 'idle' })
   const status = session?.view.status ?? 'unknown'
@@ -275,17 +275,37 @@ export function OrgMembershipPanel() {
   }, [userId])
 
   return (
-    <section className="hl-panel" aria-labelledby="hl-orgs-head">
-      <div className="hl-panel-head">
-        <h2 id="hl-orgs-head" className="hl-panel-title">
-          Organisations
-        </h2>
-        <p className="hl-mark m-0 text-ink-faint">READ ONLY IN THIS REVISION</p>
-      </div>
-
+    <AuthShell
+      chrome={chrome}
+      headingId="hl-orgs-head"
+      heading="Organisations"
+      mark={<p className="hl-mark m-0 text-ink-faint">READ ONLY IN THIS REVISION</p>}
+    >
       {status !== 'signedIn' ? (
+        /**
+         * §16.4.1 — three statuses, because the summary that folds this body
+         * has three and a fold may not contradict the line that was folded.
+         *
+         * **What the old code claimed.** It read the reader as either
+         * `unknown` or signed out, so on the shipped default — accounts off —
+         * this body printed `NOT SIGNED IN · NO MEMBERSHIP TO REPORT` while the
+         * register row it sits in summarised the same state as
+         * `ACCOUNTS NOT ENABLED YET`. Both sentences were defensible alone and
+         * together they were a contradiction: nobody is signed out of a
+         * deployment that has no sign-in, and opening the row disagreed with
+         * the row.
+         *
+         * The disabled string is imported rather than retyped for the reason
+         * `ACCOUNTS_NOT_ENABLED`'s own header gives: the summary above reads
+         * from that same author, so the two cannot drift into a second
+         * spelling.
+         */
         <p className="hl-mark m-0 text-ink-muted">
-          {status === 'unknown' ? 'CHECKING' : 'NOT SIGNED IN · NO MEMBERSHIP TO REPORT'}
+          {status === 'unknown'
+            ? 'CHECKING'
+            : status === 'disabled'
+              ? ACCOUNTS_NOT_ENABLED
+              : 'NOT SIGNED IN · NO MEMBERSHIP TO REPORT'}
         </p>
       ) : state.kind === 'loading' || state.kind === 'idle' ? (
         <p className="hl-mark m-0 text-ink-muted" aria-live="polite">
@@ -331,7 +351,7 @@ export function OrgMembershipPanel() {
           </p>
         </div>
       )}
-    </section>
+    </AuthShell>
   )
 }
 
@@ -381,12 +401,19 @@ function normaliseMemberships(rows: unknown): readonly Membership[] {
  * §12.2's rule is that channel B islands are mounted where they are needed.
  * `supabaseBrowser()` caches, so a later decision to hoist the provider costs
  * nothing and breaks nothing.
+ *
+ * §16 splits the pair up — the account half moves into the drafter block and
+ * the organisation half becomes a register row — so this wrapper's remaining
+ * value is the provider, and `chrome` is passed through rather than fixed here.
+ * Both halves in `inline` chrome would emit two heading-less blocks in a row,
+ * which is why §16's page calls the two panels separately inside one provider
+ * instead of calling this.
  */
-export function AuthPanels() {
+export function AuthPanels({ chrome = 'panel' }: { chrome?: AuthChrome }) {
   return (
     <SessionProvider>
-      <AccountPanel />
-      <OrgMembershipPanel />
+      <AccountPanel chrome={chrome} />
+      <OrgMembershipPanel chrome={chrome} />
     </SessionProvider>
   )
 }
@@ -486,7 +513,7 @@ function CallbackBody() {
           kind: 'error',
           readout: 'ACCOUNTS ARE NOT ENABLED HERE',
           note:
-            'The link was valid, but this deployment has no backend configured, '
+            'The link arrived complete, but this deployment carries no backend, '
             + 'so there is nothing to sign in to. Nothing was changed.',
           returnPath: plan.returnPath,
         })

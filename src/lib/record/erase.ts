@@ -34,7 +34,7 @@
  */
 
 import type { tally } from './derive'
-import { RECORD_QUARANTINE_KEY, RECORD_STORAGE_KEY } from './schema'
+import { EMPTY_RECORD, RECORD_QUARANTINE_KEY, RECORD_STORAGE_KEY, type RecordData } from './schema'
 import { safeStorage, type RecordStorage } from './storage'
 
 /** §12.15 — the word that gates the danger button. */
@@ -478,3 +478,77 @@ export const ERASE_ORG_HISTORY =
 /** Row 3. Both tables, by `on delete cascade`, and only this way. */
 export const ERASE_CLOSE_ACCOUNT =
   'Only closing your account removes that history.'
+
+/**
+ * §12.15, §16.3 — the record an erase leaves behind: empty, except that this
+ * browser still remembers it has already settled the alias question.
+ *
+ * ## What the code used to do, and what it cost
+ *
+ * `DataPanel` erased with `update(() => EMPTY_RECORD)`, whose
+ * `prefs.aliasNamedFor` is null, and it deliberately does NOT sign the reader
+ * out. So the erase reset the flag that records §16.3's once-per-account
+ * decision, the next mount's claim re-decided, and `noteAliasNamed` also stamped
+ * a day — a record the reader had just erased came back holding their name and a
+ * day they had not worked. That is the F1b half of the same hole: two writers of
+ * one flag disagreed about what erasing it meant.
+ *
+ * ## What §12.15 promises, and why carrying the flag keeps it
+ *
+ * The promise is about CONTENT and about the storage keys: the panel prints
+ * `NO VALUE STORED UNDER THIS KEY` for both keys, and the counts it enumerated
+ * before the act — sheet states, the name, the submittals, the days — are gone.
+ * The keys are removed by `eraseStored()` a line after this record is written, so
+ * nothing here can put a value under a key; and `carriesNothing` (`schema.ts`)
+ * deliberately ignores `prefs` entirely, so a record carrying this flag still
+ * counts as carrying nothing — which is what stops another tab pushing it and
+ * what stops the claim's erase-wins guard in `AccountSync` mistaking it for a
+ * record. The flag names an account id the reader's own account already knows;
+ * it reprints no content, restores nothing, and is invisible in every readout.
+ *
+ * ## The alternative, and why it loses
+ *
+ * The other defensible choice was to reset the flag and stop the re-offer by
+ * signing the reader out as part of the erase. It loses twice: §12.15's dialog
+ * enumerates what the act destroys, and ending a session is neither enumerated
+ * nor undoable by the undo window that follows; and a signed-in reader who erases
+ * this browser's copy and keeps working is exactly the case §14 supports, so the
+ * erase would have grown a consequence the reader was never told about.
+ * `tests/unit/record/alias-naming.test.ts` pins the choice: it asserts the flag
+ * SURVIVES, and it fails under the reset.
+ *
+ * ## Where the flag stops reaching, and why it is allowed to stop
+ *
+ * REPORTED BY REVIEW, and true: this carries the flag in the RECORD, and
+ * `eraseStored()` removes the key that record is written to a line later. So the
+ * flag holds for as long as this tab stays loaded — which covers the undo window
+ * and the rest of the session — and no longer. On the next load `store.start()`
+ * reads `EMPTY_RECORD`, the flag is null, and a still-signed-in account is
+ * offered the address again. A second tab, which replaces its state when it
+ * receives the removal event, reaches the same place.
+ *
+ * That is the limit and not an oversight, because the durable version of this
+ * flag is a durable fact about the reader. §12.15's panel prints
+ * `NO VALUE STORED UNDER THIS KEY` after the act; a tombstone that survived
+ * would be an account id sitting under a key that says it holds nothing, or a
+ * third key the panel would then have to enumerate and erase — which returns the
+ * question to where it started.
+ *
+ * And the behaviour it leaves is defensible on its own terms: a browser that
+ * holds no record, met by an account, is precisely the first-sign-in case §16.3
+ * exists for. What the flag has to prevent is the offer overruling a decision
+ * inside a record that still exists — a reader who cleared their name, or who
+ * erased and kept working — and it prevents both. `alias-naming.test.ts` pins
+ * the boundary in both directions: the flag survives the erase, and a reload
+ * after it offers again.
+ *
+ * `charKeys` is deliberately NOT carried across. It is a §12.16 preference with
+ * a visible control and a printed readout, so a reader can see what it is and
+ * change it; the alias flag has no control at all, which is why losing it is
+ * silent and losing it overrules a decision.
+ */
+export function erasedRecord(data: RecordData): RecordData {
+  const { aliasNamedFor } = data.prefs
+  if (aliasNamedFor === null) return EMPTY_RECORD
+  return { ...EMPTY_RECORD, prefs: { ...EMPTY_RECORD.prefs, aliasNamedFor } }
+}

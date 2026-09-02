@@ -169,6 +169,24 @@ function markRadio(page: Page, id: string) {
   return page.locator(`input[name="hl-alias-mark"][value="${id}"]`)
 }
 
+/**
+ * Choosing a mark the way a reader chooses one: by pressing the cell.
+ *
+ * §16.2 made this screen call the one shared `MarkPicker`, whose cell is a
+ * `<label>` carrying the glyph and the mark's name with the native radio
+ * visually hidden inside it — `opacity: 0` and `pointer-events: none`, never
+ * `display: none`, so the group keeps its single tab stop and its arrow-key
+ * navigation (`profile.css`, §16.2.3). `.check()` acts on the input itself and
+ * fails on a control that cannot be hit, which is correct of Playwright and
+ * wrong of this test: the input was never the target. So the gesture is the
+ * label, and the ASSERTION is that the native radio ended up checked — the
+ * state every other line here reads, and the one the platform owns.
+ */
+async function chooseMark(page: Page, id: string): Promise<void> {
+  await page.locator(`label[data-hl-mark="${id}"]`).click()
+  await expect(markRadio(page, id), `pressing the ${id} cell did not check its radio`).toBeChecked()
+}
+
 test.describe('§15.4 /sign-in/alias/', () => {
   test('reaches nothing beyond its own assets, even on submit', async ({ page }) => {
     const asked = tally(page)
@@ -179,7 +197,7 @@ test.describe('§15.4 /sign-in/alias/', () => {
     // The whole gesture, not just the load: a screen can be quiet until the
     // moment it has a name to send.
     await nameField(page).fill('Ada Lovelace')
-    await markRadio(page, 'hex').check()
+    await chooseMark(page, 'hex')
     await page.getByRole('button', { name: 'KEEP THIS ALIAS', exact: true }).click()
     await waitForRecord(page, (env) => env?.data.identity.name === 'Ada Lovelace')
     await page.waitForLoadState('networkidle')
@@ -226,7 +244,7 @@ test.describe('§15.4 /sign-in/alias/', () => {
     await page.goto(ALIAS)
 
     await nameField(page).fill('  Ada  Lovelace  ')
-    await markRadio(page, 'centre').check()
+    await chooseMark(page, 'centre')
     await page.getByRole('button', { name: 'KEEP THIS ALIAS', exact: true }).click()
 
     // §12.1.4 throttles the flush, so this is polled rather than read on the
@@ -265,7 +283,7 @@ test.describe('§15.4 /sign-in/alias/', () => {
     // choice. Storing the string would render identically here and misinform
     // every other reader of the field.
     await nameField(page).fill('Grace Hopper')
-    await markRadio(page, 'seeded').check()
+    await chooseMark(page, 'seeded')
     await page.getByRole('button', { name: 'KEEP THIS ALIAS', exact: true }).click()
 
     const stored = await waitForRecord(
@@ -295,7 +313,7 @@ test.describe('§15.4 /sign-in/alias/', () => {
     await expect(stamp).toContainText('Ada Lovelace')
     await expect(stamp).toContainText(UNVERIFIED)
 
-    await markRadio(page, 'weld').check()
+    await chooseMark(page, 'weld')
     await expect(stamp).toContainText(UNVERIFIED)
 
     await page.getByRole('button', { name: 'KEEP THIS ALIAS', exact: true }).click()

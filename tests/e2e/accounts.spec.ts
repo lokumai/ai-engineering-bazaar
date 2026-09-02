@@ -127,7 +127,16 @@ test.describe('§14 accounts, organisations and the record that outlives a brows
     // blank screen: §14.7 requires it to return them to the site.
     await page.goto('/profile/')
     await waitForHydratedReadout(page)
-    await expect(page.getByText(fixture.emails.learner, { exact: false })).toBeVisible()
+    // §16 puts the address on two surfaces in the account half — the session
+    // readout's own row and the sign-in panel's identity line — so a bare text
+    // match is ambiguous. The row whose job is to report the session is the one
+    // this assertion means.
+    const sessionEmail = page.locator(
+      'section[aria-labelledby="hl-account-head"] dd',
+      { hasText: fixture.emails.learner },
+    )
+    await expect(sessionEmail, 'the session readout names the signed-in address').toHaveCount(1)
+    await expect(sessionEmail).toBeVisible()
   })
 
   // -- §14.7.4 the claim ----------------------------------------------------
@@ -152,9 +161,12 @@ test.describe('§14 accounts, organisations and the record that outlives a brows
     await page.goto('/profile/')
     await waitForHydratedReadout(page)
 
-    // §14.7.4 — the reader is TOLD what happened to their own record. The
-    // account held nothing, so this is the `adopted` outcome.
-    await expect(page.getByText('NO RECORD IN ACCOUNT')).toBeVisible()
+    // §17.7 — the claim's own words are permanent now, in the register. The
+    // adopted outcome reads as a move into the account; the panel's
+    // `NO RECORD IN ACCOUNT` readout is in the fold's body.
+    await expect(registerReading(page, 'claim')).toContainText('MOVED INTO YOUR ACCOUNT')
+    const fold = await openRegisterRow(page, 'claim')
+    await expect(fold).toContainText('NO RECORD IN ACCOUNT')
 
     // §14.7.3 — and the footer stops claiming nothing once the push lands.
     await expect

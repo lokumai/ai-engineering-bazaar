@@ -1615,3 +1615,29 @@ test('§12.15 — an unreadable file changes nothing, and each state has its own
   // Three refused files, and the record is exactly as it was.
   expect(await storedData(page)).toEqual(before)
 })
+
+test('§17.1 — a receipt on the record outlives the document that reported it', async ({
+  page,
+}) => {
+  // Seeded, not claimed: this asserts the STORED half, with no account and no
+  // network. The claim that writes it is gated in `accounts.spec.ts`.
+  await seedRecord(page, EVERYTHING_RECORDED)
+  await page.goto('/profile/')
+  await settledRegister(page)
+
+  // No document claimed anything, so the arrival line is absent...
+  await expect(page.locator('.hl-receipt')).toHaveCount(0)
+  // ...and the register still reports what the record holds.
+  await expect(registerReading(page, 'claim')).toHaveText('4 MERGED · 0 LOST')
+
+  const fold = await openRegisterRow(page, 'claim')
+  await expect(fold).toContainText('CLAIMED 2026-08-11')
+  await expect(fold).toContainText('Nothing was deleted.')
+  // §17.3's regression pin, in a browser: the identity line is printed for a
+  // name that changed and not for a provenance that did not.
+  await expect(fold).toContainText('The name on the record is the one your account holds.')
+  await expect(fold).not.toContainText('The path role on the record')
+
+  // And the reading a closed row prints is the reading its open body reports.
+  await expect(registerReading(page, 'claim')).toHaveText('4 MERGED · 0 LOST')
+})

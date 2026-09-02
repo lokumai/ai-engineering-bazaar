@@ -1,6 +1,12 @@
 import { expect, test } from '@playwright/test'
 
-import { openRegisterRow, seedRecord, signedSheet, waitForHydratedReadout } from './record'
+import {
+  openRegisterRow,
+  registerReading,
+  seedRecord,
+  signedSheet,
+  waitForHydratedReadout,
+} from './record'
 import {
   accountsEnv,
   cleanup,
@@ -523,5 +529,89 @@ test.describe('§14 accounts, organisations and the record that outlives a brows
         return data?.length ?? 0
       }, { timeout: 20_000, message: 'the membership row was never written' })
       .toBe(1)
+  })
+
+  // -- §17.5 the seam writes news, once ---------------------------------------
+
+  /**
+   * §17.0's Bulgu 1, as a gate.
+   *
+   * MEASURED on the shipped build: signing in once and then reloading printed
+   * the whole claim panel again on every document load — `here 1 · account 1 ·
+   * in both 1 · merged 1`, a merge in which nothing moved — and again on a full
+   * load of any other page. This asserts the property that fixes it: the receipt
+   * is shown for the claim that was NEWS, once.
+   */
+  test('the receipt is news once, not on every page load §17.2', async ({ page, baseURL }) => {
+    await seedRecord(page, {
+      identity: { name: 'Ada Lovelace', markSeed: '0123abcd' },
+      sheets: { 'intermediate/coding-agents': signedSheet('f60e2d2') },
+    })
+    await page.goto('/')
+    await waitForHydratedReadout(page)
+
+    await signInByLink(page, fixture, fixture.emails.colleague, baseURL!)
+    await page.goto('/')
+
+    const receipt = page.locator('.hl-receipt')
+    await expect(receipt, 'the first claim is news and says so').toBeVisible({ timeout: 30_000 })
+    await expect(receipt).toContainText('MOVED INTO YOUR ACCOUNT')
+
+    // Three reloads. The claim runs on every one of them and moves nothing.
+    for (const attempt of [1, 2, 3]) {
+      await page.reload()
+      await waitForHydratedReadout(page)
+      // Wait past the two round trips the claim takes, so this cannot pass by
+      // being early: the old panel took ~2s to appear.
+      await page.waitForTimeout(5_000)
+      await expect(
+        page.locator('.hl-receipt'),
+        `reload ${attempt} reported a claim that moved nothing`,
+      ).toHaveCount(0)
+    }
+
+    // And a full load of another page is not a new claim either.
+    await page.goto('/sheets/')
+    await waitForHydratedReadout(page)
+    await page.waitForTimeout(5_000)
+    await expect(page.locator('.hl-receipt')).toHaveCount(0)
+
+    // The record the reader can check still says what happened, permanently.
+    await page.goto('/profile/')
+    await waitForHydratedReadout(page)
+    // Task 7
+    // await expect(registerReading(page, 'claim')).toContainText('MOVED INTO YOUR ACCOUNT')
+  })
+
+  test('the dismissible shell and its button are gone §17.1', async ({ page, baseURL }) => {
+    await seedRecord(page, { sheets: { 'intermediate/coding-agents': signedSheet('f60e2d2') } })
+    await page.goto('/')
+    await waitForHydratedReadout(page)
+    await signInByLink(page, fixture, fixture.emails.outsider, baseURL!)
+    await page.goto('/')
+    await expect(page.locator('.hl-receipt')).toBeVisible({ timeout: 30_000 })
+
+    await expect(page.locator('.hl-claim-shell')).toHaveCount(0)
+    await expect(page.getByRole('button', { name: 'DISMISS' })).toHaveCount(0)
+
+    // In the column, not against the viewport edge, and not clipped.
+    const geometry = await page.evaluate(() => {
+      const line = document.querySelector('.hl-receipt') as HTMLElement
+      const column = line.parentElement as HTMLElement
+      const main = document.querySelector('main') as HTMLElement
+      return {
+        lineLeft: line.getBoundingClientRect().left,
+        columnLeft: column.getBoundingClientRect().left,
+        lineRight: line.getBoundingClientRect().right,
+        columnRight: column.getBoundingClientRect().right,
+        insideMain: main.contains(line),
+        scrollWidth: document.documentElement.scrollWidth,
+        clientWidth: document.documentElement.clientWidth,
+      }
+    })
+    expect(geometry.insideMain, 'the receipt belongs to the page, not to the body').toBe(true)
+    expect(geometry.lineLeft).toBeCloseTo(geometry.columnLeft, 0)
+    expect(geometry.lineRight).toBeCloseTo(geometry.columnRight, 0)
+    expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.clientWidth + 1)
   })
 })

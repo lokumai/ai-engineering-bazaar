@@ -1,16 +1,22 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 
 import { useSession } from '@/components/auth/SessionProvider'
-import { ClaimSummary } from '@/components/record/ClaimSummary'
 import { carriesEmailIdentity, type SessionUser } from '@/lib/auth/session'
 import type { CurriculumFacts } from '@/lib/content/facts'
 import { aliasFromEmail } from '@/lib/identity/alias-offer'
 import { PROFILES_TABLE, profileRowFor } from '@/lib/org/profile-sync'
 import { selectAttention } from '@/lib/record/attention'
-import { claimMerge, summariseClaim, type ClaimSummary as ClaimSummaryData } from '@/lib/record/claim'
-import { noteAliasNamed, setIdentity } from '@/lib/record/events'
+import { announceClaim, clearClaimAnnounce } from '@/lib/record/claim-announce'
+import {
+  claimIsNews,
+  claimMerge,
+  summariseClaim,
+  type ClaimSummary as ClaimSummaryData,
+} from '@/lib/record/claim'
+import { noteAliasNamed, noteClaim, setIdentity } from '@/lib/record/events'
 import { migrate } from '@/lib/record/migrate'
 import { buildProgress } from '@/lib/record/progress'
 import { carriesNothing, SCHEMA_VERSION, type RecordData } from '@/lib/record/schema'
@@ -60,11 +66,27 @@ import { supabaseBrowser } from '@/lib/supabase/client'
  */
 export function AccountSync({ facts }: { facts: CurriculumFacts }) {
   const session = useSession()
-  const [summary, setSummary] = useState<ClaimSummaryData | null>(null)
 
   const view = session?.view
   const userId = view?.status === 'signedIn' ? view.user.id : null
   const user = view?.status === 'signedIn' ? view.user : null
+
+  const pathname = usePathname()
+
+  /**
+   * §17.1 — navigation dismisses the arrival line, and there is no button.
+   *
+   * A client transition does not reload the document, so without this the line
+   * would follow the reader across every page of the session — which is the
+   * behaviour the reader asked to be rid of. The detail is permanent in
+   * `/profile/`, so nothing is destroyed by clearing it.
+   *
+   * Keyed on `pathname` and not on a click: the reader's act is the navigation,
+   * whichever affordance performed it.
+   */
+  useEffect(() => {
+    clearClaimAnnounce()
+  }, [pathname])
 
   useEffect(() => {
     if (userId === null || user === null) {
@@ -72,7 +94,6 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
       // returns the footer to `off`, which is the only true thing to say about
       // a server when there is no session (§14.7.3).
       attachSync(null)
-      setSummary(null)
       return
     }
 
@@ -310,6 +331,27 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
       return false
     }
 
+    /**
+     * §17.2 — record the claim if it was news, and say nothing if it was not.
+     *
+     * MEASURED (§17.0): this effect runs on EVERY mount with a session, so every
+     * page load with an account row takes the `merged` branch and the old
+     * `setSummary` put the whole panel back on screen — reporting a merge in
+     * which nothing had moved. `claimIsNews` is the test that was missing, and it
+     * is a change test throughout, because the provenance the summary carries
+     * (`identity.name === 'account'`) is true on every one of those loads.
+     *
+     * The write goes through `update`'s reducer and not through a value read
+     * above it, for §16.3's measured reason: `mergeIdentity` can move the
+     * identity inside the same tick, so `current` is the only record fresher than
+     * the merge.
+     */
+    function recordClaim(summary: ClaimSummaryData): void {
+      if (!claimIsNews(summary)) return
+      update((data) => noteClaim(data, { at: nowIso(), summary }))
+      announceClaim()
+    }
+
     void instance
       .claim()
       .then((outcome) => {
@@ -374,7 +416,7 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
 
           const merged = claimMerge(local, outcome.remote)
           update(() => merged)
-          setSummary(summariseClaim(local, outcome.remote, merged))
+          recordClaim(summariseClaim(local, outcome.remote, merged))
           // AFTER the merge is written, never before: the account's name wins
           // over this device's, so "this record has no name" is only true of
           // the merged record.
@@ -388,7 +430,7 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
         }
 
         if (outcome.kind === 'adopted') {
-          setSummary(summariseClaim(outcome.record, null, outcome.record))
+          recordClaim(summariseClaim(outcome.record, null, outcome.record))
           // No row existed, so nothing can arrive to contradict the offer. This
           // is the first-sign-in case §16.3 is mostly about, and the same
           // pattern as the branch above with one term dropped: no account row
@@ -422,31 +464,19 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
     }
   }, [userId, user, facts])
 
-  if (summary === null) return null
-  return (
-    <div className="hl-claim-shell" role="region" aria-label="Record claimed">
-      <ClaimSummary summary={summary} />
-      {/*
-        The dismiss lives here rather than inside `ClaimSummary` because that
-        component computes nothing and decides nothing — it renders a summary it
-        is handed. Where the summary is shown is this file's problem: it is
-        mounted per document, so without a way to close it the panel would sit
-        on top of every sheet for the rest of the session.
-
-        It is a button and not a timeout. §12.4's stance is that nothing about
-        the record disappears on a clock the reader cannot see, and this panel
-        is the only place they are ever told what happened to their own
-        signatures.
-      */}
-      <button
-        type="button"
-        className="hl-btn"
-        onClick={() => setSummary(null)}
-      >
-        DISMISS
-      </button>
-    </div>
-  )
+  /**
+   * §17.5 — the seam decides and writes; it renders nothing.
+   *
+   * What the reader is told lives in `ClaimReceipt` (the arrival line, rendered
+   * inside the page column by `PageShell`) and in `/profile/`'s `Last claim`
+   * fold. Both read `meta.lastClaim`, which this file is the only writer of, so
+   * there is one source for the fact and two places that print it (§16.4.2).
+   *
+   * The `hl-claim-shell` this used to return was a bare `<div>` after
+   * `{children}` in `<body>`: no column, no gutters, below the footer, with the
+   * fixed mascot over its own button. §17.0 has the measurements.
+   */
+  return null
 }
 
 /**

@@ -158,3 +158,6 @@ only `INSERT` raises, which is why that suite has both `expectRefused` and
 | [`docs/manager-queries.md`](docs/manager-queries.md) | Tables, columns, joins, manager SQL |
 | [`SECURITY.md`](SECURITY.md) | The shared-origin exposure, accepted risks, operational rules |
 | [`supabase/README.md`](supabase/README.md) | Applying the schema |
+
+
+@AGENTS.md

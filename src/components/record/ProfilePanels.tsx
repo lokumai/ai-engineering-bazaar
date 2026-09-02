@@ -817,7 +817,8 @@ export function OrgReading() {
  * §17.7 — the last claim, read off the same `meta.lastClaim` the fold's body
  * prints, through the same `claimReceiptReading` the arrival line uses.
  *
- * One function, three callers, no new derivation (§16.4.2). A record that has
+ * One function, two callers — this row and `ClaimReceipt`'s arrival line — and
+ * no new derivation (§16.4.2). A record that has
  * never met an account reads `NO CLAIM ON RECORD` — a named state and the only
  * spelling of it, not a dash, because the question has an answer.
  */

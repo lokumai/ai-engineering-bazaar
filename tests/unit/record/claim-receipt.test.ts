@@ -22,6 +22,7 @@ import {
   type RecordData,
   type SheetRecord,
 } from '@/lib/record/schema'
+import { coerceRecordData } from '@/lib/record/validate'
 
 const AT = '2026-08-01T10:00:00.000Z'
 const CLAIMED_AT = '2026-09-02T11:17:00.000Z'
@@ -142,6 +143,61 @@ describe('claimIsNews (§17.2)', () => {
 
     expect(summary.identity.markChanged).toBe(true)
     expect(claimIsNews(summary)).toBe(true)
+  })
+
+  /**
+   * §17.2's submittal term rests on an invariant that lives in two OTHER files.
+   *
+   * `submittals.merged` is `tally()`, an array length. `submittals.shared` is an
+   * intersection of `submittalKeys()`, deduped by `slug · owner/repo`. In the
+   * steady state they are equal only because `events.addSubmittal` and
+   * `validate.coerceSubmittals` both refuse a second entry for the same
+   * `owner/repo` on one sheet. Loosen that — the same repository at two commits
+   * — and `merged > shared` is permanently true, so the receipt returns on every
+   * page load: the exact defect §17 exists to remove.
+   *
+   * Both halves are asserted. The first pins the refusal through the production
+   * reader, which is where the invariant is actually enforced; the second states
+   * what a record that broke it would do, so anybody loosening submittal
+   * identity is told by this test rather than by a reader.
+   */
+  it('THE INVARIANT: one repo per sheet is one array element, so the two measures agree', () => {
+    const seeded = coerceRecordData({
+      sheets: {
+        'fundamentals/s0': {
+          signedOff: AT,
+          submittals: [
+            { owner: 'cevheri', repo: 'hidden-line', commit: 'f60e2d2', at: AT },
+            // The same repository again, at another commit. Refused on read.
+            { owner: 'cevheri', repo: 'hidden-line', commit: '9f2c1ab', at: AT },
+          ],
+        },
+      },
+    })
+
+    expect(seeded.sheets['fundamentals/s0'].submittals).toHaveLength(1)
+    const summary = summariseClaim(seeded, seeded, seeded)
+    expect(summary.submittals).toEqual({ here: 1, account: 1, shared: 1, merged: 1 })
+    expect(claimIsNews(summary)).toBe(false)
+
+    // And the same record with the refusal bypassed: two array elements, one
+    // key, and a receipt that can never stop being news.
+    const loosened = structuredClone(seeded)
+    loosened.sheets['fundamentals/s0'].submittals.push({
+      owner: 'cevheri',
+      repo: 'hidden-line',
+      url: 'https://github.com/cevheri/hidden-line',
+      commit: '9f2c1ab',
+      note: '',
+      at: AT,
+    })
+    const broken = summariseClaim(loosened, loosened, loosened)
+    expect(broken.submittals.merged).toBe(2)
+    expect(broken.submittals.shared).toBe(1)
+    expect(
+      claimIsNews(broken),
+      'loosening submittal identity resurrects the receipt on every page load',
+    ).toBe(true)
   })
 
   it('a dropped submittal is news even when no sheet moved', () => {

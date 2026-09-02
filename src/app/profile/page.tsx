@@ -4,6 +4,7 @@ import { OrgMembershipPanel } from '@/components/auth/AuthPanels'
 import { SessionProvider } from '@/components/auth/SessionProvider'
 import { DataPanel } from '@/components/record/DataPanel'
 import { DrafterBlock } from '@/components/record/DrafterBlock'
+import { FoldFragment } from '@/components/record/FoldFragment'
 import {
   CharKeysReading,
   CharKeysToggle,
@@ -289,6 +290,12 @@ export default function ProfilePage() {
 
       {/* §16.1 — the one block that arrives open. */}
       <DrafterBlock />
+
+      {/* §17.6 — `/profile/#claim` and `/profile/#data` are affordances two
+          other surfaces offer, and both ids sit inside a closed `<summary>`.
+          One island for the whole page opens the fold the fragment names; it
+          renders nothing, here or in the prerender. */}
+      <FoldFragment />
 
       {/* §16.4 — and everything else, one line each. */}
       <div className="hl-panel-head">

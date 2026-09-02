@@ -443,10 +443,34 @@ export interface ClaimReceipt {
  * Called by the seam before it writes: a claim that is not news writes nothing,
  * which is also why signing in and reloading no longer rewrites the record on
  * every document load.
+ *
+ * ## One reachable shape this does NOT guard against
+ *
+ * If the merge is written locally but the push never lands — offline, or a row
+ * RLS refused — the account's row keeps its old value. The next full load reads
+ * that same stale row, recomputes `merged > shared`, and this returns true
+ * again, so `meta.lastClaim` is rewritten and the arrival line appears once
+ * more. That is not a false statement: on every one of those loads the local
+ * record really does hold work the account does not, which is the news. It is
+ * deliberately not guarded, because a claim that cannot converge is a fact about
+ * the SYNC and not about the receipt — suppressing the line would leave a reader
+ * whose work is not in their account with the impression that it is, which is
+ * the failure §1 will not allow. The state has its own signal: the footer prints
+ * `NOT SYNCED` for exactly this condition, and it is the one the reader can act
+ * on. Once a push lands the shared counts move and the line stops.
  */
 export function claimIsNews(summary: ClaimSummary): boolean {
   if (summary.outcome === 'adopted') return true
   if (summary.signed.merged > summary.signed.shared) return true
+  // THE INVARIANT THIS TERM RESTS ON. `submittals.merged` is `tally()`, an
+  // array length; `submittals.shared` is an intersection of `submittalKeys()`,
+  // deduped by `slug · owner/repo`. The two agree in the steady state only
+  // because `events.addSubmittal` and `validate.coerceSubmittals` both refuse a
+  // second entry for the same `owner/repo` on one sheet, so one repository per
+  // sheet is one array element. Loosen submittal identity — the same repo at two
+  // commits, say — and `merged > shared` becomes permanently true for anybody
+  // who has two of them, which resurrects the receipt on every page load: the
+  // exact defect §17 removed. Pinned by `claim-receipt.test.ts`.
   if (summary.submittals.merged > summary.submittals.shared) return true
   if (summary.identity.markChanged) return true
   if (summary.identity.nameChanged) return true

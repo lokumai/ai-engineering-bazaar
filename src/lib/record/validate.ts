@@ -281,7 +281,13 @@ function asClaimReceipt(value: unknown): ClaimReceipt | null {
   const counts = (input: unknown): ClaimSummary['signed'] | null => {
     if (!isRecordObject(input)) return null
     const keys = ['here', 'account', 'shared', 'merged'] as const
-    if (!keys.every((key) => Number.isFinite(input[key]))) return null
+    // A count, not merely a number. `Number.isFinite` admitted `-5` and `1.5`,
+    // and a hand-edited file could then make the register print
+    // `1.5 MERGED · 0 LOST` — a reading about the reader's own work that is not
+    // a possible reading of it.
+    if (!keys.every((key) => Number.isInteger(input[key]) && (input[key] as number) >= 0)) {
+      return null
+    }
     return {
       here: input.here as number,
       account: input.account as number,
@@ -305,10 +311,21 @@ function asClaimReceipt(value: unknown): ClaimReceipt | null {
   const identity = summary.identity
   const source = (input: unknown): ClaimIdentitySource | null =>
     input === 'account' || input === 'local' || input === 'absent' ? input : null
-  const name = source(identity.name)
-  const markSeed = source(identity.markSeed)
-  const role = source(identity.role)
-  if (name === null || markSeed === null || role === null) return null
+  // Defaulted rather than fatal, which is this module's own promise: a bad
+  // field loses the field and never the record. These three are provenances,
+  // and after §17.2 nothing reads them — `claimSummaryLines` prints the
+  // `*Changed` booleans and `claimIsNews` tests them, so an off-vocabulary
+  // string here costs the reader nothing, while discarding the receipt over it
+  // would cost them the whole account of a merge. `absent` is the honest
+  // default: it means "neither side is known to have supplied this".
+  //
+  // `outcome` keeps whole-receipt rejection because it IS printed
+  // (`NO RECORD IN ACCOUNT` / `TWO RECORDS`) and has no third value to fall
+  // back to, and so do `at` and the count blocks, which the register prints as
+  // numbers and a date.
+  const name = source(identity.name) ?? 'absent'
+  const markSeed = source(identity.markSeed) ?? 'absent'
+  const role = source(identity.role) ?? 'absent'
 
   return {
     at,

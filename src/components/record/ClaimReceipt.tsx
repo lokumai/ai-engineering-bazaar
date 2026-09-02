@@ -33,6 +33,19 @@ import { useHydrated, useRecord } from '@/lib/record/store'
  * Folding that into a reading would be the one case where the fold hides an act
  * the reader has to take.
  *
+ * ## One marker, both states
+ *
+ * `data-hl-receipt` is on both, because the two gates that measure this line —
+ * the once-only gate and the geometry gate — located `.hl-receipt`, which the
+ * action-needed state has never carried. Both were therefore blind to exactly
+ * the state the reader most needs the layout to be right in. The class is not
+ * shared instead: `.hl-receipt` is a flex rule with `justify-content:
+ * space-between`, and putting it on a panel would fight the panel's own layout.
+ * The action-needed state carries the attribute on a WRAPPER rather than on the
+ * summary, so the marker costs `ClaimSummary` no prop and the located element's
+ * `parentElement` is the page column in both states, which is what the geometry
+ * gate measures against.
+ *
  * ## No DISMISS
  *
  * The detail is permanent in `/profile/`'s register, so closing this line
@@ -53,11 +66,20 @@ export function ClaimReceipt() {
   if (!hydrated || !announced || receipt === null) return null
 
   if (claimNeedsExport(receipt.summary)) {
-    return <ClaimSummary summary={receipt.summary} className="hl-receipt-full" />
+    return (
+      <div data-hl-receipt="needs-export">
+        <ClaimSummary summary={receipt.summary} className="hl-receipt-full" heading="p" />
+      </div>
+    )
   }
 
   return (
-    <section className="hl-receipt" role="status" aria-label={CLAIM_COPY.head}>
+    <section
+      className="hl-receipt"
+      data-hl-receipt="routine"
+      role="status"
+      aria-label={CLAIM_COPY.head}
+    >
       <p className="hl-mark m-0 text-ink">{CLAIM_COPY.head}</p>
       <p className="hl-mark m-0 text-ink-muted">
         {claimReceiptReading(receipt)}

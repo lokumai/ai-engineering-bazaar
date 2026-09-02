@@ -587,6 +587,71 @@ describe('§17.3 — meta.lastClaim is a widening, and a defensive read', () => 
     }).meta.lastClaim).toBeNull()
   })
 
+  it('drops a receipt whose dropped lists are not arrays of strings', () => {
+    // Both lists are printed as prose — `a sheet keeps its 3 most recent (…)` —
+    // so a shape the joiner cannot print is not a receipt.
+    expect(coerceRecordData({
+      meta: {
+        lastClaim: { ...RECEIPT, summary: { ...RECEIPT.summary, droppedSignatures: 'none' } },
+      },
+    }).meta.lastClaim).toBeNull()
+    expect(coerceRecordData({
+      meta: {
+        lastClaim: { ...RECEIPT, summary: { ...RECEIPT.summary, droppedSubmittals: [1, 2] } },
+      },
+    }).meta.lastClaim).toBeNull()
+  })
+
+  it('keeps a receipt whose identity provenance is off-vocabulary, defaulting the field', () => {
+    // A bad field loses the FIELD, not the record: after §17.2 these three
+    // provenances are read by nothing, so discarding the whole account of a
+    // merge over one of them would be a penalty out of all proportion.
+    const data = coerceRecordData({
+      meta: {
+        lastClaim: {
+          ...RECEIPT,
+          summary: {
+            ...RECEIPT.summary,
+            identity: { ...RECEIPT.summary.identity, role: 'invented' },
+          },
+        },
+      },
+    })
+    expect(data.meta.lastClaim?.summary.identity.role).toBe('absent')
+    // And the parts the reader is shown are untouched.
+    expect(data.meta.lastClaim?.summary.signed).toEqual(RECEIPT.summary.signed)
+    expect(data.meta.lastClaim?.summary.identity.name).toBe('account')
+  })
+
+  it('drops a receipt whose counts are numbers but not counts', () => {
+    // `Number.isFinite` admitted both of these, and the register would then
+    // print `1.5 MERGED · 0 LOST`.
+    for (const merged of [-5, 1.5]) {
+      expect(coerceRecordData({
+        meta: {
+          lastClaim: {
+            ...RECEIPT,
+            summary: {
+              ...RECEIPT.summary,
+              signed: { here: 1, account: 1, shared: 0, merged },
+            },
+          },
+        },
+      }).meta.lastClaim, `${merged} is not a count`).toBeNull()
+    }
+    expect(coerceRecordData({
+      meta: {
+        lastClaim: {
+          ...RECEIPT,
+          summary: {
+            ...RECEIPT.summary,
+            submittals: { here: -1, account: 0, shared: 0, merged: 0 },
+          },
+        },
+      },
+    }).meta.lastClaim).toBeNull()
+  })
+
   it('drops a receipt that is not an object at all', () => {
     expect(coerceRecordData({ meta: { lastClaim: 'yes' } }).meta.lastClaim).toBeNull()
     expect(coerceRecordData({ meta: { lastClaim: [] } }).meta.lastClaim).toBeNull()

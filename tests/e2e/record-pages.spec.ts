@@ -1625,8 +1625,10 @@ test('§17.1 — a receipt on the record outlives the document that reported it'
   await page.goto('/profile/')
   await settledRegister(page)
 
-  // No document claimed anything, so the arrival line is absent...
-  await expect(page.locator('.hl-receipt')).toHaveCount(0)
+  // No document claimed anything, so the arrival line is absent — in EITHER
+  // state, which is why this is the marker both of them carry and not the
+  // routine state's class.
+  await expect(page.locator('[data-hl-receipt]')).toHaveCount(0)
   // ...and the register still reports what the record holds.
   await expect(registerReading(page, 'claim')).toHaveText('4 MERGED · 0 LOST')
 
@@ -1640,4 +1642,49 @@ test('§17.1 — a receipt on the record outlives the document that reported it'
 
   // And the reading a closed row prints is the reading its open body reports.
   await expect(registerReading(page, 'claim')).toHaveText('4 MERGED · 0 LOST')
+})
+
+/**
+ * §17.6 — the affordance labelled DETAILS lands on the fold, not on its lid.
+ *
+ * `#claim` is on the `<h2>` inside a closed `<summary>` (`Register.tsx` keeps it
+ * at that level so folding does not flatten the outline), so before
+ * `FoldFragment` the deep link scrolled the summary into view and delivered the
+ * one line the reader already had. The second half is the half that matters: a
+ * plain visit still finds every row closed, which is what stops the island from
+ * being a switch that opens the whole register.
+ */
+test('§17.6 — a fragment opens the register row it names, and only it', async ({ page }) => {
+  await seedRecord(page, EVERYTHING_RECORDED)
+
+  await page.goto('/profile/#claim')
+  await settledRegister(page)
+
+  const fold = page.locator(
+    'section.hl-register-row[aria-labelledby="claim"] details.hl-register-fold',
+  )
+  await expect
+    .poll(() => fold.evaluate((node) => (node as HTMLDetailsElement).open), {
+      message: 'the claim row stayed shut for a link that names it',
+    })
+    .toBe(true)
+  // Open as the reader experiences it, not merely as an attribute: the body's
+  // own text is on screen.
+  await expect(fold.locator('.hl-register-body')).toContainText('CLAIMED 2026-08-11')
+
+  // The export controls' row is the other fragment two surfaces point at.
+  await page.goto('/profile/#data')
+  await settledRegister(page)
+  await expect(
+    page.locator('section.hl-register-row[aria-labelledby="data"] details.hl-register-fold'),
+  ).toHaveAttribute('open', '')
+
+  // And a plain visit opens nothing. Asserted over every row, because an island
+  // that opened them all would pass the two assertions above.
+  await page.goto('/profile/')
+  await settledRegister(page)
+  const openCount = await page
+    .locator('details.hl-register-fold[open]')
+    .count()
+  expect(openCount, 'a plain visit to the register opened a row').toBe(0)
 })

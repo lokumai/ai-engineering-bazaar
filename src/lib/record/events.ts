@@ -33,6 +33,7 @@ import {
   type SheetRecord,
   type Submittal,
 } from './schema'
+import type { ClaimReceipt } from './claim'
 
 const MARK_SEED = /^[0-9a-f]{8}$/
 const GH_SEGMENT = /^[A-Za-z0-9._-]{1,100}$/
@@ -403,6 +404,31 @@ export function noteAliasNamed(data: RecordData, userId: string, now: string): R
   if (userId.trim() === '') return data
   if (data.prefs.aliasNamedFor === userId) return data
   return stampDay({ ...data, prefs: { ...data.prefs, aliasNamedFor: userId } }, now)
+}
+
+/**
+ * §17.4 — the last newsworthy claim, recorded. The only writer of
+ * `meta.lastClaim`, on `noteAliasNamed`'s single-door rule.
+ *
+ * **It does not stamp a day, and that is the difference from `noteAliasNamed`.**
+ * `days` is the list of dates on which something was written and it is what
+ * §7.3's fourteen-day strip draws; a sign-in is not a day the reader worked, and
+ * stamping one would inflate the strip with work that did not happen. The receipt
+ * carries its own instant in `at`, so nothing is lost by not stamping. `erase.ts`
+ * records what the opposite choice cost the alias flag: "a day they had not
+ * worked".
+ *
+ * **One slot.** A second claim replaces the first. The register row is `Last
+ * claim`, not a log: §14.2.3's append-only history is the events table, and a
+ * growing array in `localStorage` would be a second history with no reader.
+ *
+ * **It takes no clock.** Every other writer here takes `now` because it stamps
+ * a day with it; this one stamps nothing, and the instant the receipt is about
+ * is already inside the receipt. A parameter a function does not read is a
+ * question the next caller has to ask about, so it is not taken.
+ */
+export function noteClaim(data: RecordData, receipt: ClaimReceipt): RecordData {
+  return { ...data, meta: { ...data.meta, lastClaim: receipt } }
 }
 
 /**

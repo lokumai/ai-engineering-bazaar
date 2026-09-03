@@ -101,7 +101,7 @@ describe('checklistOf', () => {
 
   it('gives the same answer on the raw file as on the stripped body', () => {
     for (const m of modules) {
-      const raw = `${m.body}\n**Next Module:** [y](14_loop_engineering.md)\n`
+      const raw = `${m.body}\n**Next Module:** [y](loop_engineering.md)\n`
       expect(checklistOf(raw).length, m.slug).toBe(checklistOf(m.body).length)
     }
   })

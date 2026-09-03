@@ -71,10 +71,15 @@ describe('loadAllModules', () => {
     }
   })
 
-  it('strips frontmatter out of the body', () => {
-    const m = loadModule('fundamentals/llms')!
-    expect(m.body.startsWith('---')).toBe(false)
-    expect(m.body).toContain('# Module 1')
+  it('strips frontmatter out of the body, leaving the h1 first', () => {
+    // The h1 is the title alone now: the number is the position and lives in
+    // `curriculum.yaml`. So this checks the shape rather than the words, which
+    // is what makes it survive a retitle.
+    for (const m of modules) {
+      expect(m.body.startsWith('---'), m.slug).toBe(false)
+      expect(m.body.split('\n')[0], m.slug).toMatch(/^# \S/)
+      expect(m.body.split('\n')[0], m.slug).not.toMatch(/^# (?:Module|Modül) \d/)
+    }
   })
 
   it('ignores Turkish translations', () => {

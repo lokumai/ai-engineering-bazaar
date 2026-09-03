@@ -7,12 +7,12 @@ import { buildRevisionIndex, parseRevisionLog, revisionFor } from '@/lib/content
 const LOG = [
   'c0ffee1 2026-08-31',
   '',
-  'mini-courses/1_fundamentals/1_llms.md',
-  'mini-courses/1_fundamentals/2_training.md',
+  'mini-courses/1_fundamentals/llms.md',
+  'mini-courses/1_fundamentals/training.md',
   'deadbee 2026-08-01',
   '',
-  'mini-courses/1_fundamentals/1_llms.md',
-  'mini-courses/3_expert/16_advanced_ui.md',
+  'mini-courses/1_fundamentals/llms.md',
+  'mini-courses/3_expert/advanced_ui.md',
   '',
 ].join('\n')
 
@@ -20,17 +20,17 @@ describe('parseRevisionLog', () => {
   const index = parseRevisionLog(LOG, '/repo')
 
   it('keeps the newest commit that touched a file, not the oldest', () => {
-    expect(index.get('/repo/mini-courses/1_fundamentals/1_llms.md'))
+    expect(index.get('/repo/mini-courses/1_fundamentals/llms.md'))
       .toEqual({ hash: 'c0ffee1', date: '2026-08-31' })
   })
 
   it('records a file only the older commit touched', () => {
-    expect(index.get('/repo/mini-courses/3_expert/16_advanced_ui.md'))
+    expect(index.get('/repo/mini-courses/3_expert/advanced_ui.md'))
       .toEqual({ hash: 'deadbee', date: '2026-08-01' })
   })
 
   it('records every file in a commit, not just the first', () => {
-    expect(index.get('/repo/mini-courses/1_fundamentals/2_training.md')?.hash)
+    expect(index.get('/repo/mini-courses/1_fundamentals/training.md')?.hash)
       .toBe('c0ffee1')
   })
 

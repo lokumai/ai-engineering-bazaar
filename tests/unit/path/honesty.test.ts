@@ -1,6 +1,5 @@
-import { readFileSync, readdirSync } from 'node:fs'
-import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { CURRICULUM_MODULES } from '@/lib/content/curriculum-file'
 import { curriculumFacts } from '@/lib/content/facts'
 import { PATHS, drawnCount, isDrawnStep } from '@/lib/path/paths'
 import { ROLES, ROLE_IDS } from '@/lib/path/roles'
@@ -57,46 +56,29 @@ function moduleOf(slug: string): number {
 }
 
 /**
- * The prerequisite graph, by module number, parsed from the sheets' own
- * frontmatter.
+ * The prerequisite graph, by module number, read from the curriculum itself.
  *
- * `SheetFact` does not carry prerequisites, and it should not — §12.2 keeps it
- * small because it is serialised into every page. So this reads the files, and
- * reading them is also the point: the graph the ordering test enforces is the
- * one the curriculum actually declares, not a copy of it kept here.
+ * `SheetFact` does not carry prerequisites, and it should not: §12.2 keeps it
+ * small because it is serialised into every page. So this reads the declaration
+ * instead, and reading it is the point: the graph the ordering test enforces is
+ * the one the curriculum actually declares, not a copy of it kept here.
  *
- * The directory map is the one place a category slug meets a directory name.
- * `categoryByDir` owns the other direction; this is its inverse. The
- * "read a prerequisite list for every drawn sheet" case below fails loudly if
- * the parse ever falls short, so the ordering test cannot pass vacuously.
+ * It used to parse `module:` and `prerequisites:` out of 33 frontmatter blocks
+ * with two regexes, including a comment about `_tr.md` versus `_tr` because the
+ * loose form had twice swallowed a drawn sheet. `curriculum.yaml` names its
+ * prerequisites, so the numbers are resolved by position and there is nothing
+ * left to parse. The "read a prerequisite list for every drawn sheet" case
+ * below still fails loudly if this ever falls short, so the ordering test
+ * cannot pass vacuously.
  */
-const DIRS: Readonly<Record<string, string>> = {
-  fundamentals: '1_fundamentals',
-  intermediate: '2_intermediate',
-  expert: '3_expert',
-  ecosystem: '4_ecosystem',
-  protocols: '5_protocols_specs',
-  optional: '6_optional',
-}
-
-const CORPUS = join(import.meta.dirname, '../../../mini-courses')
-
 function prerequisiteGraph(): Map<number, number[]> {
-  const graph = new Map<number, number[]>()
-  for (const dir of Object.values(DIRS)) {
-    for (const entry of readdirSync(join(CORPUS, dir))) {
-      // `_tr.md`, not `_tr` — the loose form silently swallows `2_training.md`,
-      // which is a drawn sheet. That mistake has been made twice in this repo.
-      if (!entry.endsWith('.md') || entry === 'README.md' || entry.endsWith('_tr.md')) continue
-      const front = /^---\n([\s\S]*?)\n---/.exec(readFileSync(join(CORPUS, dir, entry), 'utf8'))
-      if (front === null) continue
-      const module = Number(/^module:\s*(\d+)$/m.exec(front[1])?.[1])
-      if (!Number.isInteger(module)) continue
-      const list = /^prerequisites:\s*\[(.*)\]$/m.exec(front[1])?.[1] ?? ''
-      graph.set(module, list.split(',').map((part) => Number(part.trim())).filter(Number.isInteger))
-    }
-  }
-  return graph
+  const byName = new Map(CURRICULUM_MODULES.map((module) => [module.name, module.module]))
+  return new Map(
+    CURRICULUM_MODULES.map((module) => [
+      module.module,
+      module.needs.map((need) => byName.get(need) as number),
+    ]),
+  )
 }
 
 const graph = prerequisiteGraph()

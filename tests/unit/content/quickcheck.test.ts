@@ -147,7 +147,7 @@ describe('summarySection', () => {
     // On sheets 2-7 the Summary is the last section, so the raw file's
     // `**Next Module:**` lines fall inside it.
     for (const m of modules) {
-      const raw = `${m.body}\n**Previous Module:** [x](1_llms.md)\n**Next Module:** [y](3_rag.md)\n`
+      const raw = `${m.body}\n**Previous Module:** [x](llms.md)\n**Next Module:** [y](rag.md)\n`
       expect(summarySection(raw), m.slug).toBe(summarySection(m.body))
     }
   })

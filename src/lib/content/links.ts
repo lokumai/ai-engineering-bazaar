@@ -29,14 +29,12 @@ import { type CourseModule, loadAllModules } from './loader'
 const OFF_SITE = /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i
 
 /**
- * A module file, as the name the yaml lists plus an optional Turkish suffix.
+ * A module file: the name the yaml lists, plus an optional Turkish suffix.
  *
- * **The numeric prefix is optional, and only for one commit.** The corpus still
- * carries `13_security.md` here and carries `security.md` after the corpus
- * pass; both have to resolve to `security` in between or the build cannot stay
- * green across the two. When the prefixes are gone, drop the optional group.
+ * There is no numeric prefix to allow for any more, and allowing one would let
+ * a link keep naming a file that no longer exists.
  */
-const MODULE_FILE = /^(?:\d+_)?([a-z0-9_]+?)(_tr)?\.md$/
+const MODULE_FILE = /^([a-z0-9_]+?)(_tr)?\.md$/
 
 /**
  * The modules the app actually serves, indexed by `dir/name`.

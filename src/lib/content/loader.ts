@@ -57,30 +57,19 @@ export interface CourseModule {
 }
 
 /**
- * The file a module's name resolves to, under either spelling.
+ * The file a module's name resolves to.
  *
- * **Transitional, and only for one commit.** The corpus still carries
- * `13_security.md` at this commit and carries `security.md` after the corpus
- * pass, and the build has to stay green across both, so both are accepted here.
- * When the prefixes are gone this collapses to `path.join(dir, name + '.md')`,
- * and a stray prefixed file becomes a file nobody listed, which
- * `curriculum-file.ts`'s rule 6 refuses.
+ * The name IS the file stem, so this is a join and not a search. It was briefly
+ * a search, while the corpus carried `13_security.md` and the yaml said
+ * `security`; there is nothing left to search for.
  *
- * Rule 6 has already established that exactly one of these exists before
- * anything calls this, so the throw is a guard rather than a live path.
+ * `curriculum-file.ts`'s rule 6 has already established that the file exists
+ * before anything calls this, so the throw is a guard rather than a live path.
  */
 export function fileFor(dir: string, name: string): string {
-  const here = path.join(CONTENT_ROOT, dir)
-  const plain = path.join(here, `${name}.md`)
-  if (fs.existsSync(plain)) return plain
-
-  const prefixed = fs.readdirSync(here).find((filename) => {
-    const parts = /^\d+_([a-z0-9_]+)\.md$/.exec(filename)
-    return parts?.[1] === name
-  })
-  if (prefixed !== undefined) return path.join(here, prefixed)
-
-  throw new Error(`No markdown file for "${name}" in ${dir}/`)
+  const file = path.join(CONTENT_ROOT, dir, `${name}.md`)
+  if (!fs.existsSync(file)) throw new Error(`No markdown file for "${name}" in ${dir}/`)
+  return file
 }
 
 let cache: CourseModule[] | null = null

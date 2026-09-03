@@ -179,7 +179,7 @@ describe('countFigures', () => {
 
   it('excludes the rail even when handed an unstripped file', () => {
     const raw = fs.readFileSync(
-      path.join(CONTENT_ROOT, '1_fundamentals', '1_llms.md'),
+      path.join(CONTENT_ROOT, '1_fundamentals', 'llms.md'),
       'utf8',
     )
     expect(countFigures(raw)).toBe(countFigures(body(1)))
@@ -197,7 +197,7 @@ describe('externalLinks / countSources', () => {
   })
 
   it('ignores relative and anchor links', () => {
-    expect(externalLinks('[a](../1_fundamentals/1_llms.md) [b](#section)')).toEqual([])
+    expect(externalLinks('[a](../1_fundamentals/llms.md) [b](#section)')).toEqual([])
   })
 
   it('counts distinct links only', () => {
@@ -238,7 +238,7 @@ describe('distinctExternalLinks', () => {
   })
 
   it('is empty where the body cites nothing openable', () => {
-    expect(distinctExternalLinks('[a](../1_fundamentals/1_llms.md) [b](#section)')).toEqual([])
+    expect(distinctExternalLinks('[a](../1_fundamentals/llms.md) [b](#section)')).toEqual([])
   })
 
   it('sees exactly what `externalLinks` sees, and nothing a scraper would add', () => {

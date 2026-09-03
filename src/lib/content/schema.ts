@@ -20,12 +20,10 @@ import type { CategorySlug } from './categories'
  * config moved and the app's vocabulary did not.
  */
 
-// STRICT IN THE NEXT COMMIT. `z.object` while the markdown files still carry
-// `module`, `title`, `category`, `status`, `duration` and `prerequisites`
-// alongside these two: the yaml is the source for all six now, so they are
-// ignored here rather than rejected. The corpus pass deletes them and this
-// becomes `z.strictObject`, at which point a stale key fails the build.
-const sheetFrontmatterSchema = z.object({
+// Strict, now the corpus pass has deleted the six fields the yaml owns. A file
+// that declares its own `module` or `status` again fails the build by name,
+// which is the point: two sources for one fact is what this migration removed.
+const sheetFrontmatterSchema = z.strictObject({
   summary: z.string().min(1).nullable().default(null),
   objectives: z.array(z.string().min(1)).default([]),
 })

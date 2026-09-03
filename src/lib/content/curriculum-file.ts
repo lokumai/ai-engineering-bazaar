@@ -90,16 +90,13 @@ function fail(rule: string, detail: string): never {
 }
 
 /**
- * A module file's name, as the yaml would spell it.
+ * A module file's name, which is the name the yaml lists and nothing else.
  *
- * **The numeric prefix is optional here on purpose, and only for now.** The
- * corpus still carries `1_llms.md` at this commit and will carry `llms.md`
- * after the corpus pass, so both have to resolve to `llms` in between or the
- * build cannot stay green across the two commits. Once the prefixes are gone,
- * drop the optional group and a stray `1_llms.md` becomes a file nobody listed,
- * which rule 6 refuses.
+ * The numeric prefix is gone from the corpus, and so is the tolerance for one
+ * here: a stray `1_llms.md` is now a file nobody listed, which rule 6 refuses
+ * by name.
  */
-const MODULE_FILE = /^(?:\d+_)?([a-z0-9_]+)\.md$/
+const MODULE_FILE = /^([a-z0-9_]+)\.md$/
 
 /** The names a category directory actually holds, English files only. */
 function namesOnDisk(dir: string): Set<string> {
@@ -116,7 +113,7 @@ function namesOnDisk(dir: string): Set<string> {
 function hasTurkish(dir: string, name: string): boolean {
   const here = path.join(CONTENT_ROOT, dir)
   return fs.readdirSync(here).some((filename) => {
-    const parts = /^(?:\d+_)?([a-z0-9_]+)_tr\.md$/.exec(filename)
+    const parts = /^([a-z0-9_]+)_tr\.md$/.exec(filename)
     return parts?.[1] === name
   })
 }

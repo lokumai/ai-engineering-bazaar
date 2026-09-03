@@ -7,7 +7,7 @@ This opening paragraph is the lead, and the renderer marks it as one.
 ## I. A numbered section
 
 Ordinary prose, with an [external link](https://example.com/paper) and a
-[cross-reference](2_training.md) to another sheet.
+[cross-reference](training.md) to another sheet.
 
 ### A. A subsection
 
@@ -54,6 +54,6 @@ A checklist, which the record reads by index:
 
 ## Summary
 
-One paragraph of summary, with a [second cross-reference](3_rag.md).
+One paragraph of summary, with a [second cross-reference](rag.md).
 
 **Quick Check**: does every structure in this file survive the renderer?

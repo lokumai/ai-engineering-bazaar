@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { imageBaseFor } from '@/lib/content/images'
@@ -90,12 +90,12 @@ describe('every sheet in the set', () => {
   it('has a Turkish sibling beside it', () => {
     // Whether the translation is finished is a separate question the site
     // answers with its own badge. What must not happen is the file missing.
+    //
+    // `curriculum-file.ts`'s rule 7 checks the same thing off the yaml, before
+    // the loader runs. This checks it off a loaded module's own name, which is
+    // the half that would survive the yaml being wrong.
     for (const module of modules) {
-      const tr = join(
-        CONTENT_ROOT,
-        module.category.dir,
-        `${module.frontmatter.module}_${module.moduleSlug.replace(/-/g, '_')}_tr.md`,
-      )
+      const tr = join(CONTENT_ROOT, module.category.dir, `${module.name}_tr.md`)
       expect(existsSync(tr), `${module.slug} has no _tr.md beside it`).toBe(true)
     }
   })
@@ -118,14 +118,41 @@ describe('every sheet in the set', () => {
     expect(numbers).toEqual(numbers.map((_, index) => index + 1))
   })
 
-  it('states a filename whose number matches the number inside it', () => {
+  it('carries no number in its filename, and none in its frontmatter', () => {
+    // What this replaced: "states a filename whose number matches the number
+    // inside it", which was the best a corpus with the number in two places
+    // could do. There is one place now, `curriculum.yaml`, and a number in a
+    // filename or a frontmatter block is a second copy coming back.
     for (const module of modules) {
       const dir = join(CONTENT_ROOT, module.category.dir)
-      const name = `${module.frontmatter.module}_${module.moduleSlug.replace(/-/g, '_')}.md`
-      expect(existsSync(join(dir, name)), `${module.slug} expected ${name}`).toBe(true)
-      expect(readFileSync(join(dir, name), 'utf8')).toContain(
-        `module: ${module.frontmatter.module}`,
-      )
+      expect(existsSync(join(dir, `${module.name}.md`)), module.slug).toBe(true)
+      expect(readFileSync(join(dir, `${module.name}.md`), 'utf8'), module.slug)
+        .not.toMatch(/^module:\s*\d+$/m)
+    }
+  })
+
+  it('names no module file with a numeric prefix, in either language', () => {
+    // The other direction: a file still called `13_security.md` would be a file
+    // nobody lists, which rule 6 refuses, so this cannot go red on its own. It
+    // is here because the two rules together are what make the rename final.
+    for (const module of modules) {
+      const dir = join(CONTENT_ROOT, module.category.dir)
+      for (const stale of readdirSync(dir)) {
+        expect(stale, `${module.category.dir} still holds a numbered file`)
+          .not.toMatch(/^\d+_.*\.md$/)
+      }
+    }
+  })
+
+  it('leaves no prev/next footer and no category dek for the app to strip', () => {
+    // Both were GitHub-only duplications of what the app derives, both were
+    // already wrong (the Intermediate chain ran 8, 9, 10, 11, 13, 12, 14), and
+    // the corpus pass deleted all of them. `strip.ts` still removes them, so
+    // one coming back is invisible on the site: this is what notices.
+    for (const module of modules) {
+      const raw = readFileSync(module.filePath, 'utf8')
+      expect(raw, module.slug).not.toMatch(/^\*\*(?:Previous|Next) (?:Module|Category):/m)
+      expect(raw, module.slug).not.toMatch(/^\*(?:Category|Kategori):/m)
     }
   })
 })

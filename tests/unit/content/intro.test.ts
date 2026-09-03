@@ -88,7 +88,7 @@ describe('stripCategoryManifest', () => {
       '## Modules',
       '',
       '1. **Module 30**',
-      '- [30_protocols.md](30_protocols.md)',
+      '- [protocols.md](protocols.md)',
       '```',
       '',
       '## Modules',
@@ -99,7 +99,7 @@ describe('stripCategoryManifest', () => {
     ].join('\n')
     const stripped = stripCategoryManifest(fenced)
     expect(stripped.match(/## Modules/g)).toHaveLength(1)
-    expect(stripped).toContain('30_protocols.md')
+    expect(stripped).toContain('protocols.md')
     expect(stripped).toContain('Tail.')
   })
 

@@ -10,8 +10,7 @@ import {
   stripSequenceLinks,
 } from '@/lib/content/strip'
 
-// Prefix-optional, so this walks the corpus across the rename.
-const MODULE_FILE = /^(?:\d+_)?[a-z0-9_]+\.md$/
+const MODULE_FILE = /^[a-z0-9_]+\.md$/
 
 function everyModuleFile(): string[] {
   const out: string[] = []
@@ -81,8 +80,8 @@ describe('stripSequenceLinks', () => {
     const md = [
       'last real paragraph',
       '',
-      '**Previous Module:** [Module 7: Multi-Agent](../1_fundamentals/7_multi_agent.md)',
-      '**Next Module:** [Module 9: Context Engineering](9_context_engineering.md)',
+      '**Previous Module:** [Multi-Agent Systems](../1_fundamentals/multi_agent.md)',
+      '**Next Module:** [Context Engineering](context_engineering.md)',
       '',
     ].join('\n')
     expect(stripSequenceLinks(md)).toBe('last real paragraph\n')
@@ -92,7 +91,7 @@ describe('stripSequenceLinks', () => {
     const md = [
       'metin',
       '',
-      '**Önceki Modül:** [Modül 6](6_agents.md)',
+      '**Önceki Modül:** [AI Agents](agents.md)',
       '**Sonraki Kategori:** [Intermediate →](../2_intermediate/README.md)',
       '',
     ].join('\n')
@@ -108,7 +107,7 @@ describe('stripSequenceLinks', () => {
 describe('stripBuildFurniture', () => {
   it('is idempotent', () => {
     const raw = fs.readFileSync(
-      path.join(CONTENT_ROOT, '1_fundamentals', '1_llms.md'),
+      path.join(CONTENT_ROOT, '1_fundamentals', 'llms.md'),
       'utf8',
     )
     const once = stripBuildFurniture(raw)
@@ -132,7 +131,7 @@ describe('stripBuildFurniture', () => {
   })
 
   it('does not edit the files on disk', () => {
-    const file = path.join(CONTENT_ROOT, '1_fundamentals', '1_llms.md')
+    const file = path.join(CONTENT_ROOT, '1_fundamentals', 'llms.md')
     const before = fs.readFileSync(file, 'utf8')
     stripBuildFurniture(before)
     expect(fs.readFileSync(file, 'utf8')).toBe(before)

@@ -299,14 +299,14 @@ describe('renderMarkdown — §6.3 links', () => {
    * the next reader an afternoon.
    */
   it('throws on an in-repo link it has no origin to resolve against', async () => {
-    await expect(renderMarkdown('[Module 12](12_harness_engineering.md)'))
-      .rejects.toThrow(/12_harness_engineering\.md/)
-    await expect(renderMarkdown('[Module 12](12_harness_engineering.md)'))
+    await expect(renderMarkdown('[Harness Engineering](harness_engineering.md)'))
+      .rejects.toThrow(/harness_engineering\.md/)
+    await expect(renderMarkdown('[Harness Engineering](harness_engineering.md)'))
       .rejects.toThrow(/`sheet`.*`excerptOf`/s)
   })
 
   it('resolves an in-repo link from an excerpt of a sheet', async () => {
-    const { html } = await renderMarkdown('[Module 13](13_security.md)', { excerptOf: 12 })
+    const { html } = await renderMarkdown('[Security](security.md)', { excerptOf: 12 })
     expect(html).toContain('href="/courses/intermediate/security/"')
     expect(html).not.toContain('data-hl-external')
   })

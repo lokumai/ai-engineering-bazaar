@@ -1,268 +1,196 @@
 ---
-summary: "Six mechanisms — instructions, skills, subagents, hooks, MCP, plugins — and when each is the right one."
+summary: "Why an agent that can write and run code can do almost anything, and the eight standard ways you extend one."
 objectives:
-  - "Name the six extension mechanisms and what each one controls"
-  - "Choose between a skill, a hook, and an MCP server for a given need"
-  - "Package a team workflow so others can install it"
+  - "Explain why writing and running code makes an agent useful far outside coding"
+  - "Say what AGENTS.md is for and what does not belong in it"
+  - "Explain what MCP solves and why a tool written once now works everywhere"
+  - "Tell subagents, skills and slash commands apart by who invokes them and where they run"
+  - "Use hooks, plugins, auto memory, plan mode and effort for the job each one fits"
 ---
 
 # Coding Agents: Extending Them
 
-Out of the box, a coding agent knows a lot about programming and nothing about *your* repo. Six extension points fix that — instruction files, skills, subagents, hooks, MCP servers and plugins — and the whole skill of using them is knowing **which one to reach for**. Pick wrong and you get an instruction the model quietly ignores; pick right and you get a guarantee. Every path, field name and event name below comes from vendor docs fetched **2026-08-25** (Claude Code ~v2.1.2xx); this area moves fast enough that the Claude Code docs changed host recently, from `docs.claude.com/en/docs/claude-code/*` to `code.claude.com/docs/en/*`, so check the links rather than your memory.
+[Context Engineering](context_engineering.md) ended on the point that the coding agents you already use are deep agents: they plan, they delegate to subagents, they read and write files. This module is about those agents themselves. First why they turned out to be so much more useful than "a thing that writes code", and then the eight ways you extend one.
 
-## I. Six mechanisms, one mnemonic
+## Why a coding agent can do more than code
 
-They differ mostly in **when they cost you context**:
+Say you have a PNG and you want it compressed, or converted to JPEG. Without an agent, somebody has to write a tool for that and hand it to the model.
 
-| Mechanism | What it is | Context cost |
-|---|---|---|
-| **Instruction file** (`CLAUDE.md` / `AGENTS.md`) | Always-on facts about the repo | Every token, every request |
-| **Skill** (`SKILL.md`) | A procedure or playbook, loaded on demand | Description only, until invoked |
-| **Subagent** | A separate agent loop with its own context window | Zero until spawned; a summary comes back |
-| **Hook** | A script the harness runs at a lifecycle event | Zero unless it prints |
-| **MCP server** | A connection to an external system | Tool *names* only; schemas are deferred |
-| **Plugin** | An installable bundle of all of the above | Whatever it contains |
+A coding agent needs no tool. It can install a Python imaging library and write the four lines that do the conversion. Ask it for a slide deck and it does the same thing: finds a pptx library, installs it, writes the code, hands you the file. Nothing about either job was in its tool list.
 
-> **Facts → instruction file. Procedures → Skills. Isolation → Subagents. Guarantees → Hooks. Connections → MCP. Distribution → Plugins.**
+This is the part worth sitting with. These agents do not only *use* what exists, they *build* what does not. One story that went around was someone whose printer had no Linux driver, so they asked a coding agent to write one. Whether or not the details survive retelling, the shape of it is real: a model that can write and run code has a way to reach almost anything a computer can do.
 
-## II. Instruction files: CLAUDE.md, AGENTS.md, and friends
+![Code is the universal interface](./images/code-is-universal.png)  
+*The top row is the old way: one agent per domain, each needing its own tools built for it. The bottom row is why coding agents took over. Code reaches the web, the calendar, the bank and the airline, so an agent that writes code covers all four without anybody writing four sets of tools.*
 
-**AGENTS.md** is the vendor-neutral format — *"a simple, open format for guiding coding agents"*, now *"stewarded by the Agentic AI Foundation under the Linux Foundation"* and *"used by over 60k open-source projects"* ([AGENTS.md, 2026-08-25](https://agents.md/)). Plain Markdown, no required fields, and it nests: agents read *the nearest file in the directory tree*, so a monorepo gets one per package.
+So coding is not one skill among many. It is the skill that substitutes for the others, which is why a coding agent helps with work that has nothing to do with software. Every example above was a non-coding task.
 
-One trap worth stating plainly: **Claude Code reads `CLAUDE.md`, not `AGENTS.md`.** The sanctioned bridges are a one-line `@AGENTS.md` import inside `CLAUDE.md`, or `ln -s AGENTS.md CLAUDE.md` ([How Claude remembers your project, 2026-08-25](https://code.claude.com/docs/en/memory)). Claude Code then loads from broadest to most specific — managed policy, `~/.claude/CLAUDE.md`, `./CLAUDE.md`, gitignored `./CLAUDE.local.md` — and **concatenates** them rather than overriding.
+The rest of this module is the standard equipment. Almost every modern coding agent has these: Claude Code, Codex, Antigravity, Copilot, OpenCode. The names and file paths differ slightly between them, and the concrete examples here are Claude Code's, listed together in [Claude Code features](https://code.claude.com/docs/en/agent-sdk/claude-code-features).
 
-**What does *not* belong in one** is where most teams go wrong ([Best practices, 2026-08-25](https://code.claude.com/docs/en/best-practices)):
+## AGENTS.md, a README for agents
 
-| ✅ Include | ❌ Exclude |
-|---|---|
-| Bash commands the agent can't guess | Anything it can learn by reading the code |
-| Style rules that differ from language defaults | Conventions it already knows |
-| Test instructions and the preferred runner | Detailed API docs (link instead) |
-| Repo etiquette: branch naming, PR conventions | Information that changes frequently |
-| Environment quirks and non-obvious gotchas | File-by-file descriptions, "write clean code" |
+README is for humans. AGENTS.md is for agents.
 
-The test for every line: *"Would removing this cause Claude to make mistakes?"* If not, cut it. Target **under 200 lines**, because *"Bloated CLAUDE.md files cause Claude to ignore your actual instructions!"* When a rule only applies to part of the repo, move it out to a path-scoped rule — the documented cure for a bloated instruction file:
+It is a plain markdown file in your repository that gets added to the agent's existing system prompt, after the one the vendor wrote. That is the whole mechanism, and [agents.md](https://agents.md/) is the open format behind it: "a dedicated, predictable place to provide the context and instructions to help AI coding agents work on your project".
 
-```markdown
-<!-- .claude/rules/api.md -->
----
-paths: ["src/api/**/*.ts"]
----
-- All API endpoints must include input validation
-- Use the standard error response format
-```
+What belongs in it is the stable, high-level, repository-wide stuff: build and test commands, the layout, conventions your team follows, the rules an agent would otherwise get wrong twice. What does not belong is anything that goes stale in a week. A file full of details that no longer match the code is worse than no file, because the agent believes it.
 
-Rules without `paths` load unconditionally; path-scoped ones fire only when the agent touches a matching file. And note the caveat that motivates the rest of this module: *"CLAUDE.md content is delivered as a user message after the system prompt… Claude reads it and tries to follow it, but there's no guarantee of strict compliance."*
+You do not have to write it by hand. Run `/init` and the agent reads your codebase and drafts one, then you correct it.
 
-## III. Skills — and the slash commands they absorbed
+Two practical notes. Claude Code reads `CLAUDE.md` rather than `AGENTS.md`, so if your repository already has an AGENTS.md for other tools, the documented move is a `CLAUDE.md` that imports it with `@AGENTS.md` and adds anything Claude-specific below. And both formats support **nested** files: one at the root, and another inside `frontend/` or `backend/` that loads when the agent works in that directory. Keeping the frontend rules out of the context of a backend task is context engineering applied to your own instructions.
 
-Two features became one. **Custom slash commands have been merged into Skills**: *"A file at `.claude/commands/deploy.md` and a skill at `.claude/skills/deploy/SKILL.md` both create `/deploy` and work the same way"*, and legacy `commands/` files keep working ([Extend Claude with skills, 2026-08-25](https://code.claude.com/docs/en/skills)). A **Skill** is a `SKILL.md` at `.claude/skills/<name>/` (project) or `~/.claude/skills/<name>/` (personal), plus optional `scripts/`, `references/` and `assets/` folders. It uses three-stage **progressive disclosure**: metadata (~100 tokens, always loaded), instructions (<5000 tokens, loaded on activation), resources (loaded only if reached) ([Agent Skills Specification, 2026-08-25](https://agentskills.io/specification)). Frontmatter decides who can fire it: the default is *both* you and the model, `disable-model-invocation: true` makes it a pure slash command, and `user-invocable: false` makes it model-only.
+## Slash commands, which are saved prompts
 
-**Worked example — `/spec`, the requirements-phase command.** Note `` !`cmd` `` shell injection, which runs *before* the content reaches the model, and `@path`, which attaches a file:
+A slash command is a prompt you wrote once and can run again by typing `/name`. In Claude Code they live in `.claude/commands/`.
 
-````markdown
-<!-- .claude/skills/spec/SKILL.md -->
----
-name: spec
-description: Turn a rough feature request into a written spec with acceptance criteria
-argument-hint: <feature description>
-disable-model-invocation: true
-allowed-tools: Read, Grep, Glob, Write, Bash(git *)
----
-Current branch: !`git branch --show-current`
-Conventions: @docs/CONTRIBUTING.md
+Three that earn their place: `/commit` writes the commit message the way your team writes them, `/review` runs your review checklist against the current diff, and `/changelog` turns merged pull requests into release notes. All three are prompts you would otherwise retype every week.
 
-Write `docs/specs/<slug>.md` for this request: $ARGUMENTS
-It must contain problem statement, non-goals, API/schema changes, acceptance
-criteria as a checklist, test plan, rollout & rollback. Ask at most three
-clarifying questions first if anything is ambiguous.
-````
+One thing to know, because it changes the picture below: **custom commands have been merged into skills.** A file at `.claude/commands/deploy.md` and a skill at `.claude/skills/deploy/SKILL.md` both give you `/deploy` and behave the same way. Existing `commands/` files keep working. What used to be the difference between the two is now a frontmatter field, and we get to it in the skills section.
 
-⚠️ **Argument indexing is 0-based** in current docs — `$0` is the first argument, `$1` the second; most 2025 tutorials say otherwise. Two more things to internalise. First, **an invoked skill stays in context**: *"the rendered `SKILL.md` content enters the conversation as a single message and stays there for the rest of the session… every line is a recurring token cost."* Keep `SKILL.md` under 500 lines and push detail into `references/`. Second, **the `description` is the entire discovery mechanism**. The spec's own contrast: good is *"Extracts text and tables from PDF files, fills PDF forms, and merges multiple PDFs. Use when working with PDF documents or when the user mentions PDFs, forms, or document extraction."* Poor is *"Helps with PDFs."*
+## MCP, so a tool is written once
 
-**And this is the one portable artifact you own.** Agent Skills is an open standard — *"originally developed by Anthropic, released as an open standard"* — with exactly six portable frontmatter fields: `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools` ([agentskills.io, 2026-08-25](https://agentskills.io)). Claude Code accepts ~20 more, but stick to the six and the same folder runs almost anywhere. The vendor-neutral directory is **`.agents/skills/`**, and Codex, Gemini CLI, Cursor and Copilot all read it. **A `SKILL.md` folder is the one thing you write once and use in every coding agent in 2026.**
+Here is the problem MCP solves.
 
-## IV. Subagents — buying back your context window
+Say you write tools for your LangChain agent so it can work with your Jira: tools that wrap the Jira API, one for creating an issue, one for searching, one for commenting. Now you want the same thing in Claude Code, or in Codex, or in a smolagents script. Every one of them expects tool definitions in its own shape, so you write the Jira tools again. And again.
 
-A **subagent** is a separate agent loop with its own context window, system prompt, tool allowlist and model, defined in `.claude/agents/<name>.md` ([Subagents, 2026-08-25](https://code.claude.com/docs/en/sub-agents)). It gets the task message and your instruction files, but **not** your conversation history, and it returns a summary rather than a transcript. (A *fork* is the variant that does inherit the parent conversation.)
+The **Model Context Protocol** makes that one job instead of four. Tools are described in one standard way, and any agent that speaks the protocol can use them.
 
-```markdown
-<!-- .claude/agents/code-reviewer.md -->
----
-name: code-reviewer
-description: Reviews a diff for correctness and convention violations. Use after a feature branch is implemented and before opening a PR.
-tools: Read, Grep, Glob, Bash
-model: sonnet
----
-Read `git diff main...HEAD`. Report only findings you are confident about, as
-`file:line — blocker|should-fix|nit — what's wrong — the fix`.
-Never edit files. Never comment on formatting the linter already enforces.
-End with one line: SHIP / FIX-FIRST.
-```
+![Before and after MCP](./images/mcp-unified-before-after.png)  
+*On the left, every service needs its own integration written for the model it is talking to, so the work multiplies with the number of models. On the right the per-service APIs have not changed at all. What changed is that they are reached through one interface the model already speaks, so the service is integrated once rather than once per agent.*
 
-Two payoffs. The obvious one is context — a review that reads 40 files returns ten lines to your session. The subtler one is **enforcement**: that `tools:` list is a real allowlist, so this reviewer *cannot* edit your code no matter what the diff tells it to do. A fresh reviewer is also a better reviewer, because it *"sees only the diff and the criteria you give it, not the reasoning that produced the change."*
+What you get out of it:
 
-**When not to delegate:** every spawn is a cold start — no history, a re-read of instruction files, a round trip, a lossy summary back. Don't delegate single-file lookups, and be sceptical of adversarial review — *"A reviewer prompted to find gaps will usually report some, even when the work is sound, because that is what it was asked to do. Chasing every finding leads to over-engineering."*
+- **No vendor lock-in.** Switching agents does not mean rewriting your tools.
+- **Tool sets become portable.** Write once, use everywhere.
+- **Somebody else has already written the one you need.** This is the part that surprises people.
 
-## V. Hooks — the only deterministic control point
+That last point is what MCP is famous for. MCP uses a client and server split: the tools live in an **MCP server**, and the agent is a client that connects to it. So an MCP server is a package of tools, and adding one is configuration rather than code. Point your agent at the Jira MCP server and it can now work your Jira.
 
-Everything so far is *advice* the model weighs against its other goals. Hooks are not: *"Unlike CLAUDE.md instructions which are advisory, hooks are deterministic and guarantee the action happens"* ([Best practices](https://code.claude.com/docs/en/best-practices)). Put more bluntly: *"An instruction like 'never edit `.env`' in CLAUDE.md or a skill is a request, not a guarantee. A `PreToolUse` hook that blocks the edit is enforcement"* ([Extend Claude Code, 2026-08-25](https://code.claude.com/docs/en/features-overview)).
-
-The 2026 surface is about **31 lifecycle events**; seven earn their keep ([Hooks reference, 2026-08-25](https://code.claude.com/docs/en/hooks)):
-
-| Event | Fires | Can block? | Typical use |
-|---|---|---|---|
-| `SessionStart` | Session begins | No | stdout becomes context: inject sprint issues, git state |
-| `UserPromptSubmit` | Before the model sees your prompt | **Yes** | Reject or annotate prompts; stdout is added as context |
-| `PreToolUse` | Before a tool runs | **Yes** | The guardrail: deny writes to protected paths |
-| `PostToolUse` | After a tool runs | **No** | Feedback: run the linter, results return as text |
-| `Stop` / `SubagentStop` | The agent (or a subagent) wants to finish | **Yes** | Gate on green tests |
-| `PreCompact` | Before compaction | **Yes** | Preserve state ([Context Engineering](context_engineering.md)) |
-
-⚠️ **`PostToolUse` ignores exit 2** — it cannot block, only inform, and so do `SessionStart`, `Notification`, `PermissionRequest` and `SubagentStart`. Check the can-block list before designing a guardrail around one. **Worked example — make committed migrations immutable.** Register the hook in `.claude/settings.json`, which is the shareable layer you commit:
-
-```json
-{ "hooks": { "PreToolUse": [ { "matcher": "Edit|Write|NotebookEdit", "hooks": [ { "type": "command",
-    "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/protect-migrations.sh" } ] } ] } }
-```
+In Claude Code that is one command, documented in [Connect to MCP servers](https://code.claude.com/docs/en/mcp-quickstart):
 
 ```bash
-#!/usr/bin/env bash
-# .claude/hooks/protect-migrations.sh — chmod +x. Hook input arrives as JSON on stdin.
-path=$(jq -r '.tool_input.file_path // ""')
-case "$path" in */migrations/*)
-  git ls-files --error-unmatch "$path" >/dev/null 2>&1 && cat <<'JSON'
-{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny",
- "permissionDecisionReason":"This migration is committed and may already be applied. Create a NEW migration instead of editing this one."}}
-JSON
-  ;;
-esac
-exit 0
-```
-
-There are two ways to block. `permissionDecision: "deny"` on exit 0 is the *polite* block — it hands the model a reason it can act on. **Exit 2** is the blunt, override-proof one: *"JSON `permissionDecision: 'allow'` cannot override it."* Matchers are worth knowing too: plain names and `|`-separated lists match exactly, but any other character (`^`, `*`, `.`) turns the matcher into an unanchored JavaScript regex.
-
-A `Stop` hook is the cure for "it works now!" — it blocks the turn from ending until your check script passes, with a built-in escape hatch so you can't build an infinite gate: *"Claude Code overrides the hook and ends the turn after 8 consecutive blocks."* **Watch for hook loops.** A `PostToolUse` hook on `Edit|Write` that itself writes files — a formatter, a codegen step — re-triggers its own event. Guard on file path, use `async: true`, cap `timeout`, and remember `disableAllHooks` while debugging. *(That failure mode follows from the event semantics; it isn't spelled out in the docs.)* Hooks as a design surface get the full treatment in [Harness Engineering](harness_engineering.md).
-
-## VI. MCP — and when it's the wrong answer
-
-**MCP** (Model Context Protocol) is an open client/server protocol whose servers expose **Resources** (data), **Prompts** (user-invoked templates) and **Tools** (model-invoked functions); the current spec revision is **2026-07-28** ([MCP Specification, 2026-08-25](https://modelcontextprotocol.io/specification/latest)). Like AGENTS.md, it now lives under the Linux Foundation's Agentic AI Foundation.
-
-```bash
+# a hosted server, reached over HTTP
 claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
-claude mcp add --env AIRTABLE_API_KEY=$KEY --transport stdio airtable -- npx -y airtable-mcp-server
-claude mcp list     # ✔ Connected / ! Needs authentication / ✘ Failed to connect
+
+# a local one, run as a process on your machine
+claude mcp add playwright -- npx -y @playwright/mcp@latest
 ```
 
-Three scopes exist and **the default is `local`** — this project, not shared. To share with the team you want *project* scope: a `.mcp.json` at the repo root, checked into version control.
+Then `claude mcp list` tells you whether it actually connected. Add `--scope project` and the server is written into a `.mcp.json` your teammates get when they clone the repository.
 
-```json
-{ "mcpServers": {
-    "sentry": { "type": "http", "url": "https://mcp.sentry.dev/mcp" },
-    "postgres": { "command": "npx", "args": ["-y", "@modelcontextprotocol/server-postgres"],
-                  "env": { "DATABASE_URL": "${DATABASE_URL}" } } } }
+For what already exists, [awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers) is the community list.
+
+> **NOTE:** each connected server spends some of the context window, because its tool names and descriptions load into every session. Ten servers you never call still cost you. Remove the ones you do not use, for the reasons in [Context Engineering](context_engineering.md).
+
+## Subagents, with a role you define
+
+[Context Engineering](context_engineering.md) covered why subagents exist: a fresh context window for expensive work, so the main window gains a conclusion instead of the whole investigation.
+
+The extension point is that you can define your own. Every agent ships a general-purpose one, and beside it you can put a security analyst, a frontend specialist, a test writer, each with its own system prompt and its own tool list. In Claude Code they are markdown files in `.claude/agents/`.
+
+A custom subagent is a fixed role. You write the instructions once, and every time that subagent is called it starts from them, in a clean window. [awesome-claude-code-subagents](https://github.com/VoltAgent/awesome-claude-code-subagents) is a collection of more than a hundred if you would rather start from someone else's.
+
+## Skills, which the agent picks up when it needs them
+
+A skill is a folder of instructions the agent can go and read when a task calls for it. Anthropic's [Equipping agents for the real world with Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills) defines them as "organized folders of instructions, scripts, and resources that agents can discover and load dynamically to perform better at specific tasks". In Claude Code: `.claude/skills/<name>/SKILL.md`.
+
+The mechanism is the important part, and it has a name worth keeping: **progressive disclosure**.
+
+At startup the agent loads only the `name` and `description` of every installed skill. That is a line or two each, so twenty skills cost almost nothing. The full instructions are read only when the agent decides a skill applies to the task in front of it.
+
+![Skills and the context window](./images/skill-and-context-window.png)  
+*The grey band at the top is all twenty skills cost while unused: one short line each. When the PDF task arrives the agent reads `SKILL.md` with an ordinary Bash call, and then follows a reference inside it to a second file. Notice that the skill enters the context as a tool result, so this is not a new mechanism. It is the tool loop from Tool Calling, used to read instructions instead of data.*
+
+So the reason skills exist rather than one enormous system prompt is context engineering. Everything the agent might need is available, and only what it actually needs is in the window.
+
+**Skills against custom subagents.** A subagent has its instructions fixed and runs in an isolated window: it goes away and comes back with an answer. A skill changes the main agent instead. Reading the security skill makes *this* agent a security reviewer for the rest of the task, in the same window, with everything else it already knows. It is the same agent changing masks, and it can change again a minute later.
+
+**Skills against slash commands.** This is the distinction that survived the merge, and it is about who is allowed to invoke the thing. By default both you and the agent can. Two frontmatter fields narrow it:
+
+```yaml
+---
+name: deploy
+description: Deploy the application to production
+disable-model-invocation: true
+---
 ```
 
-Because `.mcp.json` is *meant* to be committed, credentials go in env vars, never inline. A freshly cloned repo can't approve its own servers — they stay pending until you trust the workspace, which is the right default ([MCP, 2026-08-25](https://code.claude.com/docs/en/mcp)). Server tools appear as `mcp__<server>__<tool>`, server prompts as `/mcp__<server>__<prompt>`. **Now the honest part.** MCP is not the universal answer, and Anthropic says so in its own docs: *"CLI tools are the most context-efficient way to interact with external services. If you use GitHub, install the `gh` CLI."* The cost argument has a number — eagerly loading every tool definition and pushing every intermediate result through the model took one workflow from **150,000 tokens to 2,000** once the agent wrote code against the tools instead: *"a time and cost saving of 98.7%"* ([Code execution with MCP, 2025-11-04](https://www.anthropic.com/engineering/code-execution-with-mcp)). The nuance: the villain isn't MCP, it's **naive eager tool loading** — which is why Claude Code now defers MCP tool schemas by default and loads only tool names at startup.
+`disable-model-invocation: true` means only you can run it, which is what you want for anything with side effects. You do not want the agent deciding to deploy because the code looked ready. The opposite field, `user-invocable: false`, means only the agent can reach it, which suits background knowledge that is not a sensible command for a person to type.
 
-| Reach for MCP when | Reach for something else when |
-|---|---|
-| No safe CLI exists (Figma, a browser, a BI warehouse) | A CLI exists → Bash plus a skill documenting it |
-| The server handles OAuth you'd otherwise script | You only need *knowledge* → a skill |
-| Several different tools need the same integration | The action must be unconditional → a hook |
+Public collections: [anthropics/skills](https://github.com/anthropics/skills) is the official one, and [awesome-claude](https://github.com/webfuse-com/awesome-claude) is a broader curated list.
 
-The best combination is both: **MCP for the connection, a skill for the judgment** about how to use it well.
+## Hooks, for the things that must always happen
 
-## VII. Plugins — packaging the team's workflow
+Everything above is advice to a model, which means it is followed most of the time. A hook is not advice. It is a shell command wired to a fixed point in the agent's lifecycle, and it runs whether the model wanted it to or not.
 
-A **plugin** bundles everything above into one installable unit: a `.claude-plugin/plugin.json` manifest (only `name` is required) alongside `skills/`, `agents/`, `commands/`, `hooks/hooks.json` and `.mcp.json` ([Plugin reference, 2026-08-25](https://code.claude.com/docs/en/plugins-reference)). The documented trigger is literally *"A second repository needs the same setup."*
+The [hooks reference](https://code.claude.com/docs/en/hooks) lists more than thirty events. The ones people actually use:
 
-Publish by adding `.claude-plugin/marketplace.json` to a git repo, then `claude plugin marketplace add acme-corp/claude-plugins`. Better still, let each repo provision itself by committing to `.claude/settings.json`:
+- **`PreToolUse`**, before a tool call runs. Block an edit to a file nobody should touch, or refuse a command that would push to main.
+- **`PostToolUse`**, after a tool call succeeds. Run the formatter on every file the agent just edited, so style never depends on the agent remembering.
+- **`Stop`**, when the agent finishes its turn. Run the test suite and tell it to keep going if something is red.
+- **`SessionStart`**, when a session begins. Print the current branch and open tickets into the context.
 
-```json
-{ "extraKnownMarketplaces": {
-    "acme-plugins": { "source": { "source": "github", "repo": "acme-corp/claude-plugins" } } },
-  "enabledPlugins": { "team-workflow@acme-plugins": true } }
-```
+That first one is the point to hold onto: an instruction in AGENTS.md asking the agent never to touch a file is a request. A `PreToolUse` hook that blocks the write is a rule. This is the beginning of the next module, and the reason it exists.
 
-A plugin can ship `SessionStart` hooks that run arbitrary shell and MCP servers that phone home, so read its `hooks.json` and `.mcp.json` first, run `claude plugin validate`, and pin marketplace sources with `ref`/`sha`. Supply chain gets its own treatment in [Security](security.md). And don't build one for one repo, one person, three files.
+## Plugins, which bundle all of it
 
-## VIII. The decision table
+A plugin is a package of the things above: commands, skills, subagents, hooks, MCP servers, shipped together and installed in one step. Instead of asking a new teammate to copy six files into their `.claude/` directory, you hand them one plugin.
 
-| I want… | Use | Why not the neighbour |
-|---|---|---|
-| The agent to always know our build/test commands | **Instruction file** | A skill isn't loaded unprompted |
-| …but only when touching `src/api/**` | **`.claude/rules/*.md` with `paths:`** | Keeps the instruction file under 200 lines |
-| A repeatable prompt I trigger by name (`/spec`) | **Skill** + `disable-model-invocation: true` | Hooks can't be triggered by intent |
-| A task that reads 40 files but returns 10 lines | **Subagent** | A skill runs in *your* context window |
-| A reviewer that literally *cannot* edit | **Subagent**, `tools: Read, Grep, Glob` | "Don't edit" is not enforcement |
-| Something that must **never** happen | **`PreToolUse` hook**, `deny` or exit 2 | The one true guardrail |
-| No "done" while the tests are red | **`Stop` hook**, exit 2 (overridden after 8) | Nothing else can hold the turn |
-| To reach Jira / Sentry / Figma / a browser | **MCP server** | No safe CLI; auth is the hard part |
-| To reach GitHub, AWS, k8s, Postgres | **Bash + a skill documenting the CLI** | CLIs are the most context-efficient path |
-| To give a second repo the same setup | **Plugin** (+ marketplace) | Copy-paste rots |
+The layout is per-vendor, and for Claude Code it is a directory with a manifest naming which of those parts it provides. [Discover plugins](https://code.claude.com/docs/en/discover-plugins) covers installing them and the [plugins reference](https://code.claude.com/docs/en/plugins-reference) covers building one. [claude-plugins-official](https://github.com/anthropics/claude-plugins-official) is the Anthropic-managed directory.
 
-## IX. Cross-tool: everyone has these, under different names
+## Auto memory, which the agent writes itself
 
-You may not be on Claude Code. The mechanisms are converging; the spellings are not. Cursor and Copilot read `.claude/skills/`, Cursor also reads `.claude/agents/`, and everyone reads `.agents/skills/` — write to the six-field spec and you are portable by default.
-> **A dated warning.** Google retired Gemini CLI — on 2026-06-18 it *"stopped serving requests"*, replaced by Antigravity CLI, binary `agy` ([Google Developers Blog, 2026-05-19](https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli/)). Tables like this one are snapshots: check the docs' date, not your memory. Note that the *rows* survived the rename even though the product did not.
+Every session starts with an empty context window. Two things carry knowledge across that gap, and they are not the same thing.
 
-| | Claude Code | Codex CLI | Antigravity CLI (`agy`) | Cursor | GitHub Copilot |
-|---|---|---|---|---|---|
-| Instructions | `CLAUDE.md` + `.claude/rules/` | `AGENTS.md` (+`AGENTS.override.md`) | `.agents/rules/`; global `~/.gemini/GEMINI.md` | `.cursor/rules/*.mdc` + `AGENTS.md` | `.github/copilot-instructions.md`, `AGENTS.md` |
-| Skills | `.claude/skills/` | `.agents/skills/` | `.agents/skills/` | `.cursor/skills/`, `.agents/skills/`, `.claude/skills/` | `.github/skills`, `.claude/skills`, `.agents/skills` |
-| Subagents | `.claude/agents/*.md` | `.codex/agents/*.toml` | `/agents`, async by design | `.cursor/agents/*.md` | `.github/agents/*.agent.md` |
-| Hooks | `settings.json`, ~31 events | `hooks.json` / TOML, 11 events | `hooks.json`, `/hooks` | `.cursor/hooks.json`, 21 **camelCase** events | `.github/hooks/*.json`, 8 events |
-| MCP | `.mcp.json` | `[mcp_servers.x]` in TOML | `/mcp`, plugin `mcp_config.json` | `.cursor/mcp.json` | `~/.copilot/mcp-config.json` |
-| Plugins | `.claude-plugin/plugin.json` | `.codex-plugin/plugin.json` | `plugin.json`, `agy plugin install` | — | — |
+**AGENTS.md is what you write.** **Auto memory is what the agent writes.** From [How Claude remembers your project](https://code.claude.com/docs/en/memory):
 
-Empty cells mean **not verified**, not "does not exist". Note what the table really shows: the *rows* are the same across competing vendors. Learn the concepts and you move between tools in an afternoon; memorise `CLAUDE.md` and you are stuck. Which tool to actually pick is [Choosing a Tech Stack](../4_ecosystem/choosing_tech_stack.md)'s job.
+| | CLAUDE.md files | Auto memory |
+| --- | --- | --- |
+| Who writes it | You | Claude |
+| What it contains | Instructions and rules | Learnings and patterns |
+| Scope | Project, user, or org | Per repository, shared across worktrees |
+| Loaded into | Every session | Every session (first 200 lines or 25KB) |
+| Use for | Coding standards, workflows, project architecture | Your preferences, corrections you give Claude, project context Claude cannot derive from the code |
 
-## X. Composing an AI-powered SDLC
+The agent saves notes based on the corrections you give it, so the thing you had to explain twice this week is there next Monday. Files live in `~/.claude/projects/<project>/memory/`, with a `MEMORY.md` index that is loaded every session while the detailed notes are read on demand. That is progressive disclosure again, on the agent's own notes.
 
-None of this is impressive alone. Together it's a pipeline:
+Worth doing deliberately: tell it to remember something. "Remember that the API tests need a local Redis" gets written down. `/memory` shows you what it has saved, and everything in there is plain markdown you can edit or delete.
 
-| Phase | Mechanism | Concrete |
-|---|---|---|
-| Requirements / design | Skill + MCP + subagent | `/spec <request>` writes the spec; a Jira/Linear server means "implement ENG-4521" works without pasting; a read-only architect subagent returns an options memo |
-| Implement | Instruction file + `PreToolUse` hook | Conventions in `CLAUDE.md`; edits to committed migrations, `.env*` and `**/generated/**` denied |
-| Test | Skill + `Stop` hook | `/run-tests` encodes the one correct invocation; the turn cannot end while the suite is red |
-| Review | Subagent | `code-reviewer` with read-only tools, on a fresh context |
-| Deploy / operate | Skill + MCP | `/release` with `disable-model-invocation: true`, so the model can never decide to ship; a Sentry server drops live stack traces in |
-| All of it | Plugin | `team-workflow@acme-plugins`, self-provisioned per repo |
+## Plan mode, for the work you cannot take back
 
-## Mermaid Diagram: where each mechanism plugs into the loop
+Say you have a large refactor, or several features to land at once. Starting to type code is the wrong first move, for the reason [Context Engineering](context_engineering.md) gave: an agent that has not written the plan down loses the map.
 
-```mermaid
-graph TD
-    U[Your prompt] --> H1{UserPromptSubmit hook<br/>can reject on exit 2}
-    H1 --> CTX[Context assembled]
-    CLAUDE[Instruction files: always loaded<br/>Skill descriptions: bodies on demand<br/>MCP tool names: schemas deferred] --> CTX
-    CTX --> M[Model decides]
-    M -->|tool call| H2{PreToolUse hook}
-    H2 -->|deny / exit 2| X2[Blocked — the guardrail]
-    H2 --> T[Tool runs: Edit, Bash, MCP tool]
-    T --> H3[PostToolUse hook: lint, feedback]
-    H3 --> M
-    M -->|delegate| SA[Subagent<br/>own context window]
-    SA -->|summary only| M
-    M --> D{Stop hook}
-    D -->|exit 2, up to 8x| M
-    D --> ANS[Answer]
-    style H2 fill:#FFB6C1
-    style D fill:#FFB6C1
-    style SA fill:#ADD8E6
-```
+Plan mode is a read-only mode for exactly that. The agent explores the codebase and cannot change a line of it, so the whole first phase is understanding what is actually there. Then it writes a plan, you read it, and only after you approve does it start editing.
 
-## XI. Pitfalls
+Claude Code's version goes a step further: before planning it asks you clarifying questions, and it can offer several approaches and let you pick. Which is the useful part, because the moment to catch a bad plan is before any code exists.
 
-1. **The bloated instruction file.** Prune ruthlessly, convert hard rules to hooks — and note that `@path` imports help organisation but **don't reduce context**, since imports load at launch. Related: *"If you emphasize many lines, none of them stands out."*
-2. **Instruction-as-guardrail.** If it must hold every time, it is a hook. Full stop — and check the can-block list, because `PostToolUse` ignores exit 2.
-3. **Hook loops.** A formatter hook on `Edit|Write` that writes files re-triggers itself. **MCP sprawl** is the same class of problem: audit with `/context` and `/mcp`, scope a server to the one subagent that needs it via its `mcpServers:` field, and prefer a CLI where a safe one exists.
-4. **Over-delegation.** Cold start every time, and an adversarial reviewer will always find *something*.
-5. **Weak skill descriptions.** Name the trigger and the artifact. The opposite failure — a skill firing constantly — is also a description bug: narrow it, or add `paths:`.
+And this connects back to long-horizon work. An agent working from an approved written plan stays coherent for hours, because the plan is on disk reciting the goal back into context, rather than in a window that is quietly rotting.
 
-## Tutorial Progress
+## Effort, which is the thinking dial
+
+Chain of thought in [Prompt Engineering](prompt_engineering.md) was about getting the model to reason before answering. `/effort` is the dial for how much.
+
+Rough guide:
+
+- **medium** for question answering, documentation, small fixes, simple edits.
+- **high** for normal work. This covers most of what you do.
+- **xhigh** for heavy coding: a real refactor, a subtle bug, a design decision.
+- **max** when something is genuinely hard and the lower settings have failed.
+
+Higher is not free. It costs tokens and time on every turn, so turning it up for a typo is waste. If you want to see how much it actually buys you, [Artificial Analysis](https://artificialanalysis.ai/) publishes benchmark results per model at different reasoning settings, and the gap between one setting and the next is right there in the numbers.
+
+## Notice what all of these are
+
+Look back at the eight sections. AGENTS.md, slash commands, subagents, skills, hooks, plugins, memory, plans.
+
+Almost every one of them is **markdown in a folder**. Not a database, not a plugin API you compile against, not a config format somebody invented. Files on disk you can open in any editor, diff, review in a pull request, and copy to another machine.
+
+That is not laziness. It is the one format both parties handle well. You can read and edit it without tooling, and models are unusually good at markdown and at moving around a filesystem, because that is a very large share of what they were trained on. So the extension mechanism for a coding agent turned out to be the thing it was already best at.
+
+![One agent, three extension points](./images/mcp-skill-subagent.png)  
+*Three different problems, and it is worth naming which is which. The skills on the left are instructions the agent reads to change how it behaves. The MCP servers on the right are tools that let it reach systems it otherwise could not. The subagents below are extra context windows. Everything here is either something to know, something to do, or somewhere to think.*
+
+## Where this fits in the series
 
 ```mermaid
 graph LR
@@ -279,29 +207,29 @@ graph LR
 
 ## Summary
 
-A coding agent is a generic agent loop plus six extension points, and choosing between them comes down to *when you pay for context* and *whether you need a guarantee*. Facts go in instruction files, procedures in skills, expensive research in subagents, connections in MCP servers, and the whole thing ships as a plugin. The one idea to carry out: **everything except a hook is advice.** If a rule must hold every single time, write a `PreToolUse` hook and stop arguing with the model about it. [Harness Engineering](harness_engineering.md) takes these apart at the harness level; [Advanced Harness Engineering](../3_expert/advanced_harness_engineering.md) scales them.
+A coding agent is powerful out of proportion to its name, because writing and running code is a way to reach almost anything. It does not need a tool for every job when it can install a library or write one, and that is why it helps with work that is not coding at all.
 
-**Quick Check**: Your team keeps letting the agent edit a migration that's already applied in staging. You add "never edit applied migrations" to `CLAUDE.md`, and it happens again a week later. What should you have used instead — and why was the instruction file never going to work?
+You extend one in eight standard ways. AGENTS.md gives it your repository's rules. Slash commands save a prompt. MCP makes a tool set portable, so it is written once instead of once per agent. Custom subagents give it fixed roles in clean context windows. Skills let it pick up instructions only when a task needs them, which is progressive disclosure and the reason twenty skills are affordable. Hooks are the mechanical part: things that happen whether the model chose them or not. Plugins bundle the lot. Auto memory carries what it learned about you into the next session. Plan mode makes it understand before it edits, and effort sets how hard it thinks.
 
-Keep going! 🚀
+Almost all of it is markdown in a folder, which is the format you and the model both handle well.
 
-## References & Further Reading
+Next: hooks were the first thing in this module that the model does not get a vote on. That idea has a name, and a module.
 
-### The primary sources
+**Quick Check**: a skill and a custom subagent both give an agent a specialism. What is the actual difference, and when does each one fit?
 
-- [Extend Claude with skills](https://code.claude.com/docs/en/skills) — Anthropic, fetched 2026-08-25. SKILL.md locations and precedence, the frontmatter table, the commands→skills merger, argument substitution.
-- [Extend Claude Code](https://code.claude.com/docs/en/features-overview) — Anthropic, fetched 2026-08-25. Anthropic's own mechanism-chooser and context-cost-per-feature tables; read it before choosing anything.
-- [Hooks reference](https://code.claude.com/docs/en/hooks) — Anthropic, fetched 2026-08-25. Every lifecycle event, the settings.json shape, exit codes, matcher semantics and the JSON deny contract.
-- [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices) — Anthropic, fetched 2026-08-25. The include/exclude table, the pruning test, the CLI-first rule and the named failure patterns.
-- [How Claude remembers your project](https://code.claude.com/docs/en/memory) — Anthropic, fetched 2026-08-25. Instruction-file locations and load order, `.claude/rules/` with `paths:`, and the definitive AGENTS.md answer.
-- [Subagents](https://code.claude.com/docs/en/sub-agents) — Anthropic, fetched 2026-08-25. Every frontmatter field and exactly what does and doesn't load into an isolated context.
-- [Connect Claude Code to tools via MCP](https://code.claude.com/docs/en/mcp) — Anthropic, fetched 2026-08-25. `claude mcp add`, `.mcp.json`, the three scopes, tool naming and tool search.
-- [Plugin reference](https://code.claude.com/docs/en/plugins-reference) — Anthropic, fetched 2026-08-25. The `plugin.json` schema, directory layout, `${CLAUDE_PLUGIN_ROOT}` and `userConfig`.
+## References
 
-- [Agent Skills — Specification](https://agentskills.io/specification) — Agent Skills project, fetched 2026-08-25. The six portable frontmatter fields and their exact constraints.
-- [Agent Skills — Overview](https://agentskills.io) — Agent Skills project, fetched 2026-08-25. Three-stage progressive disclosure plus the ~40-tool adopter showcase.
-- [AGENTS.md](https://agents.md/) — Agentic AI Foundation / Linux Foundation, fetched 2026-08-25. The neutral instructions format: contents, nearest-file-wins nesting, and who honours it.
-- [MCP Specification (revision 2026-07-28)](https://modelcontextprotocol.io/specification/latest) — Model Context Protocol, fetched 2026-08-25. Resources / Prompts / Tools, trust-and-safety principles, and the Tasks / MCP Apps / "Skills over MCP" extensions.
-
-- [Steering Claude Code: when to use CLAUDE.md, skills, hooks, rules, subagents and more](https://claude.com/blog/steering-claude-code-skills-hooks-rules-subagents-and-more) — Anthropic, 2026-06-18. The best prose version of the decision framework.
-- [Code execution with MCP: building more efficient agents](https://www.anthropic.com/engineering/code-execution-with-mcp) — Anthropic Engineering, 2025-11-04. The token-cost case against eager tool loading: 150,000 tokens → 2,000, plus an honest account of what code execution costs you in sandboxing.
+- [Claude Code features](https://code.claude.com/docs/en/agent-sdk/claude-code-features): the whole extension surface on one page, useful as a checklist of what your own agent supports
+- [agents.md](https://agents.md/): the open format, including how nested files work in a monorepo
+- [How Claude remembers your project](https://code.claude.com/docs/en/memory): the CLAUDE.md and auto memory split, and where the files live
+- [Connect to MCP servers](https://code.claude.com/docs/en/mcp-quickstart): adding a server end to end, and what to check when it will not connect
+- [awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers): the community list, for checking whether your tool already exists
+- [Equipping agents for the real world with Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills): where progressive disclosure is explained properly
+- [Extend Claude with skills](https://code.claude.com/docs/en/skills): the practical version, including the two fields that decide who may invoke a skill
+- [anthropics/skills](https://github.com/anthropics/skills): the official skill collection
+- [awesome-claude](https://github.com/webfuse-com/awesome-claude): a broader curated list of Claude tooling
+- [awesome-claude-code-subagents](https://github.com/VoltAgent/awesome-claude-code-subagents): a hundred-plus subagent definitions to start from
+- [Hooks reference](https://code.claude.com/docs/en/hooks): every lifecycle event, and the input each one receives
+- [Discover plugins](https://code.claude.com/docs/en/discover-plugins) and the [plugins reference](https://code.claude.com/docs/en/plugins-reference): installing one, then building one
+- [claude-plugins-official](https://github.com/anthropics/claude-plugins-official): the managed plugin directory
+- [Artificial Analysis](https://artificialanalysis.ai/): benchmark numbers per model and per reasoning setting, if you want to see what effort buys

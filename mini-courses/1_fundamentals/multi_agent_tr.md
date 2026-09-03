@@ -1,7 +1,7 @@
 # Multi-Agent Systems
 
-Modül 6 tek bir agent ile bitti: bir loop, bir system prompt, bir tool seti. Bu modül birkaç tane
-kullandığında ne olduğu, ve bunun sana neye mal olduğu.
+[AI Agent'lar](agents_tr.md) tek bir agent ile bitti: bir loop, bir system prompt, bir tool seti. Bu
+modül birkaç tane kullandığında ne olduğu, ve bunun sana neye mal olduğu.
 
 ## Tek agent neden yetmemeye başlıyor
 
@@ -17,13 +17,13 @@ Bölmek her agent'a kısa bir prompt, küçük bir tool listesi ve tek bir iş v
 - query yazıp çalıştıran bir **SQL agent**
 - sonuçları chart'a çeviren bir **visualisation agent**
 
-Her biri Modül 6'daki agent'ın kendisi. Yeni bir şey icat edilmedi. Sadece bir loop'tan birkaç
-loop'a geçtin.
+Her biri [AI Agent'lar](agents_tr.md) modülündeki agent'ın kendisi. Yeni bir şey icat edilmedi.
+Sadece bir loop'tan birkaç loop'a geçtin.
 
 ## Başlamak için iki mimari
 
 ![Single agent, network and supervisor architectures](./images/multiagents.png)  
-*Solda, tool'larıyla tek bir agent, ki bu Modül 6. Ortada, her agent'ın her agent'la konuşabildiği bir network. Sağda, isteği alıp sadece kendisiyle konuşan worker'lara dağıtan bir supervisor.*
+*Solda, tool'larıyla tek bir agent, ki bu [AI Agent'lar](agents_tr.md) modülünün bittiği yer. Ortada, her agent'ın her agent'la konuşabildiği bir network. Sağda, isteği alıp sadece kendisiyle konuşan worker'lara dağıtan bir supervisor.*
 
 **Supervisor.** Bir agent isteği alıyor, hangi worker'ın ilgilenmesi gerektiğine karar veriyor, işi
 ona geçiriyor, geri geleni topluyor ve kullanıcıya cevap veriyor. Worker'lar sadece supervisor'la
@@ -89,7 +89,7 @@ Kelimeler tanıdık gelsin diye burada anılıyor, hepsi daha sonra ele alınıy
 
 - **Hierarchical:** supervisor'ların supervisor'ları, tek katman yetmediğinde.
 - **Agent-as-a-tool:** bir agent'ın başka bir agent'a sanki düz bir tool'muş gibi verilmesi, ki
-  Modül 4'ün mekanizmasına tam oturuyor.
+  [Tool Calling](tools_tr.md) modülünün mekanizmasına tam oturuyor.
 - **Subagent'lar:** kendi izole context'i olan kısa ömürlü yardımcılar doğuran, sonra sadece
   onların sonuçlarını tutan bir agent.
 
@@ -120,9 +120,9 @@ supervisor = CodeAgent(
 supervisor.run("How many rows are in my tables? Show them in a bar chart.")
 ```
 
-`managed_agents`'a bak. Supervisor'ın worker'ları ona, Modül 6'da tool'ların verildiği şekilde
-veriliyor; çünkü supervisor'ın bakış açısından onlar tam olarak bu: çağırıp sonuç alabileceği
-şeyler.
+`managed_agents`'a bak. Supervisor'ın worker'ları ona, [AI Agent'lar](agents_tr.md) modülünde
+tool'ların verildiği şekilde veriliyor; çünkü supervisor'ın bakış açısından onlar tam olarak bu:
+çağırıp sonuç alabileceği şeyler.
 
 ## Tek agent'ın hâlâ doğru cevap olduğu durumlar
 

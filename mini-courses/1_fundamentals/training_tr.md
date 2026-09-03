@@ -1,7 +1,7 @@
 # Training LLMs
 
-Modül 1, bir LLM'in çok sayıda parameter'a sahip bir network olduğunu ve sonraki kelimeyi tahmin
-ettiğini söyledi. Bu modül, o parameter'ların nereden geldiğiyle ilgili.
+[LLM Fundamentals](llms_tr.md) , bir LLM'in çok sayıda parameter'a sahip bir network olduğunu ve
+sonraki kelimeyi tahmin ettiğini söyledi. Bu modül, o parameter'ların nereden geldiğiyle ilgili.
 
 İki adım var, ve birbirlerine neredeyse hiç benzemiyorlar. Biri milyonlarca dolara mal oluyor ve
 bunu sadece birkaç lab yapabiliyor. Diğerini bu akşam kendi GPU'nda çalıştırabilirsin.
@@ -185,8 +185,8 @@ model.print_trainable_parameters()
 # şuna benzer bir şey: "trainable params: 0.3M || all params: 60M || trainable%: 0.5%"
 ```
 
-PEFT'i, Modül 1'de anlattığımız quantization ile karıştırma. **PEFT ucuza eğitmekle ilgili;
-quantization ucuza çalıştırmakla.** Sık sık birlikte kullanılıyorlar.
+PEFT'i, [LLM Fundamentals](llms_tr.md) modülünde anlattığımız quantization ile karıştırma. **PEFT
+ucuza eğitmekle ilgili; quantization ucuza çalıştırmakla.** Sık sık birlikte kullanılıyorlar.
 
 ## Unsloth: insanların gerçekten kullandığı şey
 
@@ -202,15 +202,16 @@ Sana verdikleri:
   popüler açık modelleri kapsıyor. Birini açıyorsun, kendi dataset'ine yönlendiriyorsun ve
   çalıştırıyorsun. "Elimde birkaç çift var"dan "fine-tune edilmiş bir modelim var"a giden en hızlı
   dürüst yol bu.
-- **Sadece training için değil, çalıştırmak için de hazır quantize edilmiş modeller.** Modül 1
-  neredeyse hiçbir şeyi kendin quantize etmediğinden bahsetmişti. Kastettiği release'ler bunlar,
-  yani aynı proje hem bir modeli sıkıştırmayı hem de eğitmeyi kapsıyor.
+- **Sadece training için değil, çalıştırmak için de hazır quantize edilmiş modeller.**
+  [LLM Fundamentals](llms_tr.md) modülü neredeyse hiçbir şeyi kendin quantize etmediğinden
+  bahsetmişti. Kastettiği release'ler bunlar, yani aynı proje hem bir modeli sıkıştırmayı hem de
+  eğitmeyi kapsıyor.
 - **Bir rehber, ve bir gerçeklik kontrolü.**
   [Fine-tuning rehberi](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide) bütün süreci
   anlatıyor. Ama başlamadan **önce**
   [fine-tuning bana uygun mu](https://unsloth.ai/docs/get-started/fine-tuning-for-beginners/faq-+-is-fine-tuning-right-for-me)
   FAQ'ini oku, çünkü dürüst cevap genelde hayır. Fine-tuning problemi gibi görünen birçok problemi
-  daha iyi bir prompt ya da Modül 3'te anlattığımız retrieval çözüyor.
+  daha iyi bir prompt ya da [RAG & Embeddings](rag_tr.md) modülündeki retrieval çözüyor.
 
 ## Üçü yan yana
 

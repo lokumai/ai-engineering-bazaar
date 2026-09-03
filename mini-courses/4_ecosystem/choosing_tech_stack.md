@@ -7,8 +7,8 @@ providers, inference engines, UI tooling and observability. This one is about pi
 for a real project, which is a different skill from knowing what exists.
 
 <!-- NEED: the topic list for this module. The obvious spine is how to choose between the
-     options laid out in modules 26 to 30, but the criteria worth teaching are the author's
-     call. -->
+     options laid out in the Ecosystem modules before this one, but the criteria worth
+     teaching are the author's call. -->
 
 ## Tutorial Progress
 

@@ -2,7 +2,8 @@
 
 *(Bu bir placeholder modül — şimdilik kısa bir özet; tam ders içeriği yakında geliyor.)*
 
-Modül 7'deki Manager-Worker kurulumunun ötesinde Agent-to-Agent protokolleri ve koordinasyon desenleri.
+[Multi-Agent Sistemler](../1_fundamentals/multi_agent_tr.md) modülündeki Manager-Worker
+kurulumunun ötesinde Agent-to-Agent protokolleri ve koordinasyon desenleri.
 
 **Bu modülde işlenecek konular**:
 - A2A

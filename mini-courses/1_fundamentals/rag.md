@@ -9,9 +9,9 @@ objectives:
 
 # RAG & Embeddings
 
-Module 1 gave you the context window: the model's working desk, and everything on it has to fit.
-Module 2 gave you fine-tuning: changing the model itself. This module is about the third option,
-and the one you will reach for most.
+[LLM Fundamentals](llms.md) gave you the context window: the model's working desk, and everything on
+it has to fit. [Training LLMs](training.md) gave you fine-tuning: changing the model itself. This
+module is about the third option, and the one you will reach for most.
 
 ## Why RAG exists
 
@@ -190,8 +190,8 @@ bookkeeping: they store the text with the vector and hand you the chunk itself.
 
 ## Why not just fine-tune the model on your documents?
 
-You learned fine-tuning in Module 2, so this is the obvious question. Why bother with embeddings
-and a database at all?
+You learned fine-tuning in [Training LLMs](training.md) , so this is the obvious question. Why
+bother with embeddings and a database at all?
 
 **Because your company's knowledge is alive, and fine-tuning is a snapshot.** Your codebase gets
 commits every day. Contracts get amended, new ones get signed, policies change. Fine-tuning takes

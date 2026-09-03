@@ -2,7 +2,8 @@
 
 *(Placeholder module — a short overview for now; full lesson content is coming soon.)*
 
-Reasoning and prompting strategies that go well beyond the basics from Module 8.
+Reasoning and prompting strategies that go well beyond the basics from
+[Prompt Engineering](../2_intermediate/prompt_engineering.md).
 
 **Topics this module will cover**:
 - Reflexion

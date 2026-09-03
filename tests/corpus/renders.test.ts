@@ -144,6 +144,23 @@ describe('every sheet in the set', () => {
     }
   })
 
+  it('names another module by title and never by number, in either language', () => {
+    // The number is a position in `curriculum.yaml`, so prose holding one is a
+    // second copy of it. All 89 that this replaced were correct on the day they
+    // were written and every one of them would have gone silently wrong on the
+    // next reorder, which is exactly the failure the config was meant to end.
+    // Fenced code is skipped: a sample is free to say whatever it says.
+    const withoutFences = (raw: string) => raw.replace(/```[\s\S]*?```/g, '')
+    const byNumber = /\b[Mm]od[u\u00fc]l\p{L}*\s+\d/u
+    for (const module of modules) {
+      const dir = join(CONTENT_ROOT, module.category.dir)
+      for (const name of [`${module.name}.md`, `${module.name}_tr.md`]) {
+        expect(withoutFences(readFileSync(join(dir, name), 'utf8')), name)
+          .not.toMatch(byNumber)
+      }
+    }
+  })
+
   it('leaves no prev/next footer and no category dek for the app to strip', () => {
     // Both were GitHub-only duplications of what the app derives, both were
     // already wrong (the Intermediate chain ran 8, 9, 10, 11, 13, 12, 14), and

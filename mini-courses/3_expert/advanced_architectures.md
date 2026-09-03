@@ -2,7 +2,8 @@
 
 *(Placeholder module — a short overview for now; full lesson content is coming soon.)*
 
-Architectural patterns that go beyond the basic Observe-Decide-Act loop from Module 6.
+Architectural patterns that go beyond the basic Observe-Decide-Act loop from
+[AI Agents](../1_fundamentals/agents.md).
 
 **Topics this module will cover**:
 - THREAD

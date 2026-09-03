@@ -2,7 +2,8 @@
 
 *(Placeholder module — a short overview for now; full lesson content is coming soon.)*
 
-Agent-to-Agent protocols and coordination patterns beyond the Manager-Worker setup from Module 7.
+Agent-to-Agent protocols and coordination patterns beyond the Manager-Worker setup from
+[Multi-Agent Systems](../1_fundamentals/multi_agent.md).
 
 **Topics this module will cover**:
 - A2A

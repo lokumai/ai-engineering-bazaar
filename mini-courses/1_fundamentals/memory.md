@@ -21,7 +21,7 @@ Let's go through each one.
 
 ## Parametric memory: what is baked into the weights
 
-Remember Module 2, where we trained and fine-tuned models? When you fine-tune a model on, say, a pile of legal documents, that information gets stored permanently inside the model's weights (its parameters).
+Remember [Training LLMs](training.md), where we trained and fine-tuned models? When you fine-tune a model on, say, a pile of legal documents, that information gets stored permanently inside the model's weights (its parameters).
 
 - **Permanent**: it does not disappear when the session ends, and you do not need to resend it every call. It is just *in* the model.
 - **Imprecise at scale**: the problem is that a model's weights hold an enormous amount of information, billions of documents' worth. Cramming your specific document in among all of that makes it hard for the model to memorize and retrieve it *exactly*.
@@ -54,7 +54,7 @@ Notice that every call sends the *whole* stack, not just the newest message, bec
 
 We go much deeper on this later, in the Expert track's [Advanced Memory](../3_expert/advanced_memory.md) module. Here is the basic idea for now.
 
-Sometimes, instead of just letting working memory disappear when a session ends, we save a summary or an index of it somewhere outside the model. Later, in a completely different session, that saved information can be pulled back into working memory when it is actually needed, often using RAG (Module 3).
+Sometimes, instead of just letting working memory disappear when a session ends, we save a summary or an index of it somewhere outside the model. Later, in a completely different session, that saved information can be pulled back into working memory when it is actually needed, often using [RAG](rag.md).
 
 **Example**: say you upload 5 PDFs to ChatGPT in one session, then start a brand-new session later and ask a question about those PDFs. ChatGPT may still answer. Not because the model "remembers" them in its weights (parametric memory), and not because they are sitting in the new session's empty context window (working memory), but because it indexed those PDFs during the earlier session, and can retrieve the relevant parts back into context now that you're asking about them again.
 
@@ -65,7 +65,7 @@ Sometimes, instead of just letting working memory disappear when a session ends,
 | Stored in | Model weights | Context window | External storage (DB, vector store, files) |
 | Persistence | Permanent | Temporary, gone when the session ends or the context fills up | Persists across sessions |
 | Precision | Fuzzy, hard to recall exactly among billions of documents | Very precise, the LLM reads it directly | Precise once retrieved back into context |
-| Created by | Training / fine-tuning (Module 2) | A growing stack of messages | Explicit save + retrieval, often via RAG (Module 3) |
+| Created by | [Training / fine-tuning](training.md) | A growing stack of messages | Explicit save + retrieval, often via [RAG](rag.md) |
 | Analogy | Someone who has read 1,000 books | Someone reading a book open right in front of them | Someone's own notes, looked up later |
 
 The takeaway: **the LLM itself has no memory of its own. Parametric memory is what training baked into its weights, working memory is what your app is currently showing it, and long-term memory is what your app saves and brings back later.**

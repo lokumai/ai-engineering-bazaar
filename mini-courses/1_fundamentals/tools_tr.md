@@ -1,8 +1,9 @@
 # LLM Tool Calling
 
-Modül 1'den 3'e kadar bir modelin ne olduğunu, nasıl eğitildiğini ve kendi verini onun önüne nasıl
-koyacağını anlattık. Bunların hepsi hâlâ okumak. Bu modül, bir modelin *yapmaya* başladığı yer: bir
-dosya okumak, bir komut çalıştırmak, bir API çağırmak.
+[LLM Fundamentals](llms_tr.md) , [Training LLMs](training_tr.md) ve [RAG & Embeddings](rag_tr.md)
+bir modelin ne olduğunu, nasıl eğitildiğini ve kendi verini onun önüne nasıl koyacağını anlattı.
+Bunların hepsi hâlâ okumak. Bu modül, bir modelin *yapmaya* başladığı yer: bir dosya okumak, bir
+komut çalıştırmak, bir API çağırmak.
 
 Her agent'ın altındaki mekanizma bu, dolayısıyla tam olarak doğru anlamaya değer.
 
@@ -20,8 +21,8 @@ değeri olan sıradan bir Python fonksiyonu. Özel hiçbir yanı yok.
 çalıştırıyor ve dönüş değerini geri veriyor.
 
 ## Bir tool call etrafında context nasıl büyür
-
-Modül 1 context'i bir mesaj yığını olarak tanıtmıştı. Bir tool call o yığına iki yeni tür ekliyor,
+[LLM Fundamentals](llms_tr.md) context'i bir mesaj yığını olarak tanıtmıştı. Bir tool call o yığına
+iki yeni tür ekliyor, ve bütün akış tek bir resimde:
 ve bütün akış tek bir resimde:
 
 ![The context of a single tool call](./images/context-tool-call.jpeg)  
@@ -221,9 +222,10 @@ def search_docs(query: str) -> list:
     return vector_db.search(encode(query), top_k=5)
 ```
 
-Sondakine bir kez daha bakmaya değer: bu, Modül 3'teki RAG pipeline'ının tool'a dönüşmüş hali.
-Artık *ne zaman* retrieval yapılacağına sen her soruda karar vermiyorsun, model karar veriyor. Bir
-RAG uygulamasını bir agent'tan ayıran şeyin büyük kısmı bu küçük kayma.
+Sondakine bir kez daha bakmaya değer: bu, [RAG & Embeddings](rag_tr.md) modülündeki RAG
+pipeline'ının tool'a dönüşmüş hali. Artık *ne zaman* retrieval yapılacağına sen her soruda karar
+vermiyorsun, model karar veriyor. Bir RAG uygulamasını bir agent'tan ayıran şeyin büyük kısmı bu
+küçük kayma.
 
 ```mermaid
 graph TD

@@ -10,7 +10,8 @@ objectives:
 
 # Prompt Engineering
 
-Module 1 ended with one paragraph about prompt engineering. This module is that paragraph, opened up.
+[LLM Fundamentals](../1_fundamentals/llms.md) ended with one paragraph about prompt engineering.
+This module is that paragraph, opened up.
 
 > **Prompt engineering is writing an input that leads the model to the output you expect.**
 
@@ -19,7 +20,7 @@ memory. Input in, output out, every time, with nothing carried over. So the mode
 input is the only thing you control, which makes the input the only thing that can decide the
 quality of what comes back.
 
-Module 1 wrote down what the model computes:
+[LLM Fundamentals](../1_fundamentals/llms.md) wrote down what the model computes:
 
 ```
 P(next token | context)
@@ -153,8 +154,8 @@ not. They are here so that "write a clear prompt" stops being vague advice.
 ## In-context learning, and few-shot prompting
 
 Models can learn things that are not in their weights. Not through pre-training, not through
-fine-tuning, but from what is sitting in the context, the working memory from Module 5. This is
-called **in-context learning**, or ICL.
+fine-tuning, but from what is sitting in the context, the working memory from
+[Memory](../1_fundamentals/memory.md) . This is called **in-context learning**, or ICL.
 
 It is also the reason RAG works at all. In [RAG & Embeddings](../1_fundamentals/rag.md) the weights never
 change; the retrieved documents land in the context and the model uses them on the spot. The
@@ -379,7 +380,7 @@ Role prompting is giving the model a job, a persona or a character before you gi
 > verbatim from ChatGPT, Claude, Gemini, Grok and others.
 
 ![Inside the system prompt](./images/system-prompt-context.jpeg)  
-*The same figure from Module 1. Identity and instructions are where a role goes, and everything in this box is written before the user says anything.*
+*The same figure from [LLM Fundamentals](../1_fundamentals/llms.md). Identity and instructions are where a role goes, and everything in this box is written before the user says anything.*
 
 That is why role prompting belongs here: the system prompt is where a role does its best work.
 Examples of the technique itself are as simple as they look:

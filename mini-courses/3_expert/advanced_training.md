@@ -2,9 +2,9 @@
 
 *(Placeholder module: a short overview for now, full lesson content is coming soon.)*
 
-What happens to a model after pre-training, and how a base model becomes something worth
-shipping. Module 2 covered pre-training, fine-tuning and PEFT at a high level. This one goes
-under that.
+What happens to a model after pre-training, and how a base model becomes something worth shipping.
+[Training LLMs](../1_fundamentals/training.md) covered pre-training, fine-tuning and PEFT at a high
+level. This one goes under that.
 
 **Topics this module will cover**:
 - Self-supervised learning: how pre-training gets a training signal with no labels

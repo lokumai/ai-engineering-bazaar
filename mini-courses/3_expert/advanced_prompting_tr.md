@@ -2,7 +2,8 @@
 
 *(Bu bir placeholder modül — şimdilik kısa bir özet; tam ders içeriği yakında geliyor.)*
 
-Modül 8'deki temellerin çok ötesine geçen akıl yürütme ve prompting stratejileri.
+[Prompt Engineering](../2_intermediate/prompt_engineering_tr.md) modülündeki temellerin çok
+ötesine geçen akıl yürütme ve prompting stratejileri.
 
 **Bu modülde işlenecek konular**:
 - Reflexion

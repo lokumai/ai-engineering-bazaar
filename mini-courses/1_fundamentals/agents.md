@@ -25,8 +25,8 @@ expecting something bigger.
 
 Here is the difference that matters.
 
-A **plain LLM is single-turn.** You give it input, it gives you output. Done. That is Module 1, and
-it is all a model does.
+A **plain LLM is single-turn.** You give it input, it gives you output. Done. That is what
+[LLM Fundamentals](llms.md) covered, and it is all a model does.
 
 An **agent is multi-turn.** The same model gets called again and again, and each time it can ask for
 a tool. It keeps going until it has what it needs, and only then writes a final answer.
@@ -39,7 +39,7 @@ call it and what you put in front of it each time.
 
 ## One pass through the loop
 
-Module 4 showed a single tool call. An agent turn is exactly that, repeated:
+[Tool Calling](tools.md) showed a single tool call. An agent turn is exactly that, repeated:
 
 ![The context of an agent](./images/agent-context.jpeg)  
 *One pass: you ask, the model thinks, the model asks for a tool, the host runs it and writes the result back, and the model answers. On the next pass the whole stack goes to the model again, now longer by two messages.*
@@ -84,9 +84,9 @@ None of the loop happens inside the LLM. **All of it happens on the host machine
 laptop or your server:
 
 - running the loop, and deciding it has ended
-- keeping the message stack that is the agent's memory (Module 5)
+- keeping the message stack that is the agent's [memory](memory.md)
 - assembling the system prompt before every call
-- executing the tools, because they are your Python functions (Module 4)
+- executing the tools, because they are your Python functions ([Tool Calling](tools.md))
 - feeding the whole grown context back in for the next pass
 
 ![An agent, unmasked](./images/agents-in-action.jpeg)  
@@ -98,16 +98,17 @@ call ids, growing and trimming the message stack, rebuilding the prompt, decidin
 [smolagents](https://github.com/huggingface/smolagents) and
 [LangChain](https://github.com/langchain-ai/langchain) exist to write that once.
 
-**And now think back to Module 1**, where we ran an LLM straight from the terminal with no framework
-at all. Why was nothing needed there? Because that was one call. Input, output, done. No loop, no
-tool parsing, no message stack to maintain. A single-turn LLM needs no scaffolding, and an agent is
-almost entirely scaffolding.
+**And now think back to [LLM Fundamentals](llms.md)**, where we ran an LLM straight from the
+terminal with no framework at all. Why was nothing needed there? Because that was one call. Input,
+output, done. No loop, no tool parsing, no message stack to maintain. A single-turn LLM needs no
+scaffolding, and an agent is almost entirely scaffolding.
 
 Which brings the series to its point. **The LLM really is just a brain: text in, text out, storing
 nothing, doing nothing else.** Every capability we have covered is an environment built around that
-brain so it can work across turns (this module), reach outside itself (Module 4), remember
-(Module 5) and read data it was never trained on (Module 3). We were not oversimplifying in
-Module 1. The model is that simple, and everything else is engineering around it.
+brain so it can work across turns (this module), reach outside itself ( [Tool Calling](tools.md) ),
+remember ( [Memory](memory.md) ) and read data it was never trained on ( [RAG & Embeddings](rag.md)
+). We were not oversimplifying in [LLM Fundamentals](llms.md) . The model is that simple, and
+everything else is engineering around it.
 
 An older way to describe the same loop is **observe, decide, act**: the model observes the context,
 decides on an action, the host acts, and the result becomes part of the next observation. Same
@@ -122,10 +123,10 @@ The **system prompt**, rebuilt and sent before every call in the loop. It carrie
 the list of available tools with their names and descriptions, and how a tool call should be
 formatted so the host can parse it.
 
-You do not write that list by hand. As Module 4 covered, the `@tool` decorator is what does it: the
-framework reads your function's name, docstring and type hints, and injects the schema into what the
-model sees. That is why the Module 4 code was so short. The decorator is not just registration, it
-is how the model gets told the function exists.
+You do not write that list by hand. As [Tool Calling](tools.md) covered, the `@tool` decorator is
+what does it: the framework reads your function's name, docstring and type hints, and injects the
+schema into what the model sees. That is why that code was so short. The decorator is not just
+registration, it is how the model gets told the function exists.
 
 ## A longer example: fixing a bug
 
@@ -161,10 +162,10 @@ result = agent.run("Read main.py and summarise it")
 That is a complete agent. Notice what is *not* there: no loop, no tool-call parsing, no message
 stack, no system prompt. `CodeAgent` is doing all of it, and `agent.run` is the loop.
 
-Other frameworks solve the same problem with different shapes, and Module 25 compares them:
-[LangChain](https://github.com/langchain-ai/langchain),
-[crewAI](https://github.com/crewAIInc/crewAI),
-[AutoGen](https://github.com/microsoft/autogen).
+Other frameworks solve the same problem with different shapes, and
+[Agent Frameworks](../4_ecosystem/agent_frameworks.md) compares them:
+[LangChain](https://github.com/langchain-ai/langchain) ,
+[crewAI](https://github.com/crewAIInc/crewAI) , [AutoGen](https://github.com/microsoft/autogen) .
 
 ![LLM as brain, agent as body](./images/agent-analogy.png)  
 *The LLM is the brain, the agent is the body around it, and the tools are its hands.*
@@ -194,7 +195,7 @@ model stops calling tools and writes an answer instead.
 
 The model is unchanged. The loop, the memory, the system prompt and the tool execution all run on
 your machine, which is what a framework is for, and which is why a single-turn LLM needed no
-framework back in Module 1.
+framework back in [LLM Fundamentals](llms.md) .
 
 Next: what happens when one agent becomes several.
 

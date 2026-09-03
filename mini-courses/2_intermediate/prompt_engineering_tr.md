@@ -1,7 +1,7 @@
 # Prompt Engineering
 
-Modül 1, prompt engineering hakkında tek bir paragrafla bitiyordu. Bu modül o paragrafın açılmış
-hâli.
+[LLM Fundamentals](../1_fundamentals/llms_tr.md) , prompt engineering hakkında tek bir paragrafla
+bitiyordu. Bu modül o paragrafın açılmış hâli.
 
 > **Prompt engineering, modeli beklediğin output'a götüren bir input yazmak.**
 
@@ -10,7 +10,7 @@ state'i ve memory'si yok. Input girer, output çıkar, her seferinde, hiçbir ş
 taşınmadan. Yani model sabit ve senin kontrol ettiğin tek şey input; bu da geri gelen şeyin
 kalitesine karar verebilecek tek şeyin input olduğu anlamına geliyor.
 
-Modül 1 modelin ne hesapladığını yazmıştı:
+[LLM Fundamentals](../1_fundamentals/llms_tr.md) modelin ne hesapladığını yazmıştı:
 
 ```
 P(next token | context)
@@ -147,12 +147,12 @@ uymayacaksın. Buradaki varlık sebepleri, "açık bir prompt yaz"ın belirsiz b
 ## In-context learning ve few-shot prompting
 
 Modeller weight'lerinde olmayan şeyleri öğrenebiliyor. Pre-training'le değil, fine-tuning'le değil,
-context'te duran şeyden, yani Modül 5'teki working memory'den. Buna **in-context learning**, kısaca
-ICL deniyor.
+context'te duran şeyden, yani [Memory](../1_fundamentals/memory_tr.md) modülündeki working
+memory'den. Buna **in-context learning**, kısaca ICL deniyor.
 
-RAG'in çalışmasının sebebi de bu. [Modül 3](../1_fundamentals/rag_tr.md)'te weight'ler hiç
-değişmiyor; getirilen dokümanlar context'e iniyor ve model onları anında kullanıyor. Kütüphane
-kapalı kalıyor, sen ihtiyacın olanı masaya koyuyorsun.
+RAG'in çalışmasının sebebi de bu. [RAG & Embeddings](../1_fundamentals/rag_tr.md) modülünde
+weight'ler hiç değişmiyor; getirilen dokümanlar context'e iniyor ve model onları anında kullanıyor.
+Kütüphane kapalı kalıyor, sen ihtiyacın olanı masaya koyuyorsun.
 
 İki template'e tekrar bak: her ikisinde de context için bir slot var. O slot, modele bir saniye
 öncesine kadar sahip olmadığı bilgiyi verdiğin tek yer.
@@ -370,12 +370,12 @@ Role prompting, göreve girmeden önce modele bir iş, bir persona ya da bir kar
 > **NOT: system prompt ne?** System prompt context'in en tepesinde bir kez duruyor ve modelin
 > bütün konuşma boyunca nasıl davrandığını tanımlıyor. Onu kullanıcı değil, modelin ya da agent'ın
 > geliştiricisi yazıyor, ve genelde uzun oluyor. Tool'ların schema ve açıklamalarıyla birlikte
-> kaydedildiği yer de burası ([Modül 4](../1_fundamentals/tools_tr.md)). Gerçeklerini görmek
+> kaydedildiği yer de burası ([Tool Calling](../1_fundamentals/tools_tr.md)). Gerçeklerini görmek
 > istersen, [system prompt leaks](https://github.com/asgeirtj/system_prompts_leaks) bunları
 > ChatGPT, Claude, Gemini, Grok ve diğerlerinden birebir toplamış.
 
 ![Inside the system prompt](./images/system-prompt-context.jpeg)  
-*Modül 1'deki figürün aynısı. Identity ve instruction'lar bir role'ün gireceği yer, ve bu kutudaki her şey kullanıcı bir şey söylemeden önce yazılıyor.*
+*[LLM Fundamentals](../1_fundamentals/llms_tr.md) modülündeki figürün aynısı. Identity ve instruction'lar bir role'ün gireceği yer, ve bu kutudaki her şey kullanıcı bir şey söylemeden önce yazılıyor.*
 
 Role prompting'in buraya ait olmasının sebebi bu: bir role en iyi işini system prompt'ta yapıyor.
 Tekniğin kendisinin örnekleri göründükleri kadar basit:
@@ -414,8 +414,8 @@ bir code review ekibi istiyorsun:
    `execute_linter_auto_fix`, `generate_docstrings`.
 
 Üç agent, tek model. Tek farkları role, talimatlar ve tool'lar; ki
-[Modül 7](../1_fundamentals/multi_agent_tr.md) bir supervisor'ün işi uzmanlara dağıttığını
-çizerken sessizce varsaydığı şey de buydu.
+[Multi-Agent Sistemler](../1_fundamentals/multi_agent_tr.md) bir supervisor'ün işi uzmanlara
+dağıttığını çizerken sessizce varsaydığı şey de buydu.
 
 Ama dikkatli ol, çünkü bir role sadece hedeflediğin kısmı değil bütün davranışı değiştiriyor. Bir
 security uzmanı ata ve sonra ona sanat tarihini sor: cevap hiç role verilmemiş hâlinden daha kötü

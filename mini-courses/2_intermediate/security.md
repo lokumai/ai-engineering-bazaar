@@ -97,6 +97,17 @@ Which brings us to the models built only to judge safety. You run one alongside 
 - **[gpt-oss-safeguard](https://ollama.com/library/gpt-oss-safeguard)**, 20B and 120B, does something the others do not: **you give it your own written policy** and it judges against that, instead of a taxonomy fixed at training time. It also shows its reasoning rather than only a label, which matters when you have to explain why something was blocked.
 - **[Llama 3.1 Nemotron Safety Guard 8B v3](https://build.nvidia.com/nvidia/llama-3_1-nemotron-safety-guard-8b-v3)** from NVIDIA covers 23 safety categories across 9 languages, and checks prompts and responses both.
 
+Side by side, so you can pick on what you actually need:
+
+| Model | Size | Checks | Worth knowing |
+| --- | --- | --- | --- |
+| Prompt Guard 86M | 86M | Input | Sorts input into benign, injection or jailbreak. Cheap enough for every request |
+| Llama Guard 4 | 12B | Input and output | Multimodal, so it reads images too. 14 hazard categories |
+| Llama Guard 3 | on Ollama | Input and output | The previous generation, and the easiest to try locally |
+| Granite 4.1 Guardian | on Ollama | Input and output | IBM's. Adds hallucination and groundedness checks |
+| gpt-oss-safeguard | 20B, 120B | Input and output | Judges against a policy you write, and shows its reasoning |
+| Nemotron Safety Guard v3 | 8B | Input and output | 23 categories across 9 languages |
+
 For most applications one small guard model in front and one behind will do more for you than a long list of hand-written rules.
 
 ## Red teaming your own system
@@ -156,6 +167,14 @@ And the capability points both ways. The same agent that needs defending can run
 Next: agents that live with you rather than in a repository, and what that does to everything in this module.
 
 **Quick Check**: a system prompt has higher priority than a user message by design. So why does prompt injection work?
+
+## Before you ship one
+
+- [ ] Put a guardrail in front of the model, and another one behind it
+- [ ] Run one red-teaming tool against your own system, and write down the attack success rate you got
+- [ ] Check what your agent reads, because any page or document it fetches can carry instructions
+- [ ] Try to get your own system prompt back out, and see how hard it actually is
+- [ ] Give every tool the narrowest credentials that still let it work
 
 ## References
 

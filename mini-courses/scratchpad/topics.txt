@@ -12,7 +12,7 @@
 === Intermediate ===
 8) prompt engineering (will include Chain-of-Though, In-context Learning, etc)
 9) context engineering (context summarization, persistent memory or context offloading or long-term memory, Subagents, TODO or Explicit Planning, Deep Agents)
-10) coding_agents (Slash Commands, Skills, AGENTS.md, Subagents, hooks, MCP, Plugins)
+10) coding_agents (Slash Commands, Skills, AGENTS.md, Subagents, hooks, MCP, Plugins)   
 11) harness_engineering (includes guardrails, hooks, sandboxes, etc)
 12) loop_engineering (Agent Teams, Dynamic Workflows, Rubric Evals)
 13) security (Jailbreaking, White-box, Black-box, Guardrails)
@@ -26,10 +26,11 @@
 18) advanced_memory(Long-term memory using Cognee and MemSearch and Hindsight, Agent Dreaming, Agent KnowledgeBase, Entire Provenance)
 19) advanced_multiagent (more architectures like proposer-verifierte, , A2A, Multi-agent coordination context delegation (handoff) vs subagent context delegation vs messaging pool)
 20) advanced_prompting (Reflextion and Self-critique, Tree of Thought, LLM Consul, caveman, ponytail)
-21) advanced_context_engineering (Superpowers, SpecKit, GSD, AgentOS, Claude Native Plan Goals Ultrathink Playground)
+21) advanced_context_engineering (Context engineering for software development like Superpowers, SpecKit, GSD, AgentOS, Claude Native Plan Goals Ultrathink Playground)
 22) advanced_harness_engineering (harness profiles, system prompts, changing tool names)
-23) advanced_deployment (agent server, langchain agent protocol) 
+23) advanced_deployment (agent server, langchain agent protocol, the tech stack for UI REDIS WORKER etc) 
 24) advanced_training (self-supervised learning in pre-training, post-training, RL and RLHF, preference alignment, DPO, PPO, GRPO, knowledge distillation)
+
 
 === Ecosystem ===
 25) agent_fameworks (langchain, agno, crewAI, smolagents, mastra, voltagent, pydanticAI)
@@ -39,8 +40,10 @@
 29) observability (LangSmith, LangFuse, Trace Analyzer Agent)
 30) chosing_tech_stack
 
+
 === Protocols & Specs ===
 31) protocols_reference (all mentioned and also NLWeb, UCP, AP2) 
+
 
 === Optional ===
 Human-in-the-Lopp (Interrupt, Steering)

@@ -64,6 +64,24 @@ actually changed. Name the files, and read `git status` before every commit.
   the working files as well as the modules.
 - **Plain English.** Short sentences, common words, readable by a non-native speaker. Not a
   textbook, so no Roman-numeral outlines or lettered subsections.
+- **Never dense. Being concise is not a goal here.** Plain English and compressed English are not
+  the same thing, and compression is the failure mode this project keeps hitting. Amirkia, after
+  reading modules 10 to 12: "Make sure you did not make the language too dense solely to make it
+  short or concise. We do not like dense language at all." Five shapes to watch for, all of them
+  found in those three modules:
+
+  | Shape | Example that had to be rewritten |
+  | --- | --- |
+  | A clause folded back on itself | "a request with a good success rate, and a good success rate is not what you want from that particular sentence" |
+  | A fragment used as a sentence | "Which means…", "Which is a sensor pointed at the guides.", "Concretely, then." |
+  | Stacked adjectives | "the stable, high-level, repository-wide stuff" |
+  | One sentence carrying a list | five items through four semicolons, ninety words. Make it a list. |
+  | A run of one-clause sentences | ten in a row, one per extension point. Reads like notes, not a person. Summaries attract this. |
+
+  The check is not the word count. Read the paragraph aloud and ask whether somebody explaining
+  this out loud would say it that way. **Loosening a module makes it longer, and that is the
+  correct outcome**: all six files grew in that pass. His own drafts are unhurried, use whole
+  sentences, and repeat a point where repeating it helps.
 - **The test is depth, not word count.** Every part must stay simple and high-level; a module
   that covers a lot is fine as long as no single part dives into detail. Do not trim a module,
   or flag it as too long, just because the total word count is above some number. Going deep
@@ -155,6 +173,10 @@ Write the Turkish only once the English is final, then:
 
 - **Mirror the structure exactly** and check it: heading counts, figures, mermaid blocks, code
   blocks. Those counts are what prove nothing was dropped.
+- **Then read the opening and the closing of both.** Matching counts prove nothing was dropped,
+  not that the right thing is there. `harness_engineering_tr.md` shipped with Loop Engineering's
+  opening paragraphs, so the module introduced itself as the wrong module while every count
+  matched perfectly. Nothing automated can catch that; two minutes of reading can.
 - **Technical vocabulary stays English**, inflected with Turkish suffixes: `context'in`,
   `parameter'lar`, `weight'ler`, `chunk'ları`. Translate the ordinary words around them.
 - **Translate a teaching example, keep a data example.** "The capital of Turkey" becomes

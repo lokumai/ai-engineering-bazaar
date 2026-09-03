@@ -1,5 +1,5 @@
 import { type Page, expect, test } from '@playwright/test'
-import { SHORT, A4, CATEGORY_PATHS, sheetByModule } from './sheets'
+import { SHORT, A4, CATEGORY_PATHS, INDEX_SHEET, sheetByModule } from './sheets'
 
 /**
  * §4.7's closing sentence, which is the only hard rule in the whole section:
@@ -24,13 +24,25 @@ const WIDEST = sheetByModule(10)
 const LONGEST = sheetByModule(13)
 
 const PAGES = [
-  ['index', '/'],
+  // §15.1 — `/` is the home screen and the flat manifest is `/sheets/`. Both
+  // are here: the home screen because it is what a reader meets first, and the
+  // manifest because it carries the 1060px table that used to live at `/` and
+  // is still the widest non-prose thing on the site.
+  ['home screen', '/'],
+  ['manifest', INDEX_SHEET],
   ['drawing set', '/courses/'],
   ['category', CATEGORY_PATHS[1]],
   ['SHORT sheet', SHORT.path],
   ['A4 sheet', A4.path],
   ['module 10', WIDEST.path],
   ['module 13', LONGEST.path],
+  // §16, hazard H-O — `/profile/` was never loaded below 1440 by any spec, and
+  // §16.1's drafter block is the site's first two-column block outside a module
+  // sheet: a 168px drawing column beside a form, a register whose summary is a
+  // three-column grid, and an eight-cell mark row that has to wrap at 390. It is
+  // here as a general property (the document never scrolls sideways) rather than
+  // as a string match, which is what the rest of this list is for.
+  ['profile sheet', '/profile/'],
 ] as const
 
 /**
@@ -155,7 +167,7 @@ test('the widest table scrolls inside its own container', async ({ page }) => {
 })
 
 test('the manifest table scrolls inside its region rather than the page', async ({ page }) => {
-  await page.goto('/')
+  await page.goto(INDEX_SHEET)
 
   const region = page.locator('.hl-index-scroll')
   const measured = await region.evaluate((el) => ({
@@ -180,8 +192,15 @@ test('the manifest table scrolls inside its region rather than the page', async 
  * every code block, which §6.7 gives `overflow-x: auto` and no cue at all. At
  * 390px that meant four columns of the manifest and half of every code fence
  * ending at a hard border with nothing to say they continued.
+ *
+ * The manifest table is at `/sheets/` since §15.1 moved it; the reason it is
+ * checked is the reason it was always checked, and it did not move with the
+ * route. The home screen is not in this loop: it has no scroller at any of the
+ * three widths, so `scrollers.length > 0` there asserts the absence of a
+ * subject rather than the presence of an affordance. What §4.7 still demands of
+ * it is asserted directly, below.
  */
-for (const [name, path] of [['index', '/'], ['module 13', LONGEST.path]] as const) {
+for (const [name, path] of [['manifest', INDEX_SHEET], ['module 13', LONGEST.path]] as const) {
   test(`${name} tells the reader where a scroller continues`, async ({ page }) => {
     await page.goto(path)
     await page.waitForLoadState('networkidle')
@@ -215,6 +234,91 @@ for (const [name, path] of [['index', '/'], ['module 13', LONGEST.path]] as cons
     }
   })
 }
+
+/**
+ * §4.7 for the front door, asserted as the gesture rather than the measurement.
+ *
+ * `home screen never scrolls the document sideways` above measures the layout;
+ * this drags it. The two fail differently — a document can refuse to grow and
+ * still be draggable, which is how the widest sheet is checked at line 115 —
+ * and `/` is now the one page every reader lands on, with two blocks in the DOM
+ * of which the stylesheet hides one. A block hidden by `display: none` still
+ * costs nothing sideways, but the block that is *shown* is chosen before first
+ * paint and never measured by React, so nothing else in the suite would notice
+ * it overhanging at 390px.
+ *
+ * The width guard is the mutation test: with both blocks gone, or the visible
+ * one collapsed, an empty page cannot be dragged either and this would pass
+ * while proving nothing.
+ */
+test('the home screen cannot be nudged sideways at any width', async ({ page }) => {
+  await page.goto('/')
+  await page.waitForLoadState('networkidle')
+
+  const viewport = page.viewportSize()!.width
+
+  // Exactly one of §15.2's two blocks is laid out, and it fills the column.
+  const shown = await page.locator('.hl-home-new, .hl-home-resume').evaluateAll(
+    (nodes) => nodes
+      .filter((node) => node.checkVisibility())
+      .map((node) => Math.round(node.getBoundingClientRect().width)),
+  )
+  expect(shown, 'the home screen renders one of its two blocks').toHaveLength(1)
+  expect(shown[0], 'the visible block has no width to overhang with')
+    .toBeGreaterThan(viewport / 2)
+
+  await page.evaluate(() => window.scrollTo(4000, 0))
+  expect(await page.evaluate(() => window.scrollX)).toBe(0)
+})
+
+/**
+ * §10.4 on the alias picker, which the test above cannot reach.
+ *
+ * That test measures the `::after` hit-area idiom on a module sheet. The mark
+ * picker meets the floor a different way — `max-md:min-h-11` on the label, which
+ * is `RolePicker`'s spelling of the same rule — so it needs its own measurement
+ * rather than an entry in that selector list.
+ *
+ * It is worth a test of its own because it shipped 2px under: MEASURED at 42px
+ * against a 44px floor, on a screen whose whole purpose is a reader choosing
+ * between eight options with a thumb. Nothing else in the suite looks at this
+ * route's controls.
+ */
+test('the mark options reach the §10.4 touch floor below 768px', async ({ page }) => {
+  test.skip(page.viewportSize()!.width >= 768, '§10.4 sets the floor below 768')
+
+  // §16.2.2 — one picker, three call sites, and two of them are routes a reader
+  // reaches on a phone. `/sign-in/alias/` is the first-run screen this test was
+  // written for; `/profile/` renders the same component at its default prefix
+  // inside the drafter block, and it is the one that changed — the floor is now
+  // stated once in `profile.css` as an unconditional `min-height` on the cell
+  // rather than by `max-md:min-h-11` on this screen's own label, so a
+  // measurement on one route no longer says anything about the other.
+  for (const route of ['/sign-in/alias/', '/profile/']) {
+    await page.goto(route)
+    await page.waitForLoadState('networkidle')
+
+    const options = await page
+      .locator('label[data-hl-mark]')
+      .evaluateAll((nodes) => nodes.map((node) => ({
+        mark: node.getAttribute('data-hl-mark'),
+        height: Math.round(node.getBoundingClientRect().height),
+      })))
+
+    // Asserted, not assumed: a picker that rendered nothing would otherwise pass
+    // a loop over an empty list. Eight is the whole vocabulary — `seeded` plus the
+    // seven named glyphs — and `alias.spec.ts` pins the order. Exactly eight is
+    // also hazard H-C: `data-hl-mark` on a wrapper as well as on the label makes
+    // this sixteen, and the picker would still look right.
+    expect(options.length, `${route} no longer renders eight mark options`).toBe(8)
+    for (const option of options) {
+      expect(
+        option.height,
+        `${option.mark} is under the touch floor on ${route}`,
+      ).toBeGreaterThanOrEqual(44)
+    }
+  }
+})
 
 test('every control reaches the §10.4 touch floor below 768px', async ({ page }) => {
   test.skip(page.viewportSize()!.width >= 768, '§10.4 sets the floor below 768')

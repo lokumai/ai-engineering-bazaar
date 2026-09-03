@@ -4,6 +4,9 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { useState } from 'react'
 import { tally } from '@/lib/record/derive'
 import {
+  ERASE_CLOSE_ACCOUNT,
+  ERASE_ORG_HISTORY,
+  ERASE_SCOPE,
   ERASE_WORD,
   NOTHING_RECORDED,
   confirmsErase,
@@ -65,16 +68,31 @@ import { useRecord } from '@/lib/record/store'
  *  - `danger` and `decline` state OUTCOMES, never Yes/No — and the decline
  *    states the SAFE outcome with no shame and no loss framing. §12.14.1's own
  *    example of the thing not to write is `No, I don't care about my progress`.
+ *  - `scope` and `history` are the §14.6 table, in words. `scope` is composed
+ *    from `erase.ts` rather than written here, because the module that performs
+ *    the deletion and the sentence that promises it must not be able to drift
+ *    apart — and because a promise on this site is testable in node (§12.14.2).
+ *
+ * **What `scope` no longer says.** Until §14.6 it ended "It changes nothing on
+ * any other device, and nothing anywhere else: the record was never sent
+ * anywhere." Phase 4's entire job is to send the record to `record_state`, so
+ * that clause became false and is gone. It has NOT been replaced with silence:
+ * `history` states the half of §14.6 this button cannot perform, in the same
+ * terms `/join/`'s §14.5.1 panel uses, because a reader who erases and then
+ * discovers their employer still holds the log was misled by both screens.
  */
 export const ERASE_COPY = {
   trigger: 'ERASE ALL LOCAL DATA',
   head: 'Erase',
   title: 'Erase all progress in this browser?',
-  scope:
-    'This removes the record from this browser, including the copy set aside '
-    + 'from a version of the site this one could not read. It changes nothing '
-    + 'on any other device, and nothing anywhere else: the record was never '
-    + 'sent anywhere.',
+  scope: ERASE_SCOPE,
+  /**
+   * §14.6 rows 2 and 3, the spec's own added line — "Kurumsal geçmişin
+   * silinmez; tamamen silmek için hesabını kapat." — in English. Two sentences
+   * rather than one clause: the survival of the log and the one way to end it
+   * are separate facts, and joining them with a semicolon buries the second.
+   */
+  history: `${ERASE_ORG_HISTORY} ${ERASE_CLOSE_ACCOUNT}`,
   confirmLabel: `Type ${ERASE_WORD} to confirm`,
   danger: 'Erase all data',
   decline: 'Keep my data',
@@ -140,8 +158,15 @@ export function EraseDialog({
               </ul>
             )}
 
-            <p className="m-0 mb-3 font-display text-meta leading-normal text-ink-muted">
+            <p className="m-0 mb-2 font-display text-meta leading-normal text-ink-muted">
               {ERASE_COPY.scope}
+            </p>
+            {/* §14.6 — its own paragraph, not a fourth clause of the one above.
+                This is the sentence a reader in an organisation has to leave
+                the dialog having read, and a sentence appended to a paragraph
+                about storage keys is a sentence that gets skimmed. */}
+            <p className="m-0 mb-3 font-display text-meta leading-normal text-ink-muted">
+              {ERASE_COPY.history}
             </p>
 
             <label className="hl-field">

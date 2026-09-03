@@ -1,4 +1,5 @@
 import { sheetStamps } from '../record/derive'
+import { NOT_MEASURED, numberWord } from '../text'
 import { EMPTY_RECORD } from '../record/schema'
 import { plural } from '../text'
 import { CATEGORIES, type Category } from './curriculum-file'
@@ -34,7 +35,7 @@ import { topicsFor } from './topics'
  */
 
 /** The one value a row prints when it has nothing true to print. */
-const DASH = '—'
+const DASH = NOT_MEASURED
 
 function pad2(n: number): string {
   return String(n).padStart(2, '0')
@@ -177,30 +178,6 @@ export function setEyebrow(): string {
 // ---------------------------------------------------------------------------
 // §4.8 item 2 — the statement
 // ---------------------------------------------------------------------------
-
-const ONES = [
-  'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight',
-  'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen',
-  'sixteen', 'seventeen', 'eighteen', 'nineteen',
-]
-
-const TENS = [
-  '', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty',
-  'ninety',
-]
-
-/**
- * A count as the statement spells it. Past ninety-nine it gives up and returns
- * the digits: a wrong word is a lie, and a numeral in a sentence is only ugly.
- */
-export function numberWord(n: number): string {
-  if (!Number.isInteger(n) || n < 0 || n > 99) return String(n)
-  if (n < 20) return ONES[n]
-
-  const tens = TENS[Math.floor(n / 10)]
-  const ones = n % 10
-  return ones === 0 ? tens : `${tens}-${ONES[ones]}`
-}
 
 function sentenceCount(n: number): string {
   if (n === 0) return 'None'

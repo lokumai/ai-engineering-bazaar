@@ -23,10 +23,18 @@
  * Both take the port as an argument and are therefore testable behind a
  * Map-backed fake, the pattern `storage.ts` established; the two wrappers below
  * them are what a component calls.
+ *
+ * **§14.6 added a second half to the erase, at the bottom of this file.** The
+ * record now lives in a `record_state` row as well as in two storage keys, so
+ * an erase that stopped at the keys would be a control lying about its reach.
+ * That half is port-shaped for exactly the reason the first half is: this
+ * module imports no supabase-js and knows nothing about a session, so every
+ * branch of it — including the one where the delete fails after the local data
+ * is already gone — is exercised in node.
  */
 
 import type { tally } from './derive'
-import { RECORD_QUARANTINE_KEY, RECORD_STORAGE_KEY } from './schema'
+import { EMPTY_RECORD, RECORD_QUARANTINE_KEY, RECORD_STORAGE_KEY, type RecordData } from './schema'
 import { safeStorage, type RecordStorage } from './storage'
 
 /** §12.15 — the word that gates the danger button. */
@@ -225,4 +233,322 @@ export function eraseStored(): void {
 
 export function restoreStoredQuarantine(raw: string | null): void {
   restoreQuarantine(safeStorage(), raw)
+}
+
+/* ---------------------------------------------------------------------------
+ * §14.6 — the account copy.
+ *
+ * Phase 4's whole job is that the record now exists in a second place, so
+ * §12.15's erase acquired a second half. §14.6's table is three rows:
+ *
+ *   not in any org           record_state deleted   learner_event deleted
+ *   in an org                record_state deleted   learner_event SURVIVES
+ *   account closed entirely  both deleted, by `on delete cascade`
+ *
+ * What the CLIENT can perform is all three rows, and this comment used to say
+ * otherwise. `0002_phase4_rls.sql` gives `record_state` an owner policy `for
+ * all`, so deleting one's own row is permitted. It gave `learner_event` no
+ * delete policy at all — and `0003_phase4_erase.sql` added one, narrow: a
+ * reader may delete their own event rows while NO organisation holds them.
+ *
+ * The paragraph that stood here described 0002's world and survived 0003
+ * unchanged, so this file and that migration contradicted each other about
+ * whether the policy existed; meanwhile no code called the delete, so the row
+ * 0003 was written to make performable stayed unperformable. Both are fixed:
+ * the port has `deleteHistory`, `eraseAccountCopy` calls it, and the receipt
+ * carries what each half removed.
+ *
+ * RLS filters `delete`, so a member's attempt removes nothing and reports no
+ * error. Zero history rows is therefore §14.6's second row working, never a
+ * failure, and the dialog keeps saying what it always said about an
+ * organisation's log: see `ERASE_ORG_HISTORY`.
+ *
+ * PORT-SHAPED, for the reason `storage.ts` states for `RecordStorage`: this
+ * module imports no supabase-js, knows nothing about a session, and stays
+ * testable in node (§12.14.2). The caller hands in the delete; this file owns
+ * only the decision about what its failure MEANS, which is the part a reader
+ * is affected by.
+ * ------------------------------------------------------------------------- */
+
+/**
+ * The one thing the caller supplies: a function that removes this account's
+ * `record_state` row. It resolves on success and may reject; the resolved
+ * VALUE is inspected too — see `eraseRemote`.
+ *
+ * `unknown` rather than `void` on purpose: the natural argument at the call
+ * site is a PostgREST builder's promise, whose value is a response object, and
+ * a signature that refused it would push the caller into a wrapper whose only
+ * job is to throw the value away.
+ */
+export type RemoteRecordDeleter = () => Promise<unknown>
+
+/**
+ * §14.6 — the three answers, and there are exactly three because a reader
+ * needs to be told a different thing in each.
+ *
+ *  - `signed-out` — there was no account copy to remove. Not a failure, and
+ *    not something to report as one: a signed-out reader who is warned that
+ *    "the account copy may remain" would be chasing a row that never existed.
+ *  - `deleted` — the row is gone. The dialog's standing copy already said this
+ *    would happen, so there is nothing extra to say.
+ *  - `failed` — either the server reported an error, or it reported removing
+ *    nothing. The local erase HAS ALREADY HAPPENED and cannot be undone
+ *    beyond §12.15's ten-second window, so this outcome can never be retried
+ *    into silence. It must be stated. `reason` is for the reader-facing detail
+ *    line and for a report, never for a decision.
+ */
+/**
+ * The `reason` for a delete the server accepted while removing no row.
+ *
+ * Lower case and no terminal period, because it is composed into a sentence
+ * rather than printed as a readout, and it states the observation instead of
+ * naming a cause: from the browser, an RLS refusal and a row that was never
+ * there produce the identical answer, and guessing between them would be
+ * §11.25's exact prohibition.
+ */
+export const NOTHING_REMOVED = 'the server removed no row'
+
+export type RemoteEraseOutcome =
+  | { kind: 'signed-out' }
+  | { kind: 'deleted' }
+  | { kind: 'failed'; reason: string }
+
+/**
+ * A rejection's message, without inventing one.
+ *
+ * §11.25's rule again: an unmeasurable value is absent, never guessed. A
+ * thrown non-Error is stringified because that is what it actually was; an
+ * empty message becomes the one honest phrase rather than a blank clause in
+ * the middle of a sentence.
+ */
+export function eraseFailureReason(thrown: unknown): string {
+  const raw = thrown instanceof Error ? thrown.message : String(thrown)
+  const trimmed = raw.trim()
+  return trimmed === '' ? 'no reason reported' : trimmed
+}
+
+/**
+ * A resolved PostgREST response carrying an error, which is the trap this
+ * whole check exists for: **PostgREST reports failure in the RESOLVED VALUE,
+ * not by rejecting.** A `.delete()` dropped by the network resolves happily
+ * with `{ error }`, so an `eraseRemote` that trusted a resolution would print
+ * "removed from your account" over a row that is still there — precisely the
+ * §1 failure this section was written to fix.
+ *
+ * An RLS refusal does not even do that much: it resolves with `error: null` and
+ * removes nothing, because RLS FILTERS `delete` and only `insert` raises. No
+ * error inspection can catch that one, which is what `resolvedRows` is for.
+ *
+ * `remote-store.ts` funnels its own calls through a `fail()` helper for the
+ * same reason. This is the belt to that braces: a caller who passes the
+ * builder promise straight in, which the signature above deliberately allows,
+ * is covered here rather than punished for it.
+ */
+function resolvedError(value: unknown): string | null {
+  if (typeof value !== 'object' || value === null) return null
+  const error = (value as { error?: unknown }).error
+  if (error === null || error === undefined) return null
+  if (typeof error === 'object' && 'message' in error) {
+    return eraseFailureReason(new Error(String((error as { message?: unknown }).message ?? '')))
+  }
+  return eraseFailureReason(error)
+}
+
+/**
+ * How many rows the delete reports removing, or `null` from a deleter that does
+ * not say.
+ *
+ * Absent is not treated as zero. A `RemoteRecordStore` always returns a receipt
+ * (`RemoteDeleteReceipt`), so the only callers that report nothing are test
+ * doubles standing in for a port, and reading their silence as "nothing was
+ * deleted" would make every such test assert a failure it did not arrange.
+ * Production cannot reach that branch, because the type will not let it.
+ */
+function resolvedRows(value: unknown): number | null {
+  if (typeof value !== 'object' || value === null) return null
+  const rows = (value as { rows?: unknown }).rows
+  return typeof rows === 'number' ? rows : null
+}
+
+/**
+ * §14.6 — erase the account copy, and decide what to tell the reader.
+ *
+ * `null` deleter means "no session", which is how a signed-out reader reaches
+ * §12.15 at all: `/profile/` works with no account (§14.0), and an erase there
+ * is complete when the two keys are gone. Requiring a session would be a
+ * disclosure lie in the other direction.
+ *
+ * Never throws. The local erase is already done by the time this runs — the
+ * keys go first, because a reader who asked for the local data to go must get
+ * that whatever the network says — so a throw here could only turn an
+ * irreversible act into an unhandled rejection. The outcome is the return
+ * value, and stating it is the caller's obligation, not an option.
+ */
+export async function eraseRemote(
+  deleter: RemoteRecordDeleter | null,
+): Promise<RemoteEraseOutcome> {
+  if (deleter === null) return { kind: 'signed-out' }
+  try {
+    const resolved = await deleter()
+    const reported = resolvedError(resolved)
+    if (reported !== null) return { kind: 'failed', reason: reported }
+    // The row count, and the reason this is not an `if (error)` and done. A
+    // delete filtered away by RLS resolves with no error and removes nothing,
+    // so a resolution is evidence that the statement RAN and never evidence
+    // that the row is gone. Zero rows after a push that just wrote one is not a
+    // success to report quietly: the reader is told the account copy may remain,
+    // which is the same thing they are told when the connection drops, because
+    // from here the two are the same fact.
+    if (resolvedRows(resolved) === 0) return { kind: 'failed', reason: NOTHING_REMOVED }
+    return { kind: 'deleted' }
+  } catch (thrown) {
+    return { kind: 'failed', reason: eraseFailureReason(thrown) }
+  }
+}
+
+/**
+ * §14.6, §12.14.1 — the readout for a delete that did not go through.
+ *
+ * Uppercase mono with no terminal period, the register `UNDO_CLOSED` and
+ * `UPTIME 6D` already set. It says ERASED HERE rather than ERASED, because the
+ * local half did succeed and a reader deciding what to do next needs to know
+ * which half is outstanding.
+ */
+export const REMOTE_ERASE_FAILED = 'ERASED HERE · ACCOUNT COPY MAY REMAIN'
+
+/**
+ * The sentence under that readout.
+ *
+ * Three things it has to do, in this order, because that is the order the
+ * reader's questions arrive in: confirm what DID happen, admit what may not
+ * have, and name the two ways out. "May remain" and not "remains": a refused
+ * delete and a dropped connection are indistinguishable from here, and
+ * asserting either would be a page claiming a server state it cannot see.
+ */
+export const REMOTE_ERASE_FAILED_NOTE =
+  'The record is gone from this browser. The delete of what your account holds '
+  + 'did not go through, so it may still be there. Erasing again while signed '
+  + 'in retries it; closing your account removes it for certain.'
+
+/**
+ * What to print for an outcome, or null when the standing copy already said
+ * it. Only `failed` speaks: a delete that worked is what the dialog promised,
+ * and an extra line confirming the promise it just kept trains a reader to
+ * stop reading these lines.
+ */
+export function remoteEraseNote(outcome: RemoteEraseOutcome): string | null {
+  return outcome.kind === 'failed' ? REMOTE_ERASE_FAILED_NOTE : null
+}
+
+/* ---------------------------------------------------------------------------
+ * §14.6 — the disclosure, as three sentences a node test can read.
+ *
+ * These live here rather than only in `EraseDialog`'s `ERASE_COPY` for the
+ * reason §12.14.2 gives for every string on this site that carries a promise:
+ * Radix portals into `document.body`, so the open dialog's markup is
+ * unreachable in a unit test — the strings are not. `ERASE_COPY` composes them
+ * and renders them; the wording is settled here, beside the function whose
+ * behaviour it describes, so the two cannot drift.
+ *
+ * BEFORE THIS SECTION the dialog said "It changes nothing on any other device,
+ * and nothing anywhere else: the record was never sent anywhere." That was
+ * true in Phase 3 and became false the moment `record_state` existed. It is
+ * gone. `/join/`'s §14.5.1 panel states the same table in the same terms, and
+ * the two pages have to agree, because they are the two screens whose whole
+ * job is this disclosure (§1).
+ * ------------------------------------------------------------------------- */
+
+/** Row 1 and row 2's first column: `record_state` is deleted either way. */
+export const ERASE_SCOPE =
+  'This removes the record from this browser, including the copy set aside '
+  + 'from a version of the site this one could not read, and it removes the '
+  + 'copy your account holds.'
+
+/**
+ * Row 2's second column, which is the one that surprises people: the log
+ * SURVIVES. Stated as ownership rather than as a limitation of this button,
+ * because that is what it is — §14.3 makes the organisation's training record
+ * the organisation's, and §14.5.1's joining screen says so before the reader
+ * joins, not after.
+ */
+export const ERASE_ORG_HISTORY =
+  'The training history an organisation already holds is not removed: that '
+  + 'log belongs to the organisation.'
+
+/** Row 3. Both tables, by `on delete cascade`, and only this way. */
+export const ERASE_CLOSE_ACCOUNT =
+  'Only closing your account removes that history.'
+
+/**
+ * §12.15, §16.3 — the record an erase leaves behind: empty, except that this
+ * browser still remembers it has already settled the alias question.
+ *
+ * ## What the code used to do, and what it cost
+ *
+ * `DataPanel` erased with `update(() => EMPTY_RECORD)`, whose
+ * `prefs.aliasNamedFor` is null, and it deliberately does NOT sign the reader
+ * out. So the erase reset the flag that records §16.3's once-per-account
+ * decision, the next mount's claim re-decided, and `noteAliasNamed` also stamped
+ * a day — a record the reader had just erased came back holding their name and a
+ * day they had not worked. That is the F1b half of the same hole: two writers of
+ * one flag disagreed about what erasing it meant.
+ *
+ * ## What §12.15 promises, and why carrying the flag keeps it
+ *
+ * The promise is about CONTENT and about the storage keys: the panel prints
+ * `NO VALUE STORED UNDER THIS KEY` for both keys, and the counts it enumerated
+ * before the act — sheet states, the name, the submittals, the days — are gone.
+ * The keys are removed by `eraseStored()` a line after this record is written, so
+ * nothing here can put a value under a key; and `carriesNothing` (`schema.ts`)
+ * deliberately ignores `prefs` entirely, so a record carrying this flag still
+ * counts as carrying nothing — which is what stops another tab pushing it and
+ * what stops the claim's erase-wins guard in `AccountSync` mistaking it for a
+ * record. The flag names an account id the reader's own account already knows;
+ * it reprints no content, restores nothing, and is invisible in every readout.
+ *
+ * ## The alternative, and why it loses
+ *
+ * The other defensible choice was to reset the flag and stop the re-offer by
+ * signing the reader out as part of the erase. It loses twice: §12.15's dialog
+ * enumerates what the act destroys, and ending a session is neither enumerated
+ * nor undoable by the undo window that follows; and a signed-in reader who erases
+ * this browser's copy and keeps working is exactly the case §14 supports, so the
+ * erase would have grown a consequence the reader was never told about.
+ * `tests/unit/record/alias-naming.test.ts` pins the choice: it asserts the flag
+ * SURVIVES, and it fails under the reset.
+ *
+ * ## Where the flag stops reaching, and why it is allowed to stop
+ *
+ * REPORTED BY REVIEW, and true: this carries the flag in the RECORD, and
+ * `eraseStored()` removes the key that record is written to a line later. So the
+ * flag holds for as long as this tab stays loaded — which covers the undo window
+ * and the rest of the session — and no longer. On the next load `store.start()`
+ * reads `EMPTY_RECORD`, the flag is null, and a still-signed-in account is
+ * offered the address again. A second tab, which replaces its state when it
+ * receives the removal event, reaches the same place.
+ *
+ * That is the limit and not an oversight, because the durable version of this
+ * flag is a durable fact about the reader. §12.15's panel prints
+ * `NO VALUE STORED UNDER THIS KEY` after the act; a tombstone that survived
+ * would be an account id sitting under a key that says it holds nothing, or a
+ * third key the panel would then have to enumerate and erase — which returns the
+ * question to where it started.
+ *
+ * And the behaviour it leaves is defensible on its own terms: a browser that
+ * holds no record, met by an account, is precisely the first-sign-in case §16.3
+ * exists for. What the flag has to prevent is the offer overruling a decision
+ * inside a record that still exists — a reader who cleared their name, or who
+ * erased and kept working — and it prevents both. `alias-naming.test.ts` pins
+ * the boundary in both directions: the flag survives the erase, and a reload
+ * after it offers again.
+ *
+ * `charKeys` is deliberately NOT carried across. It is a §12.16 preference with
+ * a visible control and a printed readout, so a reader can see what it is and
+ * change it; the alias flag has no control at all, which is why losing it is
+ * silent and losing it overrules a decision.
+ */
+export function erasedRecord(data: RecordData): RecordData {
+  const { aliasNamedFor } = data.prefs
+  if (aliasNamedFor === null) return EMPTY_RECORD
+  return { ...EMPTY_RECORD, prefs: { ...EMPTY_RECORD.prefs, aliasNamedFor } }
 }

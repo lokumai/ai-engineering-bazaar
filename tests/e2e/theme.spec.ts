@@ -1,5 +1,5 @@
 import { type Page, expect, test } from '@playwright/test'
-import { A0 } from './sheets'
+import { A0, sheetByModule } from './sheets'
 
 /**
  * These read `<html>`'s class list inside a requestAnimationFrame, with the
@@ -119,12 +119,42 @@ test('with no stored preference the system setting is honoured at first paint', 
   expect(await firstPaintClass(page)).toContain('dark')
 })
 
+/**
+ * §15.1 — the pair of pages is `/` and a sheet, because that is the transition
+ * a reader actually makes: the front door's lead card opens the first sheet of
+ * the set (§15.2.4). It used to click a manifest row on `/`; the manifest moved
+ * to its own route (`INDEX_SHEET`), and `/` is the better departure point
+ * anyway, because it is where every reader starts.
+ *
+ * The sentinel is the point of the test. A full document load re-runs the boot
+ * script in `<head>` and would carry the theme across for a reason that has
+ * nothing to do with a client-side transition — where the mechanism is instead
+ * that `<html>`'s class list is never rebuilt. So the sentinel is planted
+ * before the click and read after it: if it is gone the router did a document
+ * load and this test proved nothing, which is why it is asserted rather than
+ * assumed.
+ */
 test('the theme carries across a navigation', async ({ page }) => {
   await page.goto('/')
   await page.getByRole('button', { name: 'Toggle theme' }).click()
   const chosen = await themeOf(page)
 
-  await page.locator('.hl-index tbody .hl-row-link').first().click()
+  await page.evaluate(() => {
+    ;(window as unknown as { __hlSameDocument?: true }).__hlSameDocument = true
+  })
+
+  // The lead card, by the name it prints, so a card that stopped opening the
+  // first sheet fails here rather than being clicked anyway.
+  const first = sheetByModule(1)
+  const number = String(first.module).padStart(2, '0')
+  await page.getByRole('link', { name: `Read sheet ${number}` }).click()
+  await expect(page).toHaveURL(new RegExp(`${first.path}$`))
   await expect(page.locator('main h1')).toBeVisible()
+
+  expect(
+    await page.evaluate(
+      () => (window as unknown as { __hlSameDocument?: true }).__hlSameDocument,
+    ),
+  ).toBe(true)
   expect(await themeOf(page)).toBe(chosen)
 })

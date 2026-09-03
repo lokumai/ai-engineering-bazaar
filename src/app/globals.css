@@ -16,6 +16,16 @@
    `.hl-face` the palette's state rules win on source order as well as on
    specificity. */
 @import "./lokum.css";
+/* §15.2 — the home screen. Imported LAST because its only job is to choose
+   between the two blocks `/` renders unconditionally, keyed off the attribute
+   `lib/record/boot.ts` stamps before first paint: a later rule wins on source
+   order as well as specificity, so the state switch cannot be undone by a
+   sheet that happens to name the same class. */
+@import "./home.css";
+/* §16 — /profile/: the drafter block and the register. Imported after home.css
+   because both are page-scoped and neither names a class the other does; the
+   order is alphabetical-by-phase rather than load-bearing. */
+@import "./profile.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 

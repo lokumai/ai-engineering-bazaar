@@ -33,6 +33,7 @@ import {
   type SheetRecord,
   type Submittal,
 } from './schema'
+import type { ClaimReceipt } from './claim'
 
 const MARK_SEED = /^[0-9a-f]{8}$/
 const GH_SEGMENT = /^[A-Za-z0-9._-]{1,100}$/
@@ -215,6 +216,38 @@ export function setChecklistItem(
 }
 
 /**
+ * §14.8.1 rule 2 — is this editing session an attempt worth a log row?
+ *
+ * Pure, and separated from `QuickCheck` for the reason §5 gives for every
+ * decision in this codebase: what counts as an attempt is a rule, the textarea
+ * is a binding, and only one of the two can be tested without a browser.
+ *
+ * `openedWith` is the answer as it stood when the reader took the field, and
+ * `null` means the field was never focused. Three refusals, each one a thing a
+ * reader plainly did not do:
+ *
+ *  - **Never focused.** Nothing to file; a blur without a focus is a stray
+ *    event, not a try.
+ *  - **Unchanged.** Opening a saved answer, reading it and tabbing away is
+ *    reading, and filing a row for it would inflate the very tally §14.8.1's
+ *    `quizFailing` flag is thresholded on.
+ *  - **Emptied.** Deleting an answer is a withdrawal. §11.25's rule is that an
+ *    absence is recorded as an absence, never as a zero-length attempt — and
+ *    `setQuizAnswer` drops the quiz record entirely in that case, so a row here
+ *    would describe a state the envelope no longer holds.
+ *
+ * The comparison is against the value at FOCUS, not against the last row filed.
+ * A ref seeded from the record cannot do this job: the first frame of a static
+ * export always has an empty answer (§12.2), so it would read hydration itself
+ * as an edit and file a row nobody made.
+ */
+export function filesAttempt(openedWith: string | null, value: string): boolean {
+  if (openedWith === null) return false
+  if (value === openedWith) return false
+  return value.trim() !== ''
+}
+
+/**
  * §12.6 — the retrieval attempt, persisted per sheet. An answer emptied back to
  * nothing drops the record instead of leaving an empty one behind, which keeps
  * the in-memory shape identical to what the validator would read back.
@@ -329,6 +362,73 @@ export function observeReachedEnd(data: RecordData, slug: string, now: string): 
   return editSheet(data, slug, now, (sheet) =>
     sheet.reachedEnd ? null : { ...sheet, reachedEnd: true },
   )
+}
+
+/**
+ * §16.3 — records that the alias question has been SETTLED for `userId`, and
+ * writes NOTHING else. The name itself is `setIdentity`'s to write; the seam
+ * calls both inside one store update so a half-written state cannot exist.
+ *
+ * **Settled, not taken**, and the difference is the F1 defect. This function was
+ * unchanged by that repair; what changed is the seam's rule for reaching it.
+ * `AccountSync.aliasDecision` used to return early when the record already
+ * carried a name, so the flag was written only where an offer was ACCEPTED, and
+ * a reader who had typed a name before signing in never got one. Clearing the
+ * name then left nothing in the record saying the question had been asked, and
+ * the next claim wrote the address over an explicit `REMOVE NAME`. The seam now
+ * calls this whenever the decision is made — including the decision to write no
+ * name — which is what makes the guard below mean what its name says.
+ *
+ * This is the only writer of `prefs.aliasNamedFor`, and that single-door rule is
+ * what makes clearing the name final: the seam decides only when the flag does
+ * not name the current account, so a decision that has been recorded is never
+ * re-taken — including on the `TOKEN_REFRESHED`, `INITIAL_SESSION` and cross-tab
+ * sign-in events that remint the session object and re-run the effect. A guard
+ * held in component state instead would be reset by every one of them; that was
+ * the measured failure this field exists to remove. `erase.ts`'s `erasedRecord`
+ * is the other side of the same rule: the §12.15 erase carries this field across
+ * rather than resetting it, because a reset is a second, silent writer.
+ *
+ * The day is stamped like every other write (§7.3): the reader signed in, which
+ * is something they did.
+ *
+ * Two ways out return `data` itself, per this file's rule 3. An id that already
+ * matches means the offer is already recorded, so there is nothing to write and
+ * no day to stamp for it. A blank id is refused rather than stored: the empty
+ * string compares unequal to every real account id, so a record carrying one
+ * would be re-offered on every load — and `coerceRecordData` would drop it back
+ * to null on the next read anyway, which would make the in-memory record differ
+ * from what storage returns.
+ */
+export function noteAliasNamed(data: RecordData, userId: string, now: string): RecordData {
+  if (userId.trim() === '') return data
+  if (data.prefs.aliasNamedFor === userId) return data
+  return stampDay({ ...data, prefs: { ...data.prefs, aliasNamedFor: userId } }, now)
+}
+
+/**
+ * §17.4 — the last newsworthy claim, recorded. The only writer of
+ * `meta.lastClaim`, on `noteAliasNamed`'s single-door rule.
+ *
+ * **It does not stamp a day, and that is the difference from `noteAliasNamed`.**
+ * `days` is the list of dates on which something was written and it is what
+ * §7.3's fourteen-day strip draws; a sign-in is not a day the reader worked, and
+ * stamping one would inflate the strip with work that did not happen. The receipt
+ * carries its own instant in `at`, so nothing is lost by not stamping. `erase.ts`
+ * records what the opposite choice cost the alias flag: "a day they had not
+ * worked".
+ *
+ * **One slot.** A second claim replaces the first. The register row is `Last
+ * claim`, not a log: §14.2.3's append-only history is the events table, and a
+ * growing array in `localStorage` would be a second history with no reader.
+ *
+ * **It takes no clock.** Every other writer here takes `now` because it stamps
+ * a day with it; this one stamps nothing, and the instant the receipt is about
+ * is already inside the receipt. A parameter a function does not read is a
+ * question the next caller has to ask about, so it is not taken.
+ */
+export function noteClaim(data: RecordData, receipt: ClaimReceipt): RecordData {
+  return { ...data, meta: { ...data.meta, lastClaim: receipt } }
 }
 
 /**

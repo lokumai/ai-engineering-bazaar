@@ -46,6 +46,20 @@ jobs:
       # drops under its floor fails here, not in an audit six months later.
       - run: npm test
       - run: npm run build
+
+      # §15.1.2 — the corpus link test fails the build on a dead `.md` link, but
+      # nothing caught a MOVED ROUTE: a static export ships an internal href
+      # that resolves to nothing without erroring. This gate reads the export
+      # itself, which is the only place that question can be answered.
+      - run: node scripts/check-links-out.mjs out
+
+      # The gate's whole reason for existing is a root-relative link that lacks
+      # the base path, and that link cannot exist in the build above: GitHub
+      # Pages serves from a sub-path, so the export the deploy publishes is the
+      # only one where the question is real. Running it once, base-path-less,
+      # would have been a gate for the case that cannot fail.
+      - run: SITE_BASE_PATH=/ai-engineering-bazaar npm run build
+      - run: node scripts/check-links-out.mjs out
       # `chrome`, not `chromium`: playwright.config.ts runs the suite on real
       # Google Chrome via `channel: 'chrome'`, and installing the bundled
       # Chromium instead only passes because the runner image happens to ship

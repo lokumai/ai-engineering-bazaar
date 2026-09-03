@@ -2,7 +2,7 @@
 
 *(Bu bir placeholder modül — şimdilik kısa bir özet; tam ders içeriği yakında geliyor.)*
 
-Modül 10'deki guardrail/hook/sandbox temellerinin ötesinde, harness'ın kendisini ince ayarlamak.
+Harness Engineering'deki guardrail/hook/sandbox temellerinin ötesinde, harness'ın kendisini ince ayarlamak.
 
 **Bu modülde işlenecek konular**:
 - Harness profilleri

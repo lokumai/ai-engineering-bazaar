@@ -433,11 +433,10 @@ değiştiğinde kısık kalıyor.
 graph LR
     A[Prompt Engineering] --> B[Context Engineering]
     B --> C[Coding Agents]
-    C --> D[Extending Them]
-    D --> E[Harness Engineering]
+    C --> D[Harness Engineering]
+    D --> E[Loop Engineering]
     E --> F[Security]
-    F --> G[Loop Engineering]
-    G --> H[Personal Agents]
+    F --> G[Personal Agents]
     style A fill:#FFFF00
 ```
 

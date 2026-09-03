@@ -267,16 +267,14 @@ graph TD
 ```mermaid
 graph LR
     A[Prompt Engineering] --> B[Context Engineering]
-    B --> C[Landscape]
-    C --> D[Extending Agents]
-    D --> E[Harness Engineering]
+    B --> C[Coding Agents]
+    C --> D[Harness Engineering]
+    D --> E[Loop Engineering]
     E --> F[Security]
-    F --> G[Loop Engineering]
-    G --> H[Personal Agents]
+    F --> G[Personal Agents]
     style A fill:#90EE90
     style B fill:#90EE90
-    style C fill:#90EE90
-    style D fill:#FFFF00
+    style C fill:#FFFF00
 ```
 
 ## Summary

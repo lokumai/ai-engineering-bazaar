@@ -31,7 +31,7 @@ return value back.
 
 ## How the context grows around a tool call
 
-Module 1 introduced the context as a stack of messages. A tool call adds two new kinds to that
+[LLM Fundamentals](llms.md) introduced the context as a stack of messages. A tool call adds two new kinds to that
 stack, and this is the whole flow in one picture:
 
 ![The context of a single tool call](./images/context-tool-call.jpeg)  
@@ -231,9 +231,25 @@ def query_db(sql: str) -> list:
 def search_docs(query: str) -> list:
     """Find the most relevant documentation passages for a question."""
     return vector_db.search(encode(query), top_k=5)
+
+@tool
+def send_email(to: str, subject: str, body: str) -> str:
+    """Send an email from the user's account."""
+    return gmail.users().messages().send(userId='me', body=compose(to, subject, body)).execute()
 ```
 
-That last one is worth a second look: it is the RAG pipeline from Module 3, turned into a tool. The
+**Most useful tools are a wrapper around an API.** That last one is nine tenths Gmail's own API and one tenth
+tool: a function signature, a docstring, and a call. The same shape gives an agent your Jira (create an
+issue, search, comment), your calendar, your payment provider, your internal service. Anything with an API
+can become something the model is able to reach, and that is usually the fastest way to make an agent
+useful at work, because the API you need almost always already exists.
+
+Two things follow from it. The tool is exactly as powerful as the credentials you hand it, so a tool that
+can send mail from your account can send anything to anyone. And you rarely have to write these yourself
+any more: [Coding Agents: Extending Them](../2_intermediate/coding_agents.md) covers MCP, where somebody has
+already wrapped the API you were about to wrap.
+
+The docs one is worth a second look too: it is the RAG pipeline from [RAG & Embeddings](rag.md), turned into a tool. The
 model now decides *when* to retrieve instead of you retrieving on every question. That small shift
 is most of what separates a RAG app from an agent.
 

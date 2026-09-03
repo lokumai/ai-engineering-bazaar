@@ -186,7 +186,10 @@ One row per person. The row *is* the same envelope the browser keeps.
   "days":  ["2026-08-14"],          // dates anything was written
   "prefs": { "charKeys": true,
              "aliasNamedFor": null },  // account whose address the alias was offered from
-  "meta":  { "lastExport": null, "persisted": true }
+  "meta":  { "lastExport": null, "persisted": true,
+             "lastClaim": null }      // the last claim that moved something (§17); null here
+                                       // because a manager reads the account's row, whose meta
+                                       // came from whichever browser pushed last
 }
 ```
 

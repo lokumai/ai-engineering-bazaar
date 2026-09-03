@@ -1277,6 +1277,27 @@
     overflow-wrap: anywhere;
     color: var(--color-ink-muted);
   }
+
+  /* §17.6 — the arrival line. One row, the register's own summary geometry, so
+     the reader meets a shape they will see again on the profile sheet. It is
+     inside the page column already (PageShell renders it there), so this rule
+     sets no width and no margin of its own beyond the space below it. */
+  .hl-receipt {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 24px;
+    padding: 0 0 4px;
+    background:
+      linear-gradient(var(--color-line-strong) 0 0) 0 100% / 100% var(--stroke-hair) no-repeat,
+      transparent;
+  }
+
+  /* The action-needed form is a panel and keeps the panel's spacing. */
+  .hl-receipt-full {
+    margin: 0 0 24px;
+  }
 }
 
 /* ===========================================================================
@@ -1328,6 +1349,7 @@
   .hl-quiz-head,
   .hl-dialog-head,
   .hl-panel-head,
+  .hl-receipt,
   .hl-readout {
     border-bottom: 1px solid CanvasText;
     background: Canvas;

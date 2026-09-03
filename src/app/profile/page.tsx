@@ -4,9 +4,12 @@ import { OrgMembershipPanel } from '@/components/auth/AuthPanels'
 import { SessionProvider } from '@/components/auth/SessionProvider'
 import { DataPanel } from '@/components/record/DataPanel'
 import { DrafterBlock } from '@/components/record/DrafterBlock'
+import { FoldFragment } from '@/components/record/FoldFragment'
 import {
   CharKeysReading,
   CharKeysToggle,
+  ClaimPanel,
+  ClaimReading,
   DATA_READING,
   OrgReading,
   QuarantineNote,
@@ -81,7 +84,7 @@ function faceLegendRows(facts: CurriculumFacts): FaceLegendRows {
  * **Exported because the order is part of the specification and a test has to be
  * able to read it** (hazard H-P). The unit suite is `renderToStaticMarkup` with
  * no DOM, no Testing Library and no clicking, so the only things it can assert
- * are markup and constants; a hand-typed list of ten ids in a test file is a
+ * are markup and constants; a hand-typed list of eleven ids in a test file is a
  * second author of this table and would drift from it silently. The rendering
  * below maps over exactly this array, so what ships and what the test reads are
  * the same array in the same order — the two id-sequence assertions that pinned
@@ -106,6 +109,7 @@ export const REGISTER_ROWS = [
   { id: 'submittals', name: 'Submittal register' },
   { id: 'role', name: 'Role and path' },
   { id: 'hl-orgs-head', name: 'Organisation' },
+  { id: 'claim', name: 'Last claim' },
   { id: 'storage', name: 'Storage' },
   { id: 'raw', name: 'Stored values' },
   { id: 'data', name: 'Export, import, erase' },
@@ -120,7 +124,7 @@ type RegisterRowId = (typeof REGISTER_ROWS)[number]['id']
 
 /**
  * §12.11, rewritten by §16 — the profile sheet: one open drafter block, and one
- * register of ten closed rows.
+ * register of eleven closed rows.
  *
  * **A server page, and that is load-bearing rather than incidental** — the same
  * shape as `/dashboard/`. It measures the corpus with `curriculumFacts()`,
@@ -178,7 +182,7 @@ export default function ProfilePage() {
   /**
    * The reading and the body for each row in `REGISTER_ROWS`, keyed by its id.
    *
-   * A record keyed by the id union rather than ten inline `<RegisterRow>`
+   * A record keyed by the id union rather than eleven inline `<RegisterRow>`
    * blocks, for one reason: the type makes a row that is in the table and not
    * rendered — or rendered and not in the table — a compile error rather than a
    * page that quietly lost a panel. `needsSession` is on the row rather than in
@@ -234,6 +238,12 @@ export default function ProfilePage() {
       needsSession: true,
     },
 
+    /* §17.7 — what this browser and the account last exchanged. Beside the
+       organisation row because both are facts about the account meeting this
+       browser; the receipt is local by construction (§17.1), so it reports this
+       browser's history and never another device's. */
+    claim: { reading: <ClaimReading />, body: <ClaimPanel /> },
+
     /* §12.1.6 — queried, never assumed, and bytes are never a percentage. */
     storage: { reading: <StorageReading />, body: <StoragePanel /> },
 
@@ -280,6 +290,12 @@ export default function ProfilePage() {
 
       {/* §16.1 — the one block that arrives open. */}
       <DrafterBlock />
+
+      {/* §17.6 — `/profile/#claim` and `/profile/#data` are affordances two
+          other surfaces offer, and both ids sit inside a closed `<summary>`.
+          One island for the whole page opens the fold the fragment names; it
+          renders nothing, here or in the prerender. */}
+      <FoldFragment />
 
       {/* §16.4 — and everything else, one line each. */}
       <div className="hl-panel-head">

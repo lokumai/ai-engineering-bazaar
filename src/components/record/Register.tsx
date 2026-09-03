@@ -95,12 +95,13 @@ export function Register({
 }
 
 /**
- * Exported so the page that assembles the register can hold its ten rows as a
- * typed table rather than as ten hand-written blocks, and so a test can assert
- * the table. The order of that table is part of the specification (§16.4) and
- * two suites pin it as a sequence; a table is checkable, ten blocks of JSX are
- * not — `record-profile.test.tsx` is `renderToStaticMarkup` with no DOM, so the
- * only thing it can read is markup and constants (hazard H-P).
+ * Exported so the page that assembles the register can hold its eleven rows as a
+ * typed table rather than as eleven hand-written blocks, and so a test can
+ * assert the table. The order of that table is part of the specification
+ * (§16.4) and two suites pin it as a sequence; a table is checkable, eleven
+ * blocks of JSX are not — `record-profile.test.tsx` is `renderToStaticMarkup`
+ * with no DOM, so the only thing it can read is markup and constants (hazard
+ * H-P).
  */
 export interface RegisterRowProps {
   /** The row's own h2 id. Preserved verbatim from the panel it replaces. */

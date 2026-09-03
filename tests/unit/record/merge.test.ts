@@ -291,12 +291,12 @@ describe('identity — the account wins, empty carries the local up (§14.7.2)',
 
 describe('meta — the local browser keeps its own claims', () => {
   it('does not adopt the account export instant', () => {
-    const local = record({ meta: { lastExport: null, persisted: false } })
+    const local = record({ meta: { lastExport: null, persisted: false, lastClaim: null } })
     const remote = record({
-      meta: { lastExport: '2026-08-01T00:00:00.000Z', persisted: true },
+      meta: { lastExport: '2026-08-01T00:00:00.000Z', persisted: true, lastClaim: null },
       days: ['2026-08-01'],
     })
-    expect(mergeRecords(local, remote).meta).toEqual({ lastExport: null, persisted: false })
+    expect(mergeRecords(local, remote).meta).toEqual({ lastExport: null, persisted: false, lastClaim: null })
   })
 })
 
@@ -435,4 +435,30 @@ describe('the properties §14.2.3 relies on', () => {
       mergeRecords(LEFT, mergeRecords(RIGHT, third)).sheets,
     )
   })
+})
+
+it('§17.1 — meta stays local, so a receipt never travels between browsers', () => {
+  const receipt = {
+    at: '2026-09-02T11:17:00.000Z',
+    summary: {
+      outcome: 'merged' as const,
+      signed: { here: 4, account: 4, shared: 4, merged: 4 },
+      submittals: { here: 0, account: 0, shared: 0, merged: 0 },
+      droppedSignatures: [],
+      droppedSubmittals: [],
+      identity: {
+        name: 'account' as const,
+        markSeed: 'absent' as const,
+        role: 'absent' as const,
+        markChanged: false,
+        nameChanged: false,
+        roleChanged: false,
+      },
+    },
+  }
+  const local = { ...EMPTY_RECORD, meta: { ...EMPTY_RECORD.meta, lastClaim: null } }
+  const remote = { ...EMPTY_RECORD, meta: { ...EMPTY_RECORD.meta, lastClaim: receipt } }
+
+  // The second browser must not be told about a merge that happened in the first.
+  expect(mergeRecords(local, remote).meta.lastClaim).toBeNull()
 })

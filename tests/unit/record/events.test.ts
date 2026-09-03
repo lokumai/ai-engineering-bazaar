@@ -6,6 +6,7 @@ import {
   markActivity,
   markExported,
   mintMarkSeed,
+  noteClaim,
   observeDwell,
   observeReachedEnd,
   recordSourceOpened,
@@ -20,6 +21,7 @@ import {
   unsign,
 } from '@/lib/record/events'
 import { EMPTY_RECORD, type RecordData, type Submittal } from '@/lib/record/schema'
+import type { ClaimReceipt } from '@/lib/record/claim'
 import { coerceRecordData } from '@/lib/record/validate'
 
 const NOW = '2026-08-31T09:15:00.000Z'
@@ -507,5 +509,58 @@ describe('markActivity / markExported — the export is a backup (§7.3, §12.12
     expect(after.meta.lastExport).toBe(AT)
     // And the record left behind agrees with the file about the day.
     expect(after.days).toEqual(frozen.days)
+  })
+})
+
+describe('§17.4 — noteClaim, the one writer of meta.lastClaim', () => {
+  const RECEIPT: ClaimReceipt = {
+    at: '2026-09-02T11:17:00.000Z',
+    summary: {
+      outcome: 'merged' as const,
+      signed: { here: 1, account: 1, shared: 0, merged: 2 },
+      submittals: { here: 0, account: 0, shared: 0, merged: 0 },
+      droppedSignatures: [],
+      droppedSubmittals: [],
+      identity: {
+        name: 'account' as const,
+        markSeed: 'absent' as const,
+        role: 'absent' as const,
+        markChanged: false,
+        nameChanged: false,
+        roleChanged: false,
+      },
+    },
+  }
+
+  it('writes the receipt', () => {
+    expect(noteClaim(EMPTY_RECORD, RECEIPT).meta.lastClaim).toEqual(RECEIPT)
+  })
+
+  it('replaces an older receipt: one slot, and the last claim is the one that counts', () => {
+    const older = noteClaim(EMPTY_RECORD, { ...RECEIPT, at: '2026-08-01T00:00:00.000Z' })
+    expect(noteClaim(older, RECEIPT).meta.lastClaim?.at).toBe(RECEIPT.at)
+  })
+
+  it('does NOT stamp a day', () => {
+    // `days` is "dates on which anything was written" and it draws §7.3's
+    // fourteen-day strip. Signing in is not a day the reader worked, and
+    // `noteAliasNamed`'s own docblock records what the opposite choice cost.
+    expect(noteClaim(EMPTY_RECORD, RECEIPT).days).toEqual(EMPTY_RECORD.days)
+  })
+
+  it('touches nothing else', () => {
+    const before = {
+      ...EMPTY_RECORD,
+      identity: { ...EMPTY_RECORD.identity, name: 'Ada Lovelace' },
+      prefs: { ...EMPTY_RECORD.prefs, charKeys: false, aliasNamedFor: 'user-abc-123' },
+      meta: { ...EMPTY_RECORD.meta, lastExport: '2026-08-30T00:00:00.000Z', persisted: true },
+    }
+    const after = noteClaim(before, RECEIPT)
+
+    expect(after.identity).toEqual(before.identity)
+    expect(after.prefs).toEqual(before.prefs)
+    expect(after.sheets).toEqual(before.sheets)
+    expect(after.meta.lastExport).toBe(before.meta.lastExport)
+    expect(after.meta.persisted).toBe(true)
   })
 })

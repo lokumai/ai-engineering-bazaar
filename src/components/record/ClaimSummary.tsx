@@ -50,9 +50,23 @@ export interface ClaimSummaryProps {
    */
   onExport?: () => void
   className?: string
+  /**
+   * §17.6 — the title's element. `h2` is the panel's own heading and the
+   * default, because that is what a panel in a page's own outline is. The
+   * arrival line passes `p`: `PageShell` renders it before `{children}`, so any
+   * heading there would sit ahead of the page's `h1`, and a receipt is news
+   * about the record rather than a section of the page it happens to land on.
+   * `aria-labelledby` still names it, which a `<p id>` satisfies.
+   */
+  heading?: 'h2' | 'p'
 }
 
-export function ClaimSummary({ summary, onExport, className }: ClaimSummaryProps) {
+export function ClaimSummary({
+  summary,
+  onExport,
+  className,
+  heading = 'h2',
+}: ClaimSummaryProps) {
   const titleId = useId()
   const { signed, submittals } = summary
   const lines = claimSummaryLines(summary)
@@ -65,9 +79,15 @@ export function ClaimSummary({ summary, onExport, className }: ClaimSummaryProps
       data-outcome={summary.outcome}
     >
       <div className="hl-panel-head">
-        <h2 className="hl-panel-title" id={titleId}>
-          {CLAIM_COPY.head}
-        </h2>
+        {heading === 'p' ? (
+          <p className="hl-panel-title" id={titleId}>
+            {CLAIM_COPY.head}
+          </p>
+        ) : (
+          <h2 className="hl-panel-title" id={titleId}>
+            {CLAIM_COPY.head}
+          </h2>
+        )}
         {/* The branch §14.7.4 took, as a readout: uppercase, no terminal
             period, and it names the case rather than describing it. */}
         <span className="hl-mark text-ink-muted">
@@ -99,7 +119,12 @@ export function ClaimSummary({ summary, onExport, className }: ClaimSummaryProps
       </div>
 
       {/* §12.15 — the safe path is the adjacent action, not a paragraph the
-          reader has to act on somewhere else. */}
+          reader has to act on somewhere else. With no handler the link stands
+          in, and the fragment is part of the affordance: `/profile/` alone is a
+          self-link from the register's own `claim` fold, and lands a reader
+          arriving from the arrival line on a page whose export controls are
+          folded shut. `#data` names the row that holds them, and
+          `FoldFragment` opens it. */}
       {needsExport && (
         <div className="hl-signoff-actions mt-2">
           {onExport ? (
@@ -107,7 +132,7 @@ export function ClaimSummary({ summary, onExport, className }: ClaimSummaryProps
               {CLAIM_COPY.export}
             </button>
           ) : (
-            <Link href="/profile/" className="hl-btn hl-no-print">
+            <Link href="/profile/#data" className="hl-btn hl-no-print">
               {CLAIM_COPY.export}
             </Link>
           )}

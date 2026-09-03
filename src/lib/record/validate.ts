@@ -28,6 +28,7 @@
  * two escapers of §12.12.7 — removing the sink, not fencing the input.
  */
 
+import type { ClaimIdentitySource, ClaimReceipt, ClaimSummary } from './claim'
 import { migrate } from './migrate'
 import {
   DWELL_CAP_SECONDS,
@@ -261,6 +262,92 @@ function coerceDays(value: unknown): string[] {
 }
 
 /**
+ * §17.3 — the stored receipt, read the way §12.12 reads everything: a bad field
+ * loses the field and never the record.
+ *
+ * Structural rather than schema-versioned, because the receipt is a projection of
+ * a type this module cannot import a validator for. Every count is checked, so a
+ * hand-edited file cannot put a string where the register prints a number.
+ */
+function asClaimReceipt(value: unknown): ClaimReceipt | null {
+  if (!isRecordObject(value)) return null
+  const at = asInstant(value.at)
+  if (at === null) return null
+  if (!isRecordObject(value.summary)) return null
+
+  const summary = value.summary
+  if (summary.outcome !== 'merged' && summary.outcome !== 'adopted') return null
+
+  const counts = (input: unknown): ClaimSummary['signed'] | null => {
+    if (!isRecordObject(input)) return null
+    const keys = ['here', 'account', 'shared', 'merged'] as const
+    // A count, not merely a number. `Number.isFinite` admitted `-5` and `1.5`,
+    // and a hand-edited file could then make the register print
+    // `1.5 MERGED · 0 LOST` — a reading about the reader's own work that is not
+    // a possible reading of it.
+    if (!keys.every((key) => Number.isInteger(input[key]) && (input[key] as number) >= 0)) {
+      return null
+    }
+    return {
+      here: input.here as number,
+      account: input.account as number,
+      shared: input.shared as number,
+      merged: input.merged as number,
+    }
+  }
+  const signed = counts(summary.signed)
+  const submittals = counts(summary.submittals)
+  if (signed === null || submittals === null) return null
+
+  const slugs = (input: unknown): string[] | null =>
+    Array.isArray(input) && input.every((item) => typeof item === 'string')
+      ? [...(input as string[])]
+      : null
+  const droppedSignatures = slugs(summary.droppedSignatures)
+  const droppedSubmittals = slugs(summary.droppedSubmittals)
+  if (droppedSignatures === null || droppedSubmittals === null) return null
+
+  if (!isRecordObject(summary.identity)) return null
+  const identity = summary.identity
+  const source = (input: unknown): ClaimIdentitySource | null =>
+    input === 'account' || input === 'local' || input === 'absent' ? input : null
+  // Defaulted rather than fatal, which is this module's own promise: a bad
+  // field loses the field and never the record. These three are provenances,
+  // and after §17.2 nothing reads them — `claimSummaryLines` prints the
+  // `*Changed` booleans and `claimIsNews` tests them, so an off-vocabulary
+  // string here costs the reader nothing, while discarding the receipt over it
+  // would cost them the whole account of a merge. `absent` is the honest
+  // default: it means "neither side is known to have supplied this".
+  //
+  // `outcome` keeps whole-receipt rejection because it IS printed
+  // (`NO RECORD IN ACCOUNT` / `TWO RECORDS`) and has no third value to fall
+  // back to, and so do `at` and the count blocks, which the register prints as
+  // numbers and a date.
+  const name = source(identity.name) ?? 'absent'
+  const markSeed = source(identity.markSeed) ?? 'absent'
+  const role = source(identity.role) ?? 'absent'
+
+  return {
+    at,
+    summary: {
+      outcome: summary.outcome,
+      signed,
+      submittals,
+      droppedSignatures,
+      droppedSubmittals,
+      identity: {
+        name,
+        markSeed,
+        role,
+        markChanged: asBoolean(identity.markChanged, false),
+        nameChanged: asBoolean(identity.nameChanged, false),
+        roleChanged: asBoolean(identity.roleChanged, false),
+      },
+    },
+  }
+}
+
+/**
  * Total: every input, including a symbol, a function or `undefined`, produces a
  * record. The result is always a fresh mutable object — never the frozen
  * EMPTY_RECORD singleton, which a reducer would then be unable to build on.
@@ -300,6 +387,7 @@ export function coerceRecordData(input: unknown): RecordData {
     meta: {
       lastExport: asInstant(meta.lastExport),
       persisted: asTriState(meta.persisted),
+      lastClaim: asClaimReceipt(meta.lastClaim),
     },
   }
 }

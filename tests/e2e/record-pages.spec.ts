@@ -762,6 +762,32 @@ const EVERYTHING_RECORDED: RecordSeed = (() => {
     sheets,
     days: [daysBack(2), daysBack(1), TODAY],
     prefs: { charKeys: false },
+    meta: {
+      lastExport: null,
+      persisted: null,
+      // §17.7 — a receipt in the rich seed, so the row's notation is pinned in
+      // BOTH states. Without it the row reads NO CLAIM ON RECORD at both seeds
+      // and a frozen reading would pass the table — the exact vacuity this
+      // gate exists to close.
+      lastClaim: {
+        at: '2026-08-11T15:44:00.000Z',
+        summary: {
+          outcome: 'merged',
+          signed: { here: 2, account: 3, shared: 1, merged: 4 },
+          submittals: { here: 1, account: 0, shared: 0, merged: 1 },
+          droppedSignatures: [],
+          droppedSubmittals: [],
+          identity: {
+            name: 'account',
+            markSeed: 'account',
+            role: 'local',
+            markChanged: false,
+            nameChanged: true,
+            roleChanged: false,
+          },
+        },
+      },
+    },
   }
 })()
 
@@ -953,6 +979,9 @@ const EXPECTED_READINGS = {
   // status (§16.6) — so this row also pins the wording the four surfaces in the
   // fold share.
   'hl-orgs-head': { thin: 'ACCOUNTS NOT ENABLED YET', rich: 'ACCOUNTS NOT ENABLED YET' },
+  // §17.6's notation. The thin seed has met no account; the rich seed carries a
+  // merge of four with nothing lost.
+  claim: { thin: 'NO CLAIM ON RECORD', rich: '4 MERGED · 0 LOST' },
   storage: { thin: STORAGE_ANSWERS, rich: STORAGE_ANSWERS },
   // One key: the record's. The quarantine key is absent in both seeds, and a
   // second key appearing here would be a payload no reader asked for.
@@ -1585,4 +1614,77 @@ test('§12.15 — an unreadable file changes nothing, and each state has its own
 
   // Three refused files, and the record is exactly as it was.
   expect(await storedData(page)).toEqual(before)
+})
+
+test('§17.1 — a receipt on the record outlives the document that reported it', async ({
+  page,
+}) => {
+  // Seeded, not claimed: this asserts the STORED half, with no account and no
+  // network. The claim that writes it is gated in `accounts.spec.ts`.
+  await seedRecord(page, EVERYTHING_RECORDED)
+  await page.goto('/profile/')
+  await settledRegister(page)
+
+  // No document claimed anything, so the arrival line is absent — in EITHER
+  // state, which is why this is the marker both of them carry and not the
+  // routine state's class.
+  await expect(page.locator('[data-hl-receipt]')).toHaveCount(0)
+  // ...and the register still reports what the record holds.
+  await expect(registerReading(page, 'claim')).toHaveText('4 MERGED · 0 LOST')
+
+  const fold = await openRegisterRow(page, 'claim')
+  await expect(fold).toContainText('CLAIMED 2026-08-11')
+  await expect(fold).toContainText('Nothing was deleted.')
+  // §17.3's regression pin, in a browser: the identity line is printed for a
+  // name that changed and not for a provenance that did not.
+  await expect(fold).toContainText('The name on the record is the one your account holds.')
+  await expect(fold).not.toContainText('The path role on the record')
+
+  // And the reading a closed row prints is the reading its open body reports.
+  await expect(registerReading(page, 'claim')).toHaveText('4 MERGED · 0 LOST')
+})
+
+/**
+ * §17.6 — the affordance labelled DETAILS lands on the fold, not on its lid.
+ *
+ * `#claim` is on the `<h2>` inside a closed `<summary>` (`Register.tsx` keeps it
+ * at that level so folding does not flatten the outline), so before
+ * `FoldFragment` the deep link scrolled the summary into view and delivered the
+ * one line the reader already had. The second half is the half that matters: a
+ * plain visit still finds every row closed, which is what stops the island from
+ * being a switch that opens the whole register.
+ */
+test('§17.6 — a fragment opens the register row it names, and only it', async ({ page }) => {
+  await seedRecord(page, EVERYTHING_RECORDED)
+
+  await page.goto('/profile/#claim')
+  await settledRegister(page)
+
+  const fold = page.locator(
+    'section.hl-register-row[aria-labelledby="claim"] details.hl-register-fold',
+  )
+  await expect
+    .poll(() => fold.evaluate((node) => (node as HTMLDetailsElement).open), {
+      message: 'the claim row stayed shut for a link that names it',
+    })
+    .toBe(true)
+  // Open as the reader experiences it, not merely as an attribute: the body's
+  // own text is on screen.
+  await expect(fold.locator('.hl-register-body')).toContainText('CLAIMED 2026-08-11')
+
+  // The export controls' row is the other fragment two surfaces point at.
+  await page.goto('/profile/#data')
+  await settledRegister(page)
+  await expect(
+    page.locator('section.hl-register-row[aria-labelledby="data"] details.hl-register-fold'),
+  ).toHaveAttribute('open', '')
+
+  // And a plain visit opens nothing. Asserted over every row, because an island
+  // that opened them all would pass the two assertions above.
+  await page.goto('/profile/')
+  await settledRegister(page)
+  const openCount = await page
+    .locator('details.hl-register-fold[open]')
+    .count()
+  expect(openCount, 'a plain visit to the register opened a row').toBe(0)
 })

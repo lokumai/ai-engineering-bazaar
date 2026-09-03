@@ -32,6 +32,7 @@
  *
  * Both leaves are fs-free, so the import crosses no boundary (§12.2).
  */
+import type { ClaimReceipt } from './claim'
 import { type MarkId, STORABLE_MARK_IDS } from '../identity/mark'
 
 export type { MarkId }
@@ -137,7 +138,22 @@ export interface RecordData {
      */
     aliasNamedFor: string | null
   }
-  meta: { lastExport: string | null; persisted: boolean | null }
+  meta: {
+    lastExport: string | null
+    persisted: boolean | null
+    /**
+     * §17.1 — the last claim that was NEWS, as this browser saw it.
+     *
+     * Local by construction: `mergeRecords` resolves `meta` local-wins, so a
+     * receipt written in one browser can never be printed by another — which is
+     * the honest semantics, because a claim is an event between THIS browser and
+     * the account, and "1 sheet merged" reported in a browser where nothing was
+     * merged is a page lying about the reader's own history (§1).
+     *
+     * Written only by `events.noteClaim`, only when `claimIsNews` holds.
+     */
+    lastClaim: ClaimReceipt | null
+  }
 }
 
 export interface Envelope {
@@ -211,7 +227,7 @@ export const EMPTY_RECORD: RecordData = deepFreeze<RecordData>({
   sheets: {},
   days: [],
   prefs: { charKeys: true, aliasNamedFor: null },
-  meta: { lastExport: null, persisted: null },
+  meta: { lastExport: null, persisted: null, lastClaim: null },
 })
 
 /**
@@ -247,6 +263,14 @@ export const EMPTY_RECORD: RecordData = deepFreeze<RecordData>({
  * tab holding a valid non-empty envelope to push, racing the account-side
  * delete and recreating the row. Nothing may ever be added to `prefs` that this
  * function then consults.
+ *
+ * The same rule now covers `meta.lastClaim` (§17.3), and for a sharper version
+ * of the same hazard: a claim that moved nothing writes a receipt whose every
+ * count is zero. If that counted as content, an empty browser that had merely
+ * met an account would be stamped as holding a record, every other open tab
+ * would hold a pushable envelope, and this function would stop being able to
+ * tell an erase from a claim. `meta.lastExport` is consulted and `meta.lastClaim`
+ * is not; the difference is that an export is something the reader DID.
  */
 export function carriesNothing(data: RecordData): boolean {
   if (data.days.length > 0) return false

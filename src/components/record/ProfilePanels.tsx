@@ -5,10 +5,11 @@ import { useSession } from '@/components/auth/SessionProvider'
 import { ACCOUNTS_NOT_ENABLED } from '@/components/auth/SignInPanel'
 import { FaceLegend, type FaceLegendRow, type FaceLegendRows } from '@/components/mascot/FaceLegend'
 import { Lkm01 } from '@/components/mascot/Lkm01'
+import { ClaimSummary } from '@/components/record/ClaimSummary'
 import type { CategorySlug } from '@/lib/content/categories'
 import { MARKS } from '@/lib/identity/mark'
 import { roleById } from '@/lib/path/roles'
-import { readRawStored, type RawStored } from '@/lib/record/erase'
+import { CLAIM_COPY, claimReceiptReading } from '@/lib/record/claim'
 import {
   categoryProgress,
   signedCount,
@@ -16,6 +17,7 @@ import {
   uptime,
   type CurriculumFacts,
 } from '@/lib/record/derive'
+import { readRawStored, type RawStored } from '@/lib/record/erase'
 import { setCharKeys } from '@/lib/record/events'
 import type { Submittal } from '@/lib/record/schema'
 import {
@@ -809,6 +811,52 @@ export function OrgReading() {
   if (status === 'disabled') return <>{ACCOUNTS_NOT_ENABLED}</>
   if (status === 'signedOut') return <>{NOT_SIGNED_IN}</>
   return <>ORGANISATIONS THIS ACCOUNT HAS JOINED</>
+}
+
+/**
+ * §17.7 — the last claim, read off the same `meta.lastClaim` the fold's body
+ * prints, through the same `claimReceiptReading` the arrival line uses.
+ *
+ * One function, two callers — this row and `ClaimReceipt`'s arrival line — and
+ * no new derivation (§16.4.2). A record that has
+ * never met an account reads `NO CLAIM ON RECORD` — a named state and the only
+ * spelling of it, not a dash, because the question has an answer.
+ */
+export function ClaimReading() {
+  const record = useRecord()
+  const hydrated = useHydrated()
+  if (!hydrated) return <>{NO_READING}</>
+  return <>{claimReceiptReading(record.meta.lastClaim)}</>
+}
+
+/**
+ * §17.7 — the fold's body: the claim as it was reported when it happened.
+ *
+ * `ClaimSummary` is reused verbatim, which is the whole reason it survived the
+ * move: it computes nothing and decides nothing, so the same component that used
+ * to sit in a bare div after the footer prints the stored summary here. The date
+ * is the one line the panel could not carry before, because a panel that only
+ * ever showed the claim it had just performed had no need to say when.
+ */
+export function ClaimPanel() {
+  const record = useRecord()
+  const hydrated = useHydrated()
+  const receipt = record.meta.lastClaim
+
+  if (!hydrated || receipt === null) {
+    return (
+      <p className="hl-mark m-0 text-ink-muted">
+        {hydrated ? CLAIM_COPY.noClaim : NO_READING}
+      </p>
+    )
+  }
+
+  return (
+    <div className="grid gap-3">
+      <p className="hl-mark m-0 text-ink-muted">{`CLAIMED ${receipt.at.slice(0, 10)}`}</p>
+      <ClaimSummary summary={receipt.summary} />
+    </div>
+  )
 }
 
 /**

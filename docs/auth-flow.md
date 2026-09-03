@@ -182,11 +182,27 @@ flowchart TD
     Q -->|"read failed"| STUCK["push NOTHING<br/>state stays 'pending'<br/>footer says NOT SYNCED"]
     Q -->|"schema newer than this bundle"| STUCK
 
-    ADOPT --> TELL["show the summary"]
+    ADOPT --> TELL["claimIsNews?"]
     MERGE --> WRITE["write the merge to localStorage<br/>and push it"]
     WRITE --> TELL
-    TELL --> DONE["'18 here, 12 in your account,<br/>merged to 21. Nothing was deleted.'"]
+    TELL -->|"yes"| DONE["RECORD CLAIMED · 3 MERGED · 0 LOST · DETAILS<br/>one line, in the page column"]
+    TELL -->|"no"| QUIET["nothing printed"]
 ```
+
+**What the reader is told.** A claim that moved something prints one line in the
+page column of the document it happened on — `RECORD CLAIMED · 3 MERGED · 0
+LOST · DETAILS` — and writes itself to `meta.lastClaim`, where `/profile/` ›
+`Last claim` prints the whole summary for as long as the record exists.
+Navigating away closes the line; there is no dismiss button, because nothing is
+lost by closing it.
+
+A claim that moved **nothing** says nothing. This matters more than it looks:
+the claim runs on every mount with a session, so every full page load takes the
+merge branch, and the panel this replaced was measured reporting `here 1 ·
+account 1 · in both 1 · merged 1` — a merge of nothing — on every reload.
+`claimIsNews` is the test that decides, and every one of its terms is a change
+test: the summary's `identity.name === 'account'` is a provenance and is true on
+every load, which is why it is not one of them.
 
 **The read-failed branch is the important one.** If the account's row could not
 be read, pushing over it would destroy it. So nothing is sent, the footer reads

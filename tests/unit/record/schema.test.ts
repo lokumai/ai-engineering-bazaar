@@ -8,7 +8,9 @@ import {
   RECORD_STORAGE_KEY,
   ROLE_IDS,
   SCHEMA_VERSION,
+  carriesNothing,
   emptySheetRecord,
+  type RecordData,
 } from '@/lib/record/schema'
 
 describe('the storage keys', () => {
@@ -42,7 +44,7 @@ describe('EMPTY_RECORD', () => {
       // has named this record, which is the only thing a build can know about a
       // reader it has never met.
       prefs: { charKeys: true, aliasNamedFor: null },
-      meta: { lastExport: null, persisted: null },
+      meta: { lastExport: null, persisted: null, lastClaim: null },
     })
   })
 
@@ -126,5 +128,39 @@ describe('the closed vocabularies', () => {
   it('carries §12.4.4 and §12.9.1 as constants, not as magic numbers', () => {
     expect(DWELL_CAP_SECONDS).toBe(3600)
     expect(MAX_SUBMITTALS).toBe(3)
+  })
+})
+
+describe('§17.3 — a receipt is not content', () => {
+  it('carriesNothing ignores meta.lastClaim', () => {
+    // A claim that moved nothing into an empty browser must not make that
+    // browser look like it holds a record: `stamp.ts` would mark the document,
+    // another tab would push the envelope, and `AccountSync`'s erase-wins guard
+    // would stop being able to tell an erase from a claim.
+    const receipted: RecordData = {
+      ...EMPTY_RECORD,
+      meta: {
+        ...EMPTY_RECORD.meta,
+        lastClaim: {
+          at: '2026-09-02T11:17:00.000Z',
+          summary: {
+            outcome: 'adopted',
+            signed: { here: 0, account: 0, shared: 0, merged: 0 },
+            submittals: { here: 0, account: 0, shared: 0, merged: 0 },
+            droppedSignatures: [],
+            droppedSubmittals: [],
+            identity: {
+              name: 'absent',
+              markSeed: 'absent',
+              role: 'absent',
+              markChanged: false,
+              nameChanged: false,
+              roleChanged: false,
+            },
+          },
+        },
+      },
+    }
+    expect(carriesNothing(receipted)).toBe(true)
   })
 })

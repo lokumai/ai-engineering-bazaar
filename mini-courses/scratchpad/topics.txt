@@ -34,7 +34,7 @@
 
 
 === Ecosystem ===
-26) agent_fameworks (langchain, agno, crewAI, smolagents, mastra, voltagent, pydanticAI)
+26) agent_fameworks (langchain, agno, crewAI, smolagents, mastra, voltagent, pydanticAI, n8n, lovable bolt etc)
 27) inference_providers (OpenRouter, OpenAI, AI Studio, )
 28) inference_engines (Ollama, LMStudio, OpenWebUI, llama.cpp, TensorRT, llm-d)
 29) ui_design (Stitch, Claude Design, Design Systems, DESIGN.md)

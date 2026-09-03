@@ -32,6 +32,7 @@
  *
  * Both leaves are fs-free, so the import crosses no boundary (§12.2).
  */
+import type { ClaimReceipt } from './claim'
 import { type MarkId, STORABLE_MARK_IDS } from '../identity/mark'
 
 export type { MarkId }
@@ -107,9 +108,52 @@ export interface RecordData {
   sheets: { [slug: string]: SheetRecord }
   /** ISO dates (YYYY-MM-DD) on which anything was written. */
   days: string[]
-  /** §12.16 — character-key shortcuts, default true for this audience. */
-  prefs: { charKeys: boolean }
-  meta: { lastExport: string | null; persisted: boolean | null }
+  prefs: {
+    /** §12.16 — character-key shortcuts, default true for this audience. */
+    charKeys: boolean
+    /**
+     * §16.3 — the account id whose address the alias was offered from, or
+     * `null` for "no account has named this record".
+     *
+     * It lives in `prefs` and not in `identity` because it is not a fact about
+     * the reader; it is this browser's note that one offer has already been
+     * made, and `prefs` is the field `carriesNothing` ignores (see below) and
+     * that `mergeRecords` resolves local-wins. Both of those are the behaviour
+     * this flag needs: an offer already declined must not travel to a browser
+     * that would then re-offer, and the flag must never make an erased record
+     * look like a record.
+     *
+     * The id, rather than a boolean, because the question the seam asks is
+     * "has THIS account already offered?" — a second account signing into the
+     * same browser is a different reader making a first offer, and a boolean
+     * could not tell the two apart. `noteAliasNamed` is its only writer.
+     *
+     * ONE SLOT, and it defers the collision rather than removing it. REPORTED BY
+     * REVIEW: A clears the name, B signs in and takes the slot, B clears the
+     * name, A signs back in — the slot now reads B, so A's removal is re-offered
+     * over. A set of settled accounts is what would close it, and that is a
+     * schema widening with its own bounded-cleanup question; filed as §16.11
+     * rather than carried in here, because it needs two accounts in one browser
+     * and four acts to reach, and the one-account case it was built for holds.
+     */
+    aliasNamedFor: string | null
+  }
+  meta: {
+    lastExport: string | null
+    persisted: boolean | null
+    /**
+     * §17.1 — the last claim that was NEWS, as this browser saw it.
+     *
+     * Local by construction: `mergeRecords` resolves `meta` local-wins, so a
+     * receipt written in one browser can never be printed by another — which is
+     * the honest semantics, because a claim is an event between THIS browser and
+     * the account, and "1 sheet merged" reported in a browser where nothing was
+     * merged is a page lying about the reader's own history (§1).
+     *
+     * Written only by `events.noteClaim`, only when `claimIsNews` holds.
+     */
+    lastClaim: ClaimReceipt | null
+  }
 }
 
 export interface Envelope {
@@ -182,8 +226,8 @@ export const EMPTY_RECORD: RecordData = deepFreeze<RecordData>({
   identity: { name: null, markSeed: null, mark: null, role: null },
   sheets: {},
   days: [],
-  prefs: { charKeys: true },
-  meta: { lastExport: null, persisted: null },
+  prefs: { charKeys: true, aliasNamedFor: null },
+  meta: { lastExport: null, persisted: null, lastClaim: null },
 })
 
 /**
@@ -191,6 +235,52 @@ export const EMPTY_RECORD: RecordData = deepFreeze<RecordData>({
  * rule needs this in two places: the validator drops such a record on read, and
  * the §12.15 erase dialog must not enumerate a sheet state that holds nothing.
  */
+/**
+ * Does this record carry nothing the reader made?
+ *
+ * Used by the cross-tab path to decide whether a record is worth sending to an
+ * account, and the rule it serves is narrow: **a tab never pushes an empty
+ * record.** An empty envelope cannot inform an account of anything, and there
+ * are exactly two ways one arrives — the reader erased, or storage was cleared
+ * under this tab. In the first case the erasing tab performs the account-side
+ * delete itself; in the second the account copy is the thing that is supposed to
+ * survive.
+ *
+ * Without the rule an erase could be undone by a tab that had nothing to do with
+ * it: `DataPanel` writes the empty record, flushes it, and only then removes the
+ * key, so every other open tab sees a VALID EMPTY ENVELOPE, adopts it, and
+ * pushes — a push that races the delete and can land after it, recreating a row
+ * that then looks like a record rather than a leftover.
+ *
+ * `prefs` is deliberately not consulted. A reader who toggled a keyboard
+ * preference has made no record, and treating that as content would send an
+ * otherwise-empty envelope for the sake of one boolean.
+ *
+ * §16.3's `prefs.aliasNamedFor` is the case that makes the rule load-bearing
+ * rather than tidy. That flag is written from an ACCOUNT, moments after a
+ * sign-in, so a record the reader erased can still carry it — and if it counted
+ * as content, the erasing tab's `DataPanel` write would leave every other open
+ * tab holding a valid non-empty envelope to push, racing the account-side
+ * delete and recreating the row. Nothing may ever be added to `prefs` that this
+ * function then consults.
+ *
+ * The same rule now covers `meta.lastClaim` (§17.3), and for a sharper version
+ * of the same hazard: a claim that moved nothing writes a receipt whose every
+ * count is zero. If that counted as content, an empty browser that had merely
+ * met an account would be stamped as holding a record, every other open tab
+ * would hold a pushable envelope, and this function would stop being able to
+ * tell an erase from a claim. `meta.lastExport` is consulted and `meta.lastClaim`
+ * is not; the difference is that an export is something the reader DID.
+ */
+export function carriesNothing(data: RecordData): boolean {
+  if (data.days.length > 0) return false
+  if (data.meta.lastExport !== null) return false
+  const identity = data.identity
+  if (identity.name !== null || identity.markSeed !== null) return false
+  if (identity.mark !== null || identity.role !== null) return false
+  return Object.values(data.sheets).every(isEmptySheetRecord)
+}
+
 export function isEmptySheetRecord(sheet: SheetRecord): boolean {
   return (
     sheet.signedOff === null &&

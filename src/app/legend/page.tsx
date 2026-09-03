@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { RECORD_SCOPE } from '@/lib/record/scope'
+import { AFFILIATION, LICENCE_LABEL } from '@/lib/site'
 import Link from 'next/link'
 import { Lkm01 } from '@/components/mascot/Lkm01'
 import { PageShell } from '@/components/shell/PageShell'
@@ -28,7 +30,9 @@ export const metadata: Metadata = {
  *
  * Four blocks, in this order, because that is the order the questions arrive
  * in: what am I looking at · where is my work kept · what is not here · show me
- * the artefact.
+ * the artefact. The mark and the colophon close it: who drew this, and who
+ * publishes it. Both are provenance, and provenance belongs at the end of a
+ * sheet rather than in front of the reader's first question.
  *
  * **A server page, and hook-free on purpose.** Every mark below is drawn in a
  * fixed state — this is a key, not a readout — so there is nothing here for
@@ -130,22 +134,37 @@ const DEFERRED: readonly string[] = [
 ]
 
 /**
- * §12.19 — structurally impossible without a backend, and therefore never
- * coming. Each one needs a second party or shared server state that a static
- * export cannot supply, so none of them is a roadmap item.
+ * §12.19 — not coming, because there is nobody here to do them.
+ *
+ * This list USED TO INCLUDE `Accounts` and `Cross-device sync`, under the
+ * heading "Impossible without a backend", justified by "this site is a static
+ * export: there is no server". §14 built both. Sheet 00 was then telling a
+ * reader that two shipped features could never exist — the §1 failure this page
+ * exists to prevent, printed on the page that explains the rule.
+ *
+ * What survives the correction is what a backend does not supply: an instructor
+ * to grade, a peer asked to judge, an authority to issue a credential. None of
+ * those is a row in a table; each is a party, and this system has none of them.
  */
-const NEVER: readonly string[] = [
+const NO_SECOND_PARTY: readonly string[] = [
   'Instructor grading',
   'Peer assessment',
-  'Discussion',
-  'Cohorts',
-  'Enrolment',
-  'Accounts',
-  'Cross-device sync',
+  'A verifiable credential',
+]
+
+/**
+ * §12.4 — refused rather than missing, and the distinction is the point.
+ *
+ * These are all buildable now. They are not built because this site reports on
+ * the reader and compares them to nobody, and an aggregate figure is the first
+ * step to doing otherwise. Listing them beside the ones nobody can do would
+ * hide a decision behind an impossibility.
+ */
+const REFUSED: readonly string[] = [
   'Any cohort or aggregate figure — no “most readers finish in a week”, no ranking against anybody',
   'Leaderboards',
+  'Discussion',
   'Social sharing',
-  'A verifiable credential',
 ]
 
 export default function LegendPage() {
@@ -261,7 +280,7 @@ export default function LegendPage() {
           <h2 id="hl-legend-storage" className="hl-panel-title">
             Where your record is
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">This browser only</p>
+          <p className="hl-mark m-0 text-ink-faint">This browser’s copy</p>
         </div>
 
         {/*
@@ -276,7 +295,7 @@ export default function LegendPage() {
           one has read the other.
         */}
         <div className="hl-note">
-          <p>Your record is stored in this browser only. It is never sent anywhere.</p>
+          <p>{RECORD_SCOPE}</p>
           <p>
             Browser storage can be cleared without warning — by you, by the
             browser, or by a private window. Safari deletes it after seven days
@@ -285,11 +304,30 @@ export default function LegendPage() {
           <p>Export your record to a file to keep it.</p>
         </div>
 
+        {/*
+          §1 — this paragraph used to open "There is no account and no server to
+          hold anything, so there is nothing to sign in to and nothing to delete
+          on request." True in Phase 3, false the moment §14 landed, and missed
+          when `scope.ts` fixed the other four copies of the same claim: the
+          panel above it had already been corrected, so Sheet 00 was
+          contradicting itself two paragraphs apart.
+
+          It states the whole shape unconditionally rather than switching on
+          §14.1's flag, for `scope.ts`'s reason: copy that changes with the
+          session means the signed-out reader learns one rule and never meets
+          the one that replaced it.
+
+          It POINTS at the erase dialog rather than restating what erasing
+          removes. That promise has one home (§14.6), and a second copy here is
+          how the first one came to be wrong.
+        */}
         <p className="mt-4 mb-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
-          There is no account and no server to hold anything, so there is
-          nothing to sign in to and nothing to delete on request. The record is
-          one key in this browser&rsquo;s local storage, it is readable in a
-          text editor, and the profile sheet prints it verbatim.
+          The record is one key in this browser&rsquo;s local storage, it is
+          readable in a text editor, and the profile sheet prints it verbatim.
+          Signed out, that key is the whole of it. With an account there is a
+          second copy, held under your account, and the erase dialog on the
+          profile sheet states what each half removes and what an organisation
+          keeps.
         </p>
 
         <div className="hl-signoff-actions mt-4">
@@ -327,22 +365,47 @@ export default function LegendPage() {
         </ul>
 
         <h3 className="hl-mark m-0 mb-2 text-ink">
-          Impossible without a backend, and therefore not coming
+          Nobody here can do these, and therefore not coming
         </h3>
-        <ul className="m-0 mb-4 max-w-[var(--width-prose)] list-none p-0 font-display text-meta leading-normal text-ink-muted">
-          {NEVER.map((item) => (
+        <ul className="m-0 mb-6 max-w-[var(--width-prose)] list-none p-0 font-display text-meta leading-normal text-ink-muted">
+          {NO_SECOND_PARTY.map((item) => (
             <li key={item} className="mb-1">
               {item}
             </li>
           ))}
         </ul>
 
+        <h3 className="hl-mark m-0 mb-2 text-ink">Refused, not missing</h3>
+        <ul className="m-0 mb-4 max-w-[var(--width-prose)] list-none p-0 font-display text-meta leading-normal text-ink-muted">
+          {REFUSED.map((item) => (
+            <li key={item} className="mb-1">
+              {item}
+            </li>
+          ))}
+        </ul>
+
+        <p className="mt-0 mb-4 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+          The first three need a party this system does not have: no instructor
+          exists in it, no peer is asked to judge anybody, and there is no
+          issuing key to sign a credential with. Built here anyway, each would
+          be a page stating something it cannot know. The second list is a
+          decision instead of a limit &mdash; this site reports on you and ranks
+          you against nobody, so the figures that would make a ranking possible
+          are not collected.
+        </p>
+
+        {/*
+          Stated because the two lists above no longer state it, and a reader
+          who read this page before §14 shipped was told the opposite.
+        */}
         <p className="m-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
-          Each one of those needs a second party or shared server state. This
-          site is a static export: there is no server to hold a cohort, no
-          assessor to grade an answer, and no issuer key to sign a credential
-          with. A version of any of them built in the browser would be a page
-          stating something it cannot know.
+          Accounts and cross-device sync are not on either list: they exist.
+          Signing in is optional and gates nothing &mdash; every sheet, every
+          quick check and every sign-off behaves the same signed out &mdash; and
+          what an account changes is stated in <em>Where your record is</em>
+          {' '}above. An organisation can also assign sheets with due dates,
+          which is the nearest thing here to enrolment; it recommends an order
+          and gates nothing either.
         </p>
       </section>
 
@@ -389,6 +452,53 @@ export default function LegendPage() {
             curriculum.
           </p>
         </div>
+      </section>
+
+      {/* ---- 6 · the colophon --------------------------------------------- */}
+      {/*
+        Who publishes this, and what that organisation belongs to.
+
+        A colophon and not a marketing block, and the distinction is the whole
+        design: the footer names these three on every page, so a reader who
+        wants the relationship has somewhere to look it up — once, at the end of
+        the sheet that already answers "what am I looking at". Nothing here
+        praises anybody, because §12.14.1's register scans this route and
+        because a curriculum that spends its credibility on a slogan has less of
+        it left for the sheets.
+
+        The rows are `AFFILIATION`, in order. The order is the claim (§4), which
+        is why neither this file nor the footer keeps a list of its own.
+      */}
+      <section className="hl-panel" aria-labelledby="hl-legend-colophon">
+        <div className="hl-panel-head">
+          <h2 id="hl-legend-colophon" className="hl-panel-title">
+            Colophon
+          </h2>
+          <p className="hl-mark m-0 text-ink-faint">Who publishes this</p>
+        </div>
+
+        <dl className="m-0 max-w-[var(--width-prose)]">
+          {AFFILIATION.map((affiliate) => (
+            <div
+              key={affiliate.name}
+              className="flex items-baseline justify-between gap-4 border-b border-line py-2 last:border-b-0"
+            >
+              <dt className="hl-mark flex-none text-ink-muted">{affiliate.role}</dt>
+              <dd className="m-0 font-display text-meta text-ink">
+                <a className="hl-link" href={affiliate.url}>
+                  {affiliate.name}
+                </a>
+              </dd>
+            </div>
+          ))}
+        </dl>
+
+        <p className="mt-4 mb-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+          The chain reads outward. LokumAI publishes this site and is part of
+          Intellica; Intellica is a PIA Group company. The curriculum itself is
+          open source under the {LICENCE_LABEL}, and the sheets carry no
+          endorsement from any of the three.
+        </p>
       </section>
     </PageShell>
   )

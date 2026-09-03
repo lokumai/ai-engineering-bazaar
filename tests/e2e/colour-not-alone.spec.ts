@@ -165,3 +165,83 @@ test('the swatch is labelled by the row it sits in, never by hue alone', async (
     expect((await row.innerText()).trim().length).toBeGreaterThan(8)
   }
 })
+
+test('the drafter block and a closed register row read as text with no colour (§16.2.3, §16.7)', async ({
+  page,
+}) => {
+  /**
+   * §16 introduced two surfaces that carry state in paint, and both of them are
+   * deleted by this mode rather than merely dimmed.
+   *
+   * The selected mark cell has three carriers: an `--accent-wash` ground, a
+   * 1.5px inset shadow and a bold label. `forced-colors: active` drops every
+   * `background-image` and every `box-shadow` on the page, so two of the three
+   * are gone here and the third — a font weight — is not a state a reader can be
+   * asked to infer. §16.2.3's answer is that the native radio, hidden at every
+   * other width because the glyph and its name are the control, is brought back
+   * into view in this mode; the selection is then read from the platform's own
+   * control, which is the one thing forced colours cannot take away.
+   *
+   * The register's closed row is the other: the fold is drawn as a painted
+   * hairline grid, and the open row's marker is a painted 2px cut line. What
+   * makes a closed row honest is not any of that — it is §16.4.1's reading,
+   * which is real text in the summary. So this reads it as text, with the row
+   * still closed, which is also the screen-reader case: the line is announced
+   * without opening anything.
+   */
+  await seedRecord(page, {
+    identity: {
+      name: 'Ada Lovelace',
+      markSeed: 'a1b2c3d4',
+      mark: 'datum',
+      role: 'software-engineer',
+    },
+    sheets: SIGNED,
+  })
+  await page.goto('/profile/')
+  await expect(page.locator('.hl-readout[data-hydrated="true"]').first()).toBeAttached()
+
+  // ---- the drafter block, in words -----------------------------------------
+  const drafter = page.locator('.hl-drafter')
+  await expect(drafter).toBeVisible()
+
+  // The mark and the seed are two mono lines under the drawing, and they are the
+  // information the deleted definition list described without printing: the mark
+  // is a choice, the seed is the record of a past act.
+  const lines = await drafter.locator('.hl-drafter-line').allInnerTexts()
+  expect(lines.length, 'the drawing states neither its mark nor its seed').toBeGreaterThan(1)
+  expect(lines.join('\n')).toMatch(/MARK ·/)
+  expect(lines.join('\n')).toMatch(/SEED ·|NO SEED MINTED YET/)
+
+  // Both halves name themselves, and the naming is the substitute for the
+  // painted 1.5px rule between them, which this mode has just deleted.
+  const halves = await drafter.locator('.hl-drafter-half h3').allInnerTexts()
+  expect(halves.length).toBe(2)
+  for (const half of halves) expect(half.trim().length).toBeGreaterThan(3)
+
+  // §16.2.3 — the chosen mark is readable from the native control, not from the
+  // wash. The radio is visible in this mode BY DESIGN, and `opacity: 0` rather
+  // than `display: none` in every other mode is what makes that possible.
+  const chosen = page.locator('label[data-hl-mark="datum"] input[name="hl-mark"]')
+  await expect(chosen).toBeChecked()
+  await expect(chosen).toBeVisible()
+  // And the cell says which mark it is in text, because the glyph is decoration:
+  // it is `aria-hidden` in every state and its fill is gone here.
+  await expect(page.locator('label[data-hl-mark="datum"]')).toContainText(/\S/)
+
+  // ---- one closed row, in words -------------------------------------------
+  const row = page.locator('section.hl-register-row').first()
+  const fold = row.locator('details.hl-register-fold')
+  expect(await fold.evaluate((node) => (node as HTMLDetailsElement).open)).toBe(false)
+
+  const name = (await row.locator('.hl-register-name').innerText()).trim()
+  const reading = (await row.locator('.hl-register-reading').innerText()).trim()
+  expect(name.length, 'a closed row does not name itself').toBeGreaterThan(2)
+  // §16.4.1 — folding removes prose and never a fact, and with no colour at all
+  // the fact is still the only thing that has to survive.
+  expect(reading, 'a closed row states no reading under forced colours').not.toBe('')
+  expect(reading === '--' || /\d/.test(reading) || /^[A-Z]/.test(reading)).toBe(true)
+  // The whole summary reads as one line of text: name, reading, and the mono
+  // chevron, which is `aria-hidden` and therefore not in this reading.
+  expect((await row.locator('summary').innerText()).trim()).toContain(name)
+})

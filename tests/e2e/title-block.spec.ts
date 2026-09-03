@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { SHEETS } from './sheets'
+import { INDEX_SHEET, SHEETS } from './sheets'
 
 /**
  * §5.5 — the title block, checked against the sheet it describes.
@@ -91,7 +91,11 @@ for (const sheet of NOT_DRAWN) {
 }
 
 test('the index agrees with the sheets about which are bilingual', async ({ page }) => {
-  await page.goto('/')
+  // §4.8's table left `/` for `/sheets/` when the home screen took the front
+  // door (§15.1); the cross-check is unchanged, because the fact it checks is
+  // not about the route. `INDEX_SHEET` rather than a typed path so a second
+  // move costs one line in `sheets.ts` and nothing here.
+  await page.goto(INDEX_SHEET)
 
   // The `LANG` column is found by its own header rather than by an index, so
   // adding a column to §4.8's table does not silently retarget this test.

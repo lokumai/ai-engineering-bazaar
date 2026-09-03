@@ -1,4 +1,5 @@
 import { type Page, expect, test } from '@playwright/test'
+import { INDEX_SHEET } from './sheets'
 import { watchPage } from './watch'
 
 /**
@@ -175,8 +176,30 @@ test('sits in the normal shell flow, with its footer above the fold', async ({ p
   await expect(page.locator('footer')).toBeInViewport()
 })
 
-test('the index is one link away, and it works', async ({ page }) => {
+/**
+ * §15.1 — the 404's one way out, and where it actually goes.
+ *
+ * This case used to click a link labelled `Index` and then assert the heading
+ * read `AI Engineering Bazaar` — the HOME screen's title. That is what made it
+ * green while the link was wrong: the register moved to `INDEX_SHEET` and this
+ * link kept pointing at `/`, one line under a sentence promising the index, and
+ * the test asserted the destination it had rather than the destination the page
+ * names. The URL is asserted as well as the heading, because a page that
+ * happens to share a title would otherwise pass.
+ */
+test('the way out leads to the register the page names, not merely somewhere', async ({
+  page,
+}) => {
   await page.goto(ADDRESSES[1][0])
-  await page.locator('main').getByRole('link', { name: 'Index' }).click()
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('AI Engineering Bazaar')
+
+  // The prose immediately above the link promises the index. Asserted here so
+  // that changing the link without changing the sentence cannot pass.
+  await expect(page.locator('main')).toContainText('The index lists every one that is.')
+
+  await page.locator('main').getByRole('link', { name: 'Sheet index' }).click()
+  await expect(page).toHaveURL(new RegExp(`${INDEX_SHEET}$`))
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sheet index')
+
+  // The register itself, not a page that merely carries the title.
+  await expect(page.locator('main table')).toHaveCount(1)
 })

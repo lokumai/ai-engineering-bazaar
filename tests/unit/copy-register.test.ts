@@ -50,6 +50,27 @@ const ROOTS: readonly string[] = [
   'lib/record',
   'lib/identity',
   'lib/content/criteria.ts',
+  // §15 — the front matter. Every root below carries reader-visible prose this
+  // phase either wrote or rewrote, and none of it was scanned before: the home
+  // screen is the largest new block of copy in the project since §13's path,
+  // and the three identity surfaces are where a name could be mistaken for a
+  // proof, which is exactly the kind of claim the register guards.
+  'components/home',
+  'components/identity',
+  'app/sign-in',
+  'app/join',
+  'app/team',
+  'app/sheets',
+  'lib/auth',
+  // §16.6 — the two auth panels. `lib/auth` was scanned from §15 but the panels
+  // that print its states were not, and §16.1.1 makes them reader-visible in a
+  // second place: `SignInPanel` and `AccountPanel` now render inside the
+  // drafter block as well as on their own routes. The same sentence read twice
+  // on two screens is exactly the drift this register stops. Measured when the
+  // root was added: 81 files scanned before, 84 after — AuthPanels.tsx,
+  // SessionProvider.tsx and SignInPanel.tsx, which is why the non-vacuity test
+  // below now names this root rather than only counting.
+  'components/auth',
 ]
 
 function walk(target: string): string[] {
@@ -251,6 +272,21 @@ describe('§12.14.1 — the copy register', () => {
   it('scans a real set of files, so a silent pass cannot be an empty scan', () => {
     expect(FILES.length).toBeGreaterThan(20)
     expect(FILES.some((file) => file.endsWith('SignOff.tsx'))).toBe(true)
+  })
+
+  /**
+   * Non-vacuity per root, not just in total. `walk` returns `[]` for a path that
+   * does not resolve, which is the right behaviour while scanning — a deferred
+   * route is absent, not an error — but it also means a misspelt or emptied root
+   * contributes nothing and the whole register still reports green. Every root
+   * in the list today resolves to at least one `.ts`/`.tsx` file, so assert
+   * that: adding a root that scans nothing is then a red test rather than a
+   * silent hole. Stated as a property over `ROOTS` rather than as a file count,
+   * because the count moves with every file the phase adds.
+   */
+  it('scans every root it lists, so a new root cannot be silently empty', () => {
+    const empty = ROOTS.filter((root) => walk(root).length === 0)
+    expect(empty).toEqual([])
   })
 
   it('strips comments before scanning, or it would fail on its own rationale', () => {

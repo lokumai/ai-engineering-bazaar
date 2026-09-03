@@ -1,6 +1,6 @@
 import { type Page, expect, test } from '@playwright/test'
 import { contrastSamples, useTheme, worst } from './contrast'
-import { A0, SHORT, A4, CATEGORY_PATHS, SHEETS } from './sheets'
+import { A0, SHORT, A4, CATEGORY_PATHS, INDEX_SHEET, SHEETS } from './sheets'
 
 /**
  * §10.2–§10.3 and §9.6 — the floors only a real engine can confirm.
@@ -11,7 +11,20 @@ import { A0, SHORT, A4, CATEGORY_PATHS, SHEETS } from './sheets'
  * separate failures and all three are invisible to a DOM snapshot.
  */
 
-const PAGES = ['/', '/courses/', CATEGORY_PATHS[0], SHORT.path, A0.path, A4.path]
+/**
+ * §15.1 moved the manifest off `/`, so both addresses are listed: `/` is the
+ * home screen and `/sheets/` is the register it used to hold. A new document
+ * gets no exemption from the skip link or from the three landmarks.
+ */
+const PAGES = [
+  '/',
+  INDEX_SHEET,
+  '/courses/',
+  CATEGORY_PATHS[0],
+  SHORT.path,
+  A0.path,
+  A4.path,
+]
 
 /** What has focus, described the way a keyboard user would recognise it. */
 function focusDescription(page: Page) {
@@ -117,9 +130,14 @@ test('the header tab order runs left to right and stops at the repo link', async
   expect(order.at(-1)).toMatch(/repository/i)
 
   // The breadcrumb sits between the wordmark and the controls, in trail order.
+  // §15.1 renamed its first crumb: the root of every trail on this site used to
+  // be the manifest and read INDEX, and now `/` is the home screen and the
+  // register is one click further on at `/sheets/`. The trail follows the
+  // route, so the name it prints has to follow the route too.
   const crumbs = order.slice(2, -2)
   expect(crumbs.length).toBeGreaterThan(0)
-  expect(crumbs.join(' ').toLowerCase()).toContain('index')
+  expect(crumbs[0].toLowerCase(), 'the trail does not start at the front door').toBe('home')
+  expect(crumbs.join(' ').toLowerCase()).toContain('drawing set')
 })
 
 test('every interactive control in the header shows a focus ring', async ({ page }) => {
@@ -137,8 +155,39 @@ test('every interactive control in the header shows a focus ring', async ({ page
   }
 })
 
-test('a row in the manifest is one tab stop, and it is reachable', async ({ page }) => {
+test('the home screen is titled once, whichever state is showing (§15.2.2)', async ({ page }) => {
   await page.goto('/')
+
+  // §15.2 renders BOTH state blocks unconditionally and lets `home.css` pick
+  // one off `data-hl-record`, so a heading drawn inside either block is a
+  // heading in the document in every record state. That is two ways to get
+  // this wrong from one arrangement — the page dropping its own h1 and letting
+  // each block head itself, or a block growing one beside the page's — and
+  // both are invisible to the reader who only ever sees one block painted.
+  const h1 = page.locator('h1')
+  await expect(h1).toHaveCount(1)
+  // Typed out rather than imported from `lib/site`, for the reason `sheets.ts`
+  // gives: an expectation read from the same constant the page renders can only
+  // prove the constant agrees with itself. §15.2.2 fixes this string, and a
+  // reader's state may never appear in it — "Welcome back" would be a lie in
+  // the tab of anybody the build has never met.
+  await expect(h1).toHaveText('AI Engineering Bazaar')
+
+  // Measured on the DOM rather than on what is visible: the hidden block is
+  // still announced to anything reading the document, and `display: none` is
+  // the state switch, not a promise about the accessibility tree.
+  expect(
+    await page.locator('.hl-home-resume h1, .hl-home-new h1').count(),
+    'a state block draws an h1 of its own',
+  ).toBe(0)
+
+  // And both blocks are present, or the two counts above prove nothing.
+  await expect(page.locator('.hl-home-resume')).toHaveCount(1)
+  await expect(page.locator('.hl-home-new')).toHaveCount(1)
+})
+
+test('a row in the manifest is one tab stop, and it is reachable', async ({ page }) => {
+  await page.goto(INDEX_SHEET)
 
   // §5.3 — the whole row is one link target, so it must not be two or three
   // tab stops per row. One per row, however many rows the set has.
@@ -155,7 +204,7 @@ test('the schedule of parts and the manifest are named tables', async ({ page })
   await page.goto(A4.path)
   await expect(page.locator('table.hl-schedule caption')).toHaveText(/schedule of parts/i)
 
-  await page.goto('/')
+  await page.goto(INDEX_SHEET)
   await expect(page.locator('.hl-index caption')).not.toHaveText('')
 })
 
@@ -211,7 +260,7 @@ test('the schedule of parts announces its ITEM column legibly (§4.5)', async ({
 
 test('the manifest\'s quiet columns clear the §10.4 floor (§4.8, §4.9)', async ({ page }) => {
   for (const theme of THEMES) {
-    await page.goto('/')
+    await page.goto(INDEX_SHEET)
     await useTheme(page, theme)
 
     // §4.8 sets `#` in `--color-ink-faint` and `SUBSYSTEM` in `--color-ink-
@@ -229,7 +278,7 @@ test('the manifest\'s quiet columns clear the §10.4 floor (§4.8, §4.9)', asyn
 })
 
 test('the manifest keeps a hierarchy across its columns (§4.8)', async ({ page }) => {
-  await page.goto('/')
+  await page.goto(INDEX_SHEET)
 
   // A cascade collision painted both quiet columns at full `--color-ink`:
   // `.hl-row > :is(td, th)` is (0,1,1) and outranked the class rules. The

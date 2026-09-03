@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { numberWord } from '@/lib/text'
 import { categoryBySlug } from '@/lib/content/curriculum-file'
 import { LANG_DISPLAY } from '@/lib/content/derive'
 import { loadAllModules } from '@/lib/content/loader'
@@ -7,7 +8,6 @@ import {
   categorySummary,
   durationLabel,
   indexStatement,
-  numberWord,
   setEyebrow,
   setSummary,
   sheetRows,

@@ -1,5 +1,6 @@
+import { Fragment } from 'react'
 import { categoryLabels } from '@/lib/content/chrome'
-import { LICENCE_LABEL, LICENCE_URL, REPO_URL } from '@/lib/site'
+import { AFFILIATION, LICENCE_LABEL, LICENCE_URL, REPO_URL } from '@/lib/site'
 import { SheetLabel } from './SheetLabel'
 
 /** The file's last-touching commit — never repo HEAD (spec §5.2, §11.26). */
@@ -69,22 +70,58 @@ export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
           {readout}
         </div>
 
-        <div className="flex h-8 items-center gap-3 font-display text-meta text-ink-muted">
+        {/* §5.2 row 2 — provenance. The repository, the licence, the hand that
+            drew it, and the organisations behind it: six cells that are all the
+            same KIND of fact, which is why they share one rule rather than
+            earning a third row.
+
+            `min-h-8` and `flex-wrap`, where row 2 used to be a fixed `h-8`.
+            Six cells do not fit across 342px, and §4.7 allows exactly one
+            answer to that: the row takes a second line. A fixed height would
+            have clipped the wrapped line instead, and a `nowrap` row would have
+            pushed the document sideways — the one thing no page may do. On any
+            width where the six fit, `min-h-8` is 32px and §5.2's 72px total is
+            unchanged. */}
+        <div className="flex min-h-8 flex-wrap items-center gap-x-3 font-display text-meta text-ink-muted">
           <a className="hl-link" href={REPO_URL}>
             Repository
           </a>
-          <span aria-hidden="true" className="text-ink-faint">
-            ·
-          </span>
+          <Dot />
           <a className="hl-link" href={LICENCE_URL}>
             {LICENCE_LABEL}
           </a>
-          <span aria-hidden="true" className="text-ink-faint">
-            ·
-          </span>
+          <Dot />
           <span className="font-mono uppercase tracking-[0.06em]">Drawn by LKM-01</span>
+          {/* The chain, in `AFFILIATION` order. Names only: the relationship
+              between them is stated once, with its labels, in `/legend/`'s
+              colophon. A footer is the wrong place to explain a corporate
+              structure and the right place to name one. */}
+          {AFFILIATION.map((affiliate) => (
+            <Fragment key={affiliate.name}>
+              <Dot />
+              <a className="hl-link" href={affiliate.url}>
+                {affiliate.name}
+              </a>
+            </Fragment>
+          ))}
         </div>
       </div>
     </footer>
+  )
+}
+
+/**
+ * The separator between two footer cells.
+ *
+ * `aria-hidden`, because a screen reader announcing "middle dot" between every
+ * pair reads the punctuation of a layout as content. It was already written
+ * three times in this row before the affiliation cells arrived and would have
+ * been written six; one component is the same mark in every gap.
+ */
+function Dot() {
+  return (
+    <span aria-hidden="true" className="text-ink-faint">
+      ·
+    </span>
   )
 }

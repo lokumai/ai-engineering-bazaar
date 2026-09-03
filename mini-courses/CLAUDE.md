@@ -109,6 +109,14 @@ figures silently disappeared from the site while still showing on GitHub.
 So the alt text is not just accessibility text, it is the printed figure label: give it a short
 title, capitalised.
 
+**A caption note only attaches to an image, never to a mermaid diagram.** Measured in the export
+2026-09-03. For a markdown image the italic line becomes the figure's `<p class="hl-cap-note">`.
+For a mermaid fence the build writes the `<figcaption>` label from the nearest heading instead
+(`FIG. 29.1`, then that heading), and an italic line after the closing fence stays an ordinary
+`<p><em>` paragraph. That is still worth writing, because it reads as a caption to anyone on the page or on
+GitHub and it is where the punchline a mermaid node cannot hold belongs. Just do not count on it
+showing up as a caption, and do not count `hl-cap-note` to check a diagram has one.
+
 
 ## How a module gets written
 

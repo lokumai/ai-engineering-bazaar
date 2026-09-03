@@ -195,26 +195,34 @@ categories:
     modules:
       - name: agent_frameworks
         title: Agent Frameworks
-        status: draft
+        status: ready
+        minutes: 20
         notes: >-
           langchain, agno, crewAI, smolagents, mastra, voltagent, pydanticAI,
           n8n, lovable bolt etc
       - name: inference_providers
         title: Inference Providers
-        status: draft
+        status: ready
+        minutes: 20
+        needs: [agent_frameworks]
         notes: OpenRouter, OpenAI, AI Studio,
       - name: inference_engines
         title: Inference Engines
-        status: draft
+        status: ready
+        minutes: 20
+        needs: [inference_providers]
         notes: Ollama, LMStudio, OpenWebUI, llama.cpp, TensorRT, llm-d
       - name: ui_design
         title: UI Design
-        status: draft
+        status: ready
+        minutes: 20
         notes: Stitch, Claude Design, Design Systems, DESIGN.md
       - name: observability
         title: Observability
-        status: draft
-        notes: LangSmith, LangFuse, Trace Analyzer Agent
+        status: ready
+        minutes: 20
+        needs: [agent_frameworks]
+        notes: LangSmith, LangFuse, Latitude, Trace Analyzer Agent
       - { name: choosing_tech_stack, title: Choosing a Tech Stack, status: draft }
 
   - slug: protocols

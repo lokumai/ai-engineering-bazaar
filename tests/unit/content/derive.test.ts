@@ -32,6 +32,16 @@ function body(moduleNumber: number): string {
   return byNumber.get(moduleNumber)!.body
 }
 
+/**
+ * Every module the config calls a draft, by number.
+ *
+ * These three cases used to say `n >= 16`, which was true right up until the
+ * Ecosystem sheets were written and modules 25 to 29 stopped being stubs. The
+ * number was never the fact being tested; `status` was.
+ */
+const draftNumbers = () =>
+  modules.filter((m) => m.frontmatter.status === 'draft').map((m) => m.frontmatter.module)
+
 /** The extent that module's sheet actually prints. */
 function measured(moduleNumber: number): number {
   return byNumber.get(moduleNumber)!.extent
@@ -75,7 +85,7 @@ describe('extent', () => {
    */
 
   it('leaves every stub under 200 words', () => {
-    for (const n of numbers((n) => n >= 16)) {
+    for (const n of draftNumbers()) {
       expect(measured(n), `module ${n}`).toBeLessThan(200)
     }
   })
@@ -168,7 +178,7 @@ describe('countFigures', () => {
   })
 
   it('counts no figures on any draft stub', () => {
-    for (const n of numbers((n) => n >= 16)) {
+    for (const n of draftNumbers()) {
       expect(countFigures(body(n)), `module ${n}`).toBe(0)
     }
   })
@@ -322,8 +332,7 @@ describe('langCoverage', () => {
       // states the outcome as EN on sheets 8-32, and §11.27 reserves the badge
       // for a real translation. A schedule of parts is not bilingual: there is
       // no drawing yet, in either language.
-      for (const n of numbers((n) => n >= 16)) {
-        expect(byNumber.get(n)!.frontmatter.status, `module ${n}`).toBe('draft')
+      for (const n of draftNumbers()) {
         expect(langFromExtents(extent(body(n)), trExtent(n)), `module ${n}`).toBe('EN·TR')
         expect(
           langCoverage(byNumber.get(n)!.filePath, 'draft'),

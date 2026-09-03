@@ -9,7 +9,7 @@
    there has to be. What the generator removes is writing them out by hand,
    keyed on a number the curriculum computes.
 
-   33 modules, 14 of them drawn. */
+   33 modules, 19 of them drawn. */
 
 @layer components {
   /* A. Every module. The segment fills with its own category's hue.
@@ -69,7 +69,12 @@
   html.hl-signed-11 .hl-step[data-module="11"] .hl-step-tick,
   html.hl-signed-12 .hl-step[data-module="12"] .hl-step-tick,
   html.hl-signed-13 .hl-step[data-module="13"] .hl-step-tick,
-  html.hl-signed-14 .hl-step[data-module="14"] .hl-step-tick {
+  html.hl-signed-14 .hl-step[data-module="14"] .hl-step-tick,
+  html.hl-signed-25 .hl-step[data-module="25"] .hl-step-tick,
+  html.hl-signed-26 .hl-step[data-module="26"] .hl-step-tick,
+  html.hl-signed-27 .hl-step[data-module="27"] .hl-step-tick,
+  html.hl-signed-28 .hl-step[data-module="28"] .hl-step-tick,
+  html.hl-signed-29 .hl-step[data-module="29"] .hl-step-tick {
     display: inline;
     color: var(--color-accent-ink);   /* T2 — accent as TEXT is `-ink` only. */
   }
@@ -95,7 +100,12 @@
   html.hl-signed-11 .hl-seg[data-module="11"],
   html.hl-signed-12 .hl-seg[data-module="12"],
   html.hl-signed-13 .hl-seg[data-module="13"],
-  html.hl-signed-14 .hl-seg[data-module="14"] {
+  html.hl-signed-14 .hl-seg[data-module="14"],
+  html.hl-signed-25 .hl-seg[data-module="25"],
+  html.hl-signed-26 .hl-seg[data-module="26"],
+  html.hl-signed-27 .hl-seg[data-module="27"],
+  html.hl-signed-28 .hl-seg[data-module="28"],
+  html.hl-signed-29 .hl-seg[data-module="29"] {
     /* Filled with the system colour, so "signed off" is still a filled cell
        against an empty one: a difference in fill, not in hue. `forced-color-
        adjust` is already `none` on `.hl-seg` in lokum.css's own block. */

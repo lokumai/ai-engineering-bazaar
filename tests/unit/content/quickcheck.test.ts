@@ -68,18 +68,19 @@ describe('quickCheckOf', () => {
       .toEqual({ question: 'first?' })
   })
 
-  it('finds none on any undrawn sheet, and keys on the question not the status', () => {
-    // §12.6's trap, still the trap: the component keys on the extractor
-    // returning non-null, never on `status === "ready"`. It happens that all 15
-    // drawn sheets ask something and none of the 17 drafts does, but that is a
-    // measurement of the corpus today, not a rule the component may assume.
-    for (const module of [16, 20, 25, 30, 32]) {
-      expect(byNumber.get(module)!.frontmatter.status).toBe('draft')
-      expect(quickCheckOf(body(module))).toBeNull()
-    }
-  })
+  /*
+   * Removed: "finds none on any undrawn sheet, and keys on the question not the
+   * status", which named modules 16, 20, 25, 30 and 32 and asserted each was a
+   * draft. Module 25 stopped being one the day Agent Frameworks was written.
+   *
+   * §12.6's trap is real and still worth guarding: the component keys on the
+   * extractor returning non-null, never on `status === "ready"`. But the case
+   * below guards it from `status` instead of from five numbers, and every
+   * assertion above works off inline text, which is what actually proves the
+   * extractor never looks at status.
+   */
 
-  it('finds none on any of the seventeen undrawn sheets', () => {
+  it('finds none on any undrawn sheet', () => {
     for (const m of modules.filter((c) => c.frontmatter.status === 'draft')) {
       expect(quickCheckOf(m.body), m.slug).toBeNull()
     }

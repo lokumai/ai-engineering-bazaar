@@ -45,13 +45,20 @@ describe('loadAllModules', () => {
       .toEqual(modules.map((_, index) => index + 1))
   })
 
-  it('marks a leading run of modules ready, and nothing after it', () => {
-    // How far the drawn run reaches moves as sheets are written, so the run is
-    // measured rather than pinned: what must hold is that it has no holes.
+  it('marks some modules ready, and every one of them is really written', () => {
+    // This used to require the ready modules to be a run from 1 with no holes,
+    // on the assumption that the course gets written front to back. It does
+    // not: Ecosystem was written while Expert was still stubs, so 1-14 and
+    // 25-29 are ready with a gap between. The position was never the point.
+    //
+    // What does have to hold is the pair of rules either side of `status`: a
+    // stub stays under 200 words (`derive.test.ts`), and anything calling
+    // itself ready is past that, so the flag and the file cannot disagree.
     const ready = modules.filter((m) => m.frontmatter.status === 'ready')
-      .map((m) => m.frontmatter.module)
     expect(ready.length).toBeGreaterThan(0)
-    expect(ready).toEqual(Array.from({ length: ready.length }, (_, i) => i + 1))
+    for (const m of ready) {
+      expect(m.extent, `${m.slug} claims ready`).toBeGreaterThan(200)
+    }
   })
 
   it('references only real modules in prerequisites', () => {

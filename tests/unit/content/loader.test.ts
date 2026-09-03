@@ -63,6 +63,18 @@ describe('loadAllModules', () => {
     }
   })
 
+  it('lists prerequisites ascending, whatever order the yaml names them in', () => {
+    // `curriculum.yaml` names prerequisites, and an author writes the names in
+    // whatever order reads best. Everything downstream treats the numbers as a
+    // sorted set (`edges.ts` sorts them, `title-block.ts` sorts them), so this
+    // is the one place the order is settled. Reordering two adjacent modules in
+    // the yaml is what surfaced the disagreement.
+    for (const m of modules) {
+      expect([...m.frontmatter.prerequisites], m.slug)
+        .toEqual([...m.frontmatter.prerequisites].sort((a, b) => a - b))
+    }
+  })
+
   it('never lists a prerequisite that comes later in the curriculum', () => {
     for (const m of modules) {
       for (const p of m.frontmatter.prerequisites) {

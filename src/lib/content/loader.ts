@@ -111,7 +111,18 @@ export function loadAllModules(): CourseModule[] {
         // The yaml names prerequisites; the app numbers them. Rule 3 has
         // already established that every name resolves, so this cannot be
         // partial and an unknown prerequisite is no longer dropped in silence.
-        prerequisites: entry.needs.map((need) => (moduleByName(need) as { module: number }).module),
+        //
+        // **Sorted, and the sort is the fix for a real disagreement.** This
+        // list used to be hand-written in the frontmatter and happened to be
+        // ascending everywhere, so nothing noticed that `edges.ts` and
+        // `title-block.ts` both sort it while this did not. Resolving from
+        // `needs` made the author's listing order visible: swapping two
+        // adjacent modules in the yaml left `personal_agents` reporting
+        // `[13, 12]` here and `[12, 13]` on its own sheet. A prerequisite list
+        // is a set, so it gets one order, and it gets it once.
+        prerequisites: entry.needs
+          .map((need) => (moduleByName(need) as { module: number }).module)
+          .sort((a, b) => a - b),
       }
 
       const moduleSlug = moduleSlugFromName(entry.name)

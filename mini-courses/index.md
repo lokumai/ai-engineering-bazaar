@@ -56,4 +56,4 @@ There is also a path page: tell it what you do and it draws an ordered route thr
 This is an open source project. Found a typo, or want to improve a module?
 [Open an issue or PR on GitHub](https://github.com/lokumai/ai-engineering-bazaar).
 
-Read [MANIFEST.md](MANIFEST.md) first, since it is the contract every module is held to. If you want the technical picture instead, the repository carries two architecture documents: one mapping the whole repository and one for the application that renders these pages.
+Read [MANIFEST.md](MANIFEST.md) first, since it is the contract every module is held to. If you want the technical picture instead, the repository carries an architecture document covering the build and the application that renders these pages.

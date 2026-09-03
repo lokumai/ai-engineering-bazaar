@@ -8,7 +8,7 @@ the documents linked at the end.
 
 ## What it is
 
-A course site built **from** markdown rather than **around** it. Thirty-two
+A course site built **from** markdown rather than **around** it. Thirty-three
 modules in `mini-courses/` are the corpus; everything a page shows — the
 progress marks, the figure numbers, the source counts, the revision hashes, the
 dependency graph — is derived from those files at build time. The output is a
@@ -32,8 +32,8 @@ mini-courses/*.md  ──build──▶  static export  ──▶  the reader's 
 
 | | |
 |---|---|
-| 32 | module sheets, in 6 categories |
-| 53 | prerendered pages |
+| 33 | module sheets, in 6 categories, ordered by one config file |
+| 58 | prerendered pages |
 | 10 | Postgres tables, 23 RLS policies, **0** database functions |
 | ~33k | lines of `src/`, ~28k of tests |
 
@@ -68,6 +68,21 @@ transformation happens at build time from the file itself.
 The reason is drift. A count typed into a component is correct the day it is
 written and wrong the first time somebody adds a module — and nothing fails.
 
+**`mini-courses/curriculum.yaml` is where the rule bottoms out.** It holds the
+category order and, inside each, an ordered list of modules with a title, a
+status, a duration and named prerequisites. No number appears in it anywhere: a
+module's number **is** its position in that list, computed in one place in the
+loader and written nowhere else. Filenames therefore carry no number either, and
+prose names another module by title.
+
+What that buys is a one-line reorder. Move an entry and the numbers, the
+prev/next chain, the index order and the per-module CSS all follow, with nothing
+under `src/` touched. It also removes a whole class of silent error: the
+validator refuses a module listed without a file, a file written without a
+listing, a prerequisite naming an unknown module, a prerequisite that sits later
+in the course than the module needing it, and a `ready` module with no duration.
+Each failure names the module at fault.
+
 ### 3 · The browser is the source
 
 The reader's record lives in `localStorage`. Supabase holds a replica.
@@ -90,6 +105,7 @@ Wherever a question has an answer, exactly one piece of code answers it.
 | What does "stalled" mean? | `lib/record/attention.ts` |
 | Where does the record go? (the copy) | `lib/record/scope.ts` |
 | What is an internal link? | `lib/content/links.ts` |
+| What number is this module, and what comes next? | `mini-courses/curriculum.yaml` |
 
 The failure this prevents is two answers that agree until they do not. A manager's
 panel computing completion in SQL while the reader's page computes it in
@@ -124,19 +140,30 @@ tested against a real database with real JWTs rather than read for correctness.
 ## The build
 
 ```
-mini-courses/            src/lib/content/            src/app/
-  1_fundamentals/          loader.ts    reads         generateStaticParams
-    01_llms.md             schema.ts    validates       ↓
-    01_llms_tr.md          render.ts    md → html     out/
-  2_intermediate/          links.ts     rewrites        courses/<cat>/<module>/
-  …                        derive.ts    counts          path/  dashboard/  …
-  index.md                 facts.ts     the spine
+mini-courses/              src/lib/content/                 src/app/
+  curriculum.yaml            curriculum-file.ts  validates    generateStaticParams
+  1_fundamentals/            loader.ts           walks it       ↓
+    llms.md                  render.ts           md → html    out/
+    llms_tr.md               links.ts            rewrites       courses/<cat>/<module>/
+  2_intermediate/            derive.ts           counts         path/  dashboard/  …
+  …                          facts.ts            the spine
 ```
 
 Three parts of this are worth knowing:
 
-- **Frontmatter is the contract**, validated with zod at build time. A module
-  with a missing field fails the build rather than rendering a gap.
+- **The config is the contract**, validated with zod plus seven cross-file rules
+  at build time. The valuable one compares the `.md` files on disk in a category
+  against the names listed for it, in both directions, so a module you list
+  without writing and a file you write without listing both fail by name. A
+  module file's own frontmatter is down to `summary` and `objectives`; putting
+  `module:` or `status:` back in it fails the build, because the config owns
+  those.
+- **Two generated files are written by `prebuild`**, and they are treated
+  differently on purpose. `src/app/lokum-modules.css` is **committed**, because
+  vitest and playwright never run `prebuild` and would otherwise test a file that
+  is not there: change a `status` in the yaml and regenerate it in the same
+  commit. `public/course-images/` is **gitignored**, because it is only a copy of
+  images already in `mini-courses/`.
 - **Internal links are rewritten**, not left as `.md`. A cross-reference that
   cannot be resolved to a real route **fails the build** — the gate that replaced
   `mkdocs build --strict` when this became a Next.js project, and the one that
@@ -183,8 +210,8 @@ Four suites, each answering something the others cannot.
 
 | Suite | Runs | Answers |
 |---|---|---|
-| `npm test` — vitest, 2505 tests | every push | anything that computes a value, with no DOM |
-| `tests/corpus/` | inside `npm test` | the transforms against all 32 real modules, not a fixture |
+| `npm test` — vitest | every push | anything that computes a value, with no DOM |
+| `tests/corpus/` | inside `npm test` | the transforms against every real module, not a fixture |
 | `npm run test:e2e` — Playwright, real Chrome | every push | first-frame correctness, layout at three widths, real interaction |
 | `node scripts/test-rls.mjs` | by hand, needs credentials | every policy, through PostgREST, with real sessions |
 
@@ -198,6 +225,21 @@ Two habits are load-bearing rather than decorative:
   deliberately broken implementation is not protecting anything. The claim gate
   and the sync generation counter were each verified by removing them and
   watching the right test fail.
+
+A third habit belongs to the corpus rather than the code, and it is the one most
+often got wrong here. **A test may check a rule that holds for any content. It
+may never write down a fact about the content.** The suite once transcribed
+heading spines, word counts, module numbers and quoted prose, so ordinary edits
+turned the build red and taught nobody anything, and not one of those pinned
+facts ever caught a real defect. The rule, the four layers that replaced them and
+the questions to ask before adding a test live in
+[`tests/README.md`](tests/README.md). Read it before touching anything under
+`tests/`.
+
+The browser suite is where this leaks hardest, because `tests/e2e/sheets.ts`
+names representative sheets by number and specs then measure prose on them.
+Rewriting a module moves those measurements, and rewriting the Intermediate
+sheets took out 29 cases at once.
 
 `scripts/check-mermaid.mjs` parses and renders every diagram in `docs/` in real
 Chrome, because a broken diagram is an error box on GitHub rather than a build
@@ -227,7 +269,10 @@ the conditions under which a custom domain stops being optional.
 
 | Document | For |
 |---|---|
-| [`README.md`](README.md) | Running it, the commands, what the tests cover |
+| [`README.md`](README.md) | What the course is, and the commands to run it |
+| [`mini-courses/MANIFEST.md`](mini-courses/MANIFEST.md) | The seven rules every module is held to. Read before writing content |
+| [`mini-courses/CLAUDE.md`](mini-courses/CLAUDE.md) | The working agreement: how a module gets written, the diagram system, the naming rules |
+| [`tests/README.md`](tests/README.md) | The testing rule, the four layers, and what fails for a reason |
 | [`docs/data-flow.md`](docs/data-flow.md) | The record, storage, sync, two devices, the exported file |
 | [`docs/auth-flow.md`](docs/auth-flow.md) | Sign-in, sessions, joining, who may read what |
 | [`docs/manager-queries.md`](docs/manager-queries.md) | Tables, columns, joins, and SQL a manager needs |

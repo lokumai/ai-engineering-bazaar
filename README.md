@@ -59,10 +59,7 @@ Corrections and better explanations are welcome, and so are reports of anything 
 
 ## For developers
 
-The courses are plain markdown in `mini-courses/`, and the site is a Next.js static export that reads them. Two documents cover the rest:
-
-- **[`context/ARCHITECTURE.md`](context/ARCHITECTURE.md)** maps the whole repository: the two projects in it, where the line between them sits, how a markdown file becomes a page, and what `mini-courses/curriculum.yaml` owns.
-- **[`ARCHITECTURE.md`](ARCHITECTURE.md)** is the application's own architecture: the six rules that explain why the code looks the way it does, the build, the runtime layers and deployment.
+The courses are plain markdown in `mini-courses/`, and the site is a Next.js static export that reads them. **[`ARCHITECTURE.md`](ARCHITECTURE.md)** is the map: what the repository is, the six rules that explain why the code looks the way it does, the build, the runtime layers, and what `mini-courses/curriculum.yaml` owns.
 
 ```bash
 npm install

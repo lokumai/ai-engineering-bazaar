@@ -17,9 +17,9 @@ Sırayla bakalım.
 
 ## Parametric memory: weight'lere gömülü olan
 
-Modül 2'yi hatırla, modelleri eğittiğimiz ve fine-tune ettiğimiz yer. Bir modeli diyelim bir yığın
-hukuki dokümanla fine-tune ettiğinde, o bilgi modelin weight'lerinin (parameter'larının) içinde
-kalıcı olarak saklanıyor.
+[Training LLMs](training_tr.md) modülünü hatırla, modelleri eğittiğimiz ve fine-tune ettiğimiz yer.
+Bir modeli diyelim bir yığın hukuki dokümanla fine-tune ettiğinde, o bilgi modelin weight'lerinin
+(parameter'larının) içinde kalıcı olarak saklanıyor.
 
 - **Kalıcı**: session bittiğinde kaybolmuyor, ve her çağrıda yeniden göndermen gerekmiyor. Zaten
   modelin *içinde*.
@@ -77,8 +77,8 @@ modülünde çok daha derin ineceğiz. Şimdilik temel fikir şu.
 
 Bazen, working memory'nin session bittiğinde yok olmasına izin vermek yerine, onun bir özetini ya da
 index'ini modelin dışında bir yere kaydediyoruz. Daha sonra, tamamen farklı bir session'da, o
-kaydedilmiş bilgi gerçekten ihtiyaç duyulduğunda working memory'ye geri çekilebiliyor, genelde RAG
-(Modül 3) kullanılarak.
+kaydedilmiş bilgi gerçekten ihtiyaç duyulduğunda working memory'ye geri çekilebiliyor, genelde
+[RAG](rag_tr.md) kullanılarak.
 
 **Örnek**: diyelim bir session'da ChatGPT'ye 5 PDF yükledin, sonra daha sonra yepyeni bir session
 başlatıp o PDF'ler hakkında bir soru sordun. ChatGPT yine cevaplayabilir. Modelin onları
@@ -93,7 +93,7 @@ index'lediği ve şimdi onlar hakkında sorduğunda ilgili parçaları context'e
 | Nerede saklanıyor | Model weight'leri | Context window | Dış depolama (DB, vector store, dosyalar) |
 | Kalıcılık | Kalıcı | Geçici, session bitince ya da context dolunca gidiyor | Session'lar arasında kalıyor |
 | Kesinlik | Puslu, milyarlarca doküman arasından tam hatırlamak zor | Çok kesin, LLM doğrudan okuyor | Context'e geri getirildiğinde kesin |
-| Nasıl oluşuyor | Training / fine-tuning (Modül 2) | Büyüyen bir mesaj yığını | Açık kaydetme + geri getirme, genelde RAG ile (Modül 3) |
+| Nasıl oluşuyor | [Training / fine-tuning](training_tr.md) | Büyüyen bir mesaj yığını | Açık kaydetme + geri getirme, genelde [RAG](rag_tr.md) ile |
 | Analoji | 1.000 kitap okumuş biri | Tam önünde açık bir kitap okuyan biri | Birinin kendi notları, sonra bakılan |
 
 Özet olarak: **LLM'in kendine ait bir memory'si yok. Parametric memory, training'in weight'lere

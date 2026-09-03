@@ -15,8 +15,9 @@ beklemekten geliyor.
 
 Önemli olan fark şu.
 
-**Düz bir LLM single-turn.** Ona input veriyorsun, o sana output veriyor. Bitti. Modül 1 buydu, ve
-bir modelin yaptığı şey bundan fazlası değil.
+**Düz bir LLM single-turn.** Ona input veriyorsun, o sana output veriyor. Bitti.
+[LLM Fundamentals](llms_tr.md) modülünün anlattığı şey buydu, ve bir modelin yaptığı şey bundan
+fazlası değil.
 
 **Bir agent multi-turn.** Aynı model tekrar tekrar çağrılıyor, ve her seferinde bir tool
 isteyebiliyor. İhtiyacı olanı elde edene kadar devam ediyor, ve ancak ondan sonra bir final cevap
@@ -30,7 +31,8 @@ seferinde önüne ne koyduğunda.
 
 ## Loop'un bir turu
 
-Modül 4 tek bir tool call göstermişti. Bir agent turu tam olarak o, tekrarlanmış hâli:
+[Tool Calling](tools_tr.md) tek bir tool call göstermişti. Bir agent turu tam olarak o, tekrarlanmış
+hâli:
 
 ![The context of an agent](./images/agent-context.jpeg)  
 *Bir tur: sen soruyorsun, model düşünüyor, model bir tool istiyor, host onu çalıştırıp sonucu geri yazıyor, ve model cevaplıyor. Sonraki turda yığının tamamı yine modele gidiyor, artık iki mesaj daha uzun.*
@@ -76,9 +78,9 @@ Loop'un hiçbir parçası LLM'in içinde olmuyor. **Hepsi host makinede oluyor**
 sunucunda:
 
 - loop'u çalıştırmak, ve bittiğine karar vermek
-- agent'ın memory'si olan mesaj yığınını tutmak (Modül 5)
+- agent'ın [memory](memory_tr.md)'si olan mesaj yığınını tutmak
 - her çağrıdan önce system prompt'u kurmak
-- tool'ları çalıştırmak, çünkü onlar senin Python fonksiyonların (Modül 4)
+- tool'ları çalıştırmak, çünkü onlar senin Python fonksiyonların ([Tool Calling](tools_tr.md))
 - büyümüş context'in tamamını sonraki tur için geri beslemek
 
 ![An agent, unmasked](./images/agents-in-action.jpeg)  
@@ -91,16 +93,17 @@ yeniden kurmak, ne zaman duracağına karar vermek.
 [smolagents](https://github.com/huggingface/smolagents) ve
 [LangChain](https://github.com/langchain-ai/langchain) bunu bir kez yazmak için var.
 
-**Şimdi Modül 1'i hatırla**, bir LLM'i hiç framework olmadan doğrudan terminalden çalıştırdığımız
-yer. Orada neden hiçbir şeye ihtiyaç yoktu? Çünkü o tek bir çağrıydı. Input, output, bitti. Loop
-yok, tool parse etme yok, sürdürülecek bir mesaj yığını yok. Single-turn bir LLM hiçbir iskeleye
-ihtiyaç duymuyor, ve bir agent neredeyse tamamen iskele.
-
+**Şimdi [LLM Fundamentals](llms_tr.md) modülünü hatırla**, bir LLM'i hiç framework olmadan doğrudan
+terminalden çalıştırdığımız yer. Orada neden hiçbir şeye ihtiyaç yoktu? Çünkü o tek bir çağrıydı.
+Input, output, bitti. Loop yok, tool parse etme yok, sürdürülecek bir mesaj yığını yok. Single-turn
+bir LLM hiçbir iskeleye ihtiyaç duymuyor, ve bir agent neredeyse tamamen iskele.
 Ve bu da seriyi asıl noktasına getiriyor. **LLM gerçekten sadece bir beyin: metin girer, metin
 çıkar, hiçbir şey saklamaz, başka hiçbir şey yapmaz.** Buraya kadar anlattığımız her yetenek, o
 beynin etrafına kurulmuş bir çevre; böylece beyin turlar boyunca çalışabiliyor (bu modül), kendi
-dışına uzanabiliyor (Modül 4), hatırlayabiliyor (Modül 5) ve hiç eğitilmediği veriyi okuyabiliyor
-(Modül 3). Modül 1'de fazla basitleştirmiyorduk. Model gerçekten o kadar basit, ve geri kalan her
+dışına uzanabiliyor ( [Tool Calling](tools_tr.md) ), hatırlayabiliyor ( [Memory](memory_tr.md) ) ve
+hiç eğitilmediği veriyi okuyabiliyor ( [RAG & Embeddings](rag_tr.md) ).
+[LLM Fundamentals](llms_tr.md) modülünde fazla basitleştirmiyorduk. Model gerçekten o kadar basit,
+ve geri kalan her şey onun etrafındaki mühendislik.
 şey onun etrafındaki mühendislik.
 
 Aynı loop'u anlatmanın daha eski bir yolu **observe, decide, act**: model context'i gözlemliyor, bir
@@ -116,10 +119,10 @@ Kapağın altında bir agent hâlâ tekrar tekrar çağrılan bir LLM'den başka
 ve açıklamalarıyla birlikte kullanılabilir tool listesini, ve host'un parse edebilmesi için bir tool
 call'ın nasıl formatlanacağını taşıyor.
 
-O listeyi elle yazmıyorsun. Modül 4'te anlattığımız gibi, bunu yapan şey `@tool` decorator'ı:
-framework fonksiyonunun adını, docstring'ini ve type hint'lerini okuyup schema'yı modelin gördüğü
-şeye enjekte ediyor. Modül 4'teki kodun bu kadar kısa olmasının sebebi bu. Decorator sadece kayıt
-değil, modele o fonksiyonun var olduğunun söylenme şekli.
+O listeyi elle yazmıyorsun. [Tool Calling](tools_tr.md) modülünde anlattığımız gibi, bunu yapan şey
+`@tool` decorator'ı: framework fonksiyonunun adını, docstring'ini ve type hint'lerini okuyup
+schema'yı modelin gördüğü şeye enjekte ediyor. O kodun bu kadar kısa olmasının sebebi bu. Decorator
+sadece kayıt değil, modele o fonksiyonun var olduğunun söylenme şekli.
 
 ## Daha uzun bir örnek: bir bug'ı düzeltmek
 
@@ -154,10 +157,10 @@ result = agent.run("Read main.py and summarise it")
 
 Bu tam bir agent. Orada *olmayan* şeye dikkat et: loop yok, tool call parse etme yok, mesaj yığını
 yok, system prompt yok. Hepsini `CodeAgent` yapıyor, ve `agent.run` de loop'un kendisi.
-
-Başka framework'ler aynı problemi farklı şekillerde çözüyor, ve Modül 25 onları karşılaştırıyor:
-[LangChain](https://github.com/langchain-ai/langchain),
-[crewAI](https://github.com/crewAIInc/crewAI),
+Başka framework'ler aynı problemi farklı şekillerde çözüyor, ve
+[Agent Framework'leri](../4_ecosystem/agent_frameworks_tr.md) onları karşılaştırıyor:
+[LangChain](https://github.com/langchain-ai/langchain) ,
+[crewAI](https://github.com/crewAIInc/crewAI) , [AutoGen](https://github.com/microsoft/autogen) .
 [AutoGen](https://github.com/microsoft/autogen).
 
 ![LLM as brain, agent as body](./images/agent-analogy.png)  
@@ -187,8 +190,8 @@ Bir agent, bir LLM'in hedefine ulaşana kadar tool çağırdığı bir loop, ve 
 bırakıp onun yerine bir cevap yazdığında bitiyor.
 
 Model değişmiyor. Loop, memory, system prompt ve tool çalıştırma, hepsi senin makinende çalışıyor;
-bir framework'ün var olma sebebi bu, ve Modül 1'de single-turn bir LLM'in neden framework'e ihtiyaç
-duymadığının da cevabı bu.
+bir framework'ün var olma sebebi bu, ve [LLM Fundamentals](llms_tr.md) modülünde single-turn bir
+LLM'in neden framework'e ihtiyaç duymadığının da cevabı bu.
 
 Sırada bir agent'ın birden fazlaya dönüşmesi var.
 

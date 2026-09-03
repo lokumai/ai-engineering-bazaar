@@ -2,7 +2,8 @@
 
 *(Placeholder module — a short overview for now; full lesson content is coming soon.)*
 
-Frameworks and specs for structuring an agent's context and goals at a bigger scale than Module 9.
+Frameworks and specs for structuring an agent's context and goals at a bigger scale than
+[Context Engineering](../2_intermediate/context_engineering.md).
 
 **Topics this module will cover**:
 - Superpowers

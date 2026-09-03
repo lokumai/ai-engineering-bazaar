@@ -10,8 +10,8 @@ objectives:
 
 # Training LLMs
 
-Module 1 said an LLM is a network with a huge number of parameters, and that it predicts the
-next word. This module is about where those parameters come from.
+[LLM Fundamentals](llms.md) said an LLM is a network with a huge number of parameters, and that it
+predicts the next word. This module is about where those parameters come from.
 
 There are two steps, and they are almost nothing alike. One costs millions of dollars and only
 a handful of labs can do it. The other you can run tonight on your own GPU.
@@ -195,8 +195,8 @@ model.print_trainable_parameters()
 # something like: "trainable params: 0.3M || all params: 60M || trainable%: 0.5%"
 ```
 
-Do not confuse PEFT with quantization, which Module 1 covered. **PEFT is about training
-cheaply; quantization is about running cheaply.** They are often used together.
+Do not confuse PEFT with quantization, which [LLM Fundamentals](llms.md) covered. **PEFT is about
+training cheaply; quantization is about running cheaply.** They are often used together.
 
 ## Unsloth: what people actually reach for
 
@@ -212,15 +212,15 @@ What you get from it:
 - **Ready-made notebooks.** The [notebook collection](https://unsloth.ai/docs/get-started/unsloth-notebooks)
   covers the popular open models. You open one, point it at your dataset, and run it. That is
   the fastest honest route from "I have some pairs" to "I have a fine-tuned model".
-- **Pre-quantized models for running, not just training.** Module 1 mentioned that you rarely
-  quantize anything yourself. These are the releases it meant, so the same project covers
-  compressing a model and training one.
+- **Pre-quantized models for running, not just training.** [LLM Fundamentals](llms.md) mentioned
+  that you rarely quantize anything yourself. These are the releases it meant, so the same project
+  covers compressing a model and training one.
 - **A guide, and a reality check.** The
   [fine-tuning guide](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide) walks the
   whole process. Read the FAQ,
   [is fine-tuning right for me](https://unsloth.ai/docs/get-started/fine-tuning-for-beginners/faq-+-is-fine-tuning-right-for-me),
   **before** you start, because the honest answer is often no. A better prompt or the retrieval
-  we cover in Module 3 solves a lot of problems that look like fine-tuning problems.
+  in [RAG & Embeddings](rag.md) solves a lot of problems that look like fine-tuning problems.
 
 ## The three, side by side
 

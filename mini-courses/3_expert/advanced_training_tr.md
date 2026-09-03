@@ -2,8 +2,9 @@
 
 *(Bu bir placeholder modül: şimdilik kısa bir özet, tam ders içeriği yakında geliyor.)*
 
-Pre-training'den sonra modele ne olur, ve bir base model nasıl ürün haline gelir. Modül 2
-pre-training, fine-tuning ve PEFT'i yüksek seviyede anlattı. Bu modül onun altına iniyor.
+Pre-training'den sonra modele ne olur, ve bir base model nasıl ürün haline gelir.
+[Training LLMs](../1_fundamentals/training_tr.md) modülü pre-training, fine-tuning ve PEFT'i yüksek
+seviyede anlattı. Bu modül onun altına iniyor.
 
 **Bu modülde işlenecek konular**:
 - Self-supervised learning: pre-training label olmadan training signal'i nasıl üretir

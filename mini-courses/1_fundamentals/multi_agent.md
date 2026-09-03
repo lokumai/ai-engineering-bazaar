@@ -10,8 +10,8 @@ objectives:
 
 # Multi-Agent Systems
 
-Module 6 ended with one agent: one loop, one system prompt, one set of tools. This module is what
-happens when you use several, and what that costs you.
+[AI Agents](agents.md) ended with one agent: one loop, one system prompt, one set of tools. This
+module is what happens when you use several, and what that costs you.
 
 ## Why one agent stops being enough
 
@@ -27,13 +27,13 @@ Splitting it gives each agent a short prompt, a small tool list and one job:
 - a **SQL agent** that writes and runs queries
 - a **visualisation agent** that turns results into charts
 
-Each one is just an agent from Module 6. Nothing new has been invented. You have simply gone from
-one loop to several.
+Each one is just an agent from [AI Agents](agents.md) . Nothing new has been invented. You have
+simply gone from one loop to several.
 
 ## Two architectures to start with
 
 ![Single agent, network and supervisor architectures](./images/multiagents.png)  
-*Left, one agent with its tools, which is Module 6. Middle, a network where every agent can talk to every other. Right, a supervisor that receives the request and delegates to workers who only talk to it.*
+*Left, one agent with its tools, which is where [AI Agents](agents.md) ended. Middle, a network where every agent can talk to every other. Right, a supervisor that receives the request and delegates to workers who only talk to it.*
 
 **Supervisor.** One agent receives the request, decides which worker should handle it, passes the
 work along, collects what comes back, and answers the user. Workers talk to the supervisor and
@@ -97,7 +97,7 @@ Named here so the words are familiar, all covered later:
 
 - **Hierarchical:** supervisors of supervisors, for when one layer is not enough.
 - **Agent-as-a-tool:** one agent exposed to another as if it were a plain tool, which slots neatly
-  into Module 4's mechanism.
+  into the mechanism from [Tool Calling](tools.md).
 - **Subagents:** an agent that spawns short-lived helpers with their own isolated context, then
   keeps only their results.
 
@@ -129,8 +129,8 @@ supervisor.run("How many rows are in my tables? Show them in a bar chart.")
 ```
 
 Look at `managed_agents`. The supervisor's workers are handed to it the same way tools were in
-Module 6, because from the supervisor's point of view that is what they are: things it can call and
-get a result from.
+[AI Agents](agents.md) , because from the supervisor's point of view that is what they are: things
+it can call and get a result from.
 
 ## When one agent is still the right answer
 

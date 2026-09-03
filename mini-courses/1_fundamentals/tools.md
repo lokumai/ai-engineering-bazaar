@@ -10,9 +10,10 @@ objectives:
 
 # Tool Calling
 
-Modules 1 to 3 covered what a model is, how it was trained, and how to put your own data in front
-of it. All of that is still reading. This module is where a model starts *doing*: reading a file,
-running a command, calling an API.
+[LLM Fundamentals](llms.md) , [Training LLMs](training.md) and [RAG & Embeddings](rag.md) covered
+what a model is, how it was trained, and how to put your own data in front of it. All of that is
+still reading. This module is where a model starts *doing*: reading a file, running a command,
+calling an API.
 
 This is the mechanism underneath every agent, so it is worth getting exactly right.
 

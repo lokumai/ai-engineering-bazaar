@@ -90,7 +90,7 @@ could. The goal is to maximise the tokens in context that carry real signal and 
 that are noise, so the context does not rot.
 
 ![Prompt engineering next to context engineering](./images/prompt-vs-context-eng.png)  
-*On the left, one turn and one decision, which is Module 8. On the right, a universe of things that could go in the window and a decision about what actually does, taken again on every single turn.*
+*On the left, one turn and one decision, which is [Prompt Engineering](prompt_engineering.md). On the right, a universe of things that could go in the window and a decision about what actually does, taken again on every single turn.*
 
 The term took off after a [post by Andrej Karpathy](https://x.com/karpathy/status/1937902205765607626)
 in mid-2025 and got its fullest treatment in Anthropic's
@@ -146,7 +146,7 @@ something valuable this way is common, not rare.
 is the long-term one, and in practice it is usually organised in three kinds:
 
 ![Three kinds of long-term memory](./images/semantic-episodic-procedural.png)  
-*The split matters because the three are written and read at different times. Facts about you accumulate quietly, past actions are what stop an agent repeating a mistake, and the instructions layer is just the system prompt from Module 4 under another name.*
+*The split matters because the three are written and read at different times. Facts about you accumulate quietly, past actions are what stop an agent repeating a mistake, and the instructions layer is just the system prompt from [Tool Calling](../1_fundamentals/tools.md) under another name.*
 
 ## A knowledge base the agent can explore
 

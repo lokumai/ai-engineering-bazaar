@@ -1,8 +1,8 @@
 # Retrieval-Augmented Generation (RAG)
 
-Modül 1 sana context window'u verdi: modelin çalışma masası, ve üstündeki her şeyin oraya sığması
-gerekiyor. Modül 2 fine-tuning'i verdi: modelin kendisini değiştirmek. Bu modül üçüncü seçenekle
-ilgili, ve en sık uzanacağın seçenek bu.
+[LLM Fundamentals](llms_tr.md) sana context window'u verdi: modelin çalışma masası, ve üstündeki her
+şeyin oraya sığması gerekiyor. [Training LLMs](training_tr.md) fine-tuning'i verdi: modelin
+kendisini değiştirmek. Bu modül üçüncü seçenekle ilgili, ve en sık uzanacağın seçenek bu.
 
 ## RAG neden var
 
@@ -181,8 +181,8 @@ kendisini veriyorlar.
 
 ## Peki neden modeli kendi dokümanlarınla fine-tune etmiyoruz?
 
-Fine-tuning'i Modül 2'de öğrendin, dolayısıyla akla gelen soru bu. Embedding'ler ve bir database'le
-neden uğraşalım?
+Fine-tuning'i [Training LLMs](training_tr.md) modülünde öğrendin, dolayısıyla akla gelen soru bu.
+Embedding'ler ve bir database'le neden uğraşalım?
 
 **Çünkü şirketinin bilgisi canlı, fine-tuning ise bir enstantane.** Codebase'ine her gün commit
 geliyor. Sözleşmeler tadil ediliyor, yenileri imzalanıyor, politikalar değişiyor. Fine-tuning

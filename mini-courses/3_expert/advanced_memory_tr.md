@@ -2,7 +2,8 @@
 
 *(Bu bir placeholder modül — şimdilik kısa bir özet; tam ders içeriği yakında geliyor.)*
 
-Modül 5'te bahsedilen, context window'un tamamen dışında yaşayan uzun süreli hafıza sistemleri.
+[Memory](../1_fundamentals/memory_tr.md) modülünde bahsedilen, context window'un tamamen dışında
+yaşayan uzun süreli hafıza sistemleri.
 
 **Bu modülde işlenecek konular**:
 - Cognee

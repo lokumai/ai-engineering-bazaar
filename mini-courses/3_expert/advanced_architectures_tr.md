@@ -2,7 +2,8 @@
 
 *(Bu bir placeholder modül — şimdilik kısa bir özet; tam ders içeriği yakında geliyor.)*
 
-Modül 6'daki temel Observe-Decide-Act loop'unun ötesine geçen mimari desenler.
+[AI Agent'lar](../1_fundamentals/agents_tr.md) modülündeki temel Observe-Decide-Act loop'unun
+ötesine geçen mimari desenler.
 
 **Bu modülde işlenecek konular**:
 - THREAD

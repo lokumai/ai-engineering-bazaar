@@ -79,19 +79,19 @@ graph LR
 
 The input side catches things before they reach the model: a detected injection attempt, a topic you do not handle, personal data that should not be sent to a provider. The output side catches things before they reach the reader: harmful content, leaked system prompt, personal data on the way back out.
 
-Four ways to actually build them:
+Three frameworks to actually build them with:
 
 - **[Guardrails AI](https://github.com/guardrails-ai/guardrails)** wraps the model call and validates what comes back against a set of validators you compose, retrying or fixing when a check fails.
 - **[NeMo Guardrails](https://github.com/NVIDIA-NeMo/Guardrails)** from NVIDIA is programmable rails for conversational systems, where you describe the allowed conversation flows and it holds the model to them.
 - **[LangChain's guardrails](https://docs.langchain.com/oss/python/langchain/guardrails)** are middleware with before-agent and after-agent hooks, which is exactly the two boxes above. It ships PII detection and human-in-the-loop approval, and you stack your own on top.
-- **[Prompt Guard 86M](https://huggingface.co/meta-llama/Prompt-Guard-86M)** from Meta is not a framework but a small classifier, 86M parameters with a 512-token window, that sorts an input into benign, injection or jailbreak. It is small enough to run in front of every request.
 
-That last one is a useful distinction to hold: a guardrail can be a rule, or it can be a model. Rules are fast, cheap and easy to fool. Models catch the subtle cases and cost you a call.
+There is one distinction worth holding onto here. A guardrail can be a rule, or it can be a model. Rules are fast, cheap and easy to fool. A model catches the subtle cases and costs you a call.
 
 ## Guard models
 
 Which brings us to the models built only to judge safety. You run one alongside your real model, hand it the prompt or the response, and it answers with a verdict rather than a reply.
 
+- **[Prompt Guard 86M](https://huggingface.co/meta-llama/Prompt-Guard-86M)** from Meta is the small one, and the place to start. 86M parameters with a 512-token window, and it sorts an input into benign, injection or jailbreak. It is small enough to run in front of every single request.
 - **[Llama Guard 4](https://developer.meta.com/ai/docs/model-cards-and-prompt-formats/llama-guard-4/)**, 12B, multimodal so it reads images as well as text. It checks both user input and model output against a taxonomy of 14 hazard categories, and answers "safe" or "unsafe" plus which category was violated. **[Llama Guard 3](https://ollama.com/library/llama-guard3)** is the previous generation and is on Ollama, which makes it the easiest one to try locally.
 - **[Granite 4.1 Guardian](https://ollama.com/library/granite4.1-guardian)** is IBM's, also on Ollama, and covers hallucination and groundedness checks alongside the usual harm categories.
 - **[gpt-oss-safeguard](https://ollama.com/library/gpt-oss-safeguard)**, 20B and 120B, does something the others do not: **you give it your own written policy** and it judges against that, instead of a taxonomy fixed at training time. It also shows its reasoning rather than only a label, which matters when you have to explain why something was blocked.

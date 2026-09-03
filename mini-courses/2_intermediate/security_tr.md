@@ -69,19 +69,19 @@ graph LR
 
 Giriş tarafı, şeyleri modele ulaşmadan yakalıyor: tespit edilen bir injection denemesi, ele almadığın bir konu, sağlayıcıya gönderilmemesi gereken kişisel veri. Çıkış tarafı, şeyleri okuyucuya ulaşmadan yakalıyor: zararlı içerik, sızmış system prompt, geri dönüş yolunda kişisel veri.
 
-Bunları gerçekten kurmanın dört yolu:
+Bunları kurabileceğin üç framework:
 
 - **[Guardrails AI](https://github.com/guardrails-ai/guardrails)** model çağrısını sarıyor ve geri geleni senin bir araya getirdiğin validator'lara karşı doğruluyor; bir kontrol düştüğünde tekrar deniyor ya da düzeltiyor.
 - **NVIDIA'nın [NeMo Guardrails](https://github.com/NVIDIA-NeMo/Guardrails)** ürünü konuşma sistemleri için programlanabilir raylar; izin verilen konuşma akışlarını tanımlıyorsun ve modeli onlara bağlı tutuyor.
 - **[LangChain'in guardrail'leri](https://docs.langchain.com/oss/python/langchain/guardrails)** before-agent ve after-agent hook'ları olan middleware, ki bu tam olarak yukarıdaki iki kutu. PII tespiti ve human-in-the-loop onayı hazır geliyor, üstüne kendinkileri yığıyorsun.
-- **Meta'nın [Prompt Guard 86M](https://huggingface.co/meta-llama/Prompt-Guard-86M)** modeli bir framework değil, küçük bir classifier: 86M parameter ve 512 token'lık bir pencere, bir input'u benign, injection ya da jailbreak diye ayırıyor. Her isteğin önünde çalışacak kadar küçük.
 
-Son madde akılda tutulmaya değen bir ayrım: bir guardrail bir kural olabilir, ya da bir model. Kurallar hızlı, ucuz ve kandırılması kolay. Modeller ince durumları yakalıyor ve sana bir çağrıya mal oluyor.
+Burada akılda tutulmaya değen bir ayrım var. Bir guardrail bir kural olabilir, ya da bir model. Kurallar hızlı, ucuz ve kandırılması kolay. Bir model ince durumları yakalıyor ve sana bir çağrıya mal oluyor.
 
 ## Guard model'ler
 
 Bu da bizi sadece güvenliğe karar vermek için yapılmış modellere getiriyor. Gerçek modelinin yanında bir tane çalıştırıyorsun, ona prompt'u ya da cevabı veriyorsun, o da cevap yerine bir karar döndürüyor.
 
+- **Meta'nın [Prompt Guard 86M](https://huggingface.co/meta-llama/Prompt-Guard-86M)** modeli küçük olanı, ve başlanacak yer. 86M parameter ve 512 token'lık bir pencere, ve bir input'u benign, injection ya da jailbreak diye ayırıyor. Her bir isteğin önünde çalışacak kadar küçük.
 - **[Llama Guard 4](https://developer.meta.com/ai/docs/model-cards-and-prompt-formats/llama-guard-4/)**, 12B, multimodal olduğu için metnin yanında görüntü de okuyor. Hem user input'u hem model output'unu 14 tehlike kategorisinden oluşan bir taksonomiye karşı kontrol ediyor, ve "safe" ya da "unsafe" artı hangi kategorinin ihlal edildiğini söylüyor. **[Llama Guard 3](https://ollama.com/library/llama-guard3)** önceki nesil ve Ollama'da, bu da onu lokalde denemesi en kolay olan yapıyor.
 - **[Granite 4.1 Guardian](https://ollama.com/library/granite4.1-guardian)** IBM'in, o da Ollama'da, ve alışılmış zarar kategorilerinin yanında hallucination ile groundedness kontrolleri de yapıyor.
 - **[gpt-oss-safeguard](https://ollama.com/library/gpt-oss-safeguard)**, 20B ve 120B, diğerlerinin yapmadığı bir şey yapıyor: **kendi yazdığın politikayı ona veriyorsun** ve eğitim zamanında sabitlenmiş bir taksonom yerine ona göre karar veriyor. Ayrıca sadece bir etiket değil gerekçesini de gösteriyor, ki bir şeyin neden engellendiğini açıklamak zorunda kaldığında bu önemli.

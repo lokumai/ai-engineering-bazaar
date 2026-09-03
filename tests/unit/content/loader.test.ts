@@ -2,13 +2,9 @@ import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { CATEGORIES, type CategorySlug, categoryBySlug } from '@/lib/content/categories'
-import {
-  assertCategoryMatchesDirectory,
-  loadAllModules,
-  loadCategoryIntro,
-  loadModule,
-} from '@/lib/content/loader'
+import type { CategorySlug } from '@/lib/content/categories'
+import { CATEGORIES } from '@/lib/content/curriculum-file'
+import { fileFor, loadAllModules, loadCategoryIntro, loadModule } from '@/lib/content/loader'
 import {
   countDiagrams,
   countImages,
@@ -36,10 +32,17 @@ describe('loadAllModules', () => {
     expect(numbers).toEqual([...numbers].sort((a, b) => a - b))
   })
 
-  it('places each module in the category its directory implies', () => {
+  it('places each module in the category the curriculum lists it under', () => {
     for (const m of modules) {
       expect(m.frontmatter.category).toBe(m.category.slug)
     }
+  })
+
+  it('numbers the modules from one, in curriculum order, with no gaps', () => {
+    // The number is the position, produced in one place. This is the assertion
+    // that says so: it cannot hold if anything else is also computing it.
+    expect(modules.map((m) => m.frontmatter.module))
+      .toEqual(modules.map((_, index) => index + 1))
   })
 
   it('marks a leading run of modules ready, and nothing after it', () => {
@@ -146,18 +149,22 @@ describe('loadCategoryIntro', () => {
   })
 })
 
-describe('assertCategoryMatchesDirectory', () => {
-  const expert = categoryBySlug('expert')!
-
-  it('accepts a module whose frontmatter agrees with its directory', () => {
-    expect(() =>
-      assertCategoryMatchesDirectory('expert', expert, '3_expert/16_advanced_ui.md'),
-    ).not.toThrow()
+/**
+ * `assertCategoryMatchesDirectory` is gone, and so is the pair of cases that
+ * covered it. It checked that a module's declared `category` agreed with the
+ * directory it sat in; the category is now the yaml section a module is listed
+ * under, so the disagreement it guarded against is no longer expressible.
+ */
+describe('fileFor', () => {
+  it('finds the file for every module the curriculum lists', () => {
+    for (const category of CATEGORIES) {
+      for (const module of category.modules) {
+        expect(fs.existsSync(fileFor(category.dir, module.name)), module.name).toBe(true)
+      }
+    }
   })
 
-  it('rejects a module filed under the wrong directory, naming both sides', () => {
-    expect(() =>
-      assertCategoryMatchesDirectory('fundamentals', expert, '3_expert/16_advanced_ui.md'),
-    ).toThrow(/3_expert\/16_advanced_ui\.md.*"fundamentals".*"expert"/s)
+  it('throws for a name no file answers to, naming both the name and the directory', () => {
+    expect(() => fileFor('1_fundamentals', 'wizardry')).toThrow(/wizardry.*1_fundamentals/s)
   })
 })

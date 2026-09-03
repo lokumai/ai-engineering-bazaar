@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useSelectedLayoutSegment } from 'next/navigation'
-import { breadcrumbFor } from '@/lib/route-labels'
+import { breadcrumbFor, type CategoryLabel } from '@/lib/route-labels'
 
 /**
  * The header trail (spec §5.1): `INDEX / INTERMEDIATE / AI SECURITY`, mono,
@@ -13,6 +13,9 @@ import { breadcrumbFor } from '@/lib/route-labels'
  * A module's sheet number is not — that lives in the content — so it is
  * absent here rather than guessed at.
  *
+ * The subsystem titles are content too, so they arrive as a prop from
+ * `SiteHeader`, which is a server component and may read the corpus (§12.2).
+ *
  * The route is the pathname on every page but one. `404.html` is prerendered
  * at `/_not-found` and served at every address that is not a sheet, so there
  * the pathname is whatever was asked for and names nothing; the layout segment
@@ -21,8 +24,8 @@ import { breadcrumbFor } from '@/lib/route-labels'
  * Below 768px only the current segment shows: the landmark stays, the 56px
  * header does not overflow (§11.10).
  */
-export function Breadcrumb() {
-  const crumbs = breadcrumbFor(usePathname() ?? '/', useSelectedLayoutSegment())
+export function Breadcrumb({ categories }: { categories: readonly CategoryLabel[] }) {
+  const crumbs = breadcrumbFor(usePathname() ?? '/', categories, useSelectedLayoutSegment())
 
   return (
     <nav aria-label="Drawing set" className="min-w-0">

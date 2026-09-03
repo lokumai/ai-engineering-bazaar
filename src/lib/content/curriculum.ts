@@ -1,4 +1,4 @@
-import { CATEGORIES, type Category } from './categories'
+import { CATEGORIES, type Category } from './curriculum-file'
 import { type CourseModule, loadAllModules } from './loader'
 
 /**

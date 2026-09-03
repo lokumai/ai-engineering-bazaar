@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Lkm01 } from '@/components/mascot/Lkm01'
 import { Keyboard } from '@/components/record/Keyboard'
 import { REPO_URL } from '@/lib/site'
+import { categoryLabels } from '@/lib/content/chrome'
 import { Breadcrumb } from './Breadcrumb'
 import { ThemeToggle } from './ThemeToggle'
 
@@ -71,7 +72,7 @@ export function SiteHeader() {
         </Link>
 
         <div className="flex min-w-0 flex-1 justify-center">
-          <Breadcrumb />
+          <Breadcrumb categories={categoryLabels()} />
         </div>
 
         <div className="flex shrink-0 items-center gap-1">

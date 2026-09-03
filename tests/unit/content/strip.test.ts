@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { CATEGORIES } from '@/lib/content/categories'
+import { CATEGORY_DIRS, CATEGORY_SLUGS } from '@/lib/content/categories'
 import { CONTENT_ROOT } from '@/lib/content/paths'
 import {
   stripBuildFurniture,
@@ -10,12 +10,13 @@ import {
   stripSequenceLinks,
 } from '@/lib/content/strip'
 
-const MODULE_FILE = /^\d+_.+\.md$/
+// Prefix-optional, so this walks the corpus across the rename.
+const MODULE_FILE = /^(?:\d+_)?[a-z0-9_]+\.md$/
 
 function everyModuleFile(): string[] {
   const out: string[] = []
-  for (const category of CATEGORIES) {
-    const dir = path.join(CONTENT_ROOT, category.dir)
+  for (const slug of CATEGORY_SLUGS) {
+    const dir = path.join(CONTENT_ROOT, CATEGORY_DIRS[slug])
     for (const filename of fs.readdirSync(dir).sort()) {
       if (!MODULE_FILE.test(filename)) continue
       out.push(path.join(dir, filename))

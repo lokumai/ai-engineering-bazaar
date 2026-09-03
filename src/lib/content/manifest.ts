@@ -1,7 +1,7 @@
 import { sheetStamps } from '../record/derive'
 import { EMPTY_RECORD } from '../record/schema'
 import { plural } from '../text'
-import { CATEGORIES, type Category } from './categories'
+import { CATEGORIES, type Category } from './curriculum-file'
 import { categoryPath, sheetPath } from './curriculum'
 import { LANG_DISPLAY } from './derive'
 import { moduleGraph } from './edges'

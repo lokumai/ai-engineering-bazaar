@@ -1,5 +1,4 @@
 import fs from 'node:fs'
-import path from 'node:path'
 import matter from 'gray-matter'
 import remarkGfm from 'remark-gfm'
 import remarkParse from 'remark-parse'
@@ -7,9 +6,6 @@ import remarkRehype from 'remark-rehype'
 import { unified } from 'unified'
 import { visit } from 'unist-util-visit'
 import type { Element } from 'hast'
-import { categoryBySlug } from './categories'
-import { CONTENT_ROOT } from './paths'
-import { moduleSlugFromFilename } from './slugs'
 import { stripBuildFurniture, stripLeadIn } from './strip'
 
 /**
@@ -56,7 +52,6 @@ export const LANG_DISPLAY: Record<Lang, string> = {
   'EN·TR': 'EN · TR',
 }
 
-const MODULE_FILE = /^\d+_.+\.md$/
 const FENCE = /^[ \t]*(`{3,}|~{3,})[ \t]*(\S*)/
 const IMAGE = /!\[[^\]]*\]\([^)]*\)/g
 const TABLE_DELIMITER =
@@ -231,48 +226,30 @@ export function langFromExtents(en: number, tr: number): Lang {
   return tr / en >= TRANSLATION_RATIO ? 'EN·TR' : 'EN'
 }
 
-interface FileFacts {
-  /** The declared status, or null where the file has none — or is not there. */
-  status: 'ready' | 'draft' | null
-  /** §5.5 `EXTENT`, measured exactly as the loader measures the English body. */
-  extent: number
-}
+/**
+ * §5.5 `EXTENT` of one file, measured exactly as the loader measures the
+ * English body. A file that is not there is zero words rather than an error: a
+ * missing Turkish sibling has the honest answer `EN`.
+ *
+ * **It reads the extent and nothing else.** It used to return the declared
+ * `status` too, out of its own `matter()` call, which gave `langCoverage` a
+ * second opinion about a fact the loader already knew. That second read is why
+ * `status` could not leave the frontmatter until this function stopped asking
+ * for it.
+ */
+const extents = new Map<string, number>()
 
-const fileFacts = new Map<string, FileFacts>()
-
-function factsOfFile(file: string): FileFacts {
-  const cached = fileFacts.get(file)
+function extentOfFile(file: string): number {
+  const cached = extents.get(file)
   if (cached !== undefined) return cached
 
-  let facts: FileFacts = { status: null, extent: 0 }
-  if (fs.existsSync(file)) {
-    const parsed = matter(fs.readFileSync(file, 'utf8'))
-    const status = parsed.data.status
-    facts = {
-      status: status === 'ready' || status === 'draft' ? status : null,
-      extent: extent(stripLeadIn(stripBuildFurniture(parsed.content))),
-    }
-  }
+  const words = fs.existsSync(file)
+    ? extent(stripLeadIn(stripBuildFurniture(matter(fs.readFileSync(file, 'utf8')).content)))
+    : 0
 
-  fileFacts.set(file, facts)
-  return facts
+  extents.set(file, words)
+  return words
 }
-
-/** Resolve `fundamentals/llms` to its English file, without asking the loader. */
-function englishFileFor(slug: string): string | null {
-  const [categorySlug, moduleSlug] = slug.split('/')
-  const category = categoryBySlug(categorySlug ?? '')
-  if (!category || !moduleSlug) return null
-
-  const dir = path.join(CONTENT_ROOT, category.dir)
-  for (const filename of fs.readdirSync(dir).sort()) {
-    if (!MODULE_FILE.test(filename) || filename.endsWith('_tr.md')) continue
-    if (moduleSlugFromFilename(filename) === moduleSlug) return path.join(dir, filename)
-  }
-  return null
-}
-
-const langs = new Map<string, Lang>()
 
 /**
  * §7.6 `LANG` — `EN · TR` only where the Turkish sibling is a real translation
@@ -292,20 +269,19 @@ const langs = new Map<string, Lang>()
  * drawn in either language. Printing it would also invert the index — the
  * seventeen undrawn sheets advertised as bilingual and the seven finished ones
  * as English-only.
+ *
+ * **The status is an argument, not something read here.** It is the loader's,
+ * out of `curriculum.yaml`, and taking it means this function no longer opens
+ * the English file to ask a question somebody else already answered. Omitting
+ * it is a compile error, which is the point: with `status` gone from the
+ * frontmatter a second read would see `undefined`, the draft guard would stop
+ * firing, and every draft sheet would claim to be bilingual on the strength of
+ * a stub translated from a stub.
  */
-function langOfEnglishFile(file: string): Lang {
-  const english = factsOfFile(file)
-  if (english.status === 'draft') return 'EN'
-  return langFromExtents(english.extent, factsOfFile(file.replace(/\.md$/, '_tr.md')).extent)
-}
-
-export function langCoverage(slug: string): Lang {
-  const cached = langs.get(slug)
-  if (cached !== undefined) return cached
-
-  const english = englishFileFor(slug)
-  const lang = english === null ? 'EN' : langOfEnglishFile(english)
-
-  langs.set(slug, lang)
-  return lang
+export function langCoverage(englishFile: string, status: 'ready' | 'draft'): Lang {
+  if (status === 'draft') return 'EN'
+  return langFromExtents(
+    extentOfFile(englishFile),
+    extentOfFile(englishFile.replace(/\.md$/, '_tr.md')),
+  )
 }

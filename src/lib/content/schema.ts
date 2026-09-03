@@ -1,40 +1,83 @@
 import { z } from 'zod'
-import { CATEGORIES } from './categories'
+import type { CategorySlug } from './categories'
 
-const categorySlugs = CATEGORIES.map((c) => c.slug) as [string, ...string[]]
+/**
+ * The frontmatter split in two.
+ *
+ * **What the curriculum owns** is in `mini-courses/curriculum.yaml`: the
+ * module's name, its title, its status, its minutes, its prerequisites, and,
+ * through its position in that file, its number. Six fields that describe where
+ * a module sits in the course, and a course is a shape, not a property of any
+ * one markdown file.
+ *
+ * **What the file owns** is what could not be written anywhere else: the sheet's
+ * own `summary` and its `objectives`. `sheetFrontmatterSchema` below is those
+ * two and nothing more.
+ *
+ * `ModuleFrontmatter` is the two merged, and it is deliberately the shape that
+ * existed before the split, field for field. Thirteen readers of
+ * `frontmatter.module` and seven of `frontmatter.title` compile unchanged; the
+ * config moved and the app's vocabulary did not.
+ */
 
-const base = z.object({
-  module: z.number().int().positive(),
-  title: z.string().min(1),
-  category: z.enum(categorySlugs),
-  status: z.enum(['ready', 'draft']),
-  duration: z.number().int().nonnegative().default(0),
+// STRICT IN THE NEXT COMMIT. `z.object` while the markdown files still carry
+// `module`, `title`, `category`, `status`, `duration` and `prerequisites`
+// alongside these two: the yaml is the source for all six now, so they are
+// ignored here rather than rejected. The corpus pass deletes them and this
+// becomes `z.strictObject`, at which point a stale key fails the build.
+const sheetFrontmatterSchema = z.object({
   summary: z.string().min(1).nullable().default(null),
   objectives: z.array(z.string().min(1)).default([]),
-  prerequisites: z.array(z.number().int().positive()).default([]),
 })
 
-export const moduleFrontmatterSchema = base
-  .refine((v) => v.status !== 'ready' || v.summary !== null, {
-    path: ['summary'],
-    message: 'a ready module needs a summary',
-  })
-  .refine((v) => v.status !== 'ready' || v.objectives.length >= 2, {
-    path: ['objectives'],
-    message: 'a ready module needs at least two objectives',
-  })
-  .refine((v) => v.status !== 'ready' || v.duration > 0, {
-    path: ['duration'],
-    message: 'a ready module needs an estimated duration in minutes',
-  })
+export type SheetFrontmatter = z.infer<typeof sheetFrontmatterSchema>
 
-export type ModuleFrontmatter = z.infer<typeof moduleFrontmatterSchema>
+/** The merged shape the whole app reads. */
+export interface ModuleFrontmatter {
+  /** The module's position in the curriculum, 1-based. */
+  module: number
+  title: string
+  category: CategorySlug
+  status: 'ready' | 'draft'
+  /** Minutes, as `curriculum.yaml` declares them. */
+  duration: number
+  summary: string | null
+  objectives: string[]
+  /** The prerequisites' numbers, resolved from the yaml's names. */
+  prerequisites: number[]
+}
 
-export function parseFrontmatter(raw: unknown, source: string): ModuleFrontmatter {
-  const result = moduleFrontmatterSchema.safeParse(raw)
-  if (result.success) return result.data
-  const detail = result.error.issues
-    .map((i) => `  ${i.path.join('.') || '(root)'}: ${i.message}`)
-    .join('\n')
-  throw new Error(`Invalid frontmatter in ${source}:\n${detail}`)
+/**
+ * The file's own two fields.
+ *
+ * `status` is passed in rather than read, because the file no longer declares
+ * it. The two rules below are about the sheet and belong here, but both are
+ * conditional on a status the curriculum owns, so the caller supplies it and
+ * omitting it is a compile error. The third rule that used to sit beside them
+ * (a ready module needs a duration above zero) is now the yaml's rule 5,
+ * checked where the duration is declared.
+ */
+export function parseFrontmatter(
+  raw: unknown,
+  source: string,
+  status: 'ready' | 'draft',
+): SheetFrontmatter {
+  const result = sheetFrontmatterSchema.safeParse(raw)
+  if (!result.success) {
+    const detail = result.error.issues
+      .map((i) => `  ${i.path.join('.') || '(root)'}: ${i.message}`)
+      .join('\n')
+    throw new Error(`Invalid frontmatter in ${source}:\n${detail}`)
+  }
+
+  const data = result.data
+  if (status === 'ready' && data.summary === null) {
+    throw new Error(`Invalid frontmatter in ${source}:\n  summary: a ready module needs a summary`)
+  }
+  if (status === 'ready' && data.objectives.length < 2) {
+    throw new Error(
+      `Invalid frontmatter in ${source}:\n  objectives: a ready module needs at least two objectives`,
+    )
+  }
+  return data
 }

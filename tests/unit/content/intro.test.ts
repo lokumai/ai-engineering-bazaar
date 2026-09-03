@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CATEGORIES } from '@/lib/content/categories'
+import { CATEGORIES } from '@/lib/content/curriculum-file'
 import { categoryIntro, stripCategoryManifest } from '@/lib/content/intro'
 
 /**

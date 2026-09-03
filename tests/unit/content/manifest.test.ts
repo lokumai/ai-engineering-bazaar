@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { categoryBySlug } from '@/lib/content/categories'
+import { categoryBySlug } from '@/lib/content/curriculum-file'
 import { loadAllModules } from '@/lib/content/loader'
 import {
   categoryEyebrow,

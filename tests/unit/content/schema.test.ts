@@ -1,62 +1,57 @@
 import { describe, expect, it } from 'vitest'
 import { parseFrontmatter } from '@/lib/content/schema'
 
+/**
+ * What is left in a module file's frontmatter after the split: a `summary` and
+ * `objectives`. The six fields that describe where a module sits in the course
+ * are `curriculum.yaml`'s, and the rules about them are checked there, by
+ * `curriculum-file.ts`.
+ *
+ * `status` is passed in rather than declared, so the two conditional rules
+ * below are checked against the curriculum's answer and not the file's.
+ */
 const ready = {
-  module: 1,
-  title: 'LLM Fundamentals',
-  category: 'fundamentals',
-  status: 'ready',
-  duration: 25,
   summary: 'What a language model does and how to control it.',
   objectives: ['Explain the context window', 'Choose a temperature'],
-  prerequisites: [],
 }
 
 describe('parseFrontmatter', () => {
-  it('accepts a complete ready module', () => {
-    const result = parseFrontmatter(ready, '1_llms.md')
-    expect(result.module).toBe(1)
+  it('accepts a complete ready sheet', () => {
+    const result = parseFrontmatter(ready, 'llms.md', 'ready')
+    expect(result.summary).toBe(ready.summary)
     expect(result.objectives).toHaveLength(2)
   })
 
-  it('accepts a draft module without summary or objectives', () => {
-    const result = parseFrontmatter(
-      { module: 16, title: 'Advanced UI', category: 'expert', status: 'draft' },
-      '16_advanced_ui.md',
-    )
+  it('accepts a draft sheet with no frontmatter at all', () => {
+    const result = parseFrontmatter({}, 'advanced_ui.md', 'draft')
     expect(result.summary).toBeNull()
     expect(result.objectives).toEqual([])
-    expect(result.duration).toBe(0)
   })
 
-  it('rejects a ready module with no summary', () => {
+  it('rejects a ready sheet with no summary', () => {
     const { summary, ...rest } = ready
-    expect(() => parseFrontmatter(rest, '1_llms.md'))
-      .toThrow(/1_llms\.md.*summary/s)
+    void summary
+    expect(() => parseFrontmatter(rest, 'llms.md', 'ready'))
+      .toThrow(/llms\.md.*summary/s)
   })
 
-  it('rejects a ready module with fewer than two objectives', () => {
-    expect(() => parseFrontmatter({ ...ready, objectives: ['only one'] }, '1_llms.md'))
-      .toThrow(/1_llms\.md.*objectives/s)
+  it('rejects a ready sheet with fewer than two objectives', () => {
+    expect(() => parseFrontmatter({ ...ready, objectives: ['only one'] }, 'llms.md', 'ready'))
+      .toThrow(/llms\.md.*objectives/s)
   })
 
-  it('rejects an unknown category', () => {
-    expect(() => parseFrontmatter({ ...ready, category: 'wizardry' }, '1_llms.md'))
-      .toThrow(/1_llms\.md/)
+  it('rejects an objective that is an empty string', () => {
+    expect(() => parseFrontmatter({ ...ready, objectives: ['', 'ok'] }, 'llms.md', 'ready'))
+      .toThrow(/llms\.md/)
   })
 
-  it('rejects a non-integer module number', () => {
-    expect(() => parseFrontmatter({ ...ready, module: 1.5 }, '1_llms.md'))
-      .toThrow(/1_llms\.md/)
-  })
-
-  it('rejects a ready module with zero duration', () => {
-    expect(() => parseFrontmatter({ ...ready, duration: 0 }, '1_llms.md'))
-      .toThrow(/1_llms\.md.*duration/s)
+  it('rejects a summary that is not a string', () => {
+    expect(() => parseFrontmatter({ ...ready, summary: 25 }, 'llms.md', 'ready'))
+      .toThrow(/llms\.md/)
   })
 
   it('names the file in every error, so a build failure is actionable', () => {
-    expect(() => parseFrontmatter({}, '9_context_engineering.md'))
-      .toThrow(/9_context_engineering\.md/)
+    expect(() => parseFrontmatter({}, 'context_engineering.md', 'ready'))
+      .toThrow(/context_engineering\.md/)
   })
 })

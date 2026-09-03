@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import matter from 'gray-matter'
 import { describe, expect, it } from 'vitest'
-import { CATEGORIES } from '@/lib/content/categories'
+import { CATEGORIES } from '@/lib/content/curriculum-file'
 import {
   LANG_DISPLAY,
   TRANSLATION_RATIO,
@@ -306,7 +306,8 @@ describe('langCoverage', () => {
     // placeholder does not, and the extents are measured off the files in this
     // file rather than taken from the module.
     for (const n of numbers((n) => byNumber.get(n)!.frontmatter.status === 'ready')) {
-      expect(langCoverage(byNumber.get(n)!.slug), `module ${n}`)
+      const sheet = byNumber.get(n)!
+      expect(langCoverage(sheet.filePath, sheet.frontmatter.status), `module ${n}`)
         .toBe(langFromExtents(extent(body(n)), trExtent(n)))
     }
   })
@@ -324,7 +325,10 @@ describe('langCoverage', () => {
       for (const n of numbers((n) => n >= 16)) {
         expect(byNumber.get(n)!.frontmatter.status, `module ${n}`).toBe('draft')
         expect(langFromExtents(extent(body(n)), trExtent(n)), `module ${n}`).toBe('EN·TR')
-        expect(langCoverage(byNumber.get(n)!.slug), `module ${n}`).toBe('EN')
+        expect(
+          langCoverage(byNumber.get(n)!.filePath, 'draft'),
+          `module ${n}`,
+        ).toBe('EN')
       }
     },
   )
@@ -337,12 +341,17 @@ describe('langCoverage', () => {
     }
   })
 
-  it('returns EN for a slug no module claims', () => {
-    expect(langCoverage('fundamentals/nope')).toBe('EN')
+  it('returns EN for a file that is not there', () => {
+    // A file with no words has no ratio, and refusing the badge is the honest
+    // answer. It takes a status now, so this can no longer be reached with a
+    // slug nothing claims.
+    expect(langCoverage('/nowhere/nope.md', 'ready')).toBe('EN')
   })
 
   it('agrees with the value the loader bakes into every module', () => {
-    for (const m of modules) expect(m.lang, m.slug).toBe(langCoverage(m.slug))
+    for (const m of modules) {
+      expect(m.lang, m.slug).toBe(langCoverage(m.filePath, m.frontmatter.status))
+    }
   })
 })
 

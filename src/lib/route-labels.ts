@@ -1,5 +1,3 @@
-import { categoryBySlug } from './content/categories'
-
 /**
  * The header breadcrumb and the footer's sheet label are the only two pieces
  * of the shell that change per page, and the header is rendered once in the
@@ -10,7 +8,22 @@ import { categoryBySlug } from './content/categories'
  * sheet number lives in the content, so `sheetLabelFor` returns null on a
  * module page and the module page passes the real number to `PageShell`, which
  * hands it to the footer (spec §5.2).
+ *
+ * **The category labels arrive as an argument, and that is a constraint rather
+ * than a style.** A subsystem's title and its position live in
+ * `mini-courses/curriculum.yaml`, which only `node:fs` can read, and the two
+ * components that call these functions are client islands (§12.2). So their
+ * server parents measure the labels once and hand them down, the same way every
+ * other build-time fact crosses that line. This module still imports nothing.
  */
+
+/** What the chrome needs to know about one subsystem. */
+export interface CategoryLabel {
+  slug: string
+  title: string
+  /** 1-based position in the curriculum, for `SUBSYSTEM 02`. */
+  order: number
+}
 
 export interface Crumb {
   label: string
@@ -65,24 +78,28 @@ const SET_SEGMENT = 'courses'
 
 const ROUTE_TITLES: Record<string, string> = { [SET_SEGMENT]: 'Drawing set' }
 
-function titleFor(segment: string): string {
+function titleFor(segment: string, categories: readonly CategoryLabel[]): string {
   return ROUTE_TITLES[segment]
-    ?? categoryBySlug(segment)?.title
+    ?? categories.find((category) => category.slug === segment)?.title
     ?? segment.replaceAll('-', ' ')
 }
 
-function subsystemLabel(slug: string): string {
-  const category = categoryBySlug(slug)
+function subsystemLabel(slug: string, categories: readonly CategoryLabel[]): string {
+  const category = categories.find((candidate) => candidate.slug === slug)
   return category
     ? `SUBSYSTEM ${String(category.order).padStart(2, '0')}`
-    : titleFor(slug).toUpperCase()
+    : titleFor(slug, categories).toUpperCase()
 }
 
 /**
  * `segment` is `useSelectedLayoutSegment()`. It is only ever consulted to
  * recognise the not-found route, where the pathname is not the page's.
  */
-export function breadcrumbFor(pathname: string, segment: string | null = null): Crumb[] {
+export function breadcrumbFor(
+  pathname: string,
+  categories: readonly CategoryLabel[],
+  segment: string | null = null,
+): Crumb[] {
   if (segment === NOT_FOUND_SEGMENT) {
     return [{ label: 'Index', href: '/' }, { label: NOT_FOUND_TITLE, href: null }]
   }
@@ -94,27 +111,30 @@ export function breadcrumbFor(pathname: string, segment: string | null = null): 
   segments.forEach((segment, i) => {
     const last = i === segments.length - 1
     crumbs.push({
-      label: titleFor(segment),
+      label: titleFor(segment, categories),
       href: last ? null : `/${segments.slice(0, i + 1).join('/')}/`,
     })
   })
   return crumbs
 }
 
-export function sheetLabelFor(pathname: string): string | null {
+export function sheetLabelFor(
+  pathname: string,
+  categories: readonly CategoryLabel[],
+): string | null {
   const segments = segmentsOf(pathname)
   if (segments.length === 0) return 'INDEX SHEET'
 
   if (segments[0] === SET_SEGMENT) {
     const rest = segments.slice(1)
-    if (rest.length === 0) return titleFor(SET_SEGMENT).toUpperCase()
+    if (rest.length === 0) return titleFor(SET_SEGMENT, categories).toUpperCase()
     // Two segments past `/courses/` is a module sheet, and its number is a
     // fact about the content, not about the route.
-    return rest.length === 1 ? subsystemLabel(rest[0]) : null
+    return rest.length === 1 ? subsystemLabel(rest[0], categories) : null
   }
 
   if (segments.length > 1) return null
-  return subsystemLabel(segments[0])
+  return subsystemLabel(segments[0], categories)
 }
 
 /** A chrome label split into its words and its machine-derived values. */

@@ -1,4 +1,4 @@
-import { CATEGORIES } from './categories'
+import { CATEGORIES } from './curriculum-file'
 import { checklistOf } from './checklist'
 import { moduleGraph } from './edges'
 import { loadAllModules } from './loader'

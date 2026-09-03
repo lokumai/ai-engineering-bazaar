@@ -1,4 +1,4 @@
-import { categoryBySlug } from './categories'
+import { categoryBySlug } from './curriculum-file'
 import { loadCategoryIntro } from './loader'
 
 /**

@@ -15,7 +15,8 @@ import { RolePanel } from '@/components/record/RolePanel'
 import { StampShelf } from '@/components/record/StampShelf'
 import { Uptime } from '@/components/record/Uptime'
 import { PageShell } from '@/components/shell/PageShell'
-import { CATEGORIES, type CategorySlug } from '@/lib/content/categories'
+import type { CategorySlug } from '@/lib/content/categories'
+import { CATEGORIES } from '@/lib/content/curriculum-file'
 import { curriculumFacts, type CurriculumFacts } from '@/lib/content/facts'
 
 export const metadata: Metadata = {

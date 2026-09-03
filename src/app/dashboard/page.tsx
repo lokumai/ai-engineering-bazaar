@@ -10,7 +10,7 @@ import { ContinueLine, Diagram, DiagramReadout } from '@/components/record/Diagr
 import { StampShelf } from '@/components/record/StampShelf'
 import { Uptime } from '@/components/record/Uptime'
 import { PageShell } from '@/components/shell/PageShell'
-import { CATEGORIES } from '@/lib/content/categories'
+import { CATEGORIES } from '@/lib/content/curriculum-file'
 import { moduleGraph } from '@/lib/content/edges'
 import { curriculumFacts, type CurriculumFacts, type SheetFact } from '@/lib/content/facts'
 import { ROLES } from '@/lib/path/roles'

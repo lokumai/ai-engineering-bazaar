@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CATEGORIES } from '@/lib/content/categories'
+import { CATEGORIES } from '@/lib/content/curriculum-file'
 import { checklistOf } from '@/lib/content/checklist'
 import { curriculumFacts } from '@/lib/content/facts'
 import { loadAllModules } from '@/lib/content/loader'

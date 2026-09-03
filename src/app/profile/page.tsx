@@ -98,6 +98,9 @@ function faceLegendRows(facts: CurriculumFacts): FaceLegendRows {
  */
 export default function ProfilePage() {
   const facts = curriculumFacts()
+  // §13.4.2's denominator. `RolePanel` is a client island and `status: ready`
+  // lives in the markdown, so the measurement is taken here (§12.2).
+  const drawnSlugs = facts.sheets.filter((sheet) => sheet.drawn).map((sheet) => sheet.slug)
   const legend = faceLegendRows(facts)
 
   return (
@@ -155,7 +158,7 @@ export default function ProfilePage() {
         <h3 id="role" className="hl-mark m-0 text-ink">
           Role and path
         </h3>
-        <RolePanel />
+        <RolePanel drawnSlugs={drawnSlugs} />
       </section>
 
       {/* ---- 2 · READOUT -------------------------------------------------- */}

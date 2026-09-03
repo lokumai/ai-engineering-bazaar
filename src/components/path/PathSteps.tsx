@@ -45,9 +45,11 @@ export interface SheetRef {
   path: string
   /** `04` — the number as the manifest's `#` column prints it. */
   number: string
+  /** The unpadded number, for the `data-module` channel A selectors keys on. */
+  module: number
   /** The subsystem title, so the step's hue is never the sole carrier (§13.1.4). */
   subsystem: string
-  /** `status: ready`. The step's own `module` decides the treatment; this checks it. */
+  /** `status: ready`, measured from the corpus. The only answer there is. */
   drawn: boolean
 }
 
@@ -93,17 +95,29 @@ function categoryOf(slug: string): string {
  */
 const NO_TITLE = '—'
 
-function Step({ step, sheet }: { step: PathStep; sheet: SheetRef | undefined }) {
-  // The module number decides it, not the sheet's frontmatter: `isDrawnStep` is
-  // the single rule every count on this page runs on (§13.4.2), and a step
-  // whose two answers disagree must take the more cautious one.
-  const draft = !isDrawnStep(step) || sheet?.drawn === false
+/** §11.25 — the instrument convention, for the number column's own refusal. */
+const NO_READING = '--'
+
+function Step({
+  step,
+  sheet,
+  drawn,
+}: {
+  step: PathStep
+  sheet: SheetRef | undefined
+  drawn: ReadonlySet<string>
+}) {
+  // One answer, and the corpus is the only one that has it. `isDrawnStep` used
+  // to compare a number written into the step against a constant written into
+  // `paths.ts`, so there were two answers and this line had to pick the more
+  // cautious of them (§13.4.2).
+  const draft = !isDrawnStep(step, drawn)
   const title = sheet?.title ?? NO_TITLE
 
   return (
     <li
       className="hl-step hl-cat-tint ps-3"
-      data-module={step.module}
+      data-module={sheet?.module}
       data-cat={categoryOf(step.slug)}
       data-tier={step.tier}
       data-draft={draft ? '' : undefined}
@@ -122,7 +136,7 @@ function Step({ step, sheet }: { step: PathStep; sheet: SheetRef | undefined }) 
               : 'hl-mark text-ink-muted'
           }
         >
-          {sheet?.number ?? String(step.module).padStart(2, '0')}
+          {sheet?.number ?? NO_READING}
         </span>
 
         {draft || sheet === undefined ? (
@@ -167,10 +181,16 @@ function Step({ step, sheet }: { step: PathStep; sheet: SheetRef | undefined }) 
 }
 
 export function PathSteps({ path, sheets }: { path: LearningPath; sheets: SheetRefs }) {
+  // The drawn set, read off the same measurements the titles came from, so a
+  // step and the sheet it points at cannot answer the question differently.
+  const drawn = new Set(
+    Object.entries(sheets).filter(([, sheet]) => sheet.drawn).map(([slug]) => slug),
+  )
+
   return (
     <ol className="m-0 flex list-none flex-col gap-3 p-0">
       {path.steps.map((step) => (
-        <Step key={step.slug} step={step} sheet={sheets[step.slug]} />
+        <Step key={step.slug} step={step} sheet={sheets[step.slug]} drawn={drawn} />
       ))}
     </ol>
   )

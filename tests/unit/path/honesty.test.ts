@@ -36,14 +36,24 @@ const bySlug = new Map(facts.sheets.map((sheet) => [sheet.slug, sheet]))
 
 /**
  * §13.4.2's own rule, stated once: a sheet is drawn or it is not, and the
- * corpus is the authority. `isDrawnStep` uses the module number because a step
- * carries no status of its own; this cross-checks that shortcut against the
- * frontmatter, so the two cannot drift.
+ * corpus is the authority. This is the set `isDrawnStep` is given, so nothing
+ * here can drift from the frontmatter: it IS the frontmatter.
  */
+const DRAWN: ReadonlySet<string> = new Set(
+  facts.sheets.filter((sheet) => sheet.drawn).map((sheet) => sheet.slug),
+)
+
 function corpusSaysDrawn(slug: string): boolean {
   const sheet = bySlug.get(slug)
   if (sheet === undefined) throw new Error(`path: ${slug} is not in the corpus`)
   return sheet.drawn
+}
+
+/** The module number the corpus gives a slug. A step no longer carries one. */
+function moduleOf(slug: string): number {
+  const sheet = bySlug.get(slug)
+  if (sheet === undefined) throw new Error(`path: ${slug} is not in the corpus`)
+  return sheet.module
 }
 
 /**
@@ -97,13 +107,6 @@ describe('§13.4 — every path is over sheets that exist', () => {
     expect(unknown).toEqual([])
   })
 
-  it.each(PATHS)('$role gives every step the module number its slug actually has', (path) => {
-    const wrong = path.steps
-      .filter((step) => bySlug.get(step.slug)?.module !== step.module)
-      .map((step) => `${step.slug} says ${step.module}, corpus says ${bySlug.get(step.slug)?.module}`)
-    expect(wrong).toEqual([])
-  })
-
   it.each(PATHS)('$role lists no sheet twice', (path) => {
     const slugs = path.steps.map((step) => step.slug)
     expect(slugs).toHaveLength(new Set(slugs).size)
@@ -126,10 +129,12 @@ describe('§13.4.2 — a draft sheet is never promised as a lesson', () => {
     expect(wrong).toEqual([])
   })
 
-  it('agrees with the corpus about which steps are drawn', () => {
+  it('reads drawn off the corpus for every step', () => {
+    // Not a cross-check of two sources any more: `isDrawnStep` is handed the
+    // corpus's own set, so this asserts the wiring rather than the agreement.
     const disagree = PATHS.flatMap((path) =>
       path.steps
-        .filter((step) => isDrawnStep(step) !== corpusSaysDrawn(step.slug))
+        .filter((step) => isDrawnStep(step, DRAWN) !== corpusSaysDrawn(step.slug))
         .map((step) => `${path.role}: ${step.slug}`),
     )
     expect(disagree).toEqual([])
@@ -139,17 +144,17 @@ describe('§13.4.2 — a draft sheet is never promised as a lesson', () => {
 describe('§13.4.2 — the denominator counts drawn steps only', () => {
   it.each(PATHS)('$role counts only what a reader can sign off', (path) => {
     const drawn = path.steps.filter((step) => corpusSaysDrawn(step.slug)).length
-    expect(drawnCount(path)).toBe(drawn)
+    expect(drawnCount(path, DRAWN)).toBe(drawn)
     // The whole point: the denominator is smaller than the list whenever a path
     // carries a roadmap marker, and every path here carries at least one.
-    expect(drawnCount(path)).toBeLessThan(path.steps.length)
+    expect(drawnCount(path, DRAWN)).toBeLessThan(path.steps.length)
   })
 
   it('never reports a denominator of zero', () => {
     // A path whose drawn count is zero would print `n of 0`, which cannot be
     // true of anybody. Every role must have something to read today.
     for (const path of PATHS) {
-      expect(drawnCount(path), path.role).toBeGreaterThan(0)
+      expect(drawnCount(path, DRAWN), path.role).toBeGreaterThan(0)
     }
   })
 })
@@ -171,13 +176,14 @@ describe('§13.4.1 — order respects the prerequisite graph', () => {
   })
 
   it.each(PATHS)('$role places no sheet before a prerequisite it also lists', (path) => {
-    const position = new Map(path.steps.map((step, index) => [step.module, index]))
+    const position = new Map(path.steps.map((step, index) => [moduleOf(step.slug), index]))
     const backwards: string[] = []
     for (const step of path.steps) {
-      for (const required of graph.get(step.module) ?? []) {
+      const module = moduleOf(step.slug)
+      for (const required of graph.get(module) ?? []) {
         const at = position.get(required)
-        if (at !== undefined && at > (position.get(step.module) ?? 0)) {
-          backwards.push(`module ${step.module} before its prerequisite ${required}`)
+        if (at !== undefined && at > (position.get(module) ?? 0)) {
+          backwards.push(`module ${module} before its prerequisite ${required}`)
         }
       }
     }

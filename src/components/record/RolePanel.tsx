@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { RolePicker } from '@/components/path/RolePicker'
 import { MARKS, type MarkId } from '@/lib/identity/mark'
@@ -70,7 +70,16 @@ function offeredMark(role: Role): MarkId | null {
   return offered === undefined ? null : offered.id
 }
 
-export function RolePanel() {
+export interface RolePanelProps {
+  /**
+   * The slugs the corpus says are drawn, serialised down from `/profile/`.
+   * `status: ready` lives in the markdown, only `lib/content/` can read it, and
+   * this panel is a client island (§12.2).
+   */
+  drawnSlugs: readonly string[]
+}
+
+export function RolePanel({ drawnSlugs }: RolePanelProps) {
   const record = useRecord()
   const hydrated = useHydrated()
 
@@ -78,7 +87,9 @@ export function RolePanel() {
 
   return (
     <div className="grid gap-4">
-      {role === undefined ? <RoleEmpty /> : <RoleStanding role={role} />}
+      {role === undefined
+        ? <RoleEmpty drawnSlugs={drawnSlugs} />
+        : <RoleStanding role={role} drawnSlugs={drawnSlugs} />}
 
       {/* §13.6 — rendered only where it can be an offer: a role on record and
           no mark chosen. It is the last thing in the panel because it follows
@@ -94,7 +105,7 @@ export function RolePanel() {
  * §12.13's fifth empty state, added by §13.14 — record present, role absent.
  * It offers the picker and draws no path, because there is no path to draw.
  */
-function RoleEmpty() {
+function RoleEmpty({ drawnSlugs }: { drawnSlugs: readonly string[] }) {
   return (
     <>
       <p className="hl-mark m-0 text-ink-muted">{NO_ROLE}</p>
@@ -106,7 +117,7 @@ function RoleEmpty() {
         without touching a single sign-off.
       </p>
 
-      <RolePicker />
+      <RolePicker drawnSlugs={drawnSlugs} />
     </>
   )
 }
@@ -124,13 +135,20 @@ function RoleEmpty() {
  * The tally is framed to-go, and there is no percentage here or anywhere
  * (§11.35): counting in sheets is what lets both framings stay true at once.
  */
-function RoleStanding({ role }: { role: Role }) {
+function RoleStanding({
+  role,
+  drawnSlugs,
+}: {
+  role: Role
+  drawnSlugs: readonly string[]
+}) {
   const record = useRecord()
   const hydrated = useHydrated()
+  const drawnSet = useMemo(() => new Set(drawnSlugs), [drawnSlugs])
 
   const path = pathFor(role.id)
-  const drawn = path === undefined ? null : drawnCount(path)
-  const standing = path === undefined ? null : pathStanding(path, record)
+  const drawn = path === undefined ? null : drawnCount(path, drawnSet)
+  const standing = path === undefined ? null : pathStanding(path, record, drawnSet)
   const drafts = path === undefined || drawn === null ? null : path.steps.length - drawn
 
   return (
@@ -186,7 +204,7 @@ function RoleStanding({ role }: { role: Role }) {
           again brings this path back exactly as it stands now.
         </p>
 
-        <RolePicker />
+        <RolePicker drawnSlugs={drawnSlugs} />
       </details>
     </>
   )

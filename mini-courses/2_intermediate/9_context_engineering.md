@@ -4,310 +4,394 @@ title: "Context Engineering"
 category: intermediate
 status: ready
 duration: 30
-summary: "Treating the context window as a budget you spend deliberately, not a bucket you fill."
+summary: "Deciding what earns a place in a limited context window, and why more context makes answers worse."
 objectives:
-  - "Break an agent's context into its constituent parts"
-  - "Apply the four levers for controlling context"
-  - "Recognise context rot and the failure modes that follow"
+  - "Explain context rot and why a model degrades before its window is full"
+  - "Say what context engineering decides, and why the decision repeats every turn"
+  - "Apply summarisation, offloading, a knowledge base, subagents and explicit planning"
+  - "Name what a deep agent must have, and why coding agents are already one"
+  - "Explain how chain of thought keeps a long session on track"
 prerequisites: [5, 8]
 ---
 
 # Module 9: Context Engineering
 
-*Category: Intermediate — Module 9 (2 of 7 in this category)*
+[Module 8](8_prompt_engineering.md) was about writing one good input. This module is about
+everything else that ends up in front of the model, and about the fact that there is not enough
+room for all of it.
 
-[Module 5](../1_fundamentals/5_memory.md) showed you that "memory" is really just a growing stack of messages you re-send on every call. [Module 8](8_prompt_engineering.md) showed you how to write one good instruction. This module is about what happens when that stack gets long: the window is finite, it degrades *before* it is full, and something has to decide — every single turn — what still deserves a seat in it. That decision is your job now.
+After prompt engineering came context engineering, which became the trend of late 2025. Here we
+cover where it came from, how it developed, and the techniques worth knowing.
 
-## I. From Prompt Engineering to Context Engineering
+## Everybody wanted a bigger window
 
-Anthropic's definition is the one the field settled on: context engineering is "the set of strategies for curating and maintaining the optimal set of tokens (information) during LLM inference" ([Effective context engineering for AI agents, 2025-09-29](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)).
+Back then the whole conversation was about size. People wanted models with larger context windows,
+and they were busy giving the model more and more, because more context genuinely did mean better
+results.
 
-The difference from prompt engineering is not scale, it's *shape*:
+You know the feeling if you have ever been deep in a session with a coding agent: brainstorming,
+designing, going back and forth, and then you are at 95% of the window with no warning. Since more
+context helped, people padded their prompts, and the window filled faster than ever.
 
-| | Prompt engineering | Context engineering |
-|---|---|---|
-| The unit of work | One string, mostly the system prompt | Everything in the window: system prompt, tools, MCP schemas, files, tool results, history |
-| When you do it | Once, up front | Every turn, for the life of the task |
-| What "good" looks like | A clear, well-structured instruction | The **smallest set of high-signal tokens** that still gets the job done |
-| Failure you feel | The model misunderstands you | The model forgets, repeats itself, or confidently uses stale facts |
+So what did systems do when the stack outgrew the window? Mostly a **sliding window**. If the model
+holds 1M tokens and your history has reached 1.4M, the window slides forward and the model only
+sees the last 1M, from 0.4M to 1.4M. The first 0.4M is gone.
 
-**Context engineering** is iterative. **Prompt engineering** is a discrete authoring act. You still need both — a beautifully curated window full of a vague instruction gets you nowhere.
+That is worse than it sounds. The moment you cross the line you have to sacrifice the *oldest*
+context, which is usually where you explained what you were trying to do. The shared understanding
+you built with the model is the first thing thrown away, and you are left copying your own earlier
+prompts back in by hand to remind it what the job was.
 
-The framing that makes the rest of this module click: the window is a finite **attention budget**, and "every new token introduced depletes this budget" ([Anthropic, 2025-09-29](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)). Transformers form n² pairwise relationships across n tokens, so attention spreads thinner as the input grows — and models saw far fewer long sequences during training than short ones. It's not a bucket you fill. It's a resource that degrades as you spend it.
+## Then the window turned out to make things worse
 
-## II. The Window Is a Budget, Not a Bucket
+While everyone was working around a full window, the Chroma team published
+[Context Rot: How Increasing Input Tokens Impacts LLM Performance](https://www.trychroma.com/research/context-rot),
+and the finding landed hard: **as the context grows, the model gets worse at the task.**
 
-Every engineer's first instinct is "buy a bigger window." Here is why that doesn't work, with receipts.
+They ran 18 models, including GPT-4.1, Claude 4 and Gemini 2.5, and the pattern held across all of
+them. The same model given the same job does it noticeably better with 25K tokens in its context
+than with 800K. Not because the window overflowed. Because of what was already in it.
 
-| Evidence | Finding |
-|---|---|
-| [Lost in the Middle, arXiv:2307.03172](https://arxiv.org/abs/2307.03172) (TACL 2023) | A U-shaped position curve: performance is highest when the relevant information sits at the **beginning or end** of the input, and "significantly degrades when models must access relevant information in the middle." |
-| [NoLiMa, arXiv:2502.05167](https://arxiv.org/abs/2502.05167) (ICML 2025) | With needles that share little literal wording with the question, **11 of 13** models claiming 128K+ support drop below 50% of their own short-context baseline at just **32K**. GPT-4o falls from **99.3% to 69.7%**. |
-| [Context Rot, Chroma, 2025-07-14](https://www.trychroma.com/research/context-rot) | Across **18 models**, recall falls as input grows. A **single distractor** already hurts; four compound it. Models did *better* on shuffled haystacks than logically structured ones. On LongMemEval, a **~300-token focused prompt beat the ~113k-token full prompt**. |
-| [arXiv:2510.05381](https://arxiv.org/abs/2510.05381), 2025-10-06 | **13.9%–85% degradation** as input length grows *even with perfect retrieval* — and removing, masking, or neutralizing the irrelevant text does not rescue it. |
+![Two jars, same model](./images/context-pollution-jars.jpeg)  
+*The three things the model needs are in both jars. On the right they are still there, still legible, and still lost, because everything else in the jar is competing for the same attention.*
 
-That last row is the one to keep. "Just retrieve better" is not an escape hatch; length itself is the tax. These are different tasks and setups, so read the conclusion as directional rather than as one curve: **longer input means less reliable output, well before the window is full.**
+The phenomenon has two names in the wild: **context rot** and **context pollution**.
 
-**Context rot** is the name for this — as token count rises, accurate recall from context falls. 1M-token windows are routine now, and Claude Code still compacts at 1M, because the mechanism didn't change ([Explore the context window, Claude Code Docs](https://code.claude.com/docs/en/context-window)).
+The reason is **attention**, the mechanism a model uses to decide which parts of its input matter
+for the token it is about to write. We are not going into the theory of it. What you need is the
+consequence: attention is a fixed budget, and it gets divided across everything in the window. Same
+as a person. You can hold a few things in your head at once and no more, and the model that is
+your agent's brain is no different. Fill its context with a lot of loosely related material and it
+carries the same load a person would, and makes the same kind of mistakes.
 
-## III. Anatomy of Your Agent's Context
+Worth being precise about one thing, because it is the part people get wrong: this is not the
+window "filling up". Performance starts sliding long before you hit the limit. A window that is
+40% full can already be producing worse answers than the same window at 5%.
 
-You can't manage what you can't see. Run `/context` in Claude Code and you get a breakdown of what's occupying the window right now, including which memory files actually loaded ([How Claude Code works](https://code.claude.com/docs/en/how-claude-code-works)).
+Here is what it feels like in practice. You start a long session to write a book, and you tell the
+model up front to write in a clear academic tone. For the first stretch it does. Somewhere past
+800K it stops: the tone drifts to something vague and chatty, and the model starts inventing
+things. Nothing was deleted, and the window never overflowed. The instruction is still sitting
+there. Its share of the attention has just been competing with everything else you have added
+since, and it lost. The model has lost the map.
 
-Anthropic's own walkthrough gives an illustrative startup budget before you type anything: system prompt ~4,200 tokens; project CLAUDE.md ~1,800; auto memory ~680; skill descriptions ~450; user CLAUDE.md ~320; environment info ~280; MCP tool *names* ~120, with schemas deferred by default. Then the reads begin — 2,400, 1,100, 1,800, 1,600 tokens — and the docs' own conclusion is blunt: **"File reads dominate context usage"** ([Explore the context window](https://code.claude.com/docs/en/context-window)).
+![A needle, a distractor and a haystack](./images/distractor_irrelevance.png)  
+*The question asks for the classmate's advice. The needle answers it, and the distractor is the same sentence about a professor. Chroma's finding is that one distractor is enough to hurt, and that the less the needle looks like the question, the faster the whole thing falls apart as the haystack grows.*
 
-Two consequences you can act on today:
+That test has a name you will hear constantly: **needle in a haystack**. The version above is the
+harder one. The easy version buries an exact phrase and asks for it back, which models do almost
+perfectly. Chroma's contribution was to bury something you have to *reason* to find, and to add
+plausible near-misses beside it.
 
-- Your startup overhead is a few thousand tokens. Your *reading* is tens of thousands. Optimize the reading first.
-- Tool definitions are not free. Exposing MCP servers as a code API instead of raw tool definitions took one Google-Drive-to-Salesforce example from **150,000 tokens to 2,000 — a 98.7% saving** ([Code execution with MCP, Anthropic, 2025-11-04](https://www.anthropic.com/engineering/code-execution-with-mcp)). And tool *count* degrades behaviour independently of budget: a quantized Llama 3.1 8b failed with **46** tools but succeeded with **19**, with room to spare ([How Long Contexts Fail, Drew Breunig, 2025-06-22](https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html)).
+Out of all of this came a set of practices, and a name for them.
 
-## IV. Get the Vocabulary Right
+## So what is context engineering
 
-These four words get used interchangeably and they are not the same operation. Half of this module is knowing which one you're asking for.
+Context engineering answers one question: **what should go into the context, and what should be
+kept out of it?**
 
-| Technique | What it removes | What it keeps | Cost | Main risk |
-|---|---|---|---|---|
-| **Truncation / trimming** | Oldest turns, wholesale (last-N) | Recent N turns verbatim | Free, deterministic | Silently forgets early decisions |
-| **Tool-result clearing** | Old tool *results* only, replaced by a placeholder | All reasoning, plus recent results | Cheap; invalidates the prompt cache | The agent can't re-read the raw output |
-| **Summarization** | Older messages, replaced by a model-written gist | Long-range memory, compactly | An extra model call + latency | Lossy; "risks context poisoning if summaries contain errors" |
-| **Compaction** | The conversation, which is then **restarted from the summary** | The gist, plus whatever reloads from disk | A whole large request | Same as above, and it happens automatically |
+The window is limited, so something has to decide. Context engineering is the art and science of
+curating what goes into that limited window out of the constantly growing universe of things that
+could. The goal is to maximise the tokens in context that carry real signal and minimise the ones
+that are noise, so the context does not rot.
 
-(Trimming and summarization trade-offs from the [OpenAI Cookbook — Session Memory](https://developers.openai.com/cookbook/examples/agents_sdk/session_memory); compaction from [Anthropic, 2025-09-29](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents).)
+![Prompt engineering next to context engineering](./images/prompt-vs-context-eng.png)  
+*On the left, one turn and one decision, which is Module 8. On the right, a universe of things that could go in the window and a decision about what actually does, taken again on every single turn.*
 
-Two more distinctions worth pinning down:
+The term took off after a [post by Andrej Karpathy](https://x.com/karpathy/status/1937902205765607626)
+in mid-2025 and got its fullest treatment in Anthropic's
+[Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents),
+which calls it "the set of strategies for curating and maintaining the optimal set of tokens
+during LLM inference". Philipp Schmid's
+[The New Skill in AI is Not Prompting, It's Context Engineering](https://www.philschmid.de/context-engineering)
+puts the same idea as a job description: give the model the right information and tools, in the
+right format, at the right time. LangChain sorts the techniques into four verbs, in
+[Context Engineering](https://www.langchain.com/blog/context-engineering-for-agents) and in Lance
+Martin's [Context Engineering for Agents](https://rlancemartin.github.io/2025/06/23/context_engineering/):
+write, select, compress, isolate.
 
-- **Memory vs context.** Context is what's in the window *now*. **Memory** is a durable store outside it that must be *retrieved into* context to matter at all ([Memory tool, Claude Platform Docs](https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool)). Writing something to memory does nothing on its own.
-- **RAG vs agentic retrieval.** Classic RAG ([Module 3](../1_fundamentals/3_rag.md)) pre-computes an index and retrieves chunks before the model runs. **Just-in-time retrieval** holds lightweight identifiers — file paths, URLs, stored queries — and loads the data with tools at runtime, discovering context through exploration ([Anthropic, 2025-09-29](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)).
+Here are the techniques worth knowing now.
 
-### What Claude Code's auto-compaction actually does
+## Summarisation, also called compaction
 
-It "clears older tool outputs first, then summarizes the conversation if needed. Your requests and key code snippets are preserved; detailed instructions from early in the conversation may be lost" ([How Claude Code works](https://code.claude.com/docs/en/how-claude-code-works)). Note the order — the cheap, targeted operation runs before the lossy one.
+The simplest one. When the context gets long, replace it with a summary of itself: 800K tokens of
+conversation become 20K tokens of "here is what we decided, here is what is still broken, here is
+where we were".
 
-Afterwards, some things come back **from disk**: the system prompt, project-root CLAUDE.md, auto memory, and the plan Claude wrote in plan mode. Up to **five** recently modified files are re-read (a file over 5,000 tokens returns as a path reference without content), and invoked skill bodies re-inject capped at **5,000 tokens per skill and 25,000 total** ([Explore the context window](https://code.claude.com/docs/en/context-window)).
+Most agents now do this on their own when they get close to the limit, and some let you trigger it.
+In Claude Code you type `/compact` and it happens on the spot.
 
-What you lose is anything that existed *only* in the conversation. That is the single most useful sentence in this module: **if it matters, it belongs on disk.**
+![A window before and after compaction](./images/compaction-before-after.png)  
+*Notice what gets kept and what does not. The tool results are the bulk of the window and they go; the summary keeps the decisions; the handful of recent files are kept because they will be read again immediately. The reserved block at the bottom is the agent holding room for its own summarising, so it can never be caught with a full window and nowhere to write.*
 
-The threshold is configurable via `/autocompact`, the `--autocompact` flag, or `CLAUDE_CODE_AUTO_COMPACT_WINDOW`, accepting **100K to 1M** and capped at the model's real window; Sonnet 5 auto-compacts at about 967K by default ([Model configuration](https://code.claude.com/docs/en/model-config)). And if a single file is so large that context refills right after every summary, Claude Code stops auto-compacting after a few attempts and errors rather than thrashing forever ([How Claude Code works](https://code.claude.com/docs/en/how-claude-code-works)).
+The cost is real and worth stating plainly. A summary throws away the 40,000-token output of a
+terminal command that nobody needs again, which is the point. But it can also throw away something
+you did need, either by accident or because whatever wrote the summary judged it unimportant and was
+wrong. Anthropic's own guidance on compaction is to preserve architectural decisions, unresolved
+bugs and implementation details for exactly this reason.
 
-## V. The Four Levers
+## Offloading to files
 
-Everything practical reduces to four moves. LangChain frames them as **write / select / compress / isolate** ([Context Engineering for Agents, 2025-07-02](https://www.langchain.com/blog/context-engineering-for-agents)); here they are as things you actually type.
+Instead of keeping something in the context, the agent writes it down somewhere it can read later:
+a markdown file, usually. The important facts leave the window and live on disk, and the agent
+fetches them back when it actually needs them.
 
-### 1. Compress — compact or summarize
+The Manus team, in
+[Context Engineering for AI Agents: Lessons from Building Manus](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus),
+put it as using the file system as context: unlimited in size, persistent by nature, and something
+the agent can operate directly.
 
-**Use it when:** you're deep in one task, the history matters, and the window is filling.
+Many agents build this into a feature called **long-term memory**: an index of the things worth
+keeping, so that even after the context is summarised away, the facts survive and can be searched.
 
-**Steer it.** `/compact focus on the auth bug fix` beats a bare `/compact`. `/rewind` lets you summarize only part of the conversation. A `# Compact instructions` section in CLAUDE.md makes the steering permanent ([Manage costs effectively](https://code.claude.com/docs/en/costs)).
+Same warning as before, and it is the same root cause. Deciding what is worth keeping is a
+judgement call, and the judgement belongs to either you or the model. Both get it wrong. Losing
+something valuable this way is common, not rare.
 
-**What it costs:** compaction is itself a large request, because the model has to read the conversation it's summarizing. `/clear` costs nothing ([Manage costs effectively](https://code.claude.com/docs/en/costs)).
+[Module 5](../1_fundamentals/5_memory.md) split memory into parametric, working and long-term. This
+is the long-term one, and in practice it is usually organised in three kinds:
 
-**When it backfires:** over-summarizing. A wrong premise inside a summary is never challenged again — it just becomes background truth for the rest of the session ([Breunig, 2025-06-22](https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html)). If you're switching to unrelated work, `/clear` is strictly better *and* free.
+![Three kinds of long-term memory](./images/semantic-episodic-procedural.png)  
+*The split matters because the three are written and read at different times. Facts about you accumulate quietly, past actions are what stop an agent repeating a mistake, and the instructions layer is just the system prompt from Module 4 under another name.*
 
-### 2. Offload — move it to the filesystem
+## A knowledge base the agent can explore
 
-**Don't compress in place; move it out and keep a reference.** Manus drops fetched web page content from context and keeps only the URL, because the URL is restorable and the content isn't ([Context Engineering for AI Agents: Lessons from Building Manus, 2025-07-18](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus)). Agents "regularly write notes persisted to memory outside of the context window" and pull them back later — the Claude-plays-Pokémon run kept precise tallies, maps, and strategy notes across thousands of game steps ([Anthropic, 2025-09-29](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)).
+When information is genuinely valuable and stable, such as how your company's internal API works,
+do not paste it into every prompt. Put it somewhere the agent can go and look: a folder of markdown
+files it can read and search.
 
-The API's memory tool encodes the mindset in its own injected instruction: *"ASSUME INTERRUPTION: Your context window might be reset at any moment, so you risk losing any progress that is not recorded in your memory directory"* ([Memory tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool)).
+Then the agent retrieves your documentation when it decides it needs to, reads the part that
+matters, and learns that much in context. Retrieval can be full RAG from
+[Module 3](../1_fundamentals/3_rag.md) or just an agent opening files. Either way, the alternative
+is dumping the entire API reference into the window and paying for it on every turn.
 
-**When it backfires:** stale and bloated notes. A wrong fact written once is re-read every session. Timestamp your notes and expire the ones nothing has touched — and mind the index limits: Claude Code's auto-memory `MEMORY.md` loads only the first **200 lines or 25KB, whichever comes first**, and anything past that is silently dropped on the next load ([How Claude remembers your project](https://code.claude.com/docs/en/memory)). Deeper memory architectures are Module 18's job.
+One tool worth knowing here: [DeepWiki](https://deepwiki.org/) generates a wiki for a GitHub
+repository. When your agent has a question about some library's internals, its architecture or its
+API, it can read DeepWiki's write-up instead of crawling the repository itself and filling its
+context with source files.
 
-### 3. Isolate — spawn a subagent
+## Isolation, which is what subagents are for
 
-This is the lever readers most often get wrong, so let's be concrete about the exchange rate.
+Here is the case that makes this click.
 
-A subagent gets **its own window**, does the token-heavy work there, and returns only its final text. In Anthropic's illustrated session the subagent read **6,100 tokens** of files and the parent received **420 tokens** plus a small metadata trailer — "That's the context savings" ([Explore the context window](https://code.claude.com/docs/en/context-window)). Distilled sub-agent reports typically run **1,000–2,000 tokens** ([Anthropic, 2025-09-29](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)).
+Your coding agent needs to tell you what architecture a repository uses, and the repository is a
+million lines. To answer, it has to open a lot of files. Say that costs 800K tokens of context, and
+the answer is one sentence: the system orchestrates an event-driven microservices fabric, blending
+distributed Kafka streams with real-time geospatial processing. One sentence, 800K tokens of context
+spent to produce it, and now that 800K is sitting in the window rotting everything that comes next.
 
-What surprises people: **a subagent does not inherit what you know.** It gets its own shorter system prompt, the task message, the CLAUDE.md hierarchy, a git-status snapshot, preloaded skills, and a roster of its siblings. It does *not* get your conversation history, the files you already read, the skills you already invoked, your output style, or the main conversation's auto memory. A **fork** (`/subtask …`) is the exception — it inherits the whole conversation and shares the prompt cache with the main session ([Subagents](https://code.claude.com/docs/en/sub-agents)).
+The fix is to not do the reading in that context at all. The main agent calls a second agent with
+an empty context of its own, a **subagent**. The subagent does the 800K-token crawl, throws away
+everything except the conclusion, and hands back the sentence. The main agent's context gains one
+sentence.
 
-**When it backfires:**
+![Two subagents with their own windows](./images/subagent.png)  
+*Each box is a separate context that starts empty and is discarded when the work is done. The main agent never sees the intermediate steps, which is the whole point: what it cannot see cannot rot its window.*
 
-- **Shared context work.** Cognition's argument is the essential counterweight: "Actions carry implicit decisions, and conflicting decisions carry bad results." Parallel agents can't see each other's traces, so they produce incompatible work; a single-threaded linear agent plus deliberate compression is the safer default ([Don't Build Multi-Agents, 2025-06-12](https://cognition.com/blog/dont-build-multi-agents)). Claude Code's docs agree — use the main conversation when phases share significant context, when the task needs frequent back-and-forth, for quick targeted edits, or when latency matters ([Subagents](https://code.claude.com/docs/en/sub-agents)).
-- **Cost.** Agent teams use "approximately 7x more tokens than standard sessions when teammates run in plan mode" ([Manage costs effectively](https://code.claude.com/docs/en/costs)); LangChain cites Cognition reporting up to **15×** more tokens for multi-agent versus chat ([LangChain, 2025-07-02](https://www.langchain.com/blog/context-engineering-for-agents)).
+**How it works.** A subagent is a fresh agent with a clean context. The main agent calls it the way
+it calls any other tool, something like `Task("find out what architecture this repo uses")`. From
+[Module 4](../1_fundamentals/4_tools.md)'s point of view, nothing new is happening: a tool was
+called and a tool result came back. The subagent runs its own loop, hides every intermediate step,
+and returns the final answer as that result. Anthropic reports these summaries usually landing
+around 1,000 to 2,000 tokens.
 
-The honest rule: delegate **read-heavy, self-contained questions** ("investigate how token refresh works"). Keep **decisions** in the main thread. Orchestration topologies are [Module 12](12_loop_engineering.md)'s territory.
+Modern agents call subagents in sequence or in parallel, which leaves the main agent free to do
+what it is actually good at: holding the plan and deciding what happens next.
 
-### 4. Anchor — an explicit plan or TODO file
+## Explicit planning, which is a to-do list
 
-Manus calls this **recitation**, and the section is literally titled "Manipulate Attention Through Recitation." They deliberately create and rewrite a `todo.md` step by step so the objective is re-stated at the *end* of context on every turn — a direct counter to lost-in-the-middle across tasks that average around 50 tool calls ([Manus, 2025-07-18](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus)).
+Say you ask an agent to build you a portfolio site. That means defining the scope, choosing a
+stack, building the layouts, writing the content in, wiring up a CMS and configuring deployment.
 
-In Claude Code, plan mode writes the plan to disk, and that plan is **re-injected from disk after compaction** — making the plan file the one artifact that survives everything ([Explore the context window](https://code.claude.com/docs/en/context-window)). `Ctrl+G` opens it in your editor before Claude proceeds ([Best practices for Claude Code](https://code.claude.com/docs/en/best-practices)).
-
-**When it backfires:** a plan that never gets updated is just another stale note. Anthropic's long-running-agent study names the failure modes precisely — attempting too much simultaneously, declaring victory prematurely, leaving buggy undocumented code, and skipping verification. Their harness had every session read the progress notes and git history, work on **a single feature at a time**, verify, commit, then update the progress file before ending ([Effective harnesses for long-running agents, 2025-11-26](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)). Mark a feature complete only after end-to-end verification, never when the code is merely written.
-
-## VI. The Cost Lever: Prompt Caching Meets Context Editing
-
-This is where context engineering becomes something you can defend to a manager.
-
-Prompt caching hashes a **prefix**, ordered `tools → system → messages`, and "changes at any level invalidate that level and all subsequent levels." Cache reads cost **0.1×**; 5-minute writes cost **1.25×**; 1-hour writes cost **2×**. A `cache_control` breakpoint must sit on the **last block that is identical across requests** — put one after a per-request timestamp and you get zero cache hits, forever ([Prompt caching, Claude Platform Docs](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)).
-
-Three consequences you will feel in the bill:
-
-- **Editing early in the context is expensive.** Mutating tool definitions per step invalidates the entire cache and orphans references to now-missing tools. Manus's advice: **mask tool logits instead of adding or removing definitions**, and treat contexts as append-only. They call KV-cache hit rate "the single most important metric for a production-stage AI agent" ([Manus, 2025-07-18](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus)).
-- **Batch your context edits.** Tool-result clearing invalidates the cache, which is exactly why `clear_at_least` exists — don't pay for a re-cache to reclaim 800 tokens ([Context editing, Claude Platform Docs](https://platform.claude.com/docs/en/build-with-claude/context-editing)).
-- **Watch it.** `/usage` attributes tokens to skills, subagents, plugins, and individual MCP servers, and flags a behaviour — long context, cache misses — once it accounts for 10% or more of recent usage ([Manage costs effectively](https://code.claude.com/docs/en/costs)).
-
-Here is the one API snippet in this module, so you can see these are real platform features rather than folklore (Python SDK, beta header `context-management-2025-06-27`):
-
-```python
-resp = client.beta.messages.create(
-    betas=["context-management-2025-06-27"],
-    model="claude-opus-5",
-    max_tokens=4096,
-    messages=messages,
-    tools=[{"type": "memory_20250818", "name": "memory"}],
-    context_management={"edits": [{
-        "type": "clear_tool_uses_20250919",
-        "trigger": {"type": "input_tokens", "value": 30000},
-        "keep": {"type": "tool_uses", "value": 3},
-        "clear_at_least": {"type": "input_tokens", "value": 5000},  # cache economics
-        "exclude_tools": ["memory"],   # never clear memory results
-        "clear_tool_inputs": False,    # keep the call, drop the result
-    }]},
-)
-print(resp.context_management.applied_edits)  # cleared_tool_uses, cleared_input_tokens
-```
-
-Anthropic's own docs note that for most cases you should prefer **server-side compaction** over hand-rolled tool clearing ([Context editing](https://platform.claude.com/docs/en/build-with-claude/context-editing)). Tuning these knobs belongs to [Module 11](11_harness_engineering.md) and Module 21.
-
-## VII. When Context Goes Bad
-
-Four named failure modes, so you can diagnose instead of guess ([Breunig, 2025-06-22](https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html)):
-
-| Failure | What it looks like | Evidence |
-|---|---|---|
-| **Poisoning** | A false fact enters context (often via a summary) and is never questioned again | A Gemini Pokémon run whose goals and summary were "poisoned with misinformation about the game state," leading it to pursue impossible objectives |
-| **Distraction** | The agent repeats its own history instead of planning something new | Beyond ~100k tokens, "a tendency toward favoring repeating actions from its vast history"; Databricks saw correctness decline around **32k** for Llama 3.1 405b |
-| **Confusion** | Too many tools; the model picks the wrong one | Berkeley Function-Calling Leaderboard: all models worse with more tools; 46 tools failed, 19 succeeded |
-| **Clash** | Information spread across turns contradicts itself | Spreading a prompt across turns cost **39%** on average, with o3 falling from **98.1 to 64.1**: "when LLMs take a wrong turn in a conversation, they get lost and do not recover" |
-
-### A real tension, presented as a judgement call
-
-Manus says **keep the wrong stuff in**: leaving failed actions and their error messages in context lets the model "implicitly update internal beliefs" and stop repeating the mistake — error recovery is "one of the clearest indicators of true agentic behavior" ([Manus, 2025-07-18](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus)). Claude Code's best practices say the opposite for a supervised session: "If you've corrected Claude more than twice on the same issue in one session, the context is cluttered with failed approaches. Run `/clear` and start fresh" ([Best practices](https://code.claude.com/docs/en/best-practices)).
-
-Both are right about different situations. Manus is describing one autonomous run where the error is training signal; Claude Code is describing a supervised session where thrash has crowded out the goal. The resolution to carry: **keep the error signal, drop the thrash.**
-
-One honest caveat before you over-trust any of this: a 2026 survey argues that the repeated compaction agents actually perform "is almost never measured, and no benchmark holds one budget axis across all the layers at once" ([What to Keep, What to Forget, arXiv:2607.08032](https://arxiv.org/abs/2607.08032)). You are ahead of the literature here. Measure on your own work.
-
-## VIII. Your Playbook
-
-### The decision you make ten times a day
+Start writing code straight away and the agent will lose the map: it forgets a step, or drifts
+somewhere else entirely. So instead it writes the plan down first, as a to-do list with a state on
+each item:
 
 ```text
-/context          see what's in the window now (+ which memory files loaded)
-/usage            token counts + attribution (skills, subagents, MCP) + behaviour flags
-/clear            switching to unrelated work. Costs nothing.
-/compact <focus>  same task, you still need the gist of history. Costs a big request.
-/rewind           summarize only part of the conversation, or roll back code + chat
-subagent          one self-contained, read-heavy question ("investigate X")
-/subtask          same, but it needs your whole conversation (fork; shares prompt cache)
+[x] Define the scope: one page, three projects, a contact form
+[x] Choose the stack: Next.js, static export, no database
+[~] Build the layouts: header and hero done, project grid in progress
+[ ] Write the content in
+[ ] Wire up a CMS
+[ ] Configure deployment
 ```
 
-### What belongs in CLAUDE.md — and what does not
+Then it works through the list, and after each step it goes back, marks what it finished, and picks
+up the next one. The big task became small tasks, and there is now a written record of which are
+done, so nothing depends on the agent remembering.
 
-CLAUDE.md loads **every session**, so every line is a permanent tax. Target under 200 lines; the docs are blunt that "bloated CLAUDE.md files cause Claude to ignore your actual instructions!" ([Best practices](https://code.claude.com/docs/en/best-practices)). The test for each line: *would removing this cause Claude to make a mistake?* If not, cut it.
+The second effect is less obvious and matters more. Re-reading and rewriting that list drags the
+goal back into recent context, over and over. Manus calls this **manipulating attention through
+recitation**, and it is the most direct answer to the academic-tone problem above: the instruction
+loses its share of attention because nothing repeats it, and a to-do list repeats it.
 
-```markdown
-# CLAUDE.md
+Hold onto the word recitation. It comes back at the end of this module, because the to-do list is
+not the only thing that does it.
 
-## Commands
-- Test: `pnpm test --filter <pkg>`      # never npm
-- Typecheck after a series of edits: `pnpm typecheck`
+**How it works.** Modern agents expose this as a built-in tool. If yours does not have one and it
+can reach a filesystem, it can keep a markdown file and get the same result.
 
-## Conventions that differ from defaults
-- ES modules only, no CommonJS
-- API handlers live in `src/api/handlers/`
+> **NOTE:** these are not all of them. [Module 21: Advanced Context
+> Engineering](../3_expert/21_advanced_context_engineering.md) picks up the harder techniques,
+> particularly for software work.
 
-## Compact instructions
-When compacting, always preserve the list of modified files and the test command.
-```
+## Deep agents
 
-Everything else is fetched on demand: multi-step procedures become a **skill** (loads only when invoked), and area-specific rules go in `.claude/rules/*.md` with `paths:` frontmatter so they load only when a matching file is read. Two caveats: `@path` imports help organization but **not** context size, since imported files load at launch; and path-scoped rules get summarized away by compaction unless their trigger file is read again ([How Claude remembers your project](https://code.claude.com/docs/en/memory)). If you keep your instructions in `AGENTS.md`, Claude Code reads `CLAUDE.md` — bridge it with `@AGENTS.md` as the first line, or `ln -s AGENTS.md CLAUDE.md`.
+**Deep agents** are an agent architecture that became popular during all of this. You do not have to
+build every technique above into your own agent by hand, and this is the shape that packages them.
+There are several architectures worth knowing, covered in
+[Module 16: Advanced Architectures](../3_expert/16_advanced_architectures.md); this is the one that
+belongs in this module, because it is context engineering turned into a design.
 
-### Worked example: a refactor too big for one window
-
-You need to migrate 40 modules off a deprecated auth client. Naively, you'd describe the whole thing in one session and watch it compact three times and forget the convention you established in message four. Instead:
-
-```text
-Session 1 (plan only):  plan mode -> "interview me, then write SPEC.md"
-                        nothing gets implemented in this session
-Session 2..N (fresh):   read SPEC.md + PROGRESS.md + git log
-                        work ONE module, run the check, commit, append to PROGRESS.md
-                        /clear before the next module
-Review:                 a subagent reviews the diff against SPEC.md in a fresh context
-                        scope it: "report gaps against the spec, not style preferences"
-```
-
-Every session starts near-empty and re-derives its state from three durable artifacts — the spec, the progress file, and git history — rather than from a summary of a summary ([Best practices](https://code.claude.com/docs/en/best-practices), [Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)). That's also your session handoff story: a colleague, or you on Monday, picks it up from the same three files.
-
-### Cheap wins, in order of payoff
-
-1. **Scope your requests.** "Fix the token-refresh bug in `src/auth/`" beats "improve the codebase" — vague requests trigger broad scanning, and unbounded "investigate this" is how you read hundreds of files by accident ([Manage costs effectively](https://code.claude.com/docs/en/costs), [Best practices](https://code.claude.com/docs/en/best-practices)).
-2. **Filter verbose tool output before it lands.** A `PreToolUse` hook that greps a test run for failures reduces "context from tens of thousands of tokens to hundreds" ([Manage costs effectively](https://code.claude.com/docs/en/costs)). Hooks are [Module 11](11_harness_engineering.md).
-3. **Prefer CLI tools to MCP servers** where you can — `gh`, `aws`, `gcloud` "don't add any per-tool listing" cost, and `/mcp` disables the servers you aren't using ([Manage costs effectively](https://code.claude.com/docs/en/costs)).
-4. **Trust agentic search for code.** On a 116-question LongMemEval subset, "grep generally yields higher accuracy than vector retrieval" — though "overall scores still depend strongly on which harness and tool-calling style is used" ([Is Grep All You Need?, arXiv:2605.15184](https://arxiv.org/abs/2605.15184)). You do not need to index your repo before your agent is useful.
-
-These principles transfer to other coding agents; the mechanics differ, and the specific commands, thresholds, and caps above are Claude Code's and were not verified against other tools.
-
-## Mermaid Diagram: The Same Task, With and Without Isolation
+To count as deep, an agent needs at least these:
 
 ```mermaid
-graph TD
-    A[Your prompt: investigate token refresh, then fix it] --> B{Where does the reading happen?}
-    B -->|Main window| C[Read 6 files: +6,100 tokens<br/>they stay in your window]
-    C --> D[Window fills, auto-compact runs<br/>tool outputs cleared, then summarized]
-    D --> E[Early instructions lost]
-    B -->|Subagent| F[Subagent's own window<br/>reads 6,100 tokens]
-    F --> G[Returns a 420-token summary]
-    G --> H[Your window stays small<br/>plan + CLAUDE.md still intact]
+mindmap
+  root((Deep agent))
+    Planning
+      A to-do list it keeps updating
+      The goal, recited back into context
+    Subagents
+      Delegation to a clean window
+      Only the conclusion comes back
+    Filesystem
+      Read, write, search
+      Memory that outlives the window
 ```
 
-## Tutorial Progress
+Philipp Schmid's [Agents 2.0: From Shallow Loops to Deep
+Agents](https://www.philschmid.de/agents-2.0-deep-agents) adds a fourth: a very long, very specific
+system prompt, sometimes thousands of tokens, telling the agent when to plan, when to spawn a
+subagent and how to organise its files. NVIDIA's [What Is a Deep
+Agent?](https://www.nvidia.com/en-us/glossary/deep-agents/) describes the same architecture in the
+same terms. You will also hear the whole idea called **Agents 2.0**, which is the same thing under a
+name that makes the break from the plain loop of
+[Module 6](../1_fundamentals/6_agents.md) sound as big as it is. [The Agent 2.0 Era: Mastering
+Long-Horizon Tasks with Deep
+Agents](https://medium.com/@amirkiarafiei/the-agent-2-0-era-mastering-long-horizon-tasks-with-deep-agents-part-3-745705e13b16)
+walks through it end to end.
+
+To build one, [deepagents](https://github.com/langchain-ai/deepagents) from LangChain is the
+straightforward place to start. It calls itself a batteries-included agent harness, and the
+batteries are exactly this list: planning, a pluggable filesystem, subagents with isolated windows,
+and summarisation of long threads. The [Deep Agents
+overview](https://docs.langchain.com/oss/python/deepagents/overview) is the documentation.
+
+The real benefit: a deep agent does most of the context engineering for you. It summarises, it
+offloads, it delegates, it plans, without you wiring any of it. Some techniques still need a human,
+and those are the advanced module's problem.
+
+And the thing to notice: most agents you already use are deep agents. Claude Code, Codex, Copilot
+and OpenCode all have planning, subagents and a filesystem.
+
+## Long-horizon tasks
+
+Put all of this together and something new appears: agents that work for hours without anyone
+watching them.
+
+You have probably seen someone get a whole website or a working game out of a single prompt. Those
+are **long-horizon tasks**, and they became possible because of the techniques in this module. An
+agent that can break a huge job into steps, plan them, write its own notes, offload what it does
+not need, spawn subagents for the expensive parts and summarise its own context can keep going long
+past the point where it would previously have lost the thread.
+
+How far along this is has an actual measurement, which is more useful than the marketing. METR's
+[Measuring AI Ability to Complete Long Software Tasks](https://arxiv.org/abs/2503.14499) asks a
+simple question: take the tasks a model finishes about half the time, and how long do those tasks
+take a human? That number is the model's **time horizon**. When the paper came out, Claude 3.7
+Sonnet sat at roughly 50 minutes of human work, and the trend line has been doubling every seven
+months or so since 2019. Extend it and month-long tasks arrive inside five years. METR keeps the
+[current numbers](https://metr.org/time-horizons/) for each frontier model on one chart, at both
+50% and 80% success, which is the honest way to read a claim that some agent "worked for six
+hours".
+
+Long-horizon is the keyword of 2026 and every company is chasing it, because it is the difference
+between an agent that helps you work and an agent that does the work. If you want the research
+landscape rather than the headline,
+[Awesome-Long-Horizon-Agents](https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents) is a
+maintained reading list that sorts the whole field into what you build around the model and what
+you change inside it.
+
+## Chain of thought as a context engineering tool
+
+One last thing, and it sits exactly between this module and the last one.
+
+Chain of thought from [Module 8](8_prompt_engineering.md) does more than improve one answer. It
+keeps a long session on the rails, because the model writing out its reasoning is the model
+repeating the goal to itself. Take the book that drifted out of academic tone. With reasoning
+turned on, the trace at that same point in the session looks something like:
+
+```text
+<thinking>
+The user wants section 8, which is about slang in American society. Before I
+start: their instruction from the beginning of this project was a clear academic
+tone throughout, and that has not been withdrawn. The subject is informal, but
+the treatment of it should not be. Academic register, slang only as quoted
+examples.
+</thinking>
+```
+
+Nothing was retrieved and nothing was added to the window. The model simply wrote the instruction
+back into its own recent context, where attention is cheapest.
+
+That is the same move the to-do list makes, and it is why the word recitation is worth keeping. Both
+techniques work by **saying the important thing again, close to where the model is about to write**.
+A to-do list recites the plan; a chain of thought recites the constraint. Attention goes to what is
+near and repeated, so anything you want the model to still care about at 800K tokens has to be
+repeated by something. Left alone, it fades. That is chain of thought working as a context
+engineering tool, and it is the cheapest one in the module: you do not build it, you turn it on.
+
+## Where this fits in the series
 
 ```mermaid
 graph LR
-    A[8: Prompt Engineering] --> B[9: Context Engineering]
-    B --> C[10: Landscape]
-    C --> D[11: Extending Agents]
-    D --> E[12: Harness Engineering]
-    E --> F[13: Security]
-    F --> G[14: Loop Engineering]
-    G --> H[15: Personal Agents]
+    A[8. Prompt Engineering] --> B[9. Context Engineering]
+    B --> C[10. Coding Agents]
+    C --> D[11. Harness Engineering]
+    D --> E[12. Loop Engineering]
+    E --> F[13. Security]
+    F --> G[14. Personal Agents]
     style A fill:#90EE90
     style B fill:#FFFF00
 ```
 
 ## Summary
 
-The context window is an attention budget that degrades as you spend it, not a bucket you fill — which is why bigger windows didn't make this discipline obsolete. You now have four levers: **compress** (compact or summarize, lossy and not free), **offload** (move it to disk and keep a reference), **isolate** (a subagent burns its own window and hands back roughly 1–2k tokens, but knows nothing you know), and **anchor** (a plan or progress file that survives compaction because it lives on disk). Each has a cost and a way it backfires, and knowing which is which is the whole skill. If you remember one sentence: **anything that must survive should be on disk, not in the conversation.**
+A context window is limited, and it degrades before it is full. More context makes the answer
+worse, which is the opposite of what everyone assumed in 2025, and the reason is that attention is
+a fixed budget divided across whatever is in the window.
 
-**Quick Check**: Your session is at 80% of the window. You're about to start work that is *unrelated* to everything so far — do you `/compact` or `/clear`, and why does the answer flip if the new work is a continuation of the same task? Then: you delegate a 6,100-token investigation to a subagent that returns 420 tokens. Name one thing you gained and one thing you gave up.
+Context engineering is deciding what earns a place in there. The techniques are all versions of the
+same move: get the tokens out of the window and keep a way back to them. Summarise the history,
+offload facts to files, leave documentation where the agent can go and read it, hand expensive work
+to a subagent with its own window, and keep a to-do list that recites the goal back into recent
+context. A deep agent is an agent that does most of this for you, which is why the coding agents
+you use every day already are one.
 
-## References & Further Reading
+Next: the coding agents themselves, and the six ways you extend one.
 
-### Start here
+**Quick Check**: why does a model get worse before its window is full, and what does a subagent
+actually save you?
 
-- [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) — Anthropic Engineering, 2025-09-29. The field's canonical definition, plus attention budget, compaction, note-taking, sub-agents, and just-in-time retrieval.
-- [Context Engineering for AI Agents: Lessons from Building Manus](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus) — Manus, 2025-07-18. The most practical production write-up: KV-cache economics, filesystem as context, `todo.md` recitation, and "keep the wrong stuff in."
-- [Context Engineering for Agents](https://www.langchain.com/blog/context-engineering-for-agents) — LangChain, 2025-07-02. The write / select / compress / isolate framework that organizes the whole field.
+## References
 
-### The evidence that long context degrades
-
-- [Context Rot: How Increasing Input Tokens Impacts LLM Performance](https://www.trychroma.com/research/context-rot) — Chroma, 2025-07-14. The experiments behind "long context degrades," across 18 models; replication toolkit at [chroma-core/context-rot](https://github.com/chroma-core/context-rot).
-- [Lost in the Middle: How Language Models Use Long Contexts](https://arxiv.org/abs/2307.03172) — Liu et al., arXiv:2307.03172 / TACL 2023. The original U-shaped position curve; still the mental model to carry.
-- [NoLiMa: Long-Context Evaluation Beyond Literal Matching](https://arxiv.org/abs/2502.05167) — Modarressi et al., arXiv:2502.05167, ICML 2025. Why near-perfect needle-in-a-haystack scores were misleading.
-- [Context Length Alone Hurts LLM Performance Despite Perfect Retrieval](https://arxiv.org/abs/2510.05381) — Du et al., arXiv:2510.05381, 2025-10-06. The paper to cite when someone says "just retrieve better."
-- [How Long Contexts Fail](https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html) — Drew Breunig, 2025-06-22. The poisoning / distraction / confusion / clash taxonomy, with the numbers behind each.
-- [Is Grep All You Need? How Agent Harnesses Reshape Agentic Search](https://arxiv.org/abs/2605.15184) — Sen et al., arXiv:2605.15184, 2026-05-14. Published evidence for agentic search over a pre-built vector index, with the harness caveat stated honestly.
-
-### Doing it in practice
-
-- [Explore the context window](https://code.claude.com/docs/en/context-window) — Claude Code Docs. An interactive walkthrough of what loads, what each file read costs, and exactly what survives compaction.
-- [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices) — Claude Code Docs. Explore→plan→code→commit, `/clear` discipline, subagents for investigation, and the common failure patterns.
-- [Manage costs effectively](https://code.claude.com/docs/en/costs) — Claude Code Docs. `/usage` attribution, the `PreToolUse` output-filtering hook, CLI tools over MCP, and cache lifetimes.
-- [Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) — Anthropic Engineering, 2025-11-26. How to hand work off between sessions with progress files, git, and one-feature-at-a-time discipline.
-- [Don't Build Multi-Agents](https://cognition.com/blog/dont-build-multi-agents) — Cognition, 2025-06-12. The essential counterweight before you reach for subagents.
-- [Context editing](https://platform.claude.com/docs/en/build-with-claude/context-editing) and [Memory tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool) — Claude Platform Docs. The two API primitives that turn this module into code.
-- [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) — Claude Platform Docs. The `tools → system → messages` prefix hierarchy, and where to put a `cache_control` breakpoint.
+- [Context Rot: How Increasing Input Tokens Impacts LLM Performance](https://www.trychroma.com/research/context-rot): the Chroma study behind all of this, 18 models, and the needle-and-distractor experiments
+- [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents): the fullest treatment, and the source of the compaction and subagent guidance
+- [The New Skill in AI is Not Prompting, It's Context Engineering](https://www.philschmid.de/context-engineering): the shortest good definition
+- [Context Engineering](https://www.langchain.com/blog/context-engineering-for-agents): the four verbs, write, select, compress and isolate
+- [Context Engineering for Agents](https://rlancemartin.github.io/2025/06/23/context_engineering/): the same four with the diagrams worth stealing
+- [Karpathy on context engineering](https://x.com/karpathy/status/1937902205765607626): the post that put the term in front of everyone
+- [Context Engineering for AI Agents: Lessons from Building Manus](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus): hard-won and specific, especially the filesystem and recitation lessons
+- [Stop stuffing your context window (here's why)](https://youtube.com/shorts/9P36wMntNSI): the short version, if you would rather watch
+- [DeepWiki](https://deepwiki.org/): a wiki per repository, so your agent reads about the code instead of reading the code
+- [Agents 2.0: From Shallow Loops to Deep Agents](https://www.philschmid.de/agents-2.0-deep-agents): what makes an agent deep, and why it is an architecture rather than a feature
+- [What Is a Deep Agent?](https://www.nvidia.com/en-us/glossary/deep-agents/): the same definition, stated plainly
+- [The Agent 2.0 Era: Mastering Long-Horizon Tasks with Deep Agents](https://medium.com/@amirkiarafiei/the-agent-2-0-era-mastering-long-horizon-tasks-with-deep-agents-part-3-745705e13b16): the same architecture walked through end to end
+- [deepagents](https://github.com/langchain-ai/deepagents): the library, and the [Deep Agents overview](https://docs.langchain.com/oss/python/deepagents/overview) that documents it
+- [Measuring AI Ability to Complete Long Software Tasks](https://arxiv.org/abs/2503.14499): where the time-horizon number comes from, and the doubling trend
+- [Task-completion time horizons](https://metr.org/time-horizons/): the current numbers per model, kept up to date
+- [Awesome-Long-Horizon-Agents](https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents): the research landscape, sorted, if you want to go deeper than this module
+- [Module 21: Advanced Context Engineering](../3_expert/21_advanced_context_engineering.md): the techniques this module left out
 
 **Previous Module:** [Module 8: Prompt Engineering](8_prompt_engineering.md)
 **Next Module:** [Module 10: Coding Agents: Extending Them](10_coding_agents.md)

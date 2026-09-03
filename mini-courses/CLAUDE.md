@@ -40,6 +40,11 @@ asked to be rewritten as "those features still work, but if someone breaks them 
 notice automatically". Where a term has to stay, define it in the same sentence. This is about the
 conversation, not only the modules, where the manifest already demands the same thing.
 
+**Stage explicit paths, never a directory.** `git add mini-courses/2_intermediate` sweeps in
+whatever the author has dropped there and not yet committed. That happened: nine in-progress images
+went into a commit and onto the remote because a directory was staged instead of the files that had
+actually changed. Name the files, and read `git status` before every commit.
+
 **Do not commit or push unless asked.**
 
 ## Writing rules
@@ -384,7 +389,7 @@ position, computed in exactly one place in the app. Reordering the course is mov
   app derives the sequence, the position and the listing from the config.
 
 **Adding a module is three things**: the two markdown files, and one line in the yaml. Nothing else
-moves, and `git status --short` will show exactly three paths.
+moves, and `git status --short` will show four paths: the config, the two new files, and the regenerated `src/app/lokum-modules.css`.
 
 **The config is validated, and the validator is worth reading before you fight it.**
 `src/lib/content/curriculum-file.ts` refuses seven things `zod` cannot express, each naming the

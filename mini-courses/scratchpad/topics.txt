@@ -21,28 +21,29 @@
 
 === Expert ===
 15) advanced_ui (agentic UI, generative UI, event streaming, AG-UI, MCP-Apps UI, A2UI, Copilotkit, Agent Client Protocol ACP)
-16) advanced_agent_architectures (THREAD, ReAct, Deep, CodeAct, RLM, Dynamic Workflows)
-17) advanced_tools(RAG vs Agentic Search, JSON vs CLI tools, Frotend Tools, Code Mode, Tool Chaining)
-18) advanced_memory(Long-term memory using Cognee and MemSearch and Hindsight, Agent Dreaming, Agent KnowledgeBase, Entire Provenance)
-19) advanced_multiagent (more architectures like proposer-verifierte, , A2A, Multi-agent coordination context delegation (handoff) vs subagent context delegation vs messaging pool)
-20) advanced_prompting (Reflextion and Self-critique, Tree of Thought, LLM Consul, caveman, ponytail)
-21) advanced_context_engineering (Context engineering for software development like Superpowers, SpecKit, GSD, AgentOS, Claude Native Plan Goals Ultrathink Playground)
-22) advanced_harness_engineering (harness profiles, system prompts, changing tool names)
-23) advanced_deployment (agent server, langchain agent protocol, the tech stack for UI REDIS WORKER etc) 
-24) advanced_training (self-supervised learning in pre-training, post-training, RL and RLHF, preference alignment, DPO, PPO, GRPO, knowledge distillation)
+16) advanced_tools(RAG vs Agentic Search, JSON vs CLI tools, Frotend Tools, Code Mode, Tool Chaining)
+17) advanced_memory(Long-term memory using Cognee and MemSearch and Hindsight, Agent Dreaming, Agent KnowledgeBase, Entire Provenance)
+18) advanced_multiagent (more architectures like proposer-verifierte, , A2A, Multi-agent coordination context delegation (handoff) vs subagent context delegation vs messaging pool, background agents and monitoring)
+19) advanced_prompting (Reflextion and Self-critique, Tree of Thought, LLM Consul, caveman, ponytail)
+20) advanced_context_engineering (Context engineering for software development like Superpowers, SpecKit, GSD, AgentOS, Claude Native Plan Goals Ultrathink Playground)
+21) advanced_harness_engineering (harness profiles, system prompts, changing tool names)
+22) advanced_coding_agents (claude code best practices: https://code.claude.com/docs/en/best-practices#use-cli-tools, rewind, resume, subagent-cli-skills, /fork, btw)
+23) advanced_agent_architectures (THREAD, ReAct, Deep, CodeAct, RLM, Dynamic Workflows)
+24) advanced_deployment (agent server, langchain agent protocol, the tech stack for UI REDIS WORKER etc) 
+25) advanced_training (self-supervised learning in pre-training, post-training, RL and RLHF, preference alignment, DPO, PPO, GRPO, knowledge distillation)
 
 
 === Ecosystem ===
-25) agent_fameworks (langchain, agno, crewAI, smolagents, mastra, voltagent, pydanticAI)
-26) inference_providers (OpenRouter, OpenAI, AI Studio, )
-27) inference_engines (Ollama, LMStudio, OpenWebUI, llama.cpp, TensorRT, llm-d, )
-28) ui_design (Stitch, Claude Design, Design Systems, DESIGN.md)
-29) observability (LangSmith, LangFuse, Trace Analyzer Agent)
-30) chosing_tech_stack
+26) agent_fameworks (langchain, agno, crewAI, smolagents, mastra, voltagent, pydanticAI)
+27) inference_providers (OpenRouter, OpenAI, AI Studio, )
+28) inference_engines (Ollama, LMStudio, OpenWebUI, llama.cpp, TensorRT, llm-d)
+29) ui_design (Stitch, Claude Design, Design Systems, DESIGN.md)
+30) observability (LangSmith, LangFuse, Trace Analyzer Agent)
+31) chosing_tech_stack
 
 
 === Protocols & Specs ===
-31) protocols_reference (all mentioned and also NLWeb, UCP, AP2) 
+32) protocols_reference (all mentioned and also NLWeb, UCP, AP2) 
 
 
 === Optional ===

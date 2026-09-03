@@ -320,6 +320,26 @@ check a rule that holds for any module; it may not record what a module currentl
 `tests/README.md` carries the rule, the four layers that replaced the old suite, and what to ask
 before adding a test. Read it before touching anything under `tests/`.
 
+**Comparing two builds needs `scripts/compare-export.sh`, never `diff -r`.** A raw recursive diff
+between two builds of *identical* source is never empty, for four reasons that say nothing about
+the site: Turbopack names chunk files per build; Next.js stamps a random 21-character build id into
+every page's payload; the React payload numbers its rows, so adding one prop to one client
+component renumbers rows on every page that uses it and moves ~1KB with the visible page unchanged;
+and `out/course-images/` mirrors whatever is on disk, including untracked images. The script
+compares what a reader can see (every page with `<script>` blocks stripped and the two random
+values normalised) plus the page inventory by name. This is the strongest check in the repo for a
+change that is *not supposed to* alter the site:
+
+```bash
+npm run build && cp -a out /tmp/out-base   # before
+# … make the change …
+npm run build && ./scripts/compare-export.sh /tmp/out-base out
+```
+
+To build a reference from another commit without disturbing the working tree, use a throwaway
+worktree and hard-link `node_modules` into it (`cp -al`, which costs no disk and takes under a
+second). Turbopack rejects a *symlinked* `node_modules` with "points out of the filesystem root".
+
 **If the suite fails, run `git status` before assuming it was you.** The author edits these files
 while you work. Twice this has been the real cause: a save that silently dropped a section, and a
 frontmatter fence broken into `## module: 3` with the closing `---` deleted, which took 31 test
@@ -328,6 +348,29 @@ structural breakage, leave every marker untouched, and say what you fixed.
 
 Also check: every module ends with a References section, no leftover `NEED` markers you meant to
 fill, and no placeholder cross-references like "module X".
+
+## In flight: the curriculum config
+
+**A migration is underway that changes how the course shape is written.** Until it lands, expect the
+corpus to look as this file describes; after it lands, these things change and this section must be
+replaced with the new rules:
+
+- `mini-courses/curriculum.yaml` becomes the one place the course shape lives: category titles and
+  blurbs, and an ordered list of module names per category. Position in that list is the module
+  number, computed and never written down.
+- Module filenames lose their numeric prefix (`context_engineering.md`), and frontmatter shrinks to
+  `summary` and `objectives`. `module`, `category`, `status`, `duration`, `title` and
+  `prerequisites` all move to the config, with prerequisites named rather than numbered.
+- **Prose names other modules by title, never by number.** A cross-reference is
+  `[Context Engineering](context_engineering.md)`.
+- Three GitHub-only duplications are deleted rather than maintained, because the app already strips
+  all three: the italic `*Category: … — Module 11 (4 of 7 …)*` dek, the `**Previous/Next Module:**`
+  footers, and the `## Modules` lists in the category READMEs.
+- The H1 becomes just the title (`# Context Engineering`).
+
+The full plan, including the seven commits and the two silent-failure paths that set their order,
+is at `~/.claude/plans/warm-wandering-pebble.md`. Two subagents are executing it: one implements,
+one reviews. Do not start content work that depends on the new shape until it is committed.
 
 ## Repo map
 

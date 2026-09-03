@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { categoryBySlug } from '@/lib/content/curriculum-file'
+import { LANG_DISPLAY } from '@/lib/content/derive'
 import { loadAllModules } from '@/lib/content/loader'
 import {
   categoryEyebrow,
@@ -54,8 +55,17 @@ describe('sheetRows — one row per sheet in the set (§4.8)', () => {
   })
 
   it('prints the language coverage the corpus actually has', () => {
-    expect(rows[0].lang).toBe('EN · TR')
-    expect(rows[12].lang).toBe('EN')
+    // Derived per row rather than written down. Which sheets have a Turkish
+    // sibling changes every time one is translated, and this used to assert
+    // that sheet 13 was English-only: it went red the day Security was
+    // translated, having found nothing. What has to hold is that the row
+    // prints the coverage the loader computed and does not invent a label.
+    const modules = loadAllModules()
+    expect(rows.length).toBe(modules.length)
+    for (const [i, row] of rows.entries()) {
+      expect(row.lang, modules[i].slug).toBe(LANG_DISPLAY[modules[i].lang])
+      expect(Object.values(LANG_DISPLAY)).toContain(row.lang)
+    }
   })
 
   it('carries the declared prerequisites, and an em dash where there are none', () => {

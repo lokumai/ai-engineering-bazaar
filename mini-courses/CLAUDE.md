@@ -302,6 +302,13 @@ grep -rl "my-new-figure" out/courses/    # is it actually on a page?
 That is how the missing-images defect was caught, and only after typecheck, 1948 tests and the
 build had all passed. Tests check what someone thought to check; the export is what ships.
 
+**Never write a test that states a fact about the content.** The suite used to pin word counts,
+module numbers, checklist totals and quoted prose, so ordinary edits turned the build red and
+taught nobody anything. It was cut from 1,948 tests to a few hundred in September 2026. A test may
+check a rule that holds for any module; it may not record what a module currently says.
+`tests/README.md` carries the rule, the four layers that replaced the old suite, and what to ask
+before adding a test. Read it before touching anything under `tests/`.
+
 **If the suite fails, run `git status` before assuming it was you.** The author edits these files
 while you work. Twice this has been the real cause: a save that silently dropped a section, and a
 frontmatter fence broken into `## module: 3` with the closing `---` deleted, which took 31 test

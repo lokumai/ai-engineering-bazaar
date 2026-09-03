@@ -1,0 +1,47 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`the whole pipeline, over one fake module > collects the same checklist 1`] = `
+[
+  {
+    "index": 0,
+    "text": "The first item, unticked.",
+  },
+  {
+    "index": 1,
+    "text": "The second item, ticked.",
+  },
+]
+`;
+
+exports[`the whole pipeline, over one fake module > collects the same table of contents 1`] = `
+[
+  {
+    "depth": 2,
+    "id": "a-numbered-section",
+    "mark": "I",
+    "text": "A numbered section",
+  },
+  {
+    "depth": 3,
+    "id": "a-a-subsection",
+    "text": "A. A subsection",
+  },
+  {
+    "depth": 2,
+    "id": "pictures-and-diagrams",
+    "mark": "II",
+    "text": "Pictures and diagrams",
+  },
+  {
+    "depth": 2,
+    "id": "code-quotes-and-lists",
+    "mark": "III",
+    "text": "Code, quotes and lists",
+  },
+  {
+    "depth": 2,
+    "id": "summary",
+    "text": "Summary",
+  },
+]
+`;

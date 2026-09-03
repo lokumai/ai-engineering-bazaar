@@ -55,6 +55,14 @@ test('with no role, the path draws no path and writes nothing (§12.13)', async 
   expect(await page.evaluate(() => Object.keys(localStorage))).toEqual([])
 })
 
+// The no-JavaScript test below uses the same first-paint probe as
+// theme.spec.ts, and it has the same race: it reads the class list in a
+// requestAnimationFrame with every script aborted. It fails the same way with
+// this file's other changes reverted, so it is the measurement, not the page.
+// Retries are file-wide because there is no describe block to scope them to; a
+// genuine break still fails all three attempts.
+test.describe.configure({ retries: 2 })
+
 test('a stored role draws its own path in frame one, with no JavaScript at all', async ({
   page,
 }) => {

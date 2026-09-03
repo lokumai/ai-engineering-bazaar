@@ -63,20 +63,16 @@ describe('extent', () => {
     }
   })
 
-  /**
-   * The 2,500-word threshold is gone with the A2 format (see `SheetFormat`), so
-   * this no longer gates a layout. The two bands are still a real fact about the
-   * corpus and worth pinning: the long-form modules are 3–6× the short ones, and
-   * the day that stops being true the reader's estimated durations are wrong too.
+  /*
+   * Removed: "keeps the long-form modules an order of magnitude above the short
+   * ones", which asserted max(extent of modules 1-7) < min(extent of the ready
+   * modules from 8 up. Its own comment called the two bands "a real fact about
+   * the corpus and worth pinning", which is the one thing a test here may not do
+   * (`tests/README.md`). It went red when Harness Engineering was written at
+   * 2,216 words against a Fundamentals module at 2,468: no defect, just a corpus
+   * that no longer sorts into two bands. It also keyed off module numbers, which
+   * `curriculum.yaml` now owns.
    */
-  it('keeps the long-form modules an order of magnitude above the short ones', () => {
-    const short = numbers((n) => n <= 7).map(measured)
-    const long = numbers(
-      (n) => n >= 8 && byNumber.get(n)!.frontmatter.status === 'ready',
-    ).map(measured)
-    expect(Math.min(...short)).toBeGreaterThan(0)
-    expect(Math.max(...short)).toBeLessThan(Math.min(...long))
-  })
 
   it('leaves every stub under 200 words', () => {
     for (const n of numbers((n) => n >= 16)) {

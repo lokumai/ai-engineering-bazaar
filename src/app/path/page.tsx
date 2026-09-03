@@ -70,6 +70,7 @@ function sheetRefs(): SheetRefs {
       title: row.title,
       path: row.path,
       number: row.number,
+      module: row.module,
       subsystem: row.subsystem.title,
       drawn: row.drawn,
     }
@@ -79,6 +80,14 @@ function sheetRefs(): SheetRefs {
 
 export default function PathPage() {
   const sheets = sheetRefs()
+
+  // §13.4.2's denominator, measured once here and handed down. `lib/path/` can
+  // never work this out for itself: `status: ready` lives in the markdown and
+  // reading it needs `node:fs`, which the two islands below cannot have (§12.2).
+  const drawnSlugs = Object.entries(sheets)
+    .filter(([, sheet]) => sheet.drawn)
+    .map(([slug]) => slug)
+  const drawnSet = new Set(drawnSlugs)
 
   // §11.25 — measured here rather than written into the sentence. The set has
   // been renumbered before and seventeen sheets are drafts today; a typed
@@ -149,13 +158,13 @@ export default function PathPage() {
                 </p>
 
                 {/* Channel B: the tally, and the marker on the next step. */}
-                <PathStanding role={role.id} />
+                <PathStanding role={role.id} drawnSlugs={drawnSlugs} />
 
                 {/* §13.4.2 — the denominator, stated where the reader can see
                     what it excludes. Derived, never typed (§11.25). */}
                 <p className="hl-mark mt-2 mb-0 text-ink-faint">
                   {plural(path.steps.length, 'step')} ·{' '}
-                  {plural(drawnCount(path), 'sheet')} drawn
+                  {plural(drawnCount(path, drawnSet), 'sheet')} drawn
                 </p>
               </div>
             </div>
@@ -185,7 +194,7 @@ export default function PathPage() {
             static page can give: it has never met this reader, and null is the
             record's own default (§13.3). The island follows the record once the
             store has answered. */}
-        <RolePicker role={null} />
+        <RolePicker role={null} drawnSlugs={drawnSlugs} />
 
         <p className="mt-3 mb-0 font-display text-meta leading-normal text-ink-muted">
           The whole set stays where it is:{' '}

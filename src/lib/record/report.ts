@@ -20,7 +20,7 @@
  * the browser would publish the private key to every visitor.
  *
  * So every claim is phrased as a statement about the **record**, never about the
- * person: "this record contains 7 of 32 sheets marked signed off" is always
+ * person: "this record contains 7 of 33 sheets marked signed off" is always
  * true, where "has completed" is not something this data supports. §12.12.1
  * lists the permitted forms and the forbidden ones, and `CLAIMS` below is that
  * list in code.
@@ -338,6 +338,13 @@ function buildModel(input: ReportInput): ReportModel {
 
   const categories = categoryStandings(rows)
 
+  // §13.4.2's denominator, off the facts this document was handed rather than
+  // off a number written down anywhere: `drawn` is `status: ready` in the
+  // corpus, and `facts.sheets` is where the corpus reached this module.
+  const drawnSlugs = new Set(
+    facts.sheets.filter((fact) => fact.drawn).map((fact) => fact.slug),
+  )
+
   return {
     // §12.12.1 — with no repositories this document holds only self-reported
     // button presses. Renaming it costs one conditional and stops it
@@ -350,7 +357,7 @@ function buildModel(input: ReportInput): ReportModel {
     markSvg: renderMark(data),
     cubeSvg: renderCube(categories),
     categories,
-    role: roleStandingOf(data),
+    role: roleStandingOf(data, drawnSlugs),
     rows,
     signed,
     unsigned: rows.filter((row) => row.signedOff === null),
@@ -431,7 +438,10 @@ function categoryStandings(rows: readonly LedgerRow[]): readonly CategoryStandin
  * the honest one — the document then says nothing about a role rather than
  * printing a string the reader never chose from.
  */
-function roleStandingOf(data: RecordData): RoleStanding | null {
+function roleStandingOf(
+  data: RecordData,
+  drawnSlugs: ReadonlySet<string>,
+): RoleStanding | null {
   const role = roleById(data.identity.role)
   if (role === undefined) return null
   const path = pathFor(role.id)
@@ -440,7 +450,10 @@ function roleStandingOf(data: RecordData): RoleStanding | null {
     standing:
       path === undefined
         ? null
-        : { signed: pathStanding(path, data).signed, drawn: drawnCount(path) },
+        : {
+          signed: pathStanding(path, data, drawnSlugs).signed,
+          drawn: drawnCount(path, drawnSlugs),
+        },
   }
 }
 

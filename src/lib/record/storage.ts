@@ -30,7 +30,7 @@ export interface RecordStorage {
  * SHARED with every sibling site on `lokumai.github.io` and from which an
  * exceeded write is rejected rather than evicted. The cap exists to stop an
  * imported file from consuming the shared quota, not to constrain real use: a
- * record of 32 sheets with three submittals each is a few kilobytes.
+ * record of the whole set with three submittals each is a few kilobytes.
  */
 export const SOFT_CAP_BYTES = 512 * 1024
 

@@ -9,7 +9,7 @@
  * `next/link` does not reload the document — so a reader who signs a sheet off
  * and keeps reading would carry the boot script's stale answer for the whole
  * session. MEASURED, in Chrome, before this module existed: sign off two sheets
- * in one session and the footer readout correctly says `02/32` while `<html>`
+ * in one session and the footer readout correctly says `02/33` while `<html>`
  * still says `hl-signed-13` alone. A mascot showing "intermediate started" to a
  * reader who has since started fundamentals is a page claiming a state that is
  * not true of them right now, which is the one thing §1 forbids outright.

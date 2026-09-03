@@ -16,7 +16,7 @@
  * (§12.2). It reaches `node:fs` through `report-facts.ts`, so like every other
  * module in this directory it can never be imported by a client component.
  *
- * **The facts are the real corpus.** `reportFacts()` supplies all 32 sheets,
+ * **The facts are the real corpus.** `reportFacts()` supplies every sheet,
  * their objectives, their questions and their checklist item text, so the
  * specimen is a genuine artefact of this curriculum rather than a mock-up of
  * one — and the slugs the sample data writes against are read out of the corpus
@@ -236,7 +236,7 @@ let cache: SpecimenDocument | null = null
 /**
  * Cached in a module-level `let` like every other derive in this directory: a
  * static export renders every page in one process, and building the document
- * costs a full string template over 32 sheets.
+ * costs a full string template over every sheet.
  *
  * The digest is computed with `node:crypto` rather than `crypto.subtle` so this
  * stays synchronous — the value is the same SHA-256 over the same canonical

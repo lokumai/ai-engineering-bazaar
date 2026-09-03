@@ -141,7 +141,7 @@
        Both used the same box and the same measure, so the rail moved the
        metadata and the prose with it: the text started at x=588 on a short sheet
        and x=456 on a long one, and jumped 132px sideways as a reader moved
-       between two sheets of the same curriculum. One component renders all 32
+       between two sheets of the same curriculum. One component renders every sheet
        and there is no per-module code anywhere, but the format was making the
        set look hand-designed page by page. */
     .hl-sheet[data-format="A0"] {
@@ -819,7 +819,7 @@
     color: var(--color-caution-ink);
   }
 
-  /* Sheet 1 has no previous and sheet 32 has no next. The cell still prints:
+  /* Sheet 1 has no previous and the last sheet has no next. The cell still prints:
      the symmetry is the information (§5.7). */
   .hl-prevnext-end {
     justify-content: center;

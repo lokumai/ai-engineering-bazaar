@@ -33,7 +33,7 @@ export interface RenderedMarkdown {
    * This is the authoritative hook §12.7 names: GFM only makes a task item when
    * `[ ]` opens the list item's first paragraph, and the hast tree is where that
    * decision has already been made. `checklistOf` reads the same fact off the
-   * raw lines because it has to answer for all 32 sheets synchronously, inside
+   * raw lines because it has to answer for every sheet synchronously, inside
    * `curriculumFacts()`; §12.7 requires the two to be cross-tested against each
    * other, and `tests/unit/content/render-record.test.ts` does that per sheet.
    */
@@ -62,8 +62,7 @@ export interface RenderOptions {
    * a table would otherwise be numbered into the body's sequence and collide
    * with a table the reader has already met. **MEASURED:** rendering the
    * summary with neither option shipped four unrewritten `.md` hrefs, on
-   * `intermediate/coding-agents`, `coding-agents-landscape` and
-   * `personal-agents`.
+   * `intermediate/coding-agents` and `personal-agents`.
    */
   excerptOf?: number
 }
@@ -287,7 +286,7 @@ function claimId(base: string, taken: Set<string>): string {
  * heading's accessible name and every h2 and h3 announces as
  * "Why We Need RAG Link to “Why We Need RAG”". Heading navigation is how a
  * screen-reader user skims an 18,400px sheet, and ~20 headings a sheet across
- * 15 drawn sheets is ~300 doubled names.
+ * the drawn sheets are ~300 doubled names.
  *
  * So the heading names itself from a span around its own title and the anchor
  * keeps its own label. `aria-hidden` on the anchor would be the shorter fix
@@ -732,7 +731,7 @@ function rehypeTaskListMarkers() {
  *
  * Looked up lazily, on the first course link in the document. A sheet with none
  * — and every render that is not a sheet at all — must not pay for
- * `loadAllModules()`, which reads 32 files and runs `git log` over each of them.
+ * `loadAllModules()`, which reads every module file and runs `git log` over each.
  *
  * **Markdown with no origin and an internal `.md` link in it throws.** A
  * relative path with no directory to resolve it against cannot be turned into a

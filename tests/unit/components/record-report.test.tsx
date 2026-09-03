@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { RECORD_SCOPE } from '@/lib/record/scope'
+import { curriculumFacts } from '@/lib/content/facts'
 import { describe, expect, it } from 'vitest'
 import {
   DocumentDownload,
@@ -301,8 +302,11 @@ describe('/report/ — the route (§12.12)', () => {
   it('is a server page that measures the real corpus for both consumers', () => {
     expect(markup).toContain('Record of work')
     expect(markup).toContain('data-hl-report')
-    // 32 sheets, counted, never typed: the lead states the size of the set.
-    expect(words(markup)).toMatch(/ledger of all 32 sheets/)
+    // The lead states the size of the set. Counted here too, never typed:
+    // the corpus is reordered and added to constantly, and a number written
+    // into this file would turn an ordinary edit into a failure.
+    const sheets = curriculumFacts().sheets.length
+    expect(words(markup)).toMatch(new RegExp(`ledger of all ${sheets} sheets`))
   })
 
   it('names no authority and claims none (§12.12.1)', () => {
@@ -477,7 +481,7 @@ describe('the specimen (§12.13)', () => {
   it('describes the file it is actually offering', () => {
     const text = words(markup)
     expect(text).toMatch(/[0-9a-f]{64}/)
-    expect(text).toMatch(/07 \/ 32/)
+    expect(text).toMatch(new RegExp(`07 / ${curriculumFacts().sheets.length}`))
     expect(text).toMatch(/2026-08-31T17:00:00\.000Z/)
   })
 

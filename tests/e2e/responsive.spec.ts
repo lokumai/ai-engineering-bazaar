@@ -13,15 +13,18 @@ import { SHORT, A4, CATEGORY_PATHS, INDEX_SHEET, sheetByModule } from './sheets'
  * at all, which is why the widest tables on the site are checked from both
  * ends: the document must not move, *and* the container around them must.
  *
- * Module 10 and module 13 are here by measurement, not by taste. They carry
- * the widest tables in the corpus, and a table is the thing that pushes a
- * document sideways at 390px.
+ * The two sheets below are here by measurement, not by taste, and the
+ * measurement was retaken after the Intermediate rewrite: it used to name
+ * modules 10 and 13, whose machine-written drafts carried the widest tables and
+ * the longest prose. Rewriting them moved both records. A table is still the
+ * thing that pushes a document sideways at 390px, so the widest one is what
+ * this file has to load.
  */
 
-/** Module 10 — the widest table on the site. */
-const WIDEST = sheetByModule(10)
-/** Module 13 — the longest sheet, and the most figures. */
-const LONGEST = sheetByModule(13)
+/** Module 12, Loop Engineering: the widest table in the corpus, at five columns. */
+const WIDEST = sheetByModule(12)
+/** Module 9, Context Engineering: the longest sheet, and the most figures. */
+const LONGEST = sheetByModule(9)
 
 const PAGES = [
   // §15.1 — `/` is the home screen and the flat manifest is `/sheets/`. Both

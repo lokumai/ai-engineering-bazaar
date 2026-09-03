@@ -146,7 +146,7 @@ export function applyFilter(
 /**
  * §12.13 class 3 — NO MATCH, the one empty state a filter can produce. The
  * denominator is the set the chips were handed, so a subsystem's table says
- * `0 of 8` and the index says `0 of 32`; SC 4.1.3's own examples are "5 results
+ * `0 of 8` and the index says `0 of 33`; SC 4.1.3's own examples are "5 results
  * returned" / "No results returned", so the count is announced, not implied.
  */
 export function noMatchReadout(total: number): string {

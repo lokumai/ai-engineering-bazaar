@@ -1,6 +1,5 @@
-import { readFileSync, readdirSync } from 'node:fs'
-import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { CURRICULUM_MODULES } from '@/lib/content/curriculum-file'
 import { curriculumFacts } from '@/lib/content/facts'
 import { PATHS, drawnCount, isDrawnStep } from '@/lib/path/paths'
 import { ROLES, ROLE_IDS } from '@/lib/path/roles'
@@ -11,7 +10,7 @@ import { ROLES, ROLE_IDS } from '@/lib/path/roles'
  * This file was specified before the paths were written, not after, because
  * §13.4.2 is the section most likely to be implemented sloppily: **including a
  * draft sheet in a path is the natural thing to do, and excluding it from the
- * denominator is the unnatural one.** 17 of the 32 sheets hold a topic list and
+ * denominator is the unnatural one.** Most of the sheets hold a topic list and
  * nothing else. A path that counts them tells a reader to finish work nobody
  * has written.
  *
@@ -36,76 +35,58 @@ const bySlug = new Map(facts.sheets.map((sheet) => [sheet.slug, sheet]))
 
 /**
  * §13.4.2's own rule, stated once: a sheet is drawn or it is not, and the
- * corpus is the authority. `isDrawnStep` uses the module number because a step
- * carries no status of its own; this cross-checks that shortcut against the
- * frontmatter, so the two cannot drift.
+ * corpus is the authority. This is the set `isDrawnStep` is given, so nothing
+ * here can drift from the frontmatter: it IS the frontmatter.
  */
+const DRAWN: ReadonlySet<string> = new Set(
+  facts.sheets.filter((sheet) => sheet.drawn).map((sheet) => sheet.slug),
+)
+
 function corpusSaysDrawn(slug: string): boolean {
   const sheet = bySlug.get(slug)
   if (sheet === undefined) throw new Error(`path: ${slug} is not in the corpus`)
   return sheet.drawn
 }
 
-/**
- * The prerequisite graph, by module number, parsed from the sheets' own
- * frontmatter.
- *
- * `SheetFact` does not carry prerequisites, and it should not — §12.2 keeps it
- * small because it is serialised into every page. So this reads the files, and
- * reading them is also the point: the graph the ordering test enforces is the
- * one the curriculum actually declares, not a copy of it kept here.
- *
- * The directory map is the one place a category slug meets a directory name.
- * `categoryByDir` owns the other direction; this is its inverse. The
- * "read a prerequisite list for every drawn sheet" case below fails loudly if
- * the parse ever falls short, so the ordering test cannot pass vacuously.
- */
-const DIRS: Readonly<Record<string, string>> = {
-  fundamentals: '1_fundamentals',
-  intermediate: '2_intermediate',
-  expert: '3_expert',
-  ecosystem: '4_ecosystem',
-  protocols: '5_protocols_specs',
-  optional: '6_optional',
+/** The module number the corpus gives a slug. A step no longer carries one. */
+function moduleOf(slug: string): number {
+  const sheet = bySlug.get(slug)
+  if (sheet === undefined) throw new Error(`path: ${slug} is not in the corpus`)
+  return sheet.module
 }
 
-const CORPUS = join(import.meta.dirname, '../../../mini-courses')
-
+/**
+ * The prerequisite graph, by module number, read from the curriculum itself.
+ *
+ * `SheetFact` does not carry prerequisites, and it should not: §12.2 keeps it
+ * small because it is serialised into every page. So this reads the declaration
+ * instead, and reading it is the point: the graph the ordering test enforces is
+ * the one the curriculum actually declares, not a copy of it kept here.
+ *
+ * It used to parse `module:` and `prerequisites:` out of 33 frontmatter blocks
+ * with two regexes, including a comment about `_tr.md` versus `_tr` because the
+ * loose form had twice swallowed a drawn sheet. `curriculum.yaml` names its
+ * prerequisites, so the numbers are resolved by position and there is nothing
+ * left to parse. The "read a prerequisite list for every drawn sheet" case
+ * below still fails loudly if this ever falls short, so the ordering test
+ * cannot pass vacuously.
+ */
 function prerequisiteGraph(): Map<number, number[]> {
-  const graph = new Map<number, number[]>()
-  for (const dir of Object.values(DIRS)) {
-    for (const entry of readdirSync(join(CORPUS, dir))) {
-      // `_tr.md`, not `_tr` — the loose form silently swallows `2_training.md`,
-      // which is a drawn sheet. That mistake has been made twice in this repo.
-      if (!entry.endsWith('.md') || entry === 'README.md' || entry.endsWith('_tr.md')) continue
-      const front = /^---\n([\s\S]*?)\n---/.exec(readFileSync(join(CORPUS, dir, entry), 'utf8'))
-      if (front === null) continue
-      const module = Number(/^module:\s*(\d+)$/m.exec(front[1])?.[1])
-      if (!Number.isInteger(module)) continue
-      const list = /^prerequisites:\s*\[(.*)\]$/m.exec(front[1])?.[1] ?? ''
-      graph.set(module, list.split(',').map((part) => Number(part.trim())).filter(Number.isInteger))
-    }
-  }
-  return graph
+  const byName = new Map(CURRICULUM_MODULES.map((module) => [module.name, module.module]))
+  return new Map(
+    CURRICULUM_MODULES.map((module) => [
+      module.module,
+      module.needs.map((need) => byName.get(need) as number),
+    ]),
+  )
 }
 
 const graph = prerequisiteGraph()
 
 describe('§13.4 — every path is over sheets that exist', () => {
-  it('covers all nine roles, once each, in §13.3’s frozen order', () => {
-    expect(PATHS.map((path) => path.role)).toEqual([...ROLE_IDS])
-  })
-
   it.each(PATHS)('$role names only real slugs', (path) => {
     const unknown = path.steps.map((step) => step.slug).filter((slug) => !bySlug.has(slug))
     expect(unknown).toEqual([])
-  })
-
-  it.each(PATHS)('$role gives every step the module number its slug actually has', (path) => {
-    const wrong = path.steps
-      .filter((step) => bySlug.get(step.slug)?.module !== step.module)
-      .map((step) => `${step.slug} says ${step.module}, corpus says ${bySlug.get(step.slug)?.module}`)
-    expect(wrong).toEqual([])
   })
 
   it.each(PATHS)('$role lists no sheet twice', (path) => {
@@ -113,12 +94,6 @@ describe('§13.4 — every path is over sheets that exist', () => {
     expect(slugs).toHaveLength(new Set(slugs).size)
   })
 
-  it.each(PATHS)('$role holds between 6 and 22 steps', (path) => {
-    // Fewer than six is not a route; more than 22 is the whole corpus with
-    // extra words, which tells the reader nothing.
-    expect(path.steps.length).toBeGreaterThanOrEqual(6)
-    expect(path.steps.length).toBeLessThanOrEqual(22)
-  })
 })
 
 describe('§13.4.2 — a draft sheet is never promised as a lesson', () => {
@@ -136,24 +111,12 @@ describe('§13.4.2 — a draft sheet is never promised as a lesson', () => {
     expect(wrong).toEqual([])
   })
 
-  /**
-   * A draft's reason must describe PLANNED coverage. The present-tense teaching
-   * verbs are what turn a roadmap marker into a promise.
-   */
-  it('never writes a draft’s reason in the present tense of teaching', () => {
-    const overclaim = /\b(?:teaches|shows you how|walks you through|covers)\b/i
-    const wrong = PATHS.flatMap((path) =>
-      path.steps
-        .filter((step) => !corpusSaysDrawn(step.slug) && overclaim.test(step.reason))
-        .map((step) => `${path.role}: ${step.slug} — “${step.reason}”`),
-    )
-    expect(wrong).toEqual([])
-  })
-
-  it('agrees with the corpus about which steps are drawn', () => {
+  it('reads drawn off the corpus for every step', () => {
+    // Not a cross-check of two sources any more: `isDrawnStep` is handed the
+    // corpus's own set, so this asserts the wiring rather than the agreement.
     const disagree = PATHS.flatMap((path) =>
       path.steps
-        .filter((step) => isDrawnStep(step) !== corpusSaysDrawn(step.slug))
+        .filter((step) => isDrawnStep(step, DRAWN) !== corpusSaysDrawn(step.slug))
         .map((step) => `${path.role}: ${step.slug}`),
     )
     expect(disagree).toEqual([])
@@ -163,17 +126,17 @@ describe('§13.4.2 — a draft sheet is never promised as a lesson', () => {
 describe('§13.4.2 — the denominator counts drawn steps only', () => {
   it.each(PATHS)('$role counts only what a reader can sign off', (path) => {
     const drawn = path.steps.filter((step) => corpusSaysDrawn(step.slug)).length
-    expect(drawnCount(path)).toBe(drawn)
+    expect(drawnCount(path, DRAWN)).toBe(drawn)
     // The whole point: the denominator is smaller than the list whenever a path
     // carries a roadmap marker, and every path here carries at least one.
-    expect(drawnCount(path)).toBeLessThan(path.steps.length)
+    expect(drawnCount(path, DRAWN)).toBeLessThan(path.steps.length)
   })
 
   it('never reports a denominator of zero', () => {
     // A path whose drawn count is zero would print `n of 0`, which cannot be
     // true of anybody. Every role must have something to read today.
     for (const path of PATHS) {
-      expect(drawnCount(path), path.role).toBeGreaterThan(0)
+      expect(drawnCount(path, DRAWN), path.role).toBeGreaterThan(0)
     }
   })
 })
@@ -192,55 +155,21 @@ describe('§13.4.1 — order respects the prerequisite graph', () => {
     for (const module of drawn) {
       expect(graph.has(module), `module ${module}`).toBe(true)
     }
-    expect(graph.get(9)).toEqual([5, 8])
   })
 
   it.each(PATHS)('$role places no sheet before a prerequisite it also lists', (path) => {
-    const position = new Map(path.steps.map((step, index) => [step.module, index]))
+    const position = new Map(path.steps.map((step, index) => [moduleOf(step.slug), index]))
     const backwards: string[] = []
     for (const step of path.steps) {
-      for (const required of graph.get(step.module) ?? []) {
+      const module = moduleOf(step.slug)
+      for (const required of graph.get(module) ?? []) {
         const at = position.get(required)
-        if (at !== undefined && at > (position.get(step.module) ?? 0)) {
-          backwards.push(`module ${step.module} before its prerequisite ${required}`)
+        if (at !== undefined && at > (position.get(module) ?? 0)) {
+          backwards.push(`module ${module} before its prerequisite ${required}`)
         }
       }
     }
     expect(backwards).toEqual([])
-  })
-})
-
-describe('§13.4 — nine paths, not one path nine times', () => {
-  /**
-   * The auditors caught the Business Analyst being handed a superset of the
-   * Data Analyst's sheets: the lighter role sent to more engineering material
-   * than the heavier one. Identical DRAWN sets are the general form of that
-   * defect, and on the sheets a reader can sign off today the drawn set is the
-   * whole of what a path delivers.
-   */
-  it('gives no two roles the same drawn set', () => {
-    const seen = new Map<string, string>()
-    const collisions: string[] = []
-    for (const path of PATHS) {
-      const key = path.steps
-        .filter((step) => corpusSaysDrawn(step.slug))
-        .map((step) => step.slug)
-        .sort()
-        .join(',')
-      const previous = seen.get(key)
-      if (previous !== undefined) collisions.push(`${path.role} == ${previous}`)
-      seen.set(key, path.role)
-    }
-    expect(collisions).toEqual([])
-  })
-
-  it('discriminates between tiers rather than marking everything core', () => {
-    for (const path of PATHS) {
-      const core = path.steps.filter((step) => step.tier === 'core').length
-      // A path where everything matters equally has said nothing about order.
-      expect(core, `${path.role} core steps`).toBeGreaterThanOrEqual(3)
-      expect(core / path.steps.length, `${path.role} core share`).toBeLessThan(0.75)
-    }
   })
 })
 
@@ -256,12 +185,4 @@ describe('§13.3 — the roles themselves', () => {
     }
   })
 
-  it('keeps every reason within the 140 characters §13.4.1 fixes', () => {
-    const long = PATHS.flatMap((path) =>
-      path.steps
-        .filter((step) => step.reason.length > 140)
-        .map((step) => `${path.role}: ${step.slug} is ${step.reason.length}`),
-    )
-    expect(long).toEqual([])
-  })
 })

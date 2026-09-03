@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import matter from 'gray-matter'
 import { describe, expect, it } from 'vitest'
-import { CATEGORIES } from '@/lib/content/categories'
+import { CATEGORIES } from '@/lib/content/curriculum-file'
 import {
   LANG_DISPLAY,
   TRANSLATION_RATIO,
@@ -32,6 +32,16 @@ function body(moduleNumber: number): string {
   return byNumber.get(moduleNumber)!.body
 }
 
+/**
+ * Every module the config calls a draft, by number.
+ *
+ * These three cases used to say `n >= 16`, which was true right up until the
+ * Ecosystem sheets were written and modules 25 to 29 stopped being stubs. The
+ * number was never the fact being tested; `status` was.
+ */
+const draftNumbers = () =>
+  modules.filter((m) => m.frontmatter.status === 'draft').map((m) => m.frontmatter.module)
+
 /** The extent that module's sheet actually prints. */
 function measured(moduleNumber: number): number {
   return byNumber.get(moduleNumber)!.extent
@@ -53,10 +63,6 @@ describe('extent', () => {
     expect(extent('one two  three\nfour')).toBe(4)
   })
 
-  it('counts module 1 at its measured extent', () => {
-    expect(measured(1)).toBe(1114)
-  })
-
   it('leaves out the h1 and the dek, which the sheet never renders', () => {
     // §5.5: words "after stripping frontmatter, the dek, and the deleted
     // progress rail". Every file in the corpus opens with an h1, so the
@@ -67,42 +73,23 @@ describe('extent', () => {
     }
   })
 
-  it('drops the h1 alone where there is no dek, and both where there is', () => {
-    // Modules 1-7 run the h1 straight into the lead paragraph; 8-32 carry
-    // `*Category: … *` between the two.
-    expect(extent(body(1)) - measured(1)).toBe(extent('# Module 1: Large Language Model (LLM) Fundamentals'))
-    expect(extent(body(13)) - measured(13))
-      .toBe(extent('# Module 13: Security') + extent('*Category: Intermediate — Module 13 (6 of 8 in this category)*'))
-  })
-
-  /**
-   * The 2,500-word threshold is gone with the A2 format (see `SheetFormat`), so
-   * this no longer gates a layout. The two bands are still a real fact about the
-   * corpus and worth pinning: the long-form modules are 3–6× the short ones, and
-   * the day that stops being true the reader's estimated durations are wrong too.
+  /*
+   * Removed: "keeps the long-form modules an order of magnitude above the short
+   * ones", which asserted max(extent of modules 1-7) < min(extent of the ready
+   * modules from 8 up. Its own comment called the two bands "a real fact about
+   * the corpus and worth pinning", which is the one thing a test here may not do
+   * (`tests/README.md`). It went red when Harness Engineering was written at
+   * 2,216 words against a Fundamentals module at 2,468: no defect, just a corpus
+   * that no longer sorts into two bands. It also keyed off module numbers, which
+   * `curriculum.yaml` now owns.
    */
-  it('keeps the long-form modules an order of magnitude above the short ones', () => {
-    const short = numbers((n) => n <= 7).map(measured)
-    const long = numbers((n) => n >= 8 && n <= 15).map(measured)
-    expect(Math.min(...short)).toBeGreaterThan(0)
-    expect(Math.max(...short)).toBeLessThan(Math.min(...long))
-  })
 
   it('leaves every stub under 200 words', () => {
-    for (const n of numbers((n) => n >= 16)) {
+    for (const n of draftNumbers()) {
       expect(measured(n), `module ${n}`).toBeLessThan(200)
     }
   })
 
-  it('reproduces the measured band ranges', () => {
-    const range = (lo: number, hi: number) => {
-      const words = numbers((n) => n >= lo && n <= hi).map(measured)
-      return [Math.min(...words), Math.max(...words)]
-    }
-    expect(range(1, 7)).toEqual([615, 1620])
-    expect(range(8, 15)).toEqual([3817, 4868])
-    expect(range(16, 32)).toEqual([38, 58])
-  })
 })
 
 describe('sheetFormat', () => {
@@ -122,12 +109,6 @@ describe('sheetFormat', () => {
   it('gives a draft module the A4 detail sheet whatever its extent', () => {
     expect(sheetFormat({ status: 'draft' }, 12)).toBe('A4')
     expect(sheetFormat({ status: 'draft' }, 9999)).toBe('A4')
-  })
-
-  it('sizes the drawing set at 15 drawn sheets and 17 drafts', () => {
-    const tally = { A0: 0, A4: 0 }
-    for (const m of modules) tally[m.sheetFormat] += 1
-    expect(tally).toEqual({ A0: 15, A4: 17 })
   })
 
   it('follows status and nothing else', () => {
@@ -152,14 +133,16 @@ describe('countDiagrams', () => {
     expect(countDiagrams(raw)).toBe(0)
   })
 
-  it('finds 21 real figures across the English corpus', () => {
-    const total = modules.reduce((sum, m) => sum + countDiagrams(m.body), 0)
-    expect(total).toBe(21)
-  })
-
-  it('does not absorb module 6\'s four images into its one diagram', () => {
-    expect(countDiagrams(body(6))).toBe(1)
-    expect(countImages(body(6))).toBe(4)
+  it('counts images and diagrams separately, never summing them', () => {
+    // The counts themselves are facts about today's prose, so they are derived.
+    // What is asserted is the behaviour the bug had wrong: adding an image must
+    // not move the diagram count. Module 6 is the sheet that carries several
+    // images alongside its diagrams, so it is the one worth measuring on.
+    const raw = body(6)
+    const diagrams = countDiagrams(raw)
+    expect(countImages(raw)).toBeGreaterThan(0)
+    expect(diagrams).toBeGreaterThan(0)
+    expect(countDiagrams(`${raw}\n![an extra image](extra.png)\n`)).toBe(diagrams)
   })
 })
 
@@ -172,10 +155,6 @@ describe('countImages', () => {
     expect(countImages('[not an image](a.png)\n')).toBe(0)
   })
 
-  it('finds the corpus 8 images', () => {
-    const total = modules.reduce((sum, m) => sum + countImages(m.body), 0)
-    expect(total).toBe(8)
-  })
 })
 
 describe('countTables', () => {
@@ -188,10 +167,6 @@ describe('countTables', () => {
     expect(countTables('```\n| a | b |\n|---|---|\n```\n')).toBe(0)
   })
 
-  it('finds tables in exactly 11 modules', () => {
-    const withTables = modules.filter((m) => countTables(m.body) > 0)
-    expect(withTables).toHaveLength(11)
-  })
 })
 
 describe('countFigures', () => {
@@ -203,14 +178,14 @@ describe('countFigures', () => {
   })
 
   it('counts no figures on any draft stub', () => {
-    for (const n of numbers((n) => n >= 16)) {
+    for (const n of draftNumbers()) {
       expect(countFigures(body(n)), `module ${n}`).toBe(0)
     }
   })
 
   it('excludes the rail even when handed an unstripped file', () => {
     const raw = fs.readFileSync(
-      path.join(CONTENT_ROOT, '1_fundamentals', '1_llms.md'),
+      path.join(CONTENT_ROOT, '1_fundamentals', 'llms.md'),
       'utf8',
     )
     expect(countFigures(raw)).toBe(countFigures(body(1)))
@@ -228,7 +203,7 @@ describe('externalLinks / countSources', () => {
   })
 
   it('ignores relative and anchor links', () => {
-    expect(externalLinks('[a](../1_fundamentals/1_llms.md) [b](#section)')).toEqual([])
+    expect(externalLinks('[a](../1_fundamentals/llms.md) [b](#section)')).toEqual([])
   })
 
   it('counts distinct links only', () => {
@@ -244,8 +219,8 @@ describe('externalLinks / countSources', () => {
   })
 
   it('does not count a URL inside an inline code span', () => {
-    // 10_coding_agents_landscape.md:59 writes the installer host in
-    // backticks; `unfenced()` would still have counted it, which is why this
+    // The dropped landscape sheet wrote an installer host in backticks;
+    // `unfenced()` would still have counted it, which is why this
     // reads anchors off the parsed tree rather than lines of markdown.
     expect(externalLinks('the host is `https://hermes-agent.example/install.sh`')).toEqual([])
   })
@@ -255,25 +230,15 @@ describe('externalLinks / countSources', () => {
     expect(externalLinks(md)).toEqual(['https://a.example', 'https://c.example'])
   })
 
-  it('reproduces the 397 measured link occurrences, 379 of them in modules 8-15', () => {
-    const occurrences = (ns: number[]) =>
-      ns.reduce((sum, n) => sum + externalLinks(body(n)).length, 0)
-    expect(occurrences(numbers(() => true))).toBe(397)
-    expect(occurrences(numbers((n) => n >= 8 && n <= 15))).toBe(379)
-    expect(occurrences(numbers((n) => n >= 16))).toBe(0)
-  })
-
-  it('reproduces 209 distinct sources across the corpus', () => {
-    const total = modules.reduce((sum, m) => sum + countSources(m.body), 0)
-    expect(total).toBe(209)
-  })
-
-  it('counts only the openable links on the three sheets that quoted URLs', () => {
-    // The three modules where the old regex and the rendered page disagreed.
-    expect(countSources(body(10))).toBe(30)
-    expect(countSources(body(11))).toBe(15)
-    expect(countSources(body(15))).toBe(16)
-  })
+  /*
+   * Removed: "counts only the openable links on the sheets that quoted URLs",
+   * which asserted `countSources(body(10)) === 15` and `body(14) === 16`. Two
+   * link counts on two live modules, so rewriting either one turned the build
+   * red without saying anything about `countSources`. The property it meant to
+   * protect, that a URL in backticks or a fence is not openable while an
+   * anchor and a bare URL are, is already covered by the two cases directly
+   * above from inline fixtures, which is where a claim like that belongs.
+   */
 })
 
 describe('distinctExternalLinks', () => {
@@ -283,7 +248,7 @@ describe('distinctExternalLinks', () => {
   })
 
   it('is empty where the body cites nothing openable', () => {
-    expect(distinctExternalLinks('[a](../1_fundamentals/1_llms.md) [b](#section)')).toEqual([])
+    expect(distinctExternalLinks('[a](../1_fundamentals/llms.md) [b](#section)')).toEqual([])
   })
 
   it('sees exactly what `externalLinks` sees, and nothing a scraper would add', () => {
@@ -309,29 +274,6 @@ describe('distinctExternalLinks', () => {
     for (const m of modules) {
       expect(distinctExternalLinks(m.body).length, m.slug).toBe(countSources(m.body))
       expect(distinctExternalLinks(m.body).length, m.slug).toBe(m.sources)
-    }
-  })
-
-  it('reproduces the 209 distinct sources, and the three sheets that quoted URLs', () => {
-    const total = modules.reduce((sum, m) => sum + distinctExternalLinks(m.body).length, 0)
-    expect(total).toBe(209)
-    expect(distinctExternalLinks(body(10))).toHaveLength(30)
-    expect(distinctExternalLinks(body(11))).toHaveLength(15)
-    expect(distinctExternalLinks(body(15))).toHaveLength(16)
-  })
-
-  it('lists 397 occurrences but 209 sources across the corpus', () => {
-    // The gap is the point: 188 repeat citations. §12.8 records that a UI
-    // listing occurrences beside the header count looks wrong on any sheet
-    // that cites a URL twice.
-    const occurrences = modules.reduce((sum, m) => sum + externalLinks(m.body).length, 0)
-    const distinct = modules.reduce((sum, m) => sum + distinctExternalLinks(m.body).length, 0)
-    expect({ occurrences, distinct }).toEqual({ occurrences: 397, distinct: 209 })
-  })
-
-  it('cites nothing at all on any of the seventeen undrawn sheets', () => {
-    for (const n of numbers((n) => n >= 16)) {
-      expect(distinctExternalLinks(body(n)), `module ${n}`).toEqual([])
     }
   })
 
@@ -368,15 +310,15 @@ describe('langFromExtents', () => {
 })
 
 describe('langCoverage', () => {
-  it('marks modules 1-7 bilingual — their Turkish is a real translation', () => {
-    for (const n of numbers((n) => n <= 7)) {
-      expect(langCoverage(byNumber.get(n)!.slug), `module ${n}`).toBe('EN·TR')
-    }
-  })
-
-  it('marks modules 8-15 English-only — their Turkish is a 50-90 word placeholder', () => {
-    for (const n of numbers((n) => n >= 8 && n <= 15)) {
-      expect(langCoverage(byNumber.get(n)!.slug), `module ${n}`).toBe('EN')
+  it('badges a drawn sheet bilingual exactly when its Turkish is a real translation', () => {
+    // Which sheets are translated moves every time one of them is, so the set
+    // is not listed here. The rule is: a real translation earns the badge and a
+    // placeholder does not, and the extents are measured off the files in this
+    // file rather than taken from the module.
+    for (const n of numbers((n) => byNumber.get(n)!.frontmatter.status === 'ready')) {
+      const sheet = byNumber.get(n)!
+      expect(langCoverage(sheet.filePath, sheet.frontmatter.status), `module ${n}`)
+        .toBe(langFromExtents(extent(body(n)), trExtent(n)))
     }
   })
 
@@ -390,45 +332,35 @@ describe('langCoverage', () => {
       // states the outcome as EN on sheets 8-32, and §11.27 reserves the badge
       // for a real translation. A schedule of parts is not bilingual: there is
       // no drawing yet, in either language.
-      for (const n of numbers((n) => n >= 16)) {
-        expect(byNumber.get(n)!.frontmatter.status, `module ${n}`).toBe('draft')
+      for (const n of draftNumbers()) {
         expect(langFromExtents(extent(body(n)), trExtent(n)), `module ${n}`).toBe('EN·TR')
-        expect(langCoverage(byNumber.get(n)!.slug), `module ${n}`).toBe('EN')
+        expect(
+          langCoverage(byNumber.get(n)!.filePath, 'draft'),
+          `module ${n}`,
+        ).toBe('EN')
       }
     },
   )
 
-  it('leaves exactly the seven sheets §7.6 names bilingual', () => {
-    expect(modules.filter((m) => m.lang === 'EN·TR').map((m) => m.frontmatter.module))
-      .toEqual([1, 2, 3, 4, 5, 6, 7])
+  it('leaves every draft sheet English-only, however its Turkish measures', () => {
+    // The general form of the 16-32 case above: a schedule of parts is not a
+    // drawing in either language, so no draft sheet may carry the badge.
+    for (const m of modules.filter((sheet) => sheet.lang === 'EN·TR')) {
+      expect(m.frontmatter.status, m.slug).toBe('ready')
+    }
   })
 
-  it('returns EN for a slug no module claims', () => {
-    expect(langCoverage('fundamentals/nope')).toBe('EN')
+  it('returns EN for a file that is not there', () => {
+    // A file with no words has no ratio, and refusing the badge is the honest
+    // answer. It takes a status now, so this can no longer be reached with a
+    // slug nothing claims.
+    expect(langCoverage('/nowhere/nope.md', 'ready')).toBe('EN')
   })
 
   it('agrees with the value the loader bakes into every module', () => {
-    for (const m of modules) expect(m.lang, m.slug).toBe(langCoverage(m.slug))
-  })
-})
-
-describe('the corpus every derived number is measured from', () => {
-  it('still holds 32 English modules and 32 Turkish siblings', () => {
-    let en = 0
-    let tr = 0
-    for (const category of CATEGORIES) {
-      for (const f of fs.readdirSync(path.join(CONTENT_ROOT, category.dir))) {
-        if (!/^\d+_.+\.md$/.test(f)) continue
-        if (f.endsWith('_tr.md')) tr += 1
-        else en += 1
-      }
+    for (const m of modules) {
+      expect(m.lang, m.slug).toBe(langCoverage(m.filePath, m.frontmatter.status))
     }
-    expect({ en, tr }).toEqual({ en: 32, tr: 32 })
-  })
-
-  it('still splits 15 ready / 17 draft', () => {
-    const ready = modules.filter((m) => m.frontmatter.status === 'ready')
-    expect(ready).toHaveLength(15)
-    expect(modules).toHaveLength(32)
   })
 })
+

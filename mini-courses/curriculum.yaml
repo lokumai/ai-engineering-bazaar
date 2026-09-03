@@ -1,0 +1,250 @@
+# The shape of the course, in one file.
+#
+# Category order and module order are FILE ORDER, and no number appears here at
+# all. A module's number is its position, computed in exactly one place in the
+# repository, so reordering the course is moving a line and nothing else. The
+# number used to be the module's identity in seven places at once, two reorders
+# each needed a script written for the occasion, and one of them shipped a link
+# whose text said "Module 26" while it pointed at file 25.
+#
+# `name`     the file stem, and the source of the URL slug: `harness_engineering`
+#            is `2_intermediate/harness_engineering.md` and
+#            `/courses/intermediate/harness-engineering/`.
+# `title`    required. It is not derivable from the name: `rag` is
+#            "RAG & Embeddings".
+# `status`   `ready` or `draft`, and it defaults to `draft`, so a module nobody
+#            has written cannot claim to be finished by leaving a field out.
+# `minutes`  the estimate a sheet prints. Defaults to 0. A `ready` module needs
+#            one above zero.
+# `needs`    prerequisites, BY NAME, so `needs: [prompt_engineering]` and the
+#            link `[Prompt Engineering](prompt_engineering.md)` share one string
+#            that a grep can find. Every name must sit earlier in this file.
+# `notes`    what the module is meant to cover. Read by nothing that ships: it
+#            is the author's own planning note, carried across verbatim from
+#            `scratchpad/topics.txt`, where it sat beside a number that had
+#            drifted out of step with the corpus.
+#
+# One shape, two notations: flow style where a module fits on a line, block
+# style where there is more to say. `src/lib/content/curriculum-file.ts`
+# validates this file and refuses seven things zod cannot express on its own,
+# including the one that matters most: the `.md` files on disk in a category and
+# the names listed for it must be the same set, both directions.
+
+categories:
+  - slug: fundamentals
+    title: Fundamentals
+    status: ready
+    blurb: LLMs, training, retrieval, tools, memory, and the agent loop. Start here.
+    modules:
+      - { name: llms, title: LLM Fundamentals, status: ready, minutes: 25 }
+      - name: training
+        title: Training LLMs
+        status: ready
+        minutes: 25
+        needs: [llms]
+        notes: rename fine-tuning markdowns to this
+      - name: rag
+        title: RAG & Embeddings
+        status: ready
+        minutes: 30
+        needs: [llms, training]
+      - name: tools
+        title: Tool Calling
+        status: ready
+        minutes: 25
+        needs: [llms]
+      - name: memory
+        title: Memory
+        status: ready
+        minutes: 20
+        needs: [llms, rag]
+        notes: short-term memory which is LLM context, LLM are stateless
+      - name: agents
+        title: AI Agents
+        status: ready
+        minutes: 25
+        needs: [tools, memory]
+      - name: multi_agent
+        title: Multi-Agent Systems
+        status: ready
+        minutes: 25
+        needs: [agents]
+
+  - slug: intermediate
+    title: Intermediate
+    status: ready
+    blurb: Prompting, context, coding agents, harnesses, security, and loops.
+    modules:
+      - name: prompt_engineering
+        title: Prompt Engineering
+        status: ready
+        minutes: 30
+        needs: [llms]
+        notes: will include Chain-of-Though, In-context Learning, etc
+      - name: context_engineering
+        title: Context Engineering
+        status: ready
+        minutes: 30
+        needs: [memory, prompt_engineering]
+        notes: >-
+          context summarization, persistent memory or context offloading or
+          long-term memory, Subagents, TODO or Explicit Planning, Deep Agents
+      - name: coding_agents
+        title: "Coding Agents: Extending Them"
+        status: ready
+        minutes: 30
+        needs: [agents]
+        notes: Slash Commands, Skills, AGENTS.md, Subagents, hooks, MCP, Plugins
+      - name: harness_engineering
+        title: Harness Engineering
+        status: ready
+        minutes: 30
+        needs: [coding_agents]
+        notes: includes guardrails, hooks, sandboxes, etc
+      - name: loop_engineering
+        title: Loop Engineering
+        status: ready
+        minutes: 30
+        needs: [harness_engineering]
+        notes: Agent Teams, Dynamic Workflows, Rubric Evals
+      - name: security
+        title: Security
+        status: ready
+        minutes: 30
+        needs: [harness_engineering]
+        notes: >-
+          Jailbreaking, White-box, Black-box, Guardrails, Llama Guard,
+          NemotronGuard etc.
+      - name: personal_agents
+        title: Personal Agents
+        status: ready
+        minutes: 30
+        needs: [loop_engineering, security]
+        notes: Opeclaw, Hermes Agent, Moltbook
+
+  - slug: expert
+    title: Expert
+    status: draft
+    blurb: Advanced architectures, memory, prompting, and deployment.
+    modules:
+      - name: advanced_ui
+        title: Advanced UI
+        status: draft
+        notes: >-
+          agentic UI, generative UI, event streaming, AG-UI, MCP-Apps UI, A2UI,
+          Copilotkit, Agent Client Protocol ACP
+      - name: advanced_architectures
+        title: Advanced Architectures
+        status: draft
+        notes: THREAD, ReAct, Deep, CodeAct, RLM, Dynamic Workflows
+      - name: advanced_tools
+        title: Advanced Tools
+        status: draft
+        notes: >-
+          RAG vs Agentic Search, JSON vs CLI tools, Frotend Tools, Code Mode,
+          Tool Chaining
+      - name: advanced_memory
+        title: Advanced Memory
+        status: draft
+        notes: >-
+          Long-term memory using Cognee and MemSearch and Hindsight, Agent
+          Dreaming, Agent KnowledgeBase, Entire Provenance
+      - name: advanced_multiagent
+        title: Advanced Multi-Agent
+        status: draft
+        notes: >-
+          more architectures like proposer-verifierte, , A2A, Multi-agent
+          coordination context delegation (handoff) vs subagent context
+          delegation vs messaging pool, background agents and monitoring
+      - name: advanced_prompting
+        title: Advanced Prompting
+        status: draft
+        notes: >-
+          Reflextion and Self-critique, Tree of Thought, LLM Consul, caveman,
+          ponytail
+      - name: advanced_context_engineering
+        title: Advanced Context Engineering
+        status: draft
+        notes: >-
+          Context engineering for software development like Superpowers,
+          SpecKit, GSD, AgentOS, Claude Native Plan Goals Ultrathink Playground
+      - name: advanced_harness_engineering
+        title: Advanced Harness Engineering
+        status: draft
+        notes: >-
+          harness profiles, system prompts, changing tool names, self evolving
+          harnessess, context and harness embedded in llm anthtropic article:
+          https://claude.com/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models
+      - name: advanced_deployment
+        title: Advanced Deployment
+        status: draft
+        notes: >-
+          agent server, langchain agent protocol, the tech stack for UI REDIS
+          WORKER etc
+      - name: advanced_training
+        title: Advanced Training
+        status: draft
+        notes: >-
+          self-supervised learning in pre-training, post-training, RL and RLHF,
+          preference alignment, DPO, PPO, GRPO, knowledge distillation
+
+  - slug: ecosystem
+    title: Ecosystem
+    status: draft
+    blurb: Frameworks, inference providers and engines, UI, and observability.
+    modules:
+      - name: agent_frameworks
+        title: Agent Frameworks
+        status: ready
+        minutes: 20
+        notes: >-
+          langchain, agno, crewAI, smolagents, mastra, voltagent, pydanticAI,
+          n8n, lovable bolt etc
+      - name: inference_providers
+        title: Inference Providers
+        status: ready
+        minutes: 20
+        needs: [agent_frameworks]
+        notes: OpenRouter, OpenAI, AI Studio,
+      - name: inference_engines
+        title: Inference Engines
+        status: ready
+        minutes: 20
+        needs: [inference_providers]
+        notes: Ollama, LMStudio, OpenWebUI, llama.cpp, TensorRT, llm-d
+      - name: ui_design
+        title: UI Design
+        status: ready
+        minutes: 20
+        notes: Stitch, Claude Design, Design Systems, DESIGN.md
+      - name: observability
+        title: Observability
+        status: ready
+        minutes: 20
+        needs: [agent_frameworks]
+        notes: LangSmith, LangFuse, Latitude, Trace Analyzer Agent
+      - { name: choosing_tech_stack, title: Choosing a Tech Stack, status: draft }
+
+  - slug: protocols
+    title: Protocols & Specs
+    status: draft
+    blurb: One reference for every protocol and spec the series touches.
+    modules:
+      - name: protocols_reference
+        title: Protocols Reference
+        status: draft
+        notes: all mentioned and also NLWeb, UCP, AP2
+
+  - slug: optional
+    title: Optional
+    status: draft
+    blurb: Human-in-the-loop and runtime topics that round out the series.
+    modules:
+      - name: human_in_the_loop
+        title: Human in the Loop
+        status: draft
+        notes: Interrupt, Steering
+      - name: runtime
+        title: Runtime
+        status: draft
+        notes: Checkpoints, Fault Tolerance, Time Travel

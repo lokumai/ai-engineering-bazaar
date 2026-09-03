@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import Link from 'next/link'
 import { RolePicker } from '@/components/path/RolePicker'
 import { MARKS, type MarkId } from '@/lib/identity/mark'
@@ -78,14 +79,25 @@ export function offeredMark(role: Role): MarkId | null {
   return offered === undefined ? null : offered.id
 }
 
-export function RolePanel() {
+export interface RolePanelProps {
+  /**
+   * The slugs the corpus says are drawn, serialised down from `/profile/`.
+   * `status: ready` lives in the markdown, only `lib/content/` can read it, and
+   * this panel is a client island (§12.2).
+   */
+  drawnSlugs: readonly string[]
+}
+
+export function RolePanel({ drawnSlugs }: RolePanelProps) {
   const record = useRecord()
 
   const role = roleById(record.identity.role)
 
   return (
     <div className="grid gap-4">
-      {role === undefined ? <RoleEmpty /> : <RoleStanding role={role} />}
+      {role === undefined
+        ? <RoleEmpty drawnSlugs={drawnSlugs} />
+        : <RoleStanding role={role} drawnSlugs={drawnSlugs} />}
     </div>
   )
 }
@@ -94,7 +106,7 @@ export function RolePanel() {
  * §12.13's fifth empty state, added by §13.14 — record present, role absent.
  * It offers the picker and draws no path, because there is no path to draw.
  */
-function RoleEmpty() {
+function RoleEmpty({ drawnSlugs }: { drawnSlugs: readonly string[] }) {
   return (
     <>
       <p className="hl-mark m-0 text-ink-muted">{NO_ROLE}</p>
@@ -106,7 +118,7 @@ function RoleEmpty() {
         without touching a single sign-off.
       </p>
 
-      <RolePicker />
+      <RolePicker drawnSlugs={drawnSlugs} />
     </>
   )
 }
@@ -114,7 +126,7 @@ function RoleEmpty() {
 /**
  * §13.4.2, §13.8 — the path's standing, in sheets.
  *
- * The denominator counts DRAWN steps only. 17 of the 32 sheets are drafts
+ * The denominator counts DRAWN steps only. Most of the sheets are drafts
  * holding a topic list and nothing else, and a draft sheet carries no sign-off
  * control at all (§12.4.1) — so counting one as something left to do would ask
  * the reader to finish a sheet nobody has written. The draft steps a path
@@ -124,9 +136,16 @@ function RoleEmpty() {
  * The tally is framed to-go, and there is no percentage here or anywhere
  * (§11.35): counting in sheets is what lets both framings stay true at once.
  */
-function RoleStanding({ role }: { role: Role }) {
+function RoleStanding({
+  role,
+  drawnSlugs,
+}: {
+  role: Role
+  drawnSlugs: readonly string[]
+}) {
   const record = useRecord()
   const hydrated = useHydrated()
+  const drawnSet = useMemo(() => new Set(drawnSlugs), [drawnSlugs])
 
   // The offer's label, resolved through `offeredMark` so the id is checked
   // against the mark set once, in the one place that does it (§11.25).
@@ -134,8 +153,8 @@ function RoleStanding({ role }: { role: Role }) {
   const offered = MARKS.find((mark) => mark.id === suggested)
 
   const path = pathFor(role.id)
-  const drawn = path === undefined ? null : drawnCount(path)
-  const standing = path === undefined ? null : pathStanding(path, record)
+  const drawn = path === undefined ? null : drawnCount(path, drawnSet)
+  const standing = path === undefined ? null : pathStanding(path, record, drawnSet)
   const drafts = path === undefined || drawn === null ? null : path.steps.length - drawn
 
   return (
@@ -202,7 +221,7 @@ function RoleStanding({ role }: { role: Role }) {
           again brings this path back exactly as it stands now.
         </p>
 
-        <RolePicker />
+        <RolePicker drawnSlugs={drawnSlugs} />
       </details>
     </>
   )

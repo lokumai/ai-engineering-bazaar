@@ -1,20 +1,20 @@
 import { href } from '@/lib/url'
-import { categoryByDir } from './categories'
-import { loadAllModules } from './loader'
-import { fullSlug, moduleSlugFromFilename } from './slugs'
+import { categoryByDir } from './curriculum-file'
+import { type CourseModule, loadAllModules } from './loader'
 
 /**
  * The corpus cross-references itself in the only notation a folder of markdown
- * files has: a relative path to another file. `[Module 13](13_security.md)`,
- * `[Module 17](../3_expert/17_advanced_architectures.md)`. **MEASURED:** 163
- * such links exist across the 32 English sheets and their Turkish siblings, in
- * exactly two shapes — `NAME.md` inside the same category directory and
- * `../DIR/NAME.md` into another one — and not one of them carries an anchor.
+ * files has: a relative path to another file. `[Security](security.md)`,
+ * `[Advanced Architectures](../3_expert/advanced_architectures.md)`.
+ * **MEASURED:** 265 such links exist across the English sheets and their
+ * Turkish siblings, in exactly two shapes — `NAME.md` inside the same category
+ * directory and `../DIR/NAME.md` into another one — and not one of them carries
+ * an anchor.
  *
- * A file path is not a route. The sheet at `13_security.md` is served at
+ * A file path is not a route. The sheet at `security.md` is served at
  * `/courses/intermediate/security/`, so the browser resolved the href against
- * the *page* URL and asked for `/courses/intermediate/13_security.md`, which is
- * a 404. **MEASURED** in the static export before this module existed: 39 dead
+ * the *page* URL and asked for `/courses/intermediate/security.md`, which is a
+ * 404. **MEASURED** in the static export before this module existed: 39 dead
  * links across 8 pages, every one of them in `intermediate`, because that is
  * the category whose prose cross-references its neighbours in the body rather
  * than only in the navigation furniture `strip.ts` removes.
@@ -29,22 +29,29 @@ import { fullSlug, moduleSlugFromFilename } from './slugs'
 /** A scheme, a protocol-relative host, or a bare fragment: never our route. */
 const OFF_SITE = /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i
 
-/** The module files the loader reads: a numeric prefix, then the name. */
-const MODULE_FILE = /^(\d+_.+?)(_tr)?\.md$/
+/**
+ * A module file: the name the yaml lists, plus an optional Turkish suffix.
+ *
+ * There is no numeric prefix to allow for any more, and allowing one would let
+ * a link keep naming a file that no longer exists.
+ */
+const MODULE_FILE = /^([a-z0-9_]+?)(_tr)?\.md$/
 
 /**
- * Every route the app actually serves, as `category/module-slug`.
+ * The modules the app actually serves, indexed by `dir/name`.
  *
  * The loader is the authority on this, not a directory listing and not a
  * pattern: a file is a module route exactly when `loadAllModules` loaded it,
  * and asking anything else would let the two drift. Memoised because a rehype
- * plugin asks per link and `loadAllModules` builds 32 records.
+ * plugin asks per link and `loadAllModules` builds 33 records.
  */
-let routes: ReadonlySet<string> | null = null
+let byDirAndName: ReadonlyMap<string, CourseModule> | null = null
 
-function moduleRoutes(): ReadonlySet<string> {
-  routes ??= new Set(loadAllModules().map((module) => module.slug))
-  return routes
+function moduleIndex(): ReadonlyMap<string, CourseModule> {
+  byDirAndName ??= new Map(
+    loadAllModules().map((module) => [`${module.category.dir}/${module.name}`, module]),
+  )
+  return byDirAndName
 }
 
 /**
@@ -57,9 +64,7 @@ function moduleRoutes(): ReadonlySet<string> {
  * keeps a caller from passing a sheet number and a directory that disagree.
  */
 export function sheetSource(sheet: number): string | null {
-  const module = loadAllModules().find((m) => m.frontmatter.module === sheet)
-  if (!module) return null
-  return `${module.category.dir}/${module.filePath.split('/').pop() ?? ''}`
+  return loadAllModules().find((m) => m.frontmatter.module === sheet)?.source ?? null
 }
 
 /** True for an href written as a path to a markdown file in the corpus. */
@@ -98,15 +103,15 @@ function walk(dir: string, target: string): string[] {
  * left exactly as the author wrote them.
  *
  * `source` is the file the href was written in, relative to `CONTENT_ROOT`
- * (`2_intermediate/12_harness_engineering.md`). It supplies the directory the
+ * (`2_intermediate/harness_engineering.md`). It supplies the directory the
  * link resolves against and it is what the error message names, and taking one
  * path rather than a directory plus a name means the two can never disagree.
  *
  * **An internal `.md` link the corpus cannot answer for throws.** Until this
  * module, `mkdocs build --strict` was the only thing in the repository that
  * failed on a dead internal link — breaking one on purpose produced
- * `WARNING - Doc file '1_fundamentals/1_llms.md' contains a link
- * '9_bu_dosya_yok.md', but the target ... is not found among documentation
+ * `WARNING - Doc file '1_fundamentals/llms.md' contains a link
+ * 'bu_dosya_yok.md', but the target ... is not found among documentation
  * files. Aborted with 1 warnings in strict mode!` MkDocs is deleted, so that
  * gate exists here or it exists nowhere. A throw is the stronger form of it:
  * a warning needs a flag to become fatal, and a flag can be turned off.
@@ -116,10 +121,8 @@ export function courseLinkFor(rawHref: string, source: string): string | null {
 
   const target = targetOf(rawHref)
   const fragment = rawHref.slice(target.length)
-  const dir = source.includes('/') ? source.slice(0, source.lastIndexOf('/')) : ''
-  const segments = walk(dir, target)
 
-  const route = routeFor(segments)
+  const route = routeOf(rawHref, source)
   if (route === null) {
     throw new Error(
       `${source} links to "${rawHref}", which is not a module in mini-courses/. ` +
@@ -136,35 +139,62 @@ export function courseLinkFor(rawHref: string, source: string): string | null {
   return `${href(route)}${fragment}`
 }
 
-/** The app-relative route for a resolved corpus path, or null if there is none. */
-function routeFor(segments: string[]): string | null {
+/** The directory part of a source path, relative to `CONTENT_ROOT`. */
+function dirOf(source: string): string {
+  return source.includes('/') ? source.slice(0, source.lastIndexOf('/')) : ''
+}
+
+/**
+ * The module an internal corpus link names, or null when it names none.
+ *
+ * **One resolver, and it used to be two.** The render path scraped the
+ * directory and the filename out of the href, while the graph path scraped the
+ * NUMBER out of the filename with a second regex of its own (`edges.ts`'s
+ * `MODULE_FILENAME`). Two resolvers over one corpus is two chances to disagree,
+ * and the number they were reading is exactly what the corpus pass takes out of
+ * the filename. So both callers ask this instead, and neither reads a filename.
+ *
+ * A link this cannot answer for returns null. The two callers then differ, which
+ * is the difference that was always intended: `courseLinkFor` throws, because a
+ * dead cross-reference on a rendered page is a defect, and the graph shrugs,
+ * because an edge that cannot be drawn is simply not an edge.
+ */
+export function corpusTargetOf(rawHref: string, source: string): CourseModule | null {
+  if (!isCourseLink(rawHref)) return null
+
+  const segments = walk(dirOf(source), targetOf(rawHref))
+  if (segments.length !== 2) return null
+  const [dir, filename] = segments
+
+  if (categoryByDir(dir) === undefined) return null
+  const parts = MODULE_FILE.exec(filename)
+  if (parts === null) return null
+
+  // A `_tr.md` target resolves to its English sibling, deliberately. The app
+  // serves no Turkish route at all — the loader reads one file per module, so
+  // no such page exists to link to — and a sheet reports its own language
+  // coverage in its title block (§7.6 `LANG`), which is where a reader learns
+  // whether a Turkish translation exists. The two alternatives are both worse:
+  // pointing at a route that is not built is a 404, and dropping the link takes
+  // a cross-reference off the sheet that the author put there.
+  return moduleIndex().get(`${dir}/${parts[1]}`) ?? null
+}
+
+/**
+ * The app-relative route an internal corpus link means, or null if there is
+ * none. `corpusTargetOf` does all the work; the one thing it does not answer
+ * for is the corpus' own table of contents.
+ */
+function routeOf(rawHref: string, source: string): string | null {
   // `mini-courses/index.md` — the corpus root file, reached as `../index.md`
   // from a category README. It has no module route because it is not a module:
   // it is the corpus' own table of contents, and the page that does that job
   // here is `/courses/`. Landing the reader on the course index is what the
   // link meant. `strip.ts` and `intro.ts` between them already remove the
   // links that use it, so this branch is a guarantee rather than a live path.
+  const segments = walk(dirOf(source), targetOf(rawHref))
   if (segments.length === 1 && segments[0] === 'index.md') return '/courses/'
 
-  if (segments.length !== 2) return null
-  const [dir, filename] = segments
-
-  const category = categoryByDir(dir)
-  if (!category) return null
-
-  const parts = MODULE_FILE.exec(filename)
-  if (!parts) return null
-
-  // A `_tr.md` target resolves to its English sibling's route, deliberately.
-  // The app serves no Turkish route at all — `loader.ts` skips every `_tr.md`
-  // file, so no such page exists to link to — and a sheet reports its own
-  // language coverage in its title block (§7.6 `LANG`), which is where a reader
-  // learns whether a Turkish translation exists. The two alternatives are both
-  // worse: pointing at a route that is not built is a 404, and dropping the
-  // link takes a cross-reference off the sheet that the author put there.
-  const moduleSlug = moduleSlugFromFilename(`${parts[1]}.md`)
-  const slug = fullSlug(category.slug, moduleSlug)
-  if (!moduleRoutes().has(slug)) return null
-
-  return `/courses/${slug}/`
+  const module = corpusTargetOf(rawHref, source)
+  return module === null ? null : `/courses/${module.slug}/`
 }

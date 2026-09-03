@@ -68,13 +68,17 @@ export interface PathStanding {
  * why it is derived here instead of being marked per step: two "take this next"
  * marks on one page would be two claims that cannot both be true (§1).
  */
-export function pathStanding(path: LearningPath, record: RecordData): PathStanding {
+export function pathStanding(
+  path: LearningPath,
+  record: RecordData,
+  drawnSlugs: ReadonlySet<string>,
+): PathStanding {
   let drawn = 0
   let signed = 0
   let nextSlug: string | null = null
 
   for (const step of path.steps) {
-    if (!isDrawnStep(step)) continue
+    if (!isDrawnStep(step, drawnSlugs)) continue
     drawn += 1
     if (isStepSigned(step, record)) {
       signed += 1
@@ -94,13 +98,17 @@ export type StepState = 'signed' | 'ready' | 'draft'
  *
  * `'draft'` wins over everything. A draft sheet has no sign-off control, so it
  * can be neither signed nor ready, and a stored sign-off against one is a state
- * the site could not have produced — an imported file, or a slug that pointed
- * at a drawn sheet before a renumber. Reading such a record as `'signed'` would
- * print `SIGNED OFF` beside a sheet holding a topic list and nothing else,
- * which is the exact claim §1 forbids.
+ * the site could not have produced — an imported file, or a slug that named a
+ * drawn sheet before the sheet was renamed. Reading such a record as `'signed'`
+ * would print `SIGNED OFF` beside a sheet holding a topic list and nothing
+ * else, which is the exact claim §1 forbids.
  */
-export function stepState(step: PathStep, record: RecordData): StepState {
-  if (!isDrawnStep(step)) return 'draft'
+export function stepState(
+  step: PathStep,
+  record: RecordData,
+  drawnSlugs: ReadonlySet<string>,
+): StepState {
+  if (!isDrawnStep(step, drawnSlugs)) return 'draft'
   return isStepSigned(step, record) ? 'signed' : 'ready'
 }
 

@@ -31,7 +31,8 @@ import { RolePanel } from '@/components/record/RolePanel'
 import { StampShelf } from '@/components/record/StampShelf'
 import { Uptime } from '@/components/record/Uptime'
 import { PageShell } from '@/components/shell/PageShell'
-import { CATEGORIES, type CategorySlug } from '@/lib/content/categories'
+import type { CategorySlug } from '@/lib/content/categories'
+import { CATEGORIES } from '@/lib/content/curriculum-file'
 import { curriculumFacts, type CurriculumFacts } from '@/lib/content/facts'
 
 export const metadata: Metadata = {
@@ -177,6 +178,9 @@ type RegisterRowId = (typeof REGISTER_ROWS)[number]['id']
  */
 export default function ProfilePage() {
   const facts = curriculumFacts()
+  // §13.4.2's denominator. `RolePanel` is a client island and `status: ready`
+  // lives in the markdown, so the measurement is taken here (§12.2).
+  const drawnSlugs = facts.sheets.filter((sheet) => sheet.drawn).map((sheet) => sheet.slug)
   const legend = faceLegendRows(facts)
 
   /**
@@ -227,7 +231,7 @@ export default function ProfilePage() {
 
     /* §13.3 — a role is a statement the reader makes, never a guess this site
        makes, and changing it touches no sign-off. */
-    role: { reading: <RoleReading />, body: <RolePanel /> },
+    role: { reading: <RoleReading />, body: <RolePanel drawnSlugs={drawnSlugs} /> },
 
     /* §14.5 — read only in this revision, and the row says which account's
        memberships it is reporting. The provider is here rather than around the

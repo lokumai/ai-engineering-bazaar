@@ -24,7 +24,7 @@
 export type SheetFormat = 'A0' | 'A4'
 
 export interface Sheet {
-  /** Position in the set, 1..32. The prev/next chain walks this order. */
+  /** Position in the set, 1..33. The prev/next chain walks this order. */
   module: number
   path: string
   title: string
@@ -60,29 +60,30 @@ export const SHEETS: readonly Sheet[] = [
   sheet(7, '/courses/fundamentals/multi-agent/', 'Multi-Agent Systems', 'A0'),
   sheet(8, '/courses/intermediate/prompt-engineering/', 'Prompt Engineering', 'A0'),
   sheet(9, '/courses/intermediate/context-engineering/', 'Context Engineering', 'A0'),
-  sheet(10, '/courses/intermediate/coding-agents-landscape/', 'Coding Agents: The Landscape', 'A0'),
-  sheet(11, '/courses/intermediate/coding-agents/', 'Coding Agents: Extending Them', 'A0'),
-  sheet(12, '/courses/intermediate/harness-engineering/', 'Harness Engineering', 'A0'),
+  sheet(10, '/courses/intermediate/coding-agents/', 'Coding Agents: Extending Them', 'A0'),
+  sheet(11, '/courses/intermediate/harness-engineering/', 'Harness Engineering', 'A0'),
+  sheet(12, '/courses/intermediate/loop-engineering/', 'Loop Engineering', 'A0'),
   sheet(13, '/courses/intermediate/security/', 'Security', 'A0'),
-  sheet(14, '/courses/intermediate/loop-engineering/', 'Loop Engineering', 'A0'),
-  sheet(15, '/courses/intermediate/personal-agents/', 'Personal Agents', 'A0'),
-  sheet(16, '/courses/expert/advanced-ui/', 'Advanced UI', 'A4'),
-  sheet(17, '/courses/expert/advanced-architectures/', 'Advanced Architectures', 'A4'),
-  sheet(18, '/courses/expert/advanced-tools/', 'Advanced Tools', 'A4'),
-  sheet(19, '/courses/expert/advanced-memory/', 'Advanced Memory', 'A4'),
-  sheet(20, '/courses/expert/advanced-multiagent/', 'Advanced Multi-Agent', 'A4'),
-  sheet(21, '/courses/expert/advanced-prompting/', 'Advanced Prompting', 'A4'),
-  sheet(22, '/courses/expert/advanced-context-engineering/', 'Advanced Context Engineering', 'A4'),
-  sheet(23, '/courses/expert/advanced-harness-engineering/', 'Advanced Harness Engineering', 'A4'),
-  sheet(24, '/courses/expert/advanced-deployment/', 'Advanced Deployment', 'A4'),
-  sheet(25, '/courses/ecosystem/agent-frameworks/', 'Agent Frameworks', 'A4'),
-  sheet(26, '/courses/ecosystem/inference-providers/', 'Inference Providers', 'A4'),
-  sheet(27, '/courses/ecosystem/inference-engines/', 'Inference Engines', 'A4'),
-  sheet(28, '/courses/ecosystem/ui-design/', 'UI Design', 'A4'),
-  sheet(29, '/courses/ecosystem/observability/', 'Observability', 'A4'),
-  sheet(30, '/courses/protocols/protocols-reference/', 'Protocols Reference', 'A4'),
-  sheet(31, '/courses/optional/human-in-the-loop/', 'Human in the Loop', 'A4'),
-  sheet(32, '/courses/optional/runtime/', 'Runtime', 'A4'),
+  sheet(14, '/courses/intermediate/personal-agents/', 'Personal Agents', 'A0'),
+  sheet(15, '/courses/expert/advanced-ui/', 'Advanced UI', 'A4'),
+  sheet(16, '/courses/expert/advanced-architectures/', 'Advanced Architectures', 'A4'),
+  sheet(17, '/courses/expert/advanced-tools/', 'Advanced Tools', 'A4'),
+  sheet(18, '/courses/expert/advanced-memory/', 'Advanced Memory', 'A4'),
+  sheet(19, '/courses/expert/advanced-multiagent/', 'Advanced Multi-Agent', 'A4'),
+  sheet(20, '/courses/expert/advanced-prompting/', 'Advanced Prompting', 'A4'),
+  sheet(21, '/courses/expert/advanced-context-engineering/', 'Advanced Context Engineering', 'A4'),
+  sheet(22, '/courses/expert/advanced-harness-engineering/', 'Advanced Harness Engineering', 'A4'),
+  sheet(23, '/courses/expert/advanced-deployment/', 'Advanced Deployment', 'A4'),
+  sheet(24, '/courses/expert/advanced-training/', 'Advanced Training', 'A4'),
+  sheet(25, '/courses/ecosystem/agent-frameworks/', 'Agent Frameworks', 'A0'),
+  sheet(26, '/courses/ecosystem/inference-providers/', 'Inference Providers', 'A0'),
+  sheet(27, '/courses/ecosystem/inference-engines/', 'Inference Engines', 'A0'),
+  sheet(28, '/courses/ecosystem/ui-design/', 'UI Design', 'A0'),
+  sheet(29, '/courses/ecosystem/observability/', 'Observability', 'A0'),
+  sheet(30, '/courses/ecosystem/choosing-tech-stack/', 'Choosing a Tech Stack', 'A4'),
+  sheet(31, '/courses/protocols/protocols-reference/', 'Protocols Reference', 'A4'),
+  sheet(32, '/courses/optional/human-in-the-loop/', 'Human in the Loop', 'A4'),
+  sheet(33, '/courses/optional/runtime/', 'Runtime', 'A4'),
 ]
 
 /**
@@ -111,6 +112,16 @@ export const CATEGORY_PATHS = [
   '/courses/protocols/',
   '/courses/optional/',
 ] as const
+
+/**
+ * How many task items the A0 exemplar's checklist carries.
+ *
+ * Typed out here for the same reason as everything else in this file: a spec
+ * that counted the boxes on the page could not notice the author changing the
+ * checklist. It moved from 8 to 5 when Security was rewritten, and the specs
+ * that read it went red until somebody looked, which is the intended outcome.
+ */
+export const CHECKLIST_ITEMS = 5
 
 /** One sheet of each §4.4 format, for the tests that want a representative. */
 export const A0 = SHEETS[12] // 13 — Security, the widest prose on the site

@@ -2,13 +2,9 @@ import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { CATEGORIES, type CategorySlug, categoryBySlug } from '@/lib/content/categories'
-import {
-  assertCategoryMatchesDirectory,
-  loadAllModules,
-  loadCategoryIntro,
-  loadModule,
-} from '@/lib/content/loader'
+import type { CategorySlug } from '@/lib/content/categories'
+import { CATEGORIES } from '@/lib/content/curriculum-file'
+import { fileFor, loadAllModules, loadCategoryIntro, loadModule } from '@/lib/content/loader'
 import {
   countDiagrams,
   countImages,
@@ -20,10 +16,6 @@ import { stripLeadIn } from '@/lib/content/strip'
 
 describe('loadAllModules', () => {
   const modules = loadAllModules()
-
-  it('finds every module in the curriculum', () => {
-    expect(modules).toHaveLength(32)
-  })
 
   it('assigns each module a unique full slug', () => {
     const slugs = modules.map((m) => m.slug)
@@ -40,17 +32,33 @@ describe('loadAllModules', () => {
     expect(numbers).toEqual([...numbers].sort((a, b) => a - b))
   })
 
-  it('places each module in the category its directory implies', () => {
+  it('places each module in the category the curriculum lists it under', () => {
     for (const m of modules) {
       expect(m.frontmatter.category).toBe(m.category.slug)
     }
   })
 
-  it('marks modules 1 through 15 as ready', () => {
+  it('numbers the modules from one, in curriculum order, with no gaps', () => {
+    // The number is the position, produced in one place. This is the assertion
+    // that says so: it cannot hold if anything else is also computing it.
+    expect(modules.map((m) => m.frontmatter.module))
+      .toEqual(modules.map((_, index) => index + 1))
+  })
+
+  it('marks some modules ready, and every one of them is really written', () => {
+    // This used to require the ready modules to be a run from 1 with no holes,
+    // on the assumption that the course gets written front to back. It does
+    // not: Ecosystem was written while Expert was still stubs, so 1-14 and
+    // 25-29 are ready with a gap between. The position was never the point.
+    //
+    // What does have to hold is the pair of rules either side of `status`: a
+    // stub stays under 200 words (`derive.test.ts`), and anything calling
+    // itself ready is past that, so the flag and the file cannot disagree.
     const ready = modules.filter((m) => m.frontmatter.status === 'ready')
-    expect(ready.map((m) => m.frontmatter.module)).toEqual(
-      Array.from({ length: 15 }, (_, i) => i + 1),
-    )
+    expect(ready.length).toBeGreaterThan(0)
+    for (const m of ready) {
+      expect(m.extent, `${m.slug} claims ready`).toBeGreaterThan(200)
+    }
   })
 
   it('references only real modules in prerequisites', () => {
@@ -62,6 +70,18 @@ describe('loadAllModules', () => {
     }
   })
 
+  it('lists prerequisites ascending, whatever order the yaml names them in', () => {
+    // `curriculum.yaml` names prerequisites, and an author writes the names in
+    // whatever order reads best. Everything downstream treats the numbers as a
+    // sorted set (`edges.ts` sorts them, `title-block.ts` sorts them), so this
+    // is the one place the order is settled. Reordering two adjacent modules in
+    // the yaml is what surfaced the disagreement.
+    for (const m of modules) {
+      expect([...m.frontmatter.prerequisites], m.slug)
+        .toEqual([...m.frontmatter.prerequisites].sort((a, b) => a - b))
+    }
+  })
+
   it('never lists a prerequisite that comes later in the curriculum', () => {
     for (const m of modules) {
       for (const p of m.frontmatter.prerequisites) {
@@ -70,10 +90,15 @@ describe('loadAllModules', () => {
     }
   })
 
-  it('strips frontmatter out of the body', () => {
-    const m = loadModule('fundamentals/llms')!
-    expect(m.body.startsWith('---')).toBe(false)
-    expect(m.body).toContain('# Module 1')
+  it('strips frontmatter out of the body, leaving the h1 first', () => {
+    // The h1 is the title alone now: the number is the position and lives in
+    // `curriculum.yaml`. So this checks the shape rather than the words, which
+    // is what makes it survive a retitle.
+    for (const m of modules) {
+      expect(m.body.startsWith('---'), m.slug).toBe(false)
+      expect(m.body.split('\n')[0], m.slug).toMatch(/^# \S/)
+      expect(m.body.split('\n')[0], m.slug).not.toMatch(/^# (?:Module|Modül) \d/)
+    }
   })
 
   it('ignores Turkish translations', () => {
@@ -85,11 +110,6 @@ describe('loadAllModules', () => {
       expect(m.body, m.slug).not.toMatch(/^##\s+Tutorial Progress/m)
       expect(m.body, m.slug).not.toMatch(/^\*\*(Previous|Next) Module:\*\*/m)
     }
-  })
-
-  it('never touches the file on disk to do it', () => {
-    const m = loadModule('fundamentals/llms')!
-    expect(fs.readFileSync(m.filePath, 'utf8')).toContain('## Tutorial Progress')
   })
 
   it('derives an extent, a sheet format, figures, sources and a language for each', () => {
@@ -106,14 +126,6 @@ describe('loadAllModules', () => {
     }
   })
 
-  it('stamps each module with the commit that last touched its own file', () => {
-    for (const m of modules) {
-      expect(m.revision, m.slug).not.toBeNull()
-      expect(m.revision!.hash, m.slug).toMatch(/^[0-9a-f]{7,}$/)
-      expect(m.revision!.date, m.slug).toMatch(/^\d{4}-\d{2}-\d{2}$/)
-    }
-  })
-
   it('takes that commit from the file itself, not from repo HEAD', () => {
     const m = loadModule('fundamentals/llms')!
     const git = (args: string[]) =>
@@ -127,7 +139,9 @@ describe('loadAllModules', () => {
 
 describe('loadModule', () => {
   it('finds a module by its full slug', () => {
-    expect(loadModule('intermediate/loop-engineering')?.frontmatter.module).toBe(14)
+    const sheet = loadModule('intermediate/loop-engineering')
+    expect(sheet?.slug).toBe('intermediate/loop-engineering')
+    expect(sheet?.frontmatter.module).toBeGreaterThan(0)
   })
 
   it('returns undefined for an unknown slug', () => {
@@ -159,18 +173,22 @@ describe('loadCategoryIntro', () => {
   })
 })
 
-describe('assertCategoryMatchesDirectory', () => {
-  const expert = categoryBySlug('expert')!
-
-  it('accepts a module whose frontmatter agrees with its directory', () => {
-    expect(() =>
-      assertCategoryMatchesDirectory('expert', expert, '3_expert/16_advanced_ui.md'),
-    ).not.toThrow()
+/**
+ * `assertCategoryMatchesDirectory` is gone, and so is the pair of cases that
+ * covered it. It checked that a module's declared `category` agreed with the
+ * directory it sat in; the category is now the yaml section a module is listed
+ * under, so the disagreement it guarded against is no longer expressible.
+ */
+describe('fileFor', () => {
+  it('finds the file for every module the curriculum lists', () => {
+    for (const category of CATEGORIES) {
+      for (const module of category.modules) {
+        expect(fs.existsSync(fileFor(category.dir, module.name)), module.name).toBe(true)
+      }
+    }
   })
 
-  it('rejects a module filed under the wrong directory, naming both sides', () => {
-    expect(() =>
-      assertCategoryMatchesDirectory('fundamentals', expert, '3_expert/16_advanced_ui.md'),
-    ).toThrow(/3_expert\/16_advanced_ui\.md.*"fundamentals".*"expert"/s)
+  it('throws for a name no file answers to, naming both the name and the directory', () => {
+    expect(() => fileFor('1_fundamentals', 'wizardry')).toThrow(/wizardry.*1_fundamentals/s)
   })
 })

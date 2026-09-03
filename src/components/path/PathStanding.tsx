@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import {
   PATH_BODY_ATTR,
   PATH_NEXT_ATTR,
@@ -62,14 +62,21 @@ const NO_READING = '--'
 export interface PathStandingProps {
   /** Whose path this is. The body it sits in carries the same id (§13.4.3). */
   role: RoleId
+  /**
+   * The slugs the corpus says are drawn, serialised down from the page. It is
+   * `status: ready` in the markdown, so only `lib/content/` can measure it, and
+   * this island runs in the browser (§12.2).
+   */
+  drawnSlugs: readonly string[]
 }
 
-export function PathStanding({ role }: PathStandingProps) {
+export function PathStanding({ role, drawnSlugs }: PathStandingProps) {
   const record = useRecord()
   const hydrated = useHydrated()
+  const drawnSet = useMemo(() => new Set(drawnSlugs), [drawnSlugs])
 
   const path = PATHS.find((candidate) => candidate.role === role)
-  const standing = path ? pathStanding(path, record) : null
+  const standing = path ? pathStanding(path, record, drawnSet) : null
 
   /**
    * Scoped to this role's body: all nine are in the prerendered document, and

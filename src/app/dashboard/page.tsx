@@ -11,7 +11,8 @@ import { ContinueLine, Diagram, DiagramReadout } from '@/components/record/Diagr
 import { StampShelf } from '@/components/record/StampShelf'
 import { Uptime } from '@/components/record/Uptime'
 import { PageShell } from '@/components/shell/PageShell'
-import { CATEGORIES, type CategorySlug } from '@/lib/content/categories'
+import type { CategorySlug } from '@/lib/content/categories'
+import { CATEGORIES } from '@/lib/content/curriculum-file'
 import { moduleGraph } from '@/lib/content/edges'
 import { curriculumFacts, type CurriculumFacts, type SheetFact } from '@/lib/content/facts'
 import { ROLES } from '@/lib/path/roles'
@@ -249,6 +250,10 @@ export default function DashboardPage() {
   // to hand it here and the answer is the same for everybody.
   const ceiling = xp(EMPTY_RECORD, facts).attainableToday
   const undrawn = facts.sheets.filter((sheet) => !sheet.drawn).length
+  // §13.4.2's denominator, for the nine path readouts below. Measured here
+  // because `PathStanding` is a client island and `status: ready` is in the
+  // markdown (§12.2).
+  const drawnSlugs = facts.sheets.filter((sheet) => sheet.drawn).map((sheet) => sheet.slug)
 
   return (
     <PageShell>
@@ -352,7 +357,7 @@ export default function DashboardPage() {
             </p>
             {/* §13.4.2 — the denominator counts drawn steps only, and the
                 island says so in the same breath as the numbers. */}
-            <PathStanding role={role.id} />
+            <PathStanding role={role.id} drawnSlugs={drawnSlugs} />
             <p className="mt-2 mb-0 font-display text-ui leading-normal">
               <Link href="/path/" className="hl-link">
                 The steps on this path, in order

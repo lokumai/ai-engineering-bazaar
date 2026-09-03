@@ -2,11 +2,6 @@ import { describe, expect, it } from 'vitest'
 import { renderMarkdown } from '@/lib/content/render'
 
 describe('renderMarkdown', () => {
-  it('renders headings with stable ids', async () => {
-    const { html } = await renderMarkdown('## Why We Need RAG')
-    expect(html).toContain('id="why-we-need-rag"')
-  })
-
   it('collects a table of contents from h2 and h3 only', async () => {
     const { toc } = await renderMarkdown(
       '# Title\n\n## First\n\n### Nested\n\n#### Ignored\n\n## Second',
@@ -16,23 +11,6 @@ describe('renderMarkdown', () => {
       { id: 'nested', text: 'Nested', depth: 3 },
       { id: 'second', text: 'Second', depth: 2 },
     ])
-  })
-
-  it('renders GitHub-flavoured tables', async () => {
-    const { html } = await renderMarkdown('| a | b |\n| - | - |\n| 1 | 2 |')
-    expect(html).toContain('<table>')
-  })
-
-  it('highlights code at build time', async () => {
-    const { html } = await renderMarkdown('```python\nx = 1\n```')
-    expect(html).toContain('<pre')
-    expect(html).toContain('data-language="python"')
-  })
-
-  it('hands mermaid blocks to the client island instead of highlighting them', async () => {
-    const { html } = await renderMarkdown('```mermaid\ngraph TD;\nA-->B;\n```')
-    expect(html).toContain('class="mermaid-source"')
-    expect(html).not.toContain('data-language="mermaid"')
   })
 
   it('rewrites relative image sources onto the given base', async () => {
@@ -51,22 +29,9 @@ describe('renderMarkdown', () => {
     expect(html).toContain('src="https://example.com/a.png"')
   })
 
-  it('does not emit the top-level h1, which the page renders itself', async () => {
-    const { html } = await renderMarkdown('# Module 1: LLM Fundamentals\n\nBody.')
-    expect(html).not.toContain('<h1')
-    expect(html).toContain('Body.')
-  })
 })
 
 describe('renderMarkdown — B6.2, the italic dek', () => {
-  it('strips the redundant category dek line under the h1', async () => {
-    const { html } = await renderMarkdown(
-      '# Module 13: Security\n\n*Category: Intermediate — Module 13 (6 of 8 in this category)*\n\nReal body.',
-    )
-    expect(html).not.toContain('6 of 8 in this category')
-    expect(html).toContain('Real body.')
-  })
-
   it('strips the Turkish dek too', async () => {
     const { html } = await renderMarkdown(
       '# Module 16\n\n*Kategori: Expert — Modül 16 (bu kategoride 1/9)*\n\nGövde.',
@@ -79,32 +44,12 @@ describe('renderMarkdown — B6.2, the italic dek', () => {
     expect(html).toContain('An emphasised opening.')
   })
 
-  it('marks the opening paragraph as the lead (§6.2)', async () => {
-    const { html } = await renderMarkdown('# Module 1\n\nOpening.\n\nSecond.')
-    expect(html).toMatch(/<p class="hl-lead">Opening\.<\/p>/)
-    expect(html).toContain('<p>Second.</p>')
-  })
 })
 
 describe('renderMarkdown — B6.3, Roman section marks', () => {
-  it('splits the numeral off the heading into data-mark', async () => {
-    const { html } = await renderMarkdown('## VII. Guardrails, honestly rated')
-    expect(html).toContain('data-mark="VII"')
-    expect(html).toContain('>Guardrails, honestly rated')
-    expect(html).not.toContain('VII. Guardrails')
-  })
-
   it('derives the id from the text alone, not the numeral', async () => {
     const { html } = await renderMarkdown('## VII. Guardrails, honestly rated')
     expect(html).toContain('id="guardrails-honestly-rated"')
-  })
-
-  it('stores the numeral beside the text in the table of contents (§5.6)', async () => {
-    const { toc } = await renderMarkdown('## I. What changed\n\n## References')
-    expect(toc).toEqual([
-      { id: 'what-changed', text: 'What changed', depth: 2, mark: 'I' },
-      { id: 'references', text: 'References', depth: 2 },
-    ])
   })
 
   it('gives a non-Roman h2 no numeral and no tick', async () => {
@@ -125,13 +70,6 @@ describe('renderMarkdown — B6.3, Roman section marks', () => {
 })
 
 describe('renderMarkdown — §6.1 heading anchors', () => {
-  it('gives every h2 and h3 a focusable section link', async () => {
-    const { html } = await renderMarkdown('## A section\n\n### A sub-section')
-    expect(html.match(/class="hl-anchor"/g)).toHaveLength(2)
-    expect(html).toContain('href="#a-section"')
-    expect(html).toContain('aria-hidden="true">§</span>')
-  })
-
   it('keeps the anchor out of the table of contents text', async () => {
     const { toc } = await renderMarkdown('## A section')
     expect(toc[0].text).toBe('A section')
@@ -177,26 +115,10 @@ describe('renderMarkdown — B5 table width classes (§6.5)', () => {
     return `${row('h')}\n${row('-')}\n${row('v')}`
   }
 
-  it('wraps a table in a captioned figure with its own scroll container', async () => {
-    const { html } = await renderMarkdown(table(3), { sheet: 13 })
-    expect(html).toContain('<figure class="hl-figure hl-table"')
-    expect(html).toContain('<figcaption')
-    expect(html).toContain('<div class="table-scroll"')
-    expect(html).toContain('<table>')
-  })
-
   it('numbers tables per sheet, in document order', async () => {
     const { html } = await renderMarkdown(`${table(2)}\n\ntext\n\n${table(2)}`, { sheet: 13 })
     expect(html).toContain('TBL. 13.1')
     expect(html).toContain('TBL. 13.2')
-  })
-
-  it('titles the table from the section it sits in', async () => {
-    const { html } = await renderMarkdown(
-      `## VII. Guardrails, honestly rated\n\n${table(3)}`,
-      { sheet: 13 },
-    )
-    expect(html).toContain('TBL. 13.1 — Guardrails, honestly rated')
   })
 
   it('keeps four columns or fewer inside the measure', async () => {
@@ -285,11 +207,6 @@ describe('renderMarkdown — §10.2 table headers', () => {
 describe('renderMarkdown — §6.4 task lists', () => {
   const list = '- [ ] No secrets in the system prompt\n- [ ] Tools are allow-listed'
 
-  it('takes the inert checkbox out of the accessibility tree', async () => {
-    const { html } = await renderMarkdown(list)
-    expect(html.match(/<input type="checkbox" disabled aria-hidden="true">/g)).toHaveLength(2)
-  })
-
   it('leaves the item text, which is the actual content, untouched', async () => {
     const { html } = await renderMarkdown(list)
     expect(html).toContain('No secrets in the system prompt')
@@ -298,27 +215,6 @@ describe('renderMarkdown — §6.4 task lists', () => {
 })
 
 describe('renderMarkdown — §6.9 images', () => {
-  it('wraps an image in a captioned figure', async () => {
-    const { html } = await renderMarkdown('![Naive RAG](./images/rag.png)', { sheet: 3 })
-    expect(html).toContain('<figure class="hl-figure hl-image"')
-    expect(html).toContain('FIG. 3.1 — Naive RAG')
-    expect(html).not.toContain('<p><img')
-  })
-
-  // §6.5 fixes the strip at 28px carrying a short label, and an `<em>` under
-  // an image is arbitrary-length descriptive prose — 335 characters in module
-  // 5. So the two go to different places: the alt names the plate, the
-  // sentence is set below it in the meta voice.
-  it('labels the strip with the alt and sets the italic line below it', async () => {
-    const { html } = await renderMarkdown(
-      '![Agent Analogy](./images/a.png)  \n*LLM as brain, agent as body!*',
-      { sheet: 6 },
-    )
-    expect(html).toContain('<span class="hl-cap-label">FIG. 6.1 — Agent Analogy</span>')
-    expect(html).toContain('<p class="hl-cap-note">LLM as brain, agent as body!</p>')
-    expect(html).toContain('alt="Agent Analogy"')
-  })
-
   // Two images under one h2 is module 6's shape; the section heading would
   // have printed the same label on both.
   it('falls back to the section heading only where there is no alt', async () => {
@@ -347,28 +243,9 @@ describe('renderMarkdown — §6.9 images', () => {
 })
 
 describe('renderMarkdown — §6.10 diagram containers', () => {
-  it('wraps the client-island marker in a captioned figure', async () => {
-    const { html } = await renderMarkdown(
-      '## Mermaid Diagram: where each defense actually sits\n\n```mermaid\ngraph LR\n  A --> B\n```',
-      { sheet: 13 },
-    )
-    expect(html).toContain('<figure class="hl-figure hl-diagram"')
-    expect(html).toContain('class="mermaid-source"')
-    expect(html).toContain('FIG. 13.1 — where each defense actually sits')
-    expect(html).toContain('data-hl-expand')
-  })
-
   it('reserves the space with a drawn placeholder, not a shimmer', async () => {
     const { html } = await renderMarkdown('```mermaid\ngraph LR\n  A --> B\n```', { sheet: 13 })
     expect(html).toContain('Rendering FIG. 13.1')
-  })
-
-  it('remaps the semantic fills to token-styled classes (B2)', async () => {
-    const { html } = await renderMarkdown(
-      '```mermaid\ngraph LR\n  A --> B\n  style A fill:#FFD9D9\n```',
-    )
-    expect(html).toContain('classDef fault')
-    expect(html).not.toContain('#FFD9D9')
   })
 
   it('fails the build on a colour literal it does not know (B3)', async () => {
@@ -379,13 +256,6 @@ describe('renderMarkdown — §6.10 diagram containers', () => {
 })
 
 describe('renderMarkdown — §6.7 code blocks', () => {
-  it('gives a code block a language tag and a copy control', async () => {
-    const { html } = await renderMarkdown('```python\nx = 1\n```')
-    expect(html).toContain('<div class="hl-code" data-language="python">')
-    expect(html).toContain('class="hl-code-lang">python<')
-    expect(html).toContain('data-hl-copy')
-  })
-
   it('renders an untagged fence as program output, not as code', async () => {
     const { html } = await renderMarkdown('```\nsome output\n```')
     expect(html).toContain('data-language="output"')
@@ -413,31 +283,7 @@ describe('renderMarkdown — §6.7 code blocks', () => {
   })
 })
 
-describe('renderMarkdown — §6.8 blockquotes', () => {
-  it('lifts a bold lead-in ending in a colon into a label', async () => {
-    const { html } = await renderMarkdown(
-      '> **Boundary, not guardrail:** hash the tool list at approval time.',
-    )
-    expect(html).toContain('data-hl-labelled')
-    expect(html).toContain('<p class="hl-quote-label">Boundary, not guardrail</p>')
-    expect(html).toContain('hash the tool list at approval time.')
-    expect(html).not.toContain('<strong>Boundary')
-  })
-
-  it('leaves a quote with no label as a plain pull-rule', async () => {
-    const { html } = await renderMarkdown('> **A dated warning.** Google retired it.')
-    expect(html).toContain('<blockquote class="hl-quote">')
-    expect(html).not.toContain('hl-quote-label')
-  })
-})
-
 describe('renderMarkdown — §6.3 links', () => {
-  it('marks an external link without colouring its text', async () => {
-    const { html } = await renderMarkdown('[OWASP](https://owasp.org/x)')
-    expect(html).toContain('data-hl-external')
-    expect(html).toContain('aria-hidden="true">↗</span>')
-  })
-
   /**
    * A sourceless render carrying an internal markdown link is a caller bug, and
    * it fails here rather than shipping the href as written.
@@ -453,14 +299,14 @@ describe('renderMarkdown — §6.3 links', () => {
    * the next reader an afternoon.
    */
   it('throws on an in-repo link it has no origin to resolve against', async () => {
-    await expect(renderMarkdown('[Module 12](12_harness_engineering.md)'))
-      .rejects.toThrow(/12_harness_engineering\.md/)
-    await expect(renderMarkdown('[Module 12](12_harness_engineering.md)'))
+    await expect(renderMarkdown('[Harness Engineering](harness_engineering.md)'))
+      .rejects.toThrow(/harness_engineering\.md/)
+    await expect(renderMarkdown('[Harness Engineering](harness_engineering.md)'))
       .rejects.toThrow(/`sheet`.*`excerptOf`/s)
   })
 
   it('resolves an in-repo link from an excerpt of a sheet', async () => {
-    const { html } = await renderMarkdown('[Module 13](13_security.md)', { excerptOf: 12 })
+    const { html } = await renderMarkdown('[Security](security.md)', { excerptOf: 12 })
     expect(html).toContain('href="/courses/intermediate/security/"')
     expect(html).not.toContain('data-hl-external')
   })

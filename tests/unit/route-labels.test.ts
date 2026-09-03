@@ -11,24 +11,39 @@ import {
   sheetLabelFor,
 } from '@/lib/route-labels'
 
+/**
+ * The subsystem labels, as a page hands them in. Written out here rather than
+ * read from the curriculum on purpose: this file tests that a label comes from
+ * the map it is given and not from the URL segment, and reading the real map
+ * would make the two indistinguishable.
+ */
+const CATEGORIES = [
+  { slug: 'fundamentals', title: 'Fundamentals', order: 1 },
+  { slug: 'intermediate', title: 'Intermediate', order: 2 },
+  { slug: 'expert', title: 'Expert', order: 3 },
+  { slug: 'ecosystem', title: 'Ecosystem', order: 4 },
+  { slug: 'protocols', title: 'Protocols & Specs', order: 5 },
+  { slug: 'optional', title: 'Optional', order: 6 },
+]
+
 describe('breadcrumbFor', () => {
   it('shows the index as the current page at the root', () => {
-    expect(breadcrumbFor('/')).toEqual([{ label: 'Home', href: null }])
+    expect(breadcrumbFor('/', CATEGORIES)).toEqual([{ label: 'Home', href: null }])
   })
 
   it('tolerates a pathname with no trailing slash', () => {
-    expect(breadcrumbFor('')).toEqual([{ label: 'Home', href: null }])
+    expect(breadcrumbFor('', CATEGORIES)).toEqual([{ label: 'Home', href: null }])
   })
 
   it('names a category from the category map, not from the slug', () => {
-    expect(breadcrumbFor('/protocols/')).toEqual([
+    expect(breadcrumbFor('/protocols/', CATEGORIES)).toEqual([
       { label: 'Home', href: '/' },
       { label: 'Protocols & Specs', href: null },
     ])
   })
 
   it('links back through the category on a module page', () => {
-    expect(breadcrumbFor('/intermediate/ai-security/')).toEqual([
+    expect(breadcrumbFor('/intermediate/ai-security/', CATEGORIES)).toEqual([
       { label: 'Home', href: '/' },
       { label: 'Intermediate', href: '/intermediate/' },
       { label: 'ai security', href: null },
@@ -36,21 +51,21 @@ describe('breadcrumbFor', () => {
   })
 
   it('labels a non-category page from its own segment', () => {
-    expect(breadcrumbFor('/dashboard/')).toEqual([
+    expect(breadcrumbFor('/dashboard/', CATEGORIES)).toEqual([
       { label: 'Home', href: '/' },
       { label: 'dashboard', href: null },
     ])
   })
 
   it('names the drawing set, which is a page and not a bare URL segment', () => {
-    expect(breadcrumbFor('/courses/')).toEqual([
+    expect(breadcrumbFor('/courses/', CATEGORIES)).toEqual([
       { label: 'Home', href: '/' },
       { label: 'Drawing set', href: null },
     ])
   })
 
   it('trails the real module route through both of its parents', () => {
-    expect(breadcrumbFor('/courses/intermediate/security/')).toEqual([
+    expect(breadcrumbFor('/courses/intermediate/security/', CATEGORIES)).toEqual([
       { label: 'Home', href: '/' },
       { label: 'Drawing set', href: '/courses/' },
       { label: 'Intermediate', href: '/courses/intermediate/' },
@@ -71,31 +86,31 @@ describe('breadcrumbFor on the not-found route', () => {
   const urls = ['/_not-found/', '/404/', '/typo/', '/courses/fundamentals/bogus/', '/']
 
   it('reads the same on every address the document can be served at', () => {
-    const trails = urls.map((url) => breadcrumbFor(url, NOT_FOUND_SEGMENT))
+    const trails = urls.map((url) => breadcrumbFor(url, CATEGORIES, NOT_FOUND_SEGMENT))
     for (const trail of trails) expect(trail).toEqual(trails[0])
   })
 
   it('names the page rather than the URL that was asked for', () => {
-    expect(breadcrumbFor('/404/', NOT_FOUND_SEGMENT)).toEqual([
+    expect(breadcrumbFor('/404/', CATEGORIES, NOT_FOUND_SEGMENT)).toEqual([
       { label: 'Home', href: '/' },
       { label: NOT_FOUND_TITLE, href: null },
     ])
   })
 
   it('leaks no part of the address into the trail', () => {
-    const labels = breadcrumbFor('/courses/fundamentals/bogus/', NOT_FOUND_SEGMENT)
+    const labels = breadcrumbFor('/courses/fundamentals/bogus/', CATEGORIES, NOT_FOUND_SEGMENT)
       .map((crumb) => crumb.label)
       .join(' ')
     expect(labels).not.toMatch(/bogus|not.?found|404/i)
   })
 
   it('still links home, which is the one route it can promise exists', () => {
-    expect(breadcrumbFor('/404/', NOT_FOUND_SEGMENT)[0].href).toBe('/')
+    expect(breadcrumbFor('/404/', CATEGORIES, NOT_FOUND_SEGMENT)[0].href).toBe('/')
   })
 
   it('leaves every other route to the pathname', () => {
     for (const segment of [null, 'courses', '__PAGE__']) {
-      expect(breadcrumbFor('/courses/', segment)).toEqual([
+      expect(breadcrumbFor('/courses/', CATEGORIES, segment)).toEqual([
         { label: 'Home', href: '/' },
         { label: 'Drawing set', href: null },
       ])
@@ -115,35 +130,35 @@ describe('NOT_FOUND_SHEET_LABEL', () => {
 
 describe('sheetLabelFor', () => {
   it('names the index sheet', () => {
-    expect(sheetLabelFor('/')).toBe('HOME')
+    expect(sheetLabelFor('/', CATEGORIES)).toBe('HOME')
     // §15.1 — the register moved, and its label went with it.
-    expect(sheetLabelFor('/sheets/')).toBe('SHEET INDEX')
+    expect(sheetLabelFor('/sheets/', CATEGORIES)).toBe('SHEET INDEX')
   })
 
   it('numbers a category by its position in the drawing set', () => {
-    expect(sheetLabelFor('/fundamentals/')).toBe('SUBSYSTEM 01')
-    expect(sheetLabelFor('/expert/')).toBe('SUBSYSTEM 03')
+    expect(sheetLabelFor('/fundamentals/', CATEGORIES)).toBe('SUBSYSTEM 01')
+    expect(sheetLabelFor('/expert/', CATEGORIES)).toBe('SUBSYSTEM 03')
   })
 
   it('names other top-level pages after themselves', () => {
-    expect(sheetLabelFor('/dashboard/')).toBe('DASHBOARD')
+    expect(sheetLabelFor('/dashboard/', CATEGORIES)).toBe('DASHBOARD')
   })
 
   it('returns nothing for a module page, whose sheet number comes from content', () => {
-    expect(sheetLabelFor('/intermediate/ai-security/')).toBeNull()
+    expect(sheetLabelFor('/intermediate/ai-security/', CATEGORIES)).toBeNull()
   })
 
   it('names the drawing set', () => {
-    expect(sheetLabelFor('/courses/')).toBe('DRAWING SET')
+    expect(sheetLabelFor('/courses/', CATEGORIES)).toBe('DRAWING SET')
   })
 
   it('numbers a subsystem at the route the site actually serves it from', () => {
-    expect(sheetLabelFor('/courses/fundamentals/')).toBe('SUBSYSTEM 01')
-    expect(sheetLabelFor('/courses/protocols/')).toBe('SUBSYSTEM 05')
+    expect(sheetLabelFor('/courses/fundamentals/', CATEGORIES)).toBe('SUBSYSTEM 01')
+    expect(sheetLabelFor('/courses/protocols/', CATEGORIES)).toBe('SUBSYSTEM 05')
   })
 
   it('still returns nothing for a module page under that route', () => {
-    expect(sheetLabelFor('/courses/intermediate/security/')).toBeNull()
+    expect(sheetLabelFor('/courses/intermediate/security/', CATEGORIES)).toBeNull()
   })
 })
 
@@ -161,7 +176,7 @@ describe('an ancestor segment with no page of its own (§15.1)', () => {
    * router-tree case that follows them, which reads the filesystem instead.
    */
   it('names the segment but does not link it', () => {
-    expect(breadcrumbFor('/auth/callback/')).toEqual([
+    expect(breadcrumbFor('/auth/callback/', CATEGORIES)).toEqual([
       { label: 'Home', href: '/' },
       { label: 'auth', href: null },
       { label: 'callback', href: null },
@@ -169,7 +184,7 @@ describe('an ancestor segment with no page of its own (§15.1)', () => {
   })
 
   it('still links an ancestor that does have a page', () => {
-    const crumbs = breadcrumbFor('/courses/fundamentals/')
+    const crumbs = breadcrumbFor('/courses/fundamentals/', CATEGORIES)
     expect(crumbs[1]).toEqual({ label: 'Drawing set', href: '/courses/' })
   })
 
@@ -236,7 +251,7 @@ describe('markTokens', () => {
     // moved the register: `sheetLabelFor` returns `HOME` and `SHEET INDEX`
     // today and nothing anywhere renders the old string, so the case was
     // tokenising a fixture rather than a label.
-    expect(sheetLabelFor('/sheets/')).toBe('SHEET INDEX')
+    expect(sheetLabelFor('/sheets/', CATEGORIES)).toBe('SHEET INDEX')
     expect(markTokens('SHEET INDEX')).toEqual([{ text: 'SHEET INDEX', value: false }])
   })
 

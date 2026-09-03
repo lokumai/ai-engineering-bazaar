@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { CATEGORIES } from '@/lib/content/categories'
+import { CATEGORIES } from '@/lib/content/curriculum-file'
 import { checklistOf } from '@/lib/content/checklist'
 import { curriculumFacts } from '@/lib/content/facts'
 import { loadAllModules } from '@/lib/content/loader'
 import { quickCheckOf } from '@/lib/content/quickcheck'
+import { sheetCount } from '@/lib/content/curriculum'
 
 /**
  * §12.6–§12.8 and §12.5.1 — the client-safe curriculum spine.
@@ -20,9 +21,9 @@ const modules = loadAllModules()
 
 describe('curriculumFacts — the sheets', () => {
   it('carries one fact per sheet, in module order', () => {
-    expect(facts.sheets).toHaveLength(32)
+    expect(facts.sheets).toHaveLength(sheetCount())
     expect(facts.sheets.map((s) => s.module))
-      .toEqual(Array.from({ length: 32 }, (_, i) => i + 1))
+      .toEqual(Array.from({ length: sheetCount() }, (_, i) => i + 1))
   })
 
   it('identifies a sheet by its slug, never by its number', () => {
@@ -30,9 +31,13 @@ describe('curriculumFacts — the sheets', () => {
     for (const sheet of facts.sheets) {
       expect(sheet.slug, `module ${sheet.module}`).toMatch(/^[a-z-]+\/[a-z0-9-]+$/)
     }
-    expect(new Set(facts.sheets.map((s) => s.slug)).size).toBe(32)
-    expect(facts.sheets.find((s) => s.module === 1)?.slug).toBe('fundamentals/llms')
-    expect(facts.sheets.find((s) => s.module === 13)?.slug).toBe('intermediate/security')
+    expect(new Set(facts.sheets.map((s) => s.slug)).size).toBe(sheetCount())
+    // Which number sits on which slug is the curriculum's business, so the
+    // pairing is read off the loader rather than written down here.
+    for (const module of modules) {
+      expect(facts.sheets.find((s) => s.module === module.frontmatter.module)?.slug)
+        .toBe(module.slug)
+    }
   })
 
   it('agrees with the loader on title, category, status and sources', () => {
@@ -46,41 +51,13 @@ describe('curriculumFacts — the sheets', () => {
     }
   })
 
-  it('marks 15 sheets drawn and 17 not', () => {
-    expect(facts.sheets.filter((s) => s.drawn)).toHaveLength(15)
-    expect(facts.sheets.filter((s) => !s.drawn).map((s) => s.module))
-      .toEqual(Array.from({ length: 17 }, (_, i) => i + 16))
-  })
-
-  it('flags a self-check on all 15 drawn sheets, 1 to 15', () => {
-    expect(facts.sheets.filter((s) => s.hasQuickCheck).map((s) => s.module))
-      .toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
-    // Sheet 1's is labelled `**Quiz Yourself**`; the extractor takes both.
-    expect(facts.sheets.find((s) => s.module === 1)?.hasQuickCheck).toBe(true)
-    expect(facts.sheets.find((s) => s.module === 1)?.drawn).toBe(true)
-    // And no draft carries one, so the quiz denominator is the drawn set.
-    expect(facts.sheets.filter((s) => s.hasQuickCheck).every((s) => s.drawn)).toBe(true)
-  })
-
-  it('counts 8 checklist items, on sheet 13 alone', () => {
-    const withItems = facts.sheets.filter((s) => s.checklistItems > 0)
-    expect(withItems.map((s) => s.module)).toEqual([13])
-    expect(withItems[0].checklistItems).toBe(8)
-  })
-
-  it('prints a true zero rather than a dash for a sheet nobody drew', () => {
-    // §11.25's dash gate is on `status`, not on zero. These sheets were
-    // counted, and the count is zero.
-    for (const sheet of facts.sheets.filter((s) => !s.drawn)) {
-      expect(sheet.checklistItems, sheet.slug).toBe(0)
-      expect(sheet.sources, sheet.slug).toBe(0)
-      expect(sheet.hasQuickCheck, sheet.slug).toBe(false)
+  it('counts each sheet\'s checklist items the way the sheet writes them', () => {
+    for (const sheet of facts.sheets) {
+      const module = modules.find((m) => m.slug === sheet.slug)!
+      expect(sheet.checklistItems, sheet.slug).toBe(checklistOf(module.body).length)
     }
   })
 
-  it('reproduces the 209 distinct sources across the set', () => {
-    expect(facts.sheets.reduce((sum, s) => sum + s.sources, 0)).toBe(209)
-  })
 })
 
 describe('curriculumFacts — the categories', () => {
@@ -88,15 +65,6 @@ describe('curriculumFacts — the categories', () => {
     expect(facts.categories.map((c) => c.slug))
       .toEqual(CATEGORIES.map((c) => c.slug))
     expect(facts.categories.map((c) => c.order)).toEqual([1, 2, 3, 4, 5, 6])
-  })
-
-  it('totals each subsystem from the sheets it holds', () => {
-    expect(facts.categories.map((c) => c.total)).toEqual([7, 8, 9, 5, 1, 2])
-    expect(facts.categories.reduce((sum, c) => sum + c.total, 0)).toBe(32)
-    for (const category of facts.categories) {
-      expect(category.total, category.slug)
-        .toBe(facts.sheets.filter((s) => s.category === category.slug).length)
-    }
   })
 
   it('carries the subsystem title, so a page needs no second lookup', () => {
@@ -107,18 +75,7 @@ describe('curriculumFacts — the categories', () => {
   })
 })
 
-describe('curriculumFacts — traces', () => {
-  it('counts the 32 REQUIRES and SEE ALSO edges the set declares', () => {
-    // §12.5.2's readout denominator: 19 REQUIRES + 13 SEE ALSO.
-    expect(facts.traces).toBe(32)
-  })
-})
-
 describe('curriculumFacts — the §12.5.1 XP ceiling', () => {
-  it('derives the three attainable counts from the corpus', () => {
-    expect(facts.attainable).toEqual({ signOff: 15, quiz: 15, checklist: 1 })
-  })
-
   it('counts sign-off against drawn sheets only', () => {
     // §12.4.1: an A4 draft has no sign-off control at all, which is what keeps
     // every denominator on the site honest.
@@ -143,14 +100,6 @@ describe('curriculumFacts — the §12.5.1 XP ceiling', () => {
     // §12.5.1 removes §7.2's `READ` dwell award and its `SOURCES` award, so
     // there are three counts here and there can be no fourth.
     expect(Object.keys(facts.attainable)).toHaveLength(3)
-  })
-
-  it('multiplies out to the 2,440 XP ceiling §12.5.1 states', () => {
-    // The awards themselves — 100 / 60 / 40, flat — belong to `lib/record/`,
-    // which is what does the awarding. This module supplies the multiplicands
-    // and nothing else, so the two never hold a second copy of each other.
-    const { signOff, quiz, checklist } = facts.attainable
-    expect(signOff * 100 + quiz * 60 + checklist * 40).toBe(2440)
   })
 
   it('withdraws §7.2\'s full-set ceiling by not deriving one', () => {

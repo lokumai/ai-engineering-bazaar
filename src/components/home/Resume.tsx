@@ -92,6 +92,11 @@ export interface ResumeProps {
 }
 
 export function Resume({ facts, subsystems }: ResumeProps) {
+  // §12.2 — `status: ready` lives in the markdown and only `lib/content/` can
+  // read it, so the drawn set is measured here, where the corpus facts already
+  // are, and handed down to the island rather than looked up inside it.
+  const drawnSlugs = facts.sheets.filter((sheet) => sheet.drawn).map((sheet) => sheet.slug)
+
   return (
     <section className="hl-home-resume" aria-labelledby="hl-resume">
       <p className="hl-eyebrow hl-mark">Read from the record in this browser</p>
@@ -171,7 +176,7 @@ export function Resume({ facts, subsystems }: ResumeProps) {
                 <p className="hl-mark m-0 text-ink-muted">
                   Role <span className="text-ink">{role.label}</span>
                 </p>
-                <PathStanding role={role.id} />
+                <PathStanding role={role.id} drawnSlugs={drawnSlugs} />
                 <p className="hl-home-note-line">
                   <Link href="/path/" className="hl-link">
                     The steps on this path, in order

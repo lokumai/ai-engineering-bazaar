@@ -1,4 +1,5 @@
 import { Fragment } from 'react'
+import { categoryLabels } from '@/lib/content/chrome'
 import { AFFILIATION, LICENCE_LABEL, LICENCE_URL, REPO_URL } from '@/lib/site'
 import { SheetLabel } from './SheetLabel'
 
@@ -53,7 +54,7 @@ export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
             line rather than pushing the document sideways. `gap-x-4` and not
             `gap-4`, so a wrapped line costs its own height and nothing more. */}
         <div className="flex min-h-10 flex-wrap items-center justify-between gap-x-4">
-          <SheetLabel sheet={sheet} />
+          <SheetLabel sheet={sheet} categories={categoryLabels()} />
 
           {/* §3.4 — a machine-derived value never wraps. At 390px the row is
               342px wide and `SHEET 13 OF 32` broken after the number reads as

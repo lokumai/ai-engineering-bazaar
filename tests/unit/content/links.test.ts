@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { courseLinkFor, isCourseLink, sheetSource } from '@/lib/content/links'
+import { loadAllModules } from '@/lib/content/loader'
 
 /**
  * The corpus' own cross-references, as routes.
@@ -10,7 +11,7 @@ import { courseLinkFor, isCourseLink, sheetSource } from '@/lib/content/links'
  * writes, except the two invented dead ones — which is the point of them.
  */
 
-const HARNESS = '2_intermediate/12_harness_engineering.md'
+const HARNESS = '2_intermediate/harness_engineering.md'
 
 describe('courseLinkFor', () => {
   const original = process.env.NEXT_PUBLIC_SITE_BASE_PATH
@@ -18,22 +19,28 @@ describe('courseLinkFor', () => {
 
   it('resolves a link inside the same category directory', () => {
     process.env.NEXT_PUBLIC_SITE_BASE_PATH = ''
-    expect(courseLinkFor('13_security.md', HARNESS))
+    expect(courseLinkFor('security.md', HARNESS))
       .toBe('/courses/intermediate/security/')
   })
 
   it('resolves a link into another category directory', () => {
     process.env.NEXT_PUBLIC_SITE_BASE_PATH = ''
-    expect(courseLinkFor('../3_expert/17_advanced_architectures.md', HARNESS))
+    expect(courseLinkFor('../3_expert/advanced_architectures.md', HARNESS))
       .toBe('/courses/expert/advanced-architectures/')
   })
 
-  it('drops the numeric prefix, because the number is not the identifier', () => {
-    // `slugs.ts` owns this rule: module 10 was split out of the old coding-agents
-    // module, so the corpus has been renumbered before and will be again.
+  it('refuses a target that still carries a number, because no such file exists', () => {
+    // The prefixes are gone from the corpus, and so is the tolerance for one:
+    // a link that keeps the old spelling names a file nobody ships, and saying
+    // so is more use than quietly resolving it.
+    expect(() => courseLinkFor('11_harness_engineering.md', HARNESS))
+      .toThrow(/11_harness_engineering\.md/)
+  })
+
+  it('turns a name into its hyphenated route', () => {
     process.env.NEXT_PUBLIC_SITE_BASE_PATH = ''
-    expect(courseLinkFor('10_coding_agents_landscape.md', HARNESS))
-      .toBe('/courses/intermediate/coding-agents-landscape/')
+    expect(courseLinkFor('harness_engineering.md', HARNESS))
+      .toBe('/courses/intermediate/harness-engineering/')
   })
 
   /**
@@ -43,22 +50,22 @@ describe('courseLinkFor', () => {
    */
   it('resolves a _tr target to its English sibling', () => {
     process.env.NEXT_PUBLIC_SITE_BASE_PATH = ''
-    expect(courseLinkFor('13_security_tr.md', HARNESS))
-      .toBe(courseLinkFor('13_security.md', HARNESS))
-    expect(courseLinkFor('../1_fundamentals/7_multi_agent_tr.md', HARNESS))
+    expect(courseLinkFor('security_tr.md', HARNESS))
+      .toBe(courseLinkFor('security.md', HARNESS))
+    expect(courseLinkFor('../1_fundamentals/multi_agent_tr.md', HARNESS))
       .toBe('/courses/fundamentals/multi-agent/')
   })
 
   it('ends every route with a slash, so the canonical form costs no redirect', () => {
     process.env.NEXT_PUBLIC_SITE_BASE_PATH = ''
-    for (const target of ['13_security.md', '../3_expert/16_advanced_ui.md']) {
+    for (const target of ['security.md', '../3_expert/advanced_ui.md']) {
       expect(courseLinkFor(target, HARNESS), target).toMatch(/\/$/)
     }
   })
 
   it('applies the deploy base path, exactly once', () => {
     process.env.NEXT_PUBLIC_SITE_BASE_PATH = '/ai-engineering-bazaar'
-    const route = courseLinkFor('13_security.md', HARNESS)
+    const route = courseLinkFor('security.md', HARNESS)
     expect(route).toBe('/ai-engineering-bazaar/courses/intermediate/security/')
     expect(route?.match(/\/ai-engineering-bazaar\//g)).toHaveLength(1)
   })
@@ -96,34 +103,38 @@ describe('courseLinkFor', () => {
    * the afternoon of whoever reads it.
    */
   it('throws on a target the corpus does not have, naming file and href', () => {
-    expect(() => courseLinkFor('9_bu_dosya_yok.md', HARNESS))
-      .toThrow(/2_intermediate\/12_harness_engineering\.md/)
-    expect(() => courseLinkFor('9_bu_dosya_yok.md', HARNESS))
-      .toThrow(/9_bu_dosya_yok\.md/)
+    expect(() => courseLinkFor('bu_dosya_yok.md', HARNESS))
+      .toThrow(/2_intermediate\/harness_engineering\.md/)
+    expect(() => courseLinkFor('bu_dosya_yok.md', HARNESS))
+      .toThrow(/bu_dosya_yok\.md/)
   })
 
   it('throws on a directory that is not a category', () => {
-    expect(() => courseLinkFor('../7_imaginary/1_llms.md', HARNESS))
+    expect(() => courseLinkFor('../7_imaginary/llms.md', HARNESS))
       .toThrow(/7_imaginary/)
   })
 
   /**
-   * Not one of the 163 links in the corpus carries an anchor, so there is no
+   * Not one of the corpus' links carries an anchor, so there is no
    * heading-to-slug mapping to get wrong. A fragment is carried through
    * unchanged rather than dropped: `rehype-slug` derives ids from the heading
    * text on both sides, so an authored anchor has a fair chance of landing.
    */
   it('carries a fragment through unchanged', () => {
     process.env.NEXT_PUBLIC_SITE_BASE_PATH = ''
-    expect(courseLinkFor('13_security.md#threat-model', HARNESS))
+    expect(courseLinkFor('security.md#threat-model', HARNESS))
       .toBe('/courses/intermediate/security/#threat-model')
   })
 })
 
 describe('sheetSource', () => {
   it('names the file a numbered sheet was loaded from', () => {
-    expect(sheetSource(13)).toBe('2_intermediate/13_security.md')
-    expect(sheetSource(1)).toBe('1_fundamentals/1_llms.md')
+    // The path is derived from the sheet, not transcribed: renumbering the
+    // corpus must not fail this.
+    for (const module of loadAllModules()) {
+      expect(sheetSource(module.frontmatter.module), module.slug)
+        .toBe(`${module.category.dir}/${module.name}.md`)
+    }
   })
 
   it('returns null for a number no sheet carries', () => {

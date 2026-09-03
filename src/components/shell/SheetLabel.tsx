@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { markTokens, sheetLabelFor } from '@/lib/route-labels'
+import { markTokens, sheetLabelFor, type CategoryLabel } from '@/lib/route-labels'
 
 /**
  * The left cell of footer row 1 (spec §5.2): `SHEET 13 OF 32` on a module
@@ -16,9 +16,15 @@ import { markTokens, sheetLabelFor } from '@/lib/route-labels'
  * is whatever was asked for, so it has to be told its own name. See
  * `NOT_FOUND_SEGMENT`.
  */
-export function SheetLabel({ sheet }: { sheet?: string | null }) {
+export function SheetLabel({
+  sheet,
+  categories,
+}: {
+  sheet?: string | null
+  categories: readonly CategoryLabel[]
+}) {
   const pathname = usePathname() ?? '/'
-  const label = sheet ?? sheetLabelFor(pathname)
+  const label = sheet ?? sheetLabelFor(pathname, categories)
   if (!label) return null
 
   return (

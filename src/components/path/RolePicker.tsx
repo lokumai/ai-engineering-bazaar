@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { pathStanding } from '@/lib/path/derive'
 import { PATHS, drawnCount } from '@/lib/path/paths'
@@ -12,11 +12,17 @@ import { plural } from '@/lib/text'
 /**
  * §13.3, §13.4.3 item 1 — the nine roles, as a radio group.
  *
- * **Self-contained on purpose.** `/path/` and `/profile/` both render it, and
- * neither owns it: the option list, each blurb and each path's drawn-step count
- * come from `lib/path/`, which imports nothing (§12.2's import direction), so
- * there is no prop to drill and no second vocabulary to drift. A count is
- * derived by `drawnCount`, never typed (§11.25).
+ * **The option list and the blurbs are self-contained on purpose.** `/path/`
+ * and `/profile/` both render it, and neither owns it: they come from
+ * `lib/path/`, which imports nothing (§12.2's import direction), so there is no
+ * second vocabulary to drift.
+ *
+ * **Which sheets are drawn is the one thing that has to be drilled in.** It is
+ * `status: ready` in the corpus, which only `lib/content/` can read, and this is
+ * a client island: a single value imported across that line pulls `node:fs`
+ * into the browser bundle and stops the build (§12.2). So `drawnSlugs` arrives
+ * as a serialised prop from the server page. Every count here is still derived
+ * by `drawnCount`, never typed (§11.25).
  *
  * **Native radios inside `role="radiogroup"`**, the arrangement `MarkPicker`
  * documents. A group of same-named `<input type="radio">` gives arrow-key
@@ -78,17 +84,28 @@ export interface RolePickerProps {
   role?: RoleId | null
   /** Scopes the radio group's name and its ids when a page holds two. */
   idPrefix?: string
+  /**
+   * The slugs the corpus says are drawn. Required, not optional: a default of
+   * `[]` would print `0 sheets drawn` beside all nine roles and look like a
+   * finished page, which is the failure §11.25 is about.
+   */
+  drawnSlugs: readonly string[]
 }
 
 /** §13.4.2 — the count an option may state: drawn steps, never the whole list. */
-function drawnOn(role: RoleId): number {
+function drawnOn(role: RoleId, drawnSlugs: ReadonlySet<string>): number {
   const path = PATHS.find((candidate) => candidate.role === role)
-  return path === undefined ? 0 : drawnCount(path)
+  return path === undefined ? 0 : drawnCount(path, drawnSlugs)
 }
 
-export function RolePicker({ role = null, idPrefix = 'hl-role' }: RolePickerProps) {
+export function RolePicker({
+  role = null,
+  idPrefix = 'hl-role',
+  drawnSlugs,
+}: RolePickerProps) {
   const record = useRecord()
   const hydrated = useHydrated()
+  const drawnSet = useMemo(() => new Set(drawnSlugs), [drawnSlugs])
 
   // The prop is the prerender's answer; the record is the reader's. They agree
   // in the first client render because `EMPTY_RECORD.identity.role` is null and
@@ -111,7 +128,7 @@ export function RolePicker({ role = null, idPrefix = 'hl-role' }: RolePickerProp
   }
 
   const path = selected === null ? undefined : PATHS.find((one) => one.role === selected)
-  const standing = path === undefined ? null : pathStanding(path, record)
+  const standing = path === undefined ? null : pathStanding(path, record, drawnSet)
   const label = ROLES.find((one) => one.id === selected)?.label ?? null
 
   return (
@@ -123,7 +140,7 @@ export function RolePicker({ role = null, idPrefix = 'hl-role' }: RolePickerProp
       <div className="grid gap-2 sm:grid-cols-2">
         {ROLES.map((option) => {
           const blurbId = `${idPrefix}-${option.id}-blurb`
-          const drawn = drawnOn(option.id)
+          const drawn = drawnOn(option.id, drawnSet)
           return (
             <div
               key={option.id}

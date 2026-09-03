@@ -1,23 +1,24 @@
 import { describe, expect, it } from 'vitest'
-import { CATEGORIES, categoryByDir, categoryBySlug } from '@/lib/content/categories'
-import { fullSlug, moduleSlugFromFilename } from '@/lib/content/slugs'
+import { CATEGORY_SLUGS } from '@/lib/content/categories'
+import { CATEGORIES, categoryByDir, categoryBySlug } from '@/lib/content/curriculum-file'
+import { fullSlug, moduleSlugFromName } from '@/lib/content/slugs'
 
-describe('moduleSlugFromFilename', () => {
-  it('strips the numeric prefix and the extension', () => {
-    expect(moduleSlugFromFilename('1_llms.md')).toBe('llms')
-  })
-
+describe('moduleSlugFromName', () => {
   it('converts underscores to hyphens', () => {
-    expect(moduleSlugFromFilename('7_multi_agent.md')).toBe('multi-agent')
+    expect(moduleSlugFromName('multi_agent')).toBe('multi-agent')
   })
 
-  it('handles two-digit module numbers', () => {
-    expect(moduleSlugFromFilename('22_advanced_context_engineering.md'))
+  it('leaves a single-word name alone', () => {
+    expect(moduleSlugFromName('llms')).toBe('llms')
+  })
+
+  it('converts every underscore, not only the first', () => {
+    expect(moduleSlugFromName('advanced_context_engineering'))
       .toBe('advanced-context-engineering')
   })
 
-  it('rejects a filename without a numeric prefix', () => {
-    expect(() => moduleSlugFromFilename('README.md')).toThrow(/numeric prefix/)
+  it('rejects an empty name', () => {
+    expect(() => moduleSlugFromName('')).toThrow(/cannot be empty/)
   })
 })
 
@@ -28,22 +29,19 @@ describe('fullSlug', () => {
 })
 
 describe('CATEGORIES', () => {
-  it('covers all six content directories', () => {
-    expect(CATEGORIES).toHaveLength(6)
+  it('covers every slug the app has a type for', () => {
+    expect(CATEGORIES.map((c) => c.slug)).toEqual([...CATEGORY_SLUGS])
   })
 
-  it('is ordered by the curriculum sequence', () => {
-    expect(CATEGORIES.map((c) => c.slug)).toEqual([
-      'fundamentals', 'intermediate', 'expert', 'ecosystem', 'protocols', 'optional',
-    ])
+  it('numbers the categories from one, in file order', () => {
+    expect(CATEGORIES.map((c) => c.order)).toEqual(CATEGORIES.map((_, i) => i + 1))
   })
 
-  it('maps a directory name to its category', () => {
-    expect(categoryByDir('5_protocols_specs')?.slug).toBe('protocols')
-  })
-
-  it('maps a slug back to its category', () => {
-    expect(categoryBySlug('protocols')?.dir).toBe('5_protocols_specs')
+  it('maps a directory name to its category, and back', () => {
+    for (const category of CATEGORIES) {
+      expect(categoryByDir(category.dir)?.slug).toBe(category.slug)
+      expect(categoryBySlug(category.slug)?.dir).toBe(category.dir)
+    }
   })
 
   it('returns undefined for an unknown directory', () => {

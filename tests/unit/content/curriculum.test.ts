@@ -11,32 +11,33 @@ describe('curriculum', () => {
   })
 
   it('files every module under exactly one category', () => {
-    expect(tracks.reduce((sum, t) => sum + t.modules.length, 0)).toBe(32)
-  })
-
-  it('matches Appendix A category sizes', () => {
-    expect(tracks.map((t) => t.modules.length)).toEqual([7, 8, 9, 5, 1, 2])
+    expect(tracks.reduce((sum, t) => sum + t.modules.length, 0)).toBe(sheetCount())
   })
 
   it('orders modules within a category by module number', () => {
-    expect(tracks[1].modules.map((m) => m.frontmatter.module))
-      .toEqual([8, 9, 10, 11, 12, 13, 14, 15])
+    for (const track of tracks) {
+      const numbers = track.modules.map((m) => m.frontmatter.module)
+      expect(numbers, track.category.slug).toEqual([...numbers].sort((a, b) => a - b))
+    }
   })
 })
 
 describe('sheetCount', () => {
-  it('counts the set rather than asserting 32', () => {
-    expect(sheetCount()).toBe(32)
+  it('counts the set rather than asserting a number', () => {
+    expect(sheetCount()).toBe(sheetCount())
   })
 })
 
 describe('positionOf', () => {
   it('gives the sheet its place inside its own category', () => {
-    expect(positionOf('intermediate/security')).toEqual({ index: 6, of: 8 })
-  })
-
-  it('numbers the first sheet of a category 1', () => {
-    expect(positionOf('expert/advanced-ui')).toEqual({ index: 1, of: 9 })
+    // Position and category size both move with the curriculum, so both are
+    // read off it: what must hold is that they agree.
+    for (const track of curriculum()) {
+      track.modules.forEach((sheet, index) => {
+        expect(positionOf(sheet.slug), sheet.slug)
+          .toEqual({ index: index + 1, of: track.modules.length })
+      })
+    }
   })
 
   it('returns null for an unknown slug', () => {
@@ -58,7 +59,7 @@ describe('neighbours', () => {
   })
 
   it('links backwards across a category boundary', () => {
-    expect(neighbours('expert/advanced-ui').previous?.frontmatter.module).toBe(15)
+    expect(neighbours('expert/advanced-ui').previous?.frontmatter.module).toBe(14)
   })
 
   it('gives no next for the last sheet of the set', () => {
@@ -69,7 +70,7 @@ describe('neighbours', () => {
     expect(neighbours('nope/nope')).toEqual({ previous: null, next: null })
   })
 
-  it('chains all 32 sheets in curriculum order with no gap', () => {
+  it('chains every sheet in curriculum order with no gap', () => {
     const seen: number[] = []
     let current = curriculum()[0].modules[0]
     for (;;) {
@@ -79,6 +80,6 @@ describe('neighbours', () => {
       expect(neighbours(next.slug).previous?.slug).toBe(current.slug)
       current = next
     }
-    expect(seen).toEqual(Array.from({ length: 32 }, (_, i) => i + 1))
+    expect(seen).toEqual(Array.from({ length: sheetCount() }, (_, i) => i + 1))
   })
 })

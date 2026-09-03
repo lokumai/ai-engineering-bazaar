@@ -190,9 +190,10 @@ test('a row in the manifest is one tab stop, and it is reachable', async ({ page
   await page.goto(INDEX_SHEET)
 
   // §5.3 — the whole row is one link target, so it must not be two or three
-  // tab stops per row across a thirty-two row table.
+  // tab stops per row. One per row, however many rows the set has.
   const stops = await page.locator('.hl-index tbody a, .hl-index tbody [tabindex]:not([tabindex="-1"])').count()
-  expect(stops).toBe(32)
+  const rows = await page.locator('.hl-index tbody tr').count()
+  expect(stops).toBe(rows)
 
   // The scroll region itself is focusable so a keyboard can reach the columns
   // that scroll (§10.3).
@@ -382,7 +383,13 @@ test('a data table of three or more columns announces its rows (§10.2)', async 
     })),
   )
 
-  expect(tables.length).toBeGreaterThan(3)
+  // At least one, not "more than three". The old number counted the tables in
+  // one machine-written draft, and rewriting that sheet took it to zero. What
+  // the rule actually says is that ANY data table of three or more columns has
+  // to announce its rows, so one is enough to make the loop below mean
+  // something and nothing here should depend on how many a sheet happens to
+  // carry.
+  expect(tables.length).toBeGreaterThan(0)
   for (const table of tables) {
     expect(table.headerScopes.every((scope) => scope === 'col')).toBe(true)
     if (table.columns < 3) continue

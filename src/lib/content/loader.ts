@@ -1,7 +1,13 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import matter from 'gray-matter'
-import { CATEGORIES, type Category, type CategorySlug, categoryBySlug } from './categories'
+import type { CategorySlug } from './categories'
+import {
+  CATEGORIES,
+  type Category,
+  categoryBySlug,
+  moduleByName,
+} from './curriculum-file'
 import {
   type Lang,
   type SheetFormat,
@@ -14,12 +20,14 @@ import {
 import { CONTENT_ROOT } from './paths'
 import { type Revision, revisionFor } from './revision'
 import { type ModuleFrontmatter, parseFrontmatter } from './schema'
-import { fullSlug, moduleSlugFromFilename } from './slugs'
+import { fullSlug, moduleSlugFromName } from './slugs'
 import { stripBuildFurniture, stripLeadIn } from './strip'
 
 export interface CourseModule {
   /** `fundamentals/llms` — the identifier used across the app */
   slug: string
+  /** `llms` — the module's name in `curriculum.yaml`, and its file stem */
+  name: string
   /** `llms` — the last URL segment */
   moduleSlug: string
   category: Category
@@ -44,60 +52,88 @@ export interface CourseModule {
   revision: Revision | null
   /** Absolute path, for diagnostics */
   filePath: string
+  /** `2_intermediate/security.md` — what an error message and a link resolver name */
+  source: string
 }
 
-const MODULE_FILE = /^\d+_.+\.md$/
-
 /**
- * A module's declared category must agree with the directory it sits in.
- * Nothing downstream re-checks this: the loader trusts `category.slug` for the
- * URL and the frontmatter for filtering, so a disagreement would silently file
- * a module under one category and link it under another.
+ * The file a module's name resolves to.
+ *
+ * The name IS the file stem, so this is a join and not a search. It was briefly
+ * a search, while the corpus carried `security.md` and the yaml said
+ * `security`; there is nothing left to search for.
+ *
+ * `curriculum-file.ts`'s rule 6 has already established that the file exists
+ * before anything calls this, so the throw is a guard rather than a live path.
  */
-export function assertCategoryMatchesDirectory(
-  declared: string,
-  category: Category,
-  source: string,
-): void {
-  if (declared === category.slug) return
-  throw new Error(
-    `${source} declares category "${declared}" ` +
-    `but lives in the "${category.slug}" directory`,
-  )
+export function fileFor(dir: string, name: string): string {
+  const file = path.join(CONTENT_ROOT, dir, `${name}.md`)
+  if (!fs.existsSync(file)) throw new Error(`No markdown file for "${name}" in ${dir}/`)
+  return file
 }
 
 let cache: CourseModule[] | null = null
 
+/**
+ * Every module, in curriculum order.
+ *
+ * **The yaml is walked, not the directory.** It used to be
+ * `readdirSync().sort()` followed by a sort on `frontmatter.module`, which is
+ * two orderings imposed on a set that already had one: the order the course is
+ * written in. Both sorts are gone, because file order in `curriculum.yaml` IS
+ * the order, and `curriculum-file.ts`'s rule 6 has already checked that the
+ * listing and the directory hold the same set of files. A module in a directory
+ * that nobody listed no longer loads silently; it fails the build.
+ *
+ * The merge happens before anything derived is computed, which is the ordering
+ * that matters: `sheetFormat` and `langCoverage` both need `status`, and
+ * `status` is now the yaml's.
+ */
 export function loadAllModules(): CourseModule[] {
   if (cache) return cache
 
   const modules: CourseModule[] = []
   for (const category of CATEGORIES) {
-    const dir = path.join(CONTENT_ROOT, category.dir)
-    for (const filename of fs.readdirSync(dir).sort()) {
-      if (!MODULE_FILE.test(filename)) continue
-      if (filename.endsWith('_tr.md')) continue
-
-      const filePath = path.join(dir, filename)
+    for (const entry of category.modules) {
+      const filePath = fileFor(category.dir, entry.name)
+      const source = `${category.dir}/${path.basename(filePath)}`
       const parsed = matter(fs.readFileSync(filePath, 'utf8'))
-      const frontmatter = parseFrontmatter(
-        parsed.data,
-        `${category.dir}/${filename}`,
-      )
-      assertCategoryMatchesDirectory(
-        frontmatter.category,
-        category,
-        `${category.dir}/${filename}`,
-      )
-      const moduleSlug = moduleSlugFromFilename(filename)
-      const slug = fullSlug(category.slug, moduleSlug)
+      const sheet = parseFrontmatter(parsed.data, source, entry.status)
+
+      const frontmatter: ModuleFrontmatter = {
+        module: entry.module,
+        title: entry.title,
+        category: category.slug,
+        status: entry.status,
+        duration: entry.minutes,
+        summary: sheet.summary,
+        objectives: sheet.objectives,
+        // The yaml names prerequisites; the app numbers them. Rule 3 has
+        // already established that every name resolves, so this cannot be
+        // partial and an unknown prerequisite is no longer dropped in silence.
+        //
+        // **Sorted, and the sort is the fix for a real disagreement.** This
+        // list used to be hand-written in the frontmatter and happened to be
+        // ascending everywhere, so nothing noticed that `edges.ts` and
+        // `title-block.ts` both sort it while this did not. Resolving from
+        // `needs` made the author's listing order visible: swapping two
+        // adjacent modules in the yaml left `personal_agents` reporting
+        // `[13, 12]` here and `[12, 13]` on its own sheet. A prerequisite list
+        // is a set, so it gets one order, and it gets it once.
+        prerequisites: entry.needs
+          .map((need) => (moduleByName(need) as { module: number }).module)
+          .sort((a, b) => a - b),
+      }
+
+      const moduleSlug = moduleSlugFromName(entry.name)
       const body = stripBuildFurniture(parsed.content).trimStart()
       // The body keeps its h1 and its dek — `render.ts` drops them from the
       // tree (B6.1, B6.2) — so the measurement drops them here rather than
       // counting two lines the sheet never prints (§5.5).
       const words = extent(stripLeadIn(body))
       modules.push({
-        slug,
+        slug: fullSlug(category.slug, moduleSlug),
+        name: entry.name,
         moduleSlug,
         category,
         frontmatter,
@@ -106,14 +142,20 @@ export function loadAllModules(): CourseModule[] {
         sheetFormat: sheetFormat(frontmatter, words),
         figures: countFigures(body),
         sources: countSources(body),
-        lang: langCoverage(slug),
+        // The status is handed over rather than read a second time. Reading it
+        // again out of the file is what made this call order load-bearing and
+        // silent: with `status` gone from the frontmatter, a second `matter()`
+        // would see `undefined`, the draft guard would stop firing, and all 19
+        // draft sheets would claim `LANG EN · TR` on the strength of their stub
+        // translations sitting at a 0.83 to 1.00 ratio.
+        lang: langCoverage(filePath, entry.status),
         revision: revisionFor(filePath),
         filePath,
+        source,
       })
     }
   }
 
-  modules.sort((a, b) => a.frontmatter.module - b.frontmatter.module)
   cache = modules
   return modules
 }

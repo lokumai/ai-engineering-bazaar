@@ -2,8 +2,9 @@ import { describe, expect, it } from 'vitest'
 import type { CategorySlug } from '@/lib/content/categories'
 import {
   type GraphModule,
+  type LinkResolver,
   buildGraph,
-  inProseModuleLinks,
+  inProseLinkTargets,
   moduleGraph,
 } from '@/lib/content/edges'
 import { loadAllModules } from '@/lib/content/loader'
@@ -14,32 +15,49 @@ function m(
   prerequisites: number[] = [],
   body = '',
 ): GraphModule {
-  return { module, category, prerequisites, body }
+  return { module, category, prerequisites, body, source: `${category}/${module}.md` }
 }
 
-describe('inProseModuleLinks', () => {
-  it('reads the module number out of a relative link', () => {
-    expect(inProseModuleLinks('see [ctx](9_context_engineering.md) now')).toEqual([9])
+/**
+ * A resolver for bodies nobody wrote to disk: a target's number is the digits
+ * in its href. It stands where `links.ts`'s corpus resolver stands in the real
+ * graph, which is why `buildGraph` takes one: the graph's own rules are then
+ * testable over invented modules, without a corpus and without a filename
+ * convention baked into the module under test.
+ */
+const byDigits: LinkResolver = (rawHref) => {
+  const digits = /(\d+)/.exec(rawHref)
+  return digits === null ? null : Number(digits[1])
+}
+
+describe('inProseLinkTargets', () => {
+  it('reports the href of a relative link, as written', () => {
+    expect(inProseLinkTargets('see [ctx](context_engineering.md) now'))
+      .toEqual(['context_engineering.md'])
   })
 
-  it('reads a link that reaches into another category directory', () => {
-    expect(inProseModuleLinks('[x](../3_expert/21_advanced_prompting.md)')).toEqual([21])
+  it('reports a link that reaches into another category directory', () => {
+    expect(inProseLinkTargets('[x](../3_expert/advanced_prompting.md)'))
+      .toEqual(['../3_expert/advanced_prompting.md'])
   })
 
-  it('ignores the anchor on a deep link, and reports a target once', () => {
-    expect(
-      inProseModuleLinks('[a](9_context_engineering.md#lanes) [b](9_context_engineering.md)'),
-    ).toEqual([9])
+  it('drops the anchor on a deep link, and reports a target once', () => {
+    expect(inProseLinkTargets('[a](context_engineering.md#lanes) [b](context_engineering.md)'))
+      .toEqual(['context_engineering.md'])
   })
 
-  it('ignores links that are not module files', () => {
-    expect(inProseModuleLinks('[r](README.md) [h](https://example.com) [a](#top)')).toEqual([])
+  it('reports every markdown target, and leaves the resolver to reject one', () => {
+    // It does not know what a module is: `README.md` is a markdown file, so it
+    // is reported. The resolver answers null for it and the graph drops it.
+    expect(inProseLinkTargets('[r](README.md) [h](https://example.com) [a](#top)'))
+      .toEqual(['README.md'])
+    expect(byDigits('README.md', 'anything.md')).toBeNull()
   })
 })
 
 describe('buildGraph', () => {
   it('points a REQUIRES edge from the prerequisite to the module that needs it', () => {
-    const graph = buildGraph([m(1, 'fundamentals'), m(2, 'fundamentals', [1])])
+    const graph = buildGraph([m(1, 'fundamentals'), m(2, 'fundamentals', [1])], byDigits)
     expect(graph.edges).toEqual([
       { from: 1, to: 2, kind: 'requires', crossBand: false },
     ])
@@ -50,19 +68,19 @@ describe('buildGraph', () => {
   })
 
   it('flags an edge that leaves its band', () => {
-    const graph = buildGraph([m(1, 'fundamentals'), m(8, 'intermediate', [1])])
+    const graph = buildGraph([m(1, 'fundamentals'), m(8, 'intermediate', [1])], byDigits)
     expect(graph.edges[0].crossBand).toBe(true)
   })
 
   it('drops a prerequisite no module answers to', () => {
-    expect(buildGraph([m(2, 'fundamentals', [99])]).edges).toEqual([])
+    expect(buildGraph([m(2, 'fundamentals', [99])], byDigits).edges).toEqual([])
   })
 
   it('makes a SEE ALSO edge from a non-adjacent in-prose link', () => {
     const graph = buildGraph([
       m(8, 'intermediate', [], 'see [sec](13_security.md)'),
       m(13, 'intermediate'),
-    ])
+    ], byDigits)
     expect(graph.edges).toEqual([
       { from: 8, to: 13, kind: 'see-also', crossBand: false },
     ])
@@ -74,7 +92,7 @@ describe('buildGraph', () => {
     const graph = buildGraph([
       m(8, 'intermediate', [], '[next](9_context_engineering.md)'),
       m(9, 'intermediate'),
-    ])
+    ], byDigits)
     expect(graph.seeAlso(8)).toEqual([])
   })
 
@@ -82,12 +100,12 @@ describe('buildGraph', () => {
     const graph = buildGraph([
       m(8, 'intermediate', [], '[adv](../3_expert/21_advanced_prompting.md)'),
       m(21, 'expert'),
-    ])
+    ], byDigits)
     expect(graph.seeAlso(8)).toEqual([])
   })
 
   it('refuses a SEE ALSO edge a module points at itself', () => {
-    const graph = buildGraph([m(8, 'intermediate', [], '[self](8_prompt_engineering.md)')])
+    const graph = buildGraph([m(8, 'intermediate', [], '[self](8_prompt_engineering.md)')], byDigits)
     expect(graph.edges).toEqual([])
   })
 
@@ -98,7 +116,7 @@ describe('buildGraph', () => {
       m(11, 'intermediate'),
       m(13, 'intermediate'),
     ]
-    expect(buildGraph(input).edges).toEqual(buildGraph(input).edges)
+    expect(buildGraph(input, byDigits).edges).toEqual(buildGraph(input, byDigits).edges)
   })
 })
 
@@ -109,8 +127,13 @@ describe('the curriculum graph', () => {
   const requires = graph.edges.filter((e) => e.kind === 'requires')
   const seeAlso = graph.edges.filter((e) => e.kind === 'see-also')
 
-  it('declares 19 REQUIRES edges', () => {
-    expect(requires).toHaveLength(19)
+  it('declares one REQUIRES edge per prerequisite in the corpus', () => {
+    // The count moves whenever a sheet's prerequisites do, so it is summed off
+    // the frontmatter rather than pinned.
+    const declared = modules.reduce(
+      (total, sheet) => total + sheet.frontmatter.prerequisites.length, 0)
+    expect(declared).toBeGreaterThan(0)
+    expect(requires).toHaveLength(declared)
   })
 
   it('crosses a band boundary exactly three times, at 1-8, 5-9 and 6-10', () => {
@@ -124,32 +147,13 @@ describe('the curriculum graph', () => {
       expect(graph.feeds(e.from), `${e.from} feeds ${e.to}`).toContain(e.to)
     }
     expect(graph.feeds(1)).toEqual([2, 3, 4, 5, 8])
-    expect(graph.requires(15)).toEqual([13, 14])
+    expect(graph.requires(14)).toEqual([12, 13])
   })
 
-  it('leaves module 1 requiring nothing and module 32 feeding nothing', () => {
+  it('leaves the first sheet requiring nothing and the last feeding nothing', () => {
+    const last = Math.max(...known)
     expect(graph.requires(1)).toEqual([])
-    expect(graph.feeds(32)).toEqual([])
-  })
-
-  it('declares 13 SEE ALSO edges, every one of them inside Intermediate', () => {
-    expect(seeAlso).toHaveLength(13)
-    for (const e of seeAlso) {
-      const label = `${e.from} sees ${e.to}`
-      expect(e.from, label).toBeGreaterThanOrEqual(8)
-      expect(e.from, label).toBeLessThanOrEqual(15)
-      expect(e.to, label).toBeGreaterThanOrEqual(8)
-      expect(e.to, label).toBeLessThanOrEqual(15)
-      expect(Math.abs(e.to - e.from), label).toBeGreaterThan(1)
-    }
-  })
-
-  it('prints an empty SEE ALSO list for every module outside Intermediate', () => {
-    for (const module of modules) {
-      const n = module.frontmatter.module
-      if (n >= 8 && n <= 15) continue
-      expect(graph.seeAlso(n), `module ${n}`).toEqual([])
-    }
+    expect(graph.feeds(last)).toEqual([])
   })
 
   it('names only modules that exist, on both ends of every edge', () => {

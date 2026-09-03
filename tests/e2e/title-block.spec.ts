@@ -117,7 +117,11 @@ test('the index agrees with the sheets about which are bilingual', async ({ page
     if (row.draft) expect(row.lang, `sheet ${row.module}`).toBe('EN')
   }
 
-  // §7.6's own stated outcome: `EN · TR` on sheets 1-7, `EN` on 8-32.
-  expect(langs.filter((row) => row.lang === 'EN · TR').map((row) => row.module))
-    .toEqual([1, 2, 3, 4, 5, 6, 7])
+  // Which sheets are translated changes as they are translated, so the index
+  // is checked against the sheets rather than against a list written here: a
+  // drawn sheet reads `EN · TR` or `EN`, and nothing else.
+  for (const row of langs) {
+    if (!row.draft) expect(row.lang, `sheet ${row.module}`).toMatch(/^EN( · TR)?$/)
+  }
+  expect(langs.some((row) => row.lang === 'EN · TR')).toBe(true)
 })

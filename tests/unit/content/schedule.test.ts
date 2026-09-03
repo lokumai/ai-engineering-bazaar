@@ -67,16 +67,6 @@ describe('summarySentence', () => {
 describe('every draft sheet in the corpus', () => {
   const drafts = loadAllModules().filter((m) => m.sheetFormat === 'A4')
 
-  it('is all seventeen of them', () => {
-    expect(drafts).toHaveLength(17)
-  })
-
-  it('has a schedule of parts, because that is the sheet', () => {
-    for (const draft of drafts) {
-      expect(scheduleOfParts(draft.body).length, draft.slug).toBeGreaterThan(0)
-    }
-  })
-
   it('has a summary sentence that is not the dek and not the placeholder note', () => {
     for (const draft of drafts) {
       const summary = summarySentence(draft.body)

@@ -6,6 +6,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 the code looks the way it does. Read it before a first substantive change. This
 file is the operating manual on top of it.
 
+## Two halves, and which file governs which
+
+This repository holds two projects that meet at one file, and they have separate
+working agreements. Read the right one.
+
+| Working in | Governed by | In short |
+| --- | --- | --- |
+| `src/`, `tests/`, `scripts/`, `supabase/` | **this file** | The application that renders the corpus |
+| `mini-courses/` | [`mini-courses/CLAUDE.md`](mini-courses/CLAUDE.md) | The authored course, and everything `MANIFEST.md` governs |
+
+They share the derive-never-restate rule and the measure-do-not-assert habit,
+and they diverge on almost everything else: the corpus agreement is about prose,
+figures, translation and the seven manifest rules, none of which apply to code.
+
+**`mini-courses/curriculum.yaml` is the file they meet at.** It is authored by
+the course side and read by the app side, which makes it the only place a change
+in one half can break the other. `mini-courses/AGENTS.md` is a byte-identical
+copy of the corpus agreement; the `AGENTS.md` at this root is something else
+entirely, a block `next dev` writes and re-adds on every run, so leave it alone
+apart from committing it with your work.
+
 ## Commands
 
 ```bash
@@ -59,10 +80,17 @@ is an error box on GitHub, never a build failure.
 
 ## Architecture, in the parts that span files
 
-**The content pipeline.** `mini-courses/*.md` → `src/lib/content/` → routes.
-`loader.ts` reads, `schema.ts` validates frontmatter with zod, `render.ts` does
-md→html, `links.ts` rewrites cross-references, `derive.ts` counts, and
-`facts.ts` is the spine every page asks for the corpus. All of it is
+**The content pipeline.** `mini-courses/curriculum.yaml` + `mini-courses/*.md` →
+`src/lib/content/` → routes. `curriculum-file.ts` validates the config with zod
+plus seven cross-file rules, `loader.ts` **walks that config** rather than the
+directory, `render.ts` does md→html, `links.ts` rewrites cross-references,
+`derive.ts` counts, and `facts.ts` is the spine every page asks for the corpus.
+
+Because the loader walks the config, **a module's number is its position in
+`curriculum.yaml`**, computed there and written nowhere else. Filenames carry no
+number, prose names another module by title, and a module's own frontmatter is
+`summary` and `objectives` only. Adding `module:` or `status:` back to a file
+fails the build. Reordering the course is moving one line. All of it is
 build-time-only and reaches `node:fs`, so it may never be imported by a client
 component — that is why `layout.tsx` measures `curriculumFacts()` itself and
 passes the result down as props.
@@ -105,6 +133,25 @@ only `INSERT` raises, which is why that suite has both `expectRefused` and
 - **`mini-courses/` is read-only.** Nothing in `src/` may restate a fact that
   lives in a markdown file — no module count, no title, no category total.
   Derive it at build time.
+- **The config is validated, and the useful rule is the set comparison.** For
+  each category, the `.md` files on disk and the names listed in
+  `curriculum.yaml` must be the same set in both directions, so a module listed
+  without a file and a file written without a listing both fail by name. Also
+  enforced: unique names, resolvable prerequisites that sit earlier in the
+  course, a `ready` module with a positive duration, and a `_tr.md` sibling for
+  every module.
+- **Regenerate `src/app/lokum-modules.css` in the same commit as a `status`
+  change.** `prebuild` writes it, vitest and playwright never run `prebuild`,
+  and it is committed for exactly that reason. `public/course-images/` is the
+  other generated output and is gitignored, being only a copy of what is already
+  in `mini-courses/`.
+- **A test may check a rule that holds for any content; it may never write down
+  a fact about the content.** A word count, a table count, a heading spine or a
+  module number in an assertion turns an ordinary edit red and teaches nobody
+  anything. [`tests/README.md`](tests/README.md) carries the rule, the four
+  layers and what fails for a reason. The browser suite leaks hardest here,
+  because `tests/e2e/sheets.ts` names representative sheets by number and specs
+  then measure prose on them.
 - **An unresolvable internal `.md` link fails the build**, and
   `tests/corpus/links.test.ts` also asserts no rendered HTML anywhere carries a
   non-external `href` ending in `.md`. It checks every surface that renders
@@ -153,6 +200,9 @@ only `INSERT` raises, which is why that suite has both `expectRefused` and
 | Document | For |
 | --- | --- |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | The six rules, the build, the runtime layers |
+| [`mini-courses/CLAUDE.md`](mini-courses/CLAUDE.md) | The corpus agreement: how a module gets written, figures, translation |
+| [`mini-courses/MANIFEST.md`](mini-courses/MANIFEST.md) | The seven rules every module is held to |
+| [`tests/README.md`](tests/README.md) | The testing rule, the four layers, and the checks that fail for a reason |
 | [`docs/data-flow.md`](docs/data-flow.md) | The record, storage, sync, two devices, the exported file |
 | [`docs/auth-flow.md`](docs/auth-flow.md) | Sign-in, sessions, joining, who may read what |
 | [`docs/manager-queries.md`](docs/manager-queries.md) | Tables, columns, joins, manager SQL |

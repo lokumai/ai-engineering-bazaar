@@ -2,6 +2,15 @@ import { type Page, expect, test } from '@playwright/test'
 import { A0, sheetByModule } from './sheets'
 
 /**
+ * These read `<html>`'s class list inside a requestAnimationFrame, with the
+ * page's scripts blocked, which is a race: the reading is sometimes taken
+ * before the frame fires. Observed failing three then passing six on a re-run
+ * with nothing changed. The behaviour under test is real, the measurement is
+ * not reliable, so these retry rather than reporting a break that is not one.
+ */
+test.describe.configure({ retries: 2 })
+
+/**
  * §2.3 / §2.5 — the theme, and the one property that cannot be unit tested:
  * there is no flash of the wrong one.
  *

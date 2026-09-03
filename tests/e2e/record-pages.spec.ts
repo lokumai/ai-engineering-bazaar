@@ -251,8 +251,20 @@ test('§12.10.1 — every band is a graphics-object and states its own counted t
 
   // The record is in the labels, which is the only place a screen-reader user
   // learns it: the accent fill and the solid outline are not in the tree.
-  expect(labels.filter((label) => /— 1 of 7 signed off$/.test(label))).toHaveLength(1)
-  expect(labels.filter((label) => /— 2 of 8 signed off$/.test(label))).toHaveLength(1)
+  //
+  // Both numbers are counted here too, and that is the point rather than
+  // tidiness: the denominator is the size of the subsystem and the numerator is
+  // what the seed signed off inside it. Written down, either one would make an
+  // added or reordered sheet fail this test instead of the thing it guards.
+  const signedIn = (category: string) =>
+    Object.keys(SEEDED.sheets ?? {}).filter((slug) => slug.startsWith(`${category}/`)).length
+  const sizeOf = (category: string) =>
+    SHEETS.filter((sheet) => sheet.category === category).length
+
+  for (const category of ['fundamentals', 'intermediate']) {
+    const stated = new RegExp(`— ${signedIn(category)} of ${sizeOf(category)} signed off$`)
+    expect(labels.filter((label) => stated.test(label)), category).toHaveLength(1)
+  }
 })
 
 test('§12.10.1 — every node is named from aria-label, never from its visible text', async ({

@@ -1,0 +1,57 @@
+
+
+<p class="hl-lead">This opening paragraph is the lead, and the renderer marks it as one.</p>
+<h2 data-mark="I" id="a-numbered-section" aria-labelledby="a-numbered-section-title"><span id="a-numbered-section-title">A numbered section</span><a class="hl-anchor" href="#a-numbered-section" aria-label="Link to “A numbered section”"><span aria-hidden="true">§</span></a></h2>
+<p>Ordinary prose, with an <a href="https://example.com/paper" data-hl-external="">external link⁠<span class="hl-ext-mark" aria-hidden="true">↗</span></a> and a
+<a href="/courses/fundamentals/training/">cross-reference</a> to another sheet.</p>
+<h3 id="a-a-subsection" aria-labelledby="a-a-subsection-title"><span id="a-a-subsection-title">A. A subsection</span><a class="hl-anchor" href="#a-a-subsection" aria-label="Link to “A. A subsection”"><span aria-hidden="true">§</span></a></h3>
+<p>A three-column table, whose first body cell becomes a row header:</p>
+<figure class="hl-figure hl-table" data-hl-width="prose" data-hl-columns="3"><figcaption class="hl-cap"><span class="hl-cap-label">TBL. 1.1 — A. A subsection</span></figcaption><div class="table-scroll" role="region" tabindex="0" aria-label="Table 1.1" data-hl-scroller=""><table>
+<thead>
+<tr>
+<th scope="col">Layer</th>
+<th scope="col">What it is</th>
+<th scope="col">Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row">One</th>
+<td>The first thing</td>
+<td>Low</td>
+</tr>
+<tr>
+<th scope="row">Two</th>
+<td>The second thing</td>
+<td>High</td>
+</tr>
+</tbody>
+</table></div></figure>
+<h2 data-mark="II" id="pictures-and-diagrams" aria-labelledby="pictures-and-diagrams-title"><span id="pictures-and-diagrams-title">Pictures and diagrams</span><a class="hl-anchor" href="#pictures-and-diagrams" aria-label="Link to “Pictures and diagrams”"><span aria-hidden="true">§</span></a></h2>
+<figure class="hl-figure hl-image" data-hl-width="prose"><img src="/course-images/fundamentals/example.png" alt="A drawn figure"><figcaption class="hl-cap"><span class="hl-cap-label">FIG. 1.1 — A drawn figure</span><p class="hl-cap-note">The caption line, which the renderer puts below the label.</p></figcaption></figure>
+<figure class="hl-figure hl-diagram" data-hl-width="prose"><div class="hl-diagram-body" role="region" tabindex="0" aria-label="Figure 1.2" data-hl-scroller=""><div class="mermaid-source" data-mermaid="graph TD
+    A[&#x22;Start&#x22;] --> B{&#x22;Branch?&#x22;}
+    B -->|yes| C[&#x22;Do the thing&#x22;]
+    B -->|no| D[&#x22;Stop&#x22;]
+    classDef fault stroke-width:1px
+    classDef verify stroke-width:1px
+    class D fault
+    class C verify"><p class="hl-diagram-pending">Rendering FIG. 1.2</p></div></div><figcaption class="hl-cap"><span class="hl-cap-label">FIG. 1.2 — Pictures and diagrams</span><button type="button" class="hl-cap-action" data-hl-expand="">Expand</button></figcaption></figure>
+<h2 data-mark="III" id="code-quotes-and-lists" aria-labelledby="code-quotes-and-lists-title"><span id="code-quotes-and-lists-title">Code, quotes and lists</span><a class="hl-anchor" href="#code-quotes-and-lists" aria-label="Link to “Code, quotes and lists”"><span aria-hidden="true">§</span></a></h2>
+<div class="hl-code" data-language="python"><div class="hl-code-head"><span class="hl-code-lang">python</span><button type="button" class="hl-code-copy" data-hl-copy="" aria-live="polite">Copy</button></div><pre tabindex="0" data-language="python" data-theme="hidden-line-light hidden-line-dark" role="region" aria-label="python code" data-hl-scroller=""><code data-language="python" data-theme="hidden-line-light hidden-line-dark" style="display: grid;"><span data-line=""><span style="--shiki-light:#161B20;--shiki-light-font-weight:500;--shiki-dark:#E5E8EC;--shiki-dark-font-weight:500">def</span><span style="--shiki-light:#161B20;--shiki-dark:#E5E8EC"> add(a: int, b: int) -> int:</span></span>
+<span data-line=""><span style="--shiki-light:#161B20;--shiki-light-font-weight:500;--shiki-dark:#E5E8EC;--shiki-dark-font-weight:500">    return</span><span style="--shiki-light:#161B20;--shiki-dark:#E5E8EC"> a </span><span style="--shiki-light:#161B20;--shiki-light-font-weight:500;--shiki-dark:#E5E8EC;--shiki-dark-font-weight:500">+</span><span style="--shiki-light:#161B20;--shiki-dark:#E5E8EC"> b</span></span></code></pre></div>
+<div class="hl-code" data-language="output"><div class="hl-code-head"><span class="hl-code-lang">output</span><button type="button" class="hl-code-copy" data-hl-copy="" aria-live="polite">Copy</button></div><pre tabindex="0" role="region" aria-label="Program output" data-hl-scroller=""><code>Program output, in an untagged fence.
+</code></pre></div>
+<blockquote class="hl-quote" data-hl-labelled=""><p class="hl-quote-label">Note</p><div class="hl-quote-body">
+<p>a blockquote whose bold lead-in ends in a colon becomes a label.</p>
+</div></blockquote>
+<blockquote class="hl-quote">
+<p>A blockquote with no lead-in stays a plain pull-rule.</p>
+</blockquote>
+<p>A checklist, which the record reads by index:</p>
+<ul class="contains-task-list">
+<li class="task-list-item" data-hl-check="0"><input type="checkbox" disabled aria-hidden="true"> The first item, unticked.</li>
+<li class="task-list-item" data-hl-check="1"><input type="checkbox" checked disabled aria-hidden="true"> The second item, ticked.</li>
+</ul>
+<h2 id="summary" aria-labelledby="summary-title"><span id="summary-title">Summary</span><a class="hl-anchor" href="#summary" aria-label="Link to “Summary”"><span aria-hidden="true">§</span></a></h2>
+<p>One paragraph of summary, with a <a href="/courses/fundamentals/rag/">second cross-reference</a>.</p>

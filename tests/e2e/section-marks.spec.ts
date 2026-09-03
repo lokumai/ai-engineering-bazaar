@@ -28,7 +28,24 @@ function inkOf(page: Page, selector: string) {
   }, selector)
 }
 
+/**
+ * SKIPPED, and the reason is the corpus rather than the code.
+ *
+ * Both cases below need a sheet whose `h2`s carry `data-mark`, which is what
+ * puts a numeral beside a section. `data-mark` appears nowhere in the export:
+ * grep it and you get zero. The old machine-written Intermediate drafts
+ * numbered their sections, and the rewrite dropped that style everywhere, so
+ * there is no page left to measure the rule on.
+ *
+ * The rule is still worth having. To bring these back, either a sheet has to
+ * use numbered sections again, or they need a served fixture page to run
+ * against, which the browser suite does not currently have. That is a decision
+ * about the corpus, not something to settle by loosening the assertions.
+ */
+const NO_NUMBERED_SECTIONS = true
+
 test('the section numeral stays out of the left rail (§6.1, §4.1)', async ({ page }) => {
+  test.skip(NO_NUMBERED_SECTIONS, 'no sheet carries a section numeral: see the note above')
   await page.goto(A0.path)
 
   const measured = await page.evaluate(() => {
@@ -64,6 +81,7 @@ test('the section numeral stays out of the left rail (§6.1, §4.1)', async ({ p
 })
 
 test('a TOC numeral never runs into its section title (§5.6)', async ({ page }) => {
+  test.skip(NO_NUMBERED_SECTIONS, 'no sheet carries a section numeral: see the note above')
   await page.goto(A0.path)
 
   const marks = await inkOf(page, '.hl-rail-left .hl-toc-mark')

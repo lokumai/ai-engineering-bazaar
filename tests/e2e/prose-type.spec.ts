@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { A0, SHORT } from './sheets'
+import { A0, SHORT, sheetByModule } from './sheets'
 
 /**
  * §3.4 and §6.5 in the prose column: which type a run of content ends up set
@@ -47,7 +47,12 @@ test('a caption strip stays 28px however long the author wrote (§6.5)', async (
 })
 
 test('inline code in a table cell is text-meta, not 0.9em of the cell (§3.4)', async ({ page }) => {
-  await page.goto(A0.path)
+  // Module 6 rather than the A0 exemplar. This used to load Security and
+  // require more than ten such cells, which counted a machine-written draft
+  // that has since been rewritten to none. Module 6 is the one sheet in the
+  // corpus that puts inline code inside a table cell, and one cell is enough
+  // to measure the size the rule is about.
+  await page.goto(sheetByModule(6).path)
 
   const measured = await page.evaluate(() => {
     const cells = [...document.querySelectorAll('.prose :is(td, th) code')]
@@ -62,8 +67,8 @@ test('inline code in a table cell is text-meta, not 0.9em of the cell (§3.4)', 
     }
   })
 
-  expect(measured.count, 'the security sheet still has inline code in tables')
-    .toBeGreaterThan(10)
+  expect(measured.count, 'no sheet puts inline code in a table cell any more')
+    .toBeGreaterThan(0)
   expect(measured.parents).toContain('td')
   // §3.2's `text-meta` step, and the px it resolves to at the root size.
   expect(Number.parseFloat(measured.meta) * 16).toBe(13)

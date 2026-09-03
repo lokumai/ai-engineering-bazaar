@@ -75,11 +75,11 @@ export const SHEETS: readonly Sheet[] = [
   sheet(22, '/courses/expert/advanced-harness-engineering/', 'Advanced Harness Engineering', 'A4'),
   sheet(23, '/courses/expert/advanced-deployment/', 'Advanced Deployment', 'A4'),
   sheet(24, '/courses/expert/advanced-training/', 'Advanced Training', 'A4'),
-  sheet(25, '/courses/ecosystem/agent-frameworks/', 'Agent Frameworks', 'A4'),
-  sheet(26, '/courses/ecosystem/inference-providers/', 'Inference Providers', 'A4'),
-  sheet(27, '/courses/ecosystem/inference-engines/', 'Inference Engines', 'A4'),
-  sheet(28, '/courses/ecosystem/ui-design/', 'UI Design', 'A4'),
-  sheet(29, '/courses/ecosystem/observability/', 'Observability', 'A4'),
+  sheet(25, '/courses/ecosystem/agent-frameworks/', 'Agent Frameworks', 'A0'),
+  sheet(26, '/courses/ecosystem/inference-providers/', 'Inference Providers', 'A0'),
+  sheet(27, '/courses/ecosystem/inference-engines/', 'Inference Engines', 'A0'),
+  sheet(28, '/courses/ecosystem/ui-design/', 'UI Design', 'A0'),
+  sheet(29, '/courses/ecosystem/observability/', 'Observability', 'A0'),
   sheet(30, '/courses/ecosystem/choosing-tech-stack/', 'Choosing a Tech Stack', 'A4'),
   sheet(31, '/courses/protocols/protocols-reference/', 'Protocols Reference', 'A4'),
   sheet(32, '/courses/optional/human-in-the-loop/', 'Human in the Loop', 'A4'),
@@ -112,6 +112,16 @@ export const CATEGORY_PATHS = [
   '/courses/protocols/',
   '/courses/optional/',
 ] as const
+
+/**
+ * How many task items the A0 exemplar's checklist carries.
+ *
+ * Typed out here for the same reason as everything else in this file: a spec
+ * that counted the boxes on the page could not notice the author changing the
+ * checklist. It moved from 8 to 5 when Security was rewritten, and the specs
+ * that read it went red until somebody looked, which is the intended outcome.
+ */
+export const CHECKLIST_ITEMS = 5
 
 /** One sheet of each §4.4 format, for the tests that want a representative. */
 export const A0 = SHEETS[12] // 13 — Security, the widest prose on the site

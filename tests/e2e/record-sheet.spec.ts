@@ -17,7 +17,7 @@ import {
   waitForRecord,
   waitForSheet,
 } from './record'
-import { A0, INDEX_SHEET, SHEETS, sheetByModule } from './sheets'
+import { A0, CHECKLIST_ITEMS, INDEX_SHEET, SHEETS, sheetByModule } from './sheets'
 import { watchPage } from './watch'
 
 /**
@@ -82,7 +82,7 @@ const NO_READING = [`Signed off --/${SHEETS.length}`, 'XP --', 'Class --', '-- a
 const EMPTY_STAMPS = [
   'SIGN-OFF 0 OF 1',
   'QUIZ 0 OF 1',
-  'CHECKLIST 0 OF 8',
+  `CHECKLIST 0 OF ${CHECKLIST_ITEMS}`,
   'SOURCES OPENED 0 OF 5',
 ]
 
@@ -775,19 +775,19 @@ for (const outcome of ['MATCHED', 'DID NOT MATCH'] as const) {
 // §12.7 — the checklist
 // ---------------------------------------------------------------------------
 
-test('the eight items are real, named checkboxes and a tick survives a reload (§12.7)', async ({
+test('the task items are real, named checkboxes and a tick survives a reload (§12.7)', async ({
   page,
 }) => {
   await page.goto(SHEET.path)
 
   const boxes = page.getByRole('checkbox')
-  await expect(boxes).toHaveCount(8)
+  await expect(boxes).toHaveCount(CHECKLIST_ITEMS)
 
   for (const box of await boxes.all()) {
     await expect(box).toBeEnabled()
     // §6.4's problem, solved rather than avoided: the item's text is a SIBLING
     // of the box, so it contributes nothing to the accessible name and the
-    // island has to supply one. Without it these are eight nameless checkboxes.
+    // island has to supply one. Without it these are nameless checkboxes.
     const name = (await box.getAttribute('aria-label')) ?? ''
     expect(name.trim().length, 'a checkbox with no accessible name').toBeGreaterThan(0)
   }
@@ -802,7 +802,7 @@ test('the eight items are real, named checkboxes and a tick survives a reload (�
   expect((await readRecord(page))?.data.sheets[SLUG]?.checklist).toEqual({ '0': true })
 })
 
-test('all eight ticked awards 40, and a ticked item is not struck through (§12.5.1, §12.7)', async ({
+test('ticking every item awards the flat 40, and a ticked item is not struck through (§12.5.1, §12.7)', async ({
   page,
 }) => {
   await page.goto(SHEET.path)
@@ -812,11 +812,17 @@ test('all eight ticked awards 40, and a ticked item is not struck through (§12.
   const total = await boxes.count()
   for (let index = 0; index < total; index += 1) await boxes.nth(index).check()
 
+  // 40 is flat: `XP_CHECKLIST` in `lib/record/derive.ts` pays for *completing*
+  // the checklist, not per item, so the award does not move when the author
+  // adds or removes one. The old test read 40 too and was right about the
+  // number; it was only wrong to call it eight items.
   await expect(readoutCell(page, /^XP/)).toHaveText('XP 40')
   const stored = await waitForSheet(page, SLUG, (sheet) =>
     Object.keys(sheet?.checklist ?? {}).length === total,
   )
-  expect(Object.keys(stored.checklist).sort()).toEqual(['0', '1', '2', '3', '4', '5', '6', '7'])
+  expect(Object.keys(stored.checklist).sort()).toEqual(
+    Array.from({ length: total }, (_, index) => String(index)).sort(),
+  )
 
   // §7.2 — NO strikethrough. A struck-through line reads as cancelled, and a
   // completed check is the opposite of cancelled.

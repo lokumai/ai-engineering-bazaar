@@ -383,7 +383,13 @@ test('a data table of three or more columns announces its rows (§10.2)', async 
     })),
   )
 
-  expect(tables.length).toBeGreaterThan(3)
+  // At least one, not "more than three". The old number counted the tables in
+  // one machine-written draft, and rewriting that sheet took it to zero. What
+  // the rule actually says is that ANY data table of three or more columns has
+  // to announce its rows, so one is enough to make the loop below mean
+  // something and nothing here should depend on how many a sheet happens to
+  // carry.
+  expect(tables.length).toBeGreaterThan(0)
   for (const table of tables) {
     expect(table.headerScopes.every((scope) => scope === 'col')).toBe(true)
     if (table.columns < 3) continue

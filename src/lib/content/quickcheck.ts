@@ -5,7 +5,7 @@ import { stripBuildFurniture } from './strip'
  * §12.6 — the Quick Check, and the one authored thing that stands in for the
  * model answer this corpus does not have.
  *
- * **MEASURED:** 15 of the 32 sheets carry a self-check — every drawn sheet. It is
+ * **MEASURED:** every drawn sheet carries a self-check, and no draft does. It is
  * written `**Quick Check**: <question>` — a bold *inline* run opening a
  * paragraph, not a heading — so `sectionTitles`, `topicsFor` and the TOC are
  * all blind to it and the section spine cannot be used to find it. Sheet 1 is
@@ -14,7 +14,7 @@ import { stripBuildFurniture } from './strip'
  *
  * **There is no authored model answer anywhere in the corpus.** Greps for
  * `**Answer`, `Model answer`, `Cevap` and `<details>` return nothing across the
- * 32 English sheets. So §5.10's `REVEAL MODEL ANSWER` is withdrawn, there is no
+ * English sheets. So §5.10's `REVEAL MODEL ANSWER` is withdrawn, there is no
  * field here for an answer, and nothing in this file may invent one (§11.25):
  * a reveal button over a generated answer is the §1 failure in one control.
  * `summarySection` is what §12.6 reveals instead, labelled as what it is.
@@ -26,7 +26,7 @@ import { stripBuildFurniture } from './strip'
  *
  * **The Turkish form is deliberately not handled.** Six `_tr.md` siblings carry
  * `**Hızlı Kontrol**`, but the loader skips every `_tr.md` file, so no Turkish
- * body ever reaches this module — 25 of the 32 are 73–153-word placeholders
+ * body ever reaches this module — the drafts are 73 to 153-word placeholders
  * anyway, and §12.0 defers the Turkish routes to a later slice. A second label
  * here would be a branch no test could reach through the loader, and §11.25's
  * rule cuts both ways: code that claims to read something nothing hands it is

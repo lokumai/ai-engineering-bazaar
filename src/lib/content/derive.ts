@@ -258,7 +258,7 @@ function extentOfFile(file: string): number {
  * Two rules, and both of them are the spec's. §7.6's ratio decides a drawn
  * sheet. A sheet that is *not* drawn prints `EN`, because §4.5 item 4 spells
  * the draft strip out as `LANG EN` and §7.6's own stated outcome is `EN` on
- * sheets 8–32.
+ * the draft sheets.
  *
  * That second rule is not a rounding of the first. Measured today, modules
  * 16–32 sit at 0.83–1.00 — both sides of those pairs are stubs, and the

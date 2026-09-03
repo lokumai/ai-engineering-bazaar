@@ -17,7 +17,7 @@ import type { RoleId } from './roles'
  *    control, and a reader with no role has the whole corpus exactly as Phase 2
  *    left it.
  *
- * 2. **A draft step never promises a lesson** (§13.4.2). 17 of the 32 sheets are
+ * 2. **A draft step never promises a lesson** (§13.4.2). Most of the sheets are
  *    drafts holding a topic list and nothing else. A path may include one,
  *    because a roadmap that stops at the edge of today's content is a worse
  *    roadmap — but its `reason` says what the sheet is PLANNED to cover, and its

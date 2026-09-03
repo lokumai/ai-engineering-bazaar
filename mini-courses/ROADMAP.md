@@ -19,9 +19,9 @@ pile of good markdown nobody returns to is a blog.
 
 ## 1. Content for Fundamentals and Intermediate
 
-Modules 1 to 15. Fundamentals is improved in place; Intermediate is rewritten from scratch,
-because the existing files are dense, citation-heavy research notes rather than the plain
-explanations the manifest asks for.
+Fundamentals and Intermediate, from LLM Fundamentals through Personal Agents. Fundamentals is
+improved in place; Intermediate is rewritten from scratch, because the existing files are dense,
+citation-heavy research notes rather than the plain explanations the manifest asks for.
 
 This comes first for the reason the manifest gives: original human writing on topics too new
 for reliable sources is the thing worth building on.
@@ -43,9 +43,9 @@ selection has something real to work from.
 
 ## 4. Advanced material
 
-Modules 15 to 24, the Expert track. This waits for the Intermediate tier deliberately: the
-advanced modules assume the vocabulary the earlier ones establish, and writing them first
-would mean writing them twice.
+The Expert track, from Advanced UI through Advanced Training. This waits for the Intermediate tier
+deliberately: the advanced modules assume the vocabulary the earlier ones establish, and writing
+them first would mean writing them twice.
 
 ## 5. Chatbot features over the course content
 
@@ -55,7 +55,7 @@ this. What exactly we take from it is still to be decided.
 
 ## 6. The remaining material
 
-Ecosystem, Protocols and Specs, and the optional modules. Modules 24 to 32.
+Ecosystem, Protocols and Specs, and the optional modules: Agent Frameworks through Runtime.
 
 ## 7. Generative and agentic UI
 

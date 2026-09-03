@@ -20,7 +20,7 @@
  * the browser would publish the private key to every visitor.
  *
  * So every claim is phrased as a statement about the **record**, never about the
- * person: "this record contains 7 of 32 sheets marked signed off" is always
+ * person: "this record contains 7 of 33 sheets marked signed off" is always
  * true, where "has completed" is not something this data supports. §12.12.1
  * lists the permitted forms and the forbidden ones, and `CLAIMS` below is that
  * list in code.

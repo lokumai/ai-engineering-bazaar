@@ -25,7 +25,7 @@ export function curriculum(): CategoryWithModules[] {
 }
 
 /**
- * Sheets in the set. Counted, never typed: `SHEET 13 OF 32` is a claim about
+ * Sheets in the set. Counted, never typed: `SHEET 13 OF 33` is a claim about
  * the repository and it stops being true the day a thirty-third file lands
  * (§11.25).
  */

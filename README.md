@@ -23,14 +23,14 @@ The internet already has plenty of AI content. Adding more only makes sense if i
 ## Structure
 
 
-| Category                                                              | Modules | Description                                                                                                               |
+| Category                                                              | Sheets  | Description                                                                                                               |
 | --------------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------- |
-| [Fundamentals](mini-courses/1_fundamentals/README.md)                     | 1-7     | LLMs, training, RAG, tools, memory, agents, multi-agent systems.**Start here.**                                           |
-| [Intermediate](mini-courses/2_intermediate/README.md)                     | 8-14    | Prompt engineering, context engineering, coding agents, harness engineering, security, loop engineering, personal agents. |
-| [NOT READY] [Expert](mini-courses/3_expert/README.md)                     | 15-24   | Advanced UI, architectures, tools, memory, multi-agent, prompting, context engineering, harness engineering, deployment, training.  |
-| [NOT READY] [Ecosystem](mini-courses/4_ecosystem/README.md)               | 25-30   | Agent frameworks, inference providers, inference engines, UI design, observability, choosing a tech stack.                                       |
-| [NOT READY] [Protocols & Specs](mini-courses/5_protocols_specs/README.md) | 31      | A single reference of every protocol and spec mentioned across the series.                                                |
-| [NOT READY] [Optional](mini-courses/6_optional/README.md)                 | 32-33   | Human-in-the-loop and runtime topics that round out the series.                                                           |
+| [Fundamentals](mini-courses/1_fundamentals/README.md)                     | 7       | LLMs, training, RAG, tools, memory, agents, multi-agent systems.**Start here.**                                           |
+| [Intermediate](mini-courses/2_intermediate/README.md)                     | 7       | Prompt engineering, context engineering, coding agents, harness engineering, security, loop engineering, personal agents. |
+| [NOT READY] [Expert](mini-courses/3_expert/README.md)                     | 10      | Advanced UI, architectures, tools, memory, multi-agent, prompting, context engineering, harness engineering, deployment, training.  |
+| [NOT READY] [Ecosystem](mini-courses/4_ecosystem/README.md)               | 6       | Agent frameworks, inference providers, inference engines, UI design, observability, choosing a tech stack.                                       |
+| [NOT READY] [Protocols & Specs](mini-courses/5_protocols_specs/README.md) | 1       | A single reference of every protocol and spec mentioned across the series.                                                |
+| [NOT READY] [Optional](mini-courses/6_optional/README.md)                 | 2       | Human-in-the-loop and runtime topics that round out the series.                                                           |
 
 
 
@@ -63,7 +63,7 @@ repository root is the Next.js application that reads them:
 as the whole site.
 
 **The course cross-references are rewritten at build time.** A module that links to
-another with a relative markdown path — `[Module 13](13_security.md)` — has that href
+another with a relative markdown path — `[Security](security.md)` — has that href
 turned into the real route by `src/lib/content/links.ts`. An internal `.md` link the
 corpus cannot answer for **fails the build**, naming the file and the href, so a broken
 cross-reference cannot reach the published site.
@@ -102,17 +102,16 @@ Two things about those routes are worth knowing, because they are what makes
 them worth reading:
 
 - **Every reason is grounded in the sheet it points at.** They were written by
-  reading the 32 sheets, then audited against the files by readers who had not
+  reading the sheets, then audited against the files by readers who had not
   written them — which caught seven real problems, including a claim about
   retrieval-correctness content that does not exist in the corpus and a route
-  that promised vector-store operations no sheet covers. The quotation behind
-  each reason is kept in `tests/fixtures/path-evidence.json`, and a test
-  checks all 123 of them against the source files on every run.
-- **17 of the 32 sheets are not written yet.** A route may point at one, because
-  a roadmap that stops at the edge of today's content is a worse roadmap — but
-  such a step says `NOT DRAWN`, links to nothing, and is **excluded from the
-  count**. A route with 12 written sheets and 2 planned ones reports `n of 12`,
-  never `n of 14`.
+  that promised vector-store operations no sheet covers.
+- **Most of the sheets are not written yet**, and the site says how many on
+  every listing page rather than here, where the number would go stale. A route
+  may point at an unwritten sheet, because a roadmap that stops at the edge of
+  today's content is a worse roadmap — but such a step says `NOT DRAWN`, links
+  to nothing, and is **excluded from the count**. A route with 12 written sheets
+  and 2 planned ones reports `n of 12`, never `n of 14`.
 
 A role is a statement you make, never a guess: nothing infers it from what you
 have read. And a path recommends an order — it gates nothing, every sheet stays

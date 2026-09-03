@@ -95,7 +95,7 @@ export function sheetFacts(
   }
 }
 
-/** §4.5 item 2 / §4.6 — `SUBSYSTEM 03 · EXPERT · SHEET 17 OF 32`. */
+/** §4.5 item 2 / §4.6 — `SUBSYSTEM 03 · EXPERT · SHEET 17 OF 33`. */
 export function eyebrow(facts: SheetFacts): string {
   return [
     `SUBSYSTEM ${pad2(facts.categoryOrder)}`,
@@ -104,7 +104,7 @@ export function eyebrow(facts: SheetFacts): string {
   ].join(' · ')
 }
 
-/** §5.2 — `SHEET 13 OF 32`, the footer's left cell. */
+/** §5.2 — `SHEET 13 OF 33`, the footer's left cell. */
 export function sheetLabel(facts: SheetFacts): string {
   return `SHEET ${facts.module} OF ${facts.sheets}`
 }

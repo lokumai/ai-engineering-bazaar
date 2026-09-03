@@ -60,7 +60,7 @@ export interface CourseModule {
  * The file a module's name resolves to.
  *
  * The name IS the file stem, so this is a join and not a search. It was briefly
- * a search, while the corpus carried `13_security.md` and the yaml said
+ * a search, while the corpus carried `security.md` and the yaml said
  * `security`; there is nothing left to search for.
  *
  * `curriculum-file.ts`'s rule 6 has already established that the file exists

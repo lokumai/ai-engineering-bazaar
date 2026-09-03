@@ -125,7 +125,7 @@ function RoleEmpty({ drawnSlugs }: { drawnSlugs: readonly string[] }) {
 /**
  * §13.4.2, §13.8 — the path's standing, in sheets.
  *
- * The denominator counts DRAWN steps only. 17 of the 32 sheets are drafts
+ * The denominator counts DRAWN steps only. Most of the sheets are drafts
  * holding a topic list and nothing else, and a draft sheet carries no sign-off
  * control at all (§12.4.1) — so counting one as something left to do would ask
  * the reader to finish a sheet nobody has written. The draft steps a path

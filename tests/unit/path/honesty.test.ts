@@ -10,7 +10,7 @@ import { ROLES, ROLE_IDS } from '@/lib/path/roles'
  * This file was specified before the paths were written, not after, because
  * §13.4.2 is the section most likely to be implemented sloppily: **including a
  * draft sheet in a path is the natural thing to do, and excluding it from the
- * denominator is the unnatural one.** 17 of the 32 sheets hold a topic list and
+ * denominator is the unnatural one.** Most of the sheets hold a topic list and
  * nothing else. A path that counts them tells a reader to finish work nobody
  * has written.
  *

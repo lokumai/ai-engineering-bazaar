@@ -4,16 +4,17 @@ import { type CourseModule, loadAllModules } from './loader'
 
 /**
  * The corpus cross-references itself in the only notation a folder of markdown
- * files has: a relative path to another file. `[Module 13](13_security.md)`,
- * `[Module 17](../3_expert/17_advanced_architectures.md)`. **MEASURED:** 163
- * such links exist across the 32 English sheets and their Turkish siblings, in
- * exactly two shapes — `NAME.md` inside the same category directory and
- * `../DIR/NAME.md` into another one — and not one of them carries an anchor.
+ * files has: a relative path to another file. `[Security](security.md)`,
+ * `[Advanced Architectures](../3_expert/advanced_architectures.md)`.
+ * **MEASURED:** 265 such links exist across the English sheets and their
+ * Turkish siblings, in exactly two shapes — `NAME.md` inside the same category
+ * directory and `../DIR/NAME.md` into another one — and not one of them carries
+ * an anchor.
  *
- * A file path is not a route. The sheet at `13_security.md` is served at
+ * A file path is not a route. The sheet at `security.md` is served at
  * `/courses/intermediate/security/`, so the browser resolved the href against
- * the *page* URL and asked for `/courses/intermediate/13_security.md`, which is
- * a 404. **MEASURED** in the static export before this module existed: 39 dead
+ * the *page* URL and asked for `/courses/intermediate/security.md`, which is a
+ * 404. **MEASURED** in the static export before this module existed: 39 dead
  * links across 8 pages, every one of them in `intermediate`, because that is
  * the category whose prose cross-references its neighbours in the body rather
  * than only in the navigation furniture `strip.ts` removes.
@@ -102,15 +103,15 @@ function walk(dir: string, target: string): string[] {
  * left exactly as the author wrote them.
  *
  * `source` is the file the href was written in, relative to `CONTENT_ROOT`
- * (`2_intermediate/12_harness_engineering.md`). It supplies the directory the
+ * (`2_intermediate/harness_engineering.md`). It supplies the directory the
  * link resolves against and it is what the error message names, and taking one
  * path rather than a directory plus a name means the two can never disagree.
  *
  * **An internal `.md` link the corpus cannot answer for throws.** Until this
  * module, `mkdocs build --strict` was the only thing in the repository that
  * failed on a dead internal link — breaking one on purpose produced
- * `WARNING - Doc file '1_fundamentals/1_llms.md' contains a link
- * '9_bu_dosya_yok.md', but the target ... is not found among documentation
+ * `WARNING - Doc file '1_fundamentals/llms.md' contains a link
+ * 'bu_dosya_yok.md', but the target ... is not found among documentation
  * files. Aborted with 1 warnings in strict mode!` MkDocs is deleted, so that
  * gate exists here or it exists nowhere. A throw is the stronger form of it:
  * a warning needs a flag to become fatal, and a flag can be turned off.

@@ -305,7 +305,7 @@ export function validateGraph(
     }
   }
 
-  // Iterative three-colour DFS. Recursive would be fine at 32 nodes; iterative
+  // Iterative three-colour DFS. Recursive would be fine at 33 nodes; iterative
   // is what keeps the reported cycle in traversal order rather than in reverse.
   const out = new Map<number, number[]>()
   for (const edge of edges) {

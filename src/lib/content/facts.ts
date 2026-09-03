@@ -42,7 +42,7 @@ export interface SheetFact {
   /** `status: ready` — the geometry is on the sheet, so it can be signed off. */
   drawn: boolean
   /**
-   * §12.6 — whether this sheet asks a self-check. All 15 drawn sheets do and no
+   * §12.6 — whether this sheet asks a self-check. Every drawn sheet does and no
    * draft does, but that is a measurement, not a rule: a consumer keys on this
    * flag, never on `drawn`.
    */
@@ -70,11 +70,11 @@ export interface CategoryFact {
  * them to disagree.
  */
 export interface AttainableCounts {
-  /** Drawn sheets: 15. A draft has no sign-off control at all (§12.4.1). */
+  /** Drawn sheets. A draft has no sign-off control at all (§12.4.1). */
   signOff: number
-  /** Drawn sheets that ask a self-check: 15. */
+  /** Drawn sheets that ask a self-check. */
   quiz: number
-  /** Drawn sheets with at least one checklist item: 1. */
+  /** Drawn sheets with at least one checklist item. */
   checklist: number
 }
 

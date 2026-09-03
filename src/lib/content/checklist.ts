@@ -4,7 +4,7 @@ import { stripBuildFurniture } from './strip'
 /**
  * §12.7 — the checklist a reader runs against their own repository.
  *
- * **MEASURED:** 8 `- [ ]` items, all of them in `2_intermediate/13_security.md`,
+ * **MEASURED:** 8 `- [ ]` items, all of them in `2_intermediate/security.md`,
  * none on the other 31 sheets. That is the `CHECKLIST` row of §12.5.1's XP
  * table — eligible today, one sheet — and §12.5.4 is why there is no checklist
  * column on the manifest: 31 dashes and one `8` is absent, not empty.
@@ -14,7 +14,7 @@ import { stripBuildFurniture } from './strip'
  * authoritative reading of that is the hast tree `rehypeTaskListMarkers`
  * decorates — but that tree only exists behind an `await` and only for a sheet
  * the renderer has been asked to render. This module takes the raw-line route
- * instead: synchronous, available for all 32 sheets, cheap enough to run inside
+ * instead: synchronous, available for every sheet, cheap enough to run inside
  * `curriculumFacts()`. The price is that the two can disagree, so §12.7
  * requires the corpus total to be cross-checked against the hast route, and
  * `tests/unit/content/checklist.test.ts` does exactly that, per sheet.

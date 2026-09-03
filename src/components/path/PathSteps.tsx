@@ -21,8 +21,8 @@ import { isDrawnStep, type LearningPath, type PathStep, type Tier } from '@/lib/
  * `data-hl-path-slug`: it is the contract between this markup and that island,
  * the same arrangement `SignOffMarks` uses for the sign-off squares.
  *
- * **A draft step never implies a lesson** (§13.4.2, §12.4.1). Modules 16–32
- * hold a topic list and nothing else, so a draft step is drawn in §11.25's
+ * **A draft step never implies a lesson** (§13.4.2, §12.4.1). A draft sheet
+ * holds a topic list and nothing else, so a draft step is drawn in §11.25's
  * hidden-line treatment with `NOT DRAWN` beside it, carries no sign-off
  * marker — no `hl-signed-<n>` for n ≥ 16 can ever be stamped, because a draft
  * sheet has no sign-off control to produce one — and carries **no link**: a

@@ -94,7 +94,7 @@ function fail(rule: string, detail: string): never {
  *
  * The numeric prefix is gone from the corpus, and so is the tolerance for one
  * here: a stray `1_llms.md` is now a file nobody listed, which rule 6 refuses
- * by name.
+ * by name. That is deliberate rather than incidental.
  */
 const MODULE_FILE = /^([a-z0-9_]+)\.md$/
 

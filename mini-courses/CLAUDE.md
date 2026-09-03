@@ -82,7 +82,7 @@ title, capitalised.
 
 ## How a module gets written
 
-Practices settled while writing modules 1 to 3. They are not style garnish, they are what makes a
+Practices settled while writing the first three Fundamentals modules. They are not style garnish, they are what makes a
 module land.
 
 **Open by connecting, then name the one idea.** The first lines say what the previous module
@@ -90,7 +90,7 @@ established and what this one adds. No greetings, no "welcome", no "in this modu
 
 **Figures carry the argument, they never decorate.** Put a figure where the reader needs it, not
 at the end of the section. If a figure is good enough to change what the section should say, then
-restructure the section: the training-network figure became the opening of module 2 because it
+restructure the section: the training-network figure became the opening of Training LLMs because it
 answers "what does training change", which the draft never asked. The caption says something the
 picture cannot say for itself: the mechanism, the one thing to notice, or the consequence. A
 caption that restates the alt text is wasted.
@@ -121,10 +121,10 @@ title: two guessed titles this session were both wrong. On a project whose whole
 machine-written content on these topics is unreliable, a wrong number or a mislabelled source is
 the one unforgivable defect.
 
-**Make an earlier module pay off in a later one.** Module 3's retrieval pipeline reappears in
-Module 4 as a tool, with the note that letting the model decide *when* to retrieve is most of what
-separates a RAG app from an agent. Module 1's `read_file(path)` tool schema reappears in Module 4's
-system prompt. These callbacks are what make the set a series rather than seven articles, and they
+**Make an earlier module pay off in a later one.** RAG & Embeddings' retrieval pipeline reappears
+in Tool Calling as a tool, with the note that letting the model decide *when* to retrieve is most of
+what separates a RAG app from an agent. LLM Fundamentals' `read_file(path)` tool schema reappears in
+Tool Calling's system prompt. These callbacks are what make the set a series rather than seven articles, and they
 cost one sentence each.
 
 **Cut the filler.** No greetings, no "Keep going 🚀", no "Quiz Yourself", no telling the reader how
@@ -133,7 +133,7 @@ valuable the material is.
 **End with links out**, and build the References list only from links actually used in the text,
 each with a few words on why it is worth opening.
 
-**API examples use the OpenAI and OpenRouter-compatible shape**, because Module 1 points readers at
+**API examples use the OpenAI and OpenRouter-compatible shape**, because LLM Fundamentals points readers at
 OpenRouter and they could actually run what they read. Add one line noting field names differ
 slightly between providers while the shape does not.
 
@@ -174,8 +174,8 @@ Rule 5 of the manifest says pictures do a lot of the work, so a module without o
 unfinished. There are four places to get one, roughly in order of how much work they cost.
 
 **1. Reuse a figure that already exists.** The cheapest and often the best. `agent-context.jpeg` was
-drawn for Module 4 and reused in Module 6 for one pass of the loop; `llm-context.jpeg` was drawn for
-Module 1 and reused in Module 5 as the message stack. A figure the reader has seen before does
+drawn for Tool Calling and reused in AI Agents for one pass of the loop; `llm-context.jpeg` was
+drawn for LLM Fundamentals and reused in Memory as the message stack. A figure the reader has seen before does
 double duty: it teaches the new point and reminds them of the old one.
 
 **2. Draw one with the project templates.** For anything about context, messages, tools or agents,
@@ -210,10 +210,10 @@ host and a model take turns, which is most of Fundamentals.
 paint their own blocks and branches in bright inline colours (orange, magenta, yellow) that the
 site's design tokens never reach, so they stay bright in dark mode.
 
-- **`mindmap` is allowed.** It was tried in Module 9, and Amirkia looked at it and liked the
+- **`mindmap` is allowed.** It was tried in Context Engineering, and Amirkia looked at it and liked the
   colours: "no worries if it ignores site design". So a mindmap keeps its own palette on purpose.
 - **`timeline` is not.** Same colour problem, plus it grows wide enough to clip its last column.
-  Tried in Module 8 and replaced. A story over time reads better as a `graph TD` with one node per
+  Tried in Prompt Engineering and replaced. A story over time reads better as a `graph TD` with one node per
   era and the events inside the node, which themes correctly and reads top to bottom as
   chronological. The manifest-rule-1 point still stands: a model cannot tell a reader when an idea
   appeared or what it replaced, so the *content* of that figure is one only a human can supply.
@@ -236,13 +236,13 @@ move is to use no colour at all and let structure carry the meaning.
 - **YouTube**, including **Shorts**, for a video that explains something better than prose will.
   Always fetch the real title rather than guessing it.
 - **Memes and brain rot.** Not decoration, and not a joke at the reader's expense: a good meme
-  compresses an argument. Module 6 carries three, and each one states a different claim the prose
+  compresses an argument. AI Agents carries three, and each one states a different claim the prose
   then unpacks. If a meme is doing that work, it earns its place.
 
 **Whatever the source, the caption still has to say something the picture cannot.** A found image
 with a caption that only names it is worse than no image. And check what the picture actually shows
 before writing about it: a figure labelled "unsupervised" needed a note that the precise term is
-self-supervised, and three memes in Module 6 had captions that threw their arguments away.
+self-supervised, and three memes in AI Agents had captions that threw their arguments away.
 
 ## Diagrams
 
@@ -287,11 +287,21 @@ sides can see the whole board, so nothing moves.
 
 ## Starting a new module
 
-Copy `mini-courses/_module_template.md`. It carries the required YAML frontmatter with every
-field explained, and an annotated body showing every structure the renderer understands:
-figures, mermaid, tables, tagged code, cross-references, the optional Quick Check and
-checklist, and the sequence link the app strips. It is never loaded as a module itself,
-because the loader only reads the six category directories.
+Three things, and the third is the one that is easy to forget.
+
+1. Copy `mini-courses/_module_template.md` to `<category>/<name>.md`, where `<name>` is lowercase
+   with underscores and no number.
+2. Create `<name>_tr.md` beside it, even as a stub. A module with no Turkish sibling fails the
+   build.
+3. **Add one line to `curriculum.yaml`**, in the position the module should hold. That line is what
+   gives it a number, a title, a status and a place in the sequence; without it the file is one
+   nobody listed, and the build says so by name.
+
+The template carries the two frontmatter fields a file still declares (`summary` and `objectives`)
+and an annotated body showing every structure the renderer understands: figures, mermaid, tables,
+tagged code, cross-references, the optional Quick Check and checklist, and the sequence rail the app
+strips. It is never loaded as a module itself, because the loader reads the config rather than the
+directory.
 
 ## Checks before you call something done
 
@@ -349,28 +359,41 @@ structural breakage, leave every marker untouched, and say what you fixed.
 Also check: every module ends with a References section, no leftover `NEED` markers you meant to
 fill, and no placeholder cross-references like "module X".
 
-## In flight: the curriculum config
+## One central curriculum config
 
-**A migration is underway that changes how the course shape is written.** Until it lands, expect the
-corpus to look as this file describes; after it lands, these things change and this section must be
-replaced with the new rules:
+**`mini-courses/curriculum.yaml` is the one place the course shape lives.** Category order and
+module order are file order in it, and no number appears in it at all: a module's number is its
+position, computed in exactly one place in the app. Reordering the course is moving a line.
 
-- `mini-courses/curriculum.yaml` becomes the one place the course shape lives: category titles and
-  blurbs, and an ordered list of module names per category. Position in that list is the module
-  number, computed and never written down.
-- Module filenames lose their numeric prefix (`context_engineering.md`), and frontmatter shrinks to
-  `summary` and `objectives`. `module`, `category`, `status`, `duration`, `title` and
-  `prerequisites` all move to the config, with prerequisites named rather than numbered.
-- **Prose names other modules by title, never by number.** A cross-reference is
-  `[Context Engineering](context_engineering.md)`.
-- Three GitHub-only duplications are deleted rather than maintained, because the app already strips
-  all three: the italic `*Category: … — Module 11 (4 of 7 …)*` dek, the `**Previous/Next Module:**`
-  footers, and the `## Modules` lists in the category READMEs.
-- The H1 becomes just the title (`# Context Engineering`).
+- **A module is listed by `name`**, which is its file stem and the source of its URL.
+  `title` is required (`rag` is not "RAG & Embeddings" by any rule), `status` defaults to `draft`,
+  `minutes` defaults to 0, and `needs` names prerequisites **by name**, so `needs: [prompt_engineering]`
+  and the link `[Prompt Engineering](prompt_engineering.md)` share one string a grep can find.
+- **A module file's frontmatter is `summary` and `objectives`, and nothing else.** A draft has
+  neither, so it has no frontmatter fence at all. Adding `module:` or `status:` back to a file fails
+  the build by name: the config owns both.
+- **Filenames carry no number.** `2_intermediate/context_engineering.md`, and the URL is
+  `/courses/intermediate/context-engineering/`. The directory keeps its own prefix.
+- **The H1 is the title alone.** `# Context Engineering`.
+- **Prose names another module by title, never by number.** A cross-reference is
+  `[Context Engineering](context_engineering.md)`, and a sentence says "Context Engineering covers
+  the four levers", not "Module 9 covers".
+- **Three things are deleted rather than maintained**, because the app strips all three and two of
+  them had already drifted into being wrong: the italic `*Category: … — Module 11 (4 of 7 …)*` dek,
+  the `**Previous/Next Module:**` footers, and the `## Modules` lists in the category READMEs. The
+  app derives the sequence, the position and the listing from the config.
 
-The full plan, including the seven commits and the two silent-failure paths that set their order,
-is at `~/.claude/plans/warm-wandering-pebble.md`. Two subagents are executing it: one implements,
-one reviews. Do not start content work that depends on the new shape until it is committed.
+**Adding a module is three things**: the two markdown files, and one line in the yaml. Nothing else
+moves, and `git status --short` will show exactly three paths.
+
+**The config is validated, and the validator is worth reading before you fight it.**
+`src/lib/content/curriculum-file.ts` refuses seven things `zod` cannot express, each naming the
+module at fault: the categories must be in the app's own order, every name must be unique, every
+`needs` entry must resolve and must sit earlier in the file, a `ready` module needs minutes above
+zero, **the `.md` files on disk in a category and the names listed for it must be the same set,
+both directions**, and every module needs a `_tr.md` sibling. That fifth one is the valuable one: a
+module you list without writing the file, and a file you write without listing it, are the two ways
+this can go wrong while everything else still passes.
 
 ## Repo map
 
@@ -383,12 +406,13 @@ mini-courses/            the authored corpus, and all this file governs
   CLAUDE.md / AGENTS.md  this file
   _module_template.md    copy this to start a module
   index.md               site homepage, mirrors README.md
-  1_fundamentals/        modules 1-7   (rewritten, both languages)
-  2_intermediate/        modules 8-14  (being rewritten from scratch)
-  3_expert/              modules 15-24 (draft)
-  4_ecosystem/           modules 25-30 (draft)
-  5_protocols_specs/     module 31     (draft)
-  6_optional/            modules 32-33 (draft)
+  curriculum.yaml        the course shape: the one place a module's position lives
+  1_fundamentals/        rewritten, both languages
+  2_intermediate/        being rewritten from scratch
+  3_expert/              draft
+  4_ecosystem/           draft
+  5_protocols_specs/     draft
+  6_optional/            draft
   scratchpad/            research notes and diagram prompts, never published
 src/ tests/ scripts/     the Next.js app that renders the corpus (not ours)
 ```

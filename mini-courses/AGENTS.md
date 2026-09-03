@@ -40,6 +40,13 @@ asked to be rewritten as "those features still work, but if someone breaks them 
 notice automatically". Where a term has to stay, define it in the same sentence. This is about the
 conversation, not only the modules, where the manifest already demands the same thing.
 
+**Never delete a file the author works in.** `scratchpad/topics.txt` was deleted because a plan
+step said so, after he had agreed only that its *notes* should be copied into `curriculum.yaml`.
+Copying content out of a file is not permission to remove it, and approval of a long plan is not
+approval of every line in it. If a step removes something the author touches, ask about that step
+on its own, in one sentence, at the moment it would happen. `scratchpad/` is his to think in and
+nothing in it is ours to tidy.
+
 **Stage explicit paths, never a directory.** `git add mini-courses/2_intermediate` sweeps in
 whatever the author has dropped there and not yet committed. That happened: nine in-progress images
 went into a commit and onto the remote because a directory was staged instead of the files that had

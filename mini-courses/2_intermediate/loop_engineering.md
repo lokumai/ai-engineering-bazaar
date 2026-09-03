@@ -53,7 +53,7 @@ The agent finishes, and something checks the work against criteria before anyone
 
 This is the [Harness Engineering](harness_engineering.md) sensor idea turned into a loop: the sensor no longer just reports, it decides whether there is another iteration. The stop condition here is a **goal**, so this is the goal-based loop.
 
-The criteria can be anything you can check. A test suite passing. A type check clean. A Lighthouse score above 90. Or a rubric, which is a written list of what a good result looks like, graded by another model call for the things a test cannot check.
+The criteria can be anything you are able to check. A test suite passing. A type check coming back clean. A Lighthouse score above 90. It can also be a rubric, which is just a written list of what a good result looks like. Another model call grades the work against that list, which covers the things no test can check.
 
 In LangChain you build it with rubric middleware. In Claude Code it is `/goal`, and per [Loop engineering: Getting started with loops](https://claude.com/blog/getting-started-with-loops) it stops when the goal is achieved or a maximum number of turns is reached:
 
@@ -75,7 +75,7 @@ In Claude Code that is `/loop` for a recurring job on your own machine and `/sch
 /loop 5m check my PR, address review comments, and fix failing CI
 ```
 
-Both stop when you cancel or the work is finished. What makes this level worth having is that the agent is now wired into the systems around it: a pull request opening, a build failing, an alert firing, and the agent already responding before anybody has read the notification.
+Both stop when you cancel them, or when the work is finished. What makes this level worth having is that the agent is now wired into the systems around it. A pull request opens, a build fails, an alert fires, and the agent has already started dealing with it before anybody has read the notification.
 
 ### Level 4: the autonomous loop
 
@@ -94,13 +94,15 @@ That is genuinely most of the idea. The loop keeps prompting until the job is do
 ![Ralph Wiggum](./images/ralph.png)  
 *Named after the Simpsons character, and the joke is affectionate rather than dismissive: the technique works precisely because it is too simple to be clever, and keeps going after setbacks that would stop something more sophisticated.*
 
-The one rule that matters most: **Ralph does one task per loop.** Not the whole backlog per iteration, one item. Each pass reads the plan, picks the next unfinished thing, does it, records that it is done, and exits. The next pass starts clean and picks the next one.
+The one rule that matters most is this: **Ralph does one task per loop.** Not the whole backlog on every iteration, just one item off it. Each pass reads the plan, picks the next unfinished thing, does it, records that it is done, and exits. Then the next pass starts clean and picks up the one after that.
 
 This is what pushed coding agents past the several-hour mark that [Context Engineering](context_engineering.md) described. A loop like this runs for days, because no single session has to survive that long.
 
 The real versions are considerably more careful than four lines of bash. What people add is failure handling: you watch which iterations fail, work out the failure mode, and engineer that mode out so it cannot recur. Huntley's own framing is that software becomes clay on a pottery wheel rather than bricks laid one at a time, and a failed iteration is a reason to refine rather than a reason to stop.
 
-Places to get a real one: the [ralph-loop plugin](https://claude.com/plugins/ralph-loop) for Claude Code, [snarktank/ralph](https://github.com/snarktank/ralph), which runs until every item in a product requirements document is complete, and [loop-engineering](https://github.com/cobusgreyling/loop-engineering), a collection of patterns and CLI tools including cost auditing. [Ralph Wiggum Loop for Claude Code](https://awesomeclaude.ai/ralph-wiggum) is a good written walkthrough, and it makes the point that results here depend more on the operator's prompt-writing than on the model.
+There are a few places to get a real one. The [ralph-loop plugin](https://claude.com/plugins/ralph-loop) is the packaged version for Claude Code. [snarktank/ralph](https://github.com/snarktank/ralph) runs until every item in a product requirements document is complete. And [loop-engineering](https://github.com/cobusgreyling/loop-engineering) collects patterns and CLI tools, including one for auditing what a long run costs you.
+
+[Ralph Wiggum Loop for Claude Code](https://awesomeclaude.ai/ralph-wiggum) is a good written walkthrough, and it makes a point worth repeating: how well this works depends more on the prompt you wrote than on the model you ran it with.
 
 > **NOTE:** LangChain names a different fourth level, the **hill climbing loop**, which reads production traces to find problems and improve the agent's own configuration. It is worth knowing as the level above this one: a loop whose output is a better harness rather than finished work.
 
@@ -118,7 +120,10 @@ An agent team is several full Claude Code sessions working together. One is the 
 
 That creates a loop almost as a side effect. The lead is watching what the others are doing and deciding what happens next, which is the job you used to do.
 
-Against subagents, from [Orchestrate teams of Claude Code sessions](https://code.claude.com/docs/en/agent-teams):
+![Subagents next to an agent team](./images/subagents-vs-teams.png)  
+*The dashed circles on the left are the thing to notice. A subagent's result is all that survives it, and the main agent is the only place any of that work comes back to. On the right nothing gets summarised on the way up, because there is no single window that sees everything. That is where the higher token cost in the table below comes from, and it is also why a lead can lose track of what its own team is doing.*
+
+Here is how the two compare, from [Orchestrate teams of Claude Code sessions](https://code.claude.com/docs/en/agent-teams):
 
 | | Subagents | Agent teams |
 | --- | --- | --- |
@@ -136,7 +141,7 @@ The line to notice is the last one. Each teammate is a whole separate instance, 
 
 A dynamic workflow is a JavaScript script that orchestrates many subagents at once. Claude writes the script for the task you described, and a runtime executes it in the background while your session stays free.
 
-The difference from everything above is **who holds the plan**. With subagents, skills and agent teams, Claude is the orchestrator and decides turn by turn what to run next. A workflow moves that decision into code: the script holds the loop, the branching and the intermediate results, so your context receives only the final answer.
+The difference from everything above is **who holds the plan**. With subagents, skills and agent teams, Claude is the orchestrator, and it decides turn by turn what to run next. A workflow moves that decision into code instead. The script is what holds the loop, the branching and all the intermediate results, so the only thing that reaches your context is the final answer.
 
 From [Orchestrate subagents at scale with dynamic workflows](https://code.claude.com/docs/en/workflows):
 
@@ -149,9 +154,9 @@ From [Orchestrate subagents at scale with dynamic workflows](https://code.claude
 | Scale | A few delegated tasks per turn | Same as subagents | A handful of long-running peers | Dozens to hundreds of agents per run |
 | Interruption | Restarts the turn | Restarts the turn | Teammates keep running | Resumable in the same session |
 
-Two rows deserve attention. **Scale**: dozens to hundreds of agents in one run, against a handful of teammates, because a script does not need a context window to remember what it is doing. And **what is repeatable**: with a team you can reuse the team definition, but with a workflow the orchestration itself is a file you can read, edit, rerun and commit.
+Two rows deserve attention. The first is **scale**: dozens to hundreds of agents in a single run, where a team gives you a handful. A script can do that because it does not need a context window to remember what it is doing. The second is **what is repeatable**. With a team you can reuse the team definition, but with a workflow the orchestration itself becomes a file you can read, edit, rerun and commit.
 
-That also buys a quality pattern you cannot easily get otherwise. Because the script is in charge, it can have independent agents adversarially review each other's findings before any of them are reported, or draft a plan from several angles and weigh them against each other. Not just more agents, but agents checking each other.
+That also buys you a quality pattern that is hard to get any other way. Because the script is in charge, it can send independent agents to argue against each other's findings before any of them get reported, or draft a plan from several angles and weigh those against each other. Not just more agents, but agents checking each other.
 
 You turn it on with `/effort ultracode`, which combines the highest reasoning setting with automatic workflow orchestration, or you include the word `ultracode` in a single prompt to run just that task as a workflow.
 
@@ -184,9 +189,9 @@ graph LR
 
 Loop engineering is designing the repeating cycle that carries an agent to a goal without a person in it, and the design is the stop condition.
 
-The loops stack. The agent loop is the model calling tools until it is done, and frameworks already give you that. The verification loop adds a grader that sends work back, and its stop condition is a goal plus a cap on tries. The event-driven loop lets a clock or a webhook decide when a run starts. The autonomous loop, the Ralph loop, is a script that prompts the agent again and again until the acceptance criteria are met, one task per iteration, with each pass starting from a clean window and the state living on disk. That is what took agents from hours to days.
+The loops stack, one inside the next. The agent loop is the model calling tools until it is done, and every framework already gives you that one. The verification loop adds a grader that hands work back when it falls short, and it stops on a goal plus a cap on how many tries it gets. The event-driven loop hands the starting decision to a clock or a webhook. And the autonomous loop, the Ralph loop, is a script that prompts the agent again and again until the acceptance criteria are met. It does one task per iteration, every pass starts from a clean window, and the state lives on disk rather than in a context. That last one is what took agents from hours to days.
 
-Above that, the agent designs the loop. Agent teams give you peer sessions with a shared task list and a lead that coordinates. Dynamic workflows move the plan into a script, which scales to hundreds of agents, makes the orchestration itself the reusable thing, and lets agents check each other's work.
+Above all of that, the agent designs the loop itself. Agent teams give you peer sessions with a shared task list and a lead that coordinates them. Dynamic workflows move the plan into a script, and that buys three things: it scales to hundreds of agents, it makes the orchestration itself the reusable part, and it lets agents check each other's work.
 
 Next: everything in this module made an agent harder to supervise. Security is what that costs.
 

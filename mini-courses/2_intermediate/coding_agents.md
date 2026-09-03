@@ -10,7 +10,7 @@ objectives:
 
 # Coding Agents: Extending Them
 
-[Context Engineering](context_engineering.md) ended on the point that the coding agents you already use are deep agents: they plan, they delegate to subagents, they read and write files. This module is about those agents themselves. First why they turned out to be so much more useful than "a thing that writes code", and then the eight ways you extend one.
+[Context Engineering](context_engineering.md) ended on the point that the coding agents you already use are deep agents: they plan, they delegate to subagents, they read and write files. This module is about those agents themselves. We start with why they turned out to be so much more useful than "a thing that writes code", and then go through the eight ways you extend one.
 
 ## Why a coding agent can do more than code
 
@@ -23,7 +23,7 @@ This is the part worth sitting with. These agents do not only *use* what exists,
 ![Code is the universal interface](./images/code-is-universal.png)  
 *The top row is the old way: one agent per domain, each needing its own tools built for it. The bottom row is why coding agents took over. Code reaches the web, the calendar, the bank and the airline, so an agent that writes code covers all four without anybody writing four sets of tools.*
 
-So coding is not one skill among many. It is the skill that substitutes for the others, which is why a coding agent helps with work that has nothing to do with software. Every example above was a non-coding task.
+So coding is not just one skill among many. It is the skill that can stand in for the others, and that is why a coding agent helps with work that has nothing to do with software. Look back at the examples above: every one of them was a non-coding task.
 
 The rest of this module is the standard equipment. Almost every modern coding agent has these: Claude Code, Codex, Antigravity, Copilot, OpenCode. The names and file paths differ slightly between them, and the concrete examples here are Claude Code's, listed together in [Claude Code features](https://code.claude.com/docs/en/agent-sdk/claude-code-features).
 
@@ -33,11 +33,13 @@ README is for humans. AGENTS.md is for agents.
 
 It is a plain markdown file in your repository that gets added to the agent's existing system prompt, after the one the vendor wrote. That is the whole mechanism, and [agents.md](https://agents.md/) is the open format behind it: "a dedicated, predictable place to provide the context and instructions to help AI coding agents work on your project".
 
-What belongs in it is the stable, high-level, repository-wide stuff: build and test commands, the layout, conventions your team follows, the rules an agent would otherwise get wrong twice. What does not belong is anything that goes stale in a week. A file full of details that no longer match the code is worse than no file, because the agent believes it.
+What belongs in it is the stuff that stays true across the whole repository and does not change much: build and test commands, how the directories are laid out, the conventions your team follows, and the rules an agent would otherwise get wrong twice. What does not belong is anything that goes stale in a week. A file full of details that no longer match the code is worse than no file, because the agent believes it.
 
 You do not have to write it by hand. Run `/init` and the agent reads your codebase and drafts one, then you correct it.
 
-Two practical notes. Claude Code reads `CLAUDE.md` rather than `AGENTS.md`, so if your repository already has an AGENTS.md for other tools, the documented move is a `CLAUDE.md` that imports it with `@AGENTS.md` and adds anything Claude-specific below. And both formats support **nested** files: one at the root, and another inside `frontend/` or `backend/` that loads when the agent works in that directory. Keeping the frontend rules out of the context of a backend task is context engineering applied to your own instructions.
+Two practical notes. The first is that Claude Code reads `CLAUDE.md` rather than `AGENTS.md`. So if your repository already has an AGENTS.md for other tools, the documented move is to write a `CLAUDE.md` that imports it with `@AGENTS.md`, then add anything Claude-specific underneath.
+
+The second is that both formats support **nested** files. You can keep one at the root and another inside `frontend/` or `backend/`, and the nested one loads only when the agent is working in that directory. Keeping the frontend rules out of a backend task is context engineering, applied to your own instructions.
 
 ## Slash commands, which are saved prompts
 
@@ -115,9 +117,9 @@ disable-model-invocation: true
 ---
 ```
 
-`disable-model-invocation: true` means only you can run it, which is what you want for anything with side effects. You do not want the agent deciding to deploy because the code looked ready. The opposite field, `user-invocable: false`, means only the agent can reach it, which suits background knowledge that is not a sensible command for a person to type.
+`disable-model-invocation: true` means only you can run it, which is what you want for anything that has side effects. You do not want the agent deciding to deploy because the code looked ready to it. The opposite field is `user-invocable: false`, and it means only the agent can reach the skill. That one suits background knowledge, the kind of thing that would make no sense as a command a person types.
 
-Public collections: [anthropics/skills](https://github.com/anthropics/skills) is the official one, and [awesome-claude](https://github.com/webfuse-com/awesome-claude) is a broader curated list.
+For public collections, [anthropics/skills](https://github.com/anthropics/skills) is the official one and [awesome-claude](https://github.com/webfuse-com/awesome-claude) is a broader curated list.
 
 ## Hooks, for the things that must always happen
 
@@ -136,7 +138,7 @@ That first one is the point to hold onto: an instruction in AGENTS.md asking the
 
 A plugin is a package of the things above: commands, skills, subagents, hooks, MCP servers, shipped together and installed in one step. Instead of asking a new teammate to copy six files into their `.claude/` directory, you hand them one plugin.
 
-The layout is per-vendor, and for Claude Code it is a directory with a manifest naming which of those parts it provides. [Discover plugins](https://code.claude.com/docs/en/discover-plugins) covers installing them and the [plugins reference](https://code.claude.com/docs/en/plugins-reference) covers building one. [claude-plugins-official](https://github.com/anthropics/claude-plugins-official) is the Anthropic-managed directory.
+The layout differs from vendor to vendor. For Claude Code a plugin is a directory with a manifest, and the manifest says which of those parts the plugin provides. [Discover plugins](https://code.claude.com/docs/en/discover-plugins) covers installing them, and the [plugins reference](https://code.claude.com/docs/en/plugins-reference) covers building one. [claude-plugins-official](https://github.com/anthropics/claude-plugins-official) is the Anthropic-managed directory.
 
 ## Auto memory, which the agent writes itself
 
@@ -152,9 +154,9 @@ Every session starts with an empty context window. Two things carry knowledge ac
 | Loaded into | Every session | Every session (first 200 lines or 25KB) |
 | Use for | Coding standards, workflows, project architecture | Your preferences, corrections you give Claude, project context Claude cannot derive from the code |
 
-The agent saves notes based on the corrections you give it, so the thing you had to explain twice this week is there next Monday. Files live in `~/.claude/projects/<project>/memory/`, with a `MEMORY.md` index that is loaded every session while the detailed notes are read on demand. That is progressive disclosure again, on the agent's own notes.
+The agent writes these notes based on the corrections you give it, so the thing you had to explain twice this week is still there next Monday. The files live in `~/.claude/projects/<project>/memory/`. A `MEMORY.md` index is loaded every session, and the detailed notes sit beside it and get read only when they are needed, which is progressive disclosure again, this time applied to the agent's own notes.
 
-Worth doing deliberately: tell it to remember something. "Remember that the API tests need a local Redis" gets written down. `/memory` shows you what it has saved, and everything in there is plain markdown you can edit or delete.
+One thing worth doing on purpose is telling it to remember something. Say "remember that the API tests need a local Redis" and it gets written down. `/memory` shows you everything it has saved, and all of it is plain markdown you can edit or delete.
 
 ## Plan mode, for the work you cannot take back
 
@@ -162,9 +164,9 @@ Say you have a large refactor, or several features to land at once. Starting to 
 
 Plan mode is a read-only mode for exactly that. The agent explores the codebase and cannot change a line of it, so the whole first phase is understanding what is actually there. Then it writes a plan, you read it, and only after you approve does it start editing.
 
-Claude Code's version goes a step further: before planning it asks you clarifying questions, and it can offer several approaches and let you pick. Which is the useful part, because the moment to catch a bad plan is before any code exists.
+Claude Code's version goes a step further. Before it plans anything it asks you clarifying questions, and it can offer you several approaches and let you pick one. That is the genuinely useful part, because the moment to catch a bad plan is before any code exists.
 
-And this connects back to long-horizon work. An agent working from an approved written plan stays coherent for hours, because the plan is on disk reciting the goal back into context, rather than in a window that is quietly rotting.
+This also connects back to long-horizon work. An agent working from a written plan you approved stays coherent for hours, and the reason is that the plan sits on disk where it keeps reciting the goal back into context. Left in a context window instead, the same goal would quietly rot away.
 
 ## Effort, which is the thinking dial
 
@@ -177,7 +179,7 @@ Rough guide:
 - **xhigh** for heavy coding: a real refactor, a subtle bug, a design decision.
 - **max** when something is genuinely hard and the lower settings have failed.
 
-Higher is not free. It costs tokens and time on every turn, so turning it up for a typo is waste. If you want to see how much it actually buys you, [Artificial Analysis](https://artificialanalysis.ai/) publishes benchmark results per model at different reasoning settings, and the gap between one setting and the next is right there in the numbers.
+Higher is not free. It costs tokens and time on every single turn, so turning it all the way up to fix a typo is money thrown away. If you want to see how much it actually buys you, [Artificial Analysis](https://artificialanalysis.ai/) publishes benchmark results per model at different reasoning settings, and the gap between one setting and the next is right there in the numbers.
 
 ## Notice what all of these are
 
@@ -209,7 +211,11 @@ graph LR
 
 A coding agent is powerful out of proportion to its name, because writing and running code is a way to reach almost anything. It does not need a tool for every job when it can install a library or write one, and that is why it helps with work that is not coding at all.
 
-You extend one in eight standard ways. AGENTS.md gives it your repository's rules. Slash commands save a prompt. MCP makes a tool set portable, so it is written once instead of once per agent. Custom subagents give it fixed roles in clean context windows. Skills let it pick up instructions only when a task needs them, which is progressive disclosure and the reason twenty skills are affordable. Hooks are the mechanical part: things that happen whether the model chose them or not. Plugins bundle the lot. Auto memory carries what it learned about you into the next session. Plan mode makes it understand before it edits, and effort sets how hard it thinks.
+You extend one in eight standard ways. Three of them are about what the agent knows: AGENTS.md gives it your repository's rules, auto memory carries what it learned about you into the next session, and skills let it pick up instructions only when a task actually calls for them. That last one is progressive disclosure, and it is the reason twenty skills are affordable.
+
+Three are about what it can do. Slash commands save a prompt you would otherwise retype. MCP makes a whole tool set portable, so the tool gets written once instead of once per agent. And custom subagents give it fixed roles to hand work to, each in a clean context window.
+
+The last two are about control. Hooks are the mechanical part, the things that happen whether the model chose them or not, and plan mode makes it understand the code before it is allowed to edit any. Plugins bundle any of the above into one install, and effort sets how hard it thinks while doing all of it.
 
 Almost all of it is markdown in a folder, which is the format you and the model both handle well.
 

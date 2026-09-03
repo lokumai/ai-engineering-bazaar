@@ -43,7 +43,7 @@ Agent bitiriyor, ve biri kabul etmeden önce işi kriterlere karşı kontrol edi
 
 Bu, [Harness Engineering](harness_engineering_tr.md)'in sensör fikrinin loop'a dönüşmüş hâli: sensör artık sadece rapor vermiyor, bir iterasyon daha olup olmadığına karar veriyor. Buradaki stop condition bir **hedef**, yani bu goal-based loop.
 
-Kriterler kontrol edebildiğin herhangi bir şey olabilir. Geçen bir test suite. Temiz bir type check. 90'ın üzerinde bir Lighthouse skoru. Ya da bir rubric, yani iyi bir sonucun neye benzediğinin yazılı listesi; bir test'in kontrol edemeyeceği şeyler için başka bir model çağrısıyla notlanıyor.
+Kriterler kontrol edebildiğin herhangi bir şey olabilir. Geçen bir test suite. Temiz dönen bir type check. 90'ın üzerinde bir Lighthouse skoru. Bir rubric de olabilir, yani iyi bir sonucun neye benzediğini anlatan yazılı bir liste. Başka bir model çağrısı işi o listeye göre notluyor, ve bu da hiçbir test'in kontrol edemeyeceği şeyleri kapsıyor.
 
 LangChain'de bunu rubric middleware ile kuruyorsun. Claude Code'da `/goal`, ve [Loop engineering: Getting started with loops](https://claude.com/blog/getting-started-with-loops) sayfasına göre hedefe ulaşıldığında ya da maksimum tur sayısına gelindiğinde duruyor:
 
@@ -65,7 +65,7 @@ Claude Code'da bu, kendi makinende tekrarlayan bir iş için `/loop`, aynı şey
 /loop 5m check my PR, address review comments, and fix failing CI
 ```
 
-İkisi de sen iptal ettiğinde ya da iş bittiğinde duruyor. Bu seviyeyi değerli yapan şey, agent'ın artık etrafındaki sistemlere bağlı olması: bir pull request açılıyor, bir build düşüyor, bir alarm çalıyor, ve agent bildirimi kimse okumadan önce cevap veriyor.
+İkisi de sen iptal ettiğinde ya da iş bittiğinde duruyor. Bu seviyeyi değerli yapan şey, agent'ın artık etrafındaki sistemlere bağlı olması. Bir pull request açılıyor, bir build düşüyor, bir alarm çalıyor, ve agent bildirimi kimse okumadan önce onunla ilgilenmeye başlamış oluyor.
 
 ### Seviye 4: otonom loop
 
@@ -84,13 +84,15 @@ Fikrin çoğu gerçekten bu. Loop, iş bitene kadar prompt'lamaya devam ediyor, 
 ![Ralph Wiggum](./images/ralph.png)  
 *Adı Simpsons karakterinden geliyor, ve şaka küçümseyici değil sevecen: teknik tam olarak zekice olmayacak kadar basit olduğu için işliyor, ve daha sofistike bir şeyi durduracak aksiliklerden sonra devam ediyor.*
 
-En çok önemli olan tek kural: **Ralph loop başına bir iş yapıyor.** İterasyon başına bütün backlog değil, tek bir kalem. Her geçiş planı okuyor, bitmemiş sıradaki şeyi seçiyor, yapıyor, bittiğini kaydediyor, ve çıkıyor. Sonraki geçiş temiz başlayıp sıradakini alıyor.
+En çok önemli olan kural şu: **Ralph loop başına bir iş yapıyor.** Her iterasyonda bütün backlog değil, listeden sadece tek bir kalem. Her geçiş planı okuyor, bitmemiş sıradaki şeyi seçiyor, yapıyor, bittiğini kaydediyor, ve çıkıyor. Sonra bir sonraki geçiş temiz başlayıp ondan sonrakini alıyor.
 
 [Context Engineering](context_engineering_tr.md)'in anlattığı birkaç saatlik sınırı coding agent'ların aşmasını sağlayan şey bu. Böyle bir loop günlerce çalışıyor, çünkü tek bir session'ın o kadar dayanması gerekmiyor.
 
 Gerçek versiyonlar dört satır bash'ten belirgin biçimde daha dikkatli. İnsanların eklediği şey hata yönetimi: hangi iterasyonların düştüğünü izliyorsun, hata modunu çıkarıyorsun, ve o modu tekrar edemeyecek şekilde engineer ediyorsun. Huntley'in kendi çerçevesi, yazılımın tek tek dizilen tuğlalar yerine çömlekçi çarkındaki kile dönüşmesi; düşen bir iterasyon da durma sebebi değil, iyileştirme sebebi.
 
-Gerçek bir tane bulacağın yerler: Claude Code için [ralph-loop plugin'i](https://claude.com/plugins/ralph-loop), bir ürün gereksinim dokümanındaki her kalem tamamlanana kadar çalışan [snarktank/ralph](https://github.com/snarktank/ralph), ve maliyet denetimi de dahil desenler ile CLI araçları toplayan [loop-engineering](https://github.com/cobusgreyling/loop-engineering). [Ralph Wiggum Loop for Claude Code](https://awesomeclaude.ai/ralph-wiggum) iyi bir yazılı anlatım, ve buradaki sonuçların modelden çok operatörün prompt yazmasına bağlı olduğunu söylüyor.
+Gerçek bir tane bulacağın birkaç yer var. [ralph-loop plugin'i](https://claude.com/plugins/ralph-loop) Claude Code için paketlenmiş hâli. [snarktank/ralph](https://github.com/snarktank/ralph) bir ürün gereksinim dokümanındaki her kalem tamamlanana kadar çalışıyor. [loop-engineering](https://github.com/cobusgreyling/loop-engineering) ise desenleri ve CLI araçlarını topluyor, uzun bir çalışmanın sana neye mal olduğunu denetleyen bir tane de dahil.
+
+[Ralph Wiggum Loop for Claude Code](https://awesomeclaude.ai/ralph-wiggum) iyi bir yazılı anlatım, ve tekrarlamaya değer bir noktaya basıyor: bunun ne kadar iyi çalıştığı, çalıştırdığın modelden çok yazdığın prompt'a bağlı.
 
 > **NOT:** LangChain farklı bir dördüncü seviye adlandırıyor, **hill climbing loop**: production trace'lerini okuyup problem bulan ve agent'ın kendi konfigürasyonunu iyileştiren loop. Bunun bir üst seviye olarak bilinmesi değerli: çıktısı bitmiş iş değil, daha iyi bir harness olan bir loop.
 
@@ -108,7 +110,10 @@ Agent team, birlikte çalışan birkaç tam Claude Code session'ı. Biri lead: i
 
 Bu, neredeyse yan etki olarak bir loop yaratıyor. Lead diğerlerinin ne yaptığını izliyor ve sırada ne olacağına karar veriyor, ki bu da eskiden senin yaptığın iş.
 
-Subagent'lara karşı, [Orchestrate teams of Claude Code sessions](https://code.claude.com/docs/en/agent-teams) sayfasından:
+![Subagents next to an agent team](./images/subagents-vs-teams.png)  
+*Soldaki kesik çizgili daireler dikkat edilecek şey. Bir subagent'tan hayatta kalan tek şey sonucu, ve o işin geri döndüğü tek yer de ana agent. Sağda ise yukarı çıkarken hiçbir şey özetlenmiyor, çünkü her şeyi gören tek bir window yok. Aşağıdaki tablodaki daha yüksek token maliyeti buradan geliyor, ve bir lead'in kendi ekibinin ne yaptığını takip edemez hâle gelmesinin sebebi de bu.*
+
+İkisi şöyle karşılaştırılıyor, [Orchestrate teams of Claude Code sessions](https://code.claude.com/docs/en/agent-teams) sayfasından:
 
 | | Subagent'lar | Agent teams |
 | --- | --- | --- |
@@ -126,7 +131,7 @@ Dikkat edilecek satır son satır. Her teammate ayrı bir instance, yani maliyet
 
 Dynamic workflow, aynı anda çok sayıda subagent'ı orkestre eden bir JavaScript script'i. Claude script'i anlattığın iş için yazıyor, bir runtime da onu arka planda çalıştırıyor, session'ın boş kalırken.
 
-Yukarıdaki her şeyden farkı, **planı kimin tuttuğu**. Subagent'lar, skill'ler ve agent teams'te orkestratör Claude ve sırada ne çalışacağına tur tur karar veriyor. Workflow o kararı kodun içine taşıyor: loop'u, dallanmayı ve ara sonuçları script tutuyor, yani senin context'ine sadece son cevap geliyor.
+Yukarıdaki her şeyden farkı, **planı kimin tuttuğu**. Subagent'lar, skill'ler ve agent teams'te orkestratör Claude, ve sırada ne çalışacağına tur tur o karar veriyor. Workflow ise o kararı kodun içine taşıyor. Loop'u, dallanmayı ve bütün ara sonuçları script tutuyor, yani senin context'ine ulaşan tek şey son cevap oluyor.
 
 [Orchestrate subagents at scale with dynamic workflows](https://code.claude.com/docs/en/workflows) sayfasından:
 
@@ -139,9 +144,9 @@ Yukarıdaki her şeyden farkı, **planı kimin tuttuğu**. Subagent'lar, skill'l
 | Ölçek | Tur başına birkaç devredilmiş iş | Subagent'larla aynı | Bir tutam uzun çalışan eş | Çalışma başına düzinelerce ya da yüzlerce agent |
 | Kesinti | Turu baştan başlatıyor | Turu baştan başlatıyor | Teammate'ler çalışmaya devam ediyor | Aynı session içinde devam ettirilebilir |
 
-İki satır dikkat hak ediyor. **Ölçek**: bir tutam teammate'e karşı tek çalışmada düzinelerce ya da yüzlerce agent, çünkü bir script'in ne yaptığını hatırlamak için context window'a ihtiyacı yok. Ve **tekrar kullanılabilir olan**: bir team'de team tanımını yeniden kullanabiliyorsun, ama bir workflow'da orkestrasyonun kendisi okuyabildiğin, düzenleyebildiğin, yeniden çalıştırabildiğin ve commit'leyebildiğin bir dosya.
+İki satır dikkat hak ediyor. Birincisi **ölçek**: tek bir çalışmada düzinelerce ya da yüzlerce agent, ki bir team sana bir tutam veriyor. Script bunu yapabiliyor çünkü ne yaptığını hatırlamak için bir context window'a ihtiyacı yok. İkincisi **tekrar kullanılabilir olan**. Bir team'de team tanımını yeniden kullanabiliyorsun, ama bir workflow'da orkestrasyonun kendisi okuyabildiğin, düzenleyebildiğin, yeniden çalıştırabildiğin ve commit'leyebildiğin bir dosyaya dönüşüyor.
 
-Bu aynı zamanda başka türlü kolay elde edemeyeceğin bir kalite deseni kazandırıyor. Script kontrolde olduğu için, bağımsız agent'ların birbirinin bulgularını raporlanmadan önce çekişmeli biçimde review etmesini sağlayabiliyor, ya da bir planı birkaç açıdan çizip birbirine karşı tartabiliyor. Sadece daha çok agent değil, birbirini kontrol eden agent'lar.
+Bu aynı zamanda başka türlü kolay elde edemeyeceğin bir kalite deseni kazandırıyor. Script kontrolde olduğu için, bağımsız agent'ları birbirinin bulgularına karşı çıkmaya gönderebiliyor, hem de hiçbiri raporlanmadan önce; ya da bir planı birkaç açıdan çizip onları birbirine karşı tartabiliyor. Sadece daha çok agent değil, birbirini kontrol eden agent'lar.
 
 `/effort ultracode` ile açıyorsun; en yüksek reasoning ayarını otomatik workflow orkestrasyonuyla birleştiriyor. Ya da tek bir prompt'ta `ultracode` kelimesini geçirip sadece o işi workflow olarak çalıştırıyorsun.
 
@@ -174,9 +179,9 @@ graph LR
 
 Loop engineering, bir agent'ı içinde insan olmadan bir hedefe taşıyan tekrarlayan döngüyü tasarlamak, ve tasarımın kendisi stop condition.
 
-Loop'lar üst üste biniyor. Agent loop, modelin bitene kadar tool çağırması, ve onu framework'ler zaten veriyor. Verification loop, işi geri gönderen bir grader ekliyor, ve stop condition'ı bir hedef artı deneme sayısına bir üst sınır. Event-driven loop, bir saatin ya da bir webhook'un çalışmanın ne zaman başlayacağına karar vermesini sağlıyor. Otonom loop, yani Ralph loop, kabul kriterleri karşılanana kadar agent'ı tekrar tekrar prompt'layan bir script; iterasyon başına bir iş, her geçiş temiz bir window'dan başlıyor ve state diskte duruyor. Agent'ları saatlerden günlere taşıyan şey bu.
+Loop'lar biri diğerinin içinde olacak şekilde üst üste biniyor. Agent loop, modelin bitene kadar tool çağırması, ve onu her framework zaten veriyor. Verification loop, iş yetersiz kaldığında onu geri veren bir grader ekliyor, ve bir hedefle artı kaç deneme hakkı olduğunu söyleyen bir üst sınırla duruyor. Event-driven loop, başlama kararını bir saate ya da bir webhook'a devrediyor. Otonom loop, yani Ralph loop, kabul kriterleri karşılanana kadar agent'ı tekrar tekrar prompt'layan bir script. İterasyon başına bir iş yapıyor, her geçiş temiz bir window'dan başlıyor, ve state bir context'te değil diskte duruyor. Agent'ları saatlerden günlere taşıyan şey de bu son madde.
 
-Onun üzerinde loop'u agent tasarlıyor. Agent teams sana paylaşılan bir task listesi olan eş session'lar ve koordine eden bir lead veriyor. Dynamic workflow'lar planı bir script'e taşıyor; bu da yüzlerce agent'a ölçekleniyor, orkestrasyonun kendisini tekrar kullanılabilir şey yapıyor, ve agent'ların birbirinin işini kontrol etmesini sağlıyor.
+Bütün bunların üzerinde loop'u agent'ın kendisi tasarlıyor. Agent teams sana paylaşılan bir task listesi olan eş session'lar ve onları koordine eden bir lead veriyor. Dynamic workflow'lar planı bir script'e taşıyor, ve bu üç şey kazandırıyor: yüzlerce agent'a ölçekleniyor, orkestrasyonun kendisini tekrar kullanılabilir parça yapıyor, ve agent'ların birbirinin işini kontrol etmesini sağlıyor.
 
 Sırada: bu modüldeki her şey bir agent'ı denetlemeyi zorlaştırdı. Security de bunun maliyeti.
 

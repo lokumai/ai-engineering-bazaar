@@ -34,12 +34,18 @@
 
 
 === Ecosystem ===
-26) agent_fameworks (langchain, agno, crewAI, smolagents, mastra, voltagent, pydanticAI, n8n, lovable bolt etc)
-27) inference_providers (OpenRouter, OpenAI, AI Studio, )
-28) inference_engines (Ollama, LMStudio, OpenWebUI, llama.cpp, TensorRT, llm-d)
-29) ui_design (Stitch, Claude Design, Design Systems, DESIGN.md)
-30) observability (LangSmith, LangFuse, Trace Analyzer Agent)
+26) agent_fameworks (langchain mention langchain is the best and most up to date and most production ready and it has langgraph as runtime which is lower level libarray and langchain as main interface and high level library to build agents and deep agents as higher levle built open others for deep agent archietcture, agno, crewAI, smolagents, mastra, voltagent, pydanticAI, n8n (AI workflows vs AI Agents https://www.promptingguide.ai/agents/ai-workflows-vs-ai-agents to compare n8n with other, also mention n8n has mcp allowing claude to create such workflows), mention no-code platforms such as lovable or bolt etc)
+27) inference_providers (OpenRouter as gateway to many inference providers around the world, vendors such as OpenAI Claude etc, Google AI Studio which give some free)
+28) inference_engines (Ollama, LMStudio, OpenWebUI as UI, llama.cpp, TensorRT, SGLang and others mentioned in llm inferecen in fundamental modules, llm-d for distirbuted serving)
+29) ui_design (Google Stitch with DESIGN.md, Claude Design Design Systems)
+30) observability (LangSmith, LangFuse, Latitude, Trace Analyzer Agent)
+https://www.langchain.com/blog/from-traces-to-insights-understanding-agent-behavior-at-scale
+https://www.langchain.com/blog/traces-start-agent-improvement-loop
+
 31) chosing_tech_stack
+
+
+
 
 
 === Protocols & Specs ===

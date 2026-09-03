@@ -1,5 +1,7 @@
 # AI Engineering Bazaar 🏪
 
+![AI Engineering Bazaar, by Lokum AI. An Iznik tile mural of a bazaar arcade whose hanging lanterns are wired to a neural chip](assets/banner-tiles.jpeg)
+
 AI Engineering made simple, short, and useful.
 
 📖 **Read online:** [lokumai.github.io/ai-engineering-bazaar](https://lokumai.github.io/ai-engineering-bazaar/)
@@ -74,3 +76,5 @@ Accounts are off unless configured, and with no `.env.local` everything builds a
 ## Licence
 
 [MIT](LICENSE).
+
+![A brass tray of Turkish delight held up in a sunlit stone bazaar](assets/footer-lokum.jpeg)

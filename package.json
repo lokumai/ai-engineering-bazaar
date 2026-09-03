@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "Static site for the AI engineering mini-courses in mini-courses/, published at https://lokumai.github.io/ai-engineering-bazaar/.",
   "scripts": {
-    "predev": "node scripts/copy-course-images.mjs",
+    "predev": "node scripts/curriculum-css.mjs && node scripts/copy-course-images.mjs",
     "dev": "next dev",
-    "prebuild": "node scripts/copy-course-images.mjs",
+    "prebuild": "node scripts/curriculum-css.mjs && node scripts/copy-course-images.mjs",
     "build": "next build",
     "test": "vitest run",
     "test:e2e": "playwright test",

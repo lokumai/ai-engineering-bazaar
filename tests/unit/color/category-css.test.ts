@@ -4,35 +4,57 @@ import { describe, expect, it } from 'vitest'
 import { CATEGORIES } from '@/lib/content/curriculum-file'
 import { curriculumFacts } from '@/lib/content/facts'
 import { ROLE_IDS } from '@/lib/path/roles'
+import { render } from '../../../scripts/curriculum-css.mjs'
 
 /**
- * §13.5 — the generated selector groups in `lokum.css`, checked for completeness.
+ * §13.5 — the per-state selector groups, checked for completeness.
  *
- * Channel A cannot loop. Every state rule in `lokum.css` is a hand-written list
- * of selectors — six per category state, 32 per module, 15 per signable module,
- * nine per role — and a hand-written list is the one thing in this system that a
- * renumber, a new category or a tenth role silently invalidates. The failure is
- * not a crash: it is a category that never lights up, or a module whose segment
- * stays dormant after the reader signed it. Both are §1 failures, and neither
- * shows up in a typecheck or in a render.
+ * Channel A cannot loop. Every state rule is a LIST of selectors — six per
+ * category state, one per module, one per signable module, nine per role — and
+ * a list is the one thing in this system that a renumber, a new category or a
+ * tenth role silently invalidates. The failure is not a crash: it is a category
+ * that never lights up, or a module whose segment stays dormant after the
+ * reader signed it. Both are §1 failures, and neither shows up in a typecheck
+ * or in a render.
  *
  * So the lists are checked against their sources — `CATEGORIES`, the corpus, and
  * `ROLE_IDS` — rather than against a transcription. Nothing here is a literal
  * count.
  *
- * The one asymmetry, and it is deliberate: **the segment rules cover all 32
- * modules and the step-tick rules cover only the 15 drawn ones.** A draft sheet
- * has no sign-off control (§12.4.1), so `hl-signed-16` can never be stamped —
- * but a segment for a draft sheet is still drawn (dashed, unfillable), and
- * writing its rule keeps the list uniform against the day the sheet is written.
- * A step tick for a draft would instead state that the sheet could be signed,
- * which is the claim §13.4.2 exists to prevent.
+ * **The three module lists are now generated**, from `curriculum.yaml` by
+ * `scripts/curriculum-css.mjs`, into a committed `lokum-modules.css`. That
+ * moves the risk rather than removing it: a committed generated file can go
+ * stale. So the last case here runs the generator and compares, which is the
+ * one check the others cannot make for themselves.
+ *
+ * The one asymmetry, and it is deliberate: **the segment rules cover every
+ * module and the step-tick rules cover only the drawn ones.** A draft sheet has
+ * no sign-off control (§12.4.1), so `hl-signed-<n>` can never be stamped for
+ * one — but a segment for a draft sheet is still drawn (dashed, unfillable),
+ * and writing its rule keeps the list uniform against the day the sheet is
+ * written. A step tick for a draft would instead state that the sheet could be
+ * signed, which is the claim §13.4.2 exists to prevent.
  */
 
-const LOKUM_CSS = join(import.meta.dirname, '../../../src/app/lokum.css')
+const APP = join(import.meta.dirname, '../../../src/app')
+const LOKUM_CSS = join(APP, 'lokum.css')
+const MODULES_CSS = join(APP, 'lokum-modules.css')
+
+/**
+ * The stylesheet as the browser sees it: `lokum.css` with the generated
+ * module selectors inlined where it imports them.
+ *
+ * They live in `lokum-modules.css` now, and every rule below still has to hold
+ * over the pair, because a selector's completeness is a property of the
+ * stylesheet and not of which file it was typed into.
+ */
+const raw = readFileSync(LOKUM_CSS, 'utf8').replace(
+  /@import "\.\/lokum-modules\.css"[^;]*;/,
+  readFileSync(MODULES_CSS, 'utf8'),
+)
 
 /** Comments stripped, so prose naming a selector is never counted as one. */
-const css = readFileSync(LOKUM_CSS, 'utf8').replace(/\/\*[\s\S]*?\*\//g, ' ')
+const css = raw.replace(/\/\*[\s\S]*?\*\//g, ' ')
 
 const facts = curriculumFacts()
 const ALL_MODULES = facts.sheets.map((sheet) => sheet.module).sort((a, b) => a - b)
@@ -177,5 +199,19 @@ describe('§13.1.3 — no hue escapes the closed list of surfaces', () => {
     }
     const unexpected = [...consumers].filter((klass) => !PERMITTED.has(klass))
     expect(unexpected).toEqual([])
+  })
+})
+
+describe('the generated module selectors are the committed ones', () => {
+  /**
+   * The check that keeps a committed generated file honest. `prebuild`
+   * regenerates it, but vitest and playwright do not run `prebuild`, so the
+   * file has to be in the repository — and a file in the repository can drift
+   * from the thing that generates it. Nothing else in this file would notice:
+   * the lists would still be complete, just complete for yesterday's
+   * curriculum.
+   */
+  it('matches what the generator produces from curriculum.yaml today', () => {
+    expect(readFileSync(MODULES_CSS, 'utf8')).toBe(render())
   })
 })

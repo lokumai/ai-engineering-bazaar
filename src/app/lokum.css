@@ -40,6 +40,25 @@
 
    =========================================================================== */
 
+/* The per-module selector lists, generated from `mini-courses/curriculum.yaml`
+   by `scripts/curriculum-css.mjs` and committed to the repository.
+   `scripts/curriculum-css.mjs` explains why they are enumerated at all.
+
+   **Imported without `layer()`, and that is load-bearing.** The generated file
+   declares its own `@layer components` around the two hue rules and leaves its
+   `forced-colors` block OUTSIDE any layer, which is exactly where this file had
+   it. `@import … layer(components)` would put the whole file in one layer and
+   demote that block out of the unlayered origin, where it currently beats
+   `.hl-seg { background: Canvas }` below. Tried, and it cost two cases in
+   `colour-not-alone.spec.ts`: every segment came back the same fill under
+   forced colours, and the path step lost its `SIGNED OFF` marker. Layer origin
+   outranks specificity, so no selector could have saved it.
+
+   Source order within the layer is safe: every generated selector carries a
+   class and an attribute, so it outranks on specificity the rule it
+   overrides. */
+@import "./lokum-modules.css";
+
 :root {
   /* §13.1.1 — one lightness for all six, and therefore ONE set of tokens for
      both themes. Measured, not chosen: the grounds sit at the extremes
@@ -77,8 +96,8 @@
      -------------------------------------------------------------------------
      One rule per category maps `data-cat` onto two local custom properties.
      Every rule after this reads `--hl-cat` / `--hl-cat-half` and never names a
-     category again — so the 32 module selectors below are written once instead
-     of six times, and a seventh category costs exactly one rule here.
+     category again — so the generated module selectors are written once
+     instead of six times, and a seventh category costs exactly one rule here.
      `tests/unit/category-css.test.ts` asserts one carrier per category and no
      orphans. */
   [data-cat="fundamentals"] { --hl-cat: var(--cat-fundamentals); --hl-cat-half: var(--cat-fundamentals-half); }
@@ -125,45 +144,12 @@
     background: transparent;
   }
 
-  /* Channel A. 32 selectors, one per module number, all sharing one
-     declaration. `--hl-cat` was resolved by the carrier above from the
-     segment's own `data-cat`, so the category never appears here. */
-  html.hl-signed-1  .hl-seg[data-module="1"],
-  html.hl-signed-2  .hl-seg[data-module="2"],
-  html.hl-signed-3  .hl-seg[data-module="3"],
-  html.hl-signed-4  .hl-seg[data-module="4"],
-  html.hl-signed-5  .hl-seg[data-module="5"],
-  html.hl-signed-6  .hl-seg[data-module="6"],
-  html.hl-signed-7  .hl-seg[data-module="7"],
-  html.hl-signed-8  .hl-seg[data-module="8"],
-  html.hl-signed-9  .hl-seg[data-module="9"],
-  html.hl-signed-10 .hl-seg[data-module="10"],
-  html.hl-signed-11 .hl-seg[data-module="11"],
-  html.hl-signed-12 .hl-seg[data-module="12"],
-  html.hl-signed-13 .hl-seg[data-module="13"],
-  html.hl-signed-14 .hl-seg[data-module="14"],
-  html.hl-signed-15 .hl-seg[data-module="15"],
-  html.hl-signed-16 .hl-seg[data-module="16"],
-  html.hl-signed-17 .hl-seg[data-module="17"],
-  html.hl-signed-18 .hl-seg[data-module="18"],
-  html.hl-signed-19 .hl-seg[data-module="19"],
-  html.hl-signed-20 .hl-seg[data-module="20"],
-  html.hl-signed-21 .hl-seg[data-module="21"],
-  html.hl-signed-22 .hl-seg[data-module="22"],
-  html.hl-signed-23 .hl-seg[data-module="23"],
-  html.hl-signed-24 .hl-seg[data-module="24"],
-  html.hl-signed-25 .hl-seg[data-module="25"],
-  html.hl-signed-26 .hl-seg[data-module="26"],
-  html.hl-signed-27 .hl-seg[data-module="27"],
-  html.hl-signed-28 .hl-seg[data-module="28"],
-  html.hl-signed-29 .hl-seg[data-module="29"],
-  html.hl-signed-30 .hl-seg[data-module="30"],
-  html.hl-signed-31 .hl-seg[data-module="31"],
-  html.hl-signed-32 .hl-seg[data-module="32"],
-  html.hl-signed-33 .hl-seg[data-module="33"] {
-    background: var(--hl-cat);
-    border-color: var(--hl-cat);
-  }
+  /* Channel A's per-module segment rules are GENERATED, into
+     `lokum-modules.css`, which this file imports at the top. There is one
+     selector per module and there has to be: the class sits on `<html>` and
+     the number sits in an attribute on a descendant, and CSS has no operator
+     that relates the two. What is generated is the writing-out, keyed on a
+     number `curriculum.yaml` computes. See `scripts/curriculum-css.mjs`. */
 
   /* -------------------------------------------------------------------------
      §13.1.2 — the aggregate surfaces, where chroma IS the state
@@ -329,30 +315,14 @@
   /* A step the reader has signed off says so in words. The marker is real
      text — `SIGNED OFF`, in the accent pen, which still means exactly that and
      nothing else (T1 is unamended) — hidden by default and revealed by channel
-     A. Only the 15 drawn modules appear here: a draft sheet has no sign-off
-     control at all (§12.4.1), so no selector for one can ever match, and
-     writing 32 would state that it could.
+     A. Only the drawn modules get a reveal rule: a draft sheet has no
+     sign-off control at all (§12.4.1), so no selector for one can ever match,
+     and writing one would state that it could. The rules themselves are
+     generated, into `lokum-modules.css`.
 
      The next-step marker is a different problem and is handled below. */
   .hl-step-tick { display: none; }
 
-  html.hl-signed-1  .hl-step[data-module="1"]  .hl-step-tick,
-  html.hl-signed-2  .hl-step[data-module="2"]  .hl-step-tick,
-  html.hl-signed-3  .hl-step[data-module="3"]  .hl-step-tick,
-  html.hl-signed-4  .hl-step[data-module="4"]  .hl-step-tick,
-  html.hl-signed-5  .hl-step[data-module="5"]  .hl-step-tick,
-  html.hl-signed-6  .hl-step[data-module="6"]  .hl-step-tick,
-  html.hl-signed-7  .hl-step[data-module="7"]  .hl-step-tick,
-  html.hl-signed-8  .hl-step[data-module="8"]  .hl-step-tick,
-  html.hl-signed-9  .hl-step[data-module="9"]  .hl-step-tick,
-  html.hl-signed-10 .hl-step[data-module="10"] .hl-step-tick,
-  html.hl-signed-11 .hl-step[data-module="11"] .hl-step-tick,
-  html.hl-signed-12 .hl-step[data-module="12"] .hl-step-tick,
-  html.hl-signed-13 .hl-step[data-module="13"] .hl-step-tick,
-  html.hl-signed-14 .hl-step[data-module="14"] .hl-step-tick {
-    display: inline;
-    color: var(--color-accent-ink);   /* T2 — accent as TEXT is `-ink` only. */
-  }
 
   /* THE NEXT STEP IS CHANNEL B, and the first draft of this file got it wrong.
      "Next" means FIRST UNSIGNED, which is a computation over the whole list,
@@ -379,25 +349,6 @@
     background: Canvas;
     border-color: CanvasText;
     forced-color-adjust: none;
-  }
-  html.hl-signed-1  .hl-seg[data-module="1"],
-  html.hl-signed-2  .hl-seg[data-module="2"],
-  html.hl-signed-3  .hl-seg[data-module="3"],
-  html.hl-signed-4  .hl-seg[data-module="4"],
-  html.hl-signed-5  .hl-seg[data-module="5"],
-  html.hl-signed-6  .hl-seg[data-module="6"],
-  html.hl-signed-7  .hl-seg[data-module="7"],
-  html.hl-signed-8  .hl-seg[data-module="8"],
-  html.hl-signed-9  .hl-seg[data-module="9"],
-  html.hl-signed-10 .hl-seg[data-module="10"],
-  html.hl-signed-11 .hl-seg[data-module="11"],
-  html.hl-signed-12 .hl-seg[data-module="12"],
-  html.hl-signed-13 .hl-seg[data-module="13"],
-  html.hl-signed-14 .hl-seg[data-module="14"] {
-    /* Filled with the system colour, so "signed off" is still a filled cell
-       against an empty one — a difference in fill, not in hue. */
-    background: CanvasText;
-    border-color: CanvasText;
   }
 
   .hl-cat-tint { --hl-tint: CanvasText; }

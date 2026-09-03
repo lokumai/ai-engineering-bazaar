@@ -73,6 +73,50 @@ sometimes taken before the frame fires: observed failing three then passing six
 on a re-run with nothing changed. Both files retry twice. A genuine break still
 fails all three attempts.
 
+## Eight checks that fail for a reason, not because they broke
+
+Moved here from `README.md`, which was the only place they were written down.
+When one of these goes red, the cause is usually the thing it names rather than
+the test.
+
+- **The corpus check** (`tests/corpus/`) renders every real module rather than a
+  fixture, so a transform that works on a sample and dies on the content fails
+  here.
+- **The link gate** resolves every internal cross-reference against the routes
+  that exist, and asserts no rendered HTML anywhere carries a non-external
+  `href` ending in `.md`. It checks each surface the app renders markdown on:
+  the module body, the sheet's summary panel and the category introductions,
+  because a gate covering only the body once passed while four dead links were
+  shipping.
+- **The contrast check** (`tests/unit/color/contrast.test.ts`) recomputes every
+  WCAG ratio in §10.1 from the live token values in `src/app/globals.css`.
+  Change a colour and it fails until the spec's table is re-derived.
+- **The stroke-weight check** fails on any `border-width: var(--stroke-struct)`.
+  Chrome floors a border to a whole pixel, so the middle weight has to be
+  *painted*, as a gradient or a height, never bordered. It caught this exact
+  mistake twice.
+- **The copy register** (`tests/unit/copy-register.test.ts`) scans every
+  reader-visible string in the record and path layers for exclamation marks,
+  praise, anthropomorphism, "just", "simply", "easy", "please", "sorry" and
+  confirmshaming. Comments are stripped first, because they quote every banned
+  word while explaining why it is banned. It also bans a second spelling of a
+  status: the register says `NOT DRAWN`, and `NOT YET DRAWN` fails, because both
+  read as correct on their own.
+- **The palette check** (`tests/unit/color/lokum.test.ts`) recomputes all six
+  category hues from `src/app/lokum.css`: 3:1 against three grounds in both
+  themes at full and half chroma, in gamut, mutually distinguishable, and 20°
+  clear of the accent pen. It also asserts the copy of those values inlined in
+  the `RECORD OF WORK` matches the stylesheet, because that file has no
+  stylesheet to import and a drifted hue there would be invisible.
+- **The path honesty check** (`tests/unit/path/honesty.test.ts`) holds the nine
+  routes to §13.4.2: real slugs, no duplicates, prerequisite order, denominators
+  over written sheets only, and no unwritten sheet described as though it teaches
+  something. It found two defects that twelve independent agents had passed.
+- **The path evidence check** (`tests/unit/path/evidence.test.ts`) measures each
+  of the 123 reasons against the sheet it cites. Genuine citations score a median
+  of 100%; the same citations pointed at a different sheet score a median of 33%.
+  It asserts both, so it cannot pass by being vacuous.
+
 ## Commands
 
 ```bash

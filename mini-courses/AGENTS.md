@@ -195,15 +195,29 @@ Write the Turkish only once the English is final, then:
 
 ## Two files that move together
 
-`README.md` (GitHub) and `mini-courses/index.md` (published site) are the same page for two
-audiences. **Change one, update the other in the same commit.** The transform from README to
-index:
+`README.md` and `mini-courses/index.md` are the same page for two audiences. **Change one, update
+the other in the same commit.** The transform from README to index:
 
-- drop the "Read online" line, since it is self-referential on the site
+- drop the "Read online" line, since the reader is already there
 - strip the `mini-courses/` prefix from link paths, since `index.md` lives inside it
 - keep the `MANIFEST.md` and `ROADMAP.md` links relative in both, since both files sit inside
   `mini-courses/`
+- **link nothing outside `mini-courses/` from `index.md`.** An internal `.md` link the corpus
+  cannot resolve fails the build, so point at GitHub or name the file in prose instead
 - keep the Contributing section at the end of `index.md`
+
+**`index.md` is no longer the published home page.** It used to be, and this rule used to say so.
+The app's §15 work replaced `/` with a home screen built from components, and `lib/content/` now
+reads `index.md` only as a link target: `../index.md` from inside a category resolves to
+`/courses/`. So `index.md` is a page for people browsing `mini-courses/` on GitHub, nothing more.
+Keeping it in step with `README.md` is still worth doing for that reader, but do not expect to find
+its prose in the export, and do not go looking for a bug when you cannot.
+
+**Both files describe the course, not the machinery.** The technical detail belongs in
+`context/ARCHITECTURE.md` (the whole repository) and the root `ARCHITECTURE.md` (the application).
+`README.md` was trimmed from 2,704 words to about 1,000 on that basis: what was cut had to land
+somewhere first, and the eight notable test checks moved into `tests/README.md` rather than being
+deleted.
 
 ## Language
 

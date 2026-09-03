@@ -26,7 +26,7 @@
 18) advanced_multiagent (more architectures like proposer-verifierte, , A2A, Multi-agent coordination context delegation (handoff) vs subagent context delegation vs messaging pool, background agents and monitoring)
 19) advanced_prompting (Reflextion and Self-critique, Tree of Thought, LLM Consul, caveman, ponytail)
 20) advanced_context_engineering (Context engineering for software development like Superpowers, SpecKit, GSD, AgentOS, Claude Native Plan Goals Ultrathink Playground)
-21) advanced_harness_engineering (harness profiles, system prompts, changing tool names)
+21) advanced_harness_engineering (harness profiles, system prompts, changing tool names, self evolving harnessess, context and harness embedded in llm anthtropic article: https://claude.com/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models)
 22) advanced_coding_agents (claude code best practices: https://code.claude.com/docs/en/best-practices#use-cli-tools, rewind, resume, subagent-cli-skills, /fork, btw)
 23) advanced_agent_architectures (THREAD, ReAct, Deep, CodeAct, RLM, Dynamic Workflows)
 24) advanced_deployment (agent server, langchain agent protocol, the tech stack for UI REDIS WORKER etc) 

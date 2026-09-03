@@ -34,6 +34,12 @@ not match what it shows: fix these and say plainly what you changed. Verify numb
 draft rather than passing them through. The line is: **correct what is wrong, add nothing that
 was not asked.**
 
+**Write to Amirkia in plain technical English.** Technical terms are welcome, he is an AI
+engineer. A metaphor standing in for the mechanism is not: "the feature lost its safety net" was
+asked to be rewritten as "those features still work, but if someone breaks them later nothing will
+notice automatically". Where a term has to stay, define it in the same sentence. This is about the
+conversation, not only the modules, where the manifest already demands the same thing.
+
 **Do not commit or push unless asked.**
 
 ## Writing rules
@@ -200,14 +206,19 @@ mermaid already knows.
 **`sequenceDiagram`** matters especially here: it is the honest shape for anything where a user, a
 host and a model take turns, which is most of Fundamentals.
 
-**Do not use `timeline`.** It parses and renders, but mermaid's own theme paints its period and
-event blocks with bright inline colours (orange, magenta, yellow) that the site's tokens never
-reach, so the figure ignores the design system and stays bright in dark mode. It also grows wide
-enough to clip. This was tried in Module 8 and replaced. A story over time is better told as a
-`graph TD` with one node per era and the events inside the node, which themes correctly and reads
-top to bottom as chronological. The manifest-rule-1 point still stands, though: a model cannot tell
-a reader when an idea appeared or what it replaced, so the *content* of that figure is one only a
-human can supply.
+**Two types colour themselves, and the two were judged differently.** `timeline` and `mindmap` both
+paint their own blocks and branches in bright inline colours (orange, magenta, yellow) that the
+site's design tokens never reach, so they stay bright in dark mode.
+
+- **`mindmap` is allowed.** It was tried in Module 9, and Amirkia looked at it and liked the
+  colours: "no worries if it ignores site design". So a mindmap keeps its own palette on purpose.
+- **`timeline` is not.** Same colour problem, plus it grows wide enough to clip its last column.
+  Tried in Module 8 and replaced. A story over time reads better as a `graph TD` with one node per
+  era and the events inside the node, which themes correctly and reads top to bottom as
+  chronological. The manifest-rule-1 point still stands: a model cannot tell a reader when an idea
+  appeared or what it replaced, so the *content* of that figure is one only a human can supply.
+
+Either way, look at a self-colouring diagram in the browser, in both themes, before trusting it.
 
 Anything ending in `-beta` works but its syntax can still move, so prefer a stable type where one
 fits.
@@ -329,12 +340,12 @@ mini-courses/            the authored corpus, and all this file governs
   CLAUDE.md / AGENTS.md  this file
   _module_template.md    copy this to start a module
   index.md               site homepage, mirrors README.md
-  1_fundamentals/        modules 1-7   (improved in place)
-  2_intermediate/        modules 8-15  (being rewritten from scratch)
-  3_expert/              modules 16-25 (draft)
-  4_ecosystem/           modules 26-31 (draft)
-  5_protocols_specs/     module 32     (draft)
-  6_optional/            modules 33-34 (draft)
+  1_fundamentals/        modules 1-7   (rewritten, both languages)
+  2_intermediate/        modules 8-14  (being rewritten from scratch)
+  3_expert/              modules 15-24 (draft)
+  4_ecosystem/           modules 25-30 (draft)
+  5_protocols_specs/     module 31     (draft)
+  6_optional/            modules 32-33 (draft)
   scratchpad/            research notes and diagram prompts, never published
 src/ tests/ scripts/     the Next.js app that renders the corpus (not ours)
 ```

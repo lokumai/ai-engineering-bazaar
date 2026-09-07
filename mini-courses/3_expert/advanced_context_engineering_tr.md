@@ -2,8 +2,7 @@
 
 *(Bu bir placeholder modül — şimdilik kısa bir özet; tam ders içeriği yakında geliyor.)*
 
-Bir agent'ın context'ini ve hedeflerini
-[Context Engineering](../2_intermediate/context_engineering_tr.md) modülünden daha büyük ölçekte
+Bir agent'ın context'ini ve hedeflerini Context Engineering modülünden daha büyük ölçekte
 yapılandırmak için framework'ler ve spec'ler.
 
 **Bu modülde işlenecek konular**:

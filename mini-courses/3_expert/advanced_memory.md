@@ -2,8 +2,7 @@
 
 *(Placeholder module — a short overview for now; full lesson content is coming soon.)*
 
-Long-term memory systems that live outside the context window entirely, referenced back in
-[Memory](../1_fundamentals/memory.md).
+Long-term memory systems that live outside the context window entirely, referenced back in Memory.
 
 **Topics this module will cover**:
 - Cognee

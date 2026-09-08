@@ -65,7 +65,7 @@ reconstructed from git and is labelled as inferred inside each file.
 | File | What it holds | State |
 |---|---|---|
 | `MANIFESTO.md` | 15 non-negotiable rules, what this is and is NOT | Rules 1–7 are the author's own, from `mini-courses/MANIFEST.md`. Rules 8–15 came out of the work. |
-| `ARCHITECTURE.md` | The domain, the two lifecycles, what the system refuses, the record, accounts, the vocabulary | Current as of 2026-09-08. The fullest file here; read §2, §3 and §9 before touching the corpus. |
+| `ARCHITECTURE.md` | The six rules, the domain, the two lifecycles, what the system refuses, the record, accounts, the build, deployment, the vocabulary | Current as of 2026-09-08. **The only architecture document**: the root `ARCHITECTURE.md` was folded into it and deleted (D11). 607 lines, sections 1 to 12; read the six rules, then §2, §3 and §9. |
 | `DESIGN.md` | The shipped design system, with real token values | **Being replaced.** True today, but see the warning at the top of the file before building any interface. |
 
 ### `kia-context/logs/` — state · written every session
@@ -73,7 +73,7 @@ reconstructed from git and is labelled as inferred inside each file.
 | File | What it holds | State |
 |---|---|---|
 | `PROGRESS.md` | M1 to M8, their deliverables and acceptance criteria | M1–M6 inferred; **M7 and M8 are live and M8 is the active milestone.** |
-| `BRAINSTORM.md` | D1 to D10, plus open questions O1 and O2 | D1–D6 inferred; **D7–D10 recorded live.** |
+| `BRAINSTORM.md` | D1 to D11, plus open questions O1 to O3 | D1–D6 inferred; **D7–D11 recorded live.** O3 is closed. |
 
 ---
 
@@ -111,8 +111,8 @@ maintained by an agent, and do not need reading to do the work. The root `CLAUDE
 
 ## 6. The numbering, and why it never restarts
 
-`M1…M8` are milestones in `logs/PROGRESS.md`. `D1…D10` are decisions and `O1…O2` are open questions in
-`logs/BRAINSTORM.md`. Rules `1…15` are in `specs/MANIFESTO.md`.
+`M1…M8` are milestones in `logs/PROGRESS.md`. `D1…D11` are decisions and `O1…O3` are open questions in
+`logs/BRAINSTORM.md`, of which O3 is closed. Rules `1…15` are in `specs/MANIFESTO.md`.
 
 **Numbers are permanent.** They are cited across files and from code comments. Append; strike through
 rather than delete; never renumber.

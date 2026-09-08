@@ -213,8 +213,9 @@ reads `index.md` only as a link target: `../index.md` from inside a category res
 Keeping it in step with `README.md` is still worth doing for that reader, but do not expect to find
 its prose in the export, and do not go looking for a bug when you cannot.
 
-**Both files describe the course, not the machinery.** The technical detail belongs in the root
-`ARCHITECTURE.md`, which covers the repository, the build and the application.
+**Both files describe the course, not the machinery.** The technical detail belongs in
+`kia-context/specs/ARCHITECTURE.md`, which covers the repository, the build and the application. It
+used to be a file at the repository root; it was folded into the context harness on 2026-09-08.
 `README.md` was trimmed from 2,704 words to about 1,000 on that basis: what was cut had to land
 somewhere first, and the eight notable test checks moved into `tests/README.md` rather than being
 deleted.

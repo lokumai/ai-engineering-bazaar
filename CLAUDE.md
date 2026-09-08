@@ -2,9 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-[`ARCHITECTURE.md`](ARCHITECTURE.md) is the map — the six rules that explain why
-the code looks the way it does. Read it before a first substantive change. This
-file is the operating manual on top of it.
+[`kia-context/specs/ARCHITECTURE.md`](kia-context/specs/ARCHITECTURE.md) is the
+architecture document, and the only one: the six rules that explain why the code
+looks the way it does, plus the domain, the lifecycles and the vocabulary. Read it
+before a first substantive change. This file is the operating manual on top of it.
+The root `ARCHITECTURE.md` was folded into it on 2026-09-08.
 
 ## Two halves, and which file governs which
 
@@ -199,7 +201,7 @@ only `INSERT` raises, which is why that suite has both `expectRefused` and
 
 | Document | For |
 | --- | --- |
-| [`ARCHITECTURE.md`](ARCHITECTURE.md) | The six rules, the build, the runtime layers |
+| [`kia-context/specs/ARCHITECTURE.md`](kia-context/specs/ARCHITECTURE.md) | The six rules, the domain, the lifecycles, the build, the runtime layers |
 | [`mini-courses/CLAUDE.md`](mini-courses/CLAUDE.md) | The corpus agreement: how a module gets written, figures, translation |
 | [`mini-courses/MANIFEST.md`](mini-courses/MANIFEST.md) | The seven rules every module is held to |
 | [`tests/README.md`](tests/README.md) | The testing rule, the four layers, and the checks that fail for a reason |

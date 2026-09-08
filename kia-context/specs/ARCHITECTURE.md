@@ -17,26 +17,114 @@ last_updated: "2026-09-08"
 
 # 🏗️ ARCHITECTURE — How this project is built
 
-> ## ⚠️ There is a second architecture document, and this is not a mistake to fix by deleting one
->
-> The repository root holds **`ARCHITECTURE.md`**, written by the colleague who owns the application
-> and linked from the root `CLAUDE.md`. It is 286 lines and covers *What it is · The rules that
-> explain the code · The build · The runtime in layers · Testing · Deployment*. Roughly a third of it
-> overlaps with this file.
->
-> **The author has previously ruled that there is one architecture document and no second one should
-> be created.** This file exists because the kiacontext harness requires it at this path, so the two
-> now coexist and the boundary has to be explicit rather than assumed:
->
-> | Question | File |
-> |---|---|
-> | How is the app built, deployed and layered? Why does the code look like that? | the **root** `ARCHITECTURE.md` — it is the colleague's, and it wins on the application |
-> | What is a module? What does `status` change? What will the build refuse? What is in the reader's record? What does that word mean? | **this** file — it wins on the domain, the lifecycles and the vocabulary |
->
-> **Neither file may restate the other.** Where they disagree, the root file wins on the application
-> and this one wins on the corpus and the domain. **This overlap is unresolved and the author has been
-> told.** The options are to merge them, to cut this file down to the domain half, or to leave both
-> with this boundary. Do not silently pick one.
+> **This is the only architecture document.** The repository root used to hold a second one, written
+> by the colleague who owns the application. It was folded into this file and deleted on 2026-09-08
+> (`logs/BRAINSTORM.md` D11), because a third of it overlapped and two documents describing one system
+> is two documents that disagree. Its six rules survive below, unchanged in substance; its stale
+> counts were corrected against the repository on the way in.
+
+---
+
+## What this is
+
+A course site built **from** markdown rather than **around** it. The 33 modules in `mini-courses/`
+are the corpus, and everything a page shows — the progress marks, the figure numbers, the source
+counts, the revision hashes, the dependency graph — is derived from those files at build time. The
+output is a static export: HTML, CSS and JS on GitHub Pages, no server.
+
+On top of that sits an optional account layer. A reader can work with no account at all, in which
+case nothing about them leaves their browser. Signing in copies their record to Supabase so it
+survives the browser, and joining an organisation lets its managers follow it.
+
+```
+mini-courses/*.md  ──build──▶  static export  ──▶  the reader's browser
+   (read-only)                  56 pages            record in localStorage
+                                                          │
+                                                    optional account
+                                                          ▼
+                                                  Supabase: tables + RLS
+                                                          │
+                                                    manager panel
+```
+
+---
+
+## The six rules that explain the code
+
+Nearly every design decision in this repository is one of these applied to a specific problem, so
+they are worth reading before the code. **They came from the document this file absorbed and they are
+the most reusable thing in it.**
+
+### 1 · No page may lie
+
+The oldest rule and the one the others serve. A page states what it knows, says so when it does not
+know, and never presents a claim as a verified fact.
+
+In practice: a denominator is derived rather than typed, an in-flight query renders "in flight"
+rather than a zero, a failed write says `NOT SAVED` instead of pretending, a signed-off module is
+labelled the reader's own assertion rather than an achievement, and a footer that cannot reach the
+server says exactly that.
+
+The rule has teeth because it is the one most often violated by convenience. Several defects found
+while building the account layer were exactly this shape: four pages claiming the record "is never
+sent anywhere" after it had started being sent, and an erase dialog promising a reach it did not
+have.
+
+### 2 · Content is derived, never restated
+
+`mini-courses/` is read-only. Nothing in `src/` may hold a fact that is already in a markdown file:
+not a module count, not a title, not a category total.
+
+The reason is drift. A count typed into a component is correct the day it is written and wrong the
+first time somebody adds a module, and nothing fails. §2 below is where this rule bottoms out.
+
+### 3 · The browser is the source
+
+The reader's record lives in `localStorage`; Supabase holds a replica.
+
+Not a preference, a consequence. There is no request-time server, so no cookie and no header can
+carry reader state into prerendered HTML. The progress marks have to be right in the **first painted
+frame**, which means reading storage synchronously, which means a `fetch` cannot be on that path. So
+the network is kept off it entirely: a local write never waits, and the account layer is something
+that happens afterwards.
+
+### 4 · One definition of each thing
+
+Wherever a question has an answer, exactly one piece of code answers it.
+
+| Question | The one place |
+|---|---|
+| How far along is this reader? | `src/lib/record/derive.ts` |
+| What does a write to storage mean? | `src/lib/record/storage.ts` |
+| What does "stalled" mean? | `src/lib/record/attention.ts` |
+| Where does the record go? | `src/lib/record/scope.ts` |
+| What is an internal link? | `src/lib/content/links.ts` |
+| What number is this module, and what comes next? | `mini-courses/curriculum.yaml` |
+
+The failure this prevents is two answers that agree until they do not. A manager's panel computing
+completion in SQL while the reader's page computes it in TypeScript works fine until the curriculum
+grows, and then one person is told `18/32` and another `17/32` about the same progress. `derive.ts`'s
+output is therefore **stored** in a column so reports read the same number rather than recomputing
+it.
+
+### 5 · Decisions are pure; only rendering needs a browser
+
+Anything that decides something is a pure function taking its inputs explicitly, including the clock.
+No `Date.now()` inside a reducer, no `Math.random()` in a layout. That is what makes a boundary
+testable at the boundary.
+
+What remains for a real browser is what only a browser can answer: did the diagram island render, is
+the theme right in the first frame, does any page push the document sideways at 390px, does a
+signed-in reader's record actually reach a second machine.
+
+### 6 · Authorisation lives in the database
+
+Every access rule is a row-level-security policy in Postgres. No Edge Functions, no RPC, no views,
+which also means the schema is portable Postgres and moves to Neon or a self-hosted box unchanged.
+
+The corollary matters as much: an over-permissive policy **never raises an error**. It answers, with
+rows it should not have returned. So the policies are tested against a real database with real JWTs
+rather than read for correctness.
 
 ---
 
@@ -227,6 +315,27 @@ RecordData
 **`sheets` is keyed by slug, not by number.** This is what makes a curriculum reorder safe: renaming a
 module orphans its progress, but moving it does not.
 
+### The runtime, in layers
+
+```
+┌─ Channel A ──────────────────────────────────────────────┐
+│ inline script in <head>, blocking, before first paint    │
+│ reads localStorage → stamps <html> → CSS draws the marks │
+│ zero React, correct in frame one                         │
+└──────────────────────────────────────────────────────────┘
+┌─ Channel B ──────────────────────────────────────────────┐
+│ React islands, post-mount: readouts, panels, dialogs     │
+│ getServerSnapshot returns the frozen empty record        │
+└──────────────────────────────────────────────────────────┘
+┌─ The account layer, optional ────────────────────────────┐
+│ session → the claim → merge → throttled push             │
+│ AccountSync.tsx is the ONE place these are joined        │
+└──────────────────────────────────────────────────────────┘
+```
+
+The two channels exist because CSS can draw a reader's progress before hydration and React cannot.
+Both are needed and neither replaces the other.
+
 ### The record is read twice per page, and the split is load-bearing
 
 - **Channel A** — `src/lib/record/boot.ts` generates a blocking inline `<script>` in `<head>` that
@@ -253,8 +362,11 @@ no content.
 
 `src/components/record/AccountSync.tsx` is **the seam** — the single place where the session,
 `createSync`, `createRemoteRecordStore`, `claimMerge` and the claim UI are joined. Its absence was the
-largest defect in the accounts work: both halves existed and signing in did nothing. When adding to
-either side, check the seam actually calls it. `src/lib/record/wire.ts` is the shared vocabulary both
+largest defect in this work: ten agents built both halves of the account layer and nothing joined
+them, so signing in did nothing at all. **A seam needs an owner.** Every module either side of it is
+deliberately ignorant of the others, which is what makes each testable in isolation, and the price of
+that ignorance is that one file has to know all of them. When adding to either side, check the seam
+actually calls it. `src/lib/record/wire.ts` is the shared vocabulary both
 halves compile against.
 
 **Authorisation is row-level security and nothing else.** `supabase/migrations/` holds **5** migration
@@ -276,6 +388,26 @@ idempotent: an event resent after a failed flush lands as itself rather than as 
 
 There is no server at run time. `npm run build` produces a static export into `out/`, served from
 GitHub Pages under a sub-path.
+
+```
+mini-courses/              src/lib/content/                 src/app/
+  curriculum.yaml            curriculum-file.ts  validates    generateStaticParams
+  1_fundamentals/            loader.ts           walks it       ↓
+    llms.md                  render.ts           md → html    out/
+    llms_tr.md               links.ts            rewrites       courses/<cat>/<module>/
+  2_intermediate/            derive.ts           counts         path/  dashboard/  …
+  …                          facts.ts            the spine
+```
+
+**Two generated files are written by `prebuild`, and they are treated differently on purpose.**
+`src/app/lokum-modules.css` is **committed**, because vitest and playwright never run `prebuild` and
+would otherwise test a file that is not there: change a `status` in the yaml and regenerate it in the
+same commit. `public/course-images/` is **gitignored**, because it is only a copy of images already
+in `mini-courses/`.
+
+**Revision hashes come from git, per file**, which is why CI must check out with full history. A file
+git does not know about — one newly added or renamed and not yet committed — has no revision, and its
+page prints none.
 
 **At build time**, for one module page:
 
@@ -380,7 +512,29 @@ misleading; use `gh api repos/.../rulesets`.
 ## 11. The test suite, and the one rule it lives by
 
 **76** test files (`find tests -name '*.test.ts*' | wc -l`) holding **2,033** unit and corpus tests,
-plus **26** Playwright spec files.
+plus **26** Playwright spec files, in four suites that each answer something the others cannot.
+
+| Suite | Runs | Answers |
+|---|---|---|
+| `npm test`, vitest | every push | anything that computes a value, with no DOM |
+| `tests/corpus/` | inside `npm test` | the transforms against every real module, not a fixture |
+| `npm run test:e2e`, real Chrome | every push | first-frame correctness, layout at three widths, real interaction |
+| `node scripts/test-rls.mjs` | by hand, needs credentials | every policy, through PostgREST, with real sessions |
+
+**Two habits are load-bearing rather than decorative.**
+
+**Measure, do not assert.** The most valuable results here came from measuring: finding 39 broken
+links by counting them in the export, proving a CI failure was pre-existing by building the previous
+commit in a worktree, proving a magic link could not work cross-device by watching it fail in Chrome,
+and proving the diagram overflow by reading element geometry off the page rather than reasoning about
+CSS.
+
+**Mutation-test the guards that matter.** A test that would pass against a deliberately broken
+implementation protects nothing. The claim gate and the sync generation counter were each verified by
+removing them and watching the right test fail; the guard added on 2026-09-08 against naming a module
+by number was watched failing in both languages before it was kept.
+
+### The one rule the suite lives by
 
 > A test may check a rule that holds for any content; it may never write down a fact about the
 > content.
@@ -402,3 +556,52 @@ so in their own docblocks. Reading the real curriculum there would defeat what t
 **Exemplars must be chosen by route, never by number or index.** `sheets.ts` and
 `tests/e2e/responsive.spec.ts` picked theirs positionally until 2026-09-08, when a reorder silently
 moved every one of them onto different content with the whole suite still green.
+
+---
+
+## 12. Deployment
+
+`main` → GitHub Actions → GitHub Pages, at `https://lokumai.github.io/ai-engineering-bazaar/`.
+
+The workflow guards the two failures that would otherwise publish **green** and serve a broken site:
+
+- **A dropped `.nojekyll`**, which makes Jekyll delete `_next/` and leave unstyled HTML.
+- **A `basePath` that never reached `assetPrefix`**, which 404s every stylesheet. This is why the
+  build runs twice in CI, the second time under the Pages sub-path, with the link checker run against
+  each.
+
+It also checks the **published** site rather than the artifact, because the worst failures happen
+after the upload.
+
+Accounts are gated on `NEXT_PUBLIC_AUTH_ENABLED`, a build-time constant. It is a real safety measure
+rather than a rollout convenience: `SECURITY.md` covers what enabling it costs while the site is
+served from a shared origin, and the conditions under which a custom domain stops being optional.
+
+**`main` is protected by a ruleset named `main-require-pr`**, so a direct push is rejected even for a
+fast-forward, and `gh pr merge --admin` is refused while a check is still running. Note that
+`repos/.../branches/main/protection` returns 404 for this repository, which is misleading; use
+`gh api repos/.../rulesets`.
+
+---
+
+## Read next
+
+Everything below is outside this harness. It is not superseded by this file: each one goes deeper on
+one subject than an architecture document should.
+
+| Document | For |
+|---|---|
+| `mini-courses/MANIFEST.md` | The seven rules every module is held to. Read before writing content |
+| `mini-courses/CLAUDE.md` | The working agreement: how a module gets written, the diagram system, the naming rules |
+| `tests/README.md` | The testing rule, the four layers, and what fails for a reason |
+| `docs/data-flow.md` | The record, storage, sync, two devices, the exported file |
+| `docs/auth-flow.md` | Sign-in, sessions, joining, who may read what |
+| `docs/manager-queries.md` | Tables, columns, joins, and the SQL a manager needs |
+| `SECURITY.md` | Threat notes, accepted risks, operational rules |
+| `supabase/README.md` | Applying the schema |
+| `README.md` | What the course is, and the commands to run it |
+
+**The code carries its own reasoning.** Modules open with a comment recording the decision and *why*,
+including the alternatives that were rejected and, where it mattered, the measurement that settled
+it. If a comment restates the code it is a defect; if it tells you why the code is not the obvious
+thing, it is doing its job.

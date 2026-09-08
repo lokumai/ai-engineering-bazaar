@@ -189,6 +189,28 @@ guessed: cobalt `#282864`, cream `#C8B48C`, clay `#A0503C`, ochre `#C8A078`.
 **Rule that follows:** `MANIFESTO.md` rule 7's first question, and `ARCHITECTURE.md` §9 lists the
 vocabulary being retired. The choices themselves are still open — see O1.
 
+### D11 · One architecture document, and the root one is folded into the harness — 2026-09-08
+
+**Considered:** leave both with an explicit boundary / cut `specs/ARCHITECTURE.md` down to the domain
+half / fold the root `ARCHITECTURE.md` into it and delete the root file
+**Chose:** the third, on the author's instruction. My recommendation had been the second.
+**Because:** two documents describing one system are two documents that disagree, and about a third
+of the 286-line root file overlapped with the 381-line harness file. The author's standing rule was
+already *there is one architecture document*; this restores it rather than carving out an exception.
+**Rejected the boundary because:** it only postpones the drift, and a reader who opens one of two
+files cannot tell they are holding half.
+**What was carried over, not lost:** the **six rules that explain the code** — no page may lie,
+content is derived never restated, the browser is the source, one definition of each thing, decisions
+are pure, authorisation lives in the database — plus the runtime-layers picture, the build pipeline,
+the two generated files and why one is committed, revision hashes coming from git, the four test
+suites, the two load-bearing habits, and the deployment guards. The result is 607 lines and keeps its
+original section numbering **1 to 12 unchanged**, so every `§n` citation already written across this
+harness still resolves.
+**Corrected on the way in:** the absorbed file's stale counts. It said 53 pages in one place and 58
+in another (measured: 56), 23 RLS policies (28) and about 33k lines of `src` (39,344).
+**Rule that follows:** the file itself, and four references repointed at it in the root `CLAUDE.md`,
+`README.md`, `mini-courses/CLAUDE.md` and `mini-courses/AGENTS.md`.
+
 ---
 
 ## Open questions
@@ -206,7 +228,7 @@ Two sub-questions the author flagged as worth deciding separately:
 - **Does the word "Level" describe the curriculum or the reader?** Both are currently called that in
   one of the three vocabulary sets, and one of the two has to change.
 
-### O3 · Two architecture documents now exist — opened 2026-09-08
+### ~~O3 · Two architecture documents now exist~~ — opened and closed 2026-09-08
 
 The repository root has `ARCHITECTURE.md`, the colleague's, 286 lines, linked from the root
 `CLAUDE.md`. Installing this harness added `specs/ARCHITECTURE.md`, 381 lines. **About a third
@@ -219,7 +241,8 @@ at a fixed path, so the two coexist for now behind an explicit boundary written 
 `specs/ARCHITECTURE.md`: the root file wins on the application, this one wins on the domain, the
 lifecycles and the vocabulary, and neither restates the other.
 
-**Three ways to close this**, and it is the author's call:
+**Closed by D11: the root file was folded into this harness and deleted.** The three options
+considered were:
 
 1. **Leave both** with the boundary as written. Cheapest, and the risk is drift.
 2. **Cut `specs/ARCHITECTURE.md` down to the domain half** — the module and reader lifecycles, the
@@ -227,8 +250,8 @@ lifecycles and the vocabulary, and neither restates the other.
 3. **Fold the root file into this one** and leave a pointer behind. Cleanest, but it rewrites a
    colleague's document and breaks the link in the root `CLAUDE.md`.
 
-My recommendation is 2: it is the only option that removes the duplication without touching the
-colleague's file.
+My recommendation was 2. The author chose 3, which is stronger: it leaves exactly one architecture
+document rather than one and a half.
 
 ### O2 · Where the retired progress vocabulary lands — opened 2026-09-08
 

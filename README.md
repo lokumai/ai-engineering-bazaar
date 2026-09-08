@@ -60,7 +60,7 @@ Corrections and better explanations are welcome, and so are reports of anything 
 
 ## For developers
 
-The courses are plain markdown in `mini-courses/`, and the site is a Next.js static export that reads them. **[`ARCHITECTURE.md`](ARCHITECTURE.md)** is the map: what the repository is, the six rules that explain why the code looks the way it does, the build, the runtime layers, and what `mini-courses/curriculum.yaml` owns.
+The courses are plain markdown in `mini-courses/`, and the site is a Next.js static export that reads them. **[`kia-context/specs/ARCHITECTURE.md`](kia-context/specs/ARCHITECTURE.md)** is the map: what the repository is, the six rules that explain why the code looks the way it does, the build, the runtime layers, and what `mini-courses/curriculum.yaml` owns.
 
 ```bash
 npm install

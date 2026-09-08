@@ -75,7 +75,7 @@ describe('claimIsNews (§17.2)', () => {
     expect(claimIsNews(summariseClaim(local, null, local))).toBe(true)
   })
 
-  it('a sheet crossing from one side to the other is news', () => {
+  it('a module crossing from one side to the other is news', () => {
     const local = signedRun(0, 2)
     const account = signedRun(1, 3)
     const merged = signedRun(0, 3)
@@ -161,7 +161,7 @@ describe('claimIsNews (§17.2)', () => {
    * what a record that broke it would do, so anybody loosening submittal
    * identity is told by this test rather than by a reader.
    */
-  it('THE INVARIANT: one repo per sheet is one array element, so the two measures agree', () => {
+  it('THE INVARIANT: one repo per module is one array element, so the two measures agree', () => {
     const seeded = coerceRecordData({
       sheets: {
         'fundamentals/s0': {
@@ -200,7 +200,7 @@ describe('claimIsNews (§17.2)', () => {
     ).toBe(true)
   })
 
-  it('a dropped submittal is news even when no sheet moved', () => {
+  it('a dropped submittal is news even when no module moved', () => {
     const summary: ClaimSummary = {
       outcome: 'merged',
       signed: { here: 1, account: 1, shared: 1, merged: 1 },

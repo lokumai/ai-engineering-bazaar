@@ -39,9 +39,9 @@ import { loadModule } from './loader'
  * claiming, and no sentence spoken as if the site were a person.
  */
 export const SIGN_OFF_ASSERTION =
-  'Signing off is your own assertion that you have read this sheet and '
+  'Marking a module complete is your own assertion that you have read this module and '
   + 'consider these objectives met. Nobody else assesses it, and you can '
-  + 'un-sign it at any time.'
+  + 'un-complete it at any time.'
 
 export interface SignOffCriteria {
   /** The sheet's declared `objectives`, verbatim. Empty on an undrawn sheet. */

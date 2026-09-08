@@ -139,7 +139,7 @@ function assignment(overrides: Partial<Assignment> = {}): Assignment {
   return {
     id: 'a1',
     orgId: 'org-a',
-    title: 'Read the protocol sheets',
+    title: 'Read the protocol modules',
     note: null,
     dueAt: '2026-09-01T00:00:00.000Z',
     createdAt: null,
@@ -152,7 +152,7 @@ function assignment(overrides: Partial<Assignment> = {}): Assignment {
 function draft(overrides: Partial<AssignmentDraft> = {}): AssignmentDraft {
   return {
     orgId: 'org-a',
-    title: 'Read the protocol sheets',
+    title: 'Read the protocol modules',
     note: '',
     dueDate: '2026-09-01',
     sheets: ['protocols/mcp'],
@@ -232,7 +232,7 @@ describe('classifySubmittals', () => {
 // ---------------------------------------------------------------------------
 
 describe('sheetClaimRows', () => {
-  it('lists only signed-off sheets, because evidence corroborates a claim', () => {
+  it('lists only completed modules, because evidence corroborates a claim', () => {
     const data = record({
       'fundamentals/llms': sheet({ signedOff: '2026-08-12T00:00:00.000Z' }),
       'protocols/mcp': sheet({ reachedEnd: true, dwellSeconds: 600 }),
@@ -267,7 +267,7 @@ describe('sheetClaimRows', () => {
   it('orders by module and keeps a sign-off the corpus no longer carries', () => {
     const data = record({
       'protocols/mcp': sheet({ signedOff: '2026-08-01T00:00:00.000Z' }),
-      'withdrawn/sheet': sheet({ signedOff: '2026-08-02T00:00:00.000Z' }),
+      'withready/module': sheet({ signedOff: '2026-08-02T00:00:00.000Z' }),
       'fundamentals/llms': sheet({ signedOff: '2026-08-03T00:00:00.000Z' }),
     })
     const rows = sheetClaimRows(data, FACTS, null)
@@ -277,7 +277,7 @@ describe('sheetClaimRows', () => {
     expect(rows.map((row) => row.slug)).toEqual([
       'fundamentals/llms',
       'protocols/mcp',
-      'withdrawn/sheet',
+      'withready/module',
     ])
     expect(rows.map((row) => row.inCurriculum)).toEqual([true, true, false])
     expect(rows[2]?.module).toBeNull()
@@ -321,7 +321,7 @@ describe('latestSignOff', () => {
     const data = record({
       'fundamentals/llms': sheet({ signedOff: '2026-08-12T00:00:00.000Z' }),
       'protocols/mcp': sheet({ signedOff: '2026-09-03T00:00:00.000Z' }),
-      'other/sheet': sheet(),
+      'other/module': sheet(),
     })
     const result = latestSignOff(data)
     expect(result).toBe('2026-09-03T00:00:00.000Z')
@@ -331,7 +331,7 @@ describe('latestSignOff', () => {
     expect(typeof result).toBe('string')
   })
 
-  it('is null when nothing is signed off', () => {
+  it('is null when nothing is completed', () => {
     expect(latestSignOff(EMPTY_RECORD)).toBeNull()
   })
 })
@@ -355,7 +355,7 @@ describe('sheetLogsByUser', () => {
     expect(sheetLogsByUser(events).get('u1')?.s1?.attempts).toBe(2)
   })
 
-  it('takes the last write against a sheet, whatever wrote it', () => {
+  it('takes the last write against a module, whatever wrote it', () => {
     // `assessQuiz` is later than either attempt and is the last touch.
     expect(sheetLogsByUser(events).get('u1')?.s1?.lastTouchedAt).toBe(
       '2026-08-04T00:00:00.000Z',
@@ -371,7 +371,7 @@ describe('sheetLogsByUser', () => {
     expect(logs.get('u1')?.s2?.attempts).toBe(1)
   })
 
-  it('drops rows with no sheet and rows with an unparseable instant', () => {
+  it('drops rows with no module and rows with an unparseable instant', () => {
     const logs = sheetLogsByUser([
       ...events,
       { userId: 'u1', kind: 'signOff', sheetSlug: 's3', at: 'not a date' },
@@ -406,7 +406,7 @@ describe('attentionReason', () => {
 
   it('never renders a flag without its measurement', () => {
     expect(attentionReason(flag({}))).toBe(
-      'OPENED, NOT SIGNED OFF · protocols/mcp · 21 DAYS IDLE',
+      'OPENED, NOT COMPLETED · protocols/mcp · 21 DAYS IDLE',
     )
     expect(attentionReason(flag({ why: 'quizFailing', attempts: 3 }))).toBe(
       'QUIZ MISSED · protocols/mcp · 3 ATTEMPTS',
@@ -418,7 +418,7 @@ describe('attentionReason', () => {
 
   it('degrades to a weaker statement rather than printing a missing value', () => {
     expect(attentionReason(flag({ idleDays: null }))).toBe(
-      'OPENED, NOT SIGNED OFF · protocols/mcp',
+      'OPENED, NOT COMPLETED · protocols/mcp',
     )
     expect(attentionReason(flag({ why: 'overdue', dueAt: null }))).toBe(
       'OVERDUE · protocols/mcp',

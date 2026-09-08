@@ -103,7 +103,7 @@ export const PATHS: readonly LearningPath[] = [
         slug: 'fundamentals/tools',
         tier: 'core',
         reason:
-          'A tool is a function you write; this sheet shows who actually executes the call and what a tool schema must contain',
+          'A tool is a function you write; this module shows who actually executes the call and what a tool schema must contain',
       },
       {
         slug: 'fundamentals/memory',
@@ -157,13 +157,13 @@ export const PATHS: readonly LearningPath[] = [
         slug: 'expert/advanced-agent-architectures',  // draft
         tier: 'context',
         reason:
-          'A draft sheet with no lesson yet; planned to cover ReAct, CodeAct and dynamic workflows as loop shapes beyond Observe-Decide-Act',
+          'A draft module with no lesson yet; planned to cover ReAct, CodeAct and dynamic workflows as loop shapes beyond Observe-Decide-Act',
       },
       {
         slug: 'expert/advanced-harness-engineering',  // draft
         tier: 'context',
         reason:
-          'A draft sheet with no lesson yet; planned to cover harness profiles, system prompts, and reshaping tools for a given context',
+          'A draft module with no lesson yet; planned to cover harness profiles, system prompts, and reshaping tools for a given context',
       },
     ],
   },
@@ -247,7 +247,7 @@ export const PATHS: readonly LearningPath[] = [
         slug: 'fundamentals/llms',
         tier: 'core',
         reason:
-          'Retrieval budgets start at the context window, and this sheet sets out what happens when you exceed it',
+          'Retrieval budgets start at the context window, and this module sets out what happens when you exceed it',
       },
       {
         slug: 'fundamentals/training',
@@ -397,7 +397,7 @@ export const PATHS: readonly LearningPath[] = [
         slug: 'intermediate/security',
         tier: 'supporting',
         reason:
-          'Retrieved tables and tickets count as semi-trusted input; the sheet covers prompt injection and the exfiltration channels that follow',
+          'Retrieved tables and tickets count as semi-trusted input; the module covers prompt injection and the exfiltration channels that follow',
       },
       {
         slug: 'intermediate/personal-agents',
@@ -505,13 +505,13 @@ export const PATHS: readonly LearningPath[] = [
         slug: 'fundamentals/tools',
         tier: 'supporting',
         reason:
-          'Tool calling is the surface you probe: the sheet walks through terminal access, database queries and email sending as tools',
+          'Tool calling is the surface you probe: the module walks through terminal access, database queries and email sending as tools',
       },
       {
         slug: 'fundamentals/memory',
         tier: 'supporting',
         reason:
-          'Reproducing an agent bug means rebuilding its state, and this sheet shows the whole message stack being resent on every call',
+          'Reproducing an agent bug means rebuilding its state, and this module shows the whole message stack being resent on every call',
       },
       {
         slug: 'fundamentals/agents',
@@ -589,7 +589,7 @@ export const PATHS: readonly LearningPath[] = [
         slug: 'fundamentals/rag',
         tier: 'supporting',
         reason:
-          'Settles the recurring build question through the sheet\'s own section on fine-tuning the model on documents instead',
+          'Settles the recurring build question through the module\'s own section on fine-tuning the model on documents instead',
       },
       {
         slug: 'fundamentals/tools',
@@ -637,7 +637,7 @@ export const PATHS: readonly LearningPath[] = [
         slug: 'intermediate/security',
         tier: 'core',
         reason:
-          'Prompt injection remains unsolved, and section VII rates the common guardrails honestly — what a risk sign-off actually needs',
+          'Prompt injection remains unsolved, and section VII rates the common guardrails honestly — what a risk approval actually needs',
       },
       {
         slug: 'intermediate/loop-engineering',
@@ -805,7 +805,7 @@ export const PATHS: readonly LearningPath[] = [
         slug: 'ecosystem/inference-providers',  // draft
         tier: 'context',
         reason:
-          'Planned to cover the hosted serving options a deal turns on — OpenRouter, OpenAI, Google AI Studio; the sheet is not written yet',
+          'Planned to cover the hosted serving options a deal turns on — OpenRouter, OpenAI, Google AI Studio; the module is not written yet',
       },
       {
         slug: 'protocols/protocols-reference',  // draft

@@ -90,7 +90,7 @@ const UNAVAILABLE_COPY = {
     note:
       'Sign-in is not switched on for this deployment. Everything on this site '
       + 'works without an account: your record is kept in this browser, and the '
-      + 'profile sheet can export it to a file you keep.',
+      + 'account page can export it to a file you keep.',
   },
   missingUrl: {
     readout: 'ACCOUNTS ENABLED BUT NOT CONFIGURED · NO PROJECT URL',
@@ -268,7 +268,7 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
         </div>
         {chrome === 'panel' && (
           <p className="mt-4 mb-0 font-display text-meta text-ink-muted">
-            <Link href="/profile/">Go to the profile sheet</Link>
+            <Link href="/profile/">Go to the account page</Link>
           </p>
         )}
       </AuthShell>
@@ -327,7 +327,7 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
       >
         {chrome === 'panel' && (
           <p className="mt-0 mb-4 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
-            This browser already holds a session. The profile sheet shows whose
+            This browser already holds a session. The account page shows whose
             it is, what it is connected to, and how to sign out of it.
           </p>
         )}
@@ -352,7 +352,7 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
 
         {chrome === 'panel' && (
           <p className="m-0 font-display text-meta">
-            <Link href="/profile/">Open the profile sheet</Link>
+            <Link href="/profile/">Open the account page</Link>
           </p>
         )}
       </AuthShell>

@@ -66,9 +66,9 @@ const OTHER = sheetByModule(1)
 const OTHER_SLUG = slugOf(OTHER)
 
 /** §12.13 class 1 — what the readout prints when nothing has been recorded. */
-const EMPTY_READOUT = [`Signed off 00/${SHEETS.length}`, 'XP 0', 'Class —', 'I at 8']
+const EMPTY_READOUT = [`Completed 00/${SHEETS.length}`, 'XP 0', 'Class —', 'I at 8']
 /** §12.2 — what it prints before the store has answered at all. */
-const NO_READING = [`Signed off --/${SHEETS.length}`, 'XP --', 'Class --', '-- at --']
+const NO_READING = [`Completed --/${SHEETS.length}`, 'XP --', 'Class --', '-- at --']
 
 /**
  * §7.4 / §5.9 — sheet 13's four slots, every one at zero against its real
@@ -80,7 +80,7 @@ const NO_READING = [`Signed off --/${SHEETS.length}`, 'XP --', 'Class --', '-- a
  * already said "sources opened"; the stamps were the outlier.
  */
 const EMPTY_STAMPS = [
-  'SIGN-OFF 0 OF 1',
+  'COMPLETION 0 OF 1',
   'QUIZ 0 OF 1',
   `CHECKLIST 0 OF ${CHECKLIST_ITEMS}`,
   'SOURCES OPENED 0 OF 5',
@@ -122,7 +122,7 @@ function stampConditions(page: Page): Promise<string[]> {
     )
 }
 
-const signOff = (page: Page) => page.getByRole('button', { name: 'SIGN OFF', exact: true })
+const signOff = (page: Page) => page.getByRole('button', { name: 'COMPLETE', exact: true })
 const signedOff = (page: Page) => page.getByRole('button', { name: /^SIGNED OFF / })
 const unsign = (page: Page) => page.getByRole('button', { name: 'UNSIGN', exact: true })
 const anyDialog = (page: Page) => page.locator('[role="dialog"], [role="alertdialog"], dialog')
@@ -158,7 +158,7 @@ function watchDialogs(page: Page): string[] {
  * "the build genuinely does not know who is reading" can be checked instead of
  * argued about.
  */
-test('the sheet as exported is the honest empty form (§12.2, §12.13 class 1)', async ({
+test('the module as exported is the honest empty form (§12.2, §12.13 class 1)', async ({
   browser,
 }) => {
   const context = await browser.newContext({ javaScriptEnabled: false })
@@ -187,7 +187,7 @@ test('the sheet as exported is the honest empty form (§12.2, §12.13 class 1)',
   await context.close()
 })
 
-test('with nothing recorded the sheet settles on 00/32, not on -- (§12.2 channel B)', async ({
+test('with nothing recorded the module settles on 00/32, not on -- (§12.2 channel B)', async ({
   page,
 }) => {
   const problems = watchPage(page)
@@ -283,7 +283,7 @@ test('with nothing stored the first frame claims no record (§12.2, §12.13)', a
  * too broadly would energise the other five, and that is exactly the bug a
  * single-face assertion cannot see.
  */
-test('a started subsystem draws its face at the structural weight (§8.2, §12.2)', async ({
+test('a started level draws its face at the structural weight (§8.2, §12.2)', async ({
   page,
 }) => {
   await seedRecord(page, { sheets: { [SLUG]: signedSheet('b7225f8') } })
@@ -304,7 +304,7 @@ test('a started subsystem draws its face at the structural weight (§8.2, §12.2
   }
 })
 
-test('a subsystem with every sheet signed off is hatched, not merely inked (§8.2, §12.2)', async ({
+test('a level with every module completed is hatched, not merely inked (§8.2, §12.2)', async ({
   page,
 }) => {
   // `-complete` needs the whole subsystem, and its denominator is a build-time
@@ -417,7 +417,7 @@ test('channel A stays true across a client transition (§12.2)', async ({ page }
   await expect(page.locator('.hl-home-resume')).toBeVisible()
   await expect(page.locator('.hl-home-new')).toBeHidden()
 
-  await page.locator('.hl-home-resume').getByRole('link', { name: 'Sheet index' }).click()
+  await page.locator('.hl-home-resume').getByRole('link', { name: 'Catalog' }).click()
   await expect(page).toHaveURL(new RegExp(`${INDEX_SHEET}$`))
   await page.locator(`.hl-index tbody a[href$="${OTHER.path}"]`).click()
   await expect(page.locator('main h1')).toHaveText(OTHER.title)
@@ -441,7 +441,7 @@ test('channel A stays true across a client transition (§12.2)', async ({ page }
 // §12.4 — sign-off, the completion primitive
 // ---------------------------------------------------------------------------
 
-test('sign-off records the sheet’s own revision and survives a reload (§12.4.1, §12.4.3)', async ({
+test('sign-off records the module’s own revision and survives a reload (§12.4.1, §12.4.3)', async ({
   page,
 }) => {
   await seedRecord(page, { identity: { name: 'Ada Lovelace', markSeed: '0123abcd' } })
@@ -449,7 +449,7 @@ test('sign-off records the sheet’s own revision and survives a reload (§12.4.
   await waitForHydratedReadout(page)
 
   const revision = (await printedRevision(page).innerText()).trim()
-  expect(revision, 'the sheet printed no revision to sign against').toMatch(/^[0-9a-f]{7,40}$/)
+  expect(revision, 'the module printed no revision to sign against').toMatch(/^[0-9a-f]{7,40}$/)
 
   await signOff(page).click()
 
@@ -473,7 +473,7 @@ test('sign-off records the sheet’s own revision and survives a reload (§12.4.
   expect(await hasRootClass(page, `hl-signed-${SHEET.module}`)).toBe(true)
 })
 
-test('un-sign reverses the assertion and clears its channel-A stamp (§12.4.1)', async ({
+test('un-complete reverses the assertion and clears its channel-A stamp (§12.4.1)', async ({
   page,
 }) => {
   await seedRecord(page, {
@@ -501,7 +501,7 @@ test('un-sign reverses the assertion and clears its channel-A stamp (§12.4.1)',
   expect(await hasRootClass(page, `hl-cat-${SHEET.category}-started`)).toBe(false)
 })
 
-test('neither sign-off nor un-sign raises a confirmation (§12.4.1, §12.15)', async ({ page }) => {
+test('neither sign-off nor un-complete raises a confirmation (§12.4.1, §12.15)', async ({ page }) => {
   const raised = watchDialogs(page)
   await seedRecord(page, { identity: { name: 'Ada Lovelace', markSeed: '0123abcd' } })
   await page.goto(SHEET.path)
@@ -516,11 +516,11 @@ test('neither sign-off nor un-sign raises a confirmation (§12.4.1, §12.15)', a
   await expect(signOff(page)).toBeVisible()
   // Un-sign is its own undo. §12.15's erase is the only confirmation on this
   // site, and it only works because nothing else spends the reader's attention.
-  expect(raised, 'un-sign raised a dialog').toEqual([])
+  expect(raised, 'un-complete raised a dialog').toEqual([])
   await expect(anyDialog(page)).toHaveCount(0)
 })
 
-test('§12.4.3 prints the drift when the sheet has moved under a sign-off', async ({ page }) => {
+test('§12.4.3 prints the drift when the module has moved under a sign-off', async ({ page }) => {
   await seedRecord(page, {
     sheets: { [SLUG]: signedSheet('a1b2c3d') },
     identity: { name: 'Ada Lovelace', markSeed: '0123abcd' },
@@ -531,7 +531,7 @@ test('§12.4.3 prints the drift when the sheet has moved under a sign-off', asyn
   const revision = (await printedRevision(page).innerText()).trim()
   const drift = page.locator('.hl-signoff-drift')
   await expect(drift).toHaveText(
-    new RegExp(`SIGNED OFF 2026-08-14 AGAINST REV a1b2c3d . SHEET NOW AT REV ${revision}`),
+    new RegExp(`COMPLETED 2026-08-14 AGAINST REV a1b2c3d . MODULE NOW AT REV ${revision}`),
   )
 })
 
@@ -702,24 +702,24 @@ test('nothing is revealed before an answer is written (§12.6)', async ({ page }
 
   // And it says why, without praise, blame or an exclamation mark (§12.14.1).
   await expect(page.locator('.hl-quiz-note').first()).toHaveText(
-    'The sheet’s summary can be compared once an answer is written.',
+    'The module’s summary can be compared once an answer is written.',
   )
 })
 
-test('the reveal is the sheet’s own summary, named as that (§12.6)', async ({ page }) => {
+test('the reveal is the module’s own summary, named as that (§12.6)', async ({ page }) => {
   await page.goto(SHEET.path)
   const question = (await page.locator('.hl-quiz-question').innerText()).trim()
 
   await page.locator('.hl-quiz textarea').fill('Read, act, exfiltrate — the trifecta.')
   const compare = page.getByRole('button', { name: /^COMPARE WITH THE SHEET/ })
-  await expect(compare).toHaveText('COMPARE WITH THE SHEET’S SUMMARY')
+  await expect(compare).toHaveText('COMPARE WITH THE MODULE’S SUMMARY')
   await compare.click()
 
   // Labelled exactly what it is. It is the closest authored thing that exists,
   // and naming it accurately costs nothing — whereas a reveal button over an
   // absent or generated answer is the §1 failure this codebase exists to
   // prevent.
-  await expect(page.locator('.hl-quiz-reveal-label')).toHaveText('THE SHEET’S SUMMARY')
+  await expect(page.locator('.hl-quiz-reveal-label')).toHaveText('THE MODULE’S SUMMARY')
   await expect(page.locator('.hl-quiz-reveal .prose')).toHaveText(/\S/)
 
   // §12.6 — `summarySection` removes the self-check paragraph from the section
@@ -755,7 +755,7 @@ for (const outcome of ['MATCHED', 'DID NOT MATCH'] as const) {
     // §12.4.2 — self-assessment is its own axis and no third state is derived
     // from it: the readout gains XP and nothing gains a pass, a grade or a mark.
     await expect(readoutCell(page, /^XP/)).toHaveText('XP 60')
-    await expect(readoutCell(page, /^Signed off/)).toHaveText(`Signed off 00/${SHEETS.length}`)
+    await expect(readoutCell(page, /^Signed off/)).toHaveText(`Completed 00/${SHEETS.length}`)
     await expect(page.locator('.hl-quiz-note').filter({ hasText: 'SELF-ASSESSED' })).toHaveText(
       `SELF-ASSESSED: ${outcome}`,
     )
@@ -843,13 +843,13 @@ test('a deep link is stored and printed as the reconstructed repository URL (§1
   const RECONSTRUCTED = 'https://github.com/cevheri/hidden-line'
 
   await page.goto(SHEET.path)
-  await expect(page.locator('.hl-submittal-empty')).toHaveText('NO SUBMITTAL REGISTERED')
+  await expect(page.locator('.hl-submittal-empty')).toHaveText('NOTHING ADDED YET')
 
   await page
     .getByRole('textbox', { name: 'Repository' })
     .fill(`${RECONSTRUCTED}/tree/main/lms?tab=readme#top`)
   await page.getByRole('textbox', { name: /What you built/ }).fill('A harness for the trifecta')
-  await page.getByRole('button', { name: 'REGISTER', exact: true }).click()
+  await page.getByRole('button', { name: 'ADD REPOSITORY', exact: true }).click()
 
   // §12.9.2 — render only the reconstructed string, as BOTH the href and the
   // visible label. That is what makes a link whose text lies about its
@@ -884,7 +884,7 @@ test('a reader-supplied commit is lowercased and printed unverified (§12.9.3)',
     .getByRole('textbox', { name: 'Repository' })
     .fill('https://github.com/cevheri/hidden-line')
   await page.getByRole('textbox', { name: /^Commit/ }).fill('9F2C1AB')
-  await page.getByRole('button', { name: 'REGISTER', exact: true }).click()
+  await page.getByRole('button', { name: 'ADD REPOSITORY', exact: true }).click()
 
   const commit = page.locator('.hl-submittal-commit')
   await expect(commit).toContainText('COMMIT 9f2c1ab')
@@ -910,10 +910,10 @@ const HOSTILE_REPOS: readonly [string, string][] = [
 ]
 
 for (const [what, input] of HOSTILE_REPOS) {
-  test(`the register refuses ${what} (§12.9.2)`, async ({ page }) => {
+  test(`the submittal form refuses ${what} (§12.9.2)`, async ({ page }) => {
     await page.goto(SHEET.path)
     await page.getByRole('textbox', { name: 'Repository' }).fill(input)
-    await page.getByRole('button', { name: 'REGISTER', exact: true }).click()
+    await page.getByRole('button', { name: 'ADD REPOSITORY', exact: true }).click()
 
     // Imperative, describing the fix; no "please", no verdict on the input.
     await expect(page.locator('.hl-field-error')).toHaveText(
@@ -922,7 +922,7 @@ for (const [what, input] of HOSTILE_REPOS) {
     // Refused, not silently swallowed: a form that clears itself and records
     // nothing is the page telling the reader something untrue.
     await expect(page.locator('.hl-submittal-item')).toHaveCount(0)
-    await expect(page.locator('.hl-submittal-empty')).toHaveText('NO SUBMITTAL REGISTERED')
+    await expect(page.locator('.hl-submittal-empty')).toHaveText('NOTHING ADDED YET')
     await expect(page.locator('.hl-submittal a')).toHaveCount(0)
     expect((await readRecord(page))?.data.sheets[SLUG]?.submittals ?? []).toEqual([])
   })
@@ -962,7 +962,7 @@ test('g d reaches the dashboard (§12.16)', async ({ page }) => {
   await expect(page.locator('main h1')).toBeVisible()
 })
 
-test('? opens the shortcut sheet and Escape closes it (§12.16)', async ({ page }) => {
+test('? opens the keyboard shortcuts and Escape closes it (§12.16)', async ({ page }) => {
   await page.goto(SHEET.path)
   await waitForHydratedReadout(page)
 
@@ -974,7 +974,7 @@ test('? opens the shortcut sheet and Escape closes it (§12.16)', async ({ page 
   // The source case, not the rendered one: `.hl-mark` uppercases these in CSS,
   // and asserting the transformed text would pass on a stylesheet that had
   // stopped loading (§3.4).
-  await expect(sheet).toContainText('Shortcut sheet')
+  await expect(sheet).toContainText('Keyboard shortcuts')
   await expect(sheet).toContainText('Keyboard shortcuts')
   for (const row of ['g d', 'g i', 'g p', 'g r', 'g c', '[ / ]', 'j / k', 'Esc'])
     await expect(sheet).toContainText(row)
@@ -983,7 +983,7 @@ test('? opens the shortcut sheet and Escape closes it (§12.16)', async ({ page 
   await expect(sheet).toHaveCount(0)
 })
 
-test('. toggles the theme and s signs off the current sheet (§12.16)', async ({ page }) => {
+test('. toggles the theme and s signs off the current module (§12.16)', async ({ page }) => {
   await seedTheme(page, 'light')
   await seedRecord(page, { identity: { name: 'Ada Lovelace', markSeed: '0123abcd' } })
   await page.goto(SHEET.path)
@@ -1082,12 +1082,12 @@ test('reading the site writes nothing until the reader records something (§12.1
   await page.waitForTimeout(1200)
 
   const afterIndex = await readRawRecord(page)
-  expect(afterIndex, 'the index sheet wrote nothing').toBeNull()
+  expect(afterIndex, 'the catalog wrote nothing').toBeNull()
 
   await page.goto(A0.path)
   await page.waitForLoadState('networkidle')
   await page.waitForTimeout(1200)
-  expect(await readRawRecord(page), 'a module sheet wrote nothing').toBeNull()
+  expect(await readRawRecord(page), 'a module module wrote nothing').toBeNull()
 
   // And the second load still reads as NEVER STARTED rather than CLEARED BY YOU.
   await page.reload()
@@ -1115,7 +1115,7 @@ test('reading the site writes nothing until the reader records something (§12.1
  * had been printing `REPOSITORIES n` all along. These two cases are the round
  * trip that was missing — type it in, and read it back out of the panel.
  */
-test('§12.9 — registering a repository reaches the title block’s own row', async ({ page }) => {
+test('§12.9 — registering a repository reaches the module info’s own row', async ({ page }) => {
   await page.goto(SHEET.path)
 
   const row = page
@@ -1133,7 +1133,7 @@ test('§12.9 — registering a repository reaches the title block’s own row', 
   // Worth knowing rather than working around — see the note on the second case.
   const form = page.locator('.hl-submittal-form')
   await form.getByLabel('Repository').fill('https://github.com/libredb/libredb-studio')
-  await page.getByRole('button', { name: 'REGISTER' }).click()
+  await page.getByRole('button', { name: 'ADD REPOSITORY' }).click()
 
   await expect(row).toHaveText('1')
 
@@ -1168,7 +1168,7 @@ test('§12.9.3 — the commit field states its format before it is typed in', as
   // wording of it.
   await form.getByLabel('Repository').fill('https://github.com/libredb/libredb-studio')
   await commit.fill('project added')
-  await page.getByRole('button', { name: 'REGISTER' }).click()
+  await page.getByRole('button', { name: 'ADD REPOSITORY' }).click()
 
   const error = page.locator('.hl-field-error')
   await expect(error).toContainText('7 to 40 hexadecimal characters')

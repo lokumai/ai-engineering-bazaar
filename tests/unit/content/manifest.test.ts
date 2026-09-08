@@ -22,33 +22,33 @@ import { sheetCount } from '@/lib/content/curriculum'
 
 const rows = sheetRows()
 
-describe('sheetRows — one row per sheet in the set (§4.8)', () => {
-  it('covers the whole drawing set, in sheet order', () => {
+describe('moduleRows — one row per module in the set (§4.8)', () => {
+  it('covers the whole curriculum, in module order', () => {
     expect(rows.map((row) => row.module)).toEqual(
       Array.from({ length: sheetCount() }, (_, i) => i + 1),
     )
   })
 
-  it('numbers the drawing column the way the title block does', () => {
+  it('numbers the drawing column the way the module info does', () => {
     expect(rows[0].number).toBe('01')
     expect(rows[31].number).toBe('32')
   })
 
-  it('addresses each sheet at its own route', () => {
+  it('addresses each module at its own route', () => {
     for (const sheet of loadAllModules()) {
       const row = rows.find((candidate) => candidate.module === sheet.frontmatter.module)
       expect(row?.path, sheet.slug).toBe(`/courses/${sheet.slug}/`)
     }
   })
 
-  it('states extent as words and declared minutes on a drawn sheet', () => {
+  it('states extent as words and declared minutes on a ready module', () => {
     // The shape, not the measurement: the word count moves with every edit.
     for (const row of rows.filter((candidate) => candidate.drawn)) {
       expect(row.extent, row.title).toMatch(/^[\d,]+ W · \d+ MIN$/)
     }
   })
 
-  it('prints an em dash for the extent of a sheet that is not drawn', () => {
+  it('prints an em dash for the extent of a module that is planned', () => {
     // Its words are the schedule of parts and its duration is undeclared; a
     // reading time for a drawing that does not exist would be an estimate.
     expect(rows[16].extent).toBe('—')
@@ -80,7 +80,7 @@ describe('sheetRows — one row per sheet in the set (§4.8)', () => {
     expect(rows.some((row) => row.requires === '—')).toBe(true)
   })
 
-  it('names the subsystem each sheet belongs to, and links to it', () => {
+  it('names the level each module belongs to, and links to it', () => {
     expect(rows[12].subsystem).toEqual({
       order: 2,
       title: 'Intermediate',
@@ -88,24 +88,24 @@ describe('sheetRows — one row per sheet in the set (§4.8)', () => {
     })
   })
 
-  it('takes at most three topics from the sheet itself', () => {
+  it('takes at most three topics from the module itself', () => {
     for (const row of rows) expect(row.topics.length, row.title).toBeLessThanOrEqual(3)
   })
 
   it('claims nothing about a reader: no progress, no completion, no score', () => {
     const serialised = JSON.stringify(rows)
     expect(serialised)
-      .not.toMatch(/completed|completion|progress|approved|percent|\bxp\b/i)
+      .not.toMatch(/signedOff|reachedEnd|progress|approved|percent|\bxp\b/i)
   })
 })
 
 describe('the filter chips (§4.8 item 5)', () => {
   it('offers §4.8\'s four names in its order, then §12.18\'s two', () => {
     expect(FILTERS.map((filter) => filter.label))
-      .toEqual(['ALL', 'READY', 'NOT DRAWN', 'EN · TR', 'SIGNED OFF', 'UNSIGNED'])
+      .toEqual(['ALL', 'READY', 'PLANNED', 'EN · TR', 'COMPLETED', 'NOT COMPLETED'])
   })
 
-  it('keeps the set in sheet order — filtering never re-sorts', () => {
+  it('keeps the set in module order — filtering never re-sorts', () => {
     const drawn = applyFilter(rows, 'ready').map((row) => row.module)
     expect(drawn).toEqual([...drawn].sort((a, b) => a - b))
   })
@@ -154,25 +154,25 @@ describe('durationLabel — hours and minutes, never a bare estimate', () => {
     expect(durationLabel(45)).toBe('~45 MIN')
   })
 
-  it('says nothing at all when no sheet declares a duration', () => {
+  it('says nothing at all when no module declares a duration', () => {
     expect(durationLabel(0)).toBeNull()
   })
 })
 
 describe('the counts each page states about itself', () => {
 
-  it('writes the subsystem eyebrow §4.9 item 1 asks for', () => {
+  it('writes the level eyebrow §4.9 item 1 asks for', () => {
     // The format rather than the counts: a two-digit subsystem number, the
     // plural SHEETS for a subsystem of more than one, DRAWN, and a rounded
     // duration. The counts were written in as `7 SHEETS · 7 DRAWN` and went
     // red the moment Generative UI joined the subsystem.
     expect(categoryEyebrow(categoryBySlug('intermediate')!))
-      .toMatch(/^SUBSYSTEM 02 · \d+ SHEETS · \d+ DRAWN · ~\d+ H( \d+ MIN)?$/)
+      .toMatch(/^LEVEL 02 · \d+ MODULES · \d+ READY · ~\d+ H( \d+ MIN)?$/)
   })
 
-  it('counts a subsystem of one in the singular', () => {
+  it('counts a level of one in the singular', () => {
     expect(categoryEyebrow(categoryBySlug('protocols')!))
-      .toBe('SUBSYSTEM 05 · 1 SHEET · 0 DRAWN')
+      .toBe('LEVEL 05 · 1 MODULE · 0 READY')
   })
 
 })

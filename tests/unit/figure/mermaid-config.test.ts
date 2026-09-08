@@ -36,7 +36,7 @@ describe('mermaidConfig — §6.10 B4, verbatim', () => {
     })
   })
 
-  it('never lets mermaid paint its own error graphic over the sheet', () => {
+  it('never lets mermaid paint its own error graphic over the module', () => {
     expect(config.suppressErrorRendering).toBe(true)
   })
 

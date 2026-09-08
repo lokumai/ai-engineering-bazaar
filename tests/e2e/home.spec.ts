@@ -397,7 +397,7 @@ test('a first write during the visit reaches the home screen without a reload (�
   // Home the way a reader gets there: a link, not a reload.
   // The breadcrumb, which is where a reader on this route sees a way back.
   await page
-    .getByRole('navigation', { name: 'Drawing set' })
+    .getByRole('navigation', { name: 'Curriculum' })
     .getByRole('link', { name: 'Home', exact: true })
     .click()
   await expect(page).toHaveURL(/\/$/)
@@ -431,7 +431,7 @@ test('a first write during the visit reaches the home screen without a reload (�
  * subsystem is drawn there will be no such cell, and the count below is what
  * says so out loud instead of passing silently.
  */
-test('no meter cell names a subsystem without measuring it (§15.3.1, §10.4)', async ({
+test('no meter cell names a level without measuring it (§15.3.1, §10.4)', async ({
   page,
 }) => {
   await seedOneSignOff(page)
@@ -449,9 +449,9 @@ test('no meter cell names a subsystem without measuring it (§15.3.1, §10.4)', 
   // The branch this section changed. `plural` and not a typed word: protocols &
   // specs is a subsystem of one, and `1 sheets` would be a typed word
   // contradicting the measured number beside it (§11.25).
-  const undrawn = page.locator('.hl-home-meters > li', { hasText: 'NOT DRAWN' })
+  const undrawn = page.locator('.hl-home-meters > li', { hasText: 'PLANNED' })
   const dashed = await undrawn.count()
-  expect(dashed, 'no undrawn subsystem left to check — retire this half').toBeGreaterThan(0)
+  expect(dashed, 'no unready level left to check — retire this half').toBeGreaterThan(0)
 
   for (let i = 0; i < dashed; i++) {
     const text = (await undrawn.nth(i).innerText()).replace(/\s+/g, ' ').trim()
@@ -465,7 +465,7 @@ test('no meter cell names a subsystem without measuring it (§15.3.1, §10.4)', 
 // §15.2.4, §15.1 — where the door leads
 // ---------------------------------------------------------------------------
 
-test('the lead card opens the first sheet of the set, and it exists (§15.2.4)', async ({
+test('the lead card opens the first module of the set, and it exists (§15.2.4)', async ({
   page,
 }) => {
   const problems = watchPage(page)

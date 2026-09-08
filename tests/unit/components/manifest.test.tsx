@@ -24,7 +24,7 @@ const DRAWN: SheetRow = {
   module: 13,
   number: '13',
   slug: 'intermediate/security',
-  slots: ['SIGN-OFF', 'QUIZ', 'CHECKLIST', 'SOURCES'],
+  slots: ['COMPLETION', 'QUIZ', 'CHECKLIST', 'SOURCES'],
   title: 'Security',
   path: '/courses/intermediate/security/',
   drawn: true,
@@ -47,7 +47,7 @@ const DASHED: SheetRow = {
   title: 'Advanced Architectures',
   path: '/courses/expert/advanced-architectures/',
   drawn: false,
-  status: 'NOT DRAWN',
+  status: 'PLANNED',
   subsystem: { order: 3, title: 'Expert', path: '/courses/expert/' },
   extent: '—',
   sources: '—',
@@ -73,7 +73,7 @@ describe('ModuleRow — the index row (§5.3)', () => {
     expect(drawn).toContain('href="/courses/intermediate/security')
   })
 
-  it('names the sheet in a row header, so a screen reader keeps its bearings', () => {
+  it('names the module in a row header, so a screen reader keeps its bearings', () => {
     expect(drawn).toContain('<th scope="row"')
     expect(drawn).toContain('Security')
   })
@@ -86,30 +86,30 @@ describe('ModuleRow — the index row (§5.3)', () => {
     expect(drawn).toContain('>12<')
   })
 
-  it('marks a sheet that is not drawn, so its hidden line can be drawn', () => {
+  it('marks a module that is planned, so its hidden line can be ready', () => {
     expect(dashed).toContain('data-draft')
     expect(drawn).not.toContain('data-draft')
   })
 
-  it('says in words that a sheet is not drawn, never in colour alone', () => {
-    expect(dashed).toContain('NOT DRAWN')
+  it('says in words that a module is planned, never in colour alone', () => {
+    expect(dashed).toContain('PLANNED')
     expect(drawn).toContain('READY')
   })
 
-  it('draws the status tick as a hidden line on an undrawn sheet', () => {
+  it('draws the status tick as a hidden line on an unready module', () => {
     expect(dashed).toContain('stroke-dasharray="3 2"')
     expect(drawn).not.toContain('stroke-dasharray')
   })
 
-  it('prints the topics instead of the subsystem where asked (§4.9)', () => {
+  it('prints the topics instead of the level where asked (§4.9)', () => {
     const topics = renderToStaticMarkup(<ModuleRow row={DASHED} column="topics" />)
     expect(topics).toContain('CodeAct')
     expect(topics).not.toContain('Expert')
   })
 
-  it('draws the sign-off squares this sheet supplies, and only those (§5.9)', () => {
+  it('draws the sign-off squares this module supplies, and only those (§5.9)', () => {
     expect(drawn.match(/hl-signoff-square/g)).toHaveLength(4)
-    for (const slot of ['SIGN-OFF', 'QUIZ', 'CHECKLIST', 'SOURCES']) {
+    for (const slot of ['COMPLETION', 'QUIZ', 'CHECKLIST', 'SOURCES']) {
       expect(drawn).toContain(`data-hl-slot="${slot}"`)
       expect(drawn).toContain(`title="${slot}"`)
     }
@@ -120,7 +120,7 @@ describe('ModuleRow — the index row (§5.3)', () => {
     expect(drawn).not.toContain('data-signed="true"')
   })
 
-  it('names the sheet by slug for the island, never by number (§12.1.3)', () => {
+  it('names the module by slug for the island, never by number (§12.1.3)', () => {
     expect(drawn).toContain('data-hl-signoff-cell="intermediate/security"')
     expect(drawn).not.toContain('data-hl-signoff-cell="13"')
     // §12.16's `s` shortcut clicks `[data-hl-signoff]` — the sheet's sign-off
@@ -129,7 +129,7 @@ describe('ModuleRow — the index row (§5.3)', () => {
     expect(drawn).not.toMatch(/data-hl-signoff=/)
   })
 
-  it('draws an undrawn sheet one hidden-line square and no slug to look up', () => {
+  it('draws an unready module one hidden-line square and no slug to look up', () => {
     expect(dashed.match(/hl-signoff-square/g)).toHaveLength(1)
     expect(dashed).toContain('data-drawn="false"')
     expect(dashed).not.toContain('data-hl-signoff-cell')
@@ -150,9 +150,9 @@ describe('ModuleRow — the index row (§5.3)', () => {
   })
 })
 
-describe('SheetIndex — the manifest table (§4.8 item 4)', () => {
+describe('ModuleIndex — the manifest table (§4.8 item 4)', () => {
   const markup = renderToStaticMarkup(
-    <SheetIndex rows={[DRAWN, DASHED]} column="subsystem" label="The drawing set" />,
+    <SheetIndex rows={[DRAWN, DASHED]} column="subsystem" label="The curriculum" />,
   )
 
   it('heads the columns §4.8 names, in its order', () => {
@@ -161,10 +161,10 @@ describe('SheetIndex — the manifest table (§4.8 item 4)', () => {
     // Authored in sentence case and uppercased in CSS (§3.2): a screen
     // reader spells out a word written in capitals.
     expect(headers).toEqual([
-      '#', 'Sheet', 'Subsystem', 'Extent', 'Sources', 'Lang', 'Status',
+      '#', 'Module', 'Level', 'Length', 'Sources', 'Lang', 'Status',
       // §12.18's ninth column, where §4.8 puts it: after STATUS. REQUIRES is
       // the column this implementation added, so it is the one at the end.
-      'Sign-off', 'Requires',
+      'Completion', 'Requirements',
     ])
   })
 
@@ -173,17 +173,17 @@ describe('SheetIndex — the manifest table (§4.8 item 4)', () => {
       <SheetIndex rows={[DRAWN]} column="topics" label="Intermediate" />,
     )
     expect(category).toContain('>Topics<')
-    expect(category).not.toContain('>Subsystem<')
+    expect(category).not.toContain('>Level<')
   })
 
-  it('renders one row per sheet and nothing else', () => {
+  it('renders one row per module and nothing else', () => {
     expect(markup.match(/<tr/g)).toHaveLength(3)
   })
 
   it('scrolls inside its own container, reachable from the keyboard (§10.3)', () => {
     expect(markup).toContain('role="region"')
     expect(markup).toContain('tabindex="0"')
-    expect(markup).toContain('aria-label="The drawing set"')
+    expect(markup).toContain('aria-label="The curriculum"')
   })
 
   it('names the table for anyone who cannot see where they are', () => {
@@ -199,10 +199,10 @@ describe('SheetIndex — the manifest table (§4.8 item 4)', () => {
 
 describe('TickGauge — the discrete tick gauge (§7.5)', () => {
   const gauge = renderToStaticMarkup(
-    <TickGauge ticks={['drawn', 'drawn', 'not-drawn']} label="3 sheets, 2 drawn" />,
+    <TickGauge ticks={['drawn', 'drawn', 'not-drawn']} label="3 modules, 2 ready" />,
   )
 
-  it('is one tick per sheet, never a bar and never a percentage (§11.35)', () => {
+  it('is one tick per module, never a bar and never a percentage (§11.35)', () => {
     expect(gauge.match(/<rect|<line/g)).toHaveLength(3)
     expect(gauge).not.toContain('%')
   })
@@ -212,7 +212,7 @@ describe('TickGauge — the discrete tick gauge (§7.5)', () => {
     expect(gauge).toContain('height="12"')
   })
 
-  it('draws a sheet that is not drawn as a dashed hairline', () => {
+  it('draws a module that is planned as a dashed hairline', () => {
     expect(gauge).toContain('stroke-dasharray="3 2"')
   })
 
@@ -222,7 +222,7 @@ describe('TickGauge — the discrete tick gauge (§7.5)', () => {
 
   it('states its reading in words where nothing else does', () => {
     expect(gauge).toContain('role="img"')
-    expect(gauge).toContain('aria-label="3 sheets, 2 drawn"')
+    expect(gauge).toContain('aria-label="3 modules, 2 ready"')
   })
 
   it('is decoration where the page already states the count', () => {
@@ -231,12 +231,12 @@ describe('TickGauge — the discrete tick gauge (§7.5)', () => {
     expect(silent).not.toContain('role="img"')
   })
 
-  it('renders nothing for a subsystem with no sheets', () => {
+  it('renders nothing for a level with no modules', () => {
     expect(renderToStaticMarkup(<TickGauge ticks={[]} />)).toBe('')
   })
 })
 
-describe('CategoryBlock — the subsystem block (§5.4)', () => {
+describe('CategoryBlock — the level block (§5.4)', () => {
   const live = renderToStaticMarkup(
     <CategoryBlock
       order={2}
@@ -255,24 +255,24 @@ describe('CategoryBlock — the subsystem block (§5.4)', () => {
   )
 
   it('is three stacked lines, and never a card (§5.4)', () => {
-    expect(live).toContain('Subsystem 02')
+    expect(live).toContain('Level 02')
     expect(live).toContain('Intermediate')
     expect(live).toContain('<svg')
     expect(live).not.toMatch(/rounded|shadow/)
   })
 
-  it('links to the subsystem it names', () => {
+  it('links to the level it names', () => {
     expect(live).toContain('href="/courses/intermediate')
   })
 
-  it('marks a subsystem with no drawn sheets, which mutes its name (§5.4)', () => {
+  it('marks a level with no ready modules, which mutes its name (§5.4)', () => {
     expect(undrawn).toContain('data-undrawn')
     expect(live).not.toContain('data-undrawn')
   })
 
   it('says its coverage in words, not in the gauge alone (§10.4)', () => {
-    expect(live).toContain('aria-label="2 sheets, 2 drawn"')
-    expect(undrawn).toContain('aria-label="2 sheets, 0 drawn"')
+    expect(live).toContain('aria-label="2 modules, 2 ready"')
+    expect(undrawn).toContain('aria-label="2 modules, 0 ready"')
   })
 })
 
@@ -308,15 +308,15 @@ const FACTS: CurriculumFacts = {
   traces: 0,
 }
 
-describe('SheetFilters — the chip row (§4.8 item 5, §12.18)', () => {
+describe('ModuleFilters — the chip row (§4.8 item 5, §12.18)', () => {
   const markup = renderToStaticMarkup(
-    <SheetFilters rows={[DRAWN, DASHED]} label="The drawing set" />,
+    <SheetFilters rows={[DRAWN, DASHED]} label="The curriculum" />,
   )
 
   it('offers §4.8\'s four chips and §12.18\'s two, in that order', () => {
     const labels = [...markup.matchAll(/hl-chip"[^>]*>([^<]*)</g)].map((m) => m[1])
     expect(labels).toEqual([
-      'ALL', 'READY', 'NOT DRAWN', 'EN · TR', 'SIGNED OFF', 'UNSIGNED',
+      'ALL', 'READY', 'PLANNED', 'EN · TR', 'COMPLETED', 'NOT COMPLETED',
     ])
   })
 
@@ -338,7 +338,7 @@ describe('SheetFilters — the chip row (§4.8 item 5, §12.18)', () => {
   it('renders the whole set with no record to read', () => {
     expect(markup).toContain('Security')
     expect(markup).toContain('Advanced Architectures')
-    expect(markup).not.toContain('NO SHEETS MATCH FILTER')
+    expect(markup).not.toContain('NO MODULES MATCH FILTER')
   })
 })
 
@@ -346,7 +346,7 @@ describe('NoMatch — §12.13 class 3', () => {
   const markup = renderToStaticMarkup(<NoMatch total={32} onClear={() => {}} />)
 
   it('states the count and offers exactly one path out', () => {
-    expect(markup).toContain('NO SHEETS MATCH FILTER — 0 of 32')
+    expect(markup).toContain('NO MODULES MATCH FILTER — 0 of 32')
     expect(markup).toContain('Clear the filter')
     expect(markup.match(/<button/g)).toHaveLength(1)
     expect(markup).not.toContain('<a ')
@@ -364,7 +364,7 @@ describe('NoMatch — §12.13 class 3', () => {
 })
 
 describe('SignOffMarks — the island that fills column 9 (§12.2)', () => {
-  it('adds nothing to the served HTML: the squares are already drawn', () => {
+  it('adds nothing to the served HTML: the squares are already ready', () => {
     expect(renderToStaticMarkup(<SignOffMarks facts={FACTS} />)).toBe('')
   })
 
@@ -379,7 +379,7 @@ describe('SignOffMarks — the island that fills column 9 (§12.2)', () => {
     expect(row).toContain('data-signed="false"')
   })
 
-  it('asks sheetStamps for the same slots the row drew, so neither invents one', () => {
+  it('asks moduleStamps for the same slots the row drew, so neither invents one', () => {
     // The row's `slots` come from `sheetStamps` at build time and the island
     // reads the same function at run time; this pins the two together.
     expect(DRAWN.slots).toEqual(

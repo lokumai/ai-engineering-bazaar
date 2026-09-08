@@ -154,7 +154,7 @@ export function QuickCheck({
         <div className="hl-quiz-actions">
           {offerCompare && (
             <button type="button" className="hl-btn" onClick={() => setPressed(true)}>
-              COMPARE WITH THE SHEET&rsquo;S SUMMARY
+              COMPARE WITH THE MODULE&rsquo;S SUMMARY
             </button>
           )}
           {offerAssess && (
@@ -191,14 +191,14 @@ export function QuickCheck({
 
         {!attempted && (
           <p className="hl-quiz-note font-display text-meta">
-            The sheet&rsquo;s summary can be compared once an answer is written.
+            The module&rsquo;s summary can be compared once an answer is written.
           </p>
         )}
 
         {showSummary && (
           <div className="hl-quiz-reveal">
             {/* Labelled the sheet's own summary, never "the answer" (§12.6). */}
-            <p className="hl-quiz-reveal-label hl-mark">THE SHEET&rsquo;S SUMMARY</p>
+            <p className="hl-quiz-reveal-label hl-mark">THE MODULE&rsquo;S SUMMARY</p>
             {/* Authored markdown, rendered by the same pipeline as the prose,
                 so it is typeset as prose rather than as a bare HTML dump. */}
             <div className="prose" dangerouslySetInnerHTML={{ __html: summaryHtml ?? '' }} />

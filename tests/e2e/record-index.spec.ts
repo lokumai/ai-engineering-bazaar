@@ -68,7 +68,7 @@ const chip = (page: Page, label: string) => page.getByRole('button', { name: lab
 // §4.8 column 9 / §12.18 — the column itself
 // ---------------------------------------------------------------------------
 
-test('the ninth column is SIGN-OFF, and its squares are 14 × 14 (§4.8, §12.18)', async ({
+test('the ninth column is COMPLETION, and its squares are 14 × 14 (§4.8, §12.18)', async ({
   page,
 }) => {
   await page.goto(INDEX_SHEET)
@@ -77,7 +77,7 @@ test('the ninth column is SIGN-OFF, and its squares are 14 × 14 (§4.8, §12.18
   await expect(headers).toHaveCount(9)
   // The rendered case, because this one is a §4.8 column name the reader reads
   // off the drawing, and `SIGN-OFF` is how §4.8 writes it.
-  await expect(headers.nth(7)).toHaveText('SIGN-OFF', { useInnerText: true })
+  await expect(headers.nth(7)).toHaveText('COMPLETION', { useInnerText: true })
 
   const boxes = squares(page, SEEDED_SLUG)
   await expect(boxes).toHaveCount(4)
@@ -140,7 +140,7 @@ test('a seeded record paints the squares its record has earned (§12.2 channel B
   // `sheetStamps` decides what is filled — the same function the manifest asked
   // which squares to draw — so a square is filled when its slot's count has
   // reached its threshold, one rule for all four slots.
-  await expect(slotState(page, SEEDED_SLUG, 'SIGN-OFF')).toHaveAttribute('data-signed', 'true')
+  await expect(slotState(page, SEEDED_SLUG, 'COMPLETION')).toHaveAttribute('data-signed', 'true')
   await expect(slotState(page, SEEDED_SLUG, 'QUIZ')).toHaveAttribute('data-signed', 'true')
   // Nothing was ticked and no source was opened, so those two stay as drawn.
   await expect(slotState(page, SEEDED_SLUG, 'CHECKLIST')).toHaveAttribute('data-signed', 'false')
@@ -149,7 +149,7 @@ test('a seeded record paints the squares its record has earned (§12.2 channel B
   // Every other sheet's cell is untouched: one island paints all of them, and a
   // selector that matched too broadly would fill the whole column.
   const other = slugOf(sheetByModule(1))
-  await expect(slotState(page, other, 'SIGN-OFF')).toHaveAttribute('data-signed', 'false')
+  await expect(slotState(page, other, 'COMPLETION')).toHaveAttribute('data-signed', 'false')
 
   expect(problems.consoleErrors).toEqual([])
 })
@@ -167,7 +167,7 @@ test('pressing a filter chip and returning to ALL keeps the squares painted (§1
 }) => {
   await seedRecord(page, { sheets: { [SEEDED_SLUG]: signedSheet('b7225f8') } })
   await page.goto(INDEX_SHEET)
-  const painted = slotState(page, SEEDED_SLUG, 'SIGN-OFF')
+  const painted = slotState(page, SEEDED_SLUG, 'COMPLETION')
   await expect(painted).toHaveAttribute('data-signed', 'true')
 
   // `READY` is a drawing filter, so it re-mounts rows without changing which
@@ -177,7 +177,7 @@ test('pressing a filter chip and returning to ALL keeps the squares painted (§1
   await expect(rows(page)).toHaveCount(DRAWN_COUNT)
   await expect(painted).toHaveAttribute('data-signed', 'true')
 
-  await chip(page, 'NOT DRAWN').click()
+  await chip(page, 'PLANNED').click()
   await expect(rows(page)).toHaveCount(SHEET_COUNT - DRAWN_COUNT)
   // The seeded sheet is not in this table at all; the assertion is that coming
   // back finds it painted rather than that it stayed painted while absent.
@@ -192,7 +192,7 @@ test('pressing a filter chip and returning to ALL keeps the squares painted (§1
 // §12.18 — the two chips that select on the record
 // ---------------------------------------------------------------------------
 
-test('the SIGNED OFF and UNSIGNED chips filter on the reader’s own assertions (§12.18)', async ({
+test('the COMPLETED and UNSIGNED chips filter on the reader’s own assertions (§12.18)', async ({
   page,
 }) => {
   const signed = [sheetByModule(13), sheetByModule(8)]
@@ -202,7 +202,7 @@ test('the SIGNED OFF and UNSIGNED chips filter on the reader’s own assertions 
   await page.goto(INDEX_SHEET)
   await waitForHydratedReadout(page)
 
-  await chip(page, 'SIGNED OFF').click()
+  await chip(page, 'COMPLETED').click()
   await expect(rows(page)).toHaveCount(signed.length)
   const titles = await page.locator('.hl-index tbody .hl-row-link').allTextContents()
   expect(titles.sort()).toEqual(signed.map((sheet) => sheet.title).sort())
@@ -232,7 +232,7 @@ test('the count of what is shown is announced, not implied (§12.13, SC 4.1.3)',
   await expect(count).toHaveAttribute('role', 'status')
   await expect(count).toHaveText(`Showing ${SHEET_COUNT} of ${SHEET_COUNT}`)
 
-  await chip(page, 'SIGNED OFF').click()
+  await chip(page, 'COMPLETED').click()
   await expect(count).toHaveText(`Showing 1 of ${SHEET_COUNT}`)
 
   await chip(page, 'UNSIGNED').click()
@@ -265,7 +265,7 @@ test('ALL is active on load and the first client render emits the prerender’s 
   await waitForHydratedReadout(page)
 
   await expect(chip(page, 'ALL')).toHaveAttribute('aria-pressed', 'true')
-  for (const label of ['READY', 'NOT DRAWN', 'EN · TR', 'SIGNED OFF', 'UNSIGNED'])
+  for (const label of ['READY', 'PLANNED', 'EN · TR', 'COMPLETED', 'UNSIGNED'])
     await expect(chip(page, label)).toHaveAttribute('aria-pressed', 'false')
 
   await expect(rows(page)).toHaveCount(prerendered)
@@ -334,7 +334,7 @@ for (const [width, height] of WIDTHS) {
     await page.goto(INDEX_SHEET)
     // Every drawn sheet signed off, so every fillable square in the column is
     // painted — the widest the column can ever be.
-    await expect(slotState(page, SEEDED_SLUG, 'SIGN-OFF')).toHaveAttribute('data-signed', 'true')
+    await expect(slotState(page, SEEDED_SLUG, 'COMPLETION')).toHaveAttribute('data-signed', 'true')
 
     const measured = await page.evaluate(() => {
       const root = document.documentElement

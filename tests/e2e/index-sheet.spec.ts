@@ -41,7 +41,7 @@ function spellOut(n: number): string {
   return word.charAt(0).toUpperCase() + word.slice(1)
 }
 
-test('lists every sheet in the set, once, in sheet order', async ({ page }) => {
+test('lists every module in the set, once, in module order', async ({ page }) => {
   await page.goto(INDEX_SHEET)
 
   const rows = page.locator('.hl-index tbody tr')
@@ -59,7 +59,7 @@ test('lists every sheet in the set, once, in sheet order', async ({ page }) => {
   expect(links).toEqual(SHEETS.map((s) => ({ href: s.path, title: s.title })))
 })
 
-test('the drawn / not-drawn counts match the rows actually rendered', async ({ page }) => {
+test('the ready / not-ready counts match the rows actually rendered', async ({ page }) => {
   await page.goto(INDEX_SHEET)
 
   const ready = page.locator('.hl-index tbody tr:not([data-draft])')
@@ -101,7 +101,7 @@ test('the filter chips narrow the table to the count they claim', async ({ page 
   await expect(rows).toHaveCount(DRAWN_COUNT)
   await expect(count).toHaveText(`Showing ${DRAWN_COUNT} of ${SHEET_COUNT}`)
 
-  await page.getByRole('button', { name: 'NOT DRAWN', exact: true }).click()
+  await page.getByRole('button', { name: 'PLANNED', exact: true }).click()
   await expect(rows).toHaveCount(NOT_DRAWN_COUNT)
   await expect(count).toHaveText(`Showing ${NOT_DRAWN_COUNT} of ${SHEET_COUNT}`)
 
@@ -109,7 +109,7 @@ test('the filter chips narrow the table to the count they claim', async ({ page 
   await expect(rows).toHaveCount(SHEET_COUNT)
 })
 
-test('links every subsystem, and each row reaches its sheet', async ({ page }) => {
+test('links every level, and each row reaches its module', async ({ page }) => {
   const problems = watchPage(page)
   await page.goto(INDEX_SHEET)
 

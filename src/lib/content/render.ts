@@ -766,7 +766,7 @@ function rehypeCourseLinks(sheet: number | undefined) {
       if (sheet === undefined) {
         throw new Error(
           `Cannot resolve the internal markdown link "${value}": this render was ` +
-          'given no origin. The caller has to pass `sheet` for a numbered sheet, ' +
+          'given no origin. The caller has to pass `sheet` for a numbered module, ' +
           'or `excerptOf` for a section lifted out of one, because the file the ' +
           'href was written in is what a relative path resolves against.',
         )
@@ -776,7 +776,7 @@ function rehypeCourseLinks(sheet: number | undefined) {
       if (source === null) {
         throw new Error(
           `Cannot resolve the internal markdown link "${value}": no file in ` +
-          `mini-courses/ carries sheet number ${sheet}, so there is no directory ` +
+          `mini-courses/ carries module number ${sheet}, so there is no directory ` +
           'to resolve a relative path against.',
         )
       }
@@ -933,7 +933,7 @@ export async function renderMarkdown(
     .process(markdown)
 
   const html = String(file)
-  assertNoRawHex(html, options.sheet === undefined ? 'prose' : `sheet ${options.sheet}`)
+  assertNoRawHex(html, options.sheet === undefined ? 'prose' : `module ${options.sheet}`)
 
   return { html, toc, checklist }
 }

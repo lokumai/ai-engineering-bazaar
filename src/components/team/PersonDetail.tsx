@@ -39,7 +39,7 @@ import type { TeamSnapshot } from '@/lib/org/queries'
 
 /** SHEET 300 + CLAIM 230 + QUIZ 200 + SUBMITTAL 330 = `.hl-index`'s 1060px. */
 const COLUMNS: ReadonlyArray<{ key: string; label: string; width: number }> = [
-  { key: 'sheet', label: 'Sheet', width: 300 },
+  { key: 'sheet', label: 'Module', width: 300 },
   { key: 'claim', label: 'Claim', width: 230 },
   { key: 'quiz', label: 'Evidence · quiz', width: 200 },
   { key: 'submittal', label: 'Evidence · submittal', width: 330 },
@@ -85,7 +85,7 @@ function submittalWords(evidence: SubmittalEvidence): { text: string; muted: boo
     case 'unattributable':
       return { text: 'NO GITHUB LINK ON PROFILE', muted: true }
     case 'none':
-      return { text: 'NONE REGISTERED', muted: true }
+      return { text: 'NOTHING ADDED YET', muted: true }
   }
 }
 
@@ -102,7 +102,7 @@ function ClaimRow({ row, login }: { row: SheetClaimRow; login: string | null }) 
     <tr className="hl-row">
       <th scope="row" className="hl-row-title">
         <span className="hl-mark block text-ink-muted">
-          {row.module === null ? 'NOT IN THIS CORPUS' : `SHEET ${String(row.module).padStart(2, '0')}`}
+          {row.module === null ? 'NOT IN THIS CORPUS' : `MODULE ${String(row.module).padStart(2, '0')}`}
         </span>
         {row.slug}
       </th>
@@ -110,7 +110,7 @@ function ClaimRow({ row, login }: { row: SheetClaimRow; login: string | null }) 
       {/* §14.8.2 — THE CLAIM: an instant the reader asserted, and the revision
           they asserted it against (§12.4.3). Never a tick. */}
       <td className="hl-row-context hl-mark">
-        {`SIGNED OFF ${day(row.signedOff)}`}
+        {`COMPLETED ${day(row.signedOff)}`}
         <span className="block text-ink-muted">
           {row.signedRevision === null ? 'NO REV RECORDED' : `REV ${row.signedRevision}`}
         </span>
@@ -265,7 +265,7 @@ function PersonBody({
       <hr className="hl-rule-struct" aria-hidden="true" />
 
       <p className="hl-mark m-0 mb-1">
-        {`SIGNED OFF ${progress.signedOff} / ${progress.attainable}`}
+        {`COMPLETED ${progress.signedOff} / ${progress.attainable}`}
         {' · '}
         {`ACTIVE ${progress.days} OF THE LAST 14 DAYS`}
         {' · '}
@@ -311,7 +311,7 @@ function PersonBody({
               {' · '}
               {assignment.dueAt === null ? 'NO DEADLINE' : `DUE ${day(assignment.dueAt)}`}
               {' · '}
-              {`${assignment.sheets.length} SHEETS`}
+              {`${assignment.sheets.length} MODULES`}
               {/* §14.2.4 — an empty target set is the whole org, and the row
                   says so rather than leaving a manager to infer why someone
                   they never named is on the hook. */}
@@ -327,13 +327,13 @@ function PersonBody({
         The left column is what this person asserted about themselves (§12.4.4:
         observed, printed as evidence, gating nothing). The two on the right are
         what can be checked without them — the Quick Check they assessed
-        themselves against the sheet, and the repository owner compared with the
+        themselves against the module, and the repository owner compared with the
         GitHub login their sign-in supplied, which they cannot edit.
       </p>
 
       {rows.length === 0 ? (
         <p className="hl-mark m-0 text-ink-muted" role="status">
-          NO SIGN-OFF RECORDED
+          NO COMPLETION RECORDED
         </p>
       ) : (
         <div
@@ -345,7 +345,7 @@ function PersonBody({
         >
           <table className="hl-index">
             <caption className="sr-only">
-              One row per sign-off: the claim, and the evidence beside it.
+              One row per completion: the claim, and the evidence beside it.
             </caption>
             <colgroup>
               {COLUMNS.map((column) => (

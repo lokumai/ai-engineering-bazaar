@@ -29,7 +29,7 @@ describe('sheetCount', () => {
 })
 
 describe('positionOf', () => {
-  it('gives the sheet its place inside its own category', () => {
+  it('gives the module its place inside its own category', () => {
     // Position and category size both move with the curriculum, so both are
     // read off it: what must hold is that they agree.
     for (const track of curriculum()) {
@@ -46,7 +46,7 @@ describe('positionOf', () => {
 })
 
 describe('neighbours', () => {
-  it('gives no previous for the first sheet of the set', () => {
+  it('gives no previous for the first module of the set', () => {
     expect(neighbours('fundamentals/llms').previous).toBeNull()
   })
 
@@ -68,7 +68,7 @@ describe('neighbours', () => {
     expect(previous?.frontmatter.module).toBe(first.frontmatter.module - 1)
   })
 
-  it('gives no next for the last sheet of the set', () => {
+  it('gives no next for the last module of the set', () => {
     // Named `optional/runtime` until that sheet was removed, at which point it
     // still passed, because an unknown slug also has no next. It asks the
     // question of whatever sheet is genuinely last.
@@ -81,7 +81,7 @@ describe('neighbours', () => {
     expect(neighbours('nope/nope')).toEqual({ previous: null, next: null })
   })
 
-  it('chains every sheet in curriculum order with no gap', () => {
+  it('chains every module in curriculum order with no gap', () => {
     const seen: number[] = []
     let current = curriculum()[0].modules[0]
     for (;;) {

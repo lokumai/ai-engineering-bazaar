@@ -13,8 +13,8 @@ import { plural } from '@/lib/text'
 export const metadata: Metadata = {
   title: 'Path',
   description:
-    'An ordered route through the drawing set for each of nine roles, with the '
-    + 'reason each sheet is on it and the sheets that are not yet drawn marked '
+    'An ordered route through the curriculum for each of nine roles, with the '
+    + 'reason each module is on it and the modules that are planned marked '
     + 'as such.',
 }
 
@@ -100,12 +100,12 @@ export default function PathPage() {
       <h1 className="hl-listing-title">Path</h1>
 
       <p className="hl-lead">
-        An ordered route through the drawing set for each of nine roles. Each
-        step names the sheet, why that role reads it, and whether the sheet is
-        drawn yet — {undrawn} of the {all.length} are not, and a step pointing at
-        one of those says so and links to nothing. A path recommends an order; it
-        does not gate anything, and every sheet stays reachable from the drawing
-        set.
+        An ordered route through the curriculum for each of nine roles. Each
+        step names the module, why that role reads it, and whether the module is
+        written yet — {undrawn} of the {all.length} are not, and a step pointing
+        at one of those says so and links to nothing. A path recommends an order;
+        it does not gate anything, and every module stays reachable from the
+        curriculum.
       </p>
 
       <hr className="hl-rule-struct" aria-hidden="true" />
@@ -117,7 +117,7 @@ export default function PathPage() {
         <div className="hl-empty" data-hl-empty="role-absent">
           <p className="hl-mark hl-empty-status m-0">NO ROLE SET</p>
           <p className="hl-empty-cue">
-            A path is an ordered list of sheets for one role, with a reason
+            A path is an ordered list of modules for one role, with a reason
             against each step. Choosing a role draws yours here, and the nine
             options are below with what each path covers.
           </p>
@@ -164,7 +164,7 @@ export default function PathPage() {
                     what it excludes. Derived, never typed (§11.25). */}
                 <p className="hl-mark mt-2 mb-0 text-ink-faint">
                   {plural(path.steps.length, 'step')} ·{' '}
-                  {plural(drawnCount(path, drawnSet), 'sheet')} drawn
+                  {plural(drawnCount(path, drawnSet), 'module')} drawn
                 </p>
               </div>
             </div>
@@ -199,9 +199,9 @@ export default function PathPage() {
         <p className="mt-3 mb-0 font-display text-meta leading-normal text-ink-muted">
           The whole set stays where it is:{' '}
           <Link className="hl-link" href="/courses/">
-            the drawing set
+            the curriculum
           </Link>{' '}
-          lists every sheet, and every sheet keeps its own sign-off control
+          lists every module, and every module keeps its own completion control
           whether or not it is on your path.
         </p>
       </section>

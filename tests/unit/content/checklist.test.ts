@@ -77,11 +77,11 @@ describe('checklistOf', () => {
     expect(checklistOf('   - [ ] three spaces\n')).toHaveLength(1)
   })
 
-  it('returns an empty list, never null, for a sheet with no checklist', () => {
+  it('returns an empty list, never null, for a module with no checklist', () => {
     expect(checklistOf('## I. Prose only\n\nNothing to tick.\n')).toEqual([])
   })
 
-  it('numbers a sheet\'s items contiguously from zero, across every group', () => {
+  it('numbers a module\'s items contiguously from zero, across every group', () => {
     // One index space per sheet, not one per list: §12.7 keys the record by
     // index within the sheet, so a second group must continue the first.
     for (const m of modules) {

@@ -127,12 +127,12 @@ export function AttentionPanel({ sheets }: { sheets: readonly AttentionSheet[] }
                     <>
                       {sheet.drawn ? (
                         <Link href={`/courses/${sheet.slug}/`} className="hl-link">
-                          Sheet {String(sheet.module).padStart(2, '0')} · {sheet.title}
+                          Module {String(sheet.module).padStart(2, '0')} · {sheet.title}
                         </Link>
                       ) : (
                         <>
-                          Sheet {String(sheet.module).padStart(2, '0')} · {sheet.title}{' '}
-                          <span className="hl-mark text-ink-muted">NOT DRAWN</span>
+                          Module {String(sheet.module).padStart(2, '0')} · {sheet.title}{' '}
+                          <span className="hl-mark text-ink-muted">PLANNED</span>
                         </>
                       )}
                       <span className="hl-mark ms-2 text-ink-muted">{sheet.subsystem}</span>
@@ -147,13 +147,13 @@ export function AttentionPanel({ sheets }: { sheets: readonly AttentionSheet[] }
       )}
 
       <p className="mt-3 mb-0 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
-        A sheet is listed here when the last dated write against it — a Quick
+        A module is listed here when the last dated write against it — a Quick
         Check answer or a filed submittal — is {STALL_DAYS} or more days old. A
         checklist tick and a followed source carry no date in this record, so
         they neither start nor reset that count. A Quick Check recorded as
         missed is not listed on its own: the count of attempts is held in the
-        event log, which this page does not read. A sheet leaves the list when
-        it is signed off, never because more time passed.
+        event log, which this page does not read. A module leaves the list when
+        it is completed, never because more time passed.
       </p>
     </>
   )

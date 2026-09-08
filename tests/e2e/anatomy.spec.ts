@@ -52,8 +52,8 @@ async function zones(page: Page, selectors: readonly string[]) {
   }
 }
 
-test.describe('A0 — the assembly sheet', () => {
-  test('has a section spine, a 656px prose column and a title block', async ({ page }) => {
+test.describe('A0 — the assembly module', () => {
+  test('has a section spine, a 656px prose column and a module info', async ({ page }) => {
     await page.goto(A0.path)
 
     // Zone 1: the section spine, tracking scroll and nothing else (§4.6).
@@ -63,7 +63,7 @@ test.describe('A0 — the assembly sheet', () => {
     expect(await widthOf(page.locator('.hl-rail-left'))).toBe(208)
 
     // …and the dependency block below its rule, the rail's other half.
-    await expect(page.locator('.hl-rail-left').getByText('Requires', { exact: false }).first())
+    await expect(page.locator('.hl-rail-left').getByText('Requirements', { exact: false }).first())
       .toBeVisible()
 
     // Zone 2: the prose column, at the measure §4.4 gives it.
@@ -117,7 +117,7 @@ test.describe('A0 — the assembly sheet', () => {
     // missing was any sign of it: both grounds are `--color-paper`, so the
     // panel underneath did not read as covered, it read as gone.
     const broken = figures.filter((figure) => figure.breaksOut)
-    expect(broken.length, 'sheet 13 still has a figure that breaks the measure')
+    expect(broken.length, 'module 13 still has a figure that breaks the measure')
       .toBeGreaterThan(0)
 
     for (const figure of broken) {
@@ -136,7 +136,7 @@ test.describe('A0 — the assembly sheet', () => {
     }
   })
 
-  test('the spine follows the reader down the sheet', async ({ page }) => {
+  test('the spine follows the reader down the module', async ({ page }) => {
     await page.goto(A0.path)
 
     const current = page.locator('.hl-toc-entry[aria-current="true"]')
@@ -167,7 +167,7 @@ test.describe('A0 — the assembly sheet', () => {
   })
 })
 
-test.describe('A short drawn sheet — the same anatomy as a long one', () => {
+test.describe('A short ready module — the same anatomy as a long one', () => {
   /**
    * §4.4 used to split drawn sheets at 2,500 words: over it the A0 assembly with
    * three zones and the title-block panel, under it the A2 part sheet with two
@@ -183,7 +183,7 @@ test.describe('A short drawn sheet — the same anatomy as a long one', () => {
    * started at x=588 on a short sheet and x=456 on a long one, jumping 132px
    * sideways between them.
    */
-  test('carries the title-block panel and the stamps, like every drawn sheet', async ({
+  test('carries the title-block panel and the stamps, like every ready module', async ({
     page,
   }) => {
     await page.goto(SHORT.path)
@@ -221,7 +221,7 @@ test.describe('A short drawn sheet — the same anatomy as a long one', () => {
    * a measure because a rail left a hole is spending space because it is there;
    * this system centres leftover width everywhere else, so it centres here.
    */
-  test('holds §6’s measure below 1280, on a short sheet and a long one alike', async ({
+  test('holds §6’s measure below 1280, on a short module and a long one alike', async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1100, height: 900 })
@@ -242,7 +242,7 @@ test.describe('A short drawn sheet — the same anatomy as a long one', () => {
   })
 })
 
-test.describe('A4 — the detail sheet', () => {
+test.describe('A4 — the detail module', () => {
   test('is a status band and a schedule of parts, with no rails', async ({ page }) => {
     await page.goto(A4.path)
 

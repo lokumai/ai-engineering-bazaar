@@ -153,12 +153,12 @@ function Step({
         )}
 
         {/* The state, in words. A draft says what it is; a drawn step says
-            `SIGNED OFF` only when this reader's own record says so, which is
+            `COMPLETED` only when this reader's own record says so, which is
             channel A's to decide — the markup is identical for every reader. */}
         {draft ? (
-          <span className="hl-mark text-ink-faint">NOT DRAWN</span>
+          <span className="hl-mark text-ink-faint">PLANNED</span>
         ) : (
-          <span className="hl-step-tick hl-mark">SIGNED OFF</span>
+          <span className="hl-step-tick hl-mark">COMPLETED</span>
         )}
 
         {/* Revealed by `data-next="true"`, which only a client island can set
@@ -170,7 +170,7 @@ function Step({
       </div>
 
       {/* §13.4.1 — why THIS role reads THIS sheet, naming something the sheet
-          contains. On a draft step it says what the sheet is planned to cover,
+          contains. On a draft step it says what the module is planned to cover,
           and `honesty.test.ts` refuses the present-tense teaching verbs that
           would read as a promise. */}
       <p className="mt-1 mb-0 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">

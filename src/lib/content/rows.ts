@@ -103,24 +103,24 @@ function isSignedOff(row: SheetRow, signed: ReadonlySet<string>): boolean {
  *
  * The first four select on a property of the drawing. The last two select on
  * the record, which is a claim about the reader, so they are marked `record`
- * and the chip row is honest about which is which. `UNSIGNED` counts a sheet
+ * and the chip row is honest about which is which. `NOT COMPLETED` counts a module
  * nobody has drawn — it is not signed off, and §12.5.2's `TO GO` counts it the
  * same way, out of the whole set rather than out of the drawn ones.
  */
 export const FILTERS: readonly SheetFilter[] = [
   { id: 'all', label: 'ALL', basis: 'drawing', keep: () => true },
   { id: 'ready', label: 'READY', basis: 'drawing', keep: (row) => row.drawn },
-  { id: 'not-drawn', label: 'NOT DRAWN', basis: 'drawing', keep: (row) => !row.drawn },
+  { id: 'not-drawn', label: 'PLANNED', basis: 'drawing', keep: (row) => !row.drawn },
   { id: 'bilingual', label: 'EN · TR', basis: 'drawing', keep: (row) => row.bilingual },
   {
     id: 'signed',
-    label: 'SIGNED OFF',
+    label: 'COMPLETED',
     basis: 'record',
     keep: (row, signed) => isSignedOff(row, signed),
   },
   {
     id: 'unsigned',
-    label: 'UNSIGNED',
+    label: 'NOT COMPLETED',
     basis: 'record',
     keep: (row, signed) => !isSignedOff(row, signed),
   },
@@ -150,5 +150,5 @@ export function applyFilter(
  * returned" / "No results returned", so the count is announced, not implied.
  */
 export function noMatchReadout(total: number): string {
-  return `NO SHEETS MATCH FILTER — 0 of ${total}`
+  return `NO MODULES MATCH FILTER — 0 of ${total}`
 }

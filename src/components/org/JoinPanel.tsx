@@ -80,7 +80,7 @@ function unavailableCopy(why: SupabaseUnavailable): { status: string; detail: st
         'This deployment was built with the account layer switched off, so no '
         + 'organisation can be read from here and none can be joined. Nothing '
         + 'else on the site depends on it: the record stays in this browser and '
-        + 'every sheet behaves exactly as it does without an account.',
+        + 'every module behaves exactly as it does without an account.',
     }
   }
   return {
@@ -443,7 +443,7 @@ export function JoinPanel() {
                 third is about which sign-ins the account carries, which
                 `/profile/` does not show — this link was hard-coded to
                 `/profile/` for all three, so the reader whose account had no
-                email sign-in was sent to the one sheet that cannot say so, and
+                email sign-in was sent to the one module that cannot say so, and
                 the copy naming the sheet could drift from the link beside it. */}
             <p className="hl-empty-path m-0">
               <Link href={copy.link.href} className="hl-link">

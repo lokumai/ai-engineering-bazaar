@@ -130,15 +130,15 @@ function viewOf(node: LayoutNode, record: RecordData): NodeView {
 
 /** §12.14.1 — a status readout: a key, a value, and no terminal period. */
 const STATE_TEXT: Record<NodeState, string> = {
-  draft: 'NOT DRAWN',
-  unread: 'NOT SIGNED OFF',
-  started: 'IN PROGRESS · NOT SIGNED OFF',
-  signed: 'SIGNED OFF',
+  draft: 'PLANNED',
+  unread: 'NOT COMPLETED',
+  started: 'IN PROGRESS · NOT COMPLETED',
+  signed: 'COMPLETED',
 }
 
 function stateText(view: NodeView): string {
   if (view.state === 'signed' && view.signedOn !== null) {
-    return `SIGNED OFF ${view.signedOn.slice(0, 10)}`
+    return `COMPLETED ${view.signedOn.slice(0, 10)}`
   }
   return STATE_TEXT[view.state]
 }
@@ -150,7 +150,7 @@ function stateText(view: NodeView): string {
  * the accent fill and the solid outline are not in the accessibility tree.
  */
 function nodeLabel(view: NodeView): string {
-  const parts = [`Sheet ${view.node.module}`, view.node.title, stateLabel(view)]
+  const parts = [`Module ${view.node.module}`, view.node.title, stateLabel(view)]
   if (view.node.requires.length > 0) {
     parts.push(`requires ${view.node.requires.join(', ')}`)
   }
@@ -160,21 +160,21 @@ function nodeLabel(view: NodeView): string {
 function stateLabel(view: NodeView): string {
   switch (view.state) {
     case 'draft':
-      return 'not drawn'
+      return 'planned'
     case 'unread':
-      return 'not signed off'
+      return 'not completed'
     case 'started':
-      return 'in progress, not signed off'
+      return 'in progress, not completed'
     case 'signed':
       return view.signedOn === null
-        ? 'signed off'
-        : `signed off ${view.signedOn.slice(0, 10)}`
+        ? 'completed'
+        : `completed ${view.signedOn.slice(0, 10)}`
   }
 }
 
 /** §12.10.1's band name. Both numbers are counted, never typed (§11.25). */
 function bandLabel(band: LayoutBand, signed: number): string {
-  return `Subsystem ${band.ordinal} — ${band.title} — ${signed} of ${band.total} signed off`
+  return `Level ${band.ordinal} — ${band.title} — ${signed} of ${band.total} completed`
 }
 
 /** A DOM handle, from the identity rather than the number (§12.1.3). */
@@ -255,7 +255,7 @@ export function Diagram({
   return (
     <figure className="m-0">
       <figcaption className="hl-diagram-title">
-        Single-line diagram · {layout.nodes.length} sheets ·{' '}
+        Single-line diagram · {layout.nodes.length} modules ·{' '}
         {layout.bands.length} subsystems · {layout.traces.length} traces
       </figcaption>
 
@@ -277,15 +277,15 @@ export function Diagram({
               leave `aria-labelledby` pointing at nothing and the drawing
               nameless. */}
           <title id={TITLE_ID}>
-            {`Drawing set — ${layout.nodes.length} sheets in ${layout.bands.length} subsystems`}
+            {`Curriculum — ${layout.nodes.length} modules in ${layout.bands.length} levels`}
           </title>
           <desc id={DESC_ID}>
-            One horizontal band per subsystem, each holding its sheets as
-            numbered nodes in sheet order. Traces above a band are prerequisites;
-            traces below it are cross-references. A solid outline is a sheet
-            that has been drawn, a dashed outline is a sheet not yet drawn, and
-            an accent outline with a wash is a sheet this browser records as
-            signed off. The same graph is listed as a table below the diagram.
+            One horizontal band per level, each holding its modules as
+            numbered nodes in module order. Traces above a band are prerequisites;
+            traces below it are cross-references. A solid outline is a module
+            that has been written, a dashed outline is a module planned, and
+            an accent outline with a wash is a module this browser records as
+            completed. The same graph is listed as a table below the diagram.
           </desc>
 
           {/* Rails and traces first, so the node rects paint over them; and
@@ -344,7 +344,7 @@ export function Diagram({
                   fill="var(--color-ink-muted)"
                   aria-hidden="true"
                 >
-                  Subsystem {band.ordinal}
+                  Level {band.ordinal}
                 </text>
                 <text
                   x={HEADER_TEXT_X}
@@ -472,7 +472,7 @@ function StackedBands({
             className="mb-6"
             aria-label={bandLabel(band, signed)}
           >
-            <p className="hl-mark m-0 text-ink-muted">Subsystem {band.ordinal}</p>
+            <p className="hl-mark m-0 text-ink-muted">Level {band.ordinal}</p>
             <p className="m-0 font-display text-micro font-semibold text-ink">
               {band.title}
             </p>
@@ -480,7 +480,7 @@ function StackedBands({
                 what lets the gauge itself be decoration rather than a second
                 announcement of the same number. */}
             <p className="hl-mark m-0 text-ink-faint">
-              {band.total} sheets · {signed} signed off
+              {band.total} modules · {signed} completed
             </p>
             <TickGauge className="mt-1" ticks={members.map(tickOf)} />
 
@@ -553,19 +553,19 @@ function Legend() {
       <p className="m-0 mb-2">Legend</p>
       <dl className="hl-defs">
         <dt>Solid outline</dt>
-        <dd>Sheet drawn</dd>
+        <dd>Module ready</dd>
         <dt>Dashed outline</dt>
-        <dd>Sheet not yet drawn</dd>
+        <dd>Module planned</dd>
         <dt>Accent outline, wash, 2px left edge</dt>
-        <dd>Signed off in this browser</dd>
+        <dd>Completed in this browser</dd>
         <dt>Hairline between nodes</dt>
         <dd>Sequence, not a dependency</dd>
         <dt>Solid trace above a band</dt>
-        <dd>Requires</dd>
+        <dd>Requirements</dd>
         <dt>Dashed trace below a band</dt>
         <dd>See also</dd>
         <dt>Accent trace</dt>
-        <dd>Both ends signed off</dd>
+        <dd>Both ends completed</dd>
       </dl>
     </div>
   )
@@ -594,21 +594,21 @@ function DiagramTable({
 
   return (
     <details className="hl-diagram-table">
-      <summary>The same graph as a table · {rows.length} sheets</summary>
+      <summary>The same graph as a table · {rows.length} modules</summary>
       <div className="mt-3 overflow-x-auto">
         <table className="w-full border-collapse text-left font-mono text-mark tabular-nums">
           <caption className="hl-mark mb-2 text-left text-ink-muted">
-            Every sheet in the set, the state this browser records for it, and
-            the sheets it requires and feeds
+            Every module in the curriculum, the state this browser records for it, and
+            the modules it needs and unlocks
           </caption>
           <thead>
             <tr className="border-b border-line-strong text-ink-muted uppercase">
               <th scope="col" className="py-1 pr-3 font-medium">#</th>
-              <th scope="col" className="py-1 pr-3 font-medium">Sheet</th>
-              <th scope="col" className="py-1 pr-3 font-medium">Subsystem</th>
+              <th scope="col" className="py-1 pr-3 font-medium">Module</th>
+              <th scope="col" className="py-1 pr-3 font-medium">Level</th>
               <th scope="col" className="py-1 pr-3 font-medium">State</th>
-              <th scope="col" className="py-1 pr-3 font-medium">Requires</th>
-              <th scope="col" className="py-1 font-medium">Feeds</th>
+              <th scope="col" className="py-1 pr-3 font-medium">Requirements</th>
+              <th scope="col" className="py-1 font-medium">Unlocks</th>
             </tr>
           </thead>
           <tbody>
@@ -680,7 +680,7 @@ export function ContinueLine({ facts }: { facts: ContinueFacts }) {
     <p className="hl-mark m-0 text-ink-muted">
       Continue{' '}
       <Link href={`/courses/${slug}/`} className="hl-link">
-        Sheet {String(sheet.module).padStart(2, '0')} · {sheet.title}
+        Module {String(sheet.module).padStart(2, '0')} · {sheet.title}
       </Link>
     </p>
   )

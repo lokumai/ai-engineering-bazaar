@@ -20,7 +20,7 @@ import { SHEETS } from './sheets'
 const first = SHEETS[0]
 const last = SHEETS[SHEETS.length - 1]
 
-test('sheet 1 has no previous', async ({ page }) => {
+test('module 1 has no previous', async ({ page }) => {
   await page.goto(first.path)
 
   await expect(page.locator('.hl-prevnext a[rel="prev"]')).toHaveCount(0)
@@ -29,7 +29,7 @@ test('sheet 1 has no previous', async ({ page }) => {
   await expect(page.locator('.hl-prevnext a[rel="next"]')).toHaveCount(1)
 })
 
-test('sheet 32 has no next', async ({ page }) => {
+test('module 32 has no next', async ({ page }) => {
   await page.goto(last.path)
 
   await expect(page.locator('.hl-prevnext a[rel="next"]')).toHaveCount(0)

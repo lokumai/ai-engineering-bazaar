@@ -810,7 +810,7 @@ export function attentionReason(flag: AttentionFlag): string {
       return `QUIZ MISSED · ${flag.sheetSlug} · ${flag.attempts} ATTEMPTS`
     case 'stalled':
       return flag.idleDays === null
-        ? `OPENED, NOT SIGNED OFF · ${flag.sheetSlug}`
-        : `OPENED, NOT SIGNED OFF · ${flag.sheetSlug} · ${flag.idleDays} DAYS IDLE`
+        ? `OPENED, NOT COMPLETED · ${flag.sheetSlug}`
+        : `OPENED, NOT COMPLETED · ${flag.sheetSlug} · ${flag.idleDays} DAYS IDLE`
   }
 }

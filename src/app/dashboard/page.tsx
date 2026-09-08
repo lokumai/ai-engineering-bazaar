@@ -67,7 +67,7 @@ function legendRows(facts: CurriculumFacts): FaceLegendRows {
         // as "the sheets a reader could sign off", and a draft sheet carries no
         // sign-off control at all (§12.4.1). This page first used
         // `category.total`, so the same table printed `--/9` for Expert here and
-        // `NOT DRAWN` on `/profile/`: one component, two denominators, which is
+        // `PLANNED` on `/profile/`: one component, two denominators, which is
         // exactly the drift §11.25 exists to stop. Nine sign-offs nobody can
         // take is also a claim about the reader's future that §1 does not allow.
         total: drawnOf(facts, category.slug).length,
@@ -98,7 +98,7 @@ function drawnOf(facts: CurriculumFacts, slug: string): readonly SheetFact[] {
  * The panel is handed every sheet in the set rather than the drawn ones alone.
  * `selectAttention` iterates the RECORD, and a record can legitimately hold an
  * entry for a sheet that has since been un-drawn (an import, a renamed file):
- * the honest row for that sheet names it and says `NOT DRAWN`, which it cannot
+ * the honest row for that sheet names it and says `PLANNED`, which it cannot
  * do if the page withheld the title (§12.1.3).
  *
  * The subsystem title travels as a string. The panel is an island and
@@ -141,7 +141,7 @@ function attentionSheets(facts: CurriculumFacts): readonly AttentionSheet[] {
  * The tally is the em dash §15.3.1 asks for, followed by the register's own
  * word for the state. Both are needed: the dash alone left a reader to guess
  * between "no sheets" and "cannot be worked out" (the measurement recorded in
- * `FaceLegend`), and `FaceLegend` prints `NOT DRAWN` in the same table on this
+ * `FaceLegend`), and `FaceLegend` prints `PLANNED` in the same table on this
  * same page — two spellings of one status on one screen is the drift §12.14.1
  * bans.
  *
@@ -172,7 +172,7 @@ function UnsignableMeter({
         ))}
       </div>
       <p className="hl-mark m-0 mt-1 text-ink-muted">
-        {DASH} signed off · {plural(sheets.length, 'sheet')}, NOT DRAWN
+        {DASH} completed · {plural(sheets.length, 'module')}, PLANNED
       </p>
     </div>
   )
@@ -181,8 +181,8 @@ function UnsignableMeter({
 export const metadata: Metadata = {
   title: 'Dashboard',
   description:
-    'The sheets waiting on you and why, then the drawing set as a single-line '
-    + 'diagram with what this browser records against each sheet.',
+    'The modules waiting on you and why, then the curriculum as a single-line '
+    + 'diagram with what this browser records against each module.',
 }
 
 /**
@@ -260,11 +260,11 @@ export default function DashboardPage() {
       <h1 className="hl-listing-title">Dashboard</h1>
 
       <p className="hl-lead">
-        What is waiting on you and why, and then the whole drawing set as one
-        diagram: every sheet, every prerequisite, and every cross-reference
-        between sheets in the same subsystem. This page holds nothing the record
+        What is waiting on you and why, and then the whole curriculum as one
+        diagram: every module, every prerequisite, and every cross-reference
+        between modules in the same level. This page holds nothing the record
         in this browser does not already hold. What it records against each
-        sheet reaches the mark and the meters before the first paint, and every
+        module reaches the mark and the meters before the first paint, and every
         tally after the page loads: a count has to be worked out, and a page
         prerendered once for everybody cannot work one out for a reader it has
         never met.
@@ -284,7 +284,7 @@ export default function DashboardPage() {
           <h2 id="waiting" className="hl-panel-title">
             Waiting on you
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">Opened, not signed off</p>
+          <p className="hl-mark m-0 text-ink-faint">Opened, not completed</p>
         </div>
         <AttentionPanel sheets={attentionSheets(facts)} />
       </section>
@@ -301,7 +301,7 @@ export default function DashboardPage() {
           <h2 id="mark" className="hl-panel-title">
             The mark
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">Six faces, six subsystems</p>
+          <p className="hl-mark m-0 text-ink-faint">Six faces, six levels</p>
         </div>
         <div className="flex flex-wrap items-start gap-8">
           <Lkm01 size={128} idPrefix="dashboard" />
@@ -336,11 +336,11 @@ export default function DashboardPage() {
         <div className="hl-path-empty">
           <p className="hl-mark m-0 text-ink">NO ROLE ON RECORD</p>
           <p className="mt-1 mb-0 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
-            No role is worked out from your name, from the sheets you have
-            signed off, or from anything else this browser holds. State one on
+            No role is worked out from your name, from the modules you have
+            completed, or from anything else this browser holds. State one on
             the{' '}
             <Link href="/profile/" className="hl-link">
-              profile sheet
+              account page
             </Link>{' '}
             and a path is drawn for it; leave it unstated and the whole set
             stays exactly as it is.
@@ -391,16 +391,16 @@ export default function DashboardPage() {
         {group(ceiling)} attainable today
         {undrawn > 0 && (
           <>
-            {' '}· Full-set ceiling not yet derivable — {plural(undrawn, 'sheet')}{' '}
-            undrawn
+            {' '}· Whole-curriculum ceiling not yet derivable — {plural(undrawn, 'module')}{' '}
+            planned
           </>
         )}
       </p>
 
       {/* §12.10.6 — one line, the next ready sheet that is not signed off, and
           absent when there is none. It is not the panel at the top of the page
-          and does not duplicate it: this names the next sheet to OPEN, in
-          curriculum order, while that one names sheets already opened and left.
+          and does not duplicate it: this names the next module to OPEN, in
+          curriculum order, while that one names modules already opened and left.
           Its absence is the first thing a returning reader notices, which is
           the whole reason it is this cheap. */}
       <div className="mt-4 mb-4">
@@ -412,28 +412,28 @@ export default function DashboardPage() {
       {/* §13.1.3 (5), §13.5, §15.3.1 — one segmented meter per subsystem, in
           curriculum order, each with its own printed count under it.
 
-          A segment is one sheet, in module order, and a sheet nobody has drawn
+          A segment is one module, in module order, and a module nobody has ready
           is dashed and can never fill (§13.4.2) — so the meter states how much
-          of the subsystem EXISTS as well as how much of it is signed off, which
+          of the level EXISTS as well as how much of it is completed, which
           a bar could not. It is channel A throughout: no arithmetic, no
           hydration, right in frame one.
 
           A subsystem with nothing drawn takes `UnsignableMeter` instead, which
           is dashed end to end and tallied with an em dash: `0/9` would offer a
-          denominator of nine sign-offs that no control on this site can take
+          denominator of nine completions that no control on this site can take
           (§15.3.1).
 
           The hue is never the carrier (SC 1.4.1, §13.1.4). Every row prints its
-          flavour name, its subsystem title and its count, and the segments keep
+          flavour name, its level title and its count, and the segments keep
           their borders and their dashes when `forced-colors: active` drops
           every hue. */}
       <section className="hl-panel" aria-labelledby="meters">
         <div className="hl-panel-head">
           <h2 id="meters" className="hl-panel-title">
-            Subsystems
+            Levels
           </h2>
           <p className="hl-mark m-0 text-ink-faint">
-            One segment per sheet · dashed where NOT DRAWN
+            One segment per module · dashed where PLANNED
           </p>
         </div>
         <ul className="m-0 grid list-none gap-3 p-0">
@@ -476,7 +476,7 @@ export default function DashboardPage() {
       <section className="hl-panel mt-8" aria-labelledby="uptime">
         <div className="hl-panel-head">
           <h2 id="uptime" className="hl-panel-title">
-            Uptime
+            Streak
           </h2>
           <p className="hl-mark m-0 text-ink-faint">Days with a write, not hours</p>
         </div>
@@ -505,7 +505,7 @@ export default function DashboardPage() {
       </section>
 
       {/* §12.1.7 places the durability disclosure on the index sheet and on
-          SHEET 00, and nowhere else. It is not repeated here: a note that
+          MODULE 00, and nowhere else. It is not repeated here: a note that
           appears on every page carrying a number is a banner, which is the one
           thing that section rules out. */}
     </PageShell>

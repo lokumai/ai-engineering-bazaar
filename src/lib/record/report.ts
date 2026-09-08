@@ -225,7 +225,7 @@ interface CategoryStanding {
    * legend PRINTS, and the two are deliberately different numbers: 17 of the 32
    * sheets are drafts carrying no sign-off control at all (§12.4.1), so
    * `0/9` beside Expert would offer nine sign-offs nobody can take. When this is
-   * zero the legend prints `NOT DRAWN` instead of a fraction — the register's own
+   * zero the legend prints `PLANNED` instead of a fraction — the register's own
    * word (§12.14.1), and the same thing `FaceLegend` prints on the site.
    */
   drawn: number
@@ -604,7 +604,7 @@ function flavours(model: ReportModel): string {
  *   - no standing at all — the subsystem is not in this record: an em dash,
  *     §11.25's "cannot be derived".
  *   - nothing drawn — there are sheets, and none of them can be signed off yet:
- *     `NOT DRAWN`, the register's own word (§12.14.1).
+ *     `PLANNED`, the register's own word (§12.14.1).
  *   - otherwise the fraction, over DRAWN sheets.
  *
  * The site's `FaceLegend` decides this the same way. It cannot be shared — this
@@ -613,7 +613,7 @@ function flavours(model: ReportModel): string {
  */
 function flavourCount(entry: CategoryStanding | undefined): string {
   if (entry === undefined) return '—'
-  if (entry.drawn <= 0) return 'NOT DRAWN'
+  if (entry.drawn <= 0) return 'PLANNED'
   return `${entry.signed}/${entry.drawn}`
 }
 
@@ -632,10 +632,10 @@ function flavourCount(entry: CategoryStanding | undefined): string {
     )
   })
   return (
-    '<table class="flavours"><caption>The six faces of the mark, the subsystem '
-    + 'each one reports, and the sheets this record holds a sign-off for</caption>'
-    + '<thead><tr><th scope="col">Flavour</th><th scope="col">Subsystem</th>'
-    + '<th scope="col">Signed off</th></tr></thead>'
+    '<table class="flavours"><caption>The six faces of the mark, the level '
+    + 'each one reports, and the modules this record holds a completion for</caption>'
+    + '<thead><tr><th scope="col">Flavour</th><th scope="col">Level</th>'
+    + '<th scope="col">Completed</th></tr></thead>'
     + `<tbody>${rows.join('')}</tbody></table>`
   )
 }
@@ -661,7 +661,7 @@ function roleLines(model: ReportModel): string {
   const { signed, drawn } = role.standing
   return (
     line
-    + `<dt>Path</dt><dd>${signed} of ${drawn} drawn sheet${drawn === 1 ? '' : 's'} on the `
+    + `<dt>Path</dt><dd>${signed} of ${drawn} ready module${drawn === 1 ? '' : 's'} on the `
     + `${escText(role.label)} path</dd>`
   )
 }
@@ -669,7 +669,7 @@ function roleLines(model: ReportModel): string {
 /** Wrapped in `<bdi dir="auto">`: an RTL name must not reorder what surrounds it. */
 function readerName(model: ReportModel): string {
   if (model.name === null || model.name.trim() === '') {
-    return '<span class="dim">UNSIGNED</span>'
+    return '<span class="dim">NOT COMPLETED</span>'
   }
   return `<bdi dir="auto">${escText(model.name)}</bdi>`
 }
@@ -709,10 +709,10 @@ const LIMITS: readonly string[] = [
  * that cannot be verified: route the attention to the evidence that can be.
  */
 const HOW_TO_CHECK: readonly string[] = [
-  'Open the criteria for each sheet and read what signing it off was supposed to require.',
+  'Open the criteria for each module and read what completing it was supposed to require.',
   'Open every registered repository below.',
   'Resolve each commit hash and compare its authored date with the date in the ledger.',
-  'If the repositories are empty, ignore the sheet tally entirely.',
+  'If the repositories are empty, ignore the module tally entirely.',
   'Ask the holder to walk you through one repository.',
 ]
 
@@ -721,7 +721,7 @@ function claims(model: ReportModel): string[] {
   const out: string[] = []
   out.push(
     `This record contains ${model.signed.length} of ${model.facts.sheets.length} `
-    + 'sheets marked signed off, on the dates listed.',
+    + 'modules marked completed, on the dates listed.',
   )
   if (model.quizCount > 0) {
     out.push(
@@ -733,13 +733,13 @@ function claims(model: ReportModel): string[] {
     out.push(
       `${model.distinctSources.length} distinct primary-source URL`
       + `${model.distinctSources.length === 1 ? ' was' : 's were'} opened from these `
-      + 'sheets; they are listed.',
+      + 'modules; they are listed.',
     )
   }
   if (model.submittalCount > 0) {
     out.push(
       `${model.submittalCount} repositor${model.submittalCount === 1 ? 'y was' : 'ies were'} `
-      + 'registered against the sheets shown.',
+      + 'registered against the modules shown.',
     )
   }
   if (model.span !== null) {
@@ -754,10 +754,10 @@ function claims(model: ReportModel): string[] {
 function ledger(model: ReportModel): string {
   const rows = model.rows.map((row) => {
     const state = !row.fact.drawn
-      ? 'NOT DRAWN'
+      ? 'PLANNED'
       : row.signedOff === null
-        ? 'NOT SIGNED OFF'
-        : 'SIGNED OFF'
+        ? 'NOT COMPLETED'
+        : 'COMPLETED'
     const quiz = row.quizAssessed === null
       ? '—'
       : row.quizAssessed === 'matched'
@@ -782,10 +782,10 @@ function ledger(model: ReportModel): string {
     )
   })
   return (
-    '<table class="ledger"><caption>Every sheet in the set, and what this record '
-    + 'holds about it. A dashed state means the sheet has not been drawn yet.</caption>'
-    + '<thead><tr><th scope="col">#</th><th scope="col">Sheet</th>'
-    + '<th scope="col">Subsystem</th><th scope="col">State</th>'
+    '<table class="ledger"><caption>Every module in the curriculum, and what this record '
+    + 'holds about it. A dashed state means the module has not been written yet.</caption>'
+    + '<thead><tr><th scope="col">#</th><th scope="col">Module</th>'
+    + '<th scope="col">Level</th><th scope="col">State</th>'
     + '<th scope="col">Signed</th><th scope="col">Against rev.</th>'
     + '<th scope="col">Quick check</th></tr></thead>'
     + `<tbody>${rows.join('')}</tbody></table>`
@@ -811,7 +811,7 @@ function evidence(model: ReportModel): string {
         : `<p class="note">${escText(submittal.note)}</p>`
       return (
         '<li class="entry">'
-        + `<p class="eyebrow">SHEET ${String(row.fact.module).padStart(2, '0')} `
+        + `<p class="eyebrow">MODULE ${String(row.fact.module).padStart(2, '0')} `
         + `· ${escText(row.fact.title)}</p>`
         + `<p class="repo mono"><a href="${url}" rel="noopener noreferrer" `
         + `target="_blank">${label}</a></p>`
@@ -823,7 +823,7 @@ function evidence(model: ReportModel): string {
     }),
   )
   return (
-    '<section id="evidence"><h2>Evidence register</h2>'
+    '<section id="evidence"><h2>Evidence</h2>'
     + '<p class="lede">The only content in this document a third party can check '
     + 'independently. Everything above is the reader’s own assertion.</p>'
     + `<ul class="entries">${entries.join('')}</ul></section>`
@@ -837,7 +837,7 @@ function answers(model: ReportModel): string {
   if (written.length === 0) return ''
   const items = written.map((row) => (
     '<li class="entry">'
-    + `<p class="eyebrow">SHEET ${String(row.fact.module).padStart(2, '0')} `
+    + `<p class="eyebrow">MODULE ${String(row.fact.module).padStart(2, '0')} `
     + `· ${escText(row.fact.title)}</p>`
     + (row.fact.question === null
       ? ''
@@ -863,7 +863,7 @@ function checklists(model: ReportModel): string {
     ))
     return (
       '<li class="entry">'
-      + `<p class="eyebrow">SHEET ${String(row.fact.module).padStart(2, '0')} `
+      + `<p class="eyebrow">MODULE ${String(row.fact.module).padStart(2, '0')} `
       + `· ${escText(row.fact.title)}</p>`
       + `<ul class="checks">${items.join('')}</ul></li>`
     )
@@ -885,7 +885,7 @@ function sources(model: ReportModel): string {
   return (
     '<section id="sources"><h2>Primary sources opened</h2>'
     + `<p class="lede">${model.distinctSources.length} distinct URL`
-    + `${model.distinctSources.length === 1 ? '' : 's'} opened from the sheets in this `
+    + `${model.distinctSources.length === 1 ? '' : 's'} opened from the modules in this `
     + 'record. Opened, not read — an outbound click is the only fact available.</p>'
     + `<ul class="urls">${items.join('')}</ul></section>`
   )
@@ -897,11 +897,11 @@ function notSigned(model: ReportModel): string {
     `<li${row.fact.drawn ? '' : ' class="dim"'}>`
     + `<span class="mono">${String(row.fact.module).padStart(2, '0')}</span> `
     + escText(row.fact.title)
-    + (row.fact.drawn ? '' : ' <span class="mono">· NOT DRAWN</span>')
+    + (row.fact.drawn ? '' : ' <span class="mono">· PLANNED</span>')
     + '</li>'
   ))
   return (
-    '<section id="not-signed"><h2>Not yet signed off</h2>'
+    '<section id="not-signed"><h2>Not yet completed</h2>'
     + '<p class="lede">Stated rather than omitted. A record that can only '
     + 'accumulate positives is not a record.</p>'
     + `<ul class="remaining">${items.join('')}</ul></section>`
@@ -913,13 +913,13 @@ function criteria(model: ReportModel): string {
   if (drawn.length === 0) return ''
   const blocks = drawn.map((sheet) => (
     '<li class="entry">'
-    + `<p class="eyebrow">SHEET ${String(sheet.module).padStart(2, '0')} `
+    + `<p class="eyebrow">MODULE ${String(sheet.module).padStart(2, '0')} `
     + `· ${escText(sheet.title)}</p><ul class="objectives">`
     + sheet.objectives.map((line) => `<li>${escText(line)}</li>`).join('')
     + '</ul></li>'
   ))
   return (
-    '<section id="criteria"><h2>What signing off required</h2>'
+    '<section id="criteria"><h2>What completing it required</h2>'
     + `<p class="lede">${escText(model.facts.assertion)} `
     + `The canonical list lives at <span class="mono">${escText(model.facts.criteriaUrl)}</span>.</p>`
     + `<ul class="entries">${blocks.join('')}</ul></section>`
@@ -974,9 +974,9 @@ th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;vertic
 thead th{border-bottom:1px solid var(--strong);font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
 td.num{width:32px;color:var(--faint);font-variant-numeric:tabular-nums}
 td.state{white-space:nowrap;font-size:10px;letter-spacing:.06em}
-td.state[data-state="NOT DRAWN"]{color:var(--faint)}
-td.state[data-state="NOT SIGNED OFF"]{color:var(--muted)}
-td.state[data-state="SIGNED OFF"]{color:var(--accent)}
+td.state[data-state="PLANNED"]{color:var(--faint)}
+td.state[data-state="NOT COMPLETED"]{color:var(--muted)}
+td.state[data-state="COMPLETED"]{color:var(--accent)}
 tr.checkable{background:var(--wash)}
 tr.checkable td.num::after{content:"\\2022";margin-left:4px;color:var(--accent)}
 ul.entries,ul.urls,ul.remaining,ul.checks,ul.objectives{margin:0;padding:0;list-style:none}
@@ -1006,7 +1006,7 @@ footer{margin-top:48px;padding-top:12px;border-top:1px solid var(--strong);font-
 tr[hidden],li[hidden]{display:none}
 @media (forced-colors:active){
 tr.checkable{background:Canvas}
-td.state[data-state="SIGNED OFF"]{color:CanvasText;font-weight:700}
+td.state[data-state="COMPLETED"]{color:CanvasText;font-weight:700}
 .box{border-color:CanvasText}
 ul.checks li[data-ticked=true] .box{border-color:Highlight}
 .legend i.a{border-top-color:Highlight}
@@ -1128,13 +1128,13 @@ ${model.markSvg}
 </header>
 
 <dl class="meta">
-<dt>Signed off</dt><dd>${model.signed.length} / ${model.facts.sheets.length}</dd>
+<dt>Completed</dt><dd>${model.signed.length} / ${model.facts.sheets.length}</dd>
 <dt>To go</dt><dd>${model.unsigned.length}</dd>${roleLines(model)}
 <dt>Repositories</dt><dd>${model.submittalCount}</dd>
 <dt>Sources opened</dt><dd>${model.distinctSources.length}</dd>
 <dt>Generated</dt><dd>${escText(model.generatedAt)}</dd>
 <dt>Content digest</dt><dd>${escText(model.digest)}</dd>
-<dt>Status</dt><dd>UNSIGNED — self-attested</dd>
+<dt>Status</dt><dd>NOT COMPLETED — self-attested</dd>
 </dl>
 
 <section class="cover">
@@ -1143,7 +1143,7 @@ ${flavours(model)}
 </section>
 
 <div class="bar no-print">
-<label class="eyebrow" for="band">Subsystem</label>
+<label class="eyebrow" for="band">Level</label>
 <select id="band"><option value="all">ALL</option>${bands
   .map(([slug, title]) => `<option value="${escAttr(slug)}">${escText(title)}</option>`)
   .join('')}</select>
@@ -1164,11 +1164,11 @@ generated. It proves nothing about the facts inside it.</p>
 </section>
 
 <section id="ledger">
-<h2>Sheet ledger</h2>
+<h2>Module ledger</h2>
 <div class="legend">
-<span><i></i>signed off</span>
-<span><i class="d"></i>not yet drawn</span>
-<span><i class="a"></i>signed off with a registered repository and commit</span>
+<span><i></i>completed</span>
+<span><i class="d"></i>planned</span>
+<span><i class="a"></i>completed with a registered repository and commit</span>
 </div>
 ${ledgerHtml}
 </section>

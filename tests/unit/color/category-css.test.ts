@@ -114,7 +114,7 @@ describe('§13.5 — the segment rules cover the whole corpus', () => {
     expect([...raw].sort((a, b) => a - b)).toEqual(ALL_MODULES)
   })
 
-  it('repeats the same list under forced-colors, for the drawn sheets', () => {
+  it('repeats the same list under forced-colors, for the ready modules', () => {
     // The forced-colours block fills a signed segment with a system colour, so
     // "signed" survives as a difference in fill rather than in hue. It only
     // needs the signable modules; a draft segment has nothing to reveal.
@@ -126,8 +126,8 @@ describe('§13.5 — the segment rules cover the whole corpus', () => {
   })
 })
 
-describe('§13.4.2 — a step tick exists only for a sheet that can be signed', () => {
-  it('covers the drawn modules and stops there', () => {
+describe('§13.4.2 — a step tick exists only for a module that can be signed', () => {
+  it('covers the ready modules and stops there', () => {
     const named = captures(/html\.hl-signed-(\d+)\s+\.hl-step\[data-module="\d+"\]\s+\.hl-step-tick/g)
       .map(Number)
       .sort((a, b) => a - b)

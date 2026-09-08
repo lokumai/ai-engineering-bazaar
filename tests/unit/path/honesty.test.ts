@@ -83,20 +83,20 @@ function prerequisiteGraph(): Map<number, number[]> {
 
 const graph = prerequisiteGraph()
 
-describe('§13.4 — every path is over sheets that exist', () => {
+describe('§13.4 — every path is over modules that exist', () => {
   it.each(PATHS)('$role names only real slugs', (path) => {
     const unknown = path.steps.map((step) => step.slug).filter((slug) => !bySlug.has(slug))
     expect(unknown).toEqual([])
   })
 
-  it.each(PATHS)('$role lists no sheet twice', (path) => {
+  it.each(PATHS)('$role lists no module twice', (path) => {
     const slugs = path.steps.map((step) => step.slug)
     expect(slugs).toHaveLength(new Set(slugs).size)
   })
 
 })
 
-describe('§13.4.2 — a draft sheet is never promised as a lesson', () => {
+describe('§13.4.2 — a draft module is never promised as a lesson', () => {
   /**
    * The rule that caught two steps twelve agents had passed. A sheet with no
    * content cannot be `core` and cannot be `supporting`, because both claim it
@@ -111,7 +111,7 @@ describe('§13.4.2 — a draft sheet is never promised as a lesson', () => {
     expect(wrong).toEqual([])
   })
 
-  it('reads drawn off the corpus for every step', () => {
+  it('reads ready off the corpus for every step', () => {
     // Not a cross-check of two sources any more: `isDrawnStep` is handed the
     // corpus's own set, so this asserts the wiring rather than the agreement.
     const disagree = PATHS.flatMap((path) =>
@@ -123,7 +123,7 @@ describe('§13.4.2 — a draft sheet is never promised as a lesson', () => {
   })
 })
 
-describe('§13.4.2 — the denominator counts drawn steps only', () => {
+describe('§13.4.2 — the denominator counts ready steps only', () => {
   it.each(PATHS)('$role counts only what a reader can sign off', (path) => {
     const drawn = path.steps.filter((step) => corpusSaysDrawn(step.slug)).length
     expect(drawnCount(path, DRAWN)).toBe(drawn)
@@ -152,7 +152,7 @@ describe('§13.4.1 — order respects the prerequisite graph', () => {
    * module 3. What must never happen is both present and in the wrong order,
    * because then the path itself tells the reader to read them backwards.
    */
-  it('read a prerequisite list for every drawn sheet', () => {
+  it('read a prerequisite list for every ready module', () => {
     // If this fails the parse above is broken and the ordering test below is
     // vacuously passing, which is worse than failing.
     const drawn = facts.sheets.filter((sheet) => sheet.drawn).map((sheet) => sheet.module)
@@ -161,7 +161,7 @@ describe('§13.4.1 — order respects the prerequisite graph', () => {
     }
   })
 
-  it.each(PATHS)('$role places no sheet before a prerequisite it also lists', (path) => {
+  it.each(PATHS)('$role places no module before a prerequisite it also lists', (path) => {
     const position = new Map(path.steps.map((step, index) => [moduleOf(step.slug), index]))
     const backwards: string[] = []
     for (const step of path.steps) {

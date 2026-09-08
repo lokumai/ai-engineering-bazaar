@@ -312,7 +312,7 @@ function latestSignOff(data: RecordData, facts: ReadonlyArray<SheetFact>): strin
 }
 
 function drawnReason(drawn: number, total: number): string {
-  return `${drawn} OF ${total} SHEETS DRAWN`
+  return `${drawn} OF ${total} MODULES READY`
 }
 
 export function stamps(data: RecordData, facts: CurriculumFacts): Stamp[] {
@@ -326,8 +326,8 @@ export function stamps(data: RecordData, facts: CurriculumFacts): Stamp[] {
     const current = members.filter((fact) => isSigned(data, fact)).length
     const attainable = category.total > 0 && drawn >= category.total
     out.push({
-      id: `subsystem:${category.slug}`,
-      label: `SUBSYSTEM ${String(index + 1).padStart(2, '0')} · ${category.slug.toUpperCase()}`,
+      id: `level:${category.slug}`,
+      label: `LEVEL ${String(index + 1).padStart(2, '0')} · ${category.slug.toUpperCase()}`,
       earned: current >= category.total && category.total > 0 ? latestSignOff(data, members) : null,
       threshold: category.total,
       current,
@@ -408,8 +408,8 @@ export function sheetStamps(data: RecordData, facts: CurriculumFacts, slug: stri
   const out: Stamp[] = []
 
   out.push({
-    id: 'SIGN-OFF',
-    label: 'SIGN-OFF',
+    id: 'COMPLETION',
+    label: 'COMPLETION',
     earned: sheet?.signedOff ?? null,
     threshold: 1,
     current: sheet?.signedOff ? 1 : 0,

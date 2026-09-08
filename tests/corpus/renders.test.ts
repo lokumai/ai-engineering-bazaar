@@ -37,7 +37,7 @@ const renderAll = () =>
     })),
   )
 
-describe('every sheet in the set', () => {
+describe('every module in the set', () => {
   it('renders without throwing', async () => {
     const pages = await renderAll()
     expect(pages).toHaveLength(modules.length)

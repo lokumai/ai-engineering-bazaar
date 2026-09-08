@@ -230,7 +230,7 @@ describe('routeFor — where each destination goes', () => {
     expect(routeFor('record', '/')).toBe('/report/')
   })
 
-  it('reads the current category off the route, from a sheet or its category page', () => {
+  it('reads the current category off the route, from a module or its category page', () => {
     expect(categoryPathOf('/courses/intermediate/security/')).toBe('/courses/intermediate/')
     expect(categoryPathOf('/courses/intermediate/')).toBe('/courses/intermediate/')
   })
@@ -243,7 +243,7 @@ describe('routeFor — where each destination goes', () => {
   })
 })
 
-describe('the table the ? sheet prints (§12.16)', () => {
+describe('the table the ? module prints (§12.16)', () => {
   it('lists every row of §12.16, in its order', () => {
     // §13.14 amends §12.16: `g l` (Learning path) joins the `g` mode, after
     // `g r` and before `g c` — `g c` stays last because it is the only one

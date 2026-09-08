@@ -115,7 +115,7 @@ describe('renderMarkdown — B5 table width classes (§6.5)', () => {
     return `${row('h')}\n${row('-')}\n${row('v')}`
   }
 
-  it('numbers tables per sheet, in document order', async () => {
+  it('numbers tables per module, in document order', async () => {
     const { html } = await renderMarkdown(`${table(2)}\n\ntext\n\n${table(2)}`, { sheet: 13 })
     expect(html).toContain('TBL. 13.1')
     expect(html).toContain('TBL. 13.2')
@@ -243,7 +243,7 @@ describe('renderMarkdown — §6.9 images', () => {
 })
 
 describe('renderMarkdown — §6.10 diagram containers', () => {
-  it('reserves the space with a drawn placeholder, not a shimmer', async () => {
+  it('reserves the space with a ready placeholder, not a shimmer', async () => {
     const { html } = await renderMarkdown('```mermaid\ngraph LR\n  A --> B\n```', { sheet: 13 })
     expect(html).toContain('Rendering FIG. 13.1')
   })
@@ -305,7 +305,7 @@ describe('renderMarkdown — §6.3 links', () => {
       .rejects.toThrow(/`sheet`.*`excerptOf`/s)
   })
 
-  it('resolves an in-repo link from an excerpt of a sheet', async () => {
+  it('resolves an in-repo link from an excerpt of a module', async () => {
     const { html } = await renderMarkdown('[Security](security.md)', { excerptOf: 12 })
     expect(html).toContain('href="/courses/intermediate/security/"')
     expect(html).not.toContain('data-hl-external')

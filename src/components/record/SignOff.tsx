@@ -173,7 +173,7 @@ export function SignOff({
   return (
     <section className="hl-signoff" aria-labelledby={headId}>
       <div className="hl-signoff-head hl-mark">
-        <span id={headId}>SIGN-OFF</span>
+        <span id={headId}>COMPLETION</span>
         {/* §12.4.1 / §12.12.1 — who is asserting is the one thing about this
             block a reader must not have to infer. The state itself is on the
             control, which is where §12.4.1 puts it. */}
@@ -219,7 +219,7 @@ export function SignOff({
             aria-pressed={signedOff !== null}
             onClick={onToggle}
           >
-            {signedOff === null ? 'SIGN OFF' : `SIGNED OFF ${signedOff.slice(0, 10)}`}
+            {signedOff === null ? 'COMPLETE' : `COMPLETED ${signedOff.slice(0, 10)}`}
           </button>
           {/* §12.4.1 — `UNSIGN` adjacent, and the toggle itself un-signs too: a
               pressed toggle whose click did nothing would be a control lying
@@ -236,15 +236,15 @@ export function SignOff({
         </div>
 
         {/* §12.4.3 — a completion claim that quietly became false. No LMS
-            handles this. Not an error state and no caution colour: the sheet
+            handles this. Not an error state and no caution colour: the module
             changing after you signed it is a fact, not something you did wrong.
             The short hashes keep their own case — a git hash is not ours to
             recase, and `.hl-mark` uppercases everything else in the line. */}
         {drift !== null && signedOff !== null && (
           <p className="hl-signoff-drift hl-mark">
-            {`SIGNED OFF ${signedOff.slice(0, 10)} AGAINST REV `}
+            {`COMPLETED ${signedOff.slice(0, 10)} AGAINST REV `}
             <span className="normal-case">{drift.signedAgainst}</span>
-            {' · SHEET NOW AT REV '}
+            {' · MODULE NOW AT REV '}
             <span className="normal-case">{drift.nowAt}</span>
           </p>
         )}

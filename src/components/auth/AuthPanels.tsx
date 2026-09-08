@@ -145,7 +145,7 @@ export function AccountPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
         <p className="mt-4 mb-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
           Signing out clears the session from this browser. It does not delete
           anything: your record stays in this browser, and the copy connected to
-          this account stays on the account. The erase control on this sheet is
+          this account stays on the account. The erase control on this module is
           the one that deletes.
         </p>
       )}
@@ -345,7 +345,7 @@ export function OrgMembershipPanel({ chrome = 'panel' }: { chrome?: AuthChrome }
         <div className="hl-note">
           <p>
             Managers of the organisations listed above can see your whole record:
-            the sheets you have signed off, every quiz attempt, your submittals
+            the modules you have completed, every quiz attempt, your submittals
             and your timeline. Erasing your record in this browser does not
             withdraw the history an organisation already holds.
           </p>

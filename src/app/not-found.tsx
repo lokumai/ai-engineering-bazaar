@@ -11,7 +11,7 @@ import {
 export const metadata = { title: NOT_FOUND_TITLE }
 
 /** §8.4 fixes the wording of the exploded drawing's caption on this page. */
-const CAPTION = 'ASSEMBLY NOT FOUND · SHEET DOES NOT EXIST IN THIS DRAWING SET'
+const CAPTION = 'PAGE NOT FOUND · NO SUCH MODULE IN THIS CURRICULUM'
 
 /**
  * The 404 (spec §8.4, §8.5).
@@ -34,7 +34,7 @@ export default function NotFound() {
       <h1 className="hl-listing-title">{NOT_FOUND_TITLE}</h1>
 
       <p className="hl-lead">
-        This address is not a sheet in the drawing set. The index lists every
+        This address is not a module in the curriculum. The catalog lists every
         one that is.
       </p>
 

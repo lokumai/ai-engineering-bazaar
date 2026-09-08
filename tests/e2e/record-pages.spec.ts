@@ -138,7 +138,7 @@ const SEEDED: RecordSeed = {
       signedOff: '2026-07-20T11:30:00.000Z',
       signedRevision: 'bc23de4',
       quiz: {
-        answer: 'Retrieval before generation, and the sheet says why.',
+        answer: 'Retrieval before generation, and the module says why.',
         assessed: 'matched',
         at: '2026-07-20T11:20:00.000Z',
       },
@@ -159,7 +159,7 @@ const SEEDED: RecordSeed = {
           repo: 'hidden-line',
           url: 'https://github.com/cevheri/hidden-line',
           commit: '9f2c1ab',
-          note: 'A prompt-injection harness for the sheet 13 criteria.',
+          note: 'A prompt-injection harness for the module 13 criteria.',
           at: '2026-08-11T16:00:00.000Z',
         },
       ],
@@ -262,7 +262,7 @@ test('§12.10.1 — every band is a graphics-object and states its own counted t
     SHEETS.filter((sheet) => sheet.category === category).length
 
   for (const category of ['fundamentals', 'intermediate']) {
-    const stated = new RegExp(`— ${signedIn(category)} of ${sizeOf(category)} signed off$`)
+    const stated = new RegExp(`— ${signedIn(category)} of ${sizeOf(category)} completed$`)
     expect(labels.filter((label) => stated.test(label)), category).toHaveLength(1)
   }
 })
@@ -286,13 +286,13 @@ test('§12.10.1 — every node is named from aria-label, never from its visible 
 
   for (const [index, node] of read.entries()) {
     const sheet = SHEETS[index]
-    expect(node.label, `sheet ${sheet.module} has no accessible name`).not.toBe('')
+    expect(node.label, `module ${sheet.module} has no accessible name`).not.toBe('')
     // The visible `<text>` is the zero-padded module number and does NOT
     // compute into the accessible name, so the name has to carry everything a
     // reader of the drawing gets for free — the title and the state.
     expect(node.visible).toMatch(/^\d\d$/)
     expect(node.label).not.toBe(node.visible)
-    expect(node.label).toContain(`Sheet ${sheet.module}`)
+    expect(node.label).toContain(`Module ${sheet.module}`)
     expect(node.label).toContain(sheet.title)
     expect(node.id).toBe(`hl-node-${sheet.path.split('/').slice(2, 4).join('-')}`)
   }
@@ -303,9 +303,9 @@ test('§12.10.1 — every node is named from aria-label, never from its visible 
   // drawn sheet, at which point two of the three were asserting about the
   // wrong module.
   const at = (path: string) => read[SHEETS.findIndex((sheet) => sheet.path === path)]
-  expect(at('/courses/fundamentals/llms/').label).toContain('signed off 2026-07-01')
-  expect(at('/courses/intermediate/security/').label).toContain('signed off 2026-08-11')
-  expect(read[SHEETS.findIndex((sheet) => !sheet.drawn)].label).toContain('not drawn')
+  expect(at('/courses/fundamentals/llms/').label).toContain('completed 2026-07-01')
+  expect(at('/courses/intermediate/security/').label).toContain('completed 2026-08-11')
+  expect(read[SHEETS.findIndex((sheet) => !sheet.drawn)].label).toContain('planned')
 })
 
 test('§12.10.2 — the whole diagram is one tab stop', async ({ page }) => {
@@ -362,7 +362,7 @@ test('§12.10.2 — ArrowRight moves within a band, ArrowDown moves between band
   expect((await focusedId())!.startsWith('hl-node-fundamentals-')).toBe(true)
 })
 
-test('§12.10.2 — Enter on a focused node opens that sheet', async ({ page }) => {
+test('§12.10.2 — Enter on a focused node opens that module', async ({ page }) => {
   await seedRecord(page, SEEDED)
   await page.goto('/dashboard/')
 
@@ -402,7 +402,7 @@ test('§12.10.3 — the table equivalent is in the DOM with the disclosure close
     await details.locator('thead th').evaluateAll((nodes) =>
       nodes.map((node) => (node.textContent ?? '').trim()),
     ),
-  ).toEqual(['#', 'Sheet', 'Subsystem', 'State', 'Requires', 'Feeds'])
+  ).toEqual(['#', 'Module', 'Level', 'State', 'Requirements', 'Unlocks'])
 
   await details.locator('summary').click()
   await expect(rows.first()).toBeVisible()
@@ -483,7 +483,7 @@ test('§12.10 — the emitted geometry is byte-identical across two loads', asyn
   expect(first!.floats).toEqual([])
 })
 
-test('§12.10.6 — CONTINUE names the next ready sheet that is not signed off', async ({ page }) => {
+test('§12.10.6 — CONTINUE names the next ready module that is not completed', async ({ page }) => {
   await seedRecord(page, SEEDED)
   await page.goto('/dashboard/')
 
@@ -491,7 +491,7 @@ test('§12.10.6 — CONTINUE names the next ready sheet that is not signed off',
   // is 2. The link text carries the number as well as the title, which is what
   // makes it unambiguous against the 32 titles in the table below it.
   const next = sheetByModule(2)
-  const link = page.getByRole('link', { name: `Sheet 02 · ${next.title}` })
+  const link = page.getByRole('link', { name: `Module 02 · ${next.title}` })
   await expect(link).toHaveCount(1)
   await expect(link).toBeVisible()
   await expect(link).toHaveAttribute('href', next.path)
@@ -499,7 +499,7 @@ test('§12.10.6 — CONTINUE names the next ready sheet that is not signed off',
   await expect(page.locator('p', { has: link })).toContainText(/^Continue Sheet 02 · /)
 })
 
-test('§12.10.6 — CONTINUE is absent when there is no next sheet', async ({ page }) => {
+test('§12.10.6 — CONTINUE is absent when there is no next module', async ({ page }) => {
   // Every drawn sheet signed off. §12.10.6 makes the line ABSENT rather than
   // congratulatory, and its absence is the whole design: it is cheap, and it is
   // the first thing a returning senior engineer notices.
@@ -647,14 +647,14 @@ async function settledRegister(page: Page): Promise<Record<string, RowSnapshot>>
         previous = now
         return settled
       },
-      { message: 'the register never stopped changing' },
+      { message: 'the record never stopped changing' },
     )
     .toBe(true)
 
   return snapshot
 }
 
-test('§16.4 — the drafter block arrives open, and every register row arrives closed', async ({
+test('§16.4 — the account block arrives open, and every row arrives closed', async ({
   page,
 }) => {
   const problems = watchPage(page)
@@ -665,7 +665,7 @@ test('§16.4 — the drafter block arrives open, and every register row arrives 
   // disclosure at all: both of the controls a reader comes here for are on
   // screen with nothing clicked. `IdentityPanel`'s field and §16.2's mark row
   // are asserted rather than the box, because they are what "open" is for.
-  await expect(page.locator('h2#drafter')).toBeVisible()
+  await expect(page.locator('h2#account')).toBeVisible()
   await expect(page.getByRole('textbox', { name: /Name or initials/ })).toBeVisible()
   await expect(page.locator('label[data-hl-mark]').first()).toBeVisible()
   // …and it is not itself inside a fold, which is the other half of "open".
@@ -769,7 +769,7 @@ const EVERYTHING_RECORDED: RecordSeed = (() => {
         repo: 'hidden-line',
         url: 'https://github.com/cevheri/hidden-line',
         commit: '9f2c1ab',
-        note: 'A prompt-injection harness for the sheet 13 criteria.',
+        note: 'A prompt-injection harness for the module 13 criteria.',
         at: '2026-08-11T16:00:00.000Z',
       },
     ],
@@ -919,7 +919,7 @@ test('§16.4.1 / §16.4.2 — a summary reading comes from the body it summarise
       expect(
         readingMoved,
         `${id}: a counted reading printed "${rich[id].reading}" for both an empty `
-          + 'record and a fully signed-off one, so it is not counting the record',
+          + 'record and a fully completed one, so it is not counting the record',
       ).toBe(true)
     }
   }
@@ -988,7 +988,7 @@ const EXPECTED_READINGS = {
     rich: `${(EVERYTHING_RECORDED.days ?? []).length} OF LAST 14 DAYS`,
   },
   stamps: { thin: '0 OF # EARNED', rich: '# OF # EARNED' },
-  submittals: { thin: 'NO SUBMITTAL REGISTERED', rich: '1 FILED' },
+  submittals: { thin: 'NOTHING ADDED YET', rich: '1 FILED' },
   // `SOFTWARE ENGINEER` is `roles.ts`'s label for the seeded `software-engineer`,
   // upper-cased by `.hl-register-reading` rather than by the component.
   role: { thin: 'NO ROLE ON RECORD', rich: 'SOFTWARE ENGINEER' },
@@ -1238,7 +1238,7 @@ test('§12.15 — the erase dialog names its scope and enumerates the real count
     .locator('.hl-dialog-tally li')
     .evaluateAll((nodes) => nodes.map((node) => (node.textContent ?? '').trim()))
   expect(enumerated).toEqual([
-    '3 sheet states',
+    '3 module states',
     '1 name',
     '1 submittal',
     '1 self-check',
@@ -1671,7 +1671,7 @@ test('§17.1 — a receipt on the record outlives the document that reported it'
  * plain visit still finds every row closed, which is what stops the island from
  * being a switch that opens the whole register.
  */
-test('§17.6 — a fragment opens the register row it names, and only it', async ({ page }) => {
+test('§17.6 — a fragment opens the row it names, and only it', async ({ page }) => {
   await seedRecord(page, EVERYTHING_RECORDED)
 
   await page.goto('/profile/#claim')

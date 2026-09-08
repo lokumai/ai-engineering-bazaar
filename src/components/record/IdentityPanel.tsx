@@ -320,8 +320,8 @@ function IdentityFields() {
 
       {/* §12.3.2, §12.3.5 — what an edit reaches, and what it cannot. */}
       <p className="m-0 font-display text-meta leading-normal text-ink-muted">
-        Changing the name changes what every sheet prints as CHECKED BY. It does
-        not change the dates sheets were signed off on, and it does not change
+        Changing the name changes what every module prints as CHECKED BY. It does
+        not change the dates modules were completed on, and it does not change
         the mark: both are records of something that already happened.
       </p>
 

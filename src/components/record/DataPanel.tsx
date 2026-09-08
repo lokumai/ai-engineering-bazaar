@@ -425,7 +425,7 @@ export function DataPanel() {
               </>
             )}
             <p className="mt-1 mb-0 font-display text-meta leading-normal text-ink-muted">
-              The sign-off marks drawn before this page loaded stay on screen
+              The completion marks ready before this page loaded stay on screen
               until the page is reloaded: they are painted by the boot script,
               which reads the record once, before anything else runs.
             </p>

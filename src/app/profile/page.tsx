@@ -38,7 +38,7 @@ import { curriculumFacts, type CurriculumFacts } from '@/lib/content/facts'
 export const metadata: Metadata = {
   title: 'Profile',
   description:
-    "The drafter's own record: identity, the readout, the submittal register, "
+    "Your own record: identity, the readout, what you have built, "
     + 'what this browser has stored, and the controls that export, import or '
     + 'erase it.',
 }
@@ -105,9 +105,9 @@ function faceLegendRows(facts: CurriculumFacts): FaceLegendRows {
  */
 export const REGISTER_ROWS = [
   { id: 'readout', name: 'Readout' },
-  { id: 'uptime', name: 'Uptime' },
+  { id: 'uptime', name: 'Streak' },
   { id: 'stamps', name: 'Stamps' },
-  { id: 'submittals', name: 'Submittal register' },
+  { id: 'submittals', name: 'What you built' },
   { id: 'role', name: 'Role and path' },
   { id: 'hl-orgs-head', name: 'Organisation' },
   { id: 'claim', name: 'Last claim' },
@@ -219,7 +219,7 @@ export default function ProfilePage() {
 
     /* §7.4 — the set-level stamps at 168 × 44. Every locked stamp states its
        exact threshold and its live count (§12.5.4), and the three the corpus
-       cannot supply today say so in sheets drawn rather than going quietly
+       cannot supply today say so in modules ready rather than going quietly
        missing (§12.5.6). */
     stamps: { reading: <StampsReading facts={facts} />, body: <StampShelf facts={facts} /> },
 
@@ -279,7 +279,7 @@ export default function ProfilePage() {
       </div>
 
       <p className="hl-lead">
-        The drafter's own record: who is checking these sheets, and what this
+        Your own record: who is checking these modules, and what this
         browser has recorded against them. Everything here is read from this
         browser after the page loads, because a page prerendered once for
         everybody knows nothing about the reader until then.
@@ -304,7 +304,7 @@ export default function ProfilePage() {
       {/* §16.4 — and everything else, one line each. */}
       <div className="hl-panel-head">
         <h2 id={REGISTER_HEADING_ID} className="hl-panel-title">
-          The register
+          Your progress
         </h2>
         <p className="hl-mark m-0 text-ink-faint">Closed, and each row states its reading</p>
       </div>

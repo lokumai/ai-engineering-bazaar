@@ -19,9 +19,9 @@ import { SHEETS } from './sheets'
  */
 
 const DRAWN = SHEETS.filter((sheet) => sheet.drawn)
-const signOff = (page: Page) => page.getByRole('button', { name: 'SIGN OFF', exact: true })
+const signOff = (page: Page) => page.getByRole('button', { name: 'COMPLETE', exact: true })
 
-test('the reader can sign a sheet off, and it is still signed after a reload', async ({
+test('the reader can sign a module off, and it is still signed after a reload', async ({
   page,
 }) => {
   const sheet = DRAWN[0]
@@ -107,6 +107,6 @@ test('every picture the export names is in the export', () => {
       }
     }
   }
-  expect(pictures, 'no sheet exported a single picture').toBeGreaterThan(0)
+  expect(pictures, 'no module exported a single picture').toBeGreaterThan(0)
   expect(missing).toEqual([])
 })

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description:
     'A record document generated at build time from labelled sample data and '
     + 'stamped as a specimen, so the artefact can be read before anything has '
-    + 'been signed off.',
+    + 'been completed.',
 }
 
 /**
@@ -49,8 +49,8 @@ export default function SpecimenPage() {
   const specimen = specimenDocument()
 
   return (
-    <PageShell sheet="SHEET 00 · SPECIMEN">
-      <p className="hl-eyebrow hl-mark">SHEET 00 — LEGEND &amp; SPECIMEN</p>
+    <PageShell sheet="MODULE 00 · SPECIMEN">
+      <p className="hl-eyebrow hl-mark">MODULE 00 — LEGEND &amp; SPECIMEN</p>
 
       <h1 className="hl-listing-title">Specimen record</h1>
 
@@ -67,7 +67,7 @@ export default function SpecimenPage() {
         time. Every name, date, repository and answer in it is invented for the
         specimen. It holds nothing about you, it reads nothing out of this
         browser, and it changes nothing. Your own record is built on the
-        record-of-work sheet.
+        record-of-work module.
       </p>
 
       <hr className="hl-rule-struct" aria-hidden="true" />
@@ -86,11 +86,11 @@ export default function SpecimenPage() {
               (§12.12.2). Printed here as typed, in a `<bdi>` for the same
               reason the document does it: a name must not reorder what is
               around it. */}
-          <dt>Drafter</dt>
+          <dt>Account</dt>
           <dd>
             <bdi dir="auto">{specimen.data.identity.name}</bdi>
           </dd>
-          <dt>Sheets signed off</dt>
+          <dt>Modules completed</dt>
           <dd>
             {String(specimen.signedOff).padStart(String(specimen.of).length, '0')} /{' '}
             {specimen.of}
@@ -138,7 +138,7 @@ export default function SpecimenPage() {
         <ol className="m-0 max-w-[var(--width-prose)] list-none p-0 font-display text-meta leading-normal text-ink-muted">
           <li className="mb-2">
             <span className="hl-mark text-ink">01 Header</span> — the title, the
-            drafter&rsquo;s name as typed, their mark, the generation timestamp
+            account&rsquo;s name as typed, their mark, the generation timestamp
             and the content digest
           </li>
           <li className="mb-2">
@@ -146,14 +146,14 @@ export default function SpecimenPage() {
             seven statements about what the document is not, above the fold
           </li>
           <li className="mb-2">
-            <span className="hl-mark text-ink">03 Sheet ledger</span> — all{' '}
-            {specimen.of} sheets: number, sheet, subsystem, state, date signed,
-            the revision it was signed against, and the Quick Check state
+            <span className="hl-mark text-ink">03 Module ledger</span> — all{' '}
+            {specimen.of} modules: number, module, level, state, date completed,
+            the revision it was completed against, and the Quick Check state
           </li>
           <li className="mb-2">
-            <span className="hl-mark text-ink">04 Evidence register</span> — one
+            <span className="hl-mark text-ink">04 Evidence</span> — one
             entry per repository, with the reader&rsquo;s note, the commit hash
-            as supplied, and the sheet it answers
+            as supplied, and the module it answers
           </li>
           <li className="mb-2">
             <span className="hl-mark text-ink">05 How to check this</span> — five
@@ -163,9 +163,9 @@ export default function SpecimenPage() {
         </ol>
 
         <p className="mt-4 mb-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
-          It also lists the sheets that are not signed off, the sources opened
-          from each sheet, the checklist items with the reader&rsquo;s own ticks
-          labelled unscored, the criteria a sign-off asserted against, and a
+          It also lists the modules that are not completed, the sources opened
+          from each module, the checklist items with the reader&rsquo;s own ticks
+          labelled unscored, the criteria a completion asserted against, and a
           legend for the line types. It carries its own record inside it, so the
           file is also a backup that can be imported into another browser.
         </p>
@@ -197,7 +197,7 @@ export default function SpecimenPage() {
             BUILD YOUR OWN RECORD
           </Link>
           <Link className="hl-btn" href="/legend/">
-            BACK TO SHEET 00
+            BACK TO MODULE 00
           </Link>
         </div>
       </section>

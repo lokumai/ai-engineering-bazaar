@@ -80,23 +80,23 @@ function columnsFor(column: RowColumn): Column[] {
 
   return [
     { key: 'number', label: '#', width: 48 },
-    { key: 'sheet', label: 'Sheet', width: topics ? 240 : null },
+    { key: 'sheet', label: 'Module', width: topics ? 240 : null },
     {
       key: 'context',
-      label: topics ? 'Topics' : 'Subsystem',
+      label: topics ? 'Topics' : 'Level',
       width: topics ? null : 168,
     },
-    { key: 'extent', label: 'Extent', width: 152 },
+    { key: 'extent', label: 'Length', width: 152 },
     { key: 'sources', label: 'Sources', width: 88 },
     { key: 'lang', label: 'Lang', width: 80 },
     { key: 'status', label: 'Status', width: 116 },
     {
       key: 'signoff',
-      label: 'Sign-off',
+      label: 'Completion',
       width: 72,
       className: 'hl-index-signoff',
     },
-    { key: 'requires', label: 'Requires', width: 96 },
+    { key: 'requires', label: 'Requirements', width: 96 },
   ]
 }
 

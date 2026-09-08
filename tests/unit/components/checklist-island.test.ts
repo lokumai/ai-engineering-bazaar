@@ -54,7 +54,7 @@ describe('the selector contract', () => {
 })
 
 describe('render.ts emits what the island reads', () => {
-  it('finds at least one sheet with items to render', () => {
+  it('finds at least one module with items to render', () => {
     // Which sheet, and how many items, is the author's business.
     expect(withItems.length).toBeGreaterThan(0)
     expect(checklistOf(withItems[0].body).length).toBeGreaterThan(0)
@@ -106,7 +106,7 @@ describe('render.ts emits what the island reads', () => {
     // it by re-scoping to unticked items only.
   })
 
-  it('stamps nothing on the sheets with no checklist', async () => {
+  it('stamps nothing on the modules with no checklist', async () => {
     for (const sheet of modules.filter((m) => m.frontmatter.status === 'ready').slice(0, 6)) {
       if (checklistOf(sheet.body).length > 0) continue
       const rendered = await renderMarkdown(sheet.body, {

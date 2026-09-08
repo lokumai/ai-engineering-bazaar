@@ -47,7 +47,7 @@ export function ShortcutSheet({ open, onOpenChange, pathname, charKeys }: Shortc
         Hidden below 768px, where §4.7 puts the layout into one column and the
         header's slots run out: a control offering a table of keystrokes is a
         control for a device with keys. Nothing is lost — the `?` key still
-        opens this sheet at every width, because the handler never asks how
+        opens this module at every width, because the handler never asks how
         wide the viewport is.
       */}
       <Dialog.Trigger
@@ -64,7 +64,7 @@ export function ShortcutSheet({ open, onOpenChange, pathname, charKeys }: Shortc
             Radix would otherwise warn about a `Description` this dialog has no
             honest text for. */}
         <Dialog.Content className="hl-dialog" aria-describedby={undefined}>
-          <div className="hl-dialog-head hl-mark">Shortcut sheet</div>
+          <div className="hl-dialog-head hl-mark">Keyboard shortcuts</div>
 
           <div className="hl-dialog-body">
             <Dialog.Title className="hl-dialog-title">Keyboard shortcuts</Dialog.Title>
@@ -101,7 +101,7 @@ export function ShortcutSheet({ open, onOpenChange, pathname, charKeys }: Shortc
                   Single-character shortcuts are switched off, so nothing in this table fires
                   except Esc. The switch is on the{' '}
                   <Link href="/profile/" className="hl-link" onClick={() => onOpenChange(false)}>
-                    profile sheet
+                    account page
                   </Link>
                   .
                 </p>

@@ -56,7 +56,7 @@ describe('inProseLinkTargets', () => {
 })
 
 describe('buildGraph', () => {
-  it('points a REQUIRES edge from the prerequisite to the module that needs it', () => {
+  it('points a REQUIREMENTS edge from the prerequisite to the module that needs it', () => {
     const graph = buildGraph([m(1, 'fundamentals'), m(2, 'fundamentals', [1])], byDigits)
     expect(graph.edges).toEqual([
       { from: 1, to: 2, kind: 'requires', crossBand: false },
@@ -127,7 +127,7 @@ describe('the curriculum graph', () => {
   const requires = graph.edges.filter((e) => e.kind === 'requires')
   const seeAlso = graph.edges.filter((e) => e.kind === 'see-also')
 
-  it('declares one REQUIRES edge per prerequisite in the corpus', () => {
+  it('declares one REQUIREMENTS edge per prerequisite in the corpus', () => {
     // The count moves whenever a sheet's prerequisites do, so it is summed off
     // the frontmatter rather than pinned.
     const declared = modules.reduce(
@@ -150,7 +150,7 @@ describe('the curriculum graph', () => {
     expect(requires.some((e) => e.crossBand)).toBe(true)
   })
 
-  it('mirrors every REQUIRES edge in the FEEDS index', () => {
+  it('mirrors every REQUIREMENTS edge in the UNLOCKS index', () => {
     for (const e of requires) {
       expect(graph.requires(e.to), `${e.from} feeds ${e.to}`).toContain(e.from)
       expect(graph.feeds(e.from), `${e.from} feeds ${e.to}`).toContain(e.to)
@@ -165,7 +165,7 @@ describe('the curriculum graph', () => {
     }
   })
 
-  it('leaves the first sheet requiring nothing and the last feeding nothing', () => {
+  it('leaves the first module requiring nothing and the last feeding nothing', () => {
     const last = Math.max(...known)
     expect(graph.requires(1)).toEqual([])
     expect(graph.feeds(last)).toEqual([])

@@ -73,7 +73,7 @@ export const SPECIMEN_STAMP = 'SPECIMEN — NOT YOUR RECORD'
  * travels in the sample data instead. That is the honest place for it anyway:
  * the header is asserting who checked these sheets, and the answer is nobody.
  */
-export const SPECIMEN_NAME = `A. DRAFTER — ${SPECIMEN_STAMP}`
+export const SPECIMEN_NAME = `A. READER — ${SPECIMEN_STAMP}`
 
 /**
  * Fixed sample instants, 41 days apart end to end, so the document's own span
@@ -163,12 +163,12 @@ function sampleRecord(facts: ReportFacts): RecordData {
     {
       answer:
         'Specimen answer. A reader writes their own recall here before they '
-        + 'compare it with the sheet’s summary; nothing on this site marks it.',
+        + 'compare it with the module’s summary; nothing on this site marks it.',
       assessed: 'matched',
     },
     {
       answer:
-        'Specimen answer. This one was recorded as not matching the sheet, '
+        'Specimen answer. This one was recorded as not matching the module, '
         + 'which costs nothing and can be retried.',
       assessed: 'missed',
     },
@@ -223,7 +223,7 @@ function sampleRecord(facts: ReportFacts): RecordData {
       repo: 'specimen-retrieval-eval',
       url: 'https://github.com/example/specimen-retrieval-eval',
       commit: null,
-      note: 'Specimen entry with no commit hash, so the register shows that state too.',
+      note: 'Specimen entry with no commit hash, so the list shows that state too.',
       at: SPECIMEN_MARKS[3],
     }, SPECIMEN_MARKS[3])
   }

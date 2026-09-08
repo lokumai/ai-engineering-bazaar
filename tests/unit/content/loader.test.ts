@@ -112,7 +112,7 @@ describe('loadAllModules', () => {
     }
   })
 
-  it('derives an extent, a sheet format, figures, sources and a language for each', () => {
+  it('derives an extent, a module format, figures, sources and a language for each', () => {
     // Every one of these bakes in what `derive` computes, so every one is
     // asserted against `derive` computing it. `figures >= 0` and
     // `sources >= 0` — a length sum and a Set size — could never have gone

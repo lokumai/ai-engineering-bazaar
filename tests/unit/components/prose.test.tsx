@@ -13,7 +13,7 @@ describe('Prose', () => {
     expect(renderToStaticMarkup(<Prose html="" />)).toContain('data-hl-prose')
   })
 
-  it('lets a sheet layout add its own class without losing the prose rules', () => {
+  it('lets a module layout add its own class without losing the prose rules', () => {
     const markup = renderToStaticMarkup(<Prose html="" className="mt-8" />)
     expect(markup).toContain('class="prose mt-8"')
   })

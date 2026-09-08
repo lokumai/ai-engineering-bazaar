@@ -454,32 +454,57 @@ against the corpus's own set. A path whose every step is readable is the goal, n
 
 ## 9. Words that mean something specific here
 
-An outsider will misread most of these, and a reader-facing rename is in flight (see
-`logs/BRAINSTORM.md` D10 and `logs/PROGRESS.md` M8). **The code still uses the left column
-everywhere**, so both are listed.
+**The reader-facing rename landed on 2026-09-08** (`logs/PROGRESS.md` M9, vocabulary set C). The right
+column is what a reader now sees. **The left column is still what the code says**, everywhere:
+`sheetStamps`, `data-drawn`, `hl-sheet`, `kind: 'sign-off'`, `sheet_slug`. That is deliberate and it is
+not laziness — a storage key or a DB column carries a reader's saved history, and renaming one to match
+a label would invalidate every record for a cosmetic gain. So the two columns are both live, and the
+line between them is: **anything a reader can see uses the right column, anything the machine reads
+uses the left.**
 
-| In the code | What it means | Reader-facing candidate |
+| In the code | What it means | What the reader sees |
 |---|---|---|
-| drawing set | the whole 33-module curriculum | Curriculum |
-| sheet | one module's page | Module |
-| subsystem | a category | Level |
-| sign off | the reader asserting they have read a module | Complete / Mark as read |
-| drawn / not drawn | `status: ready` / `status: draft` | Ready / Planned |
-| feeds | the modules a module is a prerequisite *for* | Unlocks |
-| requires | a module's own prerequisites | Requirements |
-| title block | the right-hand panel of facts on a module page | Module info |
-| the register | the reader's stored history | Your progress |
-| the drafter | the reader | Account |
-| index sheet | the flat list of all modules, at `/sheets` | Catalog |
-| extent | length in words and minutes | Length |
+| drawing set | the whole 33-module curriculum | **Curriculum** |
+| sheet | one module's page | **Module** |
+| subsystem | a category | **Level** |
+| sign off | the reader asserting they have read a module | **Complete** / **Completed** |
+| drawn / not drawn | `status: ready` / `status: draft` | **Ready** / **Planned** |
+| feeds | the modules a module is a prerequisite *for* | **Unlocks** |
+| requires | a module's own prerequisites | **Requirements** |
+| title block | the right-hand panel of facts on a module page | **Module info** |
+| the register | the reader's stored history | **Your progress** |
+| the drafter | the reader | **you** / **Account** |
+| index sheet | the flat list of all modules, at `/sheets` | **Catalog** |
+| extent | length in words and minutes | **Length** |
+| uptime | days in a row | **Streak** |
+| submittal register | the repositories a reader has linked to a module | **What you built** |
+| unsigned | a module the reader has not completed | **Not completed** |
 | A0 / A4 | the two page anatomies, chosen by `status` | — internal |
-| mark, class, XP, uptime | badge, rank, points, streak | Rank / Points / Streak |
-| LKM-01 | the drafter mark printed in the title block | — internal |
+| mark, class, XP | badge, rank, points | **Rank** / **XP** |
+| LKM-01 | the mark printed in the module info panel | — internal |
 | §n.n | a section of the original design spec, cited in code comments | — internal |
 
+**Two things are enforced rather than reviewed.** `tests/unit/copy-register.test.ts` scans **the whole
+of `src/`** for the left column in any reader-visible string and fails naming the file, the string and
+the replacement — a deliberately wider net than the copy register above it, because the vocabulary was
+replaced in one pass and has to be held everywhere. A word inside backticks is stripped before
+matching, since that is the code's own name. And the honest check is the export: strip the tags from
+every file in `out/` and grep the visible text. **Measured on 2026-09-08: 1,660 occurrences across 56
+pages before the rename, 0 after.**
+
+Three words did **not** move, and each for a reason:
+
+- **`drawn` on its own** is ordinary English for a figure. "LKM-01 has drawn every figure in this
+  curriculum" is correct and the legend page says it. Only the status sense is banned, which always
+  reads `not drawn`.
+- **`requires` and `feeds`** are ordinary verbs. What was retired was the pair of *labels*, and those
+  are asserted directly by `tests/unit/content/title-block.test.ts`.
+- **`register`, the verb.** A reader still registers a repository against a module. Only *the*
+  register — the noun for their stored history — became **Your progress**.
+
 **The section numbers in code comments (`§12.2`, `§4.4`, `§13.1.1`) refer to a design specification
-that is not in this repository.** They are stable identifiers used to tie a piece of code to the
-decision that produced it. Treat them as citations you cannot follow, not as dead links.
+that is not in this repository.** They are stable identifiers tying a piece of code to the decision
+that produced it. Treat them as citations you cannot follow, not as dead links.
 
 ---
 

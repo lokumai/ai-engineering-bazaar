@@ -112,10 +112,10 @@ function RoleEmpty({ drawnSlugs }: { drawnSlugs: readonly string[] }) {
       <p className="hl-mark m-0 text-ink-muted">{NO_ROLE}</p>
 
       <p className="m-0 font-display text-meta leading-normal text-ink-muted">
-        A role is never worked out from your name, from the sheets you have
-        signed off, or from anything else this browser holds. It is on record
+        A role is never worked out from your name, from the modules you have
+        completed, or from anything else this browser holds. It is on record
         only if you state it here, and it can be changed or removed at any time
-        without touching a single sign-off.
+        without touching a single completion.
       </p>
 
       <RolePicker drawnSlugs={drawnSlugs} />
@@ -163,7 +163,7 @@ function RoleStanding({
         <dt>Role</dt>
         <dd>{role.label}</dd>
 
-        <dt>Signed off on this path</dt>
+        <dt>Completed on this path</dt>
         <dd>
           {/* Gated on `hydrated` even though a role on record implies the store
               has answered: the gate is what tells "nothing recorded" from "not
@@ -176,7 +176,7 @@ function RoleStanding({
         <dt>To go</dt>
         <dd>{hydrated && standing !== null ? String(standing.remaining) : NO_READING}</dd>
 
-        <dt>Steps not yet drawn</dt>
+        <dt>Steps planned</dt>
         <dd>{drafts === null ? NO_READING : String(drafts)}</dd>
       </dl>
 
@@ -184,7 +184,7 @@ function RoleStanding({
 
       {/* §13.6, §16.2.1 — the reasoning behind the offered mark, kept as one
           line of reader-visible prose where the role is stated, and marked as an
-          offer on the shared mark row rather than drawn again here. Nothing on
+          offer on the shared mark row rather than ready again here. Nothing on
           this line is on record: an offer is a marking, and the only write is
           the reader's own click on a glyph. */}
       {offered !== undefined && (
@@ -196,9 +196,9 @@ function RoleStanding({
       {/* §13.4.2 — stated where the two numbers sit, so the denominator cannot
           be misread as the length of the list. */}
       <p className="m-0 font-display text-meta leading-normal text-ink-muted">
-        The tally counts sheets that are drawn. Steps pointing at a sheet nobody
+        The tally counts modules that are ready. Steps pointing at a module nobody
         has written yet are on the path as a roadmap and are left out of it,
-        because a sheet with no content has nothing to sign off.
+        because a module with no content has nothing to complete.
       </p>
 
       <p className="m-0 font-display text-ui leading-normal">
@@ -215,9 +215,9 @@ function RoleStanding({
         </summary>
 
         <p className="mt-2 mb-2 font-display text-meta leading-normal text-ink-muted">
-          Changing the role changes which sheets the path recommends and in what
-          order. It changes nothing that is on record: sign-offs are recorded
-          against sheets, so every one of them survives, and choosing this role
+          Changing the role changes which modules the path recommends and in what
+          order. It changes nothing that is on record: completions are recorded
+          against modules, so every one of them survives, and choosing this role
           again brings this path back exactly as it stands now.
         </p>
 

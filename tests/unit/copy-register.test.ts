@@ -187,7 +187,7 @@ const BANS: readonly Ban[] = [
   {
     name: 'anthropomorphism (first person)',
     pattern: /\b(?:I|I'm|I've|we|we'll|we've|my|our)\b/i,
-    why: 'The page never says "I saved your progress". It says SHEET 07 SIGNED OFF. Google and '
+    why: 'The page never says "I saved your progress". It says MODULE 07 COMPLETED. Google and '
       + "Microsoft's UI guides independently forbid attributing human qualities to software.",
   },
   {
@@ -219,11 +219,11 @@ const BANS: readonly Ban[] = [
     why: 'GOV.UK: an error message never blames the reader.',
   },
   {
-    name: 'NOT YET DRAWN',
+    name: 'PLANNED',
     pattern: /\bNOT YET DRAWN\b/,
-    why: '§12.14.1 — the register has ONE word for this state and it is NOT DRAWN, used by the '
+    why: '§12.14.1 — the copy register has ONE word for this state and it is PLANNED, used by '
       + 'manifest, the filter chip, the module row, the diagram and the report. §13 arrived with '
-      + '"NOT YET DRAWN" in its spec text, and a path step duly printed it, so one sheet read two '
+      + '"PLANNED" in its spec text, and a path step duly printed it, so one sheet read two '
       + 'ways on two screens. A second spelling of a status is the drift this register exists to '
       + 'stop, and it is worth a ban of its own because both forms read as correct in isolation.',
   },
@@ -246,7 +246,7 @@ const ALLOWED: ReadonlyArray<{ text: RegExp; ban: string; why: string }> = [
     ban: 'anthropomorphism (first person)',
     why: '§12.15 and §12.14.1 both quote this EXACT label as the model decline button, and '
       + '§12.14.1 uses it as its own example of copy that is right. The ban is on the software '
-      + 'speaking as a person ("I saved your progress"); this possessive is the READER\'s, on a '
+      + 'speaking as a person ("I saved it for you"); this possessive is the READER\'s, on a '
       + 'button that states the safe outcome, which is the thing the section asks for rather '
       + 'than the thing it forbids.',
   },
@@ -259,6 +259,13 @@ const ALLOWED: ReadonlyArray<{ text: RegExp; ban: string; why: string }> = [
     text: /SHA-256|Intl\.|navigator\.|crypto\.|localStorage/,
     ban: '*',
     why: 'An API name.',
+  },
+  {
+    text: /(?:^|\s)hl-/,
+    ban: 'retired vocabulary',
+    why: 'A stylesheet class list. `hl-sheet-title` and `hl-subsystems-head` are the code\'s own '
+      + 'names, which §9 keeps: renaming a class is a refactor with no reader-visible effect, and '
+      + 'a class list only looks like prose because it contains a space.',
   },
 ]
 
@@ -293,9 +300,9 @@ describe('§12.14.1 — the copy register', () => {
     const sample = [
       "// This comment says please and simply and has an exclamation mark!",
       "/* So does this one: awesome! */",
-      "const ok = 'SHEET 07 SIGNED OFF'",
+      "const ok = 'MODULE 07 COMPLETED'",
     ].join('\n')
-    expect(visibleText(sample)).toEqual(['SHEET 07 SIGNED OFF'])
+    expect(visibleText(sample)).toEqual(['MODULE 07 COMPLETED'])
   })
 
   it('lifts strings out before stripping comments, so a comment marker inside one is safe', () => {
@@ -331,4 +338,124 @@ describe('§12.14.1 — the copy register', () => {
       expect(offences, `${ban.name}: ${ban.why}`).toEqual([])
     })
   }
+})
+
+/**
+ * M9 — the retired vocabulary, banned rather than reviewed.
+ *
+ * `kia-context/specs/ARCHITECTURE.md` §9 lists the words the interface used to
+ * speak: a module was a *sheet*, a level a *subsystem*, finishing one a
+ * *sign-off*, and a written one *drawn*. The whole set was a *drawing set* and
+ * the reader was a *drafter*. It was consistent and it was undecodable to a
+ * first-time reader, so `logs/BRAINSTORM.md` D10 replaced it with vocabulary set
+ * C. **The code keeps the old names** — `sheetStamps`, `data-drawn`, `hl-sheet`,
+ * `kind: 'sign-off'` — because renaming a storage key would invalidate every
+ * reader's saved history for a cosmetic gain. Only what a reader can see moved.
+ *
+ * ## Why this scan is wider than the register above
+ *
+ * `ROOTS` deliberately excludes the older chrome: the register arrived mid-way
+ * through the project and widening it would have turned a guard into a refactor.
+ * This ban has the opposite requirement. The vocabulary was replaced everywhere
+ * in one pass, so it has to be *held* everywhere, and a root left out is a place
+ * the old word can come back. So this scans the whole of `src/`.
+ *
+ * ## What is not banned, and why
+ *
+ * **`drawn` on its own.** It is ordinary English for a figure — "LKM-01 has
+ * drawn every figure in this curriculum" is correct, and the legend page says
+ * exactly that. Only the status sense is banned, which always appears as
+ * `not drawn`, `NOT DRAWN` or `not yet drawn`.
+ *
+ * **`requires` and `feeds`.** Both are ordinary verbs. The retired thing was the
+ * pair of *labels*, and those are asserted directly by
+ * `tests/unit/content/title-block.test.ts`, which is a better instrument: it
+ * checks the label a module page actually prints rather than the word appearing
+ * anywhere in a sentence.
+ *
+ * ## The measurement this replaces
+ *
+ * Before the rename the export carried **1,660 occurrences of this vocabulary
+ * across 56 pages**; after it, zero. That was measured by stripping tags from
+ * every file in `out/` and grepping the visible text, which is the honest check
+ * and needs a build. This test is the cheap one that runs on every commit, and
+ * it is a lexical scan of the source rather than a substitute for that build.
+ */
+const RETIRED: ReadonlyArray<{ pattern: RegExp; instead: string }> = [
+  { pattern: /\bdrawing set\b/i, instead: 'the curriculum' },
+  { pattern: /\bindex sheet\b/i, instead: 'the catalog' },
+  { pattern: /\bsheets?\b/i, instead: 'module' },
+  { pattern: /\bsubsystems?\b/i, instead: 'level' },
+  { pattern: /\bsign(?:ed|ing)?[ -]off\b/i, instead: 'complete / completed' },
+  { pattern: /\bnot (?:yet )?drawn\b/i, instead: 'planned' },
+  { pattern: /\btitle block\b/i, instead: 'module info' },
+  { pattern: /\bthe register\b/i, instead: 'your progress' },
+  { pattern: /\bdrafters?\b/i, instead: 'you, or the account' },
+  { pattern: /\bextent\b/i, instead: 'length' },
+  { pattern: /\buptime\b/i, instead: 'streak' },
+]
+
+/** Every `.ts`/`.tsx` under `src/`, so a new file cannot be a hole. */
+function everything(dir: string = ''): string[] {
+  const full = path.join(SRC, dir)
+  return readdirSync(full).flatMap((entry) => {
+    const next = path.join(dir, entry)
+    if (statSync(path.join(SRC, next)).isDirectory()) return everything(next)
+    return entry.endsWith('.ts') || entry.endsWith('.tsx') ? [path.join(SRC, next)] : []
+  })
+}
+
+const ALL_FILES = everything().sort()
+
+describe('M9 — the retired vocabulary stays retired', () => {
+  it('scans the whole of src, not a subset, so a new file cannot be a hole', () => {
+    expect(ALL_FILES.length).toBeGreaterThan(FILES.length)
+    expect(ALL_FILES).toEqual(expect.arrayContaining(FILES))
+  })
+
+  it('states a replacement for every word it bans', () => {
+    for (const { pattern, instead } of RETIRED) {
+      expect(instead, String(pattern)).not.toBe('')
+    }
+  })
+
+  /**
+   * The guard bites: run the bans over a string that carries the old
+   * vocabulary and every one of them has to fire. Without this the block
+   * above passes just as green with a typo in every pattern.
+   */
+  it('fires on the vocabulary it is meant to catch', () => {
+    const old = 'SHEET 07 of the drawing set · SUBSYSTEM 02 · NOT DRAWN · '
+      + 'the index sheet · signed off by the drafter · title block · '
+      + 'the register · EXTENT · UPTIME'
+    const fired = RETIRED.filter(({ pattern }) => pattern.test(old))
+    expect(fired).toHaveLength(RETIRED.length)
+  })
+
+  /**
+   * A word inside backticks is the code's own name, not a word a reader sees:
+   * `render.ts` throws "the caller has to pass `sheet`", where `sheet` is the
+   * parameter. §9 keeps those, so they are stripped before matching rather than
+   * exempted string by string — an exemption list would grow with every error
+   * message that mentions an identifier.
+   */
+  const withoutCodeNames = (text: string) => text.replaceAll(/`[^`]*`/g, '')
+
+  it('finds none of it in any reader-visible string', () => {
+    const offences: string[] = []
+    for (const file of ALL_FILES) {
+      for (const text of visibleText(readFileSync(file, 'utf8'))) {
+        const prose = withoutCodeNames(text)
+        for (const { pattern, instead } of RETIRED) {
+          if (pattern.test(prose) && !exempt(text, 'retired vocabulary')) {
+            offences.push(
+              `${path.relative(SRC, file)}: ${JSON.stringify(text)}`
+              + ` — matched ${pattern}, say ${instead}`,
+            )
+          }
+        }
+      }
+    }
+    expect(offences).toEqual([])
+  })
 })

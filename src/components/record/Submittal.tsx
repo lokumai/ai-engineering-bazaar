@@ -146,7 +146,7 @@ export function Submittal({ slug }: { slug: string }) {
     if (submittals.some((entry) => `${entry.owner}/${entry.repo}`.toLowerCase() === taken)) {
       // The reducer would drop this silently. A form that clears itself and
       // records nothing is the page telling the reader something untrue.
-      setError({ field: 'repo', message: 'This repository is already registered against this sheet' })
+      setError({ field: 'repo', message: 'This repository is already registered against this module' })
       return
     }
 
@@ -183,13 +183,13 @@ export function Submittal({ slug }: { slug: string }) {
     <section className="hl-submittal" aria-labelledby={headId}>
       <div className="hl-submittal-head hl-mark">
         <h2 id={headId} className="m-0 font-medium">
-          SUBMITTAL — REGISTER WHAT YOU BUILT
+          WHAT YOU BUILT
         </h2>
         <span>{`${submittals.length} OF ${MAX_SUBMITTALS}`}</span>
       </div>
 
       {submittals.length === 0 ? (
-        <p className="hl-submittal-empty hl-mark">NO SUBMITTAL REGISTERED</p>
+        <p className="hl-submittal-empty hl-mark">NOTHING ADDED YET</p>
       ) : (
         <ul className="hl-submittal-list">
           {submittals.map((entry, index) => (
@@ -301,7 +301,7 @@ export function Submittal({ slug }: { slug: string }) {
 
           <div className="flex flex-wrap items-center gap-2">
             <button type="submit" className="hl-btn">
-              REGISTER
+              ADD REPOSITORY
             </button>
           </div>
         </form>

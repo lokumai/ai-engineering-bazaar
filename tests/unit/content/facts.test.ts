@@ -19,14 +19,14 @@ import { sheetCount } from '@/lib/content/curriculum'
 const facts = curriculumFacts()
 const modules = loadAllModules()
 
-describe('curriculumFacts — the sheets', () => {
-  it('carries one fact per sheet, in module order', () => {
+describe('curriculumFacts — the modules', () => {
+  it('carries one fact per module, in module order', () => {
     expect(facts.sheets).toHaveLength(sheetCount())
     expect(facts.sheets.map((s) => s.module))
       .toEqual(Array.from({ length: sheetCount() }, (_, i) => i + 1))
   })
 
-  it('identifies a sheet by its slug, never by its number', () => {
+  it('identifies a module by its slug, never by its number', () => {
     // §12.1.3: the set has been renumbered before. A number is a label.
     for (const sheet of facts.sheets) {
       expect(sheet.slug, `module ${sheet.module}`).toMatch(/^[a-z-]+\/[a-z0-9-]+$/)
@@ -51,7 +51,7 @@ describe('curriculumFacts — the sheets', () => {
     }
   })
 
-  it('counts each sheet\'s checklist items the way the sheet writes them', () => {
+  it('counts each module\'s checklist items the way the module writes them', () => {
     for (const sheet of facts.sheets) {
       const module = modules.find((m) => m.slug === sheet.slug)!
       expect(sheet.checklistItems, sheet.slug).toBe(checklistOf(module.body).length)
@@ -61,13 +61,13 @@ describe('curriculumFacts — the sheets', () => {
 })
 
 describe('curriculumFacts — the categories', () => {
-  it('lists the five subsystems in their declared order', () => {
+  it('lists the five levels in their declared order', () => {
     expect(facts.categories.map((c) => c.slug))
       .toEqual(CATEGORIES.map((c) => c.slug))
     expect(facts.categories.map((c) => c.order)).toEqual([1, 2, 3, 4, 5])
   })
 
-  it('carries the subsystem title, so a page needs no second lookup', () => {
+  it('carries the level title, so a page needs no second lookup', () => {
     for (const category of CATEGORIES) {
       expect(facts.categories.find((c) => c.slug === category.slug)?.title)
         .toBe(category.title)
@@ -76,20 +76,20 @@ describe('curriculumFacts — the categories', () => {
 })
 
 describe('curriculumFacts — the §12.5.1 XP ceiling', () => {
-  it('counts sign-off against drawn sheets only', () => {
+  it('counts sign-off against ready modules only', () => {
     // §12.4.1: an A4 draft has no sign-off control at all, which is what keeps
     // every denominator on the site honest.
     expect(facts.attainable.signOff).toBe(facts.sheets.filter((s) => s.drawn).length)
   })
 
-  it('counts a quiz only where a drawn sheet actually asks something', () => {
+  it('counts a quiz only where a ready module actually asks something', () => {
     const eligible = modules.filter(
       (m) => m.frontmatter.status === 'ready' && quickCheckOf(m.body) !== null,
     )
     expect(facts.attainable.quiz).toBe(eligible.length)
   })
 
-  it('counts a checklist only where a drawn sheet has at least one item', () => {
+  it('counts a checklist only where a ready module has at least one item', () => {
     const eligible = modules.filter(
       (m) => m.frontmatter.status === 'ready' && checklistOf(m.body).length > 0,
     )
@@ -126,7 +126,7 @@ describe('curriculumFacts — what it may not carry', () => {
     expect(JSON.parse(JSON.stringify(facts))).toEqual(facts)
   })
 
-  it('holds exactly the nine fields §12.6 declares for a sheet', () => {
+  it('holds exactly the nine fields §12.6 declares for a module', () => {
     for (const sheet of facts.sheets) {
       expect(Object.keys(sheet).sort(), sheet.slug).toEqual([
         'category', 'checklistItems', 'drawn', 'hasQuickCheck',

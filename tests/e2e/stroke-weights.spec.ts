@@ -89,7 +89,7 @@ test('Chrome still floors a border width, which is why rules are painted', async
     .toBe('100% 1.5px')
 })
 
-test('the index sheet paints its structural rule at the struct weight', async ({ page }) => {
+test('the catalog paints its structural rule at the struct weight', async ({ page }) => {
   await page.goto('/')
   const { weights, ruleStructHeight, token } = await paintedWeights(page)
 
@@ -97,14 +97,14 @@ test('the index sheet paints its structural rule at the struct weight', async ({
   // §4.8 item 3 — the full-box rule under the statement. Its whole box is the
   // rule, so this is the weight itself, measured.
   expect(ruleStructHeight).toBe(1.5)
-  expect(weights, 'the struct weight is painted somewhere on the index sheet')
+  expect(weights, 'the struct weight is painted somewhere on the catalog')
     .toContain(1.5)
 })
 
-test('an A0 sheet paints the struct weight rather than bordering it', async ({ page }) => {
+test('an A0 module paints the struct weight rather than bordering it', async ({ page }) => {
   await page.goto(A0.path)
   const { weights } = await paintedWeights(page)
-  expect(weights, 'no rule on the sheet paints heavier than a hairline')
+  expect(weights, 'no rule on the module paints heavier than a hairline')
     .toContain(1.5)
 
   // The named consumers: §6.1's rule under the h1, §6.5's rule under a table
@@ -125,7 +125,7 @@ test('an A0 sheet paints the struct weight rather than bordering it', async ({ p
   )
 
   for (const consumer of consumers) {
-    expect(consumer.found, `${consumer.selector} exists on an A0 sheet`).toBe(true)
+    expect(consumer.found, `${consumer.selector} exists on an A0 module`).toBe(true)
     expect(consumer.painted, `${consumer.selector} paints the rule`).toBe('100% 1.5px')
     expect(consumer.borderColor, `${consumer.selector} does not border it`)
       .toBe('rgba(0, 0, 0, 0)')

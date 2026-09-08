@@ -520,7 +520,7 @@ export async function createAssignment(
     if (cleanup.error) {
       throw new Error(
         `${original} — and the incomplete assignment ${id} could not be removed `
-          + `(${cleanup.error.message}). It exists with no sheets; delete it by hand.`,
+          + `(${cleanup.error.message}). It exists with no modules; delete it by hand.`,
       )
     }
     throw new Error(`${original} — the incomplete assignment was removed.`)

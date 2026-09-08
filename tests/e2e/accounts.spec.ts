@@ -75,7 +75,7 @@ test.describe('§14 accounts, organisations and the record that outlives a brows
 
   // -- §14.7 sign-in --------------------------------------------------------
 
-  test('the sign-in sheet offers exactly the providers this project has', async ({ page }) => {
+  test('the sign-in page offers exactly the providers this project has', async ({ page }) => {
     // Asserted against Supabase's own public settings rather than against a
     // fixed list of three. A provider needs code AND configuration, and the
     // panel used to offer all three unconditionally — so on a project with
@@ -239,7 +239,7 @@ test.describe('§14 accounts, organisations and the record that outlives a brows
 
     await page.goto('/courses/intermediate/harness-engineering/')
     await waitForHydratedReadout(page)
-    await page.getByRole('button', { name: 'SIGN OFF', exact: true }).click()
+    await page.getByRole('button', { name: 'COMPLETE', exact: true }).click()
     await expect(page.getByRole('button', { name: /^SIGNED OFF / })).toBeVisible()
 
     // The event name IS the reducer name (§14.2.3) - no translation layer.
@@ -366,7 +366,7 @@ test.describe('§14 accounts, organisations and the record that outlives a brows
 
     // Inside the delay: the claim has not resolved, so `outcome.record` — if it
     // were applied as a replacement — cannot know about this.
-    await page.getByRole('button', { name: 'SIGN OFF', exact: true }).click()
+    await page.getByRole('button', { name: 'COMPLETE', exact: true }).click()
     await expect(page.getByRole('button', { name: /^SIGNED OFF / })).toBeVisible()
 
     // Past the delay, so the merge has landed and written to localStorage.
@@ -413,7 +413,7 @@ test.describe('§14 accounts, organisations and the record that outlives a brows
     // Something to erase, in both tables.
     await page.goto('/courses/intermediate/loop-engineering/')
     await waitForHydratedReadout(page)
-    await page.getByRole('button', { name: 'SIGN OFF', exact: true }).click()
+    await page.getByRole('button', { name: 'COMPLETE', exact: true }).click()
     await expect(page.getByRole('button', { name: /^SIGNED OFF / })).toBeVisible()
     await expect
       .poll(() => serverRecord(fixture, fixture.ids.eraser), { timeout: 20_000 })
@@ -523,7 +523,7 @@ test.describe('§14 accounts, organisations and the record that outlives a brows
 
   // -- §14.5 joining --------------------------------------------------------
 
-  test('the join sheet discloses before it offers, and the reader joins', async ({
+  test('the join module discloses before it offers, and the reader joins', async ({
     page,
     baseURL,
   }) => {

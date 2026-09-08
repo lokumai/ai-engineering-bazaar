@@ -83,7 +83,7 @@ describe('the note under the list', () => {
   })
 
   it('keeps sign-off as the only exit', () => {
-    expect(NOTE).toContain('signed off, never because more time passed')
+    expect(NOTE).toContain('completed, never because more time passed')
   })
 })
 
@@ -120,7 +120,7 @@ describe('what the panel actually lists, on its own arguments', () => {
     expect(flags[0]?.idleDays).toBe(STALL_DAYS)
   })
 
-  it('lists nothing for a sheet whose only evidence is undated ticks and sources', () => {
+  it('lists nothing for a module whose only evidence is undated ticks and sources', () => {
     const data = record({
       'fundamentals/llms': {
         ...emptySheetRecord(),

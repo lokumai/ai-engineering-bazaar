@@ -55,7 +55,7 @@ export const NOT_FOUND_SEGMENT = '/_not-found'
  * one honest thing it can say is that no such sheet exists — never the URL
  * that was asked for, which names nothing.
  */
-export const NOT_FOUND_TITLE = 'No such sheet'
+export const NOT_FOUND_TITLE = 'No such module'
 
 /**
  * The same name in the case chrome labels are written in (§3.4). The footer
@@ -84,8 +84,8 @@ const SET_SEGMENT = 'courses'
 const INDEX_SEGMENT = 'sheets'
 
 const ROUTE_TITLES: Record<string, string> = {
-  [SET_SEGMENT]: 'Drawing set',
-  [INDEX_SEGMENT]: 'Sheet index',
+  [SET_SEGMENT]: 'Curriculum',
+  [INDEX_SEGMENT]: 'Catalog',
 }
 
 /**
@@ -153,7 +153,7 @@ function titleFor(segment: string, categories: readonly CategoryLabel[]): string
 function subsystemLabel(slug: string, categories: readonly CategoryLabel[]): string {
   const category = categories.find((candidate) => candidate.slug === slug)
   return category
-    ? `SUBSYSTEM ${String(category.order).padStart(2, '0')}`
+    ? `LEVEL ${String(category.order).padStart(2, '0')}`
     : titleFor(slug, categories).toUpperCase()
 }
 

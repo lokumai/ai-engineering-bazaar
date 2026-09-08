@@ -47,7 +47,7 @@ function Relation({ label, targets }: DependencyRelation) {
                 data-draft={target.draft ? '' : undefined}
                 title={
                   target.draft
-                    ? `${target.title} — not yet drawn`
+                    ? `${target.title} — planned`
                     : target.title
                 }
               >

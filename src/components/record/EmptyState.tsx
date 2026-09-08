@@ -77,8 +77,8 @@ export function emptyStateCopy(state: EmptyStateSpec): Copy {
       return {
         status: `SIGNED OFF 00 / ${String(state.of).padStart(2, '0')}`,
         cue:
-          'Sheets you sign off are drawn with a solid outline. Nothing is '
-          + 'signed off yet.',
+          'Modules you complete have a solid outline. Nothing is '
+          + 'completed yet.',
         path: state.firstSheet,
         live: null,
       }
@@ -100,7 +100,7 @@ export function emptyStateCopy(state: EmptyStateSpec): Copy {
       // filter is hiding them. Inventing a third line here would be copy the
       // spec did not write.
       return {
-        status: `NO SHEETS MATCH FILTER — ${state.matched} of ${state.of}`,
+        status: `NO MODULES MATCH FILTER — ${state.matched} of ${state.of}`,
         cue: null,
         path: null,
         live: 'status',

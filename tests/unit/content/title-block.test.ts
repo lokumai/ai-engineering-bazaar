@@ -66,27 +66,27 @@ describe('thousands', () => {
   })
 })
 
-describe('eyebrow and sheet label', () => {
-  it('states the subsystem, the band and the sheet in the set', () => {
-    expect(eyebrow(DRAWN)).toBe('SUBSYSTEM 02 · INTERMEDIATE · SHEET 13 OF 32')
+describe('eyebrow and module label', () => {
+  it('states the level, the band and the module in the set', () => {
+    expect(eyebrow(DRAWN)).toBe('LEVEL 02 · INTERMEDIATE · MODULE 13 OF 32')
   })
 
-  it('zero-pads the subsystem number', () => {
-    expect(eyebrow(NOT_DRAWN)).toBe('SUBSYSTEM 03 · EXPERT · SHEET 20 OF 32')
+  it('zero-pads the level number', () => {
+    expect(eyebrow(NOT_DRAWN)).toBe('LEVEL 03 · EXPERT · MODULE 20 OF 32')
   })
 
   it('gives the footer its own short form', () => {
-    expect(sheetLabel(DRAWN)).toBe('SHEET 13 OF 32')
+    expect(sheetLabel(DRAWN)).toBe('MODULE 13 OF 32')
   })
 })
 
-describe('titleBlockRows — the drawn sheet', () => {
+describe('titleBlockRows — the ready module', () => {
   const rows = titleBlockRows(DRAWN)
 
   it('prints the twelve rows §5.5 names, in order', () => {
     expect(rows.map((r) => r.label)).toEqual([
-      'DRAWING', 'SUBSYSTEM', 'POSITION', 'EXTENT', 'FIGURES', 'SOURCES',
-      'REQUIRES', 'FEEDS', 'REVISION', 'DATE', 'LANG', 'DRAWN BY',
+      'DRAWING', 'LEVEL', 'POSITION', 'LENGTH', 'FIGURES', 'SOURCES',
+      'REQUIREMENTS', 'UNLOCKS', 'REVISION', 'DATE', 'LANG', 'MARKED BY',
     ])
   })
 
@@ -94,16 +94,16 @@ describe('titleBlockRows — the drawn sheet', () => {
     expect(value(rows, 'DRAWING')).toBe('13')
   })
 
-  it('names the subsystem by number and title', () => {
-    expect(value(rows, 'SUBSYSTEM')).toBe('02 · INTERMEDIATE')
+  it('names the level by number and title', () => {
+    expect(value(rows, 'LEVEL')).toBe('02 · INTERMEDIATE')
   })
 
-  it('places the sheet inside its own category', () => {
+  it('places the module inside its own category', () => {
     expect(value(rows, 'POSITION')).toBe('6 OF 8')
   })
 
   it('prints extent as measured words and the declared duration', () => {
-    expect(value(rows, 'EXTENT')).toBe('4,912 W · 30 MIN')
+    expect(value(rows, 'LENGTH')).toBe('4,912 W · 30 MIN')
   })
 
   it('separates diagrams from tables', () => {
@@ -115,8 +115,8 @@ describe('titleBlockRows — the drawn sheet', () => {
   })
 
   it('lists dependency edges as module numbers', () => {
-    expect(value(rows, 'REQUIRES')).toBe('12')
-    expect(value(rows, 'FEEDS')).toBe('14')
+    expect(value(rows, 'REQUIREMENTS')).toBe('12')
+    expect(value(rows, 'UNLOCKS')).toBe('14')
   })
 
   it('prints the file revision, not repo HEAD, and its date', () => {
@@ -126,16 +126,16 @@ describe('titleBlockRows — the drawn sheet', () => {
 
   it('keeps the hash in its own case, since .hl-mark uppercases', () => {
     expect(rows.find((r) => r.label === 'REVISION')?.preserveCase).toBe(true)
-    expect(rows.find((r) => r.label === 'EXTENT')?.preserveCase).toBeUndefined()
+    expect(rows.find((r) => r.label === 'LENGTH')?.preserveCase).toBeUndefined()
   })
 
   it('spaces the bilingual value and credits the draughtsman', () => {
     expect(value(titleBlockRows({ ...DRAWN, lang: 'EN·TR' }), 'LANG')).toBe('EN · TR')
-    expect(value(rows, 'DRAWN BY')).toBe('LKM-01')
+    expect(value(rows, 'MARKED BY')).toBe('LKM-01')
   })
 })
 
-describe('titleBlockRows — a drawn sheet that cites nothing', () => {
+describe('titleBlockRows — a ready module that cites nothing', () => {
   // Modules 2, 4 and 5 are `status: ready` and carry no external link at all.
   const rows = titleBlockRows({ ...DRAWN, sources: 0, diagrams: 1, tables: 0 })
 
@@ -148,18 +148,18 @@ describe('titleBlockRows — a drawn sheet that cites nothing', () => {
   })
 })
 
-describe('titleBlockRows — the sheet that is not drawn', () => {
+describe('titleBlockRows — the module that is planned', () => {
   const rows = titleBlockRows(NOT_DRAWN)
 
   it('has no extent, because there is no drawing to measure', () => {
-    expect(value(rows, 'EXTENT')).toBe('—')
+    expect(value(rows, 'LENGTH')).toBe('—')
   })
 
   it('dashes every row §4.5 dashes on the draft strip', () => {
     expect(value(rows, 'FIGURES')).toBe('—')
     expect(value(rows, 'SOURCES')).toBe('—')
-    expect(value(rows, 'REQUIRES')).toBe('—')
-    expect(value(rows, 'FEEDS')).toBe('—')
+    expect(value(rows, 'REQUIREMENTS')).toBe('—')
+    expect(value(rows, 'UNLOCKS')).toBe('—')
   })
 
   it('dashes them on status, not on a zero that happens to coincide', () => {
@@ -174,13 +174,13 @@ describe('titleBlockRows — the sheet that is not drawn', () => {
 })
 
 describe('titleStripRows', () => {
-  it('carries the same rows as the block on a drawn sheet', () => {
+  it('carries the same rows as the block on a ready module', () => {
     expect(titleStripRows(DRAWN)).toEqual(titleBlockRows(DRAWN))
   })
 
-  it('carries the six §4.5 names on a draft sheet, in that order', () => {
+  it('carries the six §4.5 names on a draft module, in that order', () => {
     expect(titleStripRows(NOT_DRAWN).map((r) => r.label)).toEqual([
-      'EXTENT', 'FIGURES', 'SOURCES', 'REQUIRES', 'LANG', 'REVISION',
+      'LENGTH', 'FIGURES', 'SOURCES', 'REQUIREMENTS', 'LANG', 'REVISION',
     ])
   })
 })
@@ -193,7 +193,7 @@ describe('a missing revision', () => {
   })
 })
 
-describe('sheetFacts, over the real corpus', () => {
+describe('moduleFacts, over the real corpus', () => {
   const graph = moduleGraph()
   const facts = (slug: string) => {
     const module = loadModule(slug)
@@ -241,7 +241,7 @@ describe('sheetFacts, over the real corpus', () => {
     expect(row?.value).toBe(`${diagrams} DIAG · ${tables} TBL`)
   })
 
-  it('prints a FIGURES row no drawn sheet can inflate', () => {
+  it('prints a FIGURES row no ready module can inflate', () => {
     for (const module of loadAllModules().filter((m) => m.frontmatter.status === 'ready')) {
       const row = titleBlockRows(facts(module.slug)).find((r) => r.label === 'FIGURES')
       expect(row?.value, module.slug)
@@ -249,11 +249,11 @@ describe('sheetFacts, over the real corpus', () => {
     }
   })
 
-  it('leaves every draft sheet with nothing to print but its revision', () => {
+  it('leaves every draft module with nothing to print but its revision', () => {
     for (const module of loadAllModules().filter((m) => m.sheetFormat === 'A4')) {
       const rows = titleStripRows(facts(module.slug))
       const printed = Object.fromEntries(rows.map((r) => [r.label, r.value]))
-      expect(printed.EXTENT, module.slug).toBe('—')
+      expect(printed.LENGTH, module.slug).toBe('—')
       expect(printed.FIGURES, module.slug).toBe('—')
       expect(printed.SOURCES, module.slug).toBe('—')
     }

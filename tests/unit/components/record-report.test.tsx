@@ -65,9 +65,9 @@ const DIGEST = 'a'.repeat(64)
 function sheet(module: number): ReportSheetFact {
   const drawn = module <= 6
   return {
-    slug: `band/sheet-${module}`,
+    slug: `band/module-${module}`,
     module,
-    title: `Sheet ${module}`,
+    title: `Module ${module}`,
     categorySlug: module <= 4 ? 'fundamentals' : 'intermediate',
     categoryTitle: module <= 4 ? 'Fundamentals' : 'Intermediate',
     categoryOrder: module <= 4 ? 1 : 2,
@@ -83,7 +83,7 @@ const FACTS: ReportFacts = {
   sheets: Array.from({ length: 8 }, (_, i) => sheet(i + 1)),
   curriculumName: 'AI Engineering Bazaar',
   criteriaUrl: 'https://lokumai.github.io/ai-engineering-bazaar/legend/',
-  assertion: 'Signing off is your own assertion that you have read this sheet.',
+  assertion: 'Marking a module complete is your own assertion that you have read this module.',
 }
 
 /**
@@ -114,15 +114,15 @@ const COUNTS: CurriculumFacts = {
 /** A record with something in every field the preview reports. */
 function fullRecord(): RecordData {
   let data = setIdentity(EMPTY_RECORD, { name: 'Ada Lovelace' }, AT)
-  data = signOff(data, 'band/sheet-1', 'a1b2c3d', AT)
-  data = signOff(data, 'band/sheet-2', 'a1b2c3d', AT)
-  data = setQuizAnswer(data, 'band/sheet-2', 'Because the window is finite.', AT)
-  data = assessQuiz(data, 'band/sheet-2', 'matched', AT)
-  data = recordSourceOpened(data, 'band/sheet-1', 'https://example.org/spec', AT)
-  data = recordSourceOpened(data, 'band/sheet-2', 'https://example.org/other', AT)
+  data = signOff(data, 'band/module-1', 'a1b2c3d', AT)
+  data = signOff(data, 'band/module-2', 'a1b2c3d', AT)
+  data = setQuizAnswer(data, 'band/module-2', 'Because the window is finite.', AT)
+  data = assessQuiz(data, 'band/module-2', 'matched', AT)
+  data = recordSourceOpened(data, 'band/module-1', 'https://example.org/spec', AT)
+  data = recordSourceOpened(data, 'band/module-2', 'https://example.org/other', AT)
   // The same URL twice, so `sources` is asserted to be DISTINCT (§12.8).
-  data = recordSourceOpened(data, 'band/sheet-2', 'https://example.org/spec', AT)
-  data = addSubmittal(data, 'band/sheet-2', {
+  data = recordSourceOpened(data, 'band/module-2', 'https://example.org/spec', AT)
+  data = addSubmittal(data, 'band/module-2', {
     owner: 'cevheri',
     repo: 'agent-harness',
     url: 'https://github.com/cevheri/agent-harness',
@@ -178,7 +178,7 @@ describe('reportPreview — what the file will say (§12.12.1, §12.12.2)', () =
     const preview = reportPreview(data, COUNTS)
     const html = buildRecordOfWork({ data, facts: FACTS, generatedAt: GENERATED, digest: DIGEST })
 
-    expect(html).toContain(`<dt>Signed off</dt><dd>${preview.signed} / ${preview.of}</dd>`)
+    expect(html).toContain(`<dt>Completed</dt><dd>${preview.signed} / ${preview.of}</dd>`)
     expect(html).toContain(`<dt>To go</dt><dd>${preview.toGo}</dd>`)
     expect(html).toContain(`<dt>Repositories</dt><dd>${preview.repositories}</dd>`)
     expect(html).toContain(`<dt>Sources opened</dt><dd>${preview.sources}</dd>`)
@@ -306,7 +306,7 @@ describe('/report/ — the route (§12.12)', () => {
     // the corpus is reordered and added to constantly, and a number written
     // into this file would turn an ordinary edit into a failure.
     const sheets = curriculumFacts().sheets.length
-    expect(words(markup)).toMatch(new RegExp(`ledger of all ${sheets} sheets`))
+    expect(words(markup)).toMatch(new RegExp(`ledger of all ${sheets} modules`))
   })
 
   it('names no authority and claims none (§12.12.1)', () => {
@@ -334,11 +334,11 @@ describe('/report/ — the route (§12.12)', () => {
   })
 })
 
-describe('SHEET 00 — the legend (§12.13)', () => {
+describe('MODULE 00 — the legend (§12.13)', () => {
   const markup = renderToStaticMarkup(<LegendPage />)
 
-  it('is SHEET 00, and it is a page rather than a gate', () => {
-    expect(markup).toContain('SHEET 00 — LEGEND &amp; SPECIMEN')
+  it('is MODULE 00, and it is a page rather than a gate', () => {
+    expect(markup).toContain('MODULE 00 — LEGEND &amp; SPECIMEN')
     // No first-run gate anywhere on this site: no modal, no tour, no step
     // counter, nothing that opens by itself.
     expect(markup).not.toContain('role="dialog"')
@@ -502,7 +502,7 @@ describe('§12.14.1 — the copy register', () => {
   const surfaces: Array<[string, string]> = [
     ['ReportPanel', renderToStaticMarkup(<ReportPanel facts={FACTS} counts={COUNTS} />)],
     ['/report/', renderToStaticMarkup(<ReportPage />)],
-    ['SHEET 00', renderToStaticMarkup(<LegendPage />)],
+    ['MODULE 00', renderToStaticMarkup(<LegendPage />)],
     ['the specimen', renderToStaticMarkup(<SpecimenPage />)],
   ]
 

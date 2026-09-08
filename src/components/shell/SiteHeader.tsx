@@ -55,7 +55,7 @@ export function SiteHeader() {
       <div className="mx-auto flex h-14 w-full max-w-[var(--width-shell)] items-center gap-4 px-6">
         {/*
           MASCOT SLOT — LKM-01 (§8) as the live progress meter: a 32px box
-          holding the 28px mark §5.1 asks for, drawn on a 0 0 32 32 viewBox.
+          holding the 28px mark §5.1 asks for, ready on a 0 0 32 32 viewBox.
           Its six faces are painted from the `hl-cat-*` classes the record's
           boot script stamps on <html> before first paint (§12.2), so the mark
           is correct in frame one and its markup never varies by reader.

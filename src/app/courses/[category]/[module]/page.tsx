@@ -212,8 +212,8 @@ export default async function ModuleSheetPage({
     <SheetRail
       toc={rendered?.toc.filter((entry) => entry.depth === 2) ?? []}
       relations={[
-        relation('Requires', graph.requires(number)),
-        relation('Feeds', graph.feeds(number)),
+        relation('Requirements', graph.requires(number)),
+        relation('Unlocks', graph.feeds(number)),
         relation('See also', graph.seeAlso(number)),
       ]}
     />
@@ -248,7 +248,7 @@ export default async function ModuleSheetPage({
               may never be the sole carrier of what it reports (§13.1.4, SC
               1.4.1). This page prints no statement of the subsystem's standing
               anywhere — the eyebrow names the subsystem and the sheet's place
-              in the drawing set, and the sign-off control speaks for this sheet
+              in the curriculum, and the completion control speaks for this module
               alone. So a tinted rule here would have been chroma asserting
               something about the reader that no text on the page said, and
               satisfying 1.4.1 would have meant adding a second coloured element
@@ -273,8 +273,8 @@ export default async function ModuleSheetPage({
               right rail leaves behind below 1280px (§4.7). */}
           {/* §7.4 — the strip carries the stamps too, which closes two holes at
               once: the seven A2 sheets (all of Fundamentals) never had a stamp
-              grid at all, and an A0 sheet below 1280px lost its grid when the
-              rail collapsed to this strip. On an A0 sheet at xl the strip is
+              grid at all, and an A0 module below 1280px lost its grid when the
+              rail collapsed to this strip. On an A0 module at xl the strip is
               hidden, so only one grid is ever on screen. */}
           <TitleStrip
             rows={titleStripRows(facts)}
@@ -334,7 +334,7 @@ export default async function ModuleSheetPage({
           {drawn && <SourceTracking slug={slug} />}
           {/* §12.7 — the checklist is upgraded where it already stands, inside
               the section that explains it, rather than lifted out and stacked
-              below the prose. Mounted only where there is one: one sheet in the
+              below the prose. Mounted only where there is one: one module in the
               corpus has items, and an island that finds nothing is a wasted
               mount on the other fourteen. */}
           {drawn && rendered !== null && rendered.checklist.length > 0 && (
@@ -346,8 +346,8 @@ export default async function ModuleSheetPage({
             `sheet.css` carries the reasoning: both drawn formats have always
             used the same 1152px box and the same 656px measure, so giving the
             rail to A0 only moved the metadata rather than the text, and the
-            prose jumped 132px sideways between two sheets of the same
-            curriculum. A draft has no rail because it has no title block panel
+            prose jumped 132px sideways between two modules of the same
+            curriculum. A draft has no rail because it has no module info panel
             and nothing to put in one (§4.5). */}
         {drawn && (
           <div className="hl-rail-right">

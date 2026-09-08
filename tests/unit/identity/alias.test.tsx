@@ -138,7 +138,7 @@ describe('§15.4.3 — the correction rides on the artefact', () => {
     expect(words(preview.replace(/text-caution-ink/g, ''))).toContain('UNVERIFIED')
   })
 
-  it('previews an empty name as UNSIGNED, which is what the title block prints', () => {
+  it('previews an empty name as UNSIGNED, which is what the module info prints', () => {
     const preview = SHEET.slice(SHEET.indexOf('<aside'))
     expect(words(preview)).toContain('UNSIGNED')
     // Never a placeholder person and never a fabricated example name.

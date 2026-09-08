@@ -133,7 +133,7 @@ export function PathStanding({ role, drawnSlugs }: PathStandingProps) {
         ·
       </span>
       <span>
-        Signed off{' '}
+        Completed{' '}
         <span className="hl-readout-value">
           {signed} of {standing.drawn}
         </span>

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: 'Alias',
   description:
     'Put a name and a mark on the record this browser holds. It is not an '
-    + 'account and it proves nothing; every sheet works without one.',
+    + 'account and it proves nothing; every module works without one.',
 }
 
 /**

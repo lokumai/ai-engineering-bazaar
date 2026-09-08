@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: 'Record of work',
   description:
     'Build one self-contained HTML file from what this browser has recorded: '
-    + 'the sheet ledger, the repositories registered against it, and the limits '
+    + 'the module ledger, the repositories registered against it, and the limits '
     + 'of what it can claim.',
 }
 
@@ -52,9 +52,9 @@ export default function ReportPage() {
       <p className="hl-lead">
         One self-contained HTML file, built in this browser out of what this
         browser has recorded, and saved to your own disk. It holds the ledger of
-        all {counts.sheets.length} sheets, the repositories registered against
+        all {counts.sheets.length} modules, the repositories registered against
         them, the answers written into the Quick Checks, and the sources opened
-        from each sheet. It is a record. Nobody assessed it and no authority
+        from each module. It is a record. Nobody assessed it and no authority
         issued it, and the file says so in its second block, above everything
         else it states.
       </p>
@@ -77,9 +77,9 @@ export default function ReportPage() {
 
         <p className="mt-0 mb-4 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
           The file ends with five instructions addressed to whoever reads it:
-          read the criteria for each sheet, open every registered repository,
+          read the criteria for each module, open every registered repository,
           resolve each commit hash and compare its authored date with the date in
-          the ledger, ignore the sheet tally entirely if the repositories are
+          the ledger, ignore the module tally entirely if the repositories are
           empty, and ask the holder to walk through one repository. Then it says
           plainly that nothing in the document should change a hiring decision,
           and that the repositories might.
@@ -90,7 +90,7 @@ export default function ReportPage() {
             READ A SPECIMEN FIRST
           </Link>
           <Link className="hl-btn" href="/legend/">
-            SHEET 00 — LEGEND
+            MODULE 00 — LEGEND
           </Link>
         </div>
       </section>

@@ -58,7 +58,7 @@ import type { ReactNode } from 'react'
  * reading taken" (§16.4.2) and is a reading, not a gap.
  */
 export const BLANK_READING_MESSAGE =
-  'A register row may not print a blank reading (§16.4.1). '
+  'A row may not print a blank reading (§16.4.1). '
   + 'Pass the reading the row exists to report, or `--` when nothing has been '
   + 'measured yet.'
 

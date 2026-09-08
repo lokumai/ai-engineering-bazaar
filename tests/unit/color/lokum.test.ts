@@ -178,7 +178,7 @@ describe('§13.1.1 — the six hues are declared once and only once', () => {
    * inside a `.dark` block in ANY stylesheet would reintroduce the drift the
    * single definition exists to prevent.
    */
-  it('never redefines a category hue under .dark, in any stylesheet', () => {
+  it('never redefines a category hue under .dark, in any stylemodule', () => {
     const offenders: string[] = []
     for (const [file, source] of stylesheets()) {
       const darkAt = source.search(/\.dark\b/)
@@ -265,7 +265,7 @@ describe('§13.1.2 — progress is visible, which is what dormant-as-a-hue broke
   })
 })
 
-describe('§13.1.1 — a hue identifies a subsystem', () => {
+describe('§13.1.1 — a hue identifies a level', () => {
   it('separates all ten pairs', () => {
     const tooClose: string[] = []
     for (let i = 0; i < FLAVOURS.length; i += 1) {
@@ -298,7 +298,7 @@ describe('§13.1.1 — a hue identifies a subsystem', () => {
 })
 
 describe('§13.1.2 — there is no dormant token to find', () => {
-  it('declares no --cat-dormant, in any stylesheet', () => {
+  it('declares no --cat-dormant, in any stylemodule', () => {
     for (const [file, source] of stylesheets()) {
       expect(source, file).not.toMatch(/--cat-dormant/)
     }

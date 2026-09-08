@@ -103,7 +103,7 @@ export function SheetFilters({
       )}
 
       <div className="hl-chips">
-        <div className="hl-chip-row" role="group" aria-label="Filter the drawing set">
+        <div className="hl-chip-row" role="group" aria-label="Filter the curriculum">
           {FILTERS.map((filter) => (
             <button
               key={filter.id}

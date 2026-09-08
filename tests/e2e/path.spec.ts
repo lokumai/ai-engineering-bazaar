@@ -190,9 +190,9 @@ test('a draft step points at nothing and says so (§13.4.2)', async ({ page }) =
   // (§12.4.1), so its step carries no link that implies a lesson, and it never
   // claims to be next. Which sheets are still drafts is the corpus's business,
   // so the step is found by what it says.
-  const draft = body.locator('.hl-step', { hasText: 'NOT DRAWN' }).first()
+  const draft = body.locator('.hl-step', { hasText: 'PLANNED' }).first()
   await expect(draft).toBeVisible()
-  await expect(draft).toContainText('NOT DRAWN')
+  await expect(draft).toContainText('PLANNED')
   await expect(draft.locator('a')).toHaveCount(0)
   await expect(draft.locator('.hl-step-tick')).not.toBeVisible()
 })

@@ -28,7 +28,7 @@ export function Breadcrumb({ categories }: { categories: readonly CategoryLabel[
   const crumbs = breadcrumbFor(usePathname() ?? '/', categories, useSelectedLayoutSegment())
 
   return (
-    <nav aria-label="Drawing set" className="min-w-0">
+    <nav aria-label="Curriculum" className="min-w-0">
       {/* display:flex drops the implicit list role in some engines; keep it. */}
       <ol role="list" className="flex items-center font-mono text-meta uppercase tracking-[0.06em]">
         {crumbs.map((crumb, i) => {

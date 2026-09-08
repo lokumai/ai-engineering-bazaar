@@ -18,11 +18,11 @@ import { watchPage } from './watch'
 const PAGES: [string, string][] = [
   ['home screen', '/'],
   ['manifest', INDEX_SHEET],
-  ['drawing set', '/courses/'],
+  ['curriculum', '/courses/'],
   ['category', CATEGORY_PATHS[1]],
-  ['A0 sheet', A0.path],
-  ['SHORT sheet', SHORT.path],
-  ['A4 sheet', A4.path],
+  ['A0 module', A0.path],
+  ['SHORT module', SHORT.path],
+  ['A4 module', A4.path],
 ]
 
 for (const [name, path] of PAGES) {
@@ -42,7 +42,7 @@ test('the manifest survives being used', async ({ page }) => {
   const problems = watchPage(page)
   await page.goto(INDEX_SHEET)
 
-  for (const chip of ['READY', 'NOT DRAWN', 'EN · TR', 'ALL']) {
+  for (const chip of ['READY', 'PLANNED', 'EN · TR', 'ALL']) {
     await page.getByRole('button', { name: chip, exact: true }).click()
   }
   await page.getByRole('button', { name: 'Toggle theme' }).click()
@@ -74,7 +74,7 @@ const HOME_STATES: [string, RecordSeed | null, string][] = [
   // which is the returning reader's page. The first visit is the one with no
   // key in `localStorage` at all.
   ['a first visit', null, 'Open the index'],
-  ['a return', { sheets: { [slugOf(A0)]: signedSheet('b7225f8') } }, 'Sheet index'],
+  ['a return', { sheets: { [slugOf(A0)]: signedSheet('b7225f8') } }, 'Catalog'],
 ]
 
 for (const [state, seed, out] of HOME_STATES) {
@@ -94,7 +94,7 @@ for (const [state, seed, out] of HOME_STATES) {
   })
 }
 
-test('an A0 sheet survives being read', async ({ page }) => {
+test('an A0 module survives being read', async ({ page }) => {
   const problems = watchPage(page)
   await page.goto(A0.path)
   await page.waitForLoadState('networkidle')
@@ -111,7 +111,7 @@ test('an A0 sheet survives being read', async ({ page }) => {
   expect(problems.failedRequests).toEqual([])
 })
 
-test('a route that does not exist answers 404 rather than a blank sheet', async ({ page }) => {
+test('a route that does not exist answers 404 rather than a blank module', async ({ page }) => {
   const response = await page.goto('/courses/fundamentals/not-a-sheet/')
   expect(response?.status()).toBe(404)
   await expect(page.locator('body')).not.toHaveText('')

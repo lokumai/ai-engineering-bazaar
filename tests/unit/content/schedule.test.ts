@@ -64,7 +64,7 @@ describe('summarySentence', () => {
   })
 })
 
-describe('every draft sheet in the corpus', () => {
+describe('every draft module in the corpus', () => {
   const drafts = loadAllModules().filter((m) => m.sheetFormat === 'A4')
 
   it('has a summary sentence that is not the dek and not the placeholder note', () => {

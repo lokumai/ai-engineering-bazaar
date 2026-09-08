@@ -377,7 +377,7 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
             the reader did while `claim()` was in flight, and `claim()` is two
             network round trips — read the row, then push — with the record
             layer mounted and interactive the whole time. A checklist tick or a
-            sign-off made in that window was in the store and not in
+            completion made in that window was in the store and not in
             `outcome.record`, and the replacement reverted it in front of the
             reader.
 
@@ -392,7 +392,7 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
 
             The summary is built from the SAME local record that was merged, not
             from `outcome.local` — otherwise a claim that folded in a late
-            sign-off would report a count that no longer described anything.
+            completion would report a count that no longer described anything.
           */
           const local = snapshot()
 
@@ -406,7 +406,7 @@ export function AccountSync({ facts }: { facts: CurriculumFacts }) {
             flight. The claim then resolves holding a merge built from the row it
             read BEFORE the delete, writes it to `localStorage`, marks the record
             pending and pushes it. MEASURED: the row came back carrying the
-            sheets the reader had just erased.
+            modules the reader had just erased.
 
             The merge cannot tell the two cases apart on its own. Merging an
             empty local record with a populated remote one correctly yields the

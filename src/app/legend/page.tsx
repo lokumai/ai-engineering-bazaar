@@ -169,13 +169,13 @@ const REFUSED: readonly string[] = [
 
 export default function LegendPage() {
   return (
-    <PageShell sheet="SHEET 00">
-      <p className="hl-eyebrow hl-mark">SHEET 00 — LEGEND &amp; SPECIMEN</p>
+    <PageShell sheet="MODULE 00">
+      <p className="hl-eyebrow hl-mark">MODULE 00 — LEGEND &amp; SPECIMEN</p>
 
       <h1 className="hl-listing-title">Legend</h1>
 
       <p className="hl-lead">
-        This site is drawn as a set of engineering sheets, and it reports only
+        This site reports only
         what it can observe. This page is the key to the marks it draws with, the
         disclosure of where your record is kept, and the list of what it does not
         have. Nothing here opens by itself, and nothing here is a step in a
@@ -205,7 +205,7 @@ export default function LegendPage() {
             what is left on a phone would set it four words to the line. */}
         <dl className="m-0 grid max-w-[var(--width-wide)] items-start gap-y-3 sm:grid-cols-[minmax(0,224px)_minmax(0,1fr)] sm:gap-x-5">
           <KeyRow
-            term="Not drawn"
+            term="Planned"
             marks={
               <>
                 <span className="hl-signoff-square" data-drawn="false" aria-hidden="true" />
@@ -213,12 +213,12 @@ export default function LegendPage() {
               </>
             }
           >
-            A hidden line, dashed 3 2. The sheet is in the set and its geometry
-            is not: it has no sign-off control at all, and it awards nothing.
+            A hidden line, dashed 3 2. The module is in the set and its geometry
+            is not: it has no completion control at all, and it awards nothing.
           </KeyRow>
 
           <KeyRow
-            term="Not signed off"
+            term="Not completed"
             marks={
               <>
                 <span className="hl-signoff-square" data-signed="false" aria-hidden="true" />
@@ -226,17 +226,17 @@ export default function LegendPage() {
               </>
             }
           >
-            A solid hairline. Every drawn sheet is in this state until you say
+            A solid hairline. Every ready module is in this state until you say
             otherwise.
           </KeyRow>
 
           <KeyRow term="In progress" marks={<NodeSample state="started" />}>
-            Something is recorded against the sheet — an answer written, an item
-            ticked, a source opened — and it is still not signed off.
+            Something is recorded against the module — an answer written, an item
+            ticked, a source opened — and it is still not completed.
           </KeyRow>
 
           <KeyRow
-            term="Signed off"
+            term="Completed"
             marks={
               <>
                 <span className="hl-signoff-square" data-signed="true" aria-hidden="true" />
@@ -246,7 +246,7 @@ export default function LegendPage() {
           >
             The accent outline, the accent wash, and the 2px left edge an
             approved node carries everywhere on the site. You asserted it;
-            nothing here inferred it, and you can un-sign it at any time.
+            nothing here inferred it, and you can un-complete it at any time.
           </KeyRow>
 
           <KeyRow
@@ -259,9 +259,9 @@ export default function LegendPage() {
               </span>
             }
           >
-            One tick per sheet in the subsystem: accent signed off, solid drawn,
-            dashed hairline not yet drawn. Never a percentage, because counting
-            in sheets is what lets what is done and what is left both be stated
+            One tick per module in the level: accent completed, solid ready,
+            dashed hairline planned. Never a percentage, because counting
+            in modules is what lets what is done and what is left both be stated
             truthfully.
           </KeyRow>
         </dl>
@@ -269,8 +269,8 @@ export default function LegendPage() {
         <p className="mt-4 mb-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
           On the dashboard a solid trace above a band is a prerequisite, a dashed
           trace below it is a cross-reference, and a trace goes accent when both
-          of the sheets it joins are signed off. The hairline chain between nodes
-          is sheet order, which is not a dependency.
+          of the modules it joins are completed. The hairline chain between nodes
+          is module order, which is not a dependency.
         </p>
       </section>
 
@@ -290,7 +290,7 @@ export default function LegendPage() {
           spends the alarm budget the erase dialog needs (§12.15).
 
           Word for word the same three lines the name field carries on the
-          profile sheet. They are stated twice because §12.1.7 places them in
+          account page. They are stated twice because §12.1.7 places them in
           both slots, and the wording is identical so that a reader who has read
           one has read the other.
         */}
@@ -309,7 +309,7 @@ export default function LegendPage() {
           hold anything, so there is nothing to sign in to and nothing to delete
           on request." True in Phase 3, false the moment §14 landed, and missed
           when `scope.ts` fixed the other four copies of the same claim: the
-          panel above it had already been corrected, so Sheet 00 was
+          panel above it had already been corrected, so Module 00 was
           contradicting itself two paragraphs apart.
 
           It states the whole shape unconditionally rather than switching on
@@ -323,16 +323,16 @@ export default function LegendPage() {
         */}
         <p className="mt-4 mb-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
           The record is one key in this browser&rsquo;s local storage, it is
-          readable in a text editor, and the profile sheet prints it verbatim.
+          readable in a text editor, and the account page prints it verbatim.
           Signed out, that key is the whole of it. With an account there is a
           second copy, held under your account, and the erase dialog on the
-          profile sheet states what each half removes and what an organisation
+          account page states what each half removes and what an organisation
           keeps.
         </p>
 
         <div className="hl-signoff-actions mt-4">
           <Link className="hl-btn" href="/profile/">
-            OPEN THE PROFILE SHEET
+            OPEN THE PROFILE MODULE
           </Link>
           <Link className="hl-btn" href="/report/">
             BUILD A RECORD OF WORK
@@ -400,10 +400,10 @@ export default function LegendPage() {
         */}
         <p className="m-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
           Accounts and cross-device sync are not on either list: they exist.
-          Signing in is optional and gates nothing &mdash; every sheet, every
-          quick check and every sign-off behaves the same signed out &mdash; and
+          Signing in is optional and gates nothing &mdash; every module, every
+          quick check and every completion behaves the same signed out &mdash; and
           what an account changes is stated in <em>Where your record is</em>
-          {' '}above. An organisation can also assign sheets with due dates,
+          {' '}above. An organisation can also assign modules with due dates,
           which is the nearest thing here to enrolment; it recommends an order
           and gates nothing either.
         </p>
@@ -423,7 +423,7 @@ export default function LegendPage() {
           file. The specimen is one of those, generated at build time from
           labelled sample data and stamped as a specimen, so you can read the
           real artefact — the ledger, the evidence register, the seven limits,
-          the audit instructions — before you have signed anything off.
+          the audit instructions — before you have completed anything.
         </p>
 
         <div className="hl-signoff-actions">
@@ -440,7 +440,7 @@ export default function LegendPage() {
       <section className="hl-panel" aria-labelledby="hl-legend-mark">
         <div className="hl-panel-head">
           <h2 id="hl-legend-mark" className="hl-panel-title">
-            Drawn by
+            Marked by
           </h2>
           <p className="hl-mark m-0 text-ink-faint">LKM-01</p>
         </div>
@@ -464,7 +464,7 @@ export default function LegendPage() {
         the sheet that already answers "what am I looking at". Nothing here
         praises anybody, because §12.14.1's register scans this route and
         because a curriculum that spends its credibility on a slogan has less of
-        it left for the sheets.
+        it left for the modules.
 
         The rows are `AFFILIATION`, in order. The order is the claim (§4), which
         is why neither this file nor the footer keeps a list of its own.

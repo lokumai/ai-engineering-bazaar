@@ -118,7 +118,7 @@ const PANELS: ReadonlyArray<[string, (chrome?: 'panel' | 'inline') => React.Reac
  * `/profile/`: a link offering to take the reader to the sheet they are reading
  * is a page saying something untrue about itself.
  */
-const PANEL_ONLY = ['/profile/', 'Go to the profile sheet', 'Open the profile sheet']
+const PANEL_ONLY = ['/profile/', 'Go to the account page', 'Open the account page']
 
 /**
  * And the wider rule those three are instances of: inline chrome drops the
@@ -126,7 +126,7 @@ const PANEL_ONLY = ['/profile/', 'Go to the profile sheet', 'Open the profile sh
  * `/profile/` renders. Matched case-insensitively so a sentence-initial `The
  * profile sheet shows whose it is` is caught by the same rule as the link.
  */
-const ABOUT_THE_SHEET = /profile sheet/i
+const ABOUT_THE_SHEET = /account page/i
 
 /** Panel chrome's wrapper, stripped so what remains is the body both share. */
 function bodyOf(panel: string, headingId: string): string {

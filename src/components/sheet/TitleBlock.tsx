@@ -52,8 +52,8 @@ export function TitleBlock({
   stamps?: ReactNode
 }) {
   return (
-    <aside aria-label="Title block" className="hl-title-block">
-      <div className="hl-title-block-head hl-mark">Title block</div>
+    <aside aria-label="Module info" className="hl-title-block">
+      <div className="hl-title-block-head hl-mark">Module info</div>
       <dl className="hl-title-block-rows">
         {rows.map((row) => (
           <div key={row.label} className="hl-title-block-row hl-mark">
@@ -108,7 +108,7 @@ export function TitleStrip({
   className?: string
 }) {
   return (
-    <aside aria-label="Title block" className={className}>
+    <aside aria-label="Module info" className={className}>
       {/* `data-stamps` moves the strip's own 32px bottom margin onto the stamp
           container below it, so the two sit together as one block instead of
           being pushed apart. Explicit, rather than a negative margin or a

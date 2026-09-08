@@ -34,7 +34,7 @@ const ADDRESSES: [string, number][] = [
 ]
 
 /** §8.4 — the caption, in the words the spec fixes for this page. */
-const CAPTION = 'ASSEMBLY NOT FOUND · SHEET DOES NOT EXIST IN THIS DRAWING SET'
+const CAPTION = 'PAGE NOT FOUND · NO SUCH MODULE IN THIS CURRICULUM'
 
 /**
  * A static host answers an unknown address with `404.html` *and* a 404 status.
@@ -96,17 +96,17 @@ for (const [address, expectedStatus] of ADDRESSES) {
 
     // §5.1 — the trail, and §5.2 — the footer's sheet slot. Both are derived
     // from the route, and on this one route the URL is not it.
-    const trail = await page.locator('nav[aria-label="Drawing set"]').innerText()
+    const trail = await page.locator('nav[aria-label="Curriculum"]').innerText()
     const sheet = await page.locator('footer').innerText()
 
     for (const [where, text] of [['trail', trail], ['footer', sheet]] as const) {
       expect(text, `${where} printed a URL segment`)
         .not.toMatch(/_not.?found|no.such.module|\b404\b/i)
-      expect(text.toUpperCase(), `${where} does not name the page`).toContain('NO SUCH SHEET')
+      expect(text.toUpperCase(), `${where} does not name the page`).toContain('NO SUCH MODULE')
     }
 
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('No such sheet')
-    await expect(page).toHaveTitle('No such sheet · AI Engineering Bazaar')
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('No such module')
+    await expect(page).toHaveTitle('No such module · AI Engineering Bazaar')
   })
 }
 
@@ -115,7 +115,7 @@ test('the trail and the footer read the same at every address', async ({ page })
   for (const address of [...ADDRESSES.map(([path]) => path), '/nothing/at/all/']) {
     await page.goto(address)
     readings.push([
-      await page.locator('nav[aria-label="Drawing set"]').innerText(),
+      await page.locator('nav[aria-label="Curriculum"]').innerText(),
       await page.locator('footer').innerText(),
     ])
   }
@@ -189,7 +189,7 @@ test('sits in the normal shell flow, with its footer above the fold', async ({ p
  * names. The URL is asserted as well as the heading, because a page that
  * happens to share a title would otherwise pass.
  */
-test('the way out leads to the register the page names, not merely somewhere', async ({
+test('the way out leads to the page it names, not merely somewhere', async ({
   page,
 }) => {
   await page.goto(ADDRESSES[1][0])
@@ -198,9 +198,9 @@ test('the way out leads to the register the page names, not merely somewhere', a
   // that changing the link without changing the sentence cannot pass.
   await expect(page.locator('main')).toContainText('The index lists every one that is.')
 
-  await page.locator('main').getByRole('link', { name: 'Sheet index' }).click()
+  await page.locator('main').getByRole('link', { name: 'Catalog' }).click()
   await expect(page).toHaveURL(new RegExp(`${INDEX_SHEET}$`))
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sheet index')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Catalog')
 
   // The register itself, not a page that merely carries the title.
   await expect(page.locator('main table')).toHaveCount(1)

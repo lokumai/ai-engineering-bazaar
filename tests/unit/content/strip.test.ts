@@ -139,11 +139,11 @@ describe('stripBuildFurniture', () => {
 })
 
 describe('stripLeadIn', () => {
-  it('drops the h1 the sheet renders from frontmatter instead (B6.1)', () => {
+  it('drops the h1 the module renders from frontmatter instead (B6.1)', () => {
     expect(stripLeadIn('# Module 13: Security\n\nProse.\n')).toBe('\nProse.\n')
   })
 
-  it('drops the italic dek the title block already states (B6.2)', () => {
+  it('drops the italic dek the module info already states (B6.2)', () => {
     const md = '# Module 13: Security\n\n*Category: Intermediate — Module 13 (6 of 8 in this category)*\n\nProse.\n'
     expect(stripLeadIn(md)).toBe('\n\nProse.\n')
   })

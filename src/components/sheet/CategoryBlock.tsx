@@ -33,13 +33,13 @@ export function CategoryBlock({ order, title, path, ticks }: CategoryBlockProps)
       data-undrawn={drawn === 0 ? '' : undefined}
     >
       <span className="hl-mark hl-category-order">
-        Subsystem {String(order).padStart(2, '0')}
+        Level {String(order).padStart(2, '0')}
       </span>
       <span className="hl-category-name">{title}</span>
       <span className="hl-category-gauge">
         <TickGauge
           ticks={ticks}
-          label={`${plural(ticks.length, 'sheet')}, ${drawn} drawn`}
+          label={`${plural(ticks.length, 'module')}, ${drawn} ready`}
         />
       </span>
     </Link>

@@ -506,7 +506,7 @@ export function slugOf(sheet: Sheet): string {
 
 export function sheetBySlug(slug: string): Sheet {
   const found = SHEETS.find((sheet) => slugOf(sheet) === slug)
-  if (!found) throw new Error(`no sheet ${slug} in the set`)
+  if (!found) throw new Error(`no module ${slug} in the set`)
   return found
 }
 

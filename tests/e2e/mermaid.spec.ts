@@ -73,13 +73,13 @@ test('downloads no mermaid bundle on a page with no figures', async ({ page }) =
   expect(requested.filter((url) => /mermaid/i.test(url))).toHaveLength(0)
 })
 
-test('every marker on a sheet becomes a drawing, not just the first', async ({ page }) => {
+test('every marker on a module becomes a drawing, not just the first', async ({ page }) => {
   const problems = watchPage(page)
   await page.goto(A0.path)
 
   const markers = page.locator('[data-hl-prose] .mermaid-source[data-mermaid]')
   const total = await markers.count()
-  expect(total, 'the A0 sheet still carries figures').toBeGreaterThan(0)
+  expect(total, 'the A0 module still carries figures').toBeGreaterThan(0)
 
   // One island renders all of them, so a single failure part-way through the
   // list leaves the rest of the sheet showing raw mermaid source.
@@ -95,7 +95,7 @@ test('every marker on a sheet becomes a drawing, not just the first', async ({ p
   expect(problems.consoleErrors).toEqual([])
 })
 
-test('a sheet that is not drawn downloads no mermaid bundle', async ({ page }) => {
+test('a module that is planned downloads no mermaid bundle', async ({ page }) => {
   test.skip(SPLIT_BUNDLE_ONLY, 'dev does not code-split; run against the export')
   const requested: string[] = []
   page.on('request', (request) => requested.push(request.url()))

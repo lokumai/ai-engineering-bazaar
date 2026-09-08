@@ -8,10 +8,10 @@ import { curriculumFacts } from '@/lib/content/facts'
 import { categoryRows, setEyebrow, sheetRows, subsystems } from '@/lib/content/manifest'
 
 export const metadata: Metadata = {
-  title: 'Sheet index',
+  title: 'Catalog',
   description:
-    'One row per sheet in sheet order, filterable, with the subsystem as a '
-    + 'column — the flat manifest the banded drawing set cannot show.',
+    'One row per module in module order, filterable, with the level as a '
+    + 'column — the flat manifest the banded curriculum cannot show.',
 }
 
 /**
@@ -53,17 +53,17 @@ export default function SheetIndexPage() {
     <PageShell>
       <p className="hl-eyebrow hl-mark">{setEyebrow()}</p>
 
-      <h1 className="hl-listing-title">Sheet index</h1>
+      <h1 className="hl-listing-title">Catalog</h1>
 
       <p className="hl-lead">
-        Every sheet in one flat list, in sheet order, with the subsystem as a
-        column. Filter it by subsystem, by state or by language to find a single
-        sheet; read the set by subsystem on the drawing set instead.
+        Every module in one flat list, in module order, with the level as a
+        column. Filter it by level, by state or by language to find a single
+        module; read the curriculum grouped by level instead.
       </p>
 
       <hr className="hl-rule-struct" aria-hidden="true" />
 
-      <SheetFilters rows={rows} label="The drawing set, every sheet" />
+      <SheetFilters rows={rows} label="The curriculum, every module" />
 
       {/* §12.2 — one island per document, mounted from the page rather than
           from the row, so that every row stays hook-free and the server-only
@@ -72,12 +72,12 @@ export default function SheetIndexPage() {
 
       {/* §5.4 calls this block "the category link on the index", and this is
           where it lives: below the manifest, because a set's index is its
-          sheets and the subsystems are how they group. Each block states its
-          own coverage in ticks — one per sheet, dashed where the geometry is
+          modules and the levels are how they group. Each block states its
+          own coverage in ticks — one per module, dashed where the geometry is
           not yet drawn. */}
-      <section className="hl-subsystems" aria-labelledby="subsystems">
-        <h2 id="subsystems" className="hl-mark hl-subsystems-head">
-          Subsystems
+      <section className="hl-subsystems" aria-labelledby="levels">
+        <h2 id="levels" className="hl-mark hl-subsystems-head">
+          Levels
         </h2>
         <ul className="hl-subsystem-list">
           {subsystems().map(({ category, path }) => (

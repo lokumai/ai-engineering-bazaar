@@ -61,7 +61,7 @@ export function sheetRows(): SheetRow[] {
       title: sheet.frontmatter.title,
       path: sheetPath(sheet),
       drawn,
-      status: drawn ? 'READY' : 'NOT DRAWN',
+      status: drawn ? 'READY' : 'PLANNED',
       subsystem: {
         order: sheet.category.order,
         title: sheet.category.title,
@@ -159,15 +159,15 @@ function joinMarks(parts: readonly (string | null)[]): string {
  */
 export function coverageLabel({ sheets, drawn, minutes }: Coverage): string {
   return joinMarks([
-    plural(sheets, 'SHEET').toUpperCase(),
-    `${drawn} DRAWN`,
+    plural(sheets, 'MODULE').toUpperCase(),
+    `${drawn} READY`,
     durationLabel(minutes),
   ])
 }
 
 /** §4.9 item 1 — `SUBSYSTEM 02 · 8 SHEETS · 8 DRAWN · ~3 H 55 MIN`. */
 export function categoryEyebrow(category: Category): string {
-  return `SUBSYSTEM ${pad2(category.order)} · ${coverageLabel(categorySummary(category))}`
+  return `LEVEL ${pad2(category.order)} · ${coverageLabel(categorySummary(category))}`
 }
 
 /** The same line for the set as a whole. */
@@ -196,10 +196,10 @@ export function indexStatement(): string[] {
   const { sheets, drawn, notDrawn } = setSummary()
 
   return [
-    `${sentenceCount(sheets)} sheets on becoming an AI-powered software engineer.`,
+    `${sentenceCount(sheets)} modules on becoming an AI-powered software engineer.`,
     notDrawn === 0
-      ? 'Every sheet is drawn.'
-      : `${sentenceCount(drawn)} are drawn. ${sentenceCount(notDrawn)} are `
+      ? 'Every module is ready.'
+      : `${sentenceCount(drawn)} are ready. ${sentenceCount(notDrawn)} are `
         + 'dashed — the geometry exists in the model, the lines do not.',
     'Every claim is fetched from a primary source and dated. Nothing is cited '
     + 'from memory.',

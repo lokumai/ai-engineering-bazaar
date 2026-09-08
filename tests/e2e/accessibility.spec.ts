@@ -137,7 +137,7 @@ test('the header tab order runs left to right and stops at the repo link', async
   const crumbs = order.slice(2, -2)
   expect(crumbs.length).toBeGreaterThan(0)
   expect(crumbs[0].toLowerCase(), 'the trail does not start at the front door').toBe('home')
-  expect(crumbs.join(' ').toLowerCase()).toContain('drawing set')
+  expect(crumbs.join(' ').toLowerCase()).toContain('curriculum')
 })
 
 test('every interactive control in the header shows a focus ring', async ({ page }) => {
@@ -232,7 +232,7 @@ test('code comments clear the text floor on the code ground (§6.7, T5)', async 
     const samples = (
       await contrastSamples(page, '.hl-code pre code span:not(:has(span))')
     ).filter((sample) => sample.text !== '')
-    expect(samples.length, 'no highlighted code on this sheet').toBeGreaterThan(20)
+    expect(samples.length, 'no highlighted code on this module').toBeGreaterThan(20)
 
     const low = worst(samples)
     expect(
@@ -294,9 +294,9 @@ test('the manifest keeps a hierarchy across its columns (§4.8)', async ({ page 
     }
   })
 
-  expect(inks.title, 'the sheet title is the loud column').toBe(inks.ink)
+  expect(inks.title, 'the module title is the loud column').toBe(inks.ink)
   expect(inks.number, '# recedes from the title').not.toBe(inks.ink)
-  expect(inks.context, 'SUBSYSTEM recedes from the title').not.toBe(inks.ink)
+  expect(inks.context, 'LEVEL recedes from the title').not.toBe(inks.ink)
 })
 
 test('prev/next carries no text below the §10.4 floor (§5.7)', async ({ page }) => {

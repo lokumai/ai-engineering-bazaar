@@ -64,9 +64,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           marks, the six category faces and `data-hl-storage` on <html> so CSS
           draws every one of them in frame one — no React, nothing to hydrate,
           and no header repainting itself on every load. Second because the
-          theme decides what colour the page is and this decides what is drawn
+          theme decides what colour the page is and this decides what is ready
           on it; both are inside try/catch and do nothing on failure, which
-          lands the page in the honest empty state rather than a half-drawn one.
+          lands the page in the honest empty state rather than a half-ready one.
 
           `suppressHydrationWarning` above covers exactly this: <html> is the
           one element two boot scripts legitimately mutate before React sees it.
@@ -90,7 +90,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <RecordStateSync facts={stampFacts} />
         {/* §14.7 — THE SEAM, mounted once per document.
             The session and the record's sync are document-level concerns, not
-            page-level ones: a sign-off happens on a sheet, so a sync that lived
+            page-level ones: a completion happens on a module, so a sync that lived
             on `/profile/` would only reach the account when the reader visited
             the page that has nothing to do with the work. Every navigation here
             is a client transition, so once per document is once per session.

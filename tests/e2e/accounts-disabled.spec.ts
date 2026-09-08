@@ -66,7 +66,7 @@ test.describe('§14.1 accounts are switched off', () => {
     // says what DOES work, not merely what does not. Named exactly — the page
     // has a second link whose text also contains "profile sheet".
     await expect(
-      page.getByRole('link', { name: 'Go to the profile sheet', exact: true })
+      page.getByRole('link', { name: 'Go to the account page', exact: true })
     ).toBeVisible()
 
     // No provider control of any kind. Two routes render one now (§16.1), and
@@ -183,7 +183,7 @@ test.describe('§14.1 accounts are switched off', () => {
     const readout = page.locator('footer .hl-readout')
     await expect(readout).toHaveAttribute('data-hydrated', 'true')
 
-    await page.getByRole('button', { name: 'SIGN OFF', exact: true }).click()
+    await page.getByRole('button', { name: 'COMPLETE', exact: true }).click()
     await expect(page.getByRole('button', { name: /^SIGNED OFF / })).toBeVisible()
 
     // The record is in this browser, exactly as it was before §14 existed.

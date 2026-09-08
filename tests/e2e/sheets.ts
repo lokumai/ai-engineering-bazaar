@@ -124,7 +124,7 @@ export const CHECKLIST_ITEMS = 5
 
 export function sheetByModule(module: number): Sheet {
   const found = SHEETS.find((s) => s.module === module)
-  if (!found) throw new Error(`no sheet ${module} in the set`)
+  if (!found) throw new Error(`no module ${module} in the set`)
   return found
 }
 
@@ -139,7 +139,7 @@ export function sheetByModule(module: number): Sheet {
  */
 export function sheetByPath(path: string): Sheet {
   const found = SHEETS.find((s) => s.path === path)
-  if (!found) throw new Error(`no sheet at ${path} in the set`)
+  if (!found) throw new Error(`no module at ${path} in the set`)
   return found
 }
 

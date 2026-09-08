@@ -92,7 +92,7 @@ function count(row: FaceLegendRow): string {
   // word for that state (§12.14.1), used by the manifest, the module row, the
   // diagram and the report, and it answers the SIGNED OFF column's question
   // exactly.
-  if (row.total <= 0) return 'NOT DRAWN'
+  if (row.total <= 0) return 'PLANNED'
   return `${row.signed === null ? NO_READING : row.signed}/${row.total}`
 }
 
@@ -114,14 +114,14 @@ export function FaceLegend({ rows, className }: FaceLegendProps) {
   return (
     <table className={className ? `${TABLE} ${className}` : TABLE}>
       <caption className="hl-mark mb-2 text-left text-ink-muted">
-        The six faces of the mark, the subsystem each one reports, and the
-        sheets signed off in it
+        The six faces of the mark, the level each one reports, and the
+        modules completed in it
       </caption>
       <thead>
         <tr className="border-b border-line-strong text-ink-muted uppercase">
           <th scope="col" className="py-1 pr-3 font-medium">Flavour</th>
-          <th scope="col" className="py-1 pr-3 font-medium">Subsystem</th>
-          <th scope="col" className="py-1 font-medium">Signed off</th>
+          <th scope="col" className="py-1 pr-3 font-medium">Level</th>
+          <th scope="col" className="py-1 font-medium">Completed</th>
         </tr>
       </thead>
       <tbody>

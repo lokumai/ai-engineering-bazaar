@@ -344,17 +344,17 @@ export function SubmittalRegister({ sheets }: { sheets: readonly RegisterSheet[]
   if (rows.length === 0) {
     // §12.9.1 — a hairline slot stating that it is empty. Never a nag, and
     // never a prompt dressed as a task.
-    return <p className="hl-submittal-empty hl-mark">NO SUBMITTAL REGISTERED</p>
+    return <p className="hl-submittal-empty hl-mark">NOTHING ADDED YET</p>
   }
 
   return (
     <table className="w-full border-collapse font-display text-ui">
       <caption className="sr-only">
-        Every repository registered against a sheet in this browser
+        Every repository registered against a module in this browser
       </caption>
       <thead>
         <tr>
-          {['Sheet', 'Submittal', 'Registered'].map((heading) => (
+          {['Module', 'Submittal', 'Registered'].map((heading) => (
             <th
               key={heading}
               scope="col"
@@ -372,7 +372,7 @@ export function SubmittalRegister({ sheets }: { sheets: readonly RegisterSheet[]
               scope="row"
               className="border-b border-line px-3 py-2 text-start align-top font-mono text-mark font-normal uppercase tracking-[0.06em] whitespace-nowrap text-ink-muted"
             >
-              {`SHEET ${String(sheet.module).padStart(2, '0')}`}
+              {`MODULE ${String(sheet.module).padStart(2, '0')}`}
               <span className="block font-display tracking-normal normal-case text-ink">
                 {sheet.title}
               </span>
@@ -625,7 +625,7 @@ export function CharKeysToggle() {
       </label>
       <p className="mt-1 mb-0 font-display text-meta leading-normal text-ink-muted">
         With this off, every single-character key and every two-key chord in the
-        shortcut sheet stops doing anything. Shortcuts that need Ctrl, Cmd or
+        keyboard shortcuts stops doing anything. Shortcuts that need Ctrl, Cmd or
         Alt keep working, and Escape always closes what is open.
       </p>
     </div>
@@ -693,7 +693,7 @@ export const DATA_READING = 'YOUR COPY OF THE RECORD'
 const NO_ROLE = 'NO ROLE ON RECORD'
 
 /** `SubmittalRegister`'s own words for an empty register, for the same reason. */
-const NO_SUBMITTAL = 'NO SUBMITTAL REGISTERED'
+const NO_SUBMITTAL = 'NOTHING ADDED YET'
 
 /** `AccountPanel`'s spelling of a signed-out session, for the same reason. */
 const NOT_SIGNED_IN = 'NOT SIGNED IN'
@@ -704,7 +704,7 @@ export function ReadoutReading({ facts }: { facts: CurriculumFacts }) {
   const hydrated = useHydrated()
   const counts = signedCount(record, facts)
 
-  return <>{hydrated ? `${counts.signed} OF ${counts.of} SIGNED OFF` : NO_READING}</>
+  return <>{hydrated ? `${counts.signed} OF ${counts.of} COMPLETED` : NO_READING}</>
 }
 
 /**

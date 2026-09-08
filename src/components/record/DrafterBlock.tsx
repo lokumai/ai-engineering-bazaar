@@ -117,7 +117,7 @@ export function DrafterBlock() {
     <section aria-labelledby={DRAFTER_HEADING_ID}>
       <div className="hl-panel-head">
         <h2 id={DRAFTER_HEADING_ID} className="hl-panel-title">
-          The drafter
+          The account
         </h2>
         <p className="hl-mark m-0 text-ink-faint">This browser, and across browsers</p>
       </div>
@@ -152,7 +152,7 @@ export function DrafterBlock() {
                     lines below this readout, and `AccountSync.pushProfileRow`
                     upserts the record's identity into `profiles` for every
                     signed-in reader — so "local only" and the sentence under it
-                    contradicted each other on one screen. The register bans a
+                    contradicted each other on one screen. Your progress bans a
                     word, not a falsehood, which is why nothing failed.
                     `/sign-in/`'s "LOCAL ONLY · …" readouts stay, because those
                     describe an act (that form sends nothing) rather than the

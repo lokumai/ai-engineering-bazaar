@@ -58,7 +58,7 @@ describe('extent', () => {
     expect(extent('one two  three\nfour')).toBe(4)
   })
 
-  it('leaves out the h1 and the dek, which the sheet never renders', () => {
+  it('leaves out the h1 and the dek, which the module never renders', () => {
     // §5.5: words "after stripping frontmatter, the dek, and the deleted
     // progress rail". Every file in the corpus opens with an h1, so the
     // printed extent is strictly below a naive count of the served body.
@@ -101,13 +101,13 @@ describe('sheetFormat', () => {
    * single rule that outlived the shared panel — a 720px measure below 1280 —
    * measured 82 characters per line against the 68–72 that 656px was chosen for.
    */
-  it('gives every drawn module the same anatomy, whatever its extent', () => {
+  it('gives every ready module the same anatomy, whatever its extent', () => {
     expect(sheetFormat({ status: 'ready' }, 12)).toBe('A0')
     expect(sheetFormat({ status: 'ready' }, 2_499)).toBe('A0')
     expect(sheetFormat({ status: 'ready' }, 9_999)).toBe('A0')
   })
 
-  it('gives a draft module the A4 detail sheet whatever its extent', () => {
+  it('gives a draft module the A4 detail module whatever its extent', () => {
     expect(sheetFormat({ status: 'draft' }, 12)).toBe('A4')
     expect(sheetFormat({ status: 'draft' }, 9999)).toBe('A4')
   })
@@ -261,7 +261,7 @@ describe('distinctExternalLinks', () => {
     expect(distinctExternalLinks(md)).toEqual(['https://c.example'])
   })
 
-  it('is the occurrence list with the repeats removed, on every sheet', () => {
+  it('is the occurrence list with the repeats removed, on every module', () => {
     for (const m of modules) {
       expect(distinctExternalLinks(m.body), m.slug).toEqual([...new Set(externalLinks(m.body))])
       expect(distinctExternalLinks(m.body).length, m.slug)
@@ -303,7 +303,7 @@ describe('langFromExtents', () => {
     expect(langFromExtents(0, 0)).toBe('EN')
   })
 
-  it('prints EN · TR spaced, per the title block', () => {
+  it('prints EN · TR spaced, per the module info', () => {
     expect(LANG_DISPLAY['EN·TR']).toBe('EN · TR')
     expect(LANG_DISPLAY.EN).toBe('EN')
     expect(TRANSLATION_RATIO).toBe(0.4)
@@ -311,7 +311,7 @@ describe('langFromExtents', () => {
 })
 
 describe('langCoverage', () => {
-  it('badges a drawn sheet bilingual exactly when its Turkish is a real translation', () => {
+  it('badges a ready module bilingual exactly when its Turkish is a real translation', () => {
     // Which sheets are translated moves every time one of them is, so the set
     // is not listed here. The rule is: a real translation earns the badge and a
     // placeholder does not, and the extents are measured off the files in this
@@ -343,7 +343,7 @@ describe('langCoverage', () => {
     },
   )
 
-  it('leaves every draft sheet English-only, however its Turkish measures', () => {
+  it('leaves every draft module English-only, however its Turkish measures', () => {
     // The general form of the 16-32 case above: a schedule of parts is not a
     // drawing in either language, so no draft sheet may carry the badge.
     for (const m of modules.filter((sheet) => sheet.lang === 'EN·TR')) {

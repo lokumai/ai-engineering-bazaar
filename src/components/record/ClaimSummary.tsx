@@ -98,7 +98,7 @@ export function ClaimSummary({
       {/* §11.25 — a counted zero prints `0`. Somebody looked; a dash here would
           say nobody did. */}
       <dl className="hl-defs">
-        <dt>Signed off here</dt>
+        <dt>Completed here</dt>
         <dd>{signed.here}</dd>
         <dt>In your account</dt>
         <dd>{signed.account}</dd>

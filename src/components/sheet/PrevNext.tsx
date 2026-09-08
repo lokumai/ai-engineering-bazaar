@@ -54,7 +54,7 @@ function Cell({
       </span>
       <span className="hl-prevnext-title">{target.title}</span>
       {target.draft && (
-        <span className="hl-prevnext-tag hl-mark">Not drawn</span>
+        <span className="hl-prevnext-tag hl-mark">Planned</span>
       )}
     </Link>
   )
@@ -74,7 +74,7 @@ export function PrevNext({
         rel="prev"
         label={
           <>
-            <span aria-hidden="true">←</span> Previous sheet
+            <span aria-hidden="true">←</span> Previous module
           </>
         }
       />
@@ -83,7 +83,7 @@ export function PrevNext({
         rel="next"
         label={
           <>
-            Next sheet <span aria-hidden="true">→</span>
+            Next module <span aria-hidden="true">→</span>
           </>
         }
       />

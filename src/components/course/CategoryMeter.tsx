@@ -95,7 +95,7 @@ export function CategoryMeter({
         <span data-hl-cat-tally={category}>
           {NO_READING}/{ordered.length}
         </span>{' '}
-        signed off
+        completed
       </p>
     </div>
   )

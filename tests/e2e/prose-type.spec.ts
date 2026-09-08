@@ -67,7 +67,7 @@ test('inline code in a table cell is text-meta, not 0.9em of the cell (§3.4)', 
     }
   })
 
-  expect(measured.count, 'no sheet puts inline code in a table cell any more')
+  expect(measured.count, 'no module puts inline code in a table cell any more')
     .toBeGreaterThan(0)
   expect(measured.parents).toContain('td')
   // §3.2's `text-meta` step, and the px it resolves to at the root size.

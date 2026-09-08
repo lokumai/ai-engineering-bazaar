@@ -108,7 +108,7 @@ export const MARKS: ReadonlyArray<{ id: MarkId; label: string; description: stri
     description:
       'A pattern derived from an 8-character seed minted once with your record. ' +
       'It is not derived from your name, so renaming yourself leaves every ' +
-      'signed sheet as it was.',
+      'signed module as it was.',
   },
   {
     id: 'datum',

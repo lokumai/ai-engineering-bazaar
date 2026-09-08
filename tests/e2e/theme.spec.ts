@@ -147,7 +147,7 @@ test('the theme carries across a navigation', async ({ page }) => {
   // first sheet fails here rather than being clicked anyway.
   const first = sheetByModule(1)
   const number = String(first.module).padStart(2, '0')
-  await page.getByRole('link', { name: `Read sheet ${number}` }).click()
+  await page.getByRole('link', { name: `Read module ${number}` }).click()
   await expect(page).toHaveURL(new RegExp(`${first.path}$`))
   await expect(page.locator('main h1')).toBeVisible()
 

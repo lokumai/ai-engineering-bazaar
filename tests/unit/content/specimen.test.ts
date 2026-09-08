@@ -60,7 +60,7 @@ describe('the stamp (§12.13)', () => {
     // preview's first page — so the label cannot be scrolled past or cropped.
     const header = DOC.html.slice(0, DOC.html.indexOf('Status and limits'))
     expect(header).toContain(SPECIMEN_STAMP)
-    expect(header).toContain('A. DRAFTER')
+    expect(header).toContain('A. READER')
   })
 
   it('names the file a specimen too, on top of §12.12.1’s fixed stem', () => {
@@ -115,9 +115,9 @@ describe('it is a real artefact, not a mock-up', () => {
 })
 
 describe('the sample data is obviously sample, and holds no reader data', () => {
-  it('names a drafter who is plainly not the reader', () => {
+  it('names a reader who is plainly not you', () => {
     expect(DATA?.identity.name).toBe(SPECIMEN_NAME)
-    expect(SPECIMEN_NAME).toContain('A. DRAFTER')
+    expect(SPECIMEN_NAME).toContain('A. READER')
   })
 
   it('writes only against slugs the corpus actually has (§12.1.3)', () => {
@@ -159,7 +159,7 @@ describe('the sample data is obviously sample, and holds no reader data', () => 
     expect(assessed).toContain('missed')
   })
 
-  it('signs off a counted number of sheets out of a counted set', () => {
+  it('signs off a counted number of modules out of a counted set', () => {
     expect(DOC.signedOff).toBe(7)
     expect(DOC.of).toBe(FACTS.sheets.length)
     expect(DOC.of).toBeGreaterThan(DOC.signedOff)

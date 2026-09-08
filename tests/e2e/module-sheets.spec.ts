@@ -36,7 +36,7 @@ for (const sheet of SHEETS) {
 
     // The eyebrow states the sheet's own place in the set (§4.5 item 2, §5.5).
     await expect(page.locator('.hl-eyebrow')).toContainText(
-      new RegExp(`SHEET ${sheet.module} OF ${SHEETS.length}`, 'i'),
+      new RegExp(`MODULE ${sheet.module} OF ${SHEETS.length}`, 'i'),
     )
 
     expect(problems.consoleErrors, `${sheet.path} console`).toEqual([])

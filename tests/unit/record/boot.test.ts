@@ -121,7 +121,7 @@ describe('data-hl-storage — what tells empty state 4 from empty state 1 (§12.
 describe('the marks CSS draws from (§12.2 Channel A)', () => {
   const script = recordBootScript(TOTALS, MODULES)
 
-  it('stamps one class per signed-off module number', () => {
+  it('stamps one class per completed module number', () => {
     const stamped = run(script, { stored: envelope(signedSheets('fundamentals/llms', 'intermediate/security')) })
     expect(stamped.attributes.get('data-hl-record')).toBe('1')
     expect([...stamped.classes].sort()).toEqual([
@@ -132,14 +132,14 @@ describe('the marks CSS draws from (§12.2 Channel A)', () => {
     ])
   })
 
-  it('marks a category complete only when every sheet in it is signed', () => {
+  it('marks a category complete only when every module in it is signed', () => {
     const all = Object.keys(MODULES).filter((slug) => slug.startsWith('fundamentals/'))
     const stamped = run(script, { stored: envelope(signedSheets(...all)) })
     expect(stamped.classes.has('hl-cat-fundamentals-complete')).toBe(true)
     expect(stamped.classes.has('hl-cat-fundamentals-started')).toBe(false)
   })
 
-  it('ignores a sheet that is present but not signed off', () => {
+  it('ignores a module that is present but not completed', () => {
     const stored = envelope({ sheets: { 'fundamentals/llms': { signedOff: null, reachedEnd: true } } })
     const stamped = run(script, { stored })
     expect(stamped.attributes.get('data-hl-record')).toBe('1')
@@ -173,7 +173,7 @@ describe('the marks CSS draws from (§12.2 Channel A)', () => {
     }
   })
 
-  it('survives a hostile sheets map', () => {
+  it('survives a hostile modules map', () => {
     const stored = envelope({ sheets: [{ signedOff: 'x' }] })
     expect(run(script, { stored }).classes.size).toBe(0)
     const polluting = envelope({ sheets: { __proto__: { signedOff: 'x' } } })
@@ -237,17 +237,17 @@ describe('data-hl-record only goes on a record that carries something (§15.11)'
       'a record holding only a preference',
       { ...EMPTY_RECORD, prefs: { charKeys: false, aliasNamedFor: null } },
     ],
-    ['a record holding only an empty sheet entry', withSheet({})],
+    ['a record holding only an empty module entry', withSheet({})],
     ['a name the reader typed', { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, name: 'Ada' } }],
     ['a mark seed', { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, markSeed: 'a1b2c3d4' } }],
     ['a role the reader chose', { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, role: 'qa' } }],
     ['a day on which something was written', { ...EMPTY_RECORD, days: ['2026-08-31'] }],
     ['an export the reader took', { ...EMPTY_RECORD, meta: { lastExport: '2026-08-31T09:00:00.000Z', persisted: null, lastClaim: null } }],
-    ['a sheet reached the end of', withSheet({ reachedEnd: true })],
-    ['dwell on a sheet and nothing else', withSheet({ dwellSeconds: 41 })],
+    ['a module reached the end of', withSheet({ reachedEnd: true })],
+    ['dwell on a module and nothing else', withSheet({ dwellSeconds: 41 })],
     ['one checklist box', withSheet({ checklist: { '7': true } })],
     ['one source opened', withSheet({ sources: ['https://example.invalid/paper'] })],
-    ['a sheet signed off', withSheet({ signedOff: '2026-08-14T09:00:00.000Z' })],
+    ['a module completed', withSheet({ signedOff: '2026-08-14T09:00:00.000Z' })],
   ]
 
   /**
@@ -280,8 +280,8 @@ describe('data-hl-record only goes on a record that carries something (§15.11)'
     ['a quiz holding neither an answer nor an assessment', { sheets: { 'fundamentals/llms': { quiz: { answer: '  ' } } } }],
     ['a quiz holding an assessment', { sheets: { 'fundamentals/llms': { quiz: { assessed: 'missed' } } } }],
     ['a signedRevision too short to be a hash', { sheets: { 'fundamentals/llms': { signedRevision: 'abc' } } }],
-    ['a sheet key over the safe length', { sheets: { ['f/' + 'x'.repeat(250)]: { reachedEnd: true } } }],
-    ['sheets as an array', { sheets: [{ reachedEnd: true }] }],
+    ['a module key over the safe length', { sheets: { ['f/' + 'x'.repeat(250)]: { reachedEnd: true } } }],
+    ['modules as an array', { sheets: [{ reachedEnd: true }] }],
   ]
 
   const both: ReadonlyArray<[string, unknown]> = [...CASES, ...MALFORMED]

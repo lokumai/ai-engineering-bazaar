@@ -43,16 +43,16 @@ for (const sheet of SHEETS) {
     // for this file. A footer printing repo HEAD would pass the line above and
     // fail here on 31 of the 32 sheets.
     expect(row.text, `${sheet.path} revision`).toMatch(/REV [0-9a-f]{4,} · \d{4}-\d{2}-\d{2}/)
-    expect(row.revision, 'the title block states a revision too').not.toBeNull()
+    expect(row.revision, 'the module info states a revision too').not.toBeNull()
     expect(row.text?.toUpperCase()).toContain(`REV ${row.revision}`.toUpperCase())
   })
 }
 
 const LISTINGS: readonly [string, string][] = [
   ['/', 'HOME'],
-  ['/sheets/', 'SHEET INDEX'],
-  ['/courses/', 'DRAWING SET'],
-  [CATEGORY_PATHS[1], 'SUBSYSTEM 02'],
+  ['/sheets/', 'CATALOG'],
+  ['/courses/', 'CURRICULUM'],
+  [CATEGORY_PATHS[1], 'LEVEL 02'],
 ]
 
 for (const [path, label] of LISTINGS) {
@@ -67,7 +67,7 @@ for (const [path, label] of LISTINGS) {
   })
 }
 
-test('a route that is not a sheet still gets a main and a footer', async ({ page }) => {
+test('a route that is not a module still gets a main and a footer', async ({ page }) => {
   const response = await page.goto('/courses/fundamentals/not-a-sheet/')
   expect(response?.status()).toBe(404)
 

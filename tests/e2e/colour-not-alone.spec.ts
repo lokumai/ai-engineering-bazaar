@@ -89,7 +89,7 @@ test('a module row still states its own status with no colour (§13.1.3 item 3)'
   expect(borders.every((colour) => colour !== 'rgba(0, 0, 0, 0)')).toBe(true)
 })
 
-test('LKM-01 still reports every subsystem with no colour (§13.1.3 item 1)', async ({
+test('LKM-01 still reports every level with no colour (§13.1.3 item 1)', async ({
   page,
 }) => {
   await seedRecord(page, { sheets: SIGNED })
@@ -128,7 +128,7 @@ test('LKM-01 still reports every subsystem with no colour (§13.1.3 item 1)', as
   // A subsystem holding no drawn sheets says so in the register's own word
   // rather than as a bare dash or as `0/9`, which would each imply something
   // untrue (§11.25, §13.14a).
-  expect(text).toContain('NOT DRAWN')
+  expect(text).toContain('PLANNED')
 })
 
 test('a path step still states its state with no colour (§13.1.3 item 6)', async ({ page }) => {
@@ -145,7 +145,7 @@ test('a path step still states its state with no colour (§13.1.3 item 6)', asyn
   await expect(first).toContainText(/CORE|SUPPORTING|CONTEXT/i)
 
   // And the two states a step can be in are words, not colours.
-  await expect(body.locator('.hl-step-tick:visible').first()).toContainText('SIGNED OFF')
+  await expect(body.locator('.hl-step-tick:visible').first()).toContainText('COMPLETED')
   await expect(body).toContainText(/REMAINING ON THIS PATH/i)
 })
 
@@ -170,7 +170,7 @@ test('the swatch is labelled by the row it sits in, never by hue alone', async (
   }
 })
 
-test('the drafter block and a closed register row read as text with no colour (§16.2.3, §16.7)', async ({
+test('the account block and a closed row read as text with no colour (§16.2.3, §16.7)', async ({
   page,
 }) => {
   /**

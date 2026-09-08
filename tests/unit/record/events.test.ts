@@ -87,7 +87,7 @@ describe('signOff', () => {
     expect(signOff(frozen(), SLUG, null, NOW).sheets[SLUG].signedRevision).toBeNull()
   })
 
-  it('leaves an already-signed sheet exactly as it was recorded', () => {
+  it('leaves an already-signed module exactly as it was recorded', () => {
     const first = signOff(frozen(), SLUG, 'a1b2c3d', NOW)
     const again = signOff(first, SLUG, 'e4f5a6b', '2026-09-02T10:00:00.000Z')
     // A recorded fact is not rewritten: §12.4.3's drift line is the honest
@@ -107,7 +107,7 @@ describe('signOff', () => {
     expect(earlier.days).toEqual([TODAY, '2026-09-02'])
   })
 
-  it('does not touch the rest of the sheet', () => {
+  it('does not touch the rest of the module', () => {
     const before = observeDwell(frozen(), SLUG, 90, NOW)
     const after = signOff(before, SLUG, null, NOW)
     expect(after.sheets[SLUG].dwellSeconds).toBe(90)
@@ -124,7 +124,7 @@ describe('unsign', () => {
     expect(next.days).toEqual([TODAY])
   })
 
-  it('is a no-op on a sheet nobody signed', () => {
+  it('is a no-op on a module nobody signed', () => {
     const data = frozen()
     expect(unsign(data, SLUG)).toBe(data)
   })
@@ -320,7 +320,7 @@ describe('addSubmittal and removeSubmittal', () => {
     expect(next.sheets[SLUG].submittals[0].url).toBe('https://github.com/owner/repo')
   })
 
-  it('holds at most three per sheet (§12.9.1)', () => {
+  it('holds at most three per module (§12.9.1)', () => {
     let data = frozen()
     for (const n of [1, 2, 3]) data = addSubmittal(data, SLUG, submittal('o', `r${n}`), NOW)
     const full = data
@@ -328,12 +328,12 @@ describe('addSubmittal and removeSubmittal', () => {
     expect(full.sheets[SLUG].submittals).toHaveLength(3)
   })
 
-  it('rejects the same repository twice on one sheet, case-insensitively', () => {
+  it('rejects the same repository twice on one module, case-insensitively', () => {
     const one = addSubmittal(frozen(), SLUG, submittal('Own', 'Repo'), NOW)
     expect(addSubmittal(one, SLUG, submittal('own', 'repo'), NOW)).toBe(one)
   })
 
-  it('accepts the same repository on a different sheet', () => {
+  it('accepts the same repository on a different module', () => {
     const one = addSubmittal(frozen(), SLUG, submittal('own', 'repo'), NOW)
     const two = addSubmittal(one, 'fundamentals/training', submittal('own', 'repo'), NOW)
     expect(two.sheets['fundamentals/training'].submittals).toHaveLength(1)
@@ -376,7 +376,7 @@ describe('observeDwell', () => {
     }
   })
 
-  it('is a no-op once the sheet is already at the cap', () => {
+  it('is a no-op once the module is already at the cap', () => {
     const capped = observeDwell(frozen(), SLUG, 3600, NOW)
     expect(observeDwell(capped, SLUG, 10, NOW)).toBe(capped)
   })

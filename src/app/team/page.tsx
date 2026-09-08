@@ -7,7 +7,7 @@ import { curriculumFacts } from '@/lib/content/facts'
 export const metadata: Metadata = {
   title: 'Team',
   description:
-    "An organisation's roster: progress against the drawing set, what each "
+    "An organisation's roster: progress against the curriculum, what each "
     + 'member asserted about themselves, the evidence beside it, and what needs '
     + 'attention.',
 }
@@ -71,7 +71,7 @@ export default function TeamPage() {
       <p className="hl-lead">
         One row per member of your organisation. The claim column is what each
         person asserted about themselves; the evidence column is what can be
-        checked without them. They are separate columns because a sign-off is a
+        checked without them. They are separate columns because a completion is a
         statement by its author and not a verified fact, and merging them into
         one tick would print the first as the second.
       </p>
@@ -100,7 +100,7 @@ export default function TeamPage() {
           be a fact about a person that nobody asserted. The label changes when
           that member keeps an alias on the{' '}
           <Link href="/sign-in/alias/" className="hl-link">
-            alias sheet
+            alias module
           </Link>{' '}
           and their next push reaches the server. Nothing else about the row
           depends on it — the progress, the claim and the evidence are read the
@@ -121,12 +121,12 @@ export default function TeamPage() {
             line is a real property of the system above, not a disclaimer. */}
         <ul className="m-0 max-w-[var(--width-prose)] list-none p-0 font-display text-meta leading-normal text-ink-muted">
           <li className="py-1">
-            A sign-off is the member&rsquo;s own assertion. Nothing assessed it,
+            A completion is the member&rsquo;s own assertion. Nothing assessed it,
             and nothing here gates on it.
           </li>
           <li className="py-1">
             A quiz result is the member&rsquo;s own comparison of their answer
-            with the sheet&rsquo;s summary. There is no marker.
+            with the module&rsquo;s summary. There is no marker.
           </li>
           <li className="py-1">
             A verified submittal means the repository owner matches the GitHub
@@ -144,12 +144,12 @@ export default function TeamPage() {
           <li className="py-1">
             Every cell is a count or a date about one member. There is no rank,
             no comparison between two members, and no average for the
-            organisation — a count against the drawing set is what this panel
+            organisation — a count against the curriculum is what this panel
             holds, and it is all it holds.
           </li>
           <li className="py-1">
             The quiz cells carry whether an answer was compared with the
-            sheet&rsquo;s summary and what the member concluded from it. The text
+            module&rsquo;s summary and what the member concluded from it. The text
             they wrote is in the record their browser pushed; no column on this
             screen prints it.
           </li>
@@ -160,7 +160,7 @@ export default function TeamPage() {
             ASSIGNMENTS
           </Link>
           <Link className="hl-btn" href="/legend/">
-            SHEET 00 — LEGEND
+            MODULE 00 — LEGEND
           </Link>
         </div>
       </section>

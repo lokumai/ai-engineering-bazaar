@@ -33,7 +33,7 @@ import { SITE_NAME } from '@/lib/site'
 export const metadata: Metadata = {
   title: { absolute: SITE_NAME },
   description:
-    'The front door: what the set is, the sheet to start on, the whole set, '
+    'The front door: what the set is, the module to start on, the whole set, '
     + 'the path through it, and where your reading is kept.',
 }
 
@@ -99,7 +99,7 @@ export default function HomePage() {
           strip at the foot of the first-visit block says the same thing again
           where a reader is deciding (§15.2.5). */}
       <p className="hl-eyebrow hl-mark">
-        Open drawing set · no account · nothing gated
+        Open curriculum · no account · nothing gated
       </p>
 
       {/* §15.2.2 — one h1 for one document. Neither block draws its own, so a

@@ -145,7 +145,7 @@ export function Readout({ variant, facts, traces = null, className }: ReadoutPro
   cells.push(
     <Cell
       key="signed"
-      label="Signed off"
+      label="Completed"
       value={fraction(hydrated ? counts.signed : null, counts.of)}
     />,
   )
@@ -169,7 +169,7 @@ export function Readout({ variant, facts, traces = null, className }: ReadoutPro
       )
     }
     cells.push(
-      <Cell key="uptime" label="Uptime" value={streak === null ? NO_READING : `${streak}d`} />,
+      <Cell key="uptime" label="Streak" value={streak === null ? NO_READING : `${streak}d`} />,
     )
   }
 

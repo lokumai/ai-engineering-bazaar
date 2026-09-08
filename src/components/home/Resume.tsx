@@ -106,38 +106,38 @@ export function Resume({ facts, subsystems }: ResumeProps) {
 
       <div className="hl-resume">
         <div className="hl-resume-open">
-          <p className="hl-mark m-0 text-ink-muted">Next sheet, not signed off</p>
+          <p className="hl-mark m-0 text-ink-muted">Next module, not completed</p>
           {/* §12.10.6 — the one line, and it is absent when every drawn sheet
-              is signed off, which is the honest form of that state and cheaper
+              is completed, which is the honest form of that state and cheaper
               than a panel explaining itself.
 
               **The label used to read "Open, not signed off", and it lied.**
               `ContinueLine` prints `nextUnsigned` (`derive.ts`) — the first
-              DRAWN sheet in curriculum order that is not signed off, which the
-              reader may never have opened: sign off 01 and 03, never open 02,
+              READY module in curriculum order that is not completed, which the
+              reader may never have opened: complete 01 and 03, never open 02,
               and the old label announced 02 as open. Worse, "opened and left"
               already means something exact on this site — `attention.ts`, under
-              the dashboard's `OPENED, NOT SIGNED OFF` — so the old wording
+              the dashboard's `OPENED, NOT COMPLETED` — so the old wording
               claimed that state on a surface that cannot compute it.
 
-              §15.3 asked for the last-opened unsigned sheet, and the rejected
+              §15.3 asked for the last-opened unsigned module, and the rejected
               fix was to supply it: `selectAttention(record, [], now)` here has
               no event log and flags a sheet only after `STALL_DAYS`, so a
-              reader who read a sheet this morning would get an EMPTY block. An
+              reader who read a module this morning would get an EMPTY block. An
               empty block is a worse falsehood than a narrow label, so the label
               was made to match the value instead, in wording the dashboard does
               not use. */}
           <ContinueLine facts={facts} />
           {/* §12.4.1 puts the sign-off control on the sheet and nowhere else,
-              so this block names the sheet and sends the reader to it rather
+              so this block names the module and sends the reader to it rather
               than offering a second control that could only navigate. */}
           <p className="hl-home-note-line">
-            A sheet is signed off on the sheet itself, beside the criteria the
-            sign-off asserts.
+            A module is completed on the module itself, beside the criteria the
+            completion asserts.
           </p>
         </div>
 
-        {/* §7.1 — the strip, unduplicated: `SIGNED OFF 04/32 · TO GO 28 · …`.
+        {/* §7.1 — the strip, unduplicated: `COMPLETED 04/32 · TO GO 28 · …`.
             `TRACES` is omitted because this page does not build the graph and
             never counted them (§11.25). */}
         <div className="hl-resume-readout">
@@ -164,9 +164,9 @@ export function Resume({ facts, subsystems }: ResumeProps) {
               <p className="hl-home-note-line">
                 State one on the{' '}
                 <Link href="/profile/" className="hl-link">
-                  profile sheet
+                  account page
                 </Link>{' '}
-                and a path is drawn for it. Leave it unstated and the whole set
+                and a path is ready for it. Leave it unstated and the whole set
                 stays exactly as it is.
               </p>
             </div>
@@ -189,15 +189,15 @@ export function Resume({ facts, subsystems }: ResumeProps) {
       </div>
 
       {/* §13.1.3 (5), §13.5 — one segmented meter per subsystem, in curriculum
-          order, each with its own printed count. One segment is one sheet, in
-          module order, so the meter reports how much of the subsystem exists as
+          order, each with its own printed count. One segment is one module, in
+          module order, so the meter reports how much of the level exists as
           well as how much of it is signed off — which a bar could not. */}
       <section className="hl-panel" aria-labelledby="hl-resume-meters">
         <div className="hl-panel-head">
           <h3 id="hl-resume-meters" className="hl-panel-title">
-            Subsystems
+            Levels
           </h3>
-          <p className="hl-mark m-0 text-ink-faint">One segment per sheet</p>
+          <p className="hl-mark m-0 text-ink-faint">One segment per module</p>
         </div>
 
         <ul className="hl-home-meters">
@@ -221,13 +221,13 @@ export function Resume({ facts, subsystems }: ResumeProps) {
       </section>
 
       <div className="hl-home-actions">
-        {/* `Sheet index` and not `The whole set`: §12.14.1 admits one spelling
+        {/* `Catalog` and not `The whole set`: §12.14.1 admits one spelling
             per thing, and this destination already has a name — the trail and
             the footer label print it from `ROUTE_TITLES`, and the first-visit
             block's card uses it too. Two names for one page on one document is
             the same defect as two spellings of one status. */}
         <Link className="hl-btn" href="/sheets/">
-          Sheet index
+          Catalog
         </Link>
         <Link className="hl-btn" href="/dashboard/">
           Dashboard
@@ -244,7 +244,7 @@ export function Resume({ facts, subsystems }: ResumeProps) {
           this block instead of the first-visit one, the filled meter segments,
           and which of the nine path bodies is shown. Every figure — the strip's
           counts, the meter tallies, the fourteen-day ticks, the path standing,
-          and the sheet on the Continue line — is a channel B island and is
+          and the module on the Continue line — is a channel B island and is
           demonstrably a dash or absent in that frame, so a reader who watched
           them arrive was being told they had been there all along. */}
       <div className="hl-note">
@@ -252,11 +252,11 @@ export function Resume({ facts, subsystems }: ResumeProps) {
           Which block you are reading, the filled meter segments and which path
           is shown come from the record in this browser before the page paints.
           The counts, the fourteen-day strip, the standing on your path and the
-          sheet on the Continue line are read from the record after that, and
+          module on the Continue line are read from the record after that, and
           stay dashed or absent until it has been read.
         </p>
         <p>
-          Dashed segments are sheets that are NOT DRAWN. They carry no sign-off
+          Dashed segments are modules that are PLANNED. They carry no completion
           control, so they are counted into no total here.
         </p>
       </div>
@@ -310,7 +310,7 @@ function UnsignableMeter({ slug, sheets }: ResumeSubsystem) {
         ))}
       </div>
       <p className="hl-mark m-0 mt-1 text-ink-muted">
-        {DASH} signed off · {plural(sheets.length, 'sheet')}, NOT DRAWN
+        {DASH} completed · {plural(sheets.length, 'module')}, PLANNED
       </p>
     </div>
   )

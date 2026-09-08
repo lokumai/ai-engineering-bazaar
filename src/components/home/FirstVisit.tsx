@@ -135,13 +135,13 @@ export function FirstVisit({
           </p>
           <h2 className="hl-home-card-title">{firstSheet.title}</h2>
           <p className="hl-home-card-note">
-            The first of {plural(firstSheet.subsystemSheets, 'sheet')} in{' '}
+            The first of {plural(firstSheet.subsystemSheets, 'module')} in{' '}
             {firstSheet.subsystem}. It assumes you write software and assumes
             nothing else.
           </p>
           <p className="hl-home-card-go">
             <Link className="hl-btn" href={firstSheet.path}>
-              Read sheet {firstSheet.number}
+              Read module {firstSheet.number}
             </Link>
           </p>
         </li>
@@ -150,15 +150,15 @@ export function FirstVisit({
           <p className="hl-mark m-0 text-ink-muted">
             Browse · {plural(setSheets, 'row')}
           </p>
-          {/* Titled for where it goes. It read "The whole drawing set", which is
+          {/* Titled for where it goes. It read "The whole curriculum", which is
               the NAME of `/courses/`: two pages carried one name and each of
               their leads sent the reader to the other. `/sheets/` calls itself
               the sheet index, on the page and in `route-labels.ts`, and the
               banded set keeps the name it has. */}
-          <h2 className="hl-home-card-title">The sheet index</h2>
+          <h2 className="hl-home-card-title">The catalog</h2>
           <p className="hl-home-card-note">
-            One table: every sheet, its subsystem, its extent, and whether it is
-            drawn. Filter it by subsystem, by state or by language.
+            One table: every module, its level, its length, and whether it is
+            ready. Filter it by level, by state or by language.
           </p>
           <p className="hl-home-card-go">
             <Link className="hl-btn" href="/sheets/">
@@ -169,11 +169,11 @@ export function FirstVisit({
 
         <li className="hl-home-card">
           <p className="hl-mark m-0 text-ink-muted">
-            Order · {setDrawn} drawn
+            Order · {setDrawn} ready
           </p>
           <h2 className="hl-home-card-title">The path through them</h2>
           <p className="hl-home-card-note">
-            The order the sheets are read in, and what each one needs before it.
+            The order the modules are read in, and what each one needs before it.
           </p>
           <p className="hl-home-card-go">
             <Link className="hl-btn" href="/path/">
@@ -184,19 +184,19 @@ export function FirstVisit({
       </ul>
 
       {/* §5.4 — the category block, reused rather than restyled: the same
-          `SUBSYSTEM 0n` / name / tick gauge it draws on every listing page,
+          `LEVEL 0n` / name / tick gauge it draws on every listing page,
           with the subsystem's own line of prose beside it. The gauge reports
-          the DRAWING SET — which sheets exist — and is true for everybody in
+          the CURRICULUM — which modules exist — and is true for everybody in
           every frame, which is what makes it the right instrument on a document
           that has never met the reader (§7.5). */}
       <section className="hl-panel" aria-labelledby="hl-home-subsystems">
         <div className="hl-panel-head">
-          {/* Not "Six subsystems": a count typed into a heading is a count
+          {/* Not "Six levels": a count typed into a heading is a count
               nobody measured, and the six blocks below are their own tally
               (§11.25). The manifest and the dashboard head this panel the same
               way, so one subject reads one way on three screens. */}
           <h2 id="hl-home-subsystems" className="hl-panel-title">
-            Subsystems
+            Levels
           </h2>
           <p className="hl-mark m-0 text-ink-faint">Counted from the files</p>
         </div>
@@ -213,11 +213,11 @@ export function FirstVisit({
               <p className="hl-home-row-note">{subsystem.blurb}</p>
               {/* §12.14.1 — one spelling of this status, everywhere: the
                   manifest, the filter chip, the module row and the diagram all
-                  say NOT DRAWN. */}
+                  say PLANNED. */}
               <p className="hl-mark hl-home-row-stat">
                 {subsystem.drawn === 0
-                  ? `${plural(subsystem.sheets, 'sheet')} · not drawn`
-                  : `${subsystem.drawn} of ${plural(subsystem.sheets, 'sheet')} drawn`}
+                  ? `${plural(subsystem.sheets, 'module')} · planned`
+                  : `${subsystem.drawn} of ${plural(subsystem.sheets, 'module')} ready`}
               </p>
             </li>
           ))}

@@ -37,19 +37,19 @@ const PAGES = [
   // is still the widest non-prose thing on the site.
   ['home screen', '/'],
   ['manifest', INDEX_SHEET],
-  ['drawing set', '/courses/'],
+  ['curriculum', '/courses/'],
   ['category', CATEGORY_PATHS[1]],
-  ['SHORT sheet', SHORT.path],
-  ['A4 sheet', A4.path],
-  ['widest sheet', WIDEST.path],
-  ['longest sheet', LONGEST.path],
+  ['SHORT module', SHORT.path],
+  ['A4 module', A4.path],
+  ['widest module', WIDEST.path],
+  ['longest module', LONGEST.path],
   // §16, hazard H-O — `/profile/` was never loaded below 1440 by any spec, and
   // §16.1's drafter block is the site's first two-column block outside a module
   // sheet: a 168px drawing column beside a form, a register whose summary is a
   // three-column grid, and an eight-cell mark row that has to wrap at 390. It is
   // here as a general property (the document never scrolls sideways) rather than
   // as a string match, which is what the rest of this list is for.
-  ['profile sheet', '/profile/'],
+  ['account page', '/profile/'],
 ] as const
 
 /**
@@ -207,7 +207,7 @@ test('the manifest table scrolls inside its region rather than the page', async 
  * subject rather than the presence of an affordance. What §4.7 still demands of
  * it is asserted directly, below.
  */
-for (const [name, path] of [['manifest', INDEX_SHEET], ['longest sheet', LONGEST.path]] as const) {
+for (const [name, path] of [['manifest', INDEX_SHEET], ['longest module', LONGEST.path]] as const) {
   test(`${name} tells the reader where a scroller continues`, async ({ page }) => {
     await page.goto(path)
     await page.waitForLoadState('networkidle')
@@ -359,7 +359,7 @@ test('every control reaches the §10.4 touch floor below 768px', async ({ page }
       }
     }))
 
-  expect(controls.length, 'sheet 13 still has controls to hit').toBeGreaterThan(3)
+  expect(controls.length, 'module 13 still has controls to hit').toBeGreaterThan(3)
   for (const control of controls) {
     expect(control.content, `${control.kind} has no hit area`).not.toBe('none')
     expect(control.position, `${control.kind}'s hit area is not positioned`)
@@ -371,7 +371,7 @@ test('every control reaches the §10.4 touch floor below 768px', async ({ page }
   }
 })
 
-test('the sheet gives up its zones in §4.7 order as the viewport narrows', async ({ page }) => {
+test('the module gives up its zones in §4.7 order as the viewport narrows', async ({ page }) => {
   const width = page.viewportSize()!.width
   await page.goto(LONGEST.path) // an A0 sheet — the only format with three zones
 
@@ -397,7 +397,7 @@ test('the sheet gives up its zones in §4.7 order as the viewport narrows', asyn
   }
 })
 
-test('the A4 sheet keeps its band and schedule at every width', async ({ page }) => {
+test('the A4 module keeps its band and schedule at every width', async ({ page }) => {
   await page.goto(A4.path)
   await expect(page.locator('.hl-status-band')).toBeVisible()
   await expect(page.locator('table.hl-schedule')).toBeVisible()

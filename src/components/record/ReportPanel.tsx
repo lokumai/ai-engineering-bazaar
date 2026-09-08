@@ -432,7 +432,7 @@ export function ReportPanel({ facts, counts }: ReportPanelProps) {
         <dl className="hl-defs">
           <dt>Title</dt>
           <dd>{reading(preview.title)}</dd>
-          <dt>Signed off</dt>
+          <dt>Completed</dt>
           <dd>{reading(fraction(preview.signed, preview.of))}</dd>
           <dt>To go</dt>
           <dd>{reading(String(preview.toGo))}</dd>
@@ -449,9 +449,9 @@ export function ReportPanel({ facts, counts }: ReportPanelProps) {
             evidence register rather than printing it empty. Stating the rule
             costs one line and stops the file overstating its own weight. */}
         <p className="mt-3 mb-0 font-display text-meta leading-normal text-ink-muted">
-          A record with no repository registered against any sheet is titled
+          A record with no repository registered against any module is titled
           READING RECORD, and its evidence register is dropped rather than
-          printed empty. Every sheet in the set is listed either way, signed off
+          printed empty. Every module in the set is listed either way, completed
           or not.
         </p>
       </section>

@@ -71,7 +71,7 @@ export default function JoinPage() {
       <p className="hl-lead">
         An organisation is a group whose managers follow the progress of the
         people in it. Joining one is a decision with a consequence for
-        everything this browser has recorded about you, so this sheet states the
+        everything this browser has recorded about you, so this module states the
         consequence before it offers the control, and the row that makes you a
         member is written by you from here — not by a manager, and not by a link
         in a message.
@@ -121,7 +121,7 @@ export default function JoinPage() {
             <p className="m-0 mt-1 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
               A manager can enter your address at their organisation. Nothing
               is sent to you and nothing happens to your record: the entry
-              makes the organisation visible on this sheet, and writing the
+              makes the organisation visible on this module, and writing the
               membership row is still your action. You can read only the entry
               that names your own address.
             </p>
@@ -181,7 +181,7 @@ export default function JoinPage() {
           history the organisation already holds: that log belongs to the
           organisation and stays with it. Erasing your own record on the{' '}
           <Link href="/profile/" className="hl-link">
-            profile sheet
+            account page
           </Link>{' '}
           removes it from this browser and removes the copy your account
           holds, and leaves that same organisation history in place. Closing

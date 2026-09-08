@@ -287,11 +287,11 @@ export function AliasSheet({ accountDoors }: { accountDoors: number }) {
       </div>
 
       {/* The artefact, not a form preview (§15.4.3). `.hl-title-block` is the
-          block a sheet prints, so what is on screen here is the thing being
+          block a module prints, so what is on screen here is the thing being
           chosen. The label is written out rather than imported from
           `lib/content/title-block.ts`: that module reaches `node:fs` through
           `derive.ts` and this island may not (§12.2, §15.4.4). */}
-      <aside aria-label="Your stamp, as a sheet will print it" className="hl-title-block">
+      <aside aria-label="Your stamp, as a module will print it" className="hl-title-block">
         <div className="hl-title-block-head hl-mark">Checked by</div>
 
         <div className="grid justify-items-center gap-2 px-3 py-4">

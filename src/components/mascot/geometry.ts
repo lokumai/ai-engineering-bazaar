@@ -232,7 +232,7 @@ export function edgeStateOf(states: FaceStates, edge: Edge): FaceState {
 /** §8.3 — the header mark's accessible name, updated from state. */
 export function progressLabel(states: FaceStates): string {
   const started = FACES.filter((face) => states[face.id] !== 'dormant').length
-  return `Progress: ${started} of ${FACES.length} subsystems started`
+  return `Progress: ${started} of ${FACES.length} levels started`
 }
 
 /**

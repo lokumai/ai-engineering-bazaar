@@ -18,7 +18,7 @@ const modules = loadAllModules()
 const drawn = modules.filter((m) => m.frontmatter.status === 'ready')
 
 describe('signOffCriteria', () => {
-  it('returns the sheet\'s own declared objectives, verbatim and in order', () => {
+  it('returns the module\'s own declared objectives, verbatim and in order', () => {
     const sheet = modules.find((m) => m.slug === 'fundamentals/llms')!
     expect(signOffCriteria('fundamentals/llms').objectives)
       .toEqual(sheet.frontmatter.objectives)
@@ -26,7 +26,7 @@ describe('signOffCriteria', () => {
       .toBe('Explain what an LLM does with a prompt, and why it is a next-token predictor')
   })
 
-  it('states no criteria for an undrawn sheet, because it declares none', () => {
+  it('states no criteria for an unready module, because it declares none', () => {
     // §12.4.1: an A4 draft has no sign-off control at all — absent, not
     // disabled — so there is nothing for criteria to sit beside. This returns
     // the empty list rather than inventing one for a sheet nobody has drawn.
@@ -35,7 +35,7 @@ describe('signOffCriteria', () => {
     }
   })
 
-  it('states no criteria for a slug no sheet claims', () => {
+  it('states no criteria for a slug no module claims', () => {
     expect(signOffCriteria('fundamentals/nope').objectives).toEqual([])
     expect(signOffCriteria('').objectives).toEqual([])
   })
@@ -47,7 +47,7 @@ describe('signOffCriteria', () => {
       .not.toBe(signOffCriteria(sheet.slug).objectives)
   })
 
-  it('names the reader\'s assertion, and the same one on every sheet', () => {
+  it('names the reader\'s assertion, and the same one on every module', () => {
     for (const m of modules) {
       expect(signOffCriteria(m.slug).assertion, m.slug).toBe(SIGN_OFF_ASSERTION)
     }
@@ -60,9 +60,9 @@ describe('SIGN_OFF_ASSERTION — §12.14.1, the copy register', () => {
     // §12.4.1 / §12.4.2: completion is the reader's own assertion, and there
     // is no assessor anywhere in this system to claim otherwise.
     expect(SIGN_OFF_ASSERTION).toBe(
-      'Signing off is your own assertion that you have read this sheet and '
+      'Marking a module complete is your own assertion that you have read this module and '
       + 'consider these objectives met. Nobody else assesses it, and you can '
-      + 'un-sign it at any time.',
+      + 'un-complete it at any time.',
     )
   })
 

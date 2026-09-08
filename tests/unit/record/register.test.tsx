@@ -61,7 +61,7 @@ const REGISTER = renderToStaticMarkup(
   </Register>,
 )
 
-describe('§16.4 — a register row arrives closed', () => {
+describe('§16.4 — a row arrives closed', () => {
   it('renders a native <details> with no `open` attribute', () => {
     expect(ROW).toContain('<details')
     // MEASURED: React serialises a boolean attribute as `open=""`, so the
@@ -114,7 +114,7 @@ describe('§16.4.1 — the mutation guard', () => {
     it(`refuses to render a row whose reading is ${JSON.stringify(reading)}`, () => {
       expect(() =>
         renderToStaticMarkup(
-          <RegisterRow id="uptime" name="Uptime" reading={reading}>
+          <RegisterRow id="uptime" name="Streak" reading={reading}>
             <p>body</p>
           </RegisterRow>,
         ),
@@ -129,8 +129,8 @@ describe('§16.4.1 — the mutation guard', () => {
   })
 })
 
-describe('§16.7 — the register and its rows are named', () => {
-  it('wires the register to the heading id it is given', () => {
+describe('§16.7 — your progress and its rows are named', () => {
+  it('wires your progress to the heading id it is given', () => {
     expect(REGISTER).toContain('aria-labelledby="register-head"')
   })
 

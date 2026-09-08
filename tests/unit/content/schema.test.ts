@@ -16,26 +16,26 @@ const ready = {
 }
 
 describe('parseFrontmatter', () => {
-  it('accepts a complete ready sheet', () => {
+  it('accepts a complete ready module', () => {
     const result = parseFrontmatter(ready, 'llms.md', 'ready')
     expect(result.summary).toBe(ready.summary)
     expect(result.objectives).toHaveLength(2)
   })
 
-  it('accepts a draft sheet with no frontmatter at all', () => {
+  it('accepts a draft module with no frontmatter at all', () => {
     const result = parseFrontmatter({}, 'advanced_ui.md', 'draft')
     expect(result.summary).toBeNull()
     expect(result.objectives).toEqual([])
   })
 
-  it('rejects a ready sheet with no summary', () => {
+  it('rejects a ready module with no summary', () => {
     const { summary, ...rest } = ready
     void summary
     expect(() => parseFrontmatter(rest, 'llms.md', 'ready'))
       .toThrow(/llms\.md.*summary/s)
   })
 
-  it('rejects a ready sheet with fewer than two objectives', () => {
+  it('rejects a ready module with fewer than two objectives', () => {
     expect(() => parseFrontmatter({ ...ready, objectives: ['only one'] }, 'llms.md', 'ready'))
       .toThrow(/llms\.md.*objectives/s)
   })

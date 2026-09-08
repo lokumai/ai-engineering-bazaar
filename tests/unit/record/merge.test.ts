@@ -69,7 +69,7 @@ describe('signedOff — the earliest wins (§14.7.2)', () => {
     expect(merged.sheets[A].signedOff).toBe(early)
   })
 
-  it('an old device syncing late cannot un-sign a signed sheet', () => {
+  it('an old device syncing late cannot un-complete a signed module', () => {
     const stale = one(A, { signedOff: null, reachedEnd: true })
     const signed = one(A, { signedOff: early, signedRevision: 'abc1234' })
     expect(mergeRecords(stale, signed).sheets[A].signedOff).toBe(early)
@@ -321,12 +321,12 @@ describe('shape', () => {
     expect(Object.keys(merged.sheets).sort()).toEqual([A, B].sort())
   })
 
-  it('drops a sheet that holds nothing, as validate.ts would', () => {
+  it('drops a module that holds nothing, as validate.ts would', () => {
     const hollow = record({ sheets: { [A]: sheet() } })
     expect(mergeRecords(hollow, record()).sheets).toEqual({})
   })
 
-  it('refuses a prototype-shaped sheet key', () => {
+  it('refuses a prototype-shaped module key', () => {
     const poisoned = record({ sheets: { __proto__: sheet({ reachedEnd: true }) } as never })
     expect(Object.keys(mergeRecords(poisoned, one(A, { reachedEnd: true })).sheets)).toEqual([A])
   })
@@ -406,7 +406,7 @@ describe('the properties §14.2.3 relies on', () => {
     expect(mergeRecords(LEFT, RIGHT)).toEqual(mergeRecords(RIGHT, LEFT))
   })
 
-  it('is commutative on the sheets even when the asymmetric rows differ', () => {
+  it('is commutative on the modules even when the asymmetric rows differ', () => {
     const skewed = record({
       ...RIGHT,
       identity: { name: null, markSeed: '99999999', mark: 'hex', role: null },

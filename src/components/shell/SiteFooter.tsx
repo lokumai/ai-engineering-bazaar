@@ -57,7 +57,7 @@ export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
           <SheetLabel sheet={sheet} categories={categoryLabels()} />
 
           {/* §3.4 — a machine-derived value never wraps. At 390px the row is
-              342px wide and `SHEET 13 OF 32` broken after the number reads as
+              342px wide and `MODULE 13 OF 32` broken after the number reads as
               two facts instead of one. */}
           {revision && (
             <span className="hl-mark whitespace-nowrap text-ink-muted">
@@ -91,7 +91,7 @@ export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
             {LICENCE_LABEL}
           </a>
           <Dot />
-          <span className="font-mono uppercase tracking-[0.06em]">Drawn by LKM-01</span>
+          <span className="font-mono uppercase tracking-[0.06em]">Marked by LKM-01</span>
           {/* The chain, in `AFFILIATION` order. Names only: the relationship
               between them is stated once, with its labels, in `/legend/`'s
               colophon. A footer is the wrong place to explain a corporate

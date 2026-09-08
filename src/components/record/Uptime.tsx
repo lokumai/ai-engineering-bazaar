@@ -90,11 +90,11 @@ export function Uptime() {
 function label(
   reading: { streak: number; lastActive: string | null; days: Array<{ date: string }> } | null,
 ): string {
-  if (reading === null) return 'UPTIME --'
-  if (reading.streak > 0) return `UPTIME ${reading.streak}D`
+  if (reading === null) return 'STREAK --'
+  if (reading.streak > 0) return `STREAK ${reading.streak}D`
   const gap = daysAgo(reading)
-  if (gap === null) return 'UPTIME 0D'
-  return `UPTIME 0D · LAST ${gap}D AGO`
+  if (gap === null) return 'STREAK 0D'
+  return `STREAK 0D · LAST ${gap}D AGO`
 }
 
 function daysAgo(reading: {

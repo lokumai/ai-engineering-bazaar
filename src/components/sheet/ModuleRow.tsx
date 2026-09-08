@@ -92,7 +92,7 @@ function SignOffSquares({ row }: { row: SheetRow }) {
         <span
           className="hl-signoff-square"
           data-drawn="false"
-          title="NOT DRAWN"
+          title="PLANNED"
           aria-hidden="true"
         />
       </span>

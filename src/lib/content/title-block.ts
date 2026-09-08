@@ -99,7 +99,7 @@ export function sheetFacts(
 /** §4.5 item 2 / §4.6 — `SUBSYSTEM 03 · EXPERT · SHEET 17 OF 33`. */
 export function eyebrow(facts: SheetFacts): string {
   return [
-    `SUBSYSTEM ${pad2(facts.categoryOrder)}`,
+    `LEVEL ${pad2(facts.categoryOrder)}`,
     facts.categoryTitle.toUpperCase(),
     sheetLabel(facts),
   ].join(' · ')
@@ -107,7 +107,7 @@ export function eyebrow(facts: SheetFacts): string {
 
 /** §5.2 — `SHEET 13 OF 33`, the footer's left cell. */
 export function sheetLabel(facts: SheetFacts): string {
-  return `SHEET ${facts.module} OF ${facts.sheets}`
+  return `MODULE ${facts.module} OF ${facts.sheets}`
 }
 
 /**
@@ -130,12 +130,12 @@ export function titleBlockRows(facts: SheetFacts): TitleBlockRow[] {
   return [
     { label: 'DRAWING', value: pad2(facts.module) },
     {
-      label: 'SUBSYSTEM',
+      label: 'LEVEL',
       value: `${pad2(facts.categoryOrder)} · ${facts.categoryTitle.toUpperCase()}`,
     },
     { label: 'POSITION', value: `${facts.position.index} OF ${facts.position.of}` },
     {
-      label: 'EXTENT',
+      label: 'LENGTH',
       value: drawn ? `${thousands(facts.extent)} W · ${facts.duration} MIN` : DASH,
     },
     {
@@ -143,12 +143,12 @@ export function titleBlockRows(facts: SheetFacts): TitleBlockRow[] {
       value: drawn ? `${facts.diagrams} DIAG · ${facts.tables} TBL` : DASH,
     },
     { label: 'SOURCES', value: drawn ? String(facts.sources) : DASH },
-    { label: 'REQUIRES', value: list(facts.requires) },
-    { label: 'FEEDS', value: list(facts.feeds) },
+    { label: 'REQUIREMENTS', value: list(facts.requires) },
+    { label: 'UNLOCKS', value: list(facts.feeds) },
     { label: 'REVISION', value: facts.revision?.hash ?? DASH, preserveCase: true },
     { label: 'DATE', value: facts.revision?.date ?? DASH },
     { label: 'LANG', value: LANG_DISPLAY[facts.lang] },
-    { label: 'DRAWN BY', value: 'LKM-01' },
+    { label: 'MARKED BY', value: 'LKM-01' },
   ]
 }
 
@@ -213,7 +213,7 @@ export function carriesRepositories(facts: SheetFacts): boolean {
 }
 
 /** The six rows §4.5 item 4 gives a draft sheet's strip, in its order. */
-const DRAFT_STRIP = ['EXTENT', 'FIGURES', 'SOURCES', 'REQUIRES', 'LANG', 'REVISION']
+const DRAFT_STRIP = ['LENGTH', 'FIGURES', 'SOURCES', 'REQUIREMENTS', 'LANG', 'REVISION']
 
 /**
  * §5.5 Variant B — the same rows, laid out horizontally beneath the h1.
@@ -228,7 +228,7 @@ export function titleStripRows(facts: SheetFacts): TitleBlockRow[] {
 
   return DRAFT_STRIP.map((label) => {
     const row = rows.find((r) => r.label === label)
-    if (!row) throw new Error(`§4.5 names a strip row the title block does not have: ${label}`)
+    if (!row) throw new Error(`§4.5 names a strip row the module info does not have: ${label}`)
     return row
   })
 }

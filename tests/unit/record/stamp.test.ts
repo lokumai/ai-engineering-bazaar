@@ -85,15 +85,15 @@ function signed(...slugs: string[]): RecordData {
 
 describe('the two stampers agree', () => {
   const CASES: ReadonlyArray<[string, RecordData]> = [
-    ['nothing signed off', EMPTY_RECORD],
-    ['one sheet', signed('intermediate/security')],
-    ['two sheets in one subsystem', signed('intermediate/security', 'intermediate/loop-engineering')],
-    ['two subsystems', signed('intermediate/security', 'fundamentals/llms')],
+    ['nothing completed', EMPTY_RECORD],
+    ['one module', signed('intermediate/security')],
+    ['two modules in one level', signed('intermediate/security', 'intermediate/loop-engineering')],
+    ['two levels', signed('intermediate/security', 'fundamentals/llms')],
     ['a whole subsystem, which is the one place `-complete` can be reached today',
       signed('fundamentals/llms', 'fundamentals/training', 'fundamentals/rag',
         'fundamentals/tools', 'fundamentals/memory', 'fundamentals/agents',
         'fundamentals/multi-agent')],
-    ['a single-sheet subsystem, where one sign-off completes it',
+    ['a single-module level, where one sign-off completes it',
       signed('protocols/protocols-reference')],
     ['a slug the build has no module number for', signed('expert/advanced-ui')],
     ['a role and nothing else, which is a reader who has chosen a path before signing anything',
@@ -148,7 +148,7 @@ describe('stampClassesFor — what a record implies', () => {
     expect(stampClassesFor(EMPTY_RECORD, FACTS)).toEqual([])
   })
 
-  it('names the sheet by MODULE NUMBER and the subsystem by SLUG', () => {
+  it('names the module by MODULE NUMBER and the level by SLUG', () => {
     expect(stampClassesFor(signed('intermediate/security'), FACTS))
       .toEqual(['hl-cat-intermediate-started', 'hl-signed-13'])
   })
@@ -172,7 +172,7 @@ describe('stampClassesFor — what a record implies', () => {
       .toEqual(['hl-cat-intermediate-started', 'hl-signed-13'])
   })
 
-  it('ignores a sheet that was recorded but never signed off', () => {
+  it('ignores a module that was recorded but never completed', () => {
     const data = signOff(EMPTY_RECORD, 'intermediate/security', 'a1b2c3d', AT)
     expect(stampClassesFor(unsign(data, 'intermediate/security'), FACTS)).toEqual([])
   })

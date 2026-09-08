@@ -57,17 +57,17 @@ describe('breadcrumbFor', () => {
     ])
   })
 
-  it('names the drawing set, which is a page and not a bare URL segment', () => {
+  it('names the curriculum, which is a page and not a bare URL segment', () => {
     expect(breadcrumbFor('/courses/', CATEGORIES)).toEqual([
       { label: 'Home', href: '/' },
-      { label: 'Drawing set', href: null },
+      { label: 'Curriculum', href: null },
     ])
   })
 
   it('trails the real module route through both of its parents', () => {
     expect(breadcrumbFor('/courses/intermediate/security/', CATEGORIES)).toEqual([
       { label: 'Home', href: '/' },
-      { label: 'Drawing set', href: '/courses/' },
+      { label: 'Curriculum', href: '/courses/' },
       { label: 'Intermediate', href: '/courses/intermediate/' },
       { label: 'security', href: null },
     ])
@@ -112,7 +112,7 @@ describe('breadcrumbFor on the not-found route', () => {
     for (const segment of [null, 'courses', '__PAGE__']) {
       expect(breadcrumbFor('/courses/', CATEGORIES, segment)).toEqual([
         { label: 'Home', href: '/' },
-        { label: 'Drawing set', href: null },
+        { label: 'Curriculum', href: null },
       ])
     }
   })
@@ -129,32 +129,32 @@ describe('NOT_FOUND_SHEET_LABEL', () => {
 })
 
 describe('sheetLabelFor', () => {
-  it('names the index sheet', () => {
+  it('names the catalog', () => {
     expect(sheetLabelFor('/', CATEGORIES)).toBe('HOME')
     // §15.1 — the register moved, and its label went with it.
-    expect(sheetLabelFor('/sheets/', CATEGORIES)).toBe('SHEET INDEX')
+    expect(sheetLabelFor('/sheets/', CATEGORIES)).toBe('CATALOG')
   })
 
-  it('numbers a category by its position in the drawing set', () => {
-    expect(sheetLabelFor('/fundamentals/', CATEGORIES)).toBe('SUBSYSTEM 01')
-    expect(sheetLabelFor('/expert/', CATEGORIES)).toBe('SUBSYSTEM 03')
+  it('numbers a category by its position in the curriculum', () => {
+    expect(sheetLabelFor('/fundamentals/', CATEGORIES)).toBe('LEVEL 01')
+    expect(sheetLabelFor('/expert/', CATEGORIES)).toBe('LEVEL 03')
   })
 
   it('names other top-level pages after themselves', () => {
     expect(sheetLabelFor('/dashboard/', CATEGORIES)).toBe('DASHBOARD')
   })
 
-  it('returns nothing for a module page, whose sheet number comes from content', () => {
+  it('returns nothing for a module page, whose module number comes from content', () => {
     expect(sheetLabelFor('/intermediate/ai-security/', CATEGORIES)).toBeNull()
   })
 
-  it('names the drawing set', () => {
-    expect(sheetLabelFor('/courses/', CATEGORIES)).toBe('DRAWING SET')
+  it('names the curriculum', () => {
+    expect(sheetLabelFor('/courses/', CATEGORIES)).toBe('CURRICULUM')
   })
 
-  it('numbers a subsystem at the route the site actually serves it from', () => {
-    expect(sheetLabelFor('/courses/fundamentals/', CATEGORIES)).toBe('SUBSYSTEM 01')
-    expect(sheetLabelFor('/courses/protocols/', CATEGORIES)).toBe('SUBSYSTEM 05')
+  it('numbers a level at the route the site actually serves it from', () => {
+    expect(sheetLabelFor('/courses/fundamentals/', CATEGORIES)).toBe('LEVEL 01')
+    expect(sheetLabelFor('/courses/protocols/', CATEGORIES)).toBe('LEVEL 05')
   })
 
   it('still returns nothing for a module page under that route', () => {
@@ -185,7 +185,7 @@ describe('an ancestor segment with no page of its own (§15.1)', () => {
 
   it('still links an ancestor that does have a page', () => {
     const crumbs = breadcrumbFor('/courses/fundamentals/', CATEGORIES)
-    expect(crumbs[1]).toEqual({ label: 'Drawing set', href: '/courses/' })
+    expect(crumbs[1]).toEqual({ label: 'Curriculum', href: '/courses/' })
   })
 
   /**
@@ -231,8 +231,8 @@ describe('an ancestor segment with no page of its own (§15.1)', () => {
 
 describe('markTokens', () => {
   it('separates the machine-derived values from the label words', () => {
-    expect(markTokens('SHEET 13 OF 32')).toEqual([
-      { text: 'SHEET ', value: false },
+    expect(markTokens('MODULE 13 OF 32')).toEqual([
+      { text: 'MODULE ', value: false },
       { text: '13', value: true },
       { text: ' OF ', value: false },
       { text: '32', value: true },
@@ -240,8 +240,8 @@ describe('markTokens', () => {
   })
 
   it('keeps a value that carries punctuation in one piece', () => {
-    expect(markTokens('SHEETS 11/32')).toEqual([
-      { text: 'SHEETS ', value: false },
+    expect(markTokens('MODULES 11/32')).toEqual([
+      { text: 'MODULES ', value: false },
       { text: '11/32', value: true },
     ])
   })
@@ -251,8 +251,8 @@ describe('markTokens', () => {
     // moved the register: `sheetLabelFor` returns `HOME` and `SHEET INDEX`
     // today and nothing anywhere renders the old string, so the case was
     // tokenising a fixture rather than a label.
-    expect(sheetLabelFor('/sheets/', CATEGORIES)).toBe('SHEET INDEX')
-    expect(markTokens('SHEET INDEX')).toEqual([{ text: 'SHEET INDEX', value: false }])
+    expect(sheetLabelFor('/sheets/', CATEGORIES)).toBe('CATALOG')
+    expect(markTokens('CATALOG')).toEqual([{ text: 'CATALOG', value: false }])
   })
 
   it('returns nothing for an empty label', () => {

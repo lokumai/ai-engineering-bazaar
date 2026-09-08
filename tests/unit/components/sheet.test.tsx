@@ -45,7 +45,7 @@ describe('TableOfContents — the section spine (§5.6)', () => {
     expect(markup).toContain('href="#what-is-different"')
   })
 
-  it('renders nothing at all when the sheet has no sections', () => {
+  it('renders nothing at all when the module has no sections', () => {
     expect(renderToStaticMarkup(<TableOfContents entries={[]} activeId={null} />)).toBe('')
   })
 
@@ -62,11 +62,11 @@ describe('TitleBlock — variant A (§5.5)', () => {
   const markup = renderToStaticMarkup(<TitleBlock rows={rows} />)
 
   it('is the page\'s complementary landmark', () => {
-    expect(markup).toContain('aria-label="Title block"')
+    expect(markup).toContain('aria-label="Module info"')
   })
 
   it('carries its header strip', () => {
-    expect(markup).toContain('Title block</div>')
+    expect(markup).toContain('Module info</div>')
   })
 
   it('prints every row as a label/value pair', () => {
@@ -84,7 +84,7 @@ describe('TitleBlock — variant A (§5.5)', () => {
 })
 
 describe('TitleStrip — variant B (§5.5)', () => {
-  it('takes the class the sheet uses to hide it once the rail returns', () => {
+  it('takes the class the module uses to hide it once the rail returns', () => {
     const markup = renderToStaticMarkup(
       <TitleStrip rows={[{ label: 'LANG', value: 'EN · TR' }]} className="xl:hidden" />,
     )
@@ -108,8 +108,8 @@ describe('Objectives (§5.5)', () => {
 describe('StatusBand (§4.5)', () => {
   const markup = renderToStaticMarkup(<StatusBand />)
 
-  it('says both true things about a sheet that is not drawn', () => {
-    expect(markup).toContain('Not yet drawn')
+  it('says both true things about a module that is planned', () => {
+    expect(markup).toContain('Planned')
     expect(markup).toContain('Schedule of parts only')
   })
 })
@@ -149,8 +149,8 @@ describe('PrevNext (§5.7)', () => {
 
   it('prints both directions', () => {
     const markup = renderToStaticMarkup(<PrevNext previous={drawn} next={drawn} />)
-    expect(markup).toContain('Previous sheet')
-    expect(markup).toContain('Next sheet')
+    expect(markup).toContain('Previous module')
+    expect(markup).toContain('Next module')
   })
 
   it('marks the ends of the set rather than omitting a cell', () => {
@@ -159,15 +159,15 @@ describe('PrevNext (§5.7)', () => {
     expect(markup.match(/hl-prevnext-cell/g)).toHaveLength(2)
   })
 
-  it('tags a target that is not drawn, in words as well as line type', () => {
+  it('tags a target that is planned, in words as well as line type', () => {
     const markup = renderToStaticMarkup(<PrevNext previous={drawn} next={notDrawn} />)
-    expect(markup).toContain('Not drawn')
+    expect(markup).toContain('Planned')
     expect(markup).toContain('data-draft=""')
   })
 
-  it('does not tag a drawn target', () => {
+  it('does not tag a ready target', () => {
     const markup = renderToStaticMarkup(<PrevNext previous={drawn} next={drawn} />)
-    expect(markup).not.toContain('Not drawn')
+    expect(markup).not.toContain('Planned')
     expect(markup).not.toContain('data-draft')
   })
 
@@ -180,16 +180,16 @@ describe('PrevNext (§5.7)', () => {
 describe('DependencyBlock (§4.6)', () => {
   it('prints an em dash for a relation with no edges', () => {
     const markup = renderToStaticMarkup(
-      <DependencyBlock relations={[{ label: 'Requires', targets: [] }]} />,
+      <DependencyBlock relations={[{ label: 'Requirements', targets: [] }]} />,
     )
     expect(markup).toContain('—')
   })
 
-  it('draws a link to an undrawn sheet as a hidden line', () => {
+  it('draws a link to an unready module as a hidden line', () => {
     const markup = renderToStaticMarkup(
       <DependencyBlock
         relations={[{
-          label: 'Feeds',
+          label: 'Unlocks',
           targets: [
             { module: 12, title: 'Harness', path: '/a/', draft: false },
             { module: 16, title: 'Advanced UI', path: '/b/', draft: true },
@@ -202,7 +202,7 @@ describe('DependencyBlock (§4.6)', () => {
   })
 })
 
-describe('sheet.css holds the line (§11)', () => {
+describe('module.css holds the line (§11)', () => {
   const css = readFileSync(
     path.resolve(process.cwd(), 'src', 'app', 'sheet.css'),
     'utf8',

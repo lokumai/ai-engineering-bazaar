@@ -116,8 +116,8 @@ export default function SignInPage() {
         Three ways to put your name on this record, and they cost different
         things. The first asks for nothing and sends nothing on its own. The
         other two move a copy off this browser, carrying the name with it, so
-        the record survives a cleared cache and a second machine. Every sheet,
-        every Quick Check and every sign-off works the same under all three,
+        the record survives a cleared cache and a second machine. Every module,
+        every Quick Check and every completion works the same under all three,
         and under none of them.
       </p>
 
@@ -294,7 +294,7 @@ export default function SignInPage() {
         <p>
           Whichever door you take, the record already in this browser is not
           discarded. If the account has a record too, the two are merged
-          field by field — a sign-off is never taken back, and no submittal is
+          field by field — a completion is never taken back, and no submittal is
           dropped — and you are shown what the merge did before it is kept.
         </p>
         <p>
@@ -303,7 +303,7 @@ export default function SignInPage() {
         </p>
         <p className="m-0">
           <Link href="/profile/">
-            The profile sheet is where the record itself lives
+            The account page is where the record itself lives
           </Link>
           .
         </p>

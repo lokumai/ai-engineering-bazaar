@@ -45,7 +45,7 @@ function inkOf(page: Page, selector: string) {
 const NO_NUMBERED_SECTIONS = true
 
 test('the section numeral stays out of the left rail (§6.1, §4.1)', async ({ page }) => {
-  test.skip(NO_NUMBERED_SECTIONS, 'no sheet carries a section numeral: see the note above')
+  test.skip(NO_NUMBERED_SECTIONS, 'no module carries a section numeral: see the note above')
   await page.goto(A0.path)
 
   const measured = await page.evaluate(() => {
@@ -68,7 +68,7 @@ test('the section numeral stays out of the left rail (§6.1, §4.1)', async ({ p
 
   // §4.1's zone arithmetic leaves a 24px gutter and §6.1 wants 44px of it.
   // The gutter wins, so the numeral is inline — but it is still a mono mark.
-  expect(measured.marks.length, 'the security sheet still numbers its sections')
+  expect(measured.marks.length, 'the security module still numbers its sections')
     .toBeGreaterThan(5)
   for (const mark of measured.marks) {
     expect(mark.font, `${mark.mark} is still set in mono`).toMatch(/Plex Mono/)
@@ -81,7 +81,7 @@ test('the section numeral stays out of the left rail (§6.1, §4.1)', async ({ p
 })
 
 test('a TOC numeral never runs into its section title (§5.6)', async ({ page }) => {
-  test.skip(NO_NUMBERED_SECTIONS, 'no sheet carries a section numeral: see the note above')
+  test.skip(NO_NUMBERED_SECTIONS, 'no module carries a section numeral: see the note above')
   await page.goto(A0.path)
 
   const marks = await inkOf(page, '.hl-rail-left .hl-toc-mark')
@@ -92,7 +92,7 @@ test('a TOC numeral never runs into its section title (§5.6)', async ({ page })
   // help — an over-constrained line box overflows towards inline-end — so the
   // numeral is set RTL and the overflow goes left, into the padding the spine
   // already stands clear of.
-  expect(marks.some((m) => m.text === 'VIII'), 'sheet 13 still has a section VIII')
+  expect(marks.some((m) => m.text === 'VIII'), 'module 13 still has a section VIII')
     .toBe(true)
 
   for (const [i, mark] of marks.entries()) {

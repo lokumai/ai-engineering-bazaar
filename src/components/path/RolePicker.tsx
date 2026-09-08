@@ -180,7 +180,7 @@ export function RolePicker({
                   denominator. A draft step is on the path and out of the count,
                   because a sheet nobody has written cannot be signed off. */}
               <p className="hl-mark m-0 mt-1 text-ink-faint">
-                {plural(drawn, 'sheet')} drawn
+                {plural(drawn, 'module')} drawn
               </p>
             </div>
           )
@@ -212,9 +212,9 @@ export function RolePicker({
       {/* §13.3 — stated where the control is, because the alternative reading
           is that switching costs the reader their record. */}
       <p className="mt-2 mb-0 font-display text-meta leading-normal text-ink-muted">
-        A path is a view over the sheets, not a container. Changing role changes
-        the order this site recommends and nothing else: sign-offs are recorded
-        against sheets, so none of them move.
+        A path is a view over the modules, not a container. Changing role changes
+        the order this site recommends and nothing else: completions are recorded
+        against modules, so none of them move.
       </p>
     </fieldset>
   )

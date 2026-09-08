@@ -128,7 +128,7 @@ describe('courseLinkFor', () => {
 })
 
 describe('sheetSource', () => {
-  it('names the file a numbered sheet was loaded from', () => {
+  it('names the file a numbered module was loaded from', () => {
     // The path is derived from the sheet, not transcribed: renumbering the
     // corpus must not fail this.
     for (const module of loadAllModules()) {
@@ -137,7 +137,7 @@ describe('sheetSource', () => {
     }
   })
 
-  it('returns null for a number no sheet carries', () => {
+  it('returns null for a number no module carries', () => {
     expect(sheetSource(999)).toBeNull()
   })
 })

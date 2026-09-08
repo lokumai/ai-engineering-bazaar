@@ -137,7 +137,7 @@ export function Lkm01({ size = 28, idPrefix = 'lkm01', className }: Lkm01Props) 
         hidden faces. That is real drafting practice for adjacent sectioned
         parts, it keeps the overlapping projection regions legible, and it is
         why a fully approved set crosshatches where the faces overlap. Both
-        patterns are emitted whatever the reader has signed off: an unused
+        patterns are emitted whatever the reader has completed: an unused
         `<pattern>` paints nothing, and a conditional one paints a hydration
         mismatch (§12.2).
       */}

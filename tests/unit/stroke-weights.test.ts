@@ -65,7 +65,7 @@ function declarationsIn(file: string): Declaration[] {
 const CSS_FILES = readdirSync(CSS_DIR).filter((name) => name.endsWith('.css')).sort()
 
 describe('§2.2 — the struct weight is painted, never bordered', () => {
-  it('finds the stylesheets it is meant to be checking', () => {
+  it('finds the stylemodules it is meant to be checking', () => {
     expect(CSS_FILES).toContain('globals.css')
     expect(CSS_FILES.length).toBeGreaterThanOrEqual(5)
   })

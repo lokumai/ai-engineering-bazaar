@@ -67,7 +67,7 @@ for (const sheet of DRAWN) {
     // The dash means "nobody counted this" and belongs to the sheets nobody
     // has drawn (§4.5, §11.25).
     expect(found.rows.SOURCES, `${sheet.path} SOURCES`).toMatch(/^\d+$/)
-    expect(found.rows.EXTENT, `${sheet.path} EXTENT`).toMatch(/^[\d,]+ W · \d+ MIN$/)
+    expect(found.rows.EXTENT, `${sheet.path} LENGTH`).toMatch(/^[\d,]+ W · \d+ MIN$/)
   })
 }
 
@@ -78,10 +78,10 @@ for (const sheet of NOT_DRAWN) {
 
     // §4.5 item 4, verbatim: `EXTENT —`, `FIGURES —`, `SOURCES —`,
     // `REQUIRES —`, `LANG EN`.
-    expect(found.rows.EXTENT, `${sheet.path} EXTENT`).toBe('—')
+    expect(found.rows.EXTENT, `${sheet.path} LENGTH`).toBe('—')
     expect(found.rows.FIGURES, `${sheet.path} FIGURES`).toBe('—')
     expect(found.rows.SOURCES, `${sheet.path} SOURCES`).toBe('—')
-    expect(found.rows.REQUIRES, `${sheet.path} REQUIRES`).toBe('—')
+    expect(found.rows.REQUIRES, `${sheet.path} REQUIREMENTS`).toBe('—')
 
     // §11.27 and §1's second self-check. The Turkish sibling of a stub is a
     // faithful translation *of the stub*, which is why the ratio alone badged
@@ -90,7 +90,7 @@ for (const sheet of NOT_DRAWN) {
   })
 }
 
-test('the index agrees with the sheets about which are bilingual', async ({ page }) => {
+test('the index agrees with the modules about which are bilingual', async ({ page }) => {
   // §4.8's table left `/` for `/sheets/` when the home screen took the front
   // door (§15.1); the cross-check is unchanged, because the fact it checks is
   // not about the route. `INDEX_SHEET` rather than a typed path so a second
@@ -114,14 +114,14 @@ test('the index agrees with the sheets about which are bilingual', async ({ page
   // A sheet that is not drawn is `EN` on its own sheet (§4.5), so it is `EN`
   // here too — the index and the sheet are two renderings of one fact.
   for (const row of langs) {
-    if (row.draft) expect(row.lang, `sheet ${row.module}`).toBe('EN')
+    if (row.draft) expect(row.lang, `module ${row.module}`).toBe('EN')
   }
 
   // Which sheets are translated changes as they are translated, so the index
   // is checked against the sheets rather than against a list written here: a
   // drawn sheet reads `EN · TR` or `EN`, and nothing else.
   for (const row of langs) {
-    if (!row.draft) expect(row.lang, `sheet ${row.module}`).toMatch(/^EN( · TR)?$/)
+    if (!row.draft) expect(row.lang, `module ${row.module}`).toMatch(/^EN( · TR)?$/)
   }
   expect(langs.some((row) => row.lang === 'EN · TR')).toBe(true)
 })

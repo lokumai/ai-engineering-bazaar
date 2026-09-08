@@ -268,9 +268,9 @@ function MemberRow({
         {member.record.kind !== 'record' ? (
           <span className="text-ink-muted">—</span>
         ) : latestSignOff(member.record.data) === null ? (
-          <span className="text-ink-muted">NO SIGN-OFF</span>
+          <span className="text-ink-muted">NO COMPLETION</span>
         ) : (
-          `SIGNED OFF · LATEST ${day(latestSignOff(member.record.data))}`
+          `COMPLETED · LATEST ${day(latestSignOff(member.record.data))}`
         )}
       </td>
 

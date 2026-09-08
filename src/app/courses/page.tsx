@@ -16,9 +16,9 @@ import {
 import { plural } from '@/lib/text'
 
 export const metadata: Metadata = {
-  title: 'Drawing set',
+  title: 'Curriculum',
   description:
-    'Every sheet in the set, grouped by subsystem, with the topics each one '
+    'Every module in the set, grouped by level, with the topics each one '
     + 'covers or is scheduled to cover.',
 }
 
@@ -46,11 +46,11 @@ export default function DrawingSetPage() {
     <PageShell>
       <p className="hl-eyebrow hl-mark">{setEyebrow()}</p>
 
-      <h1 className="hl-listing-title">Drawing set</h1>
+      <h1 className="hl-listing-title">Curriculum</h1>
 
       <p className="hl-lead">
-        Every sheet in the set, grouped by subsystem. The topics column names
-        what a sheet covers: its first three sections where it is drawn, the
+        Every module in the curriculum, grouped by level. The topics column names
+        what a module covers: its first three sections where it is ready, the
         first three items of its schedule of parts where it is not.
       </p>
 
@@ -78,7 +78,7 @@ export default function DrawingSetPage() {
               data-cat={category.slug}
             >
               {/* The band header is the section's heading: a screen reader
-                  meets `SUBSYSTEM 02 · INTERMEDIATE` as an h2 and a link, not
+                  meets `LEVEL 02 · INTERMEDIATE` as an h2 and a link, not
                   as a decorative strip beside an unlabelled table. */}
               <h2 className="hl-band-title">
                 <CategoryBlock
@@ -91,7 +91,7 @@ export default function DrawingSetPage() {
               <div className="flex flex-wrap items-end gap-x-6 gap-y-2">
                 <p className="hl-mark hl-band-meta">{coverageLabel(coverage)}</p>
                 {/* §13.1.4 — the meter never stands alone: it prints
-                    `n/m signed off` beside itself, and that count is what the
+                    `n/m completed` beside itself, and that count is what the
                     hue reinforces rather than replaces. */}
                 <CategoryMeter category={category.slug} sheets={rows} />
               </div>
@@ -100,7 +100,7 @@ export default function DrawingSetPage() {
             <SheetIndex
               rows={rows}
               column="topics"
-              label={`${category.title}, ${plural(rows.length, 'sheet')}`}
+              label={`${category.title}, ${plural(rows.length, 'module')}`}
             />
           </section>
         )

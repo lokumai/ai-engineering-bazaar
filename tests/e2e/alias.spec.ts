@@ -50,7 +50,7 @@ import { readRecord, waitForRecord } from './record'
 const ALIAS = '/sign-in/alias/'
 
 /** The preview, addressed the way §15.4.3 makes it addressable. */
-const STAMP = 'aside[aria-label="Your stamp, as a sheet will print it"]'
+const STAMP = 'aside[aria-label="Your stamp, as a module will print it"]'
 
 /** §15.4.3 — the correction rides on the artefact, in every draft state. */
 const UNVERIFIED = 'UNVERIFIED'

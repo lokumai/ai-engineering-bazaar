@@ -55,7 +55,7 @@ const PROBLEM_COPY: Readonly<Record<AssignmentProblem, string>> = {
   noTitle: 'The assignment needs a title. It is what a member will see first.',
   longTitle: `The title is longer than ${MAX_ASSIGNMENT_TITLE} characters.`,
   noSheets:
-    'Select at least one sheet. An assignment with no sheets has no deadline '
+    'Select at least one module. An assignment with no modules has no deadline '
     + 'anything can be measured against, so it would produce no signal at all.',
   badDueDate: 'The due date is not a real calendar date.',
 }
@@ -306,10 +306,10 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
             />
           </label>
           {/* The deadline's meaning, stated where it is typed. §14.8.1 calls a
-              deadline missed only when it is strictly past, so a sheet assigned
+              deadline missed only when it is strictly past, so a module assigned
               for the 1st starts asking for attention during the 2nd. */}
           <span className="hl-field-hint block">
-            Stored as the start of that day, UTC. A sheet is flagged overdue from
+            Stored as the start of that day, UTC. A module is flagged overdue from
             the first day after it.
           </span>
 
@@ -319,7 +319,7 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
             data-invalid={problems.includes('noSheets') ? 'true' : 'false'}
           >
             <legend className="hl-mark p-0 text-ink">
-              {`SHEETS — ${draft.sheets.length} SELECTED`}
+              {`MODULES — ${draft.sheets.length} SELECTED`}
             </legend>
             <div className="mt-2 max-h-72 overflow-y-auto border border-line-strong p-3">
               {sheets.map((sheet) => (
@@ -331,7 +331,7 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
                   />
                   <span className="hl-check-label">
                     <span className="hl-mark text-ink-muted">
-                      {`SHEET ${String(sheet.module).padStart(2, '0')} `}
+                      {`MODULE ${String(sheet.module).padStart(2, '0')} `}
                     </span>
                     {sheet.slug}
                     {/* §4.8's hidden line in words: a sheet nobody has drawn
@@ -339,7 +339,7 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
                         assigning it would create a deadline that can never be
                         met. It is offered — the corpus changes — and labelled. */}
                     {!sheet.drawn && (
-                      <span className="hl-mark text-ink-muted"> · NOT DRAWN</span>
+                      <span className="hl-mark text-ink-muted"> · PLANNED</span>
                     )}
                   </span>
                 </label>
@@ -431,7 +431,7 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
                   {' · '}
                   {assignment.dueAt === null ? 'NO DEADLINE' : `DUE ${assignment.dueAt.slice(0, 10)}`}
                   {' · '}
-                  {`${assignment.sheets.length} SHEETS`}
+                  {`${assignment.sheets.length} MODULES`}
                   {' · '}
                   {assignment.targets.length === 0
                     ? 'WHOLE ORGANISATION'

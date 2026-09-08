@@ -10,7 +10,7 @@
 export function StatusBand() {
   return (
     <p className="hl-status-band hl-mark">
-      <span>Not yet drawn</span>
+      <span>Planned</span>
       <span>Schedule of parts only</span>
     </p>
   )

@@ -190,7 +190,7 @@ describe('§12.2 — the honest empty first frame of every panel', () => {
   })
 
   it('states an empty register instead of nagging for one (§12.9.1)', () => {
-    expect(REGISTER).toContain('NO SUBMITTAL REGISTERED')
+    expect(REGISTER).toContain('NOTHING ADDED YET')
     expect(REGISTER).toContain('hl-submittal-empty')
     // No table at all when there is nothing in it: a header row over no rows
     // is a claim that there are columns worth reading.
@@ -273,7 +273,7 @@ describe('§12.3.3 — the name field', () => {
 
   it('states what an edit reaches and what it cannot (§12.3.2, §12.3.5)', () => {
     const text = words(IDENTITY)
-    expect(text).toContain('It does not change the dates sheets were signed off on')
+    expect(text).toContain('It does not change the dates modules were completed on')
     expect(text).toContain('it does not change the mark')
   })
 })
@@ -588,7 +588,7 @@ describe('§12.15, §12.12.5 — the content digest, read back out of a file', (
   })
 })
 
-describe('§12.9.2 — the register’s link is reconstructed, never echoed', () => {
+describe('§12.9.2 — the repository link is reconstructed, never echoed', () => {
   it('builds the href and the label from the two validated segments alone', () => {
     expect(repoUrl({ owner: 'lokumai', repo: 'ai-engineering-bazaar' })).toBe(
       'https://github.com/lokumai/ai-engineering-bazaar',
@@ -628,7 +628,7 @@ describe('§12.1.6, §11.35 — the storage panel prints bytes and nothing else'
  * values, Export/import/erase, Keyboard — because a reader who has been here
  * before finds a row by where it sits. `toEqual` over an array, never a set.
  */
-describe('§16.1, §16.4 — the page itself: the drafter block, then the register', () => {
+describe('§16.1, §16.4 — the page itself: the account block, then your progress', () => {
   it('prints its own chord beside its title (§12.16)', () => {
     expect(PAGE).toContain('>G P<')
     expect(PAGE).toContain('Profile')
@@ -644,7 +644,7 @@ describe('§16.1, §16.4 — the page itself: the drafter block, then the regist
     expect(occurrences(PAGE, /<details/g)).toBe(REGISTER_ROWS.length)
   })
 
-  it('opens with the drafter block and closes every register row', () => {
+  it('opens with the account block and closes every row', () => {
     // §16.4: the rows are always closed on arrival. `<details open>` is the
     // single-attribute mutation this catches.
     expect(PAGE).not.toContain('<details open')
@@ -717,7 +717,7 @@ describe('§16.1, §16.4 — the page itself: the drafter block, then the regist
    * — the mark row and §13.3's role picker, which `path.spec.ts:48` pins at
    * nine options and hazard H-N keeps to a single group.
    */
-  it('draws the mark picker once and only once on the whole sheet (§16.2.2)', () => {
+  it('draws the mark picker once and only once on the whole module (§16.2.2)', () => {
     const marks = [...PAGE.matchAll(/<label[^>]*data-hl-mark="([^"]+)"/g)].map(([, id]) => id)
     expect(marks).toEqual([...MARK_PICKER_IDS])
     // Every occurrence of the attribute is one of those labels: a nested copy
@@ -728,7 +728,7 @@ describe('§16.1, §16.4 — the page itself: the drafter block, then the regist
     expect(occurrences(PAGE, /name="hl-mark"/g)).toBe(MARK_PICKER_IDS.length)
   })
 
-  it('keeps one h1 and puts the block above the register in the outline (§16.7)', () => {
+  it('keeps one h1 and puts the block above your progress in the outline (§16.7)', () => {
     expect(occurrences(PAGE, /<h1/g)).toBe(1)
     // The block is an h2 with two h3 halves; every register row is an h2. No h4
     // anywhere, because nothing on this sheet is three levels deep.
@@ -793,7 +793,7 @@ describe('§12.14.1 — the copy register, over every string this task authors',
     ['DATA_READING', DATA_READING],
     // And every closed row's own line: the name and the reading it states.
     ...REGISTER_ROWS.map(
-      ({ id }): [string, string] => [`register row ${id}`, words(summaryOf(PAGE, id))],
+      ({ id }): [string, string] => [`row ${id}`, words(summaryOf(PAGE, id))],
     ),
   ]
 
@@ -867,7 +867,7 @@ describe('§12.14.1 — the copy register, over every string this task authors',
    * drawing's two mono lines, the drafter halves' marks — without any of them
    * being enrolled by hand.
    */
-  it('ends every readout on the sheet without a full stop', () => {
+  it('ends every readout on the module without a full stop', () => {
     const found = readouts(PAGE)
     // A floor, so a broken extractor reads as a failure rather than as a page
     // with nothing to check: every register row prints one, at least.
@@ -875,7 +875,7 @@ describe('§12.14.1 — the copy register, over every string this task authors',
     for (const readout of found) expect(readout, readout).not.toMatch(/\.$/)
     // The three the old fixed list named are still among them, so the property
     // did not become weaker than the assertion it replaced.
-    for (const readout of ['NO NAME ON RECORD', 'NO SUBMITTAL REGISTERED', NO_SEED_MINTED]) {
+    for (const readout of ['NO NAME ON RECORD', 'NOTHING ADDED YET', NO_SEED_MINTED]) {
       expect(found, readout).toContain(readout)
     }
   })

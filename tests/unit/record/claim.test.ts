@@ -95,7 +95,7 @@ describe('no server row — the local envelope is what gets pushed (§14.7.4)', 
   it('says where the work went, and that nothing was deleted', () => {
     const { summary } = decideClaim(signedRun(0, 2), null)
     expect(claimSummaryLines(summary)).toEqual([
-      '2 signed-off sheets and 0 submittals moved from this browser into your account.',
+      '2 completed modules and 0 submittals moved from this browser into your account.',
       CLAIM_COPY.nothingDeleted,
     ])
   })
@@ -120,8 +120,8 @@ describe('server row, disjoint work — both sides survive', () => {
   it('omits the "were in both" clause when there is no overlap', () => {
     const { summary } = decideClaim(local, account)
     expect(claimSummaryLines(summary)).toEqual([
-      '3 signed-off sheets here, 5 in your account.',
-      'Merged: 8 signed-off sheets.',
+      '3 completed modules here, 5 in your account.',
+      'Merged: 8 completed modules.',
       CLAIM_COPY.nothingDeleted,
     ])
   })
@@ -164,8 +164,8 @@ describe('server row, overlapping work — the overlap is named, not lost', () =
     const { summary } = decideClaim(withSubmittals, accountWithSubmittals)
     expect(summary.submittals).toEqual({ here: 4, account: 2, shared: 0, merged: 6 })
     expect(claimSummaryLines(summary)).toEqual([
-      '18 signed-off sheets here, 12 in your account.',
-      'Merged: 21 signed-off sheets. 9 were in both.',
+      '18 completed modules here, 12 in your account.',
+      'Merged: 21 completed modules. 9 were in both.',
       'Submittals: 4 + 2 → 6.',
       CLAIM_COPY.nothingDeleted,
     ])
@@ -209,7 +209,7 @@ describe('server row, overlapping work — the overlap is named, not lost', () =
     expect(summary.droppedSubmittals).toEqual(['a · cevheri/one'])
     expect(claimSummarySentence(summary)).not.toContain(CLAIM_COPY.nothingDeleted)
     expect(claimSummaryLines(summary)).toContain(
-      '1 submittal was dropped: a sheet keeps its 3 most recent (a · cevheri/one).',
+      '1 submittal was dropped: a module keeps its 3 most recent (a · cevheri/one).',
     )
     expect(claimNeedsExport(summary)).toBe(true)
   })
@@ -242,7 +242,7 @@ describe('the summary’s numbers, against a hand-computed expectation', () => {
 
   const { record: written, summary } = decideClaim(local, account)
 
-  it('counts signed sheets on both sides, the overlap, and the result', () => {
+  it('counts signed modules on both sides, the overlap, and the result', () => {
     expect(summary.signed).toEqual({ here: 2, account: 2, shared: 1, merged: 3 })
   })
 
@@ -250,19 +250,19 @@ describe('the summary’s numbers, against a hand-computed expectation', () => {
     expect(summary.submittals).toEqual({ here: 2, account: 2, shared: 1, merged: 3 })
   })
 
-  it('keeps the EARLIEST signature on the sheet both sides signed (§14.7.2)', () => {
+  it('keeps the EARLIEST signature on the module both sides signed (§14.7.2)', () => {
     expect(written.sheets.y.signedOff).toBe('2026-08-02T00:00:00.000Z')
   })
 
-  it('does not count a sheet that was only opened', () => {
+  it('does not count a module that was only opened', () => {
     expect(summary.signed.here).toBe(2)
     expect(written.sheets.z.reachedEnd).toBe(true)
   })
 
   it('reads out as one sentence for a live region', () => {
     expect(claimSummarySentence(summary)).toBe(
-      '2 signed-off sheets here, 2 in your account. '
-      + 'Merged: 3 signed-off sheets. 1 was in both. '
+      '2 completed modules here, 2 in your account. '
+      + 'Merged: 3 completed modules. 1 was in both. '
       + 'Submittals: 2 + 2 → 3. 1 was the same. '
       + CLAIM_COPY.nothingDeleted,
     )
@@ -290,7 +290,7 @@ describe('§14.7.2’s identity rows, which the merge table leaves incomplete', 
     expect(summary.identity.markSeed).toBe('account')
     expect(summary.identity.markChanged).toBe(true)
     expect(claimSummarySentence(summary)).toContain(
-      'The mark drawn beside your signatures',
+      'The mark ready beside your signatures',
     )
   })
 
@@ -340,7 +340,7 @@ describe('§14.7.2’s identity rows, which the merge table leaves incomplete', 
   })
 })
 
-describe('no signed-off sheet is lost in either direction', () => {
+describe('no completed module is lost in either direction', () => {
   /** Every signed slug on either side is still signed after the claim. */
   function survives(local: RecordData, account: RecordData | null): boolean {
     const { record: written, summary } = decideClaim(local, account)
@@ -372,7 +372,7 @@ describe('no signed-off sheet is lost in either direction', () => {
     expect(survives(b, a)).toBe(true)
   })
 
-  it('holds when one side UNSIGNED a sheet the other still holds (§14.7.2)', () => {
+  it('holds when one side UNSIGNED a module the other still holds (§14.7.2)', () => {
     // The un-sign does not survive the merge, and that is the documented
     // direction: an un-sign is one click to repeat, a silently un-signed sheet
     // is a lie. The claim must not report it as a deletion either.

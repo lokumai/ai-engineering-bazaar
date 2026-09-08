@@ -38,6 +38,8 @@ export interface CurriculumFacts {
     hasQuickCheck: boolean
     checklistItems: number
     sources: number
+    /** M13 — the module's own declared minutes, which `readingMinutes` sums. */
+    duration: number
   }>
   categories: ReadonlyArray<{ slug: string; total: number }>
   /** §7.1 `TRACES n/32`. Carried for the readout; no selector here uses it. */
@@ -48,6 +50,20 @@ type SheetFact = CurriculumFacts['sheets'][number]
 
 // ---------------------------------------------------------------------------
 // §12.5.1 — XP. Three events, all of them real acts.
+//
+// M13 / O2 — NO READER-VISIBLE SURFACE RENDERS ANY OF THIS ANY MORE, and that
+// is a decision rather than an oversight. O2 asked what XP, CLASS and "I at 8"
+// answer for a reader; nobody named a question, and a weighted sum of three
+// unlike acts is not a quantity anybody can act on. The readout prints
+// `readingMinutes` in XP's place, and CLASS and its next threshold are gone
+// from every instrument (`logs/BRAINSTORM.md` D22).
+//
+// The selectors stay, and the record still holds everything they read: the
+// awards are part of the stored vocabulary a reader's exported file was written
+// against, `stamps` below counts the same acts in the unit the shelf reports
+// them in, and deleting a pure selector to remove a label would be a schema
+// change dressed up as a restyle. Nothing here may be put back on a page
+// without answering O2's question first.
 // ---------------------------------------------------------------------------
 
 /** §12.5.1, amending §7.2. Sources and dwell pay nothing at all. */
@@ -124,6 +140,42 @@ export function signedCount(
   const of = facts.sheets.length
   const signed = facts.sheets.filter((fact) => isSigned(data, fact)).length
   return { signed, toGo: of - signed, of }
+}
+
+/**
+ * M13 / O2 — the reading time behind the modules a reader has completed, and
+ * the whole course's, in minutes.
+ *
+ * **This is the number that replaced `XP` on every instrument.** O2 asked what
+ * XP measures and the answer was nothing a reader can name: 100 for a
+ * completion, 60 for a quick check, 40 for a checklist, summed. Minutes are the
+ * one quantity on this site that answers "how far in am I" in a unit the reader
+ * already thinks in, and both halves of it are derived.
+ *
+ * **Whose minutes, and the honest answer.** The module's own declared duration,
+ * not the reader's time on the page. Nothing writes `dwellSeconds` — no
+ * observer was ever shipped, which `attention.ts` records — so a reader-measured
+ * reading time would be `0 m` for everybody, which is worse than an estimate
+ * that says it is one. The surfaces that print this say whose estimate it is.
+ *
+ * `of` counts the DRAWN modules only, and that is the one place this denominator
+ * differs from `signedCount`'s: a draft declares no duration (the curriculum
+ * validator only requires one of a `ready` module), so counting the drafts in
+ * would add nothing to the total and would still be a claim about minutes
+ * nobody has written.
+ */
+export function readingMinutes(
+  data: RecordData,
+  facts: CurriculumFacts,
+): { done: number; of: number } {
+  let done = 0
+  let of = 0
+  for (const fact of facts.sheets) {
+    if (!fact.drawn) continue
+    of += fact.duration
+    if (isSigned(data, fact)) done += fact.duration
+  }
+  return { done, of }
 }
 
 /** §12.5.3 / §7.5 — 8 / 16 / 24 / 32, and the numeral is a COUNT of sheets. */

@@ -51,6 +51,19 @@ export interface SheetFact {
   checklistItems: number
   /** §12.8 / §5.5 `SOURCES` — distinct external links. */
   sources: number
+  /**
+   * M13 — the module's own declared reading time, in minutes.
+   *
+   * It is the only duration on the site anybody measured: nothing writes
+   * `dwellSeconds` (no observer was ever shipped, which `attention.ts` records),
+   * so a reading time derived from the reader's own time on the page would be
+   * zero for every reader on every surface. The module declares its minutes in
+   * frontmatter, the curriculum validator refuses a `ready` module with a
+   * duration of zero, and a draft declares none — so `readingMinutes` sums this
+   * over the modules a reader has COMPLETED and the number is honest about
+   * whose estimate it is.
+   */
+  duration: number
   /** §12.4.3 — the REV short hash a sign-off is recorded against, or null. */
   revision: string | null
 }
@@ -108,6 +121,7 @@ export function curriculumFacts(): CurriculumFacts {
     hasQuickCheck: quickCheckOf(m.body) !== null,
     checklistItems: checklistOf(m.body).length,
     sources: m.sources,
+    duration: m.frontmatter.duration,
     revision: m.revision?.hash ?? null,
   }))
 

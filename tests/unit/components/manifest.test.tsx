@@ -290,6 +290,7 @@ const FACTS: CurriculumFacts = {
       hasQuickCheck: true,
       checklistItems: 8,
       sources: 23,
+      duration: 30,
     },
     {
       slug: 'expert/advanced-architectures',
@@ -299,6 +300,7 @@ const FACTS: CurriculumFacts = {
       hasQuickCheck: false,
       checklistItems: 0,
       sources: 0,
+      duration: 0,
     },
   ],
   categories: [

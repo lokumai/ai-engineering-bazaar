@@ -126,10 +126,15 @@ describe('curriculumFacts — what it may not carry', () => {
     expect(JSON.parse(JSON.stringify(facts))).toEqual(facts)
   })
 
-  it('holds exactly the nine fields §12.6 declares for a module', () => {
+  it('holds exactly the ten fields a module contributes, and no eleventh', () => {
+    // M13 added `duration`: the module's own declared minutes, which
+    // `readingMinutes` sums over the completed modules to print a reading time
+    // where XP used to be (O2, D22). The list is here so that a field added to
+    // an object serialised into all 58 pages is a decision somebody made
+    // rather than a page that quietly grew.
     for (const sheet of facts.sheets) {
       expect(Object.keys(sheet).sort(), sheet.slug).toEqual([
-        'category', 'checklistItems', 'drawn', 'hasQuickCheck',
+        'category', 'checklistItems', 'drawn', 'duration', 'hasQuickCheck',
         'module', 'revision', 'slug', 'sources', 'title',
       ])
     }

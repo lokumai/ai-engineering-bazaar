@@ -98,6 +98,12 @@ const COUNTS: CurriculumFacts = {
     category: fact.categorySlug,
     drawn: fact.drawn,
     hasQuickCheck: fact.question !== null,
+    // M13 — the module's own declared minutes, which `readingMinutes` sums over
+    // the completed ones. `ReportSheetFact` carries no duration (the report
+    // document reprints text, not the schedule), so the two ready modules in
+    // this fixture declare one here and the draft declares none, which is the
+    // shape the curriculum validator enforces.
+    duration: fact.drawn ? 30 : 0,
     checklistItems: fact.checklistItems.length,
     sources: 0,
   })),

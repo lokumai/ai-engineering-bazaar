@@ -60,6 +60,7 @@ function facts(): CurriculumFacts {
         hasQuickCheck: drawn,
         checklistItems: module === 13 ? 8 : 0,
         sources: drawn ? 25 : 0,
+        duration: drawn ? 30 : 0,
       })
     }
   }

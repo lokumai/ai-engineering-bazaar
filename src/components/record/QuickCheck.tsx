@@ -1,7 +1,6 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { XP_QUIZ } from '@/lib/record/derive'
 import { assessQuiz, filesAttempt, setQuizAnswer } from '@/lib/record/events'
 import { logEvent, nowIso, update, useRecord } from '@/lib/record/store'
 
@@ -106,7 +105,12 @@ export function QuickCheck({
     <section className="hl-quiz" aria-labelledby={headId}>
       <div className="hl-quiz-head hl-mark">
         <span id={headId}>QUICK CHECK</span>
-        <span className="hl-quiz-award">{`+${XP_QUIZ} XP`}</span>
+        {/* M13 / O2 — this chip read `+60 XP`. The points are gone from every
+            instrument on the site (`derive.ts`, and D22 for why), so an award
+            printed here would be a currency nothing spends. What is left is
+            the one thing the reader needs to know before writing an answer:
+            they mark it themselves and no score is kept anywhere. */}
+        <span className="hl-quiz-award">Self-marked</span>
       </div>
 
       <div className="hl-quiz-body">

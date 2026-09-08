@@ -84,6 +84,7 @@ const FACTS: CurriculumFacts = {
       hasQuickCheck: true,
       checklistItems: 0,
       sources: 3,
+      duration: 30,
     },
     {
       slug: 'protocols/mcp',
@@ -93,6 +94,7 @@ const FACTS: CurriculumFacts = {
       hasQuickCheck: true,
       checklistItems: 0,
       sources: 4,
+      duration: 25,
     },
   ],
   categories: [

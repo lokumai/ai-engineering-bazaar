@@ -65,10 +65,19 @@ const SLUG = slugOf(SHEET)
 const OTHER = sheetByModule(1)
 const OTHER_SLUG = slugOf(OTHER)
 
-/** §12.13 class 1 — what the readout prints when nothing has been recorded. */
-const EMPTY_READOUT = [`Completed 00/${SHEETS.length}`, 'XP 0', 'Rank —', 'I at 8']
+/**
+ * §12.13 class 1 — what the readout prints when nothing has been recorded.
+ *
+ * M13 / O2 — two cells, not four. `XP`, `Rank` and the next threshold left the
+ * strip when nobody could name the question they answered, and `Reading time`
+ * arrived in XP's place: the modules' own declared minutes over the modules the
+ * reader has completed, which is `0 m` for a record that holds nothing. The
+ * exact cell list is asserted rather than a subset, so a cell put back is a red
+ * test rather than a strip that quietly grew again.
+ */
+const EMPTY_READOUT = [`Completed 00/${SHEETS.length}`, 'Reading time 0 m']
 /** §12.2 — what it prints before the store has answered at all. */
-const NO_READING = [`Completed --/${SHEETS.length}`, 'XP --', 'Rank --', '-- at --']
+const NO_READING = [`Completed --/${SHEETS.length}`, 'Reading time --']
 
 /**
  * §7.4 / §5.9 — sheet 13's four slots, every one at zero against its real
@@ -782,10 +791,13 @@ for (const outcome of ['MATCHED', 'DID NOT MATCH'] as const) {
     await button.click()
     await expect(button).toHaveAttribute('aria-pressed', 'true')
 
-    // §12.4.2 — self-assessment is its own axis and no third state is derived
-    // from it: the readout gains XP and nothing gains a pass, a grade or a mark.
-    await expect(readoutCell(page, /^XP/)).toHaveText('XP 60')
+    // §12.4.2 — self-assessment is its own axis and NOTHING else moves with
+    // it: no pass, no grade, no mark, and since M13 no points either. Both
+    // cells of the readout are asserted unchanged, which is the stronger form
+    // of the claim the old `XP 60` assertion made — it read the one cell that
+    // did move and said nothing about the two that must not.
     await expect(readoutCell(page, /^Completed/)).toHaveText(`Completed 00/${SHEETS.length}`)
+    await expect(readoutCell(page, /^Reading time/)).toHaveText('Reading time 0 m')
     await expect(page.locator('.hl-quiz-note').filter({ hasText: 'SELF-ASSESSED' })).toHaveText(
       `SELF-ASSESSED: ${outcome}`,
     )
@@ -832,7 +844,7 @@ test('the task items are real, named checkboxes and a tick survives a reload (§
   expect((await readRecord(page))?.data.sheets[SLUG]?.checklist).toEqual({ '0': true })
 })
 
-test('ticking every item awards the flat 40, and a ticked item is not struck through (§12.5.1, §12.7)', async ({
+test('ticking every item moves no instrument, and a ticked item is not struck through (§12.7)', async ({
   page,
 }) => {
   await page.goto(SHEET.path)
@@ -842,11 +854,13 @@ test('ticking every item awards the flat 40, and a ticked item is not struck thr
   const total = await boxes.count()
   for (let index = 0; index < total; index += 1) await boxes.nth(index).check()
 
-  // 40 is flat: `XP_CHECKLIST` in `lib/record/derive.ts` pays for *completing*
-  // the checklist, not per item, so the award does not move when the author
-  // adds or removes one. The old test read 40 too and was right about the
-  // number; it was only wrong to call it eight items.
-  await expect(readoutCell(page, /^XP/)).toHaveText('XP 40')
+  // M13 / O2 — the checklist used to pay a flat 40 and this line read
+  // `XP 40`. The points are gone from every instrument on the site, so what
+  // is asserted now is that the checklist moves NEITHER cell: ticking eight
+  // boxes is not completing a module and is not reading time either. The
+  // record below is where the eight ticks are checked.
+  await expect(readoutCell(page, /^Completed/)).toHaveText(`Completed 00/${SHEETS.length}`)
+  await expect(readoutCell(page, /^Reading time/)).toHaveText('Reading time 0 m')
   const stored = await waitForSheet(page, SLUG, (sheet) =>
     Object.keys(sheet?.checklist ?? {}).length === total,
   )

@@ -73,3 +73,30 @@ export function numberWord(n: number): string {
   const ones = n % 10
   return ones === 0 ? tens : `${tens}-${ONES[ones]}`
 }
+
+// ---------------------------------------------------------------------------
+// Durations
+// ---------------------------------------------------------------------------
+
+/**
+ * A count of minutes as a reader says it: `45 m`, `1 h`, `3 h 55 m`.
+ *
+ * M13 — the home page and the progress page both print a reading time, and
+ * `lib/content/manifest.ts`'s `durationLabel` cannot serve them: it reaches
+ * `node:fs` through its own module, it prints the drawing-set's uppercase
+ * `~3 H 55 MIN`, and the tilde in front of it says "the modules' own estimate,
+ * summed" — which is true of a whole level and not of the sentence a reader's
+ * own reading time sits in. This is the client-safe one, and it is the only
+ * arithmetic either surface does with a duration.
+ *
+ * Zero returns `0 m` rather than an empty string or a dash: nothing has been
+ * completed is a measurement, and the surfaces that must print "no reading
+ * taken" print `NOT_MEASURED` for themselves.
+ */
+export function hoursMinutes(minutes: number): string {
+  const total = Math.max(0, Math.round(minutes))
+  const hours = Math.floor(total / 60)
+  const rest = total % 60
+  if (hours === 0) return `${rest} m`
+  return rest === 0 ? `${hours} h` : `${hours} h ${rest} m`
+}

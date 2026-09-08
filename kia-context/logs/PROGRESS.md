@@ -454,6 +454,38 @@ piece of work — the list does not exist yet as a site-wide component, and the
 left rail currently holds the contents rather than the curriculum, so building
 it means the rail swap that M11 needs anyway.
 
+### The e2e state, and the four that are still red
+
+**355 passed, 4 failed, 19 skipped**, down from 67 failures on the first honest
+run. Every one of the 63 that were fixed was an expectation rather than a
+regression, and they clustered in the four places a lexical rename cannot reach:
+regex literals, property accesses (`rows.EXTENT`), locators by accessible name
+that the navbar made ambiguous, and template literals holding a `CONST_NAME`
+(the skip rule that protects `sheet_slug` rejects any string with an
+underscore).
+
+The four still red, stated precisely rather than waved at:
+
+1. **`accessibility.spec.ts:330` — the manifest's quiet columns, DARK theme
+   only.** The `#` column reports `"01" at 1.84:1` against a 4.5 floor. It is
+   painted `--color-ink-muted`, which is 6.90:1 on the dark ground, so the
+   effective background is not the ground — the row carries `hl-cat-tint`. This
+   is plausibly the palette change and it needs one careful measurement of what
+   actually paints behind that cell. **An ad-hoc check of mine got this wrong**
+   by walking ancestors and reading the parent's background while attributing it
+   to the child; the number above is the suite's, which is the one to trust.
+2. **`anatomy.spec.ts:92` — "module 13 still has a figure that breaks the
+   measure", expected > 0, got 0.** The test's premise is that at least one
+   figure in that module overflows the measure. The type change moved the
+   measure, so none does. That test pins a fact about the content, which
+   `tests/README.md` forbids; the fix is probably to the test rather than to the
+   page, but it needs deciding rather than assuming.
+3. **`home.spec.ts:271`** and **4. `record-sheet.spec.ts:307`** — both in the
+   channel-A / first-paint family that was already intermittent on this machine
+   before any of this work, and both pass when run alone. Not cleared as
+   pre-existing, only suspected: proving it needs a run against a clean build of
+   `main`.
+
 ---
 
 ## 🏁 Milestone M11: The module page

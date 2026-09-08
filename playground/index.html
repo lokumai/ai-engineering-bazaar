@@ -125,7 +125,7 @@ ol.pick span{color:var(--muted);font-size:14.5px}
   The ornament is spent once, on the tile band, and every other surface is quiet.
 </div>
 
-<h2>Bazaar, four grounds &mdash; open for a decision</h2>
+<h2>Bazaar, four grounds &mdash; chosen: G3 Powder</h2>
 <p>
   T4's palette is unchanged: cobalt <code>#282864</code>, clay <code>#A0503C</code>, ochre
   <code>#C8A078</code>, teal <code>#2F8C86</code>, gold <code>#B8873B</code>. One token moves, the
@@ -150,10 +150,11 @@ ol.pick span{color:var(--muted);font-size:14.5px}
     <b>Icing &mdash; <code>#FBF7F0</code></b>
     <p>Clearly lighter, and raised surfaces go to pure white to keep their edge. 93.3%.</p>
   </a>
-  <a class="item" href="01-theme-T4-ground-G3-powder.html" style="--edge:#fdfbf7">
+  <a class="item" href="01-theme-T4-ground-G3-powder.html" style="--edge:#0b6e5f">
     <span class="id">G3</span>
     <b>Powder &mdash; <code>#FDFBF7</code></b>
     <p>Almost white, still warm. Cards separate on their hairline rather than their fill. 96.6%.</p>
+    <em>Chosen</em>
   </a>
   <a class="item" href="01-theme-T4-ground-G4-lokum-cream.html" style="--edge:#fff8e9">
     <span class="id">G4</span>
@@ -179,10 +180,13 @@ ol.pick span{color:var(--muted);font-size:14.5px}
 </div>
 
 <div class="note bug">
-  <b>Measured while building these.</b> The teal tick sits at 3.44:1 against today's cream and only
-  reaches 3.90:1 on the lightest ground, so lightening the page cannot fix it on its own. As a filled
-  disc with a white check it is a graphical indicator rather than text, which needs 3:1, and it clears
-  that on every ground. Keeping teal as a hairline glyph would not.
+  <b>Measured while building these.</b> Two things. The teal tick sits at 3.44:1 against the old cream
+  and only reaches 3.90:1 on G3, so lightening the page cannot fix it: as a filled disc with a white
+  check it is a graphical indicator at a 3:1 floor, which it clears, and as a hairline glyph it would
+  not. And on a ground this light <b>no line colour in the palette reaches 3:1</b> &mdash;
+  <code>#D8CBB4</code> is 1.55:1, <code>#C3B299</code> is 2.00:1. Fine for a border that groups a
+  card, not fine for the border that identifies a control, so those move to
+  <code>#948D7D</code> at 3.19:1. That is a fix in M9, not a restyle.
 </div>
 
 <h2>Decided, on 2026-09-08</h2>
@@ -193,8 +197,8 @@ ol.pick span{color:var(--muted);font-size:14.5px}
   <tbody>
     <tr><td>Vocabulary</td><td class="a"><b>C &mdash; Engineering curriculum.</b> Catalog, Level,
       Module, Complete, Requires.</td></tr>
-    <tr><td>Theme</td><td class="a"><b>T4 Bazaar</b>, colours unchanged. Ground open:
-      G1&ndash;G4 above.</td></tr>
+    <tr><td>Theme</td><td class="a"><b>T4 Bazaar</b>, colours unchanged, ground
+      <b>G3 Powder <code>#FDFBF7</code></b>.</td></tr>
     <tr><td>Navbar</td><td class="a"><b>A</b> &mdash; one row, a dropdown per level.</td></tr>
     <tr><td>Catalog</td><td class="a"><b>All three, as a view toggle</b> with an icon each:
       <b>Overview</b> (was C), <b>Cards</b> (was A), <b>Table</b> (was B).</td></tr>
@@ -211,8 +215,9 @@ ol.pick span{color:var(--muted);font-size:14.5px}
 </table>
 
 <div class="note">
-  <b>One thing still open.</b> Which ground: G1, G2, G3 or G4. Everything else is settled and the
-  build order is written down.
+  <b>Nothing is open.</b> All ten answers are in and the ground is <b>G3</b>. The design system is
+  <code>kia-context/specs/DESIGN.md</code>, the build is milestones <b>M9 to M14</b> in
+  <code>kia-context/logs/PROGRESS.md</code>, and M9 starts on your approval.
 </div>
 
 </div>

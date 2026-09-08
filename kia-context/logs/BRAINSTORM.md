@@ -9,7 +9,7 @@ description: >
 authority: background
 writes: agent, whenever a decision is made
 status: active
-covers: "the whole project, 2026-07-07 onward — D1 onward, O1 onward"
+covers: "the whole project, 2026-07-07 onward — D1 to D15, O1 to O4"
 last_updated: "2026-09-08"
 ---
 
@@ -241,7 +241,8 @@ white check it is a graphical indicator rather than text, needing 3:1, which it 
 a hairline glyph it would not. That is why the tick changed shape and not colour.
 **Method worth keeping:** the four are generated from one template by a script, so structure,
 spacing, type and ornament are byte-identical and the ground is provably the only difference.
-**Rule that follows:** `specs/DESIGN.md`, rewritten around T4. Which ground is open — see O4.
+**Rule that follows:** `specs/DESIGN.md`, rewritten around T4. The ground chosen was **G3 `#FDFBF7`**
+— see O4, which also records the one thing that choice broke.
 
 ### D13 · The catalog ships all three views behind a toggle, not one of them — 2026-09-08
 
@@ -348,22 +349,42 @@ real and can be relabelled to minutes read and days in a row. **Class and "I at 
 replacement**, because nobody has yet said what question they were answering. Leaving them out is the
 current proposal.
 
-### O4 · Which of the four grounds — opened 2026-09-08
+### ~~O4 · Which of the four grounds~~ — opened and closed 2026-09-08
 
-The one thing still open in the interface revision, and the last thing blocking M9. T4's palette is
-unchanged; the ground is the only variable. Side by side at `playground/01-theme-T4-grounds.html`.
+**Answered: G3 "Powder", `#FDFBF7`.** The author: *"g3 powder is good I liked it."* The lightest of
+the four, at 96.6% relative luminance against the retired `#F4ECE0` at 84.6%. T4's palette is
+otherwise unchanged; `--paper` goes to pure white, because a raised surface cannot be darker than its
+ground.
+
+What the four measured, kept as the record of what was compared:
 
 | | Ground | | Luminance | Body text | Active navbar item on the bar |
 |---|---|---|---|---|---|
-| — | today | `#F4ECE0` | 84.6% | 13.24:1 | 11.36:1 |
+| — | retired | `#F4ECE0` | 84.6% | 13.24:1 | 11.36:1 |
 | **G1** | Sugared | `#F8F2E8` | 89.3% | 13.94:1 | 11.95:1 |
 | **G2** | Icing | `#FBF7F0` | 93.3% | 14.53:1 | 12.46:1 |
-| **G3** | Powder | `#FDFBF7` | 96.6% | 15.01:1 | 12.88:1 |
+| **G3** | Powder | `#FDFBF7` | 96.6% | **15.01:1** | **12.88:1** |
 | **G4** | Lokum cream | `#FFF8E9` | 94.3% | 14.67:1 | 12.58:1 |
 
-G4 is the logo's own ground, sampled from `final.png`; the other three are neutral steps along the
-same warm axis. The numbers are computed from the tokens by the generator, not asserted.
+**Closing it turned up something the choice itself caused, which is why this entry is longer than a
+one-line answer.** On a ground this light, a white card sits 1.035 in luminance above the page, so the
+fill no longer separates it and the hairline is doing the whole job. Measured against `#FDFBF7`, **no
+line colour in T4's palette reaches 3:1**: `line` `#D8CBB4` is 1.55:1 and `line-strong` `#C3B299` is
+2.00:1.
 
-**Answering this changes two values** in `specs/DESIGN.md`, `--ground` and `--paper`, where all four
-are carried as named grounds under one selector. Nothing else in the design system depends on it. See
-D12.
+That is acceptable for a border that **groups** — a card's content identifies the card — and not
+acceptable for the border that **identifies an interactive control**, which needs 3:1 to be
+perceivable at all. So the line tokens split by job rather than by weight, and the interactive one is
+`on-surface-faint` `#948D7D` at 3.19:1 on the ground and 3.30:1 on a white card: **the lightest token
+already in the palette that clears the floor**, chosen for that reason, so a quiet control stays
+quiet and no new hue enters the system.
+
+**Rejected darkening `line` itself because:** reaching 3:1 needs roughly `#8F8467`, which is a visibly
+heavier interface everywhere, to fix a problem that only exists on controls. Rejected keeping G1 or G2
+for the extra fill separation because the author chose G3 having seen all four.
+
+**One defect this exposes in what shipped:** `button-quiet` used `line-strong`, which is 2.07:1 on
+white and fails. Fixing it is a deliverable of `logs/PROGRESS.md` M9, not a note for later.
+
+**Rule that follows:** `specs/DESIGN.md`, Colors — the two line tokens and the split between them.
+See D12 for why the ground was the only variable.

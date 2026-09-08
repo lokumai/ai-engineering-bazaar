@@ -21,8 +21,8 @@ colors:
   primary-hover: "#3a3a86"
   on-primary: "#FFFFFF"
   title: "#1b1b47"
-  surface: "{grounds.selected.surface}"
-  surface-raised: "{grounds.selected.surface-raised}"
+  surface: "#fdfbf7"
+  surface-raised: "#FFFFFF"
   surface-sunken: "#e6dac6"
   on-surface: "#20242e"
   on-surface-muted: "#6a6558"
@@ -50,8 +50,8 @@ colors:
   slab-function: "#7fb8e8"
   slab-number: "#e0a45c"
 grounds:
-  selected: null            # OPEN — BRAINSTORM.md O4. Today's shipped ground is #F4ECE0 / #FFFDF9.
-  shipped: { surface: "#f4ece0", surface-raised: "#fffdf9" }
+  selected: "G3"            # chosen 2026-09-08, BRAINSTORM.md O4. Retired: #F4ECE0 / #FFFDF9.
+  retired: { surface: "#f4ece0", surface-raised: "#fffdf9" }
   G1: { surface: "#f8f2e8", surface-raised: "#fffefb" }
   G2: { surface: "#fbf7f0", surface-raised: "#FFFFFF" }
   G3: { surface: "#fdfbf7", surface-raised: "#FFFFFF" }
@@ -126,7 +126,7 @@ components:
   button-quiet:
     backgroundColor: "{colors.surface-raised}"
     textColor: "{colors.on-surface}"
-    borderColor: "{colors.line-strong}"
+    borderColor: "{colors.on-surface-faint}"
     borderRadius: "{rounded.md}"
   level-accordion:
     backgroundColor: "{colors.surface-raised}"
@@ -154,8 +154,9 @@ components:
 > document is two systems. The reasoning is `logs/BRAINSTORM.md` **D10**; the vocabulary it took with
 > it is `specs/ARCHITECTURE.md` §9.
 >
-> **One value is still open:** which ground. See `logs/BRAINSTORM.md` **O4**, and the `grounds:` block
-> above. Everything else here is settled.
+> **Every value here is settled.** The last one open, the ground, was answered on 2026-09-08:
+> **G3 "Powder", `#FDFBF7`.** The other three candidates stay in the `grounds:` block as the record of
+> what was compared, and `logs/BRAINSTORM.md` **O4** has the numbers.
 
 ---
 
@@ -192,12 +193,40 @@ What follows from that:
 the current heading in the contents rail. `title` is a deeper cobalt used only for h1, h2 and the bold
 lead-in of a card, so headings sit a step above the body without a second hue.
 
-`surface` is the ground; `surface-raised` is anything sitting on it, and it is **always lighter than
-the ground** — that is the constraint the `grounds:` block exists to keep. `surface-sunken` is the
-sand used for a header strip inside a card and for a hover state in the module list.
+`surface` is the ground: **`#FDFBF7`, at 96.6% relative luminance.** It replaced `#F4ECE0` at 84.6%,
+and it is the only token that changed when the theme was accepted. It is also the fill of the active
+item in the navbar, which is where its contrast against cobalt matters: 12.88:1, up from 11.36:1.
+
+`surface-raised` is anything sitting on the ground, and it is **always lighter than the ground** —
+the constraint the `grounds:` block exists to keep. On G3 that leaves it pure white, only 3.5% of a
+step above the ground, which has one consequence worth stating as a rule: **a raised surface is told
+apart by its hairline, not by its fill.** Every card, panel and dropdown needs its `line` border.
+Removing a border because "the fill already separates it" is a defect on this ground; it did not
+used to be.
+
+`surface-sunken` is the sand used for a header strip inside a card, for a hover state in the module
+list, and for the current level's fill. Against a near-white ground it does more work than it did
+before, which is why the current level reads clearly without a second device.
+
+**Two line tokens, and the split is load-bearing on this ground.** Measured against `#FDFBF7`, no
+line colour in T4's palette reaches 3:1: `line` is 1.55:1 and `line-strong` is 2.00:1. That is fine
+for a boundary that only **groups** things, because the content inside identifies the group — a card,
+a panel, a section rule. It is not fine for the boundary that **identifies an interactive control**,
+which needs 3:1 to be perceivable. So:
+
+- **Grouping** — `line`, or `line-strong` where a group needs to read as heavier.
+- **Identifying a control** — `on-surface-faint` `#948d7d`, at 3.19:1 on the ground and 3.30:1 on a
+  white card. It is the lightest token in the palette that clears the floor, which is exactly why it
+  is the one to use: a quiet control stays quiet.
+
+This applies to the quiet button, inputs, the search field and the catalog's view toggle. Before this
+ground was chosen, `button-quiet` used `line-strong` at 2.07:1 on white, which fails. Fixing it is a
+deliverable of `logs/PROGRESS.md` M9.
 
 Three text weights and no more: `on-surface` for prose, `on-surface-muted` for anything secondary,
-`on-surface-faint` for anything a reader can ignore. All three are measured against the ground on
+`on-surface-faint` for anything a reader can ignore. On G3 they measure 15.01:1, 5.62:1 and 3.19:1.
+**The faint weight does not clear 4.5:1 and must never carry a sentence** — it is for a count, a unit
+or a status word that is repeated elsewhere on the page. All three are measured against the ground on
 every change; the numbers are recomputed by the palette tests from the shipped stylesheet, never
 written down in an assertion.
 
@@ -270,7 +299,9 @@ painted as a gradient or a height, and `stroke-weights.test.ts` fails a `border-
 
 - **button-primary** — cobalt, white text, `md`. One per screen region. The completion button at the
   end of a module is the canonical one, and it carries a check glyph.
-- **button-quiet** — raised fill, `line-strong` border. For anything secondary.
+- **button-quiet** — raised fill, an `on-surface-faint` border, `md`. For anything secondary. The
+  border is the only thing identifying it, so it uses the interactive line token and not the grouping
+  one (see **Colors**).
 - **level-accordion** — the `arch`. The **current level is enlarged**, gets a 4px coloured left edge
   and the sand fill, and its count goes from grey to the reader's own ink. Being able to see which
   level you are in was one of the thirteen named flaws.
@@ -298,6 +329,9 @@ painted as a gradient or a height, and `stroke-weights.test.ts` fails a `border-
   middle dots, or a `→` glued to the end of link text. Each is a tell, and the first two were in this
   system's own first draft.
 - Don't put a second accent next to cobalt. Clay is the focus ring; ochre is a rule and an underline.
+- Don't drop a card's border because the fill already separates it. On this ground it does not: white
+  on `#FDFBF7` is a 1.035 luminance ratio, and the hairline is what makes the card a card.
+- Don't give an interactive control a `line` or `line-strong` border. Neither reaches 3:1 here.
 - Don't add a shadow scale.
 - Don't let the tick become a hairline glyph — it fails contrast as text (see **Colors**).
 - Don't write a reader-visible string with an exclamation mark, praise, an apology, "just", "simply"

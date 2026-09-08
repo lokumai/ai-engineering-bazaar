@@ -8,6 +8,18 @@ looks the way it does, plus the domain, the lifecycles and the vocabulary. Read 
 before a first substantive change. This file is the operating manual on top of it.
 The root `ARCHITECTURE.md` was folded into it on 2026-09-08.
 
+**The interface is being replaced.** Not the functionality: every capability stays,
+and the presentation, the vocabulary and the palette change.
+[`kia-context/specs/DESIGN.md`](kia-context/specs/DESIGN.md) is the design
+authority and holds the exact tokens; the work is milestones **M9 to M14** in
+`kia-context/logs/PROGRESS.md`, in that order. **Before styling anything, read
+DESIGN.md rather than copying a nearby component** — the drawing-set system it
+replaced had zero radius on every token, a serif body and monospace labels, and
+none of that survives. Two live constraints from it: the ground is `#FDFBF7`, so
+a raised surface is told apart by its border and not its fill, and a border that
+identifies an interactive control uses `on-surface-faint`, because nothing
+lighter in the palette reaches 3:1.
+
 ## Two halves, and which file governs which
 
 This repository holds two projects that meet at one file, and they have separate
@@ -204,6 +216,7 @@ only `INSERT` raises, which is why that suite has both `expectRefused` and
 | [`kia-context/specs/ARCHITECTURE.md`](kia-context/specs/ARCHITECTURE.md) | The six rules, the domain, the lifecycles, the build, the runtime layers |
 | [`mini-courses/CLAUDE.md`](mini-courses/CLAUDE.md) | The corpus agreement: how a module gets written, figures, translation |
 | [`mini-courses/MANIFEST.md`](mini-courses/MANIFEST.md) | The seven rules every module is held to |
+| [`kia-context/specs/DESIGN.md`](kia-context/specs/DESIGN.md) | The design system: every token value, which border token to use, and the do-nots |
 | [`tests/README.md`](tests/README.md) | The testing rule, the four layers, and the checks that fail for a reason |
 | [`docs/data-flow.md`](docs/data-flow.md) | The record, storage, sync, two devices, the exported file |
 | [`docs/auth-flow.md`](docs/auth-flow.md) | Sign-in, sessions, joining, who may read what |

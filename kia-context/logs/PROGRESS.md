@@ -9,7 +9,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "the whole project, 2026-07-07 onward — M1 onward"
+covers: "the whole project, 2026-07-07 onward — M1 to M14"
 last_updated: "2026-09-08"
 ---
 
@@ -52,7 +52,7 @@ last_updated: "2026-09-08"
 | **M6** | Intermediate and Ecosystem written | 19 of 33 modules written, every one bilingual | M1 | ✅ Done |
 | **M7** | The curriculum reordered | the config matches the author's intended order, everything green | M5, M6 | 🔄 In progress |
 | **M8** | The interface revised | a first-time reader can navigate without learning anything | M7 | 🔄 In progress · umbrella for M9–M14 |
-| **M9** | The vocabulary and the ground | no reader-visible string uses a retired word, and one ground is chosen | M8 | ⏸ Blocked on O4 |
+| **M9** | The vocabulary and the ground | no reader-visible string uses a retired word, and the theme's tokens ship | M8 | 🟢 Ready — awaiting approval to build |
 | **M10** | The shell | one navbar on every route, and a module list that folds away | M9 | ⬜ Not started |
 | **M11** | The module page | a diagram wider than the column cannot paint outside it | M10 | ⬜ Not started |
 | **M12** | The catalog | one route, three views, filters at the top | M10 | ⬜ Not started |
@@ -60,6 +60,35 @@ last_updated: "2026-09-08"
 | **M14** | Progress and account | one route instead of four, and completion editable from it | M11 | ⬜ Not started |
 
 > **Numbering never restarts.** When this file is split, part two continues at the next M.
+
+### The order of M9 to M14, and why it is that order
+
+Not arbitrary, and not parallelisable. Each one is a commit that can ship on its own and leave the
+site working, which is the property that makes the sequence worth keeping.
+
+1. **M9 first** because every later milestone writes strings and uses tokens. Doing it second means
+   renaming things twice.
+2. **M10 before M11** because the module page sits inside the shell. Building the page against the old
+   navbar means measuring the content column against a rail that is about to move.
+3. **M11 before M12 and M14** because it carries the diagram containment fix, which is the only flaw
+   in the thirteen that is a defect rather than a preference, and because the catalog and the progress
+   page both link into it.
+4. **M12, M13 and M14 are independent of each other** and can go in any order once M11 lands. M14 last
+   by preference, because it is the only one that touches the account layer and the RLS suite has to
+   run against it.
+
+**The gate at each one** is the full CI order from the root `CLAUDE.md`: `npm run typecheck && npm test
+&& npm run build && npm run test:e2e`. A green `npm test` alone means little here, because the link
+gate and the export only fail in `build`. Nothing is marked `[x]` on a partial gate.
+
+**What must not change across all six.** These are the acceptance criteria of M8, and they are checked
+at every milestone rather than at the end:
+
+- Every capability in `ARCHITECTURE.md` §3 to §8 still works.
+- No route, no slug and no reader record moves. A reader who marked twelve modules complete last month
+  still has twelve.
+- `mini-courses/` is untouched. `git status` showing anything under it means the milestone went wrong.
+- No test pins a fact about the content.
 
 ---
 
@@ -225,7 +254,7 @@ across the whole site, not one screen at a time.
 | Question | Chosen | Recorded in |
 |---|---|---|
 | Vocabulary | **C, Engineering curriculum** — Catalog, Level, Module, Complete, Requires | O1 |
-| Theme | **T4 Bazaar**, colours unchanged; which of four grounds is open | D12, O4 |
+| Theme | **T4 Bazaar**, colours unchanged, ground **G3 `#FDFBF7`** | D12, O4 |
 | Navbar | **A** — one row, a dropdown per level | — |
 | Catalog | **all three views behind a toggle**: Overview, Cards, Table | D13 |
 | Module layout | the layout already in T4, with a centred full-width column | D15 |
@@ -248,19 +277,23 @@ across the whole site, not one screen at a time.
 - The full gate stays green, and no test pins a fact about the content.
 
 ### Report
-Not finished. The direction is settled and the ground is the one thing left; the six build milestones
-are M9 to M14.
+Not finished, but nothing is open. All ten answers are in, the ground is **G3 `#FDFBF7`** (O4), and
+the six build milestones are M9 to M14. **Waiting on the author's approval to start building.**
 
 
 ---
 
 ## 🏁 Milestone M9: The vocabulary and the ground
 
-**Blocked on O4** — the ground. Everything else in it can be written before that answer lands.
+**Ready.** O4 is answered: the ground is **G3 `#FDFBF7`**.
 
 Set C, *Engineering curriculum*, replaces the drawing-set vocabulary everywhere a reader can see it,
 and T4's tokens replace the Hidden Line tokens. Nothing about behaviour changes in this milestone;
 if a page does something different afterwards, that is a defect.
+
+**This milestone is where the whole revision can go quietly wrong**, because it is the one that
+touches every file and changes nothing you can click. Do the vocabulary and the tokens as two
+commits, not one, so a contrast regression and a rename regression cannot arrive together.
 
 ### Deliverables
 
@@ -269,7 +302,15 @@ if a page does something different afterwards, that is a defect.
       the register → **My progress**, the drafter → **you**
 - [ ] `ARCHITECTURE.md` §9's table updated: each retired term struck through with its replacement
 - [ ] `tests/unit/copy-register.test.ts` extended so a retired word in a reader-visible string fails
-- [ ] The T4 token set written into `src/app/lokum.css`, with the chosen ground
+- [ ] The T4 token set written into `src/app/lokum.css`, ground **`#FDFBF7`**, raised surfaces white
+- [ ] **The two line tokens split by job**: `line` / `line-strong` for grouping, `on-surface-faint`
+      `#948D7D` for the boundary that identifies an interactive control. On this ground no line colour
+      in the palette reaches 3:1, so a control bordered with `line-strong` is unperceivable at 2.07:1
+      (O4)
+- [ ] `button-quiet`, the inputs, the search field and the catalog's view toggle moved onto the
+      interactive line token — this is a fix, not a restyle
+- [ ] Every card, panel and dropdown keeps its border: on a ground at 96.6% luminance, white sits
+      1.035 above it and the fill separates nothing
 - [ ] `src/app/lokum-modules.css` regenerated in the same commit, per the root `CLAUDE.md`
 - [ ] The five level colours mapped to T4's, and `src/components/mascot/geometry.ts` checked, since it
       names faces after categories
@@ -282,6 +323,11 @@ if a page does something different afterwards, that is a defect.
 - The copy-register test fails when a retired word is put back, verified by putting one back.
 - Every contrast and palette test recomputes from the shipped stylesheet and passes; **the tick is a
   filled disc and clears 3:1 against the ground**, because it cannot clear 4.5:1 as text (D12).
+- **Every interactive control's boundary clears 3:1** against the surface behind it, measured from the
+  shipped stylesheet. A test that passes when `button-quiet` is put back on `line-strong` protects
+  nothing, so put it back once and watch it fail.
+- **`on-surface-faint` carries no sentence anywhere.** It is 3.19:1 on this ground, which is under the
+  4.5:1 text floor; it is for a count, a unit or a status word repeated elsewhere on the page.
 - The forced-colors e2e spec still passes: colour is never the only signal.
 - No behaviour changed. The record, the routes, the slugs and the reader's saved progress are
   untouched, and `git status` shows nothing under `mini-courses/`.

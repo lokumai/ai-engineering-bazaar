@@ -25,14 +25,20 @@ import { describe, expect, it } from 'vitest'
  * back on `line` or `line-strong` fails here rather than in front of a reader.
  * Mutation-tested by putting `.hl-btn` back on `--color-line-strong`.
  *
- * ## Rule 2 — the slab's override equals the dark theme it duplicates
+ * ## Rule 2 — every local theme override equals the dark theme it duplicates
  *
- * The slab is dark in BOTH themes, so `rail.css` redeclares the semantic
- * palette on `.hl-slab` using the dark theme's literal values. It cannot share
- * them through a `var()` indirection: `code-theme.ts` reads the `.dark` block's
- * declarations as TEXT at build time and hands them to a hex converter, so an
- * indirection there stops the build. Two copies of a value is two values, and
- * this is what stops them drifting.
+ * The slab is dark in BOTH themes, so the palette is redeclared on the element
+ * using the dark theme's literal values. It cannot be shared through a `var()`
+ * indirection: `code-theme.ts` reads the `.dark` block's declarations as TEXT at
+ * build time and hands them to a hex converter, so an indirection there stops
+ * the build.
+ *
+ * **There are two such overrides, not one**, which is why this half of the file
+ * discovers them rather than naming one: the figure carries the slab in
+ * `rail.css`, and the EXPAND overlay carries it again in `figure.css`, because
+ * Radix portals the overlay out of `.prose` and mermaid renders a fresh drawing
+ * into it. Two copies of a value is two values; a third is checked the moment
+ * somebody writes it.
  */
 
 const CSS_DIR = join(import.meta.dirname, '../../../src/app')
@@ -127,15 +133,6 @@ function darkBlock(): string {
   return css.slice(open, css.indexOf('}', open))
 }
 
-/** The `.hl-slab` block of `rail.css`, where the slab overrides the palette. */
-function slabBlock(): string {
-  const css = read('rail.css')
-  const start = css.search(/\.hl-slab\s*\{/)
-  expect(start, 'rail.css has no .hl-slab block').toBeGreaterThan(-1)
-  const open = css.indexOf('{', start) + 1
-  return css.slice(open, css.indexOf('}', open))
-}
-
 function declarationsIn(block: string): Map<string, string> {
   const found = new Map<string, string>()
   for (const match of block.matchAll(/(--color-[a-z-]+)\s*:\s*([^;]+);/g)) {
@@ -144,32 +141,71 @@ function declarationsIn(block: string): Map<string, string> {
   return found
 }
 
-describe('M11 — the slab duplicates the dark palette, exactly', () => {
+/**
+ * Every rule OUTSIDE `globals.css` that redeclares a palette token, with the
+ * selector it is declared under.
+ *
+ * Found rather than named, and that is the point: the slab is declared twice —
+ * once on the figure in `rail.css` and once on the magnified copy in
+ * `figure.css`, because the EXPAND overlay is portalled out of `.prose` and
+ * mermaid renders a fresh drawing into it. A test that named one of them would
+ * have let the other drift, which is exactly the failure two copies of a value
+ * invite. A third copy is checked the moment somebody writes it.
+ */
+function paletteOverrides(): { selector: string; declarations: Map<string, string> }[] {
+  const found: { selector: string; declarations: Map<string, string> }[] = []
+  for (const name of FILES) {
+    if (name === 'globals.css') continue
+    const css = read(name)
+    for (const match of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+      const declarations = declarationsIn(match[2])
+      // A rule that sets one token is setting a colour; a rule that sets a
+      // whole palette is a local theme, which is what this is about.
+      if (declarations.size < 5) continue
+      found.push({ selector: `${name} ${match[1].trim()}`, declarations })
+    }
+  }
+  return found
+}
+
+describe('M11 — every local theme override duplicates the dark palette, exactly', () => {
   const dark = declarationsIn(darkBlock())
-  const slab = declarationsIn(slabBlock())
+  const overrides = paletteOverrides()
 
-  /** The overrides that are literal values rather than slab-token aliases. */
-  const literals = [...slab.entries()].filter(([, value]) => !value.startsWith('var('))
-
-  it('overrides something with a literal, so this test has a subject', () => {
-    expect(literals.length).toBeGreaterThan(8)
+  it('finds the overrides it is meant to be checking', () => {
+    expect(overrides.length, 'no local palette override found at all')
+      .toBeGreaterThanOrEqual(2)
   })
 
-  it.each(literals)('%s matches the .dark declaration it copies', (token, value) => {
+  /** Each literal value in each override, paired with the token it sets. */
+  const literals = overrides.flatMap((override) =>
+    [...override.declarations.entries()]
+      .filter(([, value]) => !value.startsWith('var('))
+      .map(([token, value]) => [override.selector, token, value] as const),
+  )
+
+  it('overrides something with a literal, so this test has a subject', () => {
+    expect(literals.length).toBeGreaterThan(16)
+  })
+
+  it.each(literals)('%s: %s matches the .dark declaration it copies', (_where, token, value) => {
     const night = dark.get(token)
     expect(night, `${token} is not declared in .dark, so nothing pins this copy`)
       .toBeDefined()
-    expect(value, `${token} on the slab has drifted from the dark theme`).toBe(night)
+    expect(value, `${token} has drifted from the dark theme`).toBe(night)
   })
 
-  it('takes the slab grounds and inks from the slab tokens, not from literals', () => {
+  it('takes its grounds and inks from the slab tokens, not from literals', () => {
     // The overrides that are NOT semantic hues must be aliases of a
     // `--color-slab-*` token, so the slab's own palette has exactly one
     // definition and `code-theme.ts` reads the same values the page paints.
-    for (const key of ['--color-paper', '--color-cleared', '--color-ink', '--color-line'] as const) {
-      expect(slab.get(key), `${key} is not declared on the slab`).toMatch(
-        /^var\(--color-slab[a-z-]*\)$/,
-      )
+    for (const override of overrides) {
+      for (const key of ['--color-paper', '--color-ink', '--color-line'] as const) {
+        expect(
+          override.declarations.get(key),
+          `${override.selector} does not alias ${key} to a slab token`,
+        ).toMatch(/^var\(--color-slab[a-z-]*\)$/)
+      }
     }
   })
 

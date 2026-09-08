@@ -523,12 +523,28 @@ at an edge nothing else used — and they are a second decorative motif on a
 system that spends its ornament once. They are gone from the module page and
 still on every route that keeps the shell.
 
-### The e2e state, and what the four red ones turned out to be
+### The gate, and what the four red ones turned out to be
 
-**431 passed, 19 skipped, 1 red at the time of writing** — the last one my own
-new test, fixed before the gate below. The starting point was 355 passed and 4
-failed, and the diagnosis PROGRESS.md carried for two of the four was wrong in
-the same way both times: **they were races in the harness, not palette defects.**
+**The full CI order, on a machine with nothing else running:**
+
+| | |
+|---|---|
+| `npm run typecheck` | clean |
+| `npm test` | **2,107 passed**, 77 files (2,042 at the start of the milestone) |
+| `npm run build` | clean, 58 pages exported |
+| `npx playwright test` | **435 passed, 0 failed, 19 skipped** (355 / 4 / 19 at the start) |
+
+**Run the four with nothing else running, and that is not a style note.** Two
+red results in this session were produced by me running `npm test` while a
+Playwright suite held eight Chrome workers: a corpus-wide vitest case over-ran
+its 5s timeout, and a channel-B hydration test in `record-pages.spec.ts` lost its
+race. Both pass alone, three times each. The root `CLAUDE.md`'s trap list already
+says not to start a server during a Playwright run; the same applies to the unit
+suite, for the same reason.
+
+**The starting point was 355 passed and 4 failed**, and the diagnosis PROGRESS.md
+carried for two of the four was wrong in the same way both times: **they were
+races in the harness, not palette defects.**
 `logs/BRAINSTORM.md` **D20** has the measurements. In short:
 
 1. **`accessibility.spec.ts:330`** — the manifest's `#` column at `1.84:1` in

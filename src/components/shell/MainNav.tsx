@@ -22,17 +22,34 @@ import { INDEX_ROUTE, INDEX_TITLE, type CategoryLabel } from '@/lib/route-labels
  * from those four, and a navbar that lists nine things is the menu problem
  * again in a different shape.
  *
- * ## The dropdown has no JavaScript
+ * ## The dropdown is a native disclosure, and the first version was broken
  *
- * It opens on `:hover` and on `:focus-within`, in CSS. That is not a
- * simplification, it is the only version that is correct before hydration: the
- * export is static, a reader can click a link in the first frame, and a menu
- * that needs `useState` to open is a menu that does nothing for as long as the
- * bundle takes to arrive. `:focus-within` is what makes it keyboard-reachable —
- * tab into `Curriculum`, the panel opens, tab again and you are on the first
- * level. No `aria-expanded` is claimed, because nothing here toggles state; the
- * trigger is a link to `/courses/` and the panel is a list of links, which is
- * what a reader gets either way.
+ * It is `<details>` / `<summary>`. No JavaScript, which matters because the
+ * export is static and a reader can operate this in the first frame, before
+ * any bundle arrives — a menu that needs `useState` to open is a menu that
+ * does nothing until it lands.
+ *
+ * **The first version used `:hover` and `:focus-within` on a
+ * `visibility: hidden` panel, and it was keyboard-inaccessible.** The reasoning
+ * was that tabbing to the trigger would fire `:focus-within` and open the
+ * panel, so the links inside would then be reachable. That is circular, and a
+ * browser does not play along: `visibility: hidden` removes an element from the
+ * tab order, so focus can never get inside to trigger the rule that would
+ * reveal it. **Measured, by pressing Tab forty times in Chrome and printing
+ * what had focus** — the five level links never appeared. The check that made
+ * it look fine called `.focus()` on the trigger programmatically, which does
+ * fire `:focus-within`; a real Tab press cannot.
+ *
+ * `<details>` has no such problem. Its contents are genuinely inert when
+ * closed and genuinely focusable when open, the browser gives Enter and Space
+ * for free, and `<summary>` carries the expanded state to a screen reader
+ * without anyone claiming `aria-expanded` by hand.
+ *
+ * The cost is hover-to-open, which CSS cannot do to an `open` attribute. That
+ * is an acceptable trade: click and Enter both open it, which is how every
+ * disclosure a reader has met behaves, and the panel's first row is a link to
+ * the curriculum index — so the destination the trigger used to be is still one
+ * click away and is now *named* rather than implied.
  *
  * ## Why this is a client island at all
  *
@@ -105,42 +122,67 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
 
           return (
             <li key={destination.href} className="hl-nav-item">
-              <Link
-                href={destination.href}
-                className="hl-nav-link"
-                aria-current={current ? 'page' : undefined}
-              >
-                {destination.label}
-                {isCurriculum && <Chevron />}
-              </Link>
+              {isCurriculum ? (
+                <details className="hl-nav-details">
+                  <summary
+                    className="hl-nav-link"
+                    data-current={current ? '' : undefined}
+                    aria-current={current ? 'page' : undefined}
+                  >
+                    {destination.label}
+                    <Chevron />
+                  </summary>
 
-              {isCurriculum && (
-                <div className="hl-nav-menu">
-                  <ul role="list">
-                    {categories.map((category) => {
-                      const href = `${CURRICULUM}${category.slug}/`
-                      return (
-                        <li key={category.slug}>
-                          <Link
-                            href={href}
-                            className="hl-nav-menu-link"
-                            data-cat={category.slug}
-                            aria-current={pathname.startsWith(href) ? 'page' : undefined}
-                          >
-                            {/* The level's own colour, and its number beside
-                                it: the hue is never the only carrier
-                                (§13.1.4). */}
-                            <span aria-hidden="true" className="hl-nav-menu-key" />
-                            <span className="hl-nav-menu-order">
-                              {String(category.order).padStart(2, '0')}
-                            </span>
-                            <span className="hl-nav-menu-title">{category.title}</span>
-                          </Link>
-                        </li>
-                      )
-                    })}
-                  </ul>
-                </div>
+                  <div className="hl-nav-menu">
+                    <ul role="list">
+                      {/* The destination the trigger used to be. A disclosure
+                          cannot also be a link, so the whole-curriculum page
+                          is named here instead of implied by the label. */}
+                      <li>
+                        <Link
+                          href={CURRICULUM}
+                          className="hl-nav-menu-link hl-nav-menu-all"
+                          aria-current={pathname === CURRICULUM ? 'page' : undefined}
+                        >
+                          <span aria-hidden="true" className="hl-nav-menu-key" />
+                          <span className="hl-nav-menu-order">All</span>
+                          <span className="hl-nav-menu-title">Every level</span>
+                        </Link>
+                      </li>
+                      {categories.map((category) => {
+                        const href = `${CURRICULUM}${category.slug}/`
+                        return (
+                          <li key={category.slug}>
+                            <Link
+                              href={href}
+                              className="hl-nav-menu-link"
+                              data-cat={category.slug}
+                              aria-current={pathname.startsWith(href) ? 'page' : undefined}
+                            >
+                              {/* The level's own colour, and its number beside
+                                  it: the hue is never the only carrier
+                                  (§13.1.4). */}
+                              <span aria-hidden="true" className="hl-nav-menu-key" />
+                              <span className="hl-nav-menu-order">
+                                {String(category.order).padStart(2, '0')}
+                              </span>
+                              <span className="hl-nav-menu-title">{category.title}</span>
+                            </Link>
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  </div>
+                </details>
+              ) : (
+                <Link
+                  href={destination.href}
+                  className="hl-nav-link"
+                  data-current={current ? '' : undefined}
+                  aria-current={current ? 'page' : undefined}
+                >
+                  {destination.label}
+                </Link>
               )}
             </li>
           )

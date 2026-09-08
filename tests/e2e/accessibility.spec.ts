@@ -129,34 +129,84 @@ test('the header tab order runs left to right and stops at the repo link', async
     order.push(focused.text)
   }
 
-  // Skip link, wordmark, the navbar, the trail, then the controls (§5.1, M10).
+  // MEASURED in Chrome, and the order is not what it was before M10:
+  //   skip · wordmark · navbar (4) · controls (4) · trail
+  // The trail moved to its own row UNDER the navbar row, so it is last in the
+  // DOM and therefore last in the tab order. That is why the old
+  // `order.at(-1)` assertion for the repo link is gone: the controls are no
+  // longer the end of the header.
+  const at = (name: RegExp) => order.findIndex((text) => name.test(text))
+
   expect(order[0]).toMatch(/skip to content/i)
   expect(order[1]).toMatch(/lokum/i)
-  expect(order.at(-2)).toMatch(/toggle theme/i)
-  expect(order.at(-1)).toMatch(/repository/i)
 
-  const middle = order.slice(2, -2).map((text) => text.toLowerCase())
+  // Left to right, and the rule is the ORDER of the groups rather than any
+  // group's length: the navbar is reached before the controls, and the trail
+  // after them.
+  expect(at(/^home$/i), 'the navbar').toBe(2)
+  expect(at(/^curriculum$/i)).toBe(3)
+  expect(at(/^catalog$/i)).toBe(4)
+  expect(at(/^my progress$/i)).toBe(5)
+  expect(at(/toggle theme/i)).toBeGreaterThan(at(/^my progress$/i))
+  expect(at(/repository/i)).toBeGreaterThan(at(/toggle theme/i))
 
-  // M10 — the navbar comes first in the middle, in the order it is written,
-  // and its Curriculum panel is reachable rather than a hover-only trap. The
-  // four destinations are asserted as a PREFIX and not as the whole list,
-  // because the five level links sit inside the third one.
-  expect(middle.slice(0, 2)).toEqual(['home', 'curriculum'])
-  expect(middle, 'the level panel is not reachable by keyboard')
+  // The trail is what follows the controls, and its first crumb is the front
+  // door. §15.1 renamed it: the root of every trail used to be the manifest
+  // and read INDEX; `/` is the home screen now and the register is one click
+  // further on at `/sheets/`.
+  const trail = order.slice(at(/repository/i) + 1).map((text) => text.toLowerCase())
+  expect(trail.length, 'the trail is not in the tab order').toBeGreaterThan(0)
+  expect(trail[0], 'the trail does not start at the front door').toBe('home')
+  expect(trail.join(' ')).toContain('curriculum')
+})
+
+/**
+ * M10 — the level panel, and the property the first version of it failed.
+ *
+ * It was a `visibility: hidden` panel revealed on `:focus-within`, which is
+ * circular: `visibility: hidden` takes an element out of the tab order, so
+ * focus can never get inside to fire the rule that would reveal it. The five
+ * level links were simply not reachable by keyboard, and the check that missed
+ * it called `.focus()` programmatically — which does fire `:focus-within`,
+ * where a Tab press cannot.
+ *
+ * So this asserts both halves, because either alone passes for the wrong
+ * reason: closed, the links are NOT in the tab order (a disclosure that leaks
+ * its contents is six stops of noise on every page); open, they ARE.
+ */
+test('the level panel is inert when closed and reachable when open', async ({ page }) => {
+  await page.goto(A0.path)
+
+  const summary = page.locator('summary.hl-nav-link')
+  const levels = page.locator('.hl-nav-menu-link')
+
+  const tabTexts = async (presses: number) => {
+    const seen: string[] = []
+    for (let i = 0; i < presses; i++) {
+      await page.keyboard.press('Tab')
+      seen.push(
+        (await page.evaluate(() => (document.activeElement?.textContent ?? '').trim())).toLowerCase(),
+      )
+    }
+    return seen
+  }
+
+  // Closed: walk the whole header and never meet a level.
+  await expect(summary).toHaveAttribute('open', /^$/, { timeout: 1 }).catch(() => {})
+  const closedWalk = await tabTexts(14)
+  expect(closedWalk.some((text) => text.includes('fundamentals') && text.startsWith('01')))
+    .toBe(false)
+
+  // Open with the keyboard, which is the interaction that was broken.
+  await page.reload()
+  await summary.focus()
+  await page.keyboard.press('Enter')
+  await expect(page.locator('details.hl-nav-details')).toHaveAttribute('open', '')
+
+  const openWalk = await tabTexts(7)
+  expect(openWalk, 'the levels are not reachable once the panel is open')
     .toContain('01fundamentals')
-  expect(middle).toContain('catalog')
-  expect(middle).toContain('my progress')
-
-  // The trail comes after the navbar, and its first crumb is the front door.
-  // §15.1 renamed it: the root of every trail used to be the manifest and read
-  // INDEX; `/` is the home screen now and the register is one click further on
-  // at `/sheets/`. The trail follows the route, so its name has to follow too.
-  // Found by NAME rather than by slice, because the navbar's own length is not
-  // this test's business.
-  const trailStart = middle.lastIndexOf('home')
-  expect(trailStart, 'the trail does not start at the front door')
-    .toBeGreaterThan(middle.indexOf('my progress'))
-  expect(middle.slice(trailStart).join(' ')).toContain('curriculum')
+  await expect(levels).toHaveCount(6) // every level, plus the whole-curriculum row
 })
 
 test('every interactive control in the header shows a focus ring', async ({ page }) => {

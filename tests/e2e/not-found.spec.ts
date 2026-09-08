@@ -100,8 +100,16 @@ for (const [address, expectedStatus] of ADDRESSES) {
     const sheet = await page.locator('footer').innerText()
 
     for (const [where, text] of [['trail', trail], ['footer', sheet]] as const) {
+      // The forbidden pattern is the URL SEGMENT, hyphenated, and it has to
+      // stay that way. M9 renamed the page's own title from `No such sheet` to
+      // `No such module`, and the guard as written used `.` for the separator
+      // — so the honest title started matching the pattern meant to catch the
+      // address, and this test failed while asserting two things that could no
+      // longer both be true. The segment is `no-such-module`; the page says
+      // `No such module`. One hyphen is the whole difference, and the two
+      // assertions below are only meaningful together.
       expect(text, `${where} printed a URL segment`)
-        .not.toMatch(/_not.?found|no.such.module|\b404\b/i)
+        .not.toMatch(/_not-?found|no-such-module|\b404\b/i)
       expect(text.toUpperCase(), `${where} does not name the page`).toContain('NO SUCH MODULE')
     }
 
@@ -196,7 +204,7 @@ test('the way out leads to the page it names, not merely somewhere', async ({
 
   // The prose immediately above the link promises the index. Asserted here so
   // that changing the link without changing the sentence cannot pass.
-  await expect(page.locator('main')).toContainText('The index lists every one that is.')
+  await expect(page.locator('main')).toContainText('The catalog lists every one that is.')
 
   await page.locator('main').getByRole('link', { name: 'Catalog' }).click()
   await expect(page).toHaveURL(new RegExp(`${INDEX_SHEET}$`))

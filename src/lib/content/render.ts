@@ -547,7 +547,7 @@ function rehypeFigures(options: RenderOptions) {
 
         parent.children[index] = element(
           'figure',
-          { className: ['hl-figure', 'hl-diagram'], 'data-hl-width': 'prose' },
+          { className: ['hl-figure', 'hl-diagram', 'hl-slab'], 'data-hl-width': 'prose' },
           [
             scrollRegion('hl-diagram-body', name.replace('FIG.', 'Figure'), [marker]),
             caption(name, section, {
@@ -870,7 +870,12 @@ function rehypeCodeBlocks() {
 
       parent.children[index] = element(
         'div',
-        { className: ['hl-code'], 'data-language': language },
+        // M11 — the dark slab. `hl-slab` is a local theme override in
+        // `rail.css`, not a set of bespoke code colours: it redeclares the
+        // palette on this element so everything inside it — the header strip,
+        // the syntax spans, a mermaid SVG — lands on a dark ground with no
+        // second stylesheet and no re-render. The author's explicit choice.
+        { className: ['hl-code', 'hl-slab'], 'data-language': language },
         [
           element('div', { className: ['hl-code-head'] }, [
             element('span', { className: ['hl-code-lang'] }, [text(language)]),

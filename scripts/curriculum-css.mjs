@@ -20,20 +20,28 @@
  * the list has to be enumerated once per module, and enumeration is inherent to
  * the design rather than an accident of it.
  *
- * What is an accident is enumerating it BY HAND. Three lists, 61 selectors, all
- * keyed on a number the curriculum now computes:
+ * What is an accident is enumerating it BY HAND. Four lists, all keyed on a
+ * number the curriculum now computes:
  *
  *   A  every module      the segment fills with its category hue
  *   B  drawn modules     the path step says SIGNED OFF
  *   C  drawn modules     the same segment, inside `forced-colors: active`,
  *                        filled with a system colour so the state survives
  *                        with no hue at all
+ *   D  drawn modules     M10 — the curriculum rail's completion tick, a 17px
+ *                        filled disc revealed on the row of a module the
+ *                        reader has completed
  *
- * B and C stop at the drawn sheets deliberately. A draft sheet has no sign-off
- * control (§12.4.1), so `hl-signed-<n>` can never be stamped for one, and
- * writing the rule anyway would state that it could. A is the whole set,
- * because a draft segment is still drawn (dashed, unfillable) and keeping the
- * list uniform costs nothing.
+ * B, C and D stop at the drawn sheets deliberately. A draft sheet has no
+ * completion control (§12.4.1), so `hl-signed-<n>` can never be stamped for
+ * one, and writing the rule anyway would state that it could. A is the whole
+ * set, because a draft segment is still drawn (dashed, unfillable) and keeping
+ * the list uniform costs nothing.
+ *
+ * D needs no forced-colours twin, and that is the one asymmetry worth naming:
+ * the disc is revealed by `display`, and `display` survives a forced-colours
+ * theme untouched. Its fill and its check take the system colours from one
+ * unconditional rule in `rail.css`, so nothing per-module has to be repeated.
  *
  * ## Why the output is committed
  *
@@ -87,7 +95,7 @@ export function render() {
    Do not edit. Run \`node scripts/curriculum-css.mjs\` after changing the
    curriculum, which \`npm run build\` does for you.
 
-   Why these lists are enumerated at all, and why only these three: see the
+   Why these lists are enumerated at all, and why only these four: see the
    docblock at the top of the generator. Short version: channel A matches a
    class on <html> against an attribute on a descendant, and CSS has no
    operator that compares the two, so there is one selector per module and
@@ -112,6 +120,14 @@ ${selectors(every, (pad, n) => `html.hl-signed-${pad} .hl-seg[data-module="${n}"
 ${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .hl-step[data-module="${n}"] .hl-step-tick`)}
     display: inline;
     color: var(--color-accent-ink);   /* T2 — accent as TEXT is \`-ink\` only. */
+  }
+
+  /* D. M10 — the curriculum rail's tick, for the drawn modules only. The mark
+     is a 17px teal disc with a white check and an \`sr-only\` word inside it, so
+     revealing it reveals the shape, the fill and the statement together and
+     colour is never the only carrier. \`rail.css\` holds its geometry. */
+${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .hl-mod[data-module="${n}"] .hl-mod-mark`)}
+    display: inline-flex;
   }
 }
 

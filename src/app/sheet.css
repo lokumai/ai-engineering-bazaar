@@ -40,15 +40,38 @@
     background-size: var(--hl-hidden-weight, var(--stroke-hair)) 100%;
   }
 
-  /* -- §4.4 / §4.7 The sheet grid ---------------------------------------- */
+  /* -- M10 / M11 — the reading shell -------------------------------------
+     Three tracks, and the two rails are anchored to the WINDOW edges with the
+     content centred between them (kia-context/logs/BRAINSTORM.md D15). The
+     author's words: "The center content in each module should be center aligned
+     and span the whole container, while some horizontal space from left sidebar
+     and right 'on this page' is reserved."
+
+     THE ARITHMETIC, and every number in it is measured rather than chosen.
+     `PageShell` gives a module page no 1200px shell — `.hl-sheet` is the full
+     window width — so at 1440px the tracks are 262 + 974 + 204. The middle
+     track spends `--width-gutter` (49px at 1440) either side and the column
+     takes `min(--width-measure, what is left)`, centred: 814px, clearing each
+     rail by 80px. Folded, the middle track is 1236px, the column stays 814px
+     and the gutters grow to 211px. **That cap is the whole reason the column
+     can take the width it is given without becoming unreadable** — a measure
+     that grows with the window is 120 characters a line on a big display, and
+     §3.2's readable range ends at 75.
+
+     `minmax(0, 1fr)` and not `1fr`: a grid item's automatic minimum size is
+     its content, so a 1,500px SVG inside the column would otherwise widen the
+     track and push the right rail off the window. That is one half of the
+     diagram containment fix (D10); the other half is the scroll container in
+     `prose.css`.
+
+     Below the breakpoints the rails are `display: none` and their content is in
+     the drawer (§4.7). One column, centred, at the same cap. */
 
   .hl-sheet {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    justify-content: center;
   }
 
-  /* Below 1024 there is one column: the rails are in the drawer (§4.7). */
   .hl-sheet > .hl-rail-left,
   .hl-sheet > .hl-rail-right {
     display: none;
@@ -57,147 +80,125 @@
   .hl-sheet > .hl-column {
     grid-column: 1;
     width: 100%;
-    max-width: var(--width-prose);
-    margin-inline: auto;
     min-width: 0;
+    /* The gutter is the column's own padding at EVERY width, not only where a
+       rail sits beside it. A bleed page has no shell padding to inherit, and
+       without this the prose ran flush to the window edge at 390px — MEASURED,
+       x=0. `--width-gutter` clamps to 24px there, which is what the bar above
+       it already uses. */
+    padding-inline: var(--width-gutter);
+    /* The column carries the cap, so `.prose` must not cap itself again at
+       §3.3's 656px inside it. Every other page keeps that default. */
+    --hl-measure: 100%;
   }
 
-  /* Everything in the column obeys the measure the format gives it, so the
-     strip, the schedule and the prev/next stay aligned with the prose. */
+  /* One column: the measure, centred, with the gutter outside it. */
   .hl-sheet > .hl-column > * {
-    max-width: var(--hl-measure, var(--width-prose));
+    width: 100%;
+    max-width: var(--width-measure);
+    margin-inline: auto;
   }
 
+  /* The rails are sticky under the bar: 56px of row plus 32px of trail. They
+     scroll inside themselves rather than with the page, because the curriculum
+     is 33 rows and a rail a reader has to scroll the article to reach is a rail
+     they will not use. */
   .hl-rail-left,
   .hl-rail-right {
     position: sticky;
-    top: 80px;
+    top: 88px;
     align-self: start;
+    max-height: calc(100vh - 104px);
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
   }
 
   .hl-rail-left {
     grid-column: 1;
-    width: var(--width-rail-l);
+    width: var(--width-rail-nav);
+    min-width: 0;
+    /* The fold. 200ms on DESIGN.md's own curve, and `visibility` is what takes
+       the folded rail's 33 links OUT OF THE TAB ORDER — the property D17's
+       correction turns on. Opening is instant on visibility and animated on
+       width; closing delays the visibility swap until the width has finished,
+       so the rail does not vanish and then shrink. */
+    overflow: hidden;
+    visibility: visible;
+    transition:
+      width var(--duration-fold) var(--ease-fold),
+      visibility 0s linear 0s;
+  }
+
+  html[data-hl-rail="folded"] .hl-rail-left {
+    width: 0;
+    visibility: hidden;
+    transition:
+      width var(--duration-fold) var(--ease-fold),
+      visibility 0s linear var(--duration-fold);
   }
 
   .hl-rail-right {
     grid-column: 3;
-    width: var(--width-rail-r);
+    width: var(--width-rail-toc);
+    overflow-y: auto;
   }
 
-  @media (min-width: 1024px) {
+  /* 880px — the point the curriculum list can sit beside a readable measure. */
+  @media (min-width: 880px) {
+    /* `auto` and NOT `--width-rail-nav`, and this is the whole reason the fold
+       reclaims its space. A fixed first track stays 262px wide with an empty
+       rail inside it: MEASURED, the column came back 974px after folding
+       instead of 1236px, so the prose did not move at all and the fold looked
+       broken. An `auto` track takes the item's own width, so animating the
+       rail's width animates the track with it and the column grows in the same
+       200ms. */
     .hl-sheet {
-      column-gap: 24px;
+      grid-template-columns: auto minmax(0, 1fr);
     }
 
     .hl-sheet > .hl-column {
       grid-column: 2;
-      max-width: none;
-      margin-inline: 0;
     }
 
-    /* A drawn sheet with its right rail collapsed (§4.7): 208 + 24 + 656 = 888,
-       centred in the 1152 box.
-       ------------------------------------------------------------------------
-       §4.7 used to grow the measure to 720px here, on the reasoning that the
-       collapsed rail had left width going spare. MEASURED, 720px at 17px Source
-       Serif 4 is **82 characters per line** — against the 68–72 that §3.2 picked
-       656px FOR, and past the 75 that ends the readable range. Widening a
-       measure because a rail left a hole is spending space because it is there,
-       and this system's answer to leftover width everywhere else is to centre.
-       So it centres. §4.7 is amended, and the 720px is gone. */
-    .hl-sheet[data-format="A0"] {
-      grid-template-columns: var(--width-rail-l) var(--width-prose);
-      --hl-break-left: 232px;
-    }
-
-    /* A4: one column, 656 centred. No rails, at any width. */
-    .hl-sheet[data-format="A4"] {
-      grid-template-columns: var(--width-prose);
-    }
-
-    .hl-sheet[data-format="A4"] > .hl-column {
-      grid-column: 1;
-    }
-
-    .hl-sheet[data-format="A0"] > .hl-rail-left {
-      display: block;
-    }
-
-    /* From here up a `full` figure really does break left, over the rail, so
-       it gets the edge defined below. Set on the figure and not on the sheet:
-       a `wide` figure has nowhere to break to until 1280. */
-    .hl-sheet[data-format="A0"] .hl-figure[data-hl-width="full"] {
-      --hl-figure-edge: var(--color-line-strong);
+    .hl-sheet > .hl-rail-left {
+      display: flex;
     }
   }
 
-  @media (min-width: 1280px) {
-    /* All three zones: 208 + 24 + 656 + 24 + 240 = 1152 exactly.
-       ------------------------------------------------------------------------
-       Every DRAWN sheet, which it did not used to be. §4.4 gave the right rail
-       to sheets over 2,500 words only, so the seven shorter ones — all of
-       Fundamentals — put their title block in the strip under the h1 instead.
-       Both used the same box and the same measure, so the rail moved the
-       metadata and the prose with it: the text started at x=588 on a short sheet
-       and x=456 on a long one, and jumped 132px sideways as a reader moved
-       between two sheets of the same curriculum. One component renders every sheet
-       and there is no per-module code anywhere, but the format was making the
-       set look hand-designed page by page. */
+  /* 1180px — and the contents rail joins. A drawn module only: a draft has no
+     sections to list (§4.5). */
+  @media (min-width: 1180px) {
     .hl-sheet[data-format="A0"] {
-      grid-template-columns: var(--width-rail-l) var(--width-prose) var(--width-rail-r);
-      --hl-measure: var(--width-prose);
-      --hl-break-right: 264px;
+      grid-template-columns: auto minmax(0, 1fr) var(--width-rail-toc);
     }
 
     .hl-sheet[data-format="A0"] > .hl-rail-right {
-      display: block;
-    }
-
-    /* …and from here up a `wide` figure breaks right, over the title block. */
-    .hl-sheet[data-format="A0"] .hl-figure[data-hl-width="wide"] {
-      --hl-figure-edge: var(--color-line-strong);
+      display: flex;
     }
   }
 
-  /* §6.5 / B5 — a figure that breaks out of the measure "simply overlays the
-     rail's horizontal band with a --color-paper ground". Two things make that
-     true: the ground itself, and painting above the rails, which are sticky
-     and therefore already in the positioned layer whatever the DOM order says.
-     Without both, a 6-column table at 1152px is transparent and the left
-     rail's section list reads straight through it.
+  /* M11 — A FIGURE NO LONGER BREAKS OUT OF THE MEASURE, and the pair of rules
+     that used to make the break-out readable are gone with it.
 
-     §6.5 designs this collision rather than avoiding it: a 5-column figure is
-     920px, which it defines as "prose + gutter + right rail". A rail that is
-     briefly covered and comes back is the cost of a table that can be read. */
-  .hl-sheet .prose .hl-figure {
-    position: relative;
-    z-index: 1;
-    background: var(--color-paper);
-  }
+     §6.5 used to let a wide table or a wide diagram spill over the rails on
+     `--color-paper` with a hairline down each broken side, so a covered panel
+     read as covered rather than as gone. That was a coherent design for a
+     656px measure with 208px and 240px of metadata either side. It is the wrong
+     design here for a measured reason: mermaid renders CLIENT-SIDE and injects
+     an SVG at its natural content width after load, so the break-out was the
+     mechanism by which a 1,524px drawing came to paint from x=144 to x=1668 on
+     a 1440px window — across both rails and past the window edge — with 96
+     elements of one figure outside the column on the widest module in the
+     corpus (MEASURED; kia-context/logs/BRAINSTORM.md D10).
 
-  /* What makes the overlay read as an overlay. Both grounds are
-     `--color-paper`, so a covered panel does not read as covered — it reads as
-     gone: MEASURED at 1440, the title block was completely absent behind the
-     5-column TBL. 13.4 and behind the wide mermaid figure, with no border, no
-     ground change and no cue that anything was underneath. A hairline down
-     each broken-out side says "a sheet laid over the panel". Top and bottom
-     already close themselves — a picture with its own rules, a table with its
-     row rules — so only the sides were missing.
-
-     Transparent unless the layout above says this figure really is breaking
-     out: a hairline down a figure sitting flush in the measure is a line that
-     means nothing (§1, third check). Painted on a pseudo-element rather than
-     as a border on the figure, because the width classes in prose.css are
-     `min(920px, …)` against a border-box and 2px of real border would put the
-     table inside into a 2px scroll it could never resolve. */
-  .hl-sheet .prose .hl-figure:is([data-hl-width="wide"], [data-hl-width="full"])::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-inline: var(--stroke-hair) solid var(--hl-figure-edge, transparent);
-    pointer-events: none;
-  }
+     The rule that replaces it is DESIGN.md's: **anything wider than its column
+     scrolls inside its own box.** The figure is the column's width and the
+     scroll container inside it is where the extra width goes, so a diagram can
+     be any width at all and still cannot paint one pixel outside the track.
+     `prose.css` holds the scroll containers; `--hl-break-left` and
+     `--hl-break-right` are no longer set by any layout, which collapses the
+     `min()` in those width classes to 100% on its own. */
 
   /* -- §4.6 Eyebrow and sheet title -------------------------------------- */
 
@@ -215,16 +216,31 @@
 
   /* -- §4.7 The contents control, 768–1023 and below ---------------------- */
 
+  /* §4.7 — the control that opens the drawer, at the width its own rail went.
+     `ContentsDrawer` says why the two breakpoints differ by format: a draft has
+     no contents rail to lose, so a `Contents` control at 1024px would have
+     opened an empty panel. */
   .hl-subheader {
-    display: flex;
+    display: none;
     align-items: center;
     margin-bottom: 16px;
   }
 
-  @media (min-width: 1024px) {
-    .hl-subheader {
-      display: none;
-    }
+  @media (max-width: 1179px) {
+    .hl-subheader[data-hl-at="wide"] { display: flex; }
+  }
+
+  @media (max-width: 879px) {
+    .hl-subheader[data-hl-at="narrow"] { display: flex; }
+  }
+
+  /* One copy in the accessibility tree, never two. The drawer's contents are
+     only mounted while it is open, and above the width where the curriculum
+     rail is in flow its copy inside the drawer is hidden. */
+  .hl-drawer-curriculum { display: none; }
+
+  @media (max-width: 879px) {
+    .hl-drawer-curriculum { display: block; }
   }
 
   /* §5.10 — the one button shape on this site. There is no filled variant. */
@@ -234,8 +250,17 @@
     align-items: center;
     height: 32px;
     padding: 0 12px;
-    border: var(--stroke-hair) solid var(--color-line-strong);
-    background: var(--color-paper);
+    /* THE INTERACTIVE BORDER (kia-context/logs/BRAINSTORM.md D19). A boundary
+       that IDENTIFIES a control needs 3:1 to be perceivable and no other line
+       colour in this palette reaches it — `line-strong` is 2.68:1 on the sand
+       an input actually sits on, which is why `--color-line-control` exists as
+       a third token at all. It was declared in M9 and applied by nothing;
+       M10/M11 move every control onto it. */
+    border: var(--stroke-hair) solid var(--color-line-control);
+    /* `md` — DESIGN.md's `button-quiet`. See the note beside `.hl-btn` in
+       `record.css` for why the radius arrives with the component. */
+    border-radius: var(--radius-md);
+    background: var(--color-cleared);
     color: var(--color-ink);
     transition: background-color 90ms linear, border-color 90ms linear;
   }
@@ -314,7 +339,9 @@
   .hl-toc-entry {
     position: relative;
     display: grid;
-    grid-template-columns: 24px minmax(0, 1fr);
+    /* One column unless this module's headings carry numerals; the list says
+       which, on `data-hl-marks`. `TableOfContents` carries the measurement. */
+    grid-template-columns: minmax(0, 1fr);
     column-gap: 6px;
     align-items: baseline;
     min-height: 28px;
@@ -339,6 +366,10 @@
     bottom: 0;
     width: 2px;
     background: var(--color-line);
+  }
+
+  .hl-toc[data-hl-marks] .hl-toc-entry {
+    grid-template-columns: 24px minmax(0, 1fr);
   }
 
   .hl-toc-entry:hover {
@@ -400,11 +431,16 @@
     border: 0;
   }
 
+  /* M11 — STACKED, not two columns. MEASURED in the 204px contents rail:
+     `REQUIREMENTS` is an 11px mono label with 0.06em of tracking, which is 92px
+     of ink in the 76px track this used to reserve, so the label ran straight
+     into its own value and the row read `REQUIREMENTS12`. A label above its
+     values cannot collide with them at any rail width or in any language, and
+     the rail is the only place this block appears. */
   .hl-dep-row {
-    display: grid;
-    grid-template-columns: 76px minmax(0, 1fr);
-    gap: 8px;
-    align-items: baseline;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
     padding: 4px 0;
   }
 

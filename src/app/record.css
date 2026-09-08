@@ -44,7 +44,18 @@
     gap: 6px;
     height: 32px;
     padding: 0 12px;
-    border: var(--stroke-hair) solid var(--color-line-strong);
+    /* THE INTERACTIVE BORDER (kia-context/logs/BRAINSTORM.md D19). A boundary
+       that IDENTIFIES a control needs 3:1 to be perceivable and no other line
+       colour in this palette reaches it — `line-strong` is 2.68:1 on the sand
+       an input actually sits on, which is why `--color-line-control` exists as
+       a third token at all. It was declared in M9 and applied by nothing;
+       M10/M11 move every control onto it. */
+    border: var(--stroke-hair) solid var(--color-line-control);
+    /* `md` — DESIGN.md's `button-quiet`. The retired system held all nine
+       radius tokens at 0px and that was the strongest single signal of the
+       drawing-set look; M9 set the scale and left it unapplied for the
+       milestone that applies it with its components. */
+    border-radius: var(--radius-md);
     background: var(--color-paper);
     color: var(--color-ink);
     font-family: var(--font-mono);
@@ -56,6 +67,40 @@
     cursor: pointer;
     /* §9.2 — the only two properties any hover may transition. */
     transition: background-color 90ms linear, border-color 90ms linear;
+  }
+
+  /* M11 — `button-primary`, and there is exactly one per screen region: the
+     completion control at the end of a module (`kia-context/specs/DESIGN.md`,
+     Components). Cobalt fill, `md` radius, a check glyph, sentence case in the
+     display face rather than a tracked-out mono label.
+
+     `--color-paper` for the text and NOT white, and that is the whole reason
+     this works in both themes. Cobalt is dark in light mode and the accent is
+     LIFTED in dark mode — oklch(0.7159) — so white on it would be a pale
+     label on a pale fill. The page's own ground inverts with the theme, which
+     is exactly what a filled accent needs: MEASURED, 12.88:1 light and 6.81:1
+     dark, both clear of the 4.5:1 text floor.
+
+     No hover lift, no shadow, no scale: §9.2 permits background-color and
+     border-color, and this button takes the two it is allowed. */
+  .hl-btn-primary {
+    height: 36px;
+    padding: 0 16px;
+    gap: 7px;
+    font-family: var(--font-display);
+    font-size: var(--text-ui);
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    border-radius: var(--radius-md);
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-paper);
+  }
+
+  .hl-btn-primary:hover:not(:disabled):not([aria-disabled="true"]) {
+    background: var(--color-accent-ink);
+    border-color: var(--color-accent-ink);
   }
 
   .hl-btn:hover:not(:disabled):not([aria-disabled="true"]) {
@@ -76,9 +121,13 @@
     cursor: not-allowed;
   }
 
-  /* The signed state. Accent is legitimate here and only here: this button's
-     pressed state IS "signed off" (T1). The 2px left edge repeats the §5.8
-     approved-node vocabulary so the same fact looks the same everywhere. */
+  /* The completed state. Accent is legitimate here and only here: this
+     button's pressed state IS "complete" (T1). The 2px left edge repeats the
+     §5.8 approved-node vocabulary so the same fact looks the same everywhere.
+     A completed module's control is deliberately NOT the filled primary any
+     more — the filled invitation is spent, and what is left is a statement of
+     a state the reader can undo. (0,2,0) beats `.hl-btn-primary` at (0,1,0),
+     so the order of the two blocks does not matter. */
   .hl-btn[aria-pressed="true"] {
     border-color: var(--color-accent);
     border-left-width: var(--stroke-cut);
@@ -274,8 +323,14 @@
     width: 100%;
     height: 36px;
     padding: 0 10px;
-    border: var(--stroke-hair) solid var(--color-line-strong);
-    border-radius: 0;
+    /* THE INTERACTIVE BORDER (kia-context/logs/BRAINSTORM.md D19). A boundary
+       that IDENTIFIES a control needs 3:1 to be perceivable and no other line
+       colour in this palette reaches it — `line-strong` is 2.68:1 on the sand
+       an input actually sits on, which is why `--color-line-control` exists as
+       a third token at all. It was declared in M9 and applied by nothing;
+       M10/M11 move every control onto it. */
+    border: var(--stroke-hair) solid var(--color-line-control);
+    border-radius: var(--radius-md);
     background: var(--color-sunken);
     color: var(--color-ink);
     font-family: var(--font-display);
@@ -662,11 +717,14 @@
     box-sizing: border-box;
     width: 14px;
     height: 14px;
+    /* A checkbox is a control, so its boundary identifies rather than groups
+       (D19). The 14px square keeps zero radius: DESIGN.md's `sm` is for a chip
+       and a tick box is a tick box. */
     /* §10.4 asks for a 44px target below 768px and SC 2.5.8 for 24px
        everywhere. The painted square stays 14px; the hit area grows through the
        label, which wraps it. */
     margin: 5px 0 0;
-    border: var(--stroke-hair) solid var(--color-line-strong);
+    border: var(--stroke-hair) solid var(--color-line-control);
     border-radius: 0;
     background: var(--color-paper);
     cursor: pointer;
@@ -803,11 +861,13 @@
     color: var(--color-ink);
   }
 
+  /* An input, so it takes the interactive border (D19) and the `md` radius. */
   .hl-quiz textarea {
     display: block;
     width: 100%;
     padding: 8px 10px;
-    border: var(--stroke-hair) solid var(--color-line-strong);
+    border: var(--stroke-hair) solid var(--color-line-control);
+    border-radius: var(--radius-md);
     border-radius: 0;
     background: var(--color-sunken);
     color: var(--color-ink);

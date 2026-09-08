@@ -13,9 +13,16 @@ import {
  * the one thing this design promises (§11.25). A row whose value could not be
  * derived prints `—`; none of them prints a plausible guess.
  *
- * Variant A is the 240px panel that sits in an A0 sheet's right rail at 1280
- * and up. Variant B is the horizontal strip every other sheet gets, and the
- * one an A0 sheet falls back to when the right rail collapses (§4.7).
+ * Variant B, the horizontal strip, is what a module page renders — at every
+ * width, since M11 cut the right rail back to the sections and the dependency
+ * block and moved these rows into the column.
+ *
+ * **Variant A, the 240px panel, is rendered by no page today.** It is kept
+ * because it is the same rows in a vertical track and M12's catalog and M14's
+ * progress page are both still to be built; `titleStripRows` and
+ * `titleBlockRows` already return the identical set for a ready module, which
+ * `title-block.test.ts` asserts, so the two variants cannot drift apart while
+ * one of them is idle. If M14 lands without using it, delete it there.
  *
  * **Both stay SERVER components** (§12.2). The two things on the block that
  * belong to the reader — §12.3.1's `CHECKED BY` value and §7.4's stamp grid —

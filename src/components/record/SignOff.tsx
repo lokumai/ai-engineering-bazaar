@@ -212,25 +212,51 @@ export function SignOff({
               The manifest's ninth column deliberately uses
               `data-hl-signoff-cell` instead, so 32 non-interactive squares on
               the index can never answer this selector and swallow the key. */}
+          {/* M11 / D14 — COMPLETION CONTROL A, and `kia-context/specs/DESIGN.md`
+              names this the canonical `button-primary`: cobalt, filled, with a
+              check glyph. It is the only filled button on the page, which is
+              what makes it the one thing a reader who has finished reading
+              looks for. Sentence case, because a tracked-out all-caps label is
+              the tell DESIGN.md refuses; the label was `COMPLETE`. */}
           <button
             type="button"
-            className="hl-btn"
+            className="hl-btn hl-btn-primary"
             {...{ [SIGN_OFF_ATTR]: slug }}
             aria-pressed={signedOff !== null}
             onClick={onToggle}
           >
-            {signedOff === null ? 'COMPLETE' : `COMPLETED ${signedOff.slice(0, 10)}`}
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M3 8.5l3.5 3.5L13 5" />
+            </svg>
+            {signedOff === null ? 'Complete' : `Completed ${signedOff.slice(0, 10)}`}
           </button>
-          {/* §12.4.1 — `UNSIGN` adjacent, and the toggle itself un-signs too: a
-              pressed toggle whose click did nothing would be a control lying
-              about what it is. */}
+          {/* §12.4.1 — the un-complete control adjacent, and the toggle itself
+              un-completes too: a pressed toggle whose click did nothing would
+              be a control lying about what it is.
+
+              It read `UNSIGN` until M11. That is the drawing-set vocabulary
+              §9 retired — sign-off became Complete — and it survived the M9
+              rename because the copy register matches on word boundaries and
+              `UNSIGN` carries no hyphen for `sign-off` to be found inside. The
+              keyboard sheet already printed "Complete or un-complete the
+              current module", so the two now say the same word. */}
           {signedOff !== null && (
             <button
               type="button"
               className="hl-btn"
               onClick={() => update((data) => unsign(data, slug), { kind: 'unsign', sheetSlug: slug })}
             >
-              UNSIGN
+              Un-complete
             </button>
           )}
         </div>

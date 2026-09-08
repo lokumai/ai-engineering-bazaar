@@ -6,6 +6,10 @@
 @import "./sheet.css";
 /* §4.8–§4.9, §5.3–§5.4, §7.5 — the index sheet and the listing pages. */
 @import "./manifest.css";
+/* M10 / M11 — the reading shell: the curriculum rail, its fold and its restore
+   tab, the contents rail, and the slab. Imported before `figure.css` so a
+   figure's own rules can still override the slab's. */
+@import "./rail.css";
 /* §6.10 B5 — the figure EXPAND overlay, which Radix portals outside .prose. */
 @import "./figure.css";
 /* §12 — every surface that carries reader state: sign-off, identity, the
@@ -46,7 +50,7 @@
   --color-ink-muted:    oklch(0.5074 0.0209 89.5);                 /*  5.62:1 on paper        */
   /* DECORATIVE ONLY (T5). It must stay UNDER 3:1 — 2.77:1 — or it becomes
      usable as a meaningful mark, and the contrast test asserts that ceiling
-     in both directions. The interactive border is `--color-line-strong`,
+     in both directions. The interactive border is `--color-line-control`,
      which is a different job and a different value. */
   --color-ink-faint:    oklch(0.6823 0.0234 83.2);
 
@@ -56,8 +60,9 @@
      1.55:1. That is fine for a border that GROUPS — a card's content
      identifies the card — and not fine for the border that IDENTIFIES an
      interactive control, which needs 3:1 to be perceivable at all. So a
-     button, an input or a toggle borders with `--color-line-strong`, never
-     with this. See kia-context/logs/BRAINSTORM.md O4. */
+     button, an input or a toggle borders with `--color-line-control` below,
+     never with this and never with `line-strong` either. See
+     kia-context/logs/BRAINSTORM.md O4 and D19. */
   --color-line:         oklch(0.8466 0.0343 82.0);  /* DECORATIVE / GROUPING ONLY (T4) 1.55:1 */
   --color-line-strong:  oklch(0.6449 0.0246 87.2);  /* structural GROUPING, heavier            */
   /* THE INTERACTIVE BORDER, and it is its own token for a measured reason.
@@ -68,8 +73,13 @@
      because it is what clears 3.1:1 against the grounds of BOTH themes, and a
      structural line at that lightness is a line a reader can mistake for a
      level. So the control border is separate, at 3.19:1 on the sand and above
-     3.8:1 on the other two grounds. Nothing applies it yet; the components take
-     it in M10 and M11, where DESIGN.md's `button-quiet` moves onto it. */
+     3.8:1 on the other two grounds.
+
+     **M10/M11 applied it.** Every button, input, checkbox, textarea and the
+     two fold controls border with this and nothing else;
+     `tests/unit/color/slab-and-controls.test.ts` asserts that, and asserts the
+     other direction too — a control put back on `line` or `line-strong` fails
+     there rather than in front of a reader. */
   --color-line-control: oklch(0.6012 0.0264 88.3);
   --color-line-cut:     oklch(0.5074 0.0209 89.5);  /* cut plane / current, 5.62:1            */
 
@@ -119,6 +129,10 @@
   --stroke-hair:   1px;      /* rules, dividers, hidden-line dashes        */
   --stroke-struct: 1.5px;    /* component outlines, active state           */
   --stroke-cut:    2px;      /* current section, selected node, focus ring */
+  /* M10 — DESIGN.md's `strokes.edge`. The one weight above the cut plane, and
+     it has exactly one job: the coloured edge that says which level you are
+     inside. A whole pixel, so a border is the right carrier for it. */
+  --stroke-edge:   4px;
   --dash-hidden:   3 2;      /* ISO 128 hidden line — draft status         */
   --dash-axis:     6 2 1 2;  /* chain-dot — axis / centre line             */
   --dash-leader:   2 2;      /* leader lines, empty stamp slots            */
@@ -193,8 +207,65 @@
   --width-wide:   920px;     /* prose + gutter + right rail                 */
   --width-palette: 640px;
 
+  /* ---- M10 / M11: the reading shell, anchored to the window ----------
+     Three tracks, and the two rails are anchored to the WINDOW edges rather
+     than to a 1200px shell, with the content centred between them
+     (kia-context/logs/BRAINSTORM.md D15). The old `--width-rail-l` / `-r`
+     above are the retired 208/240 pair and are kept only because
+     `manifest.css` and the listing pages still measure against the 1152px
+     box; nothing on a module page reads them.
+
+     MEASURED at 1440px, which is the arithmetic these four numbers exist to
+     produce: 1440 − 262 − 204 leaves a 974px track, `--width-gutter` spends
+     49px of it either side, and the column takes `min(80ch, 876px)` centred —
+     so it clears each rail by 80px. Folded, the track is 1236px and the
+     gutters grow to 211px while the column does not, which is the whole point
+     of the cap. */
+  --width-rail-nav: 262px;   /* the curriculum list                         */
+  --width-rail-toc: 204px;   /* on this page                                */
+  --width-measure:  80ch;    /* the reading measure — a cap, not a width    */
+  --width-gutter:   clamp(24px, 3.4vw, 56px);
+
   /* ---- The only shadow in the system --------------------------------- */
   --shadow-pop: 0 24px 48px -24px oklch(0.2608 0.0197 267.9 / 0.13);
+
+  /* ---- Motion -------------------------------------------------------- */
+  /* Three durations and one curve, from kia-context/specs/DESIGN.md's
+     `motion:` block. Every one of them collapses to 0 under
+     `prefers-reduced-motion`, which is asserted rather than assumed. */
+  --ease-fold:      cubic-bezier(.22, .61, .36, 1);
+  --duration-fold:   200ms;
+  --duration-hover:  120ms;
+  --duration-reveal: 150ms;
+
+  /* ---- The slab: code and diagrams ----------------------------------
+     THE ONE PLACE THE PAGE GOES DARK, and it does not flip with the theme —
+     which is why every value below is declared identically inside `.dark`.
+     A slab that inverted with the page would put a light code block on a
+     light ground in one theme and a dark one in the other, and the reason the
+     slab exists is to separate what the machine says from what the author
+     says. That separation is not a function of the reader's theme.
+
+     `lib/content/code-theme.ts` reads these at build time and requires every
+     token it names to be declared in BOTH themes, so the duplication below is
+     load-bearing rather than sloppy.
+
+     MEASURED against `--color-slab`: ink 12.82:1, keyword 6.40:1, string
+     9.05:1, comment 5.21:1, function 7.77:1, number 7.54:1 — every one of
+     them clearing the 4.5:1 text floor, which `contrast.test.ts` recomputes.
+     `slab-comment` is NOT the `#767c88` DESIGN.md first carried: that measured
+     3.92:1 here, and a comment in a teaching corpus is content rather than
+     decoration (the same call §6.7 already made against `--color-ink-faint`).
+     See kia-context/logs/BRAINSTORM.md D21. */
+  --color-slab:          oklch(0.2408 0.0156 274.1);   /* #1d1f27 */
+  --color-slab-raised:   oklch(0.2822 0.0189 272.0);   /* #262933 — header strip */
+  --color-slab-ink:      oklch(0.9159 0.0154 90.2);    /* #e7e3d8 */
+  --color-slab-line:     oklch(0.3336 0.0164 270.9);   /* #33363f — grouping only */
+  --color-slab-keyword:  oklch(0.7251 0.1321 313.9);   /* #c48ce0 */
+  --color-slab-string:   oklch(0.7972 0.0992 149.1);   /* #8fcf9a */
+  --color-slab-comment:  oklch(0.6567 0.0233 268.3);   /* #8b91a0 */
+  --color-slab-function: oklch(0.7614 0.0913 244.8);   /* #7fb8e8 */
+  --color-slab-number:   oklch(0.7612 0.1140 69.7);    /* #e0a45c */
 }
 
 /* ---------------------------------------------------------------------------
@@ -250,6 +321,19 @@
     --color-selection:    oklch(0.7159 0.0999 283.6 / 0.22);
 
     --shadow-pop: 0 24px 48px -24px oklch(0 0 0 / 0.5);
+
+    /* The slab does not flip. Identical to the light declarations, on purpose:
+       see the note beside them. `code-theme.ts` throws if a token it names is
+       absent from either theme, which is what keeps the two copies in step. */
+    --color-slab:          oklch(0.2408 0.0156 274.1);
+    --color-slab-raised:   oklch(0.2822 0.0189 272.0);
+    --color-slab-ink:      oklch(0.9159 0.0154 90.2);
+    --color-slab-line:     oklch(0.3336 0.0164 270.9);
+    --color-slab-keyword:  oklch(0.7251 0.1321 313.9);
+    --color-slab-string:   oklch(0.7972 0.0992 149.1);
+    --color-slab-comment:  oklch(0.6567 0.0233 268.3);
+    --color-slab-function: oklch(0.7614 0.0913 244.8);
+    --color-slab-number:   oklch(0.7612 0.1140 69.7);
   }
 
   html { color-scheme: light; }
@@ -392,7 +476,10 @@
   }
   .hl-icon-btn:hover {
     color: var(--color-ink);
-    border-color: var(--color-line-strong);
+    /* The hairline that appears on hover is the whole of this control's
+       boundary, so it takes the interactive token rather than the grouping one
+       (kia-context/logs/BRAINSTORM.md D19). */
+    border-color: var(--color-line-control);
   }
   /* §10.4 — 44 × 44 minimum target below 768px. The mark stays 28px; only the
      hit area grows, so the header still reads as drawn. */

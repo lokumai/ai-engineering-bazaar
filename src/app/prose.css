@@ -13,9 +13,12 @@
 
 @layer components {
   .prose {
-    /* The layout owns the column; this is the default it inherits from §3.3.
-       At 1024–1279 the right rail collapses and §4.7 lets the measure grow, so
-       the layout raises `--hl-measure` rather than fighting a hard cap. */
+    /* The layout owns the column; this is the default for the pages that have
+       no column of their own. A module page sets `--hl-measure: 100%` on
+       `.hl-column`, because there the cap is `--width-measure` (80ch) and it is
+       applied to the whole column so the strip, the completion control and the
+       prev/next line up with the prose (M11, D15). Every other page still
+       inherits §3.3's 656px. */
     max-width: var(--hl-measure, var(--width-prose));
     min-width: 0;
 
@@ -318,7 +321,9 @@
     width: 14px;
     height: 14px;
     margin: 0;
-    border: var(--stroke-hair) solid var(--color-line-strong);
+    /* A control once the island upgrades it, so its boundary identifies
+       rather than groups (D19). */
+    border: var(--stroke-hair) solid var(--color-line-control);
     border-radius: 0;
     background: var(--color-paper);
   }
@@ -416,7 +421,9 @@
   .prose :is(.hl-cap-action, .hl-code-copy):hover {
     color: var(--color-ink);
     background: var(--color-cleared);
-    border-color: var(--color-line-strong);
+    /* The border is the only thing identifying this control once it appears,
+       so it is the interactive token (D19). */
+    border-color: var(--color-line-control);
   }
 
   .prose :is(.hl-cap-action, .hl-code-copy):active {
@@ -424,26 +431,29 @@
     border-color: var(--color-line-cut);
   }
 
-  /* Width classes. `--hl-break-left` / `--hl-break-right` say how much room
-     sits either side of the measure on this sheet; only the layout knows, so
-     only the layout sets them, on any ancestor. The `min()` is the guarantee: a
-     figure uses the room it was given and not one pixel more, so the page body
-     never scrolls horizontally however wide the content wants to be (§11.10),
-     and with the variables unset nothing breaks out at all. */
-  .prose .hl-figure[data-hl-width="wide"] {
-    width: min(var(--width-wide), calc(100% + var(--hl-break-right, 0px)));
-  }
+  /* M11 — THE WIDTH CLASSES NO LONGER MOVE A FIGURE. They used to widen it
+     over the rails by `--hl-break-left` / `--hl-break-right`; no layout sets
+     those any more, and `sheet.css` says why. What the class still decides is
+     how wide the thing INSIDE the figure is allowed to be before it scrolls —
+     the `min-width` on the tables below — so a six-column verdict table is not
+     crushed into three words a line at any window width.
 
+     A figure is its column's width and never more. That is the containment
+     rule, and it is stated as `100%` rather than left implicit so nobody has to
+     resolve a `min()` against a variable nothing sets to know it. */
+  .prose .hl-figure[data-hl-width="wide"],
   .prose .hl-figure[data-hl-width="full"] {
-    margin-left: calc(-1 * var(--hl-break-left, 0px));
-    width: min(
-      var(--width-box),
-      calc(100% + var(--hl-break-left, 0px) + var(--hl-break-right, 0px))
-    );
+    width: 100%;
   }
 
-  /* Every wide thing scrolls inside its own container, in every case. The
-     right-edge fade that says so lives in globals.css, keyed on the same
+  /* Every wide thing scrolls inside its own container, in every case, and this
+     is the half of the diagram containment fix that catches what the layout
+     cannot: mermaid renders CLIENT-SIDE and injects an SVG at its natural
+     content width after load, so the overflow does not exist until it runs
+     (D10). A scroll container is the only thing that can be right about a
+     width nobody knew at build time.
+
+     The right-edge fade that says so lives in globals.css, keyed on the same
      `[data-hl-overflow]` attribute for every scroller on the site. */
   .prose :is(.table-scroll, .hl-diagram-body) {
     overflow-x: auto;
@@ -559,11 +569,11 @@
 
   /* -- §6.7 Code blocks --------------------------------------------------- */
 
+  /* M11 — a code block is a dark slab in both themes. The ground, the border
+     and the radius are `rail.css`'s `.hl-slab`, which wins on source order;
+     what stays here is the geometry. */
   .prose .hl-code {
     margin: 32px 0;
-    background: var(--color-sunken);
-    border: var(--stroke-hair) solid var(--color-line-strong);
-    border-radius: 0;
     box-shadow: none;
   }
 
@@ -612,7 +622,12 @@
 
   /* B8 — the dual theme, switched by a class and nothing else. Shiki wrote both
      variants as custom properties on every span, so this is the whole of the
-     0ms theme switch for code (§9.2): no re-highlight, no JavaScript. */
+     0ms theme switch for code (§9.2): no re-highlight, no JavaScript.
+
+     Since M11 the two variants hold the SAME six values, because the slab does
+     not flip with the theme (`code-theme.ts`). The pair is kept rather than
+     collapsed to one: the mechanism is what makes a future slab that does vary
+     free, and a single-theme build would have to re-highlight to get it back. */
   .prose .hl-code code span {
     color: var(--shiki-light);
     font-weight: var(--shiki-light-font-weight, 400);

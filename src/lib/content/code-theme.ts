@@ -40,27 +40,43 @@ export interface CodeTokenRole {
 }
 
 /**
- * §6.7's table, with one correction §10.1 forces on it. Everything not listed
- * here falls through to the theme's default foreground, which is `--color-ink`.
+ * §6.7's table, as M11 moved it onto the slab.
  *
- * §6.7 originally named `--color-ink-faint` for the comment token. On the
- * `--color-sunken` code ground that is 2.45:1 in light and 2.54:1 in dark, and
- * T5 is a refusal: `--color-ink-faint` "may never be applied to text a user
- * must read". A comment in a teaching corpus is content — `# Example vectors`
- * is the line that explains the three below it — so the floor wins (§1) and
- * the token is `--color-ink-muted`, 4.71:1 light / 6.36:1 dark. That is the
- * same token §6.7 gives an untagged OUTPUT block, deliberately: the two are
- * different block types carrying the same "quieter than the code" weight, and
- * the language tag already tells them apart.
+ * **The code ground is no longer `--color-sunken` and no longer flips with the
+ * theme.** A code block is a dark slab in both themes now — the author's
+ * explicit choice, and the one place the page goes dark on purpose, because it
+ * separates what the machine says from what the author says
+ * (`kia-context/specs/DESIGN.md`, Overview). Every token below is therefore a
+ * `--color-slab-*` token, declared identically in both themes in
+ * `globals.css`.
+ *
+ * That change also settles §11.20's "no syntax theme with more than four token
+ * colours" the other way, and deliberately. Four was the right budget when the
+ * code ground was the page's own sand and a fifth hue would have been a fifth
+ * hue *in the page's palette*. The slab is its own small palette with its own
+ * ground, closed to five values, and DESIGN.md names all five: keyword, string,
+ * comment, function, number. Emphasis by weight is kept for keywords on top of
+ * the hue, because that is what made the four-colour theme readable.
+ *
+ * The correction §10.1 forced on the old table carries over unchanged, and it
+ * is the reason `slab-comment` is not the value DESIGN.md first carried: a
+ * comment in a teaching corpus is CONTENT — `# Example vectors` is the line
+ * that explains the three below it — so it takes the 4.5:1 text floor, and
+ * `#767c88` measured 3.92:1 on the slab. `contrast.test.ts` recomputes all six
+ * against `--color-slab` on every change.
  */
 export const CODE_TOKEN_ROLES: readonly CodeTokenRole[] = [
-  { scope: ['comment', 'punctuation.definition.comment'], token: '--color-ink-muted' },
-  { scope: ['string', 'constant.other.symbol', 'punctuation.definition.string'], token: '--color-verify-ink' },
-  { scope: ['keyword', 'storage', 'storage.type', 'keyword.operator'], token: '--color-ink', bold: true },
-  { scope: ['constant.numeric', 'constant.language', 'constant.character'], token: '--color-accent-ink' },
+  { scope: ['comment', 'punctuation.definition.comment'], token: '--color-slab-comment' },
+  { scope: ['string', 'constant.other.symbol', 'punctuation.definition.string'], token: '--color-slab-string' },
+  { scope: ['keyword', 'storage', 'storage.type', 'keyword.operator'], token: '--color-slab-keyword', bold: true },
+  { scope: ['constant.numeric', 'constant.language', 'constant.character'], token: '--color-slab-number' },
+  {
+    scope: ['entity.name.function', 'support.function', 'meta.function-call'],
+    token: '--color-slab-function',
+  },
 ]
 
-export const DEFAULT_TOKEN = '--color-ink'
+export const DEFAULT_TOKEN = '--color-slab-ink'
 
 let source: string | null = null
 

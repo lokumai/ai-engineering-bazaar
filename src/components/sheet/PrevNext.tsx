@@ -1,20 +1,31 @@
 import Link from 'next/link'
 
 /**
- * §5.7 — the sheet either side of this one in the set.
+ * §5.7 — the module either side of this one, kept as M11 found it and in the
+ * vocabulary of set C.
  *
  * The build **deletes** the `**Previous Module:** …` / `**Next Module:** …`
  * lines from every source file (B1) and this component replaces them, so the
- * chain is read from the manifest rather than from thirty-two hand-typed pairs
- * of links that were wrong the last time the modules were renumbered.
+ * chain is read from the curriculum rather than from thirty-three hand-typed
+ * pairs of links that were wrong the last time the modules were renumbered.
  *
- * Sheet 1 has no previous and sheet 32 has no next. Those cells still render,
- * reading `— END OF SET`: the symmetry is information, and a set that quietly
- * omits one half of its navigation looks broken rather than finished.
+ * The first module has no previous and the last has no next. Those cells still
+ * render, reading `End of the course`: the symmetry is information, and a set
+ * that quietly omits one half of its navigation looks broken rather than
+ * finished. It used to read `— END OF SET`, which was the drawing-set
+ * vocabulary M9 retired everywhere a reader can see it
+ * (`kia-context/specs/ARCHITECTURE.md` §9) and which survived here because the
+ * word "set" carries no `-`, so the copy register's word boundaries could not
+ * see it inside a phrase.
  *
- * Not a `<nav>` landmark on purpose — §10.2 allows exactly two, the drawing
- * set in the header and the sections in the rail, and a third would dilute
- * both for anyone navigating by landmark.
+ * **No arrow glued to the link text.** `Next module →` is one of the tells
+ * `kia-context/specs/DESIGN.md` names outright. The direction is already in
+ * the words and in the two cells' positions; the glyph was a third statement
+ * of it.
+ *
+ * Not a `<nav>` landmark on purpose — §10.2 allows exactly two, the trail in
+ * the header and the sections in the rail, and a third would dilute both for
+ * anyone navigating by landmark.
  */
 
 export interface PrevNextTarget {
@@ -30,13 +41,13 @@ function Cell({
   rel,
 }: {
   target: PrevNextTarget | null
-  label: React.ReactNode
+  label: string
   rel: 'prev' | 'next'
 }) {
   if (target === null) {
     return (
       <div className="hl-prevnext-cell hl-prevnext-end hl-mark">
-        <span>— End of set</span>
+        <span>End of the course</span>
       </div>
     )
   }
@@ -72,20 +83,12 @@ export function PrevNext({
       <Cell
         target={previous}
         rel="prev"
-        label={
-          <>
-            <span aria-hidden="true">←</span> Previous module
-          </>
-        }
+        label="Previous module"
       />
       <Cell
         target={next}
         rel="next"
-        label={
-          <>
-            Next module <span aria-hidden="true">→</span>
-          </>
-        }
+        label="Next module"
       />
     </div>
   )

@@ -30,12 +30,29 @@ export function PageShell({
   children,
   sheet,
   revision,
+  bleed = false,
 }: {
   children: React.ReactNode
   /** §5.2 — `SHEET 13 OF 32`. Omitted, the footer names the route instead. */
   sheet?: string | null
   /** §5.2, §11.26 — this file's last-touching commit, never repo HEAD. */
   revision?: Revision | null
+  /**
+   * M10 — hand the page the whole window instead of the 1200px shell.
+   *
+   * D15 anchors a module page's two rails to the WINDOW edges, and a 1200px
+   * `max-width` with 24px of padding is exactly the thing that stops them
+   * reaching. Only the module page asks for this; every other route keeps the
+   * shell, and this is a prop rather than a second shell component because the
+   * `<main>`, the skip target, the claim receipt and the footer's own row of
+   * facts are identical either way — a fork would be four things duplicated to
+   * vary one.
+   *
+   * The claim receipt keeps the shell regardless: it is a sentence of prose
+   * about the reader's record, and a sentence measured against 1440px is
+   * unreadable whatever the page around it is doing.
+   */
+  bleed?: boolean
 }) {
   const facts = curriculumFacts()
 
@@ -46,17 +63,32 @@ export function PageShell({
           in the header after the skip. `main:focus` is un-ringed in
           globals.css. */}
       <main id="main" tabIndex={-1} className="flex-1 pt-10 pb-16">
-        <RegistrationMarks edge="top" />
-        {/* §4.7 — 24px of side padding, dropping to 20px below 768px. */}
+        {/* §4.2's corner marks frame the 1152px content box. A bleed page has
+            no such box — its rails are on the window edges — so the marks
+            would float mid-page at an edge nothing else uses. They are also the
+            retired drawing-set frame, and `kia-context/specs/DESIGN.md` spends
+            the ornament budget once, on the tile band under the bar: a second
+            decorative motif means one of the two is wrong. The routes that
+            still keep the box still get them. */}
+        {!bleed && <RegistrationMarks edge="top" />}
+        {/* §17.6 — the claim receipt, above the page's own content, because it
+            is news about the reader's record and not part of whatever page they
+            happened to land on. Renders nothing in the prerender and nothing on
+            a document where no claim was news. It keeps the shell in both
+            modes; see `bleed`. */}
         <div className="mx-auto w-full max-w-[var(--width-shell)] px-5 md:px-6">
-          {/* §17.6 — the claim receipt, in the column and above the page's own
-              content, because it is news about the reader's record and not part
-              of whatever page they happened to land on. Renders nothing in the
-              prerender and nothing on a document where no claim was news. */}
           <ClaimReceipt />
-          {children}
         </div>
-        <RegistrationMarks edge="bottom" className="mt-16" />
+        {/* §4.7 — 24px of side padding, dropping to 20px below 768px, unless
+            the page asked for the window. */}
+        {bleed ? (
+          <div className="w-full">{children}</div>
+        ) : (
+          <div className="mx-auto w-full max-w-[var(--width-shell)] px-5 md:px-6">
+            {children}
+          </div>
+        )}
+        {!bleed && <RegistrationMarks edge="bottom" className="mt-16" />}
       </main>
 
       <SiteFooter

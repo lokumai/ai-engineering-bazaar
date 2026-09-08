@@ -22,9 +22,17 @@ export function TableOfContents({
 }) {
   if (entries.length === 0) return null
 
+  // MEASURED: 96 of the corpus's h2s carry a Roman numeral and the rest carry
+  // none, so the 24px gutter the numeral hangs in is dead space on the modules
+  // that have no numerals — 30px of a 204px rail, which is where the contents
+  // moved in M11. The gutter is reserved per LIST rather than per row, because
+  // sizing it per row would let two entries of one module disagree about where
+  // their titles start.
+  const marks = entries.some((entry) => entry.mark)
+
   return (
     <nav aria-label="Sections">
-      <ol role="list" className="hl-toc">
+      <ol role="list" className="hl-toc" data-hl-marks={marks ? '' : undefined}>
         {entries.map((entry) => (
           <li key={entry.id}>
             <a
@@ -37,9 +45,11 @@ export function TableOfContents({
               {/* MEASURED: 96 of the corpus's h2s carry a Roman numeral, split
                   off at build time (B6.3). The rest get no numeral and no
                   gutter mark rather than an invented one. */}
-              <span className="hl-toc-mark" aria-hidden="true">
-                {entry.mark ?? ''}
-              </span>
+              {marks && (
+                <span className="hl-toc-mark" aria-hidden="true">
+                  {entry.mark ?? ''}
+                </span>
+              )}
               <span className="hl-toc-text">{entry.text}</span>
             </a>
           </li>

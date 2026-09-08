@@ -1,0 +1,495 @@
+/* ===========================================================================
+   M10 / M11 — THE READING SHELL.
+
+   Four things live here, and they are together because they are one screen:
+   the curriculum rail and its accordion, the fold and the tab that undoes it,
+   the contents rail, and the slab that code and diagrams sit on.
+
+   The grid that positions the three tracks is in `sheet.css`; this file is what
+   goes inside them. `kia-context/specs/DESIGN.md` holds every value and
+   `kia-context/logs/PROGRESS.md` M10/M11 holds the deliverables.
+   =========================================================================== */
+
+@layer components {
+
+  /* =========================================================================
+     THE CURRICULUM RAIL
+     ======================================================================== */
+
+  .hl-rail-nav {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    /* The rail is anchored to the window edge, so the list needs its own
+       clearance from it: 12px in, 8px out, inside the 262px track D15's
+       arithmetic is written against. */
+    padding-inline: 12px 8px;
+    /* The fold animates the RAIL's width to zero, so the list inside it must
+       not reflow to 3px-per-word on the way out. It keeps its own width and is
+       clipped by the track. */
+    width: var(--width-rail-nav);
+    flex: none;
+  }
+
+  .hl-rail-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 0 4px 8px;
+    border-bottom: var(--stroke-hair) solid var(--color-line);
+  }
+
+  .hl-rail-title,
+  .hl-rail-label {
+    font-family: var(--font-display);
+    font-size: var(--text-meta);
+    font-weight: 600;
+    letter-spacing: 0;
+    /* Sentence case. No tracked-out all-caps label anywhere in this file —
+       DESIGN.md names it the single clearest tell of a generated interface. */
+    text-transform: none;
+    color: var(--color-ink-muted);
+    margin: 0;
+  }
+
+  .hl-rail-scroll {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    padding: 8px 0 24px;
+  }
+
+  /* -- The fold's two controls ------------------------------------------- */
+
+  /* An interactive control's boundary needs 3:1 to be perceivable and no line
+     colour in this palette reaches it, which is why `--color-line-control`
+     exists at all (kia-context/logs/BRAINSTORM.md D19). Every control in this
+     file borders with it. */
+  .hl-rail-fold {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 24px;
+    padding: 0 7px;
+    font-family: var(--font-display);
+    font-size: var(--text-micro);
+    color: var(--color-ink-muted);
+    background: var(--color-cleared);
+    border: var(--stroke-hair) solid var(--color-line-control);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition:
+      background-color var(--duration-hover) linear,
+      border-color var(--duration-hover) linear;
+  }
+
+  .hl-rail-fold:hover {
+    color: var(--color-ink);
+    background: var(--color-sunken);
+  }
+
+  /* The restore tab. Vertically centred against the WINDOW, which is the fix
+     for the first version of it: that one was `top: 88px`, directly under a
+     sticky header at `z-index: 40`, and could not be clicked at all — found by
+     driving it in a browser (D15). Centred, it cannot collide with the bar
+     whatever height the bar becomes. */
+  .hl-rail-restore {
+    position: fixed;
+    top: 50%;
+    left: 0;
+    z-index: 45;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 10px 12px 8px;
+    font-family: var(--font-display);
+    font-size: var(--text-micro);
+    color: var(--color-ink-muted);
+    background: var(--color-cleared);
+    border: var(--stroke-hair) solid var(--color-line-control);
+    border-left: 0;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    box-shadow: var(--shadow-pop);
+    cursor: pointer;
+    /* Not `display: none`: `visibility` is what takes it out of the tab order
+       AND lets it transition, and the whole point of the pair of controls is
+       that exactly one of them is reachable at a time. */
+    visibility: hidden;
+    transition:
+      background-color var(--duration-hover) linear,
+      border-color var(--duration-hover) linear,
+      visibility 0s linear var(--duration-fold);
+  }
+
+  html[data-hl-rail="folded"] .hl-rail-restore {
+    visibility: visible;
+    transition:
+      background-color var(--duration-hover) linear,
+      border-color var(--duration-hover) linear,
+      visibility 0s linear 0s;
+  }
+
+  .hl-rail-restore:hover {
+    color: var(--color-ink);
+    background: var(--color-sunken);
+  }
+
+  .hl-rail-restore-label {
+    writing-mode: vertical-rl;
+    letter-spacing: 0.02em;
+  }
+
+  /* Below the width where the rail is in flow there is nothing to restore: the
+     curriculum is in the drawer, and a tab offering to bring back a column
+     that cannot exist is a control that cannot do its job (§1). */
+  @media (max-width: 879px) {
+    .hl-rail-restore { display: none; }
+  }
+
+  /* -- The accordion, one section per level ------------------------------ */
+
+  .hl-level {
+    margin: 0 4px 6px;
+    background: var(--color-cleared);
+    border: var(--stroke-hair) solid var(--color-line);
+    /* The arch. It is the banner's own shape and it marks a level and nothing
+       else (DESIGN.md, Shapes). */
+    border-radius: var(--shape-arch);
+    border-inline-start: var(--stroke-edge) solid transparent;
+  }
+
+  /* THE CURRENT LEVEL. The author asked for it to "imply" where you are, and
+     it does so three ways at once, because colour is never the only signal
+     (§13.1.4): a 4px edge in the level's own hue, the sand fill, and a step up
+     in size. The count goes from grey to the reader's own ink. */
+  .hl-level[data-current] {
+    background: var(--color-sunken);
+    border-color: var(--color-line-strong);
+    border-inline-start-color: var(--hl-cat);
+  }
+
+  .hl-level-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 10px;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-size: var(--text-ui);
+    font-weight: 500;
+    color: var(--color-ink);
+    list-style: none;
+    transition: background-color var(--duration-hover) linear;
+  }
+
+  /* `<summary>`'s native marker, in both spellings Chrome and Safari use. The
+     chevron replaces it, so the triangle would be a second disclosure mark. */
+  .hl-level-head::-webkit-details-marker { display: none; }
+  .hl-level-head::marker { content: ""; }
+
+  .hl-level[data-current] > .hl-level-head {
+    padding: 12px 10px;
+    font-size: var(--text-h4);
+    font-weight: 600;
+  }
+
+  .hl-level-head:hover { background: var(--color-sunken); }
+
+  .hl-level-key {
+    flex: none;
+    width: 7px;
+    height: 7px;
+    border-radius: var(--radius-xs);
+    background: var(--hl-cat);
+  }
+
+  .hl-level[data-current] > .hl-level-head > .hl-level-key {
+    width: 9px;
+    height: 9px;
+  }
+
+  .hl-level-order {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink-muted);
+  }
+
+  .hl-level-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Grey by default. In the reader's own ink on the level they are inside —
+     the second half of the author's request, and the reason `ink-muted` and
+     `ink` are the pair rather than two greys. */
+  .hl-level-count {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink-muted);
+  }
+
+  .hl-level[data-current] > .hl-level-head > .hl-level-count {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+
+  .hl-level-chevron {
+    flex: none;
+    color: var(--color-ink-muted);
+    /* The one transform in this file, and it carries the open state rather
+       than decorating it — the same allowance `MainNav`'s chevron takes. */
+    transition: transform var(--duration-reveal) var(--ease-fold);
+  }
+
+  .hl-level[open] > .hl-level-head > .hl-level-chevron {
+    transform: rotate(-180deg);
+  }
+
+  .hl-level-modules {
+    margin: 0;
+    padding: 0 0 6px;
+    list-style: none;
+  }
+
+  /* -- A module row ------------------------------------------------------ */
+
+  .hl-mod {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 6px 10px 6px 8px;
+    font-family: var(--font-display);
+    font-size: var(--text-meta);
+    line-height: 1.4;
+    color: var(--color-ink);
+    text-decoration: none;
+    border-inline-start: var(--stroke-cut) solid transparent;
+    transition:
+      background-color var(--duration-hover) linear,
+      border-color var(--duration-hover) linear;
+  }
+
+  .hl-mod:hover {
+    background: var(--color-sunken);
+    border-inline-start-color: var(--color-line-cut);
+  }
+
+  /* The module being read. Marked twice — the accent ink and the 2px edge — so
+     it survives a forced-colours theme with the edge alone. */
+  .hl-mod[aria-current="page"] {
+    color: var(--color-accent-ink);
+    font-weight: 600;
+    background: var(--color-sunken);
+    border-inline-start-color: var(--color-accent);
+  }
+
+  .hl-mod-lead {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Reserved at the tick's own size whether or not a tick is ever revealed,
+       so completing a module does not shift the row it lands on. */
+    width: 17px;
+    height: 17px;
+    margin-top: 1px;
+  }
+
+  .hl-mod-order {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink-faint);
+  }
+
+  .hl-mod-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-wrap: pretty;
+  }
+
+  .hl-mod[data-draft] .hl-mod-title { color: var(--color-ink-muted); }
+
+  .hl-mod-tag {
+    flex: none;
+    align-self: center;
+    padding: 1px 5px;
+    font-family: var(--font-display);
+    font-size: var(--text-mark);
+    color: var(--color-caution-ink);
+    border: var(--stroke-hair) solid var(--color-line);
+    border-radius: var(--radius-sm);
+  }
+
+  /* THE COMPLETION TICK — a 17px filled disc with a white check.
+     `display: none` here and revealed for one module number by
+     `lokum-modules.css`, which is channel A: the boot script stamps
+     `hl-signed-<n>` on `<html>` before first paint, so a reader's completed
+     modules are ticked in frame one with no React (§12.2). The build has never
+     met this reader, so the honest default is no claim at all.
+
+     The disc rather than a glyph is load-bearing: teal measures 3.44:1 to
+     3.90:1 on the three grounds, which fails the 4.5:1 text floor and clears
+     the 3:1 graphic one (DESIGN.md, Colors). Do not turn it back into a
+     hairline check. */
+  .hl-mod-mark {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 17px;
+    height: 17px;
+    border-radius: var(--radius-full);
+    background: var(--color-verify);
+    color: var(--color-cleared);
+  }
+
+  .hl-mod-check { flex: none; }
+
+  /* =========================================================================
+     THE CONTENTS RAIL
+     ======================================================================== */
+
+  .hl-rail-right > .hl-rail-label:not(:first-child) {
+    margin-top: 20px;
+  }
+
+  .hl-rail-rule {
+    margin: 20px 0;
+    border: 0;
+    border-top: var(--stroke-hair) solid var(--color-line);
+  }
+
+  /* =========================================================================
+     THE SLAB — the one place the page goes dark, and it does not flip.
+
+     A local theme override rather than a set of bespoke rules, and that is the
+     whole trick. `mermaid-config.ts` binds every fill, stroke and label in a
+     diagram to a `var(--color-…)` reference precisely so a theme switch costs
+     0ms and no re-render; custom properties cascade into inline SVG, so
+     redeclaring the palette on the slab re-themes all fifty-three diagrams
+     onto a dark ground with no change to the mermaid config, no re-parse and no
+     JavaScript at all.
+
+     THE SEMANTIC VALUES BELOW ARE THE DARK THEME'S, DUPLICATED ON PURPOSE.
+     MEASURED against `--color-slab`, the LIGHT theme's diagram hues do not
+     survive here: `fault` is 2.90:1 and `info` is 1.67:1, against the 3:1 a
+     graphic has to clear. The dark theme's are 6.20:1 and 6.38:1, because they
+     were chosen for a dark ground in the first place. They cannot be written as
+     `var(--color-fault-night)` and shared, because `code-theme.ts` reads the
+     `.dark` block's declarations as TEXT at build time and hands them to a hex
+     converter, so an indirection there would stop the build.
+     `tests/unit/color/lokum.test.ts` asserts each slab override equals the
+     `.dark` value it duplicates, which is what keeps the two in step.
+     ======================================================================== */
+
+  .prose .hl-slab {
+    --color-paper:        var(--color-slab);
+    --color-cleared:      var(--color-slab-raised);
+    --color-sunken:       var(--color-slab);
+    --color-ink:          var(--color-slab-ink);
+    --color-ink-muted:    var(--color-slab-comment);
+    --color-ink-faint:    var(--color-slab-line);
+    --color-line:         var(--color-slab-line);
+    /* NOT `slab-line`, and this one is measured. `line-strong` is what
+       `mermaid-config.ts` binds every node stroke, every edge path and every
+       arrowhead to, and `slab-line` is 1.36:1 against the slab — a diagram
+       whose geometry a reader cannot see. `slab-comment` is 5.21:1 and clears
+       the 3:1 a graphic carries with room to spare. The slab's own outer
+       border stays `slab-line`, declared outright below, because that boundary
+       groups rather than draws. */
+    --color-line-strong:  var(--color-slab-comment);
+    --color-line-control: var(--color-slab-comment);
+    --color-line-cut:     var(--color-slab-comment);
+
+    --color-accent:       oklch(0.7159 0.0999 283.6);
+    --color-accent-ink:   oklch(0.7778 0.0823 284.3);
+    --color-caution:      oklch(0.7775 0.1049 77.4);
+    --color-caution-ink:  oklch(0.8205 0.0932 77.6);
+    --color-caution-wash: oklch(0.7775 0.1049 77.4 / 0.16);
+    --color-verify:       oklch(0.7539 0.0912 188.2);
+    --color-verify-ink:   oklch(0.7992 0.0827 188.8);
+    --color-verify-wash:  oklch(0.7539 0.0912 188.2 / 0.14);
+    --color-fault:        oklch(0.7129 0.1068 37.1);
+    --color-fault-ink:    oklch(0.7602 0.0946 37.3);
+    --color-fault-wash:   oklch(0.7129 0.1068 37.1 / 0.14);
+    --color-info:         oklch(0.7159 0.0999 283.6);
+    --color-info-ink:     oklch(0.7778 0.0823 284.3);
+    --color-info-wash:    oklch(0.7159 0.0999 283.6 / 0.14);
+
+    background: var(--color-slab);
+    color: var(--color-slab-ink);
+    border: var(--stroke-hair) solid var(--color-slab-line);
+    /* `lg` — the slab's own shape (DESIGN.md, Shapes). */
+    border-radius: var(--radius-lg);
+    /* The radius has to clip the scroll container inside it, or a diagram
+       scrolled halfway paints over the rounded corner. */
+    overflow: hidden;
+  }
+
+  /* The monospace header strip: the language of a code block, the plate number
+     of a diagram. Raised, so the strip reads as part of the slab rather than as
+     a caption floating above it. */
+  .prose .hl-slab > :is(.hl-code-head, .hl-cap) {
+    background: var(--color-slab-raised);
+    border-color: var(--color-slab-line);
+    color: var(--color-slab-comment);
+  }
+
+  /* The rules a light figure drew top and bottom are the slab's own border
+     now, so they would double it. */
+  .prose .hl-diagram.hl-slab {
+    border-top: var(--stroke-hair) solid var(--color-slab-line);
+    border-bottom: var(--stroke-hair) solid var(--color-slab-line);
+  }
+
+  .prose .hl-slab .hl-diagram-fallback {
+    background: var(--color-slab-raised);
+    color: var(--color-slab-ink);
+  }
+
+  .prose .hl-slab .hl-diagram-pending {
+    border-color: var(--color-slab-line);
+    color: var(--color-slab-comment);
+  }
+
+  /* Forced colours drops every hue, and the slab must still read as a slab:
+     the system's own surface pair, with the border carrying the boundary. */
+  @media (forced-colors: active) {
+    .prose .hl-slab {
+      forced-color-adjust: none;
+      background: Canvas;
+      color: CanvasText;
+      border-color: CanvasText;
+    }
+
+    .prose .hl-slab > :is(.hl-code-head, .hl-cap) {
+      background: Canvas;
+      color: CanvasText;
+      border-color: CanvasText;
+    }
+
+    .hl-mod-mark {
+      forced-color-adjust: none;
+      background: CanvasText;
+      color: Canvas;
+    }
+
+    .hl-level[data-current] {
+      border-inline-start-color: CanvasText;
+    }
+
+    .hl-mod[aria-current="page"] {
+      border-inline-start-color: CanvasText;
+    }
+  }
+}

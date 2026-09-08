@@ -7,6 +7,8 @@ import { SignOff } from '@/components/record/SignOff'
 import { ChecklistIsland } from '@/components/record/ChecklistIsland'
 import { SourceTracking } from '@/components/record/SourceTracking'
 import { Submittal } from '@/components/record/Submittal'
+import { CurriculumRail } from '@/components/curriculum/CurriculumRail'
+import { RailRestoreTab } from '@/components/curriculum/RailFold'
 import { ContentsDrawer } from '@/components/sheet/ContentsDrawer'
 import type { DependencyRelation, SheetLink } from '@/components/sheet/DependencyBlock'
 import { Objectives } from '@/components/sheet/Objectives'
@@ -14,7 +16,7 @@ import { PrevNext, type PrevNextTarget } from '@/components/sheet/PrevNext'
 import { ScheduleOfParts } from '@/components/sheet/ScheduleOfParts'
 import { SheetRail } from '@/components/sheet/SheetRail'
 import { StatusBand } from '@/components/sheet/StatusBand'
-import { TitleBlock, TitleStrip } from '@/components/sheet/TitleBlock'
+import { TitleStrip } from '@/components/sheet/TitleBlock'
 import { PageShell } from '@/components/shell/PageShell'
 import {
   moduleByNumber,
@@ -27,6 +29,7 @@ import { signOffCriteria } from '@/lib/content/criteria'
 import { moduleGraph } from '@/lib/content/edges'
 import { curriculumFacts } from '@/lib/content/facts'
 import { imageBaseFor } from '@/lib/content/images'
+import { railLevels } from '@/lib/content/rail'
 import { type CourseModule, loadAllModules, loadModule } from '@/lib/content/loader'
 import { quickCheckOf, summarySection } from '@/lib/content/quickcheck'
 import { renderMarkdown } from '@/lib/content/render'
@@ -37,7 +40,6 @@ import {
   eyebrow,
   sheetFacts,
   sheetLabel,
-  titleBlockRows,
   titleStripRows,
 } from '@/lib/content/title-block'
 
@@ -208,6 +210,9 @@ export default async function ModuleSheetPage({
     })
     : null
 
+  // M11 — the RIGHT rail: what is on this page, and what sits either side of
+  // it in the dependency graph. A draft has neither: no sections, because §4.5
+  // gives it one sentence and a schedule, and nothing to depend on it.
   const rail = drawn ? (
     <SheetRail
       toc={rendered?.toc.filter((entry) => entry.depth === 2) ?? []}
@@ -218,6 +223,18 @@ export default async function ModuleSheetPage({
       ]}
     />
   ) : null
+
+  // M10 — the LEFT rail: the curriculum, one accordion section per level, with
+  // this module's level open and enlarged. Every module page gets it, draft
+  // included: it is navigation, not module info, and a reader who lands on a
+  // stub needs a way out of it more than anyone.
+  const curriculum = (
+    <CurriculumRail
+      levels={railLevels()}
+      currentSlug={slug}
+      currentLevel={sheet.category.slug}
+    />
+  )
 
   // §4.5 item 5 — the single descriptive sentence, read out of the source
   // rather than retyped, and absent rather than invented if it is not there.
@@ -230,14 +247,26 @@ export default async function ModuleSheetPage({
   return (
     // §5.2 — the footer's own row of facts, which only this page knows: the
     // sheet's number in the set, and the commit that last touched its file.
-    <PageShell sheet={sheetLabel(facts)} revision={sheet.revision}>
+    <PageShell sheet={sheetLabel(facts)} revision={sheet.revision} bleed>
       <div className="hl-sheet" data-format={format}>
-        {rail && <div className="hl-rail-left">{rail}</div>}
+        <div className="hl-rail-left">{curriculum}</div>
+        {/* Outside the grid: it is `position: fixed` against the window's left
+            edge and vertically centred, so it cannot collide with the sticky
+            bar the way the first version of it did (D15). */}
+        <RailRestoreTab />
 
         <div className="hl-column">
           {format === 'A4' && <StatusBand />}
 
-          {rail && <ContentsDrawer>{rail}</ContentsDrawer>}
+          {/* Below the width where a rail can sit beside the prose, both rails'
+              content moves behind one control (§4.7). Which widths that is
+              depends on which rails this format has, so the drawer is told:
+              `wide` opens at the point the contents rail goes, `narrow` at the
+              point the curriculum list does. */}
+          <ContentsDrawer at={drawn ? 'wide' : 'narrow'}>
+            {rail && <div className="hl-drawer-contents">{rail}</div>}
+            <div className="hl-drawer-curriculum">{curriculum}</div>
+          </ContentsDrawer>
 
           {/* §13.1.3 — THE READING PAGE TAKES NO CATEGORY HUE, and the first
               draft of §13 was wrong to grant it one.
@@ -269,13 +298,13 @@ export default async function ModuleSheetPage({
             <h1>{sheet.frontmatter.title}</h1>
           </div>
 
-          {/* Variant B, in the column. On an A0 sheet it is the fallback the
-              right rail leaves behind below 1280px (§4.7). */}
-          {/* §7.4 — the strip carries the stamps too, which closes two holes at
-              once: the seven A2 sheets (all of Fundamentals) never had a stamp
-              grid at all, and an A0 module below 1280px lost its grid when the
-              rail collapsed to this strip. On an A0 module at xl the strip is
-              hidden, so only one grid is ever on screen. */}
+          {/* M11 — the module's own facts, in the column, at every width.
+              This used to be the narrow-window fallback for a 240px rail of
+              twelve metadata rows; the rail was cut back to what a reader uses
+              while reading (the sections and the dependencies) and the panel
+              came here, where it already had a variant. Nothing was dropped:
+              the rows, `CHECKED BY`, the repository count and the stamp grid
+              are all still in it, which is why none of this went to O2. */}
           <TitleStrip
             rows={titleStripRows(facts)}
             checkedBy={checkedBy}
@@ -285,23 +314,9 @@ export default async function ModuleSheetPage({
                 <SheetStamps slug={slug} fact={stampFact} variant="strip" />
               )
             }
-            className={drawn ? 'xl:hidden' : undefined}
           />
 
           <Objectives items={sheet.frontmatter.objectives} />
-
-          {/* §12.4.1 — ABOVE the content, beside the stated criteria. A
-              completion switch a reader meets after scrolling past everything
-              is a switch about a thing they have already left, which is why
-              Moodle moved both to the top of the activity. */}
-          {criteria !== null && (
-            <SignOff
-              slug={slug}
-              criteria={criteria}
-              revision={sheet.revision?.hash ?? null}
-              drawn={drawn}
-            />
-          )}
 
           {drawn && rendered ? (
             <Prose html={rendered.html} />
@@ -327,6 +342,34 @@ export default async function ModuleSheetPage({
               only content in the whole record a third party can check. */}
           {drawn && <Submittal slug={slug} />}
 
+          {/* M11 / D14 — COMPLETION CONTROL A: one button, at the end of the
+              module, where the reader already is.
+
+              §12.4.1 put this above the content, reasoning that a switch a
+              reader meets after scrolling past everything is a switch about a
+              thing they have already left. The author chose the opposite, and
+              chose it for both surfaces at once: option A here, option C — a
+              row of adjustable state — on the home and progress pages, because
+              the two surfaces ask different questions
+              (`kia-context/logs/BRAINSTORM.md` D14). At the end of a module the
+              reader has one thing to say and wants one button in front of them;
+              a control at the top asks them to assert something before they
+              have read it.
+
+              Both controls write through `src/lib/record/store.ts`, which is
+              the only writer (`kia-context/specs/ARCHITECTURE.md` §5). Two
+              controls, one path. The `s` shortcut clicks whichever one is on
+              the page, by attribute, so moving it cost the keyboard map
+              nothing. */}
+          {criteria !== null && (
+            <SignOff
+              slug={slug}
+              criteria={criteria}
+              revision={sheet.revision?.hash ?? null}
+              drawn={drawn}
+            />
+          )}
+
           <PrevNext previous={target(previous)} next={target(next)} />
 
           {/* §12.8 — one delegated listener for the whole document, mounted
@@ -342,23 +385,9 @@ export default async function ModuleSheetPage({
           )}
         </div>
 
-        {/* §4.4 — the right rail belongs to every DRAWN sheet, not to A0 alone.
-            `sheet.css` carries the reasoning: both drawn formats have always
-            used the same 1152px box and the same 656px measure, so giving the
-            rail to A0 only moved the metadata rather than the text, and the
-            prose jumped 132px sideways between two modules of the same
-            curriculum. A draft has no rail because it has no module info panel
-            and nothing to put in one (§4.5). */}
-        {drawn && (
-          <div className="hl-rail-right">
-            <TitleBlock
-              rows={titleBlockRows(facts)}
-              checkedBy={checkedBy}
-              repositories={repositories}
-              stamps={stampFact === null ? null : <SheetStamps slug={slug} fact={stampFact} />}
-            />
-          </div>
-        )}
+        {/* M11 — the right rail, for a drawn module only. A draft has no
+            sections to list and nothing depends on it (§4.5). */}
+        {rail && <div className="hl-rail-right">{rail}</div>}
       </div>
     </PageShell>
   )

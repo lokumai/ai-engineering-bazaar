@@ -497,11 +497,11 @@ export interface CategoryHue {
  * (`0.115` halves to `0.0575`), and that is checked too.
  */
 export const CATEGORY_HUES: Readonly<Record<string, CategoryHue>> = {
-  fundamentals: { full: 'oklch(0.605 0.150 350)', half: 'oklch(0.605 0.075 350)' },
-  intermediate: { full: 'oklch(0.605 0.128 138)', half: 'oklch(0.605 0.064 138)' },
-  expert: { full: 'oklch(0.605 0.130 288)', half: 'oklch(0.605 0.065 288)' },
-  ecosystem: { full: 'oklch(0.605 0.098 200)', half: 'oklch(0.605 0.049 200)' },
-  protocols: { full: 'oklch(0.605 0.115 54)', half: 'oklch(0.605 0.0575 54)' },
+  fundamentals: { full: 'oklch(0.575 0.098 189)', half: 'oklch(0.575 0.049 189)' },
+  intermediate: { full: 'oklch(0.575 0.128 240)', half: 'oklch(0.575 0.064 240)' },
+  expert: { full: 'oklch(0.575 0.130 320)', half: 'oklch(0.575 0.065 320)' },
+  ecosystem: { full: 'oklch(0.575 0.115 75)', half: 'oklch(0.575 0.0575 75)' },
+  protocols: { full: 'oklch(0.575 0.120 30)', half: 'oklch(0.575 0.060 30)' },
 }
 
 /**

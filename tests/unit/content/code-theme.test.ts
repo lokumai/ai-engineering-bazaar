@@ -7,11 +7,21 @@ import {
 } from '@/lib/content/code-theme'
 
 describe('readDesignToken', () => {
+  /**
+   * The function under test is the READER, not the palette. Pinning
+   * `--color-ink`'s value here made a palette change (M9) a failure in a file
+   * about parsing, so what is asserted is the shape: a value for each theme,
+   * both real oklch triples, and the dark one lighter than the light one —
+   * which is the one thing that would be wrong if the two were swapped.
+   */
   it('reads a token out of globals.css in both themes', () => {
-    expect(readDesignToken('--color-ink')).toEqual({
-      light: 'oklch(0.22  0.012 250)',
-      dark: 'oklch(0.93  0.006 250)',
-    })
+    const ink = readDesignToken('--color-ink')
+    expect(Object.keys(ink).sort()).toEqual(['dark', 'light'])
+    for (const value of [ink.light, ink.dark]) {
+      expect(value).toMatch(/^oklch\(\s*[\d.]+\s+[\d.]+\s+[\d.]+\s*\)$/)
+    }
+    const lightnessOf = (css: string) => Number(/^oklch\(\s*([\d.]+)/.exec(css)?.[1])
+    expect(lightnessOf(ink.dark)).toBeGreaterThan(lightnessOf(ink.light))
   })
 
   it('fails loudly rather than inventing a value for an unknown token', () => {

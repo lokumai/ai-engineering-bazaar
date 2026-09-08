@@ -37,44 +37,59 @@
 
 @theme {
   /* ---- Grounds ------------------------------------------------------- */
-  --color-paper:        oklch(0.976 0.004 85);   /* page ground, warm bond  */
-  --color-cleared:      oklch(0.995 0.002 85);   /* raised: panels, cards   */
-  --color-sunken:       oklch(0.945 0.005 85);   /* recessed: code, inputs  */
+  --color-paper:        oklch(0.9885 0.0057 84.6);   /* ground — G3 "Powder", 96.6% luminance */
+  --color-cleared:      oklch(1.0000 0.0000 90.0);   /* raised: panels, cards                 */
+  --color-sunken:       oklch(0.9297 0.0242 85.8);   /* recessed: strips, inputs — İznik sand  */
 
   /* ---- Ink ----------------------------------------------------------- */
-  --color-ink:          oklch(0.22  0.012 250);
-  --color-ink-muted:    oklch(0.52  0.010 250);
-  --color-ink-faint:    oklch(0.68  0.008 250);  /* DECORATIVE ONLY (T5)    */
+  --color-ink:          oklch(0.2608 0.0197 267.9);                 /* 15.01:1 on paper        */
+  --color-ink-muted:    oklch(0.5074 0.0209 89.5);                 /*  5.62:1 on paper        */
+  /* DECORATIVE ONLY (T5). It must stay UNDER 3:1 — 2.77:1 — or it becomes
+     usable as a meaningful mark, and the contrast test asserts that ceiling
+     in both directions. The interactive border is `--color-line-strong`,
+     which is a different job and a different value. */
+  --color-ink-faint:    oklch(0.6823 0.0234 83.2);
 
   /* ---- Line weights (colour) ----------------------------------------- */
-  --color-line:         oklch(0.86  0.006 250);  /* DECORATIVE ONLY (T4)    */
-  --color-line-strong:  oklch(0.64  0.010 250);  /* structural, ≥3:1        */
-  --color-line-cut:     oklch(0.42  0.010 250);  /* cut plane / current     */
+  /* THE TWO LINE JOBS, and on this ground the split is load-bearing. No line
+     colour in the Bazaar palette reaches 3:1 against `oklch(0.9885 0.0057 84.6)`: this one is
+     1.55:1. That is fine for a border that GROUPS — a card's content
+     identifies the card — and not fine for the border that IDENTIFIES an
+     interactive control, which needs 3:1 to be perceivable at all. So a
+     button, an input or a toggle borders with `--color-line-strong`, never
+     with this. See kia-context/logs/BRAINSTORM.md O4. */
+  --color-line:         oklch(0.8466 0.0343 82.0);  /* DECORATIVE / GROUPING ONLY (T4) 1.55:1 */
+  --color-line-strong:  oklch(0.6449 0.0246 87.2);  /* structural AND interactive, 3.19:1     */
+  --color-line-cut:     oklch(0.5074 0.0209 89.5);  /* cut plane / current, 5.62:1            */
 
   /* ---- The annotation pen -------------------------------------------- */
-  --color-accent:       oklch(0.585 0.196 32);   /* fill/stroke only (T1)   */
-  --color-accent-ink:   oklch(0.50  0.19  32);   /* accent as text (T2)     */
-  --color-accent-wash:  oklch(0.585 0.196 32 / 0.08);
+  /* Cobalt, sampled from assets/banner-tiles.jpeg. It reads as text at
+     12.88:1, which the retired orange did not (3.4:1) — so T2's separate
+     `accent-ink` is no longer a different colour, and the two tokens are kept
+     only so nothing has to be renamed. */
+  --color-accent:       oklch(0.3147 0.1032 278.7);                 /* 12.88:1 on paper        */
+  --color-accent-ink:   oklch(0.3147 0.1032 278.7);
+  --color-accent-wash:  oklch(0.3147 0.1032 278.7 / 0.08);                /* cobalt at 8%            */
 
   /* ---- Semantics: diagrams + status ticks only (T6) ------------------- */
-  --color-caution:      oklch(0.72  0.13  75);   /* draft / not yet drawn   */
-  --color-caution-ink:  oklch(0.52  0.12  70);
-  --color-caution-wash: oklch(0.72  0.13  75 / 0.14);
-  --color-verify:       oklch(0.60  0.09  165);  /* trusted / verified      */
-  --color-verify-ink:   oklch(0.48  0.09  165);
-  --color-verify-wash:  oklch(0.60  0.09  165 / 0.12);
-  --color-fault:        oklch(0.50  0.16  12);   /* untrusted / danger      */
-  --color-fault-ink:    oklch(0.44  0.17  12);
-  --color-fault-wash:   oklch(0.50  0.16  12 / 0.10);
-  --color-info:         oklch(0.53  0.11  245);  /* neutral annotation      */
-  --color-info-ink:     oklch(0.47  0.11  245);
-  --color-info-wash:    oklch(0.53  0.11  245 / 0.12);
+  --color-caution:      oklch(0.6570 0.1100 75.5);  /* gold — planned, 3.09:1 as a graphic    */
+  --color-caution-ink:  oklch(0.5300 0.0959 78.0);  /*                5.18:1 as text          */
+  --color-caution-wash: oklch(0.6570 0.1100 75.5 / 0.14);
+  --color-verify:       oklch(0.5847 0.0861 189.0);  /* teal — completed, 3.90:1 as a graphic  */
+  --color-verify-ink:   oklch(0.4922 0.0714 188.7);  /*                5.78:1 as text          */
+  --color-verify-wash:  oklch(0.5847 0.0861 189.0 / 0.12);
+  --color-fault:        oklch(0.5253 0.1111 35.1);  /* clay — untrusted, 5.48:1               */
+  --color-fault-ink:    oklch(0.4724 0.1039 35.0);  /*                6.86:1 as text          */
+  --color-fault-wash:   oklch(0.5253 0.1111 35.1 / 0.10);
+  --color-info:         oklch(0.3929 0.1241 279.0);  /* cobalt, lifted — annotation            */
+  --color-info-ink:     oklch(0.3640 0.1179 278.8);  /*               10.72:1 as text          */
+  --color-info-wash:    oklch(0.3929 0.1241 279.0 / 0.12);
 
   /* ---- Focus --------------------------------------------------------- */
-  --color-focus:        oklch(0.585 0.196 32);
+  --color-focus:        oklch(0.5253 0.1111 35.1);  /* clay, and clay is nothing else         */
 
   /* ---- Selection ----------------------------------------------------- */
-  --color-selection:    oklch(0.585 0.196 32 / 0.16);
+  --color-selection:    oklch(0.3147 0.1032 278.7 / 0.16);                /* cobalt at 16%           */
 
   /* ---- Line widths (ISO 128 quantisation) ----------------------------
      MEASURED: Chrome floors every `border-*-width` and `outline-width` to a
@@ -142,7 +157,7 @@
   --width-palette: 640px;
 
   /* ---- The only shadow in the system --------------------------------- */
-  --shadow-pop: 0 24px 48px -24px oklch(0.22 0.012 250 / 0.12);
+  --shadow-pop: 0 24px 48px -24px oklch(0.2608 0.0197 267.9 / 0.13);
 }
 
 /* ---------------------------------------------------------------------------
@@ -158,37 +173,43 @@
 
 @layer base {
   .dark {
-    --color-paper:        oklch(0.185 0.008 255);
-    --color-cleared:      oklch(0.225 0.009 255);
-    --color-sunken:       oklch(0.150 0.008 255);
+    /* Bazaar at night: the cobalt ground taken down rather than a neutral
+       graphite. Never #000 — a 1px hairline halates against true black, which
+       is also why `ink` stops at oklch(0.9253 0.0141 88.7). Every number here is computed, and
+       every floor the light theme clears this one clears too. */
+    --color-paper:        oklch(0.2161 0.0273 283.9);
+    --color-cleared:      oklch(0.2507 0.0282 284.2);
+    --color-sunken:       oklch(0.1898 0.0282 283.4);
 
-    --color-ink:          oklch(0.93  0.006 250);
-    --color-ink-muted:    oklch(0.66  0.010 250);
-    --color-ink-faint:    oklch(0.44  0.010 255);
+    --color-ink:          oklch(0.9253 0.0141 88.7);                /* 14.07:1 on paper       */
+    --color-ink-muted:    oklch(0.7133 0.0210 87.5);                /*  6.90:1                */
+    --color-ink-faint:    oklch(0.4874 0.0201 84.6);                /*  2.77:1, decorative    */
 
-    --color-line:         oklch(0.31  0.010 255);
-    --color-line-strong:  oklch(0.52  0.012 255);
-    --color-line-cut:     oklch(0.62  0.012 255);
+    --color-line:         oklch(0.3315 0.0404 284.0);                /*  1.43:1, grouping      */
+    --color-line-strong:  oklch(0.5374 0.0529 284.5);                /*  3.38:1, interactive   */
+    --color-line-cut:     oklch(0.6439 0.0445 285.1);                /*  5.25:1                */
 
-    --color-accent:       oklch(0.705 0.172 36);
-    --color-accent-ink:   oklch(0.76  0.15  36);
-    --color-accent-wash:  oklch(0.705 0.172 36 / 0.14);
+    /* Cobalt is 2.9% luminance and unreadable on this ground, so the accent
+       is the same hue lifted until it clears the text floor. */
+    --color-accent:       oklch(0.7159 0.0999 283.6);                /*  6.81:1                */
+    --color-accent-ink:   oklch(0.7778 0.0823 284.3);                /*  8.55:1                */
+    --color-accent-wash:  oklch(0.7159 0.0999 283.6 / 0.14);
 
-    --color-caution:      oklch(0.79  0.13  78);
-    --color-caution-ink:  oklch(0.82  0.12  78);
-    --color-caution-wash: oklch(0.79  0.13  78 / 0.16);
-    --color-verify:       oklch(0.72  0.10  168);
-    --color-verify-ink:   oklch(0.78  0.10  168);
-    --color-verify-wash:  oklch(0.72  0.10  168 / 0.14);
-    --color-fault:        oklch(0.63  0.17  15);
-    --color-fault-ink:    oklch(0.70  0.16  15);
-    --color-fault-wash:   oklch(0.63  0.17  15 / 0.14);
-    --color-info:         oklch(0.70  0.11  245);
-    --color-info-ink:     oklch(0.76  0.10  245);
-    --color-info-wash:    oklch(0.70  0.11  245 / 0.14);
+    --color-caution:      oklch(0.7775 0.1049 77.4);
+    --color-caution-ink:  oklch(0.8205 0.0932 77.6);
+    --color-caution-wash: oklch(0.7775 0.1049 77.4 / 0.16);
+    --color-verify:       oklch(0.7539 0.0912 188.2);
+    --color-verify-ink:   oklch(0.7992 0.0827 188.8);
+    --color-verify-wash:  oklch(0.7539 0.0912 188.2 / 0.14);
+    --color-fault:        oklch(0.7129 0.1068 37.1);
+    --color-fault-ink:    oklch(0.7602 0.0946 37.3);
+    --color-fault-wash:   oklch(0.7129 0.1068 37.1 / 0.14);
+    --color-info:         oklch(0.7159 0.0999 283.6);
+    --color-info-ink:     oklch(0.7778 0.0823 284.3);
+    --color-info-wash:    oklch(0.7159 0.0999 283.6 / 0.14);
 
-    --color-focus:        oklch(0.705 0.172 36);
-    --color-selection:    oklch(0.705 0.172 36 / 0.22);
+    --color-focus:        oklch(0.7129 0.1068 37.1);
+    --color-selection:    oklch(0.7159 0.0999 283.6 / 0.22);
 
     --shadow-pop: 0 24px 48px -24px oklch(0 0 0 / 0.5);
   }
@@ -222,12 +243,12 @@
      to the structural one, and the decorative ink to the muted one. */
   @media (prefers-contrast: more) {
     :root {
-      --color-line:      oklch(0.64 0.010 250);
-      --color-ink-faint: oklch(0.52 0.010 250);
+      --color-line:      oklch(0.6449 0.0246 87.2);
+      --color-ink-faint: oklch(0.5074 0.0209 89.5);
     }
     .dark {
-      --color-line:      oklch(0.52 0.012 255);
-      --color-ink-faint: oklch(0.66 0.010 250);
+      --color-line:      oklch(0.5374 0.0529 284.5);
+      --color-ink-faint: oklch(0.7133 0.0210 87.5);
     }
   }
 

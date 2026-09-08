@@ -7,82 +7,79 @@ import {
 } from '@/lib/content/code-theme'
 
 /**
- * Requirement B9 — the CI contrast check, §10.1.
+ * Requirement B9 — the CI contrast check.
  *
- * The tables below are §10.1 transcribed, and every ratio is recomputed here
- * from the *live* token values in `globals.css`. Two things therefore fail the
- * build: a token edited so that a pair drops under its floor, and a token
- * edited at all in a way the spec has not been updated to match. That second
- * one is deliberate. §10.1 is a published claim about this palette; a spec
- * whose numbers quietly stop describing the shipped colours is worth less than
- * no spec, so the number has to move in both places or not at all.
+ * Every ratio below is recomputed from the *live* token values in
+ * `globals.css`, so a token edited under its floor fails the build.
+ *
+ * ## What changed here in M9, and why it is less rather than more
+ *
+ * This file used to carry §10.1's published ratio for every pair and assert
+ * the shipped palette reproduced it to within 0.08. That was a reasonable
+ * instrument while §10.1 was the authority. It is not one now: the palette was
+ * replaced wholesale (`kia-context/logs/BRAINSTORM.md` D12), and a table of
+ * twenty pinned numbers is precisely what `tests/README.md` forbids — a fact
+ * written down, which turns an ordinary token edit into twenty red tests and
+ * teaches nobody anything. The floors are the rule; the exact ratio is a
+ * consequence.
+ *
+ * So each pair now declares the JOB its foreground does, and the job carries
+ * the threshold:
+ *
+ *  - `text` — 4.5:1. Anything that can carry a sentence.
+ *  - `graphic` — 3.0:1. A fill, a stroke or a state marker (SC 1.4.11).
+ *  - `decorative` — a CEILING, not a floor. `line` and `ink-faint` must stay
+ *    BELOW the structural threshold, because the moment one of them clears it
+ *    somebody will reach for it to carry meaning, and a rule enforced by
+ *    "please do not" is not enforced. This direction is the one the old table
+ *    only commented on.
  */
 
 type Theme = 'light' | 'dark'
 
+type Job = 'text' | 'graphic' | 'decorative'
+
+const FLOOR: Record<Job, number> = { text: 4.5, graphic: 3.0, decorative: 3.0 }
+
 interface Pair {
-  /** Token names without the `--color-` prefix, exactly as §10.1 writes them. */
+  /** Token names without the `--color-` prefix. */
   foreground: string
   background: string
-  /** The ratio §10.1 publishes. */
-  ratio: number
-  /** The floor this pair must clear, or `null` for a decorative-only pair. */
-  floor: number | null
+  job: Job
 }
 
 /**
- * §10.1's ratios are quoted to two decimals; this check derives them through
- * the same OKLCh → 8-bit sRGB pipeline the Shiki theme uses (B8), so agreement
- * is to within a rounding step, not to the digit.
+ * The Bazaar palette, by role. Both themes carry the same pairs, because a
+ * token that can hold a sentence in light has to hold one in dark.
  */
-const TOLERANCE = 0.08
-
-const LIGHT: readonly Pair[] = [
-  { foreground: 'ink', background: 'paper', ratio: 16.14, floor: 4.5 },
-  { foreground: 'ink', background: 'cleared', ratio: 17.05, floor: 4.5 },
-  { foreground: 'ink', background: 'sunken', ratio: 14.73, floor: 4.5 },
-  { foreground: 'ink-muted', background: 'paper', ratio: 5.13, floor: 4.5 },
-  { foreground: 'ink-muted', background: 'cleared', ratio: 5.42, floor: 4.5 },
-  { foreground: 'ink-muted', background: 'sunken', ratio: 4.68, floor: 4.5 },
-  { foreground: 'accent-ink', background: 'paper', ratio: 6.16, floor: 4.5 },
-  { foreground: 'accent-ink', background: 'cleared', ratio: 6.51, floor: 4.5 },
-  // Non-text UI only — 4.30 is under the 4.5 text floor, which is precisely
-  // why T2 exists and why `accent-ink` is a separate token.
-  { foreground: 'accent', background: 'paper', ratio: 4.30, floor: 3.0 },
-  { foreground: 'line-strong', background: 'paper', ratio: 3.14, floor: 3.0 },
-  { foreground: 'line-strong', background: 'cleared', ratio: 3.31, floor: 3.0 },
-  { foreground: 'line-cut', background: 'paper', ratio: 7.89, floor: 3.0 },
-  { foreground: 'caution-ink', background: 'paper', ratio: 5.27, floor: 4.5 },
-  { foreground: 'verify-ink', background: 'paper', ratio: 5.82, floor: 4.5 },
-  { foreground: 'fault-ink', background: 'paper', ratio: 7.96, floor: 4.5 },
-  { foreground: 'info-ink', background: 'paper', ratio: 6.32, floor: 4.5 },
-  { foreground: 'verify', background: 'paper', ratio: 3.52, floor: 3.0 },
-  // Fill only, never a stroke that carries meaning alone.
-  { foreground: 'caution', background: 'paper', ratio: 2.36, floor: null },
-  // Decorative only (T4 / T5): no floor, but the published number still holds.
-  { foreground: 'line', background: 'paper', ratio: 1.43, floor: null },
-  { foreground: 'ink-faint', background: 'paper', ratio: 2.69, floor: null },
+const PAIRS: readonly Pair[] = [
+  { foreground: 'ink', background: 'paper', job: 'text' },
+  { foreground: 'ink', background: 'cleared', job: 'text' },
+  { foreground: 'ink', background: 'sunken', job: 'text' },
+  { foreground: 'ink-muted', background: 'paper', job: 'text' },
+  { foreground: 'ink-muted', background: 'cleared', job: 'text' },
+  { foreground: 'ink-muted', background: 'sunken', job: 'text' },
+  { foreground: 'accent', background: 'paper', job: 'text' },
+  { foreground: 'accent', background: 'cleared', job: 'text' },
+  { foreground: 'accent-ink', background: 'paper', job: 'text' },
+  { foreground: 'accent-ink', background: 'cleared', job: 'text' },
+  { foreground: 'caution-ink', background: 'paper', job: 'text' },
+  { foreground: 'verify-ink', background: 'paper', job: 'text' },
+  { foreground: 'fault-ink', background: 'paper', job: 'text' },
+  { foreground: 'info-ink', background: 'paper', job: 'text' },
+  { foreground: 'line-strong', background: 'paper', job: 'graphic' },
+  { foreground: 'line-strong', background: 'cleared', job: 'graphic' },
+  { foreground: 'line-cut', background: 'paper', job: 'graphic' },
+  { foreground: 'caution', background: 'paper', job: 'graphic' },
+  { foreground: 'verify', background: 'paper', job: 'graphic' },
+  { foreground: 'fault', background: 'paper', job: 'graphic' },
+  { foreground: 'focus', background: 'paper', job: 'graphic' },
+  { foreground: 'line', background: 'paper', job: 'decorative' },
+  { foreground: 'ink-faint', background: 'paper', job: 'decorative' },
 ]
 
-const DARK: readonly Pair[] = [
-  { foreground: 'ink', background: 'paper', ratio: 15.17, floor: 4.5 },
-  { foreground: 'ink', background: 'cleared', ratio: 13.92, floor: 4.5 },
-  { foreground: 'ink', background: 'sunken', ratio: 16.01, floor: 4.5 },
-  { foreground: 'ink-muted', background: 'paper', ratio: 6.00, floor: 4.5 },
-  { foreground: 'ink-muted', background: 'cleared', ratio: 5.50, floor: 4.5 },
-  { foreground: 'ink-muted', background: 'sunken', ratio: 6.36, floor: 4.5 },
-  { foreground: 'accent-ink', background: 'paper', ratio: 8.14, floor: 4.5 },
-  { foreground: 'accent', background: 'paper', ratio: 6.63, floor: 3.0 },
-  { foreground: 'line-strong', background: 'paper', ratio: 3.39, floor: 3.0 },
-  { foreground: 'line-strong', background: 'cleared', ratio: 3.11, floor: 3.0 },
-  { foreground: 'line-cut', background: 'paper', ratio: 5.12, floor: 3.0 },
-  { foreground: 'caution-ink', background: 'paper', ratio: 10.55, floor: 4.5 },
-  { foreground: 'verify-ink', background: 'paper', ratio: 9.72, floor: 4.5 },
-  { foreground: 'fault-ink', background: 'paper', ratio: 6.47, floor: 4.5 },
-  { foreground: 'info-ink', background: 'paper', ratio: 8.77, floor: 4.5 },
-  { foreground: 'line', background: 'paper', ratio: 1.42, floor: null },
-  { foreground: 'ink-faint', background: 'paper', ratio: 2.40, floor: null },
-]
+const LIGHT = PAIRS
+const DARK = PAIRS
 
 function tokenRatio(pair: Pair, theme: Theme): number {
   return contrastRatio(
@@ -120,41 +117,72 @@ describe('contrastRatio', () => {
 describe.each<[Theme, readonly Pair[]]>([
   ['light', LIGHT],
   ['dark', DARK],
-])('§10.1 contrast floor — %s theme', (theme, pairs) => {
-  it.each(pairs.map((pair) => [`${pair.foreground} / ${pair.background}`, pair] as const))(
-    '%s reproduces the ratio §10.1 publishes',
-    (_label, pair) => {
-      expect(Math.abs(tokenRatio(pair, theme) - pair.ratio)).toBeLessThanOrEqual(TOLERANCE)
-    },
-  )
-
+])('the contrast floor — %s theme', (theme, pairs) => {
   it.each(
     pairs
-      .filter((pair) => pair.floor !== null)
+      .filter((pair) => pair.job !== 'decorative')
+      .map((pair) => [`${pair.foreground} / ${pair.background} (${pair.job})`, pair] as const),
+  )('%s clears the floor its job carries', (_label, pair) => {
+    expect(tokenRatio(pair, theme)).toBeGreaterThanOrEqual(FLOOR[pair.job])
+  })
+
+  /**
+   * The other direction, and the one that actually protects the design system:
+   * a decorative token has to stay UNDER the structural threshold. If `line`
+   * ever clears 3:1 it becomes usable as a meaningful boundary, and the two
+   * line jobs — grouping and identifying — collapse into one. On this ground
+   * that split is the whole reason `line-strong` exists (BRAINSTORM.md O4).
+   */
+  it.each(
+    pairs
+      .filter((pair) => pair.job === 'decorative')
       .map((pair) => [`${pair.foreground} / ${pair.background}`, pair] as const),
-  )('%s clears its floor', (_label, pair) => {
-    expect(tokenRatio(pair, theme)).toBeGreaterThanOrEqual(pair.floor as number)
+  )('%s stays below the structural threshold, so it cannot carry meaning', (_label, pair) => {
+    expect(tokenRatio(pair, theme)).toBeLessThan(FLOOR.decorative)
   })
 })
 
-describe('the two failure modes §10.1 names', () => {
-  it('keeps --color-accent under the 4.5 text floor in light, so T2 stays true', () => {
-    // If this ever passes 4.5 the palette has changed enough that T2's
-    // justification — "accent fails 4.5:1 in light mode" — needs rewriting.
-    const ratio = contrastRatio(
-      readDesignToken('--color-accent').light,
-      readDesignToken('--color-paper').light,
-    )
-    expect(ratio).toBeLessThan(4.5)
-  })
-
-  it('keeps --color-line far below the 3.0 structural floor, so T4 stays true', () => {
+describe('what the palette change settled, and what it did not', () => {
+  /**
+   * T2 is retired, and this is where that is recorded.
+   *
+   * The retired palette's accent was an orange at 4.30:1 on paper — under the
+   * text floor — so T2 forbade painting text with `--color-accent` and gave
+   * every label a second token, `--color-accent-ink`. Bazaar's accent is
+   * cobalt at 12.88:1. The rule has nothing left to protect against, the two
+   * tokens now hold the same value, and both are kept only so that no
+   * stylesheet has to be renamed.
+   *
+   * Asserted rather than deleted: if somebody lightens the accent back under
+   * the floor, this test says which rule they have just re-created.
+   */
+  it('has an accent that can carry text, in both themes, so T2 no longer applies', () => {
     for (const theme of ['light', 'dark'] as const) {
       const ratio = contrastRatio(
-        readDesignToken('--color-line')[theme],
+        readDesignToken('--color-accent')[theme],
         readDesignToken('--color-paper')[theme],
       )
-      expect(ratio).toBeLessThan(3.0)
+      expect(ratio, theme).toBeGreaterThanOrEqual(4.5)
+    }
+  })
+
+  /**
+   * A raised surface is defined by its border on this ground, not by its fill.
+   * The gap is 1.035 in luminance — three and a half per cent — which is why
+   * `specs/DESIGN.md` bans dropping a card's hairline. Asserted as "barely
+   * lighter" in both directions: lighter, because a card is never darker than
+   * its page, and barely, because a card that separates on fill alone would
+   * mean the border could go.
+   */
+  it('raises a surface by a hairline and not by a fill', () => {
+    for (const theme of ['light', 'dark'] as const) {
+      const paper = relativeLuminance(readDesignToken('--color-paper')[theme])
+      const cleared = relativeLuminance(readDesignToken('--color-cleared')[theme])
+      expect(cleared, theme).toBeGreaterThan(paper)
+      expect(contrastRatio(
+        readDesignToken('--color-cleared')[theme],
+        readDesignToken('--color-paper')[theme],
+      ), theme).toBeLessThan(1.6)
     }
   })
 })

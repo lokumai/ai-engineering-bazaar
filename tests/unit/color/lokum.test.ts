@@ -197,7 +197,11 @@ describe('§13.1.1 — the six hues are declared once and only once', () => {
         token(`--cat-${slug}-half`).L,
       ]),
     )
-    expect([...lightnesses]).toEqual([0.605])
+    // The rule is "one lightness for all of them", not "0.605". The value
+    // moved in M9 when the sand ground was lightened, and a literal here made
+    // that a red test rather than a recomputation. What must hold is the set
+    // size: six hues, one lightness between them.
+    expect([...lightnesses]).toHaveLength(1)
   })
 
   it('halves the chroma exactly, and moves nothing else', () => {

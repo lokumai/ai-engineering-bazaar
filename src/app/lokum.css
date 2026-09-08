@@ -70,16 +70,31 @@
      namespace: Tailwind would then emit `bg-cat-*` utilities, and a utility is
      an invitation to paint a hue onto something that is not on §13.1.3's list.
      No utility exists, so rule 1 is enforced by absence. */
-  --cat-fundamentals:      oklch(0.605 0.150 350);  /* GÜL     — rose        */
-  --cat-fundamentals-half: oklch(0.605 0.075 350);
-  --cat-intermediate:      oklch(0.605 0.128 138);  /* FISTIK  — pistachio   */
-  --cat-intermediate-half: oklch(0.605 0.064 138);
-  --cat-expert:            oklch(0.605 0.130 288);  /* LAVANTA — lavender    */
-  --cat-expert-half:       oklch(0.605 0.065 288);
-  --cat-ecosystem:         oklch(0.605 0.098 200);  /* NANE    — mint        */
-  --cat-ecosystem-half:    oklch(0.605 0.049 200);
-  --cat-protocols:         oklch(0.605 0.115  54);  /* KAHVE   — coffee      */
-  --cat-protocols-half:    oklch(0.605 0.0575 54);
+  /* M9 — re-hued to the Bazaar palette. Two constraints moved and both are
+     recorded here, because both look like taste and are not:
+
+     1. **Intermediate is no longer cobalt.** T4 gives the Intermediate level
+        the same cobalt as the interactive accent, and a level hue within 20°
+        of the accent is a level hue a reader can mistake for a link. So it
+        sits at 240 — a colder İznik blue, 38.7° clear of the accent's 278.7.
+     2. **The lightness dropped from 0.605 to 0.575.** The sand ground was
+        lightened from 71.0% to 80.4% relative luminance so that muted text
+        clears 4.5:1 on it, and that made the mid-tone hues WORSE against it:
+        the lowest of them measured 3.00:1 against a 3.10 floor. Darkening the
+        hues is the fix that keeps the ground readable.
+
+     Both numbers are recomputed by tests/unit/color/lokum.test.ts against the
+     grounds that actually ship, at full chroma and at half. */
+  --cat-fundamentals:      oklch(0.575 0.098 189);  /* MİNE    — teal        */
+  --cat-fundamentals-half: oklch(0.575 0.049 189);
+  --cat-intermediate:      oklch(0.575 0.128 240);  /* ÇİNİ    — İznik blue  */
+  --cat-intermediate-half: oklch(0.575 0.064 240);
+  --cat-expert:            oklch(0.575 0.130 320);  /* ERİK    — plum        */
+  --cat-expert-half:       oklch(0.575 0.065 320);
+  --cat-ecosystem:         oklch(0.575 0.115  75);  /* BAL     — honey       */
+  --cat-ecosystem-half:    oklch(0.575 0.0575 75);
+  --cat-protocols:         oklch(0.575 0.120  30);  /* KİL     — clay        */
+  --cat-protocols-half:    oklch(0.575 0.060  30);
 
   /* There is no `--cat-dormant`. §13.1.2: a category with nothing signed off
      is not "the grey version of gül", it is a category with nothing special

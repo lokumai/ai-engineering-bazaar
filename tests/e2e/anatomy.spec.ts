@@ -249,7 +249,7 @@ test.describe('A4 — the detail module', () => {
     // §4.5 item 1 — the band says the two true things, in words (§10.4).
     const band = page.locator('.hl-status-band')
     await expect(band).toBeVisible()
-    await expect(band).toContainText(/not yet drawn/i)
+    await expect(band).toContainText(/planned/i)
     await expect(band).toContainText(/schedule of parts only/i)
 
     // §4.5 item 6 — the topics list as a hairline table, not as bullets.

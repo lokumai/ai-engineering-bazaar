@@ -67,7 +67,7 @@ for (const sheet of DRAWN) {
     // The dash means "nobody counted this" and belongs to the sheets nobody
     // has drawn (§4.5, §11.25).
     expect(found.rows.SOURCES, `${sheet.path} SOURCES`).toMatch(/^\d+$/)
-    expect(found.rows.EXTENT, `${sheet.path} LENGTH`).toMatch(/^[\d,]+ W · \d+ MIN$/)
+    expect(found.rows.LENGTH, `${sheet.path} LENGTH`).toMatch(/^[\d,]+ W · \d+ MIN$/)
   })
 }
 
@@ -78,10 +78,10 @@ for (const sheet of NOT_DRAWN) {
 
     // §4.5 item 4, verbatim: `EXTENT —`, `FIGURES —`, `SOURCES —`,
     // `REQUIRES —`, `LANG EN`.
-    expect(found.rows.EXTENT, `${sheet.path} LENGTH`).toBe('—')
+    expect(found.rows.LENGTH, `${sheet.path} LENGTH`).toBe('—')
     expect(found.rows.FIGURES, `${sheet.path} FIGURES`).toBe('—')
     expect(found.rows.SOURCES, `${sheet.path} SOURCES`).toBe('—')
-    expect(found.rows.REQUIRES, `${sheet.path} REQUIREMENTS`).toBe('—')
+    expect(found.rows.REQUIREMENTS, `${sheet.path} REQUIREMENTS`).toBe('—')
 
     // §11.27 and §1's second self-check. The Turkish sibling of a stub is a
     // faithful translation *of the stub*, which is why the ratio alone badged

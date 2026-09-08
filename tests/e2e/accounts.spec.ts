@@ -240,7 +240,7 @@ test.describe('§14 accounts, organisations and the record that outlives a brows
     await page.goto('/courses/intermediate/harness-engineering/')
     await waitForHydratedReadout(page)
     await page.getByRole('button', { name: 'COMPLETE', exact: true }).click()
-    await expect(page.getByRole('button', { name: /^SIGNED OFF / })).toBeVisible()
+    await expect(page.getByRole('button', { name: /^COMPLETED / })).toBeVisible()
 
     // The event name IS the reducer name (§14.2.3) - no translation layer.
     await expect
@@ -367,11 +367,11 @@ test.describe('§14 accounts, organisations and the record that outlives a brows
     // Inside the delay: the claim has not resolved, so `outcome.record` — if it
     // were applied as a replacement — cannot know about this.
     await page.getByRole('button', { name: 'COMPLETE', exact: true }).click()
-    await expect(page.getByRole('button', { name: /^SIGNED OFF / })).toBeVisible()
+    await expect(page.getByRole('button', { name: /^COMPLETED / })).toBeVisible()
 
     // Past the delay, so the merge has landed and written to localStorage.
     await page.waitForTimeout(4_000)
-    await expect(page.getByRole('button', { name: /^SIGNED OFF / })).toBeVisible()
+    await expect(page.getByRole('button', { name: /^COMPLETED / })).toBeVisible()
 
     // And it is in the record, not merely on the screen: a reload reads
     // localStorage, which is what the merge wrote.
@@ -380,7 +380,7 @@ test.describe('§14 accounts, organisations and the record that outlives a brows
     )
     await page.reload()
     await waitForHydratedReadout(page)
-    await expect(page.getByRole('button', { name: /^SIGNED OFF / })).toBeVisible()
+    await expect(page.getByRole('button', { name: /^COMPLETED / })).toBeVisible()
   })
 
   /**
@@ -414,7 +414,7 @@ test.describe('§14 accounts, organisations and the record that outlives a brows
     await page.goto('/courses/intermediate/loop-engineering/')
     await waitForHydratedReadout(page)
     await page.getByRole('button', { name: 'COMPLETE', exact: true }).click()
-    await expect(page.getByRole('button', { name: /^SIGNED OFF / })).toBeVisible()
+    await expect(page.getByRole('button', { name: /^COMPLETED / })).toBeVisible()
     await expect
       .poll(() => serverRecord(fixture, fixture.ids.eraser), { timeout: 20_000 })
       .not.toBeNull()

@@ -246,7 +246,7 @@ test('§12.10.1 — every band is a graphics-object and states its own counted t
   )
   for (const label of labels) {
     // §12.10.1's exact form. Both numbers are counted, never typed (§11.25).
-    expect(label).toMatch(/^Subsystem \d\d — .+ — \d+ of \d+ signed off$/)
+    expect(label).toMatch(/^Level \d\d — .+ — \d+ of \d+ completed$/)
   }
 
   // The record is in the labels, which is the only place a screen-reader user

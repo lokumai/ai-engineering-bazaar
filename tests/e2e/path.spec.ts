@@ -124,7 +124,7 @@ test('hydrated, the tally leads with what is left and one step is marked next', 
   // §13.8 — TO-GO framing, and §11.35 forbids a percentage outright. Three
   // sheets were seeded as signed, so the tally counts three off the drawn total.
   await expect(body).toContainText(/\d+\s+OF\s+\d+\s+REMAINING/i)
-  await expect(body).toContainText(/SIGNED OFF\s+3\s+OF\s+\d+/i)
+  await expect(body).toContainText(/COMPLETED\s+3\s+OF\s+\d+/i)
 
   // §13.4.2 — the two numbers are both printed, and they differ. A path that
   // counted its draft steps would print the same number twice and ask the
@@ -132,7 +132,7 @@ test('hydrated, the tally leads with what is left and one step is marked next', 
   // is curation, so the numbers are read off the page and compared.
   const tally = (await body.innerText()).toUpperCase()
   const steps = Number(/(\d+)\s+STEPS/.exec(tally)?.[1])
-  const drawn = Number(/(\d+)\s+SHEETS DRAWN/.exec(tally)?.[1])
+  const drawn = Number(/(\d+)\s+MODULES READY/.exec(tally)?.[1])
   expect(steps).toBeGreaterThan(drawn)
   expect(drawn).toBeGreaterThan(0)
   expect(tally).not.toContain('%')

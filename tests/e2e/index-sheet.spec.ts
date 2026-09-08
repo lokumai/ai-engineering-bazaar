@@ -70,7 +70,7 @@ test('the ready / not-ready counts match the rows actually rendered', async ({ p
 
   // Every one of those rows says so in words as well as in line type (§10.4).
   await expect(page.locator('.hl-row-status', { hasText: /^READY$/ })).toHaveCount(DRAWN_COUNT)
-  await expect(page.locator('.hl-row-status', { hasText: /^NOT DRAWN$/ })).toHaveCount(NOT_DRAWN_COUNT)
+  await expect(page.locator('.hl-row-status', { hasText: /^PLANNED$/ })).toHaveCount(NOT_DRAWN_COUNT)
 
   // …and the eyebrow above the table counts the same set (§11.25), in the
   // marks register rather than in words.

@@ -84,7 +84,12 @@ for (const [state, seed, out] of HOME_STATES) {
     await page.goto('/')
 
     await page.getByRole('button', { name: 'Toggle theme' }).click()
-    await page.getByRole('link', { name: out, exact: true }).click()
+    // Scoped to `main`, and that is M10's fault rather than a nicety: the
+    // navbar added a `Catalog` link to every page, so an unscoped locator for
+    // that name now matches two elements and Playwright refuses in strict
+    // mode. This test is about the home screen's own way out, so it looks for
+    // it where the home screen is.
+    await page.locator('main').getByRole('link', { name: out, exact: true }).click()
     await expect(page).toHaveURL(new RegExp(`${INDEX_SHEET}$`))
     await page.goBack()
     await page.waitForLoadState('networkidle')

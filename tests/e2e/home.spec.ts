@@ -457,7 +457,7 @@ test('no meter cell names a level without measuring it (§15.3.1, §10.4)', asyn
     const text = (await undrawn.nth(i).innerText()).replace(/\s+/g, ' ').trim()
     // Case-insensitive: `.hl-mark` uppercases in CSS, so `innerText` reads
     // `SIGNED OFF · 9 SHEETS`. The words are what is pinned, not the casing.
-    expect(text).toMatch(/signed off · (\d+ sheets|1 sheet), NOT DRAWN/i)
+    expect(text).toMatch(/completed · (\d+ modules|1 module), PLANNED/i)
   }
 })
 

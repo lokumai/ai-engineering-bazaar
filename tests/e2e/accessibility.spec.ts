@@ -114,8 +114,14 @@ test('main is not a tab stop of its own', async ({ page }) => {
 test('the header tab order runs left to right and stops at the repo link', async ({ page }) => {
   await page.goto(A0.path)
 
+  // M10 raised the cap from 16. The header gained a navbar: four destinations
+  // plus the five levels inside the Curriculum panel, which `:focus-within`
+  // opens as the trigger takes focus, so every one of them is in the tab order
+  // by design. Sixteen presses no longer reach the repo link, and a cap that
+  // stops short reads as "the order ends here" rather than "we stopped
+  // looking".
   const order: string[] = []
-  for (let i = 0; i < 16; i++) {
+  for (let i = 0; i < 40; i++) {
     await page.keyboard.press('Tab')
     const focused = await focusDescription(page)
     if (!focused) break
@@ -123,21 +129,34 @@ test('the header tab order runs left to right and stops at the repo link', async
     order.push(focused.text)
   }
 
-  // Skip link, wordmark, the breadcrumb trail, then the two controls (§5.1).
+  // Skip link, wordmark, the navbar, the trail, then the controls (§5.1, M10).
   expect(order[0]).toMatch(/skip to content/i)
   expect(order[1]).toMatch(/lokum/i)
   expect(order.at(-2)).toMatch(/toggle theme/i)
   expect(order.at(-1)).toMatch(/repository/i)
 
-  // The breadcrumb sits between the wordmark and the controls, in trail order.
-  // §15.1 renamed its first crumb: the root of every trail on this site used to
-  // be the manifest and read INDEX, and now `/` is the home screen and the
-  // register is one click further on at `/sheets/`. The trail follows the
-  // route, so the name it prints has to follow the route too.
-  const crumbs = order.slice(2, -2)
-  expect(crumbs.length).toBeGreaterThan(0)
-  expect(crumbs[0].toLowerCase(), 'the trail does not start at the front door').toBe('home')
-  expect(crumbs.join(' ').toLowerCase()).toContain('curriculum')
+  const middle = order.slice(2, -2).map((text) => text.toLowerCase())
+
+  // M10 — the navbar comes first in the middle, in the order it is written,
+  // and its Curriculum panel is reachable rather than a hover-only trap. The
+  // four destinations are asserted as a PREFIX and not as the whole list,
+  // because the five level links sit inside the third one.
+  expect(middle.slice(0, 2)).toEqual(['home', 'curriculum'])
+  expect(middle, 'the level panel is not reachable by keyboard')
+    .toContain('01fundamentals')
+  expect(middle).toContain('catalog')
+  expect(middle).toContain('my progress')
+
+  // The trail comes after the navbar, and its first crumb is the front door.
+  // §15.1 renamed it: the root of every trail used to be the manifest and read
+  // INDEX; `/` is the home screen now and the register is one click further on
+  // at `/sheets/`. The trail follows the route, so its name has to follow too.
+  // Found by NAME rather than by slice, because the navbar's own length is not
+  // this test's business.
+  const trailStart = middle.lastIndexOf('home')
+  expect(trailStart, 'the trail does not start at the front door')
+    .toBeGreaterThan(middle.indexOf('my progress'))
+  expect(middle.slice(trailStart).join(' ')).toContain('curriculum')
 })
 
 test('every interactive control in the header shows a focus ring', async ({ page }) => {

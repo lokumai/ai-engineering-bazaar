@@ -184,7 +184,7 @@ test.describe('§14.1 accounts are switched off', () => {
     await expect(readout).toHaveAttribute('data-hydrated', 'true')
 
     await page.getByRole('button', { name: 'COMPLETE', exact: true }).click()
-    await expect(page.getByRole('button', { name: /^SIGNED OFF / })).toBeVisible()
+    await expect(page.getByRole('button', { name: /^COMPLETED / })).toBeVisible()
 
     // The record is in this browser, exactly as it was before §14 existed.
     //

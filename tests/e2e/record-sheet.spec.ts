@@ -123,7 +123,7 @@ function stampConditions(page: Page): Promise<string[]> {
 }
 
 const signOff = (page: Page) => page.getByRole('button', { name: 'COMPLETE', exact: true })
-const signedOff = (page: Page) => page.getByRole('button', { name: /^SIGNED OFF / })
+const signedOff = (page: Page) => page.getByRole('button', { name: /^COMPLETED / })
 const unsign = (page: Page) => page.getByRole('button', { name: 'UNSIGN', exact: true })
 const anyDialog = (page: Page) => page.locator('[role="dialog"], [role="alertdialog"], dialog')
 
@@ -456,7 +456,7 @@ test('sign-off records the module’s own revision and survives a reload (§12.4
   // §12.4.1 — the control states the assertion and its date, and `UNSIGN` is
   // adjacent rather than hidden behind the pressed toggle.
   await expect(signedOff(page)).toHaveAttribute('aria-pressed', 'true')
-  await expect(signedOff(page)).toHaveText(/^SIGNED OFF \d{4}-\d{2}-\d{2}$/)
+  await expect(signedOff(page)).toHaveText(/^COMPLETED \d{4}-\d{2}-\d{2}$/)
   await expect(unsign(page)).toBeVisible()
   await expect(checkedBy(page)).toHaveText(['Ada Lovelace', 'Ada Lovelace'])
 
@@ -711,7 +711,7 @@ test('the reveal is the module’s own summary, named as that (§12.6)', async (
   const question = (await page.locator('.hl-quiz-question').innerText()).trim()
 
   await page.locator('.hl-quiz textarea').fill('Read, act, exfiltrate — the trifecta.')
-  const compare = page.getByRole('button', { name: /^COMPARE WITH THE SHEET/ })
+  const compare = page.getByRole('button', { name: /^COMPARE WITH THE MODULE/ })
   await expect(compare).toHaveText('COMPARE WITH THE MODULE’S SUMMARY')
   await compare.click()
 
@@ -745,7 +745,7 @@ for (const outcome of ['MATCHED', 'DID NOT MATCH'] as const) {
     await page.goto(SHEET.path)
     await waitForHydratedReadout(page)
     await page.locator('.hl-quiz textarea').fill('An answer, written before anything is revealed.')
-    await page.getByRole('button', { name: /^COMPARE WITH THE SHEET/ }).click()
+    await page.getByRole('button', { name: /^COMPARE WITH THE MODULE/ }).click()
 
     const button = page.getByRole('button', { name: outcome, exact: true })
     await expect(button).toHaveAttribute('aria-pressed', 'false')
@@ -755,7 +755,7 @@ for (const outcome of ['MATCHED', 'DID NOT MATCH'] as const) {
     // §12.4.2 — self-assessment is its own axis and no third state is derived
     // from it: the readout gains XP and nothing gains a pass, a grade or a mark.
     await expect(readoutCell(page, /^XP/)).toHaveText('XP 60')
-    await expect(readoutCell(page, /^Signed off/)).toHaveText(`Completed 00/${SHEETS.length}`)
+    await expect(readoutCell(page, /^Completed/)).toHaveText(`Completed 00/${SHEETS.length}`)
     await expect(page.locator('.hl-quiz-note').filter({ hasText: 'SELF-ASSESSED' })).toHaveText(
       `SELF-ASSESSED: ${outcome}`,
     )

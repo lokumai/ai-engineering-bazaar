@@ -225,7 +225,7 @@ test('§12.10.1 — the diagram is a graphics-document, and role="img" appears n
   })
   expect(names.labelledby).not.toBe('')
   expect(names.describedby).not.toBe('')
-  expect(names.title).toContain(`${SHEET_COUNT} sheets`)
+  expect(names.title).toContain(`${SHEET_COUNT} modules`)
   expect(names.desc.length).toBeGreaterThan(40)
 
   expect(problems.consoleErrors).toEqual([])
@@ -976,10 +976,10 @@ const STORAGE_ANSWERS = /^(PERSISTENT|BEST-EFFORT|UNAVAILABLE|UNKNOWN)$/
 
 const EXPECTED_READINGS = {
   readout: {
-    thin: `0 OF ${SHEET_COUNT} SIGNED OFF`,
+    thin: `0 OF ${SHEET_COUNT} COMPLETED`,
     // Every drawn sheet is signed off in the rich seed; the denominator is the
     // whole set, drawn or not, which is what the strip counts against.
-    rich: `${DRAWN_COUNT} OF ${SHEET_COUNT} SIGNED OFF`,
+    rich: `${DRAWN_COUNT} OF ${SHEET_COUNT} COMPLETED`,
   },
   // 14 is §7.3's window, which the strip in this row's body draws as fourteen
   // ticks; the numerator is the seed's own day list.

@@ -75,8 +75,8 @@ test('the ready / not-ready counts match the rows actually rendered', async ({ p
   // …and the eyebrow above the table counts the same set (§11.25), in the
   // marks register rather than in words.
   const eyebrow = await page.locator('.hl-eyebrow').innerText()
-  expect(eyebrow).toContain(`${SHEET_COUNT} SHEETS`)
-  expect(eyebrow).toContain(`${DRAWN_COUNT} DRAWN`)
+  expect(eyebrow).toContain(`${SHEET_COUNT} MODULES`)
+  expect(eyebrow).toContain(`${DRAWN_COUNT} READY`)
 
   // The spelt-out form of the same three counts is the home screen's first-visit
   // statement (§15.2.3). It is prose about the set, not about the reader, so it
@@ -84,8 +84,8 @@ test('the ready / not-ready counts match the rows actually rendered', async ({ p
   // two, because they are no longer on one page.
   await page.goto('/')
   const statement = (await page.locator('.hl-statement').innerText()).replace(/\s+/g, ' ')
-  expect(statement).toContain(`${spellOut(SHEET_COUNT)} sheets`)
-  expect(statement).toContain(`${spellOut(DRAWN_COUNT)} are drawn.`)
+  expect(statement).toContain(`${spellOut(SHEET_COUNT)} modules`)
+  expect(statement).toContain(`${spellOut(DRAWN_COUNT)} are ready.`)
   expect(statement).toContain(`${spellOut(NOT_DRAWN_COUNT)} are dashed`)
 })
 

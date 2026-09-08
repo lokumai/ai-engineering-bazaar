@@ -37,7 +37,7 @@ for (const sheet of SHEETS) {
 
     expect(row.height, '§5.2 gives row 1 40px').toBe(40)
     expect(row.text, `${sheet.path} footer row 1`).not.toBe('')
-    expect(row.text).toContain(`SHEET ${sheet.module} OF ${SHEET_COUNT}`)
+    expect(row.text).toContain(`MODULE ${sheet.module} OF ${SHEET_COUNT}`)
 
     // §5.2's centre cell, and §11.26: the same hash the title block derived
     // for this file. A footer printing repo HEAD would pass the line above and

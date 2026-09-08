@@ -181,7 +181,7 @@ export function Readout({ variant, facts, traces = null, className }: ReadoutPro
   cells.push(
     <Cell
       key="class"
-      label="Class"
+      label="Rank"
       value={hydrated ? (rank.numeral ?? '—') : NO_READING}
     />,
   )

@@ -375,3 +375,15 @@
   .hl-meter { break-inside: avoid; }
   .hl-seg { print-color-adjust: exact; }
 }
+
+
+/* M10 — the navbar dropdown names a level, so §13.1.3 allows it the hue. The
+   number printed beside it is what keeps the hue from being the only carrier
+   (§13.1.4), and `globals.css` drops both under forced colours. */
+@layer components {
+  .hl-nav-menu-link[data-cat="fundamentals"] .hl-nav-menu-key { background: var(--cat-fundamentals); }
+  .hl-nav-menu-link[data-cat="intermediate"] .hl-nav-menu-key { background: var(--cat-intermediate); }
+  .hl-nav-menu-link[data-cat="expert"] .hl-nav-menu-key       { background: var(--cat-expert); }
+  .hl-nav-menu-link[data-cat="ecosystem"] .hl-nav-menu-key    { background: var(--cat-ecosystem); }
+  .hl-nav-menu-link[data-cat="protocols"] .hl-nav-menu-key    { background: var(--cat-protocols); }
+}

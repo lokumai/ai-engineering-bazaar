@@ -4,6 +4,7 @@ import { Keyboard } from '@/components/record/Keyboard'
 import { REPO_URL } from '@/lib/site'
 import { categoryLabels } from '@/lib/content/chrome'
 import { Breadcrumb } from './Breadcrumb'
+import { MainNav } from './MainNav'
 import { ThemeToggle } from './ThemeToggle'
 
 /**
@@ -71,8 +72,13 @@ export function SiteHeader() {
           Lokum<span className="text-ink-muted"> / Bazaar</span>
         </Link>
 
-        <div className="flex min-w-0 flex-1 justify-center">
-          <Breadcrumb categories={categoryLabels()} />
+        {/* M10 — the navbar takes the middle of the row, and the trail moves
+            under it. Both are wanted and they answer different questions: the
+            navbar says where you can go, the trail says where you are. Sharing
+            one 56px row made the trail the only one of the two that was ever
+            visible. */}
+        <div className="flex min-w-0 flex-1 items-center gap-4">
+          <MainNav categories={categoryLabels()} />
         </div>
 
         <div className="flex shrink-0 items-center gap-1">
@@ -105,6 +111,19 @@ export function SiteHeader() {
               <path d="M11.5 5v3.5h-7" />
             </svg>
           </a>
+        </div>
+      </div>
+
+      {/* M10 — the trail, on its own rule under the row.
+          Both are wanted and they answer different questions: the navbar says
+          where a reader can go, the trail says where they are. They used to
+          share one 56px row, and the trail was the only one of the two that
+          was ever there. It keeps its `Curriculum` landmark name, which is
+          what `not-found.spec.ts` reads it by; the navbar's landmark is
+          `Main`. */}
+      <div className="border-t border-line bg-paper">
+        <div className="mx-auto flex h-8 w-full max-w-[var(--width-shell)] items-center px-6">
+          <Breadcrumb categories={categoryLabels()} />
         </div>
       </div>
     </header>

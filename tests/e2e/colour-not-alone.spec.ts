@@ -20,7 +20,7 @@ import { CATEGORY_PATHS } from './sheets'
  * blank here and nowhere else.
  *
  * The same pass doubles as the colour-blindness argument. Two of the six hues
- * are 38° apart (FISTIK and KAYMAK) and a deuteranope may not separate them at
+ * are 45° apart (KİREMİT and BAL) and a deuteranope may not separate them at
  * all; that is tolerable precisely because nothing here rests on telling two
  * hues apart.
  */
@@ -118,7 +118,7 @@ test('LKM-01 still reports every level with no colour (§13.1.3 item 1)', async 
   await expect(legend).toHaveCount(CATEGORY_PATHS.length)
 
   const text = await page.locator('body').innerText()
-  for (const flavour of ['GÜL', 'FISTIK', 'LAVANTA', 'NANE', 'KAHVE']) {
+  for (const flavour of ['TURKUAZ', 'LACİVERT', 'ERİK', 'BAL', 'KİREMİT']) {
     expect(text, flavour).toContain(flavour)
   }
   for (const title of ['Fundamentals', 'Intermediate', 'Expert', 'Ecosystem']) {

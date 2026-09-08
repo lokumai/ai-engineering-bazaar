@@ -46,11 +46,11 @@ const LOKUM_CSS = join(CSS_DIR, 'lokum.css')
 
 /** §13.1.1's order, frozen. The flavour names are §13.9's. */
 const FLAVOURS = [
-  { slug: 'fundamentals', flavour: 'GÜL' },
-  { slug: 'intermediate', flavour: 'FISTIK' },
-  { slug: 'expert', flavour: 'LAVANTA' },
-  { slug: 'ecosystem', flavour: 'NANE' },
-  { slug: 'protocols', flavour: 'KAHVE' },
+  { slug: 'fundamentals', flavour: 'TURKUAZ' },
+  { slug: 'intermediate', flavour: 'LACİVERT' },
+  { slug: 'expert', flavour: 'ERİK' },
+  { slug: 'ecosystem', flavour: 'BAL' },
+  { slug: 'protocols', flavour: 'KİREMİT' },
 ] as const
 
 /** SC 1.4.11's 3:1, with the margin §13.1.1 states. Unrounded. */

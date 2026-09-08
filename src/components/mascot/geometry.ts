@@ -99,19 +99,26 @@ export const FACES: readonly Face[] = [
  * them. Turkish casing is the trap: `toLocaleUpperCase('tr')` turns `i` into
  * `İ`, and a name cased at render time is cased in whatever locale the
  * renderer happened to be handed. Stored this way the question never arises.
- * FISTIK is spelled correctly — the lower-case form is `fıstık`, and the
- * uppercase of a dotless ı is the same glyph as an English capital I.
+ * **M9 renamed all five.** They are proper nouns for the colours themselves,
+ * so when the palette was re-hued to Bazaar (`logs/BRAINSTORM.md` D12) every
+ * one of them became false: Fundamentals was GÜL, rose, and is now teal. A
+ * colour name that no longer names its colour is worse than no name, because
+ * §13.9 prints it to a reader as the thing the hue is called.
  *
- * They are proper nouns for colours, the way a paint chart names its colours,
- * so §13.9 requires the English category title printed beside every one of
- * them. `FaceLegend` is where that pairing happens.
+ * The five now are İznik's own: turquoise, the navy the tiles are known for,
+ * plum, honey and roof-tile red. `İ` is held pre-cased for the same reason it
+ * always was — `toLocaleUpperCase('tr')` turns `i` into `İ`, so a name cased at
+ * render time is cased in whatever locale the renderer happened to be handed.
+ *
+ * §13.9 requires the English category title printed beside every one of them.
+ * `FaceLegend` is where that pairing happens.
  */
 export const FLAVOURS = {
-  fundamentals: 'GÜL',
-  intermediate: 'FISTIK',
-  expert: 'LAVANTA',
-  ecosystem: 'NANE',
-  protocols: 'KAHVE',
+  fundamentals: 'TURKUAZ',
+  intermediate: 'LACİVERT',
+  expert: 'ERİK',
+  ecosystem: 'BAL',
+  protocols: 'KİREMİT',
 } as const satisfies Record<CategorySlug, string>
 
 /**

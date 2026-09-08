@@ -63,7 +63,7 @@
   /* §13.1.1 — one lightness for all six, and therefore ONE set of tokens for
      both themes. Measured, not chosen: the grounds sit at the extremes
      (0.976 light / 0.185 dark), so L 0.605 clears 3:1 against both. Worst case
-     in the whole palette is FISTIK at 3.14:1 on `sunken` light, 4.64:1 dark.
+     in the whole palette is TURKUAZ at 3.31:1 on `sunken` light.
      `tests/unit/lokum-contrast.test.ts` recomputes every number here.
 
      These are deliberately NOT in `@theme` and NOT in the `--color-*`
@@ -85,15 +85,15 @@
 
      Both numbers are recomputed by tests/unit/color/lokum.test.ts against the
      grounds that actually ship, at full chroma and at half. */
-  --cat-fundamentals:      oklch(0.575 0.098 189);  /* MİNE    — teal        */
+  --cat-fundamentals:      oklch(0.575 0.098 189);  /* TURKUAZ  — turquoise   */
   --cat-fundamentals-half: oklch(0.575 0.049 189);
-  --cat-intermediate:      oklch(0.575 0.128 240);  /* ÇİNİ    — İznik blue  */
+  --cat-intermediate:      oklch(0.575 0.128 240);  /* LACİVERT — İznik navy  */
   --cat-intermediate-half: oklch(0.575 0.064 240);
-  --cat-expert:            oklch(0.575 0.130 320);  /* ERİK    — plum        */
+  --cat-expert:            oklch(0.575 0.130 320);  /* ERİK     — plum        */
   --cat-expert-half:       oklch(0.575 0.065 320);
-  --cat-ecosystem:         oklch(0.575 0.115  75);  /* BAL     — honey       */
+  --cat-ecosystem:         oklch(0.575 0.115  75);  /* BAL      — honey       */
   --cat-ecosystem-half:    oklch(0.575 0.0575 75);
-  --cat-protocols:         oklch(0.575 0.120  30);  /* KİL     — clay        */
+  --cat-protocols:         oklch(0.575 0.120  30);  /* KİREMİT  — roof tile   */
   --cat-protocols-half:    oklch(0.575 0.060  30);
 
   /* There is no `--cat-dormant`. §13.1.2: a category with nothing signed off

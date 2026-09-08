@@ -213,9 +213,97 @@ in another (measured: 56), 23 RLS policies (28) and about 33k lines of `src` (39
 
 ---
 
+### D12 · T4 keeps its palette, and only the ground is lightened — 2026-09-08
+
+**Considered:** a different theme / four re-lit palettes with new hues / T4's exact palette with the
+ground as the single variable
+**Chose:** the third, after the author corrected the second. His words: *"the original T4 is already
+really good. the only thing for variant I wanted was the background color which also our navbar items
+activate with. the original colors of T4 should be kept in variants, only the background filling
+color should change and become lighter ones."*
+**Because:** the objection was to one token, not to the scheme. Cobalt, clay, ochre, teal and gold are
+accepted; the cream ground behind them is what read as heavy.
+**My first attempt was wrong and is worth recording as such.** I read *"too strong and too dark and
+saturated"* as being about the cobalt header and built four palettes with new hues taken from the
+logo, which threw away the part he had just said he liked. The lesson is narrow and useful: when
+someone says a design is good except for one thing, the variable is that one thing.
+**Measured, on the four candidates that replaced them:** today's ground `#F4ECE0` sits at 84.6%
+relative luminance; the four run 89.3%, 93.3%, 96.6% and 94.3%. Body text on it goes 13.24 to
+13.94–15.01:1, secondary text 4.96 to 5.22–5.62:1.
+**What has to move with it, and nothing else does:** the raised surface. A card cannot be darker than
+the page it sits on, so `--paper` goes to white on the three lightest grounds. Every other token is
+byte-identical to what shipped.
+**The one thing that improves for free:** the ground is also the fill of the active navbar item, so
+lifting it lifts that chip's contrast against the cobalt bar — 11.36:1 today, up to 12.88:1.
+**Still not fixed by this, and a real defect:** the teal tick is 3.44:1 on today's cream and only
+reaches 3.90:1 on the lightest ground, so the ground cannot rescue it. Drawn as a filled disc with a
+white check it is a graphical indicator rather than text, needing 3:1, which it clears everywhere. As
+a hairline glyph it would not. That is why the tick changed shape and not colour.
+**Method worth keeping:** the four are generated from one template by a script, so structure,
+spacing, type and ornament are byte-identical and the ground is provably the only difference.
+**Rule that follows:** `specs/DESIGN.md`, rewritten around T4. Which ground is open — see O4.
+
+### D13 · The catalog ships all three views behind a toggle, not one of them — 2026-09-08
+
+**Considered:** pick one of the three catalog alternatives / ship all three with a view switch
+**Chose:** all three, on the author's instruction: *"I want All 3 !!! They should be all loaded and
+using a toggle."* Renamed to what each one is for: **Overview**, **Cards**, **Table**.
+**Because:** they answer three different questions. Overview shows the shape of the course, Cards is
+for browsing when you do not know what you want, Table is for scanning and comparing when you do.
+One view has to lose one of those.
+**Rejected picking one because:** the author asked for all three, having seen all three.
+**The cost, recorded so nobody is surprised by it later:** three renderings to keep working instead of
+one. It is bounded by making them views over one data source with no view-specific data and no
+view-specific route, so a curriculum change cannot update one and miss another. Anything a view needs
+that the others do not is the signal that this decision needs revisiting.
+
+### D14 · Completion appears in two places, with two different controls — 2026-09-08
+
+**Considered:** one control used everywhere / a different control per surface
+**Chose:** the author's split — option A at the end of a module, option C on the home and progress
+pages.
+**Because:** the two surfaces ask different questions. At the end of a module the reader has one thing
+to say and wants one button where they already are. On home and progress they are looking at
+thirty-three modules at once and want to see and adjust state without opening anything.
+**Rejected one control everywhere because:** the module-end button becomes noise in an overview, and
+an overview control at the end of a module makes the reader hunt for the one row that is theirs.
+**Constraint this puts on the build:** both controls write through `src/lib/record/store.ts`, which is
+the only writer (`ARCHITECTURE.md` §5). Two controls, one path.
+
+### D15 · The content column is centred and takes the width it is given — 2026-09-08
+
+**Considered:** keep the shipped 656px left-aligned prose column / centre it at the same width /
+centre it and let it grow
+**Chose:** the third. The author: *"The center content in each module should be center aligned and
+span the whole container, while some horizontal space from left sidebar and right 'on this page' is
+reserved."*
+**Because:** the shipped column left a wide empty band between the prose and the right rail on any
+normal display, which read as a rendering fault rather than as a margin.
+**Measured at 1440px:** the column comes out 814px wide, capped at 80ch, centred in the 974px track
+left over by the two rails, so it clears each of them by 80px; with the list folded away the gutters
+grow to 211px and the column does not. That cap is the reason it grows without becoming unreadable.
+**Rejected the same width, centred, because:** it moves the empty band rather than removing it.
+**Comes with it:** the module list folds away in 200ms, restored by a tab pinned to the left edge. The
+first version of that tab was fixed at `top:88px` under a `z-index:40` sticky header and could not be
+clicked at all — found by driving it in a browser, not by reading it.
+
+
 ## Open questions
 
-### O1 · Which direction the interface takes — opened 2026-09-08
+### ~~O1 · Which direction the interface takes~~ — opened and closed 2026-09-08
+
+**Closed by the author's choices**, all ten of them, recorded in `logs/PROGRESS.md` M8 and in
+`playground/index.html`: vocabulary set **C**, theme **T4** at lower volume (D12), navbar **A**,
+catalog **all three behind a toggle** (D13), the module layout and sidebar already in T4, completion
+**A** at a module's end and **C** on the overviews (D14), **dark slab** for code and diagrams,
+progress and account **A**, home **A**.
+
+Both sub-questions were answered by set C: `Complete` is the label, and `Level` describes the
+curriculum. What remains of the second is folded into O2.
+
+The original question, for the record.
+
+<!-- superseded -->
 
 Waiting on the author. Nine choices are outstanding: one vocabulary set of three, one theme of four,
 and one option each for navbar, catalog, module layout, sidebar, completion control, code and diagram
@@ -259,3 +347,23 @@ XP, Class, Uptime and "I at 8" are all shown on the home page today. XP and Upti
 real and can be relabelled to minutes read and days in a row. **Class and "I at 8" have no proposed
 replacement**, because nobody has yet said what question they were answering. Leaving them out is the
 current proposal.
+
+### O4 · Which of the four grounds — opened 2026-09-08
+
+The one thing still open in the interface revision, and the last thing blocking M9. T4's palette is
+unchanged; the ground is the only variable. Side by side at `playground/01-theme-T4-grounds.html`.
+
+| | Ground | | Luminance | Body text | Active navbar item on the bar |
+|---|---|---|---|---|---|
+| — | today | `#F4ECE0` | 84.6% | 13.24:1 | 11.36:1 |
+| **G1** | Sugared | `#F8F2E8` | 89.3% | 13.94:1 | 11.95:1 |
+| **G2** | Icing | `#FBF7F0` | 93.3% | 14.53:1 | 12.46:1 |
+| **G3** | Powder | `#FDFBF7` | 96.6% | 15.01:1 | 12.88:1 |
+| **G4** | Lokum cream | `#FFF8E9` | 94.3% | 14.67:1 | 12.58:1 |
+
+G4 is the logo's own ground, sampled from `final.png`; the other three are neutral steps along the
+same warm axis. The numbers are computed from the tokens by the generator, not asserted.
+
+**Answering this changes two values** in `specs/DESIGN.md`, `--ground` and `--paper`, where all four
+are carried as named grounds under one selector. Nothing else in the design system depends on it. See
+D12.

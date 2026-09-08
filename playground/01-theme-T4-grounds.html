@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bazaar palette variants — B1 to B4</title>
+<title>Bazaar ground variants — G1 to G4</title>
 <style>
 :root { --sans:"Avenir Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
         --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
@@ -81,30 +81,33 @@ h1 { font:600 32px/1.2 var(--sans); margin:0 0 12px; letter-spacing:-.015em }
 </style></head><body>
 
 <div class="lead">
-  <h1>Bazaar, four palettes</h1>
-  <p>Same design, four colour schemes. The structure, spacing, type and ornament are generated from
-  one template, so the only thing you are choosing on this page is colour. Every hue comes from the
-  Lokum AI logo, sampled from the file: ground <code>#FFF8E9</code>, rose <code>#DC5F3F</code>,
-  orange <code>#E67410</code>, green <code>#415C29</code>.</p>
+  <h1>Bazaar, four grounds</h1>
+  <p>T4's palette, unchanged. Cobalt <code>#282864</code>, clay <code>#A0503C</code>, ochre
+  <code>#C8A078</code>, teal <code>#2F8C86</code> and gold <code>#B8873B</code> are exactly as they
+  shipped. One token moves: <b>the ground</b>, the fill behind the page, which is also the fill of the
+  active item in the navbar. Lifting it lifts that chip's contrast against the cobalt bar at the same
+  time, which is why the last column below goes up as the ground goes lighter.</p>
+  <p>Today's ground is <code>#F4ECE0</code>, at 84.6% relative luminance. The four below run from
+  89.3% to 96.6%. Raised surfaces move with it, because a card cannot be darker than the page it sits
+  on; nothing else in the palette changes.</p>
   <p>Each full page also carries the three changes you asked for: a centred content column with
-  gutters clearing both rails, a sidebar that folds away, a completion tick that reads as a filled
-  disc rather than a hairline, and the level you are in enlarged and marked in the sidebar.</p>
-  <p>The numbers under each card are computed from the tokens, not asserted. Everything on all four
-  clears 4.5:1.</p>
+  gutters clearing both rails, a module list that folds away, a completion tick that reads as a filled
+  disc rather than a hairline, and the level you are in enlarged and marked.</p>
+  <p>The numbers under each card are computed from the tokens, not asserted.</p>
 </div>
 
 <div class="grid">
 
 <section class="card">
-  <div class="hd"><b>B1</b><h2>Lokum Light</h2><a class="open" href="01-theme-T4-bazaar-B1-lokum-light.html">Open full page &rarr;</a></div>
-  <p class="note">The logo itself: black type on its own cream, ornament in the three lokum colours. The header stops being a coloured slab and becomes paper, so nothing on the page is darker than the text.</p>
-  <div class="mock" style="--g:#fffbf0;--p:#ffffff;--sd:#f6ecd9;--ln:#e8dcc4;
-       --l2c:#d7c6a8;--ik:#1a1a18;--mu:#6e665a;--hb:#fff8e9;--hi:#1a1a18;
-       --hd:#6e665a;--hc:#1a1a18;--hci:#fff8e9;--ac:#aa3d22;
-       --ok:#4a6b2e;--k1:#5c7a3a;--k2:#c4711a;--k3:#b8503a;--k4:#a8853c;--k5:#6b6480;
-       --bg0:#f6ecd9;--ba:#a8c08a;--bb:#f0c38f;--bc:#e0a08c;--gd:#d9bc7a">
+  <div class="hd"><b>G1</b><h2>Sugared</h2><a class="open" href="01-theme-T4-ground-G1-sugared.html">Open full page &rarr;</a></div>
+  <p class="note">One step up. Still unmistakably a cream, just off the floor.</p>
+  <div class="mock" style="--g:#f8f2e8;--p:#fffefb;--sd:#e6dac6;--ln:#d8cbb4;
+       --l2c:#c3b299;--ik:#20242e;--mu:#6a6558;--hb:#282864;--hi:#ffffff;
+       --hd:#c9c6e4;--hc:#f8f2e8;--hci:#1b1b47;--ac:#282864;
+       --ok:#2f8c86;--k1:#2f8c86;--k2:#282864;--k3:#7a4a86;--k4:#b8873b;--k5:#a0503c;
+       --bg0:#282864;--ba:#2f8c86;--bb:#c8a078;--bc:#a0503c;--gd:#b8873b">
     <div class="m-top">
-      <span class="m-cubes"><i class="rose"></i><i class="gap"></i><i class="orange"></i><i class="green"></i></span>
+      <span class="m-cubes"><i class="rose"></i><i class="orange"></i><i class="green"></i><i class="gap"></i></span>
       <span class="m-brand">AI Engineering Bazaar</span>
       <span class="m-nav on">Curriculum</span><span class="m-nav">Catalog</span><span class="m-nav">My progress</span>
       <span class="m-field"></span>
@@ -132,20 +135,20 @@ h1 { font:600 32px/1.2 var(--sans); margin:0 0 12px; letter-spacing:-.015em }
       </div>
     </div>
   </div>
-  <div class="sw"><i style="background:#fffbf0" title="ground #fffbf0"></i><i style="background:#ffffff" title="paper #ffffff"></i><i style="background:#f6ecd9" title="sand #f6ecd9"></i><i style="background:#fff8e9" title="headbg #fff8e9"></i><i style="background:#f6ecd9" title="bandground #f6ecd9"></i><i style="background:#5c7a3a" title="l1 #5c7a3a"></i><i style="background:#c4711a" title="l2 #c4711a"></i><i style="background:#b8503a" title="l3 #b8503a"></i><i style="background:#a8853c" title="l4 #a8853c"></i><i style="background:#6b6480" title="l5 #6b6480"></i><i style="background:#aa3d22" title="accent #aa3d22"></i><i style="background:#4a6b2e" title="ok #4a6b2e"></i></div>
-  <table class="met"><tr><td>Header luminance</td><td><b>94.3%</b> &nbsp;<span>vs 2.9% today</span></td></tr><tr><td>Body text</td><td>16.86:1</td></tr><tr><td>Secondary text</td><td>5.47:1</td></tr><tr><td>Header text &middot; idle nav</td><td>16.48:1 &middot; 5.35:1</td></tr><tr><td>Link &middot; tick</td><td>5.97:1 &middot; 5.91:1</td></tr></table>
+  <div class="sw"><i style="background:#f8f2e8" title="ground #f8f2e8"></i><i style="background:#fffefb" title="paper #fffefb"></i><i style="background:#e6dac6" title="sand #e6dac6"></i><i style="background:#282864" title="headbg #282864"></i><i style="background:#282864" title="bandground #282864"></i><i style="background:#2f8c86" title="l1 #2f8c86"></i><i style="background:#282864" title="l2 #282864"></i><i style="background:#7a4a86" title="l3 #7a4a86"></i><i style="background:#b8873b" title="l4 #b8873b"></i><i style="background:#a0503c" title="l5 #a0503c"></i><i style="background:#282864" title="accent #282864"></i><i style="background:#2f8c86" title="ok #2f8c86"></i></div>
+  <table class="met"><tr><td>Ground</td><td><code>#f8f2e8</code> &nbsp;<b>89.3%</b> &nbsp;<span>vs 84.6% today</span></td></tr><tr><td>Body text on it</td><td>13.94:1 &nbsp;<span>13.24 today</span></td></tr><tr><td>Secondary text</td><td>5.22:1 &nbsp;<span>4.96 today</span></td></tr><tr><td>Link</td><td>11.95:1 &nbsp;<span>11.36 today</span></td></tr><tr><td>Active navbar item on the bar</td><td>11.95:1 &nbsp;<span>11.36 today</span></td></tr><tr><td>Raised surface</td><td><code>#fffefb</code></td></tr></table>
 </section>
 
 <section class="card">
-  <div class="hd"><b>B2</b><h2>Sugar Sand</h2><a class="open" href="01-theme-T4-bazaar-B2-sugar-sand.html">Open full page &rarr;</a></div>
-  <p class="note">A sand header instead of a cobalt one, with slate-indigo type on it. Keeps a coloured band across the top so the site still has a lid, at a third of the old contrast.</p>
-  <div class="mock" style="--g:#fdf8ee;--p:#ffffff;--sd:#f1e5d0;--ln:#e4d6bd;
-       --l2c:#d0bd9e;--ik:#23252e;--mu:#6b6558;--hb:#f1e5d0;--hi:#2f3245;
-       --hd:#6b6558;--hc:#2f3245;--hci:#fdf8ee;--ac:#4a4e75;
-       --ok:#4f7333;--k1:#4b8177;--k2:#5b5e8c;--k3:#8a5f82;--k4:#a8823c;--k5:#b0604a;
-       --bg0:#e7d8bd;--ba:#8fb3ac;--bb:#e2b98c;--bc:#c98a76;--gd:#c9a760">
+  <div class="hd"><b>G2</b><h2>Icing</h2><a class="open" href="01-theme-T4-ground-G2-icing.html">Open full page &rarr;</a></div>
+  <p class="note">Clearly lighter, and the raised surfaces go to pure white to keep their edge.</p>
+  <div class="mock" style="--g:#fbf7f0;--p:#ffffff;--sd:#e6dac6;--ln:#d8cbb4;
+       --l2c:#c3b299;--ik:#20242e;--mu:#6a6558;--hb:#282864;--hi:#ffffff;
+       --hd:#c9c6e4;--hc:#fbf7f0;--hci:#1b1b47;--ac:#282864;
+       --ok:#2f8c86;--k1:#2f8c86;--k2:#282864;--k3:#7a4a86;--k4:#b8873b;--k5:#a0503c;
+       --bg0:#282864;--ba:#2f8c86;--bb:#c8a078;--bc:#a0503c;--gd:#b8873b">
     <div class="m-top">
-      <span class="m-cubes"><i class="rose"></i><i class="gap"></i><i class="orange"></i><i class="green"></i></span>
+      <span class="m-cubes"><i class="rose"></i><i class="orange"></i><i class="green"></i><i class="gap"></i></span>
       <span class="m-brand">AI Engineering Bazaar</span>
       <span class="m-nav on">Curriculum</span><span class="m-nav">Catalog</span><span class="m-nav">My progress</span>
       <span class="m-field"></span>
@@ -173,20 +176,20 @@ h1 { font:600 32px/1.2 var(--sans); margin:0 0 12px; letter-spacing:-.015em }
       </div>
     </div>
   </div>
-  <div class="sw"><i style="background:#fdf8ee" title="ground #fdf8ee"></i><i style="background:#ffffff" title="paper #ffffff"></i><i style="background:#f1e5d0" title="sand #f1e5d0"></i><i style="background:#f1e5d0" title="headbg #f1e5d0"></i><i style="background:#e7d8bd" title="bandground #e7d8bd"></i><i style="background:#4b8177" title="l1 #4b8177"></i><i style="background:#5b5e8c" title="l2 #5b5e8c"></i><i style="background:#8a5f82" title="l3 #8a5f82"></i><i style="background:#a8823c" title="l4 #a8823c"></i><i style="background:#b0604a" title="l5 #b0604a"></i><i style="background:#4a4e75" title="accent #4a4e75"></i><i style="background:#4f7333" title="ok #4f7333"></i></div>
-  <table class="met"><tr><td>Header luminance</td><td><b>79.3%</b> &nbsp;<span>vs 2.9% today</span></td></tr><tr><td>Body text</td><td>14.42:1</td></tr><tr><td>Secondary text</td><td>5.47:1</td></tr><tr><td>Header text &middot; idle nav</td><td>10.14:1 &middot; 4.65:1</td></tr><tr><td>Link &middot; tick</td><td>7.52:1 &middot; 5.18:1</td></tr></table>
+  <div class="sw"><i style="background:#fbf7f0" title="ground #fbf7f0"></i><i style="background:#ffffff" title="paper #ffffff"></i><i style="background:#e6dac6" title="sand #e6dac6"></i><i style="background:#282864" title="headbg #282864"></i><i style="background:#282864" title="bandground #282864"></i><i style="background:#2f8c86" title="l1 #2f8c86"></i><i style="background:#282864" title="l2 #282864"></i><i style="background:#7a4a86" title="l3 #7a4a86"></i><i style="background:#b8873b" title="l4 #b8873b"></i><i style="background:#a0503c" title="l5 #a0503c"></i><i style="background:#282864" title="accent #282864"></i><i style="background:#2f8c86" title="ok #2f8c86"></i></div>
+  <table class="met"><tr><td>Ground</td><td><code>#fbf7f0</code> &nbsp;<b>93.3%</b> &nbsp;<span>vs 84.6% today</span></td></tr><tr><td>Body text on it</td><td>14.53:1 &nbsp;<span>13.24 today</span></td></tr><tr><td>Secondary text</td><td>5.44:1 &nbsp;<span>4.96 today</span></td></tr><tr><td>Link</td><td>12.46:1 &nbsp;<span>11.36 today</span></td></tr><tr><td>Active navbar item on the bar</td><td>12.46:1 &nbsp;<span>11.36 today</span></td></tr><tr><td>Raised surface</td><td><code>#ffffff</code></td></tr></table>
 </section>
 
 <section class="card">
-  <div class="hd"><b>B3</b><h2>Olive Grove</h2><a class="open" href="01-theme-T4-bazaar-B3-olive-grove.html">Open full page &rarr;</a></div>
-  <p class="note">The green cube, desaturated and lifted, leads instead of the blue. Still a coloured header, but a mid-tone one, so the page reads warm rather than corporate.</p>
-  <div class="mock" style="--g:#fbf8f0;--p:#ffffff;--sd:#efe7d6;--ln:#e2dac6;
-       --l2c:#cdc2a8;--ik:#22241d;--mu:#6a6759;--hb:#5e6b45;--hi:#fbf8f0;
-       --hd:#e4e9da;--hc:#fbf8f0;--hci:#3c4629;--ac:#4a5c34;
-       --ok:#4f7333;--k1:#5e7a3c;--k2:#54607f;--k3:#8a5f6f;--k4:#a8823c;--k5:#a8563a;
-       --bg0:#4b5736;--ba:#8fa86a;--bb:#dfb783;--bc:#c47f5f;--gd:#cbab63">
+  <div class="hd"><b>G3</b><h2>Powder</h2><a class="open" href="01-theme-T4-ground-G3-powder.html">Open full page &rarr;</a></div>
+  <p class="note">Almost white, still warm. Cards separate on their hairline rather than on their fill.</p>
+  <div class="mock" style="--g:#fdfbf7;--p:#ffffff;--sd:#e6dac6;--ln:#d8cbb4;
+       --l2c:#c3b299;--ik:#20242e;--mu:#6a6558;--hb:#282864;--hi:#ffffff;
+       --hd:#c9c6e4;--hc:#fdfbf7;--hci:#1b1b47;--ac:#282864;
+       --ok:#2f8c86;--k1:#2f8c86;--k2:#282864;--k3:#7a4a86;--k4:#b8873b;--k5:#a0503c;
+       --bg0:#282864;--ba:#2f8c86;--bb:#c8a078;--bc:#a0503c;--gd:#b8873b">
     <div class="m-top">
-      <span class="m-cubes"><i class="rose"></i><i class="gap"></i><i class="orange"></i><i class="green"></i></span>
+      <span class="m-cubes"><i class="rose"></i><i class="orange"></i><i class="green"></i><i class="gap"></i></span>
       <span class="m-brand">AI Engineering Bazaar</span>
       <span class="m-nav on">Curriculum</span><span class="m-nav">Catalog</span><span class="m-nav">My progress</span>
       <span class="m-field"></span>
@@ -214,20 +217,20 @@ h1 { font:600 32px/1.2 var(--sans); margin:0 0 12px; letter-spacing:-.015em }
       </div>
     </div>
   </div>
-  <div class="sw"><i style="background:#fbf8f0" title="ground #fbf8f0"></i><i style="background:#ffffff" title="paper #ffffff"></i><i style="background:#efe7d6" title="sand #efe7d6"></i><i style="background:#5e6b45" title="headbg #5e6b45"></i><i style="background:#4b5736" title="bandground #4b5736"></i><i style="background:#5e7a3c" title="l1 #5e7a3c"></i><i style="background:#54607f" title="l2 #54607f"></i><i style="background:#8a5f6f" title="l3 #8a5f6f"></i><i style="background:#a8823c" title="l4 #a8823c"></i><i style="background:#a8563a" title="l5 #a8563a"></i><i style="background:#4a5c34" title="accent #4a5c34"></i><i style="background:#4f7333" title="ok #4f7333"></i></div>
-  <table class="met"><tr><td>Header luminance</td><td><b>13.3%</b> &nbsp;<span>vs 2.9% today</span></td></tr><tr><td>Body text</td><td>14.79:1</td></tr><tr><td>Secondary text</td><td>5.35:1</td></tr><tr><td>Header text &middot; idle nav</td><td>5.4:1 &middot; 4.63:1</td></tr><tr><td>Link &middot; tick</td><td>6.89:1 &middot; 5.16:1</td></tr></table>
+  <div class="sw"><i style="background:#fdfbf7" title="ground #fdfbf7"></i><i style="background:#ffffff" title="paper #ffffff"></i><i style="background:#e6dac6" title="sand #e6dac6"></i><i style="background:#282864" title="headbg #282864"></i><i style="background:#282864" title="bandground #282864"></i><i style="background:#2f8c86" title="l1 #2f8c86"></i><i style="background:#282864" title="l2 #282864"></i><i style="background:#7a4a86" title="l3 #7a4a86"></i><i style="background:#b8873b" title="l4 #b8873b"></i><i style="background:#a0503c" title="l5 #a0503c"></i><i style="background:#282864" title="accent #282864"></i><i style="background:#2f8c86" title="ok #2f8c86"></i></div>
+  <table class="met"><tr><td>Ground</td><td><code>#fdfbf7</code> &nbsp;<b>96.6%</b> &nbsp;<span>vs 84.6% today</span></td></tr><tr><td>Body text on it</td><td>15.01:1 &nbsp;<span>13.24 today</span></td></tr><tr><td>Secondary text</td><td>5.62:1 &nbsp;<span>4.96 today</span></td></tr><tr><td>Link</td><td>12.88:1 &nbsp;<span>11.36 today</span></td></tr><tr><td>Active navbar item on the bar</td><td>12.88:1 &nbsp;<span>11.36 today</span></td></tr><tr><td>Raised surface</td><td><code>#ffffff</code></td></tr></table>
 </section>
 
 <section class="card">
-  <div class="hd"><b>B4</b><h2>Soft Cobalt</h2><a class="open" href="01-theme-T4-bazaar-B4-soft-cobalt.html">Open full page &rarr;</a></div>
-  <p class="note">The T4 you already like, dialled down: the same indigo family lifted and desaturated, on a lighter ground. Choose this if the structure was right and only the volume was wrong.</p>
-  <div class="mock" style="--g:#faf6ee;--p:#ffffff;--sd:#efe7d8;--ln:#e2d9c7;
-       --l2c:#ccc0aa;--ik:#20222b;--mu:#696556;--hb:#5c5f8e;--hi:#fdfbf6;
-       --hd:#dfdfee;--hc:#fdfbf6;--hci:#3c3f66;--ac:#474b78;
-       --ok:#4f7333;--k1:#4b8177;--k2:#5b5e8c;--k3:#7f5c86;--k4:#a8823c;--k5:#a8563a;
-       --bg0:#4c4f7a;--ba:#8fb3ac;--bb:#e0b98f;--bc:#c4826a;--gd:#c9a760">
+  <div class="hd"><b>G4</b><h2>Lokum cream</h2><a class="open" href="01-theme-T4-ground-G4-lokum-cream.html">Open full page &rarr;</a></div>
+  <p class="note">The logo's own ground, sampled from final.png. Lighter than today, and warmer with it.</p>
+  <div class="mock" style="--g:#fff8e9;--p:#ffffff;--sd:#e6dac6;--ln:#d8cbb4;
+       --l2c:#c3b299;--ik:#20242e;--mu:#6a6558;--hb:#282864;--hi:#ffffff;
+       --hd:#c9c6e4;--hc:#fff8e9;--hci:#1b1b47;--ac:#282864;
+       --ok:#2f8c86;--k1:#2f8c86;--k2:#282864;--k3:#7a4a86;--k4:#b8873b;--k5:#a0503c;
+       --bg0:#282864;--ba:#2f8c86;--bb:#c8a078;--bc:#a0503c;--gd:#b8873b">
     <div class="m-top">
-      <span class="m-cubes"><i class="rose"></i><i class="gap"></i><i class="orange"></i><i class="green"></i></span>
+      <span class="m-cubes"><i class="rose"></i><i class="orange"></i><i class="green"></i><i class="gap"></i></span>
       <span class="m-brand">AI Engineering Bazaar</span>
       <span class="m-nav on">Curriculum</span><span class="m-nav">Catalog</span><span class="m-nav">My progress</span>
       <span class="m-field"></span>
@@ -255,20 +258,20 @@ h1 { font:600 32px/1.2 var(--sans); margin:0 0 12px; letter-spacing:-.015em }
       </div>
     </div>
   </div>
-  <div class="sw"><i style="background:#faf6ee" title="ground #faf6ee"></i><i style="background:#ffffff" title="paper #ffffff"></i><i style="background:#efe7d8" title="sand #efe7d8"></i><i style="background:#5c5f8e" title="headbg #5c5f8e"></i><i style="background:#4c4f7a" title="bandground #4c4f7a"></i><i style="background:#4b8177" title="l1 #4b8177"></i><i style="background:#5b5e8c" title="l2 #5b5e8c"></i><i style="background:#7f5c86" title="l3 #7f5c86"></i><i style="background:#a8823c" title="l4 #a8823c"></i><i style="background:#a8563a" title="l5 #a8563a"></i><i style="background:#474b78" title="accent #474b78"></i><i style="background:#4f7333" title="ok #4f7333"></i></div>
-  <table class="met"><tr><td>Header luminance</td><td><b>12.4%</b> &nbsp;<span>vs 2.9% today</span></td></tr><tr><td>Body text</td><td>14.7:1</td></tr><tr><td>Secondary text</td><td>5.42:1</td></tr><tr><td>Header text &middot; idle nav</td><td>5.83:1 &middot; 4.57:1</td></tr><tr><td>Link &middot; tick</td><td>7.65:1 &middot; 5.08:1</td></tr></table>
+  <div class="sw"><i style="background:#fff8e9" title="ground #fff8e9"></i><i style="background:#ffffff" title="paper #ffffff"></i><i style="background:#e6dac6" title="sand #e6dac6"></i><i style="background:#282864" title="headbg #282864"></i><i style="background:#282864" title="bandground #282864"></i><i style="background:#2f8c86" title="l1 #2f8c86"></i><i style="background:#282864" title="l2 #282864"></i><i style="background:#7a4a86" title="l3 #7a4a86"></i><i style="background:#b8873b" title="l4 #b8873b"></i><i style="background:#a0503c" title="l5 #a0503c"></i><i style="background:#282864" title="accent #282864"></i><i style="background:#2f8c86" title="ok #2f8c86"></i></div>
+  <table class="met"><tr><td>Ground</td><td><code>#fff8e9</code> &nbsp;<b>94.3%</b> &nbsp;<span>vs 84.6% today</span></td></tr><tr><td>Body text on it</td><td>14.67:1 &nbsp;<span>13.24 today</span></td></tr><tr><td>Secondary text</td><td>5.49:1 &nbsp;<span>4.96 today</span></td></tr><tr><td>Link</td><td>12.58:1 &nbsp;<span>11.36 today</span></td></tr><tr><td>Active navbar item on the bar</td><td>12.58:1 &nbsp;<span>11.36 today</span></td></tr><tr><td>Raised surface</td><td><code>#ffffff</code></td></tr></table>
 </section>
 
 <section class="card">
   <div class="hd"><b>T4</b><h2>T4 Bazaar (what you have now)</h2><a class="open" href="01-theme-T4-bazaar.html">Open full page &rarr;</a></div>
-  <p class="note">For reference. Header luminance 2.9%.</p>
+  <p class="note">For reference: the ground as it ships today.</p>
   <div class="mock" style="--g:#f4ece0;--p:#fffdf9;--sd:#e6dac6;--ln:#d8cbb4;
        --l2c:#c3b299;--ik:#20242e;--mu:#6a6558;--hb:#282864;--hi:#ffffff;
        --hd:#c9c6e4;--hc:#f4ece0;--hci:#1b1b47;--ac:#282864;
        --ok:#2f8c86;--k1:#2f8c86;--k2:#282864;--k3:#7a4a86;--k4:#b8873b;--k5:#a0503c;
        --bg0:#282864;--ba:#2f8c86;--bb:#c8a078;--bc:#a0503c;--gd:#b8873b">
     <div class="m-top">
-      <span class="m-cubes"><i class="rose"></i><i class="gap"></i><i class="orange"></i><i class="green"></i></span>
+      <span class="m-cubes"><i class="rose"></i><i class="orange"></i><i class="green"></i><i class="gap"></i></span>
       <span class="m-brand">AI Engineering Bazaar</span>
       <span class="m-nav on">Curriculum</span><span class="m-nav">Catalog</span><span class="m-nav">My progress</span>
       <span class="m-field"></span>
@@ -297,7 +300,7 @@ h1 { font:600 32px/1.2 var(--sans); margin:0 0 12px; letter-spacing:-.015em }
     </div>
   </div>
   <div class="sw"><i style="background:#f4ece0" title="ground #f4ece0"></i><i style="background:#fffdf9" title="paper #fffdf9"></i><i style="background:#e6dac6" title="sand #e6dac6"></i><i style="background:#282864" title="headbg #282864"></i><i style="background:#282864" title="bandground #282864"></i><i style="background:#2f8c86" title="l1 #2f8c86"></i><i style="background:#282864" title="l2 #282864"></i><i style="background:#7a4a86" title="l3 #7a4a86"></i><i style="background:#b8873b" title="l4 #b8873b"></i><i style="background:#a0503c" title="l5 #a0503c"></i><i style="background:#282864" title="accent #282864"></i><i style="background:#2f8c86" title="ok #2f8c86"></i></div>
-  <table class="met"><tr><td>Header luminance</td><td><b>2.9%</b></td></tr><tr><td>Body text</td><td>13.24:1</td></tr><tr><td>Secondary text</td><td>4.96:1</td></tr><tr><td>Header text &middot; idle nav</td><td>13.31:1 &middot; 8.04:1</td></tr><tr><td>Link &middot; tick</td><td>11.36:1 &middot; 3.44:1</td></tr></table>
+  <table class="met"><tr><td>Ground</td><td><code>#f4ece0</code> &nbsp;<b>84.6%</b></td></tr><tr><td>Body text on it</td><td>13.24:1</td></tr><tr><td>Secondary text</td><td>4.96:1</td></tr><tr><td>Link</td><td>11.36:1</td></tr><tr><td>Active navbar item on the bar</td><td>11.36:1</td></tr><tr><td>Raised surface</td><td><code>#fffdf9</code></td></tr></table>
 </section>
 </div>
 </body></html>

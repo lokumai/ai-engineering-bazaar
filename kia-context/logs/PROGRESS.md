@@ -51,7 +51,13 @@ last_updated: "2026-09-08"
 | **M5** | One central curriculum config | reordering the course is one line | M4 | ✅ Done |
 | **M6** | Intermediate and Ecosystem written | 19 of 33 modules written, every one bilingual | M1 | ✅ Done |
 | **M7** | The curriculum reordered | the config matches the author's intended order, everything green | M5, M6 | 🔄 In progress |
-| **M8** | The interface revised | a first-time reader can navigate without learning anything | M7 | 🔄 In progress |
+| **M8** | The interface revised | a first-time reader can navigate without learning anything | M7 | 🔄 In progress · umbrella for M9–M14 |
+| **M9** | The vocabulary and the ground | no reader-visible string uses a retired word, and one ground is chosen | M8 | ⏸ Blocked on O4 |
+| **M10** | The shell | one navbar on every route, and a module list that folds away | M9 | ⬜ Not started |
+| **M11** | The module page | a diagram wider than the column cannot paint outside it | M10 | ⬜ Not started |
+| **M12** | The catalog | one route, three views, filters at the top | M10 | ⬜ Not started |
+| **M13** | The home page | a first-time visitor knows what this is and where to start | M10 | ⬜ Not started |
+| **M14** | Progress and account | one route instead of four, and completion editable from it | M11 | ⬜ Not started |
 
 > **Numbering never restarts.** When this file is split, part two continues at the next M.
 
@@ -201,13 +207,33 @@ functionality stays; the presentation is replaced.
 - [x] Three alternatives each for navbar, catalog, module layout, sidebar, completion, code and
       diagram colour, progress page, and home
 - [x] The diagram overflow bug reproduced and diagnosed rather than guessed at
-- [ ] The author chooses: one vocabulary set, one theme, one option per component
-- [ ] Naming and design tokens applied
-- [ ] The shell: one navbar on every page, and the collapsible module list
-- [ ] The module page, including the diagram containment fix
-- [ ] The catalog, with filters at the top and levels separated by colour
-- [ ] The home page
-- [ ] Progress and account, folding the four routes that currently compete
+- [x] Four palettes of the chosen theme, at a quarter of its volume, generated from one template
+- [x] The author chooses: ten answers, recorded below and in `playground/index.html`
+- [ ] ~~Naming and design tokens applied~~ → **M9**
+- [ ] ~~The shell: one navbar on every page, and the collapsible module list~~ → **M10**
+- [ ] ~~The module page, including the diagram containment fix~~ → **M11**
+- [ ] ~~The catalog, with filters at the top and levels separated by colour~~ → **M12**
+- [ ] ~~The home page~~ → **M13**
+- [ ] ~~Progress and account, folding the four routes that currently compete~~ → **M14**
+
+**The build was broken out into M9 to M14** at the author's request, once the choices were made. M8
+stays open as the umbrella: it is done when all six are done and its acceptance criteria below hold
+across the whole site, not one screen at a time.
+
+### What was chosen — 2026-09-08
+
+| Question | Chosen | Recorded in |
+|---|---|---|
+| Vocabulary | **C, Engineering curriculum** — Catalog, Level, Module, Complete, Requires | O1 |
+| Theme | **T4 Bazaar**, colours unchanged; which of four grounds is open | D12, O4 |
+| Navbar | **A** — one row, a dropdown per level | — |
+| Catalog | **all three views behind a toggle**: Overview, Cards, Table | D13 |
+| Module layout | the layout already in T4, with a centred full-width column | D15 |
+| Completion | **A** at the end of a module, **C** on home and progress | D14 |
+| Code and diagrams | **dark slab** | — |
+| Progress and account | **A** | — |
+| Home | **A** | — |
+| Module list | the one already in T4, foldable, current level enlarged | D15 |
 
 ### Acceptance criteria
 
@@ -222,4 +248,197 @@ functionality stays; the presentation is replaced.
 - The full gate stays green, and no test pins a fact about the content.
 
 ### Report
-Not finished. Waiting on the author's choices.
+Not finished. The direction is settled and the ground is the one thing left; the six build milestones
+are M9 to M14.
+
+
+---
+
+## 🏁 Milestone M9: The vocabulary and the ground
+
+**Blocked on O4** — the ground. Everything else in it can be written before that answer lands.
+
+Set C, *Engineering curriculum*, replaces the drawing-set vocabulary everywhere a reader can see it,
+and T4's tokens replace the Hidden Line tokens. Nothing about behaviour changes in this milestone;
+if a page does something different afterwards, that is a defect.
+
+### Deliverables
+
+- [ ] The five renames applied to every reader-visible string: subsystem → **Level**, sheet →
+      **Module**, index sheet → **Catalog**, sign-off → **Complete**, feeds/drawing → **Requires**,
+      the register → **My progress**, the drafter → **you**
+- [ ] `ARCHITECTURE.md` §9's table updated: each retired term struck through with its replacement
+- [ ] `tests/unit/copy-register.test.ts` extended so a retired word in a reader-visible string fails
+- [ ] The T4 token set written into `src/app/lokum.css`, with the chosen ground
+- [ ] `src/app/lokum-modules.css` regenerated in the same commit, per the root `CLAUDE.md`
+- [ ] The five level colours mapped to T4's, and `src/components/mascot/geometry.ts` checked, since it
+      names faces after categories
+- [ ] Turkish checked alongside English: the vocabulary change is bilingual or it is half done
+
+### Acceptance criteria
+
+- **No page states a word from the left column of `ARCHITECTURE.md` §9**, in either language. A grep
+  over the export, not over the source.
+- The copy-register test fails when a retired word is put back, verified by putting one back.
+- Every contrast and palette test recomputes from the shipped stylesheet and passes; **the tick is a
+  filled disc and clears 3:1 against the ground**, because it cannot clear 4.5:1 as text (D12).
+- The forced-colors e2e spec still passes: colour is never the only signal.
+- No behaviour changed. The record, the routes, the slugs and the reader's saved progress are
+  untouched, and `git status` shows nothing under `mini-courses/`.
+
+### Report
+Not started.
+
+---
+
+## 🏁 Milestone M10: The shell
+
+One navbar on every route, and a module list that gets out of the way. This is the milestone that
+answers "no active, unified navbar" and "the left and right components should anchor to the edges".
+
+### Deliverables
+
+- [ ] Navbar option **A**: one row, on every route, with a dropdown per level
+- [ ] The current route marked in it, and the current level marked in the dropdown
+- [ ] The module list as an accordion, one section per level, the current level **enlarged with a
+      coloured edge** and its count in the reader's own ink rather than grey
+- [ ] It folds away in 200ms, with a tab pinned to the left edge to bring it back, and the fold
+      remembered per reader
+- [ ] `prefers-reduced-motion` respected: the fold is instant, not animated
+- [ ] Both rails anchored to the window edges, with the content column centred between them (D15)
+- [ ] The completion tick as a filled disc, large enough to read at a glance
+
+### Acceptance criteria
+
+- Every route carries the same navbar, verified by loading all 17 in a browser and comparing.
+- The fold moves the column and restores it, verified by driving it: the list's measured width goes
+  to zero and back. **Not by reading the CSS** — the first version of that tab was unclickable under a
+  sticky header and only a browser found it.
+- Keyboard reaches the dropdown, the fold and the restore tab, with a visible focus ring on each.
+- At 390px the list is a sheet rather than a column, and no page scrolls sideways
+  (`responsive.spec.ts` runs at 1440, 1024 and 390).
+- The reader's fold preference is written through `src/lib/record/store.ts` or not stored at all.
+  **Not a second writer** (`ARCHITECTURE.md` §5).
+
+### Report
+Not started.
+
+---
+
+## 🏁 Milestone M11: The module page
+
+The screen the reader spends their time on, and the one carrying the only flaw in the thirteen that
+was not a matter of taste.
+
+### Deliverables
+
+- [ ] T4's layout, with the content column centred and spanning its container, capped so it stays
+      readable (D15: 80ch, measured at 814px on a 1440px window)
+- [ ] Code blocks and diagrams as a **dark slab**
+- [ ] **The diagram containment fix**: a diagram wider than the column scrolls inside its own box
+- [ ] The right rail cut back to what a reader uses, and what leaves it recorded in O2 if it has no
+      home
+- [ ] Completion control **A** at the end of the module: one button where the reader already is
+- [ ] Prev and next kept, in the vocabulary of set C
+
+### Acceptance criteria
+
+- **In Chrome at 1440px, on the widest diagram in the corpus: no element of a diagram may have a
+  right edge beyond its column without a clipping ancestor.** The current failure is 90 to 145
+  elements per page outside the column, from a 1,423px SVG injected into a 656px column (D10). The
+  check has to run after mermaid has injected, because the overflow does not exist before that.
+- The same at 390px and 1024px.
+- Every capability of the module page still works: completion, undo, checklist, quick check, sources,
+  submittals, both languages.
+- Mermaid text stays legible on the dark slab, and the diagram palette clears 3:1 for graphics.
+- No test pins a word count, a table count or a module number.
+
+### Report
+Not started.
+
+---
+
+## 🏁 Milestone M12: The catalog
+
+One route, three views (D13). Filters at the top, levels told apart by colour.
+
+### Deliverables
+
+- [ ] A view toggle with an icon and a name each: **Overview**, **Cards**, **Table**
+- [ ] All three render from one data source, with no view-specific data and no view-specific route
+- [ ] Filters at the top of the page, not down a side
+- [ ] Levels separated by colour in every view, and by something other than colour as well
+- [ ] The reader's chosen view remembered
+- [ ] Both languages
+
+### Acceptance criteria
+
+- The three views show **the same set of modules** for the same filter state, asserted by comparing
+  the rendered module names between views rather than against a written list.
+- A curriculum change reaches all three views, verified by reordering one line in
+  `curriculum.yaml` and checking all three follow.
+- Filters work by keyboard and are announced; an empty result says what to do next, not "no results".
+- Levels are distinguishable under `forced-colors: active`.
+- One route. Adding a view must not add a URL.
+
+### Report
+Not started.
+
+---
+
+## 🏁 Milestone M13: The home page
+
+Option **A**. The first thing a stranger sees, and today it shows XP, Class and Uptime.
+
+### Deliverables
+
+- [ ] Home page A, in the chosen ground and vocabulary
+- [ ] Completion shown with control **C** (D14): state visible and adjustable across the course
+- [ ] The retired progress vocabulary resolved: XP and Uptime relabelled to what they measure, Class
+      and "I at 8" removed unless somebody says what question they answered (O2)
+- [ ] Every count on it derived at build time, never restated
+
+### Acceptance criteria
+
+- A reader who has never seen the site can say what this is and where to start, from the first screen
+  at 1440px and at 390px.
+- No number on the page is written in `src/`. Break one derivation and the page must change
+  (`ARCHITECTURE.md` rule: content is derived, never restated).
+- Channel A still stamps `<html>` before first paint, so progress marks are correct in frame one and
+  there is no flash of an empty record (`ARCHITECTURE.md` §12.2).
+- Signed out is the default and complete; nothing on the page requires an account.
+
+### Report
+Not started.
+
+---
+
+## 🏁 Milestone M14: Progress and account
+
+Option **A**, and the milestone that answers "profile and dashboard are unusable". Four routes
+currently compete to tell the reader the same thing.
+
+### Deliverables
+
+- [ ] One progress-and-account route, replacing the four, with the others redirecting rather than
+      404ing
+- [ ] Completion control **C** on it (D14), writing through `store.ts`
+- [ ] Export, import and erase kept and findable
+- [ ] Optional sign-in kept, gating nothing, with `AccountSync` still the single seam
+      (`ARCHITECTURE.md` §6)
+- [ ] Role paths kept, with the denominator honest about drafts
+
+### Acceptance criteria
+
+- Every capability in `ARCHITECTURE.md` §5 to §8 still works: export, import, erase, streak, role
+  paths, claim-and-merge, sign-in, sign-out.
+- **With no `.env.local` the page is complete and makes zero Supabase requests**, which the default
+  e2e run asserts.
+- With accounts on, `E2E_ACCOUNTS=1 npx playwright test accounts.spec.ts` passes and
+  `node scripts/test-rls.mjs` is unchanged: this milestone touches no policy.
+- An old bookmark to any of the four retired routes lands somewhere useful.
+- The reader can see their state without signing in, on a second device, and understand why it
+  differs.
+
+### Report
+Not started.

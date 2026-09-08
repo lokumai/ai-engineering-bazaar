@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>B2 Sugar Sand — bazaar palette variant</title>
+<title>G1 Sugared — bazaar ground variant</title>
 <style>
 /* ===========================================================================
-   BAZAAR VARIANT B2 — "Sugar Sand"
-   One design, four palettes. The structure, spacing, type and ornament are
-   byte-identical across B2 and its three siblings: they are generated from
-   one template, so the only thing you are choosing here is colour.
-   Hues come from the Lokum AI logo, sampled from the file rather than guessed:
-       ground  #FFF8E9    rose  #DC5F3F / #AA2E1B
-       orange  #E67410 / #F3A14B     green #415C29 / #274414
+   BAZAAR GROUND G1 — "Sugared"
+   T4's palette, unchanged, with ONE token moved: the ground. That fill is also
+   the fill of the active navbar item, so lifting it lifts that chip's contrast
+   against the cobalt bar at the same time.
+   Cobalt #282864, clay #A0503C, ochre #C8A078, teal #2F8C86 and gold #B8873B
+   are exactly as they shipped, sampled from assets/banner-tiles.jpeg.
+   Only `--ground` and `--paper` differ between G1 and its three siblings.
    Contrast ratios in the footer strip are computed from these tokens, not
    asserted.
    Includes the three requested changes: a centred content column with reserved
@@ -20,36 +20,38 @@
    level emphasised in the sidebar.
    =========================================================================== */
 :root {
-  --ground:#fdf8ee;
-  --paper:#ffffff;
-  --sand:#f1e5d0;
-  --line:#e4d6bd;
-  --line2:#d0bd9e;
-  --ink:#23252e;
-  --muted:#6b6558;
-  --faint:#968f80;
-  --headbg:#f1e5d0;
-  --headink:#2f3245;
-  --headdim:#6b6558;
-  --headline:#d8c7a8;
-  --headhover:rgba(47,50,69,.07);
-  --headchip:#2f3245;
-  --headchipink:#fdf8ee;
-  --headfield:rgba(47,50,69,.05);
-  --headfieldline:rgba(47,50,69,.18);
-  --accent:#4a4e75;
-  --accent2:#b0604a;
-  --ok:#4f7333;
-  --gold:#c9a760;
-  --l1:#4b8177;
-  --l2:#5b5e8c;
-  --l3:#8a5f82;
-  --l4:#a8823c;
-  --l5:#b0604a;
-  --bandground:#e7d8bd;
-  --banda:#8fb3ac;
-  --bandb:#e2b98c;
-  --bandc:#c98a76;
+  --ground:#f8f2e8;
+  --paper:#fffefb;
+  --sand:#e6dac6;
+  --line:#d8cbb4;
+  --line2:#c3b299;
+  --ink:#20242e;
+  --title:#1b1b47;
+  --muted:#6a6558;
+  --faint:#948d7d;
+  --headbg:#282864;
+  --headink:#ffffff;
+  --headdim:#c9c6e4;
+  --headline:#28286400;
+  --headhover:rgba(255,255,255,.10);
+  --headchip:#f8f2e8;
+  --headchipink:#1b1b47;
+  --headfield:rgba(255,255,255,.08);
+  --headfieldline:rgba(255,255,255,.25);
+  --accent:#282864;
+  --accent2:#a0503c;
+  --ok:#2f8c86;
+  --gold:#b8873b;
+  --ochre:#c8a078;
+  --l1:#2f8c86;
+  --l2:#282864;
+  --l3:#7a4a86;
+  --l4:#b8873b;
+  --l5:#a0503c;
+  --bandground:#282864;
+  --banda:#2f8c86;
+  --bandb:#c8a078;
+  --bandc:#a0503c;
   --sans:"Avenir Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --nav:262px;
@@ -71,13 +73,11 @@ a:hover { text-decoration:underline; text-underline-offset:2px; }
 .top-in { display:flex; align-items:center; gap:16px; height:58px; padding:0 22px; }
 .brand { display:flex; align-items:center; gap:10px; color:var(--headink); font:600 16px/1 var(--sans); }
 .brand:hover { text-decoration:none; }
-/* the mark: the logo's three lokum cubes, in the logo's own stack.
-   These three hexes are the logo file's, not the theme's, so the mark reads the
-   same on a cream header and on an olive one. */
+/* the mark: T4's four glazed squares, unchanged. */
 .cubes { display:grid; grid-template-columns:9px 9px; gap:2px; }
 .cubes i { width:9px; height:9px; border-radius:2px; display:block; }
-.cubes i.rose { background:#dc5f3f; } .cubes i.orange { background:#e88a2e; }
-.cubes i.green { background:#7fa352; } .cubes i.gap { background:none; }
+.cubes i.rose { background:var(--l5); } .cubes i.orange { background:var(--l1); }
+.cubes i.green { background:var(--l4); } .cubes i.gap { background:var(--ground); }
 .mainnav { display:flex; gap:2px; margin-left:4px; }
 .mainnav > * { position:relative; }
 .mainnav a, .mainnav button.lv { color:var(--headdim); padding:7px 11px; border-radius:5px;
@@ -182,26 +182,26 @@ main { padding:30px clamp(24px,3.4vw,56px) 96px; min-width:0; }
 .col { max-width:min(100%, 80ch); margin-inline:auto; }
 .crumb { color:var(--muted); font-size:13.5px; margin-bottom:14px; display:flex; gap:8px; }
 .crumb a { color:var(--muted) }
-h1 { font:600 38px/1.16 var(--sans); letter-spacing:-.015em; margin:0 0 12px; }
+h1 { font:600 38px/1.16 var(--sans); letter-spacing:-.015em; margin:0 0 12px; color:var(--title); }
 .row { display:flex; align-items:center; gap:11px; flex-wrap:wrap; margin:0 0 28px;
        color:var(--muted); font-size:14px; }
 .tag { display:inline-flex; align-items:center; gap:7px; border-radius:4px; padding:4px 10px;
        font:600 12.5px/1 var(--sans); background:var(--paper); border:1px solid var(--line); }
 .tag i { width:7px; height:7px; border-radius:2px; }
-h2 { font:600 25px/1.28 var(--sans); margin:44px 0 14px; letter-spacing:-.012em;
+h2 { font:600 25px/1.28 var(--sans); margin:44px 0 14px; letter-spacing:-.012em; color:var(--title);
      display:flex; align-items:center; gap:12px; }
 h2::after { content:""; flex:1; height:2px;
-     background:repeating-linear-gradient(90deg,var(--line2) 0 6px,transparent 6px 12px); }
+     background:repeating-linear-gradient(90deg,var(--ochre) 0 6px,transparent 6px 12px); }
 h3 { font:600 18.5px/1.35 var(--sans); margin:30px 0 8px; }
 p { margin:0 0 17px; }
 .prose a { font-weight:500; text-decoration:underline; text-underline-offset:2px;
-     text-decoration-color:var(--line2); }
+     text-decoration-color:var(--ochre); }
 .prose ul { margin:0 0 17px; padding-left:22px } .prose li { margin:6px 0 }
 .prose strong { font-weight:650 }
 
 .goals { background:var(--paper); border:1px solid var(--line); border-radius:4px 14px 4px 14px;
      padding:17px 20px; margin:0 0 28px; }
-.goals b { display:block; font-size:14px; margin-bottom:8px; }
+.goals b { display:block; font-size:14px; margin-bottom:8px; color:var(--title); }
 .goals ul { margin:0; padding-left:20px } .goals li { margin:5px 0; font-size:15px }
 
 /* dark slab, the chosen code and diagram treatment */
@@ -240,7 +240,7 @@ figcaption { color:var(--muted); font-size:13.5px; margin-top:9px; }
 .pn a { border:1px solid var(--line); border-radius:4px; padding:13px 15px; background:var(--paper) }
 .pn a:hover { border-color:var(--line2); text-decoration:none; background:var(--sand) }
 .pn small { display:block; color:var(--faint); font-size:12.5px; margin-bottom:3px }
-.pn b { color:var(--ink); font-weight:600; font-size:15px }
+.pn b { color:var(--title); font-weight:600; font-size:15px }
 .pn .r { text-align:right }
 
 .toc { position:sticky; top:76px; padding:30px 20px 40px 8px; }
@@ -264,12 +264,12 @@ figcaption { color:var(--muted); font-size:13.5px; margin-top:9px; }
 </head>
 <body>
 
-<div class="pg"><b>B2</b><span>Sugar Sand &mdash; A sand header instead of a cobalt one, with slate-indigo type on it. Keeps a coloured band across the top so the site still has a lid, at a third of the old contrast.</span></div>
+<div class="pg"><b>G1</b><span>Sugared &mdash; One step up. Still unmistakably a cream, just off the floor.</span></div>
 
 <header class="top">
   <div class="top-in">
     <a class="brand" href="#">
-      <span class="cubes" aria-hidden="true"><i class="rose"></i><i class="gap"></i><i class="orange"></i><i class="green"></i></span>
+      <span class="cubes" aria-hidden="true"><i class="rose"></i><i class="orange"></i><i class="green"></i><i class="gap"></i></span>
       AI Engineering Bazaar
     </a>
     <nav class="mainnav">
@@ -453,8 +453,8 @@ hits = store.<span class="f">query</span>(vector, top_k=<span class="n">4</span>
 </div>
 
 <div class="mx">
-  <div class="sw"><i style="background:#fdf8ee" title="--ground #fdf8ee"></i><i style="background:#f1e5d0" title="--headbg #f1e5d0"></i><i style="background:#e7d8bd" title="--bandground #e7d8bd"></i><i style="background:#4b8177" title="--l1 #4b8177"></i><i style="background:#5b5e8c" title="--l2 #5b5e8c"></i><i style="background:#8a5f82" title="--l3 #8a5f82"></i><i style="background:#a8823c" title="--l4 #a8823c"></i><i style="background:#b0604a" title="--l5 #b0604a"></i><i style="background:#4a4e75" title="--accent #4a4e75"></i><i style="background:#4f7333" title="--ok #4f7333"></i></div>
-  <table><tr><td>Header lightness</td><td><code>#f1e5d0</code></td><td>relative luminance 79.3% &middot; T4's cobalt was 2.9%</td></tr><tr><td>Body text on ground</td><td><code>#23252e</code> on <code>#fdf8ee</code></td><td>14.42:1</td></tr><tr><td>Secondary text</td><td><code>#6b6558</code></td><td>5.47:1</td></tr><tr><td>Header text</td><td><code>#2f3245</code></td><td>10.14:1 &middot; nav idle 4.65:1</td></tr><tr><td>Link</td><td><code>#4a4e75</code></td><td>7.52:1</td></tr><tr><td>Completion tick</td><td><code>#4f7333</code></td><td>5.18:1</td></tr></table>
+  <div class="sw"><i style="background:#f8f2e8" title="--ground #f8f2e8"></i><i style="background:#282864" title="--headbg #282864"></i><i style="background:#282864" title="--bandground #282864"></i><i style="background:#2f8c86" title="--l1 #2f8c86"></i><i style="background:#282864" title="--l2 #282864"></i><i style="background:#7a4a86" title="--l3 #7a4a86"></i><i style="background:#b8873b" title="--l4 #b8873b"></i><i style="background:#a0503c" title="--l5 #a0503c"></i><i style="background:#282864" title="--accent #282864"></i><i style="background:#2f8c86" title="--ok #2f8c86"></i></div>
+  <table><tr><td>Ground</td><td><code>#f8f2e8</code></td><td>relative luminance 89.3% &middot; today's cream is 84.6%</td></tr><tr><td>Body text on ground</td><td><code>#20242e</code> on <code>#f8f2e8</code></td><td>13.94:1</td></tr><tr><td>Secondary text</td><td><code>#6a6558</code></td><td>5.22:1</td></tr><tr><td>Header text</td><td><code>#ffffff</code></td><td>13.31:1 &middot; nav idle 8.04:1</td></tr><tr><td>Link</td><td><code>#282864</code></td><td>11.95:1</td></tr><tr><td>Completion tick</td><td><code>#2f8c86</code></td><td>3.62:1</td></tr></table>
 </div>
 
 <script>

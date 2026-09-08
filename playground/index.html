@@ -125,132 +125,64 @@ ol.pick span{color:var(--muted);font-size:14.5px}
   The ornament is spent once, on the tile band, and every other surface is quiet.
 </div>
 
-<h2>Bazaar, four palettes &mdash; open for a decision</h2>
+<h2>Bazaar, four grounds &mdash; open for a decision</h2>
 <p>
-  You picked T4 and asked for the same design at lower volume. These four are generated from one
-  template, so structure, spacing, type and ornament are identical and colour is the only variable.
-  Every hue is sampled from the Lokum AI logo file: ground <code>#FFF8E9</code>, rose
-  <code>#DC5F3F</code>, orange <code>#E67410</code>, green <code>#415C29</code>.
+  T4's palette is unchanged: cobalt <code>#282864</code>, clay <code>#A0503C</code>, ochre
+  <code>#C8A078</code>, teal <code>#2F8C86</code>, gold <code>#B8873B</code>. One token moves, the
+  <b>ground</b> &mdash; the fill behind the page, which is also the fill of the active item in the
+  navbar. Today it is <code>#F4ECE0</code> at 84.6% relative luminance; these four run 89.3% to 96.6%.
 </p>
 <div class="deck">
-  <a class="item" href="01-theme-T4-variants.html" style="--edge:#e88a2e">
-    <span class="id">B1&ndash;B4</span>
+  <a class="item" href="01-theme-T4-grounds.html" style="--edge:#282864">
+    <span class="id">G1&ndash;G4</span>
     <b>All four, side by side</b>
-    <p>Miniatures, full swatch strips and the measured contrast of each, against T4 for reference.</p>
+    <p>Miniatures, swatch strips and the measured contrast of each, against today's ground for
+      reference.</p>
     <em>Start here, then open the one you like</em>
   </a>
-  <a class="item" href="01-theme-T4-bazaar-B1-lokum-light.html" style="--edge:#aa3d22">
-    <span class="id">B1</span>
-    <b>Lokum Light</b>
-    <p>The logo itself: black type on its own cream. The header stops being a coloured slab, so
-      nothing on the page is darker than the text. Header luminance 94.3%.</p>
+  <a class="item" href="01-theme-T4-ground-G1-sugared.html" style="--edge:#f8f2e8">
+    <span class="id">G1</span>
+    <b>Sugared &mdash; <code>#F8F2E8</code></b>
+    <p>One step up. Still unmistakably a cream, just off the floor. 89.3%.</p>
   </a>
-  <a class="item" href="01-theme-T4-bazaar-B2-sugar-sand.html" style="--edge:#c9a760">
-    <span class="id">B2</span>
-    <b>Sugar Sand</b>
-    <p>A sand header with slate-indigo type. The site keeps a lid, at a third of the old contrast.
-      Header luminance 79.3%.</p>
+  <a class="item" href="01-theme-T4-ground-G2-icing.html" style="--edge:#fbf7f0">
+    <span class="id">G2</span>
+    <b>Icing &mdash; <code>#FBF7F0</code></b>
+    <p>Clearly lighter, and raised surfaces go to pure white to keep their edge. 93.3%.</p>
   </a>
-  <a class="item" href="01-theme-T4-bazaar-B3-olive-grove.html" style="--edge:#5e6b45">
-    <span class="id">B3</span>
-    <b>Olive Grove</b>
-    <p>The green cube leads instead of the blue, desaturated and lifted. Warm rather than corporate.
-      Header luminance 13.3%.</p>
+  <a class="item" href="01-theme-T4-ground-G3-powder.html" style="--edge:#fdfbf7">
+    <span class="id">G3</span>
+    <b>Powder &mdash; <code>#FDFBF7</code></b>
+    <p>Almost white, still warm. Cards separate on their hairline rather than their fill. 96.6%.</p>
   </a>
-  <a class="item" href="01-theme-T4-bazaar-B4-soft-cobalt.html" style="--edge:#5c5f8e">
-    <span class="id">B4</span>
-    <b>Soft Cobalt</b>
-    <p>The T4 you like, dialled down: the same indigo family lifted and desaturated. Pick this if
-      the structure was right and only the volume was wrong. Header luminance 12.4%.</p>
+  <a class="item" href="01-theme-T4-ground-G4-lokum-cream.html" style="--edge:#fff8e9">
+    <span class="id">G4</span>
+    <b>Lokum cream &mdash; <code>#FFF8E9</code></b>
+    <p>The logo's own ground, sampled from <code>final.png</code>. Lighter than today, and warmer
+      with it. 94.3%.</p>
   </a>
 </div>
 
 <div class="note">
-  <b>What changed besides colour.</b> All four also carry the three fixes you asked for, so you are
-  judging the real thing: the content column is centred and spans its container with gutters that
-  clear both rails, the sidebar folds away in 200ms and a tab on the left edge brings it back, the
-  completion tick is a filled disc rather than a hairline glyph, and the level you are in is
+  <b>What moves with the ground, and why.</b> Only the raised surface. A card cannot be darker than
+  the page it sits on, so <code>--paper</code> goes to white on G2, G3 and G4. Nothing else in the
+  palette changes, and the active navbar chip gains contrast against the cobalt bar for free: 11.36:1
+  today, up to 12.88:1 on G3.
+</div>
+
+<div class="note">
+  <b>What changed besides the ground.</b> All four also carry the three fixes you asked for, so you
+  are judging the real thing: the content column is centred and spans its container with gutters that
+  clear both rails, the module list folds away in 200ms with a tab on the left edge to bring it back,
+  the completion tick is a filled disc rather than a hairline glyph, and the level you are in is
   enlarged with a coloured edge.
 </div>
 
 <div class="note bug">
-  <b>Measured while building these.</b> T4's teal completion tick sits at <code>3.44:1</code>
-  against its cream, under the 4.5:1 floor the contrast tests hold the rest of the site to. All four
-  variants are above it. That is a defect in the current palette, not a preference.
-</div>
-
-<h2>Components, three each</h2>
-<p>All shown in one neutral palette so you judge the structure and not the colour.</p>
-<div class="deck">
-  <a class="item" href="02-navbar.html"><span class="id">A B C</span><b>Navbar</b>
-    <p>One row with a dropdown per level, two rows with a breadcrumb strip, or the five levels as
-      the navigation itself.</p><em>Fixes: no unified navbar</em></a>
-  <a class="item" href="03-catalog.html"><span class="id">A B C</span><b>Catalog</b>
-    <p>Cards by level, one sortable table, or five columns. Filters at the top and sticky in all
-      three.</p><em>Fixes: filters at the bottom, levels not separated</em></a>
-  <a class="item" href="04-module-layout.html"><span class="id">A B C</span><b>Module layout</b>
-    <p>Rails pinned to the viewport edges, the right rail cut from eleven rows to three facts, and
-      wide diagrams contained.</p><em>Fixes: crowding, unnecessary info, the overlap bug</em></a>
-  <a class="item" href="09-sidebar.html"><span class="id">1 2 3</span><b>Left sidebar</b>
-    <p>Accordion, flat list with sticky level dividers, or level chips over a single list. All
-      collapsible.</p><em>Fixes: no module list while reading</em></a>
-  <a class="item" href="05-progress.html"><span class="id">A B C</span><b>Finishing a module</b>
-    <p>One button and one bar, a checklist that defines done, or rings per level. What happens to
-      XP, Rank and Uptime.</p><em>Fixes: SIGN-OFF, XP, CLASS, I AT 8</em></a>
-  <a class="item" href="06-code-diagrams.html"><span class="id">1 2 3</span><b>Code &amp; diagrams</b>
-    <p>Light ink-first, dark slab, or your banner palette. Six token roles for code, three node
-      roles for diagrams.</p><em>Fixes: monotone, dry colour</em></a>
-  <a class="item" href="07-dashboard.html"><span class="id">A B C</span><b>Progress &amp; account</b>
-    <p>One page, three tabs, or no progress page at all. All three absorb /dashboard, /profile,
-      /path and /report.</p><em>Fixes: cannot tell what these pages are for</em></a>
-  <a class="item" href="08-home.html"><span class="id">A B C</span><b>Home page</b>
-    <p>Say what it is then show the levels, search first, or two states depending on whether the
-      reader has started.</p><em>Fixes: nine numbers about an empty record</em></a>
-</div>
-
-<h2>Your list, and where each item is answered</h2>
-<table>
-  <thead><tr><th>What you said</th><th>Where to look</th></tr></thead>
-  <tbody>
-    <tr><td class="q">Unfamiliar interface; people should recognise it</td>
-        <td class="a">T1, T2, T3 are each modelled on a pattern this audience already uses daily</td></tr>
-    <tr><td class="q">Text-heavy; people want to see, not read</td>
-        <td class="a">Every option: labels became icons with tooltips, and the module rail lost eight of eleven rows</td></tr>
-    <tr><td class="q">Learning curve; Medium is learnable at a glance</td>
-        <td class="a">T2 is that argument taken literally; <code>02</code> and <code>09</code> cut navigation to one shape</td></tr>
-    <tr><td class="q">No clear hierarchy; is this a button or not</td>
-        <td class="a">All four themes: one accent used only for interactive things, a real type scale, buttons that look pressable</td></tr>
-    <tr><td class="q">Naming: subsystem, sign-off, feeds, drafter</td>
-        <td class="a"><code>00-vocabulary.html</code>, three complete sets</td></tr>
-    <tr><td class="q">No unified navbar; it changes on every page</td>
-        <td class="a"><code>02-navbar.html</code>, and every theme file uses one bar on every page</td></tr>
-    <tr><td class="q">Dashboard and profile are unusable</td>
-        <td class="a"><code>07-dashboard.html</code>, which merges four routes into one</td></tr>
-    <tr><td class="q">Diagrams overlap the sidebars</td>
-        <td class="a"><code>04-module-layout.html</code>. Measured and diagnosed, see the note below</td></tr>
-    <tr><td class="q">Diagrams and code are monotone</td>
-        <td class="a"><code>06-code-diagrams.html</code></td></tr>
-    <tr><td class="q">Filters belong at the top; separate levels by colour</td>
-        <td class="a"><code>03-catalog.html</code>, sticky filter bar in all three</td></tr>
-    <tr><td class="q">Too much in the right rail of a module</td>
-        <td class="a"><code>04-module-layout.html</code>, eleven rows down to three</td></tr>
-    <tr><td class="q">Side components should anchor to the edges</td>
-        <td class="a"><code>04-module-layout.html</code> option A, with a ruler showing where the content starts and ends</td></tr>
-    <tr><td class="q">Optional accordion sidebar, with modules under each level</td>
-        <td class="a"><code>09-sidebar.html</code> option 1, and the navbar dropdown in <code>02</code> option A</td></tr>
-  </tbody>
-</table>
-
-<div class="note bug">
-  <b>The overlap bug, measured.</b> I reproduced it in Chrome at 1440px on
-  <code>/courses/fundamentals/observability/</code>. The content column runs from x=376 to x=1032
-  and the right rail starts at x=1056, but mermaid injects an SVG <b>1,423px wide starting at
-  x=144</b>, so it paints across both rails and past the window edge. It is not a CSS width
-  problem: mermaid renders in the browser after the page loads, so the SVG arrives at its natural
-  content width and escapes the scroll container that was meant to hold it. Between 90 and 145
-  elements per page sit outside the column. The rails I rebuilt for the new curriculum are wider
-  still, so this got worse, not better. Every layout in <code>04</code> demonstrates the
-  containment that fixes it.
+  <b>Measured while building these.</b> The teal tick sits at 3.44:1 against today's cream and only
+  reaches 3.90:1 on the lightest ground, so lightening the page cannot fix it on its own. As a filled
+  disc with a white check it is a graphical indicator rather than text, which needs 3:1, and it clears
+  that on every ground. Keeping teal as a hairline glyph would not.
 </div>
 
 <h2>Decided, on 2026-09-08</h2>
@@ -261,8 +193,8 @@ ol.pick span{color:var(--muted);font-size:14.5px}
   <tbody>
     <tr><td>Vocabulary</td><td class="a"><b>C &mdash; Engineering curriculum.</b> Catalog, Level,
       Module, Complete, Requires.</td></tr>
-    <tr><td>Theme</td><td class="a"><b>T4 Bazaar</b>, at lower volume. Palette open: B1&ndash;B4
-      above.</td></tr>
+    <tr><td>Theme</td><td class="a"><b>T4 Bazaar</b>, colours unchanged. Ground open:
+      G1&ndash;G4 above.</td></tr>
     <tr><td>Navbar</td><td class="a"><b>A</b> &mdash; one row, a dropdown per level.</td></tr>
     <tr><td>Catalog</td><td class="a"><b>All three, as a view toggle</b> with an icon each:
       <b>Overview</b> (was C), <b>Cards</b> (was A), <b>Table</b> (was B).</td></tr>
@@ -279,7 +211,7 @@ ol.pick span{color:var(--muted);font-size:14.5px}
 </table>
 
 <div class="note">
-  <b>One thing still open.</b> Which palette: B1, B2, B3 or B4. Everything else is settled and the
+  <b>One thing still open.</b> Which ground: G1, G2, G3 or G4. Everything else is settled and the
   build order is written down.
 </div>
 

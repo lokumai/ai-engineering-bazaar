@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UI playground — AI Engineering Bazaar</title>
+<style>
+:root{
+  --paper:#fff;--wash:#f7f8fa;--sunken:#eef1f5;--ink:#1a1d23;--muted:#5b6472;--faint:#8a929e;
+  --line:#e3e6eb;--line-2:#cfd4dc;--accent:#0b6e5f;--soft:#e6f2ef;--accent-ink:#08594c;
+  --warn:#a0503c;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--wash);color:var(--ink);font:16px/1.65 var(--sans)}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1000px;margin:0 auto;padding:52px 24px 100px}
+h1{font-size:34px;line-height:1.15;letter-spacing:-.028em;margin:0 0 12px}
+.lede{color:var(--muted);font-size:17.5px;max-width:64ch;margin:0 0 10px}
+h2{font-size:21px;letter-spacing:-.015em;margin:52px 0 6px}
+h2 + p{color:var(--muted);margin:0 0 18px;max-width:70ch}
+.deck{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:14px}
+.item{display:block;background:var(--paper);border:1px solid var(--line);border-radius:11px;
+  padding:16px 17px;text-decoration:none;color:inherit;border-left:3px solid var(--edge,var(--line-2))}
+.item:hover{border-color:var(--line-2);box-shadow:0 8px 22px -14px rgba(20,25,35,.26)}
+.item .id{display:inline-block;background:var(--ink);color:#fff;border-radius:5px;padding:1px 7px;
+  font:700 12px/18px var(--sans);margin-bottom:9px}
+.item b{display:block;font-size:16px;letter-spacing:-.01em;margin-bottom:5px}
+.item p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.5}
+.item em{display:block;margin-top:9px;font-style:normal;font-size:12.5px;color:var(--accent);
+  font-weight:600}
+table{width:100%;border-collapse:collapse;background:var(--paper);border:1px solid var(--line);
+  border-radius:10px;overflow:hidden;margin-top:6px}
+th,td{text-align:left;padding:10px 13px;font-size:14.5px;vertical-align:top}
+thead th{background:var(--wash);color:var(--muted);font:600 13px/1.4 var(--sans);
+  border-bottom:1px solid var(--line)}
+tbody tr + tr td{border-top:1px solid var(--line)}
+td.q{color:var(--warn);width:38%}
+td.a code{background:var(--wash);padding:1px 5px;border-radius:4px;font:12.5px var(--mono)}
+.note{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--accent);
+  border-radius:9px;padding:15px 17px;margin:20px 0 0;font-size:15px}
+.note b{color:var(--accent-ink)}
+.bug{border-left-color:var(--warn)}
+.bug b{color:var(--warn)}
+ol.pick{counter-reset:s;list-style:none;padding:0;margin:14px 0 0}
+ol.pick li{background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:13px 16px;
+  margin-bottom:9px;display:flex;gap:13px;align-items:baseline}
+ol.pick li::before{counter-increment:s;content:counter(s);background:var(--soft);
+  color:var(--accent-ink);border-radius:6px;min-width:24px;height:24px;display:grid;
+  place-items:center;font:700 12.5px/1 var(--sans);flex:none}
+ol.pick b{font-weight:650}
+ol.pick span{color:var(--muted);font-size:14.5px}
+.kbd{font:12.5px var(--mono);background:var(--wash);border:1px solid var(--line-2);border-radius:4px;
+  padding:2px 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>UI playground</h1>
+<p class="lede">
+  Standalone HTML. Open any file in a browser; nothing is wired to the app and nothing here changes
+  the site. Everything below keeps the features you already have &mdash; progress in the browser,
+  the checklist, the quick check, the role-based path, optional sign-in, English and Turkish
+  &mdash; and changes only how they look and where they sit.
+</p>
+<p class="lede" style="font-size:16px">
+  Reply with letters and numbers. For example: <span class="kbd">T1, vocab C, navbar A, catalog C,
+  layout A, progress A+C, code 2, diagrams 3, home C, sidebar 1</span>.
+</p>
+
+<h2>Start here</h2>
+<p>Naming first, because every screen inherits it.</p>
+<div class="deck">
+  <a class="item" href="00-vocabulary.html" style="--edge:#a0503c">
+    <span class="id">A B C</span>
+    <b>Three vocabulary sets</b>
+    <p>Replacements for subsystem, sheet, sign-off, feeds, drawing, register and drafter, as three
+      complete sets rather than word by word.</p>
+    <em>Decide this one first</em>
+  </a>
+</div>
+
+<h2>The four themes</h2>
+<p>
+  The same module page rendered four ways, so you are comparing like with like. Each is a different
+  UI language, not a different colour scheme.
+</p>
+<div class="deck">
+  <a class="item" href="01-theme-T1-handbook.html" style="--edge:#0b6e5f">
+    <span class="id">T1</span>
+    <b>Handbook</b>
+    <p>The documentation lens: MDN, Stripe, Astro. Permanent left nav, one accent colour, nothing
+      to learn.</p>
+    <em>Safest, most familiar</em>
+  </a>
+  <a class="item" href="01-theme-T2-reader.html" style="--edge:#1d4ed8">
+    <span class="id">T2</span>
+    <b>Reader</b>
+    <p>The Medium lens. No side rails at all, serif body, contents in a drawer, a progress line
+      under the bar.</p>
+    <em>Best for pure reading</em>
+  </a>
+  <a class="item" href="01-theme-T3-workbench.html" style="--edge:#7c6cf0">
+    <span class="id">T3</span>
+    <b>Workbench</b>
+    <p>The dev-tool lens: Linear, Vercel, Raycast. Dark by default, compact, command palette.</p>
+    <em>Snappiest, most technical</em>
+  </a>
+  <a class="item" href="01-theme-T4-bazaar.html" style="--edge:#282864">
+    <span class="id">T4</span>
+    <b>Bazaar</b>
+    <p>Built from your banner. Every colour sampled from <code>assets/banner-tiles.jpeg</code>:
+      cobalt, cream, clay, ochre, teal. A tile band is the one ornament.</p>
+    <em>The only one that looks like you</em>
+  </a>
+</div>
+
+<div class="note">
+  <b>On T4.</b> Cobalt leads rather than the cream, and the headings are a geometric sans rather
+  than a serif, on purpose: cream plus serif plus a clay accent is the single most common
+  machine-generated look right now, and it would have made your own artwork read as a template.
+  The ornament is spent once, on the tile band, and every other surface is quiet.
+</div>
+
+<h2>Components, three each</h2>
+<p>All shown in one neutral palette so you judge the structure and not the colour.</p>
+<div class="deck">
+  <a class="item" href="02-navbar.html"><span class="id">A B C</span><b>Navbar</b>
+    <p>One row with a dropdown per level, two rows with a breadcrumb strip, or the five levels as
+      the navigation itself.</p><em>Fixes: no unified navbar</em></a>
+  <a class="item" href="03-catalog.html"><span class="id">A B C</span><b>Catalog</b>
+    <p>Cards by level, one sortable table, or five columns. Filters at the top and sticky in all
+      three.</p><em>Fixes: filters at the bottom, levels not separated</em></a>
+  <a class="item" href="04-module-layout.html"><span class="id">A B C</span><b>Module layout</b>
+    <p>Rails pinned to the viewport edges, the right rail cut from eleven rows to three facts, and
+      wide diagrams contained.</p><em>Fixes: crowding, unnecessary info, the overlap bug</em></a>
+  <a class="item" href="09-sidebar.html"><span class="id">1 2 3</span><b>Left sidebar</b>
+    <p>Accordion, flat list with sticky level dividers, or level chips over a single list. All
+      collapsible.</p><em>Fixes: no module list while reading</em></a>
+  <a class="item" href="05-progress.html"><span class="id">A B C</span><b>Finishing a module</b>
+    <p>One button and one bar, a checklist that defines done, or rings per level. What happens to
+      XP, Rank and Uptime.</p><em>Fixes: SIGN-OFF, XP, CLASS, I AT 8</em></a>
+  <a class="item" href="06-code-diagrams.html"><span class="id">1 2 3</span><b>Code &amp; diagrams</b>
+    <p>Light ink-first, dark slab, or your banner palette. Six token roles for code, three node
+      roles for diagrams.</p><em>Fixes: monotone, dry colour</em></a>
+  <a class="item" href="07-dashboard.html"><span class="id">A B C</span><b>Progress &amp; account</b>
+    <p>One page, three tabs, or no progress page at all. All three absorb /dashboard, /profile,
+      /path and /report.</p><em>Fixes: cannot tell what these pages are for</em></a>
+  <a class="item" href="08-home.html"><span class="id">A B C</span><b>Home page</b>
+    <p>Say what it is then show the levels, search first, or two states depending on whether the
+      reader has started.</p><em>Fixes: nine numbers about an empty record</em></a>
+</div>
+
+<h2>Your list, and where each item is answered</h2>
+<table>
+  <thead><tr><th>What you said</th><th>Where to look</th></tr></thead>
+  <tbody>
+    <tr><td class="q">Unfamiliar interface; people should recognise it</td>
+        <td class="a">T1, T2, T3 are each modelled on a pattern this audience already uses daily</td></tr>
+    <tr><td class="q">Text-heavy; people want to see, not read</td>
+        <td class="a">Every option: labels became icons with tooltips, and the module rail lost eight of eleven rows</td></tr>
+    <tr><td class="q">Learning curve; Medium is learnable at a glance</td>
+        <td class="a">T2 is that argument taken literally; <code>02</code> and <code>09</code> cut navigation to one shape</td></tr>
+    <tr><td class="q">No clear hierarchy; is this a button or not</td>
+        <td class="a">All four themes: one accent used only for interactive things, a real type scale, buttons that look pressable</td></tr>
+    <tr><td class="q">Naming: subsystem, sign-off, feeds, drafter</td>
+        <td class="a"><code>00-vocabulary.html</code>, three complete sets</td></tr>
+    <tr><td class="q">No unified navbar; it changes on every page</td>
+        <td class="a"><code>02-navbar.html</code>, and every theme file uses one bar on every page</td></tr>
+    <tr><td class="q">Dashboard and profile are unusable</td>
+        <td class="a"><code>07-dashboard.html</code>, which merges four routes into one</td></tr>
+    <tr><td class="q">Diagrams overlap the sidebars</td>
+        <td class="a"><code>04-module-layout.html</code>. Measured and diagnosed, see the note below</td></tr>
+    <tr><td class="q">Diagrams and code are monotone</td>
+        <td class="a"><code>06-code-diagrams.html</code></td></tr>
+    <tr><td class="q">Filters belong at the top; separate levels by colour</td>
+        <td class="a"><code>03-catalog.html</code>, sticky filter bar in all three</td></tr>
+    <tr><td class="q">Too much in the right rail of a module</td>
+        <td class="a"><code>04-module-layout.html</code>, eleven rows down to three</td></tr>
+    <tr><td class="q">Side components should anchor to the edges</td>
+        <td class="a"><code>04-module-layout.html</code> option A, with a ruler showing where the content starts and ends</td></tr>
+    <tr><td class="q">Optional accordion sidebar, with modules under each level</td>
+        <td class="a"><code>09-sidebar.html</code> option 1, and the navbar dropdown in <code>02</code> option A</td></tr>
+  </tbody>
+</table>
+
+<div class="note bug">
+  <b>The overlap bug, measured.</b> I reproduced it in Chrome at 1440px on
+  <code>/courses/fundamentals/observability/</code>. The content column runs from x=376 to x=1032
+  and the right rail starts at x=1056, but mermaid injects an SVG <b>1,423px wide starting at
+  x=144</b>, so it paints across both rails and past the window edge. It is not a CSS width
+  problem: mermaid renders in the browser after the page loads, so the SVG arrives at its natural
+  content width and escapes the scroll container that was meant to hold it. Between 90 and 145
+  elements per page sit outside the column. The rails I rebuilt for the new curriculum are wider
+  still, so this got worse, not better. Every layout in <code>04</code> demonstrates the
+  containment that fixes it.
+</div>
+
+<h2>What I need from you</h2>
+<ol class="pick">
+  <li><b>One vocabulary set</b> <span>A, B or C, or a mix such as &ldquo;C but Mark as read&rdquo;.</span></li>
+  <li><b>One theme</b> <span>T1, T2, T3 or T4. You can also say &ldquo;T1 structure with T4 colour&rdquo;, which is a real option.</span></li>
+  <li><b>One option per component</b> <span>navbar, catalog, layout, sidebar, progress, code, diagrams, dashboard, home.</span></li>
+  <li><b>Anything missing</b> <span>tell me which screen you want to see before I start building.</span></li>
+</ol>
+
+<p style="color:var(--muted);margin-top:26px">
+  Once you have chosen, the build order I would suggest is: naming and tokens, then the shell
+  (navbar and sidebar), then the module page including the diagram fix, then the catalog, then
+  home, then progress and account. Each of those is a step that can ship on its own.
+</p>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T2 Reader — theme preview</title>
+<style>
+/* ===========================================================================
+   THEME T2 — "Reader"
+   Lens: Medium and Substack. Reading first, controls second. Nothing is
+   permanently on screen except the text and one bar. Everything else is one
+   click away in a drawer.
+   The bet: the content is markdown prose, so the interface should get out of
+   the way rather than frame it on three sides.
+   =========================================================================== */
+:root {
+  --paper:#fdfdfb; --raise:#ffffff; --wash:#f2f2ee; --ink:#16181d;
+  --muted:#5d6169; --faint:#9a9ea6; --line:#e5e5df; --line-2:#d0d0c8;
+  --link:#1d4ed8; --ok:#15803d;
+  --l1:#0f766e; --l2:#1d4ed8; --l3:#7e22ce; --l4:#b45309; --l5:#525252;
+  --serif: ui-serif, Charter, "Bitstream Charter", "Iowan Old Style", "Source Serif Pro", Georgia, serif;
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.6 var(--sans); }
+a { color:var(--link); }
+:focus-visible { outline:2px solid var(--link); outline-offset:3px; }
+
+.pg { background:#16181d; color:#fff; padding:10px 20px; font:13.5px/1.5 var(--sans); }
+.pg b { background:#fff; color:#16181d; padding:1px 7px; border-radius:4px; margin-right:8px; }
+.pg span { color:#b4b8c0; }
+
+/* ---- one slim bar, and a reading progress line under it ---------------- */
+.top { position:sticky; top:0; z-index:30; background:rgba(253,253,251,.94);
+       backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+.top-in { max-width:1220px; margin:0 auto; display:flex; align-items:center; gap:14px;
+       height:58px; padding:0 24px; }
+.brand { font:600 16px/1 var(--sans); letter-spacing:-.01em; color:var(--ink);
+       text-decoration:none; display:flex; align-items:center; gap:9px; }
+.brand i { width:9px; height:22px; border-radius:2px; background:var(--l1); display:block; }
+.top .spacer { flex:1; }
+.tbtn { display:inline-flex; align-items:center; gap:7px; border:0; background:none; cursor:pointer;
+       font:500 14.5px/1 var(--sans); color:var(--muted); padding:9px 11px; border-radius:6px; }
+.tbtn:hover { background:var(--wash); color:var(--ink); }
+.tbtn.primary { background:var(--ink); color:#fff; font-weight:600; padding:9px 15px; }
+.tbtn.primary:hover { background:#000; }
+.progress { height:2px; background:var(--wash); }
+.progress i { display:block; height:2px; width:38%; background:var(--l1); }
+
+/* ---- the drawer: contents live here, not on the page ------------------- */
+.drawer { position:fixed; inset:0 auto 0 0; width:330px; background:var(--raise); z-index:60;
+       border-right:1px solid var(--line); transform:translateX(-100%);
+       transition:transform .22s cubic-bezier(.4,0,.2,1); overflow-y:auto; padding:22px 20px 60px; }
+.drawer[data-open] { transform:none; }
+.scrim { position:fixed; inset:0; background:rgba(22,24,29,.32); z-index:50; opacity:0;
+       pointer-events:none; transition:opacity .22s; }
+.scrim[data-open] { opacity:1; pointer-events:auto; }
+.drawer h3 { font:600 15px/1.3 var(--sans); margin:0 0 4px; }
+.drawer .lvlname { display:flex; align-items:center; gap:8px; margin:22px 0 6px;
+       font:600 13px/1 var(--sans); color:var(--muted); }
+.drawer .lvlname i { width:7px; height:7px; border-radius:2px; }
+.drawer ol { list-style:none; margin:0; padding:0; }
+.drawer ol a { display:flex; gap:10px; padding:7px 9px; border-radius:6px; text-decoration:none;
+       color:var(--ink); font-size:14.5px; }
+.drawer ol a:hover { background:var(--wash); }
+.drawer ol a[aria-current] { background:#eaf0fe; color:var(--link); font-weight:600; }
+.drawer ol a s { color:var(--ok); text-decoration:none; }
+.drawer ol a em { color:var(--faint); font-style:normal; font-size:13px; margin-left:auto; }
+.closex { position:absolute; top:16px; right:16px; }
+
+/* ---- the article ------------------------------------------------------- */
+article { max-width:44rem; margin:0 auto; padding:56px 24px 120px; }
+.kicker { display:flex; align-items:center; gap:10px; font:500 14px/1 var(--sans);
+       color:var(--muted); margin-bottom:20px; }
+.kicker i { width:7px; height:7px; border-radius:2px; background:var(--l1); }
+.kicker a { color:var(--muted); text-decoration:none; }
+.kicker a:hover { color:var(--ink); }
+h1 { font:700 44px/1.14 var(--sans); letter-spacing:-.03em; margin:0 0 18px; }
+.byline { display:flex; align-items:center; gap:12px; color:var(--muted); font-size:14.5px;
+       padding-bottom:26px; margin-bottom:34px; border-bottom:1px solid var(--line); }
+.byline b { color:var(--ink); font-weight:600; }
+
+/* body copy is the point of this theme */
+.body { font:19px/1.75 var(--serif); }
+.body p { margin:0 0 26px; }
+.body h2 { font:700 29px/1.25 var(--sans); letter-spacing:-.022em; margin:52px 0 16px; }
+.body h3 { font:650 21px/1.3 var(--sans); margin:38px 0 12px; }
+.body a { color:var(--link); text-decoration:underline; text-underline-offset:2px;
+       text-decoration-thickness:1px; }
+.body ul { margin:0 0 26px; padding-left:26px; }
+.body li { margin:9px 0; }
+.body strong { font-weight:600; }
+
+.goals { font:16px/1.6 var(--sans); background:var(--wash); border-radius:10px;
+       padding:20px 22px; margin:0 0 34px; }
+.goals p { font-weight:600; margin:0 0 10px; font-size:14.5px; }
+.goals ul { margin:0; padding-left:20px; }
+.goals li { margin:6px 0; }
+
+/* code: colour, and a real surface */
+.code { margin:0 0 30px; border-radius:10px; overflow:hidden; background:#1c1f26; }
+.code header { display:flex; padding:9px 14px; background:#22262f; color:#8b93a1;
+       font:12.5px/1 var(--mono); }
+.code header span { margin-left:auto; }
+.code pre { margin:0; padding:16px 18px; overflow-x:auto; font:13.5px/1.75 var(--mono); color:#e4e8ef; }
+.k{color:#c792ea}.s{color:#a5d6a7}.c{color:#6f7683;font-style:italic}.f{color:#82aaff}.n{color:#f7c67f}
+
+/* diagram: its own scroller, never escapes */
+figure { margin:0 0 34px; }
+.diagram { border:1px solid var(--line); border-radius:10px; background:var(--raise); }
+.diagram .inner { overflow-x:auto; overscroll-behavior-x:contain; padding:22px 18px; min-width:0; }
+.diagram .inner > svg { max-width:100%; height:auto; }
+figcaption { font:14px/1.55 var(--sans); color:var(--muted); margin-top:10px; }
+.flow { display:flex; align-items:center; min-width:min-content; }
+.node { border:1px solid var(--line-2); border-radius:7px; padding:10px 14px;
+       font:13.5px/1 var(--sans); white-space:nowrap; background:var(--paper); }
+.node.on { background:var(--l1); color:#fff; border-color:var(--l1); font-weight:600; }
+.arr { color:var(--line-2); padding:0 8px; }
+
+/* the one action, at the end where a reader finishes */
+.finish { margin-top:56px; padding:26px 0 0; border-top:1px solid var(--line);
+       display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+.finish .big { border:0; background:var(--ink); color:#fff; font:600 16px/1 var(--sans);
+       padding:14px 24px; border-radius:8px; cursor:pointer; }
+.finish .big:hover { background:#000; }
+.finish p { margin:0; color:var(--muted); font-size:14px; }
+.nextup { margin-top:40px; border:1px solid var(--line); border-radius:10px; padding:18px 20px;
+       display:flex; align-items:center; gap:14px; text-decoration:none; }
+.nextup:hover { background:var(--wash); }
+.nextup small { display:block; color:var(--faint); font-size:13px; margin-bottom:2px;
+       font-family:var(--sans); }
+.nextup b { color:var(--ink); font:650 17px/1.3 var(--sans); }
+.nextup span { margin-left:auto; color:var(--faint); font-size:22px; }
+</style>
+</head>
+<body>
+
+<div class="pg"><b>T2</b><span>Reader &mdash; Medium lens. No side rails at all: contents open in a drawer. Same content as T1, T3, T4.</span></div>
+
+<header class="top">
+  <div class="top-in">
+    <button class="tbtn" id="open" aria-expanded="false">
+      <svg width="17" height="17" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M2.5 4.5h13M2.5 9h13M2.5 13.5h9"/></svg>
+      Contents
+    </button>
+    <a class="brand" href="#"><i></i>AI Engineering Bazaar</a>
+    <div class="spacer"></div>
+    <button class="tbtn" title="Search">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M10 10l4.5 4.5"/></svg>
+    </button>
+    <button class="tbtn" title="Türkçe">TR</button>
+    <button class="tbtn primary">My progress</button>
+  </div>
+  <div class="progress"><i></i></div>
+</header>
+
+<div class="scrim" id="scrim"></div>
+<nav class="drawer" id="drawer" aria-label="Contents">
+  <button class="tbtn closex" id="close" aria-label="Close">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+  </button>
+  <h3>Contents</h3>
+  <p style="margin:0;color:var(--muted);font-size:14px">19 of 33 modules written</p>
+
+  <div class="lvlname"><i style="background:var(--l1)"></i>Fundamentals</div>
+  <ol>
+    <li><a href="#">LLM Fundamentals <s>&#10003;</s></a></li>
+    <li><a href="#">Training LLMs <s>&#10003;</s></a></li>
+    <li><a href="#" aria-current="page">RAG &amp; Embeddings</a></li>
+    <li><a href="#">Tool Calling</a></li>
+    <li><a href="#">Memory</a></li>
+    <li><a href="#">AI Agents</a></li>
+    <li><a href="#">Multi-Agent Systems</a></li>
+    <li><a href="#">Observability</a></li>
+  </ol>
+
+  <div class="lvlname"><i style="background:var(--l2)"></i>Intermediate</div>
+  <ol>
+    <li><a href="#">Prompt Engineering</a></li>
+    <li><a href="#">Context Engineering</a></li>
+    <li><a href="#">Coding Agents</a></li>
+    <li><a href="#">Harness Engineering</a></li>
+    <li><a href="#">Loop Engineering</a></li>
+    <li><a href="#">Generative UI <em>planned</em></a></li>
+    <li><a href="#">Security</a></li>
+    <li><a href="#">Personal Agents</a></li>
+  </ol>
+
+  <div class="lvlname"><i style="background:var(--l3)"></i>Expert</div>
+  <ol>
+    <li><a href="#">Advanced Tools <em>planned</em></a></li>
+    <li><a href="#">Advanced Memory <em>planned</em></a></li>
+  </ol>
+
+  <div class="lvlname"><i style="background:var(--l4)"></i>Ecosystem</div>
+  <ol>
+    <li><a href="#">Agent Frameworks</a></li>
+    <li><a href="#">Inference Providers</a></li>
+  </ol>
+</nav>
+
+<article>
+  <div class="kicker">
+    <i></i><a href="#">Fundamentals</a> &middot; Module 3 of 8
+  </div>
+
+  <h1>RAG &amp; Embeddings</h1>
+
+  <div class="byline">
+    <span><b>30 min</b> read</span>
+    <span>&middot;</span>
+    <span>English &amp; <a href="#" style="color:inherit">Türkçe</a></span>
+    <span>&middot;</span>
+    <span>Updated 4 Sep 2026</span>
+  </div>
+
+  <div class="goals">
+    <p>What you will be able to do</p>
+    <ul>
+      <li>Explain why retrieval beats fine-tuning for facts that change</li>
+      <li>Describe how text becomes an embedding, and how similarity is measured</li>
+      <li>Walk through the retrieve-then-generate pipeline end to end</li>
+      <li>Decide, for a given problem, whether you want RAG or fine-tuning</li>
+    </ul>
+  </div>
+
+  <div class="body">
+    <p>
+      <a href="#">LLM Fundamentals</a> gave you the context window: the model's working desk, and
+      everything on it has to fit. <a href="#">Training LLMs</a> gave you fine-tuning: changing the
+      model itself. This module is about the third option, and the one you will reach for most.
+    </p>
+
+    <h2>Why RAG exists</h2>
+    <p>
+      A model knows what it was trained on. Ask it about your company's internal handbook and it
+      has three ways to answer, and only one of them is any good: guess, be retrained, or be handed
+      the relevant page at the moment you ask.
+    </p>
+
+    <figure>
+      <div class="diagram">
+        <div class="inner">
+          <div class="flow">
+            <span class="node">Question</span><span class="arr">&rarr;</span>
+            <span class="node">Search your data</span><span class="arr">&rarr;</span>
+            <span class="node">Find the relevant page</span><span class="arr">&rarr;</span>
+            <span class="node">Question + page in the context</span><span class="arr">&rarr;</span>
+            <span class="node on">Model answers from what it sees</span>
+          </div>
+        </div>
+      </div>
+      <figcaption>
+        The model is never changed. Everything happens in the input, which is why a document added
+        this morning can be answered about this afternoon.
+      </figcaption>
+    </figure>
+
+    <h3>What an embedding actually is</h3>
+    <p>
+      An embedding is a list of numbers that stands for a piece of text, arranged so that texts
+      meaning similar things end up close together. Similarity becomes distance, and distance is
+      something a database can sort by.
+    </p>
+
+    <div class="code">
+      <header>rag.py<span>python</span></header>
+<pre><span class="c"># one embedding, then one nearest-neighbour search</span>
+<span class="k">from</span> openai <span class="k">import</span> OpenAI
+
+client = <span class="f">OpenAI</span>()
+vector = client.embeddings.<span class="f">create</span>(
+    model=<span class="s">"text-embedding-3-small"</span>,
+    input=<span class="s">"How do I rotate the signing key?"</span>,
+).data[<span class="n">0</span>].embedding
+
+hits = store.<span class="f">query</span>(vector, top_k=<span class="n">4</span>)
+</pre>
+    </div>
+
+    <p>
+      Four passages come back, they go into the context alongside the question, and the model
+      answers from what it can see rather than from what it remembers.
+    </p>
+  </div>
+
+  <div class="finish">
+    <button class="big">Mark as read</button>
+    <p>Saved in this browser. No account needed.</p>
+  </div>
+
+  <a class="nextup" href="#">
+    <div><small>Next in Fundamentals</small><b>Tool Calling</b></div>
+    <span>&rsaquo;</span>
+  </a>
+</article>
+
+<script>
+  const d = document.getElementById('drawer'), s = document.getElementById('scrim');
+  const set = (on) => {
+    d.toggleAttribute('data-open', on); s.toggleAttribute('data-open', on);
+    document.getElementById('open').setAttribute('aria-expanded', String(on));
+  };
+  document.getElementById('open').onclick = () => set(true);
+  document.getElementById('close').onclick = () => set(false);
+  s.onclick = () => set(false);
+  addEventListener('keydown', (e) => { if (e.key === 'Escape') set(false); });
+</script>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T3 Workbench — theme preview</title>
+<style>
+/* ===========================================================================
+   THEME T3 — "Workbench"
+   Lens: the tools this audience already lives in (Linear, Vercel, Raycast).
+   Dark by default, compact, keyboard-forward. Level colour is used as a real
+   signal, not decoration: it tints the rail, the chip and the active row.
+   The bet: your readers are engineers, and this is the register they trust.
+   =========================================================================== */
+:root {
+  --bg:#0e1116; --raise:#161b22; --raise-2:#1c222b; --line:#262d38; --line-2:#333c4a;
+  --ink:#e6edf3; --ink-2:#b6c2cf; --muted:#8b96a5; --faint:#6b7684;
+  --accent:#7c6cf0; --accent-2:#9b8ffc; --accent-bg:#1e1b3a;
+  --ok:#3fb950;
+  --l1:#2dd4bf; --l2:#60a5fa; --l3:#c084fc; --l4:#fbbf24; --l5:#94a3b8;
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --nav:248px;
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.6 var(--sans);
+       -webkit-font-smoothing:antialiased; }
+a { color:var(--accent-2); text-decoration:none; }
+a:hover { color:#b6adff; }
+:focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
+
+.pg { background:#000; color:#e6edf3; padding:10px 20px; font-size:13.5px; }
+.pg b { background:var(--accent); color:#fff; padding:1px 7px; border-radius:4px; margin-right:8px; }
+.pg span { color:#8b96a5; }
+
+/* ---- top bar ----------------------------------------------------------- */
+.top { position:sticky; top:0; z-index:40; background:rgba(14,17,22,.86);
+       backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+.top-in { display:flex; align-items:center; gap:16px; height:52px; padding:0 16px; }
+.brand { display:flex; align-items:center; gap:9px; color:var(--ink); font:600 14.5px/1 var(--sans);
+       letter-spacing:-.01em; }
+.brand .g { width:22px; height:22px; border-radius:6px;
+       background:linear-gradient(135deg,var(--accent),#4dd0c0); display:grid; place-items:center;
+       font:700 11px/1 var(--sans); color:#0e1116; }
+.tabs { display:flex; gap:1px; margin-left:10px; }
+.tabs a { padding:6px 11px; border-radius:6px; color:var(--muted); font-size:14px; font-weight:500; }
+.tabs a:hover { background:var(--raise-2); color:var(--ink); }
+.tabs a[aria-current] { background:var(--raise-2); color:var(--ink); font-weight:600;
+       box-shadow:inset 0 -2px 0 var(--accent); }
+.sp { flex:1; }
+.cmdk { display:flex; align-items:center; gap:8px; height:31px; padding:0 9px 0 10px;
+       border:1px solid var(--line-2); border-radius:7px; background:var(--raise);
+       color:var(--muted); font-size:13.5px; min-width:190px; cursor:pointer; }
+.cmdk kbd { margin-left:auto; font:11px/1 var(--mono); background:var(--raise-2);
+       border:1px solid var(--line-2); border-radius:4px; padding:3px 5px; color:var(--muted); }
+.ib { width:31px; height:31px; border:1px solid var(--line-2); border-radius:7px;
+      background:var(--raise); color:var(--muted); display:grid; place-items:center; cursor:pointer;
+      font:600 11px/1 var(--sans); }
+.ib:hover { background:var(--raise-2); color:var(--ink); }
+
+/* ---- shell ------------------------------------------------------------- */
+.shell { display:grid; grid-template-columns:var(--nav) minmax(0,1fr); align-items:start; }
+@media (max-width:900px){ .shell{grid-template-columns:minmax(0,1fr);} .side{display:none;} }
+
+.side { position:sticky; top:52px; height:calc(100vh - 52px); overflow-y:auto;
+      border-right:1px solid var(--line); padding:14px 8px 40px; }
+.side .grp { margin-bottom:3px; }
+.side summary { list-style:none; cursor:pointer; display:flex; align-items:center; gap:8px;
+      padding:7px 9px; border-radius:6px; font:600 13.5px/1 var(--sans); color:var(--ink-2); }
+.side summary::-webkit-details-marker{display:none}
+.side summary:hover { background:var(--raise); color:var(--ink); }
+.side .bar { width:3px; height:14px; border-radius:2px; flex:none; }
+.side .n { margin-left:auto; font:500 12px/1 var(--mono); color:var(--muted); }
+.side ul { list-style:none; margin:1px 0 6px; padding:0 0 0 20px; }
+.side ul a { display:flex; align-items:center; gap:8px; padding:6px 9px; border-radius:6px;
+      color:var(--muted); font-size:13.5px; }
+.side ul a:hover { background:var(--raise); color:var(--ink); }
+.side ul a[aria-current] { background:var(--accent-bg); color:#fff; font-weight:600; }
+.side ul a .tick { color:var(--ok); font-size:11px; }
+.side ul a .soon { margin-left:auto; font-size:11px; color:var(--faint); border:1px solid var(--line-2);
+      border-radius:4px; padding:1px 5px; }
+
+/* ---- content ----------------------------------------------------------- */
+main { padding:28px 40px 90px; min-width:0; max-width:1000px; }
+.crumb { display:flex; gap:8px; align-items:center; color:var(--muted); font-size:13px;
+      margin-bottom:12px; }
+.crumb a{color:var(--muted)} .crumb a:hover{color:var(--ink)}
+h1 { font:700 34px/1.15 var(--sans); letter-spacing:-.03em; margin:0 0 12px; }
+.row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:0 0 28px; }
+.chip { display:inline-flex; align-items:center; gap:6px; border-radius:6px; padding:4px 9px;
+      font:600 12.5px/1 var(--sans); background:var(--raise-2); color:var(--ink-2);
+      border:1px solid var(--line); }
+.chip i { width:7px; height:7px; border-radius:2px; }
+.chip.done { color:var(--ok); border-color:#1c3a24; background:#0f2417; }
+.mut { color:var(--muted); font-size:13.5px; }
+.prose { max-width:72ch; }
+h2 { font:650 22px/1.3 var(--sans); letter-spacing:-.02em; margin:40px 0 12px; color:#fff; }
+h3 { font:600 17px/1.35 var(--sans); margin:28px 0 8px; }
+p { margin:0 0 16px; color:var(--ink-2); }
+.prose a { text-decoration:underline; text-underline-offset:2px; text-decoration-color:#4b4577; }
+.prose ul { margin:0 0 16px; padding-left:22px; color:var(--ink-2); }
+.prose li { margin:6px 0; }
+.prose strong { color:#fff; font-weight:600; }
+
+.goals { border:1px solid var(--line); border-left:2px solid var(--l1); border-radius:8px;
+      background:var(--raise); padding:15px 18px; margin:0 0 26px; }
+.goals b { display:block; font-size:13.5px; margin-bottom:7px; color:#fff; }
+.goals ul { margin:0; padding-left:19px; }
+.goals li { font-size:14px; }
+
+.code { margin:0 0 22px; border:1px solid var(--line); border-radius:8px; overflow:hidden;
+      background:#0b0e13; }
+.code header { display:flex; padding:8px 13px; background:var(--raise); color:var(--muted);
+      font:12.5px/1 var(--mono); border-bottom:1px solid var(--line); }
+.code header span{margin-left:auto}
+.code pre { margin:0; padding:15px 17px; overflow-x:auto; font:13px/1.75 var(--mono); color:#c9d4e0; }
+.k{color:#c792ea}.s{color:#7ee787}.c{color:#6b7684;font-style:italic}.f{color:#79c0ff}.n{color:#ffa657}
+
+figure { margin:0 0 28px; }
+.diagram { border:1px solid var(--line); border-radius:8px; background:var(--raise); }
+.diagram .in { overflow-x:auto; overscroll-behavior-x:contain; padding:20px 16px; min-width:0; }
+.diagram .in > svg { max-width:100%; height:auto; }
+figcaption { color:var(--muted); font-size:13px; margin-top:8px; }
+.flow{display:flex;align-items:center;min-width:min-content}
+.node { border:1px solid var(--line-2); border-radius:6px; padding:9px 12px; font-size:13px;
+      white-space:nowrap; background:var(--raise-2); color:var(--ink-2); }
+.node.on { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600; }
+.arr{color:var(--line-2);padding:0 7px}
+
+.act { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:40px;
+      padding-top:20px; border-top:1px solid var(--line); max-width:72ch; }
+.btn { border:1px solid var(--accent); background:var(--accent); color:#fff; font:600 14.5px/1 var(--sans);
+      padding:10px 17px; border-radius:7px; cursor:pointer; }
+.btn:hover{background:#6a58ee}
+.btn.g { background:var(--raise); color:var(--ink); border-color:var(--line-2); }
+.btn.g:hover{background:var(--raise-2)}
+.act .mut { margin-left:auto; }
+.pn { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:30px; max-width:72ch; }
+.pn a { border:1px solid var(--line); border-radius:8px; padding:12px 14px; background:var(--raise); }
+.pn a:hover { border-color:var(--line-2); background:var(--raise-2); }
+.pn small{display:block;color:var(--faint);font-size:12px;margin-bottom:3px}
+.pn b{color:var(--ink);font-weight:600;font-size:14.5px}
+.pn .r{text-align:right}
+</style>
+</head>
+<body>
+
+<div class="pg"><b>T3</b><span>Workbench &mdash; dev-tool lens, dark by default. Compact, &#8984;K, level colour as signal. Same content as T1, T2, T4.</span></div>
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="#"><span class="g">L</span>Bazaar</a>
+    <nav class="tabs">
+      <a href="#">Home</a>
+      <a href="#" aria-current="page">Curriculum</a>
+      <a href="#">Catalog</a>
+      <a href="#">Progress</a>
+    </nav>
+    <div class="sp"></div>
+    <div class="cmdk" role="button" tabindex="0">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M10 10l4.5 4.5"/></svg>
+      Jump to&hellip; <kbd>&#8984;K</kbd>
+    </div>
+    <button class="ib" title="Light theme">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3.4"/><path d="M8 1v1.6M8 13.4V15M1 8h1.6M13.4 8H15"/></svg>
+    </button>
+    <button class="ib" title="Türkçe">TR</button>
+  </div>
+</header>
+
+<div class="shell">
+  <aside class="side">
+    <details class="grp" open>
+      <summary><span class="bar" style="background:var(--l1)"></span>Fundamentals<span class="n">3/8</span></summary>
+      <ul>
+        <li><a href="#">LLM Fundamentals <span class="tick">&#10003;</span></a></li>
+        <li><a href="#">Training LLMs <span class="tick">&#10003;</span></a></li>
+        <li><a href="#" aria-current="page">RAG &amp; Embeddings</a></li>
+        <li><a href="#">Tool Calling</a></li>
+        <li><a href="#">Memory</a></li>
+        <li><a href="#">AI Agents</a></li>
+        <li><a href="#">Multi-Agent Systems</a></li>
+        <li><a href="#">Observability</a></li>
+      </ul>
+    </details>
+    <details class="grp">
+      <summary><span class="bar" style="background:var(--l2)"></span>Intermediate<span class="n">0/8</span></summary>
+      <ul>
+        <li><a href="#">Prompt Engineering</a></li>
+        <li><a href="#">Context Engineering</a></li>
+        <li><a href="#">Coding Agents</a></li>
+        <li><a href="#">Harness Engineering</a></li>
+        <li><a href="#">Loop Engineering</a></li>
+        <li><a href="#">Generative UI <span class="soon">soon</span></a></li>
+        <li><a href="#">Security</a></li>
+        <li><a href="#">Personal Agents</a></li>
+      </ul>
+    </details>
+    <details class="grp">
+      <summary><span class="bar" style="background:var(--l3)"></span>Expert<span class="n">0/11</span></summary>
+      <ul>
+        <li><a href="#">Advanced Tools <span class="soon">soon</span></a></li>
+        <li><a href="#">Advanced Memory <span class="soon">soon</span></a></li>
+      </ul>
+    </details>
+    <details class="grp">
+      <summary><span class="bar" style="background:var(--l4)"></span>Ecosystem<span class="n">0/5</span></summary>
+      <ul>
+        <li><a href="#">Agent Frameworks</a></li>
+        <li><a href="#">Inference Providers</a></li>
+      </ul>
+    </details>
+    <details class="grp">
+      <summary><span class="bar" style="background:var(--l5)"></span>Protocols<span class="n">0/1</span></summary>
+      <ul><li><a href="#">Protocols Reference <span class="soon">soon</span></a></li></ul>
+    </details>
+  </aside>
+
+  <main>
+    <nav class="crumb"><a href="#">Curriculum</a>/<a href="#">Fundamentals</a>/<span>RAG &amp; Embeddings</span></nav>
+    <h1>RAG &amp; Embeddings</h1>
+    <div class="row">
+      <span class="chip"><i style="background:var(--l1)"></i>Fundamentals</span>
+      <span class="chip">Module 3 of 8</span>
+      <span class="chip">30 min</span>
+      <span class="mut">1,814 words &middot; English &amp; Türkçe</span>
+    </div>
+
+    <div class="prose">
+      <div class="goals">
+        <b>What you will be able to do</b>
+        <ul>
+          <li>Explain why retrieval beats fine-tuning for facts that change</li>
+          <li>Describe how text becomes an embedding, and how similarity is measured</li>
+          <li>Walk through the retrieve-then-generate pipeline end to end</li>
+          <li>Decide, for a given problem, whether you want RAG or fine-tuning</li>
+        </ul>
+      </div>
+
+      <p><a href="#">LLM Fundamentals</a> gave you the context window: the model's working desk, and
+      everything on it has to fit. <a href="#">Training LLMs</a> gave you fine-tuning: changing the
+      model itself. This module is about the third option, and the one you will reach for most.</p>
+
+      <h2>Why RAG exists</h2>
+      <p>A model knows what it was trained on. Ask it about your company's internal handbook and it
+      has three ways to answer, and only one of them is any good: guess, be retrained, or be handed
+      the relevant page at the moment you ask.</p>
+
+      <figure>
+        <div class="diagram"><div class="in"><div class="flow">
+          <span class="node">Question</span><span class="arr">&rarr;</span>
+          <span class="node">Search your data</span><span class="arr">&rarr;</span>
+          <span class="node">Find the relevant page</span><span class="arr">&rarr;</span>
+          <span class="node">Question + page in the context</span><span class="arr">&rarr;</span>
+          <span class="node on">Model answers from what it sees</span>
+        </div></div></div>
+        <figcaption>The model is never changed. Everything happens in the input, which is why a
+        document added this morning can be answered about this afternoon.</figcaption>
+      </figure>
+
+      <h3>What an embedding actually is</h3>
+      <p>An embedding is a list of numbers that stands for a piece of text, arranged so that texts
+      meaning similar things end up close together. Similarity becomes distance, and distance is
+      something a database can sort by.</p>
+
+      <div class="code">
+        <header>rag.py<span>python</span></header>
+<pre><span class="c"># one embedding, then one nearest-neighbour search</span>
+<span class="k">from</span> openai <span class="k">import</span> OpenAI
+
+client = <span class="f">OpenAI</span>()
+vector = client.embeddings.<span class="f">create</span>(
+    model=<span class="s">"text-embedding-3-small"</span>,
+    input=<span class="s">"How do I rotate the signing key?"</span>,
+).data[<span class="n">0</span>].embedding
+
+hits = store.<span class="f">query</span>(vector, top_k=<span class="n">4</span>)
+</pre>
+      </div>
+
+      <p>Four passages come back, they go into the context alongside the question, and the model
+      answers from what it can see rather than from what it remembers.</p>
+    </div>
+
+    <div class="act">
+      <button class="btn">Mark complete</button>
+      <button class="btn g">Requirements (2)</button>
+      <span class="mut">Stored in this browser</span>
+    </div>
+
+    <nav class="pn">
+      <a href="#"><small>Previous</small><b>Training LLMs</b></a>
+      <a class="r" href="#"><small>Next</small><b>Tool Calling</b></a>
+    </nav>
+  </main>
+</div>
+</body>
+</html>

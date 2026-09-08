@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catalog — 3 alternatives</title>
+<style>
+:root{
+  --paper:#fff;--wash:#f7f8fa;--sunken:#eef1f5;--ink:#1a1d23;--muted:#5b6472;--faint:#8a929e;
+  --line:#e3e6eb;--line-2:#cfd4dc;--accent:#0b6e5f;--soft:#e6f2ef;--accent-ink:#08594c;
+  --l1:#0b6e5f;--l1s:#e6f2ef;--l2:#1d63b8;--l2s:#e8f0fb;--l3:#7a4fb5;--l3s:#f1ecfa;
+  --l4:#b5761d;--l4s:#fbf3e6;--l5:#5b6472;--l5s:#f0f2f5;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--wash);color:var(--ink);font:16px/1.6 var(--sans)}
+a{text-decoration:none;color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.head{max-width:1180px;margin:0 auto;padding:40px 24px 8px}
+.head h1{font-size:28px;letter-spacing:-.02em;margin:0 0 8px}
+.head p{color:var(--muted);max-width:70ch;margin:0}
+.opt{max-width:1180px;margin:34px auto 0;padding:0 24px}
+.tag{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}
+.tag b{background:var(--ink);color:#fff;border-radius:6px;min-width:30px;height:26px;line-height:26px;
+  text-align:center;font:700 13.5px/26px var(--sans);padding:0 8px}
+.tag h2{font-size:19px;margin:0;letter-spacing:-.01em}
+.tag span{color:var(--muted);font-size:14.5px}
+.frame{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.why{padding:12px 16px;background:var(--wash);border-top:1px solid var(--line);color:var(--muted);font-size:14px}
+.why b{color:var(--ink)}
+.pad{padding:22px 24px 28px}
+
+/* ---------- the filter bar, at the TOP in all three ---------- */
+.filters{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:16px 24px;
+  border-bottom:1px solid var(--line);background:var(--paper);position:sticky;top:0;z-index:3}
+.fsearch{display:flex;align-items:center;gap:9px;height:38px;padding:0 12px;flex:1;min-width:220px;
+  border:1px solid var(--line-2);border-radius:8px;color:var(--faint);font-size:14.5px;cursor:text}
+.fchip{display:inline-flex;align-items:center;gap:7px;height:33px;padding:0 12px;border-radius:999px;
+  border:1px solid var(--line-2);background:var(--paper);color:var(--muted);font:550 13.5px/1 var(--sans);
+  cursor:pointer}
+.fchip:hover{border-color:var(--faint);color:var(--ink)}
+.fchip i{width:8px;height:8px;border-radius:50%}
+.fchip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.fchip.count{font-variant-numeric:tabular-nums}
+.fsep{width:1px;height:22px;background:var(--line)}
+.fmut{color:var(--faint);font-size:13.5px;margin-left:auto;font-variant-numeric:tabular-nums}
+
+/* ---------- A: cards grouped by level ---------- */
+.lvlhead{display:flex;align-items:center;gap:12px;margin:26px 0 12px}
+.lvlhead:first-child{margin-top:0}
+.lvlhead .swatch{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;
+  color:#fff;font:700 13px/1 var(--sans)}
+.lvlhead h3{margin:0;font-size:18px;letter-spacing:-.01em}
+.lvlhead .of{color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
+.lvlhead .rule{flex:1;height:1px;background:var(--line)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(252px,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:10px;padding:14px 15px;background:var(--paper);
+  display:block;border-top:3px solid var(--lc,var(--line))}
+.card:hover{border-color:var(--line-2);box-shadow:0 6px 18px -10px rgba(20,25,35,.2)}
+.card .n{color:var(--faint);font:600 12px/1 var(--mono)}
+.card h4{margin:6px 0 6px;font-size:16px;letter-spacing:-.01em;color:var(--ink);line-height:1.3}
+.card p{margin:0 0 10px;color:var(--muted);font-size:13.5px;line-height:1.5}
+.card .foot{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--faint)}
+.card .done{color:var(--accent);font-weight:600}
+.card .soon{border:1px solid var(--line-2);border-radius:4px;padding:1px 6px}
+.card.planned{background:var(--wash);opacity:.85}
+.card.planned h4{color:var(--muted)}
+
+/* ---------- B: one dense table, colour in the left edge ---------- */
+table{width:100%;border-collapse:collapse}
+thead th{text-align:left;padding:9px 14px;background:var(--wash);border-bottom:1px solid var(--line);
+  font:600 12.5px/1 var(--sans);color:var(--muted);position:sticky;top:71px;z-index:2}
+tbody td{padding:11px 14px;border-bottom:1px solid var(--line);font-size:14.5px;vertical-align:middle}
+tbody tr:hover{background:var(--wash)}
+tbody tr td:first-child{border-left:3px solid var(--lc);font:600 12.5px/1 var(--mono);color:var(--faint);
+  width:52px}
+tbody .name{font-weight:600;color:var(--ink)}
+tbody .name small{display:block;font-weight:400;color:var(--muted);font-size:13px;margin-top:2px}
+.badge{display:inline-flex;align-items:center;gap:6px;border-radius:5px;padding:3px 8px;
+  font:600 12px/1 var(--sans)}
+.badge i{width:7px;height:7px;border-radius:2px}
+.tick{color:var(--accent);font-weight:700}
+.dash{color:var(--faint)}
+.brk td{background:var(--wash);border-bottom:1px solid var(--line);padding:8px 14px;
+  font:700 11.5px/1 var(--sans);letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+
+/* ---------- C: five columns, one per level ---------- */
+.board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+@media(max-width:1080px){.board{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.board{grid-template-columns:minmax(0,1fr)}}
+.col{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--paper)}
+.col > header{padding:11px 13px;color:#fff}
+.col > header b{display:block;font-size:14.5px;font-weight:650}
+.col > header span{font-size:12.5px;opacity:.85;font-variant-numeric:tabular-nums}
+.col ol{list-style:none;margin:0;padding:7px}
+.col ol a{display:flex;gap:8px;align-items:flex-start;padding:8px 9px;border-radius:6px;
+  color:var(--ink);font-size:13.5px;line-height:1.35}
+.col ol a:hover{background:var(--wash)}
+.col ol a .num{color:var(--faint);font:600 11.5px/1.5 var(--mono);flex:none}
+.col ol a.done .num{color:var(--accent)}
+.col ol a.planned{color:var(--faint)}
+.track{height:4px;background:rgba(255,255,255,.3)}
+.track i{display:block;height:4px;background:#fff}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>Catalog &mdash; three alternatives</h1>
+  <p>
+    In all three the filters are at the <b>top</b> and sticky, and every level has its own colour.
+    What differs is the shape of the list itself. One neutral palette so you judge the layout.
+  </p>
+</div>
+
+<!-- ============================ A ============================ -->
+<section class="opt">
+  <div class="tag"><b>A</b><h2>Cards, grouped under a level heading</h2>
+    <span>scannable, shows a one-line summary</span></div>
+  <div class="frame">
+    <div class="filters">
+      <div class="fsearch" role="button" tabindex="0">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M10 10l4.5 4.5"/></svg>
+        Search 33 modules
+      </div>
+      <div class="fsep"></div>
+      <button class="fchip" aria-pressed="true">All</button>
+      <button class="fchip"><i style="background:var(--l1)"></i>Fundamentals</button>
+      <button class="fchip"><i style="background:var(--l2)"></i>Intermediate</button>
+      <button class="fchip"><i style="background:var(--l3)"></i>Expert</button>
+      <button class="fchip"><i style="background:var(--l4)"></i>Ecosystem</button>
+      <div class="fsep"></div>
+      <button class="fchip">Ready only</button>
+      <button class="fchip">Not done</button>
+      <span class="fmut">33 modules &middot; 19 ready</span>
+    </div>
+    <div class="pad">
+      <div class="lvlhead">
+        <span class="swatch" style="background:var(--l1)">1</span>
+        <h3>Fundamentals</h3><span class="of">8 modules &middot; 3 done</span><span class="rule"></span>
+      </div>
+      <div class="cards">
+        <a class="card" href="#" style="--lc:var(--l1)">
+          <span class="n">01</span>
+          <h4>LLM Fundamentals</h4>
+          <p>What a model is, what a token is, and the first API call.</p>
+          <div class="foot"><span class="done">&#10003; Done</span>&middot;<span>25 min</span></div>
+        </a>
+        <a class="card" href="#" style="--lc:var(--l1)">
+          <span class="n">02</span>
+          <h4>Training LLMs</h4>
+          <p>Pre-training, fine-tuning and PEFT, and when each is the wrong idea.</p>
+          <div class="foot"><span class="done">&#10003; Done</span>&middot;<span>25 min</span></div>
+        </a>
+        <a class="card" href="#" style="--lc:var(--l1)">
+          <span class="n">03</span>
+          <h4>RAG &amp; Embeddings</h4>
+          <p>Retrieval, vectors, and why this beats fine-tuning for facts that change.</p>
+          <div class="foot"><span class="done">&#10003; Done</span>&middot;<span>30 min</span></div>
+        </a>
+        <a class="card" href="#" style="--lc:var(--l1)">
+          <span class="n">04</span>
+          <h4>Tool Calling</h4>
+          <p>How a model reaches outside itself, and who actually runs the tool.</p>
+          <div class="foot"><span>25 min</span></div>
+        </a>
+        <a class="card" href="#" style="--lc:var(--l1)">
+          <span class="n">08</span>
+          <h4>Observability</h4>
+          <p>Traces hold what the code cannot tell you about a run.</p>
+          <div class="foot"><span>20 min</span></div>
+        </a>
+      </div>
+
+      <div class="lvlhead">
+        <span class="swatch" style="background:var(--l2)">2</span>
+        <h3>Intermediate</h3><span class="of">8 modules &middot; 0 done</span><span class="rule"></span>
+      </div>
+      <div class="cards">
+        <a class="card" href="#" style="--lc:var(--l2)">
+          <span class="n">09</span>
+          <h4>Prompt Engineering</h4>
+          <p>Chain of thought, in-context learning, and what a role prompt is worth.</p>
+          <div class="foot"><span>30 min</span></div>
+        </a>
+        <a class="card" href="#" style="--lc:var(--l2)">
+          <span class="n">10</span>
+          <h4>Context Engineering</h4>
+          <p>Summarisation, offloading, subagents and explicit planning.</p>
+          <div class="foot"><span>30 min</span></div>
+        </a>
+        <span class="card planned" style="--lc:var(--l2)">
+          <span class="n">14</span>
+          <h4>Generative UI</h4>
+          <p>Event streaming, SSE, and a model that writes the interface.</p>
+          <div class="foot"><span class="soon">Planned</span></div>
+        </span>
+      </div>
+    </div>
+    <div class="why"><b>Why it works:</b> a summary line per module means a reader can choose
+      without opening anything, and the level heading gives the list a rhythm.
+      <b>Cost:</b> 33 cards is a long page, and you need a one-line summary for every module.</div>
+  </div>
+</section>
+
+<!-- ============================ B ============================ -->
+<section class="opt">
+  <div class="tag"><b>B</b><h2>One table, sortable, colour on the left edge</h2>
+    <span>densest: the whole course on one screen</span></div>
+  <div class="frame">
+    <div class="filters">
+      <div class="fsearch" role="button" tabindex="0">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M10 10l4.5 4.5"/></svg>
+        Filter by name or topic
+      </div>
+      <div class="fsep"></div>
+      <button class="fchip" aria-pressed="true">All levels</button>
+      <button class="fchip">Ready</button>
+      <button class="fchip">Planned</button>
+      <button class="fchip">Done</button>
+      <button class="fchip">Not done</button>
+      <span class="fmut">33 rows</span>
+    </div>
+    <table>
+      <thead><tr><th>#</th><th>Module</th><th>Level</th><th>Length</th><th>Requires</th><th>Done</th></tr></thead>
+      <tbody>
+        <tr class="brk"><td colspan="6">Fundamentals &middot; 3 of 8 done</td></tr>
+        <tr style="--lc:var(--l1)"><td>01</td>
+          <td class="name">LLM Fundamentals<small>What a model is, and the first API call</small></td>
+          <td><span class="badge" style="background:var(--l1s);color:var(--l1)"><i style="background:var(--l1)"></i>Fundamentals</span></td>
+          <td>25 min</td><td class="dash">&mdash;</td><td class="tick">&#10003;</td></tr>
+        <tr style="--lc:var(--l1)"><td>02</td>
+          <td class="name">Training LLMs<small>Pre-training, fine-tuning, PEFT</small></td>
+          <td><span class="badge" style="background:var(--l1s);color:var(--l1)"><i style="background:var(--l1)"></i>Fundamentals</span></td>
+          <td>25 min</td><td>01</td><td class="tick">&#10003;</td></tr>
+        <tr style="--lc:var(--l1)"><td>03</td>
+          <td class="name">RAG &amp; Embeddings<small>Retrieval, vectors, similarity</small></td>
+          <td><span class="badge" style="background:var(--l1s);color:var(--l1)"><i style="background:var(--l1)"></i>Fundamentals</span></td>
+          <td>30 min</td><td>01, 02</td><td class="tick">&#10003;</td></tr>
+        <tr style="--lc:var(--l1)"><td>08</td>
+          <td class="name">Observability<small>Traces, and the loop they start</small></td>
+          <td><span class="badge" style="background:var(--l1s);color:var(--l1)"><i style="background:var(--l1)"></i>Fundamentals</span></td>
+          <td>20 min</td><td>06</td><td class="dash">&mdash;</td></tr>
+        <tr class="brk"><td colspan="6">Intermediate &middot; 0 of 8 done</td></tr>
+        <tr style="--lc:var(--l2)"><td>09</td>
+          <td class="name">Prompt Engineering<small>Chain of thought, in-context learning</small></td>
+          <td><span class="badge" style="background:var(--l2s);color:var(--l2)"><i style="background:var(--l2)"></i>Intermediate</span></td>
+          <td>30 min</td><td>01</td><td class="dash">&mdash;</td></tr>
+        <tr style="--lc:var(--l2)"><td>14</td>
+          <td class="name" style="color:var(--muted)">Generative UI<small>Event streaming, SSE</small></td>
+          <td><span class="badge" style="background:var(--l2s);color:var(--l2)"><i style="background:var(--l2)"></i>Intermediate</span></td>
+          <td class="dash">&mdash;</td><td class="dash">&mdash;</td>
+          <td><span class="badge" style="background:var(--sunken);color:var(--muted)">Planned</span></td></tr>
+        <tr class="brk"><td colspan="6">Expert &middot; 0 of 11 done</td></tr>
+        <tr style="--lc:var(--l3)"><td>17</td>
+          <td class="name" style="color:var(--muted)">Advanced Tools<small>Agentic search, code mode, chaining</small></td>
+          <td><span class="badge" style="background:var(--l3s);color:var(--l3)"><i style="background:var(--l3)"></i>Expert</span></td>
+          <td class="dash">&mdash;</td><td class="dash">&mdash;</td>
+          <td><span class="badge" style="background:var(--sunken);color:var(--muted)">Planned</span></td></tr>
+      </tbody>
+    </table>
+    <div class="why"><b>Why it works:</b> everything is comparable at a glance and it sorts. It is
+      also the only option where <i>Requires</i> is readable as a column.
+      <b>Cost:</b> a table feels like admin, not like a course, and it is the weakest on a phone.</div>
+  </div>
+</section>
+
+<!-- ============================ C ============================ -->
+<section class="opt">
+  <div class="tag"><b>C</b><h2>Five columns, one per level</h2>
+    <span>the whole shape of the course in one view</span></div>
+  <div class="frame">
+    <div class="filters">
+      <div class="fsearch" role="button" tabindex="0">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M10 10l4.5 4.5"/></svg>
+        Search 33 modules
+      </div>
+      <div class="fsep"></div>
+      <button class="fchip" aria-pressed="true">Show planned</button>
+      <button class="fchip">Only what I can start</button>
+      <span class="fmut">19 of 33 ready &middot; 3 done</span>
+    </div>
+    <div class="pad">
+      <div class="board">
+        <div class="col">
+          <header style="background:var(--l1)"><b>Fundamentals</b><span>3 of 8 done</span></header>
+          <div class="track"><i style="width:37%"></i></div>
+          <ol>
+            <li><a class="done" href="#"><span class="num">01</span>LLM Fundamentals</a></li>
+            <li><a class="done" href="#"><span class="num">02</span>Training LLMs</a></li>
+            <li><a class="done" href="#"><span class="num">03</span>RAG &amp; Embeddings</a></li>
+            <li><a href="#"><span class="num">04</span>Tool Calling</a></li>
+            <li><a href="#"><span class="num">05</span>Memory</a></li>
+            <li><a href="#"><span class="num">06</span>AI Agents</a></li>
+            <li><a href="#"><span class="num">07</span>Multi-Agent Systems</a></li>
+            <li><a href="#"><span class="num">08</span>Observability</a></li>
+          </ol>
+        </div>
+        <div class="col">
+          <header style="background:var(--l2)"><b>Intermediate</b><span>0 of 8 done</span></header>
+          <div class="track"><i style="width:0"></i></div>
+          <ol>
+            <li><a href="#"><span class="num">09</span>Prompt Engineering</a></li>
+            <li><a href="#"><span class="num">10</span>Context Engineering</a></li>
+            <li><a href="#"><span class="num">11</span>Coding Agents</a></li>
+            <li><a href="#"><span class="num">12</span>Harness Engineering</a></li>
+            <li><a href="#"><span class="num">13</span>Loop Engineering</a></li>
+            <li><a class="planned" href="#"><span class="num">14</span>Generative UI</a></li>
+            <li><a href="#"><span class="num">15</span>Security</a></li>
+            <li><a href="#"><span class="num">16</span>Personal Agents</a></li>
+          </ol>
+        </div>
+        <div class="col">
+          <header style="background:var(--l3)"><b>Expert</b><span>0 of 11 done</span></header>
+          <div class="track"><i style="width:0"></i></div>
+          <ol>
+            <li><a class="planned" href="#"><span class="num">17</span>Advanced Tools</a></li>
+            <li><a class="planned" href="#"><span class="num">18</span>Advanced Memory</a></li>
+            <li><a class="planned" href="#"><span class="num">19</span>Advanced Multi-Agent</a></li>
+            <li><a class="planned" href="#"><span class="num">20</span>Advanced Prompting</a></li>
+            <li><a class="planned" href="#"><span class="num">21</span>Adv. Context Eng.</a></li>
+            <li><a class="planned" href="#"><span class="num">22</span>Adv. Coding Agents</a></li>
+          </ol>
+        </div>
+        <div class="col">
+          <header style="background:var(--l4)"><b>Ecosystem</b><span>0 of 5 done</span></header>
+          <div class="track"><i style="width:0"></i></div>
+          <ol>
+            <li><a href="#"><span class="num">28</span>Agent Frameworks</a></li>
+            <li><a href="#"><span class="num">29</span>Inference Providers</a></li>
+            <li><a href="#"><span class="num">30</span>Inference Engines</a></li>
+            <li><a href="#"><span class="num">31</span>UI Design</a></li>
+            <li><a class="planned" href="#"><span class="num">32</span>Choosing a Stack</a></li>
+          </ol>
+        </div>
+        <div class="col">
+          <header style="background:var(--l5)"><b>Protocols</b><span>0 of 1 done</span></header>
+          <div class="track"><i style="width:0"></i></div>
+          <ol>
+            <li><a class="planned" href="#"><span class="num">33</span>Protocols Reference</a></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <div class="why"><b>Why it works:</b> a beginner sees the entire course in one screen and
+      understands the five levels without reading a word of explanation. It is also the clearest
+      separation of levels by colour, which you asked for. <b>Cost:</b> no room for summaries, and
+      it collapses to a stack of five lists on a phone.</div>
+  </div>
+</section>
+
+<div class="head" style="padding-top:34px">
+  <p style="color:var(--muted)"><b>My read:</b> <b>C</b> as the landing view of the catalog, because
+  it answers &ldquo;what is this course&rdquo; instantly, with <b>B</b> available behind a
+  &ldquo;table&rdquo; toggle for the times you want to sort or compare. <b>A</b> is the best of the
+  three only if you are willing to write 33 one-line summaries.</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Completion &amp; progress — 3 alternatives</title>
+<style>
+:root{
+  --paper:#fff;--wash:#f7f8fa;--sunken:#eef1f5;--ink:#1a1d23;--muted:#5b6472;--faint:#8a929e;
+  --line:#e3e6eb;--line-2:#cfd4dc;--accent:#0b6e5f;--soft:#e6f2ef;--accent-ink:#08594c;
+  --l1:#0b6e5f;--l2:#1d63b8;--l3:#7a4fb5;--l4:#b5761d;--l5:#5b6472;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--wash);color:var(--ink);font:16px/1.6 var(--sans)}
+a{text-decoration:none;color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.head{max-width:980px;margin:0 auto;padding:40px 24px 8px}
+.head h1{font-size:28px;letter-spacing:-.02em;margin:0 0 8px}
+.head p{color:var(--muted);max-width:72ch;margin:0 0 8px}
+.opt{max-width:980px;margin:34px auto 0;padding:0 24px}
+.tag{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}
+.tag b{background:var(--ink);color:#fff;border-radius:6px;min-width:30px;padding:0 8px;
+  font:700 13.5px/26px var(--sans);text-align:center}
+.tag h2{font-size:19px;margin:0;letter-spacing:-.01em}
+.tag span{color:var(--muted);font-size:14.5px}
+.frame{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.pad{padding:26px 26px 30px}
+.why{padding:12px 16px;background:var(--wash);border-top:1px solid var(--line);color:var(--muted);font-size:14px}
+.why b{color:var(--ink)}
+.sub{font:600 12.5px/1 var(--sans);color:var(--faint);margin:0 0 12px}
+hr.d{border:0;border-top:1px dashed var(--line-2);margin:26px 0}
+
+/* ---- A: one button, one sentence ---- */
+.a-wrap{border-top:1px solid var(--line);padding-top:20px;display:flex;align-items:center;gap:14px;
+  flex-wrap:wrap}
+.big{border:1px solid var(--accent);background:var(--accent);color:#fff;font:600 15px/1 var(--sans);
+  padding:12px 20px;border-radius:8px;cursor:pointer}
+.big:hover{background:var(--accent-ink)}
+.big.done{background:var(--soft);color:var(--accent-ink);border-color:#bfe0d8}
+.a-wrap p{margin:0;color:var(--muted);font-size:14px}
+.a-bar{display:flex;align-items:center;gap:12px;margin-top:22px;font-size:14px;color:var(--muted)}
+.track{flex:1;max-width:280px;height:7px;border-radius:4px;background:var(--sunken);overflow:hidden}
+.track i{display:block;height:7px;background:var(--accent)}
+
+/* ---- B: a checklist that adds up to completion ---- */
+.checks{border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.checks .row{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line)}
+.checks .row:last-child{border-bottom:0}
+.checks .row:hover{background:var(--wash)}
+.checks input{margin:3px 0 0;width:17px;height:17px;accent-color:var(--accent)}
+.checks .row div{min-width:0}
+.checks .row b{display:block;font-size:15px;font-weight:550;line-height:1.4}
+.checks .row small{color:var(--muted);font-size:13px}
+.checks footer{display:flex;align-items:center;gap:12px;padding:13px 16px;background:var(--wash);
+  border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+.checks footer b{color:var(--ink)}
+.mini{border:1px solid var(--line-2);background:var(--paper);border-radius:7px;padding:8px 14px;
+  font:600 14px/1 var(--sans);cursor:pointer;margin-left:auto;color:var(--ink)}
+
+/* ---- C: level rings ---- */
+.rings{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px}
+.ring{border:1px solid var(--line);border-radius:10px;padding:16px 14px;text-align:center}
+.ring .dial{width:74px;height:74px;margin:0 auto 10px;border-radius:50%;display:grid;place-items:center;
+  font:700 17px/1 var(--sans)}
+.ring b{display:block;font-size:14px;font-weight:600}
+.ring small{color:var(--muted);font-size:12.5px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:18px;font-size:13.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:9px;height:9px;border-radius:3px}
+.stat{display:flex;gap:26px;flex-wrap:wrap;margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
+.stat div b{display:block;font:700 24px/1.1 var(--sans);letter-spacing:-.02em}
+.stat div span{color:var(--muted);font-size:13px}
+.gone{color:var(--faint);text-decoration:line-through}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>Finishing a module, and seeing progress</h1>
+  <p>
+    Today this is <b>SIGN-OFF</b> with a paragraph explaining that it is self-asserted, plus
+    <b>XP</b>, <b>CLASS</b>, <b>UPTIME</b> and <b>I AT 8</b> on the home page. Nobody can read that
+    at a glance, and nothing tells you what it is for.
+  </p>
+  <p>
+    Every option below keeps the underlying behaviour you already have &mdash; a per-module
+    completion flag in this browser, the checklist, the self-assessment, the streak &mdash; and
+    changes only what a reader sees.
+  </p>
+</div>
+
+<!-- ============================ A ============================ -->
+<section class="opt">
+  <div class="tag"><b>A</b><h2>One button, one sentence, one bar</h2>
+    <span>the minimum that still works</span></div>
+  <div class="frame">
+    <div class="pad">
+      <p class="sub">At the end of a module</p>
+      <div class="a-wrap">
+        <button class="big">Mark complete</button>
+        <p>Saved in this browser. You can undo it any time.</p>
+      </div>
+      <div class="a-bar">
+        <b style="color:var(--ink);font-weight:600">Fundamentals</b>
+        <span class="track"><i style="width:37%"></i></span>
+        <span>3 of 8</span>
+      </div>
+      <hr class="d">
+      <p class="sub">Once it is done</p>
+      <div class="a-wrap" style="border:0;padding:0">
+        <button class="big done">&#10003; Completed today</button>
+        <p><a href="#">Undo</a> &middot; Next: <a href="#">Tool Calling</a></p>
+      </div>
+    </div>
+    <div class="why"><b>What goes:</b> XP, Rank, Streak and the explanation paragraph.
+      <b>What stays:</b> the flag, the undo, and one progress bar per level.
+      <b>Trade:</b> nothing rewards coming back, so a reader has no reason to build a habit.</div>
+  </div>
+</section>
+
+<!-- ============================ B ============================ -->
+<section class="opt">
+  <div class="tag"><b>B</b><h2>A checklist that earns the tick</h2>
+    <span>completion means something, without a test</span></div>
+  <div class="frame">
+    <div class="pad">
+      <p class="sub">At the end of a module</p>
+      <div class="checks">
+        <div class="row"><input type="checkbox" id="c1" checked><div><label for="c1"><b>Read the module</b></label><small>Ticked for you when you reach the end</small></div></div>
+        <div class="row"><input type="checkbox" id="c2" checked><div><label for="c2"><b>Opened at least one source</b></label><small>You opened 2 of 5</small></div></div>
+        <div class="row"><input type="checkbox" id="c3"><div><label for="c3"><b>Answered the quick check</b></label><small>One question, self-marked, no score kept</small></div></div>
+        <div class="row"><input type="checkbox" id="c4"><div><label for="c4"><b>Tried it on something of your own</b></label><small>Optional. Paste a repository link if you want a record of it</small></div></div>
+        <footer>
+          <span><b>2 of 4</b> done</span>
+          <button class="mini">Mark module complete</button>
+        </footer>
+      </div>
+      <p style="color:var(--muted);font-size:14px;margin:14px 0 0">
+        The button works whatever the boxes say. The list is there to tell a reader what
+        &ldquo;complete&rdquo; is supposed to mean, which is the job the paragraph does today.
+      </p>
+    </div>
+    <div class="why"><b>What goes:</b> the paragraph of explanation, XP, Rank.
+      <b>What stays:</b> the checklist and the quick check you already store, now shown as the
+      definition of done rather than as two separate boxed counters.
+      <b>Trade:</b> four rows is more furniture at the end of every module.</div>
+  </div>
+</section>
+
+<!-- ============================ C ============================ -->
+<section class="opt">
+  <div class="tag"><b>C</b><h2>Rings per level, and three numbers that mean something</h2>
+    <span>keeps a light game layer, drops the jargon</span></div>
+  <div class="frame">
+    <div class="pad">
+      <p class="sub">On the home page and on My progress</p>
+      <div class="rings">
+        <div class="ring">
+          <div class="dial" style="background:conic-gradient(var(--l1) 0 37%,var(--sunken) 37%);color:var(--l1)">
+            <span style="background:var(--paper);width:56px;height:56px;border-radius:50%;display:grid;place-items:center">3/8</span>
+          </div>
+          <b>Fundamentals</b><small>37% done</small>
+        </div>
+        <div class="ring">
+          <div class="dial" style="background:conic-gradient(var(--l2) 0 0%,var(--sunken) 0)">
+            <span style="background:var(--paper);width:56px;height:56px;border-radius:50%;display:grid;place-items:center;color:var(--faint)">0/8</span>
+          </div>
+          <b>Intermediate</b><small>not started</small>
+        </div>
+        <div class="ring">
+          <div class="dial" style="background:conic-gradient(var(--l3) 0 0%,var(--sunken) 0)">
+            <span style="background:var(--paper);width:56px;height:56px;border-radius:50%;display:grid;place-items:center;color:var(--faint)">0/11</span>
+          </div>
+          <b>Expert</b><small>11 planned</small>
+        </div>
+        <div class="ring">
+          <div class="dial" style="background:conic-gradient(var(--l4) 0 0%,var(--sunken) 0)">
+            <span style="background:var(--paper);width:56px;height:56px;border-radius:50%;display:grid;place-items:center;color:var(--faint)">0/5</span>
+          </div>
+          <b>Ecosystem</b><small>not started</small>
+        </div>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--accent)"></i>done</span>
+        <span><i style="background:var(--sunken)"></i>not yet</span>
+        <span><i style="background:var(--line);border:1px dashed var(--line-2)"></i>not written yet</span>
+      </div>
+      <div class="stat">
+        <div><b>3</b><span>modules done</span></div>
+        <div><b>1h 20m</b><span>read so far</span></div>
+        <div><b>4 days</b><span>in a row</span></div>
+      </div>
+      <p style="color:var(--muted);font-size:14px;margin:20px 0 0">
+        Renamed, not removed: <span class="gone">XP 0</span> becomes minutes read,
+        <span class="gone">UPTIME 1D</span> becomes days in a row,
+        <span class="gone">CLASS &mdash;</span> and <span class="gone">I AT 8</span> are dropped
+        entirely because neither answered a question anybody was asking.
+      </p>
+    </div>
+    <div class="why"><b>What goes:</b> the words XP, Class, Uptime and the segment bars.
+      <b>What stays:</b> everything you already count, relabelled to what it measures.
+      <b>Trade:</b> four rings is the most visual furniture of the three, and rings are harder to
+      read precisely than a bar.</div>
+  </div>
+</section>
+
+<div class="head" style="padding-top:34px">
+  <p style="color:var(--muted)"><b>My read:</b> <b>A</b> at the end of a module, because the reader
+  wants one button there, and <b>C</b> on the home and progress pages, because that is where a
+  picture of where you are belongs. <b>B</b> only if you want &ldquo;complete&rdquo; to carry more
+  weight than &ldquo;I read it&rdquo;. A and C combine; B replaces A.</p>
+</div>
+
+</body>
+</html>

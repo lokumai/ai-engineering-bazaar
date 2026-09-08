@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Left sidebar — 3 alternatives</title>
+<style>
+:root{
+  --paper:#fff;--wash:#f7f8fa;--sunken:#eef1f5;--ink:#1a1d23;--muted:#5b6472;--faint:#8a929e;
+  --line:#e3e6eb;--line-2:#cfd4dc;--accent:#0b6e5f;--soft:#e6f2ef;--accent-ink:#08594c;
+  --l1:#0b6e5f;--l2:#1d63b8;--l3:#7a4fb5;--l4:#b5761d;--l5:#5b6472;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--wash);color:var(--ink);font:16px/1.6 var(--sans)}
+a{text-decoration:none;color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.head{max-width:1100px;margin:0 auto;padding:40px 24px 8px}
+.head h1{font-size:28px;letter-spacing:-.02em;margin:0 0 8px}
+.head p{color:var(--muted);max-width:72ch;margin:0 0 8px}
+.grid{max-width:1100px;margin:30px auto 60px;padding:0 24px;display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+@media(max-width:960px){.grid{grid-template-columns:1fr}}
+.col > .tag{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+.col > .tag b{background:var(--ink);color:#fff;border-radius:6px;min-width:28px;padding:0 7px;
+  font:700 13px/25px var(--sans);text-align:center}
+.col > .tag h2{font-size:16.5px;margin:0;letter-spacing:-.01em}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:11px;overflow:hidden}
+.why{padding:11px 14px;background:var(--wash);border-top:1px solid var(--line);color:var(--muted);
+  font-size:13.5px}
+.why b{color:var(--ink)}
+.pane{height:452px;overflow-y:auto;padding:14px 10px}
+
+/* ---- 1: accordion, one level open ---- */
+.ac details{margin-bottom:2px}
+.ac summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:9px;padding:8px 10px;
+  border-radius:7px;font:600 14px/1.2 var(--sans);color:var(--ink)}
+.ac summary::-webkit-details-marker{display:none}
+.ac summary:hover{background:var(--wash)}
+.ac .k{width:4px;height:15px;border-radius:2px;flex:none}
+.ac .n{margin-left:auto;font:500 12px/1 var(--mono);color:var(--faint)}
+.ac .cv{color:var(--faint);font-size:10px;transition:transform .18s}
+.ac details[open] .cv{transform:rotate(90deg)}
+.ac ul{list-style:none;margin:2px 0 8px;padding:0 0 0 11px;border-left:1px solid var(--line);
+  margin-left:15px}
+.ac ul a{display:flex;align-items:center;gap:8px;padding:6px 9px;border-radius:6px;
+  color:var(--muted);font-size:13.5px;line-height:1.4}
+.ac ul a:hover{background:var(--wash);color:var(--ink)}
+.ac ul a[aria-current]{background:var(--soft);color:var(--accent-ink);font-weight:600;
+  box-shadow:inset 2px 0 0 var(--accent)}
+.ac ul a .tk{color:var(--accent);font-size:11px}
+.ac ul a .pl{margin-left:auto;font-size:10.5px;color:var(--faint);border:1px solid var(--line-2);
+  border-radius:4px;padding:1px 5px}
+
+/* ---- 2: flat list, level as a sticky divider ---- */
+.fl .div{position:sticky;top:0;background:var(--paper);padding:9px 10px 6px;display:flex;
+  align-items:center;gap:8px;font:700 11px/1 var(--sans);color:var(--muted);letter-spacing:.07em;
+  text-transform:uppercase;border-bottom:1px solid var(--line);z-index:1}
+.fl .div i{width:8px;height:8px;border-radius:2px}
+.fl .div em{margin-left:auto;font-style:normal;font-family:var(--mono);letter-spacing:0;
+  text-transform:none;font-weight:500}
+.fl a{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:6px;color:var(--muted);
+  font-size:13.5px}
+.fl a:hover{background:var(--wash);color:var(--ink)}
+.fl a[aria-current]{background:var(--soft);color:var(--accent-ink);font-weight:600}
+.fl a .no{font:600 11px/1 var(--mono);color:var(--faint);width:16px;flex:none}
+.fl a[aria-current] .no{color:var(--accent)}
+.fl a .tk{margin-left:auto;color:var(--accent);font-size:11px}
+
+/* ---- 3: two panes, level chosen at the top ---- */
+.tp .chips{display:flex;gap:5px;flex-wrap:wrap;padding:2px 4px 12px;border-bottom:1px solid var(--line);
+  margin-bottom:10px}
+.tp .chips button{border:1px solid var(--line-2);background:var(--paper);border-radius:999px;
+  padding:5px 10px;font:600 12px/1 var(--sans);color:var(--muted);cursor:pointer;display:inline-flex;
+  align-items:center;gap:6px}
+.tp .chips button i{width:7px;height:7px;border-radius:50%}
+.tp .chips button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.tp .now{font:600 13.5px/1 var(--sans);color:var(--ink);padding:0 6px 9px;display:flex;gap:8px;
+  align-items:center}
+.tp .now em{margin-left:auto;font-style:normal;color:var(--faint);font-size:12px;font-family:var(--mono)}
+.tp ol{list-style:none;margin:0;padding:0}
+.tp ol a{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;
+  color:var(--muted);font-size:13.5px}
+.tp ol a:hover{background:var(--wash);color:var(--ink)}
+.tp ol a[aria-current]{background:var(--soft);color:var(--accent-ink);font-weight:600}
+.tp ol a .no{font:600 11px/1 var(--mono);color:var(--faint);width:16px;flex:none}
+.tp ol a .tk{margin-left:auto;color:var(--accent);font-size:11px}
+.tp .other{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line-2);font-size:12.5px;
+  color:var(--faint);padding-left:8px}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>Left sidebar &mdash; three alternatives</h1>
+  <p>
+    You asked for an optional accordion sidebar with a second level under each entry. All three
+    below do that; they differ in how much of the course is visible at once. Each pane is scrolled
+    to the same place, showing Fundamentals with module 3 current.
+  </p>
+  <p style="font-size:14.5px">
+    All three collapse behind a button below 900px, and remember whether you closed them.
+  </p>
+</div>
+
+<div class="grid">
+
+  <!-- ===== 1 ===== -->
+  <div class="col">
+    <div class="tag"><b>1</b><h2>Accordion</h2></div>
+    <div class="card">
+      <div class="pane ac">
+        <details open>
+          <summary><span class="k" style="background:var(--l1)"></span>Fundamentals<span class="n">3/8</span><span class="cv">&#9656;</span></summary>
+          <ul>
+            <li><a href="#">LLM Fundamentals <span class="tk">&#10003;</span></a></li>
+            <li><a href="#">Training LLMs <span class="tk">&#10003;</span></a></li>
+            <li><a href="#" aria-current="page">RAG &amp; Embeddings</a></li>
+            <li><a href="#">Tool Calling</a></li>
+            <li><a href="#">Memory</a></li>
+            <li><a href="#">AI Agents</a></li>
+            <li><a href="#">Multi-Agent Systems</a></li>
+            <li><a href="#">Observability</a></li>
+          </ul>
+        </details>
+        <details>
+          <summary><span class="k" style="background:var(--l2)"></span>Intermediate<span class="n">0/8</span><span class="cv">&#9656;</span></summary>
+          <ul>
+            <li><a href="#">Prompt Engineering</a></li>
+            <li><a href="#">Context Engineering</a></li>
+            <li><a href="#">Coding Agents</a></li>
+            <li><a href="#">Harness Engineering</a></li>
+            <li><a href="#">Loop Engineering</a></li>
+            <li><a href="#">Generative UI <span class="pl">soon</span></a></li>
+            <li><a href="#">Security</a></li>
+            <li><a href="#">Personal Agents</a></li>
+          </ul>
+        </details>
+        <details>
+          <summary><span class="k" style="background:var(--l3)"></span>Expert<span class="n">0/11</span><span class="cv">&#9656;</span></summary>
+          <ul>
+            <li><a href="#">Advanced Tools <span class="pl">soon</span></a></li>
+            <li><a href="#">Advanced Memory <span class="pl">soon</span></a></li>
+          </ul>
+        </details>
+        <details>
+          <summary><span class="k" style="background:var(--l4)"></span>Ecosystem<span class="n">0/5</span><span class="cv">&#9656;</span></summary>
+          <ul>
+            <li><a href="#">Agent Frameworks</a></li>
+            <li><a href="#">Inference Providers</a></li>
+          </ul>
+        </details>
+        <details>
+          <summary><span class="k" style="background:var(--l5)"></span>Protocols &amp; Specs<span class="n">0/1</span><span class="cv">&#9656;</span></summary>
+          <ul><li><a href="#">Protocols Reference <span class="pl">soon</span></a></li></ul>
+        </details>
+      </div>
+      <div class="why"><b>Best for:</b> reading one level at a time. The five level names are always
+        visible, so the shape of the course never leaves the screen.
+        <b>Cost:</b> jumping between levels costs a click.</div>
+    </div>
+  </div>
+
+  <!-- ===== 2 ===== -->
+  <div class="col">
+    <div class="tag"><b>2</b><h2>Flat, with sticky level dividers</h2></div>
+    <div class="card">
+      <div class="pane fl">
+        <div class="div"><i style="background:var(--l1)"></i>Fundamentals<em>3/8</em></div>
+        <a href="#"><span class="no">01</span>LLM Fundamentals<span class="tk">&#10003;</span></a>
+        <a href="#"><span class="no">02</span>Training LLMs<span class="tk">&#10003;</span></a>
+        <a href="#" aria-current="page"><span class="no">03</span>RAG &amp; Embeddings<span class="tk">&#10003;</span></a>
+        <a href="#"><span class="no">04</span>Tool Calling</a>
+        <a href="#"><span class="no">05</span>Memory</a>
+        <a href="#"><span class="no">06</span>AI Agents</a>
+        <a href="#"><span class="no">07</span>Multi-Agent Systems</a>
+        <a href="#"><span class="no">08</span>Observability</a>
+        <div class="div"><i style="background:var(--l2)"></i>Intermediate<em>0/8</em></div>
+        <a href="#"><span class="no">09</span>Prompt Engineering</a>
+        <a href="#"><span class="no">10</span>Context Engineering</a>
+        <a href="#"><span class="no">11</span>Coding Agents</a>
+        <a href="#"><span class="no">12</span>Harness Engineering</a>
+        <a href="#"><span class="no">13</span>Loop Engineering</a>
+        <a href="#"><span class="no">14</span>Generative UI</a>
+        <a href="#"><span class="no">15</span>Security</a>
+        <a href="#"><span class="no">16</span>Personal Agents</a>
+        <div class="div"><i style="background:var(--l3)"></i>Expert<em>0/11</em></div>
+        <a href="#"><span class="no">17</span>Advanced Tools</a>
+        <a href="#"><span class="no">18</span>Advanced Memory</a>
+        <a href="#"><span class="no">19</span>Advanced Multi-Agent</a>
+      </div>
+      <div class="why"><b>Best for:</b> moving anywhere in one click, and seeing the module number
+        line up 1 to 33. The divider sticks while you scroll, so you always know which level you
+        are looking at. <b>Cost:</b> a 33-item scroll, and the course shape is less obvious.</div>
+    </div>
+  </div>
+
+  <!-- ===== 3 ===== -->
+  <div class="col">
+    <div class="tag"><b>3</b><h2>Level chips, then one list</h2></div>
+    <div class="card">
+      <div class="pane tp">
+        <div class="chips">
+          <button aria-pressed="true"><i style="background:var(--l1)"></i>Fund.</button>
+          <button><i style="background:var(--l2)"></i>Inter.</button>
+          <button><i style="background:var(--l3)"></i>Expert</button>
+          <button><i style="background:var(--l4)"></i>Eco.</button>
+          <button><i style="background:var(--l5)"></i>Proto.</button>
+        </div>
+        <div class="now"><span class="k" style="width:4px;height:14px;border-radius:2px;background:var(--l1);display:block"></span>Fundamentals<em>3/8</em></div>
+        <ol>
+          <li><a href="#"><span class="no">01</span>LLM Fundamentals<span class="tk">&#10003;</span></a></li>
+          <li><a href="#"><span class="no">02</span>Training LLMs<span class="tk">&#10003;</span></a></li>
+          <li><a href="#" aria-current="page"><span class="no">03</span>RAG &amp; Embeddings<span class="tk">&#10003;</span></a></li>
+          <li><a href="#"><span class="no">04</span>Tool Calling</a></li>
+          <li><a href="#"><span class="no">05</span>Memory</a></li>
+          <li><a href="#"><span class="no">06</span>AI Agents</a></li>
+          <li><a href="#"><span class="no">07</span>Multi-Agent Systems</a></li>
+          <li><a href="#"><span class="no">08</span>Observability</a></li>
+        </ol>
+        <p class="other">Pick another level above to switch the list.</p>
+      </div>
+      <div class="why"><b>Best for:</b> the shortest sidebar. Never scrolls past one level, and the
+        chips are the level colour key at the same time.
+        <b>Cost:</b> only one level's modules exist at a time, so you cannot see across levels, and
+        the chip labels have to be abbreviated to fit.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="head" style="padding-bottom:60px">
+  <p style="color:var(--muted)"><b>My read:</b> <b>1</b>. It is the pattern you asked for, it is
+  what every documentation site this audience uses already does, and the level names staying on
+  screen is what fixes &ldquo;I do not know where I am&rdquo;. <b>2</b> is the better pick if you
+  want the 1&ndash;33 numbering to feel like one sequence rather than five groups.</p>
+</div>
+
+</body>
+</html>

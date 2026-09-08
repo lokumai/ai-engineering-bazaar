@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code &amp; diagrams — 3 alternatives</title>
+<style>
+:root{
+  --paper:#fff;--wash:#f7f8fa;--sunken:#eef1f5;--ink:#1a1d23;--muted:#5b6472;--faint:#8a929e;
+  --line:#e3e6eb;--line-2:#cfd4dc;--accent:#0b6e5f;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--wash);color:var(--ink);font:16px/1.6 var(--sans)}
+a{text-decoration:none;color:var(--accent)}
+.head{max-width:1040px;margin:0 auto;padding:40px 24px 8px}
+.head h1{font-size:28px;letter-spacing:-.02em;margin:0 0 8px}
+.head p{color:var(--muted);max-width:72ch;margin:0 0 8px}
+.opt{max-width:1040px;margin:34px auto 0;padding:0 24px}
+.tag{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}
+.tag b{background:var(--ink);color:#fff;border-radius:6px;min-width:30px;padding:0 8px;
+  font:700 13.5px/26px var(--sans);text-align:center}
+.tag h2{font-size:19px;margin:0;letter-spacing:-.01em}
+.tag span{color:var(--muted);font-size:14.5px}
+.frame{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.pad{padding:22px 24px 26px}
+.why{padding:12px 16px;background:var(--wash);border-top:1px solid var(--line);color:var(--muted);font-size:14px}
+.why b{color:var(--ink)}
+.sub{font:600 12.5px/1 var(--sans);color:var(--faint);margin:0 0 11px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:820px){.two{grid-template-columns:1fr}}
+
+/* shared shells */
+.cb{border-radius:9px;overflow:hidden;margin:0}
+.cb header{display:flex;align-items:center;gap:8px;padding:8px 13px;font:12.5px/1 var(--mono)}
+.cb header span{margin-left:auto}
+.cb pre{margin:0;padding:15px 17px;overflow-x:auto;font:13.5px/1.75 var(--mono)}
+.dgm{border-radius:9px;overflow:hidden}
+.dgm .in{overflow-x:auto;padding:20px 16px;min-width:0}
+.flow{display:flex;align-items:center;min-width:min-content}
+.nd{border-radius:7px;padding:10px 13px;font:13px/1 var(--sans);white-space:nowrap;border:1.5px solid}
+.ar{padding:0 8px;font-weight:700}
+.swatches{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.sw{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted)}
+.sw i{width:14px;height:14px;border-radius:4px;border:1px solid rgba(0,0,0,.08)}
+
+/* ============ 1: light, six roles, ink-first ============ */
+.t1 .cb{border:1px solid #dfe3e8;background:#fcfdfe}
+.t1 .cb header{background:#f2f5f8;color:#5b6472;border-bottom:1px solid #dfe3e8}
+.t1 .cb pre{color:#22262e}
+.t1 .kw{color:#8a2be2;font-weight:600} .t1 .st{color:#0b6e5f} .t1 .cm{color:#8a929e;font-style:italic}
+.t1 .fn{color:#1d63b8;font-weight:600} .t1 .nu{color:#b5761d} .t1 .op{color:#5b6472}
+.t1 .dgm{border:1px solid #dfe3e8;background:#fcfdfe}
+.t1 .nd{background:#fff;border-color:#c8d0da;color:#22262e}
+.t1 .nd.a{background:#e6f2ef;border-color:#0b6e5f;color:#08594c;font-weight:600}
+.t1 .nd.b{background:#e8f0fb;border-color:#1d63b8;color:#144b8f;font-weight:600}
+.t1 .nd.c{background:#fbf3e6;border-color:#b5761d;color:#8a5a15;font-weight:600}
+.t1 .ar{color:#a9b3bf}
+
+/* ============ 2: dark slab, one warm accent ============ */
+.t2 .cb{border:1px solid #262d38;background:#0f131a}
+.t2 .cb header{background:#171d26;color:#8b96a5;border-bottom:1px solid #262d38}
+.t2 .cb pre{color:#cdd6e0}
+.t2 .kw{color:#ff9e64} .t2 .st{color:#9ece6a} .t2 .cm{color:#5a6474;font-style:italic}
+.t2 .fn{color:#7aa2f7} .t2 .nu{color:#e0af68} .t2 .op{color:#89ddff}
+.t2 .dgm{border:1px solid #262d38;background:#131820}
+.t2 .nd{background:#1b2230;border-color:#333c4a;color:#cdd6e0}
+.t2 .nd.a{background:#1f3a35;border-color:#2dd4bf;color:#8ef0e2;font-weight:600}
+.t2 .nd.b{background:#1e2b45;border-color:#7aa2f7;color:#b3c8ff;font-weight:600}
+.t2 .nd.c{background:#3a2e1c;border-color:#e0af68;color:#f5d4a0;font-weight:600}
+.t2 .ar{color:#4a5464}
+
+/* ============ 3: banner palette, cobalt and clay ============ */
+.t3 .cb{border:1px solid #d8cbb4;background:#fffdf9}
+.t3 .cb header{background:#e6dac6;color:#6a6558;border-bottom:1px solid #d8cbb4}
+.t3 .cb pre{color:#20242e}
+.t3 .kw{color:#282864;font-weight:700} .t3 .st{color:#2f8c86} .t3 .cm{color:#948d7d;font-style:italic}
+.t3 .fn{color:#a0503c;font-weight:600} .t3 .nu{color:#b8873b;font-weight:600} .t3 .op{color:#6a6558}
+.t3 .dgm{border:1px solid #d8cbb4;background:#fffdf9}
+.t3 .nd{background:#f4ece0;border-color:#c3b299;color:#20242e}
+.t3 .nd.a{background:#282864;border-color:#282864;color:#fff;font-weight:600}
+.t3 .nd.b{background:#2f8c86;border-color:#2f8c86;color:#fff;font-weight:600}
+.t3 .nd.c{background:#c8a078;border-color:#a0503c;color:#3a1f16;font-weight:600}
+.t3 .ar{color:#c8a078}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>Code blocks and diagrams &mdash; three colour systems</h1>
+  <p>
+    Today both are one grey on another grey, so a keyword looks like a comment and a highlighted
+    diagram node looks like an ordinary one. Each option below gives code <b>six</b> token roles
+    and diagrams <b>three</b> node roles, which is enough to carry meaning and few enough to learn.
+  </p>
+  <p style="font-size:14.5px">
+    The diagram node roles matter for your corpus specifically: your mermaid rails already mean
+    three things &mdash; <b>done</b>, <b>you are here</b>, and <b>not yet</b> &mdash; and right now
+    all three look the same.
+  </p>
+</div>
+
+<!-- ============================ 1 ============================ -->
+<section class="opt t1">
+  <div class="tag"><b>1</b><h2>Light, ink-first</h2>
+    <span>code on paper, like the rest of the page</span></div>
+  <div class="frame">
+    <div class="pad">
+      <div class="two">
+        <div>
+          <p class="sub">Code</p>
+          <figure class="cb">
+            <header>rag.py<span>python</span></header>
+<pre><span class="cm"># embed, then search</span>
+<span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+
+client = <span class="fn">OpenAI</span>()
+vec = client.embeddings.<span class="fn">create</span>(
+    model=<span class="st">"text-embedding-3-small"</span>,
+    input=question,
+).data[<span class="nu">0</span>].embedding
+
+hits = store.<span class="fn">query</span>(vec, top_k=<span class="nu">4</span>)
+</pre>
+          </figure>
+        </div>
+        <div>
+          <p class="sub">Diagram</p>
+          <div class="dgm"><div class="in"><div class="flow">
+            <span class="nd a">Done</span><span class="ar">&rarr;</span>
+            <span class="nd a">Done</span><span class="ar">&rarr;</span>
+            <span class="nd b">You are here</span><span class="ar">&rarr;</span>
+            <span class="nd">Next</span><span class="ar">&rarr;</span>
+            <span class="nd">Later</span>
+          </div></div></div>
+          <div class="swatches">
+            <span class="sw"><i style="background:#8a2be2"></i>keyword</span>
+            <span class="sw"><i style="background:#0b6e5f"></i>string</span>
+            <span class="sw"><i style="background:#1d63b8"></i>call</span>
+            <span class="sw"><i style="background:#b5761d"></i>number</span>
+            <span class="sw"><i style="background:#8a929e"></i>comment</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="why"><b>Why:</b> nothing on the page goes dark, so a module reads as one surface and
+      a code block does not punch a hole in it. <b>Cost:</b> the lowest contrast of the three, and
+      light syntax colours are harder to keep accessible at small sizes.</div>
+  </div>
+</section>
+
+<!-- ============================ 2 ============================ -->
+<section class="opt t2">
+  <div class="tag"><b>2</b><h2>Dark slab</h2>
+    <span>what engineers see in their editor all day</span></div>
+  <div class="frame">
+    <div class="pad">
+      <div class="two">
+        <div>
+          <p class="sub">Code</p>
+          <figure class="cb">
+            <header>rag.py<span>python</span></header>
+<pre><span class="cm"># embed, then search</span>
+<span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+
+client = <span class="fn">OpenAI</span>()
+vec = client.embeddings.<span class="fn">create</span>(
+    model=<span class="st">"text-embedding-3-small"</span>,
+    input=question,
+).data[<span class="nu">0</span>].embedding
+
+hits = store.<span class="fn">query</span>(vec, top_k=<span class="nu">4</span>)
+</pre>
+          </figure>
+        </div>
+        <div>
+          <p class="sub">Diagram</p>
+          <div class="dgm"><div class="in"><div class="flow">
+            <span class="nd a">Done</span><span class="ar">&rarr;</span>
+            <span class="nd a">Done</span><span class="ar">&rarr;</span>
+            <span class="nd b">You are here</span><span class="ar">&rarr;</span>
+            <span class="nd">Next</span><span class="ar">&rarr;</span>
+            <span class="nd">Later</span>
+          </div></div></div>
+          <div class="swatches">
+            <span class="sw"><i style="background:#ff9e64"></i>keyword</span>
+            <span class="sw"><i style="background:#9ece6a"></i>string</span>
+            <span class="sw"><i style="background:#7aa2f7"></i>call</span>
+            <span class="sw"><i style="background:#e0af68"></i>number</span>
+            <span class="sw"><i style="background:#5a6474"></i>comment</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="why"><b>Why:</b> the highest contrast, instantly familiar, and code stops competing
+      with prose because it is obviously a different kind of thing. <b>Cost:</b> a dark slab in a
+      light page is a strong visual break, and a module with five code blocks starts to look
+      striped.</div>
+  </div>
+</section>
+
+<!-- ============================ 3 ============================ -->
+<section class="opt t3">
+  <div class="tag"><b>3</b><h2>Banner palette</h2>
+    <span>cobalt, teal, clay and ochre from your tile artwork</span></div>
+  <div class="frame">
+    <div class="pad">
+      <div class="two">
+        <div>
+          <p class="sub">Code</p>
+          <figure class="cb">
+            <header>rag.py<span>python</span></header>
+<pre><span class="cm"># embed, then search</span>
+<span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+
+client = <span class="fn">OpenAI</span>()
+vec = client.embeddings.<span class="fn">create</span>(
+    model=<span class="st">"text-embedding-3-small"</span>,
+    input=question,
+).data[<span class="nu">0</span>].embedding
+
+hits = store.<span class="fn">query</span>(vec, top_k=<span class="nu">4</span>)
+</pre>
+          </figure>
+        </div>
+        <div>
+          <p class="sub">Diagram</p>
+          <div class="dgm"><div class="in"><div class="flow">
+            <span class="nd b">Done</span><span class="ar">&rarr;</span>
+            <span class="nd b">Done</span><span class="ar">&rarr;</span>
+            <span class="nd a">You are here</span><span class="ar">&rarr;</span>
+            <span class="nd">Next</span><span class="ar">&rarr;</span>
+            <span class="nd">Later</span>
+          </div></div></div>
+          <div class="swatches">
+            <span class="sw"><i style="background:#282864"></i>cobalt</span>
+            <span class="sw"><i style="background:#2f8c86"></i>teal</span>
+            <span class="sw"><i style="background:#a0503c"></i>clay</span>
+            <span class="sw"><i style="background:#b8873b"></i>ochre</span>
+            <span class="sw"><i style="background:#948d7d"></i>stone</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="why"><b>Why:</b> the only one that makes a code block look like it belongs to this
+      project rather than to a generic theme, and it reuses colours the reader already met in the
+      banner. <b>Cost:</b> four hues is a tight budget for syntax, so complex code has fewer
+      distinctions than options 1 and 2 give it.</div>
+  </div>
+</section>
+
+<div class="head" style="padding-top:34px">
+  <p style="color:var(--muted)"><b>My read:</b> <b>2</b> for code, because the audience reads dark
+  code all day and the contrast is honest, and <b>1 or 3</b> for diagrams, because a diagram sits in
+  the argument of the prose and should not break the page. Mixing them is normal: dark code blocks
+  with light diagrams is what most documentation sites actually ship.</p>
+  <p style="color:var(--muted);font-size:14.5px"><b>One technical note.</b> Whichever you pick,
+  diagram colour has to be applied by <i>class</i> rather than by hex in the markdown. Your corpus
+  writes <code>style A fill:#90EE90</code> today and the build rewrites nine known hexes into
+  themed classes; any other hex fails the build. Three named roles &mdash; done, here, not yet
+  &mdash; would replace that mechanism with something an author can use without memorising
+  hexes.</p>
+</div>
+
+</body>
+</html>

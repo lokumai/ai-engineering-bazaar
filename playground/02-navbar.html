@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Navbar — 3 alternatives</title>
+<style>
+:root {
+  --paper:#fff; --wash:#f7f8fa; --sunken:#eef1f5; --ink:#1a1d23; --muted:#5b6472; --faint:#8a929e;
+  --line:#e3e6eb; --line-2:#cfd4dc; --accent:#0b6e5f; --soft:#e6f2ef; --accent-ink:#08594c;
+  --l1:#0b6e5f; --l2:#1d63b8; --l3:#7a4fb5; --l4:#b5761d; --l5:#5b6472;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--wash);color:var(--ink);font:16px/1.6 var(--sans)}
+a{text-decoration:none;color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.head{max-width:1180px;margin:0 auto;padding:40px 24px 8px}
+.head h1{font-size:28px;letter-spacing:-.02em;margin:0 0 8px}
+.head p{color:var(--muted);max-width:66ch;margin:0}
+.opt{max-width:1180px;margin:34px auto 0;padding:0 24px}
+.tag{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}
+.tag b{background:var(--ink);color:#fff;border-radius:6px;min-width:30px;height:26px;line-height:26px;
+  text-align:center;font-size:13.5px;font-weight:700;padding:0 8px}
+.tag h2{font-size:19px;margin:0;letter-spacing:-.01em}
+.tag span{color:var(--muted);font-size:14.5px}
+.frame{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.why{padding:12px 16px;background:var(--wash);border-top:1px solid var(--line);color:var(--muted);
+  font-size:14px}
+.why b{color:var(--ink)}
+.stage{padding:0 0 26px;background:var(--paper)}
+.fake{padding:22px 26px;color:var(--faint);font-size:14px;border-top:1px dashed var(--line);
+  margin-top:0}
+
+/* ---------- shared bits ---------- */
+.brand{display:flex;align-items:center;gap:9px;color:var(--ink);font:650 15.5px/1 var(--sans);
+  letter-spacing:-.01em;flex:none}
+.brand .g{width:24px;height:24px;border-radius:6px;background:var(--ink);color:#fff;display:grid;
+  place-items:center;font:700 12px/1 var(--sans)}
+.sp{flex:1}
+.srch{display:flex;align-items:center;gap:8px;height:34px;padding:0 10px;border:1px solid var(--line-2);
+  border-radius:7px;color:var(--faint);font-size:14px;min-width:190px;cursor:text;background:var(--paper)}
+.srch kbd{margin-left:auto;font:11px/1 var(--mono);border:1px solid var(--line-2);border-radius:4px;
+  padding:3px 5px;background:var(--wash)}
+.ib{width:34px;height:34px;border:1px solid var(--line-2);border-radius:7px;background:var(--paper);
+  display:grid;place-items:center;cursor:pointer;color:var(--muted);font:600 11.5px/1 var(--sans)}
+.ib:hover{background:var(--wash);color:var(--ink)}
+.av{width:30px;height:30px;border-radius:50%;background:var(--soft);color:var(--accent-ink);
+  display:grid;place-items:center;font:650 12.5px/1 var(--sans);border:1px solid #c9e2db}
+
+/* ---------- A: one row, tabs, dropdown per level ---------- */
+.a-bar{display:flex;align-items:center;gap:18px;height:58px;padding:0 20px;border-bottom:1px solid var(--line)}
+.a-nav{display:flex;gap:2px}
+.a-nav > div{position:relative}
+.a-nav a.top{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:6px;
+  color:var(--muted);font-size:14.5px;font-weight:500}
+.a-nav a.top:hover{background:var(--wash);color:var(--ink)}
+.a-nav a.top[aria-current]{background:var(--soft);color:var(--accent-ink);font-weight:600}
+.a-nav .chev{font-size:9px;color:var(--faint)}
+.menu{position:absolute;top:calc(100% + 7px);left:0;width:290px;background:var(--paper);
+  border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 28px -8px rgba(20,25,35,.18);
+  padding:7px;z-index:5}
+.menu .grp{padding:8px 10px 4px;font:700 11px/1 var(--sans);color:var(--faint);letter-spacing:.06em;
+  text-transform:uppercase}
+.menu a{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:6px;color:var(--ink);
+  font-size:14.5px}
+.menu a:hover{background:var(--wash)}
+.menu a i{width:7px;height:7px;border-radius:2px;flex:none}
+.menu a em{margin-left:auto;font-style:normal;color:var(--faint);font-size:12.5px;
+  font-variant-numeric:tabular-nums}
+
+/* ---------- B: two rows, breadcrumb strip below ---------- */
+.b-r1{display:flex;align-items:center;gap:16px;height:54px;padding:0 20px}
+.b-r2{display:flex;align-items:center;gap:8px;height:42px;padding:0 20px;background:var(--wash);
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:13.5px;
+  color:var(--muted);overflow-x:auto}
+.b-r2 a{color:var(--muted);white-space:nowrap}
+.b-r2 a:hover{color:var(--ink)}
+.b-r2 .now{color:var(--ink);font-weight:600;white-space:nowrap}
+.b-r2 .sep{color:var(--line-2)}
+.b-r2 .prog{margin-left:auto;display:flex;align-items:center;gap:9px;white-space:nowrap}
+.b-r2 .track{width:110px;height:5px;border-radius:3px;background:var(--sunken);overflow:hidden}
+.b-r2 .track i{display:block;height:5px;width:22%;background:var(--accent)}
+.b-nav{display:flex;gap:2px}
+.b-nav a{padding:7px 12px;border-radius:6px;color:var(--muted);font-size:14.5px;font-weight:500}
+.b-nav a:hover{background:var(--wash);color:var(--ink)}
+.b-nav a[aria-current]{color:var(--ink);font-weight:600;box-shadow:inset 0 -2px 0 var(--accent);
+  border-radius:0}
+
+/* ---------- C: level rail, no text nav ---------- */
+.c-bar{display:flex;align-items:center;gap:14px;height:56px;padding:0 18px;border-bottom:1px solid var(--line)}
+.c-levels{display:flex;gap:6px;margin-left:8px}
+.c-levels a{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 10px;border-radius:999px;
+  border:1px solid var(--line);color:var(--muted);font-size:14px;font-weight:550;background:var(--paper)}
+.c-levels a:hover{border-color:var(--line-2);color:var(--ink)}
+.c-levels a[aria-current]{border-color:transparent;color:#fff}
+.c-levels a i{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.85}
+.c-levels a b{font-weight:650;font-variant-numeric:tabular-nums;opacity:.7;font-size:12.5px}
+.c-ico{display:flex;gap:4px;margin-left:auto}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>Navbar &mdash; three alternatives</h1>
+  <p>
+    All three are shown in one neutral palette on purpose, so you are judging the <b>structure</b>
+    and not the colour. Every one of them is identical on every page, has a visible current
+    location, and puts search and language in the same place. Pick a letter.
+  </p>
+</div>
+
+<!-- ============================ A ============================ -->
+<section class="opt">
+  <div class="tag"><b>A</b><h2>One row, with a dropdown per level</h2>
+    <span>the docs pattern: MDN, Stripe, Tailwind</span></div>
+  <div class="frame">
+    <div class="stage">
+      <div class="a-bar">
+        <a class="brand" href="#"><span class="g">L</span>AI Engineering Bazaar</a>
+        <nav class="a-nav">
+          <div><a class="top" href="#">Home</a></div>
+          <div>
+            <a class="top" href="#" aria-current="page">Curriculum <span class="chev">&#9660;</span></a>
+            <div class="menu">
+              <div class="grp">Jump to a level</div>
+              <a href="#"><i style="background:var(--l1)"></i>Fundamentals<em>3/8</em></a>
+              <a href="#"><i style="background:var(--l2)"></i>Intermediate<em>0/8</em></a>
+              <a href="#"><i style="background:var(--l3)"></i>Expert<em>0/11</em></a>
+              <a href="#"><i style="background:var(--l4)"></i>Ecosystem<em>0/5</em></a>
+              <a href="#"><i style="background:var(--l5)"></i>Protocols &amp; Specs<em>0/1</em></a>
+            </div>
+          </div>
+          <div><a class="top" href="#">Catalog</a></div>
+          <div><a class="top" href="#">My progress</a></div>
+        </nav>
+        <div class="sp"></div>
+        <div class="srch" role="button" tabindex="0">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M10 10l4.5 4.5"/></svg>
+          Search<kbd>/</kbd>
+        </div>
+        <button class="ib" title="Theme">&#9680;</button>
+        <button class="ib" title="Türkçe">TR</button>
+        <div class="av">AO</div>
+      </div>
+      <p class="fake">The dropdown is shown open so you can see it. Hovering or clicking
+        &ldquo;Curriculum&rdquo; reveals the five levels with your count beside each.</p>
+    </div>
+    <div class="why"><b>Why it works:</b> four words, one open menu, and the level list is one hover
+      away rather than a separate page. <b>Cost:</b> a dropdown is a hover target, so it needs a
+      tap-friendly version on mobile.</div>
+  </div>
+</section>
+
+<!-- ============================ B ============================ -->
+<section class="opt">
+  <div class="tag"><b>B</b><h2>Two rows: nav on top, where-you-are below</h2>
+    <span>the app pattern: GitHub, Linear, Notion</span></div>
+  <div class="frame">
+    <div class="stage">
+      <div class="b-r1">
+        <a class="brand" href="#"><span class="g">L</span>AI Engineering Bazaar</a>
+        <nav class="b-nav">
+          <a href="#">Home</a>
+          <a href="#" aria-current="page">Curriculum</a>
+          <a href="#">Catalog</a>
+          <a href="#">My progress</a>
+        </nav>
+        <div class="sp"></div>
+        <div class="srch" role="button" tabindex="0">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M10 10l4.5 4.5"/></svg>
+          Search<kbd>/</kbd>
+        </div>
+        <button class="ib" title="Theme">&#9680;</button>
+        <button class="ib" title="Türkçe">TR</button>
+        <div class="av">AO</div>
+      </div>
+      <div class="b-r2">
+        <a href="#">Curriculum</a><span class="sep">/</span>
+        <a href="#">Fundamentals</a><span class="sep">/</span>
+        <span class="now">RAG &amp; Embeddings</span>
+        <span class="prog"><span class="track"><i></i></span> 3 of 33 done</span>
+      </div>
+      <p class="fake">The second row changes as you move; the first row never does. Progress sits
+        at the right of the second row, so it is always visible without taking a whole panel.</p>
+    </div>
+    <div class="why"><b>Why it works:</b> it answers &ldquo;where am I&rdquo; and &ldquo;how far
+      along am I&rdquo; on every single page, permanently. <b>Cost:</b> 96px of vertical space
+      before any content, and two rows read as heavier.</div>
+  </div>
+</section>
+
+<!-- ============================ C ============================ -->
+<section class="opt">
+  <div class="tag"><b>C</b><h2>Levels as the navigation</h2>
+    <span>the course pattern: Duolingo, roadmap.sh, Exercism</span></div>
+  <div class="frame">
+    <div class="stage">
+      <div class="c-bar">
+        <a class="brand" href="#"><span class="g">L</span>Bazaar</a>
+        <nav class="c-levels">
+          <a href="#" aria-current="page" style="background:var(--l1)"><i></i>Fundamentals <b>3/8</b></a>
+          <a href="#"><i style="background:var(--l2)"></i>Intermediate <b>0/8</b></a>
+          <a href="#"><i style="background:var(--l3)"></i>Expert <b>0/11</b></a>
+          <a href="#"><i style="background:var(--l4)"></i>Ecosystem <b>0/5</b></a>
+          <a href="#"><i style="background:var(--l5)"></i>Protocols <b>0/1</b></a>
+        </nav>
+        <div class="c-ico">
+          <button class="ib" title="Search">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M10 10l4.5 4.5"/></svg>
+          </button>
+          <button class="ib" title="My progress">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12h3V7H2zM6.5 12h3V3h-3zM11 12h3V9h-3z"/></svg>
+          </button>
+          <button class="ib" title="Theme">&#9680;</button>
+          <button class="ib" title="Türkçe">TR</button>
+        </div>
+      </div>
+      <p class="fake">There is no &ldquo;Curriculum&rdquo; link, because the five levels
+        <em>are</em> the curriculum. Everything else becomes an icon on the right.</p>
+    </div>
+    <div class="why"><b>Why it works:</b> the structure of the course is the navigation, so a
+      beginner sees the whole shape immediately, and the colour code is learned in the first
+      second. <b>Cost:</b> five level names will not fit on a phone, so mobile needs a different
+      treatment, and the icons on the right carry no labels.</div>
+  </div>
+</section>
+
+<div class="head" style="padding-top:34px">
+  <p style="color:var(--muted)"><b>My read:</b> <b>A</b> if the priority is that nobody has to learn
+  anything, <b>B</b> if the priority is that a reader always knows where they are and how far along,
+  <b>C</b> if the priority is that the course structure teaches itself. A and B combine cleanly:
+  A's dropdown can sit in B's first row.</p>
+</div>
+
+</body>
+</html>

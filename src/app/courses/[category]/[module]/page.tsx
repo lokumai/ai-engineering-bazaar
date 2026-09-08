@@ -44,31 +44,46 @@ import {
 } from '@/lib/content/title-block'
 
 /**
- * The module sheet — §4.4's three formats, chosen at build time from status
- * and extent and never overridden by hand.
+ * The module page — the screen a reader spends 95% of their time on, rebuilt in
+ * M10 and M11.
  *
- * **A0**, the assembly sheet: a drawn module of 2,500 words or more, three
- * zones, 208 + 24 + 656 + 24 + 240 = 1152.
- * **A2**, the part sheet: a drawn module under that, two zones centred.
- * **A4**, the detail sheet: a module that is not yet drawn. §4.5 gives it its
- * own anatomy — a status band, one sentence and a schedule of parts — because
- * wrapping a 1,144px instrument panel around 120 words of stub is the single
- * biggest failure mode of this whole direction. An A4 sheet is not a broken
- * A0; on seventeen of the thirty-two sheets it is the design.
+ * ## The shell, and the swap at the middle of it
  *
- * Every number the page prints — extent, figures, sources, revision, language,
- * position, the size of the set — is derived (§11.25). The spine still tracks
- * scroll and not completion; §12 adds the surfaces that do carry reader state,
- * and every one of them is an island under §12.2's two-channel rule: the server
- * renders the honest empty form — `SIGN OFF` unpressed, `CHECKED BY —`, an
- * empty answer, every stamp slot at zero against its real threshold — and the
- * record fills it in after the hydration commit. Nothing here reads storage
- * during render, and nothing claims a state the build could not know.
+ * Three tracks, with **both rails anchored to the window edges** and the
+ * reading column centred between them, capped at 80ch
+ * (`kia-context/logs/BRAINSTORM.md` D15). Left is the **curriculum**, right is
+ * **what is on this page** — which is the opposite way round from how it
+ * shipped, and the swap is the point: the thing a reader reaches for most often
+ * on a course page is another page of the course, and the contents of the page
+ * you are already reading is a within-page aid. `PageShell` is asked for
+ * `bleed`, because the 1200px shell every other route sits in is exactly what
+ * stops a rail reaching the window.
  *
- * **A draft sheet gets none of it** (§12.4.1): no sign-off control, no Quick
- * Check, no submittal register, no `CHECKED BY` row, no stamp slots. It awards
- * nothing and cannot be signed, and that is what keeps every denominator on the
- * site honest.
+ * `sheetFormat` is down to two and it decides exactly one thing here: whether
+ * there is a contents rail at all. A draft has no sections to list, so it has
+ * none — but it keeps the curriculum rail, because that is navigation rather
+ * than module info and a reader who lands on a stub needs a way out of it more
+ * than anyone does. §4.5 still gives it its own anatomy: a status band, one
+ * sentence and a schedule of parts, because wrapping a 1,144px instrument panel
+ * around 120 words of stub was the single biggest failure mode of this whole
+ * direction, and on fourteen of the thirty-three modules the stub IS the
+ * design.
+ *
+ * ## What has not changed
+ *
+ * Every number the page prints — length, figures, sources, revision, language,
+ * position, the size of the course — is derived (§11.25). §12 adds the surfaces
+ * that carry reader state, and every one of them is an island under §12.2's
+ * two-channel rule: the server renders the honest empty form — the completion
+ * control unpressed, `CHECKED BY —`, an empty answer, every stamp slot at zero
+ * against its real threshold — and the record fills it in after the hydration
+ * commit. Nothing here reads storage during render, and nothing claims a state
+ * the build could not know.
+ *
+ * **A draft gets none of it** (§12.4.1): no completion control, no Quick Check,
+ * no submittal register, no `CHECKED BY` row, no stamp slots. It awards nothing
+ * and cannot be completed, and that is what keeps every denominator on the site
+ * honest.
  */
 
 interface RouteParams {

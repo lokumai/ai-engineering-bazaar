@@ -1,10 +1,13 @@
 /* ===========================================================================
    §4.4–§4.7, §5.5–§5.7 — the module sheet.
 
-   Three formats, chosen at build time and written onto the wrapper as
-   `data-format`: A0 the drawn sheet (three zones; two, centred, below 1280), A4
-   detail (one column, no rails). An A4 sheet is not a degraded A0 — §4.5 gives
-   it its own anatomy — so nothing here treats a format as a fallback.
+   Two formats, chosen at build time and written onto the wrapper as
+   `data-format`: A0 a written module, A4 one that is only planned. Since M10
+   they share the same shell — the curriculum rail, the reading column — and
+   `data-format` decides exactly one thing: whether the contents rail exists at
+   all, which a draft has no sections to fill. An A4 module is not a degraded
+   A0 (§4.5 gives it its own anatomy), so nothing here treats a format as a
+   fallback.
 
    Two things repeat and are worth naming up front. Every rule is one of three
    quantised weights (`--stroke-hair` 1px, `--stroke-struct` 1.5px,

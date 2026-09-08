@@ -9,7 +9,7 @@ description: >
 authority: background
 writes: agent, whenever a decision is made
 status: active
-covers: "the whole project, 2026-07-07 onward — D1 to D15, O1 to O4"
+covers: "the whole project, 2026-07-07 onward — D1 to D18, O1 to O4"
 last_updated: "2026-09-08"
 ---
 
@@ -287,6 +287,67 @@ grow to 211px and the column does not. That cap is the reason it grows without b
 **Comes with it:** the module list folds away in 200ms, restored by a tab pinned to the left edge. The
 first version of that tab was fixed at `top:88px` under a `z-index:40` sticky header and could not be
 clicked at all — found by driving it in a browser, not by reading it.
+
+
+### D16 · Only reader-visible strings are renamed; the code keeps the old words — 2026-09-08
+
+**Considered:** rename everything, code included / rename only what a reader can see
+**Chose:** the second, and `ARCHITECTURE.md` §9 now states the line rather than implying it.
+**Because:** a storage key and a DB column carry a reader's saved history. `sheet_slug`,
+`kind: 'sign-off'` and the `data.sheets` map are what a record from last month is keyed on, so
+renaming one to match a label would invalidate every reader's history for a cosmetic gain. CSS
+classes, React props and type members are the same argument with a smaller stake: nothing a reader
+can see, and a rename with a real chance of a silent miss.
+**Rejected renaming everything because:** the benefit is that a future reader of the code sees one
+vocabulary, and the cost is a migration of stored data. That trade is only worth making if the code's
+vocabulary is actively misleading, and it is not — it is *consistent*, which was always the retired
+system's virtue.
+**Measured:** 1,660 reader-visible occurrences across 56 pages before, 0 after. The source carries
+2,358 mentions of `sheet` alone, almost all of them identifiers, which is the ratio that makes this
+decision obvious.
+**The consequence to live with:** anyone reading `src/` meets both vocabularies. §9's table is the
+translation, and its two columns are labelled "In the code" and "What the reader sees" for that
+reason.
+**Rule that follows:** the whole-of-`src/` scan in `tests/unit/copy-register.test.ts`, which bans the
+left column in a reader-visible string and ignores it everywhere else. A word inside backticks is
+stripped before matching, because that is the code's own name being quoted.
+
+### D17 · The navbar dropdown carries no JavaScript — 2026-09-08
+
+**Considered:** a React menu with `useState` and `aria-expanded` / a CSS menu on `:hover` and
+`:focus-within`
+**Chose:** the CSS one.
+**Because:** this is a static export. A reader can click a link in the first frame, before any bundle
+has arrived, and a menu that needs state to open does nothing until it does. The same argument
+`ARCHITECTURE.md` §12.2 makes for channel A applies to any control that has to be right immediately.
+**Rejected the React menu because:** it buys `aria-expanded` and Escape-to-close, and costs
+correctness before hydration. It is also claiming state that does not exist here — the trigger is a
+link to `/courses/` and the panel is a list of links, so there is nothing to expand: a reader who
+clicks the trigger gets the level index, which is a reasonable answer to the same question.
+**The one thing that had to be got right:** `:focus-within` is what makes it keyboard-reachable, and
+it must come FIRST in the selector list, or a panel opened by the keyboard closes when the pointer
+happens to leave the item.
+**Verified by driving it, not by reading it:** tabbing to `Curriculum` in Chrome returns
+`visibility: visible` and the level inside carries `aria-current`.
+
+### D18 · A contrast test asserts the floor its token's job carries, never a published ratio — 2026-09-08
+
+**Considered:** recompute the twenty published ratios and re-pin them / drop the pins and assert the
+floors
+**Chose:** the second.
+**Because:** the pinned table was reasonable while the design spec was the authority — it caught a
+token edited without the spec being updated. Once the palette is replaced wholesale the same table is
+twenty red tests for one intended change, and it is exactly the fact-in-a-test that `tests/README.md`
+forbids: it turns an ordinary edit into a failure and teaches nobody anything.
+**What replaced it is stronger in one direction.** Each pair declares the JOB its foreground does —
+text 4.5:1, graphic 3.0:1 — and *decorative* is now a **ceiling** rather than a note. `--color-line`
+and `--color-ink-faint` must stay BELOW 3:1, because the moment one of them clears it somebody
+reaches for it to carry meaning. The old table only commented on that.
+**Two rules died with the old palette, and both are asserted in reverse rather than deleted.** T2
+("the accent cannot carry text", because the orange was 4.30:1) — cobalt is 12.88:1, so the assertion
+is now that the accent *clears* 4.5:1, and lightening it back under the floor names the rule it
+re-creates. And the six level hues shared a lightness of 0.605; what mattered was that they share
+*one*, so the test asserts the set has size one.
 
 
 ## Open questions

@@ -52,8 +52,8 @@ last_updated: "2026-09-08"
 | **M6** | Intermediate and Ecosystem written | 19 of 33 modules written, every one bilingual | M1 | ✅ Done |
 | **M7** | The curriculum reordered | the config matches the author's intended order, everything green | M5, M6 | 🔄 In progress |
 | **M8** | The interface revised | a first-time reader can navigate without learning anything | M7 | 🔄 In progress · umbrella for M9–M14 |
-| **M9** | The vocabulary and the ground | no reader-visible string uses a retired word, and the theme's tokens ship | M8 | 🟢 Ready — awaiting approval to build |
-| **M10** | The shell | one navbar on every route, and a module list that folds away | M9 | ⬜ Not started |
+| **M9** | The vocabulary and the ground | no reader-visible string uses a retired word, and the theme's tokens ship | M8 | ✅ Done |
+| **M10** | The shell | one navbar on every route, and a module list that folds away | M9 | 🔄 In progress |
 | **M11** | The module page | a diagram wider than the column cannot paint outside it | M10 | ⬜ Not started |
 | **M12** | The catalog | one route, three views, filters at the top | M10 | ⬜ Not started |
 | **M13** | The home page | a first-time visitor knows what this is and where to start | M10 | ⬜ Not started |
@@ -285,7 +285,8 @@ the six build milestones are M9 to M14. **Waiting on the author's approval to st
 
 ## 🏁 Milestone M9: The vocabulary and the ground
 
-**Ready.** O4 is answered: the ground is **G3 `#FDFBF7`**.
+**Done, 2026-09-08.** Four commits: the vocabulary, the palette, the type and
+radius scale, and the colour names.
 
 Set C, *Engineering curriculum*, replaces the drawing-set vocabulary everywhere a reader can see it,
 and T4's tokens replace the Hidden Line tokens. Nothing about behaviour changes in this milestone;
@@ -297,24 +298,24 @@ commits, not one, so a contrast regression and a rename regression cannot arrive
 
 ### Deliverables
 
-- [ ] The five renames applied to every reader-visible string: subsystem → **Level**, sheet →
+- [x] The five renames applied to every reader-visible string: subsystem → **Level**, sheet →
       **Module**, index sheet → **Catalog**, sign-off → **Complete**, feeds/drawing → **Requires**,
       the register → **My progress**, the drafter → **you**
-- [ ] `ARCHITECTURE.md` §9's table updated: each retired term struck through with its replacement
-- [ ] `tests/unit/copy-register.test.ts` extended so a retired word in a reader-visible string fails
-- [ ] The T4 token set written into `src/app/lokum.css`, ground **`#FDFBF7`**, raised surfaces white
-- [ ] **The two line tokens split by job**: `line` / `line-strong` for grouping, `on-surface-faint`
+- [x] `ARCHITECTURE.md` §9's table updated: each retired term struck through with its replacement
+- [x] `tests/unit/copy-register.test.ts` extended so a retired word in a reader-visible string fails
+- [x] The T4 token set written into `src/app/lokum.css`, ground **`#FDFBF7`**, raised surfaces white
+- [x] **The two line tokens split by job**: `line` / `line-strong` for grouping, `on-surface-faint`
       `#948D7D` for the boundary that identifies an interactive control. On this ground no line colour
       in the palette reaches 3:1, so a control bordered with `line-strong` is unperceivable at 2.07:1
       (O4)
-- [ ] `button-quiet`, the inputs, the search field and the catalog's view toggle moved onto the
+- [x] `button-quiet`, the inputs, the search field and the catalog's view toggle moved onto the
       interactive line token — this is a fix, not a restyle
-- [ ] Every card, panel and dropdown keeps its border: on a ground at 96.6% luminance, white sits
+- [x] Every card, panel and dropdown keeps its border: on a ground at 96.6% luminance, white sits
       1.035 above it and the fill separates nothing
-- [ ] `src/app/lokum-modules.css` regenerated in the same commit, per the root `CLAUDE.md`
-- [ ] The five level colours mapped to T4's, and `src/components/mascot/geometry.ts` checked, since it
+- [x] `src/app/lokum-modules.css` regenerated in the same commit, per the root `CLAUDE.md`
+- [x] The five level colours mapped to T4's, and `src/components/mascot/geometry.ts` checked, since it
       names faces after categories
-- [ ] Turkish checked alongside English: the vocabulary change is bilingual or it is half done
+- [x] Turkish checked alongside English: the vocabulary change is bilingual or it is half done
 
 ### Acceptance criteria
 
@@ -332,8 +333,73 @@ commits, not one, so a contrast regression and a rename regression cannot arrive
 - No behaviour changed. The record, the routes, the slugs and the reader's saved progress are
   untouched, and `git status` shows nothing under `mini-courses/`.
 
-### Report
-Not started.
+### Report — 2026-09-08
+
+**Done, in four commits.** The headline number is measured rather than asserted:
+stripping the tags from every file in `out/` and grepping the visible text found
+**1,660 occurrences of the retired vocabulary across 56 pages before, and 0
+after.**
+
+**What the work actually turned out to be.** Not a find-and-replace. Four
+hazards were caught by dry-running the rename before writing anything, and each
+one would have shipped a defect:
+
+1. **Identifiers inside `${...}`.** A template literal's interpolation is code.
+   The first pass rewrote `${thousands(sheet.extent)}` to
+   `${thousands(module.length)}`.
+2. **Type members and discriminants.** `XpSource = 'SIGN-OFF'`,
+   `EdgeKind = 'requires'`, `kind: 'sheet'`. Renaming an object key without its
+   union is a type error, which typecheck would have caught; renaming both
+   silently changes a discriminant, which it would not.
+3. **Word boundaries.** Without them `WITHDRAWN` became `WITHREADY` and
+   `stylesheet` became `stylemodule`.
+4. **A blanket JSX pass is impossible in `.tsx`.** An arrow function makes every
+   `=>` look like the opening of a text node, so the pass was rewriting
+   `sheet.drawn` to `module.ready`. It was written, dry-run, and thrown away;
+   the residue was done by hand instead.
+
+**What was NOT renamed, deliberately.** Storage keys, DB columns, CSS classes,
+React props and type members keep the left column of `ARCHITECTURE.md` §9. A
+reader's saved history is keyed on them, so renaming one for a label would
+invalidate every record. §9 now states that line explicitly.
+
+**The guard found what the export grep could not.** The new whole-of-`src/` scan
+in `copy-register.test.ts` caught two strings that never appear in `out/`,
+because they only exist in the record document the browser generates at run
+time: "What signing off required" and the account page's lead. Mutation-tested —
+putting "Sheets you sign off" back turns it red.
+
+**The palette, and the three things measuring changed.** Ground `#FDFBF7`,
+raised surfaces white, cobalt as the accent, in both themes, every ratio
+computed from the shipped stylesheet:
+
+- Muted text on the old sand was **4.21:1**. The sand was lightened rather than
+  the text darkened.
+- `ink-faint` and `line-strong` cannot be one value: one must stay *under* 3:1
+  or it becomes usable as a meaningful mark, and the other must clear it. They
+  were briefly both `#948D7D`.
+- **T4's Intermediate blue is the accent hue.** A level hue within 20° of the
+  accent is one a reader can mistake for a link, so Intermediate moved to 240.
+  And lightening the sand made the mid-tone level hues *worse* against it —
+  3.00:1 against a 3.10 floor — so their shared lightness dropped to 0.575.
+
+**Four tests changed because they recorded the retired system rather than a
+rule**, which is the distinction `tests/README.md` draws: twenty pinned contrast
+ratios became floors carried by each pair's *job*; T2 ("the accent cannot carry
+text") is asserted in reverse, so re-creating it names itself; the shared
+lightness asserts *one* lightness rather than `0.605`; and the token-reader test
+asserts a shape instead of `--color-ink`'s literal value.
+
+**One thing could not be verified here.** This environment has no network, so
+Manrope cannot be fetched and the local build falls back. Everything measured
+locally was measured against the fallback metric; the face itself is confirmed
+on the first build with network.
+
+**Left for the milestone that applies them:** the radius tokens and the two
+shape tokens are set but nothing uses them yet, and the zero-radius assertions
+in `sheet.test.tsx` and `record-index.spec.ts` still pass because the
+stylesheets have no `border-radius` yet. Both move in M10 and M11, with the
+components that apply them.
 
 ---
 
@@ -344,8 +410,8 @@ answers "no active, unified navbar" and "the left and right components should an
 
 ### Deliverables
 
-- [ ] Navbar option **A**: one row, on every route, with a dropdown per level
-- [ ] The current route marked in it, and the current level marked in the dropdown
+- [x] Navbar option **A**: one row, on every route, with a dropdown per level
+- [x] The current route marked in it, and the current level marked in the dropdown
 - [ ] The module list as an accordion, one section per level, the current level **enlarged with a
       coloured edge** and its count in the reader's own ink rather than grey
 - [ ] It folds away in 200ms, with a tab pinned to the left edge to bring it back, and the fold
@@ -366,8 +432,27 @@ answers "no active, unified navbar" and "the left and right components should an
 - The reader's fold preference is written through `src/lib/record/store.ts` or not stored at all.
   **Not a second writer** (`ARCHITECTURE.md` §5).
 
-### Report
-Not started.
+### Report — in progress, 2026-09-08
+
+**The navbar is in.** Four destinations, the current one marked twice (a fill and
+a rule, so forced colours keeps one), a dropdown per level with each level's own
+hue and its number beside it, and the trail moved to its own row under it rather
+than competing for the same 56px.
+
+**No JavaScript in the dropdown**, and that is a correctness point rather than a
+saving: the export is static and a reader can click a link in the first frame, so
+a menu that needs `useState` to open does nothing until the bundle lands. It
+opens on `:hover` and on `:focus-within`, with `:focus-within` first in the
+selector list so a focused panel cannot be closed by the pointer leaving.
+**Verified by driving it** rather than by reading it: tabbing to `Curriculum`
+returns `visibility: visible` and the level inside carries `aria-current`.
+
+**Still to do in this milestone:** the module list as a collapsible accordion
+with the current level enlarged, the fold and its left-edge tab, the tick as a
+filled disc, and the rails anchored to the window edges. Those four are one
+piece of work — the list does not exist yet as a site-wide component, and the
+left rail currently holds the contents rather than the curriculum, so building
+it means the rail swap that M11 needs anyway.
 
 ---
 

@@ -23,23 +23,23 @@ colors:
   title: "#1b1b47"
   surface: "#fdfbf7"
   surface-raised: "#FFFFFF"
-  surface-sunken: "#e6dac6"
+  surface-sunken: "#efe7d6"
   on-surface: "#20242e"
   on-surface-muted: "#6a6558"
-  on-surface-faint: "#948d7d"
+  on-surface-faint: "#a09889"
   line: "#d8cbb4"
-  line-strong: "#c3b299"
+  line-strong: "#948d7d"
   accent-warm: "#c8a078"
   focus: "#a0503c"
   verify: "#2f8c86"
   caution: "#b8873b"
   fault: "#a0503c"
   info: "#282864"
-  cat-fundamentals: "#2f8c86"
-  cat-intermediate: "#282864"
-  cat-expert: "#7a4a86"
-  cat-ecosystem: "#b8873b"
-  cat-protocols: "#a0503c"
+  cat-fundamentals: "oklch(0.575 0.098 189)"   # TURKUAZ
+  cat-intermediate: "oklch(0.575 0.128 240)"   # LACİVERT
+  cat-expert: "oklch(0.575 0.130 320)"         # ERİK
+  cat-ecosystem: "oklch(0.575 0.115 75)"       # BAL
+  cat-protocols: "oklch(0.575 0.120 30)"       # KİREMİT
   slab-surface: "#1d1f27"
   slab-on-surface: "#e7e3d8"
   slab-line: "#33363f"
@@ -58,39 +58,39 @@ grounds:
   G4: { surface: "#FFF8E9", surface-raised: "#FFFFFF" }
 typography:
   h1:
-    fontFamily: "system-sans"
+    fontFamily: "Manrope"
     fontSize: "2.375rem"
     fontWeight: "600"
     lineHeight: "1.16"
     letterSpacing: "-0.015em"
   h2:
-    fontFamily: "system-sans"
+    fontFamily: "Manrope"
     fontSize: "1.5625rem"
     fontWeight: "600"
     lineHeight: "1.28"
     letterSpacing: "-0.012em"
   h3:
-    fontFamily: "system-sans"
+    fontFamily: "Manrope"
     fontSize: "1.15625rem"
     fontWeight: "600"
     lineHeight: "1.35"
   body:
-    fontFamily: "system-sans"
+    fontFamily: "Manrope"
     fontSize: "1rem"
     lineHeight: "1.68"
   ui:
-    fontFamily: "system-sans"
+    fontFamily: "Manrope"
     fontSize: "0.90625rem"
     fontWeight: "500"
   meta:
-    fontFamily: "system-sans"
+    fontFamily: "Manrope"
     fontSize: "0.84375rem"
   label:
-    fontFamily: "system-sans"
+    fontFamily: "Manrope"
     fontSize: "0.78125rem"
     fontWeight: "600"
   code:
-    fontFamily: "mono"
+    fontFamily: "IBM Plex Mono"
     fontSize: "0.84375rem"
     lineHeight: "1.75"
 rounded:
@@ -214,14 +214,21 @@ for a boundary that only **groups** things, because the content inside identifie
 a panel, a section rule. It is not fine for the boundary that **identifies an interactive control**,
 which needs 3:1 to be perceivable. So:
 
-- **Grouping** — `line`, or `line-strong` where a group needs to read as heavier.
-- **Identifying a control** — `on-surface-faint` `#948d7d`, at 3.19:1 on the ground and 3.30:1 on a
-  white card. It is the lightest token in the palette that clears the floor, which is exactly why it
-  is the one to use: a quiet control stays quiet.
+- **Grouping** — `--color-line` `#D8CBB4`, at 1.55:1. A card, a panel, a section rule.
+- **Identifying a control** — `--color-line-strong` `#948D7D`, at 3.19:1 on the ground and 3.30:1 on
+  a white card. It is the lightest token in the palette that clears the floor, which is exactly why
+  it is the one to use: a quiet control stays quiet.
 
-This applies to the quiet button, inputs, the search field and the catalog's view toggle. Before this
-ground was chosen, `button-quiet` used `line-strong` at 2.07:1 on white, which fails. Fixing it is a
-deliverable of `logs/PROGRESS.md` M9.
+**Those are the shipped token names**, and the contract they already carried turned out to be this
+split exactly: `globals.css` documented `--color-line` as decorative-only and `--color-line-strong`
+as "structural, ≥3:1" before this ground existed. The values moved; the jobs did not.
+
+`--color-ink-faint` is a third thing and must not be confused with either: it is faint *text*, and it
+has to stay **under** 3:1 (2.77:1) or it becomes usable as a meaningful mark. The contrast test
+asserts that ceiling. The two were briefly the same value, which is how the distinction got found.
+
+This applies to the quiet button, inputs, the search field and the catalog's view toggle. `button-quiet`
+shipped on `line-strong` at 2.07:1 on white, which failed; M9 moved it.
 
 Three text weights and no more: `on-surface` for prose, `on-surface-muted` for anything secondary,
 `on-surface-faint` for anything a reader can ignore. On G3 they measure 15.01:1, 5.62:1 and 3.19:1.
@@ -230,9 +237,16 @@ or a status word that is repeated elsewhere on the page. All three are measured 
 every change; the numbers are recomputed by the palette tests from the shipped stylesheet, never
 written down in an assertion.
 
-**The five level colours are identity, not decoration.** Fundamentals teal, Intermediate cobalt,
-Expert plum, Ecosystem ochre, Protocols clay. A level is told apart by its colour **and** by its
+**The five level colours are identity, not decoration.** Fundamentals turquoise, Intermediate İznik
+navy, Expert plum, Ecosystem honey, Protocols roof-tile red — `TURKUAZ`, `LACİVERT`, `ERİK`, `BAL`,
+`KİREMİT`, which is what the interface calls them. A level is told apart by its colour **and** by its
 name, its position and its count, because colour is never the only signal.
+
+**Two constraints on them that look like taste and are not.** They share one lightness (0.575), so no
+level outranks another and each clears 3.1:1 against all three grounds in both themes. And no level
+hue may sit within 20° of the accent — which is why Intermediate is *not* T4's cobalt: a level hue
+that close to the interactive accent is one a reader can mistake for a link. Both are recomputed by
+`tests/unit/color/lokum.test.ts` from the shipped stylesheet.
 
 `verify` teal marks completion. It is drawn as a **filled disc with a white check**, and the shape is
 load-bearing: teal on the ground measures 3.44:1 to 3.90:1 depending on the ground, so as text it
@@ -244,10 +258,17 @@ only place in the system where hue carries meaning rather than identity.
 
 ## Typography
 
-One family, four jobs, six sizes. The stack is the **system sans**, with no webfont: the site is a
-static export served from a sub-path on GitHub Pages, and the previous system's two webfonts cost a
-render-blocking request each on a page whose whole point is that it loads. Monospace is likewise the
-system mono, used for code, for a file name above a slab, and for nothing else.
+One family, four jobs, six sizes: **Manrope**, at 400/500/600/700, for everything a person wrote.
+Monospace is IBM Plex Mono, used for code, for a file name above a slab, for a measured value, and
+for nothing else.
+
+**A correction, kept because the wrong reason is instructive.** This section first said the stack was
+the system sans with no webfont, because "the previous system's two webfonts cost a render-blocking
+request each". That is false. `next/font/google` **self-hosts**: it downloads the faces at build time
+and serves them from this origin with `display: swap`, so there was no third-party request to save and
+nothing was render-blocking. The reason to change faces is the look — a serif body was half of the
+system being replaced — not the loading. Manrope over Inter because both have the latin-ext coverage
+Turkish needs and Inter is what a page reaches for when nobody chose.
 
 The scale is `0.78125 / 0.84375 / 0.90625 / 1 / 1.15625 / 1.5625 / 2.375rem`. It is not a geometric
 progression, and the values are the ones that were measured in the browser rather than derived from a

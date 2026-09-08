@@ -45,7 +45,8 @@ and the same explanation given in person for the third time. See `genesis/GENESI
 | 2026-09 (early) | Accounts, a rebuilt test suite, one central curriculum config | M3, M4, M5 |
 | 2026-09 (mid) | Intermediate and Ecosystem written and translated | M6 |
 | **2026-09-08** | **The curriculum reordered, and the interface being replaced** | **M7, M8 — active** |
-| **2026-09-08** | **The interface revision planned in six stages, and the design system replaced** | **M9 to M14 — M9 ready to build** |
+| **2026-09-08** | **The interface revision planned in six stages, and the design system replaced** | **M9 to M14** |
+| **2026-09-08** | **The vocabulary and the palette replaced; the navbar built** | **M9 done, M10 in progress** |
 
 **The harness itself was installed on 2026-09-08**, 105 commits in. Everything before that date was
 reconstructed from git and is labelled as inferred inside each file.
@@ -67,14 +68,14 @@ reconstructed from git and is labelled as inferred inside each file.
 |---|---|---|
 | `MANIFESTO.md` | 15 non-negotiable rules, what this is and is NOT | Rules 1–7 are the author's own, from `mini-courses/MANIFEST.md`. Rules 8–15 came out of the work. |
 | `ARCHITECTURE.md` | The six rules, the domain, the two lifecycles, what the system refuses, the record, accounts, the build, deployment, the vocabulary | Current as of 2026-09-08. **The only architecture document**: the root `ARCHITECTURE.md` was folded into it and deleted (D11). 607 lines, sections 1 to 12; read the six rules, then §2, §3 and §9. |
-| `DESIGN.md` | The design system: tokens, colour roles, type scale, layout, components, and the do-nots | **Rewritten 2026-09-08** around the chosen theme, and complete: the ground is **G3 `#FDFBF7`**. The old "Hidden Line" drawing-set system was deleted, not kept alongside. |
+| `DESIGN.md` | The design system: tokens, colour roles, type scale, layout, components, and the do-nots | **Rewritten 2026-09-08**, and **shipped** in M9: ground `#FDFBF7`, cobalt accent, Manrope, five re-hued level colours. The old "Hidden Line" system was deleted, not kept alongside. Two corrections are recorded in it rather than tidied away. |
 
 ### `kia-context/logs/` — state · written every session
 
 | File | What it holds | State |
 |---|---|---|
-| `PROGRESS.md` | M1 to M14, their deliverables and acceptance criteria, and the order they go in | M1–M6 inferred; **M7 to M14 live.** M8 is the umbrella for the interface revision and **M9 is ready, waiting only on approval to build.** |
-| `BRAINSTORM.md` | D1 to D15, plus open questions O1 to O4 | D1–D6 inferred; **D7–D15 recorded live.** O1, O3 and O4 are closed; **O2 is the only one open.** |
+| `PROGRESS.md` | M1 to M14, their deliverables and acceptance criteria, and the order they go in | M1–M6 inferred; **M7 to M14 live.** **M9 is done** and **M10 is the active milestone.** M8 is the umbrella for the whole revision. |
+| `BRAINSTORM.md` | D1 to D18, plus open questions O1 to O4 | D1–D6 inferred; **D7–D18 recorded live.** O1, O3 and O4 are closed; **O2 is the only one open.** |
 
 ---
 
@@ -97,7 +98,7 @@ maintained by an agent, and do not need reading to do the work. The root `CLAUDE
 | What is a module, and what does `status: draft` actually change? | `specs/ARCHITECTURE.md` §2, §3 |
 | What will the build refuse? | `specs/ARCHITECTURE.md` §4 |
 | Where does a reader's progress live? | `specs/ARCHITECTURE.md` §5 |
-| Why is that word so strange? | `specs/ARCHITECTURE.md` §9 |
+| Why is that word so strange? | `specs/ARCHITECTURE.md` §9 — and note it has TWO columns now: what the code says, and what a reader sees |
 | What colour is a level, exactly? | `specs/DESIGN.md` |
 | Why is the tick a disc and not a check mark? | `specs/DESIGN.md`, Colors |
 | Which ground did we pick, and what did it break? | `logs/BRAINSTORM.md` **O4** |
@@ -115,7 +116,7 @@ maintained by an agent, and do not need reading to do the work. The root `CLAUDE
 
 ## 6. The numbering, and why it never restarts
 
-`M1…M14` are milestones in `logs/PROGRESS.md`. `D1…D15` are decisions and `O1…O4` are open questions
+`M1…M14` are milestones in `logs/PROGRESS.md`. `D1…D18` are decisions and `O1…O4` are open questions
 in `logs/BRAINSTORM.md`, of which O1, O3 and O4 are closed. Rules `1…15` are in `specs/MANIFESTO.md`.
 
 **M8 did not become M9.** It stayed open as the umbrella for the whole interface revision and M9 to

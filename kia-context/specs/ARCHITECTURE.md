@@ -17,6 +17,29 @@ last_updated: "2026-09-08"
 
 # 🏗️ ARCHITECTURE — How this project is built
 
+> ## ⚠️ There is a second architecture document, and this is not a mistake to fix by deleting one
+>
+> The repository root holds **`ARCHITECTURE.md`**, written by the colleague who owns the application
+> and linked from the root `CLAUDE.md`. It is 286 lines and covers *What it is · The rules that
+> explain the code · The build · The runtime in layers · Testing · Deployment*. Roughly a third of it
+> overlaps with this file.
+>
+> **The author has previously ruled that there is one architecture document and no second one should
+> be created.** This file exists because the kiacontext harness requires it at this path, so the two
+> now coexist and the boundary has to be explicit rather than assumed:
+>
+> | Question | File |
+> |---|---|
+> | How is the app built, deployed and layered? Why does the code look like that? | the **root** `ARCHITECTURE.md` — it is the colleague's, and it wins on the application |
+> | What is a module? What does `status` change? What will the build refuse? What is in the reader's record? What does that word mean? | **this** file — it wins on the domain, the lifecycles and the vocabulary |
+>
+> **Neither file may restate the other.** Where they disagree, the root file wins on the application
+> and this one wins on the corpus and the domain. **This overlap is unresolved and the author has been
+> told.** The options are to merge them, to cut this file down to the domain half, or to leave both
+> with this boundary. Do not silently pick one.
+
+---
+
 **Two projects meet in one repository, and they meet at exactly one file.**
 
 One is an authored corpus of markdown: 33 course modules in two languages, written by hand. The other

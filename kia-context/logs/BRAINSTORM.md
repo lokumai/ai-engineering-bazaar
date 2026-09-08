@@ -206,6 +206,30 @@ Two sub-questions the author flagged as worth deciding separately:
 - **Does the word "Level" describe the curriculum or the reader?** Both are currently called that in
   one of the three vocabulary sets, and one of the two has to change.
 
+### O3 · Two architecture documents now exist — opened 2026-09-08
+
+The repository root has `ARCHITECTURE.md`, the colleague's, 286 lines, linked from the root
+`CLAUDE.md`. Installing this harness added `specs/ARCHITECTURE.md`, 381 lines. **About a third
+overlaps** — build, runtime, testing, and "what it is".
+
+This contradicts a standing instruction. In September 2026 a second architecture document was created
+at `context/ARCHITECTURE.md` and the author had it deleted and its content folded into the root file,
+with the rule: *there is one architecture document, do not create another.* The harness requires one
+at a fixed path, so the two coexist for now behind an explicit boundary written at the top of
+`specs/ARCHITECTURE.md`: the root file wins on the application, this one wins on the domain, the
+lifecycles and the vocabulary, and neither restates the other.
+
+**Three ways to close this**, and it is the author's call:
+
+1. **Leave both** with the boundary as written. Cheapest, and the risk is drift.
+2. **Cut `specs/ARCHITECTURE.md` down to the domain half** — the module and reader lifecycles, the
+   refusals, the record, the vocabulary — and delete everything the root file already says.
+3. **Fold the root file into this one** and leave a pointer behind. Cleanest, but it rewrites a
+   colleague's document and breaks the link in the root `CLAUDE.md`.
+
+My recommendation is 2: it is the only option that removes the duplication without touching the
+colleague's file.
+
 ### O2 · Where the retired progress vocabulary lands — opened 2026-09-08
 
 XP, Class, Uptime and "I at 8" are all shown on the home page today. XP and Uptime measure something

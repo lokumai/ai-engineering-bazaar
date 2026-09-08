@@ -556,6 +556,25 @@ before first paint") went flaky once in one full run and passed on retry. It is
 the theme boot script's own channel-A probe, the same shape as the record's,
 and it was not touched by this work.
 
+**And two acceptance criteria had nothing checking them.** Both are now
+measured, and writing the second one turned up something worth keeping:
+
+- **"Every route carries the same navbar, verified by loading all 17 in a
+  browser and comparing"** — `navigation.spec.ts` loads sixteen routes plus a
+  module page and compares the destinations, the level list, and how many
+  destinations are marked current, which must never exceed one.
+- **"Mermaid text stays legible on the dark slab, and the diagram palette clears
+  3:1 for graphics"** — `mermaid.spec.ts` composites each label's colour up its
+  ancestor chain and recomputes: **16 labels at worst 12.82:1 and 28 strokes at
+  worst 5.21:1, identical in both themes**, which is the claim, because a slab
+  that quietly inherited the page's palette would pass in one theme and fail in
+  the other. Mutation-tested: putting `--color-line-strong` back on `slab-line`
+  inside the slab reports **1.36:1** and fails. And mermaid 11 lays a node's
+  label out as HTML inside a `foreignObject`, keeping `<text>` for the edge
+  labels only — 13 `<text>` elements carrying 2 labels between them against 14
+  `.nodeLabel` elements on one module — so a selector of either alone measures a
+  third of the drawing and calls it the whole.
+
 ---
 
 ## 🏁 Milestone M11: The module page

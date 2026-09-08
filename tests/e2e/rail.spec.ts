@@ -1,6 +1,6 @@
 import { type Page, expect, test } from '@playwright/test'
 import { A0, A4, SHEETS } from './sheets'
-import { seedRecord, signedSheet } from './record'
+import { seedRecord, signedSheet, waitForHydratedReadout } from './record'
 
 /**
  * M10 — the curriculum rail, its accordion, its fold, and the tick.
@@ -208,6 +208,24 @@ test.describe('the fold', () => {
       const context = await browser.newContext({ reducedMotion: motion })
       const page = await context.newPage()
       await page.goto(A0.path)
+
+      // **Wait for the page to be live and painted before clicking, and this
+      // is not defensive padding.** REPRODUCED: with the document only
+      // committed and the click sent immediately, no transition fires at all —
+      // the attribute change and the rail's first layout land in one style
+      // resolution, so there is no "before" width to transition FROM, and the
+      // fold is instant however the stylesheet is written. Under eight parallel
+      // workers a `load`-resolved `goto` is early enough to hit that, which is
+      // what turned this red in a full run and green run alone.
+      //
+      // `.hl-readout[data-hydrated="true"]` is the footer island's own signal,
+      // so it says React has hydrated this document rather than guessing how
+      // long that takes; the two frames after it are what put a laid-out width
+      // on the rail.
+      await waitForHydratedReadout(page)
+      await expect.poll(() => railWidth(page), { timeout: 3_000 }).toBeGreaterThan(0)
+      await page.evaluate(() => new Promise(requestAnimationFrame))
+      await page.evaluate(() => new Promise(requestAnimationFrame))
 
       // Listeners on before the click, so nothing can happen unobserved.
       await page.evaluate(() => {

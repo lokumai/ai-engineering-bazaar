@@ -125,6 +125,60 @@ ol.pick span{color:var(--muted);font-size:14.5px}
   The ornament is spent once, on the tile band, and every other surface is quiet.
 </div>
 
+<h2>Bazaar, four palettes &mdash; open for a decision</h2>
+<p>
+  You picked T4 and asked for the same design at lower volume. These four are generated from one
+  template, so structure, spacing, type and ornament are identical and colour is the only variable.
+  Every hue is sampled from the Lokum AI logo file: ground <code>#FFF8E9</code>, rose
+  <code>#DC5F3F</code>, orange <code>#E67410</code>, green <code>#415C29</code>.
+</p>
+<div class="deck">
+  <a class="item" href="01-theme-T4-variants.html" style="--edge:#e88a2e">
+    <span class="id">B1&ndash;B4</span>
+    <b>All four, side by side</b>
+    <p>Miniatures, full swatch strips and the measured contrast of each, against T4 for reference.</p>
+    <em>Start here, then open the one you like</em>
+  </a>
+  <a class="item" href="01-theme-T4-bazaar-B1-lokum-light.html" style="--edge:#aa3d22">
+    <span class="id">B1</span>
+    <b>Lokum Light</b>
+    <p>The logo itself: black type on its own cream. The header stops being a coloured slab, so
+      nothing on the page is darker than the text. Header luminance 94.3%.</p>
+  </a>
+  <a class="item" href="01-theme-T4-bazaar-B2-sugar-sand.html" style="--edge:#c9a760">
+    <span class="id">B2</span>
+    <b>Sugar Sand</b>
+    <p>A sand header with slate-indigo type. The site keeps a lid, at a third of the old contrast.
+      Header luminance 79.3%.</p>
+  </a>
+  <a class="item" href="01-theme-T4-bazaar-B3-olive-grove.html" style="--edge:#5e6b45">
+    <span class="id">B3</span>
+    <b>Olive Grove</b>
+    <p>The green cube leads instead of the blue, desaturated and lifted. Warm rather than corporate.
+      Header luminance 13.3%.</p>
+  </a>
+  <a class="item" href="01-theme-T4-bazaar-B4-soft-cobalt.html" style="--edge:#5c5f8e">
+    <span class="id">B4</span>
+    <b>Soft Cobalt</b>
+    <p>The T4 you like, dialled down: the same indigo family lifted and desaturated. Pick this if
+      the structure was right and only the volume was wrong. Header luminance 12.4%.</p>
+  </a>
+</div>
+
+<div class="note">
+  <b>What changed besides colour.</b> All four also carry the three fixes you asked for, so you are
+  judging the real thing: the content column is centred and spans its container with gutters that
+  clear both rails, the sidebar folds away in 200ms and a tab on the left edge brings it back, the
+  completion tick is a filled disc rather than a hairline glyph, and the level you are in is
+  enlarged with a coloured edge.
+</div>
+
+<div class="note bug">
+  <b>Measured while building these.</b> T4's teal completion tick sits at <code>3.44:1</code>
+  against its cream, under the 4.5:1 floor the contrast tests hold the rest of the site to. All four
+  variants are above it. That is a defect in the current palette, not a preference.
+</div>
+
 <h2>Components, three each</h2>
 <p>All shown in one neutral palette so you judge the structure and not the colour.</p>
 <div class="deck">
@@ -199,19 +253,35 @@ ol.pick span{color:var(--muted);font-size:14.5px}
   containment that fixes it.
 </div>
 
-<h2>What I need from you</h2>
-<ol class="pick">
-  <li><b>One vocabulary set</b> <span>A, B or C, or a mix such as &ldquo;C but Mark as read&rdquo;.</span></li>
-  <li><b>One theme</b> <span>T1, T2, T3 or T4. You can also say &ldquo;T1 structure with T4 colour&rdquo;, which is a real option.</span></li>
-  <li><b>One option per component</b> <span>navbar, catalog, layout, sidebar, progress, code, diagrams, dashboard, home.</span></li>
-  <li><b>Anything missing</b> <span>tell me which screen you want to see before I start building.</span></li>
-</ol>
+<h2>Decided, on 2026-09-08</h2>
+<p>Your answers, recorded so the build has one source. The full milestone with acceptance criteria
+  is in <code>kia-context/logs/PROGRESS.md</code>.</p>
+<table>
+  <thead><tr><th>Question</th><th>Chosen</th></tr></thead>
+  <tbody>
+    <tr><td>Vocabulary</td><td class="a"><b>C &mdash; Engineering curriculum.</b> Catalog, Level,
+      Module, Complete, Requires.</td></tr>
+    <tr><td>Theme</td><td class="a"><b>T4 Bazaar</b>, at lower volume. Palette open: B1&ndash;B4
+      above.</td></tr>
+    <tr><td>Navbar</td><td class="a"><b>A</b> &mdash; one row, a dropdown per level.</td></tr>
+    <tr><td>Catalog</td><td class="a"><b>All three, as a view toggle</b> with an icon each:
+      <b>Overview</b> (was C), <b>Cards</b> (was A), <b>Table</b> (was B).</td></tr>
+    <tr><td>Module layout</td><td class="a">The layout already in <b>T4</b>, plus the centred
+      full-width column and the collapsible sidebar.</td></tr>
+    <tr><td>Completion and progress</td><td class="a"><b>A</b> at the end of a module, one button
+      where the reader is. <b>C</b> on the home and progress pages.</td></tr>
+    <tr><td>Code and diagrams</td><td class="a"><b>Dark slab</b>.</td></tr>
+    <tr><td>Progress and account</td><td class="a"><b>A</b>.</td></tr>
+    <tr><td>Home</td><td class="a"><b>A</b>.</td></tr>
+    <tr><td>Left sidebar</td><td class="a">The one already in <b>T4</b>, with the current level
+      enlarged and a heavier tick.</td></tr>
+  </tbody>
+</table>
 
-<p style="color:var(--muted);margin-top:26px">
-  Once you have chosen, the build order I would suggest is: naming and tokens, then the shell
-  (navbar and sidebar), then the module page including the diagram fix, then the catalog, then
-  home, then progress and account. Each of those is a step that can ship on its own.
-</p>
+<div class="note">
+  <b>One thing still open.</b> Which palette: B1, B2, B3 or B4. Everything else is settled and the
+  build order is written down.
+</div>
 
 </div>
 </body>

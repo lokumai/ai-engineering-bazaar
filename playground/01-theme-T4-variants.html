@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bazaar palette variants — B1 to B4</title>
+<style>
+:root { --sans:"Avenir Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+* { box-sizing:border-box }
+body { margin:0; background:#f7f4ee; color:#1f2026; font:16px/1.66 var(--sans); }
+.lead { max-width:74ch; margin:0 auto; padding:44px 24px 8px; }
+h1 { font:600 32px/1.2 var(--sans); margin:0 0 12px; letter-spacing:-.015em }
+.lead p { margin:0 0 14px; color:#55524a }
+.lead code { font:13.5px/1 var(--mono); background:#eae5da; padding:2px 6px; border-radius:3px }
+.grid { max-width:1180px; margin:0 auto; padding:20px 24px 90px; display:grid; gap:26px; }
+@media (min-width:1000px){ .grid{grid-template-columns:1fr 1fr} }
+.card { background:#fff; border:1px solid #e0dacd; border-radius:12px; padding:18px 18px 16px; }
+.hd { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap }
+.hd b { font:700 12px/1 var(--sans); background:#1f2026; color:#fff; padding:4px 8px; border-radius:4px }
+.hd h2 { font:600 19px/1.3 var(--sans); margin:0 }
+.hd .open { margin-left:auto; font:500 13.5px/1 var(--sans); color:#3f5f8f; text-decoration:none }
+.hd .open:hover { text-decoration:underline }
+.note { margin:8px 0 14px; font-size:14px; color:#5c584f; }
+
+/* the miniature */
+.mock { border:1px solid #ded8ca; border-radius:8px; overflow:hidden; background:var(--g); }
+.m-top { display:flex; align-items:center; gap:7px; padding:0 10px; height:34px;
+         background:var(--hb); color:var(--hi); }
+.m-cubes { display:grid; grid-template-columns:5px 5px; gap:1px }
+.m-cubes i { width:5px; height:5px; border-radius:1px; display:block }
+.m-cubes i.rose{background:#dc5f3f} .m-cubes i.orange{background:#e88a2e}
+.m-cubes i.green{background:#7fa352} .m-cubes i.gap{background:none}
+.m-brand { font:600 10.5px/1 var(--sans); margin-right:4px }
+.m-nav { font:500 9.5px/1 var(--sans); color:var(--hd); padding:3px 5px; border-radius:3px }
+.m-nav.on { background:var(--hc); color:var(--hci); font-weight:600 }
+.m-field { margin-left:auto; width:64px; height:15px; border-radius:3px;
+           border:1px solid color-mix(in srgb, var(--hi) 26%, transparent) }
+.m-band { height:9px; background-color:var(--bg0); border-bottom:1px solid var(--gd);
+  background-image:
+    linear-gradient(45deg, var(--ba) 25%, transparent 25% 75%, var(--ba) 75%),
+    linear-gradient(45deg, var(--bb) 25%, transparent 25% 75%, var(--bb) 75%),
+    linear-gradient(45deg, var(--bc) 25%, transparent 25% 75%, var(--bc) 75%);
+  background-size:9px 9px, 9px 9px, 27px 9px; background-position:0 0, 4.5px 4.5px, 13.5px 0; }
+.m-body { display:grid; grid-template-columns:132px 1fr; min-height:238px }
+.m-side { padding:8px 6px; border-right:1px solid var(--ln) }
+.m-lvl { display:flex; align-items:center; gap:5px; font:600 9.5px/1 var(--sans); color:var(--ik);
+   background:var(--p); border:1px solid var(--ln); border-radius:7px 7px 2px 2px;
+   padding:6px 6px; margin-top:5px }
+.m-lvl i { width:3px; height:9px; border-radius:1px; flex:none }
+.m-lvl em { margin-left:auto; font-style:normal; color:var(--mu); font-weight:500 }
+.m-lvl.here { background:var(--sd); border-color:var(--l2c); border-left:3px solid var(--k1);
+   font-size:10.5px; padding:7px 6px }
+.m-lvl.here i { height:12px; width:4px }
+.m-mod { display:flex; align-items:center; gap:5px; font:9.5px/1 var(--sans); color:var(--mu);
+   padding:5px 6px 5px 12px; margin-left:8px; border-left:1px solid var(--ln) }
+.m-mod.cur { background:var(--k1); color:#fff; font-weight:600; border-radius:4px;
+   margin-left:8px; border-left-color:transparent }
+.m-tick { width:11px; height:11px; border-radius:50%; background:var(--ok); color:#fff;
+   font-size:7px; display:grid; place-items:center; flex:none }
+.m-tick.w { background:#fff; color:var(--k1) }
+.m-main { padding:12px 14px }
+.m-h1 { font:600 16px/1.2 var(--sans); color:var(--ik); margin-bottom:7px }
+.m-tags { display:flex; gap:5px; margin-bottom:10px }
+.m-tags span { display:inline-flex; align-items:center; gap:4px; font:600 8px/1 var(--sans);
+   color:var(--mu); background:var(--p); border:1px solid var(--ln); border-radius:3px; padding:3px 5px }
+.m-tags i { width:4px; height:4px; border-radius:1px }
+.m-card { height:42px; background:var(--p); border:1px solid var(--ln);
+   border-radius:3px 10px 3px 10px; margin-bottom:11px }
+.m-line { height:5px; background:var(--mu); opacity:.28; border-radius:2px; margin-bottom:6px }
+.m-line.lk { background:var(--ac); opacity:.85 }
+.m-slab { height:46px; background:#1d1f27; border:1px solid #33363f; border-radius:5px; margin:10px 0 11px }
+.m-btn { display:inline-block; background:var(--ac); color:#fff; font:600 9.5px/1 var(--sans);
+   padding:7px 11px; border-radius:4px }
+
+.sw { display:flex; margin-top:14px; border:1px solid #e0dacd; border-radius:4px;
+      overflow:hidden; width:max-content }
+.sw i { width:36px; height:22px; display:block }
+.met { border-collapse:collapse; margin-top:11px; font-size:13px; color:#55524a }
+.met td { padding:2px 14px 2px 0 }
+.met td:first-child { color:#1f2026 }
+.met b { font-weight:700 } .met span { color:#8b857a }
+</style></head><body>
+
+<div class="lead">
+  <h1>Bazaar, four palettes</h1>
+  <p>Same design, four colour schemes. The structure, spacing, type and ornament are generated from
+  one template, so the only thing you are choosing on this page is colour. Every hue comes from the
+  Lokum AI logo, sampled from the file: ground <code>#FFF8E9</code>, rose <code>#DC5F3F</code>,
+  orange <code>#E67410</code>, green <code>#415C29</code>.</p>
+  <p>Each full page also carries the three changes you asked for: a centred content column with
+  gutters clearing both rails, a sidebar that folds away, a completion tick that reads as a filled
+  disc rather than a hairline, and the level you are in enlarged and marked in the sidebar.</p>
+  <p>The numbers under each card are computed from the tokens, not asserted. Everything on all four
+  clears 4.5:1.</p>
+</div>
+
+<div class="grid">
+
+<section class="card">
+  <div class="hd"><b>B1</b><h2>Lokum Light</h2><a class="open" href="01-theme-T4-bazaar-B1-lokum-light.html">Open full page &rarr;</a></div>
+  <p class="note">The logo itself: black type on its own cream, ornament in the three lokum colours. The header stops being a coloured slab and becomes paper, so nothing on the page is darker than the text.</p>
+  <div class="mock" style="--g:#fffbf0;--p:#ffffff;--sd:#f6ecd9;--ln:#e8dcc4;
+       --l2c:#d7c6a8;--ik:#1a1a18;--mu:#6e665a;--hb:#fff8e9;--hi:#1a1a18;
+       --hd:#6e665a;--hc:#1a1a18;--hci:#fff8e9;--ac:#aa3d22;
+       --ok:#4a6b2e;--k1:#5c7a3a;--k2:#c4711a;--k3:#b8503a;--k4:#a8853c;--k5:#6b6480;
+       --bg0:#f6ecd9;--ba:#a8c08a;--bb:#f0c38f;--bc:#e0a08c;--gd:#d9bc7a">
+    <div class="m-top">
+      <span class="m-cubes"><i class="rose"></i><i class="gap"></i><i class="orange"></i><i class="green"></i></span>
+      <span class="m-brand">AI Engineering Bazaar</span>
+      <span class="m-nav on">Curriculum</span><span class="m-nav">Catalog</span><span class="m-nav">My progress</span>
+      <span class="m-field"></span>
+    </div>
+    <div class="m-band"></div>
+    <div class="m-body">
+      <div class="m-side">
+        <div class="m-lvl here"><i style="background:var(--k1)"></i>Fundamentals<em>3/8</em></div>
+        <div class="m-mod"><span class="m-tick">&#10003;</span>LLM Fundamentals</div>
+        <div class="m-mod cur"><span class="m-tick w">&#10003;</span>RAG &amp; Embeddings</div>
+        <div class="m-mod">Tool Calling</div>
+        <div class="m-lvl"><i style="background:var(--k2)"></i>Intermediate<em>0/8</em></div>
+        <div class="m-lvl"><i style="background:var(--k3)"></i>Expert<em>0/11</em></div>
+        <div class="m-lvl"><i style="background:var(--k4)"></i>Ecosystem<em>0/5</em></div>
+        <div class="m-lvl"><i style="background:var(--k5)"></i>Protocols</div>
+      </div>
+      <div class="m-main">
+        <div class="m-h1">RAG &amp; Embeddings</div>
+        <div class="m-tags"><span><i style="background:var(--k1)"></i>Fundamentals</span><span>Module 3 of 8</span></div>
+        <div class="m-card"></div>
+        <div class="m-line" style="width:96%"></div><div class="m-line" style="width:88%"></div>
+        <div class="m-line lk" style="width:44%"></div>
+        <div class="m-slab"></div>
+        <div class="m-btn">Mark complete</div>
+      </div>
+    </div>
+  </div>
+  <div class="sw"><i style="background:#fffbf0" title="ground #fffbf0"></i><i style="background:#ffffff" title="paper #ffffff"></i><i style="background:#f6ecd9" title="sand #f6ecd9"></i><i style="background:#fff8e9" title="headbg #fff8e9"></i><i style="background:#f6ecd9" title="bandground #f6ecd9"></i><i style="background:#5c7a3a" title="l1 #5c7a3a"></i><i style="background:#c4711a" title="l2 #c4711a"></i><i style="background:#b8503a" title="l3 #b8503a"></i><i style="background:#a8853c" title="l4 #a8853c"></i><i style="background:#6b6480" title="l5 #6b6480"></i><i style="background:#aa3d22" title="accent #aa3d22"></i><i style="background:#4a6b2e" title="ok #4a6b2e"></i></div>
+  <table class="met"><tr><td>Header luminance</td><td><b>94.3%</b> &nbsp;<span>vs 2.9% today</span></td></tr><tr><td>Body text</td><td>16.86:1</td></tr><tr><td>Secondary text</td><td>5.47:1</td></tr><tr><td>Header text &middot; idle nav</td><td>16.48:1 &middot; 5.35:1</td></tr><tr><td>Link &middot; tick</td><td>5.97:1 &middot; 5.91:1</td></tr></table>
+</section>
+
+<section class="card">
+  <div class="hd"><b>B2</b><h2>Sugar Sand</h2><a class="open" href="01-theme-T4-bazaar-B2-sugar-sand.html">Open full page &rarr;</a></div>
+  <p class="note">A sand header instead of a cobalt one, with slate-indigo type on it. Keeps a coloured band across the top so the site still has a lid, at a third of the old contrast.</p>
+  <div class="mock" style="--g:#fdf8ee;--p:#ffffff;--sd:#f1e5d0;--ln:#e4d6bd;
+       --l2c:#d0bd9e;--ik:#23252e;--mu:#6b6558;--hb:#f1e5d0;--hi:#2f3245;
+       --hd:#6b6558;--hc:#2f3245;--hci:#fdf8ee;--ac:#4a4e75;
+       --ok:#4f7333;--k1:#4b8177;--k2:#5b5e8c;--k3:#8a5f82;--k4:#a8823c;--k5:#b0604a;
+       --bg0:#e7d8bd;--ba:#8fb3ac;--bb:#e2b98c;--bc:#c98a76;--gd:#c9a760">
+    <div class="m-top">
+      <span class="m-cubes"><i class="rose"></i><i class="gap"></i><i class="orange"></i><i class="green"></i></span>
+      <span class="m-brand">AI Engineering Bazaar</span>
+      <span class="m-nav on">Curriculum</span><span class="m-nav">Catalog</span><span class="m-nav">My progress</span>
+      <span class="m-field"></span>
+    </div>
+    <div class="m-band"></div>
+    <div class="m-body">
+      <div class="m-side">
+        <div class="m-lvl here"><i style="background:var(--k1)"></i>Fundamentals<em>3/8</em></div>
+        <div class="m-mod"><span class="m-tick">&#10003;</span>LLM Fundamentals</div>
+        <div class="m-mod cur"><span class="m-tick w">&#10003;</span>RAG &amp; Embeddings</div>
+        <div class="m-mod">Tool Calling</div>
+        <div class="m-lvl"><i style="background:var(--k2)"></i>Intermediate<em>0/8</em></div>
+        <div class="m-lvl"><i style="background:var(--k3)"></i>Expert<em>0/11</em></div>
+        <div class="m-lvl"><i style="background:var(--k4)"></i>Ecosystem<em>0/5</em></div>
+        <div class="m-lvl"><i style="background:var(--k5)"></i>Protocols</div>
+      </div>
+      <div class="m-main">
+        <div class="m-h1">RAG &amp; Embeddings</div>
+        <div class="m-tags"><span><i style="background:var(--k1)"></i>Fundamentals</span><span>Module 3 of 8</span></div>
+        <div class="m-card"></div>
+        <div class="m-line" style="width:96%"></div><div class="m-line" style="width:88%"></div>
+        <div class="m-line lk" style="width:44%"></div>
+        <div class="m-slab"></div>
+        <div class="m-btn">Mark complete</div>
+      </div>
+    </div>
+  </div>
+  <div class="sw"><i style="background:#fdf8ee" title="ground #fdf8ee"></i><i style="background:#ffffff" title="paper #ffffff"></i><i style="background:#f1e5d0" title="sand #f1e5d0"></i><i style="background:#f1e5d0" title="headbg #f1e5d0"></i><i style="background:#e7d8bd" title="bandground #e7d8bd"></i><i style="background:#4b8177" title="l1 #4b8177"></i><i style="background:#5b5e8c" title="l2 #5b5e8c"></i><i style="background:#8a5f82" title="l3 #8a5f82"></i><i style="background:#a8823c" title="l4 #a8823c"></i><i style="background:#b0604a" title="l5 #b0604a"></i><i style="background:#4a4e75" title="accent #4a4e75"></i><i style="background:#4f7333" title="ok #4f7333"></i></div>
+  <table class="met"><tr><td>Header luminance</td><td><b>79.3%</b> &nbsp;<span>vs 2.9% today</span></td></tr><tr><td>Body text</td><td>14.42:1</td></tr><tr><td>Secondary text</td><td>5.47:1</td></tr><tr><td>Header text &middot; idle nav</td><td>10.14:1 &middot; 4.65:1</td></tr><tr><td>Link &middot; tick</td><td>7.52:1 &middot; 5.18:1</td></tr></table>
+</section>
+
+<section class="card">
+  <div class="hd"><b>B3</b><h2>Olive Grove</h2><a class="open" href="01-theme-T4-bazaar-B3-olive-grove.html">Open full page &rarr;</a></div>
+  <p class="note">The green cube, desaturated and lifted, leads instead of the blue. Still a coloured header, but a mid-tone one, so the page reads warm rather than corporate.</p>
+  <div class="mock" style="--g:#fbf8f0;--p:#ffffff;--sd:#efe7d6;--ln:#e2dac6;
+       --l2c:#cdc2a8;--ik:#22241d;--mu:#6a6759;--hb:#5e6b45;--hi:#fbf8f0;
+       --hd:#e4e9da;--hc:#fbf8f0;--hci:#3c4629;--ac:#4a5c34;
+       --ok:#4f7333;--k1:#5e7a3c;--k2:#54607f;--k3:#8a5f6f;--k4:#a8823c;--k5:#a8563a;
+       --bg0:#4b5736;--ba:#8fa86a;--bb:#dfb783;--bc:#c47f5f;--gd:#cbab63">
+    <div class="m-top">
+      <span class="m-cubes"><i class="rose"></i><i class="gap"></i><i class="orange"></i><i class="green"></i></span>
+      <span class="m-brand">AI Engineering Bazaar</span>
+      <span class="m-nav on">Curriculum</span><span class="m-nav">Catalog</span><span class="m-nav">My progress</span>
+      <span class="m-field"></span>
+    </div>
+    <div class="m-band"></div>
+    <div class="m-body">
+      <div class="m-side">
+        <div class="m-lvl here"><i style="background:var(--k1)"></i>Fundamentals<em>3/8</em></div>
+        <div class="m-mod"><span class="m-tick">&#10003;</span>LLM Fundamentals</div>
+        <div class="m-mod cur"><span class="m-tick w">&#10003;</span>RAG &amp; Embeddings</div>
+        <div class="m-mod">Tool Calling</div>
+        <div class="m-lvl"><i style="background:var(--k2)"></i>Intermediate<em>0/8</em></div>
+        <div class="m-lvl"><i style="background:var(--k3)"></i>Expert<em>0/11</em></div>
+        <div class="m-lvl"><i style="background:var(--k4)"></i>Ecosystem<em>0/5</em></div>
+        <div class="m-lvl"><i style="background:var(--k5)"></i>Protocols</div>
+      </div>
+      <div class="m-main">
+        <div class="m-h1">RAG &amp; Embeddings</div>
+        <div class="m-tags"><span><i style="background:var(--k1)"></i>Fundamentals</span><span>Module 3 of 8</span></div>
+        <div class="m-card"></div>
+        <div class="m-line" style="width:96%"></div><div class="m-line" style="width:88%"></div>
+        <div class="m-line lk" style="width:44%"></div>
+        <div class="m-slab"></div>
+        <div class="m-btn">Mark complete</div>
+      </div>
+    </div>
+  </div>
+  <div class="sw"><i style="background:#fbf8f0" title="ground #fbf8f0"></i><i style="background:#ffffff" title="paper #ffffff"></i><i style="background:#efe7d6" title="sand #efe7d6"></i><i style="background:#5e6b45" title="headbg #5e6b45"></i><i style="background:#4b5736" title="bandground #4b5736"></i><i style="background:#5e7a3c" title="l1 #5e7a3c"></i><i style="background:#54607f" title="l2 #54607f"></i><i style="background:#8a5f6f" title="l3 #8a5f6f"></i><i style="background:#a8823c" title="l4 #a8823c"></i><i style="background:#a8563a" title="l5 #a8563a"></i><i style="background:#4a5c34" title="accent #4a5c34"></i><i style="background:#4f7333" title="ok #4f7333"></i></div>
+  <table class="met"><tr><td>Header luminance</td><td><b>13.3%</b> &nbsp;<span>vs 2.9% today</span></td></tr><tr><td>Body text</td><td>14.79:1</td></tr><tr><td>Secondary text</td><td>5.35:1</td></tr><tr><td>Header text &middot; idle nav</td><td>5.4:1 &middot; 4.63:1</td></tr><tr><td>Link &middot; tick</td><td>6.89:1 &middot; 5.16:1</td></tr></table>
+</section>
+
+<section class="card">
+  <div class="hd"><b>B4</b><h2>Soft Cobalt</h2><a class="open" href="01-theme-T4-bazaar-B4-soft-cobalt.html">Open full page &rarr;</a></div>
+  <p class="note">The T4 you already like, dialled down: the same indigo family lifted and desaturated, on a lighter ground. Choose this if the structure was right and only the volume was wrong.</p>
+  <div class="mock" style="--g:#faf6ee;--p:#ffffff;--sd:#efe7d8;--ln:#e2d9c7;
+       --l2c:#ccc0aa;--ik:#20222b;--mu:#696556;--hb:#5c5f8e;--hi:#fdfbf6;
+       --hd:#dfdfee;--hc:#fdfbf6;--hci:#3c3f66;--ac:#474b78;
+       --ok:#4f7333;--k1:#4b8177;--k2:#5b5e8c;--k3:#7f5c86;--k4:#a8823c;--k5:#a8563a;
+       --bg0:#4c4f7a;--ba:#8fb3ac;--bb:#e0b98f;--bc:#c4826a;--gd:#c9a760">
+    <div class="m-top">
+      <span class="m-cubes"><i class="rose"></i><i class="gap"></i><i class="orange"></i><i class="green"></i></span>
+      <span class="m-brand">AI Engineering Bazaar</span>
+      <span class="m-nav on">Curriculum</span><span class="m-nav">Catalog</span><span class="m-nav">My progress</span>
+      <span class="m-field"></span>
+    </div>
+    <div class="m-band"></div>
+    <div class="m-body">
+      <div class="m-side">
+        <div class="m-lvl here"><i style="background:var(--k1)"></i>Fundamentals<em>3/8</em></div>
+        <div class="m-mod"><span class="m-tick">&#10003;</span>LLM Fundamentals</div>
+        <div class="m-mod cur"><span class="m-tick w">&#10003;</span>RAG &amp; Embeddings</div>
+        <div class="m-mod">Tool Calling</div>
+        <div class="m-lvl"><i style="background:var(--k2)"></i>Intermediate<em>0/8</em></div>
+        <div class="m-lvl"><i style="background:var(--k3)"></i>Expert<em>0/11</em></div>
+        <div class="m-lvl"><i style="background:var(--k4)"></i>Ecosystem<em>0/5</em></div>
+        <div class="m-lvl"><i style="background:var(--k5)"></i>Protocols</div>
+      </div>
+      <div class="m-main">
+        <div class="m-h1">RAG &amp; Embeddings</div>
+        <div class="m-tags"><span><i style="background:var(--k1)"></i>Fundamentals</span><span>Module 3 of 8</span></div>
+        <div class="m-card"></div>
+        <div class="m-line" style="width:96%"></div><div class="m-line" style="width:88%"></div>
+        <div class="m-line lk" style="width:44%"></div>
+        <div class="m-slab"></div>
+        <div class="m-btn">Mark complete</div>
+      </div>
+    </div>
+  </div>
+  <div class="sw"><i style="background:#faf6ee" title="ground #faf6ee"></i><i style="background:#ffffff" title="paper #ffffff"></i><i style="background:#efe7d8" title="sand #efe7d8"></i><i style="background:#5c5f8e" title="headbg #5c5f8e"></i><i style="background:#4c4f7a" title="bandground #4c4f7a"></i><i style="background:#4b8177" title="l1 #4b8177"></i><i style="background:#5b5e8c" title="l2 #5b5e8c"></i><i style="background:#7f5c86" title="l3 #7f5c86"></i><i style="background:#a8823c" title="l4 #a8823c"></i><i style="background:#a8563a" title="l5 #a8563a"></i><i style="background:#474b78" title="accent #474b78"></i><i style="background:#4f7333" title="ok #4f7333"></i></div>
+  <table class="met"><tr><td>Header luminance</td><td><b>12.4%</b> &nbsp;<span>vs 2.9% today</span></td></tr><tr><td>Body text</td><td>14.7:1</td></tr><tr><td>Secondary text</td><td>5.42:1</td></tr><tr><td>Header text &middot; idle nav</td><td>5.83:1 &middot; 4.57:1</td></tr><tr><td>Link &middot; tick</td><td>7.65:1 &middot; 5.08:1</td></tr></table>
+</section>
+
+<section class="card">
+  <div class="hd"><b>T4</b><h2>T4 Bazaar (what you have now)</h2><a class="open" href="01-theme-T4-bazaar.html">Open full page &rarr;</a></div>
+  <p class="note">For reference. Header luminance 2.9%.</p>
+  <div class="mock" style="--g:#f4ece0;--p:#fffdf9;--sd:#e6dac6;--ln:#d8cbb4;
+       --l2c:#c3b299;--ik:#20242e;--mu:#6a6558;--hb:#282864;--hi:#ffffff;
+       --hd:#c9c6e4;--hc:#f4ece0;--hci:#1b1b47;--ac:#282864;
+       --ok:#2f8c86;--k1:#2f8c86;--k2:#282864;--k3:#7a4a86;--k4:#b8873b;--k5:#a0503c;
+       --bg0:#282864;--ba:#2f8c86;--bb:#c8a078;--bc:#a0503c;--gd:#b8873b">
+    <div class="m-top">
+      <span class="m-cubes"><i class="rose"></i><i class="gap"></i><i class="orange"></i><i class="green"></i></span>
+      <span class="m-brand">AI Engineering Bazaar</span>
+      <span class="m-nav on">Curriculum</span><span class="m-nav">Catalog</span><span class="m-nav">My progress</span>
+      <span class="m-field"></span>
+    </div>
+    <div class="m-band"></div>
+    <div class="m-body">
+      <div class="m-side">
+        <div class="m-lvl here"><i style="background:var(--k1)"></i>Fundamentals<em>3/8</em></div>
+        <div class="m-mod"><span class="m-tick">&#10003;</span>LLM Fundamentals</div>
+        <div class="m-mod cur"><span class="m-tick w">&#10003;</span>RAG &amp; Embeddings</div>
+        <div class="m-mod">Tool Calling</div>
+        <div class="m-lvl"><i style="background:var(--k2)"></i>Intermediate<em>0/8</em></div>
+        <div class="m-lvl"><i style="background:var(--k3)"></i>Expert<em>0/11</em></div>
+        <div class="m-lvl"><i style="background:var(--k4)"></i>Ecosystem<em>0/5</em></div>
+        <div class="m-lvl"><i style="background:var(--k5)"></i>Protocols</div>
+      </div>
+      <div class="m-main">
+        <div class="m-h1">RAG &amp; Embeddings</div>
+        <div class="m-tags"><span><i style="background:var(--k1)"></i>Fundamentals</span><span>Module 3 of 8</span></div>
+        <div class="m-card"></div>
+        <div class="m-line" style="width:96%"></div><div class="m-line" style="width:88%"></div>
+        <div class="m-line lk" style="width:44%"></div>
+        <div class="m-slab"></div>
+        <div class="m-btn">Mark complete</div>
+      </div>
+    </div>
+  </div>
+  <div class="sw"><i style="background:#f4ece0" title="ground #f4ece0"></i><i style="background:#fffdf9" title="paper #fffdf9"></i><i style="background:#e6dac6" title="sand #e6dac6"></i><i style="background:#282864" title="headbg #282864"></i><i style="background:#282864" title="bandground #282864"></i><i style="background:#2f8c86" title="l1 #2f8c86"></i><i style="background:#282864" title="l2 #282864"></i><i style="background:#7a4a86" title="l3 #7a4a86"></i><i style="background:#b8873b" title="l4 #b8873b"></i><i style="background:#a0503c" title="l5 #a0503c"></i><i style="background:#282864" title="accent #282864"></i><i style="background:#2f8c86" title="ok #2f8c86"></i></div>
+  <table class="met"><tr><td>Header luminance</td><td><b>2.9%</b></td></tr><tr><td>Body text</td><td>13.24:1</td></tr><tr><td>Secondary text</td><td>4.96:1</td></tr><tr><td>Header text &middot; idle nav</td><td>13.31:1 &middot; 8.04:1</td></tr><tr><td>Link &middot; tick</td><td>11.36:1 &middot; 3.44:1</td></tr></table>
+</section>
+</div>
+</body></html>

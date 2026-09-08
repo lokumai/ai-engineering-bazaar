@@ -40,16 +40,21 @@ describe('EMPTY_RECORD', () => {
       identity: { name: null, markSeed: null, mark: null, role: null },
       sheets: {},
       days: [],
-      // §16.3 widened `prefs`: `aliasNamedFor` is null here because no account
-      // has named this record, which is the only thing a build can know about a
-      // reader it has never met.
-      prefs: { charKeys: true, aliasNamedFor: null },
+      // §16.3 widened `prefs` and M10 widened it again: `aliasNamedFor` is
+      // null because no account has named this record, and `railFolded` is
+      // false because a reader the build has never met has not asked for the
+      // curriculum rail to be hidden. Both are the only thing a build can know.
+      prefs: { charKeys: true, railFolded: false, aliasNamedFor: null },
       meta: { lastExport: null, persisted: null, lastClaim: null },
     })
   })
 
   it('defaults charKeys on, as §12.16 specifies for this audience', () => {
     expect(EMPTY_RECORD.prefs.charKeys).toBe(true)
+  })
+
+  it('defaults the curriculum rail OPEN, because nobody asked for it shut', () => {
+    expect(EMPTY_RECORD.prefs.railFolded).toBe(false)
   })
 
   it('is one singleton, or useSyncExternalStore loops', () => {

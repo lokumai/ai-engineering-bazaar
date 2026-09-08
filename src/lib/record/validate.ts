@@ -370,6 +370,15 @@ export function coerceRecordData(input: unknown): RecordData {
     prefs: {
       charKeys: asBoolean(prefs.charKeys, EMPTY_RECORD.prefs.charKeys),
       /**
+       * M10. A record written before this field existed reads back false — the
+       * rail open — which needs no rung on the migration ladder, because the
+       * default IS the honest answer for a reader who never expressed a
+       * preference. Only a real boolean folds it, for the same reason only a
+       * real boolean turns `charKeys` off: a truthy string out of a
+       * hand-edited record must not decide the layout.
+       */
+      railFolded: asBoolean(prefs.railFolded, EMPTY_RECORD.prefs.railFolded),
+      /**
        * §16.3. A string stays, everything else — a number, a boolean, an
        * object, an absent key, the empty string — becomes null, which is the
        * value that means "no account has named this record" and so is the only

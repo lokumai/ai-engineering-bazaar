@@ -136,21 +136,24 @@ describe('prefs.aliasNamedFor — the schema slot (§16.3)', () => {
       meta: { lastExport: null, persisted: null },
     })
     const data = coerceRecordData(before.data)
-    expect(data.prefs).toEqual({ charKeys: false, aliasNamedFor: null })
+    expect(data.prefs).toEqual({ charKeys: false, railFolded: false, aliasNamedFor: null })
     expect(data.identity.name).toBe('Ada')
     expect(data.days).toEqual(['2026-08-01'])
   })
 
   it('drops an unknown pref key, as the permissive coercer always has', () => {
     const data = coerceRecordData({ prefs: { charKeys: false, theme: 'dark' } })
-    expect(Object.keys(data.prefs).sort()).toEqual(['aliasNamedFor', 'charKeys'])
+    // Every pref the coercer knows, and only those. A new pref belongs on this
+    // list; anything else in a stored envelope is dropped.
+    expect(Object.keys(data.prefs).sort())
+      .toEqual(['aliasNamedFor', 'charKeys', 'railFolded'])
   })
 })
 
 describe('carriesNothing still ignores prefs (schema.ts, §16.3)', () => {
   const flagged: RecordData = {
     ...EMPTY_RECORD,
-    prefs: { charKeys: true, aliasNamedFor: 'user-1' },
+    prefs: { charKeys: true, railFolded: false, aliasNamedFor: 'user-1' },
   }
 
   it('an erased record is not resurrected by the naming flag', () => {

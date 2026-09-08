@@ -440,6 +440,26 @@ export function setCharKeys(data: RecordData, on: boolean): RecordData {
   return { ...data, prefs: { ...data.prefs, charKeys: on } }
 }
 
+/**
+ * M10 — the curriculum rail's fold, remembered per reader.
+ *
+ * Same shape as `setCharKeys` and for the same reason: this is the ONE writer
+ * of the fold, because `store.ts` is the one writer of learner state
+ * (`kia-context/specs/ARCHITECTURE.md` §5). The fold is a layout preference and
+ * the temptation is a second `localStorage` key beside the record; that is
+ * exactly the second writer the rule forbids, and it would also be invisible to
+ * the export, the erase dialog and the merge.
+ *
+ * It stamps no day. Folding a rail is not work on the curriculum, and a reader
+ * who collapsed a sidebar has not earned a streak — `days` is evidence about
+ * the course, so writing to it here would inflate every readout that counts
+ * days.
+ */
+export function setRailFolded(data: RecordData, folded: boolean): RecordData {
+  if (data.prefs.railFolded === folded) return data
+  return { ...data, prefs: { ...data.prefs, railFolded: folded } }
+}
+
 /** §12.15 — `lastExport`, so `NO EXPORT ON RECORD` can be a truthful state. */
 /**
  * §7.3 — the reader did something today, and nothing else about the record has

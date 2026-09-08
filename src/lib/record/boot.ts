@@ -16,6 +16,15 @@
  *   `class="hl-role-<id>"`                the reader's role (§13.3)
  *   `data-hl-record="1"`                  a record CARRYING SOMETHING exists
  *   `data-hl-storage="ok" | "blocked"`    tells empty state 1 from 4 (§12.13)
+ *   `data-hl-rail="folded"`               M10 — the curriculum rail is folded
+ *
+ * **The rail stamp is written BEFORE the `carriesNothing` gate**, and that
+ * order is the whole reason it is stamped here at all. A reader whose only
+ * stored state is a folded rail carries nothing by §15.11's rule, so the gate
+ * returns before the class list is touched; stamping the fold after it would
+ * mean the rail sprang open on every load for exactly the readers who had
+ * asked for it to be shut. It is not a claim that a record exists — it is a
+ * layout preference, and the two questions are answered separately.
  *
  * The whole body is inside try/catch and does nothing on failure, which lands
  * the page in the honest empty state rather than a half-drawn one.
@@ -129,6 +138,7 @@ var env=JSON.parse(raw);
 if(!isObj(env)||typeof env.schema!=="number"||env.schema<1||env.schema>${SCHEMA_VERSION})return;
 var d=env.data;
 if(!isObj(d))return;
+if(isObj(d.prefs)&&d.prefs.railFolded===true)r.setAttribute("data-hl-rail","folded");
 var counts={},k,c,i,n,rec,id,ro=null,sh=d.sheets,has=0;
 if(arr(d.days)&&someDay(d.days))has=1;
 if(isObj(d.meta)&&inst(d.meta.lastExport))has=1;

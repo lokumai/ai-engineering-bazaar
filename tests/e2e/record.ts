@@ -101,8 +101,12 @@ export interface RecordData {
    * the store — they read as data loss when the only difference is a key the
    * seed forgot. Measured: omitting it made those three specs red while the
    * app was correct.
+   *
+   * M10's `railFolded` is here for exactly that reason: it is the third
+   * widening of `prefs`, and the three round trips above compare raw storage
+   * against a record that went through the store.
    */
-  prefs: { charKeys: boolean; aliasNamedFor: string | null }
+  prefs: { charKeys: boolean; railFolded: boolean; aliasNamedFor: string | null }
   /**
    * §17.3 — `lastClaim` is typed out the same structural way as everything
    * else here (see the module docblock): a shape drift in `lib/record/claim.ts`
@@ -186,7 +190,7 @@ export function recordData(seed: RecordSeed = {}): RecordData {
     identity: { name: null, markSeed: null, mark: null, role: null, ...seed.identity },
     sheets,
     days: seed.days ?? [SEED_DAY],
-    prefs: { charKeys: true, aliasNamedFor: null, ...seed.prefs },
+    prefs: { charKeys: true, railFolded: false, aliasNamedFor: null, ...seed.prefs },
     meta: { lastExport: null, persisted: null, lastClaim: null, ...seed.meta },
   }
 }
@@ -424,10 +428,32 @@ export async function probeFirstPaint(page: Page): Promise<void> {
   })
 }
 
-export function firstPaint(page: Page): Promise<FirstPaint | undefined> {
-  return page.evaluate(
+/**
+ * The reading the probe took, WAITING for it rather than sampling it once.
+ *
+ * `page.evaluate` right after `goto` can land before the probe's
+ * `requestAnimationFrame` callback has run, and the old version of this
+ * function then returned `undefined` — which every caller read as "channel A
+ * did not stamp" and reported as a first-paint regression. It passed alone and
+ * failed under parallel load, which is the signature of a race rather than of a
+ * defect, and it is the same mistake `contrast.ts`'s `useTheme` was making one
+ * frame over: **a frame count, or a single sample, is not a wait**
+ * (`kia-context/logs/BRAINSTORM.md` D20).
+ *
+ * The claim is unchanged and it is still the strong one: the reading is taken
+ * in a `requestAnimationFrame` scheduled from an init script, which runs before
+ * the first paint and before any React effect. Waiting for that callback does
+ * not weaken it — the callback either ran before the paint or it did not run at
+ * all, and a timeout here says so out loud instead of returning a value that
+ * looks like an empty `<html>`.
+ */
+export async function firstPaint(page: Page): Promise<FirstPaint | undefined> {
+  const handle = await page.waitForFunction(
     () => (window as unknown as PaintWindow).__hlRecordFirstPaint,
+    null,
+    { timeout: 10_000 },
   )
+  return handle.jsonValue()
 }
 
 /** The class list alone, the shape `theme.spec.ts` reads. */

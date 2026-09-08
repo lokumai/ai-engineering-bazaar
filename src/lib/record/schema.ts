@@ -112,6 +112,25 @@ export interface RecordData {
     /** §12.16 — character-key shortcuts, default true for this audience. */
     charKeys: boolean
     /**
+     * M10 — whether the curriculum rail on a module page is folded away.
+     *
+     * It lives in `prefs` for the same reason `charKeys` does: it is a fact
+     * about the browser in front of the reader rather than about the reader,
+     * and `prefs` is the field `carriesNothing` ignores and `mergeRecords`
+     * resolves local-wins. A reader who folds the rail on a laptop has not
+     * said anything about their phone.
+     *
+     * The record store is the only writer of learner state
+     * (`kia-context/specs/ARCHITECTURE.md` §5), so the fold is written here or
+     * it is not written at all. It is NOT a second `localStorage` key: two
+     * writers to one reader's state is the defect that rule exists to prevent.
+     *
+     * Default false — the rail is open — because a reader who has never met
+     * this site has not asked for it to be hidden, and the honest empty form
+     * of a preference is the one the reader did not set.
+     */
+    railFolded: boolean
+    /**
      * §16.3 — the account id whose address the alias was offered from, or
      * `null` for "no account has named this record".
      *
@@ -226,7 +245,7 @@ export const EMPTY_RECORD: RecordData = deepFreeze<RecordData>({
   identity: { name: null, markSeed: null, mark: null, role: null },
   sheets: {},
   days: [],
-  prefs: { charKeys: true, aliasNamedFor: null },
+  prefs: { charKeys: true, railFolded: false, aliasNamedFor: null },
   meta: { lastExport: null, persisted: null, lastClaim: null },
 })
 

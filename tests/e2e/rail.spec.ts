@@ -190,32 +190,57 @@ test.describe('the fold', () => {
     expect(await railWidth(page)).toBe(0)
   })
 
+  /**
+   * **Asked of the browser, not sampled at a stopwatch.** The first version of
+   * this test clicked, waited 40ms and read the width, expecting to catch the
+   * fold mid-animation. Under eight parallel workers the click's protocol round
+   * trip plus the wait exceeded the 200ms fold, the width read zero, and a
+   * working animation was reported as an instant one — which is D20's mistake
+   * committed in a test written the same afternoon.
+   *
+   * `transitionend.elapsedTime` is how long the transition actually ran, in
+   * seconds, reported by the engine. It is a record of an event rather than a
+   * reading taken at a moment, so it does not care how loaded the machine is.
+   * MEASURED: 0.2 with motion, 0.00001 under `prefers-reduced-motion`.
+   */
   test('is instant under prefers-reduced-motion, and animated without it', async ({ browser }) => {
-    for (const [motion, expectation] of [
-      ['reduce', 'instant'],
-      ['no-preference', 'animated'],
-    ] as const) {
+    for (const motion of ['reduce', 'no-preference'] as const) {
       const context = await browser.newContext({ reducedMotion: motion })
       const page = await context.newPage()
       await page.goto(A0.path)
 
-      const declared = await page
-        .locator('.hl-rail-left')
-        .evaluate((node) => getComputedStyle(node).transitionDuration)
+      // Listeners on before the click, so nothing can happen unobserved.
+      await page.evaluate(() => {
+        const seen: number[] = []
+        ;(window as unknown as { __fold: number[] }).__fold = seen
+        document
+          .querySelector('.hl-rail-left')!
+          .addEventListener('transitionend', (event) => {
+            const transition = event as TransitionEvent
+            if (transition.propertyName === 'width') seen.push(transition.elapsedTime)
+          })
+      })
 
       await page.locator('[data-hl-rail-hide]').click()
-      // 40ms is well inside the 200ms fold: instant means already at zero,
-      // animated means somewhere in between.
-      await page.waitForTimeout(40)
-      const midway = await railWidth(page)
+      await expect.poll(() => railWidth(page), { timeout: 3_000 }).toBe(0)
 
-      if (expectation === 'instant') {
-        expect(declared, motion).toMatch(/^0?\.?0*1?e?-?\d*s|^0s/)
-        expect(midway, motion).toBe(0)
+      const ran = await page.evaluate(
+        () => (window as unknown as { __fold: number[] }).__fold,
+      )
+      expect(ran.length, `${motion}: the width never transitioned at all`)
+        .toBeGreaterThan(0)
+      const seconds = Math.max(...ran)
+
+      if (motion === 'reduce') {
+        // §9.5's global rule collapses every duration on the site, so the fold
+        // is a state swap rather than a movement.
+        expect(seconds, motion).toBeLessThan(0.01)
       } else {
-        expect(declared, motion).toContain('0.2s')
-        expect(midway, motion).toBeGreaterThan(0)
-        await expect.poll(() => railWidth(page), { timeout: 2_000 }).toBe(0)
+        // DESIGN.md's `motion.fold`. Asserted as a band rather than as 0.2
+        // exactly, because the engine reports what it ran and a frame boundary
+        // can round it.
+        expect(seconds, motion).toBeGreaterThan(0.15)
+        expect(seconds, motion).toBeLessThan(0.35)
       }
 
       await context.close()

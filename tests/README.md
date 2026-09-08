@@ -65,7 +65,7 @@ catch every version of "it is broken", which is what a reader would meet.
 4. Prove it can fail. Break the thing on purpose, watch the test go red, put it
    back. A test never seen failing is decoration.
 
-## Known flakes
+## Known flakes, and the family they nearly all belong to
 
 `theme.spec.ts` and `path.spec.ts` read `<html>`'s class list inside a
 `requestAnimationFrame` with the page's scripts blocked. The reading is
@@ -73,7 +73,27 @@ sometimes taken before the frame fires: observed failing three then passing six
 on a re-run with nothing changed. Both files retry twice. A genuine break still
 fails all three attempts.
 
-## Eight checks that fail for a reason, not because they broke
+**Before calling anything else a flake, check whether it is a race you can
+close.** Five failures were read as regressions in M10 and every one of them was
+a check that counted frames, waited on `networkidle`, or sampled once a value
+that arrives asynchronously — see `kia-context/logs/BRAINSTORM.md` **D20**. The
+signature is the same every time: **passes run alone, fails under parallel
+load.** That is not a flake to retry around, it is a wait that was never
+written. Three specific traps, each of which cost a red run:
+
+- **A frame count is not a wait.** Lifting `transition: none !important` and
+  changing the value in the same frame makes Chrome start the transition on the
+  NEXT frame, so a sample taken one frame later reads the OLD value. `useTheme`
+  in `tests/e2e/contrast.ts` waits for `document.getAnimations()` to settle.
+- **`networkidle` is not "the island has run".** Mermaid arrives behind a
+  dynamic import and injects its SVG afterwards. Wait on the island's own
+  `data-hl-ready`, which is what `containment.spec.ts` does.
+- **A proxy is not the property.** "React cannot have hydrated before the first
+  paint" was used to mean "this reading is pre-React", and under CPU contention
+  with a warm cache it is false. If the property is structural, assert it
+  structurally.
+
+## Ten checks that fail for a reason, not because they broke
 
 Moved here from `README.md`, which was the only place they were written down.
 When one of these goes red, the cause is usually the thing it names rather than
@@ -91,6 +111,18 @@ the test.
 - **The contrast check** (`tests/unit/color/contrast.test.ts`) recomputes every
   WCAG ratio in §10.1 from the live token values in `src/app/globals.css`.
   Change a colour and it fails until the spec's table is re-derived.
+- **The containment check** (`tests/e2e/containment.spec.ts`) measures the
+  PAINTED rectangle of every element of every diagram — its own box intersected
+  with every clipping ancestor's — against the reading column, at all three
+  viewports, after mermaid has injected. It is not "no element extends past the
+  column": a drawing inside a scroll container legitimately does. Mutation-tested
+  at 57 elements and 275px of overflow.
+- **The control-border check** (`tests/unit/color/slab-and-controls.test.ts`)
+  names each interactive control and asserts its border is
+  `--color-line-control` and is NOT a grouping token. The second half is the one
+  that protects the rule; without it a control moved back onto `line-strong`
+  passes. It also holds the slab's local palette equal to the `.dark` values it
+  duplicates, because two copies of a value are two values.
 - **The stroke-weight check** fails on any `border-width: var(--stroke-struct)`.
   Chrome floors a border to a whole pixel, so the middle weight has to be
   *painted*, as a gradient or a height, never bordered. It caught this exact

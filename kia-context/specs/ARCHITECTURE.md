@@ -306,11 +306,23 @@ RecordData
   sheets     { [slug]: { signedOff, signedRevision, reachedEnd, dwellSeconds,
                          quiz { answer, assessed }, checklist {}, sources [], submittals [] } }
   days       [ ISO dates ]          the streak
-  prefs      { charKeys, aliasNamedFor }
+  prefs      { charKeys, railFolded, aliasNamedFor }
   meta       { lastExport, persisted, lastClaim }
 ```
 
 `dwellSeconds` is capped at 3600 and `submittals` at 3, both in `schema.ts`.
+
+**`prefs` holds the browser's preferences, not the reader's history.** `charKeys` is SC 2.1.4's off
+switch and `railFolded` (M10) is whether the curriculum rail on a module page is folded away. Both are
+facts about the machine in front of the reader rather than about the reader, which is why `prefs` is
+the one field `carriesNothing` ignores and the one `mergeRecords` resolves local-wins. A widening here
+needs no migration rung: `coerceRecordData` defaults a missing key, and the default is the honest
+answer for a reader who never expressed a preference.
+
+**The record store is the only writer, and a UI preference is not an exception.** The temptation with
+`railFolded` was a second `localStorage` key beside the record; that would be a second writer, and it
+would also be invisible to the export, the erase dialog and the account merge — three surfaces that
+are supposed to account for everything the site remembers.
 
 **`sheets` is keyed by slug, not by number.** This is what makes a curriculum reorder safe: renaming a
 module orphans its progress, but moving it does not.
@@ -340,7 +352,10 @@ Both are needed and neither replaces the other.
 
 - **Channel A** — `src/lib/record/boot.ts` generates a blocking inline `<script>` in `<head>` that
   reads `localStorage`, stamps classes and attributes onto `<html>`, and lets CSS draw the progress
-  marks **before first paint**. No React. Correct in frame one.
+  marks **before first paint**. No React. Correct in frame one. It carries layout state as well as
+  progress: `data-hl-rail="folded"` (M10) is stamped **before** the `carriesNothing` gate, because a
+  reader whose only stored state is a folded rail carries nothing by that rule and the rail would
+  spring open on every load for exactly the readers who asked for it to be shut.
 - **Channel B** — React islands after mount. `getServerSnapshot` returns a frozen empty record,
   because the prerendered HTML has never met the reader.
 
@@ -351,6 +366,14 @@ Anything derived belongs in exactly one file: `derive.ts` (how far along), `atte
 scheduled at document start does not fire on the first navigation in a fresh browsing context. Those
 tests fail cold and pass warm, locally, and pass in CI. Compare against a clean build before blaming a
 change.
+
+**And one correction to how that consequence is checked.** The helper that reads the probe used to
+sample it once, so a reading taken before the callback ran came back `undefined` and every caller
+reported it as "channel A did not stamp". It waits now. A related assertion — "React cannot have
+hydrated before the first paint", used as a proxy for pre-React — was measured to be false under CPU
+contention with a warm cache, and was replaced with a structural check that the boot script is inline
+and blocking in `<head>`, which is what makes the claim true by construction rather than by timing.
+Both are `logs/BRAINSTORM.md` **D20**.
 
 ---
 
@@ -471,7 +494,7 @@ uses the left.**
 | drawn / not drawn | `status: ready` / `status: draft` | **Ready** / **Planned** |
 | feeds | the modules a module is a prerequisite *for* | **Unlocks** |
 | requires | a module's own prerequisites | **Requirements** |
-| title block | the right-hand panel of facts on a module page | **Module info** |
+| title block | the module's own panel of facts | **Module info** — M11 moved it out of the right rail and into the column |
 | the register | the reader's stored history | **Your progress** |
 | the drafter | the reader | **you** / **Account** |
 | index sheet | the flat list of all modules, at `/sheets` | **Catalog** |
@@ -501,6 +524,19 @@ Three words did **not** move, and each for a reason:
   are asserted directly by `tests/unit/content/title-block.test.ts`.
 - **`register`, the verb.** A reader still registers a repository against a module. Only *the*
   register — the noun for their stored history — became **Your progress**.
+
+**Two strings slipped the rename and M11 caught them**, both for the same mechanical reason: the copy
+register matches on word boundaries, and neither carried one where `sign-off` or `drawing set` could
+be found inside it.
+
+- `UNSIGN`, the button beside the completion control, is now **Un-complete** — which is the word the
+  keyboard sheet had been printing beside `s` all along.
+- `— END OF SET`, the cell where the prev/next chain runs out, is now **End of the course**.
+
+The hole itself is not closed: the ban is a lexer, so a retired word inside a longer token, inside a
+template literal, or inside a JSX run containing braces still passes it. Closing that properly means a
+parser rather than a lexer, and the export grep is what covers it today
+(`logs/BRAINSTORM.md` D19's last paragraph).
 
 **The section numbers in code comments (`§12.2`, `§4.4`, `§13.1.1`) refer to a design specification
 that is not in this repository.** They are stable identifiers tying a piece of code to the decision

@@ -9,8 +9,8 @@ description: >
 authority: blueprint
 writes: agent, as the interface evolves
 status: active
-covers: "the Bazaar system, chosen 2026-09-08 — being built in PROGRESS.md M9 to M14"
-last_updated: "2026-09-08"
+covers: "the Bazaar system, chosen 2026-09-08 — M9 to M11 shipped, M12 to M14 to come"
+last_updated: "2026-09-09"
 ---
 
 ---
@@ -46,7 +46,7 @@ colors:
   slab-raised: "#262933"
   slab-keyword: "#c48ce0"
   slab-string: "#8fcf9a"
-  slab-comment: "#767c88"
+  slab-comment: "#8b91a0"      # was #767c88; 3.92:1 on the slab, see Colors
   slab-function: "#7fb8e8"
   slab-number: "#e0a45c"
 grounds:
@@ -234,7 +234,13 @@ has to stay **under** 3:1 (2.77:1) or it becomes usable as a meaningful mark. Th
 asserts that ceiling. The two were briefly the same value, which is how the distinction got found.
 
 This applies to the quiet button, inputs, the search field and the catalog's view toggle. `button-quiet`
-shipped on `line-strong` at 2.07:1 on white, which failed; M9 moved it.
+shipped on `line-strong` at 2.07:1 on white, which failed.
+
+**M10/M11 applied it, and M9 had not.** M9 declared the token and left every control on
+`line-strong`; the components moved when the components were built.
+`tests/unit/color/slab-and-controls.test.ts` now names each control and asserts the border in both
+directions — a control put back on `line` or `line-strong` fails there — and there is no search field
+yet, because §12.0 still defers the command palette.
 
 Three text weights and no more: `on-surface` for prose, `on-surface-muted` for anything secondary,
 `on-surface-faint` for anything a reader can ignore. On G3 they measure 15.01:1, 5.62:1 and 3.19:1.
@@ -262,6 +268,28 @@ back into a hairline glyph.
 The slab is its own small palette. Its five syntax colours are chosen against `#1d1f27` and are the
 only place in the system where hue carries meaning rather than identity.
 
+**A second correction, and it is the same lesson as the first one.** `slab-comment` was `#767c88`
+here, and it measures **3.92:1 against `#1d1f27`** — under the 4.5:1 text floor. A comment in a
+teaching corpus is content, not decoration (`# Example vectors` is the line that explains the three
+below it), so it takes the text floor, and the value moved to **`#8b91a0`** at 5.21:1. That is the
+same call §6.7 already had to make against `--color-ink-faint` on the old code ground, one ground
+over. Measured for the record, against the slab: ink 12.82:1, string 9.05:1, function 7.77:1, number
+7.54:1, keyword 6.40:1, comment 5.21:1. `tests/unit/color/contrast.test.ts` recomputes all six.
+
+**And one token the slab needs that this block does not name.** `slab-line` is the slab's own
+boundary and its internal dividers, and it is decorative by design — 1.36:1 — so it must stay under
+3:1 and a test asserts that ceiling. It is therefore the wrong colour for a **diagram's geometry**:
+`mermaid-config.ts` binds every node stroke, every edge path and every arrowhead to
+`--color-line-strong`, so inside the slab that token resolves to `slab-comment` at 5.21:1 instead. A
+diagram drawn in `slab-line` is a diagram whose geometry a reader cannot see.
+
+**The slab does not flip with the theme, and that is why it works at all.** It is implemented as a
+local theme override — the palette redeclared on the figure — rather than as a set of bespoke code and
+diagram colours. Custom properties cascade into inline SVG, so fifty-three diagrams re-theme onto a
+dark ground with no change to the mermaid configuration, no re-parse and no JavaScript. The semantic
+hues inside it are the **dark theme's**: measured on the slab, the light theme's `fault` is 2.90:1 and
+its `info` is 1.67:1, against the 3:1 a graphic carries.
+
 ## Typography
 
 One family, four jobs, six sizes: **Manrope**, at 400/500/600/700, for everything a person wrote.
@@ -283,7 +311,16 @@ ratio.
 **Line length is capped at 80ch and the column is centred.** The column takes the width its container
 gives it, so on a wide window it grows into the space the rails leave rather than sitting against the
 left edge with a band of nothing beside it — but it stops at 80ch, which is what keeps growing from
-becoming unreadable. Measured at 1440px: an 814px column, centred, clearing each rail by 80px.
+becoming unreadable.
+
+**Measured on the shipped build at 1440px**, which is a different number from the 814px this section
+first carried and the difference is instructive: `ch` is the advance width of `0` in the face that
+actually resolved, so the cap is **781px in Manrope** and 814px was measured before the webfont was
+being fetched. The pixel count is not the rule and the tests do not assert it — `anatomy.spec.ts`
+measures an 80ch box inside the prose itself and compares. What holds either way: the two rails are
+anchored to the window edges (0–262 and 1236–1440), the 974px track between them spends 49px of gutter
+either side, and the column is centred in it clearing each rail by 97px. Folded, the track is 1236px,
+the column stays 781px, and the gutters grow to 228px.
 
 Sentence case everywhere. **No tracked-out all-caps labels**, which is the single clearest tell of a
 generated interface and was in the first draft of this system before it was caught.
@@ -294,13 +331,30 @@ Three columns: the module list at 262px, the content, the contents rail at 204px
 anchored to the window edges**, and the content is centred between them with a gutter of
 `clamp(24px, 3.4vw, 56px)`.
 
-The list collapses. It folds in 200ms on `cubic-bezier(.22,.61,.36,1)`, and a tab pinned to the left
-edge brings it back — vertically centred, so it cannot collide with the sticky bar. Under
-`prefers-reduced-motion` the fold is instant.
+**A page that wants the window has to be given it.** The shell puts every route in a 1200px
+`max-width` box with 24px of padding, and that box is exactly what stops a rail reaching the window
+edge — so `PageShell` takes a `bleed` flag and the module page is the one route that sets it. The
+claim receipt keeps the shell in both modes: it is a sentence of prose about the reader's record, and a
+sentence measured against 1440px is unreadable whatever the page around it is doing.
+
+**The fold reclaims its track, and a fixed one does not.** The list folds in 200ms on
+`cubic-bezier(.22,.61,.36,1)`, and a tab pinned to the left edge brings it back — vertically centred,
+so it cannot collide with the sticky bar. Under `prefers-reduced-motion` the fold is instant. The
+first grid track is `auto` rather than `262px`: MEASURED, with a fixed track the rail emptied and the
+column came back the same width, so the prose did not move and the fold looked broken. An `auto` track
+takes the item's own width, so animating the rail animates the track with it.
+
+**The folded rail is `visibility: hidden`, and that is load-bearing rather than tidy.** It is what
+takes 33 links out of the tab order, which is the property `logs/BRAINSTORM.md` D17 is about; the
+transition delays the visibility swap until the width has finished on the way out and applies it
+immediately on the way in. The restore tab is the mirror image, so exactly one of the two controls is
+reachable at any time and each hands focus to the other.
 
 Two breakpoints, both from the shipped e2e projects: at 1180px the contents rail goes, at 880px the
 module list becomes a sheet. `responsive.spec.ts` runs at 1440, 1024 and 390, and nothing may scroll
-sideways at any of them.
+sideways at any of them. Below each breakpoint the rail's content moves into one drawer, and **which
+breakpoint reveals that control depends on the format**: a module with no contents rail to lose has no
+reason to offer one until the list goes too, and offering it earlier opened an empty panel.
 
 **Anything wider than its column scrolls inside its own box.** Tables, code and diagrams. This is a
 rule and not a preference: mermaid renders client-side and injects an SVG at its natural width after
@@ -311,6 +365,13 @@ load, which is how a 1,423px diagram came to paint across a 656px column and bot
 
 There is no shadow scale. Depth is a lighter fill plus a hairline, and that is the whole system. Two
 exceptions, both for something that floats over the page: the navbar dropdown and the restore tab.
+
+**And one thing removed rather than styled.** The retired system framed every page with four L-shaped
+corner registration marks at the corners of a 1152px content box. On a module page there is no such
+box — the rails are on the window edges — so the marks floated at an edge nothing else used, and they
+are a second decorative motif on a system that spends its ornament once. M11 stopped rendering them on
+that page. The routes that still keep the 1200px shell still have them; M12 and M13 decide their fate
+there.
 
 ## Shapes
 
@@ -324,16 +385,26 @@ painted as a gradient or a height, and `stroke-weights.test.ts` fails a `border-
 
 ## Components
 
-- **button-primary** — cobalt, white text, `md`. One per screen region. The completion button at the
-  end of a module is the canonical one, and it carries a check glyph.
+- **button-primary** — cobalt, `md`. One per screen region. The completion button at the end of a
+  module is the canonical one, and it carries a check glyph. **Its text is `surface`, not white**, and
+  that is measured rather than stylistic: cobalt is dark in light mode and the accent is *lifted* in
+  dark mode, so white on it would be a pale label on a pale fill. The page's own ground inverts with
+  the theme, which is exactly what a filled accent needs — 12.88:1 light, 6.81:1 dark. Its completed
+  state is deliberately not filled: the invitation is spent, and what is left is a statement of a
+  state the reader can undo.
 - **button-quiet** — raised fill, an `on-surface-faint` border, `md`. For anything secondary. The
   border is the only thing identifying it, so it uses the interactive line token and not the grouping
   one (see **Colors**).
-- **level-accordion** — the `arch`. The **current level is enlarged**, gets a 4px coloured left edge
-  and the sand fill, and its count goes from grey to the reader's own ink. Being able to see which
-  level you are in was one of the thirteen named flaws.
-- **tick** — a 17px teal disc with a white check. On the current row it inverts: white disc, teal
-  check.
+- **level-accordion** — the `arch`, and a native `<details>` per level with the current one `open` at
+  build time, so it works in the first frame before any bundle lands. The **current level is
+  enlarged**, gets a 4px coloured left edge and the sand fill, and its count goes from grey to the
+  reader's own ink. Being able to see which level you are in was one of the thirteen named flaws. Four
+  signals rather than one, because colour is never the only carrier.
+- **tick** — a 17px teal disc with a white check, and it carries the word `Complete` for a screen
+  reader inside it. Revealed by channel A — the boot script stamps `hl-signed-<n>` on `<html>` and one
+  generated selector per module reveals the mark — so a reader's completed modules are ticked before
+  the first paint with no React. Absent rather than empty by default: the build has never met the
+  reader. The 17px box is reserved either way, so a completion does not shift the row it lands on.
 - **tag** — raised fill, hairline, `sm`, a 7px colour square when it names a level.
 - **slab** — dark, `lg`, with a monospace header strip and its own scroll container.
 - **view toggle** — the catalog's Overview / Cards / Table, each with an icon and a word. Three views
@@ -361,6 +432,11 @@ painted as a gradient or a height, and `stroke-weights.test.ts` fails a `border-
 - Don't give an interactive control a `line` or `line-strong` border. Neither reaches 3:1 here.
 - Don't add a shadow scale.
 - Don't let the tick become a hairline glyph — it fails contrast as text (see **Colors**).
+- Don't let a figure break out of its column to get room. It was how the retired system gave a wide
+  table and a wide diagram their width, and it is how a 1,524px drawing came to paint across both
+  rails and past the window edge. The scroll container is the answer; `containment.spec.ts` measures
+  the painted rectangle of every element of every diagram at all three viewports.
+- Don't draw a diagram's geometry in `slab-line` (see **Colors**).
 - Don't write a reader-visible string with an exclamation mark, praise, an apology, "just", "simply"
   or "easy", or a second spelling of a status. `tests/unit/copy-register.test.ts` enforces all of it.
 - Don't state a retired word from `specs/ARCHITECTURE.md` §9 anywhere a reader can see it.

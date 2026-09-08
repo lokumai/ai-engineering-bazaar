@@ -9,8 +9,8 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "the whole project, 2026-07-07 onward — M1 to M14"
-last_updated: "2026-09-08"
+covers: "the whole project, 2026-07-07 onward — M1 to M14; M9 to M11 shipped"
+last_updated: "2026-09-09"
 ---
 
 # 📈 PROGRESS — What we are building
@@ -53,8 +53,8 @@ last_updated: "2026-09-08"
 | **M7** | The curriculum reordered | the config matches the author's intended order, everything green | M5, M6 | 🔄 In progress |
 | **M8** | The interface revised | a first-time reader can navigate without learning anything | M7 | 🔄 In progress · umbrella for M9–M14 |
 | **M9** | The vocabulary and the ground | no reader-visible string uses a retired word, and the theme's tokens ship | M8 | ✅ Done |
-| **M10** | The shell | one navbar on every route, and a module list that folds away | M9 | 🔄 In progress |
-| **M11** | The module page | a diagram wider than the column cannot paint outside it | M10 | ⬜ Not started |
+| **M10** | The shell | one navbar on every route, and a module list that folds away | M9 | ✅ Done |
+| **M11** | The module page | a diagram wider than the column cannot paint outside it | M10 | ✅ Done |
 | **M12** | The catalog | one route, three views, filters at the top | M10 | ⬜ Not started |
 | **M13** | The home page | a first-time visitor knows what this is and where to start | M10 | ⬜ Not started |
 | **M14** | Progress and account | one route instead of four, and completion editable from it | M11 | ⬜ Not started |
@@ -412,13 +412,13 @@ answers "no active, unified navbar" and "the left and right components should an
 
 - [x] Navbar option **A**: one row, on every route, with a dropdown per level
 - [x] The current route marked in it, and the current level marked in the dropdown
-- [ ] The module list as an accordion, one section per level, the current level **enlarged with a
+- [x] The module list as an accordion, one section per level, the current level **enlarged with a
       coloured edge** and its count in the reader's own ink rather than grey
-- [ ] It folds away in 200ms, with a tab pinned to the left edge to bring it back, and the fold
+- [x] It folds away in 200ms, with a tab pinned to the left edge to bring it back, and the fold
       remembered per reader
-- [ ] `prefers-reduced-motion` respected: the fold is instant, not animated
-- [ ] Both rails anchored to the window edges, with the content column centred between them (D15)
-- [ ] The completion tick as a filled disc, large enough to read at a glance
+- [x] `prefers-reduced-motion` respected: the fold is instant, not animated
+- [x] Both rails anchored to the window edges, with the content column centred between them (D15)
+- [x] The completion tick as a filled disc, large enough to read at a glance
 
 ### Acceptance criteria
 
@@ -432,12 +432,12 @@ answers "no active, unified navbar" and "the left and right components should an
 - The reader's fold preference is written through `src/lib/record/store.ts` or not stored at all.
   **Not a second writer** (`ARCHITECTURE.md` §5).
 
-### Report — in progress, 2026-09-08
+### Report — 2026-09-08 (the navbar) and 2026-09-09 (the rest)
 
-**The navbar is in.** Four destinations, the current one marked twice (a fill and
-a rule, so forced colours keeps one), a dropdown per level with each level's own
-hue and its number beside it, and the trail moved to its own row under it rather
-than competing for the same 56px.
+**The navbar landed first**, on 2026-09-08. Four destinations, the current one
+marked twice (a fill and a rule, so forced colours keeps one), a dropdown per
+level with each level's own hue and its number beside it, and the trail moved to
+its own row under it rather than competing for the same 56px.
 
 **No JavaScript in the dropdown**, and that is a correctness point rather than a
 saving: the export is static and a reader can click a link in the first frame, so
@@ -454,44 +454,107 @@ were not in the order at all. See `logs/BRAINSTORM.md` **D17**, which carries th
 correction and the rule: to check a keyboard path, press the key, and assert both
 halves of a disclosure, because either alone passes for the wrong reason.
 
-**Still to do in this milestone:** the module list as a collapsible accordion
-with the current level enlarged, the fold and its left-edge tab, the tick as a
-filled disc, and the rails anchored to the window edges. Those four are one
-piece of work — the list does not exist yet as a site-wide component, and the
-left rail currently holds the contents rather than the curriculum, so building
-it means the rail swap that M11 needs anyway.
+---
 
-### The e2e state, and the four that are still red
+**The remaining four deliverables landed on 2026-09-09, together with M11**, for
+the reason the previous report gave: the left rail held the contents rather than
+the curriculum, so building the list meant the rail swap M11 needed anyway.
 
-**355 passed, 4 failed, 19 skipped**, down from 67 failures on the first honest
-run. Every one of the 63 that were fixed was an expectation rather than a
-regression, and they clustered in the four places a lexical rename cannot reach:
-regex literals, property accesses (`rows.EXTENT`), locators by accessible name
-that the navbar made ambiguous, and template literals holding a `CONST_NAME`
-(the skip rule that protects `sheet_slug` rejects any string with an
-underscore).
+**The accordion.** `src/components/curriculum/CurriculumRail.tsx`, a server
+component: five native `<details>`, one per level, with the current level's
+`open` set at build time. No JavaScript, for the same reason the navbar has
+none. The current level is told apart **four ways at once** rather than one,
+because colour is never the only carrier — a 4px edge in its own hue, the sand
+fill, a step up in size, and its count moved from grey to the reader's own ink.
+The author asked for exactly that: *"when we are in a specific level, its tab in
+the left sidebar must imply it."*
 
-The four still red, stated precisely rather than waved at:
+**The tick is a 17px teal disc with a white check**, revealed by channel A: a
+fourth generated selector list in `scripts/curriculum-css.mjs` reveals the mark
+for a module the boot script stamped, so a reader's completed modules are ticked
+**before the first paint** with no React at all. It carries the word `Complete`
+inside it for a screen reader, revealed by the same rule so the two cannot
+disagree, and the 17px box is reserved whether or not a tick ever appears, so a
+completion does not shift the row it lands on. The author's words: *"the green
+tick … should be bolder and larger. currently it is too small."*
 
-1. **`accessibility.spec.ts:330` — the manifest's quiet columns, DARK theme
-   only.** The `#` column reports `"01" at 1.84:1` against a 4.5 floor. It is
-   painted `--color-ink-muted`, which is 6.90:1 on the dark ground, so the
-   effective background is not the ground — the row carries `hl-cat-tint`. This
-   is plausibly the palette change and it needs one careful measurement of what
-   actually paints behind that cell. **An ad-hoc check of mine got this wrong**
-   by walking ancestors and reading the parent's background while attributing it
-   to the child; the number above is the suite's, which is the one to trust.
-2. **`anatomy.spec.ts:92` — "module 13 still has a figure that breaks the
-   measure", expected > 0, got 0.** The test's premise is that at least one
-   figure in that module overflows the measure. The type change moved the
-   measure, so none does. That test pins a fact about the content, which
-   `tests/README.md` forbids; the fix is probably to the test rather than to the
-   page, but it needs deciding rather than assuming.
-3. **`home.spec.ts:271`** and **4. `record-sheet.spec.ts:307`** — both in the
-   channel-A / first-paint family that was already intermittent on this machine
-   before any of this work, and both pass when run alone. Not cleared as
-   pre-existing, only suspected: proving it needs a run against a clean build of
-   `main`.
+**The fold, and the thing that made it work.** 200ms on DESIGN.md's own curve,
+with a restore tab pinned to the window's left edge and vertically centred. The
+part that is not obvious: **the first grid track is `auto`, not `262px`.**
+MEASURED — with a fixed track the rail's width animated to zero and the column
+came back **974px, exactly what it had been**, so the prose did not move and the
+fold looked broken. With an `auto` track the column goes 974 → 1236 in the same
+200ms. The folded rail is `visibility: hidden`, which is what takes its 33 links
+out of the tab order, and each of the two controls hands focus to the other so a
+keyboard reader is never stranded.
+
+**Everything above was driven in a browser, and here is what it measured.**
+
+| | measured |
+|---|---|
+| rail, open | x 0 → 262 |
+| contents rail | x 1236 → 1440 |
+| column track | 974px, gutter 48.96px each side |
+| the measure | **781px**, centred, clearing each rail by **97px** |
+| folded | rail 0px, column 1236px, gutters 228px |
+| fold, `prefers-reduced-motion` | `transition-duration: 1e-05s`, 262 → 0 in 40ms |
+| fold, motion on | `0.2s`, 106px at 40ms, 0px at 440ms |
+| restore tab | 57 × 120 at x=0, y=390 — `elementFromPoint` returns the tab itself |
+| tab order, open | … trail · **hide** · level · level · module ×8 … |
+| tab order, folded | … trail · **restore** · (no level, no module, no hide) |
+| the fold, stored | `prefs.railFolded: true`, and no second `localStorage` key |
+
+**781px and not 814px**, which is the number D15 recorded. `ch` is the advance
+width of `0` in whatever face resolved, and 814 was measured before the webfont
+was being fetched; `document.fonts` reports Manrope loaded on this build. The
+pixel count is not the rule and no test asserts it — `anatomy.spec.ts` measures
+an 80ch box inside the prose itself and compares against that.
+
+**The fold is written through `store.ts` and nowhere else**, as
+`ARCHITECTURE.md` §5 requires. `prefs.railFolded` is the third widening of
+`prefs`, it needs no migration rung, and the boot script stamps it **before**
+the `carriesNothing` gate — a reader whose only stored state is a folded rail
+carries nothing by §15.11's rule, and stamping after the gate would have sprung
+the rail open on every load for exactly the readers who asked for it to be shut.
+
+**One thing removed rather than restyled.** §4.2's four corner registration
+marks framed a 1152px content box. A bleed page has no such box, so they floated
+at an edge nothing else used — and they are a second decorative motif on a
+system that spends its ornament once. They are gone from the module page and
+still on every route that keeps the shell.
+
+### The e2e state, and what the four red ones turned out to be
+
+**431 passed, 19 skipped, 1 red at the time of writing** — the last one my own
+new test, fixed before the gate below. The starting point was 355 passed and 4
+failed, and the diagnosis PROGRESS.md carried for two of the four was wrong in
+the same way both times: **they were races in the harness, not palette defects.**
+`logs/BRAINSTORM.md` **D20** has the measurements. In short:
+
+1. **`accessibility.spec.ts:330`** — the manifest's `#` column at `1.84:1` in
+   dark. The ink was already the dark theme's and the ground was still the light
+   theme's: the sample landed 32ms into a 90ms `background-color` cross-fade.
+   The theme helper counted two frames after lifting its transition freeze;
+   Chrome starts the transition **on** the thaw frame. It waits for the
+   transitions now. All 31 accessibility tests pass, including the code-comment
+   contrast check on the new slab ground.
+2. **`anatomy.spec.ts:92`** — "module 13 still has a figure that breaks the
+   measure". Two defects in one test: it waited on `networkidle` while mermaid
+   injects after a dynamic import, and it pinned a fact about the content, which
+   `tests/README.md` forbids. **It is deleted, with the behaviour it described**
+   — nothing breaks out of the measure any more — and `containment.spec.ts`
+   asserts the rule in its place.
+3. **`home.spec.ts:271` and `record-sheet.spec.ts:307`** — both the same
+   `firstPaint` sampling race, and both green now: the helper waits for its probe
+   instead of reading it once. Two MORE in that family surfaced and were cleared
+   the same way, and a third assertion in it was a proxy rather than a property
+   (D20 again).
+
+**One test remains intermittent and it is not in this family.**
+`theme.spec.ts:99` ("a stored light preference beats a dark system setting,
+before first paint") went flaky once in one full run and passed on retry. It is
+the theme boot script's own channel-A probe, the same shape as the record's,
+and it was not touched by this work.
 
 ---
 
@@ -502,14 +565,14 @@ was not a matter of taste.
 
 ### Deliverables
 
-- [ ] T4's layout, with the content column centred and spanning its container, capped so it stays
+- [x] T4's layout, with the content column centred and spanning its container, capped so it stays
       readable (D15: 80ch, measured at 814px on a 1440px window)
-- [ ] Code blocks and diagrams as a **dark slab**
-- [ ] **The diagram containment fix**: a diagram wider than the column scrolls inside its own box
-- [ ] The right rail cut back to what a reader uses, and what leaves it recorded in O2 if it has no
+- [x] Code blocks and diagrams as a **dark slab**
+- [x] **The diagram containment fix**: a diagram wider than the column scrolls inside its own box
+- [x] The right rail cut back to what a reader uses, and what leaves it recorded in O2 if it has no
       home
-- [ ] Completion control **A** at the end of the module: one button where the reader already is
-- [ ] Prev and next kept, in the vocabulary of set C
+- [x] Completion control **A** at the end of the module: one button where the reader already is
+- [x] Prev and next kept, in the vocabulary of set C
 
 ### Acceptance criteria
 
@@ -523,8 +586,105 @@ was not a matter of taste.
 - Mermaid text stays legible on the dark slab, and the diagram palette clears 3:1 for graphics.
 - No test pins a word count, a table count or a module number.
 
-### Report
-Not started.
+### Report — 2026-09-09
+
+**Done, with M10's remainder, in one piece of work.** The rail swap is why: the
+left rail held the contents and the right held twelve rows of metadata, and T4
+wants the opposite, so neither milestone could be finished without the other.
+
+**THE CONTAINMENT FIX, which is the item that mattered.** The measured before
+and after, on the widest module in the corpus at 1440px:
+
+| | before | after |
+|---|---|---|
+| the column | 656px, x 376 → 1032 | 974px track, 781px measure |
+| the figure's box | **1152px, x 144 → 1296** — over both rails | 781px, inside the column |
+| the widest SVG | 1524px, reported x 360 → **1884** | 1524px, clipped to 781px |
+| elements outside the column | **96** on one module, 45 and 34 on two others | **0** |
+| at 1024px / 390px | not measured | **0** and **0** |
+
+**What the defect actually was, and it is not what the acceptance criterion
+says.** The criterion reads "no element of a diagram may have a right edge
+beyond its column without a clipping ancestor", and measured literally the OLD
+build already passed it: `.hl-diagram-body` has had `overflow-x: auto` all
+along, so the 1524px drawing was clipped and the document never scrolled
+sideways. The real defect was one level up — **the figure broke OUT of the
+column** by 232px left and 264px right, on purpose, because that is how the
+retired system gave a wide table its width. So the scroll container was doing
+its job inside a box that was itself in the wrong place, and 96 elements of one
+figure sat outside the measure with a rail underneath them.
+
+So the fix was to stop the break-out: no layout sets `--hl-break-left` or
+`--hl-break-right` any more, which collapses the `min()` in the width classes to
+100% on its own, and the two rules that made a broken-out figure *readable* —
+the `--color-paper` ground and the hairline down each broken side — went with
+it. `containment.spec.ts` asserts the stronger form: the **painted** rectangle
+of every element, its own box intersected with every clipping ancestor above it,
+must lie inside the column. 138 elements measured per page, at three viewports,
+on every written module, after waiting on the island's own `data-hl-ready`.
+
+**Mutation-tested**, which is the only reason to believe any of it: forcing
+`overflow-x: visible` back on and restoring the 1152px width put **57 elements
+up to 275px outside the column and pushed the document's scroll width to
+1511px** on a 1440px window. Every assertion fires on that.
+
+**The slab is a local theme override, not a second palette** (`BRAINSTORM.md`
+D21). `mermaid-config.ts` already binds every fill, stroke and label to a
+`var(--color-…)` reference so a theme switch costs 0ms; custom properties
+cascade into inline SVG, so redeclaring the palette on the figure re-themes all
+fifty-three diagrams onto a dark ground with no change to the mermaid config, no
+re-parse and no JavaScript. Two things measurement changed: the light theme's
+`fault` is 2.90:1 and `info` 1.67:1 on `#1d1f27`, so the slab duplicates the
+dark theme's semantic values; and `slab-line` is 1.36:1, correct for the slab's
+own boundary and wrong for a diagram's geometry, so `--color-line-strong`
+resolves to `slab-comment` at 5.21:1 inside it.
+
+**One published value moved.** DESIGN.md's `slab-comment` `#767c88` measures
+**3.92:1** on the slab, under the 4.5:1 a comment needs because a comment in a
+teaching corpus is content. `#8b91a0`, 5.21:1. Measured for the record against
+`--color-slab`: ink 12.82, string 9.05, function 7.77, number 7.54, keyword
+6.40, comment 5.21. And **§11.20's four-colour cap is reversed rather than
+broken**: four was right when the code ground was the page's own sand, and the
+slab is its own closed five-value palette with its own ground.
+
+**The right rail is cut to two things**: the sections of this module, and what
+sits either side of it in the dependency graph. The twelve metadata rows moved
+into the column, into `TitleStrip` — which already rendered exactly that set as
+the narrow-window variant, so nothing was dropped and nothing had to be built.
+**Nothing lost its home, so nothing went to O2 — but a question did**: four of
+the twelve are rows nobody has named a use for, and moving them into the column
+made them louder rather than quieter. That is written into **O2** rather than
+answered on the way past, because `title-block.ts` has unit tests stating the row
+set and deleting a row is a decision about what the page claims.
+
+**Completion control A** is at the end of the module now, before prev/next,
+where §12.4.1 had put it at the top. D14 is the reason and the author chose it
+for both surfaces at once. It is DESIGN.md's canonical `button-primary` — cobalt,
+filled, `md`, with a check glyph, in sentence case — and its text is
+`--color-paper` rather than white, because cobalt is dark in light mode and the
+accent is *lifted* in dark mode: 12.88:1 and 6.81:1, both clear. Its completed
+state is deliberately not filled.
+
+**Two strings slipped M9's rename and this caught them**, both because the copy
+register matches on word boundaries and neither carried one: `UNSIGN` is now
+**Un-complete** (which is what the keyboard sheet had been printing beside `s`
+all along) and `— END OF SET` is now **End of the course**. The arrows glued to
+`Previous module →` are gone too — DESIGN.md names that as a tell.
+
+**`--color-line-control` is applied.** M9 declared it and left every control on
+`line-strong`; eight controls moved onto it, and
+`tests/unit/color/slab-and-controls.test.ts` asserts each one in **both**
+directions — mutation-tested by putting `.hl-btn` back, which turns two cases
+red. The `md` radius arrived with them, which retires T7's zero-radius rule; the
+test that recorded it now asserts the rule that replaced it, that a radius is a
+token and never a literal.
+
+**What was NOT done, and it is a real gap.** The module list is on the module
+page only. M12's catalog, M13's home and M14's progress pages still use the
+1200px shell with no rail, which is the right seam — those three milestones are
+where those pages get rebuilt — but a reader who folds the rail on a module and
+then visits the catalog sees no rail to restore. The fold preference travels
+with them and is honoured the moment they come back.
 
 ---
 

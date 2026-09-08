@@ -9,8 +9,8 @@ description: >
 authority: background
 writes: agent, whenever a decision is made
 status: active
-covers: "the whole project, 2026-07-07 onward — D1 to D19, O1 to O4"
-last_updated: "2026-09-08"
+covers: "the whole project, 2026-07-07 onward — D1 to D21, O1 to O4"
+last_updated: "2026-09-09"
 ---
 
 # 🧠 BRAINSTORM — Why we chose what we chose
@@ -405,6 +405,82 @@ three real holes in the *source* scan, covered today by the export grep, and clo
 means a parser rather than a lexer.
 
 
+### D20 · A frame count is not a wait, and a proxy is not the property — 2026-09-09
+
+**Considered:** treat four red browser tests as regressions from the M9 palette / read them as races
+in the harness
+**Chose:** the second, after measuring each one. Three of the four were the harness; the fourth was a
+test that pinned a fact about the content.
+**How it came up:** `logs/PROGRESS.md` M10 named four e2e failures and diagnosed two of them as
+plausible palette defects. Both diagnoses were wrong in the same way.
+**Measured, on `accessibility.spec.ts`'s dark-theme manifest check** (`"01" at 1.84:1` against a 4.5
+floor): the ink was already dark-theme `ink-muted` and the ground was still **light-theme paper**.
+Polling the row's computed `background-color` every 120ms after the theme switch returned
+`oklab(0.988498 …)` — the light value, at transition progress zero, with one running animation on the
+element — and the dark value only from the second sample. The row transitions `background-color` over
+90ms, and lifting `transition: none !important` in the same frame as the value change makes Chrome
+start the transition on the NEXT frame, from the old value. The helper's own docblock said "the frame
+after the freeze is lifted is the first one that is honest". It is not; it is the first frame of a
+cross-fade.
+**Measured, on `anatomy.spec.ts`'s figure check** ("module 13 still has a figure that breaks the
+measure", expected > 0, got 0): it passed run alone and failed under parallel load, because it waited
+on `networkidle` and mermaid injects its SVG after a dynamic import that `networkidle` does not
+account for. It also pinned a content fact, which `tests/README.md` forbids — an author who narrowed
+every diagram would have turned it red for doing nothing wrong. It was deleted with the behaviour it
+described, and `containment.spec.ts` asserts the rule instead, waiting on the island's own
+`data-hl-ready`.
+**And the same shape twice more.** `firstPaint` sampled its probe once, so a read that landed before
+the probe's `requestAnimationFrame` returned `undefined` and every caller reported it as "channel A
+did not stamp" — two more failures, cleared by waiting for it. And one assertion in that family was a
+PROXY rather than the property: `painted.hydrated !== 'true'` stood in for "React has not run", on the
+reasoning that hydration cannot beat the first paint. **Measured under eight workers with a warm
+cache, twice out of two runs:** all three channel-A stamps correct in the pre-paint frame AND
+`hydrated` reading `true`, because under CPU contention the main thread parses and hydrates in one
+long task and the browser produces no frame until it ends. React beating the first *paint* contradicts
+nothing §12.2 claims.
+**Rejected weakening the assertion**, which would have been tampering. It was replaced with a
+structural check on the served HTML — the boot script is inline and blocking inside `<head>` — which
+is what makes "before first paint" true by construction rather than by timing, and which fails if
+anyone defers it or moves it into `<body>`.
+**Rule that follows, and it generalises past tests:** **to wait for something, wait for it.** A frame
+count, a `networkidle`, or a single sample of a value that arrives asynchronously is a race dressed as
+a check. This is D17's lesson one layer down: D17 said press the key rather than call `.focus()`;
+this says wait for the paint rather than count frames to it. `specs/ARCHITECTURE.md` §5 carries the
+consequence for the channel-A tests.
+
+### D21 · The slab is a local theme override, not a second palette — 2026-09-09
+
+**Considered:** give code and diagrams their own bespoke colours / redeclare the existing palette on
+the slab element and let it cascade
+**Chose:** the second.
+**Because:** `mermaid-config.ts` already binds every fill, stroke, label and arrowhead in a diagram to
+a `var(--color-…)` reference, for a different reason — a 0ms theme switch with no re-render (§9.2).
+Custom properties cascade into inline SVG, so redeclaring the palette on the figure re-themes all
+fifty-three diagrams onto a dark ground with **no change to the mermaid configuration, no re-parse and
+no JavaScript at all**. A bespoke palette would have meant a second set of selectors to keep in step
+with the first.
+**Rejected bespoke colours because:** the slab is the one place hue carries meaning rather than
+identity, and a second mechanism for it is a second thing to get wrong on every diagram type the
+corpus grows.
+**Two things measurement changed.** The light theme's diagram hues do not survive on `#1d1f27`:
+`fault` is **2.90:1** and `info` is **1.67:1** against the 3:1 a graphic carries, so the slab
+duplicates the DARK theme's semantic values — which cannot be shared through a `var()` indirection,
+because `code-theme.ts` reads the `.dark` block as TEXT at build time and hands it to a hex converter.
+`tests/unit/color/slab-and-controls.test.ts` asserts each copy equals the `.dark` value it duplicates.
+And `slab-line` is **1.36:1** on the slab: correct for the slab's own boundary, which groups, and
+wrong for a diagram's geometry, which is what `--color-line-strong` draws — so inside the slab that
+token resolves to `slab-comment` at 5.21:1 instead.
+**One published value moved.** DESIGN.md's `slab-comment` `#767c88` measures 3.92:1 on the slab, under
+the 4.5:1 text floor. A comment in a teaching corpus is content, so it takes that floor; `#8b91a0` at
+5.21:1. This is the third time the same call has been made — §6.7 made it against `--color-ink-faint`
+on the old code ground — which is why it is recorded rather than tidied.
+**Also decided, and it is a rule reversed rather than broken:** §11.20 capped a syntax theme at four
+token colours, and the slab has five. Four was right when the code ground was the page's own sand and
+a fifth hue was a fifth hue *in the page's palette*. The slab is its own closed palette with its own
+ground, DESIGN.md names all five, and the keyword keeps its weight emphasis on top of its hue because
+that is what made the four-colour theme readable.
+
+
 ## Open questions
 
 ### ~~O1 · Which direction the interface takes~~ — opened and closed 2026-09-08
@@ -464,6 +540,23 @@ XP, Class, Uptime and "I at 8" are all shown on the home page today. XP and Upti
 real and can be relabelled to minutes read and days in a row. **Class and "I at 8" have no proposed
 replacement**, because nobody has yet said what question they were answering. Leaving them out is the
 current proposal.
+
+**M11 added a second half to this question and answered none of it.** Cutting the right rail back to
+the sections and the dependency block left the module's twelve derived facts with nowhere to be, and
+they went into the column — where they already had a variant, so nothing was dropped and nothing had
+to be built. But four of the twelve are rows nobody has named a use for, and moving them into the
+column made them more prominent rather than less:
+
+- **`DRAWING 15`** restates the eyebrow one line above it (`MODULE 15 OF 33`), and `DRAWING` is the
+  retired vocabulary in substance even though the copy register's word boundaries do not catch it.
+- **`MARKED BY LKM-01`** is the same on all 33 modules.
+- **`FIGURES 2 DIAG · 1 TBL`** and **`SOURCES 30`** count things the reader can see by scrolling.
+
+Deleting a row is a decision about what the module page claims, and `title-block.ts` has unit tests
+that state the row set, so it is not a change to make on the way past. **The whole panel is also still
+tracked-out all-caps mono**, which `specs/DESIGN.md` names as the single clearest tell of a generated
+interface — so the question is not only which rows go but what the survivors look like. M14 touches
+the progress surfaces and is the natural place.
 
 ### ~~O4 · Which of the four grounds~~ — opened and closed 2026-09-08
 

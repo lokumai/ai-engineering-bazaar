@@ -8,7 +8,7 @@ import { RecordStateSync } from '@/components/record/RecordStateSync'
 import { recordBootScript } from '@/lib/record/boot'
 import { SITE_DESCRIPTION, SITE_NAME } from '@/lib/site'
 import { THEME_BOOT_SCRIPT } from '@/lib/theme'
-import { plexCondensed, plexMono, sourceSerif } from './fonts'
+import { manrope, plexMono } from './fonts'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -53,7 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${plexCondensed.variable} ${sourceSerif.variable} ${plexMono.variable}`}
+      className={`${manrope.variable} ${plexMono.variable}`}
       suppressHydrationWarning
     >
       <head>

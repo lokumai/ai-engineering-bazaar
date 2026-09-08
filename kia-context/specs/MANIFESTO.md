@@ -41,9 +41,22 @@ without asking them for anything.
 
 ## 4. Who it is for
 
-Working engineers and beginners moving into AI engineering. Many are not native English speakers, so
-the language has to be plain enough to read at speed in a second language. A Turkish version of every
-module exists for the same reason.
+**People who are new to AI engineering and do not know where to start.** That is the whole target.
+Experienced engineers are not stuck and were never the audience: they keep learning regardless. The
+reader this is written for has no shortage of material and no way to tell which of it matters.
+
+Three groups, in the order they created the need:
+
+1. **Interns and new joiners** at the author's own company, who currently get a scattered reading
+   list instead of a curriculum.
+2. **Colleagues in other groups**, so an explanation is written once rather than given in person for
+   the third time.
+3. **Anyone else with the same problem**, including companies who want their engineers working this
+   way and have no roadmap for it.
+
+Much of that audience does not read English as a first language, so the language has to be plain
+enough to read at speed in a second one. A Turkish version of every module exists for the same
+reason. See `genesis/GENESIS.md` §1 and §2 for where this came from.
 
 ## 5. Non-negotiable rules
 

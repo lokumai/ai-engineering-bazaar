@@ -30,8 +30,9 @@ Two halves live in one repository and meet at one file. The **corpus** is markdo
 `src/`, built by a colleague, which renders it. They share `mini-courses/curriculum.yaml` and nothing
 else.
 
-The project exists because good sources for these topics barely exist yet, and a model trained before
-they existed repeats the weak ones back with confidence. See `genesis/GENESIS.md` §2.
+It exists because generating content is now fast and **validating** it is not, so the scarce thing is
+a human expert standing behind a claim. It started as an internal need: interns with nowhere to start,
+and the same explanation given in person for the third time. See `genesis/GENESIS.md` §1 and §2.
 
 ---
 
@@ -57,7 +58,7 @@ reconstructed from git and is labelled as inferred inside each file.
 | File | What it holds | State |
 |---|---|---|
 | `SEED.md` | The first prompts | **Not recovered.** The conversations predate the harness by two months. Paste them or delete the file. |
-| `GENESIS.md` | Why the project exists, quoted from the author's own document | Partly inferred. **Three things marked NOT KNOWN need the author.** |
+| `GENESIS.md` | Why the project exists, and who it was built for | Filled from the author's own account on 2026-09-08. **One thing still open: whether success is measured.** |
 
 ### `kia-context/specs/` — the law · read-only unless explicitly refactoring
 

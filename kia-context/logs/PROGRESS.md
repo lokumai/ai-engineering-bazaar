@@ -441,11 +441,18 @@ than competing for the same 56px.
 
 **No JavaScript in the dropdown**, and that is a correctness point rather than a
 saving: the export is static and a reader can click a link in the first frame, so
-a menu that needs `useState` to open does nothing until the bundle lands. It
-opens on `:hover` and on `:focus-within`, with `:focus-within` first in the
-selector list so a focused panel cannot be closed by the pointer leaving.
-**Verified by driving it** rather than by reading it: tabbing to `Curriculum`
-returns `visibility: visible` and the level inside carries `aria-current`.
+a menu that needs `useState` to open does nothing until the bundle lands. It is a
+native `<details>` disclosure.
+
+**The first version of it was keyboard-inaccessible and my own check passed it.**
+It hid the panel with `visibility: hidden` and revealed it on `:focus-within`,
+which is circular — `visibility: hidden` removes an element from the tab order,
+so focus can never get inside to fire the rule that would show it. The check
+called `.focus()` programmatically, which *does* fire `:focus-within`. Pressing
+Tab forty times in Chrome and printing what had focus showed the five level links
+were not in the order at all. See `logs/BRAINSTORM.md` **D17**, which carries the
+correction and the rule: to check a keyboard path, press the key, and assert both
+halves of a disclosure, because either alone passes for the wrong reason.
 
 **Still to do in this milestone:** the module list as a collapsible accordion
 with the current level enlarged, the fold and its left-edge tab, the tick as a

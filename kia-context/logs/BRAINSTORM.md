@@ -312,23 +312,46 @@ reason.
 left column in a reader-visible string and ignores it everywhere else. A word inside backticks is
 stripped before matching, because that is the code's own name being quoted.
 
-### D17 · The navbar dropdown carries no JavaScript — 2026-09-08
+### D17 · The navbar dropdown carries no JavaScript, and it is a `<details>` — 2026-09-08
 
 **Considered:** a React menu with `useState` and `aria-expanded` / a CSS menu on `:hover` and
-`:focus-within`
-**Chose:** the CSS one.
-**Because:** this is a static export. A reader can click a link in the first frame, before any bundle
-has arrived, and a menu that needs state to open does nothing until it does. The same argument
-`ARCHITECTURE.md` §12.2 makes for channel A applies to any control that has to be right immediately.
+`:focus-within` / a native `<details>` disclosure
+**Chose:** the third. **This entry originally recorded the second, and was wrong** — see the
+correction below, which is kept because the mistake is more instructive than the answer.
+**Because, for all three:** this is a static export. A reader can click a link in the first frame,
+before any bundle has arrived, and a menu that needs state to open does nothing until it does. The
+same argument `ARCHITECTURE.md` §12.2 makes for channel A applies to any control that has to be
+right immediately.
 **Rejected the React menu because:** it buys `aria-expanded` and Escape-to-close, and costs
-correctness before hydration. It is also claiming state that does not exist here — the trigger is a
-link to `/courses/` and the panel is a list of links, so there is nothing to expand: a reader who
-clicks the trigger gets the level index, which is a reasonable answer to the same question.
-**The one thing that had to be got right:** `:focus-within` is what makes it keyboard-reachable, and
-it must come FIRST in the selector list, or a panel opened by the keyboard closes when the pointer
-happens to leave the item.
-**Verified by driving it, not by reading it:** tabbing to `Curriculum` in Chrome returns
-`visibility: visible` and the level inside carries `aria-current`.
+correctness before hydration. `<details>` gives all three for free — the browser supplies Enter,
+Space and Escape, and `<summary>` carries the expanded state without anyone claiming
+`aria-expanded` by hand.
+
+**CORRECTED, the same day.** What this entry first said was: *"Chose: the CSS one… `:focus-within`
+is what makes it keyboard-reachable, and it must come FIRST in the selector list… Verified by
+driving it: tabbing to `Curriculum` in Chrome returns `visibility: visible`."*
+
+Every part of that is wrong, and the reasoning was circular. **`visibility: hidden` removes an
+element from the tab order**, so focus can never get inside the panel to fire the `:focus-within`
+rule that would reveal it. The five level links were not reachable by keyboard at all.
+
+**The verification was the defect.** It called `.focus()` on the trigger programmatically, which
+*does* fire `:focus-within` — so the panel opened, the level showed `aria-current`, and the check
+passed. A real Tab press cannot do that. **Measured properly by pressing Tab forty times in Chrome
+and printing what had focus**, the order was `skip · wordmark · Home · Curriculum · Catalog · My
+progress · Profile · Keyboard shortcuts · Toggle theme · Repository · trail`, with no level link in
+it anywhere.
+
+**Rule that follows, and it is the reusable part:** to check a keyboard path, **press the key**. And
+for a disclosure, assert BOTH halves — closed, the contents are NOT in the tab order; open, they
+are — because either alone passes for the wrong reason.
+**The cost of `<details>`, accepted:** hover-to-open, which CSS cannot do to an `open` attribute.
+And a disclosure cannot also be a link, so the whole-curriculum page the label used to be is now the
+panel's first row, named rather than implied.
+**One thing `<details>` does not do:** close on a client navigation. `open` is DOM state on an
+element the layout keeps, so choosing a level left the panel hanging over the page it had just
+opened — found by an external review, confirmed by measurement, and fixed with one effect keyed on
+the pathname. Escape *does* close it; Chrome does that natively.
 
 ### D18 · A contrast test asserts the floor its token's job carries, never a published ratio — 2026-09-08
 

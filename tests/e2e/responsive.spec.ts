@@ -1,5 +1,5 @@
 import { type Page, expect, test } from '@playwright/test'
-import { SHORT, A4, CATEGORY_PATHS, INDEX_SHEET, sheetByModule } from './sheets'
+import { SHORT, A4, CATEGORY_PATHS, INDEX_SHEET, sheetByPath } from './sheets'
 
 /**
  * §4.7's closing sentence, which is the only hard rule in the whole section:
@@ -19,12 +19,16 @@ import { SHORT, A4, CATEGORY_PATHS, INDEX_SHEET, sheetByModule } from './sheets'
  * the longest prose. Rewriting them moved both records. A table is still the
  * thing that pushes a document sideways at 390px, so the widest one is what
  * this file has to load.
+ *
+ * They are named by route rather than by number. They were `sheetByModule(12)`
+ * and `sheetByModule(9)` until the September 2026 reorder, which quietly moved
+ * both onto other modules while every test stayed green.
  */
 
-/** Module 12, Loop Engineering: the widest table in the corpus, at five columns. */
-const WIDEST = sheetByModule(12)
-/** Module 9, Context Engineering: the longest sheet, and the most figures. */
-const LONGEST = sheetByModule(9)
+/** Loop Engineering: the widest table in the corpus, at five columns. */
+const WIDEST = sheetByPath('/courses/intermediate/loop-engineering/')
+/** Context Engineering: the longest sheet, and the most figures. */
+const LONGEST = sheetByPath('/courses/intermediate/context-engineering/')
 
 const PAGES = [
   // §15.1 — `/` is the home screen and the flat manifest is `/sheets/`. Both
@@ -37,8 +41,8 @@ const PAGES = [
   ['category', CATEGORY_PATHS[1]],
   ['SHORT sheet', SHORT.path],
   ['A4 sheet', A4.path],
-  ['module 10', WIDEST.path],
-  ['module 13', LONGEST.path],
+  ['widest sheet', WIDEST.path],
+  ['longest sheet', LONGEST.path],
   // §16, hazard H-O — `/profile/` was never loaded below 1440 by any spec, and
   // §16.1's drafter block is the site's first two-column block outside a module
   // sheet: a 168px drawing column beside a form, a register whose summary is a
@@ -203,7 +207,7 @@ test('the manifest table scrolls inside its region rather than the page', async 
  * subject rather than the presence of an affordance. What §4.7 still demands of
  * it is asserted directly, below.
  */
-for (const [name, path] of [['manifest', INDEX_SHEET], ['module 13', LONGEST.path]] as const) {
+for (const [name, path] of [['manifest', INDEX_SHEET], ['longest sheet', LONGEST.path]] as const) {
   test(`${name} tells the reader where a scroller continues`, async ({ page }) => {
     await page.goto(path)
     await page.waitForLoadState('networkidle')

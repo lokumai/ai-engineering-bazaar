@@ -285,12 +285,13 @@ Production prompt'larına ne kadar emek gittiğini görmek için okumaya değer:
 
 ```mermaid
 graph LR
-    A["LLMs"] --> B["Training"]
-    B --> C["RAG"]
-    C --> D["Tools"]
-    D --> E["Memory"]
-    E --> F["Agents"]
-    F --> G["Multi-Agent"]
+    A[LLMs] --> B[Training]
+    B --> C[RAG]
+    C --> D[Tools]
+    D --> E[Memory]
+    E --> F[Agents]
+    F --> G[Multi-Agent]
+    G --> H[Observability]
     style A fill:#FFFF00
 ```
 

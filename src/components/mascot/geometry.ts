@@ -13,8 +13,12 @@ import type { CategorySlug } from '@/lib/content/categories'
  * animation or transition at any size in any variant (§9.1). A state change
  * here is a repaint, not a tween.
  *
- * A cube has six faces and this curriculum has six categories, so the mark is
- * not a logo standing next to a progress indicator; it *is* the indicator.
+ * A cube has six faces and this curriculum has five categories, so the mark is
+ * not a logo standing next to a progress indicator; it *is* the indicator. The
+ * sixth face is the one facing away and down: it was the Optional category
+ * until that category's two modules were folded into Advanced Deployment, and
+ * it has never been drawn in any variant, so losing its mapping changes no
+ * pixel. `FACES` is deliberately not total over `CategorySlug`.
  * Everything a caller needs to decide what is drawn lives here, in plain data,
  * so it can be tested without a renderer.
  */
@@ -79,18 +83,17 @@ function defineFace(
   return { id, name, category, visible, points, path: polyline(points, true) }
 }
 
-/** §8.1 — six rhombi, mapped to the six categories in order. */
+/** §8.1 — the five drawn-or-hidden rhombi a category maps to, in order. */
 export const FACES: readonly Face[] = [
   defineFace('F1', 'TOP', 'fundamentals', true, ['T', 'R', 'C', 'L']),
   defineFace('F2', 'LEFT', 'intermediate', true, ['L', 'C', 'Bp', 'Lp']),
   defineFace('F3', 'RIGHT', 'expert', true, ['C', 'R', 'Rp', 'Bp']),
   defineFace('F4', 'BACK-LEFT', 'ecosystem', false, ['T', 'C', 'Lp', 'L']),
   defineFace('F5', 'BACK-RIGHT', 'protocols', false, ['T', 'R', 'Rp', 'C']),
-  defineFace('F6', 'BOTTOM', 'optional', false, ['Lp', 'C', 'Rp', 'Bp']),
 ]
 
 /**
- * §13.1.1, §13.9 — the six flavour names, in the same order as the faces.
+ * §13.1.1, §13.9 — the five flavour names, in the same order as the faces.
  *
  * Held UPPERCASE as literals so no locale-dependent casing ever runs over
  * them. Turkish casing is the trap: `toLocaleUpperCase('tr')` turns `i` into
@@ -109,7 +112,6 @@ export const FLAVOURS = {
   expert: 'LAVANTA',
   ecosystem: 'NANE',
   protocols: 'KAHVE',
-  optional: 'KAYMAK',
 } as const satisfies Record<CategorySlug, string>
 
 /**

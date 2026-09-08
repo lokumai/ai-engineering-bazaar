@@ -5,6 +5,7 @@ import {
   NOT_DRAWN_COUNT,
   SHEETS,
   SHEET_COUNT,
+  CATEGORY_PATHS,
 } from './sheets'
 import { watchPage } from './watch'
 
@@ -112,7 +113,7 @@ test('links every subsystem, and each row reaches its sheet', async ({ page }) =
   const problems = watchPage(page)
   await page.goto(INDEX_SHEET)
 
-  await expect(page.locator('.hl-subsystem-list > li')).toHaveCount(6)
+  await expect(page.locator('.hl-subsystem-list > li')).toHaveCount(CATEGORY_PATHS.length)
 
   // One row, followed end to end: the manifest is only useful if it navigates.
   await page.locator('.hl-index tbody .hl-row-link').first().click()

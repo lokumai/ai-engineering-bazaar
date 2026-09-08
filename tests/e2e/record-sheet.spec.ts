@@ -17,7 +17,7 @@ import {
   waitForRecord,
   waitForSheet,
 } from './record'
-import { A0, CHECKLIST_ITEMS, INDEX_SHEET, SHEETS, sheetByModule } from './sheets'
+import { A0, CATEGORY_PATHS, CHECKLIST_ITEMS, INDEX_SHEET, SHEETS, sheetByModule } from './sheets'
 import { watchPage } from './watch'
 
 /**
@@ -298,7 +298,7 @@ test('a started subsystem draws its face at the structural weight (§8.2, §12.2
       ]),
     )
 
-  expect(faces).toHaveLength(6)
+  expect(faces).toHaveLength(CATEGORY_PATHS.length)
   for (const [category, width] of faces) {
     expect(width, `${category} face`).toBe(category === SHEET.category ? '1.5px' : '1px')
   }

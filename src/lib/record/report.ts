@@ -502,7 +502,6 @@ export const CATEGORY_HUES: Readonly<Record<string, CategoryHue>> = {
   expert: { full: 'oklch(0.605 0.130 288)', half: 'oklch(0.605 0.065 288)' },
   ecosystem: { full: 'oklch(0.605 0.098 200)', half: 'oklch(0.605 0.049 200)' },
   protocols: { full: 'oklch(0.605 0.115 54)', half: 'oklch(0.605 0.0575 54)' },
-  optional: { full: 'oklch(0.605 0.085 100)', half: 'oklch(0.605 0.0425 100)' },
 }
 
 /**

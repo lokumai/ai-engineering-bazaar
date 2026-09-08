@@ -435,8 +435,9 @@ graph LR
     B --> C[Coding Agents]
     C --> D[Harness Engineering]
     D --> E[Loop Engineering]
-    E --> F[Security]
-    F --> G[Personal Agents]
+    E --> F[Generative UI]
+    F --> G[Security]
+    G --> H[Personal Agents]
     style A fill:#FFFF00
 ```
 

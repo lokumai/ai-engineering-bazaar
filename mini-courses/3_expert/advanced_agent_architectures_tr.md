@@ -1,13 +1,15 @@
-# İleri Seviye Harness Engineering
+# İleri Seviye Mimariler
 
 *(Bu bir placeholder modül — şimdilik kısa bir özet; tam ders içeriği yakında geliyor.)*
 
-Harness Engineering'deki guardrail/hook/sandbox temellerinin ötesinde, harness'ın kendisini ince ayarlamak.
+AI Agent'lar modülündeki temel Observe-Decide-Act loop'unun ötesine geçen mimari desenler.
 
 **Bu modülde işlenecek konular**:
-- Harness profilleri
-- System prompt'lar
-- Tool isimlerini/şekillerini bağlama göre değiştirme
+- THREAD
+- ReAct
+- CodeAct
+- RLM
+- Dynamic Workflows
 
 ## Eğitim İlerlemesi
 
@@ -29,5 +31,6 @@ graph LR
     style D fill:#90EE90
     style E fill:#90EE90
     style F fill:#90EE90
-    style G fill:#FFFF00
+    style G fill:#90EE90
+    style H fill:#FFFF00
 ```

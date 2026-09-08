@@ -80,14 +80,14 @@
   --cat-ecosystem-half:    oklch(0.605 0.049 200);
   --cat-protocols:         oklch(0.605 0.115  54);  /* KAHVE   — coffee      */
   --cat-protocols-half:    oklch(0.605 0.0575 54);
-  --cat-optional:          oklch(0.605 0.085  100); /* KAYMAK  — cream       */
-  --cat-optional-half:     oklch(0.605 0.0425 100);
 
   /* There is no `--cat-dormant`. §13.1.2: a category with nothing signed off
      is not "the grey version of gül", it is a category with nothing special
      about it, so it is drawn in the structural line every other component
      uses. Inventing a per-category grey failed twice when measured — 2.11:1
-     against `sunken`, and indistinguishable from KAYMAK's complete state. */
+     against `sunken`, and indistinguishable from the cream the Optional
+     category used to carry, before its modules were folded into Advanced
+     Deployment and the category went away. */
 }
 
 @layer components {
@@ -105,7 +105,6 @@
   [data-cat="expert"]       { --hl-cat: var(--cat-expert);       --hl-cat-half: var(--cat-expert-half); }
   [data-cat="ecosystem"]    { --hl-cat: var(--cat-ecosystem);    --hl-cat-half: var(--cat-ecosystem-half); }
   [data-cat="protocols"]    { --hl-cat: var(--cat-protocols);    --hl-cat-half: var(--cat-protocols-half); }
-  [data-cat="optional"]     { --hl-cat: var(--cat-optional);     --hl-cat-half: var(--cat-optional-half); }
 
   /* -------------------------------------------------------------------------
      §13.1.3 (2, 5) — the segmented meter
@@ -167,8 +166,7 @@
   html.hl-cat-intermediate-started .hl-cat-tint[data-cat="intermediate"],
   html.hl-cat-expert-started       .hl-cat-tint[data-cat="expert"],
   html.hl-cat-ecosystem-started    .hl-cat-tint[data-cat="ecosystem"],
-  html.hl-cat-protocols-started    .hl-cat-tint[data-cat="protocols"],
-  html.hl-cat-optional-started     .hl-cat-tint[data-cat="optional"] {
+  html.hl-cat-protocols-started    .hl-cat-tint[data-cat="protocols"] {
     --hl-tint: var(--hl-cat-half);
   }
 
@@ -176,8 +174,7 @@
   html.hl-cat-intermediate-complete .hl-cat-tint[data-cat="intermediate"],
   html.hl-cat-expert-complete       .hl-cat-tint[data-cat="expert"],
   html.hl-cat-ecosystem-complete    .hl-cat-tint[data-cat="ecosystem"],
-  html.hl-cat-protocols-complete    .hl-cat-tint[data-cat="protocols"],
-  html.hl-cat-optional-complete     .hl-cat-tint[data-cat="optional"] {
+  html.hl-cat-protocols-complete    .hl-cat-tint[data-cat="protocols"] {
     --hl-tint: var(--hl-cat);
   }
 
@@ -238,8 +235,7 @@
   html.hl-cat-intermediate-started .hl-face[data-cat="intermediate"],
   html.hl-cat-expert-started       .hl-face[data-cat="expert"],
   html.hl-cat-ecosystem-started    .hl-face[data-cat="ecosystem"],
-  html.hl-cat-protocols-started    .hl-face[data-cat="protocols"],
-  html.hl-cat-optional-started     .hl-face[data-cat="optional"] {
+  html.hl-cat-protocols-started    .hl-face[data-cat="protocols"] {
     fill: var(--hl-cat-half);
   }
 
@@ -247,8 +243,7 @@
   html.hl-cat-intermediate-complete .hl-face[data-cat="intermediate"],
   html.hl-cat-expert-complete       .hl-face[data-cat="expert"],
   html.hl-cat-ecosystem-complete    .hl-face[data-cat="ecosystem"],
-  html.hl-cat-protocols-complete    .hl-face[data-cat="protocols"],
-  html.hl-cat-optional-complete     .hl-face[data-cat="optional"] {
+  html.hl-cat-protocols-complete    .hl-face[data-cat="protocols"] {
     fill: var(--hl-cat);
   }
 

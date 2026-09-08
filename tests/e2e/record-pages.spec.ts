@@ -297,10 +297,15 @@ test('§12.10.1 — every node is named from aria-label, never from its visible 
     expect(node.id).toBe(`hl-node-${sheet.path.split('/').slice(2, 4).join('-')}`)
   }
 
-  // §12.10.1's state clause, for the three sheets this record holds.
-  expect(read[0].label).toContain('signed off 2026-07-01')
-  expect(read[12].label).toContain('signed off 2026-08-11')
-  expect(read[15].label).toContain('not drawn')
+  // §12.10.1's state clause, for the sheets this record holds. Found by route,
+  // not by position: these were `read[0]`, `read[12]` and `read[15]` until the
+  // September 2026 reorder moved Security from 13 to 15 and turned 16 into a
+  // drawn sheet, at which point two of the three were asserting about the
+  // wrong module.
+  const at = (path: string) => read[SHEETS.findIndex((sheet) => sheet.path === path)]
+  expect(at('/courses/fundamentals/llms/').label).toContain('signed off 2026-07-01')
+  expect(at('/courses/intermediate/security/').label).toContain('signed off 2026-08-11')
+  expect(read[SHEETS.findIndex((sheet) => !sheet.drawn)].label).toContain('not drawn')
 })
 
 test('§12.10.2 — the whole diagram is one tab stop', async ({ page }) => {

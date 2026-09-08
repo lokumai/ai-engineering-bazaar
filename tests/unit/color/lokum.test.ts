@@ -51,7 +51,6 @@ const FLAVOURS = [
   { slug: 'expert', flavour: 'LAVANTA' },
   { slug: 'ecosystem', flavour: 'NANE' },
   { slug: 'protocols', flavour: 'KAHVE' },
-  { slug: 'optional', flavour: 'KAYMAK' },
 ] as const
 
 /** SC 1.4.11's 3:1, with the margin §13.1.1 states. Unrounded. */
@@ -267,7 +266,7 @@ describe('§13.1.2 — progress is visible, which is what dormant-as-a-hue broke
 })
 
 describe('§13.1.1 — a hue identifies a subsystem', () => {
-  it('separates all fifteen pairs', () => {
+  it('separates all ten pairs', () => {
     const tooClose: string[] = []
     for (let i = 0; i < FLAVOURS.length; i += 1) {
       for (let j = i + 1; j < FLAVOURS.length; j += 1) {
@@ -322,7 +321,7 @@ describe('§13.7 — the RECORD OF WORK carries the same six hues', () => {
     expect(parseOklch(inReport.half), `${flavour} half`).toEqual(token(`--cat-${slug}-half`))
   })
 
-  it('names the six categories and no others', () => {
+  it('names the five categories and no others', () => {
     expect(Object.keys(CATEGORY_HUES).sort()).toEqual(FLAVOURS.map((f) => f.slug).sort())
   })
 })

@@ -26,11 +26,11 @@ Which is why LangChain put it as plainly as they did in [The Agent Improvement L
 
 ## Where to put them
 
-- **LangSmith** is LangChain's, and the most integrated if you are already using anything from [Agent Frameworks](agent_frameworks.md). Tracing, datasets, evaluators and annotation in one place.
+- **LangSmith** is LangChain's, and the most integrated if you are already using anything from [Agent Frameworks](../4_ecosystem/agent_frameworks.md). Tracing, datasets, evaluators and annotation in one place.
 - **[Langfuse](https://github.com/langfuse/langfuse)** is the open-source one, and the usual answer when the traces must stay on your own infrastructure. It speaks OpenTelemetry as well as the framework SDKs, so it collects from almost anything, and it carries evals, prompt management and datasets alongside the traces.
 - **[Latitude](https://github.com/latitude-dev/latitude-llm)** is also open source, aimed squarely at monitoring in production.
 
-The thing to check before you pick is not the feature list. It is whether it collects from what you already run, and whether it can keep the traces where your data policy says they have to live. Prompts and tool results are full of customer text, which puts this in the same conversation as the data policy from [Inference Providers](inference_providers.md).
+The thing to check before you pick is not the feature list. It is whether it collects from what you already run, and whether it can keep the traces where your data policy says they have to live. Prompts and tool results are full of customer text, which puts this in the same conversation as the data policy from [Inference Providers](../4_ecosystem/inference_providers.md).
 
 ## The loop
 
@@ -47,7 +47,7 @@ graph LR
 
 *Every stage is attached to the same object, which is why the loop closes at all. Evaluators score traces. Annotations attach to traces. The offline dataset is made of traces. The regression test replays them. Take the trace away and none of these steps can reach each other.*
 
-And it compounds. Each pass produces better data, better data locates failures more precisely, and the next change is aimed better than the last. This is the verification loop from [Loop Engineering](../2_intermediate/loop_engineering.md), running on a longer timescale with a human in it.
+And it compounds. Each pass produces better data, better data locates failures more precisely, and the next change is aimed better than the last. This is the verification loop that [Loop Engineering](../2_intermediate/loop_engineering.md) covers, running on a longer timescale with a human in it.
 
 ## The problem nobody expected
 
@@ -57,22 +57,27 @@ Nobody reads a hundred thousand of anything. And the usual instruments do not sa
 
 So the newest tool in this module is **an agent that reads the traces**. LangSmith's Insights Agent clusters thousands of conversations to surface the usage patterns and failure modes on its own, with nobody specifying what to look for in advance. It is exploratory analysis of a pile too big for a person, done by the same technology that produced the pile.
 
-Which is where this series has been heading all along. [Loop Engineering](../2_intermediate/loop_engineering.md) ended on an agent designing the loop; this is an agent auditing the output. And it is worth noticing that the reason any of it is necessary is the fact [Harness Engineering](../2_intermediate/harness_engineering.md) started from: these systems are non-deterministic, they take unbounded natural language as input, and most of their failures therefore turn up in production rather than in your tests.
+Which is where this series is heading. [Loop Engineering](../2_intermediate/loop_engineering.md) gets to an agent that designs the loop; this is an agent that audits the output. And it is worth noticing that the reason any of it is necessary is the fact [Harness Engineering](../2_intermediate/harness_engineering.md) starts from: these systems are non-deterministic, they take unbounded natural language as input, and most of their failures therefore turn up in production rather than in your tests.
 
 ## Where this fits in the series
 
 ```mermaid
 graph LR
-    A[Agent Frameworks] --> B[Inference Providers]
-    B --> C[Inference Engines]
-    C --> D[UI Design]
-    D --> E[Observability]
-    E --> F[Choosing a Tech Stack]
+    A[LLMs] --> B[Training]
+    B --> C[RAG]
+    C --> D[Tools]
+    D --> E[Memory]
+    E --> F[Agents]
+    F --> G[Multi-Agent]
+    G --> H[Observability]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
     style D fill:#90EE90
-    style E fill:#FFFF00
+    style E fill:#90EE90
+    style F fill:#90EE90
+    style G fill:#90EE90
+    style H fill:#FFFF00
 ```
 
 ## Summary

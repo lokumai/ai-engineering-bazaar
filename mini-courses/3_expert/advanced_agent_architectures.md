@@ -1,15 +1,17 @@
-# İleri Seviye Harness Engineering
+# Advanced Architectures
 
-*(Bu bir placeholder modül — şimdilik kısa bir özet; tam ders içeriği yakında geliyor.)*
+*(Placeholder module — a short overview for now; full lesson content is coming soon.)*
 
-Harness Engineering'deki guardrail/hook/sandbox temellerinin ötesinde, harness'ın kendisini ince ayarlamak.
+Architectural patterns that go beyond the basic Observe-Decide-Act loop from AI Agents.
 
-**Bu modülde işlenecek konular**:
-- Harness profilleri
-- System prompt'lar
-- Tool isimlerini/şekillerini bağlama göre değiştirme
+**Topics this module will cover**:
+- THREAD
+- ReAct
+- CodeAct
+- RLM
+- Dynamic Workflows
 
-## Eğitim İlerlemesi
+## Tutorial Progress
 
 ```mermaid
 graph LR
@@ -29,5 +31,6 @@ graph LR
     style D fill:#90EE90
     style E fill:#90EE90
     style F fill:#90EE90
-    style G fill:#FFFF00
+    style G fill:#90EE90
+    style H fill:#FFFF00
 ```

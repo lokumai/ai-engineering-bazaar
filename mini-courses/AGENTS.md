@@ -468,7 +468,6 @@ mini-courses/            the authored corpus, and all this file governs
   3_expert/              draft
   4_ecosystem/           draft
   5_protocols_specs/     draft
-  6_optional/            draft
   scratchpad/            research notes and diagram prompts, never published
 src/ tests/ scripts/     the Next.js app that renders the corpus (not ours)
 ```

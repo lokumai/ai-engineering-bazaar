@@ -160,7 +160,7 @@ That also buys you a quality pattern that is hard to get any other way. Because 
 
 You turn it on with `/effort ultracode`, which combines the highest reasoning setting with automatic workflow orchestration, or you include the word `ultracode` in a single prompt to run just that task as a workflow.
 
-> **NOTE:** dynamic workflows do not exist only because of loop engineering. They are also the practical form of an idea called **recursive language modelling**, and of architectures like **CodeAct**, both covered in [Advanced Architectures](../3_expert/advanced_architectures.md). CodeAct, from [Executable Code Actions Elicit Better LLM Agents](https://arxiv.org/abs/2402.01030), makes executable code the agent's action space instead of JSON tool calls. [Recursive Language Models](https://arxiv.org/abs/2512.24601) has a model treat its input as a variable it can grep, slice and hand to recursive copies of itself, which is how a script full of agents starts looking like one model with an unbounded window. Alex Zhang's [write-up](https://alexzhang13.github.io/blog/2025/rlm/) is the readable version and [rlm](https://github.com/alexzhang13/rlm) is the library.
+> **NOTE:** dynamic workflows do not exist only because of loop engineering. They are also the practical form of an idea called **recursive language modelling**, and of architectures like **CodeAct**, both covered in [Advanced Agent Architectures](../3_expert/advanced_agent_architectures.md). CodeAct, from [Executable Code Actions Elicit Better LLM Agents](https://arxiv.org/abs/2402.01030), makes executable code the agent's action space instead of JSON tool calls. [Recursive Language Models](https://arxiv.org/abs/2512.24601) has a model treat its input as a variable it can grep, slice and hand to recursive copies of itself, which is how a script full of agents starts looking like one model with an unbounded window. Alex Zhang's [write-up](https://alexzhang13.github.io/blog/2025/rlm/) is the readable version and [rlm](https://github.com/alexzhang13/rlm) is the library.
 
 ## The trend, stated plainly
 
@@ -176,8 +176,9 @@ graph LR
     B --> C[Coding Agents]
     C --> D[Harness Engineering]
     D --> E[Loop Engineering]
-    E --> F[Security]
-    F --> G[Personal Agents]
+    E --> F[Generative UI]
+    F --> G[Security]
+    G --> H[Personal Agents]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
@@ -210,4 +211,4 @@ Next: everything in this module made an agent harder to supervise. Security is w
 - [Orchestrate subagents at scale with dynamic workflows](https://code.claude.com/docs/en/workflows): what a workflow script looks like, its limits, and the four-way comparison
 - [Executable Code Actions Elicit Better LLM Agents](https://arxiv.org/abs/2402.01030): CodeAct, where code becomes the action space
 - [Recursive Language Models](https://arxiv.org/abs/2512.24601): the paper, with [Alex Zhang's write-up](https://alexzhang13.github.io/blog/2025/rlm/) and the [rlm](https://github.com/alexzhang13/rlm) library
-- [Advanced Architectures](../3_expert/advanced_architectures.md): CodeAct, recursive language models and the rest, properly
+- [Advanced Agent Architectures](../3_expert/advanced_agent_architectures.md): CodeAct, recursive language models and the rest, properly

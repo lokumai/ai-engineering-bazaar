@@ -16,11 +16,11 @@ LangChain'in [The Agent Improvement Loop Starts with a Trace](https://www.langch
 
 ## Nereye koyulacağı
 
-- **LangSmith** LangChain'in, ve [Agent Framework'leri](agent_frameworks_tr.md)'nden bir şey kullanıyorsan en entegre olanı. Tracing, dataset'ler, evaluator'lar ve annotation tek bir yerde.
+- **LangSmith** LangChain'in, ve [Agent Framework'leri](../4_ecosystem/agent_frameworks_tr.md)'nden bir şey kullanıyorsan en entegre olanı. Tracing, dataset'ler, evaluator'lar ve annotation tek bir yerde.
 - **[Langfuse](https://github.com/langfuse/langfuse)** açık kaynak olanı, ve trace'lerin kendi altyapında kalması gerektiğinde alışılmış cevap. Framework SDK'larının yanında OpenTelemetry de konuşuyor, yani neredeyse her şeyden toplayabiliyor, ve trace'lerin yanında eval'ler, prompt yönetimi ve dataset'ler taşıyor.
 - **[Latitude](https://github.com/latitude-dev/latitude-llm)** de açık kaynak, doğrudan production'da izlemeye yönelmiş.
 
-Seçmeden önce kontrol edilecek şey feature listesi değil. Zaten çalıştırdığın şeyden toplayıp toplamadığı, ve trace'leri veri politikanın yaşamalarını söylediği yerde tutabilip tutamadığı. Prompt'lar ve tool sonuçları müşteri metniyle dolu, ki bu da bunu [Inference Provider'lar](inference_providers_tr.md)'daki veri politikasıyla aynı konuşmaya koyuyor.
+Seçmeden önce kontrol edilecek şey feature listesi değil. Zaten çalıştırdığın şeyden toplayıp toplamadığı, ve trace'leri veri politikanın yaşamalarını söylediği yerde tutabilip tutamadığı. Prompt'lar ve tool sonuçları müşteri metniyle dolu, ki bu da bunu [Inference Provider'lar](../4_ecosystem/inference_providers_tr.md)'daki veri politikasıyla aynı konuşmaya koyuyor.
 
 ## Loop
 
@@ -47,22 +47,27 @@ Kimse yüz bin şeyi okumuyor. Ve alışılmış aletler seni kurtarmıyor, çü
 
 Yani bu modüldeki en yeni tool, **trace'leri okuyan bir agent**. LangSmith'in Insights Agent'ı binlerce konuşmayı kümeleyerek kullanım desenlerini ve hata modlarını kendi başına yüzeye çıkarıyor; kimse önceden neye bakılacağını belirtmeden. Bir insan için fazla büyük bir yığının keşifsel analizi, yığını üreten teknolojinin kendisi tarafından yapılıyor.
 
-Bu serinin baştan beri gittiği yer de burası. [Loop Engineering](../2_intermediate/loop_engineering_tr.md) loop'u tasarlayan bir agent'la bitiyordu; bu da çıktıyı denetleyen bir agent. Ve bunların hiçbirinin gerekli olmasının sebebinin [Harness Engineering](../2_intermediate/harness_engineering_tr.md)'in başladığı gerçek olduğuna dikkat etmeye değer: bu sistemler non-deterministic, sınırsız doğal dili input olarak alıyorlar, ve dolayısıyla hatalarının çoğu testlerinde değil production'da ortaya çıkıyor.
+Bu serinin gittiği yer de burası. [Loop Engineering](../2_intermediate/loop_engineering_tr.md) loop'u tasarlayan bir agent'a varıyor; bu da çıktıyı denetleyen bir agent. Ve bunların hiçbirinin gerekli olmasının sebebinin [Harness Engineering](../2_intermediate/harness_engineering_tr.md)'in başladığı gerçek olduğuna dikkat etmeye değer: bu sistemler non-deterministic, sınırsız doğal dili input olarak alıyorlar, ve dolayısıyla hatalarının çoğu testlerinde değil production'da ortaya çıkıyor.
 
 ## Bu serinin neresindeyiz
 
 ```mermaid
 graph LR
-    A[Agent Frameworks] --> B[Inference Providers]
-    B --> C[Inference Engines]
-    C --> D[UI Design]
-    D --> E[Observability]
-    E --> F[Choosing a Tech Stack]
+    A[LLMs] --> B[Training]
+    B --> C[RAG]
+    C --> D[Tools]
+    D --> E[Memory]
+    E --> F[Agents]
+    F --> G[Multi-Agent]
+    G --> H[Observability]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
     style D fill:#90EE90
-    style E fill:#FFFF00
+    style E fill:#90EE90
+    style F fill:#90EE90
+    style G fill:#90EE90
+    style H fill:#FFFF00
 ```
 
 ## Özet

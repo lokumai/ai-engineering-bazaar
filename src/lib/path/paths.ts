@@ -154,7 +154,7 @@ export const PATHS: readonly LearningPath[] = [
           'Workflow or autonomous agent, which composition pattern fits the task shape, and a verifier ladder with rubric evals wired into CI',
       },
       {
-        slug: 'expert/advanced-architectures',  // draft
+        slug: 'expert/advanced-agent-architectures',  // draft
         tier: 'context',
         reason:
           'A draft sheet with no lesson yet; planned to cover ReAct, CodeAct and dynamic workflows as loop shapes beyond Observe-Decide-Act',
@@ -226,16 +226,10 @@ export const PATHS: readonly LearningPath[] = [
           'Ops detail for unattended runs: --timeout-seconds, script tool budgets, failure alerts, and a supervised service over a while-true loop',
       },
       {
-        slug: 'ecosystem/observability',  // draft
+        slug: 'fundamentals/observability',
         tier: 'context',
         reason:
-          'Planned coverage of LangSmith, LangFuse and trace-analyzer agents; the sheet holds a topic list until it is written',
-      },
-      {
-        slug: 'optional/runtime',  // draft
-        tier: 'context',
-        reason:
-          'Slated for checkpoints, fault tolerance and time travel across long failure-prone runs; no lesson content there yet',
+          'A trace is the only record of what a run actually did, and this covers collecting them, keeping them where your data policy says they may live, and the loop that turns them into fixes',
       },
       {
         slug: 'expert/advanced-deployment',  // draft
@@ -328,10 +322,10 @@ export const PATHS: readonly LearningPath[] = [
           'A draft outline only. It lists the long-term memory systems planned for later coverage, including Cognee and entire provenance',
       },
       {
-        slug: 'ecosystem/observability',  // draft
+        slug: 'fundamentals/observability',
         tier: 'context',
         reason:
-          'Not written yet. The topic list names LangSmith, LangFuse and trace-analyzer agents as the planned tracing coverage',
+          'Every model call, tool call and subagent in one tree with tokens, cost and latency on each, which is the record you need when a pipeline step returned nothing and the agent treated that as an answer',
       },
     ],
   },
@@ -418,10 +412,10 @@ export const PATHS: readonly LearningPath[] = [
           'A draft outline only. Its topic list promises RAG versus agentic search, and JSON versus CLI tools, once the module is written',
       },
       {
-        slug: 'ecosystem/observability',  // draft
+        slug: 'fundamentals/observability',
         tier: 'context',
         reason:
-          'Still an outline. Planned coverage names LangSmith, LangFuse and trace-analyzer agents for inspecting what a query agent did',
+          'Shows what a query agent actually did, step by step, instead of only the answer it settled on, including the case where an empty result was reported as a finding',
       },
     ],
   },
@@ -494,12 +488,6 @@ export const PATHS: readonly LearningPath[] = [
         tier: 'core',
         reason:
           'The Verifier Ladder holds that a model cannot grade itself, and the rubric cookbook starts from about 20 real cases with binary labels',
-      },
-      {
-        slug: 'optional/human-in-the-loop',  // draft
-        tier: 'context',
-        reason:
-          'A placeholder today, listing interrupt and steering as its planned topics; hold it as a roadmap marker for keeping a person in control',
       },
     ],
   },
@@ -574,16 +562,10 @@ export const PATHS: readonly LearningPath[] = [
           'The verifier ladder and the rubric cookbook — a golden set of about 20 cases, deterministic gates, R1-R7, calibrate before you trust',
       },
       {
-        slug: 'ecosystem/observability',  // draft
+        slug: 'fundamentals/observability',
         tier: 'context',
         reason:
-          'A draft placeholder, not yet readable; it is planned to cover LangSmith, LangFuse and trace-analyzer agents',
-      },
-      {
-        slug: 'optional/runtime',  // draft
-        tier: 'context',
-        reason:
-          'Still a draft with only a topic list; checkpoints, fault tolerance and time travel are planned, which is where replaying a run belongs',
+          'The failures worth testing for live between the steps rather than inside them, and a trace is where they are visible: a slightly wrong argument, a repeated pass, an instruction dropped at the context limit',
       },
     ],
   },
@@ -664,16 +646,10 @@ export const PATHS: readonly LearningPath[] = [
           'The verifier ladder answers who checks agent output: defined rules and linters first, LLM as judge last',
       },
       {
-        slug: 'optional/human-in-the-loop',  // draft
+        slug: 'fundamentals/observability',
         tier: 'context',
         reason:
-          'A placeholder for now: planned to cover interrupt and steering, with only the topic list on the page today',
-      },
-      {
-        slug: 'ecosystem/observability',  // draft
-        tier: 'context',
-        reason:
-          'Not yet written: the roadmap names LangSmith, LangFuse and trace-analyzer agents as the planned coverage',
+          'Where cost and latency per run come from, and the honest answer to why an agent looked fine in a demo and then failed in production',
       },
     ],
   },
@@ -748,10 +724,10 @@ export const PATHS: readonly LearningPath[] = [
           'Roadmap only, no lesson content yet: the planned topics name Cognee, Agent KnowledgeBase and Entire Provenance',
       },
       {
-        slug: 'ecosystem/observability',  // draft
+        slug: 'fundamentals/observability',
         tier: 'context',
         reason:
-          'Still a draft: LangSmith, LangFuse and trace-analyzer agents are listed as planned topics, where audit-trail material will land',
+          'A trace is the audit trail: every call and its result, held wherever your data policy allows, which is what a later question about what was read gets answered from',
       },
     ],
   },

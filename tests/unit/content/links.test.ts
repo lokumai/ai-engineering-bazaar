@@ -25,8 +25,8 @@ describe('courseLinkFor', () => {
 
   it('resolves a link into another category directory', () => {
     process.env.NEXT_PUBLIC_SITE_BASE_PATH = ''
-    expect(courseLinkFor('../3_expert/advanced_architectures.md', HARNESS))
-      .toBe('/courses/expert/advanced-architectures/')
+    expect(courseLinkFor('../3_expert/advanced_agent_architectures.md', HARNESS))
+      .toBe('/courses/expert/advanced-agent-architectures/')
   })
 
   it('refuses a target that still carries a number, because no such file exists', () => {

@@ -12,15 +12,16 @@ Running agents as real production services rather than one-off scripts or chat s
 
 ```mermaid
 graph LR
-    A[Advanced UI] --> B[Advanced Architectures]
-    B --> C[Advanced Tools]
-    C --> D[Advanced Memory]
-    D --> E[Advanced Multi-Agent]
-    E --> F[Advanced Prompting]
-    F --> G[Adv. Context Eng.]
-    G --> H[Adv. Harness Eng.]
-    H --> I[Advanced Deployment]
-    I --> J[Advanced Training]
+    A[Advanced Tools] --> B[Advanced Memory]
+    B --> C[Advanced Multi-Agent]
+    C --> D[Advanced Prompting]
+    D --> E[Adv. Context Eng.]
+    E --> F[Adv. Coding Agents]
+    F --> G[Adv. Harness Eng.]
+    G --> H[Adv. Agent Arch.]
+    H --> I[Advanced UI]
+    I --> J[Advanced Deployment]
+    J --> K[Advanced Training]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
@@ -29,5 +30,6 @@ graph LR
     style F fill:#90EE90
     style G fill:#90EE90
     style H fill:#90EE90
-    style I fill:#FFFF00
+    style I fill:#90EE90
+    style J fill:#FFFF00
 ```

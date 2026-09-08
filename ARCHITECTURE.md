@@ -32,7 +32,7 @@ mini-courses/*.md  ──build──▶  static export  ──▶  the reader's 
 
 | | |
 |---|---|
-| 33 | module sheets, in 6 categories, ordered by one config file |
+| 33 | module sheets, in 5 categories, ordered by one config file |
 | 58 | prerendered pages |
 | 10 | Postgres tables, 23 RLS policies, **0** database functions |
 | ~33k | lines of `src/`, ~28k of tests |

@@ -61,10 +61,10 @@ describe('curriculumFacts — the sheets', () => {
 })
 
 describe('curriculumFacts — the categories', () => {
-  it('lists the six subsystems in their declared order', () => {
+  it('lists the five subsystems in their declared order', () => {
     expect(facts.categories.map((c) => c.slug))
       .toEqual(CATEGORIES.map((c) => c.slug))
-    expect(facts.categories.map((c) => c.order)).toEqual([1, 2, 3, 4, 5, 6])
+    expect(facts.categories.map((c) => c.order)).toEqual([1, 2, 3, 4, 5])
   })
 
   it('carries the subsystem title, so a page needs no second lookup', () => {

@@ -127,9 +127,13 @@ describe('§13.4.2 — the denominator counts drawn steps only', () => {
   it.each(PATHS)('$role counts only what a reader can sign off', (path) => {
     const drawn = path.steps.filter((step) => corpusSaysDrawn(step.slug)).length
     expect(drawnCount(path, DRAWN)).toBe(drawn)
-    // The whole point: the denominator is smaller than the list whenever a path
-    // carries a roadmap marker, and every path here carries at least one.
-    expect(drawnCount(path, DRAWN)).toBeLessThan(path.steps.length)
+    // The denominator can never exceed the list. It used to be asserted as
+    // strictly smaller, on the grounds that every path carried at least one
+    // roadmap marker, but that was a fact about the corpus on the day it was
+    // written: the analyst, qa and project-manager paths reached parity once
+    // Observability was written and the Optional markers went away. A path
+    // whose every step is readable is the goal, not a failure.
+    expect(drawnCount(path, DRAWN)).toBeLessThanOrEqual(path.steps.length)
   })
 
   it('never reports a denominator of zero', () => {

@@ -150,7 +150,7 @@ Bu aynı zamanda başka türlü kolay elde edemeyeceğin bir kalite deseni kazan
 
 `/effort ultracode` ile açıyorsun; en yüksek reasoning ayarını otomatik workflow orkestrasyonuyla birleştiriyor. Ya da tek bir prompt'ta `ultracode` kelimesini geçirip sadece o işi workflow olarak çalıştırıyorsun.
 
-> **NOT:** dynamic workflow'lar sadece loop engineering yüzünden var değil. Aynı zamanda **recursive language modelling** denen bir fikrin ve **CodeAct** gibi mimarilerin pratik hâli; ikisi de [Advanced Architectures](../3_expert/advanced_architectures_tr.md)'da işleniyor. CodeAct, [Executable Code Actions Elicit Better LLM Agents](https://arxiv.org/abs/2402.01030)'dan geliyor ve JSON tool çağrıları yerine çalıştırılabilir kodu agent'ın action space'i yapıyor. [Recursive Language Models](https://arxiv.org/abs/2512.24601) ise modelin input'unu grep'leyebildiği, dilimleyebildiği ve kendisinin recursive kopyalarına verebildiği bir değişken gibi ele almasını sağlıyor; agent dolu bir script'in neden sınırsız window'lu tek bir model gibi görünmeye başladığı da bu. Alex Zhang'in [yazısı](https://alexzhang13.github.io/blog/2025/rlm/) okunabilir versiyonu, [rlm](https://github.com/alexzhang13/rlm) de library.
+> **NOT:** dynamic workflow'lar sadece loop engineering yüzünden var değil. Aynı zamanda **recursive language modelling** denen bir fikrin ve **CodeAct** gibi mimarilerin pratik hâli; ikisi de [Advanced Agent Architectures](../3_expert/advanced_agent_architectures_tr.md)'da işleniyor. CodeAct, [Executable Code Actions Elicit Better LLM Agents](https://arxiv.org/abs/2402.01030)'dan geliyor ve JSON tool çağrıları yerine çalıştırılabilir kodu agent'ın action space'i yapıyor. [Recursive Language Models](https://arxiv.org/abs/2512.24601) ise modelin input'unu grep'leyebildiği, dilimleyebildiği ve kendisinin recursive kopyalarına verebildiği bir değişken gibi ele almasını sağlıyor; agent dolu bir script'in neden sınırsız window'lu tek bir model gibi görünmeye başladığı da bu. Alex Zhang'in [yazısı](https://alexzhang13.github.io/blog/2025/rlm/) okunabilir versiyonu, [rlm](https://github.com/alexzhang13/rlm) de library.
 
 ## Trend, düpedüz söylenmiş hâliyle
 
@@ -166,8 +166,9 @@ graph LR
     B --> C[Coding Agents]
     C --> D[Harness Engineering]
     D --> E[Loop Engineering]
-    E --> F[Security]
-    F --> G[Personal Agents]
+    E --> F[Generative UI]
+    F --> G[Security]
+    G --> H[Personal Agents]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
@@ -200,4 +201,4 @@ Sırada: bu modüldeki her şey bir agent'ı denetlemeyi zorlaştırdı. Securit
 - [Orchestrate subagents at scale with dynamic workflows](https://code.claude.com/docs/en/workflows): bir workflow script'i neye benziyor, limitleri, ve dörtlü karşılaştırma
 - [Executable Code Actions Elicit Better LLM Agents](https://arxiv.org/abs/2402.01030): CodeAct, kodun action space olduğu yer
 - [Recursive Language Models](https://arxiv.org/abs/2512.24601): makale, [Alex Zhang'in yazısı](https://alexzhang13.github.io/blog/2025/rlm/) ve [rlm](https://github.com/alexzhang13/rlm) library'si ile
-- [Advanced Architectures](../3_expert/advanced_architectures_tr.md): CodeAct, recursive language model'ler ve gerisi, düzgün hâliyle
+- [Advanced Agent Architectures](../3_expert/advanced_agent_architectures_tr.md): CodeAct, recursive language model'ler ve gerisi, düzgün hâliyle

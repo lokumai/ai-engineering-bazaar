@@ -120,15 +120,17 @@ graph LR
     B --> C[Coding Agents]
     C --> D[Harness Engineering]
     D --> E[Loop Engineering]
-    E --> F[Security]
-    F --> G[Personal Agents]
+    E --> F[Generative UI]
+    F --> G[Security]
+    G --> H[Personal Agents]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
     style D fill:#90EE90
     style E fill:#90EE90
     style F fill:#90EE90
-    style G fill:#FFFF00
+    style G fill:#90EE90
+    style H fill:#FFFF00
 ```
 
 ## Summary

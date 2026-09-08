@@ -136,9 +136,18 @@ describe('the curriculum graph', () => {
     expect(requires).toHaveLength(declared)
   })
 
-  it('crosses a band boundary exactly three times, at 1-8, 5-9 and 6-10', () => {
-    expect(requires.filter((e) => e.crossBand).map((e) => [e.from, e.to]))
-      .toEqual([[1, 8], [5, 9], [6, 10]])
+  it('marks an edge as crossing a band exactly when its ends sit in different bands', () => {
+    // What this replaced: `.toEqual([[1, 8], [5, 9], [6, 10]])`, three pairs of
+    // module numbers, which went red the moment the curriculum was reordered.
+    // A module number in an assertion is the first thing `tests/README.md`
+    // rules out. The band is read back off the corpus rather than off the graph,
+    // so this still fails if `edges.ts` carries the wrong category for one.
+    const bandOf = new Map(modules.map((x) => [x.frontmatter.module, x.category.slug]))
+    for (const e of requires) {
+      expect(e.crossBand, `${e.from} to ${e.to}`)
+        .toBe(bandOf.get(e.from) !== bandOf.get(e.to))
+    }
+    expect(requires.some((e) => e.crossBand)).toBe(true)
   })
 
   it('mirrors every REQUIRES edge in the FEEDS index', () => {
@@ -146,8 +155,14 @@ describe('the curriculum graph', () => {
       expect(graph.requires(e.to), `${e.from} feeds ${e.to}`).toContain(e.from)
       expect(graph.feeds(e.from), `${e.from} feeds ${e.to}`).toContain(e.to)
     }
-    expect(graph.feeds(1)).toEqual([2, 3, 4, 5, 8])
-    expect(graph.requires(14)).toEqual([12, 13])
+    // What this replaced: two pinned lists of module numbers. The rule they
+    // were reaching for is that the index agrees with the corpus, which holds
+    // for any curriculum.
+    for (const sheet of modules) {
+      const asc = (a: number, b: number) => a - b
+      expect([...graph.requires(sheet.frontmatter.module)].sort(asc), sheet.slug)
+        .toEqual([...sheet.frontmatter.prerequisites].sort(asc))
+    }
   })
 
   it('leaves the first sheet requiring nothing and the last feeding nothing', () => {

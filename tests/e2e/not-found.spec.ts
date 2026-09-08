@@ -1,5 +1,5 @@
 import { type Page, expect, test } from '@playwright/test'
-import { INDEX_SHEET } from './sheets'
+import { CATEGORY_PATHS, INDEX_SHEET } from './sheets'
 import { watchPage } from './watch'
 
 /**
@@ -136,10 +136,12 @@ test('draws §8.4’s exploded axonometric, and only one of it', async ({ page }
   expect(box?.height).toBe(96)
   await expect(svg).toHaveAttribute('aria-hidden', 'true')
 
-  // Six faces, six leader lines: the cube taken apart, not a cube with a line
-  // through it.
-  await expect(page.locator('main [data-face]')).toHaveCount(6)
-  await expect(page.locator('main [data-leader]')).toHaveCount(6)
+  // One face and one leader line per subsystem: the cube taken apart, not a
+  // cube with a line through it. Counted off the subsystem list rather than
+  // written as 6, which is what it said until the Optional subsystem went away
+  // and took the cube's hidden bottom face with it.
+  await expect(page.locator('main [data-face]')).toHaveCount(CATEGORY_PATHS.length)
+  await expect(page.locator('main [data-leader]')).toHaveCount(CATEGORY_PATHS.length)
 
   await expect(page.getByText(CAPTION, { exact: true })).toHaveCount(1)
 })
@@ -155,7 +157,7 @@ test('keeps §8.2’s line types once the faces no longer touch', async ({ page 
   // every state" — which is the only thing left telling a reader the cube's
   // front from its back once it is disassembled.
   for (const visible of ['F1', 'F2', 'F3']) expect(await dashOf(visible), visible).toBe('none')
-  for (const hidden of ['F4', 'F5', 'F6']) {
+  for (const hidden of ['F4', 'F5']) {
     expect(await dashOf(hidden), hidden).toMatch(/^2px,\s*2px$/)
   }
 })

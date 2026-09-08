@@ -26,12 +26,11 @@ The internet already has plenty of AI content. Adding more only makes sense if i
 
 | Category | Sheets | Description |
 | --- | --- | --- |
-| [Fundamentals](mini-courses/1_fundamentals/README.md) | 7 | LLMs, training, RAG, tools, memory, agents, multi-agent systems. **Start here.** |
-| [Intermediate](mini-courses/2_intermediate/README.md) | 7 | Prompt engineering, context engineering, coding agents, harness engineering, loop engineering, security, personal agents. |
-| [Ecosystem](mini-courses/4_ecosystem/README.md) | 6 | Agent frameworks, inference providers, inference engines, UI design, observability, choosing a tech stack. |
-| [IN PROGRESS] [Expert](mini-courses/3_expert/README.md) | 10 | Advanced UI, architectures, tools, memory, multi-agent, prompting, context engineering, harness engineering, deployment, training. |
+| [Fundamentals](mini-courses/1_fundamentals/README.md) | 8 | LLMs, training, RAG, tools, memory, agents, multi-agent systems, observability. **Start here.** |
+| [Intermediate](mini-courses/2_intermediate/README.md) | 8 | Prompt engineering, context engineering, coding agents, harness engineering, loop engineering, generative UI, security, personal agents. |
+| [Ecosystem](mini-courses/4_ecosystem/README.md) | 5 | Agent frameworks, inference providers, inference engines, UI design, choosing a tech stack. |
+| [IN PROGRESS] [Expert](mini-courses/3_expert/README.md) | 11 | Advanced tools, memory, multi-agent, prompting, context engineering, coding agents, harness engineering, agent architectures, UI, deployment, training. |
 | [IN PROGRESS] [Protocols & Specs](mini-courses/5_protocols_specs/README.md) | 1 | A single reference of every protocol and spec mentioned across the series. |
-| [IN PROGRESS] [Optional](mini-courses/6_optional/README.md) | 2 | Human-in-the-loop and runtime topics that round out the series. |
 
 Every module is written in English first, with a Turkish version alongside it once the English is final. Each category page says how many of its sheets are finished, so the number is never stale here.
 

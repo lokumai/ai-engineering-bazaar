@@ -34,7 +34,7 @@ categories:
   - slug: fundamentals
     title: Fundamentals
     status: ready
-    blurb: LLMs, training, retrieval, tools, memory, and the agent loop. Start here.
+    blurb: LLMs, training, retrieval, tools, memory, the agent loop, and seeing what it did. Start here.
     modules:
       - { name: llms, title: LLM Fundamentals, status: ready, minutes: 25 }
       - name: training
@@ -69,11 +69,20 @@ categories:
         status: ready
         minutes: 25
         needs: [agents]
+      - name: observability
+        title: Observability
+        status: ready
+        minutes: 20
+        needs: [agents]
+        notes: >-
+          LangSmith, LangFuse, Latitude, Trace Analyzer Agent.
+          https://www.langchain.com/blog/from-traces-to-insights-understanding-agent-behavior-at-scale
+          https://www.langchain.com/blog/traces-start-agent-improvement-loop
 
   - slug: intermediate
     title: Intermediate
     status: ready
-    blurb: Prompting, context, coding agents, harnesses, security, and loops.
+    blurb: Prompting, context, coding agents, harnesses, loops, generative UI, and security.
     modules:
       - name: prompt_engineering
         title: Prompt Engineering
@@ -107,6 +116,10 @@ categories:
         minutes: 30
         needs: [harness_engineering]
         notes: Agent Teams, Dynamic Workflows, Rubric Evals
+      - name: ui
+        title: Generative UI
+        status: draft
+        notes: generative UI, event streaming, SSE
       - name: security
         title: Security
         status: ready
@@ -125,18 +138,8 @@ categories:
   - slug: expert
     title: Expert
     status: draft
-    blurb: Advanced architectures, memory, prompting, and deployment.
+    blurb: Tools, memory, multi-agent, prompting, context, coding agents, harnesses, architectures, UI, deployment, training.
     modules:
-      - name: advanced_ui
-        title: Advanced UI
-        status: draft
-        notes: >-
-          agentic UI, generative UI, event streaming, AG-UI, MCP-Apps UI, A2UI,
-          Copilotkit, Agent Client Protocol ACP
-      - name: advanced_architectures
-        title: Advanced Architectures
-        status: draft
-        notes: THREAD, ReAct, Deep, CodeAct, RLM, Dynamic Workflows
       - name: advanced_tools
         title: Advanced Tools
         status: draft
@@ -161,13 +164,20 @@ categories:
         status: draft
         notes: >-
           Reflextion and Self-critique, Tree of Thought, LLM Consul, caveman,
-          ponytail
+          ponytail, ADHD
       - name: advanced_context_engineering
         title: Advanced Context Engineering
         status: draft
         notes: >-
           Context engineering for software development like Superpowers,
           SpecKit, GSD, AgentOS, Claude Native Plan Goals Ultrathink Playground
+      - name: advanced_coding_agents
+        title: Advanced Coding Agents
+        status: draft
+        notes: >-
+          claude code best practices:
+          https://code.claude.com/docs/en/best-practices#use-cli-tools, rewind,
+          resume, subagent-cli-skills, /fork, btw
       - name: advanced_harness_engineering
         title: Advanced Harness Engineering
         status: draft
@@ -175,12 +185,23 @@ categories:
           harness profiles, system prompts, changing tool names, self evolving
           harnessess, context and harness embedded in llm anthtropic article:
           https://claude.com/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models
+      - name: advanced_agent_architectures
+        title: Advanced Agent Architectures
+        status: draft
+        notes: THREAD, ReAct, Deep, CodeAct, RLM, Dynamic Workflows
+      - name: advanced_ui
+        title: Advanced UI
+        status: draft
+        notes: >-
+          agentic UI, AG-UI, MCP-Apps UI, A2UI, Copilotkit, Agent Client
+          Protocol ACP, TUI for agents
       - name: advanced_deployment
         title: Advanced Deployment
         status: draft
         notes: >-
           agent server, langchain agent protocol, the tech stack for UI REDIS
-          WORKER etc
+          WORKER etc, Human-in-the-Lopp (Interrupt, Steering), Runtime
+          (Checkpoints, Fault Tolerance, Time Travel)
       - name: advanced_training
         title: Advanced Training
         status: draft
@@ -191,38 +212,46 @@ categories:
   - slug: ecosystem
     title: Ecosystem
     status: draft
-    blurb: Frameworks, inference providers and engines, UI, and observability.
+    blurb: Frameworks, inference providers and engines, UI design, and picking a stack.
     modules:
       - name: agent_frameworks
         title: Agent Frameworks
         status: ready
         minutes: 20
         notes: >-
-          langchain, agno, crewAI, smolagents, mastra, voltagent, pydanticAI,
-          n8n, lovable bolt etc
+          langchain mention langchain is the best and most up to date and most
+          production ready and it has langgraph as runtime which is lower level
+          libarray and langchain as main interface and high level library to
+          build agents and deep agents as higher levle built open others for
+          deep agent archietcture, agno, crewAI, smolagents, mastra, voltagent,
+          pydanticAI, n8n (AI workflows vs AI Agents
+          https://www.promptingguide.ai/agents/ai-workflows-vs-ai-agents to
+          compare n8n with other, also mention n8n has mcp allowing claude to
+          create such workflows), mention no-code platforms such as lovable or
+          bolt etc
       - name: inference_providers
         title: Inference Providers
         status: ready
         minutes: 20
         needs: [agent_frameworks]
-        notes: OpenRouter, OpenAI, AI Studio,
+        notes: >-
+          OpenRouter as gateway to many inference providers around the world,
+          vendors such as OpenAI Claude etc, Google AI Studio which give some
+          free
       - name: inference_engines
         title: Inference Engines
         status: ready
         minutes: 20
         needs: [inference_providers]
-        notes: Ollama, LMStudio, OpenWebUI, llama.cpp, TensorRT, llm-d
+        notes: >-
+          Ollama, LMStudio, OpenWebUI as UI, llama.cpp, TensorRT, SGLang and
+          others mentioned in llm inferecen in fundamental modules, llm-d for
+          distirbuted serving
       - name: ui_design
         title: UI Design
         status: ready
         minutes: 20
-        notes: Stitch, Claude Design, Design Systems, DESIGN.md
-      - name: observability
-        title: Observability
-        status: ready
-        minutes: 20
-        needs: [agent_frameworks]
-        notes: LangSmith, LangFuse, Latitude, Trace Analyzer Agent
+        notes: Google Stitch with DESIGN.md, Claude Design Design Systems
       - { name: choosing_tech_stack, title: Choosing a Tech Stack, status: draft }
 
   - slug: protocols
@@ -234,17 +263,3 @@ categories:
         title: Protocols Reference
         status: draft
         notes: all mentioned and also NLWeb, UCP, AP2
-
-  - slug: optional
-    title: Optional
-    status: draft
-    blurb: Human-in-the-loop and runtime topics that round out the series.
-    modules:
-      - name: human_in_the_loop
-        title: Human in the Loop
-        status: draft
-        notes: Interrupt, Steering
-      - name: runtime
-        title: Runtime
-        status: draft
-        notes: Checkpoints, Fault Tolerance, Time Travel

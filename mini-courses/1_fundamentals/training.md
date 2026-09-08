@@ -285,6 +285,7 @@ graph LR
     D --> E[Memory]
     E --> F[Agents]
     F --> G[Multi-Agent]
+    G --> H[Observability]
     style A fill:#90EE90
     style B fill:#FFFF00
 ```

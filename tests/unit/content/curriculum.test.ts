@@ -4,9 +4,9 @@ import { curriculum, neighbours, positionOf, sheetCount } from '@/lib/content/cu
 describe('curriculum', () => {
   const tracks = curriculum()
 
-  it('returns all six categories in spec order', () => {
+  it('returns all five categories in spec order', () => {
     expect(tracks.map((t) => t.category.slug)).toEqual([
-      'fundamentals', 'intermediate', 'expert', 'ecosystem', 'protocols', 'optional',
+      'fundamentals', 'intermediate', 'expert', 'ecosystem', 'protocols',
     ])
   })
 
@@ -59,11 +59,22 @@ describe('neighbours', () => {
   })
 
   it('links backwards across a category boundary', () => {
-    expect(neighbours('expert/advanced-ui').previous?.frontmatter.module).toBe(14)
+    // Was pinned as advanced-ui's previous being 14. Both moved in the
+    // September 2026 reorder, so it is derived: the first sheet of a
+    // subsystem has a previous, and that previous sits in another subsystem.
+    const first = curriculum()[2].modules[0]
+    const previous = neighbours(first.slug).previous
+    expect(previous?.category.slug).not.toBe(first.category.slug)
+    expect(previous?.frontmatter.module).toBe(first.frontmatter.module - 1)
   })
 
   it('gives no next for the last sheet of the set', () => {
-    expect(neighbours('optional/runtime').next).toBeNull()
+    // Named `optional/runtime` until that sheet was removed, at which point it
+    // still passed, because an unknown slug also has no next. It asks the
+    // question of whatever sheet is genuinely last.
+    const last = curriculum().at(-1)!.modules.at(-1)!
+    expect(neighbours(last.slug).next).toBeNull()
+    expect(neighbours(last.slug).previous).not.toBeNull()
   })
 
   it('returns nulls for an unknown slug', () => {

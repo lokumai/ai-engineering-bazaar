@@ -233,7 +233,7 @@ can reach a filesystem, it can keep a markdown file and get the same result.
 **Deep agents** are an agent architecture that became popular during all of this. You do not have to
 build every technique above into your own agent by hand, and this is the shape that packages them.
 There are several architectures worth knowing, covered in
-[Advanced Architectures](../3_expert/advanced_architectures.md); this is the one that
+[Advanced Agent Architectures](../3_expert/advanced_agent_architectures.md); this is the one that
 belongs in this module, because it is context engineering turned into a design.
 
 To count as deep, an agent needs at least these:
@@ -342,8 +342,9 @@ graph LR
     B --> C[Coding Agents]
     C --> D[Harness Engineering]
     D --> E[Loop Engineering]
-    E --> F[Security]
-    F --> G[Personal Agents]
+    E --> F[Generative UI]
+    F --> G[Security]
+    G --> H[Personal Agents]
     style A fill:#90EE90
     style B fill:#FFFF00
 ```

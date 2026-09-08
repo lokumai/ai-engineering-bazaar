@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { seedRecord, signedSheet } from './record'
+import { CATEGORY_PATHS } from './sheets'
 
 /**
  * §13.1.4 / SC 1.4.1 — every surface that carries a category hue says the same
@@ -88,7 +89,7 @@ test('a module row still states its own status with no colour (§13.1.3 item 3)'
   expect(borders.every((colour) => colour !== 'rgba(0, 0, 0, 0)')).toBe(true)
 })
 
-test('LKM-01 still reports six subsystems with no colour (§13.1.3 item 1)', async ({
+test('LKM-01 still reports every subsystem with no colour (§13.1.3 item 1)', async ({
   page,
 }) => {
   await seedRecord(page, { sheets: SIGNED })
@@ -102,22 +103,25 @@ test('LKM-01 still reports six subsystems with no colour (§13.1.3 item 1)', asy
     (nodes) => nodes.map((node) => getComputedStyle(node).fill),
   )
   // Two cubes on this page, not one: the 28px mark in the header and the 128px
-  // hero (§13.2's four sizes). So the count is a positive multiple of six faces
-  // rather than six — asserting six would have been a claim about the page's
-  // furniture, and it would break the day a third mark appears.
+  // hero (§13.2's four sizes). So the count is a positive multiple of the face
+  // count rather than the face count itself — asserting it directly would have
+  // been a claim about the page's furniture, and it would break the day a third
+  // mark appears. The face count comes off the subsystem list, because there is
+  // one face per subsystem.
   expect(fills.length).toBeGreaterThan(0)
-  expect(fills.length % 6).toBe(0)
+  expect(fills.length % CATEGORY_PATHS.length).toBe(0)
   expect(fills.every((fill) => fill === 'none')).toBe(true)
 
-  // Six rows, each naming its flavour, its subsystem and its count in words.
+  // One row per subsystem, each naming its flavour, its subsystem and its
+  // count in words.
   const legend = page.locator('.hl-legend-swatch')
-  await expect(legend).toHaveCount(6)
+  await expect(legend).toHaveCount(CATEGORY_PATHS.length)
 
   const text = await page.locator('body').innerText()
-  for (const flavour of ['GÜL', 'FISTIK', 'LAVANTA', 'NANE', 'KAHVE', 'KAYMAK']) {
+  for (const flavour of ['GÜL', 'FISTIK', 'LAVANTA', 'NANE', 'KAHVE']) {
     expect(text, flavour).toContain(flavour)
   }
-  for (const title of ['Fundamentals', 'Intermediate', 'Expert', 'Ecosystem', 'Optional']) {
+  for (const title of ['Fundamentals', 'Intermediate', 'Expert', 'Ecosystem']) {
     expect(text, title).toContain(title)
   }
 
@@ -159,7 +163,7 @@ test('the swatch is labelled by the row it sits in, never by hue alone', async (
   }
 
   const rows = page.locator('tr', { has: page.locator('.hl-legend-swatch') })
-  await expect(rows).toHaveCount(6)
+  await expect(rows).toHaveCount(CATEGORY_PATHS.length)
   for (const row of await rows.all()) {
     // Flavour, subsystem, and a reading: three cells, all of them words.
     expect((await row.innerText()).trim().length).toBeGreaterThan(8)

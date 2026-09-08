@@ -58,32 +58,32 @@ export const SHEETS: readonly Sheet[] = [
   sheet(5, '/courses/fundamentals/memory/', 'Memory', 'A0'),
   sheet(6, '/courses/fundamentals/agents/', 'AI Agents', 'A0'),
   sheet(7, '/courses/fundamentals/multi-agent/', 'Multi-Agent Systems', 'A0'),
-  sheet(8, '/courses/intermediate/prompt-engineering/', 'Prompt Engineering', 'A0'),
-  sheet(9, '/courses/intermediate/context-engineering/', 'Context Engineering', 'A0'),
-  sheet(10, '/courses/intermediate/coding-agents/', 'Coding Agents: Extending Them', 'A0'),
-  sheet(11, '/courses/intermediate/harness-engineering/', 'Harness Engineering', 'A0'),
-  sheet(12, '/courses/intermediate/loop-engineering/', 'Loop Engineering', 'A0'),
-  sheet(13, '/courses/intermediate/security/', 'Security', 'A0'),
-  sheet(14, '/courses/intermediate/personal-agents/', 'Personal Agents', 'A0'),
-  sheet(15, '/courses/expert/advanced-ui/', 'Advanced UI', 'A4'),
-  sheet(16, '/courses/expert/advanced-architectures/', 'Advanced Architectures', 'A4'),
+  sheet(8, '/courses/fundamentals/observability/', 'Observability', 'A0'),
+  sheet(9, '/courses/intermediate/prompt-engineering/', 'Prompt Engineering', 'A0'),
+  sheet(10, '/courses/intermediate/context-engineering/', 'Context Engineering', 'A0'),
+  sheet(11, '/courses/intermediate/coding-agents/', 'Coding Agents: Extending Them', 'A0'),
+  sheet(12, '/courses/intermediate/harness-engineering/', 'Harness Engineering', 'A0'),
+  sheet(13, '/courses/intermediate/loop-engineering/', 'Loop Engineering', 'A0'),
+  sheet(14, '/courses/intermediate/ui/', 'Generative UI', 'A4'),
+  sheet(15, '/courses/intermediate/security/', 'Security', 'A0'),
+  sheet(16, '/courses/intermediate/personal-agents/', 'Personal Agents', 'A0'),
   sheet(17, '/courses/expert/advanced-tools/', 'Advanced Tools', 'A4'),
   sheet(18, '/courses/expert/advanced-memory/', 'Advanced Memory', 'A4'),
   sheet(19, '/courses/expert/advanced-multiagent/', 'Advanced Multi-Agent', 'A4'),
   sheet(20, '/courses/expert/advanced-prompting/', 'Advanced Prompting', 'A4'),
   sheet(21, '/courses/expert/advanced-context-engineering/', 'Advanced Context Engineering', 'A4'),
-  sheet(22, '/courses/expert/advanced-harness-engineering/', 'Advanced Harness Engineering', 'A4'),
-  sheet(23, '/courses/expert/advanced-deployment/', 'Advanced Deployment', 'A4'),
-  sheet(24, '/courses/expert/advanced-training/', 'Advanced Training', 'A4'),
-  sheet(25, '/courses/ecosystem/agent-frameworks/', 'Agent Frameworks', 'A0'),
-  sheet(26, '/courses/ecosystem/inference-providers/', 'Inference Providers', 'A0'),
-  sheet(27, '/courses/ecosystem/inference-engines/', 'Inference Engines', 'A0'),
-  sheet(28, '/courses/ecosystem/ui-design/', 'UI Design', 'A0'),
-  sheet(29, '/courses/ecosystem/observability/', 'Observability', 'A0'),
-  sheet(30, '/courses/ecosystem/choosing-tech-stack/', 'Choosing a Tech Stack', 'A4'),
-  sheet(31, '/courses/protocols/protocols-reference/', 'Protocols Reference', 'A4'),
-  sheet(32, '/courses/optional/human-in-the-loop/', 'Human in the Loop', 'A4'),
-  sheet(33, '/courses/optional/runtime/', 'Runtime', 'A4'),
+  sheet(22, '/courses/expert/advanced-coding-agents/', 'Advanced Coding Agents', 'A4'),
+  sheet(23, '/courses/expert/advanced-harness-engineering/', 'Advanced Harness Engineering', 'A4'),
+  sheet(24, '/courses/expert/advanced-agent-architectures/', 'Advanced Agent Architectures', 'A4'),
+  sheet(25, '/courses/expert/advanced-ui/', 'Advanced UI', 'A4'),
+  sheet(26, '/courses/expert/advanced-deployment/', 'Advanced Deployment', 'A4'),
+  sheet(27, '/courses/expert/advanced-training/', 'Advanced Training', 'A4'),
+  sheet(28, '/courses/ecosystem/agent-frameworks/', 'Agent Frameworks', 'A0'),
+  sheet(29, '/courses/ecosystem/inference-providers/', 'Inference Providers', 'A0'),
+  sheet(30, '/courses/ecosystem/inference-engines/', 'Inference Engines', 'A0'),
+  sheet(31, '/courses/ecosystem/ui-design/', 'UI Design', 'A0'),
+  sheet(32, '/courses/ecosystem/choosing-tech-stack/', 'Choosing a Tech Stack', 'A4'),
+  sheet(33, '/courses/protocols/protocols-reference/', 'Protocols Reference', 'A4'),
 ]
 
 /**
@@ -110,7 +110,6 @@ export const CATEGORY_PATHS = [
   '/courses/expert/',
   '/courses/ecosystem/',
   '/courses/protocols/',
-  '/courses/optional/',
 ] as const
 
 /**
@@ -123,18 +122,35 @@ export const CATEGORY_PATHS = [
  */
 export const CHECKLIST_ITEMS = 5
 
-/** One sheet of each §4.4 format, for the tests that want a representative. */
-export const A0 = SHEETS[12] // 13 — Security, the widest prose on the site
-/**
- * A SHORT drawn sheet. It used to be the SHORT format's exemplar; it is now an A0
- * like every other drawn sheet, and the name is kept because a dozen specs use
- * it to mean "the short one with images" — which is still exactly what it is.
- */
-export const SHORT = SHEETS[2] //  3 — RAG & Embeddings, the sheet with images
-export const A4 = SHEETS[19] // 20 — Advanced Multi-Agent
-
 export function sheetByModule(module: number): Sheet {
   const found = SHEETS.find((s) => s.module === module)
   if (!found) throw new Error(`no sheet ${module} in the set`)
   return found
 }
+
+/**
+ * A sheet by the route it serves, which is the identity that survives a
+ * reorder. The exemplars below used to be picked by position (`SHEETS[12]`)
+ * and by number (`sheetByModule(12)`), and the September 2026 reorder moved
+ * every one of them onto different content without a single test going red:
+ * `A0` stopped being Security, and the widest-table sheet stopped being Loop
+ * Engineering. The numbers and titles above are still typed out by hand on
+ * purpose. Only the *choice* of exemplar is stated by intent.
+ */
+export function sheetByPath(path: string): Sheet {
+  const found = SHEETS.find((s) => s.path === path)
+  if (!found) throw new Error(`no sheet at ${path} in the set`)
+  return found
+}
+
+/** One sheet of each §4.4 format, for the tests that want a representative. */
+/** Security: the widest prose on the site. */
+export const A0 = sheetByPath('/courses/intermediate/security/')
+/**
+ * A SHORT drawn sheet. It used to be the SHORT format's exemplar; it is now an A0
+ * like every other drawn sheet, and the name is kept because a dozen specs use
+ * it to mean "the short one with images" — which is still exactly what it is.
+ */
+export const SHORT = sheetByPath('/courses/fundamentals/rag/')
+/** A not-drawn sheet. */
+export const A4 = sheetByPath('/courses/expert/advanced-multiagent/')

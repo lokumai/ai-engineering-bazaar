@@ -21,24 +21,32 @@ import { render } from '../../../scripts/curriculum-css.mjs'
  * `ROLE_IDS` — rather than against a transcription. Nothing here is a literal
  * count.
  *
- * **The three module lists are now generated**, from `curriculum.yaml` by
+ * **The four module lists are now generated**, from `curriculum.yaml` by
  * `scripts/curriculum-css.mjs`, into a committed `lokum-modules.css`. That
  * moves the risk rather than removing it: a committed generated file can go
  * stale. So the last case here runs the generator and compares, which is the
- * one check the others cannot make for themselves.
+ * one check the others cannot make for themselves. M10 added the fourth — the
+ * curriculum rail's completion tick.
  *
  * The one asymmetry, and it is deliberate: **the segment rules cover every
- * module and the step-tick rules cover only the drawn ones.** A draft sheet has
- * no sign-off control (§12.4.1), so `hl-signed-<n>` can never be stamped for
- * one — but a segment for a draft sheet is still drawn (dashed, unfillable),
- * and writing its rule keeps the list uniform against the day the sheet is
- * written. A step tick for a draft would instead state that the sheet could be
- * signed, which is the claim §13.4.2 exists to prevent.
+ * module and the two tick lists cover only the written ones.** A draft module
+ * has no completion control (§12.4.1), so `hl-signed-<n>` can never be stamped
+ * for one — but a segment for a draft is still drawn (dashed, unfillable), and
+ * writing its rule keeps the list uniform against the day the module is
+ * written. A tick for a draft would instead state that it could be completed,
+ * which is the claim §13.4.2 exists to prevent.
  */
 
 const APP = join(import.meta.dirname, '../../../src/app')
 const LOKUM_CSS = join(APP, 'lokum.css')
 const MODULES_CSS = join(APP, 'lokum-modules.css')
+/**
+ * M10 — the curriculum rail paints a level hue too, so it is inside the closed
+ * list §13.1.3 keeps and it has to be inside this file's scan. It was not, and
+ * a guard that does not read the file where a new consumer lives is a guard
+ * with a hole in it rather than a guard.
+ */
+const RAIL_CSS = join(APP, 'rail.css')
 
 /**
  * The stylesheet as the browser sees it: `lokum.css` with the generated
@@ -51,7 +59,7 @@ const MODULES_CSS = join(APP, 'lokum-modules.css')
 const raw = readFileSync(LOKUM_CSS, 'utf8').replace(
   /@import "\.\/lokum-modules\.css"[^;]*;/,
   readFileSync(MODULES_CSS, 'utf8'),
-)
+) + '\n' + readFileSync(RAIL_CSS, 'utf8')
 
 /** Comments stripped, so prose naming a selector is never counted as one. */
 const css = raw.replace(/\/\*[\s\S]*?\*\//g, ' ')
@@ -139,11 +147,35 @@ describe('§13.4.2 — a step tick exists only for a module that can be signed',
     // light up a different step than the one that was signed, which is the
     // worst kind of quiet defect: plausible, and wrong.
     const mismatched = [
-      ...css.matchAll(/html\.hl-signed-(\d+)\s+\.hl-(?:seg|step)\[data-module="(\d+)"\]/g),
+      ...css.matchAll(/html\.hl-signed-(\d+)\s+\.hl-(?:seg|step|mod)\[data-module="(\d+)"\]/g),
     ]
       .filter((match) => match[1] !== match[2])
       .map((match) => `${match[1]} → ${match[2]}`)
     expect(mismatched).toEqual([])
+  })
+})
+
+describe('M10 — the curriculum rail’s tick covers every module that can be completed', () => {
+  it('covers the ready modules and stops there', () => {
+    const named = captures(
+      /html\.hl-signed-(\d+)\s+\.hl-mod\[data-module="\d+"\]\s+\.hl-mod-mark/g,
+    )
+      .map(Number)
+      .sort((a, b) => a - b)
+    expect(named).toEqual(DRAWN_MODULES)
+  })
+
+  /**
+   * The same asymmetry the step tick has, and for the same reason: a draft
+   * module has no completion control (§12.4.1), so `hl-signed-<n>` can never be
+   * stamped for one. A rule that could light up would state that it could be
+   * completed, which is the claim §13.4.2 exists to prevent.
+   */
+  it('names no module the corpus has not written', () => {
+    const named = captures(
+      /html\.hl-signed-(\d+)\s+\.hl-mod\[data-module="\d+"\]\s+\.hl-mod-mark/g,
+    ).map(Number)
+    for (const module of named) expect(DRAWN_MODULES).toContain(module)
   })
 })
 
@@ -182,6 +214,9 @@ describe('§13.1.3 — no hue escapes the closed list of surfaces', () => {
     'hl-face',          // an LKM-01 face (1)
     'hl-legend-swatch', // the face legend's swatch
     'hl-cat-tint',      // the carrier itself
+    'hl-level',         // M10 — the current level's 4px coloured edge
+    'hl-level-key',     // M10 — the level's own square in the rail
+    'hl-nav-menu-key',  // M10 — the level's own square in the navbar dropdown
   ])
 
   it('paints only from classes the spec lists', () => {

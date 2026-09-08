@@ -25,7 +25,7 @@ test('module 1 has no previous', async ({ page }) => {
 
   await expect(page.locator('.hl-prevnext a[rel="prev"]')).toHaveCount(0)
   await expect(page.locator('.hl-prevnext .hl-prevnext-cell').first())
-    .toContainText(/end of set/i)
+    .toContainText(/end of the course/i)
   await expect(page.locator('.hl-prevnext a[rel="next"]')).toHaveCount(1)
 })
 
@@ -34,7 +34,7 @@ test('module 32 has no next', async ({ page }) => {
 
   await expect(page.locator('.hl-prevnext a[rel="next"]')).toHaveCount(0)
   await expect(page.locator('.hl-prevnext .hl-prevnext-cell').last())
-    .toContainText(/end of set/i)
+    .toContainText(/end of the course/i)
   await expect(page.locator('.hl-prevnext a[rel="prev"]')).toHaveCount(1)
 })
 

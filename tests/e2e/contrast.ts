@@ -116,8 +116,31 @@ export function worst(samples: readonly ContrastSample[]): ContrastSample {
  * prev/next cell — cross-fades over 90ms, and a contrast sample taken straight
  * after the switch reads the new ink against the old ground: dark-mode
  * `ink-muted` on light-mode paper, a pairing that is on screen for a tenth of
- * a second and exists in no theme. The frame after the freeze is lifted is the
- * first one that is honest.
+ * a second and exists in no theme.
+ *
+ * ## A FRAME COUNT IS NOT A WAIT, and that was a real defect
+ *
+ * This function used to end after one frame past the thaw, on the reasoning
+ * that "the frame after the freeze is lifted is the first one that is honest".
+ * It is not. **MEASURED in Chrome 151:** lifting `transition: none !important`
+ * and changing the value in the same frame makes Chrome start the transition on
+ * the NEXT frame, from the old value. Polling a manifest row's computed
+ * `background-color` every 120ms after the thaw returned
+ * `oklab(0.988498 …)` — the LIGHT theme's paper, at progress zero, with one
+ * running animation on the element — and the dark value only from the second
+ * sample on.
+ *
+ * That is why `accessibility.spec.ts`'s dark-theme manifest check reported
+ * `"01" at 1.84:1`: the ink was already dark-theme `ink-muted` and the ground
+ * was still light-theme paper. Both halves were correct; the sample was taken
+ * 32ms into a 90ms cross-fade. It passed when run alone and failed under
+ * parallel load, which is the signature of a race being read as a palette
+ * defect. See `kia-context/logs/BRAINSTORM.md` D20.
+ *
+ * So this waits for the transitions themselves to finish rather than counting
+ * frames. Only CSS transitions are awaited: §9.3's one page-load animation and
+ * §9.4's three keyframe animations are finite too, but a keyframe animation
+ * this helper does not own has no business blocking a colour sample.
  */
 export async function useTheme(page: Page, theme: 'light' | 'dark'): Promise<void> {
   await page.evaluate(async (next) => {
@@ -132,6 +155,22 @@ export async function useTheme(page: Page, theme: 'light' | 'dark'): Promise<voi
     const frame = () => new Promise((resolve) => requestAnimationFrame(resolve))
     await frame()
     root.classList.remove('disable-transitions')
+    await frame()
+
+    // Whatever Chrome started on the thaw frame, let it finish. `finished`
+    // rejects when an animation is cancelled — a route change, an element
+    // removed — which is not an error here, only an animation that is over.
+    const settle = async () => {
+      const running = document
+        .getAnimations()
+        .filter((animation) => animation instanceof CSSTransition)
+      await Promise.all(running.map((animation) => animation.finished.catch(() => {})))
+      return running.length
+    }
+    // Twice: finishing one transition can reveal an element whose own
+    // transition then starts. Bounded, because every duration on this site is
+    // 200ms or less and nothing here loops.
+    while ((await settle()) > 0) await frame()
     await frame()
   }, theme)
 }

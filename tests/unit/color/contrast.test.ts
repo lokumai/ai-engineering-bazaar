@@ -218,21 +218,25 @@ describe('what the palette change settled, and what it did not', () => {
 })
 
 /**
- * §6.7's four tokens, against the ground §6.7 puts them on.
+ * §6.7's syntax tokens, against the ground M11 put them on.
  *
- * The tables above pair a token with `paper` and `cleared`; a code block is
- * `--color-sunken`, which is the darkest ground in light mode and therefore
- * the tightest pairing on the site. §6.7 originally gave the comment token
- * `--color-ink-faint`, which is 2.45:1 there — under half the floor, on real
- * teaching prose (`# Add some code snippets with embeddings`). T5 forbids
- * exactly that, and §1 gives the floor the last word over a component.
+ * **The code ground is the SLAB now, and it does not flip with the theme.** A
+ * code block and a diagram are dark in both themes on purpose
+ * (`kia-context/specs/DESIGN.md`, Overview), so every syntax token is a
+ * `--color-slab-*` token measured against `--color-slab` — and both theme
+ * passes must give the same answer, which is itself worth asserting because
+ * a slab token accidentally declared in only one theme would make
+ * `readDesignToken` throw rather than pass quietly.
  *
- * The light pass has ~0.2 of headroom, so this check is not optional
- * decoration: nudge `--color-ink-muted` a shade lighter and comments drop
- * under 4.5 with nothing else on the site changing.
+ * The rule §6.7 carried is unchanged and it is why `slab-comment` is not the
+ * `#767c88` DESIGN.md first wrote: a comment in a teaching corpus is CONTENT
+ * (`# Add some code snippets with embeddings`), so it takes the 4.5:1 text
+ * floor rather than a decorative one, and `#767c88` measured 3.92:1 here. T5
+ * is the same refusal one ground over, and §1 gives the floor the last word
+ * over a component.
  */
-describe('§6.7 syntax tokens on the code ground', () => {
-  const ground = (theme: Theme) => readDesignToken('--color-sunken')[theme]
+describe('§6.7 syntax tokens on the slab', () => {
+  const ground = (theme: Theme) => readDesignToken('--color-slab')[theme]
 
   it.each(
     (['light', 'dark'] as const).flatMap((theme) =>
@@ -240,12 +244,44 @@ describe('§6.7 syntax tokens on the code ground', () => {
         (token) => [theme, token] as const,
       ),
     ),
-  )('%s: %s clears 4.5:1 on --color-sunken', (theme, token) => {
+  )('%s: %s clears 4.5:1 on --color-slab', (theme, token) => {
     expect(contrastRatio(readDesignToken(token)[theme], ground(theme))).toBeGreaterThanOrEqual(4.5)
   })
 
-  it('never paints a comment in the decorative ink T5 refuses', () => {
+  it('never paints a comment in a decorative ink, on any ground', () => {
     const comment = CODE_TOKEN_ROLES.find((role) => role.scope.includes('comment'))
     expect(comment?.token).not.toBe('--color-ink-faint')
+    expect(comment?.token).not.toBe('--color-slab-line')
+  })
+
+  /**
+   * The slab's own boundary line is the decorative one, and it has to STAY
+   * decorative: `slab-line` is what the slab's border and its internal
+   * dividers are drawn in, and the moment it clears 3:1 somebody reaches for
+   * it to draw a diagram's geometry — which is the mistake `rail.css` records
+   * having caught, at 1.36:1.
+   */
+  it('keeps the slab line under the structural threshold', () => {
+    for (const theme of ['light', 'dark'] as const) {
+      expect(
+        contrastRatio(readDesignToken('--color-slab-line')[theme], ground(theme)),
+        theme,
+      ).toBeLessThan(3.0)
+    }
+  })
+
+  /**
+   * …and the token that replaced it for that job has to clear it. This is the
+   * pair `rail.css` sets `--color-line-strong` to inside the slab, which is
+   * every node stroke, every edge path and every arrowhead in fifty-three
+   * diagrams.
+   */
+  it('gives a diagram inside the slab a stroke that clears the graphic floor', () => {
+    for (const theme of ['light', 'dark'] as const) {
+      expect(
+        contrastRatio(readDesignToken('--color-slab-comment')[theme], ground(theme)),
+        theme,
+      ).toBeGreaterThanOrEqual(3.0)
+    }
   })
 })

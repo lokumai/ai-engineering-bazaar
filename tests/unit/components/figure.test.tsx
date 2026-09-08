@@ -25,7 +25,9 @@ describe('the contract with render.ts', () => {
 
     expect(FIGURE_SELECTORS.SOURCES).toBe('[data-hl-prose] .mermaid-source[data-mermaid]')
     expect(html).toContain('<div class="mermaid-source" data-mermaid=')
-    expect(html).toContain('<figure class="hl-figure hl-diagram"')
+    // M11 — the third class is the dark slab, which is a local theme override
+    // rather than a set of diagram colours: `rail.css` says why.
+    expect(html).toContain('<figure class="hl-figure hl-diagram hl-slab"')
   })
 
   it('looks for the EXPAND control the caption strip actually carries', async () => {

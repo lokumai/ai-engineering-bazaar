@@ -371,35 +371,74 @@ test('every control reaches the §10.4 touch floor below 768px', async ({ page }
   }
 })
 
+/**
+ * §4.7's order, as M10 and M11 rewrote it. Two breakpoints, both from
+ * `kia-context/specs/DESIGN.md`'s Layout: **at 1180px the contents rail goes,
+ * at 880px the curriculum list does.** They used to be 1280 and 1024, and the
+ * rails held the other way round.
+ *
+ * Whichever rails the window has taken away are behind one control, and the
+ * module's own facts stay in the column at every width, because since M11 that
+ * is the only place they live.
+ */
 test('the module gives up its zones in §4.7 order as the viewport narrows', async ({ page }) => {
   const width = page.viewportSize()!.width
-  await page.goto(LONGEST.path) // an A0 sheet — the only format with three zones
+  await page.goto(LONGEST.path) // a written module — the only format with three zones
 
-  const rightRail = page.locator('.hl-rail-right')
-  const leftRail = page.locator('.hl-rail-left')
+  const contents = page.locator('.hl-rail-right')
+  const curriculum = page.locator('.hl-rail-left')
   const drawer = page.getByRole('button', { name: 'Contents', exact: true })
 
-  if (width >= 1280) {
-    await expect(rightRail).toBeVisible()
-    await expect(leftRail).toBeVisible()
+  // The module's facts are in the column in all three cases.
+  await expect(page.locator('.hl-title-strip')).toBeVisible()
+
+  if (width >= 1180) {
+    await expect(contents).toBeVisible()
+    await expect(curriculum).toBeVisible()
     await expect(drawer).toBeHidden()
-  } else if (width >= 1024) {
-    // Right rail collapses; the title block becomes the strip (§4.7).
-    await expect(rightRail).toBeHidden()
-    await expect(leftRail).toBeVisible()
-    await expect(page.locator('.hl-title-strip')).toBeVisible()
-  } else {
-    // Left rail becomes a drawer; one column.
-    await expect(rightRail).toBeHidden()
-    await expect(leftRail).toBeHidden()
+  } else if (width >= 880) {
+    // The contents rail goes first, behind the control; the curriculum stays.
+    await expect(contents).toBeHidden()
+    await expect(curriculum).toBeVisible()
     await expect(drawer).toBeVisible()
-    await expect(page.locator('.hl-title-strip')).toBeVisible()
+  } else {
+    // Both are behind the control, and the drawer carries both.
+    await expect(contents).toBeHidden()
+    await expect(curriculum).toBeHidden()
+    await expect(drawer).toBeVisible()
+
+    await drawer.click()
+    const panel = page.locator('[role="dialog"]')
+    await expect(panel.locator('nav[aria-label="Sections"]')).toBeVisible()
+    await expect(panel.locator('nav[aria-label="Course modules"]')).toBeVisible()
   }
 })
 
-test('the A4 module keeps its band and schedule at every width', async ({ page }) => {
+/**
+ * A draft module. It has no contents rail at any width — §4.5 gives it one
+ * sentence and a schedule, so there are no sections to list — but it DOES get
+ * the curriculum, which M10 gave to every module page: the rail is navigation
+ * rather than module info, and a reader who lands on a stub needs a way out of
+ * it more than anyone does.
+ */
+test('the draft module keeps its band and schedule at every width', async ({ page }) => {
+  const width = page.viewportSize()!.width
   await page.goto(A4.path)
   await expect(page.locator('.hl-status-band')).toBeVisible()
   await expect(page.locator('table.hl-schedule')).toBeVisible()
-  await expect(page.locator('.hl-rail-left')).toHaveCount(0)
+  await expect(page.locator('.hl-rail-right')).toHaveCount(0)
+
+  const curriculum = page.locator('.hl-rail-left')
+  const drawer = page.getByRole('button', { name: 'Contents', exact: true })
+
+  if (width >= 880) {
+    await expect(curriculum).toBeVisible()
+    // …and NO control, because there is nothing for it to open: a draft has no
+    // contents rail to lose, so a `Contents` button here would open an empty
+    // panel, which is a control that cannot do its job (§1).
+    await expect(drawer).toBeHidden()
+  } else {
+    await expect(curriculum).toBeHidden()
+    await expect(drawer).toBeVisible()
+  }
 })

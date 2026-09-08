@@ -86,7 +86,17 @@ const EMPTY_STAMPS = [
   'SOURCES OPENED 0 OF 5',
 ]
 
-/** Both §12.3.1 rows: the A0 right-rail title block, and the strip below the h1. */
+/**
+ * §12.3.1's row, wherever the layout puts it.
+ *
+ * It used to be TWO — the 240px right-rail panel and the strip below the h1,
+ * one of them hidden at any given width — and this helper collected both so
+ * neither could go stale unnoticed. M11 cut the rail back to the sections and
+ * the dependency block and moved the module's facts into the column, so there
+ * is exactly one now. Both selectors are kept: the panel is still built
+ * (`TitleBlock.tsx` says why) and this helper should find it if a page ever
+ * renders it again.
+ */
 function checkedBy(page: Page) {
   return page
     .locator('.hl-title-block-row, .hl-title-strip-pair')
@@ -94,10 +104,13 @@ function checkedBy(page: Page) {
     .locator('dd')
 }
 
-/** The sheet's own printed `REVISION` — what §12.4.3 records a sign-off against. */
+/**
+ * The module's own printed `REVISION` — what §12.4.3 records a completion
+ * against. Same story as `checkedBy`: it is in the strip now.
+ */
 function printedRevision(page: Page) {
   return page
-    .locator('.hl-title-block-row')
+    .locator('.hl-title-block-row, .hl-title-strip-pair')
     .filter({ has: page.locator('dt', { hasText: /^REVISION$/ }) })
     .locator('dd')
 }
@@ -122,9 +135,9 @@ function stampConditions(page: Page): Promise<string[]> {
     )
 }
 
-const signOff = (page: Page) => page.getByRole('button', { name: 'COMPLETE', exact: true })
-const signedOff = (page: Page) => page.getByRole('button', { name: /^COMPLETED / })
-const unsign = (page: Page) => page.getByRole('button', { name: 'UNSIGN', exact: true })
+const signOff = (page: Page) => page.getByRole('button', { name: 'Complete', exact: true })
+const signedOff = (page: Page) => page.getByRole('button', { name: /^Completed / })
+const unsign = (page: Page) => page.getByRole('button', { name: 'Un-complete', exact: true })
 const anyDialog = (page: Page) => page.locator('[role="dialog"], [role="alertdialog"], dialog')
 
 /**
@@ -171,8 +184,9 @@ test('the module as exported is the honest empty form (§12.2, §12.13 class 1)'
 
   // §12.3.1 — both rows print `—`, which is the ISO 128 hidden line the rest of
   // the set already reads as "not yet", not a missing value.
-  await expect(checkedBy(page)).toHaveCount(2)
-  await expect(checkedBy(page)).toHaveText(['—', '—'])
+  // One row now, not two: see `checkedBy` above.
+  await expect(checkedBy(page)).toHaveCount(1)
+  await expect(checkedBy(page)).toHaveText(['—'])
 
   // §12.5.4 — every slot states its exact threshold and its current count. That
   // single rule is what makes a stamp informational rather than controlling, and
@@ -196,7 +210,7 @@ test('with nothing recorded the module settles on 00/32, not on -- (§12.2 chann
 
   await expect(readoutCells(page)).toHaveText(EMPTY_READOUT)
   await expect(signOff(page)).toHaveAttribute('aria-pressed', 'false')
-  await expect(checkedBy(page)).toHaveText(['—', '—'])
+  await expect(checkedBy(page)).toHaveText(['—'])
   expect(await stampConditions(page)).toEqual(EMPTY_STAMPS)
 
   // A channel-B readout that mismatched its own prerender would be logged here
@@ -230,29 +244,45 @@ test('a seeded record stamps <html> inside the first frame (§12.2 channel A)', 
   expect(painted!.storage).toBe('ok')
 
   // And the reading is genuinely pre-React, which is what makes the three above
-  // mean anything: in this same frame channel B has not run, so the sign-off
-  // control still says `aria-pressed="false"` about a sheet the stored record
-  // says is signed off. An effect that added these classes could not have got
-  // there first.
+  // mean anything. **This used to be asserted as `painted.hydrated !== 'true'`,
+  // and that proxy is wrong** — kept here in full because the reason is the
+  // useful part.
   //
-  // Stated as what would FALSIFY channel A rather than as a positive reading,
-  // and the difference is not pedantry. `hydrated` comes off `.hl-readout`,
-  // which sits 82.5 KB into a 211 KB document, while the probe fires on the
-  // first `requestAnimationFrame` — so the browser can paint, and this can run,
-  // before that element has been parsed at all. MEASURED: serving the document
-  // in two chunks 400 ms apart makes this read `null` on a build of `main` just
-  // as readily as on any later one, and a loaded CI runner produces the same
-  // condition for free — which is exactly how it first showed up, on a run that
-  // took 4.7 minutes where its predecessors took 3.8. `null` there is not a
-  // weaker channel A, it is a stronger one: nothing had rendered the readout,
-  // so nothing could have populated it. The only reading that contradicts
-  // §12.2 is a readout that has already published `true`.
-  expect(painted!.hydrated).not.toBe('true')
-  // The corroboration the line above declines to race for, taken where there is
-  // no race: `data-hydrated` is a real two-state signal, so the `false` the
-  // prerender ships is a state the page leaves rather than one it never had.
-  // Without this, `not.toBe('true')` would also pass against an attribute that
-  // is hardcoded and means nothing.
+  // The argument was: `hydrated` comes off `.hl-readout`, 82.5 KB into a 211 KB
+  // document, and the probe fires on the first `requestAnimationFrame`, so the
+  // browser can paint before that element is parsed; `null` is therefore a
+  // STRONGER reading than `false`, and only an already-published `true` could
+  // contradict §12.2.
+  //
+  // It can. MEASURED under eight parallel workers, twice out of two runs, with
+  // a warm HTTP cache: all three stamps above were correct in the pre-paint
+  // frame AND `hydrated` read `true`. Under CPU contention the main thread
+  // parses the document and runs React's hydration in one long task, and the
+  // browser produces no frame — so no `requestAnimationFrame` callback — until
+  // that task ends. React beating the first PAINT contradicts nothing in
+  // §12.2: what §12.2 claims is that the stamps are on `<html>` before any
+  // paint and without React's help, and the three assertions above are what
+  // measure it. The proxy was measuring scheduler load. See
+  // `kia-context/logs/BRAINSTORM.md` D20.
+  //
+  // What replaces it cannot be raced at all, because it is structural rather
+  // than temporal: the reason channel A is pre-paint is that the script is
+  // INLINE AND BLOCKING INSIDE `<head>`. Read off the served document, not off
+  // the live DOM, so a bundle that moved the script to the end of `<body>`, or
+  // deferred it, or replaced it with an effect, fails here — which is the
+  // regression the old line was reaching for.
+  const served = await page.request.get(SHEET.path)
+  const html = await served.text()
+  const head = html.slice(0, html.indexOf('</head>'))
+  expect(head, 'the record boot script is not inline in <head>').toContain('hl-record')
+  expect(head, 'the boot script is deferred, so it is no longer pre-paint')
+    .not.toMatch(/<script[^>]+(defer|async)[^>]*>[^<]*hl-record/)
+
+  // The corroboration, taken where there is no race: `data-hydrated` is a real
+  // two-state signal, so the `false` the prerender ships is a state the page
+  // leaves rather than one it never had. Without this, nothing above would
+  // notice an attribute that was hardcoded and meant nothing.
+  await expect(page.locator('footer .hl-readout')).toHaveAttribute('data-hydrated', /true|false/)
   await waitForHydratedReadout(page)
   await expect(page.locator('footer .hl-readout')).toHaveAttribute('data-hydrated', 'true')
   await expect(signOff(page)).toHaveCount(0)
@@ -456,9 +486,9 @@ test('sign-off records the module’s own revision and survives a reload (§12.4
   // §12.4.1 — the control states the assertion and its date, and `UNSIGN` is
   // adjacent rather than hidden behind the pressed toggle.
   await expect(signedOff(page)).toHaveAttribute('aria-pressed', 'true')
-  await expect(signedOff(page)).toHaveText(/^COMPLETED \d{4}-\d{2}-\d{2}$/)
+  await expect(signedOff(page)).toHaveText(/^Completed \d{4}-\d{2}-\d{2}$/)
   await expect(unsign(page)).toBeVisible()
-  await expect(checkedBy(page)).toHaveText(['Ada Lovelace', 'Ada Lovelace'])
+  await expect(checkedBy(page)).toHaveText(['Ada Lovelace'])
 
   // §12.4.3 — the hash AT sign-off, which is what makes the drift line possible
   // later. The record must hold the sheet's own printed REV, not HEAD.
@@ -469,7 +499,7 @@ test('sign-off records the module’s own revision and survives a reload (§12.4
   // The whole point of §12.1.4's flush: it came back.
   await page.reload()
   await expect(signedOff(page)).toHaveAttribute('aria-pressed', 'true')
-  await expect(checkedBy(page)).toHaveText(['Ada Lovelace', 'Ada Lovelace'])
+  await expect(checkedBy(page)).toHaveText(['Ada Lovelace'])
   expect(await hasRootClass(page, `hl-signed-${SHEET.module}`)).toBe(true)
 })
 
@@ -491,7 +521,7 @@ test('un-complete reverses the assertion and clears its channel-A stamp (§12.4.
   // §12.3.1 — not signed off prints `—`, which is a different state from
   // `UNSIGNED`: the first is "nobody signed this", the second is "signed by
   // somebody who declined to give a name".
-  await expect(checkedBy(page)).toHaveText(['—', '—'])
+  await expect(checkedBy(page)).toHaveText(['—'])
   // §12.4.3 — with no assertion there is no revision to be adrift from.
   await expect(page.locator('.hl-signoff-drift')).toHaveCount(0)
 
@@ -630,7 +660,7 @@ test('skipping the name is a legitimate state and prints UNSIGNED (§12.3.2)', a
   await expect(page.locator('.hl-signoff form')).toHaveCount(0)
   // Never a placeholder person: no "Anonymous", no "Reader", no invented name.
   // Absence of a name is information; a fake name would be a claim.
-  await expect(checkedBy(page)).toHaveText(['UNSIGNED', 'UNSIGNED'])
+  await expect(checkedBy(page)).toHaveText(['UNSIGNED'])
   expect((await waitForSheet(page, SLUG, (s) => s?.signedOff != null)).signedOff).not.toBeNull()
   expect((await readRecord(page))?.data.identity.name ?? null).toBeNull()
 })

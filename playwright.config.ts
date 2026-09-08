@@ -30,10 +30,17 @@ import { defineConfig, devices } from '@playwright/test'
  * ## The viewports
  *
  * §4.7 gives the layout three behaviours and each project is one of them:
- * 1440 is all three zones of an A0 sheet, 1024 is the right rail collapsed to
- * a strip, 390 is the single column. Only the responsive spec runs on all
- * three — the rest of the suite is behaviour, not a rendering matrix, and
- * tripling it would triple CI for no additional answer.
+ * 1440 is all three tracks of a written module, 1024 is the contents rail
+ * behind its control, 390 is the single column. **Two** specs run on all three
+ * — the rest of the suite is behaviour, not a rendering matrix, and tripling it
+ * would triple CI for no additional answer.
+ *
+ * The second one is `containment.spec.ts`, and M11's acceptance criteria are
+ * why: "no element of a diagram may have a right edge beyond its column
+ * without a clipping ancestor… the same at 390px and 1024px". A diagram's
+ * natural width does not change with the window but the column's does, so the
+ * ratio between them — which is the whole of the defect — is different at each
+ * one. See `kia-context/logs/PROGRESS.md` M11.
  */
 
 const TARGET = process.env.E2E_TARGET ?? 'static'
@@ -83,12 +90,12 @@ export default defineConfig({
     },
     {
       name: 'chrome-1024',
-      testMatch: /responsive\.spec\.ts/,
+      testMatch: /(responsive|containment)\.spec\.ts/,
       use: { ...devices['Desktop Chrome'], channel, viewport: { width: 1024, height: 768 } },
     },
     {
       name: 'chrome-390',
-      testMatch: /responsive\.spec\.ts/,
+      testMatch: /(responsive|containment)\.spec\.ts/,
       use: {
         ...devices['Desktop Chrome'],
         channel,

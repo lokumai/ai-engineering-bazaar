@@ -107,11 +107,19 @@ test('an A0 module paints the struct weight rather than bordering it', async ({ 
   expect(weights, 'no rule on the module paints heavier than a hairline')
     .toContain(1.5)
 
-  // The named consumers: §6.1's rule under the h1, §6.5's rule under a table
-  // header, §5.5's rule under the title block's head. Each keeps a transparent
-  // border for the layout space it always occupied.
+  // The named consumers: §6.1's rule under the h1 and §6.5's rule under a
+  // table header. Each keeps a transparent border for the layout space it
+  // always occupied.
+  //
+  // `.hl-title-block-head` was the third and is gone from this list, not from
+  // the rule: M11 cut the right rail back to the sections and the dependency
+  // block, so variant A of the module info — the 240px panel that head belongs
+  // to — is rendered by no page (`TitleBlock.tsx`). A selector that cannot
+  // match asserts nothing, and leaving it here would have read as a regression
+  // in the paint rather than as a layout that moved. `catalog`'s own case above
+  // still covers a painted struct rule outside the prose.
   const consumers = await page.evaluate(() =>
-    ['.prose h1', '.prose thead th', '.hl-title-block-head'].map((selector) => {
+    ['.prose h1', '.prose thead th'].map((selector) => {
       const el = document.querySelector(selector)
       if (!el) return { selector, found: false }
       const style = getComputedStyle(el)

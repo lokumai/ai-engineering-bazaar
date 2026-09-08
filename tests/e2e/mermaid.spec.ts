@@ -28,20 +28,43 @@ test('renders a mermaid marker as an SVG drawing', async ({ page }) => {
   await expect(diagram).toBeVisible({ timeout: 20_000 })
 })
 
-test('paints the figure from tokens, and re-themes it without re-rendering', async ({ page }) => {
+/**
+ * B4/§9.2 — every colour in the drawing is a `var(--color-…)` reference and
+ * nothing is inline, so the drawing re-resolves from the cascade with no
+ * re-render and no re-parse.
+ *
+ * **M11 changed what that mechanism is used FOR, and the test with it.** A
+ * diagram is a dark slab in both themes now (`kia-context/specs/DESIGN.md`),
+ * and the slab is implemented as a local theme override on the figure —
+ * `rail.css` redeclares the palette there, custom properties cascade into
+ * inline SVG, and fifty-three diagrams land on a dark ground with no change to
+ * `mermaid-config.ts` at all. That is the same mechanism this test has always
+ * been about; what it proves has been inverted:
+ *
+ * - the painted stroke IS the token, read from the FIGURE rather than from
+ *   `<html>`, because the figure is where the slab declares it;
+ * - flipping the theme does NOT change it, which is the slab's promise;
+ * - the root token DOES change under the same flip, so the two are genuinely
+ *   independent and the slab is not simply a token that happens not to move;
+ * - and the SVG is never re-rendered either way, which is the 0ms claim.
+ *
+ * Asserting "the stroke changed" would now be asserting a defect.
+ */
+test('paints the figure from its own tokens, and never re-renders it', async ({ page }) => {
   await page.goto(WITH_FIGURES)
   const diagram = page.locator('.mermaid-source svg').first()
   await expect(diagram).toBeVisible({ timeout: 20_000 })
 
-  // B4/§9.2: every colour in the drawing is a `var(--color-…)` reference, so a
-  // theme flip re-resolves it in the same frame — no re-render, no re-parse.
-  // That is only true if the painted stroke *is* the token, so read both.
-  const strokeAndToken = () =>
+  const read = () =>
     diagram.evaluate((svg) => {
       const node = svg.querySelector('.node rect, .node polygon, .node path')
+      const figure = svg.closest('.hl-figure')!
       return {
         stroke: node ? getComputedStyle(node).stroke : null,
-        token: getComputedStyle(document.documentElement)
+        // The token as the FIGURE resolves it — the slab's value.
+        slabToken: getComputedStyle(figure).getPropertyValue('--color-line-strong').trim(),
+        // …and as the page resolves it, which is a different value entirely.
+        rootToken: getComputedStyle(document.documentElement)
           .getPropertyValue('--color-line-strong')
           .trim(),
         probe: svg.getAttribute('data-hl-probe'),
@@ -51,15 +74,22 @@ test('paints the figure from tokens, and re-themes it without re-rendering', asy
   // A probe the render would destroy: if mermaid re-runs, this attribute goes.
   await diagram.evaluate((svg) => svg.setAttribute('data-hl-probe', 'set'))
 
-  const light = await strokeAndToken()
+  const light = await read()
   expect(light.stroke).not.toBeNull()
+  expect(light.slabToken).not.toBe('')
+  // The slab is its own palette, not the page's.
+  expect(light.slabToken).not.toBe(light.rootToken)
 
   await page.evaluate(() => document.documentElement.classList.add('dark'))
-  const dark = await strokeAndToken()
+  const dark = await read()
 
+  // No re-render, in either direction.
   expect(dark.probe).toBe('set')
-  expect(dark.token).not.toBe(light.token)
-  expect(dark.stroke).not.toBe(light.stroke)
+  // The page's own token moved…
+  expect(dark.rootToken).not.toBe(light.rootToken)
+  // …and the drawing did not, because the slab does not flip.
+  expect(dark.slabToken).toBe(light.slabToken)
+  expect(dark.stroke).toBe(light.stroke)
 })
 
 test('downloads no mermaid bundle on a page with no figures', async ({ page }) => {

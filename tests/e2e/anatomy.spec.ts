@@ -2,18 +2,29 @@ import { type Locator, type Page, expect, test } from '@playwright/test'
 import { A0, SHORT, A4 } from './sheets'
 
 /**
- * §4.4 — the three sheet formats, each rendering its own anatomy.
+ * §4.4, as M10 and M11 rebuilt it — the reading shell, asserted structurally.
  *
  * The failure this guards against is the one §4.4 names as the biggest in the
- * whole direction: an A4 stub wrapped in A0 chrome, or an A0 assembly quietly
- * degrading to a single column because a grid rule stopped matching. Both
- * still show an h1 and both still pass `module-sheets.spec.ts`. The difference
- * is structural, so it is asserted structurally — which parts exist, which do
- * not, and how wide the prose actually is.
+ * whole direction: a stub wrapped in the full chrome, or an assembly quietly
+ * degrading to a single column because a grid rule stopped matching. Both still
+ * show an h1 and both still pass `module-sheets.spec.ts`. The difference is
+ * structural, so it is asserted structurally — which parts exist, which do not,
+ * and how wide the text actually is.
  *
- * These run at 1440 (the `chrome-1440` project), where §4.7 gives every format
- * its full three-zone behaviour. `responsive.spec.ts` covers what happens as
- * the zones collapse.
+ * ## What changed in M11, and why nothing here pins a pixel any more
+ *
+ * The three tracks used to be 208 + 24 + 656 + 24 + 240 = 1152, centred in a
+ * 1200px shell, and this file asserted those numbers. They are gone: the rails
+ * are anchored to the WINDOW edges and the column is centred between them at a
+ * cap of 80ch (`kia-context/logs/BRAINSTORM.md` D15). So the assertions are the
+ * RULES rather than the arithmetic — the rail widths are read back from the
+ * tokens that declare them, and the measure is compared against an 80ch box
+ * measured in the reading face itself. A webfont that loads at a different
+ * advance width moves the pixel count and must not move this suite.
+ *
+ * These run at 1440 (the `chrome-1440` project), where every rail is in flow.
+ * `responsive.spec.ts` covers what happens as they collapse, and
+ * `containment.spec.ts` covers what a diagram may not do inside the column.
  */
 
 /** The rendered width of an element, which is the thing §4.4 legislates. */
@@ -23,14 +34,41 @@ async function widthOf(locator: Locator): Promise<number> {
   return Math.round(box.width)
 }
 
+/** A layout token, read back from the stylesheet that declares it. */
+function track(page: Page, name: string): Promise<number> {
+  return page.evaluate(
+    (token) => parseFloat(getComputedStyle(document.documentElement).getPropertyValue(token)),
+    name,
+  )
+}
+
 /**
- * The width of the *drawing*, and where it sits in the 1152px box.
+ * The reading measure, in the reading face.
  *
- * `.hl-sheet` is the grid container and it always spans the shell; §4.4's
- * numbers are the width of the tracks inside it, and "centred in the 1152 box"
- * is a statement about the leftover space either side. So this measures the
- * zones themselves, from the left edge of the first to the right edge of the
- * last, and reports how far each margin is from the container's edge.
+ * `--width-measure` is `80ch`, and `ch` is the advance width of `0` in
+ * whatever font actually resolved — Manrope where the webfont loaded, a
+ * fallback where it did not. Measuring an 80ch box inside the prose itself is
+ * the only way to assert the cap without writing down a pixel count that a
+ * font swap invalidates.
+ */
+function measureCap(page: Page): Promise<number> {
+  return page.evaluate(() => {
+    const prose = document.querySelector('[data-hl-prose], .prose')!
+    const probe = document.createElement('div')
+    probe.style.cssText = 'position:absolute;visibility:hidden;width:var(--width-measure)'
+    prose.appendChild(probe)
+    const width = probe.getBoundingClientRect().width
+    probe.remove()
+    return Math.round(width)
+  })
+}
+
+/**
+ * Where the three tracks sit, and how far each end is from the WINDOW.
+ *
+ * D15's rule is "anchored to the window edges", so what this reports is the
+ * distance from the viewport's own edges rather than from a shell that no
+ * longer exists on this page.
  */
 async function zones(page: Page, selectors: readonly string[]) {
   const boxes = await Promise.all(
@@ -40,101 +78,101 @@ async function zones(page: Page, selectors: readonly string[]) {
       return box
     }),
   )
-  const sheet = await page.locator('.hl-sheet').boundingBox()
+  const viewport = page.viewportSize()!
 
   const left = Math.min(...boxes.map((b) => b.x))
   const right = Math.max(...boxes.map((b) => b.x + b.width))
 
   return {
     width: Math.round(right - left),
-    leadIn: Math.round(left - sheet!.x),
-    leadOut: Math.round(sheet!.x + sheet!.width - right),
+    leadIn: Math.round(left),
+    leadOut: Math.round(viewport.width - right),
   }
 }
 
 test.describe('A0 — the assembly module', () => {
-  test('has a section spine, a 656px prose column and a module info', async ({ page }) => {
+  test('is the curriculum, the reading column and the contents, edge to edge', async ({
+    page,
+  }) => {
     await page.goto(A0.path)
 
-    // Zone 1: the section spine, tracking scroll and nothing else (§4.6).
-    const spine = page.locator('.hl-rail-left nav[aria-label="Sections"]')
-    await expect(spine).toBeVisible()
-    expect(await spine.locator('.hl-toc-entry').count()).toBeGreaterThan(2)
-    expect(await widthOf(page.locator('.hl-rail-left'))).toBe(208)
+    // Zone 1: THE CURRICULUM, which is what M10 put here. It used to be the
+    // section spine; the swap is the point (`CurriculumRail.tsx`).
+    const rail = page.locator('.hl-rail-left')
+    await expect(rail.locator('nav[aria-label="Course modules"]')).toBeVisible()
+    expect(await widthOf(rail)).toBe(await track(page, '--width-rail-nav'))
 
-    // …and the dependency block below its rule, the rail's other half.
-    await expect(page.locator('.hl-rail-left').getByText('Requirements', { exact: false }).first())
-      .toBeVisible()
+    // One accordion section per level, this module's level open and enlarged,
+    // and its own row marked as the current page. The counts are the levels'
+    // own and are derived, so nothing here says how many there are.
+    const levels = page.locator('.hl-level')
+    expect(await levels.count()).toBeGreaterThan(1)
+    await expect(page.locator('.hl-level[data-current]')).toHaveCount(1)
+    await expect(page.locator('.hl-level[data-current][open]')).toHaveCount(1)
+    await expect(page.locator('.hl-mod[aria-current="page"]')).toHaveCount(1)
 
-    // Zone 2: the prose column, at the measure §4.4 gives it.
+    // Zone 2: the reading column, capped at the measure and centred in what
+    // the rails leave. Two claims, and the second is the one D15 is about: the
+    // track is WIDER than the text, so the cap is doing work rather than
+    // coinciding with the space available.
     const prose = page.locator('[data-hl-prose]')
     await expect(prose).toBeVisible()
-    expect(await widthOf(page.locator('.hl-column'))).toBe(656)
+    const cap = await measureCap(page)
+    expect(await widthOf(prose)).toBe(cap)
+    expect(await widthOf(page.locator('.hl-column'))).toBeGreaterThan(cap)
 
-    // Zone 3: the title block, as the 240px panel rather than the strip.
-    const titleBlock = page.locator('.hl-rail-right .hl-title-block')
-    await expect(titleBlock).toBeVisible()
-    expect(await widthOf(page.locator('.hl-rail-right'))).toBe(240)
-    await expect(titleBlock.locator('.hl-title-block-row')).not.toHaveCount(0)
+    const centred = await page.evaluate(() => {
+      const column = document.querySelector('.hl-column')!.getBoundingClientRect()
+      const text = document.querySelector('[data-hl-prose]')!.getBoundingClientRect()
+      return {
+        before: Math.round(text.left - column.left),
+        after: Math.round(column.right - text.right),
+      }
+    })
+    expect(centred.before).toBe(centred.after)
 
-    // The strip variant is the *fallback* for this format and must not double
-    // up with the panel at a width where the panel is showing (§4.7).
-    await expect(page.locator('.hl-column .hl-title-strip')).toBeHidden()
+    // Zone 3: ON THIS PAGE, which is what the right rail holds now — the
+    // sections of this module and what sits either side of it in the graph.
+    const contents = page.locator('.hl-rail-right')
+    await expect(contents.locator('nav[aria-label="Sections"]')).toBeVisible()
+    expect(await contents.locator('.hl-toc-entry').count()).toBeGreaterThan(2)
+    await expect(contents.getByText('Requirements', { exact: false }).first()).toBeVisible()
+    expect(await widthOf(contents)).toBe(await track(page, '--width-rail-toc'))
 
-    // 208 + 24 + 656 + 24 + 240 = 1152, exactly (§4.6) — and it fills the box,
-    // so there is nothing left over either side.
+    // The module's own facts are in the COLUMN now, at every width, and the
+    // 240px panel variant is rendered by no page (`TitleBlock.tsx`).
+    await expect(page.locator('.hl-column .hl-title-strip')).toBeVisible()
+    await expect(page.locator('.hl-title-block')).toHaveCount(0)
+
+    // …and the whole thing is anchored to the window, not to a 1200px shell.
     const drawing = await zones(page, ['.hl-rail-left', '.hl-column', '.hl-rail-right'])
-    expect(drawing.width).toBe(1152)
+    expect(drawing.width).toBe(page.viewportSize()!.width)
     expect(drawing.leadIn).toBe(0)
     expect(drawing.leadOut).toBe(0)
   })
 
-  test('a figure that covers a rail reads as covering it', async ({ page }) => {
-    await page.goto(A0.path)
-    await page.waitForLoadState('networkidle')
-
-    const figures = await page.locator('[data-hl-prose] .hl-figure').evaluateAll(
-      (nodes) => {
-        const column = document.querySelector('.hl-column')!.getBoundingClientRect()
-        return nodes.map((node) => {
-          const rect = node.getBoundingClientRect()
-          const edge = getComputedStyle(node, '::before')
-          // `content: none` means there is no pseudo-element at all, and its
-          // other properties are then the element's own inherited values.
-          const drawn = edge.content !== 'none'
-          return {
-            width: node.getAttribute('data-hl-width'),
-            breaksOut: rect.left < column.left - 1 || rect.right > column.right + 1,
-            edgeColor: drawn ? edge.borderLeftColor : 'rgba(0, 0, 0, 0)',
-            edgeWidth: drawn ? edge.borderLeftWidth : '0px',
-          }
-        })
-      },
-    )
-
-    // §6.5 gives a 5-column table 920px — "prose + gutter + right rail" — so
-    // the collision with the title block is designed, not accidental. What was
-    // missing was any sign of it: both grounds are `--color-paper`, so the
-    // panel underneath did not read as covered, it read as gone.
-    const broken = figures.filter((figure) => figure.breaksOut)
-    expect(broken.length, 'module 13 still has a figure that breaks the measure')
-      .toBeGreaterThan(0)
-
-    for (const figure of broken) {
-      expect(figure.edgeColor, `a ${figure.width} figure with no edge`)
-        .not.toBe('rgba(0, 0, 0, 0)')
-      // §2.2's hairline. Not the struct weight: this is a divider, not
-      // structure — the figure's own rules already close it top and bottom.
-      expect(figure.edgeWidth).toBe('1px')
-    }
-
-    // …and a figure that is not covering anything is not boxed in either: a
-    // hairline down a figure sitting flush in the measure means nothing (§1).
-    for (const figure of figures.filter((f) => !f.breaksOut)) {
-      expect(figure.edgeColor, `a flush ${figure.width} figure was boxed`)
-        .toBe('rgba(0, 0, 0, 0)')
-    }
-  })
+  /**
+   * The test that used to sit here asserted that at least one figure on this
+   * module BREAKS OUT of the measure, and that a broken-out figure draws a
+   * hairline down each broken side so the rail it covers reads as covered.
+   *
+   * **It is deleted rather than fixed, because M11 removed the behaviour it
+   * described.** Nothing breaks out any more: a figure is its column's width
+   * and anything wider scrolls inside its own box, which is the rule
+   * `kia-context/specs/DESIGN.md` states and the fix D10 asked for. There is no
+   * covered rail left to make legible.
+   *
+   * It was also the one test in this file that pinned a fact about the CONTENT
+   * — "module 13 still has a figure that breaks the measure" — which
+   * `tests/README.md` forbids: an author who narrowed every diagram would have
+   * turned it red for doing nothing wrong. And it raced the client-side
+   * mermaid render, waiting on `networkidle` rather than on the island's own
+   * `data-hl-ready`, which is why it passed alone and failed under load
+   * (`kia-context/logs/BRAINSTORM.md` D20).
+   *
+   * What replaced it is `containment.spec.ts`, which asserts the rule instead
+   * of the instance, at all three viewports, after the injection.
+   */
 
   test('the spine follows the reader down the module', async ({ page }) => {
     await page.goto(A0.path)
@@ -183,45 +221,49 @@ test.describe('A short ready module — the same anatomy as a long one', () => {
    * started at x=588 on a short sheet and x=456 on a long one, jumping 132px
    * sideways between them.
    */
-  test('carries the title-block panel and the stamps, like every ready module', async ({
+  test('carries the module facts and the stamps, like every ready module', async ({
     page,
   }) => {
     await page.goto(SHORT.path)
 
-    await expect(page.locator('.hl-title-block')).toBeVisible()
-    await expect(page.locator('.hl-rail-right')).toBeVisible()
+    // The strip is the module's own facts, in the column, at every width, and
+    // it is the only place they live since M11 cut the rail back.
+    await expect(page.locator('.hl-column .hl-title-strip')).toBeVisible()
+    await expect(page.locator('.hl-title-block')).toHaveCount(0)
 
-    // The strip stays in the document as the sub-1280 fallback, hidden here, so
-    // exactly one title block is ever on screen.
-    await expect(page.locator('.hl-title-strip')).not.toBeVisible()
+    // The same three tracks as the long module, and the same rule for each:
+    // the widths come from the tokens and the measure from the face.
+    await expect(page.locator('.hl-rail-left nav[aria-label="Course modules"]')).toBeVisible()
+    await expect(page.locator('.hl-rail-right nav[aria-label="Sections"]')).toBeVisible()
+    expect(await widthOf(page.locator('.hl-rail-left')))
+      .toBe(await track(page, '--width-rail-nav'))
+    expect(await widthOf(page.locator('.hl-rail-right')))
+      .toBe(await track(page, '--width-rail-toc'))
+    expect(await widthOf(page.locator('[data-hl-prose]'))).toBe(await measureCap(page))
 
-    // Three zones, the same arithmetic as the long sheet:
-    // 208 + 24 + 656 + 24 + 240 = 1152.
-    await expect(page.locator('.hl-rail-left nav[aria-label="Sections"]')).toBeVisible()
-    expect(await widthOf(page.locator('.hl-column'))).toBe(656)
     const drawing = await zones(page, ['.hl-rail-left', '.hl-column', '.hl-rail-right'])
-    expect(drawing.width).toBe(1152)
-    expect(drawing.leadIn).toBe(drawing.leadOut)
+    expect(drawing.leadIn).toBe(0)
+    expect(drawing.leadOut).toBe(0)
 
-    // §7.4 — the stamps used to render only inside the A0 rail.
+    // §7.4 — the stamps used to render only inside the old right rail.
     await expect(page.locator('.hl-stamp:visible')).not.toHaveCount(0)
 
-    // …and none of the A4 furniture.
+    // …and none of the draft furniture.
     await expect(page.locator('.hl-status-band')).toHaveCount(0)
     await expect(page.locator('.hl-schedule')).toHaveCount(0)
   })
 
   /**
-   * The last rule that separated the two drawn formats, measured and removed.
+   * The measure holds as the window narrows, which is the claim §6 is about.
    *
-   * §4.7 grew the measure to 720px between 1024 and 1279 once the right rail
-   * collapsed, on the reasoning that the width was going spare. MEASURED, 720px
-   * at 17px Source Serif 4 is 82 characters per line — against the 68–72 that
-   * §3.2 chose 656px FOR, and past the 75 that ends the readable range. Widening
-   * a measure because a rail left a hole is spending space because it is there;
-   * this system centres leftover width everywhere else, so it centres here.
+   * §4.7 once grew the measure to 720px when the right rail collapsed, on the
+   * reasoning that the width was going spare. MEASURED, 720px at 17px Source
+   * Serif 4 was 82 characters per line — against the 68–72 that 656px was
+   * chosen FOR, and past the 75 that ends the readable range. The cap is
+   * 80ch now and it is a CAP: it never grows past the face's 80 characters,
+   * and below the cap the column simply gets what is left.
    */
-  test('holds §6’s measure below 1280, on a short module and a long one alike', async ({
+  test('holds §6’s measure as the rails collapse, on a short module and a long one', async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1100, height: 900 })
@@ -229,15 +271,23 @@ test.describe('A short ready module — the same anatomy as a long one', () => {
     for (const path of [SHORT.path, A0.path]) {
       await page.goto(path)
 
-      // The rail is gone at this width, so both fall back to the strip — and
-      // both keep their stamps in it, which is the other hole this closed.
-      await expect(page.locator('.hl-title-block')).not.toBeVisible()
+      // The contents rail is gone at this width, so it is behind the control,
+      // and the module's own facts and stamps stay in the column.
+      await expect(page.locator('.hl-rail-right')).not.toBeVisible()
+      await expect(page.locator('.hl-subheader')).toBeVisible()
       await expect(page.locator('.hl-title-strip')).toBeVisible()
       await expect(page.locator('.hl-stamp:visible')).not.toHaveCount(0)
 
-      // `.prose`, not `.hl-column`: the column is the box, `--hl-measure` bounds
-      // the text inside it, and the measure is the number §6 is about.
-      expect(await widthOf(page.locator('.prose').first()), path).toBe(656)
+      // The curriculum is still beside the prose: 1100px is above the width
+      // where it becomes a sheet.
+      await expect(page.locator('.hl-rail-left')).toBeVisible()
+
+      // `.prose`, not `.hl-column`: the column is the box and the measure is
+      // the text inside it, which is the number §6 legislates. Never wider
+      // than the cap, whatever the window does.
+      const width = await widthOf(page.locator('.prose').first())
+      expect(width, path).toBeLessThanOrEqual(await measureCap(page))
+      expect(width, path).toBeGreaterThan(0)
     }
   })
 })
@@ -261,17 +311,25 @@ test.describe('A4 — the detail module', () => {
     // The `ITEM` column is a derived ordinal, zero-padded like `DRAWING`.
     await expect(items.first().locator('.hl-schedule-item')).toHaveText('01')
 
-    // "One column: 656px centred. No rails." — at any width (§4.4).
-    await expect(page.locator('.hl-rail-left')).toHaveCount(0)
+    // NO CONTENTS RAIL, at any width: a draft has no sections to list.
     await expect(page.locator('.hl-rail-right')).toHaveCount(0)
     await expect(page.locator('nav[aria-label="Sections"]')).toHaveCount(0)
 
-    const drawing = await zones(page, ['.hl-column'])
-    expect(drawing.width).toBe(656)
-    expect(drawing.leadIn).toBe(drawing.leadOut)
+    // …but it DOES get the curriculum, and that is a change M10 made
+    // deliberately: the rail is navigation, not module info, and a reader who
+    // lands on a stub needs a way out of it more than anyone does.
+    await expect(page.locator('.hl-rail-left nav[aria-label="Course modules"]')).toBeVisible()
+    await expect(page.locator('.hl-mod[aria-current="page"]')).toHaveCount(1)
 
-    // The title block is the strip here too, and no prose is rendered: §4.5's
-    // body is one sentence and the schedule.
+    // Two tracks, anchored to the window, with the content centred in the one
+    // the rail leaves.
+    const drawing = await zones(page, ['.hl-rail-left', '.hl-column'])
+    expect(drawing.width).toBe(page.viewportSize()!.width)
+    expect(drawing.leadIn).toBe(0)
+    expect(drawing.leadOut).toBe(0)
+
+    // The module's facts are the strip here too, and no prose is rendered:
+    // §4.5's body is one sentence and the schedule.
     await expect(page.locator('.hl-title-strip')).toBeVisible()
     await expect(page.locator('[data-hl-prose]')).toHaveCount(0)
   })
@@ -279,9 +337,13 @@ test.describe('A4 — the detail module', () => {
   test('makes no claim about a reader it has never met', async ({ page }) => {
     await page.goto(A4.path)
 
-    // §4.5: no stamp slots, no XP, no completion — on a sheet that is not
-    // drawn there is nothing to have read (§1, §7.2).
+    // §4.5: no stamp slots, no XP, no completion — on a module that is not
+    // written there is nothing to have read (§1, §7.2).
     await expect(page.locator('.hl-title-block')).toHaveCount(0)
     await expect(page.locator('[class*="stamp"]')).toHaveCount(0)
+    await expect(page.locator('[data-hl-signoff]')).toHaveCount(0)
+    // …and no tick can be revealed on its own row in the rail, because no
+    // selector for one is generated (`scripts/curriculum-css.mjs`, list D).
+    await expect(page.locator('.hl-mod[aria-current="page"] .hl-mod-mark')).toHaveCount(0)
   })
 })

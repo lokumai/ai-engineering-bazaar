@@ -19,7 +19,7 @@ import { SHEETS } from './sheets'
  */
 
 const DRAWN = SHEETS.filter((sheet) => sheet.drawn)
-const signOff = (page: Page) => page.getByRole('button', { name: 'COMPLETE', exact: true })
+const signOff = (page: Page) => page.getByRole('button', { name: 'Complete', exact: true })
 
 test('the reader can sign a module off, and it is still signed after a reload', async ({
   page,
@@ -35,18 +35,18 @@ test('the reader can sign a module off, and it is still signed after a reload', 
   await signOff(page).click()
 
   // The control flips, and the running tally in the footer moves with it.
-  await expect(page.getByRole('button', { name: /^COMPLETED / })).toBeVisible()
+  await expect(page.getByRole('button', { name: /^Completed / })).toBeVisible()
   await expect.poll(async () => readout.innerText()).not.toBe(before)
   const after = await readout.innerText()
 
   // The point of the feature: it survives leaving the page.
   await page.reload()
   await waitForHydratedReadout(page)
-  await expect(page.getByRole('button', { name: /^COMPLETED / })).toBeVisible()
+  await expect(page.getByRole('button', { name: /^Completed / })).toBeVisible()
   await expect.poll(async () => readout.innerText()).toBe(after)
 
   // And it can be taken back.
-  await page.getByRole('button', { name: 'UNSIGN', exact: true }).click()
+  await page.getByRole('button', { name: 'Un-complete', exact: true }).click()
   await expect(signOff(page)).toHaveAttribute('aria-pressed', 'false')
 })
 
@@ -54,7 +54,7 @@ test('the reader is given a name and a mark once there is a record', async ({ pa
   await page.goto(DRAWN[0].path)
   await waitForHydratedReadout(page)
   await signOff(page).click()
-  await expect(page.getByRole('button', { name: /^COMPLETED / })).toBeVisible()
+  await expect(page.getByRole('button', { name: /^Completed / })).toBeVisible()
 
   // Somewhere on the record pages the reader is named, and the name is real
   // words rather than an empty slot or the literal word "undefined".

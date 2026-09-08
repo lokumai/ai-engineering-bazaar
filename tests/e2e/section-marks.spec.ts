@@ -44,11 +44,12 @@ function inkOf(page: Page, selector: string) {
  */
 const NO_NUMBERED_SECTIONS = true
 
-test('the section numeral stays out of the left rail (§6.1, §4.1)', async ({ page }) => {
+test('the section numeral stays out of the curriculum rail (§6.1, §4.1)', async ({ page }) => {
   test.skip(NO_NUMBERED_SECTIONS, 'no module carries a section numeral: see the note above')
   await page.goto(A0.path)
 
   const measured = await page.evaluate(() => {
+    // M10 — the curriculum is the LEFT rail now; the contents moved right.
     const rail = document.querySelector('.hl-rail-left')!.getBoundingClientRect()
     const headings = [...document.querySelectorAll('.prose h2[data-mark]')]
     return {
@@ -84,8 +85,9 @@ test('a TOC numeral never runs into its section title (§5.6)', async ({ page })
   test.skip(NO_NUMBERED_SECTIONS, 'no module carries a section numeral: see the note above')
   await page.goto(A0.path)
 
-  const marks = await inkOf(page, '.hl-rail-left .hl-toc-mark')
-  const titles = await inkOf(page, '.hl-rail-left .hl-toc-text')
+  // M11 — the contents rail is on the RIGHT.
+  const marks = await inkOf(page, '.hl-rail-right .hl-toc-mark')
+  const titles = await inkOf(page, '.hl-rail-right .hl-toc-text')
 
   expect(marks.length).toBeGreaterThan(5)
   // MEASURED: `VIII` is 29px of ink in a 24px track. Right-alignment cannot

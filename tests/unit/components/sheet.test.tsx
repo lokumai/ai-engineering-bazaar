@@ -155,7 +155,7 @@ describe('PrevNext (§5.7)', () => {
 
   it('marks the ends of the set rather than omitting a cell', () => {
     const markup = renderToStaticMarkup(<PrevNext previous={null} next={drawn} />)
-    expect(markup).toContain('— End of set')
+    expect(markup).toContain('End of the course')
     expect(markup.match(/hl-prevnext-cell/g)).toHaveLength(2)
   })
 
@@ -208,8 +208,27 @@ describe('module.css holds the line (§11)', () => {
     'utf8',
   )
 
-  it('has no border radius anywhere (T7, §11.1)', () => {
-    expect(css).not.toMatch(/border-radius/)
+  /**
+   * **T7 is retired, and this is the assertion that records it.**
+   *
+   * The rule was zero radius everywhere, and it was the single strongest signal
+   * of the drawing-set look: all nine radius tokens sat at 0px
+   * (`kia-context/specs/DESIGN.md`, the note above the scale). The Bazaar
+   * system spends radius sparingly and gives two shapes a meaning of their own,
+   * so "no border radius anywhere" is no longer a rule to hold.
+   *
+   * What replaced it is the rule that keeps the scale meaningful: **a radius is
+   * a token or it is zero, never a literal.** A hand-typed `6px` is how a
+   * ten-value scale becomes twelve values, and it is invisible in review. `0`
+   * stays available and still means "a rule, not a box".
+   */
+  it('takes every radius from a token, never from a literal', () => {
+    const declarations = [...css.matchAll(/border-radius:\s*([^;]+);/g)].map((m) => m[1].trim())
+    for (const value of declarations) {
+      expect(value, `${value} is a literal radius`).toMatch(
+        /^(0|0px|var\(--radius-[a-z0-9]+\)|var\(--shape-[a-z]+\))$/,
+      )
+    }
   })
 
   it('has no box-shadow (§11.6)', () => {

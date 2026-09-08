@@ -192,7 +192,7 @@ test('pressing a filter chip and returning to ALL keeps the squares painted (§1
 // §12.18 — the two chips that select on the record
 // ---------------------------------------------------------------------------
 
-test('the COMPLETED and UNSIGNED chips filter on the reader’s own assertions (§12.18)', async ({
+test('the COMPLETED and NOT COMPLETED chips filter on the reader’s own assertions (§12.18)', async ({
   page,
 }) => {
   const signed = [sheetByModule(13), sheetByModule(8)]
@@ -207,9 +207,9 @@ test('the COMPLETED and UNSIGNED chips filter on the reader’s own assertions (
   const titles = await page.locator('.hl-index tbody .hl-row-link').allTextContents()
   expect(titles.sort()).toEqual(signed.map((sheet) => sheet.title).sort())
 
-  // §12.4.1 — a draft can never carry a sign-off, so it is always `UNSIGNED`
+  // §12.4.1 — a draft can never be completed, so it is always `NOT COMPLETED`
   // rather than excluded from both: the two chips partition the whole set.
-  await chip(page, 'UNSIGNED').click()
+  await chip(page, 'NOT COMPLETED').click()
   await expect(rows(page)).toHaveCount(SHEET_COUNT - signed.length)
   await expect(page.locator('.hl-index tbody tr[data-draft]')).toHaveCount(
     SHEET_COUNT - DRAWN_COUNT,
@@ -235,7 +235,7 @@ test('the count of what is shown is announced, not implied (§12.13, SC 4.1.3)',
   await chip(page, 'COMPLETED').click()
   await expect(count).toHaveText(`Showing 1 of ${SHEET_COUNT}`)
 
-  await chip(page, 'UNSIGNED').click()
+  await chip(page, 'NOT COMPLETED').click()
   await expect(count).toHaveText(`Showing ${SHEET_COUNT - 1} of ${SHEET_COUNT}`)
 })
 
@@ -265,7 +265,7 @@ test('ALL is active on load and the first client render emits the prerender’s 
   await waitForHydratedReadout(page)
 
   await expect(chip(page, 'ALL')).toHaveAttribute('aria-pressed', 'true')
-  for (const label of ['READY', 'PLANNED', 'EN · TR', 'COMPLETED', 'UNSIGNED'])
+  for (const label of ['READY', 'PLANNED', 'EN · TR', 'COMPLETED', 'NOT COMPLETED'])
     await expect(chip(page, label)).toHaveAttribute('aria-pressed', 'false')
 
   await expect(rows(page)).toHaveCount(prerendered)
@@ -276,7 +276,7 @@ test('ALL is active on load and the first client render emits the prerender’s 
 
   // The readout on the same page reads the same record (§12.2 channel B), so a
   // painted column and a printed count cannot disagree.
-  await expect(readoutCells(page).first()).toHaveText(`Signed off 02/${SHEET_COUNT}`)
+  await expect(readoutCells(page).first()).toHaveText(`Completed 02/${SHEET_COUNT}`)
 })
 
 test('the boot script stamps the index before its first paint too (§12.2 channel A)', async ({

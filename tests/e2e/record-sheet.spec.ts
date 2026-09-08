@@ -66,9 +66,9 @@ const OTHER = sheetByModule(1)
 const OTHER_SLUG = slugOf(OTHER)
 
 /** §12.13 class 1 — what the readout prints when nothing has been recorded. */
-const EMPTY_READOUT = [`Completed 00/${SHEETS.length}`, 'XP 0', 'Class —', 'I at 8']
+const EMPTY_READOUT = [`Completed 00/${SHEETS.length}`, 'XP 0', 'Rank —', 'I at 8']
 /** §12.2 — what it prints before the store has answered at all. */
-const NO_READING = [`Completed --/${SHEETS.length}`, 'XP --', 'Class --', '-- at --']
+const NO_READING = [`Completed --/${SHEETS.length}`, 'XP --', 'Rank --', '-- at --']
 
 /**
  * §7.4 / §5.9 — sheet 13's four slots, every one at zero against its real

@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { type Page, expect, test } from '@playwright/test'
 import { REGISTER_ROWS } from '@/app/profile/page'
+import { DRAFTER_HEADING_ID } from '@/components/record/DrafterBlock'
 import {
   QUARANTINE_KEY,
   RECORD_KEY,
@@ -496,7 +497,7 @@ test('§12.10.6 — CONTINUE names the next ready module that is not completed',
   await expect(link).toBeVisible()
   await expect(link).toHaveAttribute('href', next.path)
   // One line, above the graph.
-  await expect(page.locator('p', { has: link })).toContainText(/^Continue Sheet 02 · /)
+  await expect(page.locator('p', { has: link })).toContainText(/^Continue Module 02 · /)
 })
 
 test('§12.10.6 — CONTINUE is absent when there is no next module', async ({ page }) => {
@@ -665,7 +666,7 @@ test('§16.4 — the account block arrives open, and every row arrives closed', 
   // disclosure at all: both of the controls a reader comes here for are on
   // screen with nothing clicked. `IdentityPanel`'s field and §16.2's mark row
   // are asserted rather than the box, because they are what "open" is for.
-  await expect(page.locator('h2#account')).toBeVisible()
+  await expect(page.locator(`h2#${DRAFTER_HEADING_ID}`)).toBeVisible()
   await expect(page.getByRole('textbox', { name: /Name or initials/ })).toBeVisible()
   await expect(page.locator('label[data-hl-mark]').first()).toBeVisible()
   // …and it is not itself inside a fold, which is the other half of "open".

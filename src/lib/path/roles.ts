@@ -105,7 +105,7 @@ export const ROLES: readonly Role[] = [
     id: 'analyst',
     label: 'Business Analyst',
     blurb:
-      'The vocabulary, the limits a model cannot be promised past, and the points where a person still signs off',
+      'The vocabulary, the limits a model cannot be promised past, and the points where a person still decides',
     homeCategory: 'fundamentals',
     suggestedMark: 'datum',
     markRationale:

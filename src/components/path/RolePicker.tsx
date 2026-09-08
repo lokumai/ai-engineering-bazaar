@@ -180,7 +180,7 @@ export function RolePicker({
                   denominator. A draft step is on the path and out of the count,
                   because a sheet nobody has written cannot be signed off. */}
               <p className="hl-mark m-0 mt-1 text-ink-faint">
-                {plural(drawn, 'module')} drawn
+                {plural(drawn, 'module')} ready
               </p>
             </div>
           )

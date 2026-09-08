@@ -386,7 +386,10 @@ const RETIRED: ReadonlyArray<{ pattern: RegExp; instead: string }> = [
   { pattern: /\bindex sheet\b/i, instead: 'the catalog' },
   { pattern: /\bsheets?\b/i, instead: 'module' },
   { pattern: /\bsubsystems?\b/i, instead: 'level' },
-  { pattern: /\bsign(?:ed|ing)?[ -]off\b/i, instead: 'complete / completed' },
+  // `signs off` and `sign-offs` were both missed by the first version of this:
+  // `\bsign(?:ed|ing)?[ -]off\b` has no alternative for the third person and
+  // no trailing `s?`, so a plural slipped through the word boundary.
+  { pattern: /\bsign(?:s|ed|ing)?[ -]offs?\b/i, instead: 'complete / completed' },
   { pattern: /\bnot (?:yet )?drawn\b/i, instead: 'planned' },
   { pattern: /\btitle block\b/i, instead: 'module info' },
   { pattern: /\bthe register\b/i, instead: 'your progress' },

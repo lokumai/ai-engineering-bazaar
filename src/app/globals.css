@@ -59,7 +59,18 @@
      button, an input or a toggle borders with `--color-line-strong`, never
      with this. See kia-context/logs/BRAINSTORM.md O4. */
   --color-line:         oklch(0.8466 0.0343 82.0);  /* DECORATIVE / GROUPING ONLY (T4) 1.55:1 */
-  --color-line-strong:  oklch(0.6449 0.0246 87.2);  /* structural AND interactive, 3.19:1     */
+  --color-line-strong:  oklch(0.6449 0.0246 87.2);  /* structural GROUPING, heavier            */
+  /* THE INTERACTIVE BORDER, and it is its own token for a measured reason.
+     `line-strong` was doing both jobs, and on `sunken` — the sand an input and
+     a card's header strip sit on — it measures 2.68:1, which is not
+     perceivable. Darkening `line-strong` itself was tried and it collided with
+     the five level colours: they share one lightness of 0.575, pinned there
+     because it is what clears 3.1:1 against the grounds of BOTH themes, and a
+     structural line at that lightness is a line a reader can mistake for a
+     level. So the control border is separate, at 3.19:1 on the sand and above
+     3.8:1 on the other two grounds. Nothing applies it yet; the components take
+     it in M10 and M11, where DESIGN.md's `button-quiet` moves onto it. */
+  --color-line-control: oklch(0.6012 0.0264 88.3);
   --color-line-cut:     oklch(0.5074 0.0209 89.5);  /* cut plane / current, 5.62:1            */
 
   /* ---- The annotation pen -------------------------------------------- */
@@ -73,7 +84,7 @@
 
   /* ---- Semantics: diagrams + status ticks only (T6) ------------------- */
   --color-caution:      oklch(0.6570 0.1100 75.5);  /* gold — planned, 3.09:1 as a graphic    */
-  --color-caution-ink:  oklch(0.5300 0.0959 78.0);  /*                5.18:1 as text          */
+  --color-caution-ink:  oklch(0.5041 0.0921 78.1);  /*     as text on all three grounds       */
   --color-caution-wash: oklch(0.6570 0.1100 75.5 / 0.14);
   --color-verify:       oklch(0.5847 0.0861 189.0);  /* teal — completed, 3.90:1 as a graphic  */
   --color-verify-ink:   oklch(0.4922 0.0714 188.7);  /*                5.78:1 as text          */
@@ -115,7 +126,7 @@
   /* ---- Spacing: 4px base --------------------------------------------- */
   --spacing: 4px;
 
-  /* ---- Radius: zero, everywhere (T7) --------------------------------- */
+  /* ---- Radius: spent sparingly, and two shapes carry meaning --------- */
   /* M9 — the retired system held all nine of these at 0px, and that was the
      single strongest signal of the drawing-set look. Bazaar spends radius
      sparingly and gives two shapes a meaning of their own: `arch` marks a
@@ -142,11 +153,17 @@
   /* M9 — one family for everything a person wrote, at two weights, and the
      mono only for what a machine measured. `display` and `body` are the same
      face on purpose: the retired system's serif body was half of the look
-     being replaced. See src/app/fonts.ts for why Manrope and not Inter. */
-  --font-display: var(--font-manrope), "Avenir Next", "Segoe UI",
-                  "Helvetica Neue", Arial, sans-serif;
-  --font-body:    var(--font-manrope), "Avenir Next", "Segoe UI",
-                  "Helvetica Neue", Arial, sans-serif;
+     being replaced. See src/app/fonts.ts for why Manrope and not Inter.
+
+     **No fallback stack here, and that is the fix for a real defect.**
+     `next/font`'s `fallback` option is already appended to the family it
+     generates, so `var(--font-manrope)` expands to the face AND its fallbacks.
+     Repeating them here duplicated the whole stack in the computed value —
+     `Manrope, "Avenir Next", …, sans-serif, "Avenir Next", …, sans-serif` —
+     which `prose-type.spec.ts` reads off a real element and is how it was
+     found. The fallbacks belong in `fonts.ts`, once. */
+  --font-display: var(--font-manrope);
+  --font-body:    var(--font-manrope);
   --font-mono:    var(--font-plex-mono), "IBM Plex Mono", ui-monospace,
                   "SF Mono", "Cascadia Mono", Menlo, monospace;
 
@@ -206,7 +223,8 @@
     --color-ink-faint:    oklch(0.4874 0.0201 84.6);                /*  2.77:1, decorative    */
 
     --color-line:         oklch(0.3315 0.0404 284.0);                /*  1.43:1, grouping      */
-    --color-line-strong:  oklch(0.5374 0.0529 284.5);                /*  3.38:1, interactive   */
+    --color-line-strong:  oklch(0.5374 0.0529 284.5);                /*  3.38:1, grouping      */
+    --color-line-control: oklch(0.5920 0.0500 284.8);                /*  interactive           */
     --color-line-cut:     oklch(0.6439 0.0445 285.1);                /*  5.25:1                */
 
     /* Cobalt is 2.9% luminance and unreadable on this ground, so the accent
@@ -444,9 +462,10 @@
       underline, because colour is never the only carrier (SC 1.4.1) and a
       reader in a forced-colours theme keeps the underline when the fill goes.
 
-   2. **The menu opens on `:hover` and on `:focus-within`.** The second is what
-      makes it reachable by keyboard, and it must come first in the selector
-      list so a focused panel cannot be closed by the pointer leaving.
+   2. **The chevron is the only thing that moves.** `<summary>`'s native marker
+      is removed, so the chevron carries the open state, and it is the one
+      transform in this file — see the note on §9.2 below, which forbids
+      transforms for STATE and is why nothing else here has one.
 
    3. **The panel is bordered with `--color-line`, not `--color-line-strong`.**
       It groups; it does not identify a control. The links inside it are the

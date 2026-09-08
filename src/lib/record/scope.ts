@@ -199,7 +199,7 @@ export const NAME_FROM_ADDRESS =
  * a note further down.
  */
 export const ALIAS_SCOPE =
-  'An alias is a name and a mark this browser puts on your record, on your sign-offs ' +
+  'An alias is a name and a mark this browser puts on your record, on your completions ' +
   'and on anything you export. It is not an account and it proves nothing: anyone using ' +
   'this browser can change it. With no account it stays at this browser; signing in from ' +
   'here carries the name and the mark to your account, and to the roster of any ' +

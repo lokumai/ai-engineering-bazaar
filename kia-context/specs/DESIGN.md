@@ -215,13 +215,19 @@ a panel, a section rule. It is not fine for the boundary that **identifies an in
 which needs 3:1 to be perceivable. So:
 
 - **Grouping** — `--color-line` `#D8CBB4`, at 1.55:1. A card, a panel, a section rule.
-- **Identifying a control** — `--color-line-strong` `#948D7D`, at 3.19:1 on the ground and 3.30:1 on
-  a white card. It is the lightest token in the palette that clears the floor, which is exactly why
-  it is the one to use: a quiet control stays quiet.
+- **Identifying a control** — `--color-line-control`, which is a token of its own and was not in the
+  first version of this file. `line-strong` was doing both jobs, and against the **sand** — the ground
+  an input and a card's header strip actually sit on — it measured **2.68:1**, which is not
+  perceivable. Darkening `line-strong` itself was tried and collided with the five level colours: they
+  share one lightness, pinned by their own 3.1:1 requirement against both themes' grounds, and a
+  structural line at that lightness is one a reader can mistake for a level. So the control border is
+  separate, and it clears 3:1 on **all three** grounds.
 
-**Those are the shipped token names**, and the contract they already carried turned out to be this
-split exactly: `globals.css` documented `--color-line` as decorative-only and `--color-line-strong`
-as "structural, ≥3:1" before this ground existed. The values moved; the jobs did not.
+**Those are the shipped token names.** `--color-line` was already documented as decorative-only and
+`--color-line-strong` as "structural, ≥3:1", so two of the three jobs were named before this ground
+existed; the third had to be added. **The lesson is that a floor checked against one ground is not
+checked**: both of these cleared 3:1 on the page and failed on the sand, and the contrast test now
+pairs every token with all three grounds because of it.
 
 `--color-ink-faint` is a third thing and must not be confused with either: it is faint *text*, and it
 has to stay **under** 3:1 (2.77:1) or it becomes usable as a meaningful mark. The contrast test

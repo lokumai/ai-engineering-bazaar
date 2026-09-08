@@ -74,8 +74,38 @@ const PAIRS: readonly Pair[] = [
   { foreground: 'verify', background: 'paper', job: 'graphic' },
   { foreground: 'fault', background: 'paper', job: 'graphic' },
   { foreground: 'focus', background: 'paper', job: 'graphic' },
+  /**
+   * `sunken` is the tightest ground on the site — it is the sand, the darkest
+   * of the three in light mode — and it is where an input, a card's header
+   * strip and the current level's fill live. The first version of this table
+   * paired it with `ink` and `ink-muted` only, which left the two things that
+   * actually sit on it untested: **an interactive border**, which has to reach
+   * 3:1 there or the control is unperceivable, and **a status ink**, which has
+   * to reach 4.5:1 there or a state that is only stated in words cannot be
+   * read. Found in review, not by the suite.
+   */
+  { foreground: 'line-control', background: 'paper', job: 'graphic' },
+  { foreground: 'line-control', background: 'cleared', job: 'graphic' },
+  { foreground: 'line-control', background: 'sunken', job: 'graphic' },
+  { foreground: 'line-cut', background: 'sunken', job: 'graphic' },
+  { foreground: 'focus', background: 'sunken', job: 'graphic' },
+  { foreground: 'accent', background: 'sunken', job: 'text' },
+  { foreground: 'caution-ink', background: 'sunken', job: 'text' },
+  { foreground: 'verify-ink', background: 'sunken', job: 'text' },
+  { foreground: 'fault-ink', background: 'sunken', job: 'text' },
+  { foreground: 'info-ink', background: 'sunken', job: 'text' },
+  /**
+   * The ceiling holds on every ground, not only on `paper`. A decorative token
+   * that creeps over 3:1 against the raised or the sunken surface is just as
+   * usable as a meaningful mark there, and the whole point of the ceiling is
+   * that nobody can reach for one.
+   */
   { foreground: 'line', background: 'paper', job: 'decorative' },
+  { foreground: 'line', background: 'cleared', job: 'decorative' },
+  { foreground: 'line', background: 'sunken', job: 'decorative' },
   { foreground: 'ink-faint', background: 'paper', job: 'decorative' },
+  { foreground: 'ink-faint', background: 'cleared', job: 'decorative' },
+  { foreground: 'ink-faint', background: 'sunken', job: 'decorative' },
 ]
 
 const LIGHT = PAIRS

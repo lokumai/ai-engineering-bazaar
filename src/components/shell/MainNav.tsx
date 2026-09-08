@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect, useRef } from 'react'
 import { INDEX_ROUTE, INDEX_TITLE, type CategoryLabel } from '@/lib/route-labels'
 
 /**
@@ -50,6 +51,18 @@ import { INDEX_ROUTE, INDEX_TITLE, type CategoryLabel } from '@/lib/route-labels
  * disclosure a reader has met behaves, and the panel's first row is a link to
  * the curriculum index — so the destination the trigger used to be is still one
  * click away and is now *named* rather than implied.
+ *
+ * ## One thing `<details>` does not do for us: close on navigation
+ *
+ * `open` is DOM state on an element the layout keeps across a client
+ * navigation, so choosing a level left the panel hanging open over the page it
+ * had just opened — measured, not reasoned about. Chrome closes it on Escape
+ * natively, and an outside click is answered by the reader clicking something
+ * else, but a route change is not an interaction with this element at all. So
+ * the one effect in this file closes it when the path changes. It writes the
+ * attribute through a ref rather than making `open` controlled state, because a
+ * controlled disclosure has to re-implement Escape, Enter, Space and the
+ * summary's own toggle, and all four already work.
  *
  * ## Why this is a client island at all
  *
@@ -112,6 +125,11 @@ function Chevron() {
 
 export function MainNav({ categories }: { categories: readonly CategoryLabel[] }) {
   const pathname = usePathname() ?? '/'
+  const panel = useRef<HTMLDetailsElement>(null)
+
+  useEffect(() => {
+    if (panel.current) panel.current.open = false
+  }, [pathname])
 
   return (
     <nav aria-label="Main" className="hl-nav">
@@ -123,11 +141,17 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
           return (
             <li key={destination.href} className="hl-nav-item">
               {isCurriculum ? (
-                <details className="hl-nav-details">
+                <details className="hl-nav-details" ref={panel}>
+                  {/* `data-current` and NOT `aria-current`. This is a
+                      disclosure trigger, not a link, so it is never itself the
+                      current page — and a level page would otherwise carry two
+                      `aria-current="page"` inside one nav, on the summary and
+                      on the level link, which is a contradiction a screen
+                      reader has to resolve for the reader. The visual mark is
+                      the same either way; only the claim changes. */}
                   <summary
                     className="hl-nav-link"
                     data-current={current ? '' : undefined}
-                    aria-current={current ? 'page' : undefined}
                   >
                     {destination.label}
                     <Chevron />

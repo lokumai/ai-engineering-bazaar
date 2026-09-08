@@ -41,7 +41,7 @@ test('a caption strip stays 28px however long the author wrote (§6.5)', async (
     // The sentence is set in the meta voice, not shouted in mono (§3.4).
     expect(strip.note!.length, 'the author\'s sentence survives in full')
       .toBeGreaterThan(60)
-    expect(strip.noteFont).toMatch(/Plex Sans Condensed|IBM Plex Sans/)
+    expect(strip.noteFont).toMatch(/Manrope/)
     expect(strip.noteTransform).toBe('none')
   }
 })

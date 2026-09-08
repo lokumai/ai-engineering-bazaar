@@ -164,7 +164,7 @@ export default function PathPage() {
                     what it excludes. Derived, never typed (§11.25). */}
                 <p className="hl-mark mt-2 mb-0 text-ink-faint">
                   {plural(path.steps.length, 'step')} ·{' '}
-                  {plural(drawnCount(path, drawnSet), 'module')} drawn
+                  {plural(drawnCount(path, drawnSet), 'module')} ready
                 </p>
               </div>
             </div>

@@ -9,7 +9,7 @@ description: >
 authority: background
 writes: agent, whenever a decision is made
 status: active
-covers: "the whole project, 2026-07-07 onward — D1 to D18, O1 to O4"
+covers: "the whole project, 2026-07-07 onward — D1 to D19, O1 to O4"
 last_updated: "2026-09-08"
 ---
 
@@ -348,6 +348,38 @@ reaches for it to carry meaning. The old table only commented on that.
 is now that the accent *clears* 4.5:1, and lightening it back under the floor names the rule it
 re-creates. And the six level hues shared a lightness of 0.605; what mattered was that they share
 *one*, so the test asserts the set has size one.
+
+
+### D19 · The interactive border is its own token, because a floor checked against one ground is not checked — 2026-09-08
+
+**Considered:** darken `--color-line-strong` so it clears 3:1 everywhere / give the interactive
+border a token of its own
+**Chose:** the second, after trying the first and watching it collide.
+**How it came up:** O4 established that a border which *identifies a control* needs 3:1 and a border
+which *groups* does not, and gave the job to `--color-line-strong` at 3.19:1. That number was measured
+against the page. **An external review pointed out that the contrast table paired every token with
+`paper` and `cleared` only, and checked `sunken` for the two inks alone** — and `sunken` is the sand
+that an input and a card's header strip actually sit on.
+**Measured, once the pairs were added:** `line-strong` is **2.68:1** on the sand and `caution-ink` is
+**4.35:1**. So the exact defect O4 exists to prevent had shipped anyway, one ground over.
+**Why darkening `line-strong` failed:** the five level colours share one lightness, 0.575, and it is
+pinned — it is what clears 3.1:1 against the grounds of *both* themes at full chroma and at half. A
+structural line dark enough for the sand lands at that same lightness, and `lokum.test.ts`'s
+separation rule caught it immediately: a line a reader can mistake for a level. Lowering the levels
+instead broke their own contrast floor against the dark ground. There was no room.
+**So:** `--color-line-control` is a third line token, clearing 3:1 on all three grounds.
+`--color-line-strong` keeps the grouping job and carries no floor on the sand, because grouping is all
+it does there. `--color-caution-ink` is darkened to clear 4.5:1 on all three.
+**Rule that follows, and it generalises past colour:** **a floor checked against one ground is not
+checked.** `tests/unit/color/contrast.test.ts` now pairs every token with every ground it can appear
+on, in both themes, and the decorative ceiling is asserted on all three too rather than only on the
+page.
+**Also from that review, and worth keeping separately:** the vocabulary ban's completion pattern had
+no third person and no plural, so `signs off` and `sign-offs` slipped through a word boundary.
+Widening it caught two reader-visible strings on the spot. The ban still cannot read a template
+literal or a JSX run containing braces, and its `hl-` exemption is per-string rather than per-token —
+three real holes in the *source* scan, covered today by the export grep, and closing them properly
+means a parser rather than a lexer.
 
 
 ## Open questions

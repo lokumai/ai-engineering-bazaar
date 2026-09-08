@@ -75,7 +75,7 @@ reconstructed from git and is labelled as inferred inside each file.
 | File | What it holds | State |
 |---|---|---|
 | `PROGRESS.md` | M1 to M14, their deliverables and acceptance criteria, and the order they go in | M1–M6 inferred; **M7 to M14 live.** **M9 is done** and **M10 is the active milestone.** M8 is the umbrella for the whole revision. |
-| `BRAINSTORM.md` | D1 to D18, plus open questions O1 to O4 | D1–D6 inferred; **D7–D18 recorded live.** O1, O3 and O4 are closed; **O2 is the only one open.** |
+| `BRAINSTORM.md` | D1 to D19, plus open questions O1 to O4 | D1–D6 inferred; **D7–D19 recorded live.** O1, O3 and O4 are closed; **O2 is the only one open.** |
 
 ---
 
@@ -116,7 +116,7 @@ maintained by an agent, and do not need reading to do the work. The root `CLAUDE
 
 ## 6. The numbering, and why it never restarts
 
-`M1…M14` are milestones in `logs/PROGRESS.md`. `D1…D18` are decisions and `O1…O4` are open questions
+`M1…M14` are milestones in `logs/PROGRESS.md`. `D1…D19` are decisions and `O1…O4` are open questions
 in `logs/BRAINSTORM.md`, of which O1, O3 and O4 are closed. Rules `1…15` are in `specs/MANIFESTO.md`.
 
 **M8 did not become M9.** It stayed open as the umbrella for the whole interface revision and M9 to

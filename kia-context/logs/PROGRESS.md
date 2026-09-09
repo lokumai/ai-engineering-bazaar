@@ -10,7 +10,7 @@ authority: state
 writes: agent, every session
 status: active
 covers: "the whole project, 2026-07-07 onward — M1 to M14; M9 to M14 shipped and reviewed"
-last_updated: "2026-09-09"
+last_updated: "2026-09-10"
 ---
 
 # 📈 PROGRESS — What we are building

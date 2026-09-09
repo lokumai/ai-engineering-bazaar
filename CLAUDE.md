@@ -14,17 +14,36 @@ and the presentation, the vocabulary and the palette change.
 `playground/01-theme-T4-ground-G3-powder.html` is what the interface must look
 like. [`kia-context/specs/DESIGN.md`](kia-context/specs/DESIGN.md) is a
 transcription of its design *language* and names it in `source:`; where the two
-disagree, **the mockup is right and DESIGN.md is the bug**. **M15 is done and
-the work is milestone M16** in `kia-context/logs/PROGRESS.md`, whose per-surface
-reference table says which mockup each screen comes from.
+disagree, **the mockup is right and DESIGN.md is the bug** — with one named
+exception, listed in DESIGN.md itself, because a measured accessibility floor
+outranks a transcribed value (**D34**).
 
-Two things M15 left for M16 to use. **`src/design/bazaar.css` is the language as
-CSS** — both themes, every primitive — and it is deliberately **not imported**;
-wiring it in and deleting the eleven old stylesheets is M16's first act. And
-**`tests/e2e/fidelity.ts` compares a built page to the mockup**: write an
-app-side `SelectorMap` beside `MOCKUP_SELECTORS` and each rebuilt surface has a
-check that it actually matches. That check is the thing whose absence let five
-milestones ship the wrong design.
+**The work is milestone M16**, in `kia-context/logs/PROGRESS.md`, which sets it
+out as ten stages. **Stages 0 to 3 are done**: the token layer, the shell, the
+navigation and the rail. **Stage 4 is the catalog and stage 5 the reading
+page.** Each stage's entry names its reference mockup, what it touches, the
+fidelity roles it adds and the traps in it.
+
+Two things every stage does. It compares the built surface to its mockup by
+adding roles to `APP_SELECTORS` in `tests/e2e/fidelity.ts` **and** a
+`fidelity.spec.ts` block with its mutation, in the same sitting. And it takes
+**geometry from the component mockup and colour from the shell** (**D31**):
+`02` to `09` are on a deliberately older palette, so reading them literally
+would put a green accent on a cool grey ground.
+
+**`src/design/bazaar.css` is the language as CSS** — both themes, every
+primitive — and it is the token layer the site loads. A surface stylesheet in
+`src/app/` arranges its primitives and defines none of its own;
+`tests/unit/design/surface-stylesheets.test.ts` holds them to that.
+
+**Two guards exist because of failures that nothing else could see.**
+`tests/unit/design/styling-references.test.ts` reads every colour, font and size
+utility plus every `var(--…)` out of the markup and the surface stylesheets and
+requires each to resolve against the language — because **a Tailwind utility
+named after a deleted token emits nothing at all**, with no error and no
+warning, and 401 references were silently inert for one commit. And
+`tests/e2e/fidelity.ts` compares a built page to its mockup fact by fact, which
+is the check whose absence let five milestones ship the wrong design.
 
 **Before styling anything, open the mockup, then DESIGN.md — and copy neither a
 nearby component nor the old stylesheets.** M9 to M14 re-themed the old

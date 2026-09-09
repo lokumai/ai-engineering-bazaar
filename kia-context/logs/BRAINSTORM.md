@@ -9,8 +9,8 @@ description: >
 authority: background
 writes: agent, whenever a decision is made
 status: active
-covers: "the whole project, 2026-07-07 onward — D1 to D34, O1 to O4"
-last_updated: "2026-09-09"
+covers: "the whole project, 2026-07-07 onward — D1 to D38, O1 to O4"
+last_updated: "2026-09-10"
 ---
 
 # 🧠 BRAINSTORM — Why we chose what we chose
@@ -1071,3 +1071,54 @@ of which the bar was doing.
 The breadcrumb leaves the bar in the same change, and that needs no decision: the mockup puts
 `nav.crumb` inside the reading column, above the display heading. The retired header gave it a
 second 32px row of its own.
+
+### D37 · A progress count cannot be drawn on channel A, so the rail states the total — 2026-09-10
+
+The mockup's rail prints `3/8` on each group: modules done over modules in the level. `09` variant 1
+does the same. **Neither can be built.**
+
+A done-of-total count is **reader state**, and it is on screen in frame one — so §12.2 forbids it
+travelling on channel B, where it would arrive after the first paint and change under the reader.
+And **CSS cannot count**, so channel A cannot draw it either: the pre-paint script can stamp
+`hl-signed-<n>` on `<html>`, and no selector turns nineteen stamps into the numeral 3.
+
+**Considered:** render the numerator on channel B anyway, since it is "only a number". Rejected —
+that is the flicker the channel split exists to prevent, and a count that corrects itself after
+paint is worse than a count that was never claimed. **Also considered:** pre-render one span per
+possible count per level and have the generator reveal the right one, which is the only way CSS
+could express it. Rejected on cost: five levels × up to eleven counts is fifty-five spans and
+fifty-five generated rules to state something the discs already state.
+
+**Chosen:** the count is the level's **total**, and progress is carried by the completion discs on
+the rows — which *are* channel A, one generated rule per written module, correct in frame one.
+
+**This is D23 one layer down.** That entry rejected the ring a mock drew for the same reason and
+shipped a segmented meter: a meter is a shape CSS can reveal, and a number is not. The rule worth
+carrying is the general one — **before transcribing a figure from a mockup, ask which channel could
+draw it.** A mockup is a picture and has no channels.
+
+**Rule that follows:** `specs/ARCHITECTURE.md` §12.2 is unchanged; what this adds is that a mockup
+may specify something no channel can render, and the mockup does not win that argument.
+
+### D38 · The design language names a thing once, and the generator follows it — 2026-09-10
+
+M16 stage 0 renamed the language's prefix from `hl-` to `bz-` (**D29**) and renamed
+`scripts/curriculum-css.mjs`'s prefix with it — but not its **names**. So for three commits the
+generated sheet revealed `.bz-mod-mark` while the component emitted `.hl-mod-mark` and
+`src/design/bazaar.css` defined `.bz-tick`: three vocabularies, no two of which agreed, and a
+completion mark that could not appear. Nothing failed. The selector was well-formed, the markup was
+well-formed, and channel A had simply been disconnected.
+
+**Considered:** teach the language the generator's names, since the generator is the thing that is
+hard to change. Rejected — `CLAUDE.md` makes the language the design vocabulary, and a generated
+file is the easiest thing in the repository to regenerate.
+
+**Chosen:** the language names it; everything else follows. `.bz-item` for a rail row, `.bz-tick`
+for the completion disc, and the generator emits exactly those. `--bz-here` became `--bz-cat` in the
+same pass, so there is now **one** name for "this element's category hue" rather than one for the
+group's edge and another for the generated segment.
+
+**Rule that follows:** a prefix rename is not a rename. When a name moves, the thing to grep for is
+the *name*, and the check that would have caught this is the one M16 added anyway —
+`tests/unit/design/styling-references.test.ts`, which now reads the surface stylesheets as well as
+the markup and refuses any reference the language does not define.

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { SIGN_OFF_SELECTORS, SignOffMarks } from '@/components/record/SignOffMarks'
 import { CategoryBlock } from '@/components/sheet/CategoryBlock'
 import { ModuleRow } from '@/components/sheet/ModuleRow'
-import { NoMatch, SheetFilters } from '@/components/sheet/SheetFilters'
+import { Catalog, NoMatch } from '@/components/catalog/Catalog'
 import { SheetIndex } from '@/components/sheet/SheetIndex'
 import { TickGauge } from '@/components/sheet/TickGauge'
 import type { SheetRow } from '@/lib/content/rows'
@@ -16,7 +16,7 @@ import { EMPTY_RECORD } from '@/lib/record/schema'
  *
  * Every assertion here is on the SERVER markup, which for anything the record
  * touches is the honest empty first frame (§12.2, §12.14.2): unsigned squares,
- * `ALL` active, thirty-two rows. Real storage, a real click and the island's
+ * both filters at `all`, every row. Real storage, a real click and the island's
  * repaint are Playwright's, in a real browser.
  */
 
@@ -29,7 +29,7 @@ const DRAWN: SheetRow = {
   path: '/courses/intermediate/security/',
   drawn: true,
   status: 'READY',
-  subsystem: { order: 2, title: 'Intermediate', path: '/courses/intermediate/' },
+  subsystem: { order: 2, title: 'Intermediate', path: '/courses/intermediate/', slug: 'intermediate' },
   extent: '4,883 W · 30 MIN',
   sources: '23',
   lang: 'EN',
@@ -48,7 +48,7 @@ const DASHED: SheetRow = {
   path: '/courses/expert/advanced-architectures/',
   drawn: false,
   status: 'PLANNED',
-  subsystem: { order: 3, title: 'Expert', path: '/courses/expert/' },
+  subsystem: { order: 3, title: 'Expert', path: '/courses/expert/', slug: 'expert' },
   extent: '—',
   sources: '—',
   lang: 'EN · TR',
@@ -310,21 +310,97 @@ const FACTS: CurriculumFacts = {
   traces: 0,
 }
 
-describe('ModuleFilters — the chip row (§4.8 item 5, §12.18)', () => {
+/**
+ * M12 / D13 — the catalog's three views, over one array.
+ *
+ * The acceptance criterion this block exists for is the one that cannot be
+ * written down without pinning content: **the three views show the same set of
+ * modules for the same filter state.** So the module titles are lifted out of
+ * each view's own markup and the three sets are compared WITH EACH OTHER —
+ * never against a written list — which is a property that holds for any corpus
+ * and fails the moment a view starts filtering, sorting or paginating on its
+ * own (`tests/README.md`'s rule, and D13's bound on the cost of three views).
+ */
+describe('Catalog — three views over one data source (M12, D13)', () => {
   const markup = renderToStaticMarkup(
-    <SheetFilters rows={[DRAWN, DASHED]} label="The curriculum" />,
+    <Catalog rows={[DRAWN, DASHED]} label="The catalog" />,
   )
 
-  it('offers §4.8\'s four chips and §12.18\'s two, in that order', () => {
-    const labels = [...markup.matchAll(/hl-chip"[^>]*>([^<]*)</g)].map((m) => m[1])
-    expect(labels).toEqual([
-      'ALL', 'READY', 'PLANNED', 'EN · TR', 'COMPLETED', 'NOT COMPLETED',
-    ])
+  /** One view's slice of the document, by the `data-view` box it renders in. */
+  function view(id: string): string {
+    const open = markup.indexOf(`data-view="${id}" aria-labelledby`)
+    expect(open, `no ${id} view in the markup`).toBeGreaterThan(-1)
+    const next = ['overview', 'cards', 'table']
+      .map((other) => markup.indexOf(`data-view="${other}" aria-labelledby`))
+      .filter((at) => at > open)
+    return markup.slice(open, next.length > 0 ? Math.min(...next) : markup.length)
+  }
+
+  /**
+   * The module titles a view renders, as a set.
+   *
+   * Read off the markup rather than off the rows, because reading them off the
+   * rows would compare the fixture with itself. Each view marks up a title
+   * differently — a link in the overview, a heading in the cards, a table cell
+   * in the table — so the titles are found by looking for the fixture's own
+   * two titles rather than by a selector that only one view satisfies.
+   */
+  function titlesIn(html: string): string[] {
+    return [DRAWN, DASHED]
+      .filter((row) => html.includes(`>${row.title}<`))
+      .map((row) => row.title)
+      .sort()
+  }
+
+  it('renders all three views in one document, at one URL', () => {
+    for (const id of ['overview', 'cards', 'table']) {
+      expect(view(id).length).toBeGreaterThan(0)
+    }
+    // D13's criterion: adding a view must not add an address. Nothing in the
+    // toggle navigates, so nothing in it is a link.
+    const toggle = markup.slice(
+      markup.indexOf('hl-viewtoggle'),
+      markup.indexOf('hl-chip-count'),
+    )
+    expect(toggle).not.toContain('<a ')
   })
 
-  it('opens with ALL active, and with every row rendered (§12.2)', () => {
-    expect(markup.match(/aria-pressed="true"/g)).toHaveLength(1)
-    expect(markup).toMatch(/aria-pressed="true"[^>]*>ALL</)
+  it('shows the same set of modules in every view', () => {
+    const [overview, cards, table] = ['overview', 'cards', 'table'].map((id) =>
+      titlesIn(view(id)),
+    )
+    expect(overview).toEqual(cards)
+    expect(cards).toEqual(table)
+    // Non-vacuity: a comparison of three empty sets is green and proves
+    // nothing, so each view has to have found the fixture's modules.
+    expect(overview.length).toBe(2)
+  })
+
+  it('gives every view a name and an icon, and the state to a screen reader', () => {
+    for (const name of ['Overview', 'Cards', 'Table']) expect(markup).toContain(name)
+    // One glyph per button, and the word beside it — never the glyph alone.
+    expect(markup.match(/class="hl-view-icon"/g)).toHaveLength(3)
+    // The showing view is stated in the button's accessible name, not in an
+    // `aria-pressed` React would have to render: channel A decides which view
+    // is showing, and a second author of one state is two states (D17).
+    expect(markup.match(/hl-view-on/g)).toHaveLength(3)
+    expect(markup.slice(markup.indexOf('hl-viewtoggle'))).not.toContain('aria-pressed')
+  })
+
+  it('offers both filter axes, at the top, each as a named group', () => {
+    const controls = markup.slice(0, markup.indexOf('hl-views'))
+    expect(controls).toContain('aria-label="Filter by level"')
+    expect(controls).toContain('aria-label="Filter by state or language"')
+    // The chips come before the views in the document, which is the M12
+    // deliverable: filters at the top of the page, not down a side.
+    expect(markup.indexOf('hl-chip-row')).toBeLessThan(markup.indexOf('hl-views'))
+  })
+
+  it('opens with both filters at all, and with every module rendered (§12.2)', () => {
+    // One pressed chip per group, and each is the group's `all`.
+    expect(markup.match(/aria-pressed="true"/g)).toHaveLength(2)
+    expect(markup).toMatch(/aria-pressed="true"[^>]*>Every level</)
+    expect(markup).toMatch(/aria-pressed="true"[^>]*>All</)
     // Two rows and the header row: the prerender narrows nothing, because a
     // reader-state filter active on load would change the row count between
     // the server render and the first client render.
@@ -337,19 +413,32 @@ describe('ModuleFilters — the chip row (§4.8 item 5, §12.18)', () => {
     expect(markup).toMatch(/Showing <span[^>]*>2<\/span> of <span[^>]*>2<\/span>/)
   })
 
+  it('tells a level apart by more than its hue in every view (SC 1.4.1)', () => {
+    // The hue arrives through `data-cat`, which is the carrier `lokum.css`
+    // resolves. Every surface that carries it also prints the level's name,
+    // so dropping every colour cannot cost the reader the distinction.
+    for (const id of ['overview', 'cards']) {
+      const html = view(id)
+      expect(html).toContain(`data-cat="${DRAWN.subsystem.slug}"`)
+      expect(html).toContain(DRAWN.subsystem.title)
+    }
+  })
+
   it('renders the whole set with no record to read', () => {
     expect(markup).toContain('Security')
     expect(markup).toContain('Advanced Architectures')
-    expect(markup).not.toContain('NO MODULES MATCH FILTER')
+    expect(markup).not.toContain('No module matches')
   })
 })
 
 describe('NoMatch — §12.13 class 3', () => {
   const markup = renderToStaticMarkup(<NoMatch total={32} onClear={() => {}} />)
 
-  it('states the count and offers exactly one path out', () => {
-    expect(markup).toContain('NO MODULES MATCH FILTER — 0 of 32')
-    expect(markup).toContain('Clear the filter')
+  it('states the count and says what to do next, in one path out', () => {
+    expect(markup).toContain('No module matches both filters · 0 of 32')
+    // M12 — an empty result says what to do, not only that it is empty.
+    expect(markup).toContain('Widen either one')
+    expect(markup).toContain('Show the whole catalog')
     expect(markup.match(/<button/g)).toHaveLength(1)
     expect(markup).not.toContain('<a ')
   })

@@ -85,6 +85,9 @@ describe('moduleRows — one row per module in the set (§4.8)', () => {
       order: 2,
       title: 'Intermediate',
       path: '/courses/intermediate/',
+      // M12 — the slug is carried so the catalog's views can address the
+      // level's own colour as `[data-cat="<slug>"]`.
+      slug: 'intermediate',
     })
   })
 
@@ -100,9 +103,18 @@ describe('moduleRows — one row per module in the set (§4.8)', () => {
 })
 
 describe('the filter chips (§4.8 item 5)', () => {
-  it('offers §4.8\'s four names in its order, then §12.18\'s two', () => {
+  /**
+   * M12 — the same six selections, in the same order, in sentence case.
+   *
+   * `kia-context/specs/DESIGN.md` names a tracked-out all-caps label as the
+   * single clearest tell of a generated interface, and `EN · TR` was two of
+   * its do-nots at once: caps, and a meta string joined with a middle dot. The
+   * ids are untouched, because `DEFAULT_FILTER_ID` and the record chips are
+   * addressed by id and a label is not an identity.
+   */
+  it('offers the six selections in order, in the case a reader reads', () => {
     expect(FILTERS.map((filter) => filter.label))
-      .toEqual(['ALL', 'READY', 'PLANNED', 'EN · TR', 'COMPLETED', 'NOT COMPLETED'])
+      .toEqual(['All', 'Ready', 'Planned', 'Both languages', 'Completed', 'Not completed'])
   })
 
   it('keeps the set in module order — filtering never re-sorts', () => {

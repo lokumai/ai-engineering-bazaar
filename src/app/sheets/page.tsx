@@ -1,97 +1,78 @@
 import type { Metadata } from 'next'
+import { Catalog } from '@/components/catalog/Catalog'
 import { SignOffMarks } from '@/components/record/SignOffMarks'
-import { CategoryBlock } from '@/components/sheet/CategoryBlock'
-import { SheetFilters } from '@/components/sheet/SheetFilters'
 import { PageShell } from '@/components/shell/PageShell'
-import { ticksFrom } from '@/components/sheet/TickGauge'
 import { curriculumFacts } from '@/lib/content/facts'
-import { categoryRows, setEyebrow, sheetRows, subsystems } from '@/lib/content/manifest'
+import { sheetRows } from '@/lib/content/manifest'
 
 export const metadata: Metadata = {
   title: 'Catalog',
   description:
-    'One row per module in module order, filterable, with the level as a '
-    + 'column — the flat manifest the banded curriculum cannot show.',
+    'Every module in the course, in three views over one list: the levels in '
+    + 'order, a card for each module, or every column at once. Filter by level, '
+    + 'by state or by language.',
 }
 
 /**
- * §4.8 — the index sheet, at its own address (§15.1).
+ * M12 / D13 — the catalog. One route, three views, filters at the top.
  *
- * This document was `/` until §15 gave the front door to the home screen. It
- * moved rather than merged: `/courses/` shows the same sheets under their six
- * band headers with a `TOPICS` column, and the two columns are mutually
- * exclusive — a flat list in sheet order can carry `SUBSYSTEM`, a banded one
- * cannot (the band already says it), and topics only mean something beside
- * their neighbours (§15.1.1). Merging the pages kills one of the two columns,
- * so both stay and each states its own job in its own lead.
+ * ## What this page is, after M12
  *
- * No hero. No gradient. No "Get started" button (§11.3). The page opens with
- * its title, one line of what it is for, a structural rule, and then the
- * manifest — every sheet, immediately, with no filters above the fold.
+ * It was the "index sheet": one flat table in module order with the filter
+ * chips *below* it, and a second block of level links under that. The author
+ * asked for all three of the catalog alternatives behind a toggle rather than
+ * one of them, so the page is now a thin server shell around one client island:
+ * this file measures the corpus and hands `Catalog` the rows, and `Catalog`
+ * renders the filters, the toggle and all three views over that one array.
  *
- * Everything the page says about the set is measured from the set: the eyebrow
- * from `setSummary()`, each row's extent, sources and language coverage off the
- * file, and the sheets that are not drawn carrying an ISO 128 hidden line down
- * the `#` cell and the words `NOT DRAWN` beside a dashed tick.
+ * **The level blocks that used to sit under the table are gone, and nothing was
+ * lost.** They were a second, shorter rendering of the same grouping the
+ * Overview view now IS. Two renderings of one grouping on one page is the drift
+ * D13 spends its whole cost paragraph bounding.
  *
- * Exactly one column is a claim about the reader — the ninth, `SIGN-OFF`
- * (§12.18) — and the build does not make it. Every square is drawn unsigned,
- * because that is the only thing a page prerendered once for everybody can
- * truthfully say about a reader it has never met; `SignOffMarks` fills them
- * from this browser's record after mount (§12.2 channel B). What the page still
- * refuses is unchanged: no percentage (§11.35), no fourth progress surface
- * (§11.38), and no number that was not measured from the corpus (§11.25).
+ * ## Why the shell is this thin
  *
- * The 56px `hl-index-title` step is not used here. It belongs to the home
- * screen and appears once on the site (§3.2), so this listing takes the same
- * `hl-listing-title` step as every other listing.
+ * §12.2's import rule: `lib/content/*` reaches `node:fs`, so a client island
+ * may never import it and every build-time fact has to cross the boundary as
+ * serialised props. `sheetRows()` is that measurement, taken once here, and it
+ * is the ONE data source D13 requires — the three views are three renderings of
+ * the array this page hands down, so a curriculum change reaches all three or
+ * none, and no view can carry a fact the others do not have.
+ *
+ * `SignOffMarks` stays, and stays at document level: the table view's ninth
+ * column draws its squares unsigned, because that is the only thing a page
+ * prerendered once for everybody can truthfully say about a reader it has never
+ * met, and one island per document fills them from this browser's record after
+ * mount (§12.2 channel B). It is mounted from the page rather than from a row
+ * so that every row stays hook-free.
+ *
+ * What the page still refuses is unchanged: no percentage (§11.35), no fourth
+ * progress surface (§11.38), and no number that was not measured from the
+ * corpus (§11.25). The eyebrow of counts that used to sit above the title went
+ * with the ALL-CAPS meta strip `kia-context/specs/DESIGN.md` names as a tell;
+ * every count it carried is in the Overview view's own bands, beside the
+ * modules it counts.
  */
-export default function SheetIndexPage() {
+export default function CatalogPage() {
   const rows = sheetRows()
 
   return (
     <PageShell>
-      <p className="hl-eyebrow hl-mark">{setEyebrow()}</p>
-
       <h1 className="hl-listing-title">Catalog</h1>
 
       <p className="hl-lead">
-        Every module in one flat list, in module order, with the level as a
-        column. Filter it by level, by state or by language to find a single
-        module; read the curriculum grouped by level instead.
+        Every module in the course, in three views over one list. The overview
+        is the course in its levels, the cards are for browsing, and the table
+        puts every column beside every other. Filter by level, by state or by
+        language; the view you pick is the one you get next time.
       </p>
 
-      <hr className="hl-rule-struct" aria-hidden="true" />
-
-      <SheetFilters rows={rows} label="The curriculum, every module" />
+      <Catalog rows={rows} label="The catalog" />
 
       {/* §12.2 — one island per document, mounted from the page rather than
           from the row, so that every row stays hook-free and the server-only
           listing pages keep rendering the identical components. */}
       <SignOffMarks facts={curriculumFacts()} />
-
-      {/* §5.4 calls this block "the category link on the index", and this is
-          where it lives: below the manifest, because a set's index is its
-          modules and the levels are how they group. Each block states its
-          own coverage in ticks — one per module, dashed where the geometry is
-          not yet drawn. */}
-      <section className="hl-subsystems" aria-labelledby="levels">
-        <h2 id="levels" className="hl-mark hl-subsystems-head">
-          Levels
-        </h2>
-        <ul className="hl-subsystem-list">
-          {subsystems().map(({ category, path }) => (
-            <li key={category.slug}>
-              <CategoryBlock
-                order={category.order}
-                title={category.title}
-                path={path}
-                ticks={ticksFrom(categoryRows(category))}
-              />
-            </li>
-          ))}
-        </ul>
-      </section>
     </PageShell>
   )
 }

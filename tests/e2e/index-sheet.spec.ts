@@ -7,17 +7,24 @@ import {
   SHEET_COUNT,
   CATEGORY_PATHS,
 } from './sheets'
+import { showTable } from './views'
 import { watchPage } from './watch'
 
 /**
- * §4.8 — the index sheet, and the one promise it makes that is easy to break
- * silently: every count the page prints is measured from the set it is
+ * §4.8, as M12 left it — the catalog, and the one promise it makes that is easy
+ * to break silently: every count the page prints is measured from the set it is
  * printing.
  *
- * The sheet lives at `INDEX_SHEET` since §15.1 gave `/` to the home screen. The
- * table moved verbatim, so every test here moved with it — the subject was
- * never the route, it was the flat manifest — and the route is imported rather
- * than typed so a second move costs one line in `sheets.ts`.
+ * The page lives at `INDEX_SHEET` since §15.1 gave `/` to the home screen, and
+ * M12 turned it into three views over one array (D13). **The table is one of
+ * the three now, and it is not the one showing by default**, so every test here
+ * that reads the table selects the Table view first. That is a real change in
+ * what these tests exercise and it is the right one: the table's counts are
+ * still the subject, and the toggle is now part of reaching them.
+ *
+ * `catalog.spec.ts` is the file about the three views themselves — that they
+ * render the same set, that the choice is remembered and that only the showing
+ * one is in the tab order. This file stayed with the counts.
  *
  * "Fifteen are drawn" is prose, so nothing type-checks it and no unit test of
  * the loader can catch the day it stops matching the table it is counting. So
@@ -43,6 +50,7 @@ function spellOut(n: number): string {
 
 test('lists every module in the set, once, in module order', async ({ page }) => {
   await page.goto(INDEX_SHEET)
+  await showTable(page)
 
   const rows = page.locator('.hl-index tbody tr')
   await expect(rows).toHaveCount(SHEET_COUNT)
@@ -61,6 +69,7 @@ test('lists every module in the set, once, in module order', async ({ page }) =>
 
 test('the ready / not-ready counts match the rows actually rendered', async ({ page }) => {
   await page.goto(INDEX_SHEET)
+  await showTable(page)
 
   const ready = page.locator('.hl-index tbody tr:not([data-draft])')
   const notDrawn = page.locator('.hl-index tbody tr[data-draft]')
@@ -72,11 +81,21 @@ test('the ready / not-ready counts match the rows actually rendered', async ({ p
   await expect(page.locator('.hl-row-status', { hasText: /^READY$/ })).toHaveCount(DRAWN_COUNT)
   await expect(page.locator('.hl-row-status', { hasText: /^PLANNED$/ })).toHaveCount(NOT_DRAWN_COUNT)
 
-  // …and the eyebrow above the table counts the same set (§11.25), in the
-  // marks register rather than in words.
-  const eyebrow = await page.locator('.hl-eyebrow').innerText()
-  expect(eyebrow).toContain(`${SHEET_COUNT} MODULES`)
-  expect(eyebrow).toContain(`${DRAWN_COUNT} READY`)
+  // …and the Overview view's bands count the same set (§11.25), level by
+  // level. M12 retired the ALL-CAPS eyebrow of counts that used to sit above
+  // the table — `kia-context/specs/DESIGN.md` names a tracked-out mono strip as
+  // the clearest tell of a generated interface — and put each count beside the
+  // modules it counts. So the comparison is the sum of the bands against the
+  // rows, which is a stronger statement than the eyebrow's two numbers were.
+  const bands = await page.locator('.hl-ov-count').allInnerTexts()
+  const summed = bands.reduce(
+    (total, text) => {
+      const [modules, ready] = [...text.matchAll(/(\d+)/g)].map((match) => Number(match[1]))
+      return { modules: total.modules + modules, ready: total.ready + ready }
+    },
+    { modules: 0, ready: 0 },
+  )
+  expect(summed).toEqual({ modules: SHEET_COUNT, ready: DRAWN_COUNT })
 
   // The spelt-out form of the same three counts is the home screen's first-visit
   // statement (§15.2.3). It is prose about the set, not about the reader, so it
@@ -91,21 +110,25 @@ test('the ready / not-ready counts match the rows actually rendered', async ({ p
 
 test('the filter chips narrow the table to the count they claim', async ({ page }) => {
   await page.goto(INDEX_SHEET)
+  await showTable(page)
 
   const rows = page.locator('.hl-index tbody tr')
   const count = page.locator('.hl-chip-count')
 
   await expect(count).toHaveText(`Showing ${SHEET_COUNT} of ${SHEET_COUNT}`)
 
-  await page.getByRole('button', { name: 'READY', exact: true }).click()
+  // M12 — the same six selections in sentence case. The ids did not move; the
+  // labels did, because a tracked-out all-caps chip is one of DESIGN.md's
+  // do-nots and `EN · TR` was two of them at once.
+  await page.getByRole('button', { name: 'Ready', exact: true }).click()
   await expect(rows).toHaveCount(DRAWN_COUNT)
   await expect(count).toHaveText(`Showing ${DRAWN_COUNT} of ${SHEET_COUNT}`)
 
-  await page.getByRole('button', { name: 'PLANNED', exact: true }).click()
+  await page.getByRole('button', { name: 'Planned', exact: true }).click()
   await expect(rows).toHaveCount(NOT_DRAWN_COUNT)
   await expect(count).toHaveText(`Showing ${NOT_DRAWN_COUNT} of ${SHEET_COUNT}`)
 
-  await page.getByRole('button', { name: 'ALL', exact: true }).click()
+  await page.getByRole('button', { name: 'All', exact: true }).click()
   await expect(rows).toHaveCount(SHEET_COUNT)
 })
 
@@ -113,9 +136,17 @@ test('links every level, and each row reaches its module', async ({ page }) => {
   const problems = watchPage(page)
   await page.goto(INDEX_SHEET)
 
-  await expect(page.locator('.hl-subsystem-list > li')).toHaveCount(CATEGORY_PATHS.length)
+  // M12 — the level links are the Overview view's bands. They replaced the
+  // block of category cards that used to sit under the table, which was a
+  // second, shorter rendering of the same grouping (D13's cost paragraph).
+  await expect(page.locator('.hl-ov-band')).toHaveCount(CATEGORY_PATHS.length)
+  const levelLinks = await page.locator('.hl-ov-link').evaluateAll((nodes) =>
+    nodes.map((node) => new URL((node as HTMLAnchorElement).href).pathname),
+  )
+  expect(levelLinks.sort()).toEqual([...CATEGORY_PATHS].sort())
 
-  // One row, followed end to end: the manifest is only useful if it navigates.
+  // One row, followed end to end: the catalog is only useful if it navigates.
+  await showTable(page)
   await page.locator('.hl-index tbody .hl-row-link').first().click()
   await expect(page).toHaveURL(new RegExp(`${SHEETS[0].path}$`))
   await expect(page.locator('main h1')).toHaveText(SHEETS[0].title)

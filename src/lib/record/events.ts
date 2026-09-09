@@ -28,6 +28,7 @@ import {
   MAX_SUBMITTALS,
   emptySheetRecord,
   isSafeKey,
+  type CatalogViewId,
   type RecordData,
   type RoleId,
   type SheetRecord,
@@ -458,6 +459,25 @@ export function setCharKeys(data: RecordData, on: boolean): RecordData {
 export function setRailFolded(data: RecordData, folded: boolean): RecordData {
   if (data.prefs.railFolded === folded) return data
   return { ...data, prefs: { ...data.prefs, railFolded: folded } }
+}
+
+/**
+ * M12 / D13 — which of the catalog's three views the reader chose.
+ *
+ * The same shape as `setRailFolded` and for the same reason: `store.ts` is the
+ * only writer of learner state (`kia-context/specs/ARCHITECTURE.md` §5), so the
+ * view is written here or it is not written at all. A second `localStorage` key
+ * beside the record would be a second writer, and it would also be invisible to
+ * the export, the erase dialog and the account merge — the three surfaces that
+ * are supposed to account for everything this site remembers about a reader.
+ *
+ * It stamps no day. Choosing a view is not work on the curriculum, and `days`
+ * is evidence about the course: writing to it here would inflate every readout
+ * that counts days for a reader who did nothing but press a toggle.
+ */
+export function setCatalogView(data: RecordData, view: CatalogViewId): RecordData {
+  if (data.prefs.catalogView === view) return data
+  return { ...data, prefs: { ...data.prefs, catalogView: view } }
 }
 
 /** §12.15 — `lastExport`, so `NO EXPORT ON RECORD` can be a truthful state. */

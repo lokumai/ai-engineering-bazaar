@@ -28,6 +28,7 @@
  * two escapers of §12.12.7 — removing the sink, not fencing the input.
  */
 
+import { isViewId } from '../catalog/views'
 import type { ClaimIdentitySource, ClaimReceipt, ClaimSummary } from './claim'
 import { migrate } from './migrate'
 import {
@@ -392,6 +393,15 @@ export function coerceRecordData(input: unknown): RecordData {
        * needs no rung on the migration ladder; see `migrate.ts` on widening.
        */
       aliasNamedFor: asString(prefs.aliasNamedFor),
+      /**
+       * M12. One of the three ids or null, matched against `CATALOG_VIEWS`
+       * rather than trusted, for the reason §12.1.3 gives about every value
+       * read back out of storage: the id reaches a class name and an attribute
+       * selector, so a hand-edited record must not be able to choose its own.
+       * Null is "has not chosen", which is what a record written before this
+       * field existed says and needs no rung on the migration ladder.
+       */
+      catalogView: isViewId(prefs.catalogView) ? prefs.catalogView : null,
     },
     meta: {
       lastExport: asInstant(meta.lastExport),

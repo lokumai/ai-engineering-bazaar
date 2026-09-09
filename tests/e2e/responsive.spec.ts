@@ -1,5 +1,6 @@
 import { type Page, expect, test } from '@playwright/test'
 import { SHORT, A4, CATEGORY_PATHS, INDEX_SHEET, sheetByPath } from './sheets'
+import { showTable } from './views'
 
 /**
  * §4.7's closing sentence, which is the only hard rule in the whole section:
@@ -175,6 +176,10 @@ test('the widest table scrolls inside its own container', async ({ page }) => {
 
 test('the manifest table scrolls inside its region rather than the page', async ({ page }) => {
   await page.goto(INDEX_SHEET)
+  // M12 — the table is one of the catalog's three views and CSS reveals one
+  // (D13). A `display: none` scroller measures zero on both axes, so the view
+  // has to be the showing one before its overflow means anything.
+  await showTable(page)
 
   const region = page.locator('.hl-index-scroll')
   const measured = await region.evaluate((el) => ({
@@ -210,6 +215,10 @@ test('the manifest table scrolls inside its region rather than the page', async 
 for (const [name, path] of [['manifest', INDEX_SHEET], ['longest module', LONGEST.path]] as const) {
   test(`${name} tells the reader where a scroller continues`, async ({ page }) => {
     await page.goto(path)
+    // M12 — the catalog's table view, selected, for the same reason: a hidden
+    // scroller has no box, so `Affordances` has nothing to mark and this loop
+    // would assert the absence of a subject.
+    if (path === INDEX_SHEET) await showTable(page)
     await page.waitForLoadState('networkidle')
 
     const scrollers = await page.locator('[data-hl-scroller]').evaluateAll(

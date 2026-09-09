@@ -18,6 +18,7 @@ import {
   waitForSheet,
 } from './record'
 import { A0, CATEGORY_PATHS, CHECKLIST_ITEMS, INDEX_SHEET, SHEETS, sheetByModule } from './sheets'
+import { showTable } from './views'
 import { watchPage } from './watch'
 
 /**
@@ -458,6 +459,11 @@ test('channel A stays true across a client transition (§12.2)', async ({ page }
 
   await page.locator('.hl-home-resume').getByRole('link', { name: 'Catalog' }).click()
   await expect(page).toHaveURL(new RegExp(`${INDEX_SHEET}$`))
+  // M12 — the catalog renders three views over one array and CSS reveals one
+  // (D13). The row link is in the table view, which is not the one showing by
+  // default, so this hop asks for it: a `display: none` row is not clickable
+  // and that is the arrangement working, not failing.
+  await showTable(page)
   await page.locator(`.hl-index tbody a[href$="${OTHER.path}"]`).click()
   await expect(page.locator('main h1')).toHaveText(OTHER.title)
   expect(await documentLoads(page), 'the router did a full page load').toBe(1)

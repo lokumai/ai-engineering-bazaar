@@ -116,7 +116,7 @@ describe('prefs.aliasNamedFor — the schema slot (§16.3)', () => {
   })
 
   it('coerces a string through and anything else to null', () => {
-    expect(coerceRecordData({ prefs: { aliasNamedFor: 'user-1' } }).prefs.aliasNamedFor).toBe(
+    expect(coerceRecordData({ prefs: { aliasNamedFor: 'user-1', catalogView: null } }).prefs.aliasNamedFor).toBe(
       'user-1',
     )
     for (const junk of [42, true, null, undefined, {}, [], '']) {
@@ -136,7 +136,7 @@ describe('prefs.aliasNamedFor — the schema slot (§16.3)', () => {
       meta: { lastExport: null, persisted: null },
     })
     const data = coerceRecordData(before.data)
-    expect(data.prefs).toEqual({ charKeys: false, railFolded: false, aliasNamedFor: null })
+    expect(data.prefs).toEqual({ charKeys: false, railFolded: false, aliasNamedFor: null, catalogView: null })
     expect(data.identity.name).toBe('Ada')
     expect(data.days).toEqual(['2026-08-01'])
   })
@@ -146,14 +146,14 @@ describe('prefs.aliasNamedFor — the schema slot (§16.3)', () => {
     // Every pref the coercer knows, and only those. A new pref belongs on this
     // list; anything else in a stored envelope is dropped.
     expect(Object.keys(data.prefs).sort())
-      .toEqual(['aliasNamedFor', 'charKeys', 'railFolded'])
+      .toEqual(['aliasNamedFor', 'catalogView', 'charKeys', 'railFolded'])
   })
 })
 
 describe('carriesNothing still ignores prefs (schema.ts, §16.3)', () => {
   const flagged: RecordData = {
     ...EMPTY_RECORD,
-    prefs: { charKeys: true, railFolded: false, aliasNamedFor: 'user-1' },
+    prefs: { charKeys: true, railFolded: false, aliasNamedFor: 'user-1', catalogView: null },
   }
 
   it('an erased record is not resurrected by the naming flag', () => {

@@ -10,7 +10,7 @@ import { useRecord } from '@/lib/record/store'
  *
  * The squares themselves are drawn by `ModuleRow`, in the unsigned state, at
  * build time. They cannot be filled by React, and that is a structural fact
- * about this codebase rather than a preference: `SheetFilters` is `'use client'`
+ * about this codebase rather than a preference: `Catalog` is `'use client'`
  * and imports `SheetIndex`, which imports `ModuleRow`, so on `/` both already
  * run in the browser — while `/courses/` and `/courses/[category]/` render the
  * identical components server-only. A hook in either of them works on `/` and

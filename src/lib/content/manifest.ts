@@ -66,6 +66,9 @@ export function sheetRows(): SheetRow[] {
         order: sheet.category.order,
         title: sheet.category.title,
         path: categoryPath(sheet.category),
+        // M12 — carried rather than recovered from the path: the catalog's
+        // views address a level's colour as `[data-cat="<slug>"]`.
+        slug: sheet.category.slug,
       },
       // The same refusal §5.5 makes in the title block: a stub's words are its
       // schedule of parts and its duration is undeclared, so there is no

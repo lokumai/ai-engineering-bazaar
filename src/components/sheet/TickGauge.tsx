@@ -5,7 +5,7 @@
  * does not.
  *
  * **Hook-free, and it has to stay that way.** This renders inside `SheetIndex`
- * and `CategoryBlock`, and those run in two regimes at once: `SheetFilters` is
+ * and `CategoryBlock`, and those run in two regimes at once: `Catalog` is
  * `'use client'` and imports `SheetIndex`, so on `/` this component is already
  * in the browser, while `/courses/` and `/courses/[category]/` render the
  * identical components **server-only**. A hook added here works on `/` and

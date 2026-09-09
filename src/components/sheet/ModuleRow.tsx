@@ -21,9 +21,10 @@ import type { SheetRow } from '@/lib/content/rows'
  * it is drawn in the unsigned state on every prerender, because that is the
  * only thing build-time HTML can truthfully claim about a reader it has never
  * met (§12.2). One document-level island fills it after mount; this component
- * stays hook-free, because `SheetFilters` imports it and `/courses/` and
- * `/courses/[category]/` do not — a hook here works on `/` and fails the
- * static export of the other two (§12.2, "where hooks may not go").
+ * stays hook-free, because `Catalog` renders it through `SheetIndex` while
+ * `/courses/` and `/courses/[category]/` render the same table from a server
+ * component — a hook here works under the island and fails the static export
+ * of the other two (§12.2, "where hooks may not go").
  */
 
 /** Which column §4.8's `SUBSYSTEM` slot is carrying on this page (§4.9). */
@@ -121,7 +122,7 @@ function SignOffSquares({ row }: { row: SheetRow }) {
  * Read off the slug's own first segment, exactly as `lib/record/boot.ts` reads
  * it: the slug IS the identity (§12.1.3), the set has been renumbered before,
  * and a second map from row to category is a second thing that can drift. No
- * import is added for it, which matters here — `SheetFilters` is `'use client'`
+ * import is added for it, which matters here — `Catalog` is `'use client'`
  * and pulls this component into the browser bundle (§12.2).
  */
 function categoryOf(slug: string): string {

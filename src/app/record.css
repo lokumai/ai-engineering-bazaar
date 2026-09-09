@@ -1008,7 +1008,18 @@
     background: var(--color-cleared);
   }
 
+  /* The status line of an empty state. M12 gives it the display face at UI
+     size: the catalog's no-match state no longer passes `.hl-mark`, because a
+     tracked-out mono uppercase line is what DESIGN.md names as the tell, and
+     this sentence is copy rather than a machine reading. The empty states that
+     still pass `.hl-mark` are unaffected — `globals.css` is the later layer, so
+     that class still wins where it is used. */
   .hl-empty-status {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-ui);
+    font-weight: 600;
+    line-height: 1.4;
     color: var(--color-ink);
   }
 

@@ -287,7 +287,7 @@ describe('data-hl-record after mount (§15.2.1, §12.13)', () => {
     // the store writes on a first theme click.
     stampRecordState(
       root,
-      { ...EMPTY_RECORD, prefs: { charKeys: false, railFolded: false, aliasNamedFor: null } },
+      { ...EMPTY_RECORD, prefs: { charKeys: false, railFolded: false, aliasNamedFor: null, catalogView: null } },
       FACTS,
     )
     expect(root.getAttribute('data-hl-record')).toBeNull()

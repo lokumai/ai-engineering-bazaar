@@ -235,7 +235,7 @@ describe('data-hl-record only goes on a record that carries something (§15.11)'
     ['a freshly minted record, which is what a migration stamp leaves behind', EMPTY_RECORD],
     [
       'a record holding only a preference',
-      { ...EMPTY_RECORD, prefs: { charKeys: false, railFolded: false, aliasNamedFor: null } },
+      { ...EMPTY_RECORD, prefs: { charKeys: false, railFolded: false, aliasNamedFor: null, catalogView: null } },
     ],
     ['a record holding only an empty module entry', withSheet({})],
     ['a name the reader typed', { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, name: 'Ada' } }],
@@ -322,6 +322,44 @@ describe('data-hl-record only goes on a record that carries something (§15.11)'
     const stamped = run(script, { stored: envelope(data) })
     expect(stamped.attributes.get('data-hl-record')).toBe('1')
     expect([...stamped.classes]).toEqual(['hl-role-qa'])
+  })
+
+  /**
+   * M12 — the two layout preferences are stamped BEFORE the gate, and that
+   * order is the whole reason they are stamped in this script at all.
+   *
+   * A record whose only content is "fold the rail" or "show me the table"
+   * carries nothing by §15.11's rule, so the gate returns before any class is
+   * touched. Stamping either after it would mean the rail sprang open, and the
+   * catalog fell back to the overview, on every load for exactly the readers
+   * who had asked for something else. Both attributes are asserted together
+   * with the ABSENCE of `data-hl-record`, which is what makes this a test of
+   * the order rather than of the attribute.
+   */
+  it('stamps a layout preference on a record that carries nothing (M10, M12)', () => {
+    const stamped = run(script, {
+      stored: envelope({ prefs: { railFolded: true, catalogView: 'table' } }),
+    })
+    expect(stamped.attributes.get('data-hl-rail')).toBe('folded')
+    expect(stamped.attributes.get('data-hl-view')).toBe('table')
+    expect(stamped.attributes.has('data-hl-record')).toBe(false)
+    expect([...stamped.classes]).toEqual([])
+  })
+
+  it('stamps no view for one it does not know, because the id reaches a selector', () => {
+    for (const view of ['everything', '', 7, null, {}, 'TABLE'])
+      expect(
+        run(script, { stored: envelope({ prefs: { catalogView: view } }) })
+          .attributes.has('data-hl-view'),
+        JSON.stringify(view),
+      ).toBe(false)
+    // And the three it does know, so the check above cannot be passing because
+    // the stamp is broken for every value.
+    for (const view of ['overview', 'cards', 'table'])
+      expect(
+        run(script, { stored: envelope({ prefs: { catalogView: view } }) })
+          .attributes.get('data-hl-view'),
+      ).toBe(view)
   })
 
   it('does not throw on a hand-edited record whose fields are the wrong shape', () => {

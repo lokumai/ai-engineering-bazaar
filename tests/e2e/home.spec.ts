@@ -500,7 +500,12 @@ test(`the set card opens the manifest at ${INDEX_SHEET} (§15.1)`, async ({ page
   await expect(set).toHaveAttribute('href', INDEX_SHEET)
   await set.click()
   await expect(page).toHaveURL(new RegExp(`${INDEX_SHEET}$`))
-  await expect(page.locator('main table')).toBeVisible()
+  // M12 — what the door opens on is the catalog's default view, which is the
+  // overview rather than the table (D13). The table is one keystroke away and
+  // `catalog.spec.ts` owns the toggle; what this test is about is that the door
+  // leads to the catalog and the catalog rendered something.
+  await expect(page.locator('.hl-view[data-view="overview"]')).toBeVisible()
+  await expect(page.locator('.hl-ov-band').first()).toBeVisible()
 
   expect(problems.consoleErrors).toEqual([])
   expect(problems.failedRequests).toEqual([])

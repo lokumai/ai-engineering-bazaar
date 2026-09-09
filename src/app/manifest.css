@@ -463,6 +463,430 @@
     color: var(--color-ink-muted);
   }
 
+  /* =========================================================================
+     M12 / D13 — THE CATALOG: one route, one data source, three views.
+
+     Four rules govern this block, and each one is a rule the system already
+     had. They are here because a reader of `Catalog.tsx` will come looking for
+     them.
+
+     ONE — WHICH VIEW IS SHOWING IS CHANNEL A (§12.2). `lib/record/boot.ts`
+     stamps `data-hl-view` on <html> before first paint from the reader's stored
+     preference, and the carrier rule below turns that into local custom
+     properties. So a reader who chose Table last week meets Table in frame one:
+     no flash of a view they did not ask for, no hydration, and it works with
+     the bundle blocked. There is no `useState` behind the toggle and no
+     `aria-pressed` on its buttons, because both would be a second author of one
+     state (see `Catalog.tsx`).
+
+     TWO — ONE CARRIER, then nothing names a view again. The same arrangement
+     `lokum.css` uses for the five level hues, and for the same reason: the
+     selector list that relates a root attribute to a descendant's attribute is
+     the thing that goes stale, so it is written ONCE and every rule after it
+     reads the properties it sets. A fourth view costs one line in that rule.
+
+     THREE — the two views that are not showing are `display: none`, which is
+     what takes their module links out of the tab order. Load-bearing rather
+     than tidy: three views in one document would otherwise put 99 links
+     between the toggle and the footer.
+
+     FOUR — a level is told apart by its hue AND by its name AND by its number
+     AND by its count. §13.1.3's list of surfaces allowed a level hue is closed;
+     the overview's band and the card's leading edge NAME a level, which is what
+     admits them, exactly as M10 admitted the navbar dropdown's key. Under
+     `forced-colors: active` every hue goes and the other three carry the whole
+     distinction (SC 1.4.1, §13.1.4).
+     ======================================================================== */
+
+  /* -- the carrier: exactly one view is the showing one ------------------- */
+
+  /* `html:not([data-hl-view])` is the reader who has not chosen, and it is
+     also every reader with scripting off — which is why the prerendered
+     document has to be in the default view and `DEFAULT_VIEW_ID` is the first
+     of the three. `prefs.catalogView` is null rather than `'overview'` for the
+     same reason: it distinguishes "has not chosen" from "chose the default",
+     so changing the default moves the first reader and not the second. */
+  html:not([data-hl-view]) [data-view="overview"],
+  html[data-hl-view="overview"] [data-view="overview"],
+  html[data-hl-view="cards"] [data-view="cards"],
+  html[data-hl-view="table"] [data-view="table"] {
+    /* The section's own display. */
+    --hl-view-box: block;
+    /* The word `Showing` inside the toggle's button, which is what states the
+       state to a screen reader — revealed by the same rule that reveals the
+       view, so the picture and the sentence cannot come apart. */
+    --hl-view-flag: inline;
+    /* The showing button's look. Cobalt is the interactive vocabulary in this
+       system and "the view you are in" is exactly that (DESIGN.md, Colors);
+       the heavier bottom edge is what survives forced colours, where every
+       hue goes. */
+    --hl-view-ink: var(--color-accent-ink);
+    --hl-view-fill: var(--color-accent-wash);
+    --hl-view-line: var(--color-accent);
+    --hl-view-weight: var(--stroke-cut);
+  }
+
+  /* -- the controls, at the TOP of the page ------------------------------- */
+
+  /* M12 reverses §4.8, which put the chips BELOW the table on the argument
+     that a reader should meet the whole set before narrowing it. With three
+     views there is no single "whole set" to meet first, and a control that
+     changes what is on screen belongs above the thing it changes. */
+  .hl-cat-controls {
+    display: grid;
+    gap: 12px;
+    margin: 24px 0 28px;
+    padding-bottom: 16px;
+    border-bottom: var(--stroke-hair) solid var(--color-line);
+  }
+
+  .hl-cat-filters {
+    display: grid;
+    gap: 8px;
+  }
+
+  .hl-cat-viewbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  /* A chip. Sentence case in the display face, `sm` radius — DESIGN.md's shape
+     for a chip or a tag — and THE INTERACTIVE BORDER, because the border is
+     the only thing identifying it as a control and no other line colour in
+     this palette reaches 3:1 (D19). It was `.hl-button .hl-mark`, which is
+     32px, monospace and tracked-out uppercase: two of DESIGN.md's do-nots in
+     one control. */
+  .hl-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 30px;
+    padding: 0 11px;
+    border: var(--stroke-hair) solid var(--color-line-control);
+    border-radius: var(--radius-sm);
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: var(--text-meta);
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 90ms linear, border-color 90ms linear;
+  }
+
+  .hl-chip:hover {
+    background: var(--color-cleared);
+    border-color: var(--color-line-cut);
+  }
+
+  /* The level's own hue, 7px, beside the level's own name — never instead of
+     it. Dormant grey where a chip names no level (`Every level`). */
+  .hl-chip-chip {
+    flex: none;
+    width: 7px;
+    height: 7px;
+    border-radius: 1px;
+    background: var(--hl-cat, var(--color-line-strong));
+  }
+
+  /* -- the view toggle --------------------------------------------------- */
+
+  .hl-viewtoggle {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .hl-viewbtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 32px;
+    padding: 0 12px;
+    border-style: solid;
+    border-width: var(--stroke-hair);
+    border-bottom-width: var(--hl-view-weight, var(--stroke-hair));
+    border-color: var(--hl-view-line, var(--color-line-control));
+    border-radius: var(--radius-md);
+    background: var(--hl-view-fill, var(--color-paper));
+    color: var(--hl-view-ink, var(--color-ink));
+    font-family: var(--font-display);
+    font-size: var(--text-meta);
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 90ms linear, border-color 90ms linear;
+  }
+
+  .hl-viewbtn:hover {
+    background: var(--hl-view-fill, var(--color-cleared));
+    border-color: var(--hl-view-line, var(--color-line-cut));
+  }
+
+  .hl-view-icon {
+    flex: none;
+  }
+
+  /* Hidden from sight, revealed to a screen reader by rule ONE's carrier. The
+     `sr-only` utility keeps it out of the picture; this switches whether it is
+     in the accessible name at all. */
+  .hl-view-on {
+    display: var(--hl-view-flag, none);
+  }
+
+  /* -- the views --------------------------------------------------------- */
+
+  .hl-view {
+    display: var(--hl-view-box, none);
+  }
+
+  .hl-view-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    margin: 0 0 16px;
+    font-family: var(--font-display);
+    font-size: var(--text-h4);
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--color-ink);
+  }
+
+  /* The line saying what this view is for. `ink-muted` and never `ink-faint`:
+     it is a sentence, and the faint weight is 3.19:1 and may carry a count, a
+     unit or a status word and nothing more (DESIGN.md, Colors). */
+  .hl-view-answers {
+    font-size: var(--text-meta);
+    font-weight: 400;
+    color: var(--color-ink-muted);
+  }
+
+  /* -- the OVERVIEW view: one band per level ----------------------------- */
+
+  .hl-ov {
+    display: grid;
+    gap: 16px;
+  }
+
+  /* The `arch` marks a level — the banner's own shape (DESIGN.md, Shapes) —
+     and the 4px leading edge in the level's own hue is `strokes.edge`, the one
+     weight above the cut plane, which M10 gave exactly one job: saying which
+     level you are looking at. */
+  .hl-ov-band {
+    border: var(--stroke-hair) solid var(--color-line);
+    border-inline-start: var(--stroke-edge) solid var(--hl-cat, var(--color-line-strong));
+    border-radius: var(--shape-arch);
+    background: var(--color-cleared);
+    overflow: hidden;
+  }
+
+  .hl-ov-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px 16px;
+    padding: 12px 16px;
+    border-bottom: var(--stroke-hair) solid var(--color-line);
+    background: var(--color-sunken);
+  }
+
+  .hl-ov-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-h4);
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .hl-ov-link {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+
+  .hl-ov-link:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent-warm);
+    text-underline-offset: 3px;
+  }
+
+  .hl-ov-order {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    font-weight: 400;
+    color: var(--color-ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hl-ov-count {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-meta);
+    color: var(--color-ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Multiple columns from 11 modules down to 1, without a media query: the
+     level with eleven and the level with one are both in this list. */
+  .hl-ov-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0 20px;
+    margin: 0;
+    padding: 8px 16px 12px;
+    list-style: none;
+  }
+
+  .hl-ov-item {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 5px 0;
+    font-family: var(--font-display);
+    font-size: var(--text-ui);
+    line-height: 1.4;
+  }
+
+  .hl-ov-num {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    color: var(--color-ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hl-ov-mod {
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+
+  a.hl-ov-mod:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent-warm);
+    text-underline-offset: 3px;
+  }
+
+  /* One spelling of this status, everywhere (§12.14.1): the table, the card,
+     the overview, the path step and the diagram all say `Planned`. */
+  .hl-ov-planned {
+    margin-inline-start: auto;
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+  }
+
+  /* -- the CARDS view --------------------------------------------------- */
+
+  .hl-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(258px, 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hl-card {
+    display: grid;
+    align-content: start;
+    gap: 8px;
+    padding: 14px;
+    border: var(--stroke-hair) solid var(--color-line);
+    border-inline-start: var(--stroke-edge) solid var(--hl-cat, var(--color-line-strong));
+    border-radius: var(--radius-lg);
+    background: var(--color-cleared);
+  }
+
+  /* A planned module's leading edge takes the ISO 128 hidden line the whole
+     system uses for a drawing that does not exist yet, so the card says
+     `Planned` in three ways: the word, the missing link, and the line type. */
+  .hl-card[data-drawn="false"] {
+    border-inline-start-style: dashed;
+  }
+
+  .hl-card-level {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-meta);
+    color: var(--color-ink-muted);
+  }
+
+  .hl-card-chip {
+    flex: none;
+    width: 7px;
+    height: 7px;
+    border-radius: 1px;
+    background: var(--hl-cat, var(--color-line-strong));
+  }
+
+  .hl-card-num {
+    margin-inline-start: auto;
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    color: var(--color-ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hl-card-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-h4);
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--color-ink);
+  }
+
+  .hl-card-link {
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+
+  .hl-card-link:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent-warm);
+    text-underline-offset: 3px;
+  }
+
+  .hl-card-facts {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 3px 12px;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-meta);
+    line-height: 1.4;
+  }
+
+  /* Every fact labelled. A row of bare values joined with middle dots is one
+     of DESIGN.md's named tells, and it is what this strip used to be. */
+  .hl-card-facts > div {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+  }
+
+  .hl-card-facts dt {
+    color: var(--color-ink-muted);
+  }
+
+  .hl-card-facts dd {
+    margin: 0;
+    color: var(--color-ink);
+    font-variant-numeric: tabular-nums;
+  }
+
   /* §4.7 — below 768px the page keeps 20px of side padding and the table
      keeps its own scroller. The chips stack rather than stretch. */
   @media (max-width: 767px) {
@@ -475,5 +899,54 @@
     .hl-chips {
       justify-content: flex-start;
     }
+  }
+}
+
+@media (forced-colors: active) {
+  /* M12 — the catalog's controls and views under forced colours.
+
+     The mode drops every hue, forces a non-URL `background-image` to none, and
+     honours the system keywords in place of the forced value. So the showing
+     view's button keeps its 2px bottom edge — a border WIDTH is not overridden
+     — and takes `Highlight` for its colour; the chips come back as platform
+     buttons; and the level hue on a band and a card is replaced by the border
+     the band would otherwise have painted. Nothing is lost, because a level's
+     name, number and count carry the distinction already (§13.1.4). */
+  .hl-chip {
+    border: 1px solid ButtonBorder;
+    background: ButtonFace;
+    color: ButtonText;
+  }
+
+  .hl-chip[aria-pressed="true"] {
+    border: 2px solid Highlight;
+    background: Canvas;
+    color: CanvasText;
+  }
+
+  .hl-viewbtn {
+    border-color: ButtonBorder;
+    background: ButtonFace;
+    color: ButtonText;
+  }
+
+  html:not([data-hl-view]) .hl-viewbtn[data-view="overview"],
+  html[data-hl-view="overview"] .hl-viewbtn[data-view="overview"],
+  html[data-hl-view="cards"] .hl-viewbtn[data-view="cards"],
+  html[data-hl-view="table"] .hl-viewbtn[data-view="table"] {
+    border-color: Highlight;
+    background: Canvas;
+    color: CanvasText;
+  }
+
+  .hl-ov-band,
+  .hl-card {
+    border: 1px solid CanvasText;
+    border-inline-start-width: var(--stroke-edge);
+  }
+
+  .hl-chip-chip,
+  .hl-card-chip {
+    background: CanvasText;
   }
 }

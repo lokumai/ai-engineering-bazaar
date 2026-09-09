@@ -79,6 +79,8 @@ const CONTROLS: readonly string[] = [
   '.prose input[type="checkbox"]',    // a task-list box in the prose
   '.hl-rail-fold',                    // M10 — the fold
   '.hl-rail-restore',                 // M10 — the restore tab
+  '.hl-chip',                         // M12 — a catalog filter
+  '.hl-viewbtn',                      // M12 — one of the three view buttons
 ]
 
 /** The declaration block a selector opens, up to its closing brace. */

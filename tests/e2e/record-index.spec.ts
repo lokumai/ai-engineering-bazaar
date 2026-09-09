@@ -9,6 +9,7 @@ import {
   waitForHydratedReadout,
 } from './record'
 import { A0, DRAWN_COUNT, INDEX_SHEET, SHEETS, SHEET_COUNT, sheetByModule } from './sheets'
+import { showTable } from './views'
 import { watchPage } from './watch'
 
 /**
@@ -64,6 +65,7 @@ function slotState(page: Page, slug: string, slot: string) {
 const rows = (page: Page) => page.locator('.hl-index tbody tr')
 const chip = (page: Page, label: string) => page.getByRole('button', { name: label, exact: true })
 
+
 // ---------------------------------------------------------------------------
 // §4.8 column 9 / §12.18 — the column itself
 // ---------------------------------------------------------------------------
@@ -72,6 +74,7 @@ test('the ninth column is COMPLETION, and its squares are 14 × 14 (§4.8, §12.
   page,
 }) => {
   await page.goto(INDEX_SHEET)
+  await showTable(page)
 
   const headers = page.locator('.hl-index thead th')
   await expect(headers).toHaveCount(9)
@@ -99,6 +102,7 @@ test('nothing in the sign-off column is interactive or announced (§4.8, §10.3,
   page,
 }) => {
   await page.goto(INDEX_SHEET)
+  await showTable(page)
 
   // §12.18 — a control here would sit under `.hl-row-link`'s stretched
   // pseudo-element, unclickable, and lifting it out would add a second tab stop
@@ -136,6 +140,7 @@ test('a seeded record paints the squares its record has earned (§12.2 channel B
     },
   })
   await page.goto(INDEX_SHEET)
+  await showTable(page)
 
   // `sheetStamps` decides what is filled — the same function the manifest asked
   // which squares to draw — so a square is filled when its slot's count has
@@ -162,28 +167,29 @@ test('a seeded record paints the squares its record has earned (§12.2 channel B
  * rows React re-mounts are the server's markup again, and React has no reason
  * to think anything else wrote to them.
  */
-test('pressing a filter chip and returning to ALL keeps the squares painted (§12.2)', async ({
+test('pressing a filter chip and returning to All keeps the squares painted (§12.2)', async ({
   page,
 }) => {
   await seedRecord(page, { sheets: { [SEEDED_SLUG]: signedSheet('b7225f8') } })
   await page.goto(INDEX_SHEET)
+  await showTable(page)
   const painted = slotState(page, SEEDED_SLUG, 'COMPLETION')
   await expect(painted).toHaveAttribute('data-signed', 'true')
 
-  // `READY` is a drawing filter, so it re-mounts rows without changing which
+  // `Ready` is a drawing filter, so it re-mounts rows without changing which
   // sheets the record says are signed off — the cleanest way to make the DOM
   // move under the paint.
-  await chip(page, 'READY').click()
+  await chip(page, 'Ready').click()
   await expect(rows(page)).toHaveCount(DRAWN_COUNT)
   await expect(painted).toHaveAttribute('data-signed', 'true')
 
-  await chip(page, 'PLANNED').click()
+  await chip(page, 'Planned').click()
   await expect(rows(page)).toHaveCount(SHEET_COUNT - DRAWN_COUNT)
   // The seeded sheet is not in this table at all; the assertion is that coming
   // back finds it painted rather than that it stayed painted while absent.
   await expect(squares(page, SEEDED_SLUG)).toHaveCount(0)
 
-  await chip(page, 'ALL').click()
+  await chip(page, 'All').click()
   await expect(rows(page)).toHaveCount(SHEET_COUNT)
   await expect(painted).toHaveAttribute('data-signed', 'true')
 })
@@ -192,7 +198,7 @@ test('pressing a filter chip and returning to ALL keeps the squares painted (§1
 // §12.18 — the two chips that select on the record
 // ---------------------------------------------------------------------------
 
-test('the COMPLETED and NOT COMPLETED chips filter on the reader’s own assertions (§12.18)', async ({
+test('the Completed and Not completed chips filter on the reader’s own assertions (§12.18)', async ({
   page,
 }) => {
   const signed = [sheetByModule(13), sheetByModule(8)]
@@ -200,16 +206,17 @@ test('the COMPLETED and NOT COMPLETED chips filter on the reader’s own asserti
     sheets: Object.fromEntries(signed.map((sheet) => [slugOf(sheet), signedSheet('b7225f8')])),
   })
   await page.goto(INDEX_SHEET)
+  await showTable(page)
   await waitForHydratedReadout(page)
 
-  await chip(page, 'COMPLETED').click()
+  await chip(page, 'Completed').click()
   await expect(rows(page)).toHaveCount(signed.length)
   const titles = await page.locator('.hl-index tbody .hl-row-link').allTextContents()
   expect(titles.sort()).toEqual(signed.map((sheet) => sheet.title).sort())
 
-  // §12.4.1 — a draft can never be completed, so it is always `NOT COMPLETED`
+  // §12.4.1 — a draft can never be completed, so it is always `Not completed`
   // rather than excluded from both: the two chips partition the whole set.
-  await chip(page, 'NOT COMPLETED').click()
+  await chip(page, 'Not completed').click()
   await expect(rows(page)).toHaveCount(SHEET_COUNT - signed.length)
   await expect(page.locator('.hl-index tbody tr[data-draft]')).toHaveCount(
     SHEET_COUNT - DRAWN_COUNT,
@@ -232,15 +239,15 @@ test('the count of what is shown is announced, not implied (§12.13, SC 4.1.3)',
   await expect(count).toHaveAttribute('role', 'status')
   await expect(count).toHaveText(`Showing ${SHEET_COUNT} of ${SHEET_COUNT}`)
 
-  await chip(page, 'COMPLETED').click()
+  await chip(page, 'Completed').click()
   await expect(count).toHaveText(`Showing 1 of ${SHEET_COUNT}`)
 
-  await chip(page, 'NOT COMPLETED').click()
+  await chip(page, 'Not completed').click()
   await expect(count).toHaveText(`Showing ${SHEET_COUNT - 1} of ${SHEET_COUNT}`)
 })
 
 /**
- * §12.2 — `DEFAULT_FILTER_ID` is `ALL` and has to stay `ALL`.
+ * §12.2 — `DEFAULT_FILTER_ID` is `all` and has to stay `all`.
  *
  * The served bytes are one witness and the hydrated DOM is the other. Reading
  * the row count out of the response body rather than out of a constant is what
@@ -248,7 +255,7 @@ test('the count of what is shown is announced, not implied (§12.13, SC 4.1.3)',
  * suite with itself: if a record chip were ever active on load, the numbers
  * would differ and React would repaint the table.
  */
-test('ALL is active on load and the first client render emits the prerender’s rows (§12.2)', async ({
+test('All is active on load and the first client render emits the prerender’s rows (§12.2)', async ({
   page,
 }) => {
   const problems = watchPage(page)
@@ -264,8 +271,8 @@ test('ALL is active on load and the first client render emits the prerender’s 
   await page.goto(INDEX_SHEET)
   await waitForHydratedReadout(page)
 
-  await expect(chip(page, 'ALL')).toHaveAttribute('aria-pressed', 'true')
-  for (const label of ['READY', 'PLANNED', 'EN · TR', 'COMPLETED', 'NOT COMPLETED'])
+  await expect(chip(page, 'All')).toHaveAttribute('aria-pressed', 'true')
+  for (const label of ['Ready', 'Planned', 'Both languages', 'Completed', 'Not completed'])
     await expect(chip(page, label)).toHaveAttribute('aria-pressed', 'false')
 
   await expect(rows(page)).toHaveCount(prerendered)
@@ -332,6 +339,7 @@ for (const [width, height] of WIDTHS) {
     })
     await page.setViewportSize({ width, height })
     await page.goto(INDEX_SHEET)
+    await showTable(page)
     // Every drawn sheet signed off, so every fillable square in the column is
     // painted — the widest the column can ever be.
     await expect(slotState(page, SEEDED_SLUG, 'COMPLETION')).toHaveAttribute('data-signed', 'true')

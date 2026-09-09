@@ -42,7 +42,7 @@ test('the manifest survives being used', async ({ page }) => {
   const problems = watchPage(page)
   await page.goto(INDEX_SHEET)
 
-  for (const chip of ['READY', 'PLANNED', 'EN · TR', 'ALL']) {
+  for (const chip of ['Ready', 'Planned', 'Both languages', 'All']) {
     await page.getByRole('button', { name: chip, exact: true }).click()
   }
   await page.getByRole('button', { name: 'Toggle theme' }).click()

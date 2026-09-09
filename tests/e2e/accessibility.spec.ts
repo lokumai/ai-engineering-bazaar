@@ -1,6 +1,7 @@
 import { type Page, expect, test } from '@playwright/test'
 import { contrastSamples, useTheme, worst } from './contrast'
 import { A0, SHORT, A4, CATEGORY_PATHS, INDEX_SHEET, SHEETS } from './sheets'
+import { showTable } from './views'
 
 /**
  * §10.2–§10.3 and §9.6 — the floors only a real engine can confirm.
@@ -257,6 +258,10 @@ test('the home screen is titled once, whichever state is showing (§15.2.2)', as
 
 test('a row in the manifest is one tab stop, and it is reachable', async ({ page }) => {
   await page.goto(INDEX_SHEET)
+  // M12 — the table is one of the catalog's three views and CSS reveals one
+  // (D13). A hidden view's links are out of the tab order by design, which is
+  // the point of that arrangement; the claim here is about the showing table.
+  await showTable(page)
 
   // §5.3 — the whole row is one link target, so it must not be two or three
   // tab stops per row. One per row, however many rows the set has.
@@ -274,6 +279,7 @@ test('the schedule of parts and the manifest are named tables', async ({ page })
   await expect(page.locator('table.hl-schedule caption')).toHaveText(/schedule of parts/i)
 
   await page.goto(INDEX_SHEET)
+  await showTable(page)
   await expect(page.locator('.hl-index caption')).not.toHaveText('')
 })
 
@@ -330,6 +336,7 @@ test('the schedule of parts announces its ITEM column legibly (§4.5)', async ({
 test('the manifest\'s quiet columns clear the §10.4 floor (§4.8, §4.9)', async ({ page }) => {
   for (const theme of THEMES) {
     await page.goto(INDEX_SHEET)
+    await showTable(page)
     await useTheme(page, theme)
 
     // §4.8 sets `#` in `--color-ink-faint` and `SUBSYSTEM` in `--color-ink-
@@ -348,6 +355,7 @@ test('the manifest\'s quiet columns clear the §10.4 floor (§4.8, §4.9)', asyn
 
 test('the manifest keeps a hierarchy across its columns (§4.8)', async ({ page }) => {
   await page.goto(INDEX_SHEET)
+  await showTable(page)
 
   // A cascade collision painted both quiet columns at full `--color-ink`:
   // `.hl-row > :is(td, th)` is (0,1,1) and outranked the class rules. The

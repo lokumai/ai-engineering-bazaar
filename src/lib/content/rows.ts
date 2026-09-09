@@ -11,6 +11,16 @@ export interface SubsystemRef {
   order: number
   title: string
   path: string
+  /**
+   * M12 — the level's own slug, which is also its identity.
+   *
+   * Added for the catalog's three views: every level colour in the palette is
+   * addressed as `[data-cat="<slug>"]` (`lokum.css`), so a view that groups by
+   * level needs the slug and not only the title. It was derivable from `path`
+   * by string surgery, which is exactly the kind of derivation that breaks the
+   * day a route changes; the loader knows it, so it is carried.
+   */
+  slug: string
 }
 
 export interface SheetRow {
@@ -108,23 +118,47 @@ function isSignedOff(row: SheetRow, signed: ReadonlySet<string>): boolean {
  * same way, out of the whole set rather than out of the drawn ones.
  */
 export const FILTERS: readonly SheetFilter[] = [
-  { id: 'all', label: 'ALL', basis: 'drawing', keep: () => true },
-  { id: 'ready', label: 'READY', basis: 'drawing', keep: (row) => row.drawn },
-  { id: 'not-drawn', label: 'PLANNED', basis: 'drawing', keep: (row) => !row.drawn },
-  { id: 'bilingual', label: 'EN · TR', basis: 'drawing', keep: (row) => row.bilingual },
+  { id: 'all', label: 'All', basis: 'drawing', keep: () => true },
+  { id: 'ready', label: 'Ready', basis: 'drawing', keep: (row) => row.drawn },
+  { id: 'not-drawn', label: 'Planned', basis: 'drawing', keep: (row) => !row.drawn },
+  { id: 'bilingual', label: 'Both languages', basis: 'drawing', keep: (row) => row.bilingual },
   {
     id: 'signed',
-    label: 'COMPLETED',
+    label: 'Completed',
     basis: 'record',
     keep: (row, signed) => isSignedOff(row, signed),
   },
   {
     id: 'unsigned',
-    label: 'NOT COMPLETED',
+    label: 'Not completed',
     basis: 'record',
     keep: (row, signed) => !isSignedOff(row, signed),
   },
 ]
+
+/**
+ * M12 — the id the level filter takes when it is selecting nothing.
+ *
+ * The level filter is a second axis rather than six more chips on the first
+ * one, because the two questions are independent: "the Expert modules" and
+ * "the ones I have not completed" compose, and a single row of eleven chips
+ * cannot express the pair. It is `'all'` on load for the same §12.2 reason
+ * `DEFAULT_FILTER_ID` is: the prerendered HTML has met no reader, so the first
+ * client render has to emit the same rows the server did.
+ */
+export const ALL_LEVELS = 'all'
+
+/** The levels the rows themselves contain, in curriculum order. */
+export function levelsOf(rows: readonly SheetRow[]): SubsystemRef[] {
+  const seen = new Map<string, SubsystemRef>()
+  for (const row of rows) if (!seen.has(row.subsystem.slug)) seen.set(row.subsystem.slug, row.subsystem)
+  return [...seen.values()].sort((a, b) => a.order - b.order)
+}
+
+/** The rows of one level, or every row for `ALL_LEVELS`. Never re-sorted. */
+export function applyLevel(rows: readonly SheetRow[], level: string): SheetRow[] {
+  return level === ALL_LEVELS ? [...rows] : rows.filter((row) => row.subsystem.slug === level)
+}
 
 /** The chip that is active on load, and the only one that may be (§12.2). */
 export const DEFAULT_FILTER_ID: string = FILTERS[0].id
@@ -144,11 +178,33 @@ export function applyFilter(
 }
 
 /**
- * §12.13 class 3 — NO MATCH, the one empty state a filter can produce. The
- * denominator is the set the chips were handed, so a subsystem's table says
- * `0 of 8` and the index says `0 of 33`; SC 4.1.3's own examples are "5 results
- * returned" / "No results returned", so the count is announced, not implied.
+ * §12.13 class 3 — the one empty state a filter can produce, as the sentence
+ * the live region announces.
+ *
+ * The denominator is the set the chips were handed, so a level's table says
+ * `0 of 8` and the catalog says `0 of 33`; SC 4.1.3's own examples are "5
+ * results returned" / "No results returned", so the count is announced rather
+ * than implied.
+ *
+ * **M12 rewrote it and the rewrite is the deliverable, not the casing.** It
+ * read `NO MODULES MATCH FILTER — 0 of 33`, which is a status and not an
+ * instruction: M12 asks an empty result to say what to do next. The cause is
+ * named as the filter rather than the reader, the sentence points at the
+ * control that undoes it, and `NO_MATCH_CUE` beside it is the paragraph that
+ * says which control.
  */
 export function noMatchReadout(total: number): string {
-  return `NO MODULES MATCH FILTER — 0 of ${total}`
+  return `No module matches both filters · 0 of ${total}`
 }
+
+/**
+ * The line under it: what to do, in one sentence, naming the control.
+ *
+ * Separate from the readout above because only the readout belongs in the live
+ * region — a status message is announced on change and this is standing prose,
+ * so a screen reader would hear the whole paragraph again on every keystroke of
+ * a filter it was not describing.
+ */
+export const NO_MATCH_CUE =
+  'The two filters select different modules. Widen either one, or clear both to '
+  + 'see the whole catalog again.'

@@ -1,0 +1,91 @@
+/* ===========================================================================
+   THE SHELL — M16 stage 1.
+
+   Reference: `playground/01-theme-T4-ground-G3-powder.html`. Structure and
+   geometry come from that file; every colour, length and weight comes from
+   `src/design/bazaar.css`, which is a transcription of it.
+
+   THIS FILE IS SMALL ON PURPOSE, and if it grows the reason should be
+   suspicious. The language already carries the whole shell: `bz-bar` and its
+   sub-palette, `bz-band`, the three-column `bz-shell` grid with both
+   breakpoints and the fold, `bz-rail` and its groups, `bz-col` and its
+   measure, `bz-aside`. A surface stylesheet's job is to arrange primitives the
+   language defines, not to define more of them — so what is left here is the
+   glue the language deliberately does not carry, because a surface's layout is
+   not part of a design language (`kia-context/specs/DESIGN.md`, Overview).
+
+   Three things, and that is the whole file: the flexible gap that pushes the
+   bar's controls to the trailing edge, the skip link, and one screen-reader
+   utility. Lengths here are literal because the language declares no spacing
+   scale — the mockup's paddings are properties of each primitive rather than
+   steps on a ladder, so DESIGN.md leaves them out on purpose.
+
+   `tests/unit/design/surface-stylesheets.test.ts` holds this file to the rules
+   every surface stylesheet is held to: no colour literal, no radius that is not
+   a token, no shadow, no blur, no palette declaration of its own, and no
+   category hue on a link, a button or a focus ring.
+   =========================================================================== */
+
+@layer components {
+
+  /* The mockup's `.sp`: an empty flex child between the navigation and the
+     search field. It is layout rather than language — the bar's items and its
+     controls are both primitives, and this is only the space between them. */
+  .bz-bar-spacer {
+    flex: 1;
+  }
+
+  /* The disclosure marker on a bar item that owns a set of things. The mockup
+     draws it as `.mainnav .cv`, and it is not in the language because a chevron
+     is not a design decision — it inherits the item's own colour and turns with
+     the disclosure it belongs to. */
+  .bz-bar-chevron {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+  }
+
+  /* ---------------------------------------------------------------------------
+     The skip link.
+
+     First focusable element on every page, and invisible until it is focused.
+     `clip-path` rather than `display: none` or a negative offset, because a
+     display-hidden element is not focusable at all and an off-screen one is
+     read by a screen reader in the wrong place. It appears over the bar, so it
+     takes the raised surface and a strong hairline: on the cobalt it needs its
+     own ground to be readable at all.
+     --------------------------------------------------------------------------- */
+  .skip-link {
+    position: absolute;
+    z-index: 60;
+    top: 6px;
+    left: 6px;
+    padding: 7px 12px;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-base);
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface);
+    font: 500 var(--text-control) / 1 var(--font-sans);
+    clip-path: inset(50%);
+  }
+
+  .skip-link:focus {
+    clip-path: none;
+  }
+
+  /* Available to a reader using a screen reader and to nobody else. Used where
+     a mark a sighted reader reads as a shape needs a word — the completion
+     disc, the band's absence of meaning — and never to hide something that
+     should simply not be rendered. */
+  .bz-said {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}

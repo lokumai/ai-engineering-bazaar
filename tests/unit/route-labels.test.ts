@@ -18,12 +18,12 @@ import {
  * would make the two indistinguishable.
  */
 const CATEGORIES = [
-  { slug: 'fundamentals', title: 'Fundamentals', order: 1 },
-  { slug: 'intermediate', title: 'Intermediate', order: 2 },
-  { slug: 'expert', title: 'Expert', order: 3 },
-  { slug: 'ecosystem', title: 'Ecosystem', order: 4 },
-  { slug: 'protocols', title: 'Protocols & Specs', order: 5 },
-  { slug: 'optional', title: 'Optional', order: 6 },
+  { slug: 'fundamentals', title: 'Fundamentals', order: 1, total: 1 },
+  { slug: 'intermediate', title: 'Intermediate', order: 2, total: 1 },
+  { slug: 'expert', title: 'Expert', order: 3, total: 1 },
+  { slug: 'ecosystem', title: 'Ecosystem', order: 4, total: 1 },
+  { slug: 'protocols', title: 'Protocols & Specs', order: 5, total: 1 },
+  { slug: 'optional', title: 'Optional', order: 6, total: 1 },
 ]
 
 describe('breadcrumbFor', () => {

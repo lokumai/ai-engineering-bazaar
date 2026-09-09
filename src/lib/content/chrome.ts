@@ -19,5 +19,6 @@ export function categoryLabels(): readonly CategoryLabel[] {
     slug: category.slug,
     title: category.title,
     order: category.order,
+    total: category.modules.length,
   }))
 }

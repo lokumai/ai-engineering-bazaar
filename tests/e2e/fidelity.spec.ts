@@ -1,14 +1,18 @@
 import { expect, test } from '@playwright/test'
 import {
+  APP_SELECTORS,
+  DELIBERATELY_ABSENT,
   DESIGN_FACTS,
   freezeMotion,
   FACT_KEYS,
   MOCKUP_SELECTORS,
   MOCKUP_URL,
   compareDesignFacts,
+  differencesIn,
   extractDesignFacts,
   factKey,
   factsRead,
+  type Role,
 } from './fidelity'
 
 /**
@@ -142,4 +146,102 @@ test.describe('the fidelity harness', () => {
       expect(found.actual).not.toBe(found.reference)
     })
   }
+})
+
+/* ===========================================================================
+   M16 — the surfaces, each against the mockup it came from.
+
+   This is what the milestone is for. Every stage adds its roles to
+   `APP_SELECTORS` and a block here, and the comparison is restricted to the
+   roles that stage built — not as a way to hide a difference, but because a
+   surface that does not exist yet has nothing to compare. Each block asserts
+   its own roles were really read on both sides, so restricting the comparison
+   cannot make it vacuous.
+   =========================================================================== */
+
+test.describe('M16 stage 1 — the bar and the band', () => {
+  /** What stage 1 built. `barField` is in DELIBERATELY_ABSENT, with the reason. */
+  const BUILT: readonly Role[] = ['bar', 'barInner', 'brand', 'barLink', 'barLinkCurrent']
+
+  test('is indistinguishable from the mockup, in every fact it carries', async ({ page }) => {
+    await page.goto(MOCKUP_URL)
+    await freezeMotion(page)
+    const reference = await extractDesignFacts(page, MOCKUP_SELECTORS)
+
+    // `/courses/` rather than `/`: the current-destination chip only exists on
+    // a page that IS one of the bar's destinations, and the comparison would
+    // otherwise read it as absent on both sides and check nothing.
+    await page.goto('/courses/')
+    await freezeMotion(page)
+    const actual = await extractDesignFacts(page, APP_SELECTORS)
+
+    // Non-vacuity first, and on both sides. A typo in either selector map
+    // would make every fact null and the difference list empty.
+    for (const role of BUILT) {
+      const read = FACT_KEYS.filter((key) => key.startsWith(`${role}.`))
+      expect(read.length, `${role} contributes no fact`).toBeGreaterThan(0)
+      expect(
+        read.some((key) => reference[key] !== null),
+        `${role} was not read in the mockup`,
+      ).toBe(true)
+      expect(
+        read.some((key) => actual[key] !== null),
+        `${role} was not read on the built page`,
+      ).toBe(true)
+    }
+
+    expect(differencesIn(reference, actual, BUILT)).toEqual([])
+  })
+
+  test('renders the band, which is the language’s only ornament', async ({ page }) => {
+    await page.goto(MOCKUP_URL)
+    await freezeMotion(page)
+    const reference = await extractDesignFacts(page, MOCKUP_SELECTORS)
+
+    await page.goto('/courses/')
+    await freezeMotion(page)
+    const actual = await extractDesignFacts(page, APP_SELECTORS)
+
+    // The band is not in APP_SELECTORS' comparison set above because it is
+    // `aria-hidden` decoration rather than a component, but it is the single
+    // most load-bearing thing in the design after the bar itself: 18px of
+    // lattice that the sticky offset is measured from. So it is asserted to
+    // exist and to match, separately and by name.
+    expect(reference['band.height'], 'the mockup has no band').not.toBeNull()
+    expect(differencesIn(reference, actual, ['band'])).toEqual([])
+  })
+
+  /**
+   * The mutation, in the same sitting as the check. In M15 this twice found
+   * the hole in the check rather than in the code.
+   */
+  test('notices when the built bar stops matching', async ({ page }) => {
+    await page.goto(MOCKUP_URL)
+    await freezeMotion(page)
+    const reference = await extractDesignFacts(page, MOCKUP_SELECTORS)
+
+    await page.goto('/courses/')
+    await freezeMotion(page)
+    // The exact failure the rejected work shipped: the bar on the page ground
+    // instead of on cobalt. DESIGN.md's first Don't, and the one change that
+    // "removes the language".
+    await page.addStyleTag({
+      content: '.bz-bar { background: var(--color-surface) !important; }',
+    })
+    const mutated = await extractDesignFacts(page, APP_SELECTORS)
+
+    const differences = differencesIn(reference, mutated, BUILT)
+    expect(differences.map((difference) => difference.fact))
+      .toContain('bar.backgroundColor')
+  })
+
+  test('records a reason for every role it does not render', async ({ page }) => {
+    // A role absent with no entry here is a difference nobody explained, and an
+    // unexplained difference is how a real one gets ignored.
+    for (const [role, reason] of Object.entries(DELIBERATELY_ABSENT)) {
+      expect(reason.length, `${role} is absent with no reason`).toBeGreaterThan(20)
+      expect(APP_SELECTORS[role as Role], `${role} is both absent and mapped`)
+        .toBeUndefined()
+    }
+  })
 })

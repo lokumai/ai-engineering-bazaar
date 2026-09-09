@@ -1016,3 +1016,58 @@ raised, 1.50 on the hover fill. It is the edge the language gives an interactive
 shell's real controls in front of us rather than invent a token now. What is enforced meanwhile is
 the promise DESIGN.md actually makes: `line-strong` is strictly stronger than `line` on every ground,
 in both themes.
+
+### D35 · A control is identified by its shape, not by its edge — an accepted risk — 2026-09-09
+
+**Measured across the shell, all of them the mockup's own values faithfully transcribed:** the bar's
+search field edge (white at 25% over cobalt) **2.19:1**, its fill **1.26:1**, the rail's fold button
+bordered with `line` at **1.55:1**, and `line-strong` on the page ground **2.00:1**. SC 1.4.11 asks
+3:1 for anything required to identify a user-interface component. Not one control in the language
+clears it, and the pattern is systemic rather than a slip — it follows directly from a design whose
+whole premise is that a surface is told apart by a hairline on a near-white ground.
+
+**Considered:** two new tokens, one edge dark enough to clear 3:1 on `surface` and one light enough
+to clear it on `bar`, which is what the retired design's `--color-line-control` did for the first
+case. **Rejected by the author.** It meets the guideline everywhere, but it costs two colours the
+mockup does not contain — a second and third named deviation, against D34's one — and it visibly
+hardens every control on the page, which is the look this design deliberately avoids. Also
+considered: redraw the mockup's `.srch`, `.ib` and `.fold` rules, which keeps the invariant perfectly
+and stops stage 1 until the specification is edited.
+
+**Chosen, and written down rather than discovered:** a control is identified by its **shape, its
+label, its position and its cursor**, with the boundary as a supporting signal. The viewer who needs
+more is served by `forced-colors: active`, where every hairline is replaced by a system colour and
+which `tests/e2e/accessibility.spec.ts` already loads the site under.
+
+**The cost is real and is not being hidden:** a low-vision viewer who is not using a forced-colour
+mode gets a weaker control boundary than the guideline wants. That is the accepted risk, and the
+mitigation is that no control anywhere depends on its edge alone.
+
+**Rule that follows:** `specs/DESIGN.md`, Colors — the accepted risk, named. `line-strong` is still
+required to be strictly stronger than `line` on every ground in both themes
+(`tests/unit/color/contrast.test.ts`), because if the two ever met the language would have one line
+weight while claiming two.
+
+### D36 · LKM-01 leaves the bar and keeps every other job — 2026-09-09
+
+The retired header carried the mascot as a live progress meter: six faces painted before first paint
+by the record's boot script, correct in frame one with no hydration. **The mockup's bar has no
+mascot.** Its brand is a 2×2 tile of glazed squares — three category hues and one square left as the
+ground — and DESIGN.md is explicit that "it is a tile, not a logo". LKM-01 reaches 23 files.
+
+**Considered:** paint the tile's four squares from the reader's progress, keeping a progress signal
+in the bar on every page. **Rejected on arithmetic:** the course has five levels and the tile has
+four cells, so one square per level is impossible without changing the mockup's geometry, and the
+mockup's geometry is the specification. Also considered: retire LKM-01 altogether, which is the
+smallest codebase and discards a drawing the project built deliberately — a product decision with no
+way back, and not one an agent gets to take.
+
+**Chosen:** the bar takes the mockup's static tile, and **no capability is lost**, because the
+progress-meter job is already specified elsewhere by mockups the author chose — `05` variant C's
+level rings on the home page and My progress, and `07` variant A's progress bars. LKM-01 survives as
+the 404 drawing, the legend page's subject, the exported record's cover and the drafter's stamp, none
+of which the bar was doing.
+
+The breadcrumb leaves the bar in the same change, and that needs no decision: the mockup puts
+`nav.crumb` inside the reading column, above the display heading. The retired header gave it a
+second 32px row of its own.

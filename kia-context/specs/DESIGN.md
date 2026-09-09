@@ -424,6 +424,24 @@ value they need is prefixed `slab-`. It is a self-contained set precisely so a s
 anywhere without the surrounding ground leaking into it. Syntax colours are tuned against
 `slab-surface` alone; a slab on a light card is not a thing in this language.
 
+### The accepted risk, named
+
+**No control in this language clears 3:1 against its own boundary, and that is a decision rather
+than an oversight.** MEASURED: a field on the bar reaches 2.19:1 at its edge and 1.26:1 at its fill,
+a fold button bordered with `line` reaches 1.55:1, and `line-strong` on the ground reaches 2.00:1.
+SC 1.4.11 asks 3:1 for anything required to identify a component.
+
+It follows from the premise. A design whose surfaces are told apart by a hairline on a near-white
+ground cannot also have loud control edges without becoming a different design. So **a control is
+identified by its shape, its label, its position and its cursor**, and the boundary supports that
+rather than carrying it. A viewer who needs more is served by a forced-colour mode, where every
+hairline becomes a system colour.
+
+Two things this does not license. **No control may depend on its edge alone** — it needs a shape a
+viewer can recognise and a label a reader can read. And `line-strong` must stay strictly stronger
+than `line` on every ground in both themes; if the two ever met, the language would have one line
+weight while claiming two, and every interactive edge would silently become a grouping edge.
+
 ### Where this file knowingly parts from its source
 
 **One value, and it is listed so that no other can be added quietly.** The mockup named in `source:`

@@ -285,3 +285,67 @@ export const MOCKUP_SELECTORS: SelectorMap = {
   aside: '.toc',
   asideLink: '.toc a:not([aria-current])',
 }
+
+/* ---------------------------------------------------------------------------
+   THE APPLICATION SIDE — M16.
+
+   The map that was missing for five milestones. `MOCKUP_SELECTORS` above reads
+   the specification; this reads the built page, and `compareDesignFacts` is
+   what makes "indistinguishable from its mockup" a thing a machine can refuse.
+   Keyed by role, not by class, which is why the language is portable: the
+   mockup calls the bar `.top` and the application calls it `.bz-bar`, and
+   neither has to know about the other.
+
+   ONE ROLE PER SURFACE, ADDED BY THE STAGE THAT BUILDS IT. A role listed here
+   before its surface exists reads as `null` and the comparison reports it as a
+   difference, which is the correct answer — the page really does not have it
+   yet.
+   --------------------------------------------------------------------------- */
+
+export const APP_SELECTORS: SelectorMap = {
+  /* Stage 1 — the bar and the band. */
+  bar: '.bz-bar',
+  barInner: '.bz-bar-inner',
+  brand: '.bz-brand',
+  barLink: '.bz-bar-nav a:not([aria-current]):not([data-current]), .bz-bar-nav summary:not([data-current])',
+  // The current destination takes the chip whether it is a link or the
+  // disclosure trigger that owns the level pages, and the trigger carries
+  // `data-current` rather than `aria-current` — a disclosure is not itself a
+  // page, and two `aria-current="page"` inside one nav is a contradiction a
+  // screen reader has to resolve for the reader (BRAINSTORM D28).
+  barLinkCurrent: '.bz-bar-nav [aria-current], .bz-bar-nav [data-current]',
+  band: '.bz-band',
+}
+
+/**
+ * The roles a stage has actually built, so a surface can be held to its mockup
+ * before the whole interface exists.
+ *
+ * A stage names what it built and the comparison is restricted to that. It is
+ * NOT a way to hide a difference: a role left out here is a role nobody is
+ * checking, so the spec that uses this asserts the list is non-empty and every
+ * role in it was really read on both sides.
+ */
+export function differencesIn(
+  reference: DesignFacts,
+  actual: DesignFacts,
+  roles: readonly Role[],
+): Difference[] {
+  const wanted = new Set<string>(roles)
+  return compareDesignFacts(reference, actual)
+    .filter((difference) => wanted.has(difference.fact.split('.')[0]))
+}
+
+/**
+ * Roles the application deliberately does not render, with the reason.
+ *
+ * `barField` is the mockup's search box. **The command palette does not
+ * exist** — it is deferred — and a control that opens nothing is the claim §1
+ * forbids, so the slot is empty until there is something to search. The
+ * retired header held the same slot back for the same reason. Recorded here
+ * rather than left as an unexplained difference, because an unexplained
+ * difference is how a real one gets ignored.
+ */
+export const DELIBERATELY_ABSENT: Readonly<Partial<Record<Role, string>>> = {
+  barField: 'the command palette is deferred; a control that opens nothing is refused',
+}

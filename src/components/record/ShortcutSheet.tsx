@@ -51,7 +51,7 @@ export function ShortcutSheet({ open, onOpenChange, pathname, charKeys }: Shortc
         wide the viewport is.
       */}
       <Dialog.Trigger
-        className="hl-icon-btn hidden md:inline-flex"
+        className="bz-bar-icon hidden md:inline-flex"
         aria-label="Keyboard shortcuts"
         title="Keyboard shortcuts (?)"
       >

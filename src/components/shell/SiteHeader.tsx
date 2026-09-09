@@ -1,42 +1,67 @@
 import Link from 'next/link'
-import { Lkm01 } from '@/components/mascot/Lkm01'
 import { Keyboard } from '@/components/record/Keyboard'
 import { REPO_URL } from '@/lib/site'
 import { categoryLabels } from '@/lib/content/chrome'
-import { Breadcrumb } from './Breadcrumb'
 import { MainNav } from './MainNav'
 import { ThemeToggle } from './ThemeToggle'
 
 /**
- * Site header (spec §5.1). 56px, sticky, ground `--color-paper`, one hairline
- * bottom rule that is always there: the header never changes on scroll — no
- * shrink, no shadow, no blur backdrop.
+ * The bar and the band — M16 stage 1.
  *
- * Costume budget (§4.3): the one motif permitted in this region is the mascot
- * cube. No title block, no stamps, no section marks, no zone coordinates.
+ * Reference: `playground/01-theme-T4-ground-G3-powder.html`, `header.top` and
+ * the `.band` under it. **The bar is a solid cobalt slab with its own on-bar
+ * sub-palette and it never sits on the page ground.** That one fact is the
+ * strongest thing the design language says, and it is what the retired header
+ * got wrong: it was `bg-paper` with a hairline under it, 56px tall, carrying a
+ * mono uppercase wordmark. Nothing of that shape survives here.
  *
- * **This stays a server component.** §12.2's channel A puts the mascot's face
- * states in CSS, driven by the pre-paint boot script, so the mark that reports
- * the reader's progress needs no hook and no hydration — and the two controls
- * that do need the browser (`ThemeToggle`, `Keyboard`) are leaves the header
- * holds as children. That is the arrangement the whole shell uses.
+ * ## What left the bar, and why none of it is lost
+ *
+ * **The mascot.** LKM-01 sat here as a live progress meter, its six faces
+ * painted before first paint by the record's boot script. The mockup's bar has
+ * no mascot: its mark is a 2×2 tile of glazed squares, and DESIGN.md is
+ * explicit that "it is a tile, not a logo". The progress-meter job is specified
+ * elsewhere by the mockups the author chose — `05` variant C's level rings and
+ * `07` variant A's bars — and LKM-01 keeps the 404, the legend page, the
+ * exported record's cover and the drafter's stamp (BRAINSTORM **D36**).
+ *
+ * **The breadcrumb.** It had a second 32px row of its own under the bar. The
+ * mockup puts `nav.crumb` inside the reading column, above the display
+ * heading, which is where it goes.
+ *
+ * ## What fills the mockup's control slots
+ *
+ * The mockup draws a search field and a `TR` button. **Neither feature exists**
+ * — the command palette and the Turkish routes are both deferred — and a
+ * control that opens nothing is exactly the claim §1 forbids, which is why the
+ * retired header held those two slots back as well. So the mockup specifies the
+ * slot and the product fills it with the controls it actually has: the profile
+ * link, the shortcut sheet, the theme toggle and the repository. Each is a
+ * `bz-bar-icon`, which is the primitive the mockup's own `.ib` buttons use. The
+ * search field returns when there is something to search.
+ *
+ * **This stays a server component.** The two controls that need the browser —
+ * `ThemeToggle` and `Keyboard` — are leaves it holds as children, which is the
+ * arrangement the whole shell uses.
  */
 
-/**
- * §12.3, §12.11 — the identity affordance: a title block with a signed field.
- *
- * It is deliberately NOT the drafter's stamp (§12.3.5). The stamp is the
- * reader's own mark, which is reader state and therefore channel B, and a
- * header rendered once for every reader cannot draw one without either
- * flickering or asserting an identity that may not exist. A drawing's
- * `CHECKED BY` field, empty, claims nothing and points at the sheet where the
- * name is actually set.
- */
-function TitleBlockGlyph() {
+/** The mockup's `.cubes`: three category hues and one square left as the ground. */
+function BrandMark() {
+  return (
+    <span className="bz-brand-mark" aria-hidden="true">
+      <i style={{ background: 'var(--color-category-5)' }} />
+      <i style={{ background: 'var(--color-category-1)' }} />
+      <i style={{ background: 'var(--color-category-4)' }} />
+      <i style={{ background: 'var(--color-surface)' }} />
+    </span>
+  )
+}
+
+function ProfileGlyph() {
   return (
     <svg
-      width="16"
-      height="16"
+      width="14"
+      height="14"
       viewBox="0 0 16 16"
       fill="none"
       stroke="currentColor"
@@ -50,82 +75,63 @@ function TitleBlockGlyph() {
   )
 }
 
+function RepoGlyph() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      aria-hidden="true"
+    >
+      <rect x="3" y="2" width="3" height="3" />
+      <rect x="3" y="11" width="3" height="3" />
+      <rect x="10" y="2" width="3" height="3" />
+      <path d="M4.5 5v6" />
+      <path d="M11.5 5v3.5h-7" />
+    </svg>
+  )
+}
+
 export function SiteHeader() {
   return (
-    <header role="banner" className="sticky top-0 z-40 border-b border-line-strong bg-paper">
-      <div className="mx-auto flex h-14 w-full max-w-[var(--width-shell)] items-center gap-4 px-6">
-        {/*
-          MASCOT SLOT — LKM-01 (§8) as the live progress meter: a 32px box
-          holding the 28px mark §5.1 asks for, ready on a 0 0 32 32 viewBox.
-          Its six faces are painted from the `hl-cat-*` classes the record's
-          boot script stamps on <html> before first paint (§12.2), so the mark
-          is correct in frame one and its markup never varies by reader.
-        */}
-        <span data-slot="mascot" className="flex h-8 w-8 shrink-0 items-center justify-center">
-          <Lkm01 />
-        </span>
+    <>
+      <header role="banner" className="bz-bar">
+        <div className="bz-bar-inner">
+          <Link href="/" className="bz-brand">
+            <BrandMark />
+            AI Engineering Bazaar
+          </Link>
 
-        <Link
-          href="/"
-          className="shrink-0 font-mono text-meta font-medium uppercase tracking-[0.06em] text-ink"
-        >
-          Lokum<span className="text-ink-muted"> / Bazaar</span>
-        </Link>
-
-        {/* M10 — the navbar takes the middle of the row, and the trail moves
-            under it. Both are wanted and they answer different questions: the
-            navbar says where you can go, the trail says where you are. Sharing
-            one 56px row made the trail the only one of the two that was ever
-            visible. */}
-        <div className="flex min-w-0 flex-1 items-center gap-4">
           <MainNav categories={categoryLabels()} />
-        </div>
 
-        <div className="flex shrink-0 items-center gap-1">
-          {/*
-            SEARCH TRIGGER (§5.1) and LANGUAGE TOGGLE (§5.1, §7.6) are still
-            held back: §12.0 defers the command palette and the Turkish routes,
-            and a control that opens nothing is the kind of claim §1 exists to
-            forbid. Their two slots take the identity affordance and the
-            shortcut sheet, both at §5.1's 28 × 28.
-          */}
-          <Link href="/profile/" className="hl-icon-btn" aria-label="Profile" title="Profile (g p)">
-            <TitleBlockGlyph />
+          <div className="bz-bar-spacer" />
+
+          <Link
+            href="/profile/"
+            className="bz-bar-icon"
+            aria-label="Your progress"
+            title="Your progress (g p)"
+          >
+            <ProfileGlyph />
           </Link>
           <Keyboard />
           <ThemeToggle />
-          <a href={REPO_URL} className="hl-icon-btn" aria-label="Repository" title="Repository">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              aria-hidden="true"
-            >
-              <rect x="3" y="2" width="3" height="3" />
-              <rect x="3" y="11" width="3" height="3" />
-              <rect x="10" y="2" width="3" height="3" />
-              <path d="M4.5 5v6" />
-              <path d="M11.5 5v3.5h-7" />
-            </svg>
+          <a href={REPO_URL} className="bz-bar-icon" aria-label="Repository" title="Repository">
+            <RepoGlyph />
           </a>
         </div>
-      </div>
+      </header>
 
-      {/* M10 — the trail, on its own rule under the row.
-          Both are wanted and they answer different questions: the navbar says
-          where a reader can go, the trail says where they are. They used to
-          share one 56px row, and the trail was the only one of the two that
-          was ever there. It keeps its `Curriculum` landmark name, which is
-          what `not-found.spec.ts` reads it by; the navbar's landmark is
-          `Main`. */}
-      <div className="border-t border-line bg-paper">
-        <div className="mx-auto flex h-8 w-full max-w-[var(--width-shell)] items-center px-6">
-          <Breadcrumb categories={categoryLabels()} />
-        </div>
-      </div>
-    </header>
+      {/*
+        The one ornament, once per page: an 18px lattice of three glaze stripes
+        on cobalt finished with a gold rule, directly under the bar. It carries
+        no meaning and states none — `aria-hidden`, and the sticky offset every
+        other sticky element uses is the bar plus this band.
+      */}
+      <div className="bz-band" aria-hidden="true" />
+    </>
   )
 }

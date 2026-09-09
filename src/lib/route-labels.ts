@@ -21,8 +21,15 @@
 export interface CategoryLabel {
   slug: string
   title: string
-  /** 1-based position in the curriculum, for `SUBSYSTEM 02`. */
+  /** 1-based position in the curriculum. Also which category hue it binds. */
   order: number
+  /**
+   * How many modules the level holds. M16: the mockup's menu row is a hue key
+   * on the leading edge, the level's name, and a count on the trailing edge, so
+   * the count is part of the label rather than something a caller looks up.
+   * Derived from the curriculum, never written down.
+   */
+  total: number
 }
 
 export interface Crumb {

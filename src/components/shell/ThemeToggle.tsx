@@ -54,7 +54,7 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      className="hl-icon-btn"
+      className="bz-bar-icon"
       aria-label="Toggle theme"
       title="Toggle theme"
     >

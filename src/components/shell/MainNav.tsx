@@ -124,7 +124,7 @@ function Chevron() {
       stroke="currentColor"
       strokeWidth="1.8"
       aria-hidden="true"
-      className="hl-nav-chevron"
+      className="bz-bar-chevron"
     >
       <path d="M2.5 4.5L6 8l3.5-3.5" />
     </svg>
@@ -140,16 +140,16 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
   }, [pathname])
 
   return (
-    <nav aria-label="Main" className="hl-nav">
-      <ul role="list" className="hl-nav-row">
+    <nav aria-label="Main" className="bz-bar-nav">
+      <ul role="list">
         {DESTINATIONS.map((destination) => {
           const current = isCurrent(destination, pathname)
           const isCurriculum = destination.href === CURRICULUM
 
           return (
-            <li key={destination.href} className="hl-nav-item">
+            <li key={destination.href}>
               {isCurriculum ? (
-                <details className="hl-nav-details" ref={panel}>
+                <details ref={panel}>
                   {/* `data-current` and NOT `aria-current`. This is a
                       disclosure trigger, not a link, so it is never itself the
                       current page — and a level page would otherwise carry two
@@ -158,14 +158,14 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
                       reader has to resolve for the reader. The visual mark is
                       the same either way; only the claim changes. */}
                   <summary
-                    className="hl-nav-link"
+                    className="bz-bar-link"
                     data-current={current ? '' : undefined}
                   >
                     {destination.label}
                     <Chevron />
                   </summary>
 
-                  <div className="hl-nav-menu">
+                  <div className="bz-menu">
                     <ul role="list">
                       {/* The destination the trigger used to be. A disclosure
                           cannot also be a link, so the whole-curriculum page
@@ -173,12 +173,12 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
                       <li>
                         <Link
                           href={CURRICULUM}
-                          className="hl-nav-menu-link hl-nav-menu-all"
+                          className="bz-menu-item"
                           aria-current={pathname === CURRICULUM ? 'page' : undefined}
                         >
-                          <span aria-hidden="true" className="hl-nav-menu-key" />
-                          <span className="hl-nav-menu-order">All</span>
-                          <span className="hl-nav-menu-title">Every level</span>
+                          <span aria-hidden="true" className="bz-menu-key" />
+                          Every level
+                          <span className="bz-menu-count">All</span>
                         </Link>
                       </li>
                       {categories.map((category) => {
@@ -187,18 +187,20 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
                           <li key={category.slug}>
                             <Link
                               href={href}
-                              className="hl-nav-menu-link"
+                              className="bz-menu-item"
                               data-cat={category.slug}
                               aria-current={pathname.startsWith(href) ? 'page' : undefined}
                             >
                               {/* The level's own colour, and its number beside
                                   it: the hue is never the only carrier
                                   (§13.1.4). */}
-                              <span aria-hidden="true" className="hl-nav-menu-key" />
-                              <span className="hl-nav-menu-order">
-                                {String(category.order).padStart(2, '0')}
-                              </span>
-                              <span className="hl-nav-menu-title">{category.title}</span>
+                              <span
+                                aria-hidden="true"
+                                className="bz-menu-key"
+                                style={{ background: `var(--color-category-${category.order})` }}
+                              />
+                              {category.title}
+                              <span className="bz-menu-count">{category.total}</span>
                             </Link>
                           </li>
                         )
@@ -209,7 +211,7 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
               ) : (
                 <Link
                   href={destination.href}
-                  className="hl-nav-link"
+                  className="bz-bar-link"
                   data-current={current ? '' : undefined}
                   aria-current={current ? 'page' : undefined}
                 >

@@ -59,7 +59,7 @@ last_updated: "2026-09-09"
 | **M13** | The home page | a first-time visitor knows what this is and where to start | M10 | ✅ Done |
 | **M14** | Progress and account | one route instead of four, and completion editable from it | M11 | ✅ Done |
 | **M15** | The design language | one DESIGN.md transcribed from the mockup, and a check that proves a built page matches it | M14 | ✅ Done |
-| **M16** | The interface, rebuilt on it | every surface indistinguishable from its mockup, with no capability lost | M15 | 🚧 Stage 0 done, stage 1 part 1 done |
+| **M16** | The interface, rebuilt on it | every surface indistinguishable from its mockup, with no capability lost | M15 | 🚧 stage 0 and stage 1 part 1 of ten |
 
 > **Numbering never restarts.** When this file is split, part two continues at the next M.
 
@@ -1481,31 +1481,59 @@ is a rebuild of the presentation layer, not an edit of it.
 ### The specifications, per surface
 
 The design language is M15's. Each surface's *layout* comes from the mockup the author chose, and
-those are the only references:
+those are the only references.
 
-| Surface | Reference | Choice |
-| --- | --- | --- |
-| Shell: bar, band, rail, reading column, aside | `01-theme-T4-ground-G3-powder.html` | T4 on G3 |
-| Top navigation | `02-navbar.html` | **A** — one row, a dropdown per group |
-| Catalog | `03-catalog.html` | **all three**, one route, behind a toggle with an icon and a name each: **Overview** (C), **Cards** (A), **Table** (B) |
-| The reading page | `04-module-layout.html` | T4's own |
-| Completion | `05-progress.html` | **A** at the end of a piece, **C** on the overviews |
-| Code and figures | `06-code-diagrams.html` | the **dark slab** |
-| Progress and account | `05`/`07` | **A** |
-| Home | `08-home.html` | **A** |
-| Rail | `09-sidebar.html` | T4's own |
+**The reference column names two files, because `02` to `09` are on a deliberately different
+palette from `01` (D31).** They are layout studies — `02` says so in its own prose: "All three are
+shown in one neutral palette **on purpose**, so you are judging the **structure** and not the
+colour." So **geometry, structure and class semantics come from the component mockup; colour, type
+and every token come from the shell.** Read the other way round, "indistinguishable from
+`03-catalog.html`" would put a green accent on a cool grey ground, which is the mirror image of the
+mistake this milestone exists to correct.
+
+| Surface | Layout from | Colour from | Choice |
+| --- | --- | --- | --- |
+| Shell: bar, band, rail, reading column, aside | `01-theme-T4-ground-G3-powder.html` | same | T4 on G3 |
+| Top navigation | `02-navbar.html` | `01` | **A** — one row, a dropdown per group |
+| Catalog | `03-catalog.html` | `01` | **all three**, one route, behind a toggle with an icon and a name each: **Overview** (C), **Cards** (A), **Table** (B) |
+| The reading page | `01`'s `main > .col`, containment from `04` | `01` | T4's own |
+| Completion | `05-progress.html` | `01` | **A** at the end of a piece, **C** on the overviews |
+| Code and figures | `01`'s slab, node roles from `06` | `01` | the **dark slab** |
+| Progress and account | `07`-A, rings from `05`-C | `01` | **A** |
+| Home | `08-home.html` | `01` | **A** |
+| Rail | `01`'s `details.arch`, which is `09`-1 extended | `01` | T4's own |
+
+**Two rows say `01` where the table used to name `04` and `09`, and that is a correction rather than
+a change of mind.** Neither of those files contains a T4 variant — `04` holds A/B/C and `09` holds
+1/2/3, all on the older palette — so "T4's own" resolves to the shell file itself. `01`'s
+`main > .col` **is** the ratified reading page, and its `details.arch` **is** the ratified rail,
+being `09` variant 1 extended with a `data-here` treatment for the current group. What `04` still
+contributes is the wide-figure containment rule, which the shell adopted verbatim, and a `.bleed`
+utility it did not. `06` likewise proposes a slab the shell does not ship; the shell wins, and `06`
+contributes its three node roles.
 
 ### Deliverables
 
+- [x] **The eleven old stylesheets deleted.** Not migrated — see the decision below. Stage 0: nine
+      deleted, the entry point rewritten to 56 lines, the generated sheet kept generated.
+- [x] **The token layer is the language.** `src/design/bazaar.css` is imported and prefixed `bz-`;
+      `code-theme.ts` reads it and accepts hex; the invented type family is gone.
+- [x] **The app-side `SelectorMap` exists**, which is the deliverable whose absence let five
+      milestones ship the wrong design. `fidelity.spec.ts` compares a built surface to its mockup.
 - [ ] The shell rebuilt: cobalt bar, the lattice band under it, the three-column grid anchored to the
-      window edges, the folding rail, the sticky offset. Every route carries it.
-- [ ] Each surface above rebuilt against its reference, at 1440, 1024 and 390.
-- [ ] **The eleven old stylesheets deleted.** Not migrated — see the decision below.
+      window edges, the folding rail, the sticky offset. Every route carries it. **Stage 1: the bar
+      and the band are done and proven identical at three viewports; the grid, the rail and the
+      aside are part 2.**
+- [ ] Each surface above rebuilt against its reference, at 1440, 1024 and 390. **1 of 10 stages, in
+      part.** Stage by stage in *The ten stages* below.
 - [ ] The visual expectations in the browser suite rewritten against the mockups; the behavioural
-      ones kept as they are.
+      ones kept as they are. **The seven CSS-reading unit test files are done in stage 0; the 141
+      hardcoded classes across the browser specs are re-pointed by the stage that owns their
+      surface.**
 - [ ] Every capability intact: completion and undo, the checklist, the quick check, sources,
       submittals, both languages, export, import, erase, the streak, role paths, optional sign-in,
-      claim-and-merge, the three retired routes still landing somewhere useful.
+      claim-and-merge, the three retired routes still landing somewhere useful. **Checked off by the
+      stage that touches each, not at the end.**
 
 ### The stylesheets: deleted, not migrated
 
@@ -1537,26 +1565,272 @@ treatment rather than dropped, because the corpus depends on them and the mockup
   of behavioural tests **not lower** than it is today.
 - With no `.env.local` the site is complete and makes zero requests to the account service.
 
-### How it will be worked, and the honest risk
-
-**Surface by surface, in the order of the table**, with the whole gate plus the fidelity check run
-at each step, so there is a real page to look at early rather than a claim at the end. The shell
-comes first because every other surface sits inside it.
+### The honest risk
 
 **This is a large milestone and it is one milestone because the author asked for two.** 87 files
-carry presentation and 19 of the 30 browser specs assert appearance. If it has to be cut, the cut is
-announced before it happens and the author chooses what goes — not decided quietly at the end, which
-is what happened with M9 to M14.
+carry presentation, 82 components and 17 routes; **1,252 `hl-` occurrences in markup when it opened,
+386 old class selectors across 7,158 lines of CSS, 141 hardcoded classes spread over 31 browser
+spec files, and roughly 250 unit tests asserting markup shape.** The stage plan below is what turns
+that into ten commits that can each be looked at.
+
+**If it has to be cut, the cut is announced before it happens and the author chooses what goes** —
+not decided quietly at the end, which is what happened with M9 to M14. **The cut line is stage 10**:
+the nine mockup-backed surfaces are the milestone's point, and the eight derived routes have the
+weakest reference.
 
 **Where the mockup is silent, work stops and the author is asked.** Inventing a value is what
 produced a substituted type family, a re-hued categorical series and a light top bar. There is no
-budget for taste in this milestone.
+budget for taste in this milestone. Six such questions have been asked and answered so far — D30
+and D33 to D36 — and **two are still open**: whether a rail group's open state persists, which `09`
+promises in prose and no mockup implements, and how a figure wider than the measure behaves, which
+`04` answers with a `.bleed` utility the shell deliberately does not carry.
 
-### How the stages are numbered
+### The ten stages, and what each one owes
 
-Ten stages after a stage 0, worked in the order of the reference table above, each one commit with
-the whole gate run at the end of it. The shell is first because every other surface sits inside it.
-Stage 0 is the token layer; stage 10 is the eight routes with no mockup (**D30**).
+Stage 0 is the token layer; stages 1 to 10 are the surfaces, in the order of the reference table
+above. **Each stage is one commit, and it does four things**: read the mockup and then DESIGN.md,
+copying neither a nearby component nor a deleted stylesheet; rebuild the surface's markup and author
+its own stylesheet in the language's terms; **add its roles to `APP_SELECTORS` in
+`tests/e2e/fidelity.ts` and a `fidelity.spec.ts` block, with the mutation, in the same sitting**; and
+run the whole gate. A stage does not land red.
+
+Two things are true of every stage and are not repeated in each row. **Behaviour is carried over
+from the components that already work** — the mockups implement almost none of it, one three-line
+script across ten files, so the mockup governs appearance only. And **the specs that name the old
+markup are re-pointed by the stage that rebuilds their surface**, keeping the behavioural
+assertions and rewriting the appearance ones against the mockup.
+
+| # | Surface | Reference (layout · colour) | Status |
+| --- | --- | --- | --- |
+| **0** | The token layer | — | ✅ `b3354d9` |
+| **1** | The shell: bar, band, grid, rail slot, reading column, aside | `01` · `01` | 🚧 part 1 `5fbc06b` |
+| **2** | The navigation's dropdown, held to its own mockup | `02`-A · `01` | ⬜ |
+| **3** | The rail: groups, items, ticks, the fold and its restore tab | `01` (= `09`-1 extended) · `01` | ⬜ |
+| **4** | The catalog, three views behind one toggle | `03`-C/A/B · `01` | ⬜ |
+| **5** | The reading page | `01`'s `main > .col`; containment from `04` · `01` | ⬜ |
+| **6** | Code and figures | `01`'s slab; node roles from `06` · `01` | ⬜ |
+| **7** | Completion | `05`-A and `05`-C · `01` | ⬜ |
+| **8** | Progress and account | `07`-A, rings from `05`-C · `01` | ⬜ |
+| **9** | Home | `08`-A · `01` | ⬜ |
+| **10** | The eight routes with no mockup | derived (**D30**) · `01` | ⬜ |
+
+**The progress meter, measured at each stage.** `grep -rho '\bhl-[a-z0-9-]*' --include='*.tsx' src/`
+counted **1,252** when M16 opened and **1,230** after stage 1 part 1. It reaches 0 when the rebuild
+is real. Where the remainder lives today, which is also roughly how much each stage carries:
+`components/record/` **386**, `src/app/` **293**, `components/team/` **116**, `components/sheet/`
+**114**, `components/auth/` **71**, `components/catalog/` **52**, `components/path/` **36**,
+`components/identity/` **35**, `components/org/` and `components/curriculum/` **29** each,
+`components/shell/`, `mascot/` and `figure/` **15** each, `course/` **14**, `home/` **10**.
+
+**Six of the 23 fidelity roles are mapped.** `bar`, `barInner`, `brand`, `barLink`,
+`barLinkCurrent`, `band`. The seventeen still unmapped are named in the stages below, and
+`barField` stays in `DELIBERATELY_ABSENT` until there is something to search.
+
+---
+
+#### Stage 1 — the shell · `01-theme-T4-ground-G3-powder.html`
+
+**Part 1 is done** (`5fbc06b`): the cobalt bar, the band, and the app-side `SelectorMap` that makes
+the whole milestone checkable. See its report below.
+
+**Part 2** is the frame the other nine stages sit in, and it was split off rather than half-built:
+the `bz-shell` grid moves into `PageShell` with three slots — rail, `bz-main > bz-col`, aside — and
+`PageShell`'s `bleed` prop stops meaning anything, because the mockup anchors the rails to the
+window on every route rather than only on the module page. **That is why it touches all 17 routes.**
+The breadcrumb lands in the reading column, above the display heading, which is where the mockup
+puts it.
+
+- **Roles it adds:** `column`, `aside`, `asideLink`.
+- **Specs it re-points:** `anatomy` (17 old classes, and it is the spec about the grid itself),
+  `containment` (5), `responsive` (18, three viewports), `navigation` (7), `site-footer` (2),
+  `not-found` (1). `not-found.spec.ts` reads a nav landmark named `Curriculum`; that behaviour has to
+  survive the breadcrumb's move.
+- **Watch for:** the two product breakpoints are the language's, 1180 and 880, and the sticky offset
+  is 76px = 58 bar + 18 band. Nothing reflows into a hamburger and the body never scrolls sideways.
+
+#### Stage 2 — the navigation's dropdown · `02-navbar.html` variant A
+
+The bar's markup landed in stage 1 part 1 and `MainNav` needed no behavioural change — it was
+already variant A, a native `<details>` disclosure that works before any bundle arrives, with
+`data-current` on the trigger (**D28**). **What stage 2 owes is the check**: the menu is not in the
+`Role` union at all, so nothing yet compares the panel the reader actually opens.
+
+- **Roles it adds:** `menu`, `menuItem`, `menuKey`, `menuCount`.
+- **The comparison is geometry only, and this is where D31 bites hardest.** `02` is on the older
+  palette, so its widths, paddings, radii and the row's three-part shape are the specification while
+  every colour comes from `01`. A naive "indistinguishable from `02`" would put a green accent on a
+  grey ground.
+- **Watch for:** the mockup renders the panel permanently open and has no show/hide mechanism at
+  all, so the open state is what gets compared. Both halves of the disclosure's tab order are
+  asserted — closed, the rows are out; open, they are in.
+
+#### Stage 3 — the rail · `01`, which is `09-sidebar.html` variant 1 extended
+
+`09` contains no T4 variant; the shell's `details.arch` **is** the ratified rail, variant 1 plus a
+`data-here` treatment for the current group. The current group is emphasised four ways at once — a
+larger type size, a sunken fill, a strong border and a thick leading edge in the group's own hue —
+and that is deliberate redundancy, not decoration.
+
+- **Roles it adds:** `rail`, `railInner`, `group`, `groupCurrent`, `groupKey`, `item`, `tick`, plus
+  the fold button and the restore tab.
+- **Components:** `CurriculumRail`, `RailFold` (29 old classes between them).
+- **Specs it re-points:** `rail` (13).
+- **Revives:** the `[data-cat]` hue carrier and the closed five-hue series in
+  `category-surfaces.test.ts` — the rail is the first surface to bind `--bz-cat`.
+- **Watch for:** the fold animates the grid track to `0px` while the rail's inner box keeps its own
+  width, so content does not reflow mid-animation; the restore tab is vertically centred so it can
+  never collide with the sticky chrome; under `prefers-reduced-motion` the fold is instant. **The
+  rail's completion tick is channel A** — `boot.ts` stamps `hl-signed-<n>` and the generated sheet
+  reveals `.bz-mod-mark`, so the mark is right in frame one and no island may draw it. `09` promises
+  the open/closed state persists and no mockup implements it: **that is one of the two open
+  questions for the author.**
+
+#### Stage 4 — the catalog · `03-catalog.html`, all three views
+
+One route, three views behind a toggle with an icon and a name each: **Overview** (C), **Cards** (A),
+**Table** (B). Serves `/courses/`, `/courses/[category]/` and `/sheets/`. All three views ship in
+the DOM and CSS reveals one, because the choice is channel A — `data-hl-view` on `<html>` against
+`data-view` on a descendant.
+
+- **Roles it adds:** the sticky filter bar and its chips, the level head, the card and its title,
+  the table row, the board column, and the view toggle.
+- **Components:** `Catalog`, `CatalogCards`, `CatalogOverview`, `ViewIcon`, `SheetIndex`,
+  `CategoryBlock`, `ModuleRow`, `TickGauge` (52 + part of 114 old classes).
+- **Specs it re-points:** `catalog` (18), `index-sheet` (8). Helper: `tests/e2e/views.ts` hardcodes
+  `.hl-view[data-view]`.
+- **Revives:** the five guarded cases in `catalog/views.test.ts` — the reveal list must cover every
+  view in both the carrier and the forced-colours twin, and the no-script fallback branch too.
+- **Watch for:** `03` stacks two stickies, the filter bar at `top:0` and the table header at a
+  hardcoded `71px` matching the bar's height — **derive that, never copy the magic number.** The
+  level badge takes an edge and not a tinted fill (**D33**). B has no mobile treatment in the mockup
+  and its own note says so, so the narrow behaviour is a question if the table cannot scroll inside
+  its own box. And M12's acceptance criterion holds: reorder `curriculum.yaml` and all three views
+  follow identically.
+
+#### Stage 5 — the reading page · `01`'s `main > .col`, containment from `04`
+
+The heaviest route, ~19 component imports. Breadcrumbs above a display heading, a row of tags, then
+sections whose headings carry a dashed ochre rule filling the remaining width — the one place
+ornament touches the reading column. Prose links are underlined in ochre rather than recoloured.
+
+- **Roles it adds:** `crumb`, `display`, `tag`, `section`, `subsection`, `prose`, `card` (the
+  `leaf`-shaped aside a reader can skip), `actions`, `buttonPrimary`, the quiet button, and `pager`.
+- **Components:** `TitleBlock`, `StatusBand`, `Objectives`, `ScheduleOfParts`, `DependencyBlock`,
+  `SectionSpine`, `TableOfContents`, `ContentsDrawer`, `SheetRail`, `PrevNext`, `Prose` (the rest of
+  `components/sheet/`'s 114, plus `course/`'s 14).
+- **Specs it re-points:** `module-sheets` (33 tests, almost all behavioural), `title-block` (34),
+  `prose-type` (3), `section-marks` (already hard-skipped — decide whether it comes back).
+- **Watch for:** `04` contributes the wide-figure containment rule, which the shell already adopted,
+  and a `.bleed` utility the shell deliberately does not have — **a figure wider than the measure is
+  the second open question for the author.** The measure is 80ch and the mockup widened it from
+  `04`'s 68ch on purpose. `sheet.test.tsx`'s discipline rules now live in
+  `surface-stylesheets.test.ts` and will hold this stage's stylesheet automatically.
+
+#### Stage 6 — code and figures · `01`'s slab, node roles from `06-code-diagrams.html`
+
+A slab has a mono header strip and a scrolling code body; a figure frame uses the same dark palette
+and **its contents scroll inside the frame**, so a diagram wider than the column never widens the
+page. `06` proposes a different slab from the one the shell ships; **the shell wins** (**D31**), and
+`06` contributes only its three node roles — done, you are here, not yet — of which the language has
+two, so the third is a state to add and not a colour to invent.
+
+- **Roles it adds:** `slab`, `slabCode`, the slab head, `figure`, `node`, the active node, the third
+  node state, the arrow, the caption.
+- **Components:** `MermaidFigure`, `Diagram`, `Prose`'s code path (`figure/`'s 15).
+- **Specs it re-points:** `mermaid` (6).
+- **Watch for:** `mermaid.ts` cannot use `var()` — mermaid's `classDef` grammar rejects a CSS
+  function and a parse error blanks the figure — so the four semantic classes are emitted as literal
+  values resolved at build time from the token layer, exactly like `code-theme.ts`. **Swapping the
+  token layer silently changed every diagram in the corpus, and `node scripts/check-mermaid.mjs` is
+  the only thing that proves they still render.** The semantics ride the node's border and never
+  become a fill (**D33**): `verify` = success, `caution` = caution, `fault` = the clay, `info` = the
+  cobalt. `mermaid.spec.ts` asserts the slab is theme-fixed; that must stay true.
+
+#### Stage 7 — completion · `05-progress.html`, variants A and C
+
+**A** at the end of a piece: a top-ruled action row with one primary button, and after it a
+completed state with an undo beside it. **C** on the overviews: a dial per level, drawn as a
+`conic-gradient` with a knocked-out inner disc — no SVG and no JavaScript — plus three statistics.
+
+- **Roles it adds:** the completion mark, the completion control in both states, the dial, the
+  statistic row.
+- **Components:** `SignOff`, `SignOffMarks`, `CourseCompletion`, `ChecklistIsland`, `QuickCheck`,
+  `CheckedBy`, `TickGauge` (part of `record/`'s 386).
+- **Specs it re-points:** `record-sheet` (35 old classes, the largest exposure in the suite),
+  `record-index` (10). Helper: `tests/e2e/record.ts` (14).
+- **Revives:** the two aggregate category states in `category-surfaces.test.ts`.
+- **Watch for:** **a mark a reader sees in frame one is stamped before first paint** — the generated
+  sheet's five selector lists drive `.bz-seg`, `.bz-step-tick`, `.bz-mod-mark`, `.bz-cmod-mark` and
+  `.bz-cmod-said`, and **D25** keeps the completion state off `aria-pressed` and on a channel-A word
+  associated by `aria-describedby`. A completion mark is a filled disc with a white check, never a
+  stroked glyph, because the teal clears a 3:1 graphic floor and not a 4.5:1 text floor. `05`'s three
+  progress rails are three implementations of one primitive across `03`, `05`, `07` and `08` — unify
+  them.
+
+#### Stage 8 — progress and account · `07-dashboard.html` variant A, rings from `05`-C
+
+The route that absorbed three others: `/dashboard/`, `/path/` and `/report/` are `MovedTo` stubs
+forwarding here, and they must keep forwarding. Variant A is a continue hero, a progress block, a
+statistics row, then two settings panels.
+
+- **Roles it adds:** the continue hero, the progress row, the panel, the field, the danger button.
+- **Components:** all of `components/record/`'s panels, `components/path/` (36),
+  `components/identity/` (35), `AccountSync`, `Register`, `ReportPanel`, `DrafterBlock`.
+- **Specs it re-points:** `record-pages` (30), `path` (8), `alias` (3), `accounts` (5, skipped
+  without `E2E_ACCOUNTS=1`), `accounts-disabled` (4).
+- **Revives:** the nine-role path reveal and its negation chain in `category-surfaces.test.ts`.
+- **Watch for:** `07`'s progress row is a three-track grid with a **fixed 150px label column**,
+  which will overflow with a long level name or its Turkish translation — fix it rather than
+  transcribe it. The account layer is optional and gates nothing; with no `.env.local` the page is
+  complete and makes zero requests. `AccountSync` is the seam where session, sync, store and claim
+  meet, and its absence was the largest defect in Phase 4. The exported RECORD OF WORK keeps its own
+  print palette and borrows only the five hues, which `category-hues.test.ts` already guards.
+
+#### Stage 9 — home · `08-home.html` variant A
+
+A display heading, a lede, two calls to action, four measured facts, a grid of level cards, then a
+four-part rule block. The level card is structurally the same primitive as `03`-C's board column —
+a coloured header, a progress rail, a short list — so it is one component with two variants, not two
+components.
+
+- **Roles it adds:** the hero, the lede, the fact row, the level card.
+- **Components:** `KeepingYourPlace`, `ContinueLine`, `src/app/page.tsx` (10 + part of 293).
+- **Specs it re-points:** `home` (18, and both of the suite's only two `toHaveClass` calls).
+- **Watch for:** the page renders **both** halves unconditionally and CSS picks one off
+  `data-hl-record`, which is the entire first-visit-versus-returning switch and is channel A. `08`
+  uses literal emoji as icons in its rule block — replace them with the SVG idiom the rest of the
+  design uses. Its four facts are corpus counts and must be derived, never written down.
+
+#### Stage 10 — the eight routes with no mockup · derived (**D30**)
+
+`/legend/`, `/legend/specimen/`, `/team/`, `/team/assignments/`, `/sign-in/`, `/sign-in/alias/`,
+`/join/`, `/auth/callback/`. Built from primitives the mockups already specify — `card`, `tag`, the
+primary and quiet buttons, `slab`, the bar field for an input, the group and item rows for a list.
+**Nothing is invented; where one needs a shape the language does not have, that one shape is a
+question and not a design decision.**
+
+- **Components:** `components/auth/` (71), `components/team/` (116), `components/org/` (29),
+  `components/identity/` (35), `legend/page.tsx` (508 lines).
+- **Specs it re-points:** `accessibility` (17), `colour-not-alone` (19), `health` (2), `features`
+  (1), `redirects` (1).
+- **Watch for:** four of the eight sit behind an auth flag that is off by default, so their specs
+  skip cleanly and the fidelity comparison has to run against a build with
+  `NEXT_PUBLIC_AUTH_ENABLED=true`. `/legend/` is the page that replaces onboarding by not being
+  onboarding — it is never auto-opened, and that must stay true. **This is the announced cut line**
+  if the milestone has to be cut: the nine mockup-backed surfaces are the point, and these eight
+  have the weakest reference.
+
+---
+
+### Closing the milestone
+
+M16 is done when all three mechanical tests hold at once — no `hl-` class in any `className`, no
+stylesheet in `src/app/` but the entry point and the generated sheet, and `fidelity.spec.ts`
+comparing **every** surface to its reference with no differences — and when the capability ledger is
+checked off with the full gate green and the behavioural test count no lower than it is today. Then
+`CLAUDE.md`, `INDEX.md` and `tests/README.md` are re-pointed, and the two open questions
+(a rail group's persistence, a figure wider than the measure) are either answered or recorded as
+deliberately unanswered.
 
 ### Report — stage 0, the token layer swapped, 2026-09-09
 
@@ -1719,11 +1993,9 @@ fold, the rail, the measure, the aside. If that file grows, the reason should be
 | `npm run build` | clean, 56 HTML files |
 | `npx playwright test fidelity.spec.ts` | **140 passed, 19 skipped**, three viewports |
 
-### Stage 1 part 2, which is next
+### Next
 
-The `bz-shell` grid into `PageShell` — rail, `bz-main > bz-col`, aside — the folding rail on
-`bz-rail`/`bz-group`/`bz-item`/`bz-tick` with `data-rail` on the shell, the restore tab, and the
-breadcrumb landing in the column. It touches all 17 routes, because `PageShell`'s `bleed` prop stops
-meaning anything once every page gets the grid, so it was split from part 1 rather than half-done
-inside it. `not-found.spec.ts` reads a nav landmark named `Curriculum`; that behaviour has to
-survive the breadcrumb's move.
+**Stage 1 part 2**, and what it owes is written once, in *The ten stages* above rather than a second
+time here. In short: the `bz-shell` grid into `PageShell`, its three slots, and the breadcrumb into
+the reading column — all 17 routes, because `bleed` stops meaning anything once every page gets the
+grid.

@@ -193,7 +193,9 @@ export default function SpecimenPage() {
             filename={specimen.filename}
             label="DOWNLOAD THE SPECIMEN"
           />
-          <Link className="hl-btn" href="/report/">
+          {/* M14 — the builder is the progress page's `report` row now, and
+              the fragment opens it on arrival (`FoldFragment`). */}
+          <Link className="hl-btn" href="/profile/#report">
             BUILD YOUR OWN RECORD
           </Link>
           <Link className="hl-btn" href="/legend/">

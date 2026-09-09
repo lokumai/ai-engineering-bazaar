@@ -12,7 +12,7 @@ import {
 } from '@/components/record/ReportPanel'
 import LegendPage from '@/app/legend/page'
 import SpecimenPage from '@/app/legend/specimen/page'
-import ReportPage from '@/app/report/page'
+import ReportPage, { metadata as REPORT_META } from '@/app/report/page'
 import { signedCount, tally, type CurriculumFacts } from '@/lib/record/derive'
 import {
   buildRecordOfWork,
@@ -302,41 +302,36 @@ describe('the filename reaches the control that saves it (§12.12.1)', () => {
   })
 })
 
-describe('/report/ — the route (§12.12)', () => {
+/**
+ * M14 — `/report/` is a forward now, and this is what a redirect has to be in a
+ * static export.
+ *
+ * The builder itself did not move: `ReportPanel` is the subject of everything
+ * above, and it is rendered by `/profile/`'s `report` register row, where the
+ * assertions about the document it builds still apply. What is asserted here is
+ * only that the retired address lands a reader somewhere useful, three ways
+ * (`MovedTo` carries why three), and that it does not ask a search engine to
+ * index a page with no content.
+ */
+describe('/report/ — the forward (M14)', () => {
   const markup = renderToStaticMarkup(<ReportPage />)
 
-  it('is a server page that measures the real corpus for both consumers', () => {
-    expect(markup).toContain('Record of work')
-    expect(markup).toContain('data-hl-report')
-    // The lead states the size of the set. Counted here too, never typed:
-    // the corpus is reordered and added to constantly, and a number written
-    // into this file would turn an ordinary edit into a failure.
-    const sheets = curriculumFacts().sheets.length
-    expect(words(markup)).toMatch(new RegExp(`ledger of all ${sheets} modules`))
+  it('forwards to the one progress route, with the fragment kept', () => {
+    // The script is first and is the only one of the three that can carry a
+    // fragment, because `location.hash` is only knowable in the browser.
+    expect(markup).toContain('location.replace("/profile/"+location.hash)')
+    expect(markup).toContain('http-equiv="refresh"')
+    expect(markup).toContain('0; url=/profile/')
   })
 
-  it('names no authority and claims none (§12.12.1)', () => {
-    expect(markup).toContain('SELF-ATTESTED · NO ISSUING AUTHORITY')
-    // The seven limits are removed before the scan rather than exempted from
-    // it: "This is not a W3C Verifiable Credential" is a denial, and a denial
-    // is the one place the forbidden vocabulary belongs. What is being checked
-    // is the page's own prose around them.
-    let text = words(markup)
-    for (const line of REPORT_LIMITS) text = text.replace(line, ' ')
-    expect(text).not.toMatch(
-      /\b(?:certificate|certified|credential|diploma|qualification|badge|verified)\b/i,
-    )
+  it('says where the record of work went, and links there', () => {
+    expect(words(markup)).toContain('The record of work is part of Your progress now')
+    expect(markup).toContain('href="/profile')
   })
 
-  /**
-   * Asserted without the trailing slash: `trailingSlash: true` is applied by
-   * the router and the export, not by `Link` in a bare `renderToStaticMarkup`,
-   * so the rendered `href` here is one character shorter than the one the built
-   * page carries. The prefix is the part this test is about.
-   */
-  it('routes a reader to the specimen before they build anything', () => {
-    expect(markup).toContain('href="/legend/specimen')
-    expect(markup).toContain('href="/legend"')
+  it('asks not to be indexed, because it has no content to find', () => {
+    expect(ReportPage).toBeDefined()
+    expect(REPORT_META.robots).toEqual({ index: false, follow: true })
   })
 })
 

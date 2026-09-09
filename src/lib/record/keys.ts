@@ -27,14 +27,14 @@
  */
 
 /**
- * The `g` destinations. §12.16 named five, §13.14 added `path` and §15.1 added
- * `home`; the count is not restated here because the union below is the list,
- * and a number in a comment beside it is a second author for the same fact that
- * went stale on the first amendment. The second-key map at `GO` carries the
- * amendments and their reasons. `category` depends on the route.
+ * The `g` destinations. §12.16 named five, §13.14 added `path`, §15.1 added
+ * `home` and M14 removed three; the count is not restated here because the
+ * union below is the list, and a number in a comment beside it is a second
+ * author for the same fact that went stale on the first amendment. The
+ * second-key map at `GO` carries the amendments and their reasons. `category`
+ * depends on the route.
  */
-export type NavTarget =
-  | 'dashboard' | 'home' | 'index' | 'profile' | 'record' | 'path' | 'category'
+export type NavTarget = 'home' | 'index' | 'profile' | 'category'
 
 /**
  * What a resolved key asks the island to do. Three of these need page context
@@ -146,14 +146,20 @@ export interface Resolution {
  * the new front door takes **`h`, unbound until now**. Leaving `g i` on `/`
  * would have kept the keystroke and broken the promise — the shortcut sheet
  * prints the word `index` beside it, and it would have gone somewhere else.
+ *
+ * **M14 amends it to four, by deletion.** `d` (dashboard), `r` (record of
+ * work) and `l` (learning path) named three routes that folded into
+ * `/profile/`, and the honest thing to do with a chord whose destination is
+ * gone is to unbind it: four keystrokes reaching one page is a shortcut sheet
+ * that reads as a mistake, and repointing them would have been three promises
+ * kept in the letter and broken in the substance — `g r` printing "Record" and
+ * opening a page whose first heading is something else. `g p` was always the
+ * chord for the reader's own record, and it still is.
  */
 const GO: ReadonlyMap<string, NavTarget> = new Map([
-  ['d', 'dashboard'],
   ['h', 'home'],
   ['i', 'index'],
   ['p', 'profile'],
-  ['r', 'record'],
-  ['l', 'path'],
   ['c', 'category'],
 ])
 
@@ -235,10 +241,7 @@ export function expirePending(state: KeyState): KeyState {
 export const ROUTES: Readonly<Record<Exclude<NavTarget, 'category'>, string>> = Object.freeze({
   home: '/',
   index: '/sheets/',
-  dashboard: '/dashboard/',
   profile: '/profile/',
-  record: '/report/',
-  path: '/path/',
 })
 
 /**
@@ -246,8 +249,8 @@ export const ROUTES: Readonly<Record<Exclude<NavTarget, 'category'>, string>> = 
  * out of the content: a module sheet and its category page are both under
  * `/courses/<category>/`, and the category is the segment, not a lookup.
  *
- * Null where there is no current category — the index sheet, the drawing set,
- * the dashboard, the profile. `g c` then does nothing, which is the truth;
+ * Null where there is no current category — the catalog, the curriculum, the
+ * home page, the progress page. `g c` then does nothing, which is the truth;
  * inventing a category to jump to would be §1's failure in one keystroke.
  */
 export function categoryPathOf(pathname: string): string | null {
@@ -278,12 +281,10 @@ export interface Shortcut {
 }
 
 export const SHORTCUTS: readonly Shortcut[] = Object.freeze([
-  { keys: 'g d', action: 'Dashboard', target: 'dashboard' as NavTarget },
   { keys: 'g h', action: 'Home', target: 'home' as NavTarget },
   { keys: 'g i', action: 'Catalog', target: 'index' as NavTarget },
-  { keys: 'g p', action: 'Profile', target: 'profile' as NavTarget },
-  { keys: 'g r', action: 'Record', target: 'record' as NavTarget },
-  { keys: 'g l', action: 'Learning path', target: 'path' as NavTarget },
+  // M14 — one destination for the reader's own record, where there were four.
+  { keys: 'g p', action: 'Your progress', target: 'profile' as NavTarget },
   { keys: 'g c', action: 'Current category', target: 'category' as NavTarget },
   { keys: '[ / ]', action: 'Previous / next module', target: null },
   { keys: 'j / k', action: 'Next / previous section', target: null },

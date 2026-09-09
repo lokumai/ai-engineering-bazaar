@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { seedRecord, signedSheet } from './record'
+import { openRegisterRow, seedRecord, signedSheet } from './record'
 import { CATEGORY_PATHS } from './sheets'
 
 /**
@@ -93,7 +93,12 @@ test('LKM-01 still reports every level with no colour (§13.1.3 item 1)', async 
   page,
 }) => {
   await seedRecord(page, { sheets: SIGNED })
-  await page.goto('/dashboard/')
+  // M14 — the mark and its face legend are the `readout` row of the progress
+  // page's register: `/dashboard/` folded into `/profile/`. The row is opened
+  // because a closed `<details>` has no box, and `getComputedStyle` on an
+  // unrendered element answers about a box that is not there.
+  await page.goto('/profile/')
+  await openRegisterRow(page, 'readout')
 
   // The faces lose their fill entirely under forced colours — `lokum.css` sets
   // `.hl-face { fill: none }` there on purpose. What is left is §8.2's line
@@ -133,7 +138,9 @@ test('LKM-01 still reports every level with no colour (§13.1.3 item 1)', async 
 
 test('a path step still states its state with no colour (§13.1.3 item 6)', async ({ page }) => {
   await seedRecord(page, { identity: { role: 'software-engineer' }, sheets: SIGNED })
-  await page.goto('/path/')
+  // M14 — the nine paths are the `role` row of the progress page's register.
+  await page.goto('/profile/')
+  await openRegisterRow(page, 'role')
 
   const body = page.locator('.hl-path-body[data-role="software-engineer"]')
   await expect(body).toBeVisible()
@@ -151,7 +158,8 @@ test('a path step still states its state with no colour (§13.1.3 item 6)', asyn
 
 test('the swatch is labelled by the row it sits in, never by hue alone', async ({ page }) => {
   await seedRecord(page, { sheets: SIGNED })
-  await page.goto('/dashboard/')
+  await page.goto('/profile/')
+  await openRegisterRow(page, 'readout')
 
   // §13.1.3 item 8 — the swatch is the one place a hue appears without an
   // adjacent count of its own, which is why it is `aria-hidden` and why its row

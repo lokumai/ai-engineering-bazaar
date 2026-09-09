@@ -331,10 +331,13 @@ export default function LegendPage() {
         </p>
 
         <div className="hl-signoff-actions mt-4">
+          {/* M14 — one destination where there were two: the record of work is
+              a row of the progress page's register now, and `#report` opens
+              that row on arrival (`FoldFragment`). */}
           <Link className="hl-btn" href="/profile/">
-            OPEN THE PROFILE MODULE
+            OPEN YOUR PROGRESS
           </Link>
-          <Link className="hl-btn" href="/report/">
+          <Link className="hl-btn" href="/profile/#report">
             BUILD A RECORD OF WORK
           </Link>
         </div>

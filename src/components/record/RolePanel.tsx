@@ -1,13 +1,11 @@
 'use client'
 
 import { useMemo } from 'react'
-import Link from 'next/link'
 import { RolePicker } from '@/components/path/RolePicker'
 import { MARKS, type MarkId } from '@/lib/identity/mark'
-import { pathStanding } from '@/lib/path/derive'
 import { drawnCount, pathFor } from '@/lib/path/paths'
 import { roleById, type Role } from '@/lib/path/roles'
-import { useHydrated, useRecord } from '@/lib/record/store'
+import { useRecord } from '@/lib/record/store'
 
 /**
  * §13.3, §13.6 — the role the reader has stated, the standing of the path that
@@ -143,8 +141,6 @@ function RoleStanding({
   role: Role
   drawnSlugs: readonly string[]
 }) {
-  const record = useRecord()
-  const hydrated = useHydrated()
   const drawnSet = useMemo(() => new Set(drawnSlugs), [drawnSlugs])
 
   // The offer's label, resolved through `offeredMark` so the id is checked
@@ -154,29 +150,34 @@ function RoleStanding({
 
   const path = pathFor(role.id)
   const drawn = path === undefined ? null : drawnCount(path, drawnSet)
-  const standing = path === undefined ? null : pathStanding(path, record, drawnSet)
   const drafts = path === undefined || drawn === null ? null : path.steps.length - drawn
 
   return (
     <>
+      {/* M14 — two rows left this list, and the reason is that the path's own
+          steps are on this row now.
+ 
+          `Completed on this path` and `To go` were here because `/path/` was a
+          different page and this panel was a reader's only sight of the
+          standing. Since M14 folded that route in, `PathStanding` sits directly
+          above the ordered steps in this same row — one derivation
+          (`pathStanding`), one live region, one place a reader reads it. Two
+          renderings of one reading inside one row is the drift §16.4.2 exists
+          to stop, and the one that survives is the one beside the steps it
+          describes.
+
+          `Steps planned` stays, because nothing else states it: it is the
+          count `PathStanding`'s denominator deliberately leaves out (§13.4.2),
+          and leaving it out silently is what would make the denominator look
+          like the length of the list. */}
       <dl className="hl-defs">
         <dt>Role</dt>
         <dd>{role.label}</dd>
 
-        <dt>Completed on this path</dt>
-        <dd>
-          {/* Gated on `hydrated` even though a role on record implies the store
-              has answered: the gate is what tells "nothing recorded" from "not
-              yet read", and only one of those is a fact about the reader. */}
-          {hydrated && standing !== null && drawn !== null
-            ? `${standing.signed} OF ${drawn}`
-            : NO_READING}
-        </dd>
-
-        <dt>To go</dt>
-        <dd>{hydrated && standing !== null ? String(standing.remaining) : NO_READING}</dd>
-
         <dt>Steps planned</dt>
+        {/* Gated on `hydrated` nowhere: this is a count of the corpus, true for
+            every reader in every frame, and dashing it would refuse a number
+            somebody did measure (§11.25). */}
         <dd>{drafts === null ? NO_READING : String(drafts)}</dd>
       </dl>
 
@@ -195,16 +196,13 @@ function RoleStanding({
 
       {/* §13.4.2 — stated where the two numbers sit, so the denominator cannot
           be misread as the length of the list. */}
+      {/* M14 — the ordered steps used to be a link to `/path/` from here. They
+          are in this same register row now, immediately below the picker, so
+          the link would have pointed at the page it is already on. */}
       <p className="m-0 font-display text-meta leading-normal text-ink-muted">
         The tally counts modules that are ready. Steps pointing at a module nobody
         has written yet are on the path as a roadmap and are left out of it,
         because a module with no content has nothing to complete.
-      </p>
-
-      <p className="m-0 font-display text-ui leading-normal">
-        <Link href="/path/" className="hl-link">
-          The steps on this path, in order
-        </Link>
       </p>
 
       {/* §13.3 — no dialog, and the summary says why there is none. A reader

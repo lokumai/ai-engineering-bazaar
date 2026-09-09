@@ -631,17 +631,25 @@ describe('§12.1.6, §11.35 — the storage panel prints bytes and nothing else'
 describe('§16.1, §16.4 — the page itself: the account block, then your progress', () => {
   it('prints its own chord beside its title (§12.16)', () => {
     expect(PAGE).toContain('>G P<')
-    expect(PAGE).toContain('Profile')
+    // M14 — one progress-and-account route where there were four, and the
+    // title is what it is for rather than what the URL is called.
+    expect(PAGE).toContain('Your progress')
   })
 
   it('renders exactly REGISTER_ROWS, in exactly that order', () => {
     const rows = [...PAGE.matchAll(/<h2 id="([^"]+)" class="hl-register-name">([^<]+)</g)]
       .map(([, id, name]) => ({ id, name }))
     expect(rows).toEqual(REGISTER_ROWS.map(({ id, name }) => ({ id, name })))
-    // A row is a `<details>` and there are no others on this page, so the count
-    // is also the count of folds — a row rendered outside the register, or a
-    // row in the table and not rendered, moves one of these two numbers.
-    expect(occurrences(PAGE, /<details/g)).toBe(REGISTER_ROWS.length)
+    // Every row is a `hl-register-fold` and nothing else on the page is, so
+    // the count is the count of rows — a row rendered outside the register, or
+    // a row in the table and not rendered, moves one of these two numbers.
+    //
+    // Counted on the CLASS rather than on `<details`, which is what it was
+    // until M14: the rows that arrived with the fold of `/dashboard/` bring
+    // disclosures of their own inside their bodies (the diagram's dependency
+    // table is one), and a bare `<details` count would have made this
+    // assertion about how many nested folds the page's panels happen to use.
+    expect(occurrences(PAGE, /class="hl-register-fold"/g)).toBe(REGISTER_ROWS.length)
   })
 
   it('opens with the account block and closes every row', () => {
@@ -728,16 +736,28 @@ describe('§16.1, §16.4 — the page itself: the account block, then your progr
     expect(occurrences(PAGE, /name="hl-mark"/g)).toBe(MARK_PICKER_IDS.length)
   })
 
-  it('keeps one h1 and puts the block above your progress in the outline (§16.7)', () => {
+  it('keeps one h1 and goes no deeper than h3 in the outline (§16.7)', () => {
     expect(occurrences(PAGE, /<h1/g)).toBe(1)
-    // The block is an h2 with two h3 halves; every register row is an h2. No h4
-    // anywhere, because nothing on this sheet is three levels deep.
-    expect(occurrences(PAGE, /<h3/g)).toBe(2)
+    // Every register row is an h2, and so is each open panel above them; the
+    // account block's two halves and the level cards inside control C are h3.
+    // What is asserted is the DEPTH rather than the count: an h4 would mean
+    // something on this page is three levels deep, and M14 folded three routes
+    // in here without adding a level.
+    expect(occurrences(PAGE, /<h3/g)).toBeGreaterThan(0)
     expect(PAGE).not.toContain('<h4')
   })
 
-  it('omits TRACES, which only the dashboard can count (§11.25)', () => {
-    expect(PAGE).not.toContain('Traces')
+  /**
+   * M14 — `TRACES` used to be absent from this page, because only the
+   * dashboard built the graph and a dash standing in for a number nobody
+   * counted is what §11.25 forbids. The dashboard folded in here, so the cell
+   * is now on this page — and it must appear ONLY inside the row that counts
+   * it, which is the same rule stated where the graph now lives.
+   */
+  it('prints TRACES only inside the row that counts it (§11.25, §5.8)', () => {
+    const row = PAGE.slice(PAGE.indexOf('id="diagram"'), PAGE.indexOf('id="report"'))
+    expect(row).toContain('Traces')
+    expect(occurrences(PAGE, /Traces/g)).toBe(occurrences(row, /Traces/g))
   })
 
   it('is inside the shell, so it has a main region and a footer', () => {

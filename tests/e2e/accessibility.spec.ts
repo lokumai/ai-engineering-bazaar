@@ -147,8 +147,10 @@ test('the header tab order runs left to right and stops at the repo link', async
   expect(at(/^home$/i), 'the navbar').toBe(2)
   expect(at(/^curriculum$/i)).toBe(3)
   expect(at(/^catalog$/i)).toBe(4)
-  expect(at(/^my progress$/i)).toBe(5)
-  expect(at(/toggle theme/i)).toBeGreaterThan(at(/^my progress$/i))
+  // M14 — the fourth destination reads `Your progress`. It was `My progress`,
+  // and the copy register bans the first person outright.
+  expect(at(/^your progress$/i)).toBe(5)
+  expect(at(/toggle theme/i)).toBeGreaterThan(at(/^your progress$/i))
   expect(at(/repository/i)).toBeGreaterThan(at(/toggle theme/i))
 
   // The trail is what follows the controls, and its first crumb is the front

@@ -20,7 +20,7 @@ import {
   type LayoutNode,
   type RovingKey,
 } from '@/lib/record/layout'
-import { useRecord } from '@/lib/record/store'
+import { useHydrated, useRecord } from '@/lib/record/store'
 import type { RecordData } from '@/lib/record/schema'
 import { href } from '@/lib/url'
 
@@ -708,15 +708,55 @@ export function DiagramReadout({
   facts: CurriculumFacts
   edges: readonly LayoutEdgeInput[]
 }) {
+  return <Readout variant="full" facts={facts} traces={useTraces(facts, edges)} />
+}
+
+/**
+ * §5.8 — the edges with BOTH endpoints completed, which is the one number only
+ * the surface holding the graph can count.
+ *
+ * §5.8 is exact about the rule: a trace with one completed end is not
+ * energized, because the dependency has not been satisfied end to end. The
+ * record's facts carry the denominator (`facts.traces`) and not the graph, so
+ * every other surface prints no `TRACES` cell at all rather than a dash
+ * standing in for a number nobody looked for (§11.25).
+ *
+ * Extracted from `DiagramReadout` by M14 so the register row that HOLDS the
+ * diagram can state the same reading in its summary line (§16.4.2: a summary
+ * reading comes from the body it summarises, and never from a second
+ * derivation).
+ */
+function useTraces(
+  facts: CurriculumFacts,
+  edges: readonly LayoutEdgeInput[],
+): number {
   const record = useRecord()
 
   const signed = new Set<number>()
   for (const sheet of facts.sheets) {
     if (sheet.drawn && record.sheets[sheet.slug]?.signedOff) signed.add(sheet.module)
   }
-  const live = edges.filter(
-    (edge) => signed.has(edge.from) && signed.has(edge.to),
-  ).length
+  return edges.filter((edge) => signed.has(edge.from) && signed.has(edge.to)).length
+}
 
-  return <Readout variant="full" facts={facts} traces={live} />
+/**
+ * §16.4.1 — the diagram row's summary line: `14 OF 32 TRACES`.
+ *
+ * The numerator is the reader's — the same `useTraces` the strip inside the row
+ * uses, so the fold removes prose and never a fact and the two cannot disagree.
+ * The denominator is the corpus's and prints in frame one, because refusing a
+ * number somebody did count is §11.25 in reverse. `--` until the store has
+ * answered, which is the house spelling for "no reading taken yet".
+ */
+export function TracesReading({
+  facts,
+  edges,
+}: {
+  facts: CurriculumFacts
+  edges: readonly LayoutEdgeInput[]
+}) {
+  const hydrated = useHydrated()
+  const live = useTraces(facts, edges)
+
+  return <>{`${hydrated ? live : '--'} of ${facts.traces} traces`}</>
 }

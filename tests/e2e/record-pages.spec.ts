@@ -18,6 +18,7 @@ import {
   slugOf,
 } from './record'
 import { CATEGORY_PATHS, DRAWN_COUNT, SHEETS, SHEET_COUNT, sheetByModule } from './sheets'
+import { QUARANTINE_COPY } from '@/components/record/ProfilePanels'
 import { watchPage } from './watch'
 
 /**
@@ -187,17 +188,33 @@ function definition(page: Page, scope: string, term: string): Promise<string | n
 }
 
 // ===========================================================================
-// §12.10 — THE DASHBOARD
+// §12.10 — THE CURRICULUM DIAGRAM
 // ===========================================================================
 
 const DIAGRAM = 'svg[role="graphics-document"]'
+
+/**
+ * M14 — the diagram, opened.
+ *
+ * It was `/dashboard/`'s centrepiece; that route folded into `/profile/` and
+ * the drawing is the `diagram` row of its register. Every assertion below is
+ * the same claim about the same drawing — it moved rather than changing — but a
+ * closed `<details>` has no box, so the row has to be opened before anything
+ * measures geometry, focus or visibility. `openRegisterRow` is idempotent and
+ * waits for the body to be rendered, which is why it is the gesture rather
+ * than a click on the summary.
+ */
+async function openDiagram(page: Page): Promise<void> {
+  await page.goto('/profile/')
+  await openRegisterRow(page, 'diagram')
+}
 
 test('§12.10.1 — the diagram is a graphics-document, and role="img" appears nowhere on it', async ({
   page,
 }) => {
   const problems = watchPage(page)
   await seedRecord(page, SEEDED)
-  await page.goto('/dashboard/')
+  await openDiagram(page)
 
   const svg = page.locator(DIAGRAM)
   await expect(svg).toHaveCount(1)
@@ -237,7 +254,7 @@ test('§12.10.1 — every band is a graphics-object and states its own counted t
   page,
 }) => {
   await seedRecord(page, SEEDED)
-  await page.goto('/dashboard/')
+  await openDiagram(page)
 
   const bands = page.locator(`${DIAGRAM} > g[role="graphics-object"]`)
   await expect(bands).toHaveCount(CATEGORY_PATHS.length)
@@ -272,7 +289,7 @@ test('§12.10.1 — every node is named from aria-label, never from its visible 
   page,
 }) => {
   await seedRecord(page, SEEDED)
-  await page.goto('/dashboard/')
+  await openDiagram(page)
 
   const nodes = page.locator(`${DIAGRAM} g[role="graphics-symbol"]`)
   await expect(nodes).toHaveCount(SHEET_COUNT)
@@ -311,7 +328,7 @@ test('§12.10.1 — every node is named from aria-label, never from its visible 
 
 test('§12.10.2 — the whole diagram is one tab stop', async ({ page }) => {
   await seedRecord(page, SEEDED)
-  await page.goto('/dashboard/')
+  await openDiagram(page)
 
   const tabindexes = await page
     .locator(`${DIAGRAM} g[role="graphics-symbol"]`)
@@ -328,7 +345,7 @@ test('§12.10.2 — ArrowRight moves within a band, ArrowDown moves between band
   page,
 }) => {
   await seedRecord(page, SEEDED)
-  await page.goto('/dashboard/')
+  await openDiagram(page)
 
   const focusedId = () => page.evaluate(() => document.activeElement?.id ?? null)
   const roving = () =>
@@ -365,7 +382,7 @@ test('§12.10.2 — ArrowRight moves within a band, ArrowDown moves between band
 
 test('§12.10.2 — Enter on a focused node opens that module', async ({ page }) => {
   await seedRecord(page, SEEDED)
-  await page.goto('/dashboard/')
+  await openDiagram(page)
 
   await page.locator(`${DIAGRAM} g[role="graphics-symbol"][tabindex="0"]`).focus()
   await page.keyboard.press('Enter')
@@ -378,7 +395,7 @@ test('§12.10.3 — the table equivalent is in the DOM with the disclosure close
   page,
 }) => {
   await seedRecord(page, SEEDED)
-  await page.goto('/dashboard/')
+  await openDiagram(page)
 
   const details = page.locator('details.hl-diagram-table')
   await expect(details).toHaveCount(1)
@@ -461,7 +478,7 @@ test('§12.10 — the emitted geometry is byte-identical across two loads', asyn
     }, { coordinates: COORDINATES })
 
   await seedRecord(page, SEEDED)
-  await page.goto('/dashboard/')
+  await openDiagram(page)
   // §12.2 channel B: the record reaches the drawing after the hydration commit,
   // so both captures have to be taken on the same side of it. Otherwise this
   // test compares a pre-hydration frame with a post-hydration one and reports a
@@ -484,19 +501,31 @@ test('§12.10 — the emitted geometry is byte-identical across two loads', asyn
   expect(first!.floats).toEqual([])
 })
 
+/**
+ * M13/M14 — `ContinueLine` is on the HOME page now, not on a progress page.
+ *
+ * It was the dashboard's one line above the graph. The dashboard folded into
+ * `/profile/` and the line did not go with it: a reader who wants the next
+ * module is on the front door, not on the page about their own record, and home
+ * A shows it inside `.hl-home-continue` — the one block on that page keyed off
+ * `data-hl-record`, so a reader with no record is not offered a shortcut into a
+ * course they have not started.
+ *
+ * The claim is unchanged and so is the component; only the surface moved.
+ */
 test('§12.10.6 — CONTINUE names the next ready module that is not completed', async ({ page }) => {
   await seedRecord(page, SEEDED)
-  await page.goto('/dashboard/')
+  await page.goto('/')
 
-  // Sheets 1, 8 and 13 are signed off in this record, so the next ready sheet
-  // is 2. The link text carries the number as well as the title, which is what
-  // makes it unambiguous against the 32 titles in the table below it.
+  // Modules 1, 8 and 13 are completed in this record, so the next ready one is
+  // 2. The link text carries the number as well as the title, which is what
+  // makes it unambiguous against the thirty-three titles in control C below.
   const next = sheetByModule(2)
   const link = page.getByRole('link', { name: `Module 02 · ${next.title}` })
   await expect(link).toHaveCount(1)
   await expect(link).toBeVisible()
   await expect(link).toHaveAttribute('href', next.path)
-  // One line, above the graph.
+  // One line, above the two actions.
   await expect(page.locator('p', { has: link })).toContainText(/^Continue Module 02 · /)
 })
 
@@ -514,14 +543,16 @@ test('§12.10.6 — CONTINUE is absent when there is no next module', async ({ p
   }
 
   await seedRecord(page, { identity: { name: READER }, sheets: everything })
-  await page.goto('/dashboard/')
+  await page.goto('/')
 
-  // The drawing has to have taken the record on board before an absence means
-  // anything: on the server frame nothing is signed off and CONTINUE is there.
-  await expect(
-    page.locator(`${DIAGRAM} g[role="graphics-symbol"][data-state="signed"]`),
-  ).toHaveCount(SHEETS.filter((sheet) => sheet.drawn).length)
-  await expect(page.getByRole('link', { name: /^Sheet \d\d · / })).toHaveCount(0)
+  // The island has to have taken the record on board before an absence means
+  // anything: on the server frame nothing is completed and CONTINUE is there.
+  // Control C's own ticks are the witness — one per completed module, all of
+  // them channel A — and they are painted from the same record.
+  await expect(page.locator('.hl-cmod .hl-cmod-mark:visible')).toHaveCount(
+    SHEETS.filter((sheet) => sheet.drawn).length,
+  )
+  await expect(page.getByRole('link', { name: /^Module \d\d · / })).toHaveCount(0)
   await expect(page.getByText('Continue', { exact: false })).toHaveCount(0)
 })
 
@@ -697,7 +728,17 @@ test('§16.4 — the account block arrives open, and every row arrives closed', 
   expect(state.filter((row) => row.open !== false).map((row) => row.row)).toEqual([])
 
   // §12.1.2's quarantine note renders nothing when there is nothing to report.
-  await expect(page.getByText('NOT READ', { exact: false })).toHaveCount(0)
+  //
+  // Asserted on the note's own words rather than on the substring `NOT READ`,
+  // which is what this line looked for until M14: the attention panel folded
+  // in from `/dashboard/` explains that "the count of attempts is held in the
+  // event log, which this page does not read", and Playwright's text matching
+  // is case-insensitive and whitespace-normalised, so `not read` matched a
+  // sentence about something else entirely. The full readout is the note's, and
+  // `QUARANTINE_COPY` is exported for exactly this kind of assertion.
+  for (const { readout } of Object.values(QUARANTINE_COPY)) {
+    await expect(page.getByText(readout, { exact: false })).toHaveCount(0)
+  }
 
   expect(problems.consoleErrors).toEqual([])
   expect(problems.failedRequests).toEqual([])
@@ -997,6 +1038,21 @@ const EXPECTED_READINGS = {
   // status (§16.6) — so this row also pins the wording the four surfaces in the
   // fold share.
   'hl-orgs-head': { thin: 'ACCOUNTS NOT ENABLED YET', rich: 'ACCOUNTS NOT ENABLED YET' },
+  // M14's two rows, folded in from `/dashboard/` and `/report/`.
+  //
+  // The diagram's reading is `TRACES` — the edges with BOTH endpoints completed
+  // (§5.8) — because that is the one number only the surface holding the graph
+  // can count, and it is the same `useTraces` the strip inside the row uses. It
+  // moves with the record, which is what the case below this table requires of
+  // any reading with a digit in it. The first version of this row printed the
+  // corpus's own two counts and read identically for an empty record and a
+  // completed one; that is what that case caught.
+  //
+  // The record of work has no count at all — there is no measure of how much
+  // record of work a reader has — so it prints its subject the way the export
+  // row does (§16.4.2).
+  diagram: { thin: '0 OF # TRACES', rich: '# OF # TRACES' },
+  report: { thin: 'ONE FILE, BUILT IN THIS BROWSER', rich: 'ONE FILE, BUILT IN THIS BROWSER' },
   // §17.6's notation. The thin seed has met no account; the rich seed carries a
   // merge of four with nothing lost.
   claim: { thin: 'NO CLAIM ON RECORD', rich: '4 MERGED · 0 LOST' },
@@ -1547,10 +1603,13 @@ test('§12.12.6 — the importer accepts the RECORD OF WORK .html and matches it
   await seedRecord(page, SEEDED)
   await installSaveProbe(page)
 
-  // The document is generated on `/report/`, which is the only page that builds
-  // it. The failure mode §12.12.6 removes is a learner who keeps the pretty
-  // document and loses the record, so the pretty document has to import.
-  await page.goto('/report/')
+  // The document is generated by the `report` row of the progress page's
+  // register, which is the only place that builds it: M14 folded `/report/`
+  // into `/profile/`. The failure mode §12.12.6 removes is a learner who keeps
+  // the pretty document and loses the record, so the pretty document has to
+  // import — and both halves of that round trip are now on one page.
+  await page.goto('/profile/')
+  await openRegisterRow(page, 'report')
   await expect(page.locator('[data-hl-report][data-hydrated="true"]')).toHaveCount(1)
   const generatedFrom = await settled(page)
   await expect

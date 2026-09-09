@@ -1005,14 +1005,36 @@ test('g is a mode rather than a race, and Escape clears it (§12.16, SC 2.1.1)',
   expect(await documentLoads(page), 'an abandoned g navigated anyway').toBe(1)
 })
 
-test('g d reaches the dashboard (§12.16)', async ({ page }) => {
+test('g p reaches the one progress route (§12.16)', async ({ page }) => {
   await page.goto(SHEET.path)
   await waitForHydratedReadout(page)
 
+  // M14 — it was `g d`, for the dashboard. Three of the seven `g` chords named
+  // routes that folded into `/profile/`, and the honest thing to do with a
+  // chord whose destination is gone is to unbind it rather than repoint it:
+  // four keystrokes reaching one page is a shortcut sheet that reads as a
+  // mistake. `g p` has meant the reader's own record since §12.16.
   await page.keyboard.press('g')
-  await page.keyboard.press('d')
-  await page.waitForURL(/\/dashboard\/$/)
+  await page.keyboard.press('p')
+  await page.waitForURL(/\/profile\/$/)
   await expect(page.locator('main h1')).toBeVisible()
+})
+
+test('the three chords M14 retired navigate nowhere (§12.16)', async ({ page }) => {
+  await page.goto(SHEET.path)
+  await waitForHydratedReadout(page)
+
+  // A mistyped chord does nothing at all, which is the whole difference between
+  // a mode and a race — and it is what an unbound second key has always done.
+  // Asserted as the absence of a navigation rather than as a key that "does
+  // nothing", because the failure this guards against is `g d` quietly landing
+  // on a page whose first heading is something else.
+  for (const key of ['d', 'r', 'l']) {
+    await page.keyboard.press('g')
+    await page.keyboard.press(key)
+  }
+  await expect(page).toHaveURL(new RegExp(`${SHEET.path}$`))
+  expect(await documentLoads(page), 'a retired chord navigated anyway').toBe(1)
 })
 
 test('? opens the keyboard shortcuts and Escape closes it (§12.16)', async ({ page }) => {
@@ -1029,7 +1051,9 @@ test('? opens the keyboard shortcuts and Escape closes it (§12.16)', async ({ p
   // stopped loading (§3.4).
   await expect(sheet).toContainText('Keyboard shortcuts')
   await expect(sheet).toContainText('Keyboard shortcuts')
-  for (const row of ['g d', 'g i', 'g p', 'g r', 'g c', '[ / ]', 'j / k', 'Esc'])
+  // M14 — four `g` rows, not seven: `g d`, `g r` and `g l` went with the three
+  // routes that folded into `/profile/`.
+  for (const row of ['g h', 'g i', 'g p', 'g c', '[ / ]', 'j / k', 'Esc'])
     await expect(sheet).toContainText(row)
 
   await page.keyboard.press('Escape')

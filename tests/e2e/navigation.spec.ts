@@ -97,8 +97,12 @@ test('previous walks 32 back to 1', async ({ page }) => {
  * a page a reader navigates to — it is where a magic link lands, and it
  * redirects.
  *
- * `find src/app -name page.tsx | wc -l` says 17. Sixteen are here; the
- * seventeenth is the module page, reached by `A0.path`.
+ * `find src/app -name page.tsx | wc -l` says 17, and thirteen of them are here:
+ * the fourteenth is the module page, reached by `A0.path`, and the other three
+ * are M14's forwards — `/dashboard/`, `/report/` and `/path/`, which replace
+ * their own document with `/profile/` the moment they load. Asserting on a
+ * navbar in a page that is redirecting is a race with no subject, and what
+ * those three routes owe a reader is asserted in `redirects.spec.ts` instead.
  */
 const EVERY_ROUTE: readonly string[] = [
   '/',
@@ -106,13 +110,10 @@ const EVERY_ROUTE: readonly string[] = [
   '/courses/fundamentals/',
   A0.path,
   INDEX_SHEET,
-  '/dashboard/',
   '/join/',
   '/legend/',
   '/legend/specimen/',
-  '/path/',
   '/profile/',
-  '/report/',
   '/sign-in/',
   '/sign-in/alias/',
   '/team/',

@@ -143,11 +143,13 @@ test('the theme carries across a navigation', async ({ page }) => {
     ;(window as unknown as { __hlSameDocument?: true }).__hlSameDocument = true
   })
 
-  // The lead card, by the name it prints, so a card that stopped opening the
-  // first sheet fails here rather than being clicked anyway.
+  // The home page's lead action, by the name it prints, so an action that
+  // stopped opening the first module fails here rather than being clicked
+  // anyway. M13 renamed it: home A's primary control names the module it opens
+  // (`Start with LLM Fundamentals`) rather than its number, because a slug is
+  // an identity and a number is a label (§12.1.3).
   const first = sheetByModule(1)
-  const number = String(first.module).padStart(2, '0')
-  await page.getByRole('link', { name: `Read module ${number}` }).click()
+  await page.getByRole('link', { name: `Start with ${first.title}` }).click()
   await expect(page).toHaveURL(new RegExp(`${first.path}$`))
   await expect(page.locator('main h1')).toBeVisible()
 

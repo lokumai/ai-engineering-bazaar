@@ -16,12 +16,13 @@ import { INDEX_ROUTE, INDEX_TITLE, type CategoryLabel } from '@/lib/route-labels
  *
  * ## Four destinations, and why exactly these
  *
- * `Home`, `Curriculum`, `Catalog`, `My progress`. They are the four things a
+ * `Home`, `Curriculum`, `Catalog`, `Your progress`. They are the four things a
  * reader arrives wanting: the front door, the course in its levels, the flat
  * list to search, and their own state. Nothing else earns a top-level slot —
- * `/path/`, `/dashboard/`, `/report/`, `/legend/` and `/team/` are all reached
- * from those four, and a navbar that lists nine things is the menu problem
- * again in a different shape.
+ * `/legend/` and `/team/` are reached from those four, and a navbar that lists
+ * nine things is the menu problem again in a different shape. M14 removed the
+ * question of the other three: `/path/`, `/dashboard/` and `/report/` are the
+ * fourth destination now rather than three routes it was standing in for.
  *
  * ## The dropdown is a native disclosure, and the first version was broken
  *
@@ -92,10 +93,17 @@ const DESTINATIONS: readonly Destination[] = [
   { href: INDEX_ROUTE, label: INDEX_TITLE, owns: [INDEX_ROUTE] },
   {
     href: '/profile/',
-    label: 'My progress',
-    // The four routes that report on the reader. M14 folds them into one; until
-    // then they are one destination in the navbar rather than four, because a
-    // reader has one question and the split is ours, not theirs.
+    // M14 — `Your progress`, which is the name the page itself carries and the
+    // one §9 gives this subject. It read `My progress`, and the copy register
+    // bans the first person outright: the site does not speak as the reader any
+    // more than it speaks as itself.
+    label: 'Your progress',
+    /**
+     * M14 folded the four routes that reported on the reader into `/profile/`,
+     * and the three retired ones are still owned here: they are forwarding
+     * pages, and for the frame a reader spends on one the navbar should mark
+     * the destination they are on their way to rather than nothing at all.
+     */
     owns: ['/profile/', '/report/', '/dashboard/', '/path/'],
   },
 ]

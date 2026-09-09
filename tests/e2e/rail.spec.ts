@@ -16,16 +16,27 @@ import { seedRecord, signedSheet, waitForHydratedReadout } from './record'
  * wrong reason.
  */
 
-/** The rail's measured width, which is what the fold is a claim about. */
-function railWidth(page: Page): Promise<number> {
+/**
+ * The rail's GRID TRACK, which is what the fold is a claim about.
+ *
+ * M16 moved this from the rail's own box, and the difference is 1px of
+ * transparent border. The fold animates `grid-template-columns` to `0px` and
+ * the rail keeps its hairline — the mockup does the same, `border-right-color:
+ * transparent` rather than a border removed — so the element measures 1px
+ * folded and never 0. Asserting the element's width would have been asserting
+ * something the design does not do; the track is the thing that closes.
+ */
+function railTrack(page: Page): Promise<number> {
   return page
-    .locator('.hl-rail-left')
-    .evaluate((node) => Math.round(node.getBoundingClientRect().width))
+    .locator('.bz-shell')
+    .evaluate((node) => Math.round(Number.parseFloat(
+      getComputedStyle(node).gridTemplateColumns.split(' ')[0],
+    )))
 }
 
 function columnWidth(page: Page): Promise<number> {
   return page
-    .locator('.hl-column')
+    .locator('.bz-main')
     .evaluate((node) => Math.round(node.getBoundingClientRect().width))
 }
 
@@ -46,8 +57,12 @@ async function tabWalk(page: Page, presses: number): Promise<string[]> {
         if (active.hasAttribute('data-bz-rail-hide')) return 'hide'
         if (active.hasAttribute('data-bz-rail-restore')) return 'restore'
         const classes = (active.className ?? '').toString()
-        if (classes.includes('hl-mod')) return 'module'
-        if (classes.includes('hl-level-head')) return 'level'
+        // Scoped to the rail on purpose: the bar's own level dropdown is a
+        // `<summary>` as well, and an unscoped check reported the navbar's
+        // trigger as a rail level that a folded rail had left reachable.
+        const inRail = active.closest('.bz-rail') !== null
+        if (inRail && classes.includes('bz-item')) return 'module'
+        if (inRail && active.tagName.toLowerCase() === 'summary') return 'level'
         return active.tagName.toLowerCase()
       }),
     )
@@ -59,14 +74,14 @@ test.describe('the accordion', () => {
   test('is one section per level, with the current one open and enlarged', async ({ page }) => {
     await page.goto(A0.path)
 
-    const levels = page.locator('.hl-level')
+    const levels = page.locator('.bz-group')
     // Every level in the curriculum, and the count is asked of the page rather
     // than written down: a level added to `curriculum.yaml` must not turn this
     // red for doing nothing wrong.
     const shipped = new Set(SHEETS.map((sheet) => sheet.category))
     expect(await levels.count()).toBe(shipped.size)
 
-    const current = page.locator('.hl-level[data-current]')
+    const current = page.locator('.bz-group[data-here]')
     await expect(current).toHaveCount(1)
     await expect(current).toHaveAttribute('open', '')
     await expect(current).toHaveAttribute('data-cat', A0.category)
@@ -76,19 +91,24 @@ test.describe('the accordion', () => {
     // for. Plus a coloured edge and the count in the reader's own ink, so the
     // level is never told apart by size alone.
     const sizes = await page.evaluate(() => {
-      const head = (element: Element) => element.querySelector('.hl-level-head')!
-      const current = document.querySelector('.hl-level[data-current]')!
-      const other = document.querySelector('.hl-level:not([data-current])')!
+      const head = (element: Element) => element.querySelector(':scope > summary')!
+      const current = document.querySelector('.bz-group[data-here]')!
+      const other = document.querySelector('.bz-group:not([data-here])')!
       const style = (element: Element) => getComputedStyle(head(element))
       return {
         currentSize: parseFloat(style(current).fontSize),
         otherSize: parseFloat(style(other).fontSize),
-        currentEdge: getComputedStyle(current).borderInlineStartColor,
-        otherEdge: getComputedStyle(other).borderInlineStartColor,
+        // On the summary, which is where the language paints the arch, its
+        // fill and its leading edge. Reading the <details> gave both groups a
+        // transparent border and made the comparison vacuous.
+        currentEdge: style(current).borderInlineStartColor,
+        otherEdge: style(other).borderInlineStartColor,
+        currentWeight: parseFloat(style(current).borderInlineStartWidth),
+        otherWeight: parseFloat(style(other).borderInlineStartWidth),
         currentCount: getComputedStyle(
-          current.querySelector('.hl-level-count')!,
+          current.querySelector('.bz-group-count')!,
         ).color,
-        otherCount: getComputedStyle(other.querySelector('.hl-level-count')!).color,
+        otherCount: getComputedStyle(other.querySelector('.bz-group-count')!).color,
         ink: getComputedStyle(document.body).color,
       }
     })
@@ -96,7 +116,12 @@ test.describe('the accordion', () => {
     expect(sizes.currentSize).toBeGreaterThan(sizes.otherSize)
     // A 4px edge in the level's own hue against a transparent one.
     expect(sizes.currentEdge).not.toBe(sizes.otherEdge)
-    expect(sizes.otherEdge).toBe('rgba(0, 0, 0, 0)')
+    // NOT "the other edge is transparent", which was the retired design's
+    // arrangement. Every group in this language carries a hairline; the
+    // current one replaces its leading edge with a thick bar in the group's
+    // own hue, so the pair that tells them apart is the weight and the colour
+    // together.
+    expect(sizes.currentWeight).toBeGreaterThan(sizes.otherWeight)
     // "its count in the reader's own ink rather than grey".
     expect(sizes.currentCount).toBe(sizes.ink)
     expect(sizes.otherCount).not.toBe(sizes.ink)
@@ -104,13 +129,13 @@ test.describe('the accordion', () => {
 
   test('marks the module being read, and only that one', async ({ page }) => {
     await page.goto(A0.path)
-    const current = page.locator('.hl-mod[aria-current="page"]')
+    const current = page.locator('.bz-item[aria-current="page"]')
     await expect(current).toHaveCount(1)
     await expect(current).toHaveAttribute('href', A0.path)
 
     // A draft module gets the rail too — it is navigation, not module info.
     await page.goto(A4.path)
-    await expect(page.locator('.hl-mod[aria-current="page"]')).toHaveCount(1)
+    await expect(page.locator('.bz-item[aria-current="page"]')).toHaveCount(1)
   })
 
   test('opens a level a reader chooses, with no JavaScript in the way', async ({ page }) => {
@@ -118,8 +143,8 @@ test.describe('the accordion', () => {
     // lands. Driving it with the keyboard is the check that matters, and it is
     // asserted in both states.
     await page.goto(A0.path)
-    const other = page.locator('.hl-level:not([data-current])').first()
-    const rows = other.locator('.hl-mod')
+    const other = page.locator('.bz-group:not([data-here])').first()
+    const rows = other.locator('.bz-item')
 
     await expect(other).not.toHaveAttribute('open', '')
     expect(await rows.first().isVisible()).toBe(false)
@@ -143,13 +168,13 @@ test.describe('the fold', () => {
     // 203, expected 0) while it passed 6/6 alone.
     await waitForHydratedReadout(page)
 
-    const open = await railWidth(page)
+    const open = await railTrack(page)
     const openColumn = await columnWidth(page)
     expect(open).toBeGreaterThan(0)
 
     await page.locator('[data-bz-rail-hide]').click()
     // Measured after the 200ms fold rather than at a frame count.
-    await expect.poll(() => railWidth(page), { timeout: 2_000 }).toBe(0)
+    await expect.poll(() => railTrack(page), { timeout: 2_000 }).toBe(0)
     const foldedColumn = await columnWidth(page)
 
     // The point of the fold is that the reading column gets the space, which
@@ -160,7 +185,7 @@ test.describe('the fold', () => {
     expect(foldedColumn - openColumn).toBe(open)
 
     await page.locator('[data-bz-rail-restore]').click()
-    await expect.poll(() => railWidth(page), { timeout: 2_000 }).toBe(open)
+    await expect.poll(() => railTrack(page), { timeout: 2_000 }).toBe(open)
     expect(await columnWidth(page)).toBe(openColumn)
   })
 
@@ -175,7 +200,7 @@ test.describe('the fold', () => {
     // 203, expected 0) while it passed 6/6 alone.
     await waitForHydratedReadout(page)
     await page.locator('[data-bz-rail-hide]').click()
-    await expect.poll(() => railWidth(page), { timeout: 2_000 }).toBe(0)
+    await expect.poll(() => railTrack(page), { timeout: 2_000 }).toBe(0)
 
     // Written through the record store and nowhere else
     // (`kia-context/specs/ARCHITECTURE.md` §5). A second `localStorage` key
@@ -203,7 +228,7 @@ test.describe('the fold', () => {
     // of an open column, and no width to animate away.
     await page.goto(A0.path)
     await expect(page.locator('html')).toHaveAttribute('data-bz-rail', 'folded')
-    expect(await railWidth(page)).toBe(0)
+    expect(await railTrack(page)).toBe(0)
   })
 
   /**
@@ -239,7 +264,7 @@ test.describe('the fold', () => {
       // long that takes; the two frames after it are what put a laid-out width
       // on the rail.
       await waitForHydratedReadout(page)
-      await expect.poll(() => railWidth(page), { timeout: 3_000 }).toBeGreaterThan(0)
+      await expect.poll(() => railTrack(page), { timeout: 3_000 }).toBeGreaterThan(0)
       await page.evaluate(() => new Promise(requestAnimationFrame))
       await page.evaluate(() => new Promise(requestAnimationFrame))
 
@@ -248,28 +273,34 @@ test.describe('the fold', () => {
         const seen: number[] = []
         ;(window as unknown as { __fold: number[] }).__fold = seen
         document
-          .querySelector('.hl-rail-left')!
+          .querySelector('.bz-shell')!
           .addEventListener('transitionend', (event) => {
             const transition = event as TransitionEvent
-            if (transition.propertyName === 'width') seen.push(transition.elapsedTime)
+            // `grid-template-columns`, not `width`: M16 folds the TRACK while
+            // the rail keeps its own box, so that content does not reflow
+            // mid-animation. A listener on the rail's width never fires.
+            if (transition.propertyName === 'grid-template-columns') {
+              seen.push(transition.elapsedTime)
+            }
           })
       })
 
       await page.locator('[data-bz-rail-hide]').click()
-      await expect.poll(() => railWidth(page), { timeout: 3_000 }).toBe(0)
+      await expect.poll(() => railTrack(page), { timeout: 3_000 }).toBe(0)
 
       const ran = await page.evaluate(
         () => (window as unknown as { __fold: number[] }).__fold,
       )
-      expect(ran.length, `${motion}: the width never transitioned at all`)
-        .toBeGreaterThan(0)
-      const seconds = Math.max(...ran)
-
       if (motion === 'reduce') {
-        // §9.5's global rule collapses every duration on the site, so the fold
-        // is a state swap rather than a movement.
-        expect(seconds, motion).toBeLessThan(0.01)
+        // The language REMOVES the transition under reduced motion rather than
+        // shortening it, so the honest assertion is that nothing transitioned
+        // at all — the fold is a state swap. Asserting a duration under 10ms
+        // would have required an event that, correctly, never fires.
+        expect(ran, motion).toEqual([])
       } else {
+        expect(ran.length, `${motion}: the fold never transitioned at all`)
+          .toBeGreaterThan(0)
+        const seconds = Math.max(...ran)
         // DESIGN.md's `motion.fold`. Asserted as a band rather than as 0.2
         // exactly, because the engine reports what it ran and a frame boundary
         // can round it.
@@ -298,7 +329,7 @@ test.describe('the fold', () => {
       .not.toContain('restore')
 
     await page.locator('[data-bz-rail-hide]').click()
-    await expect.poll(() => railWidth(page), { timeout: 2_000 }).toBe(0)
+    await expect.poll(() => railTrack(page), { timeout: 2_000 }).toBe(0)
 
     // A fresh document so the walk starts at the top rather than wherever the
     // click left focus, and folded from the first frame by channel A.
@@ -370,7 +401,7 @@ test.describe('the fold', () => {
     // four runs until all three waited.
     await waitForHydratedReadout(page)
     await page.locator('[data-bz-rail-hide]').click()
-    await expect.poll(() => railWidth(page), { timeout: 2_000 }).toBe(0)
+    await expect.poll(() => railTrack(page), { timeout: 2_000 }).toBe(0)
 
     const box = await page.locator('[data-bz-rail-restore]').boundingBox()
     expect(box, 'the restore tab has no box').not.toBeNull()
@@ -392,7 +423,7 @@ test.describe('the fold', () => {
     expect(hit, 'something else is painted over the restore tab').toBe(true)
 
     await page.mouse.click(box!.x + box!.width / 2, box!.y + box!.height / 2)
-    await expect.poll(() => railWidth(page), { timeout: 2_000 }).toBeGreaterThan(0)
+    await expect.poll(() => railTrack(page), { timeout: 2_000 }).toBeGreaterThan(0)
   })
 })
 
@@ -424,10 +455,10 @@ test.describe('the completion tick', () => {
 
     // One tick per completed module and no more — the count is derived from
     // what was seeded, never written down.
-    await expect(page.locator('.hl-mod-mark:visible')).toHaveCount(completed.length)
+    await expect(page.locator('.bz-tick:visible')).toHaveCount(completed.length)
 
     for (const sheet of completed) {
-      const mark = page.locator(`.hl-mod[data-module="${sheet.module}"] .hl-mod-mark`)
+      const mark = page.locator(`.bz-item[data-module="${sheet.module}"] .bz-tick`)
       await expect(mark).toBeVisible()
 
       const drawn = await mark.evaluate((node) => {
@@ -458,6 +489,6 @@ test.describe('the completion tick', () => {
 
   test('claims nothing about a reader with no record', async ({ page }) => {
     await page.goto(A0.path)
-    await expect(page.locator('.hl-mod-mark:visible')).toHaveCount(0)
+    await expect(page.locator('.bz-tick:visible')).toHaveCount(0)
   })
 })

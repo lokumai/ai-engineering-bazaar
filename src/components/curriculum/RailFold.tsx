@@ -78,6 +78,12 @@ export function RailFoldButton() {
       type="button"
       data-bz-rail-hide=""
       className="bz-rail-fold"
+      /* The mockup's fold control is a 28px square holding a glyph and
+         nothing else, so the word that used to sit beside it becomes the
+         button's accessible name. It says the ACTION, not the state: a single
+         `aria-expanded` trigger would have to be state-rendered, which puts a
+         mark a reader meets in frame one on channel B. */
+      aria-label="Hide the curriculum"
       onClick={() => setFold(true)}
     >
       <svg
@@ -92,7 +98,6 @@ export function RailFoldButton() {
         <path d="M7.5 2.5L4 6l3.5 3.5" />
         <path d="M1.5 1.5v9" />
       </svg>
-      Hide
     </button>
   )
 }
@@ -113,6 +118,7 @@ export function RailRestoreTab() {
       type="button"
       data-bz-rail-restore=""
       className="bz-rail-restore"
+      aria-label="Show the curriculum"
       onClick={() => setFold(false)}
     >
       <svg
@@ -127,7 +133,6 @@ export function RailRestoreTab() {
         <path d="M4.5 2.5L8 6l-3.5 3.5" />
         <path d="M10.5 1.5v9" />
       </svg>
-      <span className="bz-said">Course modules</span>
     </button>
   )
 }

@@ -228,7 +228,35 @@ function referencesIn(path: string): Reference[] {
   return found
 }
 
-const REFERENCES = FILES.flatMap(referencesIn)
+/**
+ * The surface stylesheets, held to the same rule as the markup.
+ *
+ * This half was added after the first: a `var(--tracking-label)` typed into a
+ * surface sheet is as silent as `text-ink-muted` in a `className`, and the
+ * markup sweep could not see it. Same treatment — comments out, a file's own
+ * declarations allowed, everything else must resolve against the language.
+ */
+const SURFACE_DIR = join(ROOT, 'src/app')
+const NOT_A_SURFACE = new Set(['lokum-modules.css'])
+
+function surfaceReferences(): Reference[] {
+  return readdirSync(SURFACE_DIR)
+    .filter((name) => name.endsWith('.css') && !NOT_A_SURFACE.has(name))
+    .flatMap((name) => {
+      const css = withoutComments(readFileSync(join(SURFACE_DIR, name), 'utf8'))
+      const own = declaresItself(css)
+      return [...css.matchAll(/var\(\s*(--[a-z0-9-]+)/g)]
+        .map((match) => match[1])
+        .filter((property) => !property.endsWith('-') && !own.has(property))
+        .map((property) => ({
+          file: `src/app/${name}`,
+          raw: `var(${property})`,
+          candidates: [property],
+        }))
+    })
+}
+
+const REFERENCES = [...FILES.flatMap(referencesIn), ...surfaceReferences()]
 
 /* -------------------------------------------------------------------------- */
 

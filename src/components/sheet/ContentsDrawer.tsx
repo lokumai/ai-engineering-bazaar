@@ -49,17 +49,17 @@ export function ContentsDrawer({
 }) {
   return (
     <Dialog.Root>
-      <div className="hl-subheader" data-hl-at={at}>
-        <Dialog.Trigger className="hl-button hl-mark">Contents</Dialog.Trigger>
+      <div className="bz-drawer-bar" data-bz-at={at}>
+        <Dialog.Trigger className="bz-btn-quiet bz-btn">Contents</Dialog.Trigger>
       </div>
       <Dialog.Portal>
-        <Dialog.Overlay className="hl-drawer-backdrop" />
+        <Dialog.Overlay className="bz-drawer-backdrop" />
         {/* No description: the panel is a list of links, and Radix would
             otherwise warn about a `Description` this dialog does not need. */}
-        <Dialog.Content className="hl-drawer" aria-describedby={undefined}>
-          <div className="hl-drawer-head">
-            <Dialog.Title className="hl-mark">Contents</Dialog.Title>
-            <Dialog.Close className="hl-button hl-mark">Close</Dialog.Close>
+        <Dialog.Content className="bz-drawer" aria-describedby={undefined}>
+          <div className="bz-drawer-head">
+            <Dialog.Title className="bz-drawer-title">Contents</Dialog.Title>
+            <Dialog.Close className="bz-btn-quiet bz-btn">Close</Dialog.Close>
           </div>
           {children}
         </Dialog.Content>

@@ -215,7 +215,7 @@
    One class per thing the language names. A product's own markup is its own
    business — these are the shapes, not the page.
 
-   `--bz-here` is the ONE custom property a caller has to bind: the current
+   `--bz-cat` is the ONE custom property a caller has to bind: the current
    group's own hue, set per instance from the categorical series. The language
    cannot know which group is which, so the binding is the product's.
    =========================================================================== */
@@ -591,7 +591,7 @@
   .bz-group[data-here] > summary {
     padding: 12px 12px 12px 11px;
     border-color: var(--color-line-strong);
-    border-left: 4px solid var(--bz-here);
+    border-left: 4px solid var(--bz-cat);
     background: var(--color-surface-sunken);
     font-size: var(--text-lead);
   }
@@ -630,7 +630,7 @@
   }
 
   .bz-item[aria-current] {
-    background: var(--bz-here);
+    background: var(--bz-cat);
     color: var(--color-on-primary);
     font-weight: 600;
   }
@@ -671,7 +671,7 @@
   /* On the current item the disc inverts, because the row is already filled
      with the hue. */
   .bz-item[aria-current] .bz-tick { background: var(--color-on-primary); }
-  .bz-item[aria-current] .bz-tick > svg { stroke: var(--bz-here); }
+  .bz-item[aria-current] .bz-tick > svg { stroke: var(--bz-cat); }
 
   /* -- the reading column -------------------------------------------------
      Centred inside the fluid middle and capped at the measure. The cap keeps

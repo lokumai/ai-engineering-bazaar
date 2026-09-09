@@ -1,0 +1,121 @@
+/* ===========================================================================
+   THE CURRICULUM RAIL — M16 stage 3.
+
+   Reference: `playground/01-theme-T4-ground-G3-powder.html`'s `details.arch`,
+   which is `playground/09-sidebar.html` variant 1 with a current-group
+   treatment added. `09` holds no T4 variant, so the shell is the ratified one.
+
+   Small for the same reason `shell.css` is: the language already carries the
+   whole rail — the sticky column, the arch-topped groups, the hue key, the
+   count, the item rows, the completion disc, the fold and its restore tab.
+   What is left here is the two things a design language cannot hold, because
+   both are about this product's own data.
+   =========================================================================== */
+
+@layer components {
+
+  /* ---------------------------------------------------------------------------
+     1. WHICH HUE BELONGS TO WHICH LEVEL.
+
+     `--bz-cat` is the one custom property the language asks a caller to bind:
+     the group's leading edge, its key, and its current item's fill all read it,
+     and so does the generated per-module sheet. The language cannot bind it,
+     because a level's slug is this course's business and not a design
+     decision — DESIGN.md names `category-3`, never `expert`.
+
+     Bound off `data-cat` rather than inline on every group, so the mapping is
+     stated once and `tests/unit/color/category-surfaces.test.ts` can hold it to
+     the whole curriculum: every level covered, and every hue from the closed
+     series of five.
+     --------------------------------------------------------------------------- */
+  [data-cat="fundamentals"] { --bz-cat: var(--color-category-1); }
+  [data-cat="intermediate"] { --bz-cat: var(--color-category-2); }
+  [data-cat="expert"]       { --bz-cat: var(--color-category-3); }
+  [data-cat="ecosystem"]    { --bz-cat: var(--color-category-4); }
+  [data-cat="protocols"]    { --bz-cat: var(--color-category-5); }
+
+  /* The key is the hue as a shape. It reads the carrier rather than being told
+     a colour, so a level's hue is written down in exactly one place. */
+  .bz-group-key { background: var(--bz-cat); }
+
+  /* ---------------------------------------------------------------------------
+     2. THE COMPLETION DISC IS HIDDEN UNTIL CHANNEL A REVEALS IT.
+
+     This is the whole reason the disc is rendered for every module that can be
+     completed rather than only for the ones that are. `src/lib/record/boot.ts`
+     stamps `hl-signed-<n>` on `<html>` in a blocking script before first paint,
+     and `src/app/lokum-modules.css` — generated, one selector per written
+     module — flips this back to `grid` for that module alone. No React, no
+     hydration, correct in frame one.
+
+     `display` and not `opacity` or `visibility`: a hidden disc must take no
+     space, or every row would carry a gap for a mark it may never show. The
+     word inside it goes with it, which is what keeps the shape and its
+     statement from ever disagreeing.
+     --------------------------------------------------------------------------- */
+  .bz-item .bz-tick { display: none; }
+
+  /* ---------------------------------------------------------------------------
+     3. THE RAIL'S NARROW FORM.
+
+     Below the width where a rail can sit beside the prose, its content moves
+     behind one control. So the control exists only there — above that width the
+     rail itself is on screen and a second way to reach it would be a claim that
+     something is hidden when it is not.
+
+     `data-bz-at` says WHICH width, because that depends on which rails the page
+     has: `narrow` opens at the point the curriculum list goes, `wide` at the
+     point the contents rail goes ahead of it.
+     --------------------------------------------------------------------------- */
+  .bz-drawer-bar { display: none; }
+
+  @media (max-width: 1180px) {
+    .bz-drawer-bar[data-bz-at="wide"] { display: flex; padding: 12px 0 0; }
+  }
+
+  @media (max-width: 880px) {
+    .bz-drawer-bar[data-bz-at="narrow"] { display: flex; padding: 12px 0 0; }
+  }
+
+  /* The panel. Radix owns the focus trap, the Escape key and the focus
+     restore; what the language owns is that it is a raised surface with a
+     hairline, over a ground that dims. Deliberately unanimated: it is a way
+     to reach a list, not a moment. */
+  .bz-drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    /* The slab's ground at half strength. The language declares no translucent
+       surface — its only rgba values belong to the bar's sub-palette — so the
+       dimming comes from `opacity` on the overlay rather than from a colour
+       invented for it. */
+    background: var(--color-slab-surface);
+    opacity: 0.5;
+  }
+
+  .bz-drawer {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 71;
+    width: min(88vw, var(--layout-rail));
+    overflow: hidden auto;
+    padding: 14px 12px 48px;
+    border-right: 1px solid var(--color-line);
+    background: var(--color-surface);
+  }
+
+  .bz-drawer-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .bz-drawer-title {
+    color: var(--color-on-surface-faint);
+    font: 600 var(--text-label) / 1 var(--font-sans);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+}

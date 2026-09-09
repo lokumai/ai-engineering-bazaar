@@ -107,7 +107,7 @@ describe('§13.4.2 — a step tick exists only for a module that can be signed',
     // light up a different step than the one that was signed, which is the
     // worst kind of quiet defect: plausible, and wrong.
     const mismatched = [
-      ...css.matchAll(/html\.hl-signed-(\d+)\s+\.bz-(?:seg|step|mod|cmod)\[data-module="(\d+)"\]/g),
+      ...css.matchAll(/html\.hl-signed-(\d+)\s+\.bz-(?:seg|step|item|cmod)\[data-module="(\d+)"\]/g),
     ]
       .filter((match) => match[1] !== match[2])
       .map((match) => `${match[1]} → ${match[2]}`)
@@ -118,7 +118,7 @@ describe('§13.4.2 — a step tick exists only for a module that can be signed',
 describe('M10 — the curriculum rail’s tick covers every module that can be completed', () => {
   it('covers the ready modules and stops there', () => {
     const named = captures(
-      /html\.hl-signed-(\d+)\s+\.bz-mod\[data-module="\d+"\]\s+\.bz-mod-mark/g,
+      /html\.hl-signed-(\d+)\s+\.bz-item\[data-module="\d+"\]\s+\.bz-tick/g,
     )
       .map(Number)
       .sort((a, b) => a - b)
@@ -133,7 +133,7 @@ describe('M10 — the curriculum rail’s tick covers every module that can be c
    */
   it('names no module the corpus has not written', () => {
     const named = captures(
-      /html\.hl-signed-(\d+)\s+\.bz-mod\[data-module="\d+"\]\s+\.bz-mod-mark/g,
+      /html\.hl-signed-(\d+)\s+\.bz-item\[data-module="\d+"\]\s+\.bz-tick/g,
     ).map(Number)
     for (const module of named) expect(DRAWN_MODULES).toContain(module)
   })

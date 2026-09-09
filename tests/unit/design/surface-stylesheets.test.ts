@@ -24,8 +24,8 @@ import { describe, expect, it } from 'vitest'
  * puts a rule about stylesheets in a file about stylesheets, and it makes the
  * set of files **discovered** rather than named, so a sheet a later stage adds
  * is held to all of this the moment it lands and nobody has to remember to add
- * it. At the end of stage 0 there are no surface stylesheets yet, which is why
- * these report as skipped rather than as passing.
+ * it. They reported as skipped until stage 1 wrote the first one; the guard is
+ * still there so the file is honest if a stage ever deletes the last surface.
  *
  * Two of the original rules did not survive the design and are recorded rather
  * than quietly dropped. **The ISO 128 dashed-line rule** (every
@@ -47,11 +47,27 @@ interface Surface {
   readonly css: string
 }
 
+/**
+ * Comments out, and every rule below needs it.
+ *
+ * A comment is where a surface explains itself — why a value is what it is,
+ * which mockup it came from, what the retired design did instead — so prose
+ * naming `box-shadow` or a hex would fail the file for describing itself. The
+ * selector rules need it more: without stripping, `([^{}]+)\{` captures the
+ * whole comment ahead of a rule AS the selector, and any comment containing the
+ * word "a" then reads as a link. That is exactly how this file first failed.
+ *
+ * Replaced with spaces rather than removed, so nothing shifts.
+ */
+function withoutComments(css: string): string {
+  return css.replace(/\/\*[\s\S]*?\*\//g, (match) => match.replace(/[^\n]/g, ' '))
+}
+
 function surfaces(): Surface[] {
   return readdirSync(APP_DIR)
     .filter((name) => name.endsWith('.css') && !NOT_A_SURFACE.has(name))
     .sort()
-    .map((name) => ({ name, css: readFileSync(join(APP_DIR, name), 'utf8') }))
+    .map((name) => ({ name, css: withoutComments(readFileSync(join(APP_DIR, name), 'utf8')) }))
 }
 
 const SURFACES = surfaces()

@@ -1,4 +1,6 @@
 import { expect, test } from '@playwright/test'
+import { SHEETS, SHORT } from './sheets'
+import { seedRecord, signedSheet } from './record'
 import {
   APP_SELECTORS,
   DELIBERATELY_ABSENT,
@@ -422,5 +424,103 @@ test.describe('M16 stage 2 — the dropdown a bar item opens', () => {
     await expect(rows.first()).toBeVisible()
     await rows.first().focus()
     await expect(rows.first()).toBeFocused()
+  })
+})
+
+test.describe('M16 stage 3 — the rail', () => {
+  const BUILT: readonly Role[] = [
+    'rail', 'railInner', 'group', 'groupCurrent', 'groupKey', 'item', 'tick',
+  ]
+
+  /*
+    Below the rail breakpoint there is no rail — in the mockup and on the page
+    alike, which is the language dropping the least redundant column first.
+    That absence is a design fact and it IS asserted, by the harness's own
+    per-breakpoint case; what it is not is something these two cases can
+    compare, so they stand down rather than assert nothing.
+  */
+  test.skip(({ viewport }) => (viewport?.width ?? 0) < 880, 'the rail is gone at this width')
+
+  /** `fundamentals/rag` — the slug shape the record stores a sheet under. */
+  const slugOf = (path: string) => path.replace('/courses/', '').replace(/\/$/, '')
+
+  /**
+   * Every written module completed.
+   *
+   * Not thoroughness: the completion disc is `display: none` until the
+   * generated per-module sheet reveals it, so a page with no record has no disc
+   * to compare and `tick` would read `null` on one side only. Seeding is what
+   * makes the comparison possible, and it exercises all nineteen generated
+   * rules while it is at it — a mark drawn from Web Storage in a blocking script
+   * before first paint, with no island anywhere near it.
+   */
+  async function seedEveryCompletion(page: import('@playwright/test').Page) {
+    await seedRecord(page, {
+      sheets: Object.fromEntries(
+        SHEETS.filter((sheet) => sheet.drawn)
+          .map((sheet) => [slugOf(sheet.path), signedSheet('b7225f8')]),
+      ),
+    })
+  }
+
+  test('is indistinguishable from the mockup, discs included', async ({ page }) => {
+    await page.goto(MOCKUP_URL)
+    await freezeMotion(page)
+    const reference = await extractDesignFacts(page, MOCKUP_SELECTORS)
+
+    /*
+      A FUNDAMENTALS module, and the choice is load-bearing rather than
+      arbitrary. Every rail fact read from "the first group that is not the
+      current one" depends on which group that is — and the key's hue most of
+      all. The mockup's current group is the first level, so a page whose
+      current group is any other level would compare category-1 against
+      category-2 and report a difference that is really a difference of
+      CONTENT. Same position in the series on both sides, or the comparison is
+      not about the design.
+    */
+    await seedEveryCompletion(page)
+    await page.goto(SHORT.path)
+    await freezeMotion(page)
+    const actual = await extractDesignFacts(page, APP_SELECTORS)
+
+    const shown = (facts: Record<string, string | null>, role: Role) =>
+      FACT_KEYS.filter((key) => key.startsWith(`${role}.`)).some((key) => facts[key] !== null)
+
+    for (const role of BUILT) {
+      expect(shown(actual, role), `${role}: mockup ${shown(reference, role)}, page ${shown(actual, role)}`)
+        .toBe(shown(reference, role))
+    }
+    expect(BUILT.some((role) => shown(reference, role)), 'no role on screen here').toBe(true)
+
+    expect(differencesIn(reference, actual, BUILT)).toEqual([])
+  })
+
+  /**
+   * The current group is emphasised four ways at once — a larger type size, a
+   * sunken fill, a strong border and a thick leading edge in its own hue — and
+   * the redundancy is the design. Losing any one of the four is what this
+   * notices, because a reader who cannot separate the hues still has three.
+   */
+  test('notices when the current group stops being unmistakable', async ({ page }) => {
+    await page.goto(MOCKUP_URL)
+    await freezeMotion(page)
+    const reference = await extractDesignFacts(page, MOCKUP_SELECTORS)
+
+    await seedEveryCompletion(page)
+    await page.goto(SHORT.path)
+    await freezeMotion(page)
+    await page.addStyleTag({
+      // `99px` rather than `inherit`: an inherited size can resolve to the
+      // very value being overridden, and a mutation that changes nothing
+      // proves nothing.
+      content: '.bz-group[data-here] > summary { font-size: 99px !important;'
+        + ' background: magenta !important; border-left-width: 99px !important; }',
+    })
+    const mutated = await extractDesignFacts(page, APP_SELECTORS)
+
+    const facts = differencesIn(reference, mutated, BUILT).map((one) => one.fact)
+    expect(facts).toContain('groupCurrent.fontSize')
+    expect(facts).toContain('groupCurrent.backgroundColor')
+    expect(facts).toContain('groupCurrent.borderLeftWidth')
   })
 })

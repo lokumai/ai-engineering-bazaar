@@ -137,9 +137,12 @@ ${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .bz-step[data-module="${n}
      is a 17px teal disc with a white check and an \`sr-only\` word inside it, so
      revealing it reveals the shape, the fill and the statement together and
      colour is never the only carrier. The rail's own stylesheet holds its
-     geometry. */
-${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .bz-mod[data-module="${n}"] .bz-mod-mark`)}
-    display: inline-flex;
+     geometry, and the names are the design language's - .bz-item for the row
+     and .bz-tick for the disc - because M16 makes that the one vocabulary.
+     Stage 0 changed this file's prefix and left its names, so for one commit
+     the generator revealed a selector no markup carried. */
+${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .bz-item[data-module="${n}"] .bz-tick`)}
+    display: grid;
   }
 
   /* E. M13/M14 — completion control C's tick, for the drawn modules only. The

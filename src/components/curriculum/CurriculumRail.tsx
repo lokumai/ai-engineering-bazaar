@@ -58,26 +58,9 @@ import { RailFoldButton } from './RailFold'
  * state that it could be completed.
  */
 
-function Chevron() {
-  return (
-    <svg
-      width="10"
-      height="10"
-      viewBox="0 0 12 12"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      aria-hidden="true"
-      className="hl-level-chevron"
-    >
-      <path d="M2.5 4.5L6 8l3.5-3.5" />
-    </svg>
-  )
-}
-
 function Tick() {
   return (
-    <span className="hl-mod-mark">
+    <span className="bz-tick">
       <svg
         viewBox="0 0 17 17"
         width="11"
@@ -88,13 +71,12 @@ function Tick() {
         strokeLinecap="round"
         strokeLinejoin="round"
         aria-hidden="true"
-        className="hl-mod-check"
       >
         <path d="M3.5 9l3 3 7-7" />
       </svg>
       {/* Not `aria-hidden`: this is the part that says what the disc means, and
           it is revealed by the same rule, so the two cannot disagree. */}
-      <span className="sr-only">Complete</span>
+      <span className="bz-said">Complete</span>
     </span>
   )
 }
@@ -114,65 +96,74 @@ export function CurriculumRail({
     /* Not named `Curriculum`: the trail under the navbar already owns that
        landmark name (`Breadcrumb.tsx`), and two navigation landmarks with one
        name is a locator a reader's software has to disambiguate for them. */
-    <nav aria-label="Course modules" className="hl-rail-nav">
-      <div className="hl-rail-head">
-        <span className="hl-rail-title">Course modules</span>
+    <nav aria-label="Course modules">
+      <div className="bz-rail-head">
+        {/* The mockup's own word for this column. The landmark keeps the
+            fuller name: a region is named for what it contains, and a reader
+            arriving by landmark has no column in front of them to read a
+            label off. */}
+        <span className="bz-rail-head-label">Curriculum</span>
         <RailFoldButton />
       </div>
 
-      <div className="hl-rail-scroll">
-        {levels.map((level) => {
-          const current = level.slug === currentLevel
-          return (
-            <details
-              key={level.slug}
-              className="hl-level"
-              data-cat={level.slug}
-              data-current={current ? '' : undefined}
-              open={current}
-            >
-              <summary className="hl-level-head">
-                {/* The level's own colour, and its number and name beside it:
-                    the hue is never the only carrier (§13.1.4). */}
-                <span aria-hidden="true" className="hl-level-key" />
-                <span className="hl-level-order">
-                  {String(level.order).padStart(2, '0')}
-                </span>
-                <span className="hl-level-title">{level.title}</span>
-                <span className="hl-level-count">{level.modules.length}</span>
-                <Chevron />
-              </summary>
+      {levels.map((level) => {
+        const current = level.slug === currentLevel
+        return (
+          <details
+            key={level.slug}
+            className="bz-group"
+            data-cat={level.slug}
+            data-here={current ? '' : undefined}
+            open={current}
+          >
+            {/*
+              The current group is emphasised FOUR ways at once — a larger type
+              size, a sunken fill, a strong border, and a thick leading edge in
+              the group's own hue — and that redundancy is the design rather
+              than a flourish. `data-here` drives all four; the hue itself comes
+              from `--bz-cat`, bound once per level by the rail's stylesheet off
+              `data-cat` rather than inline on every group.
+            */}
+            <summary>
+              <span aria-hidden="true" className="bz-group-key" />
+              {level.title}
+              {/*
+                The level's total, and NOT the mockup's `3/8`.
 
-              <ul role="list" className="hl-level-modules">
-                {level.modules.map((module) => (
-                  <li key={module.slug}>
-                    <Link
-                      href={module.path}
-                      className="hl-mod"
-                      data-module={module.module}
-                      data-draft={module.drawn ? undefined : ''}
-                      aria-current={module.slug === currentSlug ? 'page' : undefined}
-                    >
-                      {/* Reserved whether or not it is ever revealed, so a
-                          completion does not shift the row it lands on. */}
-                      <span className="hl-mod-lead">
-                        {module.drawn && <Tick />}
-                      </span>
-                      <span className="hl-mod-order">
-                        {String(module.module).padStart(2, '0')}
-                      </span>
-                      <span className="hl-mod-title">{module.title}</span>
-                      {!module.drawn && (
-                        <span className="hl-mod-tag">Planned</span>
-                      )}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </details>
-          )
-        })}
-      </div>
+                A done-of-total count is reader state, and it is on screen in
+                frame one — so by §12.2 it may not travel on channel B, and CSS
+                cannot count, so channel A cannot draw it either. This is the
+                same wall D23 hit when a mock drew a progress ring and the
+                project shipped a segmented meter instead. What carries progress
+                here is the discs on the rows, which ARE channel A.
+              */}
+              <span className="bz-group-count">{level.modules.length}</span>
+            </summary>
+
+            <ul role="list" className="bz-group-list">
+              {level.modules.map((module) => (
+                <li key={module.slug}>
+                  <Link
+                    href={module.path}
+                    className="bz-item"
+                    data-module={module.module}
+                    data-draft={module.drawn ? undefined : ''}
+                    aria-current={module.slug === currentSlug ? 'page' : undefined}
+                  >
+                    {/* Rendered for every module that CAN be completed and
+                        hidden until the generated sheet reveals this one:
+                        channel A, correct in frame one, no island. A draft has
+                        no completion control at all, so it gets no disc. */}
+                    {module.drawn && <Tick />}
+                    {module.title}
+                    {!module.drawn && <span className="bz-item-pending">Planned</span>}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </details>
+        )
+      })}
     </nav>
   )
 }

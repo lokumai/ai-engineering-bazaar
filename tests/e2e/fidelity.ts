@@ -309,8 +309,8 @@ export const MOCKUP_SELECTORS: SelectorMap = {
   group: '.arch:not([data-here]) > summary',
   groupCurrent: '.arch[data-here] > summary',
   groupKey: '.arch:not([data-here]) > summary .key',
-  item: '.arch li a:not([aria-current])',
-  tick: '.arch li a:not([aria-current]) .tick',
+  item: '.arch[open] li a:not([aria-current])',
+  tick: '.arch[open] li a:not([aria-current]) .tick',
   column: '.col',
   card: '.goals',
   slab: '.slab',
@@ -366,6 +366,18 @@ export const APP_SELECTORS: SelectorMap = {
   menuItem: '.bz-menu-item',
   menuKey: '.bz-menu-key',
   menuCount: '.bz-menu-count',
+
+  /* Stage 3 — the rail. `tick` reads `null` on a page with no reader record,
+     because the disc is hidden until channel A reveals it; the spec seeds one
+     rather than pointing this at a disc that is always on, which would have
+     stopped proving the channel works. */
+  rail: '.bz-rail',
+  railInner: '.bz-rail-inner',
+  group: '.bz-group:not([data-here]) > summary',
+  groupCurrent: '.bz-group[data-here] > summary',
+  groupKey: '.bz-group:not([data-here]) > summary .bz-group-key',
+  item: '.bz-group[open] .bz-item:not([aria-current])',
+  tick: '.bz-group[open] .bz-item:not([aria-current]) .bz-tick',
 }
 
 /**

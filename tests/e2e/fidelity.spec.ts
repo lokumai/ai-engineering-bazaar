@@ -83,7 +83,12 @@ test.describe('the fidelity harness', () => {
     // Below the fold breakpoint the aside is gone and below the rail
     // breakpoint the rail is too, so those roles are legitimately absent —
     // which is itself a design fact and is asserted rather than skipped.
-    const absent = FACT_KEYS.filter((key) => facts[key] === null)
+    // The menu is the one role that is absent at EVERY width, and on purpose:
+    // it is a panel a reader opens. Both documents hide it until then, by
+    // different mechanisms, and stage 2's own block is what opens both and
+    // compares them.
+    const menuRoles = /^menu/
+    const absent = FACT_KEYS.filter((key) => facts[key] === null && !menuRoles.test(key))
     const railRoles = /^(rail|railInner|group|groupCurrent|groupKey|item|tick)\./
     const asideRoles = /^aside/
 
@@ -117,6 +122,14 @@ test.describe('the fidelity harness', () => {
     test(`notices ${key} changing`, async ({ page }) => {
       await page.goto(MOCKUP_URL)
       await freezeMotion(page)
+      // A menu is a panel a reader opens, so it is off screen at every width
+      // and its facts would skip for ever — fifteen of them, unproven, which
+      // is precisely the hole "one case per fact" exists to close. Opened here
+      // rather than exempted.
+      if (fact.role.startsWith('menu')) {
+        await page.locator('.mainnav > span').first().hover()
+        await expect(page.locator('.dd').first()).toBeVisible()
+      }
       const reference = await extractDesignFacts(page, MOCKUP_SELECTORS)
 
       if (reference[key] === null) {
@@ -132,6 +145,10 @@ test.describe('the fidelity harness', () => {
         content: `${selector} { ${property}: ${fact.mutate} !important; }`,
       })
 
+      if (fact.role.startsWith('menu')) {
+        await page.locator('.mainnav > span').first().hover()
+        await expect(page.locator('.dd').first()).toBeVisible()
+      }
       const mutated = await extractDesignFacts(page, MOCKUP_SELECTORS)
       const differences = compareDesignFacts(reference, mutated)
 
@@ -302,5 +319,108 @@ test.describe('M16 stage 1 part 2 — the frame', () => {
 
     expect(differencesIn(reference, mutated, BUILT).map((one) => one.fact))
       .toContain('column.maxWidth')
+  })
+})
+
+test.describe('M16 stage 2 — the dropdown a bar item opens', () => {
+  const BUILT: readonly Role[] = ['menu', 'menuItem', 'menuKey', 'menuCount']
+
+  /**
+   * Both panels start hidden, and by different mechanisms — which is the
+   * point of comparing them at all rather than reading the stylesheet.
+   *
+   * The mockup's `.dd` is `display: none` until `.mainnav > *` is hovered or
+   * holds focus. The application uses a native `<details>`, so the browser
+   * hides it and no rule has to: that is what lets the menu work in the first
+   * frame, before any bundle arrives (**D17**). Two mechanisms, one appearance,
+   * and the appearance is what has to match.
+   *
+   * `02-navbar.html` chose this variant and `01` re-drew it in the shell's own
+   * palette, so `01` is the reference for both geometry and colour here and
+   * D31's split does not apply. What `02` still holds that `01` dropped: a
+   * 290px panel, a 10px radius and an uppercase group eyebrow. Superseded.
+   */
+  async function openBoth(page: import('@playwright/test').Page) {
+    await page.goto(MOCKUP_URL)
+    await freezeMotion(page)
+    await page.locator('.mainnav > span').first().hover()
+    await expect(page.locator('.dd').first()).toBeVisible()
+    const reference = await extractDesignFacts(page, MOCKUP_SELECTORS)
+
+    await page.goto('/courses/')
+    await freezeMotion(page)
+    // A real gesture, not `details.open = true`: the disclosure has to open the
+    // way a reader opens it or the test proves nothing about the reader's path.
+    await page.locator('.bz-bar-nav summary').first().click()
+    await expect(page.locator('.bz-menu').first()).toBeVisible()
+    const actual = await extractDesignFacts(page, APP_SELECTORS)
+
+    return { reference, actual }
+  }
+
+  test('is indistinguishable from the mockup, once opened', async ({ page }) => {
+    const { reference, actual } = await openBoth(page)
+
+    for (const role of BUILT) {
+      const read = FACT_KEYS.filter((key) => key.startsWith(`${role}.`))
+      expect(read.length, `${role} contributes no fact`).toBeGreaterThan(0)
+      expect(read.some((key) => reference[key] !== null), `${role} unread in the mockup`).toBe(true)
+      expect(read.some((key) => actual[key] !== null), `${role} unread on the page`).toBe(true)
+    }
+
+    expect(differencesIn(reference, actual, BUILT)).toEqual([])
+  })
+
+  test('notices when the menu loses the shadow that lifts it off the page', async ({ page }) => {
+    await page.goto(MOCKUP_URL)
+    await freezeMotion(page)
+    await page.locator('.mainnav > span').first().hover()
+    const reference = await extractDesignFacts(page, MOCKUP_SELECTORS)
+
+    await page.goto('/courses/')
+    await freezeMotion(page)
+    await page.locator('.bz-bar-nav summary').first().click()
+    // The language spends a shadow in exactly two places and this is one:
+    // a menu that opened over content. Without it the panel reads as part of
+    // the page rather than as something temporary above it.
+    await page.addStyleTag({ content: '.bz-menu { box-shadow: none !important; }' })
+    const mutated = await extractDesignFacts(page, APP_SELECTORS)
+
+    expect(differencesIn(reference, mutated, BUILT).map((one) => one.fact))
+      .toContain('menu.boxShadow')
+  })
+
+  /**
+   * **D17's rule, and both halves of it.** A disclosure has to be asserted
+   * closed as well as open, because either alone passes for the wrong reason:
+   * the first version of this menu used `:focus-within` on a
+   * `visibility: hidden` panel, which is circular — a hidden element is out of
+   * the tab order, so focus can never get inside to fire the rule that would
+   * reveal it. The five level links were unreachable by keyboard and the
+   * verification that missed it called `.focus()` instead of pressing Tab.
+   */
+  test('keeps its rows out of the tab order until it is open', async ({ page }) => {
+    await page.goto('/courses/')
+    await freezeMotion(page)
+
+    const rows = page.locator('.bz-menu-item')
+    await expect(rows.first()).not.toBeVisible()
+
+    // Closed: a Tab walk cannot reach a row. Bounded, and long enough to pass
+    // the whole bar.
+    let reached = false
+    for (let press = 0; press < 40 && !reached; press += 1) {
+      await page.keyboard.press('Tab')
+      reached = await page.evaluate(() =>
+        document.activeElement?.closest('.bz-menu-item') !== null
+        && document.activeElement?.closest('.bz-menu-item') !== undefined)
+    }
+    expect(reached, 'a menu row was reachable while the menu was closed').toBe(false)
+
+    // Open: they are in it.
+    await page.locator('.bz-bar-nav summary').first().click()
+    await expect(rows.first()).toBeVisible()
+    await rows.first().focus()
+    await expect(rows.first()).toBeFocused()
   })
 })

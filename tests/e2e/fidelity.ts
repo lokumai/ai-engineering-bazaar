@@ -60,6 +60,10 @@ export type Role =
   | 'barLink'
   | 'barLinkCurrent'
   | 'barField'
+  | 'menu'
+  | 'menuItem'
+  | 'menuKey'
+  | 'menuCount'
   | 'band'
   | 'rail'
   | 'railInner'
@@ -115,6 +119,31 @@ const FACTS: readonly Fact[] = [
   { role: 'barLinkCurrent', property: 'color', mutate: 'magenta' },
   { role: 'barField', property: 'backgroundColor', mutate: 'magenta' },
   { role: 'barField', property: 'borderTopColor', mutate: 'magenta' },
+  // The menu a bar item opens over the page. It is one of only two places the
+  // language spends a shadow, and the only one a reader opens on purpose — so
+  // the shadow is a fact here rather than a nicety.
+  { role: 'menu', property: 'backgroundColor', mutate: 'magenta' },
+  { role: 'menu', property: 'borderRadius', mutate: '99px' },
+  { role: 'menu', property: 'minWidth', mutate: '99px' },
+  { role: 'menu', property: 'padding', mutate: '99px' },
+  { role: 'menu', property: 'boxShadow', mutate: 'none' },
+  { role: 'menuItem', property: 'padding', mutate: '99px' },
+  { role: 'menuItem', property: 'borderRadius', mutate: '99px' },
+  { role: 'menuItem', property: 'fontSize', mutate: '99px' },
+  // A hue key on the leading edge and a count on the trailing edge: the two
+  // things DESIGN.md says a menu row carries.
+  { role: 'menuKey', property: 'width', mutate: '99px' },
+  { role: 'menuKey', property: 'height', mutate: '99px' },
+  { role: 'menuKey', property: 'borderRadius', mutate: '99px' },
+  { role: 'menuCount', property: 'fontSize', mutate: '99px' },
+  { role: 'menuCount', property: 'color', mutate: 'magenta' },
+  /* NOT `marginLeft`. The count sits on the trailing edge by `margin-left:
+     auto`, and the computed value of an auto margin is the gap that happens to
+     be left over — 50.77px in the mockup against 65.58px on the page, because
+     the two documents carry different level names. That is a measurement of
+     CONTENT, which `tests/README.md` forbids a test from writing down. The
+     design fact is the trailing edge, and the row's flex layout is what the
+     transcription check already holds. */
   // One ornament, once per page.
   { role: 'band', property: 'height', mutate: '99px' },
   { role: 'band', property: 'backgroundColor', mutate: 'magenta' },
@@ -267,6 +296,13 @@ export const MOCKUP_SELECTORS: SelectorMap = {
   // discrepancy is a question for M16, not something to quietly fix here.
   barLinkCurrent: '.mainnav [aria-current]',
   barField: '.srch',
+  // The dropdown, which `01` re-drew in the shell's own palette after `02`
+  // chose the variant. It is `display: none` until the item is hovered or
+  // holds focus, so a spec has to open it before there is anything to read.
+  menu: '.dd',
+  menuItem: '.dd a',
+  menuKey: '.dd a .key',
+  menuCount: '.dd a .n',
   band: '.band',
   rail: '.side',
   railInner: '.side-in',
@@ -322,6 +358,14 @@ export const APP_SELECTORS: SelectorMap = {
      a difference, which is the correct answer but a noisy one. */
   column: '.bz-col',
   aside: '.bz-aside',
+
+  /* Stage 2 — the dropdown. The app opens it with a native `<details>` rather
+     than on hover, so it is hidden by the element itself and needs no rule of
+     its own to be. */
+  menu: '.bz-menu',
+  menuItem: '.bz-menu-item',
+  menuKey: '.bz-menu-key',
+  menuCount: '.bz-menu-count',
 }
 
 /**

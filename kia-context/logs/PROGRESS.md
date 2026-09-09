@@ -1073,7 +1073,7 @@ Run in the CI order on a quiet machine, after the last commit of the three:
 | | |
 |---|---|
 | `npm run typecheck` | clean |
-| `npm test` | **2,149 passed**, 79 files (2,107 at the start of M12) |
+| `npm test` | **2,149 passed**, 78 files (2,107 at the start of M12) |
 | `npm run build` | clean, **56 HTML files** in `out/` (Next reports 57 generated pages; one is the not-found boundary, which the export writes as `404.html` rather than as a directory) |
 | `npx playwright test` | **462 passed, 2 failed, 19 skipped** (435 / 0 / 19 after M11) |
 

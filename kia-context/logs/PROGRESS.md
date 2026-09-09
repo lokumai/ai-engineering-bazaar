@@ -59,7 +59,7 @@ last_updated: "2026-09-09"
 | **M13** | The home page | a first-time visitor knows what this is and where to start | M10 | ✅ Done |
 | **M14** | Progress and account | one route instead of four, and completion editable from it | M11 | ✅ Done |
 | **M15** | The design language | one DESIGN.md transcribed from the mockup, and a check that proves a built page matches it | M14 | ✅ Done |
-| **M16** | The interface, rebuilt on it | every surface indistinguishable from its mockup, with no capability lost | M15 | 🚧 Stage 0 of 10 done |
+| **M16** | The interface, rebuilt on it | every surface indistinguishable from its mockup, with no capability lost | M15 | 🚧 Stage 0 done, stage 1 part 1 done |
 
 > **Numbering never restarts.** When this file is split, part two continues at the next M.
 
@@ -1676,3 +1676,54 @@ carries the first app-side `SelectorMap` in `tests/e2e/fidelity.ts`, and it is w
 honest, whereas an old-structure page that still looks finished is the failure being engineered out.
 The 141 hardcoded selectors in the specs are re-pointed surface by surface, with the behavioural
 tests kept.
+
+### Report — stage 1 part 1, the bar and the band, 2026-09-09
+
+**The app-side `SelectorMap` exists, and that is the headline.** `tests/e2e/fidelity.ts` could read
+the mockup since M15 and had nothing to compare it against. It now reads the built page too, and
+`differencesIn(reference, actual, roles)` restricts a comparison to the roles a stage actually built.
+**The built bar is fact for fact identical to the mockup at 1440, 1024 and 390** — 140 fidelity
+tests passed, 19 skipped.
+
+Three things make that non-vacuous rather than a green light. The stage-1 block asserts every one of
+its roles was really read **on both sides** before comparing, so a typo in either map fails instead
+of passing. The mutation is the exact failure that shipped four times — put the bar on the page
+ground, DESIGN.md's first Don't — and the check names `bar.backgroundColor`. And
+`DELIBERATELY_ABSENT` carries a reason for every role the product does not render, because an
+unexplained difference is how a real one gets ignored.
+
+**The check earned itself on its first run.** It failed because the band role was described in a
+comment and never mapped — precisely the class of omission that let five milestones pass.
+
+**What the bar carries.** The mockup's own structure: brand tile, one row of navigation with a
+dropdown per level, a flexible gap, then icon buttons. `MainNav`'s behaviour needed nothing — it was
+already variant A, a native `<details>` disclosure that works before any bundle arrives, with
+`data-current` on the trigger per **D28** — so only its class names and its row shape changed, to
+the mockup's hue key, name and trailing count. The count is new on `CategoryLabel`, derived from the
+curriculum rather than written down.
+
+**What left the bar.** LKM-01 (**D36**) and the breadcrumb, neither of them a loss: the mockup's
+mark is a tile not a logo, the progress-meter job belongs to `05`-C's rings and `07`-A's bars, and
+the mockup puts `nav.crumb` in the reading column. **What the bar does not render:** the mockup's
+search field and `TR` button, because neither feature exists and a control that opens nothing is the
+claim §1 forbids — the retired header held the same two slots back for the same reason.
+
+**`src/app/shell.css` is three rules and a chevron**, because the language already carries the whole
+shell: the bar and its sub-palette, the band, the three-column grid with both breakpoints and the
+fold, the rail, the measure, the aside. If that file grows, the reason should be suspicious.
+
+| Check | Result |
+| --- | --- |
+| `npm run typecheck` | clean |
+| `npm test` | **2,115 passed, 9 skipped, 0 failed** — down from 16 skipped, because seven existence-guarded rules switched themselves on the moment a surface stylesheet appeared |
+| `npm run build` | clean, 56 HTML files |
+| `npx playwright test fidelity.spec.ts` | **140 passed, 19 skipped**, three viewports |
+
+### Stage 1 part 2, which is next
+
+The `bz-shell` grid into `PageShell` — rail, `bz-main > bz-col`, aside — the folding rail on
+`bz-rail`/`bz-group`/`bz-item`/`bz-tick` with `data-rail` on the shell, the restore tab, and the
+breadcrumb landing in the column. It touches all 17 routes, because `PageShell`'s `bleed` prop stops
+meaning anything once every page gets the grid, so it was split from part 1 rather than half-done
+inside it. `not-found.spec.ts` reads a nav landmark named `Curriculum`; that behaviour has to
+survive the breadcrumb's move.

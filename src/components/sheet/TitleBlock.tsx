@@ -17,12 +17,21 @@ import {
  * width, since M11 cut the right rail back to the sections and the dependency
  * block and moved these rows into the column.
  *
- * **Variant A, the 240px panel, is rendered by no page today.** It is kept
- * because it is the same rows in a vertical track and M12's catalog and M14's
- * progress page are both still to be built; `titleStripRows` and
- * `titleBlockRows` already return the identical set for a ready module, which
- * `title-block.test.ts` asserts, so the two variants cannot drift apart while
- * one of them is idle. If M14 lands without using it, delete it there.
+ * **Variant A, the 240px panel, is rendered by no page.** M11 kept it against
+ * M12 and M14 needing it and said to delete it there if they did not; neither
+ * did, and **it is still kept, deliberately, for a reason M11 could not have
+ * had.** `logs/BRAINSTORM.md` **O2**'s open half is a question about exactly
+ * these rows — which of the twelve a module page should claim at all, and what
+ * the survivors look like now that `.hl-panel-title` is no longer 11px
+ * tracked-out mono and this block is the last surface on the site that is. A
+ * panel is the shape that question may well answer to, and deleting the
+ * component would cost five unit cases and a stylesheet block to remove the
+ * thing the next decision might restore.
+ *
+ * `titleStripRows` and `titleBlockRows` return the identical set for a ready
+ * module, which `title-block.test.ts` asserts, so the two variants cannot drift
+ * apart while one of them is idle. **Whoever closes O2 decides this**: if the
+ * answer is a strip, variant A goes with the same commit.
  *
  * **Both stay SERVER components** (§12.2). The two things on the block that
  * belong to the reader — §12.3.1's `CHECKED BY` value and §7.4's stamp grid —

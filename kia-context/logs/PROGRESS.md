@@ -298,10 +298,14 @@ open — the work is done, the claim is not made.
   surface on the site still in 11px tracked-out uppercase mono, because M13 converted
   `.hl-panel-title` off it. M14 was named as the natural place for that decision and was the wrong
   guess — it rebuilt the progress surfaces and never touched the module page.
-- **`TitleBlock` variant A** is still rendered by no page. M11 kept it with a docblock saying M14
-  should delete it if it went unused; M14 did not use it, and did not delete it either — deleting it
-  means editing `sheet.test.tsx` and `sheet.css` for no behaviour change, which is a tidy-up rather
-  than a milestone, and the docblock still says so.
+- **`TitleBlock` variant A** is still rendered by no page, and **keeping it is now a decision rather
+  than an omission.** M11 kept it against M12 and M14 needing it and said to delete it there if they
+  did not. Neither did. But O2's open half is a question about exactly those rows — which of the
+  twelve a module page should claim, and what the survivors look like now that `.hl-panel-title` has
+  moved off 11px tracked-out mono and this block is the last surface on the site still in it. A panel
+  is a shape that question may answer to, so deleting the component would cost five unit cases and a
+  stylesheet block to remove the thing the next decision might restore. Its docblock says so, and
+  says that whoever closes O2 decides it.
 
 
 ---

@@ -1240,3 +1240,39 @@ nobody asked to fold. All three wait now.
 fails intermittently, and raising its poll from 2s to 8s did **not** help — the
 width never arrives, so it is a click that does not land rather than a slow one.
 At one worker and at three it passes 6/6. It is recorded here rather than closed.
+
+### The second, independent review — GLM 5.3 Flash
+
+Run through the hermes-agent CLI over six of the rebuild's files, given the
+channel-A/channel-B contract in the prompt and told to report only:
+`hermes chat -q … --yolo -Q --model glm-5.3-flash --toolsets file`, wrapped in
+`timeout`. A file list and not a patch, which is what made the earlier GLM pass
+produce findings rather than a summary.
+
+**Four of five findings were real, and the first two were hits on the fix from
+the pass above** — which is the argument for a second reviewer that has not read
+the first one's reasoning:
+
+1. **The state was on the row, not on the control.** Moving control C's
+   completion onto channel A put the word in the row, but a reader who focused
+   the button still heard only the action. GLM: *"same harm class as the removed
+   `aria-pressed`, relocated rather than resolved."* Fair. The button now points
+   at the word with `aria-describedby`, which works because a hidden element
+   contributes no accessible description — so the description is present exactly
+   when channel A has revealed the word, with no React involved.
+2. **The docblock still taught the defect** after the attribute was removed.
+3. **The empty state dropped focus:** `Show the whole catalog` unmounts itself,
+   so focus fell to `<body>` at the moment the reader was told to act.
+4. **`/profile/` typed the `G P` chord** that `SHORTCUTS` defines.
+
+**One finding did not reproduce, and that is worth recording too.** GLM reported
+that `#claim` and `#data` are fragment targets inside closed `<details>` that
+only a JS island opens, so deep links would land on hidden content with scripts
+refused. **Measured in Chrome with JavaScript disabled:** `id="claim"` is on the
+`<h2>` inside the `<summary>`, which is visible whether the disclosure is open or
+closed — `detailsOpen: false, targetVisible: true`. The link works.
+
+**Both reviews together: fourteen findings, thirteen real, one blocker.** The two
+that matter most were each invisible to the run that produced them — a 39px word
+in a 28px box that no test looked for, and an ARIA attribute that only lies when
+scripts never arrive.

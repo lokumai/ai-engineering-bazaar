@@ -48,6 +48,13 @@ for a Roman numeral." "A two-column table's first column is not a row header."
 "A URL inside a code span is not an external link." Keep these. They are the
 part of the suite that pays.
 
+**`tests/e2e/redirects.spec.ts`** is the only place the site's three forwarding
+routes are checked. A redirect in a static export is a document rather than a
+status code, so it is measured as one: the retired address lands on `/profile/`,
+keeps the fragment it was bookmarked with, says where it went with every module
+refused, and forwards to the same URL its own visible link carries — read out of
+`out/`, because the base-path failure only exists in the other build.
+
 **`tests/e2e/features.spec.ts`** asks whether each feature works at all: sign a
 sheet off and it survives a reload, the reader gets a name, the mascot draws
 itself, every picture on every page loads. Four browser tests stand in for 865
@@ -93,7 +100,7 @@ written. Three specific traps, each of which cost a red run:
   with a warm cache it is false. If the property is structural, assert it
   structurally.
 
-## Ten checks that fail for a reason, not because they broke
+## Twelve checks that fail for a reason, not because they broke
 
 Moved here from `README.md`, which was the only place they were written down.
 When one of these goes red, the cause is usually the thing it names rather than
@@ -144,6 +151,22 @@ the test.
   routes to §13.4.2: real slugs, no duplicates, prerequisite order, denominators
   over written sheets only, and no unwritten sheet described as though it teaches
   something. It found two defects that twelve independent agents had passed.
+- **The three-views check** (`tests/e2e/catalog.spec.ts`) compares the module
+  names the catalog's three views RENDER **with each other**, for four filter
+  states, and never against a written list. That is D13's binding criterion —
+  three renderings of one array — and comparing against a list would both pin a
+  fact about the content and pass if all three views were wrong the same way.
+  The same file walks the tab order by pressing Tab until a link inside the
+  showing view has focus, and asserts the hidden views' links are unreachable:
+  either half alone passes for the wrong reason (D17).
+- **The reveal-list check** (`tests/unit/catalog/views.test.ts`) holds
+  `manifest.css`'s channel-A selector list to `VIEW_IDS` in both places it
+  appears, and pairs each selector's two view ids. A mismatched pair shows one
+  view for another's stored preference: plausible, and wrong. It is the same
+  shape as `category-css.test.ts`'s per-module lists, and for the same reason —
+  CSS cannot relate a class on `<html>` to an attribute value on a descendant,
+  so the relation is a list, and a list is what a fourth view silently
+  invalidates.
 - **The path evidence check** (`tests/unit/path/evidence.test.ts`) measures each
   of the 123 reasons against the sheet it cites. Genuine citations score a median
   of 100%; the same citations pointed at a different sheet score a median of 33%.

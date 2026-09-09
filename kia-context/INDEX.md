@@ -48,6 +48,7 @@ and the same explanation given in person for the third time. See `genesis/GENESI
 | **2026-09-08** | **The interface revision planned in six stages, and the design system replaced** | **M9 to M14** |
 | **2026-09-08** | **The vocabulary and the palette replaced; the navbar built** | **M9 done, M10 in progress** |
 | **2026-09-09** | **The rails swapped, the module list folded, the diagram contained** | **M10 and M11 done** |
+| **2026-09-09** | **The catalog's three views, home A with completion control C, and four progress routes folded into one** | **M12, M13 and M14 done — the interface revision is built** |
 
 **The harness itself was installed on 2026-09-08**, 105 commits in. Everything before that date was
 reconstructed from git and is labelled as inferred inside each file.
@@ -69,14 +70,14 @@ reconstructed from git and is labelled as inferred inside each file.
 |---|---|---|
 | `MANIFESTO.md` | 15 non-negotiable rules, what this is and is NOT | Rules 1–7 are the author's own, from `mini-courses/MANIFEST.md`. Rules 8–15 came out of the work. |
 | `ARCHITECTURE.md` | The six rules, the domain, the two lifecycles, what the system refuses, the record, accounts, the build, deployment, the vocabulary | Current as of 2026-09-08. **The only architecture document**: the root `ARCHITECTURE.md` was folded into it and deleted (D11). 607 lines, sections 1 to 12; read the six rules, then §2, §3 and §9. |
-| `DESIGN.md` | The design system: tokens, colour roles, type scale, layout, components, and the do-nots | **Rewritten 2026-09-08**, and shipped in **M9 to M11**: ground `#FDFBF7`, cobalt accent, Manrope, five re-hued level colours, the dark slab, the fold, the 80ch measure. The old "Hidden Line" system was deleted, not kept alongside. **Four corrections are recorded in it rather than tidied away** — the type stack, the ground, `slab-comment`, and the measured width of the measure. |
+| `DESIGN.md` | The design system: tokens, colour roles, type scale, layout, components, and the do-nots | **Rewritten 2026-09-08**, and shipped in **M9 to M14**: ground `#FDFBF7`, cobalt accent, Manrope, five re-hued level colours, the dark slab, the fold, the 80ch measure, the view toggle, completion control C. The old "Hidden Line" system was deleted, not kept alongside. **Five corrections are recorded in it rather than tidied away** — the type stack, the ground, `slab-comment`, the measured width of the measure, and the `title` colour the token block names and no stylesheet declares. |
 
 ### `kia-context/logs/` — state · written every session
 
 | File | What it holds | State |
 |---|---|---|
-| `PROGRESS.md` | M1 to M14, their deliverables and acceptance criteria, and the order they go in | M1–M6 inferred; **M7 to M14 live.** **M9, M10 and M11 are done** and **M12 is the next one.** M8 is the umbrella for the whole revision. |
-| `BRAINSTORM.md` | D1 to D21, plus open questions O1 to O4 | D1–D6 inferred; **D7–D21 recorded live.** O1, O3 and O4 are closed; **O2 is the only one open**, and M11 added a second half to it. |
+| `PROGRESS.md` | M1 to M14, their deliverables and acceptance criteria, and the order they go in | M1–M6 inferred; **M7 to M14 live.** **M9 to M14 are all done**, so M8's six stages are built and what is left on M8 is its own umbrella criteria and M7's last checkbox. |
+| `BRAINSTORM.md` | D1 to D24, plus open questions O1 to O4 | D1–D6 inferred; **D7–D24 recorded live.** O1, O3 and O4 are closed; **O2 is half closed** — D22 answered the progress vocabulary, and the module info panel's four unnamed rows are still open. |
 
 ---
 
@@ -107,6 +108,10 @@ maintained by an agent, and do not need reading to do the work. The root `CLAUDE
 | A browser test passes alone and fails under load. Where do I start? | `logs/BRAINSTORM.md` **D20** |
 | Which ground did we pick, and what did it break? | `logs/BRAINSTORM.md` **O4** |
 | Which border token do I use? | `specs/DESIGN.md`, Colors — it depends on whether the border groups or identifies |
+| Why does the catalog have three views, and how is one of them chosen? | `logs/BRAINSTORM.md` **D13**, and `logs/PROGRESS.md` M12 |
+| Where did XP and Rank go? | `logs/BRAINSTORM.md` **D22**, and `specs/ARCHITECTURE.md` §9 |
+| Why is completion control C a meter and not the ring the mock drew? | `logs/BRAINSTORM.md` **D23** |
+| An old bookmark to `/dashboard/`. What happens? | `logs/BRAINSTORM.md` **D24**, and `specs/ARCHITECTURE.md` §7 |
 | What am I building next? | `logs/PROGRESS.md` — the active milestone |
 | Was my idea already rejected? | `logs/BRAINSTORM.md` |
 | How is a module written? | **`mini-courses/CLAUDE.md`**, outside this harness. It governs the corpus. |
@@ -120,8 +125,9 @@ maintained by an agent, and do not need reading to do the work. The root `CLAUDE
 
 ## 6. The numbering, and why it never restarts
 
-`M1…M14` are milestones in `logs/PROGRESS.md`. `D1…D21` are decisions and `O1…O4` are open questions
-in `logs/BRAINSTORM.md`, of which O1, O3 and O4 are closed. Rules `1…15` are in `specs/MANIFESTO.md`.
+`M1…M14` are milestones in `logs/PROGRESS.md`. `D1…D24` are decisions and `O1…O4` are open questions
+in `logs/BRAINSTORM.md`, of which O1, O3 and O4 are closed and O2 is half closed. Rules `1…15` are in
+`specs/MANIFESTO.md`.
 
 **M8 did not become M9.** It stayed open as the umbrella for the whole interface revision and M9 to
 M14 are its stages, because its acceptance criteria are about the site as a whole rather than about

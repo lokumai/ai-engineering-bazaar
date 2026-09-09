@@ -11,8 +11,8 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-08
-last_updated: "2026-09-08"
+covers: the whole system as built on 2026-09-09, with M9 to M14 shipped
+last_updated: "2026-09-09"
 ---
 
 # 🏗️ ARCHITECTURE — How this project is built
@@ -306,23 +306,38 @@ RecordData
   sheets     { [slug]: { signedOff, signedRevision, reachedEnd, dwellSeconds,
                          quiz { answer, assessed }, checklist {}, sources [], submittals [] } }
   days       [ ISO dates ]          the streak
-  prefs      { charKeys, railFolded, aliasNamedFor }
+  prefs      { charKeys, railFolded, aliasNamedFor, catalogView }
   meta       { lastExport, persisted, lastClaim }
 ```
 
 `dwellSeconds` is capped at 3600 and `submittals` at 3, both in `schema.ts`.
 
 **`prefs` holds the browser's preferences, not the reader's history.** `charKeys` is SC 2.1.4's off
-switch and `railFolded` (M10) is whether the curriculum rail on a module page is folded away. Both are
-facts about the machine in front of the reader rather than about the reader, which is why `prefs` is
-the one field `carriesNothing` ignores and the one `mergeRecords` resolves local-wins. A widening here
-needs no migration rung: `coerceRecordData` defaults a missing key, and the default is the honest
-answer for a reader who never expressed a preference.
+switch, `railFolded` (M10) is whether the curriculum rail on a module page is folded away, and
+`catalogView` (M12) is which of the catalog's three views the reader last chose. All three are facts
+about the machine in front of the reader rather than about the reader, which is why `prefs` is the one
+field `carriesNothing` ignores and the one `mergeRecords` resolves local-wins. A widening here needs
+no migration rung: `coerceRecordData` defaults a missing key, and the default is the honest answer for
+a reader who never expressed a preference.
+
+**`catalogView` is `null` rather than `'overview'` by default, and the distinction is load-bearing.**
+Null is "has not chosen", which is not the same as "chose the view that happens to be the default":
+the boot script stamps nothing for null, the stylesheet's fallback rule reveals the default view, and
+a later change of default therefore moves the reader who never chose and leaves the reader who did
+exactly where they put themselves.
 
 **The record store is the only writer, and a UI preference is not an exception.** The temptation with
 `railFolded` was a second `localStorage` key beside the record; that would be a second writer, and it
 would also be invisible to the export, the erase dialog and the account merge — three surfaces that
 are supposed to account for everything the site remembers.
+
+**One write can be three, and that is why completion has one path.** D14 puts a completion control at
+the end of a module (**A**) and another across the whole course on the home and progress pages
+(**C**). The first completion on a record does three things — the sign-off, the mark seed minted once
+and never again, and the single permitted `navigator.storage.persist()` — so both controls call
+`src/lib/record/complete.ts`'s `toggleCompletion` rather than implementing that sequence twice. A
+second control doing only the first of the three would leave a reader with no mark on their exported
+record and no persistence request ever made, and nothing would have failed.
 
 **`sheets` is keyed by slug, not by number.** This is what makes a curriculum reorder safe: renaming a
 module orphans its progress, but moving it does not.
@@ -457,9 +472,17 @@ Four components import `CategorySlug` from `categories.ts` and all four use `imp
 erased; a value import from `curriculum-file.ts` into a client island pulls the file system into the
 browser bundle and stops the build.
 
-**17 routes** (`find src/app -name page.tsx | wc -l`), producing 56 HTML pages. `/` is a home screen
+**17 routes** (`find src/app -name page.tsx | wc -l`), producing 57 HTML pages. `/` is a home page
 built from components; `mini-courses/index.md` is no longer the published home page and is read only as
 a link target.
+
+**Three of the seventeen are forwards, and a static export has no other way to redirect.** M14 folded
+`/dashboard/`, `/report/` and `/path/` into `/profile/`; `output: 'export'` means `next.config`'s
+`redirects` are never applied and a page's own `redirect()` throws at build time, so each of the three
+renders `MovedTo` instead — an inline script (the only one of the three mechanisms that can carry the
+fragment), a `<meta http-equiv="refresh">` for a reader with scripting off, and a visible link. The
+target goes through `lib/url.ts`'s `href()`, because `basePath` rewrites only what the router touches
+and a hardcoded path would work locally and 404 on GitHub Pages. `logs/BRAINSTORM.md` **D24**.
 
 ---
 
@@ -472,6 +495,13 @@ that path.
 
 A path's denominator counts only steps whose module is `ready`, computed by `isDrawnStep(step, drawn)`
 against the corpus's own set. A path whose every step is readable is the goal, not an error.
+
+**All nine live on one surface and channel A shows one.** They were `/path/` until M14 and are the
+`role` row of `/profile/`'s register now: every body is in the prerendered document and
+`.hl-path-body[data-role="<id>"]` is revealed against the `hl-role-<id>` class the boot script stamps
+before first paint. There are no per-role routes and there must not be — a static export would
+prerender a nine-way fan-out once for every reader, putting eight pages on the site describing
+somebody else's route.
 
 ---
 
@@ -495,15 +525,15 @@ uses the left.**
 | feeds | the modules a module is a prerequisite *for* | **Unlocks** |
 | requires | a module's own prerequisites | **Requirements** |
 | title block | the module's own panel of facts | **Module info** — M11 moved it out of the right rail and into the column |
-| the register | the reader's stored history | **Your progress** |
+| the register | the reader's stored history | **Your progress** — the page's own title and the navbar's fourth item since M14 |
 | the drafter | the reader | **you** / **Account** |
 | index sheet | the flat list of all modules, at `/sheets` | **Catalog** |
 | extent | length in words and minutes | **Length** |
-| uptime | days in a row | **Streak** |
+| uptime | days in a row | **Streak**, and **Days in a row** on completion control C |
 | submittal register | the repositories a reader has linked to a module | **What you built** |
 | unsigned | a module the reader has not completed | **Not completed** |
 | A0 / A4 | the two page anatomies, chosen by `status` | — internal |
-| mark, class, XP | badge, rank, points | **Rank** / **XP** |
+| mark, class, XP | badge, rank, points | ~~**Rank** / **XP**~~ — **nothing.** M13 took all three off every instrument: nobody could name the question they answered, and `Reading time` took XP's cell (`logs/BRAINSTORM.md` **D22**). `xp()` and `classOf()` are still in `derive.ts`, rendered by nothing |
 | LKM-01 | the mark printed in the module info panel | — internal |
 | §n.n | a section of the original design spec, cited in code comments | — internal |
 
@@ -537,6 +567,14 @@ The hole itself is not closed: the ban is a lexer, so a retired word inside a lo
 template literal, or inside a JSX run containing braces still passes it. Closing that properly means a
 parser rather than a lexer, and the export grep is what covers it today
 (`logs/BRAINSTORM.md` D19's last paragraph).
+
+**M13 found two more that no lexer could have caught, and both were on the page a stranger meets
+first.** `indexStatement()` printed *"Fourteen are dashed — the geometry exists in the model, the
+lines do not"*: not one banned word in it, and the drawing-set metaphor entire. And the navbar's
+fourth item read `My progress`, which the copy register's own first-person ban would have caught if
+`components/shell` had been in its roots — it is not, because the register was scoped to the copy §12
+authored. The lesson is the one the export grep already implies: **the ban lists words, and a
+vocabulary is a way of talking.** Reading the shipped page is still the only check for the second.
 
 **The section numbers in code comments (`§12.2`, `§4.4`, `§13.1.1`) refer to a design specification
 that is not in this repository.** They are stable identifiers tying a piece of code to the decision

@@ -9,7 +9,7 @@ description: >
 authority: background
 writes: agent, whenever a decision is made
 status: active
-covers: "the whole project, 2026-07-07 onward — D1 to D21, O1 to O4"
+covers: "the whole project, 2026-07-07 onward — D1 to D24, O1 to O4"
 last_updated: "2026-09-09"
 ---
 
@@ -480,6 +480,79 @@ a fifth hue was a fifth hue *in the page's palette*. The slab is its own closed 
 ground, DESIGN.md names all five, and the keyword keeps its weight emphasis on top of its hue because
 that is what made the four-colour theme readable.
 
+### D22 · XP, Rank and "I at 8" leave every instrument; reading time replaces them — 2026-09-09
+
+**Considered:** relabel XP to something a reader can name / keep the points and add a unit beside them
+/ take all three off every surface and print minutes instead
+**Chose:** the third, which is the author's own resolution of O2: *"XP 0 becomes minutes read, UPTIME
+1D becomes days in a row, CLASS — and I AT 8 are dropped entirely because neither answered a question
+anybody was asking."*
+**Because:** O2 asked what question each answered and nobody could name one. `XP` is
+`100 × completions + 60 × quick checks + 40 × checklists`, a weighted sum of three unlike acts, and
+there is no honest label for it — "points" is the same jargon in plainer type. `CLASS` is a Roman
+numeral for any 8 modules of 33 and §12.5.3 already forbade it from claiming a capability, which
+leaves a rank that ranks nothing.
+**Rejected relabelling because:** a label cannot fix a quantity. Whatever the cell was called it would
+still be a number a reader could not act on, and the point of an instrument is that a reading tells
+you something.
+**What replaced it, and the one thing measurement decided.** `readingMinutes` sums the modules' OWN
+declared duration over the modules the reader has completed. The obvious alternative was the reader's
+own time on the page, which the record already has a field for — and **nothing writes it**: no dwell
+observer was ever shipped (`attention.ts` records that), so a reader-measured reading time would print
+`0 m` for every reader on every surface. The modules' estimate is an estimate and the surfaces that
+print it say so once.
+**What it cost:** the footer's strip on all 57 pages loses three cells and gains one; the quick
+check's `+60 XP` chip becomes `Self-marked`, because an award beside a question is a currency nothing
+spends any more; and the dashboard's `2,440 attainable today` line went with the fold in M14.
+**What stayed, deliberately:** `xp()` and `classOf()` are still in `lib/record/derive.ts`, with a
+header saying no surface renders them and why. The record still holds everything they read, a
+reader's exported file was written against that vocabulary, and deleting a pure selector to remove a
+label would be a schema change dressed up as a restyle. Nothing there may go back on a page without
+answering O2's question first.
+
+### D23 · Control C is the segmented meter, not the ring the mock drew — 2026-09-09
+
+**Considered:** the playground's conic-gradient ring per level / the segmented meter already shipping
+on the listings
+**Chose:** the meter, and this is the one place the build departs from a chosen mock.
+**Because:** a ring's fill is a **computed fraction**, and a computed fraction cannot reach CSS on
+channel A — there is no arithmetic in a stylesheet and no way to stamp `37%` into a class name. So a
+ring has to be drawn after hydration, which §12.2 forbids for a mark a reader sees in frame one, and
+M13's own acceptance criteria forbid by name: *no flash of an empty record.* The failure lands on
+exactly the readers who have progress.
+**Measured, on the shipped page:** with every `.js` request refused, the meter's segments and the
+per-module ticks are painted in the frame the probe takes and the footer's strip still publishes
+`data-hydrated="false"`. A ring in that frame is empty.
+**And it says more.** One segment per module needs no arithmetic and reports WHICH modules are done,
+not just how many; a dashed segment says which are not written at all. A ring cannot express either.
+**What is kept of C:** the per-level picture, the three numbers that mean something, the jargon gone,
+and the state adjustable from the list — which is the substance of the option the author picked. The
+mock's own note said rings "are harder to read precisely than a bar".
+
+### D24 · `/profile/` is the address that survives the fold, because it owns the fragments — 2026-09-09
+
+**Considered:** a new `/progress/` with all four old routes forwarding to it / keeping one of the four
+and forwarding the other three
+**Chose:** the second, with `/profile/` as the survivor.
+**Because:** a `<meta http-equiv="refresh">` cannot carry a fragment. `/profile/` is the target of
+five in-tree deep links — `#data` from `SignOff`'s NOT SAVED state and from `EmptyState` classes 2
+and 4, `#claim` from the claim receipt, `#raw`, and `#hl-account-head` from the header's identity
+affordance — and `FoldFragment` opens the row a fragment names. Moving that route would have broken
+all five to rename a URL no reader reads.
+**Rejected a new address because:** the reader-visible name is what changes (`Your progress`, which is
+§9's word for this subject and what the page and the navbar now both say), and the URL is code. D16
+already draws that line: only what a reader can see is renamed.
+**What the forwards had to be, and it is not a config option.** `output: 'export'` has no server, so
+`next.config`'s `redirects` are never applied and a page's own `redirect()` throws at build time. The
+document does the work: an inline script first — the only one of the three that can carry
+`location.hash` — then a `<meta refresh>` for a reader with scripting off, then a visible link. The
+target goes through `lib/url.ts`'s `href()`, because `basePath` only rewrites what the router touches
+and a hardcoded `/profile/` would work locally and 404 on GitHub Pages.
+**Also decided here, and it is the smaller half:** the three `g` chords whose destinations folded —
+`g d`, `g r`, `g l` — are **unbound rather than repointed**. Four keystrokes reaching one page is a
+shortcut sheet that reads as a mistake, and a row printing `Record` while opening a page headed
+something else is a promise kept in the letter and broken in the substance.
+
 
 ## Open questions
 
@@ -534,12 +607,23 @@ considered were:
 My recommendation was 2. The author chose 3, which is stronger: it leaves exactly one architecture
 document rather than one and a half.
 
-### O2 · Where the retired progress vocabulary lands — opened 2026-09-08
+### O2 · Where the retired progress vocabulary lands — opened 2026-09-08, HALF ANSWERED 2026-09-09
 
-XP, Class, Uptime and "I at 8" are all shown on the home page today. XP and Uptime measure something
-real and can be relabelled to minutes read and days in a row. **Class and "I at 8" have no proposed
-replacement**, because nobody has yet said what question they were answering. Leaving them out is the
-current proposal.
+**The first half is closed. See D22.** M13 took `XP`, `Rank` and `II at 16` off every instrument on
+the site, `Uptime` was already `Streak` from M9, and `Reading time` replaced XP — the modules' own
+declared minutes over the modules the reader has completed, because nothing writes the reader's own
+time on a page and a figure that reads `0 m` for everybody is worse than an estimate that says it is
+one. Nobody named a question `Rank` or the next threshold answered, which is what the paragraph below
+asked for and did not get.
+
+The original half, for the record:
+
+> XP, Class, Uptime and "I at 8" are all shown on the home page today. XP and Uptime measure
+> something real and can be relabelled to minutes read and days in a row. **Class and "I at 8" have
+> no proposed replacement**, because nobody has yet said what question they were answering. Leaving
+> them out is the current proposal.
+
+**The second half is still open**, and M14 did not take it either. It is below, unchanged.
 
 **M11 added a second half to this question and answered none of it.** Cutting the right rail back to
 the sections and the dependency block left the module's twelve derived facts with nowhere to be, and
@@ -555,8 +639,14 @@ column made them more prominent rather than less:
 Deleting a row is a decision about what the module page claims, and `title-block.ts` has unit tests
 that state the row set, so it is not a change to make on the way past. **The whole panel is also still
 tracked-out all-caps mono**, which `specs/DESIGN.md` names as the single clearest tell of a generated
-interface — so the question is not only which rows go but what the survivors look like. M14 touches
-the progress surfaces and is the natural place.
+interface — so the question is not only which rows go but what the survivors look like.
+
+**M14 was named as the natural place and it was the wrong guess.** M14 rebuilt the progress surfaces
+and never touched the module page: the strip is `title-block.ts`'s row set, which is a claim about
+what a MODULE page states, and the four rows in question are facts about the drawing rather than
+about the reader. It also converted `.hl-panel-title` off 11px tracked-out mono, which is the same
+tell one component over — so the strip is now the last surface on the site still in that type. It
+needs its own decision about what the page claims, and a milestone that says so.
 
 ### ~~O4 · Which of the four grounds~~ — opened and closed 2026-09-08
 

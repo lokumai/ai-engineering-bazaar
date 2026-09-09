@@ -89,15 +89,22 @@ test('Chrome still floors a border width, which is why rules are painted', async
     .toBe('100% 1.5px')
 })
 
-test('the catalog paints its structural rule at the struct weight', async ({ page }) => {
-  await page.goto('/')
+test('a listing page paints its structural rule at the struct weight', async ({ page }) => {
+  // `/courses/`, not `/`. This test read the home page until M13, where §4.8
+  // item 3's full-box rule under the statement was the subject — and home A
+  // does not have one: the four measured facts are separated by hairlines and
+  // the page carries no `.hl-rule-struct` at all. The rule itself did not move,
+  // and the pages that draw it are the listings and the progress page, so the
+  // measurement follows it there. What is being checked is unchanged: the
+  // middle weight is PAINTED rather than bordered, because Chrome floors a
+  // border to a whole pixel.
+  await page.goto('/courses/')
   const { weights, ruleStructHeight, token } = await paintedWeights(page)
 
   expect(token).toBe('1.5px')
-  // §4.8 item 3 — the full-box rule under the statement. Its whole box is the
-  // rule, so this is the weight itself, measured.
+  // Its whole box is the rule, so this is the weight itself, measured.
   expect(ruleStructHeight).toBe(1.5)
-  expect(weights, 'the struct weight is painted somewhere on the catalog')
+  expect(weights, 'the struct weight is painted somewhere on the page')
     .toContain(1.5)
 })
 

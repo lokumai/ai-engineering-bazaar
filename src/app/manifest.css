@@ -294,15 +294,9 @@
 
   /* -- §4.8 item 5 — the filter chips ------------------------------------ */
 
-  .hl-chips {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    margin-top: 16px;
-  }
-
+  /* M12 removed `.hl-chips`, the row that held the chips BELOW the table: the
+     catalog's controls are `.hl-cat-controls` at the top of the page now, and
+     a rule nothing renders is a rule the next reader has to check. */
   .hl-chip-row {
     display: flex;
     flex-wrap: wrap;
@@ -335,28 +329,12 @@
 
   /* -- §5.4 — the category block ----------------------------------------- */
 
-  .hl-subsystems {
-    margin-top: 48px;
-  }
-
-  .hl-subsystems-head {
-    margin: 0 0 16px;
-    font-weight: 400;
-    color: var(--color-ink-muted);
-  }
-
-  /* Six 176px blocks across the 1152 box, wrapping to two and then to one.
-     `1fr` as the max rather than 176px on purpose: auto-fit counts tracks
-     against the maximum, so a 176px cap yields five columns and a widow. The
-     block's own max-width holds the 176. */
-  .hl-subsystem-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(152px, 1fr));
-    gap: 24px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
+  /* M12 removed `.hl-subsystems`, `.hl-subsystems-head` and
+     `.hl-subsystem-list`: the block of level links under the catalog's table
+     was a second, shorter rendering of the grouping the Overview view now IS
+     (D13's cost paragraph), so the block went and its three rules with it.
+     `.hl-category` below stays — `CategoryBlock` still draws it on every
+     listing page and on each level's own page. */
 
   /* Three stacked lines in a 176px column. No border, no ground, no card. */
   .hl-category {
@@ -896,7 +874,9 @@
       letter-spacing: -0.020em;
     }
 
-    .hl-chips {
+    /* M12 — the two filter groups stack rather than stretch, and the toggle
+       row takes the bottom of the block on its own. */
+    .hl-cat-viewbar {
       justify-content: flex-start;
     }
   }

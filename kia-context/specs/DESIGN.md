@@ -9,7 +9,7 @@ description: >
 authority: blueprint
 writes: agent, as the interface evolves
 status: active
-covers: "the Bazaar system, chosen 2026-09-08 — M9 to M11 shipped, M12 to M14 to come"
+covers: "the Bazaar system, chosen 2026-09-08 — M9 to M14 shipped; the whole revision is built"
 last_updated: "2026-09-09"
 ---
 
@@ -193,6 +193,13 @@ What follows from that:
 the current heading in the contents rail. `title` is a deeper cobalt used only for h1, h2 and the bold
 lead-in of a card, so headings sit a step above the body without a second hue.
 
+**A correction, found in M13 and left standing here as one.** `title` `#1b1b47` is in the token block
+above and **no stylesheet declares it**: M9 shipped the palette without a `--color-title`, so every
+heading on the site is `--color-ink`. That is why M13's 56px hero is `--color-ink` too — reaching for
+a token nothing declares computes to an inherited colour, which no contrast test can see and no
+reviewer would notice. Either ship the token or take it out of this block; what must not happen is a
+third page reaching for it.
+
 `surface` is the ground: **`#FDFBF7`, at 96.6% relative luminance.** It replaced `#F4ECE0` at 84.6%,
 and it is the only token that changed when the theme was accepted. It is also the fill of the active
 item in the navbar, which is where its contrast against cobalt matters: 12.88:1, up from 11.36:1.
@@ -240,7 +247,8 @@ shipped on `line-strong` at 2.07:1 on white, which failed.
 `line-strong`; the components moved when the components were built.
 `tests/unit/color/slab-and-controls.test.ts` now names each control and asserts the border in both
 directions — a control put back on `line` or `line-strong` fails there — and there is no search field
-yet, because §12.0 still defers the command palette.
+yet, because §12.0 still defers the command palette. M12 and M13 added three more names to that list:
+the catalog's filter chip, its view button, and control C's per-module toggle.
 
 Three text weights and no more: `on-surface` for prose, `on-surface-muted` for anything secondary,
 `on-surface-faint` for anything a reader can ignore. On G3 they measure 15.01:1, 5.62:1 and 3.19:1.
@@ -404,11 +412,29 @@ painted as a gradient or a height, and `stroke-weights.test.ts` fails a `border-
   reader inside it. Revealed by channel A — the boot script stamps `hl-signed-<n>` on `<html>` and one
   generated selector per module reveals the mark — so a reader's completed modules are ticked before
   the first paint with no React. Absent rather than empty by default: the build has never met the
-  reader. The 17px box is reserved either way, so a completion does not shift the row it lands on.
+  reader. The 17px box is reserved either way, so a completion does not shift the row it lands on. It
+  is drawn in **two** places on the same channel now: the curriculum rail's row, and inside completion
+  control C's own toggle.
 - **tag** — raised fill, hairline, `sm`, a 7px colour square when it names a level.
 - **slab** — dark, `lg`, with a monospace header strip and its own scroll container.
-- **view toggle** — the catalog's Overview / Cards / Table, each with an icon and a word. Three views
-  over one data source; see `logs/BRAINSTORM.md` D13.
+- **view toggle** — the catalog's Overview / Cards / Table, each with an icon and a word, and `md`
+  radius on the interactive line token. Three views over one data source; see `logs/BRAINSTORM.md`
+  D13. **The showing view is not marked with `aria-pressed`**: which view is showing is an attribute
+  on `<html>` that no React render sets, so an ARIA state would be a second author of it and the two
+  would disagree for every frame before hydration. The button carries the word `Showing`, hidden from
+  sight and revealed by the same rule that reveals the view — the arrangement the tick uses — plus a
+  heavier bottom edge, which is what survives forced colours.
+- **completion control C** — the whole course, visible and adjustable: one `arch` card per level with
+  its 4px coloured edge, the segmented meter, and one row per module carrying a 28px toggle and the
+  module's own link. On the home page and on the progress page, and it is the same component on both
+  (D14). Three readings above it — modules completed, reading time, days in a row — each `--` until
+  the store answers.
+  **It is a meter and not the mock's ring**, and that is measured rather than stylistic: a ring's fill
+  is a computed fraction, a computed fraction cannot reach channel A, and a mark a reader sees in
+  frame one may not travel on channel B. See `logs/BRAINSTORM.md` **D23**.
+- **panel head** — a title and a note, hairline-ruled under, both in the display face. The title was
+  11px tracked-out uppercase mono until M13, which is the tell this system's own do-nots name first;
+  it heads every panel on eight routes, so it was converted once rather than per page.
 
 ## Do's and Don'ts
 

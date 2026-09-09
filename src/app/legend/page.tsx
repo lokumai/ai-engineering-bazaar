@@ -499,7 +499,7 @@ export default function LegendPage() {
         <p className="mt-4 mb-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
           The chain reads outward. LokumAI publishes this site and is part of
           Intellica; Intellica is a PIA Group company. The curriculum itself is
-          open source under the {LICENCE_LABEL}, and the sheets carry no
+          open source under the {LICENCE_LABEL}, and the modules carry no
           endorsement from any of the three.
         </p>
       </section>

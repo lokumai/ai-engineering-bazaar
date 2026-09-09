@@ -227,7 +227,7 @@ export default function HomePage() {
             <dt>It reads like being told</dt>
             <dd>
               Ask an engineer in person and you get a straight answer with the
-              caveats attached. That is the register here.
+              caveats attached. That is the voice here.
             </dd>
           </div>
           <div>

@@ -9,7 +9,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "the whole project, 2026-07-07 onward — M1 to M14; M9 to M11 shipped"
+covers: "the whole project, 2026-07-07 onward — M1 to M14; M9 to M14 shipped"
 last_updated: "2026-09-09"
 ---
 
@@ -51,13 +51,13 @@ last_updated: "2026-09-09"
 | **M5** | One central curriculum config | reordering the course is one line | M4 | ✅ Done |
 | **M6** | Intermediate and Ecosystem written | 19 of 33 modules written, every one bilingual | M1 | ✅ Done |
 | **M7** | The curriculum reordered | the config matches the author's intended order, everything green | M5, M6 | 🔄 In progress |
-| **M8** | The interface revised | a first-time reader can navigate without learning anything | M7 | 🔄 In progress · umbrella for M9–M14 |
+| **M8** | The interface revised | a first-time reader can navigate without learning anything | M7 | 🔄 All six stages built · waiting on the author's own read |
 | **M9** | The vocabulary and the ground | no reader-visible string uses a retired word, and the theme's tokens ship | M8 | ✅ Done |
 | **M10** | The shell | one navbar on every route, and a module list that folds away | M9 | ✅ Done |
 | **M11** | The module page | a diagram wider than the column cannot paint outside it | M10 | ✅ Done |
-| **M12** | The catalog | one route, three views, filters at the top | M10 | ⬜ Not started |
-| **M13** | The home page | a first-time visitor knows what this is and where to start | M10 | ⬜ Not started |
-| **M14** | Progress and account | one route instead of four, and completion editable from it | M11 | ⬜ Not started |
+| **M12** | The catalog | one route, three views, filters at the top | M10 | ✅ Done |
+| **M13** | The home page | a first-time visitor knows what this is and where to start | M10 | ✅ Done |
+| **M14** | Progress and account | one route instead of four, and completion editable from it | M11 | ✅ Done |
 
 > **Numbering never restarts.** When this file is split, part two continues at the next M.
 
@@ -276,9 +276,32 @@ across the whole site, not one screen at a time.
   **no element of a diagram may have a right edge beyond its column, without a clipping ancestor.**
 - The full gate stays green, and no test pins a fact about the content.
 
-### Report
-Not finished, but nothing is open. All ten answers are in, the ground is **G3 `#FDFBF7`** (O4), and
-the six build milestones are M9 to M14. **Waiting on the author's approval to start building.**
+### Report — 2026-09-09
+
+**All six stages are built.** M9 (the vocabulary and the ground), M10 (the shell), M11 (the module
+page), M12 (the catalog), M13 (the home page) and M14 (progress and account) are each done, each
+shipped on its own and left the site working, and the gate is green at every one of them.
+
+Five of M8's own acceptance criteria are met and measured, and they are measured in the six reports
+rather than restated here: every capability in §3 to §8 still works, no route or reader record moved,
+`mini-courses/` is untouched, no test pins a fact about the content, and the diagram containment is
+asserted at three viewports on every written module.
+
+**One criterion is not ours to close.** *"A reader who has never seen the site can find a module, read
+it and mark it done without being taught anything."* That is a judgement about a first-time reader and
+the author is the only person who can make it, on the built site. Until then this milestone stays
+open — the work is done, the claim is not made.
+
+**Two things the six stages left behind, both recorded rather than tidied:**
+
+- **O2's second half.** The module info panel's four unnamed rows, and its type: it is now the last
+  surface on the site still in 11px tracked-out uppercase mono, because M13 converted
+  `.hl-panel-title` off it. M14 was named as the natural place for that decision and was the wrong
+  guess — it rebuilt the progress surfaces and never touched the module page.
+- **`TitleBlock` variant A** is still rendered by no page. M11 kept it with a docblock saying M14
+  should delete it if it went unused; M14 did not use it, and did not delete it either — deleting it
+  means editing `sheet.test.tsx` and `sheet.css` for no behaviour change, which is a tidy-up rather
+  than a milestone, and the docblock still says so.
 
 
 ---
@@ -729,12 +752,12 @@ One route, three views (D13). Filters at the top, levels told apart by colour.
 
 ### Deliverables
 
-- [ ] A view toggle with an icon and a name each: **Overview**, **Cards**, **Table**
-- [ ] All three render from one data source, with no view-specific data and no view-specific route
-- [ ] Filters at the top of the page, not down a side
-- [ ] Levels separated by colour in every view, and by something other than colour as well
-- [ ] The reader's chosen view remembered
-- [ ] Both languages
+- [x] A view toggle with an icon and a name each: **Overview**, **Cards**, **Table**
+- [x] All three render from one data source, with no view-specific data and no view-specific route
+- [x] Filters at the top of the page, not down a side
+- [x] Levels separated by colour in every view, and by something other than colour as well
+- [x] The reader's chosen view remembered
+- [x] Both languages
 
 ### Acceptance criteria
 
@@ -746,8 +769,79 @@ One route, three views (D13). Filters at the top, levels told apart by colour.
 - Levels are distinguishable under `forced-colors: active`.
 - One route. Adding a view must not add a URL.
 
-### Report
-Not started.
+### Report — 2026-09-09
+
+**Done.** `/sheets/` is a thin server shell that measures the corpus once and
+hands ONE array to one island; the island renders the two filter groups, the
+toggle and all three views over that array. `src/components/catalog/` is the
+whole of it: `Catalog.tsx`, `CatalogOverview.tsx`, `CatalogCards.tsx`,
+`ViewIcon.tsx`, plus the table view, which is `SheetIndex` unchanged.
+
+**Which view is showing is channel A**, and that is the decision the rest
+follows from. `prefs.catalogView` is the fourth widening of `prefs`; the boot
+script stamps `data-hl-view` on `<html>` before first paint; **one carrier rule
+in `manifest.css` turns that into four custom properties and every rule after it
+reads them** — the arrangement `lokum.css` uses for the five level hues, for the
+same reason: the selector list relating a root attribute to a descendant's
+attribute is the thing that goes stale, so it is written once and a fourth view
+costs one line. MEASURED with every `.js` request refused: a reader whose stored
+view is Cards gets Cards, `data-hl-view="cards"`, and the other two views not
+laid out at all.
+
+**The toggle carries no `aria-pressed`, and that is the same argument as D17.**
+The state lives on `<html>`, so an ARIA attribute React renders would be a
+second author of one state and the two would disagree for every frame before
+hydration — the reader shown the table and told "Overview, pressed". Each button
+carries the word `Showing`, hidden from sight and revealed by the same rule that
+reveals the view, so the picture and the sentence cannot come apart. The rail's
+tick already worked that way.
+
+**Two filter axes rather than eleven chips**, because level and state compose:
+"the Expert modules" and "the ones I have not completed" are independent
+questions and one row cannot express the pair. Both open at `all` and have to
+(§12.2): two of the six selections read the record, and a reader-state filter
+active on load would change the row count between the prerender and the first
+client render.
+
+**The level blocks under the table are gone.** They were a second, shorter
+rendering of the grouping the Overview view now IS, which is the cost D13 spends
+a paragraph bounding.
+
+### What measuring changed, twice
+
+1. **The "same set of modules" comparison was wrong in a way that passed.** The
+   first version read each view's whole text and asked which of the set's titles
+   appeared in it — which counts a title that is a SUBSTRING of another. With the
+   Planned filter showing **14** modules it found **17**, because `Memory` is
+   inside `Advanced Memory` and two more like it. It reads the element that
+   holds a title now, per view, so each name is exact and the comparison is
+   still between the views rather than against a list.
+2. **The overview and the cards refused to link a planned module, and the table
+   linked it.** A planned module HAS a page — the A4 anatomy with its schedule
+   of parts — so two views had different reach, which is the drift D13's
+   "no view-specific data" rule exists to stop. Every view links every module
+   now, and the word `Planned` is what says it is not written.
+
+### The gate
+
+| | |
+|---|---|
+| `npm run typecheck` | clean |
+| `npm test` | **2,130 passed** (2,107 at the start of the milestone) |
+| `npm run build` | clean, **56 HTML files** in `out/` (Next reports 57 generated pages; one is the not-found boundary, which the export writes as `404.html` rather than as a directory) |
+| `npx playwright test` | the catalog specs and every spec that reads the table: **58 passed**. The whole suite is reported once, under M14 |
+
+`tests/e2e/catalog.spec.ts` is eleven new browser tests, and two of them are the
+ones that could not be written any other way: the three views' rendered module
+names compared **with each other** for four filter states, and the tab order
+walked by pressing Tab until a link inside the showing view has focus, with the
+hidden views' links proved unreachable. Either half of that second one alone
+passes for the wrong reason (D17).
+
+`tests/unit/catalog/views.test.ts` checks the reveal list against `VIEW_IDS` in
+both places it appears — the carrier and the forced-colours twin — and pairs each
+selector's two view ids, which is the mismatch that would show one view for
+another's stored preference: plausible, and wrong.
 
 ---
 
@@ -757,11 +851,11 @@ Option **A**. The first thing a stranger sees, and today it shows XP, Class and 
 
 ### Deliverables
 
-- [ ] Home page A, in the chosen ground and vocabulary
-- [ ] Completion shown with control **C** (D14): state visible and adjustable across the course
-- [ ] The retired progress vocabulary resolved: XP and Uptime relabelled to what they measure, Class
+- [x] Home page A, in the chosen ground and vocabulary
+- [x] Completion shown with control **C** (D14): state visible and adjustable across the course
+- [x] The retired progress vocabulary resolved: XP and Uptime relabelled to what they measure, Class
       and "I at 8" removed unless somebody says what question they answered (O2)
-- [ ] Every count on it derived at build time, never restated
+- [x] Every count on it derived at build time, never restated
 
 ### Acceptance criteria
 
@@ -773,8 +867,92 @@ Option **A**. The first thing a stranger sees, and today it shows XP, Class and 
   there is no flash of an empty record (`ARCHITECTURE.md` §12.2).
 - Signed out is the default and complete; nothing on the page requires an account.
 
-### Report
-Not started.
+### Report — 2026-09-09
+
+**Done.** Home **A**: the headline, the measured statement, two actions, four
+counted facts, the five levels, four reasons to read this rather than the next
+thing a search returns, and the identity strip. **One document for every
+reader** — the first-visit half and the returning-reader half are gone, and what
+is left of that machinery is one line: `.hl-home-continue`, the only thing on
+the page keyed off `data-hl-record`, so a reader with a record gets the shortest
+path back to work and a reader without one is not shown a control for a state
+they are not in.
+
+**The level grid IS completion control C** (D14), which is the property home A
+was chosen for: the levels double as the table of contents, so the same
+component shows a stranger the shape of the course and everybody else their own
+way through it. `CourseCompletion` is rendered here and on the progress page,
+from the same measurement.
+
+**D14's constraint is kept by `lib/record/complete.ts`.** The first completion
+on a record is three writes and not one — the sign-off, the mark seed minted
+once and never again (§12.3.5), and the single permitted
+`navigator.storage.persist()` (§12.1.6) — so control A and control C call one
+function rather than implementing it twice. Without that, a reader completing
+their first module from a list would have been left with **no mark on their
+exported record and no persistence request ever made, and nothing would have
+failed.** `home.spec.ts` asserts the minted seed after a click on control C for
+exactly that reason.
+
+### The one place this departs from the mock, and it is measured
+
+The playground's option C drew a **conic-gradient ring per level**. This draws
+the **segmented meter** instead. A ring's fill is a computed fraction, a computed
+fraction cannot reach CSS on channel A, and §12.2's rule is that a mark a reader
+sees in frame one may not travel on channel B — so a ring would be empty in the
+first frame of every load for exactly the readers who have progress, which is
+the flash of an empty record this milestone's own criteria forbid by name. The
+meter carries the same reading with no arithmetic at all and says which modules
+besides how many. `logs/BRAINSTORM.md` **D23**.
+
+**Frame one, measured with every `.js` request refused:** two seeded completions
+ticked, the other thirty-one not, in the frame the probe took, with the footer's
+strip still publishing the prerendered `false`. That last value is what makes
+the first two statements about frame one rather than about a page that had
+settled.
+
+### O2's other half, answered
+
+`XP`, `Rank` and `II at 16` are gone from every instrument on the site — the
+footer's strip on all 57 pages included — and `Reading time` took XP's place:
+the modules' own declared minutes over the modules the reader has completed. It
+is the modules' estimate rather than a measurement of the reader because
+**nothing on this site writes `dwellSeconds`** (no observer was ever shipped,
+which `attention.ts` records), so a reader-measured figure would read `0 m` for
+everybody. The three numbers on control C are modules completed, reading time
+and days in a row. `logs/BRAINSTORM.md` **D22** carries the decision and O2 is
+closed.
+
+Two smaller things went with it. The quick check's `+60 XP` chip reads
+`Self-marked`, because an award beside a question is a currency nothing spends
+any more. And `indexStatement()`'s second line — *"Fourteen are dashed — the
+geometry exists in the model, the lines do not"* — was the drawing-set metaphor
+in substance on the page a stranger meets first; the copy register's word
+boundaries could not catch it and neither could the export grep.
+
+**`.hl-panel-title` stopped being 11px tracked-out mono**, which DESIGN.md names
+as the clearest tell of a generated interface. It heads every panel on eight
+routes, so leaving it while rebuilding two of them would have shipped a
+half-converted interface.
+
+### The gate
+
+| | |
+|---|---|
+| `npm run typecheck` | clean |
+| `npm test` | **2,134 passed** |
+| `npm run build` | clean, **56 HTML files** in `out/` (Next reports 57 generated pages; one is the not-found boundary, which the export writes as `404.html` rather than as a directory) |
+| `npx playwright test home.spec.ts` | **18 passed**. The whole suite is reported once, under M14 |
+
+`home.spec.ts` was rewritten around the page that exists: the frame-one tick
+test above, control C's write (four things read that one write and all four have
+to move), the keyboard path walked by pressing Tab, the three
+"carries nothing" seeds — one of which is M12's new `catalogView`, because
+pressing a view toggle is not reading the course — and the numbers test, which
+compares the facts strip against the level cards rather than against a written
+list. That last one is how "no number is written in `src/`" is checked from a
+browser: the strip summarises the cards, so summing the cards has to reproduce
+it.
 
 ---
 
@@ -785,13 +963,13 @@ currently compete to tell the reader the same thing.
 
 ### Deliverables
 
-- [ ] One progress-and-account route, replacing the four, with the others redirecting rather than
+- [x] One progress-and-account route, replacing the four, with the others redirecting rather than
       404ing
-- [ ] Completion control **C** on it (D14), writing through `store.ts`
-- [ ] Export, import and erase kept and findable
-- [ ] Optional sign-in kept, gating nothing, with `AccountSync` still the single seam
+- [x] Completion control **C** on it (D14), writing through `store.ts`
+- [x] Export, import and erase kept and findable
+- [x] Optional sign-in kept, gating nothing, with `AccountSync` still the single seam
       (`ARCHITECTURE.md` §6)
-- [ ] Role paths kept, with the denominator honest about drafts
+- [x] Role paths kept, with the denominator honest about drafts
 
 ### Acceptance criteria
 
@@ -805,5 +983,133 @@ currently compete to tell the reader the same thing.
 - The reader can see their state without signing in, on a second device, and understand why it
   differs.
 
-### Report
-Not started.
+### Report — 2026-09-09
+
+**Done.** `/profile/` is the one progress-and-account route; `/dashboard/`,
+`/report/` and `/path/` are forwards.
+
+**`/profile/` is the survivor, and the choice was not arbitrary.** Only one of
+the four could keep its address, and this one owns every deep link on the site —
+`#data`, `#claim`, `#raw`, `#storage`, `#hl-account-head` — pointed at from
+`SignOff`'s NOT SAVED state, `EmptyState` classes 2 and 4, the claim receipt and
+the header's identity affordance. **A fragment cannot survive a `<meta
+refresh>`**, so redirecting this route would have broken five in-tree
+affordances to save renaming a URL no reader reads. `logs/BRAINSTORM.md`
+**D24**.
+
+**The shape.** Open: the account block, what is waiting on you and why, and
+completion control C. Folded, one line each and each stating its own reading
+(§16.4.1): the readout and the face legend, the streak, the stamps, what you
+built, the role **and its ordered steps**, the curriculum diagram, the record of
+work, the organisation, the last claim, storage, the stored bytes,
+export/import/erase, the keyboard switch. Thirteen rows, and the two that
+arrived with the fold obey the same rule as the eleven that were there.
+
+**What the fold made honest, and it needed measuring.** The diagram row's
+reading started as the corpus's own two counts — and read **identically for an
+empty record and a fully completed one**, which `record-pages.spec.ts`'s own
+rule for a counted reading catches. It is `TRACES` now: the edges with BOTH
+endpoints completed (§5.8), from the same `useTraces` the strip inside the row
+uses, which is the one number only the surface holding the graph can count.
+
+**Two rows left `RolePanel`'s list.** `Completed on this path` and `To go` were
+there because `/path/` was a different page; the standing is stated once now,
+beside the steps it describes, by the island that also marks the one step to
+take next. Two renderings of one derivation inside one row is the drift §16.4.2
+exists to stop. And there is exactly ONE `RolePicker` on the document — two
+would be two radio groups sharing the name `hl-role`, which is one group as far
+as the browser is concerned.
+
+### How a redirect ships in a static export
+
+There is no server: `output: 'export'` means `next.config`'s `redirects` are
+never applied and a page's own `redirect()` throws at build time. So the
+document itself moves the reader, three ways in decreasing order of speed —
+an inline script first (**the only one that can carry the fragment**, because
+`location.hash` is knowable only in the browser), a `<meta http-equiv="refresh">`
+for a reader with scripting off, and a visible sentence with a link for anyone
+the first two did not move. `MovedTo` carries the reasoning.
+
+**Verified in `out/`, not reasoned about:** all three stubs carry all three, the
+script and the meta and the link agree on one target, and the target goes
+through `lib/url.ts`'s `href()` so the base-path build does not 404 — the
+failure that works locally and breaks in production. `/report/#data` lands on
+`/profile/#data` with that row open, which is the two halves meeting:
+`FoldFragment` opens the row a fragment names.
+
+### Three chords went with their routes
+
+`g d`, `g r` and `g l` are **unbound**, not repointed. Four keystrokes reaching
+one page is a shortcut sheet that reads as a mistake, and `g r` printing
+`Record` while opening a page headed something else is a promise kept in the
+letter only. `g p` has meant the reader's own record since §12.16 and still
+does. The navbar's fourth item reads **Your progress**: it read `My progress`,
+and the copy register bans the first person outright — a ban it had escaped
+because `components/shell` is not in the register's roots.
+
+### Measured
+
+| | |
+|---|---|
+| `/profile/` | **472 KB, 56 KB gzipped**, with all four routes in it |
+| the four it replaces | 114 + 191 + 88 + 375 KB |
+| register rows | 13, all closed on arrival |
+| control C's rows on it | 33, one per module |
+| path bodies | 9, one visible |
+| RLS | `scripts/test-rls.mjs` unchanged; no policy touched |
+
+The fold **reduced** the bytes the site ships for these surfaces rather than
+concentrating them, which was the open question when it started: the nine path
+bodies were already 375 KB on a route of their own.
+
+### The gate — the whole of it, for M12, M13 and M14 together
+
+Run in the CI order on a quiet machine, after the last commit of the three:
+
+| | |
+|---|---|
+| `npm run typecheck` | clean |
+| `npm test` | **2,149 passed**, 79 files (2,107 at the start of M12) |
+| `npm run build` | clean, **56 HTML files** in `out/` (Next reports 57 generated pages; one is the not-found boundary, which the export writes as `404.html` rather than as a directory) |
+| `npx playwright test` | **462 passed, 2 failed, 19 skipped** (435 / 0 / 19 after M11) |
+
+**The two red ones are the contention family the previous milestone documented,
+and both pass alone — three times each.** They are `navigation.spec.ts`'s two
+chain walks, which click through all 33 modules with a 5s per-assertion timeout
+while eight Chrome workers compete; one of them took 41s in the full run and
+21s for the whole file on its own. `rail.spec.ts`'s two fold cases failed the
+same way in an earlier full run and passed 12/12 alone. **Run the four steps
+with nothing else running**, which the root `CLAUDE.md` and M10's report both
+already say.
+
+**One red result in that earlier run was real and is fixed.**
+`stroke-weights.spec.ts` asserted the painted 1.5px rule on `/`, and home A
+does not have one — its four measured facts are separated by hairlines. The
+rule did not move; the pages that draw it are the listings and the progress
+page, so the measurement followed it to `/courses/`.
+
+### The two checks that are new, and what they are for
+
+`tests/e2e/redirects.spec.ts` is the acceptance criterion about an old
+bookmark: each of the three retired routes lands on `/profile/`, keeps its
+fragment, says where it went with every module refused, asks not to be indexed,
+and forwards to the same URL its own visible link carries — that last one read
+out of `out/`, because the base-path failure exists only in the other build.
+**Verified against both builds:** `SITE_BASE_PATH=/ai-engineering-bazaar npm run
+build` writes `/ai-engineering-bazaar/profile/` into all three mechanisms of all
+three stubs.
+
+`path.spec.ts` kept every claim it made and moved them into the register row,
+including the frame-one one — a `<details>` opens with no JavaScript, which is
+why that test can still refuse every module and then open the row.
+
+### The honest check on the vocabulary, re-run
+
+M9's own measurement was 1,660 occurrences of the retired vocabulary across 56
+pages before the rename and 0 after. Re-run on this export, over the eleven
+retired words **plus `XP` and `CLASS n`**: **56 pages, 0 occurrences.** It found
+three on the way, and all three were things no lexer could have caught — the
+home page's own new copy saying *"That is the register here"* in the sense of a
+linguistic register, the legend's *"the sheets carry no endorsement"*, and the
+curriculum diagram's caption counting *"5 subsystems"*. The first was mine and
+one hour old; the other two had been shipping since M9.

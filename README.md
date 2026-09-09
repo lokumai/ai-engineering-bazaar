@@ -50,9 +50,9 @@ The site keeps a record of which sheets you have signed off, your answers to the
 
 Signing in is optional and nothing is gated behind it. Every sheet works exactly the same signed out. An account only means the record survives a cleared cache, a second machine or a lost laptop.
 
-Because browser storage can be cleared without warning, **export is a real feature**. From `/profile/` you can write your whole record to a file, and the `RECORD OF WORK` at `/report/` is a single HTML file you keep, which works offline years later and can be imported into another browser.
+Because browser storage can be cleared without warning, **export is a real feature**. Everything about your own record is on one page, `/profile/`: from there you can write the whole record to a file, and the `RECORD OF WORK` is a single HTML file you keep, which works offline years later and can be imported into another browser.
 
-There is also a `/path/` page: tell it what you do and it draws an ordered route through the set for your role, saying what each sheet gives someone in that job. It recommends an order and gates nothing.
+The same page draws an ordered route through the set for your role: tell it what you do and it says what each module gives someone in that job. It recommends an order and gates nothing.
 
 ## Contributing
 

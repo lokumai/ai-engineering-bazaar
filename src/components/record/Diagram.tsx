@@ -255,8 +255,12 @@ export function Diagram({
   return (
     <figure className="m-0">
       <figcaption className="hl-diagram-title">
+        {/* M14 — `subsystems` was the last reader-visible use of the retired
+            word on the site, found by the export grep rather than by the copy
+            register: `layout.bands.length` is a count of LEVELS, and the
+            caption is the one place this drawing names them. */}
         Single-line diagram · {layout.nodes.length} modules ·{' '}
-        {layout.bands.length} subsystems · {layout.traces.length} traces
+        {layout.bands.length} levels · {layout.traces.length} traces
       </figcaption>
 
       {/* §4.10.5 — below 1024px the graph degrades to six stacked blocks, not

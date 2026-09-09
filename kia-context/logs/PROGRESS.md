@@ -58,7 +58,7 @@ last_updated: "2026-09-09"
 | **M12** | The catalog | one route, three views, filters at the top | M10 | ✅ Done |
 | **M13** | The home page | a first-time visitor knows what this is and where to start | M10 | ✅ Done |
 | **M14** | Progress and account | one route instead of four, and completion editable from it | M11 | ✅ Done |
-| **M15** | The design language | one DESIGN.md transcribed from the mockup, and a check that proves a built page matches it | M14 | 🔄 Language, transcription check and fidelity harness in · the dark palette awaits sign-off |
+| **M15** | The design language | one DESIGN.md transcribed from the mockup, and a check that proves a built page matches it | M14 | ✅ Done |
 | **M16** | The interface, rebuilt on it | every surface indistinguishable from its mockup, with no capability lost | M15 | ⬜ Not started |
 
 > **Numbering never restarts.** When this file is split, part two continues at the next M.
@@ -1421,7 +1421,33 @@ reading before approving:
   completion disc are identical in both themes, which is what keeps the two
   looking like siblings.
 
-**Nothing has entered `DESIGN.md`.** It goes in when the author approves it.
+**APPROVED 2026-09-09 and now in `DESIGN.md`**, as a `dark:` token map — an
+explicit extension to the format, which has no dark field, kept as tokens rather
+than prose so it can be checked mechanically. It is, by
+`tests/unit/design/transcription.test.ts`: no dark token may be a colour the
+dark mockup does not contain, and the anchors — the bar, its chip, the band and
+the completion disc — must be identical across the two themes. Both halves
+mutation-tested.
+
+The author also took the slab question: **the slab keeps its hairline**, and the
+alternative of lifting the page grounds off it was declined, because that costs a
+value which is not the mockup's own and the hairline rule is the one the light
+theme already lives by. Recorded as **D27**.
+
+**And the navigation-chip discrepancy is answered (D28):** the trigger for the
+section the reader is in DOES carry the powder chip, marked with a data attribute
+rather than `aria-current`, so the picture is right without telling an assistive
+technology that a trigger is a page. That reverses M10's choice on the visual
+half while keeping its ARIA reasoning intact.
+
+### The four deliverables, closed
+
+| Deliverable | State |
+| --- | --- |
+| One `DESIGN.md`, written from the mockup, old one deleted | ✅ 582 lines, `source:` names both mockups |
+| The language as one stylesheet | ✅ `src/design/bazaar.css`, 1,126 lines, not yet imported |
+| A fidelity check | ✅ 90 unit assertions + 128 browser checks, both mutation-proven |
+| The retired vocabulary of the old design deleted from the token layer | ✅ nothing of it survives: no invented radius scale, no substituted family, no re-hued series |
 
 ### Report — DESIGN.md written, 2026-09-09
 

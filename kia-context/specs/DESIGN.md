@@ -7,11 +7,11 @@ description: >
   route or page names, no product vocabulary, no component implementation, no architecture or data
   flow, and no reasoning about rejected options (BRAINSTORM.md). A surface's LAYOUT is not a design
   language either — that lives in the milestone that builds it, against the mockup it came from.
-source: playground/01-theme-T4-ground-G3-powder.html
+source: playground/01-theme-T4-ground-G3-powder.html (light) · playground/01-theme-T4-G3-DARK.html (its approved derivation)
 authority: blueprint
 writes: agent, as the language evolves
 status: active
-covers: "the Bazaar language, transcribed from T4 on ground G3 — 2026-09-09"
+covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling — 2026-09-09"
 last_updated: "2026-09-09"
 ---
 
@@ -67,6 +67,31 @@ colors:
   slab-comment: "#767C88"
   slab-function: "#7FB8E8"
   slab-number: "#E0A45C"
+# An EXTENSION to the format, which has no dark field. Kept as tokens rather
+# than prose so it can be checked mechanically, which it is.
+dark:
+  surface: "#1D1F27"
+  surface-raised: "#262933"
+  surface-sunken: "#181A21"
+  on-surface: "#E7E3D8"
+  on-surface-title: "#E9E6E0"
+  on-surface-muted: "#9AA0AD"
+  on-surface-faint: "#606571"
+  line: "#33363F"
+  line-strong: "#444854"
+  primary: "#848BD0"
+  on-primary: "#1D1F27"
+  focus: "#AD5B47"
+  success: "#2F8C86"
+  caution: "#B8873B"
+  on-caution: "#20201C"
+  ornament: "#C8A078"
+  category-1: "#2F8C86"
+  category-2: "#676DAF"
+  category-3: "#91609D"
+  category-4: "#B8873B"
+  category-5: "#AD5B47"
+  band-c: "#AD5B47"
 typography:
   sans: '"Avenir Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
   mono: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
@@ -367,6 +392,32 @@ marks a finished thing. Gold `caution` marks something a reader should notice be
 underline under prose links, and the middle stripe of the band. It never carries state. Text set on
 a `caution` fill takes `on-caution`, a near-black warm ink: white on gold does not clear a text
 floor, and it is the only place in the language where type on a chromatic fill is not white.
+
+**The dark theme is a derivation, and the bar is what anchors it.** The light
+palette is the design; the dark one is computed from it, and the computation is
+part of the language rather than a footnote to it. **The surfaces are the slab
+promoted from a component to the whole page** — the palette already contains a
+dark ground with ink proven on it, so almost nothing is new. Every chromatic is
+lifted in OKLCH **lightness with hue and chroma held**, until it clears its
+floor on all three grounds; hues move by fractions of a degree and half of them
+do not move at all. Three things follow that are easy to get wrong:
+
+- **`primary` lifts and the bar does not.** Cobalt cannot be a link on a dark
+  ground, and it does not have to be: the language keeps `bar` and `primary`
+  apart precisely so one can move without the other. The bar, its five on-bar
+  values, the band and the completion disc are identical in both themes, and
+  that is the whole reason the two read as siblings.
+- **`on-primary` stops being white.** White on the lifted accent measures
+  3.19:1 and fails a text floor, while the ground on it reaches 5.15:1. A filled
+  primary action in the dark theme therefore carries dark type.
+- **`on-surface-faint` has a ceiling, not a floor.** It is for something a
+  reader may ignore, so it is lowered until it sits *under* 3:1 rather than
+  raised to clear it — the only token in the language checked from above.
+
+The accepted cost, decided rather than overlooked: on the dark ground **the page
+and the slab are the same fill**, so a code block is told apart by its hairline.
+That is the rule the light theme already lives by, where a white card on a
+near-white ground is separated by its border and not its fill.
 
 **The dark slab is a second, complete palette.** Code and diagrams sit on `slab-surface`, and every
 value they need is prefixed `slab-`. It is a self-contained set precisely so a slab can be dropped

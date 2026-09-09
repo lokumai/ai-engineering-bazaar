@@ -700,6 +700,79 @@ that turns out to be needed must be re-derived from a mockup to earn its place b
 
 **Rule that follows:** `specs/DESIGN.md`'s own Overview, and M15/M16 in `logs/PROGRESS.md`.
 
+### D27 · The dark theme is the slab promoted, not a second palette — 2026-09-09
+
+**Considered:** (a) keep the dark palette shipped in M9 to M14 and rebuild only the light theme /
+(b) drop the dark theme and match the mockup exactly, which is light-only / (c) derive a dark
+sibling from the light palette and have the author approve it before it enters the language.
+
+**Chose (c).** No mockup in `playground/` defines a dark theme — **0 matches for
+`prefers-color-scheme` across all of them** — and the application ships a full dark palette with a
+toggle that `theme.spec.ts` asserts. So the language had a hole where a shipped capability was, and
+the one thing I may not do is fill a hole in the mockup with taste (D26).
+
+**Rejected (a)** because that palette belongs to the design that was rejected; keeping it would make
+the two themes stop looking related. **Rejected (b)** because it removes a capability, and M16's
+terms are that no capability is lost.
+
+**The derivation, and it is a transformation with every step stated:**
+
+1. **The surfaces ARE the slab, promoted from a component to the whole page.** The mockup already
+   contains a complete dark ground with ink proven on it, which is why almost nothing here is new.
+2. **Every chromatic lifted in OKLCH lightness, hue and chroma held**, until it cleared its floor on
+   **all three grounds** — a floor checked against one ground is not checked (D19). **Hues moved by
+   at most 0.3°, and five of the ten did not move at all.**
+3. **The bar does not move.** Cobalt, its five on-bar values, the band and the completion disc are
+   identical in both themes. That is what keeps them siblings, and a test asserts it.
+
+**Three things the numbers forced, none of them a preference:**
+
+| | |
+| --- | --- |
+| `on-surface-faint` | Has a **ceiling**, not a floor: it is for something ignorable, so it was *lowered* until under 3:1 on every ground — 2.49 to 2.98. The only token checked from above. |
+| `on-primary` | Stops being white. White on the lifted accent is **3.19:1** and fails a text floor; the ground on it is **5.15:1**. A filled primary action carries dark type in the dark theme. The light theme needs no such token, white on cobalt being 12.88:1. |
+| `primary` | Lifts while `bar` does not, which is only possible because the language keeps those two separate. |
+
+**The accepted cost, decided by the author rather than overlooked:** the page ground and the slab are
+now the same fill, so **a code block is told apart by its hairline**. The alternative — shifting the
+three page grounds up a step so the slab reads as recessed — was offered and declined, because it
+costs a value that is not the mockup's own and the hairline rule is the one the light theme already
+lives by (a white card on a near-white ground is 1.03:1 and is separated by its border).
+
+**Measured:** the palette is `playground/01-theme-T4-G3-DARK.html`, generated so that **outside the
+token block the only differences from the light mockup are the header comment, the annotation
+strip's text and one `.btn` rule** — so the palette is provably the only variable, the same
+discipline as D12's grounds.
+
+**Rule that follows:** `specs/DESIGN.md`, Colors — and `tests/unit/design/transcription.test.ts`
+holds it, including that no dark token may be a colour the dark mockup does not contain, and that
+the anchors are identical across the two themes.
+
+### D28 · A dropdown trigger can be the current destination — 2026-09-09
+
+**Considered:** (a) the current-destination chip appears only on a real page link, never on a
+disclosure trigger — which is what M10 built / (b) the trigger for the section you are in carries
+the chip, which is what the mockup's markup intends.
+
+**Chose (b)**, on the author's call, with one condition of my own: the chip is marked with a **data
+attribute and not `aria-current`**, so nothing tells an assistive technology that a trigger is a
+page.
+
+**Because the mockup is inconsistent with itself and the intent is still clear.** Its CSS styles
+`.mainnav a[aria-current]` while its markup puts `aria-current="page"` on the `button.lv` that opens
+the Curriculum dropdown — a selector that does not match a button, **so the chip never actually
+paints in the mockup**. Found by the fidelity harness, which read the role as absent.
+
+**Why M10 chose otherwise, and why that reasoning survives:** two `aria-current="page"` in one
+navigation is a contradiction, and a disclosure trigger is not a page. Both remain true. What
+changes is that this is a question about the *picture* rather than about the ARIA: the powder chip
+on cobalt is the strongest "you are here" the language can make, and withholding it from the one
+control that owns the section the reader is in wastes it. Splitting the two — visual state on a data
+attribute, no ARIA claim — satisfies both.
+
+**Rule that follows:** M16, the top-navigation row. `specs/DESIGN.md` already says the current
+destination is a solid powder chip on cobalt and needs no change.
+
 ### O2 · Where the retired progress vocabulary lands — opened 2026-09-08, HALF ANSWERED 2026-09-09
 
 **The first half is closed. See D22.** M13 took `XP`, `Rank` and `II at 16` off every instrument on

@@ -1013,6 +1013,108 @@
   }
 }
 
+/* ===========================================================================
+   THE DARK SIBLING
+
+   Approved 2026-09-09 from `playground/01-theme-T4-G3-DARK.html`, which is a
+   derivation rather than a design: no mockup defines a dark theme, so every
+   value below was computed and the steps are stated.
+
+   **The surfaces ARE the slab, promoted from a component to the whole page.**
+   The mockup already contains a complete dark surface with ink proven on it,
+   which is why almost nothing here is new. One accepted consequence, decided
+   rather than overlooked: the page ground and the slab are now the same fill,
+   so a code block is told apart by its hairline. That is the same rule the
+   light theme lives by, where a white card on a near-white ground is also
+   separated by its border and not its fill.
+
+   **Every chromatic was lifted in OKLCH lightness with hue and chroma held**,
+   until it cleared its floor on ALL THREE grounds — a floor checked against
+   one ground is not checked (D19). Hues moved by at most 0.3°, and five of the
+   ten did not have to move at all.
+
+   **The bar does not move.** Cobalt, its five on-bar values, the band and the
+   completion disc are identical in both themes, and that is what keeps the two
+   looking like siblings rather than two designs.
+   =========================================================================== */
+
+.dark {
+  /* The slab's own three, promoted. `raised` is LIGHTER here and `sunken`
+     darker, which is the inversion a dark ground requires. */
+  --color-surface:              #1d1f27;
+  --color-surface-raised:       #262933;
+  --color-surface-sunken:       #181a21;
+  --color-line:                 #33363f;
+  --color-line-strong:          #444854;
+
+  /* `title` stays a voice of its own: in the light theme it is further from the
+     ground than the ink, so here it is lighter by the same distance. */
+  --color-on-surface:           #e7e3d8;
+  --color-on-surface-title:     #e9e6e0;
+  --color-on-surface-muted:     #9aa0ad;
+  /* A CEILING, not a floor. `faint` is for something a reader may ignore, so it
+     was lowered until it sits under 3:1 on every ground: 2.49 to 2.98. */
+  --color-on-surface-faint:     #606571;
+
+  /* Untouched, all nine. The chrome is the anchor. */
+  --color-bar:                  #282864;
+  --color-on-bar:               #ffffff;
+  --color-on-bar-dim:           #c9c6e4;
+  --color-bar-edge:             #28286400;
+  --color-bar-hover:            rgba(255, 255, 255, 0.10);
+  --color-bar-chip:             #fdfbf7;
+  --color-on-bar-chip:          #1b1b47;
+  --color-bar-field:            rgba(255, 255, 255, 0.08);
+  --color-bar-field-line:       rgba(255, 255, 255, 0.25);
+
+  /* Cobalt cannot be a link on a dark ground, so `primary` lifts — and it can,
+     without touching the bar, because the language keeps those two separate.
+     `on-primary` becomes the ground: white on the lifted accent measures
+     3.19:1 and fails a text floor, while the ground on it reaches 5.15:1. That
+     is the one genuine addition the dark theme needs. */
+  --color-primary:              #848bd0;
+  --color-on-primary:           #1d1f27;
+  --color-focus:                #ad5b47;
+  /* Teal, gold and ochre already cleared 3:1 on this ground and so are
+     unchanged — the derivation moved only what had to move. */
+  --color-success:              #2f8c86;
+  --color-caution:              #b8873b;
+  --color-on-caution:           #20201c;
+  --color-ornament:             #c8a078;
+
+  /* Three of five lifted; teal and gold already cleared. `category-2` remains
+     the cobalt family, which is the documented exception to the 20° rule. */
+  --color-category-1:           #2f8c86;
+  --color-category-2:           #676daf;
+  --color-category-3:           #91609d;
+  --color-category-4:           #b8873b;
+  --color-category-5:           #ad5b47;
+
+  --color-band-ground:          #282864;
+  --color-band-a:               #2f8c86;
+  --color-band-b:               #c8a078;
+  --color-band-c:               #ad5b47;
+
+  /* The slab does not re-theme: it is already dark, and a code block that
+     changed colour with the page would stop being the same object. Redeclared
+     rather than inherited because `src/lib/content/code-theme.ts` reads each of
+     these out of the token layer and requires every one of them to appear in
+     both halves, above and inside the dark block. */
+  --color-slab-surface:         #1d1f27;
+  --color-slab-surface-raised:  #262933;
+  --color-slab-on-surface:      #e7e3d8;
+  --color-slab-on-surface-muted:#9aa0ad;
+  --color-slab-line:            #33363f;
+  --color-slab-line-raised:     #444854;
+  --color-slab-on-raised:       #dcd8cd;
+  --color-slab-arrow:           #6e737f;
+  --color-slab-keyword:         #c48ce0;
+  --color-slab-string:          #8fcf9a;
+  --color-slab-comment:         #767c88;
+  --color-slab-function:        #7fb8e8;
+  --color-slab-number:          #e0a45c;
+}
+
 /* The fold is instant, not animated. */
 @media (prefers-reduced-motion: reduce) {
   .hl-shell,

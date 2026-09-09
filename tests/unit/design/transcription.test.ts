@@ -28,7 +28,19 @@ import { describe, expect, it } from 'vitest'
  */
 
 const ROOT = path.resolve(import.meta.dirname, '../../..')
+/**
+ * The specification is TWO files now. The light mockup is the design; the dark
+ * one is its approved derivation (`logs/BRAINSTORM.md` D27), and it is a mockup
+ * rather than a note precisely so it can be checked the same way. Colours are
+ * compared against the union: a value in the dark theme is legitimate if the
+ * dark mockup contains it, and invented otherwise.
+ *
+ * The light mockup remains the reference for STRUCTURE — the dark one differs
+ * from it only in its token block, provably — so the primitive comparison below
+ * resolves against it alone.
+ */
 const MOCKUP = path.join(ROOT, 'playground/01-theme-T4-ground-G3-powder.html')
+const MOCKUP_DARK = path.join(ROOT, 'playground/01-theme-T4-G3-DARK.html')
 const LANGUAGE = path.join(ROOT, 'src/design/bazaar.css')
 
 /** The mockup's own annotation chrome. It describes the variant to a reader of
@@ -47,12 +59,21 @@ function withoutComments(css: string): string {
   return css.replaceAll(/\/\*[\s\S]*?\*\//g, ' ')
 }
 
-function mockupCss(): string {
-  const html = read(MOCKUP)
+function styleBlock(file: string): string {
+  const html = read(file)
   const open = html.indexOf('<style>')
-  const close = html.indexOf('</style>')
-  expect(open, 'the mockup has no <style> block').toBeGreaterThan(-1)
+  const close = html.lastIndexOf('</style>')
+  expect(open, `${path.basename(file)} has no <style> block`).toBeGreaterThan(-1)
   return withoutComments(html.slice(open + '<style>'.length, close))
+}
+
+function mockupCss(): string {
+  return styleBlock(MOCKUP)
+}
+
+/** Both mockups, for the checks whose subject is the whole specification. */
+function specificationCss(): string {
+  return `${styleBlock(MOCKUP)}\n${styleBlock(MOCKUP_DARK)}`
 }
 
 function languageCss(): string {
@@ -221,6 +242,7 @@ function resolved(
 
 describe('M15 — the language is a transcription of the mockup', () => {
   const mockup = mockupCss()
+  const specification = specificationCss()
   const language = languageCss()
 
   it('the mockup and the language stylesheet are both readable', () => {
@@ -231,14 +253,14 @@ describe('M15 — the language is a transcription of the mockup', () => {
   // -- 1. colour, both directions, name-agnostic ---------------------------
 
   describe('every colour, in both directions', () => {
-    const inMockup = coloursIn(mockup)
+    const inMockup = coloursIn(specification)
     const inLanguage = coloursIn(language)
 
     it('is a real comparison and not a vacuous one', () => {
       // A set comparison of two empty sets passes. The mockup's palette is the
       // whole point of the file, so if the extractor finds almost nothing the
       // pattern has broken and every assertion below is worthless.
-      expect(inMockup.size).toBeGreaterThan(25)
+      expect(inMockup.size).toBeGreaterThan(35)
       expect(inLanguage.size).toBeGreaterThan(25)
     })
 
@@ -286,8 +308,49 @@ describe('M15 — the language is a transcription of the mockup', () => {
 
     it.each(declared)('%s appears in the mockup', (_name, value) => {
       const needle = normalise(value).replaceAll(COLOUR_PATTERN, (c) => parseColour(c) ?? c)
-      const haystack = normalise(mockup).replaceAll(COLOUR_PATTERN, (c) => parseColour(c) ?? c)
+      const haystack = normalise(specification).replaceAll(COLOUR_PATTERN, (c) => parseColour(c) ?? c)
       expect(haystack).toContain(needle)
+    })
+  })
+
+  // -- 2b. the dark theme is the approved derivation, not a second design ---
+
+  describe('the dark theme', () => {
+    const darkBlock = blockFor(language, '.dark') ?? ''
+    const declared = tokensIn(darkBlock)
+    const inDarkMockup = coloursIn(styleBlock(MOCKUP_DARK))
+
+    it('is actually there', () => {
+      expect(declared.size).toBeGreaterThan(30)
+    })
+
+    it('declares no colour the approved dark mockup does not contain', () => {
+      const invented = [...declared]
+        .map(([name, value]) => [name, parseColour(value)] as const)
+        .filter(([, colour]) => colour !== null && !inDarkMockup.has(colour))
+        .map(([name]) => name)
+        .sort()
+      expect(invented, 'dark tokens that are not in the dark mockup').toEqual([])
+    })
+
+    it('holds the bar, the band and the completion mark identical to the light theme', () => {
+      // What keeps the two themes siblings rather than two designs. Asserted
+      // because it is a promise the derivation makes and the easiest to lose.
+      const light = tokensIn(blockFor(language, '@theme') ?? '')
+      const anchors = [
+        '--color-bar',
+        '--color-on-bar',
+        '--color-on-bar-dim',
+        '--color-bar-chip',
+        '--color-on-bar-chip',
+        '--color-band-ground',
+        '--color-success',
+      ]
+      for (const token of anchors) {
+        expect(parseColour(declared.get(token) ?? ''), token).toBe(
+          parseColour(light.get(token) ?? ''),
+        )
+      }
     })
   })
 
@@ -342,11 +405,15 @@ describe('M15 — the language is a transcription of the mockup', () => {
       ['.toc', '.hl-aside', ['top', 'padding']],
     ]
 
-    // Every custom property in the file, not only `:root`'s. The mockup scopes
-    // the slab's three values on `.slab` itself, so a `:root`-only map left
-    // `var(--sl-ink)` unresolved and reported drift that was not there.
+    // The mockup: every custom property in the file, not only `:root`'s, because
+    // it scopes the slab's three values on `.slab` itself and a `:root`-only map
+    // left `var(--sl-ink)` unresolved and reported drift that was not there.
     const mockupTokens = tokensIn(mockup)
-    const languageTokens = tokensIn(language)
+    // The language: the LIGHT block only. Reading the whole file picked up the
+    // `.dark` values, which win on last-declaration, and every light primitive
+    // then resolved against the dark palette — a menu came back as the dark
+    // raised surface and the comparison failed on a file that was correct.
+    const languageTokens = tokensIn(blockFor(language, '@theme') ?? '')
 
     it('resolves the two token maps', () => {
       expect(mockupTokens.size).toBeGreaterThan(30)

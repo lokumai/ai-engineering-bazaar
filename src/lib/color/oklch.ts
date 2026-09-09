@@ -93,3 +93,73 @@ export function oklchToHex(css: string): string {
 
   return `#${channels.map(encode).join('')}`
 }
+
+/* ---------------------------------------------------------------------------
+   The other direction, added in M16.
+
+   The token layer used to be `oklch()` and every perceptual rule read the
+   triple straight out of the stylesheet. It is hex now, because it is a
+   transcription of a mockup that writes hex, and hex says nothing about hue or
+   lightness on its own. So the rules that are actually about perception — are
+   two group hues far enough apart to tell one group from another, does a hue
+   sit clear of the link colour — need this.
+
+   Same matrices as above, inverted, so one file owns the transform in both
+   directions and the pair cannot drift.
+   --------------------------------------------------------------------------- */
+
+const HEX_COLOUR = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i
+
+export interface Oklch {
+  /** Perceptual lightness, 0 to 1. */
+  readonly L: number
+  /** Chroma. 0 is a neutral grey, and its hue is meaningless. */
+  readonly C: number
+  /** Hue angle in degrees, 0 to 360. */
+  readonly h: number
+}
+
+/** sRGB transfer function, inverted: gamma-encoded channel → linear. */
+function decode(channel: number): number {
+  return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
+}
+
+/** linear sRGB → OKLab (Ottosson's matrices, the inverse of the pair above). */
+function linearSrgbToOklab(r: number, g: number, b: number): [number, number, number] {
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b)
+  const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b)
+  const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b)
+
+  return [
+    0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s,
+    1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s,
+    0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s,
+  ]
+}
+
+/**
+ * `#2F8C86` → `{ L, C, h }`. Three-digit hex is expanded. Alpha is rejected
+ * for the same reason `oklchToHex` rejects it: a translucent colour has no
+ * lightness or hue until it is composited against something.
+ */
+export function hexToOklch(hex: string): Oklch {
+  const source = hex.trim()
+  const match = HEX_COLOUR.exec(source)
+  if (!match) throw new Error(`oklch: "${source}" is not a #rgb or #rrggbb colour`)
+
+  const digits = match[1].length === 3
+    ? [...match[1]].map((d) => d + d).join('')
+    : match[1]
+  const value = Number.parseInt(digits, 16)
+
+  const [r, g, b] = [(value >> 16) & 0xff, (value >> 8) & 0xff, value & 0xff]
+    .map((channel) => decode(channel / 255))
+
+  const [L, a, bb] = linearSrgbToOklab(r, g, b)
+  const C = Math.hypot(a, bb)
+  // A neutral has no hue. Reporting 0 rather than an angle derived from float
+  // noise keeps a caller from concluding that two greys are 180° apart.
+  const h = C < 1e-6 ? 0 : ((Math.atan2(bb, a) * 180) / Math.PI + 360) % 360
+
+  return { L, C, h }
+}

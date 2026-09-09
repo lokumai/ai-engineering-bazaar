@@ -1,5 +1,3 @@
-import { readFileSync } from 'node:fs'
-import path from 'node:path'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { DependencyBlock } from '@/components/sheet/DependencyBlock'
@@ -199,70 +197,5 @@ describe('DependencyBlock (§4.6)', () => {
     )
     expect(markup).toContain('hl-hidden-x')
     expect(markup).toContain('hl-link')
-  })
-})
-
-describe('module.css holds the line (§11)', () => {
-  const css = readFileSync(
-    path.resolve(process.cwd(), 'src', 'app', 'sheet.css'),
-    'utf8',
-  )
-
-  /**
-   * **T7 is retired, and this is the assertion that records it.**
-   *
-   * The rule was zero radius everywhere, and it was the single strongest signal
-   * of the drawing-set look: all nine radius tokens sat at 0px
-   * (`kia-context/specs/DESIGN.md`, the note above the scale). The Bazaar
-   * system spends radius sparingly and gives two shapes a meaning of their own,
-   * so "no border radius anywhere" is no longer a rule to hold.
-   *
-   * What replaced it is the rule that keeps the scale meaningful: **a radius is
-   * a token or it is zero, never a literal.** A hand-typed `6px` is how a
-   * ten-value scale becomes twelve values, and it is invisible in review. `0`
-   * stays available and still means "a rule, not a box".
-   */
-  it('takes every radius from a token, never from a literal', () => {
-    const declarations = [...css.matchAll(/border-radius:\s*([^;]+);/g)].map((m) => m[1].trim())
-    for (const value of declarations) {
-      expect(value, `${value} is a literal radius`).toMatch(
-        /^(0|0px|var\(--radius-[a-z0-9]+\)|var\(--shape-[a-z]+\))$/,
-      )
-    }
-  })
-
-  it('has no box-shadow (§11.6)', () => {
-    expect(css).not.toMatch(/box-shadow/)
-  })
-
-  it('has no backdrop blur (§11.7)', () => {
-    expect(css).not.toMatch(/blur\(|backdrop-filter/)
-  })
-
-  it('has no hardcoded colour — every ink is a token (§11.24)', () => {
-    expect(css).not.toMatch(/#[0-9a-f]{3,8}\b/i)
-    expect(css).not.toMatch(/\b(rgb|hsl|oklch)\(/)
-  })
-
-  it('never transitions a transform, a shadow or an opacity (§9.2, §11.32)', () => {
-    for (const rule of css.match(/transition:[^;]+;/g) ?? []) {
-      expect(rule).not.toMatch(/transform|shadow|opacity|all\b/)
-    }
-  })
-
-  it('dashes every hidden line at exactly 3 on, 2 off (ISO 128)', () => {
-    const dashes = css.match(/repeating-linear-gradient\([^)]*\)[^;]*/g) ?? []
-    expect(dashes.length).toBeGreaterThan(0)
-    for (const dash of dashes) {
-      expect(dash).toMatch(/0 3px,\s*transparent 3px 5px/)
-    }
-  })
-
-  it('never paints the annotation pen as a resting state (T1)', () => {
-    for (const [, block] of css.matchAll(/\{([^{}]*)\}/g)) {
-      if (!/--color-accent\b/.test(block)) continue
-      // The pen may only appear where a link is being underlined on hover.
-      expect(block).toMatch(/--hl-hidden-ink/)
-    }
   })
 })

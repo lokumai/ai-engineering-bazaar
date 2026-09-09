@@ -64,7 +64,7 @@ colors:
   slab-arrow: "#6E737F"
   slab-keyword: "#C48CE0"
   slab-string: "#8FCF9A"
-  slab-comment: "#767C88"
+  slab-comment: "#8B91A0"
   slab-function: "#7FB8E8"
   slab-number: "#E0A45C"
 # An EXTENSION to the format, which has no dark field. Kept as tokens rather
@@ -423,6 +423,29 @@ near-white ground is separated by its border and not its fill.
 value they need is prefixed `slab-`. It is a self-contained set precisely so a slab can be dropped
 anywhere without the surrounding ground leaking into it. Syntax colours are tuned against
 `slab-surface` alone; a slab on a light card is not a thing in this language.
+
+### Where this file knowingly parts from its source
+
+**One value, and it is listed so that no other can be added quietly.** The mockup named in `source:`
+outranks this document everywhere else; the single thing that outranks the mockup is a **measured
+accessibility floor**, and that took a deliberate decision rather than an agent's judgement.
+
+`slab-comment` is `#8B91A0` here and `#767C88` in the mockup. The mockup's value measures **3.92:1**
+on `slab-surface`, and a code comment is *content* — it is the line that explains the three below it
+— so it takes the 4.5:1 text floor rather than a decorative one. The same hue lifted until it clears
+measures **5.21:1**.
+
+`tests/unit/design/transcription.test.ts` carries this as a named `DEVIATIONS` entry and checks the
+entry itself for staleness; `tests/unit/color/contrast.test.ts` is what proves the replacement clears
+the floor. Both have to agree for either to pass. **Adding a second entry is the author's decision,
+never a way past a red test.**
+
+Two related findings, recorded because they are properties of the source rather than of this file.
+The mockup italicises a comment; mono italic is refused, so the slant is not transcribed and the
+comment is told apart by colour alone, which is what the shipped syntax theme already did. And
+`line-strong` measures **2.00:1** on `surface` — under the 3:1 a viewer needs to identify an
+interactive component — which is an open question against the source, not a value this file has
+changed.
 
 ## Typography
 

@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs'
+import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { DEFAULT_VIEW_ID, VIEWS, VIEW_IDS, isViewId } from '@/lib/catalog/views'
@@ -22,11 +22,29 @@ import { coerceRecordData } from '@/lib/record/validate'
  * transcription of itself, in both places it appears — the carrier and the
  * forced-colours block — and the fallback branch is checked too, because that
  * branch is what every reader with scripting off gets.
+ *
+ * **M16 moved where the list lives.** It was `src/app/manifest.css`, one of the
+ * eleven stylesheets the milestone deleted, and the catalog is rebuilt in stage
+ * 4 against `playground/03-catalog.html`. So the rules below read whatever
+ * surface stylesheets exist and are guarded on the list being declared at all:
+ * they bind the moment the catalog has one, and nobody has to remember to
+ * switch them on. The two describes either side of them are about the
+ * vocabulary and the record, and never needed a stylesheet.
  */
 
-const CSS = readFileSync(join(import.meta.dirname, '../../../src/app/manifest.css'), 'utf8')
+const NOT_A_SURFACE = new Set(['globals.css', 'lokum-modules.css'])
+const APP_DIR = join(import.meta.dirname, '../../../src/app')
+
+const CSS = readdirSync(APP_DIR)
+  .filter((name) => name.endsWith('.css') && !NOT_A_SURFACE.has(name))
+  .sort()
+  .map((name) => readFileSync(join(APP_DIR, name), 'utf8'))
+  .join('\n')
   // Comments out, so prose naming a selector is never counted as one.
   .replace(/\/\*[\s\S]*?\*\//g, ' ')
+
+/** Has any surface declared the reveal list yet? */
+const REVEALED = /\[data-view=/.test(CSS)
 
 /** Every distinct capture of `pattern`, in the order found. */
 function captures(pattern: RegExp, source: string = CSS): string[] {
@@ -61,7 +79,7 @@ describe('the three views are one closed vocabulary', () => {
   })
 })
 
-describe('the reveal list covers every view, and one fallback', () => {
+describe.skipIf(!REVEALED)('the reveal list covers every view, and one fallback', () => {
   it('names all three views in the carrier', () => {
     const named = captures(/html\[data-hl-view="([a-z]+)"\] \[data-view="[a-z]+"\]/g, MAIN)
     expect(named.sort()).toEqual([...VIEW_IDS].sort())

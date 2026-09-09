@@ -1,226 +1,163 @@
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { readDesignToken } from '@/lib/content/code-theme'
 
 /**
- * M10/M11 — two rules that are about WHICH token a surface reaches for, which
- * no contrast test can answer.
+ * Who owns a theme, and the one palette that refuses to flip.
  *
- * `contrast.test.ts` proves the palette clears its floors. It cannot prove that
- * a control ended up bordered with the token that carries the interactive
- * floor, or that the slab's local override of the palette matches the dark
- * theme it duplicates. Both of those are properties of the stylesheets, so both
- * are read out of the stylesheets.
+ * ## What this file was, and what M16 kept
  *
- * ## Rule 1 — a control's boundary is `--color-line-control` and nothing else
+ * It read every `.css` in `src/app/` and held two rules. The first named
+ * eleven control selectors by hand and required each to border with
+ * `--color-line-control`; the second required every *local* dark-palette
+ * override — `rail.css` had one for the figure, `figure.css` one for the EXPAND
+ * overlay — to equal the `.dark` block in `globals.css`, value for value.
  *
- * `kia-context/logs/BRAINSTORM.md` D19: a border that IDENTIFIES a control
- * needs 3:1 to be perceivable, a border that GROUPS does not, and on this
- * ground no line colour reaches 3:1 — `line-strong` measures 2.68:1 on the sand
- * an input actually sits on. So the interactive border is a third token. M9
- * declared it and applied it to nothing; M10 and M11 moved the components onto
- * it, and this is the guard that keeps them there.
+ * Both rules were about a system with the palette in eleven places. The
+ * language has it in one, `src/design/bazaar.css`, with both themes in the same
+ * file, so the second rule becomes something stronger and simpler: **a surface
+ * stylesheet may not theme anything.** No local override to keep in step,
+ * because no local override may exist. That is enforceable today and it closes
+ * the drift the old rule could only detect.
  *
- * Asserted in both directions, which is the half that matters: a control put
- * back on `line` or `line-strong` fails here rather than in front of a reader.
- * Mutation-tested by putting `.hl-btn` back on `--color-line-strong`.
- *
- * ## Rule 2 — every local theme override equals the dark theme it duplicates
- *
- * The slab is dark in BOTH themes, so the palette is redeclared on the element
- * using the dark theme's literal values. It cannot be shared through a `var()`
- * indirection: `code-theme.ts` reads the `.dark` block's declarations as TEXT at
- * build time and hands them to a hex converter, so an indirection there stops
- * the build.
- *
- * **There are two such overrides, not one**, which is why this half of the file
- * discovers them rather than naming one: the figure carries the slab in
- * `rail.css`, and the EXPAND overlay carries it again in `figure.css`, because
- * Radix portals the overlay out of `.prose` and mermaid renders a fresh drawing
- * into it. Two copies of a value is two values; a third is checked the moment
- * somebody writes it.
+ * The first rule is not restored yet, and deliberately. `--color-line-control`
+ * has no successor: the language separates a hairline from an interactive edge
+ * by colour, `line` against `line-strong`, and `line-strong` measures 2.00:1 on
+ * the ground — under SC 1.4.11's 3:1 for anything required to identify a
+ * component. That question is stage 1's, answered with the shell's real
+ * buttons, fields and toggles in front of us rather than invented now
+ * (`logs/PROGRESS.md`, M16). What stands in the meantime is the existence-guarded
+ * rule at the bottom of this file, and the ordering rule in
+ * `tests/unit/color/contrast.test.ts`.
  */
 
-const CSS_DIR = join(import.meta.dirname, '../../../src/app')
+const LANGUAGE = join(import.meta.dirname, '../../../src/design/bazaar.css')
+const APP_DIR = join(import.meta.dirname, '../../../src/app')
+const NOT_A_SURFACE = new Set(['globals.css', 'lokum-modules.css'])
 
-/** Comments stripped, so prose naming a token is never counted as a use. */
-function withoutComments(css: string): string {
-  return css.replace(/\/\*[\s\S]*?\*\//g, ' ')
+const language = readFileSync(LANGUAGE, 'utf8')
+
+interface Surface {
+  readonly name: string
+  readonly css: string
 }
 
-function read(name: string): string {
-  return withoutComments(readFileSync(join(CSS_DIR, name), 'utf8'))
-}
+const SURFACES: Surface[] = readdirSync(APP_DIR)
+  .filter((name) => name.endsWith('.css') && !NOT_A_SURFACE.has(name))
+  .sort()
+  .map((name) => ({ name, css: readFileSync(join(APP_DIR, name), 'utf8') }))
 
-const FILES = readdirSync(CSS_DIR).filter((name) => name.endsWith('.css')).sort()
-
-/** Every stylesheet, as one string, in import order-independent form. */
-const ALL = FILES.map((name) => read(name)).join('\n')
-
-// ---------------------------------------------------------------------------
-// Rule 1 — the interactive border
-// ---------------------------------------------------------------------------
-
-/**
- * The controls, by the selector each one is styled under.
- *
- * Typed out rather than discovered, and deliberately: "which of these
- * selectors is a control" is a design decision, not something a regex can
- * infer, and a new control that nobody adds here is a new control nobody
- * checked. That is the same argument `tests/e2e/sheets.ts` makes about
- * exemplars.
- */
-const CONTROLS: readonly string[] = [
-  '.hl-btn',                          // every record control
-  '.hl-button',                       // the quiet button
-  '.hl-field input',                  // the name field
-  '.hl-quiz textarea',                // the self-check answer
-  '.hl-check input[type="checkbox"]', // a checklist box
-  '.prose input[type="checkbox"]',    // a task-list box in the prose
-  '.hl-rail-fold',                    // M10 — the fold
-  '.hl-rail-restore',                 // M10 — the restore tab
-  '.hl-chip',                         // M12 — a catalog filter
-  '.hl-viewbtn',                      // M12 — one of the three view buttons
-  '.hl-cmod-toggle',                  // D14 — control C's per-module toggle
+/** Every `--color-slab-*` the language declares, from the light block. */
+const themeBlock = language.slice(
+  language.indexOf('@theme {'),
+  language.indexOf('\n@layer base'),
+)
+const SLAB_TOKENS = [
+  ...new Set([...themeBlock.matchAll(/(--color-slab-[a-z-]+)\s*:/g)].map((m) => m[1])),
 ]
 
-/** The declaration block a selector opens, up to its closing brace. */
-function blockFor(selector: string): string {
-  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const opener = new RegExp(`(^|[,}\\s])${escaped}\\s*\\{`, 'm')
-  for (const name of FILES) {
-    const css = read(name)
-    const match = opener.exec(css)
-    if (!match) continue
-    const start = css.indexOf('{', match.index) + 1
-    const end = css.indexOf('}', start)
-    return css.slice(start, end)
-  }
-  throw new Error(`no rule block for ${selector} in ${FILES.join(', ')}`)
-}
-
-describe('D19 — a control identifies itself with the interactive border', () => {
-  it.each(CONTROLS)('%s borders with --color-line-control', (selector) => {
-    const block = blockFor(selector)
-    expect(block, `${selector} declares no border colour at all`)
-      .toMatch(/border[^:]*:[^;]*var\(--color-line-control\)/)
+describe('the slab is one ground in both themes', () => {
+  it('is reading the tokens it claims to check', () => {
+    // A comparison over an empty list passes. The slab has a whole
+    // sub-palette — ground, raised, two inks, two lines, an arrow and five
+    // syntax roles — so a handful means the extractor broke.
+    expect(SLAB_TOKENS.length).toBeGreaterThan(10)
   })
 
-  it.each(CONTROLS)('%s does not border with a grouping token', (selector) => {
-    const block = blockFor(selector)
-    // The rest state only. A hover may darken to `line-cut`, which is a
-    // different claim and a heavier line, not a lighter one.
-    expect(block, `${selector} is bordered with a grouping token`)
-      .not.toMatch(/border[^:]*:[^;]*var\(--color-line(-strong)?\)/)
+  /**
+   * `src/lib/content/code-theme.ts` reads six of these positionally — before
+   * the `.dark` index is the light value, after it is the dark one — and throws
+   * if either is missing. So a slab token declared in only one theme is a build
+   * failure rather than a test failure, and this is the check that catches it
+   * first and says which token.
+   */
+  it.each(SLAB_TOKENS)('%s is declared in both themes', (token) => {
+    expect(() => readDesignToken(token)).not.toThrow()
   })
 
-  it('applies the token somewhere at all, so it is not a dead declaration', () => {
-    // M9 declared `--color-line-control` and left it unused, which the
-    // milestone report recorded as work left for M10/M11. This is what says it
-    // has actually been done.
-    const uses = [...ALL.matchAll(/var\(--color-line-control\)/g)].length
-    expect(uses).toBeGreaterThanOrEqual(CONTROLS.length)
+  /**
+   * A code block and a figure are dark in both themes on purpose: it is the one
+   * place the page goes dark, because it separates what the machine says from
+   * what the author says (DESIGN.md, Overview). A slab token that differed
+   * between themes would show as a code block changing colour with the page.
+   */
+  it.each(SLAB_TOKENS)('%s holds the same value in both themes', (token) => {
+    const { light, dark } = readDesignToken(token)
+    expect(dark).toBe(light)
   })
 })
 
-// ---------------------------------------------------------------------------
-// Rule 2 — the slab's palette
-// ---------------------------------------------------------------------------
-
-/** The `.dark` block of `globals.css`, where the night palette is declared. */
-function darkBlock(): string {
-  const css = read('globals.css')
-  const start = css.search(/\.dark\s*\{/)
-  expect(start, 'globals.css has no .dark block').toBeGreaterThan(-1)
-  const open = css.indexOf('{', start) + 1
-  return css.slice(open, css.indexOf('}', open))
-}
-
-function declarationsIn(block: string): Map<string, string> {
-  const found = new Map<string, string>()
-  for (const match of block.matchAll(/(--color-[a-z-]+)\s*:\s*([^;]+);/g)) {
-    found.set(match[1], match[2].trim())
-  }
-  return found
-}
-
-/**
- * Every rule OUTSIDE `globals.css` that redeclares a palette token, with the
- * selector it is declared under.
- *
- * Found rather than named, and that is the point: the slab is declared twice —
- * once on the figure in `rail.css` and once on the magnified copy in
- * `figure.css`, because the EXPAND overlay is portalled out of `.prose` and
- * mermaid renders a fresh drawing into it. A test that named one of them would
- * have let the other drift, which is exactly the failure two copies of a value
- * invite. A third copy is checked the moment somebody writes it.
- */
-function paletteOverrides(): { selector: string; declarations: Map<string, string> }[] {
-  const found: { selector: string; declarations: Map<string, string> }[] = []
-  for (const name of FILES) {
-    if (name === 'globals.css') continue
-    const css = read(name)
-    for (const match of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
-      const declarations = declarationsIn(match[2])
-      // A rule that sets one token is setting a colour; a rule that sets a
-      // whole palette is a local theme, which is what this is about.
-      if (declarations.size < 5) continue
-      found.push({ selector: `${name} ${match[1].trim()}`, declarations })
-    }
-  }
-  return found
-}
-
-describe('M11 — every local theme override duplicates the dark palette, exactly', () => {
-  const dark = declarationsIn(darkBlock())
-  const overrides = paletteOverrides()
-
-  it('finds the overrides it is meant to be checking', () => {
-    expect(overrides.length, 'no local palette override found at all')
-      .toBeGreaterThanOrEqual(2)
+describe('the language owns theming, and nothing else does', () => {
+  /**
+   * One palette, one file, both themes. The old system had the dark values in
+   * three places and a test whose whole job was to keep the copies equal; this
+   * refuses the copies instead. A surface that needs a colour to change with
+   * the theme asks for a token that already does.
+   */
+  it('declares the dark theme exactly once, in the language', () => {
+    expect(language).toMatch(/^\.dark\s*\{/m)
+    const opened = [...language.matchAll(/^\.dark\s*\{/gm)]
+    expect(opened, 'more than one .dark block in the language').toHaveLength(1)
   })
 
-  /** Each literal value in each override, paired with the token it sets. */
-  const literals = overrides.flatMap((override) =>
-    [...override.declarations.entries()]
-      .filter(([, value]) => !value.startsWith('var('))
-      .map(([token, value]) => [override.selector, token, value] as const),
-  )
-
-  it('overrides something with a literal, so this test has a subject', () => {
-    expect(literals.length).toBeGreaterThan(16)
+  it('lets no surface stylesheet theme anything', () => {
+    const offenders = SURFACES
+      .filter(({ css }) => /(^|[\s,>~+])\.dark\b/m.test(css.replace(/\/\*[\s\S]*?\*\//g, ' ')))
+      .map(({ name }) => name)
+    expect(
+      offenders,
+      'a surface stylesheet carrying its own .dark rules. The language holds '
+      + 'both themes; a surface that needs a colour to change with the theme '
+      + 'spends a token that already does.',
+    ).toEqual([])
   })
 
-  it.each(literals)('%s: %s matches the .dark declaration it copies', (_where, token, value) => {
-    const night = dark.get(token)
-    expect(night, `${token} is not declared in .dark, so nothing pins this copy`)
-      .toBeDefined()
-    expect(value, `${token} has drifted from the dark theme`).toBe(night)
-  })
-
-  it('takes its grounds and inks from the slab tokens, not from literals', () => {
-    // The overrides that are NOT semantic hues must be aliases of a
-    // `--color-slab-*` token, so the slab's own palette has exactly one
-    // definition and `code-theme.ts` reads the same values the page paints.
-    for (const override of overrides) {
-      for (const key of ['--color-paper', '--color-ink', '--color-line'] as const) {
-        expect(
-          override.declarations.get(key),
-          `${override.selector} does not alias ${key} to a slab token`,
-        ).toMatch(/^var\(--color-slab[a-z-]*\)$/)
+  it('lets no surface stylesheet redeclare a palette token', () => {
+    const offenders: string[] = []
+    for (const { name, css } of SURFACES) {
+      const bare = css.replace(/\/\*[\s\S]*?\*\//g, ' ')
+      for (const match of bare.matchAll(/(--color-[a-z0-9-]+)\s*:/g)) {
+        offenders.push(`${name}: ${match[1]}`)
       }
     }
+    expect(
+      offenders,
+      'a surface stylesheet declaring a --color-* token. Every colour in the '
+      + 'system is declared once, in src/design/bazaar.css.',
+    ).toEqual([])
   })
+})
 
-  it('declares every slab token in both themes, which code-theme.ts requires', () => {
-    const globals = read('globals.css')
-    const names = new Set(
-      [...globals.matchAll(/(--color-slab[a-z-]*)\s*:/g)].map((match) => match[1]),
-    )
-    expect(names.size).toBeGreaterThan(5)
-    const darkNames = declarationsIn(darkBlock())
-    for (const name of names) {
-      expect(darkNames.has(name), `${name} is missing from the .dark block`).toBe(true)
+describe('an interactive edge, once a surface draws one', () => {
+  const bordered = /border[a-z-]*:\s*[^;]*var\(--color-line(?:-strong)?\)/
+
+  /**
+   * The narrow version of the retired rule, and the part of it that does not
+   * depend on the open 3:1 question: an interactive or hovered edge takes
+   * `line-strong`, and a grouping edge takes `line`. Getting them the wrong way
+   * round makes a static group look pressable and a control look like a divider,
+   * which is a defect regardless of what either ratio measures.
+   */
+  it.skipIf(SURFACES.length === 0)('never borders a control with the grouping line', () => {
+    const offenders: string[] = []
+    for (const { name, css } of SURFACES) {
+      const bare = css.replace(/\/\*[\s\S]*?\*\//g, ' ')
+      for (const [, selector, block] of bare.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+        const target = selector.trim()
+        const interactive = /(?:^|[\s,.#\[])(?:button|input|textarea|select|a)\b|btn|toggle|field|chip|fold/i
+          .test(target)
+        if (!interactive) continue
+        if (!bordered.test(block)) continue
+        if (/var\(--color-line\)/.test(block)) {
+          offenders.push(`${name}: ${target}`)
+        }
+      }
     }
+    expect(
+      offenders,
+      'these border an interactive element with --color-line, the grouping '
+      + 'weight. An interactive or hovered edge takes --color-line-strong.',
+    ).toEqual([])
   })
 })

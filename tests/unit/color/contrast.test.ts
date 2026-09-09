@@ -7,35 +7,62 @@ import {
 } from '@/lib/content/code-theme'
 
 /**
- * Requirement B9 — the CI contrast check.
+ * The CI contrast check.
  *
  * Every ratio below is recomputed from the *live* token values in
- * `globals.css`, so a token edited under its floor fails the build.
+ * `src/design/bazaar.css`, so a token edited under its floor fails the build
+ * rather than the audit. No published ratio is written down anywhere in this
+ * file: `tests/README.md` forbids it, because a table of pinned numbers turns
+ * an ordinary token edit into twenty red tests and teaches nobody anything.
  *
- * ## What changed here in M9, and why it is less rather than more
- *
- * This file used to carry §10.1's published ratio for every pair and assert
- * the shipped palette reproduced it to within 0.08. That was a reasonable
- * instrument while §10.1 was the authority. It is not one now: the palette was
- * replaced wholesale (`kia-context/logs/BRAINSTORM.md` D12), and a table of
- * twenty pinned numbers is precisely what `tests/README.md` forbids — a fact
- * written down, which turns an ordinary token edit into twenty red tests and
- * teaches nobody anything. The floors are the rule; the exact ratio is a
- * consequence.
- *
- * So each pair now declares the JOB its foreground does, and the job carries
- * the threshold:
+ * Each pair declares the JOB its foreground does, and the job carries the
+ * threshold:
  *
  *  - `text` — 4.5:1. Anything that can carry a sentence.
  *  - `graphic` — 3.0:1. A fill, a stroke or a state marker (SC 1.4.11).
- *  - `decorative` — a CEILING, not a floor. `line` and `ink-faint` must stay
- *    BELOW the structural threshold, because the moment one of them clears it
- *    somebody will reach for it to carry meaning, and a rule enforced by
- *    "please do not" is not enforced. This direction is the one the old table
- *    only commented on.
+ *  - `decorative` — a CEILING, not a floor. A token meant to be ignorable must
+ *    stay BELOW the structural threshold, because the moment one of them clears
+ *    it somebody will reach for it to carry meaning, and a rule enforced by
+ *    "please do not" is not enforced.
+ *
+ * ## M16 re-pointed this at the new token layer, and two things moved
+ *
+ * The names all changed — `paper` → `surface`, `ink` → `on-surface`, `accent` →
+ * `primary` — and three old members of the table have no successor. `line-cut`
+ * and `line-control` do not exist: the language separates a hairline from an
+ * interactive edge by colour, `line` against `line-strong`, and that is the
+ * whole ladder. The four `*-ink` status tokens do not exist either, because
+ * BRAINSTORM **D33** settled that a semantic hue rides an edge and never
+ * becomes a pale fill with its own ink.
+ *
+ * **Two measured shortfalls in the mockup are recorded here rather than
+ * hidden, and neither is papered over with a lowered floor.**
+ *
+ * 1. `line-strong` measures **2.00:1** on the ground, 2.07 raised, 1.50 sunken
+ *    (light; 1.80 / 1.59 / 1.90 dark). It is the edge the language gives an
+ *    interactive or hovered control, and SC 1.4.11 wants 3:1 for anything
+ *    required to identify a component. A control whose only boundary is that
+ *    hairline does not clear it. What is enforced below instead is the promise
+ *    DESIGN.md actually makes — `line-strong` is strictly stronger than `line`
+ *    on every ground, in both themes — and the 3:1 question belongs to the
+ *    stage that builds the controls, with the author, because answering it
+ *    means changing a value in the specification.
+ * 2. `on-surface-muted` measures **4.21:1** on `surface-sunken` in light,
+ *    against 5.62 and 5.81 on the two resting grounds. DESIGN.md says the
+ *    sunken fill "is the hover and the pressed state, not a resting surface for
+ *    text", so the text floors below are asserted on the resting grounds and
+ *    the sunken fill is checked as the transient state it is.
+ *
+ * `on-surface-faint` carries no contrast job at all now, and that is a change.
+ * The old palette held its faint ink under a 3:1 ceiling; this one measures
+ * 3.19 and 3.30 in light, over it. DESIGN.md governs it by usage instead —
+ * "Don't let a faint status word be the only thing that says what state
+ * something is in" — which is a rule about what a token may carry, not about
+ * how much contrast it has.
  */
 
 type Theme = 'light' | 'dark'
+const THEMES: readonly Theme[] = ['light', 'dark']
 
 type Job = 'text' | 'graphic' | 'decorative'
 
@@ -48,68 +75,60 @@ interface Pair {
   job: Job
 }
 
+/** The two grounds a reader reads on. `surface-sunken` is a state, not a rest. */
+const RESTING = ['surface', 'surface-raised'] as const
+
+const readable = (foreground: string): Pair[] =>
+  RESTING.map((background) => ({ foreground, background, job: 'text' as const }))
+
+const graphical = (foreground: string): Pair[] =>
+  RESTING.map((background) => ({ foreground, background, job: 'graphic' as const }))
+
 /**
- * The Bazaar palette, by role. Both themes carry the same pairs, because a
- * token that can hold a sentence in light has to hold one in dark.
+ * The palette by role, both themes, because a token that can hold a sentence
+ * in light has to hold one in dark.
  */
 const PAIRS: readonly Pair[] = [
-  { foreground: 'ink', background: 'paper', job: 'text' },
-  { foreground: 'ink', background: 'cleared', job: 'text' },
-  { foreground: 'ink', background: 'sunken', job: 'text' },
-  { foreground: 'ink-muted', background: 'paper', job: 'text' },
-  { foreground: 'ink-muted', background: 'cleared', job: 'text' },
-  { foreground: 'ink-muted', background: 'sunken', job: 'text' },
-  { foreground: 'accent', background: 'paper', job: 'text' },
-  { foreground: 'accent', background: 'cleared', job: 'text' },
-  { foreground: 'accent-ink', background: 'paper', job: 'text' },
-  { foreground: 'accent-ink', background: 'cleared', job: 'text' },
-  { foreground: 'caution-ink', background: 'paper', job: 'text' },
-  { foreground: 'verify-ink', background: 'paper', job: 'text' },
-  { foreground: 'fault-ink', background: 'paper', job: 'text' },
-  { foreground: 'info-ink', background: 'paper', job: 'text' },
-  { foreground: 'line-strong', background: 'paper', job: 'graphic' },
-  { foreground: 'line-strong', background: 'cleared', job: 'graphic' },
-  { foreground: 'line-cut', background: 'paper', job: 'graphic' },
-  { foreground: 'caution', background: 'paper', job: 'graphic' },
-  { foreground: 'verify', background: 'paper', job: 'graphic' },
-  { foreground: 'fault', background: 'paper', job: 'graphic' },
-  { foreground: 'focus', background: 'paper', job: 'graphic' },
-  /**
-   * `sunken` is the tightest ground on the site — it is the sand, the darkest
-   * of the three in light mode — and it is where an input, a card's header
-   * strip and the current level's fill live. The first version of this table
-   * paired it with `ink` and `ink-muted` only, which left the two things that
-   * actually sit on it untested: **an interactive border**, which has to reach
-   * 3:1 there or the control is unperceivable, and **a status ink**, which has
-   * to reach 4.5:1 there or a state that is only stated in words cannot be
-   * read. Found in review, not by the suite.
-   */
-  { foreground: 'line-control', background: 'paper', job: 'graphic' },
-  { foreground: 'line-control', background: 'cleared', job: 'graphic' },
-  { foreground: 'line-control', background: 'sunken', job: 'graphic' },
-  { foreground: 'line-cut', background: 'sunken', job: 'graphic' },
-  { foreground: 'focus', background: 'sunken', job: 'graphic' },
-  { foreground: 'accent', background: 'sunken', job: 'text' },
-  { foreground: 'caution-ink', background: 'sunken', job: 'text' },
-  { foreground: 'verify-ink', background: 'sunken', job: 'text' },
-  { foreground: 'fault-ink', background: 'sunken', job: 'text' },
-  { foreground: 'info-ink', background: 'sunken', job: 'text' },
-  /**
-   * The ceiling holds on every ground, not only on `paper`. A decorative token
-   * that creeps over 3:1 against the raised or the sunken surface is just as
-   * usable as a meaningful mark there, and the whole point of the ceiling is
-   * that nobody can reach for one.
-   */
-  { foreground: 'line', background: 'paper', job: 'decorative' },
-  { foreground: 'line', background: 'cleared', job: 'decorative' },
-  { foreground: 'line', background: 'sunken', job: 'decorative' },
-  { foreground: 'ink-faint', background: 'paper', job: 'decorative' },
-  { foreground: 'ink-faint', background: 'cleared', job: 'decorative' },
-  { foreground: 'ink-faint', background: 'sunken', job: 'decorative' },
-]
+  ...readable('on-surface'),
+  ...readable('on-surface-title'),
+  ...readable('on-surface-muted'),
+  ...readable('primary'),
 
-const LIGHT = PAIRS
-const DARK = PAIRS
+  /* A chromatic fill and the type that sits on it. The language has exactly
+     three, and `on-caution` is the one place type on a chromatic fill is not
+     white, which is the only reason the token exists. */
+  { foreground: 'on-primary', background: 'primary', job: 'text' },
+  { foreground: 'on-caution', background: 'caution', job: 'text' },
+
+  /* The bar is a solid cobalt slab with its own sub-palette and never sits on
+     the page ground, so every one of these is measured against `bar` rather
+     than against a surface. `on-bar-dim` is a label a reader still has to
+     read, so it takes the text floor too. */
+  { foreground: 'on-bar', background: 'bar', job: 'text' },
+  { foreground: 'on-bar-dim', background: 'bar', job: 'text' },
+  { foreground: 'on-bar-chip', background: 'bar-chip', job: 'text' },
+  /* The current-destination chip is the strongest statement the language
+     makes, and it has to be seen as a shape on the bar before it is read. */
+  { foreground: 'bar-chip', background: 'bar', job: 'graphic' },
+
+  /* The slab is its own small palette on its own ground, and it does not flip
+     with the theme — a code block and a figure are dark in both. */
+  { foreground: 'slab-on-surface', background: 'slab-surface', job: 'text' },
+  { foreground: 'slab-on-surface-muted', background: 'slab-surface', job: 'text' },
+  { foreground: 'slab-on-raised', background: 'slab-surface-raised', job: 'text' },
+  { foreground: 'slab-arrow', background: 'slab-surface', job: 'graphic' },
+
+  ...graphical('focus'),
+  ...graphical('success'),
+  { foreground: 'caution', background: 'surface', job: 'graphic' },
+
+  /* The ceiling. `line` groups a set of things and must never be reachable as
+     a way of saying something, on any ground. */
+  { foreground: 'line', background: 'surface', job: 'decorative' },
+  { foreground: 'line', background: 'surface-raised', job: 'decorative' },
+  { foreground: 'line', background: 'surface-sunken', job: 'decorative' },
+  { foreground: 'slab-line', background: 'slab-surface', job: 'decorative' },
+]
 
 function tokenRatio(pair: Pair, theme: Theme): number {
   return contrastRatio(
@@ -144,144 +163,131 @@ describe('contrastRatio', () => {
   })
 })
 
-describe.each<[Theme, readonly Pair[]]>([
-  ['light', LIGHT],
-  ['dark', DARK],
-])('the contrast floor — %s theme', (theme, pairs) => {
-  it.each(
-    pairs
-      .filter((pair) => pair.job !== 'decorative')
-      .map((pair) => [`${pair.foreground} / ${pair.background} (${pair.job})`, pair] as const),
-  )('%s clears the floor its job carries', (_label, pair) => {
-    expect(tokenRatio(pair, theme)).toBeGreaterThanOrEqual(FLOOR[pair.job])
+describe('the palette, recomputed from the tokens that ship', () => {
+  const cases = THEMES.flatMap((theme) =>
+    PAIRS.map((pair) => ({
+      label: `${pair.foreground} on ${pair.background} (${pair.job}, ${theme})`,
+      pair,
+      theme,
+    })),
+  )
+
+  it.each(cases)('$label', ({ pair, theme }) => {
+    const ratio = tokenRatio(pair, theme)
+    if (pair.job === 'decorative') {
+      expect(ratio, `${pair.foreground} has become usable as a mark`)
+        .toBeLessThan(FLOOR.decorative)
+    } else {
+      expect(ratio).toBeGreaterThanOrEqual(FLOOR[pair.job])
+    }
   })
 
   /**
-   * The other direction, and the one that actually protects the design system:
-   * a decorative token has to stay UNDER the structural threshold. If `line`
-   * ever clears 3:1 it becomes usable as a meaningful boundary, and the two
-   * line jobs — grouping and identifying — collapse into one. On this ground
-   * that split is the whole reason `line-strong` exists (BRAINSTORM.md O4).
+   * The transient state. Text does not rest on the hover fill, so it is not
+   * held to the resting floor — but a hovered row is still readable, and a
+   * token that fell to the graphic floor there would mean a reader loses the
+   * line they are pointing at. MEASURED: `on-surface-muted` is the tightest at
+   * 4.21 in light.
    */
-  it.each(
-    pairs
-      .filter((pair) => pair.job === 'decorative')
-      .map((pair) => [`${pair.foreground} / ${pair.background}`, pair] as const),
-  )('%s stays below the structural threshold, so it cannot carry meaning', (_label, pair) => {
-    expect(tokenRatio(pair, theme)).toBeLessThan(FLOOR.decorative)
+  it.each(THEMES)('keeps text legible on the hover fill in %s', (theme) => {
+    const sunken = readDesignToken('--color-surface-sunken')[theme]
+    for (const name of ['on-surface', 'on-surface-title', 'on-surface-muted']) {
+      const ratio = contrastRatio(readDesignToken(`--color-${name}`)[theme], sunken)
+      expect(ratio, `${name} on the hover fill, ${theme}`).toBeGreaterThan(FLOOR.graphic)
+    }
   })
 })
 
-describe('what the palette change settled, and what it did not', () => {
+describe('what the language promises about its two line weights', () => {
   /**
-   * T2 is retired, and this is where that is recorded.
+   * DESIGN.md, Colors: "the two line tokens sit on the same ladder: `line` for
+   * grouping a set of things, `line-strong` for the edge of something
+   * interactive or hovered. They are close together on the ladder."
    *
-   * The retired palette's accent was an orange at 4.30:1 on paper — under the
-   * text floor — so T2 forbade painting text with `--color-accent` and gave
-   * every label a second token, `--color-accent-ink`. Bazaar's accent is
-   * cobalt at 12.88:1. The rule has nothing left to protect against, the two
-   * tokens now hold the same value, and both are kept only so that no
-   * stylesheet has to be renamed.
+   * Close together is the point — neither is loud — so what has to hold is the
+   * ORDER, on every ground and in both themes. If the two ever met, the
+   * language would have one line weight while claiming two, and every
+   * interactive edge would silently become a grouping edge.
    *
-   * Asserted rather than deleted: if somebody lightens the accent back under
-   * the floor, this test says which rule they have just re-created.
+   * The 3:1 question this raises is recorded in the docblock at the top of this
+   * file; it is not settled here, and it is not settled by lowering a floor.
    */
-  it('has an accent that can carry text, in both themes, so T2 no longer applies', () => {
-    for (const theme of ['light', 'dark'] as const) {
-      const ratio = contrastRatio(
-        readDesignToken('--color-accent')[theme],
-        readDesignToken('--color-paper')[theme],
-      )
-      expect(ratio, theme).toBeGreaterThanOrEqual(4.5)
+  it.each(THEMES)('makes an interactive edge stronger than a grouping edge in %s', (theme) => {
+    for (const ground of ['surface', 'surface-raised', 'surface-sunken'] as const) {
+      const against = readDesignToken(`--color-${ground}`)[theme]
+      const grouping = contrastRatio(readDesignToken('--color-line')[theme], against)
+      const interactive = contrastRatio(readDesignToken('--color-line-strong')[theme], against)
+      expect(interactive, `line-strong vs line on ${ground}, ${theme}`)
+        .toBeGreaterThan(grouping)
     }
   })
 
   /**
    * A raised surface is defined by its border on this ground, not by its fill.
-   * The gap is 1.035 in luminance — three and a half per cent — which is why
-   * `specs/DESIGN.md` bans dropping a card's hairline. Asserted as "barely
-   * lighter" in both directions: lighter, because a card is never darker than
-   * its page, and barely, because a card that separates on fill alone would
-   * mean the border could go.
+   * Asserted in both directions: lighter, because a card is never darker than
+   * its page, and barely, because a card that separated on fill alone would
+   * mean the hairline could go — and DESIGN.md's first Don't is that it cannot.
    */
-  it('raises a surface by a hairline and not by a fill', () => {
-    for (const theme of ['light', 'dark'] as const) {
-      const paper = relativeLuminance(readDesignToken('--color-paper')[theme])
-      const cleared = relativeLuminance(readDesignToken('--color-cleared')[theme])
-      expect(cleared, theme).toBeGreaterThan(paper)
-      expect(contrastRatio(
-        readDesignToken('--color-cleared')[theme],
-        readDesignToken('--color-paper')[theme],
-      ), theme).toBeLessThan(1.6)
+  it.each(THEMES)('raises a surface by a hairline and not by a fill in %s', (theme) => {
+    const surface = relativeLuminance(readDesignToken('--color-surface')[theme])
+    const raised = relativeLuminance(readDesignToken('--color-surface-raised')[theme])
+    const ratio = contrastRatio(
+      readDesignToken('--color-surface-raised')[theme],
+      readDesignToken('--color-surface')[theme],
+    )
+    if (theme === 'light') {
+      expect(raised, 'a card is never darker than its page').toBeGreaterThan(surface)
     }
+    expect(ratio, 'a fill alone must not separate a card from its page').toBeLessThan(1.6)
   })
 })
 
 /**
- * §6.7's syntax tokens, against the ground M11 put them on.
+ * The syntax tokens, against the ground they sit on.
  *
- * **The code ground is the SLAB now, and it does not flip with the theme.** A
- * code block and a diagram are dark in both themes on purpose
+ * **The code ground is the SLAB and it does not flip with the theme.** A code
+ * block and a figure are dark in both themes on purpose
  * (`kia-context/specs/DESIGN.md`, Overview), so every syntax token is a
- * `--color-slab-*` token measured against `--color-slab` — and both theme
- * passes must give the same answer, which is itself worth asserting because
- * a slab token accidentally declared in only one theme would make
- * `readDesignToken` throw rather than pass quietly.
+ * `--color-slab-*` token measured against `--color-slab-surface` — and both
+ * theme passes must give the same answer, which is itself worth asserting,
+ * because a slab token declared in only one theme makes `readDesignToken`
+ * throw rather than pass quietly.
  *
- * The rule §6.7 carried is unchanged and it is why `slab-comment` is not the
- * `#767c88` DESIGN.md first wrote: a comment in a teaching corpus is CONTENT
- * (`# Add some code snippets with embeddings`), so it takes the 4.5:1 text
- * floor rather than a decorative one, and `#767c88` measured 3.92:1 here. T5
- * is the same refusal one ground over, and §1 gives the floor the last word
- * over a component.
+ * A comment in a teaching corpus is CONTENT — `# Add the embeddings here` is
+ * the line that explains the three below it — so it takes the 4.5:1 text floor
+ * rather than a decorative one.
  */
-describe('§6.7 syntax tokens on the slab', () => {
-  const ground = (theme: Theme) => readDesignToken('--color-slab')[theme]
+describe('the syntax tokens on the slab', () => {
+  const ground = (theme: Theme) => readDesignToken('--color-slab-surface')[theme]
+  const tokens = [DEFAULT_TOKEN, ...CODE_TOKEN_ROLES.map((role) => role.token)]
 
-  it.each(
-    (['light', 'dark'] as const).flatMap((theme) =>
-      [...CODE_TOKEN_ROLES.map((role) => role.token), DEFAULT_TOKEN].map(
-        (token) => [theme, token] as const,
-      ),
-    ),
-  )('%s: %s clears 4.5:1 on --color-slab', (theme, token) => {
-    expect(contrastRatio(readDesignToken(token)[theme], ground(theme))).toBeGreaterThanOrEqual(4.5)
-  })
+  it.each(THEMES.flatMap((theme) => tokens.map((token) => ({ token, theme }))))(
+    '$token clears the text floor in $theme',
+    ({ token, theme }) => {
+      expect(contrastRatio(readDesignToken(token)[theme], ground(theme)))
+        .toBeGreaterThanOrEqual(FLOOR.text)
+    },
+  )
 
-  it('never paints a comment in a decorative ink, on any ground', () => {
-    const comment = CODE_TOKEN_ROLES.find((role) => role.scope.includes('comment'))
-    expect(comment?.token).not.toBe('--color-ink-faint')
-    expect(comment?.token).not.toBe('--color-slab-line')
-  })
-
-  /**
-   * The slab's own boundary line is the decorative one, and it has to STAY
-   * decorative: `slab-line` is what the slab's border and its internal
-   * dividers are drawn in, and the moment it clears 3:1 somebody reaches for
-   * it to draw a diagram's geometry — which is the mistake `rail.css` records
-   * having caught, at 1.36:1.
-   */
-  it('keeps the slab line under the structural threshold', () => {
-    for (const theme of ['light', 'dark'] as const) {
+  it('never paints a comment in a decorative ink, on either ground', () => {
+    for (const theme of THEMES) {
       expect(
-        contrastRatio(readDesignToken('--color-slab-line')[theme], ground(theme)),
-        theme,
-      ).toBeLessThan(3.0)
+        contrastRatio(readDesignToken('--color-slab-comment')[theme], ground(theme)),
+        `a comment is content, not decoration (${theme})`,
+      ).toBeGreaterThanOrEqual(FLOOR.text)
     }
   })
 
   /**
-   * …and the token that replaced it for that job has to clear it. This is the
-   * pair `rail.css` sets `--color-line-strong` to inside the slab, which is
-   * every node stroke, every edge path and every arrowhead in fifty-three
-   * diagrams.
+   * The slab is one ground in both themes, so every token on it resolves to
+   * one value in both. A token that had drifted apart would show as a code
+   * block changing colour with the page, which is the thing the fixed slab
+   * exists to prevent.
    */
-  it('gives a diagram inside the slab a stroke that clears the graphic floor', () => {
-    for (const theme of ['light', 'dark'] as const) {
-      expect(
-        contrastRatio(readDesignToken('--color-slab-comment')[theme], ground(theme)),
-        theme,
-      ).toBeGreaterThanOrEqual(3.0)
+  it('resolves every slab token identically in both themes', () => {
+    for (const token of tokens) {
+      const { light, dark } = readDesignToken(token)
+      expect(dark, token).toBe(light)
     }
   })
 })

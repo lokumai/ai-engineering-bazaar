@@ -9,7 +9,7 @@ description: >
 authority: background
 writes: agent, whenever a decision is made
 status: active
-covers: "the whole project, 2026-07-07 onward — D1 to D24, O1 to O4"
+covers: "the whole project, 2026-07-07 onward — D1 to D34, O1 to O4"
 last_updated: "2026-09-09"
 ---
 
@@ -870,3 +870,149 @@ white and fails. Fixing it is a deliverable of `logs/PROGRESS.md` M9, not a note
 
 **Rule that follows:** `specs/DESIGN.md`, Colors — the two line tokens and the split between them.
 See D12 for why the ground was the only variable.
+
+---
+
+### D29 · The language takes its own class prefix, so a re-theme cannot pass for a rebuild — 2026-09-09
+
+M16 deletes the eleven old stylesheets and rebuilds every surface. Both the old stylesheets and
+`src/design/bazaar.css` used the `hl-` prefix, and **13 names collided with different meanings on
+each side** — `hl-btn` (60 places in the markup), `hl-note` (19), `hl-rail` (19), `hl-node` (11),
+plus `hl-band`, `hl-card`, `hl-card-title`, `hl-facts`, `hl-figure`, `hl-slab`, `hl-rail-fold`,
+`hl-rail-head`, `hl-rail-restore`: 136 places in all.
+
+**Considered:** keep `hl-` and rebuild each surface's markup in the same commit as its stylesheet.
+**Rejected**, because during the rebuild any surface not yet touched would silently pick up the new
+rules for those 13 and **look plausible while still being the old structure** — which is exactly how
+M9 to M14 passed review. There would also be no mechanical way to tell a rebuilt surface from a
+re-themed one, and the absence of that signal is what let 378 of 398 old class names survive.
+
+**Chosen:** the language renames to `bz-`. It cost one mechanical pass over `bazaar.css` (116
+occurrences), the 33 selector pairs of the transcription test, and the eight class names
+`scripts/curriculum-css.mjs` emits. In exchange, `grep -r 'hl-' src --include='*.tsx'` is a live
+progress meter: **1,252 today, 0 when the rebuild is done.**
+
+**Deliberately out of scope:** the `<html>` stamps `src/lib/record/boot.ts` writes —
+`hl-signed-<n>`, `hl-cat-<slug>-started|complete`, `hl-role-<id>` and the `data-hl-*` attributes.
+Those are the **record's** vocabulary, not the design's, and renaming them would churn the boot
+script, the store, the generator and 128 generated selectors for no design gain.
+
+**Rule that follows:** `CLAUDE.md` — what "rebuilt" means, and the three mechanical tests of it.
+
+### D30 · A surface with no mockup is derived from primitives, never invented — 2026-09-09
+
+Eight routes have no mockup at all: `/legend/`, `/legend/specimen/`, `/team/`,
+`/team/assignments/`, `/sign-in/`, `/sign-in/alias/`, `/join/`, `/auth/callback/`. The language names
+no primitive for a form, a table or a stat tile.
+
+**Considered:** stop M16 after the nine mockup-backed surfaces and wait for the author to draw the
+other eight (highest fidelity, but four of them sit behind an auth flag that is off by default, and
+the milestone could not finish); or defer them to M17 (which would leave part of the old token layer
+alive beside the new one, so the eleven stylesheets could not all be deleted).
+
+**Chosen:** rebuild them from primitives the mockups already specify — `card`, `tag`,
+`button-primary`, `button-quiet`, `slab`, `bar-field` for an input, the group and item rows for a
+list. Where one genuinely needs a shape the language does not have, **that one shape is a question
+to the author, not a design decision.**
+
+### D31 · Layout comes from the component mockup, colour from the shell — 2026-09-09
+
+**Measured:** mockups `02` to `09` are on a different palette from `01-theme-T4-ground-G3-powder`.
+Ground `#f7f8fa` against `#fdfbf7`, accent `#0b6e5f` against `#282864`, hairline `#e3e6eb` against
+`#d8cbb4`, a different five-hue series, and no Avenir in the type stack. They say why in their own
+prose: *"All three are shown in one neutral palette on purpose, so you are judging the structure and
+not the colour."* They are layout studies.
+
+So "indistinguishable from its mockup" had to be split before it could be an acceptance criterion at
+all. Taken literally against `03-catalog.html` it would have put a green accent on a grey ground —
+the mirror image of the mistake M16 exists to correct.
+
+**Chosen:** **geometry, structure and class semantics come from the component mockup; colour, type
+and every token come from the shell.** Two consequences were checked rather than assumed.
+`04-module-layout.html` and `09-sidebar.html` contain no T4 variant at all, so PROGRESS.md's "T4's
+own" resolves to the shell file itself — `01`'s `main > .col` *is* the ratified reading page and its
+`details.arch` *is* the ratified rail. And `06-code-diagrams.html` proposes a slab
+(`#0f131a/#cdd6e0/#262d38`) that is **not** the one the shell ships (`#1d1f27/#e7e3d8/#33363f`); the
+shell wins, because it is the specification, and `06` contributes only its three diagram node roles.
+
+### D32 · The three-weight line system is retired; the browser fact it guarded is not — 2026-09-09
+
+The old design quantised three line weights after ISO 128 — `--stroke-hair` 1px, `--stroke-struct`
+1.5px, `--stroke-cut` 2px — and two test files existed because **Chrome floors a border width to a
+whole CSS pixel**, which deleted the middle one silently. The rule was that the struct weight had to
+be *painted* rather than bordered.
+
+The T4 language has no such system: it separates a hairline from a strong edge by **colour**, `line`
+against `line-strong`, and every line it draws is one whole pixel. `--stroke-*` appears **0** times
+in the language against 16 in the old `globals.css`. Keeping the rule would have meant asserting a
+fact about a deleted design.
+
+**Chosen:** re-express, don't delete. `tests/unit/stroke-weights.test.ts` now refuses **any
+fractional pixel in any border or outline** across every shipped stylesheet — the same defect, in a
+system with no stroke scale, and it would catch a 1.5px border reintroduced tomorrow. The browser
+probe survives as the single test in `tests/e2e/stroke-weights.spec.ts`, because it is the premise
+the unit rule rests on and it should be asked of the engine rather than quoted.
+
+Three rules of `tests/unit/color/lokum.test.ts` were retired the same way, and **three of them were
+measured false** against the specification: the five hues span L 0.315 to 0.657, so there is no
+shared lightness; there is no half-chroma sibling to halve; and the primary *is* `category-2`, so
+"20° clear of the accent" is 0° by design. See the docblock of
+`tests/unit/color/category-hues.test.ts`.
+
+### D33 · A semantic hue rides an edge; it never becomes a pale fill — 2026-09-09
+
+The corpus turns `style X fill:#HEX` into four semantic diagram classes — `fault`, `verify`, `info`,
+`caution` — styled from tokens, and the old design gave each a base, an ink and a pale wash: 12
+tokens. **The language has `success` and `caution` and no pale tint anywhere.**
+
+**Considered:** derive a wash per semantic by lightening each hue, which would also have solved the
+catalog table's tinted level badge. **Rejected:** a tint scale exists nowhere in the mockup, so it
+would have been the language growing a new dimension by derivation — the shape of the mistake that
+produced Manrope and a re-hued category series.
+
+**Chosen:** a figure is a dark slab and a node is a raised slab surface with a hairline, so the
+semantic rides the node's **border** while the fill stays the slab's own. `verify` = `success`
+`#2f8c86`, `caution` = `#b8873b`, `fault` = the clay `#a0503c`, `info` = the cobalt `#282864`. Four
+hues, every hex already in the mockup, zero washes — and it is what DESIGN.md's Components section
+already says a figure node is. Colour stays a second signal because the semantic class name remains
+in the markup.
+
+The same principle settled two other places without a second conversation: the catalog table's level
+badge takes an edge rather than a tinted fill, and the exported RECORD OF WORK — which had a
+half-chroma fill for a started subsystem — now takes the hue on an edge for `started` and as a fill
+for `complete`.
+
+### D34 · A measured accessibility floor outranks a transcribed value, once, and in writing — 2026-09-09
+
+The mockup is the specification and it outranks every document. This is the one thing that outranks
+the mockup, and it took the author's decision to establish.
+
+**Measured:** the mockup sets `.c { color:#767c88 }` on a code comment, which is **3.92:1** on the
+slab ground — under the 4.5:1 text floor. A code comment in a teaching corpus is *content*: it is
+the line that explains the three below it. The retired design had already found this and shipped
+`#8b91a0`; M15's transcription faithfully restored the mockup's value and **restored the defect with
+it**, which is how this was caught — by re-pointing the contrast table at the new token layer, not
+by reading either file.
+
+**Considered:** keep the mockup's value and reclassify a comment as decorative, taking the 3:1
+graphic floor. **Rejected:** it contradicts the project's own settled position, and the reader who
+most needs the contrast is the one who loses it. Also considered: redraw the mockup, which keeps the
+invariant perfectly but edits the specification.
+
+**Chosen:** the language lifts the same hue to `#8b91a0`, measured **5.21:1**, and the deviation is
+named in three places rather than left silent — `DESIGN.md` says which value and why,
+`tests/unit/design/transcription.test.ts` carries a `DEVIATIONS` list that is itself checked for
+staleness, and `tests/unit/color/contrast.test.ts` is what proves the replacement clears the floor.
+The two files have to agree for either to pass. **The list has one entry, and adding a second is a
+decision for the author, never a way past a red test.**
+
+The same pass found the mockup italicises comments while §3.4 forbids mono italic — the shipped
+syntax theme was already upright, so the transcribed `font-style: italic` was a contradiction rather
+than a choice, and it is gone.
+
+**Still open, and it is stage 1's:** `--color-line-strong` measures **2.00:1** on the ground, 2.07
+raised, 1.50 on the hover fill. It is the edge the language gives an interactive control, and SC
+1.4.11 asks 3:1 for anything required to identify a component. The author chose to answer it with the
+shell's real controls in front of us rather than invent a token now. What is enforced meanwhile is
+the promise DESIGN.md actually makes: `line-strong` is strictly stronger than `line` on every ground,
+in both themes.

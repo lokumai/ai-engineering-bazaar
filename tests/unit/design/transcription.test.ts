@@ -250,6 +250,42 @@ describe('M15 — the language is a transcription of the mockup', () => {
     expect(language.length).toBeGreaterThan(2_000)
   })
 
+  /**
+   * THE DEVIATION LIST, and it has one entry.
+   *
+   * The mockup is the specification and this file is what enforces that, so a
+   * value the language changes on purpose has to be named here or the whole
+   * check becomes negotiable. **A measured accessibility floor is the one thing
+   * that outranks a transcribed value** (BRAINSTORM D34), and nothing else does.
+   *
+   * `slab-comment`: the mockup sets `.c { color:#767c88 }`, which measures
+   * **3.92:1** on the slab ground. A code comment in a teaching corpus is
+   * content — it is the line that explains the three below it — so it takes the
+   * 4.5:1 text floor. The language lifts the same hue to `#8b91a0`, measured
+   * **5.21:1**. The retired design had already found and fixed this; M15's
+   * transcription restored the mockup's value and with it the defect, which is
+   * how this was caught.
+   *
+   * Adding an entry here is a decision for the author, not a way past a red
+   * test. `tests/unit/color/contrast.test.ts` is what proves the replacement
+   * actually clears the floor, so the two files have to agree for either to
+   * pass.
+   */
+  const DEVIATIONS: readonly { readonly mockup: string; readonly language: string; readonly why: string }[] = [
+    {
+      mockup: '#767c88',
+      language: '#8b91a0',
+      why: 'a code comment is content and takes the 4.5:1 text floor; the mockup measures 3.92:1',
+    },
+  ]
+
+  const permittedInLanguage = new Set(
+    DEVIATIONS.map((d) => parseColour(d.language)).filter((c): c is string => c !== null),
+  )
+  const permittedlyDropped = new Set(
+    DEVIATIONS.map((d) => parseColour(d.mockup)).filter((c): c is string => c !== null),
+  )
+
   // -- 1. colour, both directions, name-agnostic ---------------------------
 
   describe('every colour, in both directions', () => {
@@ -265,13 +301,39 @@ describe('M15 — the language is a transcription of the mockup', () => {
     })
 
     it('the language invents no colour the mockup does not contain', () => {
-      const invented = [...inLanguage].filter((colour) => !inMockup.has(colour)).sort()
+      const invented = [...inLanguage]
+        .filter((colour) => !inMockup.has(colour))
+        .filter((colour) => !permittedInLanguage.has(colour))
+        .sort()
       expect(invented, 'colours in the language that are not in the mockup').toEqual([])
     })
 
     it('the language drops no colour the mockup contains', () => {
-      const dropped = [...inMockup].filter((colour) => !inLanguage.has(colour)).sort()
+      const dropped = [...inMockup]
+        .filter((colour) => !inLanguage.has(colour))
+        .filter((colour) => !permittedlyDropped.has(colour))
+        .sort()
       expect(dropped, 'colours in the mockup that the language never declares').toEqual([])
+    })
+
+    /**
+     * The deviation list is a hole in the check above, so it is checked too:
+     * every entry has to be a colour the mockup really contains and the
+     * language really replaced. A stale entry would keep a hole open after the
+     * reason for it had gone.
+     */
+    it('carries no stale deviation', () => {
+      for (const deviation of DEVIATIONS) {
+        const from = parseColour(deviation.mockup)
+        const to = parseColour(deviation.language)
+        expect(from, deviation.mockup).not.toBeNull()
+        expect(to, deviation.language).not.toBeNull()
+        expect(inMockup.has(from as string), `${deviation.mockup} is no longer in the mockup`)
+          .toBe(true)
+        expect(inLanguage.has(to as string), `${deviation.language} is not in the language`)
+          .toBe(true)
+        expect(deviation.why.length, 'a deviation without a reason').toBeGreaterThan(20)
+      }
     })
   })
 
@@ -325,9 +387,12 @@ describe('M15 — the language is a transcription of the mockup', () => {
     })
 
     it('declares no colour the approved dark mockup does not contain', () => {
+      // The one named deviation applies here too: the slab does not flip with
+      // the theme, so a lifted slab token is lifted in both.
       const invented = [...declared]
         .map(([name, value]) => [name, parseColour(value)] as const)
-        .filter(([, colour]) => colour !== null && !inDarkMockup.has(colour))
+        .filter(([, colour]) =>
+          colour !== null && !inDarkMockup.has(colour) && !permittedInLanguage.has(colour))
         .map(([name]) => name)
         .sort()
       expect(invented, 'dark tokens that are not in the dark mockup').toEqual([])
@@ -370,39 +435,39 @@ describe('M15 — the language is a transcription of the mockup', () => {
      * legitimately differ in shorthand and ordering.
      */
     const PAIRS: ReadonlyArray<readonly [string, string, readonly string[]]> = [
-      ['.top', '.hl-bar', ['background', 'z-index', 'position']],
-      ['.top-in', '.hl-bar-inner', ['height', 'padding', 'gap']],
-      ['.brand', '.hl-brand', ['gap', 'color']],
-      ['.mainnav', '.hl-bar-nav', ['gap', 'margin-left']],
-      ['.dd', '.hl-menu', ['min-width', 'padding', 'border-radius', 'background', 'box-shadow', 'top']],
-      ['.band', '.hl-band', ['height', 'background-color', 'background-size', 'background-position', 'border-bottom']],
-      ['.shell', '.hl-shell', ['grid-template-columns', 'align-items']],
-      ['.side', '.hl-rail', ['top', 'height', 'overflow', 'border-right', 'background']],
-      ['.side-in', '.hl-rail-inner', ['width', 'padding']],
-      ['.foldbar', '.hl-rail-head', ['gap', 'padding']],
-      ['.fold', '.hl-rail-fold', ['width', 'height', 'border', 'border-radius', 'background', 'color']],
-      ['.unfold', '.hl-rail-restore', ['width', 'height', 'border-radius', 'background', 'box-shadow', 'left', 'top']],
-      ['.arch > summary', '.hl-group > summary', ['padding', 'border', 'border-radius', 'background', 'margin-top', 'gap']],
-      ['.arch .key', '.hl-group-key', ['width', 'height', 'border-radius']],
-      ['.arch .n', '.hl-group-count', ['margin-left', 'color']],
-      ['.arch ul', '.hl-group-list', ['margin', 'padding', 'border-left']],
-      ['.arch li a', '.hl-item', ['padding', 'border-radius', 'color', 'gap']],
-      ['.tick', '.hl-tick', ['width', 'height', 'border-radius', 'background']],
-      ['main', '.hl-main', ['padding']],
-      ['.col', '.hl-col', ['max-width', 'margin-inline']],
-      ['.crumb', '.hl-crumb', ['color', 'margin-bottom', 'gap']],
-      ['.tag', '.hl-tag', ['padding', 'border-radius', 'background', 'border', 'gap']],
-      ['.goals', '.hl-card', ['padding', 'border-radius', 'background', 'border', 'margin']],
-      ['.slab', '.hl-slab', ['margin', 'border', 'border-radius', 'background', 'overflow']],
-      ['.slab pre', '.hl-slab-code', ['margin', 'padding', 'overflow-x', 'color']],
-      ['.diagram', '.hl-figure', ['border', 'border-radius', 'background']],
-      ['.diagram .in', '.hl-figure-body', ['padding', 'overflow-x', 'overscroll-behavior-x', 'min-width']],
-      ['.node', '.hl-node', ['padding', 'border-radius', 'border', 'background', 'color']],
-      ['.arr', '.hl-arrow', ['padding', 'color', 'font-weight']],
-      ['.act', '.hl-actions', ['gap', 'margin-top', 'padding-top', 'border-top']],
-      ['.btn', '.hl-btn', ['padding', 'border-radius', 'background', 'border', 'color', 'gap']],
-      ['.pn', '.hl-pager', ['grid-template-columns', 'gap', 'margin-top']],
-      ['.toc', '.hl-aside', ['top', 'padding']],
+      ['.top', '.bz-bar', ['background', 'z-index', 'position']],
+      ['.top-in', '.bz-bar-inner', ['height', 'padding', 'gap']],
+      ['.brand', '.bz-brand', ['gap', 'color']],
+      ['.mainnav', '.bz-bar-nav', ['gap', 'margin-left']],
+      ['.dd', '.bz-menu', ['min-width', 'padding', 'border-radius', 'background', 'box-shadow', 'top']],
+      ['.band', '.bz-band', ['height', 'background-color', 'background-size', 'background-position', 'border-bottom']],
+      ['.shell', '.bz-shell', ['grid-template-columns', 'align-items']],
+      ['.side', '.bz-rail', ['top', 'height', 'overflow', 'border-right', 'background']],
+      ['.side-in', '.bz-rail-inner', ['width', 'padding']],
+      ['.foldbar', '.bz-rail-head', ['gap', 'padding']],
+      ['.fold', '.bz-rail-fold', ['width', 'height', 'border', 'border-radius', 'background', 'color']],
+      ['.unfold', '.bz-rail-restore', ['width', 'height', 'border-radius', 'background', 'box-shadow', 'left', 'top']],
+      ['.arch > summary', '.bz-group > summary', ['padding', 'border', 'border-radius', 'background', 'margin-top', 'gap']],
+      ['.arch .key', '.bz-group-key', ['width', 'height', 'border-radius']],
+      ['.arch .n', '.bz-group-count', ['margin-left', 'color']],
+      ['.arch ul', '.bz-group-list', ['margin', 'padding', 'border-left']],
+      ['.arch li a', '.bz-item', ['padding', 'border-radius', 'color', 'gap']],
+      ['.tick', '.bz-tick', ['width', 'height', 'border-radius', 'background']],
+      ['main', '.bz-main', ['padding']],
+      ['.col', '.bz-col', ['max-width', 'margin-inline']],
+      ['.crumb', '.bz-crumb', ['color', 'margin-bottom', 'gap']],
+      ['.tag', '.bz-tag', ['padding', 'border-radius', 'background', 'border', 'gap']],
+      ['.goals', '.bz-card', ['padding', 'border-radius', 'background', 'border', 'margin']],
+      ['.slab', '.bz-slab', ['margin', 'border', 'border-radius', 'background', 'overflow']],
+      ['.slab pre', '.bz-slab-code', ['margin', 'padding', 'overflow-x', 'color']],
+      ['.diagram', '.bz-figure', ['border', 'border-radius', 'background']],
+      ['.diagram .in', '.bz-figure-body', ['padding', 'overflow-x', 'overscroll-behavior-x', 'min-width']],
+      ['.node', '.bz-node', ['padding', 'border-radius', 'border', 'background', 'color']],
+      ['.arr', '.bz-arrow', ['padding', 'color', 'font-weight']],
+      ['.act', '.bz-actions', ['gap', 'margin-top', 'padding-top', 'border-top']],
+      ['.btn', '.bz-btn', ['padding', 'border-radius', 'background', 'border', 'color', 'gap']],
+      ['.pn', '.bz-pager', ['grid-template-columns', 'gap', 'margin-top']],
+      ['.toc', '.bz-aside', ['top', 'padding']],
     ]
 
     // The mockup: every custom property in the file, not only `:root`'s, because

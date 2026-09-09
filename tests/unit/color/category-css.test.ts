@@ -1,66 +1,53 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { CATEGORIES } from '@/lib/content/curriculum-file'
 import { curriculumFacts } from '@/lib/content/facts'
-import { ROLE_IDS } from '@/lib/path/roles'
 import { render } from '../../../scripts/curriculum-css.mjs'
 
 /**
- * §13.5 — the per-state selector groups, checked for completeness.
+ * The generated per-module selector lists, checked for completeness.
  *
- * Channel A cannot loop. Every state rule is a LIST of selectors — six per
- * category state, one per module, one per signable module, nine per role — and
- * a list is the one thing in this system that a renumber, a new category or a
- * tenth role silently invalidates. The failure is not a crash: it is a category
- * that never lights up, or a module whose segment stays dormant after the
- * reader signed it. Both are §1 failures, and neither shows up in a typecheck
- * or in a render.
+ * Channel A cannot loop. Every state rule is a LIST of selectors, one per
+ * module, and a list is the one thing in this system that a renumber or a newly
+ * written module silently invalidates. The failure is not a crash: it is a
+ * module whose mark stays dark after the reader completed it. That shows up in
+ * no typecheck and in no render.
  *
- * So the lists are checked against their sources — `CATEGORIES`, the corpus, and
- * `ROLE_IDS` — rather than against a transcription. Nothing here is a literal
- * count.
+ * So the lists are checked against their source, the corpus, rather than
+ * against a transcription. Nothing here is a literal count. And because the
+ * file is **generated and committed** — `prebuild` writes it, vitest and
+ * playwright never run `prebuild` — the last case runs the generator and
+ * compares, which is the one check the others cannot make for themselves.
  *
- * **The module lists are now generated**, from `curriculum.yaml` by
- * `scripts/curriculum-css.mjs`, into a committed `lokum-modules.css`. That
- * moves the risk rather than removing it: a committed generated file can go
- * stale. So the last case here runs the generator and compares, which is the
- * one check the others cannot make for themselves. M10 added the fourth — the
- * curriculum rail's completion tick — and M13 the fifth, completion control
- * C's, which is the same disc inside the button that sets it.
+ * ## What M16 moved out of this file
  *
- * The one asymmetry, and it is deliberate: **the segment rules cover every
- * module and the two tick lists cover only the written ones.** A draft module
- * has no completion control (§12.4.1), so `hl-signed-<n>` can never be stamped
- * for one — but a segment for a draft is still drawn (dashed, unfillable), and
+ * It used to read `lokum.css` and `rail.css` too, and hold four more groups of
+ * rules: the `[data-cat]` hue carrier, the two aggregate category states on the
+ * tint and on the LKM-01 faces, the nine-role path reveal, and the closed list
+ * of surfaces permitted to paint a category hue. Those three stylesheets were
+ * deleted with the rest of the old interface, and the rules belong to the
+ * surfaces that re-author them — so they live in
+ * `tests/unit/color/category-surfaces.test.ts` now, each one binding from the
+ * moment its surface exists. Splitting them keeps this file about the one thing
+ * it can check today without waiting for a surface.
+ *
+ * The one asymmetry here is deliberate: **the segment rules cover every module
+ * and the tick lists cover only the written ones.** A draft module has no
+ * completion control (§12.4.1), so `hl-signed-<n>` can never be stamped for
+ * one — but a segment for a draft is still drawn, dashed and unfillable, and
  * writing its rule keeps the list uniform against the day the module is
  * written. A tick for a draft would instead state that it could be completed,
  * which is the claim §13.4.2 exists to prevent.
  */
 
-const APP = join(import.meta.dirname, '../../../src/app')
-const LOKUM_CSS = join(APP, 'lokum.css')
-const MODULES_CSS = join(APP, 'lokum-modules.css')
-/**
- * M10 — the curriculum rail paints a level hue too, so it is inside the closed
- * list §13.1.3 keeps and it has to be inside this file's scan. It was not, and
- * a guard that does not read the file where a new consumer lives is a guard
- * with a hole in it rather than a guard.
- */
-const RAIL_CSS = join(APP, 'rail.css')
+const MODULES_CSS = join(import.meta.dirname, '../../../src/app/lokum-modules.css')
 
 /**
- * The stylesheet as the browser sees it: `lokum.css` with the generated
- * module selectors inlined where it imports them.
- *
- * They live in `lokum-modules.css` now, and every rule below still has to hold
- * over the pair, because a selector's completeness is a property of the
- * stylesheet and not of which file it was typed into.
+ * The generated sheet alone. It is the whole subject now: every selector these
+ * rules are about is emitted by the generator, so reading anything else would
+ * only add places for the pattern to match something it did not mean.
  */
-const raw = readFileSync(LOKUM_CSS, 'utf8').replace(
-  /@import "\.\/lokum-modules\.css"[^;]*;/,
-  readFileSync(MODULES_CSS, 'utf8'),
-) + '\n' + readFileSync(RAIL_CSS, 'utf8')
+const raw = readFileSync(MODULES_CSS, 'utf8')
 
 /** Comments stripped, so prose naming a selector is never counted as one. */
 const css = raw.replace(/\/\*[\s\S]*?\*\//g, ' ')
@@ -77,34 +64,6 @@ function captures(pattern: RegExp): string[] {
   return [...new Set([...css.matchAll(pattern)].map((match) => match[1]))]
 }
 
-describe('§13.1.3 — the hue carrier covers every category, and only real ones', () => {
-  it('maps each category slug to its two tokens, once', () => {
-    const carriers = captures(/\[data-cat="([a-z-]+)"\]\s*\{\s*--hl-cat:/g)
-    expect(carriers.sort()).toEqual(CATEGORIES.map((category) => category.slug).sort())
-  })
-
-  it('declares a token pair for every category the carrier names', () => {
-    for (const { slug } of CATEGORIES) {
-      expect(css, slug).toContain(`--cat-${slug}:`)
-      expect(css, slug).toContain(`--cat-${slug}-half:`)
-    }
-  })
-})
-
-describe('§13.1.2 — both aggregate states cover all six categories', () => {
-  it.each(['started', 'complete'] as const)('hl-cat-…-%s names every category', (state) => {
-    const named = captures(
-      new RegExp(`html\\.hl-cat-([a-z-]+)-${state}\\s+\\.hl-cat-tint`, 'g'),
-    )
-    expect(named.sort()).toEqual(CATEGORIES.map((category) => category.slug).sort())
-  })
-
-  it.each(['started', 'complete'] as const)('the LKM-01 faces take %s for every category', (state) => {
-    const named = captures(new RegExp(`html\\.hl-cat-([a-z-]+)-${state}\\s+\\.hl-face`, 'g'))
-    expect(named.sort()).toEqual(CATEGORIES.map((category) => category.slug).sort())
-  })
-})
-
 describe('§13.5 — the segment rules cover the whole corpus', () => {
     /**
    * The stylesheet lists the segment rule twice — once for colour and once
@@ -116,7 +75,7 @@ describe('§13.5 — the segment rules cover the whole corpus', () => {
   const mainRules = css.slice(0, FORCED_AT)
 
   it('names every module in the corpus, exactly once', () => {
-    const raw = [...mainRules.matchAll(/html\.hl-signed-(\d+)\s+\.hl-seg\[data-module=/g)]
+    const raw = [...mainRules.matchAll(/html\.hl-signed-(\d+)\s+\.bz-seg\[data-module=/g)]
       .map((match) => Number(match[1]))
     // `captures` de-dupes, so a module listed twice would pass the set
     // comparison silently. Compare the raw list, which cannot hide one.
@@ -128,7 +87,7 @@ describe('§13.5 — the segment rules cover the whole corpus', () => {
     // "signed" survives as a difference in fill rather than in hue. It only
     // needs the signable modules; a draft segment has nothing to reveal.
     const forced = css.slice(css.search(/@media \(forced-colors: active\)/))
-    const named = [...forced.matchAll(/html\.hl-signed-(\d+)\s+\.hl-seg\[data-module=/g)]
+    const named = [...forced.matchAll(/html\.hl-signed-(\d+)\s+\.bz-seg\[data-module=/g)]
       .map((match) => Number(match[1]))
       .sort((a, b) => a - b)
     expect(named).toEqual(DRAWN_MODULES)
@@ -137,18 +96,18 @@ describe('§13.5 — the segment rules cover the whole corpus', () => {
 
 describe('§13.4.2 — a step tick exists only for a module that can be signed', () => {
   it('covers the ready modules and stops there', () => {
-    const named = captures(/html\.hl-signed-(\d+)\s+\.hl-step\[data-module="\d+"\]\s+\.hl-step-tick/g)
+    const named = captures(/html\.hl-signed-(\d+)\s+\.bz-step\[data-module="\d+"\]\s+\.bz-step-tick/g)
       .map(Number)
       .sort((a, b) => a - b)
     expect(named).toEqual(DRAWN_MODULES)
   })
 
   it('pairs each selector’s two module numbers', () => {
-    // `html.hl-signed-13 .hl-step[data-module="13"]` — a mismatch here would
+    // `html.hl-signed-13 .bz-step[data-module="13"]` — a mismatch here would
     // light up a different step than the one that was signed, which is the
     // worst kind of quiet defect: plausible, and wrong.
     const mismatched = [
-      ...css.matchAll(/html\.hl-signed-(\d+)\s+\.hl-(?:seg|step|mod|cmod)\[data-module="(\d+)"\]/g),
+      ...css.matchAll(/html\.hl-signed-(\d+)\s+\.bz-(?:seg|step|mod|cmod)\[data-module="(\d+)"\]/g),
     ]
       .filter((match) => match[1] !== match[2])
       .map((match) => `${match[1]} → ${match[2]}`)
@@ -159,7 +118,7 @@ describe('§13.4.2 — a step tick exists only for a module that can be signed',
 describe('M10 — the curriculum rail’s tick covers every module that can be completed', () => {
   it('covers the ready modules and stops there', () => {
     const named = captures(
-      /html\.hl-signed-(\d+)\s+\.hl-mod\[data-module="\d+"\]\s+\.hl-mod-mark/g,
+      /html\.hl-signed-(\d+)\s+\.bz-mod\[data-module="\d+"\]\s+\.bz-mod-mark/g,
     )
       .map(Number)
       .sort((a, b) => a - b)
@@ -174,7 +133,7 @@ describe('M10 — the curriculum rail’s tick covers every module that can be c
    */
   it('names no module the corpus has not written', () => {
     const named = captures(
-      /html\.hl-signed-(\d+)\s+\.hl-mod\[data-module="\d+"\]\s+\.hl-mod-mark/g,
+      /html\.hl-signed-(\d+)\s+\.bz-mod\[data-module="\d+"\]\s+\.bz-mod-mark/g,
     ).map(Number)
     for (const module of named) expect(DRAWN_MODULES).toContain(module)
   })
@@ -183,7 +142,7 @@ describe('M10 — the curriculum rail’s tick covers every module that can be c
 describe('M13 — control C’s tick covers every module that can be completed', () => {
   it('covers the ready modules and stops there', () => {
     const named = captures(
-      /html\.hl-signed-(\d+)\s+\.hl-cmod\[data-module="\d+"\]\s+\.hl-cmod-mark/g,
+      /html\.hl-signed-(\d+)\s+\.bz-cmod\[data-module="\d+"\]\s+\.bz-cmod-mark/g,
     )
       .map(Number)
       .sort((a, b) => a - b)
@@ -198,67 +157,9 @@ describe('M13 — control C’s tick covers every module that can be completed',
    */
   it('names no module the corpus has not written', () => {
     const named = captures(
-      /html\.hl-signed-(\d+)\s+\.hl-cmod\[data-module="\d+"\]\s+\.hl-cmod-mark/g,
+      /html\.hl-signed-(\d+)\s+\.bz-cmod\[data-module="\d+"\]\s+\.bz-cmod-mark/g,
     ).map(Number)
     for (const module of named) expect(DRAWN_MODULES).toContain(module)
-  })
-})
-
-describe('§13.4.3 — the path shows exactly one body', () => {
-  it('names all nine roles in the reveal rule', () => {
-    const named = captures(/html\.hl-role-([a-z-]+)\s+\.hl-path-body/g)
-    expect(named.sort()).toEqual([...ROLE_IDS].sort())
-  })
-
-  /**
-   * The empty state is shown by negating every role at once. A role missing
-   * from that chain would show the empty state AND that role's path together —
-   * two contradictory answers on one screen (§1).
-   */
-  it('negates all nine roles in the empty-state rule', () => {
-    const chain = /html((?::not\(\.hl-role-[a-z-]+\))+)\s+\.hl-path-empty/.exec(css)
-    expect(chain).not.toBeNull()
-    const negated = [...(chain?.[1] ?? '').matchAll(/\.hl-role-([a-z-]+)/g)].map((m) => m[1])
-    expect(negated.sort()).toEqual([...ROLE_IDS].sort())
-  })
-})
-
-describe('§13.1.3 — no hue escapes the closed list of surfaces', () => {
-  /**
-   * `--hl-tint` and `--hl-cat` are the only two ways a category hue can be
-   * painted, so every rule that reads one is a surface on §13.1.3's list. The
-   * list is closed; a new consumer means either a new entry in the spec or a
-   * hue somewhere it does not belong.
-   */
-  const PERMITTED = new Set([
-    'hl-seg',           // the segmented meter (2, 5)
-    'hl-cat-rule',      // a category card's leading rule (2)
-    'hl-row',           // a module row's leading rule (3)
-    'hl-band-tint',     // a category page's header band (4)
-    'hl-step',          // a path step's leading rule (6)
-    'hl-face',          // an LKM-01 face (1)
-    'hl-legend-swatch', // the face legend's swatch
-    'hl-cat-tint',      // the carrier itself
-    'hl-level',         // M10 — the current level's 4px coloured edge
-    'hl-level-key',     // M10 — the level's own square in the rail
-    'hl-nav-menu-key',  // M10 — the level's own square in the navbar dropdown
-  ])
-
-  it('paints only from classes the spec lists', () => {
-    const consumers = new Set<string>()
-    // Each rule block: everything before `{`, then the declarations.
-    for (const match of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
-      const [, selector, body] = match
-      if (!/var\(--hl-(?:tint|cat)/.test(body)) continue
-      // Drop the channel-A state classes first. `html.hl-signed-13` and
-      // `html.hl-cat-expert-complete` sit on the root element and select a
-      // reader's state; they are not the surface being painted, and counting
-      // them would list all 47 of them as rogue consumers.
-      const target = selector.replace(/html(?:\.[a-z0-9-]+|:not\([^)]*\))*/g, ' ')
-      for (const klass of target.matchAll(/\.(hl-[a-z0-9-]+)/g)) consumers.add(klass[1])
-    }
-    const unexpected = [...consumers].filter((klass) => !PERMITTED.has(klass))
-    expect(unexpected).toEqual([])
   })
 })
 

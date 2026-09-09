@@ -13,68 +13,69 @@
 
 @layer components {
   /* A. Every module. The segment fills with its own category's hue.
-     `--hl-cat` was resolved by the carrier in lokum.css from the segment's own
-     `data-cat`, so the category never appears here. */
-  html.hl-signed-1  .hl-seg[data-module="1"],
-  html.hl-signed-2  .hl-seg[data-module="2"],
-  html.hl-signed-3  .hl-seg[data-module="3"],
-  html.hl-signed-4  .hl-seg[data-module="4"],
-  html.hl-signed-5  .hl-seg[data-module="5"],
-  html.hl-signed-6  .hl-seg[data-module="6"],
-  html.hl-signed-7  .hl-seg[data-module="7"],
-  html.hl-signed-8  .hl-seg[data-module="8"],
-  html.hl-signed-9  .hl-seg[data-module="9"],
-  html.hl-signed-10 .hl-seg[data-module="10"],
-  html.hl-signed-11 .hl-seg[data-module="11"],
-  html.hl-signed-12 .hl-seg[data-module="12"],
-  html.hl-signed-13 .hl-seg[data-module="13"],
-  html.hl-signed-14 .hl-seg[data-module="14"],
-  html.hl-signed-15 .hl-seg[data-module="15"],
-  html.hl-signed-16 .hl-seg[data-module="16"],
-  html.hl-signed-17 .hl-seg[data-module="17"],
-  html.hl-signed-18 .hl-seg[data-module="18"],
-  html.hl-signed-19 .hl-seg[data-module="19"],
-  html.hl-signed-20 .hl-seg[data-module="20"],
-  html.hl-signed-21 .hl-seg[data-module="21"],
-  html.hl-signed-22 .hl-seg[data-module="22"],
-  html.hl-signed-23 .hl-seg[data-module="23"],
-  html.hl-signed-24 .hl-seg[data-module="24"],
-  html.hl-signed-25 .hl-seg[data-module="25"],
-  html.hl-signed-26 .hl-seg[data-module="26"],
-  html.hl-signed-27 .hl-seg[data-module="27"],
-  html.hl-signed-28 .hl-seg[data-module="28"],
-  html.hl-signed-29 .hl-seg[data-module="29"],
-  html.hl-signed-30 .hl-seg[data-module="30"],
-  html.hl-signed-31 .hl-seg[data-module="31"],
-  html.hl-signed-32 .hl-seg[data-module="32"],
-  html.hl-signed-33 .hl-seg[data-module="33"] {
-    background: var(--hl-cat);
-    border-color: var(--hl-cat);
+     `--bz-cat` is resolved by the carrier from the segment's own `data-cat`,
+     so the category never appears here. M16 owes that binding to whichever
+     surface stylesheet draws the segment. */
+  html.hl-signed-1  .bz-seg[data-module="1"],
+  html.hl-signed-2  .bz-seg[data-module="2"],
+  html.hl-signed-3  .bz-seg[data-module="3"],
+  html.hl-signed-4  .bz-seg[data-module="4"],
+  html.hl-signed-5  .bz-seg[data-module="5"],
+  html.hl-signed-6  .bz-seg[data-module="6"],
+  html.hl-signed-7  .bz-seg[data-module="7"],
+  html.hl-signed-8  .bz-seg[data-module="8"],
+  html.hl-signed-9  .bz-seg[data-module="9"],
+  html.hl-signed-10 .bz-seg[data-module="10"],
+  html.hl-signed-11 .bz-seg[data-module="11"],
+  html.hl-signed-12 .bz-seg[data-module="12"],
+  html.hl-signed-13 .bz-seg[data-module="13"],
+  html.hl-signed-14 .bz-seg[data-module="14"],
+  html.hl-signed-15 .bz-seg[data-module="15"],
+  html.hl-signed-16 .bz-seg[data-module="16"],
+  html.hl-signed-17 .bz-seg[data-module="17"],
+  html.hl-signed-18 .bz-seg[data-module="18"],
+  html.hl-signed-19 .bz-seg[data-module="19"],
+  html.hl-signed-20 .bz-seg[data-module="20"],
+  html.hl-signed-21 .bz-seg[data-module="21"],
+  html.hl-signed-22 .bz-seg[data-module="22"],
+  html.hl-signed-23 .bz-seg[data-module="23"],
+  html.hl-signed-24 .bz-seg[data-module="24"],
+  html.hl-signed-25 .bz-seg[data-module="25"],
+  html.hl-signed-26 .bz-seg[data-module="26"],
+  html.hl-signed-27 .bz-seg[data-module="27"],
+  html.hl-signed-28 .bz-seg[data-module="28"],
+  html.hl-signed-29 .bz-seg[data-module="29"],
+  html.hl-signed-30 .bz-seg[data-module="30"],
+  html.hl-signed-31 .bz-seg[data-module="31"],
+  html.hl-signed-32 .bz-seg[data-module="32"],
+  html.hl-signed-33 .bz-seg[data-module="33"] {
+    background: var(--bz-cat);
+    border-color: var(--bz-cat);
   }
 
   /* B. The drawn modules only. A step the reader has signed off says so in
      words, in the accent pen. A draft sheet has no sign-off control at all
      (§12.4.1), so no selector for one could ever match, and writing one would
      state that it could. */
-  html.hl-signed-1  .hl-step[data-module="1"] .hl-step-tick,
-  html.hl-signed-2  .hl-step[data-module="2"] .hl-step-tick,
-  html.hl-signed-3  .hl-step[data-module="3"] .hl-step-tick,
-  html.hl-signed-4  .hl-step[data-module="4"] .hl-step-tick,
-  html.hl-signed-5  .hl-step[data-module="5"] .hl-step-tick,
-  html.hl-signed-6  .hl-step[data-module="6"] .hl-step-tick,
-  html.hl-signed-7  .hl-step[data-module="7"] .hl-step-tick,
-  html.hl-signed-8  .hl-step[data-module="8"] .hl-step-tick,
-  html.hl-signed-9  .hl-step[data-module="9"] .hl-step-tick,
-  html.hl-signed-10 .hl-step[data-module="10"] .hl-step-tick,
-  html.hl-signed-11 .hl-step[data-module="11"] .hl-step-tick,
-  html.hl-signed-12 .hl-step[data-module="12"] .hl-step-tick,
-  html.hl-signed-13 .hl-step[data-module="13"] .hl-step-tick,
-  html.hl-signed-15 .hl-step[data-module="15"] .hl-step-tick,
-  html.hl-signed-16 .hl-step[data-module="16"] .hl-step-tick,
-  html.hl-signed-28 .hl-step[data-module="28"] .hl-step-tick,
-  html.hl-signed-29 .hl-step[data-module="29"] .hl-step-tick,
-  html.hl-signed-30 .hl-step[data-module="30"] .hl-step-tick,
-  html.hl-signed-31 .hl-step[data-module="31"] .hl-step-tick {
+  html.hl-signed-1  .bz-step[data-module="1"] .bz-step-tick,
+  html.hl-signed-2  .bz-step[data-module="2"] .bz-step-tick,
+  html.hl-signed-3  .bz-step[data-module="3"] .bz-step-tick,
+  html.hl-signed-4  .bz-step[data-module="4"] .bz-step-tick,
+  html.hl-signed-5  .bz-step[data-module="5"] .bz-step-tick,
+  html.hl-signed-6  .bz-step[data-module="6"] .bz-step-tick,
+  html.hl-signed-7  .bz-step[data-module="7"] .bz-step-tick,
+  html.hl-signed-8  .bz-step[data-module="8"] .bz-step-tick,
+  html.hl-signed-9  .bz-step[data-module="9"] .bz-step-tick,
+  html.hl-signed-10 .bz-step[data-module="10"] .bz-step-tick,
+  html.hl-signed-11 .bz-step[data-module="11"] .bz-step-tick,
+  html.hl-signed-12 .bz-step[data-module="12"] .bz-step-tick,
+  html.hl-signed-13 .bz-step[data-module="13"] .bz-step-tick,
+  html.hl-signed-15 .bz-step[data-module="15"] .bz-step-tick,
+  html.hl-signed-16 .bz-step[data-module="16"] .bz-step-tick,
+  html.hl-signed-28 .bz-step[data-module="28"] .bz-step-tick,
+  html.hl-signed-29 .bz-step[data-module="29"] .bz-step-tick,
+  html.hl-signed-30 .bz-step[data-module="30"] .bz-step-tick,
+  html.hl-signed-31 .bz-step[data-module="31"] .bz-step-tick {
     display: inline;
     color: var(--color-accent-ink);   /* T2 — accent as TEXT is `-ink` only. */
   }
@@ -82,52 +83,53 @@
   /* D. M10 — the curriculum rail's tick, for the drawn modules only. The mark
      is a 17px teal disc with a white check and an `sr-only` word inside it, so
      revealing it reveals the shape, the fill and the statement together and
-     colour is never the only carrier. `rail.css` holds its geometry. */
-  html.hl-signed-1  .hl-mod[data-module="1"] .hl-mod-mark,
-  html.hl-signed-2  .hl-mod[data-module="2"] .hl-mod-mark,
-  html.hl-signed-3  .hl-mod[data-module="3"] .hl-mod-mark,
-  html.hl-signed-4  .hl-mod[data-module="4"] .hl-mod-mark,
-  html.hl-signed-5  .hl-mod[data-module="5"] .hl-mod-mark,
-  html.hl-signed-6  .hl-mod[data-module="6"] .hl-mod-mark,
-  html.hl-signed-7  .hl-mod[data-module="7"] .hl-mod-mark,
-  html.hl-signed-8  .hl-mod[data-module="8"] .hl-mod-mark,
-  html.hl-signed-9  .hl-mod[data-module="9"] .hl-mod-mark,
-  html.hl-signed-10 .hl-mod[data-module="10"] .hl-mod-mark,
-  html.hl-signed-11 .hl-mod[data-module="11"] .hl-mod-mark,
-  html.hl-signed-12 .hl-mod[data-module="12"] .hl-mod-mark,
-  html.hl-signed-13 .hl-mod[data-module="13"] .hl-mod-mark,
-  html.hl-signed-15 .hl-mod[data-module="15"] .hl-mod-mark,
-  html.hl-signed-16 .hl-mod[data-module="16"] .hl-mod-mark,
-  html.hl-signed-28 .hl-mod[data-module="28"] .hl-mod-mark,
-  html.hl-signed-29 .hl-mod[data-module="29"] .hl-mod-mark,
-  html.hl-signed-30 .hl-mod[data-module="30"] .hl-mod-mark,
-  html.hl-signed-31 .hl-mod[data-module="31"] .hl-mod-mark {
+     colour is never the only carrier. The rail's own stylesheet holds its
+     geometry. */
+  html.hl-signed-1  .bz-mod[data-module="1"] .bz-mod-mark,
+  html.hl-signed-2  .bz-mod[data-module="2"] .bz-mod-mark,
+  html.hl-signed-3  .bz-mod[data-module="3"] .bz-mod-mark,
+  html.hl-signed-4  .bz-mod[data-module="4"] .bz-mod-mark,
+  html.hl-signed-5  .bz-mod[data-module="5"] .bz-mod-mark,
+  html.hl-signed-6  .bz-mod[data-module="6"] .bz-mod-mark,
+  html.hl-signed-7  .bz-mod[data-module="7"] .bz-mod-mark,
+  html.hl-signed-8  .bz-mod[data-module="8"] .bz-mod-mark,
+  html.hl-signed-9  .bz-mod[data-module="9"] .bz-mod-mark,
+  html.hl-signed-10 .bz-mod[data-module="10"] .bz-mod-mark,
+  html.hl-signed-11 .bz-mod[data-module="11"] .bz-mod-mark,
+  html.hl-signed-12 .bz-mod[data-module="12"] .bz-mod-mark,
+  html.hl-signed-13 .bz-mod[data-module="13"] .bz-mod-mark,
+  html.hl-signed-15 .bz-mod[data-module="15"] .bz-mod-mark,
+  html.hl-signed-16 .bz-mod[data-module="16"] .bz-mod-mark,
+  html.hl-signed-28 .bz-mod[data-module="28"] .bz-mod-mark,
+  html.hl-signed-29 .bz-mod[data-module="29"] .bz-mod-mark,
+  html.hl-signed-30 .bz-mod[data-module="30"] .bz-mod-mark,
+  html.hl-signed-31 .bz-mod[data-module="31"] .bz-mod-mark {
     display: inline-flex;
   }
 
   /* E. M13/M14 — completion control C's tick, for the drawn modules only. The
      disc sits inside the button that SETS the completion, so the reader's own
      state is right in frame one on a page that lists every module.
-     `record.css` holds its geometry. */
-  html.hl-signed-1  .hl-cmod[data-module="1"] .hl-cmod-mark,
-  html.hl-signed-2  .hl-cmod[data-module="2"] .hl-cmod-mark,
-  html.hl-signed-3  .hl-cmod[data-module="3"] .hl-cmod-mark,
-  html.hl-signed-4  .hl-cmod[data-module="4"] .hl-cmod-mark,
-  html.hl-signed-5  .hl-cmod[data-module="5"] .hl-cmod-mark,
-  html.hl-signed-6  .hl-cmod[data-module="6"] .hl-cmod-mark,
-  html.hl-signed-7  .hl-cmod[data-module="7"] .hl-cmod-mark,
-  html.hl-signed-8  .hl-cmod[data-module="8"] .hl-cmod-mark,
-  html.hl-signed-9  .hl-cmod[data-module="9"] .hl-cmod-mark,
-  html.hl-signed-10 .hl-cmod[data-module="10"] .hl-cmod-mark,
-  html.hl-signed-11 .hl-cmod[data-module="11"] .hl-cmod-mark,
-  html.hl-signed-12 .hl-cmod[data-module="12"] .hl-cmod-mark,
-  html.hl-signed-13 .hl-cmod[data-module="13"] .hl-cmod-mark,
-  html.hl-signed-15 .hl-cmod[data-module="15"] .hl-cmod-mark,
-  html.hl-signed-16 .hl-cmod[data-module="16"] .hl-cmod-mark,
-  html.hl-signed-28 .hl-cmod[data-module="28"] .hl-cmod-mark,
-  html.hl-signed-29 .hl-cmod[data-module="29"] .hl-cmod-mark,
-  html.hl-signed-30 .hl-cmod[data-module="30"] .hl-cmod-mark,
-  html.hl-signed-31 .hl-cmod[data-module="31"] .hl-cmod-mark {
+     The completion surface's own stylesheet holds its geometry. */
+  html.hl-signed-1  .bz-cmod[data-module="1"] .bz-cmod-mark,
+  html.hl-signed-2  .bz-cmod[data-module="2"] .bz-cmod-mark,
+  html.hl-signed-3  .bz-cmod[data-module="3"] .bz-cmod-mark,
+  html.hl-signed-4  .bz-cmod[data-module="4"] .bz-cmod-mark,
+  html.hl-signed-5  .bz-cmod[data-module="5"] .bz-cmod-mark,
+  html.hl-signed-6  .bz-cmod[data-module="6"] .bz-cmod-mark,
+  html.hl-signed-7  .bz-cmod[data-module="7"] .bz-cmod-mark,
+  html.hl-signed-8  .bz-cmod[data-module="8"] .bz-cmod-mark,
+  html.hl-signed-9  .bz-cmod[data-module="9"] .bz-cmod-mark,
+  html.hl-signed-10 .bz-cmod[data-module="10"] .bz-cmod-mark,
+  html.hl-signed-11 .bz-cmod[data-module="11"] .bz-cmod-mark,
+  html.hl-signed-12 .bz-cmod[data-module="12"] .bz-cmod-mark,
+  html.hl-signed-13 .bz-cmod[data-module="13"] .bz-cmod-mark,
+  html.hl-signed-15 .bz-cmod[data-module="15"] .bz-cmod-mark,
+  html.hl-signed-16 .bz-cmod[data-module="16"] .bz-cmod-mark,
+  html.hl-signed-28 .bz-cmod[data-module="28"] .bz-cmod-mark,
+  html.hl-signed-29 .bz-cmod[data-module="29"] .bz-cmod-mark,
+  html.hl-signed-30 .bz-cmod[data-module="30"] .bz-cmod-mark,
+  html.hl-signed-31 .bz-cmod[data-module="31"] .bz-cmod-mark {
     display: inline-flex;
   }
 
@@ -139,27 +141,27 @@
      at all — which is what made `aria-pressed` the only statement of the
      state an assistive technology got, on channel B, permanently contradicting
      this disc with scripts refused. And giving it E's own class instead made
-     `.hl-cmod-mark` match two elements per row, which is a strict-mode
+     `.bz-cmod-mark` match two elements per row, which is a strict-mode
      violation in every locator that reads the tick. */
-  html.hl-signed-1  .hl-cmod[data-module="1"] .hl-cmod-said,
-  html.hl-signed-2  .hl-cmod[data-module="2"] .hl-cmod-said,
-  html.hl-signed-3  .hl-cmod[data-module="3"] .hl-cmod-said,
-  html.hl-signed-4  .hl-cmod[data-module="4"] .hl-cmod-said,
-  html.hl-signed-5  .hl-cmod[data-module="5"] .hl-cmod-said,
-  html.hl-signed-6  .hl-cmod[data-module="6"] .hl-cmod-said,
-  html.hl-signed-7  .hl-cmod[data-module="7"] .hl-cmod-said,
-  html.hl-signed-8  .hl-cmod[data-module="8"] .hl-cmod-said,
-  html.hl-signed-9  .hl-cmod[data-module="9"] .hl-cmod-said,
-  html.hl-signed-10 .hl-cmod[data-module="10"] .hl-cmod-said,
-  html.hl-signed-11 .hl-cmod[data-module="11"] .hl-cmod-said,
-  html.hl-signed-12 .hl-cmod[data-module="12"] .hl-cmod-said,
-  html.hl-signed-13 .hl-cmod[data-module="13"] .hl-cmod-said,
-  html.hl-signed-15 .hl-cmod[data-module="15"] .hl-cmod-said,
-  html.hl-signed-16 .hl-cmod[data-module="16"] .hl-cmod-said,
-  html.hl-signed-28 .hl-cmod[data-module="28"] .hl-cmod-said,
-  html.hl-signed-29 .hl-cmod[data-module="29"] .hl-cmod-said,
-  html.hl-signed-30 .hl-cmod[data-module="30"] .hl-cmod-said,
-  html.hl-signed-31 .hl-cmod[data-module="31"] .hl-cmod-said {
+  html.hl-signed-1  .bz-cmod[data-module="1"] .bz-cmod-said,
+  html.hl-signed-2  .bz-cmod[data-module="2"] .bz-cmod-said,
+  html.hl-signed-3  .bz-cmod[data-module="3"] .bz-cmod-said,
+  html.hl-signed-4  .bz-cmod[data-module="4"] .bz-cmod-said,
+  html.hl-signed-5  .bz-cmod[data-module="5"] .bz-cmod-said,
+  html.hl-signed-6  .bz-cmod[data-module="6"] .bz-cmod-said,
+  html.hl-signed-7  .bz-cmod[data-module="7"] .bz-cmod-said,
+  html.hl-signed-8  .bz-cmod[data-module="8"] .bz-cmod-said,
+  html.hl-signed-9  .bz-cmod[data-module="9"] .bz-cmod-said,
+  html.hl-signed-10 .bz-cmod[data-module="10"] .bz-cmod-said,
+  html.hl-signed-11 .bz-cmod[data-module="11"] .bz-cmod-said,
+  html.hl-signed-12 .bz-cmod[data-module="12"] .bz-cmod-said,
+  html.hl-signed-13 .bz-cmod[data-module="13"] .bz-cmod-said,
+  html.hl-signed-15 .bz-cmod[data-module="15"] .bz-cmod-said,
+  html.hl-signed-16 .bz-cmod[data-module="16"] .bz-cmod-said,
+  html.hl-signed-28 .bz-cmod[data-module="28"] .bz-cmod-said,
+  html.hl-signed-29 .bz-cmod[data-module="29"] .bz-cmod-said,
+  html.hl-signed-30 .bz-cmod[data-module="30"] .bz-cmod-said,
+  html.hl-signed-31 .bz-cmod[data-module="31"] .bz-cmod-said {
     display: inline;
   }
 }
@@ -171,28 +173,28 @@
    `forced-colors: active` and asserts each surface still reports its state. */
 @media (forced-colors: active) {
   /* C. The drawn modules, for the same reason B stops there. */
-  html.hl-signed-1  .hl-seg[data-module="1"],
-  html.hl-signed-2  .hl-seg[data-module="2"],
-  html.hl-signed-3  .hl-seg[data-module="3"],
-  html.hl-signed-4  .hl-seg[data-module="4"],
-  html.hl-signed-5  .hl-seg[data-module="5"],
-  html.hl-signed-6  .hl-seg[data-module="6"],
-  html.hl-signed-7  .hl-seg[data-module="7"],
-  html.hl-signed-8  .hl-seg[data-module="8"],
-  html.hl-signed-9  .hl-seg[data-module="9"],
-  html.hl-signed-10 .hl-seg[data-module="10"],
-  html.hl-signed-11 .hl-seg[data-module="11"],
-  html.hl-signed-12 .hl-seg[data-module="12"],
-  html.hl-signed-13 .hl-seg[data-module="13"],
-  html.hl-signed-15 .hl-seg[data-module="15"],
-  html.hl-signed-16 .hl-seg[data-module="16"],
-  html.hl-signed-28 .hl-seg[data-module="28"],
-  html.hl-signed-29 .hl-seg[data-module="29"],
-  html.hl-signed-30 .hl-seg[data-module="30"],
-  html.hl-signed-31 .hl-seg[data-module="31"] {
+  html.hl-signed-1  .bz-seg[data-module="1"],
+  html.hl-signed-2  .bz-seg[data-module="2"],
+  html.hl-signed-3  .bz-seg[data-module="3"],
+  html.hl-signed-4  .bz-seg[data-module="4"],
+  html.hl-signed-5  .bz-seg[data-module="5"],
+  html.hl-signed-6  .bz-seg[data-module="6"],
+  html.hl-signed-7  .bz-seg[data-module="7"],
+  html.hl-signed-8  .bz-seg[data-module="8"],
+  html.hl-signed-9  .bz-seg[data-module="9"],
+  html.hl-signed-10 .bz-seg[data-module="10"],
+  html.hl-signed-11 .bz-seg[data-module="11"],
+  html.hl-signed-12 .bz-seg[data-module="12"],
+  html.hl-signed-13 .bz-seg[data-module="13"],
+  html.hl-signed-15 .bz-seg[data-module="15"],
+  html.hl-signed-16 .bz-seg[data-module="16"],
+  html.hl-signed-28 .bz-seg[data-module="28"],
+  html.hl-signed-29 .bz-seg[data-module="29"],
+  html.hl-signed-30 .bz-seg[data-module="30"],
+  html.hl-signed-31 .bz-seg[data-module="31"] {
     /* Filled with the system colour, so "signed off" is still a filled cell
        against an empty one: a difference in fill, not in hue. `forced-color-
-       adjust` is already `none` on `.hl-seg` in lokum.css's own block. */
+       adjust` is set to `none` on `.bz-seg` where that segment is drawn. */
     background: CanvasText;
     border-color: CanvasText;
   }

@@ -475,45 +475,48 @@ function roleStandingOf(
  * still reads, because §13.1.4's carriers are the line types, the hatch and the
  * printed counts, none of which are colour.
  */
-export interface CategoryHue {
-  full: string
-  half: string
-}
+
 
 /**
- * §13.1.1's six hues, transcribed.
+ * The five category hues, transcribed.
  *
  * This is the ONLY copy this document has. A RECORD OF WORK is opened from
  * `file://` with an opaque origin and no stylesheet to import, so the values
- * cannot be read from `lokum.css` at write time and cannot be linked at read
- * time — they have to be inlined, which means they have to be duplicated, which
- * means they can drift silently. A wrong hue here would be invisible: the
+ * cannot be read from the token layer at write time and cannot be linked at
+ * read time — they have to be inlined, which means they have to be duplicated,
+ * which means they can drift silently. A wrong hue here would be invisible: the
  * document would simply be a slightly different colour from the site, in a file
  * nobody can reissue.
  *
- * So it is EXPORTED, for one reason: `tests/unit/color/lokum.test.ts` parses
- * `src/app/lokum.css` and asserts this table against it, triple by triple. The
- * halves are exact rather than rounded to the stylesheet's usual three decimals
- * (`0.115` halves to `0.0575`), and that is checked too.
+ * So it is EXPORTED, for one reason:
+ * `tests/unit/color/category-hues.test.ts` reads the five out of
+ * `src/design/bazaar.css` and asserts this table against them, in curriculum
+ * order. That is the whole guard against the drift.
+ *
+ * **M16 dropped the half-chroma sibling each hue used to carry.** The T4
+ * language has no tint scale of any kind, and inventing one for this document
+ * would have been the same mistake in a quieter place, so the started state is
+ * carried by the hue on an EDGE and the complete state by the hue as a FILL
+ * (BRAINSTORM D33). The rest of this document keeps its own print palette,
+ * which was never the site's and is not part of the interface.
  */
-export const CATEGORY_HUES: Readonly<Record<string, CategoryHue>> = {
-  fundamentals: { full: 'oklch(0.575 0.098 189)', half: 'oklch(0.575 0.049 189)' },
-  intermediate: { full: 'oklch(0.575 0.128 240)', half: 'oklch(0.575 0.064 240)' },
-  expert: { full: 'oklch(0.575 0.130 320)', half: 'oklch(0.575 0.065 320)' },
-  ecosystem: { full: 'oklch(0.575 0.115 75)', half: 'oklch(0.575 0.0575 75)' },
-  protocols: { full: 'oklch(0.575 0.120 30)', half: 'oklch(0.575 0.060 30)' },
+export const CATEGORY_HUES: Readonly<Record<string, string>> = {
+  fundamentals: '#2F8C86',
+  intermediate: '#282864',
+  expert:       '#7A4A86',
+  ecosystem:    '#B8873B',
+  protocols:    '#A0503C',
 }
 
 /**
- * One carrier rule per category, exactly as `lokum.css` writes it: the slug is
- * named once, and every rule after it paints with `--cat` / `--cat-half` and
- * never names a category again. The ledger's `data-band` is matched as well as
+ * One carrier rule per category: the slug is named once, and every rule after
+ * it paints with `--cat` and never names a category again. The ledger's `data-band` is matched as well as
  * `data-cat`, because the in-document filter already tags every row with it and
  * a second attribute for the same fact is a second thing to keep true.
  */
 const HUE_CARRIERS: string = Object.entries(CATEGORY_HUES)
   .map(([slug, hue]) =>
-    `[data-cat="${slug}"],tr[data-band="${slug}"]{--cat:${hue.full};--cat-half:${hue.half}}`,
+    `[data-cat="${slug}"],tr[data-band="${slug}"]{--cat:${hue}}`,
   )
   .join('\n')
 
@@ -1020,14 +1023,14 @@ ${HUE_CARRIERS}
 .cover{display:flex;flex-wrap:wrap;align-items:flex-start;gap:24px;margin:24px 0}
 .cube{flex:none}
 .cube-face{fill:none;stroke:var(--line);stroke-width:1}
-.cube-face[data-state=started]{fill:var(--cat-half);stroke:var(--ink);stroke-width:1.5}
+.cube-face[data-state=started]{fill:none;stroke:var(--cat);stroke-width:1.5}
 .cube-face[data-state=complete]{fill:var(--cat);stroke:var(--accent);stroke-width:1.5}
 .cube-sugar{fill:var(--paper)}
 table.flavours{width:auto;min-width:280px}
 .flavours th[scope=row]{white-space:nowrap;font-weight:400}
 .flavours td.num{width:auto;color:var(--muted);text-align:left}
 .flavours i{display:inline-block;width:12px;height:12px;margin-right:6px;vertical-align:middle;border:1px solid var(--strong);background:transparent}
-.flavours i[data-state=started]{background:var(--cat-half,var(--strong))}
+.flavours i[data-state=started]{border-color:var(--cat,var(--strong))}
 .flavours i[data-state=complete]{background:var(--cat,var(--strong))}
 .ledger tbody td.num{border-inline-start:2px solid var(--cat,var(--strong))}
 /* §13.1.4 — every hue goes, and the drawing still reads: the cube keeps §8.2's

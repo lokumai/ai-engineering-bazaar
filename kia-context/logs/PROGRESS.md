@@ -59,7 +59,7 @@ last_updated: "2026-09-09"
 | **M13** | The home page | a first-time visitor knows what this is and where to start | M10 | ✅ Done |
 | **M14** | Progress and account | one route instead of four, and completion editable from it | M11 | ✅ Done |
 | **M15** | The design language | one DESIGN.md transcribed from the mockup, and a check that proves a built page matches it | M14 | ✅ Done |
-| **M16** | The interface, rebuilt on it | every surface indistinguishable from its mockup, with no capability lost | M15 | ⬜ Not started |
+| **M16** | The interface, rebuilt on it | every surface indistinguishable from its mockup, with no capability lost | M15 | 🚧 Stage 0 of 10 done |
 
 > **Numbering never restarts.** When this file is split, part two continues at the next M.
 
@@ -1552,5 +1552,127 @@ is what happened with M9 to M14.
 produced a substituted type family, a re-hued categorical series and a light top bar. There is no
 budget for taste in this milestone.
 
-### Report
-Not started.
+### How the stages are numbered
+
+Ten stages after a stage 0, worked in the order of the reference table above, each one commit with
+the whole gate run at the end of it. The shell is first because every other surface sits inside it.
+Stage 0 is the token layer; stage 10 is the eight routes with no mockup (**D30**).
+
+### Report — stage 0, the token layer swapped, 2026-09-09
+
+**The eleven old stylesheets are gone.** Nine deleted outright — `prose`, `sheet`, `manifest`,
+`rail`, `figure`, `record`, `lokum`, `home`, `profile` — `globals.css` rewritten from 742 lines to a
+**56-line entry point**, and the generated per-module sheet kept, generated. That is **7,158 lines
+of CSS and 386 class selectors removed in one commit**, replaced by an `@import` of the language.
+
+`src/app/fonts.ts` is deleted with them and `next/font/google` has left the layout. **MEASURED in
+the export: zero requests to `fonts.googleapis.com` or `fonts.gstatic.com`, and `manrope` appears 0
+times in the shipped CSS.** Type is the mockup's own system stack, so it varies with the reader's
+OS exactly as the mockup's does.
+
+**The language is wired in and renamed.** `src/design/bazaar.css` took the `bz-` prefix (**D29**):
+116 occurrences in the language, the 33 selector pairs of the transcription test, and the eight
+class names the generator emits. It stayed at `src/design/` rather than moving into `src/app/`,
+because the reader that needed it there was pointed at it instead — see the next paragraph — and the
+tests that used to glob `src/app/*.css` now discover *surface* stylesheets, of which there are
+currently none.
+
+**The build-time trap was real and is closed.** `src/lib/content/code-theme.ts` resolved
+`src/app/globals.css` by path, required a literal `.dark {` block, read six `--color-slab-*` tokens
+positionally and fed each to `oklchToHex` — so it required `oklch()`, and the language writes hex
+because the mockup does. It now reads `src/design/bazaar.css` and accepts both notations through one
+exported `toHex`, which the test uses too so the policy cannot exist in two places. **Verified end to
+end: `--shiki-light:#8B91A0` appears in the rendered code blocks of the export.** No test catches
+this; only `npm run build` does.
+
+### What the eleven stylesheets took with them, and what replaced it
+
+Seven unit test files reached into `src/app/*.css`. Not one was deleted without its rule being
+either re-expressed or recorded, and **three of the old rules turned out to be measurably false**
+against the specification (**D32**).
+
+| Was | Now | What happened |
+| --- | --- | --- |
+| `unit/stroke-weights.test.ts`, 4 tests on `--stroke-hair/struct/cut` | 2 tests, same file | Re-expressed as **no fractional pixel in any border or outline**, over every shipped stylesheet, discovered not listed. The browser fact survives; the token scale did not exist to survive. |
+| `e2e/stroke-weights.spec.ts`, 3 tests | 1 test | The flooring probe is kept as the premise the unit rule rests on. The two that measured the old painted rule are retired. |
+| `unit/color/lokum.test.ts`, 102 tests on `--cat-<slug>` | `unit/color/category-hues.test.ts`, 31 tests | Re-expressed against `--color-category-1…5`. Kept: the series is closed at five and declared once, every hue clears 3:1 on every resting ground in both themes, all ten pairs separated by ≥20° of hue, and the exported record's inlined copy equals the language. |
+| `unit/color/slab-and-controls.test.ts`, 55 tests | 31 tests, same file | The 11 hand-named control selectors are stage 1's (see the open question). What replaced the local-dark-override rule is stronger: **a surface stylesheet may not theme anything and may not declare a `--color-*` token at all.** |
+| `unit/color/category-css.test.ts`, 18 tests | 9 tests, plus `category-surfaces.test.ts`, 7 | Split. The generated-sheet completeness and the generator round-trip stay; the four rules about deleted surfaces became **existence-guarded** completeness rules that bind the moment their surface exists. |
+| `unit/color/contrast.test.ts`, 95 tests | 78 tests, same file | Re-pointed at the new token names. `line-cut`, `line-control` and the four `*-ink` status tokens have no successor. |
+| `unit/catalog/views.test.ts`, `unit/components/sheet.test.tsx` | 12 and 28 | Re-pointed at discovered surface stylesheets; the seven CSS-discipline rules moved to `unit/design/surface-stylesheets.test.ts`, which holds every surface a later stage authors. |
+
+**The 16 skipped tests are the point, not a gap.** Six in `surface-stylesheets`, five in `views`,
+four in `category-surfaces`, one in `slab-and-controls`. Each is guarded on the existence of the
+thing it checks rather than on a note in a document, so it switches itself on when its stage lands.
+A rule parked in a milestone document is a rule that evaporates, which is the failure this whole
+milestone exists to correct.
+
+### Three findings the re-pointing surfaced, none of them assumed
+
+Re-pointing the contrast table at the new token layer found what reading either file did not.
+
+1. **`slab-comment` measured 3.92:1** on the slab, under the 4.5:1 a comment takes as content. The
+   retired design had already found and fixed this; M15's transcription faithfully restored the
+   mockup's value **and the defect with it**. Settled by the author as **D34**: the language lifts
+   the same hue to `#8B91A0`, **5.21:1**, and it is the one named deviation from the mockup, listed
+   in DESIGN.md and in a `DEVIATIONS` entry that is itself checked for staleness.
+2. **The mockup italicises a code comment** while §3.4 refuses mono italic, and the shipped syntax
+   theme was already upright — so the transcribed `font-style: italic` was a contradiction rather
+   than a choice. Removed.
+3. **`line-strong` measured 2.00:1** on the ground, 2.07 raised, 1.50 on the hover fill. It is the
+   edge the language gives an interactive control, and SC 1.4.11 asks 3:1 for anything required to
+   identify a component. **Open, and it is stage 1's**, by the author's decision: answered with the
+   shell's real buttons and fields in front of us rather than by inventing a token now. Enforced
+   meanwhile: `line-strong` is strictly stronger than `line` on every ground in both themes.
+
+`on-surface-muted` also measures 4.21:1 on the hover fill against 5.62 and 5.81 on the two resting
+grounds; DESIGN.md calls the sunken fill a hover and pressed state rather than a resting surface for
+text, so the text floors are asserted on the resting grounds and the hover fill is checked as the
+transient state it is.
+
+### The gate at the end of stage 0
+
+| Check | Result |
+| --- | --- |
+| `npm run typecheck` | clean |
+| `npm test` | **2,108 passed, 16 skipped, 0 failed, 81 files** |
+| `npm run build` | clean, **56 HTML files**, 42,253 bytes of CSS |
+| Export, language present | `#fdfbf7`, `#282864`, `#8b91a0`, `bz-bar`, `bz-rail`, `bz-group`, `bz-slab` all in the shipped CSS |
+| Export, old design absent | `hl-panel`, `hl-signoff`, `hl-viewbtn`, `hl-prose`, `manrope` — **0 each** |
+| Browser suite | **expected red, and not a gate until stage 1 lands.** Every surface is unstyled; 141 hardcoded `.hl-*` selectors across 31 specs still name the old markup. |
+
+**The unit count fell from 2,239 to 2,124 and that is accounted for rather than waved at.** Almost
+all of it is `it.each` expansion over tables that got smaller because the palette is smaller: the old
+category table ran five hues × three grounds × two themes × **two chroma levels**, and the
+half-chroma dimension does not exist in this language; the contrast table lost `line-cut`,
+`line-control` and four `*-ink` tokens that have no successor. **No rule was dropped without being
+re-expressed or recorded in D32.**
+
+### Mutation proofs run in this sitting
+
+Every check written or rewritten was watched failing before it was trusted, which in M15 twice found
+the hole in the check rather than in the code.
+
+| Check | Mutation | Result |
+| --- | --- | --- |
+| transcription, renamed pairs | `.bz-bar` → `.bz-barTYPO` | fails, naming `.top → .bz-bar` |
+| transcription, deviation list | a `language` value not in the language | fails 3 ways, including "carries no stale deviation" |
+| stroke weights | `border-top: 1.5px` added to the language | fails, naming the file and line |
+| surface stylesheets | a planted sheet with a literal radius, a shadow, a hex, an opacity transition and a category hue on a link | **all five rules fail** |
+| category surfaces | a carrier covering two of five categories, `--color-category-9`, one role in the negation chain | 4 rules fail, then the two role rules once the guard was widened |
+| category hues | `category-4` nudged toward `category-5` | hue separation fails in both themes |
+| category hues, drift guard | one hex digit changed in the exported record's copy | fails |
+| theming ownership | a surface declaring `.dark`, a `--color-*` token and a control bordered with `line` | all three fail |
+| `code-theme.ts` hex | observed failing before the fix: `oklch: "#e7e3d8" is not an oklch(L C H) triple` | the reason the passthrough exists |
+
+### Next, and the honest position
+
+Stage 1 is the shell, against `01-theme-T4-ground-G3-powder.html`: the cobalt bar, the lattice band,
+the three-column grid anchored to the window edges, the folding rail and the 76px sticky offset. It
+carries the first app-side `SelectorMap` in `tests/e2e/fidelity.ts`, and it is where the
+`line-strong` question gets answered.
+
+**The browser suite is red and stays red until surfaces exist**, by design: a half-styled site is
+honest, whereas an old-structure page that still looks finished is the failure being engineered out.
+The 141 hardcoded selectors in the specs are re-pointed surface by surface, with the behavioural
+tests kept.

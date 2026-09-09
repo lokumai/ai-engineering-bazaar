@@ -8,7 +8,6 @@ import { RecordStateSync } from '@/components/record/RecordStateSync'
 import { recordBootScript } from '@/lib/record/boot'
 import { SITE_DESCRIPTION, SITE_NAME } from '@/lib/site'
 import { THEME_BOOT_SCRIPT } from '@/lib/theme'
-import { manrope, plexMono } from './fonts'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -50,12 +49,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   }
   const recordBoot = recordBootScript(stampFacts.categoryTotals, stampFacts.slugToModule)
 
+  /**
+   * No `className` on <html> any more, and that is M16.
+   *
+   * M9 wired two `next/font/google` families here — Manrope for everything a
+   * person wrote, IBM Plex Mono for what a machine measured — and defended the
+   * choice in a written decision. Neither was in the mockup, which names one
+   * stack and names a SYSTEM stack: `"Avenir Next", ui-sans-serif, system-ui,
+   * …`. So type varies with the reader's OS, exactly as the mockup's own does.
+   * `--font-sans` and `--font-mono` in `src/design/bazaar.css` are the only
+   * place a family is named now, and nothing is downloaded.
+   */
   return (
-    <html
-      lang="en"
-      className={`${manrope.variable} ${plexMono.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang="en" suppressHydrationWarning>
       <head>
         {/* Blocking, before any paint: no flash of the wrong theme (§2.5). */}
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />

@@ -5,13 +5,13 @@
  *   node scripts/curriculum-css.mjs           write the file
  *   node scripts/curriculum-css.mjs --check   exit 1 if the file is out of date
  *
- * ## Why this is generated and the rest of `lokum.css` is not
+ * ## Why this is generated and the rest of the stylesheets are not
  *
  * Channel A (§12.2) reveals a signed state from a class the boot script stamps
  * on `<html>` before first paint, so every state rule is a selector matching
  * that class against a descendant's attribute:
  *
- *   html.hl-signed-13 .hl-seg[data-module="13"] { … }
+ *   html.hl-signed-13 .bz-seg[data-module="13"] { … }
  *
  * **CSS has no operator that compares a root class to a descendant's attribute
  * value.** There is no `:has()`, `attr()` or custom-property trick that
@@ -43,7 +43,7 @@
  * D and E need no forced-colours twin, and that is the one asymmetry worth
  * naming: the disc is revealed by `display`, and `display` survives a
  * forced-colours theme untouched. Its fill and its check take the system
- * colours from one unconditional rule — `rail.css` for D, `home.css` for E — so
+ * colours from one unconditional rule in the surface's own stylesheet, so
  * nothing per-module has to be repeated.
  *
  * **E is why control C is a control and not a readout.** A completion the
@@ -116,18 +116,19 @@ export function render() {
 
 @layer components {
   /* A. Every module. The segment fills with its own category's hue.
-     \`--hl-cat\` was resolved by the carrier in lokum.css from the segment's own
-     \`data-cat\`, so the category never appears here. */
-${selectors(every, (pad, n) => `html.hl-signed-${pad} .hl-seg[data-module="${n}"]`)}
-    background: var(--hl-cat);
-    border-color: var(--hl-cat);
+     \`--bz-cat\` is resolved by the carrier from the segment's own \`data-cat\`,
+     so the category never appears here. M16 owes that binding to whichever
+     surface stylesheet draws the segment. */
+${selectors(every, (pad, n) => `html.hl-signed-${pad} .bz-seg[data-module="${n}"]`)}
+    background: var(--bz-cat);
+    border-color: var(--bz-cat);
   }
 
   /* B. The drawn modules only. A step the reader has signed off says so in
      words, in the accent pen. A draft sheet has no sign-off control at all
      (§12.4.1), so no selector for one could ever match, and writing one would
      state that it could. */
-${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .hl-step[data-module="${n}"] .hl-step-tick`)}
+${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .bz-step[data-module="${n}"] .bz-step-tick`)}
     display: inline;
     color: var(--color-accent-ink);   /* T2 — accent as TEXT is \`-ink\` only. */
   }
@@ -135,16 +136,17 @@ ${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .hl-step[data-module="${n}
   /* D. M10 — the curriculum rail's tick, for the drawn modules only. The mark
      is a 17px teal disc with a white check and an \`sr-only\` word inside it, so
      revealing it reveals the shape, the fill and the statement together and
-     colour is never the only carrier. \`rail.css\` holds its geometry. */
-${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .hl-mod[data-module="${n}"] .hl-mod-mark`)}
+     colour is never the only carrier. The rail's own stylesheet holds its
+     geometry. */
+${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .bz-mod[data-module="${n}"] .bz-mod-mark`)}
     display: inline-flex;
   }
 
   /* E. M13/M14 — completion control C's tick, for the drawn modules only. The
      disc sits inside the button that SETS the completion, so the reader's own
      state is right in frame one on a page that lists every module.
-     \`record.css\` holds its geometry. */
-${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .hl-cmod[data-module="${n}"] .hl-cmod-mark`)}
+     The completion surface's own stylesheet holds its geometry. */
+${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .bz-cmod[data-module="${n}"] .bz-cmod-mark`)}
     display: inline-flex;
   }
 
@@ -156,9 +158,9 @@ ${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .hl-cmod[data-module="${n}
      at all — which is what made \`aria-pressed\` the only statement of the
      state an assistive technology got, on channel B, permanently contradicting
      this disc with scripts refused. And giving it E's own class instead made
-     \`.hl-cmod-mark\` match two elements per row, which is a strict-mode
+     \`.bz-cmod-mark\` match two elements per row, which is a strict-mode
      violation in every locator that reads the tick. */
-${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .hl-cmod[data-module="${n}"] .hl-cmod-said`)}
+${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .bz-cmod[data-module="${n}"] .bz-cmod-said`)}
     display: inline;
   }
 }
@@ -170,10 +172,10 @@ ${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .hl-cmod[data-module="${n}
    \`forced-colors: active\` and asserts each surface still reports its state. */
 @media (forced-colors: active) {
   /* C. The drawn modules, for the same reason B stops there. */
-${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .hl-seg[data-module="${n}"]`)}
+${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .bz-seg[data-module="${n}"]`)}
     /* Filled with the system colour, so "signed off" is still a filled cell
        against an empty one: a difference in fill, not in hue. \`forced-color-
-       adjust\` is already \`none\` on \`.hl-seg\` in lokum.css's own block. */
+       adjust\` is set to \`none\` on \`.bz-seg\` where that segment is drawn. */
     background: CanvasText;
     border-color: CanvasText;
   }

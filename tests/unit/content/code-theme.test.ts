@@ -1,28 +1,34 @@
 import { describe, expect, it } from 'vitest'
-import { oklchToHex } from '@/lib/color/oklch'
+import { relativeLuminance } from '@/lib/color/contrast'
 import {
   CODE_TOKEN_ROLES,
   DEFAULT_TOKEN,
   codeThemes,
   readDesignToken,
+  toHex,
 } from '@/lib/content/code-theme'
 
 describe('readDesignToken', () => {
   /**
-   * The function under test is the READER, not the palette. Pinning
-   * `--color-ink`'s value here made a palette change (M9) a failure in a file
-   * about parsing, so what is asserted is the shape: a value for each theme,
-   * both real oklch triples, and the dark one lighter than the light one —
-   * which is the one thing that would be wrong if the two were swapped.
+   * The function under test is the READER, not the palette. Pinning a token's
+   * value here made a palette change (M9) a failure in a file about parsing,
+   * so what is asserted is the shape: a value for each theme, both resolving
+   * to a real colour, and the dark one LIGHTER than the light one — which is
+   * the one thing that would be wrong if the two were swapped.
+   *
+   * M16 made this notation-agnostic on purpose. It used to require an
+   * `oklch(L C H)` triple and read the lightness out of the string, which
+   * would have failed the moment the token layer became a transcription of a
+   * mockup that writes hex. Luminance is the property actually being claimed.
    */
-  it('reads a token out of globals.css in both themes', () => {
-    const ink = readDesignToken('--color-ink')
+  it('reads a token out of the token layer in both themes', () => {
+    const ink = readDesignToken('--color-on-surface')
     expect(Object.keys(ink).sort()).toEqual(['dark', 'light'])
     for (const value of [ink.light, ink.dark]) {
-      expect(value).toMatch(/^oklch\(\s*[\d.]+\s+[\d.]+\s+[\d.]+\s*\)$/)
+      expect(() => relativeLuminance(toHex(value))).not.toThrow()
     }
-    const lightnessOf = (css: string) => Number(/^oklch\(\s*([\d.]+)/.exec(css)?.[1])
-    expect(lightnessOf(ink.dark)).toBeGreaterThan(lightnessOf(ink.light))
+    expect(relativeLuminance(toHex(ink.dark)))
+      .toBeGreaterThan(relativeLuminance(toHex(ink.light)))
   })
 
   it('fails loudly rather than inventing a value for an unknown token', () => {
@@ -49,7 +55,7 @@ describe('codeThemes', () => {
 
   it('derives every colour from a design token, never a literal', () => {
     const expected = (name: string, theme: 'light' | 'dark') =>
-      oklchToHex(readDesignToken(name)[theme])
+      toHex(readDesignToken(name)[theme])
 
     expect(light.fg).toBe(expected(DEFAULT_TOKEN, 'light'))
     expect(dark.fg).toBe(expected(DEFAULT_TOKEN, 'dark'))
@@ -71,7 +77,7 @@ describe('codeThemes', () => {
     const keyword = light.settings.find((s) => s.scope.includes('keyword'))
     expect(keyword?.settings.fontStyle).toBe('bold')
     expect(keyword?.settings.foreground)
-      .toBe(oklchToHex(readDesignToken('--color-slab-keyword').light))
+      .toBe(toHex(readDesignToken('--color-slab-keyword').light))
   })
 
   /** The slab does not flip, so neither does the theme built from it. */

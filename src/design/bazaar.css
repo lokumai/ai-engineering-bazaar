@@ -126,7 +126,7 @@
   --color-slab-arrow:           #6e737f;
   --color-slab-keyword:         #c48ce0;
   --color-slab-string:          #8fcf9a;
-  --color-slab-comment:         #767c88;
+  --color-slab-comment:         #8b91a0;
   --color-slab-function:        #7fb8e8;
   --color-slab-number:          #e0a45c;
 
@@ -215,7 +215,7 @@
    One class per thing the language names. A product's own markup is its own
    business — these are the shapes, not the page.
 
-   `--hl-here` is the ONE custom property a caller has to bind: the current
+   `--bz-here` is the ONE custom property a caller has to bind: the current
    group's own hue, set per instance from the categorical series. The language
    cannot know which group is which, so the binding is the product's.
    =========================================================================== */
@@ -250,7 +250,7 @@
 
   /* -- the bar ------------------------------------------------------------ */
 
-  .hl-bar {
+  .bz-bar {
     position: sticky;
     top: 0;
     z-index: 40;
@@ -259,7 +259,7 @@
     border-bottom: 1px solid var(--color-bar-edge);
   }
 
-  .hl-bar-inner {
+  .bz-bar-inner {
     display: flex;
     align-items: center;
     gap: 16px;
@@ -267,7 +267,7 @@
     padding: 0 22px;
   }
 
-  .hl-brand {
+  .bz-brand {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -275,32 +275,32 @@
     font: 600 var(--text-lead) / 1 var(--font-sans);
   }
 
-  .hl-brand:hover { text-decoration: none; }
+  .bz-brand:hover { text-decoration: none; }
 
   /* A tile, not a logo: four glazed squares from the same series, one left as
      the ground. */
-  .hl-brand-mark {
+  .bz-brand-mark {
     display: grid;
     grid-template-columns: 9px 9px;
     gap: 2px;
   }
 
-  .hl-brand-mark > * {
+  .bz-brand-mark > * {
     display: block;
     width: 9px;
     height: 9px;
     border-radius: var(--radius-hair);
   }
 
-  .hl-bar-nav {
+  .bz-bar-nav {
     display: flex;
     gap: 2px;
     margin-left: 4px;
   }
 
-  .hl-bar-nav > * { position: relative; }
+  .bz-bar-nav > * { position: relative; }
 
-  .hl-bar-link {
+  .bz-bar-link {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -314,7 +314,7 @@
     cursor: pointer;
   }
 
-  .hl-bar-link:hover {
+  .bz-bar-link:hover {
     background: var(--color-bar-hover);
     color: var(--color-on-bar);
     text-decoration: none;
@@ -322,13 +322,13 @@
 
   /* A solid powder chip on cobalt: the strongest contrast the language can
      make, and therefore the right way to say "you are here". */
-  .hl-bar-link[aria-current] {
+  .bz-bar-link[aria-current] {
     background: var(--color-bar-chip);
     color: var(--color-on-bar-chip);
     font-weight: 600;
   }
 
-  .hl-bar-field {
+  .bz-bar-field {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -343,7 +343,7 @@
     cursor: text;
   }
 
-  .hl-bar-icon {
+  .bz-bar-icon {
     display: grid;
     place-items: center;
     width: 33px;
@@ -356,11 +356,11 @@
     cursor: pointer;
   }
 
-  .hl-bar-icon:hover { background: var(--color-bar-hover); }
+  .bz-bar-icon:hover { background: var(--color-bar-hover); }
 
   /* -- the menu ----------------------------------------------------------- */
 
-  .hl-menu {
+  .bz-menu {
     position: absolute;
     top: 40px;
     left: 0;
@@ -373,7 +373,7 @@
     box-shadow: var(--shadow-menu);
   }
 
-  .hl-menu-item {
+  .bz-menu-item {
     display: flex;
     align-items: center;
     gap: 9px;
@@ -383,19 +383,19 @@
     font: 500 var(--text-item) / var(--text-item--line-height) var(--font-sans);
   }
 
-  .hl-menu-item:hover {
+  .bz-menu-item:hover {
     background: var(--color-surface-sunken);
     text-decoration: none;
   }
 
-  .hl-menu-key {
+  .bz-menu-key {
     flex: none;
     width: 4px;
     height: 15px;
     border-radius: var(--radius-hair);
   }
 
-  .hl-menu-count {
+  .bz-menu-count {
     margin-left: auto;
     color: var(--color-on-surface-muted);
     font-size: var(--text-label);
@@ -404,7 +404,7 @@
   /* -- the ornament -------------------------------------------------------
      A lattice of three glazes on cobalt, finished with a gold rule. */
 
-  .hl-band {
+  .bz-band {
     height: var(--layout-band);
     background-color: var(--color-band-ground);
     background-image:
@@ -421,33 +421,33 @@
      anchored to the window's edges, not to a centred container: the language
      reads as a workbench, not a document floating in a page. */
 
-  .hl-shell {
+  .bz-shell {
     display: grid;
     grid-template-columns: var(--layout-rail) minmax(0, 1fr) var(--layout-aside);
     align-items: start;
     transition: grid-template-columns var(--duration-fold) var(--ease-bazaar);
   }
 
-  .hl-shell[data-rail="folded"] {
+  .bz-shell[data-rail="folded"] {
     grid-template-columns: 0px minmax(0, 1fr) var(--layout-aside);
   }
 
   /* Drop the least important thing first: an in-page index is the most
      redundant of the three columns, so the aside goes before the rail. */
   @media (max-width: 1180px) {
-    .hl-shell { grid-template-columns: var(--layout-rail) minmax(0, 1fr); }
-    .hl-shell[data-rail="folded"] { grid-template-columns: 0px minmax(0, 1fr); }
-    .hl-aside { display: none; }
+    .bz-shell { grid-template-columns: var(--layout-rail) minmax(0, 1fr); }
+    .bz-shell[data-rail="folded"] { grid-template-columns: 0px minmax(0, 1fr); }
+    .bz-aside { display: none; }
   }
 
   @media (max-width: 880px) {
-    .hl-shell { grid-template-columns: minmax(0, 1fr); }
-    .hl-rail { display: none; }
+    .bz-shell { grid-template-columns: minmax(0, 1fr); }
+    .bz-rail { display: none; }
   }
 
   /* -- the rail ----------------------------------------------------------- */
 
-  .hl-rail {
+  .bz-rail {
     position: sticky;
     top: var(--layout-sticky);
     height: calc(100vh - var(--layout-sticky));
@@ -459,7 +459,7 @@
       transform var(--duration-fold) var(--ease-bazaar);
   }
 
-  .hl-rail-inner {
+  .bz-rail-inner {
     width: var(--layout-rail);
     padding: 16px 12px 48px;
   }
@@ -467,7 +467,7 @@
   /* `visibility`/`opacity` and `pointer-events: none` together: a folded rail
      must not be reachable by Tab, or a keyboard reader traverses a column that
      is not on screen. */
-  .hl-shell[data-rail="folded"] .hl-rail {
+  .bz-shell[data-rail="folded"] .bz-rail {
     opacity: 0;
     transform: translateX(-14px);
     overflow: hidden;
@@ -475,20 +475,20 @@
     pointer-events: none;
   }
 
-  .hl-rail-head {
+  .bz-rail-head {
     display: flex;
     align-items: center;
     gap: 8px;
     padding: 0 2px 4px;
   }
 
-  .hl-rail-head-label {
+  .bz-rail-head-label {
     color: var(--color-on-surface-faint);
     font: 600 var(--text-label) / 1 var(--font-sans);
     letter-spacing: var(--tracking-label);
   }
 
-  .hl-rail-fold {
+  .bz-rail-fold {
     display: grid;
     place-items: center;
     width: 28px;
@@ -501,14 +501,14 @@
     cursor: pointer;
   }
 
-  .hl-rail-fold:hover {
+  .bz-rail-fold:hover {
     background: var(--color-surface-sunken);
     color: var(--color-on-surface);
   }
 
   /* Vertically centred, so it can never collide with the sticky chrome
      whatever the chrome's height becomes. */
-  .hl-rail-restore {
+  .bz-rail-restore {
     position: fixed;
     left: 0;
     top: 50%;
@@ -527,10 +527,10 @@
     cursor: pointer;
   }
 
-  .hl-shell[data-rail="folded"] ~ .hl-rail-restore,
-  .hl-rail-restore[data-shown] { display: grid; }
+  .bz-shell[data-rail="folded"] ~ .bz-rail-restore,
+  .bz-rail-restore[data-shown] { display: grid; }
 
-  .hl-rail-restore:hover {
+  .bz-rail-restore:hover {
     background: var(--color-surface-sunken);
     color: var(--color-on-surface);
   }
@@ -541,7 +541,7 @@
      edge in the group's own hue. Its count moves from muted to full ink.
      Four signals because one of them is colour, and colour is never alone. */
 
-  .hl-group > summary {
+  .bz-group > summary {
     display: flex;
     align-items: center;
     gap: 9px;
@@ -559,14 +559,14 @@
       border-color var(--duration-swift) var(--ease-bazaar);
   }
 
-  .hl-group > summary::-webkit-details-marker { display: none; }
+  .bz-group > summary::-webkit-details-marker { display: none; }
 
-  .hl-group > summary:hover {
+  .bz-group > summary:hover {
     background: var(--color-surface-sunken);
     border-color: var(--color-line-strong);
   }
 
-  .hl-group-key {
+  .bz-group-key {
     flex: none;
     width: 5px;
     height: 17px;
@@ -576,38 +576,38 @@
       width var(--duration-shift) var(--ease-bazaar);
   }
 
-  .hl-group-count {
+  .bz-group-count {
     margin-left: auto;
     color: var(--color-on-surface-muted);
     font: 500 var(--text-mark) / 1 var(--font-sans);
   }
 
-  .hl-group[data-here] > summary {
+  .bz-group[data-here] > summary {
     padding: 12px 12px 12px 11px;
     border-color: var(--color-line-strong);
-    border-left: 4px solid var(--hl-here);
+    border-left: 4px solid var(--bz-here);
     background: var(--color-surface-sunken);
     font-size: var(--text-lead);
   }
 
-  .hl-group[data-here] > summary .hl-group-key {
+  .bz-group[data-here] > summary .bz-group-key {
     width: 6px;
     height: 23px;
   }
 
-  .hl-group[data-here] > summary .hl-group-count {
+  .bz-group[data-here] > summary .bz-group-count {
     color: var(--color-on-surface);
     font-weight: 600;
   }
 
-  .hl-group-list {
+  .bz-group-list {
     margin: 0 0 4px 16px;
     padding: 6px 0 4px 14px;
     list-style: none;
     border-left: 1px solid var(--color-line);
   }
 
-  .hl-item {
+  .bz-item {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -617,19 +617,19 @@
     font-size: var(--text-item);
   }
 
-  .hl-item:hover {
+  .bz-item:hover {
     background: var(--color-surface-raised);
     color: var(--color-on-surface);
     text-decoration: none;
   }
 
-  .hl-item[aria-current] {
-    background: var(--hl-here);
+  .bz-item[aria-current] {
+    background: var(--bz-here);
     color: var(--color-on-primary);
     font-weight: 600;
   }
 
-  .hl-item-pending {
+  .bz-item-pending {
     margin-left: auto;
     padding: 1px 5px;
     border: 1px solid var(--color-line);
@@ -642,7 +642,7 @@
      clears a 3:1 graphical floor against the ground but not a 4.5:1 text
      floor, so the meaning has to be carried by a shape with a fill. A stroked
      tick fails for exactly the viewers it matters most to. */
-  .hl-tick {
+  .bz-tick {
     flex: none;
     display: grid;
     place-items: center;
@@ -652,7 +652,7 @@
     background: var(--color-success);
   }
 
-  .hl-tick > svg {
+  .bz-tick > svg {
     width: 11px;
     height: 11px;
     fill: none;
@@ -664,8 +664,8 @@
 
   /* On the current item the disc inverts, because the row is already filled
      with the hue. */
-  .hl-item[aria-current] .hl-tick { background: var(--color-on-primary); }
-  .hl-item[aria-current] .hl-tick > svg { stroke: var(--hl-here); }
+  .bz-item[aria-current] .bz-tick { background: var(--color-on-primary); }
+  .bz-item[aria-current] .bz-tick > svg { stroke: var(--bz-here); }
 
   /* -- the reading column -------------------------------------------------
      Centred inside the fluid middle and capped at the measure. The cap keeps
@@ -673,17 +673,17 @@
      padding is fluid, so the gutters grow with the window rather than the
      measure growing. */
 
-  .hl-main {
+  .bz-main {
     min-width: 0;
     padding: 30px clamp(24px, 3.4vw, 56px) 96px;
   }
 
-  .hl-col {
+  .bz-col {
     max-width: min(100%, var(--layout-measure));
     margin-inline: auto;
   }
 
-  .hl-crumb {
+  .bz-crumb {
     display: flex;
     gap: 8px;
     margin-bottom: 14px;
@@ -691,9 +691,9 @@
     font-size: var(--text-meta);
   }
 
-  .hl-crumb a { color: var(--color-on-surface-muted); }
+  .bz-crumb a { color: var(--color-on-surface-muted); }
 
-  .hl-display {
+  .bz-display {
     margin: 0 0 12px;
     color: var(--color-on-surface-title);
     font: 600 var(--text-display) / var(--text-display--line-height) var(--font-sans);
@@ -702,7 +702,7 @@
 
   /* The dashed ochre rule is the one place ornament touches the reading
      column. */
-  .hl-section {
+  .bz-section {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -712,7 +712,7 @@
     letter-spacing: var(--tracking-section);
   }
 
-  .hl-section::after {
+  .bz-section::after {
     content: "";
     flex: 1;
     height: 2px;
@@ -723,12 +723,12 @@
     );
   }
 
-  .hl-subsection {
+  .bz-subsection {
     margin: 30px 0 8px;
     font: 600 var(--text-subsection) / var(--text-subsection--line-height) var(--font-sans);
   }
 
-  .hl-facts {
+  .bz-facts {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -738,7 +738,7 @@
     font-size: var(--text-item);
   }
 
-  .hl-tag {
+  .bz-tag {
     display: inline-flex;
     align-items: center;
     gap: 7px;
@@ -749,7 +749,7 @@
     font: 600 var(--text-mark) / 1 var(--font-sans);
   }
 
-  .hl-tag > i {
+  .bz-tag > i {
     width: 7px;
     height: 7px;
     border-radius: var(--radius-hair);
@@ -760,26 +760,26 @@
      text; emphasis is 650 rather than 700, because the ground is light enough
      that ordinary bold under-reads. */
 
-  .hl-prose p { margin: 0 0 17px; }
+  .bz-prose p { margin: 0 0 17px; }
 
-  .hl-prose a {
+  .bz-prose a {
     font-weight: 500;
     text-decoration: underline;
     text-decoration-color: var(--color-ornament);
     text-underline-offset: 2px;
   }
 
-  .hl-prose ul {
+  .bz-prose ul {
     margin: 0 0 17px;
     padding-left: 22px;
   }
 
-  .hl-prose li { margin: 6px 0; }
-  .hl-prose strong { font-weight: 650; }
+  .bz-prose li { margin: 6px 0; }
+  .bz-prose strong { font-weight: 650; }
 
   /* A tile set at an angle: the callout, and the only other place `leaf`
      appears. */
-  .hl-card {
+  .bz-card {
     margin: 0 0 28px;
     padding: 17px 20px;
     border: 1px solid var(--color-line);
@@ -787,26 +787,26 @@
     background: var(--color-surface-raised);
   }
 
-  .hl-card-title {
+  .bz-card-title {
     display: block;
     margin-bottom: 8px;
     color: var(--color-on-surface-title);
     font-size: var(--text-item);
   }
 
-  .hl-card ul {
+  .bz-card ul {
     margin: 0;
     padding-left: 20px;
   }
 
-  .hl-card li {
+  .bz-card li {
     margin: 5px 0;
     font-size: 15px;
   }
 
   /* -- the slab ----------------------------------------------------------- */
 
-  .hl-slab {
+  .bz-slab {
     overflow: hidden;
     margin: 0 0 24px;
     border: 1px solid var(--color-slab-line);
@@ -814,7 +814,7 @@
     background: var(--color-slab-surface);
   }
 
-  .hl-slab-head {
+  .bz-slab-head {
     display: flex;
     padding: 9px 13px;
     border-bottom: 1px solid var(--color-slab-line);
@@ -822,9 +822,9 @@
     font: var(--text-mark) / 1 var(--font-mono);
   }
 
-  .hl-slab-head > span:last-child { margin-left: auto; }
+  .bz-slab-head > span:last-child { margin-left: auto; }
 
-  .hl-slab-code {
+  .bz-slab-code {
     margin: 0;
     padding: 15px 17px;
     overflow-x: auto;
@@ -832,48 +832,48 @@
     font: var(--text-code) / var(--text-code--line-height) var(--font-mono);
   }
 
-  .hl-tok-keyword  { color: var(--color-slab-keyword);  font-weight: 600; }
-  .hl-tok-string   { color: var(--color-slab-string); }
-  .hl-tok-comment  { color: var(--color-slab-comment);  font-style: italic; }
-  .hl-tok-function { color: var(--color-slab-function); }
-  .hl-tok-number   { color: var(--color-slab-number);   font-weight: 600; }
+  .bz-tok-keyword  { color: var(--color-slab-keyword);  font-weight: 600; }
+  .bz-tok-string   { color: var(--color-slab-string); }
+  .bz-tok-comment  { color: var(--color-slab-comment); }
+  .bz-tok-function { color: var(--color-slab-function); }
+  .bz-tok-number   { color: var(--color-slab-number);   font-weight: 600; }
 
   /* -- figures ------------------------------------------------------------
      The same dark palette, and the contents scroll INSIDE the frame: a diagram
      wider than the column never widens the page. */
 
-  .hl-figure {
+  .bz-figure {
     margin: 0 0 28px;
     border: 1px solid var(--color-slab-line);
     border-radius: var(--radius-lg);
     background: var(--color-slab-surface);
   }
 
-  .hl-figure-body {
+  .bz-figure-body {
     min-width: 0;
     padding: 20px 18px;
     overflow-x: auto;
     overscroll-behavior-x: contain;
   }
 
-  .hl-figure-body > svg {
+  .bz-figure-body > svg {
     max-width: 100%;
     height: auto;
   }
 
-  .hl-caption {
+  .bz-caption {
     margin-top: 9px;
     color: var(--color-on-surface-muted);
     font-size: var(--text-meta);
   }
 
-  .hl-flow {
+  .bz-flow {
     display: flex;
     align-items: center;
     min-width: min-content;
   }
 
-  .hl-node {
+  .bz-node {
     padding: 9px 13px;
     border: 1px solid var(--color-slab-line-raised);
     border-radius: var(--radius-base);
@@ -883,14 +883,14 @@
     white-space: nowrap;
   }
 
-  .hl-node[data-active] {
+  .bz-node[data-active] {
     border-color: var(--color-category-1);
     background: var(--color-category-1);
     color: var(--color-on-primary);
     font-weight: 600;
   }
 
-  .hl-arrow {
+  .bz-arrow {
     padding: 0 8px;
     color: var(--color-slab-arrow);
     font-weight: 700;
@@ -900,7 +900,7 @@
      One primary beside at most one quiet. Primary hover brightens the fill
      rather than changing the hue. */
 
-  .hl-actions {
+  .bz-actions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -910,7 +910,7 @@
     border-top: 2px solid var(--color-line);
   }
 
-  .hl-btn {
+  .bz-btn {
     display: inline-flex;
     align-items: center;
     gap: 9px;
@@ -923,69 +923,69 @@
     cursor: pointer;
   }
 
-  .hl-btn:hover { filter: brightness(1.12); }
+  .bz-btn:hover { filter: brightness(1.12); }
 
-  .hl-btn-quiet {
+  .bz-btn-quiet {
     border-color: var(--color-line-strong);
     background: var(--color-surface-raised);
     color: var(--color-on-surface);
   }
 
-  .hl-btn-quiet:hover {
+  .bz-btn-quiet:hover {
     background: var(--color-surface-sunken);
     filter: none;
   }
 
-  .hl-actions .hl-note {
+  .bz-actions .bz-note {
     margin: 0;
     color: var(--color-on-surface-muted);
     font-size: var(--text-item);
   }
 
-  .hl-pager {
+  .bz-pager {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
     margin-top: 34px;
   }
 
-  .hl-pager-item {
+  .bz-pager-item {
     padding: 13px 15px;
     border: 1px solid var(--color-line);
     border-radius: var(--radius-sm);
     background: var(--color-surface-raised);
   }
 
-  .hl-pager-item:hover {
+  .bz-pager-item:hover {
     border-color: var(--color-line-strong);
     background: var(--color-surface-sunken);
     text-decoration: none;
   }
 
-  .hl-pager-item small {
+  .bz-pager-item small {
     display: block;
     margin-bottom: 3px;
     color: var(--color-on-surface-faint);
     font-size: var(--text-mark);
   }
 
-  .hl-pager-item b {
+  .bz-pager-item b {
     color: var(--color-on-surface-title);
     font-size: 15px;
     font-weight: 600;
   }
 
-  .hl-pager-item[data-end] { text-align: right; }
+  .bz-pager-item[data-end] { text-align: right; }
 
   /* -- the aside ---------------------------------------------------------- */
 
-  .hl-aside {
+  .bz-aside {
     position: sticky;
     top: var(--layout-sticky);
     padding: 30px 20px 40px 8px;
   }
 
-  .hl-aside-label {
+  .bz-aside-label {
     display: block;
     margin-bottom: 10px;
     color: var(--color-on-surface-muted);
@@ -993,7 +993,7 @@
     font-weight: 600;
   }
 
-  .hl-aside-link {
+  .bz-aside-link {
     display: block;
     padding: 5px 0 5px 12px;
     border-left: 2px solid var(--color-line);
@@ -1001,12 +1001,12 @@
     font-size: var(--text-meta);
   }
 
-  .hl-aside-link:hover {
+  .bz-aside-link:hover {
     color: var(--color-on-surface);
     text-decoration: none;
   }
 
-  .hl-aside-link[aria-current] {
+  .bz-aside-link[aria-current] {
     border-left-color: var(--color-primary);
     color: var(--color-primary);
     font-weight: 600;
@@ -1110,17 +1110,17 @@
   --color-slab-arrow:           #6e737f;
   --color-slab-keyword:         #c48ce0;
   --color-slab-string:          #8fcf9a;
-  --color-slab-comment:         #767c88;
+  --color-slab-comment:         #8b91a0;
   --color-slab-function:        #7fb8e8;
   --color-slab-number:          #e0a45c;
 }
 
 /* The fold is instant, not animated. */
 @media (prefers-reduced-motion: reduce) {
-  .hl-shell,
-  .hl-rail,
-  .hl-group > summary,
-  .hl-group-key {
+  .bz-shell,
+  .bz-rail,
+  .bz-group > summary,
+  .bz-group-key {
     transition: none;
   }
 }

@@ -14,16 +14,38 @@ import { oklchToHex } from '@/lib/color/oklch'
  * therefore re-themes every code block with no re-highlight and no JavaScript,
  * which is what makes the 0ms theme switch of §9.2 possible.
  *
- * The colours are read out of `globals.css` at build time rather than copied
+ * The colours are read out of the token layer at build time rather than copied
  * into this file. §11.25 makes derived-or-absent the rule for metadata; a
- * syntax theme that quietly keeps the *old* value of `--color-verify-ink` is
- * the same failure wearing a different hat.
+ * syntax theme that quietly keeps the *old* value of a token is the same
+ * failure wearing a different hat.
+ *
+ * **M16 moved what it reads and what notation it accepts.** The tokens used to
+ * live in `src/app/globals.css` in `oklch()`; they now live in
+ * `src/design/bazaar.css`, which is a transcription of
+ * `playground/01-theme-T4-ground-G3-powder.html` and therefore writes **hex**,
+ * because the mockup does. Converting the language into `oklch()` to suit this
+ * reader would put a second notation between the mockup and the page, which is
+ * exactly the drift that got the last interface rejected — so the reader
+ * accepts both instead. `src/lib/color/contrast.ts` already did.
  */
 
-const GLOBALS_CSS = path.resolve(process.cwd(), 'src', 'app', 'globals.css')
+const TOKENS_CSS = path.resolve(process.cwd(), 'src', 'design', 'bazaar.css')
 
 /** Where the `.dark` override (§2.3) begins in that file. */
 const DARK_SCOPE = /\.dark\s*\{/
+
+/** `#rrggbb` passes through; anything else goes through the oklch pipeline. */
+const HEX = /^#[0-9a-f]{6}$/i
+
+/**
+ * Exported so nothing has to keep a second copy of the notation policy. A test
+ * that converted a token itself would pass while this reader was broken, which
+ * is how a check stops checking.
+ */
+export function toHex(value: string): string {
+  const source = value.trim()
+  return HEX.test(source) ? source.toLowerCase() : oklchToHex(source)
+}
 
 export interface ThemeTokenValue {
   light: string
@@ -48,7 +70,7 @@ export interface CodeTokenRole {
  * separates what the machine says from what the author says
  * (`kia-context/specs/DESIGN.md`, Overview). Every token below is therefore a
  * `--color-slab-*` token, declared identically in both themes in
- * `globals.css`.
+ * `src/design/bazaar.css`.
  *
  * That change also settles §11.20's "no syntax theme with more than four token
  * colours" the other way, and deliberately. Four was the right budget when the
@@ -62,8 +84,8 @@ export interface CodeTokenRole {
  * is the reason `slab-comment` is not the value DESIGN.md first carried: a
  * comment in a teaching corpus is CONTENT — `# Example vectors` is the line
  * that explains the three below it — so it takes the 4.5:1 text floor, and
- * `#767c88` measured 3.92:1 on the slab. `contrast.test.ts` recomputes all six
- * against `--color-slab` on every change.
+ * a comment measured against the slab has to clear it. `contrast.test.ts`
+ * recomputes all six against `--color-slab-surface` on every change.
  */
 export const CODE_TOKEN_ROLES: readonly CodeTokenRole[] = [
   { scope: ['comment', 'punctuation.definition.comment'], token: '--color-slab-comment' },
@@ -76,12 +98,12 @@ export const CODE_TOKEN_ROLES: readonly CodeTokenRole[] = [
   },
 ]
 
-export const DEFAULT_TOKEN = '--color-slab-ink'
+export const DEFAULT_TOKEN = '--color-slab-on-surface'
 
 let source: string | null = null
 
-function globalsCss(): string {
-  if (source === null) source = fs.readFileSync(GLOBALS_CSS, 'utf8')
+function tokensCss(): string {
+  if (source === null) source = fs.readFileSync(TOKENS_CSS, 'utf8')
   return source
 }
 
@@ -92,10 +114,10 @@ function globalsCss(): string {
  * moment either declaration disappears.
  */
 export function readDesignToken(name: string): ThemeTokenValue {
-  const css = globalsCss()
+  const css = tokensCss()
   const darkAt = css.search(DARK_SCOPE)
   if (darkAt === -1) {
-    throw new Error(`code-theme: no .dark block in ${GLOBALS_CSS}`)
+    throw new Error(`code-theme: no .dark block in ${TOKENS_CSS}`)
   }
 
   const declaration = new RegExp(`${name}\\s*:\\s*([^;]+);`, 'g')
@@ -110,7 +132,7 @@ export function readDesignToken(name: string): ThemeTokenValue {
 
   if (light === null || dark === null) {
     throw new Error(
-      `code-theme: ${name} is not declared in both themes in ${GLOBALS_CSS}` +
+      `code-theme: ${name} is not declared in both themes in ${TOKENS_CSS}` +
       ` (light: ${light ?? 'missing'}, dark: ${dark ?? 'missing'})`,
     )
   }
@@ -125,7 +147,7 @@ export interface CodeThemeRule {
 export interface CodeTheme {
   name: string
   type: 'light' | 'dark'
-  /** Transparent: §6.7 puts the block on `--color-sunken`, which must show. */
+  /** Transparent: the block sits on the slab's own ground, which must show. */
   bg: string
   fg: string
   colors: Record<string, string>
@@ -138,7 +160,7 @@ export type CodeThemes = {
 }
 
 function build(variant: 'light' | 'dark'): CodeTheme {
-  const hex = (token: string) => oklchToHex(readDesignToken(token)[variant])
+  const hex = (token: string) => toHex(readDesignToken(token)[variant])
   const fg = hex(DEFAULT_TOKEN)
 
   return {

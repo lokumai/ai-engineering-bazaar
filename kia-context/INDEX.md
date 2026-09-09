@@ -69,7 +69,7 @@ reconstructed from git and is labelled as inferred inside each file.
 | File | What it holds | State |
 |---|---|---|
 | `MANIFESTO.md` | 15 non-negotiable rules, what this is and is NOT | Rules 1–7 are the author's own, from `mini-courses/MANIFEST.md`. Rules 8–15 came out of the work. |
-| `ARCHITECTURE.md` | The six rules, the domain, the two lifecycles, what the system refuses, the record, accounts, the build, deployment, the vocabulary | Current as of 2026-09-08. **The only architecture document**: the root `ARCHITECTURE.md` was folded into it and deleted (D11). 607 lines, sections 1 to 12; read the six rules, then §2, §3 and §9. |
+| `ARCHITECTURE.md` | The six rules, the domain, the two lifecycles, what the system refuses, the record, accounts, the build, deployment, the vocabulary | Current as of 2026-09-09. **The only architecture document**: the root `ARCHITECTURE.md` was folded into it and deleted (D11). 706 lines, sections 1 to 12; read the six rules, then §2, §3 and §9. |
 | `DESIGN.md` | The design system: tokens, colour roles, type scale, layout, components, and the do-nots | **Rewritten 2026-09-08**, and shipped in **M9 to M14**: ground `#FDFBF7`, cobalt accent, Manrope, five re-hued level colours, the dark slab, the fold, the 80ch measure, the view toggle, completion control C. The old "Hidden Line" system was deleted, not kept alongside. **Five corrections are recorded in it rather than tidied away** — the type stack, the ground, `slab-comment`, the measured width of the measure, and the `title` colour the token block names and no stylesheet declares. |
 
 ### `kia-context/logs/` — state · written every session

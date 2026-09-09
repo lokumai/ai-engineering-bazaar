@@ -9,7 +9,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "the whole project, 2026-07-07 onward — M1 to M14; M9 to M14 shipped"
+covers: "the whole project, 2026-07-07 onward — M1 to M14; M9 to M14 shipped and reviewed"
 last_updated: "2026-09-09"
 ---
 
@@ -558,7 +558,7 @@ still on every route that keeps the shell.
 |---|---|
 | `npm run typecheck` | clean |
 | `npm test` | **2,107 passed**, 77 files (2,042 at the start of the milestone) |
-| `npm run build` | clean, 58 pages exported |
+| `npm run build` | clean, **56 HTML files** in `out/` (Next reports 57 generated pages; one is the not-found boundary, which the export writes as `404.html` rather than as a directory) |
 | `npx playwright test` | **435 passed, 0 failed, 19 skipped** (355 / 4 / 19 at the start) |
 
 **Run the four with nothing else running, and that is not a style note.** Two
@@ -1111,9 +1111,132 @@ why that test can still refuse every module and then open the row.
 
 M9's own measurement was 1,660 occurrences of the retired vocabulary across 56
 pages before the rename and 0 after. Re-run on this export, over the eleven
-retired words **plus `XP` and `CLASS n`**: **56 pages, 0 occurrences.** It found
+retired words **plus `XP` and `CLASS n`**: **56 pages, 0 occurrences of twelve
+of the thirteen forms.** The thirteenth is bare `drawn`, which the export still
+carries four times — `legend/`'s *"It has drawn every figure in this
+curriculum"*, and three sentences in `intermediate/personal-agents` about a
+figure being drawn. All four are the ordinary English verb and not the retired
+status word, `copy-register.test.ts:365` exempts bare `drawn` for exactly that
+reason and names the legend sentence as the reason, and three of the four are in
+the read-only corpus. Stated this way because "0 occurrences" over all thirteen
+is not what the export contains, and a review checked. It found
 three on the way, and all three were things no lexer could have caught — the
 home page's own new copy saying *"That is the register here"* in the sense of a
 linguistic register, the legend's *"the sheets carry no endorsement"*, and the
 curriculum diagram's caption counting *"5 subsystems"*. The first was mine and
 one hour old; the other two had been shipping since M9.
+
+---
+
+## 🔍 The review pass over M10 to M14, and what it cost
+
+Three agents built M10's remainder through M14; a fourth reviewed the combined
+diff without being told any of their reasoning, and the orchestrator checked the
+review rather than taking it. **Nine findings, one of them a blocker, and every
+one of the ten claims spot-checked reproduced exactly.** What follows is what
+was wrong, because a review that only records its verdict teaches nobody.
+
+### The blocker: a 28px box holding a 39px word
+
+`.hl-cmod-planned` was given `width: 28px` so the planned rows would line up
+with the completion toggle beside them, and then given the word `Planned`, which
+measures 39px at 11px mono with 0.06em tracking. With `overflow: visible` the
+last glyph painted **on top of the module number**, and it read `PLANNED14
+Generative UI`.
+
+**MEASURED, independently, before the fix:** text box 444→494 inside a box of
+455→483, with the link starting at x=491. **14 of 14 planned rows collided, on
+`/` and on `/profile/`, at 1440, 1024 and 390.** Those are the two surfaces this
+phase built and one of them is the front door. M13's report ticked the
+deliverable and did not mention it, and no test in the diff caught it.
+
+**Fixed** by widening the reserved track to 48px for the toggle and the label
+both — the toggle keeps its 28px target for SC 2.5.8 inside a 10px margin — so
+the rows still line up and the word fits. Measured after: **0 of 14 collide at
+all three widths, and the rows keep one left edge per column.** `Planned` also
+moved from `ink-faint` (2.86:1) to `ink-muted`, because it is the only thing on
+the row that says the module is not written, which makes it text a reader must
+read; `.hl-ov-planned` and `.hl-quiz-award` moved for the same reason.
+
+**A test now holds the rule**, in `responsive.spec.ts`, and it is a rule about
+any label at any width rather than a fact about this page: no element whose text
+overflows its own box may have that text reach a sibling's text. It reads the
+**text** box with a `Range` and not the element box, because an overflowing
+element reports the box it was given and not the ink it painted — reading the
+element box is what let this ship. **Mutation-tested in both directions:** put
+`width: 28px` back and it fails; the fix and it passes.
+
+### The one that would have been invisible: `aria-pressed` on channel B
+
+Recorded as **D25**. Control C's toggle reported `aria-pressed="false"` for ever
+about a module whose disc was painted and whose own word said `Complete`.
+Measured with every `.js` request refused. The fix moved the statement onto
+channel A and turned up two things worth more than itself: `aria-label` on a
+button means **nothing inside that button is ever announced**, so the `sr-only`
+word the tick already carried was dead weight; and the word needs its own class,
+because sharing the disc's made one selector match two elements per row, which
+is a strict-mode violation in seven tests.
+
+### The rest, in one line each
+
+- **`page.tsx` typed `The five levels`** while everything around it was derived,
+  breaking M13's own acceptance criterion and falsifying the file's own docblock
+  claim that "not one count in this file is typed". Now `numberWord(levels.length)`,
+  the same construction `AliasSheet.tsx` already used.
+- **`containment.spec.ts` said "asserted by PRESSING the key" and called
+  `.focus()`** — D17's anti-pattern re-committed in the file carrying M11's
+  headline fix. It now walks the tab order with real Tab presses.
+- **The copy register did not scan `components/shell`, `components/catalog`,
+  `components/curriculum` or `lib/catalog`** — the four directories holding the
+  largest blocks of new copy in the whole revision. Added; **19 tests pass**, so
+  the hole was latent and not an active violation. `ARCHITECTURE.md` records that
+  this same omission is how a first-person `My progress` shipped once already.
+- **`catalog.spec.ts` typed a level title** into a locator. Taken by position in
+  its named group instead.
+- **Three ratios in DESIGN.md were wrong**, one of them contradicting a figure
+  fifteen lines above it, and **D19's own premise quoted a ratio that was never
+  true of either value the token has held**. All recomputed from the shipped
+  stylesheet; D19 corrected in place with its number kept and struck.
+- **`INDEX.md` described a 607-line ARCHITECTURE.md that is 706 lines**, M10's
+  gate table said 58 exported pages where the other three say 56 (measured: 56),
+  `curriculum-file.ts` still said "six categories" above the export the whole
+  content layer walks, and the BRAINSTORM template's placeholder answered to
+  `### D7`, so that number resolved to two places.
+
+### M12's acceptance criterion that nobody had run
+
+> "A curriculum change reaches all three views, verified by reordering one line
+> in `curriculum.yaml` and checking all three follow."
+
+It was satisfied by construction and **never actually run**, and the box was
+ticked. Run now: `loop_engineering` and `security` swapped — the legal pair, each
+needing only `harness_engineering`, with `personal_agents` needing both and
+sitting after — then the ordered hrefs of all three views read out of the export.
+**All three followed the one line, identically, and all three agreed with each
+other before and after.** The corpus was restored and the restore proved: the
+export's per-view order is byte-identical to before, and `git status` on
+`curriculum.yaml` is empty.
+
+### The gate, after the fixes
+
+| Gate | Result |
+| --- | --- |
+| `npm run typecheck` | clean |
+| `npm test` | **2,149 passed**, 78 files |
+| `npm run build` | clean, **56 HTML files**, `lokum-modules.css` in sync with its generator |
+| `npx playwright test` | **467 passed, 0 failed, 19 skipped** (3.4m, 8 workers) |
+
+**That is the first fully green full run on this branch**, and it is worth saying
+why the earlier ones were not. Three consecutive full runs each produced a
+different red, all passing alone: Agent A reported 0, Agent B two in
+`navigation.spec.ts`, the reviewer one in `rail.spec.ts`. The cause was found:
+**`waitForHydratedReadout` had been applied to one of the three fold tests and
+not the other two.** The hide control is a React island, so a click sent before
+the document hydrates lands on nothing and the poll then times out on a rail
+nobody asked to fold. All three wait now.
+
+**Not claimed as fixed:** the family is load-sensitivity, not one bug. Under
+`--repeat-each=3` over the whole of `rail.spec.ts` a restore assertion still
+fails intermittently, and raising its poll from 2s to 8s did **not** help — the
+width never arrives, so it is a click that does not land rather than a slow one.
+At one worker and at three it passes 6/6. It is recorded here rather than closed.

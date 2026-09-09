@@ -43,7 +43,7 @@ Number it permanently, date it absolutely, say what was **rejected**, and give t
 command if a measurement decided it.
 
 ```markdown
-### D7 · {{The decision, as a short claim}} — {{YYYY-MM-DD}}
+### Dn · {{The decision, as a short claim}} — {{YYYY-MM-DD}}
 
 **Considered:** {{option A}} / {{option B}} / {{option C}}
 **Chose:** {{B}}
@@ -607,6 +607,49 @@ considered were:
 My recommendation was 2. The author chose 3, which is stronger: it leaves exactly one architecture
 document rather than one and a half.
 
+### D25 · Control C states its completion on channel A, and carries no `aria-pressed` — 2026-09-09
+
+**Considered:** keep `aria-pressed` on control C's per-module toggle, rendered on channel B (what
+M13 shipped) / move the state onto channel A as a word revealed by the same generated rule that
+reveals the disc / render `aria-pressed` on channel A somehow.
+
+**Chose:** the word on channel A. `aria-pressed` is gone from that toggle.
+
+**Because:** whether a module is complete is decided by a class on `<html>` that no React render
+sets (§12.2). An attribute rendered on channel B is therefore a **second author of one state**, and
+the two authors disagree for every frame before hydration — and for ever when scripts never arrive.
+**MEASURED**, with every `.js` request refused and one module seeded complete: the disc was painted,
+its own word read `Complete`, and the same button reported `aria-pressed="false"`. A screen reader
+was told "not pressed" about a module that is complete. The third option does not exist: CSS cannot
+set an ARIA attribute.
+
+**Rejected keeping it because** it is the exact defect `Catalog.tsx`'s own docblock already refuses
+for its view toggle, in the same phase, for the same reason. One surface followed the rule and the
+other did not.
+
+**Two things this turned up that are worth more than the fix:**
+
+1. **`aria-label` on a button replaces its contents for naming, so a word inside it is never
+   announced.** The tick already carried an `sr-only` word for exactly this job and it was dead
+   weight: with the label present, nothing inside the button reached an assistive technology at all.
+   The word therefore has to live OUTSIDE the button. This is why the rail's tick and control C's
+   tick, which look like the same problem, do not have the same solution — the rail's tick is inside
+   a link whose name comes from its text, and control C's is inside a button whose name is an
+   attribute.
+2. **The word needed its own class, not the disc's.** Reusing `hl-cmod-mark` for it made that
+   selector match two elements per row, which is a strict-mode violation in every locator that reads
+   the tick — seven e2e tests, and it is how the first version of this fix was caught. The generator
+   emits a second rule (E2) for `.hl-cmod-said` instead.
+
+**Also measured, and it is why the assertion nearly went in wrong:** the revealed word computes to
+`display: block`, not the `inline` the stylesheet asks for, because it is absolutely positioned and
+absolute positioning **blockifies** an inline display. A test asserting `inline` failed against a
+page that was behaving correctly. The assertion is `display: none` or not.
+
+**Rule that follows:** `specs/ARCHITECTURE.md` §12.2 already holds it — a mark a reader sees in
+frame one may not travel on channel B. This entry is the second surface to break it, so the rule is
+not new; what is new is that an `aria-*` attribute counts as a mark.
+
 ### O2 · Where the retired progress vocabulary lands — opened 2026-09-08, HALF ANSWERED 2026-09-09
 
 **The first half is closed. See D22.** M13 took `XP`, `Rank` and `II at 16` off every instrument on
@@ -684,6 +727,23 @@ for the extra fill separation because the author chose G3 having seen all four.
 
 **One defect this exposes in what shipped:** `button-quiet` used `line-strong`, which is 2.07:1 on
 white and fails. Fixing it is a deliverable of `logs/PROGRESS.md` M9, not a note for later.
+
+> **CORRECTED 2026-09-09 — the number above is wrong, and the decision is still right.**
+> `line-strong` does not measure 2.07:1 on white. Recomputed from the shipped token
+> `oklch(0.6449 0.0246 87.2)`: **3.30:1 on `cleared` (white), 3.19:1 on `paper`, 2.68:1 on
+> `sunken`** — and against the value this token held before the Bazaar palette,
+> `oklch(0.64 0.010 250)`, it was 3.36:1 on white, so 2.07:1 was never true of either. DESIGN.md
+> carried the same error as "2.00:1" and has been corrected to the three measured figures.
+>
+> **What this changes:** nothing about the decision. A third token is still right, because the
+> ground a control actually sits on is the **sand**, where `line-strong` is 2.68:1 and does not
+> reach 3:1 — which is the sentence D19 already gets right two paragraphs up. What it changes is the
+> premise "no line colour reaches 3:1", which is true only of the sand and false of the paper and
+> the cleared surface.
+>
+> **The rule, and it is D19's own rule turned on itself:** a floor checked against one ground is not
+> checked — and a floor *quoted* from memory is not measured. Found by an independent review of the
+> M10 to M14 work, which read the ratio off the shipped stylesheet instead of off this file.
 
 **Rule that follows:** `specs/DESIGN.md`, Colors — the two line tokens and the split between them.
 See D12 for why the ground was the only variable.

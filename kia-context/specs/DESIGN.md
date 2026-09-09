@@ -215,8 +215,10 @@ used to be.
 list, and for the current level's fill. Against a near-white ground it does more work than it did
 before, which is why the current level reads clearly without a second device.
 
-**Two line tokens, and the split is load-bearing on this ground.** Measured against `#FDFBF7`, no
-line colour in T4's palette reaches 3:1: `line` is 1.55:1 and `line-strong` is 2.00:1. That is fine
+**Two line tokens, and the split is load-bearing on this ground.** Measured against `#FDFBF7`,
+`line` is 1.55:1 and `line-strong` is 3.19:1 — but a control does not only sit on the paper, and
+against the **sand** those fall to 1.30:1 and 2.68:1, so neither line colour in T4's palette reaches
+3:1 on every ground it is drawn on. That is fine
 for a boundary that only **groups** things, because the content inside identifies the group — a card,
 a panel, a section rule. It is not fine for the boundary that **identifies an interactive control**,
 which needs 3:1 to be perceivable. So:
@@ -251,7 +253,8 @@ yet, because §12.0 still defers the command palette. M12 and M13 added three mo
 the catalog's filter chip, its view button, and control C's per-module toggle.
 
 Three text weights and no more: `on-surface` for prose, `on-surface-muted` for anything secondary,
-`on-surface-faint` for anything a reader can ignore. On G3 they measure 15.01:1, 5.62:1 and 3.19:1.
+`on-surface-faint` for anything a reader can ignore. On G3 they measure 15.01:1, 5.62:1 and 2.77:1,
+and on the sand 12.61:1, 4.72:1 and 2.32:1.
 **The faint weight does not clear 4.5:1 and must never carry a sentence** — it is for a count, a unit
 or a status word that is repeated elsewhere on the page. All three are measured against the ground on
 every change; the numbers are recomputed by the palette tests from the shipped stylesheet, never
@@ -269,8 +272,9 @@ that close to the interactive accent is one a reader can mistake for a link. Bot
 `tests/unit/color/lokum.test.ts` from the shipped stylesheet.
 
 `verify` teal marks completion. It is drawn as a **filled disc with a white check**, and the shape is
-load-bearing: teal on the ground measures 3.44:1 to 3.90:1 depending on the ground, so as text it
-would fail and as a graphical indicator it passes the 3:1 floor comfortably. Do not turn the tick
+load-bearing: teal measures 3.27:1 on the sand, 3.89:1 on the paper and 4.03:1 on a cleared surface
+in the light theme, and 7.61:1 to 8.79:1 in the dark one, so in the light theme it would fail as text
+and passes the 3:1 graphical floor on all three grounds. Do not turn the tick
 back into a hairline glyph.
 
 The slab is its own small palette. Its five syntax colours are chosen against `#1d1f27` and are the

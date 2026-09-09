@@ -4,13 +4,12 @@ import Link from 'next/link'
 import { NAME_SCOPE } from '@/lib/record/scope'
 import { useState } from 'react'
 import type { SignOffCriteria } from '@/lib/content/criteria'
-import { seedFrom } from '@/lib/identity/mark'
 import { MAX_NAME_GRAPHEMES, countGraphemes, sanitiseName } from '@/lib/identity/name'
+import { toggleCompletion } from '@/lib/record/complete'
 import { revisionDrift } from '@/lib/record/derive'
-import { mintMarkSeed, setIdentity, signOff, unsign } from '@/lib/record/events'
+import { setIdentity, unsign } from '@/lib/record/events'
 import {
   nowIso,
-  requestPersistence,
   update,
   useHydrated,
   useRecord,
@@ -39,10 +38,18 @@ import { DrafterStamp } from './DrafterStamp'
  * the one dialog that matters — the §12.15 erase, which is the only
  * confirmation anywhere on this site.
  *
- * `SignOff` is also where two once-per-record things happen, because the first
- * sign-off is the only genuine user gesture the record gets:
- * `navigator.storage.persist()` may only be asked on one (§12.1.6), and the
- * mark seed is minted here and never again (§12.3.5).
+ * **The write itself is not here any more, and that is D14's constraint.** M13
+ * and M14 put completion control **C** on the home and progress pages, and the
+ * first completion on a record is three writes rather than one: the sign-off,
+ * the mark seed minted once and never again (§12.3.5), and the single permitted
+ * `navigator.storage.persist()` (§12.1.6). Two controls implementing that
+ * separately is two implementations of one thing, so it lives in
+ * `lib/record/complete.ts` and both controls call it — two controls, one path
+ * through `store.ts`, which is the only writer of learner state.
+ *
+ * What stays here is the one thing that belongs to this page: §12.3.2's name
+ * prompt, asked in the module's own `CHECKED BY` field, which control C has no
+ * module to ask inside.
  *
  * The import of `SignOffCriteria` is a **type-only** import. `criteria.ts`
  * reaches the loader and therefore `node:fs`; the values arrive as serialised
@@ -54,24 +61,6 @@ const REFUSED: Record<string, string> = {
   quota: "THIS BROWSER'S STORAGE IS FULL",
   blocked: 'THIS BROWSER IS NOT STORING DATA FOR THIS SITE',
   'too-large': 'THE RECORD IS LARGER THAN THIS PAGE WILL WRITE',
-}
-
-/**
- * §12.3.5 — four bytes from the CSPRNG, once. The bytes are generated here and
- * the hex is built by the pure function, which is why `seedFrom` has no
- * parameter a name could arrive through: a name-derived mark would silently
- * change on every already-signed sheet the moment the reader renamed
- * themselves. Returns null where Web Crypto is unavailable, and the mark then
- * renders as nothing rather than as a pattern from a predictable seed.
- */
-function mintSeed(): string | null {
-  try {
-    const bytes = new Uint8Array(4)
-    crypto.getRandomValues(bytes)
-    return seedFrom(bytes)
-  } catch {
-    return null
-  }
 }
 
 export function SignOff({
@@ -109,37 +98,18 @@ export function SignOff({
   const refused = REFUSED[write] ?? null
 
   function onToggle(): void {
-    if (signedOff !== null) {
-      update((data) => unsign(data, slug), { kind: 'unsign', sheetSlug: slug })
-      return
-    }
-
-    const now = nowIso()
-    // The seed is minted once and never regenerated, so its absence is the
-    // honest test for "this is the first sign-off" (§12.3.5).
-    const first = record.identity.markSeed === null
-    update((data) => signOff(data, slug, revision, now), {
-      // §12.4.3's drift line needs the revision the reader signed AGAINST, and
-      // the log is where a later un-sign-and-re-sign stays visible.
-      kind: 'signOff',
-      sheetSlug: slug,
-      payload: { revision },
-    })
-    if (!first) return
-
-    const seed = mintSeed()
-    if (seed !== null) {
-      update((data) => mintMarkSeed(data, seed, now), { kind: 'mintMarkSeed' })
-    }
-    // §12.1.6 — called once, on a genuine user gesture. A `false` answer is
-    // normal, not an error, and the store records the queried value.
-    void requestPersistence()
+    // D14 — the write itself is `toggleCompletion`, shared with control C on
+    // the home and progress pages: two controls, one path, because the first
+    // completion is three writes and not one (`lib/record/complete.ts`).
+    const outcome = toggleCompletion(record, slug, revision)
     // §12.3.2 — the name is asked for at exactly one moment, and only when
     // there is not one already. No first-run gate, no modal, no coach mark: a
     // controlled study of 70 users across 4 apps found tutorial-viewers rated
     // tasks significantly harder (4.92 vs 5.49, p=0.047) with no gain in
-    // success or speed.
-    if (record.identity.name === null) setPrompting(true)
+    // success or speed. It stays HERE rather than in the shared write, because
+    // the field it asks in is this module's own `CHECKED BY` and control C has
+    // no module to ask inside.
+    if (outcome.first && record.identity.name === null) setPrompting(true)
   }
 
   function onNameChange(event: React.ChangeEvent<HTMLInputElement>): void {

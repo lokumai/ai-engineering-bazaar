@@ -2,7 +2,7 @@
    Do not edit. Run `node scripts/curriculum-css.mjs` after changing the
    curriculum, which `npm run build` does for you.
 
-   Why these lists are enumerated at all, and why only these four: see the
+   Why these lists are enumerated at all, and why only these five: see the
    docblock at the top of the generator. Short version: channel A matches a
    class on <html> against an attribute on a descendant, and CSS has no
    operator that compares the two, so there is one selector per module and
@@ -102,6 +102,33 @@
   html.hl-signed-29 .hl-mod[data-module="29"] .hl-mod-mark,
   html.hl-signed-30 .hl-mod[data-module="30"] .hl-mod-mark,
   html.hl-signed-31 .hl-mod[data-module="31"] .hl-mod-mark {
+    display: inline-flex;
+  }
+
+  /* E. M13/M14 — completion control C's tick, for the drawn modules only. The
+     same disc as D, with the same `sr-only` word inside it, on the same
+     channel: the difference is that this one sits inside the button that SETS
+     the completion, so the reader's own state is right in frame one on a page
+     that lists every module. `home.css` holds its geometry. */
+  html.hl-signed-1  .hl-cmod[data-module="1"] .hl-cmod-mark,
+  html.hl-signed-2  .hl-cmod[data-module="2"] .hl-cmod-mark,
+  html.hl-signed-3  .hl-cmod[data-module="3"] .hl-cmod-mark,
+  html.hl-signed-4  .hl-cmod[data-module="4"] .hl-cmod-mark,
+  html.hl-signed-5  .hl-cmod[data-module="5"] .hl-cmod-mark,
+  html.hl-signed-6  .hl-cmod[data-module="6"] .hl-cmod-mark,
+  html.hl-signed-7  .hl-cmod[data-module="7"] .hl-cmod-mark,
+  html.hl-signed-8  .hl-cmod[data-module="8"] .hl-cmod-mark,
+  html.hl-signed-9  .hl-cmod[data-module="9"] .hl-cmod-mark,
+  html.hl-signed-10 .hl-cmod[data-module="10"] .hl-cmod-mark,
+  html.hl-signed-11 .hl-cmod[data-module="11"] .hl-cmod-mark,
+  html.hl-signed-12 .hl-cmod[data-module="12"] .hl-cmod-mark,
+  html.hl-signed-13 .hl-cmod[data-module="13"] .hl-cmod-mark,
+  html.hl-signed-15 .hl-cmod[data-module="15"] .hl-cmod-mark,
+  html.hl-signed-16 .hl-cmod[data-module="16"] .hl-cmod-mark,
+  html.hl-signed-28 .hl-cmod[data-module="28"] .hl-cmod-mark,
+  html.hl-signed-29 .hl-cmod[data-module="29"] .hl-cmod-mark,
+  html.hl-signed-30 .hl-cmod[data-module="30"] .hl-cmod-mark,
+  html.hl-signed-31 .hl-cmod[data-module="31"] .hl-cmod-mark {
     display: inline-flex;
   }
 }

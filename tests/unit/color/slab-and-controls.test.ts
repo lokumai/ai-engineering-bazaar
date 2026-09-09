@@ -81,6 +81,7 @@ const CONTROLS: readonly string[] = [
   '.hl-rail-restore',                 // M10 — the restore tab
   '.hl-chip',                         // M12 — a catalog filter
   '.hl-viewbtn',                      // M12 — one of the three view buttons
+  '.hl-cmod-toggle',                  // D14 — control C's per-module toggle
 ]
 
 /** The declaration block a selector opens, up to its closing brace. */

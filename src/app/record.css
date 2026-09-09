@@ -1305,14 +1305,36 @@
       transparent;
   }
 
+  /* M13 — the display face at UI size, in sentence case.
+ 
+     It was 11px monospace, tracked out and uppercased.
+     `kia-context/specs/DESIGN.md` names both of those as tells — "Don't use
+     ALL-CAPS eyebrow labels, a monospace face for small UI labels" — and this
+     one class heads every panel on the home page, the progress page, the
+     legend, the team pages and the three identity surfaces, so leaving it
+     while rebuilding two of those would have shipped a half-converted
+     interface. The colour, the rule under it and the flex head are untouched:
+     this is the type, and nothing else. */
   .hl-panel-title {
     margin: 0;
-    font-family: var(--font-mono);
-    font-size: var(--text-mark);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    font-weight: 500;
+    font-family: var(--font-display);
+    font-size: var(--text-ui);
+    font-weight: 600;
+    letter-spacing: -0.005em;
     color: var(--color-ink);
+  }
+
+  /* The line a panel head prints opposite its title: what the panel reports,
+     or the state it is in. `ink-muted` and never `ink-faint` — it is a
+     sentence, and the faint weight measures 3.19:1 and may carry a count, a
+     unit or a status word and nothing more (DESIGN.md, Colors). */
+  .hl-panel-note {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-meta);
+    line-height: 1.4;
+    text-align: end;
+    color: var(--color-ink-muted);
   }
 
   /* A definition grid for machine-derived pairs — storage state, byte counts,
@@ -1369,6 +1391,252 @@
   .hl-receipt-full {
     margin: 0 0 24px;
   }
+
+  /* =========================================================================
+     D14 — COMPLETION CONTROL C: the whole course, visible and adjustable.
+
+     It is here rather than in `home.css` because it is rendered on the home
+     page and on the progress page both, and every other surface that carries
+     reader state is in this file.
+
+     Two things about it are load-bearing rather than decorative.
+
+     ONE — THE TICK IS CHANNEL A. `.hl-cmod-mark` is `display: none` until one
+     of the generated selectors in `lokum-modules.css` (list E) reveals it for a
+     module the boot script stamped, so a reader with thirty-three rows on
+     screen sees the right ticks in frame one, with no React. The disc carries
+     the word `Complete` inside it, revealed by the same rule, so the shape and
+     the sentence cannot come apart — the arrangement the curriculum rail's tick
+     already uses. Only `aria-pressed` waits for the store, and an attribute is
+     not a picture.
+
+     TWO — THE 17px DISC SITS IN A BOX THE ROW RESERVES EITHER WAY. The toggle
+     is a fixed 28px square, so completing a module does not move the row it
+     lands on or the rows under it.
+     ======================================================================== */
+
+  .hl-cc-numbers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    margin: 0 0 8px;
+    border-top: var(--stroke-hair) solid var(--color-line);
+    border-bottom: var(--stroke-hair) solid var(--color-line);
+  }
+
+  .hl-cc-numbers > div {
+    padding: 12px 24px 12px 0;
+    margin-inline-end: 24px;
+    border-inline-end: var(--stroke-hair) solid var(--color-line);
+  }
+
+  .hl-cc-numbers > div:last-child {
+    padding-inline-end: 0;
+    margin-inline-end: 0;
+    border-inline-end: 0;
+  }
+
+  .hl-cc-numbers dt {
+    margin: 0 0 2px;
+    font-family: var(--font-display);
+    font-size: var(--text-meta);
+    color: var(--color-ink-muted);
+  }
+
+  .hl-cc-numbers dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-meta);
+    color: var(--color-ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hl-cc-value {
+    font-size: var(--text-h3);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--color-ink);
+  }
+
+  .hl-cc-note {
+    max-width: var(--width-prose);
+    margin: 0 0 24px;
+    font-family: var(--font-display);
+    font-size: var(--text-meta);
+    line-height: 1.5;
+    color: var(--color-ink-muted);
+  }
+
+  .hl-cc-levels {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
+    gap: 12px;
+    margin: 0 0 32px;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* The `arch` marks a level — the banner's own shape — and the 4px leading
+     edge in the level's own hue is `strokes.edge`, whose one job in this system
+     is saying which level you are looking at. `--hl-cat` is resolved by
+     `lokum.css`'s carrier from this element's own `data-cat`. */
+  .hl-cc-level {
+    display: flex;
+    flex-direction: column;
+    padding: 14px 16px 10px;
+    border: var(--stroke-hair) solid var(--color-line);
+    border-inline-start: var(--stroke-edge) solid var(--hl-cat, var(--color-line-strong));
+    border-radius: var(--shape-arch);
+    background: var(--color-cleared);
+  }
+
+  .hl-cc-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px 12px;
+  }
+
+  .hl-cc-title {
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-h4);
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--color-ink);
+  }
+
+  .hl-cc-order {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    font-weight: 400;
+    color: var(--color-ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hl-cc-count {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-meta);
+    color: var(--color-ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hl-cc-meter {
+    margin: 10px 0 6px;
+  }
+
+  /* The meter is 176px wide wherever else it is drawn; inside a level card it
+     takes the card, because the card IS the level and a fixed width would
+     leave a gap that reads as a missing segment. */
+  .hl-cc-meter .hl-meter {
+    width: 100%;
+  }
+
+  .hl-cc-mods {
+    margin: 4px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hl-cmod {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 32px;
+  }
+
+  /* SC 2.5.8 — 28px of control inside a 32px row, which clears the 24 × 24
+     floor; the row's own height and the 8px gap carry the rest of the target.
+     Bordered with THE INTERACTIVE BORDER, because the border is the only thing
+     identifying it as a control and no other line colour in this palette
+     reaches 3:1 (D19). */
+  .hl-cmod-toggle {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: var(--stroke-hair) solid var(--color-line-control);
+    border-radius: var(--radius-sm);
+    background: var(--color-paper);
+    color: var(--color-ink);
+    cursor: pointer;
+    transition: background-color 90ms linear, border-color 90ms linear;
+  }
+
+  .hl-cmod-toggle:hover {
+    background: var(--color-sunken);
+    border-color: var(--color-line-cut);
+  }
+
+  /* Channel A reveals this (list E). 17px, the same disc the curriculum rail
+     draws, inside a box the row reserves either way. */
+  .hl-cmod-mark {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 17px;
+    height: 17px;
+    border-radius: var(--radius-full);
+    background: var(--color-verify);
+    color: var(--color-cleared);
+  }
+
+  .hl-cmod-check { flex: none; }
+
+  /* §12.4.1 — a planned module has no control at all, and the word says why.
+     The box it sits in is the toggle's, so the rows line up. */
+  .hl-cmod-planned {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+  }
+
+  .hl-cmod-link {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    min-width: 0;
+    padding: 4px 0;
+    font-family: var(--font-display);
+    font-size: var(--text-ui);
+    line-height: 1.35;
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+
+  .hl-cmod-link:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent-warm);
+    text-underline-offset: 3px;
+  }
+
+  .hl-cmod-num {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: var(--text-mark);
+    color: var(--color-ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hl-cmod[data-drawn="false"] .hl-cmod-link {
+    color: var(--color-ink-muted);
+  }
+
 }
 
 /* ===========================================================================
@@ -1404,6 +1672,36 @@
   .hl-btn[aria-disabled="true"] {
     color: GrayText;
     border-color: GrayText;
+  }
+
+  /* D14's control C. The tick is revealed by `display`, which forced colours
+     leaves alone, so the state survives on its own; what it needs is a fill
+     and a check the reader can tell apart, and `forced-color-adjust: none` is
+     the same exception the rail's tick takes for the same 17px disc. */
+  .hl-cmod-toggle {
+    border: 1px solid ButtonBorder;
+    background: ButtonFace;
+    color: ButtonText;
+  }
+
+  .hl-cmod-mark {
+    forced-color-adjust: none;
+    background: CanvasText;
+    color: Canvas;
+  }
+
+  .hl-cc-level {
+    border: 1px solid CanvasText;
+    border-inline-start-width: var(--stroke-edge);
+  }
+
+  .hl-cc-numbers {
+    border-top: 1px solid CanvasText;
+    border-bottom: 1px solid CanvasText;
+  }
+
+  .hl-cc-numbers > div:not(:last-child) {
+    border-inline-end: 1px solid CanvasText;
   }
 
   /* Every painted rule is gone, so the border comes back as a real border. */

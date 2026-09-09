@@ -104,8 +104,11 @@ test('the ready / not-ready counts match the rows actually rendered', async ({ p
   await page.goto('/')
   const statement = (await page.locator('.hl-statement').innerText()).replace(/\s+/g, ' ')
   expect(statement).toContain(`${spellOut(SHEET_COUNT)} modules`)
-  expect(statement).toContain(`${spellOut(DRAWN_COUNT)} are ready.`)
-  expect(statement).toContain(`${spellOut(NOT_DRAWN_COUNT)} are dashed`)
+  expect(statement).toContain(`${spellOut(DRAWN_COUNT)} are ready to read.`)
+  // M13 rewrote this line: it read "… are dashed — the geometry exists in the
+  // model, the lines do not", which is the retired vocabulary in substance on
+  // the page a stranger meets first.
+  expect(statement).toContain(`${spellOut(NOT_DRAWN_COUNT)} are planned`)
 })
 
 test('the filter chips narrow the table to the count they claim', async ({ page }) => {

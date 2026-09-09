@@ -57,15 +57,15 @@ test('the manifest survives being used', async ({ page }) => {
  *
  * It is the most-visited page on the site and no other spec watches it for
  * console errors, which is reason enough; the record states are the reason it
- * is watched twice. Both blocks are always in the DOM and `home.css` hides one
- * with `display: none` (§15.2.1), so the resume block's islands —
- * `ContinueLine`, `Readout`, `Uptime`, `PathStanding`, the meters and
- * `CategoryTally` — hydrate and read the record even on the visit where the
- * reader never sees them. A throw inside a hidden block looks like a clean page
- * to every assertion that reads the DOM, and only this watchdog would notice.
+ * is watched twice. M13 made it one document rather than two blocks with one
+ * hidden, but the islands on it still read the record in both states —
+ * `ContinueLine`, `CourseCompletion`'s thirty-three toggles, `CategoryTally`
+ * and the footer's strip — and a throw inside any of them looks like a clean
+ * page to every assertion that reads the DOM. Only this watchdog would notice.
  *
- * The way out of the page differs by state because the visible block differs;
- * both lead to the manifest, and coming back exercises §12.2 channel A across a
+ * The way out is the same for both states now, which is itself the M13 change:
+ * one document, one set of controls, and the record decides nothing but the
+ * returning reader's shortcut. Coming back exercises §12.2 channel A across a
  * router transition, with the islands mounting a second time.
  */
 const HOME_STATES: [string, RecordSeed | null, string][] = [
@@ -73,8 +73,8 @@ const HOME_STATES: [string, RecordSeed | null, string][] = [
   // today in `days` — and the boot script would stamp `data-hl-record` for it,
   // which is the returning reader's page. The first visit is the one with no
   // key in `localStorage` at all.
-  ['a first visit', null, 'Open the index'],
-  ['a return', { sheets: { [slugOf(A0)]: signedSheet('b7225f8') } }, 'Catalog'],
+  ['a first visit', null, 'Browse the catalog'],
+  ['a return', { sheets: { [slugOf(A0)]: signedSheet('b7225f8') } }, 'Browse the catalog'],
 ]
 
 for (const [state, seed, out] of HOME_STATES) {

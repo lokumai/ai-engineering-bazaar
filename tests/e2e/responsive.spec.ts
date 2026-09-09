@@ -273,15 +273,18 @@ test('the home screen cannot be nudged sideways at any width', async ({ page }) 
 
   const viewport = page.viewportSize()!.width
 
-  // Exactly one of §15.2's two blocks is laid out, and it fills the column.
-  const shown = await page.locator('.hl-home-new, .hl-home-resume').evaluateAll(
+  // M13 — one document rather than two blocks with one hidden, so what is
+  // measured is the hero and the level grid: both are laid out, both fill the
+  // column, and neither overhangs at any of the three widths.
+  const shown = await page.locator('.hl-home-hero, .hl-cc-levels').evaluateAll(
     (nodes) => nodes
       .filter((node) => node.checkVisibility())
       .map((node) => Math.round(node.getBoundingClientRect().width)),
   )
-  expect(shown, 'the home screen renders one of its two blocks').toHaveLength(1)
-  expect(shown[0], 'the visible block has no width to overhang with')
-    .toBeGreaterThan(viewport / 2)
+  expect(shown, 'the home page renders its hero and its level grid').toHaveLength(2)
+  for (const width of shown) {
+    expect(width, 'a block with no width to overhang with').toBeGreaterThan(viewport / 2)
+  }
 
   await page.evaluate(() => window.scrollTo(4000, 0))
   expect(await page.evaluate(() => window.scrollX)).toBe(0)

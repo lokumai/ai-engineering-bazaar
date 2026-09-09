@@ -225,35 +225,31 @@ test('every interactive control in the header shows a focus ring', async ({ page
   }
 })
 
-test('the home screen is titled once, whichever state is showing (§15.2.2)', async ({ page }) => {
+test('the home page is titled once, and the title claims no state (§15.2.2)', async ({ page }) => {
   await page.goto('/')
 
-  // §15.2 renders BOTH state blocks unconditionally and lets `home.css` pick
-  // one off `data-hl-record`, so a heading drawn inside either block is a
-  // heading in the document in every record state. That is two ways to get
-  // this wrong from one arrangement — the page dropping its own h1 and letting
-  // each block head itself, or a block growing one beside the page's — and
-  // both are invisible to the reader who only ever sees one block painted.
+  // M13 — one document for every reader, so one h1. It used to be two blocks
+  // rendered unconditionally with `home.css` picking one, which was two ways to
+  // get this wrong from one arrangement: the page dropping its own h1 and
+  // letting each block head itself, or a block growing one beside the page's.
+  // Both were invisible to the reader who only ever saw one block painted.
   const h1 = page.locator('h1')
   await expect(h1).toHaveCount(1)
-  // Typed out rather than imported from `lib/site`, for the reason `sheets.ts`
+  // Typed out rather than imported from the page, for the reason `sheets.ts`
   // gives: an expectation read from the same constant the page renders can only
-  // prove the constant agrees with itself. §15.2.2 fixes this string, and a
-  // reader's state may never appear in it — "Welcome back" would be a lie in
-  // the tab of anybody the build has never met.
-  await expect(h1).toHaveText('AI Engineering Bazaar')
+  // prove the constant agrees with itself. A reader's state may never appear in
+  // it — "Welcome back" would be a lie for anybody the build has never met.
+  await expect(h1).toHaveText('AI engineering, written by someone who builds it.')
+  expect(await h1.innerText()).not.toMatch(/\b(you|your|welcome|back)\b/i)
 
-  // Measured on the DOM rather than on what is visible: the hidden block is
-  // still announced to anything reading the document, and `display: none` is
-  // the state switch, not a promise about the accessibility tree.
+  // The one thing on the page that IS keyed to the reader's record, counted on
+  // the DOM rather than on what is visible: it is present for everybody and
+  // shown to the reader who has a record, which is `home.spec.ts`'s subject.
+  await expect(page.locator('.hl-home-continue')).toHaveCount(1)
   expect(
-    await page.locator('.hl-home-resume h1, .hl-home-new h1').count(),
-    'a state block draws an h1 of its own',
+    await page.locator('.hl-home-continue h1, .hl-home-continue h2').count(),
+    'the record-keyed block draws a heading of its own',
   ).toBe(0)
-
-  // And both blocks are present, or the two counts above prove nothing.
-  await expect(page.locator('.hl-home-resume')).toHaveCount(1)
-  await expect(page.locator('.hl-home-new')).toHaveCount(1)
 })
 
 test('a row in the manifest is one tab stop, and it is reachable', async ({ page }) => {

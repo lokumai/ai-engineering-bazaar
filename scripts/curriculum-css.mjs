@@ -20,7 +20,7 @@
  * the list has to be enumerated once per module, and enumeration is inherent to
  * the design rather than an accident of it.
  *
- * What is an accident is enumerating it BY HAND. Four lists, all keyed on a
+ * What is an accident is enumerating it BY HAND. Five lists, all keyed on a
  * number the curriculum now computes:
  *
  *   A  every module      the segment fills with its category hue
@@ -31,17 +31,27 @@
  *   D  drawn modules     M10 — the curriculum rail's completion tick, a 17px
  *                        filled disc revealed on the row of a module the
  *                        reader has completed
+ *   E  drawn modules     M13/M14 — completion control C's tick, the same disc
+ *                        on the same channel, inside the toggle that sets it
  *
- * B, C and D stop at the drawn sheets deliberately. A draft sheet has no
+ * B, C, D and E stop at the drawn sheets deliberately. A draft sheet has no
  * completion control (§12.4.1), so `hl-signed-<n>` can never be stamped for
  * one, and writing the rule anyway would state that it could. A is the whole
  * set, because a draft segment is still drawn (dashed, unfillable) and keeping
  * the list uniform costs nothing.
  *
- * D needs no forced-colours twin, and that is the one asymmetry worth naming:
- * the disc is revealed by `display`, and `display` survives a forced-colours
- * theme untouched. Its fill and its check take the system colours from one
- * unconditional rule in `rail.css`, so nothing per-module has to be repeated.
+ * D and E need no forced-colours twin, and that is the one asymmetry worth
+ * naming: the disc is revealed by `display`, and `display` survives a
+ * forced-colours theme untouched. Its fill and its check take the system
+ * colours from one unconditional rule — `rail.css` for D, `home.css` for E — so
+ * nothing per-module has to be repeated.
+ *
+ * **E is why control C is a control and not a readout.** A completion the
+ * reader can set from a list of thirty-three has to be RIGHT in frame one for
+ * the modules already completed, or the page flashes an empty record at exactly
+ * the reader who has one; a tick that arrives with React cannot be. So the
+ * button's mark is channel A like every other mark on the site, and only its
+ * `aria-pressed` — an attribute, not a picture — waits for the store.
  *
  * ## Why the output is committed
  *
@@ -95,7 +105,7 @@ export function render() {
    Do not edit. Run \`node scripts/curriculum-css.mjs\` after changing the
    curriculum, which \`npm run build\` does for you.
 
-   Why these lists are enumerated at all, and why only these four: see the
+   Why these lists are enumerated at all, and why only these five: see the
    docblock at the top of the generator. Short version: channel A matches a
    class on <html> against an attribute on a descendant, and CSS has no
    operator that compares the two, so there is one selector per module and
@@ -127,6 +137,15 @@ ${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .hl-step[data-module="${n}
      revealing it reveals the shape, the fill and the statement together and
      colour is never the only carrier. \`rail.css\` holds its geometry. */
 ${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .hl-mod[data-module="${n}"] .hl-mod-mark`)}
+    display: inline-flex;
+  }
+
+  /* E. M13/M14 — completion control C's tick, for the drawn modules only. The
+     same disc as D, with the same \`sr-only\` word inside it, on the same
+     channel: the difference is that this one sits inside the button that SETS
+     the completion, so the reader's own state is right in frame one on a page
+     that lists every module. \`home.css\` holds its geometry. */
+${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .hl-cmod[data-module="${n}"] .hl-cmod-mark`)}
     display: inline-flex;
   }
 }

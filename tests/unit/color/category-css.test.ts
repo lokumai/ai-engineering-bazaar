@@ -21,12 +21,13 @@ import { render } from '../../../scripts/curriculum-css.mjs'
  * `ROLE_IDS` — rather than against a transcription. Nothing here is a literal
  * count.
  *
- * **The four module lists are now generated**, from `curriculum.yaml` by
+ * **The module lists are now generated**, from `curriculum.yaml` by
  * `scripts/curriculum-css.mjs`, into a committed `lokum-modules.css`. That
  * moves the risk rather than removing it: a committed generated file can go
  * stale. So the last case here runs the generator and compares, which is the
  * one check the others cannot make for themselves. M10 added the fourth — the
- * curriculum rail's completion tick.
+ * curriculum rail's completion tick — and M13 the fifth, completion control
+ * C's, which is the same disc inside the button that sets it.
  *
  * The one asymmetry, and it is deliberate: **the segment rules cover every
  * module and the two tick lists cover only the written ones.** A draft module
@@ -147,7 +148,7 @@ describe('§13.4.2 — a step tick exists only for a module that can be signed',
     // light up a different step than the one that was signed, which is the
     // worst kind of quiet defect: plausible, and wrong.
     const mismatched = [
-      ...css.matchAll(/html\.hl-signed-(\d+)\s+\.hl-(?:seg|step|mod)\[data-module="(\d+)"\]/g),
+      ...css.matchAll(/html\.hl-signed-(\d+)\s+\.hl-(?:seg|step|mod|cmod)\[data-module="(\d+)"\]/g),
     ]
       .filter((match) => match[1] !== match[2])
       .map((match) => `${match[1]} → ${match[2]}`)
@@ -174,6 +175,30 @@ describe('M10 — the curriculum rail’s tick covers every module that can be c
   it('names no module the corpus has not written', () => {
     const named = captures(
       /html\.hl-signed-(\d+)\s+\.hl-mod\[data-module="\d+"\]\s+\.hl-mod-mark/g,
+    ).map(Number)
+    for (const module of named) expect(DRAWN_MODULES).toContain(module)
+  })
+})
+
+describe('M13 — control C’s tick covers every module that can be completed', () => {
+  it('covers the ready modules and stops there', () => {
+    const named = captures(
+      /html\.hl-signed-(\d+)\s+\.hl-cmod\[data-module="\d+"\]\s+\.hl-cmod-mark/g,
+    )
+      .map(Number)
+      .sort((a, b) => a - b)
+    expect(named).toEqual(DRAWN_MODULES)
+  })
+
+  /**
+   * The same asymmetry the rail's tick has: a draft module has no completion
+   * control at all (§12.4.1), so `hl-signed-<n>` can never be stamped for one,
+   * and a rule that could light up would state that it could be completed.
+   * Control C renders no toggle for a draft for the same reason.
+   */
+  it('names no module the corpus has not written', () => {
+    const named = captures(
+      /html\.hl-signed-(\d+)\s+\.hl-cmod\[data-module="\d+"\]\s+\.hl-cmod-mark/g,
     ).map(Number)
     for (const module of named) expect(DRAWN_MODULES).toContain(module)
   })

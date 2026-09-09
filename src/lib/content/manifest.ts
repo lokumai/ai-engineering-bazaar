@@ -4,7 +4,7 @@ import { EMPTY_RECORD } from '../record/schema'
 import { plural } from '../text'
 import { CATEGORIES, type Category } from './curriculum-file'
 import { categoryPath, sheetPath } from './curriculum'
-import { LANG_DISPLAY } from './derive'
+import { LANG_DISPLAY, countFigures } from './derive'
 import { moduleGraph } from './edges'
 import { curriculumFacts } from './facts'
 import { loadAllModules } from './loader'
@@ -129,6 +129,44 @@ export function setSummary(): Coverage {
   return coverage(sheetRows(), declaredMinutes(() => true))
 }
 
+/**
+ * M13 — the four facts the home page states about the course, measured.
+ *
+ * The home page's strip of numbers is the one place on the site that says how
+ * big this thing is, and §11.25 does not make an exception for a number in a
+ * headline: every one of these is counted from the corpus at build time, so
+ * breaking a derivation changes the page rather than leaving it confidently
+ * wrong. The strip prints `19 of 33 written`, a reading time, a figure count
+ * and a source count, and it prints nothing this function did not count.
+ *
+ * `figures` is diagrams plus images, which is what a module's own info panel
+ * counts (`countFigures`), so the total and the per-module rows cannot
+ * disagree. `sources` is the sum of each module's distinct external links —
+ * per module, so a paper cited by two modules is two citations here. The home
+ * page says "sources cited" rather than "distinct sources" for exactly that
+ * reason.
+ */
+export interface CorpusTotals {
+  modules: number
+  ready: number
+  /** Declared minutes across the ready modules. */
+  minutes: number
+  figures: number
+  sources: number
+}
+
+export function corpusTotals(): CorpusTotals {
+  const modules = loadAllModules()
+  const { sheets, drawn, minutes } = setSummary()
+  return {
+    modules: sheets,
+    ready: drawn,
+    minutes,
+    figures: modules.reduce((total, module) => total + countFigures(module.body), 0),
+    sources: modules.reduce((total, module) => total + module.sources, 0),
+  }
+}
+
 export function categorySummary(category: Category): Coverage {
   return coverage(
     categoryRows(category),
@@ -200,10 +238,16 @@ export function indexStatement(): string[] {
 
   return [
     `${sentenceCount(sheets)} modules on becoming an AI-powered software engineer.`,
+    // M13 — this line read "… are dashed — the geometry exists in the model,
+    // the lines do not", which is the drawing-set metaphor in substance on the
+    // one page a stranger meets first. The copy register's word boundaries
+    // could not catch it (`dashed` is not in §9's table) and the export grep
+    // could not either. Set C says what the state is: a planned module has a
+    // page, and that page is a schedule of what it will cover.
     notDrawn === 0
       ? 'Every module is ready.'
-      : `${sentenceCount(drawn)} are ready. ${sentenceCount(notDrawn)} are `
-        + 'dashed — the geometry exists in the model, the lines do not.',
+      : `${sentenceCount(drawn)} are ready to read. ${sentenceCount(notDrawn)} are `
+        + 'planned, and each one lists what it will cover.',
     'Every claim is fetched from a primary source and dated. Nothing is cited '
     + 'from memory.',
     'Read in any order the dependency graph allows.',

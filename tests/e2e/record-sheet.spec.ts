@@ -445,19 +445,22 @@ test('channel A stays true across a client transition (§12.2)', async ({ page }
   // violation was the locator's looseness surfacing, not a regression. What
   // this hop needs is the home link in the header, so that is what it asks for.
   await page.getByRole('banner').getByRole('link', { name: /^Lokum/ }).click()
-  await expect(page.locator('h1.hl-index-title')).toBeVisible()
+  await expect(page.locator('h1.hl-hero-title')).toBeVisible()
 
-  // §15.2.1 — the stamp, read as the reader meets it. Both blocks are in the
-  // DOM of a document the router assembled client-side; `home.css` shows the
-  // resume half only while `<html>` still carries `data-hl-record="1"`, so a
-  // stamp lost in the transition would leave the returning reader on the
-  // first-visit page. Asserting the hidden half too: a rule that showed both
-  // would satisfy a bare "resume is visible" check.
+  // §15.2.1 — the stamp, read as the reader meets it. M13 made the home page
+  // one document, so what the stamp chooses is the returning reader's
+  // shortcut: `home.css` shows it only while `<html>` still carries
+  // `data-hl-record="1"`, and a stamp lost in a client transition would take
+  // it away from a reader who has just completed a module. The tick inside
+  // control C is asserted with it, because that one is per-module and is the
+  // mark the reader is actually looking for.
   await expect(page.locator('html')).toHaveAttribute('data-hl-record', '1')
-  await expect(page.locator('.hl-home-resume')).toBeVisible()
-  await expect(page.locator('.hl-home-new')).toBeHidden()
+  await expect(page.locator('.hl-home-continue')).toBeVisible()
+  await expect(
+    page.locator(`.hl-cmod[data-module="${SHEET.module}"] .hl-cmod-mark`),
+  ).toBeVisible()
 
-  await page.locator('.hl-home-resume').getByRole('link', { name: 'Catalog' }).click()
+  await page.getByRole('link', { name: 'Browse the catalog' }).click()
   await expect(page).toHaveURL(new RegExp(`${INDEX_SHEET}$`))
   // M12 — the catalog renders three views over one array and CSS reveals one
   // (D13). The row link is in the table view, which is not the one showing by

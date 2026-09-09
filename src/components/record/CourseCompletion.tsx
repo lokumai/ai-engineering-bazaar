@@ -52,9 +52,14 @@ import { hoursMinutes, plural } from '@/lib/text'
  * each meter's `n/total` are arithmetic over the record, CSS has no arithmetic,
  * and each prints `--` until the store has answered — which is the true
  * statement that no record has been read yet and never a zero somebody
- * invented (§11.25). `aria-pressed` on the toggle is on this channel too, and
- * it is an attribute rather than a picture: the reader sees the right tick in
- * frame one either way.
+ * invented (§11.25).
+ *
+ * **The toggle's completion is NOT on this channel, and must not be put back
+ * on it.** It carried `aria-pressed` until D25: an attribute React renders is a
+ * second author of a state channel A already stamps, and with scripts refused
+ * it read `false` for ever about a module whose disc was painted. The state is
+ * a word revealed by the same generated rule as the disc, and the button points
+ * at it with `aria-describedby` so that focusing the button announces it.
  *
  * ## The toggle
  *
@@ -93,6 +98,15 @@ export interface CompletionLevel {
   title: string
   order: number
   modules: readonly CompletionModule[]
+}
+
+/**
+ * The id the toggle points `aria-describedby` at. A slug and not a module
+ * number, because a module's number is its position and moves when the course
+ * is reordered, while its slug is its identity.
+ */
+function saidId(slug: string): string {
+  return `hl-cmod-said-${slug}`
 }
 
 function Tick() {
@@ -244,6 +258,15 @@ export function CourseCompletion({
                         // the same generated rule that reveals the disc, so
                         // the picture and the sentence cannot come apart.
                         aria-label={`Complete ${one.title}`}
+                        // The state, announced ON the control. The word it
+                        // points at is `display: none` until channel A reveals
+                        // it, and a hidden element contributes no description —
+                        // so the button describes itself as complete exactly
+                        // when it is, with no React deciding anything. Without
+                        // this the word was in the row but not on the button,
+                        // and a reader who focused the button was told the
+                        // action and never the state.
+                        aria-describedby={saidId(one.slug)}
                         onClick={() => toggleCompletion(record, one.slug)}
                       >
                         <Tick />
@@ -270,7 +293,9 @@ export function CourseCompletion({
                         is never announced; and it carries its own class rather
                         than the disc's, because sharing `hl-cmod-mark` made
                         that selector match two elements per row. */}
-                    <span className="hl-cmod-said">Complete</span>
+                    <span id={saidId(one.slug)} className="hl-cmod-said">
+                      Complete
+                    </span>
                   </li>
                 ))}
               </ul>

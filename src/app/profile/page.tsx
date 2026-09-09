@@ -44,9 +44,18 @@ import { curriculumFacts, type CurriculumFacts } from '@/lib/content/facts'
 import { sheetRows } from '@/lib/content/manifest'
 import { reportFacts } from '@/lib/content/report-facts'
 import { PATHS } from '@/lib/path/paths'
+import { SHORTCUTS } from '@/lib/record/keys'
 import { ROLES } from '@/lib/path/roles'
 import { SITE_ORIGIN } from '@/lib/site-origin'
 import { plural } from '@/lib/text'
+
+/**
+ * The chord that reaches this page, read from the one place it is defined.
+ * `SHORTCUTS` is what the key handler dispatches on, so printing anything else
+ * here would tell a reader a chord that does nothing.
+ */
+const PROFILE_CHORD =
+  SHORTCUTS.find((shortcut) => shortcut.target === 'profile')?.keys.toUpperCase() ?? ''
 
 export const metadata: Metadata = {
   title: 'Your progress',
@@ -461,7 +470,10 @@ export default function ProgressPage() {
       */}
       <div className="mb-4 flex flex-wrap items-baseline justify-between gap-3">
         <h1 className="hl-listing-title m-0">Your progress</h1>
-        <p className="hl-mark m-0 text-ink-muted">G P</p>
+        {/* Derived, not typed: `SHORTCUTS` is where this chord is defined and
+            where the handler reads it from, so a page that spelled it out
+            would keep printing a chord that no longer works. */}
+        <p className="hl-mark m-0 text-ink-muted">{PROFILE_CHORD}</p>
       </div>
 
       <p className="hl-lead">

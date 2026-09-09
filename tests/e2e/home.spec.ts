@@ -391,6 +391,56 @@ test('control C completes a module from the home page, and takes it back', async
   )
 })
 
+/**
+ * D25, asserted with scripts REFUSED, which is the only condition under which
+ * the defect it records was visible.
+ *
+ * Control C's toggle carried `aria-pressed` on channel B while the disc beside
+ * it is revealed on channel A. With every module refused, that attribute read
+ * `false` for ever about a module whose tick was painted and whose own word
+ * said `Complete`: a screen reader was told "not pressed" about a completed
+ * module. The state is now a word revealed by the same generated rule as the
+ * disc, and the button points at it with `aria-describedby` so the CONTROL
+ * announces it and not only the row.
+ *
+ * BOTH halves, because either alone passes for the wrong reason (D17): the
+ * word is revealed on the completed module and hidden on every other, and the
+ * button carries no `aria-pressed` in either state. A hidden element
+ * contributes no accessible description, which is what makes one word on one
+ * channel enough for both states.
+ */
+test('control C states completion on channel A, and claims nothing on channel B', async ({
+  page,
+}) => {
+  const planned = sheetByModule(1)
+  await seedRecord(page, { sheets: { [SEEDED_SLUG]: signedSheet('b7225f8') } })
+
+  await page.route('**/*.js', (route) => route.abort())
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
+
+  // Channel A ran: the completed module's tick is painted with no React.
+  await expect(page.locator(`${MODULE_ROW}[data-module="${SEEDED.module}"] ${TICK}`)).toBeVisible()
+
+  // The state, said where a reader who focuses the control will hear it.
+  expect(await saidRevealed(page, SEEDED.module)).toBe(true)
+  expect(await saidRevealed(page, planned.module)).toBe(false)
+
+  // And the description resolves to that word, rather than being an id that
+  // points at nothing.
+  const described = await page
+    .locator(`${MODULE_ROW}[data-module="${SEEDED.module}"] .hl-cmod-toggle`)
+    .evaluate((node) => {
+      const id = node.getAttribute('aria-describedby')
+      const target = id ? document.getElementById(id) : null
+      return { hasPressed: node.hasAttribute('aria-pressed'), resolves: !!target,
+               text: target?.textContent?.trim() ?? null }
+    })
+  expect(described.resolves, 'aria-describedby points at no element').toBe(true)
+  expect(described.text).toBe('Complete')
+  // The contract: putting `aria-pressed` back turns this red.
+  expect(described.hasPressed, '`aria-pressed` is back on channel B (D25)').toBe(false)
+})
+
 test('a planned module has no completion control at all', async ({ page }) => {
   await page.goto('/')
 

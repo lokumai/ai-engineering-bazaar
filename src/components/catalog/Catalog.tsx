@@ -98,6 +98,13 @@ const VIEW_ATTR = 'data-view'
 const VIEW_ROOT_ATTR = 'data-hl-view'
 
 /**
+ * The chip focus lands on when the filters are cleared from the empty state.
+ * An attribute and not the group's `aria-label`, so the hand-off does not break
+ * when a reader-visible string is edited.
+ */
+const RESET_ATTR = 'data-hl-filter-reset'
+
+/**
  * §12.13 class 3 — the one empty state two filters can produce, in the space
  * the views occupied so the reader is told where the catalog went rather than
  * left to infer it from a gap.
@@ -160,9 +167,24 @@ export function Catalog({
   // it would be false where there was nothing to exclude.
   const excluded = visible.length === 0 && rows.length > 0
 
+  /**
+   * Clearing the filters UNMOUNTS the button that cleared them — the empty
+   * state is replaced by the three views — so focus would be dropped on the
+   * floor, and a keyboard reader would lose their place at exactly the moment
+   * the empty state told them to act. Focus therefore goes to the control that
+   * now expresses the state they just chose: the `Every level` chip.
+   *
+   * Next frame and not this one, and by query rather than by ref, which is the
+   * shape `RailFold` uses for the same hand-off and for the same measured
+   * reason (D17) — the element that is to take focus is one this render has
+   * only just decided about.
+   */
   function clear(): void {
     setSelect(DEFAULT_FILTER_ID)
     setLevel(ALL_LEVELS)
+    requestAnimationFrame(() => {
+      document.querySelector<HTMLElement>(`[${RESET_ATTR}]`)?.focus()
+    })
   }
 
   /**
@@ -185,6 +207,7 @@ export function Catalog({
             <button
               type="button"
               className="hl-chip"
+              {...{ [RESET_ATTR]: '' }}
               aria-pressed={level === ALL_LEVELS}
               onClick={() => setLevel(ALL_LEVELS)}
             >

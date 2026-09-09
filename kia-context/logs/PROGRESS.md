@@ -58,8 +58,16 @@ last_updated: "2026-09-09"
 | **M12** | The catalog | one route, three views, filters at the top | M10 | ✅ Done |
 | **M13** | The home page | a first-time visitor knows what this is and where to start | M10 | ✅ Done |
 | **M14** | Progress and account | one route instead of four, and completion editable from it | M11 | ✅ Done |
+| **M15** | The design language | one DESIGN.md transcribed from the mockup, and a check that proves a built page matches it | M14 | 🔄 DESIGN.md written · the language stylesheet and the fidelity check are not |
+| **M16** | The interface, rebuilt on it | every surface indistinguishable from its mockup, with no capability lost | M15 | ⬜ Not started |
 
 > **Numbering never restarts.** When this file is split, part two continues at the next M.
+
+> **M9 to M14 shipped and were rejected.** They re-themed the interface instead of rebuilding it,
+> because the design document they were built against described the old structure carrying the new
+> palette. **M15 and M16 replace that work, they do not extend it.** The author's words:
+> *"THE WHOLE WEBSITE SHOULD HAVE BEEN BUILT BY USING THE T4 THEME AS REFERENCE"*, and
+> *"it is just the old html that its colors are changed"*.
 
 ### The order of M9 to M14, and why it is that order
 
@@ -1276,3 +1284,156 @@ closed — `detailsOpen: false, targetVisible: true`. The link works.
 that matter most were each invisible to the run that produced them — a 39px word
 in a 28px box that no test looked for, and an ARIA attribute that only lies when
 scripts never arrive.
+
+---
+
+## 🏁 Milestone M15: The design language
+
+**The mockup is the specification.** `playground/01-theme-T4-ground-G3-powder.html` — theme T4 on
+ground G3 — is what the interface must look like. This milestone turns it into something an agent
+can build from without seeing it, and into something that can be *checked* rather than asserted.
+
+Its whole reason for existing is the failure of M9 to M14: a design document that described the old
+structure with new colour values, and not one acceptance criterion that compared a built page to the
+mockup. **7,158 lines of stylesheet across eleven files, against a mockup whose entire design
+language is 257 lines of CSS.** That 28× ratio is accumulated structure from a system already
+rejected, not design.
+
+### Deliverables
+
+- [x] **One `DESIGN.md`, written from the mockup, with the old one deleted rather than edited.** A
+      design *language* and not a project specification: generic component names, a five-hue
+      categorical series rather than the product's own taxonomy, and no framework class, route,
+      feature or content vocabulary anywhere in it. It carries a `source:` field naming the mockup,
+      and the rule that where the two disagree **the mockup is right and the document is the bug**.
+- [ ] **The language as one stylesheet**, in the shape the mockup uses: a token layer plus the
+      primitives the language names (bar, menu, rail, group, item, mark, tag, card, slab, figure
+      frame, buttons, pager, aside, band). Roughly the mockup's own size. It replaces the old token
+      layer outright; it does not sit beside it.
+- [ ] **A fidelity check**, which is the deliverable that makes "exact" mean something. It reads the
+      values that carry the design out of the mockup **and** out of the built page and asserts they
+      agree: bar fill and height, the on-bar sub-palette, brand type stack and weight, rail and
+      aside widths, the sticky offset, the measure, every radius including the two asymmetric
+      shapes, the focus ring, the five categorical hues, and the slab palette. It fails loudly when
+      a value is substituted, which is exactly what nothing caught last time.
+- [ ] The retired vocabulary of the old design deleted from the token layer: no radius scale of my
+      invention, no substituted type family, no re-hued categorical series.
+
+### Acceptance criteria
+
+- **`DESIGN.md` contains no product vocabulary.** Measured by grep: zero occurrences of framework
+  class prefixes, route names, content nouns, or architecture terms. Another product could adopt the
+  file unchanged.
+- **Every value in the mockup's token block appears in `DESIGN.md`, and nothing appears that is not
+  in the mockup.** Both directions, measured. A value I invented is a defect even if it looks
+  better — that is how a substituted type family and a re-hued series shipped once already.
+- The fidelity check **fails** when a token is deliberately changed, and passes against the mockup.
+  A check never seen failing is decoration.
+- Nothing in `src/` changes behaviour in this milestone. `npm test`, `npm run build` and the e2e
+  suite stay green on the work as it stands.
+
+### Report — DESIGN.md written, 2026-09-09
+
+**The old file was deleted, not evolved**, on the author's instruction, and one file stands. Written
+against the mockup with its stylesheet open: 528 lines, sections in the format's own order
+(Overview, Colors, Typography, Layout, Elevation & Depth, Shapes, Components, Do's and Don'ts).
+
+**Verified rather than claimed.** All **30** hex values in the mockup's stylesheet appear in the
+token block and **none** appears that the mockup does not contain. All sixteen load-bearing
+dimensions and timings are present: the 58px bar, the 18px band, the 76px sticky offset, the 262px
+rail, the 204px aside, the 80ch measure, both breakpoints, the easing curve, the three translucent
+on-bar values, both asymmetric shapes, the 17px mark and the 200ms fold. Product-vocabulary grep:
+**0**.
+
+One genuine gap in the language was found while checking and closed: the mockup sets text on a gold
+fill to a near-black warm ink, and the document had `caution` with no `on-caution`. It is the only
+place in the language where type on a chromatic fill is not white.
+
+**What is deliberately not in it.** Page layouts. Which panels a screen carries, and in what order,
+is not a design language — it belongs to M16, against the mockup for that surface. Keeping layout
+out of this file is the structural correction: it is what stops the document from quietly becoming a
+description of whatever already exists.
+
+---
+
+## 🏁 Milestone M16: The interface, rebuilt on the language
+
+Every surface rebuilt so it is indistinguishable from its mockup, with **no capability lost**. This
+is a rebuild of the presentation layer, not an edit of it.
+
+### The specifications, per surface
+
+The design language is M15's. Each surface's *layout* comes from the mockup the author chose, and
+those are the only references:
+
+| Surface | Reference | Choice |
+| --- | --- | --- |
+| Shell: bar, band, rail, reading column, aside | `01-theme-T4-ground-G3-powder.html` | T4 on G3 |
+| Top navigation | `02-navbar.html` | **A** — one row, a dropdown per group |
+| Catalog | `03-catalog.html` | **all three**, one route, behind a toggle with an icon and a name each: **Overview** (C), **Cards** (A), **Table** (B) |
+| The reading page | `04-module-layout.html` | T4's own |
+| Completion | `05-progress.html` | **A** at the end of a piece, **C** on the overviews |
+| Code and figures | `06-code-diagrams.html` | the **dark slab** |
+| Progress and account | `05`/`07` | **A** |
+| Home | `08-home.html` | **A** |
+| Rail | `09-sidebar.html` | T4's own |
+
+### Deliverables
+
+- [ ] The shell rebuilt: cobalt bar, the lattice band under it, the three-column grid anchored to the
+      window edges, the folding rail, the sticky offset. Every route carries it.
+- [ ] Each surface above rebuilt against its reference, at 1440, 1024 and 390.
+- [ ] **The eleven old stylesheets deleted.** Not migrated — see the decision below.
+- [ ] The visual expectations in the browser suite rewritten against the mockups; the behavioural
+      ones kept as they are.
+- [ ] Every capability intact: completion and undo, the checklist, the quick check, sources,
+      submittals, both languages, export, import, erase, the streak, role paths, optional sign-in,
+      claim-and-merge, the three retired routes still landing somewhere useful.
+
+### The stylesheets: deleted, not migrated
+
+The author left this call to me, and it is **delete all eleven and author a fresh set from the
+language**. Migrating them is precisely how the old structure survived M9 to M14: an edit preserves
+the thing being edited, and 378 of the old design's 398 class names survived a milestone series that
+was supposed to replace them. The fresh set is authored in the language's own terms, and any old rule
+that turns out to be needed has to be re-derived from a mockup to earn its place back.
+
+The exceptions, and why: the **generated** per-item stylesheet stays generated (its selectors are
+enumeration, not design, and its generator is regenerated in the same commit as any change);
+**markdown typography** and **figure framing** are re-authored against the mockup's prose and figure
+treatment rather than dropped, because the corpus depends on them and the mockup specifies both.
+
+### Acceptance criteria
+
+- **The fidelity check from M15 passes on every route**, not only on the page the mockup drew.
+- **Side by side with its mockup at 1440px, each surface is indistinguishable** apart from content
+  and the components the author chose differently. Checked by screenshot against the reference, not
+  by reading the CSS.
+- No page body scrolls sideways at 1440, 1024 or 390; wide content scrolls inside its own box, and a
+  figure wider than the column cannot paint outside it.
+- The interface survives `forced-colors: active`, and colour is never the only signal.
+- **A mark a reader sees in frame one is stamped before first paint**, not rendered by an island.
+- Keyboard: every control reachable and operable, a visible focus ring on each, and for every
+  disclosure **both** halves asserted — closed, its contents are out of the tab order; open, they
+  are in it.
+- `npm run typecheck`, `npm test`, `npm run build` and the full browser suite green, with the count
+  of behavioural tests **not lower** than it is today.
+- With no `.env.local` the site is complete and makes zero requests to the account service.
+
+### How it will be worked, and the honest risk
+
+**Surface by surface, in the order of the table**, with the whole gate plus the fidelity check run
+at each step, so there is a real page to look at early rather than a claim at the end. The shell
+comes first because every other surface sits inside it.
+
+**This is a large milestone and it is one milestone because the author asked for two.** 87 files
+carry presentation and 19 of the 30 browser specs assert appearance. If it has to be cut, the cut is
+announced before it happens and the author chooses what goes — not decided quietly at the end, which
+is what happened with M9 to M14.
+
+**Where the mockup is silent, work stops and the author is asked.** Inventing a value is what
+produced a substituted type family, a re-hued categorical series and a light top bar. There is no
+budget for taste in this milestone.
+
+### Report
+Not started.

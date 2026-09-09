@@ -70,7 +70,7 @@ reconstructed from git and is labelled as inferred inside each file.
 |---|---|---|
 | `MANIFESTO.md` | 15 non-negotiable rules, what this is and is NOT | Rules 1–7 are the author's own, from `mini-courses/MANIFEST.md`. Rules 8–15 came out of the work. |
 | `ARCHITECTURE.md` | The six rules, the domain, the two lifecycles, what the system refuses, the record, accounts, the build, deployment, the vocabulary | Current as of 2026-09-09. **The only architecture document**: the root `ARCHITECTURE.md` was folded into it and deleted (D11). 706 lines, sections 1 to 12; read the six rules, then §2, §3 and §9. |
-| `DESIGN.md` | The design system: tokens, colour roles, type scale, layout, components, and the do-nots | **Rewritten 2026-09-08**, and shipped in **M9 to M14**: ground `#FDFBF7`, cobalt accent, Manrope, five re-hued level colours, the dark slab, the fold, the 80ch measure, the view toggle, completion control C. The old "Hidden Line" system was deleted, not kept alongside. **Five corrections are recorded in it rather than tidied away** — the type stack, the ground, `slab-comment`, the measured width of the measure, and the `title` colour the token block names and no stylesheet declares. |
+| `DESIGN.md` | The design **language**: tokens, colour roles, type scale, layout, elevation, shapes, components, and the do-nots | **Deleted and rewritten from scratch 2026-09-09** against the mockup it now names in `source:` — `playground/01-theme-T4-ground-G3-powder.html`. Where the two disagree the mockup is right and this file is the bug (**D26**). It is a portable language, not a project specification: no framework class, route, feature or content vocabulary, and **no page layout** — layout belongs to M16, against the mockup for that surface. Transcription verified: all 30 of the mockup's hex values present, none invented. The version written for M9 was deleted, not superseded, on the author's instruction. |
 
 ### `kia-context/logs/` — state · written every session
 
@@ -101,7 +101,7 @@ maintained by an agent, and do not need reading to do the work. The root `CLAUDE
 | What will the build refuse? | `specs/ARCHITECTURE.md` §4 |
 | Where does a reader's progress live? | `specs/ARCHITECTURE.md` §5 |
 | Why is that word so strange? | `specs/ARCHITECTURE.md` §9 — and note it has TWO columns now: what the code says, and what a reader sees |
-| What colour is a level, exactly? | `specs/DESIGN.md` |
+| What colour is a level, exactly? | `specs/DESIGN.md`, Colors — the language names a five-hue **categorical series**; which level takes which hue is the product's binding, not the language's |
 | Why is the tick a disc and not a check mark? | `specs/DESIGN.md`, Colors |
 | Why is code dark in the light theme? | `specs/DESIGN.md`, Colors, and `logs/BRAINSTORM.md` **D21** |
 | Why does a wide diagram scroll instead of spilling over the rails? | `logs/BRAINSTORM.md` **D10**, and `specs/DESIGN.md`'s Layout |
@@ -169,12 +169,15 @@ The three heaviest edges, by count:
 |---|---|---|
 | `logs/BRAINSTORM.md` | `specs/ARCHITECTURE.md` | 19 |
 | `logs/PROGRESS.md` | `specs/ARCHITECTURE.md` | 12 |
-| `specs/DESIGN.md` | `logs/BRAINSTORM.md` | 6 |
+| `specs/DESIGN.md` | `logs/BRAINSTORM.md` | 1, in its frontmatter only |
 | `logs/BRAINSTORM.md` | `specs/MANIFESTO.md` | 5 |
 
-The sketch above does not draw one edge that now matters: **`specs/DESIGN.md` points at
-`logs/BRAINSTORM.md` six times**, because the design system cites the decision behind each value
-rather than restating it.
+The sketch above no longer draws an edge it used to: **`specs/DESIGN.md`'s body now cites nothing in
+this repository — zero references to any `kia-context/` path** — and its one mention of
+`logs/BRAINSTORM.md` is in its frontmatter, saying what does not belong in the file. That is the
+point of it rather than an omission: as of **D26** the design document is a portable *language*, and
+a language that cites this project's decision log cannot be adopted by another project. It points
+outward instead, at the mockup named in its `source:` field, which outranks it.
 
 **`ARCHITECTURE.md` is the hub**, which is the shape you want: the logs explain why the blueprint says
 what it says, and the blueprint never explains itself.

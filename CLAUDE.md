@@ -10,15 +10,24 @@ The root `ARCHITECTURE.md` was folded into it on 2026-09-08.
 
 **The interface is being replaced.** Not the functionality: every capability stays,
 and the presentation, the vocabulary and the palette change.
-[`kia-context/specs/DESIGN.md`](kia-context/specs/DESIGN.md) is the design
-authority and holds the exact tokens; the work is milestones **M9 to M14** in
-`kia-context/logs/PROGRESS.md`, in that order. **Before styling anything, read
-DESIGN.md rather than copying a nearby component** — the drawing-set system it
-replaced had zero radius on every token, a serif body and monospace labels, and
-none of that survives. Two live constraints from it: the ground is `#FDFBF7`, so
-a raised surface is told apart by its border and not its fill, and a border that
-identifies an interactive control uses `on-surface-faint`, because nothing
-lighter in the palette reaches 3:1.
+**The mockup is the specification, and it outranks every document.**
+`playground/01-theme-T4-ground-G3-powder.html` is what the interface must look
+like. [`kia-context/specs/DESIGN.md`](kia-context/specs/DESIGN.md) is a
+transcription of its design *language* and names it in `source:`; where the two
+disagree, **the mockup is right and DESIGN.md is the bug**. The work is
+milestones **M15 and M16** in `kia-context/logs/PROGRESS.md`.
+
+**Before styling anything, open the mockup, then DESIGN.md — and copy neither a
+nearby component nor the old stylesheets.** M9 to M14 re-themed the old
+interface instead of rebuilding it, because the design document they were built
+against described the old structure carrying the new palette; 378 of the old
+design's 398 class names survived five milestones meant to replace them
+(`logs/BRAINSTORM.md` **D26**). Two live constraints: the top bar is a solid
+cobalt slab with its own on-bar sub-palette and never sits on the page ground,
+and because the ground is `#FDFBF7` a raised surface is told apart by its
+**hairline and not its fill** — with `line` for grouping and `line-strong` for
+an interactive or hovered edge. **A surface's layout is not in DESIGN.md by
+design**: it lives in the M16 table, against the mockup that surface came from.
 
 ## Two halves, and which file governs which
 

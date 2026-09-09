@@ -650,6 +650,56 @@ page that was behaving correctly. The assertion is `display: none` or not.
 frame one may not travel on channel B. This entry is the second surface to break it, so the rule is
 not new; what is new is that an `aria-*` attribute counts as a mark.
 
+### D26 · The mockup is the specification; DESIGN.md is a portable language, and layout is neither — 2026-09-09
+
+**Considered:** (a) keep the DESIGN.md written for M9, correct its wrong values and carry on / (b)
+keep it as `DESIGN_v1.md` marked superseded and write a new one beside it / (c) delete it and write
+one file from the mockup, with layout moved out of it entirely.
+
+**Chose (c).** The author's instruction was explicit: *"delete the old DESIGN.md. Keep a single
+DESIGN.md and write it from beginning based on the reference T4 G3."*
+
+**Because the document was not merely wrong in places, it was the wrong kind of document.** It
+described the structure the project already had, carrying the newly chosen palette, and it was full
+of product internals — framework class names, route names, content vocabulary, architecture
+sections. An agent reading it rebuilt the existing interface, faithfully, five milestones in a row.
+Correcting its values would have left that intact.
+
+**MEASURED, which is what settles it rather than taste:**
+
+| | |
+| --- | --- |
+| Mentions of the chosen mockup in the old DESIGN.md | **2**, both about contrast ratios |
+| Mentions of `playground/` in the prompts of the three agents that built M10 to M14 | **0** |
+| The mockup's on-dark-bar sub-palette in the old DESIGN.md | **0 of 5 tokens** — so its header was not buildable from it |
+| Old class names surviving the five milestones meant to replace them | **378 of 398** |
+| The mockup's whole design language | **257 lines of CSS**, against the app's **7,158** |
+
+**Rejected (a)** because the file's *kind* was the defect, not its contents. **Rejected (b)** — the
+supersede path I had proposed an hour earlier — on the author's call: two design documents in one
+repository is two answers to one question, and the older one would be read by something eventually.
+Git holds the history; the working tree holds one answer.
+
+**Three rules follow, and they are the point of the entry:**
+
+1. **A design document is a LANGUAGE, not a specification of the product.** Generic component names,
+   a categorical hue *series* rather than the product's own taxonomy, and nothing that names a page,
+   a route, a feature, a framework class or a piece of content. The test is portability: another
+   product should be able to adopt the file unchanged.
+2. **A surface's layout is not part of the language.** Which panels a screen carries, in what order,
+   belongs to the milestone that builds that screen, against the mockup it came from. This is the
+   structural fix: layout inside the language document is what let the document become a description
+   of whatever already existed.
+3. **A transcription names its original.** `DESIGN.md` carries `source:` pointing at the mockup, and
+   where the two disagree the **mockup is right and the document is the bug**. A transcription that
+   does not name its original gets mistaken for an original and then diverges from it quietly.
+
+**Also decided here, the author having left it to me: in M16 the eleven stylesheets are deleted, not
+migrated.** An edit preserves the thing being edited — see the 378 of 398 above. Anything from them
+that turns out to be needed must be re-derived from a mockup to earn its place back.
+
+**Rule that follows:** `specs/DESIGN.md`'s own Overview, and M15/M16 in `logs/PROGRESS.md`.
+
 ### O2 · Where the retired progress vocabulary lands — opened 2026-09-08, HALF ANSWERED 2026-09-09
 
 **The first half is closed. See D22.** M13 took `XP`, `Rank` and `II at 16` off every instrument on

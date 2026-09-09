@@ -1,472 +1,531 @@
 ---
 description: >
-  The design system, in the DESIGN.md format — a machine-readable token block paired with prose saying
-  what each token means and when to reach for it. Written so an agent building an interface has both
-  the exact values and the intent behind them. This is the Bazaar system, chosen on 2026-09-08; it
-  replaced the "Hidden Line" drawing-set system, which was deleted rather than kept alongside it.
-  NOT here: component implementation, framework class names, or why an option was rejected
-  (BRAINSTORM.md). Nor the reader-facing vocabulary, which is ARCHITECTURE.md §9.
+  The design LANGUAGE, in the DESIGN.md format — a token block an agent can read exactly, and prose
+  saying what each token is for and when to reach for it. It is written to be portable: another
+  product could adopt this file unchanged and look like it belongs to the same family.
+  NOT here, and this is the part that went wrong before: no framework or utility class names, no
+  route or page names, no product vocabulary, no component implementation, no architecture or data
+  flow, and no reasoning about rejected options (BRAINSTORM.md). A surface's LAYOUT is not a design
+  language either — that lives in the milestone that builds it, against the mockup it came from.
+source: playground/01-theme-T4-ground-G3-powder.html
 authority: blueprint
-writes: agent, as the interface evolves
+writes: agent, as the language evolves
 status: active
-covers: "the Bazaar system, chosen 2026-09-08 — M9 to M14 shipped; the whole revision is built"
+covers: "the Bazaar language, transcribed from T4 on ground G3 — 2026-09-09"
 last_updated: "2026-09-09"
 ---
 
 ---
 name: "Bazaar"
-description: "İznik tile: a cobalt bar, a warm ground, five level colours, and one band of ornament. Every hue sampled from assets/banner-tiles.jpeg."
+version: "alpha"
+description: "İznik tile. A cobalt bar over a powder ground, one warm neutral family, a five-hue categorical series, arch-topped groups, and a single band of lattice ornament. Every hue sampled from glazed ceramic."
 colors:
-  primary: "#282864"
-  primary-hover: "#3a3a86"
-  on-primary: "#FFFFFF"
-  title: "#1b1b47"
-  surface: "#fdfbf7"
+  surface: "#FDFBF7"
   surface-raised: "#FFFFFF"
-  surface-sunken: "#efe7d6"
-  on-surface: "#20242e"
-  on-surface-muted: "#6a6558"
-  on-surface-faint: "#a09889"
-  line: "#d8cbb4"
-  line-strong: "#948d7d"
-  accent-warm: "#c8a078"
-  focus: "#a0503c"
-  verify: "#2f8c86"
-  caution: "#b8873b"
-  fault: "#a0503c"
-  info: "#282864"
-  cat-fundamentals: "oklch(0.575 0.098 189)"   # TURKUAZ
-  cat-intermediate: "oklch(0.575 0.128 240)"   # LACİVERT
-  cat-expert: "oklch(0.575 0.130 320)"         # ERİK
-  cat-ecosystem: "oklch(0.575 0.115 75)"       # BAL
-  cat-protocols: "oklch(0.575 0.120 30)"       # KİREMİT
-  slab-surface: "#1d1f27"
-  slab-on-surface: "#e7e3d8"
-  slab-line: "#33363f"
-  slab-raised: "#262933"
-  slab-keyword: "#c48ce0"
-  slab-string: "#8fcf9a"
-  slab-comment: "#8b91a0"      # was #767c88; 3.92:1 on the slab, see Colors
-  slab-function: "#7fb8e8"
-  slab-number: "#e0a45c"
-grounds:
-  selected: "G3"            # chosen 2026-09-08, BRAINSTORM.md O4. Retired: #F4ECE0 / #FFFDF9.
-  retired: { surface: "#f4ece0", surface-raised: "#fffdf9" }
-  G1: { surface: "#f8f2e8", surface-raised: "#fffefb" }
-  G2: { surface: "#fbf7f0", surface-raised: "#FFFFFF" }
-  G3: { surface: "#fdfbf7", surface-raised: "#FFFFFF" }
-  G4: { surface: "#FFF8E9", surface-raised: "#FFFFFF" }
+  surface-sunken: "#E6DAC6"
+  on-surface: "#20242E"
+  on-surface-title: "#1B1B47"
+  on-surface-muted: "#6A6558"
+  on-surface-faint: "#948D7D"
+  line: "#D8CBB4"
+  line-strong: "#C3B299"
+  primary: "#282864"
+  on-primary: "#FFFFFF"
+  focus: "#A0503C"
+  success: "#2F8C86"
+  caution: "#B8873B"
+  on-caution: "#20201C"
+  ornament: "#C8A078"
+  bar: "#282864"
+  on-bar: "#FFFFFF"
+  on-bar-dim: "#C9C6E4"
+  bar-hover: "rgba(255,255,255,0.10)"
+  bar-edge: "rgba(40,40,100,0)"
+  bar-chip: "#FDFBF7"
+  on-bar-chip: "#1B1B47"
+  bar-field: "rgba(255,255,255,0.08)"
+  bar-field-line: "rgba(255,255,255,0.25)"
+  category-1: "#2F8C86"
+  category-2: "#282864"
+  category-3: "#7A4A86"
+  category-4: "#B8873B"
+  category-5: "#A0503C"
+  band-ground: "#282864"
+  band-a: "#2F8C86"
+  band-b: "#C8A078"
+  band-c: "#A0503C"
+  slab-surface: "#1D1F27"
+  slab-surface-raised: "#262933"
+  slab-on-surface: "#E7E3D8"
+  slab-on-surface-muted: "#9AA0AD"
+  slab-line: "#33363F"
+  slab-line-raised: "#444854"
+  slab-on-raised: "#DCD8CD"
+  slab-arrow: "#6E737F"
+  slab-keyword: "#C48CE0"
+  slab-string: "#8FCF9A"
+  slab-comment: "#767C88"
+  slab-function: "#7FB8E8"
+  slab-number: "#E0A45C"
 typography:
-  h1:
-    fontFamily: "Manrope"
-    fontSize: "2.375rem"
+  sans: '"Avenir Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
+  mono: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+  body:
+    fontFamily: sans
+    fontSize: "16px"
+    lineHeight: "1.68"
+  display:
+    fontFamily: sans
+    fontSize: "38px"
     fontWeight: "600"
     lineHeight: "1.16"
     letterSpacing: "-0.015em"
-  h2:
-    fontFamily: "Manrope"
-    fontSize: "1.5625rem"
+  section:
+    fontFamily: sans
+    fontSize: "25px"
     fontWeight: "600"
     lineHeight: "1.28"
     letterSpacing: "-0.012em"
-  h3:
-    fontFamily: "Manrope"
-    fontSize: "1.15625rem"
+  subsection:
+    fontFamily: sans
+    fontSize: "18.5px"
     fontWeight: "600"
     lineHeight: "1.35"
-  body:
-    fontFamily: "Manrope"
-    fontSize: "1rem"
-    lineHeight: "1.68"
-  ui:
-    fontFamily: "Manrope"
-    fontSize: "0.90625rem"
-    fontWeight: "500"
-  meta:
-    fontFamily: "Manrope"
-    fontSize: "0.84375rem"
-  label:
-    fontFamily: "Manrope"
-    fontSize: "0.78125rem"
+  lead:
+    fontFamily: sans
+    fontSize: "16px"
     fontWeight: "600"
+    lineHeight: "1"
+  control:
+    fontFamily: sans
+    fontSize: "14.5px"
+    fontWeight: "500"
+    lineHeight: "1"
+  item:
+    fontFamily: sans
+    fontSize: "14px"
+    fontWeight: "500"
+    lineHeight: "1.3"
+  meta:
+    fontFamily: sans
+    fontSize: "13.5px"
+    fontWeight: "400"
+    lineHeight: "1.6"
+  mark:
+    fontFamily: sans
+    fontSize: "12.5px"
+    fontWeight: "600"
+    lineHeight: "1"
+  label:
+    fontFamily: sans
+    fontSize: "12px"
+    fontWeight: "600"
+    lineHeight: "1"
+    letterSpacing: "0.06em"
   code:
-    fontFamily: "IBM Plex Mono"
-    fontSize: "0.84375rem"
+    fontFamily: mono
+    fontSize: "13.5px"
     lineHeight: "1.75"
-rounded:
-  none: "0px"
-  sm: "3px"
-  md: "5px"
-  lg: "7px"
-  card: "4px 14px 4px 14px"
-  arch: "14px 14px 4px 4px"
-  pill: "9999px"
+  code-meta:
+    fontFamily: mono
+    fontSize: "12.5px"
+    lineHeight: "1"
 spacing:
-  unit: "4px"
-strokes:
-  hair: "1px"
-  strong: "2px"
-  edge: "4px"
-  dash-rule: "6 6"
-widths:
-  nav: "262px"
-  toc: "204px"
-  prose: "80ch"
-  gutter: "clamp(24px, 3.4vw, 56px)"
+  hair: "2px"
+  xs: "4px"
+  sm: "6px"
+  base: "9px"
+  md: "12px"
+  lg: "17px"
+  xl: "22px"
+  2xl: "28px"
+  3xl: "44px"
+  4xl: "96px"
+rounded:
+  hair: "2px"
+  xs: "3px"
+  sm: "4px"
+  base: "5px"
+  md: "6px"
+  lg: "7px"
+  xl: "8px"
+  pill: "9px"
+  disc: "50%"
+  arch: "14px 14px 4px 4px"
+  leaf: "4px 14px 4px 14px"
+layout:
+  bar: "58px"
   band: "18px"
+  sticky: "76px"
+  rail: "262px"
+  aside: "204px"
+  measure: "80ch"
+  fold-at: "1180px"
+  rail-at: "880px"
 motion:
-  fold: "200ms cubic-bezier(.22,.61,.36,1)"
-  hover: "120ms cubic-bezier(.22,.61,.36,1)"
-  reveal: "150ms cubic-bezier(.22,.61,.36,1)"
+  ease: "cubic-bezier(.22,.61,.36,1)"
+  swift: "120ms"
+  fade: "150ms"
+  shift: "160ms"
+  fold: "200ms"
 components:
-  button-primary:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.on-primary}"
-    borderRadius: "{rounded.md}"
-  button-quiet:
-    backgroundColor: "{colors.surface-raised}"
-    textColor: "{colors.on-surface}"
-    borderColor: "{colors.on-surface-faint}"
-    borderRadius: "{rounded.md}"
-  level-accordion:
-    backgroundColor: "{colors.surface-raised}"
-    borderColor: "{colors.line}"
-    borderRadius: "{rounded.arch}"
-  tick:
-    backgroundColor: "{colors.verify}"
-    textColor: "{colors.on-primary}"
-    borderRadius: "{rounded.pill}"
+  bar:
+    backgroundColor: bar
+    textColor: on-bar
+    height: "58px"
+    padding: "0 22px"
+  bar-item:
+    textColor: on-bar-dim
+    typography: control
+    rounded: base
+    padding: "7px 11px"
+    height: "32px"
+  bar-item-current:
+    backgroundColor: bar-chip
+    textColor: on-bar-chip
+    typography: lead
+    rounded: base
+  bar-field:
+    backgroundColor: bar-field
+    textColor: on-bar-dim
+    rounded: base
+    height: "33px"
+    padding: "0 11px"
+  bar-icon-button:
+    backgroundColor: bar-field
+    textColor: on-bar
+    rounded: base
+    size: "33px"
+  menu:
+    backgroundColor: surface-raised
+    rounded: xl
+    padding: "6px"
+    width: "214px"
+  menu-item:
+    textColor: on-surface
+    typography: item
+    rounded: base
+    padding: "7px 10px"
+  rail:
+    backgroundColor: surface
+    width: "262px"
+    padding: "16px 12px 48px"
+  rail-group:
+    backgroundColor: surface-raised
+    textColor: on-surface
+    typography: control
+    rounded: arch
+    padding: "9px 12px"
+  rail-group-current:
+    backgroundColor: surface-sunken
+    textColor: on-surface
+    typography: lead
+    padding: "12px 12px 12px 11px"
+  rail-item:
+    textColor: on-surface-muted
+    typography: item
+    rounded: base
+    padding: "6px 9px"
+  rail-item-current:
+    textColor: on-primary
+    typography: lead
+    rounded: base
+  fold-button:
+    backgroundColor: surface-raised
+    textColor: on-surface-muted
+    rounded: md
+    size: "28px"
+  restore-tab:
+    backgroundColor: surface-raised
+    textColor: on-surface-muted
+    rounded: "0 9px 9px 0"
+    width: "26px"
+    height: "60px"
+  mark-complete:
+    backgroundColor: success
+    textColor: on-primary
+    rounded: disc
     size: "17px"
+  tag:
+    backgroundColor: surface-raised
+    textColor: on-surface
+    typography: mark
+    rounded: sm
+    padding: "4px 10px"
+  card:
+    backgroundColor: surface-raised
+    rounded: leaf
+    padding: "17px 20px"
   slab:
-    backgroundColor: "{colors.slab-surface}"
-    textColor: "{colors.slab-on-surface}"
-    borderColor: "{colors.slab-line}"
-    borderRadius: "{rounded.lg}"
+    backgroundColor: slab-surface
+    textColor: slab-on-surface
+    typography: code
+    rounded: lg
+    padding: "15px 17px"
+  slab-header:
+    textColor: slab-on-surface-muted
+    typography: code-meta
+    padding: "9px 13px"
+  figure-node:
+    backgroundColor: slab-surface-raised
+    textColor: slab-on-raised
+    typography: meta
+    rounded: base
+    padding: "9px 13px"
+  button-primary:
+    backgroundColor: primary
+    textColor: on-primary
+    typography: lead
+    rounded: base
+    padding: "11px 20px"
+  button-quiet:
+    backgroundColor: surface-raised
+    textColor: on-surface
+    typography: lead
+    rounded: base
+    padding: "11px 20px"
+  pager-item:
+    backgroundColor: surface-raised
+    rounded: sm
+    padding: "13px 15px"
+  aside-item:
+    textColor: on-surface-muted
+    typography: meta
+    padding: "5px 0 5px 12px"
+  band:
+    backgroundColor: band-ground
+    height: "18px"
 ---
 
-# 🎨 DESIGN — The Bazaar system
-
-> **This replaced a whole system, and the old one is gone.** Until 2026-09-08 the interface was
-> "Hidden Line": paper, hairlines, three drafting stroke weights, three dash patterns, **zero radius
-> on all nine radius tokens**, a serif body, monospace for every label, and one orange accent. It was
-> internally consistent and thoroughly carried through, and it was undecodable to a first-time reader.
-> It was deleted from this file rather than kept beside the new one, because two design systems in one
-> document is two systems. The reasoning is `logs/BRAINSTORM.md` **D10**; the vocabulary it took with
-> it is `specs/ARCHITECTURE.md` §9.
->
-> **Every value here is settled.** The last one open, the ground, was answered on 2026-09-08:
-> **G3 "Powder", `#FDFBF7`.** The other three candidates stay in the `grounds:` block as the record of
-> what was compared, and `logs/BRAINSTORM.md` **O4** has the numbers.
-
----
+# 🎨 DESIGN — The Bazaar language
 
 ## Overview
 
-The interface is a **glazed İznik tile**: a cobalt bar across the top, a warm ground beneath it, five
-level colours, and exactly one band of ornament. It comes from the project's own artwork rather than
-from a reference site, and every hue in it was **sampled from `assets/banner-tiles.jpeg`** rather than
-chosen: cobalt `#282864`, clay `#A0503C`, ochre `#C8A078`, teal `#2F8C86`, gold `#B8873B`.
+Bazaar is a **glazed-ceramic** language. Everything in it comes from İznik tile: a deep cobalt that
+carries the chrome, a powder-white ground that carries the reading, one family of warm sand neutrals
+for structure, five saturated glaze hues for categorisation, and exactly one band of lattice
+ornament to say the surface was made by someone.
 
-What follows from that:
+Three ideas explain every token below.
 
-- **Cobalt leads, and the ground supports.** The bar is the darkest thing on the page and the only
-  saturated surface. The ground is warm and light, and it is also the fill of the active item in the
-  bar, which is how the navbar says where you are without a second colour.
-- **Ornament is spent once.** A diamond tile lattice on a gold rule, 18px tall, directly under the
-  bar. Nothing else on any page is decorative. If a second ornament appears, one of them is wrong.
-- **A geometric sans, not a serif.** Headings and body are the same family at different weights. This
-  is deliberate: a cream ground plus a high-contrast serif plus a clay accent is the most common
-  machine-generated look there is, and it would have made the project's own artwork read as a
-  template.
-- **Radius carries meaning, sparingly.** Ordinary surfaces are 3 to 7px. Two shapes are special: the
-  **arch** (`14px 14px 4px 4px`) marks a level, which is the banner's own shape, and the **card**
-  (`4px 14px 4px 14px`) marks a block of the author's voice, such as the objectives.
-- **One accent for interaction.** Cobalt for anything you can act on. Clay is the focus ring and
-  nothing else. Ochre is the warm rule under a heading and the underline on a link, and never a
-  surface.
-- **Code and diagrams are a dark slab.** The one place the page goes dark, on purpose: it separates
-  what the machine says from what the author says, and it stops a diagram from washing out.
+**1. The chrome is dark and the page is light.** The top bar is a solid slab of `bar` cobalt with
+white type on it; the ground under it is `surface`, almost white. This is the language's strongest
+signal and its most easily lost: a bar drawn on the ground instead of in cobalt turns Bazaar into a
+generic light theme. The bar has its own five-token sub-palette — `on-bar`, `on-bar-dim`,
+`bar-hover`, `bar-chip`, `bar-field` — because a control sitting on cobalt cannot borrow the values
+of one sitting on powder.
+
+**2. The ground is near-white, so structure is drawn with lines, not fills.** `surface-raised`
+(pure white) sits on `surface` (`#FDFBF7`) at a luminance ratio of about 1.03 — invisible on its own.
+A raised thing is therefore identified by its **hairline**, and removing a border because "the fill
+already separates it" is the single most common way to break this language. `surface-sunken` is the
+one fill that does read: it is the hover and the pressed state, not a resting surface for text.
+
+**3. Colour classifies; it never carries meaning alone.** The five-hue `category-*` series exists to
+tell groups apart at a glance. Each hue is bound to one group and then reused for that group's
+marker, its current-state edge and its active item — but always alongside a second signal: a
+position, a weight, a size, a word. A viewer who cannot separate the hues must still be able to
+read the interface.
+
+**What this file is not.** It is a language, not a product. It names `rail`, `card`, `slab` and
+`category-3`; it does not name a page, a route, a framework class, a feature or anything the product
+happens to call its content. A surface's *layout* — which panels, in which order, on which screen —
+is not part of the language and does not belong here; it belongs to the milestone that builds that
+surface, against the mockup it came from. Where this document and the mockup named in `source:`
+disagree, **the mockup is right and this document is the bug.**
 
 ## Colors
 
-`primary` cobalt is the whole interactive vocabulary: links, buttons, the current module in the list,
-the current heading in the contents rail. `title` is a deeper cobalt used only for h1, h2 and the bold
-lead-in of a card, so headings sit a step above the body without a second hue.
+**The neutral family is warm and it is a family.** `surface` → `surface-raised` → `surface-sunken`
+is one ladder of sand, and the two line tokens sit on the same ladder: `line` for grouping a set of
+things, `line-strong` for the edge of something interactive or hovered. They are close together on
+purpose. If a border needs to shout, the answer is a heavier *weight* or a `category-*` hue, never a
+darker neutral invented for the occasion.
 
-**A correction, found in M13 and left standing here as one.** `title` `#1b1b47` is in the token block
-above and **no stylesheet declares it**: M9 shipped the palette without a `--color-title`, so every
-heading on the site is `--color-ink`. That is why M13's 56px hero is `--color-ink` too — reaching for
-a token nothing declares computes to an inherited colour, which no contrast test can see and no
-reviewer would notice. Either ship the token or take it out of this block; what must not happen is a
-third page reaching for it.
+**Four weights of type colour, and the top two are not interchangeable.** `on-surface` is for
+reading. `on-surface-title` — a deeper, bluer ink — is for display and section headings only, and it
+is what makes headings feel set rather than merely bold. `on-surface-muted` carries secondary
+information a reader will look for: metadata, breadcrumbs, an aside's items, a count they might
+count. `on-surface-faint` is for text a reader may ignore entirely — a pending badge, a unit, a
+label above a control — and it does **not** meet a 4.5:1 text floor on this ground. A word that is
+the only thing telling the viewer something takes `on-surface-muted`, however small it is.
 
-`surface` is the ground: **`#FDFBF7`, at 96.6% relative luminance.** It replaced `#F4ECE0` at 84.6%,
-and it is the only token that changed when the theme was accepted. It is also the fill of the active
-item in the navbar, which is where its contrast against cobalt matters: 12.88:1, up from 11.36:1.
+**`primary` is cobalt and it does three jobs**: it fills the bar, it fills the primary action, and it
+is the link colour. That overlap is deliberate and it has one consequence worth stating: **no
+`category-*` hue may sit within about 20° of `primary`'s hue**, or a category marker will be read as
+a link. `category-2` *is* the cobalt, which is the exception that proves it — that category is
+identified by the bar's own colour, so nothing about it is ambiguous.
 
-`surface-raised` is anything sitting on the ground, and it is **always lighter than the ground** —
-the constraint the `grounds:` block exists to keep. On G3 that leaves it pure white, only 3.5% of a
-step above the ground, which has one consequence worth stating as a rule: **a raised surface is told
-apart by its hairline, not by its fill.** Every card, panel and dropdown needs its `line` border.
-Removing a border because "the fill already separates it" is a defect on this ground; it did not
-used to be.
+**`focus` is clay, not cobalt.** The focus ring is deliberately the one warm chromatic in the set, so
+it is visible against cobalt chrome, against white cards and against the dark slab without changing
+per context. Never re-colour a focus ring to match its surroundings; that is how a keyboard path
+becomes invisible on one surface out of five.
 
-`surface-sunken` is the sand used for a header strip inside a card, for a hover state in the module
-list, and for the current level's fill. Against a near-white ground it does more work than it did
-before, which is why the current level reads clearly without a second device.
+**`success`, `caution` and `ornament` are glazes, not signals from a traffic light.** Teal `success`
+marks a finished thing. Gold `caution` marks something a reader should notice before acting.
+`ornament` — the ochre — is decorative only: it draws the dashed rule after a section heading, the
+underline under prose links, and the middle stripe of the band. It never carries state. Text set on
+a `caution` fill takes `on-caution`, a near-black warm ink: white on gold does not clear a text
+floor, and it is the only place in the language where type on a chromatic fill is not white.
 
-**Two line tokens, and the split is load-bearing on this ground.** Measured against `#FDFBF7`,
-`line` is 1.55:1 and `line-strong` is 3.19:1 — but a control does not only sit on the paper, and
-against the **sand** those fall to 1.30:1 and 2.68:1, so neither line colour in T4's palette reaches
-3:1 on every ground it is drawn on. That is fine
-for a boundary that only **groups** things, because the content inside identifies the group — a card,
-a panel, a section rule. It is not fine for the boundary that **identifies an interactive control**,
-which needs 3:1 to be perceivable. So:
-
-- **Grouping** — `--color-line` `#D8CBB4`, at 1.55:1. A card, a panel, a section rule.
-- **Identifying a control** — `--color-line-control`, which is a token of its own and was not in the
-  first version of this file. `line-strong` was doing both jobs, and against the **sand** — the ground
-  an input and a card's header strip actually sit on — it measured **2.68:1**, which is not
-  perceivable. Darkening `line-strong` itself was tried and collided with the five level colours: they
-  share one lightness, pinned by their own 3.1:1 requirement against both themes' grounds, and a
-  structural line at that lightness is one a reader can mistake for a level. So the control border is
-  separate, and it clears 3:1 on **all three** grounds.
-
-**Those are the shipped token names.** `--color-line` was already documented as decorative-only and
-`--color-line-strong` as "structural, ≥3:1", so two of the three jobs were named before this ground
-existed; the third had to be added. **The lesson is that a floor checked against one ground is not
-checked**: both of these cleared 3:1 on the page and failed on the sand, and the contrast test now
-pairs every token with all three grounds because of it.
-
-`--color-ink-faint` is a third thing and must not be confused with either: it is faint *text*, and it
-has to stay **under** 3:1 (2.77:1) or it becomes usable as a meaningful mark. The contrast test
-asserts that ceiling. The two were briefly the same value, which is how the distinction got found.
-
-This applies to the quiet button, inputs, the search field and the catalog's view toggle. `button-quiet`
-shipped on `line-strong` at 2.07:1 on white, which failed.
-
-**M10/M11 applied it, and M9 had not.** M9 declared the token and left every control on
-`line-strong`; the components moved when the components were built.
-`tests/unit/color/slab-and-controls.test.ts` now names each control and asserts the border in both
-directions — a control put back on `line` or `line-strong` fails there — and there is no search field
-yet, because §12.0 still defers the command palette. M12 and M13 added three more names to that list:
-the catalog's filter chip, its view button, and control C's per-module toggle.
-
-Three text weights and no more: `on-surface` for prose, `on-surface-muted` for anything secondary,
-`on-surface-faint` for anything a reader can ignore. On G3 they measure 15.01:1, 5.62:1 and 2.77:1,
-and on the sand 12.61:1, 4.72:1 and 2.32:1.
-**The faint weight does not clear 4.5:1 and must never carry a sentence** — it is for a count, a unit
-or a status word that is repeated elsewhere on the page. All three are measured against the ground on
-every change; the numbers are recomputed by the palette tests from the shipped stylesheet, never
-written down in an assertion.
-
-**The five level colours are identity, not decoration.** Fundamentals turquoise, Intermediate İznik
-navy, Expert plum, Ecosystem honey, Protocols roof-tile red — `TURKUAZ`, `LACİVERT`, `ERİK`, `BAL`,
-`KİREMİT`, which is what the interface calls them. A level is told apart by its colour **and** by its
-name, its position and its count, because colour is never the only signal.
-
-**Two constraints on them that look like taste and are not.** They share one lightness (0.575), so no
-level outranks another and each clears 3.1:1 against all three grounds in both themes. And no level
-hue may sit within 20° of the accent — which is why Intermediate is *not* T4's cobalt: a level hue
-that close to the interactive accent is one a reader can mistake for a link. Both are recomputed by
-`tests/unit/color/lokum.test.ts` from the shipped stylesheet.
-
-`verify` teal marks completion. It is drawn as a **filled disc with a white check**, and the shape is
-load-bearing: teal measures 3.27:1 on the sand, 3.89:1 on the paper and 4.03:1 on a cleared surface
-in the light theme, and 7.61:1 to 8.79:1 in the dark one, so in the light theme it would fail as text
-and passes the 3:1 graphical floor on all three grounds. Do not turn the tick
-back into a hairline glyph.
-
-The slab is its own small palette. Its five syntax colours are chosen against `#1d1f27` and are the
-only place in the system where hue carries meaning rather than identity.
-
-**A second correction, and it is the same lesson as the first one.** `slab-comment` was `#767c88`
-here, and it measures **3.92:1 against `#1d1f27`** — under the 4.5:1 text floor. A comment in a
-teaching corpus is content, not decoration (`# Example vectors` is the line that explains the three
-below it), so it takes the text floor, and the value moved to **`#8b91a0`** at 5.21:1. That is the
-same call §6.7 already had to make against `--color-ink-faint` on the old code ground, one ground
-over. Measured for the record, against the slab: ink 12.82:1, string 9.05:1, function 7.77:1, number
-7.54:1, keyword 6.40:1, comment 5.21:1. `tests/unit/color/contrast.test.ts` recomputes all six.
-
-**And one token the slab needs that this block does not name.** `slab-line` is the slab's own
-boundary and its internal dividers, and it is decorative by design — 1.36:1 — so it must stay under
-3:1 and a test asserts that ceiling. It is therefore the wrong colour for a **diagram's geometry**:
-`mermaid-config.ts` binds every node stroke, every edge path and every arrowhead to
-`--color-line-strong`, so inside the slab that token resolves to `slab-comment` at 5.21:1 instead. A
-diagram drawn in `slab-line` is a diagram whose geometry a reader cannot see.
-
-**The slab does not flip with the theme, and that is why it works at all.** It is implemented as a
-local theme override — the palette redeclared on the figure — rather than as a set of bespoke code and
-diagram colours. Custom properties cascade into inline SVG, so fifty-three diagrams re-theme onto a
-dark ground with no change to the mermaid configuration, no re-parse and no JavaScript. The semantic
-hues inside it are the **dark theme's**: measured on the slab, the light theme's `fault` is 2.90:1 and
-its `info` is 1.67:1, against the 3:1 a graphic carries.
+**The dark slab is a second, complete palette.** Code and diagrams sit on `slab-surface`, and every
+value they need is prefixed `slab-`. It is a self-contained set precisely so a slab can be dropped
+anywhere without the surrounding ground leaking into it. Syntax colours are tuned against
+`slab-surface` alone; a slab on a light card is not a thing in this language.
 
 ## Typography
 
-One family, four jobs, six sizes: **Manrope**, at 400/500/600/700, for everything a person wrote.
-Monospace is IBM Plex Mono, used for code, for a file name above a slab, for a measured value, and
-for nothing else.
+**One sans family does all the work.** `sans` is a humanist geometric with a warm, slightly wide
+lowercase; `mono` appears only inside a slab and on the smallest code metadata. There is no serif in
+this language and no monospace label — a small uppercase mono label is a different design idiom
+altogether and it fights the glaze.
 
-**A correction, kept because the wrong reason is instructive.** This section first said the stack was
-the system sans with no webfont, because "the previous system's two webfonts cost a render-blocking
-request each". That is false. `next/font/google` **self-hosts**: it downloads the faces at build time
-and serves them from this origin with `display: swap`, so there was no third-party request to save and
-nothing was render-blocking. The reason to change faces is the look — a serif body was half of the
-system being replaced — not the loading. Manrope over Inter because both have the latin-ext coverage
-Turkish needs and Inter is what a page reaches for when nobody chose.
+**The scale is display / section / subsection / body, and it is set tight at the top.** Display and
+section both take negative letter-spacing and `on-surface-title`, so headings read as one
+typographic voice and body text as another. Body is `16px` at a generous `1.68` line height, which is
+what makes the measure below feel like reading rather than scanning.
 
-The scale is `0.78125 / 0.84375 / 0.90625 / 1 / 1.15625 / 1.5625 / 2.375rem`. It is not a geometric
-progression, and the values are the ones that were measured in the browser rather than derived from a
-ratio.
+**Below body there are five small sizes and they are not decorative variety.** `control` for
+anything clickable in chrome, `item` for a row in a list or menu, `meta` for secondary prose,
+`mark` for a count or a tag, and `label` — the only tracked size — for the caption above a group of
+controls. Reaching for a sixth size is a sign the hierarchy is wrong, not that the scale is short.
 
-**Line length is capped at 80ch and the column is centred.** The column takes the width its container
-gives it, so on a wide window it grows into the space the rails leave rather than sitting against the
-left edge with a band of nothing beside it — but it stops at 80ch, which is what keeps growing from
-becoming unreadable.
-
-**Measured on the shipped build at 1440px**, which is a different number from the 814px this section
-first carried and the difference is instructive: `ch` is the advance width of `0` in the face that
-actually resolved, so the cap is **781px in Manrope** and 814px was measured before the webfont was
-being fetched. The pixel count is not the rule and the tests do not assert it — `anatomy.spec.ts`
-measures an 80ch box inside the prose itself and compares. What holds either way: the two rails are
-anchored to the window edges (0–262 and 1236–1440), the 974px track between them spends 49px of gutter
-either side, and the column is centred in it clearing each rail by 97px. Folded, the track is 1236px,
-the column stays 781px, and the gutters grow to 228px.
-
-Sentence case everywhere. **No tracked-out all-caps labels**, which is the single clearest tell of a
-generated interface and was in the first draft of this system before it was caught.
+**Weight carries emphasis before size does.** `600` is the language's emphatic weight and appears at
+every size; `500` is the resting weight for controls and list items; body prose emphasises at `650`,
+slightly heavier than a normal bold, because the ground is so light that ordinary bold under-reads.
 
 ## Layout
 
-Three columns: the module list at 262px, the content, the contents rail at 204px. **Both rails are
-anchored to the window edges**, and the content is centred between them with a gutter of
-`clamp(24px, 3.4vw, 56px)`.
+**Three columns, and the middle one takes everything left over.** A fixed `rail` on the leading edge,
+a fluid centre, and a fixed `aside` on the trailing edge. The rail and the aside are anchored to the
+window's edges, not to a centred container — the language reads as a workbench, not as a document
+floating in a page.
 
-**A page that wants the window has to be given it.** The shell puts every route in a 1200px
-`max-width` box with 24px of padding, and that box is exactly what stops a rail reaching the window
-edge — so `PageShell` takes a `bleed` flag and the module page is the one route that sets it. The
-claim receipt keeps the shell in both modes: it is a sentence of prose about the reader's record, and a
-sentence measured against 1440px is unreadable whatever the page around it is doing.
+**The reading column is centred inside the fluid middle and capped at `measure`.** The cap is what
+keeps the line length readable when the window is wide; the centring is what keeps the gutters even
+on both sides. The middle column's own padding is fluid, so the gutters grow with the window instead
+of the measure growing.
 
-**The fold reclaims its track, and a fixed one does not.** The list folds in 200ms on
-`cubic-bezier(.22,.61,.36,1)`, and a tab pinned to the left edge brings it back — vertically centred,
-so it cannot collide with the sticky bar. Under `prefers-reduced-motion` the fold is instant. The
-first grid track is `auto` rather than `262px`: MEASURED, with a fixed track the rail emptied and the
-column came back the same width, so the prose did not move and the fold looked broken. An `auto` track
-takes the item's own width, so animating the rail animates the track with it.
+**The chrome stacks to `sticky`.** The `bar` plus the `band` is the height everything sticky sits
+below — the rail, the aside, and any in-page sticky element. That single number is why the band can
+exist at all without pushing content under the bar.
 
-**The folded rail is `visibility: hidden`, and that is load-bearing rather than tidy.** It is what
-takes 33 links out of the tab order, which is the property `logs/BRAINSTORM.md` D17 is about; the
-transition delays the visibility swap until the width has finished on the way out and applies it
-immediately on the way in. The restore tab is the mirror image, so exactly one of the two controls is
-reachable at any time and each hands focus to the other.
+**Two breakpoints, and they drop the least important thing first.** Below `fold-at` the aside goes,
+because an in-page index is the most redundant of the three columns. Below `rail-at` the rail goes
+too and the reading column takes the whole window. Nothing reflows into a hamburger and nothing
+scrolls sideways at any width: wide content scrolls **inside its own box**.
 
-Two breakpoints, both from the shipped e2e projects: at 1180px the contents rail goes, at 880px the
-module list becomes a sheet. `responsive.spec.ts` runs at 1440, 1024 and 390, and nothing may scroll
-sideways at any of them. Below each breakpoint the rail's content moves into one drawer, and **which
-breakpoint reveals that control depends on the format**: a module with no contents rail to lose has no
-reason to offer one until the list goes too, and offering it earlier opened an empty panel.
-
-**Anything wider than its column scrolls inside its own box.** Tables, code and diagrams. This is a
-rule and not a preference: mermaid renders client-side and injects an SVG at its natural width after
-load, which is how a 1,423px diagram came to paint across a 656px column and both rails. See
-`logs/BRAINSTORM.md` D10.
+**The rail folds.** It collapses to zero width over `fold`, the reading column takes the space, and a
+small tab pinned to the leading edge — vertically centred, so it can never collide with the sticky
+chrome — brings it back. Under `prefers-reduced-motion` the fold is instant.
 
 ## Elevation & Depth
 
-There is no shadow scale. Depth is a lighter fill plus a hairline, and that is the whole system. Two
-exceptions, both for something that floats over the page: the navbar dropdown and the restore tab.
+**There is almost no elevation, and that is the point.** Nothing floats except things that are
+genuinely temporary. A shadow appears in exactly two places: under a menu that has opened over
+content, and under the fold's restore tab, which overlaps the page from outside it. Both shadows are
+warm and brown-tinted rather than neutral grey — a grey shadow on a sand ground reads as dirt.
 
-**And one thing removed rather than styled.** The retired system framed every page with four L-shaped
-corner registration marks at the corners of a 1152px content box. On a module page there is no such
-box — the rails are on the window edges — so the marks floated at an edge nothing else used, and they
-are a second decorative motif on a system that spends its ornament once. M11 stopped rendering them on
-that page. The routes that still keep the 1200px shell still have them; M12 and M13 decide their fate
-there.
+**Everything else establishes depth with a line and a fill from the neutral ladder.** A card is white
+with a hairline. A hovered row goes to `surface-sunken`. A pressed control does the same. The
+language has no elevation scale to reach for, so a request for "more prominence" is answered with
+weight, hue or space.
 
 ## Shapes
 
-`sm` 3px for a chip or a tag, `md` 5px for a button or an input, `lg` 7px for a slab. `arch` for a
-level, `card` for a block in the author's voice, `pill` for the tick. Zero radius is available and
-means "a rule, not a box".
+**Radii are small and there are many of them, because each one belongs to a size of thing.** A `2px`
+corner on a `9px` swatch and a `7px` corner on a slab are the same *visual* softness at different
+scales. Pick the radius that matches the element's size rather than a global default.
 
-Strokes are `1px` for ordinary structure and `2px` for a divider that ends a section. **Never a
-fractional border width:** Chrome floors border widths to whole pixels, so a 1.5px line has to be
-painted as a gradient or a height, and `stroke-weights.test.ts` fails a `border-width` that tries.
+**Two shapes carry the language's signature and both are asymmetric.** `arch` — heavily rounded at
+the top, nearly square at the bottom — is the top of a group, a doorway; it is what makes a list of
+groups read as an arcade. `leaf` — rounded on two opposing corners — is the callout, a tile set at an
+angle. Use each exactly where it belongs, never as a general-purpose radius, and never both on one
+element.
+
+**A completion mark is a filled disc with a white check inside it.** It is a disc and not a hairline
+glyph for a measurable reason: `success` teal against `surface` clears a 3:1 graphical floor but not
+a 4.5:1 text floor, so the meaning has to be carried by a **shape** with a fill. Turning it back into
+a stroked tick makes the state fail for exactly the viewers it matters most to.
+
+**One ornament, once per page.** The `band` is an 18px lattice of three glaze stripes on cobalt,
+finished with a gold rule, and it sits directly under the bar. It is the only decoration in the
+language. A second ornament anywhere on the page makes the first one look like a mistake.
 
 ## Components
 
-- **button-primary** — cobalt, `md`. One per screen region. The completion button at the end of a
-  module is the canonical one, and it carries a check glyph. **Its text is `surface`, not white**, and
-  that is measured rather than stylistic: cobalt is dark in light mode and the accent is *lifted* in
-  dark mode, so white on it would be a pale label on a pale fill. The page's own ground inverts with
-  the theme, which is exactly what a filled accent needs — 12.88:1 light, 6.81:1 dark. Its completed
-  state is deliberately not filled: the invitation is spent, and what is left is a statement of a
-  state the reader can undo.
-- **button-quiet** — raised fill, an `on-surface-faint` border, `md`. For anything secondary. The
-  border is the only thing identifying it, so it uses the interactive line token and not the grouping
-  one (see **Colors**).
-- **level-accordion** — the `arch`, and a native `<details>` per level with the current one `open` at
-  build time, so it works in the first frame before any bundle lands. The **current level is
-  enlarged**, gets a 4px coloured left edge and the sand fill, and its count goes from grey to the
-  reader's own ink. Being able to see which level you are in was one of the thirteen named flaws. Four
-  signals rather than one, because colour is never the only carrier.
-- **tick** — a 17px teal disc with a white check, and it carries the word `Complete` for a screen
-  reader inside it. Revealed by channel A — the boot script stamps `hl-signed-<n>` on `<html>` and one
-  generated selector per module reveals the mark — so a reader's completed modules are ticked before
-  the first paint with no React. Absent rather than empty by default: the build has never met the
-  reader. The 17px box is reserved either way, so a completion does not shift the row it lands on. It
-  is drawn in **two** places on the same channel now: the curriculum rail's row, and inside completion
-  control C's own toggle.
-- **tag** — raised fill, hairline, `sm`, a 7px colour square when it names a level.
-- **slab** — dark, `lg`, with a monospace header strip and its own scroll container.
-- **view toggle** — the catalog's Overview / Cards / Table, each with an icon and a word, and `md`
-  radius on the interactive line token. Three views over one data source; see `logs/BRAINSTORM.md`
-  D13. **The showing view is not marked with `aria-pressed`**: which view is showing is an attribute
-  on `<html>` that no React render sets, so an ARIA state would be a second author of it and the two
-  would disagree for every frame before hydration. The button carries the word `Showing`, hidden from
-  sight and revealed by the same rule that reveals the view — the arrangement the tick uses — plus a
-  heavier bottom edge, which is what survives forced colours.
-- **completion control C** — the whole course, visible and adjustable: one `arch` card per level with
-  its 4px coloured edge, the segmented meter, and one row per module carrying a 28px toggle and the
-  module's own link. On the home page and on the progress page, and it is the same component on both
-  (D14). Three readings above it — modules completed, reading time, days in a row — each `--` until
-  the store answers.
-  **It is a meter and not the mock's ring**, and that is measured rather than stylistic: a ring's fill
-  is a computed fraction, a computed fraction cannot reach channel A, and a mark a reader sees in
-  frame one may not travel on channel B. See `logs/BRAINSTORM.md` **D23**.
-- **panel head** — a title and a note, hairline-ruled under, both in the display face. The title was
-  11px tracked-out uppercase mono until M13, which is the tell this system's own do-nots name first;
-  it heads every panel on eight routes, so it was converted once rather than per page.
+**Chrome.** The `bar` holds a wordmark, a row of `bar-item`s, a flexible gap, then a `bar-field` and
+its `bar-icon-button`s. The current destination is a `bar-item-current`: a solid powder chip on
+cobalt, which is the strongest contrast the language can make and therefore the right way to say
+"you are here". A `bar-item` that owns a set of things opens a `menu` below it — white, hairlined,
+softly shadowed, its rows carrying a small hue `key` on the leading edge and a count on the trailing
+edge.
+
+**The wordmark is a 2×2 grid of glazed squares**, one per category hue with one square left as the
+ground. It is a tile, not a logo, and it is drawn from the same series as everything else.
+
+**The rail.** A `label` caption and a `fold-button` sit at the top. Below them, one `rail-group` per
+group, each an `arch`-topped disclosure carrying its hue key, its name and its count. **The current
+group is unmistakable and it is emphasised four ways at once**: a larger type size, a sunken fill, a
+strong border, and a thick leading edge in the group's own hue. Its count moves from muted to full
+ink. Inside a group, `rail-item`s are quiet muted rows; the current item takes the group's hue as a
+solid fill with white type; an item that is not yet available carries a small faint outlined badge.
+
+**Reading.** Breadcrumbs in `meta` above a `display` heading, then a row of `tag`s for the piece's
+own facts. Sections open with a `section` heading followed by a **dashed ochre rule that fills the
+remaining width** — the one place ornament touches the reading column. Prose links are underlined in
+ochre rather than coloured differently from body text. A `card` in `leaf` shape holds an aside the
+reader can skip.
+
+**Code and figures.** A `slab` has a mono header strip and a scrolling code body. A figure frame uses
+the same dark palette, and **its contents scroll inside the frame** — a diagram wider than the
+column never widens the page. Nodes inside a figure are raised slab surfaces with hairlines; an
+active node takes a category hue with white type.
+
+**Actions.** A top-ruled action row holds one `button-primary` — cobalt, white type — beside at most
+one `button-quiet`, which is white with a strong hairline. Primary hover brightens the fill rather
+than changing the hue. Below that, a two-up `pager` of white hairlined tiles, each with a faint
+`mark` label over a titled destination.
+
+**The aside** is a sticky in-page index: a `label` heading, then items indented behind a `line` rail
+that turns `primary` on the current item. It is the first thing to go when the window narrows.
 
 ## Do's and Don'ts
 
-**Do**
+**Do** draw the top bar in cobalt with white type on every screen, and give controls inside it the
+`bar-*` tokens rather than the surface ones.
+**Don't** put the bar on the ground, or give it a light fill "for a cleaner look". That one change
+removes the language.
 
-- Derive every number on every page at build time. A count written in `src/` is a defect.
-- Recompute contrast from the shipped stylesheet in the tests, and let it fail when a token moves.
-- Give a level its colour **and** something that is not colour.
-- Put a scroll container around anything that can be wider than its column, before it is.
-- Keep the ornament to the one band.
+**Do** identify a raised surface with its hairline.
+**Don't** remove a border because the white fill seems to separate it — on this ground it does not.
 
-**Don't**
+**Do** use `on-surface-faint` for something genuinely ignorable, and `on-surface-muted` for anything
+a viewer must actually read, however small.
+**Don't** let a faint status word be the only thing that says what state something is in.
 
-- Don't use `border-width` with a fractional value.
-- Don't use ALL-CAPS eyebrow labels, a monospace face for small UI labels, meta strings joined with
-  middle dots, or a `→` glued to the end of link text. Each is a tell, and the first two were in this
-  system's own first draft.
-- Don't put a second accent next to cobalt. Clay is the focus ring; ochre is a rule and an underline.
-- Don't drop a card's border because the fill already separates it. On this ground it does not: white
-  on `#FDFBF7` is a 1.035 luminance ratio, and the hairline is what makes the card a card.
-- Don't give an interactive control a `line` or `line-strong` border. Neither reaches 3:1 here.
-- Don't add a shadow scale.
-- Don't let the tick become a hairline glyph — it fails contrast as text (see **Colors**).
-- Don't let a figure break out of its column to get room. It was how the retired system gave a wide
-  table and a wide diagram their width, and it is how a 1,524px drawing came to paint across both
-  rails and past the window edge. The scroll container is the answer; `containment.spec.ts` measures
-  the painted rectangle of every element of every diagram at all three viewports.
-- Don't draw a diagram's geometry in `slab-line` (see **Colors**).
-- Don't write a reader-visible string with an exclamation mark, praise, an apology, "just", "simply"
-  or "easy", or a second spelling of a status. `tests/unit/copy-register.test.ts` enforces all of it.
-- Don't state a retired word from `specs/ARCHITECTURE.md` §9 anywhere a reader can see it.
+**Do** bind one `category-*` hue per group and reuse it for that group's key, edge and active item.
+**Don't** invent a sixth hue, re-order the series, or use a category hue for a link, a button or a
+focus ring.
+
+**Do** pair every colour signal with a second signal — a size, a weight, a position, a word.
+**Don't** rely on hue alone anywhere; the interface must survive a forced-colour mode and a viewer
+who cannot separate teal from cobalt.
+
+**Do** keep the focus ring clay, at 2px, with an offset, everywhere.
+**Don't** restyle it per surface.
+
+**Do** keep the completion mark a filled disc with a white check.
+**Don't** turn it into a stroked glyph; it fails the text floor.
+
+**Do** use `arch` for the top of a group and `leaf` for a callout.
+**Don't** apply either as a general radius, and don't put both on one element.
+
+**Do** keep exactly one band of ornament, under the bar.
+**Don't** add a second decorative element anywhere.
+
+**Do** let wide content scroll inside its own box.
+**Don't** ever let the page body scroll sideways.
+
+**Do** use the type stack as given.
+**Don't** substitute a different family, add a serif, or introduce small uppercase mono labels.

@@ -58,7 +58,7 @@ last_updated: "2026-09-09"
 | **M12** | The catalog | one route, three views, filters at the top | M10 | ✅ Done |
 | **M13** | The home page | a first-time visitor knows what this is and where to start | M10 | ✅ Done |
 | **M14** | Progress and account | one route instead of four, and completion editable from it | M11 | ✅ Done |
-| **M15** | The design language | one DESIGN.md transcribed from the mockup, and a check that proves a built page matches it | M14 | 🔄 DESIGN.md written · the language stylesheet and the fidelity check are not |
+| **M15** | The design language | one DESIGN.md transcribed from the mockup, and a check that proves a built page matches it | M14 | 🔄 Language, transcription check and fidelity harness in · the dark palette awaits sign-off |
 | **M16** | The interface, rebuilt on it | every surface indistinguishable from its mockup, with no capability lost | M15 | ⬜ Not started |
 
 > **Numbering never restarts.** When this file is split, part two continues at the next M.
@@ -1331,6 +1331,97 @@ rejected, not design.
   A check never seen failing is decoration.
 - Nothing in `src/` changes behaviour in this milestone. `npm test`, `npm run build` and the e2e
   suite stay green on the work as it stands.
+
+### Report — the language, the checks, and a palette awaiting sign-off, 2026-09-09
+
+**Three of four deliverables are in; the fourth is a proposal waiting on the
+author.** Nothing under `src/app/` changed and no route was touched, which was
+the point of the scope: the suite is green on the work as it stands.
+
+**`src/design/bazaar.css`, 1,022 lines.** The language as CSS — a token block
+plus every primitive `DESIGN.md` names. It is a transcription: values are read
+out of the mockup, not designed. **It is deliberately not imported by
+`globals.css`**, and it lives outside `src/app/` for a measured reason —
+`lokum.test.ts`, `slab-and-controls.test.ts` and `stroke-weights.test.ts` glob
+every `.css` in that directory, and the second keeps any rule declaring five or
+more `--color-*` tokens and then requires its values to equal the *old* dark
+palette. A second token layer in `src/app/` fails the moment it is written.
+
+**`tests/unit/design/transcription.test.ts`, 87 assertions.** Colours compared
+as SETS in both directions, which is name-agnostic — rename every token and it
+still passes, substitute or invent one colour and it fails naming it. Every
+dimension the language declares must appear in the mockup, one direction only
+because the reverse is noise. And 33 primitive pairs resolved through each
+file's own token map and compared to each other, so no value is ever written
+down in the test.
+
+**Mutation-tested, and it found a hole in itself.** A substituted colour, a
+2px-wider rail and an altered mono stack are all caught. **Swapping the type
+stack to Manrope — the exact substitution that got the last interface rejected
+— passed**, because the declared-token sweep did not include `--font-`. Fixed,
+and now caught. That is the second time in this project that writing the
+mutation test was worth more than writing the check.
+
+**`tests/e2e/fidelity.ts` + `fidelity.spec.ts`: 128 passed, 19 skipped, 0
+failed** across all three viewports. The extractor is keyed by ROLE with a
+selector map per document, because the mockup calls the bar `.top` and the
+application must be free to call it something else — that freedom is what makes
+the language portable. It carries **no colour maths at all**: two documents
+rendered by the same engine serialise one colour to one string, so painting is
+`contrast.ts`'s job. The 19 skips are the roles the language says are absent
+below its breakpoints, and that absence is asserted rather than skipped past.
+
+**One mutation case per fact, 46 of them**, each painting over one property and
+requiring the comparator to name that fact. A fact cannot be added to the table
+without a mutation value, so a fact cannot be added without being proven to be
+checked.
+
+**Writing it turned up a live bug of the D20 family.** The first mutation run
+reported that overriding a group's background changed nothing, on a page where
+it plainly had: `.arch > summary` carries a 120ms transition, and the value was
+read in the protocol round trip before it had moved. The harness now freezes
+transitions before every read, which is why `contrast.ts` does the same.
+
+**Two findings that need the author, not a decision of mine:**
+
+1. **The mockup's current-destination chip never paints.** Its CSS styles
+   `.mainnav a[aria-current]` while its markup puts `aria-current="page"` on the
+   `button.lv` that opens the dropdown, which that selector does not match. The
+   intent is unambiguous — the language says the current destination is a solid
+   powder chip on cobalt — but whether a dropdown TRIGGER is itself "current" is
+   a real question, and M10 answered it the opposite way.
+2. **On the dark ground the slab and the page are the same colour.** The dark
+   surfaces were derived from the slab, so `#1d1f27` is now both. A code block
+   would be told apart by its hairline only.
+
+### The dark palette, derived and awaiting approval
+
+`playground/01-theme-T4-G3-DARK.html`. No mockup defines a dark theme, so this
+is a **transformation with every step stated** rather than a palette anyone
+chose. Structural identity is provable: outside the token block the only
+differences are the header comment, the annotation strip's text, and one `.btn`
+rule that the numbers forced.
+
+**The surfaces are the slab palette promoted from a component to the page.**
+That is the derivation's whole trick and it is why so little is new: the mockup
+already contains a complete dark surface with ink proven on it.
+
+**Every chromatic was lifted in OKLCH lightness with hue and chroma held**,
+until it cleared its floor **on all three grounds** (D19). Hues moved by at most
+0.3°. Five of the ten did not need to move at all. Three consequences worth
+reading before approving:
+
+- `faint` has a **ceiling**, not a floor — it is for something ignorable — so it
+  was lowered until it sits under 3:1 on every ground, at 2.49 to 2.98.
+- **White on the lifted accent measures 3.19:1 and fails a text floor**, so a
+  primary button's label becomes the ground at 5.15:1. The light theme needs no
+  such token, because white on cobalt is 12.88:1. This is the one genuine
+  addition to the palette.
+- **The bar does not move.** Cobalt, its five on-bar values, the band and the
+  completion disc are identical in both themes, which is what keeps the two
+  looking like siblings.
+
+**Nothing has entered `DESIGN.md`.** It goes in when the author approves it.
 
 ### Report — DESIGN.md written, 2026-09-09
 

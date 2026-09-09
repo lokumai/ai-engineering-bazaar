@@ -90,12 +90,12 @@ export default defineConfig({
     },
     {
       name: 'chrome-1024',
-      testMatch: /(responsive|containment)\.spec\.ts/,
+      testMatch: /(responsive|containment|fidelity)\.spec\.ts/,
       use: { ...devices['Desktop Chrome'], channel, viewport: { width: 1024, height: 768 } },
     },
     {
       name: 'chrome-390',
-      testMatch: /(responsive|containment)\.spec\.ts/,
+      testMatch: /(responsive|containment|fidelity)\.spec\.ts/,
       use: {
         ...devices['Desktop Chrome'],
         channel,

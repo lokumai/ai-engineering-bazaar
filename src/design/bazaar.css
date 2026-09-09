@@ -1,0 +1,1024 @@
+/* ===========================================================================
+   BAZAAR — the design language, as CSS.
+
+   THIS FILE IS A TRANSCRIPTION, NOT A DESIGN. Every value in it is read out of
+   `playground/01-theme-T4-ground-G3-powder.html`, which is the specification;
+   `kia-context/specs/DESIGN.md` is the same language written as prose and
+   tokens. Where any of the three disagree, **the mockup is right**, this file
+   is second, and DESIGN.md is the bug. Do not "improve" a value here: the last
+   interface was rejected because a design document was allowed to drift from
+   the mockup it came from, and a substituted type family, a re-hued category
+   series and a light top bar all shipped from that drift (BRAINSTORM D26).
+
+   `tests/unit/design/transcription.test.ts` holds that line mechanically: the
+   set of colours declared here must equal the set of colours in the mockup, in
+   both directions, and every dimension declared here must appear in it.
+
+   NOT IMPORTED YET, deliberately. `src/app/globals.css` still carries the old
+   token layer and the eleven stylesheets that depend on it. Wiring this file in
+   and deleting those is M16's first act; until then this is a specification the
+   test suite checks rather than code the site runs.
+
+   IT LIVES OUTSIDE `src/app/` FOR A REASON. Three unit tests glob every `.css`
+   in that directory — `tests/unit/color/lokum.test.ts`,
+   `tests/unit/color/slab-and-controls.test.ts` and
+   `tests/unit/stroke-weights.test.ts` — and the second keeps any rule that
+   declares five or more `--color-*` tokens and then requires its values to
+   equal the *old* dark palette. A second token layer in `src/app/` fails that
+   the moment it is written. Moving this file is part of M16, not a tidy-up.
+
+   ONE THING M16 MUST HANDLE: `src/lib/content/code-theme.ts` reads the six
+   `--color-slab-*` tokens out of `globals.css` and requires `oklch()` notation,
+   because it feeds them through `oklchToHex`. The mockup writes hex, so this
+   file writes hex. When this becomes the token layer, that reader has to accept
+   hex or stop converting. `npm run build` is the only thing that catches it.
+   =========================================================================== */
+
+@theme {
+
+  /* -- ground and structure ------------------------------------------------
+     The neutral family is warm and it is a LADDER: surface, raised, sunken.
+     White on the ground is a ~1.03 luminance ratio, so a raised surface is
+     told apart by its hairline and never by its fill. `sunken` is the one
+     neutral fill that reads, and it is a hover/pressed state rather than a
+     resting surface for text. */
+  --color-surface:              #fdfbf7;
+  --color-surface-raised:       #ffffff;
+  --color-surface-sunken:       #e6dac6;
+  --color-line:                 #d8cbb4;
+  --color-line-strong:          #c3b299;
+
+  /* -- ink -----------------------------------------------------------------
+     Four weights, and the top two are not interchangeable: `on-surface` reads,
+     `on-surface-title` is deeper and bluer and belongs to display and section
+     headings only. `faint` is for something a reader may ignore entirely and
+     does not meet a text floor on this ground. */
+  --color-on-surface:           #20242e;
+  --color-on-surface-title:     #1b1b47;
+  --color-on-surface-muted:     #6a6558;
+  --color-on-surface-faint:     #948d7d;
+
+  /* -- the bar, and its own palette ----------------------------------------
+     The chrome is dark and the page is light. This is the language's strongest
+     signal: a bar drawn on the ground instead of in cobalt turns Bazaar into a
+     generic light theme. A control sitting on cobalt cannot borrow the values
+     of one sitting on powder, which is why these five exist at all.
+     `bar-edge` is a fully transparent cobalt: the bar declares a bottom border
+     and then declines to paint it, because the band below supplies the edge. */
+  --color-bar:                  #282864;
+  --color-on-bar:               #ffffff;
+  --color-on-bar-dim:           #c9c6e4;
+  --color-bar-edge:             #28286400;
+  --color-bar-hover:            rgba(255, 255, 255, 0.10);
+  --color-bar-chip:             #fdfbf7;
+  --color-on-bar-chip:          #1b1b47;
+  --color-bar-field:            rgba(255, 255, 255, 0.08);
+  --color-bar-field-line:       rgba(255, 255, 255, 0.25);
+
+  /* -- action, focus, state ------------------------------------------------
+     `primary` does three jobs — the bar, the primary action, and the link —
+     and that overlap has one consequence: no category hue may sit within ~20°
+     of it, or a category marker reads as a link.
+     `focus` is clay and NOT cobalt, deliberately: it is the one warm chromatic
+     in the set, so the ring is visible on cobalt chrome, on white cards and on
+     the dark slab without being restyled per surface.
+     `on-caution` is the only place in the language where type on a chromatic
+     fill is not white — white on gold does not clear a text floor. */
+  --color-primary:              #282864;
+  --color-on-primary:           #ffffff;
+  --color-focus:                #a0503c;
+  --color-success:              #2f8c86;
+  --color-caution:              #b8873b;
+  --color-on-caution:           #20201c;
+  --color-ornament:             #c8a078;
+
+  /* -- the categorical series ----------------------------------------------
+     Five glazes that tell groups apart. A product binds one to each of its own
+     groups; the language only says there are five, that they are used with a
+     second signal beside colour, and that `category-2` IS the cobalt — the
+     exception that proves the 20° rule, since that group is identified by the
+     bar's own colour and nothing about it is ambiguous. */
+  --color-category-1:           #2f8c86;
+  --color-category-2:           #282864;
+  --color-category-3:           #7a4a86;
+  --color-category-4:           #b8873b;
+  --color-category-5:           #a0503c;
+
+  /* -- the ornament --------------------------------------------------------
+     One band, once per page, and it is the only decoration in the language. */
+  --color-band-ground:          #282864;
+  --color-band-a:               #2f8c86;
+  --color-band-b:               #c8a078;
+  --color-band-c:               #a0503c;
+
+  /* -- the slab: a second, complete palette --------------------------------
+     Code and diagrams sit on their own dark ground and every value they need
+     is prefixed. Self-contained on purpose, so a slab can be dropped anywhere
+     without the surrounding ground leaking into it — and so it does not
+     re-theme. The syntax colours are tuned against `slab-surface` alone. */
+  --color-slab-surface:         #1d1f27;
+  --color-slab-surface-raised:  #262933;
+  --color-slab-on-surface:      #e7e3d8;
+  --color-slab-on-surface-muted:#9aa0ad;
+  --color-slab-line:            #33363f;
+  --color-slab-line-raised:     #444854;
+  --color-slab-on-raised:       #dcd8cd;
+  --color-slab-arrow:           #6e737f;
+  --color-slab-keyword:         #c48ce0;
+  --color-slab-string:          #8fcf9a;
+  --color-slab-comment:         #767c88;
+  --color-slab-function:        #7fb8e8;
+  --color-slab-number:          #e0a45c;
+
+  /* -- type ----------------------------------------------------------------
+     One sans family does all the work; mono appears only inside a slab and on
+     the smallest code metadata. No serif, and no small uppercase mono label —
+     that is a different design idiom and it fights the glaze.
+     The stack is the mockup's, unchanged and unsubstituted: Avenir Next where
+     the reader has it, the platform's own sans everywhere else. */
+  --font-sans: "Avenir Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --text-body:                  16px;
+  --text-body--line-height:     1.68;
+  --text-display:               38px;
+  --text-display--line-height:  1.16;
+  --text-section:               25px;
+  --text-section--line-height:  1.28;
+  --text-subsection:            18.5px;
+  --text-subsection--line-height: 1.35;
+  --text-lead:                  16px;
+  --text-control:               14.5px;
+  --text-item:                  14px;
+  --text-item--line-height:     1.3;
+  /* No line-height: the mockup never sets one on a caption or a breadcrumb, so
+     meta inherits the body's. The 1.6 that looks like it belongs here comes
+     from the mockup's own annotation strip, which is not part of the design. */
+  --text-meta:                  13.5px;
+  --text-mark:                  12.5px;
+  --text-label:                 12px;
+  --text-code:                  13.5px;
+  --text-code--line-height:     1.75;
+
+  --tracking-display:           -0.015em;
+  --tracking-section:           -0.012em;
+  --tracking-label:             0.06em;
+
+  /* -- layout --------------------------------------------------------------
+     `sticky` is the sum of `bar` and `band`, and that single number is why the
+     band can exist at all without pushing content under the bar. */
+  --layout-bar:                 58px;
+  --layout-band:                18px;
+  --layout-sticky:              76px;
+  --layout-rail:                262px;
+  --layout-aside:               204px;
+  --layout-measure:             80ch;
+  --layout-fold-at:             1180px;
+  --layout-rail-at:             880px;
+
+  /* -- shape ---------------------------------------------------------------
+     Many radii, because each belongs to a SIZE of thing: a 2px corner on a 9px
+     swatch and a 7px corner on a slab are the same visual softness at
+     different scales. Pick the one that matches the element, not a default.
+     Two shapes carry the signature and both are asymmetric: `arch` is the top
+     of a group, a doorway, and it is what makes a list of groups read as an
+     arcade; `leaf` is a callout, a tile set at an angle. Never as a general
+     radius, and never both on one element. */
+  --radius-hair:                2px;
+  --radius-xs:                  3px;
+  --radius-sm:                  4px;
+  --radius-base:                5px;
+  --radius-md:                  6px;
+  --radius-lg:                  7px;
+  --radius-xl:                  8px;
+  --radius-pill:                9px;
+  --shape-arch:                 14px 14px 4px 4px;
+  --shape-leaf:                 4px 14px 4px 14px;
+
+  /* -- motion and depth ----------------------------------------------------
+     Almost no elevation, and that is the point: a shadow appears only where
+     something is genuinely temporary — a menu opened over content, and the
+     restore tab, which overlaps the page from outside it. Both are warm and
+     brown-tinted; a grey shadow on a sand ground reads as dirt. */
+  --ease-bazaar:                cubic-bezier(0.22, 0.61, 0.36, 1);
+  --duration-swift:             120ms;
+  --duration-fade:              150ms;
+  --duration-shift:             160ms;
+  --duration-fold:              200ms;
+  --shadow-menu:                0 12px 28px rgba(40, 30, 10, 0.13);
+  --shadow-tab:                 2px 0 10px rgba(40, 30, 10, 0.10);
+}
+
+/* ===========================================================================
+   THE PRIMITIVES
+
+   One class per thing the language names. A product's own markup is its own
+   business — these are the shapes, not the page.
+
+   `--hl-here` is the ONE custom property a caller has to bind: the current
+   group's own hue, set per instance from the categorical series. The language
+   cannot know which group is which, so the binding is the product's.
+   =========================================================================== */
+
+@layer base {
+
+  body {
+    margin: 0;
+    background: var(--color-surface);
+    color: var(--color-on-surface);
+    font: var(--text-body) / var(--text-body--line-height) var(--font-sans);
+  }
+
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* Clay, 2px, offset, everywhere. Never restyled per surface. */
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+
+  /* -- the bar ------------------------------------------------------------ */
+
+  .hl-bar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: var(--color-bar);
+    color: var(--color-on-bar);
+    border-bottom: 1px solid var(--color-bar-edge);
+  }
+
+  .hl-bar-inner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: var(--layout-bar);
+    padding: 0 22px;
+  }
+
+  .hl-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--color-on-bar);
+    font: 600 var(--text-lead) / 1 var(--font-sans);
+  }
+
+  .hl-brand:hover { text-decoration: none; }
+
+  /* A tile, not a logo: four glazed squares from the same series, one left as
+     the ground. */
+  .hl-brand-mark {
+    display: grid;
+    grid-template-columns: 9px 9px;
+    gap: 2px;
+  }
+
+  .hl-brand-mark > * {
+    display: block;
+    width: 9px;
+    height: 9px;
+    border-radius: var(--radius-hair);
+  }
+
+  .hl-bar-nav {
+    display: flex;
+    gap: 2px;
+    margin-left: 4px;
+  }
+
+  .hl-bar-nav > * { position: relative; }
+
+  .hl-bar-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 7px 11px;
+    border: 0;
+    border-radius: var(--radius-base);
+    background: none;
+    color: var(--color-on-bar-dim);
+    font: 500 var(--text-control) / 1 var(--font-sans);
+    cursor: pointer;
+  }
+
+  .hl-bar-link:hover {
+    background: var(--color-bar-hover);
+    color: var(--color-on-bar);
+    text-decoration: none;
+  }
+
+  /* A solid powder chip on cobalt: the strongest contrast the language can
+     make, and therefore the right way to say "you are here". */
+  .hl-bar-link[aria-current] {
+    background: var(--color-bar-chip);
+    color: var(--color-on-bar-chip);
+    font-weight: 600;
+  }
+
+  .hl-bar-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 180px;
+    height: 33px;
+    padding: 0 11px;
+    border: 1px solid var(--color-bar-field-line);
+    border-radius: var(--radius-base);
+    background: var(--color-bar-field);
+    color: var(--color-on-bar-dim);
+    font-size: var(--text-item);
+    cursor: text;
+  }
+
+  .hl-bar-icon {
+    display: grid;
+    place-items: center;
+    width: 33px;
+    height: 33px;
+    border: 1px solid var(--color-bar-field-line);
+    border-radius: var(--radius-base);
+    background: var(--color-bar-field);
+    color: var(--color-on-bar);
+    font: 600 11px / 1 var(--font-sans);
+    cursor: pointer;
+  }
+
+  .hl-bar-icon:hover { background: var(--color-bar-hover); }
+
+  /* -- the menu ----------------------------------------------------------- */
+
+  .hl-menu {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    z-index: 60;
+    min-width: 214px;
+    padding: 6px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-raised);
+    box-shadow: var(--shadow-menu);
+  }
+
+  .hl-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 10px;
+    border-radius: var(--radius-base);
+    color: var(--color-on-surface);
+    font: 500 var(--text-item) / var(--text-item--line-height) var(--font-sans);
+  }
+
+  .hl-menu-item:hover {
+    background: var(--color-surface-sunken);
+    text-decoration: none;
+  }
+
+  .hl-menu-key {
+    flex: none;
+    width: 4px;
+    height: 15px;
+    border-radius: var(--radius-hair);
+  }
+
+  .hl-menu-count {
+    margin-left: auto;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-label);
+  }
+
+  /* -- the ornament -------------------------------------------------------
+     A lattice of three glazes on cobalt, finished with a gold rule. */
+
+  .hl-band {
+    height: var(--layout-band);
+    background-color: var(--color-band-ground);
+    background-image:
+      linear-gradient(45deg, var(--color-band-a) 25%, transparent 25% 75%, var(--color-band-a) 75%),
+      linear-gradient(45deg, var(--color-band-b) 25%, transparent 25% 75%, var(--color-band-b) 75%),
+      linear-gradient(45deg, var(--color-band-c) 25%, transparent 25% 75%, var(--color-band-c) 75%);
+    background-size: 18px 18px, 18px 18px, 54px 18px;
+    background-position: 0 0, 9px 9px, 27px 0;
+    border-bottom: 2px solid var(--color-caution);
+  }
+
+  /* -- the shell ----------------------------------------------------------
+     Three columns and the middle one takes everything left over. The rails are
+     anchored to the window's edges, not to a centred container: the language
+     reads as a workbench, not a document floating in a page. */
+
+  .hl-shell {
+    display: grid;
+    grid-template-columns: var(--layout-rail) minmax(0, 1fr) var(--layout-aside);
+    align-items: start;
+    transition: grid-template-columns var(--duration-fold) var(--ease-bazaar);
+  }
+
+  .hl-shell[data-rail="folded"] {
+    grid-template-columns: 0px minmax(0, 1fr) var(--layout-aside);
+  }
+
+  /* Drop the least important thing first: an in-page index is the most
+     redundant of the three columns, so the aside goes before the rail. */
+  @media (max-width: 1180px) {
+    .hl-shell { grid-template-columns: var(--layout-rail) minmax(0, 1fr); }
+    .hl-shell[data-rail="folded"] { grid-template-columns: 0px minmax(0, 1fr); }
+    .hl-aside { display: none; }
+  }
+
+  @media (max-width: 880px) {
+    .hl-shell { grid-template-columns: minmax(0, 1fr); }
+    .hl-rail { display: none; }
+  }
+
+  /* -- the rail ----------------------------------------------------------- */
+
+  .hl-rail {
+    position: sticky;
+    top: var(--layout-sticky);
+    height: calc(100vh - var(--layout-sticky));
+    overflow: hidden auto;
+    border-right: 1px solid var(--color-line);
+    background: var(--color-surface);
+    transition:
+      opacity var(--duration-fade) var(--ease-bazaar),
+      transform var(--duration-fold) var(--ease-bazaar);
+  }
+
+  .hl-rail-inner {
+    width: var(--layout-rail);
+    padding: 16px 12px 48px;
+  }
+
+  /* `visibility`/`opacity` and `pointer-events: none` together: a folded rail
+     must not be reachable by Tab, or a keyboard reader traverses a column that
+     is not on screen. */
+  .hl-shell[data-rail="folded"] .hl-rail {
+    opacity: 0;
+    transform: translateX(-14px);
+    overflow: hidden;
+    border-right-color: transparent;
+    pointer-events: none;
+  }
+
+  .hl-rail-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 2px 4px;
+  }
+
+  .hl-rail-head-label {
+    color: var(--color-on-surface-faint);
+    font: 600 var(--text-label) / 1 var(--font-sans);
+    letter-spacing: var(--tracking-label);
+  }
+
+  .hl-rail-fold {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    margin-left: auto;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface-muted);
+    cursor: pointer;
+  }
+
+  .hl-rail-fold:hover {
+    background: var(--color-surface-sunken);
+    color: var(--color-on-surface);
+  }
+
+  /* Vertically centred, so it can never collide with the sticky chrome
+     whatever the chrome's height becomes. */
+  .hl-rail-restore {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    z-index: 50;
+    display: none;
+    place-items: center;
+    width: 26px;
+    height: 60px;
+    transform: translateY(-50%);
+    border: 1px solid var(--color-line);
+    border-left: 0;
+    border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface-muted);
+    box-shadow: var(--shadow-tab);
+    cursor: pointer;
+  }
+
+  .hl-shell[data-rail="folded"] ~ .hl-rail-restore,
+  .hl-rail-restore[data-shown] { display: grid; }
+
+  .hl-rail-restore:hover {
+    background: var(--color-surface-sunken);
+    color: var(--color-on-surface);
+  }
+
+  /* -- a group, as an arch ------------------------------------------------
+     THE CURRENT GROUP IS UNMISTAKABLE, and it is emphasised four ways at once:
+     a larger type size, a sunken fill, a strong border, and a thick leading
+     edge in the group's own hue. Its count moves from muted to full ink.
+     Four signals because one of them is colour, and colour is never alone. */
+
+  .hl-group > summary {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-top: 8px;
+    padding: 9px 12px;
+    list-style: none;
+    border: 1px solid var(--color-line);
+    border-radius: var(--shape-arch);
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface);
+    font: 600 var(--text-control) / 1.2 var(--font-sans);
+    cursor: pointer;
+    transition:
+      background var(--duration-swift) var(--ease-bazaar),
+      border-color var(--duration-swift) var(--ease-bazaar);
+  }
+
+  .hl-group > summary::-webkit-details-marker { display: none; }
+
+  .hl-group > summary:hover {
+    background: var(--color-surface-sunken);
+    border-color: var(--color-line-strong);
+  }
+
+  .hl-group-key {
+    flex: none;
+    width: 5px;
+    height: 17px;
+    border-radius: var(--radius-hair);
+    transition:
+      height var(--duration-shift) var(--ease-bazaar),
+      width var(--duration-shift) var(--ease-bazaar);
+  }
+
+  .hl-group-count {
+    margin-left: auto;
+    color: var(--color-on-surface-muted);
+    font: 500 var(--text-mark) / 1 var(--font-sans);
+  }
+
+  .hl-group[data-here] > summary {
+    padding: 12px 12px 12px 11px;
+    border-color: var(--color-line-strong);
+    border-left: 4px solid var(--hl-here);
+    background: var(--color-surface-sunken);
+    font-size: var(--text-lead);
+  }
+
+  .hl-group[data-here] > summary .hl-group-key {
+    width: 6px;
+    height: 23px;
+  }
+
+  .hl-group[data-here] > summary .hl-group-count {
+    color: var(--color-on-surface);
+    font-weight: 600;
+  }
+
+  .hl-group-list {
+    margin: 0 0 4px 16px;
+    padding: 6px 0 4px 14px;
+    list-style: none;
+    border-left: 1px solid var(--color-line);
+  }
+
+  .hl-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 9px;
+    border-radius: var(--radius-base);
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-item);
+  }
+
+  .hl-item:hover {
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface);
+    text-decoration: none;
+  }
+
+  .hl-item[aria-current] {
+    background: var(--hl-here);
+    color: var(--color-on-primary);
+    font-weight: 600;
+  }
+
+  .hl-item-pending {
+    margin-left: auto;
+    padding: 1px 5px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xs);
+    color: var(--color-on-surface-faint);
+    font-size: 11px;
+  }
+
+  /* A FILLED DISC with a white check, and the shape is load-bearing: the teal
+     clears a 3:1 graphical floor against the ground but not a 4.5:1 text
+     floor, so the meaning has to be carried by a shape with a fill. A stroked
+     tick fails for exactly the viewers it matters most to. */
+  .hl-tick {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    background: var(--color-success);
+  }
+
+  .hl-tick > svg {
+    width: 11px;
+    height: 11px;
+    fill: none;
+    stroke: var(--color-on-primary);
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* On the current item the disc inverts, because the row is already filled
+     with the hue. */
+  .hl-item[aria-current] .hl-tick { background: var(--color-on-primary); }
+  .hl-item[aria-current] .hl-tick > svg { stroke: var(--hl-here); }
+
+  /* -- the reading column -------------------------------------------------
+     Centred inside the fluid middle and capped at the measure. The cap keeps
+     the line length readable; the centring keeps the gutters even. The column
+     padding is fluid, so the gutters grow with the window rather than the
+     measure growing. */
+
+  .hl-main {
+    min-width: 0;
+    padding: 30px clamp(24px, 3.4vw, 56px) 96px;
+  }
+
+  .hl-col {
+    max-width: min(100%, var(--layout-measure));
+    margin-inline: auto;
+  }
+
+  .hl-crumb {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  .hl-crumb a { color: var(--color-on-surface-muted); }
+
+  .hl-display {
+    margin: 0 0 12px;
+    color: var(--color-on-surface-title);
+    font: 600 var(--text-display) / var(--text-display--line-height) var(--font-sans);
+    letter-spacing: var(--tracking-display);
+  }
+
+  /* The dashed ochre rule is the one place ornament touches the reading
+     column. */
+  .hl-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 44px 0 14px;
+    color: var(--color-on-surface-title);
+    font: 600 var(--text-section) / var(--text-section--line-height) var(--font-sans);
+    letter-spacing: var(--tracking-section);
+  }
+
+  .hl-section::after {
+    content: "";
+    flex: 1;
+    height: 2px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--color-ornament) 0 6px,
+      transparent 6px 12px
+    );
+  }
+
+  .hl-subsection {
+    margin: 30px 0 8px;
+    font: 600 var(--text-subsection) / var(--text-subsection--line-height) var(--font-sans);
+  }
+
+  .hl-facts {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 11px;
+    margin: 0 0 28px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-item);
+  }
+
+  .hl-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 10px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-raised);
+    font: 600 var(--text-mark) / 1 var(--font-sans);
+  }
+
+  .hl-tag > i {
+    width: 7px;
+    height: 7px;
+    border-radius: var(--radius-hair);
+  }
+
+  /* -- prose --------------------------------------------------------------
+     Links are underlined in ochre rather than coloured differently from body
+     text; emphasis is 650 rather than 700, because the ground is light enough
+     that ordinary bold under-reads. */
+
+  .hl-prose p { margin: 0 0 17px; }
+
+  .hl-prose a {
+    font-weight: 500;
+    text-decoration: underline;
+    text-decoration-color: var(--color-ornament);
+    text-underline-offset: 2px;
+  }
+
+  .hl-prose ul {
+    margin: 0 0 17px;
+    padding-left: 22px;
+  }
+
+  .hl-prose li { margin: 6px 0; }
+  .hl-prose strong { font-weight: 650; }
+
+  /* A tile set at an angle: the callout, and the only other place `leaf`
+     appears. */
+  .hl-card {
+    margin: 0 0 28px;
+    padding: 17px 20px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--shape-leaf);
+    background: var(--color-surface-raised);
+  }
+
+  .hl-card-title {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--color-on-surface-title);
+    font-size: var(--text-item);
+  }
+
+  .hl-card ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+
+  .hl-card li {
+    margin: 5px 0;
+    font-size: 15px;
+  }
+
+  /* -- the slab ----------------------------------------------------------- */
+
+  .hl-slab {
+    overflow: hidden;
+    margin: 0 0 24px;
+    border: 1px solid var(--color-slab-line);
+    border-radius: var(--radius-lg);
+    background: var(--color-slab-surface);
+  }
+
+  .hl-slab-head {
+    display: flex;
+    padding: 9px 13px;
+    border-bottom: 1px solid var(--color-slab-line);
+    color: var(--color-slab-on-surface-muted);
+    font: var(--text-mark) / 1 var(--font-mono);
+  }
+
+  .hl-slab-head > span:last-child { margin-left: auto; }
+
+  .hl-slab-code {
+    margin: 0;
+    padding: 15px 17px;
+    overflow-x: auto;
+    color: var(--color-slab-on-surface);
+    font: var(--text-code) / var(--text-code--line-height) var(--font-mono);
+  }
+
+  .hl-tok-keyword  { color: var(--color-slab-keyword);  font-weight: 600; }
+  .hl-tok-string   { color: var(--color-slab-string); }
+  .hl-tok-comment  { color: var(--color-slab-comment);  font-style: italic; }
+  .hl-tok-function { color: var(--color-slab-function); }
+  .hl-tok-number   { color: var(--color-slab-number);   font-weight: 600; }
+
+  /* -- figures ------------------------------------------------------------
+     The same dark palette, and the contents scroll INSIDE the frame: a diagram
+     wider than the column never widens the page. */
+
+  .hl-figure {
+    margin: 0 0 28px;
+    border: 1px solid var(--color-slab-line);
+    border-radius: var(--radius-lg);
+    background: var(--color-slab-surface);
+  }
+
+  .hl-figure-body {
+    min-width: 0;
+    padding: 20px 18px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+
+  .hl-figure-body > svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .hl-caption {
+    margin-top: 9px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  .hl-flow {
+    display: flex;
+    align-items: center;
+    min-width: min-content;
+  }
+
+  .hl-node {
+    padding: 9px 13px;
+    border: 1px solid var(--color-slab-line-raised);
+    border-radius: var(--radius-base);
+    background: var(--color-slab-surface-raised);
+    color: var(--color-slab-on-raised);
+    font-size: var(--text-meta);
+    white-space: nowrap;
+  }
+
+  .hl-node[data-active] {
+    border-color: var(--color-category-1);
+    background: var(--color-category-1);
+    color: var(--color-on-primary);
+    font-weight: 600;
+  }
+
+  .hl-arrow {
+    padding: 0 8px;
+    color: var(--color-slab-arrow);
+    font-weight: 700;
+  }
+
+  /* -- actions ------------------------------------------------------------
+     One primary beside at most one quiet. Primary hover brightens the fill
+     rather than changing the hue. */
+
+  .hl-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 13px;
+    margin-top: 44px;
+    padding-top: 22px;
+    border-top: 2px solid var(--color-line);
+  }
+
+  .hl-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 20px;
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-base);
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    font: 600 15px / 1 var(--font-sans);
+    cursor: pointer;
+  }
+
+  .hl-btn:hover { filter: brightness(1.12); }
+
+  .hl-btn-quiet {
+    border-color: var(--color-line-strong);
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface);
+  }
+
+  .hl-btn-quiet:hover {
+    background: var(--color-surface-sunken);
+    filter: none;
+  }
+
+  .hl-actions .hl-note {
+    margin: 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-item);
+  }
+
+  .hl-pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 34px;
+  }
+
+  .hl-pager-item {
+    padding: 13px 15px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-raised);
+  }
+
+  .hl-pager-item:hover {
+    border-color: var(--color-line-strong);
+    background: var(--color-surface-sunken);
+    text-decoration: none;
+  }
+
+  .hl-pager-item small {
+    display: block;
+    margin-bottom: 3px;
+    color: var(--color-on-surface-faint);
+    font-size: var(--text-mark);
+  }
+
+  .hl-pager-item b {
+    color: var(--color-on-surface-title);
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .hl-pager-item[data-end] { text-align: right; }
+
+  /* -- the aside ---------------------------------------------------------- */
+
+  .hl-aside {
+    position: sticky;
+    top: var(--layout-sticky);
+    padding: 30px 20px 40px 8px;
+  }
+
+  .hl-aside-label {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-mark);
+    font-weight: 600;
+  }
+
+  .hl-aside-link {
+    display: block;
+    padding: 5px 0 5px 12px;
+    border-left: 2px solid var(--color-line);
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  .hl-aside-link:hover {
+    color: var(--color-on-surface);
+    text-decoration: none;
+  }
+
+  .hl-aside-link[aria-current] {
+    border-left-color: var(--color-primary);
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+}
+
+/* The fold is instant, not animated. */
+@media (prefers-reduced-motion: reduce) {
+  .hl-shell,
+  .hl-rail,
+  .hl-group > summary,
+  .hl-group-key {
+    transition: none;
+  }
+}

@@ -130,7 +130,7 @@ export default function HomePage() {
   }))
 
   return (
-    <PageShell>
+    <PageShell column={false}>
       <div className="hl-home-hero">
         {/* §15.2.2 — one h1 for one document, and it says what the place is
             rather than repeating the wordmark two rows above it. */}

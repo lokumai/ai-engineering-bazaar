@@ -130,12 +130,21 @@ describe('§12.1.3 — what the two fields store', () => {
 })
 
 describe('§15.4.3 — the correction rides on the artefact', () => {
-  it('prints UNVERIFIED inside the stamp block, in caution ink', () => {
+  /**
+   * M16 removed the colour half of this, and the test's own reasoning is why it
+   * costs nothing. The retired palette had a `caution-ink` that could carry
+   * text; this language has `caution` for a fill and `on-caution` for type
+   * sitting on one, and no ink for a warning word on the page ground — because
+   * gold on the ground measures 3.09:1, under the text floor. DESIGN.md's rule
+   * covers the rest: "Don't let a faint status word be the only thing that says
+   * what state something is in", read the other way, means the WORD is the
+   * signal and the colour was never allowed to be.
+   */
+  it('prints UNVERIFIED inside the stamp block, as a word rather than a colour', () => {
     const preview = SHEET.slice(SHEET.indexOf('<aside'))
     expect(words(preview)).toContain('UNVERIFIED')
-    expect(preview).toContain('text-caution-ink')
-    // Colour is never the only signal: the word carries it on its own.
-    expect(words(preview.replace(/text-caution-ink/g, ''))).toContain('UNVERIFIED')
+    // Stripped of every class, the state is still stated.
+    expect(words(preview.replace(/class="[^"]*"/g, ''))).toContain('UNVERIFIED')
   })
 
   it('previews an empty name as UNSIGNED, which is what the module info prints', () => {

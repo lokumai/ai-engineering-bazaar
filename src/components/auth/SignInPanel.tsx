@@ -262,12 +262,12 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
     const copy = UNAVAILABLE_COPY[view.why]
     return (
       <AuthShell chrome={chrome} headingId="hl-signin-state" heading="Accounts">
-        <p className="hl-mark m-0 text-ink-muted">{copy.readout}</p>
+        <p className="hl-mark m-0 text-on-surface-muted">{copy.readout}</p>
         <div className="hl-note">
           <p>{copy.note}</p>
         </div>
         {chrome === 'panel' && (
-          <p className="mt-4 mb-0 font-display text-meta text-ink-muted">
+          <p className="mt-4 mb-0 text-meta text-on-surface-muted">
             <Link href="/profile/">Go to the account page</Link>
           </p>
         )}
@@ -283,7 +283,7 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
   if (view.status === 'unknown') {
     return (
       <AuthShell chrome={chrome} headingId="hl-signin-state" heading="Accounts">
-        <p className="hl-mark m-0 text-ink-muted" aria-live="polite">
+        <p className="hl-mark m-0 text-on-surface-muted" aria-live="polite">
           CHECKING WHETHER THIS BROWSER IS SIGNED IN
         </p>
       </AuthShell>
@@ -320,13 +320,13 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
         headingId="hl-signin-state"
         heading="Already signed in"
         mark={
-          <p className="hl-mark m-0 text-ink-faint">
+          <p className="hl-mark m-0 text-on-surface-faint">
             {view.user.githubLogin ?? view.user.email ?? 'SESSION ACTIVE'}
           </p>
         }
       >
         {chrome === 'panel' && (
-          <p className="mt-0 mb-4 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+          <p className="mt-0 mb-4 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
             This browser already holds a session. The account page shows whose
             it is, what it is connected to, and how to sign out of it.
           </p>
@@ -334,8 +334,8 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
 
         {needsMailbox && (
           <div className="mb-4" data-hl-needs-mailbox="1">
-            <p className="hl-mark mt-0 mb-2 text-ink">NO EMAIL SIGN-IN ON THIS ACCOUNT</p>
-            <p className="mt-0 mb-3 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+            <p className="hl-mark mt-0 mb-2 text-on-surface">NO EMAIL SIGN-IN ON THIS ACCOUNT</p>
+            <p className="mt-0 mb-3 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
               Both routes into an organisation ask for a sign-in by email that
               the mail service completed, and this session carries none. Nothing
               on this site adds one to an account that already exists. Signing
@@ -351,7 +351,7 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
         )}
 
         {chrome === 'panel' && (
-          <p className="m-0 font-display text-meta">
+          <p className="m-0 text-meta">
             <Link href="/profile/">Open the account page</Link>
           </p>
         )}
@@ -419,20 +419,20 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
       chrome={chrome}
       headingId="hl-signin-state"
       heading="Sign in"
-      mark={<p className="hl-mark m-0 text-ink-faint">OPTIONAL · THE SITE WORKS WITHOUT IT</p>}
+      mark={<p className="hl-mark m-0 text-on-surface-faint">OPTIONAL · THE SITE WORKS WITHOUT IT</p>}
     >
       {/* §14.8.2's argument, in one line, above the button it argues for — and
           only when that button is there. The sentence is about what a GitHub
           sign-in buys; printing it over a deployment that has no GitHub
           sign-in describes a capability the reader cannot reach. */}
       {available?.github !== false && (
-        <p className="mt-0 mb-4 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-0 mb-4 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           {github.note}
         </p>
       )}
 
       {available === null ? (
-        <p className="hl-mark m-0 text-ink-faint">CHECKING WHICH METHODS THIS SITE OFFERS</p>
+        <p className="hl-mark m-0 text-on-surface-faint">CHECKING WHICH METHODS THIS SITE OFFERS</p>
       ) : (
         <div className="flex flex-wrap gap-2">
           {available.github && (
@@ -460,7 +460,7 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
             </button>
           )}
           {!available.github && !available.google && (
-            <p className="hl-mark m-0 text-ink-faint">
+            <p className="hl-mark m-0 text-on-surface-faint">
               NO PROVIDER SIGN-IN ON THIS DEPLOYMENT · USE THE EMAIL LINK BELOW
             </p>
           )}
@@ -520,7 +520,7 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
           </p>
           {/* The library's own words, quoted and labelled as such rather than
               paraphrased into advice this panel cannot give. */}
-          <p className="hl-mark text-ink-muted">REPORTED · {phase.message}</p>
+          <p className="hl-mark text-on-surface-muted">REPORTED · {phase.message}</p>
         </div>
       )}
 

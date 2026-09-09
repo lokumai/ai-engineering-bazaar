@@ -460,7 +460,7 @@ export default function ProgressPage() {
   }
 
   return (
-    <PageShell>
+    <PageShell column={false}>
       {/*
         §12.16 — the chord is printed on its own destination, which is what makes
         it discoverable rather than buried in the `?` sheet: every `g` target is
@@ -473,7 +473,7 @@ export default function ProgressPage() {
         {/* Derived, not typed: `SHORTCUTS` is where this chord is defined and
             where the handler reads it from, so a page that spelled it out
             would keep printing a chord that no longer works. */}
-        <p className="hl-mark m-0 text-ink-muted">{PROFILE_CHORD}</p>
+        <p className="hl-mark m-0 text-on-surface-muted">{PROFILE_CHORD}</p>
       </div>
 
       <p className="hl-lead">

@@ -113,12 +113,12 @@ const TABLE = 'w-full border-collapse text-left font-mono text-mark tabular-nums
 export function FaceLegend({ rows, className }: FaceLegendProps) {
   return (
     <table className={className ? `${TABLE} ${className}` : TABLE}>
-      <caption className="hl-mark mb-2 text-left text-ink-muted">
+      <caption className="hl-mark mb-2 text-left text-on-surface-muted">
         The six faces of the mark, the level each one reports, and the
         modules completed in it
       </caption>
       <thead>
-        <tr className="border-b border-line-strong text-ink-muted uppercase">
+        <tr className="border-b border-line-strong text-on-surface-muted uppercase">
           <th scope="col" className="py-1 pr-3 font-medium">Flavour</th>
           <th scope="col" className="py-1 pr-3 font-medium">Level</th>
           <th scope="col" className="py-1 font-medium">Completed</th>
@@ -133,7 +133,7 @@ export function FaceLegend({ rows, className }: FaceLegendProps) {
                   swatch beside it is named by, and it is the one string §13.9
                   prints in Turkish. Stored uppercase in `FLAVOURS`, never cased
                   at render time, because Turkish `i` uppercases to `İ`. */}
-              <th scope="row" className="py-1 pr-3 font-normal whitespace-nowrap text-ink">
+              <th scope="row" className="py-1 pr-3 font-normal whitespace-nowrap text-on-surface">
                 <span
                   aria-hidden="true"
                   className="hl-legend-swatch hl-cat-tint me-2 align-middle"
@@ -141,8 +141,8 @@ export function FaceLegend({ rows, className }: FaceLegendProps) {
                 />
                 {FLAVOURS[face.category]}
               </th>
-              <td className="py-1 pr-3 whitespace-nowrap text-ink-muted">{row.title}</td>
-              <td className="py-1 whitespace-nowrap text-ink-muted">
+              <td className="py-1 pr-3 whitespace-nowrap text-on-surface-muted">{row.title}</td>
+              <td className="py-1 whitespace-nowrap text-on-surface-muted">
                 {/* `row.total <= 0` prints a bare em dash and must NOT be
                     filled: there is no fraction for the island to write. */}
                 {row.total <= 0 ? (

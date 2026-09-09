@@ -71,7 +71,7 @@ function group(value: number): string {
  */
 function Unsigned({ children }: { children: string }) {
   return (
-    <span className="inline-block border border-dashed border-line-strong px-1.5 text-ink-faint">
+    <span className="inline-block border border-dashed border-line-strong px-1.5 text-on-surface-faint">
       {children}
     </span>
   )
@@ -138,7 +138,7 @@ export function QuarantineNote() {
 
   return (
     <section aria-label="Record status" className="mb-8">
-      <p className="hl-mark m-0 text-ink">{copy.readout}</p>
+      <p className="hl-mark m-0 text-on-surface">{copy.readout}</p>
       <div className="hl-note">
         <p>{copy.note}</p>
       </div>
@@ -348,7 +348,7 @@ export function SubmittalRegister({ sheets }: { sheets: readonly RegisterSheet[]
   }
 
   return (
-    <table className="w-full border-collapse font-display text-ui">
+    <table className="w-full border-collapse text-item">
       <caption className="sr-only">
         Every repository registered against a module in this browser
       </caption>
@@ -358,7 +358,7 @@ export function SubmittalRegister({ sheets }: { sheets: readonly RegisterSheet[]
             <th
               key={heading}
               scope="col"
-              className="border-b border-line-strong px-3 py-2 text-start font-mono text-mark font-medium uppercase tracking-[0.06em] whitespace-nowrap text-ink-muted"
+              className="border-b border-line-strong px-3 py-2 text-start font-mono text-mark font-medium uppercase tracking-[0.06em] whitespace-nowrap text-on-surface-muted"
             >
               {heading}
             </th>
@@ -370,10 +370,10 @@ export function SubmittalRegister({ sheets }: { sheets: readonly RegisterSheet[]
           <tr key={`${sheet.slug}-${index}`}>
             <th
               scope="row"
-              className="border-b border-line px-3 py-2 text-start align-top font-mono text-mark font-normal uppercase tracking-[0.06em] whitespace-nowrap text-ink-muted"
+              className="border-b border-line px-3 py-2 text-start align-top font-mono text-mark font-normal uppercase tracking-[0.06em] whitespace-nowrap text-on-surface-muted"
             >
               {`MODULE ${String(sheet.module).padStart(2, '0')}`}
-              <span className="block font-display tracking-normal normal-case text-ink">
+              <span className="block tracking-normal normal-case text-on-surface">
                 {sheet.title}
               </span>
             </th>
@@ -401,13 +401,13 @@ export function SubmittalRegister({ sheets }: { sheets: readonly RegisterSheet[]
               {entry.commit !== null && (
                 <p className="hl-submittal-commit">
                   {`COMMIT ${entry.commit}`}
-                  <span className="ml-2 font-display tracking-normal normal-case">
+                  <span className="ml-2 tracking-normal normal-case">
                     supplied by reader; not fetched or verified by this application
                   </span>
                 </p>
               )}
             </td>
-            <td className="border-b border-line px-3 py-2 align-top font-mono text-mark tracking-[0.06em] whitespace-nowrap text-ink-muted">
+            <td className="border-b border-line px-3 py-2 align-top font-mono text-mark tracking-[0.06em] whitespace-nowrap text-on-surface-muted">
               {entry.at.slice(0, 10)}
             </td>
           </tr>
@@ -566,17 +566,17 @@ export function RawValues() {
 
   return (
     <div>
-      <p className="mt-0 mb-0 font-display text-meta leading-normal text-ink-muted">
+      <p className="mt-0 mb-0 text-meta leading-normal text-on-surface-muted">
         Exactly what is in this browser's storage, unchanged. Two keys: the
         record, and the copy set aside if a payload could not be read.
       </p>
 
-      <p className="hl-mark mt-3 mb-0 text-ink">hl-record</p>
+      <p className="hl-mark mt-3 mb-0 text-on-surface">hl-record</p>
       <pre className="hl-raw">
         {raw === null ? NO_READING : (raw.record ?? 'NO VALUE STORED UNDER THIS KEY')}
       </pre>
 
-      <p className="hl-mark mt-3 mb-0 text-ink">hl-record-quarantine</p>
+      <p className="hl-mark mt-3 mb-0 text-on-surface">hl-record-quarantine</p>
       <pre className="hl-raw">
         {raw === null ? NO_READING : (raw.quarantine ?? 'NO VALUE STORED UNDER THIS KEY')}
       </pre>
@@ -619,11 +619,11 @@ export function CharKeysToggle() {
           checked={on}
           onChange={(event) => update((data) => setCharKeys(data, event.target.checked))}
         />
-        <span className="font-display text-ui leading-normal text-ink">
+        <span className="text-item leading-normal text-on-surface">
           Single-character shortcuts
         </span>
       </label>
-      <p className="mt-1 mb-0 font-display text-meta leading-normal text-ink-muted">
+      <p className="mt-1 mb-0 text-meta leading-normal text-on-surface-muted">
         With this off, every single-character key and every two-key chord in the
         keyboard shortcuts stops doing anything. Shortcuts that need Ctrl, Cmd or
         Alt keep working, and Escape always closes what is open.
@@ -845,7 +845,7 @@ export function ClaimPanel() {
 
   if (!hydrated || receipt === null) {
     return (
-      <p className="hl-mark m-0 text-ink-muted">
+      <p className="hl-mark m-0 text-on-surface-muted">
         {hydrated ? CLAIM_COPY.noClaim : NO_READING}
       </p>
     )
@@ -853,7 +853,7 @@ export function ClaimPanel() {
 
   return (
     <div className="grid gap-3">
-      <p className="hl-mark m-0 text-ink-muted">{`CLAIMED ${receipt.at.slice(0, 10)}`}</p>
+      <p className="hl-mark m-0 text-on-surface-muted">{`CLAIMED ${receipt.at.slice(0, 10)}`}</p>
       <ClaimSummary summary={receipt.summary} />
     </div>
   )

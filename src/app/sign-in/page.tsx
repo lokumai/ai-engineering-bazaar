@@ -128,29 +128,29 @@ export default function SignInPage() {
           whole pixel and paints (§2.2); the struct weight is the one that may
           never be a border. */}
       <section
-        className="hl-panel border border-line-strong border-l-2 border-l-accent bg-cleared p-5"
+        className="hl-panel border border-line-strong border-l-2 border-l-primary bg-surface-raised p-5"
         aria-labelledby="hl-door-alias"
       >
         <div className="hl-panel-head">
           <h2
             id="hl-door-alias"
-            className="m-0 font-display text-h4 leading-tight font-semibold text-ink"
+            className="m-0 text-subsection leading-tight font-semibold text-on-surface"
           >
             Use an alias
           </h2>
-          <p className="hl-mark m-0 text-accent-ink">LOCAL ONLY · NOT AN ACCOUNT</p>
+          <p className="hl-mark m-0 text-primary">LOCAL ONLY · NOT AN ACCOUNT</p>
         </div>
 
         {/* §15.9.1 — what an alias is, what it proves and where it goes, from
             the one module allowed to say so. This door and `/sign-in/alias/`
             print the same characters. */}
-        <p className="mt-0 mb-3 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-0 mb-3 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
           {ALIAS_SCOPE}
         </p>
 
         {/* §15.5.3 — the door's own limit, in the door's own paragraph: only
             the facts `ALIAS_SCOPE` does not state. */}
-        <p className="mt-0 mb-4 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-0 mb-4 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
           No email and no password, and the form that asks for them sends
           nothing. Its limits: an alias cannot join an organisation, and a
           submittal recorded under it stays a typed claim rather than a checked
@@ -179,11 +179,11 @@ export default function SignInPage() {
           <h2 id="hl-door-accounts" className="hl-panel-title">
             The {numberWord(ACCOUNT_DOOR_COUNT)} account doors
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">A COPY OFF THIS BROWSER</p>
+          <p className="hl-mark m-0 text-on-surface-faint">A COPY OFF THIS BROWSER</p>
         </div>
 
-        <p className="mt-0 mb-3 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
-          <span className="hl-mark text-ink">EMAIL A SIGN-IN LINK</span> — one
+        <p className="mt-0 mb-3 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
+          <span className="hl-mark text-on-surface">EMAIL A SIGN-IN LINK</span> — one
           link to your inbox, and no password to keep. Opening it is what proves
           the mailbox, and a proven mailbox is what an organisation admitting
           people by their email domain checks. Its limit: this site learns an
@@ -191,16 +191,16 @@ export default function SignInPage() {
           typed claim — there is no repository owner to compare it against.
         </p>
 
-        <p className="m-0 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
-          <span className="hl-mark text-ink">CONTINUE WITH GITHUB</span> — one
+        <p className="m-0 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
+          <span className="hl-mark text-on-surface">CONTINUE WITH GITHUB</span> — one
           press, and it brings along the handle a roster prints and a submittal
           is checked against. Its limit: GitHub hands this site no address it
           can prove, so joining an organisation by its email domain does not
           work under a GitHub-only account.
         </p>
 
-        <p className="m-0 mt-3 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
-          <span className="hl-mark text-ink">CONTINUE WITH GOOGLE</span> — one
+        <p className="m-0 mt-3 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
+          <span className="hl-mark text-on-surface">CONTINUE WITH GOOGLE</span> — one
           press, and the copy off this browser that any account gives. It is the
           GitHub door without the handle: no address this site can prove, so no
           domain join, and no repository owner to compare a submittal against,
@@ -223,7 +223,7 @@ export default function SignInPage() {
           <h2 id="hl-door-table" className="hl-panel-title">
             What each door does
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">READ ACROSS BEFORE YOU PICK</p>
+          <p className="hl-mark m-0 text-on-surface-faint">READ ACROSS BEFORE YOU PICK</p>
         </div>
 
         {/* Every wide thing scrolls inside its own container, and the page body
@@ -273,7 +273,7 @@ export default function SignInPage() {
                       signal. The mockup tinted `Yes` verify-green, `No` faint
                       and `In your orgs` caution-amber; three of those readings
                       are wrong here. T6 reserves the semantic inks for
-                      diagrams and status ticks, `--color-ink-faint` is
+                      diagrams and status ticks, `--color-on-surface-faint` is
                       decorative only (T5) and would put the most common answer
                       on this table below the contrast floor, and a colour that
                       vanishes under `forced-colors` cannot be carrying a

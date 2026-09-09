@@ -426,7 +426,7 @@ export function ReportPanel({ facts, counts }: ReportPanelProps) {
           <h2 id="hl-report-preview" className="hl-panel-title">
             What the file will say
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">Counted from this browser</p>
+          <p className="hl-mark m-0 text-on-surface-faint">Counted from this browser</p>
         </div>
 
         <dl className="hl-defs">
@@ -448,7 +448,7 @@ export function ReportPanel({ facts, counts }: ReportPanelProps) {
             self-reported button presses, so it renames itself and drops the
             evidence register rather than printing it empty. Stating the rule
             costs one line and stops the file overstating its own weight. */}
-        <p className="mt-3 mb-0 font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-3 mb-0 text-meta leading-normal text-on-surface-muted">
           A record with no repository registered against any module is titled
           READING RECORD, and its evidence register is dropped rather than
           printed empty. Every module in the set is listed either way, completed
@@ -461,7 +461,7 @@ export function ReportPanel({ facts, counts }: ReportPanelProps) {
           <h2 id="hl-report-limits" className="hl-panel-title">
             Status and limits
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">Second block of the file</p>
+          <p className="hl-mark m-0 text-on-surface-faint">Second block of the file</p>
         </div>
 
         {/* §12.12.3 — all seven, declarative, and above the control that
@@ -480,7 +480,7 @@ export function ReportPanel({ facts, counts }: ReportPanelProps) {
           <h2 id="hl-report-save" className="hl-panel-title">
             Save
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">One self-contained file</p>
+          <p className="hl-mark m-0 text-on-surface-faint">One self-contained file</p>
         </div>
 
         <dl className="hl-defs">
@@ -499,11 +499,11 @@ export function ReportPanel({ facts, counts }: ReportPanelProps) {
         {/* The digest is `.hl-mark` without its uppercasing: a hex digest a
             reader compares against the one inside the file has to be printed
             in the case it is actually written in. */}
-        <p className="hl-mark mt-4 mb-1 text-ink-muted">Content digest</p>
-        <p className="hl-mark m-0 break-all normal-case text-ink">
+        <p className="hl-mark mt-4 mb-1 text-on-surface-muted">Content digest</p>
+        <p className="hl-mark m-0 break-all normal-case text-on-surface">
           {digest.kind === 'pending' ? DASH : digestText(digest)}
         </p>
-        <p className="mt-2 mb-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-2 mb-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           SHA-256 over this browser&rsquo;s record, canonicalised with sorted
           keys. It is printed inside the file, where it shows that the file has
           not changed since it was generated. It shows nothing at all about
@@ -527,7 +527,7 @@ export function ReportPanel({ facts, counts }: ReportPanelProps) {
           </button>
         </div>
 
-        <p className="mt-2 mb-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-2 mb-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           The file is written by this page and saved by this browser; nothing is
           uploaded and nothing is fetched. It carries the record inside it, so
           it can be imported back into this site to restore this state in

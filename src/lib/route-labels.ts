@@ -224,8 +224,8 @@ export interface MarkToken {
 const VALUE = /(\d[\d,./:-]*)/
 
 /**
- * Spec §5.2 gives a footer label two inks: `--color-ink-muted` for the words,
- * `--color-ink` for the values. Splitting is the only way to paint both from
+ * Spec §5.2 gives a footer label two inks: `--color-on-surface-muted` for the words,
+ * `--color-on-surface` for the values. Splitting is the only way to paint both from
  * one string.
  */
 export function markTokens(label: string): MarkToken[] {

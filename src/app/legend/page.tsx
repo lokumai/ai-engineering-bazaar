@@ -113,10 +113,10 @@ function KeyRow({
   return (
     <>
       <dt className="flex items-center gap-2">
-        <span className="hl-mark text-ink">{term}</span>
+        <span className="hl-mark text-on-surface">{term}</span>
         {marks}
       </dt>
-      <dd className="m-0 font-display text-meta leading-normal text-ink-muted">
+      <dd className="m-0 text-meta leading-normal text-on-surface-muted">
         {children}
       </dd>
     </>
@@ -190,10 +190,10 @@ export default function LegendPage() {
           <h2 id="hl-legend-lines" className="hl-panel-title">
             Line types
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">ISO 128</p>
+          <p className="hl-mark m-0 text-on-surface-faint">ISO 128</p>
         </div>
 
-        <p className="mt-0 mb-4 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-0 mb-4 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           Line type carries every state first and the accent repeats it second.
           That is why the drawing still reads in print, in a forced-colours
           theme, and for a reader who sees no colour at all: remove the accent
@@ -203,7 +203,7 @@ export default function LegendPage() {
         {/* Two columns above 640px and stacked below it: the marks and their
             names are the widest thing here, and squeezing the meaning into
             what is left on a phone would set it four words to the line. */}
-        <dl className="m-0 grid max-w-[var(--width-wide)] items-start gap-y-3 sm:grid-cols-[minmax(0,224px)_minmax(0,1fr)] sm:gap-x-5">
+        <dl className="m-0 grid max-w-[var(--layout-measure)] items-start gap-y-3 sm:grid-cols-[minmax(0,224px)_minmax(0,1fr)] sm:gap-x-5">
           <KeyRow
             term="Planned"
             marks={
@@ -266,7 +266,7 @@ export default function LegendPage() {
           </KeyRow>
         </dl>
 
-        <p className="mt-4 mb-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-4 mb-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           On the dashboard a solid trace above a band is a prerequisite, a dashed
           trace below it is a cross-reference, and a trace goes accent when both
           of the modules it joins are completed. The hairline chain between nodes
@@ -280,7 +280,7 @@ export default function LegendPage() {
           <h2 id="hl-legend-storage" className="hl-panel-title">
             Where your record is
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">This browser’s copy</p>
+          <p className="hl-mark m-0 text-on-surface-faint">This browser’s copy</p>
         </div>
 
         {/*
@@ -321,7 +321,7 @@ export default function LegendPage() {
           removes. That promise has one home (§14.6), and a second copy here is
           how the first one came to be wrong.
         */}
-        <p className="mt-4 mb-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-4 mb-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           The record is one key in this browser&rsquo;s local storage, it is
           readable in a text editor, and the account page prints it verbatim.
           Signed out, that key is the whole of it. With an account there is a
@@ -349,17 +349,17 @@ export default function LegendPage() {
           <h2 id="hl-legend-absent" className="hl-panel-title">
             What this site does not have
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">Named, not stubbed</p>
+          <p className="hl-mark m-0 text-on-surface-faint">Named, not stubbed</p>
         </div>
 
-        <p className="mt-0 mb-4 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-0 mb-4 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           Naming an absence is honest. A control that looks like a feature and
           does nothing is not, so nothing below is present as a disabled button
           or a greyed-out menu item. It is not built.
         </p>
 
-        <h3 className="hl-mark m-0 mb-2 text-ink">Deferred to a following slice</h3>
-        <ul className="m-0 mb-6 max-w-[var(--width-prose)] list-none p-0 font-display text-meta leading-normal text-ink-muted">
+        <h3 className="hl-mark m-0 mb-2 text-on-surface">Deferred to a following slice</h3>
+        <ul className="m-0 mb-6 max-w-[var(--layout-measure)] list-none p-0 text-meta leading-normal text-on-surface-muted">
           {DEFERRED.map((item) => (
             <li key={item} className="mb-1">
               {item}
@@ -367,10 +367,10 @@ export default function LegendPage() {
           ))}
         </ul>
 
-        <h3 className="hl-mark m-0 mb-2 text-ink">
+        <h3 className="hl-mark m-0 mb-2 text-on-surface">
           Nobody here can do these, and therefore not coming
         </h3>
-        <ul className="m-0 mb-6 max-w-[var(--width-prose)] list-none p-0 font-display text-meta leading-normal text-ink-muted">
+        <ul className="m-0 mb-6 max-w-[var(--layout-measure)] list-none p-0 text-meta leading-normal text-on-surface-muted">
           {NO_SECOND_PARTY.map((item) => (
             <li key={item} className="mb-1">
               {item}
@@ -378,8 +378,8 @@ export default function LegendPage() {
           ))}
         </ul>
 
-        <h3 className="hl-mark m-0 mb-2 text-ink">Refused, not missing</h3>
-        <ul className="m-0 mb-4 max-w-[var(--width-prose)] list-none p-0 font-display text-meta leading-normal text-ink-muted">
+        <h3 className="hl-mark m-0 mb-2 text-on-surface">Refused, not missing</h3>
+        <ul className="m-0 mb-4 max-w-[var(--layout-measure)] list-none p-0 text-meta leading-normal text-on-surface-muted">
           {REFUSED.map((item) => (
             <li key={item} className="mb-1">
               {item}
@@ -387,7 +387,7 @@ export default function LegendPage() {
           ))}
         </ul>
 
-        <p className="mt-0 mb-4 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-0 mb-4 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           The first three need a party this system does not have: no instructor
           exists in it, no peer is asked to judge anybody, and there is no
           issuing key to sign a credential with. Built here anyway, each would
@@ -401,7 +401,7 @@ export default function LegendPage() {
           Stated because the two lists above no longer state it, and a reader
           who read this page before §14 shipped was told the opposite.
         */}
-        <p className="m-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        <p className="m-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           Accounts and cross-device sync are not on either list: they exist.
           Signing in is optional and gates nothing &mdash; every module, every
           quick check and every completion behaves the same signed out &mdash; and
@@ -418,10 +418,10 @@ export default function LegendPage() {
           <h2 id="hl-legend-specimen" className="hl-panel-title">
             Specimen record
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">Sample data</p>
+          <p className="hl-mark m-0 text-on-surface-faint">Sample data</p>
         </div>
 
-        <p className="mt-0 mb-4 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-0 mb-4 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           The document this site can produce is a single self-contained HTML
           file. The specimen is one of those, generated at build time from
           labelled sample data and stamped as a specimen, so you can read the
@@ -445,12 +445,12 @@ export default function LegendPage() {
           <h2 id="hl-legend-mark" className="hl-panel-title">
             Marked by
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">LKM-01</p>
+          <p className="hl-mark m-0 text-on-surface-faint">LKM-01</p>
         </div>
 
         <div className="flex items-center gap-4">
           <Lkm01 size={96} idPrefix="legend" />
-          <p className="m-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+          <p className="m-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
             LKM-01 (Lokum) is a 1-unit cube. It has drawn every figure in this
             curriculum.
           </p>
@@ -477,17 +477,17 @@ export default function LegendPage() {
           <h2 id="hl-legend-colophon" className="hl-panel-title">
             Colophon
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">Who publishes this</p>
+          <p className="hl-mark m-0 text-on-surface-faint">Who publishes this</p>
         </div>
 
-        <dl className="m-0 max-w-[var(--width-prose)]">
+        <dl className="m-0 max-w-[var(--layout-measure)]">
           {AFFILIATION.map((affiliate) => (
             <div
               key={affiliate.name}
               className="flex items-baseline justify-between gap-4 border-b border-line py-2 last:border-b-0"
             >
-              <dt className="hl-mark flex-none text-ink-muted">{affiliate.role}</dt>
-              <dd className="m-0 font-display text-meta text-ink">
+              <dt className="hl-mark flex-none text-on-surface-muted">{affiliate.role}</dt>
+              <dd className="m-0 text-meta text-on-surface">
                 <a className="hl-link" href={affiliate.url}>
                   {affiliate.name}
                 </a>
@@ -496,7 +496,7 @@ export default function LegendPage() {
           ))}
         </dl>
 
-        <p className="mt-4 mb-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-4 mb-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           The chain reads outward. LokumAI publishes this site and is part of
           Intellica; Intellica is a PIA Group company. The curriculum itself is
           open source under the {LICENCE_LABEL}, and the modules carry no

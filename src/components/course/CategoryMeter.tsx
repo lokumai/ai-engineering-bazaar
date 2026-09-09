@@ -91,7 +91,7 @@ export function CategoryMeter({
         ))}
       </div>
 
-      <p className="hl-mark m-0 mt-1 text-ink-muted">
+      <p className="hl-mark m-0 mt-1 text-on-surface-muted">
         <span data-hl-cat-tally={category}>
           {NO_READING}/{ordered.length}
         </span>{' '}

@@ -90,7 +90,7 @@ export function ClaimSummary({
         )}
         {/* The branch §14.7.4 took, as a readout: uppercase, no terminal
             period, and it names the case rather than describing it. */}
-        <span className="hl-mark text-ink-muted">
+        <span className="hl-mark text-on-surface-muted">
           {summary.outcome === 'adopted' ? 'NO RECORD IN ACCOUNT' : 'TWO RECORDS'}
         </span>
       </div>

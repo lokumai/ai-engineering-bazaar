@@ -209,7 +209,7 @@ export function Readout({ variant, facts, traces = null, className }: ReadoutPro
   if (sync === 'failed') {
     cells.push(
       <span key="sync" role="status" className="whitespace-nowrap">
-        <span className="hl-readout-value text-fault-ink">Not synced</span>
+        <span className="hl-readout-value text-on-surface">Not synced</span>
         <span aria-hidden="true" className="hl-readout-sep">{' · '}</span>
         <Link href="/profile/" className="hl-link hl-no-print">
           Export your record

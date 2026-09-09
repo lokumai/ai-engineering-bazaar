@@ -80,8 +80,8 @@ export function ClaimReceipt() {
       role="status"
       aria-label={CLAIM_COPY.head}
     >
-      <p className="hl-mark m-0 text-ink">{CLAIM_COPY.head}</p>
-      <p className="hl-mark m-0 text-ink-muted">
+      <p className="hl-mark m-0 text-on-surface">{CLAIM_COPY.head}</p>
+      <p className="hl-mark m-0 text-on-surface-muted">
         {claimReceiptReading(receipt)}
         {' · '}
         <Link href="/profile/#claim">DETAILS</Link>

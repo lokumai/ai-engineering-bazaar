@@ -180,7 +180,7 @@ function AttentionCell({ flags }: { flags: readonly AttentionFlag[] }) {
   if (flags.length === 0) {
     // Not "all clear": §14.8.1 flags three specific conditions and their
     // absence is the absence of those three, which is what this says.
-    return <span className="text-ink-muted">NO FLAGS</span>
+    return <span className="text-on-surface-muted">NO FLAGS</span>
   }
   const shown = flags.slice(0, FLAGS_IN_ROW)
   const rest = flags.length - shown.length
@@ -191,7 +191,7 @@ function AttentionCell({ flags }: { flags: readonly AttentionFlag[] }) {
           {attentionReason(flag)}
         </li>
       ))}
-      {rest > 0 && <li className="text-ink-muted">{`${rest} MORE — OPEN THE DETAIL`}</li>}
+      {rest > 0 && <li className="text-on-surface-muted">{`${rest} MORE — OPEN THE DETAIL`}</li>}
     </ul>
   )
 }
@@ -242,7 +242,7 @@ function MemberRow({
         {login === undefined || login === null ? (
           // §14.8.2 — no login means the submittal check cannot run, and the
           // cell says which of the two it is rather than printing a dash.
-          <span className="text-ink-muted">NOT LINKED</span>
+          <span className="text-on-surface-muted">NOT LINKED</span>
         ) : (
           login
         )}
@@ -250,14 +250,14 @@ function MemberRow({
 
       <td className="hl-mark">
         {computed === null ? (
-          <span className="text-ink-muted">
+          <span className="text-on-surface-muted">
             {member.record.kind === 'absent' ? 'NO SERVER COPY' : 'UNREADABLE'}
           </span>
         ) : (
           <>
             {`${computed.progress.signedOff} / ${computed.progress.attainable}`}
             {computed.stale && (
-              <span className="block text-ink-muted">STORED PROGRESS STALE</span>
+              <span className="block text-on-surface-muted">STORED PROGRESS STALE</span>
             )}
           </>
         )}
@@ -266,9 +266,9 @@ function MemberRow({
       {/* §14.8.2 — THE CLAIM. The reader's own assertion, and labelled as one. */}
       <td className="hl-row-context hl-mark">
         {member.record.kind !== 'record' ? (
-          <span className="text-ink-muted">—</span>
+          <span className="text-on-surface-muted">—</span>
         ) : latestSignOff(member.record.data) === null ? (
-          <span className="text-ink-muted">NO COMPLETION</span>
+          <span className="text-on-surface-muted">NO COMPLETION</span>
         ) : (
           `COMPLETED · LATEST ${day(latestSignOff(member.record.data))}`
         )}
@@ -279,7 +279,7 @@ function MemberRow({
           themselves, this one is what can be checked independently of them. */}
       <td className="hl-row-context hl-mark">
         {member.record.kind !== 'record' ? (
-          <span className="text-ink-muted">—</span>
+          <span className="text-on-surface-muted">—</span>
         ) : (
           evidenceLines(evidenceSummary(rows)).map((line) => (
             <span key={line} className="block">
@@ -291,7 +291,7 @@ function MemberRow({
 
       <td className="hl-row-context hl-mark">
         {computed === null ? (
-          <span className="text-ink-muted">—</span>
+          <span className="text-on-surface-muted">—</span>
         ) : (
           <AttentionCell flags={computed.progress.attention} />
         )}
@@ -374,13 +374,13 @@ export function TeamTable({ facts }: { facts: CurriculumFacts }) {
           <h2 id="hl-team-state" className="hl-panel-title">
             Roster
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">{copy.status}</p>
+          <p className="hl-mark m-0 text-on-surface-faint">{copy.status}</p>
         </div>
         {/* §12.13's live-region split: a query's progress and its outcome are
             both status, not alerts — nothing here is an error the reader
             caused. */}
         <p
-          className="m-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted"
+          className="m-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted"
           role="status"
         >
           {copy.detail}
@@ -406,7 +406,7 @@ export function TeamTable({ facts }: { facts: CurriculumFacts }) {
           <h2 id="hl-team-roster" className="hl-panel-title">
             Roster
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">
+          <p className="hl-mark m-0 text-on-surface-faint">
             {snapshot.orgs.map((org) => org.name).join(' · ')}
           </p>
         </div>
@@ -415,13 +415,13 @@ export function TeamTable({ facts }: { facts: CurriculumFacts }) {
             conclude. An undercounted attempt tally can only hide a flag, never
             invent one, and a reader is entitled to know which way it fails. */}
         {snapshot.eventsTruncated && (
-          <p className="hl-mark m-0 mb-3 text-ink-muted">
+          <p className="hl-mark m-0 mb-3 text-on-surface-muted">
             EVENT LOG TRUNCATED — QUIZ ATTEMPT COUNTS MAY BE LOW
           </p>
         )}
 
         {members.length === 0 ? (
-          <p className="hl-mark m-0 text-ink-muted" role="status">
+          <p className="hl-mark m-0 text-on-surface-muted" role="status">
             NO MEMBERS IN THIS ORGANISATION
           </p>
         ) : (
@@ -489,9 +489,9 @@ export function TeamTable({ facts }: { facts: CurriculumFacts }) {
             <h2 id="hl-team-unknown" className="hl-panel-title">
               Person
             </h2>
-            <p className="hl-mark m-0 text-ink-faint">NOT IN THIS ROSTER</p>
+            <p className="hl-mark m-0 text-on-surface-faint">NOT IN THIS ROSTER</p>
           </div>
-          <p className="m-0 font-display text-meta leading-normal text-ink-muted" role="status">
+          <p className="m-0 text-meta leading-normal text-on-surface-muted" role="status">
             {`No member of your organisation has the id ${selected}.`}
           </p>
         </section>

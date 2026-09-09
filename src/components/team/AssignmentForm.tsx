@@ -90,8 +90,8 @@ type Write =
  * Reported to the orchestrator.
  */
 const FIELD_CONTROL =
-  'block w-full rounded-none border border-line-strong bg-sunken px-2.5 '
-  + 'font-display text-ui text-ink hover:border-line-cut'
+  'block w-full rounded-none border border-line-strong bg-surface-sunken px-2.5 '
+  + 'text-item text-on-surface hover:border-line-cut'
 
 function toggle(list: readonly string[], value: string): string[] {
   return list.includes(value) ? list.filter((entry) => entry !== value) : [...list, value]
@@ -161,10 +161,10 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
           <h2 id="hl-assign-state" className="hl-panel-title">
             New assignment
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">{copy.status}</p>
+          <p className="hl-mark m-0 text-on-surface-faint">{copy.status}</p>
         </div>
         <p
-          className="m-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted"
+          className="m-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted"
           role="status"
         >
           {copy.detail}
@@ -234,7 +234,7 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
           <h2 id="hl-assign-new" className="hl-panel-title">
             New assignment
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">
+          <p className="hl-mark m-0 text-on-surface-faint">
             {draft.targets.length === 0 ? 'SCOPE — WHOLE ORGANISATION' : `SCOPE — ${draft.targets.length} NAMED`}
           </p>
         </div>
@@ -318,7 +318,7 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
             className="mt-6 border-0 p-0"
             data-invalid={problems.includes('noSheets') ? 'true' : 'false'}
           >
-            <legend className="hl-mark p-0 text-ink">
+            <legend className="hl-mark p-0 text-on-surface">
               {`MODULES — ${draft.sheets.length} SELECTED`}
             </legend>
             <div className="mt-2 max-h-72 overflow-y-auto border border-line-strong p-3">
@@ -330,7 +330,7 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
                     onChange={() => setDraft({ ...draft, sheets: toggle(draft.sheets, sheet.slug) })}
                   />
                   <span className="hl-check-label">
-                    <span className="hl-mark text-ink-muted">
+                    <span className="hl-mark text-on-surface-muted">
                       {`MODULE ${String(sheet.module).padStart(2, '0')} `}
                     </span>
                     {sheet.slug}
@@ -339,7 +339,7 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
                         assigning it would create a deadline that can never be
                         met. It is offered — the corpus changes — and labelled. */}
                     {!sheet.drawn && (
-                      <span className="hl-mark text-ink-muted"> · PLANNED</span>
+                      <span className="hl-mark text-on-surface-muted"> · PLANNED</span>
                     )}
                   </span>
                 </label>
@@ -349,14 +349,14 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
 
           {/* ---- who ------------------------------------------------------- */}
           <fieldset className="mt-6 border-0 p-0">
-            <legend className="hl-mark p-0 text-ink">WHO</legend>
-            <p className="m-0 mb-2 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+            <legend className="hl-mark p-0 text-on-surface">WHO</legend>
+            <p className="m-0 mb-2 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
               Select nobody and the assignment applies to the whole organisation,
               including anyone who joins later (§14.2.4). Naming people limits it
               to exactly those accounts.
             </p>
             {inOrg.length === 0 ? (
-              <p className="hl-mark m-0 text-ink-muted">
+              <p className="hl-mark m-0 text-on-surface-muted">
                 NO MEMBERS TO NAME — THE ASSIGNMENT WILL APPLY TO THE WHOLE ORGANISATION
               </p>
             ) : (
@@ -413,13 +413,13 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
           <h2 id="hl-assign-existing" className="hl-panel-title">
             Existing assignments
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">
+          <p className="hl-mark m-0 text-on-surface-faint">
             {snapshot.orgs.map((org) => org.name).join(' · ')}
           </p>
         </div>
 
         {snapshot.assignments.length === 0 ? (
-          <p className="hl-mark m-0 text-ink-muted" role="status">
+          <p className="hl-mark m-0 text-on-surface-muted" role="status">
             NONE
           </p>
         ) : (
@@ -438,11 +438,11 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
                     : `${assignment.targets.length} NAMED`}
                 </p>
                 {assignment.note !== null && (
-                  <p className="m-0 mt-1 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+                  <p className="m-0 mt-1 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
                     {assignment.note}
                   </p>
                 )}
-                <p className="hl-mark m-0 mt-1 text-ink-faint">
+                <p className="hl-mark m-0 mt-1 text-on-surface-faint">
                   {assignment.sheets.join(' · ')}
                 </p>
               </li>

@@ -303,12 +303,12 @@ export function DataPanel() {
             EXPORT YOUR RECORD
           </button>
           {exported !== null && (
-            <span className="hl-mark text-ink-muted" role="status">
+            <span className="hl-mark text-on-surface-muted" role="status">
               {`EXPORTED ${exported.slice(0, 10)}`}
             </span>
           )}
         </div>
-        <p className="mt-2 mb-0 font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-2 mb-0 text-meta leading-normal text-on-surface-muted">
           One JSON file, indented so it can be read in a text editor. It is
           written by this page and downloaded by this browser; nothing is
           uploaded. An export taken with nothing recorded says exactly that.
@@ -337,19 +337,19 @@ export function DataPanel() {
           <div className="mt-2" role="status">
             {imported.kind === 'imported' && (
               <>
-                <p className="hl-mark m-0 text-ink">
+                <p className="hl-mark m-0 text-on-surface">
                   {`RECORD IMPORTED · SCHEMA ${imported.schema}`}
                 </p>
                 <p
                   className={
                     imported.digest === 'edited'
                       ? 'hl-not-saved hl-mark'
-                      : 'hl-mark m-0 mt-1 text-ink-muted'
+                      : 'hl-mark m-0 mt-1 text-on-surface-muted'
                   }
                 >
                   {DIGEST_READOUT[imported.digest]}
                 </p>
-                <p className="mt-1 mb-0 font-display text-meta leading-normal text-ink-muted">
+                <p className="mt-1 mb-0 text-meta leading-normal text-on-surface-muted">
                   {imported.digest === 'edited'
                     ? 'The record in this file does not hash to the digest printed '
                       + 'in it. The file was imported anyway, because a hash '
@@ -363,8 +363,8 @@ export function DataPanel() {
             )}
             {imported.kind === 'empty' && (
               <>
-                <p className="hl-mark m-0 text-ink">NO RECORD IN THIS FILE</p>
-                <p className="mt-1 mb-0 font-display text-meta leading-normal text-ink-muted">
+                <p className="hl-mark m-0 text-on-surface">NO RECORD IN THIS FILE</p>
+                <p className="mt-1 mb-0 text-meta leading-normal text-on-surface-muted">
                   Nothing was changed. The exported .json and the RECORD OF WORK
                   .html both carry the record; another file does not.
                 </p>
@@ -372,12 +372,12 @@ export function DataPanel() {
             )}
             {imported.kind === 'unreadable' && (
               <>
-                <p className="hl-mark m-0 text-ink">
+                <p className="hl-mark m-0 text-on-surface">
                   {imported.reason === 'newer'
                     ? 'FILE WRITTEN BY A NEWER VERSION OF THIS SITE — NOT READ'
                     : 'FILE IS NOT THE SHAPE THIS SITE WRITES — NOT READ'}
                 </p>
-                <p className="mt-1 mb-0 font-display text-meta leading-normal text-ink-muted">
+                <p className="mt-1 mb-0 text-meta leading-normal text-on-surface-muted">
                   Nothing was changed, and the file on disk is untouched.
                   {imported.reason === 'newer'
                     ? ' Reload this site to pick up the newer version, then import it again.'
@@ -386,7 +386,7 @@ export function DataPanel() {
               </>
             )}
             {imported.kind === 'unopened' && (
-              <p className="hl-mark m-0 text-ink">THIS FILE COULD NOT BE OPENED</p>
+              <p className="hl-mark m-0 text-on-surface">THIS FILE COULD NOT BE OPENED</p>
             )}
           </div>
         )}
@@ -408,7 +408,7 @@ export function DataPanel() {
             session made; the server has nothing to say about it. */}
         {erasedAt !== null && hydrated && (
           <div className="mt-2" role="status">
-            <p className="hl-mark m-0 text-ink">
+            <p className="hl-mark m-0 text-on-surface">
               {undo !== null && left > 0 ? undoLabel(left) : UNDO_CLOSED}
             </p>
             {/* §14.6 — said only when it needs saying. `remoteEraseNote`
@@ -418,13 +418,13 @@ export function DataPanel() {
                 row that never existed. */}
             {remoteErase !== null && remoteEraseNote(remoteErase) !== null && (
               <>
-                <p className="hl-mark mt-1 mb-0 text-ink">{REMOTE_ERASE_FAILED}</p>
-                <p className="mt-1 mb-0 font-display text-meta leading-normal text-ink-muted">
+                <p className="hl-mark mt-1 mb-0 text-on-surface">{REMOTE_ERASE_FAILED}</p>
+                <p className="mt-1 mb-0 text-meta leading-normal text-on-surface-muted">
                   {remoteEraseNote(remoteErase)}
                 </p>
               </>
             )}
-            <p className="mt-1 mb-0 font-display text-meta leading-normal text-ink-muted">
+            <p className="mt-1 mb-0 text-meta leading-normal text-on-surface-muted">
               The completion marks ready before this page loaded stay on screen
               until the page is reloaded: they are painted by the boot script,
               which reads the record once, before anything else runs.

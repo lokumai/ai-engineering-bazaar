@@ -5,8 +5,8 @@ import { markTokens, sheetLabelFor, type CategoryLabel } from '@/lib/route-label
 
 /**
  * The left cell of footer row 1 (spec §5.2): `SHEET 13 OF 32` on a module
- * sheet, the page's own name everywhere else. Words take `--color-ink-muted`,
- * machine-derived values take `--color-ink`.
+ * sheet, the page's own name everywhere else. Words take `--color-on-surface-muted`,
+ * machine-derived values take `--color-on-surface`.
  *
  * `sheet` is the override a module page passes once it knows its number; with
  * nothing passed, the label is derived from the route, and a route that cannot
@@ -30,9 +30,9 @@ export function SheetLabel({
   return (
     // §3.4 — a machine-derived value never wraps: at 390px `SHEET 13 OF 32`
     // broken after the number reads as two facts instead of one.
-    <span className="hl-mark whitespace-nowrap text-ink-muted">
+    <span className="hl-mark whitespace-nowrap text-on-surface-muted">
       {markTokens(label).map((token, i) => (
-        <span key={i} className={token.value ? 'text-ink' : undefined}>
+        <span key={i} className={token.value ? 'text-on-surface' : undefined}>
           {token.text}
         </span>
       ))}

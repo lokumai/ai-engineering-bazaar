@@ -579,7 +579,7 @@ export function tally(data: RecordData): {
  * §12.4.3 — a completion claim that quietly became false. No LMS handles this,
  * and it is the sharpest available application of §1: the sheet changed under a
  * sign-off, so both revisions are printed. Not an error state, no caution
- * colour — a fact, in `--color-ink-muted`.
+ * colour — a fact, in `--color-on-surface-muted`.
  *
  * Absent when either revision is unknown: a drift claim against a revision we
  * do not have is exactly the invented value §11.25 forbids.

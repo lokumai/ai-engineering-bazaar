@@ -35,7 +35,7 @@ export default function AssignmentsPage() {
   const facts = curriculumFacts()
 
   return (
-    <PageShell sheet="ASSIGNMENTS">
+    <PageShell column={false} sheet="ASSIGNMENTS">
       <p className="hl-eyebrow hl-mark">ORGANISATION DATA · NOT PART OF A RECORD</p>
 
       <h1 className="hl-listing-title">Assignments</h1>

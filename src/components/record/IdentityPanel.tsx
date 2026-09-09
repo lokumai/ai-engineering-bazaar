@@ -220,7 +220,7 @@ function IdentityFields() {
           <span className="hl-identity-initials normal-case">{initials}</span>
         )}
         {stored === null || stored.trim() === '' ? (
-          <span className="hl-mark text-ink-muted">{NO_NAME}</span>
+          <span className="hl-mark text-on-surface-muted">{NO_NAME}</span>
         ) : (
           <bdi dir="auto" className="hl-identity-name">
             {stored}
@@ -238,7 +238,7 @@ function IdentityFields() {
           {stored === null || stored.trim() === '' ? (
             'UNSIGNED'
           ) : (
-            <bdi dir="auto" className="font-display normal-case tracking-normal">
+            <bdi dir="auto" className="normal-case tracking-normal">
               {stored}
             </bdi>
           )}
@@ -278,7 +278,7 @@ function IdentityFields() {
             while it is still true of that value. One author (`scope.ts`), and
             never the address itself. */}
         {fromAddress && (
-          <p className="hl-mark m-0 text-ink-muted" id={SOURCE_HINT}>
+          <p className="hl-mark m-0 text-on-surface-muted" id={SOURCE_HINT}>
             {NAME_FROM_ADDRESS}
           </p>
         )}
@@ -311,7 +311,7 @@ function IdentityFields() {
               of what is worth saying (§12.5.7, §12.14.1). Gated on `hydrated`
               so it can only ever follow a write this session made. */}
           {saved && hydrated && (
-            <span className="hl-mark text-ink-muted" role="status">
+            <span className="hl-mark text-on-surface-muted" role="status">
               NAME ON RECORD
             </span>
           )}
@@ -319,7 +319,7 @@ function IdentityFields() {
       </form>
 
       {/* §12.3.2, §12.3.5 — what an edit reaches, and what it cannot. */}
-      <p className="m-0 font-display text-meta leading-normal text-ink-muted">
+      <p className="m-0 text-meta leading-normal text-on-surface-muted">
         Changing the name changes what every module prints as CHECKED BY. It does
         not change the dates modules were completed on, and it does not change
         the mark: both are records of something that already happened.

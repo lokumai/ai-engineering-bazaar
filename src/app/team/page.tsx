@@ -63,7 +63,7 @@ export default function TeamPage() {
   const facts = curriculumFacts()
 
   return (
-    <PageShell sheet="TEAM">
+    <PageShell column={false} sheet="TEAM">
       <p className="hl-eyebrow hl-mark">SCOPED BY RLS · NOT BY THIS PAGE</p>
 
       <h1 className="hl-listing-title">Team</h1>
@@ -91,8 +91,8 @@ export default function TeamPage() {
           screen a manager is likely to read as a fault in the panel, and the
           answer is a property of the record rather than of this page. */}
       <div className="hl-note">
-        <p className="hl-mark m-0 text-ink">Why a row reads USER and eight characters</p>
-        <p className="m-0 mt-1 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
+        <p className="hl-mark m-0 text-on-surface">Why a row reads USER and eight characters</p>
+        <p className="m-0 mt-1 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
           A member is named by the alias they typed for themselves. Where nobody
           has typed one, the row prints the first eight characters of the account
           id and stays in the roster: a row removed for want of a name would hide
@@ -113,13 +113,13 @@ export default function TeamPage() {
           <h2 id="hl-team-limits" className="hl-panel-title">
             What this panel cannot tell you
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">Stated, not implied</p>
+          <p className="hl-mark m-0 text-on-surface-faint">Stated, not implied</p>
         </div>
 
         {/* §12.12.3's stance, applied to a screen about other people: naming the
             limits precisely is what makes the rest of it worth believing. Each
             line is a real property of the system above, not a disclaimer. */}
-        <ul className="m-0 max-w-[var(--width-prose)] list-none p-0 font-display text-meta leading-normal text-ink-muted">
+        <ul className="m-0 max-w-[var(--layout-measure)] list-none p-0 text-meta leading-normal text-on-surface-muted">
           <li className="py-1">
             A completion is the member&rsquo;s own assertion. Nothing assessed it,
             and nothing here gates on it.

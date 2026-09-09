@@ -144,7 +144,7 @@ export function RolePicker({
           return (
             <div
               key={option.id}
-              className="border border-line-strong bg-cleared p-3"
+              className="border border-line-strong bg-surface-raised p-3"
               data-hl-role={option.id}
               data-hl-selected={selected === option.id ? 'true' : 'false'}
             >
@@ -163,15 +163,15 @@ export function RolePicker({
                   // control keeps its native appearance and takes the accent
                   // through `accent-color` — which the platform draws and
                   // forced-colors overrides correctly (§12.17).
-                  style={{ accentColor: 'var(--color-accent)' }}
+                  style={{ accentColor: 'var(--color-primary)' }}
                   className="h-[14px] w-[14px] shrink-0"
                 />
-                <span className="hl-mark text-ink">{option.label}</span>
+                <span className="hl-mark text-on-surface">{option.label}</span>
               </label>
 
               <p
                 id={blurbId}
-                className="mt-1 mb-0 font-display text-meta leading-normal text-ink-muted"
+                className="mt-1 mb-0 text-meta leading-normal text-on-surface-muted"
               >
                 {option.blurb}
               </p>
@@ -179,7 +179,7 @@ export function RolePicker({
               {/* §13.4.2 — the path's DRAWN step count, which is also its
                   denominator. A draft step is on the path and out of the count,
                   because a sheet nobody has written cannot be signed off. */}
-              <p className="hl-mark m-0 mt-1 text-ink-faint">
+              <p className="hl-mark m-0 mt-1 text-on-surface-faint">
                 {plural(drawn, 'module')} ready
               </p>
             </div>
@@ -195,13 +195,13 @@ export function RolePicker({
       <p
         id={statusId}
         role="status"
-        className="hl-mark mt-2 mb-0 min-h-[1.5em] text-ink-muted"
+        className="hl-mark mt-2 mb-0 min-h-[1.5em] text-on-surface-muted"
         data-hydrated={hydrated ? 'true' : 'false'}
       >
         {chosen && label !== null && standing !== null && (
           <>
             {label} ·{' '}
-            <span className="text-ink">
+            <span className="text-on-surface">
               {hydrated ? standing.remaining : NO_READING} of {standing.drawn}
             </span>{' '}
             remaining on this path
@@ -211,7 +211,7 @@ export function RolePicker({
 
       {/* §13.3 — stated where the control is, because the alternative reading
           is that switching costs the reader their record. */}
-      <p className="mt-2 mb-0 font-display text-meta leading-normal text-ink-muted">
+      <p className="mt-2 mb-0 text-meta leading-normal text-on-surface-muted">
         A path is a view over the modules, not a container. Changing role changes
         the order this site recommends and nothing else: completions are recorded
         against modules, so none of them move.

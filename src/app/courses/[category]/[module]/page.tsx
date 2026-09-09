@@ -262,16 +262,27 @@ export default async function ModuleSheetPage({
   return (
     // §5.2 — the footer's own row of facts, which only this page knows: the
     // sheet's number in the set, and the commit that last touched its file.
-    <PageShell sheet={sheetLabel(facts)} revision={sheet.revision} bleed>
-      <div className="hl-sheet" data-format={format}>
-        <div className="hl-rail-left">{curriculum}</div>
-        {/* Outside the grid: it is `position: fixed` against the window's left
-            edge and vertically centred, so it cannot collide with the sticky
-            bar the way the first version of it did (D15). */}
+    /*
+      M16 stage 1 part 2 — the three columns are `PageShell`'s slots now, not
+      three divs this page builds. `bleed` is gone with the 1152px box it used
+      to opt out of, and `bz-shell` anchors the rail and the aside to the
+      window, which is what D15 asked for and what a centred container could
+      never give.
+    */
+    <PageShell
+      sheet={sheetLabel(facts)}
+      revision={sheet.revision}
+      rail={curriculum}
+      aside={rail ?? undefined}
+    >
+      <div className="bz-sheet" data-format={format}>
+        {/* `position: fixed` against the window's left edge and vertically
+            centred, so it cannot collide with the sticky bar the way the first
+            version of it did (D15). Its place in the document does not matter;
+            the fold reveals it from an ancestor attribute. */}
         <RailRestoreTab />
 
-        <div className="hl-column">
-          {format === 'A4' && <StatusBand />}
+        {format === 'A4' && <StatusBand />}
 
           {/* Below the width where a rail can sit beside the prose, both rails'
               content moves behind one control (§4.7). Which widths that is
@@ -398,11 +409,6 @@ export default async function ModuleSheetPage({
           {drawn && rendered !== null && rendered.checklist.length > 0 && (
             <ChecklistIsland slug={slug} />
           )}
-        </div>
-
-        {/* M11 — the right rail, for a drawn module only. A draft has no
-            sections to list and nothing depends on it (§4.5). */}
-        {rail && <div className="hl-rail-right">{rail}</div>}
       </div>
     </PageShell>
   )

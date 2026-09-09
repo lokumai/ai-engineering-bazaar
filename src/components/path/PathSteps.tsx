@@ -132,31 +132,31 @@ function Step({
         <span
           className={
             draft
-              ? 'hl-mark hl-hidden-y ps-2 text-ink-faint'
-              : 'hl-mark text-ink-muted'
+              ? 'hl-mark hl-hidden-y ps-2 text-on-surface-faint'
+              : 'hl-mark text-on-surface-muted'
           }
         >
           {sheet?.number ?? NO_READING}
         </span>
 
         {draft || sheet === undefined ? (
-          <span className="text-ink-muted">{title}</span>
+          <span className="text-on-surface-muted">{title}</span>
         ) : (
           <Link className="hl-link" href={sheet.path}>
             {title}
           </Link>
         )}
 
-        <span className="hl-mark text-ink-faint">{TIER_LABEL[step.tier]}</span>
+        <span className="hl-mark text-on-surface-faint">{TIER_LABEL[step.tier]}</span>
         {sheet !== undefined && (
-          <span className="hl-mark text-ink-faint">{sheet.subsystem}</span>
+          <span className="hl-mark text-on-surface-faint">{sheet.subsystem}</span>
         )}
 
         {/* The state, in words. A draft says what it is; a drawn step says
             `COMPLETED` only when this reader's own record says so, which is
             channel A's to decide — the markup is identical for every reader. */}
         {draft ? (
-          <span className="hl-mark text-ink-faint">PLANNED</span>
+          <span className="hl-mark text-on-surface-faint">PLANNED</span>
         ) : (
           <span className="hl-step-tick hl-mark">COMPLETED</span>
         )}
@@ -173,7 +173,7 @@ function Step({
           contains. On a draft step it says what the module is planned to cover,
           and `honesty.test.ts` refuses the present-tense teaching verbs that
           would read as a promise. */}
-      <p className="mt-1 mb-0 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
+      <p className="mt-1 mb-0 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
         {step.reason}
       </p>
     </li>

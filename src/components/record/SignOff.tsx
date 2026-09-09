@@ -163,7 +163,7 @@ export function SignOff({
 
             record.css authors no class for these two sentences, so they take the
             same tokens directly. */}
-        <p className="mb-1 font-display text-meta text-ink-muted">
+        <p className="mb-1 text-meta text-on-surface-muted">
           {criteria.objectives.length > 0 && (
             <>
               Asserted against the{' '}
@@ -254,7 +254,7 @@ export function SignOff({
             <p className="hl-not-saved hl-mark" role="alert">
               {`NOT SAVED · ${refused}`}
             </p>
-            <p className="mt-1 font-display text-meta text-ink-muted">
+            <p className="mt-1 text-meta text-on-surface-muted">
               The record is held in memory on this page only. Export it to a file to keep it.
             </p>
             {/* §12.1.4 — the safe path is the adjacent action, not a paragraph

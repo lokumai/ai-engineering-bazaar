@@ -180,7 +180,7 @@ export function Lkm01({ size = 28, idPrefix = 'lkm01', className }: Lkm01Props) 
           and nothing more, so it is hidden from assistive technology (T5).
 
           `.hl-sugar` is the class §13.2 fixes for it: sugar is sugar in every
-          flavour, so `lokum.css` paints it `--color-paper` and it needs no
+          flavour, so `lokum.css` paints it `--color-surface` and it needs no
           state rule of its own. The `fill` attribute stays as the value before
           any stylesheet has arrived — a presentation attribute is the weakest
           declaration there is, so the class wins the moment `lokum.css` loads,
@@ -193,7 +193,7 @@ export function Lkm01({ size = 28, idPrefix = 'lkm01', className }: Lkm01Props) 
             cx={cx}
             cy={cy}
             r={SUGAR_R}
-            fill="var(--color-ink-faint)"
+            fill="var(--color-on-surface-faint)"
           />
         ))}
       </g>
@@ -216,7 +216,7 @@ function Hatch({ id, angle, spec }: { id: string; angle: number; spec: HatchSpec
         y1={0}
         x2={spec.pitch / 2}
         y2={spec.pitch}
-        stroke="var(--color-accent)"
+        stroke="var(--color-primary)"
         strokeWidth={spec.stroke}
       />
     </pattern>

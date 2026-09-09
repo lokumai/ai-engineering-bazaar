@@ -43,8 +43,8 @@ async function tabWalk(page: Page, presses: number): Promise<string[]> {
       await page.evaluate(() => {
         const active = document.activeElement
         if (!active) return 'none'
-        if (active.hasAttribute('data-hl-rail-hide')) return 'hide'
-        if (active.hasAttribute('data-hl-rail-restore')) return 'restore'
+        if (active.hasAttribute('data-bz-rail-hide')) return 'hide'
+        if (active.hasAttribute('data-bz-rail-restore')) return 'restore'
         const classes = (active.className ?? '').toString()
         if (classes.includes('hl-mod')) return 'module'
         if (classes.includes('hl-level-head')) return 'level'
@@ -147,7 +147,7 @@ test.describe('the fold', () => {
     const openColumn = await columnWidth(page)
     expect(open).toBeGreaterThan(0)
 
-    await page.locator('[data-hl-rail-hide]').click()
+    await page.locator('[data-bz-rail-hide]').click()
     // Measured after the 200ms fold rather than at a frame count.
     await expect.poll(() => railWidth(page), { timeout: 2_000 }).toBe(0)
     const foldedColumn = await columnWidth(page)
@@ -159,7 +159,7 @@ test.describe('the fold', () => {
     expect(foldedColumn).toBeGreaterThan(openColumn)
     expect(foldedColumn - openColumn).toBe(open)
 
-    await page.locator('[data-hl-rail-restore]').click()
+    await page.locator('[data-bz-rail-restore]').click()
     await expect.poll(() => railWidth(page), { timeout: 2_000 }).toBe(open)
     expect(await columnWidth(page)).toBe(openColumn)
   })
@@ -174,7 +174,7 @@ test.describe('the fold', () => {
     // an independent review caught red in a full run at 8 workers (railWidth
     // 203, expected 0) while it passed 6/6 alone.
     await waitForHydratedReadout(page)
-    await page.locator('[data-hl-rail-hide]').click()
+    await page.locator('[data-bz-rail-hide]').click()
     await expect.poll(() => railWidth(page), { timeout: 2_000 }).toBe(0)
 
     // Written through the record store and nowhere else
@@ -202,7 +202,7 @@ test.describe('the fold', () => {
     // A fresh document, folded before the first paint by channel A — no flash
     // of an open column, and no width to animate away.
     await page.goto(A0.path)
-    await expect(page.locator('html')).toHaveAttribute('data-hl-rail', 'folded')
+    await expect(page.locator('html')).toHaveAttribute('data-bz-rail', 'folded')
     expect(await railWidth(page)).toBe(0)
   })
 
@@ -255,7 +255,7 @@ test.describe('the fold', () => {
           })
       })
 
-      await page.locator('[data-hl-rail-hide]').click()
+      await page.locator('[data-bz-rail-hide]').click()
       await expect.poll(() => railWidth(page), { timeout: 3_000 }).toBe(0)
 
       const ran = await page.evaluate(
@@ -297,7 +297,7 @@ test.describe('the fold', () => {
     expect(open, 'the restore tab is reachable while the rail is open')
       .not.toContain('restore')
 
-    await page.locator('[data-hl-rail-hide]').click()
+    await page.locator('[data-bz-rail-hide]').click()
     await expect.poll(() => railWidth(page), { timeout: 2_000 }).toBe(0)
 
     // A fresh document so the walk starts at the top rather than wherever the
@@ -316,11 +316,11 @@ test.describe('the fold', () => {
   test('hands focus to whichever control is on screen', async ({ page }) => {
     await page.goto(A0.path)
 
-    await page.locator('[data-hl-rail-hide]').click()
-    await expect(page.locator('[data-hl-rail-restore]')).toBeFocused()
+    await page.locator('[data-bz-rail-hide]').click()
+    await expect(page.locator('[data-bz-rail-restore]')).toBeFocused()
 
     await page.keyboard.press('Enter')
-    await expect(page.locator('[data-hl-rail-hide]')).toBeFocused()
+    await expect(page.locator('[data-bz-rail-hide]')).toBeFocused()
   })
 
   test('rings both controls when the keyboard reaches them', async ({ page }) => {
@@ -339,17 +339,17 @@ test.describe('the fold', () => {
       await page.keyboard.press('Tab')
       walked += 1
       const onHide = await page.evaluate(
-        () => document.activeElement?.hasAttribute('data-hl-rail-hide') ?? false,
+        () => document.activeElement?.hasAttribute('data-bz-rail-hide') ?? false,
       )
       if (onHide) break
     }
     expect(walked, 'Tab never reached the fold control').toBeLessThan(30)
-    const hideRing = await ring('[data-hl-rail-hide]')
+    const hideRing = await ring('[data-bz-rail-hide]')
     expect(hideRing.width, 'no focus ring on the fold control').toBeGreaterThan(0)
 
     await page.keyboard.press('Enter')
-    await expect(page.locator('[data-hl-rail-restore]')).toBeFocused()
-    const restoreRing = await ring('[data-hl-rail-restore]')
+    await expect(page.locator('[data-bz-rail-restore]')).toBeFocused()
+    const restoreRing = await ring('[data-bz-rail-restore]')
     expect(restoreRing.width, 'no focus ring on the restore tab').toBeGreaterThan(0)
   })
 
@@ -369,10 +369,10 @@ test.describe('the fold', () => {
     // full suite at 8 workers produced a different one of them red on each of
     // four runs until all three waited.
     await waitForHydratedReadout(page)
-    await page.locator('[data-hl-rail-hide]').click()
+    await page.locator('[data-bz-rail-hide]').click()
     await expect.poll(() => railWidth(page), { timeout: 2_000 }).toBe(0)
 
-    const box = await page.locator('[data-hl-rail-restore]').boundingBox()
+    const box = await page.locator('[data-bz-rail-restore]').boundingBox()
     expect(box, 'the restore tab has no box').not.toBeNull()
 
     // Against the window's left edge, and clear of the sticky bar.
@@ -385,7 +385,7 @@ test.describe('the fold', () => {
     const hit = await page.evaluate(
       ([x, y]) => {
         const element = document.elementFromPoint(x, y)
-        return element?.closest('[data-hl-rail-restore]') !== null
+        return element?.closest('[data-bz-rail-restore]') !== null
       },
       [box!.x + box!.width / 2, box!.y + box!.height / 2],
     )

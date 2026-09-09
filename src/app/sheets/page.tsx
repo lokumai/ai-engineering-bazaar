@@ -57,7 +57,7 @@ export default function CatalogPage() {
   const rows = sheetRows()
 
   return (
-    <PageShell>
+    <PageShell column={false}>
       <h1 className="hl-listing-title">Catalog</h1>
 
       <p className="hl-lead">

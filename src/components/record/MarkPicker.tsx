@@ -215,7 +215,7 @@ export function MarkPicker({
                 // Painting a square one by hand would have carried the
                 // checked state in a `box-shadow`, and forced-colors deletes
                 // every shadow on the page.
-                style={{ accentColor: 'var(--color-accent)' }}
+                style={{ accentColor: 'var(--color-primary)' }}
                 className="hl-markrow-input"
               />
               <DrafterStamp mark={mark} seed={seed} />
@@ -242,13 +242,13 @@ export function MarkPicker({
           absence is named rather than filled with a substitute glyph. Printed
           on the seed's own account, not on the selection's: the empty cell is
           there to be seen whether or not it is the one chosen. */}
-      {seed === null && <p className="hl-mark m-0 text-ink-faint">{NO_SEED_MINTED}</p>}
+      {seed === null && <p className="hl-mark m-0 text-on-surface-faint">{NO_SEED_MINTED}</p>}
 
       {/* §12.0 / §12.3.5 — naming the absence of the control that is
           deliberately not here, in one line rather than the three the card grid
           could afford. The rest of the argument is `MARKS`' own description of
           the seeded option, which the line above prints when it is pointed at. */}
-      <p className="mt-2 mb-0 font-display text-meta leading-normal text-ink-muted">
+      <p className="mt-2 mb-0 text-meta leading-normal text-on-surface-muted">
         The seeded pattern comes from an 8-character seed minted once with this
         record, and it is never regenerated.
       </p>

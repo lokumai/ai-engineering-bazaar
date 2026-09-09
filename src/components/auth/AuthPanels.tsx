@@ -53,7 +53,7 @@ const NO_READING = '--'
  */
 function Unsigned({ children }: { children: string }) {
   return (
-    <span className="inline-block border border-dashed border-line-strong px-1.5 text-ink-faint">
+    <span className="inline-block border border-dashed border-line-strong px-1.5 text-on-surface-faint">
       {children}
     </span>
   )
@@ -83,7 +83,7 @@ export function AccountPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
     // state. `SessionProvider` records why this is not a permanent "checking".
     return (
       <AuthShell chrome={chrome} headingId="hl-account-head" heading="Account">
-        <p className="hl-mark m-0 text-ink-muted">NO SESSION IS BEING TRACKED ON THIS PAGE</p>
+        <p className="hl-mark m-0 text-on-surface-muted">NO SESSION IS BEING TRACKED ON THIS PAGE</p>
       </AuthShell>
     )
   }
@@ -96,7 +96,7 @@ export function AccountPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
       headingId="hl-account-head"
       heading="Account"
       mark={
-        <p className="hl-mark m-0 text-ink-faint">
+        <p className="hl-mark m-0 text-on-surface-faint">
           {view.status === 'signedIn'
             ? 'RECORD CONNECTED TO AN ACCOUNT'
             : 'THIS BROWSER ONLY'}
@@ -135,14 +135,14 @@ export function AccountPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
           ) : (
             <>
               {view.user.githubLogin}
-              <span className="ml-2 text-ink-faint">UNVERIFIED HERE</span>
+              <span className="ml-2 text-on-surface-faint">UNVERIFIED HERE</span>
             </>
           )}
         </dd>
       </dl>
 
       {view.status === 'signedIn' && (
-        <p className="mt-4 mb-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-4 mb-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           Signing out clears the session from this browser. It does not delete
           anything: your record stays in this browser, and the copy connected to
           this account stays on the account. The erase control on this module is
@@ -169,7 +169,7 @@ export function AccountPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
             The account could not be read, so this panel is not claiming to
             know its state. Nothing was changed.
           </p>
-          <p className="hl-mark text-ink-muted">REPORTED · {error}</p>
+          <p className="hl-mark text-on-surface-muted">REPORTED · {error}</p>
         </div>
       )}
     </AuthShell>
@@ -279,7 +279,7 @@ export function OrgMembershipPanel({ chrome = 'panel' }: { chrome?: AuthChrome }
       chrome={chrome}
       headingId="hl-orgs-head"
       heading="Organisations"
-      mark={<p className="hl-mark m-0 text-ink-faint">READ ONLY IN THIS REVISION</p>}
+      mark={<p className="hl-mark m-0 text-on-surface-faint">READ ONLY IN THIS REVISION</p>}
     >
       {status !== 'signedIn' ? (
         /**
@@ -300,7 +300,7 @@ export function OrgMembershipPanel({ chrome = 'panel' }: { chrome?: AuthChrome }
          * from that same author, so the two cannot drift into a second
          * spelling.
          */
-        <p className="hl-mark m-0 text-ink-muted">
+        <p className="hl-mark m-0 text-on-surface-muted">
           {status === 'unknown'
             ? 'CHECKING'
             : status === 'disabled'
@@ -308,7 +308,7 @@ export function OrgMembershipPanel({ chrome = 'panel' }: { chrome?: AuthChrome }
               : 'NOT SIGNED IN · NO MEMBERSHIP TO REPORT'}
         </p>
       ) : state.kind === 'loading' || state.kind === 'idle' ? (
-        <p className="hl-mark m-0 text-ink-muted" aria-live="polite">
+        <p className="hl-mark m-0 text-on-surface-muted" aria-live="polite">
           READING MEMBERSHIPS
         </p>
       ) : state.kind === 'failed' ? (
@@ -318,7 +318,7 @@ export function OrgMembershipPanel({ chrome = 'panel' }: { chrome?: AuthChrome }
             a statement that you belong to no organisation — it is a statement
             that this page does not know.
           </p>
-          <p className="hl-mark text-ink-muted">REPORTED · {state.message}</p>
+          <p className="hl-mark text-on-surface-muted">REPORTED · {state.message}</p>
         </div>
       ) : state.rows.length === 0 ? (
         <p className="hl-submittal-empty">
@@ -591,7 +591,7 @@ function CallbackBody() {
         </h2>
       </div>
 
-      <p className="hl-mark m-0 text-ink-muted" aria-live="polite">
+      <p className="hl-mark m-0 text-on-surface-muted" aria-live="polite">
         {phase.kind === 'reading' && 'READING THE RETURN ADDRESS'}
         {phase.kind === 'waiting' && 'EXCHANGING THE SIGN-IN CODE'}
         {phase.kind === 'done' && 'SIGNED IN · RETURNING'}

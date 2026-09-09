@@ -194,7 +194,7 @@ export function QuickCheck({
         </div>
 
         {!attempted && (
-          <p className="hl-quiz-note font-display text-meta">
+          <p className="hl-quiz-note text-meta">
             The module&rsquo;s summary can be compared once an answer is written.
           </p>
         )}
@@ -218,7 +218,7 @@ export function QuickCheck({
           </p>
         )}
 
-        <p className="hl-quiz-note font-display text-meta">
+        <p className="hl-quiz-note text-meta">
           Self-assessment. Not graded by anyone.
         </p>
       </div>

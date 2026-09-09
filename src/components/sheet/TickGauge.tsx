@@ -108,7 +108,7 @@ export function TickGauge({
             height={HEIGHT}
             fill={
               tick === 'approved'
-                ? 'var(--color-accent)'
+                ? 'var(--color-primary)'
                 : 'var(--color-line-strong)'
             }
           />

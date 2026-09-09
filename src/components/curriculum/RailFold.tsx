@@ -14,7 +14,7 @@ import { update } from '@/lib/record/store'
  *
  * ## Three things here are load-bearing
  *
- * **1. The state lives on `<html>`, not in React.** `data-hl-rail="folded"` is
+ * **1. The state lives on `<html>`, not in React.** `data-bz-rail="folded"` is
  * stamped by the pre-paint boot script (§12.2 channel A), so a reader who
  * folded the rail last week gets a folded rail in frame one — no flash of an
  * open column, no hydration, no layout shift. CSS does the rest. That is also
@@ -49,12 +49,12 @@ import { update } from '@/lib/record/store'
  * remove.
  */
 
-const ATTRIBUTE = 'data-hl-rail'
+const ATTRIBUTE = 'data-bz-rail'
 const FOLDED = 'folded'
 
 /** The counterpart control, so focus is never dropped on the floor. */
-const HIDE = '[data-hl-rail-hide]'
-const RESTORE = '[data-hl-rail-restore]'
+const HIDE = '[data-bz-rail-hide]'
+const RESTORE = '[data-bz-rail-restore]'
 
 function setFold(folded: boolean): void {
   const root = document.documentElement
@@ -76,8 +76,8 @@ export function RailFoldButton() {
   return (
     <button
       type="button"
-      data-hl-rail-hide=""
-      className="hl-rail-fold"
+      data-bz-rail-hide=""
+      className="bz-rail-fold"
       onClick={() => setFold(true)}
     >
       <svg
@@ -111,8 +111,8 @@ export function RailRestoreTab() {
   return (
     <button
       type="button"
-      data-hl-rail-restore=""
-      className="hl-rail-restore"
+      data-bz-rail-restore=""
+      className="bz-rail-restore"
       onClick={() => setFold(false)}
     >
       <svg
@@ -127,7 +127,7 @@ export function RailRestoreTab() {
         <path d="M4.5 2.5L8 6l-3.5 3.5" />
         <path d="M10.5 1.5v9" />
       </svg>
-      <span className="hl-rail-restore-label">Course modules</span>
+      <span className="bz-said">Course modules</span>
     </button>
   )
 }

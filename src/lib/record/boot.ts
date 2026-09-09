@@ -16,7 +16,7 @@
  *   `class="hl-role-<id>"`                the reader's role (§13.3)
  *   `data-hl-record="1"`                  a record CARRYING SOMETHING exists
  *   `data-hl-storage="ok" | "blocked"`    tells empty state 1 from 4 (§12.13)
- *   `data-hl-rail="folded"`               M10 — the curriculum rail is folded
+ *   `data-bz-rail="folded"`               M10 — the curriculum rail is folded
  *   `data-hl-view="<id>"`                 M12 — the catalog view last chosen
  *
  * **The rail and the view stamps are written BEFORE the `carriesNothing`
@@ -154,7 +154,7 @@ var env=JSON.parse(raw);
 if(!isObj(env)||typeof env.schema!=="number"||env.schema<1||env.schema>${SCHEMA_VERSION})return;
 var d=env.data;
 if(!isObj(d))return;
-if(isObj(d.prefs)&&d.prefs.railFolded===true)r.setAttribute("data-hl-rail","folded");
+if(isObj(d.prefs)&&d.prefs.railFolded===true)r.setAttribute("data-bz-rail","folded");
 if(isObj(d.prefs)&&inL(V,d.prefs.catalogView))r.setAttribute("data-hl-view",d.prefs.catalogView);
 var counts={},k,c,i,n,rec,id,ro=null,sh=d.sheets,has=0;
 if(arr(d.days)&&someDay(d.days))has=1;

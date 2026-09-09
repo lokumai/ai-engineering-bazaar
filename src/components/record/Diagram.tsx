@@ -345,7 +345,7 @@ export function Diagram({
                   x={HEADER_TEXT_X}
                   y={band.nodeY + 9}
                   textAnchor="end"
-                  fill="var(--color-ink-muted)"
+                  fill="var(--color-on-surface-muted)"
                   aria-hidden="true"
                 >
                   Level {band.ordinal}
@@ -354,8 +354,8 @@ export function Diagram({
                   x={HEADER_TEXT_X}
                   y={band.nodeY + 23}
                   textAnchor="end"
-                  fill="var(--color-ink)"
-                  fontFamily="var(--font-display)"
+                  fill="var(--color-on-surface)"
+                  fontFamily="var(--font-sans)"
                   fontSize="12"
                   fontWeight={600}
                   aria-hidden="true"
@@ -476,14 +476,14 @@ function StackedBands({
             className="mb-6"
             aria-label={bandLabel(band, signed)}
           >
-            <p className="hl-mark m-0 text-ink-muted">Level {band.ordinal}</p>
-            <p className="m-0 font-display text-micro font-semibold text-ink">
+            <p className="hl-mark m-0 text-on-surface-muted">Level {band.ordinal}</p>
+            <p className="m-0 text-label font-semibold text-on-surface">
               {band.title}
             </p>
             {/* §10.4 — the count is stated in text beside the gauge, which is
                 what lets the gauge itself be decoration rather than a second
                 announcement of the same number. */}
-            <p className="hl-mark m-0 text-ink-faint">
+            <p className="hl-mark m-0 text-on-surface-faint">
               {band.total} modules · {signed} completed
             </p>
             <TickGauge className="mt-1" ticks={members.map(tickOf)} />
@@ -523,7 +523,7 @@ function StackedBands({
                   <Link href={view.node.path} className="hl-link text-meta">
                     {view.node.title}
                   </Link>
-                  <span className="hl-mark ml-auto shrink-0 text-ink-faint">
+                  <span className="hl-mark ml-auto shrink-0 text-on-surface-faint">
                     {stateText(view)}
                   </span>
                 </li>
@@ -531,7 +531,7 @@ function StackedBands({
             </ul>
 
             {bandEdgeLines(band).length > 0 && (
-              <ul className="m-0 list-none p-0 font-mono text-meta text-ink-muted">
+              <ul className="m-0 list-none p-0 font-mono text-meta text-on-surface-muted">
                 {bandEdgeLines(band).map((line) => (
                   <li key={line}>{line}</li>
                 ))}
@@ -601,12 +601,12 @@ function DiagramTable({
       <summary>The same graph as a table · {rows.length} modules</summary>
       <div className="mt-3 overflow-x-auto">
         <table className="w-full border-collapse text-left font-mono text-mark tabular-nums">
-          <caption className="hl-mark mb-2 text-left text-ink-muted">
+          <caption className="hl-mark mb-2 text-left text-on-surface-muted">
             Every module in the curriculum, the state this browser records for it, and
             the modules it needs and unlocks
           </caption>
           <thead>
-            <tr className="border-b border-line-strong text-ink-muted uppercase">
+            <tr className="border-b border-line-strong text-on-surface-muted uppercase">
               <th scope="col" className="py-1 pr-3 font-medium">#</th>
               <th scope="col" className="py-1 pr-3 font-medium">Module</th>
               <th scope="col" className="py-1 pr-3 font-medium">Level</th>
@@ -618,23 +618,23 @@ function DiagramTable({
           <tbody>
             {rows.map((view) => (
               <tr key={view.node.slug} className="border-b border-line">
-                <td className="py-1 pr-3 text-ink-muted">{view.node.label}</td>
-                <th scope="row" className="py-1 pr-3 font-normal text-ink">
+                <td className="py-1 pr-3 text-on-surface-muted">{view.node.label}</td>
+                <th scope="row" className="py-1 pr-3 font-normal text-on-surface">
                   <Link href={view.node.path} className="hl-link">
                     {view.node.title}
                   </Link>
                 </th>
-                <td className="py-1 pr-3 text-ink-muted uppercase">
+                <td className="py-1 pr-3 text-on-surface-muted uppercase">
                   {title.get(view.node.category) ?? view.node.category}
                 </td>
-                <td className="py-1 pr-3 text-ink-muted uppercase">
+                <td className="py-1 pr-3 text-on-surface-muted uppercase">
                   {stateText(view)}
                 </td>
                 {/* §11.25 — a dash where there is nothing, never a zero. */}
-                <td className="py-1 pr-3 text-ink-muted">
+                <td className="py-1 pr-3 text-on-surface-muted">
                   {view.node.requires.length > 0 ? view.node.requires.join(', ') : '—'}
                 </td>
-                <td className="py-1 text-ink-muted">
+                <td className="py-1 text-on-surface-muted">
                   {view.node.feeds.length > 0 ? view.node.feeds.join(', ') : '—'}
                 </td>
               </tr>
@@ -681,7 +681,7 @@ export function ContinueLine({ facts }: { facts: ContinueFacts }) {
   if (!sheet) return null
 
   return (
-    <p className="hl-mark m-0 text-ink-muted">
+    <p className="hl-mark m-0 text-on-surface-muted">
       Continue{' '}
       <Link href={`/courses/${slug}/`} className="hl-link">
         Module {String(sheet.module).padStart(2, '0')} · {sheet.title}

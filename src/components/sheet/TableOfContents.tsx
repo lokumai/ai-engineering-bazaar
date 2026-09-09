@@ -6,7 +6,7 @@ import type { TocEntry } from '@/lib/content/render'
  * the viewport is the template tell this replaces.
  *
  * What it tracks is scroll position, not completion (§5.8). Nothing in here
- * ever takes `--color-accent`: the current row moves to `--color-ink`, its
+ * ever takes `--color-primary`: the current row moves to `--color-on-surface`, its
  * spine segment to the cut-plane weight, and its tick 6px into the gutter.
  * There is no visited state either — a TOC is not a progress meter.
  *

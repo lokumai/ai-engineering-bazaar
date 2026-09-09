@@ -1,95 +1,130 @@
 import { ClaimReceipt } from '@/components/record/ClaimReceipt'
 import { Readout } from '@/components/record/Readout'
+import { categoryLabels } from '@/lib/content/chrome'
 import { curriculumFacts } from '@/lib/content/facts'
-import { RegistrationMarks } from './RegistrationMarks'
+import { Breadcrumb } from './Breadcrumb'
 import { type Revision, SiteFooter } from './SiteFooter'
 
 /**
- * The main region and the footer, §4.1's shell around whatever a page draws.
+ * The frame every route sits in — M16 stage 1 part 2.
  *
- * It lives here rather than in the root layout for one reason: §5.2's footer
- * has to print `SHEET 13 OF 32` and `REV <hash> · <date>`, and both are facts
- * about the *content* of the page. A layout has no page data in scope, so with
- * the footer rendered up there its first row was structurally unreachable and
- * shipped empty on all 32 module sheets — a 40px void above the licence line.
- * A shared shell is what lets a page hand the footer its own numbers.
+ * Reference: `playground/01-theme-T4-ground-G3-powder.html`. The bar and the
+ * band are `SiteHeader`'s; this is everything under them: the three-column
+ * grid, the reading column, the trail, and the footer.
  *
- * Both parts are here together on purpose. A page that forgets the shell loses
- * its `<main>` as well as its footer, which `accessibility.spec.ts` fails
- * loudly on (§10.2); losing only the footer would be silent.
+ * ## Three columns belong to one route, and that is the mockup's own answer
  *
- * **The compact readout is measured here, not passed in** (§5.2, §7.1). This is
- * a server component, so it may read the corpus: `curriculumFacts()` reaches
- * `node:fs`, which is exactly why no client leaf may import it (§12.2), and the
- * counts cross into `Readout` as serialised props. Every page gets the readout
- * without knowing it exists, which is what §7.1 asks for — the compact form
- * lives in the footer on every page — and it is why none of the four routes
- * that render this shell had to change.
+ * Only two mockups have a fixed leading track — `01` at
+ * `262px minmax(0,1fr) 204px` and `04` at `250px minmax(0,1fr) 196px`. The
+ * catalog, the dashboard and the home page are drawn single-column inside the
+ * bar. So `bz-shell` appears when a route passes a `rail`, which today is the
+ * module page alone, and every other route is a bare `bz-main`. What "every
+ * route carries the shell" means is the bar and the band, which every route
+ * does carry.
+ *
+ * **The grid has to be a full-width child of `<body>`**, because the rail and
+ * the aside anchor to the window rather than to a centred container. That is
+ * the difference D15 recorded and the reason `bleed` used to exist.
+ *
+ * ## What M16 removed from this file
+ *
+ * **`bleed` is gone.** It existed to opt one route out of a 1152px
+ * `max-w-[var(--width-shell)]` box, and there is no such box any more: the
+ * middle column's padding is fluid and `bz-col` caps the measure. A prop whose
+ * only job was to say "not that cap" has nothing left to say.
+ *
+ * **`RegistrationMarks` is gone**, deleted rather than hidden. Four L-shaped
+ * corner marks are a second decorative element, and DESIGN.md's Don't is
+ * exactly "add a second decorative element anywhere". The ornament budget is
+ * spent once, on the band.
+ *
+ * ## The trail lives here now
+ *
+ * The retired header gave the breadcrumb a second 32px row of its own; the
+ * mockup puts `nav.crumb` inside the reading column, above the display
+ * heading. So this renders it, which also means every route gets one without
+ * asking — and it is why `Breadcrumb` is a client leaf held by a server
+ * component that can measure the corpus for it.
+ *
+ * The footer stays here for the reason it always did: §5.2's first row prints
+ * this page's own sheet number and revision, and a layout has no page data in
+ * scope. A page that forgets the shell loses its `<main>` as well as its
+ * footer, which `accessibility.spec.ts` fails loudly on.
  */
 export function PageShell({
   children,
   sheet,
   revision,
-  bleed = false,
+  rail,
+  aside,
+  column = true,
+  trail = true,
 }: {
   children: React.ReactNode
-  /** §5.2 — `SHEET 13 OF 32`. Omitted, the footer names the route instead. */
+  /** §5.2 — `MODULE 13 OF 33`. Omitted, the footer names the route instead. */
   sheet?: string | null
   /** §5.2, §11.26 — this file's last-touching commit, never repo HEAD. */
   revision?: Revision | null
   /**
-   * M10 — hand the page the whole window instead of the 1200px shell.
-   *
-   * D15 anchors a module page's two rails to the WINDOW edges, and a 1200px
-   * `max-width` with 24px of padding is exactly the thing that stops them
-   * reaching. Only the module page asks for this; every other route keeps the
-   * shell, and this is a prop rather than a second shell component because the
-   * `<main>`, the skip target, the claim receipt and the footer's own row of
-   * facts are identical either way — a fork would be four things duplicated to
-   * vary one.
-   *
-   * The claim receipt keeps the shell regardless: it is a sentence of prose
-   * about the reader's record, and a sentence measured against 1440px is
-   * unreadable whatever the page around it is doing.
+   * The leading column. Passing one turns the page into the three-column
+   * grid; omitting it leaves the reading column the whole window.
    */
-  bleed?: boolean
+  rail?: React.ReactNode
+  /** The trailing column: an in-page index. Only meaningful beside a `rail`. */
+  aside?: React.ReactNode
+  /**
+   * Cap the children at the reading measure. True for prose, false for a
+   * surface the mockups draw edge to edge — the catalog's three views, the
+   * home page's level grid, the progress page's two-up panels.
+   */
+  column?: boolean
+  /** The breadcrumb. Off only where a trail would name a page nobody navigated to. */
+  trail?: boolean
 }) {
   const facts = curriculumFacts()
 
+  const inner = (
+    <>
+      {/*
+        §17.6 — news about the reader's record, above the page's own content
+        because it is not part of whatever page they happened to land on. It
+        keeps the measure even where the children do not: a sentence of prose
+        measured against 1440px is unreadable whatever is around it.
+      */}
+      <div className="bz-col">
+        <ClaimReceipt />
+      </div>
+      {trail && (
+        <div className="bz-col">
+          <Breadcrumb categories={categoryLabels()} />
+        </div>
+      )}
+      {column ? <div className="bz-col">{children}</div> : children}
+    </>
+  )
+
+  /*
+   * §10.2 — the skip link's target. `tabIndex={-1}` so the fragment can
+   * actually take focus: without it Safari and VoiceOver leave the cursor in
+   * the header after the skip.
+   */
+  const main = (
+    <main id="main" tabIndex={-1} className="bz-main">
+      {inner}
+    </main>
+  )
+
   return (
     <>
-      {/* §10.2 — the skip link's target. `tabIndex={-1}` so the fragment can
-          actually take focus: without it Safari/VoiceOver leaves the VO cursor
-          in the header after the skip. `main:focus` is un-ringed in
-          globals.css. */}
-      <main id="main" tabIndex={-1} className="flex-1 pt-10 pb-16">
-        {/* §4.2's corner marks frame the 1152px content box. A bleed page has
-            no such box — its rails are on the window edges — so the marks
-            would float mid-page at an edge nothing else uses. They are also the
-            retired drawing-set frame, and `kia-context/specs/DESIGN.md` spends
-            the ornament budget once, on the tile band under the bar: a second
-            decorative motif means one of the two is wrong. The routes that
-            still keep the box still get them. */}
-        {!bleed && <RegistrationMarks edge="top" />}
-        {/* §17.6 — the claim receipt, above the page's own content, because it
-            is news about the reader's record and not part of whatever page they
-            happened to land on. Renders nothing in the prerender and nothing on
-            a document where no claim was news. It keeps the shell in both
-            modes; see `bleed`. */}
-        <div className="mx-auto w-full max-w-[var(--width-shell)] px-5 md:px-6">
-          <ClaimReceipt />
+      {rail === undefined ? main : (
+        <div className="bz-shell">
+          <aside className="bz-rail">
+            <div className="bz-rail-inner">{rail}</div>
+          </aside>
+          {main}
+          {aside === undefined ? null : <aside className="bz-aside">{aside}</aside>}
         </div>
-        {/* §4.7 — 24px of side padding, dropping to 20px below 768px, unless
-            the page asked for the window. */}
-        {bleed ? (
-          <div className="w-full">{children}</div>
-        ) : (
-          <div className="mx-auto w-full max-w-[var(--width-shell)] px-5 md:px-6">
-            {children}
-          </div>
-        )}
-        {!bleed && <RegistrationMarks edge="bottom" className="mt-16" />}
-      </main>
+      )}
 
       <SiteFooter
         sheet={sheet}

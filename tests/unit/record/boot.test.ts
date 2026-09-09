@@ -340,7 +340,7 @@ describe('data-hl-record only goes on a record that carries something (§15.11)'
     const stamped = run(script, {
       stored: envelope({ prefs: { railFolded: true, catalogView: 'table' } }),
     })
-    expect(stamped.attributes.get('data-hl-rail')).toBe('folded')
+    expect(stamped.attributes.get('data-bz-rail')).toBe('folded')
     expect(stamped.attributes.get('data-hl-view')).toBe('table')
     expect(stamped.attributes.has('data-hl-record')).toBe(false)
     expect([...stamped.classes]).toEqual([])

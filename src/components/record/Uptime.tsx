@@ -75,7 +75,7 @@ export function Uptime() {
           />
         ))}
       </div>
-      <p className="hl-mark m-0 text-ink-muted">{label(reading)}</p>
+      <p className="hl-mark m-0 text-on-surface-muted">{label(reading)}</p>
     </div>
   )
 }

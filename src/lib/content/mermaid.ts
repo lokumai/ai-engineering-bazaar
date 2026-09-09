@@ -41,7 +41,7 @@ const RAW_FILL = /fill:\s*#[0-9A-Fa-f]{3,8}/
  * (B4) — which is what §6.10 means by "the site styles those classes with
  * tokens", and the only place the styling *can* live: mermaid's `classDef`
  * grammar takes CSS declarations but not CSS functions, so
- * `fill:var(--color-fault-wash)` is a parse error on the `(` and a parse error
+ * `stroke:var(--color-category-5)` is a parse error on the `(` and a parse error
  * blanks the figure. What the classDef carries instead is the one thing about
  * these four classes that is not a colour and is true of every rule on the
  * sheet: §2.2's hairline weight.

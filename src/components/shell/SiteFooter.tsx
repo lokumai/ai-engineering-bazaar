@@ -39,8 +39,8 @@ export interface SiteFooterProps {
  */
 export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
   return (
-    <footer role="contentinfo" className="border-t border-line-strong bg-paper">
-      <div className="mx-auto w-full max-w-[var(--width-shell)] px-6">
+    <footer role="contentinfo" className="border-t border-line-strong bg-surface">
+      <div className="w-full px-[22px]">
         {/* §5.2 row 1 — the three-part flex, which is what puts the sheet
             label left, the revision centre and the readout right. On a page
             with no revision the two survivors take the two ends, which is the
@@ -60,7 +60,7 @@ export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
               342px wide and `MODULE 13 OF 32` broken after the number reads as
               two facts instead of one. */}
           {revision && (
-            <span className="hl-mark whitespace-nowrap text-ink-muted">
+            <span className="hl-mark whitespace-nowrap text-on-surface-muted">
               Rev <span className="normal-case">{revision.hash}</span>
               <span aria-hidden="true"> · </span>
               {revision.date}
@@ -82,7 +82,7 @@ export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
             pushed the document sideways — the one thing no page may do. On any
             width where the six fit, `min-h-8` is 32px and §5.2's 72px total is
             unchanged. */}
-        <div className="flex min-h-8 flex-wrap items-center gap-x-3 font-display text-meta text-ink-muted">
+        <div className="flex min-h-8 flex-wrap items-center gap-x-3 text-meta text-on-surface-muted">
           <a className="hl-link" href={REPO_URL}>
             Repository
           </a>
@@ -120,7 +120,7 @@ export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
  */
 function Dot() {
   return (
-    <span aria-hidden="true" className="text-ink-faint">
+    <span aria-hidden="true" className="text-on-surface-faint">
       ·
     </span>
   )

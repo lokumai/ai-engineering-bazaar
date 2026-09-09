@@ -119,7 +119,7 @@ export function DrafterBlock() {
         <h2 id={DRAFTER_HEADING_ID} className="hl-panel-title">
           The account
         </h2>
-        <p className="hl-mark m-0 text-ink-faint">This browser, and across browsers</p>
+        <p className="hl-mark m-0 text-on-surface-faint">This browser, and across browsers</p>
       </div>
 
       <div className="hl-drafter">
@@ -162,7 +162,7 @@ export function DrafterBlock() {
                     state. `/legend/`'s storage disclosure sits over the same
                     `RECORD_SCOPE` paragraph and carries this same spelling, so
                     one status is worded one way site-wide. */}
-                <p className="hl-mark m-0 text-ink-faint">This browser’s copy</p>
+                <p className="hl-mark m-0 text-on-surface-faint">This browser’s copy</p>
               </div>
 
               <IdentityPanel />
@@ -179,7 +179,7 @@ export function DrafterBlock() {
                 <h3 id="hl-account-head" className="hl-panel-title">
                   Across browsers
                 </h3>
-                <p className="hl-mark m-0 text-ink-faint">An account keeps a second copy</p>
+                <p className="hl-mark m-0 text-on-surface-faint">An account keeps a second copy</p>
               </div>
 
               <SessionProvider>

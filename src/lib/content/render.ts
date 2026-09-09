@@ -198,7 +198,7 @@ function rehypeDropSelfCheck() {
 }
 
 /**
- * §6.2 — the first paragraph of the body is the lead: 20px, `--color-ink-muted`.
+ * §6.2 — the first paragraph of the body is the lead: 20px, `--color-on-surface-muted`.
  * It reads as the deck under the sheet title, which is the job it is doing.
  */
 function rehypeLeadParagraph() {
@@ -794,7 +794,7 @@ function rehypeCourseLinks(sheet: number | undefined) {
  * §6.3 / T3 — a link is ink text with a `--color-line-strong` underline. The
  * only thing that marks it as leaving the site is a mono `↗`. **MEASURED:**
  * module 9 carries 74 external links; 74 vermilion words in one sheet would be
- * unreadable and would end `--color-accent` meaning "signed off".
+ * unreadable and would end `--color-primary` meaning "signed off".
  */
 function rehypeExternalLinks() {
   return (tree: Root) => {

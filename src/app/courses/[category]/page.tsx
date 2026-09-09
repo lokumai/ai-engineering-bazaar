@@ -66,7 +66,7 @@ export default async function CategoryPage({
   const notes = intro === null ? null : await renderMarkdown(intro)
 
   return (
-    <PageShell>
+    <PageShell column={false}>
       {/* §13.5 surface 3 — the header band, and the one aggregate hue on this
           page. `hl-band-tint` paints §13.1.2's 2px rule above the level's
           own name in its own flavour, resolved on channel A from the class the

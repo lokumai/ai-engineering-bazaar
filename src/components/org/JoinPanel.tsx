@@ -95,7 +95,7 @@ function unavailableCopy(why: SupabaseUnavailable): { status: string; detail: st
 
 function PathNote({ offer }: { offer: JoinOffer }) {
   return (
-    <p className="hl-mark m-0 text-ink-muted">
+    <p className="hl-mark m-0 text-on-surface-muted">
       {offer.path === 'domain' ? JOIN_COPY.pathDomain : JOIN_COPY.pathInvite}
     </p>
   )
@@ -123,12 +123,12 @@ function OfferBlock({
   return (
     <div className="hl-signoff">
       <div className="hl-signoff-head hl-mark">
-        <span className="text-ink">{offer.org.name}</span>
+        <span className="text-on-surface">{offer.org.name}</span>
         <PathNote offer={offer} />
       </div>
 
       <div className="hl-signoff-body">
-        <p className="hl-mark mt-0 mb-2 text-ink">{JOIN_COPY.disclosureHead}</p>
+        <p className="hl-mark mt-0 mb-2 text-on-surface">{JOIN_COPY.disclosureHead}</p>
 
         {/* §14.5.1 — read before anything is clicked. The button is below it,
             and there is no state of this component in which it is not. */}
@@ -148,7 +148,7 @@ function OfferBlock({
             {`${JOIN_COPY.action} ${offer.org.name}`}
           </button>
           {busy && (
-            <span className="hl-mark self-center text-ink-muted" role="status">
+            <span className="hl-mark self-center text-on-surface-muted" role="status">
               WRITING THE MEMBERSHIP ROW
             </span>
           )}
@@ -156,8 +156,8 @@ function OfferBlock({
 
         {failure !== null && (
           <div className="mt-3" role="alert">
-            <p className="hl-mark m-0 text-ink">ROW NOT WRITTEN</p>
-            <p className="m-0 mt-1 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
+            <p className="hl-mark m-0 text-on-surface">ROW NOT WRITTEN</p>
+            <p className="m-0 mt-1 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
               {joinFailureCopy(failure.failure, offer.org.name)}
             </p>
             {failure.message !== '' && <p className="hl-raw">{failure.message}</p>}
@@ -177,19 +177,19 @@ function MemberList({ orgs }: { orgs: readonly JoinableOrg[] }) {
   if (orgs.length === 0) return null
   return (
     <div className="mt-6">
-      <p className="hl-mark m-0 text-ink">{JOIN_COPY.memberHead}</p>
+      <p className="hl-mark m-0 text-on-surface">{JOIN_COPY.memberHead}</p>
       {/* Not `hl-defs`: that grid uppercases its cells, which is right for a
           machine-derived readout and wrong for a name somebody typed. The
           organisation is printed as it is stored. */}
       <ul className="m-0 mt-2 grid list-none gap-1 p-0">
         {orgs.map((org) => (
           <li key={org.id} className="flex flex-wrap items-baseline gap-x-3">
-            <span className="hl-mark text-ink-muted">{JOIN_COPY.joined}</span>
-            <span className="font-mono text-mark tracking-[0.06em] text-ink">{org.name}</span>
+            <span className="hl-mark text-on-surface-muted">{JOIN_COPY.joined}</span>
+            <span className="font-mono text-mark tracking-[0.06em] text-on-surface">{org.name}</span>
           </li>
         ))}
       </ul>
-      <p className="m-0 mt-2 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
+      <p className="m-0 mt-2 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
         Managers of every organisation on this list read the same record, and
         the record is one record per person. Leaving an organisation stops that;
         it does not withdraw the history the organisation already holds.
@@ -473,7 +473,7 @@ export function JoinPanel() {
               uppercase it. §14.4.2 compares it case-sensitively, so a readout
               that shouted it back in capitals would misreport the one value
               whose exact letters decide whether the insert lands. */}
-          <p className="m-0 mb-4 font-mono text-mark tracking-[0.06em] text-ink-muted">
+          <p className="m-0 mb-4 font-mono text-mark tracking-[0.06em] text-on-surface-muted">
             <span className="hl-mark">Matched on</span> {join.email}
           </p>
           {join.offers.map((offer) => (

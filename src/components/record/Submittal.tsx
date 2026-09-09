@@ -85,7 +85,7 @@ export function SubmittalEntry({
         {entry.commit !== null && (
           <p className="hl-submittal-commit">
             {`COMMIT ${entry.commit}`}
-            <span className="ml-2 font-display tracking-normal normal-case">
+            <span className="ml-2 tracking-normal normal-case">
               supplied by reader; not fetched or verified by this application
             </span>
           </p>
@@ -199,7 +199,7 @@ export function Submittal({ slug }: { slug: string }) {
       )}
 
       {full ? (
-        <p className="font-display text-meta text-ink-muted">
+        <p className="text-meta text-on-surface-muted">
           {/* The number is the constant, never a word typed beside it (§11.25). */}
           {`The register holds ${MAX_SUBMITTALS} entries. Remove one to add another.`}
         </p>

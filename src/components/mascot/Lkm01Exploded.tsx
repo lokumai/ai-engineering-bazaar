@@ -70,11 +70,18 @@ export function Lkm01Exploded({
       >
         <g transform={`translate(${EXPLODED_ORIGIN[0]},${EXPLODED_ORIGIN[1]})`}>
           {/* §8.4 — the leader lines, drawn under the faces so a face edge is
-              never broken by the line pointing at it. */}
+              never broken by the line pointing at it.
+
+              The stroke widths below are literals rather than tokens: M16
+              retired the three-weight line system (BRAINSTORM D32). An SVG
+              stroke is also not floored to a whole pixel the way a CSS border
+              is, so a fraction means what it says here — and the visible /
+              hidden distinction is carried by the stroke COLOUR and the dash
+              pattern as well, never by the weight alone. */}
           <g
             fill="none"
             stroke="var(--color-line-strong)"
-            strokeWidth="var(--stroke-hair)"
+            strokeWidth="1"
             strokeDasharray={HIDDEN_DASH}
           >
             {EXPLODED.map(({ face, leader }) => (
@@ -88,8 +95,8 @@ export function Lkm01Exploded({
                 data-face={face.id}
                 d={face.path}
                 fill="none"
-                stroke={face.visible ? 'var(--color-ink)' : 'var(--color-line-strong)'}
-                strokeWidth={face.visible ? 'var(--stroke-struct)' : 'var(--stroke-hair)'}
+                stroke={face.visible ? 'var(--color-on-surface)' : 'var(--color-line-strong)'}
+                strokeWidth={face.visible ? '1.5' : '1'}
                 strokeDasharray={face.visible ? undefined : HIDDEN_DASH}
               />
 
@@ -98,21 +105,21 @@ export function Lkm01Exploded({
 
                   It is NOT given §13.2's `.hl-sugar`, and that is the one
                   deliberate departure in this file: that class paints the
-                  stipple `--color-paper`, which is correct over a face filled
+                  stipple `--color-surface`, which is correct over a face filled
                   with its flavour and invisible over an unfilled one, and no
                   face in this variant is ever filled. Sugar on the board reads
                   as sugar only if it is drawn in ink here. */}
               {face.id === 'F1' && SUGAR.map(([cx, cy]) => (
-                <circle key={`${cx},${cy}`} cx={cx} cy={cy} r={SUGAR_R} fill="var(--color-ink-faint)" />
+                <circle key={`${cx},${cy}`} cx={cx} cy={cy} r={SUGAR_R} fill="var(--color-on-surface-faint)" />
               ))}
             </g>
           ))}
         </g>
       </svg>
 
-      {/* §8.4 — `text-mark` mono in `--color-ink-muted`, and left to wrap: it
+      {/* §8.4 — `text-mark` mono in `--color-on-surface-muted`, and left to wrap: it
           is a sentence about the drawing, not a machine-derived value (§3.4). */}
-      <p className="hl-mark mt-3 max-w-[var(--width-prose)] text-ink-muted">{caption}</p>
+      <p className="hl-mark mt-3 max-w-[var(--layout-measure)] text-on-surface-muted">{caption}</p>
     </div>
   )
 }

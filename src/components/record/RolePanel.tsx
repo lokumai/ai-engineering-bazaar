@@ -107,9 +107,9 @@ export function RolePanel({ drawnSlugs }: RolePanelProps) {
 function RoleEmpty({ drawnSlugs }: { drawnSlugs: readonly string[] }) {
   return (
     <>
-      <p className="hl-mark m-0 text-ink-muted">{NO_ROLE}</p>
+      <p className="hl-mark m-0 text-on-surface-muted">{NO_ROLE}</p>
 
-      <p className="m-0 font-display text-meta leading-normal text-ink-muted">
+      <p className="m-0 text-meta leading-normal text-on-surface-muted">
         A role is never worked out from your name, from the modules you have
         completed, or from anything else this browser holds. It is on record
         only if you state it here, and it can be changed or removed at any time
@@ -181,7 +181,7 @@ function RoleStanding({
         <dd>{drafts === null ? NO_READING : String(drafts)}</dd>
       </dl>
 
-      <p className="m-0 font-display text-meta leading-normal text-ink">{role.blurb}</p>
+      <p className="m-0 text-meta leading-normal text-on-surface">{role.blurb}</p>
 
       {/* §13.6, §16.2.1 — the reasoning behind the offered mark, kept as one
           line of reader-visible prose where the role is stated, and marked as an
@@ -189,7 +189,7 @@ function RoleStanding({
           this line is on record: an offer is a marking, and the only write is
           the reader's own click on a glyph. */}
       {offered !== undefined && (
-        <p className="m-0 font-display text-meta leading-normal text-ink-muted">
+        <p className="m-0 text-meta leading-normal text-on-surface-muted">
           {`The mark offered for this role is ${offered.label}. ${role.markRationale} It is marked as the offer on the mark row above, and an offer writes nothing: the mark on record is whichever glyph is chosen there.`}
         </p>
       )}
@@ -199,7 +199,7 @@ function RoleStanding({
       {/* M14 — the ordered steps used to be a link to `/path/` from here. They
           are in this same register row now, immediately below the picker, so
           the link would have pointed at the page it is already on. */}
-      <p className="m-0 font-display text-meta leading-normal text-ink-muted">
+      <p className="m-0 text-meta leading-normal text-on-surface-muted">
         The tally counts modules that are ready. Steps pointing at a module nobody
         has written yet are on the path as a roadmap and are left out of it,
         because a module with no content has nothing to complete.
@@ -208,11 +208,11 @@ function RoleStanding({
       {/* §13.3 — no dialog, and the summary says why there is none. A reader
           who has to be warned about a control will not use it. */}
       <details>
-        <summary className="cursor-pointer font-mono text-mark uppercase tracking-[0.06em] text-ink-muted">
+        <summary className="cursor-pointer font-mono text-mark uppercase tracking-[0.06em] text-on-surface-muted">
           Another role
         </summary>
 
-        <p className="mt-2 mb-2 font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-2 mb-2 text-meta leading-normal text-on-surface-muted">
           Changing the role changes which modules the path recommends and in what
           order. It changes nothing that is on record: completions are recorded
           against modules, so every one of them survives, and choosing this role

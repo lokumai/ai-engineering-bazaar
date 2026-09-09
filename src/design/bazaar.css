@@ -428,7 +428,7 @@
     transition: grid-template-columns var(--duration-fold) var(--ease-bazaar);
   }
 
-  .bz-shell[data-rail="folded"] {
+  [data-bz-rail="folded"] .bz-shell {
     grid-template-columns: 0px minmax(0, 1fr) var(--layout-aside);
   }
 
@@ -436,7 +436,7 @@
      redundant of the three columns, so the aside goes before the rail. */
   @media (max-width: 1180px) {
     .bz-shell { grid-template-columns: var(--layout-rail) minmax(0, 1fr); }
-    .bz-shell[data-rail="folded"] { grid-template-columns: 0px minmax(0, 1fr); }
+    [data-bz-rail="folded"] .bz-shell { grid-template-columns: 0px minmax(0, 1fr); }
     .bz-aside { display: none; }
   }
 
@@ -467,7 +467,14 @@
   /* `visibility`/`opacity` and `pointer-events: none` together: a folded rail
      must not be reachable by Tab, or a keyboard reader traverses a column that
      is not on screen. */
-  .bz-shell[data-rail="folded"] .bz-rail {
+  /* `visibility: hidden` is the one declaration here the mockup does not have,
+     and it is a correctness fix rather than a taste. Opacity, a transform and
+     `pointer-events` all stop the MOUSE; none of them removes anything from the
+     tab order, so a folded rail transcribed faithfully leaves every link in it
+     reachable by Tab — a reader would tab into a column they cannot see. It
+     changes no value the mockup declares and nothing a viewer can see. */
+  [data-bz-rail="folded"] .bz-rail {
+    visibility: hidden;
     opacity: 0;
     transform: translateX(-14px);
     overflow: hidden;
@@ -527,8 +534,7 @@
     cursor: pointer;
   }
 
-  .bz-shell[data-rail="folded"] ~ .bz-rail-restore,
-  .bz-rail-restore[data-shown] { display: grid; }
+  [data-bz-rail="folded"] .bz-rail-restore { display: grid; }
 
   .bz-rail-restore:hover {
     background: var(--color-surface-sunken);

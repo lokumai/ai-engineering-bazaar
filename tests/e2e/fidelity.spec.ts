@@ -245,3 +245,62 @@ test.describe('M16 stage 1 — the bar and the band', () => {
     }
   })
 })
+
+test.describe('M16 stage 1 part 2 — the frame', () => {
+  /** What part 2 built. The rail's own facts are stage 3's. */
+  const BUILT: readonly Role[] = ['column', 'aside']
+
+  test('caps the reading column and hangs the aside where the mockup does', async ({ page }) => {
+    await page.goto(MOCKUP_URL)
+    await freezeMotion(page)
+    const reference = await extractDesignFacts(page, MOCKUP_SELECTORS)
+
+    // A module page: the one route the three-column grid belongs to, because
+    // it is the only one any mockup draws with a fixed leading track.
+    await page.goto('/courses/fundamentals/rag/')
+    await freezeMotion(page)
+    const actual = await extractDesignFacts(page, APP_SELECTORS)
+
+    /*
+      Symmetry rather than presence, because the aside is SUPPOSED to be gone
+      below 1180px — in the mockup and on the page alike. Demanding it be read
+      at every viewport failed at 1024 and 390 for the right reason, so what is
+      asserted is that both documents agree about whether a role is on screen.
+      That is the breakpoint behaviour as well as the non-vacuity guard.
+    */
+    const shown = (facts: Record<string, string | null>, role: Role) =>
+      FACT_KEYS.filter((key) => key.startsWith(`${role}.`)).some((key) => facts[key] !== null)
+
+    for (const role of BUILT) {
+      expect(
+        FACT_KEYS.filter((key) => key.startsWith(`${role}.`)).length,
+        `${role} contributes no fact`,
+      ).toBeGreaterThan(0)
+      expect(
+        shown(actual, role),
+        `${role}: on screen in the mockup ${shown(reference, role)}, on the page ${shown(actual, role)}`,
+      ).toBe(shown(reference, role))
+    }
+
+    // …and not every role absent, which would compare nothing at all.
+    expect(BUILT.some((role) => shown(reference, role)), 'no role on screen here').toBe(true)
+
+    expect(differencesIn(reference, actual, BUILT)).toEqual([])
+  })
+
+  test('notices when the measure stops matching', async ({ page }) => {
+    await page.goto(MOCKUP_URL)
+    await freezeMotion(page)
+    const reference = await extractDesignFacts(page, MOCKUP_SELECTORS)
+
+    await page.goto('/courses/fundamentals/rag/')
+    await freezeMotion(page)
+    // The measure is what keeps a line readable on a wide window. Widening it
+    // is invisible until somebody tries to read a 1440px line.
+    await page.addStyleTag({ content: '.bz-col { max-width: none !important; }' })
+    const mutated = await extractDesignFacts(page, APP_SELECTORS)
+
+    expect(differencesIn(reference, mutated, BUILT).map((one) => one.fact))
+      .toContain('column.maxWidth')
+  })
+})

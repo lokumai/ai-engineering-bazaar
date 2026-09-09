@@ -315,6 +315,13 @@ export const APP_SELECTORS: SelectorMap = {
   // screen reader has to resolve for the reader (BRAINSTORM D28).
   barLinkCurrent: '.bz-bar-nav [aria-current], .bz-bar-nav [data-current]',
   band: '.bz-band',
+
+  /* Stage 1 part 2 — the frame. `asideLink` is not here yet: the in-page index
+     inside the aside is still the retired one, and it is stage 5 that rebuilds
+     it. A role mapped before its markup exists would read `null` and report as
+     a difference, which is the correct answer but a noisy one. */
+  column: '.bz-col',
+  aside: '.bz-aside',
 }
 
 /**

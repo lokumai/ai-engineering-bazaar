@@ -43,7 +43,7 @@ export const metadata: Metadata = {
  */
 export default function DrawingSetPage() {
   return (
-    <PageShell>
+    <PageShell column={false}>
       <p className="hl-eyebrow hl-mark">{setEyebrow()}</p>
 
       <h1 className="hl-listing-title">Curriculum</h1>

@@ -259,7 +259,7 @@ export function AliasSheet({ accountDoors }: { accountDoors: number }) {
                 whole of what is worth saying (§12.5.7). Gated on `hydrated` so
                 it can only follow a write this session made. */}
             {saved && hydrated && (
-              <span className="hl-mark text-ink-muted" role="status">
+              <span className="hl-mark text-on-surface-muted" role="status">
                 NAME ON RECORD
               </span>
             )}
@@ -297,7 +297,7 @@ export function AliasSheet({ accountDoors }: { accountDoors: number }) {
         <div className="grid justify-items-center gap-2 px-3 py-4">
           <DrafterStamp mark={storedMark(chosen)} seed={seed} size={PREVIEW_SIZE} />
           {previewName === null ? (
-            <p className="hl-mark m-0 text-ink-muted">{UNSIGNED}</p>
+            <p className="hl-mark m-0 text-on-surface-muted">{UNSIGNED}</p>
           ) : (
             // As typed, not uppercased: CSS `text-transform` cases off the
             // element's `lang`, and `ilker` under `lang="en"` uppercases to a
@@ -330,7 +330,7 @@ export function AliasSheet({ accountDoors }: { accountDoors: number }) {
             {/* Colour is never the only signal: the word is the signal, and the
                 caution ink only agrees with it (T6). */}
             <dt>Status</dt>
-            <dd className="text-caution-ink">{UNVERIFIED}</dd>
+            <dd className="text-on-surface">{UNVERIFIED}</dd>
           </div>
         </dl>
       </aside>

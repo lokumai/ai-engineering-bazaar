@@ -101,7 +101,7 @@ function ClaimRow({ row, login }: { row: SheetClaimRow; login: string | null }) 
   return (
     <tr className="hl-row">
       <th scope="row" className="hl-row-title">
-        <span className="hl-mark block text-ink-muted">
+        <span className="hl-mark block text-on-surface-muted">
           {row.module === null ? 'NOT IN THIS CORPUS' : `MODULE ${String(row.module).padStart(2, '0')}`}
         </span>
         {row.slug}
@@ -111,22 +111,22 @@ function ClaimRow({ row, login }: { row: SheetClaimRow; login: string | null }) 
           they asserted it against (§12.4.3). Never a tick. */}
       <td className="hl-row-context hl-mark">
         {`COMPLETED ${day(row.signedOff)}`}
-        <span className="block text-ink-muted">
+        <span className="block text-on-surface-muted">
           {row.signedRevision === null ? 'NO REV RECORDED' : `REV ${row.signedRevision}`}
         </span>
       </td>
 
-      <td className={`hl-row-context hl-mark${quiz.muted ? ' text-ink-muted' : ''}`}>
+      <td className={`hl-row-context hl-mark${quiz.muted ? ' text-on-surface-muted' : ''}`}>
         {quiz.text}
       </td>
 
       <td className="hl-row-context hl-mark">
-        <span className={submittal.muted ? 'text-ink-muted' : undefined}>{submittal.text}</span>
+        <span className={submittal.muted ? 'text-on-surface-muted' : undefined}>{submittal.text}</span>
         {/* The reason, always — §14.8's rule that a flag is never a bare glyph.
             The owners are printed as recorded, so a manager can see that
             `torvalds` is not the person in front of them. */}
         {row.submittalOwners.length > 0 && (
-          <span className="block text-ink-muted">
+          <span className="block text-on-surface-muted">
             {`OWNER ${row.submittalOwners.join(', ')}`}
             {row.submittal === 'ownerMismatch' && login !== null && ` · GITHUB ${login}`}
           </span>
@@ -174,33 +174,33 @@ export function PersonDetail({
           panel is where it is the thing that matters — `?u=` carries it and a
           manager may need to quote it. */}
       <dl className="hl-mark m-0 mb-5 grid grid-cols-[max-content_1fr] gap-x-6 gap-y-1">
-        <dt className="text-ink-muted">USER</dt>
+        <dt className="text-on-surface-muted">USER</dt>
         <dd className="m-0">{member.userId}</dd>
-        <dt className="text-ink-muted">GITHUB</dt>
+        <dt className="text-on-surface-muted">GITHUB</dt>
         <dd className="m-0">
-          {login === null ? <span className="text-ink-muted">NOT LINKED</span> : login}
+          {login === null ? <span className="text-on-surface-muted">NOT LINKED</span> : login}
         </dd>
-        <dt className="text-ink-muted">ROLE</dt>
+        <dt className="text-on-surface-muted">ROLE</dt>
         <dd className="m-0">
           {/* §13.3 — the reader's own statement, never inferred. Absent stays
               absent. */}
-          {member.profile?.roleId ?? <span className="text-ink-muted">NOT STATED</span>}
+          {member.profile?.roleId ?? <span className="text-on-surface-muted">NOT STATED</span>}
         </dd>
-        <dt className="text-ink-muted">SERVER COPY</dt>
+        <dt className="text-on-surface-muted">SERVER COPY</dt>
         <dd className="m-0">
           {member.record.kind === 'record' ? (
             `SAVED ${day(member.record.savedAt)} · SCHEMA ${member.record.schema}`
           ) : member.record.kind === 'absent' ? (
-            <span className="text-ink-muted">NONE — THIS ACCOUNT HAS NEVER PUSHED</span>
+            <span className="text-on-surface-muted">NONE — THIS ACCOUNT HAS NEVER PUSHED</span>
           ) : (
-            <span className="text-ink-muted">{`UNREADABLE BY THIS BUILD (${member.record.reason})`}</span>
+            <span className="text-on-surface-muted">{`UNREADABLE BY THIS BUILD (${member.record.reason})`}</span>
           )}
         </dd>
       </dl>
 
       {member.record.kind !== 'record' ? (
         <p
-          className="m-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted"
+          className="m-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted"
           role="status"
         >
           {member.record.kind === 'absent'
@@ -278,15 +278,15 @@ function PersonBody({
           were computed here, from this build's corpus, so they are current
           whatever the column says. */}
       {curriculumRev !== null && (
-        <p className="hl-mark m-0 mb-5 text-ink-muted">
+        <p className="hl-mark m-0 mb-5 text-on-surface-muted">
           {`STORED PROGRESS COMPUTED AT CURRICULUM REV ${curriculumRev}`}
         </p>
       )}
 
       {/* ---- §14.8.1 — attention, with reasons ----------------------------- */}
-      <h3 className="hl-mark m-0 mb-2 text-ink">Attention</h3>
+      <h3 className="hl-mark m-0 mb-2 text-on-surface">Attention</h3>
       {progress.attention.length === 0 ? (
-        <p className="hl-mark m-0 mb-5 text-ink-muted">
+        <p className="hl-mark m-0 mb-5 text-on-surface-muted">
           NO FLAGS — NOTHING OVERDUE, STALLED OR REPEATEDLY MISSED
         </p>
       ) : (
@@ -300,9 +300,9 @@ function PersonBody({
       )}
 
       {/* ---- §14.2.4 — what this person has been assigned ------------------ */}
-      <h3 className="hl-mark m-0 mb-2 text-ink">Assignments</h3>
+      <h3 className="hl-mark m-0 mb-2 text-on-surface">Assignments</h3>
       {assignments.length === 0 ? (
-        <p className="hl-mark m-0 mb-5 text-ink-muted">NONE</p>
+        <p className="hl-mark m-0 mb-5 text-on-surface-muted">NONE</p>
       ) : (
         <ul className="hl-mark m-0 mb-5 list-none p-0">
           {assignments.map((assignment) => (
@@ -322,8 +322,8 @@ function PersonBody({
       )}
 
       {/* ---- §14.8.2 — the two columns, one row per sign-off --------------- */}
-      <h3 className="hl-mark m-0 mb-2 text-ink">Claim and evidence</h3>
-      <p className="m-0 mb-3 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+      <h3 className="hl-mark m-0 mb-2 text-on-surface">Claim and evidence</h3>
+      <p className="m-0 mb-3 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
         The left column is what this person asserted about themselves (§12.4.4:
         observed, printed as evidence, gating nothing). The two on the right are
         what can be checked without them — the Quick Check they assessed
@@ -332,7 +332,7 @@ function PersonBody({
       </p>
 
       {rows.length === 0 ? (
-        <p className="hl-mark m-0 text-ink-muted" role="status">
+        <p className="hl-mark m-0 text-on-surface-muted" role="status">
           NO COMPLETION RECORDED
         </p>
       ) : (

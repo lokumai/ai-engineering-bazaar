@@ -158,14 +158,14 @@ export function EraseDialog({
               </ul>
             )}
 
-            <p className="m-0 mb-2 font-display text-meta leading-normal text-ink-muted">
+            <p className="m-0 mb-2 text-meta leading-normal text-on-surface-muted">
               {ERASE_COPY.scope}
             </p>
             {/* §14.6 — its own paragraph, not a fourth clause of the one above.
                 This is the sentence a reader in an organisation has to leave
                 the dialog having read, and a sentence appended to a paragraph
                 about storage keys is a sentence that gets skimmed. */}
-            <p className="m-0 mb-3 font-display text-meta leading-normal text-ink-muted">
+            <p className="m-0 mb-3 text-meta leading-normal text-on-surface-muted">
               {ERASE_COPY.history}
             </p>
 
@@ -202,7 +202,7 @@ export function EraseDialog({
                 {ERASE_COPY.export}
               </button>
               {exportedAt !== null && (
-                <span className="hl-mark self-center text-ink-muted" role="status">
+                <span className="hl-mark self-center text-on-surface-muted" role="status">
                   {`EXPORTED ${exportedAt.slice(0, 10)}`}
                 </span>
               )}

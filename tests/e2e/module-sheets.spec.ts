@@ -32,7 +32,7 @@ for (const sheet of SHEETS) {
     await expect(h1).toHaveCount(1)
     await expect(h1).toHaveText(sheet.title)
 
-    await expect(page.locator('.hl-sheet')).toHaveAttribute('data-format', sheet.format)
+    await expect(page.locator('.bz-sheet')).toHaveAttribute('data-format', sheet.format)
 
     // The eyebrow states the sheet's own place in the set (§4.5 item 2, §5.5).
     await expect(page.locator('.hl-eyebrow')).toContainText(

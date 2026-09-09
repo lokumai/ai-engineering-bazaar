@@ -62,6 +62,38 @@ unit tests that used to check the insides of those features. That trade is
 deliberate: these cannot prove an internal calculation is right, and they do
 catch every version of "it is broken", which is what a reader would meet.
 
+**`tests/unit/design/transcription.test.ts` and `tests/e2e/fidelity.*` are the
+design-fidelity layer, added in M15, and they exist because of a specific
+failure.** Five milestones re-themed the old interface instead of rebuilding it
+to the chosen mockup, and 2,149 unit tests plus 467 browser tests stayed green
+throughout, because **not one of them compared anything to the mockup**. They
+measured contrast, keyboard paths, containment and first paint — all real, none
+of them the thing that was wrong.
+
+The unit half holds `src/design/bazaar.css` to
+`playground/01-theme-T4-ground-G3-powder.html` and its approved dark sibling.
+**It writes no value down**, which is what keeps it inside the rule at the top
+of this file: colours are compared as *sets* in both directions, so renaming a
+token changes nothing and inventing a colour fails naming it; dimensions are
+checked one direction, because the reverse is noise from incidental padding; and
+each primitive is resolved through its own file's token map and compared to the
+other's, so the mockup stays the only source of every number.
+
+The browser half reads the design-carrying facts off a live page and diffs two
+pages. It is **keyed by role with a selector map per document** — the mockup
+calls the bar `.top` and the application is free to call it anything, which is
+what makes the language portable — and it carries no colour maths, because two
+documents in the same engine serialise one colour to one string. `contrast.ts`
+remains the place for absolute ratios.
+
+**Every fact carries the value used to overwrite it**, and there is one mutation
+case per fact. So a fact cannot be added to that table without also being proven
+to be checked. Two holes were found that way and both mattered: swapping the
+type stack to Manrope passed until `--font-` joined the declared-token sweep,
+and the harness reported that overriding a background changed nothing because
+`.arch > summary` carries a 120ms transition and the value was read before it
+moved.
+
 ## Before adding a test
 
 1. Would it fail if someone edited a module? Then it is a fact. Rewrite it as a
@@ -73,6 +105,11 @@ catch every version of "it is broken", which is what a reader would meet.
    back. A test never seen failing is decoration.
 
 ## Known flakes, and the family they nearly all belong to
+
+`responsive.spec.ts`'s "tells the reader where a scroller continues" fails at
+1024 roughly one run in three. Mermaid renders client-side, so whether a
+diagram's scroller has been marked as continuing depends on when the injection
+lands. Measured: one failure in three consecutive runs of that test alone.
 
 `theme.spec.ts` and `path.spec.ts` read `<html>`'s class list inside a
 `requestAnimationFrame` with the page's scripts blocked. The reading is

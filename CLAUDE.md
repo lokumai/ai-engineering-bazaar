@@ -14,8 +14,17 @@ and the presentation, the vocabulary and the palette change.
 `playground/01-theme-T4-ground-G3-powder.html` is what the interface must look
 like. [`kia-context/specs/DESIGN.md`](kia-context/specs/DESIGN.md) is a
 transcription of its design *language* and names it in `source:`; where the two
-disagree, **the mockup is right and DESIGN.md is the bug**. The work is
-milestones **M15 and M16** in `kia-context/logs/PROGRESS.md`.
+disagree, **the mockup is right and DESIGN.md is the bug**. **M15 is done and
+the work is milestone M16** in `kia-context/logs/PROGRESS.md`, whose per-surface
+reference table says which mockup each screen comes from.
+
+Two things M15 left for M16 to use. **`src/design/bazaar.css` is the language as
+CSS** — both themes, every primitive — and it is deliberately **not imported**;
+wiring it in and deleting the eleven old stylesheets is M16's first act. And
+**`tests/e2e/fidelity.ts` compares a built page to the mockup**: write an
+app-side `SelectorMap` beside `MOCKUP_SELECTORS` and each rebuilt surface has a
+check that it actually matches. That check is the thing whose absence let five
+milestones ship the wrong design.
 
 **Before styling anything, open the mockup, then DESIGN.md — and copy neither a
 nearby component nor the old stylesheets.** M9 to M14 re-themed the old

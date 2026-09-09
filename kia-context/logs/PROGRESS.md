@@ -59,7 +59,7 @@ last_updated: "2026-09-09"
 | **M13** | The home page | a first-time visitor knows what this is and where to start | M10 | ✅ Done |
 | **M14** | Progress and account | one route instead of four, and completion editable from it | M11 | ✅ Done |
 | **M15** | The design language | one DESIGN.md transcribed from the mockup, and a check that proves a built page matches it | M14 | ✅ Done |
-| **M16** | The interface, rebuilt on it | every surface indistinguishable from its mockup, with no capability lost | M15 | 🚧 stage 0 and stage 1 part 1 of ten |
+| **M16** | The interface, rebuilt on it | every surface indistinguishable from its mockup, with no capability lost | M15 | 🚧 stages 0 to 3 of ten |
 
 > **Numbering never restarts.** When this file is split, part two continues at the next M.
 
@@ -1603,9 +1603,9 @@ assertions and rewriting the appearance ones against the mockup.
 | # | Surface | Reference (layout · colour) | Status |
 | --- | --- | --- | --- |
 | **0** | The token layer | — | ✅ `b3354d9` |
-| **1** | The shell: bar, band, grid, rail slot, reading column, aside | `01` · `01` | 🚧 part 1 `5fbc06b` |
-| **2** | The navigation's dropdown, held to its own mockup | `02`-A · `01` | ⬜ |
-| **3** | The rail: groups, items, ticks, the fold and its restore tab | `01` (= `09`-1 extended) · `01` | ⬜ |
+| **1** | The shell: bar, band, grid, rail slot, reading column, aside | `01` · `01` | ✅ `5fbc06b`, `d575215` |
+| **2** | The navigation's dropdown, held to its own mockup | `01` (which re-drew `02`-A) | ✅ `f32d462` |
+| **3** | The rail: groups, items, ticks, the fold and its restore tab | `01` (= `09`-1 extended) · `01` | ✅ `ef000df` |
 | **4** | The catalog, three views behind one toggle | `03`-C/A/B · `01` | ⬜ |
 | **5** | The reading page | `01`'s `main > .col`; containment from `04` · `01` | ⬜ |
 | **6** | Code and figures | `01`'s slab; node roles from `06` · `01` | ⬜ |
@@ -1999,3 +1999,94 @@ fold, the rail, the measure, the aside. If that file grows, the reason should be
 time here. In short: the `bz-shell` grid into `PageShell`, its three slots, and the breadcrumb into
 the reading column — all 17 routes, because `bleed` stops meaning anything once every page gets the
 grid.
+
+### Report — stages 1b, 2 and 3, 2026-09-10
+
+**Stage 1 part 2** (`d575215`) put the grid into `PageShell` as three slots and
+deleted `bleed`, which only ever opted out of a 1152px box that no longer
+exists. `RegistrationMarks` was deleted rather than hidden: four corner marks
+are a second decorative element, and the ornament budget is spent once, on the
+band. **`bz-shell` appears only where a route passes a rail** — the module page
+alone, because only `01` and `04` draw a fixed leading track while `03`, `07`
+and `08` are single-column inside the bar.
+
+**Stage 2** (`f32d462`) added the four menu roles and holds the opened panel to
+the mockup, fact for fact, at all three viewports.
+
+**Stage 3** (`ef000df`) rebuilt the rail and gave it one vocabulary.
+
+### The defects these three stages found, none of them by reading
+
+| Found | What it was |
+| --- | --- |
+| A regression from stage 1 part 1 | Taking the breadcrumb out of the header left `Breadcrumb.tsx` imported by **nothing**, so the `Curriculum` landmark three assertions read existed on no page. The browser suite being "expected red" is what hid it. |
+| ~400 inert styling references | A Tailwind utility named after a deleted token emits **nothing** — no error, no warning. `text-ink`, `text-ink-muted`, `text-ink-faint`, `font-display`, `bg-paper` and `bg-cleared` all produced **zero rules** in the shipped CSS. **148 distinct references across 44 files.** |
+| The channel-A tick, broken | Three vocabularies: the component emitted `.hl-mod-mark`, the generator revealed `.bz-mod-mark`, the language defines `.bz-tick`. Stage 0 changed the generator's prefix and left its names, so for three commits the generated sheet revealed a selector no markup carried. |
+| The fold could not be right in frame one | The language transcribed an ancestor-driven state (`body.folded .shell`) as a **self** attribute, and channel A can only stamp `<html>`. Its restore tab used `~` while the mockup puts the tab **before** the shell, so the combinator could never match. |
+| A folded rail kept 33 links tabbable | The mockup folds with opacity, a transform and `pointer-events` — all of which stop the **mouse** and none of which touches the tab order. |
+| An unstyled control at every width | The contents drawer's "Contents" button had no rule, so the rail's narrow-width replacement showed while the rail itself was on screen. |
+
+### The guard that would have caught the largest of them
+
+`tests/unit/design/styling-references.test.ts` reads every colour, font and size
+utility plus every `var(--…)` out of the markup **and out of the surface
+stylesheets**, and requires each to resolve against the language's `@theme`
+block. **Its first run was the worklist**; both halves are mutation-proved.
+
+It is content-agnostic and it would have caught all 401 references the morning
+stage 0 landed. The surface half was added in stage 3 after a
+`var(--tracking-label)` went into a stylesheet the markup sweep could not see.
+
+### Corrections these stages proved
+
+- **`01` is the dropdown's reference, not `02`.** D31's layout-from-`02`,
+  colour-from-`01` split does not apply: `02` chose the variant and `01` re-drew
+  it in the shell's palette. What `02` still holds and `01` dropped — a 290px
+  panel, a 10px radius, an uppercase group eyebrow — is superseded.
+- **Two facts were measuring content, not design.** `menuCount.marginLeft` is an
+  auto margin, so its computed value is whatever gap is left over (50.77px
+  against 65.58px, because the documents carry different level names). And every
+  "first group that is not the current one" fact depends on which group that is,
+  so the rail's comparison had to move to a **fundamentals** module —
+  `groupKey.backgroundColor` was reading category-1 against category-2. Comparing
+  a hue series needs the same position in it on both sides.
+- **The per-fact mutation loop had a hole.** A menu is off screen at every
+  width, so its fifteen facts skipped for ever — fifteen `mutate` values that
+  never ran. The loop opens the menu now; skips went 58 back to 19.
+- **Two test bugs.** The rail's tab walk classified any `<summary>` as a rail
+  level, and the bar's own dropdown trigger is a `<summary>`. And under reduced
+  motion the fold check required a `transitionend` that correctly never fires,
+  because the language **removes** the transition rather than shortening it.
+
+### One deliberate divergence from the mockup, recorded
+
+**The rail's group count is the level's total, not the mockup's `3/8`.** A
+done-of-total count is reader state and it is on screen in frame one, so §12.2
+forbids it travelling on channel B — and CSS cannot count, so channel A cannot
+draw it either. This is the wall **D23** already hit when a mock drew a progress
+ring and the project shipped a segmented meter instead. Progress in the rail is
+carried by the discs on the rows, which **are** channel A.
+
+Two smaller ones, both because the shell dropped what a variant study had: the
+groups carry no disclosure chevron, and neither the level nor the module row
+carries a two-digit order prefix.
+
+### The gate after stage 3
+
+| Check | Result |
+| --- | --- |
+| `npm run typecheck` | clean |
+| `npm test` | **2,119 passed, 7 skipped, 0 failed** — two more guarded rules revived when the hue carrier landed |
+| `npm run build` | clean, 56 HTML files |
+| `fidelity`, `rail`, `module-sheets` | **243 passed, 21 skipped**, three viewports |
+| The meter | `hl-` in markup **1,188**, from 1,252 when M16 opened |
+
+### Stages 4 and 5, which are next
+
+Stage 4 is the catalog and it is the largest new-CSS stage: `bazaar.css` has no
+catalog vocabulary at all, so its filter bar, chips, cards, table and board are
+authored from `03`'s geometry. **It is on `/sheets/` alone** — `/courses/` and
+`/courses/[category]/` render `SheetIndex` directly with no filters and no
+toggle, so the table is all three share. Stage 5 is the reading page, and
+`title-block.spec.ts`'s 34 tests are the biggest single test cost in the half:
+the mockup's three-span facts strip replaces a twelve-row instrument panel.

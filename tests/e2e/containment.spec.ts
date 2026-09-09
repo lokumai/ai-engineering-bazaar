@@ -182,8 +182,15 @@ test.describe('a diagram is contained by its column', () => {
    * The keyboard half of the same rule. A horizontal scroll container that a
    * pointer can scroll and a keyboard cannot is content a keyboard reader
    * cannot reach (§10.3), so every one of them is a tab stop with a name.
-   * Asserted by PRESSING the key: the container is focused with Tab from the
-   * figure's own caption control, then scrolled with the arrow key.
+   * Asserted by PRESSING the key, both halves. The first version of this test
+   * said exactly that in this docblock and then called `.focus()`, which is
+   * D17's documented anti-pattern committed a second time in the file that
+   * carries M11's headline fix: `.focus()` succeeds on an element a Tab press
+   * can never reach, so the reachability half was unmeasured. It now walks the
+   * document with real Tab presses until the container takes focus, and fails
+   * with the number of stops it tried if it never does. MEASURED on
+   * `intermediate/prompt-engineering` at 1440px: the container takes focus at
+   * press 38.
    */
   test('a clipped diagram is reachable and scrollable from the keyboard', async ({ page }) => {
     await page.goto('/courses/intermediate/security/')
@@ -193,7 +200,22 @@ test.describe('a diagram is contained by its column', () => {
     await expect(body).toHaveAttribute('tabindex', '0')
     await expect(body).toHaveAttribute('aria-label', /figure/i)
 
-    await body.focus()
+    // A real Tab walk. The cap is generous because the count is a fact about
+    // the page's controls and not about this rule, and a cap that tracked it
+    // would turn an ordinary edit red.
+    const LIMIT = 250
+    let reached = false
+    for (let press = 0; press < LIMIT; press += 1) {
+      if (await body.evaluate((node) => node === document.activeElement)) {
+        reached = true
+        break
+      }
+      await page.keyboard.press('Tab')
+    }
+    expect(
+      reached,
+      `the diagram's scroll container never took focus in ${LIMIT} Tab presses`,
+    ).toBe(true)
     await expect(body).toBeFocused()
     const before = await body.evaluate((node) => node.scrollLeft)
     await page.keyboard.press('ArrowRight')

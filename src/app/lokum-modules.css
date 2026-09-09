@@ -106,10 +106,9 @@
   }
 
   /* E. M13/M14 — completion control C's tick, for the drawn modules only. The
-     same disc as D, with the same `sr-only` word inside it, on the same
-     channel: the difference is that this one sits inside the button that SETS
-     the completion, so the reader's own state is right in frame one on a page
-     that lists every module. `home.css` holds its geometry. */
+     disc sits inside the button that SETS the completion, so the reader's own
+     state is right in frame one on a page that lists every module.
+     `record.css` holds its geometry. */
   html.hl-signed-1  .hl-cmod[data-module="1"] .hl-cmod-mark,
   html.hl-signed-2  .hl-cmod[data-module="2"] .hl-cmod-mark,
   html.hl-signed-3  .hl-cmod[data-module="3"] .hl-cmod-mark,
@@ -130,6 +129,38 @@
   html.hl-signed-30 .hl-cmod[data-module="30"] .hl-cmod-mark,
   html.hl-signed-31 .hl-cmod[data-module="31"] .hl-cmod-mark {
     display: inline-flex;
+  }
+
+  /* E2. The word that says what E's disc means, on the same channel and for the
+     same modules, so the picture and the sentence cannot come apart.
+     It is a SEPARATE element and a separate class rather than an `sr-only`
+     span inside the button, for two reasons. `aria-label` on the button
+     replaces its contents for naming, so a word inside it is never announced
+     at all — which is what made `aria-pressed` the only statement of the
+     state an assistive technology got, on channel B, permanently contradicting
+     this disc with scripts refused. And giving it E's own class instead made
+     `.hl-cmod-mark` match two elements per row, which is a strict-mode
+     violation in every locator that reads the tick. */
+  html.hl-signed-1  .hl-cmod[data-module="1"] .hl-cmod-said,
+  html.hl-signed-2  .hl-cmod[data-module="2"] .hl-cmod-said,
+  html.hl-signed-3  .hl-cmod[data-module="3"] .hl-cmod-said,
+  html.hl-signed-4  .hl-cmod[data-module="4"] .hl-cmod-said,
+  html.hl-signed-5  .hl-cmod[data-module="5"] .hl-cmod-said,
+  html.hl-signed-6  .hl-cmod[data-module="6"] .hl-cmod-said,
+  html.hl-signed-7  .hl-cmod[data-module="7"] .hl-cmod-said,
+  html.hl-signed-8  .hl-cmod[data-module="8"] .hl-cmod-said,
+  html.hl-signed-9  .hl-cmod[data-module="9"] .hl-cmod-said,
+  html.hl-signed-10 .hl-cmod[data-module="10"] .hl-cmod-said,
+  html.hl-signed-11 .hl-cmod[data-module="11"] .hl-cmod-said,
+  html.hl-signed-12 .hl-cmod[data-module="12"] .hl-cmod-said,
+  html.hl-signed-13 .hl-cmod[data-module="13"] .hl-cmod-said,
+  html.hl-signed-15 .hl-cmod[data-module="15"] .hl-cmod-said,
+  html.hl-signed-16 .hl-cmod[data-module="16"] .hl-cmod-said,
+  html.hl-signed-28 .hl-cmod[data-module="28"] .hl-cmod-said,
+  html.hl-signed-29 .hl-cmod[data-module="29"] .hl-cmod-said,
+  html.hl-signed-30 .hl-cmod[data-module="30"] .hl-cmod-said,
+  html.hl-signed-31 .hl-cmod[data-module="31"] .hl-cmod-said {
+    display: inline;
   }
 }
 

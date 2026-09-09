@@ -454,3 +454,57 @@ test('the draft module keeps its band and schedule at every width', async ({ pag
     await expect(drawer).toBeVisible()
   }
 })
+
+/**
+ * A label in a fixed-width box may not paint its text over the text beside it.
+ *
+ * This is a rule about any label and any width, not a fact about one page: it
+ * asks every element whose box is narrower than its own text whether that text
+ * reaches the next element's text. It exists because a 28px box was chosen to
+ * line up with the completion toggle beside it and then given the word
+ * `Planned`, which measures 39px at 11px mono with 0.06em tracking. With
+ * `overflow: visible` the last glyph landed on top of the module number on all
+ * fourteen planned rows, on the home screen and on `/profile/`, at 1440, 1024
+ * and 390 — the two surfaces this phase built, and the front door of the site.
+ *
+ * MEASURED before the fix: text box 444→494 inside a box of 455→483, with the
+ * link starting at x=491; 14 of 14 rows collided at every width. After: 0.
+ *
+ * The check reads the TEXT box with a `Range` rather than the element box,
+ * because an overflowing element reports the box it was given and not the ink
+ * it actually painted, and reading the element box is what let this ship.
+ */
+test('no label paints its text over the text beside it', async ({ page }) => {
+  for (const route of ['/', '/profile/']) {
+    await page.goto(route)
+    const collisions = await page.evaluate(() => {
+      const bad: string[] = []
+      for (const el of document.querySelectorAll<HTMLElement>('body *')) {
+        if (!el.firstChild || el.firstChild.nodeType !== Node.TEXT_NODE) continue
+        const text = (el.textContent ?? '').trim()
+        if (!text || el.offsetParent === null) continue
+        const range = document.createRange()
+        range.selectNodeContents(el)
+        const ink = range.getBoundingClientRect()
+        const box = el.getBoundingClientRect()
+        if (ink.width <= box.width + 1) continue
+        // It overflows its own box. Does the ink reach a sibling's ink?
+        for (const sib of Array.from(el.parentElement?.children ?? [])) {
+          if (sib === el) continue
+          const other = document.createRange()
+          other.selectNodeContents(sib)
+          const oink = other.getBoundingClientRect()
+          if (!oink.width || !(sib as HTMLElement).offsetParent) continue
+          const overlapsX = ink.right > oink.left + 0.5 && ink.left < oink.right - 0.5
+          const overlapsY = ink.bottom > oink.top + 0.5 && ink.top < oink.bottom - 0.5
+          if (overlapsX && overlapsY) {
+            bad.push(`"${text.slice(0, 24)}" over "${(sib.textContent ?? '').trim().slice(0, 24)}"`)
+            break
+          }
+        }
+      }
+      return bad
+    })
+    expect(collisions, `${route} — a label's text is painted over its neighbour's`).toEqual([])
+  }
+})

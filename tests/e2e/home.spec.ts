@@ -66,6 +66,30 @@ const CONTINUE = '.hl-home-continue'
 const LEVEL_CARD = '.hl-cc-level'
 const MODULE_ROW = '.hl-cmod'
 const TICK = '.hl-cmod-mark'
+/**
+ * The word that states the completion to an assistive technology. It is the
+ * STATE, and the toggle carries no `aria-pressed`: whether a module is complete
+ * is decided by a class on `<html>` that no React render sets (channel A,
+ * §12.2), so an attribute rendered on channel B was a second author of one
+ * state and read `false` for ever with scripts refused, about a module whose
+ * disc was painted. Asserted by computed `display` rather than `toBeVisible`,
+ * because the element is deliberately a 1px clipped box: it is out of the
+ * picture and in the accessibility tree, and `toBeVisible` cannot tell the
+ * revealed one from the hidden one.
+ *
+ * The question is `display: none` or not, and not which non-none value: the
+ * stylesheet asks for `inline` and the computed value is `block`, because the
+ * element is absolutely positioned and absolute positioning blockifies an
+ * inline display. Asserting `inline` here failed against a page that was
+ * behaving correctly.
+ */
+const SAID = '.hl-cmod-said'
+
+function saidRevealed(page: Page, module: number): Promise<boolean> {
+  return page
+    .locator(`${MODULE_ROW}[data-module="${module}"] ${SAID}`)
+    .evaluate((node) => getComputedStyle(node).display !== 'none')
+}
 
 /**
  * What the page was drawing inside the first `requestAnimationFrame` in which
@@ -324,7 +348,10 @@ test('control C completes a module from the home page, and takes it back', async
   await expect(page.locator('.hl-readout[data-hydrated="true"]').first()).toBeAttached()
 
   const toggle = toggleFor(page, target.title)
-  await expect(toggle).toHaveAttribute('aria-pressed', 'false')
+  // The contract, asserted so that putting `aria-pressed` back turns this red:
+  // the button names the action and never the state.
+  await expect(toggle).not.toHaveAttribute('aria-pressed', /.*/)
+  expect(await saidRevealed(page, target.module)).toBe(false)
   const tick = page.locator(`${MODULE_ROW}[data-module="${target.module}"] ${TICK}`)
   await expect(tick).not.toBeVisible()
 
@@ -333,8 +360,10 @@ test('control C completes a module from the home page, and takes it back', async
   // Four things read that one write, and all four have to move: the control's
   // own state, the tick (channel A, re-stamped by the store rather than by a
   // reload), the count on this page, and the record in storage.
-  await expect(toggle).toHaveAttribute('aria-pressed', 'true')
   await expect(tick).toBeVisible()
+  await expect
+    .poll(() => saidRevealed(page, target.module), { timeout: 3_000 })
+    .toBe(true)
   await expect(page.locator('.hl-cc-numbers')).toContainText(`1 of ${SHEET_COUNT}`)
   const stored = await waitForRecord(
     page,
@@ -351,8 +380,10 @@ test('control C completes a module from the home page, and takes it back', async
 
   // And it is its own undo (§12.4.1): no dialog, and the tick goes with it.
   await toggle.click()
-  await expect(toggle).toHaveAttribute('aria-pressed', 'false')
   await expect(tick).not.toBeVisible()
+  await expect
+    .poll(() => saidRevealed(page, target.module), { timeout: 3_000 })
+    .toBe(false)
   await waitForRecord(
     page,
     (envelope) => (envelope?.data.sheets[slugOf(target)]?.signedOff ?? null) === null,
@@ -394,10 +425,12 @@ test('control C is reachable and operable from the keyboard', async ({ page }) =
   expect(reached, 'the first toggle was not reachable by Tab').toBe(true)
 
   await page.keyboard.press('Enter')
-  await expect(toggle).toHaveAttribute('aria-pressed', 'true')
   await expect(
     page.locator(`${MODULE_ROW}[data-module="${SHEETS[0].module}"] ${TICK}`),
   ).toBeVisible()
+  await expect
+    .poll(() => saidRevealed(page, SHEETS[0].module), { timeout: 3_000 })
+    .toBe(true)
 })
 
 // ---------------------------------------------------------------------------

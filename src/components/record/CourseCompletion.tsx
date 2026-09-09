@@ -112,10 +112,6 @@ function Tick() {
       >
         <path d="M3.5 9l3 3 7-7" />
       </svg>
-      {/* Not `aria-hidden`: this is the part that says what the disc means, and
-          it is revealed by the same generated rule, so the two cannot
-          disagree. */}
-      <span className="sr-only">Complete</span>
     </span>
   )
 }
@@ -232,14 +228,22 @@ export function CourseCompletion({
                       <button
                         type="button"
                         className="hl-cmod-toggle"
-                        // The name says which module and what pressing does;
-                        // `aria-pressed` says whether it is done. Neither
-                        // changes with the state, so React re-renders an
-                        // attribute and never a label.
+                        // The name says which module and what pressing does,
+                        // and it never changes with the state.
+                        //
+                        // NO `aria-pressed`, for the reason `Catalog.tsx`
+                        // gives about its view toggle: whether a module is
+                        // complete is decided by a class on `<html>` that no
+                        // React render sets (channel A, §12.2), so an
+                        // attribute rendered on channel B would be a second
+                        // author of one state. With scripts refused it read
+                        // `false` for every frame and for ever, about a module
+                        // whose disc was painted — a screen reader was told
+                        // "not pressed" about a module that is complete. The
+                        // state is said instead by the word below, revealed by
+                        // the same generated rule that reveals the disc, so
+                        // the picture and the sentence cannot come apart.
                         aria-label={`Complete ${one.title}`}
-                        aria-pressed={
-                          hydrated && (record.sheets[one.slug]?.signedOff ?? null) !== null
-                        }
                         onClick={() => toggleCompletion(record, one.slug)}
                       >
                         <Tick />
@@ -256,6 +260,17 @@ export function CourseCompletion({
                       </span>
                       {one.title}
                     </Link>
+
+                    {/* Channel A, and the only statement of the state an
+                        assistive technology gets. Revealed by the generated
+                        rule E2 for the same modules as the disc, so the
+                        picture and the sentence cannot come apart. It sits
+                        OUTSIDE the button because `aria-label` on a button
+                        replaces its contents for naming, so a word inside it
+                        is never announced; and it carries its own class rather
+                        than the disc's, because sharing `hl-cmod-mark` made
+                        that selector match two elements per row. */}
+                    <span className="hl-cmod-said">Complete</span>
                   </li>
                 ))}
               </ul>

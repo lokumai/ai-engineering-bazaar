@@ -276,8 +276,15 @@ test('both filter axes work from the keyboard and announce the count', async ({ 
   expect(readyCount).toBeGreaterThan(0)
   expect(readyCount).toBeLessThan(SHEET_COUNT)
 
-  // The second axis composes with the first rather than replacing it.
-  const level = page.getByRole('button', { name: 'Fundamentals', exact: true })
+  // The second axis composes with the first rather than replacing it. The chip
+  // is taken by its position in the named group and not by its title: a level's
+  // title is a fact about the content, which a test may not write down
+  // (`tests/README.md`), and renaming a level in `curriculum.yaml` would turn
+  // this red for no reason. `nth(1)` steps over the `All` chip.
+  const level = page
+    .getByRole('group', { name: 'Filter by level' })
+    .getByRole('button')
+    .nth(1)
   await level.focus()
   await page.keyboard.press('Space')
   await expect(level).toHaveAttribute('aria-pressed', 'true')

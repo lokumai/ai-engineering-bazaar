@@ -262,7 +262,8 @@ function build(): readonly Category[] {
 }
 
 /**
- * The six categories, in order, each with its modules and their numbers.
+ * The five categories, in order, each with its modules and their numbers.
+ * (Six until D8 retired Optional.)
  *
  * Built at import time rather than behind a memoised call, deliberately. It
  * keeps the name and the shape `categories.ts` used to export, so moving the

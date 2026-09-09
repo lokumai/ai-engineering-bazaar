@@ -71,6 +71,19 @@ const ROOTS: readonly string[] = [
   // SessionProvider.tsx and SignInPanel.tsx, which is why the non-vacuity test
   // below now names this root rather than only counting.
   'components/auth',
+  // M10, M12 and M14 — the shell, the catalog and the folded progress route.
+  // These four hold the largest new blocks of reader-visible copy in the
+  // interface revision (the view toggle's three names, the two filter groups,
+  // the empty state, the rail's `Course modules` and `Hide`, and the copy on
+  // the three redirect stubs) and NONE of them was scanned: the M9 block below
+  // walks the whole of `src/` for the retired vocabulary, so the hole was in
+  // the register's own bans only. ARCHITECTURE.md records that this same
+  // omission — `components/shell` unscanned — is how a first-person `My
+  // progress` shipped past the ban once already.
+  'components/shell',
+  'components/catalog',
+  'components/curriculum',
+  'lib/catalog',
 ]
 
 function walk(target: string): string[] {

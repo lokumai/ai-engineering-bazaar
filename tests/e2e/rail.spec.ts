@@ -134,6 +134,14 @@ test.describe('the accordion', () => {
 test.describe('the fold', () => {
   test('takes the rail to zero and gives the width to the column', async ({ page }) => {
     await page.goto(A0.path)
+    // The same wait the motion check below explains at length: the hide
+    // control is a React island, so a click sent before this document has
+    // hydrated lands on nothing at all and the poll then times out on a rail
+    // that was never asked to fold. Under eight parallel workers a
+    // `load`-resolved `goto` is early enough to hit it — this test is the one
+    // an independent review caught red in a full run at 8 workers (railWidth
+    // 203, expected 0) while it passed 6/6 alone.
+    await waitForHydratedReadout(page)
 
     const open = await railWidth(page)
     const openColumn = await columnWidth(page)
@@ -158,6 +166,14 @@ test.describe('the fold', () => {
 
   test('is remembered per reader, and is right in the first frame', async ({ page }) => {
     await page.goto(A0.path)
+    // The same wait the motion check below explains at length: the hide
+    // control is a React island, so a click sent before this document has
+    // hydrated lands on nothing at all and the poll then times out on a rail
+    // that was never asked to fold. Under eight parallel workers a
+    // `load`-resolved `goto` is early enough to hit it — this test is the one
+    // an independent review caught red in a full run at 8 workers (railWidth
+    // 203, expected 0) while it passed 6/6 alone.
+    await waitForHydratedReadout(page)
     await page.locator('[data-hl-rail-hide]').click()
     await expect.poll(() => railWidth(page), { timeout: 2_000 }).toBe(0)
 
@@ -347,6 +363,12 @@ test.describe('the fold', () => {
    */
   test('the restore tab is clickable where it is drawn', async ({ page }) => {
     await page.goto(A0.path)
+    // The hide control is a React island: a click before this document has
+    // hydrated lands on nothing, and the poll below then times out on a rail
+    // nobody asked to fold. Third of the three fold tests to need this — the
+    // full suite at 8 workers produced a different one of them red on each of
+    // four runs until all three waited.
+    await waitForHydratedReadout(page)
     await page.locator('[data-hl-rail-hide]').click()
     await expect.poll(() => railWidth(page), { timeout: 2_000 }).toBe(0)
 

@@ -141,12 +141,25 @@ ${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .hl-mod[data-module="${n}"
   }
 
   /* E. M13/M14 — completion control C's tick, for the drawn modules only. The
-     same disc as D, with the same \`sr-only\` word inside it, on the same
-     channel: the difference is that this one sits inside the button that SETS
-     the completion, so the reader's own state is right in frame one on a page
-     that lists every module. \`home.css\` holds its geometry. */
+     disc sits inside the button that SETS the completion, so the reader's own
+     state is right in frame one on a page that lists every module.
+     \`record.css\` holds its geometry. */
 ${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .hl-cmod[data-module="${n}"] .hl-cmod-mark`)}
     display: inline-flex;
+  }
+
+  /* E2. The word that says what E's disc means, on the same channel and for the
+     same modules, so the picture and the sentence cannot come apart.
+     It is a SEPARATE element and a separate class rather than an \`sr-only\`
+     span inside the button, for two reasons. \`aria-label\` on the button
+     replaces its contents for naming, so a word inside it is never announced
+     at all — which is what made \`aria-pressed\` the only statement of the
+     state an assistive technology got, on channel B, permanently contradicting
+     this disc with scripts refused. And giving it E's own class instead made
+     \`.hl-cmod-mark\` match two elements per row, which is a strict-mode
+     violation in every locator that reads the tick. */
+${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .hl-cmod[data-module="${n}"] .hl-cmod-said`)}
+    display: inline;
   }
 }
 

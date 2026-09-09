@@ -635,7 +635,7 @@
   }
 
   /* The line saying what this view is for. `ink-muted` and never `ink-faint`:
-     it is a sentence, and the faint weight is 3.19:1 and may carry a count, a
+     it is a sentence, and the faint weight is 2.77:1 and may carry a count, a
      unit or a status word and nothing more (DESIGN.md, Colors). */
   .hl-view-answers {
     font-size: var(--text-meta);
@@ -753,13 +753,17 @@
 
   /* One spelling of this status, everywhere (§12.14.1): the table, the card,
      the overview, the path step and the diagram all say `Planned`. */
+  /* `ink-muted`, not faint: in the overview this word is the only thing that
+     says the module is not written, so it is text a reader must read, and faint
+     measures 2.86:1 light / 2.53:1 dark against a 4.5 floor. The module numbers
+     beside it stay faint, because a count is what faint is for. */
   .hl-ov-planned {
     margin-inline-start: auto;
     font-family: var(--font-mono);
     font-size: var(--text-mark);
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--color-ink-faint);
+    color: var(--color-ink-muted);
   }
 
   /* -- the CARDS view --------------------------------------------------- */

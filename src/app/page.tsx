@@ -10,7 +10,7 @@ import { corpusTotals, indexStatement, sheetRows } from '@/lib/content/manifest'
 import { HOME_SCOPE } from '@/lib/record/scope'
 import { INDEX_ROUTE } from '@/lib/route-labels'
 import { SITE_NAME } from '@/lib/site'
-import { hoursMinutes, plural } from '@/lib/text'
+import { hoursMinutes, numberWord, plural } from '@/lib/text'
 
 /**
  * §15.2.2 — one document, so one title, and it claims nothing about the reader.
@@ -195,7 +195,7 @@ export default function HomePage() {
           are the same thing seen by two readers. */}
       <div className="hl-panel-head">
         <h2 id="hl-home-levels" className="hl-panel-title">
-          The five levels
+          The {numberWord(levels.length)} levels
         </h2>
         <p className="hl-panel-note">
           {plural(firstLevel, 'module')} in {first.subsystem.title}, which

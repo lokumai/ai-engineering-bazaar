@@ -9,7 +9,7 @@ authority: map
 writes: agent, when files move
 status: active
 covers: the whole harness
-last_updated: "2026-09-09"
+last_updated: 2026-09-10
 ---
 
 # 🗺️ INDEX — What each file is, and when to open it
@@ -76,8 +76,8 @@ reconstructed from git and is labelled as inferred inside each file.
 
 | File | What it holds | State |
 |---|---|---|
-| `PROGRESS.md` | M1 to M14, their deliverables and acceptance criteria, and the order they go in | M1–M6 inferred; **M7 to M14 live.** **M9 to M14 are all done**, so M8's six stages are built and what is left on M8 is its own umbrella criteria and M7's last checkbox. |
-| `BRAINSTORM.md` | D1 to D24, plus open questions O1 to O4 | D1–D6 inferred; **D7–D24 recorded live.** O1, O3 and O4 are closed; **O2 is half closed** — D22 answered the progress vocabulary, and the module info panel's four unnamed rows are still open. |
+| `PROGRESS.md` | M1 to M16, their deliverables and acceptance criteria, and the order they go in | M1–M6 inferred; **M7 to M16 live.** M9 to M15 are done. **M16 is the active milestone** — the interface rebuilt on the design language, set out as ten stages, of which **0 to 6 are done** and stage 7 is next. Its per-stage briefs and its reports are in one file on purpose; it splits at stage 10. |
+| `BRAINSTORM.md` | D1 to D45, plus open questions O1 to O4 | D1–D6 inferred; **D7–D45 recorded live.** O1, O3 and O4 are closed; **O2 is half closed** — D22 answered the progress vocabulary, and the module info panel's four unnamed rows are still open. Two M16 questions are open in the milestone rather than here: whether a wide figure may bleed past the measure (**D43**) and whether the pager's direction label leaves `on-surface-faint` (**D45**). |
 
 ---
 
@@ -112,6 +112,12 @@ maintained by an agent, and do not need reading to do the work. The root `CLAUDE
 | Where did XP and Rank go? | `logs/BRAINSTORM.md` **D22**, and `specs/ARCHITECTURE.md` §9 |
 | Why is completion control C a meter and not the ring the mock drew? | `logs/BRAINSTORM.md` **D23** |
 | An old bookmark to `/dashboard/`. What happens? | `logs/BRAINSTORM.md` **D24**, and `specs/ARCHITECTURE.md` §7 |
+| Why was the interface rebuilt rather than re-themed? | `logs/BRAINSTORM.md` **D26**, and `logs/PROGRESS.md` M16's opening |
+| Which mockup specifies this surface, and which part of it? | `logs/PROGRESS.md` M16's stage table — **geometry from the component mockup, colour from the shell** (**D31**), enforced by `tests/e2e/fidelity.ts` (**D39**) |
+| A mockup does not draw the thing I need. What now? | `logs/BRAINSTORM.md` **D30**, and `WITHOUT_REFERENCE` in `tests/e2e/fidelity.ts`, which makes every derivation state what it was derived from |
+| Why does a diagram sit on a dark frame that never re-themes? | `logs/BRAINSTORM.md` **D42**, and `specs/DESIGN.md`'s account of what a figure rebinds |
+| A test and another test seem to contradict each other. | `logs/BRAINSTORM.md` **D42** — usually the thing belongs at a different layer than either test assumed |
+| The retired design document says one thing and the language says another. | `logs/BRAINSTORM.md` **D45** — the language wins, and a measured floor outranks even the mockup exactly once (**D34**) |
 | What am I building next? | `logs/PROGRESS.md` — the active milestone |
 | Was my idea already rejected? | `logs/BRAINSTORM.md` |
 | How is a module written? | **`mini-courses/CLAUDE.md`**, outside this harness. It governs the corpus. |
@@ -125,7 +131,7 @@ maintained by an agent, and do not need reading to do the work. The root `CLAUDE
 
 ## 6. The numbering, and why it never restarts
 
-`M1…M14` are milestones in `logs/PROGRESS.md`. `D1…D24` are decisions and `O1…O4` are open questions
+`M1…M16` are milestones in `logs/PROGRESS.md`. `D1…D45` are decisions and `O1…O4` are open questions
 in `logs/BRAINSTORM.md`, of which O1, O3 and O4 are closed and O2 is half closed. Rules `1…15` are in
 `specs/MANIFESTO.md`.
 

@@ -10,7 +10,7 @@ authority: state
 writes: agent, every session
 status: active
 covers: "the whole project, 2026-07-07 onward — M1 to M14; M9 to M14 shipped and reviewed"
-last_updated: "2026-09-10"
+last_updated: 2026-09-10
 ---
 
 # 📈 PROGRESS — What we are building
@@ -59,7 +59,7 @@ last_updated: "2026-09-10"
 | **M13** | The home page | a first-time visitor knows what this is and where to start | M10 | ✅ Done |
 | **M14** | Progress and account | one route instead of four, and completion editable from it | M11 | ✅ Done |
 | **M15** | The design language | one DESIGN.md transcribed from the mockup, and a check that proves a built page matches it | M14 | ✅ Done |
-| **M16** | The interface, rebuilt on it | every surface indistinguishable from its mockup, with no capability lost | M15 | 🚧 stages 0 to 3 of ten |
+| **M16** | The interface, rebuilt on it | every surface indistinguishable from its mockup, with no capability lost | M15 | 🚧 stages 0 to 6 of ten |
 
 > **Numbering never restarts.** When this file is split, part two continues at the next M.
 
@@ -1606,9 +1606,9 @@ assertions and rewriting the appearance ones against the mockup.
 | **1** | The shell: bar, band, grid, rail slot, reading column, aside | `01` · `01` | ✅ `5fbc06b`, `d575215` |
 | **2** | The navigation's dropdown, held to its own mockup | `01` (which re-drew `02`-A) | ✅ `f32d462` |
 | **3** | The rail: groups, items, ticks, the fold and its restore tab | `01` (= `09`-1 extended) · `01` | ✅ `ef000df` |
-| **4** | The catalog, three views behind one toggle | `03`-C/A/B · `01` | ⬜ |
-| **5** | The reading page | `01`'s `main > .col`; containment from `04` · `01` | ⬜ |
-| **6** | Code and figures | `01`'s slab; node roles from `06` · `01` | ⬜ |
+| **4** | The catalog, three views behind one toggle | `03`-C/A/B · `01` | ✅ `ccccd6e` |
+| **5** | The reading page | `01`'s `main > .col`; containment from `04` · `01` | ✅ `5abb61a` |
+| **6** | Code and figures | `01`'s slab; node roles from `06` · `01` | ✅ `5abb61a` |
 | **7** | Completion | `05`-A and `05`-C · `01` | ⬜ |
 | **8** | Progress and account | `07`-A, rings from `05`-C · `01` | ⬜ |
 | **9** | Home | `08`-A · `01` | ⬜ |
@@ -2090,3 +2090,252 @@ authored from `03`'s geometry. **It is on `/sheets/` alone** — `/courses/` and
 toggle, so the table is all three share. Stage 5 is the reading page, and
 `title-block.spec.ts`'s 34 tests are the biggest single test cost in the half:
 the mockup's three-span facts strip replaces a twelve-row instrument panel.
+
+### Report — stages 4, 5 and 6, 2026-09-10
+
+Three surfaces, two commits: the catalog (`ccccd6e`), then the reading page and
+the figures together (`5abb61a`). After these, **every route a reader uses on
+the way through the course is on the new language** — finding a module, reading
+it, and looking at the code and diagrams inside it.
+
+**The three stages were not the same shape, and measuring said so before any of
+them started.** The language declares 60 `bz-` classes, and between them they
+already covered almost everything stages 5 and 6 needed — `.bz-display`,
+`.bz-section` and its dashed ochre rule, `.bz-facts`, `.bz-tag`, `.bz-card`,
+`.bz-actions`, `.bz-btn`, `.bz-pager`, `.bz-slab*`, `.bz-figure*`, `.bz-node`.
+It declares nothing a catalog needs. So stage 4 authored 700 lines of new
+vocabulary and stages 5 and 6 authored 400 between them, most of it for things
+the corpus has and `01`'s single sample of prose does not.
+
+#### Stage 4 — the catalog
+
+**`03` is an annotation page, and reading it as a component sheet would have
+been the M9-to-M14 mistake in miniature.** Its `.head`, `.opt`, the A/B/C
+badge, the fake browser `.frame` and the `.why` rationale strip are the
+apparatus of a document presenting three alternatives to the author. The
+specification inside it is the filter bar and the three view bodies.
+
+Two of its components are refused and two of its views were the wrong shape:
+
+- **`03`'s search field is a `<div role="button">` that opens nothing**, which
+  is the claim §1 forbids — the same reason the bar's own search slot stays
+  empty. It is recorded in `DELIBERATELY_ABSENT` beside `barField`.
+- **Its table carries a group-break row.** Grouping is the question the
+  overview answers; a table that also groups answers two at once, which is why
+  `03`'s own note calls the table "the densest".
+- **Variant A groups its cards under a level heading** and the component was a
+  flat list. **Variant C is a five-column board** and the component was a stack
+  of full-width bands — an outline rather than "the whole shape of the course
+  in one view", which is what the mockup's note asks for.
+
+**`03`'s `top: 71px` is not transcribed.** It is `16 + 38 + 16 + 1` — the filter
+bar's padding twice, the search field's height, and the bar's hairline — so it
+is a sum, and one of its terms is the field this stage refuses to draw. The
+terms are declared and the sum is computed, and the table header follows if the
+bar's padding ever changes.
+
+Where `03` and the language disagreed, eight times, the resolution is recorded
+in `catalog.css`'s header table. The radii, the card's hover shadow, the
+translucent progress track and the pressed chip's ink fill all went to the
+language; the tinted level badge went to **D33**; `03`'s "Done" went to the
+product's one spelling of a status; and the board's 1080/620 breakpoints became
+the two the language actually declares.
+
+#### Stage 5 — the reading page
+
+`01`'s column has six children and the page had fourteen. Every fact from the
+twelve-row title strip keeps a home and `FactsStrip` names each one; four
+stopped being printed, and none of the four is something a reader can act on.
+
+**The containment mechanism became real for the first time.** `data-hl-width`,
+`--hl-measure`, `--hl-break-left` and `--hl-break-right` were a contract that
+**nothing set and no stylesheet read** — the last three existed in a docblock
+alone. `containment.spec.ts` was not merely failing against them: it *threw*,
+because its anchor `.hl-column` was emitted by no component either, so 63 test
+instances had been reporting an error that read like an unrelated bug.
+
+#### Stage 6 — code and figures
+
+Much smaller than the row implied, because **D33 landed in stage 0**: the four
+diagram semantics already rode the stroke, the `*-wash` tokens were already
+gone, and `classDef` already carried only a stroke width. What was left was one
+defect and it was invisible to everything except the one test that could not
+pass while it existed — described in *The defect two tests disagreed about*
+below.
+
+### The defects these three stages closed, and only two were in their own scope
+
+Eleven, and nine of them were older than the stage that found them:
+
+1. **The page scrolled sideways at 390px on EVERY route.** The bar's trailing
+   icon controls ended at x=412 in a 390 viewport. That fails an M16 acceptance
+   criterion outright, and it failed it on every page rather than on a surface
+   — which is why nothing that ran per-surface had caught it. `01` has two
+   media queries and neither touches the bar; it is a desktop study.
+2. **A shell with no aside reserved the third track anyway**, so 204px of the
+   A4 anatomy was blank at 1440px.
+3. **The 404's trail printed the address it was asked for.** Stage 1b moved the
+   breadcrumb from the root layout into `PageShell`, and
+   `useSelectedLayoutSegment()` answers relative to the nearest layout above
+   the component — so the one route whose address names nothing stopped being
+   recognised. The footer's half never broke, because the page names itself
+   there explicitly; the trail now does the same.
+4. **`main` painted a focus ring around the whole page** after the skip link.
+5. **§6.5's overflow fade did not exist** after stage 0 deleted the stylesheet
+   that carried it.
+6. **The fade could never have appeared on a diagram anyway.** A
+   `ResizeObserver` on the scroll box cannot see the box's *content* grow, and
+   every diagram is injected after mount — so each figure was measured while it
+   held a one-line placeholder.
+7. **The two prose controls had no tap target.** `COPY` painted 47 × 24.
+8. **The pager's end tile put its only sentence in the faint label slot**, at
+   3.30:1.
+9. **The § permalink had no second hover stage**, so a reader who had moved the
+   pointer onto a 13px control got no feedback that they were on it.
+10. **A module's number in the catalog table was in the caution ink** at
+    3.09:1, a drawing-set convention that does not survive a text floor.
+11. **The completion squares silently shrank to 8px.** `.bz-table tbody td`'s
+    padding out-specified a bare class, leaving 44px for 68px of squares, and
+    flex shrank them rather than overflowing where anyone would see it.
+
+### The defect two tests disagreed about, which is the interesting one
+
+`mermaid.spec.ts` required a local palette override **on the figure**;
+`slab-and-controls.test.ts` forbids **a surface stylesheet** from declaring any
+`--color-*` token. Both are right, and they are only in conflict if the
+override is put in a surface: it belongs in the language, on `.bz-figure`.
+
+Until it existed, every colour `mermaid-config.ts` names was a page token while
+the frame was the dark slab — so **a diagram was a near-white box inside a
+near-black one for six commits**, and the docblock of the test that could have
+said so blamed `rail.css` for a rule that file never carried under any name.
+
+Two things followed that were not obvious. **Two of the four semantics flip
+between themes and two do not**, so a frame that never flips needs the lifted
+values at all times, and the slab gained `slab-info` and `slab-fault`. And **a
+diagram's strokes are its content, not a control's edge**: `slab-line-raised`
+measures 1.80:1 on the slab ground, so they take the 3:1 graphic floor and
+`slab-arrow` at 3.47:1.
+
+### Four guards that were passing for the wrong reason
+
+Each of these would have hidden the next real difference:
+
+- **The reveal guard's pairing check** named the toggle's class literally, so
+  the rename would have made it match nothing — and a pairing check that
+  matches nothing reports zero mismatches and passes. It is class-agnostic now.
+- **A slice in the catalog's unit test** ran from the toggle to the count.
+  Moving the count above the toggle made that a backwards range, and
+  `String.slice` answers a backwards range with the empty string, which
+  contains no `<a `.
+- **The level-panel walk compared TEXT**, and the curriculum rail's group
+  summaries read `Fundamentals8` exactly as the menu's rows do. It asks by
+  location now.
+- **`accessibility.spec.ts` counted `header` elements** as a proxy for one
+  banner. A `<header>` inside a sectioning element is `generic`, so the board's
+  five column headers made it six elements and still exactly one banner.
+
+### The harness learned to read a second document, and D31 became mechanical
+
+`03` is on the retired cool-grey palette and says so itself. So the harness now
+knows **which mockup specifies which role**, and one guard follows from it:
+**a role whose reference is not `01` may carry no colour fact.** The catalog can
+only ever be compared on lengths and type steps; its colour is held by the three
+guards that need no mockup.
+
+`NARROW_DEVIATIONS` records the two facts that stop being specified below the
+language's own lower breakpoint — the bar's inline padding and a level swatch's
+width, the second of which is a flex-shrink artefact of the level NAME beside
+it and therefore a content measurement. Each entry names a width and a reason,
+and a guard fails any entry that has stopped deviating, because a stale
+exemption would hide the next difference.
+
+### Corrections these stages proved
+
+- `catalog.spec.ts` has **11** tests and `index-sheet.spec.ts` **4**, not 18
+  and 8. `tests/e2e/views.ts` has **five** consumers, not two.
+- `title-block.spec.ts` is **3 declarations** expanding to 34 instances, and
+  `containment.spec.ts` 3 expanding to **63**.
+- The progress meter **undercounts by 71**: it reads `.tsx` only, and the
+  renderer's whole class vocabulary lives in `.ts`.
+- `PROGRESS.md` said the diagram semantics are "emitted as literal values
+  resolved at build time". They are `var()` in `themeCSS`, and
+  `mermaid-config.test.ts` actively forbids a literal.
+- `03` has **no view toggle at all** — A, B and C are three separate frames —
+  so the toggle is derived under **D30** and recorded in `WITHOUT_REFERENCE`.
+
+### Four tests re-pointed because they were wrong on their own terms
+
+Not merely stale, which matters: a stale test names markup that moved, and
+these asserted things that could not be true of any correct page.
+
+- `prose-type.spec.ts` asserted a caption's font family matches `/Manrope/`, a
+  face stage 0 removed, and computed `parseFloat(--text-meta) * 16 === 13`
+  against a token block that is now px — so it evaluated 216 against 13.
+- `title-block.spec.ts` cross-checked twelve rows that no longer exist.
+- `site-footer.spec.ts` cross-checked a revision the page had been printing
+  twice, and pinned the retired ALL-CAPS.
+- `record-index.spec.ts` pinned §5.9's "zero radius, everywhere on this site",
+  a drawing-set convention DESIGN.md's Shapes section replaced with a scale
+  that names this exact case: "a `2px` corner on a `9px` swatch".
+
+### Two questions left for the author, both recorded in the code
+
+**A figure wider than the measure.** It is capped and scrolls inside its own
+box. `04` has a `.bleed` utility, the ratified shell deliberately does not, and
+`01` draws no figure wider than its column — so nothing bleeds, and
+`data-hl-width`'s three values stay a classification the design does not spend.
+Reversing it is one rule in `prose.css`; `src/lib/figure/width.ts` still
+classifies against the retired 656 / 920 / 1152 tracks.
+
+**The pager's direction label.** `01` sets it in `faint`, and DESIGN.md is
+explicit that faint does not clear a 4.5:1 text floor and names "a label above
+a control" as a legitimate use. MEASURED at 3.30:1. Lifting it to
+`on-surface-muted` would cost nothing visible, but it would be a **second
+`DEVIATIONS` entry**, and that list says adding one is the author's decision and
+never a way past a red test. The destinations all clear the floor; the label is
+asserted to be the language's own faint token and nothing quieter.
+
+### Dead code these stages left standing, deliberately
+
+`src/components/sheet/TitleBlock.tsx` and `titleBlockRows` / `titleStripRows`
+are rendered by no page now. They are **not** deleted here: their tests are the
+only remaining coverage of a derivation stage 8 may still want when it rebuilds
+the record surfaces, and deleting a component and its tests late in a stage is
+how coverage disappears without anybody deciding it should. It goes with stage
+8, or with the author saying so.
+
+### The gate after stage 6
+
+- `npm run typecheck` — clean.
+- `npm test` — **2,128 passed, 2 skipped**, 82 files. The two skips are the
+  role-reveal pair in `category-surfaces.test.ts`, which is stage 8's; stage 4
+  revived the five reveal cases in `views.test.ts`.
+- `npm run build` — clean, **56 HTML files**.
+- `node scripts/check-mermaid.mjs mini-courses/*/*.md` — **112 / 112** corpus
+  diagrams parse AND render in real Chrome.
+- `npx playwright test fidelity.spec.ts` — **156 passed** at 1440 covering
+  stages 1 to 6, **339 passed / 21 skipped** across three viewports.
+- `npx playwright test` — **890 passed, 23 failed**, from 163 failed when stage
+  4 opened. Every remaining failure is in a stage 7, 8 or 9 surface: `path`
+  (15), `home` (10), `record-sheet` (4), `record-pages`, `colour-not-alone`,
+  and two `responsive` cases on the account and alias routes.
+- Meter: `hl-` in markup **1,045**, from 1,188 when stage 4 opened. Counting
+  `.ts` as well as `.tsx`: **1,116**, from 1,281.
+
+### Stage 7, which is next
+
+Completion, `05`-A and `05`-C. Its surface is the largest remaining `hl-`
+holding — `components/record/` — and four of the 23 failures are already
+pointing at it: the level face's weight, the mascot, the drift line and the
+quick check's reveal. Stage 5 built the action row and its two buttons and left
+the completion behaviour inside it alone, which is the seam to pick up.
+
+### One housekeeping note this file owes its next reader
+
+**It is 2,300 lines and the split boundary is stage 10, not here.** kiacontext's
+rule is to split on a phase boundary first and on length second, and M16's plan,
+its ten stage briefs and its six reports are one argument: separating the brief
+for stage 7 from the reports that corrected the brief for stages 4 to 6 would
+make both halves harder to use. It splits when the milestone closes, as
+`PROGRESS.md` and `PROGRESS_2.md`, continuing the numbering.

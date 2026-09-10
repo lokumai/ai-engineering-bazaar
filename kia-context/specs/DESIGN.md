@@ -12,7 +12,7 @@ authority: blueprint
 writes: agent, as the language evolves
 status: active
 covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling — 2026-09-09"
-last_updated: "2026-09-09"
+last_updated: 2026-09-10
 ---
 
 ---
@@ -67,6 +67,12 @@ colors:
   slab-comment: "#8B91A0"
   slab-function: "#7FB8E8"
   slab-number: "#E0A45C"
+  # The two semantics a DIAGRAM needs, added in M16 stage 6. `success` and
+  # `caution` are the same value in both themes and read on either ground;
+  # `primary` and `category-5` are not, and a frame that never flips needs the
+  # lifted values at all times or `info` is a navy stroke on a near-black one.
+  slab-info: "#848BD0"
+  slab-fault: "#AD5B47"
 # An EXTENSION to the format, which has no dark field. Kept as tokens rather
 # than prose so it can be checked mechanically, which it is.
 dark:
@@ -571,8 +577,23 @@ reader can skip.
 
 **Code and figures.** A `slab` has a mono header strip and a scrolling code body. A figure frame uses
 the same dark palette, and **its contents scroll inside the frame** — a diagram wider than the
-column never widens the page. Nodes inside a figure are raised slab surfaces with hairlines; an
-active node takes a category hue with white type.
+column never widens the page. **The caption is outside the frame**, because it is page ink and would
+be unreadable inside it.
+
+**A figure REBINDS the page's palette onto itself, and that is the mechanism the whole diagram
+treatment rests on.** A drawing is inline SVG generated in the browser, and a diagram library's own
+class grammar cannot hold a CSS function — so every colour a diagram asks for is named as an
+ordinary surface token, and the frame redeclares those tokens in slab terms. Custom properties
+cascade into inline SVG, so one rule puts every drawing on the dark ground with no second stylesheet
+and no re-render. Two consequences are not obvious and are both measured. A filled accent inside a
+figure carries **dark** type, for the same reason it does on a dark page. And a diagram's strokes are
+its **content** rather than a control's edge, so they take the 3:1 graphic floor and not the accepted
+risk below: `slab-line-raised` measures 1.80:1 on the slab ground and `slab-arrow` measures 3.47:1.
+
+**Three node roles, and the third is a state rather than a colour.** A node is a raised slab surface
+with a hairline. `active` takes a category hue with white type — the one the shell draws — and
+`here` takes `primary`. Both are also heavier, so the hue is never the only signal. The attribute is
+the same word the rail spends on its current group: one word, one meaning, across the language.
 
 **Actions.** A top-ruled action row holds one `button-primary` — cobalt, white type — beside at most
 one `button-quiet`, which is white with a strong hairline. Primary hover brightens the fill rather

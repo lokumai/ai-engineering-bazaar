@@ -9,8 +9,8 @@ description: >
 authority: background
 writes: agent, whenever a decision is made
 status: active
-covers: "the whole project, 2026-07-07 onward — D1 to D38, O1 to O4"
-last_updated: "2026-09-10"
+covers: D1 to D45
+last_updated: 2026-09-10
 ---
 
 # 🧠 BRAINSTORM — Why we chose what we chose
@@ -1122,3 +1122,182 @@ group's edge and another for the generated segment.
 the *name*, and the check that would have caught this is the one M16 added anyway —
 `tests/unit/design/styling-references.test.ts`, which now reads the surface stylesheets as well as
 the markup and refuses any reference the language does not define.
+
+### D39 · D31 becomes a rule a machine applies, not one a reader remembers — 2026-09-10
+
+**The problem.** `02` to `09` are on a deliberately older cool-grey palette
+with a green accent; `03` says so in its own copy: *"One neutral palette so you
+judge the layout."* D31 settled that geometry comes from the component mockup
+and colour from the shell — and then left that as a sentence in two documents,
+which is exactly the shape of the failure this milestone exists to correct.
+M9 to M14 had a design document that drifted from its mockup, and every
+reviewer of every commit believed the document.
+
+**Rejected: compare the catalog against `03` and tolerate the colour
+differences.** The comparison would have reported thirty-odd differences on
+every run, and a check whose normal output is thirty differences is a check
+nobody reads. It is how a real difference gets buried.
+
+**Rejected: leave the rule in prose and rely on the stage to honour it.** It is
+what D31 already did, and stage 4 was the first stage where it could actually
+bite.
+
+**Chosen.** The harness knows which document specifies each role
+(`REFERENCE_OF`), and one guard follows: **a role whose reference is not `01`
+may carry no colour fact.** So `03` can only ever be compared on lengths, gaps,
+radii and type steps, and the catalog's colour is held by the three guards that
+need no mockup at all — the token resolver, the surface discipline rules and
+the contrast suite, which recompute from the shipped stylesheet.
+
+Two registries go with it and each entry must state a reason, because "there is
+no reference for this" and "nobody checked" are otherwise indistinguishable:
+`WITHOUT_REFERENCE` for a component no mockup draws (**D30**), and
+`NARROW_DEVIATIONS` for a fact that stops being specified below the language's
+own lower breakpoint. **A guard fails any narrow deviation that has stopped
+deviating**, because an exemption kept after its difference was fixed is an
+exemption that will hide the next one.
+
+### D40 · A mockup's variant TITLE is part of its specification — 2026-09-10
+
+**What happened.** `03`'s variant A is titled *"Cards, grouped under a level
+heading"* and draws exactly that. The component was a flat list of every module
+with the level printed on each card. Variant C is *"Five columns, one per
+level"* with a progress track under each header; the component was a stack of
+full-width bands. Both contained the same facts as the mockup and neither was
+the component the mockup drew.
+
+**Why it is worth a number.** This is D26's failure mode in miniature — a
+surface that carries the new palette on the old structure — and it survived
+into stage 4 because the previous milestone had read `03` for its *filters* and
+never for its views. The mockup's own note is the argument: variant C exists to
+show *"the whole shape of the course in one view"*, which a vertical stack
+cannot be however many bands it has.
+
+**Chosen.** Read the variant titles and notes as specification, not as
+commentary. `03` also told us what NOT to build the same way: its own note
+calls the table "the densest" because it does not group, which is why its
+group-break row is refused.
+
+### D41 · A diagram's strokes are content and take the graphic floor — 2026-09-10
+
+**MEASURED.** Once the diagram palette moved onto the slab, the node and edge
+strokes resolved to `slab-line-raised` at **1.80:1** against the slab ground.
+
+**Rejected: treat it as the accepted risk D35 names.** D35 is about a
+CONTROL's boundary — a field, a fold button — where the shape, the label, the
+position and the cursor carry the identity and the edge only supports it. A
+diagram has none of those: the stroke IS the drawing. Reading D35 as covering
+it would have made an accepted risk into a general licence, which is precisely
+what a named, bounded risk must not become.
+
+**Chosen.** `slab-arrow`, which is the value this palette already has for a
+line somebody has to follow — 3.47:1 on the frame and 3.09:1 on a node's own
+fill, so the 3:1 graphic floor holds against both grounds a stroke can sit on.
+No new colour, and the mockup's own vocabulary.
+
+### D42 · A local theme override belongs in the language, not in a surface — 2026-09-10
+
+**Two tests appeared to contradict each other and neither was wrong.**
+`mermaid.spec.ts` requires a local palette override **on the figure** — it
+reads a token off the figure and off `<html>` and demands they differ.
+`slab-and-controls.test.ts` forbids **a surface stylesheet** from declaring any
+`--color-*` token at all.
+
+They are only in conflict if the override is put in a surface. It belongs in
+`src/design/bazaar.css`, where both themes already live and where redeclaring a
+token is a re-binding rather than a new colour.
+
+**What the absence cost.** Between stage 0 and stage 6 every colour the diagram
+config names was a page token while the frame was the dark slab, so **a diagram
+was a near-white box inside a near-black one** on fifty-three figures. The one
+test that could have said so was red, and its docblock blamed a file that never
+carried the rule under any name — so the failure read as an unrelated bug for
+six commits.
+
+**Why the mechanism is worth keeping rather than replacing.** The obvious
+alternative is to rewrite the diagram config to name `slab-` tokens directly.
+It reads better and it was rejected: a diagram library's own class grammar
+cannot hold a CSS function, so the colours have to arrive through the cascade
+anyway, and the rebinding is what makes ONE rule re-theme every drawing with no
+per-figure class and no re-render.
+
+### D43 · A figure is capped at the measure and scrolls; nothing bleeds — 2026-09-10
+
+**The open question the author was owed**, and it is answered from the
+references rather than left hanging — with the reversal recorded so it stays
+the author's.
+
+`04` has a `.bleed` utility and uses it once, for a diagram *"allowed to bleed
+slightly past the text on both sides"*. The ratified shell deliberately does
+not carry one, and `01` draws no figure wider than its column.
+
+**Chosen.** A figure is capped at the measure and scrolls inside its own box —
+`04`'s three-part containment pattern generalised, since the corpus has tables
+and slabs and not only flows. `data-hl-width`'s three values stay as the
+renderer's CLASSIFICATION of a figure, which is what the facts strip counts and
+what a later stage would need to widen one; the design spends nothing on them.
+
+**What was replaced.** `--hl-measure`, `--hl-break-left` and
+`--hl-break-right`, three custom properties that **nothing ever set and no
+stylesheet ever read** — they existed in one docblock. The test that was meant
+to hold them did not merely fail: it threw, because its anchor was emitted by
+no component either.
+
+Reversing this is one rule. `src/lib/figure/width.ts` still classifies against
+the retired 656 / 920 / 1152 tracks, which the language no longer has.
+
+### D44 · Below its own lower breakpoint, the bar may depart from the mockup — 2026-09-10
+
+**MEASURED.** At 390px the bar's trailing icon controls ended at x=412 in a
+390 viewport, so **every route on the site scrolled sideways** — against an
+explicit M16 acceptance criterion. `01` has two media queries, at 1180 and 880,
+and neither touches the bar: it is a desktop drawing and states 22px of inline
+padding at every width.
+
+Three alternatives, and DESIGN.md forbids the first two by name:
+
+- **a hamburger** — "nothing reflows into a hamburger";
+- **letting the bar scroll sideways inside itself** — "wide content scrolls
+  inside its own box" would seem to license it, but `overflow` creates a
+  clipping context and the bar's own dropdown is absolutely positioned inside
+  it, so the menu would be clipped. Measured on paper before it was written;
+- **hiding the wordmark's text below the breakpoint** — it keeps every declared
+  value and hides a label, which is a bigger change than it looks and is the
+  author's to make.
+
+**Chosen.** The gap and the inline padding give way below `rail-at`, which is
+where DESIGN.md already says the layout changes. Spacing only: no control is
+hidden and no colour moves. Above that breakpoint every value is the mockup's
+own — a `clamp` was tried first and rejected because it made the bar stop
+matching at 1024 too, where the mockup is perfectly happy.
+
+The departure is recorded in `NARROW_DEVIATIONS` with its width and its reason,
+so the comparison is narrowed by something somebody wrote down.
+
+### D45 · Where a retired blanket rule meets the language's ink weights, the language wins — 2026-09-10
+
+**The case.** §10.4 said no text in the pager may sit below a 4.5:1 floor.
+`01` sets the pager's direction label in `faint`, and DESIGN.md is explicit
+that `on-surface-faint` *"does not meet a 4.5:1 text floor on this ground"* and
+names its legitimate uses — one of which is, in as many words, "a label above a
+control". MEASURED: `Next module` lands at **3.30:1**.
+
+**Rejected: lift the label and record a second `DEVIATIONS` entry.** It would
+clear the floor and cost nothing visible. It is also the one thing DESIGN.md
+forbids doing unilaterally: that list says adding an entry is the author's
+decision and **never a way past a red test**. D34 is the precedent for how it
+would be written if the author wants it.
+
+**Chosen.** Assert what the language actually promises: every DESTINATION in
+the pager clears 4.5:1 — including the end-of-course tile, whose only sentence
+moved out of the label slot into the destination slot for exactly this reason —
+and the label is asserted to be the language's own faint token and nothing
+quieter still. The remaining tension is written down in the test and in
+`CLAUDE.md` rather than resolved by whoever was passing.
+
+The same reasoning settled three smaller collisions in the same sitting, each
+of which had the retired drawing set on one side and the language on the other:
+the table's column headers are sentence case and not `COMPLETION`; a 14px
+completion square takes the smallest radius step and not §5.9's "zero radius,
+everywhere"; and a draft row recedes in its TITLE, as `03` draws it, rather
+than in caution ink on its number, which measured 3.09:1.

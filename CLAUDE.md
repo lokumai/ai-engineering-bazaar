@@ -19,10 +19,18 @@ exception, listed in DESIGN.md itself, because a measured accessibility floor
 outranks a transcribed value (**D34**).
 
 **The work is milestone M16**, in `kia-context/logs/PROGRESS.md`, which sets it
-out as ten stages. **Stages 0 to 3 are done**: the token layer, the shell, the
-navigation and the rail. **Stage 4 is the catalog and stage 5 the reading
-page.** Each stage's entry names its reference mockup, what it touches, the
-fidelity roles it adds and the traps in it.
+out as ten stages. **Stages 0 to 6 are done**: the token layer, the shell, the
+navigation, the rail, the catalog, the reading page, and code and figures — so
+every route a reader uses on the way through the course is on the new language.
+**Stage 7 is completion**, and its surface is the largest remaining `hl-`
+holding, `src/components/record/`. Each stage's entry names its reference
+mockup, what it touches, the fidelity roles it adds and the traps in it.
+
+Two things stage 5 left for the author to settle, both recorded in the code
+rather than left implicit: whether a figure wider than the measure may bleed
+past the text (it does not, and reversing that is one rule in `prose.css`), and
+whether the pager's direction label should be lifted off `on-surface-faint`,
+which would be a **second** entry in DESIGN.md's `DEVIATIONS` list.
 
 Two things every stage does. It compares the built surface to its mockup by
 adding roles to `APP_SELECTORS` in `tests/e2e/fidelity.ts` **and** a
@@ -30,6 +38,16 @@ adding roles to `APP_SELECTORS` in `tests/e2e/fidelity.ts` **and** a
 **geometry from the component mockup and colour from the shell** (**D31**):
 `02` to `09` are on a deliberately older palette, so reading them literally
 would put a green accent on a cool grey ground.
+
+**Since stage 4, D31 is mechanical rather than a rule to remember.** The
+harness knows which mockup specifies which role (`REFERENCE_OF`), and a role
+whose reference is not `01` **may carry no colour fact** — so a non-shell
+mockup can only ever be compared on lengths and type steps. Two more registries
+go with it, and each entry has to state a reason: `WITHOUT_REFERENCE` for a
+component no mockup draws (**D30**), and `NARROW_DEVIATIONS` for a fact that
+stops being specified below the language's own lower breakpoint. A guard fails
+any narrow deviation that has stopped deviating, because a stale exemption
+hides the next difference.
 
 **`src/design/bazaar.css` is the language as CSS** — both themes, every
 primitive — and it is the token layer the site loads. A surface stylesheet in

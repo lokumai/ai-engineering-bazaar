@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { contrastRatio, relativeLuminance } from '@/lib/color/contrast'
 import {
@@ -64,6 +66,10 @@ import {
 type Theme = 'light' | 'dark'
 const THEMES: readonly Theme[] = ['light', 'dark']
 
+/** The language itself, for the one check that has to read a BINDING rather
+ *  than a token value. */
+const LANGUAGE = join(import.meta.dirname, '../../../src/design/bazaar.css')
+
 type Job = 'text' | 'graphic' | 'decorative'
 
 const FLOOR: Record<Job, number> = { text: 4.5, graphic: 3.0, decorative: 3.0 }
@@ -118,6 +124,24 @@ const PAIRS: readonly Pair[] = [
   { foreground: 'slab-on-raised', background: 'slab-surface-raised', job: 'text' },
   { foreground: 'slab-arrow', background: 'slab-surface', job: 'graphic' },
 
+  /*
+     THE FOCUS RING, ON EVERY GROUND IT APPEARS ON — which is four, not two.
+
+     This was `graphical('focus')` and nothing else, and `graphical` walks only
+     the two RESTING grounds. So the ring was measured on `surface` and
+     `surface-raised`, where the clay reads 5.48:1 and 5.66:1, and never on the
+     cobalt bar or the dark slab, where controls also sit. MEASURED once it was
+     asked: clay on `bar` is **2.35:1** in light, against SC 1.4.11's 3:1 — and
+     the bar holds the first controls in the tab order on every route, so that
+     was the ring a keyboard reader met first, everywhere.
+
+     The pairs below are the ring as the language now binds it: clay on the page
+     grounds, `on-bar` on the bar, `slab-on-surface` on the slab. Each token is
+     the ground's own ink, which is what a sub-palette is for. **The lesson is
+     the shape of the bug rather than the numbers**: a floor checked on one
+     ground is not checked, and a helper that defaults to "the two grounds a
+     reader reads on" will silently skip every ground that is not one of them.
+  */
   ...graphical('focus'),
   ...graphical('success'),
   /* GRAPHIC and not text, and the measurement is the reason rather than a
@@ -294,6 +318,103 @@ describe('the syntax tokens on the slab', () => {
     for (const token of tokens) {
       const { light, dark } = readDesignToken(token)
       expect(dark, token).toBe(light)
+    }
+  })
+})
+
+/**
+ * The focus ring, measured on every ground it is actually bound on — by
+ * reading the BINDINGS rather than by listing pairs.
+ *
+ * ## Why this is not three more rows in `PAIRS`
+ *
+ * The obvious fix for the bug below was three pairs: `on-bar` against `bar`,
+ * `slab-on-surface` against the two slab surfaces. Those pass — and they would
+ * pass just as well if the ring were bound to clay on every ground, because
+ * they assert something about two tokens and nothing about the ring. That is
+ * the "count a proxy for the property" mistake, and writing it while fixing an
+ * accessibility bug is how a guard ends up protecting nothing.
+ *
+ * So this resolves the `--bz-ring` declarations out of the language, maps each
+ * to the ground its selector applies to, and measures **what the ring will
+ * actually be** there. Rebind one back to clay and this fails.
+ *
+ * ## The bug it exists for
+ *
+ * `:focus-visible` was `outline: 2px solid var(--color-focus)` with the comment
+ * "never restyled per surface", and DESIGN.md said the clay was chosen so the
+ * ring works "on cobalt chrome, on white cards and on the dark slab without
+ * being restyled". MEASURED: clay on `bar` is 2.35:1 in light and 2.77:1 in
+ * dark; on the slab's surfaces 2.56:1 and 2.90:1. SC 1.4.11 wants 3:1. It
+ * cleared the floor only on the two page grounds — which are the only two
+ * `graphical()` walks, which is why nothing caught it. **The bar holds the
+ * first controls in the tab order on every route.**
+ */
+describe('the focus ring clears 3:1 on every ground it is bound on', () => {
+  /** Which ground each `--bz-ring` selector puts the ring on. */
+  const GROUND: Readonly<Record<string, readonly string[]>> = {
+    ':root': ['surface', 'surface-raised'],
+    '.bz-bar': ['bar'],
+    '.bz-slab': ['slab-surface'],
+    '.bz-figure': ['slab-surface', 'slab-surface-raised'],
+  }
+
+  /**
+   * `selector -> the token the ring resolves to`, read out of the language.
+   *
+   * Comments are stripped FIRST and the selector is found by walking back from
+   * the declaration to the nearest `{` — not by a rule-shaped regex. Two
+   * reasons, both of which bit on the first attempt: a `/* … *\/` block before
+   * a rule is captured as part of its selector, and `:root` sits inside
+   * `@layer base { … }`, so a pattern that assumes one level of braces reads
+   * the wrong text on the one binding that matters most.
+   */
+  const BINDINGS = (() => {
+    const css = readFileSync(LANGUAGE, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
+    const found: Array<{ selector: string; token: string }> = []
+    for (const declaration of css.matchAll(/--bz-ring:\s*var\((--color-[a-z0-9-]+)\)/g)) {
+      const before = css.slice(0, declaration.index)
+      const open = before.lastIndexOf('{')
+      if (open === -1) continue
+      const head = before.slice(0, open)
+      // The selector is whatever follows the previous `{`, `}` or `;`.
+      const start = Math.max(head.lastIndexOf('{'), head.lastIndexOf('}'), head.lastIndexOf(';'))
+      for (const selector of head.slice(start + 1).split(',').map((one) => one.trim())) {
+        if (selector !== '') found.push({ selector, token: declaration[1] })
+      }
+    }
+    return found
+  })()
+
+  it('reads a binding for every ground, and a ground for every binding', () => {
+    // Two empty sets agree about everything, and a selector this test does not
+    // know the ground of is a ring nobody is measuring.
+    expect(BINDINGS.length, 'no --bz-ring bindings found in the language').toBeGreaterThan(2)
+    for (const { selector } of BINDINGS) {
+      expect(
+        Object.keys(GROUND),
+        `${selector} binds the ring and GROUND does not say what it sits on`,
+      ).toContain(selector)
+    }
+    for (const selector of Object.keys(GROUND)) {
+      expect(
+        BINDINGS.map((one) => one.selector),
+        `${selector} is expected to bind the ring and does not`,
+      ).toContain(selector)
+    }
+  })
+
+  it.each(THEMES)('clears the floor in the %s theme', (theme) => {
+    for (const { selector, token } of BINDINGS) {
+      for (const ground of GROUND[selector]) {
+        const ring = readDesignToken(token)[theme]
+        const behind = readDesignToken(`--color-${ground}`)[theme]
+        const ratio = contrastRatio(ring, behind)
+        expect(
+          Number(ratio.toFixed(2)),
+          `${selector}: ${token} on ${ground} is ${ratio.toFixed(2)}:1, under SC 1.4.11's 3:1`,
+        ).toBeGreaterThanOrEqual(3)
+      }
     }
   })
 })

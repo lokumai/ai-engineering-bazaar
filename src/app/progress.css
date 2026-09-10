@@ -26,8 +26,19 @@
 @layer components {
   /* -- the continue hero, `07:36-45` --------------------------------------- */
 
+  /* -- the gate, and it was missing -----------------------------------------
+     §15.11 — this is revealed only for a record that CARRIES SOMETHING, which
+     `boot.ts` decides before first paint and stamps as `data-hl-record`. It
+     had no gate at all, so the prerendered page shipped a populated "Continue
+     where you left off" to every reader including a fresh browser, and with
+     the bundle blocked it never corrected. The home page's own shortcut has
+     had this rule since stage 9; `/profile/` was built in stage 8 and never
+     got it.
+
+     The BOX is channel A and the CONTENT is channel B, which is the only split
+     available: a module's title is text, and channel A stamps classes. */
   .bz-cont {
-    display: flex;
+    display: none;
     flex-wrap: wrap;
     align-items: center;
     gap: 18px;
@@ -36,6 +47,10 @@
     border: 1px solid var(--color-line);
     border-radius: var(--radius-xl);
     background: var(--color-surface-raised);
+  }
+
+  html[data-hl-record] .bz-cont {
+    display: flex;
   }
 
   /* `07:38` fills this 46px square with a tint and prints the ordinal on it.

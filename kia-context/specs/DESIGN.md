@@ -395,10 +395,23 @@ is the link colour. That overlap is deliberate and it has one consequence worth 
 a link. `category-2` *is* the cobalt, which is the exception that proves it — that category is
 identified by the bar's own colour, so nothing about it is ambiguous.
 
-**`focus` is clay, not cobalt.** The focus ring is deliberately the one warm chromatic in the set, so
-it is visible against cobalt chrome, against white cards and against the dark slab without changing
-per context. Never re-colour a focus ring to match its surroundings; that is how a keyboard path
-becomes invisible on one surface out of five.
+**`focus` is clay, not cobalt — and on the two grounds with their own sub-palette the ring takes that
+palette's ink instead.** This file said the clay was chosen so the ring "is visible against cobalt
+chrome, against white cards and against the dark slab without changing per context", and told you
+never to re-colour it. **MEASURED, and that was false on two of those three**: clay on `bar` is
+2.35:1 in light and 2.77:1 in dark, and on the slab's two surfaces 2.56:1 and 2.90:1, against SC
+1.4.11's 3:1 for a focus indicator. It clears the floor on the page grounds only, at 5.48:1 and
+5.66:1 — and the bar holds the first controls in the tab order on every route, so that was the ring a
+keyboard reader met first, everywhere.
+
+So the ring reads a `ring` hook that each ground may rebind, and two do: the bar to `on-bar`
+(13.31:1) and the slab to `slab-on-surface` (11.31:1 to 12.82:1). **Nothing is invented — each takes
+the ink its own sub-palette already declares**, which is what a sub-palette is for, and the
+rebinding travels by inheritance so a nested control needs no second selector.
+
+The old instruction was right in spirit and wrong in fact: **do not tint a focus ring to blend with
+its surroundings**, which is how a keyboard path goes quiet. Making it the ground's own ink is the
+opposite of blending. Anywhere without a sub-palette, it stays clay.
 
 **`success`, `caution` and `ornament` are glazes, not signals from a traffic light.** Teal `success`
 marks a finished thing. Gold `caution` marks something a reader should notice before acting.

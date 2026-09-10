@@ -1218,6 +1218,52 @@ test.describe('M16 stage 8 — progress and account', () => {
   })
 
   /**
+   * §15.11 — the shortcut is offered only to a reader who has a record, and
+   * this is the test whose absence let it ship to everybody.
+   *
+   * `/profile/`'s hero had NO gate: the prerendered page carried a populated
+   * "Continue where you left off → LLM Fundamentals" for every reader,
+   * including a fresh browser, and with the bundle blocked it never corrected.
+   * The component's own docblock claimed it rendered nothing until the store
+   * answered — `nextUnsigned` returns the FIRST drawn module for an empty
+   * record, not `null`, so it never did.
+   *
+   * Measured with every `.js` request refused, because the gate is channel A
+   * and nothing React does may be what makes it true. The equivalent test for
+   * the home page's shortcut is in the stage 9 block.
+   */
+  test('offers the continue hero only to a reader with a record, in frame one', async ({ page }) => {
+    await page.route('**/*.js', (route) => route.abort())
+
+    await page.goto('/profile/')
+    const clean = await page.evaluate(() => {
+      const hero = document.querySelector('.bz-cont') as HTMLElement | null
+      return {
+        stamped: document.documentElement.hasAttribute('data-hl-record'),
+        present: hero !== null,
+        shown: hero?.checkVisibility() ?? null,
+        // What it would have claimed if it were shown.
+        eyebrow: (document.querySelector('.bz-cont-eyebrow')?.textContent ?? '').trim(),
+      }
+    })
+    expect(clean.stamped, 'a fresh browser was stamped as carrying a record').toBe(false)
+    expect(clean.present, 'no continue hero in the document at all').toBe(true)
+    expect(clean.shown, 'a fresh browser is offered a shortcut it has not earned').toBe(false)
+    // And the copy does not claim a reader with no completions left off
+    // somewhere — the mockup draws one state and there are two.
+    expect(clean.eyebrow).toBe('Start with')
+
+    await seedRecord(page, { sheets: { 'fundamentals/llms': signedSheet('a1b2c3d') } })
+    await page.goto('/profile/')
+    const returning = await page.evaluate(() => ({
+      stamped: document.documentElement.hasAttribute('data-hl-record'),
+      shown: (document.querySelector('.bz-cont') as HTMLElement).checkVisibility(),
+    }))
+    expect(returning.stamped).toBe(true)
+    expect(returning.shown, 'a reader with a record is not offered the shortcut').toBe(true)
+  })
+
+  /**
    * §13.3 — the nine-role reveal, in a browser, with every `.js` request
    * refused.
    *

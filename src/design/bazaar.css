@@ -271,6 +271,10 @@
        to this name, because CSS cannot build a property name out of an
        attribute. */
     --bz-done: 0%;
+    /* The focus ring's colour, so a ground with its own sub-palette can rebind
+       it. Clay by default, which is what the page grounds take. See the
+       `:focus-visible` rule for why this hook exists at all. */
+    --bz-ring: var(--color-focus);
   }
 
   body {
@@ -290,10 +294,42 @@
     text-underline-offset: 2px;
   }
 
-  /* Clay, 2px, offset, everywhere. Never restyled per surface. */
+  /* Clay, 2px, offset — and REBOUND on the two grounds that have their own
+     sub-palette, which is a correction rather than a refinement.
+
+     This said "never restyled per surface", and DESIGN.md said the clay was
+     chosen "so the ring is visible on cobalt chrome, on white cards and on the
+     dark slab without being restyled per surface". MEASURED, and that is false
+     on two of those three: clay on `--color-bar` is **2.35:1** in light and
+     2.77:1 in dark, and on the slab's two surfaces 2.56:1 and 2.90:1 — against
+     SC 1.4.11's 3:1 for a focus indicator. It clears the floor only on the page
+     grounds, where it measures 5.48:1 and 5.66:1.
+
+     **The bar holds the first controls in the tab order on every route**, so
+     this is the ring a keyboard reader meets first, everywhere, and it was the
+     weakest one on the site. D34's rule applies: a measured accessibility floor
+     outranks a transcribed value.
+
+     Nothing is invented to fix it. Each ground rebinds the ring to its OWN ink,
+     which is what its sub-palette exists for — `on-bar` measures 13.31:1 on
+     cobalt and `slab-on-surface` 11.31:1 to 12.82:1 on the slab — and the
+     rebinding travels by inheritance, so a control nested anywhere inside
+     either ground gets it without a second selector.
+
+     The contrast suite missed this because `graphical('focus')` walks only the
+     two RESTING grounds. A floor checked on one ground is not checked. */
   :focus-visible {
-    outline: 2px solid var(--color-focus);
+    outline: 2px solid var(--bz-ring);
     outline-offset: 2px;
+  }
+
+  .bz-bar {
+    --bz-ring: var(--color-on-bar);
+  }
+
+  .bz-slab,
+  .bz-figure {
+    --bz-ring: var(--color-slab-on-surface);
   }
 }
 

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRecord } from '@/lib/record/store'
-import { nextUnsigned } from '@/lib/record/derive'
+import { nextUnsigned, signedCount } from '@/lib/record/derive'
 import type { CurriculumFacts } from '@/lib/content/facts'
 
 /**
@@ -14,12 +14,27 @@ import type { CurriculumFacts } from '@/lib/content/facts'
  * page — `nextUnsigned`, the first written module the reader has not signed
  * off — in the shape `07:120-127` draws.
  *
- * **Channel B, and it has to be.** `nextUnsigned` reads the record, so this
- * cannot be right in frame one; `getServerSnapshot` returns the frozen empty
- * record, which resolves to module 01 for everybody. That is not a lie — a
- * reader who has signed nothing off does continue at the first module — but it
- * is not a shortcut either, so the hero renders nothing until the store has
- * answered and nothing at all once every written module is signed off.
+ * **The BOX is channel A and the CONTENT is channel B**, which is the split the
+ * home page's shortcut already uses and the only one available: a module's
+ * title is text, and channel A stamps classes and attributes. So
+ * `progress.css` reveals this only for `html[data-hl-record]` — a record that
+ * carries something — and React fills in which module once the store answers.
+ *
+ * **IT HAD NO GATE AT ALL, and that was a defect a review caught.** The
+ * docblock here claimed "the hero renders nothing until the store has
+ * answered"; it does not, because `nextUnsigned(EMPTY_RECORD, facts)` returns
+ * the FIRST drawn module rather than `null`. So the prerendered `/profile/`
+ * shipped a fully-populated "Continue where you left off → LLM Fundamentals"
+ * to every reader, including one who had never opened anything, and with the
+ * bundle blocked it never corrected. A comment asserting the opposite of the
+ * code is worse than no comment.
+ *
+ * **The eyebrow branches, because the mockup draws one state and there are
+ * two.** `07:123` reads "Continue where you left off", which is true of a
+ * reader who has completed something and false of one who has only chosen an
+ * alias or a role — and §15.11 counts both as carrying a record. A mockup that
+ * draws one state cannot dictate the copy for a state it does not draw, so the
+ * other state says what is true of it instead.
  *
  * WHAT `07` ASKS FOR AND THIS DOES NOT PRINT. Its metadata line reads
  * "Fundamentals · 25 min · you finished the module before this one on Friday".
@@ -40,7 +55,14 @@ export function ContinueHero({
 }) {
   const record = useRecord()
   const slug = nextUnsigned(record, facts)
+  // `null` only once every written module is signed off, which is the one case
+  // where there is nothing left to continue to.
   if (slug === null) return null
+
+  // Whether the reader has actually left off anywhere, which is what the
+  // eyebrow may claim. Not a gate: a reader with a record and no completions
+  // still gets the shortcut, it just does not lie about why.
+  const started = signedCount(record, facts).signed > 0
 
   const sheet = facts.sheets.find((candidate) => candidate.slug === slug)
   if (sheet === undefined) return null
@@ -63,7 +85,9 @@ export function ContinueHero({
       </span>
 
       <div className="bz-cont-body">
-        <small className="bz-cont-eyebrow">Continue where you left off</small>
+        <small className="bz-cont-eyebrow">
+          {started ? 'Continue where you left off' : 'Start with'}
+        </small>
         <b className="bz-cont-title">{sheet.title}</b>
         {parts.length > 0 ? <p className="bz-cont-meta">{parts.join(' · ')}</p> : null}
       </div>

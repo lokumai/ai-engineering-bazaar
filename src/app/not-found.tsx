@@ -30,7 +30,7 @@ const CAPTION = 'PAGE NOT FOUND · NO SUCH MODULE IN THIS CURRICULUM'
  */
 export default function NotFound() {
   return (
-    <PageShell sheet={NOT_FOUND_SHEET_LABEL}>
+    <PageShell sheet={NOT_FOUND_SHEET_LABEL} trailLabel={NOT_FOUND_TITLE}>
       <h1 className="hl-listing-title">{NOT_FOUND_TITLE}</h1>
 
       <p className="hl-lead">

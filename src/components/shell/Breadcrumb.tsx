@@ -32,9 +32,41 @@ import { breadcrumbFor, type CategoryLabel } from '@/lib/route-labels'
  *
  * Below 768px only the current segment shows: the landmark stays and a long
  * trail cannot push the column sideways (§4.7).
+ *
+ * ## `current`, and why the 404 page has to hand it over
+ *
+ * `NOT_FOUND_SEGMENT` is how this component recognises the one route whose
+ * address names nothing — and recognising it depends on
+ * `useSelectedLayoutSegment()`, which answers relative to the nearest layout
+ * ABOVE the component. M16 stage 1b moved the trail out of `SiteHeader` in the
+ * root layout and into `PageShell`, which a page renders, so the question is
+ * being asked from a different place in the tree and the answer changed: the
+ * trail on `/404/` printed `Home / 404`, which is the URL segment the test
+ * §5.1 exists to forbid.
+ *
+ * So the page that knows it is the not-found page says so, exactly as it
+ * already does for the footer's sheet slot — `not-found.tsx` has passed
+ * `NOT_FOUND_SHEET_LABEL` all along, and that half never broke. An explicit
+ * name from the one route that cannot derive one beats an inference that is
+ * correct only from one position in the component tree.
  */
-export function Breadcrumb({ categories }: { categories: readonly CategoryLabel[] }) {
-  const crumbs = breadcrumbFor(usePathname() ?? '/', categories, useSelectedLayoutSegment())
+export function Breadcrumb({
+  categories,
+  current,
+}: {
+  categories: readonly CategoryLabel[]
+  /** Overrides the last crumb, for a route whose address names nothing. */
+  current?: string
+}) {
+  const derived = breadcrumbFor(usePathname() ?? '/', categories, useSelectedLayoutSegment())
+  /* The ROOT and the page's own name, and nothing between them. Overriding
+     only the last crumb was not enough: `/courses/fundamentals/no-such-module/`
+     kept `Curriculum / Fundamentals` in the middle, so the trail still read
+     differently at two addresses that are the same page, and §5.1's promise is
+     that the 404 never prints the address it was asked for. This is the shape
+     `breadcrumbFor` already produces for `NOT_FOUND_SEGMENT`. */
+  const crumbs =
+    current === undefined ? derived : [derived[0], { label: current, href: null }]
 
   return (
     <nav aria-label="Curriculum" className="bz-crumb">

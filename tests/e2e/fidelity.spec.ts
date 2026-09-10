@@ -3,19 +3,41 @@ import { SHEETS, SHORT } from './sheets'
 import { seedRecord, signedSheet } from './record'
 import {
   APP_SELECTORS,
+  CATALOG_SELECTORS,
+  CATALOG_URL,
   DELIBERATELY_ABSENT,
   DESIGN_FACTS,
+  NARROW_DEVIATIONS,
   freezeMotion,
   FACT_KEYS,
   MOCKUP_SELECTORS,
   MOCKUP_URL,
+  REFERENCE_OF,
+  REFERENCE_SELECTORS,
+  REFERENCE_URL,
+  WITHOUT_REFERENCE,
   compareDesignFacts,
+  differencesAt,
   differencesIn,
   extractDesignFacts,
   factKey,
   factsRead,
+  isColourProperty,
+  type Reference,
   type Role,
 } from './fidelity'
+
+/**
+ * The roles one document specifies, as fact keys.
+ *
+ * The harness reads TWO mockups from M16 stage 4 on, so every self-test below
+ * has to say which one it is talking about. Without this the "every fact the
+ * mockup supplies" test would report all thirty-nine catalog facts as missing
+ * from `01` — correctly, and uselessly.
+ */
+function keysOf(reference: Reference): string[] {
+  return FACT_KEYS.filter((key) => REFERENCE_OF[key.split('.')[0] as Role] === reference)
+}
 
 /**
  * M15 — proving the fidelity harness, which is the only deliverable in this
@@ -90,7 +112,7 @@ test.describe('the fidelity harness', () => {
     // different mechanisms, and stage 2's own block is what opens both and
     // compares them.
     const menuRoles = /^menu/
-    const absent = FACT_KEYS.filter((key) => facts[key] === null && !menuRoles.test(key))
+    const absent = keysOf('01').filter((key) => facts[key] === null && !menuRoles.test(key))
     const railRoles = /^(rail|railInner|group|groupCurrent|groupKey|item|tick)\./
     const asideRoles = /^aside/
 
@@ -109,6 +131,122 @@ test.describe('the fidelity harness', () => {
   })
 
   /**
+   * The second reference document, read on its own terms.
+   *
+   * `03` draws its three alternatives as three stacked frames in ONE document,
+   * so unlike `01` nothing in it is behind a breakpoint or a disclosure: every
+   * catalog role is on screen at every width. The expected count is computed
+   * from the fact table rather than written down, so adding a catalog fact
+   * cannot quietly lower the floor.
+   */
+  test('reads every catalog fact from the catalog mockup', async ({ page }) => {
+    await page.goto(CATALOG_URL)
+    await freezeMotion(page)
+    const facts = await extractDesignFacts(page, CATALOG_SELECTORS)
+    const wanted = keysOf('03')
+
+    expect(wanted.length, 'no catalog facts in the table').toBeGreaterThan(20)
+    const absent = wanted.filter((key) => facts[key] === null)
+    expect(absent, `03 does not supply: ${absent.join(', ')}`).toEqual([])
+  })
+
+  /**
+   * **D31, as a rule a machine applies.**
+   *
+   * `03` is on the retired cool-grey palette with a green accent, and it says
+   * so itself. So a fact specified by it may be a length or a type step and may
+   * never be a colour: comparing the built catalog's colour against `03` would
+   * demand exactly the design the last five milestones were rejected for.
+   *
+   * This is the guard that makes the split structural instead of a sentence in
+   * a document somebody has to have read. The catalog's colour is held by
+   * `styling-references.test.ts`, `surface-stylesheets.test.ts` and the
+   * contrast suite, none of which needs a mockup to do it.
+   */
+  test('compares a non-shell mockup on geometry alone', async () => {
+    const coloured = DESIGN_FACTS.filter(
+      (fact) => REFERENCE_OF[fact.role] !== '01' && isColourProperty(fact.property),
+    ).map(factKey)
+
+    expect(
+      coloured,
+      'these compare COLOUR against a mockup that is deliberately on the old ' +
+        'palette (D31): geometry comes from the component mockup, colour from `01`',
+    ).toEqual([])
+
+    // Non-vacuity: the filter above has to be looking at something.
+    expect(keysOf('03').length).toBeGreaterThan(20)
+  })
+
+  /**
+   * Every role is accounted for, one way or the other.
+   *
+   * A role the application renders is either specified by a mockup or derived
+   * from primitives with the derivation written down (**D30**). What this
+   * refuses is the third case — a role that is simply unexplained — because an
+   * unexplained role is how "no mockup draws this" and "nobody checked" become
+   * indistinguishable.
+   */
+  test('accounts for every role it maps, by reference or by derivation', async () => {
+    const unexplained = (Object.keys(APP_SELECTORS) as Role[]).filter(
+      (role) => REFERENCE_OF[role] === undefined && WITHOUT_REFERENCE[role] === undefined,
+    )
+    expect(unexplained, `no mockup and no recorded derivation: ${unexplained}`).toEqual([])
+
+    // And every fact in the table names a document, or the mutation proof
+    // above would have nothing to open.
+    const homeless = DESIGN_FACTS.filter((fact) => REFERENCE_OF[fact.role] === undefined)
+    expect(homeless.map(factKey), 'a fact whose role has no reference document').toEqual([])
+  })
+
+  /**
+   * EVERY NARROW DEVIATION IS STILL DEVIATING, AND ONLY BELOW ITS WIDTH.
+   *
+   * An exemption is the one thing in this harness that can make a comparison
+   * pass without the design being right, so each one is held to both halves of
+   * its own claim: above the width it names, the fact must match the mockup;
+   * below it, the fact must really differ. A stale entry — one kept after the
+   * difference was fixed — is an exemption that would hide the NEXT
+   * difference, and it fails here rather than waiting to be noticed.
+   */
+  for (const [key, deviation] of Object.entries(NARROW_DEVIATIONS)) {
+    const role = key.split('.')[0] as Role
+    const source = REFERENCE_OF[role]!
+
+    test(`keeps ${key} exempt only below ${deviation.below}px`, async ({ page }) => {
+      const width = page.viewportSize()!.width
+      const selectors = REFERENCE_SELECTORS[source]
+
+      await page.goto(REFERENCE_URL[source])
+      await freezeMotion(page)
+      const reference = await extractDesignFacts(page, selectors)
+
+      await page.goto(source === '03' ? '/sheets/' : SHORT.path)
+      await freezeMotion(page)
+      if (source === '03') {
+        await page.addStyleTag({ content: '.bz-view { display: block !important; }' })
+      }
+      const actual = await extractDesignFacts(page, APP_SELECTORS)
+
+      if (reference[key] === null || actual[key] === null) {
+        test.skip(true, `${key} is absent at this viewport`)
+        return
+      }
+
+      if (width >= deviation.below) {
+        expect(actual[key], `${key} is exempt below ${deviation.below}px, not here`)
+          .toBe(reference[key])
+      } else {
+        expect(
+          actual[key],
+          `${key} no longer deviates below ${deviation.below}px — the exemption ` +
+            'is stale and would hide the next difference',
+        ).not.toBe(reference[key])
+      }
+    })
+  }
+
+  /**
    * THE MUTATION PROOF, one case per fact.
    *
    * Each case paints over exactly one property in the mockup and asserts the
@@ -120,9 +258,13 @@ test.describe('the fidelity harness', () => {
    */
   for (const fact of DESIGN_FACTS) {
     const key = factKey(fact)
+    /* Which document specifies this fact. Every fact in the table has one —
+       the completeness test below is what makes that true — so the `!` is
+       safe and a missing entry fails loudly there rather than quietly here. */
+    const source = REFERENCE_OF[fact.role]!
 
     test(`notices ${key} changing`, async ({ page }) => {
-      await page.goto(MOCKUP_URL)
+      await page.goto(REFERENCE_URL[source])
       await freezeMotion(page)
       // A menu is a panel a reader opens, so it is off screen at every width
       // and its facts would skip for ever — fifteen of them, unproven, which
@@ -132,7 +274,8 @@ test.describe('the fidelity harness', () => {
         await page.locator('.mainnav > span').first().hover()
         await expect(page.locator('.dd').first()).toBeVisible()
       }
-      const reference = await extractDesignFacts(page, MOCKUP_SELECTORS)
+      const selectors = REFERENCE_SELECTORS[source]
+      const reference = await extractDesignFacts(page, selectors)
 
       if (reference[key] === null) {
         // The role is not on screen at this width. Nothing to mutate, and the
@@ -141,7 +284,7 @@ test.describe('the fidelity harness', () => {
         return
       }
 
-      const selector = MOCKUP_SELECTORS[fact.role]!
+      const selector = selectors[fact.role]!
       const property = fact.property.replaceAll(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)
       await page.addStyleTag({
         content: `${selector} { ${property}: ${fact.mutate} !important; }`,
@@ -151,7 +294,7 @@ test.describe('the fidelity harness', () => {
         await page.locator('.mainnav > span').first().hover()
         await expect(page.locator('.dd').first()).toBeVisible()
       }
-      const mutated = await extractDesignFacts(page, MOCKUP_SELECTORS)
+      const mutated = await extractDesignFacts(page, selectors)
       const differences = compareDesignFacts(reference, mutated)
 
       // It must notice, and the value must really have moved rather than the
@@ -209,7 +352,7 @@ test.describe('M16 stage 1 — the bar and the band', () => {
       ).toBe(true)
     }
 
-    expect(differencesIn(reference, actual, BUILT)).toEqual([])
+    expect(differencesAt(reference, actual, BUILT, page.viewportSize()!.width)).toEqual([])
   })
 
   test('renders the band, which is the language’s only ornament', async ({ page }) => {
@@ -522,5 +665,120 @@ test.describe('M16 stage 3 — the rail', () => {
     expect(facts).toContain('groupCurrent.fontSize')
     expect(facts).toContain('groupCurrent.backgroundColor')
     expect(facts).toContain('groupCurrent.borderLeftWidth')
+  })
+})
+
+test.describe('M16 stage 4 — the catalog', () => {
+  const BUILT: readonly Role[] = [
+    'filterBar', 'chip', 'chipCurrent', 'chipKey',
+    'levelHead', 'levelKey', 'catalogCard', 'cardTitle',
+    'tableHead', 'tableCell', 'tableEdge',
+    'board', 'boardColumn', 'boardHead', 'boardTrack', 'boardList', 'boardMod',
+  ]
+
+  /** The one route that renders `Catalog`; the other two share only the table. */
+  const CATALOG_ROUTE = '/sheets/'
+
+  /**
+   * Reveal all three views before reading.
+   *
+   * The extractor calls `checkVisibility()`, so a hidden element reads as
+   * absent — and the whole point of the catalog is that two of its three views
+   * are `display: none` at any moment. Without this, thirteen of the seventeen
+   * roles would skip on every run and the comparison would quietly be about
+   * the filter bar alone.
+   *
+   * The same shape stage 2 uses to open the dropdown before comparing it: the
+   * reveal MECHANISM is asserted elsewhere and by the tests that can actually
+   * see it — `catalog.spec.ts` walks the tab order on both sides of it and
+   * `tests/unit/catalog/views.test.ts` holds the channel-A selector list
+   * complete. What is being compared here is geometry, and geometry does not
+   * depend on which view a reader last chose.
+   */
+  async function revealEveryView(page: import('@playwright/test').Page) {
+    await page.addStyleTag({ content: '.bz-view { display: block !important; }' })
+  }
+
+  test('is indistinguishable from its mockup, in every length it carries', async ({ page }) => {
+    await page.goto(CATALOG_URL)
+    await freezeMotion(page)
+    const reference = await extractDesignFacts(page, CATALOG_SELECTORS)
+
+    await page.goto(CATALOG_ROUTE)
+    await freezeMotion(page)
+    await revealEveryView(page)
+    const actual = await extractDesignFacts(page, APP_SELECTORS)
+
+    const shown = (facts: Record<string, string | null>, role: Role) =>
+      FACT_KEYS.filter((key) => key.startsWith(`${role}.`)).some((key) => facts[key] !== null)
+
+    /* Symmetry first, and it is the check that would have caught the whole
+       rejected milestone series: a role read on neither side compares equal,
+       so a comparison over roles nothing renders is green and empty. */
+    for (const role of BUILT) {
+      expect(
+        shown(actual, role),
+        `${role}: mockup ${shown(reference, role)}, page ${shown(actual, role)}`,
+      ).toBe(shown(reference, role))
+    }
+    expect(BUILT.every((role) => shown(reference, role)), 'a role the mockup does not draw').toBe(true)
+
+    expect(differencesAt(reference, actual, BUILT, page.viewportSize()!.width)).toEqual([])
+  })
+
+  /**
+   * The mutation, and it is pointed at the number the mockup states and a
+   * reader would never notice was wrong: the 3px leading edge a table row's
+   * level hue rides, and the 3px top edge a card's does. Both are the same
+   * value in `03` and both are how a level is identified without a tinted
+   * fill (**D33**), so getting one of them wrong is exactly the sort of
+   * near-miss that survived five milestones.
+   */
+  test('notices when a level stops riding a 3px edge', async ({ page }) => {
+    await page.goto(CATALOG_URL)
+    await freezeMotion(page)
+    const reference = await extractDesignFacts(page, CATALOG_SELECTORS)
+
+    await page.goto(CATALOG_ROUTE)
+    await freezeMotion(page)
+    await revealEveryView(page)
+    await page.addStyleTag({
+      content: '.bz-catcard { border-top-width: 1px !important; }'
+        + ' .bz-row > :first-child { border-left-width: 1px !important; }',
+    })
+    const mutated = await extractDesignFacts(page, APP_SELECTORS)
+
+    const facts = differencesIn(reference, mutated, BUILT).map((one) => one.fact)
+    expect(facts).toContain('catalogCard.borderTopWidth')
+    expect(facts).toContain('tableEdge.borderLeftWidth')
+  })
+
+  /**
+   * The toggle is the one component in the stage with no reference, so what
+   * can be asserted about it is that it EXISTS, that its derivation is
+   * recorded, and that the thing the derivation turns on is true: the showing
+   * button is told apart by a heavier bottom rule, which is a width and
+   * therefore survives forced colours.
+   */
+  test('renders the derived toggle, and marks the showing one by a width', async ({ page }) => {
+    expect(WITHOUT_REFERENCE.viewToggle, 'the toggle’s derivation is unrecorded').toBeTruthy()
+    expect(REFERENCE_OF.viewToggle, 'a mockup cannot specify the toggle').toBeUndefined()
+
+    await page.goto(CATALOG_ROUTE)
+    await freezeMotion(page)
+
+    const weights = await page.locator('.bz-viewbtn').evaluateAll((nodes) =>
+      nodes.map((node) => ({
+        view: node.getAttribute('data-view'),
+        bottom: getComputedStyle(node).borderBottomWidth,
+      })),
+    )
+    expect(weights.length, 'no toggle rendered').toBe(3)
+
+    // Nothing is stamped on `<html>` on a first visit, so the fallback rule is
+    // what is being read here — the same branch a reader with scripting off
+    // gets, and the one `views.test.ts` requires by name.
+    const showing = weights.filter((one) => one.bottom === '2px')
+    expect(showing.map((one) => one.view), 'exactly one view is showing').toEqual(['overview'])
   })
 })

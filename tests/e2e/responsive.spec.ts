@@ -181,7 +181,7 @@ test('the manifest table scrolls inside its region rather than the page', async 
   // has to be the showing one before its overflow means anything.
   await showTable(page)
 
-  const region = page.locator('.hl-index-scroll')
+  const region = page.locator('.bz-table-scroll')
   const measured = await region.evaluate((el) => ({
     clientWidth: el.clientWidth,
     scrollWidth: el.scrollWidth,

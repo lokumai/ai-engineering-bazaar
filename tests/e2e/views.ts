@@ -26,7 +26,7 @@ import { VIEW_IDS, type CatalogViewId } from '../../src/lib/catalog/views'
 export async function showCatalogView(page: Page, id: CatalogViewId): Promise<void> {
   const name = { overview: 'Overview', cards: 'Cards', table: 'Table' }[id]
   await page.getByRole('button', { name: new RegExp(`^${name}`) }).click()
-  await expect(page.locator(`.hl-view[data-view="${id}"]`)).toBeVisible()
+  await expect(page.locator(`.bz-view[data-view="${id}"]`)).toBeVisible()
 }
 
 /** The table view, which is the one every pre-M12 assertion was written for. */

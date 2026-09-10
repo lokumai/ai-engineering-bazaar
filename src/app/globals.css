@@ -34,6 +34,8 @@
    that surface came from. They arrange the language's primitives and define
    none of their own; `tests/unit/design/surface-stylesheets.test.ts` is what
    holds them to that. M16 adds one per stage. */
+@import "./catalog.css";
+@import "./category.css";
 @import "./shell.css";
 @import "./rail.css";
 

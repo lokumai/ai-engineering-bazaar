@@ -58,9 +58,9 @@ export default function CatalogPage() {
 
   return (
     <PageShell column={false}>
-      <h1 className="hl-listing-title">Catalog</h1>
+      <h1 className="bz-display">Catalog</h1>
 
-      <p className="hl-lead">
+      <p className="bz-lead">
         Every module in the course, in three views over one list. The overview
         is the course in its levels, the cards are for browsing, and the table
         puts every column beside every other. Filter by level, by state or by

@@ -77,6 +77,82 @@
      a mark a sighted reader reads as a shape needs a word — the completion
      disc, the band's absence of meaning — and never to hide something that
      should simply not be rendered. */
+  /* ---------------------------------------------------------------------------
+     THE SKIP LINK'S TARGET DOES NOT PAINT A RING.
+
+     `main` carries `tabIndex={-1}` so the skip link's fragment can actually
+     take focus — without it Safari and VoiceOver leave the cursor in the
+     header. The cost is that focusing it draws the clay ring around the whole
+     page, which reads as "this entire region is selected" and is the opposite
+     of the reassurance a skip link owes.
+
+     **This is not the Don't DESIGN.md states.** That one forbids re-colouring
+     a focus ring per surface, so a keyboard path stays visible; `main` is not
+     a control on a keyboard path, it is where the path begins. The reader's
+     next Tab lands on the first real control and rings it normally, which
+     `accessibility.spec.ts` asserts in the same test.
+
+     The retired stylesheet had this rule and stage 1 did not re-author it, so
+     the assertion had been red since the interface was replaced.
+     --------------------------------------------------------------------------- */
+  .bz-main:focus-visible { outline: none; }
+
+  /* ---------------------------------------------------------------------------
+     THE BAR AT A PHONE'S WIDTH — derived, and a defect this closes.
+
+     `01` has exactly two media queries, at 1180 and 880, and neither touches
+     the bar: it is a desktop study and was never drawn at 390px. So the bar's
+     narrow behaviour is **D30** work, and it was missing — MEASURED at 390px
+     before this rule existed: `scrollWidth` 412 against a 390 viewport on
+     EVERY route, with the trailing icon controls ending at x=412. A page that
+     scrolls sideways at 390px fails one of M16's own acceptance criteria, and
+     it failed it on every page rather than on a surface, which is why nothing
+     that ran per-surface caught it.
+
+     The fix is the language's own answer to "not enough room", which is space
+     rather than structure. **DESIGN.md forbids the two obvious alternatives**:
+     nothing reflows into a hamburger, and nothing scrolls sideways — so the
+     controls cannot be hidden behind a menu and the bar cannot be allowed to
+     overflow. What is left is the gap and the inline padding, and the middle
+     column already establishes that this design answers width with fluid
+     padding rather than with a breakpoint (`.bz-main` is a `clamp`).
+
+     **Bounded by the language's own lower breakpoint, and not a clamp.** A
+     clamp would have made the padding fluid at every width, so the bar would
+     stop matching the mockup at 1024 as well — where the mockup is perfectly
+     happy and states 22px. `rail-at` is where DESIGN.md already says the
+     layout changes, so it is where the bar is allowed to. Above it every value
+     is the mockup's own; below it the departure is recorded in
+     `tests/e2e/fidelity.ts` as a narrow deviation, with this reason.
+     --------------------------------------------------------------------------- */
+  @media (max-width: 880px) {
+    .bz-bar-inner {
+      gap: 8px;
+      padding: 0 12px;
+    }
+  }
+
+  /* ---------------------------------------------------------------------------
+     A PAGE'S OPENING PARAGRAPH.
+
+     Derived (**D30**), because `01` draws a module and a module's first
+     paragraph is an ordinary `<p>` inside the prose. A listing page has no
+     prose to be inside, and it opens with a sentence saying what the page is
+     for — so the language's own `--text-lead` step gets the one class it never
+     had, and the ink is `on-surface-muted` because the sentence is secondary
+     to the heading above it and is read rather than skipped.
+
+     Here rather than in `catalog.css`: three listing routes and the reading
+     page all open this way, and a primitive owned by the first surface that
+     needed it is a primitive the others depend on invisibly.
+     --------------------------------------------------------------------------- */
+  .bz-lead {
+    max-width: var(--layout-measure);
+    margin: 0 0 26px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-lead);
+  }
+
   .bz-said {
     position: absolute;
     width: 1px;

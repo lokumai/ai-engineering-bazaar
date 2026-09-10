@@ -699,7 +699,7 @@ test(`the second action opens the catalog at ${INDEX_SHEET}`, async ({ page }) =
   await expect(page).toHaveURL(new RegExp(`${INDEX_SHEET}$`))
   // What the door opens on is the catalog's default view (D13); the table is
   // one keystroke away and `catalog.spec.ts` owns the toggle.
-  await expect(page.locator('.hl-view[data-view="overview"]')).toBeVisible()
+  await expect(page.locator('.bz-view[data-view="overview"]')).toBeVisible()
 
   expect(problems.consoleErrors).toEqual([])
   expect(problems.failedRequests).toEqual([])

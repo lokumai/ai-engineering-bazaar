@@ -37,6 +37,7 @@ function focusDescription(page: Page) {
       text: (el.getAttribute('aria-label') ?? el.textContent ?? '').trim().slice(0, 40),
       inHeader: !!el.closest('header'),
       inMain: !!el.closest('main'),
+      inRail: !!el.closest('.bz-rail'),
       outline: getComputedStyle(el).outlineWidth,
       outlineStyle: getComputedStyle(el).outlineStyle,
     }
@@ -58,9 +59,16 @@ for (const path of PAGES) {
 
   test(`${path} carries one banner, one main and one contentinfo`, async ({ page }) => {
     await page.goto(path)
-    await expect(page.locator('header')).toHaveCount(1)
+    // BY ROLE, which is what the test has always claimed to check. It counted
+    // `header` and `footer` ELEMENTS, which was an honest proxy while the site
+    // header was the only one on any page — and stopped being one when M16
+    // stage 4 gave each board column the `<header>` its mockup draws. A
+    // `<header>` inside a sectioning element is not a banner: ARIA maps it to
+    // `generic`, so `/sheets/` had six header elements and still exactly one
+    // banner. Counting the landmark asserts the claim rather than a stand-in.
+    await expect(page.getByRole('banner')).toHaveCount(1)
     await expect(page.locator('main#main')).toHaveCount(1)
-    await expect(page.locator('footer')).toHaveCount(1)
+    await expect(page.getByRole('contentinfo')).toHaveCount(1)
   })
 }
 
@@ -122,11 +130,17 @@ test('the header tab order runs left to right and stops at the repo link', async
   // stops short reads as "the order ends here" rather than "we stopped
   // looking".
   const order: string[] = []
+  /** The first stop the walk reaches OUTSIDE the header, kept rather than
+   *  dropped: where the header hands over is a design fact of its own. */
+  let handover: Awaited<ReturnType<typeof focusDescription>> = null
   for (let i = 0; i < 40; i++) {
     await page.keyboard.press('Tab')
     const focused = await focusDescription(page)
     if (!focused) break
-    if (!focused.inHeader && order.length > 0) break
+    if (!focused.inHeader && order.length > 0) {
+      handover = focused
+      break
+    }
     order.push(focused.text)
   }
 
@@ -139,7 +153,10 @@ test('the header tab order runs left to right and stops at the repo link', async
   const at = (name: RegExp) => order.findIndex((text) => name.test(text))
 
   expect(order[0]).toMatch(/skip to content/i)
-  expect(order[1]).toMatch(/lokum/i)
+  // The wordmark, which M16 stage 1 took from the mockup: `01`'s `.brand`
+  // reads "AI Engineering Bazaar". The old header said "Lokum", and this line
+  // is the last thing in the suite that still did.
+  expect(order[1]).toMatch(/bazaar/i)
 
   // Left to right, and the rule is the ORDER of the groups rather than any
   // group's length: the navbar is reached before the controls, and the trail
@@ -153,14 +170,29 @@ test('the header tab order runs left to right and stops at the repo link', async
   expect(at(/toggle theme/i)).toBeGreaterThan(at(/^your progress$/i))
   expect(at(/repository/i)).toBeGreaterThan(at(/toggle theme/i))
 
-  // The trail is what follows the controls, and its first crumb is the front
-  // door. §15.1 renamed it: the root of every trail used to be the manifest
-  // and read INDEX; `/` is the home screen now and the register is one click
-  // further on at `/sheets/`.
-  const trail = order.slice(at(/repository/i) + 1).map((text) => text.toLowerCase())
-  expect(trail.length, 'the trail is not in the tab order').toBeGreaterThan(0)
-  expect(trail[0], 'the trail does not start at the front door').toBe('home')
-  expect(trail.join(' ')).toContain('curriculum')
+  // WHERE THE HEADER HANDS OVER, and this changed twice in M16.
+  //
+  // This used to read "the trail is what follows the controls", because the
+  // retired header gave the breadcrumb a second row of its own inside
+  // `<header>`. Stage 1 moved the trail into the reading column, where the
+  // mockup puts it — and on a module page the mockup's DOM order is
+  // `.shell > .side > main`, so the CURRICULUM RAIL sits between the controls
+  // and the column. The first stop after the header is therefore the rail, and
+  // asserting otherwise would be asserting the rail is unreachable.
+  expect(handover, 'the walk never left the header').not.toBeNull()
+  expect(handover?.inRail, `the header hands over to ${handover?.text}`).toBe(true)
+
+  // And the trail is still there, still in the tab order, and still starts at
+  // the front door. Read off the landmark rather than by tabbing to it: every
+  // link in a nav is in the tab order by construction, and reaching it here
+  // would mean walking the whole curriculum first. §15.1 renamed the root —
+  // it used to be the manifest and read INDEX; `/` is the home screen now.
+  const crumbs = await page
+    .getByRole('navigation', { name: 'Curriculum' })
+    .getByRole('link')
+    .allTextContents()
+  expect(crumbs.length, 'the trail is not in the tab order').toBeGreaterThan(0)
+  expect(crumbs[0].trim().toLowerCase(), 'the trail does not start at the front door').toBe('home')
 })
 
 /**
@@ -180,35 +212,59 @@ test('the header tab order runs left to right and stops at the repo link', async
 test('the level panel is inert when closed and reachable when open', async ({ page }) => {
   await page.goto(A0.path)
 
-  const summary = page.locator('summary.hl-nav-link')
-  const levels = page.locator('.hl-nav-menu-link')
+  const summary = page.locator('summary.bz-bar-link')
+  const levels = page.locator('.bz-menu-item')
 
-  const tabTexts = async (presses: number) => {
-    const seen: string[] = []
+  /**
+   * Each stop, and whether it is INSIDE THE PANEL — which is the question, and
+   * asking it by location is what makes the answer trustworthy.
+   *
+   * Two earlier versions of this walk compared TEXT. The first looked for
+   * `01fundamentals`, a string the retired menu printed and stage 2's rebuild
+   * does not. The second compared against the panel's own row labels, and that
+   * one is worse than wrong — it reported the closed panel as leaking, because
+   * the CURRICULUM RAIL's group summaries read `Fundamentals8` too. Two
+   * different components, one label, and a test that cannot tell them apart.
+   */
+  const walk = async (presses: number) => {
+    const seen: { text: string; inMenu: boolean }[] = []
     for (let i = 0; i < presses; i++) {
       await page.keyboard.press('Tab')
       seen.push(
-        (await page.evaluate(() => (document.activeElement?.textContent ?? '').trim())).toLowerCase(),
+        await page.evaluate(() => {
+          const el = document.activeElement as HTMLElement | null
+          return {
+            text: (el?.textContent ?? '').trim().toLowerCase(),
+            inMenu: !!el?.closest('.bz-menu'),
+          }
+        }),
       )
     }
     return seen
   }
 
-  // Closed: walk the whole header and never meet a level.
+  // Closed: walk the whole header and never step inside the panel.
   await expect(summary).toHaveAttribute('open', /^$/, { timeout: 1 }).catch(() => {})
-  const closedWalk = await tabTexts(14)
-  expect(closedWalk.some((text) => text.includes('fundamentals') && text.startsWith('01')))
-    .toBe(false)
+  const closedWalk = await walk(14)
+  expect(closedWalk.length, 'the walk found nothing to walk').toBeGreaterThan(0)
+  expect(
+    closedWalk.filter((stop) => stop.inMenu).map((stop) => stop.text),
+    'a closed disclosure is leaking its rows into the tab order',
+  ).toEqual([])
 
   // Open with the keyboard, which is the interaction that was broken.
   await page.reload()
   await summary.focus()
   await page.keyboard.press('Enter')
-  await expect(page.locator('details.hl-nav-details')).toHaveAttribute('open', '')
+  await expect(page.locator('.bz-bar-nav details')).toHaveAttribute('open', '')
 
-  const openWalk = await tabTexts(7)
-  expect(openWalk, 'the levels are not reachable once the panel is open')
-    .toContain('01fundamentals')
+  const openWalk = await walk(7)
+  expect(
+    openWalk.filter((stop) => stop.inMenu).length,
+    `the levels are not reachable once the panel is open: walked ${openWalk
+      .map((stop) => stop.text)
+      .join(' | ')}`,
+  ).toBeGreaterThan(0)
   await expect(levels).toHaveCount(6) // every level, plus the whole-curriculum row
 })
 
@@ -263,13 +319,13 @@ test('a row in the manifest is one tab stop, and it is reachable', async ({ page
 
   // §5.3 — the whole row is one link target, so it must not be two or three
   // tab stops per row. One per row, however many rows the set has.
-  const stops = await page.locator('.hl-index tbody a, .hl-index tbody [tabindex]:not([tabindex="-1"])').count()
-  const rows = await page.locator('.hl-index tbody tr').count()
+  const stops = await page.locator('.bz-table tbody a, .bz-table tbody [tabindex]:not([tabindex="-1"])').count()
+  const rows = await page.locator('.bz-table tbody tr').count()
   expect(stops).toBe(rows)
 
   // The scroll region itself is focusable so a keyboard can reach the columns
   // that scroll (§10.3).
-  await expect(page.locator('.hl-index-scroll')).toHaveAttribute('tabindex', '0')
+  await expect(page.locator('.bz-table-scroll')).toHaveAttribute('tabindex', '0')
 })
 
 test('the schedule of parts and the manifest are named tables', async ({ page }) => {
@@ -278,7 +334,7 @@ test('the schedule of parts and the manifest are named tables', async ({ page })
 
   await page.goto(INDEX_SHEET)
   await showTable(page)
-  await expect(page.locator('.hl-index caption')).not.toHaveText('')
+  await expect(page.locator('.bz-table caption')).not.toHaveText('')
 })
 
 // ---------------------------------------------------------------------------
@@ -342,8 +398,8 @@ test('the manifest\'s quiet columns clear the §10.4 floor (§4.8, §4.9)', asyn
     // it is not `aria-hidden`, and it is 11px mono — the same shape §10.4
     // already forced up to `ink-muted` in the schedule of parts. Same call
     // here, for the same reason, so the two do not disagree.
-    await expect(page.locator('.hl-row-number').first()).not.toHaveAttribute('aria-hidden')
-    const samples = await contrastSamples(page, '.hl-row-number, .hl-row-context')
+    await expect(page.locator('.bz-row-number').first()).not.toHaveAttribute('aria-hidden')
+    const samples = await contrastSamples(page, '.bz-row-number, .bz-row-context')
     expect(samples.length).toBeGreaterThan(SHEETS.length)
     const low = worst(samples)
     expect(low.ratio, `${theme}: "${low.text}" at ${low.ratio.toFixed(2)}:1`)
@@ -356,15 +412,15 @@ test('the manifest keeps a hierarchy across its columns (§4.8)', async ({ page 
   await showTable(page)
 
   // A cascade collision painted both quiet columns at full `--color-ink`:
-  // `.hl-row > :is(td, th)` is (0,1,1) and outranked the class rules. The
+  // `.bz-row > :is(td, th)` is (0,1,1) and outranked the class rules. The
   // symptom was invisible in the stylesheet and obvious on the page — three
   // columns competing for the same voice.
   const inks = await page.evaluate(() => {
     const of = (sel: string) => getComputedStyle(document.querySelector(sel)!).color
     return {
-      number: of('.hl-row-number'),
-      context: of('.hl-row-context'),
-      title: of('.hl-row-title'),
+      number: of('.bz-row-number'),
+      context: of('.bz-row-context'),
+      title: of('.bz-row-title'),
       ink: getComputedStyle(document.body).color,
     }
   })

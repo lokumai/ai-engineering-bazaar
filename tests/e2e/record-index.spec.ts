@@ -34,7 +34,7 @@ import { watchPage } from './watch'
  *    class of hydration mismatch, and one React 19 answers by discarding the
  *    subtree and repainting the table. Comparing the served bytes against the
  *    hydrated DOM is the only way to ask that question.
- * 3. **The squares must stay non-interactive.** `.hl-row-link::after` covers
+ * 3. **The squares must stay non-interactive.** `.bz-row-link::after` covers
  *    the whole row with `inset: 0`, so a control in that cell would be
  *    unclickable and lifting it out would give the row a second tab stop
  *    (§10.3). Whether anything in there is focusable is a DOM fact.
@@ -62,7 +62,7 @@ function slotState(page: Page, slug: string, slot: string) {
   return page.locator(`[data-hl-signoff-cell="${slug}"] [data-hl-slot="${slot}"]`)
 }
 
-const rows = (page: Page) => page.locator('.hl-index tbody tr')
+const rows = (page: Page) => page.locator('.bz-table tbody tr')
 const chip = (page: Page, label: string) => page.getByRole('button', { name: label, exact: true })
 
 
@@ -76,11 +76,16 @@ test('the ninth column is COMPLETION, and its squares are 14 × 14 (§4.8, §12.
   await page.goto(INDEX_SHEET)
   await showTable(page)
 
-  const headers = page.locator('.hl-index thead th')
+  const headers = page.locator('.bz-table thead th')
   await expect(headers).toHaveCount(9)
-  // The rendered case, because this one is a §4.8 column name the reader reads
-  // off the drawing, and `SIGN-OFF` is how §4.8 writes it.
-  await expect(headers.nth(7)).toHaveText('COMPLETION', { useInnerText: true })
+  // The LABEL, and not the case it is painted in. This asserted the rendered
+  // `COMPLETION` because §4.8 — the retired design document — wrote its column
+  // names in capitals and the old stylesheet had a `text-transform` to match.
+  // `03-catalog.html` heads its table in sentence case, and the mockup outranks
+  // every document (`CLAUDE.md`), so the capitals went with the old drawing
+  // set. What is being checked here is which column sits in the ninth slot,
+  // which is the part that would break the record if it moved.
+  await expect(headers.nth(7)).toHaveText(/^completion$/i, { useInnerText: true })
 
   const boxes = squares(page, SEEDED_SLUG)
   await expect(boxes).toHaveCount(4)
@@ -93,8 +98,13 @@ test('the ninth column is COMPLETION, and its squares are 14 × 14 (§4.8, §12.
   for (const box of measured) {
     expect(box.width).toBe('14px')
     expect(box.height).toBe('14px')
-    // §5.9 — zero radius, everywhere on this site.
-    expect(box.radius).toBe('0px')
+    // The language's smallest radius step, and not §5.9's "zero everywhere".
+    // That was the retired drawing set's convention; DESIGN.md's Shapes
+    // section replaces it with a scale and states this case by name — "a `2px`
+    // corner on a `9px` swatch and a `7px` corner on a slab are the same
+    // visual softness at different scales". A 14px square takes the smallest
+    // step there is. The square's STATES are stage 7's, its size is §12.18's.
+    expect(box.radius).toBe('2px')
   }
 })
 
@@ -104,12 +114,12 @@ test('nothing in the sign-off column is interactive or announced (§4.8, §10.3,
   await page.goto(INDEX_SHEET)
   await showTable(page)
 
-  // §12.18 — a control here would sit under `.hl-row-link`'s stretched
+  // §12.18 — a control here would sit under `.bz-row-link`'s stretched
   // pseudo-element, unclickable, and lifting it out would add a second tab stop
   // to every row. Signing off happens on the sheet, which is the only place the
   // criteria are stated (§12.4.1).
   const focusable = await page
-    .locator('.hl-row-signoff')
+    .locator('.bz-row-signoff')
     .evaluateAll((cells) =>
       cells.reduce(
         (total, cell) =>
@@ -124,7 +134,7 @@ test('nothing in the sign-off column is interactive or announced (§4.8, §10.3,
   // over elsewhere: the sheet states its own sign-off in words, and this page
   // states it through the chips and their announced count.
   const hidden = await page
-    .locator('.hl-signoff-square')
+    .locator('.bz-signoff-square')
     .evaluateAll((nodes) => nodes.map((node) => node.getAttribute('aria-hidden')))
   expect(hidden.length).toBeGreaterThan(SHEET_COUNT)
   for (const value of hidden) expect(value).toBe('true')
@@ -211,14 +221,14 @@ test('the Completed and Not completed chips filter on the reader’s own asserti
 
   await chip(page, 'Completed').click()
   await expect(rows(page)).toHaveCount(signed.length)
-  const titles = await page.locator('.hl-index tbody .hl-row-link').allTextContents()
+  const titles = await page.locator('.bz-table tbody .bz-row-link').allTextContents()
   expect(titles.sort()).toEqual(signed.map((sheet) => sheet.title).sort())
 
   // §12.4.1 — a draft can never be completed, so it is always `Not completed`
   // rather than excluded from both: the two chips partition the whole set.
   await chip(page, 'Not completed').click()
   await expect(rows(page)).toHaveCount(SHEET_COUNT - signed.length)
-  await expect(page.locator('.hl-index tbody tr[data-draft]')).toHaveCount(
+  await expect(page.locator('.bz-table tbody tr[data-draft]')).toHaveCount(
     SHEET_COUNT - DRAWN_COUNT,
   )
 })
@@ -235,7 +245,7 @@ test('the count of what is shown is announced, not implied (§12.13, SC 4.1.3)',
   // appears at the moment it has something to say. SC 4.1.3's own examples are
   // literally "5 results returned" / "No results returned", so the count itself
   // is in the region.
-  const count = page.locator('.hl-chip-count')
+  const count = page.locator('.bz-filter-count')
   await expect(count).toHaveAttribute('role', 'status')
   await expect(count).toHaveText(`Showing ${SHEET_COUNT} of ${SHEET_COUNT}`)
 
@@ -346,7 +356,7 @@ for (const [width, height] of WIDTHS) {
 
     const measured = await page.evaluate(() => {
       const root = document.documentElement
-      const scroller = document.querySelector('.hl-index-scroll') as HTMLElement
+      const scroller = document.querySelector('.bz-table-scroll') as HTMLElement
       return {
         documentOverflow: root.scrollWidth - root.clientWidth,
         bodyOverflow: document.body.scrollWidth - root.clientWidth,

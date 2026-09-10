@@ -467,7 +467,7 @@ test('channel A stays true across a client transition (§12.2)', async ({ page }
   // default, so this hop asks for it: a `display: none` row is not clickable
   // and that is the arrangement working, not failing.
   await showTable(page)
-  await page.locator(`.hl-index tbody a[href$="${OTHER.path}"]`).click()
+  await page.locator(`.bz-table tbody a[href$="${OTHER.path}"]`).click()
   await expect(page.locator('main h1')).toHaveText(OTHER.title)
   expect(await documentLoads(page), 'the router did a full page load').toBe(1)
 

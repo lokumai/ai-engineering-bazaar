@@ -52,12 +52,12 @@ test('lists every module in the set, once, in module order', async ({ page }) =>
   await page.goto(INDEX_SHEET)
   await showTable(page)
 
-  const rows = page.locator('.hl-index tbody tr')
+  const rows = page.locator('.bz-table tbody tr')
   await expect(rows).toHaveCount(SHEET_COUNT)
 
   // The manifest and `sheets.ts` are two independent statements of what ships.
   // Reconciling them here is what lets every other spec trust the fixture.
-  const links = await page.locator('.hl-index tbody .hl-row-link').evaluateAll(
+  const links = await page.locator('.bz-table tbody .bz-row-link').evaluateAll(
     (nodes) => nodes.map((node) => ({
       href: new URL((node as HTMLAnchorElement).href).pathname,
       title: node.textContent?.trim() ?? '',
@@ -71,15 +71,15 @@ test('the ready / not-ready counts match the rows actually rendered', async ({ p
   await page.goto(INDEX_SHEET)
   await showTable(page)
 
-  const ready = page.locator('.hl-index tbody tr:not([data-draft])')
-  const notDrawn = page.locator('.hl-index tbody tr[data-draft]')
+  const ready = page.locator('.bz-table tbody tr:not([data-draft])')
+  const notDrawn = page.locator('.bz-table tbody tr[data-draft]')
 
   await expect(ready).toHaveCount(DRAWN_COUNT)
   await expect(notDrawn).toHaveCount(NOT_DRAWN_COUNT)
 
   // Every one of those rows says so in words as well as in line type (§10.4).
-  await expect(page.locator('.hl-row-status', { hasText: /^READY$/ })).toHaveCount(DRAWN_COUNT)
-  await expect(page.locator('.hl-row-status', { hasText: /^PLANNED$/ })).toHaveCount(NOT_DRAWN_COUNT)
+  await expect(page.locator('.bz-row-status', { hasText: /^READY$/ })).toHaveCount(DRAWN_COUNT)
+  await expect(page.locator('.bz-row-status', { hasText: /^PLANNED$/ })).toHaveCount(NOT_DRAWN_COUNT)
 
   // …and the Overview view's bands count the same set (§11.25), level by
   // level. M12 retired the ALL-CAPS eyebrow of counts that used to sit above
@@ -87,7 +87,7 @@ test('the ready / not-ready counts match the rows actually rendered', async ({ p
   // the clearest tell of a generated interface — and put each count beside the
   // modules it counts. So the comparison is the sum of the bands against the
   // rows, which is a stronger statement than the eyebrow's two numbers were.
-  const bands = await page.locator('.hl-ov-count').allInnerTexts()
+  const bands = await page.locator('.bz-boardcol-count').allInnerTexts()
   const summed = bands.reduce(
     (total, text) => {
       const [modules, ready] = [...text.matchAll(/(\d+)/g)].map((match) => Number(match[1]))
@@ -115,8 +115,8 @@ test('the filter chips narrow the table to the count they claim', async ({ page 
   await page.goto(INDEX_SHEET)
   await showTable(page)
 
-  const rows = page.locator('.hl-index tbody tr')
-  const count = page.locator('.hl-chip-count')
+  const rows = page.locator('.bz-table tbody tr')
+  const count = page.locator('.bz-filter-count')
 
   await expect(count).toHaveText(`Showing ${SHEET_COUNT} of ${SHEET_COUNT}`)
 
@@ -142,15 +142,15 @@ test('links every level, and each row reaches its module', async ({ page }) => {
   // M12 — the level links are the Overview view's bands. They replaced the
   // block of category cards that used to sit under the table, which was a
   // second, shorter rendering of the same grouping (D13's cost paragraph).
-  await expect(page.locator('.hl-ov-band')).toHaveCount(CATEGORY_PATHS.length)
-  const levelLinks = await page.locator('.hl-ov-link').evaluateAll((nodes) =>
+  await expect(page.locator('.bz-boardcol')).toHaveCount(CATEGORY_PATHS.length)
+  const levelLinks = await page.locator('.bz-boardcol-link').evaluateAll((nodes) =>
     nodes.map((node) => new URL((node as HTMLAnchorElement).href).pathname),
   )
   expect(levelLinks.sort()).toEqual([...CATEGORY_PATHS].sort())
 
   // One row, followed end to end: the catalog is only useful if it navigates.
   await showTable(page)
-  await page.locator('.hl-index tbody .hl-row-link').first().click()
+  await page.locator('.bz-table tbody .bz-row-link').first().click()
   await expect(page).toHaveURL(new RegExp(`${SHEETS[0].path}$`))
   await expect(page.locator('main h1')).toHaveText(SHEETS[0].title)
 

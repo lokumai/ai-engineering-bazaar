@@ -59,6 +59,7 @@ export function PageShell({
   aside,
   column = true,
   trail = true,
+  trailLabel,
 }: {
   children: React.ReactNode
   /** §5.2 — `MODULE 13 OF 33`. Omitted, the footer names the route instead. */
@@ -80,6 +81,12 @@ export function PageShell({
   column?: boolean
   /** The breadcrumb. Off only where a trail would name a page nobody navigated to. */
   trail?: boolean
+  /**
+   * What the trail's last crumb says, for the one route whose address names
+   * nothing. See `Breadcrumb`'s own note: the not-found page hands this over
+   * rather than letting the router infer it.
+   */
+  trailLabel?: string
 }) {
   const facts = curriculumFacts()
 
@@ -96,7 +103,7 @@ export function PageShell({
       </div>
       {trail && (
         <div className="bz-col">
-          <Breadcrumb categories={categoryLabels()} />
+          <Breadcrumb categories={categoryLabels()} current={trailLabel} />
         </div>
       )}
       {column ? <div className="bz-col">{children}</div> : children}

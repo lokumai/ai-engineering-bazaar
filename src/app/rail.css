@@ -15,27 +15,14 @@
 @layer components {
 
   /* ---------------------------------------------------------------------------
-     1. WHICH HUE BELONGS TO WHICH LEVEL.
+     1. THE HUE, AS A SHAPE.
 
-     `--bz-cat` is the one custom property the language asks a caller to bind:
-     the group's leading edge, its key, and its current item's fill all read it,
-     and so does the generated per-module sheet. The language cannot bind it,
-     because a level's slug is this course's business and not a design
-     decision — DESIGN.md names `category-3`, never `expert`.
-
-     Bound off `data-cat` rather than inline on every group, so the mapping is
-     stated once and `tests/unit/color/category-surfaces.test.ts` can hold it to
-     the whole curriculum: every level covered, and every hue from the closed
-     series of five.
+     The key reads `--bz-cat` rather than being told a colour, so a level's hue
+     is written down in exactly one place. That place is `category.css`, which
+     is where the slug-to-hue mapping moved in stage 4 once the catalog started
+     reading the same five hues off the same attribute; the language declares
+     the hook and a neutral default.
      --------------------------------------------------------------------------- */
-  [data-cat="fundamentals"] { --bz-cat: var(--color-category-1); }
-  [data-cat="intermediate"] { --bz-cat: var(--color-category-2); }
-  [data-cat="expert"]       { --bz-cat: var(--color-category-3); }
-  [data-cat="ecosystem"]    { --bz-cat: var(--color-category-4); }
-  [data-cat="protocols"]    { --bz-cat: var(--color-category-5); }
-
-  /* The key is the hue as a shape. It reads the carrier rather than being told
-     a colour, so a level's hue is written down in exactly one place. */
   .bz-group-key { background: var(--bz-cat); }
 
   /* ---------------------------------------------------------------------------

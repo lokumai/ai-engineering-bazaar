@@ -89,10 +89,19 @@ describe.skipIf(!REVEALED)('the reveal list covers every view, and one fallback'
    * A mismatched pair would show one view for another's stored preference:
    * plausible, and wrong, which is the worst kind of quiet defect. Same check
    * `category-css.test.ts` makes on the per-module lists.
+   *
+   * **The middle of the selector is matched as anything-but-a-separator, and
+   * that is a fix rather than laziness.** This regex used to name the toggle's
+   * class literally, so M16 stage 4's rename would have made it match nothing
+   * at all — and a pairing check that matches nothing reports zero mismatches
+   * and passes. It would have gone VACUOUS rather than red, which is the one
+   * failure mode a guard may not have. `[^,{]*?` cannot cross a comma or a
+   * brace, so it still stays inside one selector, and no future rename can
+   * silence it.
    */
   it('pairs each selector’s two view ids', () => {
     const mismatched = [
-      ...CSS.matchAll(/html\[data-hl-view="([a-z]+)"\] (?:\.hl-viewbtn)?\[data-view="([a-z]+)"\]/g),
+      ...CSS.matchAll(/html\[data-hl-view="([a-z]+)"\][^,{]*?\[data-view="([a-z]+)"\]/g),
     ]
       .filter((match) => match[1] !== match[2])
       .map((match) => `${match[1]} → ${match[2]}`)
@@ -106,11 +115,11 @@ describe.skipIf(!REVEALED)('the reveal list covers every view, and one fallback'
 
   it('repeats the same list under forced colours, for the showing button', () => {
     const named = captures(
-      /html\[data-hl-view="([a-z]+)"\] \.hl-viewbtn\[data-view="[a-z]+"\]/g,
+      /html\[data-hl-view="([a-z]+)"\] \.bz-viewbtn\[data-view="[a-z]+"\]/g,
       FORCED,
     )
     expect(named.sort()).toEqual([...VIEW_IDS].sort())
-    expect(FORCED).toContain(`html:not([data-hl-view]) .hl-viewbtn[data-view="${DEFAULT_VIEW_ID}"]`)
+    expect(FORCED).toContain(`html:not([data-hl-view]) .bz-viewbtn[data-view="${DEFAULT_VIEW_ID}"]`)
   })
 
   /**

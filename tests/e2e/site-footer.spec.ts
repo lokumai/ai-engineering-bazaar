@@ -42,7 +42,13 @@ for (const sheet of SHEETS) {
     // §5.2's centre cell, and §11.26: the same hash the title block derived
     // for this file. A footer printing repo HEAD would pass the line above and
     // fail here on 31 of the 32 sheets.
-    expect(row.text, `${sheet.path} revision`).toMatch(/REV [0-9a-f]{4,} · \d{4}-\d{2}-\d{2}/)
+    // Case-insensitive, because the CASE is not the claim. The retired footer
+    // set this row in capitals with a `text-transform`; M16 stage 1b re-derived
+    // it from the language, and DESIGN.md names a tracked-out ALL-CAPS meta
+    // strip as one of the tells the new design exists to avoid. What §5.2 and
+    // §11.26 actually promise is that the row carries THIS FILE's revision and
+    // a date — never repo HEAD — and that is what is checked.
+    expect(row.text, `${sheet.path} revision`).toMatch(/REV [0-9a-f]{4,} · \d{4}-\d{2}-\d{2}/i)
     expect(row.revision, 'the module info states a revision too').not.toBeNull()
     expect(row.text?.toUpperCase()).toContain(`REV ${row.revision}`.toUpperCase())
   })

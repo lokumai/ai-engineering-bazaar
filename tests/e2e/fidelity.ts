@@ -53,6 +53,27 @@ export const MOCKUP = path.resolve(
  *  not be: a mockup may not ship inside the site. So it is read from disk. */
 export const MOCKUP_URL = pathToFileURL(MOCKUP).href
 
+/**
+ * The SECOND reference document, and the reason the harness now has a notion
+ * of which mockup specifies what.
+ *
+ * `01` is the ratified shell and it draws a reading page. The catalog is drawn
+ * by `03`, which is a different document on a deliberately older palette — it
+ * says so itself: *"One neutral palette so you judge the layout."* **D31** is
+ * the rule that follows: geometry comes from the component mockup and colour
+ * comes from the shell.
+ *
+ * A rule in a document is a rule somebody has to remember. What makes it
+ * mechanical here is `REFERENCE_OF` plus one guard: a role whose reference is
+ * `03` may carry no COLOUR fact, so the comparison against `03` can only ever
+ * be about widths, paddings, radii and type steps. Reading `03` naively would
+ * put a green accent on a powder ground, and that is the exact class of
+ * mistake the five rejected milestones made.
+ */
+export const CATALOG = path.resolve(process.cwd(), 'playground/03-catalog.html')
+
+export const CATALOG_URL = pathToFileURL(CATALOG).href
+
 export type Role =
   | 'bar'
   | 'barInner'
@@ -81,6 +102,26 @@ export type Role =
   | 'buttonPrimary'
   | 'aside'
   | 'asideLink'
+  /* Stage 4 — the catalog, specified by `03` and geometry only (D31). */
+  | 'filterBar'
+  | 'chip'
+  | 'chipCurrent'
+  | 'chipKey'
+  | 'levelHead'
+  | 'levelKey'
+  | 'catalogCard'
+  | 'cardTitle'
+  | 'tableHead'
+  | 'tableCell'
+  | 'tableEdge'
+  | 'board'
+  | 'boardColumn'
+  | 'boardHead'
+  | 'boardTrack'
+  | 'boardList'
+  | 'boardMod'
+  /* Stage 4 — and the one thing in it no mockup draws. */
+  | 'viewToggle'
 
 export type SelectorMap = Readonly<Partial<Record<Role, string>>>
 
@@ -191,6 +232,73 @@ const FACTS: readonly Fact[] = [
   // The aside: an in-page index behind a rail that turns primary when current.
   { role: 'aside', property: 'top', mutate: '99px' },
   { role: 'asideLink', property: 'borderLeftColor', mutate: 'magenta' },
+
+  /* ---------------------------------------------------------------------------
+     STAGE 4 — THE CATALOG, AND NOT ONE COLOUR AMONG THEM.
+
+     Every fact below is specified by `03-catalog.html`, which is on the retired
+     palette, so every one of them is a LENGTH or a TYPE STEP. That is not a gap
+     in the coverage — it is D31 written as data, and `fidelity.spec.ts` has a
+     guard that fails if a colour ever appears here.
+
+     What holds the catalog's colour instead: `styling-references.test.ts`
+     (every token it names is one the language declares),
+     `surface-stylesheets.test.ts` (no hex, no colour function, no invented
+     radius) and the contrast suite, which recomputes every ratio from the
+     shipped stylesheet rather than asserting a table.
+     --------------------------------------------------------------------------- */
+
+  // The bar the filters sit in. Its `top` is NOT a fact: `03` has no site bar
+  // above it and sticks to 0, while the product sticks below the bar and the
+  // band. The gap between chips and the hairline under them are the design.
+  { role: 'filterBar', property: 'gap', mutate: '99px' },
+  { role: 'filterBar', property: 'paddingTop', mutate: '99px' },
+  { role: 'filterBar', property: 'borderBottomWidth', mutate: '9px' },
+  // A chip is the language's control height, and it does not change size when
+  // it is pressed — which is why `chipCurrent` carries the same height rather
+  // than a colour: a bar that reflowed when a filter was chosen would move the
+  // next chip out from under the pointer.
+  { role: 'chip', property: 'height', mutate: '99px' },
+  { role: 'chip', property: 'paddingLeft', mutate: '99px' },
+  { role: 'chip', property: 'gap', mutate: '99px' },
+  { role: 'chip', property: 'fontSize', mutate: '99px' },
+  { role: 'chipCurrent', property: 'height', mutate: '99px' },
+  { role: 'chipKey', property: 'width', mutate: '99px' },
+  { role: 'chipKey', property: 'height', mutate: '99px' },
+  // The cards view's grouping.
+  { role: 'levelHead', property: 'gap', mutate: '99px' },
+  { role: 'levelHead', property: 'marginBottom', mutate: '99px' },
+  { role: 'levelKey', property: 'width', mutate: '99px' },
+  { role: 'levelKey', property: 'height', mutate: '99px' },
+  { role: 'levelKey', property: 'borderRadius', mutate: '99px' },
+  // A card, and the 3px top edge its level's hue rides.
+  { role: 'catalogCard', property: 'paddingTop', mutate: '99px' },
+  { role: 'catalogCard', property: 'paddingLeft', mutate: '99px' },
+  { role: 'catalogCard', property: 'borderTopWidth', mutate: '99px' },
+  { role: 'catalogCard', property: 'borderLeftWidth', mutate: '99px' },
+  { role: 'cardTitle', property: 'marginTop', mutate: '99px' },
+  { role: 'cardTitle', property: 'fontSize', mutate: '99px' },
+  // The table. `tableCell` reads the fourth cell and not the first, because
+  // the first is the mono number column and carries its own smaller step.
+  { role: 'tableHead', property: 'paddingTop', mutate: '99px' },
+  { role: 'tableHead', property: 'paddingLeft', mutate: '99px' },
+  { role: 'tableHead', property: 'fontSize', mutate: '99px' },
+  { role: 'tableHead', property: 'borderBottomWidth', mutate: '9px' },
+  { role: 'tableCell', property: 'paddingTop', mutate: '99px' },
+  { role: 'tableCell', property: 'paddingLeft', mutate: '99px' },
+  { role: 'tableCell', property: 'fontSize', mutate: '99px' },
+  { role: 'tableEdge', property: 'borderLeftWidth', mutate: '99px' },
+  // The board: five columns, a header, a track and the rows inside it.
+  { role: 'board', property: 'gap', mutate: '99px' },
+  { role: 'boardColumn', property: 'borderTopWidth', mutate: '99px' },
+  { role: 'boardHead', property: 'paddingTop', mutate: '99px' },
+  { role: 'boardHead', property: 'paddingLeft', mutate: '99px' },
+  { role: 'boardTrack', property: 'height', mutate: '99px' },
+  { role: 'boardList', property: 'paddingTop', mutate: '99px' },
+  { role: 'boardMod', property: 'paddingTop', mutate: '99px' },
+  { role: 'boardMod', property: 'gap', mutate: '99px' },
+  { role: 'boardMod', property: 'borderRadius', mutate: '99px' },
+  { role: 'boardMod', property: 'fontSize', mutate: '99px' },
 ]
 
 export type DesignFacts = Readonly<Record<string, string | null>>
@@ -322,6 +430,106 @@ export const MOCKUP_SELECTORS: SelectorMap = {
   asideLink: '.toc a:not([aria-current])',
 }
 
+/**
+ * Where each catalog role lives in `03-catalog.html`.
+ *
+ * `03` draws its three alternatives as three stacked frames in one document,
+ * so every role below is on screen at once and `querySelector` picks the first
+ * of each. Two selectors need a `:not()` and both are for a reason:
+ *
+ * - `tbody tr:not(.brk)` — `03`'s first table row is a GROUP-BREAK row, a
+ *   `colspan` band naming the level. The product's table does not group (the
+ *   overview is the view that answers that question), so comparing against it
+ *   would be comparing against a component that is deliberately absent.
+ * - `.card:not(.planned)` — a planned card is the same box with a sunken fill,
+ *   and the fill is the half of it this comparison may not read.
+ */
+export const CATALOG_SELECTORS: SelectorMap = {
+  filterBar: '.filters',
+  chip: '.fchip:not([aria-pressed="true"])',
+  chipCurrent: '.fchip[aria-pressed="true"]',
+  chipKey: '.fchip i',
+  levelHead: '.lvlhead',
+  levelKey: '.lvlhead .swatch',
+  catalogCard: '.card:not(.planned)',
+  cardTitle: '.card:not(.planned) h4',
+  tableHead: 'thead th',
+  tableCell: 'tbody tr:not(.brk) td:nth-child(4)',
+  tableEdge: 'tbody tr:not(.brk) td:first-child',
+  board: '.board',
+  boardColumn: '.col',
+  boardHead: '.col > header',
+  boardTrack: '.track',
+  boardList: '.col ol',
+  boardMod: '.col ol a',
+}
+
+/** Which document specifies a role. A role with no entry has no mockup. */
+export type Reference = '01' | '03'
+
+/**
+ * THE ROLE-TO-DOCUMENT MAP, which is what makes D31 something a machine can
+ * refuse rather than something a reader has to remember.
+ *
+ * Roles absent from this map are specified by no mockup at all, and each one
+ * has to be named in `WITHOUT_REFERENCE` with what it was derived from
+ * instead — so "there is no reference for this" is a statement somebody wrote
+ * down, never a gap that happens to be quiet.
+ */
+export const REFERENCE_OF: Readonly<Partial<Record<Role, Reference>>> = {
+  bar: '01', barInner: '01', brand: '01', barLink: '01', barLinkCurrent: '01',
+  barField: '01', menu: '01', menuItem: '01', menuKey: '01', menuCount: '01',
+  band: '01', rail: '01', railInner: '01', group: '01', groupCurrent: '01',
+  groupKey: '01', item: '01', tick: '01', column: '01', card: '01',
+  slab: '01', slabCode: '01', figure: '01', node: '01', buttonPrimary: '01',
+  aside: '01', asideLink: '01',
+
+  filterBar: '03', chip: '03', chipCurrent: '03', chipKey: '03',
+  levelHead: '03', levelKey: '03', catalogCard: '03', cardTitle: '03',
+  tableHead: '03', tableCell: '03', tableEdge: '03', board: '03',
+  boardColumn: '03', boardHead: '03', boardTrack: '03', boardList: '03',
+  boardMod: '03',
+}
+
+export const REFERENCE_URL: Readonly<Record<Reference, string>> = {
+  '01': MOCKUP_URL,
+  '03': CATALOG_URL,
+}
+
+export const REFERENCE_SELECTORS: Readonly<Record<Reference, SelectorMap>> = {
+  '01': MOCKUP_SELECTORS,
+  '03': CATALOG_SELECTORS,
+}
+
+/**
+ * Roles the application renders that NO mockup specifies, with what each was
+ * derived from — **D30**'s rule, kept as data beside the roles that do have a
+ * reference so the two cannot be confused.
+ *
+ * The counterpart of `DELIBERATELY_ABSENT` below: that map is for a role a
+ * mockup draws and the product refuses, this one for a component the product
+ * needs and no mockup drew.
+ */
+export const WITHOUT_REFERENCE: Readonly<Partial<Record<Role, string>>> = {
+  viewToggle:
+    'no mockup draws one: `03` presents its three views as three separate ' +
+    'frames and `01` has no segmented control. Derived from the language’s ' +
+    '33px control height and `.bz-btn-quiet`’s edge, with the showing one ' +
+    'marked by a heavier bottom rule because forced colours keeps a ' +
+    'border’s width and takes its colour.',
+}
+
+/**
+ * Does this property name a COLOUR?
+ *
+ * Used by the guard that keeps a `03`-sourced fact geometric. Deliberately
+ * generous — `fill`, `stroke` and `outline` are not in the fact table today
+ * and the answer should not change on the day one is added.
+ */
+export function isColourProperty(property: string): boolean {
+  return /color|background|shadow|fill|stroke|outline/i.test(property)
+}
+
 /* ---------------------------------------------------------------------------
    THE APPLICATION SIDE — M16.
 
@@ -378,6 +586,35 @@ export const APP_SELECTORS: SelectorMap = {
   groupKey: '.bz-group:not([data-here]) > summary .bz-group-key',
   item: '.bz-group[open] .bz-item:not([aria-current])',
   tick: '.bz-group[open] .bz-item:not([aria-current]) .bz-tick',
+
+  /* Stage 4 — the catalog, on `/sheets/`. Two of these need saying:
+
+     `chip` resolves to the first UNPRESSED chip, which is the first level
+     chip, and that is the one carrying a hue key — `Every level` is the
+     pressed one on load and has no key, so `chipKey` finds the right box.
+
+     `tableCell` reads the fourth cell rather than the first for the same
+     reason the mockup map does: the first is the mono number column and
+     carries its own smaller step. `nth-child` and not `nth-of-type`, because
+     the title cell is a `th[scope="row"]` and the count has to include it. */
+  filterBar: '.bz-filters',
+  chip: '.bz-chip:not([aria-pressed="true"])',
+  chipCurrent: '.bz-chip[aria-pressed="true"]',
+  chipKey: '.bz-chip-key',
+  levelHead: '.bz-levelhead',
+  levelKey: '.bz-levelhead-key',
+  catalogCard: '.bz-catcard[data-drawn="true"]',
+  cardTitle: '.bz-catcard[data-drawn="true"] .bz-catcard-title',
+  tableHead: '.bz-table thead th',
+  tableCell: '.bz-table tbody .bz-row td:nth-child(4)',
+  tableEdge: '.bz-table tbody .bz-row[data-cat] > :first-child',
+  board: '.bz-board',
+  boardColumn: '.bz-boardcol',
+  boardHead: '.bz-boardcol-head',
+  boardTrack: '.bz-track',
+  boardList: '.bz-boardcol-list',
+  boardMod: '.bz-boardcol-mod',
+  viewToggle: '.bz-viewtoggle',
 }
 
 /**
@@ -397,6 +634,75 @@ export function differencesIn(
   const wanted = new Set<string>(roles)
   return compareDesignFacts(reference, actual)
     .filter((difference) => wanted.has(difference.fact.split('.')[0]))
+}
+
+/**
+ * FACTS THAT LEGITIMATELY STOP MATCHING BELOW A STATED WIDTH.
+ *
+ * The mockups are desktop drawings. `01` declares two breakpoints, 1180 and
+ * 880, and below the lower one it says nothing at all — it was never drawn at
+ * a phone's width, and `03` says the same about its table in its own note. So
+ * there are a small number of facts whose reference value below `rail-at` is
+ * not a specification but an artefact, and comparing against an artefact is
+ * how a real difference gets buried in noise.
+ *
+ * **Every entry names a width and a reason, and the guard in
+ * `fidelity.spec.ts` holds each one to both**: above its width the fact must
+ * match, and below it the fact must really deviate. An entry that has stopped
+ * deviating is an exemption nobody needs any more, and it fails.
+ *
+ * This is the same bargain `DELIBERATELY_ABSENT` makes for a role, applied to
+ * a value: a departure somebody wrote down, never a comparison quietly
+ * narrowed until it passed.
+ */
+export interface NarrowDeviation {
+  /** The width below which this fact is no longer specified. */
+  readonly below: number
+  readonly why: string
+}
+
+export const NARROW_DEVIATIONS: Readonly<Record<string, NarrowDeviation>> = {
+  'barInner.paddingLeft': {
+    below: 880,
+    why:
+      'the mockup gives the bar no narrow treatment and states 22px at every ' +
+      'width. MEASURED at 390px: the trailing icon controls end at x=412 in a ' +
+      '390 viewport, so the page scrolls sideways on every route — which fails ' +
+      'an M16 acceptance criterion outright. DESIGN.md forbids both of the ' +
+      'usual answers (nothing reflows into a hamburger, nothing scrolls ' +
+      'sideways), so the padding gives way instead. Spacing only: no control ' +
+      'is hidden and no colour moves.',
+  },
+  'levelKey.width': {
+    below: 880,
+    why:
+      'a flex item both documents let shrink, so below the breakpoint the ' +
+      'measured value is a function of the level NAME beside it — 18.55px in ' +
+      'the mockup against 25.30px on the page, purely because the two ' +
+      'documents name their levels differently. That is a measurement of ' +
+      'CONTENT, which tests/README.md forbids a test from writing down; the ' +
+      'same trap `menuCount.marginLeft` fell into. The page refuses to shrink ' +
+      'its swatch at all, which is the design; the mockup squashes its own.',
+  },
+}
+
+/**
+ * The differences that are really differences at this width.
+ *
+ * Every viewport-aware comparison goes through here rather than through
+ * `differencesIn`, so an exemption cannot be applied by accident: it has to be
+ * in `NARROW_DEVIATIONS` with a width and a reason.
+ */
+export function differencesAt(
+  reference: DesignFacts,
+  actual: DesignFacts,
+  roles: readonly Role[],
+  width: number,
+): Difference[] {
+  return differencesIn(reference, actual, roles).filter((difference) => {
+    const allowed = NARROW_DEVIATIONS[difference.fact]
+    return allowed === undefined || width >= allowed.below
+  })
 }
 
 /**

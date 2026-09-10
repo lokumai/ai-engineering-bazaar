@@ -7,21 +7,45 @@ import { plural } from '@/lib/text'
  *
  * D13's reason for keeping all three views is that they answer three different
  * questions, and this one answers *what is in this course and in what order*.
- * So it is the only view that groups: one band per level, in curriculum order,
- * each band naming its level, counting its modules and listing every one of
- * them as a link. Nothing here is a fact about the reader.
+ * So it is the only view that groups, and the only one a reader can take in
+ * without scrolling.
  *
- * **It renders the rows it is handed and groups nothing else.** The bands come
- * from `levelsOf(rows)`, so a filter that removes every Expert module removes
- * the Expert band with it rather than leaving an empty header — and the three
- * views cannot disagree about which modules exist, because there is one array
- * and each view is a rendering of it (D13's bound on the cost of three views).
+ * ## M16 stage 4 turned it into a board, because that is what the mockup is
  *
- * **A level is told apart four ways, and the hue is only one of them.** Its
- * name, its number, its count, and `data-cat` — which `lokum.css` resolves to
- * the level's own colour on the band's leading rule. Under
+ * `playground/03-catalog.html`'s variant C is *"Five columns, one per level"* —
+ * a `.board` grid of `.col`s, each headed in its own hue with a progress track
+ * under the header and its modules listed inside. This component was a stack
+ * of full-width bands, which reads as an outline rather than as a shape. The
+ * mockup's own note is the argument for the change: *"the whole shape of the
+ * course in one view"*, which a vertical stack cannot be.
+ *
+ * The board falls to two columns below the language's upper breakpoint and to
+ * one below its lower one. `03` breaks at 1080 and 620; those are two widths
+ * the product does not otherwise have, and DESIGN.md declares exactly two, so
+ * the mockup's intent (five, then two, then one) is mapped onto the widths
+ * that already exist rather than adding a third pair.
+ *
+ * ## The counts are build-time facts, and that is a channel decision
+ *
+ * A column says how many modules its level has and how many are **written**.
+ * It does not say how many the reader has completed, and the progress track is
+ * filled from the same written count. `03` prints "3 of 8 done", which is a
+ * fact about the reader — and a fact about the reader cannot be drawn here: it
+ * lives in Web Storage, so it would arrive after first paint and the track
+ * would visibly fill from zero on every load. **D37** records the same finding
+ * for the curriculum rail, which states a level's total for the same reason.
+ *
+ * **It renders the rows it is handed and groups nothing else.** The columns
+ * come from `levelsOf(rows)`, so a filter that removes every Expert module
+ * removes the Expert column with it rather than leaving an empty one — and the
+ * three views cannot disagree about which modules exist, because there is one
+ * array and each view is a rendering of it (D13's bound on the cost of three).
+ *
+ * **A level is told apart four ways, and the hue is only one of them**: its
+ * name, its position in the row, its counts, and `data-cat`, which
+ * `category.css` resolves to the level's own colour. Under
  * `forced-colors: active` every hue goes and the other three carry the whole
- * distinction (SC 1.4.1, §13.1.4).
+ * distinction (SC 1.4.1).
  *
  * **Every module is a link, including a planned one, and that is deliberate
  * rather than lazy.** A planned module HAS a page — the A4 anatomy, which
@@ -37,46 +61,63 @@ export function CatalogOverview({ rows }: { rows: readonly SheetRow[] }) {
   const levels = levelsOf(rows)
 
   return (
-    <div className="hl-ov">
+    <div className="bz-board">
       {levels.map((level) => {
         const own = rows.filter((row) => row.subsystem.slug === level.slug)
         const ready = own.filter((row) => row.drawn).length
+        /* Computed from the rows on screen, never a typed percentage. `03`
+           hardcodes `width:37%` beside a "3 of 8" that would round to 37.5. */
+        const filled = Math.round((ready / own.length) * 100)
 
         return (
           <section
             key={level.slug}
-            className="hl-ov-band"
+            className="bz-boardcol"
             data-cat={level.slug}
-            aria-labelledby={`hl-ov-${level.slug}`}
+            aria-labelledby={`bz-board-${level.slug}`}
           >
-            <div className="hl-ov-head">
-              <h3 id={`hl-ov-${level.slug}`} className="hl-ov-title">
-                <Link href={level.path} className="hl-ov-link">
-                  <span className="hl-ov-order">
-                    {String(level.order).padStart(2, '0')}
-                  </span>
+            <header className="bz-boardcol-head">
+              <h3 id={`bz-board-${level.slug}`} className="bz-boardcol-title">
+                <Link href={level.path} className="bz-boardcol-link">
                   {level.title}
                 </Link>
               </h3>
               {/* Both counts, always: the denominator is the level and the
                   numerator is what somebody has written. `plural` chooses the
-                  word from the number nobody typed (§11.25). */}
-              <p className="hl-ov-count">
+                  word from the number nobody typed. */}
+              <p className="bz-boardcol-count">
                 {plural(own.length, 'module')} · {ready} ready
               </p>
+            </header>
+
+            {/* The track restates the count above it and carries nothing of its
+                own, so it is hidden from assistive software rather than given a
+                role and a label that would read the same sentence twice. */}
+            <div className="bz-track" aria-hidden="true">
+              <i style={{ width: `${filled}%` }} />
             </div>
 
-            <ol className="hl-ov-list">
+            <ol className="bz-boardcol-list">
               {own.map((row) => (
-                <li key={row.slug} className="hl-ov-item" data-drawn={row.drawn ? 'true' : 'false'}>
-                  <span className="hl-ov-num">{row.number}</span>
-                  <Link href={row.path} className="hl-ov-mod">
-                    {row.title}
+                <li
+                  key={row.slug}
+                  className="bz-boardcol-item"
+                  data-drawn={row.drawn ? 'true' : 'false'}
+                >
+                  <Link href={row.path} className="bz-boardcol-mod">
+                    <span className="bz-boardcol-num">{row.number}</span>
+                    {/* The title in an element of its own. `03` leaves it a
+                        bare text node beside `.num`, which costs nothing to
+                        draw and everything to read: the link's text then reads
+                        "19Advanced UIPlanned", and the three views stop being
+                        comparable to each other by name. A span changes no
+                        geometry and gives the module's name one home. */}
+                    <span className="bz-boardcol-name">{row.title}</span>
+                    {/* One spelling of this status, everywhere: the table, the
+                        card, the board, the path step and the diagram all say
+                        `Planned`. */}
+                    {!row.drawn && <span className="bz-boardcol-planned">Planned</span>}
                   </Link>
-                  {/* One spelling of this status, everywhere (§12.14.1): the
-                      table, the card, the overview, the path step and the
-                      diagram all say `Planned`. */}
-                  {!row.drawn && <span className="hl-ov-planned">Planned</span>}
                 </li>
               ))}
             </ol>

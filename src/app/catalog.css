@@ -1,0 +1,767 @@
+/* ===========================================================================
+   THE CATALOG — M16 stage 4.
+
+   Reference: `playground/03-catalog.html` for GEOMETRY, and
+   `playground/01-theme-T4-ground-G3-powder.html` plus the language for every
+   colour, radius and type step (**D31**). `03` is on the retired cool-grey
+   palette with a green accent and says so itself: "One neutral palette so you
+   judge the layout." Read literally it would put that green on powder.
+
+   THIS FILE IS THE LARGEST OF THE SURFACE STYLESHEETS, and that is a fact
+   about the language rather than about the catalog. `bazaar.css` is a
+   transcription of `01`, and `01` draws a reading page: it has no chip, no
+   filter bar, no data table, no card grid, no board column and no view
+   toggle. Every other M16 stage arranges primitives that already exist; this
+   one has to name them first.
+
+   ## What `03` is, and which parts of it are not the specification
+
+   `03` is an annotation page presenting three alternatives to the author. Its
+   `.head`, `.opt`, `.tag` A/B/C badge, `.frame` and `.why` strip are the
+   apparatus of that document — a fake browser frame with a rationale caption
+   under it — and none of them is a component. The specification inside it is
+   the filter bar and the three view bodies. The author chose all three
+   (**D13**), so all three are built.
+
+   Two things in `03` are deliberately NOT built:
+
+   - **The search field.** `03`'s `.fsearch` is a `<div role="button">` with a
+     magnifier that opens nothing. A control that opens nothing is the claim §1
+     forbids, which is the same reason the bar's own search slot stays empty
+     and sits in `DELIBERATELY_ABSENT`. The filters beside it are real buttons
+     and they are what narrows the catalog.
+   - **The group-break row** inside the table. Grouping is what the overview
+     answers; a table that also groups is answering two questions at once, and
+     `03`'s own note calls the table "the densest" for exactly the reason that
+     it does not group.
+
+   ## Where `03` and the language disagree, and what settled each one
+
+   | `03` | here | why |
+   | --- | --- | --- |
+   | radii 999px, 12px, 10px | `--radius-pill`, `--radius-xl` | the radius scale is a closed set of eight and `surface-stylesheets.test.ts` refuses a literal. A 9px "pill" is what this language calls a pill. |
+   | card hover `box-shadow` | a `line-strong` edge | the language spends exactly two shadows, both on things that genuinely float. A card is raised by its hairline; on this ground that IS the mechanism. |
+   | pressed chip filled with ink | filled with `primary` | there is no ink-as-fill token. Cobalt on powder is the strongest statement the language makes, and it is already how the bar says "you are here". |
+   | 8px round chip dot | 8px `--radius-hair` square | 50% is a literal radius. The language's hue markers — `.bz-group-key`, `.bz-menu-key`, `.bz-tag > i` — are all rounded squares, so the key keeps its own shape. |
+   | `--faint` readouts | `--color-on-surface-muted` | DESIGN.md: faint is for what a reader may ignore. A count in a live region is not that. |
+   | `font-weight: 550` | 600 | 550 is in no scale here. |
+   | white translucent progress track | the hue on `surface-sunken` | the language declares no translucent surface, which is the same wall `rail.css`'s backdrop met. |
+   | board breakpoints 1080 / 620 | 1180 / 880 | the language declares exactly two, and inventing a third pair would give the product four widths where it claims two. |
+
+   ## The two channels in this bar, which is the thing to be careful about
+
+   The view toggle is **channel A**: `data-hl-view` on `<html>`, stamped before
+   first paint, read here. The filters are **channel B and pure JavaScript** —
+   the component hands each view an already-filtered array, and no selector in
+   this file hides a row. So the two do not interact, and both have to open at
+   `all` or the first client render disagrees with the prerender.
+   =========================================================================== */
+
+@layer components {
+
+  /* ---------------------------------------------------------------------------
+     1. THE PAGE, AND THE ONE NUMBER EVERYTHING STICKY IS DERIVED FROM.
+
+     `03` hardcodes `top: 71px` on the table header to clear its filter bar,
+     which is `16 + 38 + 16 + 1` — the bar's padding twice, the search field's
+     height, and the bar's own hairline. **That number is not transcribed**,
+     for two reasons: it is a sum, and one of its terms is the field this file
+     refuses to draw. So the terms are declared and the sum is computed, which
+     also means the table header follows if the bar's padding ever changes.
+
+     The tallest thing in our bar is a 33px chip, which is the language's
+     control height — `.bz-bar-field` and `.bz-bar-icon` are both 33px.
+     --------------------------------------------------------------------------- */
+  .bz-catalog {
+    --bz-filter-pad: 16px;
+    --bz-control: 33px;
+    --bz-filters-h: calc(var(--bz-filter-pad) * 2 + var(--bz-control) + 1px);
+  }
+
+  /* ---------------------------------------------------------------------------
+     2. THE FILTER BAR.
+
+     At the top, above the thing it changes. The ground is the page's own
+     `surface` and not a raised white band: the bar has to be opaque to be
+     sticky, and `01` draws no full-width white strip anywhere. A hairline is
+     what separates it, which is the rule the whole ground is built on.
+     --------------------------------------------------------------------------- */
+  .bz-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 9px;
+    padding: var(--bz-filter-pad) 0;
+    border-bottom: 1px solid var(--color-line);
+    background: var(--color-surface);
+    position: sticky;
+    top: var(--layout-sticky);
+    /* Under the bar (40) and the menu it opens (60), over the page. */
+    z-index: 30;
+  }
+
+  .bz-chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .bz-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: var(--bz-control);
+    padding: 0 12px;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-meta) / 1 var(--font-sans);
+    cursor: pointer;
+  }
+
+  .bz-chip:hover {
+    background: var(--color-surface-sunken);
+    color: var(--color-on-surface);
+  }
+
+  /* Pressed is a fill and a word, never a fill alone: the chip's label says
+     which level or state it selects, so forced colours loses the hue and keeps
+     the sentence. */
+  .bz-chip[aria-pressed="true"] {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+
+  .bz-chip-key {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-hair);
+    background: var(--bz-cat);
+  }
+
+  /* A pressed level chip fills with cobalt, and its own hue key would then be
+     a second colour inside a solid — so the key takes the ink of the fill and
+     the hue is carried by the unpressed chips it is being compared against. */
+  .bz-chip[aria-pressed="true"] .bz-chip-key { background: var(--color-on-primary); }
+
+  .bz-filter-sep {
+    width: 1px;
+    height: 22px;
+    background: var(--color-line);
+  }
+
+  /* `03`'s trailing readout, which in the product is a live region: it is what
+     announces the count when a chip changes it. Muted and not faint for that
+     reason — a sentence the reader's software is going to read out is not
+     something the reader may ignore. */
+  .bz-filter-count {
+    margin: 0 0 0 auto;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bz-filter-count-value {
+    color: var(--color-on-surface);
+    font-weight: 600;
+  }
+
+  /* ---------------------------------------------------------------------------
+     3. THE VIEW TOGGLE — derived, because no mockup draws one.
+
+     `03` presents A, B and C as three separate frames and has no segmented
+     control anywhere in it; `01` has none either. The author asked for all
+     three behind a toggle with an icon and a name each (**D13**), so this is
+     the one component in the stage with no reference, and **D30** applies:
+     derive it from primitives and say what from.
+
+     What from: the height is the language's control height, the edge is
+     `.bz-btn-quiet`'s, the radius is the base step, and the row is the bar's
+     own idiom of adjacent chips. The showing one is marked by a THICKER
+     BOTTOM EDGE rather than a fill, because forced colours overrides a
+     border's colour and keeps its width — a fill would make all three read
+     the same there, and `catalog.spec.ts` pins the width difference for
+     exactly that reason.
+     --------------------------------------------------------------------------- */
+  .bz-viewbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 13px;
+    margin: 18px 0 0;
+  }
+
+  .bz-viewtoggle {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .bz-viewbtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: var(--bz-control);
+    padding: 0 12px;
+    border: 1px solid var(--color-line-strong);
+    border-bottom-width: var(--bz-showing-edge, 1px);
+    border-radius: var(--radius-base);
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-meta) / 1 var(--font-sans);
+    cursor: pointer;
+  }
+
+  .bz-viewbtn:hover {
+    background: var(--color-surface-sunken);
+    color: var(--color-on-surface);
+  }
+
+  .bz-view-icon { flex: none; }
+
+  /* ---------------------------------------------------------------------------
+     4. THE CARRIER, AND THE THREE THINGS THAT READ IT.
+
+     `data-hl-view` is stamped on `<html>` by `src/lib/record/boot.ts` in a
+     blocking script before first paint, so a reader who chose Table last week
+     meets Table in frame one with the bundle blocked. `data-view` is on both
+     a view's section and its button.
+
+     **The carrier sets custom properties and nothing else, and every rule
+     that cares reads them.** That is not a flourish — it is the only shape
+     that fits. `tests/unit/catalog/views.test.ts` requires the carrier's
+     selector to be `html[data-hl-view="<id>"] [data-view="<id>"]` with no
+     class between the two halves, so one rule matches BOTH the section and
+     the button; and it caps the whole file at eight mentions of the attribute,
+     so there is no budget for a fourth selector per id. A custom property is
+     how one rule says "you are the showing one" to three different consumers,
+     one of which is a descendant.
+
+     Set on the section, `--bz-showing` reveals it. Set on the button, the same
+     property reveals the sr-only word inside it and `--bz-showing-edge`
+     thickens its bottom rule. Nothing else in the file reads either name, so
+     the two elements cannot cross-talk.
+     --------------------------------------------------------------------------- */
+  html[data-hl-view="overview"] [data-view="overview"],
+  html[data-hl-view="cards"] [data-view="cards"],
+  html[data-hl-view="table"] [data-view="table"],
+  /* The reader who has not chosen, and every reader with scripting off: the
+     prerender is in the default view, so this is what makes the document
+     correct before anybody has a preference. */
+  html:not([data-hl-view]) [data-view="overview"] {
+    --bz-showing: block;
+    --bz-showing-edge: 2px;
+  }
+
+  .bz-views { margin-top: 22px; }
+
+  /* The two views that are not showing are `display: none`, and that is
+     load-bearing rather than tidy: it is what takes their links out of the tab
+     order. With three views in one document a keyboard reader would otherwise
+     traverse the whole curriculum three times to get past the catalog. */
+  .bz-view { display: var(--bz-showing, none); }
+
+  /* The word `Showing`, present only inside the button that is. It stays
+     sr-only either way — this reveals it to assistive software, not to the
+     eye — which is how the picture and the sentence cannot come apart without
+     React authoring a state no React render sets. */
+  .bz-view-said { display: var(--bz-showing, none); }
+
+  .bz-view-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 11px;
+    margin: 0 0 16px;
+    color: var(--color-on-surface-title);
+    font: 600 var(--text-subsection) / var(--text-subsection--line-height) var(--font-sans);
+    letter-spacing: var(--tracking-section);
+  }
+
+  .bz-view-answers {
+    color: var(--color-on-surface-muted);
+    font: 400 var(--text-item) / 1.4 var(--font-sans);
+    letter-spacing: normal;
+  }
+
+  /* ---------------------------------------------------------------------------
+     5. THE LEVEL HEAD — the cards view's grouping, from `03`-A.
+     --------------------------------------------------------------------------- */
+  .bz-levelhead {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 26px 0 12px;
+  }
+
+  .bz-levelhead:first-child { margin-top: 0; }
+
+  /* `flex: none`, because a hue swatch that shrinks is not a swatch. MEASURED
+     at 390px: `03`'s own `.swatch` squashes from 26px to 18.55px, since it is
+     a flex item next to a level name that has no reason to yield first. The
+     title yields instead — `min-width: 0` below is what lets it. */
+  .bz-levelhead-key {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: var(--radius-lg);
+    background: var(--bz-cat);
+    color: var(--color-on-primary);
+    font: 600 var(--text-mark) / 1 var(--font-sans);
+  }
+
+  .bz-levelhead-title {
+    min-width: 0;
+    margin: 0;
+    color: var(--color-on-surface-title);
+    font: 600 var(--text-subsection) / 1.2 var(--font-sans);
+    letter-spacing: var(--tracking-section);
+  }
+
+  .bz-levelhead-count {
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-item);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bz-levelhead-rule {
+    flex: 1;
+    height: 1px;
+    background: var(--color-line);
+  }
+
+  /* ---------------------------------------------------------------------------
+     6. THE CARDS.
+
+     The hue rides a 3px TOP edge, which is `03`'s own pattern and **D33**'s
+     rule: a level is an edge and never a tinted fill, because this language
+     has no tint scale and inventing one is how a palette becomes twelve
+     colours. A card with no level bound falls back to the neutral default the
+     language declares for `--bz-cat`.
+     --------------------------------------------------------------------------- */
+  .bz-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(252px, 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bz-catcard {
+    padding: 14px 15px;
+    border: 1px solid var(--color-line);
+    border-top: 3px solid var(--bz-cat);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-raised);
+  }
+
+  .bz-catcard:hover { border-color: var(--color-line-strong); }
+
+  /* A planned module keeps its card, its link and its place in the count — the
+     course is 33 modules and saying so is the honest shape of it. The sunken
+     fill and the word `Planned` are what say it is not written yet. `03` dims
+     its planned card with `opacity`, which would take its own text under the
+     floor it has to clear. */
+  .bz-catcard[data-drawn="false"] { background: var(--color-surface-sunken); }
+
+  .bz-catcard-level {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0;
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-mark) / 1 var(--font-sans);
+  }
+
+  .bz-catcard-key {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-hair);
+    background: var(--bz-cat);
+  }
+
+  .bz-catcard-num {
+    margin-left: auto;
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-label) / 1 var(--font-mono);
+  }
+
+  .bz-catcard-title {
+    margin: 6px 0;
+    font: 600 var(--text-body) / 1.3 var(--font-sans);
+    letter-spacing: var(--tracking-section);
+  }
+
+  .bz-catcard-link { color: var(--color-on-surface); }
+
+  /* `03`'s card prints a one-line summary under its title; the corpus has no
+     such field, and `mini-courses/` is read-only. So the card keeps the four
+     labelled facts it already had — each fact named, because a bare `23` next
+     to a bare `EN · TR` is the meta strip DESIGN.md calls a tell — laid out on
+     `03`'s own footer row. */
+  .bz-catcard-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    margin: 0;
+    font-size: var(--text-mark);
+  }
+
+  .bz-catcard-facts > div {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+  }
+
+  /* The label is the only thing saying what the value means, so it is read and
+     not ignored; the value takes full ink so the pair is still told apart. */
+  .bz-catcard-facts dt { color: var(--color-on-surface-muted); }
+
+  .bz-catcard-facts dd {
+    margin: 0;
+    color: var(--color-on-surface);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------------------------------------------------------------------------
+     7. THE TABLE.
+
+     Nine columns and not `03`'s six. Dropping three would delete what the
+     table is for — it is the one view that states every fact the manifest
+     records — and the milestone's promise is that no capability goes. What
+     comes from `03` is the geometry: the padding, the sticky header on a
+     sunken strip, the hover, and the hue in the leading edge.
+
+     **It scrolls inside its own box**, which is the same containment the
+     language already spends on a figure, and the reason the page body never
+     scrolls sideways at 390px.
+     --------------------------------------------------------------------------- */
+  .bz-table-scroll {
+    min-width: 0;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+
+  /* `--bz-table-min` is the sum of the column widths, computed by `SheetIndex`
+     from the table it is about to draw and passed in per instance. It used to
+     be a hand-computed `1060px` in a deleted stylesheet with the arithmetic
+     written out in a comment beside it, which is two places for one number and
+     is how the ninth column's width came to be justified by subtraction. */
+  .bz-table {
+    /* Declared here so the name resolves even where nothing passes one, and
+       overridden per instance. A table with no sum to honour is simply as wide
+       as the box it is in. */
+    --bz-table-min: 100%;
+    width: 100%;
+    min-width: var(--bz-table-min);
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  .bz-table thead th {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--color-line);
+    background: var(--color-surface-sunken);
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-mark) / 1 var(--font-sans);
+    text-align: left;
+    position: sticky;
+    top: calc(var(--layout-sticky) + var(--bz-filters-h, 0px));
+    z-index: 20;
+  }
+
+  .bz-table tbody td,
+  .bz-table tbody th {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--color-line);
+    font-size: var(--text-control);
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  /* The title cell is a `th[scope="row"]`, so the weight is set per element
+     type rather than on `.bz-row-title`: a rule qualified by `tbody th` beats
+     a bare class, and the class would silently lose. */
+  .bz-table tbody td { font-weight: 400; }
+  .bz-table tbody th { font-weight: 600; }
+
+  .bz-row:hover { background: var(--color-surface-sunken); }
+
+  /* The leading rule is reserved on every row and painted only where there is
+     something to paint, so no column changes width between a drawn row and a
+     draft one.
+
+     **Drawn rows only, and that is the amended T6 rather than taste.** A draft
+     row's `#` cell already carries `--color-caution` as its hidden-line ink,
+     and a category hue and a semantic token may not sit on one element. `03`
+     tints every row including its planned ones; it has no hidden-line ink to
+     collide with. */
+  .bz-row > :first-child { border-left: 3px solid transparent; }
+  .bz-row[data-cat] > :first-child { border-left-color: var(--bz-cat); }
+
+  /* MUTED and not `03`'s faint. A module's number is its identity — prose
+     names another module by it and the rail lists it — so it is a word the
+     reader reads rather than one they may ignore, and DESIGN.md's own rule is
+     that such a word takes `on-surface-muted` however small it is. MEASURED:
+     faint puts it at 3.09:1 on the row, under the 4.5:1 a text floor asks.
+     A measured floor outranks the transcription, which is D34's precedent. */
+  .bz-row-number {
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-mark) / 1 var(--font-mono);
+  }
+
+  /* A draft row recedes in its TITLE, which is `03`'s own treatment for a
+     planned module, and NOT in the caution ink on its number.
+
+     MEASURED: caution on the page ground is 3.09:1, and a module's number is
+     text a reader reads, so it takes a 4.5:1 floor. The retired drawing set
+     put hidden-line yellow there — a convention for a line that is planned and
+     not yet cut — and the convention does not survive a text floor. The row
+     still says `PLANNED` in words, carries a dashed status tick and a dashed
+     completion square, so nothing is lost but the colour. */
+  .bz-row[data-draft] .bz-row-link { color: var(--color-on-surface-muted); }
+
+  /* Ink and not cobalt. A table of 33 rows whose every title is a link reads
+     as a wall of accent otherwise, and the row's hover plus the pointer are
+     what say it is one — which is `03`'s call as well. */
+  .bz-row-link { color: var(--color-on-surface); }
+
+  .bz-row-context,
+  .bz-row-value {
+    color: var(--color-on-surface-muted);
+  }
+
+  .bz-row-value { font-variant-numeric: tabular-nums; }
+
+  .bz-row-topics {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .bz-row-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-mark);
+  }
+
+  .bz-row-tick { flex: none; }
+
+  /* The completion column, which only the table draws.
+
+     **This is the shape and not the state.** Stage 7 is the completion stage
+     and it owns what a finished thing looks like across the whole product —
+     the disc, the check inside it, and the sub-palette they sit in. What the
+     table needs before then is a cell that is legible and a square that is
+     told apart filled from unfilled, so the column is not an empty gap for
+     three stages. `SignOffMarks` fills these after mount (channel B); the row's
+     `STATUS` cell states the same thing in words, so nothing here is the only
+     carrier of anything.
+
+     The cell gives up its inline padding, which is how four 14px squares and
+     their gaps fit the 72px the column declares. */
+  /* Qualified by `thead` / `tbody`, because `.bz-table tbody td` sets the
+     padding and a bare class loses to it — the same specificity trap the
+     title cell's weight hit. Unqualified, the cell kept its 14px inline
+     padding, four squares and three gaps had 44px instead of 72px, and they
+     silently SHRANK to 8px rather than overflowing where anyone would see it. */
+  .bz-table thead .bz-table-signoff,
+  .bz-table tbody .bz-row-signoff {
+    padding-inline: 0;
+  }
+
+  .bz-signoff-cell {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* `flex: none` so a cell that is ever too narrow overflows visibly instead of
+     quietly rescaling the mark a reader is meant to be able to count. */
+  .bz-signoff-square {
+    flex: none;
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-hair);
+  }
+
+  .bz-signoff-square[data-signed="true"] {
+    border-color: var(--color-success);
+    background: var(--color-success);
+  }
+
+  /* A module nobody has drawn cannot be completed, so its one square is drawn
+     the way the drawing set draws a line that is planned and not yet cut. */
+  .bz-signoff-square[data-drawn="false"] {
+    border-style: dashed;
+  }
+
+  /* ---------------------------------------------------------------------------
+     8. THE BOARD — `03`-C, the whole shape of the course at once.
+
+     Five columns, one per level, each headed in its own hue with a progress
+     track under it. The counts and the track are BUILD-TIME facts — how many
+     modules a level has and how many are written — and not the reader's own
+     record: a count drawn from Web Storage would arrive after first paint and
+     flash from zero, which is the failure **D37** records for the rail.
+     --------------------------------------------------------------------------- */
+  .bz-board {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  @media (max-width: 1180px) {
+    .bz-board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 880px) {
+    .bz-board { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  .bz-boardcol {
+    overflow: hidden;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-raised);
+  }
+
+  .bz-boardcol-head {
+    padding: 11px 13px;
+    background: var(--bz-cat);
+    color: var(--color-on-primary);
+  }
+
+  .bz-boardcol-title {
+    margin: 0;
+    font: 600 var(--text-control) / 1.25 var(--font-sans);
+  }
+
+  .bz-boardcol-link { color: var(--color-on-primary); }
+
+  /* Full strength, not `03`'s 85%: white at 85% over a mid-chroma hue is a
+     text floor nobody measured, and the size difference already separates the
+     count from the name. */
+  .bz-boardcol-count {
+    margin: 2px 0 0;
+    color: var(--color-on-primary);
+    font-size: var(--text-mark);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* `03` paints the track in translucent white over the hue. The language
+     declares no translucent surface — the same wall the drawer's backdrop met
+     in `rail.css` — so the track sits under the header on the card's own
+     ground and the fill is the hue itself. */
+  .bz-track {
+    height: 4px;
+    background: var(--color-surface-sunken);
+  }
+
+  .bz-track > i {
+    display: block;
+    height: 4px;
+    background: var(--bz-cat);
+  }
+
+  .bz-boardcol-list {
+    margin: 0;
+    padding: 7px;
+    list-style: none;
+  }
+
+  .bz-boardcol-mod {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px 9px;
+    border-radius: var(--radius-md);
+    color: var(--color-on-surface);
+    font-size: var(--text-meta);
+    line-height: 1.35;
+  }
+
+  .bz-boardcol-mod:hover {
+    background: var(--color-surface-sunken);
+    text-decoration: none;
+  }
+
+  .bz-boardcol-num {
+    flex: none;
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-label) / 1.5 var(--font-mono);
+  }
+
+  .bz-boardcol-item[data-drawn="false"] .bz-boardcol-mod {
+    color: var(--color-on-surface-muted);
+  }
+
+  .bz-boardcol-planned {
+    margin-left: auto;
+    padding: 1px 5px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xs);
+    color: var(--color-on-surface-faint);
+    font-size: var(--text-label);
+  }
+
+  /* ---------------------------------------------------------------------------
+     9. THE ONE EMPTY STATE TWO FILTERS CAN PRODUCE.
+
+     In the space the views occupied, so the reader is told where the catalog
+     went rather than left to infer it from a gap. No illustration and no
+     mascot.
+     --------------------------------------------------------------------------- */
+  .bz-empty {
+    margin-top: 22px;
+    padding: 28px 24px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--shape-leaf);
+    background: var(--color-surface-raised);
+  }
+
+  .bz-empty-status {
+    margin: 0 0 6px;
+    color: var(--color-on-surface-title);
+    font: 600 var(--text-subsection) / 1.3 var(--font-sans);
+  }
+
+  .bz-empty-cue {
+    margin: 0 0 16px;
+    color: var(--color-on-surface-muted);
+  }
+
+  /* ---------------------------------------------------------------------------
+     10. FORCED COLOURS.
+
+     The system takes over every colour here and keeps every width, so the
+     showing view's toggle has to be told apart by its EDGE WEIGHT — which is
+     what it is told apart by in the ordinary theme too, so there is one
+     mechanism and not a special case. This block repeats the carrier's list
+     because a custom property is not what is being set: `border-bottom-width`
+     is, directly, since forced colours also flattens the resting edge the
+     property was being read into.
+
+     It is the last thing in the file on purpose. `views.test.ts` splits every
+     surface stylesheet at the FIRST `forced-colors` block and requires the
+     carrier above the split, and this file sorts first of all of them.
+     --------------------------------------------------------------------------- */
+  @media (forced-colors: active) {
+    html[data-hl-view="overview"] .bz-viewbtn[data-view="overview"],
+    html[data-hl-view="cards"] .bz-viewbtn[data-view="cards"],
+    html[data-hl-view="table"] .bz-viewbtn[data-view="table"],
+    html:not([data-hl-view]) .bz-viewbtn[data-view="overview"] {
+      border-bottom-width: 2px;
+    }
+  }
+}

@@ -59,14 +59,14 @@ const NAMES: Record<string, string> = {
  * name exact, and the comparison is still between the views themselves.
  */
 const TITLES: Record<string, string> = {
-  overview: '.hl-ov-mod',
-  cards: '.hl-card-title',
-  table: '.hl-row-link',
+  overview: '.bz-boardcol-name',
+  cards: '.bz-catcard-title',
+  table: '.bz-row-link',
 }
 
 const VIEWS = CATALOG_VIEWS.map((id) => ({ id, name: NAMES[id] }))
 
-const viewBox = (page: Page, id: string) => page.locator(`.hl-view[data-view="${id}"]`)
+const viewBox = (page: Page, id: string) => page.locator(`.bz-view[data-view="${id}"]`)
 
 const toggle = (page: Page, name: string) =>
   page.getByRole('button', { name: new RegExp(`^${name}`) })
@@ -123,7 +123,7 @@ test('the three views show the same set of modules, filtered and unfiltered', as
     // Non-vacuity: three empty sets are equal and prove nothing.
     expect(overview.length, filter).toBeGreaterThan(0)
 
-    const shown = Number((await page.locator('.hl-chip-count-value').first().innerText()).trim())
+    const shown = Number((await page.locator('.bz-filter-count-value').first().innerText()).trim())
     expect(shown, filter).toBe(overview.length)
   }
 
@@ -168,7 +168,7 @@ test('switching view changes no URL and adds no document load', async ({ page })
 
   // The toggle is three buttons and no links: D13's criterion is that a view
   // is not an address, and a link would be one.
-  await expect(page.locator('.hl-viewtoggle a')).toHaveCount(0)
+  await expect(page.locator('.bz-viewtoggle a')).toHaveCount(0)
 })
 
 test('the chosen view is remembered, through the record and nowhere else', async ({
@@ -242,7 +242,7 @@ test('only the showing view is in the tab order, and it is', async ({ page }) =>
     const owner = await page.evaluate(() => {
       const active = document.activeElement
       if (!(active instanceof HTMLElement)) return null
-      const box = active.closest('.hl-view')
+      const box = active.closest('.bz-view')
       return box === null ? null : box.getAttribute('data-view')
     })
     if (owner !== null) {
@@ -261,7 +261,7 @@ test('only the showing view is in the tab order, and it is', async ({ page }) =>
 test('both filter axes work from the keyboard and announce the count', async ({ page }) => {
   await page.goto(INDEX_SHEET)
 
-  const count = page.locator('.hl-chip-count')
+  const count = page.locator('.bz-filter-count')
   await expect(count).toHaveAttribute('role', 'status')
   await expect(count).toHaveText(`Showing ${SHEET_COUNT} of ${SHEET_COUNT}`)
 
@@ -272,7 +272,7 @@ test('both filter axes work from the keyboard and announce the count', async ({ 
   await page.keyboard.press('Enter')
   await expect(ready).toHaveAttribute('aria-pressed', 'true')
 
-  const readyCount = Number((await page.locator('.hl-chip-count-value').first().innerText()).trim())
+  const readyCount = Number((await page.locator('.bz-filter-count-value').first().innerText()).trim())
   expect(readyCount).toBeGreaterThan(0)
   expect(readyCount).toBeLessThan(SHEET_COUNT)
 
@@ -290,7 +290,7 @@ test('both filter axes work from the keyboard and announce the count', async ({ 
   await expect(level).toHaveAttribute('aria-pressed', 'true')
   await expect(ready).toHaveAttribute('aria-pressed', 'true')
 
-  const both = Number((await page.locator('.hl-chip-count-value').first().innerText()).trim())
+  const both = Number((await page.locator('.bz-filter-count-value').first().innerText()).trim())
   expect(both).toBeLessThanOrEqual(readyCount)
 })
 
@@ -306,20 +306,20 @@ test('an empty result says what to do next, and the way out works', async ({ pag
   expect(readyOnly, 'no level in the corpus is entirely written').toBeDefined()
 
   await page.getByRole('button', { name: 'Planned', exact: true }).click()
-  await page.locator(`.hl-chip[data-cat="${readyOnly}"]`).click()
+  await page.locator(`.bz-chip[data-cat="${readyOnly}"]`).click()
 
-  const empty = page.locator('.hl-empty')
+  const empty = page.locator('.bz-empty')
   await expect(empty).toBeVisible()
   // The status names the filters as the cause and counts what it excluded from.
-  await expect(empty.locator('.hl-empty-status')).toHaveText(
+  await expect(empty.locator('.bz-empty-status')).toHaveText(
     `No module matches both filters · 0 of ${SHEET_COUNT}`,
   )
   // And it says what to do, which is M12's deliverable: not "no results".
-  await expect(empty.locator('.hl-empty-cue')).toContainText('Widen either one')
+  await expect(empty.locator('.bz-empty-cue')).toContainText('Widen either one')
 
   await empty.getByRole('button', { name: 'Show the whole catalog' }).click()
   await expect(empty).toHaveCount(0)
-  await expect(page.locator('.hl-chip-count')).toHaveText(
+  await expect(page.locator('.bz-filter-count')).toHaveText(
     `Showing ${SHEET_COUNT} of ${SHEET_COUNT}`,
   )
 })
@@ -343,21 +343,21 @@ test.describe('under forced colours', () => {
     // dropping every hue costs the reader nothing.
     for (const path of CATEGORY_PATHS) {
       const slug = path.split('/')[2]
-      const band = page.locator(`.hl-ov-band[data-cat="${slug}"]`)
+      const band = page.locator(`.bz-boardcol[data-cat="${slug}"]`)
       await expect(band).toHaveCount(1)
-      const text = await band.locator('.hl-ov-head').innerText()
+      const text = await band.locator('.bz-boardcol-head').innerText()
       expect(text, slug).toMatch(/\d+ modules? · \d+ ready/)
     }
 
     // The cards: the level's name beside its square, never the square alone.
     await toggle(page, 'Cards').click()
-    const first = page.locator('.hl-card').first()
-    await expect(first.locator('.hl-card-level')).not.toHaveText('')
+    const first = page.locator('.bz-catcard').first()
+    await expect(first.locator('.bz-catcard-level')).not.toHaveText('')
 
     // And the showing view is still told apart: the button keeps a heavier
     // bottom edge, because forced colours overrides a border's COLOUR and not
     // its width.
-    const weights = await page.locator('.hl-viewbtn').evaluateAll((nodes) =>
+    const weights = await page.locator('.bz-viewbtn').evaluateAll((nodes) =>
       nodes.map((node) => ({
         view: node.getAttribute('data-view'),
         bottom: getComputedStyle(node).borderBottomWidth,
@@ -391,5 +391,5 @@ test('a completed module reads as completed in the table view', async ({ page })
   ).toHaveAttribute('data-signed', 'true')
 
   await page.getByRole('button', { name: 'Completed', exact: true }).click()
-  await expect(page.locator('.hl-chip-count-value').first()).toHaveText('1')
+  await expect(page.locator('.bz-filter-count-value').first()).toHaveText('1')
 })

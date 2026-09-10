@@ -77,12 +77,12 @@ test('a module row still states its own status with no colour (§13.1.3 item 3)'
   await page.goto('/courses/fundamentals/')
 
   // The row's leading rule is tinted; the row's own cells are what say so.
-  const signedRow = page.locator('tr.hl-row').filter({ hasText: 'LLM Fundamentals' })
+  const signedRow = page.locator('tr.bz-row').filter({ hasText: 'LLM Fundamentals' })
   await expect(signedRow).toContainText(/READY/i)
 
   // Every hue-bearing row keeps a visible structural border, so the table still
   // reads as a table.
-  const borders = await page.locator('tr.hl-row.hl-cat-tint > :first-child').evaluateAll(
+  const borders = await page.locator('tr.bz-row.bz-cat-tint > :first-child').evaluateAll(
     (nodes) => nodes.map((node) => getComputedStyle(node).borderInlineStartColor),
   )
   expect(borders.length).toBeGreaterThan(0)

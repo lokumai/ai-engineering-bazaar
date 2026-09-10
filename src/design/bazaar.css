@@ -222,6 +222,25 @@
 
 @layer base {
 
+  /*
+    The binding hook, declared with a NEUTRAL default rather than left
+    undeclared — and both halves of that are deliberate.
+
+    Declared, because an undeclared custom property resolves to nothing and
+    `tests/unit/design/styling-references.test.ts` refuses a `var()` the
+    language does not declare. Two surfaces now read this one — the curriculum
+    rail's group key and the catalog's level heads, cards, rows and columns —
+    and neither of them owns the product's slug-to-hue mapping, so neither can
+    be the file that declares it.
+
+    Neutral, because the default is what an element with no category shows. A
+    default of `category-1` would paint every unbound key teal and read as a
+    real answer; `line` reads as "this thing has no group", which is true.
+  */
+  :root {
+    --bz-cat: var(--color-line);
+  }
+
   body {
     margin: 0;
     background: var(--color-surface);

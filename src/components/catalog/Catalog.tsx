@@ -35,9 +35,9 @@ import { ViewIcon } from './ViewIcon'
  *
  * ## All three are always rendered, and CSS reveals one
  *
- * Every view is in the DOM on every load, and `manifest.css` shows exactly one
- * — keyed off `data-hl-view`, which `lib/record/boot.ts` stamps on `<html>`
- * before first paint from the reader's stored preference (§12.2 channel A). So
+ * Every view is in the DOM on every load, and `src/app/catalog.css` shows
+ * exactly one — keyed off `data-hl-view`, which `lib/record/boot.ts` stamps on
+ * `<html>` before first paint from the reader's stored preference (channel A). So
  * a reader who chose Table last week meets Table in frame one: no flash of a
  * view they did not ask for, no hydration, and it works with the bundle
  * blocked. It is the arrangement `/path/`'s nine role bodies already use, and
@@ -62,6 +62,29 @@ import { ViewIcon } from './ViewIcon'
  * cannot come apart. It is the arrangement the curriculum rail's tick uses for
  * exactly the same reason (`CurriculumRail`), and the one `MainNav` reaches for
  * when it refuses to put a menu behind `useState`.
+ *
+ * ## M16 stage 4: what the mockup changed, and what it did not
+ *
+ * `playground/03-catalog.html` puts the filters in a STICKY bar at the top of
+ * the frame, which is where they already were — so the arrangement survived and
+ * the appearance was rebuilt around it. Three things did change.
+ *
+ * **The two views this component composes are different components now.**
+ * `CatalogCards` groups its cards under a level heading and `CatalogOverview`
+ * is a five-column board, because that is what variants A and C draw.
+ *
+ * **The search field is refused.** `03`'s filter bar leads with a `.fsearch`
+ * that looks like a control and is a `<div role="button">` opening nothing.
+ * A control that opens nothing is the claim §1 forbids — the same reason the
+ * top bar's own search slot stays empty and is recorded in the fidelity
+ * harness's `DELIBERATELY_ABSENT`. The chips beside it are real.
+ *
+ * **The toggle is derived, and it is the one thing here with no reference.**
+ * `03` presents A, B and C as three separate frames; neither it nor `01` draws
+ * a segmented control anywhere. So it is built from primitives the language
+ * does have — the 33px control height, `.bz-btn-quiet`'s edge — and the
+ * showing one is marked by a thicker bottom rule rather than a fill, because
+ * forced colours keeps a border's width and takes its colour.
  *
  * ## The two filters
  *
@@ -126,10 +149,10 @@ export function NoMatch({
   onClear: () => void
 }) {
   return (
-    <div className="hl-empty">
-      <p className="hl-empty-status">{noMatchReadout(total)}</p>
-      <p className="hl-empty-cue">{NO_MATCH_CUE}</p>
-      <button type="button" className="hl-btn hl-empty-path" onClick={onClear}>
+    <div className="bz-empty">
+      <p className="bz-empty-status">{noMatchReadout(total)}</p>
+      <p className="bz-empty-cue">{NO_MATCH_CUE}</p>
+      <button type="button" className="bz-btn bz-empty-path" onClick={onClear}>
         Show the whole catalog
       </button>
     </div>
@@ -200,105 +223,112 @@ export function Catalog({
   }
 
   return (
-    <>
-      <div className="hl-cat-controls">
-        <div className="hl-cat-filters">
-          <div className="hl-chip-row" role="group" aria-label="Filter by level">
+    <div className="bz-catalog">
+      {/* `03`'s sticky filter bar. It carries the two chip groups and the
+          count, and nothing else: the view toggle sits below it, because the
+          bar's height is what the table view's own sticky header is offset by
+          and a second row of controls inside it would make that sum wrong. */}
+      <div className="bz-filters">
+        <div className="bz-chip-row" role="group" aria-label="Filter by level">
+          <button
+            type="button"
+            className="bz-chip"
+            {...{ [RESET_ATTR]: '' }}
+            aria-pressed={level === ALL_LEVELS}
+            onClick={() => setLevel(ALL_LEVELS)}
+          >
+            Every level
+          </button>
+          {levels.map((one) => (
             <button
+              key={one.slug}
               type="button"
-              className="hl-chip"
-              {...{ [RESET_ATTR]: '' }}
-              aria-pressed={level === ALL_LEVELS}
-              onClick={() => setLevel(ALL_LEVELS)}
+              className="bz-chip"
+              data-cat={one.slug}
+              aria-pressed={level === one.slug}
+              onClick={() => setLevel(one.slug)}
             >
-              Every level
+              {/* The square is the hue; the name beside it is what a reader in
+                  forced colours reads instead (SC 1.4.1). */}
+              <span aria-hidden="true" className="bz-chip-key" />
+              {one.title}
             </button>
-            {levels.map((one) => (
-              <button
-                key={one.slug}
-                type="button"
-                className="hl-chip"
-                data-cat={one.slug}
-                aria-pressed={level === one.slug}
-                onClick={() => setLevel(one.slug)}
-              >
-                {/* The 7px square is the hue; the name beside it is what a
-                    reader in forced colours reads instead (SC 1.4.1). */}
-                <span aria-hidden="true" className="hl-chip-chip" />
-                {one.title}
-              </button>
-            ))}
-          </div>
-
-          <div className="hl-chip-row" role="group" aria-label="Filter by state or language">
-            {FILTERS.map((filter) => (
-              <button
-                key={filter.id}
-                type="button"
-                className="hl-chip"
-                aria-pressed={filter.id === select}
-                onClick={() => setSelect(filter.id)}
-              >
-                {filter.label}
-              </button>
-            ))}
-          </div>
+          ))}
         </div>
 
-        <div className="hl-cat-viewbar">
-          {/* D13 — the toggle. Three buttons, an icon and a word each, and the
-              state carried by the hidden `Showing` rather than by an ARIA
-              attribute React would have to render (see the docblock). */}
-          <div className="hl-viewtoggle" role="group" aria-label="Catalog view">
-            {VIEWS.map((view) => (
-              <button
-                key={view.id}
-                type="button"
-                className="hl-viewbtn"
-                {...{ [VIEW_ATTR]: view.id }}
-                onClick={() => choose(view.id)}
-              >
-                <ViewIcon id={view.id} />
-                {view.name}
-                <span className="sr-only hl-view-on">Showing</span>
-              </button>
-            ))}
-          </div>
+        {/* `03`'s own divider between two runs of chips. Decorative: the two
+            groups are already named to assistive software. */}
+        <div className="bz-filter-sep" aria-hidden="true" />
 
-          {/*
-            §12.13 — the count goes in a `role="status"` live region and the
-            count itself is announced: SC 4.1.3 is Level AA and its own examples
-            are "5 results returned" / "No results returned". One region,
-            rendered in both states, so the announcement comes from an element
-            the reader's software has already seen rather than from one that
-            appears at the moment it has something to say.
-          */}
-          <p className="hl-chip-count" role="status">
-            Showing <span className="hl-chip-count-value">{visible.length}</span> of{' '}
-            <span className="hl-chip-count-value">{rows.length}</span>
-          </p>
+        <div className="bz-chip-row" role="group" aria-label="Filter by state or language">
+          {FILTERS.map((filter) => (
+            <button
+              key={filter.id}
+              type="button"
+              className="bz-chip"
+              aria-pressed={filter.id === select}
+              onClick={() => setSelect(filter.id)}
+            >
+              {filter.label}
+            </button>
+          ))}
+        </div>
+
+        {/*
+          The count goes in a `role="status"` live region and the count itself
+          is announced: SC 4.1.3 is Level AA and its own examples are "5 results
+          returned" / "No results returned". One region, rendered in both
+          states, so the announcement comes from an element the reader's
+          software has already seen rather than from one that appears at the
+          moment it has something to say. It sits on the bar's trailing edge,
+          which is where `03` puts its own readout.
+        */}
+        <p className="bz-filter-count" role="status">
+          Showing <span className="bz-filter-count-value">{visible.length}</span> of{' '}
+          <span className="bz-filter-count-value">{rows.length}</span>
+        </p>
+      </div>
+
+      <div className="bz-viewbar">
+        {/* D13 — the toggle. Three buttons, an icon and a word each, and the
+            state carried by the hidden `Showing` rather than by an ARIA
+            attribute React would have to render (see the docblock). */}
+        <div className="bz-viewtoggle" role="group" aria-label="Catalog view">
+          {VIEWS.map((view) => (
+            <button
+              key={view.id}
+              type="button"
+              className="bz-viewbtn"
+              {...{ [VIEW_ATTR]: view.id }}
+              onClick={() => choose(view.id)}
+            >
+              <ViewIcon id={view.id} />
+              {view.name}
+              <span className="sr-only bz-view-said">Showing</span>
+            </button>
+          ))}
         </div>
       </div>
 
       {excluded ? (
         <NoMatch total={rows.length} onClear={clear} />
       ) : (
-        <div className="hl-views">
+        <div className="bz-views">
           {VIEWS.map((view) => (
             <section
               key={view.id}
-              className="hl-view"
+              className="bz-view"
               {...{ [VIEW_ATTR]: view.id }}
-              aria-labelledby={`hl-view-${view.id}`}
+              aria-labelledby={`bz-view-${view.id}`}
             >
               {/* Each view heads and explains itself, so the line saying what
                   this view is for is on the same channel as the view (channel
                   A) rather than rendered from the active id (channel B), which
                   would print one view's purpose above another's contents for
                   every frame before hydration. */}
-              <h2 id={`hl-view-${view.id}`} className="hl-view-head">
+              <h2 id={`bz-view-${view.id}`} className="bz-view-head">
                 {view.name}
-                <span className="hl-view-answers">{view.answers}</span>
+                <span className="bz-view-answers">{view.answers}</span>
               </h2>
 
               {view.id === 'overview' && <CatalogOverview rows={visible} />}
@@ -314,6 +344,6 @@ export function Catalog({
           ))}
         </div>
       )}
-    </>
+    </div>
   )
 }

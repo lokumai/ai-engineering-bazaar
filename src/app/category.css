@@ -1,0 +1,29 @@
+/* ===========================================================================
+   WHICH HUE BELONGS TO WHICH LEVEL — the product's own mapping.
+
+   `--bz-cat` is the one custom property `src/design/bazaar.css` asks a caller
+   to bind: a group's leading edge, its key, its current item's fill, a
+   catalog card's top edge, a table row's leading rule and a board column's
+   header all read it. The language cannot bind it, because a level's slug is
+   this course's business and not a design decision — DESIGN.md names
+   `category-3`, never `expert`.
+
+   This was section 1 of `rail.css` until stage 4. It moved because it stopped
+   being the rail's: the catalog reads the same five hues off the same
+   attribute, and a mapping stated in the file of the first surface that
+   happened to need it is a mapping the second surface depends on invisibly.
+   One file states it; the language declares the hook and a neutral default.
+
+   Bound off `data-cat` rather than inline on every element, so the mapping is
+   stated once and `tests/unit/color/category-surfaces.test.ts` can hold it to
+   the whole curriculum: every level covered, and every hue drawn from the
+   closed series of five.
+   =========================================================================== */
+
+@layer components {
+  [data-cat="fundamentals"] { --bz-cat: var(--color-category-1); }
+  [data-cat="intermediate"] { --bz-cat: var(--color-category-2); }
+  [data-cat="expert"]       { --bz-cat: var(--color-category-3); }
+  [data-cat="ecosystem"]    { --bz-cat: var(--color-category-4); }
+  [data-cat="protocols"]    { --bz-cat: var(--color-category-5); }
+}

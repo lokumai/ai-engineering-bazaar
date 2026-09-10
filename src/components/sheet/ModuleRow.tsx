@@ -39,7 +39,7 @@ export type RowColumn = 'subsystem' | 'topics'
 function StatusTick({ drawn }: { drawn: boolean }) {
   return (
     <svg
-      className="hl-row-tick"
+      className="bz-row-tick"
       width="12"
       height="12"
       viewBox="0 0 12 12"
@@ -62,7 +62,7 @@ function StatusTick({ drawn }: { drawn: boolean }) {
 
 /**
  * §4.8 column 9 / §5.9 — the sign-off squares: `14 × 14`, no text, the slot
- * name on `title`, and **no interactive control of any kind**. `.hl-row-link`'s
+ * name on `title`, and **no interactive control of any kind**. `.bz-row-link`'s
  * stretched pseudo-element covers the row with `inset: 0` so that a pointer can
  * hit any cell and `Tab` reaches the row exactly once (§10.3); a control here
  * would sit under it, unclickable, and lifting it out would give the row a
@@ -89,9 +89,9 @@ function StatusTick({ drawn }: { drawn: boolean }) {
 function SignOffSquares({ row }: { row: SheetRow }) {
   if (!row.drawn) {
     return (
-      <span className="hl-signoff-cell">
+      <span className="bz-signoff-cell">
         <span
-          className="hl-signoff-square"
+          className="bz-signoff-square"
           data-drawn="false"
           title="PLANNED"
           aria-hidden="true"
@@ -101,11 +101,11 @@ function SignOffSquares({ row }: { row: SheetRow }) {
   }
 
   return (
-    <span className="hl-signoff-cell" data-hl-signoff-cell={row.slug}>
+    <span className="bz-signoff-cell" data-hl-signoff-cell={row.slug}>
       {row.slots.map((slot) => (
         <span
           key={slot}
-          className="hl-signoff-square"
+          className="bz-signoff-square"
           data-hl-slot={slot}
           data-signed="false"
           title={slot}
@@ -142,58 +142,58 @@ export function ModuleRow({ row, column }: { row: SheetRow; column: RowColumn })
    * **Drawn rows only, and that is T6 rather than taste.** A draft row's `#`
    * cell already carries `--color-caution` as its hidden-line ink, and
    * §13.14's amended T6 is that a category hue and a semantic token never
-   * appear on the same element — `.hl-row.hl-cat-tint > :first-child` would
+   * appear on the same element — `.bz-row.bz-cat-tint > :first-child` would
    * put both on that one cell. A sheet nobody has drawn can never be signed
    * off either (§12.4.1), so it has nothing of its own to report here.
    */
   return (
     <tr
-      className={draft ? 'hl-row' : 'hl-row hl-cat-tint'}
+      className={draft ? 'bz-row' : 'bz-row bz-cat-tint'}
       data-cat={draft ? undefined : categoryOf(row.slug)}
       data-draft={draft ? '' : undefined}
     >
-      <td
-        className={`hl-mark hl-row-number${draft ? ' hl-hidden-y' : ''}`}
-      >
-        {row.number}
-      </td>
+      {/* The caution ink for a draft row's number is a rule on the row rather
+          than a class on the cell (`.bz-row[data-draft] .bz-row-number`): the
+          row already says which it is, and a second author of one state is how
+          two spellings of it appear. */}
+      <td className="bz-row-number">{row.number}</td>
 
-      <th scope="row" className="hl-row-title">
-        <Link href={row.path} className="hl-row-link">
+      <th scope="row" className="bz-row-title">
+        <Link href={row.path} className="bz-row-link">
           {row.title}
         </Link>
       </th>
 
-      <td className="hl-row-context">
+      <td className="bz-row-context">
         {column === 'subsystem' ? (
           row.subsystem.title
         ) : (
           // §4.9 — at most three, joined on one line and truncated where the
           // column runs out. The sheet itself prints every section it has;
           // this is the column that says what it is about, not a summary.
-          <span className="hl-row-topics" title={row.topics.join(' · ')}>
+          <span className="bz-row-topics" title={row.topics.join(' · ')}>
             {row.topics.join(' · ')}
           </span>
         )}
       </td>
 
-      <td className="hl-mark hl-row-value">{row.extent}</td>
-      <td className="hl-mark hl-row-value">{row.sources}</td>
-      <td className="hl-mark hl-row-value">{row.lang}</td>
+      <td className="bz-row-value">{row.extent}</td>
+      <td className="bz-row-value">{row.sources}</td>
+      <td className="bz-row-value">{row.lang}</td>
 
-      <td className="hl-mark hl-row-status">
+      <td className="bz-row-status">
         <StatusTick drawn={row.drawn} />
         <span>{row.status}</span>
       </td>
 
-      <td className="hl-row-signoff">
+      <td className="bz-row-signoff">
         <SignOffSquares row={row} />
       </td>
 
       {/* §4.6's first relation, from the `prerequisites` frontmatter (B7). The
           index's own statement tells the reader to read in any order the
           dependency graph allows; this is that graph, one row at a time. */}
-      <td className="hl-mark hl-row-value">{row.requires}</td>
+      <td className="bz-row-value">{row.requires}</td>
     </tr>
   )
 }

@@ -26,7 +26,7 @@ export function ViewIcon({ id }: { id: CatalogViewId }) {
       strokeWidth="1.3"
       strokeLinecap="round"
       aria-hidden="true"
-      className="hl-view-icon"
+      className="bz-view-icon"
     >
       {id === 'overview' && (
         <>

@@ -100,9 +100,9 @@ test('the index agrees with the modules about which are bilingual', async ({ pag
   // The `LANG` column is found by its own header rather than by an index, so
   // adding a column to §4.8's table does not silently retarget this test.
   const langs = await page.evaluate(() => {
-    const heads = [...document.querySelectorAll('.hl-index thead th')]
+    const heads = [...document.querySelectorAll('.bz-table thead th')]
     const column = heads.findIndex((th) => th.textContent?.trim().toUpperCase() === 'LANG')
-    return [...document.querySelectorAll('.hl-index tbody tr')].map((row) => ({
+    return [...document.querySelectorAll('.bz-table tbody tr')].map((row) => ({
       module: Number(row.querySelector('td, th')?.textContent?.trim()),
       lang: [...row.children][column]?.textContent?.trim() ?? '',
       draft: row.hasAttribute('data-draft'),

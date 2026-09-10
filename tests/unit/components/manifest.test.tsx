@@ -108,7 +108,7 @@ describe('ModuleRow — the index row (§5.3)', () => {
   })
 
   it('draws the sign-off squares this module supplies, and only those (§5.9)', () => {
-    expect(drawn.match(/hl-signoff-square/g)).toHaveLength(4)
+    expect(drawn.match(/bz-signoff-square/g)).toHaveLength(4)
     for (const slot of ['COMPLETION', 'QUIZ', 'CHECKLIST', 'SOURCES']) {
       expect(drawn).toContain(`data-hl-slot="${slot}"`)
       expect(drawn).toContain(`title="${slot}"`)
@@ -130,14 +130,14 @@ describe('ModuleRow — the index row (§5.3)', () => {
   })
 
   it('draws an unready module one hidden-line square and no slug to look up', () => {
-    expect(dashed.match(/hl-signoff-square/g)).toHaveLength(1)
+    expect(dashed.match(/bz-signoff-square/g)).toHaveLength(1)
     expect(dashed).toContain('data-drawn="false"')
     expect(dashed).not.toContain('data-hl-signoff-cell')
     expect(dashed).not.toContain('data-hl-slot')
   })
 
   it('puts no control in the sign-off cell: the row stays one tab stop (§10.3)', () => {
-    // `.hl-row-link::after` covers the row with `inset: 0`, so a control here
+    // `.bz-row-link::after` covers the row with `inset: 0`, so a control here
     // would be unclickable and would add a second tab stop.
     expect(drawn.match(/<a /g)).toHaveLength(1)
     expect(drawn).not.toContain('<button')
@@ -358,10 +358,15 @@ describe('Catalog — three views over one data source (M12, D13)', () => {
     }
     // D13's criterion: adding a view must not add an address. Nothing in the
     // toggle navigates, so nothing in it is a link.
-    const toggle = markup.slice(
-      markup.indexOf('hl-viewtoggle'),
-      markup.indexOf('hl-chip-count'),
-    )
+    //
+    // Bounded by where the VIEWS begin rather than by the next control along.
+    // M16 stage 4 moved the count into the filter bar, above the toggle, and
+    // this slice used to run from the toggle to the count — which after the
+    // move is a backwards range, and `String.slice` answers a backwards range
+    // with the empty string. An empty string contains no `<a `, so the
+    // assertion passed while reading nothing at all.
+    const toggle = markup.slice(markup.indexOf('bz-viewtoggle'), markup.indexOf('bz-views'))
+    expect(toggle, 'the toggle region is empty, so this asserts nothing').not.toBe('')
     expect(toggle).not.toContain('<a ')
   })
 
@@ -379,21 +384,21 @@ describe('Catalog — three views over one data source (M12, D13)', () => {
   it('gives every view a name and an icon, and the state to a screen reader', () => {
     for (const name of ['Overview', 'Cards', 'Table']) expect(markup).toContain(name)
     // One glyph per button, and the word beside it — never the glyph alone.
-    expect(markup.match(/class="hl-view-icon"/g)).toHaveLength(3)
+    expect(markup.match(/class="bz-view-icon"/g)).toHaveLength(3)
     // The showing view is stated in the button's accessible name, not in an
     // `aria-pressed` React would have to render: channel A decides which view
     // is showing, and a second author of one state is two states (D17).
-    expect(markup.match(/hl-view-on/g)).toHaveLength(3)
-    expect(markup.slice(markup.indexOf('hl-viewtoggle'))).not.toContain('aria-pressed')
+    expect(markup.match(/bz-view-said/g)).toHaveLength(3)
+    expect(markup.slice(markup.indexOf('bz-viewtoggle'))).not.toContain('aria-pressed')
   })
 
   it('offers both filter axes, at the top, each as a named group', () => {
-    const controls = markup.slice(0, markup.indexOf('hl-views'))
+    const controls = markup.slice(0, markup.indexOf('bz-views'))
     expect(controls).toContain('aria-label="Filter by level"')
     expect(controls).toContain('aria-label="Filter by state or language"')
     // The chips come before the views in the document, which is the M12
     // deliverable: filters at the top of the page, not down a side.
-    expect(markup.indexOf('hl-chip-row')).toBeLessThan(markup.indexOf('hl-views'))
+    expect(markup.indexOf('bz-chip-row')).toBeLessThan(markup.indexOf('bz-views'))
   })
 
   it('opens with both filters at all, and with every module rendered (§12.2)', () => {

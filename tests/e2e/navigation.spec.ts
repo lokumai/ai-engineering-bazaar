@@ -129,10 +129,10 @@ test('every route carries the same navbar', async ({ page }) => {
       const nav = document.querySelector('nav[aria-label="Main"]')
       if (!nav) return null
       return {
-        destinations: [...nav.querySelectorAll('.hl-nav-link')].map((node) =>
+        destinations: [...nav.querySelectorAll('.bz-bar-link')].map((node) =>
           (node.textContent ?? '').replace(/\s+/g, ' ').trim(),
         ),
-        levels: [...nav.querySelectorAll('.hl-nav-menu-link')].map((node) =>
+        levels: [...nav.querySelectorAll('.bz-menu-item')].map((node) =>
           (node.textContent ?? '').replace(/\s+/g, ' ').trim(),
         ),
         // Exactly one destination is marked current, and it is marked twice —

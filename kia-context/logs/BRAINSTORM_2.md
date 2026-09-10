@@ -10,7 +10,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D55, plus open questions O1 to O4 — 2026-09-09 to 2026-09-10"
+covers: "D26 to D58, plus open questions O1 to O4 — 2026-09-09 to 2026-09-10"
 last_updated: 2026-09-10
 ---
 
@@ -952,6 +952,108 @@ off" once something is signed, "Start with" otherwise. **The mockup is the
 specification for what it draws, and it draws one state; a state it does not
 draw is not specified by it, and copying its label into that state is a
 transcription error rather than fidelity.**
+
+### D56 · An exemption's premise is a claim about the code, so it belongs in a check — 2026-09-10
+
+The contrast suite exempts `surface-sunken` from the 4.5:1 text floor, and the
+exemption is right: the sand fill is the hover and the pressed state, and
+measuring every ink against a fill that appears for 150ms under a cursor would
+fail the palette for a state nobody reads on.
+
+**Its premise was false for three rules and the suite could not tell.**
+`.bz-table thead th`, `.bz-tablefig thead th` and the planned catalog card all
+rested `on-surface-muted` on that fill — MEASURED **4.21:1** in light, at
+12.5px/600, which is not large text. That is the catalog register, both level
+listings, the org roster, the sign-in doors and every table in the corpus: every
+column label in the product. On the two page grounds the same pair measures 5.62
+and 5.81, which is why it looked safe everywhere anybody had checked.
+
+**Two ways to fix it, and the rejected one is instructive.** Lifting
+`on-surface-muted` until it clears 4.5:1 on sand would fix all three at once —
+and `01:457` documents that value as "Secondary text #6a6558 5.62:1", so it is
+transcribed, and changing it needs **D34** and the author. The three sites are
+ours: no mockup specifies a table header's colour pair at all — `01` draws a
+table with no `thead`, and `03`, which draws one, may supply geometry only
+(D31). So the pairing was never a transcription, and the fix costs nothing:
+full ink, 11.24:1, with the quiet coming from size and weight. The language
+already does exactly this on that fill, at `.bz-group[data-here] > summary`.
+
+**What the exemption becomes is the point.** An exemption whose premise is a
+claim about the STYLESHEETS — "nothing rests text there" — is a promise until
+something reads the stylesheets. So a guard now does: for every rule declaring
+the sunken fill, any `color` in the same block must clear the floor on it.
+
+And what it cannot see is written down rather than implied. The catalog card set
+only the fill; its three muted descendants were declared sixty lines away, and
+no static reading of one block can pair them. **Ink that arrives by inheritance
+needs the cascade, which means a browser** — that is `colour-not-alone.spec.ts`'s
+layer. The one known case is asserted by name. A guard that quietly covers less
+than its title claims is the failure this milestone met four times.
+
+### D57 · The touch floor has two shapes, and one control cannot have both axes — 2026-09-10
+
+§10.4 asks for 44px below 768px. **It was stated in exactly one place in the
+whole project** — a `min-height` on the form field — while a test named "every
+control reaches the §10.4 touch floor below 768px" visited one module sheet and
+located three classes, one of which (`.bz-btn bz-btn-quiet`) was a descendant
+selector for an element type that does not exist and matched nothing, ever. The
+other two already had a hit area.
+
+MEASURED at 390px: the completion toggle **17 x 17**, the bar's two icons 33,
+eleven filter chips and three view buttons 33, every button 39.
+
+**Which shape of answer is correct is decided by the neighbours, not by taste.**
+A control in a wrapping row GROWS — nothing beside it collides with a taller
+box. A control in a fixed strip or a dense row keeps its painted size and takes
+an invisible `::after`, the idiom `prose.css` established. The bar's icons take
+the second because growing them grows the bar; the buttons and chips take the
+first because they can.
+
+**The completion toggle is the one place the floor cannot be had in both axes,
+and the trade is the entry.** A 44px-wide target centred on a 17px disc reaches
+13.5px past it, and 8px away is the module's title link — so it would cover the
+link's leading edge and **a tap meant for the module would toggle its
+completion**. Stealing a tap from a navigation control is worse than a narrow
+target, so the target stops at the gap: 17 x 17 becomes 25 x 44, with the row
+grown to 44 so the vertical axis is the full row and two rows cannot overlap.
+A true 44 x 44 needs the title to start 27px further right at 390px, which is a
+layout decision and therefore the author's, not a defect fix.
+
+The rejected alternative was to grow the painted disc. It is the mockup's shape
+and growing it on phones would make the mark the loudest thing in a list of
+titles, which inverts what the row is about.
+
+The guard now takes horizontal exemptions from a registry where each carries a
+reason and a width, and a stale entry fails — the same shape as
+`NARROW_DEVIATIONS`, for the same reason: **the deletion of a dead entry is how
+this test lost its coverage in the first place.** `.hl-icon-btn` was removed
+from the list for being dead and `.bz-bar-icon`, its successor, was never put in
+its place.
+
+### D58 · The generated sheet states which module, never what it looks like — 2026-09-10
+
+`lokum-modules.css` revealed a signed-off path step with `display: inline` and
+`color: var(--color-accent-ink)` — a token of the retired palette that **no
+theme has ever declared**, with the comment still citing theme "T2". An
+undeclared custom property is invalid at computed-value time, so `color` fell to
+`unset`, which for an inherited property means `inherit`: the word took the
+step's body ink instead of the teal `progress.css` gives it.
+
+**Repointing the token was the obvious fix and it is the wrong one.** The
+generated sheet exists because channel A cannot loop: its job is to say WHICH
+module a rule applies to. What the revealed thing looks like belongs to the
+surface stylesheet that draws it — which is already how group D is divided, and
+the base rule for this very element already sets the colour. So the declaration
+is deleted, not corrected, and the division is now stated in the generator.
+
+**Why nothing caught it is the more useful half.** The file is excluded by name
+from all three guards that read `var()`s, and each exclusion is correct: it is
+generated, and it is allowed to state colours and states a surface may not.
+**"Not held to the surface discipline" was read as "not read at all"** — for the
+whole milestone. The guard for it lives in `category-css.test.ts`, which owns
+the generated sheet: every `var()` in it resolves against the language or a
+surface. An exclusion is a statement about which RULES apply, never about
+whether a file is looked at.
 
 ## Open questions
 

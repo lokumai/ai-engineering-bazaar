@@ -1043,7 +1043,7 @@ the milestone's promise and M9 to M14's failure was losing them quietly.
 | A self-check, self-marked, no score kept | the module's quick check | `record-sheet` §12.6 cases |
 | A checklist that is never a gate | the module | `record-sheet` §12.4.1 cases |
 | Register a repository, refusing a hostile URL | the module's submittal | `record-sheet`'s `HOSTILE_REPOS` loop |
-| See how far through each level you are | `/`, `/profile/`, the rail, the catalog | `fidelity` stage 7, `colour-not-alone` |
+| See how far through each level you are | `/`, `/profile/`, the rail, the catalog | `fidelity` stage 7 (the annulus, and the channel-A percentage with JS aborted), `rail` |
 | A role, and the path it suggests | `/profile/` | `path` (6), `category-surfaces`'s nine-role pair |
 | What is waiting on you | `/profile/` | `record-pages` (28) |
 | Take a copy of the record out, and put one back | `/profile/`'s data row | `record-pages`, `record-report` unit |
@@ -1132,6 +1132,116 @@ thought to ask**, not a check that failed. The suite measures what somebody
 thought to measure, and an independent reader asking "what does this actually
 measure, on which ground, in frame one" found in one pass what ten stages of
 green gates did not.
+
+#### The reviews in full — 37 findings, 13 confirmed, 3 commits — 2026-09-10
+
+Three reviews were run over the finished milestone. Two returned; the third
+(Hermes on `glm-5.3-flash`) spent its 150-iteration budget on a brief too broad
+for it and returned nothing, with exit code 0 — **which is a failed run and not
+a clean one**, and no transcript survived, so it contributed nothing. Recorded
+because a review that produced no findings is not the same as a review that
+found nothing.
+
+The two that returned gave 37 findings between them. **Every one acted on was
+re-measured here first**, and the ones that were wrong were dropped rather than
+fixed. What follows is what held. The reasoning is **D54** to **D58**.
+
+**Confirmed and fixed** — `dbe7d72`, `114f0e5`, `7f45972`, `0c28764`:
+
+| What | Measured |
+| --- | --- |
+| The focus ring on the cobalt bar | **2.35:1** light, 2.77 dark, against 3:1 — the first controls in the tab order on every route |
+| `/profile/`'s continue hero | No gate at all: a populated shortcut prerendered for every reader |
+| A retired token in the generated sheet | `--color-accent-ink` declared by no theme, so a signed-off step's word lost its teal |
+| Every column label in the product | `on-surface-muted` on `surface-sunken` at **4.21:1**, under the 4.5:1 text floor |
+| The planned catalog card | The same pair at the same 4.21:1, arriving by inheritance |
+| §10.4's touch floor | Stated in ONE place in the project; the completion toggle **17 x 17**, bar icons 33, chips 33, buttons 39 |
+| A planned module's row | Drew nothing at all — the word clipped by `text-indent: -9999px` |
+| The legend's third key | A hatch, where `05:188` draws a dashed edge — an unrecorded departure |
+| A second spelling of a status | `not written yet` for the state the same file spells `Planned`, past a literal ban |
+| The `className` sweep | Read three shapes and skipped `className={expr}` — 16 sites, 2 with real colour utilities |
+| Four fidelity blocks | Stages 7 to 10 carried no mutation, against the rule `CLAUDE.md` states |
+| Seven hairline colours | Specified by `01`, checked by nothing — the language's most load-bearing colour |
+| Two breakpoint tokens | `--layout-fold-at` and `--layout-rail-at` referenced by nothing at all |
+
+Six guards were written or repaired, each mutation-proven: the ring's bindings,
+the sunken fill's premise, the generated sheet's tokens, the `className`
+extractor's brace balancing, the touch floor across four routes, and the
+breakpoints in both directions. **Two of them replaced a guard that was already
+green** — the ring's first version asserted two tokens and would have passed
+whatever the ring was bound to, and the touch floor's measured the two controls
+that were already right.
+
+#### Confirmed, NOT fixed, and each one is the author's call
+
+Left deliberately, with the measurement, because each is a decision rather than
+a defect:
+
+1. **`on-surface-faint` carries 28 text declarations and no contrast floor.**
+   MEASURED 3.19 and 3.30 in light, **2.82 and 2.49 in dark** — below 4.5:1
+   everywhere and below even 3:1 in dark. The contrast suite exempts it by name
+   and substitutes a usage rule from DESIGN.md that nothing enforces. Text a
+   reader must actually read sits in it: the phone drawer's group caption, the
+   quick check's header, a planned module's title link, and
+   `.bz-boardcol-planned`, whose text IS `Planned` — the exact case the usage
+   rule names. **This is the same token as D45**, the pager label question
+   already open, so the two are one decision and not two.
+2. **One primitive, three declarations.** `.bz-card`, `.bz-quote` and `.bz-quiz`
+   are the same five declarations byte-for-byte, two of them in surfaces.
+   `prose.css:310` records a reason ("the renderer owns this element") and the
+   renderer could emit `bz-card` instead — so this is a recorded decision to
+   revisit, not a defect to overturn. Same shape: five segmented meters where
+   DESIGN.md's Progress section describes two plus a dial, and
+   `.bz-rail-head-label` re-declared verbatim in six places.
+3. **Three unrecorded departures from `07`** in `progress.css` — the continue
+   hero's radius 8px against 11px, its title 600/18.5px against `650 19px`, and
+   the panel's radius 8px against 11px. `catalog.css` and `completion.css` each
+   carry an explicit departures table; `progress.css` carries none. The values
+   are probably right (the radius scale is a closed set that stops at 9px, which
+   is D31's own resolution); what is missing is the record.
+4. **The exported RECORD OF WORK is still entirely the retired design** — its
+   own palette, a serif face, and `text-transform: uppercase` on three
+   selectors, all on DESIGN.md's don't-list. It is out of M16's scope by stage
+   8's brief and that is fine; what is wrong is the REASON its exemption gives,
+   "its own inline **print** stylesheet", when nothing in the file sits inside
+   `@media print`. It is a screen document with a print palette.
+5. **Four labels for one state on one screen.** `Complete`, `SIGNED OFF`,
+   `completed` and `done` — the legend's now says `Complete`, which removes one.
+   And `/profile/` carries both registers at once: sentence case beside
+   `STORAGE: UNAVAILABLE`, `STREAK --` and `NO READING — THE RECORD IN THIS
+   BROWSER HAS NOT BEEN READ YET`. D48 governs the casing and says an enumerated
+   state keeps its spelling, which leaves the question of which of these ARE
+   enumerated states — a vocabulary question, and set C was the author's choice.
+6. **`--color-on-caution` has no consumer.** Declared in both themes and painted
+   by nothing, so DESIGN.md's "the only place in the language where type on a
+   chromatic fill is not white" describes a rule with no instance.
+7. **A hand-typed `letter-spacing: -0.015em`** in `progress.css` where
+   `--tracking-display` is that exact value, and `.bz-panel-title`'s `-0.01em`,
+   which is a fourth tracking step the language does not declare. No guard reads
+   a hand-typed length — `surface-stylesheets.test.ts` checks radii, colours,
+   shadows, blur, transitions, hues and casing, never a literal.
+8. **The rail's channel-A ticks have no audience at phone width.** `.bz-rail` is
+   `display: none` below 880px and its only replacement is the React drawer, so
+   at 390px with the bundle blocked the completion discs that exist to be right
+   in frame one cannot be seen. Navigation survives, because `MainNav` is a
+   native `<details>` — so this is lost progress marks, not lost navigation.
+   Traced statically, not measured in a browser.
+
+**The gate after all three commits**, measured rather than carried: typecheck
+clean; **2,154 unit tests in 82 files, 0 skipped** (from 2,141 at the close);
+build clean at **56 HTML files** (`find out -name '*.html' | wc -l`); fidelity
+**618 passed** (from 587, the difference being four stage mutations and seven
+new facts); browser **1,083 passed**, with only the known `rail` fold flake,
+which passes in isolation. The flaky four are unchanged and still flaky for the
+same reason: `rail`, `theme`, `navigation`, `containment`, all long-running
+timing under full parallel load. **Re-run any failure in isolation before
+believing it.**
+
+**And what the reviewers did not reach**, recorded so it is not mistaken for
+clean: the rail's three states under `forced-colors: active`, `QuickCheck` and
+`ChecklistIsland`'s state markers, the quarantined-record and no-path empty
+states, stage 10's eight derived routes for contrast specifically, and
+`04`/`06` diffed against `prose.css`'s containment rules.
 
 #### What is left, and it is not code
 

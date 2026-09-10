@@ -285,7 +285,25 @@ function referencesIn(path: string): Reference[] {
  * declarations allowed, everything else must resolve against the language.
  */
 const SURFACE_DIR = join(ROOT, 'src/app')
-const NOT_A_SURFACE = new Set(['lokum-modules.css'])
+
+/**
+ * The one file in `src/app/` this SWEEP does not read, which is not the same
+ * set as the one `surfaces.ts` exports and the difference is deliberate.
+ *
+ * `surfaces.ts` answers "which stylesheets are held to the surface
+ * discipline", and `globals.css` is not — it is the entry point. But it is
+ * still a stylesheet full of references, and a `var(--gone)` in it would be as
+ * silent as one anywhere else, so this sweep reads it. Two sets with the same
+ * name and different members is how one of them ends up deciding something it
+ * was not written for, so this one is named for the question it answers.
+ *
+ * `lokum-modules.css` is out because it is GENERATED — but its `var()`s are
+ * read after all, by `tests/unit/color/category-css.test.ts`, which is where
+ * the generated sheet's own checks live. A retired token had been sitting in it
+ * for the whole milestone precisely because "excluded here" was read as
+ * "excluded everywhere".
+ */
+const NOT_READ_BY_THIS_SWEEP = new Set(['lokum-modules.css'])
 
 /**
  * Custom properties whose NAME is composed at run time, so no stylesheet can
@@ -307,7 +325,7 @@ const COMPOSED_AT_RUNTIME = /^--bz-done-[a-z-]+$/
 
 function surfaceReferences(): Reference[] {
   return readdirSync(SURFACE_DIR)
-    .filter((name) => name.endsWith('.css') && !NOT_A_SURFACE.has(name))
+    .filter((name) => name.endsWith('.css') && !NOT_READ_BY_THIS_SWEEP.has(name))
     .flatMap((name) => {
       const css = withoutComments(readFileSync(join(SURFACE_DIR, name), 'utf8'))
       const own = declaresItself(css)
@@ -365,7 +383,7 @@ describe('every styling reference in the markup resolves against the language', 
   it('gives every runtime-composed property a fallback', () => {
     const naked: string[] = []
     for (const name of readdirSync(SURFACE_DIR)) {
-      if (!name.endsWith('.css') || NOT_A_SURFACE.has(name)) continue
+      if (!name.endsWith('.css') || NOT_READ_BY_THIS_SWEEP.has(name)) continue
       const css = withoutComments(readFileSync(join(SURFACE_DIR, name), 'utf8'))
       for (const use of css.matchAll(/var\(\s*(--[a-z0-9-]+)\s*([,)])/g)) {
         if (COMPOSED_AT_RUNTIME.test(use[1]) && use[2] === ')') {
@@ -419,7 +437,7 @@ describe('every styling reference in the markup resolves against the language', 
     // A pattern matching nothing is an exemption doing nothing, and it would
     // hide the day one of these stops being set at run time.
     const referenced = readdirSync(SURFACE_DIR)
-      .filter((name) => name.endsWith('.css') && !NOT_A_SURFACE.has(name))
+      .filter((name) => name.endsWith('.css') && !NOT_READ_BY_THIS_SWEEP.has(name))
       .flatMap((name) => [
         ...withoutComments(readFileSync(join(SURFACE_DIR, name), 'utf8'))
           .matchAll(/var\(\s*(--[a-z0-9-]+)/g),
@@ -597,5 +615,69 @@ describe('M16 closing condition: the retired vocabulary is out of the markup', (
     // And the storage keys, which are the reader's own data.
     const schema = readFileSync(join(ROOT, 'src/lib/record/schema.ts'), 'utf8')
     expect(schema).toContain("'hl-record'")
+  })
+})
+
+/**
+ * A BREAKPOINT TOKEN NOTHING CAN READ, and seven media queries that write the
+ * number instead.
+ *
+ * The language declares `--layout-fold-at: 1180px` and `--layout-rail-at:
+ * 880px`, and a review found both referenced by NOTHING: every query in the
+ * language and in the surfaces writes its literal. So editing a token moves
+ * nothing, which is the inverse of the failure this file is mostly about — not
+ * a reference with no declaration, but a declaration with no reference.
+ *
+ * **It cannot be fixed the obvious way.** CSS does not resolve `var()` in a
+ * media query's condition: `@media (max-width: var(--layout-rail-at))` is
+ * invalid and the whole block is dropped, silently. So the tokens cannot become
+ * the mechanism, and deleting them would take away the one place the two widths
+ * are NAMED — `DESIGN.md`'s Layout section says the language has two
+ * breakpoints, and a reader looking for which two should find them declared.
+ *
+ * What is enforceable is that they agree: every width a query fires at is
+ * either one of the declared breakpoints or the touch floor, and every declared
+ * breakpoint is actually used by some query. Both directions, because a token
+ * nobody uses and a query at a width nobody declared are the same defect seen
+ * from either end.
+ */
+describe('the breakpoints the language declares are the breakpoints it uses', () => {
+  /** The touch floor is a THIRD width, and it is not a layout breakpoint. */
+  const TOUCH_FLOOR = 767
+
+  const sheets = [
+    { name: 'bazaar.css', css: language },
+    ...readdirSync(SURFACE_DIR)
+      .filter((name) => name.endsWith('.css') && !NOT_READ_BY_THIS_SWEEP.has(name))
+      .map((name) => ({ name, css: readFileSync(join(SURFACE_DIR, name), 'utf8') })),
+  ]
+
+  const declared = [...language.matchAll(/--layout-([a-z-]+)-at\s*:\s*(\d+)px/g)]
+    .map((match) => ({ name: `--layout-${match[1]}-at`, width: Number(match[2]) }))
+
+  const used = sheets.flatMap(({ name, css }) =>
+    [...withoutComments(css).matchAll(/@media\s*\(\s*max-width:\s*(\d+)px/g)]
+      .map((match) => ({ where: name, width: Number(match[1]) })),
+  )
+
+  it('finds both ends of the comparison', () => {
+    expect(declared.length, 'no `--layout-*-at` token declared').toBe(2)
+    expect(used.length, 'no narrow media query found at all').toBeGreaterThan(4)
+  })
+
+  it('fires no query at a width the language does not declare', () => {
+    const widths = new Set(declared.map((one) => one.width))
+    const strays = used
+      .filter((one) => !widths.has(one.width) && one.width !== TOUCH_FLOOR)
+      .map((one) => `${one.where} at ${one.width}px`)
+    expect(strays, 'a media query at a width no `--layout-*-at` names').toEqual([])
+  })
+
+  it('declares no breakpoint no query fires at', () => {
+    const widths = new Set(used.map((one) => one.width))
+    const unused = declared
+      .filter((one) => !widths.has(one.width))
+      .map((one) => `${one.name}: ${one.width}px`)
+    expect(unused, 'a declared breakpoint nothing fires at — the queries moved').toEqual([])
   })
 })

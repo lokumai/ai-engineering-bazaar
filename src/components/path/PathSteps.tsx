@@ -163,9 +163,15 @@ function Step({
 
         {/* Revealed by `data-next="true"`, which only a client island can set
             (§12.2). Absent on a draft step: a sheet nobody has written is not
-            the one to read next. */}
+            the one to read next.
+
+            Sentence case, and **D48** is why: an enumerated record state keeps
+            its spelling because a reader matches those against each other —
+            `PLANNED` above is one — and this is not a state. It is an
+            instruction, so it stops shouting, and it shouted only because the
+            retired design's `hl-mark` uppercased everything in this line. */}
         {!draft && (
-          <span className="bz-step-next text-mark">TAKE THIS NEXT</span>
+          <span className="bz-step-next text-mark">Take this next</span>
         )}
       </div>
 

@@ -294,11 +294,13 @@ const FACTS: readonly Fact[] = [
   { role: 'group', property: 'borderRadius', mutate: '99px' },
   { role: 'group', property: 'backgroundColor', mutate: 'magenta' },
   { role: 'group', property: 'fontSize', mutate: '99px' },
+  { role: 'group', property: 'borderTopColor', mutate: 'magenta' },
   // The current group is emphasised four ways at once; two of them are here
   // and neither is only colour.
   { role: 'groupCurrent', property: 'fontSize', mutate: '99px' },
   { role: 'groupCurrent', property: 'borderLeftWidth', mutate: '99px' },
   { role: 'groupCurrent', property: 'backgroundColor', mutate: 'magenta' },
+  { role: 'groupCurrent', property: 'borderLeftColor', mutate: 'magenta' },
   // The categorical series, read off the markers rather than off token names.
   { role: 'groupKey', property: 'backgroundColor', mutate: 'magenta' },
   { role: 'groupKey', property: 'width', mutate: '99px' },
@@ -312,12 +314,15 @@ const FACTS: readonly Fact[] = [
   // `leaf` — the callout, a tile set at an angle.
   { role: 'card', property: 'borderRadius', mutate: '99px' },
   { role: 'card', property: 'backgroundColor', mutate: 'magenta' },
+  { role: 'card', property: 'borderTopColor', mutate: 'magenta' },
   // The slab is a second, complete palette and it does not re-theme.
   { role: 'slab', property: 'backgroundColor', mutate: 'magenta' },
   { role: 'slab', property: 'borderRadius', mutate: '99px' },
+  { role: 'slab', property: 'borderTopColor', mutate: 'magenta' },
   { role: 'slabCode', property: 'color', mutate: 'magenta' },
   { role: 'slabCode', property: 'fontFamily', mutate: 'Comic Sans MS' },
   { role: 'figure', property: 'backgroundColor', mutate: 'magenta' },
+  { role: 'figure', property: 'borderTopColor', mutate: 'magenta' },
   { role: 'node', property: 'backgroundColor', mutate: 'magenta' },
   { role: 'node', property: 'borderTopColor', mutate: 'magenta' },
   // One primary action, cobalt, white type.
@@ -360,6 +365,7 @@ const FACTS: readonly Fact[] = [
   { role: 'actions', property: 'marginTop', mutate: '99px' },
   { role: 'actions', property: 'paddingTop', mutate: '99px' },
   { role: 'actions', property: 'borderTopWidth', mutate: '9px' },
+  { role: 'actions', property: 'borderTopColor', mutate: 'magenta' },
   { role: 'actions', property: 'gap', mutate: '99px' },
   { role: 'buttonQuiet', property: 'backgroundColor', mutate: 'magenta' },
   { role: 'buttonQuiet', property: 'color', mutate: 'magenta' },
@@ -369,6 +375,7 @@ const FACTS: readonly Fact[] = [
   { role: 'pagerItem', property: 'padding', mutate: '99px' },
   { role: 'pagerItem', property: 'borderRadius', mutate: '99px' },
   { role: 'pagerItem', property: 'backgroundColor', mutate: 'magenta' },
+  { role: 'pagerItem', property: 'borderTopColor', mutate: 'magenta' },
 
   /* ---------------------------------------------------------------------------
      STAGE 4 — THE CATALOG, AND NOT ONE COLOUR AMONG THEM.

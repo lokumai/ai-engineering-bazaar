@@ -1036,6 +1036,34 @@ test.describe('M16 stage 7 — completion', () => {
   })
 
   /**
+   * THE MUTATION. Stages 1 to 6 each shipped one and stages 7 to 10 shipped
+   * none — all four were closed in a single sitting, which is exactly when the
+   * step that proves a comparison can fail is the step that gets skipped.
+   * `CLAUDE.md` states the rule: the roles and the mutation in the same
+   * sitting. This is the debt, paid.
+   *
+   * Pointed at the dial's own size, because the dial is what this stage added
+   * and `05` states 74px flat. A dial a few pixels small still reads as a dial,
+   * which is the near-miss that survived five milestones.
+   */
+  test('notices when the dial stops being the size `05` draws', async ({ page }) => {
+    await page.goto(PROGRESS_URL)
+    await freezeMotion(page)
+    const reference = await extractDesignFacts(page, PROGRESS_SELECTORS)
+
+    await page.goto('/')
+    await freezeMotion(page)
+    await page.addStyleTag({
+      content: '.bz-dial { width: 66px !important; height: 66px !important; }',
+    })
+    const mutated = await extractDesignFacts(page, APP_SELECTORS)
+
+    const facts = differencesIn(reference, mutated, BUILT).map((one) => one.fact)
+    expect(facts).toContain('dial.width')
+    expect(facts).toContain('dial.height')
+  })
+
+  /**
    * The dial's ring is an ANNULUS made by occlusion, not by a mask: the outer
    * disc is painted entirely by a `conic-gradient` and an opaque inner disc
    * sits on top of it. Two things follow, and neither is visible in the
@@ -1115,10 +1143,16 @@ test.describe('M16 stage 8 — progress and account', () => {
    * `07`-A, on `/profile/` — the route that absorbed `/dashboard/`, `/path/`
    * and `/report/`.
    *
-   * The hero is channel B: `nextUnsigned` reads the record, so it renders
-   * nothing until the store has answered. Which is why this seeds a record and
-   * waits for the readout before extracting — an un-hydrated page would report
-   * the hero absent and the comparison would agree with itself about nothing.
+   * The hero is gated on BOTH channels, and this docblock used to claim the
+   * wrong one. `nextUnsigned` returns the FIRST drawn module for an empty
+   * record, not `null`, so "renders nothing until the store has answered" was
+   * never true and the prerendered page shipped a populated shortcut to every
+   * reader — the defect a review found and **D55** records. The box is gated on
+   * channel A by `data-hl-record`; the CONTENT is channel B, because a module's
+   * title is text and channel A stamps classes. Which is why this seeds a
+   * record and waits for the readout before extracting: without a record the
+   * box is `display: none` and the comparison would agree with itself about
+   * nothing.
    */
   const BUILT: readonly Role[] = [
     'continueHero',
@@ -1320,6 +1354,31 @@ test.describe('M16 stage 8 — progress and account', () => {
     expect(seen.shown, 'a path is drawn for a role nobody chose').toBe(0)
     expect(seen.empties, 'no empty state where there is no path').toBeGreaterThan(0)
   })
+  /**
+   * THE MUTATION, owed since this block was written. Pointed at the panel's
+   * padding: `07` states 11px and the language holds 8px on the radius
+   * deliberately, so the padding is the one of the two that is meant to agree
+   * and is therefore the one worth proving can disagree.
+   */
+  test('notices when a panel stops taking `07`\'s padding', async ({ page }) => {
+    await page.goto(DASHBOARD_URL)
+    await freezeMotion(page)
+    const reference = await extractDesignFacts(page, DASHBOARD_SELECTORS)
+
+    await seedRecord(page, { sheets: { 'fundamentals/llms': signedSheet('a1b2c3d') } })
+    await page.goto('/profile/')
+    await waitForHydratedReadout(page)
+    await openRegisterRow(page, 'data')
+    await freezeMotion(page)
+    await page.addStyleTag({
+      content: '.bz-panel { padding-top: 4px !important; padding-left: 4px !important; }',
+    })
+    const mutated = await extractDesignFacts(page, APP_SELECTORS)
+
+    const facts = differencesIn(reference, mutated, BUILT).map((one) => one.fact)
+    expect(facts).toContain('panel.paddingTop')
+    expect(facts).toContain('panel.paddingLeft')
+  })
 })
 
 test.describe('M16 stage 9 — the front door', () => {
@@ -1346,6 +1405,30 @@ test.describe('M16 stage 9 — the front door', () => {
     expect(BUILT.every((role) => shown(reference, role)), 'a role `08` does not draw').toBe(true)
 
     expect(differencesAt(reference, actual, BUILT, page.viewportSize()!.width)).toEqual([])
+  })
+
+  /**
+   * THE MUTATION, owed since this block was written. Pointed at the rule
+   * block's grid gap and the mark's size: `08` states both, and a grid that
+   * has drifted a few pixels reads as a design choice rather than as a
+   * difference — which is what makes it worth a check and not an eye.
+   */
+  test('notices when the rule block stops matching `08`', async ({ page }) => {
+    await page.goto(HOME_URL)
+    await freezeMotion(page)
+    const reference = await extractDesignFacts(page, HOME_SELECTORS)
+
+    await page.goto('/')
+    await freezeMotion(page)
+    await page.addStyleTag({
+      content: '.bz-why { gap: 3px !important; }'
+        + ' .bz-why-mark { width: 12px !important; height: 12px !important; }',
+    })
+    const mutated = await extractDesignFacts(page, APP_SELECTORS)
+
+    const facts = differencesIn(reference, mutated, BUILT).map((one) => one.fact)
+    expect(facts).toContain('whyGrid.gap')
+    expect(facts).toContain('whyMark.width')
   })
 
   /**
@@ -1496,6 +1579,37 @@ test.describe('M16 stage 10 — the routes no mockup draws', () => {
       expect(shown(actual, role), `${role} is not on the derived route`).toBe(true)
     }
     expect(differencesAt(reference, actual, SHARED, page.viewportSize()!.width)).toEqual([])
+  })
+
+  /**
+   * THE MUTATION, owed since this block was written, and the one that matters
+   * most of the four: this stage's whole claim is that a derived route reaches
+   * for the primitive rather than for a lookalike of it, and a claim about
+   * SAMENESS is worth nothing without a demonstration that difference is
+   * detected. A lookalike is what every static guard passes — the radius from a
+   * token, the colour from the language, no shadow — so this comparison is the
+   * only thing standing between "the same panel" and "two panels that agree
+   * today".
+   */
+  test('notices when a derived route draws a lookalike instead of the primitive', async ({
+    page,
+  }) => {
+    await page.goto(DASHBOARD_URL)
+    await freezeMotion(page)
+    const reference = await extractDesignFacts(page, DASHBOARD_SELECTORS)
+
+    await page.goto('/sign-in/alias/')
+    await freezeMotion(page)
+    await page.addStyleTag({
+      content: '.bz-field > input { height: 28px !important; padding-left: 3px !important; }'
+        + ' .bz-panel { padding-top: 2px !important; }',
+    })
+    const mutated = await extractDesignFacts(page, APP_SELECTORS)
+
+    const facts = differencesIn(reference, mutated, SHARED).map((one) => one.fact)
+    expect(facts).toContain('fieldInput.height')
+    expect(facts).toContain('fieldInput.paddingLeft')
+    expect(facts).toContain('panel.paddingTop')
   })
 
   /**

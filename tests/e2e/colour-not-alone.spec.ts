@@ -164,17 +164,17 @@ test('a path step still states its state with no colour (§13.1.3 item 6)', asyn
   await page.goto('/profile/')
   await openRegisterRow(page, 'role')
 
-  const body = page.locator('.hl-path-body[data-role="software-engineer"]')
+  const body = page.locator('.bz-path-body[data-role="software-engineer"]')
   await expect(body).toBeVisible()
 
   // Every step names its subsystem and its tier in text, so the leading rule's
   // hue repeats a fact rather than carrying one.
-  const first = body.locator('.hl-step').first()
+  const first = body.locator('.bz-step').first()
   await expect(first).toContainText(/FUNDAMENTALS/i)
   await expect(first).toContainText(/CORE|SUPPORTING|CONTEXT/i)
 
   // And the two states a step can be in are words, not colours.
-  await expect(body.locator('.hl-step-tick:visible').first()).toContainText('COMPLETED')
+  await expect(body.locator('.bz-step-tick:visible').first()).toContainText('COMPLETED')
   await expect(body).toContainText(/REMAINING ON THIS PATH/i)
 })
 
@@ -233,23 +233,23 @@ test('the account block and a closed row read as text with no colour (§16.2.3, 
     sheets: SIGNED,
   })
   await page.goto('/profile/')
-  await expect(page.locator('.hl-readout[data-hydrated="true"]').first()).toBeAttached()
+  await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
 
   // ---- the drafter block, in words -----------------------------------------
-  const drafter = page.locator('.hl-drafter')
+  const drafter = page.locator('.bz-drafter')
   await expect(drafter).toBeVisible()
 
   // The mark and the seed are two mono lines under the drawing, and they are the
   // information the deleted definition list described without printing: the mark
   // is a choice, the seed is the record of a past act.
-  const lines = await drafter.locator('.hl-drafter-line').allInnerTexts()
+  const lines = await drafter.locator('.bz-drafter-line').allInnerTexts()
   expect(lines.length, 'the drawing states neither its mark nor its seed').toBeGreaterThan(1)
   expect(lines.join('\n')).toMatch(/MARK ·/)
   expect(lines.join('\n')).toMatch(/SEED ·|NO SEED MINTED YET/)
 
   // Both halves name themselves, and the naming is the substitute for the
   // painted 1.5px rule between them, which this mode has just deleted.
-  const halves = await drafter.locator('.hl-drafter-half h3').allInnerTexts()
+  const halves = await drafter.locator('.bz-drafter-half h3').allInnerTexts()
   expect(halves.length).toBe(2)
   for (const half of halves) expect(half.trim().length).toBeGreaterThan(3)
 
@@ -279,12 +279,12 @@ test('the account block and a closed row read as text with no colour (§16.2.3, 
   await expect(page.locator('label[data-hl-mark="datum"]')).toContainText(/\S/)
 
   // ---- one closed row, in words -------------------------------------------
-  const row = page.locator('section.hl-register-row').first()
-  const fold = row.locator('details.hl-register-fold')
+  const row = page.locator('section.bz-register-row').first()
+  const fold = row.locator('details.bz-register-fold')
   expect(await fold.evaluate((node) => (node as HTMLDetailsElement).open)).toBe(false)
 
-  const name = (await row.locator('.hl-register-name').innerText()).trim()
-  const reading = (await row.locator('.hl-register-reading').innerText()).trim()
+  const name = (await row.locator('.bz-register-name').innerText()).trim()
+  const reading = (await row.locator('.bz-register-reading').innerText()).trim()
   expect(name.length, 'a closed row does not name itself').toBeGreaterThan(2)
   // §16.4.1 — folding removes prose and never a fact, and with no colour at all
   // the fact is still the only thing that has to survive.

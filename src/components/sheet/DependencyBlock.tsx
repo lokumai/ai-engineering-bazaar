@@ -28,7 +28,7 @@ export interface DependencyRelation {
 function Relation({ label, targets }: DependencyRelation) {
   return (
     <div className="hl-dep-row">
-      <span className="hl-mark hl-dep-label">{label}</span>
+      <span className="text-mark hl-dep-label">{label}</span>
       <span className="hl-dep-values">
         {targets.length === 0 ? (
           <>

@@ -20,7 +20,7 @@ import {
  * conditional link.
  *
  * **Why a `dl` of numbers AND the sentences.** They are two readings of the
- * same facts and the site already speaks both languages: `hl-defs` is the
+ * same facts and the site already speaks both languages: `bz-defs` is the
  * tabular, monospace form §12.11 uses for machine-derived pairs — tabular
  * figures, so a changing digit never shifts the column — and the note block is
  * §12.1.7's plain-prose form. A reader checking `18 + 12 → 21` wants the
@@ -75,29 +75,29 @@ export function ClaimSummary({
   return (
     <section
       aria-labelledby={titleId}
-      className={['hl-panel', className].filter(Boolean).join(' ')}
+      className={['bz-panel', className].filter(Boolean).join(' ')}
       data-outcome={summary.outcome}
     >
-      <div className="hl-panel-head">
+      <div className="bz-panel-head">
         {heading === 'p' ? (
-          <p className="hl-panel-title" id={titleId}>
+          <p className="bz-panel-title" id={titleId}>
             {CLAIM_COPY.head}
           </p>
         ) : (
-          <h2 className="hl-panel-title" id={titleId}>
+          <h2 className="bz-panel-title" id={titleId}>
             {CLAIM_COPY.head}
           </h2>
         )}
         {/* The branch §14.7.4 took, as a readout: uppercase, no terminal
             period, and it names the case rather than describing it. */}
-        <span className="hl-mark text-on-surface-muted">
+        <span className="text-mark text-on-surface-muted">
           {summary.outcome === 'adopted' ? 'NO RECORD IN ACCOUNT' : 'TWO RECORDS'}
         </span>
       </div>
 
       {/* §11.25 — a counted zero prints `0`. Somebody looked; a dash here would
           say nobody did. */}
-      <dl className="hl-defs">
+      <dl className="bz-defs">
         <dt>Completed here</dt>
         <dd>{signed.here}</dd>
         <dt>In your account</dt>

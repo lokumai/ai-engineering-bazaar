@@ -5,7 +5,7 @@ import { isDrawnStep, type LearningPath, type PathStep, type Tier } from '@/lib/
  * §13.4.3 items 3 and 4 — one path's ordered steps, as server markup.
  *
  * **A server component with no hooks, and that is the whole design.** Every
- * step's *state* is channel A (§12.2): `lokum.css` reveals `.hl-step-tick` from
+ * step's *state* is channel A (§12.2): `lokum.css` reveals `.bz-step-tick` from
  * the `hl-signed-<n>` class the boot script stamped on `<html>`, so a signed
  * step says `SIGNED OFF` in frame one with zero React and nothing to hydrate.
  * Nine paths and 124 steps therefore cost nine mounted islands fewer than the
@@ -74,7 +74,7 @@ const TIER_LABEL: Readonly<Record<Tier, string>> = {
 export const PATH_BODY_ATTR = 'data-hl-path'
 export const PATH_STEP_ATTR = 'data-hl-path-slug'
 
-/** §12.2 — the attribute `lokum.css` reveals `.hl-step-next` from. */
+/** §12.2 — the attribute `lokum.css` reveals `.bz-step-next` from. */
 export const PATH_NEXT_ATTR = 'data-next'
 
 /**
@@ -116,7 +116,7 @@ function Step({
 
   return (
     <li
-      className="hl-step hl-cat-tint ps-3"
+      className="bz-step hl-cat-tint ps-3"
       data-module={sheet?.module}
       data-cat={categoryOf(step.slug)}
       data-tier={step.tier}
@@ -132,8 +132,8 @@ function Step({
         <span
           className={
             draft
-              ? 'hl-mark hl-hidden-y ps-2 text-on-surface-faint'
-              : 'hl-mark text-on-surface-muted'
+              ? 'text-mark bz-hidden-y ps-2 text-on-surface-faint'
+              : 'text-mark text-on-surface-muted'
           }
         >
           {sheet?.number ?? NO_READING}
@@ -147,25 +147,25 @@ function Step({
           </Link>
         )}
 
-        <span className="hl-mark text-on-surface-faint">{TIER_LABEL[step.tier]}</span>
+        <span className="text-mark text-on-surface-faint">{TIER_LABEL[step.tier]}</span>
         {sheet !== undefined && (
-          <span className="hl-mark text-on-surface-faint">{sheet.subsystem}</span>
+          <span className="text-mark text-on-surface-faint">{sheet.subsystem}</span>
         )}
 
         {/* The state, in words. A draft says what it is; a drawn step says
             `COMPLETED` only when this reader's own record says so, which is
             channel A's to decide — the markup is identical for every reader. */}
         {draft ? (
-          <span className="hl-mark text-on-surface-faint">PLANNED</span>
+          <span className="text-mark text-on-surface-faint">PLANNED</span>
         ) : (
-          <span className="hl-step-tick hl-mark">COMPLETED</span>
+          <span className="bz-step-tick text-mark">COMPLETED</span>
         )}
 
         {/* Revealed by `data-next="true"`, which only a client island can set
             (§12.2). Absent on a draft step: a sheet nobody has written is not
             the one to read next. */}
         {!draft && (
-          <span className="hl-step-next hl-mark">TAKE THIS NEXT</span>
+          <span className="bz-step-next text-mark">TAKE THIS NEXT</span>
         )}
       </div>
 

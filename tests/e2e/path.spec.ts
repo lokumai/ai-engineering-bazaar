@@ -57,10 +57,10 @@ const ROLE_ROW = 'role'
   be silenced. Stage 8 renames these to the design language; that is one edit
   here rather than fourteen.
 */
-const PATH_BODY = '.hl-path-body'
-const STEP = '.hl-step'
-const STEP_NEXT = '.hl-step-next'
-const STEP_TICK = '.hl-step-tick'
+const PATH_BODY = '.bz-path-body'
+const STEP = '.bz-step'
+const STEP_NEXT = '.bz-step-next'
+const STEP_TICK = '.bz-step-tick'
 
 test('with no role, no path is drawn and nothing is written (§12.13)', async ({ page }) => {
   await page.goto(PROGRESS)
@@ -71,7 +71,7 @@ test('with no role, no path is drawn and nothing is written (§12.13)', async ({
   // the closed row's SUMMARY prints the same words as its reading (§16.4.1), so
   // an unscoped locator finds the state twice and says so in strict mode.
   await expect(
-    page.locator('section[aria-labelledby="role"] .hl-register-body')
+    page.locator('section[aria-labelledby="role"] .bz-register-body')
       .getByText('NO ROLE ON RECORD'),
   ).toBeVisible()
 

@@ -238,7 +238,7 @@ function MemberRow({
         </a>
       </th>
 
-      <td className="hl-row-context hl-mark">
+      <td className="hl-row-context text-mark">
         {login === undefined || login === null ? (
           // §14.8.2 — no login means the submittal check cannot run, and the
           // cell says which of the two it is rather than printing a dash.
@@ -248,7 +248,7 @@ function MemberRow({
         )}
       </td>
 
-      <td className="hl-mark">
+      <td className="text-mark">
         {computed === null ? (
           <span className="text-on-surface-muted">
             {member.record.kind === 'absent' ? 'NO SERVER COPY' : 'UNREADABLE'}
@@ -264,7 +264,7 @@ function MemberRow({
       </td>
 
       {/* §14.8.2 — THE CLAIM. The reader's own assertion, and labelled as one. */}
-      <td className="hl-row-context hl-mark">
+      <td className="hl-row-context text-mark">
         {member.record.kind !== 'record' ? (
           <span className="text-on-surface-muted">—</span>
         ) : latestSignOff(member.record.data) === null ? (
@@ -277,7 +277,7 @@ function MemberRow({
       {/* §14.8.2 — THE EVIDENCE. A separate column, never folded into the one
           on its left: the left column is what this person says about
           themselves, this one is what can be checked independently of them. */}
-      <td className="hl-row-context hl-mark">
+      <td className="hl-row-context text-mark">
         {member.record.kind !== 'record' ? (
           <span className="text-on-surface-muted">—</span>
         ) : (
@@ -289,7 +289,7 @@ function MemberRow({
         )}
       </td>
 
-      <td className="hl-row-context hl-mark">
+      <td className="hl-row-context text-mark">
         {computed === null ? (
           <span className="text-on-surface-muted">—</span>
         ) : (
@@ -369,12 +369,12 @@ export function TeamTable({ facts }: { facts: CurriculumFacts }) {
   if (state.kind !== 'ready') {
     const copy = panelStateCopy(state)
     return (
-      <section className="hl-panel" aria-labelledby="hl-team-state">
-        <div className="hl-panel-head">
-          <h2 id="hl-team-state" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-team-state">
+        <div className="bz-panel-head">
+          <h2 id="hl-team-state" className="bz-panel-title">
             Roster
           </h2>
-          <p className="hl-mark m-0 text-on-surface-faint">{copy.status}</p>
+          <p className="text-mark m-0 text-on-surface-faint">{copy.status}</p>
         </div>
         {/* §12.13's live-region split: a query's progress and its outcome are
             both status, not alerts — nothing here is an error the reader
@@ -401,12 +401,12 @@ export function TeamTable({ facts }: { facts: CurriculumFacts }) {
 
   return (
     <>
-      <section className="hl-panel" aria-labelledby="hl-team-roster">
-        <div className="hl-panel-head">
-          <h2 id="hl-team-roster" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-team-roster">
+        <div className="bz-panel-head">
+          <h2 id="hl-team-roster" className="bz-panel-title">
             Roster
           </h2>
-          <p className="hl-mark m-0 text-on-surface-faint">
+          <p className="text-mark m-0 text-on-surface-faint">
             {snapshot.orgs.map((org) => org.name).join(' · ')}
           </p>
         </div>
@@ -415,13 +415,13 @@ export function TeamTable({ facts }: { facts: CurriculumFacts }) {
             conclude. An undercounted attempt tally can only hide a flag, never
             invent one, and a reader is entitled to know which way it fails. */}
         {snapshot.eventsTruncated && (
-          <p className="hl-mark m-0 mb-3 text-on-surface-muted">
+          <p className="text-mark m-0 mb-3 text-on-surface-muted">
             EVENT LOG TRUNCATED — QUIZ ATTEMPT COUNTS MAY BE LOW
           </p>
         )}
 
         {members.length === 0 ? (
-          <p className="hl-mark m-0 text-on-surface-muted" role="status">
+          <p className="text-mark m-0 text-on-surface-muted" role="status">
             NO MEMBERS IN THIS ORGANISATION
           </p>
         ) : (
@@ -484,12 +484,12 @@ export function TeamTable({ facts }: { facts: CurriculumFacts }) {
         />
       )}
       {selected !== null && person === null && (
-        <section className="hl-panel" aria-labelledby="hl-team-unknown">
-          <div className="hl-panel-head">
-            <h2 id="hl-team-unknown" className="hl-panel-title">
+        <section className="bz-panel" aria-labelledby="hl-team-unknown">
+          <div className="bz-panel-head">
+            <h2 id="hl-team-unknown" className="bz-panel-title">
               Person
             </h2>
-            <p className="hl-mark m-0 text-on-surface-faint">NOT IN THIS ROSTER</p>
+            <p className="text-mark m-0 text-on-surface-faint">NOT IN THIS ROSTER</p>
           </div>
           <p className="m-0 text-meta leading-normal text-on-surface-muted" role="status">
             {`No member of your organisation has the id ${selected}.`}

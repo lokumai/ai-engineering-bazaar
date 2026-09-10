@@ -1159,6 +1159,54 @@
     filter: none;
   }
 
+  /* -- the panel ----------------------------------------------------------
+     `07:78-80`, and it is `01`'s card with the corner straightened: the same
+     hairline, the same 1px edge, the same raised fill, and a plain radius
+     instead of the asymmetric `leaf`. DESIGN.md is explicit that `leaf` is "a
+     callout, a tile set at an angle" and "never as a general radius", and a
+     settings panel is not a callout — so `.bz-card` cannot be reused here and
+     this is not a second card either. It is the same box with the one detail
+     that distinguishes a callout from a container.
+
+     IT IS IN THE LANGUAGE because four surfaces reach for it: the progress
+     page's settings, the home page's blocks, and the team, sign-in and join
+     screens. 113 occurrences under one name in the retired vocabulary, which
+     is what a primitive looks like from the outside.
+
+     `07:80`'s `>` matters and is kept: it styles the panel's own intro
+     paragraph and not every `p` inside it, so a hint further down keeps its
+     own voice. */
+
+  .bz-panel {
+    padding: 18px 20px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-raised);
+  }
+
+  .bz-panel-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .bz-panel-title {
+    margin: 0;
+    color: var(--color-on-surface-title);
+    font: 600 var(--text-lead) / 1.3 var(--font-sans);
+    letter-spacing: -0.01em;
+  }
+
+  .bz-panel > p,
+  .bz-panel-note {
+    margin: 0 0 14px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-item);
+  }
+
   /* -- the field ----------------------------------------------------------
      THE OTHER PRIMITIVE THE SHELL MOCKUP DOES NOT CONTAIN. `01` has no
      `<input>` anywhere: its search is a `<div role="button">` dressed as a

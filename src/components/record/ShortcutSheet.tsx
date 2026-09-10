@@ -55,21 +55,21 @@ export function ShortcutSheet({ open, onOpenChange, pathname, charKeys }: Shortc
         aria-label="Keyboard shortcuts"
         title="Keyboard shortcuts (?)"
       >
-        <span aria-hidden="true" className="hl-mark">?</span>
+        <span aria-hidden="true" className="text-mark">?</span>
       </Dialog.Trigger>
 
       <Dialog.Portal>
-        <Dialog.Overlay className="hl-dialog-backdrop" />
+        <Dialog.Overlay className="bz-dialog-backdrop" />
         {/* No description: the table is the content and the title names it.
             Radix would otherwise warn about a `Description` this dialog has no
             honest text for. */}
-        <Dialog.Content className="hl-dialog" aria-describedby={undefined}>
-          <div className="hl-dialog-head hl-mark">Keyboard shortcuts</div>
+        <Dialog.Content className="bz-dialog" aria-describedby={undefined}>
+          <div className="bz-dialog-head text-mark">Keyboard shortcuts</div>
 
-          <div className="hl-dialog-body">
-            <Dialog.Title className="hl-dialog-title">Keyboard shortcuts</Dialog.Title>
+          <div className="bz-dialog-body">
+            <Dialog.Title className="bz-dialog-title">Keyboard shortcuts</Dialog.Title>
 
-            <table className="hl-keys">
+            <table className="bz-keys">
               <tbody>
                 {SHORTCUTS.map((row) => {
                   const href = row.target === null ? null : routeFor(row.target, pathname)

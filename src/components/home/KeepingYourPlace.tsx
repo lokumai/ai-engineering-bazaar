@@ -36,15 +36,15 @@ const VERIFIED_SUBMITTAL_DOORS: readonly string[] = DOOR_ROWS.filter(
 
 export function KeepingYourPlace() {
   return (
-    <section className="hl-panel" aria-labelledby="hl-home-identity">
-      <div className="hl-panel-head">
-        <h2 id="hl-home-identity" className="hl-panel-title">
+    <section className="bz-panel" aria-labelledby="hl-home-identity">
+      <div className="bz-panel-head">
+        <h2 id="hl-home-identity" className="bz-panel-title">
           Keeping your place
         </h2>
-        <p className="hl-panel-note">Optional · one of these, or none</p>
+        <p className="bz-panel-note">Optional · one of these, or none</p>
       </div>
 
-      <dl className="hl-defs">
+      <dl className="bz-defs">
         <dt>No name</dt>
         <dd>Reading is recorded in this browser. Nothing else happens.</dd>
         <dt>An alias</dt>

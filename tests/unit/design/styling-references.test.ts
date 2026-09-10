@@ -1,5 +1,5 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs'
-import { join } from 'node:path'
+import { join, relative } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
 /**
@@ -326,6 +326,45 @@ describe('every styling reference in the markup resolves against the language', 
       }
     }
     expect([...new Set(naked)].sort()).toEqual([])
+  })
+
+  /**
+   * The retired treatment, refused in MARKUP as well as in a stylesheet.
+   *
+   * `surface-stylesheets.test.ts` closed the stylesheet half — no surface
+   * re-cases its text, none pairs mono with the tracked label size — and that
+   * left a hole this file is the right place to close, because this is the
+   * sweep that already reads every utility out of every `className`.
+   *
+   * The hole was not hypothetical. Three components had re-created the small
+   * uppercase mono label out of `font-mono uppercase tracking-[0.06em]` while
+   * the class it replaced was being deleted, which is M9-to-M14's whole failure
+   * in miniature: the thing survives because an edit preserves what it edits.
+   */
+  it('re-creates no uppercase label out of utilities', () => {
+    const offenders: string[] = []
+    for (const file of FILES) {
+      const source = readFileSync(file, 'utf8')
+      for (const attribute of source.matchAll(
+        /className\s*=\s*(?:"([^"]*)"|\{`([^`]*)`\}|\{'([^']*)'\})/g,
+      )) {
+        const value = attribute[1] ?? attribute[2] ?? attribute[3] ?? ''
+        const words = value.split(/\s+/)
+        // `uppercase` at all, and mono paired with a label-sized step. A
+        // lowercase or capitalize utility is not this idiom.
+        if (words.includes('uppercase')) {
+          offenders.push(`${relative(ROOT, file)} — uppercase`)
+        }
+        // Mono at the TRACKED label step, which is the retired idiom. Mono at
+        // `mark` is a machine's word — a hash, a key, an ordinal — and the
+        // language does it itself in `.bz-aside-mark`, transcribed from `01`.
+        // `surface-stylesheets.test.ts` draws the line in the same place.
+        if (words.includes('font-mono') && words.includes('text-label')) {
+          offenders.push(`${relative(ROOT, file)} — mono at the tracked label size`)
+        }
+      }
+    }
+    expect([...new Set(offenders)].sort(), 'the uppercase mono label, in markup').toEqual([])
   })
 
   it('exempts a family that is actually referenced', () => {

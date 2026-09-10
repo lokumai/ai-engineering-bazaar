@@ -152,18 +152,18 @@ export function EmptyState({ state }: { state: EmptyStateSpec }) {
     <>
       {copy.status !== null && (
         <p
-          className="hl-mark hl-empty-status m-0"
+          className="text-mark bz-empty-status m-0"
           role={copy.live === 'status' ? 'status' : undefined}
         >
           {copy.status}
         </p>
       )}
-      {copy.cue !== null && <p className="hl-empty-cue">{copy.cue}</p>}
+      {copy.cue !== null && <p className="bz-empty-cue">{copy.cue}</p>}
     </>
   )
 
   return (
-    <div className="hl-empty" data-hl-empty={effective.kind}>
+    <div className="bz-empty" data-hl-empty={effective.kind}>
       {copy.live === 'alert' ? (
         <div role="alert" className="grid gap-2">
           {lines}
@@ -174,14 +174,14 @@ export function EmptyState({ state }: { state: EmptyStateSpec }) {
       {effective.kind === 'no-match' ? (
         <button
           type="button"
-          className="bz-btn hl-empty-path"
+          className="bz-btn bz-empty-path"
           onClick={effective.clear}
         >
           Clear the filter
         </button>
       ) : (
         copy.path !== null && (
-          <Link className="bz-btn hl-empty-path" href={copy.path.path}>
+          <Link className="bz-btn bz-empty-path" href={copy.path.path}>
             {copy.path.label}
           </Link>
         )

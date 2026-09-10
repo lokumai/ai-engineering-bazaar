@@ -5,6 +5,7 @@ import { SessionProvider } from '@/components/auth/SessionProvider'
 import { PathStanding } from '@/components/path/PathStanding'
 import { PathSteps, type SheetRef, type SheetRefs } from '@/components/path/PathSteps'
 import { AttentionPanel, type AttentionSheet } from '@/components/record/AttentionPanel'
+import { ContinueHero } from '@/components/record/ContinueHero'
 import { CourseCompletion, type CompletionLevel } from '@/components/record/CourseCompletion'
 import { DataPanel } from '@/components/record/DataPanel'
 import { Diagram, DiagramReadout, TracesReading } from '@/components/record/Diagram'
@@ -81,7 +82,7 @@ export const metadata: Metadata = {
  *
  * **`/profile/` is the survivor and the choice was not arbitrary.** Only one of
  * the four could keep its address, and this one owns every deep link on the
- * site: `#data`, `#claim`, `#raw`, `#storage` and `#hl-account-head` are
+ * site: `#data`, `#claim`, `#raw`, `#storage` and `#bz-account-head` are
  * pointed at from `SignOff`'s NOT SAVED state, from `EmptyState`'s classes 2
  * and 4, from the claim receipt and from the header's identity affordance. A
  * fragment cannot survive a `<meta refresh>`, so redirecting this route would
@@ -221,7 +222,7 @@ function sheetRefs(): SheetRefs {
  * **Every id from the eleven rows §16.4 shipped is verbatim.** Roughly twenty
  * assertions across the four suites address these as
  * `section[aria-labelledby="storage"|"raw"|"data"|"submittals"]`, and
- * `hl-orgs-head` is `OrgMembershipPanel`'s heading id. Renaming one is not a
+ * `bz-orgs-head` is `OrgMembershipPanel`'s heading id. Renaming one is not a
  * rename; it is a broken anchor and twenty broken assertions.
  *
  * **M14 appends two and never reorders.** `diagram` is the curriculum diagram
@@ -240,7 +241,7 @@ export const REGISTER_ROWS = [
   { id: 'role', name: 'Role and path' },
   { id: 'diagram', name: 'The curriculum as one diagram' },
   { id: 'report', name: 'Record of work' },
-  { id: 'hl-orgs-head', name: 'Organisation' },
+  { id: 'bz-orgs-head', name: 'Organisation' },
   { id: 'claim', name: 'Last claim' },
   { id: 'storage', name: 'Storage' },
   { id: 'raw', name: 'Stored values' },
@@ -308,13 +309,32 @@ export default function ProgressPage() {
    */
   const panels: Record<
     RegisterRowId,
-    { reading: React.ReactNode; body: React.ReactNode; needsSession?: true }
+    {
+      reading: React.ReactNode
+      /**
+       * §16.4.1 — which of the three shapes this row's reading takes, stated
+       * rather than inferred from the rendered text.
+       *
+       * The rule is that a row reports a count, the `--` that means no reading,
+       * or a NAMED STATE, and never a sentence of prose. That used to be
+       * checked by CASING: the readings were pre-cased to match a class that
+       * uppercased them, so capitals marked a named state and a lowercase
+       * sentence marked prose. The design language has no uppercase, so with
+       * every reading in sentence case a named state and a sentence look alike
+       * to anything reading the string — the row says which it is instead, and
+       * `record-pages.spec.ts` asks by that.
+       */
+      kind: 'count' | 'none' | 'state'
+      body: React.ReactNode
+      needsSession?: true
+    }
   > = {
     /* §7.1 — the full strip. `TRACES` is filled by the diagram row, which is
        the only place on the site that counts it; here the strip carries what
        the record's own facts can supply. §13.2's face legend sits under it,
        because the faces and the strip count the same modules. */
     readout: {
+      kind: 'count',
       reading: <ReadoutReading facts={facts} />,
       body: (
         <>
@@ -326,16 +346,17 @@ export default function ProgressPage() {
 
     /* §7.3 / §12.5.5 — fourteen hairline ticks. No flame, no notification, and
        an empty strip is never rendered as a deficit. */
-    uptime: { reading: <UptimeReading />, body: <Uptime /> },
+    uptime: { kind: 'count', reading: <UptimeReading />, body: <Uptime /> },
 
     /* §7.4 — the set-level stamps at 168 × 44. Every locked stamp states its
        exact threshold and its live count (§12.5.4), and the ones the corpus
        cannot supply today say so in modules ready rather than going quietly
        missing (§12.5.6). */
-    stamps: { reading: <StampsReading facts={facts} />, body: <StampShelf facts={facts} /> },
+    stamps: { kind: 'count', reading: <StampsReading facts={facts} />, body: <StampShelf facts={facts} /> },
 
     /* §12.11 item 5 — the only content in the record a third party can check. */
     submittals: {
+      kind: 'count',
       reading: <SubmittalReading sheets={facts.sheets} />,
       body: <SubmittalRegister sheets={facts.sheets} />,
     },
@@ -345,7 +366,7 @@ export default function ProgressPage() {
 
        **M14 folded `/path/` in here.** All nine ordered paths are in this
        markup and channel A shows exactly one: `lokum.css` resolves
-       `.hl-path-body[data-role="<id>"]` against the `hl-role-<id>` class the
+       `.bz-path-body[data-role="<id>"]` against the `hl-role-<id>` class the
        boot script stamps before first paint (§12.2), and `.hl-path-empty`
        against the absence of all nine. That is what makes the row correct in
        frame one for a reader with a role and for one without — and it is why
@@ -353,6 +374,7 @@ export default function ProgressPage() {
        nine routes, which a static export would prerender once for every
        reader: eight pages describing somebody else's route. */
     role: {
+      kind: 'state',
       reading: <RoleReading />,
       body: (
         <>
@@ -374,8 +396,8 @@ export default function ProgressPage() {
             if (path === undefined) return null
 
             return (
-              <div key={role.id} className="hl-path-body" data-role={role.id} data-hl-path={role.id}>
-                <p className="hl-panel-note text-start">
+              <div key={role.id} className="bz-path-body" data-role={role.id} data-hl-path={role.id}>
+                <p className="bz-panel-note text-start">
                   {role.label} · {plural(path.steps.length, 'step')} in order
                 </p>
                 {/* §13.8 — the standing, above the steps it describes, and the
@@ -402,6 +424,7 @@ export default function ProgressPage() {
        can count `TRACES`, because the record's facts carry the denominator and
        not the graph (§5.8, §7.1). */
     diagram: {
+      kind: 'count',
       // §16.4.1/§16.4.2 — the reading is the one number only this row can
       // count, taken from the same `useTraces` the strip in its body uses: the
       // edges with BOTH endpoints completed (§5.8). A reading that stated the
@@ -424,6 +447,7 @@ export default function ProgressPage() {
        file says so in its second block, above everything else it states
        (§12.12.4). */
     report: {
+      kind: 'state',
       reading: REPORT_READING,
       body: <ReportPanel facts={reportFacts(SITE_ORIGIN)} counts={facts} />,
     },
@@ -431,7 +455,8 @@ export default function ProgressPage() {
     /* §14.5 — read only in this revision, and the row says which account's
        memberships it is reporting. The provider is here rather than around the
        register because this is the only row that reads a session. */
-    'hl-orgs-head': {
+    'bz-orgs-head': {
+      kind: 'state',
       reading: <OrgReading />,
       body: <OrgMembershipPanel chrome="inline" />,
       needsSession: true,
@@ -441,22 +466,22 @@ export default function ProgressPage() {
        organisation row because both are facts about the account meeting this
        browser; the receipt is local by construction (§17.1), so it reports this
        browser's history and never another device's. */
-    claim: { reading: <ClaimReading />, body: <ClaimPanel /> },
+    claim: { kind: 'state', reading: <ClaimReading />, body: <ClaimPanel /> },
 
     /* §12.1.6 — queried, never assumed, and bytes are never a percentage. */
-    storage: { reading: <StorageReading />, body: <StoragePanel /> },
+    storage: { kind: 'state', reading: <StorageReading />, body: <StoragePanel /> },
 
     /* §12.11 item 7 — the bytes themselves, which is the cheapest proof §1
        reaches the storage layer. */
-    raw: { reading: <StoredValuesReading />, body: <RawValues /> },
+    raw: { kind: 'count', reading: <StoredValuesReading />, body: <RawValues /> },
 
     /* §12.15 — the row with no selector: there is no count of how exportable a
        record is, so it prints its subject (§16.4.2). */
-    data: { reading: DATA_READING, body: <DataPanel /> },
+    data: { kind: 'state', reading: DATA_READING, body: <DataPanel /> },
 
     /* §12.16 — SC 2.1.4 needs the off switch to have a home a reader can reach
        without using a shortcut. */
-    keyboard: { reading: <CharKeysReading />, body: <CharKeysToggle /> },
+    keyboard: { kind: 'state', reading: <CharKeysReading />, body: <CharKeysToggle /> },
   }
 
   return (
@@ -473,7 +498,7 @@ export default function ProgressPage() {
         {/* Derived, not typed: `SHORTCUTS` is where this chord is defined and
             where the handler reads it from, so a page that spelled it out
             would keep printing a chord that no longer works. */}
-        <p className="hl-mark m-0 text-on-surface-muted">{PROFILE_CHORD}</p>
+        <p className="text-mark m-0 text-on-surface-muted">{PROFILE_CHORD}</p>
       </div>
 
       <p className="bz-lead">
@@ -485,6 +510,17 @@ export default function ProgressPage() {
       </p>
 
       <hr className="bz-rule" aria-hidden="true" />
+
+      {/* `07`-A puts this first, and its own note says why: "one page, and the
+          first thing on it is the one action a returning reader wants."
+          Channel B, so a reader with nothing to continue — a fresh browser
+          before the store answers, or somebody who has finished every written
+          module — gets nothing here rather than a shortcut that is not a
+          shortcut. */}
+      <ContinueHero
+        facts={facts}
+        levels={Object.fromEntries(CATEGORIES.map((one) => [one.slug, one.title]))}
+      />
 
       {/* §12.1.2 — the one surface where a quarantined record can be
           discovered. Above everything, because it is the only thing on the page
@@ -500,23 +536,23 @@ export default function ProgressPage() {
           what to do next. Every row prints why it is there, and the reason is
           `attention.ts`'s own: this page adds no rule, no threshold and no
           second definition of "stalled". */}
-      <section className="hl-panel" aria-labelledby="waiting">
-        <div className="hl-panel-head">
-          <h2 id="waiting" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="waiting">
+        <div className="bz-panel-head">
+          <h2 id="waiting" className="bz-panel-title">
             Waiting on you
           </h2>
-          <p className="hl-panel-note">Opened, not completed</p>
+          <p className="bz-panel-note">Opened, not completed</p>
         </div>
         <AttentionPanel sheets={attentionSheets(facts)} />
       </section>
 
       {/* D14 — completion control C, the same control the home page carries:
           the whole course, visible and adjustable, without opening anything. */}
-      <div className="hl-panel-head">
-        <h2 id="progress-levels" className="hl-panel-title">
+      <div className="bz-panel-head">
+        <h2 id="progress-levels" className="bz-panel-title">
           Every module
         </h2>
-        <p className="hl-panel-note">Yours to set, and to take back</p>
+        <p className="bz-panel-note">Yours to set, and to take back</p>
       </div>
       <CourseCompletion facts={facts} levels={levels} headingId="progress-levels" />
 
@@ -527,18 +563,18 @@ export default function ProgressPage() {
       <FoldFragment />
 
       {/* §16.4 — and everything else, one line each. */}
-      <div className="hl-panel-head">
-        <h2 id={REGISTER_HEADING_ID} className="hl-panel-title">
+      <div className="bz-panel-head">
+        <h2 id={REGISTER_HEADING_ID} className="bz-panel-title">
           What else is on record
         </h2>
-        <p className="hl-panel-note">Closed, and each row states its reading</p>
+        <p className="bz-panel-note">Closed, and each row states its reading</p>
       </div>
 
       <Register labelledBy={REGISTER_HEADING_ID}>
         {REGISTER_ROWS.map(({ id, name }) => {
           const panel = panels[id]
           const rendered = (
-            <RegisterRow key={id} id={id} name={name} reading={panel.reading}>
+            <RegisterRow key={id} id={id} name={name} reading={panel.reading} kind={panel.kind}>
               {panel.body}
             </RegisterRow>
           )

@@ -55,7 +55,7 @@ test.describe('§14.1 accounts are switched off', () => {
   test('/sign-in/ says so, and offers no provider', async ({ page }) => {
     await page.goto('/sign-in/')
     await expect(
-      page.getByText('ACCOUNTS NOT ENABLED YET'),
+      page.getByText('Accounts not enabled yet'),
       'the build under test has accounts ENABLED. `next build` reads .env.local, '
         + 'so a local NEXT_PUBLIC_AUTH_ENABLED=true produces a build these '
         + 'assertions are the opposite of. Set it back to false, or run the '
@@ -114,27 +114,32 @@ test.describe('§14.1 accounts are switched off', () => {
      * anywhere in `<main>` is this spelling, which is what fails if a fifth
      * surface prints `ACCOUNTS NOT ENABLED` or `… IN THIS BUILD` (§16.6).
      */
-    const OFF = 'ACCOUNTS NOT ENABLED YET'
+    const OFF = 'Accounts not enabled yet'
     await expect(
-      page.locator('section[aria-labelledby="hl-account-head"]').getByText(OFF).first(),
+      page.locator('section[aria-labelledby="bz-account-head"]').getByText(OFF).first(),
     ).toBeVisible()
     await expect(
-      page.locator('section[aria-labelledby="hl-orgs-head"] .hl-register-reading'),
+      page.locator('section[aria-labelledby="bz-orgs-head"] .bz-register-reading'),
     ).toHaveText(OFF)
 
     const main = (await page.locator('main').textContent()) ?? ''
     const said = (needle: string): number => main.split(needle).length - 1
     expect(said(OFF), 'the status is read on four surfaces (§16.4.1)').toBe(4)
-    expect(
-      said('ACCOUNTS NOT ENABLED'),
-      'a second spelling of one status is on the page (§16.6)',
-    ).toBe(said(OFF))
+    // CASE-INSENSITIVELY, since M16: the four surfaces used to print this in
+    // capitals because the classes carrying it uppercased them, and comparing a
+    // literal uppercase substring to the sentence-case string now counts zero
+    // against four. What the rule is about is a second WORDING — `ACCOUNTS NOT
+    // ENABLED` without the `YET`, or `… IN THIS BUILD` — so it counts every
+    // occurrence of the stem whatever its case and requires all of them to be
+    // this one.
+    const stem = (main.toLowerCase().split('accounts not enabled').length - 1)
+    expect(stem, 'a second spelling of one status is on the page (§16.6)').toBe(said(OFF))
 
     await expectNoDoor(page, '/profile/')
 
     // And the half is not merely empty: it says what does work without one,
     // which is §14.13's honesty requirement applied to the block.
-    await expect(page.locator('section[aria-labelledby="hl-account-head"]')).toContainText(
+    await expect(page.locator('section[aria-labelledby="bz-account-head"]')).toContainText(
       /without an account/i,
     )
   })
@@ -166,7 +171,7 @@ test.describe('§14.1 accounts are switched off', () => {
 
   test('the footer asserts nothing about a server', async ({ page }) => {
     await page.goto('/courses/intermediate/harness-engineering/')
-    const readout = page.locator('footer .hl-readout')
+    const readout = page.locator('footer .bz-readout')
     await expect(readout).toHaveAttribute('data-hydrated', 'true')
     // §14.7.3: `off` is a claim too - "I am not saying anything about a server".
     await expect(readout).toHaveAttribute('data-sync', 'off')
@@ -180,7 +185,7 @@ test.describe('§14.1 accounts are switched off', () => {
 
     await page.goto('/courses/intermediate/harness-engineering/')
     await waitForHydratedReadout(page)
-    const readout = page.locator('footer .hl-readout')
+    const readout = page.locator('footer .bz-readout')
     await expect(readout).toHaveAttribute('data-hydrated', 'true')
 
     await page.getByRole('button', { name: 'Complete', exact: true }).click()

@@ -357,7 +357,7 @@ describe('MODULE 00 — the legend (§12.13)', () => {
     expect(markup).toContain('class="hl-gauge-tick" data-state="approved"')
     expect(markup).toContain('class="hl-gauge-tick" data-state="undrawn"')
     for (const state of ['draft', 'unread', 'started', 'signed']) {
-      expect(markup).toContain(`class="hl-node" data-state="${state}"`)
+      expect(markup).toContain(`class="bz-diagram-node" data-state="${state}"`)
     }
   })
 

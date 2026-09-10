@@ -15,7 +15,7 @@ export function ScheduleOfParts({ parts }: { parts: readonly string[] }) {
 
   return (
     <table className="hl-schedule">
-      <caption className="hl-mark">Schedule of parts</caption>
+      <caption className="text-mark">Schedule of parts</caption>
       <thead>
         <tr>
           <th scope="col">Item</th>

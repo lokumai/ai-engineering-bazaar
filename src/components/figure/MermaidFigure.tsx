@@ -274,10 +274,10 @@ export function MermaidFigure() {
           }}
         >
           <div className="hl-expand-head">
-            <Dialog.Title className="hl-mark">{expanded?.label ?? ''}</Dialog.Title>
+            <Dialog.Title className="text-mark">{expanded?.label ?? ''}</Dialog.Title>
             {/* It says what the keyboard does and it is also the button, so a
                 reader with no keyboard is not stranded inside the overlay. */}
-            <Dialog.Close className="hl-button hl-mark" aria-label="Close figure">
+            <Dialog.Close className="hl-button text-mark" aria-label="Close figure">
               Esc to close
             </Dialog.Close>
           </div>

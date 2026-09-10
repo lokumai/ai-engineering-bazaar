@@ -75,7 +75,7 @@ const UNSIGNED = 'UNSIGNED'
 /** §15.4.3 — printed on the stamp, in caution ink, in every draft state. */
 const UNVERIFIED = 'UNVERIFIED'
 
-/** The preview draws the mark at 48px, twice the 24px `.hl-mark-stamp` fixes. */
+/** The preview draws the mark at 48px, twice the 24px `.bz-mark-stamp` fixes. */
 const PREVIEW_SIZE = 48
 
 /**
@@ -259,7 +259,7 @@ export function AliasSheet({ accountDoors }: { accountDoors: number }) {
                 whole of what is worth saying (§12.5.7). Gated on `hydrated` so
                 it can only follow a write this session made. */}
             {saved && hydrated && (
-              <span className="hl-mark text-on-surface-muted" role="status">
+              <span className="text-mark text-on-surface-muted" role="status">
                 NAME ON RECORD
               </span>
             )}
@@ -292,24 +292,24 @@ export function AliasSheet({ accountDoors }: { accountDoors: number }) {
           `lib/content/title-block.ts`: that module reaches `node:fs` through
           `derive.ts` and this island may not (§12.2, §15.4.4). */}
       <aside aria-label="Your stamp, as a module will print it" className="hl-title-block">
-        <div className="hl-title-block-head hl-mark">Checked by</div>
+        <div className="hl-title-block-head text-mark">Checked by</div>
 
         <div className="grid justify-items-center gap-2 px-3 py-4">
           <DrafterStamp mark={storedMark(chosen)} seed={seed} size={PREVIEW_SIZE} />
           {previewName === null ? (
-            <p className="hl-mark m-0 text-on-surface-muted">{UNSIGNED}</p>
+            <p className="text-mark m-0 text-on-surface-muted">{UNSIGNED}</p>
           ) : (
             // As typed, not uppercased: CSS `text-transform` cases off the
             // element's `lang`, and `ilker` under `lang="en"` uppercases to a
             // dotless I where a Turkish reader expects İ (§12.3.4).
-            <bdi dir="auto" className="hl-identity-name text-center">
+            <bdi dir="auto" className="bz-identity-name text-center">
               {previewName}
             </bdi>
           )}
         </div>
 
         <dl className="hl-title-block-rows">
-          <div className="hl-title-block-row hl-mark">
+          <div className="hl-title-block-row text-mark">
             <dt>Mark</dt>
             <dd>{selected.label}</dd>
           </div>
@@ -317,16 +317,16 @@ export function AliasSheet({ accountDoors }: { accountDoors: number }) {
               for a named glyph and absent before the seed exists — never a
               hollow row and never a plausible-looking placeholder (§11.25). */}
           {chosen === 'seeded' && seed !== null && (
-            <div className="hl-title-block-row hl-mark">
+            <div className="hl-title-block-row text-mark">
               <dt>Seed</dt>
               <dd className="normal-case">{seed}</dd>
             </div>
           )}
-          <div className="hl-title-block-row hl-mark">
+          <div className="hl-title-block-row text-mark">
             <dt>Held in</dt>
             <dd>THIS BROWSER</dd>
           </div>
-          <div className="hl-title-block-row hl-mark">
+          <div className="hl-title-block-row text-mark">
             {/* Colour is never the only signal: the word is the signal, and the
                 caution ink only agrees with it (T6). */}
             <dt>Status</dt>

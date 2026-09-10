@@ -82,8 +82,8 @@ export function AccountPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
     // A wiring bug, said out loud rather than rendered as a reader-facing
     // state. `SessionProvider` records why this is not a permanent "checking".
     return (
-      <AuthShell chrome={chrome} headingId="hl-account-head" heading="Account">
-        <p className="hl-mark m-0 text-on-surface-muted">NO SESSION IS BEING TRACKED ON THIS PAGE</p>
+      <AuthShell chrome={chrome} headingId="bz-account-head" heading="Account">
+        <p className="text-mark m-0 text-on-surface-muted">NO SESSION IS BEING TRACKED ON THIS PAGE</p>
       </AuthShell>
     )
   }
@@ -93,17 +93,17 @@ export function AccountPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
   return (
     <AuthShell
       chrome={chrome}
-      headingId="hl-account-head"
+      headingId="bz-account-head"
       heading="Account"
       mark={
-        <p className="hl-mark m-0 text-on-surface-faint">
+        <p className="text-mark m-0 text-on-surface-faint">
           {view.status === 'signedIn'
             ? 'RECORD CONNECTED TO AN ACCOUNT'
             : 'THIS BROWSER ONLY'}
         </p>
       }
     >
-      <dl className="hl-defs">
+      <dl className="bz-defs">
         <dt>Session</dt>
         <dd aria-live="polite">
           {view.status === 'unknown' && 'CHECKING'}
@@ -169,7 +169,7 @@ export function AccountPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
             The account could not be read, so this panel is not claiming to
             know its state. Nothing was changed.
           </p>
-          <p className="hl-mark text-on-surface-muted">REPORTED · {error}</p>
+          <p className="text-mark text-on-surface-muted">REPORTED · {error}</p>
         </div>
       )}
     </AuthShell>
@@ -277,9 +277,9 @@ export function OrgMembershipPanel({ chrome = 'panel' }: { chrome?: AuthChrome }
   return (
     <AuthShell
       chrome={chrome}
-      headingId="hl-orgs-head"
+      headingId="bz-orgs-head"
       heading="Organisations"
-      mark={<p className="hl-mark m-0 text-on-surface-faint">READ ONLY IN THIS REVISION</p>}
+      mark={<p className="text-mark m-0 text-on-surface-faint">READ ONLY IN THIS REVISION</p>}
     >
       {status !== 'signedIn' ? (
         /**
@@ -300,7 +300,7 @@ export function OrgMembershipPanel({ chrome = 'panel' }: { chrome?: AuthChrome }
          * from that same author, so the two cannot drift into a second
          * spelling.
          */
-        <p className="hl-mark m-0 text-on-surface-muted">
+        <p className="text-mark m-0 text-on-surface-muted">
           {status === 'unknown'
             ? 'CHECKING'
             : status === 'disabled'
@@ -308,7 +308,7 @@ export function OrgMembershipPanel({ chrome = 'panel' }: { chrome?: AuthChrome }
               : 'NOT SIGNED IN · NO MEMBERSHIP TO REPORT'}
         </p>
       ) : state.kind === 'loading' || state.kind === 'idle' ? (
-        <p className="hl-mark m-0 text-on-surface-muted" aria-live="polite">
+        <p className="text-mark m-0 text-on-surface-muted" aria-live="polite">
           READING MEMBERSHIPS
         </p>
       ) : state.kind === 'failed' ? (
@@ -318,7 +318,7 @@ export function OrgMembershipPanel({ chrome = 'panel' }: { chrome?: AuthChrome }
             a statement that you belong to no organisation — it is a statement
             that this page does not know.
           </p>
-          <p className="hl-mark text-on-surface-muted">REPORTED · {state.message}</p>
+          <p className="text-mark text-on-surface-muted">REPORTED · {state.message}</p>
         </div>
       ) : state.rows.length === 0 ? (
         <p className="bz-submittal-empty">
@@ -584,14 +584,14 @@ function CallbackBody() {
   }, [phase, status, goOn])
 
   return (
-    <section className="hl-panel" aria-labelledby="hl-callback-head">
-      <div className="hl-panel-head">
-        <h2 id="hl-callback-head" className="hl-panel-title">
+    <section className="bz-panel" aria-labelledby="hl-callback-head">
+      <div className="bz-panel-head">
+        <h2 id="hl-callback-head" className="bz-panel-title">
           Completing sign-in
         </h2>
       </div>
 
-      <p className="hl-mark m-0 text-on-surface-muted" aria-live="polite">
+      <p className="text-mark m-0 text-on-surface-muted" aria-live="polite">
         {phase.kind === 'reading' && 'READING THE RETURN ADDRESS'}
         {phase.kind === 'waiting' && 'EXCHANGING THE SIGN-IN CODE'}
         {phase.kind === 'done' && 'SIGNED IN · RETURNING'}

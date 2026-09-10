@@ -138,7 +138,7 @@ export function QuarantineNote() {
 
   return (
     <section aria-label="Record status" className="mb-8">
-      <p className="hl-mark m-0 text-on-surface">{copy.readout}</p>
+      <p className="text-mark m-0 text-on-surface">{copy.readout}</p>
       <div className="bz-note">
         <p>{copy.note}</p>
       </div>
@@ -193,7 +193,7 @@ function withSignedCounts(
  * thing the deleted list was right about, and the only part of it worth keeping.
  *
  * **The face legend is not here any more.** It reports the six subsystems, which
- * is the Readout row's subject rather than the drafter's, and `.hl-drafter-mark`
+ * is the Readout row's subject rather than the drafter's, and `.bz-drafter-mark`
  * is a 168px column measured to the width of the two mono lines (§16.1's own
  * geometry) — a legend with a `min-w-[16rem]` table in it would have forced that
  * column open and taken the drafter block sideways at 1024px, which is the one
@@ -225,21 +225,21 @@ export function DrafterMark() {
           renders. */}
       <Lkm01 size={132} idPrefix="hl-profile" />
 
-      <p className="hl-drafter-line">
+      <p className="bz-drafter-line">
         <b>MARK</b> · {hydrated && chosen !== undefined ? chosen.label : NO_READING}
       </p>
 
       {!hydrated ? (
-        <p className="hl-drafter-line">
+        <p className="bz-drafter-line">
           <b>SEED</b> · {NO_READING}
         </p>
       ) : seed === null ? (
         // Not `SEED · <absence>`: the site has one spelling of this state and it
         // is a whole sentence, so the label is dropped rather than the string
         // rewritten to fit the pattern (§16.6).
-        <p className="hl-drafter-line">{NO_SEED_MINTED}</p>
+        <p className="bz-drafter-line">{NO_SEED_MINTED}</p>
       ) : (
-        <p className="hl-drafter-line">
+        <p className="bz-drafter-line">
           <b>SEED</b> · {seed}
         </p>
       )}
@@ -344,7 +344,7 @@ export function SubmittalRegister({ sheets }: { sheets: readonly RegisterSheet[]
   if (rows.length === 0) {
     // §12.9.1 — a hairline slot stating that it is empty. Never a nag, and
     // never a prompt dressed as a task.
-    return <p className="bz-submittal-empty hl-mark">NOTHING ADDED YET</p>
+    return <p className="bz-submittal-empty text-mark">NOTHING ADDED YET</p>
   }
 
   return (
@@ -358,7 +358,7 @@ export function SubmittalRegister({ sheets }: { sheets: readonly RegisterSheet[]
             <th
               key={heading}
               scope="col"
-              className="border-b border-line-strong px-3 py-2 text-start font-mono text-mark font-medium uppercase tracking-[0.06em] whitespace-nowrap text-on-surface-muted"
+              className="border-b border-line-strong px-3 py-2 text-start text-mark font-medium whitespace-nowrap text-on-surface-muted"
             >
               {heading}
             </th>
@@ -370,7 +370,7 @@ export function SubmittalRegister({ sheets }: { sheets: readonly RegisterSheet[]
           <tr key={`${sheet.slug}-${index}`}>
             <th
               scope="row"
-              className="border-b border-line px-3 py-2 text-start align-top font-mono text-mark font-normal uppercase tracking-[0.06em] whitespace-nowrap text-on-surface-muted"
+              className="border-b border-line px-3 py-2 text-start align-top text-mark font-normal whitespace-nowrap text-on-surface-muted"
             >
               {`MODULE ${String(sheet.module).padStart(2, '0')}`}
               <span className="block tracking-normal normal-case text-on-surface">
@@ -489,7 +489,7 @@ export function StoragePanel() {
   const lastExport = record.meta.lastExport
 
   return (
-    <dl className="hl-defs">
+    <dl className="bz-defs">
       <dt>Storage</dt>
       <dd>{state ?? NO_READING}</dd>
 
@@ -521,7 +521,7 @@ export function StoragePanel() {
           NO_READING
         ) : lastExport === null ? (
           // §12.15's own wording for the state.
-          <Unsigned>NO EXPORT ON RECORD</Unsigned>
+          <Unsigned>No export on record</Unsigned>
         ) : (
           lastExport
         )}
@@ -571,13 +571,13 @@ export function RawValues() {
         record, and the copy set aside if a payload could not be read.
       </p>
 
-      <p className="hl-mark mt-3 mb-0 text-on-surface">hl-record</p>
-      <pre className="hl-raw">
+      <p className="text-mark mt-3 mb-0 text-on-surface">hl-record</p>
+      <pre className="bz-raw">
         {raw === null ? NO_READING : (raw.record ?? 'NO VALUE STORED UNDER THIS KEY')}
       </pre>
 
-      <p className="hl-mark mt-3 mb-0 text-on-surface">hl-record-quarantine</p>
-      <pre className="hl-raw">
+      <p className="text-mark mt-3 mb-0 text-on-surface">hl-record-quarantine</p>
+      <pre className="bz-raw">
         {raw === null ? NO_READING : (raw.quarantine ?? 'NO VALUE STORED UNDER THIS KEY')}
       </pre>
     </div>
@@ -690,10 +690,10 @@ export const DATA_READING = 'YOUR COPY OF THE RECORD'
  * the failure. Worth collapsing to one author the next time `RolePanel` is
  * opened.
  */
-const NO_ROLE = 'NO ROLE ON RECORD'
+const NO_ROLE = 'No role on record'
 
 /** `SubmittalRegister`'s own words for an empty register, for the same reason. */
-const NO_SUBMITTAL = 'NOTHING ADDED YET'
+const NO_SUBMITTAL = 'Nothing added yet'
 
 /** `AccountPanel`'s spelling of a signed-out session, for the same reason. */
 const NOT_SIGNED_IN = 'NOT SIGNED IN'
@@ -704,7 +704,7 @@ export function ReadoutReading({ facts }: { facts: CurriculumFacts }) {
   const hydrated = useHydrated()
   const counts = signedCount(record, facts)
 
-  return <>{hydrated ? `${counts.signed} OF ${counts.of} COMPLETED` : NO_READING}</>
+  return <>{hydrated ? `${counts.signed} of ${counts.of} completed` : NO_READING}</>
 }
 
 /**
@@ -721,7 +721,7 @@ export function UptimeReading() {
 
   const reading = uptime(record, nowIso().slice(0, 10))
   const active = reading.days.filter((day) => day.active).length
-  return <>{`${active} OF LAST ${reading.days.length} DAYS`}</>
+  return <>{`${active} of last ${reading.days.length} days`}</>
 }
 
 /**
@@ -736,7 +736,7 @@ export function StampsReading({ facts }: { facts: CurriculumFacts }) {
   const shelf = stamps(record, facts)
   const earned = shelf.filter((stamp) => stamp.earned !== null).length
 
-  return <>{hydrated ? `${earned} OF ${shelf.length} EARNED` : NO_READING}</>
+  return <>{hydrated ? `${earned} of ${shelf.length} earned` : NO_READING}</>
 }
 
 /**
@@ -752,7 +752,7 @@ export function SubmittalReading({ sheets }: { sheets: readonly RegisterSheet[] 
 
   let filed = 0
   for (const sheet of sheets) filed += record.sheets[sheet.slug]?.submittals.length ?? 0
-  return <>{filed === 0 ? NO_SUBMITTAL : `${filed} FILED`}</>
+  return <>{filed === 0 ? NO_SUBMITTAL : `${filed} filed`}</>
 }
 
 /**
@@ -766,7 +766,7 @@ export function RoleReading() {
   const role = roleById(record.identity.role)
 
   if (!hydrated) return <>{NO_READING}</>
-  // Not upper-cased here: `.hl-register-reading` cases it in CSS, and the body
+  // Not upper-cased here: `.bz-register-reading` cases it in CSS, and the body
   // prints `role.label` verbatim, so the two stay the same string — which is
   // what §16.4.1's gate compares.
   return <>{role === undefined ? NO_ROLE : role.label}</>
@@ -845,7 +845,7 @@ export function ClaimPanel() {
 
   if (!hydrated || receipt === null) {
     return (
-      <p className="hl-mark m-0 text-on-surface-muted">
+      <p className="text-mark m-0 text-on-surface-muted">
         {hydrated ? CLAIM_COPY.noClaim : NO_READING}
       </p>
     )
@@ -853,7 +853,7 @@ export function ClaimPanel() {
 
   return (
     <div className="grid gap-3">
-      <p className="hl-mark m-0 text-on-surface-muted">{`CLAIMED ${receipt.at.slice(0, 10)}`}</p>
+      <p className="text-mark m-0 text-on-surface-muted">{`CLAIMED ${receipt.at.slice(0, 10)}`}</p>
       <ClaimSummary summary={receipt.summary} />
     </div>
   )
@@ -903,7 +903,7 @@ export function StoredValuesReading() {
 
   const held = [raw.record, raw.quarantine].filter((value) => value !== null)
   const bytes = held.reduce((total, value) => total + value.length, 0)
-  return <>{`${held.length} KEYS · ${group(bytes)} BYTES`}</>
+  return <>{`${held.length} keys · ${group(bytes)} bytes`}</>
 }
 
 /**
@@ -919,5 +919,5 @@ export function StoredValuesReading() {
  */
 export function CharKeysReading() {
   const record = useRecord()
-  return <>{record.prefs.charKeys ? 'CHARACTER KEYS ON' : 'CHARACTER KEYS OFF'}</>
+  return <>{record.prefs.charKeys ? 'Character keys on' : 'Character keys off'}</>
 }

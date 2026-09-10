@@ -101,7 +101,7 @@ function ClaimRow({ row, login }: { row: SheetClaimRow; login: string | null }) 
   return (
     <tr className="hl-row">
       <th scope="row" className="hl-row-title">
-        <span className="hl-mark block text-on-surface-muted">
+        <span className="text-mark block text-on-surface-muted">
           {row.module === null ? 'NOT IN THIS CORPUS' : `MODULE ${String(row.module).padStart(2, '0')}`}
         </span>
         {row.slug}
@@ -109,18 +109,18 @@ function ClaimRow({ row, login }: { row: SheetClaimRow; login: string | null }) 
 
       {/* §14.8.2 — THE CLAIM: an instant the reader asserted, and the revision
           they asserted it against (§12.4.3). Never a tick. */}
-      <td className="hl-row-context hl-mark">
+      <td className="hl-row-context text-mark">
         {`COMPLETED ${day(row.signedOff)}`}
         <span className="block text-on-surface-muted">
           {row.signedRevision === null ? 'NO REV RECORDED' : `REV ${row.signedRevision}`}
         </span>
       </td>
 
-      <td className={`hl-row-context hl-mark${quiz.muted ? ' text-on-surface-muted' : ''}`}>
+      <td className={`hl-row-context text-mark ${quiz.muted ? 'text-on-surface-muted' : ''}`}>
         {quiz.text}
       </td>
 
-      <td className="hl-row-context hl-mark">
+      <td className="hl-row-context text-mark">
         <span className={submittal.muted ? 'text-on-surface-muted' : undefined}>{submittal.text}</span>
         {/* The reason, always — §14.8's rule that a flag is never a bare glyph.
             The owners are printed as recorded, so a manager can see that
@@ -159,9 +159,9 @@ export function PersonDetail({
   )
 
   return (
-    <section className="hl-panel" aria-labelledby={headId}>
-      <div className="hl-panel-head">
-        <h2 id={headId} className="hl-panel-title">
+    <section className="bz-panel" aria-labelledby={headId}>
+      <div className="bz-panel-head">
+        <h2 id={headId} className="bz-panel-title">
           {label}
         </h2>
         <button type="button" className="bz-btn bz-no-print" onClick={onClose}>
@@ -173,7 +173,7 @@ export function PersonDetail({
           value on the right, no invented values. The uuid in full, because this
           panel is where it is the thing that matters — `?u=` carries it and a
           manager may need to quote it. */}
-      <dl className="hl-mark m-0 mb-5 grid grid-cols-[max-content_1fr] gap-x-6 gap-y-1">
+      <dl className="text-mark m-0 mb-5 grid grid-cols-[max-content_1fr] gap-x-6 gap-y-1">
         <dt className="text-on-surface-muted">USER</dt>
         <dd className="m-0">{member.userId}</dd>
         <dt className="text-on-surface-muted">GITHUB</dt>
@@ -264,7 +264,7 @@ function PersonBody({
     <>
       <hr className="bz-rule" aria-hidden="true" />
 
-      <p className="hl-mark m-0 mb-1">
+      <p className="text-mark m-0 mb-1">
         {`COMPLETED ${progress.signedOff} / ${progress.attainable}`}
         {' · '}
         {`ACTIVE ${progress.days} OF THE LAST 14 DAYS`}
@@ -278,19 +278,19 @@ function PersonBody({
           were computed here, from this build's corpus, so they are current
           whatever the column says. */}
       {curriculumRev !== null && (
-        <p className="hl-mark m-0 mb-5 text-on-surface-muted">
+        <p className="text-mark m-0 mb-5 text-on-surface-muted">
           {`STORED PROGRESS COMPUTED AT CURRICULUM REV ${curriculumRev}`}
         </p>
       )}
 
       {/* ---- §14.8.1 — attention, with reasons ----------------------------- */}
-      <h3 className="hl-mark m-0 mb-2 text-on-surface">Attention</h3>
+      <h3 className="text-mark m-0 mb-2 text-on-surface">Attention</h3>
       {progress.attention.length === 0 ? (
-        <p className="hl-mark m-0 mb-5 text-on-surface-muted">
+        <p className="text-mark m-0 mb-5 text-on-surface-muted">
           NO FLAGS — NOTHING OVERDUE, STALLED OR REPEATEDLY MISSED
         </p>
       ) : (
-        <ul className="hl-mark m-0 mb-5 list-none p-0">
+        <ul className="text-mark m-0 mb-5 list-none p-0">
           {progress.attention.map((flag) => (
             <li key={`${flag.why}:${flag.sheetSlug}`} className="py-0.5">
               {attentionReason(flag)}
@@ -300,11 +300,11 @@ function PersonBody({
       )}
 
       {/* ---- §14.2.4 — what this person has been assigned ------------------ */}
-      <h3 className="hl-mark m-0 mb-2 text-on-surface">Assignments</h3>
+      <h3 className="text-mark m-0 mb-2 text-on-surface">Assignments</h3>
       {assignments.length === 0 ? (
-        <p className="hl-mark m-0 mb-5 text-on-surface-muted">NONE</p>
+        <p className="text-mark m-0 mb-5 text-on-surface-muted">NONE</p>
       ) : (
-        <ul className="hl-mark m-0 mb-5 list-none p-0">
+        <ul className="text-mark m-0 mb-5 list-none p-0">
           {assignments.map((assignment) => (
             <li key={assignment.id} className="py-0.5">
               {assignment.title}
@@ -322,7 +322,7 @@ function PersonBody({
       )}
 
       {/* ---- §14.8.2 — the two columns, one row per sign-off --------------- */}
-      <h3 className="hl-mark m-0 mb-2 text-on-surface">Claim and evidence</h3>
+      <h3 className="text-mark m-0 mb-2 text-on-surface">Claim and evidence</h3>
       <p className="m-0 mb-3 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
         The left column is what this person asserted about themselves (§12.4.4:
         observed, printed as evidence, gating nothing). The two on the right are
@@ -332,7 +332,7 @@ function PersonBody({
       </p>
 
       {rows.length === 0 ? (
-        <p className="hl-mark m-0 text-on-surface-muted" role="status">
+        <p className="text-mark m-0 text-on-surface-muted" role="status">
           NO COMPLETION RECORDED
         </p>
       ) : (

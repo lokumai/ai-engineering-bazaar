@@ -113,7 +113,7 @@ function cellOf(markup: string, id: string): string {
 
 /** The shared description line's own content, by the id every radio points at. */
 function noteLineOf(markup: string): string {
-  const found = /class="hl-markrow-note" id="[^"]*">(.*?)<\/p>/.exec(markup)
+  const found = /class="bz-markrow-note" id="[^"]*">(.*?)<\/p>/.exec(markup)
   expect(found, 'the shared description line').not.toBeNull()
   return (found as RegExpExecArray)[1]
 }
@@ -184,7 +184,7 @@ describe('§12.2 — the honest empty first frame of every panel', () => {
   })
 
   it('prints the raw keys as unread rather than as empty (§12.11 item 7)', () => {
-    expect(occurrences(RAW, /<pre class="hl-raw">--<\/pre>/g)).toBe(2)
+    expect(occurrences(RAW, /<pre class="bz-raw">--<\/pre>/g)).toBe(2)
     expect(words(RAW)).toContain('hl-record')
     expect(words(RAW)).toContain('hl-record-quarantine')
   })
@@ -454,7 +454,7 @@ describe('§16.2.1 — the offered mark is a marking, and it is words', () => {
   })
 
   it('carries the offer into the shared description, which is not aria-hidden', () => {
-    const note = /class="hl-markrow-note" id="[^"]*">(.*?)<\/p>/.exec(
+    const note = /class="bz-markrow-note" id="[^"]*">(.*?)<\/p>/.exec(
       MARK_OFFERED_SEEDED,
     ) as RegExpExecArray
     expect(words(note[1])).toContain('OFFERED FOR YOUR ROLE')
@@ -607,7 +607,7 @@ describe('§12.9.2 — the repository link is reconstructed, never echoed', () =
 describe('§12.1.6, §11.35 — the storage panel prints bytes and nothing else', () => {
   it('draws no percentage, gauge, ring or fill bar', () => {
     expect(STORAGE).not.toContain('%')
-    expect(STORAGE).not.toMatch(/progressbar|meter|hl-gauge|hl-uptime|<svg/)
+    expect(STORAGE).not.toMatch(/progressbar|meter|hl-gauge|bz-uptime|<svg/)
   })
 })
 
@@ -616,7 +616,7 @@ describe('§12.1.6, §11.35 — the storage panel prints bytes and nothing else'
  *
  * **What the two assertions below replaced, and why they are not a list any
  * more.** Both pinned the eleven panels as a hand-typed sequence: eleven
- * `hl-panel-title` strings in order, and the same eleven ids again as a second
+ * `bz-panel-title` strings in order, and the same eleven ids again as a second
  * literal. §16 folds nine of those panels into register rows, so a list would
  * have had to be retyped — and a list retyped is a second author of an order the
  * page already holds. `REGISTER_ROWS` is exported from `profile/page.tsx` for
@@ -637,10 +637,10 @@ describe('§16.1, §16.4 — the page itself: the account block, then your progr
   })
 
   it('renders exactly REGISTER_ROWS, in exactly that order', () => {
-    const rows = [...PAGE.matchAll(/<h2 id="([^"]+)" class="hl-register-name">([^<]+)</g)]
+    const rows = [...PAGE.matchAll(/<h2 id="([^"]+)" class="bz-register-name">([^<]+)</g)]
       .map(([, id, name]) => ({ id, name }))
     expect(rows).toEqual(REGISTER_ROWS.map(({ id, name }) => ({ id, name })))
-    // Every row is a `hl-register-fold` and nothing else on the page is, so
+    // Every row is a `bz-register-fold` and nothing else on the page is, so
     // the count is the count of rows — a row rendered outside the register, or
     // a row in the table and not rendered, moves one of these two numbers.
     //
@@ -649,7 +649,7 @@ describe('§16.1, §16.4 — the page itself: the account block, then your progr
     // disclosures of their own inside their bodies (the diagram's dependency
     // table is one), and a bare `<details` count would have made this
     // assertion about how many nested folds the page's panels happen to use.
-    expect(occurrences(PAGE, /class="hl-register-fold"/g)).toBe(REGISTER_ROWS.length)
+    expect(occurrences(PAGE, /class="bz-register-fold"/g)).toBe(REGISTER_ROWS.length)
   })
 
   it('opens with the account block and closes every row', () => {
@@ -671,7 +671,7 @@ describe('§16.1, §16.4 — the page itself: the account block, then your progr
   })
 
   it('gives every heading id exactly one reference, so no anchor is ambiguous', () => {
-    // Hazard 2's other half. `hl-orgs-head` and `hl-account-head` are pointed at
+    // Hazard 2's other half. `bz-orgs-head` and `bz-account-head` are pointed at
     // from elsewhere in the tree, and `AuthShell` drops both in inline chrome so
     // that the register row and the drafter half own them. Two elements carrying
     // one id is not redundancy: the browser jumps to whichever comes first.
@@ -695,7 +695,12 @@ describe('§16.1, §16.4 — the page itself: the account block, then your progr
   it('states a reading on every closed row (§16.4.1)', () => {
     for (const { id } of REGISTER_ROWS) {
       const summary = summaryOf(PAGE, id)
-      const reading = /class="hl-register-reading">([\s\S]*?)<\/span>/.exec(summary)
+      // `[^>]*` between the class and the `>`: the span carries `data-reading`
+      // too, and a pattern that assumed the tag ended right after the class
+      // stopped matching the moment it did — reporting `null` rather than a
+      // blank reading, which is the same failure shape as a selector inside a
+      // regex going quietly stale.
+      const reading = /class="bz-register-reading"[^>]*>([\s\S]*?)<\/span>/.exec(summary)
       expect(reading, id).not.toBeNull()
       expect(words((reading as RegExpExecArray)[1]).trim(), id).not.toBe('')
     }
@@ -762,7 +767,7 @@ describe('§16.1, §16.4 — the page itself: the account block, then your progr
 
   it('is inside the shell, so it has a main region and a footer', () => {
     expect(PAGE).toContain('id="main"')
-    expect(PAGE).toContain('hl-readout')
+    expect(PAGE).toContain('bz-readout')
   })
 })
 

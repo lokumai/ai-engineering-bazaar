@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { A0, SHEETS, SHORT } from './sheets'
-import { seedRecord, signedSheet } from './record'
+import { openRegisterRow, seedRecord, signedSheet, waitForHydratedReadout } from './record'
 import {
   APP_SELECTORS,
   CATALOG_SELECTORS,
@@ -12,6 +12,8 @@ import {
   FACT_KEYS,
   MOCKUP_SELECTORS,
   MOCKUP_URL,
+  DASHBOARD_SELECTORS,
+  DASHBOARD_URL,
   PROGRESS_SELECTORS,
   PROGRESS_URL,
   REFERENCE_OF,
@@ -1103,5 +1105,171 @@ test.describe('M16 stage 7 — completion', () => {
     // And a level with nothing signed falls back to the language's own `0%`,
     // which is the true statement rather than an absent value.
     expect(read.untouched).toBe('0%')
+  })
+})
+
+test.describe('M16 stage 8 — progress and account', () => {
+  /**
+   * `07`-A, on `/profile/` — the route that absorbed `/dashboard/`, `/path/`
+   * and `/report/`.
+   *
+   * The hero is channel B: `nextUnsigned` reads the record, so it renders
+   * nothing until the store has answered. Which is why this seeds a record and
+   * waits for the readout before extracting — an un-hydrated page would report
+   * the hero absent and the comparison would agree with itself about nothing.
+   */
+  const BUILT: readonly Role[] = [
+    'continueHero',
+    'continueNum',
+    'panel',
+    'field',
+    'fieldLabel',
+    'fieldInput',
+  ]
+
+  test('is indistinguishable from `07`, in every length it specifies', async ({ page }) => {
+    await page.goto(DASHBOARD_URL)
+    await freezeMotion(page)
+    const reference = await extractDesignFacts(page, DASHBOARD_SELECTORS)
+
+    await seedRecord(page, { sheets: { 'fundamentals/llms': signedSheet('a1b2c3d') } })
+    await page.goto('/profile/')
+    await waitForHydratedReadout(page)
+    // The erase dialog holds the only danger button on the page, and a closed
+    // `<details>` has no box for `getComputedStyle` to answer about.
+    await openRegisterRow(page, 'data')
+    await freezeMotion(page)
+    const actual = await extractDesignFacts(page, APP_SELECTORS)
+
+    const shown = (facts: Record<string, string | null>, role: Role) =>
+      FACT_KEYS.filter((key) => key.startsWith(`${role}.`)).some((key) => facts[key] !== null)
+
+    for (const role of BUILT) {
+      expect(
+        shown(actual, role),
+        `${role}: mockup ${shown(reference, role)}, page ${shown(actual, role)}`,
+      ).toBe(shown(reference, role))
+    }
+    expect(BUILT.every((role) => shown(reference, role)), 'a role `07` does not draw').toBe(true)
+
+    expect(differencesAt(reference, actual, BUILT, page.viewportSize()!.width)).toEqual([])
+  })
+
+  /**
+   * `07:88-89` draws the destructive control as a COLOUR-ONLY modifier — "it
+   * changes nothing geometric" — and that claim cannot be checked against `07`,
+   * because `07`'s button geometry is `07`'s and the product's is `01`'s.
+   * MEASURED: 9px/15px/14px there against 11px/20px/15px here. So it is
+   * checked against the quiet button beside it, on the page, which is the
+   * comparison the claim is actually about.
+   */
+  test('draws the destructive control as a colour and nothing else', async ({ page }) => {
+    await page.goto('/profile/')
+    // The danger button is the erase row's trigger, and the row is a
+    // `<details>` with no rendered box while it is closed.
+    await openRegisterRow(page, 'data')
+
+    const measured = await page.evaluate(() => {
+      const read = (node: Element) => {
+        const style = getComputedStyle(node)
+        return {
+          box: `${style.paddingTop}|${style.paddingLeft}|${style.fontSize}|${style.borderTopWidth}|${style.borderTopLeftRadius}`,
+          edge: style.borderTopColor,
+          ink: style.color,
+          fault: getComputedStyle(document.documentElement)
+            .getPropertyValue('--color-fault')
+            .trim(),
+          onSurface: getComputedStyle(document.documentElement)
+            .getPropertyValue('--color-on-surface')
+            .trim(),
+        }
+      }
+      const danger = document.querySelector('.bz-btn-danger')
+      // A plain `.bz-btn` on the same page: the modifier sits on top of it, so
+      // "changes nothing geometric" is a claim about exactly this pair. There
+      // is no quiet button on this route — the only one is inside the role
+      // standing, which needs a role on record.
+      const plain = document.querySelector('.bz-btn:not(.bz-btn-danger):not(.bz-btn-quiet)')
+      return danger === null || plain === null ? null : { danger: read(danger), plain: read(plain) }
+    })
+
+    expect(measured, 'no danger button and plain button to compare').not.toBeNull()
+    const { danger, plain } = measured!
+    expect(danger.box, 'the danger button changes its geometry').toBe(plain.box)
+
+    /*
+      And what it DOES change: the edge carries the fault hue and the label does
+      not. `fault` is a graphic token because it measures 5.48:1 on `surface` in
+      light and 3.02:1 on `surface-raised` in dark — a 3:1 graphical floor in
+      both themes and a 4.5:1 text floor in only one, and a floor that holds in
+      one theme is not a floor. So the meaning is the word, then the edge, then
+      the hue, and never the colour of the text.
+    */
+    const rgb = (hex: string) => {
+      const n = Number.parseInt(hex.replace('#', ''), 16)
+      return `rgb(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255})`
+    }
+    expect(danger.edge, 'the danger button does not tint its edge').toBe(rgb(danger.fault))
+    expect(danger.ink, 'the danger button spends the fault hue on its text').toBe(
+      rgb(danger.onSurface),
+    )
+  })
+
+  /**
+   * §13.3 — the nine-role reveal, in a browser, with every `.js` request
+   * refused.
+   *
+   * All nine ordered paths are in the prerendered document and channel A shows
+   * one. The unit guard holds the STYLESHEET to naming all nine and negating
+   * all nine; this holds the PAGE to showing exactly one of them, which is the
+   * thing a reader would notice and the thing no regular expression over CSS
+   * can see.
+   */
+  test('shows one role path in frame one, and only one', async ({ page }) => {
+    await page.route('**/*.js', (route) => route.abort())
+    await seedRecord(page, { identity: { role: 'qa' } })
+    await page.goto('/profile/')
+    // The role row is a `<details>` and a closed one has no rendered box, so
+    // `checkVisibility()` would report every path hidden for the wrong reason.
+    // Opening a `<summary>` is the browser's own behaviour and needs no script.
+    await page.locator('section[aria-labelledby="role"] summary').click()
+
+    const seen = await page.evaluate(() => {
+      const shown = [...document.querySelectorAll('.bz-path-body')].filter((node) =>
+        node.checkVisibility(),
+      )
+      return {
+        total: document.querySelectorAll('.bz-path-body').length,
+        shown: shown.map((node) => node.getAttribute('data-role')),
+        empties: [...document.querySelectorAll('.bz-path-empty')].filter((node) =>
+          node.checkVisibility(),
+        ).length,
+      }
+    })
+
+    expect(seen.total, 'the nine paths are not all prerendered').toBe(9)
+    expect(seen.shown).toEqual(['qa'])
+    // And the empty state is NOT shown beside it, which is the contradiction
+    // the negation chain exists to prevent.
+    expect(seen.empties, 'the empty state is shown beside a chosen path').toBe(0)
+  })
+
+  /** The other half: no role, no path, and the empty state instead. */
+  test('shows no path at all, and says so, when no role is on record', async ({ page }) => {
+    await page.route('**/*.js', (route) => route.abort())
+    await page.goto('/profile/')
+    await page.locator('section[aria-labelledby="role"] summary').click()
+
+    const seen = await page.evaluate(() => ({
+      shown: [...document.querySelectorAll('.bz-path-body')].filter((node) =>
+        node.checkVisibility(),
+      ).length,
+      empties: [...document.querySelectorAll('.bz-path-empty')].filter((node) =>
+        node.checkVisibility(),
+      ).length,
+    }))
+
+    expect(seen.shown, 'a path is drawn for a role nobody chose').toBe(0)
+    expect(seen.empties, 'no empty state where there is no path').toBeGreaterThan(0)
   })
 })

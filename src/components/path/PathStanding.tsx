@@ -105,7 +105,7 @@ export function PathStanding({ role, drawnSlugs }: PathStandingProps) {
   // is the behaviour under a renamed role id, not a state the site ships in.
   if (standing === null) {
     return (
-      <p className="hl-readout" data-hydrated="false">
+      <p className="bz-readout" data-hydrated="false">
         <span>No path is authored for this role</span>
       </p>
     )
@@ -116,7 +116,7 @@ export function PathStanding({ role, drawnSlugs }: PathStandingProps) {
 
   return (
     <p
-      className="hl-readout m-0"
+      className="bz-readout m-0"
       // SC 4.1.3 — the figures change when a sheet on this path is signed off,
       // and the change is worth announcing where it is worth printing.
       role="status"
@@ -124,17 +124,17 @@ export function PathStanding({ role, drawnSlugs }: PathStandingProps) {
       data-hl-path-standing={role}
     >
       <span>
-        <span className="hl-readout-value hl-readout-togo">
+        <span className="bz-readout-value bz-readout-togo">
           {remaining} of {standing.drawn}
         </span>{' '}
         remaining on this path
       </span>
-      <span aria-hidden="true" className="hl-readout-sep">
+      <span aria-hidden="true" className="bz-readout-sep">
         ·
       </span>
       <span>
         Completed{' '}
-        <span className="hl-readout-value">
+        <span className="bz-readout-value">
           {signed} of {standing.drawn}
         </span>
       </span>

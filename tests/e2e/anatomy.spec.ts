@@ -271,7 +271,7 @@ test.describe('A short ready module — the same anatomy as a long one', () => {
     expect(drawing.leadOut).toBe(0)
 
     // §7.4 — the stamps used to render only inside the old right rail.
-    await expect(page.locator('.hl-stamp:visible')).not.toHaveCount(0)
+    await expect(page.locator('.bz-stamp:visible')).not.toHaveCount(0)
 
     // …and none of the draft furniture.
     await expect(page.locator('.hl-status-band')).toHaveCount(0)
@@ -304,7 +304,7 @@ test.describe('A short ready module — the same anatomy as a long one', () => {
       // live in (M16 stage 3 rebuilt it as `.bz-drawer-bar`).
       await expect(page.locator('.bz-drawer-bar[data-bz-at="wide"]')).toBeVisible()
       await expect(page.locator('.bz-facts')).toBeVisible()
-      await expect(page.locator('.hl-stamp:visible')).not.toHaveCount(0)
+      await expect(page.locator('.bz-stamp:visible')).not.toHaveCount(0)
 
       // The curriculum is still beside the prose: 1100px is above the width
       // where it becomes a sheet.

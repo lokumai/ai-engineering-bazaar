@@ -95,7 +95,7 @@ function unavailableCopy(why: SupabaseUnavailable): { status: string; detail: st
 
 function PathNote({ offer }: { offer: JoinOffer }) {
   return (
-    <p className="hl-mark m-0 text-on-surface-muted">
+    <p className="text-mark m-0 text-on-surface-muted">
       {offer.path === 'domain' ? JOIN_COPY.pathDomain : JOIN_COPY.pathInvite}
     </p>
   )
@@ -122,13 +122,13 @@ function OfferBlock({
 
   return (
     <div className="hl-signoff">
-      <div className="hl-signoff-head hl-mark">
+      <div className="hl-signoff-head text-mark">
         <span className="text-on-surface">{offer.org.name}</span>
         <PathNote offer={offer} />
       </div>
 
       <div className="hl-signoff-body">
-        <p className="hl-mark mt-0 mb-2 text-on-surface">{JOIN_COPY.disclosureHead}</p>
+        <p className="text-mark mt-0 mb-2 text-on-surface">{JOIN_COPY.disclosureHead}</p>
 
         {/* §14.5.1 — read before anything is clicked. The button is below it,
             and there is no state of this component in which it is not. */}
@@ -148,7 +148,7 @@ function OfferBlock({
             {`${JOIN_COPY.action} ${offer.org.name}`}
           </button>
           {busy && (
-            <span className="hl-mark self-center text-on-surface-muted" role="status">
+            <span className="text-mark self-center text-on-surface-muted" role="status">
               WRITING THE MEMBERSHIP ROW
             </span>
           )}
@@ -156,11 +156,11 @@ function OfferBlock({
 
         {failure !== null && (
           <div className="mt-3" role="alert">
-            <p className="hl-mark m-0 text-on-surface">ROW NOT WRITTEN</p>
+            <p className="text-mark m-0 text-on-surface">ROW NOT WRITTEN</p>
             <p className="m-0 mt-1 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
               {joinFailureCopy(failure.failure, offer.org.name)}
             </p>
-            {failure.message !== '' && <p className="hl-raw">{failure.message}</p>}
+            {failure.message !== '' && <p className="bz-raw">{failure.message}</p>}
           </div>
         )}
       </div>
@@ -177,14 +177,14 @@ function MemberList({ orgs }: { orgs: readonly JoinableOrg[] }) {
   if (orgs.length === 0) return null
   return (
     <div className="mt-6">
-      <p className="hl-mark m-0 text-on-surface">{JOIN_COPY.memberHead}</p>
-      {/* Not `hl-defs`: that grid uppercases its cells, which is right for a
+      <p className="text-mark m-0 text-on-surface">{JOIN_COPY.memberHead}</p>
+      {/* Not `bz-defs`: that grid uppercases its cells, which is right for a
           machine-derived readout and wrong for a name somebody typed. The
           organisation is printed as it is stored. */}
       <ul className="m-0 mt-2 grid list-none gap-1 p-0">
         {orgs.map((org) => (
           <li key={org.id} className="flex flex-wrap items-baseline gap-x-3">
-            <span className="hl-mark text-on-surface-muted">{JOIN_COPY.joined}</span>
+            <span className="text-mark text-on-surface-muted">{JOIN_COPY.joined}</span>
             <span className="font-mono text-mark tracking-[0.06em] text-on-surface">{org.name}</span>
           </li>
         ))}
@@ -211,9 +211,9 @@ function Statement({
   children?: React.ReactNode
 }) {
   return (
-    <div className="hl-empty" role={live}>
-      <p className="hl-mark hl-empty-status m-0">{status}</p>
-      <p className="hl-empty-cue">{detail}</p>
+    <div className="bz-empty" role={live}>
+      <p className="text-mark bz-empty-status m-0">{status}</p>
+      <p className="bz-empty-cue">{detail}</p>
       {children}
     </div>
   )
@@ -391,7 +391,7 @@ export function JoinPanel() {
             This state has no account at all, so the way out is the sign-in
             sheet, not the profile sheet: `/profile/` cannot show an address to
             a reader who has not signed in. */}
-        <p className="hl-empty-path m-0">
+        <p className="bz-empty-path m-0">
           <Link href="/sign-in/" className="bz-link">
             Sign in
           </Link>
@@ -412,7 +412,7 @@ export function JoinPanel() {
             + 'not a statement that none exist. Your record is untouched.'
           }
         />
-        <p className="hl-raw">{state.message}</p>
+        <p className="bz-raw">{state.message}</p>
       </>
     )
   }
@@ -423,9 +423,9 @@ export function JoinPanel() {
   return (
     <>
       {joinedName !== null && (
-        <div className="hl-empty mb-6" role="status">
-          <p className="hl-mark hl-empty-status m-0">{`${JOIN_COPY.joined} ${joinedName}`}</p>
-          <p className="hl-empty-cue">
+        <div className="bz-empty mb-6" role="status">
+          <p className="text-mark bz-empty-status m-0">{`${JOIN_COPY.joined} ${joinedName}`}</p>
+          <p className="bz-empty-cue">
             {`The membership row is written. Managers of ${joinedName} can read `
               + 'your record from now on, including the part of it that was '
               + 'recorded before this moment.'}
@@ -445,7 +445,7 @@ export function JoinPanel() {
                 `/profile/` for all three, so the reader whose account had no
                 email sign-in was sent to the one module that cannot say so, and
                 the copy naming the sheet could drift from the link beside it. */}
-            <p className="hl-empty-path m-0">
+            <p className="bz-empty-path m-0">
               <Link href={copy.link.href} className="bz-link">
                 {copy.link.label}
               </Link>
@@ -474,7 +474,7 @@ export function JoinPanel() {
               that shouted it back in capitals would misreport the one value
               whose exact letters decide whether the insert lands. */}
           <p className="m-0 mb-4 font-mono text-mark tracking-[0.06em] text-on-surface-muted">
-            <span className="hl-mark">Matched on</span> {join.email}
+            <span className="text-mark">Matched on</span> {join.email}
           </p>
           {join.offers.map((offer) => (
             <OfferBlock

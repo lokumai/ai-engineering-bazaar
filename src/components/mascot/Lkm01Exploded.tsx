@@ -119,7 +119,7 @@ export function Lkm01Exploded({
 
       {/* §8.4 — `text-mark` mono in `--color-on-surface-muted`, and left to wrap: it
           is a sentence about the drawing, not a machine-derived value (§3.4). */}
-      <p className="hl-mark mt-3 max-w-[var(--layout-measure)] text-on-surface-muted">{caption}</p>
+      <p className="text-mark mt-3 max-w-[var(--layout-measure)] text-on-surface-muted">{caption}</p>
     </div>
   )
 }

@@ -99,6 +99,29 @@ export const PROGRESS = path.resolve(process.cwd(), 'playground/05-progress.html
 
 export const PROGRESS_URL = pathToFileURL(PROGRESS).href
 
+/**
+ * The FOURTH — the progress page and the account, `07`, variant A.
+ *
+ * It is the only mockup in the set that draws a real form control: `01` has no
+ * `<input>` anywhere and dresses a `div` as its search field, which is why
+ * `barField` sits in `DELIBERATELY_ABSENT`. So the field's lengths are
+ * specified here and nowhere else, and they land on the language's scale
+ * exactly — 36px tall, a 7px radius which is `lg`, and 14.5px type which is
+ * `control`.
+ *
+ * WHAT IT DRAWS THAT THE PRODUCT DOES NOT. `07`-A's `.bars` block is five
+ * per-level rails, and `05`-C's dials already report that on this page. `07`'s
+ * own argument against variant C is the reason not to have both: *"Per-level
+ * progress is already in the sidebar and the catalog, on every page. Repeating
+ * it on a page of its own is the duplication that makes the dashboard feel
+ * pointless."* The page takes `07`'s ORDER and `05`'s rendering, so there is no
+ * `progressRow` role to compare — which is a decision and not an omission, and
+ * it is why it is written here.
+ */
+export const DASHBOARD = path.resolve(process.cwd(), 'playground/07-dashboard.html')
+
+export const DASHBOARD_URL = pathToFileURL(DASHBOARD).href
+
 export type Role =
   | 'bar'
   | 'barInner'
@@ -143,6 +166,13 @@ export type Role =
   | 'boardColumn'
   | 'boardHead'
   | 'boardTrack'
+  /* Stage 8 — progress and account, from `07`. */
+  | 'continueHero'
+  | 'continueNum'
+  | 'panel'
+  | 'field'
+  | 'fieldLabel'
+  | 'fieldInput'
   /* Stage 7 — completion, from `05`. */
   | 'levelCard'
   | 'dial'
@@ -396,6 +426,41 @@ const FACTS: readonly Fact[] = [
   { role: 'legendKey', property: 'width', mutate: '99px' },
   { role: 'legendKey', property: 'height', mutate: '99px' },
   { role: 'legendKey', property: 'borderRadius', mutate: '99px' },
+
+  /* Stage 8 — `07`-A, lengths only.
+
+     The field is the point: `07` is the only mockup that draws one, and every
+     length it gives it turns out to be on the language's scale already — 36px,
+     a 7px radius, 14.5px type, a 96px label gutter, a 10px gap. Nothing had to
+     be reconciled, which is the strongest evidence available that the scale was
+     transcribed from the same hand.
+
+     `continueHero`'s radius is NOT compared: `07` sets 11px and the radius
+     scale is a closed set that stops at 9. Snapping to it is the language
+     winning on purpose, and a fact that was always going to differ is an
+     exemption waiting to be written rather than a comparison. */
+  { role: 'continueHero', property: 'paddingTop', mutate: '99px' },
+  { role: 'continueHero', property: 'paddingLeft', mutate: '99px' },
+  { role: 'continueHero', property: 'gap', mutate: '99px' },
+  { role: 'continueNum', property: 'width', mutate: '99px' },
+  { role: 'continueNum', property: 'height', mutate: '99px' },
+  { role: 'panel', property: 'paddingTop', mutate: '99px' },
+  { role: 'panel', property: 'paddingLeft', mutate: '99px' },
+  { role: 'field', property: 'gap', mutate: '99px' },
+  { role: 'fieldLabel', property: 'width', mutate: '99px' },
+  { role: 'fieldInput', property: 'height', mutate: '99px' },
+  { role: 'fieldInput', property: 'paddingLeft', mutate: '99px' },
+  { role: 'fieldInput', property: 'borderTopLeftRadius', mutate: '99px' },
+  { role: 'fieldInput', property: 'fontSize', mutate: '99px' },
+  /* `buttonDanger` IS NOT A ROLE HERE, and the measurement is why: `07`'s
+     danger button measured 9px/15px/14px against the language's 11px/20px/15px,
+     because `07` draws it as a colour-only modifier of `07`'s OWN button and
+     the product modifies `01`'s. Comparing it to `07` would be comparing two
+     mockups' buttons to each other. `01` already specifies that geometry
+     through `buttonPrimary`, and what is left of `.btn.danger` is a colour —
+     which D31 forbids taking from a non-shell mockup anyway. The stage's own
+     block asserts the part that matters instead: that it differs from a quiet
+     button in colour and in nothing else. */
   { role: 'boardList', property: 'paddingTop', mutate: '99px' },
   { role: 'boardMod', property: 'paddingTop', mutate: '99px' },
   { role: 'boardMod', property: 'gap', mutate: '99px' },
@@ -571,6 +636,22 @@ export const PROGRESS_SELECTORS: SelectorMap = {
   legendKey: '.legend i',
 }
 
+/**
+ * `07`-A. Variant A's blocks are the first `.cont`, `.panel`, `.field` and
+ * `.btn.danger` in the document; B and C reuse the class names further down,
+ * and `extractDesignFacts` reads the first match, so no variant qualifier is
+ * needed — but that is a fact about the document's order and it is worth
+ * saying, because a mockup that reordered its options would move these.
+ */
+export const DASHBOARD_SELECTORS: SelectorMap = {
+  continueHero: '.cont',
+  continueNum: '.cont .num',
+  panel: '.panel',
+  field: '.field',
+  fieldLabel: '.field label',
+  fieldInput: '.field input',
+}
+
 export const CATALOG_SELECTORS: SelectorMap = {
   filterBar: '.filters',
   chip: '.fchip:not([aria-pressed="true"])',
@@ -592,7 +673,7 @@ export const CATALOG_SELECTORS: SelectorMap = {
 }
 
 /** Which document specifies a role. A role with no entry has no mockup. */
-export type Reference = '01' | '03' | '05'
+export type Reference = '01' | '03' | '05' | '07'
 
 /**
  * THE ROLE-TO-DOCUMENT MAP, which is what makes D31 something a machine can
@@ -621,6 +702,9 @@ export const REFERENCE_OF: Readonly<Partial<Record<Role, Reference>>> = {
   actions: '01', buttonQuiet: '01', pager: '01', pagerItem: '01',
 
   levelCard: '05', dial: '05', dialValue: '05', statRow: '05', legendKey: '05',
+
+  continueHero: '07', continueNum: '07', panel: '07', field: '07',
+  fieldLabel: '07', fieldInput: '07',
 }
 
 /**
@@ -639,6 +723,7 @@ export const REFERENCES: Readonly<
   '01': { file: MOCKUP, url: MOCKUP_URL, selectors: MOCKUP_SELECTORS },
   '03': { file: CATALOG, url: CATALOG_URL, selectors: CATALOG_SELECTORS },
   '05': { file: PROGRESS, url: PROGRESS_URL, selectors: PROGRESS_SELECTORS },
+  '07': { file: DASHBOARD, url: DASHBOARD_URL, selectors: DASHBOARD_SELECTORS },
 }
 
 /** Kept as views onto `REFERENCES`, so no caller has to change and no second
@@ -774,6 +859,16 @@ export const APP_SELECTORS: SelectorMap = {
   dialValue: '.bz-dial-value',
   statRow: '.bz-cc-stats',
   legendKey: '.bz-cc-legend-key[data-key="todo"]',
+
+  /* Stage 8 — progress and account, read off `/profile/`. The hero is channel
+     B and renders only once the store has answered, which is why the stage's
+     comparison waits for the readout before extracting. */
+  continueHero: '.bz-cont',
+  continueNum: '.bz-cont-num',
+  panel: '.bz-panel',
+  field: '.bz-field',
+  fieldLabel: '.bz-field-label',
+  fieldInput: '.bz-field > input',
   boardList: '.bz-boardcol-list',
   boardMod: '.bz-boardcol-mod',
   viewToggle: '.bz-viewtoggle',
@@ -853,6 +948,14 @@ export interface NarrowDeviation {
 }
 
 export const NARROW_DEVIATIONS: Readonly<Record<string, NarrowDeviation>> = {
+  'fieldInput.height': {
+    below: 768,
+    why:
+      'The §10.4 touch floor. `07` draws the control 36px tall and a thumb needs '
+      + '44, so the transcribed height holds where there is a pointer and the floor '
+      + 'takes over below the phone breakpoint — D34\'s rule that a measured '
+      + 'accessibility floor outranks a transcribed value. MEASURED 44px at 390.',
+  },
   'barInner.paddingLeft': {
     below: 880,
     why:

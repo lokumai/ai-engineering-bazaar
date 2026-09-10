@@ -421,15 +421,15 @@ export function ReportPanel({ facts, counts }: ReportPanelProps) {
 
   return (
     <div data-hl-report data-hydrated={hydrated ? 'true' : 'false'}>
-      <section className="hl-panel" aria-labelledby="hl-report-preview">
-        <div className="hl-panel-head">
-          <h2 id="hl-report-preview" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-report-preview">
+        <div className="bz-panel-head">
+          <h2 id="hl-report-preview" className="bz-panel-title">
             What the file will say
           </h2>
-          <p className="hl-mark m-0 text-on-surface-faint">Counted from this browser</p>
+          <p className="text-mark m-0 text-on-surface-faint">Counted from this browser</p>
         </div>
 
-        <dl className="hl-defs">
+        <dl className="bz-defs">
           <dt>Title</dt>
           <dd>{reading(preview.title)}</dd>
           <dt>Completed</dt>
@@ -456,12 +456,12 @@ export function ReportPanel({ facts, counts }: ReportPanelProps) {
         </p>
       </section>
 
-      <section className="hl-panel" aria-labelledby="hl-report-limits">
-        <div className="hl-panel-head">
-          <h2 id="hl-report-limits" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-report-limits">
+        <div className="bz-panel-head">
+          <h2 id="hl-report-limits" className="bz-panel-title">
             Status and limits
           </h2>
-          <p className="hl-mark m-0 text-on-surface-faint">Second block of the file</p>
+          <p className="text-mark m-0 text-on-surface-faint">Second block of the file</p>
         </div>
 
         {/* §12.12.3 — all seven, declarative, and above the control that
@@ -475,16 +475,16 @@ export function ReportPanel({ facts, counts }: ReportPanelProps) {
         </div>
       </section>
 
-      <section className="hl-panel" aria-labelledby="hl-report-save">
-        <div className="hl-panel-head">
-          <h2 id="hl-report-save" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-report-save">
+        <div className="bz-panel-head">
+          <h2 id="hl-report-save" className="bz-panel-title">
             Save
           </h2>
-          <p className="hl-mark m-0 text-on-surface-faint">One self-contained file</p>
+          <p className="text-mark m-0 text-on-surface-faint">One self-contained file</p>
         </div>
 
-        <dl className="hl-defs">
-          {/* `.hl-defs` uppercases, which is right for a machine-derived value
+        <dl className="bz-defs">
+          {/* `.bz-defs` uppercases, which is right for a machine-derived value
               and wrong for a filename: a name printed in a case it is not
               written in is a small lie about the file the reader is about to
               receive. */}
@@ -496,11 +496,11 @@ export function ReportPanel({ facts, counts }: ReportPanelProps) {
           </dd>
         </dl>
 
-        {/* The digest is `.hl-mark` without its uppercasing: a hex digest a
+        {/* The digest is `.text-mark` without its uppercasing: a hex digest a
             reader compares against the one inside the file has to be printed
             in the case it is actually written in. */}
-        <p className="hl-mark mt-4 mb-1 text-on-surface-muted">Content digest</p>
-        <p className="hl-mark m-0 break-all normal-case text-on-surface">
+        <p className="text-mark mt-4 mb-1 text-on-surface-muted">Content digest</p>
+        <p className="text-mark m-0 break-all normal-case text-on-surface">
           {digest.kind === 'pending' ? DASH : digestText(digest)}
         </p>
         <p className="mt-2 mb-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">

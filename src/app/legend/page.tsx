@@ -37,7 +37,7 @@ export const metadata: Metadata = {
  * **A server page, and hook-free on purpose.** Every mark below is drawn in a
  * fixed state — this is a key, not a readout — so there is nothing here for
  * channel B to fill in and nothing to hydrate (§12.2). The marks are the real
- * ones: `.hl-signoff-square`, `.hl-gauge-tick` and `.hl-node` with the same
+ * ones: `.hl-signoff-square`, `.hl-gauge-tick` and `.bz-diagram-node` with the same
  * `data-*` attributes the index rows, the tick gauges and the dashboard write,
  * so `record.css` draws the legend from the same rules it draws the site from.
  * A hand-drawn picture of the marks would be a fourth place for them to be
@@ -69,10 +69,10 @@ function NodeSample({ state }: { state: NodeSampleState }) {
       aria-hidden="true"
       focusable="false"
     >
-      <g className="hl-node" data-state={state}>
+      <g className="bz-diagram-node" data-state={state}>
         <rect x={2} y={2} width={NODE_WIDTH} height={NODE_HEIGHT} />
         {state === 'signed' && (
-          <line className="hl-node-edge" x1={2} y1={2} x2={2} y2={2 + NODE_HEIGHT} />
+          <line className="bz-diagram-node-edge" x1={2} y1={2} x2={2} y2={2 + NODE_HEIGHT} />
         )}
         <text
           x={2 + NODE_WIDTH / 2}
@@ -91,7 +91,7 @@ function NodeSample({ state }: { state: NodeSampleState }) {
  * One row of the key: the state named, every mark that carries it, and what it
  * means.
  *
- * A plain grid rather than `.hl-defs`, which uppercases its whole content — the
+ * A plain grid rather than `.bz-defs`, which uppercases its whole content — the
  * right treatment for a machine-derived value and the wrong one for a sentence.
  * The term is the same wording the dashboard's own table prints for that state,
  * so a reader who has met one has met the other.
@@ -113,7 +113,7 @@ function KeyRow({
   return (
     <>
       <dt className="flex items-center gap-2">
-        <span className="hl-mark text-on-surface">{term}</span>
+        <span className="text-mark text-on-surface">{term}</span>
         {marks}
       </dt>
       <dd className="m-0 text-meta leading-normal text-on-surface-muted">
@@ -170,7 +170,7 @@ const REFUSED: readonly string[] = [
 export default function LegendPage() {
   return (
     <PageShell sheet="MODULE 00">
-      <p className="hl-eyebrow hl-mark">MODULE 00 — LEGEND &amp; SPECIMEN</p>
+      <p className="hl-eyebrow text-mark">MODULE 00 — LEGEND &amp; SPECIMEN</p>
 
       <h1 className="bz-display">Legend</h1>
 
@@ -185,12 +185,12 @@ export default function LegendPage() {
       <hr className="bz-rule" aria-hidden="true" />
 
       {/* ---- 1 · the line-type key (§12.10.4, §12.13) --------------------- */}
-      <section className="hl-panel" aria-labelledby="hl-legend-lines">
-        <div className="hl-panel-head">
-          <h2 id="hl-legend-lines" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-legend-lines">
+        <div className="bz-panel-head">
+          <h2 id="hl-legend-lines" className="bz-panel-title">
             Line types
           </h2>
-          <p className="hl-mark m-0 text-on-surface-faint">ISO 128</p>
+          <p className="text-mark m-0 text-on-surface-faint">ISO 128</p>
         </div>
 
         <p className="mt-0 mb-4 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
@@ -275,12 +275,12 @@ export default function LegendPage() {
       </section>
 
       {/* ---- 2 · the storage disclosure (§12.1.7) ------------------------- */}
-      <section className="hl-panel" aria-labelledby="hl-legend-storage">
-        <div className="hl-panel-head">
-          <h2 id="hl-legend-storage" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-legend-storage">
+        <div className="bz-panel-head">
+          <h2 id="hl-legend-storage" className="bz-panel-title">
             Where your record is
           </h2>
-          <p className="hl-mark m-0 text-on-surface-faint">This browser’s copy</p>
+          <p className="text-mark m-0 text-on-surface-faint">This browser’s copy</p>
         </div>
 
         {/*
@@ -344,12 +344,12 @@ export default function LegendPage() {
       </section>
 
       {/* ---- 3 · what is not here (§12.19, §12.0) ------------------------- */}
-      <section className="hl-panel" aria-labelledby="hl-legend-absent">
-        <div className="hl-panel-head">
-          <h2 id="hl-legend-absent" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-legend-absent">
+        <div className="bz-panel-head">
+          <h2 id="hl-legend-absent" className="bz-panel-title">
             What this site does not have
           </h2>
-          <p className="hl-mark m-0 text-on-surface-faint">Named, not stubbed</p>
+          <p className="text-mark m-0 text-on-surface-faint">Named, not stubbed</p>
         </div>
 
         <p className="mt-0 mb-4 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
@@ -358,7 +358,7 @@ export default function LegendPage() {
           or a greyed-out menu item. It is not built.
         </p>
 
-        <h3 className="hl-mark m-0 mb-2 text-on-surface">Deferred to a following slice</h3>
+        <h3 className="text-mark m-0 mb-2 text-on-surface">Deferred to a following slice</h3>
         <ul className="m-0 mb-6 max-w-[var(--layout-measure)] list-none p-0 text-meta leading-normal text-on-surface-muted">
           {DEFERRED.map((item) => (
             <li key={item} className="mb-1">
@@ -367,7 +367,7 @@ export default function LegendPage() {
           ))}
         </ul>
 
-        <h3 className="hl-mark m-0 mb-2 text-on-surface">
+        <h3 className="text-mark m-0 mb-2 text-on-surface">
           Nobody here can do these, and therefore not coming
         </h3>
         <ul className="m-0 mb-6 max-w-[var(--layout-measure)] list-none p-0 text-meta leading-normal text-on-surface-muted">
@@ -378,7 +378,7 @@ export default function LegendPage() {
           ))}
         </ul>
 
-        <h3 className="hl-mark m-0 mb-2 text-on-surface">Refused, not missing</h3>
+        <h3 className="text-mark m-0 mb-2 text-on-surface">Refused, not missing</h3>
         <ul className="m-0 mb-4 max-w-[var(--layout-measure)] list-none p-0 text-meta leading-normal text-on-surface-muted">
           {REFUSED.map((item) => (
             <li key={item} className="mb-1">
@@ -413,12 +413,12 @@ export default function LegendPage() {
       </section>
 
       {/* ---- 4 · the specimen (§12.13) ------------------------------------ */}
-      <section className="hl-panel" aria-labelledby="hl-legend-specimen">
-        <div className="hl-panel-head">
-          <h2 id="hl-legend-specimen" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-legend-specimen">
+        <div className="bz-panel-head">
+          <h2 id="hl-legend-specimen" className="bz-panel-title">
             Specimen record
           </h2>
-          <p className="hl-mark m-0 text-on-surface-faint">Sample data</p>
+          <p className="text-mark m-0 text-on-surface-faint">Sample data</p>
         </div>
 
         <p className="mt-0 mb-4 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
@@ -440,12 +440,12 @@ export default function LegendPage() {
           two sentences below are the whole prose personality budget for the
           site, spent here, once. It sits in the panel body rather than beside a
           heading, and it never speaks. */}
-      <section className="hl-panel" aria-labelledby="hl-legend-mark">
-        <div className="hl-panel-head">
-          <h2 id="hl-legend-mark" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-legend-mark">
+        <div className="bz-panel-head">
+          <h2 id="hl-legend-mark" className="bz-panel-title">
             Marked by
           </h2>
-          <p className="hl-mark m-0 text-on-surface-faint">LKM-01</p>
+          <p className="text-mark m-0 text-on-surface-faint">LKM-01</p>
         </div>
 
         <div className="flex items-center gap-4">
@@ -472,12 +472,12 @@ export default function LegendPage() {
         The rows are `AFFILIATION`, in order. The order is the claim (§4), which
         is why neither this file nor the footer keeps a list of its own.
       */}
-      <section className="hl-panel" aria-labelledby="hl-legend-colophon">
-        <div className="hl-panel-head">
-          <h2 id="hl-legend-colophon" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-legend-colophon">
+        <div className="bz-panel-head">
+          <h2 id="hl-legend-colophon" className="bz-panel-title">
             Colophon
           </h2>
-          <p className="hl-mark m-0 text-on-surface-faint">Who publishes this</p>
+          <p className="text-mark m-0 text-on-surface-faint">Who publishes this</p>
         </div>
 
         <dl className="m-0 max-w-[var(--layout-measure)]">
@@ -486,7 +486,7 @@ export default function LegendPage() {
               key={affiliate.name}
               className="flex items-baseline justify-between gap-4 border-b border-line py-2 last:border-b-0"
             >
-              <dt className="hl-mark flex-none text-on-surface-muted">{affiliate.role}</dt>
+              <dt className="text-mark flex-none text-on-surface-muted">{affiliate.role}</dt>
               <dd className="m-0 text-meta text-on-surface">
                 <a className="bz-link" href={affiliate.url}>
                   {affiliate.name}

@@ -119,7 +119,7 @@ interface HomePaint {
   /** How many module rows had been parsed when the reading was taken. */
   rows: number
   /**
-   * `.hl-readout`'s channel-B flag, read in the same frame. `"false"` is the
+   * `.bz-readout`'s channel-B flag, read in the same frame. `"false"` is the
    * prerendered state, and it is the proof that everything above was drawn
    * before React.
    */
@@ -159,7 +159,7 @@ async function probeHomePaint(page: Page): Promise<void> {
             (document.querySelector(shortcut) as HTMLElement | null)?.checkVisibility() ?? false,
           ticked: ticked.sort((a, b) => a - b),
           rows: rows.length,
-          hydrated: document.querySelector('.hl-readout')?.getAttribute('data-hydrated') ?? null,
+          hydrated: document.querySelector('.bz-readout')?.getAttribute('data-hydrated') ?? null,
           frames,
         }
       }
@@ -324,7 +324,7 @@ test('the counts arrive after mount, and the ticks do not move', async ({ page }
   // right. A React island that re-decided the ticks would show up here as one
   // flipping once the store answered, and the frame-one test above cannot see
   // that because it never lets React run.
-  await expect(page.locator('.hl-readout[data-hydrated="true"]').first()).toBeAttached()
+  await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
   await expect(page.locator(`${MODULE_ROW}[data-module="${SEEDED.module}"] ${TICK}`)).toBeVisible()
 
   // The three numbers, which are `--` until the store has answered.
@@ -345,7 +345,7 @@ test('control C completes a module from the home page, and takes it back', async
 }) => {
   const target = sheetByModule(1)
   await page.goto('/')
-  await expect(page.locator('.hl-readout[data-hydrated="true"]').first()).toBeAttached()
+  await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
 
   const toggle = toggleFor(page, target.title)
   // The contract, asserted so that putting `aria-pressed` back turns this red:
@@ -460,7 +460,7 @@ test('a planned module has no completion control at all', async ({ page }) => {
 
 test('control C is reachable and operable from the keyboard', async ({ page }) => {
   await page.goto('/')
-  await expect(page.locator('.hl-readout[data-hydrated="true"]').first()).toBeAttached()
+  await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
 
   const toggle = toggleFor(page, SHEETS[0].title)
   // Pressed with the key, not clicked: a control that answers a click and not
@@ -714,7 +714,7 @@ test('a completion made on the home page is the same one the module page shows',
 }) => {
   const target = sheetByModule(1)
   await page.goto('/')
-  await expect(page.locator('.hl-readout[data-hydrated="true"]').first()).toBeAttached()
+  await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
   await toggleFor(page, target.title).click()
   await waitForRecord(
     page,

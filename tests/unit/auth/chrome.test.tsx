@@ -17,7 +17,7 @@ import type { SessionUser, SessionView } from '@/lib/auth/session'
  *
  * **The central assertion is a subsequence, and that is the point.** For every
  * state, the inline markup is a character-for-character subsequence of the panel
- * markup with the `hl-panel` wrapper stripped off. A subsequence can only be
+ * markup with the `bz-panel` wrapper stripped off. A subsequence can only be
  * reached by DELETING: `chrome="inline"` cannot rename a class, move an
  * attribute, reorder two elements or add a wrapper of its own without failing
  * it. That is the strongest available reading of "`panel` is byte-for-byte the
@@ -105,14 +105,14 @@ const VIEWS: ReadonlyArray<[string, SessionView]> = [
 /** The three panels that take a chrome, and the heading id each one owns. */
 const PANELS: ReadonlyArray<[string, (chrome?: 'panel' | 'inline') => React.ReactElement, string]> =
   [
-    ['SignInPanel', (chrome) => <SignInPanel chrome={chrome} />, 'hl-signin-state'],
-    ['AccountPanel', (chrome) => <AccountPanel chrome={chrome} />, 'hl-account-head'],
-    ['OrgMembershipPanel', (chrome) => <OrgMembershipPanel chrome={chrome} />, 'hl-orgs-head'],
+    ['SignInPanel', (chrome) => <SignInPanel chrome={chrome} />, 'bz-signin-state'],
+    ['AccountPanel', (chrome) => <AccountPanel chrome={chrome} />, 'bz-account-head'],
+    ['OrgMembershipPanel', (chrome) => <OrgMembershipPanel chrome={chrome} />, 'bz-orgs-head'],
   ]
 
 /**
  * The only things `chrome` is allowed to remove from the body, beyond the
- * `hl-panel` wrapper and the heading that `AuthShell` itself drops.
+ * `bz-panel` wrapper and the heading that `AuthShell` itself drops.
  *
  * Both are `/profile/` cross-references, and inline chrome only ever renders on
  * `/profile/`: a link offering to take the reader to the sheet they are reading
@@ -131,8 +131,8 @@ const ABOUT_THE_SHEET = /account page/i
 /** Panel chrome's wrapper, stripped so what remains is the body both share. */
 function bodyOf(panel: string, headingId: string): string {
   const opened = new RegExp(
-    `^<section class="hl-panel" aria-labelledby="${headingId}">`
-    + `<div class="hl-panel-head"><h2 id="${headingId}" class="hl-panel-title">[^<]*</h2>`,
+    `^<section class="bz-panel" aria-labelledby="${headingId}">`
+    + `<div class="bz-panel-head"><h2 id="${headingId}" class="bz-panel-title">[^<]*</h2>`,
   )
   expect(panel).toMatch(opened)
   expect(panel.endsWith('</section>')).toBe(true)
@@ -160,9 +160,9 @@ describe('§16.1.1 — AuthShell: the wrapper and the heading, and nothing else'
         <p>BODY</p>
       </AuthShell>,
     )
-    expect(markup).toContain('class="hl-panel"')
+    expect(markup).toContain('class="bz-panel"')
     expect(markup).toContain('aria-labelledby="hl-test-head"')
-    expect(markup).toContain('<h2 id="hl-test-head" class="hl-panel-title">Heading</h2>')
+    expect(markup).toContain('<h2 id="hl-test-head" class="bz-panel-title">Heading</h2>')
     expect(markup).toContain('<i>MARK</i>')
     expect(markup).toContain('<p>BODY</p>')
   })
@@ -193,14 +193,14 @@ describe('§16.1.1 — every session state, in both chromes', () => {
         // across the suites and by in-page anchors, and panel chrome is where
         // they still live.
         expect(panel).toContain(`id="${headingId}"`)
-        expect(panel).toContain('class="hl-panel"')
+        expect(panel).toContain('class="bz-panel"')
         expect(panel).toContain('<h2')
 
         // Inline chrome emits no heading and no panel: the drafter block's half
         // already carries an `h3`, and a second element carrying the id would
         // make the anchor ambiguous rather than redundant.
         expect(inline).not.toContain('<h2')
-        expect(inline).not.toContain('class="hl-panel"')
+        expect(inline).not.toContain('class="bz-panel"')
         expect(inline).not.toContain(headingId)
 
         // The state itself survives both, whatever it is: neither chrome may
@@ -276,7 +276,7 @@ describe('§16.1.1 — the state machine is untouched by chrome', () => {
   it('keeps the disabled readout in inline chrome, so H-B’s zero-request sweep holds', () => {
     current.view = { status: 'disabled', why: 'flagOff' }
     const inline = renderToStaticMarkup(<SignInPanel chrome="inline" />)
-    expect(inline).toContain('ACCOUNTS NOT ENABLED YET')
+    expect(inline).toContain('Accounts not enabled yet')
     // With no backend there is no door in either chrome, so inline chrome
     // cannot be the thing that puts a provider button on /profile/.
     expect(inline).not.toContain('type="email"')
@@ -288,11 +288,11 @@ describe('§16.1.1 — AuthPanels passes the chrome through rather than fixing i
   it('carries both heading ids in panel chrome, and neither in inline', () => {
     current.view = { status: 'signedOut' }
     const panel = renderToStaticMarkup(<AuthPanels />)
-    expect(panel).toContain('id="hl-account-head"')
-    expect(panel).toContain('id="hl-orgs-head"')
+    expect(panel).toContain('id="bz-account-head"')
+    expect(panel).toContain('id="bz-orgs-head"')
 
     const inline = renderToStaticMarkup(<AuthPanels chrome="inline" />)
-    expect(inline).not.toContain('hl-account-head')
-    expect(inline).not.toContain('hl-orgs-head')
+    expect(inline).not.toContain('bz-account-head')
+    expect(inline).not.toContain('bz-orgs-head')
   })
 })

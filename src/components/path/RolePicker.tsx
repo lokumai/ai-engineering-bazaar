@@ -166,7 +166,7 @@ export function RolePicker({
                   style={{ accentColor: 'var(--color-primary)' }}
                   className="h-[14px] w-[14px] shrink-0"
                 />
-                <span className="hl-mark text-on-surface">{option.label}</span>
+                <span className="text-mark text-on-surface">{option.label}</span>
               </label>
 
               <p
@@ -179,7 +179,7 @@ export function RolePicker({
               {/* §13.4.2 — the path's DRAWN step count, which is also its
                   denominator. A draft step is on the path and out of the count,
                   because a sheet nobody has written cannot be signed off. */}
-              <p className="hl-mark m-0 mt-1 text-on-surface-faint">
+              <p className="text-mark m-0 mt-1 text-on-surface-faint">
                 {plural(drawn, 'module')} ready
               </p>
             </div>
@@ -195,7 +195,7 @@ export function RolePicker({
       <p
         id={statusId}
         role="status"
-        className="hl-mark mt-2 mb-0 min-h-[1.5em] text-on-surface-muted"
+        className="text-mark mt-2 mb-0 min-h-[1.5em] text-on-surface-muted"
         data-hydrated={hydrated ? 'true' : 'false'}
       >
         {chosen && label !== null && standing !== null && (

@@ -46,7 +46,7 @@ export default function NotFound() {
           `Index`, pointed at `/`, one line under a sentence promising the index,
           it opened the home screen. Both halves come from `route-labels` now, so
           the label cannot name one page while the href opens another. */}
-      <p className="hl-mark">
+      <p className="text-mark">
         <Link className="bz-link" href={INDEX_ROUTE}>
           {INDEX_TITLE}
         </Link>

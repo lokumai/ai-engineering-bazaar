@@ -71,7 +71,7 @@ const CALLBACK_ROUTE = '/auth/callback/'
  * flag-off build is a plan rather than a fault — which is the word `YET` doing
  * work, not decoration.
  */
-export const ACCOUNTS_NOT_ENABLED = 'ACCOUNTS NOT ENABLED YET'
+export const ACCOUNTS_NOT_ENABLED = 'Accounts not enabled yet'
 
 /**
  * §12.13, §14.1 — what a build with no accounts says, in the words of the state
@@ -133,7 +133,7 @@ type Phase =
  * §16.1.1 — where an auth panel is being drawn, and the only prop that answers
  * it.
  *
- * `panel` is the shape shipped since §14.7: an `hl-panel` section with its own
+ * `panel` is the shape shipped since §14.7: an `bz-panel` section with its own
  * `h2` and the head's mono readout. `inline` is what §16's drafter block needs —
  * that block already carries the heading of the half these panels sit in, so a
  * second heading inside it would nest an `h2` under an `h3` and read as a panel
@@ -164,15 +164,15 @@ export type AuthChrome = 'panel' | 'inline'
  * drawn inside another block.
  *
  * **Why `inline` emits no id at all.**
- * `hl-account-head` and `hl-orgs-head` are addressed by roughly twenty
+ * `bz-account-head` and `bz-orgs-head` are addressed by roughly twenty
  * assertions and by one in-page anchor, so they have to keep resolving. They
  * cannot keep resolving from here: in §16's layout the organisation panel's
- * body sits inside a register row whose own `h2` carries `hl-orgs-head`, and a
+ * body sits inside a register row whose own `h2` carries `bz-orgs-head`, and a
  * second element with that id makes the anchor ambiguous rather than
  * redundant — the browser jumps to whichever comes first in the document. So in
  * `inline` chrome the CALLER owns the heading and its id: the register row
- * carries `hl-orgs-head`, and the drafter block's half-B `h3` carries
- * `hl-account-head`. Every id keeps exactly one author.
+ * carries `bz-orgs-head`, and the drafter block's half-B `h3` carries
+ * `bz-account-head`. Every id keeps exactly one author.
  *
  * The head's mono readout is passed separately from the heading because it is a
  * reading, not chrome (§16.4.1): it survives in both shapes, where the `h2`
@@ -202,9 +202,9 @@ export function AuthShell({
   }
 
   return (
-    <section className="hl-panel" aria-labelledby={headingId}>
-      <div className="hl-panel-head">
-        <h2 id={headingId} className="hl-panel-title">
+    <section className="bz-panel" aria-labelledby={headingId}>
+      <div className="bz-panel-head">
+        <h2 id={headingId} className="bz-panel-title">
           {heading}
         </h2>
         {mark}
@@ -261,8 +261,8 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
   if (view.status === 'disabled') {
     const copy = UNAVAILABLE_COPY[view.why]
     return (
-      <AuthShell chrome={chrome} headingId="hl-signin-state" heading="Accounts">
-        <p className="hl-mark m-0 text-on-surface-muted">{copy.readout}</p>
+      <AuthShell chrome={chrome} headingId="bz-signin-state" heading="Accounts">
+        <p className="text-mark m-0 text-on-surface-muted">{copy.readout}</p>
         <div className="bz-note">
           <p>{copy.note}</p>
         </div>
@@ -282,8 +282,8 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
    */
   if (view.status === 'unknown') {
     return (
-      <AuthShell chrome={chrome} headingId="hl-signin-state" heading="Accounts">
-        <p className="hl-mark m-0 text-on-surface-muted" aria-live="polite">
+      <AuthShell chrome={chrome} headingId="bz-signin-state" heading="Accounts">
+        <p className="text-mark m-0 text-on-surface-muted" aria-live="polite">
           CHECKING WHETHER THIS BROWSER IS SIGNED IN
         </p>
       </AuthShell>
@@ -317,10 +317,10 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
     return (
       <AuthShell
         chrome={chrome}
-        headingId="hl-signin-state"
+        headingId="bz-signin-state"
         heading="Already signed in"
         mark={
-          <p className="hl-mark m-0 text-on-surface-faint">
+          <p className="text-mark m-0 text-on-surface-faint">
             {view.user.githubLogin ?? view.user.email ?? 'SESSION ACTIVE'}
           </p>
         }
@@ -334,7 +334,7 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
 
         {needsMailbox && (
           <div className="mb-4" data-hl-needs-mailbox="1">
-            <p className="hl-mark mt-0 mb-2 text-on-surface">NO EMAIL SIGN-IN ON THIS ACCOUNT</p>
+            <p className="text-mark mt-0 mb-2 text-on-surface">NO EMAIL SIGN-IN ON THIS ACCOUNT</p>
             <p className="mt-0 mb-3 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
               Both routes into an organisation ask for a sign-in by email that
               the mail service completed, and this session carries none. Nothing
@@ -417,9 +417,9 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
   return (
     <AuthShell
       chrome={chrome}
-      headingId="hl-signin-state"
+      headingId="bz-signin-state"
       heading="Sign in"
-      mark={<p className="hl-mark m-0 text-on-surface-faint">OPTIONAL · THE SITE WORKS WITHOUT IT</p>}
+      mark={<p className="text-mark m-0 text-on-surface-faint">OPTIONAL · THE SITE WORKS WITHOUT IT</p>}
     >
       {/* §14.8.2's argument, in one line, above the button it argues for — and
           only when that button is there. The sentence is about what a GitHub
@@ -432,7 +432,7 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
       )}
 
       {available === null ? (
-        <p className="hl-mark m-0 text-on-surface-faint">CHECKING WHICH METHODS THIS SITE OFFERS</p>
+        <p className="text-mark m-0 text-on-surface-faint">CHECKING WHICH METHODS THIS SITE OFFERS</p>
       ) : (
         <div className="flex flex-wrap gap-2">
           {available.github && (
@@ -460,7 +460,7 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
             </button>
           )}
           {!available.github && !available.google && (
-            <p className="hl-mark m-0 text-on-surface-faint">
+            <p className="text-mark m-0 text-on-surface-faint">
               NO PROVIDER SIGN-IN ON THIS DEPLOYMENT · USE THE EMAIL LINK BELOW
             </p>
           )}
@@ -478,7 +478,7 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
             autoComplete="email"
             inputMode="email"
             value={email}
-            aria-describedby="hl-signin-email-hint"
+            aria-describedby="bz-signin-email-hint"
             aria-invalid={emailInvalid ? 'true' : 'false'}
             onChange={(event) => {
               setEmail(event.target.value)
@@ -486,7 +486,7 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
             }}
           />
         </label>
-        <span className="bz-field-hint block" id="hl-signin-email-hint">
+        <span className="bz-field-hint block" id="bz-signin-email-hint">
           A single-use link is emailed to this address. It expires, and it only
           works in the browser you open it in.
         </span>
@@ -520,7 +520,7 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
           </p>
           {/* The library's own words, quoted and labelled as such rather than
               paraphrased into advice this panel cannot give. */}
-          <p className="hl-mark text-on-surface-muted">REPORTED · {phase.message}</p>
+          <p className="text-mark text-on-surface-muted">REPORTED · {phase.message}</p>
         </div>
       )}
 

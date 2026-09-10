@@ -48,13 +48,13 @@ export function Stamp({
 
   return (
     <div
-      className={`hl-stamp ${size === 'set' ? 'hl-stamp-set' : 'hl-stamp-slot'}`}
+      className={`bz-stamp ${size === 'set' ? 'bz-stamp-set' : 'bz-stamp-slot'}`}
       data-earned={met ? 'true' : 'false'}
       data-attainable={stamp.attainable ? 'true' : 'false'}
     >
-      <span className="hl-stamp-name">{stamp.label}</span>
+      <span className="bz-stamp-name">{stamp.label}</span>
       {met ? (
-        <span className="hl-stamp-cond">
+        <span className="bz-stamp-cond">
           {stamp.earned === null
             ? 'APPROVED · DATE NOT ON RECORD'
             : `APPROVED ${stamp.earned.slice(0, 10)}`}
@@ -62,13 +62,13 @@ export function Stamp({
       ) : (
         <>
           {/* The rule, in five characters: threshold and live count, always. */}
-          <span className="hl-stamp-cond">
+          <span className="bz-stamp-cond">
             {stamp.current} OF {stamp.threshold}
           </span>
           {/* §5.9 — unattainable because the curriculum is unwritten, not
               because the reader is behind. Honest, and never hidden. */}
           {!stamp.attainable && stamp.reason !== null && (
-            <span className="hl-stamp-cond">LOCKED · {stamp.reason}</span>
+            <span className="bz-stamp-cond">LOCKED · {stamp.reason}</span>
           )}
         </>
       )}

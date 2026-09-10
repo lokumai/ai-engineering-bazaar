@@ -200,15 +200,15 @@ describe('the generated module selectors are the committed ones', () => {
  * being true. A silent exemption hides the next one.
  */
 describe('the generated selectors name classes that markup actually carries', () => {
-  /** Classes the generator names that no component emits yet, and why. */
-  const NOT_YET_CARRIED: Readonly<Record<string, string>> = {
-    'bz-step':
-      'M16 stage 8. `path/PathSteps.tsx` still emits `hl-step`; the nine-role path is ' +
-      'the surface that draws it.',
-    'bz-step-tick':
-      'M16 stage 8, with `bz-step`. Its base `display` has to be authored at the same ' +
-      'time or every drawn step reads as completed.',
-  }
+  /**
+   * Classes the generator names that no component emits yet, and why.
+   *
+   * EMPTY, as of M16 stage 8, and that is the point of the two cases below
+   * rather than a reason to delete the registry: all five groups are live now,
+   * and the next curriculum change that adds a group gets a reason written
+   * down instead of a selector that quietly draws nothing.
+   */
+  const NOT_YET_CARRIED: Readonly<Record<string, string>> = {}
 
   const generated = readFileSync(MODULES_CSS, 'utf8')
   const named = [...new Set([...generated.matchAll(/\.(bz-[a-z0-9-]+)/g)].map((m) => m[1]))].sort()

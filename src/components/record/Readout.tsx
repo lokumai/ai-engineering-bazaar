@@ -47,7 +47,7 @@ import { hoursMinutes } from '@/lib/text'
  * first — but in ink: for a high-commitment goal, remaining-actions feedback
  * raises aspiration more than present position does, and the study that tested
  * this exact readout found that stating the position reached raised it least.
- * So the undrawn count takes `.hl-readout-togo` (ink, weight 500) and the Roman
+ * So the undrawn count takes `.bz-readout-togo` (ink, weight 500) and the Roman
  * numeral stays quiet.
  *
  * **No percentage, anywhere, ever** (§11.35, §12.5.7). Counting in sheets is
@@ -120,7 +120,7 @@ function Cell({
   return (
     <span>
       {label}{' '}
-      <span className={togo ? 'hl-readout-value hl-readout-togo' : 'hl-readout-value'}>
+      <span className={togo ? 'bz-readout-value bz-readout-togo' : 'bz-readout-value'}>
         {value}
       </span>
     </span>
@@ -209,8 +209,8 @@ export function Readout({ variant, facts, traces = null, className }: ReadoutPro
   if (sync === 'failed') {
     cells.push(
       <span key="sync" role="status" className="whitespace-nowrap">
-        <span className="hl-readout-value text-on-surface">Not synced</span>
-        <span aria-hidden="true" className="hl-readout-sep">{' · '}</span>
+        <span className="bz-readout-value text-on-surface">Not synced</span>
+        <span aria-hidden="true" className="bz-readout-sep">{' · '}</span>
         <Link href="/profile/" className="bz-link bz-no-print">
           Export your record
         </Link>
@@ -221,7 +221,7 @@ export function Readout({ variant, facts, traces = null, className }: ReadoutPro
   return (
     <div
       className={[
-        'hl-readout',
+        'bz-readout',
         // §5.2 — the compact form sits inside footer row 1, which already has
         // the footer's own top rule above it. §7.1's two painted rules belong to
         // the full strip on the dashboard; a second pair inside a 40px row is
@@ -242,7 +242,7 @@ export function Readout({ variant, facts, traces = null, className }: ReadoutPro
         index === 0
           ? [cell]
           : [
-              <span key={`sep-${index}`} aria-hidden="true" className="hl-readout-sep">
+              <span key={`sep-${index}`} aria-hidden="true" className="bz-readout-sep">
                 ·
               </span>,
               cell,

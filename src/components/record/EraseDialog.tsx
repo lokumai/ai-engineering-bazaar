@@ -138,20 +138,20 @@ export function EraseDialog({
       <Dialog.Trigger className="bz-btn bz-btn-danger">{ERASE_COPY.trigger}</Dialog.Trigger>
 
       <Dialog.Portal>
-        <Dialog.Overlay className="hl-dialog-backdrop" />
+        <Dialog.Overlay className="bz-dialog-backdrop" />
         {/* `aria-describedby={undefined}`: Radix otherwise warns about a
             `Description` this dialog has no single honest sentence for — the
             enumeration below is a list, and the list IS the description. */}
-        <Dialog.Content className="hl-dialog" aria-describedby={undefined}>
-          <div className="hl-dialog-head hl-mark">{ERASE_COPY.head}</div>
+        <Dialog.Content className="bz-dialog" aria-describedby={undefined}>
+          <div className="bz-dialog-head text-mark">{ERASE_COPY.head}</div>
 
-          <div className="hl-dialog-body">
-            <Dialog.Title className="hl-dialog-title">{ERASE_COPY.title}</Dialog.Title>
+          <div className="bz-dialog-body">
+            <Dialog.Title className="bz-dialog-title">{ERASE_COPY.title}</Dialog.Title>
 
             {lines.length === 0 ? (
-              <p className="hl-dialog-tally">{NOTHING_RECORDED}</p>
+              <p className="bz-dialog-tally">{NOTHING_RECORDED}</p>
             ) : (
-              <ul className="hl-dialog-tally" aria-label={eraseTallySentence(counts)}>
+              <ul className="bz-dialog-tally" aria-label={eraseTallySentence(counts)}>
                 {lines.map((line) => (
                   <li key={line}>{line}</li>
                 ))}
@@ -202,7 +202,7 @@ export function EraseDialog({
                 {ERASE_COPY.export}
               </button>
               {exportedAt !== null && (
-                <span className="hl-mark self-center text-on-surface-muted" role="status">
+                <span className="text-mark self-center text-on-surface-muted" role="status">
                   {`EXPORTED ${exportedAt.slice(0, 10)}`}
                 </span>
               )}

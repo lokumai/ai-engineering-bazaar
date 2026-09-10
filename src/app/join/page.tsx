@@ -79,17 +79,17 @@ export default function JoinPage() {
 
       <hr className="bz-rule" aria-hidden="true" />
 
-      <section className="hl-panel" aria-labelledby="routes">
-        <div className="hl-panel-head">
-          <h2 id="routes" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="routes">
+        <div className="bz-panel-head">
+          <h2 id="routes" className="bz-panel-title">
             The two routes in
           </h2>
-          <p className="hl-mark m-0 text-on-surface-faint">Each with its own limit</p>
+          <p className="text-mark m-0 text-on-surface-faint">Each with its own limit</p>
         </div>
 
         <ol className="m-0 grid list-none gap-3 p-0">
           <li>
-            <p className="hl-mark m-0 text-on-surface">1 · The organisation domain</p>
+            <p className="text-mark m-0 text-on-surface">1 · The organisation domain</p>
             <p className="m-0 mt-1 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
               An organisation may register the domain of its own addresses. If
               the address on your account is on that domain, the organisation
@@ -117,7 +117,7 @@ export default function JoinPage() {
             </p>
           </li>
           <li>
-            <p className="hl-mark m-0 text-on-surface">2 · An address a manager entered</p>
+            <p className="text-mark m-0 text-on-surface">2 · An address a manager entered</p>
             <p className="m-0 mt-1 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
               A manager can enter your address at their organisation. Nothing
               is sent to you and nothing happens to your record: the entry
@@ -144,7 +144,7 @@ export default function JoinPage() {
             accounted for, since a reader who has used another site's invite
             code will look for both. */}
         <div className="bz-note">
-          <p className="hl-mark m-0 text-on-surface">There is no invitation code</p>
+          <p className="text-mark m-0 text-on-surface">There is no invitation code</p>
           <p className="m-0 mt-1 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
             A code would have to be checked against a stored list, and this site
             has no server of its own to check it: authority lives entirely in
@@ -158,22 +158,22 @@ export default function JoinPage() {
         </div>
       </section>
 
-      <section className="hl-panel" aria-labelledby="offers">
-        <div className="hl-panel-head">
-          <h2 id="offers" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="offers">
+        <div className="bz-panel-head">
+          <h2 id="offers" className="bz-panel-title">
             Open to you
           </h2>
-          <p className="hl-mark m-0 text-on-surface-faint">Read after the page loads</p>
+          <p className="text-mark m-0 text-on-surface-faint">Read after the page loads</p>
         </div>
         <JoinPanel />
       </section>
 
-      <section className="hl-panel" aria-labelledby="leaving">
-        <div className="hl-panel-head">
-          <h2 id="leaving" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="leaving">
+        <div className="bz-panel-head">
+          <h2 id="leaving" className="bz-panel-title">
             Leaving, and erasing
           </h2>
-          <p className="hl-mark m-0 text-on-surface-faint">Stated here as well</p>
+          <p className="text-mark m-0 text-on-surface-faint">Stated here as well</p>
         </div>
         <p className="m-0 max-w-[68ch] text-meta leading-normal text-on-surface">
           You can leave an organisation, and leaving stops its managers reading

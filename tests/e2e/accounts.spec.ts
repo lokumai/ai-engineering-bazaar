@@ -88,7 +88,7 @@ test.describe('§14 accounts, organisations and the record that outlives a brows
     const enabled = settings.external as Record<string, boolean>
 
     await page.goto('/sign-in/')
-    await expect(page.getByText('ACCOUNTS NOT ENABLED YET')).toHaveCount(0)
+    await expect(page.getByText('Accounts not enabled yet')).toHaveCount(0)
 
     // The probe is in flight on first paint; the panel says so rather than
     // flashing buttons it is about to remove.
@@ -132,7 +132,7 @@ test.describe('§14 accounts, organisations and the record that outlives a brows
     // match is ambiguous. The row whose job is to report the session is the one
     // this assertion means.
     const sessionEmail = page.locator(
-      'section[aria-labelledby="hl-account-head"] dd',
+      'section[aria-labelledby="bz-account-head"] dd',
       { hasText: fixture.emails.learner },
     )
     await expect(sessionEmail, 'the session readout names the signed-in address').toHaveCount(1)
@@ -171,7 +171,7 @@ test.describe('§14 accounts, organisations and the record that outlives a brows
 
     // §14.7.3 — and the footer stops claiming nothing once the push lands.
     await expect
-      .poll(() => page.locator('footer .hl-readout').getAttribute('data-sync'), {
+      .poll(() => page.locator('footer .bz-readout').getAttribute('data-sync'), {
         timeout: 20_000,
         message: 'the readout never reached a settled sync state',
       })
@@ -582,7 +582,7 @@ test.describe('§14 accounts, organisations and the record that outlives a brows
     await signInByLink(page, fixture, fixture.emails.colleague, baseURL!)
     await page.goto('/')
 
-    // `[data-hl-receipt]` and not `.hl-receipt`: the class belongs to the
+    // `[data-hl-receipt]` and not `.bz-receipt`: the class belongs to the
     // routine one-line state only, so a locator built on it is blind to the
     // action-needed panel — the state this gate most needs to see, because that
     // is the one carrying an act the reader has to take.

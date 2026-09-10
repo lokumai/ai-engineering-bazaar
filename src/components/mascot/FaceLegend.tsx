@@ -113,12 +113,12 @@ const TABLE = 'w-full border-collapse text-left font-mono text-mark tabular-nums
 export function FaceLegend({ rows, className }: FaceLegendProps) {
   return (
     <table className={className ? `${TABLE} ${className}` : TABLE}>
-      <caption className="hl-mark mb-2 text-left text-on-surface-muted">
+      <caption className="text-mark mb-2 text-left text-on-surface-muted">
         The six faces of the mark, the level each one reports, and the
         modules completed in it
       </caption>
       <thead>
-        <tr className="border-b border-line-strong text-on-surface-muted uppercase">
+        <tr className="border-b border-line-strong text-on-surface-muted">
           <th scope="col" className="py-1 pr-3 font-medium">Flavour</th>
           <th scope="col" className="py-1 pr-3 font-medium">Level</th>
           <th scope="col" className="py-1 font-medium">Completed</th>

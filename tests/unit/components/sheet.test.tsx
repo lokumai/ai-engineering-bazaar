@@ -6,7 +6,6 @@ import { PrevNext } from '@/components/sheet/PrevNext'
 import { ScheduleOfParts } from '@/components/sheet/ScheduleOfParts'
 import { StatusBand } from '@/components/sheet/StatusBand'
 import { TableOfContents } from '@/components/sheet/TableOfContents'
-import { TitleBlock, TitleStrip } from '@/components/sheet/TitleBlock'
 import type { TocEntry } from '@/lib/content/render'
 
 const TOC: TocEntry[] = [
@@ -49,45 +48,6 @@ describe('TableOfContents — the section spine (§5.6)', () => {
 
   it('never claims completion — no accent, no visited state', () => {
     expect(markup).not.toMatch(/accent|visited|complete/i)
-  })
-})
-
-describe('TitleBlock — variant A (§5.5)', () => {
-  const rows = [
-    { label: 'DRAWING', value: '13' },
-    { label: 'REVISION', value: 'b7225f8', preserveCase: true },
-  ]
-  const markup = renderToStaticMarkup(<TitleBlock rows={rows} />)
-
-  it('is the page\'s complementary landmark', () => {
-    expect(markup).toContain('aria-label="Module info"')
-  })
-
-  it('carries its header strip', () => {
-    expect(markup).toContain('Module info</div>')
-  })
-
-  it('prints every row as a label/value pair', () => {
-    expect(markup).toContain('<dt>DRAWING</dt>')
-    expect(markup).toContain('13</dd>')
-  })
-
-  it('leaves a git short hash in its own case', () => {
-    expect(markup).toContain('<span class="normal-case">b7225f8</span>')
-  })
-
-  it('shows no approval stamp slot, because there is no reader state yet', () => {
-    expect(markup).not.toMatch(/stamp|approved|READ|QUIZ/i)
-  })
-})
-
-describe('TitleStrip — variant B (§5.5)', () => {
-  it('takes the class the module uses to hide it once the rail returns', () => {
-    const markup = renderToStaticMarkup(
-      <TitleStrip rows={[{ label: 'LANG', value: 'EN · TR' }]} className="xl:hidden" />,
-    )
-    expect(markup).toContain('class="xl:hidden"')
-    expect(markup).toContain('EN · TR</dd>')
   })
 })
 

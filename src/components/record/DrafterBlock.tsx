@@ -46,18 +46,18 @@ import { offeredMark } from './RolePanel'
  * at two different ranges: the alias is true of this browser, the account is
  * true across browsers. A hairline between them would read as two unrelated
  * panels stacked; §2.2's 1.5px structural weight says two halves of one box.
- * That weight is painted by `.hl-drafter-half + .hl-drafter-half`, because
+ * That weight is painted by `.bz-drafter-half + .bz-drafter-half`, because
  * Chrome floors `border-width` to whole pixels and a 1.5px border would draw a
  * hairline while claiming to be a rule.
  *
  * **Each half is a `<section aria-labelledby>` rather than a `<div>`**, which
- * costs nothing and keeps two ids resolving: `identity`, and `hl-account-head`.
+ * costs nothing and keeps two ids resolving: `identity`, and `bz-account-head`.
  * Both moved from an `h2` to an `h3` here, because §16.7 gives the block the
  * `h2` and each half an `h3`; what has to survive a heading level is the
- * fragment, and both `#identity` and `#hl-account-head` still land on a heading
+ * fragment, and both `#identity` and `#bz-account-head` still land on a heading
  * that names the same thing. The second one is the reason this matters — `AuthShell` in `inline` chrome deliberately emits no
  * heading and no id (its own header explains why: two elements with
- * `hl-account-head` would make the anchor ambiguous rather than redundant), so
+ * `bz-account-head` would make the anchor ambiguous rather than redundant), so
  * the caller owns that id, and the caller is this file.
  *
  * **Nothing here branches on the session.** §16.1.1's rejected alternative was
@@ -115,22 +115,22 @@ export function DrafterBlock() {
 
   return (
     <section aria-labelledby={DRAFTER_HEADING_ID}>
-      <div className="hl-panel-head">
-        <h2 id={DRAFTER_HEADING_ID} className="hl-panel-title">
+      <div className="bz-panel-head">
+        <h2 id={DRAFTER_HEADING_ID} className="bz-panel-title">
           The account
         </h2>
-        <p className="hl-mark m-0 text-on-surface-faint">This browser, and across browsers</p>
+        <p className="text-mark m-0 text-on-surface-faint">This browser, and across browsers</p>
       </div>
 
-      <div className="hl-drafter">
-        <div className="hl-drafter-grid">
+      <div className="bz-drafter">
+        <div className="bz-drafter-grid">
           {/* §16.1 — the drawing, with the mark and the seed under it as two
               separate lines. `DrafterMark` records why they are two. */}
-          <div className="hl-drafter-mark">
+          <div className="bz-drafter-mark">
             <DrafterMark />
           </div>
 
-          <div className="hl-drafter-body">
+          <div className="bz-drafter-body">
             {/* ---- HALF A · IN THIS BROWSER ------------------------------- */}
             {/*
               §16.1 — everything the local record holds about the reader, in one
@@ -138,14 +138,14 @@ export function DrafterBlock() {
 
               `IdentityPanel` is rendered whole and unchanged. Two e2e specs
               locate its field by its accessible name (`Name or initials`) and
-              read a computed `text-transform` off `.hl-identity-initials`, and
+              read a computed `text-transform` off `.bz-identity-initials`, and
               a computed style is meaningless inside a collapsed subtree — which
               is one of the reasons this block is the part of the page that does
               not fold.
             */}
-            <section className="hl-drafter-half" aria-labelledby="identity">
-              <div className="hl-drafter-halfhead">
-                <h3 id="identity" className="hl-panel-title">
+            <section className="bz-drafter-half" aria-labelledby="identity">
+              <div className="bz-drafter-halfhead">
+                <h3 id="identity" className="bz-panel-title">
                   In this browser
                 </h3>
                 {/* Not "Local only": `IdentityPanel` prints `NAME_SCOPE` two
@@ -162,24 +162,24 @@ export function DrafterBlock() {
                     state. `/legend/`'s storage disclosure sits over the same
                     `RECORD_SCOPE` paragraph and carries this same spelling, so
                     one status is worded one way site-wide. */}
-                <p className="hl-mark m-0 text-on-surface-faint">This browser’s copy</p>
+                <p className="text-mark m-0 text-on-surface-faint">This browser’s copy</p>
               </div>
 
               <IdentityPanel />
 
               {/* §16.2.2 — the one mark picker on the site, at its default
-                  prefix, so `name="hl-mark"` and `#hl-mark-legend` keep
+                  prefix, so `name="text-mark"` and `#hl-mark-legend` keep
                   resolving exactly as they did. */}
               <MarkPicker offered={offered} />
             </section>
 
             {/* ---- HALF B · ACROSS BROWSERS ------------------------------- */}
-            <section className="hl-drafter-half" aria-labelledby="hl-account-head">
-              <div className="hl-drafter-halfhead">
-                <h3 id="hl-account-head" className="hl-panel-title">
+            <section className="bz-drafter-half" aria-labelledby="bz-account-head">
+              <div className="bz-drafter-halfhead">
+                <h3 id="bz-account-head" className="bz-panel-title">
                   Across browsers
                 </h3>
-                <p className="hl-mark m-0 text-on-surface-faint">An account keeps a second copy</p>
+                <p className="text-mark m-0 text-on-surface-faint">An account keeps a second copy</p>
               </div>
 
               <SessionProvider>

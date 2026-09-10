@@ -50,7 +50,7 @@ export default function SpecimenPage() {
 
   return (
     <PageShell sheet="MODULE 00 · SPECIMEN">
-      <p className="hl-eyebrow hl-mark">MODULE 00 — LEGEND &amp; SPECIMEN</p>
+      <p className="hl-eyebrow text-mark">MODULE 00 — LEGEND &amp; SPECIMEN</p>
 
       <h1 className="bz-display">Specimen record</h1>
 
@@ -58,7 +58,7 @@ export default function SpecimenPage() {
           in a hairline box rather than an alarm: the fact is unmissable without
           spending the caution colour, which §12.15 needs for the one
           destructive action on the site. */}
-      <p className="hl-mark m-0 mb-4 inline-block border border-line-strong bg-surface-raised px-3 py-2 text-meta text-on-surface">
+      <p className="text-mark m-0 mb-4 inline-block border border-line-strong bg-surface-raised px-3 py-2 text-meta text-on-surface">
         {SPECIMEN_STAMP}
       </p>
 
@@ -72,15 +72,15 @@ export default function SpecimenPage() {
 
       <hr className="bz-rule" aria-hidden="true" />
 
-      <section className="hl-panel" aria-labelledby="hl-specimen-facts">
-        <div className="hl-panel-head">
-          <h2 id="hl-specimen-facts" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-specimen-facts">
+        <div className="bz-panel-head">
+          <h2 id="hl-specimen-facts" className="bz-panel-title">
             What is in this specimen
           </h2>
-          <p className="hl-mark m-0 text-on-surface-faint">Sample data</p>
+          <p className="text-mark m-0 text-on-surface-faint">Sample data</p>
         </div>
 
-        <dl className="hl-defs">
+        <dl className="bz-defs">
           {/* The name is the field the document's header prints first, which is
               where the stamp rides so that it cannot be separated from the file
               (§12.12.2). Printed here as typed, in a `<bdi>` for the same
@@ -111,11 +111,11 @@ export default function SpecimenPage() {
           </dd>
         </dl>
 
-        <p className="hl-mark mt-4 mb-1 text-on-surface-muted">Content digest</p>
-        {/* `.hl-mark` without its uppercasing: a hex digest a reader compares
+        <p className="text-mark mt-4 mb-1 text-on-surface-muted">Content digest</p>
+        {/* `.text-mark` without its uppercasing: a hex digest a reader compares
             against the one inside the file has to be printed in the case it is
             written in. */}
-        <p className="hl-mark m-0 break-all normal-case text-on-surface">{specimen.digest}</p>
+        <p className="text-mark m-0 break-all normal-case text-on-surface">{specimen.digest}</p>
         <p className="mt-2 mb-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           SHA-256 over the canonicalised sample record, computed at build time.
           It shows that the file has not changed since it was generated. It shows
@@ -124,12 +124,12 @@ export default function SpecimenPage() {
         </p>
       </section>
 
-      <section className="hl-panel" aria-labelledby="hl-specimen-blocks">
-        <div className="hl-panel-head">
-          <h2 id="hl-specimen-blocks" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-specimen-blocks">
+        <div className="bz-panel-head">
+          <h2 id="hl-specimen-blocks" className="bz-panel-title">
             The five blocks of the file
           </h2>
-          <p className="hl-mark m-0 text-on-surface-faint">In this order</p>
+          <p className="text-mark m-0 text-on-surface-faint">In this order</p>
         </div>
 
         {/* §12.12.2 — the order is the argument. A certificate puts its limits
@@ -137,26 +137,26 @@ export default function SpecimenPage() {
             they qualify, and ends on the audit path rather than on a flourish. */}
         <ol className="m-0 max-w-[var(--layout-measure)] list-none p-0 text-meta leading-normal text-on-surface-muted">
           <li className="mb-2">
-            <span className="hl-mark text-on-surface">01 Header</span> — the title, the
+            <span className="text-mark text-on-surface">01 Header</span> — the title, the
             account&rsquo;s name as typed, their mark, the generation timestamp
             and the content digest
           </li>
           <li className="mb-2">
-            <span className="hl-mark text-on-surface">02 Status and limits</span> —
+            <span className="text-mark text-on-surface">02 Status and limits</span> —
             seven statements about what the document is not, above the fold
           </li>
           <li className="mb-2">
-            <span className="hl-mark text-on-surface">03 Module ledger</span> — all{' '}
+            <span className="text-mark text-on-surface">03 Module ledger</span> — all{' '}
             {specimen.of} modules: number, module, level, state, date completed,
             the revision it was completed against, and the Quick Check state
           </li>
           <li className="mb-2">
-            <span className="hl-mark text-on-surface">04 Evidence</span> — one
+            <span className="text-mark text-on-surface">04 Evidence</span> — one
             entry per repository, with the reader&rsquo;s note, the commit hash
             as supplied, and the module it answers
           </li>
           <li className="mb-2">
-            <span className="hl-mark text-on-surface">05 How to check this</span> — five
+            <span className="text-mark text-on-surface">05 How to check this</span> — five
             instructions addressed to a reviewer, and the line that the
             repositories are the part worth reading
           </li>
@@ -171,12 +171,12 @@ export default function SpecimenPage() {
         </p>
       </section>
 
-      <section className="hl-panel" aria-labelledby="hl-specimen-open">
-        <div className="hl-panel-head">
-          <h2 id="hl-specimen-open" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-specimen-open">
+        <div className="bz-panel-head">
+          <h2 id="hl-specimen-open" className="bz-panel-title">
             Open it from disk
           </h2>
-          <p className="hl-mark m-0 text-on-surface-faint">One file, no network</p>
+          <p className="text-mark m-0 text-on-surface-faint">One file, no network</p>
         </div>
 
         <p className="mt-0 mb-4 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">

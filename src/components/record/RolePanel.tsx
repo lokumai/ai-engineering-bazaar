@@ -54,7 +54,7 @@ import { useRecord } from '@/lib/record/store'
  */
 
 /** §13.3 — the absence is the information. Never a placeholder occupation. */
-const NO_ROLE = 'NO ROLE ON RECORD'
+const NO_ROLE = 'No role on record'
 
 /** The instrument convention for "no reading", and it is true. */
 const NO_READING = '--'
@@ -105,9 +105,19 @@ export function RolePanel({ drawnSlugs }: RolePanelProps) {
  * It offers the picker and draws no path, because there is no path to draw.
  */
 function RoleEmpty({ drawnSlugs }: { drawnSlugs: readonly string[] }) {
+  /*
+    `bz-path-empty` is what lets CHANNEL A settle this in frame one. React
+    renders this branch whenever the record it can see has no role, and the
+    record it can see before the store answers is the frozen empty one — so a
+    reader who HAS chosen a role would meet "no role on record" for a frame.
+    The negation chain in `progress.css` hides it unless `<html>` carries no
+    `hl-role-<id>` at all, which the boot script decided before first paint;
+    then the hydrated render replaces it with the standing. Two channels, one
+    answer, and neither has to wait for the other.
+  */
   return (
-    <>
-      <p className="hl-mark m-0 text-on-surface-muted">{NO_ROLE}</p>
+    <div className="bz-path-empty">
+      <p className="text-mark m-0 text-on-surface-muted">{NO_ROLE}</p>
 
       <p className="m-0 text-meta leading-normal text-on-surface-muted">
         A role is never worked out from your name, from the modules you have
@@ -117,7 +127,7 @@ function RoleEmpty({ drawnSlugs }: { drawnSlugs: readonly string[] }) {
       </p>
 
       <RolePicker drawnSlugs={drawnSlugs} />
-    </>
+    </div>
   )
 }
 
@@ -170,7 +180,7 @@ function RoleStanding({
           count `PathStanding`'s denominator deliberately leaves out (§13.4.2),
           and leaving it out silently is what would make the denominator look
           like the length of the list. */}
-      <dl className="hl-defs">
+      <dl className="bz-defs">
         <dt>Role</dt>
         <dd>{role.label}</dd>
 
@@ -208,7 +218,7 @@ function RoleStanding({
       {/* §13.3 — no dialog, and the summary says why there is none. A reader
           who has to be warned about a control will not use it. */}
       <details>
-        <summary className="cursor-pointer font-mono text-mark uppercase tracking-[0.06em] text-on-surface-muted">
+        <summary className="bz-btn bz-btn-quiet">
           Another role
         </summary>
 

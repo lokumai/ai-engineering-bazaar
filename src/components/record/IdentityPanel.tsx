@@ -39,7 +39,7 @@ import { DrafterStamp } from './DrafterStamp'
  * `offeredMark` resolves against the role, which this panel does not read. Two
  * call sites would have put two `data-hl-mark` groups and two `#hl-mark-legend`
  * ids on `/profile/`, which is §11.38's breach and an ambiguous anchor. The
- * field, its `SAVE NAME` button and `.hl-identity-initials` all stay here,
+ * field, its `SAVE NAME` button and `.bz-identity-initials` all stay here,
  * whole and unreworded: two e2e specs locate them by accessible name and read a
  * computed style off the initials.
  *
@@ -217,12 +217,12 @@ function IdentityFields() {
           // As typed, not uppercased: CSS `text-transform` cases off the
           // element's `lang`, and `ilker` under `lang="en"` uppercases to a
           // dotless I where a Turkish reader expects İ (§12.3.4).
-          <span className="hl-identity-initials normal-case">{initials}</span>
+          <span className="bz-identity-initials normal-case">{initials}</span>
         )}
         {stored === null || stored.trim() === '' ? (
-          <span className="hl-mark text-on-surface-muted">{NO_NAME}</span>
+          <span className="text-mark text-on-surface-muted">{NO_NAME}</span>
         ) : (
-          <bdi dir="auto" className="hl-identity-name">
+          <bdi dir="auto" className="bz-identity-name">
             {stored}
           </bdi>
         )}
@@ -232,7 +232,7 @@ function IdentityFields() {
           the name; a sheet signed with no name on record prints `UNSIGNED`, and
           a sheet nobody has signed prints `—`. Printing it here is what makes
           the field's effect checkable before a reader signs anything. */}
-      <dl className="hl-defs">
+      <dl className="bz-defs">
         <dt>Checked by</dt>
         <dd>
           {stored === null || stored.trim() === '' ? (
@@ -278,7 +278,7 @@ function IdentityFields() {
             while it is still true of that value. One author (`scope.ts`), and
             never the address itself. */}
         {fromAddress && (
-          <p className="hl-mark m-0 text-on-surface-muted" id={SOURCE_HINT}>
+          <p className="text-mark m-0 text-on-surface-muted" id={SOURCE_HINT}>
             {NAME_FROM_ADDRESS}
           </p>
         )}
@@ -311,7 +311,7 @@ function IdentityFields() {
               of what is worth saying (§12.5.7, §12.14.1). Gated on `hydrated`
               so it can only ever follow a write this session made. */}
           {saved && hydrated && (
-            <span className="hl-mark text-on-surface-muted" role="status">
+            <span className="text-mark text-on-surface-muted" role="status">
               NAME ON RECORD
             </span>
           )}

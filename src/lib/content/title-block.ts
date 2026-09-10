@@ -47,7 +47,7 @@ export interface TitleBlockRow {
   label: string
   value: string
   /**
-   * `.hl-mark` uppercases every chrome value (§3.4). A git short hash is the
+   * `.text-mark` uppercases every chrome value (§3.4). A git short hash is the
    * one value on the sheet whose case is not ours to change, so the component
    * is told to leave it alone.
    */
@@ -124,55 +124,6 @@ export function sheetLabel(facts: SheetFacts): string {
  * 5 cite no external source at all, and `SOURCES 0` is the true statement
  * about them where `SOURCES —` claims the count was never taken.
  */
-export function titleBlockRows(facts: SheetFacts): TitleBlockRow[] {
-  const drawn = facts.status === 'ready'
-
-  return [
-    { label: 'DRAWING', value: pad2(facts.module) },
-    {
-      label: 'LEVEL',
-      value: `${pad2(facts.categoryOrder)} · ${facts.categoryTitle.toUpperCase()}`,
-    },
-    { label: 'POSITION', value: `${facts.position.index} OF ${facts.position.of}` },
-    {
-      label: 'LENGTH',
-      value: drawn ? `${thousands(facts.extent)} W · ${facts.duration} MIN` : DASH,
-    },
-    {
-      label: 'FIGURES',
-      value: drawn ? `${facts.diagrams} DIAG · ${facts.tables} TBL` : DASH,
-    },
-    { label: 'SOURCES', value: drawn ? String(facts.sources) : DASH },
-    { label: 'REQUIREMENTS', value: list(facts.requires) },
-    { label: 'UNLOCKS', value: list(facts.feeds) },
-    { label: 'REVISION', value: facts.revision?.hash ?? DASH, preserveCase: true },
-    { label: 'DATE', value: facts.revision?.date ?? DASH },
-    { label: 'LANG', value: LANG_DISPLAY[facts.lang] },
-    { label: 'MARKED BY', value: 'LKM-01' },
-  ]
-}
-
-/**
- * §12.3.1 — the thirteenth row. **The reader takes `CHECKED BY`.**
- *
- * A title block carries `DRAWN BY` and `CHECKED BY`; `DRAWN BY  LKM-01` stays
- * exactly as §8.5 requires, and the other field is the reader's. This is not a
- * metaphor stretched to fit: the reader's entire activity on this site is
- * approving sheets, and §7.4 already puts reader state in the title block as
- * the stamp grid.
- *
- * It is **not** a thirteenth entry in `titleBlockRows`, and that is a type
- * decision rather than a stylistic one. Every row there is a `string` measured
- * from the file, the frontmatter or git; who is reading is none of those and
- * cannot be known at build time (§12.2). So the row's value arrives as a
- * component — `CheckedBy`, on channel B — and what this module owns is the two
- * halves of it that ARE build-time facts: the label, and whether the row exists
- * at all.
- *
- * A draft sheet has **no such row** (§12.3.1) — absent, not `—`: a sheet nobody
- * has drawn cannot be checked, and it has no sign-off control to produce a
- * checker with either (§12.4.1).
- */
 export const CHECKED_BY_LABEL = 'CHECKED BY'
 
 /** §12.3.1 — whether this sheet carries the `CHECKED BY` row at all. */
@@ -222,13 +173,3 @@ const DRAFT_STRIP = ['LENGTH', 'FIGURES', 'SOURCES', 'REQUIREMENTS', 'LANG', 'RE
  * states the drawing number, the subsystem and the position, and four of the
  * remaining rows would be em dashes in a row.
  */
-export function titleStripRows(facts: SheetFacts): TitleBlockRow[] {
-  const rows = titleBlockRows(facts)
-  if (facts.status === 'ready') return rows
-
-  return DRAFT_STRIP.map((label) => {
-    const row = rows.find((r) => r.label === label)
-    if (!row) throw new Error(`§4.5 names a strip row the module info does not have: ${label}`)
-    return row
-  })
-}

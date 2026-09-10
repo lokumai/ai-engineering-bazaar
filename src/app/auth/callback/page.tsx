@@ -39,7 +39,7 @@ export const metadata: Metadata = {
 export default function AuthCallbackPage() {
   return (
     <PageShell sheet="COMPLETING SIGN-IN">
-      <p className="hl-eyebrow hl-mark">RETURN FROM A SIGN-IN PROVIDER</p>
+      <p className="hl-eyebrow text-mark">RETURN FROM A SIGN-IN PROVIDER</p>
 
       <h1 className="bz-display">Completing sign-in</h1>
 

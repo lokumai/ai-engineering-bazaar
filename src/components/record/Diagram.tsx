@@ -71,9 +71,9 @@ import { href } from '@/lib/url'
  * every other holds `-1`; the arithmetic is `rovingTarget` in `layout.ts`, so it
  * is node-testable and this file only moves focus and pushes a route.
  *
- * The focus ring is drawn INSIDE the SVG, via `.hl-node-focus`, because the UA
+ * The focus ring is drawn INSIDE the SVG, via `.bz-diagram-node-focus`, because the UA
  * outline on a `<g>` is unreliable. It is a `<path>` rather than a `<rect>` on
- * purpose: `.hl-node[data-state="draft"] rect` sets `stroke-dasharray: 3 2`,
+ * purpose: `.bz-diagram-node[data-state="draft"] rect` sets `stroke-dasharray: 3 2`,
  * and a dashed focus ring would fail the AAA numbers §12.10.2 asks for. At a
  * 3px offset the ring is 50 × 32 at 2px, which is 328px² of indicator against
  * the 280px² a 2px perimeter of the unfocused node would give.
@@ -299,7 +299,7 @@ export function Diagram({
             {layout.rails.map((rail) => (
               <line
                 key={rail.id}
-                className="hl-rail"
+                className="bz-diagram-rail"
                 x1={rail.x1}
                 y1={rail.y1}
                 x2={rail.x2}
@@ -309,7 +309,7 @@ export function Diagram({
             {layout.traces.map((trace) => (
               <path
                 key={trace.id}
-                className="hl-trace"
+                className="bz-trace"
                 d={trace.path}
                 data-kind={trace.kind}
                 // §5.8 — live means BOTH endpoints are signed off. A trace with
@@ -341,7 +341,7 @@ export function Diagram({
                     column and kept clear of the bus, which runs vertically
                     through this region. */}
                 <text
-                  className="hl-mark"
+                  className="text-mark"
                   x={HEADER_TEXT_X}
                   y={band.nodeY + 9}
                   textAnchor="end"
@@ -380,7 +380,7 @@ export function Diagram({
                     <g
                       key={node.slug}
                       id={nodeId(node)}
-                      className="hl-node cursor-pointer"
+                      className="bz-diagram-node cursor-pointer"
                       data-state={view.state}
                       role="graphics-symbol"
                       aria-label={nodeLabel(view)}
@@ -398,7 +398,7 @@ export function Diagram({
                       {/* §5.8 — the 2px accent left edge of an approved node. */}
                       {view.state === 'signed' && (
                         <line
-                          className="hl-node-edge"
+                          className="bz-diagram-node-edge"
                           x1={node.x}
                           y1={node.y}
                           x2={node.x}
@@ -414,7 +414,7 @@ export function Diagram({
                         {node.label}
                       </text>
                       <path
-                        className="hl-node-focus"
+                        className="bz-diagram-node-focus"
                         d={`M ${node.x - 3} ${node.y - 3} h ${NODE_WIDTH + 6} v ${NODE_HEIGHT + 6} h ${-(NODE_WIDTH + 6)} z`}
                       />
                     </g>
@@ -447,7 +447,7 @@ function tickOf(view: NodeView): TickState {
  * nodes at 52px row pitch with their titles, then that band's edges as
  * `text-meta` plain text.
  *
- * Its nodes reuse `.hl-node` so the line types and the four states are the same
+ * Its nodes reuse `.bz-diagram-node` so the line types and the four states are the same
  * markup and the same CSS as the wide drawing, and they carry no `id`: two
  * copies of the graph are in the DOM at all times and only one is displayed, so
  * a shared id would be a duplicate id in every document.
@@ -476,14 +476,14 @@ function StackedBands({
             className="mb-6"
             aria-label={bandLabel(band, signed)}
           >
-            <p className="hl-mark m-0 text-on-surface-muted">Level {band.ordinal}</p>
+            <p className="text-mark m-0 text-on-surface-muted">Level {band.ordinal}</p>
             <p className="m-0 text-label font-semibold text-on-surface">
               {band.title}
             </p>
             {/* §10.4 — the count is stated in text beside the gauge, which is
                 what lets the gauge itself be decoration rather than a second
                 announcement of the same number. */}
-            <p className="hl-mark m-0 text-on-surface-faint">
+            <p className="text-mark m-0 text-on-surface-faint">
               {band.total} modules · {signed} completed
             </p>
             <TickGauge className="mt-1" ticks={members.map(tickOf)} />
@@ -498,7 +498,7 @@ function StackedBands({
                   {/* The half-pixel inset is a rendering inset, not geometry:
                       a 1px stroke on the viewBox edge is clipped in half. */}
                   <svg
-                    className="hl-node shrink-0"
+                    className="bz-diagram-node shrink-0"
                     data-state={view.state}
                     width={NODE_WIDTH}
                     height={NODE_HEIGHT}
@@ -523,7 +523,7 @@ function StackedBands({
                   <Link href={view.node.path} className="bz-link text-meta">
                     {view.node.title}
                   </Link>
-                  <span className="hl-mark ml-auto shrink-0 text-on-surface-faint">
+                  <span className="text-mark ml-auto shrink-0 text-on-surface-faint">
                     {stateText(view)}
                   </span>
                 </li>
@@ -555,7 +555,7 @@ function Legend() {
   return (
     <div className="bz-diagram-legend mt-4">
       <p className="m-0 mb-2">Legend</p>
-      <dl className="hl-defs">
+      <dl className="bz-defs">
         <dt>Solid outline</dt>
         <dd>Module ready</dd>
         <dt>Dashed outline</dt>
@@ -601,12 +601,12 @@ function DiagramTable({
       <summary>The same graph as a table · {rows.length} modules</summary>
       <div className="mt-3 overflow-x-auto">
         <table className="w-full border-collapse text-left font-mono text-mark tabular-nums">
-          <caption className="hl-mark mb-2 text-left text-on-surface-muted">
+          <caption className="text-mark mb-2 text-left text-on-surface-muted">
             Every module in the curriculum, the state this browser records for it, and
             the modules it needs and unlocks
           </caption>
           <thead>
-            <tr className="border-b border-line-strong text-on-surface-muted uppercase">
+            <tr className="border-b border-line-strong text-on-surface-muted">
               <th scope="col" className="py-1 pr-3 font-medium">#</th>
               <th scope="col" className="py-1 pr-3 font-medium">Module</th>
               <th scope="col" className="py-1 pr-3 font-medium">Level</th>
@@ -624,10 +624,10 @@ function DiagramTable({
                     {view.node.title}
                   </Link>
                 </th>
-                <td className="py-1 pr-3 text-on-surface-muted uppercase">
+                <td className="py-1 pr-3 text-on-surface-muted">
                   {title.get(view.node.category) ?? view.node.category}
                 </td>
-                <td className="py-1 pr-3 text-on-surface-muted uppercase">
+                <td className="py-1 pr-3 text-on-surface-muted">
                   {stateText(view)}
                 </td>
                 {/* §11.25 — a dash where there is nothing, never a zero. */}
@@ -681,7 +681,7 @@ export function ContinueLine({ facts }: { facts: ContinueFacts }) {
   if (!sheet) return null
 
   return (
-    <p className="hl-mark m-0 text-on-surface-muted">
+    <p className="text-mark m-0 text-on-surface-muted">
       Continue{' '}
       <Link href={`/courses/${slug}/`} className="bz-link">
         Module {String(sheet.module).padStart(2, '0')} · {sheet.title}

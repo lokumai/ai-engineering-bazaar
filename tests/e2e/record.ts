@@ -428,7 +428,7 @@ export async function probeFirstPaint(page: Page): Promise<void> {
         className: root.className,
         record: root.getAttribute('data-hl-record'),
         storage: root.getAttribute('data-hl-storage'),
-        hydrated: document.querySelector('.hl-readout')?.getAttribute('data-hydrated') ?? null,
+        hydrated: document.querySelector('.bz-readout')?.getAttribute('data-hydrated') ?? null,
       }
     })
   })
@@ -501,7 +501,7 @@ export function documentLoads(page: Page): Promise<number> {
  * so a spec that means the second has to wait for it.
  */
 export async function waitForHydratedReadout(page: Page): Promise<void> {
-  await expect(page.locator('.hl-readout[data-hydrated="true"]').first()).toBeAttached()
+  await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
 }
 
 /**
@@ -514,7 +514,7 @@ export async function waitForHydratedReadout(page: Page): Promise<void> {
  * not.
  */
 export function readoutCells(page: Page, scope = 'footer'): Locator {
-  return page.locator(`${scope} .hl-readout > span:not(.hl-readout-sep)`)
+  return page.locator(`${scope} .bz-readout > span:not(.bz-readout-sep)`)
 }
 
 /** One cell of the readout, found by the label it prints (`XP`, `Class`). */
@@ -575,17 +575,17 @@ export const CATEGORY_SLUGS: readonly string[] = [
  *
  * The row is addressed by `aria-labelledby`, not by position: the ids are
  * verbatim from the panels these rows replaced (`storage`, `raw`, `data`,
- * `submittals`, `hl-orgs-head`) and §16.4's order is asserted on its own, in
+ * `submittals`, `bz-orgs-head`) and §16.4's order is asserted on its own, in
  * `record-pages.spec.ts`, rather than assumed here by every caller.
  */
 export async function openRegisterRow(page: Page, id: string): Promise<Locator> {
-  const row = page.locator(`section.hl-register-row[aria-labelledby="${id}"]`)
-  const fold = row.locator('details.hl-register-fold')
-  const body = fold.locator('.hl-register-body')
+  const row = page.locator(`section.bz-register-row[aria-labelledby="${id}"]`)
+  const fold = row.locator('details.bz-register-fold')
+  const body = fold.locator('.bz-register-body')
 
   await expect(fold, `no register row is labelled by "${id}"`).toHaveCount(1)
   if (!(await fold.evaluate((node) => (node as HTMLDetailsElement).open))) {
-    await fold.locator('summary.hl-register-summary').click()
+    await fold.locator('summary.bz-register-summary').click()
   }
   await expect(body).toBeVisible()
   return body
@@ -594,6 +594,6 @@ export async function openRegisterRow(page: Page, id: string): Promise<Locator> 
 /** One register row's summary reading (§16.4.1), addressed by its heading id. */
 export function registerReading(page: Page, id: string): Locator {
   return page.locator(
-    `section.hl-register-row[aria-labelledby="${id}"] .hl-register-reading`,
+    `section.bz-register-row[aria-labelledby="${id}"] .bz-register-reading`,
   )
 }

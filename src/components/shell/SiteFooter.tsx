@@ -60,7 +60,7 @@ export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
               342px wide and `MODULE 13 OF 32` broken after the number reads as
               two facts instead of one. */}
           {revision && (
-            <span className="hl-mark whitespace-nowrap text-on-surface-muted">
+            <span className="text-mark whitespace-nowrap text-on-surface-muted">
               Rev <span className="normal-case">{revision.hash}</span>
               <span aria-hidden="true"> · </span>
               {revision.date}
@@ -91,7 +91,7 @@ export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
             {LICENCE_LABEL}
           </a>
           <Dot />
-          <span className="font-mono uppercase tracking-[0.06em]">Marked by LKM-01</span>
+          <span>Marked by LKM-01</span>
           {/* The chain, in `AFFILIATION` order. Names only: the relationship
               between them is stated once, with its labels, in `/legend/`'s
               colophon. A footer is the wrong place to explain a corporate

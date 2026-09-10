@@ -108,7 +108,7 @@ export const metadata: Metadata = {
 export default function SignInPage() {
   return (
     <PageShell sheet="SIGN IN">
-      <p className="hl-eyebrow hl-mark">OPTIONAL · NOTHING IS GATED BEHIND IT</p>
+      <p className="hl-eyebrow text-mark">OPTIONAL · NOTHING IS GATED BEHIND IT</p>
 
       <h1 className="bz-display">Sign in</h1>
 
@@ -128,17 +128,17 @@ export default function SignInPage() {
           whole pixel and paints (§2.2); the struct weight is the one that may
           never be a border. */}
       <section
-        className="hl-panel border border-line-strong border-l-2 border-l-primary bg-surface-raised p-5"
+        className="bz-panel border border-line-strong border-l-2 border-l-primary bg-surface-raised p-5"
         aria-labelledby="hl-door-alias"
       >
-        <div className="hl-panel-head">
+        <div className="bz-panel-head">
           <h2
             id="hl-door-alias"
             className="m-0 text-subsection leading-tight font-semibold text-on-surface"
           >
             Use an alias
           </h2>
-          <p className="hl-mark m-0 text-primary">LOCAL ONLY · NOT AN ACCOUNT</p>
+          <p className="text-mark m-0 text-primary">LOCAL ONLY · NOT AN ACCOUNT</p>
         </div>
 
         {/* §15.9.1 — what an alias is, what it proves and where it goes, from
@@ -169,21 +169,21 @@ export default function SignInPage() {
           this deployment has is a runtime answer, and these two paragraphs are
           true either way, so they are prerendered and a reader with scripting
           off still gets them. */}
-      <section className="hl-panel" aria-labelledby="hl-door-accounts">
-        <div className="hl-panel-head">
+      <section className="bz-panel" aria-labelledby="hl-door-accounts">
+        <div className="bz-panel-head">
           {/* Counted, never typed. This heading said "two" while
               `SIGN_IN_PROVIDERS` carried three provider buttons and
               `ALL_PROVIDERS` turned the third on whenever the settings probe
               could not be read — so the page contradicted the panel under it in
               a state a deployment can actually be in (§11.25). */}
-          <h2 id="hl-door-accounts" className="hl-panel-title">
+          <h2 id="hl-door-accounts" className="bz-panel-title">
             The {numberWord(ACCOUNT_DOOR_COUNT)} account doors
           </h2>
-          <p className="hl-mark m-0 text-on-surface-faint">A COPY OFF THIS BROWSER</p>
+          <p className="text-mark m-0 text-on-surface-faint">A COPY OFF THIS BROWSER</p>
         </div>
 
         <p className="mt-0 mb-3 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
-          <span className="hl-mark text-on-surface">EMAIL A SIGN-IN LINK</span> — one
+          <span className="text-mark text-on-surface">EMAIL A SIGN-IN LINK</span> — one
           link to your inbox, and no password to keep. Opening it is what proves
           the mailbox, and a proven mailbox is what an organisation admitting
           people by their email domain checks. Its limit: this site learns an
@@ -192,7 +192,7 @@ export default function SignInPage() {
         </p>
 
         <p className="m-0 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
-          <span className="hl-mark text-on-surface">CONTINUE WITH GITHUB</span> — one
+          <span className="text-mark text-on-surface">CONTINUE WITH GITHUB</span> — one
           press, and it brings along the handle a roster prints and a submittal
           is checked against. Its limit: GitHub hands this site no address it
           can prove, so joining an organisation by its email domain does not
@@ -200,7 +200,7 @@ export default function SignInPage() {
         </p>
 
         <p className="m-0 mt-3 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
-          <span className="hl-mark text-on-surface">CONTINUE WITH GOOGLE</span> — one
+          <span className="text-mark text-on-surface">CONTINUE WITH GOOGLE</span> — one
           press, and the copy off this browser that any account gives. It is the
           GitHub door without the handle: no address this site can prove, so no
           domain join, and no repository owner to compare a submittal against,
@@ -218,12 +218,12 @@ export default function SignInPage() {
         <SignInPanel />
       </SessionProvider>
 
-      <section className="hl-panel" aria-labelledby="hl-door-table">
-        <div className="hl-panel-head">
-          <h2 id="hl-door-table" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-door-table">
+        <div className="bz-panel-head">
+          <h2 id="hl-door-table" className="bz-panel-title">
             What each door does
           </h2>
-          <p className="hl-mark m-0 text-on-surface-faint">READ ACROSS BEFORE YOU PICK</p>
+          <p className="text-mark m-0 text-on-surface-faint">READ ACROSS BEFORE YOU PICK</p>
         </div>
 
         {/* Every wide thing scrolls inside its own container, and the page body
@@ -279,7 +279,7 @@ export default function SignInPage() {
                       vanishes under `forced-colors` cannot be carrying a
                       consequence (§2.6, §10.4). The reader compares words. */}
                   {DOOR_CONSEQUENCES.map((consequence) => (
-                    <td key={consequence.id} className="hl-mark">
+                    <td key={consequence.id} className="text-mark">
                       {ANSWER_WORDS[row.cells[consequence.id]]}
                     </td>
                   ))}

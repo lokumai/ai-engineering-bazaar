@@ -233,7 +233,7 @@ export function Keyboard() {
       {pending !== null && (
         // §12.16 — the mode is visible while it is held. `role="status"` because
         // SC 4.1.3 covers exactly this: a state change with no focus move.
-        <div role="status" className="hl-pending font-mono text-mark tracking-[0.06em]">
+        <div role="status" className="bz-pending font-mono text-mark tracking-[0.06em]">
           {PENDING_LABEL}
         </div>
       )}

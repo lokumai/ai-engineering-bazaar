@@ -9,8 +9,6 @@ import {
   sheetFacts,
   sheetLabel,
   thousands,
-  titleBlockRows,
-  titleStripRows,
 } from '@/lib/content/title-block'
 
 const DRAWN: SheetFacts = {
@@ -48,10 +46,6 @@ const NOT_DRAWN: SheetFacts = {
   lang: 'EN',
 }
 
-function value(rows: ReturnType<typeof titleBlockRows>, label: string): string | undefined {
-  return rows.find((r) => r.label === label)?.value
-}
-
 describe('thousands', () => {
   it('groups a four-figure word count', () => {
     expect(thousands(5008)).toBe('5,008')
@@ -77,119 +71,6 @@ describe('eyebrow and module label', () => {
 
   it('gives the footer its own short form', () => {
     expect(sheetLabel(DRAWN)).toBe('MODULE 13 OF 32')
-  })
-})
-
-describe('titleBlockRows — the ready module', () => {
-  const rows = titleBlockRows(DRAWN)
-
-  it('prints the twelve rows §5.5 names, in order', () => {
-    expect(rows.map((r) => r.label)).toEqual([
-      'DRAWING', 'LEVEL', 'POSITION', 'LENGTH', 'FIGURES', 'SOURCES',
-      'REQUIREMENTS', 'UNLOCKS', 'REVISION', 'DATE', 'LANG', 'MARKED BY',
-    ])
-  })
-
-  it('zero-pads the drawing number', () => {
-    expect(value(rows, 'DRAWING')).toBe('13')
-  })
-
-  it('names the level by number and title', () => {
-    expect(value(rows, 'LEVEL')).toBe('02 · INTERMEDIATE')
-  })
-
-  it('places the module inside its own category', () => {
-    expect(value(rows, 'POSITION')).toBe('6 OF 8')
-  })
-
-  it('prints extent as measured words and the declared duration', () => {
-    expect(value(rows, 'LENGTH')).toBe('4,912 W · 30 MIN')
-  })
-
-  it('separates diagrams from tables', () => {
-    expect(value(rows, 'FIGURES')).toBe('3 DIAG · 2 TBL')
-  })
-
-  it('prints the source count', () => {
-    expect(value(rows, 'SOURCES')).toBe('41')
-  })
-
-  it('lists dependency edges as module numbers', () => {
-    expect(value(rows, 'REQUIREMENTS')).toBe('12')
-    expect(value(rows, 'UNLOCKS')).toBe('14')
-  })
-
-  it('prints the file revision, not repo HEAD, and its date', () => {
-    expect(value(rows, 'REVISION')).toBe('b7225f8')
-    expect(value(rows, 'DATE')).toBe('2026-08-31')
-  })
-
-  it('keeps the hash in its own case, since .hl-mark uppercases', () => {
-    expect(rows.find((r) => r.label === 'REVISION')?.preserveCase).toBe(true)
-    expect(rows.find((r) => r.label === 'LENGTH')?.preserveCase).toBeUndefined()
-  })
-
-  it('spaces the bilingual value and credits the draughtsman', () => {
-    expect(value(titleBlockRows({ ...DRAWN, lang: 'EN·TR' }), 'LANG')).toBe('EN · TR')
-    expect(value(rows, 'MARKED BY')).toBe('LKM-01')
-  })
-})
-
-describe('titleBlockRows — a ready module that cites nothing', () => {
-  // Modules 2, 4 and 5 are `status: ready` and carry no external link at all.
-  const rows = titleBlockRows({ ...DRAWN, sources: 0, diagrams: 1, tables: 0 })
-
-  it('prints the zero it counted, not the dash that means "nobody counted"', () => {
-    expect(value(rows, 'SOURCES')).toBe('0')
-  })
-
-  it('prints a figures row with a zero term in it for the same reason', () => {
-    expect(value(rows, 'FIGURES')).toBe('1 DIAG · 0 TBL')
-  })
-})
-
-describe('titleBlockRows — the module that is planned', () => {
-  const rows = titleBlockRows(NOT_DRAWN)
-
-  it('has no extent, because there is no drawing to measure', () => {
-    expect(value(rows, 'LENGTH')).toBe('—')
-  })
-
-  it('dashes every row §4.5 dashes on the draft strip', () => {
-    expect(value(rows, 'FIGURES')).toBe('—')
-    expect(value(rows, 'SOURCES')).toBe('—')
-    expect(value(rows, 'REQUIREMENTS')).toBe('—')
-    expect(value(rows, 'UNLOCKS')).toBe('—')
-  })
-
-  it('dashes them on status, not on a zero that happens to coincide', () => {
-    const counted = titleBlockRows({ ...NOT_DRAWN, diagrams: 2, tables: 1, sources: 9 })
-    expect(value(counted, 'FIGURES')).toBe('—')
-    expect(value(counted, 'SOURCES')).toBe('—')
-  })
-
-  it('prints LANG EN, the value §4.5 item 4 spells out', () => {
-    expect(value(rows, 'LANG')).toBe('EN')
-  })
-})
-
-describe('titleStripRows', () => {
-  it('carries the same rows as the block on a ready module', () => {
-    expect(titleStripRows(DRAWN)).toEqual(titleBlockRows(DRAWN))
-  })
-
-  it('carries the six §4.5 names on a draft module, in that order', () => {
-    expect(titleStripRows(NOT_DRAWN).map((r) => r.label)).toEqual([
-      'LENGTH', 'FIGURES', 'SOURCES', 'REQUIREMENTS', 'LANG', 'REVISION',
-    ])
-  })
-})
-
-describe('a missing revision', () => {
-  it('prints an em dash rather than inventing a commit', () => {
-    const rows = titleBlockRows({ ...DRAWN, revision: null })
-    expect(value(rows, 'REVISION')).toBe('—')
-    expect(value(rows, 'DATE')).toBe('—')
   })
 })
 
@@ -237,25 +118,37 @@ describe('moduleFacts, over the real corpus', () => {
     expect(countImages(agents.body)).toBeGreaterThan(0)
     expect(facts(agents.slug).diagrams).toBe(diagrams)
 
-    const row = titleBlockRows(facts(agents.slug)).find((r) => r.label === 'FIGURES')
-    expect(row?.value).toBe(`${diagrams} DIAG · ${tables} TBL`)
+    expect(facts(agents.slug).tables).toBe(tables)
   })
 
-  it('prints a FIGURES row no ready module can inflate', () => {
+  /*
+    The same claim over every ready module, which is what makes it a rule about
+    the counter rather than a fact about one module's prose. It used to compare
+    a rendered `n DIAG · m TBL` row; that row went with the instrument panel in
+    stage 5, and the counter it was reading is what mattered.
+  */
+  it('counts diagrams and tables separately for every ready module', () => {
     for (const module of loadAllModules().filter((m) => m.frontmatter.status === 'ready')) {
-      const row = titleBlockRows(facts(module.slug)).find((r) => r.label === 'FIGURES')
-      expect(row?.value, module.slug)
-        .toBe(`${countDiagrams(module.body)} DIAG · ${countTables(module.body)} TBL`)
+      expect(facts(module.slug).diagrams, module.slug).toBe(countDiagrams(module.body))
+      expect(facts(module.slug).tables, module.slug).toBe(countTables(module.body))
     }
   })
 
-  it('leaves every draft module with nothing to print but its revision', () => {
+  /*
+    A draft module declares no reading time, and the counters say so rather
+    than inventing one.
+
+    THIS USED TO CLAIM MORE, and the more was a rendering rule rather than a
+    fact: the retired strip printed an em dash for LENGTH, FIGURES and SOURCES
+    on every A4 module whatever the counters held. Re-expressing it against the
+    counters caught that — a draft measured 4 sources, because a draft may
+    perfectly well cite something. The suppression went with the strip; what is
+    left is the part the curriculum validator also enforces, from the other
+    side, by refusing a `ready` module with a duration of zero.
+  */
+  it('leaves every draft module with no reading time to report', () => {
     for (const module of loadAllModules().filter((m) => m.sheetFormat === 'A4')) {
-      const rows = titleStripRows(facts(module.slug))
-      const printed = Object.fromEntries(rows.map((r) => [r.label, r.value]))
-      expect(printed.LENGTH, module.slug).toBe('—')
-      expect(printed.FIGURES, module.slug).toBe('—')
-      expect(printed.SOURCES, module.slug).toBe('—')
+      expect(facts(module.slug).duration, module.slug).toBe(0)
     }
   })
 })

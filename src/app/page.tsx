@@ -193,11 +193,11 @@ export default function HomePage() {
 
       {/* D14's control C, and home A's level grid: one component, because they
           are the same thing seen by two readers. */}
-      <div className="hl-panel-head">
-        <h2 id="hl-home-levels" className="hl-panel-title">
+      <div className="bz-panel-head">
+        <h2 id="hl-home-levels" className="bz-panel-title">
           The {numberWord(levels.length)} levels
         </h2>
-        <p className="hl-panel-note">
+        <p className="bz-panel-note">
           {plural(firstLevel, 'module')} in {first.subsystem.title}, which
           assumes you write software and assumes nothing else
         </p>
@@ -207,12 +207,12 @@ export default function HomePage() {
       {/* Home A's second half: the argument for reading this rather than the
           next thing a search returns. Four claims, each one checkable against
           the corpus itself, and none of them about the reader. */}
-      <section className="hl-panel" aria-labelledby="hl-home-why">
-        <div className="hl-panel-head">
-          <h2 id="hl-home-why" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-home-why">
+        <div className="bz-panel-head">
+          <h2 id="hl-home-why" className="bz-panel-title">
             Why this and not the hundredth AI blog
           </h2>
-          <p className="hl-panel-note">Four reasons, all of them checkable</p>
+          <p className="bz-panel-note">Four reasons, all of them checkable</p>
         </div>
         <dl className="hl-why">
           <div>

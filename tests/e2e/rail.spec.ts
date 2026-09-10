@@ -259,7 +259,7 @@ test.describe('the fold', () => {
       // workers a `load`-resolved `goto` is early enough to hit that, which is
       // what turned this red in a full run and green run alone.
       //
-      // `.hl-readout[data-hydrated="true"]` is the footer island's own signal,
+      // `.bz-readout[data-hydrated="true"]` is the footer island's own signal,
       // so it says React has hydrated this document rather than guessing how
       // long that takes; the two frames after it are what put a laid-out width
       // on the rail.

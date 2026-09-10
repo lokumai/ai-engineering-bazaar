@@ -143,7 +143,7 @@ function printedRevision(page: Page) {
  */
 function stampConditions(page: Page): Promise<string[]> {
   return page
-    .locator('.hl-stamp-slot')
+    .locator('.bz-stamp-slot')
     .evaluateAll((slots) =>
       slots
         .filter((slot) => (slot as HTMLElement).checkVisibility())
@@ -189,7 +189,7 @@ const anyDialog = (page: Page) => page.locator('[role="dialog"], [role="alertdia
 */
 const drift = (page: Page) => page.locator('.bz-signoff-drift')
 const quizReveal = (page: Page) => page.locator('.bz-quiz-reveal')
-const pendingHint = (page: Page) => page.locator('.hl-pending')
+const pendingHint = (page: Page) => page.locator('.bz-pending')
 const submittalItems = (page: Page) => page.locator('.bz-submittal-item')
 
 /**
@@ -248,7 +248,7 @@ test('the module as exported is the honest empty form (§12.2, §12.13 class 1)'
   // §12.2 — `--` is not `00/32`. The first says "no reading", the second says
   // "nothing recorded", and only the second is a fact about the reader.
   await expect(readoutCells(page)).toHaveText(NO_READING)
-  await expect(page.locator('footer .hl-readout')).toHaveAttribute('data-hydrated', 'false')
+  await expect(page.locator('footer .bz-readout')).toHaveAttribute('data-hydrated', 'false')
 
   await context.close()
 })
@@ -300,7 +300,7 @@ test('a seeded record stamps <html> inside the first frame (§12.2 channel A)', 
   // and that proxy is wrong** — kept here in full because the reason is the
   // useful part.
   //
-  // The argument was: `hydrated` comes off `.hl-readout`, 82.5 KB into a 211 KB
+  // The argument was: `hydrated` comes off `.bz-readout`, 82.5 KB into a 211 KB
   // document, and the probe fires on the first `requestAnimationFrame`, so the
   // browser can paint before that element is parsed; `null` is therefore a
   // STRONGER reading than `false`, and only an already-published `true` could
@@ -334,9 +334,9 @@ test('a seeded record stamps <html> inside the first frame (§12.2 channel A)', 
   // two-state signal, so the `false` the prerender ships is a state the page
   // leaves rather than one it never had. Without this, nothing above would
   // notice an attribute that was hardcoded and meant nothing.
-  await expect(page.locator('footer .hl-readout')).toHaveAttribute('data-hydrated', /true|false/)
+  await expect(page.locator('footer .bz-readout')).toHaveAttribute('data-hydrated', /true|false/)
   await waitForHydratedReadout(page)
-  await expect(page.locator('footer .hl-readout')).toHaveAttribute('data-hydrated', 'true')
+  await expect(page.locator('footer .bz-readout')).toHaveAttribute('data-hydrated', 'true')
   await expect(signOff(page)).toHaveCount(0)
   await expect(signedOff(page)).toBeVisible()
 })
@@ -834,7 +834,7 @@ test('a Turkish name keeps its dotted İ and its whole stored value (§12.3.4)',
   // and measured the same way: `"ilker".toUpperCase()` gives a dotless I, and
   // so does `text-transform: uppercase` off the wrong `lang`.
   await page.goto('/profile/')
-  const initials = page.locator('.hl-identity-initials')
+  const initials = page.locator('.bz-identity-initials')
   await expect(initials).toHaveText('İC')
   expect(await initials.evaluate((node) => (node as HTMLElement).innerText)).toBe('İC')
 })

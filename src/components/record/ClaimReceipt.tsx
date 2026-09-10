@@ -36,10 +36,10 @@ import { useHydrated, useRecord } from '@/lib/record/store'
  * ## One marker, both states
  *
  * `data-hl-receipt` is on both, because the two gates that measure this line —
- * the once-only gate and the geometry gate — located `.hl-receipt`, which the
+ * the once-only gate and the geometry gate — located `.bz-receipt`, which the
  * action-needed state has never carried. Both were therefore blind to exactly
  * the state the reader most needs the layout to be right in. The class is not
- * shared instead: `.hl-receipt` is a flex rule with `justify-content:
+ * shared instead: `.bz-receipt` is a flex rule with `justify-content:
  * space-between`, and putting it on a panel would fight the panel's own layout.
  * The action-needed state carries the attribute on a WRAPPER rather than on the
  * summary, so the marker costs `ClaimSummary` no prop and the located element's
@@ -68,20 +68,20 @@ export function ClaimReceipt() {
   if (claimNeedsExport(receipt.summary)) {
     return (
       <div data-hl-receipt="needs-export">
-        <ClaimSummary summary={receipt.summary} className="hl-receipt-full" heading="p" />
+        <ClaimSummary summary={receipt.summary} className="bz-receipt-full" heading="p" />
       </div>
     )
   }
 
   return (
     <section
-      className="hl-receipt"
+      className="bz-receipt"
       data-hl-receipt="routine"
       role="status"
       aria-label={CLAIM_COPY.head}
     >
-      <p className="hl-mark m-0 text-on-surface">{CLAIM_COPY.head}</p>
-      <p className="hl-mark m-0 text-on-surface-muted">
+      <p className="text-mark m-0 text-on-surface">{CLAIM_COPY.head}</p>
+      <p className="text-mark m-0 text-on-surface-muted">
         {claimReceiptReading(receipt)}
         {' · '}
         <Link href="/profile/#claim">DETAILS</Link>

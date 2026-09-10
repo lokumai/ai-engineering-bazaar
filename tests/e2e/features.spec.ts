@@ -28,7 +28,7 @@ test('the reader can sign a module off, and it is still signed after a reload', 
   await page.goto(sheet.path)
   await waitForHydratedReadout(page)
 
-  const readout = page.locator('footer .hl-readout').first()
+  const readout = page.locator('footer .bz-readout').first()
   const before = await readout.innerText()
   await expect(signOff(page)).toHaveAttribute('aria-pressed', 'false')
 

@@ -45,17 +45,17 @@ function summaryOf(markup: string): string {
 }
 
 const ROW = renderToStaticMarkup(
-  <RegisterRow id="storage" name="Storage" reading="PERSISTENT · QUERIED">
+  <RegisterRow kind="count" id="storage" name="Storage" reading="PERSISTENT · QUERIED">
     <p>How this browser answered the persistence question.</p>
   </RegisterRow>,
 )
 
 const REGISTER = renderToStaticMarkup(
   <Register labelledBy="register-head">
-    <RegisterRow id="stamps" name="Stamps" reading="2 OF 9 EARNED">
+    <RegisterRow kind="count" id="stamps" name="Stamps" reading="2 OF 9 EARNED">
       <p>The shelf.</p>
     </RegisterRow>
-    <RegisterRow id="raw" name="Stored values" reading="--">
+    <RegisterRow kind="count" id="raw" name="Stored values" reading="--">
       <p>Every key this origin holds.</p>
     </RegisterRow>
   </Register>,
@@ -114,7 +114,7 @@ describe('§16.4.1 — the mutation guard', () => {
     it(`refuses to render a row whose reading is ${JSON.stringify(reading)}`, () => {
       expect(() =>
         renderToStaticMarkup(
-          <RegisterRow id="uptime" name="Streak" reading={reading}>
+          <RegisterRow kind="count" id="uptime" name="Streak" reading={reading}>
             <p>body</p>
           </RegisterRow>,
         ),
@@ -139,8 +139,8 @@ describe('§16.7 — your progress and its rows are named', () => {
     // `section[aria-labelledby="raw"]`, and `/profile/` is the target of
     // in-tree links. The id moves inside the `<summary>`; it does not change,
     // and neither does the section that borrows it as a name.
-    expect(REGISTER).toContain('<section class="hl-register-row" aria-labelledby="stamps">')
-    expect(REGISTER).toContain('<section class="hl-register-row" aria-labelledby="raw">')
+    expect(REGISTER).toContain('<section class="bz-register-row" aria-labelledby="stamps">')
+    expect(REGISTER).toContain('<section class="bz-register-row" aria-labelledby="raw">')
   })
 
   it('carries the row id on an h2, at the heading level the panel had', () => {

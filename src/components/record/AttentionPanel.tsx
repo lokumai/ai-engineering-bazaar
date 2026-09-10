@@ -105,9 +105,9 @@ export function AttentionPanel({ sheets }: { sheets: readonly AttentionSheet[] }
   return (
     <>
       {flags === null ? (
-        <p className="hl-mark m-0 text-on-surface-muted">NO READING — THE RECORD IN THIS BROWSER HAS NOT BEEN READ YET</p>
+        <p className="text-mark m-0 text-on-surface-muted">NO READING — THE RECORD IN THIS BROWSER HAS NOT BEEN READ YET</p>
       ) : flags.length === 0 ? (
-        <p className="hl-mark m-0 text-on-surface-muted">NOTHING OPENED AND LEFT</p>
+        <p className="text-mark m-0 text-on-surface-muted">NOTHING OPENED AND LEFT</p>
       ) : (
         <ul className="m-0 grid list-none gap-2 p-0">
           {flags.map((flag) => {
@@ -122,7 +122,7 @@ export function AttentionPanel({ sheets }: { sheets: readonly AttentionSheet[] }
                     // A slug the corpus no longer answers to — a renamed sheet,
                     // an imported record. It is named as it stands in the
                     // record rather than dropped (§12.1.3).
-                    <span className="hl-mark">{flag.sheetSlug}</span>
+                    <span className="text-mark">{flag.sheetSlug}</span>
                   ) : (
                     <>
                       {sheet.drawn ? (
@@ -132,14 +132,14 @@ export function AttentionPanel({ sheets }: { sheets: readonly AttentionSheet[] }
                       ) : (
                         <>
                           Module {String(sheet.module).padStart(2, '0')} · {sheet.title}{' '}
-                          <span className="hl-mark text-on-surface-muted">PLANNED</span>
+                          <span className="text-mark text-on-surface-muted">PLANNED</span>
                         </>
                       )}
-                      <span className="hl-mark ms-2 text-on-surface-muted">{sheet.subsystem}</span>
+                      <span className="text-mark ms-2 text-on-surface-muted">{sheet.subsystem}</span>
                     </>
                   )}
                 </span>
-                <span className="hl-mark text-on-surface-muted">{reasonWords(flag)}</span>
+                <span className="text-mark text-on-surface-muted">{reasonWords(flag)}</span>
               </li>
             )
           })}

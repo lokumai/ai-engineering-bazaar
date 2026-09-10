@@ -257,22 +257,35 @@ test('the account block and a closed row read as text with no colour (§16.2.3, 
     §16.2.3 — the chosen mark is readable from the native control, not from the
     wash.
 
-    WHAT THIS PROVES AND WHAT IT NO LONGER PROVES. The design is that the radio
-    is `opacity: 0` at every other width, because the glyph and its name are the
-    control, and is brought back into view under forced colours so the selection
-    can be read from the platform's own widget. That rule lived in the deleted
-    the deleted `profile.css`, so the radio is currently visible in EVERY mode and
-    `toBeVisible()` here can no longer tell the design from its absence.
+    THE DESIGN IS A SWAP, SO BOTH HALVES ARE ASSERTED. The glyph and its name
+    are the control at every other width, so the radio is `opacity: 0` there;
+    under forced colours it comes back, because the platform's own widget is
+    then the only thing that can say which option is chosen. `progress.css`
+    states both, and stage 8 restored them after stage 0 deleted the stylesheet
+    that used to.
 
-    Both assertions below are still worth making — a checked radio the reader can
-    see is the requirement, however it comes about — but the half that made this
-    a forced-colours test is missing, and restoring it is stage 8's, with the
-    picker. `tests/unit/color/category-surfaces.test.ts` is where the rule gets
-    an existence-guarded home, so it binds the moment the surface exists rather
-    than resting on this comment.
+    This comment said the rule was missing and that `toBeVisible()` "can no
+    longer tell the design from its absence" — true when it was written, stale
+    since stage 8, and the second half is the part worth keeping: **it is still
+    true of `toBeVisible()`**, because Playwright counts an `opacity: 0` element
+    as visible. It has a box and it is not `visibility: hidden`. So the swap is
+    read from the COMPUTED OPACITY in both modes, which is the only assertion
+    that can fail if either half of the rule goes away.
   */
   const chosen = page.locator('label[data-hl-mark="datum"] input[name="hl-mark"]')
   await expect(chosen).toBeChecked()
+
+  await page.emulateMedia({ forcedColors: 'none' })
+  expect(
+    await chosen.evaluate((node) => getComputedStyle(node).opacity),
+    'the native radio is meant to be out of sight while the glyph is the control',
+  ).toBe('0')
+
+  await page.emulateMedia({ forcedColors: 'active' })
+  expect(
+    await chosen.evaluate((node) => getComputedStyle(node).opacity),
+    'with no colour at all the native radio is what says which mark is chosen',
+  ).toBe('1')
   await expect(chosen).toBeVisible()
   // And the cell says which mark it is in text, because the glyph is decoration:
   // it is `aria-hidden` in every state and its fill is gone here.

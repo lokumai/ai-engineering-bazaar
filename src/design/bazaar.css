@@ -335,6 +335,31 @@
 
 @layer components {
 
+  /* -- said, and not shown ------------------------------------------------- */
+
+  /* THE ONE WAY TO SAY SOMETHING TO A SCREEN READER AND NOT TO A SCREEN.
+     Clipped rather than `display: none`, because a hidden element is not
+     announced and contributes no accessible name; and clipped rather than
+     positioned off-screen, because a 9999px indent moves the box and can
+     lengthen the document.
+
+     It lived in `shell.css` with one consumer. **D51: two consumers means a
+     class moves into the language** — the second is the planned module's mark,
+     which draws a shape and needs the word beside it — and a primitive owned by
+     the first surface that needed it is a primitive the others depend on
+     invisibly. */
+  .bz-said {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
   /* -- the bar ------------------------------------------------------------ */
 
   .bz-bar {
@@ -1167,6 +1192,48 @@
   }
 
   .bz-btn:hover { filter: brightness(1.12); }
+
+  /* ---------------------------------------------------------------------------
+     §10.4'S TOUCH FLOOR, FOR THE CONTROLS THE LANGUAGE ITSELF DRAWS.
+
+     Until 2026-09-10 this floor existed in exactly ONE place in the whole
+     project — a `min-height` on the form field — and the browser test named
+     "every control reaches the §10.4 touch floor below 768px" measured two
+     classes on one page, both of which already had a hit area. A review
+     enumerated every narrow block and found the rest of the controls sitting
+     under the floor at 390px: MEASURED `.bz-btn` at 39px (11 + 15 + 11 + 2,
+     border-box under Tailwind's preflight) and `.bz-bar-icon` at 33px — and
+     the bar's two icons are on every route.
+
+     Two shapes of answer, and which one applies is about the neighbours.
+     A button sits in a wrapping action row with 13px of gap, so it can simply
+     GROW: nothing is beside it that a taller box would collide with. The bar's
+     icons sit in a fixed strip where growing the box grows the bar, so they
+     take the hit-area idiom `prose.css` established instead — the painted
+     control keeps the size the mockup gives it and an invisible `::after`
+     carries the target. The 8px gap between them means two 44px targets would
+     overlap by 3px on each side, so the pseudo is 44 tall and the width it can
+     have without stealing from its neighbour, which is the honest trade at
+     this width: the vertical axis is where a thumb misses.
+
+     Above 768px nothing here applies and every transcribed value holds, which
+     is what `NARROW_DEVIATIONS` exists to record.
+     --------------------------------------------------------------------------- */
+  @media (max-width: 767px) {
+    .bz-btn { min-height: 44px; }
+
+    .bz-bar-icon { position: relative; }
+
+    .bz-bar-icon::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 41px;
+      height: 44px;
+      translate: -50% -50%;
+    }
+  }
 
   .bz-btn-quiet {
     border-color: var(--color-line-strong);

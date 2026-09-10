@@ -1026,6 +1026,29 @@ export const NARROW_DEVIATIONS: Readonly<Record<string, NarrowDeviation>> = {
       + 'takes over below the phone breakpoint — D34\'s rule that a measured '
       + 'accessibility floor outranks a transcribed value. MEASURED 44px at 390.',
   },
+  'chipCurrent.height': {
+    below: 768,
+    why:
+      "The chosen chip is the same control in its selected state, so it takes "
+      + 'the floor with the others — one rule sets both. Listed separately '
+      + 'because the harness keys a deviation by ROLE and a fact registered '
+      + 'for one role says nothing about another: this entry was missing on the '
+      + 'first attempt and the 390 comparison duly failed on it alone, which is '
+      + 'the registry working rather than a nuisance.',
+  },
+  'chip.height': {
+    below: 768,
+    why:
+      'The §10.4 touch floor, the same trade as `fieldInput.height` and the '
+      + 'same rule behind it (D34). `03` draws the filter chip 33px tall — '
+      + 'the language holds it as `--bz-control` — and a thumb needs 44. There '
+      + 'are eleven of these plus three view buttons in wrapping rows, so they '
+      + 'GROW rather than take a hit area: nothing sits above or below them '
+      + 'that a taller box would collide with, and the row\'s own gap keeps two '
+      + 'targets apart. MEASURED 44px at 390 and the transcribed 33px at 1024. '
+      + 'A review found the floor stated in exactly one place in the whole '
+      + 'project before this — a `min-height` on the form field.',
+  },
   'barInner.paddingLeft': {
     below: 880,
     why:

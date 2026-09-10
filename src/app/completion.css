@@ -418,12 +418,15 @@
     background: var(--color-success);
   }
 
+  /* `05:188` — `background: var(--line); border: 1px dashed var(--line-2)`.
+     GEOMETRY from `05`, COLOUR from the shell (D31), so the dashed 1px edge is
+     transcribed and the two values are the language's own. This was a hatch
+     until 2026-09-10, which was an unrecorded departure from the one mockup
+     that draws this state, and it also meant the key taught a texture the rows
+     could not carry at 17px. */
   .bz-cc-legend-key[data-key="planned"] {
-    background: repeating-linear-gradient(
-      135deg,
-      var(--color-line) 0 3px,
-      var(--color-surface-sunken) 3px 6px
-    );
+    border: 1px dashed var(--color-line-strong);
+    background: var(--color-surface-sunken);
   }
 
   /* -- one module, in the overview's list ---------------------------------- */
@@ -440,6 +443,51 @@
     gap: 8px;
     padding: 3px 0;
     font-size: var(--text-item);
+  }
+
+  /* ---------------------------------------------------------------------------
+     §10.4'S TOUCH FLOOR ON THE PRIMARY COMPLETION CONTROL, and the one place
+     in this project where the floor cannot be reached in both axes.
+
+     MEASURED: the disc is 17 x 17px at every width, and it is rendered once
+     per written module on `/` and on `/profile/` — so completing a module on a
+     phone meant hitting a 17px target in a list of 23px rows. Nothing measured
+     it: the browser test named "every control reaches the §10.4 touch floor
+     below 768px" visits one module sheet and locates two classes, both of
+     which already carry a hit area.
+
+     THE VERTICAL AXIS TAKES THE FLOOR OUTRIGHT. The row grows to 44px and
+     centres, so the target is the full height of its own row and a thumb
+     landing anywhere in the row's leading column hits it. Two rows' targets
+     cannot overlap, because each is exactly its row.
+
+     THE HORIZONTAL AXIS IS BOUNDED BY THE NEIGHBOUR, deliberately. A 44px-wide
+     pseudo centred on a 17px disc reaches 13.5px past it on each side, and
+     8px away is the module's title link — so it would cover the leading edge
+     of the link and a tap meant for the module would toggle its completion
+     instead. **Stealing a tap from a navigation control is worse than a narrow
+     target**, so the target stops at the gap: 25px, the disc plus the space
+     that is nobody else's.
+     17 x 17 to 25 x 44 is the whole of what can be had without moving the row
+     apart; a true 44 x 44 needs the title to start 27px further right at
+     390px, which is a layout decision and not a defect fix. */
+  @media (max-width: 767px) {
+    .bz-cmod {
+      align-items: center;
+      min-height: 44px;
+    }
+
+    .bz-cmod-toggle { position: relative; }
+
+    .bz-cmod-toggle::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 25px;
+      height: 44px;
+      translate: -50% -50%;
+    }
   }
 
   .bz-cmod-toggle {
@@ -496,16 +544,26 @@
     font: 600 var(--text-mark) / 1.5 var(--font-mono);
   }
 
-  /* §12.4.1 — absent, not disabled, and the word says why in the one spelling
-     this status has. */
+  /* §12.4.1 — absent, not disabled, AND DRAWN.
+     `05:188` gives this state a dashed edge, which is the one thing in that
+     legend the shell has no counterpart for, and the language already draws
+     "not written" dashed in four other places. So the row's mark is the
+     completion toggle's geometry with the border dashed instead of solid: a
+     filled disc with a check, an empty solid ring and an empty dashed ring are
+     three shapes a reader can tell apart with no colour at all, and the delta
+     from "not yet" to "not written" is the smallest one that still reads.
+     The word is beside it in `.bz-said`, for the reader who cannot see either.
+
+     It used to be the word ALONE, in this box, clipped by
+     `text-indent: -9999px` — so a planned row drew nothing, the comment here
+     claimed the word said why, and the legend taught a mark no row carried. */
   .bz-cmod-planned {
     flex: none;
     width: 17px;
-    color: var(--color-on-surface-faint);
-    font-size: var(--text-label);
-    letter-spacing: var(--tracking-label);
-    overflow: hidden;
-    text-indent: -9999px;
+    height: 17px;
+    border: 1px dashed var(--color-line-strong);
+    border-radius: 50%;
+    background: var(--color-surface-raised);
   }
 
   .bz-cmod[data-drawn="false"] .bz-cmod-link {

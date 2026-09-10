@@ -220,6 +220,25 @@
     color: var(--color-on-surface);
   }
 
+  /* §10.4's touch floor. Both of this surface's controls are `--bz-control`,
+     33px, which is the mockup's value and is 11px under a thumb. They sit in
+     wrapping rows — eleven chips, three view buttons — so they grow rather
+     than take a hit area, and the row's own `gap` keeps two targets apart.
+     `chip.height` is registered in `NARROW_DEVIATIONS`, because below 768px
+     the transcribed height is deliberately not what the page draws.
+
+     AFTER BOTH BASE RULES, and that is load-bearing rather than tidy. This
+     block sat above `.bz-viewbtn` first, and the shipped CSS showed why that
+     is wrong: a media query carries no extra specificity, so within one
+     layer SOURCE ORDER decides, and the unconditional `height:
+     var(--bz-control)` below it won at every width. The chips were fixed and
+     the view buttons silently were not. A layer is not a suggestion and
+     neither is a media query. */
+  @media (max-width: 767px) {
+    .bz-chip,
+    .bz-viewbtn { height: 44px; }
+  }
+
   .bz-view-icon { flex: none; }
 
   /* ---------------------------------------------------------------------------

@@ -226,7 +226,7 @@ export function CourseCompletion({
                     unwritten modules says before hydration, rather than a
                     percentage nobody has measured yet. */}
                 <span className="bz-cc-caption">
-                  {planned > 0 ? plural(planned, 'module') + ' not written yet' : null}
+                  {planned > 0 ? plural(planned, 'module') + ' planned' : null}
                   {planned === 0 ? 'every module written' : null}
                 </span>
               </div>
@@ -294,9 +294,24 @@ export function CourseCompletion({
                         <Tick />
                       </button>
                     ) : (
-                      // §12.4.1 — absent, not disabled. The word is what says
-                      // why, in the one spelling this status has (§12.14.1).
-                      <span className="bz-cmod-planned">Planned</span>
+                      // §12.4.1 — absent, not disabled, and BOTH readers are
+                      // told so. The mark is the dashed ring `05:188` gives
+                      // this state and the legend teaches; the word is the
+                      // same status in the one spelling it has (§12.14.1),
+                      // carried by the language's own screen-reader primitive.
+                      //
+                      // It used to be the word alone, in a box `completion.css`
+                      // clipped with `text-indent: -9999px` — so the row drew
+                      // NOTHING for a planned module and a sighted reader told
+                      // it from "written, not completed" only by the absence
+                      // of the empty circle. The comment here claimed the word
+                      // said why; it said why to assistive tech and to nobody
+                      // else, while the legend three rows down taught a mark
+                      // no row carried.
+                      <>
+                        <span className="bz-cmod-planned" aria-hidden="true" />
+                        <span className="bz-said">Planned</span>
+                      </>
                     )}
 
                     <Link href={one.path} className="bz-cmod-link">
@@ -333,15 +348,15 @@ export function CourseCompletion({
       <ul className="bz-cc-legend">
         <li>
           <span className="bz-cc-legend-key" data-key="done" aria-hidden="true" />
-          done
+          Complete
         </li>
         <li>
           <span className="bz-cc-legend-key" data-key="todo" aria-hidden="true" />
-          not yet
+          Not yet
         </li>
         <li>
           <span className="bz-cc-legend-key" data-key="planned" aria-hidden="true" />
-          not written yet
+          Planned
         </li>
       </ul>
 

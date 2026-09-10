@@ -233,12 +233,19 @@ const BANS: readonly Ban[] = [
   },
   {
     name: 'PLANNED',
-    pattern: /\bNOT YET DRAWN\b/,
+    pattern: /\bnot\s+(?:yet\s+)?(?:drawn|written)\b/i,
     why: '§12.14.1 — the copy register has ONE word for this state and it is PLANNED, used by '
       + 'manifest, the filter chip, the module row, the diagram and the report. §13 arrived with '
       + '"PLANNED" in its spec text, and a path step duly printed it, so one sheet read two '
       + 'ways on two screens. A second spelling of a status is the drift this register exists to '
-      + 'stop, and it is worth a ban of its own because both forms read as correct in isolation.',
+      + 'stop, and it is worth a ban of its own because both forms read as correct in isolation. '
+      + 'THE PATTERN WAS THE LITERAL `NOT YET DRAWN` until 2026-09-10, and a review found the '
+      + 'drift walking straight past it: `CourseCompletion.tsx` printed "not written yet" for '
+      + 'the same state the same file spelled `Planned` twelve lines away — one of them a legend '
+      + 'key teaching the reader a word no other surface uses. A ban written as one spelling '
+      + 'catches that spelling; the state has a family of ways to be said, so this is the '
+      + 'family. The register bans the WORDS, not the casing: D48 governs whether a label '
+      + 'shouts.',
   },
 ]
 
@@ -272,6 +279,15 @@ const ALLOWED: ReadonlyArray<{ text: RegExp; ban: string; why: string }> = [
     text: /SHA-256|Intl\.|navigator\.|crypto\.|localStorage/,
     ban: '*',
     why: 'An API name.',
+  },
+  {
+    text: /^Planned to cover .* the module is not written yet$/,
+    ban: 'PLANNED',
+    why: 'A SENTENCE about the state rather than a label for it, in a path description whose '
+      + "first word is already the status. The ban exists so a reader never meets two names for "
+      + 'one state where a name is expected — a chip, a row, a key, a band. Prose that explains '
+      + 'the state it has already named is the case the ban is not about, and rewording it to '
+      + 'avoid the phrase would make the sentence worse to read for no gain in consistency.',
   },
   {
     text: /(?:^|\s)hl-/,

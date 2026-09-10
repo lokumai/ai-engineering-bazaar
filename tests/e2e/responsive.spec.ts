@@ -313,12 +313,12 @@ test('the mark options reach the §10.4 touch floor below 768px', async ({ page 
     inside the drafter block, so a measurement on one route says nothing about
     the other and both are walked.
 
-    WHERE THE FLOOR IS STATED IS CURRENTLY NOWHERE. This named `profile.css` as
-    holding it, once, as an unconditional `min-height` on the cell — and M16
-    stage 0 deleted that stylesheet with the other ten. Neither route states the
-    floor now, which is why this is red at 390: MEASURED at 19px against 44.
-    Stage 8 owns the picker and has to state it once again, in the surface
-    stylesheet it authors.
+    WHERE THE FLOOR IS STATED. `progress.css`, on `.bz-markrow-cell`, and
+    exactly once. It used to be `profile.css`, which M16 stage 0 deleted with
+    the other ten — so this test was red at 390 with the cell MEASURED at 19px
+    against 44 — and stage 8 restored it while building the picker's surface.
+    Stated once is the point: three call sites render this picker, and a floor
+    written per call site is a floor one of them will be missing.
   */
   for (const route of ['/sign-in/alias/', '/profile/']) {
     await page.goto(route)
@@ -346,55 +346,165 @@ test('the mark options reach the §10.4 touch floor below 768px', async ({ page 
   }
 })
 
+/**
+ * EVERY CONTROL, ON THE ROUTES THE CONTROLS ARE ON.
+ *
+ * This test's name was true and its body was not. It visited one module sheet
+ * and located three classes, of which one — `.bz-btn bz-btn-quiet` — was a
+ * DESCENDANT selector for a `<bz-btn-quiet>` element and could never match
+ * anything, and the other two already carried a hit area. So it measured the
+ * two controls that were already right, on the one route that had them, and
+ * reported that as "every control".
+ *
+ * A review enumerated the narrow blocks instead and found the floor stated in
+ * exactly ONE place in the whole project — a `min-height` on the form field.
+ * MEASURED at 390px: the completion toggle 17 x 17, the bar's two icons 33 x 33,
+ * the catalog's chips and view buttons 33, every button 39. The comment above
+ * the old locator even recorded `.hl-icon-btn` being deleted from the list for
+ * being dead — and `.bz-bar-icon`, its successor, was never put in its place,
+ * which is how the deletion of a dead entry removed real coverage.
+ *
+ * Two floors, because two shapes of answer are correct.
+ * A control with room GROWS; one in a fixed strip or a dense row keeps its
+ * painted size and takes an invisible `::after`. So the target here is the
+ * LARGER of the painted box and the pseudo, per axis, which is the only
+ * measurement that treats both shapes fairly.
+ *
+ * Height is 44 for everything, with no exceptions: the vertical axis is where
+ * a thumb misses. Width is 44 unless the control has a neighbour it must not
+ * steal a tap from, and each of those is registered below with the reason and
+ * the width it can actually have. A registered control whose width has reached
+ * 44 fails as a stale exemption, the same rule `NARROW_DEVIATIONS` follows.
+ */
+const BOUNDED: Readonly<Record<string, { width: number; why: string }>> = {
+  'bz-bar-icon': {
+    width: 41,
+    why:
+      'two icons 8px apart in a fixed strip: 44 each would overlap by 3px on '
+      + 'a side, so each takes the width it can have without reaching into its '
+      + "neighbour's target. Growing the box instead would grow the bar.",
+  },
+  'bz-cmod-toggle': {
+    width: 25,
+    why:
+      'the module title link sits 8px away, and a 44px target centred on the '
+      + '17px disc would cover the link\'s leading edge — a tap meant for the '
+      + 'module would toggle its completion. The target stops at the gap. A '
+      + 'true 44 needs the title to start 27px further right at 390px, which '
+      + 'is a layout decision rather than a defect fix.',
+  },
+}
+
+/** Where each control actually lives. A floor measured elsewhere is not measured. */
+const TOUCH_ROUTES: readonly { path: string; carries: string }[] = [
+  { path: '/', carries: 'the completion toggle, one per written module' },
+  { path: INDEX_SHEET, carries: 'eleven filter chips and three view buttons' },
+  { path: LONGEST.path, carries: "the slab's copy control and a figure's actions" },
+  { path: '/profile/', carries: 'the completion toggle again, and the buttons' },
+]
+
+const TOUCH_CONTROLS = [
+  '.bz-slab-copy',
+  '.bz-caption-action',
+  '.bz-btn',
+  '.bz-bar-icon',
+  '.bz-chip',
+  '.bz-viewbtn',
+  '.bz-cmod-toggle',
+].join(', ')
+
 test('every control reaches the §10.4 touch floor below 768px', async ({ page }) => {
   test.skip(page.viewportSize()!.width >= 768, '§10.4 sets the floor below 768')
 
-  await page.goto(LONGEST.path)
+  const seen = new Set<string>()
+
+  for (const route of TOUCH_ROUTES) {
+    await page.goto(route.path)
+    await page.waitForLoadState('networkidle')
+
+    const controls = await page
+      .locator(TOUCH_CONTROLS)
+      // A control the reader cannot reach has no floor to meet. §12's
+      // `Keyboard shortcuts` trigger is `display: none` below 768px — a table
+      // of keystrokes is a control for a device with keys — and an undisplayed
+      // element's pseudo has no used width, so measuring it yields `auto` and
+      // then `NaN`. Filter first, and assert below that something survived, so
+      // this can never become a scan of nothing.
+      .evaluateAll((nodes) => nodes.filter((node) => node.checkVisibility()).map((node) => {
+        const hit = getComputedStyle(node, '::after')
+        const painted = node.getBoundingClientRect()
+        const pseudo = hit.content === 'none'
+          ? { width: 0, height: 0 }
+          : { width: Number.parseFloat(hit.width) || 0, height: Number.parseFloat(hit.height) || 0 }
+        const classes = (typeof node.className === 'string' ? node.className : '').split(' ')
+        return {
+          kind: classes.find((one) => one.startsWith('bz-')) ?? classes[0] ?? '(unclassed)',
+          // The target is whichever box is larger in each axis: a control that
+          // grew needs no pseudo, and one with a pseudo keeps its painted size.
+          width: Math.max(Math.round(painted.width), Math.round(pseudo.width)),
+          height: Math.max(Math.round(painted.height), Math.round(pseudo.height)),
+        }
+      }))
+
+    expect(controls.length, `${route.path} carries ${route.carries}`).toBeGreaterThan(0)
+
+    for (const control of controls) {
+      seen.add(control.kind)
+      expect(
+        control.height,
+        `${control.kind} is ${control.height}px tall to hit on ${route.path}`,
+      ).toBeGreaterThanOrEqual(44)
+
+      const bounded = BOUNDED[control.kind]
+      if (bounded === undefined) {
+        expect(
+          control.width,
+          `${control.kind} is ${control.width}px wide to hit on ${route.path}`,
+        ).toBeGreaterThanOrEqual(44)
+      } else {
+        expect(
+          control.width,
+          `${control.kind} is ${control.width}px wide on ${route.path}, under its own bound`,
+        ).toBeGreaterThanOrEqual(bounded.width)
+      }
+    }
+  }
+
+  // The half that keeps the list above honest. A selector that stops matching
+  // takes its coverage with it silently — which is exactly how `.hl-icon-btn`
+  // came to be deleted from this test while the control it named lived on.
+  for (const kind of Object.keys(BOUNDED)) {
+    expect(seen, `${kind} is exempted horizontally and was never measured`).toContain(kind)
+  }
+  expect(seen.size, 'the routes above no longer reach four kinds of control')
+    .toBeGreaterThanOrEqual(4)
+})
+
+test('no horizontal touch exemption has stopped being needed', async ({ page }) => {
+  test.skip(page.viewportSize()!.width >= 768, '§10.4 sets the floor below 768')
+
+  // A stale exemption hides the next difference, so each one has to still be
+  // true: a control registered as horizontally bounded must actually be under
+  // 44px wide. If it has reached the floor, the entry is what is wrong now.
+  await page.goto('/')
   await page.waitForLoadState('networkidle')
 
-  // MEASURED: `COPY` painted 47 × 24 and `EXPAND` 61.6 × 24 with no hit area
-  // at all, and the two controls that did have one reached 42 × 42 — Tailwind's
-  // preflight makes them border-box and both carry a transparent hairline
-  // border, so a hand-tuned `inset` resolved against a padding box 2px smaller
-  // than the painted one.
-  const controls = await page
-    // `.hl-icon-btn` was in this list and exists nowhere in `src/` — a dead
-    // entry contributes no nodes and no failure, so it read as coverage while
-    // being none. `.bz-btn bz-btn-quiet` is real but belongs to `MermaidFigure`'s expand
-    // overlay, which is unstyled until stage 10 and closed on load, so
-    // `checkVisibility()` filters it out today and it will start being measured
-    // the moment that overlay is built. Both facts are worth writing down,
-    // because the guard below counts what survived and would otherwise make
-    // this look thinner than it is.
-    .locator('.bz-slab-copy, .bz-caption-action, .bz-btn bz-btn-quiet')
-    // A control the reader cannot reach has no floor to meet. §12 added a
-    // `Keyboard shortcuts` trigger that is `display: none` below 768px — a
-    // table of keystrokes is a control for a device with keys — and an
-    // undisplayed element's pseudo has no used width, so measuring it yields
-    // `auto` and then `NaN`. Filter first, and assert below that something
-    // survived, so this can never become a scan of nothing.
-    .evaluateAll((nodes) => nodes.filter((node) => node.checkVisibility()).map((node) => {
-      const hit = getComputedStyle(node, '::after')
-      const painted = node.getBoundingClientRect()
-      return {
-        kind: (typeof node.className === 'string' ? node.className : '').split(' ')[0],
-        painted: [Math.round(painted.width), Math.round(painted.height)],
-        content: hit.content,
-        width: Number.parseFloat(hit.width),
-        height: Number.parseFloat(hit.height),
-        position: hit.position,
-      }
-    }))
-
-  expect(controls.length, 'module 13 still has controls to hit').toBeGreaterThan(3)
-  for (const control of controls) {
-    expect(control.content, `${control.kind} has no hit area`).not.toBe('none')
-    expect(control.position, `${control.kind}'s hit area is not positioned`)
-      .toBe('absolute')
-    expect(control.width, `${control.kind} is ${control.width}px wide to hit`)
-      .toBeGreaterThanOrEqual(44)
-    expect(control.height, `${control.kind} is ${control.height}px tall to hit`)
-      .toBeGreaterThanOrEqual(44)
+  for (const [kind, bound] of Object.entries(BOUNDED)) {
+    const widths = await page.locator(`.${kind}`)
+      .evaluateAll((nodes) => nodes
+        .filter((node) => node.checkVisibility())
+        .map((node) => {
+          const hit = getComputedStyle(node, '::after')
+          const painted = node.getBoundingClientRect()
+          const pseudo = hit.content === 'none' ? 0 : Number.parseFloat(hit.width) || 0
+          return Math.max(Math.round(painted.width), Math.round(pseudo))
+        }))
+    if (widths.length === 0) continue
+    expect(bound.why.length, `${kind} is exempted with no reason`).toBeGreaterThan(60)
+    expect(
+      Math.min(...widths),
+      `${kind} reaches ${Math.min(...widths)}px wide now — delete its exemption`,
+    ).toBeLessThan(44)
   }
 })
 
@@ -509,10 +619,31 @@ test('no label paints its text over the text beside it', async ({ page }) => {
         completion toggle its width back.
       */
       let examined = 0
+      /*
+        SAID AND NOT SHOWN IS NOT A COLLISION, and this scan found out the hard
+        way. A screen-reader-only element is clipped on purpose: its ink is a
+        whole word and its box is 1px, so it trips the overflow line by
+        definition, and its ink coordinates then land on top of whatever is
+        beside it. When the planned module's row was given a drawn mark and its
+        word moved into `.bz-said`, this test reported sixteen collisions — all
+        of them the same deliberately clipped word.
+
+        Excluded by MECHANISM rather than by class name: an element whose
+        `clip-path` removes its own painted area paints nothing, so it cannot
+        paint over anything. A rule that named `.bz-said` would go quiet the
+        day the primitive is renamed; this one holds for any element clipped
+        that way, and still catches a label that overflows while visible —
+        which is the thing the test is for.
+      */
+      const clipped = (el: HTMLElement): boolean => {
+        const clip = getComputedStyle(el).clipPath
+        return clip !== 'none' && clip !== ''
+      }
       for (const el of document.querySelectorAll<HTMLElement>('body *')) {
         if (!el.firstChild || el.firstChild.nodeType !== Node.TEXT_NODE) continue
         const text = (el.textContent ?? '').trim()
         if (!text || el.offsetParent === null) continue
+        if (clipped(el)) continue
         examined += 1
         const range = document.createRange()
         range.selectNodeContents(el)
@@ -526,6 +657,9 @@ test('no label paints its text over the text beside it', async ({ page }) => {
           other.selectNodeContents(sib)
           const oink = other.getBoundingClientRect()
           if (!oink.width || !(sib as HTMLElement).offsetParent) continue
+          // The neighbour, too: a clipped sibling has no painted text to be
+          // covered, so an overlap with its ink coordinates is not a defect.
+          if (clipped(sib as HTMLElement)) continue
           const overlapsX = ink.right > oink.left + 0.5 && ink.left < oink.right - 0.5
           const overlapsY = ink.bottom > oink.top + 0.5 && ink.top < oink.bottom - 0.5
           if (overlapsX && overlapsY) {

@@ -118,15 +118,22 @@ test('nothing in the sign-off column is interactive or announced (§4.8, §10.3,
   // pseudo-element, unclickable, and lifting it out would add a second tab stop
   // to every row. Signing off happens on the sheet, which is the only place the
   // criteria are stated (§12.4.1).
-  const focusable = await page
-    .locator('.bz-row-signoff')
-    .evaluateAll((cells) =>
-      cells.reduce(
-        (total, cell) =>
-          total + cell.querySelectorAll('a, button, input, select, textarea, [tabindex]').length,
-        0,
-      ),
-    )
+  const cells = page.locator('.bz-row-signoff')
+  /*
+    COUNTED FIRST, because `reduce` over an empty list returns the seed and the
+    seed is `0`, which is this test's pass condition. Renaming the class — or
+    dropping the column — would prove "the sign-off column grew a control" false
+    by having no column at all, and report green. One assertion closes it.
+  */
+  expect(await cells.count(), 'no sign-off column to check').toBeGreaterThan(0)
+
+  const focusable = await cells.evaluateAll((found) =>
+    found.reduce(
+      (total, cell) =>
+        total + cell.querySelectorAll('a, button, input, select, textarea, [tabindex]').length,
+      0,
+    ),
+  )
   expect(focusable, 'the sign-off column grew a control').toBe(0)
 
   // They carry no text by specification, so they are hidden rather than

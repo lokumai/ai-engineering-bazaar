@@ -100,13 +100,27 @@ test('LKM-01 still reports every level with no colour (§13.1.3 item 1)', async 
   await page.goto('/profile/')
   await openRegisterRow(page, 'readout')
 
-  // The faces lose their fill entirely under forced colours — `lokum.css` sets
-  // `.hl-face { fill: none }` there on purpose. What is left is §8.2's line
-  // types and the face legend, and the legend is the accessible content: the SVG
-  // is `aria-hidden` in every state and at every size (§12.2, §12.18).
-  const fills = await page.locator('.hl-face').evaluateAll(
-    (nodes) => nodes.map((node) => getComputedStyle(node).fill),
-  )
+  /*
+    The faces carry no fill. What is left is §8.2's line types and the face
+    legend, and the legend is the accessible content: the SVG is `aria-hidden`
+    in every state and at every size (§12.2, §12.18).
+
+    WHERE THE `none` COMES FROM CHANGED, and this comment used to name
+    `lokum.css`, which set `.hl-face { fill: none }` inside a forced-colours
+    block. M16 stage 0 deleted that stylesheet, and the fill is now the `fill`
+    attribute on the path itself — so the claim is no longer conditional on
+    forced colours at all, and asserting it only under forced colours had
+    stopped distinguishing anything. It is checked in BOTH modes below, which
+    is the stronger statement the markup now actually makes: a face reports its
+    subsystem by stroke and shape, never by a fill, whatever the display is
+    doing.
+  */
+  const faceFills = () =>
+    page
+      .locator('.hl-face')
+      .evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).fill))
+
+  const fills = await faceFills()
   // Two cubes on this page, not one: the 28px mark in the header and the 128px
   // hero (§13.2's four sizes). So the count is a positive multiple of the face
   // count rather than the face count itself — asserting it directly would have
@@ -116,6 +130,14 @@ test('LKM-01 still reports every level with no colour (§13.1.3 item 1)', async 
   expect(fills.length).toBeGreaterThan(0)
   expect(fills.length % CATEGORY_PATHS.length).toBe(0)
   expect(fills.every((fill) => fill === 'none')).toBe(true)
+
+  // And again with forced colours off, because the mechanism is the markup now
+  // and not a media query. Same count, same answer.
+  await page.emulateMedia({ forcedColors: 'none' })
+  const unforced = await faceFills()
+  expect(unforced.length).toBe(fills.length)
+  expect(unforced.every((fill) => fill === 'none')).toBe(true)
+  await page.emulateMedia({ forcedColors: 'active' })
 
   // One row per subsystem, each naming its flavour, its subsystem and its
   // count in words.
@@ -231,9 +253,24 @@ test('the account block and a closed row read as text with no colour (§16.2.3, 
   expect(halves.length).toBe(2)
   for (const half of halves) expect(half.trim().length).toBeGreaterThan(3)
 
-  // §16.2.3 — the chosen mark is readable from the native control, not from the
-  // wash. The radio is visible in this mode BY DESIGN, and `opacity: 0` rather
-  // than `display: none` in every other mode is what makes that possible.
+  /*
+    §16.2.3 — the chosen mark is readable from the native control, not from the
+    wash.
+
+    WHAT THIS PROVES AND WHAT IT NO LONGER PROVES. The design is that the radio
+    is `opacity: 0` at every other width, because the glyph and its name are the
+    control, and is brought back into view under forced colours so the selection
+    can be read from the platform's own widget. That rule lived in the deleted
+    `profile.css`, so the radio is currently visible in EVERY mode and
+    `toBeVisible()` here can no longer tell the design from its absence.
+
+    Both assertions below are still worth making — a checked radio the reader can
+    see is the requirement, however it comes about — but the half that made this
+    a forced-colours test is missing, and restoring it is stage 8's, with the
+    picker. `tests/unit/color/category-surfaces.test.ts` is where the rule gets
+    an existence-guarded home, so it binds the moment the surface exists rather
+    than resting on this comment.
+  */
   const chosen = page.locator('label[data-hl-mark="datum"] input[name="hl-mark"]')
   await expect(chosen).toBeChecked()
   await expect(chosen).toBeVisible()

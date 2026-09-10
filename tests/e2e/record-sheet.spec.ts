@@ -171,6 +171,27 @@ const signedOff = (page: Page) => page.getByRole('button', { name: /^Completed /
 const unsign = (page: Page) => page.getByRole('button', { name: 'Un-complete', exact: true })
 const anyDialog = (page: Page) => page.locator('[role="dialog"], [role="alertdialog"], dialog')
 
+/*
+  FOUR LOCATORS THAT EXIST TO BE SHARED, not to save typing.
+
+  Each of these is asserted ABSENT somewhere in this file — the drift line when
+  nothing is signed, the reveal before an answer is written, the `g` hint after
+  Escape, a submittal registered from a hostile URL. `toHaveCount(0)` is a
+  passing assertion against a selector that matches nothing, so an absence test
+  that writes its own selector string stops testing anything the moment the
+  class is renamed, and reports green while doing it.
+
+  Naming each one once fixes that structurally: every absence assertion below
+  now shares a selector with a PRESENCE assertion, so a rename turns the
+  presence test red and the pair stays honest. This is the shape M16 has
+  already been bitten by four times, and the rename that these four are waiting
+  for is stages 7 and 8.
+*/
+const drift = (page: Page) => page.locator('.hl-signoff-drift')
+const quizReveal = (page: Page) => page.locator('.hl-quiz-reveal')
+const pendingHint = (page: Page) => page.locator('.hl-pending')
+const submittalItems = (page: Page) => page.locator('.hl-submittal-item')
+
 /**
  * Every `window.confirm`, `alert` and `beforeunload` this page raised.
  *
@@ -348,10 +369,29 @@ test('a started level draws its face at the structural weight (§8.2, §12.2)', 
   page,
 }) => {
   await seedRecord(page, { sheets: { [SLUG]: signedSheet('b7225f8') } })
-  await page.goto(SHEET.path)
+  /*
+    WHERE THE MASCOT IS. This read `header svg`, and the site header does not
+    carry it any more: `01` specifies the brand as a tile — four glazed squares
+    from the same series, one left as an outline — and M16 stage 1 built that.
+    So the mark moved rather than being lost; it renders at 132px in the
+    drafter block on this route, at 96px on `/legend/` and exploded on the 404.
+
+    Located through its own faces rather than through a wrapper class, so this
+    anchor survives stage 8's rename of the block around it. `.first()` because
+    `/legend/` aside, a page may carry the mark more than once and the register's
+    face legend is a second instance.
+
+    The state below is still channel A's and is still the point: the rules that
+    set it are `html.hl-cat-<slug>-started|complete`, which went with the
+    deleted `lokum.css` and are stage 7's to write. Until they exist this fails
+    on merit, which is the correct thing for it to do.
+  */
+  await page.goto('/profile/')
 
   const faces = await page
-    .locator('header svg .hl-face')
+    .locator('svg:has(.hl-face)')
+    .first()
+    .locator('.hl-face')
     .evaluateAll((paths) =>
       paths.map((path) => [
         path.getAttribute('data-cat') ?? '',
@@ -377,15 +417,27 @@ test('a level with every module completed is hatched, not merely inked (§8.2, �
 
   await seedRecord(page, { sheets })
   await probeFirstPaint(page)
-  await page.goto('/')
+  // `/profile/` for the same reason as the test above: the header's mark is a
+  // tile now, and the mascot draws in the drafter block.
+  await page.goto('/profile/')
 
   expect((await firstPaint(page))!.className).toContain(`hl-cat-${category}-complete`)
 
   const hatches = await page
-    .locator('header svg .hl-face-hatch')
+    .locator('svg:has(.hl-face-hatch)')
+    .first()
+    .locator('.hl-face-hatch')
     .evaluateAll((paths) =>
       paths.map((path) => [path.getAttribute('data-cat') ?? '', getComputedStyle(path).display]),
     )
+
+  /*
+    ASSERTED, NOT ASSUMED. The loop below is the whole test, and a selector that
+    matched nothing would skip it entirely and report green — which is what the
+    sibling assertion at the `.hl-face` test above guards against and this one
+    did not. A rename is exactly the event that would have silenced it.
+  */
+  expect(hatches).toHaveLength(CATEGORY_PATHS.length)
   for (const [slug, display] of hatches) {
     expect(display, `${slug} hatch`).toBe(slug === category ? 'block' : 'none')
   }
@@ -405,21 +457,24 @@ test('a level with every module completed is hatched, not merely inked (§8.2, �
 test('the mascot is aria-hidden and byte-identical in every state (§12.2, §12.18)', async ({
   page,
 }) => {
-  const mascot = page.locator('header svg').first()
+  // The mark itself, not whatever SVG the header happens to draw first — which
+  // since stage 1 is `01`'s four-square tile and not this component at all.
+  const mascot = page.locator('svg:has(.hl-face)').first()
 
-  await page.goto(SHEET.path)
+  await page.goto('/profile/')
   await expect(mascot).toHaveAttribute('aria-hidden', 'true')
   const unseeded = await mascot.evaluate((node) => node.outerHTML)
 
   await seedRecord(page, { sheets: { [SLUG]: signedSheet('b7225f8') } })
-  await page.goto(SHEET.path)
+  await page.goto('/profile/')
   await expect(mascot).toHaveAttribute('aria-hidden', 'true')
   const seeded = await mascot.evaluate((node) => node.outerHTML)
 
   expect(seeded).toBe(unseeded)
-  // Both hatch patterns are always in `<defs>` and all six faces always drawn:
-  // an unused `<pattern>` paints nothing, a conditional one paints a mismatch.
-  expect(await page.locator('header svg defs pattern').count()).toBe(2)
+  // Both hatch patterns are always in `<defs>` and every face always drawn: an
+  // unused `<pattern>` paints nothing, a conditional one paints a mismatch. Read
+  // off the mark itself, since the header's tile has `<defs>` of its own.
+  expect(await mascot.locator('defs pattern').count()).toBe(2)
 })
 
 /**
@@ -566,7 +621,7 @@ test('un-complete reverses the assertion and clears its channel-A stamp (§12.4.
   // somebody who declined to give a name".
   await expect(checkedBy(page)).toHaveText(['—'])
   // §12.4.3 — with no assertion there is no revision to be adrift from.
-  await expect(page.locator('.hl-signoff-drift')).toHaveCount(0)
+  await expect(drift(page)).toHaveCount(0)
 
   const cleared = await waitForSheet(page, SLUG, (sheet) => sheet?.signedOff == null)
   expect(cleared.signedRevision).toBeNull()
@@ -601,9 +656,21 @@ test('§12.4.3 prints the drift when the module has moved under a sign-off', asy
   await page.goto(SHEET.path)
   await waitForHydratedReadout(page)
 
-  const revision = (await printedRevision(page).innerText()).trim()
-  const drift = page.locator('.hl-signoff-drift')
-  await expect(drift).toHaveText(
+  /*
+    THE HASH, not the whole footer. `printedRevision` used to be the title
+    block's `REVISION` row and M16 stage 5 retargeted it to the `<footer>`,
+    which prints the revision inside a line of other facts — so trimming its
+    `innerText` and interpolating the result into a `RegExp` could never match,
+    and would not even be a valid pattern once the footer grew a `(` or a `?`.
+    The sign-off test above already extracts it correctly; this is the same
+    expression, and it is the reason a helper that returns a whole element
+    should never be read as if it returned a field.
+  */
+  const printed = await printedRevision(page).innerText()
+  const revision = printed.match(/Rev ([0-9a-f]{7,40})/i)?.[1] ?? ''
+  expect(revision, 'the footer prints no revision to be adrift from').not.toBe('')
+
+  await expect(drift(page)).toHaveText(
     new RegExp(`COMPLETED 2026-08-14 AGAINST REV a1b2c3d . MODULE NOW AT REV ${revision}`),
   )
 })
@@ -741,18 +808,35 @@ test('a Turkish name keeps its dotted İ and its whole stored value (§12.3.4)',
   const stored = await waitForRecord(page, (env) => env?.data.identity.name === NAME)
   expect(stored.data.identity.name).toBe(NAME)
 
-  // §12.3.1 — `<bdi dir="auto">`, so a name cannot re-order the label and value
-  // around it, and `normal-case`, because CSS casing is locale-sensitive off the
-  // element's `lang` and this row is `.hl-mark` (uppercase).
+  /*
+    §12.3.1 — `<bdi dir="auto">`, so a name cannot re-order the label and value
+    around it.
+
+    WHAT IS PAINTED, not which rule paints it. This asserted
+    `textTransform === 'none'`, which was a real check while the row carried an
+    uppercase treatment and something had to override it — and which M16 stage 0
+    made vacuously true by deleting every uppercase rule in the project. An
+    assertion that passes because its subject no longer exists has stopped
+    testing anything.
+
+    `innerText` has `text-transform` applied by the time Chrome hands it over
+    (`record-pages.spec.ts` depends on exactly that), so comparing it to the
+    typed string tests the OUTCOME: this name reaches the reader's eye with its
+    dot, whatever the cascade above it does. That holds under the current
+    language, would have failed under the old one without the override, and
+    fails again the day somebody reintroduces an uppercase on this row.
+  */
   const printed = checkedBy(page).first().locator('bdi[dir="auto"]')
   await expect(printed).toHaveText(NAME)
-  expect(await printed.evaluate((node) => getComputedStyle(node).textTransform)).toBe('none')
+  expect(await printed.evaluate((node) => (node as HTMLElement).innerText)).toBe(NAME)
 
-  // §12.3.4 — the initials are graphemes taken AS TYPED. `İC`, with the dot.
+  // §12.3.4 — the initials are graphemes taken AS TYPED. `İC`, with the dot,
+  // and measured the same way: `"ilker".toUpperCase()` gives a dotless I, and
+  // so does `text-transform: uppercase` off the wrong `lang`.
   await page.goto('/profile/')
   const initials = page.locator('.hl-identity-initials')
   await expect(initials).toHaveText('İC')
-  expect(await initials.evaluate((node) => getComputedStyle(node).textTransform)).toBe('none')
+  expect(await initials.evaluate((node) => (node as HTMLElement).innerText)).toBe('İC')
 })
 
 // ---------------------------------------------------------------------------
@@ -771,7 +855,7 @@ test('nothing is revealed before an answer is written (§12.6)', async ({ page }
   await expect(page.getByRole('button', { name: /COMPARE/ })).toHaveCount(0)
   await expect(page.getByRole('button', { name: 'MATCHED', exact: true })).toHaveCount(0)
   await expect(page.getByRole('button', { name: 'DID NOT MATCH', exact: true })).toHaveCount(0)
-  await expect(page.locator('.hl-quiz-reveal')).toHaveCount(0)
+  await expect(quizReveal(page)).toHaveCount(0)
 
   // And it says why, without praise, blame or an exclamation mark (§12.14.1).
   await expect(page.locator('.hl-quiz-note').first()).toHaveText(
@@ -793,7 +877,11 @@ test('the reveal is the module’s own summary, named as that (§12.6)', async (
   // absent or generated answer is the §1 failure this codebase exists to
   // prevent.
   await expect(page.locator('.hl-quiz-reveal-label')).toHaveText('THE MODULE’S SUMMARY')
-  await expect(page.locator('.hl-quiz-reveal .prose')).toHaveText(/\S/)
+  // `.bz-prose`, which is what `QuickCheck` renders. The bare `.prose` this
+  // asked for was the retired design's name and M16 stage 5 replaced it, so
+  // the locator resolved to nothing and the assertion timed out rather than
+  // failing on merit. Nothing about the reveal itself was wrong.
+  await expect(quizReveal(page).locator('.bz-prose')).toHaveText(/\S/)
 
   // §12.6 — `summarySection` removes the self-check paragraph from the section
   // it returns, because every one of them is authored INSIDE `## Summary`. Without
@@ -999,7 +1087,7 @@ for (const [what, input] of HOSTILE_REPOS) {
     )
     // Refused, not silently swallowed: a form that clears itself and records
     // nothing is the page telling the reader something untrue.
-    await expect(page.locator('.hl-submittal-item')).toHaveCount(0)
+    await expect(submittalItems(page)).toHaveCount(0)
     await expect(page.locator('.hl-submittal-empty')).toHaveText('NOTHING ADDED YET')
     await expect(page.locator('.hl-submittal a')).toHaveCount(0)
     expect((await readRecord(page))?.data.sheets[SLUG]?.submittals ?? []).toEqual([])
@@ -1020,7 +1108,7 @@ test('g is a mode rather than a race, and Escape clears it (§12.16, SC 2.1.1)',
   // The mode is VISIBLE while it is held, in `role="status"` — SC 4.1.3 covers
   // exactly this: a state change with no focus move. `g …` in the key's own
   // case, because a hint that does not match the key you pressed is not a hint.
-  const pending = page.locator('.hl-pending')
+  const pending = pendingHint(page)
   await expect(pending).toBeVisible()
   await expect(pending).toHaveText('g …')
   await expect(pending).toHaveAttribute('role', 'status')
@@ -1121,7 +1209,7 @@ test('no character shortcut fires from inside a text field (§12.16)', async ({ 
   expect(await answer.inputValue()).toBe('s.?gj[')
   await expect(signedOff(page)).toHaveCount(0)
   await expect(anyDialog(page)).toHaveCount(0)
-  await expect(page.locator('.hl-pending')).toHaveCount(0)
+  await expect(pendingHint(page)).toHaveCount(0)
   expect(await hasRootClass(page, 'dark')).toBe(false)
 })
 
@@ -1139,7 +1227,7 @@ test('no character shortcut fires with a modifier held (§12.16)', async ({ page
 
   await expect(signedOff(page)).toHaveCount(0)
   expect(await hasRootClass(page, 'dark')).toBe(false)
-  await expect(page.locator('.hl-pending')).toHaveCount(0)
+  await expect(pendingHint(page)).toHaveCount(0)
 })
 
 test('prefs.charKeys off silences every character shortcut (§12.16, SC 2.1.4)', async ({
@@ -1158,7 +1246,7 @@ test('prefs.charKeys off silences every character shortcut (§12.16, SC 2.1.4)',
   // than exempt from it.
   await expect(signedOff(page)).toHaveCount(0)
   await expect(anyDialog(page)).toHaveCount(0)
-  await expect(page.locator('.hl-pending')).toHaveCount(0)
+  await expect(pendingHint(page)).toHaveCount(0)
   expect(await hasRootClass(page, 'dark')).toBe(false)
 })
 

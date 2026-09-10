@@ -44,6 +44,24 @@ const SE = 'software-engineer'
 const PROGRESS = '/profile/'
 const ROLE_ROW = 'role'
 
+/*
+  THE FOUR SELECTORS, EACH NAMED ONCE.
+
+  Three assertions in this file are `:visible` `toHaveCount(0)` — no path drawn
+  before a role is chosen, no step marked next in the prerender, no body left
+  showing after a role is cleared. All three are satisfied by a selector that
+  matches nothing, so while each test wrote its own string a rename would have
+  turned them green and empty rather than red. Named once, every absence
+  assertion shares its selector with a presence assertion in the same file
+  (`toHaveCount(9)`, `toBeVisible`, `toHaveCount(3)`), so the pair cannot both
+  be silenced. Stage 8 renames these to the design language; that is one edit
+  here rather than fourteen.
+*/
+const PATH_BODY = '.hl-path-body'
+const STEP = '.hl-step'
+const STEP_NEXT = '.hl-step-next'
+const STEP_TICK = '.hl-step-tick'
+
 test('with no role, no path is drawn and nothing is written (§12.13)', async ({ page }) => {
   await page.goto(PROGRESS)
   await openRegisterRow(page, ROLE_ROW)
@@ -60,13 +78,13 @@ test('with no role, no path is drawn and nothing is written (§12.13)', async ({
   // All nine are in the document; none of them is on screen. That is what makes
   // the row correct in frame one for a reader who has a role and for one who
   // has not, without React deciding anything.
-  await expect(page.locator('.hl-path-body')).toHaveCount(9)
-  for (const body of await page.locator('.hl-path-body').all()) {
+  await expect(page.locator(PATH_BODY)).toHaveCount(9)
+  for (const body of await page.locator(PATH_BODY).all()) {
     await expect(body).not.toBeVisible()
   }
 
   // No path is drawn, and no step is either — never a placeholder path.
-  await expect(page.locator('.hl-step:visible')).toHaveCount(0)
+  await expect(page.locator(`${STEP}:visible`)).toHaveCount(0)
 
   // The nine roles are offered, with their blurbs, so the empty state is useful
   // rather than merely honest. ONE group of nine: two `RolePicker`s on one
@@ -120,17 +138,17 @@ test('a stored role draws its own path with no JavaScript at all', async ({
   // Opened by a click on a `<summary>`, which needs no script.
   await page.locator('section[aria-labelledby="role"] summary').click()
 
-  await expect(page.locator(`.hl-path-body[data-role="${SE}"]`)).toBeVisible()
-  await expect(page.locator('.hl-path-body:visible')).toHaveCount(1)
+  await expect(page.locator(`${PATH_BODY}[data-role="${SE}"]`)).toBeVisible()
+  await expect(page.locator(`${PATH_BODY}:visible`)).toHaveCount(1)
 
   // The three completed modules say so, and the other steps do not. The ticks
   // for all nine bodies are in the document; only the visible body's show.
-  await expect(page.locator('.hl-step-tick:visible')).toHaveCount(3)
+  await expect(page.locator(`${STEP_TICK}:visible`)).toHaveCount(3)
 
   // No step claims to be next: "first not completed" is a computation, so the
   // prerender genuinely does not know, and §13.4.3 has it stay quiet rather
   // than guess (the marker is channel B).
-  await expect(page.locator('.hl-step-next:visible')).toHaveCount(0)
+  await expect(page.locator(`${STEP_NEXT}:visible`)).toHaveCount(0)
 })
 
 test('hydrated, the standing leads with what is left and one step is marked next', async ({
@@ -147,7 +165,7 @@ test('hydrated, the standing leads with what is left and one step is marked next
   await page.goto(PROGRESS)
   const row = await openRegisterRow(page, ROLE_ROW)
 
-  const body = page.locator(`.hl-path-body[data-role="${SE}"]`)
+  const body = page.locator(`${PATH_BODY}[data-role="${SE}"]`)
   await expect(body).toBeVisible()
 
   // §13.8 — TO-GO framing, and §11.35 forbids a percentage outright. Three
@@ -171,14 +189,14 @@ test('hydrated, the standing leads with what is left and one step is marked next
 
   // Exactly one step is next, and it is the first not-completed READY step in
   // path order: the path opens 1, 3, 4, …, and 1 is completed, so 3 is next.
-  const next = body.locator('.hl-step[data-next="true"]')
+  const next = body.locator(`${STEP}[data-next="true"]`)
   await expect(next).toHaveCount(1)
   await expect(next).toHaveAttribute('data-module', '3')
   // Every step carries the marker in its markup; channel B reveals exactly the
   // one whose ancestor got `data-next`, so the count of VISIBLE ones is the
   // assertion that matters — a reader must never see two steps both claiming to
   // be next.
-  await expect(body.locator('.hl-step-next:visible')).toHaveCount(1)
+  await expect(body.locator(`${STEP_NEXT}:visible`)).toHaveCount(1)
 })
 
 test('choosing a role writes once, swaps the body, and asks nothing (§13.3)', async ({
@@ -186,12 +204,12 @@ test('choosing a role writes once, swaps the body, and asks nothing (§13.3)', a
 }) => {
   await page.goto(PROGRESS)
   await openRegisterRow(page, ROLE_ROW)
-  await expect(page.locator('.hl-path-body:visible')).toHaveCount(0)
+  await expect(page.locator(`${PATH_BODY}:visible`)).toHaveCount(0)
 
   await page.locator(`input[name="hl-role"][value="${SE}"]`).check()
 
   // Channel A re-stamps from the store, so the body swaps with no reload.
-  await expect(page.locator(`.hl-path-body[data-role="${SE}"]`)).toBeVisible()
+  await expect(page.locator(`${PATH_BODY}[data-role="${SE}"]`)).toBeVisible()
 
   await expect
     .poll(async () => (await readRecord(page))?.data.identity.role ?? null)
@@ -207,8 +225,8 @@ test('choosing a role writes once, swaps the body, and asks nothing (§13.3)', a
   // `RolePanel`'s own arrangement: open it and choose again.
   await page.getByText('Another role').click()
   await page.locator('input[name="hl-role"][value="qa"]').check()
-  await expect(page.locator('.hl-path-body[data-role="qa"]')).toBeVisible()
-  await expect(page.locator('.hl-path-body:visible')).toHaveCount(1)
+  await expect(page.locator(`${PATH_BODY}[data-role="qa"]`)).toBeVisible()
+  await expect(page.locator(`${PATH_BODY}:visible`)).toHaveCount(1)
   await expect
     .poll(async () => (await readRecord(page))?.data.identity.role ?? null)
     .toBe('qa')
@@ -219,18 +237,18 @@ test('a planned step points at nothing and says so (§13.4.2)', async ({ page })
   await page.goto(PROGRESS)
   await openRegisterRow(page, ROLE_ROW)
 
-  const body = page.locator(`.hl-path-body[data-role="${SE}"]`)
+  const body = page.locator(`${PATH_BODY}[data-role="${SE}"]`)
   await expect(body).toBeVisible()
 
   // The path ends on planned modules. A planned module has no completion
   // control at all (§12.4.1), so its step carries no link that implies a
   // lesson, and it never claims to be next. Which modules are still planned is
   // the corpus's business, so the step is found by what it says.
-  const draft = body.locator('.hl-step', { hasText: 'PLANNED' }).first()
+  const draft = body.locator(STEP, { hasText: 'PLANNED' }).first()
   await expect(draft).toBeVisible()
   await expect(draft).toContainText('PLANNED')
   await expect(draft.locator('a')).toHaveCount(0)
-  await expect(draft.locator('.hl-step-tick')).not.toBeVisible()
+  await expect(draft.locator(STEP_TICK)).not.toBeVisible()
 })
 
 test('the reader’s own standing never announces itself twice (SC 4.1.3)', async ({ page }) => {
@@ -240,7 +258,7 @@ test('the reader’s own standing never announces itself twice (SC 4.1.3)', asyn
   })
   await page.goto(PROGRESS)
   await openRegisterRow(page, ROLE_ROW)
-  await expect(page.locator(`.hl-path-body[data-role="${SE}"]`)).toBeVisible()
+  await expect(page.locator(`${PATH_BODY}[data-role="${SE}"]`)).toBeVisible()
 
   // Driving `/path/` found two visible live regions both stating the standing on
   // load — the path's readout and the picker's — so a screen reader heard the

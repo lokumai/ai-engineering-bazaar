@@ -306,13 +306,20 @@ test('the home screen cannot be nudged sideways at any width', async ({ page }) 
 test('the mark options reach the §10.4 touch floor below 768px', async ({ page }) => {
   test.skip(page.viewportSize()!.width >= 768, '§10.4 sets the floor below 768')
 
-  // §16.2.2 — one picker, three call sites, and two of them are routes a reader
-  // reaches on a phone. `/sign-in/alias/` is the first-run screen this test was
-  // written for; `/profile/` renders the same component at its default prefix
-  // inside the drafter block, and it is the one that changed — the floor is now
-  // stated once in `profile.css` as an unconditional `min-height` on the cell
-  // rather than by `max-md:min-h-11` on this screen's own label, so a
-  // measurement on one route no longer says anything about the other.
+  /*
+    §16.2.2 — one picker, three call sites, and two of them are routes a reader
+    reaches on a phone. `/sign-in/alias/` is the first-run screen this test was
+    written for; `/profile/` renders the same component at its default prefix
+    inside the drafter block, so a measurement on one route says nothing about
+    the other and both are walked.
+
+    WHERE THE FLOOR IS STATED IS CURRENTLY NOWHERE. This named `profile.css` as
+    holding it, once, as an unconditional `min-height` on the cell — and M16
+    stage 0 deleted that stylesheet with the other ten. Neither route states the
+    floor now, which is why this is red at 390: MEASURED at 19px against 44.
+    Stage 8 owns the picker and has to state it once again, in the surface
+    stylesheet it authors.
+  */
   for (const route of ['/sign-in/alias/', '/profile/']) {
     await page.goto(route)
     await page.waitForLoadState('networkidle')
@@ -351,7 +358,15 @@ test('every control reaches the §10.4 touch floor below 768px', async ({ page }
   // border, so a hand-tuned `inset` resolved against a padding box 2px smaller
   // than the painted one.
   const controls = await page
-    .locator('.bz-slab-copy, .bz-caption-action, .hl-icon-btn, .hl-button')
+    // `.hl-icon-btn` was in this list and exists nowhere in `src/` — a dead
+    // entry contributes no nodes and no failure, so it read as coverage while
+    // being none. `.hl-button` is real but belongs to `MermaidFigure`'s expand
+    // overlay, which is unstyled until stage 10 and closed on load, so
+    // `checkVisibility()` filters it out today and it will start being measured
+    // the moment that overlay is built. Both facts are worth writing down,
+    // because the guard below counts what survived and would otherwise make
+    // this look thinner than it is.
+    .locator('.bz-slab-copy, .bz-caption-action, .hl-button')
     // A control the reader cannot reach has no floor to meet. §12 added a
     // `Keyboard shortcuts` trigger that is `display: none` below 768px — a
     // table of keystrokes is a control for a device with keys — and an
@@ -477,12 +492,28 @@ test('the draft module keeps its band and schedule at every width', async ({ pag
 test('no label paints its text over the text beside it', async ({ page }) => {
   for (const route of ['/', '/profile/']) {
     await page.goto(route)
-    const collisions = await page.evaluate(() => {
+    const { bad: collisions, examined } = await page.evaluate(() => {
       const bad: string[] = []
+      /*
+        COUNTED, because this scan can stop having anything to look at.
+
+        Every element short-circuits at the `ink.width <= box.width` line unless
+        it overflows its own box, and M16 stage 0 deleted the fixed-width label
+        rules that made any element do that — so the scan currently examines a
+        real page and finds nothing, which is the right answer and also
+        indistinguishable from a scan whose premise has broken. `examined`
+        counts the elements that got as far as being measured, so a page that
+        renders no text, or a `querySelectorAll` that stops matching, fails here
+        instead of reporting a clean sweep of nothing. The collision count
+        itself stays at zero; it is the one that matters when stage 7 gives the
+        completion toggle its width back.
+      */
+      let examined = 0
       for (const el of document.querySelectorAll<HTMLElement>('body *')) {
         if (!el.firstChild || el.firstChild.nodeType !== Node.TEXT_NODE) continue
         const text = (el.textContent ?? '').trim()
         if (!text || el.offsetParent === null) continue
+        examined += 1
         const range = document.createRange()
         range.selectNodeContents(el)
         const ink = range.getBoundingClientRect()
@@ -503,8 +534,9 @@ test('no label paints its text over the text beside it', async ({ page }) => {
           }
         }
       }
-      return bad
+      return { bad, examined }
     })
+    expect(examined, `${route} — the scan found no text to measure`).toBeGreaterThan(20)
     expect(collisions, `${route} — a label's text is painted over its neighbour's`).toEqual([])
   }
 })

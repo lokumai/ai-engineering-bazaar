@@ -524,7 +524,7 @@ test('channel A stays true across a client transition (§12.2)', async ({ page }
   // reads "AI Engineering Bazaar". It said "Lokum" until then, and scoping to
   // the banner is still what keeps the footer's own LokumAI link out of it.
   await page.getByRole('banner').getByRole('link', { name: /Bazaar/ }).click()
-  await expect(page.locator('h1.hl-hero-title')).toBeVisible()
+  await expect(page.locator('h1.bz-hero-title')).toBeVisible()
 
   // §15.2.1 — the stamp, read as the reader meets it. M13 made the home page
   // one document, so what the stamp chooses is the returning reader's
@@ -534,7 +534,7 @@ test('channel A stays true across a client transition (§12.2)', async ({ page }
   // control C is asserted with it, because that one is per-module and is the
   // mark the reader is actually looking for.
   await expect(page.locator('html')).toHaveAttribute('data-hl-record', '1')
-  await expect(page.locator('.hl-home-continue')).toBeVisible()
+  await expect(page.locator('.bz-home-continue')).toBeVisible()
   await expect(
     page.locator(`.bz-cmod[data-module="${SHEET.module}"] .bz-cmod-mark`),
   ).toBeVisible()

@@ -303,9 +303,9 @@ test('the home page is titled once, and the title claims no state (§15.2.2)', a
   // The one thing on the page that IS keyed to the reader's record, counted on
   // the DOM rather than on what is visible: it is present for everybody and
   // shown to the reader who has a record, which is `home.spec.ts`'s subject.
-  await expect(page.locator('.hl-home-continue')).toHaveCount(1)
+  await expect(page.locator('.bz-home-continue')).toHaveCount(1)
   expect(
-    await page.locator('.hl-home-continue h1, .hl-home-continue h2').count(),
+    await page.locator('.bz-home-continue h1, .bz-home-continue h2').count(),
     'the record-keyed block draws a heading of its own',
   ).toBe(0)
 })

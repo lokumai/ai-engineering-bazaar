@@ -122,6 +122,25 @@ export const DASHBOARD = path.resolve(process.cwd(), 'playground/07-dashboard.ht
 
 export const DASHBOARD_URL = pathToFileURL(DASHBOARD).href
 
+/**
+ * The FIFTH — the front door, `08`, variant A.
+ *
+ * `08`'s own note prefers its variant C and then says what to do if only one
+ * state gets built: *"If you would rather build one state, take A: the pitch
+ * matters more than the shortcut, because a returning reader can use the
+ * sidebar from any page, while a stranger who bounces never comes back."* The
+ * page is A plus C's one useful half — the continue block, on channel A.
+ *
+ * Its display type is the clearest case in the set of the language winning on
+ * purpose: `08` sets the heading `700 46px/1.1` at `-.035em`, and the language
+ * has 38px at 600. So the heading's MEASURE is compared and its type is not,
+ * for the same reason `05`'s statistics are not: a fact that was always going
+ * to differ is an exemption waiting to be written, not a comparison.
+ */
+export const HOME = path.resolve(process.cwd(), 'playground/08-home.html')
+
+export const HOME_URL = pathToFileURL(HOME).href
+
 export type Role =
   | 'bar'
   | 'barInner'
@@ -166,6 +185,11 @@ export type Role =
   | 'boardColumn'
   | 'boardHead'
   | 'boardTrack'
+  /* Stage 9 — the front door, from `08`. */
+  | 'heroActions'
+  | 'factRow'
+  | 'whyMark'
+  | 'whyGrid'
   /* Stage 8 — progress and account, from `07`. */
   | 'continueHero'
   | 'continueNum'
@@ -452,6 +476,29 @@ const FACTS: readonly Fact[] = [
   { role: 'fieldInput', property: 'paddingLeft', mutate: '99px' },
   { role: 'fieldInput', property: 'borderTopLeftRadius', mutate: '99px' },
   { role: 'fieldInput', property: 'fontSize', mutate: '99px' },
+
+  /* Stage 9 — `08`-A. The two MEASURES and the four lengths.
+
+     `heroTitle.maxWidth` is 20ch and `lede.maxWidth` 56ch, and those are the
+     facts worth holding: a display line that runs the width of a 1440px window
+     is the difference between a front door and a banner, and neither is
+     something the type scale settles. Their type steps are not compared — `08`
+     sets `700 46px` at `-.035em` against the language's `600 38px` at
+     `-0.015em`, and snapping a closed scale is the language winning rather
+     than a difference to reconcile. */
+  /* `heroTitle` AND `lede` ARE NOT ROLES, and the reason is the unit.
+     Both are declared in `ch`, and `ch` resolves against the element's own
+     font — so `08`'s `20ch` at its 46px system sans computes 640px and the
+     same rule at the language's 38px Avenir Next computes 529px. Identical
+     rule, different number, and no difference to reconcile. What the mockup
+     actually specifies here is that the display line and the lede are held to
+     a MEASURE at all, and in `ch` rather than in pixels; the stage's own block
+     asserts that, where it can read the declaration instead of its result. */
+  { role: 'heroActions', property: 'gap', mutate: '99px' },
+  { role: 'factRow', property: 'rowGap', mutate: '99px' },
+  { role: 'whyMark', property: 'width', mutate: '99px' },
+  { role: 'whyMark', property: 'height', mutate: '99px' },
+  { role: 'whyGrid', property: 'gap', mutate: '99px' },
   /* `buttonDanger` IS NOT A ROLE HERE, and the measurement is why: `07`'s
      danger button measured 9px/15px/14px against the language's 11px/20px/15px,
      because `07` draws it as a colour-only modifier of `07`'s OWN button and
@@ -652,6 +699,19 @@ export const DASHBOARD_SELECTORS: SelectorMap = {
   fieldInput: '.field input',
 }
 
+/**
+ * `08`-A. Variant A is the first `.body` in the document and B and C reuse the
+ * class names below it, so `.opt:first-of-type` scopes every one of these to A
+ * rather than trusting document order — which `07`'s do trust, and which is
+ * worth not repeating now that a third mockup has options.
+ */
+export const HOME_SELECTORS: SelectorMap = {
+  heroActions: '.opt:first-of-type .ctas',
+  factRow: '.opt:first-of-type .facts',
+  whyMark: '.opt:first-of-type .rule .ic',
+  whyGrid: '.opt:first-of-type .rules',
+}
+
 export const CATALOG_SELECTORS: SelectorMap = {
   filterBar: '.filters',
   chip: '.fchip:not([aria-pressed="true"])',
@@ -673,7 +733,7 @@ export const CATALOG_SELECTORS: SelectorMap = {
 }
 
 /** Which document specifies a role. A role with no entry has no mockup. */
-export type Reference = '01' | '03' | '05' | '07'
+export type Reference = '01' | '03' | '05' | '07' | '08'
 
 /**
  * THE ROLE-TO-DOCUMENT MAP, which is what makes D31 something a machine can
@@ -705,6 +765,9 @@ export const REFERENCE_OF: Readonly<Partial<Record<Role, Reference>>> = {
 
   continueHero: '07', continueNum: '07', panel: '07', field: '07',
   fieldLabel: '07', fieldInput: '07',
+
+  heroActions: '08', factRow: '08',
+  whyMark: '08', whyGrid: '08',
 }
 
 /**
@@ -724,6 +787,7 @@ export const REFERENCES: Readonly<
   '03': { file: CATALOG, url: CATALOG_URL, selectors: CATALOG_SELECTORS },
   '05': { file: PROGRESS, url: PROGRESS_URL, selectors: PROGRESS_SELECTORS },
   '07': { file: DASHBOARD, url: DASHBOARD_URL, selectors: DASHBOARD_SELECTORS },
+  '08': { file: HOME, url: HOME_URL, selectors: HOME_SELECTORS },
 }
 
 /** Kept as views onto `REFERENCES`, so no caller has to change and no second
@@ -869,6 +933,12 @@ export const APP_SELECTORS: SelectorMap = {
   field: '.bz-field',
   fieldLabel: '.bz-field-label',
   fieldInput: '.bz-field > input',
+
+  /* Stage 9 — the front door. */
+  heroActions: '.bz-hero-actions',
+  factRow: '.bz-facts',
+  whyMark: '.bz-why-mark',
+  whyGrid: '.bz-why',
   boardList: '.bz-boardcol-list',
   boardMod: '.bz-boardcol-mod',
   viewToggle: '.bz-viewtoggle',

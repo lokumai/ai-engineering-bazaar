@@ -1,0 +1,179 @@
+/* ===========================================================================
+   §15 — THE FRONT DOOR.
+
+   Reference: `playground/08-home.html`, variant A — "Say what it is, then show
+   the five levels", whose own note is the argument for it: *"a stranger
+   understands the product in one screen, and the five level cards double as
+   the table of contents."*
+
+   `08`'s closing note prefers variant C, the two-state page that shows a
+   returning reader a shortcut and a stranger the pitch — and then says what to
+   do if only one state gets built: *"If you would rather build one state, take
+   A: the pitch matters more than the shortcut, because a returning reader can
+   use the sidebar from any page, while a stranger who bounces never comes
+   back."*
+
+   THAT IS WHAT THIS IS, and it is also what the page already was. The branch
+   was removed before M16 — `page.tsx` records it — and what survived of C is
+   one line: the continue block, which is the shortcut, on channel A. So the
+   page is A with C's one useful half, which is the recommendation and the
+   fallback taken together.
+
+   D31: colour from `01`, geometry from `08`.
+   =========================================================================== */
+
+@layer components {
+  .bz-hero {
+    margin: 0 0 34px;
+  }
+
+  /* `08:44` — `700 46px/1.1` at `-.035em`, and the language's display step is
+     38px at 600 with `-0.015em`. THE LANGUAGE WINS, as it did for `03`'s
+     weights and `05`'s dial: the scale is a closed set and `700` is in no
+     mockup's type block but this one's. What transfers is that the heading is
+     the largest thing on the page, holds to a short measure, and is the only
+     place tracking goes properly negative — so it takes `display` at the
+     tightest tracking the language has. */
+  .bz-hero-title {
+    max-width: 20ch;
+    margin: 0 0 14px;
+    color: var(--color-on-surface-title);
+    font: 600 var(--text-display) / var(--text-display--line-height) var(--font-sans);
+    letter-spacing: var(--tracking-display);
+  }
+
+  /* `08:45`'s lede: 19px over a 56ch measure. 19px is on no step; `lead` is
+     16 and `subsection` 18.5, and the one that is a READING size rather than a
+     heading size is `lead`. The measure transfers exactly. */
+  .bz-lede {
+    max-width: 56ch;
+    margin: 0 0 26px;
+  }
+
+  .bz-lede p {
+    margin: 0 0 10px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-lead);
+    line-height: 1.6;
+  }
+
+  .bz-lede p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* -- §15.2.1 the shortcut, and the one thing here that knows the reader ---
+     THE ONLY TWO-STATE MACHINERY LEFT ON THIS PAGE, and it is channel A.
+
+     `boot.ts` stamps `data-hl-record` on `<html>` before first paint for a
+     record that CARRIES SOMETHING — days, an export, an identity field or a
+     module's state — and deliberately not for one that carries only
+     preferences: pressing a view toggle is not reading the course (§15.11).
+
+     It had no reader at all. The rule that revealed it lived in `app/home.css`,
+     which stage 0 deleted with the other ten, and `boot.ts` still named that
+     file as its consumer. So the block was rendered for everybody and
+     `ContinueLine` decided in React — which cannot be right in frame one,
+     because `getServerSnapshot` returns the frozen empty record and
+     `nextUnsigned` resolves that to module 01. A reader who had never opened
+     anything was handed a shortcut to the first module and told it was where
+     they left off.
+
+     Hidden by default and revealed by the stamp, so a browser with no record
+     never sees it and a returning reader sees it in frame one with no
+     JavaScript. */
+
+  .bz-home-continue {
+    display: none;
+    margin: 0 0 18px;
+  }
+
+  html[data-hl-record] .bz-home-continue {
+    display: block;
+  }
+
+  .bz-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 11px;
+    margin: 0 0 22px;
+  }
+
+  /* `08:53-54` — the four measured facts, value first and label after, in one
+     wrapping row with no card and no icons. The language's `.bz-facts` is the
+     same primitive from `01`'s reading column, so this only adds the emphatic
+     value: 650 is the weight `01` gives an emphasised number in prose. */
+  .bz-facts-value {
+    color: var(--color-on-surface);
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bz-facts > li {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+  }
+
+  /* `08:53` spaces the four facts 24px apart; `01`'s reading-column strip,
+     which is where `.bz-facts` was transcribed from, spaces its three at 11px.
+     Two mockups, one primitive, two contexts — and a surface arranging its own
+     instance is exactly what a surface stylesheet is for. The primitive keeps
+     `01`'s value for the page `01` draws. */
+  .bz-hero .bz-facts {
+    gap: 24px;
+  }
+
+  /* -- `08:80-87` the four claims -----------------------------------------
+     `repeat(auto-fit, minmax(230px, 1fr))`, a glyph tile beside each, and the
+     block set off by a rule above it. */
+
+  .bz-why {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 16px;
+    margin: 0;
+  }
+
+  .bz-why > div {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 4px 11px;
+  }
+
+  .bz-why dt {
+    grid-column: 2;
+    color: var(--color-on-surface);
+    font-size: var(--text-item);
+    font-weight: 600;
+  }
+
+  .bz-why dd {
+    grid-column: 2;
+    margin: 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+    line-height: 1.5;
+  }
+
+  /* `08:84` tints this tile with a pair of tokens the language does not
+     have — the same `--soft` / `--accent-ink` pair `07`'s ordinal badge
+     wanted — so it is an EDGE, which is the answer **D33** already gave twice.
+     Sized for a glyph either way, which is what let the emoji be replaced by
+     an SVG without touching it. */
+  .bz-why-mark {
+    grid-row: span 2;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xl);
+    color: var(--color-primary);
+  }
+
+  .bz-why-mark > svg {
+    width: 15px;
+    height: 15px;
+  }
+}

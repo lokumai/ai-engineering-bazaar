@@ -36,9 +36,9 @@ const VERIFIED_SUBMITTAL_DOORS: readonly string[] = DOOR_ROWS.filter(
 
 export function KeepingYourPlace() {
   return (
-    <section className="bz-panel" aria-labelledby="hl-home-identity">
+    <section className="bz-panel" aria-labelledby="bz-home-identity">
       <div className="bz-panel-head">
-        <h2 id="hl-home-identity" className="bz-panel-title">
+        <h2 id="bz-home-identity" className="bz-panel-title">
           Keeping your place
         </h2>
         <p className="bz-panel-note">Optional · one of these, or none</p>
@@ -58,7 +58,7 @@ export function KeepingYourPlace() {
         </dd>
       </dl>
 
-      <div className="hl-home-actions">
+      <div className="bz-actions">
         <Link className="bz-btn" href="/sign-in/alias/">
           Choose an alias
         </Link>

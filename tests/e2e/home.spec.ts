@@ -60,7 +60,7 @@ const SEEDED = A0
 const SEEDED_SLUG = slugOf(SEEDED)
 
 /** The returning reader's shortcut, and the only thing keyed off the record. */
-const CONTINUE = '.hl-home-continue'
+const CONTINUE = '.bz-home-continue'
 
 /** Control C's own selectors (D14). */
 const LEVEL_CARD = '.bz-cc-level'
@@ -198,7 +198,7 @@ test('a clean browser meets the whole page, and it claims nothing about the read
   await expect(page.locator('main h1')).toHaveText(
     'AI engineering, written by someone who builds it.',
   )
-  await expect(page.locator('.hl-statement')).toContainText(HOME_SCOPE)
+  await expect(page.locator('.bz-lede')).toContainText(HOME_SCOPE)
 
   // Where to start: the two actions, and the first of them opens a module
   // rather than a menu (§15.2.4, §11.3).
@@ -236,10 +236,18 @@ test('every number on the page is derived from the modules it is printed beside'
   // each other: the facts strip summarises the level cards, so summing the
   // cards has to reproduce it. A typed number would drift the moment the
   // corpus moved, and this is what would catch it.
-  const facts = await page.locator('.hl-facts').innerText()
-  const [written, total] = [...facts.matchAll(/(\d+) of (\d+)\s+modules written/g)][0]
-    .slice(1)
-    .map(Number)
+  const facts = await page.locator('.bz-facts').innerText()
+  /*
+    MATCHED FIRST, then destructured. This indexed `[0]` straight off
+    `matchAll` and called `.slice(1)` on it, so a strip that stopped matching
+    threw `Cannot read properties of undefined` — which is not a failure, it is
+    an error, and it says nothing about the page. The same shape as an
+    assertion satisfied by an empty node list: what the test needs is to fail
+    with its own message.
+  */
+  const counted = [...facts.matchAll(/(\d+) of (\d+)\s+modules written/g)]
+  expect(counted, `the facts strip states no written count: "${facts}"`).toHaveLength(1)
+  const [written, total] = counted[0].slice(1).map(Number)
 
   const rows = await page.locator(MODULE_ROW).count()
   const planned = await page.locator(`${MODULE_ROW}[data-drawn="false"]`).count()
@@ -574,7 +582,7 @@ for (const state of ['clean', 'with a record'] as const) {
     await expect(page.locator('main h1')).toBeVisible()
 
     // The 56px step, used here and nowhere else on the site (§3.2).
-    await expect(page.locator('main h1')).toHaveClass(/hl-hero-title/)
+    await expect(page.locator('main h1')).toHaveClass(/bz-hero-title/)
 
     // §15.2.2 — the title is written once, at build time, for a reader the
     // build has never met, so it greets nobody and reports no state. Stated as

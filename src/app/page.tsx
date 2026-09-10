@@ -49,7 +49,7 @@ export const metadata: Metadata = {
  * for a stranger, and a hunt for the module you were on for everybody else.
  *
  * **So this is ONE document for both readers, and the branch is gone.** What
- * survives of it is one line: `.hl-home-continue` is the only thing on the page
+ * survives of it is one line: `.bz-home-continue` is the only thing on the page
  * keyed off `data-hl-record`, so a reader with a record gets the shortest path
  * back to work above the fold and a reader without one is not shown a control
  * for a state they are not in. That is the whole of the two-state machinery
@@ -131,17 +131,17 @@ export default function HomePage() {
 
   return (
     <PageShell column={false}>
-      <div className="hl-home-hero">
+      <div className="bz-hero">
         {/* §15.2.2 — one h1 for one document, and it says what the place is
             rather than repeating the wordmark two rows above it. */}
-        <h1 className="hl-hero-title">
+        <h1 className="bz-hero-title">
           AI engineering, written by someone who builds it.
         </h1>
 
         {/* §15.2.3 — the measured statement, then the one line that is not a
             measurement but a commitment, kept in `scope.ts` with the other
             three sentences about where the record goes (§15.9.1). */}
-        <div className="hl-statement">
+        <div className="bz-lede">
           {[...indexStatement(), HOME_SCOPE].map((line) => (
             <p key={line}>{line}</p>
           ))}
@@ -150,11 +150,11 @@ export default function HomePage() {
         {/* §15.2.1 — the only thing on this page that knows about the reader
             before React does. Absent for a browser with no record, which is
             what makes it a shortcut rather than a prompt. */}
-        <div className="hl-home-continue">
+        <div className="bz-home-continue">
           <ContinueLine facts={facts} />
         </div>
 
-        <div className="hl-hero-actions">
+        <div className="bz-hero-actions">
           {/* DESIGN.md, Components — one `button-primary` per screen region,
               and this is the home page's. §15.2.4: the primary action opens a
               module rather than a menu. */}
@@ -169,23 +169,23 @@ export default function HomePage() {
         {/* The four facts, each one counted from the corpus. A dash is
             impossible here: these are measurements of the repository, so the
             honest empty form of any of them is a zero somebody counted. */}
-        <ul className="hl-facts">
+        <ul className="bz-facts">
           <li>
-            <span className="hl-facts-value">
+            <span className="bz-facts-value">
               {totals.ready} of {totals.modules}
             </span>
             modules written
           </li>
           <li>
-            <span className="hl-facts-value">{hoursMinutes(totals.minutes)}</span>
+            <span className="bz-facts-value">{hoursMinutes(totals.minutes)}</span>
             of reading
           </li>
           <li>
-            <span className="hl-facts-value">{totals.figures}</span>
+            <span className="bz-facts-value">{totals.figures}</span>
             diagrams and figures
           </li>
           <li>
-            <span className="hl-facts-value">{totals.sources}</span>
+            <span className="bz-facts-value">{totals.sources}</span>
             sources cited
           </li>
         </ul>
@@ -194,7 +194,7 @@ export default function HomePage() {
       {/* D14's control C, and home A's level grid: one component, because they
           are the same thing seen by two readers. */}
       <div className="bz-panel-head">
-        <h2 id="hl-home-levels" className="bz-panel-title">
+        <h2 id="bz-home-levels" className="bz-panel-title">
           The {numberWord(levels.length)} levels
         </h2>
         <p className="bz-panel-note">
@@ -202,20 +202,43 @@ export default function HomePage() {
           assumes you write software and assumes nothing else
         </p>
       </div>
-      <CourseCompletion facts={facts} levels={levels} headingId="hl-home-levels" />
+      <CourseCompletion facts={facts} levels={levels} headingId="bz-home-levels" />
 
       {/* Home A's second half: the argument for reading this rather than the
           next thing a search returns. Four claims, each one checkable against
           the corpus itself, and none of them about the reader. */}
-      <section className="bz-panel" aria-labelledby="hl-home-why">
+      <section className="bz-panel" aria-labelledby="bz-home-why">
         <div className="bz-panel-head">
-          <h2 id="hl-home-why" className="bz-panel-title">
+          <h2 id="bz-home-why" className="bz-panel-title">
             Why this and not the hundredth AI blog
           </h2>
           <p className="bz-panel-note">Four reasons, all of them checkable</p>
         </div>
-        <dl className="hl-why">
+        {/* `08:179-182` draws a glyph beside each claim, in a 28px tinted
+            tile — and it draws them as LITERAL EMOJI: a writing hand, a speech
+            balloon, a ruler, a rising chart. Emoji are not this design's icon
+            idiom and never have been: `src/` carries twenty inline SVGs and no
+            emoji at all, on a 16-unit viewBox with `fill="none"` and
+            `stroke="currentColor"`, and `01:172-178` records why a shape with a
+            fill beats a hairline glyph where meaning depends on it. An emoji
+            also renders in whatever face the reader's platform ships, at a size
+            nothing here chose, and says something different on each one.
+
+            So the four are redrawn on that grid, keeping what each one MEANT
+            rather than tracing it: a nib, a pair of quotes, a rule with two
+            ticks, and a rising line. The tile survives the swap unchanged
+            because it was always sized for a glyph — and it is an edge rather
+            than `08`'s tint, which is the answer D33 already gave for the level
+            badge. */}
+        <dl className="bz-why">
           <div>
+            <span className="bz-why-mark" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"
+                strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 13l1-3 7-7 2 2-7 7-3 1z" />
+                <path d="M10.5 3.5l2 2" />
+              </svg>
+            </span>
             <dt>A person wrote it</dt>
             <dd>
               Most of this is too new for a model to have read anything reliable
@@ -224,6 +247,12 @@ export default function HomePage() {
             </dd>
           </div>
           <div>
+            <span className="bz-why-mark" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"
+                strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z" />
+              </svg>
+            </span>
             <dt>It reads like being told</dt>
             <dd>
               Ask an engineer in person and you get a straight answer with the
@@ -231,6 +260,13 @@ export default function HomePage() {
             </dd>
           </div>
           <div>
+            <span className="bz-why-mark" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"
+                strokeLinecap="round" strokeLinejoin="round">
+                <path d="M1.5 6h13v4h-13z" />
+                <path d="M5 6v2M8 6v2.8M11 6v2" />
+              </svg>
+            </span>
             <dt>Short on purpose</dt>
             <dd>
               {hoursMinutes(Math.round(totals.minutes / Math.max(1, totals.ready)))} a
@@ -238,6 +274,13 @@ export default function HomePage() {
             </dd>
           </div>
           <div>
+            <span className="bz-why-mark" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"
+                strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 12l4-4 3 2 5-5" />
+                <path d="M10.5 5h3.5v3.5" />
+              </svg>
+            </span>
             <dt>The pictures do the work</dt>
             <dd>
               {totals.figures} diagrams and figures, because a loop is easier to

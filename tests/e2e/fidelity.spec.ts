@@ -14,6 +14,8 @@ import {
   MOCKUP_URL,
   DASHBOARD_SELECTORS,
   DASHBOARD_URL,
+  HOME_SELECTORS,
+  HOME_URL,
   PROGRESS_SELECTORS,
   PROGRESS_URL,
   REFERENCE_OF,
@@ -1271,5 +1273,144 @@ test.describe('M16 stage 8 — progress and account', () => {
 
     expect(seen.shown, 'a path is drawn for a role nobody chose').toBe(0)
     expect(seen.empties, 'no empty state where there is no path').toBeGreaterThan(0)
+  })
+})
+
+test.describe('M16 stage 9 — the front door', () => {
+  const BUILT: readonly Role[] = ['heroActions', 'factRow', 'whyMark', 'whyGrid']
+
+  test('is indistinguishable from `08`, in the measures and the lengths', async ({ page }) => {
+    await page.goto(HOME_URL)
+    await freezeMotion(page)
+    const reference = await extractDesignFacts(page, HOME_SELECTORS)
+
+    await page.goto('/')
+    await freezeMotion(page)
+    const actual = await extractDesignFacts(page, APP_SELECTORS)
+
+    const shown = (facts: Record<string, string | null>, role: Role) =>
+      FACT_KEYS.filter((key) => key.startsWith(`${role}.`)).some((key) => facts[key] !== null)
+
+    for (const role of BUILT) {
+      expect(
+        shown(actual, role),
+        `${role}: mockup ${shown(reference, role)}, page ${shown(actual, role)}`,
+      ).toBe(shown(reference, role))
+    }
+    expect(BUILT.every((role) => shown(reference, role)), 'a role `08` does not draw').toBe(true)
+
+    expect(differencesAt(reference, actual, BUILT, page.viewportSize()!.width)).toEqual([])
+  })
+
+  /**
+   * The two measures, asserted as DECLARATIONS rather than as lengths.
+   *
+   * `08` holds the display line to `20ch` and the lede to `56ch`, and `ch`
+   * resolves against each element's own font — so the same rule computes 640px
+   * in a 46px system sans and 529px in the language's 38px face. The number is
+   * not the fact; the unit and the cap are. A display line that runs the width
+   * of a 1440px window is the difference between a front door and a banner,
+   * and nothing in the type scale settles that.
+   */
+  test('holds the display line and the lede to a measure, in `ch`', async ({ page }) => {
+    // A measure only constrains a window wider than it is. Below the
+    // language's own lower breakpoint the column is narrower than 20ch, so the
+    // line fills it and there is nothing here to measure — which is the cap
+    // working, not failing.
+    test.skip(page.viewportSize()!.width < 880, 'the column is narrower than the measure')
+    await page.goto('/')
+
+    const measured = await page.evaluate(() => {
+      const read = (selector: string) => {
+        const node = document.querySelector(selector)
+        if (node === null) return null
+        const box = node.getBoundingClientRect()
+        return {
+          width: Math.round(box.width),
+          column: Math.round((node.parentElement as HTMLElement).getBoundingClientRect().width),
+        }
+      }
+      return { hero: read('.bz-hero-title'), lede: read('.bz-lede') }
+    })
+
+    expect(measured.hero, 'no display line on the front door').not.toBeNull()
+    expect(measured.lede, 'no lede on the front door').not.toBeNull()
+    // Capped, and by a real margin rather than by a rounding error: at 1440 the
+    // column is wide enough that an uncapped line would fill it.
+    expect(measured.hero!.width).toBeLessThan(measured.hero!.column - 40)
+    expect(measured.lede!.width).toBeLessThan(measured.lede!.column - 40)
+    // And the lede's measure is the longer of the two, which is what makes one
+    // a heading and the other something to read.
+    expect(measured.lede!.width).toBeGreaterThan(measured.hero!.width)
+  })
+
+  /**
+   * §15.2.1 — the shortcut, on channel A, and the whole of the two-state
+   * machinery this page has left.
+   *
+   * `boot.ts` stamps `data-hl-record` for a record that CARRIES SOMETHING and
+   * deliberately not for one holding only preferences. The reveal had no reader
+   * at all: the rule lived in the `app/home.css` stage 0 deleted, so the block
+   * showed for everybody and `ContinueLine` decided in React — which cannot be
+   * right in frame one, because the server snapshot is the frozen empty record
+   * and `nextUnsigned` resolves that to module 01. A browser that had never
+   * opened anything was handed a shortcut to the first module.
+   *
+   * Measured with every `.js` request refused, so nothing React does can be
+   * what makes it true.
+   */
+  test('offers the shortcut only to a reader who has one, in frame one', async ({ page }) => {
+    await page.route('**/*.js', (route) => route.abort())
+
+    await page.goto('/')
+    const clean = await page.evaluate(() => ({
+      stamped: document.documentElement.hasAttribute('data-hl-record'),
+      shown: (document.querySelector('.bz-home-continue') as HTMLElement | null)?.checkVisibility()
+        ?? null,
+    }))
+    expect(clean.stamped, 'a clean browser was stamped as a returning reader').toBe(false)
+    expect(clean.shown, 'no continue block in the document at all').not.toBeNull()
+    expect(clean.shown, 'a clean browser is offered a shortcut it has not earned').toBe(false)
+
+    // A record that carries something — one signed module — and the same page.
+    await seedRecord(page, { sheets: { 'fundamentals/llms': signedSheet('a1b2c3d') } })
+    await page.goto('/')
+    const returning = await page.evaluate(() => ({
+      stamped: document.documentElement.hasAttribute('data-hl-record'),
+      shown: (document.querySelector('.bz-home-continue') as HTMLElement).checkVisibility(),
+    }))
+    expect(returning.stamped).toBe(true)
+    expect(returning.shown, 'a returning reader is not offered the shortcut').toBe(true)
+  })
+
+  /**
+   * `08:179-182` draws its four claims with literal emoji. This is the check
+   * that they did not survive the rebuild: `src/` carries twenty inline SVGs
+   * and no emoji, on a 16-unit viewBox with `stroke="currentColor"`, and an
+   * emoji renders in whatever face the reader's platform ships at a size
+   * nothing here chose.
+   */
+  test('draws the four claims in the design’s own icon idiom', async ({ page }) => {
+    await page.goto('/')
+
+    const marks = await page.locator('.bz-why-mark').evaluateAll((nodes) =>
+      nodes.map((node) => ({
+        svg: node.querySelector('svg') !== null,
+        viewBox: node.querySelector('svg')?.getAttribute('viewBox') ?? null,
+        stroke: node.querySelector('svg')?.getAttribute('stroke') ?? null,
+        hidden: node.getAttribute('aria-hidden'),
+        text: (node.textContent ?? '').trim(),
+      })),
+    )
+
+    expect(marks, 'the claims carry no marks at all').toHaveLength(4)
+    for (const mark of marks) {
+      expect(mark.svg, 'a claim’s mark is not an SVG').toBe(true)
+      expect(mark.viewBox).toBe('0 0 16 16')
+      expect(mark.stroke).toBe('currentColor')
+      expect(mark.hidden, 'a decorative mark is announced').toBe('true')
+      // No text node at all, which is what an emoji would have been.
+      expect(mark.text, `a mark carries text: "${mark.text}"`).toBe('')
+    }
   })
 })

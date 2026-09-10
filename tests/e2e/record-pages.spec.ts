@@ -507,7 +507,7 @@ test('§12.10 — the emitted geometry is byte-identical across two loads', asyn
  * It was the dashboard's one line above the graph. The dashboard folded into
  * `/profile/` and the line did not go with it: a reader who wants the next
  * module is on the front door, not on the page about their own record, and home
- * A shows it inside `.hl-home-continue` — the one block on that page keyed off
+ * A shows it inside `.bz-home-continue` — the one block on that page keyed off
  * `data-hl-record`, so a reader with no record is not offered a shortcut into a
  * course they have not started.
  *

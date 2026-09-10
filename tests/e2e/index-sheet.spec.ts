@@ -102,7 +102,7 @@ test('the ready / not-ready counts match the rows actually rendered', async ({ p
   // has to agree with the rows above — and after §15 nothing else compares the
   // two, because they are no longer on one page.
   await page.goto('/')
-  const statement = (await page.locator('.hl-statement').innerText()).replace(/\s+/g, ' ')
+  const statement = (await page.locator('.bz-lede').innerText()).replace(/\s+/g, ' ')
   expect(statement).toContain(`${spellOut(SHEET_COUNT)} modules`)
   expect(statement).toContain(`${spellOut(DRAWN_COUNT)} are ready to read.`)
   // M13 rewrote this line: it read "… are dashed — the geometry exists in the

@@ -155,15 +155,15 @@ describe('indexStatement — §4.8 item 2, with its counts derived', () => {
 
 describe('durationLabel — hours and minutes, never a bare estimate', () => {
   it('states hours and minutes together', () => {
-    expect(durationLabel(235)).toBe('~3 H 55 MIN')
+    expect(durationLabel(235)).toBe('~3 h 55 min')
   })
 
   it('drops the minutes on a whole hour', () => {
-    expect(durationLabel(120)).toBe('~2 H')
+    expect(durationLabel(120)).toBe('~2 h')
   })
 
   it('drops the hours below one', () => {
-    expect(durationLabel(45)).toBe('~45 MIN')
+    expect(durationLabel(45)).toBe('~45 min')
   })
 
   it('says nothing at all when no module declares a duration', () => {
@@ -174,17 +174,21 @@ describe('durationLabel — hours and minutes, never a bare estimate', () => {
 describe('the counts each page states about itself', () => {
 
   it('writes the level eyebrow §4.9 item 1 asks for', () => {
-    // The format rather than the counts: a two-digit subsystem number, the
-    // plural SHEETS for a subsystem of more than one, DRAWN, and a rounded
-    // duration. The counts were written in as `7 SHEETS · 7 DRAWN` and went
-    // red the moment Generative UI joined the subsystem.
+    // The format rather than the counts: a two-digit level number, the plural
+    // for a level of more than one, the ready count, and a rounded duration.
+    // The counts were written in as `7 SHEETS · 7 DRAWN` and went red the
+    // moment Generative UI joined the level.
+    //
+    // Sentence case since M16: these strings were pre-cased to match a class
+    // that applied `text-transform: uppercase`, and the design language has no
+    // uppercase at all.
     expect(categoryEyebrow(categoryBySlug('intermediate')!))
-      .toMatch(/^LEVEL 02 · \d+ MODULES · \d+ READY · ~\d+ H( \d+ MIN)?$/)
+      .toMatch(/^Level 02 · \d+ modules · \d+ ready · ~\d+ h( \d+ min)?$/)
   })
 
   it('counts a level of one in the singular', () => {
     expect(categoryEyebrow(categoryBySlug('protocols')!))
-      .toBe('LEVEL 05 · 1 MODULE · 0 READY')
+      .toBe('Level 05 · 1 module · 0 ready')
   })
 
 })

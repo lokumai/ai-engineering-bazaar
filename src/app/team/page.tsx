@@ -66,7 +66,7 @@ export default function TeamPage() {
     <PageShell column={false} sheet="TEAM">
       <p className="hl-eyebrow hl-mark">SCOPED BY RLS · NOT BY THIS PAGE</p>
 
-      <h1 className="hl-listing-title">Team</h1>
+      <h1 className="bz-display">Team</h1>
 
       <p className="bz-lead">
         One row per member of your organisation. The claim column is what each
@@ -83,14 +83,14 @@ export default function TeamPage() {
         anything else.
       </p>
 
-      <hr className="hl-rule-struct" aria-hidden="true" />
+      <hr className="bz-rule" aria-hidden="true" />
 
       <TeamTable facts={facts} />
 
       {/* §15.8 — the row that reads `USER 1a2b3c4d`. It is the one cell on this
           screen a manager is likely to read as a fault in the panel, and the
           answer is a property of the record rather than of this page. */}
-      <div className="hl-note">
+      <div className="bz-note">
         <p className="hl-mark m-0 text-on-surface">Why a row reads USER and eight characters</p>
         <p className="m-0 mt-1 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
           A member is named by the alias they typed for themselves. Where nobody
@@ -99,7 +99,7 @@ export default function TeamPage() {
           a member of your organisation, and a name supplied by this panel would
           be a fact about a person that nobody asserted. The label changes when
           that member keeps an alias on the{' '}
-          <Link href="/sign-in/alias/" className="hl-link">
+          <Link href="/sign-in/alias/" className="bz-link">
             alias module
           </Link>{' '}
           and their next push reaches the server. Nothing else about the row
@@ -155,11 +155,11 @@ export default function TeamPage() {
           </li>
         </ul>
 
-        <div className="hl-signoff-actions">
-          <Link className="hl-btn" href="/team/assignments/">
+        <div className="bz-actions">
+          <Link className="bz-btn" href="/team/assignments/">
             ASSIGNMENTS
           </Link>
-          <Link className="hl-btn" href="/legend/">
+          <Link className="bz-btn" href="/legend/">
             MODULE 00 — LEGEND
           </Link>
         </div>

@@ -166,9 +166,9 @@ describe('§15.4.5 — two controls of one weight', () => {
   it('gives the keep and the exit the same class and no primary variant', () => {
     expect(words(SHEET)).toContain('KEEP THIS ALIAS')
     expect(words(SHEET)).toContain('READ WITHOUT ONE')
-    expect(SHEET.match(/class="hl-btn"/g) ?? []).toHaveLength(2)
+    expect(SHEET.match(/class="bz-btn"/g) ?? []).toHaveLength(2)
     // The accent means signed off (T1) and nothing on this screen is one.
-    expect(SHEET).not.toContain('hl-btn-danger')
+    expect(SHEET).not.toContain('bz-btn-danger')
     expect(SHEET).not.toContain('aria-pressed')
   })
 

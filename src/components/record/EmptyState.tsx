@@ -174,14 +174,14 @@ export function EmptyState({ state }: { state: EmptyStateSpec }) {
       {effective.kind === 'no-match' ? (
         <button
           type="button"
-          className="hl-btn hl-empty-path"
+          className="bz-btn hl-empty-path"
           onClick={effective.clear}
         >
           Clear the filter
         </button>
       ) : (
         copy.path !== null && (
-          <Link className="hl-btn hl-empty-path" href={copy.path.path}>
+          <Link className="bz-btn hl-empty-path" href={copy.path.path}>
             {copy.path.label}
           </Link>
         )

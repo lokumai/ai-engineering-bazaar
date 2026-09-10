@@ -29,14 +29,14 @@ export function CategoryBlock({ order, title, path, ticks }: CategoryBlockProps)
   return (
     <Link
       href={path}
-      className="hl-category"
+      className="bz-levellink"
       data-undrawn={drawn === 0 ? '' : undefined}
     >
-      <span className="hl-mark hl-category-order">
+      <span className="bz-levellink-order">
         Level {String(order).padStart(2, '0')}
       </span>
-      <span className="hl-category-name">{title}</span>
-      <span className="hl-category-gauge">
+      <span className="bz-levellink-name">{title}</span>
+      <span className="bz-levellink-gauge">
         <TickGauge
           ticks={ticks}
           label={`${plural(ticks.length, 'module')}, ${drawn} ready`}

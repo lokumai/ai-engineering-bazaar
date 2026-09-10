@@ -239,6 +239,24 @@ function referencesIn(path: string): Reference[] {
 const SURFACE_DIR = join(ROOT, 'src/app')
 const NOT_A_SURFACE = new Set(['lokum-modules.css'])
 
+/**
+ * Custom properties whose NAME is composed at run time, so no stylesheet can
+ * declare them and this sweep would report every one as silent.
+ *
+ * There is exactly one family, and it is the one reading channel A carries as
+ * a number rather than as a class: `--bz-done-<slug>`, set on `<html>` by the
+ * boot script before first paint and by `stamp.ts` after mount. A level's slug
+ * is the course's business and not the language's — `DESIGN.md` names
+ * `category-3` and never `expert` — so declaring five of these in the language
+ * would put the curriculum inside the design system.
+ *
+ * The exemption is safe for a reason this file can state precisely: **every
+ * reference to one supplies a fallback**, and the whole hazard here is a
+ * `var()` that resolves to nothing at all, silently. A `var(--x, 0%)` cannot
+ * be silent. The case below enforces that rather than trusting it.
+ */
+const COMPOSED_AT_RUNTIME = /^--bz-done-[a-z-]+$/
+
 function surfaceReferences(): Reference[] {
   return readdirSync(SURFACE_DIR)
     .filter((name) => name.endsWith('.css') && !NOT_A_SURFACE.has(name))
@@ -247,7 +265,12 @@ function surfaceReferences(): Reference[] {
       const own = declaresItself(css)
       return [...css.matchAll(/var\(\s*(--[a-z0-9-]+)/g)]
         .map((match) => match[1])
-        .filter((property) => !property.endsWith('-') && !own.has(property))
+        .filter(
+          (property) =>
+            !property.endsWith('-') &&
+            !own.has(property) &&
+            !COMPOSED_AT_RUNTIME.test(property),
+        )
         .map((property) => ({
           file: `src/app/${name}`,
           raw: `var(${property})`,
@@ -282,5 +305,39 @@ describe('every styling reference in the markup resolves against the language', 
       + 'Tailwind utility whose token is missing emits NOTHING — no error, no '
       + 'warning — so each of these is silently doing nothing at all.',
     ).toEqual([])
+  })
+
+  /**
+   * The half that makes `COMPOSED_AT_RUNTIME` safe. Its entries are exempt from
+   * the sweep above precisely because they cannot be silent, and that is only
+   * true while every reference to one supplies a fallback — so it is checked
+   * here rather than asserted in a comment. Take the `, 0%` off and this fails
+   * while nothing else in the suite would notice.
+   */
+  it('gives every runtime-composed property a fallback', () => {
+    const naked: string[] = []
+    for (const name of readdirSync(SURFACE_DIR)) {
+      if (!name.endsWith('.css') || NOT_A_SURFACE.has(name)) continue
+      const css = withoutComments(readFileSync(join(SURFACE_DIR, name), 'utf8'))
+      for (const use of css.matchAll(/var\(\s*(--[a-z0-9-]+)\s*([,)])/g)) {
+        if (COMPOSED_AT_RUNTIME.test(use[1]) && use[2] === ')') {
+          naked.push(`src/app/${name} — var(${use[1]}) has no fallback`)
+        }
+      }
+    }
+    expect([...new Set(naked)].sort()).toEqual([])
+  })
+
+  it('exempts a family that is actually referenced', () => {
+    // A pattern matching nothing is an exemption doing nothing, and it would
+    // hide the day one of these stops being set at run time.
+    const referenced = readdirSync(SURFACE_DIR)
+      .filter((name) => name.endsWith('.css') && !NOT_A_SURFACE.has(name))
+      .flatMap((name) => [
+        ...withoutComments(readFileSync(join(SURFACE_DIR, name), 'utf8'))
+          .matchAll(/var\(\s*(--[a-z0-9-]+)/g),
+      ])
+      .filter((use) => COMPOSED_AT_RUNTIME.test(use[1]))
+    expect(referenced.length, 'nothing references the exempted family').toBeGreaterThan(0)
   })
 })

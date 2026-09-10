@@ -138,10 +138,10 @@ function OfferBlock({
           ))}
         </ul>
 
-        <div className="hl-dialog-actions">
+        <div className="bz-actions">
           <button
             type="button"
-            className="hl-btn"
+            className="bz-btn"
             disabled={busy}
             onClick={() => onJoin(offer.org)}
           >
@@ -392,7 +392,7 @@ export function JoinPanel() {
             sheet, not the profile sheet: `/profile/` cannot show an address to
             a reader who has not signed in. */}
         <p className="hl-empty-path m-0">
-          <Link href="/sign-in/" className="hl-link">
+          <Link href="/sign-in/" className="bz-link">
             Sign in
           </Link>
         </p>
@@ -446,7 +446,7 @@ export function JoinPanel() {
                 email sign-in was sent to the one module that cannot say so, and
                 the copy naming the sheet could drift from the link beside it. */}
             <p className="hl-empty-path m-0">
-              <Link href={copy.link.href} className="hl-link">
+              <Link href={copy.link.href} className="bz-link">
                 {copy.link.label}
               </Link>
             </p>

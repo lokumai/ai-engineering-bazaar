@@ -1,0 +1,709 @@
+/* ===========================================================================
+   §12.4 / §12.6 — COMPLETION, and the picture of how far a reader has come.
+
+   Reference: `playground/05-progress.html`, variants A and C, whose own
+   closing note is the brief: "**A** at the end of a module, because the reader
+   wants one button there, and **C** on the home and progress pages, because
+   that is where a picture of where you are belongs. A and C combine."
+
+   Its governing constraint is the milestone's in miniature (`05:88-91`):
+   "Every option below keeps the underlying behaviour you already have — a
+   per-module completion flag in this browser, the checklist, the
+   self-assessment, the streak — and changes only what a reader sees."
+
+   COLOUR COMES FROM `01`, GEOMETRY FROM `05` (**D31**). `05` is on the older
+   cool-grey/green palette, so reading it literally would put a green accent on
+   a powder ground; the fidelity harness makes that mechanical rather than a
+   rule to remember, and a role whose reference is not `01` may carry no colour
+   fact at all.
+
+   Where `05` disagrees with the language, the language wins and it is said
+   here rather than discovered later:
+
+   | `05` | here | why |
+   | --- | --- | --- |
+   | weight `700` on the dial and the statistics | `600` | `600` is the language's emphatic weight at every size; `700` is in no mockup's type scale but this one's. |
+   | radius `10px` on a level card | `--radius-xl` | the radius scale is a closed set and stops at 9px. |
+   | dial `17px` numeral | `--text-lead` | 17px is on no step; the scale is what the scale is for. |
+   | `.big` / `.go` buttons | `.bz-btn` | both are `01`'s own button, at a different radius. Stage 5 already built the row they sit in. |
+   =========================================================================== */
+
+@layer components {
+  /* -- §12.4 control A: the action row's two states -----------------------
+     `05:36-44` is `01`'s `.act` declaration for declaration — flex, centred,
+     wrapping, a top rule and top padding — and even the sentence matches
+     (`01:434` "Saved in this browser" against `05:103` "Saved in this browser.
+     You can undo it any time."). Stage 5 built that row as `.bz-actions` with
+     its two buttons and left the completion behaviour inside it alone; this is
+     that seam, and it adds no new row.
+
+     `05:112` cancels its own border inline, which says the border belongs to
+     the row above rather than to this primitive. */
+
+  .bz-signoff {
+    margin: 0 0 28px;
+  }
+
+  /* A caption above a group of controls, which is exactly what DESIGN.md gives
+     the `label` step to — and the only tracked size in the language. It used to
+     be a small uppercase mono label, which the language forbids twice. */
+  .bz-signoff-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    color: var(--color-on-surface-faint);
+    font: 600 var(--text-label) / 1 var(--font-sans);
+    letter-spacing: var(--tracking-label);
+  }
+
+  .bz-signoff-body {
+    margin: 0;
+  }
+
+  /* §12.4.3 — a completion claim that quietly became false. Secondary prose,
+     in the `meta` voice, and NOT in a caution colour: the module changing
+     after you signed it is a fact, not something the reader did wrong. */
+  .bz-signoff-drift {
+    margin: 10px 0 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  /* A write the browser refused. `role="alert"` carries the urgency, so the
+     hue only has to agree with it — and `fault` is a graphic token, so the
+     sentence is ordinary ink and the edge does the work. */
+  .bz-not-saved {
+    margin: 10px 0 0;
+    padding: 8px 11px;
+    border-left: 2px solid var(--color-fault);
+    color: var(--color-on-surface);
+    font-size: var(--text-meta);
+  }
+
+  .bz-identity {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  /* -- §12.6 the quick check ----------------------------------------------
+     `05`-B's four rows were rejected — "B replaces A", and A is what the
+     author chose — but the self-check itself is an existing capability and
+     keeps its place under the action row. Derived from the leaf card (**D30**),
+     which is `01`'s own shape for a thing set aside from the reading. */
+
+  .bz-quiz {
+    margin: 0 0 28px;
+    padding: 17px 20px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--shape-leaf);
+    background: var(--color-surface-raised);
+  }
+
+  .bz-quiz-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    color: var(--color-on-surface-faint);
+    font: 600 var(--text-label) / 1 var(--font-sans);
+    letter-spacing: var(--tracking-label);
+  }
+
+  .bz-quiz-question {
+    margin: 0 0 12px;
+    color: var(--color-on-surface);
+    font-size: var(--text-lead);
+  }
+
+  .bz-quiz-body {
+    margin: 0;
+  }
+
+  .bz-quiz-note {
+    margin: 10px 0 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  /* The reveal, and it is the module's own summary rather than a model answer
+     (§12.6). Set aside by a rule down its leading edge, which is the language's
+     way of saying "this is quoted from elsewhere". */
+  .bz-quiz-reveal {
+    margin: 14px 0 0;
+    padding-left: 13px;
+    border-left: 2px solid var(--color-line-strong);
+  }
+
+  .bz-quiz-reveal-label {
+    margin: 0 0 6px;
+    color: var(--color-on-surface-faint);
+    font: 600 var(--text-label) / 1 var(--font-sans);
+    letter-spacing: var(--tracking-label);
+  }
+
+  .bz-quiz-award {
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  /* -- the submittal, and the stamps --------------------------------------
+     `05:134` — "Optional. Paste a repository link if you want a record of it."
+     A form, so it is the language's field primitive and nothing local. */
+
+  .bz-submittal {
+    margin: 0 0 28px;
+  }
+
+  .bz-submittal-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    color: var(--color-on-surface-faint);
+    font: 600 var(--text-label) / 1 var(--font-sans);
+    letter-spacing: var(--tracking-label);
+  }
+
+  .bz-submittal-form {
+    margin: 0 0 12px;
+  }
+
+  .bz-submittal-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bz-submittal-item {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 7px 0;
+    border-top: 1px solid var(--color-line);
+    font-size: var(--text-item);
+  }
+
+  .bz-submittal-repo {
+    color: var(--color-on-surface);
+  }
+
+  .bz-submittal-commit {
+    margin-left: auto;
+    color: var(--color-on-surface-muted);
+    font: var(--text-mark) / 1 var(--font-mono);
+  }
+
+  .bz-submittal-note,
+  .bz-submittal-empty {
+    margin: 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  .bz-stamp-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .bz-stamp-shelf {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+  }
+
+  /* -- §12.4.1 the checklist ----------------------------------------------
+     `05:140-143` states the rule this has to keep: "The button works whatever
+     the boxes say. The list is there to tell a reader what 'complete' is
+     supposed to mean." It is never a gate. */
+
+  .bz-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    padding: 3px 0;
+    font-size: var(--text-item);
+  }
+
+  .bz-check-label {
+    color: var(--color-on-surface);
+  }
+
+  /* -- §12.6 control C: the overview ---------------------------------------
+     `05`-C, "on the home page and on My progress" — which is where
+     `CourseCompletion` renders, on `/` and on `/profile/` both. */
+
+  .bz-cc {
+    margin: 0;
+  }
+
+  /* The three statistics, and `05:195-200` is the rename map they exist for:
+     "~~XP 0~~ becomes minutes read, ~~UPTIME 1D~~ becomes days in a row,
+     ~~CLASS —~~ and ~~I AT 8~~ are dropped entirely because neither answered a
+     question anybody was asking."
+
+     A numeral used as display type is genuinely new to the language — `01`
+     states every count at reading size — so the step is `section`, which is
+     the 25px between `05`'s 24 and `07`'s 26, at the language's own emphatic
+     weight rather than `05`'s 700. */
+  .bz-cc-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 26px;
+    margin: 0 0 18px;
+    padding-top: 18px;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .bz-cc-stats dt {
+    order: 2;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  .bz-cc-stats dd {
+    order: 1;
+    margin: 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  .bz-cc-stats > div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bz-cc-stat-value {
+    display: block;
+    color: var(--color-on-surface-title);
+    font: 600 var(--text-section) / 1.1 var(--font-sans);
+    letter-spacing: var(--tracking-section);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bz-cc-note {
+    margin: 0 0 22px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  /* `05:63` — `repeat(auto-fit, minmax(140px, 1fr))`, which is the one grid
+     shape every non-shell mockup uses. */
+  .bz-cc-levels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bz-cc-level {
+    padding: 16px 14px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-raised);
+  }
+
+  .bz-cc-head {
+    text-align: center;
+  }
+
+  .bz-cc-title {
+    display: block;
+    margin: 0;
+    color: var(--color-on-surface);
+    font: 600 var(--text-item) / 1.3 var(--font-sans);
+  }
+
+  /* A count, which is what the `mark` step is for. */
+  .bz-cc-order {
+    display: block;
+    color: var(--color-on-surface-faint);
+    font: 600 var(--text-mark) / 1.5 var(--font-mono);
+  }
+
+  .bz-cc-count {
+    margin: 2px 0 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-mark);
+  }
+
+  /* -- the dial ------------------------------------------------------------
+     `05:65-66` plus its four inline gradients, and the mechanism is worth
+     stating because it is not a mask: the ring is a 74px circle painted
+     entirely by a `conic-gradient`, and an opaque 56px disc is centred ON TOP
+     of it, leaving a 9px annulus. It works by OCCLUSION, so the inner disc has
+     to be filled with whatever it sits on — here the card's own
+     `surface-raised` — or a seam shows.
+
+     WHAT MADE IT POSSIBLE AT ALL. A gradient stop is a length, so a ring
+     showing how far a reader has come needs a NUMBER in the cascade before
+     first paint. `CategoryMeter` states why that used to rule it out: "a bar's
+     length is a computed number and a computed number cannot reach CSS on
+     channel A". That is true of CSS and not of the channel — the boot script is
+     a script, and it has the counts in hand — so it now sets one custom
+     property per level and this substitutes it. `stamp.ts` keeps it in step
+     after mount and `boot.test.ts` compares the two derivations.
+
+     `--bz-done` is bound per level by `category.css`, beside `--bz-cat`, for
+     the same reason: CSS cannot build a property name out of an attribute. */
+
+  .bz-dial {
+    display: grid;
+    place-items: center;
+    width: 74px;
+    height: 74px;
+    margin: 0 auto 10px;
+    border-radius: 50%;
+    background: conic-gradient(
+      var(--bz-cat) 0 var(--bz-done, 0%),
+      var(--color-surface-sunken) var(--bz-done, 0%)
+    );
+  }
+
+  .bz-dial-value {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface);
+    font: 600 var(--text-lead) / 1 var(--font-sans);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* `05:164-182` — the three readings a dial's caption has to express: "37%
+     done", "not started", "11 planned". */
+  .bz-cc-caption {
+    display: block;
+    margin: 4px 0 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-mark);
+  }
+
+  /* `05:186-188` names three states and not two, and the third has no
+     counterpart anywhere in `01`. It is the legend for both the dial and the
+     rail, and it is why the rail's planned tail is a hatch. */
+  .bz-cc-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin: 18px 0 0;
+    padding: 0;
+    list-style: none;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  .bz-cc-legend > li {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .bz-cc-legend-key {
+    width: 9px;
+    height: 9px;
+    border-radius: var(--radius-xs);
+    background: var(--color-surface-sunken);
+  }
+
+  .bz-cc-legend-key[data-key="done"] {
+    background: var(--color-success);
+  }
+
+  .bz-cc-legend-key[data-key="planned"] {
+    background: repeating-linear-gradient(
+      135deg,
+      var(--color-line) 0 3px,
+      var(--color-surface-sunken) 3px 6px
+    );
+  }
+
+  /* -- one module, in the overview's list ---------------------------------- */
+
+  .bz-cc-mods {
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bz-cmod {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 3px 0;
+    font-size: var(--text-item);
+  }
+
+  .bz-cmod-toggle {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 17px;
+    height: 17px;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 50%;
+    background: var(--color-surface-raised);
+  }
+
+  .bz-cmod-toggle:hover {
+    border-color: var(--color-on-surface-muted);
+  }
+
+  /* THE BASE THE GENERATED SHEET NEEDS. `lokum-modules.css` reveals this for
+     the modules the reader has signed off and states only `display`, so
+     without a base rule here the disc shows for EVERY module — which is the
+     defect `home.spec.ts` was red on. A filled disc with a white check and
+     never a stroked glyph: the teal clears a 3:1 graphical floor against the
+     ground and not a 4.5:1 text floor, so the meaning has to be carried by a
+     shape with a fill. */
+  .bz-cmod-mark {
+    display: none;
+    place-items: center;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--color-success);
+    color: var(--color-on-primary);
+  }
+
+  .bz-cmod-check {
+    display: block;
+  }
+
+  /* The word the disc is described by (**D25**), on the same channel and
+     revealed for the same modules, so the picture and the sentence cannot come
+     apart. Hidden by default for the same reason as the disc — and a hidden
+     element contributes no description, which is what makes the button describe
+     itself as complete exactly when it is. */
+  .bz-cmod-said {
+    display: none;
+  }
+
+  .bz-cmod-link {
+    color: var(--color-on-surface);
+  }
+
+  .bz-cmod-num {
+    color: var(--color-on-surface-faint);
+    font: 600 var(--text-mark) / 1.5 var(--font-mono);
+  }
+
+  /* §12.4.1 — absent, not disabled, and the word says why in the one spelling
+     this status has. */
+  .bz-cmod-planned {
+    flex: none;
+    width: 17px;
+    color: var(--color-on-surface-faint);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
+    overflow: hidden;
+    text-indent: -9999px;
+  }
+
+  .bz-cmod[data-drawn="false"] .bz-cmod-link {
+    color: var(--color-on-surface-faint);
+  }
+
+  /* -- §13.1.3 the segmented meter ----------------------------------------
+     One segment per module, no arithmetic, and it stays segments rather than
+     becoming a second dial: it says WHICH modules are done and not just how
+     many, and it is the reading the listing pages carry beside their tables. */
+
+  .bz-meter {
+    display: flex;
+    gap: 2px;
+  }
+
+  .bz-seg {
+    flex: 1;
+    height: 7px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-hair);
+    background: var(--color-surface-raised);
+  }
+
+  /* §11.25 / §13.4.2 — a module nobody has written carries no completion
+     control at all, so its segment is drawn as hidden geometry and can never
+     fill. A dashed edge rather than a second fill, because colour is never the
+     only signal. */
+  .bz-seg[data-drawn="false"] {
+    border-style: dashed;
+    background: transparent;
+  }
+
+  /* A count, in the `mark` step. It is what keeps the hue redundant: the meter
+     never appears without it. */
+  .bz-meter-count {
+    margin: 4px 0 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-mark);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* -- §8.2 the level faces, and the two aggregate states -----------------
+     THE ONE THING CSS HAS TO SPELL OUT. Channel A matches a class on `<html>`
+     against an attribute on a descendant, and CSS has no operator that
+     compares the two — so there is one selector per level and there has to be,
+     exactly as `lokum-modules.css` has one per module. Ten selectors, and
+     `category-surfaces.test.ts` checks them against the curriculum rather than
+     against a list typed anywhere, so a level added without its rules fails
+     there.
+
+     `--stroke-hair` is 1px and the structural weight is 1.5px, and the whole
+     of §12.2's argument is that the difference is visible in frame one. The
+     hatch is a `<pattern>` that is always in `<defs>`: an unused one paints
+     nothing, and a conditional one paints a hydration mismatch. */
+
+  .bz-face {
+    stroke-width: 1px;
+  }
+
+  .bz-face-hatch {
+    display: none;
+  }
+
+  html.hl-cat-fundamentals-started .bz-face[data-cat="fundamentals"],
+  html.hl-cat-fundamentals-complete .bz-face[data-cat="fundamentals"],
+  html.hl-cat-intermediate-started .bz-face[data-cat="intermediate"],
+  html.hl-cat-intermediate-complete .bz-face[data-cat="intermediate"],
+  html.hl-cat-expert-started .bz-face[data-cat="expert"],
+  html.hl-cat-expert-complete .bz-face[data-cat="expert"],
+  html.hl-cat-ecosystem-started .bz-face[data-cat="ecosystem"],
+  html.hl-cat-ecosystem-complete .bz-face[data-cat="ecosystem"],
+  html.hl-cat-protocols-started .bz-face[data-cat="protocols"],
+  html.hl-cat-protocols-complete .bz-face[data-cat="protocols"] {
+    stroke-width: 1.5px;
+  }
+
+  html.hl-cat-fundamentals-complete .bz-face-hatch[data-cat="fundamentals"],
+  html.hl-cat-intermediate-complete .bz-face-hatch[data-cat="intermediate"],
+  html.hl-cat-expert-complete .bz-face-hatch[data-cat="expert"],
+  html.hl-cat-ecosystem-complete .bz-face-hatch[data-cat="ecosystem"],
+  html.hl-cat-protocols-complete .bz-face-hatch[data-cat="protocols"] {
+    display: block;
+  }
+
+  /* -- the two listing pages ----------------------------------------------
+     `/courses/` and `/courses/[category]/`. Stage 4 rebuilt the table on them;
+     this is the chrome around it, and the level's own standing is the reading
+     the aggregate states above are drawn for. */
+
+  .bz-level {
+    margin: 0 0 40px;
+  }
+
+  .bz-level-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+  }
+
+  .bz-level-title {
+    margin: 0;
+    font: 600 var(--text-subsection) / var(--text-subsection--line-height) var(--font-sans);
+  }
+
+  .bz-level-meta,
+  .bz-level-tint {
+    margin: 0;
+  }
+
+  .bz-level-meta {
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  .bz-level-gauge {
+    display: block;
+    margin: 0 0 18px;
+  }
+
+  /* The hue down the leading edge, which is channel A: `--bz-cat` is resolved
+     from the block's own `data-cat` by `category.css`. A gradient and not a
+     border, because Chrome floors a border width to whole pixels and the
+     structural weight is 1.5. */
+  .bz-cat-rule {
+    background-image: linear-gradient(
+      to right,
+      var(--bz-cat) 0 1.5px,
+      transparent 1.5px
+    );
+    background-repeat: no-repeat;
+  }
+
+  .bz-cat-tint {
+    border-bottom: 1px solid var(--bz-cat);
+  }
+
+  .bz-levellink {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    color: var(--color-on-surface-title);
+  }
+
+  .bz-levellink-order {
+    color: var(--color-on-surface-faint);
+    font: 600 var(--text-mark) / 1.5 var(--font-mono);
+  }
+
+  .bz-levellink-name {
+    color: var(--color-on-surface-title);
+  }
+
+  .bz-levellink-gauge {
+    display: block;
+    flex-basis: 100%;
+  }
+
+  .bz-levellink[data-undrawn] .bz-levellink-name {
+    color: var(--color-on-surface-muted);
+  }
+
+  .bz-notes {
+    margin: 40px 0 0;
+  }
+
+  /* A structural rule between the page's introduction and its content. `01`
+     draws none, so this is derived (**D30**) and it is the plainest thing the
+     language can say: one hairline, the grouping weight. */
+  .bz-rule {
+    height: 0;
+    margin: 22px 0;
+    border: 0;
+    border-top: 1px solid var(--color-line);
+  }
+
+  /* An inline link in ordinary prose, underlined in ochre rather than coloured
+     differently from the body — which is `01`'s own treatment for a link
+     inside a sentence. */
+  .bz-link {
+    color: var(--color-on-surface);
+    text-decoration: underline;
+    text-decoration-color: var(--color-ornament);
+    text-underline-offset: 2px;
+  }
+
+  .bz-no-print {
+    /* Not a design rule: the exported record is a different document with its
+       own stylesheet, and this marks what does not belong in it. */
+    display: revert;
+  }
+
+  @media print {
+    .bz-no-print { display: none; }
+  }
+}

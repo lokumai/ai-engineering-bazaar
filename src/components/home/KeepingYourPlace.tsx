@@ -59,10 +59,10 @@ export function KeepingYourPlace() {
       </dl>
 
       <div className="hl-home-actions">
-        <Link className="hl-btn" href="/sign-in/alias/">
+        <Link className="bz-btn" href="/sign-in/alias/">
           Choose an alias
         </Link>
-        <Link className="hl-btn" href="/sign-in/">
+        <Link className="bz-btn" href="/sign-in/">
           See all three
         </Link>
       </div>

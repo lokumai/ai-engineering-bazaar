@@ -142,7 +142,7 @@ function Step({
         {draft || sheet === undefined ? (
           <span className="text-on-surface-muted">{title}</span>
         ) : (
-          <Link className="hl-link" href={sheet.path}>
+          <Link className="bz-link" href={sheet.path}>
             {title}
           </Link>
         )}

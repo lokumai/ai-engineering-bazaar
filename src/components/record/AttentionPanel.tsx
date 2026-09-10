@@ -126,7 +126,7 @@ export function AttentionPanel({ sheets }: { sheets: readonly AttentionSheet[] }
                   ) : (
                     <>
                       {sheet.drawn ? (
-                        <Link href={`/courses/${sheet.slug}/`} className="hl-link">
+                        <Link href={`/courses/${sheet.slug}/`} className="bz-link">
                           Module {String(sheet.module).padStart(2, '0')} · {sheet.title}
                         </Link>
                       ) : (

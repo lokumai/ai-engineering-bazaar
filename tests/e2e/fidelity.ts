@@ -74,6 +74,31 @@ export const CATALOG = path.resolve(process.cwd(), 'playground/03-catalog.html')
 
 export const CATALOG_URL = pathToFileURL(CATALOG).href
 
+/**
+ * The THIRD reference document — completion, `05`, variants A and C.
+ *
+ * Its own closing note is the brief: *"**A** at the end of a module, because
+ * the reader wants one button there, and **C** on the home and progress pages,
+ * because that is where a picture of where you are belongs. A and C combine."*
+ * `D31` applies to it exactly as it does to `03`: it is on the older palette,
+ * so it specifies lengths and nothing else, and `REFERENCE_OF` is what makes
+ * that mechanical.
+ *
+ * **Only facts that genuinely agree are compared, and the reason matters.**
+ * `05` sets its statistics at `700 24px` with `-.02em`; the language's
+ * emphatic weight is `600`, its nearest step is 25px and its section tracking
+ * is `-0.012em` — so the statistic's TYPE is not comparable and its ROW's
+ * geometry is. Snapping a value to a closed scale is the language winning on
+ * purpose (the same call stage 4 made for `03`'s `550` weights and 11.5px
+ * sizes), and a fact that was always going to differ is not a comparison, it
+ * is a permanent exemption waiting to be written. The dial is the opposite
+ * case: 74 and 56 and a 9px annulus are lengths, and they are transcribed
+ * exactly.
+ */
+export const PROGRESS = path.resolve(process.cwd(), 'playground/05-progress.html')
+
+export const PROGRESS_URL = pathToFileURL(PROGRESS).href
+
 export type Role =
   | 'bar'
   | 'barInner'
@@ -118,6 +143,12 @@ export type Role =
   | 'boardColumn'
   | 'boardHead'
   | 'boardTrack'
+  /* Stage 7 — completion, from `05`. */
+  | 'levelCard'
+  | 'dial'
+  | 'dialValue'
+  | 'statRow'
+  | 'legendKey'
   | 'boardList'
   | 'boardMod'
   /* Stage 4 — and the one thing in it no mockup draws. */
@@ -346,6 +377,25 @@ const FACTS: readonly Fact[] = [
   { role: 'boardHead', property: 'paddingTop', mutate: '99px' },
   { role: 'boardHead', property: 'paddingLeft', mutate: '99px' },
   { role: 'boardTrack', property: 'height', mutate: '99px' },
+
+  /* Stage 7 — completion, `05`-C, lengths only.
+
+     The dial is the whole reason this document is a reference: 74 outside, 56
+     inside, so the ring is a 9px annulus, and it works by OCCLUSION rather
+     than by a mask — which is why the inner disc's size is a fact and not an
+     implementation detail. Get it wrong and the ring changes width. */
+  { role: 'dial', property: 'width', mutate: '99px' },
+  { role: 'dial', property: 'height', mutate: '99px' },
+  { role: 'dial', property: 'marginBottom', mutate: '99px' },
+  { role: 'dialValue', property: 'width', mutate: '99px' },
+  { role: 'dialValue', property: 'height', mutate: '99px' },
+  { role: 'levelCard', property: 'paddingTop', mutate: '99px' },
+  { role: 'levelCard', property: 'paddingLeft', mutate: '99px' },
+  { role: 'statRow', property: 'gap', mutate: '99px' },
+  { role: 'statRow', property: 'paddingTop', mutate: '99px' },
+  { role: 'legendKey', property: 'width', mutate: '99px' },
+  { role: 'legendKey', property: 'height', mutate: '99px' },
+  { role: 'legendKey', property: 'borderRadius', mutate: '99px' },
   { role: 'boardList', property: 'paddingTop', mutate: '99px' },
   { role: 'boardMod', property: 'paddingTop', mutate: '99px' },
   { role: 'boardMod', property: 'gap', mutate: '99px' },
@@ -505,6 +555,22 @@ export const MOCKUP_SELECTORS: SelectorMap = {
  * - `.card:not(.planned)` — a planned card is the same box with a sunken fill,
  *   and the fill is the half of it this comparison may not read.
  */
+/**
+ * `05`-C, and every one of these is a length.
+ *
+ * `.ring` is variant C's level card and appears nowhere else in the document,
+ * so the selectors need no variant qualifier. The dial's inner disc carries
+ * its geometry inline in the mockup, which `extractDesignFacts` reads because
+ * it asks the browser for a computed style rather than parsing a stylesheet.
+ */
+export const PROGRESS_SELECTORS: SelectorMap = {
+  levelCard: '.ring',
+  dial: '.ring .dial',
+  dialValue: '.ring .dial span',
+  statRow: '.stat',
+  legendKey: '.legend i',
+}
+
 export const CATALOG_SELECTORS: SelectorMap = {
   filterBar: '.filters',
   chip: '.fchip:not([aria-pressed="true"])',
@@ -526,7 +592,7 @@ export const CATALOG_SELECTORS: SelectorMap = {
 }
 
 /** Which document specifies a role. A role with no entry has no mockup. */
-export type Reference = '01' | '03'
+export type Reference = '01' | '03' | '05'
 
 /**
  * THE ROLE-TO-DOCUMENT MAP, which is what makes D31 something a machine can
@@ -553,17 +619,41 @@ export const REFERENCE_OF: Readonly<Partial<Record<Role, Reference>>> = {
 
   crumb: '01', display: '01', tag: '01', section: '01', subsection: '01',
   actions: '01', buttonQuiet: '01', pager: '01', pagerItem: '01',
+
+  levelCard: '05', dial: '05', dialValue: '05', statRow: '05', legendKey: '05',
 }
 
-export const REFERENCE_URL: Readonly<Record<Reference, string>> = {
-  '01': MOCKUP_URL,
-  '03': CATALOG_URL,
+/**
+ * Each reference document, in ONE place.
+ *
+ * This was three parallel maps keyed on the same union — the path, the URL and
+ * the selectors — which is three places to keep in step for one fact, and at
+ * five documents it would be fifteen. Two mockups made that a style question;
+ * a third makes it the same "one fact, one home" argument that took the
+ * catalog table's minimum width out of a comment and into the component that
+ * computes it.
+ */
+export const REFERENCES: Readonly<
+  Record<Reference, { readonly file: string; readonly url: string; readonly selectors: SelectorMap }>
+> = {
+  '01': { file: MOCKUP, url: MOCKUP_URL, selectors: MOCKUP_SELECTORS },
+  '03': { file: CATALOG, url: CATALOG_URL, selectors: CATALOG_SELECTORS },
+  '05': { file: PROGRESS, url: PROGRESS_URL, selectors: PROGRESS_SELECTORS },
 }
 
-export const REFERENCE_SELECTORS: Readonly<Record<Reference, SelectorMap>> = {
-  '01': MOCKUP_SELECTORS,
-  '03': CATALOG_SELECTORS,
-}
+/** Kept as views onto `REFERENCES`, so no caller has to change and no second
+ *  list can drift from it. */
+export const REFERENCE_URL: Readonly<Record<Reference, string>> = Object.freeze(
+  Object.fromEntries(
+    Object.entries(REFERENCES).map(([key, one]) => [key, one.url]),
+  ) as Record<Reference, string>,
+)
+
+export const REFERENCE_SELECTORS: Readonly<Record<Reference, SelectorMap>> = Object.freeze(
+  Object.fromEntries(
+    Object.entries(REFERENCES).map(([key, one]) => [key, one.selectors]),
+  ) as Record<Reference, SelectorMap>,
+)
 
 /**
  * Roles the application renders that NO mockup specifies, with what each was
@@ -676,6 +766,14 @@ export const APP_SELECTORS: SelectorMap = {
   boardColumn: '.bz-boardcol',
   boardHead: '.bz-boardcol-head',
   boardTrack: '.bz-track',
+
+  /* Stage 7 — completion. `05`-C renders on `/` and on `/profile/` both, which
+     is where its own note puts it, so these are read off the home page. */
+  levelCard: '.bz-cc-level',
+  dial: '.bz-dial',
+  dialValue: '.bz-dial-value',
+  statRow: '.bz-cc-stats',
+  legendKey: '.bz-cc-legend-key[data-key="todo"]',
   boardList: '.bz-boardcol-list',
   boardMod: '.bz-boardcol-mod',
   viewToggle: '.bz-viewtoggle',

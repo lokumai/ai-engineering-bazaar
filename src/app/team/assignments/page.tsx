@@ -38,7 +38,7 @@ export default function AssignmentsPage() {
     <PageShell column={false} sheet="ASSIGNMENTS">
       <p className="hl-eyebrow hl-mark">ORGANISATION DATA · NOT PART OF A RECORD</p>
 
-      <h1 className="hl-listing-title">Assignments</h1>
+      <h1 className="bz-display">Assignments</h1>
 
       <p className="bz-lead">
         A title, a note, a due date and a set of modules. Name nobody and it
@@ -55,12 +55,12 @@ export default function AssignmentsPage() {
         deadline and the panel reports against it.
       </p>
 
-      <hr className="hl-rule-struct" aria-hidden="true" />
+      <hr className="bz-rule" aria-hidden="true" />
 
       <AssignmentForm facts={facts} />
 
-      <div className="hl-signoff-actions">
-        <Link className="hl-btn" href="/team/">
+      <div className="bz-actions">
+        <Link className="bz-btn" href="/team/">
           BACK TO THE ROSTER
         </Link>
       </div>

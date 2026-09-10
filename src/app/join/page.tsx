@@ -66,7 +66,7 @@ export const metadata: Metadata = {
 export default function JoinPage() {
   return (
     <PageShell>
-      <h1 className="hl-listing-title">Join an organisation</h1>
+      <h1 className="bz-display">Join an organisation</h1>
 
       <p className="bz-lead">
         An organisation is a group whose managers follow the progress of the
@@ -77,7 +77,7 @@ export default function JoinPage() {
         in a message.
       </p>
 
-      <hr className="hl-rule-struct" aria-hidden="true" />
+      <hr className="bz-rule" aria-hidden="true" />
 
       <section className="hl-panel" aria-labelledby="routes">
         <div className="hl-panel-head">
@@ -143,7 +143,7 @@ export default function JoinPage() {
             §15.8: it is also where the missing use count and expiry are
             accounted for, since a reader who has used another site's invite
             code will look for both. */}
-        <div className="hl-note">
+        <div className="bz-note">
           <p className="hl-mark m-0 text-on-surface">There is no invitation code</p>
           <p className="m-0 mt-1 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
             A code would have to be checked against a stored list, and this site
@@ -180,7 +180,7 @@ export default function JoinPage() {
           your record from that moment. It does not withdraw the training
           history the organisation already holds: that log belongs to the
           organisation and stays with it. Erasing your own record on the{' '}
-          <Link href="/profile/" className="hl-link">
+          <Link href="/profile/" className="bz-link">
             account page
           </Link>{' '}
           removes it from this browser and removes the copy your account

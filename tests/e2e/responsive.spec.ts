@@ -276,7 +276,7 @@ test('the home screen cannot be nudged sideways at any width', async ({ page }) 
   // M13 — one document rather than two blocks with one hidden, so what is
   // measured is the hero and the level grid: both are laid out, both fill the
   // column, and neither overhangs at any of the three widths.
-  const shown = await page.locator('.hl-home-hero, .hl-cc-levels').evaluateAll(
+  const shown = await page.locator('.hl-home-hero, .bz-cc-levels').evaluateAll(
     (nodes) => nodes
       .filter((node) => node.checkVisibility())
       .map((node) => Math.round(node.getBoundingClientRect().width)),

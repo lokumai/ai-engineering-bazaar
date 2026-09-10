@@ -107,7 +107,7 @@ test('the forward and the link agree on the target, whatever the base path is', 
 
     const meta = /<meta http-equiv="refresh" content="0; url=([^"]+)"/.exec(html)?.[1]
     const script = /location\.replace\("([^"]+)"\)?\+location\.hash/.exec(html)?.[1]
-    const link = /<a class="hl-btn" href="([^"]*profile[^"]*)"/.exec(html)?.[1]
+    const link = /<a class="bz-btn" href="([^"]*profile[^"]*)"/.exec(html)?.[1]
 
     expect(meta, `${from} has no meta refresh`).toBeDefined()
     expect(script, `${from} has no script forward`).toBe(meta)

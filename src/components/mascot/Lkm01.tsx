@@ -146,12 +146,12 @@ export function Lkm01({ size = 28, idPrefix = 'lkm01', className }: Lkm01Props) 
         <Hatch id={hatchId(false)} angle={-45} spec={hatch} />
       </defs>
 
-      {/* The fills, under the outlines. `.hl-face-hatch` is `display: none`
+      {/* The fills, under the outlines. `.bz-face-hatch` is `display: none`
           until the subsystem's every sheet is signed off. */}
       {PAINT_ORDER.map((face) => (
         <path
           key={`hatch-${face.id}`}
-          className="hl-face-hatch"
+          className="bz-face-hatch"
           data-cat={face.category}
           data-hatch={face.id}
           d={face.path}
@@ -167,7 +167,7 @@ export function Lkm01({ size = 28, idPrefix = 'lkm01', className }: Lkm01Props) 
       {PAINT_ORDER.map((face) => (
         <path
           key={face.id}
-          className="hl-face"
+          className="bz-face"
           data-cat={face.category}
           data-face={face.id}
           d={face.path}
@@ -179,7 +179,7 @@ export function Lkm01({ size = 28, idPrefix = 'lkm01', className }: Lkm01Props) 
       {/* §8.1 — powdered sugar: a drafting stipple on the top face, decorative
           and nothing more, so it is hidden from assistive technology (T5).
 
-          `.hl-sugar` is the class §13.2 fixes for it: sugar is sugar in every
+          `.bz-sugar` is the class §13.2 fixes for it: sugar is sugar in every
           flavour, so `lokum.css` paints it `--color-surface` and it needs no
           state rule of its own. The `fill` attribute stays as the value before
           any stylesheet has arrived — a presentation attribute is the weakest
@@ -189,7 +189,7 @@ export function Lkm01({ size = 28, idPrefix = 'lkm01', className }: Lkm01Props) 
         {SUGAR.map(([cx, cy]) => (
           <circle
             key={`${cx},${cy}`}
-            className="hl-sugar"
+            className="bz-sugar"
             cx={cx}
             cy={cy}
             r={SUGAR_R}

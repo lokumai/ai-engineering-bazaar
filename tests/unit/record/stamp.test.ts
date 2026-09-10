@@ -21,7 +21,12 @@ import { describe, expect, it } from 'vitest'
 import { recordBootScript } from '@/lib/record/boot'
 import { setRole, signOff, unsign } from '@/lib/record/events'
 import { RECORD_STORAGE_KEY, SCHEMA_VERSION, EMPTY_RECORD, type RecordData } from '@/lib/record/schema'
-import { type StampFacts, stampClassesFor, stampRecordState } from '@/lib/record/stamp'
+import {
+  type StampFacts,
+  stampClassesFor,
+  stampProgressFor,
+  stampRecordState,
+} from '@/lib/record/stamp'
 
 const AT = '2026-08-31T09:00:00.000Z'
 
@@ -38,10 +43,20 @@ const FACTS: StampFacts = {
   },
 }
 
-/** The slice of `<html>` both stampers touch, and nothing more. */
+/**
+ * The slice of `<html>` both stampers touch, and nothing more.
+ *
+ * `style` is part of that slice since M16, and it is NOT optional here even
+ * though `StampRoot` declares it so. The boot script's body is wrapped in one
+ * `try`, so a fake without it does not merely lose the properties — the throw
+ * abandons the loop those properties are set in, and the remaining levels lose
+ * their `-started` and `-complete` classes too, silently. The cross-test below
+ * is what caught that, by comparing two levels rather than one.
+ */
 function fakeRoot(initial: string[] = []) {
   const classes = new Set(initial)
   const attributes = new Map<string, string>()
+  const properties = new Map<string, string>()
   return {
     classList: {
       add: (token: string) => { classes.add(token) },
@@ -50,8 +65,14 @@ function fakeRoot(initial: string[] = []) {
     },
     setAttribute: (name: string, value: string) => { attributes.set(name, value) },
     getAttribute: (name: string) => attributes.get(name) ?? null,
+    style: {
+      setProperty: (name: string, value: string) => { properties.set(name, value) },
+      removeProperty: (name: string) => { properties.delete(name) },
+    },
     get className() { return [...classes].join(' ') },
     owned: () => [...classes].filter((c) => c.startsWith('hl-')).sort(),
+    /** The progress readings, sorted, so two stampers compare as sets. */
+    progress: () => Object.fromEntries([...properties].sort()),
     attributes,
   }
 }
@@ -106,6 +127,18 @@ describe('the two stampers agree', () => {
   for (const [name, data] of CASES) {
     it(`derives the same classes for: ${name}`, () => {
       expect(runBootScript(data).owned()).toEqual(stampClassesFor(data, FACTS))
+    })
+
+    /*
+      And the same percentage, over the same cases. The classes are one
+      derivation duplicated in two languages; this is a second, and the failure
+      mode is a dial that is right in frame one and wrong the moment the reader
+      completes something — or the reverse, which is worse because a reload
+      hides it. Neither implementation can import the other: the boot script is
+      a source string in `<head>`.
+    */
+    it(`derives the same progress for: ${name}`, () => {
+      expect(runBootScript(data).progress()).toEqual(stampProgressFor(data, FACTS))
     })
   }
 

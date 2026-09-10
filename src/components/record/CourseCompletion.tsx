@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { CategoryMeter, type MeterSheet } from '@/components/course/CategoryMeter'
 import { CategoryTally } from '@/components/course/CategoryTally'
 import type { CategorySlug } from '@/lib/content/categories'
 import { toggleCompletion } from '@/lib/record/complete'
@@ -111,7 +110,7 @@ function saidId(slug: string): string {
 
 function Tick() {
   return (
-    <span className="hl-cmod-mark">
+    <span className="bz-cmod-mark">
       <svg
         viewBox="0 0 17 17"
         width="11"
@@ -122,7 +121,7 @@ function Tick() {
         strokeLinecap="round"
         strokeLinejoin="round"
         aria-hidden="true"
-        className="hl-cmod-check"
+        className="bz-cmod-check"
       >
         <path d="M3.5 9l3 3 7-7" />
       </svg>
@@ -155,17 +154,17 @@ export function CourseCompletion({
   const streak = hydrated ? uptime(record, nowIso().slice(0, 10)).streak : null
 
   return (
-    <section className="hl-cc" aria-labelledby={headingId}>
+    <section className="bz-cc" aria-labelledby={headingId}>
       {/* O2's answer, in three readings. `XP`, `Rank` and `I at 8` are gone
           because nobody could name the question they answered; what is left is
           three quantities a reader already thinks in. Each is derived, each
           prints `--` until the store has answered, and each has exactly one
           implementation in `lib/record/derive.ts`. */}
-      <dl className="hl-cc-numbers">
+      <dl className="bz-cc-stats">
         <div>
           <dt>Modules completed</dt>
           <dd>
-            <span className="hl-cc-value">
+            <span className="bz-cc-stat-value">
               {hydrated ? counts.signed : NO_READING}
             </span>{' '}
             of {counts.of}
@@ -174,7 +173,7 @@ export function CourseCompletion({
         <div>
           <dt>Reading time</dt>
           <dd>
-            <span className="hl-cc-value">
+            <span className="bz-cc-stat-value">
               {hydrated ? hoursMinutes(minutes.done) : NO_READING}
             </span>{' '}
             of {hoursMinutes(minutes.of)}
@@ -183,7 +182,7 @@ export function CourseCompletion({
         <div>
           <dt>Days in a row</dt>
           <dd>
-            <span className="hl-cc-value">{streak === null ? NO_READING : streak}</span>{' '}
+            <span className="bz-cc-stat-value">{streak === null ? NO_READING : streak}</span>{' '}
             {streak === 1 ? 'day' : 'days'}
           </dd>
         </div>
@@ -191,24 +190,21 @@ export function CourseCompletion({
 
       {/* The reading time is the modules' own estimate and says so once, here,
           rather than beside the number where it would read as a hedge. */}
-      <p className="hl-cc-note">
+      <p className="bz-cc-note">
         Reading time is what the completed modules themselves declare, added up.
         Nothing here measures how long you spent on a page.
       </p>
 
-      <ul className="hl-cc-levels">
+      <ul className="bz-cc-levels">
         {levels.map((level) => {
           const ready = level.modules.filter((one) => one.drawn)
-          const meterSheets: readonly MeterSheet[] = level.modules.map((one) => ({
-            module: one.module,
-            drawn: one.drawn,
-          }))
+          const planned = level.modules.length - ready.length
 
           return (
-            <li key={level.slug} className="hl-cc-level" data-cat={level.slug}>
-              <div className="hl-cc-head">
-                <h3 className="hl-cc-title">
-                  <span className="hl-cc-order">
+            <li key={level.slug} className="bz-cc-level" data-cat={level.slug}>
+              <div className="bz-cc-head">
+                <h3 className="bz-cc-title">
+                  <span className="bz-cc-order">
                     {String(level.order).padStart(2, '0')}
                   </span>
                   {level.title}
@@ -216,32 +212,58 @@ export function CourseCompletion({
                 {/* The level is told apart by its name, its number, its count
                     and its hue — four signals, of which colour is one
                     (SC 1.4.1, §13.1.4). */}
-                <p className="hl-cc-count">
+                <p className="bz-cc-count">
                   {ready.length === level.modules.length
                     ? plural(level.modules.length, 'module')
                     : `${plural(level.modules.length, 'module')} · ${ready.length} ready`}
                 </p>
+                {/* `05:164-182` gives every dial a caption, and the three
+                    readings it has to express are "37% done", "not started"
+                    and "11 planned". The first two are the reader's and so
+                    cannot be stated until the store has answered; the third is
+                    a build-time fact about the corpus and is true in frame
+                    one. Which is why the planned count is what a level with
+                    unwritten modules says before hydration, rather than a
+                    percentage nobody has measured yet. */}
+                <span className="bz-cc-caption">
+                  {planned > 0 ? plural(planned, 'module') + ' not written yet' : null}
+                  {planned === 0 ? 'every module written' : null}
+                </span>
               </div>
 
-              {/* Channel A for the segments, channel B for the `n/total`
-                  underneath — `CategoryMeter` writes the contract and
-                  `CategoryTally` fills every cell on the page after mount. One
-                  implementation of the meter, here and on the catalog's
-                  listings both. */}
-              <CategoryMeter category={level.slug} sheets={meterSheets} className="hl-cc-meter" />
+              {/* `05`-C's ring, and channel A carries it: the boot script
+                  works out how far through the level the reader is and sets
+                  one custom property per level before first paint, which is
+                  what a `conic-gradient` stop needs and what a class could
+                  never be. `category.css` joins the two.
 
-              <ul className="hl-cc-mods">
+                  The number inside is channel B — a tally is text, and text
+                  is the one thing channel A may not carry — so it prints the
+                  `--` no-reading form and `CategoryTally` fills it after
+                  mount, off the same `data-hl-cat-tally` contract the meter
+                  writes on the listing pages. With scripting refused the ring
+                  reads empty and the dash stays, which is the true statement
+                  that no record was read. */}
+              <div className="bz-dial" aria-hidden="true">
+                <span className="bz-dial-value">
+                  <span data-hl-cat-tally={level.slug}>
+                    {NO_READING}/{level.modules.length}
+                  </span>
+                </span>
+              </div>
+
+              <ul className="bz-cc-mods">
                 {level.modules.map((one) => (
                   <li
                     key={one.slug}
-                    className="hl-cmod"
+                    className="bz-cmod"
                     data-module={one.module}
                     data-drawn={one.drawn ? 'true' : 'false'}
                   >
                     {one.drawn ? (
                       <button
                         type="button"
-                        className="hl-cmod-toggle"
+                        className="bz-cmod-toggle"
                         // The name says which module and what pressing does,
                         // and it never changes with the state.
                         //
@@ -274,11 +296,11 @@ export function CourseCompletion({
                     ) : (
                       // §12.4.1 — absent, not disabled. The word is what says
                       // why, in the one spelling this status has (§12.14.1).
-                      <span className="hl-cmod-planned">Planned</span>
+                      <span className="bz-cmod-planned">Planned</span>
                     )}
 
-                    <Link href={one.path} className="hl-cmod-link">
-                      <span className="hl-cmod-num">
+                    <Link href={one.path} className="bz-cmod-link">
+                      <span className="bz-cmod-num">
                         {String(one.module).padStart(2, '0')}
                       </span>
                       {one.title}
@@ -291,9 +313,9 @@ export function CourseCompletion({
                         OUTSIDE the button because `aria-label` on a button
                         replaces its contents for naming, so a word inside it
                         is never announced; and it carries its own class rather
-                        than the disc's, because sharing `hl-cmod-mark` made
+                        than the disc's, because sharing `bz-cmod-mark` made
                         that selector match two elements per row. */}
-                    <span id={saidId(one.slug)} className="hl-cmod-said">
+                    <span id={saidId(one.slug)} className="bz-cmod-said">
                       Complete
                     </span>
                   </li>
@@ -302,6 +324,25 @@ export function CourseCompletion({
             </li>
           )
         })}
+      </ul>
+
+      {/* `05:186-188` — three states and not two, and the third has no
+          counterpart anywhere in `01`. It names what the rings and the rails
+          both mean, once per page, which is what makes the hue redundant
+          rather than load-bearing (SC 1.4.1). */}
+      <ul className="bz-cc-legend">
+        <li>
+          <span className="bz-cc-legend-key" data-key="done" aria-hidden="true" />
+          done
+        </li>
+        <li>
+          <span className="bz-cc-legend-key" data-key="todo" aria-hidden="true" />
+          not yet
+        </li>
+        <li>
+          <span className="bz-cc-legend-key" data-key="planned" aria-hidden="true" />
+          not written yet
+        </li>
       </ul>
 
       {/* §12.2 channel B — one island per document fills every `--/8` the

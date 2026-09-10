@@ -18,6 +18,17 @@
  *   `data-hl-storage="ok" | "blocked"`    tells empty state 1 from 4 (§12.13)
  *   `data-bz-rail="folded"`               M10 — the curriculum rail is folded
  *   `data-hl-view="<id>"`                 M12 — the catalog view last chosen
+ *   `style --bz-done-<slug>: <n>%`        M16 — how far through that level
+ *
+ * **The last one is a number and not a class, and it is the only one.** CSS
+ * cannot count, which is why every other reading here is a class and why
+ * `CategoryMeter` draws one segment per module rather than a bar. The channel
+ * can count, though — this is a script, and it has the counts in hand three
+ * lines above — so a `conic-gradient` stop can be handed a percentage it only
+ * has to substitute. That is what lets `05`-C's dial be correct in frame one
+ * instead of being a mark on the channel §12.2 forbids for exactly that.
+ * `stamp.ts`'s `stampProgressFor` is the same derivation for after mount, and
+ * `boot.test.ts` compares the two.
  *
  * **The rail and the view stamps are written BEFORE the `carriesNothing`
  * gate**, and that order is the whole reason either is stamped here at all. A
@@ -182,7 +193,8 @@ if(typeof n==="number")r.classList.add("hl-signed-"+n)}
 for(c in counts){
 if(!own(counts,c))continue;
 n=typeof T[c]==="number"?T[c]:0;
-r.classList.add("hl-cat-"+c+(n>0&&counts[c]>=n?"-complete":"-started"))}
+r.classList.add("hl-cat-"+c+(n>0&&counts[c]>=n?"-complete":"-started"));
+if(n>0)r.style.setProperty("--bz-done-"+c,Math.round(counts[c]/n*100)+"%")}
 }catch(e){}})();`
 }
 

@@ -187,10 +187,10 @@ const anyDialog = (page: Page) => page.locator('[role="dialog"], [role="alertdia
   already been bitten by four times, and the rename that these four are waiting
   for is stages 7 and 8.
 */
-const drift = (page: Page) => page.locator('.hl-signoff-drift')
-const quizReveal = (page: Page) => page.locator('.hl-quiz-reveal')
+const drift = (page: Page) => page.locator('.bz-signoff-drift')
+const quizReveal = (page: Page) => page.locator('.bz-quiz-reveal')
 const pendingHint = (page: Page) => page.locator('.hl-pending')
-const submittalItems = (page: Page) => page.locator('.hl-submittal-item')
+const submittalItems = (page: Page) => page.locator('.bz-submittal-item')
 
 /**
  * Every `window.confirm`, `alert` and `beforeunload` this page raised.
@@ -389,9 +389,9 @@ test('a started level draws its face at the structural weight (§8.2, §12.2)', 
   await page.goto('/profile/')
 
   const faces = await page
-    .locator('svg:has(.hl-face)')
+    .locator('svg:has(.bz-face)')
     .first()
-    .locator('.hl-face')
+    .locator('.bz-face')
     .evaluateAll((paths) =>
       paths.map((path) => [
         path.getAttribute('data-cat') ?? '',
@@ -424,9 +424,9 @@ test('a level with every module completed is hatched, not merely inked (§8.2, �
   expect((await firstPaint(page))!.className).toContain(`hl-cat-${category}-complete`)
 
   const hatches = await page
-    .locator('svg:has(.hl-face-hatch)')
+    .locator('svg:has(.bz-face-hatch)')
     .first()
-    .locator('.hl-face-hatch')
+    .locator('.bz-face-hatch')
     .evaluateAll((paths) =>
       paths.map((path) => [path.getAttribute('data-cat') ?? '', getComputedStyle(path).display]),
     )
@@ -434,7 +434,7 @@ test('a level with every module completed is hatched, not merely inked (§8.2, �
   /*
     ASSERTED, NOT ASSUMED. The loop below is the whole test, and a selector that
     matched nothing would skip it entirely and report green — which is what the
-    sibling assertion at the `.hl-face` test above guards against and this one
+    sibling assertion at the `.bz-face` test above guards against and this one
     did not. A rename is exactly the event that would have silenced it.
   */
   expect(hatches).toHaveLength(CATEGORY_PATHS.length)
@@ -459,7 +459,7 @@ test('the mascot is aria-hidden and byte-identical in every state (§12.2, §12.
 }) => {
   // The mark itself, not whatever SVG the header happens to draw first — which
   // since stage 1 is `01`'s four-square tile and not this component at all.
-  const mascot = page.locator('svg:has(.hl-face)').first()
+  const mascot = page.locator('svg:has(.bz-face)').first()
 
   await page.goto('/profile/')
   await expect(mascot).toHaveAttribute('aria-hidden', 'true')
@@ -536,7 +536,7 @@ test('channel A stays true across a client transition (§12.2)', async ({ page }
   await expect(page.locator('html')).toHaveAttribute('data-hl-record', '1')
   await expect(page.locator('.hl-home-continue')).toBeVisible()
   await expect(
-    page.locator(`.hl-cmod[data-module="${SHEET.module}"] .hl-cmod-mark`),
+    page.locator(`.bz-cmod[data-module="${SHEET.module}"] .bz-cmod-mark`),
   ).toBeVisible()
 
   await page.getByRole('link', { name: 'Browse the catalog' }).click()
@@ -671,7 +671,7 @@ test('§12.4.3 prints the drift when the module has moved under a sign-off', asy
   expect(revision, 'the footer prints no revision to be adrift from').not.toBe('')
 
   await expect(drift(page)).toHaveText(
-    new RegExp(`COMPLETED 2026-08-14 AGAINST REV a1b2c3d . MODULE NOW AT REV ${revision}`),
+    new RegExp(`Completed 2026-08-14 against rev a1b2c3d . module now at rev ${revision}`),
   )
 })
 
@@ -734,7 +734,7 @@ test('the name is asked for inline at the first sign-off (§12.3.2, §12.3.3)', 
   const label = form.locator('label')
   await expect(label).toBeVisible()
   await expect(label).toContainText('Name or initials, as you would sign a drawing')
-  await expect(label.locator('.hl-field-optional')).toHaveText('Optional')
+  await expect(label.locator('.bz-field-optional')).toHaveText('Optional')
 
   const field = form.getByRole('textbox', { name: /Name or initials, as you would sign a drawing/ })
   await expect(field).toBeVisible()
@@ -754,7 +754,7 @@ test('the name is asked for inline at the first sign-off (§12.3.2, §12.3.3)', 
   // behaviour cannot drift, and it is asserted through the constant here for
   // the same reason. What has NOT changed is the clause the section is about:
   // the export is where the name leaves the reader's device by their own hand.
-  await expect(form.locator('.hl-field-hint')).toHaveText(NAME_SCOPE)
+  await expect(form.locator('.bz-field-hint')).toHaveText(NAME_SCOPE)
 
   // §12.3.2 — genuinely skippable, and stated as a control rather than implied
   // by a dismissal.
@@ -845,7 +845,7 @@ test('a Turkish name keeps its dotted İ and its whole stored value (§12.3.4)',
 
 test('nothing is revealed before an answer is written (§12.6)', async ({ page }) => {
   await page.goto(SHEET.path)
-  await expect(page.locator('.hl-quiz-question')).toHaveText(/\S/)
+  await expect(page.locator('.bz-quiz-question')).toHaveText(/\S/)
 
   // ABSENT, not disabled (§11.25): a reveal-before-attempt control destroys the
   // retrieval effect, which is the one mechanism here the evidence strongly
@@ -858,25 +858,25 @@ test('nothing is revealed before an answer is written (§12.6)', async ({ page }
   await expect(quizReveal(page)).toHaveCount(0)
 
   // And it says why, without praise, blame or an exclamation mark (§12.14.1).
-  await expect(page.locator('.hl-quiz-note').first()).toHaveText(
+  await expect(page.locator('.bz-quiz-note').first()).toHaveText(
     'The module’s summary can be compared once an answer is written.',
   )
 })
 
 test('the reveal is the module’s own summary, named as that (§12.6)', async ({ page }) => {
   await page.goto(SHEET.path)
-  const question = (await page.locator('.hl-quiz-question').innerText()).trim()
+  const question = (await page.locator('.bz-quiz-question').innerText()).trim()
 
-  await page.locator('.hl-quiz textarea').fill('Read, act, exfiltrate — the trifecta.')
-  const compare = page.getByRole('button', { name: /^COMPARE WITH THE MODULE/ })
-  await expect(compare).toHaveText('COMPARE WITH THE MODULE’S SUMMARY')
+  await page.locator('.bz-quiz textarea').fill('Read, act, exfiltrate — the trifecta.')
+  const compare = page.getByRole('button', { name: /^Compare with the module/ })
+  await expect(compare).toHaveText('Compare with the module’s summary')
   await compare.click()
 
   // Labelled exactly what it is. It is the closest authored thing that exists,
   // and naming it accurately costs nothing — whereas a reveal button over an
   // absent or generated answer is the §1 failure this codebase exists to
   // prevent.
-  await expect(page.locator('.hl-quiz-reveal-label')).toHaveText('THE MODULE’S SUMMARY')
+  await expect(page.locator('.bz-quiz-reveal-label')).toHaveText('The module’s summary')
   // `.bz-prose`, which is what `QuickCheck` renders. The bare `.prose` this
   // asked for was the retired design's name and M16 stage 5 replaced it, so
   // the locator resolved to nothing and the assertion timed out rather than
@@ -905,8 +905,8 @@ for (const outcome of ['MATCHED', 'DID NOT MATCH'] as const) {
   }) => {
     await page.goto(SHEET.path)
     await waitForHydratedReadout(page)
-    await page.locator('.hl-quiz textarea').fill('An answer, written before anything is revealed.')
-    await page.getByRole('button', { name: /^COMPARE WITH THE MODULE/ }).click()
+    await page.locator('.bz-quiz textarea').fill('An answer, written before anything is revealed.')
+    await page.getByRole('button', { name: /^Compare with the module/ }).click()
 
     const button = page.getByRole('button', { name: outcome, exact: true })
     await expect(button).toHaveAttribute('aria-pressed', 'false')
@@ -920,10 +920,10 @@ for (const outcome of ['MATCHED', 'DID NOT MATCH'] as const) {
     // did move and said nothing about the two that must not.
     await expect(readoutCell(page, /^Completed/)).toHaveText(`Completed 00/${SHEETS.length}`)
     await expect(readoutCell(page, /^Reading time/)).toHaveText('Reading time 0 m')
-    await expect(page.locator('.hl-quiz-note').filter({ hasText: 'SELF-ASSESSED' })).toHaveText(
+    await expect(page.locator('.bz-quiz-note').filter({ hasText: 'SELF-ASSESSED' })).toHaveText(
       `SELF-ASSESSED: ${outcome}`,
     )
-    await expect(page.locator('.hl-quiz-body')).toContainText(
+    await expect(page.locator('.bz-quiz-body')).toContainText(
       'Self-assessment. Not graded by anyone.',
     )
 
@@ -1009,7 +1009,7 @@ test('a deep link is stored and printed as the reconstructed repository URL (§1
   const RECONSTRUCTED = 'https://github.com/cevheri/hidden-line'
 
   await page.goto(SHEET.path)
-  await expect(page.locator('.hl-submittal-empty')).toHaveText('NOTHING ADDED YET')
+  await expect(page.locator('.bz-submittal-empty')).toHaveText('Nothing added yet')
 
   await page
     .getByRole('textbox', { name: 'Repository' })
@@ -1020,7 +1020,7 @@ test('a deep link is stored and printed as the reconstructed repository URL (§1
   // §12.9.2 — render only the reconstructed string, as BOTH the href and the
   // visible label. That is what makes a link whose text lies about its
   // destination impossible rather than merely unlikely.
-  const link = page.locator('.hl-submittal-repo')
+  const link = page.locator('.bz-submittal-repo')
   await expect(link).toHaveText(RECONSTRUCTED)
   expect(await link.getAttribute('href')).toBe(RECONSTRUCTED)
   await expect(link).toHaveAttribute('rel', 'noopener noreferrer')
@@ -1029,7 +1029,7 @@ test('a deep link is stored and printed as the reconstructed repository URL (§1
   // Not merely absent from the href: absent from the register's markup, so no
   // `title`, `aria-label` or data attribute quietly carries the query string
   // the reader pasted.
-  const markup = await page.locator('.hl-submittal').innerHTML()
+  const markup = await page.locator('.bz-submittal').innerHTML()
   expect(markup).not.toContain('tab=readme')
   expect(markup).not.toContain('tree/main')
   expect(markup).not.toContain('#top')
@@ -1052,7 +1052,7 @@ test('a reader-supplied commit is lowercased and printed unverified (§12.9.3)',
   await page.getByRole('textbox', { name: /^Commit/ }).fill('9F2C1AB')
   await page.getByRole('button', { name: 'ADD REPOSITORY', exact: true }).click()
 
-  const commit = page.locator('.hl-submittal-commit')
+  const commit = page.locator('.bz-submittal-commit')
   await expect(commit).toContainText('COMMIT 9f2c1ab')
   // §12.9.3 — this is the single cheapest thing in the slice that raises the
   // record from "self-reported" to "checkable", and the caveat is what keeps it
@@ -1082,14 +1082,14 @@ for (const [what, input] of HOSTILE_REPOS) {
     await page.getByRole('button', { name: 'ADD REPOSITORY', exact: true }).click()
 
     // Imperative, describing the fix; no "please", no verdict on the input.
-    await expect(page.locator('.hl-field-error')).toHaveText(
+    await expect(page.locator('.bz-field-error')).toHaveText(
       'Enter the repository as https://github.com/owner/name',
     )
     // Refused, not silently swallowed: a form that clears itself and records
     // nothing is the page telling the reader something untrue.
     await expect(submittalItems(page)).toHaveCount(0)
-    await expect(page.locator('.hl-submittal-empty')).toHaveText('NOTHING ADDED YET')
-    await expect(page.locator('.hl-submittal a')).toHaveCount(0)
+    await expect(page.locator('.bz-submittal-empty')).toHaveText('Nothing added yet')
+    await expect(page.locator('.bz-submittal a')).toHaveCount(0)
     expect((await readRecord(page))?.data.sheets[SLUG]?.submittals ?? []).toEqual([])
   })
 }
@@ -1200,7 +1200,7 @@ test('no character shortcut fires from inside a text field (§12.16)', async ({ 
   await page.goto(SHEET.path)
   await waitForHydratedReadout(page)
 
-  const answer = page.locator('.hl-quiz textarea')
+  const answer = page.locator('.bz-quiz textarea')
   await answer.focus()
   for (const key of ['s', '.', '?', 'g', 'j', '[']) await page.keyboard.press(key)
 
@@ -1321,7 +1321,7 @@ test('§12.9 — registering a repository reaches the module info’s own row', 
   // Scoped to the form on purpose: the site header's GitHub icon also carries
   // `aria-label="Repository"`, so an unscoped lookup matches a link and a field.
   // Worth knowing rather than working around — see the note on the second case.
-  const form = page.locator('.hl-submittal-form')
+  const form = page.locator('.bz-submittal-form')
   await form.getByLabel('Repository').fill('https://github.com/libredb/libredb-studio')
   await page.getByRole('button', { name: 'ADD REPOSITORY' }).click()
 
@@ -1343,7 +1343,7 @@ test('§12.9.3 — the commit field states its format before it is typed in', as
    * test: one page, two controls, one name. Recorded here because it is a
    * pre-existing smell in the shell rather than anything §12.9 introduced.
    */
-  const form = page.locator('.hl-submittal-form')
+  const form = page.locator('.bz-submittal-form')
   const commit = form.getByLabel(/^Commit/)
   const hintId = await commit.getAttribute('aria-describedby')
   expect(hintId).not.toBeNull()
@@ -1360,7 +1360,7 @@ test('§12.9.3 — the commit field states its format before it is typed in', as
   await commit.fill('project added')
   await page.getByRole('button', { name: 'ADD REPOSITORY' }).click()
 
-  const error = page.locator('.hl-field-error')
+  const error = page.locator('.bz-field-error')
   await expect(error).toContainText('7 to 40 hexadecimal characters')
 
   // Nothing was registered, so the title block's count did not move.

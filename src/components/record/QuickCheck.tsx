@@ -102,22 +102,22 @@ export function QuickCheck({
   const headId = `hl-quiz-${key}`
 
   return (
-    <section className="hl-quiz" aria-labelledby={headId}>
-      <div className="hl-quiz-head hl-mark">
-        <span id={headId}>QUICK CHECK</span>
+    <section className="bz-quiz" aria-labelledby={headId}>
+      <div className="bz-quiz-head">
+        <span id={headId}>Quick check</span>
         {/* M13 / O2 — this chip read `+60 XP`. The points are gone from every
             instrument on the site (`derive.ts`, and D22 for why), so an award
             printed here would be a currency nothing spends. What is left is
             the one thing the reader needs to know before writing an answer:
             they mark it themselves and no score is kept anywhere. */}
-        <span className="hl-quiz-award">Self-marked</span>
+        <span className="bz-quiz-award">Self-marked</span>
       </div>
 
-      <div className="hl-quiz-body">
-        <p className="hl-quiz-question">{question}</p>
+      <div className="bz-quiz-body">
+        <p className="bz-quiz-question">{question}</p>
 
         <label className="block">
-          <span className="hl-field-label">YOUR ANSWER</span>
+          <span className="bz-field-label">Your answer</span>
           <textarea
             rows={4}
             value={answer}
@@ -155,17 +155,17 @@ export function QuickCheck({
           />
         </label>
 
-        <div className="hl-quiz-actions">
+        <div className="bz-actions">
           {offerCompare && (
-            <button type="button" className="hl-btn" onClick={() => setPressed(true)}>
-              COMPARE WITH THE MODULE&rsquo;S SUMMARY
+            <button type="button" className="bz-btn" onClick={() => setPressed(true)}>
+              Compare with the module&rsquo;s summary
             </button>
           )}
           {offerAssess && (
             <>
               <button
                 type="button"
-                className="hl-btn"
+                className="bz-btn"
                 aria-pressed={assessed === 'matched'}
                 onClick={() => update((data) => assessQuiz(data, slug, 'matched', nowIso()), {
               kind: 'assessQuiz',
@@ -178,7 +178,7 @@ export function QuickCheck({
               </button>
               <button
                 type="button"
-                className="hl-btn"
+                className="bz-btn"
                 aria-pressed={assessed === 'missed'}
                 onClick={() => update((data) => assessQuiz(data, slug, 'missed', nowIso()), {
               kind: 'assessQuiz',
@@ -194,15 +194,15 @@ export function QuickCheck({
         </div>
 
         {!attempted && (
-          <p className="hl-quiz-note text-meta">
+          <p className="bz-quiz-note text-meta">
             The module&rsquo;s summary can be compared once an answer is written.
           </p>
         )}
 
         {showSummary && (
-          <div className="hl-quiz-reveal">
+          <div className="bz-quiz-reveal">
             {/* Labelled the sheet's own summary, never "the answer" (§12.6). */}
-            <p className="hl-quiz-reveal-label hl-mark">THE MODULE&rsquo;S SUMMARY</p>
+            <p className="bz-quiz-reveal-label">The module&rsquo;s summary</p>
             {/* Authored markdown, rendered by the same pipeline as the prose,
                 so it is typeset as prose rather than as a bare HTML dump. */}
             <div className="bz-prose" dangerouslySetInnerHTML={{ __html: summaryHtml ?? '' }} />
@@ -213,12 +213,12 @@ export function QuickCheck({
             terminal period. `unknown` is a first-class value (§12.4.2), so
             before an assessment there is simply no line here to print. */}
         {assessed !== null && (
-          <p className="hl-quiz-note hl-mark">
+          <p className="bz-quiz-note">
             {`SELF-ASSESSED: ${assessed === 'matched' ? 'MATCHED' : 'DID NOT MATCH'}`}
           </p>
         )}
 
-        <p className="hl-quiz-note text-meta">
+        <p className="bz-quiz-note text-meta">
           Self-assessment. Not graded by anyone.
         </p>
       </div>

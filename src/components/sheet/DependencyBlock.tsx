@@ -43,7 +43,7 @@ function Relation({ label, targets }: DependencyRelation) {
               {i > 0 && <span aria-hidden="true">, </span>}
               <Link
                 href={target.path}
-                className={target.draft ? 'hl-hidden-x' : 'hl-link'}
+                className={target.draft ? 'hl-hidden-x' : 'bz-link'}
                 data-draft={target.draft ? '' : undefined}
                 title={
                   target.draft

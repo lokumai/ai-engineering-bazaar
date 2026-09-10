@@ -202,24 +202,12 @@ describe('the generated module selectors are the committed ones', () => {
 describe('the generated selectors name classes that markup actually carries', () => {
   /** Classes the generator names that no component emits yet, and why. */
   const NOT_YET_CARRIED: Readonly<Record<string, string>> = {
-    'bz-seg':
-      'M16 stage 8. `course/CategoryMeter.tsx` still emits `hl-seg`, and the segment ' +
-      'strip has no base geometry in any surface stylesheet — only this file touches it.',
     'bz-step':
       'M16 stage 8. `path/PathSteps.tsx` still emits `hl-step`; the nine-role path is ' +
       'the surface that draws it.',
     'bz-step-tick':
       'M16 stage 8, with `bz-step`. Its base `display` has to be authored at the same ' +
       'time or every drawn step reads as completed.',
-    'bz-cmod':
-      'M16 stage 7. `record/CourseCompletion.tsx` still emits `hl-cmod`; completion ' +
-      'control C is the surface that draws it.',
-    'bz-cmod-mark':
-      'M16 stage 7, with `bz-cmod`. This is the defect `home.spec.ts` is red on: with ' +
-      'no base rule the disc shows for every module rather than the signed ones.',
-    'bz-cmod-said':
-      'M16 stage 7, with `bz-cmod`. The word the disc is described by (D25), on the ' +
-      'same channel and for the same reason.',
   }
 
   const generated = readFileSync(MODULES_CSS, 'utf8')

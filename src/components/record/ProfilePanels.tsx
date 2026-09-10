@@ -65,7 +65,7 @@ function group(value: number): string {
  * the set already reads as "not yet": dashed, unsigned, and stating what is
  * missing rather than showing a zero that was never measured (§11.25).
  *
- * record.css has no inline dashed token — `.hl-submittal-empty` is a padded
+ * record.css has no inline dashed token — `.bz-submittal-empty` is a padded
  * block for a whole register — so this takes the hairline and the dash from
  * Tailwind against the same two design tokens that class uses.
  */
@@ -139,7 +139,7 @@ export function QuarantineNote() {
   return (
     <section aria-label="Record status" className="mb-8">
       <p className="hl-mark m-0 text-on-surface">{copy.readout}</p>
-      <div className="hl-note">
+      <div className="bz-note">
         <p>{copy.note}</p>
       </div>
     </section>
@@ -344,7 +344,7 @@ export function SubmittalRegister({ sheets }: { sheets: readonly RegisterSheet[]
   if (rows.length === 0) {
     // §12.9.1 — a hairline slot stating that it is empty. Never a nag, and
     // never a prompt dressed as a task.
-    return <p className="hl-submittal-empty hl-mark">NOTHING ADDED YET</p>
+    return <p className="bz-submittal-empty hl-mark">NOTHING ADDED YET</p>
   }
 
   return (
@@ -381,7 +381,7 @@ export function SubmittalRegister({ sheets }: { sheets: readonly RegisterSheet[]
               {/* One expression, used twice: the label and the href are the
                   same string by construction rather than by coincidence. */}
               <a
-                className="hl-submittal-repo"
+                className="bz-submittal-repo"
                 href={repoUrl(entry)}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -389,7 +389,7 @@ export function SubmittalRegister({ sheets }: { sheets: readonly RegisterSheet[]
                 {repoUrl(entry)}
               </a>
               {entry.note !== '' && (
-                <p className="hl-submittal-note">
+                <p className="bz-submittal-note">
                   <bdi dir="auto">{entry.note}</bdi>
                 </p>
               )}
@@ -399,7 +399,7 @@ export function SubmittalRegister({ sheets }: { sheets: readonly RegisterSheet[]
                   a reviewer can resolve `{repo}/commit/{sha}` and read the
                   authored date, the diff and the signature status themselves. */}
               {entry.commit !== null && (
-                <p className="hl-submittal-commit">
+                <p className="bz-submittal-commit">
                   {`COMMIT ${entry.commit}`}
                   <span className="ml-2 tracking-normal normal-case">
                     supplied by reader; not fetched or verified by this application
@@ -610,9 +610,9 @@ export function CharKeysToggle() {
 
   return (
     <div>
-      {/* `.hl-check` is tuned for a prose-size label in the corpus's own
+      {/* `.bz-check` is tuned for a prose-size label in the corpus's own
           checklist; at the readout's 14px the box wants the line's centre. */}
-      <label className="hl-check items-center">
+      <label className="bz-check items-center">
         <input
           type="checkbox"
           className="mt-0"

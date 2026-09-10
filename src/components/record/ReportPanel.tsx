@@ -302,7 +302,7 @@ export function DocumentDownload({
   return (
     <button
       type="button"
-      className="hl-btn"
+      className="bz-btn"
       data-hl-download={filename}
       onClick={() => {
         void saveDocument(html, filename)
@@ -468,7 +468,7 @@ export function ReportPanel({ facts, counts }: ReportPanelProps) {
             generates them. The certificate genre puts its limits in a footer
             in small type; this inverts that deliberately, on the page as well
             as in the document. */}
-        <div className="hl-note">
+        <div className="bz-note">
           {REPORT_LIMITS.map((line) => (
             <p key={line}>{line}</p>
           ))}
@@ -514,10 +514,10 @@ export function ReportPanel({ facts, counts }: ReportPanelProps) {
             attribute publishes the name the file will be saved under, which is
             the same contract `DocumentDownload` carries: a page that offers a
             file should be able to say which file. */}
-        <div className="hl-signoff-actions mt-4">
+        <div className="bz-actions mt-4">
           <button
             type="button"
-            className="hl-btn"
+            className="bz-btn"
             data-hl-download={filename}
             onClick={() => {
               void onDownload()

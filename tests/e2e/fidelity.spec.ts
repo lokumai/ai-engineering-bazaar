@@ -12,6 +12,8 @@ import {
   FACT_KEYS,
   MOCKUP_SELECTORS,
   MOCKUP_URL,
+  PROGRESS_SELECTORS,
+  PROGRESS_URL,
   REFERENCE_OF,
   REFERENCE_SELECTORS,
   REFERENCE_URL,
@@ -995,5 +997,111 @@ test.describe('M16 stage 6 — code and figures', () => {
     // And the two emphasised ones are heavier, so the hue is never alone.
     expect(roles[1]).toContain('600')
     expect(roles[2]).toContain('600')
+  })
+})
+
+test.describe('M16 stage 7 — completion', () => {
+  /**
+   * `05`-C, which its own note puts "on the home page and on My progress" —
+   * and `CourseCompletion` renders on both, so the home page is where these
+   * are read.
+   */
+  const BUILT: readonly Role[] = ['levelCard', 'dial', 'dialValue', 'statRow', 'legendKey']
+
+  test('is indistinguishable from `05`, in every length the overview carries', async ({ page }) => {
+    await page.goto(PROGRESS_URL)
+    await freezeMotion(page)
+    const reference = await extractDesignFacts(page, PROGRESS_SELECTORS)
+
+    await page.goto('/')
+    await freezeMotion(page)
+    const actual = await extractDesignFacts(page, APP_SELECTORS)
+
+    const shown = (facts: Record<string, string | null>, role: Role) =>
+      FACT_KEYS.filter((key) => key.startsWith(`${role}.`)).some((key) => facts[key] !== null)
+
+    for (const role of BUILT) {
+      expect(
+        shown(actual, role),
+        `${role}: mockup ${shown(reference, role)}, page ${shown(actual, role)}`,
+      ).toBe(shown(reference, role))
+    }
+    expect(BUILT.every((role) => shown(reference, role)), 'a role `05` does not draw').toBe(true)
+
+    expect(differencesAt(reference, actual, BUILT, page.viewportSize()!.width)).toEqual([])
+  })
+
+  /**
+   * The dial's ring is an ANNULUS made by occlusion, not by a mask: the outer
+   * disc is painted entirely by a `conic-gradient` and an opaque inner disc
+   * sits on top of it. Two things follow, and neither is visible in the
+   * fact-by-fact comparison above.
+   *
+   * The inner disc must be filled with whatever it sits on, or a seam shows —
+   * the ground is `#FDFBF7` and a card is `#FFFFFF`, so "transparent" is not
+   * an option and "white" is only right by accident of which one it is on.
+   *
+   * And the ring's thickness is the difference of two diameters, so a change
+   * to either that keeps both "on the scale" can still close the ring up.
+   */
+  test('draws a ring rather than a filled disc, on the fill it sits on', async ({ page }) => {
+    await page.goto('/')
+    await freezeMotion(page)
+
+    const measured = await page.locator('.bz-dial').first().evaluate((node) => {
+      const inner = node.querySelector('.bz-dial-value')!
+      const outer = node.getBoundingClientRect()
+      const disc = inner.getBoundingClientRect()
+      return {
+        annulus: Math.round(((outer.width - disc.width) / 2) * 10) / 10,
+        discFill: getComputedStyle(inner).backgroundColor,
+        cardFill: getComputedStyle(node.closest('.bz-cc-level')!).backgroundColor,
+        gradient: getComputedStyle(node).backgroundImage,
+      }
+    })
+
+    expect(measured.annulus, 'the ring has closed up or swallowed the number').toBe(9)
+    expect(measured.discFill, 'the knockout is not the fill it sits on').toBe(measured.cardFill)
+    expect(measured.discFill).not.toBe('rgba(0, 0, 0, 0)')
+    expect(measured.gradient, 'the ring is not a conic gradient').toContain('conic-gradient')
+  })
+
+  /**
+   * §12.2 — the reading that made the dial possible, and the only number
+   * channel A carries.
+   *
+   * A `conic-gradient` stop is a length, so the ring needs a percentage in the
+   * cascade before first paint. This asserts the whole chain in a browser: the
+   * boot script computes it, `category.css` joins `--bz-done-<slug>` to the
+   * `--bz-done` the language declares, and the gradient substitutes it — with
+   * every `.js` request refused, so nothing React does can be what made it
+   * true.
+   */
+  test('fills the ring in frame one, with no JavaScript at all', async ({ page }) => {
+    await page.route('**/*.js', (route) => route.abort())
+    await seedRecord(page, {
+      sheets: { 'fundamentals/llms': { signedOff: '2026-08-14T09:00:00.000Z' } },
+    })
+    await page.goto('/')
+
+    const read = await page.evaluate(() => {
+      const dial = document.querySelector('.bz-cc-level[data-cat="fundamentals"] .bz-dial')!
+      const other = document.querySelector('.bz-cc-level[data-cat="protocols"] .bz-dial')!
+      const at = (node: Element) => getComputedStyle(node).getPropertyValue('--bz-done').trim()
+      return {
+        stamped: document.documentElement.style.getPropertyValue('--bz-done-fundamentals'),
+        started: at(dial),
+        untouched: at(other),
+      }
+    })
+
+    // One of the level's modules, so a real fraction rather than 0 or 100.
+    expect(read.stamped, 'the boot script stamped no percentage').toMatch(/^\d+%$/)
+    expect(read.started).toBe(read.stamped)
+    expect(Number.parseInt(read.started, 10)).toBeGreaterThan(0)
+    expect(Number.parseInt(read.started, 10)).toBeLessThan(100)
+    // And a level with nothing signed falls back to the language's own `0%`,
+    // which is the true statement rather than an absent value.
+    expect(read.untouched).toBe('0%')
   })
 })

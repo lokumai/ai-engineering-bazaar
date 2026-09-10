@@ -164,7 +164,7 @@ export function PersonDetail({
         <h2 id={headId} className="hl-panel-title">
           {label}
         </h2>
-        <button type="button" className="hl-btn hl-no-print" onClick={onClose}>
+        <button type="button" className="bz-btn bz-no-print" onClick={onClose}>
           CLOSE
         </button>
       </div>
@@ -262,7 +262,7 @@ function PersonBody({
 
   return (
     <>
-      <hr className="hl-rule-struct" aria-hidden="true" />
+      <hr className="bz-rule" aria-hidden="true" />
 
       <p className="hl-mark m-0 mb-1">
         {`COMPLETED ${progress.signedOff} / ${progress.attainable}`}

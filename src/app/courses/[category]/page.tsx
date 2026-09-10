@@ -68,7 +68,7 @@ export default async function CategoryPage({
   return (
     <PageShell column={false}>
       {/* §13.5 surface 3 — the header band, and the one aggregate hue on this
-          page. `hl-band-tint` paints §13.1.2's 2px rule above the level's
+          page. `bz-level-tint` paints §13.1.2's 2px rule above the level's
           own name in its own flavour, resolved on channel A from the class the
           boot script stamped (§12.2); dormant is the structural line every
           other component uses, so a level nobody has started looks like
@@ -79,13 +79,13 @@ export default async function CategoryPage({
           level's length, and `n/m completed` states the reader's standing
           in text. Without that count the band's chroma would be the sole
           carrier of a claim about the reader, which §13.1.4 rules out. */}
-      <div className="hl-band-tint hl-cat-tint pt-3" data-cat={category.slug}>
+      <div className="bz-level-tint bz-cat-tint pt-3" data-cat={category.slug}>
         <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
-          <p className="hl-eyebrow hl-mark m-0">{categoryEyebrow(category)}</p>
+          <p className="bz-facts m-0">{categoryEyebrow(category)}</p>
           <CategoryMeter category={category.slug} sheets={rows} />
         </div>
 
-        <h1 className="hl-listing-title mt-3">{category.title}</h1>
+        <h1 className="bz-display mt-3">{category.title}</h1>
       </div>
 
       <p className="bz-lead">{category.blurb}</p>
@@ -93,7 +93,7 @@ export default async function CategoryPage({
       {/* §4.9 item 4 — one tick per sheet in this subsystem. The eyebrow above
           states the same reading in words, so the gauge is decoration here and
           says so (§10.4). */}
-      <TickGauge ticks={ticksFrom(rows)} className="hl-listing-gauge" />
+      <TickGauge ticks={ticksFrom(rows)} className="bz-level-gauge" />
 
       <SheetIndex
         rows={rows}
@@ -109,8 +109,8 @@ export default async function CategoryPage({
       <CategoryTally facts={curriculumFacts()} />
 
       {notes && (
-        <section className="hl-notes" aria-labelledby="general-notes">
-          <h2 id="general-notes" className="hl-mark hl-notes-head">
+        <section className="bz-notes" aria-labelledby="general-notes">
+          <h2 id="general-notes" className="bz-section">
             General notes
           </h2>
           <Prose html={notes.html} />

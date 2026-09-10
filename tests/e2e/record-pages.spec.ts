@@ -549,7 +549,7 @@ test('§12.10.6 — CONTINUE is absent when there is no next module', async ({ p
   // anything: on the server frame nothing is completed and CONTINUE is there.
   // Control C's own ticks are the witness — one per completed module, all of
   // them channel A — and they are painted from the same record.
-  await expect(page.locator('.hl-cmod .hl-cmod-mark:visible')).toHaveCount(
+  await expect(page.locator('.bz-cmod .bz-cmod-mark:visible')).toHaveCount(
     SHEETS.filter((sheet) => sheet.drawn).length,
   )
   await expect(page.getByRole('link', { name: /^Module \d\d · / })).toHaveCount(0)
@@ -1309,7 +1309,7 @@ test('§12.15 — the erase dialog names its scope and enumerates the real count
   // §12.14.1 — the buttons state OUTCOMES, and the decline states the SAFE
   // outcome with no shame and no loss framing. Never Yes/No.
   const buttons = await dialog
-    .locator('.hl-dialog-actions button')
+    .locator('.bz-actions button')
     .evaluateAll((nodes) => nodes.map((node) => (node.textContent ?? '').trim()))
   expect(buttons).toEqual(['Erase all data', 'Keep my data', 'EXPORT YOUR RECORD'])
   for (const label of buttons) {

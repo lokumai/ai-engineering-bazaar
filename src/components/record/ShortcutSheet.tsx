@@ -82,7 +82,7 @@ export function ShortcutSheet({ open, onOpenChange, pathname, charKeys }: Shortc
                         ) : (
                           <Link
                             href={href}
-                            className="hl-link"
+                            className="bz-link"
                             onClick={() => onOpenChange(false)}
                           >
                             {row.action}
@@ -96,11 +96,11 @@ export function ShortcutSheet({ open, onOpenChange, pathname, charKeys }: Shortc
             </table>
 
             {!charKeys && (
-              <div className="hl-note">
+              <div className="bz-note">
                 <p>
                   Single-character shortcuts are switched off, so nothing in this table fires
                   except Esc. The switch is on the{' '}
-                  <Link href="/profile/" className="hl-link" onClick={() => onOpenChange(false)}>
+                  <Link href="/profile/" className="bz-link" onClick={() => onOpenChange(false)}>
                     account page
                   </Link>
                   .
@@ -108,8 +108,8 @@ export function ShortcutSheet({ open, onOpenChange, pathname, charKeys }: Shortc
               </div>
             )}
 
-            <div className="hl-dialog-actions">
-              <Dialog.Close className="hl-btn">Close</Dialog.Close>
+            <div className="bz-actions">
+              <Dialog.Close className="bz-btn">Close</Dialog.Close>
             </div>
           </div>
         </Dialog.Content>

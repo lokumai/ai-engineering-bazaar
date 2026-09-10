@@ -469,7 +469,7 @@ export default function ProgressPage() {
         `title`; this is the other half of that contract.
       */}
       <div className="mb-4 flex flex-wrap items-baseline justify-between gap-3">
-        <h1 className="hl-listing-title m-0">Your progress</h1>
+        <h1 className="bz-display m-0">Your progress</h1>
         {/* Derived, not typed: `SHORTCUTS` is where this chord is defined and
             where the handler reads it from, so a page that spelled it out
             would keep printing a chord that no longer works. */}
@@ -484,7 +484,7 @@ export default function ProgressPage() {
         prerendered once for everybody knows nothing about the reader until then.
       </p>
 
-      <hr className="hl-rule-struct" aria-hidden="true" />
+      <hr className="bz-rule" aria-hidden="true" />
 
       {/* §12.1.2 — the one surface where a quarantined record can be
           discovered. Above everything, because it is the only thing on the page

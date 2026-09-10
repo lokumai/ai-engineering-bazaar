@@ -195,7 +195,7 @@ export function Readout({ variant, facts, traces = null, className }: ReadoutPro
 
   /**
    * §14.7.3 — the push did not land, so the strip says so and puts the export
-   * beside it rather than a route away from it. `.hl-not-saved`'s fault ink is
+   * beside it rather than a route away from it. `.bz-not-saved`'s fault ink is
    * borrowed as a utility rather than the class itself: that class carries a
    * `margin-top` written for a block under a control, and inside a 40px flex
    * row it would push the line off its baseline. §12.10.4 — the colour is not
@@ -211,7 +211,7 @@ export function Readout({ variant, facts, traces = null, className }: ReadoutPro
       <span key="sync" role="status" className="whitespace-nowrap">
         <span className="hl-readout-value text-on-surface">Not synced</span>
         <span aria-hidden="true" className="hl-readout-sep">{' · '}</span>
-        <Link href="/profile/" className="hl-link hl-no-print">
+        <Link href="/profile/" className="bz-link bz-no-print">
           Export your record
         </Link>
       </span>,

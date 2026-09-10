@@ -298,8 +298,8 @@ export function DataPanel() {
     <div className="grid gap-6">
       {/* ---- EXPORT ------------------------------------------------------- */}
       <div>
-        <div className="hl-signoff-actions">
-          <button type="button" className="hl-btn" onClick={onExport}>
+        <div className="bz-actions">
+          <button type="button" className="bz-btn" onClick={onExport}>
             EXPORT YOUR RECORD
           </button>
           {exported !== null && (
@@ -317,18 +317,18 @@ export function DataPanel() {
 
       {/* ---- IMPORT ------------------------------------------------------- */}
       <div>
-        <label className="hl-field">
-          <span className="hl-field-label">Import a record from a file</span>
+        <label className="bz-field">
+          <span className="bz-field-label">Import a record from a file</span>
           <input
             type="file"
             accept=".json,.html,application/json,text/html"
             onChange={(event) => void onImport(event)}
-            // `.hl-field input` already gives the border, the ground and the
+            // `.bz-field input` already gives the border, the ground and the
             // type; a file input needs its own height and vertical padding.
             className="block h-auto w-full p-2"
           />
         </label>
-        <p className="hl-field-hint">
+        <p className="bz-field-hint">
           Either the exported .json or the RECORD OF WORK .html that carries it.
           Importing replaces the record in this browser with the one in the file.
         </p>
@@ -343,7 +343,7 @@ export function DataPanel() {
                 <p
                   className={
                     imported.digest === 'edited'
-                      ? 'hl-not-saved hl-mark'
+                      ? 'bz-not-saved hl-mark'
                       : 'hl-mark m-0 mt-1 text-on-surface-muted'
                   }
                 >
@@ -394,10 +394,10 @@ export function DataPanel() {
 
       {/* ---- ERASE -------------------------------------------------------- */}
       <div>
-        <div className="hl-signoff-actions">
+        <div className="bz-actions">
           <EraseDialog onConfirm={onErase} onExport={onExport} exportedAt={exported} />
           {undo !== null && left > 0 && (
-            <button type="button" className="hl-btn" onClick={onUndo}>
+            <button type="button" className="bz-btn" onClick={onUndo}>
               UNDO
             </button>
           )}

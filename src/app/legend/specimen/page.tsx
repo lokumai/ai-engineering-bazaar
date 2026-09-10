@@ -52,7 +52,7 @@ export default function SpecimenPage() {
     <PageShell sheet="MODULE 00 · SPECIMEN">
       <p className="hl-eyebrow hl-mark">MODULE 00 — LEGEND &amp; SPECIMEN</p>
 
-      <h1 className="hl-listing-title">Specimen record</h1>
+      <h1 className="bz-display">Specimen record</h1>
 
       {/* The stamp, before the prose and before the control. It is a mono line
           in a hairline box rather than an alarm: the fact is unmissable without
@@ -70,7 +70,7 @@ export default function SpecimenPage() {
         record-of-work module.
       </p>
 
-      <hr className="hl-rule-struct" aria-hidden="true" />
+      <hr className="bz-rule" aria-hidden="true" />
 
       <section className="hl-panel" aria-labelledby="hl-specimen-facts">
         <div className="hl-panel-head">
@@ -187,7 +187,7 @@ export default function SpecimenPage() {
           specimen is how you can check that for yourself before you rely on it.
         </p>
 
-        <div className="hl-signoff-actions">
+        <div className="bz-actions">
           <DocumentDownload
             html={specimen.html}
             filename={specimen.filename}
@@ -195,10 +195,10 @@ export default function SpecimenPage() {
           />
           {/* M14 — the builder is the progress page's `report` row now, and
               the fragment opens it on arrival (`FoldFragment`). */}
-          <Link className="hl-btn" href="/profile/#report">
+          <Link className="bz-btn" href="/profile/#report">
             BUILD YOUR OWN RECORD
           </Link>
-          <Link className="hl-btn" href="/legend/">
+          <Link className="bz-btn" href="/legend/">
             BACK TO MODULE 00
           </Link>
         </div>

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { RECORD_BOOT_SCRIPT, recordBootScript } from '@/lib/record/boot'
+import { stampProgressFor } from '@/lib/record/stamp'
 import { coerceRecordData } from '@/lib/record/validate'
 import {
   EMPTY_RECORD,
@@ -27,18 +28,38 @@ const MODULES = {
 interface Stamped {
   classes: Set<string>
   attributes: Map<string, string>
+  /** The custom properties, which is where the one numeric reading goes. */
+  properties: Map<string, string>
 }
 
-/** Runs the emitted script with every global it touches stubbed out. */
+/**
+ * Runs the emitted script with every global it touches stubbed out.
+ *
+ * `style` is part of that slice since M16, and it is not optional: the script
+ * body is wrapped in one `try`, so a stub missing it would not merely fail to
+ * record the properties — the throw would abandon the loop and the remaining
+ * categories would lose their `-started` and `-complete` classes too, silently.
+ * A stub that is missing a member the script touches is a stub that tests a
+ * different script.
+ */
 function run(
   script: string,
   options: { stored?: string | null; getterThrows?: boolean; getItemThrows?: boolean } = {},
   into?: Stamped,
 ): Stamped {
-  const stamped: Stamped = into ?? { classes: new Set<string>(), attributes: new Map<string, string>() }
+  const stamped: Stamped =
+    into ?? {
+      classes: new Set<string>(),
+      attributes: new Map<string, string>(),
+      properties: new Map<string, string>(),
+    }
   const documentElement = {
     classList: { add: (token: string) => { stamped.classes.add(token) } },
     setAttribute: (name: string, value: string) => { stamped.attributes.set(name, value) },
+    style: {
+      setProperty: (name: string, value: string) => { stamped.properties.set(name, value) },
+      removeProperty: (name: string) => { stamped.properties.delete(name) },
+    },
   }
   const window = {
     get localStorage() {
@@ -223,6 +244,79 @@ describe('the marks CSS draws from (§12.2 Channel A)', () => {
  * script has no module graph to import from — and these cases are the only thing
  * keeping the two copies honest.
  */
+describe('the one numeric reading, and both channels agreeing on it (§12.2)', () => {
+  const script = recordBootScript(TOTALS, MODULES)
+
+  /*
+    Every other reading channel A carries is a class, because CSS cannot count.
+    This one is a percentage, because a `conic-gradient` stop is a length and
+    `05`-C's dial needs a number in the cascade before first paint. The script
+    can do arithmetic; the stylesheet cannot.
+  */
+  it('states how far through a level the reader is, as a percentage', () => {
+    const stamped = run(script, {
+      stored: envelope(signedSheets('fundamentals/llms', 'fundamentals/training')),
+    })
+    // Two of seven, rounded: a ring is read at a glance and half a percent of
+    // 360 degrees is 1.8, which nobody can see.
+    expect(stamped.properties.get('--bz-done-fundamentals')).toBe('29%')
+    expect(stamped.properties.has('--bz-done-intermediate')).toBe(false)
+  })
+
+  it('says 100% exactly when a level is finished', () => {
+    const stamped = run(script, { stored: envelope(signedSheets('protocols/mcp')) })
+    // `protocols` has one module in TOTALS, and this is also the case where
+    // `-complete` is stamped, so the two readings agree by construction.
+    expect(stamped.properties.get('--bz-done-protocols')).toBe('100%')
+    expect(stamped.classes.has('hl-cat-protocols-complete')).toBe(true)
+  })
+
+  it('states nothing for a level with no total to divide by', () => {
+    // The same asymmetry `-complete` has: with no denominator the honest answer
+    // is silence, and `0%` would be a claim.
+    const stamped = run(recordBootScript({}, MODULES), {
+      stored: envelope(signedSheets('fundamentals/llms')),
+    })
+    expect(stamped.properties.size).toBe(0)
+    expect(stamped.classes.has('hl-cat-fundamentals-started')).toBe(true)
+  })
+
+  it('does not abandon the classes when it writes a property', () => {
+    // The loop stamps a class and then a property per category. A throw in the
+    // second half would cost the rest of the first, and the whole script is
+    // inside one `try` — so this walks two categories and requires both.
+    const stamped = run(script, {
+      stored: envelope(signedSheets('fundamentals/llms', 'intermediate/security')),
+    })
+    expect(stamped.classes.has('hl-cat-fundamentals-started')).toBe(true)
+    expect(stamped.classes.has('hl-cat-intermediate-started')).toBe(true)
+    expect(stamped.properties.size).toBe(2)
+  })
+
+  /**
+   * The cross-test. Two implementations of one derivation — the inlined ES5 and
+   * `stamp.ts` for after mount — and the failure mode is a dial that is right
+   * in frame one and wrong the moment the reader completes something, or the
+   * reverse. Neither can import the other: the script is a source string in
+   * `<head>`.
+   */
+  it('agrees with the after-mount writer, module for module', () => {
+    for (const slugs of [
+      ['fundamentals/llms'],
+      ['fundamentals/llms', 'fundamentals/training', 'fundamentals/rag'],
+      ['protocols/mcp'],
+      ['fundamentals/llms', 'intermediate/security'],
+      [],
+    ]) {
+      const data = coerceRecordData(signedSheets(...slugs))
+      const stamped = run(script, { stored: envelope(signedSheets(...slugs)) })
+      const after = stampProgressFor(data, { categoryTotals: TOTALS, slugToModule: MODULES })
+
+      expect(Object.fromEntries(stamped.properties), slugs.join(' + ') || 'nothing').toEqual(after)
+    }
+  })
+})
+
 describe('data-hl-record only goes on a record that carries something (§15.11)', () => {
   const script = recordBootScript(TOTALS, MODULES)
 

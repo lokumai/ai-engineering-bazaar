@@ -31,7 +31,7 @@ const CAPTION = 'PAGE NOT FOUND · NO SUCH MODULE IN THIS CURRICULUM'
 export default function NotFound() {
   return (
     <PageShell sheet={NOT_FOUND_SHEET_LABEL} trailLabel={NOT_FOUND_TITLE}>
-      <h1 className="hl-listing-title">{NOT_FOUND_TITLE}</h1>
+      <h1 className="bz-display">{NOT_FOUND_TITLE}</h1>
 
       <p className="bz-lead">
         This address is not a module in the curriculum. The catalog lists every
@@ -40,14 +40,14 @@ export default function NotFound() {
 
       <Lkm01Exploded caption={CAPTION} className="mb-10" />
 
-      <hr className="hl-rule-struct" aria-hidden="true" />
+      <hr className="bz-rule" aria-hidden="true" />
 
       {/* §15.1 — the register moved, and this link did not follow it: labelled
           `Index`, pointed at `/`, one line under a sentence promising the index,
           it opened the home screen. Both halves come from `route-labels` now, so
           the label cannot name one page while the href opens another. */}
       <p className="hl-mark">
-        <Link className="hl-link" href={INDEX_ROUTE}>
+        <Link className="bz-link" href={INDEX_ROUTE}>
           {INDEX_TITLE}
         </Link>
       </p>

@@ -150,21 +150,21 @@ export function AccountPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
         </p>
       )}
 
-      <div className="hl-signoff-actions mt-4">
+      <div className="bz-actions mt-4">
         {view.status === 'signedOut' && (
-          <Link className="hl-btn" href="/sign-in/">
+          <Link className="bz-btn" href="/sign-in/">
             Sign in
           </Link>
         )}
         {view.status === 'signedIn' && (
-          <button type="button" className="hl-btn" onClick={() => void signOut()}>
+          <button type="button" className="bz-btn" onClick={() => void signOut()}>
             Sign out of this browser
           </button>
         )}
       </div>
 
       {error !== null && (
-        <div className="hl-note" role="alert">
+        <div className="bz-note" role="alert">
           <p>
             The account could not be read, so this panel is not claiming to
             know its state. Nothing was changed.
@@ -312,7 +312,7 @@ export function OrgMembershipPanel({ chrome = 'panel' }: { chrome?: AuthChrome }
           READING MEMBERSHIPS
         </p>
       ) : state.kind === 'failed' ? (
-        <div className="hl-note" role="alert">
+        <div className="bz-note" role="alert">
           <p>
             The membership list could not be read, so none is shown. This is not
             a statement that you belong to no organisation — it is a statement
@@ -321,18 +321,18 @@ export function OrgMembershipPanel({ chrome = 'panel' }: { chrome?: AuthChrome }
           <p className="hl-mark text-on-surface-muted">REPORTED · {state.message}</p>
         </div>
       ) : state.rows.length === 0 ? (
-        <p className="hl-submittal-empty">
+        <p className="bz-submittal-empty">
           NOT A MEMBER OF ANY ORGANISATION. NOBODY BUT YOU CAN SEE THIS RECORD.
         </p>
       ) : (
-        <ul className="hl-submittal-list">
+        <ul className="bz-submittal-list">
           {state.rows.map((row) => (
-            <li className="hl-submittal-item" key={row.orgId}>
+            <li className="bz-submittal-item" key={row.orgId}>
               <div className="min-w-0 flex-1">
-                <p className="hl-submittal-repo m-0">
+                <p className="bz-submittal-repo m-0">
                   {row.orgName ?? row.orgId}
                 </p>
-                <p className="hl-submittal-commit">
+                <p className="bz-submittal-commit">
                   {row.joinedAt === null ? 'JOINED · NOT RECORDED' : `JOINED ${row.joinedAt}`}
                 </p>
               </div>
@@ -342,7 +342,7 @@ export function OrgMembershipPanel({ chrome = 'panel' }: { chrome?: AuthChrome }
       )}
 
       {status === 'signedIn' && state.kind === 'loaded' && state.rows.length > 0 && (
-        <div className="hl-note">
+        <div className="bz-note">
           <p>
             Managers of the organisations listed above can see your whole record:
             the modules you have completed, every quiz attempt, your submittals
@@ -600,7 +600,7 @@ function CallbackBody() {
       </p>
 
       {phase.kind === 'nothing' && (
-        <div className="hl-note">
+        <div className="bz-note">
           <p>
             This page only does something when a sign-in provider sends a reader
             back to it, and this visit carries nothing to complete. Nothing was
@@ -610,17 +610,17 @@ function CallbackBody() {
       )}
 
       {phase.kind === 'error' && (
-        <div className="hl-note" role="alert">
+        <div className="bz-note" role="alert">
           <p>{phase.note}</p>
         </div>
       )}
 
       {(phase.kind === 'error' || phase.kind === 'nothing') && (
-        <div className="hl-signoff-actions mt-4">
-          <Link className="hl-btn" href="/sign-in/">
+        <div className="bz-actions mt-4">
+          <Link className="bz-btn" href="/sign-in/">
             Back to sign in
           </Link>
-          <Link className="hl-btn" href={phase.returnPath}>
+          <Link className="bz-btn" href={phase.returnPath}>
             Continue without signing in
           </Link>
         </div>

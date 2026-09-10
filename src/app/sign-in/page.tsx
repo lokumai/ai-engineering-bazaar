@@ -53,7 +53,7 @@ export const metadata: Metadata = {
  * **The alias is a door, not a footnote (§15.5.1).** It is first, and it is the
  * one carrying the accent edge — the order is ascending cost and the accent
  * marks the cheapest door rather than the one that suits us. Accent normally
- * means "signed off" on this site (T1, `.hl-btn[aria-pressed="true"]`), and
+ * means "signed off" on this site (T1, `.bz-btn[aria-pressed="true"]`), and
  * that reading cannot arise here: this sheet has no sign-off state on it at
  * all, and the badge beside the mark says in words what the edge is marking, so
  * the colour is never the only signal (§2.6). Putting an account first, or
@@ -110,7 +110,7 @@ export default function SignInPage() {
     <PageShell sheet="SIGN IN">
       <p className="hl-eyebrow hl-mark">OPTIONAL · NOTHING IS GATED BEHIND IT</p>
 
-      <h1 className="hl-listing-title">Sign in</h1>
+      <h1 className="bz-display">Sign in</h1>
 
       <p className="bz-lead">
         Three ways to put your name on this record, and they cost different
@@ -121,7 +121,7 @@ export default function SignInPage() {
         and under none of them.
       </p>
 
-      <hr className="hl-rule-struct" aria-hidden="true" />
+      <hr className="bz-rule" aria-hidden="true" />
 
       {/* Door 1 — the cheapest, and therefore the first and the marked one.
           The 2px left edge is `--stroke-cut` spent as a border, which is a
@@ -158,7 +158,7 @@ export default function SignInPage() {
         </p>
 
         <p className="m-0">
-          <Link className="hl-btn" href="/sign-in/alias/">
+          <Link className="bz-btn" href="/sign-in/alias/">
             Choose an alias
           </Link>
         </p>
@@ -290,7 +290,7 @@ export default function SignInPage() {
         </div>
       </section>
 
-      <div className="hl-note">
+      <div className="bz-note">
         <p>
           Whichever door you take, the record already in this browser is not
           discarded. If the account has a record too, the two are merged

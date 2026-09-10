@@ -49,7 +49,7 @@ test('a category card still reports its standing with no colour (§13.1.3 item 2
 
   // The meter is the surface that carries hue. Its count is what carries the
   // meaning, and it is real text beside it.
-  const meters = page.locator('.hl-meter')
+  const meters = page.locator('.bz-meter')
   expect(await meters.count()).toBeGreaterThan(0)
 
   await expect
@@ -64,7 +64,7 @@ test('a category card still reports its standing with no colour (§13.1.3 item 2
   // A segment's border survives forced colours — `forced-color-adjust: none` on
   // the track and a system-colour fill on a signed one — so "signed" is still a
   // filled cell against an empty one. A difference in FILL, not in hue.
-  const fills = await page.locator('.hl-seg[data-cat="fundamentals"]').evaluateAll(
+  const fills = await page.locator('.bz-seg[data-cat="fundamentals"]').evaluateAll(
     (nodes) => nodes.map((node) => getComputedStyle(node).backgroundColor),
   )
   expect(new Set(fills).size).toBeGreaterThan(1)
@@ -106,7 +106,7 @@ test('LKM-01 still reports every level with no colour (§13.1.3 item 1)', async 
     in every state and at every size (§12.2, §12.18).
 
     WHERE THE `none` COMES FROM CHANGED, and this comment used to name
-    `lokum.css`, which set `.hl-face { fill: none }` inside a forced-colours
+    `lokum.css`, which set `.bz-face { fill: none }` inside a forced-colours
     block. M16 stage 0 deleted that stylesheet, and the fill is now the `fill`
     attribute on the path itself — so the claim is no longer conditional on
     forced colours at all, and asserting it only under forced colours had
@@ -117,7 +117,7 @@ test('LKM-01 still reports every level with no colour (§13.1.3 item 1)', async 
   */
   const faceFills = () =>
     page
-      .locator('.hl-face')
+      .locator('.bz-face')
       .evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).fill))
 
   const fills = await faceFills()

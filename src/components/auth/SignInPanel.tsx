@@ -263,7 +263,7 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
     return (
       <AuthShell chrome={chrome} headingId="hl-signin-state" heading="Accounts">
         <p className="hl-mark m-0 text-on-surface-muted">{copy.readout}</p>
-        <div className="hl-note">
+        <div className="bz-note">
           <p>{copy.note}</p>
         </div>
         {chrome === 'panel' && (
@@ -344,7 +344,7 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
               provider&rsquo;s own linking behaviour, which this site does not
               set.
             </p>
-            <button type="button" className="hl-btn" onClick={() => void session?.signOut()}>
+            <button type="button" className="bz-btn" onClick={() => void session?.signOut()}>
               Sign out of this browser
             </button>
           </div>
@@ -438,7 +438,7 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
           {available.github && (
             <button
               type="button"
-              className="hl-btn"
+              className="bz-btn"
               onClick={() => void start('github')}
               disabled={busy}
             >
@@ -450,7 +450,7 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
           {available.google && (
             <button
               type="button"
-              className="hl-btn"
+              className="bz-btn"
               onClick={() => void start('google')}
               disabled={busy}
             >
@@ -467,11 +467,11 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
         </div>
       )}
 
-      <hr className="hl-rule-struct mt-6 mb-6" aria-hidden="true" />
+      <hr className="bz-rule mt-6 mb-6" aria-hidden="true" />
 
-      <form className="hl-submittal-form" onSubmit={(event) => void sendLink(event)} noValidate>
-        <label className="hl-field" data-invalid={emailInvalid ? 'true' : 'false'}>
-          <span className="hl-field-label">Email address</span>
+      <form className="bz-submittal-form" onSubmit={(event) => void sendLink(event)} noValidate>
+        <label className="bz-field" data-invalid={emailInvalid ? 'true' : 'false'}>
+          <span className="bz-field-label">Email address</span>
           <input
             type="email"
             name="email"
@@ -486,24 +486,24 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
             }}
           />
         </label>
-        <span className="hl-field-hint block" id="hl-signin-email-hint">
+        <span className="bz-field-hint block" id="hl-signin-email-hint">
           A single-use link is emailed to this address. It expires, and it only
           works in the browser you open it in.
         </span>
         {emailInvalid && (
-          <p className="hl-field-error" role="alert">
+          <p className="bz-field-error" role="alert">
             That does not look like an email address. Nothing was sent.
           </p>
         )}
         <div className="mt-3">
-          <button type="submit" className="hl-btn" disabled={busy}>
+          <button type="submit" className="bz-btn" disabled={busy}>
             {phase.kind === 'working' && phase.provider === 'email' ? 'Sending…' : magic.label}
           </button>
         </div>
       </form>
 
       {phase.kind === 'sent' && (
-        <div className="hl-note" role="status">
+        <div className="bz-note" role="status">
           <p>
             A sign-in link was sent to <strong>{phase.email}</strong>. It has not
             signed you in yet — nothing changes here until you open it. If it
@@ -513,7 +513,7 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
       )}
 
       {phase.kind === 'failed' && (
-        <div className="hl-note" role="alert">
+        <div className="bz-note" role="alert">
           <p>
             The sign-in could not be started, and nothing was changed. Your
             record in this browser is untouched.
@@ -529,7 +529,7 @@ export function SignInPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
           §14.5.1 quotes belongs on the join screen, before the click that adds
           a `memberships` row. All this page owes is the truth that signing in
           is not joining anything. */}
-      <div className="hl-note">
+      <div className="bz-note">
         <p>
           Signing in connects your record to an account so it survives this
           browser. It does not join you to an organisation and it does not share

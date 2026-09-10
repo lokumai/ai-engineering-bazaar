@@ -135,7 +135,7 @@ export function EraseDialog({
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Trigger className="hl-btn hl-btn-danger">{ERASE_COPY.trigger}</Dialog.Trigger>
+      <Dialog.Trigger className="bz-btn bz-btn-danger">{ERASE_COPY.trigger}</Dialog.Trigger>
 
       <Dialog.Portal>
         <Dialog.Overlay className="hl-dialog-backdrop" />
@@ -169,8 +169,8 @@ export function EraseDialog({
               {ERASE_COPY.history}
             </p>
 
-            <label className="hl-field">
-              <span className="hl-field-label">{ERASE_COPY.confirmLabel}</span>
+            <label className="bz-field">
+              <span className="bz-field-label">{ERASE_COPY.confirmLabel}</span>
               <input
                 type="text"
                 value={typed}
@@ -181,10 +181,10 @@ export function EraseDialog({
               />
             </label>
 
-            <div className="hl-dialog-actions">
+            <div className="bz-actions">
               <button
                 type="button"
-                className="hl-btn hl-btn-danger"
+                className="bz-btn bz-btn-danger"
                 disabled={!armed}
                 onClick={() => {
                   if (!confirmsErase(typed)) return
@@ -196,9 +196,9 @@ export function EraseDialog({
               </button>
               {/* The safe outcome, stated. Not "Cancel", which describes the
                   dialog rather than the data, and never a decline that shames. */}
-              <Dialog.Close className="hl-btn">{ERASE_COPY.decline}</Dialog.Close>
+              <Dialog.Close className="bz-btn">{ERASE_COPY.decline}</Dialog.Close>
               {/* §12.15 — one click from the destructive path. */}
-              <button type="button" className="hl-btn" onClick={onExport}>
+              <button type="button" className="bz-btn" onClick={onExport}>
                 {ERASE_COPY.export}
               </button>
               {exportedAt !== null && (

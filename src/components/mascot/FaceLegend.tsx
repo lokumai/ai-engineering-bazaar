@@ -19,7 +19,7 @@ import { FACES, FLAVOURS } from './geometry'
  * hides, which is exactly why the legend is needed to read them.
  *
  * **The colour is channel A, the count is not.** The swatch is
- * `.hl-legend-swatch .hl-cat-tint` with `data-cat`, so `lokum.css` resolves it
+ * `.hl-legend-swatch .bz-cat-tint` with `data-cat`, so `lokum.css` resolves it
  * to the structural line, half chroma or full chroma from the classes the boot
  * script stamped on `<html>` — correct in frame one, no React. A count is a
  * computed number and §12.2 allows a number on exactly one other channel: it
@@ -136,7 +136,7 @@ export function FaceLegend({ rows, className }: FaceLegendProps) {
               <th scope="row" className="py-1 pr-3 font-normal whitespace-nowrap text-on-surface">
                 <span
                   aria-hidden="true"
-                  className="hl-legend-swatch hl-cat-tint me-2 align-middle"
+                  className="hl-legend-swatch bz-cat-tint me-2 align-middle"
                   data-cat={face.category}
                 />
                 {FLAVOURS[face.category]}

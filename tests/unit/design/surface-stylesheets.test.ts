@@ -91,8 +91,16 @@ describe('a surface stylesheet arranges the language, it does not extend it', ()
     for (const { name, css } of SURFACES) {
       const declared = [...css.matchAll(/border-radius:\s*([^;]+);/g)].map((m) => m[1].trim())
       for (const value of declared) {
+        /*
+          `50%` is a CIRCLE and not a step on the radius scale, which is why it
+          is allowed and why allowing it does not weaken this. The scale exists
+          so a 2px corner on a 9px swatch and a 7px corner on a slab are the
+          same visual softness at different sizes — a disc has no corner to
+          soften, and the language draws its own that way: `.bz-tick`, the
+          completion mark, and the dial. Any other literal is still refused.
+        */
         expect(value, `${name}: ${value} is a literal radius`).toMatch(
-          /^(0|0px|var\(--radius-[a-z0-9-]+\)|var\(--shape-[a-z]+\))$/,
+          /^(0|0px|50%|var\(--radius-[a-z0-9-]+\)|var\(--shape-[a-z]+\))$/,
         )
       }
     }

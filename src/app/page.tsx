@@ -158,10 +158,10 @@ export default function HomePage() {
           {/* DESIGN.md, Components — one `button-primary` per screen region,
               and this is the home page's. §15.2.4: the primary action opens a
               module rather than a menu. */}
-          <Link className="hl-btn hl-btn-primary" href={first.path}>
+          <Link className="bz-btn" href={first.path}>
             Start with {first.title}
           </Link>
-          <Link className="hl-btn" href={INDEX_ROUTE}>
+          <Link className="bz-btn" href={INDEX_ROUTE}>
             Browse the catalog
           </Link>
         </div>

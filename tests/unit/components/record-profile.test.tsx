@@ -147,7 +147,7 @@ describe('§12.2 — the honest empty first frame of every panel', () => {
     // The identity line only — the picker below it draws six named glyphs,
     // which are facts about the vocabulary rather than about the reader.
     const line = IDENTITY.split('<dl')[0]
-    expect(line).toContain('hl-identity')
+    expect(line).toContain('bz-identity')
     expect(line).not.toContain('<svg')
     expect(line).not.toContain('?')
   })
@@ -166,8 +166,8 @@ describe('§12.2 — the honest empty first frame of every panel', () => {
     expect(text).toContain('Safari deletes it after seven days without a visit.')
     expect(text).toContain('Export your record to a file to keep it.')
     // Not dismissible, no icon, no caution colour: a note, one painted rule.
-    expect(IDENTITY).toContain('class="hl-note"')
-    expect(IDENTITY).not.toMatch(/dismiss|hl-btn-danger|role="alert"/)
+    expect(IDENTITY).toContain('class="bz-note"')
+    expect(IDENTITY).not.toMatch(/dismiss|bz-btn bz-btn-danger|role="alert"/)
   })
 
   it('carries §12.1.7’s export-boundary sentence beside the field', () => {
@@ -191,7 +191,7 @@ describe('§12.2 — the honest empty first frame of every panel', () => {
 
   it('states an empty register instead of nagging for one (§12.9.1)', () => {
     expect(REGISTER).toContain('NOTHING ADDED YET')
-    expect(REGISTER).toContain('hl-submittal-empty')
+    expect(REGISTER).toContain('bz-submittal-empty')
     // No table at all when there is nothing in it: a header row over no rows
     // is a claim that there are columns worth reading.
     expect(REGISTER).not.toContain('<table')
@@ -236,13 +236,13 @@ describe('§12.13, §12.15 — the export control at zero data', () => {
 
 describe('§12.3.3 — the name field', () => {
   it('has a visible, persistent label and no placeholder standing in for one', () => {
-    expect(IDENTITY).toContain('class="hl-field-label"')
+    expect(IDENTITY).toContain('class="bz-field-label"')
     expect(words(IDENTITY)).toContain('Name or initials, as you would sign a drawing')
     expect(IDENTITY).not.toMatch(/placeholder=/i)
   })
 
   it('is marked optional IN WORDS, never by the absence of an asterisk', () => {
-    expect(IDENTITY).toContain('<span class="hl-field-optional">Optional</span>')
+    expect(IDENTITY).toContain('<span class="bz-field-optional">Optional</span>')
     expect(IDENTITY).not.toContain('*')
   })
 
@@ -259,7 +259,7 @@ describe('§12.3.3 — the name field', () => {
   })
 
   it('shows no error before a submit: validation is on submit only', () => {
-    expect(IDENTITY).not.toContain('hl-field-error')
+    expect(IDENTITY).not.toContain('bz-field-error')
     expect(IDENTITY).toContain('data-invalid="false"')
   })
 
@@ -506,7 +506,7 @@ describe('§12.1.2 — the quarantine state, the only surface that discloses it'
 
 describe('§12.15 — the erase dialog', () => {
   it('offers one danger control, and it is the trigger', () => {
-    expect(ERASE_TRIGGER).toContain('hl-btn hl-btn-danger')
+    expect(ERASE_TRIGGER).toContain('bz-btn bz-btn-danger')
     expect(ERASE_TRIGGER).toContain(`>${ERASE_COPY.trigger}<`)
     expect(ERASE_TRIGGER).toContain('aria-haspopup="dialog"')
   })

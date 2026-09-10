@@ -50,7 +50,7 @@ export function ContentsDrawer({
   return (
     <Dialog.Root>
       <div className="bz-drawer-bar" data-bz-at={at}>
-        <Dialog.Trigger className="bz-btn-quiet bz-btn">Contents</Dialog.Trigger>
+        <Dialog.Trigger className="bz-btn bz-btn-quiet">Contents</Dialog.Trigger>
       </div>
       <Dialog.Portal>
         <Dialog.Overlay className="bz-drawer-backdrop" />
@@ -59,7 +59,7 @@ export function ContentsDrawer({
         <Dialog.Content className="bz-drawer" aria-describedby={undefined}>
           <div className="bz-drawer-head">
             <Dialog.Title className="bz-drawer-title">Contents</Dialog.Title>
-            <Dialog.Close className="bz-btn-quiet bz-btn">Close</Dialog.Close>
+            <Dialog.Close className="bz-btn bz-btn-quiet">Close</Dialog.Close>
           </div>
           {children}
         </Dialog.Content>

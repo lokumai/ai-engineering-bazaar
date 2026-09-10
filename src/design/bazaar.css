@@ -263,6 +263,14 @@
   */
   :root {
     --bz-cat: var(--color-line);
+    /* The second hook a caller binds, and the only reading channel A carries
+       as a NUMBER. `0%` is the neutral default for the same reason
+       `--bz-cat`'s is a line colour: a ring with nothing bound reads empty,
+       which is the true statement that no record has been read. `stamp.ts`
+       and the boot script set the per-level values; `category.css` joins them
+       to this name, because CSS cannot build a property name out of an
+       attribute. */
+    --bz-done: 0%;
   }
 
   body {

@@ -68,22 +68,22 @@ export function SubmittalEntry({
   index: number
 }) {
   return (
-    <li className="hl-submittal-item">
+    <li className="bz-submittal-item">
       <div className="min-w-0 flex-1">
         {/* The reconstructed URL, in full and unshortened, as both the href and
             the label — it has to survive being printed, and a label that could
             differ from its own destination is the thing §12.9.2 removes. */}
         <a
-          className="hl-submittal-repo"
+          className="bz-submittal-repo"
           href={entry.url}
           target="_blank"
           rel="noopener noreferrer"
         >
           {entry.url}
         </a>
-        {entry.note !== '' && <p className="hl-submittal-note">{entry.note}</p>}
+        {entry.note !== '' && <p className="bz-submittal-note">{entry.note}</p>}
         {entry.commit !== null && (
-          <p className="hl-submittal-commit">
+          <p className="bz-submittal-commit">
             {`COMMIT ${entry.commit}`}
             <span className="ml-2 tracking-normal normal-case">
               supplied by reader; not fetched or verified by this application
@@ -93,7 +93,7 @@ export function SubmittalEntry({
       </div>
       <button
         type="button"
-        className="hl-btn hl-no-print"
+        className="bz-btn bz-no-print"
         aria-label={`Remove ${entry.url}`}
         onClick={() => update((data) => removeSubmittal(data, slug, index), {
               // The act the envelope cannot keep: after this the row is simply
@@ -180,8 +180,8 @@ export function Submittal({ slug }: { slug: string }) {
   }
 
   return (
-    <section className="hl-submittal" aria-labelledby={headId}>
-      <div className="hl-submittal-head hl-mark">
+    <section className="bz-submittal" aria-labelledby={headId}>
+      <div className="bz-submittal-head">
         <h2 id={headId} className="m-0 font-medium">
           WHAT YOU BUILT
         </h2>
@@ -189,9 +189,9 @@ export function Submittal({ slug }: { slug: string }) {
       </div>
 
       {submittals.length === 0 ? (
-        <p className="hl-submittal-empty hl-mark">NOTHING ADDED YET</p>
+        <p className="bz-submittal-empty">Nothing added yet</p>
       ) : (
-        <ul className="hl-submittal-list">
+        <ul className="bz-submittal-list">
           {submittals.map((entry, index) => (
             <SubmittalEntry key={entry.url} entry={entry} slug={slug} index={index} />
           ))}
@@ -209,13 +209,13 @@ export function Submittal({ slug }: { slug: string }) {
         // copy — including copy the browser writes on its behalf. The field is
         // a text field for the same reason, and because §12.9.2 accepts the
         // scp-style `git@github.com:owner/repo.git`, which is not a URL.
-        <form className="hl-submittal-form" onSubmit={onSubmit} noValidate>
+        <form className="bz-submittal-form" onSubmit={onSubmit} noValidate>
           {/* The hint sits OUTSIDE the label. An implicit label names its
               control from its whole text content, so a hint inside it would
               read the example URL out as part of the field's name. */}
           <div>
-            <label className="hl-field" data-invalid={error?.field === 'repo' ? 'true' : 'false'}>
-              <span className="hl-field-label">Repository</span>
+            <label className="bz-field" data-invalid={error?.field === 'repo' ? 'true' : 'false'}>
+              <span className="bz-field-label">Repository</span>
               <input
                 type="text"
                 inputMode="url"
@@ -234,7 +234,7 @@ export function Submittal({ slug }: { slug: string }) {
             </label>
             {/* record.css gives the hint a top margin, which an inline box
                 would drop on the floor. */}
-            <span className="hl-field-hint block" id={repoHintId}>
+            <span className="bz-field-hint block" id={repoHintId}>
               https://github.com/owner/name
             </span>
           </div>
@@ -247,10 +247,10 @@ export function Submittal({ slug }: { slug: string }) {
               careless one. A reader did exactly that. An example plus the rule
               costs one line and removes the guess. */}
           <div>
-            <label className="hl-field" data-invalid={error?.field === 'commit' ? 'true' : 'false'}>
-              <span className="hl-field-label">
+            <label className="bz-field" data-invalid={error?.field === 'commit' ? 'true' : 'false'}>
+              <span className="bz-field-label">
                 Commit
-                <span className="hl-field-optional">Optional</span>
+                <span className="bz-field-optional">Optional</span>
               </span>
               <input
                 type="text"
@@ -269,15 +269,15 @@ export function Submittal({ slug }: { slug: string }) {
             </label>
             {/* The same words the error uses, so the two cannot drift apart and
                 a reader who reads the rule twice reads it once. */}
-            <span className="hl-field-hint block" id={commitHintId}>
+            <span className="bz-field-hint block" id={commitHintId}>
               {`a1b2c3d — ${COMMIT_RULE}`}
             </span>
           </div>
 
-          <label className="hl-field">
-            <span className="hl-field-label">
+          <label className="bz-field">
+            <span className="bz-field-label">
               What you built
-              <span className="hl-field-optional">Optional</span>
+              <span className="bz-field-optional">Optional</span>
             </span>
             <input
               type="text"
@@ -294,13 +294,13 @@ export function Submittal({ slug }: { slug: string }) {
           </label>
 
           {error !== null && (
-            <p className="hl-field-error" id={errorId} role="alert">
+            <p className="bz-field-error" id={errorId} role="alert">
               {error.message}
             </p>
           )}
 
           <div className="flex flex-wrap items-center gap-2">
-            <button type="submit" className="hl-btn">
+            <button type="submit" className="bz-btn">
               ADD REPOSITORY
             </button>
           </div>

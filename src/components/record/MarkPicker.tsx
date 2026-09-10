@@ -171,7 +171,7 @@ export function MarkPicker({
 
   return (
     <fieldset role="radiogroup" aria-labelledby={legendId} className="m-0 border-0 p-0">
-      <legend id={legendId} className="hl-field-label">
+      <legend id={legendId} className="bz-field-label">
         Approval mark
       </legend>
 

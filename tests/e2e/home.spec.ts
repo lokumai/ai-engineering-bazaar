@@ -63,9 +63,9 @@ const SEEDED_SLUG = slugOf(SEEDED)
 const CONTINUE = '.hl-home-continue'
 
 /** Control C's own selectors (D14). */
-const LEVEL_CARD = '.hl-cc-level'
-const MODULE_ROW = '.hl-cmod'
-const TICK = '.hl-cmod-mark'
+const LEVEL_CARD = '.bz-cc-level'
+const MODULE_ROW = '.bz-cmod'
+const TICK = '.bz-cmod-mark'
 /**
  * The word that states the completion to an assistive technology. It is the
  * STATE, and the toggle carries no `aria-pressed`: whether a module is complete
@@ -83,7 +83,7 @@ const TICK = '.hl-cmod-mark'
  * inline display. Asserting `inline` here failed against a page that was
  * behaving correctly.
  */
-const SAID = '.hl-cmod-said'
+const SAID = '.bz-cmod-said'
 
 function saidRevealed(page: Page, module: number): Promise<boolean> {
   return page
@@ -248,7 +248,7 @@ test('every number on the page is derived from the modules it is printed beside'
 
   // The same two counts again, from the level cards' own lines, which are
   // rendered by a different component from a different array.
-  const cards = await page.locator('.hl-cc-count').allInnerTexts()
+  const cards = await page.locator('.bz-cc-count').allInnerTexts()
   const summed = cards.reduce(
     (sum, text) => {
       const numbers = [...text.matchAll(/(\d+)/g)].map((match) => Number(match[1]))
@@ -328,7 +328,7 @@ test('the counts arrive after mount, and the ticks do not move', async ({ page }
   await expect(page.locator(`${MODULE_ROW}[data-module="${SEEDED.module}"] ${TICK}`)).toBeVisible()
 
   // The three numbers, which are `--` until the store has answered.
-  const numbers = page.locator('.hl-cc-numbers')
+  const numbers = page.locator('.bz-cc-stats')
   await expect(numbers).toContainText(`1 of ${SHEET_COUNT}`)
   await expect(numbers).not.toContainText('--')
 
@@ -364,7 +364,7 @@ test('control C completes a module from the home page, and takes it back', async
   await expect
     .poll(() => saidRevealed(page, target.module), { timeout: 3_000 })
     .toBe(true)
-  await expect(page.locator('.hl-cc-numbers')).toContainText(`1 of ${SHEET_COUNT}`)
+  await expect(page.locator('.bz-cc-stats')).toContainText(`1 of ${SHEET_COUNT}`)
   const stored = await waitForRecord(
     page,
     (envelope) => envelope?.data.sheets[slugOf(target)]?.signedOff != null,
@@ -428,7 +428,7 @@ test('control C states completion on channel A, and claims nothing on channel B'
   // And the description resolves to that word, rather than being an id that
   // points at nothing.
   const described = await page
-    .locator(`${MODULE_ROW}[data-module="${SEEDED.module}"] .hl-cmod-toggle`)
+    .locator(`${MODULE_ROW}[data-module="${SEEDED.module}"] .bz-cmod-toggle`)
     .evaluate((node) => {
       const id = node.getAttribute('aria-describedby')
       const target = id ? document.getElementById(id) : null
@@ -449,7 +449,7 @@ test('a planned module has no completion control at all', async ({ page }) => {
   // counts a planned module the same way, in.
   const planned = page.locator(`${MODULE_ROW}[data-drawn="false"]`)
   expect(await planned.count()).toBeGreaterThan(0)
-  await expect(planned.locator('.hl-cmod-toggle')).toHaveCount(0)
+  await expect(planned.locator('.bz-cmod-toggle')).toHaveCount(0)
   await expect(planned.locator('button')).toHaveCount(0)
   await expect(planned.first()).toContainText('Planned')
 
@@ -656,9 +656,9 @@ test('every level card names, numbers and counts itself', async ({ page }) => {
     // resolves. Everything else on the card is what a reader in forced colours
     // reads instead: a number, a name, and both counts.
     await expect(card).toHaveAttribute('data-cat', /.+/)
-    await expect(card.locator('.hl-cc-order')).toHaveText(/^\d{2}$/)
-    await expect(card.locator('.hl-cc-title')).not.toHaveText('')
-    await expect(card.locator('.hl-cc-count')).toHaveText(/\d+ modules?/)
+    await expect(card.locator('.bz-cc-order')).toHaveText(/^\d{2}$/)
+    await expect(card.locator('.bz-cc-title')).not.toHaveText('')
+    await expect(card.locator('.bz-cc-count')).toHaveText(/\d+ modules?/)
     // §10.4 — the meter is `aria-hidden`, so the printed tally beside it is the
     // only statement of its reading, and every card has one.
     await expect(card.locator('[data-hl-cat-tally]')).toHaveCount(1)

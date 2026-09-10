@@ -112,7 +112,7 @@ export function ClaimSummary({
         </dd>
       </dl>
 
-      <div className="hl-note" role="status">
+      <div className="bz-note" role="status">
         {lines.map((line) => (
           <p key={line}>{line}</p>
         ))}
@@ -126,13 +126,13 @@ export function ClaimSummary({
           folded shut. `#data` names the row that holds them, and
           `FoldFragment` opens it. */}
       {needsExport && (
-        <div className="hl-signoff-actions mt-2">
+        <div className="bz-actions mt-2">
           {onExport ? (
-            <button type="button" className="hl-btn hl-no-print" onClick={onExport}>
+            <button type="button" className="bz-btn bz-no-print" onClick={onExport}>
               {CLAIM_COPY.export}
             </button>
           ) : (
-            <Link href="/profile/#data" className="hl-btn hl-no-print">
+            <Link href="/profile/#data" className="bz-btn bz-no-print">
               {CLAIM_COPY.export}
             </Link>
           )}

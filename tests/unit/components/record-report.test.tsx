@@ -378,9 +378,9 @@ describe('MODULE 00 — the legend (§12.13)', () => {
     expect(text).toMatch(/Browser storage can be cleared without warning/)
     expect(text).toMatch(/Safari deletes it after seven days without a visit/)
     expect(text).toContain('Export your record to a file to keep it.')
-    expect(markup).toContain('class="hl-note"')
+    expect(markup).toContain('class="bz-note"')
     // Not a banner: nothing to dismiss, no icon, no caution colour.
-    expect(markup).not.toMatch(/dismiss|hl-btn-danger|caution/i)
+    expect(markup).not.toMatch(/dismiss|bz-btn-danger|caution/i)
   })
 
   /**

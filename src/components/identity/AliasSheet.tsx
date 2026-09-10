@@ -189,12 +189,12 @@ export function AliasSheet({ accountDoors }: { accountDoors: number }) {
     <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,260px)] md:items-start">
       <div className="grid gap-6">
         <form onSubmit={onSubmit} noValidate className="grid gap-6">
-          <label className="hl-field" data-invalid={error ? 'true' : 'false'}>
+          <label className="bz-field" data-invalid={error ? 'true' : 'false'}>
             {/* Visible and persistent, never a placeholder standing in for a
                 label, and optional IN WORDS (§12.3.3). */}
-            <span className="hl-field-label">
+            <span className="bz-field-label">
               Alias, as you would sign a drawing
-              <span className="hl-field-optional">Optional</span>
+              <span className="bz-field-optional">Optional</span>
             </span>
             <input
               type="text"
@@ -214,7 +214,7 @@ export function AliasSheet({ accountDoors }: { accountDoors: number }) {
               is allowed to say so. Not restated here in this screen's own
               words: four copies of this claim is how all four came to be
               wrong. */}
-          <p className="hl-field-hint" id="hl-alias-hint">
+          <p className="bz-field-hint" id="hl-alias-hint">
             {NAME_SCOPE}
           </p>
 
@@ -222,7 +222,7 @@ export function AliasSheet({ accountDoors }: { accountDoors: number }) {
               on the input, and it names the other way out rather than implying
               the field has to be filled (§12.3.3, §15.4.5). */}
           {error && (
-            <p className="hl-field-error" id="hl-alias-error" role="alert">
+            <p className="bz-field-error" id="hl-alias-error" role="alert">
               Enter an alias, or read without one
             </p>
           )}
@@ -242,17 +242,17 @@ export function AliasSheet({ accountDoors }: { accountDoors: number }) {
             }}
           />
 
-          {/* §15.4.5 — two controls of one weight. Both are `.hl-btn`, the same
+          {/* §15.4.5 — two controls of one weight. Both are `.bz-btn`, the same
               height and the same border, and the exit is beside the keep rather
               than in grey text beneath it: reading with no alias is a choice
               the screen has no standing to discourage. Neither takes
-              `aria-pressed` or `.hl-btn-danger`; the accent means signed off
+              `aria-pressed` or `.bz-btn-danger`; the accent means signed off
               (T1) and nothing here is a sign-off. */}
-          <div className="hl-signoff-actions">
-            <button type="submit" className="hl-btn">
+          <div className="bz-actions">
+            <button type="submit" className="bz-btn">
               KEEP THIS ALIAS
             </button>
-            <Link className="hl-btn" href="/">
+            <Link className="bz-btn" href="/">
               READ WITHOUT ONE
             </Link>
             {/* A readout, not praise: the record logged it, and that is the
@@ -266,7 +266,7 @@ export function AliasSheet({ accountDoors }: { accountDoors: number }) {
           </div>
         </form>
 
-        <div className="hl-note">
+        <div className="bz-note">
           <p>
             An alias can be carried into an account later. Signing in from this
             browser takes the name and the mark with the record, and the name

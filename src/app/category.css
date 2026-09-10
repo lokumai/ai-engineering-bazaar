@@ -26,4 +26,25 @@
   [data-cat="expert"]       { --bz-cat: var(--color-category-3); }
   [data-cat="ecosystem"]    { --bz-cat: var(--color-category-4); }
   [data-cat="protocols"]    { --bz-cat: var(--color-category-5); }
+
+  /* ---------------------------------------------------------------------------
+     AND HOW FAR THROUGH THAT LEVEL THE READER IS, for the same reason and in
+     the same place.
+
+     `--bz-done` is the second property a caller binds, and the only reading in
+     the whole of channel A that is a number rather than a class. The boot
+     script computes it before first paint and sets `--bz-done-<slug>` on
+     `<html>`; a level's dial needs it as plain `--bz-done`, and CSS cannot
+     build a property name out of an attribute — so the two are joined here,
+     one line per level, exactly as the hue above is.
+
+     The fallback is `0%` and it is deliberate: with scripts refused nothing is
+     stamped, and a ring reading empty is the true statement that no record was
+     read. The count printed beside it says the same thing in words.
+     --------------------------------------------------------------------------- */
+  [data-cat="fundamentals"] { --bz-done: var(--bz-done-fundamentals, 0%); }
+  [data-cat="intermediate"] { --bz-done: var(--bz-done-intermediate, 0%); }
+  [data-cat="expert"]       { --bz-done: var(--bz-done-expert, 0%); }
+  [data-cat="ecosystem"]    { --bz-done: var(--bz-done-ecosystem, 0%); }
+  [data-cat="protocols"]    { --bz-done: var(--bz-done-protocols, 0%); }
 }

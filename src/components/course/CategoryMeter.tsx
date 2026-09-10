@@ -6,7 +6,7 @@ import type { CategorySlug } from '@/lib/content/categories'
  *
  * **A server component, and it must stay one.** Every segment is filled by
  * channel A: `lib/record/boot.ts` stamps `hl-signed-<n>` on `<html>` before
- * first paint and `lokum.css` fills `.hl-seg[data-module="<n>"]` from it, so
+ * first paint and `lokum.css` fills `.bz-seg[data-module="<n>"]` from it, so
  * the meter is correct in frame one with zero React and zero hydration
  * (§12.2). Nothing here reads the record, this component takes no record, and
  * making it an island would move a mark that is right in frame one onto the
@@ -76,11 +76,11 @@ export function CategoryMeter({
       {/* Decoration, deliberately: the count below states the same reading in
           text, which is the only condition under which a gauge may be silent
           (§10.4). */}
-      <div className="hl-meter w-44" aria-hidden="true">
+      <div className="bz-meter w-44" aria-hidden="true">
         {ordered.map((sheet) => (
           <span
             key={sheet.module}
-            className="hl-seg"
+            className="bz-seg"
             data-module={sheet.module}
             data-cat={category}
             // §11.25 / §13.4.2 — a sheet nobody has drawn carries no sign-off
@@ -91,7 +91,7 @@ export function CategoryMeter({
         ))}
       </div>
 
-      <p className="hl-mark m-0 mt-1 text-on-surface-muted">
+      <p className="bz-meter-count">
         <span data-hl-cat-tally={category}>
           {NO_READING}/{ordered.length}
         </span>{' '}

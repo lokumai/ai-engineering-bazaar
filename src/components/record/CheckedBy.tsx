@@ -34,13 +34,16 @@ import { Stamp } from './Stamp'
  * this component's: `carriesCheckedBy` in `lib/content/title-block.ts` decides
  * it at build time, because "nobody has drawn this sheet" is a build-time fact.
  *
- * The name is printed **as typed** and in `normal-case`. The row carries
- * `.hl-mark`, which sets `text-transform: uppercase`, and CSS casing is
- * locale-sensitive off the element's `lang`: `ilker` under `lang="en"` uppercases
- * to a dotless `I` where a Turkish reader expects `İ`. Mis-casing the first
- * letter of somebody's own name in their own title block is the single most
- * visible i18n failure available here (§12.3.4), so the transform is refused
- * rather than corrected.
+ * The name is printed **as typed**, and since M16 nothing has to defend it.
+ * The row used to carry a class that set `text-transform: uppercase`, and CSS
+ * casing is locale-sensitive off the element's `lang`: `ilker` under
+ * `lang="en"` uppercases to a dotless `I` where a Turkish reader expects `İ`.
+ * Mis-casing the first letter of somebody's own name in their own title block
+ * is the single most visible i18n failure available here (§12.3.4), which is
+ * why the transform was refused rather than corrected — and why the design
+ * language has no uppercase anywhere, so the refusal is now the default.
+ * `record-sheet.spec.ts` measures what Chrome paints rather than which rule
+ * paints it, so this stays proven either way.
  *
  * `<bdi dir="auto">` isolates the name so an RTL name cannot re-order the
  * label and value around it — the sanitiser already removes the bidi overrides
@@ -63,7 +66,7 @@ export function CheckedBy({ slug }: { slug: string }) {
   if (name === null || name.trim() === '') return <>UNSIGNED</>
 
   return (
-    <bdi dir="auto" className="normal-case">
+    <bdi dir="auto">
       {name}
     </bdi>
   )
@@ -148,7 +151,7 @@ export function SheetStamps({
   if (slots.length === 0) return null
 
   const grid = (
-    <ul className="hl-stamp-grid" aria-label="Approval stamps">
+    <ul className="bz-stamp-grid" aria-label="Approval stamps">
       {slots.map((slot) => (
         <li key={slot.id}>
           <Stamp stamp={slot} size="slot" />
@@ -157,7 +160,7 @@ export function SheetStamps({
     </ul>
   )
 
-  if (variant === 'strip') return <div className="hl-title-strip-stamps">{grid}</div>
+  if (variant === 'strip') return <div className="bz-stamp-shelf">{grid}</div>
 
   return (
     // §5.5 — a hairline rule, then the grid, inset 12px. The rule is a real

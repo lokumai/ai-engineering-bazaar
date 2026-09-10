@@ -172,7 +172,7 @@ export default function LegendPage() {
     <PageShell sheet="MODULE 00">
       <p className="hl-eyebrow hl-mark">MODULE 00 — LEGEND &amp; SPECIMEN</p>
 
-      <h1 className="hl-listing-title">Legend</h1>
+      <h1 className="bz-display">Legend</h1>
 
       <p className="bz-lead">
         This site reports only
@@ -182,7 +182,7 @@ export default function LegendPage() {
         sequence.
       </p>
 
-      <hr className="hl-rule-struct" aria-hidden="true" />
+      <hr className="bz-rule" aria-hidden="true" />
 
       {/* ---- 1 · the line-type key (§12.10.4, §12.13) --------------------- */}
       <section className="hl-panel" aria-labelledby="hl-legend-lines">
@@ -294,7 +294,7 @@ export default function LegendPage() {
           both slots, and the wording is identical so that a reader who has read
           one has read the other.
         */}
-        <div className="hl-note">
+        <div className="bz-note">
           <p>{RECORD_SCOPE}</p>
           <p>
             Browser storage can be cleared without warning — by you, by the
@@ -330,14 +330,14 @@ export default function LegendPage() {
           keeps.
         </p>
 
-        <div className="hl-signoff-actions mt-4">
+        <div className="bz-actions mt-4">
           {/* M14 — one destination where there were two: the record of work is
               a row of the progress page's register now, and `#report` opens
               that row on arrival (`FoldFragment`). */}
-          <Link className="hl-btn" href="/profile/">
+          <Link className="bz-btn" href="/profile/">
             OPEN YOUR PROGRESS
           </Link>
-          <Link className="hl-btn" href="/profile/#report">
+          <Link className="bz-btn" href="/profile/#report">
             BUILD A RECORD OF WORK
           </Link>
         </div>
@@ -429,8 +429,8 @@ export default function LegendPage() {
           the audit instructions — before you have completed anything.
         </p>
 
-        <div className="hl-signoff-actions">
-          <Link className="hl-btn" href="/legend/specimen/">
+        <div className="bz-actions">
+          <Link className="bz-btn" href="/legend/specimen/">
             OPEN THE SPECIMEN
           </Link>
         </div>
@@ -488,7 +488,7 @@ export default function LegendPage() {
             >
               <dt className="hl-mark flex-none text-on-surface-muted">{affiliate.role}</dt>
               <dd className="m-0 text-meta text-on-surface">
-                <a className="hl-link" href={affiliate.url}>
+                <a className="bz-link" href={affiliate.url}>
                   {affiliate.name}
                 </a>
               </dd>

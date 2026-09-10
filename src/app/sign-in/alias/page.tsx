@@ -54,11 +54,11 @@ export default function AliasPage() {
     <PageShell sheet="ALIAS">
       <p className="hl-eyebrow hl-mark">LOCAL ONLY · THIS FORM SENDS NOTHING</p>
 
-      <h1 className="hl-listing-title">Choose an alias</h1>
+      <h1 className="bz-display">Choose an alias</h1>
 
       <p className="bz-lead">{ALIAS_SCOPE}</p>
 
-      <hr className="hl-rule-struct" aria-hidden="true" />
+      <hr className="bz-rule" aria-hidden="true" />
 
       <AliasSheet accountDoors={ACCOUNT_DOOR_COUNT} />
     </PageShell>

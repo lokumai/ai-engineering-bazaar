@@ -65,7 +65,7 @@ test('the reader is given a name and a mark once there is a record', async ({ pa
 })
 
 test('the mascot draws itself', async ({ page }) => {
-  // `/profile/` and not `/`, and `svg:has(.hl-face)` and not `header svg`. The
+  // `/profile/` and not `/`, and `svg:has(.bz-face)` and not `header svg`. The
   // header's first SVG is `01`'s four-square brand tile since M16 stage 1, so
   // this asserted real geometry about a different drawing entirely and passed
   // on it. The mark renders at 132px in the drafter block here.
@@ -73,7 +73,7 @@ test('the mascot draws itself', async ({ page }) => {
 
   // Drawn in code, so "it rendered" means real geometry with real size, not an
   // empty <svg> box.
-  const mascot = page.locator('svg:has(.hl-face)').first()
+  const mascot = page.locator('svg:has(.bz-face)').first()
   await expect(mascot).toBeVisible()
   const box = await mascot.boundingBox()
   expect(box?.width ?? 0).toBeGreaterThan(8)

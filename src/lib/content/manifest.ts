@@ -175,18 +175,26 @@ export function categorySummary(category: Category): Coverage {
 }
 
 /**
- * `~3 H 55 MIN`. The tilde is doing real work: this is the sum of the
+ * `~3 h 55 min`. The tilde is doing real work: this is the sum of the
  * durations the sheets themselves declare, not a measurement of anyone's
  * reading. Returns null where nothing declares one, so a subsystem with no
- * drawn sheets prints no duration at all rather than `~0 MIN`.
+ * drawn sheets prints no duration at all rather than `~0 min`.
+ *
+ * NOT SHOUTED, since M16. These strings were written in capitals because the
+ * class that carried them applied `text-transform: uppercase`, and writing
+ * them pre-cased kept the two in step. The design language has no uppercase
+ * anywhere — `01:136-137` turns it off explicitly on the one element that
+ * would have carried it — so a pre-cased string is now the only thing
+ * shouting on the page. `01`'s own facts line is the reference:
+ * `30 min · 1,814 words · English & Türkçe`.
  */
 export function durationLabel(minutes: number): string | null {
   if (minutes <= 0) return null
 
   const hours = Math.floor(minutes / 60)
   const rest = minutes % 60
-  if (hours === 0) return `~${rest} MIN`
-  return rest === 0 ? `~${hours} H` : `~${hours} H ${rest} MIN`
+  if (hours === 0) return `~${rest} min`
+  return rest === 0 ? `~${hours} h` : `~${hours} h ${rest} min`
 }
 
 function joinMarks(parts: readonly (string | null)[]): string {
@@ -194,21 +202,23 @@ function joinMarks(parts: readonly (string | null)[]): string {
 }
 
 /**
- * `8 SHEETS · 8 DRAWN · ~3 H 55 MIN` — what any group of sheets states about
+ * `8 modules · 8 ready · ~3 h 55 min` — what any group of modules states about
  * itself. The duration is dropped where nothing in the group declares one, so
- * a subsystem with no drawn sheets reads `9 SHEETS · 0 DRAWN` and stops there.
+ * a level with no written modules reads `9 modules · 0 ready` and stops there.
+ *
+ * `ready` here is a COUNT and not the status token. The table's STATUS cell
+ * still reads `READY` and `PLANNED`, one spelling each, because those are
+ * enumerated states a reader matches against each other; this is a sentence
+ * about a group, and the copy register's rule is about a status having one
+ * spelling, not about a count borrowing its word.
  */
 export function coverageLabel({ sheets, drawn, minutes }: Coverage): string {
-  return joinMarks([
-    plural(sheets, 'MODULE').toUpperCase(),
-    `${drawn} READY`,
-    durationLabel(minutes),
-  ])
+  return joinMarks([plural(sheets, 'module'), `${drawn} ready`, durationLabel(minutes)])
 }
 
-/** §4.9 item 1 — `SUBSYSTEM 02 · 8 SHEETS · 8 DRAWN · ~3 H 55 MIN`. */
+/** §4.9 item 1 — `Level 02 · 8 modules · 8 ready · ~3 h 55 min`. */
 export function categoryEyebrow(category: Category): string {
-  return `LEVEL ${pad2(category.order)} · ${coverageLabel(categorySummary(category))}`
+  return `Level ${pad2(category.order)} · ${coverageLabel(categorySummary(category))}`
 }
 
 /** The same line for the set as a whole. */

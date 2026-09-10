@@ -39,6 +39,15 @@ export interface StampRoot {
   setAttribute(name: string, value: string): void
   /** Every class currently on the element, so the stale ones can be removed. */
   readonly className: string
+  /**
+   * The custom properties, for the one reading CSS cannot derive for itself.
+   * Optional so a caller with no need for it — and every existing test —
+   * stays valid; `stampRecordState` skips the progress half when it is absent.
+   */
+  style?: {
+    setProperty(name: string, value: string): void
+    removeProperty(name: string): void
+  }
 }
 
 /** The build-time maps the derivation cannot do without (§11.25). */
@@ -101,6 +110,59 @@ export function stampClassesFor(data: RecordData, facts: StampFacts): string[] {
   return classes.sort()
 }
 
+/** The custom property a level's dial reads, for one category slug. */
+export function progressProperty(category: string): string {
+  return `--bz-done-${category}`
+}
+
+/**
+ * The one reading channel A carries as a NUMBER rather than as a class.
+ *
+ * `CategoryMeter` states the constraint this works around: "a bar's length is a
+ * computed number and a computed number cannot reach CSS on channel A". That is
+ * true of CSS, which cannot count — and it is not true of the channel, because
+ * the channel is a blocking script that runs before first paint and has the
+ * counts in hand already. So the arithmetic happens where arithmetic can, and
+ * what reaches CSS is a percentage it only has to substitute.
+ *
+ * It is what lets `05`-C's dial exist at all. A `conic-gradient` stop is a
+ * length, so a ring showing how far a reader has come needs a number in the
+ * cascade in frame one; the segmented meter needed none, which is why the meter
+ * could be built before this and the dial could not. Doing it on channel B
+ * instead would put a frame-one-visible mark on the channel §12.2 forbids for
+ * exactly that.
+ *
+ * Percentages and not fractions, because that is what a gradient stop takes.
+ * Rounded to a whole number: a ring is read at a glance and half a percent of
+ * 360° is 1.8°, which no reader can see and every re-render would recompute.
+ */
+export function stampProgressFor(
+  data: RecordData,
+  facts: StampFacts,
+): Record<string, string> {
+  const counts = new Map<string, number>()
+
+  for (const [slug, sheet] of Object.entries(data.sheets)) {
+    if (sheet.signedOff === null || sheet.signedOff === undefined) continue
+    const cut = slug.indexOf('/')
+    if (cut > 0) {
+      const category = slug.slice(0, cut)
+      counts.set(category, (counts.get(category) ?? 0) + 1)
+    }
+  }
+
+  const properties: Record<string, string> = {}
+  for (const [category, approved] of counts) {
+    const total = facts.categoryTotals[category] ?? 0
+    // With no total there is no fraction to state, and 0% would be a claim
+    // rather than an absence — the same reason `-complete` needs a real total.
+    if (total <= 0) continue
+    properties[progressProperty(category)] = `${Math.round((approved / total) * 100)}%`
+  }
+
+  return properties
+}
+
 /**
  * Apply the stamps, removing the ones that are no longer true.
  *
@@ -119,6 +181,24 @@ export function stampRecordState(
     if (token !== '' && OWNED.test(token) && !wanted.has(token)) root.classList.remove(token)
   }
   for (const token of wanted) root.classList.add(token)
+
+  /*
+    The progress properties, with the same removal half and for the same
+    reason: un-signing the only completed module in a level has to take its
+    percentage off, or the ring keeps reporting progress the reader has
+    withdrawn. Every category is cleared and only the true ones re-set, which
+    is cheaper than reading the current value back and is the same shape as the
+    class pass above.
+  */
+  if (root.style !== undefined) {
+    const progress = stampProgressFor(data, facts)
+    for (const category of Object.keys(facts.categoryTotals)) {
+      const name = progressProperty(category)
+      const value = progress[name]
+      if (value === undefined) root.style.removeProperty(name)
+      else root.style.setProperty(name, value)
+    }
+  }
 
   // `data-hl-storage` is deliberately NOT touched here. It is an answer only the
   // boot script can give: whether the READ threw, at load, in this document.

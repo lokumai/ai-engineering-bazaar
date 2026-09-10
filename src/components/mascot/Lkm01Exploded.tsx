@@ -103,7 +103,7 @@ export function Lkm01Exploded({
               {/* §8.1 — the powdered sugar belongs to the top face, so it
                   travels with it rather than staying behind on the board.
 
-                  It is NOT given §13.2's `.hl-sugar`, and that is the one
+                  It is NOT given §13.2's `.bz-sugar`, and that is the one
                   deliberate departure in this file: that class paints the
                   stipple `--color-surface`, which is correct over a face filled
                   with its flavour and invisible over an unfilled one, and no

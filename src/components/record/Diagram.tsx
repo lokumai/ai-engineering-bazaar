@@ -520,7 +520,7 @@ function StackedBands({
                       {view.node.label}
                     </text>
                   </svg>
-                  <Link href={view.node.path} className="hl-link text-meta">
+                  <Link href={view.node.path} className="bz-link text-meta">
                     {view.node.title}
                   </Link>
                   <span className="hl-mark ml-auto shrink-0 text-on-surface-faint">
@@ -620,7 +620,7 @@ function DiagramTable({
               <tr key={view.node.slug} className="border-b border-line">
                 <td className="py-1 pr-3 text-on-surface-muted">{view.node.label}</td>
                 <th scope="row" className="py-1 pr-3 font-normal text-on-surface">
-                  <Link href={view.node.path} className="hl-link">
+                  <Link href={view.node.path} className="bz-link">
                     {view.node.title}
                   </Link>
                 </th>
@@ -683,7 +683,7 @@ export function ContinueLine({ facts }: { facts: ContinueFacts }) {
   return (
     <p className="hl-mark m-0 text-on-surface-muted">
       Continue{' '}
-      <Link href={`/courses/${slug}/`} className="hl-link">
+      <Link href={`/courses/${slug}/`} className="bz-link">
         Module {String(sheet.module).padStart(2, '0')} · {sheet.title}
       </Link>
     </p>

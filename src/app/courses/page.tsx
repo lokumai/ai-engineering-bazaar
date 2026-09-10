@@ -44,9 +44,9 @@ export const metadata: Metadata = {
 export default function DrawingSetPage() {
   return (
     <PageShell column={false}>
-      <p className="hl-eyebrow hl-mark">{setEyebrow()}</p>
+      <p className="bz-facts">{setEyebrow()}</p>
 
-      <h1 className="hl-listing-title">Curriculum</h1>
+      <h1 className="bz-display">Curriculum</h1>
 
       <p className="bz-lead">
         Every module in the curriculum, grouped by level. The topics column names
@@ -54,19 +54,19 @@ export default function DrawingSetPage() {
         first three items of its schedule of parts where it is not.
       </p>
 
-      <hr className="hl-rule-struct" aria-hidden="true" />
+      <hr className="bz-rule" aria-hidden="true" />
 
       {subsystems().map(({ category, coverage, path }) => {
         const rows = categoryRows(category)
 
         return (
-          <section key={category.slug} className="hl-band">
+          <section key={category.slug} className="bz-level">
             {/* §13.5 surface 1 — the subsystem's own standing, on its own
-                colour. `hl-cat-tint` resolves the hue to the structural line,
+                colour. `bz-cat-tint` resolves the hue to the structural line,
                 half chroma or full chroma from the class the boot script
-                stamped, and `hl-cat-rule` paints it down the leading edge
+                stamped, and `bz-cat-rule` paints it down the leading edge
                 (channel A, §12.2). `ps-4` is the clearance the rule needs:
-                `hl-cat-rule` reserves its 1.5px in a transparent border and
+                `bz-cat-rule` reserves its 1.5px in a transparent border and
                 paints inside the padding box, so without padding the rule
                 would sit under the block's first pixels.
 
@@ -74,13 +74,13 @@ export default function DrawingSetPage() {
                 (§5.4, §11.2): the classes go on the band header that already
                 existed. */}
             <div
-              className="hl-band-head hl-cat-tint hl-cat-rule ps-4"
+              className="bz-level-head bz-cat-tint bz-cat-rule ps-4"
               data-cat={category.slug}
             >
               {/* The band header is the section's heading: a screen reader
                   meets `LEVEL 02 · INTERMEDIATE` as an h2 and a link, not
                   as a decorative strip beside an unlabelled table. */}
-              <h2 className="hl-band-title">
+              <h2 className="bz-level-title">
                 <CategoryBlock
                   order={category.order}
                   title={category.title}
@@ -89,7 +89,7 @@ export default function DrawingSetPage() {
                 />
               </h2>
               <div className="flex flex-wrap items-end gap-x-6 gap-y-2">
-                <p className="hl-mark hl-band-meta">{coverageLabel(coverage)}</p>
+                <p className="bz-level-meta">{coverageLabel(coverage)}</p>
                 {/* §13.1.4 — the meter never stands alone: it prints
                     `n/m completed` beside itself, and that count is what the
                     hue reinforces rather than replaces. */}

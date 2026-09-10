@@ -64,7 +64,7 @@ export function MovedTo({
       />
       <meta httpEquiv="refresh" content={`0; url=${target}`} />
 
-      <h1 className="hl-listing-title">{name}</h1>
+      <h1 className="bz-display">{name}</h1>
 
       <p className="bz-lead">
         {what} is part of {name} now, at one address instead of four. This page
@@ -72,7 +72,7 @@ export function MovedTo({
       </p>
 
       <p>
-        <Link className="hl-btn" href={to}>
+        <Link className="bz-btn" href={to}>
           {name}
         </Link>
       </p>

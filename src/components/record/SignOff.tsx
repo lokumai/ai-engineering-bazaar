@@ -59,8 +59,8 @@ import { DrafterStamp } from './DrafterStamp'
 /** The three write outcomes §12.1.4 makes the UI say `NOT SAVED` about. */
 const REFUSED: Record<string, string> = {
   quota: "THIS BROWSER'S STORAGE IS FULL",
-  blocked: 'THIS BROWSER IS NOT STORING DATA FOR THIS SITE',
-  'too-large': 'THE RECORD IS LARGER THAN THIS PAGE WILL WRITE',
+  blocked: 'This browser is not storing data for this site',
+  'too-large': 'The record is larger than this page will write',
 }
 
 export function SignOff({
@@ -145,15 +145,15 @@ export function SignOff({
 
   return (
     <section className="bz-signoff" aria-labelledby={headId}>
-      <div className="hl-signoff-head hl-mark">
-        <span id={headId}>COMPLETION</span>
+      <div className="bz-signoff-head">
+        <span id={headId}>Completion</span>
         {/* §12.4.1 / §12.12.1 — who is asserting is the one thing about this
             block a reader must not have to infer. The state itself is on the
             control, which is where §12.4.1 puts it. */}
-        <span>SELF-ASSERTED</span>
+        <span>Self-asserted</span>
       </div>
 
-      <div className="hl-signoff-body">
+      <div className="bz-signoff-body">
         {/* §12.4.1 requires the control to sit beside the criteria it asserts
             against, and it does — the criteria ARE §5.5's objectives block,
             immediately above this one, and `signOffCriteria` derives from the
@@ -170,7 +170,7 @@ export function SignOff({
           {criteria.objectives.length > 0 && (
             <>
               Asserted against the{' '}
-              <a className="hl-link" href="#hl-objectives-head">
+              <a className="bz-link" href="#hl-objectives-head">
                 {criteria.objectives.length} objectives above
               </a>
               .{' '}
@@ -249,14 +249,20 @@ export function SignOff({
         {/* §12.4.3 — a completion claim that quietly became false. No LMS
             handles this. Not an error state and no caution colour: the module
             changing after you signed it is a fact, not something you did wrong.
-            The short hashes keep their own case — a git hash is not ours to
-            recase, and `.hl-mark` uppercases everything else in the line. */}
+
+            The line used to be written in capitals, because the class it
+            carried applied `text-transform: uppercase` and pre-casing the
+            string kept the two in step. The design language has no uppercase
+            at all, so both went: the sentence is secondary prose in the `meta`
+            size, and the two `normal-case` spans that existed only to protect
+            the git hashes from the transform went with it — there is nothing
+            left to protect them from. */}
         {drift !== null && signedOff !== null && (
-          <p className="hl-signoff-drift hl-mark">
-            {`COMPLETED ${signedOff.slice(0, 10)} AGAINST REV `}
-            <span className="normal-case">{drift.signedAgainst}</span>
-            {' · MODULE NOW AT REV '}
-            <span className="normal-case">{drift.nowAt}</span>
+          <p className="bz-signoff-drift">
+            {`Completed ${signedOff.slice(0, 10)} against rev `}
+            <span>{drift.signedAgainst}</span>
+            {' · module now at rev '}
+            <span>{drift.nowAt}</span>
           </p>
         )}
 
@@ -266,7 +272,7 @@ export function SignOff({
             is the §1 failure in its purest form. */}
         {refused !== null && (
           <>
-            <p className="hl-not-saved hl-mark" role="alert">
+            <p className="bz-not-saved" role="alert">
               {`NOT SAVED · ${refused}`}
             </p>
             <p className="mt-1 text-meta text-on-surface-muted">
@@ -274,8 +280,8 @@ export function SignOff({
             </p>
             {/* §12.1.4 — the safe path is the adjacent action, not a paragraph
                 the reader has to act on somewhere else. */}
-            <div className="hl-signoff-actions mt-2">
-              <Link href="/profile/" className="hl-btn hl-no-print">
+            <div className="bz-actions mt-2">
+              <Link href="/profile/" className="bz-btn bz-no-print">
                 EXPORT YOUR RECORD
               </Link>
             </div>
@@ -288,15 +294,15 @@ export function SignOff({
             `UNSIGNED`, never a placeholder person. */}
         {prompting && (
           <form className="mt-3" onSubmit={onNameSubmit}>
-            <div className="hl-identity">
+            <div className="bz-identity">
               {/* The seed was minted a moment ago by the click that opened
                   this, so the mark it draws is the reader's own from here on. */}
               <DrafterStamp mark={record.identity.mark} seed={record.identity.markSeed} />
-              <label className="hl-field flex-1" data-invalid={nameError ? 'true' : 'false'}>
-                <span className="hl-field-label">
+              <label className="bz-field flex-1" data-invalid={nameError ? 'true' : 'false'}>
+                <span className="bz-field-label">
                   Name or initials, as you would sign a drawing
                   {/* Optional in words, never by the absence of an asterisk. */}
-                  <span className="hl-field-optional">Optional</span>
+                  <span className="bz-field-optional">Optional</span>
                 </span>
                 <input
                   type="text"
@@ -317,21 +323,21 @@ export function SignOff({
                 local storage is not a transmission; the export is precisely
                 where that stops being true, and the reader is the one who
                 crosses the line. */}
-            <p className="hl-field-hint" id={hintId}>
+            <p className="bz-field-hint" id={hintId}>
               {NAME_SCOPE}
             </p>
 
             {nameError && (
-              <p className="hl-field-error" id={errorId} role="alert">
+              <p className="bz-field-error" id={errorId} role="alert">
                 Enter the name to print on the report
               </p>
             )}
 
-            <div className="hl-signoff-actions mt-2">
-              <button type="submit" className="hl-btn">
+            <div className="bz-actions mt-2">
+              <button type="submit" className="bz-btn">
                 SAVE NAME
               </button>
-              <button type="button" className="hl-btn" onClick={() => setPrompting(false)}>
+              <button type="button" className="bz-btn" onClick={() => setPrompting(false)}>
                 SKIP
               </button>
             </div>

@@ -83,11 +83,11 @@ export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
             width where the six fit, `min-h-8` is 32px and §5.2's 72px total is
             unchanged. */}
         <div className="flex min-h-8 flex-wrap items-center gap-x-3 text-meta text-on-surface-muted">
-          <a className="hl-link" href={REPO_URL}>
+          <a className="bz-link" href={REPO_URL}>
             Repository
           </a>
           <Dot />
-          <a className="hl-link" href={LICENCE_URL}>
+          <a className="bz-link" href={LICENCE_URL}>
             {LICENCE_LABEL}
           </a>
           <Dot />
@@ -99,7 +99,7 @@ export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
           {AFFILIATION.map((affiliate) => (
             <Fragment key={affiliate.name}>
               <Dot />
-              <a className="hl-link" href={affiliate.url}>
+              <a className="bz-link" href={affiliate.url}>
                 {affiliate.name}
               </a>
             </Fragment>

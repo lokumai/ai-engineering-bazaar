@@ -386,10 +386,16 @@
     background: var(--bz-cat);
   }
 
+  /* `mark`, not `label`: this is a count, and DESIGN.md gives `mark` to "a
+     count or a tag" while `label` is the tracked caption above a group of
+     controls. `03` sets it at 11.5px, which is on neither step; snapping by
+     size put it on 12px and snapping by ROLE puts it on 12.5px, and the role
+     is what the scale is for. Half a pixel either way is below anything a
+     reader can see; a mono label is a different design idiom. */
   .bz-catcard-num {
     margin-left: auto;
     color: var(--color-on-surface-muted);
-    font: 600 var(--text-label) / 1 var(--font-mono);
+    font: 600 var(--text-mark) / 1 var(--font-mono);
   }
 
   .bz-catcard-title {
@@ -659,20 +665,13 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* `03` paints the track in translucent white over the hue. The language
-     declares no translucent surface — the same wall the drawer's backdrop met
-     in `rail.css` — so the track sits under the header on the card's own
-     ground and the fill is the hue itself. */
-  .bz-track {
-    height: 4px;
-    background: var(--color-surface-sunken);
-  }
-
-  .bz-track > i {
-    display: block;
-    height: 4px;
-    background: var(--bz-cat);
-  }
+  /* The rail under the header is `.bz-track`, and it is in the LANGUAGE rather
+     than here. It was authored in this file in stage 4, when the board column
+     was its only consumer; stages 7, 8 and 9 gave it three more, so it moved to
+     `src/design/bazaar.css` beside `.bz-tick` with the four mockups' four
+     different rails reconciled into two shapes. The board column takes the
+     default — the 4px square seam — and binds nothing, because the fill
+     already reads `--bz-cat` from the carrier on this card. */
 
   .bz-boardcol-list {
     margin: 0;
@@ -699,7 +698,9 @@
   .bz-boardcol-num {
     flex: none;
     color: var(--color-on-surface-muted);
-    font: 600 var(--text-label) / 1.5 var(--font-mono);
+    /* `mark` for the same reason as `.bz-catcard-num`: a module ordinal is a
+       count. */
+    font: 600 var(--text-mark) / 1.5 var(--font-mono);
   }
 
   .bz-boardcol-item[data-drawn="false"] .bz-boardcol-mod {

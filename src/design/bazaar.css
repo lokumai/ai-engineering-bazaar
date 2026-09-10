@@ -88,6 +88,24 @@
   --color-success:              #2f8c86;
   --color-caution:              #b8873b;
   --color-on-caution:           #20201c;
+  /* `fault` completes the trio, and it is a GRAPHIC token: an edge, a rule or
+     a mark, and NEVER type. MEASURED — the clay reads 5.48:1 on `surface` in
+     light and 3.02:1 on `surface-raised` in dark, so it clears a 3:1 graphical
+     floor in both themes and a 4.5:1 text floor in only one, and a floor that
+     holds in one theme is not a floor. Neither mockup ever sets it as type
+     either, which is the same finding from the other direction: `01` spends
+     this value on the focus ring and the band, both shapes.
+
+     So a destructive control says so in its WORD and its EDGE, not in the
+     colour of its label — which is `on-surface` like any other. That is also
+     the §13.1.3 answer: "Erase everything" is the signal, and the hue agrees
+     with it rather than carrying it.
+
+     The value is `category-5`'s and `focus`'s. Three names, one hex, and the
+     jobs are distinct: a group's identity, a focus ring, and a fault. The
+     language already accepted that split when `focus` was named rather than
+     spending `category-5` on a ring. */
+  --color-fault:                #a0503c;
   --color-ornament:             #c8a078;
 
   /* -- the categorical series ----------------------------------------------
@@ -698,6 +716,78 @@
   .bz-item[aria-current] .bz-tick { background: var(--color-on-primary); }
   .bz-item[aria-current] .bz-tick > svg { stroke: var(--bz-cat); }
 
+  /* -- the progress rail --------------------------------------------------
+     THE ONE PRIMITIVE THE SHELL MOCKUP DOES NOT CONTAIN. `01` has no meter of
+     any kind: it states progress in words, as `3/8` beside a group and
+     "Module 3 of 8" in a tag. Every other mockup draws a rail, and they draw
+     it four different ways — `05` at 7px/4px radius, `07` at 9px/5px, `03`
+     and `08` at 4px with no radius and a translucent white fill over the
+     level's hue. So this is a derivation (D30) with four references rather
+     than a transcription of one, and the choices are recorded here because
+     nothing else records them.
+
+     It lived in `catalog.css` from stage 4, where the board column was its
+     only consumer. Stages 7, 8 and 9 add three more — the completion row, the
+     progress row and the home level card — and a class defined in one surface
+     stylesheet and used by another is exactly what the surface discipline
+     exists to prevent, so it moves up here. The same move `--bz-cat` made out
+     of `rail.css` when a second surface read it.
+
+     TWO SHAPES, not four. A SEAM sits flush under a coloured header and is
+     square, which is `03`'s and `08`'s 4px; a BAR stands alone in a row and is
+     rounded. `05` and `07` disagree about the bar by 2px for no stated reason,
+     and the language picks one rather than carrying both: 9px, because `07` is
+     the mockup whose surface draws five of them in a grid and it is the more
+     legible of the two. Both radii the mockups use — 4px at 7px tall, 5px at
+     9px — are already exactly the scale's `sm` and `base`, so nothing had to be
+     reconciled.
+
+     `03` paints the track in translucent white over the hue. The language
+     declares no translucent surface — the same wall the drawer's backdrop met
+     in `rail.css` — so the track is `surface-sunken` and the fill is the hue
+     itself, which is `--bz-cat` unless a caller rebinds it. */
+
+  .bz-track {
+    --bz-track-height: 4px;
+    --bz-track-fill: var(--bz-cat);
+    display: flex;
+    overflow: hidden;
+    height: var(--bz-track-height);
+    border-radius: var(--bz-track-radius, 0);
+    background: var(--color-surface-sunken);
+  }
+
+  .bz-track > * {
+    flex: none;
+    height: var(--bz-track-height);
+  }
+
+  /* The done portion. Its width is the one thing a caller passes, as an inline
+     percentage, because it is a build-time or record fact and not a design
+     one. */
+  .bz-track > i { background: var(--bz-track-fill); }
+
+  /* `05`'s legend names THREE states and not two — "done", "not yet" and "not
+     written yet" — and the third is the reason this is not simply a two-tone
+     bar. It is drawn as a HATCH rather than as a third hue, because colour is
+     never the only signal (§13.1.3), and as a hatch rather than as the
+     legend's own dashed border, because a dash on a 4px-tall box paints two
+     visible teeth and reads as nothing. A level with unwritten modules puts
+     this after the fill; a level with none omits it and the rail is two-tone. */
+  .bz-track > [data-planned] {
+    margin-left: auto;
+    background: repeating-linear-gradient(
+      135deg,
+      var(--color-line) 0 3px,
+      var(--color-surface-sunken) 3px 6px
+    );
+  }
+
+  .bz-track-bar {
+    --bz-track-height: 9px;
+    --bz-track-radius: var(--radius-base);
+  }
+
   /* -- the reading column -------------------------------------------------
      Centred inside the fluid middle and capped at the measure. The cap keeps
      the line length readable; the centring keeps the gutters even. The column
@@ -1045,6 +1135,116 @@
     filter: none;
   }
 
+  /* A destructive action, and it is a QUIET BUTTON WITH AN EDGE rather than a
+     filled red one — which is what `07:88-89` draws too: a colour-only
+     modifier that changes nothing geometric. The label keeps `on-surface`
+     because `fault` is a graphic token (see its declaration), and the meaning
+     is carried by the word, then the edge, then the hue, in that order. */
+  .bz-btn-danger {
+    border-color: var(--color-fault);
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface);
+  }
+
+  .bz-btn-danger:hover {
+    background: var(--color-surface-sunken);
+    filter: none;
+  }
+
+  /* -- the field ----------------------------------------------------------
+     THE OTHER PRIMITIVE THE SHELL MOCKUP DOES NOT CONTAIN. `01` has no
+     `<input>` anywhere: its search is a `<div role="button">` dressed as a
+     field, which is why `barField` sits in the fidelity harness's
+     `DELIBERATELY_ABSENT`. `07:81-84` draws the real one, and it is the only
+     mockup that does.
+
+     Transcribed from it, and it lands on the scale exactly: 14.5px is
+     `control`, the label's 14px is `item`, and the 7px radius is `lg`. The
+     96px label gutter is `07`'s own. Colour comes from `01`, as always — the
+     edge is `line-strong`, because DESIGN.md gives that weight to an
+     interactive or hovered edge and a field is the most interactive thing on
+     a settings page.
+
+     ONE DEPARTURE, and it is D34's kind: `07` sets the control 36px tall, and
+     §10.4 wants 44px for a thumb. The transcribed height holds where there is
+     a pointer and the floor takes over below the language's own phone
+     breakpoint, which is the same shape as every other touch target here. A
+     measured accessibility floor outranks a transcribed value.
+
+     `07` gives the field no focus rule of its own; the global ring covers it,
+     and `focus` is clay precisely so it needs no per-surface restyling. */
+
+  .bz-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 10px;
+  }
+
+  .bz-field-label {
+    flex: none;
+    width: 96px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-item);
+  }
+
+  .bz-field > input,
+  .bz-field > select,
+  .bz-field > textarea {
+    flex: 1;
+    min-width: 0;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface);
+    font: var(--text-control) / 1 var(--font-sans);
+  }
+
+  .bz-field > textarea {
+    height: auto;
+    padding: 8px 10px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 767px) {
+    .bz-field > input,
+    .bz-field > select,
+    .bz-field > textarea {
+      min-height: 44px;
+    }
+  }
+
+  /* The two notes a field can carry. `hint` explains, `error` refuses, and the
+     error is announced rather than merely coloured — `fault` on the edge, the
+     sentence in ordinary ink. */
+  .bz-field-hint {
+    margin: 4px 0 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  .bz-field-error {
+    margin: 4px 0 0;
+    color: var(--color-on-surface);
+    font-size: var(--text-meta);
+  }
+
+  .bz-field[data-invalid="true"] > input,
+  .bz-field[data-invalid="true"] > select,
+  .bz-field[data-invalid="true"] > textarea {
+    border-color: var(--color-fault);
+    border-width: 2px;
+  }
+
+  .bz-field-optional {
+    margin-left: 6px;
+    color: var(--color-on-surface-faint);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
+  }
+
   .bz-actions .bz-note {
     margin: 0;
     color: var(--color-on-surface-muted);
@@ -1189,6 +1389,10 @@
   --color-success:              #2f8c86;
   --color-caution:              #b8873b;
   --color-on-caution:           #20201c;
+  /* Lifted with `category-5` and `focus`, to the dark mockup's own `--accent2`.
+     3.02:1 on `surface-raised` is the tightest pair in the language, and it is
+     why this token is graphic-only. */
+  --color-fault:                #ad5b47;
   --color-ornament:             #c8a078;
 
   /* Three of five lifted; teal and gold already cleared. `category-2` remains

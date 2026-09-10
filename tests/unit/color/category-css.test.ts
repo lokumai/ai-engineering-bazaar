@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs'
+import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { curriculumFacts } from '@/lib/content/facts'
@@ -41,6 +41,7 @@ import { render } from '../../../scripts/curriculum-css.mjs'
  */
 
 const MODULES_CSS = join(import.meta.dirname, '../../../src/app/lokum-modules.css')
+const SOURCE = join(import.meta.dirname, '../../../src')
 
 /**
  * The generated sheet alone. It is the whole subject now: every selector these
@@ -174,5 +175,107 @@ describe('the generated module selectors are the committed ones', () => {
    */
   it('matches what the generator produces from curriculum.yaml today', () => {
     expect(readFileSync(MODULES_CSS, 'utf8')).toBe(render())
+  })
+})
+
+/**
+ * Every class the generated sheet names, checked against the markup.
+ *
+ * THE MIRROR IMAGE OF A DEAD TOKEN. `styling-references.test.ts` exists because
+ * a Tailwind utility named after a deleted token emits nothing at all, with no
+ * error and no warning. This is the same failure pointing the other way: a
+ * selector naming a class no component carries matches nothing, fails no build,
+ * and simply does not draw. Nothing above would notice — the lists would still
+ * be complete, still keyed on the right module numbers, and still inert.
+ *
+ * The file's own comment predicted it. Group D says: "Stage 0 changed this
+ * file's prefix and left its names, so for one commit the generator revealed a
+ * selector no markup carried." That commit's state is still in force for four
+ * of the five groups, which is why the reader who completes a module on the
+ * home page sees every tick light up rather than theirs.
+ *
+ * The exemption list is the project's usual shape — `DELIBERATELY_ABSENT`,
+ * `WITHOUT_REFERENCE`, `NARROW_DEVIATIONS` — an entry per known gap, each
+ * stating a reason, plus a staleness case that fails when an entry has stopped
+ * being true. A silent exemption hides the next one.
+ */
+describe('the generated selectors name classes that markup actually carries', () => {
+  /** Classes the generator names that no component emits yet, and why. */
+  const NOT_YET_CARRIED: Readonly<Record<string, string>> = {
+    'bz-seg':
+      'M16 stage 8. `course/CategoryMeter.tsx` still emits `hl-seg`, and the segment ' +
+      'strip has no base geometry in any surface stylesheet — only this file touches it.',
+    'bz-step':
+      'M16 stage 8. `path/PathSteps.tsx` still emits `hl-step`; the nine-role path is ' +
+      'the surface that draws it.',
+    'bz-step-tick':
+      'M16 stage 8, with `bz-step`. Its base `display` has to be authored at the same ' +
+      'time or every drawn step reads as completed.',
+    'bz-cmod':
+      'M16 stage 7. `record/CourseCompletion.tsx` still emits `hl-cmod`; completion ' +
+      'control C is the surface that draws it.',
+    'bz-cmod-mark':
+      'M16 stage 7, with `bz-cmod`. This is the defect `home.spec.ts` is red on: with ' +
+      'no base rule the disc shows for every module rather than the signed ones.',
+    'bz-cmod-said':
+      'M16 stage 7, with `bz-cmod`. The word the disc is described by (D25), on the ' +
+      'same channel and for the same reason.',
+  }
+
+  const generated = readFileSync(MODULES_CSS, 'utf8')
+  const named = [...new Set([...generated.matchAll(/\.(bz-[a-z0-9-]+)/g)].map((m) => m[1]))].sort()
+
+  /** Every class name any component puts in a `className`, anywhere in `src/`. */
+  const carried = (() => {
+    const found = new Set<string>()
+    const walk = (dir: string) => {
+      for (const entry of readdirSync(dir, { withFileTypes: true })) {
+        const full = join(dir, entry.name)
+        if (entry.isDirectory()) walk(full)
+        else if (/\.tsx?$/.test(entry.name)) {
+          const source = readFileSync(full, 'utf8')
+          for (const attribute of source.matchAll(
+            /className\s*=\s*(?:"([^"]*)"|\{([^}]*)\})/g,
+          )) {
+            const value = attribute[1] ?? attribute[2] ?? ''
+            for (const token of value.matchAll(/\b(bz-[a-z0-9-]+)/g)) found.add(token[1])
+          }
+        }
+      }
+    }
+    walk(SOURCE)
+    return found
+  })()
+
+  it('finds classes in the generated sheet at all', () => {
+    // A comparison of two empty sets passes. If the extraction above breaks,
+    // every case below reports green against nothing.
+    expect(named.length).toBeGreaterThan(4)
+    expect(carried.size).toBeGreaterThan(20)
+  })
+
+  it('names nothing that no component carries', () => {
+    const missing = named.filter(
+      (name) => !carried.has(name) && !(name in NOT_YET_CARRIED),
+    )
+    expect(missing, 'generated selectors that can never match').toEqual([])
+  })
+
+  it('carries no stale exemption', () => {
+    // The half that makes the list above safe. An entry that has started being
+    // carried is an entry nobody removed, and the next real gap hides behind it.
+    const stale = Object.keys(NOT_YET_CARRIED).filter((name) => carried.has(name))
+    expect(stale, 'exempted, but the markup carries it now — delete the entry').toEqual([])
+  })
+
+  it('exempts nothing the generator does not name', () => {
+    const unknown = Object.keys(NOT_YET_CARRIED).filter((name) => !named.includes(name))
+    expect(unknown, 'exempted, but the generator never names it').toEqual([])
+  })
+
+  it('gives every exemption a reason', () => {
+    for (const [name, why] of Object.entries(NOT_YET_CARRIED)) {
+      expect(why.length, `${name} is exempted with no reason`).toBeGreaterThan(40)
+    }
   })
 })

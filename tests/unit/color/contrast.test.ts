@@ -120,6 +120,12 @@ const PAIRS: readonly Pair[] = [
 
   ...graphical('focus'),
   ...graphical('success'),
+  /* GRAPHIC and not text, and the measurement is the reason rather than a
+     preference: 5.48:1 on `surface` in light, 3.02:1 on `surface-raised` in
+     dark. It clears 3:1 in both themes and 4.5:1 in only one, so it is an
+     edge, a rule or a mark, and a destructive control's label stays
+     `on-surface`. Its declaration in the language says the same. */
+  ...graphical('fault'),
   { foreground: 'caution', background: 'surface', job: 'graphic' },
 
   /* The ceiling. `line` groups a set of things and must never be reachable as

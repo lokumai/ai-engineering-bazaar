@@ -99,10 +99,16 @@
     margin-bottom: 8px;
   }
 
+  /* No `text-transform`. The drawer is mockup-less and derives this from
+     `.bz-rail-head-label`, which transcribes `01`'s fold-bar caption — and
+     `01:136-137` writes `text-transform: none` on that caption EXPLICITLY,
+     which is an author turning the old idiom off rather than an omission.
+     DESIGN.md's don't-list says the same thing in words. This carried
+     `uppercase` from stage 3 and was the only one left in any surface
+     stylesheet; `surface-stylesheets.test.ts` now refuses it. */
   .bz-drawer-title {
     color: var(--color-on-surface-faint);
     font: 600 var(--text-label) / 1 var(--font-sans);
     letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
   }
 }

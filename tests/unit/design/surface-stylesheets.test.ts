@@ -148,4 +148,65 @@ describe('a surface stylesheet arranges the language, it does not extend it', ()
       }
     }
   })
+
+  /**
+   * DESIGN.md, Typography: "There is no serif in this language and no monospace
+   * label — a small uppercase mono label is a different design idiom altogether
+   * and it fights the glaze." And the don't-list: "Don't substitute a different
+   * family, add a serif, or introduce small uppercase mono labels."
+   *
+   * THE MOCKUP IS STRONGER THAN THE DOCUMENT HERE, which is why this is a test
+   * and not a note. `playground/01-theme-T4-ground-G3-powder.html:136-137`
+   * writes `text-transform: none` on its fold-bar caption EXPLICITLY — an
+   * author turning the retired idiom off on the one element that would
+   * otherwise have carried it — and `05`, `07` and `08` declare no
+   * `text-transform` at all. The only mockup that uppercases is `09-sidebar`,
+   * which is on the older palette and whose glyph idiom the language has
+   * already rejected on measured grounds.
+   *
+   * It exists because the retired design spent this treatment 205 times, in 52
+   * files, under one class — and dissolving those sites is worthless if the
+   * same rule can be re-authored under a `bz-` name. M9 to M14 failed by
+   * preserving the thing they were asked to replace, one convenient rule at a
+   * time.
+   *
+   * `src/lib/record/report.ts` is out of scope by construction rather than by
+   * exemption: the exported RECORD OF WORK carries its own inline print
+   * stylesheet with its own print palette, and it is not a surface stylesheet.
+   */
+  it.skipIf(none)('introduces no uppercase label, and no mono one', () => {
+    for (const { name, css } of SURFACES) {
+      for (const [, selector, block] of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+        const where = `${name}: ${selector.trim()}`
+
+        // `uppercase`, `capitalize` and `full-width` all re-case a reader's own
+        // text; `none` and `lowercase` do not, and a name a reader typed must
+        // never be re-cased at all — CSS casing is locale-sensitive off the
+        // element's `lang`, and `"ilker".toUpperCase()` yields a dotless I.
+        const cased = block.match(/text-transform:\s*([a-z-]+)/)
+        if (cased !== null) {
+          expect(cased[1], `${where} re-cases its text`).toMatch(/^(none|lowercase)$/)
+        }
+
+        /*
+          The other half of the same idiom: mono at the LABEL size, which is the
+          tracked one DESIGN.md reserves for "the caption above a group of
+          controls" — i.e. a label, by definition. That pairing is the retired
+          treatment.
+
+          Mono is not banned outright, and the distinction is the whole point of
+          the two steps: `mark` is "for a count or a tag", and `03` and `08` both
+          set a module ordinal in mono, so `.bz-row-number` and `.bz-aside-mark`
+          are faithful. What the language forbids is a mono *label*, not a mono
+          numeral. Judging by size alone would have caught all three, which is
+          how two ordinals came to be snapped to the 12px step because 11.5px
+          was nearer to it than 12.5px — a type ROLE is not chosen by half a
+          pixel.
+        */
+        if (/--font-mono/.test(block) && block.includes('--text-label')) {
+          expect(where, `${where} sets a mono label at the tracked size`).toBe('')
+        }
+      }
+    }
+  })
 })

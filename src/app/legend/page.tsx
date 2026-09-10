@@ -37,7 +37,7 @@ export const metadata: Metadata = {
  * **A server page, and hook-free on purpose.** Every mark below is drawn in a
  * fixed state — this is a key, not a readout — so there is nothing here for
  * channel B to fill in and nothing to hydrate (§12.2). The marks are the real
- * ones: `.hl-signoff-square`, `.hl-gauge-tick` and `.bz-diagram-node` with the same
+ * ones: `.bz-signoff-square`, `.bz-gauge-tick` and `.bz-diagram-node` with the same
  * `data-*` attributes the index rows, the tick gauges and the dashboard write,
  * so `record.css` draws the legend from the same rules it draws the site from.
  * A hand-drawn picture of the marks would be a fourth place for them to be
@@ -170,7 +170,7 @@ const REFUSED: readonly string[] = [
 export default function LegendPage() {
   return (
     <PageShell sheet="MODULE 00">
-      <p className="hl-eyebrow text-mark">MODULE 00 — LEGEND &amp; SPECIMEN</p>
+      <p className="bz-facts">Module 00 · legend and specimen</p>
 
       <h1 className="bz-display">Legend</h1>
 
@@ -208,7 +208,7 @@ export default function LegendPage() {
             term="Planned"
             marks={
               <>
-                <span className="hl-signoff-square" data-drawn="false" aria-hidden="true" />
+                <span className="bz-signoff-square" data-drawn="false" aria-hidden="true" />
                 <NodeSample state="draft" />
               </>
             }
@@ -221,7 +221,7 @@ export default function LegendPage() {
             term="Not completed"
             marks={
               <>
-                <span className="hl-signoff-square" data-signed="false" aria-hidden="true" />
+                <span className="bz-signoff-square" data-signed="false" aria-hidden="true" />
                 <NodeSample state="unread" />
               </>
             }
@@ -239,7 +239,7 @@ export default function LegendPage() {
             term="Completed"
             marks={
               <>
-                <span className="hl-signoff-square" data-signed="true" aria-hidden="true" />
+                <span className="bz-signoff-square" data-signed="true" aria-hidden="true" />
                 <NodeSample state="signed" />
               </>
             }
@@ -252,10 +252,10 @@ export default function LegendPage() {
           <KeyRow
             term="Tick gauge"
             marks={
-              <span className="hl-gauge" aria-hidden="true">
-                <span className="hl-gauge-tick" data-state="approved" />
-                <span className="hl-gauge-tick" />
-                <span className="hl-gauge-tick" data-state="undrawn" />
+              <span className="bz-gauge" aria-hidden="true">
+                <span className="bz-gauge-tick" data-state="approved" />
+                <span className="bz-gauge-tick" />
+                <span className="bz-gauge-tick" data-state="undrawn" />
               </span>
             }
           >

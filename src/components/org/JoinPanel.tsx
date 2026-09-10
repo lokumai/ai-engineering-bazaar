@@ -121,18 +121,18 @@ function OfferBlock({
   const statements = disclosureStatements(offer.org.name, otherOrgCount)
 
   return (
-    <div className="hl-signoff">
-      <div className="hl-signoff-head text-mark">
+    <div className="bz-signoff">
+      <div className="bz-signoff-head text-mark">
         <span className="text-on-surface">{offer.org.name}</span>
         <PathNote offer={offer} />
       </div>
 
-      <div className="hl-signoff-body">
+      <div className="bz-signoff-body">
         <p className="text-mark mt-0 mb-2 text-on-surface">{JOIN_COPY.disclosureHead}</p>
 
         {/* §14.5.1 — read before anything is clicked. The button is below it,
             and there is no state of this component in which it is not. */}
-        <ul className="hl-signoff-criteria">
+        <ul className="bz-signoff-criteria">
           {statements.map((statement) => (
             <li key={statement}>{statement}</li>
           ))}

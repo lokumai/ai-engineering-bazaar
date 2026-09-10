@@ -52,7 +52,7 @@ export const metadata: Metadata = {
 export default function AliasPage() {
   return (
     <PageShell sheet="ALIAS">
-      <p className="hl-eyebrow text-mark">LOCAL ONLY · THIS FORM SENDS NOTHING</p>
+      <p className="bz-facts">Local only · this form sends nothing</p>
 
       <h1 className="bz-display">Choose an alias</h1>
 

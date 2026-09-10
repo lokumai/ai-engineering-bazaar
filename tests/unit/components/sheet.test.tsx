@@ -166,7 +166,7 @@ describe('DependencyBlock (§4.6)', () => {
         }]}
       />,
     )
-    expect(markup).toContain('hl-hidden-x')
+    expect(markup).toContain('bz-hidden-x')
     expect(markup).toContain('bz-link')
   })
 })

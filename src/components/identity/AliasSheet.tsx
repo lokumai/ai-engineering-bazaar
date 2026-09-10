@@ -45,7 +45,7 @@ import { numberWord } from '@/lib/text'
  * `STORABLE_MARK_IDS`, so a reshuffle fails rather than ships.
  *
  * **The artefact is on screen while it is being made** (§15.4.3). The preview is
- * built from `.hl-title-block`, the same block a sheet prints, because the
+ * built from `.bz-panel`, the same block a sheet prints, because the
  * reader is choosing how their name will appear on every sign-off and in the
  * exported document — not filling in a form field. That is also why the empty
  * name previews as `UNSIGNED`: it is what the title block genuinely prints for a
@@ -286,13 +286,13 @@ export function AliasSheet({ accountDoors }: { accountDoors: number }) {
         </div>
       </div>
 
-      {/* The artefact, not a form preview (§15.4.3). `.hl-title-block` is the
+      {/* The artefact, not a form preview (§15.4.3). `.bz-panel` is the
           block a module prints, so what is on screen here is the thing being
           chosen. The label is written out rather than imported from
           `lib/content/title-block.ts`: that module reaches `node:fs` through
           `derive.ts` and this island may not (§12.2, §15.4.4). */}
-      <aside aria-label="Your stamp, as a module will print it" className="hl-title-block">
-        <div className="hl-title-block-head text-mark">Checked by</div>
+      <aside aria-label="Your stamp, as a module will print it" className="bz-panel">
+        <div className="bz-panel-title text-mark">Checked by</div>
 
         <div className="grid justify-items-center gap-2 px-3 py-4">
           <DrafterStamp mark={storedMark(chosen)} seed={seed} size={PREVIEW_SIZE} />
@@ -308,8 +308,8 @@ export function AliasSheet({ accountDoors }: { accountDoors: number }) {
           )}
         </div>
 
-        <dl className="hl-title-block-rows">
-          <div className="hl-title-block-row text-mark">
+        <dl className="bz-defs">
+          <div className="bz-defs-row text-mark">
             <dt>Mark</dt>
             <dd>{selected.label}</dd>
           </div>
@@ -317,16 +317,16 @@ export function AliasSheet({ accountDoors }: { accountDoors: number }) {
               for a named glyph and absent before the seed exists — never a
               hollow row and never a plausible-looking placeholder (§11.25). */}
           {chosen === 'seeded' && seed !== null && (
-            <div className="hl-title-block-row text-mark">
+            <div className="bz-defs-row text-mark">
               <dt>Seed</dt>
               <dd className="normal-case">{seed}</dd>
             </div>
           )}
-          <div className="hl-title-block-row text-mark">
+          <div className="bz-defs-row text-mark">
             <dt>Held in</dt>
             <dd>THIS BROWSER</dd>
           </div>
-          <div className="hl-title-block-row text-mark">
+          <div className="bz-defs-row text-mark">
             {/* Colour is never the only signal: the word is the signal, and the
                 caution ink only agrees with it (T6). */}
             <dt>Status</dt>

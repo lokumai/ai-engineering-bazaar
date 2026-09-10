@@ -14,7 +14,7 @@ export function ScheduleOfParts({ parts }: { parts: readonly string[] }) {
   if (parts.length === 0) return null
 
   return (
-    <table className="hl-schedule">
+    <table className="bz-schedule">
       <caption className="text-mark">Schedule of parts</caption>
       <thead>
         <tr>
@@ -25,8 +25,8 @@ export function ScheduleOfParts({ parts }: { parts: readonly string[] }) {
       <tbody>
         {parts.map((part, i) => (
           <tr key={part}>
-            <td className="hl-schedule-item">{String(i + 1).padStart(2, '0')}</td>
-            <td className="hl-schedule-description">{part}</td>
+            <td className="bz-schedule-item">{String(i + 1).padStart(2, '0')}</td>
+            <td className="bz-schedule-description">{part}</td>
           </tr>
         ))}
       </tbody>

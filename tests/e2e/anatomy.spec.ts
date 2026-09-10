@@ -254,7 +254,7 @@ test.describe('A short ready module — the same anatomy as a long one', () => {
     // The strip is the module's own facts, in the column, at every width, and
     // it is the only place they live since M11 cut the rail back.
     await expect(page.locator('.bz-col .bz-facts')).toBeVisible()
-    await expect(page.locator('.hl-title-block')).toHaveCount(0)
+    await expect(page.locator('.bz-panel')).toHaveCount(0)
 
     // The same three tracks as the long module, and the same rule for each:
     // the widths come from the tokens and the measure from the face.
@@ -274,8 +274,8 @@ test.describe('A short ready module — the same anatomy as a long one', () => {
     await expect(page.locator('.bz-stamp:visible')).not.toHaveCount(0)
 
     // …and none of the draft furniture.
-    await expect(page.locator('.hl-status-band')).toHaveCount(0)
-    await expect(page.locator('.hl-schedule')).toHaveCount(0)
+    await expect(page.locator('.bz-status-band')).toHaveCount(0)
+    await expect(page.locator('.bz-schedule')).toHaveCount(0)
   })
 
   /**
@@ -325,19 +325,19 @@ test.describe('A4 — the detail module', () => {
     await page.goto(A4.path)
 
     // §4.5 item 1 — the band says the two true things, in words (§10.4).
-    const band = page.locator('.hl-status-band')
+    const band = page.locator('.bz-status-band')
     await expect(band).toBeVisible()
     await expect(band).toContainText(/planned/i)
     await expect(band).toContainText(/schedule of parts only/i)
 
     // §4.5 item 6 — the topics list as a hairline table, not as bullets.
-    const schedule = page.locator('table.hl-schedule')
+    const schedule = page.locator('table.bz-schedule')
     await expect(schedule).toBeVisible()
     await expect(schedule.locator('thead th')).toHaveText([/item/i, /description/i])
     const items = schedule.locator('tbody tr')
     expect(await items.count()).toBeGreaterThan(0)
     // The `ITEM` column is a derived ordinal, zero-padded like `DRAWING`.
-    await expect(items.first().locator('.hl-schedule-item')).toHaveText('01')
+    await expect(items.first().locator('.bz-schedule-item')).toHaveText('01')
 
     // NO CONTENTS RAIL, at any width: a draft has no sections to list.
     await expect(page.locator('.bz-aside')).toHaveCount(0)
@@ -367,7 +367,7 @@ test.describe('A4 — the detail module', () => {
 
     // §4.5: no stamp slots, no XP, no completion — on a module that is not
     // written there is nothing to have read (§1, §7.2).
-    await expect(page.locator('.hl-title-block')).toHaveCount(0)
+    await expect(page.locator('.bz-panel')).toHaveCount(0)
     await expect(page.locator('[class*="stamp"]')).toHaveCount(0)
     await expect(page.locator('[data-hl-signoff]')).toHaveCount(0)
     // …and no tick can be revealed on its own row in the rail, because no

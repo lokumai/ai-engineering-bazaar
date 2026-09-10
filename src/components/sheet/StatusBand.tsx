@@ -9,7 +9,7 @@
  */
 export function StatusBand() {
   return (
-    <p className="hl-status-band text-mark">
+    <p className="bz-status-band text-mark">
       <span>Planned</span>
       <span>Schedule of parts only</span>
     </p>

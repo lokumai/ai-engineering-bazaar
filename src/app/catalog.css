@@ -435,115 +435,14 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* ---------------------------------------------------------------------------
-     7. THE TABLE.
+  /* The TABLE and the ROW are in the language, not here. Four surfaces draw
+     one now — this catalog, the two level listings, the organisation roster
+     and the sign-in doors — and a class defined in one surface stylesheet
+     and used by another is what the surface discipline exists to prevent.
+     The columns BELOW are the catalog's own and stay: a topics cell, a
+     status cell, a tick and the four sign-off squares are this table's
+     subject matter rather than any table's shape. */
 
-     Nine columns and not `03`'s six. Dropping three would delete what the
-     table is for — it is the one view that states every fact the manifest
-     records — and the milestone's promise is that no capability goes. What
-     comes from `03` is the geometry: the padding, the sticky header on a
-     sunken strip, the hover, and the hue in the leading edge.
-
-     **It scrolls inside its own box**, which is the same containment the
-     language already spends on a figure, and the reason the page body never
-     scrolls sideways at 390px.
-     --------------------------------------------------------------------------- */
-  .bz-table-scroll {
-    min-width: 0;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-  }
-
-  /* `--bz-table-min` is the sum of the column widths, computed by `SheetIndex`
-     from the table it is about to draw and passed in per instance. It used to
-     be a hand-computed `1060px` in a deleted stylesheet with the arithmetic
-     written out in a comment beside it, which is two places for one number and
-     is how the ninth column's width came to be justified by subtraction. */
-  .bz-table {
-    /* Declared here so the name resolves even where nothing passes one, and
-       overridden per instance. A table with no sum to honour is simply as wide
-       as the box it is in. */
-    --bz-table-min: 100%;
-    width: 100%;
-    min-width: var(--bz-table-min);
-    border-collapse: collapse;
-    table-layout: fixed;
-  }
-
-  .bz-table thead th {
-    padding: 9px 14px;
-    border-bottom: 1px solid var(--color-line);
-    background: var(--color-surface-sunken);
-    color: var(--color-on-surface-muted);
-    font: 600 var(--text-mark) / 1 var(--font-sans);
-    text-align: left;
-    position: sticky;
-    top: calc(var(--layout-sticky) + var(--bz-filters-h, 0px));
-    z-index: 20;
-  }
-
-  .bz-table tbody td,
-  .bz-table tbody th {
-    padding: 11px 14px;
-    border-bottom: 1px solid var(--color-line);
-    font-size: var(--text-control);
-    text-align: left;
-    vertical-align: middle;
-  }
-
-  /* The title cell is a `th[scope="row"]`, so the weight is set per element
-     type rather than on `.bz-row-title`: a rule qualified by `tbody th` beats
-     a bare class, and the class would silently lose. */
-  .bz-table tbody td { font-weight: 400; }
-  .bz-table tbody th { font-weight: 600; }
-
-  .bz-row:hover { background: var(--color-surface-sunken); }
-
-  /* The leading rule is reserved on every row and painted only where there is
-     something to paint, so no column changes width between a drawn row and a
-     draft one.
-
-     **Drawn rows only, and that is the amended T6 rather than taste.** A draft
-     row's `#` cell already carries `--color-caution` as its hidden-line ink,
-     and a category hue and a semantic token may not sit on one element. `03`
-     tints every row including its planned ones; it has no hidden-line ink to
-     collide with. */
-  .bz-row > :first-child { border-left: 3px solid transparent; }
-  .bz-row[data-cat] > :first-child { border-left-color: var(--bz-cat); }
-
-  /* MUTED and not `03`'s faint. A module's number is its identity — prose
-     names another module by it and the rail lists it — so it is a word the
-     reader reads rather than one they may ignore, and DESIGN.md's own rule is
-     that such a word takes `on-surface-muted` however small it is. MEASURED:
-     faint puts it at 3.09:1 on the row, under the 4.5:1 a text floor asks.
-     A measured floor outranks the transcription, which is D34's precedent. */
-  .bz-row-number {
-    color: var(--color-on-surface-muted);
-    font: 600 var(--text-mark) / 1 var(--font-mono);
-  }
-
-  /* A draft row recedes in its TITLE, which is `03`'s own treatment for a
-     planned module, and NOT in the caution ink on its number.
-
-     MEASURED: caution on the page ground is 3.09:1, and a module's number is
-     text a reader reads, so it takes a 4.5:1 floor. The retired drawing set
-     put hidden-line yellow there — a convention for a line that is planned and
-     not yet cut — and the convention does not survive a text floor. The row
-     still says `PLANNED` in words, carries a dashed status tick and a dashed
-     completion square, so nothing is lost but the colour. */
-  .bz-row[data-draft] .bz-row-link { color: var(--color-on-surface-muted); }
-
-  /* Ink and not cobalt. A table of 33 rows whose every title is a link reads
-     as a wall of accent otherwise, and the row's hover plus the pointer are
-     what say it is one — which is `03`'s call as well. */
-  .bz-row-link { color: var(--color-on-surface); }
-
-  .bz-row-context,
-  .bz-row-value {
-    color: var(--color-on-surface-muted);
-  }
-
-  .bz-row-value { font-variant-numeric: tabular-nums; }
 
   .bz-row-topics {
     display: block;
@@ -688,6 +587,14 @@
     color: var(--color-on-surface);
     font-size: var(--text-meta);
     line-height: 1.35;
+  }
+
+  /* The module's title inside the row's link. It has a name of its own because
+     the row is `.bz-boardcol-mod` and the number beside it is
+     `.bz-boardcol-num`, and three elements sharing one class is what made a
+     strict-mode locator match two things per row in `CourseCompletion`. */
+  .bz-boardcol-name {
+    min-width: 0;
   }
 
   .bz-boardcol-mod:hover {

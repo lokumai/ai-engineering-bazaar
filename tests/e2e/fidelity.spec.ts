@@ -1414,3 +1414,63 @@ test.describe('M16 stage 9 — the front door', () => {
     }
   })
 })
+
+test.describe('M16 stage 10 — the routes no mockup draws', () => {
+  /**
+   * **D30**: a component no mockup draws is derived from primitives the mockups
+   * do specify. So there is no sixth reference document and no new role — what
+   * there is to check is that these routes reach for the SAME primitives rather
+   * than for lookalikes of them, which is the failure mode a derived surface
+   * actually has.
+   *
+   * `01` specifies the card and the primary button; `07` specifies the panel
+   * and the field. If `/team/` drew its own card that happened to look like
+   * `01`'s, every static guard would pass — the radius would come from a token,
+   * the colour from the language, the shadow from nowhere — and the two would
+   * drift on the first edit to either. This is the check that says they are one
+   * thing.
+   */
+  const SHARED: readonly Role[] = ['panel', 'field', 'fieldLabel', 'fieldInput']
+
+  test('draws its panels and fields with the same primitives as `07`', async ({ page }) => {
+    await page.goto(DASHBOARD_URL)
+    await freezeMotion(page)
+    const reference = await extractDesignFacts(page, DASHBOARD_SELECTORS)
+
+    // `/sign-in/alias/` is the first-run screen and the one derived route that
+    // carries both a panel and a real field with no account configured.
+    await page.goto('/sign-in/alias/')
+    await freezeMotion(page)
+    const actual = await extractDesignFacts(page, APP_SELECTORS)
+
+    const shown = (facts: Record<string, string | null>, role: Role) =>
+      FACT_KEYS.filter((key) => key.startsWith(`${role}.`)).some((key) => facts[key] !== null)
+
+    for (const role of SHARED) {
+      expect(shown(actual, role), `${role} is not on the derived route`).toBe(true)
+    }
+    expect(differencesAt(reference, actual, SHARED, page.viewportSize()!.width)).toEqual([])
+  })
+
+  /**
+   * `/legend/` is the page that replaces onboarding by not being onboarding.
+   * It is never auto-opened, and that has to stay true: a tour a reader did not
+   * ask for is the thing §11.25's evidence is against, and the route being
+   * reachable is the whole of its job.
+   */
+  test('never opens the legend by itself', async ({ page }) => {
+    const opened: string[] = []
+    page.on('framenavigated', (frame) => {
+      if (frame === page.mainFrame()) opened.push(new URL(frame.url()).pathname)
+    })
+
+    await page.goto('/')
+    await page.waitForLoadState('networkidle')
+    expect(opened.filter((path) => path.startsWith('/legend'))).toEqual([])
+
+    // And it is reachable, which is the other half: a page nobody can get to
+    // is not restraint.
+    await page.goto('/legend/')
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+  })
+})

@@ -1,0 +1,290 @@
+/* ===========================================================================
+   THE ROUTES NO MOCKUP DRAWS — **D30**.
+
+   `/legend/`, `/legend/specimen/`, `/team/`, `/team/assignments/`,
+   `/sign-in/`, `/sign-in/alias/`, `/join/`, `/auth/callback/`, the 404, and
+   the handful of shapes the nine mockup-backed surfaces left over: a figure's
+   expand overlay, a module's requirements list, a draft's status band and
+   schedule of parts, the mascot's face legend.
+
+   **Nothing here is invented.** D30's rule is that a component no mockup draws
+   is DERIVED from primitives the mockups do specify, and that what it was
+   derived from is written down — so every rule below names its source. Where
+   one of these needed a shape the language does not have, that would be a
+   question for the author and not a decision to take quietly; none of them
+   did.
+
+   This is also the milestone's announced cut line, which is worth stating now
+   that it was not cut: these eight routes had the weakest reference and would
+   have been dropped first. They were 42% of the retired vocabulary, so cutting
+   them would have left nearly half of it standing and the closing condition
+   unmeetable — which is the measurement that made the decision rather than the
+   argument.
+   =========================================================================== */
+
+@layer components {
+  /* -- a definition row inside a panel ------------------------------------
+     `.bz-defs` is stage 8's, from the register's bodies; this is one row of it
+     where the markup is a `<div>` per pair rather than a flat `dl`. */
+  .bz-defs-row {
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-column: span 2;
+  }
+
+  /* -- §4.6 the module's requirements -------------------------------------
+     Derived from `01`'s aside: a `label` caption over an indented list. Stage
+     5 put the whole block behind the mockup's own `Requirements (2)` quiet
+     button, so this is what opens. */
+
+  .bz-dep-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 10px;
+    padding: 4px 0;
+  }
+
+  .bz-dep-label {
+    flex: none;
+    color: var(--color-on-surface-faint);
+    font: 600 var(--text-label) / 1 var(--font-sans);
+    letter-spacing: var(--tracking-label);
+  }
+
+  .bz-dep-values {
+    color: var(--color-on-surface);
+    font-size: var(--text-item);
+  }
+
+  /* §4.6 — a requirement on a module nobody has written yet is drawn as a
+     hidden line, which is the same dashed treatment a planned module's segment
+     and an unearned stamp get. Colour is never the only signal. */
+  .bz-dep-row[data-drawn="false"] .bz-dep-values {
+    color: var(--color-on-surface-muted);
+    text-decoration: underline dashed var(--color-line-strong);
+    text-underline-offset: 3px;
+  }
+
+  /* -- §4.5 the draft module's two blocks ---------------------------------
+     `01` draws a written module only, so the A4 branch is derived: the band is
+     the language's note with a leading rule, and the schedule is a list of
+     items with the same `item` type the rail's rows use. */
+
+  .bz-status-band {
+    margin: 0 0 22px;
+    padding: 12px 15px;
+    border-left: 2px solid var(--color-caution);
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface);
+    font-size: var(--text-item);
+  }
+
+  .bz-schedule {
+    margin: 0 0 28px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bz-schedule-item {
+    padding: 9px 0;
+    border-top: 1px solid var(--color-line);
+    color: var(--color-on-surface);
+    font-size: var(--text-item);
+    font-weight: 500;
+  }
+
+  .bz-schedule-description {
+    margin: 3px 0 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+    font-weight: 400;
+  }
+
+  /* -- the drawing-set gauge ----------------------------------------------
+     One tick per module, reporting the CORPUS rather than the reader — which
+     is why it is not `.bz-meter`, whose subject is the record. Derived from
+     `01`'s `.arch .key`, the 5×17 colour bar beside a group. */
+
+  .bz-gauge {
+    display: flex;
+    gap: 2px;
+  }
+
+  .bz-gauge-tick {
+    width: 5px;
+    height: 14px;
+    border-radius: var(--radius-hair);
+    background: var(--color-surface-sunken);
+  }
+
+  .bz-gauge-tick[data-state="drawn"] {
+    background: var(--bz-cat, var(--color-on-surface-faint));
+  }
+
+  /* A module nobody has written: hidden geometry, never a fill — the same
+     dashed treatment a planned module's segment and an unearned stamp get. An
+     `inset` shadow would have drawn the edge without changing the box, and a
+     surface may not declare a shadow at all: the language has exactly two,
+     both on primitives, both for something genuinely temporary. `border-box`
+     sizing makes a border the same thing here anyway. */
+  .bz-gauge-tick[data-state="not-drawn"] {
+    border: 1px dashed var(--color-line);
+    background: transparent;
+  }
+
+  /* -- §13.2 the face legend ----------------------------------------------
+     The accessible content of the mark: the SVG is `aria-hidden` in every
+     state, so this table is what a reader actually reads. The swatch is
+     `01`'s `.tag i` grown to a row's height. */
+  .bz-legend-swatch {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: var(--radius-xs);
+    background: var(--bz-cat, var(--color-line));
+  }
+
+  /* -- a figure, opened -----------------------------------------------------
+     A real capability with no mockup: a diagram too big for the measure can be
+     opened over the page. Derived from stage 8's dialog, which is the
+     language's one genuinely temporary surface — and it keeps its place in the
+     tab order, which is the half a mockup would not have shown either way. */
+
+  .bz-expand {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    background: var(--color-surface);
+  }
+
+  .bz-expand-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px clamp(16px, 3vw, 32px);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .bz-expand-view {
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: clamp(16px, 3vw, 32px);
+  }
+
+  .bz-expand-paper {
+    margin: 0 auto;
+    padding: 18px 20px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-raised);
+  }
+
+  /* -- the contents drawer's two lists ------------------------------------
+     Stage 3 built the drawer; these are the two things inside it, and both are
+     the rail's own vocabulary seen at phone width. */
+
+  .bz-drawer-contents,
+  .bz-drawer-curriculum {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* -- §14.11 the join criteria -------------------------------------------
+     The one place a reader is told what a join actually checks. It reuses the
+     completion block's head and body, because it is the same shape — a caption,
+     a statement, and a list of conditions — and stage 7 authored that. */
+  .bz-signoff-criteria {
+    margin: 10px 0 0;
+    padding-left: 18px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-item);
+  }
+
+  /* Not a design rule: a horizontal clip for a container whose child is
+     allowed to be wider than it, where the scroll belongs to an ancestor. */
+  .bz-hidden-x {
+    overflow-x: hidden;
+  }
+}
+
+/* ===========================================================================
+   The last few shapes, and each one is a class a component emits that nothing
+   drew. `styling-references.test.ts`'s third corner found all of them: a class
+   nobody styles is not an error to any tool in this project except that one.
+   =========================================================================== */
+
+@layer components {
+  /* §5.6 — the in-page index's item text, beside its mark. `01`'s aside gives
+     the item the `item` step and the mark the `mark` one; this is the half the
+     language named and the surface never sized. */
+  .bz-aside-text {
+    min-width: 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-item);
+  }
+
+  /* §12.10 — the curriculum drawing's own three parts. The SVG is
+     `aria-hidden`, so the caption and the table under it are what a reader
+     actually reads, and they are the accessible content rather than a fallback.
+     Derived from `01`'s `figcaption` and the language's own table. */
+  .bz-diagram-title {
+    margin: 0 0 8px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  .bz-diagram-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin: 10px 0 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  .bz-diagram-table {
+    margin: 12px 0 0;
+  }
+
+  .bz-diagram-table > summary {
+    cursor: pointer;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-item);
+  }
+
+  /* One module in the drawing, and in the legend page's specimen of it. Four
+     states, and they are NOT the figure's `.bz-node`: that is a hand-drawn box
+     in a mermaid figure and this is an SVG the record draws. Two things named
+     the same would be two things agreeing on nothing. */
+  .bz-diagram-node > rect {
+    fill: var(--color-surface-raised);
+    stroke: var(--color-line-strong);
+  }
+
+  .bz-diagram-node[data-state="draft"] > rect {
+    stroke-dasharray: 3 2;
+  }
+
+  .bz-diagram-node[data-state="signed"] > rect {
+    fill: var(--color-success);
+    stroke: var(--color-success);
+  }
+
+  .bz-diagram-node[data-state="started"] > rect {
+    stroke: var(--bz-cat, var(--color-line-strong));
+    stroke-width: 1.5px;
+  }
+
+  /* §13.2 — the mark's sugar dusting. Decoration inside an `aria-hidden`
+     drawing, and the one place in the language where a fill is a texture. */
+  .bz-sugar {
+    fill: var(--color-surface-raised);
+    opacity: 0.75;
+  }
+}

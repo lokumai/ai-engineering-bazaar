@@ -116,7 +116,7 @@ function Step({
 
   return (
     <li
-      className="bz-step hl-cat-tint ps-3"
+      className="bz-step bz-cat-tint ps-3"
       data-module={sheet?.module}
       data-cat={categoryOf(step.slug)}
       data-tier={step.tier}

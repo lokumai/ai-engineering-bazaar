@@ -360,13 +360,13 @@ test('every control reaches the §10.4 touch floor below 768px', async ({ page }
   const controls = await page
     // `.hl-icon-btn` was in this list and exists nowhere in `src/` — a dead
     // entry contributes no nodes and no failure, so it read as coverage while
-    // being none. `.hl-button` is real but belongs to `MermaidFigure`'s expand
+    // being none. `.bz-btn bz-btn-quiet` is real but belongs to `MermaidFigure`'s expand
     // overlay, which is unstyled until stage 10 and closed on load, so
     // `checkVisibility()` filters it out today and it will start being measured
     // the moment that overlay is built. Both facts are worth writing down,
     // because the guard below counts what survived and would otherwise make
     // this look thinner than it is.
-    .locator('.bz-slab-copy, .bz-caption-action, .hl-button')
+    .locator('.bz-slab-copy, .bz-caption-action, .bz-btn bz-btn-quiet')
     // A control the reader cannot reach has no floor to meet. §12 added a
     // `Keyboard shortcuts` trigger that is `display: none` below 768px — a
     // table of keystrokes is a control for a device with keys — and an
@@ -451,8 +451,8 @@ test('the module gives up its zones in §4.7 order as the viewport narrows', asy
 test('the draft module keeps its band and schedule at every width', async ({ page }) => {
   const width = page.viewportSize()!.width
   await page.goto(A4.path)
-  await expect(page.locator('.hl-status-band')).toBeVisible()
-  await expect(page.locator('table.hl-schedule')).toBeVisible()
+  await expect(page.locator('.bz-status-band')).toBeVisible()
+  await expect(page.locator('table.bz-schedule')).toBeVisible()
   await expect(page.locator('.bz-aside')).toHaveCount(0)
 
   const curriculum = page.locator('.bz-rail')

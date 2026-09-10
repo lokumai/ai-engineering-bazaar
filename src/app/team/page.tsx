@@ -64,7 +64,7 @@ export default function TeamPage() {
 
   return (
     <PageShell column={false} sheet="TEAM">
-      <p className="hl-eyebrow text-mark">SCOPED BY RLS · NOT BY THIS PAGE</p>
+      <p className="bz-facts">Scoped by RLS · not by this page</p>
 
       <h1 className="bz-display">Team</h1>
 

@@ -105,10 +105,14 @@ export const metadata: Metadata = {
  * its own and names the reader's act as the thing that moves it, which is the
  * sequence-of-states shape `RECORD_SCOPE` and `ALIAS_SCOPE` both use.
  */
+/** The doors table's two column widths, and the only place they are stated. */
+const DOOR_LABEL_WIDTH = 220
+const DOOR_COL_WIDTH = 140
+
 export default function SignInPage() {
   return (
     <PageShell sheet="SIGN IN">
-      <p className="hl-eyebrow text-mark">OPTIONAL · NOTHING IS GATED BEHIND IT</p>
+      <p className="bz-facts">Optional · nothing is gated behind it</p>
 
       <h1 className="bz-display">Sign in</h1>
 
@@ -232,25 +236,33 @@ export default function SignInPage() {
             because a scroll container a keyboard cannot reach is unusable
             (§10.3). */}
         <div
-          className="hl-index-scroll"
+          className="bz-table-scroll"
           role="region"
           tabIndex={0}
           aria-label="What each sign-in door does"
           data-hl-scroller=""
         >
-          <table className="hl-index">
+          <table
+            className="bz-table"
+            style={
+              { '--bz-table-min': `${DOOR_LABEL_WIDTH + DOOR_CONSEQUENCES.length * DOOR_COL_WIDTH}px` } as React.CSSProperties
+            }
+          >
             <caption className="sr-only">
               {`One row per door, and six consequences read across. ${DOOR_CONSEQUENCES
                 .map((consequence) => consequence.question)
                 .join(' ')}`}
             </caption>
             <colgroup>
-              {/* Sums to `.hl-index`'s hand-computed 1060px `min-width`:
-                  220 + six columns of 140. Below that the table scrolls
-                  rather than crushing `In your orgs` into three lines. */}
-              <col style={{ width: '220px' }} />
+              {/* The minimum is COMPUTED from these two widths and the number
+                  of doors, above, rather than restated as `1060px` in a
+                  comment — which is what this said, in the third of three
+                  files repeating that arithmetic against a rule stage 0 had
+                  deleted. Below the sum the table scrolls rather than crushing
+                  `In your orgs` into three lines. */}
+              <col style={{ width: `${DOOR_LABEL_WIDTH}px` }} />
               {DOOR_CONSEQUENCES.map((consequence) => (
-                <col key={consequence.id} style={{ width: '140px' }} />
+                <col key={consequence.id} style={{ width: `${DOOR_COL_WIDTH}px` }} />
               ))}
             </colgroup>
             <thead>
@@ -265,8 +277,8 @@ export default function SignInPage() {
             </thead>
             <tbody>
               {DOOR_ROWS.map((row) => (
-                <tr key={row.id} className="hl-row">
-                  <th scope="row" className="hl-row-title">
+                <tr key={row.id} className="bz-row">
+                  <th scope="row" className="bz-row-title">
                     {row.label}
                   </th>
                   {/* One ink for all four answers, and the word is the whole

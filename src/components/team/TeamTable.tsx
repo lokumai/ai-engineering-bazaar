@@ -1,5 +1,6 @@
 'use client'
 
+import type React from 'react'
 import { useCallback, useEffect, useState } from 'react'
 import { selectAttention } from '@/lib/record/attention'
 import type { CurriculumFacts } from '@/lib/record/derive'
@@ -60,16 +61,45 @@ import { PersonDetail } from './PersonDetail'
  * is not the same statement as "your org has no members".
  */
 
-/** The columns, summing to `.hl-index`'s hand-computed 1060px `min-width`. */
-const COLUMNS: ReadonlyArray<{ key: string; label: string; width: number | null }> = [
+/**
+ * The columns, and the minimum width is TAKEN FROM THEM rather than typed
+ * beside them.
+ *
+ * This said "summing to `.bz-table`'s hand-computed 1060px `min-width`", and
+ * three things were wrong with that. The rule carrying the 1060 was in a
+ * stylesheet stage 0 deleted, so the minimum did not exist and nothing forced
+ * the horizontal scroll the `role="region"` container was built to hold. Two
+ * other surfaces repeated the same number with their own arithmetic —
+ * `PersonDetail` sums 300+230+200+330 and `sign-in` sums 220 plus six columns
+ * of 140. And these six do not come to 1060 at all: they come to 920 plus one
+ * flexible column, which is why the comment could be wrong for as long as it
+ * liked without anything noticing.
+ *
+ * `SheetIndex` fixed this for the catalog in stage 4 and named the pattern:
+ * the columns declare their widths, the sum is taken once, and it reaches the
+ * stylesheet as `--bz-table-min`. The flexible column declares a `floor`
+ * instead — the number it may not shrink below, which is what the hand
+ * arithmetic used to supply. MEASURED: 920 fixed plus a 140 floor is 1,060, so
+ * the table is exactly as wide as it always claimed to be, and now nobody has
+ * to check that again.
+ */
+const COLUMNS: ReadonlyArray<{
+  key: string
+  label: string
+  width: number | null
+  floor?: number
+}> = [
   { key: 'member', label: 'Member', width: 220 },
   { key: 'github', label: 'GitHub', width: 150 },
   { key: 'progress', label: 'Progress', width: 110 },
   // §14.8.2's two columns. Adjacent, equally weighted, never merged.
   { key: 'claim', label: 'Claim', width: 190 },
   { key: 'evidence', label: 'Evidence', width: 250 },
-  { key: 'attention', label: 'Attention', width: null },
+  { key: 'attention', label: 'Attention', width: null, floor: 140 },
 ]
+
+/** The sum the stylesheet is handed, from the table it is about to draw. */
+const MIN_WIDTH = COLUMNS.reduce((total, col) => total + (col.width ?? col.floor ?? 0), 0)
 
 /** §14.8.1 — how many flags fit in a 52px-ish row before the rest is counted. */
 const FLAGS_IN_ROW = 2
@@ -219,14 +249,14 @@ function MemberRow({
       : []
 
   return (
-    <tr className="hl-row">
-      <th scope="row" className="hl-row-title">
+    <tr className="bz-row">
+      <th scope="row" className="bz-row-title">
         {/* The whole row is the link target, as everywhere else on the site.
             It is a real `href` so it can be middle-clicked and copied, and the
             handler cancels the navigation so the query the island already
             answered is not thrown away and re-issued. */}
         <a
-          className="hl-row-link"
+          className="bz-row-link"
           href={`?u=${encodeURIComponent(member.userId)}`}
           onClick={(event) => {
             if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return
@@ -238,7 +268,7 @@ function MemberRow({
         </a>
       </th>
 
-      <td className="hl-row-context text-mark">
+      <td className="bz-row-context text-mark">
         {login === undefined || login === null ? (
           // §14.8.2 — no login means the submittal check cannot run, and the
           // cell says which of the two it is rather than printing a dash.
@@ -264,7 +294,7 @@ function MemberRow({
       </td>
 
       {/* §14.8.2 — THE CLAIM. The reader's own assertion, and labelled as one. */}
-      <td className="hl-row-context text-mark">
+      <td className="bz-row-context text-mark">
         {member.record.kind !== 'record' ? (
           <span className="text-on-surface-muted">—</span>
         ) : latestSignOff(member.record.data) === null ? (
@@ -277,7 +307,7 @@ function MemberRow({
       {/* §14.8.2 — THE EVIDENCE. A separate column, never folded into the one
           on its left: the left column is what this person says about
           themselves, this one is what can be checked independently of them. */}
-      <td className="hl-row-context text-mark">
+      <td className="bz-row-context text-mark">
         {member.record.kind !== 'record' ? (
           <span className="text-on-surface-muted">—</span>
         ) : (
@@ -289,7 +319,7 @@ function MemberRow({
         )}
       </td>
 
-      <td className="hl-row-context text-mark">
+      <td className="bz-row-context text-mark">
         {computed === null ? (
           <span className="text-on-surface-muted">—</span>
         ) : (
@@ -426,13 +456,16 @@ export function TeamTable({ facts }: { facts: CurriculumFacts }) {
           </p>
         ) : (
           <div
-            className="hl-index-scroll"
+            className="bz-table-scroll"
             role="region"
             tabIndex={0}
             aria-label="Organisation roster"
             data-hl-scroller=""
           >
-            <table className="hl-index">
+            <table
+              className="bz-table"
+              style={{ '--bz-table-min': `${MIN_WIDTH}px` } as React.CSSProperties}
+            >
               <caption className="sr-only">
                 One row per member: progress, the claim, the evidence beside it,
                 and what needs attention.

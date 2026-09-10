@@ -380,3 +380,174 @@ describe('every styling reference in the markup resolves against the language', 
     expect(referenced.length, 'nothing references the exempted family').toBeGreaterThan(0)
   })
 })
+
+/**
+ * The other direction: every `bz-` class the markup carries has a RULE.
+ *
+ * `styling-references.test.ts` above catches a Tailwind utility named after a
+ * token the language does not declare, because such a utility emits nothing at
+ * all. `category-css.test.ts` catches the reverse for the generated sheet — a
+ * selector naming a class no component emits. This is the third corner: a class
+ * a component emits that no stylesheet answers to.
+ *
+ * It is the failure M16 spent ten stages undoing. Stage 0 deleted eleven
+ * stylesheets and left every class name in the markup, so for one commit the
+ * entire interface was unstyled semantic HTML and nothing in the suite said so:
+ * no typecheck, no build error, no red test. A class nobody styles is not an
+ * error to any tool in this project except this one.
+ *
+ * Two things are deliberately not failures here. A class that exists only to be
+ * queried — by a test, an island or a keyboard handler — carries no design and
+ * needs no rule, so `MECHANISM` lists those with a reason. And a Tailwind
+ * utility is not a `bz-` class, so it is out of scope by construction.
+ */
+describe('every bz- class in the markup has a rule somewhere', () => {
+  /** Classes that exist to be queried rather than to be drawn, and by what. */
+  const MECHANISM: Readonly<Record<string, string>> = {
+    'bz-row-title':
+      'The row\'s heading cell. Its type is set by `.bz-table tbody th` rather '
+      + 'than by this class, deliberately: a rule qualified by `tbody th` beats '
+      + 'a bare class and the two fought when both existed. What the class is '
+      + 'for is being asked about — by four specs and by the sign-off island.',
+  }
+
+  const languageAndSurfaces = (() => {
+    let css = readFileSync(join(ROOT, 'src/design/bazaar.css'), 'utf8')
+    for (const name of readdirSync(SURFACE_DIR)) {
+      if (name.endsWith('.css')) css += readFileSync(join(SURFACE_DIR, name), 'utf8')
+    }
+    return withoutComments(css)
+  })()
+
+  /** Every class name any rule in the language or a surface mentions. */
+  const styled = new Set(
+    [...languageAndSurfaces.matchAll(/\.(bz-[a-z0-9-]+)/g)].map((match) => match[1]),
+  )
+
+  /** Every `bz-` class any component puts in a `className`. */
+  const emitted = (() => {
+    const found = new Map<string, string>()
+    for (const file of FILES) {
+      const source = readFileSync(file, 'utf8')
+      for (const attribute of source.matchAll(
+        /className\s*=\s*(?:"([^"]*)"|\{([^}]*)\})/g,
+      )) {
+        const value = attribute[1] ?? attribute[2] ?? ''
+        for (const token of value.matchAll(/\b(bz-[a-z0-9-]+)/g)) {
+          if (!found.has(token[1])) found.set(token[1], relative(ROOT, file))
+        }
+      }
+    }
+    return found
+  })()
+
+  it('reads both sides at all', () => {
+    // Two empty sets agree about everything.
+    expect(styled.size, 'no bz- selectors found').toBeGreaterThan(150)
+    expect(emitted.size, 'no bz- classes found in markup').toBeGreaterThan(120)
+  })
+
+  it('leaves no class in the markup that nothing draws', () => {
+    const unstyled = [...emitted]
+      .filter(([name]) => !styled.has(name) && !(name in MECHANISM))
+      .map(([name, file]) => `${name} (${file})`)
+      .sort()
+    expect(unstyled, 'these classes are in the markup and no rule answers to them').toEqual([])
+  })
+
+  it('carries no stale mechanism exemption', () => {
+    const stale = Object.keys(MECHANISM).filter((name) => styled.has(name))
+    expect(stale, 'exempted as mechanism, but a rule draws it now').toEqual([])
+  })
+
+  it('exempts nothing the markup does not carry', () => {
+    const unknown = Object.keys(MECHANISM).filter((name) => !emitted.has(name))
+    expect(unknown, 'exempted, but no component emits it').toEqual([])
+  })
+
+  it('gives every mechanism exemption a reason', () => {
+    for (const [name, why] of Object.entries(MECHANISM)) {
+      expect(why.length, `${name} is exempted with no reason`).toBeGreaterThan(40)
+    }
+  })
+})
+
+/**
+ * M16's FIRST CLOSING CONDITION, and it had no test.
+ *
+ * `logs/PROGRESS.md` says the milestone is done when "no `hl-` class [is] in
+ * any `className`", and nothing under `tests/` asserted it. The meter everyone
+ * quoted did not measure it either: `grep -rho '\bhl-[a-z0-9-]*'` counted 1,045
+ * in markup, of which 158 were `data-hl-*` attribute names and the rest
+ * included the `<html>` stamps — all mechanism, all permanent, so that number
+ * could never reach zero and reaching for it would mean renaming the pre-paint
+ * script's stamps and breaking channel A silently.
+ *
+ * **What is in scope is a CLASS.** `hl-` survives on purpose in three places
+ * and each is checked below rather than merely excluded: the twenty-six
+ * `data-hl-*` attributes that islands and specs query, the three `<html>`
+ * stamps whose pattern `stamp.ts` owns, and the storage keys, whose prefix
+ * `tests/e2e/record.ts` calls "the only isolation available on a shared
+ * `github.io` origin". Renaming any of those buys a reader nothing and costs
+ * either a keyboard shortcut, a mark that is right in frame one, or every
+ * existing reader's record.
+ *
+ * The extraction is the same one the sweeps above use, and it reads the `{…}`
+ * expression form as well as the three quoted ones — so `className={cond ?
+ * 'a' : 'b'}` and `className={clsx(…)}` are covered, which the token sweep's
+ * own regex is not and which would have made a naive port of this under-count
+ * and pass early.
+ */
+describe('M16 closing condition: the retired vocabulary is out of the markup', () => {
+  const classes = (() => {
+    const found = new Map<string, string[]>()
+    for (const file of FILES) {
+      const source = readFileSync(file, 'utf8')
+      for (const attribute of source.matchAll(
+        /className\s*=\s*(?:"([^"]*)"|\{([^}]*)\})/g,
+      )) {
+        const value = attribute[1] ?? attribute[2] ?? ''
+        for (const token of value.matchAll(/\bhl-[a-z0-9-]+/g)) {
+          const where = found.get(token[0]) ?? []
+          where.push(relative(ROOT, file))
+          found.set(token[0], where)
+        }
+      }
+    }
+    return found
+  })()
+
+  it('reads the markup at all', () => {
+    // The condition is "zero", and zero is what an extraction that reads
+    // nothing also reports. So this states what it did read.
+    expect(FILES.length, 'no source files walked').toBeGreaterThan(50)
+    const anyClass = FILES.some((file) => /className\s*=/.test(readFileSync(file, 'utf8')))
+    expect(anyClass, 'no className attribute found anywhere').toBe(true)
+  })
+
+  it('has no hl- class left in any className', () => {
+    const remaining = [...classes]
+      .map(([name, files]) => `${name} (${[...new Set(files)].join(', ')})`)
+      .sort()
+    expect(remaining, 'the retired vocabulary is still in the markup').toEqual([])
+  })
+
+  it('keeps the mechanism vocabulary, which is not in scope and must not move', () => {
+    const source = FILES.map((file) => readFileSync(file, 'utf8')).join('\n')
+
+    // The attributes islands, handlers and specs query.
+    const attributes = new Set(
+      [...source.matchAll(/data-(hl-[a-z-]+)/g)].map((match) => match[1]),
+    )
+    expect(attributes.size, 'the data-hl-* vocabulary has gone missing').toBeGreaterThan(20)
+
+    // The three stamped families, whose pattern `stamp.ts` owns. Read from
+    // there rather than restated, so this cannot drift from the writer.
+    const owned = readFileSync(join(ROOT, 'src/lib/record/stamp.ts'), 'utf8')
+    expect(owned).toContain('hl-(?:signed-\\d+|cat-[a-z0-9-]+-(?:started|complete)|role-[a-z-]+)')
+
+    // And the storage keys, which are the reader's own data.
+    const schema = readFileSync(join(ROOT, 'src/lib/record/schema.ts'), 'utf8')
+    expect(schema).toContain("'hl-record'")
+  })
+})

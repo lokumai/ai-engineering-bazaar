@@ -330,7 +330,7 @@ test('a row in the manifest is one tab stop, and it is reachable', async ({ page
 
 test('the schedule of parts and the manifest are named tables', async ({ page }) => {
   await page.goto(A4.path)
-  await expect(page.locator('table.hl-schedule caption')).toHaveText(/schedule of parts/i)
+  await expect(page.locator('table.bz-schedule caption')).toHaveText(/schedule of parts/i)
 
   await page.goto(INDEX_SHEET)
   await showTable(page)
@@ -378,8 +378,8 @@ test('the schedule of parts announces its ITEM column legibly (§4.5)', async ({
 
     // Not `aria-hidden`, and the only text under a `<th scope="col">Item</th>`,
     // so it is content: §10.4 puts an 11px mono mark at `ink-muted` or better.
-    await expect(page.locator('.hl-schedule-item').first()).not.toHaveAttribute('aria-hidden')
-    const samples = await contrastSamples(page, '.hl-schedule-item')
+    await expect(page.locator('.bz-schedule-item').first()).not.toHaveAttribute('aria-hidden')
+    const samples = await contrastSamples(page, '.bz-schedule-item')
     expect(samples.length).toBeGreaterThan(0)
     const low = worst(samples)
     expect(low.ratio, `${theme}: ITEM "${low.text}" at ${low.ratio.toFixed(2)}:1`)

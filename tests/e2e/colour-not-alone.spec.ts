@@ -141,7 +141,7 @@ test('LKM-01 still reports every level with no colour (§13.1.3 item 1)', async 
 
   // One row per subsystem, each naming its flavour, its subsystem and its
   // count in words.
-  const legend = page.locator('.hl-legend-swatch')
+  const legend = page.locator('.bz-legend-swatch')
   await expect(legend).toHaveCount(CATEGORY_PATHS.length)
 
   const text = await page.locator('body').innerText()
@@ -188,11 +188,11 @@ test('the swatch is labelled by the row it sits in, never by hue alone', async (
   // carries the flavour name, the subsystem and the count as text. Under forced
   // colours it is a bordered box with the system ground, and the row is
   // unchanged.
-  for (const swatch of await page.locator('.hl-legend-swatch').all()) {
+  for (const swatch of await page.locator('.bz-legend-swatch').all()) {
     await expect(swatch).toHaveAttribute('aria-hidden', 'true')
   }
 
-  const rows = page.locator('tr', { has: page.locator('.hl-legend-swatch') })
+  const rows = page.locator('tr', { has: page.locator('.bz-legend-swatch') })
   await expect(rows).toHaveCount(CATEGORY_PATHS.length)
   for (const row of await rows.all()) {
     // Flavour, subsystem, and a reading: three cells, all of them words.

@@ -292,8 +292,8 @@ export default async function ModuleSheetPage({
             `wide` opens at the point the contents rail goes, `narrow` at the
             point the curriculum list does. */}
         <ContentsDrawer at={drawn ? 'wide' : 'narrow'}>
-          {rail && <div className="hl-drawer-contents">{rail}</div>}
-          <div className="hl-drawer-curriculum">{curriculum}</div>
+          {rail && <div className="bz-drawer-contents">{rail}</div>}
+          <div className="bz-drawer-curriculum">{curriculum}</div>
         </ContentsDrawer>
 
         {/*

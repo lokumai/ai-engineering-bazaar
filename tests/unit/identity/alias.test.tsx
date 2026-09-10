@@ -187,7 +187,7 @@ describe('§15.9.1 — the claims about the record have one author', () => {
   })
 
   it('states the limit before the offer, and never the banned promise (§15.5.4)', () => {
-    expect(words(PAGE)).toContain('LOCAL ONLY')
+    expect(words(PAGE)).toContain('Local only')
     expect(words(PAGE)).not.toMatch(/save your progress/i)
   })
 })

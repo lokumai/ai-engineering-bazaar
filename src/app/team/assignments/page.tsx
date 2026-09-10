@@ -36,7 +36,7 @@ export default function AssignmentsPage() {
 
   return (
     <PageShell column={false} sheet="ASSIGNMENTS">
-      <p className="hl-eyebrow text-mark">ORGANISATION DATA · NOT PART OF A RECORD</p>
+      <p className="bz-facts">Organisation data · not part of a record</p>
 
       <h1 className="bz-display">Assignments</h1>
 

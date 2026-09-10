@@ -339,7 +339,7 @@ describe('MODULE 00 — the legend (§12.13)', () => {
   const markup = renderToStaticMarkup(<LegendPage />)
 
   it('is MODULE 00, and it is a page rather than a gate', () => {
-    expect(markup).toContain('MODULE 00 — LEGEND &amp; SPECIMEN')
+    expect(markup).toContain('Module 00 · legend and specimen')
     // No first-run gate anywhere on this site: no modal, no tour, no step
     // counter, nothing that opens by itself.
     expect(markup).not.toContain('role="dialog"')
@@ -351,11 +351,11 @@ describe('MODULE 00 — the legend (§12.13)', () => {
     // The same classes and the same `data-*` attributes the index rows, the
     // gauges and the dashboard write, so record.css draws the legend from the
     // rules it draws the site from.
-    expect(markup).toContain('class="hl-signoff-square" data-drawn="false"')
-    expect(markup).toContain('class="hl-signoff-square" data-signed="false"')
-    expect(markup).toContain('class="hl-signoff-square" data-signed="true"')
-    expect(markup).toContain('class="hl-gauge-tick" data-state="approved"')
-    expect(markup).toContain('class="hl-gauge-tick" data-state="undrawn"')
+    expect(markup).toContain('class="bz-signoff-square" data-drawn="false"')
+    expect(markup).toContain('class="bz-signoff-square" data-signed="false"')
+    expect(markup).toContain('class="bz-signoff-square" data-signed="true"')
+    expect(markup).toContain('class="bz-gauge-tick" data-state="approved"')
+    expect(markup).toContain('class="bz-gauge-tick" data-state="undrawn"')
     for (const state of ['draft', 'unread', 'started', 'signed']) {
       expect(markup).toContain(`class="bz-diagram-node" data-state="${state}"`)
     }

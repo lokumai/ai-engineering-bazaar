@@ -607,7 +607,7 @@ describe('§12.9.2 — the repository link is reconstructed, never echoed', () =
 describe('§12.1.6, §11.35 — the storage panel prints bytes and nothing else', () => {
   it('draws no percentage, gauge, ring or fill bar', () => {
     expect(STORAGE).not.toContain('%')
-    expect(STORAGE).not.toMatch(/progressbar|meter|hl-gauge|bz-uptime|<svg/)
+    expect(STORAGE).not.toMatch(/progressbar|meter|bz-gauge|bz-uptime|<svg/)
   })
 })
 

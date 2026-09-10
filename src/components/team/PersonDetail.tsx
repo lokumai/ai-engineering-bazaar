@@ -37,13 +37,23 @@ import type { TeamSnapshot } from '@/lib/org/queries'
  * arguments, so the summary above and the table below cannot disagree.
  */
 
-/** SHEET 300 + CLAIM 230 + QUIZ 200 + SUBMITTAL 330 = `.hl-index`'s 1060px. */
+/**
+ * The columns, and the minimum is taken from them.
+ *
+ * This read "SHEET 300 + CLAIM 230 + QUIZ 200 + SUBMITTAL 330 = 1060px", which
+ * was one of three copies of that arithmetic in three files, against a rule
+ * stage 0 had deleted. `SheetIndex` named the pattern in stage 4: the columns
+ * declare their widths and the sum reaches the stylesheet once, as
+ * `--bz-table-min`. MEASURED: still 1,060.
+ */
 const COLUMNS: ReadonlyArray<{ key: string; label: string; width: number }> = [
   { key: 'sheet', label: 'Module', width: 300 },
   { key: 'claim', label: 'Claim', width: 230 },
   { key: 'quiz', label: 'Evidence · quiz', width: 200 },
   { key: 'submittal', label: 'Evidence · submittal', width: 330 },
 ]
+
+const MIN_WIDTH = COLUMNS.reduce((total, col) => total + col.width, 0)
 
 /**
  * §12.6 — the quiz outcome in words.
@@ -99,8 +109,8 @@ function ClaimRow({ row, login }: { row: SheetClaimRow; login: string | null }) 
   const submittal = submittalWords(row.submittal)
 
   return (
-    <tr className="hl-row">
-      <th scope="row" className="hl-row-title">
+    <tr className="bz-row">
+      <th scope="row" className="bz-row-title">
         <span className="text-mark block text-on-surface-muted">
           {row.module === null ? 'NOT IN THIS CORPUS' : `MODULE ${String(row.module).padStart(2, '0')}`}
         </span>
@@ -109,18 +119,18 @@ function ClaimRow({ row, login }: { row: SheetClaimRow; login: string | null }) 
 
       {/* §14.8.2 — THE CLAIM: an instant the reader asserted, and the revision
           they asserted it against (§12.4.3). Never a tick. */}
-      <td className="hl-row-context text-mark">
+      <td className="bz-row-context text-mark">
         {`COMPLETED ${day(row.signedOff)}`}
         <span className="block text-on-surface-muted">
           {row.signedRevision === null ? 'NO REV RECORDED' : `REV ${row.signedRevision}`}
         </span>
       </td>
 
-      <td className={`hl-row-context text-mark ${quiz.muted ? 'text-on-surface-muted' : ''}`}>
+      <td className={`bz-row-context text-mark ${quiz.muted ? 'text-on-surface-muted' : ''}`}>
         {quiz.text}
       </td>
 
-      <td className="hl-row-context text-mark">
+      <td className="bz-row-context text-mark">
         <span className={submittal.muted ? 'text-on-surface-muted' : undefined}>{submittal.text}</span>
         {/* The reason, always — §14.8's rule that a flag is never a bare glyph.
             The owners are printed as recorded, so a manager can see that
@@ -337,13 +347,16 @@ function PersonBody({
         </p>
       ) : (
         <div
-          className="hl-index-scroll"
+          className="bz-table-scroll"
           role="region"
           tabIndex={0}
           aria-label={`Claims and evidence for ${memberLabel(member)}`}
           data-hl-scroller=""
         >
-          <table className="hl-index">
+          <table
+            className="bz-table"
+            style={{ '--bz-table-min': `${MIN_WIDTH}px` } as React.CSSProperties}
+          >
             <caption className="sr-only">
               One row per completion: the claim, and the evidence beside it.
             </caption>

@@ -324,7 +324,7 @@ test.describe('§15.4 /sign-in/alias/', () => {
 
     // Colour is never the only signal (T6): the word carries it and the
     // caution ink only agrees. So the word must be readable text, not a class.
-    const status = stamp.locator('.hl-title-block-row', { hasText: 'Status' })
+    const status = stamp.locator('.bz-defs-row', { hasText: 'Status' })
     await expect(status).toContainText(UNVERIFIED)
   })
 })

@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { NOT_A_SURFACE } from './surfaces'
 
 /**
  * The discipline a SURFACE stylesheet is held to, as opposed to the language.
@@ -40,7 +41,6 @@ import { describe, expect, it } from 'vitest'
 const APP_DIR = join(import.meta.dirname, '../../../src/app')
 
 /** The entry point and the generated per-module sheet are not surfaces. */
-const NOT_A_SURFACE = new Set(['globals.css', 'lokum-modules.css'])
 
 interface Surface {
   readonly name: string
@@ -80,6 +80,68 @@ describe('a surface stylesheet arranges the language, it does not extend it', ()
    * excluded, every rule below would start failing for the wrong reason and the
    * failure would read as a defect in a surface.
    */
+  /**
+   * M16's SECOND CLOSING CONDITION, restated — because as written it was the
+   * opposite of the architecture.
+   *
+   * `logs/PROGRESS.md` says the milestone is done when there is "no stylesheet
+   * in `src/app/` but the entry point and the generated sheet". Read literally
+   * that is five over today and would have been ten over when the milestone
+   * finished, because M16's own method is one surface stylesheet per rebuilt
+   * surface in exactly that directory — `globals.css` says so in as many
+   * words, and this file's six discipline rules exist to hold them to
+   * arranging the language rather than extending it.
+   *
+   * What the condition MEANT is that none of the eleven retired stylesheets
+   * remains, which has been true since stage 0 deleted them: `figure`, `home`,
+   * `lokum`, `manifest`, `profile`, `record`, `sheet`, and the two that were
+   * later re-authored from a mockup rather than restored. That is what is
+   * checked here, by name, plus the shape the condition was reaching for: the
+   * directory holds the entry point, the generated sheet, and surfaces.
+   */
+  it('declares no rule for the retired vocabulary, and holds nothing but surfaces', () => {
+    /*
+      THE CONDITION IS ABOUT THE VOCABULARY, NOT THE FILENAMES, and getting
+      that wrong is instructive: a first pass listed the eleven retired
+      stylesheets by name and went red on `home.css`, which stage 9 had just
+      re-authored from `08`. `globals.css` states the actual rule — "a rule
+      from the old set earns its place back only by being re-derived from a
+      mockup" — and `prose.css` and `rail.css` are two more files that did
+      exactly that. A name is not a design; 386 class selectors were.
+
+      So what is checked is that no surface declares a rule for a class from
+      the retired vocabulary. The one exception is the generated sheet, which
+      is not a surface and whose `html.hl-signed-<n>` keys are the pre-paint
+      stamps rather than authored classes.
+    */
+    /*
+      THE THREE STAMPED FAMILIES ARE NOT THE RETIRED VOCABULARY, and a surface
+      keying on them is the whole of channel A: `html.hl-cat-<slug>-started`
+      reveals a level's face, `html.hl-role-<id>` reveals one of nine paths,
+      and `html.hl-signed-<n>` reveals a completion mark. They are stamps the
+      pre-paint script writes, not classes a component authors, and their
+      pattern is `stamp.ts`'s — read from there rather than restated, so this
+      cannot drift from the writer that owns it.
+    */
+    const owned = /^hl-(?:signed-\d+|cat-[a-z0-9-]+-(?:started|complete)|role-[a-z-]+)$/
+    for (const { name, css } of SURFACES) {
+      const retired = [...new Set([...css.matchAll(/\.(hl-[a-z0-9-]+)/g)].map((m) => m[1]))]
+        .filter((one) => !owned.test(one))
+      expect(retired, `${name} styles the retired vocabulary`).toEqual([])
+    }
+
+    // And every file in `src/app/` that is not one of the two is a surface
+    // this file checks, which is what makes the discipline rules exhaustive
+    // rather than a list somebody maintains.
+    const present = readdirSync(APP_DIR).filter((name) => name.endsWith('.css'))
+    const checked = new Set(SURFACES.map((one) => one.name))
+    for (const name of present) {
+      if (NOT_A_SURFACE.has(name)) continue
+      expect(checked, `${name} is in src/app/ and no rule holds it to anything`).toContain(name)
+    }
+    expect(present.length, 'src/app/ has no stylesheets at all').toBeGreaterThan(2)
+  })
+
   it('excludes the entry point and the generated sheet from what it checks', () => {
     const app = readdirSync(APP_DIR).filter((name) => name.endsWith('.css'))
     expect(app, 'the entry point is still where it was').toContain('globals.css')

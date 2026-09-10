@@ -27,9 +27,9 @@ export interface DependencyRelation {
 
 function Relation({ label, targets }: DependencyRelation) {
   return (
-    <div className="hl-dep-row">
-      <span className="text-mark hl-dep-label">{label}</span>
-      <span className="hl-dep-values">
+    <div className="bz-dep-row">
+      <span className="text-mark bz-dep-label">{label}</span>
+      <span className="bz-dep-values">
         {targets.length === 0 ? (
           <>
             {/* An em dash reads as punctuation, so the fact is spelled out
@@ -43,7 +43,7 @@ function Relation({ label, targets }: DependencyRelation) {
               {i > 0 && <span aria-hidden="true">, </span>}
               <Link
                 href={target.path}
-                className={target.draft ? 'hl-hidden-x' : 'bz-link'}
+                className={target.draft ? 'bz-hidden-x' : 'bz-link'}
                 data-draft={target.draft ? '' : undefined}
                 title={
                   target.draft

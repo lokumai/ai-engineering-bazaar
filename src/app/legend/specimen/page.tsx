@@ -50,7 +50,7 @@ export default function SpecimenPage() {
 
   return (
     <PageShell sheet="MODULE 00 · SPECIMEN">
-      <p className="hl-eyebrow text-mark">MODULE 00 — LEGEND &amp; SPECIMEN</p>
+      <p className="bz-facts">Module 00 · legend and specimen</p>
 
       <h1 className="bz-display">Specimen record</h1>
 

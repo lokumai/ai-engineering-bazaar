@@ -38,7 +38,8 @@ by an agent, out of a conversation — nobody maintains them by hand. Your job i
 - **Before proposing or building anything:** `specs/MANIFESTO.md` for the boundary you may not cross, and
   the active `logs/BRAINSTORM.md` to check whether your idea was already considered and rejected.
 - **Before touching anything structural:** `specs/ARCHITECTURE.md`.
-- **Every session:** `logs/PROGRESS.md` holds the current milestone, its deliverables and their
+- **Every session:** `logs/PROGRESS.md` **and its later parts** hold the current milestone, its
+  deliverables and their
   acceptance criteria — what is being built, and how far it got. How to work through it is written in
   that file, not here.
 - **Every file states its own terms.** Its frontmatter says how binding it is, who may write to it,

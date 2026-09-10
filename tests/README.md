@@ -79,6 +79,37 @@ checked one direction, because the reverse is noise from incidental padding; and
 each primitive is resolved through its own file's token map and compared to the
 other's, so the mockup stays the only source of every number.
 
+**M16 grew it to five reference documents and three registries, and made D31
+mechanical.** The harness knows which mockup specifies which role, and **a role
+whose reference is not the shell may carry no colour fact at all** — so a
+component mockup can only ever be compared on lengths and type steps, which is
+what stops a green accent arriving on a powder ground. Beside that,
+`WITHOUT_REFERENCE` holds a component no mockup draws and `NARROW_DEVIATIONS` a
+fact that stops being specified below the language's own lower breakpoint; every
+entry states a reason, and a guard fails any narrow deviation that has stopped
+deviating, because a stale exemption hides the next difference.
+
+**Not every mockup value is a fact to compare, and deciding which is the
+judgement the harness cannot make.** Three kinds are deliberately not roles, and
+each is recorded where it would otherwise look forgotten. A value snapped to a
+closed scale — a `700` weight where the language's emphatic weight is `600`, a
+24px numeral where the nearest step is 25 — was always going to differ, so
+comparing it is an exemption waiting to be written rather than a comparison. A
+measure declared in `ch` resolves against the element's own font, so the same
+rule computes two different numbers in two documents. And a modifier whose
+geometry comes from the shell cannot be compared to a component mockup's version
+of the same control: that is comparing two mockups to each other.
+
+**Three guards cover one failure from three sides, and none of them is an error
+to any other tool in this project.** `unit/design/styling-references.test.ts`
+refuses a utility named after a token the language does not declare — such a
+utility emits nothing at all — **and** a `bz-` class no stylesheet answers to,
+which is the state the whole interface was in for one commit after stage 0
+deleted the eleven stylesheets. `unit/color/category-css.test.ts` refuses a
+generated selector no component carries, which four of its five groups were for
+four commits. Together they are why "the build is green" now means something
+about the design and not only about the code.
+
 The browser half reads the design-carrying facts off a live page and diffs two
 pages. It is **keyed by role with a selector map per document** — the mockup
 calls the bar `.top` and the application is free to call it anything, which is

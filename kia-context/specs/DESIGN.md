@@ -11,7 +11,7 @@ source: playground/01-theme-T4-ground-G3-powder.html (light) · playground/01-th
 authority: blueprint
 writes: agent, as the language evolves
 status: active
-covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling — 2026-09-09"
+covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-10"
 last_updated: 2026-09-10
 ---
 
@@ -35,6 +35,12 @@ colors:
   success: "#2F8C86"
   caution: "#B8873B"
   on-caution: "#20201C"
+  # A destructive control, and a GRAPHIC token: an edge, a rule or a mark, and
+  # never type. MEASURED 5.48:1 on `surface` in light and 3.02:1 on
+  # `surface-raised` in dark — a 3:1 graphical floor in both themes and a 4.5:1
+  # text floor in only one. Its value is `category-5`'s and `focus`'s; three
+  # names, one hex, three distinct jobs.
+  fault: "#A0503C"
   ornament: "#C8A078"
   bar: "#282864"
   on-bar: "#FFFFFF"
@@ -91,6 +97,8 @@ dark:
   success: "#2F8C86"
   caution: "#B8873B"
   on-caution: "#20201C"
+  # GRAPHIC only, never type: 3.02:1 on `surface-raised` in dark.
+  fault: "#AD5B47"
   ornament: "#C8A078"
   category-1: "#2F8C86"
   category-2: "#676DAF"
@@ -579,6 +587,41 @@ reader can skip.
 the same dark palette, and **its contents scroll inside the frame** — a diagram wider than the
 column never widens the page. **The caption is outside the frame**, because it is page ink and would
 be unreadable inside it.
+
+**Progress, and the two shapes it takes.** A `track` is a two-tone bar: a sunken groove, a fill in
+the group's own hue, and — where a group holds things nobody has written yet — a hatched tail rather
+than a third colour, because colour is never the only signal. It comes in a **seam**, square and
+flush under a coloured header, and a **bar**, rounded and standing alone in a row. A `dial` is the
+same reading as a ring: a conic sweep with an opaque disc knocked out of its middle, holding the
+count in words. **The shell mockup contains neither** — it states progress textually, as `3/8` — so
+both are derived from the four component mockups, and the choice between two heights and two radii
+is recorded where they are declared.
+
+**A dial needs a NUMBER before first paint**, which is the one thing channel A was thought not to be
+able to carry. CSS cannot count, and that is why the segmented meter exists; the pre-paint script
+can, and it sets one custom property per group. So a `dial` is bound by the same surface that binds
+its hue, and a group with nothing bound reads empty — which is the true statement rather than an
+absent value.
+
+**A panel is a card with the corner straightened.** Same hairline, same raised fill, a plain radius
+instead of the asymmetric `leaf` — because `leaf` is a callout and a settings panel is a container.
+It carries a `panel-title`, an optional note, and whatever the surface puts inside it.
+
+**A field is the one primitive the shell mockup has no example of.** It has no `<input>` anywhere: its
+search is a `div` dressed as a field. So the field is transcribed from the one mockup that draws a
+real one, and every length it gives it lands on the scale already — the control step for its type,
+the `lg` radius, a 96px label gutter. It has no focus rule of its own; the ring is clay precisely so
+that nothing has to restyle it. **It grows to the touch floor below the phone breakpoint**, which is
+a measured accessibility floor outranking a transcribed height.
+
+**A table scrolls inside its own box and states its own minimum.** The minimum is the sum of the
+column widths, computed by the component from the columns it is about to draw and handed to the
+stylesheet as one custom property — never written down beside them, which is how three surfaces came
+to repeat one number and one of them to be wrong about it.
+
+**A destructive control is a quiet button with a tinted edge.** Not a filled red one: the `fault` hue
+is a graphic token and its label stays ordinary ink, so the meaning is the word, then the edge, then
+the hue. "Erase everything" is the signal and the colour agrees with it.
 
 **A figure REBINDS the page's palette onto itself, and that is the mechanism the whole diagram
 treatment rests on.** A drawing is inline SVG generated in the browser, and a diagram library's own

@@ -11,8 +11,8 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-09, with M9 to M14 shipped
-last_updated: "2026-09-09"
+covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language
+last_updated: "2026-09-10"
 ---
 
 # 🏗️ ARCHITECTURE — How this project is built
@@ -373,6 +373,23 @@ Both are needed and neither replaces the other.
   spring open on every load for exactly the readers who asked for it to be shut.
 - **Channel B** — React islands after mount. `getServerSnapshot` returns a frozen empty record,
   because the prerendered HTML has never met the reader.
+
+**Channel A stamps one NUMBER, and everything else it stamps is a class.** The reason every other
+reading is a class is that **CSS cannot count**: a rule can match `html.hl-signed-13` against
+`[data-module="13"]` but it cannot compare the two, which is why the per-module lists are generated
+and why the segmented meter draws one element per module rather than a bar. The CHANNEL can count,
+though — it is a script, and it holds the per-category totals the factory embedded — so
+`--bz-done-<slug>` is set on `<html>` as a percentage, and a surface joins it to the `--bz-done` the
+design language declares. It is what makes a proportional ring correct in frame one instead of
+animating in after hydration, which §12.2 forbids for a mark a reader sees.
+
+Two things follow and both cost something when they were missed. **`src/lib/record/stamp.ts` carries
+the same derivation for after mount**, with the removal half channel A never needs, and both suites
+cross-test the two implementations over the same records — the failure mode is a reading that is
+right on load and wrong the moment the reader acts, which a reload hides. And **the emitted script is
+wrapped in one `try`**, so a `documentElement` fake that is missing `style` does not merely lose the
+properties: the throw abandons the loop they are set in and the remaining categories silently lose
+their classes too. Two test harnesses were in that state.
 
 Anything derived belongs in exactly one file: `derive.ts` (how far along), `attention.ts` (what
 "stalled" means), `scope.ts` (where the record goes), `storage.ts` (what a write means).

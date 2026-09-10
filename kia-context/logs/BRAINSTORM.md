@@ -9,7 +9,7 @@ description: >
 authority: background
 writes: agent, whenever a decision is made
 status: active
-covers: D1 to D45
+covers: D1 to D53
 last_updated: 2026-09-10
 ---
 
@@ -1301,3 +1301,194 @@ the table's column headers are sentence case and not `COMPLETION`; a 14px
 completion square takes the smallest radius step and not §5.9's "zero radius,
 everywhere"; and a draft row recedes in its TITLE, as `03` draws it, rather
 than in caution ink on its number, which measured 3.09:1.
+
+### D46 · Channel A can carry a NUMBER, and that is what makes a dial possible — 2026-09-10
+
+`CategoryMeter`'s docblock rules out a proportional meter before first paint:
+*"a bar's length is a computed number and a computed number cannot reach CSS on
+channel A."* It is why that meter draws one segment per module — no arithmetic,
+one selector per module, correct in frame one.
+
+The claim is **true of CSS and not of the channel.** CSS cannot count. The
+channel is a blocking script in `<head>`, and it had already counted: the loop
+that decides `hl-cat-<slug>-started` against `-complete` holds both the
+numerator and the embedded total three lines above the place a percentage would
+be needed.
+
+So the boot script sets one custom property per level, `--bz-done-<slug>`, and
+a `conic-gradient` substitutes it. That is what let `05`-C's ring exist at all:
+a gradient stop is a length, so a ring showing how far a reader has come needs
+a number in the cascade in frame one, and drawing it after mount would put a
+frame-one-visible mark on the channel §12.2 forbids for exactly that.
+
+**Rejected: doing it on channel B.** It is one line of React and it is wrong in
+the way this project has already paid for — `home.spec.ts` asserts completions
+are ticked in frame one with no JavaScript at all, and a ring that animates in
+after hydration is a ring that is empty in the screenshot.
+
+**Rejected: keeping the segments and calling it done.** They are still there and
+still the right answer on the listing pages, where the reading is *which*
+modules rather than how many. But the author chose `05`-C for the overviews, and
+"the mockup is the specification" does not have an exception for "unless the
+architecture would need one line".
+
+Two consequences worth knowing. `--bz-done` is bound per level in
+`category.css`, beside `--bz-cat`, because CSS cannot build a property name out
+of an attribute — the same reason the hue is bound there. And `stamp.ts` grew
+the same derivation for after mount, cross-tested against the script in both
+suites, because the failure mode is a dial that is right in frame one and wrong
+the moment the reader completes something.
+
+### D47 · The mascot leaves the site header, and its state moves to the dial — 2026-09-10
+
+Three tests read `header svg` and asserted things about LKM-01: its per-level
+faces at the structural stroke weight, its hatch on a completed level, and its
+markup being byte-identical across states. All three were red or measuring the
+wrong element, and the reason is that **`01` specifies the brand as a tile** —
+four glazed squares from the same series, one left as an outline — and stage 1
+built that. `features.spec.ts` was asserting real geometry about the tile and
+calling it the mascot.
+
+So the mark moved rather than being lost: 132px in the drafter block on
+`/profile/`, 96px on `/legend/`, exploded on the 404. What it stopped carrying
+is the reader's per-level progress, which is now the dial's job (**D46**) and
+the rail's.
+
+**Rejected: putting the mascot back in the header.** The mockup is the
+specification and it draws a tile. A mark whose faces report progress also puts
+a reading in the one place on every page that is not about the page, which is
+the argument the bar's own sub-palette exists to keep.
+
+The two state tests were re-pointed rather than retired: the faces still carry
+`hl-cat-<slug>-started` and `-complete`, which is a real capability, and they
+are located through their own faces rather than through a wrapper class so the
+anchor survives the next rename.
+
+### D48 · An enumerated state keeps its spelling; everything else stops shouting — 2026-09-10
+
+The interface printed a great deal of text in capitals. Almost none of it was
+written that way: the classes carrying it applied `text-transform: uppercase`,
+and where a string was pre-cased it was to keep the source in step with the
+rule. The design language has no uppercase anywhere — `01:136-137` writes
+`text-transform: none` explicitly on the one element that would have carried
+it — so with the classes gone the page was left shouting in some places and not
+others. `0 of 43 traces` sat next to `2 OF 9 EARNED` on the same page.
+
+**The line, applied throughout:** an enumerated record state keeps its
+spelling, because those are values a reader matches against each other and the
+copy register's rule is that a status has exactly one — `READY`, `PLANNED`,
+`MATCHED`, `UNSIGNED`. **A label, a caption, a sentence, or a count that
+borrows a status word does not.** `19 ready` is a count and `READY` is a cell.
+
+Its sharpest consequence is a test. §16.4.1 says a register row states a count,
+`--`, or a named state and never a sentence of prose — and that rule was
+enforced BY CASING, because capitals were what told the last two apart. In
+sentence case they are the same shape. So the row states which it is in
+`data-reading` and the test asks by that: **ask by location, not by what the
+text says**, which is the third of the four vacuity modes this project has
+already been bitten by.
+
+### D49 · `fault` is a graphic token, and a destructive control says so in words — 2026-09-10
+
+`07:88-89` draws the destructive button as a colour-only modifier: tinted text,
+a tinted hairline, a normal fill. Building it needed a name for the hue, because
+`--color-category-5` holds that value and spending a category hue on a button is
+what `surface-stylesheets.test.ts` forbids — a group's identity is not a
+control's.
+
+So `--color-fault` completes `success` and `caution`. **MEASURED: 5.48:1 on
+`surface` in light and 3.02:1 on `surface-raised` in dark.** It clears a 3:1
+graphical floor in both themes and a 4.5:1 text floor in only one, and a floor
+that holds in one theme is not a floor. Neither mockup ever sets this clay as
+type either, which is the same finding from the other direction: `01` spends it
+on the focus ring and the band, both shapes.
+
+**So the meaning is carried by the word, then the edge, then the hue, in that
+order, and the label stays `on-surface`.** Which is also §13.1.3 applied
+properly: "Erase everything" is the signal and the colour agrees with it.
+
+Three names now share one hex — a group's identity, a focus ring, a fault — and
+that is not a smell: the language already accepted the split when `focus` was
+named rather than spending `category-5` on a ring.
+
+### D50 · A second rendering of one fact is a duplication, even when a mockup draws it — 2026-09-10
+
+`07`-A's progress block is five per-level rails. Stage 7 had already put
+`05`-C's dials on the same page for the same fact, and both mockups are
+ratified for their own surfaces.
+
+**They are not both built.** `07`'s own argument against its variant C is the
+reason: *"Per-level progress is already in the sidebar and the catalog, on every
+page. Repeating it on a page of its own is the duplication that makes the
+dashboard feel pointless."* A mockup that argues against duplication cannot be
+read as requiring it.
+
+So `/profile/` takes `07`'s ORDER — continue, then progress, then settings — and
+`05`-C's rendering of the middle. There is no `progressRow` fidelity role, and
+that absence is recorded beside the roles that exist, because an absent role
+looks identical to a forgotten one.
+
+### D51 · Two consumers means a class moves into the language — 2026-09-10
+
+Stage 4 authored `.bz-track` in `catalog.css` when the board column was its only
+consumer, and `.bz-table*` there too. By stage 10 the rail had four consumers and
+the table had four, and a class defined in one surface stylesheet and used by
+another is precisely what the surface discipline exists to prevent: the second
+surface depends on the first invisibly, and the two drift on the first edit to
+either.
+
+**The rule, applied four times now** — `--bz-cat` out of `rail.css` in stage 5,
+`.bz-track` and `.bz-table*` into the language in stages 7 and 10, and the panel
+and the field authored there directly once four surfaces were known to need
+them: **when a second surface needs it, it moves up.** What stays behind is the
+part that is one surface's subject matter rather than any surface's shape — the
+catalog's topics cell, its status cell, its four sign-off squares.
+
+The counterpart is a guard, because the promotion is invisible otherwise: a
+class a component emits that no stylesheet answers to. It found eight, and it is
+the third corner of the same failure `styling-references.test.ts` and
+`category-css.test.ts` cover from the other two sides.
+
+### D52 · The closing conditions were unsound, and a name is not a design — 2026-09-10
+
+M16's own definition of done had three mechanical tests. Two were wrong, and
+both were only discovered by trying to write them.
+
+**"No `hl-` class in any `className`" had no test, and the meter everybody
+quoted did not measure it.** Of 1,045 occurrences, 158 were `data-hl-*`
+attribute names and the rest included the three `<html>` stamp families — all
+mechanism, all permanent. That number can never reach zero, and driving it there
+would mean renaming the pre-paint script's stamps, the mark picker's form
+control name, or the storage keys, which are the reader's own data. Scoped to a
+class it is 0; the three families that stay are checked against `stamp.ts`'s own
+pattern rather than merely excluded.
+
+**"No stylesheet in `src/app/` but the entry point and the generated sheet" is
+the opposite of M16's method.** Every stage authors one surface stylesheet in
+exactly that directory. A first attempt at the test listed the eleven retired
+stylesheets by name and went red on `home.css`, which stage 9 had just
+re-authored from `08` — and `prose.css` and `rail.css` are two more.
+`globals.css` states the real rule: *a rule from the old set earns its place
+back only by being re-derived from a mockup.* **A name is not a design; 386
+class selectors were.** So the condition is about the vocabulary: no surface
+declares a rule for a retired class.
+
+### D53 · An emoji is not this design's icon, and the tile it sits in survives the swap — 2026-09-10
+
+`08:179-182` draws the four claims on the home page with literal emoji — a
+writing hand, a speech balloon, a ruler, a rising chart — in a 28px tinted tile.
+
+They are replaced by four inline SVGs on a 16-unit viewBox with
+`stroke="currentColor"`, which is the idiom `src/` already used in twenty places
+and no emoji. Three reasons, and only the first is taste: an emoji renders in
+whatever face the reader's platform ships, at a size nothing here chose, and
+says something slightly different on each one; `01:172-178` records why a shape
+with a fill beats a hairline glyph where meaning depends on it; and the
+completion mark's own reasoning applies — a glyph is not a shape you can rely on
+being drawn.
+
+What was kept is what each one MEANT rather than its outline: a nib, a pair of
+quotes, a rule with two ticks, a rising line. And the tile survived unchanged,
+because it was always sized for a glyph — which is the useful general point: a
+container sized for its content's box rather than for its content survives the
+content being replaced.

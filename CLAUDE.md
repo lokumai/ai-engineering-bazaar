@@ -8,8 +8,12 @@ looks the way it does, plus the domain, the lifecycles and the vocabulary. Read 
 before a first substantive change. This file is the operating manual on top of it.
 The root `ARCHITECTURE.md` was folded into it on 2026-09-08.
 
-**The interface is being replaced.** Not the functionality: every capability stays,
-and the presentation, the vocabulary and the palette change.
+**The interface has been replaced, and M16 is closed.** Not the functionality:
+every capability stayed, and the presentation, the vocabulary and the palette
+changed. The capability ledger at the end of
+[`kia-context/logs/PROGRESS_2.md`](kia-context/logs/PROGRESS_2.md) is the check
+that nothing was lost — one row per capability, where it lives, and the
+behavioural test that proves it.
 **The mockup is the specification, and it outranks every document.**
 `playground/01-theme-T4-ground-G3-powder.html` is what the interface must look
 like. [`kia-context/specs/DESIGN.md`](kia-context/specs/DESIGN.md) is a
@@ -18,19 +22,33 @@ disagree, **the mockup is right and DESIGN.md is the bug** — with one named
 exception, listed in DESIGN.md itself, because a measured accessibility floor
 outranks a transcribed value (**D34**).
 
-**The work is milestone M16**, in `kia-context/logs/PROGRESS.md`, which sets it
-out as ten stages. **Stages 0 to 6 are done**: the token layer, the shell, the
-navigation, the rail, the catalog, the reading page, and code and figures — so
-every route a reader uses on the way through the course is on the new language.
-**Stage 7 is completion**, and its surface is the largest remaining `hl-`
-holding, `src/components/record/`. Each stage's entry names its reference
-mockup, what it touches, the fidelity roles it adds and the traps in it.
+**M16 was ten stages and all ten shipped**, in
+[`kia-context/logs/PROGRESS_2.md`](kia-context/logs/PROGRESS_2.md) — the token
+layer, the shell, the navigation, the rail, the catalog, the reading page, code
+and figures, completion, progress and account, home, and the eight routes no
+mockup draws. Each stage's entry names its reference mockup, what it touched,
+the fidelity roles it added and the traps in it; seven reports follow, and each
+one records what its own brief had wrong. **Read a stage's report before
+trusting its brief.**
 
-Two things stage 5 left for the author to settle, both recorded in the code
-rather than left implicit: whether a figure wider than the measure may bleed
-past the text (it does not, and reversing that is one rule in `prose.css`), and
-whether the pager's direction label should be lifted off `on-surface-faint`,
-which would be a **second** entry in DESIGN.md's `DEVIATIONS` list.
+`PROGRESS.md` is part 1 and closed: M1 to M15, and the review pass over M10 to
+M14. New milestones go in part 2.
+
+**The retired vocabulary is out of the markup** — `hl-` in any `className` is
+**0**, from 792 — and what survives of that prefix survives on purpose: the
+twenty-six `data-hl-*` attributes islands and specs query, the three `<html>`
+stamp families whose pattern `src/lib/record/stamp.ts` owns, and the storage
+keys, whose prefix is the only isolation available on a shared `github.io`
+origin. **Renaming any of those costs a keyboard shortcut, a mark that is right
+in frame one, or every existing reader's record.** A guard checks all three
+rather than merely excluding them.
+
+Two things are still the author's to settle, both recorded in the code rather
+than left implicit: whether a figure wider than the measure may bleed past the
+text (it does not, and reversing that is one rule in `prose.css` — **D43**), and
+whether the pager's direction label should be lifted off `on-surface-faint` at a
+measured 3.30:1, which would be a **second** entry in DESIGN.md's `DEVIATIONS`
+list (**D45**).
 
 Two things every stage does. It compares the built surface to its mockup by
 adding roles to `APP_SELECTORS` in `tests/e2e/fidelity.ts` **and** a
@@ -54,14 +72,24 @@ primitive — and it is the token layer the site loads. A surface stylesheet in
 `src/app/` arranges its primitives and defines none of its own;
 `tests/unit/design/surface-stylesheets.test.ts` holds them to that.
 
-**Two guards exist because of failures that nothing else could see.**
+**Three guards exist because of failures that nothing else could see, and they
+are three corners of one failure.** A class or a token can go missing in three
+directions and none of them is an error to any other tool in this project:
 `tests/unit/design/styling-references.test.ts` reads every colour, font and size
 utility plus every `var(--…)` out of the markup and the surface stylesheets and
 requires each to resolve against the language — because **a Tailwind utility
 named after a deleted token emits nothing at all**, with no error and no
-warning, and 401 references were silently inert for one commit. And
-`tests/e2e/fidelity.ts` compares a built page to its mockup fact by fact, which
-is the check whose absence let five milestones ship the wrong design.
+warning, and 401 references were silently inert for one commit. The same file
+also refuses **a `bz-` class no stylesheet answers to**, which is that failure
+pointing the other way and is the state the whole interface was in for one
+commit after stage 0 deleted the eleven stylesheets: unstyled semantic HTML,
+and not one thing in the suite said so. And
+`tests/unit/color/category-css.test.ts` refuses **a generated selector no
+component carries**, which four of its five groups were for four commits.
+
+Beside them, `tests/e2e/fidelity.ts` compares a built page to its mockup fact by
+fact, which is the check whose absence let five milestones ship the wrong
+design. It knows five reference documents now, each in one record.
 
 **Before styling anything, open the mockup, then DESIGN.md — and copy neither a
 nearby component nor the old stylesheets.** M9 to M14 re-themed the old
@@ -271,7 +299,7 @@ only `INSERT` raises, which is why that suite has both `expectRefused` and
 | [`kia-context/specs/ARCHITECTURE.md`](kia-context/specs/ARCHITECTURE.md) | The six rules, the domain, the lifecycles, the build, the runtime layers |
 | [`mini-courses/CLAUDE.md`](mini-courses/CLAUDE.md) | The corpus agreement: how a module gets written, figures, translation |
 | [`mini-courses/MANIFEST.md`](mini-courses/MANIFEST.md) | The seven rules every module is held to |
-| [`kia-context/specs/DESIGN.md`](kia-context/specs/DESIGN.md) | The design system: every token value, which border token to use, and the do-nots |
+| [`kia-context/specs/DESIGN.md`](kia-context/specs/DESIGN.md) | The design system: every token value, which border token to use, the six primitives M16 derived, and the do-nots |
 | [`tests/README.md`](tests/README.md) | The testing rule, the four layers, and the checks that fail for a reason |
 | [`docs/data-flow.md`](docs/data-flow.md) | The record, storage, sync, two devices, the exported file |
 | [`docs/auth-flow.md`](docs/auth-flow.md) | Sign-in, sessions, joining, who may read what |
@@ -312,7 +340,8 @@ by an agent, out of a conversation — nobody maintains them by hand. Your job i
 - **Before proposing or building anything:** `specs/MANIFESTO.md` for the boundary you may not cross, and
   the active `logs/BRAINSTORM.md` to check whether your idea was already considered and rejected.
 - **Before touching anything structural:** `specs/ARCHITECTURE.md`.
-- **Every session:** `logs/PROGRESS.md` holds the current milestone, its deliverables and their
+- **Every session:** `logs/PROGRESS.md` **and its later parts** hold the current milestone, its
+  deliverables and their
   acceptance criteria — what is being built, and how far it got. How to work through it is written in
   that file, not here.
 - **Every file states its own terms.** Its frontmatter says how binding it is, who may write to it,
@@ -334,7 +363,7 @@ Four levels under `kia-context/`, split by **authority**, not by topic.
 | **Map** | `kia-context/INDEX.md` | agent, when files move | What exists, and what points at what |
 | **0** | `kia-context/genesis/` | agent, at t=0 | Where this came from. `SEED.md`, `GENESIS.md` |
 | **1–2** | `kia-context/specs/` | agent, when explicitly refactoring | The law. `MANIFESTO.md`, `ARCHITECTURE.md`, `DESIGN.md` |
-| **3** | `kia-context/logs/` | agent, every session | State. `PROGRESS.md`, `BRAINSTORM.md` |
+| **3** | `kia-context/logs/` | agent, every session | State. `PROGRESS.md` + `PROGRESS_2.md`, `BRAINSTORM.md` |
 
 `docs/` is a different thing entirely: human-facing artifacts, written **only when a human asks for one**.
 Agents do not maintain them and do not need to read them to do the work.

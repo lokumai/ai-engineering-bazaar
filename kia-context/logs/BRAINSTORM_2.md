@@ -10,7 +10,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D53, plus open questions O1 to O4 — 2026-09-09 to 2026-09-10"
+covers: "D26 to D55, plus open questions O1 to O4 — 2026-09-09 to 2026-09-10"
 last_updated: 2026-09-10
 ---
 
@@ -864,6 +864,94 @@ quotes, a rule with two ticks, a rising line. And the tile survived unchanged,
 because it was always sized for a glyph — which is the useful general point: a
 container sized for its content's box rather than for its content survives the
 content being replaced.
+
+### D54 · The focus ring is a hook, not a colour — and a floor checked on one ground is not checked — 2026-09-10
+
+A review of the finished milestone asked one question nothing in the suite had
+asked: what does the focus ring actually measure on the surface it appears on
+most? MEASURED, from the shipped language, clay (`--color-focus`) against every
+ground the ring is drawn on:
+
+| ground | light | dark |
+| --- | --- | --- |
+| `surface` | 5.48 | 3.42 |
+| `surface-raised` | 5.66 | 3.02 |
+| **`bar`** | **2.35** | **2.77** |
+| **`slab-surface`** | **2.90** | 3.42 |
+| **`slab-surface-raised`** | **2.56** | 3.02 |
+
+SC 1.4.11 wants 3:1. So the ring cleared the floor on the two page grounds and
+failed on the cobalt bar in both themes and on the slab's two surfaces in light
+— **and the bar holds the first controls in the tab order on every route**, so
+the ring a keyboard reader met first, everywhere, was the weakest one on the
+site. DESIGN.md said the opposite in as many words: that the clay was chosen so
+the ring works "against cobalt chrome, against white cards and against the dark
+slab without changing per context". That sentence is now corrected rather than
+softened, because it was wrong and somebody would have relied on it.
+
+**Three ways to fix it, and the third is the only one that is not a trade.**
+
+1. **Lift the clay** until it clears 3:1 on cobalt. Rejected: cobalt is dark, so
+   clearing it means a much lighter clay, which then has to keep clearing the
+   two page grounds it currently clears at 5.48 and 5.66 — the two constraints
+   pull opposite ways, and the value being changed is the mockup's.
+2. **A second ring token for dark chrome**, chosen and measured. Rejected as
+   redundant: the sub-palettes already declare an ink for exactly this, and a
+   new token would be a second answer to a question already answered.
+3. **Make the ring a hook and let each ground bind it.** `--bz-ring` defaults to
+   `--color-focus`, and the two dark grounds rebind it to their own
+   sub-palette's ink: the bar to `on-bar` (**13.31**), the slab and the figure
+   to `slab-on-surface` (**12.82** on `slab-surface`, **11.31** raised).
+
+Nothing is invented in the third: each ground gives the ring the ink it already
+uses for its own text, which is what a sub-palette is *for*. It travels by
+inheritance, so a nested control needs no second selector, and the ring stays
+one declaration in the language rather than one per surface. **D34** decides the
+conflict with the transcription: a measured accessibility floor outranks a
+transcribed value.
+
+**The lesson is not the fix; it is why nothing caught it.** The contrast suite
+has a `graphical('focus')` case and it passed, because it walks `RESTING` — the
+two grounds a reader *reads* on. The ring appears on four. **A floor checked on
+one ground is not checked**, which is a rule this project had already written
+down, and it shipped anyway.
+
+And the first replacement guard was worse than none: three more rows in the
+pairs table — `on-bar` against `bar`, `slab-on-surface` against
+`slab-surface` — which pass whatever the ring is bound to, because they assert
+something about two tokens and nothing about the ring. That is counting a proxy
+for the property, written while fixing an accessibility bug. What is there now
+resolves the `--bz-ring` declarations out of the language, maps each selector to
+the ground it applies to, and measures what the ring will actually be. Both
+directions are asserted, because two empty sets agree about everything.
+
+### D55 · A mockup that draws one state cannot dictate the copy for a state it does not draw — 2026-09-10
+
+The same review found `/profile/`'s continue hero shipping with **no gate at
+all**: the prerendered page offered "Continue where you left off → LLM
+Fundamentals" to every reader, a fresh browser included, and with the bundle
+blocked it never corrected. Both the component and its call site claimed
+otherwise. `nextUnsigned(EMPTY_RECORD, facts)` returns the FIRST drawn module,
+not `null`, so "renders nothing until the store has answered" was never true —
+**a comment asserting the opposite of the code is worse than no comment**, and
+this one had been read as a gate by whoever wrote the call site.
+
+The home page has had this rule since stage 9. `/profile/` was built in stage 8
+and never got it. So the fix is the split the home page already uses, and it is
+forced rather than chosen: the BOX is gated on channel A by `data-hl-record`,
+because a reader with no record must not see the frame; the CONTENT is gated on
+channel B, because a module's title is text and channel A stamps classes. That
+is the whole of what each channel can do.
+
+**What was a decision is the copy.** `07:123` reads "Continue where you left
+off", and §15.11 counts a reader as carrying a record if they have chosen an
+alias or a role — neither of which is something they left off. Transcribing the
+mockup's one string would have told a reader who has completed nothing to
+continue from where they were. So the eyebrow branches: "Continue where you left
+off" once something is signed, "Start with" otherwise. **The mockup is the
+specification for what it draws, and it draws one state; a state it does not
+draw is not specified by it, and copying its label into that state is a
+transcription error rather than fidelity.**
 
 ## Open questions
 

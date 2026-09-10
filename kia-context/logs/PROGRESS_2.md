@@ -3,13 +3,14 @@ description: >
   Part 2 of the execution log, and the ACTIVE part: a new milestone is appended here. It opens with
   M16, the interface rebuilt on the design language in ten stages — the stage table, every stage's
   brief, and the seven reports the stages wrote back, including what each one found that its own
-  brief had wrong. Part 1 holds M1 to M15 and is closed.
+  brief had wrong, and then the review pass over the finished milestone and the two defects it found
+  inside a green gate. Part 1 holds M1 to M15 and is closed.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
   (MANIFESTO.md / ARCHITECTURE.md).
 authority: state
 writes: agent, every session
 status: active
-covers: "M16, 2026-09-09 to 2026-09-10 — all ten stages shipped"
+covers: "M16, 2026-09-09 to 2026-09-10 — all ten stages shipped, plus the review pass over it"
 last_updated: 2026-09-10
 ---
 
@@ -1089,6 +1090,48 @@ measured 4 sources, because a draft may perfectly well cite something.
   before this milestone touched them. **Re-run any failure in isolation before
   believing it.**
 - Meter: **`hl-` in `className` 0**, from 792.
+- **And read the section below before quoting any of this**: the gate was green
+  and two real defects were inside it.
+
+#### Then a review found two defects the gate had no question for — 2026-09-10
+
+The line above says 0 genuine failures, and it is true as written: nothing in
+the suite was red. **It is also the wrong thing to be reassured by.** Three
+reviews were run over the finished milestone from different angles, and two
+confirmed defects came back — both shipped inside the green gate, both with a
+comment or a document asserting the opposite of what the code did. Fixed in
+`dbe7d72`; the reasoning is **D54** and **D55**.
+
+1. **The focus ring was the weakest on the site, on the surface it appears on
+   most.** MEASURED against every ground it is drawn on: clay is **2.35:1** on
+   `bar` in light and 2.77 in dark, 2.90 and 2.56 on the slab's two surfaces in
+   light, against SC 1.4.11's 3:1 — clearing only on the two page grounds, at
+   5.48 and 5.66. The bar holds the first controls in the tab order on every
+   route. The ring is now a `--bz-ring` hook that each ground binds to its own
+   sub-palette's ink: 13.31 on the bar, 12.82 and 11.31 on the slab.
+   The contrast suite could not have caught it — `graphical('focus')` walks the
+   two RESTING grounds, and the ring appears on four.
+2. **`/profile/`'s continue hero shipped with no gate**, offering a populated
+   "Continue where you left off → LLM Fundamentals" to every reader including a
+   fresh browser, and never correcting with the bundle blocked. `nextUnsigned`
+   returns the first drawn module for an empty record rather than `null`. Gated
+   the way the home page's is — the box on channel A, the content on channel B —
+   and the eyebrow now branches, because §15.11 counts a chosen alias as a
+   record and nobody left off there.
+
+Both fixes carry a mutation-proven guard: the ring's reads the actual `--bz-ring`
+bindings out of the language rather than asserting a pair of tokens, and the
+hero's is a fidelity test that fails with "a fresh browser is offered a shortcut
+it has not earned". Gate after both: typecheck clean, **2,144 unit**, build
+clean at 56 HTML files, browser suite passing with only the known timing flakes.
+
+**What this says about the closing gate, and it is the useful part.** Every
+closing condition held, 2,141 tests were green, and two real defects were inside
+that. Both were in the class this milestone kept meeting: **a check that nobody
+thought to ask**, not a check that failed. The suite measures what somebody
+thought to measure, and an independent reader asking "what does this actually
+measure, on which ground, in frame one" found in one pass what ten stages of
+green gates did not.
 
 #### What is left, and it is not code
 

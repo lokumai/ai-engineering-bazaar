@@ -485,6 +485,20 @@ entry itself for staleness; `tests/unit/color/contrast.test.ts` is what proves t
 the floor. Both have to agree for either to pass. **Adding a second entry is the author's decision,
 never a way past a red test.**
 
+**And one departure of SCOPE rather than of value, recorded here so it is not mistaken for a
+transcription error.** `01:64` states the focus ring once, globally —
+`:focus-visible { outline: 2px solid var(--accent2) }` — and the language now lets two grounds rebind
+it, for the measured reason above. **It adds no colour and drops none**: the bar takes `on-bar` and
+the slab takes `slab-on-surface`, both already declared by the mockup and both already used as ink on
+exactly those grounds. So `transcription.test.ts` is untouched by it and needs no second `DEVIATIONS`
+entry — that list is about values, and no value moved. What enforces it instead is
+`tests/unit/color/contrast.test.ts`, which resolves the `ring` bindings out of the language and
+measures each against the ground its selector applies to, in both directions: a binding with no
+ground and a ground with no binding both fail. **The fidelity harness does not check it**, and that is
+deliberate rather than an omission — a ring is only painted while a control has focus, so comparing a
+resting screenshot's facts could never see it, and a guard that cannot see the thing it names is the
+failure mode this milestone met four times.
+
 Two related findings, recorded because they are properties of the source rather than of this file.
 The mockup italicises a comment; mono italic is refused, so the slant is not transcribed and the
 comment is told apart by colour alone, which is what the shipped syntax theme already did. And
@@ -681,8 +695,10 @@ focus ring.
 **Don't** rely on hue alone anywhere; the interface must survive a forced-colour mode and a viewer
 who cannot separate teal from cobalt.
 
-**Do** keep the focus ring clay, at 2px, with an offset, everywhere.
-**Don't** restyle it per surface.
+**Do** keep the focus ring 2px with an offset everywhere, and let its colour come from the `ring`
+hook — clay on the page grounds, and each sub-palette's own ink on a ground that declares one.
+**Don't** pick a ring colour per surface by eye, and don't tint one to blend with what is behind it.
+The measurement that forced the hook, and the two grounds that rebind it, are above.
 
 **Do** keep the completion mark a filled disc with a white check.
 **Don't** turn it into a stroked glyph; it fails the text floor.

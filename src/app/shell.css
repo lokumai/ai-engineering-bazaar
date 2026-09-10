@@ -130,10 +130,12 @@
      page, which reads as "this entire region is selected" and is the opposite
      of the reassurance a skip link owes.
 
-     **This is not the Don't DESIGN.md states.** That one forbids re-colouring
-     a focus ring per surface, so a keyboard path stays visible; `main` is not
-     a control on a keyboard path, it is where the path begins. The reader's
-     next Tab lands on the first real control and rings it normally, which
+     **This is not the Don't DESIGN.md states.** That one is about a ring's
+     COLOUR — do not pick one per surface by eye, and do not tint one to blend
+     with what is behind it, because either makes a keyboard path go quiet.
+     This removes a ring from something that is not on that path: `main` is
+     where the path begins, not a control on it. The reader's next Tab lands on
+     the first real control and rings it normally, which
      `accessibility.spec.ts` asserts in the same test.
 
      The retired stylesheet had this rule and stage 1 did not re-author it, so

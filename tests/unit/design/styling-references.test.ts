@@ -142,12 +142,60 @@ const FILES = tsxFiles(SOURCE)
  */
 function utilitiesIn(source: string): string[] {
   const found: string[] = []
-  for (const attribute of source.matchAll(/className\s*=\s*(?:"([^"]*)"|\{`([^`]*)`\}|\{'([^']*)'\})/g)) {
-    const value = attribute[1] ?? attribute[2] ?? attribute[3] ?? ''
+  const push = (value: string): void => {
     for (const word of value.split(/[\s'"`]+/)) {
       const bare = word.replace(/^[a-z-]+:/g, '').replace(/^[!-]/, '')
-      if (bare.length > 0) found.push(bare)
+      // The left half of a template interpolation: the real name is only known
+      // at render time, so there is nothing here to resolve. Skipped rather
+      // than reported, which is the same call `customPropertiesIn` makes.
+      if (bare.length === 0 || bare.endsWith('-') || /[${}]/.test(bare)) continue
+      found.push(bare)
     }
+  }
+
+  for (const attribute of source.matchAll(/className\s*=\s*"([^"]*)"/g)) push(attribute[1])
+  for (const expression of bracedClassNames(source)) {
+    // Every string literal inside the expression, whatever shape the
+    // expression is: a ternary, a `clsx(…)` call, an array join, a variable
+    // plus a literal. What a literal cannot be found in — a name assembled
+    // from variables only — has nothing for this sweep to check anyway.
+    for (const literal of expression.matchAll(/'([^']*)'|"([^"]*)"|`([^`]*)`/g)) {
+      push(literal[1] ?? literal[2] ?? literal[3] ?? '')
+    }
+  }
+  return found
+}
+
+/**
+ * The text inside every `className={ … }`, found by BALANCING BRACES rather
+ * than by a pattern.
+ *
+ * This was the file's largest blind spot and it was invisible in the way this
+ * whole file exists to prevent. The old pattern accepted exactly three shapes —
+ * `className="…"`, a bare template and a bare single-quoted string — so every
+ * `className={expression}` was skipped: sixteen sites, two of them carrying a
+ * real colour utility in a ternary (`SheetLabel.tsx` and `PersonDetail.tsx`,
+ * `text-on-surface` and `text-on-surface-muted`). Rename either token and those
+ * two go inert with this suite green, which is the precise failure the file was
+ * written for.
+ *
+ * A regex cannot do this: an expression contains `{`…`}` of its own (an object,
+ * a nested JSX expression, a template's `${…}`), so a non-greedy match ends at
+ * the first inner brace and a greedy one runs to the end of the file.
+ */
+function bracedClassNames(source: string): string[] {
+  const found: string[] = []
+  for (const start of source.matchAll(/className\s*=\s*\{/g)) {
+    let depth = 1
+    let at = (start.index ?? 0) + start[0].length
+    const from = at
+    while (at < source.length && depth > 0) {
+      const character = source[at]
+      if (character === '{') depth += 1
+      else if (character === '}') depth -= 1
+      at += 1
+    }
+    if (depth === 0) found.push(source.slice(from, at - 1))
   }
   return found
 }

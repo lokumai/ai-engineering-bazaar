@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { contrastRatio, relativeLuminance } from '@/lib/color/contrast'
+import { surfaces } from '../design/surfaces'
 import {
   CODE_TOKEN_ROLES,
   DEFAULT_TOKEN,
@@ -54,6 +55,17 @@ import {
  *    sunken fill "is the hover and the pressed state, not a resting surface for
  *    text", so the text floors below are asserted on the resting grounds and
  *    the sunken fill is checked as the transient state it is.
+ *
+ *    **That premise was false for three rules, and a review found them rather
+ *    than this file.** `.bz-table thead th`, `.bz-tablefig thead th` and the
+ *    planned catalog card all rested that exact pair on that exact fill — every
+ *    column label in the product and in the corpus, at 12.5px/600, which is
+ *    not large text. The exemption was not stale in the way the harness checks
+ *    for; it was **wrong**, and being wrong is what made it silent. All three
+ *    now take full ink, and the last block in this file turns the premise into
+ *    a check: no rule may rest an ink on that fill without clearing the floor.
+ *    An exemption stated as prose is a promise; the same exemption with a guard
+ *    under it is a fact.
  *
  * `on-surface-faint` carries no contrast job at all now, and that is a change.
  * The old palette held its faint ink under a 3:1 ceiling; this one measures
@@ -416,5 +428,107 @@ describe('the focus ring clears 3:1 on every ground it is bound on', () => {
         ).toBeGreaterThanOrEqual(3)
       }
     }
+  })
+})
+
+/**
+ * THE SUNKEN FILL IS EXEMPTED FROM THE TEXT FLOOR, SO WHAT RESTS ON IT IS
+ * CHECKED HERE INSTEAD.
+ *
+ * The exemption at the top of this file is real: `surface-sunken` is the hover
+ * and the pressed state, and measuring every ink against a fill that appears
+ * for 150ms under a cursor would fail the palette for a state nobody reads on.
+ * But an exemption is only as good as its premise, and this one's premise is a
+ * claim about the STYLESHEETS — that nothing rests text there. Three rules
+ * falsified it and the suite could not tell, because a pairs table knows about
+ * tokens and nothing about which rule paints which pair.
+ *
+ * So this reads the rules. For every rule in the language or a surface that
+ * declares the sunken fill, any `color` in the SAME BLOCK must clear the text
+ * floor on it. That is the exact shape of the three defects and it is now
+ * mechanical.
+ *
+ * **What it cannot see, stated rather than implied:** ink that arrives by
+ * INHERITANCE. `.bz-catcard[data-drawn="false"]` set only the fill, and its
+ * three muted descendants were declared 60 lines away — no static reading of
+ * one block could pair them. A general answer needs the cascade, which means a
+ * browser, which is `colour-not-alone.spec.ts`'s layer and not this one. The
+ * one known case is asserted by name below, and the honest boundary is written
+ * here so the next reader does not mistake this for whole coverage.
+ */
+describe('nothing rests text on the sunken fill without clearing the floor', () => {
+  const SUNKEN = 'surface-sunken'
+
+  /** Every `color` declared in the same block as the sunken fill. */
+  const RESTED: Array<{ where: string; selector: string; token: string }> = (() => {
+    const found: Array<{ where: string; selector: string; token: string }> = []
+    const files: Array<{ name: string; css: string }> = [
+      { name: 'bazaar.css', css: readFileSync(LANGUAGE, 'utf8') },
+      ...surfaces(),
+    ]
+    for (const { name, css: raw } of files) {
+      const css = raw.replace(/\/\*[\s\S]*?\*\//g, ' ')
+      for (const fill of css.matchAll(/background:\s*var\(--color-surface-sunken\)/g)) {
+        const before = css.slice(0, fill.index)
+        const open = before.lastIndexOf('{')
+        if (open === -1) continue
+        const head = before.slice(0, open)
+        const from = Math.max(head.lastIndexOf('{'), head.lastIndexOf('}'), head.lastIndexOf(';'))
+        const selector = head.slice(from + 1).trim().replace(/\s+/g, ' ')
+        let depth = 1
+        let at = open + 1
+        while (at < css.length && depth > 0) {
+          if (css[at] === '{') depth += 1
+          else if (css[at] === '}') depth -= 1
+          at += 1
+        }
+        for (const ink of css.slice(open + 1, at - 1).matchAll(/(?:^|[;\s])color:\s*var\((--color-[a-z0-9-]+)\)/g)) {
+          found.push({ where: name, selector, token: ink[1] })
+        }
+      }
+    }
+    return found
+  })()
+
+  it('finds the fill at all, so the cases below are not an empty set', () => {
+    // The whole block is worthless if the pattern stops matching: zero rules
+    // with the fill would pass every case under it. Measured at 20 when this
+    // was written, and a floor well under that is what makes it a real check
+    // rather than a pinned count.
+    const withFill = new Set(RESTED.map((one) => one.selector))
+    expect(withFill.size, 'no rule found declaring the sunken fill').toBeGreaterThan(3)
+  })
+
+  it.each(THEMES)('holds in the %s theme', (theme) => {
+    for (const { where, selector, token } of RESTED) {
+      const ink = readDesignToken(token)[theme]
+      const behind = readDesignToken(`--color-${SUNKEN}`)[theme]
+      const ratio = contrastRatio(ink, behind)
+      expect(
+        Number(ratio.toFixed(2)),
+        `${where} ${selector}: ${token} on ${SUNKEN} is ${ratio.toFixed(2)}:1, under the 4.5:1 text floor`,
+      ).toBeGreaterThanOrEqual(4.5)
+    }
+  })
+
+  it.each(THEMES)('covers the one inherited case by name in the %s theme', (theme) => {
+    // `.bz-catcard[data-drawn="false"]` declares the fill and nothing else; the
+    // ink it inherits is declared elsewhere in the same file. Named here
+    // because the reading above structurally cannot pair them.
+    const catalog = surfaces().find((one) => one.name === 'catalog.css')
+    expect(catalog, 'catalog.css').toBeDefined()
+    const css = (catalog?.css ?? '').replace(/\/\*[\s\S]*?\*\//g, ' ')
+    const override = /\.bz-catcard\[data-drawn="false"\][^{]*\{[^}]*color:\s*var\((--color-[a-z0-9-]+)\)/.exec(css)
+    expect(
+      override,
+      'the planned card must state the ink that goes with its fill, not inherit a muted one',
+    ).not.toBeNull()
+    const ink = readDesignToken(override?.[1] ?? '--color-on-surface')[theme]
+    const behind = readDesignToken(`--color-${SUNKEN}`)[theme]
+    const ratio = contrastRatio(ink, behind)
+    expect(
+      Number(ratio.toFixed(2)),
+      `the planned card's ink is ${ratio.toFixed(2)}:1 on its own fill`,
+    ).toBeGreaterThanOrEqual(4.5)
   })
 })

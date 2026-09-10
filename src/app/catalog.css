@@ -370,6 +370,16 @@
      floor it has to clear. */
   .bz-catcard[data-drawn="false"] { background: var(--color-surface-sunken); }
 
+  /* AND WITH THE FILL COMES THE INK. The three muted things on this card — the
+     level line, the ordinal and the fact terms — measure 5.81:1 on the raised
+     fill a written card has and 4.21:1 on the sand this one has, under the
+     4.5:1 they owe as text. The fill is what says `Planned`, so the fill stays
+     and the ink is what moves; 11.24:1, and the card still reads as the quiet
+     one because the sand does that. */
+  .bz-catcard[data-drawn="false"] :is(.bz-catcard-level, .bz-catcard-num, .bz-catcard-facts dt) {
+    color: var(--color-on-surface);
+  }
+
   .bz-catcard-level {
     display: flex;
     align-items: center;

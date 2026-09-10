@@ -54,9 +54,21 @@
   }
 
   /* B. The drawn modules only. A step the reader has signed off says so in
-     words, in the accent pen. A draft sheet has no sign-off control at all
-     (§12.4.1), so no selector for one could ever match, and writing one would
-     state that it could. */
+     words. A draft sheet has no sign-off control at all (§12.4.1), so no
+     selector for one could ever match, and writing one would state that it
+     could.
+
+     THIS STATES display AND NOTHING ELSE, and that is a fix rather than a
+     style. It used to also set color: var(--color-accent-ink), a token of the
+     RETIRED palette that no theme has ever declared. An undeclared custom
+     property is invalid at computed-value time, so color fell back to unset —
+     which for an inherited property means inherit — and the word silently took
+     the step's body ink instead of the teal progress.css gives it. Nothing
+     failed: this file is excluded by name from all three of the guards that
+     would have caught it.
+     The generated sheet's whole job is WHICH module is revealed. What the
+     revealed thing looks like belongs to the surface stylesheet, which is
+     already how group D is divided. */
   html.hl-signed-1  .bz-step[data-module="1"] .bz-step-tick,
   html.hl-signed-2  .bz-step[data-module="2"] .bz-step-tick,
   html.hl-signed-3  .bz-step[data-module="3"] .bz-step-tick,
@@ -77,7 +89,6 @@
   html.hl-signed-30 .bz-step[data-module="30"] .bz-step-tick,
   html.hl-signed-31 .bz-step[data-module="31"] .bz-step-tick {
     display: inline;
-    color: var(--color-accent-ink);   /* T2 — accent as TEXT is `-ink` only. */
   }
 
   /* D. M10 — the curriculum rail's tick, for the drawn modules only. The mark

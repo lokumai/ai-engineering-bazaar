@@ -1235,11 +1235,23 @@
     table-layout: fixed;
   }
 
+  /* THE COLUMN LABEL TAKES FULL INK, AND THAT IS A MEASUREMENT RATHER THAN A
+     preference. On the sand fill this header needs to be told apart by,
+     `on-surface-muted` measures 4.21:1 — under the 4.5:1 a column label owes,
+     because a label naming what a column MEANS is content and not decoration —
+     while measuring 5.62 and 5.81 on the two page grounds, which is why the
+     pairing looked safe everywhere it was checked. `on-surface` is 11.24:1 on
+     the same fill, and the header stays quiet the way the rest of the language
+     does it: at `mark` size, at 600, against body text at `body` and 400.
+     `.bz-group[data-here] > summary` already takes full ink on this fill, so
+     this is the language agreeing with itself rather than a new idea.
+     No mockup specifies this pair: `01` draws a table with no `thead` at all,
+     and `03`, which draws one, supplies geometry only (D31). */
   .bz-table thead th {
     padding: 9px 14px;
     border-bottom: 1px solid var(--color-line);
     background: var(--color-surface-sunken);
-    color: var(--color-on-surface-muted);
+    color: var(--color-on-surface);
     font: 600 var(--text-mark) / 1 var(--font-sans);
     text-align: left;
     position: sticky;

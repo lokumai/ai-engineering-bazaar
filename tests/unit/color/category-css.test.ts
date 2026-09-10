@@ -267,3 +267,60 @@ describe('the generated selectors name classes that markup actually carries', ()
     }
   })
 })
+
+/**
+ * EVERY TOKEN THE GENERATED SHEET SPENDS MUST RESOLVE, and until 2026-09-10 no
+ * test in the project read one.
+ *
+ * This file is excluded by name from all three of the guards that read `var()`s
+ * — `surface-stylesheets.test.ts` and `styling-references.test.ts` skip it as
+ * not-a-surface, and everything above here reads SELECTORS. The exclusions are
+ * right: the sheet is generated, and it is allowed to state colours and states
+ * a surface may not. But "not held to the surface discipline" was taken to mean
+ * "not read at all", and the gap had a defect sitting in it.
+ *
+ * MEASURED: group B revealed a signed-off step and set
+ * `color: var(--color-accent-ink)` — a token of the RETIRED palette, declared
+ * by no theme and by no surface. An undeclared custom property is invalid at
+ * computed-value time, so `color` became `unset`, which for an inherited
+ * property means `inherit`: the word took the step's body ink instead of the
+ * teal `progress.css` gives it. No error, no warning, nothing red. It is the
+ * same failure as a Tailwind utility named after a deleted token, in the one
+ * file nobody was reading.
+ *
+ * The fix was to delete the declaration rather than repoint it — the generated
+ * sheet's job is WHICH module is revealed, and what the revealed thing looks
+ * like belongs to the surface, which is how group D was already divided. This
+ * check is the half that keeps it fixed.
+ */
+describe('every token the generated sheet spends', () => {
+  /** Declared anywhere the site loads: the language, or any surface. */
+  const DECLARED: ReadonlySet<string> = new Set([
+    ...readFileSync(join(import.meta.dirname, '../../../src/design/bazaar.css'), 'utf8')
+      .matchAll(/^\s*(--[a-z0-9-]+)\s*:/gm),
+    ...readdirSync(join(import.meta.dirname, '../../../src/app'))
+      .filter((name) => name.endsWith('.css'))
+      .flatMap((name) => [
+        ...readFileSync(join(import.meta.dirname, '../../../src/app', name), 'utf8')
+          .matchAll(/^\s*(--[a-z0-9-]+)\s*:/gm),
+      ]),
+  ].map((match) => match[1]))
+
+  /**
+   * `--bz-cat` is the exception and it is not a hole: it is a RUNTIME binding,
+   * resolved from the segment's own `data-cat` by the surface that draws it, so
+   * the category never appears in this file. The generator says so where it
+   * emits group A. It is declared by `category.css`, which is why it resolves.
+   */
+  const referenced = [...css.matchAll(/var\(\s*(--[a-z0-9-]+)/g)].map((match) => match[1])
+
+  it('is a real reading, not an empty one', () => {
+    expect(DECLARED.size, 'no tokens found in the language or the surfaces').toBeGreaterThan(40)
+    expect(referenced.length, 'no var() found in the generated sheet').toBeGreaterThan(0)
+  })
+
+  it('resolves against the language or a surface', () => {
+    const silent = [...new Set(referenced)].filter((name) => !DECLARED.has(name)).sort()
+    expect(silent, 'referenced by the generated sheet and declared nowhere').toEqual([])
+  })
+})

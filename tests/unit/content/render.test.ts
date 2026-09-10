@@ -84,17 +84,17 @@ describe('renderMarkdown — §6.1 heading anchors', () => {
    */
   it('names a heading from its own title, not from its permalink', async () => {
     const { html } = await renderMarkdown('## Why We Need RAG')
-    expect(html).toContain('<h2 id="why-we-need-rag" aria-labelledby="why-we-need-rag-title">')
+    expect(html).toContain('<h2 id="why-we-need-rag" aria-labelledby="why-we-need-rag-title" class="bz-section">')
     expect(html).toContain('<span id="why-we-need-rag-title">Why We Need RAG</span>')
     // The anchor keeps its own name; §6.1 and §10.3 require it to stay a
     // labelled tab stop, so `aria-hidden` is not the fix.
     expect(html).toContain('aria-label="Link to “Why We Need RAG”"')
-    expect(html).not.toContain('aria-hidden="true" class="hl-anchor"')
+    expect(html).not.toContain('aria-hidden="true" class="bz-anchor"')
   })
 
   it('names an h3 the same way', async () => {
     const { html } = await renderMarkdown('### A sub-section')
-    expect(html).toContain('<h3 id="a-sub-section" aria-labelledby="a-sub-section-title">')
+    expect(html).toContain('<h3 id="a-sub-section" aria-labelledby="a-sub-section-title" class="bz-subsection">')
   })
 
   it('never reuses an id a heading in the document already claimed', async () => {
@@ -223,7 +223,7 @@ describe('renderMarkdown — §6.9 images', () => {
       { sheet: 6 },
     )
     expect(html).toContain(
-      '<span class="hl-cap-label">FIG. 6.1 — Defining the Agent</span>',
+      '<span class="bz-caption-label">FIG. 6.1 — Defining the Agent</span>',
     )
   })
 
@@ -238,7 +238,7 @@ describe('renderMarkdown — §6.9 images', () => {
 
   it('leaves an image that sits inside real prose inline', async () => {
     const { html } = await renderMarkdown('Some text ![icon](./i.png) more text.')
-    expect(html).not.toContain('hl-image')
+    expect(html).not.toContain('bz-image')
   })
 })
 
@@ -259,7 +259,7 @@ describe('renderMarkdown — §6.7 code blocks', () => {
   it('renders an untagged fence as program output, not as code', async () => {
     const { html } = await renderMarkdown('```\nsome output\n```')
     expect(html).toContain('data-language="output"')
-    expect(html).toContain('class="hl-code-lang">output<')
+    expect(html).toContain('class="bz-slab-lang">output<')
     expect(html).not.toContain('--shiki-light')
   })
 

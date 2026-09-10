@@ -30,25 +30,27 @@ import { SectionSpine } from './SectionSpine'
  * (§4.7). Only one copy is ever in the accessibility tree: the in-flow rail is
  * `display: none` at those widths, and the drawer's copy exists only while the
  * drawer is open.
+ *
+ * ## M16 stage 5 — the section index, and nothing else
+ *
+ * `01`'s aside is *"a `label` heading, then items indented behind a `line` rail
+ * that turns `primary` on the current item"*, and that is the whole of it. It
+ * carried a second half here — a horizontal rule, an `Around this module`
+ * label and the dependency list — and that half moved: `01` puts the module's
+ * relations behind the action row's quiet `Requirements (n)` button, which
+ * makes them a disclosure a reader opens rather than a permanent column of
+ * numbers beside the prose. `04`'s aside kept a facts block; `01` dropped it
+ * for the same reason.
  */
-export function SheetRail({
-  toc,
-  relations,
-}: {
-  toc: readonly TocEntry[]
-  relations: readonly DependencyRelation[]
-}) {
+export function SheetRail({ toc }: { toc: readonly TocEntry[] }) {
   return (
     <>
       {toc.length > 0 && (
-        <p className="hl-rail-label" id="hl-on-this-page">
+        <b className="bz-aside-label" id="hl-on-this-page">
           On this page
-        </p>
+        </b>
       )}
       <SectionSpine entries={toc} />
-      {toc.length > 0 && <hr className="hl-rail-rule" aria-hidden="true" />}
-      <p className="hl-rail-label">Around this module</p>
-      <DependencyBlock relations={relations} />
     </>
   )
 }

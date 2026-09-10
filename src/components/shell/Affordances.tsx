@@ -29,7 +29,7 @@ const COPY = '[data-hl-copy]'
 let instances = 0
 
 async function copyBlock(button: HTMLButtonElement): Promise<void> {
-  const code = button.closest('.hl-code')?.querySelector('pre')
+  const code = button.closest('.bz-slab')?.querySelector('pre')
   if (!code) return
 
   try {
@@ -73,10 +73,34 @@ export function Affordances() {
       for (const entry of entries) mark(entry.target as HTMLElement)
     })
 
+    /*
+      A SECOND OBSERVER, because a `ResizeObserver` on the box cannot see the
+      box's CONTENT grow.
+
+      `overflowState` compares `scrollWidth` to `clientWidth`, and only the
+      first of those changes when a child arrives. Every diagram on the site is
+      injected after this effect runs — `MermaidFigure` renders into
+      `.mermaid-source` once mermaid has loaded — so at the moment each figure
+      was measured it held a one-line placeholder and did not overflow. The box
+      itself never resized afterwards, so the fade never appeared on the one
+      kind of scroller that always needs it.
+
+      MEASURED: `responsive.spec.ts` caught it as `bz-figure bz-figure-body
+      overflows silently` the moment stage 5 gave the figure a box that
+      actually clips.
+    */
+    const grew = new MutationObserver((records) => {
+      for (const record of records) {
+        const box = (record.target as Element).closest<HTMLElement>(SCROLLERS)
+        if (box !== null) mark(box)
+      }
+    })
+
     for (const box of scrollers) {
       mark(box)
       box.addEventListener('scroll', () => mark(box), { passive: true })
       observer.observe(box)
+      grew.observe(box, { childList: true, subtree: true })
     }
 
     document.addEventListener('click', onClick)
@@ -84,6 +108,7 @@ export function Affordances() {
     return () => {
       instances -= 1
       observer.disconnect()
+      grew.disconnect()
       document.removeEventListener('click', onClick)
     }
   }, [])

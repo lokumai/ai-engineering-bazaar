@@ -17,9 +17,9 @@ test('a caption strip stays 28px however long the author wrote (§6.5)', async (
   await page.goto(SHORT.path)
 
   const strips = await page.evaluate(() =>
-    [...document.querySelectorAll('.prose .hl-cap')].map((cap) => {
-      const label = cap.querySelector('.hl-cap-label')!
-      const note = cap.querySelector('.hl-cap-note')
+    [...document.querySelectorAll('.bz-prose .bz-caption')].map((cap) => {
+      const label = cap.querySelector('.bz-caption-label')!
+      const note = cap.querySelector('.bz-caption-note')
       return {
         label: label.textContent ?? '',
         labelHeight: Math.round(label.getBoundingClientRect().height),
@@ -34,14 +34,32 @@ test('a caption strip stays 28px however long the author wrote (§6.5)', async (
   const noted = strips.filter((strip) => strip.note !== null)
   expect(noted.length, 'module 3 still captions its image').toBeGreaterThan(0)
 
-  for (const strip of strips) {
-    expect(strip.labelHeight, `"${strip.label}"`).toBe(28)
-  }
+  /*
+    THE INVARIANT, not the number. This pinned `28`, which was the retired
+    design's fixed-height label; the label is an inline span now and its height
+    is one line of whatever step the language sets it in. What the test is
+    actually about — and what its own title claims — is that the label does not
+    grow with the sentence beside it, so it compares the strips to each other
+    instead of to a constant nobody would know how to update.
+  */
+  const heights = [...new Set(strips.map((strip) => strip.labelHeight))]
+  expect(heights, `label heights differ across captions: ${heights.join(', ')}`).toHaveLength(1)
+  expect(heights[0], 'a caption label with no height').toBeGreaterThan(0)
+
+  const family = await page.evaluate(() =>
+    getComputedStyle(document.documentElement).getPropertyValue('--font-sans').trim(),
+  )
+  // The FIRST family the language declares, read from the language rather than
+  // named here. This asserted `/Manrope/`, a face M9 wired up and M16 stage 0
+  // removed — the language has one sans family and declares it in `--font-sans`.
+  const declared = family.split(',')[0].replaceAll('"', '').trim()
+  expect(declared, 'the language declares no sans family').not.toBe('')
+
   for (const strip of noted) {
     // The sentence is set in the meta voice, not shouted in mono (§3.4).
     expect(strip.note!.length, 'the author\'s sentence survives in full')
       .toBeGreaterThan(60)
-    expect(strip.noteFont).toMatch(/Manrope/)
+    expect(strip.noteFont).toContain(declared)
     expect(strip.noteTransform).toBe('none')
   }
 })
@@ -55,7 +73,7 @@ test('inline code in a table cell is text-meta, not 0.9em of the cell (§3.4)', 
   await page.goto(sheetByModule(6).path)
 
   const measured = await page.evaluate(() => {
-    const cells = [...document.querySelectorAll('.prose :is(td, th) code')]
+    const cells = [...document.querySelectorAll('.bz-prose :is(td, th) code')]
     return {
       count: cells.length,
       sizes: [...new Set(cells.map((c) => getComputedStyle(c).fontSize))],
@@ -70,7 +88,14 @@ test('inline code in a table cell is text-meta, not 0.9em of the cell (§3.4)', 
   expect(measured.count, 'no module puts inline code in a table cell any more')
     .toBeGreaterThan(0)
   expect(measured.parents).toContain('td')
-  // §3.2's `text-meta` step, and the px it resolves to at the root size.
-  expect(Number.parseFloat(measured.meta) * 16).toBe(13)
-  expect(measured.sizes).toEqual(['13px'])
+  /*
+    §3.2's `text-meta` step, COMPARED AGAINST THE TOKEN rather than against a
+    number. This read `parseFloat(--text-meta) * 16 === 13`, which was correct
+    while the token layer was authored in `rem`; M16 stage 0 replaced it with a
+    px scale, so the multiplication computed 216 against an expectation of 13
+    and the test could not pass whatever the page did. Reading the token and
+    comparing the rendered size to it holds whichever unit the language picks.
+  */
+  expect(measured.meta, 'the language declares no --text-meta step').not.toBe('')
+  expect(measured.sizes).toEqual([measured.meta])
 })

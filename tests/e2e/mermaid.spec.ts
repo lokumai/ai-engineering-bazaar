@@ -37,10 +37,19 @@ test('renders a mermaid marker as an SVG drawing', async ({ page }) => {
  * **M11 changed what that mechanism is used FOR, and the test with it.** A
  * diagram is a dark slab in both themes now (`kia-context/specs/DESIGN.md`),
  * and the slab is implemented as a local theme override on the figure —
- * `rail.css` redeclares the palette there, custom properties cascade into
- * inline SVG, and fifty-three diagrams land on a dark ground with no change to
- * `mermaid-config.ts` at all. That is the same mechanism this test has always
- * been about; what it proves has been inverted:
+ * `.bz-figure` in `src/design/bazaar.css` redeclares the palette there, custom
+ * properties cascade into inline SVG, and fifty-three diagrams land on a dark
+ * ground with no change to `mermaid-config.ts` at all.
+ *
+ * **That override was missing between stage 0 and stage 6**, so this test could
+ * not pass: the docblock named `rail.css` as its owner, a file that never
+ * carried such a rule under any name after the interface was replaced. A
+ * diagram was a near-white box inside a near-black frame for six commits, and
+ * the only test that could have said so was red for what looked like an
+ * unrelated reason.
+ *
+ * It is the same mechanism this test has always been about; what it proves has
+ * been inverted:
  *
  * - the painted stroke IS the token, read from the FIGURE rather than from
  *   `<html>`, because the figure is where the slab declares it;
@@ -59,7 +68,7 @@ test('paints the figure from its own tokens, and never re-renders it', async ({ 
   const read = () =>
     diagram.evaluate((svg) => {
       const node = svg.querySelector('.node rect, .node polygon, .node path')
-      const figure = svg.closest('.hl-figure')!
+      const figure = svg.closest('.bz-figure')!
       return {
         stroke: node ? getComputedStyle(node).stroke : null,
         // The token as the FIGURE resolves it — the slab's value.
@@ -164,9 +173,9 @@ test('a diagram on the slab clears its floors, in both themes', async ({ page })
     await page.goto(A0.path)
     await page.waitForFunction(
       () => {
-        const all = document.querySelectorAll('[data-hl-prose] .hl-diagram').length
+        const all = document.querySelectorAll('[data-hl-prose] .bz-diagram').length
         const ready = document.querySelectorAll(
-          '[data-hl-prose] .hl-diagram[data-hl-ready]',
+          '[data-hl-prose] .bz-diagram[data-hl-ready]',
         ).length
         return all > 0 && all === ready
       },
@@ -186,7 +195,7 @@ test('a diagram on the slab clears its floors, in both themes', async ({ page })
     const labels = (
       await contrastSamples(
         page,
-        '[data-hl-prose] .hl-diagram svg .nodeLabel, [data-hl-prose] .hl-diagram svg text',
+        '[data-hl-prose] .bz-diagram svg .nodeLabel, [data-hl-prose] .bz-diagram svg text',
       )
     ).filter((sample) => sample.text !== '')
     expect(labels.length, `${theme}: no diagram label to measure`).toBeGreaterThan(5)
@@ -225,9 +234,9 @@ test('a diagram on the slab clears its floors, in both themes', async ({ page })
         return (hi + 0.05) / (lo + 0.05)
       }
       const found: number[] = []
-      for (const svg of document.querySelectorAll('[data-hl-prose] .hl-diagram svg')) {
+      for (const svg of document.querySelectorAll('[data-hl-prose] .bz-diagram svg')) {
         // The slab is the first opaque ancestor of the drawing, by construction.
-        const figure = svg.closest('.hl-slab')!
+        const figure = svg.closest('.bz-figure')!
         const ground = paint(getComputedStyle(figure).backgroundColor)
         for (const node of svg.querySelectorAll('.node rect, .edgePath path')) {
           const stroke = getComputedStyle(node).stroke

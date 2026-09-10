@@ -205,7 +205,7 @@ export function QuickCheck({
             <p className="hl-quiz-reveal-label hl-mark">THE MODULE&rsquo;S SUMMARY</p>
             {/* Authored markdown, rendered by the same pipeline as the prose,
                 so it is typeset as prose rather than as a bare HTML dump. */}
-            <div className="prose" dangerouslySetInnerHTML={{ __html: summaryHtml ?? '' }} />
+            <div className="bz-prose" dangerouslySetInnerHTML={{ __html: summaryHtml ?? '' }} />
           </div>
         )}
 

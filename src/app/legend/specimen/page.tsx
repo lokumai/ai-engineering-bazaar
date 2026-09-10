@@ -62,7 +62,7 @@ export default function SpecimenPage() {
         {SPECIMEN_STAMP}
       </p>
 
-      <p className="hl-lead">
+      <p className="bz-lead">
         This is a real record document, generated from sample data at build
         time. Every name, date, repository and answer in it is invented for the
         specimen. It holds nothing about you, it reads nothing out of this

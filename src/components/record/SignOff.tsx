@@ -68,6 +68,7 @@ export function SignOff({
   criteria,
   revision,
   drawn,
+  beside,
 }: {
   slug: string
   /** §12.4.1 — the sheet's own `objectives`, plus the one sentence §12.4.1 authors. */
@@ -76,6 +77,8 @@ export function SignOff({
   revision: string | null
   /** §12.4.1 — a draft sheet gets no control at all: absent, not disabled. */
   drawn: boolean
+  /** The one quiet control `01` allows beside the primary. */
+  beside?: React.ReactNode
 }) {
   const record = useRecord()
   const hydrated = useHydrated()
@@ -141,7 +144,7 @@ export function SignOff({
   }
 
   return (
-    <section className="hl-signoff" aria-labelledby={headId}>
+    <section className="bz-signoff" aria-labelledby={headId}>
       <div className="hl-signoff-head hl-mark">
         <span id={headId}>COMPLETION</span>
         {/* §12.4.1 / §12.12.1 — who is asserting is the one thing about this
@@ -176,7 +179,12 @@ export function SignOff({
           {criteria.assertion}
         </p>
 
-        <div className="hl-signoff-actions">
+        {/* THE ACTION ROW `01` DRAWS: a 2px top rule, one primary button, at
+            most one quiet one beside it, and a note. This is the language's
+            `bz-actions` primitive, and stage 5 put the row and its two buttons
+            in place; the completion behaviour inside it — the states, the
+            drift notice, the identity prompt — is stage 7's to rebuild. */}
+        <div className="bz-actions">
           {/* §12.16's `s` clicks this control by attribute, because the
               shortcut handler lives in the shell and has no page data in scope.
               The manifest's ninth column deliberately uses
@@ -190,7 +198,7 @@ export function SignOff({
               the tell DESIGN.md refuses; the label was `COMPLETE`. */}
           <button
             type="button"
-            className="hl-btn hl-btn-primary"
+            className="bz-btn"
             {...{ [SIGN_OFF_ATTR]: slug }}
             aria-pressed={signedOff !== null}
             onClick={onToggle}
@@ -223,12 +231,19 @@ export function SignOff({
           {signedOff !== null && (
             <button
               type="button"
-              className="hl-btn"
+              className="bz-btn bz-btn-quiet"
               onClick={() => update((data) => unsign(data, slug), { kind: 'unsign', sheetSlug: slug })}
             >
               Un-complete
             </button>
           )}
+
+          {/* `01`'s row holds one primary and AT MOST ONE quiet button, and on
+              a module the reader has not finished the quiet slot is the
+              mockup's `Requirements (n)`. Passed in rather than built here,
+              because the relations are build-time facts and this component is
+              a client island — the page hands over the finished disclosure. */}
+          {beside}
         </div>
 
         {/* §12.4.3 — a completion claim that quietly became false. No LMS

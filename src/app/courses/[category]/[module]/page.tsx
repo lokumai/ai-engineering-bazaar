@@ -14,9 +14,10 @@ import type { DependencyRelation, SheetLink } from '@/components/sheet/Dependenc
 import { Objectives } from '@/components/sheet/Objectives'
 import { PrevNext, type PrevNextTarget } from '@/components/sheet/PrevNext'
 import { ScheduleOfParts } from '@/components/sheet/ScheduleOfParts'
+import { FactsStrip } from '@/components/sheet/FactsStrip'
+import { Requirements } from '@/components/sheet/Requirements'
 import { SheetRail } from '@/components/sheet/SheetRail'
 import { StatusBand } from '@/components/sheet/StatusBand'
-import { TitleStrip } from '@/components/sheet/TitleBlock'
 import { PageShell } from '@/components/shell/PageShell'
 import {
   moduleByNumber,
@@ -37,10 +38,8 @@ import { scheduleOfParts, summarySentence } from '@/lib/content/schedule'
 import {
   carriesCheckedBy,
   carriesRepositories,
-  eyebrow,
   sheetFacts,
   sheetLabel,
-  titleStripRows,
 } from '@/lib/content/title-block'
 
 /**
@@ -229,15 +228,18 @@ export default async function ModuleSheetPage({
   // it in the dependency graph. A draft has neither: no sections, because §4.5
   // gives it one sentence and a schedule, and nothing to depend on it.
   const rail = drawn ? (
-    <SheetRail
-      toc={rendered?.toc.filter((entry) => entry.depth === 2) ?? []}
-      relations={[
-        relation('Requirements', graph.requires(number)),
-        relation('Unlocks', graph.feeds(number)),
-        relation('See also', graph.seeAlso(number)),
-      ]}
-    />
+    <SheetRail toc={rendered?.toc.filter((entry) => entry.depth === 2) ?? []} />
   ) : null
+
+  /* M16 stage 5 — the relations left the rail. `01` puts them behind the
+     action row's quiet `Requirements (n)` button, so they are a disclosure a
+     reader opens once when deciding whether they can start, rather than a
+     permanent column of module numbers beside the prose. */
+  const relations = [
+    relation('Requirements', graph.requires(number)),
+    relation('Unlocks', graph.feeds(number)),
+    relation('See also', graph.seeAlso(number)),
+  ]
 
   // M10 — the LEFT rail: the curriculum, one accordion section per level, with
   // this module's level open and enlarged. Every module page gets it, draft
@@ -284,131 +286,136 @@ export default async function ModuleSheetPage({
 
         {format === 'A4' && <StatusBand />}
 
-          {/* Below the width where a rail can sit beside the prose, both rails'
-              content moves behind one control (§4.7). Which widths that is
-              depends on which rails this format has, so the drawer is told:
-              `wide` opens at the point the contents rail goes, `narrow` at the
-              point the curriculum list does. */}
-          <ContentsDrawer at={drawn ? 'wide' : 'narrow'}>
-            {rail && <div className="hl-drawer-contents">{rail}</div>}
-            <div className="hl-drawer-curriculum">{curriculum}</div>
-          </ContentsDrawer>
+        {/* Below the width where a rail can sit beside the prose, both rails'
+            content moves behind one control (§4.7). Which widths that is
+            depends on which rails this format has, so the drawer is told:
+            `wide` opens at the point the contents rail goes, `narrow` at the
+            point the curriculum list does. */}
+        <ContentsDrawer at={drawn ? 'wide' : 'narrow'}>
+          {rail && <div className="hl-drawer-contents">{rail}</div>}
+          <div className="hl-drawer-curriculum">{curriculum}</div>
+        </ContentsDrawer>
 
-          {/* §13.1.3 — THE READING PAGE TAKES NO CATEGORY HUE, and the first
-              draft of §13 was wrong to grant it one.
+        {/*
+          THE COLUMN, IN THE ORDER `01` DRAWS IT — M16 stage 5.
 
-              §13.12 gave this page a tinted header band, and it was built. Then
-              the rule above it settled the matter: a category hue may appear
-              ONLY on a surface that reports that category's progress, and it
-              may never be the sole carrier of what it reports (§13.1.4, SC
-              1.4.1). This page prints no statement of the subsystem's standing
-              anywhere — the eyebrow names the subsystem and the sheet's place
-              in the curriculum, and the completion control speaks for this module
-              alone. So a tinted rule here would have been chroma asserting
-              something about the reader that no text on the page said, and
-              satisfying 1.4.1 would have meant adding a second coloured element
-              to the one page §13.1.3 allows exactly one.
+          `main > .col` has six children: the trail, the display heading, a row
+          of tags, the prose, a top-ruled action row, and a two-up pager. The
+          trail is `PageShell`'s; the other five are here, and getting to five
+          from fourteen is most of what this stage did.
 
-              Both ways out were worse than leaving it: the page is where a
-              reader spends 95% of their time (§6), and neither a progress
-              readout nor a second band belongs in the middle of a drawing. The
-              band stays, in the structural line every other component uses. */}
-          <div className="pt-3">
-            <p className="hl-eyebrow hl-mark">{eyebrow(facts)}</p>
-          </div>
+          What went, and where:
 
-          {/* The sheet title lives in the frontmatter and the markdown h1 is
-              stripped (B6.1), so the column's own h1 takes §6.1's rule: 16px,
-              a structural line, then 32px. */}
-          <div className="prose hl-sheet-title">
-            <h1>{sheet.frontmatter.title}</h1>
-          </div>
+          - the EYEBROW — `LEVEL 01 · FUNDAMENTALS · MODULE 3 OF 33`, a
+            tracked-out all-caps meta line above the title. DESIGN.md names
+            that shape as a tell, and every fact in it is in the two tags
+            below.
+          - the TITLE STRIP — twelve `dt`/`dd` rows. `FactsStrip` says where
+            each of them went.
+          - the OBJECTIVES — from a numbered list under a mono head, outside
+            the prose, to the mockup's `leaf` card as the prose's first child.
+          - the RIGHT RAIL's second half — the dependency list, now the action
+            row's quiet disclosure.
 
-          {/* M11 — the module's own facts, in the column, at every width.
-              This used to be the narrow-window fallback for a 240px rail of
-              twelve metadata rows; the rail was cut back to what a reader uses
-              while reading (the sections and the dependencies) and the panel
-              came here, where it already had a variant. Nothing was dropped:
-              the rows, `CHECKED BY`, the repository count and the stamp grid
-              are all still in it, which is why none of this went to O2. */}
-          <TitleStrip
-            rows={titleStripRows(facts)}
-            checkedBy={checkedBy}
-            repositories={repositories}
-            stamps={
-              stampFact === null ? null : (
-                <SheetStamps slug={slug} fact={stampFact} variant="strip" />
-              )
-            }
+          §13.1.3 still holds and is the reason this page takes NO category hue
+          beyond the facts strip's dot: a category hue may appear only on a
+          surface that reports that category's progress, and this page reports
+          one module's.
+        */}
+        <h1 className="bz-display">{sheet.frontmatter.title}</h1>
+
+        <FactsStrip facts={facts} category={sheet.category.slug} />
+
+        {drawn && rendered ? (
+          <Prose
+            html={rendered.html}
+            opening={<Objectives items={sheet.frontmatter.objectives} />}
           />
+        ) : (
+          <>
+            <Objectives items={sheet.frontmatter.objectives} />
+            {summary && <p className="bz-lead">{summary}</p>}
+            <ScheduleOfParts parts={scheduleOfParts(sheet.body)} />
+          </>
+        )}
 
-          <Objectives items={sheet.frontmatter.objectives} />
+        {/* M11 / D14 — COMPLETION CONTROL A: one button, at the end of the
+            module, where the reader already is. §12.4.1 put it above the
+            content; the author chose the opposite and chose it for both
+            surfaces at once (BRAINSTORM D14). A draft has no control at all,
+            so on those the row carries the quiet button alone. */}
+        {criteria !== null ? (
+          <SignOff
+            slug={slug}
+            criteria={criteria}
+            revision={sheet.revision?.hash ?? null}
+            drawn={drawn}
+            beside={<Requirements relations={relations} />}
+          />
+        ) : (
+          <div className="bz-actions">
+            <Requirements relations={relations} />
+          </div>
+        )}
 
-          {drawn && rendered ? (
-            <Prose html={rendered.html} />
-          ) : (
-            <>
-              {summary && <p className="hl-summary">{summary}</p>}
-              <ScheduleOfParts parts={scheduleOfParts(sheet.body)} />
-            </>
-          )}
+        {/*
+          WHAT A READER DOES AFTER READING, as `leaf` cards below the action
+          row and above the pager.
 
-          {/* §12.6 — the retrieval attempt, and the sheet's own summary as the
-              one authored thing that stands in for the model answer this corpus
-              does not contain. */}
-          {quickCheck !== null && (
-            <QuickCheck
-              slug={slug}
-              question={quickCheck.question}
-              summaryHtml={summaryHtml}
-            />
-          )}
+          None of these five has a mockup: `01` draws a module and stops at the
+          pager. So **D30** applies, and the derivation is the mockup's own
+          reading order — the action row is where the page turns from reading
+          to doing, and everything a reader can do belongs after it. The honest
+          cost is a longer column; the alternative was inventing a shape for
+          five components at once, which is how M9 to M14 went wrong.
+        */}
+        {quickCheck !== null && (
+          <QuickCheck slug={slug} question={quickCheck.question} summaryHtml={summaryHtml} />
+        )}
 
-          {/* §12.9.1 — at the end of every ready sheet, before `PrevNext`. The
-              only content in the whole record a third party can check. */}
-          {drawn && <Submittal slug={slug} />}
+        {drawn && <Submittal slug={slug} />}
 
-          {/* M11 / D14 — COMPLETION CONTROL A: one button, at the end of the
-              module, where the reader already is.
+        {stampFact !== null && (
+          <section className="bz-card" aria-labelledby="marked-by">
+            <b id="marked-by" className="bz-card-title">
+              Marked by
+            </b>
+            <SheetStamps slug={slug} fact={stampFact} variant="strip" />
 
-              §12.4.1 put this above the content, reasoning that a switch a
-              reader meets after scrolling past everything is a switch about a
-              thing they have already left. The author chose the opposite, and
-              chose it for both surfaces at once: option A here, option C — a
-              row of adjustable state — on the home and progress pages, because
-              the two surfaces ask different questions
-              (`kia-context/logs/BRAINSTORM.md` D14). At the end of a module the
-              reader has one thing to say and wants one button in front of them;
-              a control at the top asks them to assert something before they
-              have read it.
+            {/* Labelled, because `CheckedBy` and `Repositories` render a bare
+                value — they were written to be the `<dd>` of a title-block row,
+                and the row they belonged to is gone. A name and a count with
+                nothing saying which is which is the meta strip DESIGN.md calls
+                a tell, so the pair keeps its labels and the `<dl>` that makes
+                them a pair to a screen reader. */}
+            <dl className="bz-card-facts">
+              {checkedBy !== null && (
+                <div>
+                  <dt>Checked by</dt>
+                  <dd>{checkedBy}</dd>
+                </div>
+              )}
+              {repositories !== null && (
+                <div>
+                  <dt>Repositories</dt>
+                  <dd>{repositories}</dd>
+                </div>
+              )}
+            </dl>
+          </section>
+        )}
 
-              Both controls write through `src/lib/record/store.ts`, which is
-              the only writer (`kia-context/specs/ARCHITECTURE.md` §5). Two
-              controls, one path. The `s` shortcut clicks whichever one is on
-              the page, by attribute, so moving it cost the keyboard map
-              nothing. */}
-          {criteria !== null && (
-            <SignOff
-              slug={slug}
-              criteria={criteria}
-              revision={sheet.revision?.hash ?? null}
-              drawn={drawn}
-            />
-          )}
+        <PrevNext previous={target(previous)} next={target(next)} />
 
-          <PrevNext previous={target(previous)} next={target(next)} />
-
-          {/* §12.8 — one delegated listener for the whole document, mounted
-              once. Evidence, not currency: no XP, no click counting. */}
-          {drawn && <SourceTracking slug={slug} />}
-          {/* §12.7 — the checklist is upgraded where it already stands, inside
-              the section that explains it, rather than lifted out and stacked
-              below the prose. Mounted only where there is one: one module in the
-              corpus has items, and an island that finds nothing is a wasted
-              mount on the other fourteen. */}
-          {drawn && rendered !== null && rendered.checklist.length > 0 && (
-            <ChecklistIsland slug={slug} />
-          )}
+        {/* §12.8 — one delegated listener for the whole document, mounted
+            once. Evidence, not currency: no XP, no click counting. */}
+        {drawn && <SourceTracking slug={slug} />}
+        {/* §12.7 — the checklist is upgraded where it already stands, inside
+            the section that explains it, rather than lifted out and stacked
+            below the prose. */}
+        {drawn && rendered !== null && rendered.checklist.length > 0 && (
+          <ChecklistIsland slug={slug} />
+        )}
       </div>
     </PageShell>
   )

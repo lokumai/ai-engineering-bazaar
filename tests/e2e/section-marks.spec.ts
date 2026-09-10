@@ -86,8 +86,8 @@ test('a TOC numeral never runs into its section title (§5.6)', async ({ page })
   await page.goto(A0.path)
 
   // M11 — the contents rail is on the RIGHT.
-  const marks = await inkOf(page, '.hl-rail-right .hl-toc-mark')
-  const titles = await inkOf(page, '.hl-rail-right .hl-toc-text')
+  const marks = await inkOf(page, '.hl-rail-right .bz-aside-mark')
+  const titles = await inkOf(page, '.hl-rail-right .bz-aside-text')
 
   expect(marks.length).toBeGreaterThan(5)
   // MEASURED: `VIII` is 29px of ink in a 24px track. Right-alignment cannot

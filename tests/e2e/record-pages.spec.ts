@@ -397,7 +397,7 @@ test('§12.10.3 — the table equivalent is in the DOM with the disclosure close
   await seedRecord(page, SEEDED)
   await openDiagram(page)
 
-  const details = page.locator('details.hl-diagram-table')
+  const details = page.locator('details.bz-diagram-table')
   await expect(details).toHaveCount(1)
   // Closed on arrival, and mandatory rather than optional: it is the only form
   // in which a reader can VERIFY a dependency claim, and it is what serialises

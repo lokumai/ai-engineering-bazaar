@@ -108,7 +108,7 @@ test('an A0 module survives being read', async ({ page }) => {
   // diagram island and the sticky rails all run on this.
   await page.keyboard.press('End')
   await page.waitForTimeout(300)
-  await page.locator('.hl-toc-entry').last().click()
+  await page.locator('.bz-aside-link').last().click()
   await page.keyboard.press('Home')
   await page.waitForTimeout(300)
 

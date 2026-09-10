@@ -66,7 +66,7 @@ export function MovedTo({
 
       <h1 className="hl-listing-title">{name}</h1>
 
-      <p className="hl-lead">
+      <p className="bz-lead">
         {what} is part of {name} now, at one address instead of four. This page
         forwards there; if it has not, the link below does.
       </p>

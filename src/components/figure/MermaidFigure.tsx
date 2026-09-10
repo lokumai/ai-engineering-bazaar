@@ -67,7 +67,7 @@ interface Expanded {
  * the caption.
  */
 function captionOf(figure: Element): string {
-  const strip = figure.querySelector('.hl-cap')
+  const strip = figure.querySelector('.bz-caption')
   if (!strip) return 'Figure'
   return [...strip.childNodes]
     .filter((node) => node.nodeType === Node.TEXT_NODE)
@@ -104,7 +104,7 @@ function pinToNaturalSize(svg: SVGSVGElement, width: number): void {
 /** The fallback: the source, as the reader would have met it in the file. */
 function showSource(node: HTMLElement, source: string): void {
   const pre = document.createElement('pre')
-  pre.className = 'hl-diagram-fallback'
+  pre.className = 'bz-fig-fallback'
   pre.textContent = source
   node.replaceChildren(pre)
 }
@@ -130,7 +130,7 @@ export function MermaidFigure() {
 
   const expand = useCallback(async (button: HTMLElement) => {
     const mermaid = renderer.current
-    const figure = button.closest('.hl-figure')
+    const figure = button.closest('.bz-fig')
     const marker = figure?.querySelector<HTMLElement>('.mermaid-source[data-mermaid]')
     const source = marker?.dataset.mermaid
     if (!mermaid || !figure || !marker || !source) return
@@ -195,7 +195,7 @@ export function MermaidFigure() {
           node.innerHTML = svg
 
           const drawing = node.querySelector('svg')
-          const figure = node.closest<HTMLElement>('.hl-figure')
+          const figure = node.closest<HTMLElement>('.bz-fig')
           if (drawing && figure) {
             const width = naturalWidth(drawing)
             pinToNaturalSize(drawing, width)

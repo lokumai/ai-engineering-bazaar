@@ -191,8 +191,8 @@ const ROVING: ReadonlySet<string> = new Set<RovingKey>([
   'End',
 ])
 
-const TITLE_ID = 'hl-diagram-name'
-const DESC_ID = 'hl-diagram-desc'
+const TITLE_ID = 'bz-diagram-name'
+const DESC_ID = 'bz-diagram-desc'
 
 export function Diagram({
   facts,
@@ -254,7 +254,7 @@ export function Diagram({
 
   return (
     <figure className="m-0">
-      <figcaption className="hl-diagram-title">
+      <figcaption className="bz-diagram-title">
         {/* M14 — `subsystems` was the last reader-visible use of the retired
             word on the site, found by the export grep rather than by the copy
             register: `layout.bands.length` is a count of LEVELS, and the
@@ -268,7 +268,7 @@ export function Diagram({
           shipping something you already know does not work. */}
       <div className="mt-3 max-lg:hidden">
         <svg
-          className="hl-diagram"
+          className="bz-diagram"
           viewBox={`0 0 ${layout.width} ${layout.height}`}
           width={layout.width}
           height={layout.height}
@@ -553,7 +553,7 @@ function StackedBands({
  */
 function Legend() {
   return (
-    <div className="hl-diagram-legend mt-4">
+    <div className="bz-diagram-legend mt-4">
       <p className="m-0 mb-2">Legend</p>
       <dl className="hl-defs">
         <dt>Solid outline</dt>
@@ -597,7 +597,7 @@ function DiagramTable({
   const title = new Map(layout.bands.map((band) => [band.slug, band.title]))
 
   return (
-    <details className="hl-diagram-table">
+    <details className="bz-diagram-table">
       <summary>The same graph as a table · {rows.length} modules</summary>
       <div className="mt-3 overflow-x-auto">
         <table className="w-full border-collapse text-left font-mono text-mark tabular-nums">

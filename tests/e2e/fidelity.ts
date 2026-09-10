@@ -122,6 +122,16 @@ export type Role =
   | 'boardMod'
   /* Stage 4 — and the one thing in it no mockup draws. */
   | 'viewToggle'
+  /* Stage 5 — the reading page, all of it specified by `01`. */
+  | 'crumb'
+  | 'display'
+  | 'tag'
+  | 'section'
+  | 'subsection'
+  | 'actions'
+  | 'buttonQuiet'
+  | 'pager'
+  | 'pagerItem'
 
 export type SelectorMap = Readonly<Partial<Record<Role, string>>>
 
@@ -232,6 +242,48 @@ const FACTS: readonly Fact[] = [
   // The aside: an in-page index behind a rail that turns primary when current.
   { role: 'aside', property: 'top', mutate: '99px' },
   { role: 'asideLink', property: 'borderLeftColor', mutate: 'magenta' },
+
+  /* ---------------------------------------------------------------------------
+     STAGE 5 — THE READING PAGE.
+
+     Specified by `01`, so unlike the catalog these carry colour: the trail's
+     muted meta, the display heading's deeper title ink, the tag's raised fill
+     and hairline, the action row's 2px rule and the quiet button that is white
+     where the primary is cobalt.
+     --------------------------------------------------------------------------- */
+  { role: 'crumb', property: 'fontSize', mutate: '99px' },
+  { role: 'crumb', property: 'marginBottom', mutate: '99px' },
+  { role: 'crumb', property: 'color', mutate: 'magenta' },
+  { role: 'display', property: 'fontSize', mutate: '99px' },
+  { role: 'display', property: 'fontWeight', mutate: '200' },
+  { role: 'display', property: 'color', mutate: 'magenta' },
+  { role: 'display', property: 'letterSpacing', mutate: '9px' },
+  { role: 'tag', property: 'padding', mutate: '99px' },
+  { role: 'tag', property: 'borderRadius', mutate: '99px' },
+  { role: 'tag', property: 'fontSize', mutate: '99px' },
+  { role: 'tag', property: 'backgroundColor', mutate: 'magenta' },
+  { role: 'tag', property: 'borderTopColor', mutate: 'magenta' },
+  // The one place ornament touches the reading column is this heading's rule,
+  // and the heading is a flex row so that the rule can fill what is left.
+  { role: 'section', property: 'fontSize', mutate: '99px' },
+  { role: 'section', property: 'marginTop', mutate: '99px' },
+  { role: 'section', property: 'gap', mutate: '99px' },
+  { role: 'section', property: 'color', mutate: 'magenta' },
+  { role: 'subsection', property: 'fontSize', mutate: '99px' },
+  { role: 'subsection', property: 'marginTop', mutate: '99px' },
+  // A top-ruled row, and the rule is 2px where every other line here is 1px.
+  { role: 'actions', property: 'marginTop', mutate: '99px' },
+  { role: 'actions', property: 'paddingTop', mutate: '99px' },
+  { role: 'actions', property: 'borderTopWidth', mutate: '9px' },
+  { role: 'actions', property: 'gap', mutate: '99px' },
+  { role: 'buttonQuiet', property: 'backgroundColor', mutate: 'magenta' },
+  { role: 'buttonQuiet', property: 'color', mutate: 'magenta' },
+  { role: 'buttonQuiet', property: 'borderTopColor', mutate: 'magenta' },
+  { role: 'pager', property: 'gap', mutate: '99px' },
+  { role: 'pager', property: 'marginTop', mutate: '99px' },
+  { role: 'pagerItem', property: 'padding', mutate: '99px' },
+  { role: 'pagerItem', property: 'borderRadius', mutate: '99px' },
+  { role: 'pagerItem', property: 'backgroundColor', mutate: 'magenta' },
 
   /* ---------------------------------------------------------------------------
      STAGE 4 — THE CATALOG, AND NOT ONE COLOUR AMONG THEM.
@@ -428,6 +480,15 @@ export const MOCKUP_SELECTORS: SelectorMap = {
   buttonPrimary: '.btn:not(.g)',
   aside: '.toc',
   asideLink: '.toc a:not([aria-current])',
+  crumb: '.crumb',
+  display: '.col h1',
+  tag: '.row .tag',
+  section: '.col h2',
+  subsection: '.col h3',
+  actions: '.act',
+  buttonQuiet: '.btn.g',
+  pager: '.pn',
+  pagerItem: '.pn a',
 }
 
 /**
@@ -489,6 +550,9 @@ export const REFERENCE_OF: Readonly<Partial<Record<Role, Reference>>> = {
   tableHead: '03', tableCell: '03', tableEdge: '03', board: '03',
   boardColumn: '03', boardHead: '03', boardTrack: '03', boardList: '03',
   boardMod: '03',
+
+  crumb: '01', display: '01', tag: '01', section: '01', subsection: '01',
+  actions: '01', buttonQuiet: '01', pager: '01', pagerItem: '01',
 }
 
 export const REFERENCE_URL: Readonly<Record<Reference, string>> = {
@@ -615,6 +679,35 @@ export const APP_SELECTORS: SelectorMap = {
   boardList: '.bz-boardcol-list',
   boardMod: '.bz-boardcol-mod',
   viewToggle: '.bz-viewtoggle',
+
+  /* Stage 6 — the code slab and the figure frame. `slabCode` is the `<pre>`
+     the renderer marks, and `figure` is the INNER box: `01` puts `figcaption`
+     outside `.diagram`, so the frame cannot be the `<figure>` element itself. */
+  slab: '.bz-slab',
+  slabCode: '.bz-slab-code',
+  figure: '.bz-figure',
+
+  /* Stage 5 — the reading page.
+
+     Both buttons are scoped to the ACTION ROW, which is where the mockup has
+     them (`.act .btn`). Unscoped, `buttonQuiet` resolved to the contents
+     drawer's trigger — a `bz-btn-quiet` that is `display: none` above the fold
+     breakpoint — so the role read as absent at 1440 while the row below it
+     carried a perfectly good quiet button. `buttonPrimary` then excludes the
+     quiet variant by class rather than by position: the row holds one filled
+     button and at most one white one, and which is which is the point. */
+  crumb: '.bz-crumb',
+  display: '.bz-display',
+  tag: '.bz-facts .bz-tag',
+  section: '.bz-prose .bz-section',
+  subsection: '.bz-prose .bz-subsection',
+  card: '.bz-card',
+  actions: '.bz-actions',
+  buttonPrimary: '.bz-actions .bz-btn:not(.bz-btn-quiet)',
+  buttonQuiet: '.bz-actions .bz-btn-quiet',
+  pager: '.bz-pager',
+  pagerItem: '.bz-pager-item',
+  asideLink: '.bz-aside-link:not([aria-current])',
 }
 
 /**
@@ -717,4 +810,15 @@ export function differencesAt(
  */
 export const DELIBERATELY_ABSENT: Readonly<Partial<Record<Role, string>>> = {
   barField: 'the command palette is deferred; a control that opens nothing is refused',
+  node:
+    'the mockup draws a flow BY HAND, so a node there is a `.bz-node` box with ' +
+    'a background and a border. Every figure in this corpus is a mermaid ' +
+    'drawing generated in the browser, where a node is an SVG `<rect>` painted ' +
+    'through `themeCSS` — it has a `fill` and a `stroke` and no CSS background ' +
+    'at all, so the two are not the same measurement and comparing them would ' +
+    'be comparing `null` to `null`. `.bz-node` stays in the language as the ' +
+    'transcription of what a figure node IS, the way `.bz-tok-*` stays as the ' +
+    'transcription of the syntax palette shiki emits inline; what measures the ' +
+    'real thing is `tests/e2e/mermaid.spec.ts`, which reads the painted stroke ' +
+    'off the SVG and holds it to a 3:1 graphic floor in both themes.',
 }

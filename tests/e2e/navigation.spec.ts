@@ -25,19 +25,19 @@ const last = SHEETS[SHEETS.length - 1]
 test('module 1 has no previous', async ({ page }) => {
   await page.goto(first.path)
 
-  await expect(page.locator('.hl-prevnext a[rel="prev"]')).toHaveCount(0)
-  await expect(page.locator('.hl-prevnext .hl-prevnext-cell').first())
+  await expect(page.locator('.bz-pager a[rel="prev"]')).toHaveCount(0)
+  await expect(page.locator('.bz-pager .bz-pager-item').first())
     .toContainText(/end of the course/i)
-  await expect(page.locator('.hl-prevnext a[rel="next"]')).toHaveCount(1)
+  await expect(page.locator('.bz-pager a[rel="next"]')).toHaveCount(1)
 })
 
 test('module 32 has no next', async ({ page }) => {
   await page.goto(last.path)
 
-  await expect(page.locator('.hl-prevnext a[rel="next"]')).toHaveCount(0)
-  await expect(page.locator('.hl-prevnext .hl-prevnext-cell').last())
+  await expect(page.locator('.bz-pager a[rel="next"]')).toHaveCount(0)
+  await expect(page.locator('.bz-pager .bz-pager-item').last())
     .toContainText(/end of the course/i)
-  await expect(page.locator('.hl-prevnext a[rel="prev"]')).toHaveCount(1)
+  await expect(page.locator('.bz-pager a[rel="prev"]')).toHaveCount(1)
 })
 
 test('next walks 1 to 32 straight through every category boundary', async ({ page }) => {
@@ -50,12 +50,18 @@ test('next walks 1 to 32 straight through every category boundary', async ({ pag
     const previous = SHEETS[i - 1]
 
     // The link states where it goes before it goes there (§5.7).
-    const next = page.locator('.hl-prevnext a[rel="next"]')
+    const next = page.locator('.bz-pager a[rel="next"]')
     await expect(next).toContainText(expected.title)
-    await expect(next.locator('.hl-prevnext-sheet')).toHaveText(String(expected.module))
+    // ITS HREF, and not a module number printed inside the tile. `01`'s pager
+    // tile is a faint label over a titled destination and nothing else; the
+    // retired cell printed the number too, which the trail, the footer and the
+    // rail all already carry. The destination is the stronger claim anyway.
+    await expect(next).toHaveAttribute('href', new RegExp(`${expected.path}$`))
 
-    // A sheet that is not drawn says so on the link, not only on arrival.
-    await expect(next.locator('.hl-prevnext-tag')).toHaveCount(expected.drawn ? 0 : 1)
+    // A sheet that is not drawn says so on the link, not only on arrival — in
+    // the label beside the direction, which is where the tile has room for it.
+    if (expected.drawn) await expect(next).not.toContainText('Planned')
+    else await expect(next).toContainText('Planned')
 
     await next.click()
     await expect(page).toHaveURL(new RegExp(`${expected.path}$`))
@@ -63,8 +69,8 @@ test('next walks 1 to 32 straight through every category boundary', async ({ pag
 
     if (expected.category !== previous.category) {
       // The boundary is a subsystem label, not a stop (§4.4 / §5.7).
-      await expect(page.locator('.hl-eyebrow')).toContainText(
-        expected.category.toUpperCase().replace('-', ' '),
+      await expect(page.locator('.bz-facts')).toContainText(
+        new RegExp(expected.category.replace('-', '[ -]'), 'i'),
       )
     }
   }
@@ -79,7 +85,7 @@ test('previous walks 32 back to 1', async ({ page }) => {
 
   for (let i = SHEETS.length - 2; i >= 0; i--) {
     const expected = SHEETS[i]
-    await page.locator('.hl-prevnext a[rel="prev"]').click()
+    await page.locator('.bz-pager a[rel="prev"]').click()
     await expect(page).toHaveURL(new RegExp(`${expected.path}$`))
     await expect(page.locator('main h1')).toHaveText(expected.title)
   }

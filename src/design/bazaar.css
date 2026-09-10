@@ -14,24 +14,22 @@
    set of colours declared here must equal the set of colours in the mockup, in
    both directions, and every dimension declared here must appear in it.
 
-   NOT IMPORTED YET, deliberately. `src/app/globals.css` still carries the old
-   token layer and the eleven stylesheets that depend on it. Wiring this file in
-   and deleting those is M16's first act; until then this is a specification the
-   test suite checks rather than code the site runs.
+   THIS IS THE TOKEN LAYER THE SITE LOADS, since M16 stage 0: `src/app/globals.css`
+   imports it before anything that could use a utility, and the eleven
+   stylesheets of the retired interface were deleted rather than migrated.
 
-   IT LIVES OUTSIDE `src/app/` FOR A REASON. Three unit tests glob every `.css`
-   in that directory — `tests/unit/color/lokum.test.ts`,
-   `tests/unit/color/slab-and-controls.test.ts` and
-   `tests/unit/stroke-weights.test.ts` — and the second keeps any rule that
-   declares five or more `--color-*` tokens and then requires its values to
-   equal the *old* dark palette. A second token layer in `src/app/` fails that
-   the moment it is written. Moving this file is part of M16, not a tidy-up.
+   IT LIVES OUTSIDE `src/app/` FOR A REASON. Several unit tests glob every
+   `.css` in that directory and hold each one to the discipline a SURFACE
+   stylesheet is held to — no `--color-*` declarations, no `.dark` rule, no
+   invented radius. This file is the language rather than a surface, so it does
+   the opposite of all three, and a token layer sitting in `src/app/` would fail
+   those tests the moment it was written.
 
-   ONE THING M16 MUST HANDLE: `src/lib/content/code-theme.ts` reads the six
-   `--color-slab-*` tokens out of `globals.css` and requires `oklch()` notation,
-   because it feeds them through `oklchToHex`. The mockup writes hex, so this
-   file writes hex. When this becomes the token layer, that reader has to accept
-   hex or stop converting. `npm run build` is the only thing that catches it.
+   `src/lib/content/code-theme.ts` READS THIS FILE, by name and positionally:
+   it takes each `--color-slab-*` role from above the `.dark` scope and again
+   from inside it, and requires both. It accepts hex, which is what the mockup
+   writes and therefore what this file writes. `npm run build` is the only thing
+   that catches a break in that path.
    =========================================================================== */
 
 @theme {
@@ -129,6 +127,14 @@
   --color-slab-comment:         #8b91a0;
   --color-slab-function:        #7fb8e8;
   --color-slab-number:          #e0a45c;
+  /* The two SEMANTICS a diagram needs that the page's own chromatics cannot
+     supply. `success` and `caution` are the same value in both themes and work
+     on either ground; `primary` and `category-5` are not — cobalt is #282864
+     on powder and lifts to #848bd0 on a dark one. A frame that never flips
+     needs the lifted values at all times, or `info` is a navy stroke on a
+     near-black ground. Both are already the language's own dark values. */
+  --color-slab-info:            #848bd0;
+  --color-slab-fault:           #ad5b47;
 
   /* -- type ----------------------------------------------------------------
      One sans family does all the work; mono appears only inside a slab and on
@@ -872,6 +878,52 @@
     border: 1px solid var(--color-slab-line);
     border-radius: var(--radius-lg);
     background: var(--color-slab-surface);
+
+    /*
+      THE SLAB, REBOUND — and this is the mechanism the whole diagram palette
+      rests on.
+
+      A mermaid drawing is inline SVG generated in the browser, and mermaid's
+      `classDef` grammar rejects a CSS function: `stroke:var(--color-x)` is a
+      parse error on the `(` and a parse error blanks the figure. So
+      `src/lib/figure/mermaid-config.ts` paints everything through `themeCSS`,
+      which IS real CSS, and every declaration in it names a PAGE token —
+      `surface-raised` for a node's fill, `line-strong` for its stroke,
+      `on-surface` for a label.
+
+      Custom properties cascade into inline SVG, so redeclaring them HERE puts
+      fifty-three diagrams on the dark ground with no second stylesheet, no
+      per-diagram class and no re-render. Without it the page's own values win
+      and a diagram is a near-white box inside a near-black frame, which is
+      exactly what shipped between stage 0 and stage 6.
+
+      It belongs in the language and not in a surface stylesheet, and that is
+      not a preference: `tests/unit/color/slab-and-controls.test.ts` forbids a
+      surface from declaring any `--color-*` token at all. The two tests that
+      describe this mechanism looked contradictory until it was put here.
+    */
+    --color-surface: var(--color-slab-surface);
+    --color-surface-raised: var(--color-slab-surface-raised);
+    /* THE DRAWING LINE, and not the slab's raised hairline.
+
+       A node's border in the mockup is `slab-line-raised`, which is the quiet
+       edge a raised surface takes — and DESIGN.md's own "accepted risk" says a
+       control's boundary supports its identity rather than carrying it.
+       **A diagram's strokes are not a control's edge: they are the content.**
+       SC 1.4.11 asks 3:1 of a graphic that conveys meaning, and MEASURED,
+       `slab-line-raised` on the slab ground is 1.80:1 — `mermaid.spec.ts` is
+       what said so. `slab-arrow` is the value this palette already has for a
+       line somebody has to follow, and it measures 3.47:1 on the frame and
+       3.09:1 on a node's own fill. */
+    --color-line-strong: var(--color-slab-arrow);
+    --color-on-surface: var(--color-slab-on-raised);
+    --color-primary: var(--color-slab-info);
+    --color-category-5: var(--color-slab-fault);
+    /* DESIGN.md's dark-theme rule, applied to the one component that is dark
+       in both themes: white on the lifted accent measures 3.19:1 and fails a
+       text floor, while the ground on it reaches 5.15:1. So a filled accent
+       inside a figure carries DARK type, exactly as it does on a dark page. */
+    --color-on-primary: var(--color-slab-surface);
   }
 
   .bz-figure-body {
@@ -911,6 +963,38 @@
   .bz-node[data-active] {
     border-color: var(--color-category-1);
     background: var(--color-category-1);
+    color: var(--color-on-primary);
+    font-weight: 600;
+  }
+
+  /*
+    THE THIRD NODE ROLE — M16 stage 6.
+
+    `playground/06-code-diagrams.html` proposes three: done, you-are-here, and
+    not-yet. The language had two — a bare node and `[data-active]` — because
+    `01` draws only two, and `01` is the ratified shell. `06` contributes the
+    third and nothing else about a figure (**D31**): its own slab is a
+    Tokyo-Night palette on a cool grey ground, and only its `t3` variant is on
+    this palette at all.
+
+    Read off `t3`, which is the one that is: done is `.nd.b` = #2f8c86, which is
+    `category-1` and therefore the state the language already had; you-are-here
+    is `.nd.a` = #282864, the cobalt; later is a bare `.nd`. So the missing
+    state is a cobalt node and its value was already declared — nothing here is
+    a colour anybody invented, which matters because
+    `tests/unit/design/transcription.test.ts` compares the colour SET against
+    the two `01` mockups in both directions and would refuse one.
+
+    `data-here` and NOT `data-state`, deliberately. The rail already spends
+    `data-here` on "the current group", so one word carries one meaning across
+    the language (**D38**). `data-state` is taken: the record's own diagram uses
+    `.hl-node[data-state]` with four values, and a second four-value
+    `data-state` on a different kind of node is how two vocabularies start
+    agreeing on nothing.
+  */
+  .bz-node[data-here] {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
     color: var(--color-on-primary);
     font-weight: 600;
   }
@@ -1138,6 +1222,14 @@
   --color-slab-comment:         #8b91a0;
   --color-slab-function:        #7fb8e8;
   --color-slab-number:          #e0a45c;
+  /* The two SEMANTICS a diagram needs that the page's own chromatics cannot
+     supply. `success` and `caution` are the same value in both themes and work
+     on either ground; `primary` and `category-5` are not — cobalt is #282864
+     on powder and lifts to #848bd0 on a dark one. A frame that never flips
+     needs the lifted values at all times, or `info` is a navy stroke on a
+     near-black ground. Both are already the language's own dark values. */
+  --color-slab-info:            #848bd0;
+  --color-slab-fault:           #ad5b47;
 }
 
 /* The fold is instant, not animated. */

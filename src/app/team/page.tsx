@@ -68,7 +68,7 @@ export default function TeamPage() {
 
       <h1 className="hl-listing-title">Team</h1>
 
-      <p className="hl-lead">
+      <p className="bz-lead">
         One row per member of your organisation. The claim column is what each
         person asserted about themselves; the evidence column is what can be
         checked without them. They are separate columns because a completion is a
@@ -76,7 +76,7 @@ export default function TeamPage() {
         one tick would print the first as the second.
       </p>
 
-      <p className="hl-lead">
+      <p className="bz-lead">
         Nothing on this page is fetched at build time. Your own session issues
         every query, and the database decides what comes back: a manager reads
         the records of their organisation&rsquo;s members, and nobody reads

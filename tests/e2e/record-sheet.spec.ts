@@ -109,8 +109,8 @@ const EMPTY_STAMPS = [
  */
 function checkedBy(page: Page) {
   return page
-    .locator('.hl-title-block-row, .hl-title-strip-pair')
-    .filter({ has: page.locator('dt', { hasText: /^CHECKED BY$/ }) })
+    .locator('.bz-card-facts > div')
+    .filter({ has: page.locator('dt', { hasText: /^checked by$/i }) })
     .locator('dd')
 }
 
@@ -118,11 +118,17 @@ function checkedBy(page: Page) {
  * The module's own printed `REVISION` — what §12.4.3 records a completion
  * against. Same story as `checkedBy`: it is in the strip now.
  */
+/**
+ * The hash the page prints for THIS FILE, read off the footer.
+ *
+ * It used to be the title block's `REVISION` row. M16 stage 5 replaced that
+ * twelve-row panel with `01`'s three spans and stopped printing the revision
+ * twice — §5.2 already gives it to the footer, which is where a drawing's
+ * revision belongs. So this reads the one printer that is left, and the
+ * sign-off still signs against the same hash it always did.
+ */
 function printedRevision(page: Page) {
-  return page
-    .locator('.hl-title-block-row, .hl-title-strip-pair')
-    .filter({ has: page.locator('dt', { hasText: /^REVISION$/ }) })
-    .locator('dd')
+  return page.locator('footer')
 }
 
 /**
@@ -141,7 +147,22 @@ function stampConditions(page: Page): Promise<string[]> {
     .evaluateAll((slots) =>
       slots
         .filter((slot) => (slot as HTMLElement).checkVisibility())
-        .map((slot) => ((slot as HTMLElement).innerText ?? '').replace(/\s+/g, ' ').trim()),
+        /*
+          Each CHILD's text, joined by a space, rather than the slot's rendered
+          `innerText`. A stamp is a name span beside a condition span, and
+          whether the two are separated by whitespace when rendered is a
+          LAYOUT fact — stage 7 owns the completion mark's design and the
+          spans are unstyled until it lands, so `innerText` ran them together
+          as `COMPLETION0 OF 1`. What this test is about is the words and the
+          numbers, and those did not change.
+        */
+        .map((slot) =>
+          [...slot.children]
+            .map((child) => (child.textContent ?? '').replace(/\s+/g, ' ').trim())
+            .filter((text) => text !== '')
+            .join(' ')
+            .trim(),
+        ),
     )
 }
 
@@ -444,7 +465,10 @@ test('channel A stays true across a client transition (§12.2)', async ({ page }
   // began that way; the footer's `LokumAI` made it two and the strict-mode
   // violation was the locator's looseness surfacing, not a regression. What
   // this hop needs is the home link in the header, so that is what it asks for.
-  await page.getByRole('banner').getByRole('link', { name: /^Lokum/ }).click()
+  // The WORDMARK, which M16 stage 1 took from the mockup: `01`'s `.brand`
+  // reads "AI Engineering Bazaar". It said "Lokum" until then, and scoping to
+  // the banner is still what keeps the footer's own LokumAI link out of it.
+  await page.getByRole('banner').getByRole('link', { name: /Bazaar/ }).click()
   await expect(page.locator('h1.hl-hero-title')).toBeVisible()
 
   // §15.2.1 — the stamp, read as the reader meets it. M13 made the home page
@@ -496,7 +520,8 @@ test('sign-off records the module’s own revision and survives a reload (§12.4
   await page.goto(SHEET.path)
   await waitForHydratedReadout(page)
 
-  const revision = (await printedRevision(page).innerText()).trim()
+  const printed = await printedRevision(page).innerText()
+  const revision = printed.match(/Rev ([0-9a-f]{7,40})/i)?.[1] ?? ''
   expect(revision, 'the module printed no revision to sign against').toMatch(/^[0-9a-f]{7,40}$/)
 
   await signOff(page).click()
@@ -627,10 +652,10 @@ test('the name is asked for inline at the first sign-off (§12.3.2, §12.3.3)', 
   await page.goto(SHEET.path)
   await waitForHydratedReadout(page)
   // Nothing has asked yet: the sheet is the first-run experience.
-  await expect(page.locator('.hl-signoff form')).toHaveCount(0)
+  await expect(page.locator('.bz-signoff form')).toHaveCount(0)
 
   await signOff(page).click()
-  const form = page.locator('.hl-signoff form')
+  const form = page.locator('.bz-signoff form')
   await expect(form).toBeVisible()
 
   // §12.3.2 — not a modal. The drawing is asking who is checking it, and it asks
@@ -675,7 +700,7 @@ test('skipping the name is a legitimate state and prints UNSIGNED (§12.3.2)', a
   await signOff(page).click()
   await page.getByRole('button', { name: 'SKIP', exact: true }).click()
 
-  await expect(page.locator('.hl-signoff form')).toHaveCount(0)
+  await expect(page.locator('.bz-signoff form')).toHaveCount(0)
   // Never a placeholder person: no "Anonymous", no "Reader", no invented name.
   // Absence of a name is information; a fake name would be a claim.
   await expect(checkedBy(page)).toHaveText(['UNSIGNED'])
@@ -708,7 +733,7 @@ test('a Turkish name keeps its dotted İ and its whole stored value (§12.3.4)',
   await page.goto(SHEET.path)
   await waitForHydratedReadout(page)
   await signOff(page).click()
-  await page.locator('.hl-signoff form input').fill(NAME)
+  await page.locator('.bz-signoff form input').fill(NAME)
   await page.getByRole('button', { name: 'SAVE NAME', exact: true }).click()
 
   // §12.3.4 — never truncate the stored value; ellipsis is a layout affordance
@@ -1196,8 +1221,8 @@ test('§12.9 — registering a repository reaches the module info’s own row', 
   await page.goto(SHEET.path)
 
   const row = page
-    .locator('.hl-title-block-row, .hl-title-strip-pair')
-    .filter({ has: page.locator('dt', { hasText: /^REPOSITORIES$/ }) })
+    .locator('.bz-card-facts > div')
+    .filter({ has: page.locator('dt', { hasText: /^repositories$/i }) })
     .locator('dd')
     .first()
 
@@ -1253,8 +1278,8 @@ test('§12.9.3 — the commit field states its format before it is typed in', as
   // Nothing was registered, so the title block's count did not move.
   await expect(
     page
-      .locator('.hl-title-block-row, .hl-title-strip-pair')
-      .filter({ has: page.locator('dt', { hasText: /^REPOSITORIES$/ }) })
+      .locator('.bz-card-facts > div')
+      .filter({ has: page.locator('dt', { hasText: /^repositories$/i }) })
       .locator('dd')
       .first(),
   ).toHaveText('0')

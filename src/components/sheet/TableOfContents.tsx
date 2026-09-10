@@ -32,12 +32,12 @@ export function TableOfContents({
 
   return (
     <nav aria-label="Sections">
-      <ol role="list" className="hl-toc" data-hl-marks={marks ? '' : undefined}>
+      <ol role="list" className="bz-aside-list" data-hl-marks={marks ? '' : undefined}>
         {entries.map((entry) => (
           <li key={entry.id}>
             <a
               href={`#${entry.id}`}
-              className="hl-toc-entry"
+              className="bz-aside-link"
               // `aria-current` is on the row in view, which is a statement
               // about where the reader is, not about what they have read.
               aria-current={entry.id === activeId ? 'true' : undefined}
@@ -46,11 +46,11 @@ export function TableOfContents({
                   off at build time (B6.3). The rest get no numeral and no
                   gutter mark rather than an invented one. */}
               {marks && (
-                <span className="hl-toc-mark" aria-hidden="true">
+                <span className="bz-aside-mark" aria-hidden="true">
                   {entry.mark ?? ''}
                 </span>
               )}
-              <span className="hl-toc-text">{entry.text}</span>
+              <span className="bz-aside-text">{entry.text}</span>
             </a>
           </li>
         ))}

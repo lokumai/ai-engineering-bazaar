@@ -68,7 +68,7 @@ export default function JoinPage() {
     <PageShell>
       <h1 className="hl-listing-title">Join an organisation</h1>
 
-      <p className="hl-lead">
+      <p className="bz-lead">
         An organisation is a group whose managers follow the progress of the
         people in it. Joining one is a decision with a consequence for
         everything this browser has recorded about you, so this module states the

@@ -34,10 +34,22 @@ for (const sheet of SHEETS) {
 
     await expect(page.locator('.bz-sheet')).toHaveAttribute('data-format', sheet.format)
 
-    // The eyebrow states the sheet's own place in the set (§4.5 item 2, §5.5).
-    await expect(page.locator('.hl-eyebrow')).toContainText(
-      new RegExp(`MODULE ${sheet.module} OF ${SHEETS.length}`, 'i'),
-    )
+    /*
+      The FACTS STRIP names the level and gives the module's place IN THAT
+      LEVEL, which is what `01` draws — its tag reads `Module 3 of 8`, and 8 is
+      the level's size rather than the course's.
+
+      This assertion used to read `.bz-facts` and pin `MODULE n OF 33`: a
+      tracked-out all-caps meta line above the title, which DESIGN.md names as
+      a tell and stage 5 removed. The module's place in the WHOLE SET is still
+      stated, by the footer, and `site-footer.spec.ts` asserts it on every one
+      of the thirty-three — so pinning it a second time here would be one fact
+      with two tests and one of them would be about the wrong surface. What is
+      checked here is that the strip is populated and says which level this is.
+    */
+    const strip = page.locator('.bz-facts')
+    await expect(strip).toContainText(/Module \d+ of \d+/i)
+    await expect(strip).toContainText(new RegExp(sheet.category, 'i'))
 
     expect(problems.consoleErrors, `${sheet.path} console`).toEqual([])
     expect(problems.failedRequests, `${sheet.path} network`).toEqual([])

@@ -33,7 +33,7 @@ export default function NotFound() {
     <PageShell sheet={NOT_FOUND_SHEET_LABEL} trailLabel={NOT_FOUND_TITLE}>
       <h1 className="hl-listing-title">{NOT_FOUND_TITLE}</h1>
 
-      <p className="hl-lead">
+      <p className="bz-lead">
         This address is not a module in the curriculum. The catalog lists every
         one that is.
       </p>

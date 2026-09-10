@@ -205,7 +205,7 @@ function rehypeLeadParagraph() {
   return (tree: Root) => {
     const first = tree.children.find(isElement)
     if (!first || first.tagName !== 'p') return
-    first.properties = { ...first.properties, className: ['hl-lead'] }
+    first.properties = { ...first.properties, className: ['bz-lead'] }
   }
 }
 
@@ -305,12 +305,20 @@ function rehypeHeadingAnchors() {
       const titleId = claimId(`${id}-title`, taken)
       node.children = [element('span', { id: titleId }, node.children)]
       node.properties['aria-labelledby'] = titleId
+      /*
+        The language's own name for what this heading is, so the dashed ochre
+        rule and the type step are stated in ONE place (D38). `01` styles `h2`
+        and `h3` as bare element selectors and `bazaar.css` transcribes them as
+        `.bz-section` and `.bz-subsection`; a second copy of those declarations
+        under `.bz-prose h2` would be the same rule with two authors.
+      */
+      node.properties.className = [node.tagName === 'h2' ? 'bz-section' : 'bz-subsection']
 
       node.children.push(
         element(
           'a',
           {
-            className: ['hl-anchor'],
+            className: ['bz-anchor'],
             href: `#${id}`,
             'aria-label': `Link to “${hastToString(node)}”`,
           },
@@ -426,15 +434,15 @@ function caption(
   extra: { action?: Element; note?: string | null } = {},
 ): Element {
   const children: ElementContent[] = [
-    element('span', { className: ['hl-cap-label'] }, [
+    element('span', { className: ['bz-caption-label'] }, [
       text(title ? `${number} — ${title}` : number),
     ]),
   ]
   if (extra.action) children.push(extra.action)
   if (extra.note) {
-    children.push(element('p', { className: ['hl-cap-note'] }, [text(extra.note)]))
+    children.push(element('p', { className: ['bz-caption-note'] }, [text(extra.note)]))
   }
-  return element('figcaption', { className: ['hl-cap'] }, children)
+  return element('figcaption', { className: ['bz-caption'] }, children)
 }
 
 function scrollRegion(
@@ -541,19 +549,30 @@ function rehypeFigures(options: RenderOptions) {
           [
             // §6.10 B5's loading state: a drawn placeholder at the reserved
             // height. No spinner, no skeleton shimmer, no mascot.
-            element('p', { className: ['hl-diagram-pending'] }, [text(`Rendering ${name}`)]),
+            element('p', { className: ['bz-fig-pending'] }, [text(`Rendering ${name}`)]),
           ],
         )
 
         parent.children[index] = element(
           'figure',
-          { className: ['hl-figure', 'hl-diagram', 'hl-slab'], 'data-hl-width': 'prose' },
+          { className: ['bz-fig', 'bz-diagram'], 'data-hl-width': 'prose' },
           [
-            scrollRegion('hl-diagram-body', name.replace('FIG.', 'Figure'), [marker]),
+            /*
+              M16 stage 5 — the dark frame is on the SCROLL BOX and not on the
+              `<figure>`, because `01` puts `figcaption` OUTSIDE `.diagram`
+              and a caption inside the frame would be page ink on a slab
+              ground. Two language classes on one element: `bz-figure` is the
+              frame, `bz-figure-body` the containment.
+            */
+            scrollRegion(
+              'bz-figure bz-figure-body',
+              name.replace('FIG.', 'Figure'),
+              [marker],
+            ),
             caption(name, section, {
               action: element(
                 'button',
-                { type: 'button', className: ['hl-cap-action'], 'data-hl-expand': '' },
+                { type: 'button', className: ['bz-caption-action'], 'data-hl-expand': '' },
                 [text('Expand')],
               ),
             }),
@@ -569,7 +588,7 @@ function rehypeFigures(options: RenderOptions) {
         const name = label('FIG.', sheet, figures)
         parent.children[index] = element(
           'figure',
-          { className: ['hl-figure', 'hl-image'], 'data-hl-width': 'prose' },
+          { className: ['bz-fig', 'bz-image'], 'data-hl-width': 'prose' },
           [image.image, caption(name, image.label ?? section, { note: image.note })],
         )
         return [SKIP, index + 1]
@@ -584,13 +603,13 @@ function rehypeFigures(options: RenderOptions) {
         parent.children[index] = element(
           'figure',
           {
-            className: ['hl-figure', 'hl-table'],
+            className: ['bz-fig', 'bz-tablefig'],
             'data-hl-width': widthForColumns(columns),
             'data-hl-columns': String(columns),
           },
           [
             caption(name, section),
-            scrollRegion('table-scroll', name.replace('TBL.', 'Table'), [node]),
+            scrollRegion('bz-scroller', name.replace('TBL.', 'Table'), [node]),
           ],
         )
         return [SKIP, index + 1]
@@ -616,7 +635,7 @@ function rehypeBlockquotes() {
   return (tree: Root) => {
     visit(tree, 'element', (node: Element) => {
       if (node.tagName !== 'blockquote') return
-      node.properties = { ...node.properties, className: ['hl-quote'] }
+      node.properties = { ...node.properties, className: ['bz-quote'] }
 
       const paragraph = node.children.find(isElement)
       if (!paragraph || paragraph.tagName !== 'p') return
@@ -635,8 +654,8 @@ function rehypeBlockquotes() {
 
       node.properties['data-hl-labelled'] = ''
       node.children = [
-        element('p', { className: ['hl-quote-label'] }, [text(raw.slice(0, -1))]),
-        element('div', { className: ['hl-quote-body'] }, node.children),
+        element('p', { className: ['bz-quote-label'] }, [text(raw.slice(0, -1))]),
+        element('div', { className: ['bz-quote-body'] }, node.children),
       ]
     })
   }
@@ -808,7 +827,7 @@ function rehypeExternalLinks() {
         // A word joiner, so the mark can never be orphaned onto its own line
         // away from the link it annotates.
         text('\u2060'),
-        element('span', { className: ['hl-ext-mark'], 'aria-hidden': 'true' }, [text('↗')]),
+        element('span', { className: ['bz-ext-mark'], 'aria-hidden': 'true' }, [text('↗')]),
       )
     })
   }
@@ -866,24 +885,29 @@ function rehypeCodeBlocks() {
         // is the same page telling a reader two different things. MEASURED: at
         // 390px all eight blocks on the RAG sheet overflow.
         'data-hl-scroller': '',
+        className: ['bz-slab-code'],
       }
 
       parent.children[index] = element(
         'div',
-        // M11 — the dark slab. `hl-slab` is a local theme override in
-        // `rail.css`, not a set of bespoke code colours: it redeclares the
-        // palette on this element so everything inside it — the header strip,
-        // the syntax spans, a mermaid SVG — lands on a dark ground with no
-        // second stylesheet and no re-render. The author's explicit choice.
-        { className: ['hl-code', 'hl-slab'], 'data-language': language },
+        /*
+          THE SLAB, named the way the language names it. This used to be
+          `hl-code hl-slab`, and the comment beside it said `hl-slab` was "a
+          local theme override in `rail.css`" — a rule that was deleted with the
+          old interface and never existed under that name again, so for four
+          commits the class was inert and the comment was describing a file
+          nobody could open. `bz-slab` is the primitive: a mono header strip and
+          a scrolling body on a dark ground that does not re-theme.
+        */
+        { className: ['bz-slab'], 'data-language': language },
         [
-          element('div', { className: ['hl-code-head'] }, [
-            element('span', { className: ['hl-code-lang'] }, [text(language)]),
+          element('div', { className: ['bz-slab-head'] }, [
+            element('span', { className: ['bz-slab-lang'] }, [text(language)]),
             element(
               'button',
               {
                 type: 'button',
-                className: ['hl-code-copy'],
+                className: ['bz-slab-copy'],
                 'data-hl-copy': '',
                 // The label changes to COPIED for 1200ms; say so out loud.
                 'aria-live': 'polite',

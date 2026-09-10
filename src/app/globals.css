@@ -36,6 +36,7 @@
    holds them to that. M16 adds one per stage. */
 @import "./catalog.css";
 @import "./category.css";
+@import "./prose.css";
 @import "./shell.css";
 @import "./rail.css";
 

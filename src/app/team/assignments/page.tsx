@@ -40,7 +40,7 @@ export default function AssignmentsPage() {
 
       <h1 className="hl-listing-title">Assignments</h1>
 
-      <p className="hl-lead">
+      <p className="bz-lead">
         A title, a note, a due date and a set of modules. Name nobody and it
         applies to the whole organisation, including whoever joins next; name
         people and it applies to exactly those accounts. The deadline is the only
@@ -49,7 +49,7 @@ export default function AssignmentsPage() {
         the reason shown.
       </p>
 
-      <p className="hl-lead">
+      <p className="bz-lead">
         An assignment cannot make anyone sign anything off. Completion is the
         reader&rsquo;s own assertion and stays that way; this page sets a
         deadline and the panel reports against it.

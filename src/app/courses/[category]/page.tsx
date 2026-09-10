@@ -88,7 +88,7 @@ export default async function CategoryPage({
         <h1 className="hl-listing-title mt-3">{category.title}</h1>
       </div>
 
-      <p className="hl-lead">{category.blurb}</p>
+      <p className="bz-lead">{category.blurb}</p>
 
       {/* §4.9 item 4 — one tick per sheet in this subsystem. The eyebrow above
           states the same reading in words, so the gauge is decoration here and

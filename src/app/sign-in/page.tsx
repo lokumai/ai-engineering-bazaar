@@ -112,7 +112,7 @@ export default function SignInPage() {
 
       <h1 className="hl-listing-title">Sign in</h1>
 
-      <p className="hl-lead">
+      <p className="bz-lead">
         Three ways to put your name on this record, and they cost different
         things. The first asks for nothing and sends nothing on its own. The
         other two move a copy off this browser, carrying the name with it, so

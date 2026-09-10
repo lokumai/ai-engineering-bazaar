@@ -56,7 +56,7 @@ export default function AliasPage() {
 
       <h1 className="hl-listing-title">Choose an alias</h1>
 
-      <p className="hl-lead">{ALIAS_SCOPE}</p>
+      <p className="bz-lead">{ALIAS_SCOPE}</p>
 
       <hr className="hl-rule-struct" aria-hidden="true" />
 

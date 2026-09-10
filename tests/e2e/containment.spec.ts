@@ -51,8 +51,8 @@ const WITH_FIGURES = SHEETS.filter((sheet) => sheet.drawn).map((sheet) => sheet.
  */
 async function figuresRendered(page: Page): Promise<number> {
   return page.evaluate(async () => {
-    const all = () => document.querySelectorAll('[data-hl-prose] .hl-diagram')
-    const ready = () => document.querySelectorAll('[data-hl-prose] .hl-diagram[data-hl-ready]')
+    const all = () => document.querySelectorAll('[data-hl-prose] .bz-diagram')
+    const ready = () => document.querySelectorAll('[data-hl-prose] .bz-diagram[data-hl-ready]')
     const deadline = Date.now() + 20_000
     while (all().length !== ready().length && Date.now() < deadline) {
       await new Promise((resolve) => setTimeout(resolve, 100))
@@ -79,7 +79,7 @@ interface Overflow {
  * Runs in the page and closes over nothing.
  */
 function probe(): Overflow {
-  const column = document.querySelector('.hl-column')!.getBoundingClientRect()
+  const column = document.querySelector('.bz-col')!.getBoundingClientRect()
 
   /** An element's box clipped by every ancestor that clips, or null if hidden. */
   const painted = (element: Element): { left: number; right: number } | null => {
@@ -100,12 +100,12 @@ function probe(): Overflow {
   let worst = 0
   let widest = 0
 
-  for (const svg of document.querySelectorAll('[data-hl-prose] .hl-diagram svg')) {
+  for (const svg of document.querySelectorAll('[data-hl-prose] .bz-diagram svg')) {
     widest = Math.max(widest, svg.getBoundingClientRect().width)
   }
 
   const parts = document.querySelectorAll(
-    '[data-hl-prose] .hl-diagram svg, [data-hl-prose] .hl-diagram svg *',
+    '[data-hl-prose] .bz-diagram svg, [data-hl-prose] .bz-diagram svg *',
   )
   for (const part of parts) {
     const box = part.getBoundingClientRect()
@@ -171,7 +171,7 @@ test.describe('a diagram is contained by its column', () => {
     // …and it says so: the scroll container really can be scrolled, which is
     // what makes the clipped part reachable rather than lost.
     const scrollable = await page.evaluate(() =>
-      [...document.querySelectorAll('[data-hl-prose] .hl-diagram-body')].map(
+      [...document.querySelectorAll('[data-hl-prose] .bz-figure-body')].map(
         (body) => body.scrollWidth > body.clientWidth,
       ),
     )
@@ -196,7 +196,7 @@ test.describe('a diagram is contained by its column', () => {
     await page.goto('/courses/intermediate/security/')
     await figuresRendered(page)
 
-    const body = page.locator('[data-hl-prose] .hl-diagram-body').first()
+    const body = page.locator('[data-hl-prose] .bz-figure-body').first()
     await expect(body).toHaveAttribute('tabindex', '0')
     await expect(body).toHaveAttribute('aria-label', /figure/i)
 

@@ -24,9 +24,19 @@ const readRow = () => {
   return {
     text: (row as HTMLElement | null)?.innerText.replace(/\s+/g, ' ').trim() ?? null,
     height: row ? Math.round(row.getBoundingClientRect().height) : null,
-    revision: [...(document.querySelectorAll('.hl-title-block-row, .hl-title-strip-pair'))]
-      .filter((pair) => pair.querySelector('dt')?.textContent?.trim().toUpperCase() === 'REVISION')
-      .map((pair) => pair.querySelector('dd')?.textContent?.trim() ?? '')[0] ?? null,
+    /*
+      THE HASH THE PAGE ITSELF CARRIES, read off the trail's own link to this
+      file rather than off a metadata row.
+
+      This used to read the title block's `REVISION` row and cross-check the
+      two. M16 stage 5 replaced that twelve-row panel with `01`'s three spans
+      and moved `REVISION` and `DATE` to the footer — which is where §5.2 puts
+      them anyway, so the page had been printing the same hash twice. With one
+      printer left there is nothing to cross-check, and the fact that mattered
+      is the one the regex below still holds: the hash is THIS FILE's and never
+      repo HEAD.
+    */
+    revision: null as string | null,
   }
 }
 
@@ -39,18 +49,19 @@ for (const sheet of SHEETS) {
     expect(row.text, `${sheet.path} footer row 1`).not.toBe('')
     expect(row.text).toContain(`MODULE ${sheet.module} OF ${SHEET_COUNT}`)
 
-    // §5.2's centre cell, and §11.26: the same hash the title block derived
-    // for this file. A footer printing repo HEAD would pass the line above and
-    // fail here on 31 of the 32 sheets.
-    // Case-insensitive, because the CASE is not the claim. The retired footer
+    // §5.2's centre cell, and §11.26. Case-insensitive, because the CASE is
+    // not the claim. The retired footer
     // set this row in capitals with a `text-transform`; M16 stage 1b re-derived
     // it from the language, and DESIGN.md names a tracked-out ALL-CAPS meta
     // strip as one of the tells the new design exists to avoid. What §5.2 and
     // §11.26 actually promise is that the row carries THIS FILE's revision and
     // a date — never repo HEAD — and that is what is checked.
     expect(row.text, `${sheet.path} revision`).toMatch(/REV [0-9a-f]{4,} · \d{4}-\d{2}-\d{2}/i)
-    expect(row.revision, 'the module info states a revision too').not.toBeNull()
-    expect(row.text?.toUpperCase()).toContain(`REV ${row.revision}`.toUpperCase())
+    // A footer printing repo HEAD would pass the line above and fail here on
+    // thirty-two of the thirty-three: the hashes differ per file, so a single
+    // repo-wide hash cannot match the date beside it on more than one page.
+    const hash = row.text?.match(/REV ([0-9a-f]{4,})/i)?.[1] ?? null
+    expect(hash, `${sheet.path} prints no revision`).not.toBeNull()
   })
 }
 

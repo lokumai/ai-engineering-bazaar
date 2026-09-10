@@ -147,7 +147,7 @@ test('the widest table scrolls inside its own container', async ({ page }) => {
   await page.waitForLoadState('networkidle')
 
   const viewport = page.viewportSize()!.width
-  const report = await page.locator('[data-hl-prose] .hl-figure.hl-table').evaluateAll(
+  const report = await page.locator('[data-hl-prose] .bz-tablefig').evaluateAll(
     (nodes) => nodes.map((node) => {
       const scroller = (node.querySelector('[class*="scroll"]') ?? node) as HTMLElement
       return {
@@ -351,7 +351,7 @@ test('every control reaches the §10.4 touch floor below 768px', async ({ page }
   // border, so a hand-tuned `inset` resolved against a padding box 2px smaller
   // than the painted one.
   const controls = await page
-    .locator('.hl-code-copy, .hl-cap-action, .hl-icon-btn, .hl-button')
+    .locator('.bz-slab-copy, .bz-caption-action, .hl-icon-btn, .hl-button')
     // A control the reader cannot reach has no floor to meet. §12 added a
     // `Keyboard shortcuts` trigger that is `display: none` below 768px — a
     // table of keystrokes is a control for a device with keys — and an
@@ -397,12 +397,12 @@ test('the module gives up its zones in §4.7 order as the viewport narrows', asy
   const width = page.viewportSize()!.width
   await page.goto(LONGEST.path) // a written module — the only format with three zones
 
-  const contents = page.locator('.hl-rail-right')
-  const curriculum = page.locator('.hl-rail-left')
+  const contents = page.locator('.bz-aside')
+  const curriculum = page.locator('.bz-rail')
   const drawer = page.getByRole('button', { name: 'Contents', exact: true })
 
   // The module's facts are in the column in all three cases.
-  await expect(page.locator('.hl-title-strip')).toBeVisible()
+  await expect(page.locator('.bz-facts')).toBeVisible()
 
   if (width >= 1180) {
     await expect(contents).toBeVisible()
@@ -438,9 +438,9 @@ test('the draft module keeps its band and schedule at every width', async ({ pag
   await page.goto(A4.path)
   await expect(page.locator('.hl-status-band')).toBeVisible()
   await expect(page.locator('table.hl-schedule')).toBeVisible()
-  await expect(page.locator('.hl-rail-right')).toHaveCount(0)
+  await expect(page.locator('.bz-aside')).toHaveCount(0)
 
-  const curriculum = page.locator('.hl-rail-left')
+  const curriculum = page.locator('.bz-rail')
   const drawer = page.getByRole('button', { name: 'Contents', exact: true })
 
   if (width >= 880) {

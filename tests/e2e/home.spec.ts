@@ -680,7 +680,7 @@ test('the lead action opens the first module of the set, and it exists', async (
   await expect(lead).toHaveAttribute('href', first.path)
   // DESIGN.md, Components — one `button-primary` per screen region, and this is
   // the home page's.
-  await expect(lead).toHaveClass(/hl-btn-primary/)
+  await expect(lead).toHaveClass(/bz-btn/)
   await lead.click()
   await expect(page).toHaveURL(new RegExp(`${first.path}$`))
   await expect(page.locator('main h1')).toHaveText(first.title)

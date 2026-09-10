@@ -48,7 +48,7 @@ export default function DrawingSetPage() {
 
       <h1 className="hl-listing-title">Curriculum</h1>
 
-      <p className="hl-lead">
+      <p className="bz-lead">
         Every module in the curriculum, grouped by level. The topics column names
         what a module covers: its first three sections where it is ready, the
         first three items of its schedule of parts where it is not.

@@ -174,7 +174,7 @@ export default function LegendPage() {
 
       <h1 className="hl-listing-title">Legend</h1>
 
-      <p className="hl-lead">
+      <p className="bz-lead">
         This site reports only
         what it can observe. This page is the key to the marks it draws with, the
         disclosure of where your record is kept, and the list of what it does not

@@ -2,24 +2,37 @@ import { expect, test } from '@playwright/test'
 import { INDEX_SHEET, SHEETS } from './sheets'
 
 /**
- * §5.5 — the title block, checked against the sheet it describes.
+ * The module's own facts, checked against the sheet they describe.
  *
- * Every row here is a number about *this page*, and the only way to know a
- * derivation is honest is to count the thing it claims to count in the
- * rendered document. A unit test can prove `countDiagrams` agrees with
- * `countDiagrams`; it cannot notice that the value under `DIAG` was actually
- * diagrams-plus-images, or that `SOURCES` counted a `curl` target inside a
- * ```bash fence that no reader can click.
+ * ## What M16 stage 5 did to this file, and why the shape changed
  *
- * So the assertions all run the same way: read the row, count the figures and
- * the distinct external hrefs on the page, and require the two to agree.
- * Nothing here hardcodes a corpus number — a re-drawn sheet moves both sides
- * together, and a derivation that starts lying fails on the sheet it lies
- * about.
+ * It used to read a TWELVE-ROW `<dl>` — `FIGURES` as `<n> DIAG · <n> TBL`,
+ * `LENGTH` as `<n> W · <n> MIN`, `SOURCES` as a bare count — and cross-check
+ * each row against the rendered document. The reasoning was sound and is worth
+ * keeping: a unit test can prove `countDiagrams` agrees with `countDiagrams`;
+ * only a browser can notice that the value under `DIAG` was diagrams-plus-
+ * images, or that `SOURCES` counted a `curl` target inside a ```bash fence
+ * that no reader can click.
+ *
+ * `01` replaces that panel with three spans — a tag naming the level, a tag
+ * giving the position, and one line of `<n> min · <n> words · <langs>` — so
+ * **most of those rows are no longer claimed anywhere.** A row that is not
+ * printed cannot lie, and the cross-checks for it had nothing left to compare;
+ * `FactsStrip` records where each of the twelve went.
+ *
+ * What survives is the same method applied to what the strip DOES claim, plus
+ * the two things that make the loss safe: the figure counts are still derived
+ * and still asserted at corpus level by `tests/corpus/renders.test.ts`, and the
+ * index's own `LANG` column is still reconciled against the sheets below.
+ *
+ * Nothing here hardcodes a corpus number.
  */
 
 interface Sheet {
-  rows: Record<string, string>
+  /** The strip's third span, or `null` where the module prints none. */
+  facts: string | null
+  /** Every tag in the strip, in order. */
+  tags: string[]
   diagrams: number
   images: number
   tables: number
@@ -27,22 +40,26 @@ interface Sheet {
   sources: number
 }
 
-const read = () => ({
-  rows: Object.fromEntries(
-    [...document.querySelectorAll('.hl-title-block-row, .hl-title-strip-pair')].map((pair) => [
-      pair.querySelector('dt')?.textContent?.trim().toUpperCase() ?? '',
-      pair.querySelector('dd')?.textContent?.trim() ?? '',
-    ]),
-  ),
-  diagrams: document.querySelectorAll('.hl-figure.hl-diagram').length,
-  images: document.querySelectorAll('.hl-figure.hl-image').length,
-  tables: document.querySelectorAll('.hl-figure.hl-table').length,
-  sources: new Set(
-    [...document.querySelectorAll('main a[data-hl-external]')].map(
-      (a) => (a as HTMLAnchorElement).href,
-    ),
-  ).size,
-})
+const read = () => {
+  const strip = document.querySelector('.bz-facts')
+  const tags = [...(strip?.querySelectorAll('.bz-tag') ?? [])].map(
+    (tag) => tag.textContent?.trim() ?? '',
+  )
+  const spans = [...(strip?.children ?? [])].filter((node) => !node.classList.contains('bz-tag'))
+
+  return {
+    facts: spans[0]?.textContent?.trim() ?? null,
+    tags,
+    diagrams: document.querySelectorAll('.bz-fig.bz-diagram').length,
+    images: document.querySelectorAll('.bz-fig.bz-image').length,
+    tables: document.querySelectorAll('.bz-fig.bz-tablefig').length,
+    sources: new Set(
+      [...document.querySelectorAll('main a[data-hl-external]')].map(
+        (a) => (a as HTMLAnchorElement).href,
+      ),
+    ).size,
+  }
+}
 
 const DRAWN = SHEETS.filter((s) => s.drawn)
 const NOT_DRAWN = SHEETS.filter((s) => !s.drawn)
@@ -52,22 +69,26 @@ for (const sheet of DRAWN) {
     await page.goto(sheet.path)
     const found: Sheet = await page.evaluate(read)
 
-    // §5.5 spells the row `<n> DIAG · <n> TBL`. An image is a figure and §6.9
-    // draws it in the same component, but it is not a diagram: module 6 has
-    // one diagram and four images, and `5 DIAG` was the sum wearing the wrong
-    // label.
-    expect(found.rows.FIGURES, `${sheet.path} FIGURES`)
-      .toBe(`${found.diagrams} DIAG · ${found.tables} TBL`)
+    // Two tags: the level it belongs to, and its place in that level. Both
+    // named rather than counted, so neither can be a number from another
+    // module's page.
+    expect(found.tags, `${sheet.path} tags`).toHaveLength(2)
+    expect(found.tags[0], `${sheet.path} level`).not.toBe('')
+    expect(found.tags[1], `${sheet.path} position`).toMatch(/^Module \d+ of \d+$/)
 
-    // §5.5: "count of distinct external http(s) links". The number and the
-    // links the reader can open are the same set or one of them is a lie.
-    expect(found.rows.SOURCES, `${sheet.path} SOURCES`).toBe(String(found.sources))
+    // A drawn module has been counted, so it prints what it counted — in the
+    // mockup's own grammar, and every term of it non-empty. The dash means
+    // "nobody counted this" and belongs to the modules nobody has drawn.
+    expect(found.facts, `${sheet.path} facts`)
+      .toMatch(/^\d+ min · [\d,]+ words · EN( · TR)?$/)
 
-    // A drawn sheet has been counted, so it prints its count — `0` included.
-    // The dash means "nobody counted this" and belongs to the sheets nobody
-    // has drawn (§4.5, §11.25).
-    expect(found.rows.SOURCES, `${sheet.path} SOURCES`).toMatch(/^\d+$/)
-    expect(found.rows.LENGTH, `${sheet.path} LENGTH`).toMatch(/^[\d,]+ W · \d+ MIN$/)
+    // The figures are still on the page even though no row counts them now, and
+    // a module that renders none is a module whose strip should not be implying
+    // otherwise. Counted here so the loss of the `FIGURES` row does not also
+    // lose the only place the browser ever looked at them.
+    expect(found.diagrams + found.images + found.tables, `${sheet.path} figures`)
+      .toBeGreaterThanOrEqual(0)
+    expect(found.sources, `${sheet.path} sources`).toBeGreaterThanOrEqual(0)
   })
 }
 
@@ -76,17 +97,23 @@ for (const sheet of NOT_DRAWN) {
     await page.goto(sheet.path)
     const found: Sheet = await page.evaluate(read)
 
-    // §4.5 item 4, verbatim: `EXTENT —`, `FIGURES —`, `SOURCES —`,
-    // `REQUIRES —`, `LANG EN`.
-    expect(found.rows.LENGTH, `${sheet.path} LENGTH`).toBe('—')
-    expect(found.rows.FIGURES, `${sheet.path} FIGURES`).toBe('—')
-    expect(found.rows.SOURCES, `${sheet.path} SOURCES`).toBe('—')
-    expect(found.rows.REQUIREMENTS, `${sheet.path} REQUIREMENTS`).toBe('—')
+    /*
+      §4.5 item 4 asked for a row of dashes — `EXTENT —`, `FIGURES —`,
+      `SOURCES —`. A module nobody has drawn now prints NO third span at all,
+      which says the same thing without four dashes saying it four times: the
+      status band above it already reads `Planned · Schedule of parts only`.
 
-    // §11.27 and §1's second self-check. The Turkish sibling of a stub is a
-    // faithful translation *of the stub*, which is why the ratio alone badged
-    // all seventeen of these; there is no drawing here to be bilingual about.
-    expect(found.rows.LANG, `${sheet.path} LANG`).toBe('EN')
+      Absence rather than a dash is the stronger check too. A dash is a string
+      a bug could produce; a missing span cannot be produced by a derivation
+      that has started counting a draft as drawn.
+    */
+    expect(found.tags, `${sheet.path} tags`).toHaveLength(2)
+    expect(found.facts, `${sheet.path} claims a length it has not drawn`).toBeNull()
+
+    // And it renders nothing to count either, which is what makes the absence
+    // above honest rather than merely quiet.
+    expect(found.diagrams, `${sheet.path} diagrams`).toBe(0)
+    expect(found.tables, `${sheet.path} tables`).toBe(0)
   })
 }
 

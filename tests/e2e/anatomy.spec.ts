@@ -45,17 +45,17 @@ function track(page: Page, name: string): Promise<number> {
 /**
  * The reading measure, in the reading face.
  *
- * `--width-measure` is `80ch`, and `ch` is the advance width of `0` in
- * whatever font actually resolved — Manrope where the webfont loaded, a
- * fallback where it did not. Measuring an 80ch box inside the prose itself is
- * the only way to assert the cap without writing down a pixel count that a
- * font swap invalidates.
+ * `--layout-measure` is `80ch`, and `ch` is the advance width of `0` in
+ * whatever font actually resolved — the language's one sans family where it
+ * loaded, a fallback where it did not. Measuring an 80ch box inside the prose
+ * itself is the only way to assert the cap without writing down a pixel count
+ * that a font swap invalidates.
  */
 function measureCap(page: Page): Promise<number> {
   return page.evaluate(() => {
-    const prose = document.querySelector('[data-hl-prose], .prose')!
+    const prose = document.querySelector('[data-hl-prose], .bz-prose')!
     const probe = document.createElement('div')
-    probe.style.cssText = 'position:absolute;visibility:hidden;width:var(--width-measure)'
+    probe.style.cssText = 'position:absolute;visibility:hidden;width:var(--layout-measure)'
     prose.appendChild(probe)
     const width = probe.getBoundingClientRect().width
     probe.remove()
@@ -98,31 +98,37 @@ test.describe('A0 — the assembly module', () => {
 
     // Zone 1: THE CURRICULUM, which is what M10 put here. It used to be the
     // section spine; the swap is the point (`CurriculumRail.tsx`).
-    const rail = page.locator('.hl-rail-left')
+    const rail = page.locator('.bz-rail')
     await expect(rail.locator('nav[aria-label="Course modules"]')).toBeVisible()
-    expect(await widthOf(rail)).toBe(await track(page, '--width-rail-nav'))
+    expect(await widthOf(rail)).toBe(await track(page, '--layout-rail'))
 
     // One accordion section per level, this module's level open and enlarged,
     // and its own row marked as the current page. The counts are the levels'
     // own and are derived, so nothing here says how many there are.
-    const levels = page.locator('.hl-level')
+    const levels = page.locator('.bz-group')
     expect(await levels.count()).toBeGreaterThan(1)
-    await expect(page.locator('.hl-level[data-current]')).toHaveCount(1)
-    await expect(page.locator('.hl-level[data-current][open]')).toHaveCount(1)
-    await expect(page.locator('.hl-mod[aria-current="page"]')).toHaveCount(1)
+    await expect(page.locator('.bz-group[data-here]')).toHaveCount(1)
+    await expect(page.locator('.bz-group[data-here][open]')).toHaveCount(1)
+    await expect(page.locator('.bz-item[aria-current="page"]')).toHaveCount(1)
 
     // Zone 2: the reading column, capped at the measure and centred in what
     // the rails leave. Two claims, and the second is the one D15 is about: the
     // track is WIDER than the text, so the cap is doing work rather than
     // coinciding with the space available.
+    /*
+      `.bz-main` is the TRACK and `.bz-col` is the capped box inside it. The old
+      markup had one element doing both jobs (`.hl-column`), which is why this
+      compared the column to the text; now the cap is a box of its own and the
+      claim is between the track and the cap.
+    */
     const prose = page.locator('[data-hl-prose]')
     await expect(prose).toBeVisible()
     const cap = await measureCap(page)
     expect(await widthOf(prose)).toBe(cap)
-    expect(await widthOf(page.locator('.hl-column'))).toBeGreaterThan(cap)
+    expect(await widthOf(page.locator('.bz-main'))).toBeGreaterThan(cap)
 
     const centred = await page.evaluate(() => {
-      const column = document.querySelector('.hl-column')!.getBoundingClientRect()
+      const column = document.querySelector('.bz-main')!.getBoundingClientRect()
       const text = document.querySelector('[data-hl-prose]')!.getBoundingClientRect()
       return {
         before: Math.round(text.left - column.left),
@@ -133,19 +139,38 @@ test.describe('A0 — the assembly module', () => {
 
     // Zone 3: ON THIS PAGE, which is what the right rail holds now — the
     // sections of this module and what sits either side of it in the graph.
-    const contents = page.locator('.hl-rail-right')
+    const contents = page.locator('.bz-aside')
     await expect(contents.locator('nav[aria-label="Sections"]')).toBeVisible()
-    expect(await contents.locator('.hl-toc-entry').count()).toBeGreaterThan(2)
-    await expect(contents.getByText('Requirements', { exact: false }).first()).toBeVisible()
-    expect(await widthOf(contents)).toBe(await track(page, '--width-rail-toc'))
+    expect(await contents.locator('.bz-aside-link').count()).toBeGreaterThan(2)
 
-    // The module's own facts are in the COLUMN now, at every width, and the
-    // 240px panel variant is rendered by no page (`TitleBlock.tsx`).
-    await expect(page.locator('.hl-column .hl-title-strip')).toBeVisible()
-    await expect(page.locator('.hl-title-block')).toHaveCount(0)
+    /*
+      THE ASIDE IS THE SECTION INDEX AND NOTHING ELSE, which is what `01` draws
+      — *"a `label` heading, then items indented behind a `line` rail"*. It used
+      to carry a second half, an `Around this module` block of the dependency
+      graph, and stage 5 moved that behind the action row's quiet
+      `Requirements (n)` button: a reader consults it once, when deciding
+      whether they can start, so it is a disclosure rather than a column.
+    */
+    await expect(contents.getByText('Requirements', { exact: false })).toHaveCount(0)
+    await expect(page.locator('.bz-actions .bz-requires > summary')).toContainText(/Requirements/)
+    expect(await widthOf(contents)).toBe(await track(page, '--layout-aside'))
+
+    /*
+      The module's own facts are in the COLUMN, and they are a ROW OF TAGS now
+      rather than a panel of rows. The second assertion used to name the 240px
+      `TitleBlock` variant by class; a class nothing emits is trivially absent,
+      so it is the shape that is checked instead — stage 5 replaced a twelve-row
+      `<dl>` with `01`'s three spans, and a `<dl>` reappearing in this column
+      would mean the instrument panel had come back.
+    */
+    await expect(page.locator('.bz-col .bz-facts')).toBeVisible()
+    // THREE THINGS AT MOST, which is what `01`'s `div.row` holds: a tag for
+    // the level, a tag for the position, and one line of facts. The twelve-row
+    // panel this replaced would fail on the count alone.
+    expect(await page.locator('.bz-facts > *').count()).toBeLessThanOrEqual(3)
 
     // …and the whole thing is anchored to the window, not to a 1200px shell.
-    const drawing = await zones(page, ['.hl-rail-left', '.hl-column', '.hl-rail-right'])
+    const drawing = await zones(page, ['.bz-rail', '.bz-main', '.bz-aside'])
     expect(drawing.width).toBe(page.viewportSize()!.width)
     expect(drawing.leadIn).toBe(0)
     expect(drawing.leadOut).toBe(0)
@@ -177,7 +202,7 @@ test.describe('A0 — the assembly module', () => {
   test('the spine follows the reader down the module', async ({ page }) => {
     await page.goto(A0.path)
 
-    const current = page.locator('.hl-toc-entry[aria-current="true"]')
+    const current = page.locator('.bz-aside-link[aria-current="true"]')
     const headings = page.locator('[data-hl-prose] h2')
 
     // At the top of the sheet the reader has not reached a section yet, and
@@ -228,20 +253,20 @@ test.describe('A short ready module — the same anatomy as a long one', () => {
 
     // The strip is the module's own facts, in the column, at every width, and
     // it is the only place they live since M11 cut the rail back.
-    await expect(page.locator('.hl-column .hl-title-strip')).toBeVisible()
+    await expect(page.locator('.bz-col .bz-facts')).toBeVisible()
     await expect(page.locator('.hl-title-block')).toHaveCount(0)
 
     // The same three tracks as the long module, and the same rule for each:
     // the widths come from the tokens and the measure from the face.
-    await expect(page.locator('.hl-rail-left nav[aria-label="Course modules"]')).toBeVisible()
-    await expect(page.locator('.hl-rail-right nav[aria-label="Sections"]')).toBeVisible()
-    expect(await widthOf(page.locator('.hl-rail-left')))
-      .toBe(await track(page, '--width-rail-nav'))
-    expect(await widthOf(page.locator('.hl-rail-right')))
-      .toBe(await track(page, '--width-rail-toc'))
+    await expect(page.locator('.bz-rail nav[aria-label="Course modules"]')).toBeVisible()
+    await expect(page.locator('.bz-aside nav[aria-label="Sections"]')).toBeVisible()
+    expect(await widthOf(page.locator('.bz-rail')))
+      .toBe(await track(page, '--layout-rail'))
+    expect(await widthOf(page.locator('.bz-aside')))
+      .toBe(await track(page, '--layout-aside'))
     expect(await widthOf(page.locator('[data-hl-prose]'))).toBe(await measureCap(page))
 
-    const drawing = await zones(page, ['.hl-rail-left', '.hl-column', '.hl-rail-right'])
+    const drawing = await zones(page, ['.bz-rail', '.bz-main', '.bz-aside'])
     expect(drawing.leadIn).toBe(0)
     expect(drawing.leadOut).toBe(0)
 
@@ -273,19 +298,22 @@ test.describe('A short ready module — the same anatomy as a long one', () => {
 
       // The contents rail is gone at this width, so it is behind the control,
       // and the module's own facts and stamps stay in the column.
-      await expect(page.locator('.hl-rail-right')).not.toBeVisible()
-      await expect(page.locator('.hl-subheader')).toBeVisible()
-      await expect(page.locator('.hl-title-strip')).toBeVisible()
+      await expect(page.locator('.bz-aside')).not.toBeVisible()
+      // The contents move behind one control at this width, which is the
+      // drawer's bar — `.hl-subheader` was the retired header row it used to
+      // live in (M16 stage 3 rebuilt it as `.bz-drawer-bar`).
+      await expect(page.locator('.bz-drawer-bar[data-bz-at="wide"]')).toBeVisible()
+      await expect(page.locator('.bz-facts')).toBeVisible()
       await expect(page.locator('.hl-stamp:visible')).not.toHaveCount(0)
 
       // The curriculum is still beside the prose: 1100px is above the width
       // where it becomes a sheet.
-      await expect(page.locator('.hl-rail-left')).toBeVisible()
+      await expect(page.locator('.bz-rail')).toBeVisible()
 
-      // `.prose`, not `.hl-column`: the column is the box and the measure is
+      // `.prose`, not `.bz-col`: the column is the box and the measure is
       // the text inside it, which is the number §6 legislates. Never wider
       // than the cap, whatever the window does.
-      const width = await widthOf(page.locator('.prose').first())
+      const width = await widthOf(page.locator('.bz-prose').first())
       expect(width, path).toBeLessThanOrEqual(await measureCap(page))
       expect(width, path).toBeGreaterThan(0)
     }
@@ -312,25 +340,25 @@ test.describe('A4 — the detail module', () => {
     await expect(items.first().locator('.hl-schedule-item')).toHaveText('01')
 
     // NO CONTENTS RAIL, at any width: a draft has no sections to list.
-    await expect(page.locator('.hl-rail-right')).toHaveCount(0)
+    await expect(page.locator('.bz-aside')).toHaveCount(0)
     await expect(page.locator('nav[aria-label="Sections"]')).toHaveCount(0)
 
     // …but it DOES get the curriculum, and that is a change M10 made
     // deliberately: the rail is navigation, not module info, and a reader who
     // lands on a stub needs a way out of it more than anyone does.
-    await expect(page.locator('.hl-rail-left nav[aria-label="Course modules"]')).toBeVisible()
-    await expect(page.locator('.hl-mod[aria-current="page"]')).toHaveCount(1)
+    await expect(page.locator('.bz-rail nav[aria-label="Course modules"]')).toBeVisible()
+    await expect(page.locator('.bz-item[aria-current="page"]')).toHaveCount(1)
 
     // Two tracks, anchored to the window, with the content centred in the one
     // the rail leaves.
-    const drawing = await zones(page, ['.hl-rail-left', '.hl-column'])
+    const drawing = await zones(page, ['.bz-rail', '.bz-main'])
     expect(drawing.width).toBe(page.viewportSize()!.width)
     expect(drawing.leadIn).toBe(0)
     expect(drawing.leadOut).toBe(0)
 
     // The module's facts are the strip here too, and no prose is rendered:
     // §4.5's body is one sentence and the schedule.
-    await expect(page.locator('.hl-title-strip')).toBeVisible()
+    await expect(page.locator('.bz-facts')).toBeVisible()
     await expect(page.locator('[data-hl-prose]')).toHaveCount(0)
   })
 
@@ -344,6 +372,6 @@ test.describe('A4 — the detail module', () => {
     await expect(page.locator('[data-hl-signoff]')).toHaveCount(0)
     // …and no tick can be revealed on its own row in the rail, because no
     // selector for one is generated (`scripts/curriculum-css.mjs`, list D).
-    await expect(page.locator('.hl-mod[aria-current="page"] .hl-mod-mark')).toHaveCount(0)
+    await expect(page.locator('.bz-item[aria-current="page"] .bz-item-mark')).toHaveCount(0)
   })
 })

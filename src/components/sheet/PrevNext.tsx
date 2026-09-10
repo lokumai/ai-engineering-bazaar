@@ -46,8 +46,14 @@ function Cell({
 }) {
   if (target === null) {
     return (
-      <div className="hl-prevnext-cell hl-prevnext-end hl-mark">
-        <span>End of the course</span>
+      <div className="bz-pager-item" data-end={rel === 'next' ? '' : undefined}>
+        {/* The TILE'S OWN TEXT, in the destination slot rather than the label
+            slot. `01`'s tile is a faint `small` over a titled `b`, and faint is
+            for something a reader may ignore — which the label is, since the
+            title beside it says where you are going. Here there is no title:
+            this sentence is the whole tile, and MEASURED at 3.30:1 in the
+            faint ink it did not clear the floor a sentence takes. */}
+        <b>End of the course</b>
       </div>
     )
   }
@@ -56,17 +62,19 @@ function Cell({
     <Link
       href={target.path}
       rel={rel}
-      className="hl-prevnext-cell"
+      className="bz-pager-item"
+      data-end={rel === 'next' ? '' : undefined}
       data-draft={target.draft ? '' : undefined}
     >
-      <span className="hl-prevnext-head hl-mark">
-        <span>{label}</span>
-        <span className="hl-prevnext-sheet">{target.module}</span>
-      </span>
-      <span className="hl-prevnext-title">{target.title}</span>
-      {target.draft && (
-        <span className="hl-prevnext-tag hl-mark">Planned</span>
-      )}
+      {/* `01`'s pager tile is a faint `small` over a titled destination in
+          `on-surface-title`, and nothing else — the module NUMBER the retired
+          cell printed beside the label is in the trail, the footer and the
+          rail, and a fourth copy of it in a two-tile pager is noise. */}
+      <small>
+        {label}
+        {target.draft && ' · Planned'}
+      </small>
+      <b>{target.title}</b>
     </Link>
   )
 }
@@ -79,7 +87,7 @@ export function PrevNext({
   next: PrevNextTarget | null
 }) {
   return (
-    <div className="hl-prevnext">
+    <div className="bz-pager">
       <Cell
         target={previous}
         rel="prev"

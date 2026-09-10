@@ -124,7 +124,7 @@ export function PageShell({
   return (
     <>
       {rail === undefined ? main : (
-        <div className="bz-shell">
+        <div className="bz-shell" data-bz-aside={aside === undefined ? undefined : ''}>
           <aside className="bz-rail">
             <div className="bz-rail-inner">{rail}</div>
           </aside>

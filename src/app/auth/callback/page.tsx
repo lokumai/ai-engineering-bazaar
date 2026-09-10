@@ -43,7 +43,7 @@ export default function AuthCallbackPage() {
 
       <h1 className="hl-listing-title">Completing sign-in</h1>
 
-      <p className="hl-lead">
+      <p className="bz-lead">
         This page finishes a sign-in that has just come back from GitHub, Google
         or an emailed link. It runs in this browser — there is no server in this
         site to run it on — and then sends you where you were going. If it

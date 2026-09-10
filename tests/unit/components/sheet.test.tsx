@@ -36,7 +36,7 @@ describe('TableOfContents — the section spine (§5.6)', () => {
 
   it('gives a non-Roman h2 no numeral rather than an invented one', () => {
     expect(markup).toContain('>Quick Check</span>')
-    expect(markup.match(/hl-toc-mark[^>]*><\/span>/g)).toHaveLength(1)
+    expect(markup.match(/bz-aside-mark[^>]*><\/span>/g)).toHaveLength(1)
   })
 
   it('links each entry to its heading', () => {
@@ -92,10 +92,21 @@ describe('TitleStrip — variant B (§5.5)', () => {
 })
 
 describe('Objectives (§5.5)', () => {
-  it('numbers its items in a fixed column', () => {
+  /**
+   * M16 stage 5 — the ORDINALS ARE GONE, and this test says so rather than
+   * being deleted.
+   *
+   * `01`'s equivalent is `.goals`: a `leaf`-shaped card holding a plain bold
+   * line and an unnumbered `<ul>`. The numbered column was the retired drawing
+   * set's convention, and a numbered list here claimed these objectives have an
+   * order they do not have. What survives is the card, its label and one item
+   * per objective — which is the part a reader uses.
+   */
+  it('lists its items unnumbered, in the mockup’s leaf card', () => {
     const markup = renderToStaticMarkup(<Objectives items={['One', 'Two']} />)
-    expect(markup).toContain('>01</span>')
-    expect(markup).toContain('>02</span>')
+    expect(markup).toContain('bz-card')
+    expect(markup.match(/<li>/g)).toHaveLength(2)
+    expect(markup, 'an ordinal column the mockup does not draw').not.toMatch(/>0\d<\/span>/)
   })
 
   it('renders nothing when the array is empty — no empty box', () => {
@@ -154,7 +165,7 @@ describe('PrevNext (§5.7)', () => {
   it('marks the ends of the set rather than omitting a cell', () => {
     const markup = renderToStaticMarkup(<PrevNext previous={null} next={drawn} />)
     expect(markup).toContain('End of the course')
-    expect(markup.match(/hl-prevnext-cell/g)).toHaveLength(2)
+    expect(markup.match(/bz-pager-item/g)).toHaveLength(2)
   })
 
   it('tags a target that is planned, in words as well as line type', () => {

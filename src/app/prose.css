@@ -1,0 +1,434 @@
+/* ===========================================================================
+   THE READING PAGE — M16 stage 5.
+
+   Reference: `playground/01-theme-T4-ground-G3-powder.html`'s `main > .col`
+   for the column, and `playground/04-module-layout.html` for containment.
+
+   THIS FILE IS SMALL FOR A SURFACE THAT LOOKS LARGE, and the reason is worth
+   stating: the language already transcribes every element the mockup's reading
+   column contains. `.bz-display`, `.bz-section` and its dashed ochre rule,
+   `.bz-subsection`, `.bz-facts`, `.bz-tag`, `.bz-prose`'s paragraph, link,
+   list and emphasis rules, `.bz-card` in `leaf` shape, `.bz-actions` with its
+   2px top rule, `.bz-btn`, `.bz-btn-quiet`, `.bz-note`, `.bz-pager`,
+   `.bz-slab`, `.bz-figure` and the aside are all primitives. The markup was
+   pointed at them, and what is left here is the things the CORPUS has that
+   `01`'s one sample of prose does not: a data table, a blockquote, a
+   three-part caption, an image frame, a heading anchor, an external-link mark.
+
+   ## The containment mechanism, and the question it answers
+
+   `04` is the designated reference for it, and it draws the pattern in three
+   parts — a frame that owns the border, an inner box that owns
+   `overflow-x: auto`, `overscroll-behavior-x: contain` and `min-width: 0`, and
+   a child that refuses to shrink below `min-content`. `01` adopts the first
+   two and special-cases the third onto `.flow`; the corpus needs it
+   generalised, because a table is not a flow.
+
+   **A figure is capped at the measure and scrolls inside its own box. It does
+   not bleed past the text.** `04` has a `.bleed` utility for a figure allowed
+   past the column; the ratified shell deliberately does not carry one, and
+   `01` draws no figure wider than its measure. So `data-hl-width`'s three
+   values stay what the renderer measured — a classification a later stage
+   could spend — and the design spends nothing on them yet. **This is a
+   judgement call and it is the author's to reverse**: the change would be one
+   rule, and `src/lib/figure/width.ts` still classifies against the retired
+   656 / 920 / 1152 tracks that no longer exist in the language.
+
+   What this replaced: `--hl-measure`, `--hl-break-left` and
+   `--hl-break-right`, three custom properties documented in `Prose.tsx` that
+   **nothing ever set and no stylesheet ever read**. `containment.spec.ts` was
+   not merely red against them — it threw, because its anchor `.hl-column` was
+   emitted by no component either.
+   =========================================================================== */
+
+@layer components {
+
+  /* ---------------------------------------------------------------------------
+     1. THE COLUMN'S OWN BOX.
+
+     `min-width: 0` on every wrapper between the grid track and the prose, or a
+     wide table widens the track instead of scrolling: a grid item's automatic
+     minimum size is its content, and that is the whole mechanism behind a page
+     that scrolls sideways at 390px.
+     --------------------------------------------------------------------------- */
+  .bz-sheet,
+  .bz-prose {
+    min-width: 0;
+  }
+
+  /* ---------------------------------------------------------------------------
+     2. THE HEADING ANCHOR.
+
+     The renderer appends a `§` link to every `h2` and `h3` so a section can be
+     cited. `01` has no such control, so it is derived (**D30**) from what the
+     language does have: it is a link, so it takes the link colour, and it is
+     revealed rather than always present because a permanent `§` beside every
+     heading is a second mark competing with the dashed rule.
+
+     **Revealed by opacity and not by `display`.** It has to stay in the tab
+     order and keep its box at all times — a control that appears only on hover
+     is unreachable from a keyboard, and `accessibility.spec.ts` walks to it and
+     then measures its contrast. `:focus-visible` reveals it for the same
+     reason.
+     --------------------------------------------------------------------------- */
+  .bz-anchor {
+    /* No `order`: the heading is a flex row of the title span, this anchor and
+       the dashed rule as `::after`, and DOM order already puts them that way.
+       An `order` here would move the anchor past the rule. */
+    flex: none;
+    padding: 0 2px;
+    color: var(--color-primary);
+    font-size: var(--text-item);
+    opacity: 0;
+  }
+
+  .bz-section:hover .bz-anchor,
+  .bz-subsection:hover .bz-anchor,
+  .bz-anchor:focus-visible {
+    opacity: 1;
+  }
+
+  /* TWO STAGES, and the second is not decoration. Revealed, the `§` is at the
+     link colour; hovered, it goes to the title ink and gains an underline —
+     which is higher contrast in BOTH themes, since `on-surface-title` is the
+     ink extreme on either ground while `primary` sits in the middle of it.
+     Without the second stage a reader who has moved the pointer onto the
+     control gets no feedback that they are on it, and the control is 13px. */
+  .bz-anchor:hover {
+    color: var(--color-on-surface-title);
+    text-decoration: underline;
+  }
+
+  /* The subsection is not a flex row, so its anchor sits inline. */
+  .bz-subsection .bz-anchor { margin-left: 6px; }
+
+  /* ---------------------------------------------------------------------------
+     3. THE OPENING PARAGRAPH.
+
+     §6.2 asked for a deck under the title and the language declares a
+     `--text-lead` step for it that nothing else uses. It is the same device
+     fifteen mockup-less routes open with, so it is one primitive, declared in
+     `shell.css` and reused here.
+     --------------------------------------------------------------------------- */
+  .bz-prose .bz-lead { max-width: none; }
+
+  /* ---------------------------------------------------------------------------
+     4. FIGURES: THE WRAPPER, THE FRAME AND THE CAPTION.
+
+     `01`'s `<figure>` carries the bottom margin and NOTHING else; the frame is
+     an inner box and `figcaption` is its sibling, outside it. That order is
+     load-bearing rather than tidy: the caption is page ink at
+     `on-surface-muted`, and inside a dark slab it would be unreadable.
+     --------------------------------------------------------------------------- */
+  .bz-fig {
+    margin: 0 0 28px;
+    min-width: 0;
+  }
+
+  /* The diagram's frame is the language's dark figure, and its own 28px margin
+     belongs to the wrapper above — otherwise the caption would sit 28px away
+     from the drawing it names instead of 9px. */
+  .bz-diagram .bz-figure { margin: 0; }
+
+  .bz-fig-pending {
+    margin: 0;
+    color: var(--color-slab-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  /* A parse failure prints the source rather than an empty frame: a diagram
+     that cannot be drawn is still something a reader can read. */
+  .bz-fig-fallback {
+    margin: 0;
+    overflow-x: auto;
+    color: var(--color-slab-on-surface);
+    font: var(--text-code) / var(--text-code--line-height) var(--font-mono);
+    white-space: pre;
+  }
+
+  /* An image is not a slab: it takes the light frame a raised surface takes on
+     this ground, which is a hairline and not a fill. */
+  .bz-image > img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+  }
+
+  /* The three-part caption. `01` has one flat `figcaption`, which the language
+     carries as `.bz-caption`; the corpus's captions have a label, an optional
+     authored sentence and, on a diagram, a control. */
+  .bz-caption-label {
+    color: var(--color-on-surface);
+    font-weight: 600;
+  }
+
+  .bz-caption-note {
+    margin: 4px 0 0;
+    color: var(--color-on-surface-muted);
+  }
+
+  .bz-caption-action,
+  .bz-slab-copy {
+    margin-left: 8px;
+    padding: 4px 9px;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface);
+    font: 600 var(--text-mark) / 1 var(--font-sans);
+    cursor: pointer;
+    /* §10.4's touch floor. A 24px control is what the retired design shipped
+       and what `responsive.spec.ts` measured at 47 × 24 with no hit area. */
+    min-height: 30px;
+  }
+
+  .bz-caption-action:hover,
+  .bz-slab-copy:hover {
+    background: var(--color-surface-sunken);
+  }
+
+  /* ---------------------------------------------------------------------------
+     §10.4'S TOUCH FLOOR, AS A HIT AREA RATHER THAN A BIGGER BUTTON.
+
+     Both of these controls sit inside a caption or a mono header strip, where
+     a 44px button would be taller than the line it belongs to. So the painted
+     control stays the size the design wants and an invisible `::after`
+     centred on it carries the tap target.
+
+     MEASURED, from the retired design's own note: `COPY` painted 47 × 24 and
+     `EXPAND` 61.6 × 24 with no hit area at all. The floor is 44 × 44 below
+     768px, and the pseudo is given it outright rather than by `inset`, because
+     Tailwind's preflight makes these border-box and a hand-tuned inset
+     resolves against a padding box 2px smaller than the painted one — which is
+     how two earlier controls came to measure 42 × 42 and fail by 2px.
+     --------------------------------------------------------------------------- */
+  .bz-caption-action,
+  .bz-slab-copy {
+    position: relative;
+  }
+
+  .bz-caption-action::after,
+  .bz-slab-copy::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 44px;
+    height: 44px;
+    translate: -50% -50%;
+  }
+
+  /* ---------------------------------------------------------------------------
+     5. THE CODE SLAB'S HEAD, AND THE COPY CONTROL IN IT.
+
+     The language's `.bz-slab-head` puts its LAST child on the trailing edge,
+     which in the mockup is the language name. Here the last child is the copy
+     button, and the language name leads — same rule, read the other way round.
+     --------------------------------------------------------------------------- */
+  .bz-slab-head { align-items: center; }
+
+  .bz-slab-lang { color: var(--color-slab-on-surface-muted); }
+
+  /* On the slab the control sits on the slab's own sub-palette, because a
+     white button on a dark ground is the one thing DESIGN.md says a slab must
+     never borrow from the page. */
+  .bz-slab .bz-slab-copy {
+    margin-left: auto;
+    border-color: var(--color-slab-line-raised);
+    background: var(--color-slab-surface-raised);
+    color: var(--color-slab-on-raised);
+  }
+
+  .bz-slab .bz-slab-copy:hover {
+    background: var(--color-slab-line-raised);
+  }
+
+  /* ---------------------------------------------------------------------------
+     6. A DATA TABLE FROM THE CORPUS.
+
+     Derived (**D30**). `01`'s only `<table>` is in its annotation footer,
+     which `bazaar.css` excludes by name as "not part of the design", so there
+     is no reference for one — and the catalog's table is `03`'s geometry for a
+     nine-column register, not for two columns of prose. What both share is the
+     language: a hairline under every row, a sunken header strip, the control
+     type step, and the scroll box the figure already uses.
+     --------------------------------------------------------------------------- */
+  .bz-tablefig {
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-raised);
+  }
+
+  /* The caption is the first child on a table figure — the renderer puts it
+     there, which is where a plate's title goes — so it sits inside the frame
+     and takes the frame's own padding. */
+  .bz-tablefig > .bz-caption {
+    margin: 0;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .bz-scroller {
+    min-width: 0;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+
+  .bz-scroller > * { min-width: min-content; }
+
+  .bz-tablefig table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-control);
+  }
+
+  .bz-tablefig :is(th, td) {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--color-line);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .bz-tablefig thead th {
+    background: var(--color-surface-sunken);
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-mark) / 1.3 var(--font-sans);
+  }
+
+  .bz-tablefig tbody tr:last-child :is(th, td) { border-bottom: 0; }
+
+  /* A row header is the cell a reader scans down, so it keeps its weight. */
+  .bz-tablefig tbody th { font-weight: 600; }
+
+  /* ---------------------------------------------------------------------------
+     7. A BLOCKQUOTE, WHICH THE CORPUS USES AS A CALLOUT.
+
+     `leaf`-shaped, because that is what the language's `card` is for — "an
+     aside the reader can skip" — and a quote in this corpus is exactly that.
+     Not `.bz-card` itself: the renderer owns this element and a card is
+     something a component composes.
+     --------------------------------------------------------------------------- */
+  .bz-quote {
+    margin: 0 0 28px;
+    padding: 17px 20px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--shape-leaf);
+    background: var(--color-surface-raised);
+  }
+
+  .bz-quote > :last-child { margin-bottom: 0; }
+
+  .bz-quote-label {
+    margin: 0 0 8px;
+    color: var(--color-on-surface-title);
+    font-size: var(--text-item);
+    font-weight: 600;
+  }
+
+  .bz-quote-body > :last-child { margin-bottom: 0; }
+
+  /* ---------------------------------------------------------------------------
+     8. INLINE THINGS.
+     --------------------------------------------------------------------------- */
+
+  /* The mark after a link that leaves the site. Faint, because the LINK is the
+     thing being read and this is a property of it. */
+  .bz-ext-mark {
+    color: var(--color-on-surface-faint);
+    font-size: var(--text-mark);
+  }
+
+  /* Inline code is the slab's ink at the slab's step, on the page's own
+     sunken surface — a full slab treatment on three words inside a sentence
+     would be a second ground in the middle of a line. */
+  .bz-prose :not(pre) > code {
+    padding: 1px 5px;
+    border-radius: var(--radius-xs);
+    background: var(--color-surface-sunken);
+    font: var(--text-meta) / 1 var(--font-mono);
+  }
+
+  .bz-prose ol {
+    margin: 0 0 17px;
+    padding-left: 22px;
+  }
+
+  .bz-prose ol li { margin: 6px 0; }
+
+  .bz-prose hr {
+    height: 1px;
+    margin: 34px 0;
+    border: 0;
+    background: var(--color-line);
+  }
+
+  /* ---------------------------------------------------------------------------
+     9. THE ASIDE'S SECTION INDEX.
+
+     The language gives the aside its label, its indented items and the
+     `primary` rail on the current one. What is left is the list box itself and
+     the numeral gutter the corpus can carry.
+     --------------------------------------------------------------------------- */
+  .bz-aside-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bz-aside-mark {
+    display: inline-block;
+    min-width: 18px;
+    color: var(--color-on-surface-faint);
+    font: 600 var(--text-mark) / 1 var(--font-mono);
+  }
+
+  /* A labelled pair inside a card: the leaf's own list, not the retired
+     twelve-row panel. Two rows at most, which is why they sit on one line each
+     rather than in a column of aligned values. */
+  .bz-card-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    margin: 12px 0 0;
+    font-size: var(--text-item);
+  }
+
+  .bz-card-facts > div {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+
+  .bz-card-facts dt { color: var(--color-on-surface-muted); }
+
+  .bz-card-facts dd {
+    margin: 0;
+    color: var(--color-on-surface);
+    font-weight: 600;
+  }
+
+  /* ---------------------------------------------------------------------------
+     10. THE ACTION ROW'S QUIET DISCLOSURE.
+
+     `01` draws `Requirements (2)` as a quiet button and stops there, so what
+     opening it reveals is derived: the panel sits under the row it belongs to
+     and is a raised surface with a hairline, like every other panel here.
+     --------------------------------------------------------------------------- */
+  .bz-requires > summary {
+    /* A summary is a list-item by default, and the marker would sit inside the
+       button's own box. */
+    list-style: none;
+  }
+
+  .bz-requires > summary::-webkit-details-marker { display: none; }
+
+  .bz-requires-body {
+    margin-top: 12px;
+    padding: 14px 16px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-raised);
+  }
+}

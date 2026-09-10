@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { SHEETS, SHORT } from './sheets'
+import { A0, SHEETS, SHORT } from './sheets'
 import { seedRecord, signedSheet } from './record'
 import {
   APP_SELECTORS,
@@ -780,5 +780,220 @@ test.describe('M16 stage 4 — the catalog', () => {
     // gets, and the one `views.test.ts` requires by name.
     const showing = weights.filter((one) => one.bottom === '2px')
     expect(showing.map((one) => one.view), 'exactly one view is showing').toEqual(['overview'])
+  })
+})
+
+test.describe('M16 stage 5 — the reading page', () => {
+  /** What every reading page has, whatever the module says. */
+  const BUILT: readonly Role[] = [
+    'crumb', 'display', 'tag', 'section', 'card',
+    'actions', 'buttonPrimary', 'buttonQuiet', 'pager', 'pagerItem', 'asideLink',
+  ]
+
+  /**
+   * Roles the CORPUS decides, compared where a module supplies one.
+   *
+   * A subsection is an `h3`, and whether a module has one is an authoring
+   * choice — the mockup draws one, and requiring every module to have one
+   * would make this comparison a statement about the content. Kept in the
+   * table and compared conditionally rather than dropped, because dropping it
+   * would leave `.bz-subsection` unchecked on the pages that do have one.
+   */
+  const WHERE_THE_CORPUS_SUPPLIES_ONE: readonly Role[] = ['subsection']
+
+  /*
+    A0 AND NOT THE SHORT MODULE, and the symmetry check is what said so: the
+    short one has no prerequisites, so `Requirements (n)` renders nothing — a
+    control that opens an empty panel is refused — and `buttonQuiet` was
+    absent on the page while the mockup drew one. The assembly module has the
+    fullest anatomy of the thirty-three, which is what this comparison wants.
+  */
+
+  /**
+   * The aside is gone below the fold breakpoint and the mockup's is too, so
+   * `asideLink` is legitimately absent on both sides there — which the
+   * symmetry check below asserts rather than skips. What cannot be compared
+   * below the RAIL breakpoint is different: nothing on this page disappears,
+   * so the block runs at every width.
+   */
+  test('is indistinguishable from the mockup, in every fact its column carries', async ({
+    page,
+  }) => {
+    await page.goto(MOCKUP_URL)
+    await freezeMotion(page)
+    const reference = await extractDesignFacts(page, MOCKUP_SELECTORS)
+
+    await page.goto(A0.path)
+    await freezeMotion(page)
+    const actual = await extractDesignFacts(page, APP_SELECTORS)
+
+    const shown = (facts: Record<string, string | null>, role: Role) =>
+      FACT_KEYS.filter((key) => key.startsWith(`${role}.`)).some((key) => facts[key] !== null)
+
+    for (const role of BUILT) {
+      expect(
+        shown(actual, role),
+        `${role}: mockup ${shown(reference, role)}, page ${shown(actual, role)}`,
+      ).toBe(shown(reference, role))
+    }
+    expect(BUILT.some((role) => shown(reference, role)), 'no role on screen here').toBe(true)
+
+    const width = page.viewportSize()!.width
+    expect(differencesAt(reference, actual, BUILT, width)).toEqual([])
+
+    for (const role of WHERE_THE_CORPUS_SUPPLIES_ONE) {
+      expect(shown(reference, role), `the mockup draws no ${role} to compare`).toBe(true)
+      if (!shown(actual, role)) continue
+      expect(differencesAt(reference, actual, [role], width)).toEqual([])
+    }
+  })
+
+  /**
+   * The mutation, pointed at the two things a reader would feel before they
+   * could name: the dashed ochre rule after a section heading — the one place
+   * ornament touches the reading column — and the 2px top rule that separates
+   * reading from doing. Both are a WIDTH or a GAP rather than a colour, so
+   * neither survives a reader who cannot see hue.
+   */
+  test('notices when the section rule or the action row loses its geometry', async ({ page }) => {
+    await page.goto(MOCKUP_URL)
+    await freezeMotion(page)
+    const reference = await extractDesignFacts(page, MOCKUP_SELECTORS)
+
+    await page.goto(A0.path)
+    await freezeMotion(page)
+    await page.addStyleTag({
+      content: '.bz-prose .bz-section { gap: 0px !important; }'
+        + ' .bz-actions { border-top-width: 1px !important; padding-top: 0px !important; }',
+    })
+    const mutated = await extractDesignFacts(page, APP_SELECTORS)
+
+    const facts = differencesAt(
+      reference,
+      mutated,
+      BUILT,
+      page.viewportSize()!.width,
+    ).map((one) => one.fact)
+    expect(facts).toContain('section.gap')
+    expect(facts).toContain('actions.borderTopWidth')
+    expect(facts).toContain('actions.paddingTop')
+  })
+
+  /**
+   * §10.2 allows two nav landmarks and the breadcrumb's move spent one, so the
+   * pager is NOT a `<nav>` — the mockup tags its own `nav.pn` and the landmark
+   * rule outranks a tag choice, because a reader navigating by landmark meets
+   * "Curriculum", "Main", "Course modules", "Sections" and then a fifth thing
+   * called nothing in particular. The appearance is identical either way,
+   * which is what the comparison above already proved.
+   */
+  test('draws the pager without spending a third nav landmark', async ({ page }) => {
+    await page.goto(A0.path)
+    const pager = page.locator('.bz-pager')
+    await expect(pager).toHaveCount(1)
+    expect(await pager.evaluate((node) => node.tagName.toLowerCase())).toBe('div')
+    await expect(pager.locator('.bz-pager-item')).toHaveCount(2)
+  })
+})
+
+test.describe('M16 stage 6 — code and figures', () => {
+  const BUILT: readonly Role[] = ['slab', 'slabCode', 'figure']
+
+  /** A module with both a code slab and a diagram in it. */
+  const WITH_BOTH = '/courses/fundamentals/rag/'
+
+  test('is indistinguishable from the mockup, slab and frame alike', async ({ page }) => {
+    await page.goto(MOCKUP_URL)
+    await freezeMotion(page)
+    const reference = await extractDesignFacts(page, MOCKUP_SELECTORS)
+
+    await page.goto(WITH_BOTH)
+    await freezeMotion(page)
+    // The diagram's frame exists before mermaid runs — it is the scroll box the
+    // renderer emitted — so nothing here waits on the island.
+    const actual = await extractDesignFacts(page, APP_SELECTORS)
+
+    const shown = (facts: Record<string, string | null>, role: Role) =>
+      FACT_KEYS.filter((key) => key.startsWith(`${role}.`)).some((key) => facts[key] !== null)
+
+    for (const role of BUILT) {
+      expect(
+        shown(actual, role),
+        `${role}: mockup ${shown(reference, role)}, page ${shown(actual, role)}`,
+      ).toBe(shown(reference, role))
+    }
+    expect(BUILT.every((role) => shown(reference, role)), 'a role the mockup does not draw').toBe(true)
+
+    expect(differencesAt(reference, actual, BUILT, page.viewportSize()!.width)).toEqual([])
+  })
+
+  /**
+   * THE DEFECT THIS STAGE EXISTED TO CLOSE, as a mutation.
+   *
+   * Every colour `mermaid-config.ts` names is a PAGE token, and the frame is
+   * the dark slab — so without the rebinding on `.bz-figure` a diagram is a
+   * near-white box inside a near-black one. That is what shipped from stage 0
+   * until stage 6, and undoing the rebinding is exactly how it looked.
+   */
+  test('notices when a figure stops rebinding the page palette', async ({ page }) => {
+    await page.goto(WITH_BOTH)
+    await freezeMotion(page)
+
+    const before = await page.locator('.bz-figure').first().evaluate((node) => ({
+      line: getComputedStyle(node).getPropertyValue('--color-line-strong').trim(),
+      surface: getComputedStyle(node).getPropertyValue('--color-surface-raised').trim(),
+    }))
+    const root = await page.evaluate(() => ({
+      line: getComputedStyle(document.documentElement)
+        .getPropertyValue('--color-line-strong').trim(),
+      surface: getComputedStyle(document.documentElement)
+        .getPropertyValue('--color-surface-raised').trim(),
+    }))
+
+    // The frame answers differently from the page, which IS the mechanism.
+    expect(before.line, 'the figure does not rebind the line').not.toBe(root.line)
+    expect(before.surface, 'the figure does not rebind the surface').not.toBe(root.surface)
+
+    await page.addStyleTag({
+      content: '.bz-figure { --color-line-strong: revert; --color-surface-raised: revert; }',
+    })
+    const after = await page.locator('.bz-figure').first().evaluate((node) => ({
+      line: getComputedStyle(node).getPropertyValue('--color-line-strong').trim(),
+      surface: getComputedStyle(node).getPropertyValue('--color-surface-raised').trim(),
+    }))
+    expect(after.line, 'reverting the rebinding changed nothing').toBe(root.line)
+    expect(after.surface).toBe(root.surface)
+  })
+
+  /**
+   * The third node role, which `06` contributes and the language now carries.
+   * Asserted on the LANGUAGE rather than on a page, because no route renders a
+   * hand-drawn node — see `DELIBERATELY_ABSENT.node` — and a state nobody can
+   * see is still a state the next figure component will reach for.
+   */
+  test('carries three node roles, each told apart by more than a hue', async ({ page }) => {
+    // An APP route, because the probe needs the language loaded: the mockup
+    // spells its own nodes `.node` and has never heard of `.bz-node`.
+    await page.goto(WITH_BOTH)
+    const roles = await page.evaluate(() => {
+      const probe = document.createElement('div')
+      probe.innerHTML =
+        '<span class="bz-node"></span>'
+        + '<span class="bz-node" data-active=""></span>'
+        + '<span class="bz-node" data-here=""></span>'
+      document.body.append(probe)
+      const read = (node: Element) => {
+        const style = getComputedStyle(node)
+        return `${style.backgroundColor}|${style.borderTopColor}|${style.fontWeight}`
+      }
+      const out = [...probe.children].map(read)
+      probe.remove()
+      return out
+    })
+
+    expect(new Set(roles).size, `three roles, ${roles.length} distinct: ${roles}`).toBe(3)
+    // And the two emphasised ones are heavier, so the hue is never alone.
+    expect(roles[1]).toContain('600')
+    expect(roles[2]).toContain('600')
   })
 })

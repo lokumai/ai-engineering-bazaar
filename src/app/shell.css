@@ -78,6 +78,50 @@
      disc, the band's absence of meaning — and never to hide something that
      should simply not be rendered. */
   /* ---------------------------------------------------------------------------
+     §6.5 — WHERE A SCROLLER CONTINUES.
+
+     Anything that scrolls sideways fades at the edge it continues past, so a
+     reader can tell a clipped table from a table that simply ends. The mark is
+     `data-hl-overflow`, written by `src/components/shell/Affordances.tsx` after
+     mount and removed again when the box is scrolled to the end — channel B,
+     because `scrollWidth` is a measurement no build can make.
+
+     HERE rather than in `catalog.css` or `prose.css`, because both need it and
+     the attribute is the mechanism they share: the catalog's nine-column
+     register, a corpus table, a code slab and a diagram frame are four
+     different surfaces with one affordance. A rule copied into two of them
+     would be one rule with two authors.
+
+     `black` and `transparent` rather than a token: a mask reads only the alpha
+     channel, so the colour here is not a design decision and naming a design
+     colour would imply it was one.
+     --------------------------------------------------------------------------- */
+  [data-hl-scroller][data-hl-overflow="right"] {
+    mask-image: linear-gradient(to right, black calc(100% - 34px), transparent);
+  }
+
+  /* ---------------------------------------------------------------------------
+     A SHELL WITH NO ASIDE IS TWO COLUMNS, NOT THREE WITH A GAP.
+
+     The language declares one grid — `rail`, a fluid middle and `aside` — and
+     a route that passes no in-page index still got the third track. MEASURED
+     on the A4 anatomy at 1440px: the rail plus the reading column spanned
+     1236px of a 1440px window, so 204px of the drawing was reserved for a
+     column that was not there and the page read as though it had been cut off.
+
+     Not a `:has()` selector: the shell says what it has. `PageShell` knows
+     whether it was handed an aside, and an attribute it sets is a fact a test
+     can read and a rule cannot get wrong.
+     --------------------------------------------------------------------------- */
+  .bz-shell:not([data-bz-aside]) {
+    grid-template-columns: var(--layout-rail) minmax(0, 1fr);
+  }
+
+  [data-bz-rail="folded"] .bz-shell:not([data-bz-aside]) {
+    grid-template-columns: 0px minmax(0, 1fr);
+  }
+
+  /* ---------------------------------------------------------------------------
      THE SKIP LINK'S TARGET DOES NOT PAINT A RING.
 
      `main` carries `tabIndex={-1}` so the skip link's fragment can actually

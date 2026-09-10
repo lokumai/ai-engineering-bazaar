@@ -476,7 +476,7 @@ export default function ProgressPage() {
         <p className="hl-mark m-0 text-on-surface-muted">{PROFILE_CHORD}</p>
       </div>
 
-      <p className="hl-lead">
+      <p className="bz-lead">
         Everything this browser has recorded about your reading, on one page:
         what is waiting on you, every module and whether you have completed it,
         the path you chose, and the controls that take a copy out or erase it.

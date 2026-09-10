@@ -96,7 +96,7 @@ nearby component nor the old stylesheets.** M9 to M14 re-themed the old
 interface instead of rebuilding it, because the design document they were built
 against described the old structure carrying the new palette; 378 of the old
 design's 398 class names survived five milestones meant to replace them
-(`logs/BRAINSTORM.md` **D26**). Two live constraints: the top bar is a solid
+(`logs/BRAINSTORM_2.md` **D26**). Two live constraints: the top bar is a solid
 cobalt slab with its own on-bar sub-palette and never sits on the page ground,
 and because the ground is `#FDFBF7` a raised surface is told apart by its
 **hairline and not its fill** — with `line` for grouping and `line-strong` for
@@ -338,7 +338,8 @@ by an agent, out of a conversation — nobody maintains them by hand. Your job i
 **How to use them.**
 
 - **Before proposing or building anything:** `specs/MANIFESTO.md` for the boundary you may not cross, and
-  the active `logs/BRAINSTORM.md` to check whether your idea was already considered and rejected.
+  the ACTIVE part of `logs/BRAINSTORM.md` — currently `BRAINSTORM_2.md` — to check whether your
+  idea was already considered and rejected.
 - **Before touching anything structural:** `specs/ARCHITECTURE.md`.
 - **Every session:** `logs/PROGRESS.md` **and its later parts** hold the current milestone, its
   deliverables and their
@@ -363,7 +364,7 @@ Four levels under `kia-context/`, split by **authority**, not by topic.
 | **Map** | `kia-context/INDEX.md` | agent, when files move | What exists, and what points at what |
 | **0** | `kia-context/genesis/` | agent, at t=0 | Where this came from. `SEED.md`, `GENESIS.md` |
 | **1–2** | `kia-context/specs/` | agent, when explicitly refactoring | The law. `MANIFESTO.md`, `ARCHITECTURE.md`, `DESIGN.md` |
-| **3** | `kia-context/logs/` | agent, every session | State. `PROGRESS.md` + `PROGRESS_2.md`, `BRAINSTORM.md` |
+| **3** | `kia-context/logs/` | agent, every session | State. `PROGRESS.md` + `PROGRESS_2.md`, `BRAINSTORM.md` + `BRAINSTORM_2.md` |
 
 `docs/` is a different thing entirely: human-facing artifacts, written **only when a human asks for one**.
 Agents do not maintain them and do not need to read them to do the work.

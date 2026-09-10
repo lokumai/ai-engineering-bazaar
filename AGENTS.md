@@ -36,7 +36,8 @@ by an agent, out of a conversation — nobody maintains them by hand. Your job i
 **How to use them.**
 
 - **Before proposing or building anything:** `specs/MANIFESTO.md` for the boundary you may not cross, and
-  the active `logs/BRAINSTORM.md` to check whether your idea was already considered and rejected.
+  the ACTIVE part of `logs/BRAINSTORM.md` — currently `BRAINSTORM_2.md` — to check whether your
+  idea was already considered and rejected.
 - **Before touching anything structural:** `specs/ARCHITECTURE.md`.
 - **Every session:** `logs/PROGRESS.md` **and its later parts** hold the current milestone, its
   deliverables and their

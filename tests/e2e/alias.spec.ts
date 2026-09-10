@@ -176,7 +176,7 @@ function markRadio(page: Page, id: string) {
  * `<label>` carrying the glyph and the mark's name with the native radio
  * visually hidden inside it — `opacity: 0` and `pointer-events: none`, never
  * `display: none`, so the group keeps its single tab stop and its arrow-key
- * navigation (`profile.css`, §16.2.3). `.check()` acts on the input itself and
+ * navigation (`progress.css`, §16.2.3). `.check()` acts on the input itself and
  * fails on a control that cannot be hit, which is correct of Playwright and
  * wrong of this test: the input was never the target. So the gesture is the
  * label, and the ASSERTION is that the native radio ended up checked — the

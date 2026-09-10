@@ -660,7 +660,7 @@ test('every level card names, numbers and counts itself', async ({ page }) => {
 
   for (let index = 0; index < count; index += 1) {
     const card = cards.nth(index)
-    // The hue arrives through `data-cat`, which is the carrier `lokum.css`
+    // The hue arrives through `data-cat`, which is the carrier `category.css`
     // resolves. Everything else on the card is what a reader in forced colours
     // reads instead: a number, a name, and both counts.
     await expect(card).toHaveAttribute('data-cat', /.+/)

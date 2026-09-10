@@ -65,7 +65,7 @@ function group(value: number): string {
  * the set already reads as "not yet": dashed, unsigned, and stating what is
  * missing rather than showing a zero that was never measured (§11.25).
  *
- * record.css has no inline dashed token — `.bz-submittal-empty` is a padded
+ * progress.css has no inline dashed token — `.bz-submittal-empty` is a padded
  * block for a whole register — so this takes the hairline and the dash from
  * Tailwind against the same two design tokens that class uses.
  */

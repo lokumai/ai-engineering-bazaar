@@ -77,13 +77,13 @@ type Write =
   | { kind: 'failed'; message: string }
 
 /**
- * `record.css`'s `.bz-field input` rules, as utilities, for the two controls it
+ * `src/design/bazaar.css`'s `.bz-field input` rules, as utilities, for the two controls it
  * does not reach.
  *
  * `.bz-field` styles `input` and nothing else, so a `<select>` and a
  * `<textarea>` inside one would render as unstyled browser widgets in the
  * middle of a technical drawing. The right fix is one more selector in
- * `record.css`; this file may not touch it (another agent owns that surface in
+ * `src/design/bazaar.css`; this file may not touch it (another agent owns that surface in
  * this change), so the rules are restated here against the SAME custom
  * properties — never a hardcoded colour — and the duplication is named so it
  * can be deleted the moment `.bz-field :is(input, select, textarea)` exists.

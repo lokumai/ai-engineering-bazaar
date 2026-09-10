@@ -292,7 +292,7 @@ const HEX: readonly string[] = [
  *    stroke-only `d` string is a zero-length subpath that depends on the
  *    caller's line cap to be visible at all. §11.25's rule is derived or absent,
  *    so the sugar is absent here and the description does not claim it. It is
- *    drawn where it can be drawn: `.hl-sugar` in `lokum.css`.
+ *    drawn where it can be drawn: `.bz-sugar` in `derived.css`.
  *
  * The mark stays uncoloured, and there is no per-square hue. A category hue on a
  * person's mark would say the person is a subsystem (§13.6).

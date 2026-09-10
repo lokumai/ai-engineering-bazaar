@@ -82,7 +82,7 @@ import { DrafterStamp } from './DrafterStamp'
  * dead weight in the accessibility tree's place too: `aria-hidden` content
  * inside a `<label>` still cannot be read, while §16.2.3 needs the accessible
  * name to stay the mark's own name. So the cell carries §12.4.1's dashed
- * leader-line rule ("proposed, not drawn", drawn in `profile.css` by
+ * leader-line rule ("proposed, not drawn", drawn in `progress.css` by
  * `[data-hl-offered]`) and nothing else, and the row's height is the same for
  * every reader.
  *
@@ -208,7 +208,7 @@ export function MarkPicker({
                 onFocus={() => setFocused(option.id)}
                 onBlur={() => setFocused(null)}
                 aria-describedby={noteId}
-                // record.css authors no radio rule and this file may not add
+                // progress.css authors no radio rule and this file may not add
                 // one, so the control keeps its native appearance and takes
                 // the accent through `accent-color` — which the platform
                 // draws, and which forced-colors overrides correctly (§12.17).

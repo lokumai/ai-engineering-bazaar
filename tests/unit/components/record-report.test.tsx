@@ -349,7 +349,7 @@ describe('MODULE 00 — the legend (§12.13)', () => {
 
   it('draws the key with the site’s own marks, not a picture of them', () => {
     // The same classes and the same `data-*` attributes the index rows, the
-    // gauges and the dashboard write, so record.css draws the legend from the
+    // gauges and the dashboard write, so the site stylesheets draw the legend from the
     // rules it draws the site from.
     expect(markup).toContain('class="bz-signoff-square" data-drawn="false"')
     expect(markup).toContain('class="bz-signoff-square" data-signed="false"')

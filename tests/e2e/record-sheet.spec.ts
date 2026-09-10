@@ -104,7 +104,7 @@ const EMPTY_STAMPS = [
  * neither could go stale unnoticed. M11 cut the rail back to the sections and
  * the dependency block and moved the module's facts into the column, so there
  * is exactly one now. Both selectors are kept: the panel is still built
- * (`TitleBlock.tsx` says why) and this helper should find it if a page ever
+ * (the retired title block said why) and this helper should find it if a page ever
  * renders it again.
  */
 function checkedBy(page: Page) {

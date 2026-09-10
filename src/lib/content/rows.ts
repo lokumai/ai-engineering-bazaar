@@ -15,7 +15,7 @@ export interface SubsystemRef {
    * M12 — the level's own slug, which is also its identity.
    *
    * Added for the catalog's three views: every level colour in the palette is
-   * addressed as `[data-cat="<slug>"]` (`lokum.css`), so a view that groups by
+   * addressed as `[data-cat="<slug>"]` (`category.css`), so a view that groups by
    * level needs the slug and not only the title. It was derivable from `path`
    * by string surgery, which is exactly the kind of derivation that breaks the
    * day a route changes; the loader knows it, so it is carried.

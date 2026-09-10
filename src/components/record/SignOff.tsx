@@ -164,7 +164,7 @@ export function SignOff({
             a mistake rather than as thoroughness; and the count comes from the
             list itself, so the two can never disagree about how many there are.
 
-            record.css authors no class for these two sentences, so they take the
+            completion.css authors no class for these two sentences, so they take the
             same tokens directly. */}
         <p className="mb-1 text-meta text-on-surface-muted">
           {criteria.objectives.length > 0 && (

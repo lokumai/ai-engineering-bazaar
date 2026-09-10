@@ -14,7 +14,7 @@ export const metadata: Metadata = {
  *
  * All nine ordered paths are in the `role` row of that page's register, with
  * the role picker under them, and channel A still shows exactly one:
- * `lokum.css` resolves `.bz-path-body[data-role="<id>"]` against the
+ * `progress.css` resolves `.bz-path-body[data-role="<id>"]` against the
  * `hl-role-<id>` class the boot script stamps before first paint. The steps,
  * their reasons and the denominator that counts only the ready ones moved
  * verbatim (§13.4.2).

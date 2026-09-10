@@ -1072,15 +1072,22 @@ measured 4 sources, because a draft may perfectly well cite something.
 - `npm run typecheck` — clean.
 - `npm test` — **2,141 passed, 0 skipped**, 82 files. The last two skips, the
   nine-role reveal pair, went live in stage 8.
-- `npm run build` — clean, **57 HTML files**.
+- `npm run build` — clean, **56 HTML files** (`find out -name '*.html' | wc -l`).
+  Next's own line reads `57/57`, which counts ROUTES and includes `/_not-found`; the
+  earlier stage reports say 56 and they are the ones that measured the export.
 - `node scripts/check-mermaid.mjs mini-courses/*/*.md` — 112 / 112.
 - `npx playwright test fidelity.spec.ts` — **200 passed** at 1440, covering all
   ten stages against **five reference documents**; the three parallel maps are
   one record now.
-- `npx playwright test` — **1,041 passed, 0 genuine failures**, from 23. Three
-  tests fail only in a full parallel run and pass in isolation; all three did so
-  before this milestone touched them, and they are `navigation`, `theme` and
-  `containment` — long-running animation and navigation timing, not fidelity.
+- `npx playwright test` — **1,044 tests, 0 genuine failures**, from 23 failing.
+  The passing count moves between 1,041 and 1,044 run to run and **that is the
+  honest way to state it**: four tests fail only in a full parallel run and pass
+  in isolation, so which of them lands is a property of the machine rather than
+  of the build. They are `rail`'s fold animation, `theme`'s first-paint probe,
+  `navigation`'s 32-module walk and `containment`'s keyboard scroll — all
+  long-running timing, none of them a fidelity check, and all four flaking
+  before this milestone touched them. **Re-run any failure in isolation before
+  believing it.**
 - Meter: **`hl-` in `className` 0**, from 792.
 
 #### What is left, and it is not code

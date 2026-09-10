@@ -6,14 +6,14 @@ import type { CategorySlug } from '@/lib/content/categories'
  *
  * **A server component, and it must stay one.** Every segment is filled by
  * channel A: `lib/record/boot.ts` stamps `hl-signed-<n>` on `<html>` before
- * first paint and `lokum.css` fills `.bz-seg[data-module="<n>"]` from it, so
+ * first paint and `lokum-modules.css` fills `.bz-seg[data-module="<n>"]` from it, so
  * the meter is correct in frame one with zero React and zero hydration
  * (§12.2). Nothing here reads the record, this component takes no record, and
  * making it an island would move a mark that is right in frame one onto the
  * channel that cannot be (§12.2, "never put a frame-one-visible mark into
  * channel B").
  *
- * `lokum.css` explains why it is segments and not a bar: a bar's length is a
+ * `completion.css` explains why it is segments and not a bar: a bar's length is a
  * computed number and a computed number cannot reach CSS on channel A. One
  * segment per sheet needs no arithmetic and says more — which sheets, not just
  * how many.

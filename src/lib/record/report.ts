@@ -458,7 +458,7 @@ function roleStandingOf(
 }
 
 /**
- * §13.1.1 — the six hues, transcribed from `src/app/lokum.css`.
+ * §13.1.1 — the six hues, transcribed from `src/design/bazaar.css`.
  *
  * **Transcribed, and it has to be.** This document has no stylesheet to import
  * and no network to fetch one over: it is opened from `file://` years later,

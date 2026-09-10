@@ -25,7 +25,7 @@ import {
  * reader, so reader state can only arrive on one of two channels. This mark is
  * channel A: the pre-paint boot script (`lib/record/boot.ts`) stamps
  * `hl-cat-<slug>-started` / `-complete` on `<html>`, and the twelve rules in
- * `record.css` draw the faces from it. Zero React, zero hydration, correct in
+ * `completion.css` draw the faces from it. Zero React, zero hydration, correct in
  * frame one.
  *
  * What that buys, precisely. The earlier version re-sorted `EDGES` by state and
@@ -55,7 +55,7 @@ import {
  * **§13.2 granted the faces colour, and granted nothing else.** A face may now
  * be filled with its category's flat hue — half chroma started, full chroma
  * complete, and dormant is the structural line rather than a colour at all —
- * and the fill arrives on channel A from `lokum.css`, so no colour value and
+ * and the fill arrives on channel A from `completion.css`, so no colour value and
  * no `style` attribute is written here. Everything else §8.5 forbids stays
  * forbidden: no face, no eyes, no mouth, no limbs, no gradient, no voice, and
  * no animation or transition at any size in any variant (§9.1). A state change
@@ -72,7 +72,7 @@ import {
  * `hatchSpec`. At 96 and above the mark is read by `FaceLegend`, which is real
  * text and is what carries the drawing to a reader who cannot see it.
  *
- * Every stroke and fill is a `var(--…)` token or comes from `record.css`, never
+ * Every stroke and fill is a `var(--…)` token or comes from `completion.css`, never
  * a hex value: a theme switch is a custom-property swap and costs 0ms (§9.2).
  * It animates never, at any size, in any variant (§9.1), and it has no voice
  * (§8.5).
@@ -94,7 +94,7 @@ export interface Lkm01Props {
    *
    * Face state moved to channel A when §12.2 made this markup
    * state-independent, so nothing here reads this value: the same six faces are
-   * emitted for every progress reading, and `record.css` decides what each one
+   * emitted for every progress reading, and `completion.css` decides what each one
    * looks like from the classes the boot script stamped. A caller that has a
    * reading and wants it drawn has already got it — the stamp is on `<html>`
    * before this component renders.
@@ -180,10 +180,10 @@ export function Lkm01({ size = 28, idPrefix = 'lkm01', className }: Lkm01Props) 
           and nothing more, so it is hidden from assistive technology (T5).
 
           `.bz-sugar` is the class §13.2 fixes for it: sugar is sugar in every
-          flavour, so `lokum.css` paints it `--color-surface` and it needs no
+          flavour, so `derived.css` paints it `--color-surface` and it needs no
           state rule of its own. The `fill` attribute stays as the value before
           any stylesheet has arrived — a presentation attribute is the weakest
-          declaration there is, so the class wins the moment `lokum.css` loads,
+          declaration there is, so the class wins the moment `derived.css` loads,
           and it is a token rather than a colour value either way (§9.2). */}
       <g aria-hidden="true">
         {SUGAR.map(([cx, cy]) => (

@@ -419,7 +419,7 @@ describe('Catalog — three views over one data source (M12, D13)', () => {
   })
 
   it('tells a level apart by more than its hue in every view (SC 1.4.1)', () => {
-    // The hue arrives through `data-cat`, which is the carrier `lokum.css`
+    // The hue arrives through `data-cat`, which is the carrier `category.css`
     // resolves. Every surface that carries it also prints the level's name,
     // so dropping every colour cannot cost the reader the distinction.
     for (const id of ['overview', 'cards']) {

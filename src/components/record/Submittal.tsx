@@ -232,7 +232,7 @@ export function Submittal({ slug }: { slug: string }) {
                 }
               />
             </label>
-            {/* record.css gives the hint a top margin, which an inline box
+            {/* completion.css gives the hint a top margin, which an inline box
                 would drop on the floor. */}
             <span className="bz-field-hint block" id={repoHintId}>
               https://github.com/owner/name

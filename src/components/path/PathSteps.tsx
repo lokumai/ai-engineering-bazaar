@@ -5,7 +5,7 @@ import { isDrawnStep, type LearningPath, type PathStep, type Tier } from '@/lib/
  * §13.4.3 items 3 and 4 — one path's ordered steps, as server markup.
  *
  * **A server component with no hooks, and that is the whole design.** Every
- * step's *state* is channel A (§12.2): `lokum.css` reveals `.bz-step-tick` from
+ * step's *state* is channel A (§12.2): `lokum-modules.css` reveals `.bz-step-tick` from
  * the `hl-signed-<n>` class the boot script stamped on `<html>`, so a signed
  * step says `SIGNED OFF` in frame one with zero React and nothing to hydrate.
  * Nine paths and 124 steps therefore cost nine mounted islands fewer than the
@@ -74,7 +74,7 @@ const TIER_LABEL: Readonly<Record<Tier, string>> = {
 export const PATH_BODY_ATTR = 'data-hl-path'
 export const PATH_STEP_ATTR = 'data-hl-path-slug'
 
-/** §12.2 — the attribute `lokum.css` reveals `.bz-step-next` from. */
+/** §12.2 — the attribute `progress.css` reveals `.bz-step-next` from. */
 export const PATH_NEXT_ATTR = 'data-next'
 
 /**

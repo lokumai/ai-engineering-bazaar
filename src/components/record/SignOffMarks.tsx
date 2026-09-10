@@ -27,7 +27,7 @@ import { useRecord } from '@/lib/record/store'
  * carries one. Attribute selectors match a whole name, so the two contracts
  * cannot be confused for each other — and a cell here is not a control there.
  *
- * Channel A was the other candidate and record.css explains why it is not used
+ * Channel A was the other candidate and completion.css explains why it is not used
  * for these: a CSS selector cannot compare an attribute on `<html>` against an
  * attribute on a descendant, so the boot script would need one generated rule
  * per module to remove one frame of flicker from a column of 14px squares.

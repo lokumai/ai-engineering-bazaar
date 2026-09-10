@@ -33,7 +33,7 @@ export function DrafterStamp({
   mark: MarkId | null
   /** 8 lowercase hex, minted once at the first sign-off. */
   seed: string | null
-  /** record.css fixes the class at 24px; a caller wanting another size says so. */
+  /** progress.css fixes the class at 24px; a caller wanting another size says so. */
   size?: number
 }) {
   const paths = markPaths(mark ?? 'seeded', seed)

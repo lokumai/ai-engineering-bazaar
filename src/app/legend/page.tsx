@@ -39,7 +39,7 @@ export const metadata: Metadata = {
  * channel B to fill in and nothing to hydrate (§12.2). The marks are the real
  * ones: `.bz-signoff-square`, `.bz-gauge-tick` and `.bz-diagram-node` with the same
  * `data-*` attributes the index rows, the tick gauges and the dashboard write,
- * so `record.css` draws the legend from the same rules it draws the site from.
+ * so `derived.css` draws the legend from the same rules it draws the site from.
  * A hand-drawn picture of the marks would be a fourth place for them to be
  * defined, and it would start disagreeing the first time a token moved.
  */

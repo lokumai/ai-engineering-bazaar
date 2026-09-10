@@ -158,7 +158,7 @@ test.describe('A0 — the assembly module', () => {
     /*
       The module's own facts are in the COLUMN, and they are a ROW OF TAGS now
       rather than a panel of rows. The second assertion used to name the 240px
-      `TitleBlock` variant by class; a class nothing emits is trivially absent,
+      the retired title block by class; a class nothing emits is trivially absent,
       so it is the shape that is checked instead — stage 5 replaced a twelve-row
       `<dl>` with `01`'s three spans, and a `<dl>` reappearing in this column
       would mean the instrument panel had come back.

@@ -124,7 +124,7 @@ describe.skipIf(!REVEALED)('the reveal list covers every view, and one fallback'
 
   /**
    * The carrier sets custom properties and every rule after it reads them —
-   * `lokum.css`'s arrangement for the five level hues, for the same reason. If
+   * `category.css`'s arrangement for the five level hues, for the same reason. If
    * a rule names a view id outside the two lists above, the relation has a
    * second author.
    */

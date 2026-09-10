@@ -43,17 +43,6 @@ export interface SheetFacts {
   lang: Lang
 }
 
-export interface TitleBlockRow {
-  label: string
-  value: string
-  /**
-   * `.text-mark` uppercases every chrome value (§3.4). A git short hash is the
-   * one value on the sheet whose case is not ours to change, so the component
-   * is told to leave it alone.
-   */
-  preserveCase?: boolean
-}
-
 /** `5008` -> `5,008`. Written out because `toLocaleString` follows the host. */
 export function thousands(n: number): string {
   return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',')

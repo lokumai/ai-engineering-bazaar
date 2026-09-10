@@ -17,7 +17,7 @@ import { Stamp } from './Stamp'
  *
  * They live in one file because they are one job: the reader-state half of
  * §5.5's title block, mounted as leaves by a server parent that stays a server
- * component (`TitleBlock` → here, the same shape as `SiteFooter` → `SheetLabel`
+ * component (the retired title block → here, the same shape as `SiteFooter` → `SheetLabel`
  * and `SheetRail` → `SectionSpine`).
  */
 

@@ -579,7 +579,7 @@ function Legend() {
  * §12.10.3 — the table equivalent, which is mandatory and not optional.
  *
  * **Always in the DOM**, revealed by a labelled `<details>`, and forced visible
- * in print by record.css. Never `display: none` when collapsed, because it is
+ * in print by progress.css. Never `display: none` when collapsed, because it is
  * the only form in which a reader can actually *verify* a dependency claim —
  * the SVG can be read but not checked — and it is what serialises straight into
  * the record document.

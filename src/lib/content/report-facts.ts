@@ -39,7 +39,7 @@
  *    ledger is printed from — one derivation, which is what stops the cover and
  *    the ledger disagreeing (§11.25);
  *  - the **six hue values** cannot come from here at all. They live in
- *    `src/app/lokum.css`, the document has no stylesheet to import over
+ *    `src/app/lokum-modules.css`, the document has no stylesheet to import over
  *    `file://`, and a colour is not a fact about the corpus;
  *  - the **role and the path** come from the record and from `lib/path/`, which
  *    is plain fs-free data that `report.ts` reads directly. Routing a path

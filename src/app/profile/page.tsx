@@ -365,7 +365,7 @@ export default function ProgressPage() {
        this site makes, and changing it touches no completion.
 
        **M14 folded `/path/` in here.** All nine ordered paths are in this
-       markup and channel A shows exactly one: `lokum.css` resolves
+       markup and channel A shows exactly one: `progress.css` resolves
        `.bz-path-body[data-role="<id>"]` against the `hl-role-<id>` class the
        boot script stamps before first paint (§12.2), and `.hl-path-empty`
        against the absence of all nine. That is what makes the row correct in

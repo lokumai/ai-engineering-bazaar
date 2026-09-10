@@ -19,7 +19,7 @@ import { FACES, FLAVOURS } from './geometry'
  * hides, which is exactly why the legend is needed to read them.
  *
  * **The colour is channel A, the count is not.** The swatch is
- * `.bz-legend-swatch .bz-cat-tint` with `data-cat`, so `lokum.css` resolves it
+ * `.bz-legend-swatch .bz-cat-tint` with `data-cat`, so `category.css` resolves it
  * to the structural line, half chroma or full chroma from the classes the boot
  * script stamped on `<html>` — correct in frame one, no React. A count is a
  * computed number and §12.2 allows a number on exactly one other channel: it
@@ -31,7 +31,7 @@ import { FACES, FLAVOURS } from './geometry'
  *
  * **§13.1.4 — the hue is never alone.** Every row prints its flavour name, its
  * subsystem title and its count as text, so the swatch is redundant
- * reinforcement; under `forced-colors: active` `lokum.css` drops the swatch to
+ * reinforcement; under `forced-colors: active` `derived.css` drops the swatch to
  * `Canvas` on a `CanvasText` border and the legend still reports everything.
  *
  * It has no voice (§8.5, §13.8): the legend states counts and never comments

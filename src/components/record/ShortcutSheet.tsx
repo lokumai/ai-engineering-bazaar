@@ -9,7 +9,7 @@ import { SHORTCUTS, routeFor } from '@/lib/record/keys'
  *
  * Radix is here for behaviour only, exactly as Appendix C buys it: focus trap,
  * `Esc`, focus restored to whatever opened it (§10.3). None of its looks — the
- * panel is `record.css`'s hairline dialog, zero radius, no shadow beyond
+ * panel is `progress.css`'s hairline dialog, zero radius, no shadow beyond
  * `--shadow-pop`, no backdrop blur (§11.7) and no animation, because §9.4
  * permits three animations on this site and a dialog is not one of them.
  *

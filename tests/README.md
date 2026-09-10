@@ -210,7 +210,7 @@ the test.
   status: the register says `NOT DRAWN`, and `NOT YET DRAWN` fails, because both
   read as correct on their own.
 - **The palette check** (`tests/unit/color/lokum.test.ts`) recomputes all six
-  category hues from `src/app/lokum.css`: 3:1 against three grounds in both
+  category hues from `src/design/bazaar.css`: 3:1 against three grounds in both
   themes at full and half chroma, in gamut, mutually distinguishable, and 20°
   clear of the accent pen. It also asserts the copy of those values inlined in
   the `RECORD OF WORK` matches the stylesheet, because that file has no
@@ -228,7 +228,7 @@ the test.
   showing view has focus, and asserts the hidden views' links are unreachable:
   either half alone passes for the wrong reason (D17).
 - **The reveal-list check** (`tests/unit/catalog/views.test.ts`) holds
-  `manifest.css`'s channel-A selector list to `VIEW_IDS` in both places it
+  `catalog.css`'s channel-A selector list to `VIEW_IDS` in both places it
   appears, and pairs each selector's two view ids. A mismatched pair shows one
   view for another's stored preference: plausible, and wrong. It is the same
   shape as `category-css.test.ts`'s per-module lists, and for the same reason —

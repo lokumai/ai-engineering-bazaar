@@ -14,7 +14,7 @@ import { CATEGORY_PATHS } from './sheets'
  *
  * `forcedColors: 'active'` is the real thing rather than a simulation: Chrome
  * discards author colours and substitutes the system palette, which is what a
- * reader in Windows High Contrast actually gets. `lokum.css`'s
+ * reader in Windows High Contrast actually gets. The generated sheet's
  * `@media (forced-colors: active)` block drops every hue to `Canvas` /
  * `CanvasText` deliberately, so if any surface depended on its hue, it goes
  * blank here and nowhere else.
@@ -261,7 +261,7 @@ test('the account block and a closed row read as text with no colour (§16.2.3, 
     is `opacity: 0` at every other width, because the glyph and its name are the
     control, and is brought back into view under forced colours so the selection
     can be read from the platform's own widget. That rule lived in the deleted
-    `profile.css`, so the radio is currently visible in EVERY mode and
+    the deleted `profile.css`, so the radio is currently visible in EVERY mode and
     `toBeVisible()` here can no longer tell the design from its absence.
 
     Both assertions below are still worth making — a checked radio the reader can

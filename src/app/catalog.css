@@ -562,14 +562,28 @@
      record: a count drawn from Web Storage would arrive after first paint and
      flash from zero, which is the failure **D37** records for the rail.
      --------------------------------------------------------------------------- */
+  /* The count comes from the component, which counts the levels it is about to
+     draw (`CatalogOverview`). `5` is the fallback for a board with no instance
+     value, and it is `03`'s own number; every width below is still `03`'s. */
   .bz-board {
+    /* Declared here so the name resolves even where nothing passes one, and
+       overridden per instance — the same arrangement `.bz-table` has with
+       `--bz-table-min`, and for the same reason: a board with no count to
+       honour draws `03`'s five. */
+    --bz-board-cols: 5;
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(var(--bz-board-cols), minmax(0, 1fr));
     gap: 12px;
   }
 
+  /* Two columns, or the board's own count where that is fewer — `min()` on a
+     track count is not a thing, so the narrow rule re-states the variable with
+     2 as its ceiling. Without it a one-level board would go from one full-width
+     column to one half-width column as the viewport NARROWED. */
   @media (max-width: 1180px) {
-    .bz-board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .bz-board {
+      grid-template-columns: repeat(min(var(--bz-board-cols), 2), minmax(0, 1fr));
+    }
   }
 
   @media (max-width: 880px) {

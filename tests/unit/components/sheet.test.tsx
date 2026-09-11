@@ -122,10 +122,25 @@ describe('PrevNext (§5.7)', () => {
     expect(markup).toContain('Next module')
   })
 
+  /**
+   * M18 — and the tile now says WHICH end.
+   *
+   * Both empty cells read `End of the course`, so on module 01 the tile where
+   * the previous module would be announced the end of the thing the reader had
+   * just started. A symmetry check could never have found it: both cells
+   * rendering the same string is what symmetry looks like. A screenshot found
+   * it. Asserting both strings is what keeps them from converging again.
+   */
   it('marks the ends of the set rather than omitting a cell', () => {
-    const markup = renderToStaticMarkup(<PrevNext previous={null} next={drawn} />)
-    expect(markup).toContain('End of the course')
-    expect(markup.match(/bz-pager-item/g)).toHaveLength(2)
+    const first = renderToStaticMarkup(<PrevNext previous={null} next={drawn} />)
+    expect(first).toContain('Start of the course')
+    expect(first).not.toContain('End of the course')
+    expect(first.match(/bz-pager-item/g)).toHaveLength(2)
+
+    const last = renderToStaticMarkup(<PrevNext previous={drawn} next={null} />)
+    expect(last).toContain('End of the course')
+    expect(last).not.toContain('Start of the course')
+    expect(last.match(/bz-pager-item/g)).toHaveLength(2)
   })
 
   it('tags a target that is planned, in words as well as line type', () => {

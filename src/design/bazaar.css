@@ -511,6 +511,82 @@
 
   .bz-bar-icon:hover { background: var(--color-bar-hover); }
 
+  /* M18 — the repository control, which is an icon button that also carries a
+     number, so it is the one bar control that is not square.
+
+     `01` has no such thing: its bar holds four equal `.ib` squares. This takes
+     the same height, the same edge and the same fill, and gives up the fixed
+     width — the primitive is the SLOT rather than the square, and a control
+     that prints a figure cannot be 33px wide without clipping it. */
+  .bz-bar-repo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 33px;
+    padding: 0 9px;
+    border: 1px solid var(--color-bar-field-line);
+    border-radius: var(--radius-base);
+    background: var(--color-bar-field);
+    color: var(--color-on-bar);
+  }
+
+  .bz-bar-repo:hover { background: var(--color-bar-hover); }
+
+  /* The star is `--color-caution`, which is the language's gold and the same
+     value the band is finished with — not a yellow introduced for this control.
+     **MEASURED on the bar's own cobalt (`#b8873b` on `#282864`): 4.16:1**, well
+     over the 3:1 a graphic owes, and it is never the only carrier — the figure
+     beside it is `--color-on-bar` at 13.31:1 and says the same thing in a
+     numeral.
+
+     The author asked for the mark in BLACK. Black on this cobalt measures
+     **1.58:1** and the bar's own sub-palette is the strongest rule the design
+     language has, so the mark takes the bar's ink instead; it is GitHub's own
+     mark either way. Reversing that is one declaration, and it costs the floor. */
+  .bz-bar-star { flex: none; color: var(--color-caution); }
+
+  /* §12.16 — the keyboard map, wherever it is drawn. Two surfaces render it:
+     the shortcut sheet a `?` opens, and `/legend/`, which is where M18 put the
+     table when the bar stopped saying the chords exist. Two consumers is why
+     it is here and not in either surface's own stylesheet. */
+  .bz-keys {
+    border-collapse: collapse;
+    margin: 0;
+    font-size: var(--text-item);
+  }
+
+  /* **A TABLE, LAID OUT AS ONE.** It read `display: grid` with two tracks and a
+     14px gap, over `<table><tbody><tr><td>` — and a grid container's only child
+     here is the `tbody`, so the tracks sized against the wrong boxes and the
+     gap applied between nothing. MEASURED on `/legend/`: the two widest chords
+     painted their key against their action, `]Previous / next module` and
+     `kNext / previous section`, with no space at all.
+     It was wrong in the `?` dialog before M18 put the same table on a page
+     where somebody finally looked at it. */
+  .bz-keys td {
+    padding: 2px 0;
+    vertical-align: baseline;
+  }
+
+  .bz-keys td:first-child {
+    padding-right: 14px;
+    white-space: nowrap;
+  }
+
+  /* A key name is a machine value, so it takes the machine face at the machine
+     size — the same pair `.bz-catcard-num` uses for an ordinal. It is NOT the
+     small uppercase mono LABEL `DESIGN.md` forbids: nothing re-cases it, and
+     `g` and `G` are different keystrokes. */
+  .bz-keys kbd {
+    font: 600 var(--text-mark) / 1.6 var(--font-mono);
+    color: var(--color-on-surface);
+  }
+
+  .bz-bar-stars {
+    font: 600 var(--text-mark) / 1 var(--font-sans);
+    font-variant-numeric: tabular-nums;
+  }
+
   /* -- the menu ----------------------------------------------------------- */
 
   /* A CLOSED MENU HAS NO BOX, and saying so explicitly is the mockup's own
@@ -1044,9 +1120,15 @@
     font-size: var(--text-item);
   }
 
+  /* M18 — `list-style: disc`, because Tailwind's preflight removes it from
+     every list in the document and this card is the one the author named:
+     `What you will be able to do` was a run of indented sentences that looked
+     like a paragraph somebody had broken. The 20px indent was already here and
+     was indenting nothing. */
   .bz-card ul {
     margin: 0;
     padding-left: 20px;
+    list-style: disc;
   }
 
   .bz-card li {
@@ -1616,7 +1698,15 @@
     margin-top: 34px;
   }
 
+  /* M18 — ONE LINE. It stacked a faint label over a titled destination and was
+     two lines tall whatever its padding did; the author asked for shorter
+     boxes, and the row is where the height was. MEASURED: 65px to 39px, with
+     no length in the language changed — 13px of padding either side of a 13px
+     line is the arithmetic, and the 13px padding is the tile's own from before. */
   .bz-pager-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
     padding: 13px 15px;
     border: 1px solid var(--color-line);
     border-radius: var(--radius-sm);
@@ -1630,19 +1720,50 @@
   }
 
   .bz-pager-item small {
-    display: block;
-    margin-bottom: 3px;
+    flex: none;
     color: var(--color-on-surface-faint);
     font-size: var(--text-mark);
   }
 
+  /* The destination is what may be cut, because the label beside it is four
+     words that never vary and the title is the part that can be forty
+     characters long. `min-width: 0` is what lets a flex item shrink at all. */
   .bz-pager-item b {
+    min-width: 0;
+    overflow: hidden;
     color: var(--color-on-surface-title);
     font-size: 15px;
     font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .bz-pager-item[data-end] { text-align: right; }
+  /* `baseline` on the row would sit the glyph on the text baseline, where a
+     16-unit box centred on an x-height looks dropped. It is the one item that
+     centres. */
+  .bz-pager-arrow {
+    flex: none;
+    align-self: center;
+    color: var(--color-on-surface-faint);
+  }
+
+  /* The next tile reads right to left: its glyph is last in the DOM already, so
+     only the packing changes. */
+  .bz-pager-item[data-end] { justify-content: flex-end; }
+
+  /* ONE COLUMN ON A PHONE, and this is what the one-line tile cost.
+
+     Two tiles side by side were two lines tall each and fitted 390px happily.
+     One line needs the label, the glyph and a truncated title on the same row,
+     and MEASURED at 390 that is about 240px of content in a 165px tile — six
+     module routes scrolled the document sideways, which §11.10 forbids and
+     `responsive.spec.ts` caught immediately. Stacking is the answer the rest of
+     the language already uses at this width, and it costs nothing: a pager with
+     two rows of one line is still shorter than one row of two. */
+  @media (max-width: 767px) {
+    .bz-pager { grid-template-columns: minmax(0, 1fr); }
+    .bz-pager-item[data-end] { justify-content: flex-start; }
+  }
 
   /* -- the aside ---------------------------------------------------------- */
 

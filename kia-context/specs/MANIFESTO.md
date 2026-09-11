@@ -10,7 +10,7 @@ authority: law
 writes: agent, from what the human decided
 status: active
 covers: the whole product
-last_updated: "2026-09-11"
+last_updated: "2026-09-12"
 ---
 
 # 📜 MANIFESTO — What we are building, and why
@@ -35,9 +35,16 @@ to that and out again. If a feature does not serve that, it is decoration.
 
 ## 3. What it does
 
-Thirty-three short modules, ordered from beginner to expert, each five to ten minutes long, each
-ending with links out to the real sources. It remembers where a reader got to, in their own browser,
-without asking them for anything.
+Thirty-three short modules, ordered from beginner to expert, each twenty to thirty minutes long,
+each ending with links out to the real sources. It remembers where a reader got to, in their own
+browser, without asking them for anything.
+
+> **The figure was `five to ten` until 2026-09-11 and it was never true.** MEASURED against the
+> corpus this document describes: nineteen modules declare a duration, the shortest twenty minutes
+> and the longest thirty, average twenty-six. The author named it as wrong; **D65** records the
+> correction and what it does not settle. The home page states the same figure by COUNTING the
+> modules rather than by quoting this line, so the site cannot drift from the corpus again — only
+> this document can.
 
 ## 4. Who it is for
 
@@ -71,7 +78,9 @@ reason. See `genesis/GENESIS.md` §1 and §2 for where this came from.
    straight answer in normal words. That is the register.
 3. **It stays simple.** Simple and high level everywhere. A module may cover a lot; no single part of
    it may go deep.
-4. **Five to ten minutes a module.** Short on purpose, then links out.
+4. **Twenty to thirty minutes a module.** Short on purpose, then links out. (Corrected 2026-09-11
+   from `five to ten`, which no module has ever been — **D65**. The rule number is unchanged, which
+   is rule 1 of the harness: a number is cited elsewhere and never renumbered.)
 5. **Pictures do a lot of the work.** People want to see, not read. A module with no visual is usually
    unfinished.
 6. **Every module points somewhere next.** Written to leave a reader curious rather than full.

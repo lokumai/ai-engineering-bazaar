@@ -272,15 +272,21 @@ test('the home screen cannot be nudged sideways at any width', async ({ page }) 
 
   const viewport = page.viewportSize()!.width
 
-  // M13 — one document rather than two blocks with one hidden, so what is
-  // measured is the hero and the level grid: both are laid out, both fill the
-  // column, and neither overhangs at any of the three widths.
-  const shown = await page.locator('.bz-hero, .bz-cc-levels').evaluateAll(
+  /* M13 — one document rather than two blocks with one hidden, so what is
+     measured is every block the page lays out: each fills the column and none
+     overhangs at any of the three widths.
+
+     M18 — the level grid was the second of the two and is on `/profile/` now,
+     so the pair is the hero and the why-panel. The SELECTOR is what matters
+     here rather than the count: the mutation this guards against is an empty
+     page, which cannot be dragged either, so the length assertion has to keep
+     naming real blocks. */
+  const shown = await page.locator('.bz-hero, .bz-panel').evaluateAll(
     (nodes) => nodes
       .filter((node) => node.checkVisibility())
       .map((node) => Math.round(node.getBoundingClientRect().width)),
   )
-  expect(shown, 'the home page renders its hero and its level grid').toHaveLength(2)
+  expect(shown, 'the home page renders its hero and its argument').toHaveLength(2)
   for (const width of shown) {
     expect(width, 'a block with no width to overhang with').toBeGreaterThan(viewport / 2)
   }

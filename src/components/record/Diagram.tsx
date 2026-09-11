@@ -661,34 +661,16 @@ function DiagramTable({
  * has signed off nothing and is exactly what §12.13's class 1 offers as its one
  * path. Nothing about that frame is a lie.
  */
-/**
- * Both shapes at once, because both are needed and both are the same object:
- * `nextUnsigned` reads the record's view of the corpus, and the line prints the
- * sheet's own title. Narrowing the member rather than intersecting the two
- * interfaces is what keeps `sheets.find` returning one element type instead of
- * an intersection of two array types. `curriculumFacts()` satisfies it.
- */
-interface ContinueFacts extends CurriculumFacts {
-  sheets: ReadonlyArray<CurriculumFacts['sheets'][number] & { title: string }>
-}
+/* M18 — `ContinueLine` was deleted here, and saying so is cheaper than
+   letting somebody find `ContinueFacts` and wonder what drew it.
 
-export function ContinueLine({ facts }: { facts: ContinueFacts }) {
-  const record = useRecord()
-  const slug = nextUnsigned(record, facts)
-  if (slug === null) return null
+   It was the home page's one-line shortcut, `Continue · Module 02 · RAG &
+   Embeddings`, revealed on channel A by `data-hl-record`. The author had the
+   whole reader-state block taken off the front door. The DERIVATION is not
+   lost and never was this component's: `nextUnsigned` is the function, and
+   `ContinueHero` on `/profile/` prints the same answer as a hero rather than a
+   sentence. §12.10.6's two cases moved there with it. */
 
-  const sheet = facts.sheets.find((candidate) => candidate.slug === slug)
-  if (!sheet) return null
-
-  return (
-    <p className="text-mark m-0 text-on-surface-muted">
-      Continue{' '}
-      <Link href={`/courses/${slug}/`} className="bz-link">
-        Module {String(sheet.module).padStart(2, '0')} · {sheet.title}
-      </Link>
-    </p>
-  )
-}
 
 /**
  * §7.1 / §5.8 — the full readout strip, with the one value only this page can

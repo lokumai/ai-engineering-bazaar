@@ -11,8 +11,8 @@ source: playground/01-theme-T4-ground-G3-powder.html (light) · playground/01-th
 authority: blueprint
 writes: agent, as the language evolves
 status: active
-covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-10"
-last_updated: 2026-09-10
+covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-12, with three recorded deviations"
+last_updated: 2026-09-12
 ---
 
 ---
@@ -498,7 +498,24 @@ column one at all. So the lede holds to `--layout-measure` rather than to `08`'s
 stopped being the same kind of thing. `fidelity.spec.ts` asserts both halves: the display line is
 exactly its row, the lede is comfortably inside it.
 
-**This is the only entry in this file that the author decided rather than a measurement forcing.**
+**A THIRD DEVIATION, AND IT IS THE MOCKUP'S WORDS RATHER THAN ITS VALUES.** `08`'s display line reads
+*"AI engineering, written by someone who builds it"* and the home page transcribed it. **The author
+overruled it on 2026-09-11**, on a fact about the product rather than about the design: *"it is
+written by AI Engineers, not by a single engineer"*. The line reads `written by the people who build
+it` now, and the lede under it reads `Written by AI engineers who build this for a living`.
+
+`README.md`'s rule 1 said `a working AI engineer` and says `working AI engineers`; `MANIFESTO.md` §3
+already had the plural. **A sentence on a page and the document it came from are two statements of
+one thing, so correcting one without the other is how they drift** — which is the same failure the
+minute figure had, in the other direction: the site said `five to ten minutes a module` because
+`README.md` rule 4 and `MANIFESTO.md` §3 said so, and none of the three had been measured against a
+corpus whose shortest module declares twenty (**D65**). The home page counts it now, so only the
+documents can go stale.
+
+Nothing about the TYPE moved for either, so neither is a `transcription.test.ts` `DEVIATIONS` entry —
+that registry is about values, and no value changed.
+
+**These are the only entries in this file that the author decided rather than a measurement forcing.**
 The rule stands: the mockup outranks this document, a measured accessibility floor outranks the
 mockup (**D34**), and the author outranks all three — stated here so a third entry cannot be added
 by an agent reading the first two as precedent.

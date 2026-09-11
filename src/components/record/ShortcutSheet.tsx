@@ -41,22 +41,19 @@ export function ShortcutSheet({ open, onOpenChange, pathname, charKeys }: Shortc
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       {/*
-        §5.1 — a 28 × 28 icon button. Its glyph is the key that opens it, so
-        the hint is printed on the control rather than only inside it.
+        M18 — NO TRIGGER. The bar carried a 33px `?` button whose glyph was the
+        key that opened it, so the hint was printed on the control. The author
+        had the button removed; the sheet stays and `?` still opens it at every
+        width, because the handler never asks how wide the viewport is.
 
-        Hidden below 768px, where §4.7 puts the layout into one column and the
-        header's slots run out: a control offering a table of keystrokes is a
-        control for a device with keys. Nothing is lost — the `?` key still
-        opens this module at every width, because the handler never asks how
-        wide the viewport is.
+        **Deleting the control deleted the discovery**, which is the trap §12.16
+        set for anybody doing this: the button was one of only two places on the
+        site that said a chord exists, and the other was the progress icon's
+        `title`, which M18 removed in the same edit. So the table is on
+        `/legend/` now — the page whose whole job is what the marks and the
+        mechanisms here mean — rendered from this same `SHORTCUTS` array, so the
+        two cannot come apart.
       */}
-      <Dialog.Trigger
-        className="bz-bar-icon hidden md:inline-flex"
-        aria-label="Keyboard shortcuts"
-        title="Keyboard shortcuts (?)"
-      >
-        <span aria-hidden="true" className="text-mark">?</span>
-      </Dialog.Trigger>
 
       <Dialog.Portal>
         <Dialog.Overlay className="bz-dialog-backdrop" />
@@ -75,7 +72,7 @@ export function ShortcutSheet({ open, onOpenChange, pathname, charKeys }: Shortc
                   const href = row.target === null ? null : routeFor(row.target, pathname)
                   return (
                     <tr key={row.keys}>
-                      <td>{row.keys}</td>
+                      <td><kbd>{row.keys}</kbd></td>
                       <td>
                         {href === null ? (
                           row.action

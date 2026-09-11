@@ -129,6 +129,43 @@ export function setSummary(): Coverage {
   return coverage(sheetRows(), declaredMinutes(() => true))
 }
 
+/** The shortest and the longest module the course declares, in minutes. */
+export interface LengthRange {
+  shortest: number
+  longest: number
+}
+
+/**
+ * M18 — how long a module takes, DERIVED, because the site has been printing a
+ * number nobody measured.
+ *
+ * The home page said *"Five to ten minutes a module"*, which came from
+ * `README.md` rule 4 and `MANIFESTO.md` §3. **MEASURED against the corpus that
+ * sentence describes: nineteen modules declare a duration, the shortest is 20
+ * minutes and the longest is 30.** Not one of them is under twenty. The
+ * author's list of 2026-09-11 names the figure as wrong, and it was wrong by a
+ * factor of three.
+ *
+ * So the sentence takes its numbers from the modules instead of from a
+ * document, which is §11.25 applied to prose rather than to a facts strip: a
+ * module that gets longer moves the promise with it, and nobody has to notice.
+ * A written module needs a positive duration — `curriculum-file.ts` fails the
+ * build without one — so there is no empty case to spell.
+ *
+ * Only the written ones. A planned module declares nothing, and averaging a
+ * zero into a promise is how the figure went wrong in the first place.
+ */
+export function moduleLengthRange(): LengthRange {
+  const declared = loadAllModules()
+    .map((sheet) => sheet.frontmatter.duration)
+    .filter((minutes) => minutes > 0)
+
+  return {
+    shortest: Math.min(...declared),
+    longest: Math.max(...declared),
+  }
+}
+
 /**
  * M13 — the four facts the home page states about the course, measured.
  *

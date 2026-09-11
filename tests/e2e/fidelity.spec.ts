@@ -1014,9 +1014,12 @@ test.describe('M16 stage 6 — code and figures', () => {
 
 test.describe('M16 stage 7 — completion', () => {
   /**
-   * `05`-C, which its own note puts "on the home page and on My progress" —
-   * and `CourseCompletion` renders on both, so the home page is where these
-   * are read.
+   * `05`-C, which its own note puts "on the home page and on My progress".
+   *
+   * **M18 left it on one of the two.** The author's shape for the front door is
+   * the banner and the argument, so control C is on `/profile/` alone now and
+   * that is where these are read. The component and the mockup are unchanged;
+   * only the count of surfaces that draw it moved, from two to one.
    */
   const BUILT: readonly Role[] = ['levelCard', 'dial', 'dialValue', 'statRow', 'legendKey']
 
@@ -1025,7 +1028,7 @@ test.describe('M16 stage 7 — completion', () => {
     await freezeMotion(page)
     const reference = await extractDesignFacts(page, PROGRESS_SELECTORS)
 
-    await page.goto('/')
+    await page.goto('/profile/')
     await freezeMotion(page)
     const actual = await extractDesignFacts(page, APP_SELECTORS)
 
@@ -1059,7 +1062,7 @@ test.describe('M16 stage 7 — completion', () => {
     await freezeMotion(page)
     const reference = await extractDesignFacts(page, PROGRESS_SELECTORS)
 
-    await page.goto('/')
+    await page.goto('/profile/')
     await freezeMotion(page)
     await page.addStyleTag({
       content: '.bz-dial { width: 66px !important; height: 66px !important; }',
@@ -1085,7 +1088,7 @@ test.describe('M16 stage 7 — completion', () => {
    * to either that keeps both "on the scale" can still close the ring up.
    */
   test('draws a ring rather than a filled disc, on the fill it sits on', async ({ page }) => {
-    await page.goto('/')
+    await page.goto('/profile/')
     await freezeMotion(page)
 
     const measured = await page.locator('.bz-dial').first().evaluate((node) => {
@@ -1122,7 +1125,7 @@ test.describe('M16 stage 7 — completion', () => {
     await seedRecord(page, {
       sheets: { 'fundamentals/llms': { signedOff: '2026-08-14T09:00:00.000Z' } },
     })
-    await page.goto('/')
+    await page.goto('/profile/')
 
     const read = await page.evaluate(() => {
       const dial = document.querySelector('.bz-cc-level[data-cat="fundamentals"] .bz-dial')!
@@ -1509,42 +1512,22 @@ test.describe('M16 stage 9 — the front door', () => {
 
   /**
    * §15.2.1 — the shortcut, on channel A, and the whole of the two-state
-   * machinery this page has left.
+   * machinery this page had left. **M18 removed it, and this is the record.**
    *
    * `boot.ts` stamps `data-hl-record` for a record that CARRIES SOMETHING and
-   * deliberately not for one holding only preferences. The reveal had no reader
-   * at all: the rule lived in the `app/home.css` stage 0 deleted, so the block
-   * showed for everybody and `ContinueLine` decided in React — which cannot be
-   * right in frame one, because the server snapshot is the frozen empty record
-   * and `nextUnsigned` resolves that to module 01. A browser that had never
-   * opened anything was handed a shortcut to the first module.
+   * deliberately not for one holding only preferences; `.bz-home-continue` was
+   * hidden by default and revealed by that stamp, so a reader with a record met
+   * their shortcut in frame one with no JavaScript. The mechanism was right and
+   * the author had the BLOCK removed: the front door is the argument for
+   * reading this, and a reader who has a record reaches their place through
+   * `Your progress` in the bar.
    *
-   * Measured with every `.js` request refused, so nothing React does can be
-   * what makes it true.
+   * **The stamp is still stamped and still asserted** — `home.spec.ts` holds
+   * §15.11's cases on the attribute itself, which is stricter than reading what
+   * it drew, and `completion.spec.ts` reads it before first paint on the page
+   * that still draws from it. Nothing about channel A was weakened; one of its
+   * two consumers was deleted.
    */
-  test('offers the shortcut only to a reader who has one, in frame one', async ({ page }) => {
-    await page.route('**/*.js', (route) => route.abort())
-
-    await page.goto('/')
-    const clean = await page.evaluate(() => ({
-      stamped: document.documentElement.hasAttribute('data-hl-record'),
-      shown: (document.querySelector('.bz-home-continue') as HTMLElement | null)?.checkVisibility()
-        ?? null,
-    }))
-    expect(clean.stamped, 'a clean browser was stamped as a returning reader').toBe(false)
-    expect(clean.shown, 'no continue block in the document at all').not.toBeNull()
-    expect(clean.shown, 'a clean browser is offered a shortcut it has not earned').toBe(false)
-
-    // A record that carries something — one signed module — and the same page.
-    await seedRecord(page, { sheets: { 'fundamentals/llms': signedSheet('a1b2c3d') } })
-    await page.goto('/')
-    const returning = await page.evaluate(() => ({
-      stamped: document.documentElement.hasAttribute('data-hl-record'),
-      shown: (document.querySelector('.bz-home-continue') as HTMLElement).checkVisibility(),
-    }))
-    expect(returning.stamped).toBe(true)
-    expect(returning.shown, 'a returning reader is not offered the shortcut').toBe(true)
-  })
 
   /**
    * `08:179-182` draws its four claims with literal emoji. This is the check

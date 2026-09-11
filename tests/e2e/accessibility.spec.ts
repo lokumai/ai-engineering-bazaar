@@ -301,17 +301,17 @@ test('the home page is titled once, and the title claims no state (§15.2.2)', a
   // gives: an expectation read from the same constant the page renders can only
   // prove the constant agrees with itself. A reader's state may never appear in
   // it — "Welcome back" would be a lie for anybody the build has never met.
-  await expect(h1).toHaveText('AI engineering, written by someone who builds it.')
+  await expect(h1).toHaveText('AI engineering, written by the people who build it.')
   expect(await h1.innerText()).not.toMatch(/\b(you|your|welcome|back)\b/i)
 
-  // The one thing on the page that IS keyed to the reader's record, counted on
-  // the DOM rather than on what is visible: it is present for everybody and
-  // shown to the reader who has a record, which is `home.spec.ts`'s subject.
-  await expect(page.locator('.bz-home-continue')).toHaveCount(1)
-  expect(
-    await page.locator('.bz-home-continue h1, .bz-home-continue h2').count(),
-    'the record-keyed block draws a heading of its own',
-  ).toBe(0)
+  /* M18 — NOTHING on this page is keyed to the reader's record any more, which
+     is a stronger form of the same claim. The continue block was the last one,
+     and the assertion here was that it drew no heading of its own — a document
+     with one `h1` cannot have a record-keyed block adding a second. Now there
+     is no record-keyed block at all, so `main` holds exactly the headings the
+     page authored. */
+  await expect(page.locator('.bz-home-continue, .bz-cmod')).toHaveCount(0)
+  expect(await page.locator('main h1').count(), 'the front door has one h1').toBe(1)
 })
 
 test('a row in the manifest is one tab stop, and it is reachable', async ({ page }) => {

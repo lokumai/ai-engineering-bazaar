@@ -515,18 +515,22 @@ test('§12.10 — the emitted geometry is byte-identical across two loads', asyn
  */
 test('§12.10.6 — CONTINUE names the next ready module that is not completed', async ({ page }) => {
   await seedRecord(page, SEEDED)
-  await page.goto('/')
+  /* M18 — `/profile/` and not `/`. The home page's one-line `ContinueLine` went
+     with the rest of the reader-state block; the SAME DERIVATION is the hero at
+     the top of this page (`ContinueHero`, and `nextUnsigned` is the function
+     both called). So the claim did not move surface so much as lose its second
+     drawing — which is why the assertions below read the hero's parts rather
+     than the line's sentence. */
+  await page.goto('/profile/')
 
   // Modules 1, 8 and 13 are completed in this record, so the next ready one is
-  // 2. The link text carries the number as well as the title, which is what
-  // makes it unambiguous against the thirty-three titles in control C below.
+  // 2 — stated by the hero's ordinal, its title, and the target of its control.
   const next = sheetByModule(2)
-  const link = page.getByRole('link', { name: `Module 02 · ${next.title}` })
-  await expect(link).toHaveCount(1)
-  await expect(link).toBeVisible()
-  await expect(link).toHaveAttribute('href', next.path)
-  // One line, above the two actions.
-  await expect(page.locator('p', { has: link })).toContainText(/^Continue Module 02 · /)
+  const hero = page.locator('.bz-cont')
+  await expect(hero).toHaveCount(1)
+  await expect(hero.locator('.bz-cont-num')).toHaveText('02')
+  await expect(hero.locator('.bz-cont-title')).toHaveText(next.title)
+  await expect(hero.getByRole('link', { name: 'Continue' })).toHaveAttribute('href', next.path)
 })
 
 test('§12.10.6 — CONTINUE is absent when there is no next module', async ({ page }) => {
@@ -543,7 +547,7 @@ test('§12.10.6 — CONTINUE is absent when there is no next module', async ({ p
   }
 
   await seedRecord(page, { identity: { name: READER }, sheets: everything })
-  await page.goto('/')
+  await page.goto('/profile/')
 
   // The island has to have taken the record on board before an absence means
   // anything: on the server frame nothing is completed and CONTINUE is there.
@@ -552,8 +556,7 @@ test('§12.10.6 — CONTINUE is absent when there is no next module', async ({ p
   await expect(page.locator('.bz-cmod .bz-cmod-mark:visible')).toHaveCount(
     SHEETS.filter((sheet) => sheet.drawn).length,
   )
-  await expect(page.getByRole('link', { name: /^Module \d\d · / })).toHaveCount(0)
-  await expect(page.getByText('Continue', { exact: false })).toHaveCount(0)
+  await expect(page.locator('.bz-cont')).toHaveCount(0)
 })
 
 // ===========================================================================

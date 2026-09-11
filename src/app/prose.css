@@ -352,12 +352,29 @@
     font: var(--text-meta) / 1 var(--font-mono);
   }
 
-  .bz-prose ol {
+  /* M18 — THE MARKERS. Tailwind's preflight sets `list-style: none` on every
+     `ul` and `ol` in the document, and nothing here put it back: an authored
+     bullet list rendered as a run of indented sentences and a numbered list
+     lost its numbers, which on a corpus whose modules argue in steps is a
+     change of meaning rather than of appearance.
+
+     It is one declaration each and no markup moved. `Objectives` has the same
+     rule on `.bz-card ul` in the language, for the same reason — the author
+     asked for the bullets in `What you will be able to do` and this is what
+     was missing.
+
+     `ul` had no box rule at all, only `ol` did, so the indent is stated here
+     for the first time; 22px is `ol`'s, unchanged, because two lists in one
+     document may not hang differently. */
+  .bz-prose :is(ul, ol) {
     margin: 0 0 17px;
     padding-left: 22px;
   }
 
-  .bz-prose ol li { margin: 6px 0; }
+  .bz-prose ul { list-style: disc; }
+  .bz-prose ol { list-style: decimal; }
+
+  .bz-prose :is(ul, ol) li { margin: 6px 0; }
 
   .bz-prose hr {
     height: 1px;

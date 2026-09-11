@@ -71,35 +71,20 @@
     margin-bottom: 0;
   }
 
-  /* -- §15.2.1 the shortcut, and the one thing here that knows the reader ---
-     THE ONLY TWO-STATE MACHINERY LEFT ON THIS PAGE, and it is channel A.
+  /* M18 — THE CONTINUE BLOCK IS GONE, and so is its rule.
 
-     `boot.ts` stamps `data-hl-record` on `<html>` before first paint for a
-     record that CARRIES SOMETHING — days, an export, an identity field or a
-     module's state — and deliberately not for one that carries only
-     preferences: pressing a view toggle is not reading the course (§15.11).
+     It read `Continue · Module 01 · LLM Fundamentals` above the fold, hidden by
+     default and revealed on channel A by `html[data-hl-record]` — a stamp
+     `boot.ts` sets for a record that CARRIES SOMETHING, and deliberately not
+     for one carrying only preferences (§15.11).
 
-     It had no reader at all. The rule that revealed it lived in `app/home.css`,
-     which stage 0 deleted with the other ten, and `boot.ts` still named that
-     file as its consumer. So the block was rendered for everybody and
-     `ContinueLine` decided in React — which cannot be right in frame one,
-     because `getServerSnapshot` returns the frozen empty record and
-     `nextUnsigned` resolves that to module 01. A reader who had never opened
-     anything was handed a shortcut to the first module and told it was where
-     they left off.
-
-     Hidden by default and revealed by the stamp, so a browser with no record
-     never sees it and a returning reader sees it in frame one with no
-     JavaScript. */
-
-  .bz-home-continue {
-    display: none;
-    margin: 0 0 18px;
-  }
-
-  html[data-hl-record] .bz-home-continue {
-    display: block;
-  }
+     The mechanism was right and the author removed the block: the front door is
+     the argument for reading this, and a reader who has a record reaches their
+     place through `Your progress` in the bar. `data-hl-record` keeps being
+     stamped — `boot.ts` owns it and the progress page reads it — and this page
+     is no longer one of its consumers. **A rule for a class no markup carries
+     is the failure `styling-references.test.ts` exists to catch**, which is
+     why the rule went in the same edit as the block. */
 
   .bz-hero-actions {
     display: flex;

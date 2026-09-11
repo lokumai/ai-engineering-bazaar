@@ -1,7 +1,7 @@
 import { type Page, expect, test } from '@playwright/test'
 import { readRecord, seedRecord, slugOf, waitForRecord } from './record'
 import { CATEGORY_PATHS, INDEX_SHEET, SHEETS, SHEET_COUNT, sheetByModule } from './sheets'
-import { CATALOG_VIEWS } from './views'
+import { CATALOG_VIEWS, showCatalogView } from './views'
 import { watchPage } from './watch'
 
 /**
@@ -451,4 +451,37 @@ test('a completed module reads as completed in the table view', async ({ page })
 
   await page.getByRole('button', { name: 'Completed', exact: true }).click()
   await expect(page.locator('.bz-filter-count-value').first()).toHaveText('1')
+})
+
+
+/**
+ * M18 — the claim that moved off the home page.
+ *
+ * Home A's level cards doubled as the course's table of contents, and
+ * `home.spec.ts` asserted that every module in the course was on that page. The
+ * author took the level grid off the front door, so the claim had to land
+ * somewhere or quietly stop being made — and after M17 there is exactly one
+ * page that lists the whole course, which is this one.
+ *
+ * It is checked in the CARDS view rather than the table, so that the two claims
+ * this file makes about the views stay independent: the table's own row-per-
+ * module count is `index-sheet.spec.ts`, and a fixture compared against two
+ * renderings of one array would agree with itself if the array were wrong.
+ */
+test('every module in the course is listed here, and reachable', async ({ page }) => {
+  await page.goto(INDEX_SHEET)
+  await showCatalogView(page, 'cards')
+
+  const links = await page
+    .locator('.bz-view[data-view="cards"] .bz-catcard-link')
+    .evaluateAll((nodes) => nodes.map((node) => ({
+      href: new URL((node as HTMLAnchorElement).href).pathname,
+      title: node.textContent?.trim() ?? '',
+    })))
+
+  expect(links).toHaveLength(SHEET_COUNT)
+  // Against the fixture, which is an independent statement of what ships: not
+  // a count, the actual set, so a module that silently stopped rendering fails
+  // by name rather than by arithmetic.
+  expect(links).toEqual(SHEETS.map((sheet) => ({ href: sheet.path, title: sheet.title })))
 })

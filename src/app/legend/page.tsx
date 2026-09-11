@@ -4,6 +4,7 @@ import { AFFILIATION, LICENCE_LABEL } from '@/lib/site'
 import Link from 'next/link'
 import { Lkm01 } from '@/components/mascot/Lkm01'
 import { PageShell } from '@/components/shell/PageShell'
+import { SHORTCUTS } from '@/lib/record/keys'
 import { NODE_HEIGHT, NODE_WIDTH } from '@/lib/record/layout'
 
 export const metadata: Metadata = {
@@ -340,6 +341,59 @@ export default function LegendPage() {
           <Link className="bz-btn" href="/profile/#report">
             BUILD A RECORD OF WORK
           </Link>
+        </div>
+      </section>
+
+      {/* ---- 2b · the keyboard (§12.16) ---------------------------------- */}
+      <section className="bz-panel" aria-labelledby="hl-legend-keys">
+        <div className="bz-panel-head">
+          <h2 id="hl-legend-keys" className="bz-panel-title">
+            Keys
+          </h2>
+        </div>
+
+        {/*
+          M18 — the chords are HERE because the bar stopped saying they exist.
+
+          §12.16 made a chord discoverable by printing it on the control it
+          fires and on the button that opened the sheet listing them all. The
+          author had that button removed, and the progress icon whose `title`
+          carried `(g p)` with it — which between them were every mention on the
+          site. The keys still work; this is where a reader finds out.
+
+          **Rendered from `SHORTCUTS`, which is the same array the sheet renders
+          and the same array the handler dispatches on.** Typing the table here
+          would be a second vocabulary to drift out of step with the first, and
+          a keyboard map nobody can trust is worse than none.
+
+          Single-character keys are behind `prefs.charKeys` (SC 2.1.4) and the
+          switch is on the account page. That is said once, under the table,
+          rather than repeated per row.
+        */}
+        <table className="bz-keys">
+          <tbody>
+            {SHORTCUTS.map((row) => (
+              <tr key={row.keys}>
+                <td>
+                  {/* `<kbd>`, because a key name is a machine value and not
+                      prose. It is also what stops the copy register reading
+                      `g i` as the first person — see `record-report.test.ts`. */}
+                  <kbd>{row.keys}</kbd>
+                </td>
+                <td>{row.action}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div className="bz-note">
+          <p>
+            Every key above except Esc can be switched off, on the{' '}
+            <Link href="/profile/" className="bz-link">
+              account page
+            </Link>
+            .
+          </p>
         </div>
       </section>
 

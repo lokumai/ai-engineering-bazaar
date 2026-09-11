@@ -575,13 +575,10 @@
     border-radius: var(--radius-hair);
   }
 
-  .bz-keys {
-    display: grid;
-    grid-template-columns: max-content 1fr;
-    gap: 4px 14px;
-    margin: 0;
-    font-size: var(--text-item);
-  }
+  /* `.bz-keys` moved into `src/design/bazaar.css` in M18: `/legend/` renders
+     the same table now, and a class defined in one surface stylesheet and used
+     by another is what the surface discipline exists to prevent. It is the same
+     move `.bz-track` made in M17's predecessor when a second surface needed it. */
 
   /* §12.16 — the chord's own hint, held while `g` is down. `role="status"`
      carries it to a screen reader; this is what a sighted reader sees. */

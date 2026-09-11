@@ -60,8 +60,20 @@ import { plural } from '@/lib/text'
 export function CatalogOverview({ rows }: { rows: readonly SheetRow[] }) {
   const levels = levelsOf(rows)
 
+  /* M18 — the board draws as many columns as it HAS, computed here and handed
+     to the stylesheet, which is the `--bz-table-min` pattern stage 4
+     established for exactly this kind of number.
+
+     `03`'s board is `repeat(5, minmax(0, 1fr))` because `03` draws five levels,
+     and the rule went in literally. A filter that leaves one level then drew one
+     column a fifth of the page wide with four fifths empty — which is the shape
+     the author had already objected to on the home page, in capitals, and it
+     was one level chip away on the catalog before M17 made it a landing page. */
   return (
-    <div className="bz-board">
+    <div
+      className="bz-board"
+      style={{ '--bz-board-cols': levels.length } as React.CSSProperties}
+    >
       {levels.map((level) => {
         const own = rows.filter((row) => row.subsystem.slug === level.slug)
         const ready = own.filter((row) => row.drawn).length

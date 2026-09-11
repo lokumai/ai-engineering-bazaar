@@ -26,8 +26,11 @@ test('module 1 has no previous', async ({ page }) => {
   await page.goto(first.path)
 
   await expect(page.locator('.bz-pager a[rel="prev"]')).toHaveCount(0)
+  // M18 — and it says WHICH end. Both empty tiles read `End of the course`
+  // until a screenshot of module 01's pager showed the end of the course
+  // announced where its previous module would be.
   await expect(page.locator('.bz-pager .bz-pager-item').first())
-    .toContainText(/end of the course/i)
+    .toContainText(/start of the course/i)
   await expect(page.locator('.bz-pager a[rel="next"]')).toHaveCount(1)
 })
 

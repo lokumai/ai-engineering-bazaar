@@ -55,134 +55,6 @@ import { watchPage } from './watch'
  * reason: it is the module the rest of the suite already means by "a record".
  */
 
-/** Module 13 — the module this suite completes when it wants a record (§12.7). */
-const SEEDED = A0
-const SEEDED_SLUG = slugOf(SEEDED)
-
-/** The returning reader's shortcut, and the only thing keyed off the record. */
-const CONTINUE = '.bz-home-continue'
-
-/** Control C's own selectors (D14). */
-const LEVEL_CARD = '.bz-cc-level'
-const MODULE_ROW = '.bz-cmod'
-const TICK = '.bz-cmod-mark'
-/**
- * The word that states the completion to an assistive technology. It is the
- * STATE, and the toggle carries no `aria-pressed`: whether a module is complete
- * is decided by a class on `<html>` that no React render sets (channel A,
- * §12.2), so an attribute rendered on channel B was a second author of one
- * state and read `false` for ever with scripts refused, about a module whose
- * disc was painted. Asserted by computed `display` rather than `toBeVisible`,
- * because the element is deliberately a 1px clipped box: it is out of the
- * picture and in the accessibility tree, and `toBeVisible` cannot tell the
- * revealed one from the hidden one.
- *
- * The question is `display: none` or not, and not which non-none value: the
- * stylesheet asks for `inline` and the computed value is `block`, because the
- * element is absolutely positioned and absolute positioning blockifies an
- * inline display. Asserting `inline` here failed against a page that was
- * behaving correctly.
- */
-const SAID = '.bz-cmod-said'
-
-function saidRevealed(page: Page, module: number): Promise<boolean> {
-  return page
-    .locator(`${MODULE_ROW}[data-module="${module}"] ${SAID}`)
-    .evaluate((node) => getComputedStyle(node).display !== 'none')
-}
-
-/**
- * What the page was drawing inside the first `requestAnimationFrame` in which
- * control C had been parsed — before the first paint, and before any React
- * effect could have run.
- *
- * `record.ts`'s `probeFirstPaint` reads `<html>`'s stamps; this reads what the
- * stamps DRAW, which is the thing M13 actually promises a reader. A callback
- * scheduled from an init script runs before the first paint and before
- * hydration, so a tick that is already painted here cannot have been painted by
- * an effect.
- *
- * The probe retries per frame until the rows exist rather than capturing
- * blindly on frame one. That is not a wait for the STATE — the state is CSS and
- * is decided the moment the element exists — it is a wait for the PARSER, and
- * it costs nothing: `hydrated` is captured in the same reading, so a capture
- * that somehow arrived after React would announce itself instead of passing
- * quietly.
- */
-interface HomePaint {
-  /** `data-hl-record="1"` — the boot script found a readable record. */
-  record: string | null
-  /** Whether the returning reader's shortcut was visible in that frame. */
-  continued: boolean
-  /** The module numbers whose completion tick was visible in that frame. */
-  ticked: number[]
-  /** How many module rows had been parsed when the reading was taken. */
-  rows: number
-  /**
-   * `.bz-readout`'s channel-B flag, read in the same frame. `"false"` is the
-   * prerendered state, and it is the proof that everything above was drawn
-   * before React.
-   */
-  hydrated: string | null
-  /** How many frames the parser took. Reported on failure, never asserted. */
-  frames: number
-}
-
-interface HomePaintWindow {
-  __hlHomePaint?: HomePaint
-}
-
-async function probeHomePaint(page: Page): Promise<void> {
-  await page.addInitScript(
-    ({ shortcut, row, tick }: { shortcut: string; row: string; tick: string }) => {
-      ;(window as unknown as HomePaintWindow).__hlHomePaint = undefined
-      let frames = 0
-      const look = () => {
-        frames += 1
-        const rows = document.querySelectorAll(row)
-        // 240 frames is four seconds, after which the reading is taken anyway
-        // and its emptiness fails loudly rather than the probe silently never
-        // producing one.
-        if (rows.length === 0 && frames < 240) {
-          requestAnimationFrame(look)
-          return
-        }
-        const ticked: number[] = []
-        for (const element of rows) {
-          const mark = element.querySelector(tick) as HTMLElement | null
-          const number = Number(element.getAttribute('data-module'))
-          if (mark?.checkVisibility() === true) ticked.push(number)
-        }
-        ;(window as unknown as HomePaintWindow).__hlHomePaint = {
-          record: document.documentElement.getAttribute('data-hl-record'),
-          continued:
-            (document.querySelector(shortcut) as HTMLElement | null)?.checkVisibility() ?? false,
-          ticked: ticked.sort((a, b) => a - b),
-          rows: rows.length,
-          hydrated: document.querySelector('.bz-readout')?.getAttribute('data-hydrated') ?? null,
-          frames,
-        }
-      }
-      requestAnimationFrame(look)
-    },
-    { shortcut: CONTINUE, row: MODULE_ROW, tick: TICK },
-  )
-}
-
-function homePaint(page: Page): Promise<HomePaint | undefined> {
-  return page.evaluate(() => (window as unknown as HomePaintWindow).__hlHomePaint)
-}
-
-/** A record with one module completed — enough for `data-hl-record="1"`. */
-function seedOneCompletion(page: Page): Promise<void> {
-  return seedRecord(page, { sheets: { [SEEDED_SLUG]: signedSheet('b7225f8') } })
-}
-
-/** Control C's toggle for one module, by the name it carries. */
-function toggleFor(page: Page, title: string) {
-  return page.getByRole('button', { name: `Complete ${title}`, exact: true })
-}
-
 // ---------------------------------------------------------------------------
 // What a page built once for everybody says
 // ---------------------------------------------------------------------------
@@ -200,7 +72,7 @@ test('a clean browser meets the whole page, and it claims nothing about the read
   // 2026-09-11, so what is asserted is what remains true: the page opens with
   // sentences about the course, and not one of them is about the reader.
   await expect(page.locator('main h1')).toHaveText(
-    'AI engineering, written by someone who builds it.',
+    'AI engineering, written by the people who build it.',
   )
   const lede = (await page.locator('.bz-lede').innerText()).trim()
   expect(lede.length, 'the front door says nothing at all').toBeGreaterThan(40)
@@ -217,13 +89,34 @@ test('a clean browser meets the whole page, and it claims nothing about the read
     INDEX_SHEET,
   )
 
-  // The levels, doubling as the table of contents — which is the property home
-  // A was chosen for. Every module in the course is on the page.
-  await expect(page.locator(MODULE_ROW)).toHaveCount(SHEET_COUNT)
+  /* M18 — THE LEVELS ARE NOT HERE ANY MORE, and neither is the shortcut.
 
-  // And the shortcut for a reader who has been here before is ABSENT, not
-  // dimmed: nothing on the page describes a state this reader is not in.
-  await expect(page.locator(CONTINUE)).not.toBeVisible()
+     This asserted that every module in the course was on the page, because
+     home A's levels doubled as its table of contents. The author's shape for
+     the front door is the banner and the argument, so completion control C is
+     on `/profile/` and the continue block is gone. **The claim moved rather
+     than died**: `catalog.spec.ts` proves every module in the course is
+     listed, on the one page that lists it since M17.
+
+     What is asserted here instead is the property that replaced it — the front
+     door reports on NOBODY. Not one control on it reads the record, so there
+     is no state a stranger can be shown and no claim a build can get wrong. */
+  await expect(page.locator('.bz-cmod, .bz-home-continue')).toHaveCount(0)
+  await expect(page.locator('[data-hl-cat-tally]')).toHaveCount(0)
+
+  /* The three figures the strip still prints are counted from the corpus, and
+     the only honest check a browser can make on a derivation is that it is not
+     a placeholder: every one is a positive number, and NONE of them is a count
+     of modules — the page states the size of the thing in reading time,
+     figures and sources, and says how many modules there are nowhere at all.
+     Summing the level dials against the module rows is the strong version of
+     this claim and it is in `completion.spec.ts`, on the page that draws them. */
+  const figures = await page.locator('.bz-facts-value').allInnerTexts()
+  expect(figures.length, 'the facts strip states nothing').toBeGreaterThan(2)
+  for (const figure of figures) {
+    expect(figure.trim(), 'a fact is not a measured number').toMatch(/\d/)
+    expect(Number(figure.replace(/[^\d]/g, '')), figure).toBeGreaterThan(0)
+  }
 
   // NOTHING HERE REQUIRES AN ACCOUNT, and the way the page says so is now by
   // not asking. The "Keeping your place" strip — three rows explaining what a
@@ -239,268 +132,15 @@ test('a clean browser meets the whole page, and it claims nothing about the read
   expect(problems.failedRequests).toEqual([])
 })
 
-test('every number on the page is derived from the modules it is printed beside', async ({
-  page,
-}) => {
-  await page.goto('/')
-
-  // §11.25 — "no number is written in `src/`" is not a property a browser can
-  // read directly. What it CAN read is whether the page's numbers agree with
-  // each other: the facts strip summarises the level cards, so summing the
-  // cards has to reproduce it. A typed number would drift the moment the
-  // corpus moved, and this is what would catch it.
-  /*
-    THE CROSS-CHECK MOVED WITH THE COUNT. The facts strip used to open with
-    "19 of 33 modules written", and summing the level cards had to reproduce
-    it. The author had that fact removed on 2026-09-11 — the levels below
-    carry their own — so the two sources being compared are now the level
-    DIALS and the module rows they are printed beside.
-
-    Each dial reads `--/N`, where N is the level's own module count, and the
-    rows are rendered by a different component from a different array. Their
-    sum has to be the course. A typed number would drift the moment the corpus
-    moved, and this is still what would catch it.
-  */
-  const dials = await page.locator('[data-hl-cat-tally]').allInnerTexts()
-  expect(dials.length, 'no level states a tally').toBeGreaterThan(0)
-  const denominators = dials.map((text) => {
-    const match = /\/(\d+)\s*$/.exec(text.trim())
-    expect(match, `a dial states no denominator: "${text}"`).not.toBeNull()
-    return Number(match![1])
-  })
-
-  const rows = await page.locator(MODULE_ROW).count()
-  expect(
-    denominators.reduce((sum, one) => sum + one, 0),
-    'the dials and the rows disagree about how many modules there are',
-  ).toBe(rows)
-
-  // The level cards' own count lines used to be summed here as a second,
-  // independent statement of the same two numbers. They are gone with the
-  // strip's count — see above — and the dials are what replaced them.
-
-  // And the fixture, which is an independent statement of what ships. The
-  // written count is no longer printed anywhere on this page, so what is
-  // compared to the fixture is what the page still states: how many modules
-  // there are, and how many of them are drawn as planned.
-  const planned = await page.locator(`${MODULE_ROW}[data-drawn="false"]`).count()
-  expect(rows).toBe(SHEET_COUNT)
-  expect(rows - planned).toBe(DRAWN_COUNT)
-})
-
 // ---------------------------------------------------------------------------
 // M13's own criterion: the marks are right in frame one
 // ---------------------------------------------------------------------------
 
-test('a reader’s completions are ticked in frame one, with no JavaScript at all', async ({
-  page,
-}) => {
-  const second = sheetByModule(1)
-  await seedRecord(page, {
-    sheets: {
-      [SEEDED_SLUG]: signedSheet('b7225f8'),
-      [slugOf(second)]: signedSheet(null),
-    },
-  })
-  await probeFirstPaint(page)
-  await probeHomePaint(page)
 
-  // Refusing every module leaves channel A intact and kills channel B
-  // outright, so nothing below can have been done by an effect.
-  await page.route('**/*.js', (route) => route.abort())
-  await page.goto('/', { waitUntil: 'domcontentloaded' })
 
-  expect((await firstPaint(page))!.record).toBe('1')
 
-  const painted = await homePaint(page)
-  expect(painted, 'the first-paint probe never ran').toBeDefined()
-  expect(painted!.rows, 'no module rows were parsed').toBe(SHEET_COUNT)
-  // The reading, in the frame it was taken: exactly the two completed modules
-  // are ticked, and the other thirty-one are not.
-  expect(painted!.ticked, `after ${painted!.frames} frame(s)`).toEqual(
-    [SEEDED.module, second.module].sort((a, b) => a - b),
-  )
-  // The returning reader's shortcut is in the same frame.
-  expect(painted!.continued, `after ${painted!.frames} frame(s)`).toBe(true)
-  // And it is genuinely pre-React: the footer's strip still publishes the
-  // prerendered `false`, which is the state channel B leaves. It cannot say
-  // anything else here — every module was refused — which is what makes the
-  // readings above statements about frame one.
-  expect(painted!.hydrated).toBe('false')
 
-  // The same thing said as a reader would meet it, on a page where JavaScript
-  // never ran.
-  await expect(page.locator(`${MODULE_ROW}[data-module="${SEEDED.module}"] ${TICK}`)).toBeVisible()
-  await expect(page.locator(`${MODULE_ROW}[data-module="3"] ${TICK}`)).not.toBeVisible()
-})
 
-test('the counts arrive after mount, and the ticks do not move', async ({ page }) => {
-  const problems = watchPage(page)
-  await seedOneCompletion(page)
-  await page.goto('/')
-
-  // Channel B fills every count; it must not touch a mark that was already
-  // right. A React island that re-decided the ticks would show up here as one
-  // flipping once the store answered, and the frame-one test above cannot see
-  // that because it never lets React run.
-  await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
-  await expect(page.locator(`${MODULE_ROW}[data-module="${SEEDED.module}"] ${TICK}`)).toBeVisible()
-
-  // The three numbers, which are `--` until the store has answered.
-  const numbers = page.locator('.bz-cc-stats')
-  await expect(numbers).toContainText(`1 of ${SHEET_COUNT}`)
-  await expect(numbers).not.toContainText('--')
-
-  expect(problems.consoleErrors).toEqual([])
-  expect(problems.failedRequests).toEqual([])
-})
-
-// ---------------------------------------------------------------------------
-// D14 — control C writes, and everything that reads the record follows
-// ---------------------------------------------------------------------------
-
-test('control C completes a module from the home page, and takes it back', async ({
-  page,
-}) => {
-  const target = sheetByModule(1)
-  await page.goto('/')
-  await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
-
-  const toggle = toggleFor(page, target.title)
-  // The contract, asserted so that putting `aria-pressed` back turns this red:
-  // the button names the action and never the state.
-  await expect(toggle).not.toHaveAttribute('aria-pressed', /.*/)
-  expect(await saidRevealed(page, target.module)).toBe(false)
-  const tick = page.locator(`${MODULE_ROW}[data-module="${target.module}"] ${TICK}`)
-  await expect(tick).not.toBeVisible()
-
-  await toggle.click()
-
-  // Four things read that one write, and all four have to move: the control's
-  // own state, the tick (channel A, re-stamped by the store rather than by a
-  // reload), the count on this page, and the record in storage.
-  await expect(tick).toBeVisible()
-  await expect
-    .poll(() => saidRevealed(page, target.module), { timeout: 3_000 })
-    .toBe(true)
-  await expect(page.locator('.bz-cc-stats')).toContainText(`1 of ${SHEET_COUNT}`)
-  const stored = await waitForRecord(
-    page,
-    (envelope) => envelope?.data.sheets[slugOf(target)]?.signedOff != null,
-    'the completion',
-  )
-  expect(stored.data.sheets[slugOf(target)]?.signedOff).not.toBeNull()
-
-  // §12.3.5 — the first completion on a record mints the mark seed, once, and
-  // control C takes the same path control A does (`lib/record/complete.ts`).
-  // Without that shared path this write would have left the reader with no
-  // mark on their exported record and nothing would have failed.
-  expect(stored.data.identity.markSeed).toMatch(/^[0-9a-f]{8}$/)
-
-  // And it is its own undo (§12.4.1): no dialog, and the tick goes with it.
-  await toggle.click()
-  await expect(tick).not.toBeVisible()
-  await expect
-    .poll(() => saidRevealed(page, target.module), { timeout: 3_000 })
-    .toBe(false)
-  await waitForRecord(
-    page,
-    (envelope) => (envelope?.data.sheets[slugOf(target)]?.signedOff ?? null) === null,
-    'the completion, undone',
-  )
-})
-
-/**
- * D25, asserted with scripts REFUSED, which is the only condition under which
- * the defect it records was visible.
- *
- * Control C's toggle carried `aria-pressed` on channel B while the disc beside
- * it is revealed on channel A. With every module refused, that attribute read
- * `false` for ever about a module whose tick was painted and whose own word
- * said `Complete`: a screen reader was told "not pressed" about a completed
- * module. The state is now a word revealed by the same generated rule as the
- * disc, and the button points at it with `aria-describedby` so the CONTROL
- * announces it and not only the row.
- *
- * BOTH halves, because either alone passes for the wrong reason (D17): the
- * word is revealed on the completed module and hidden on every other, and the
- * button carries no `aria-pressed` in either state. A hidden element
- * contributes no accessible description, which is what makes one word on one
- * channel enough for both states.
- */
-test('control C states completion on channel A, and claims nothing on channel B', async ({
-  page,
-}) => {
-  const planned = sheetByModule(1)
-  await seedRecord(page, { sheets: { [SEEDED_SLUG]: signedSheet('b7225f8') } })
-
-  await page.route('**/*.js', (route) => route.abort())
-  await page.goto('/', { waitUntil: 'domcontentloaded' })
-
-  // Channel A ran: the completed module's tick is painted with no React.
-  await expect(page.locator(`${MODULE_ROW}[data-module="${SEEDED.module}"] ${TICK}`)).toBeVisible()
-
-  // The state, said where a reader who focuses the control will hear it.
-  expect(await saidRevealed(page, SEEDED.module)).toBe(true)
-  expect(await saidRevealed(page, planned.module)).toBe(false)
-
-  // And the description resolves to that word, rather than being an id that
-  // points at nothing.
-  const described = await page
-    .locator(`${MODULE_ROW}[data-module="${SEEDED.module}"] .bz-cmod-toggle`)
-    .evaluate((node) => {
-      const id = node.getAttribute('aria-describedby')
-      const target = id ? document.getElementById(id) : null
-      return { hasPressed: node.hasAttribute('aria-pressed'), resolves: !!target,
-               text: target?.textContent?.trim() ?? null }
-    })
-  expect(described.resolves, 'aria-describedby points at no element').toBe(true)
-  expect(described.text).toBe('Complete')
-  // The contract: putting `aria-pressed` back turns this red.
-  expect(described.hasPressed, '`aria-pressed` is back on channel B (D25)').toBe(false)
-})
-
-test('a planned module has no completion control at all', async ({ page }) => {
-  await page.goto('/')
-
-  // §12.4.1 — absent, not disabled: a control for a module nobody has written
-  // would offer a state no reader can reach, and every denominator on the site
-  // counts a planned module the same way, in.
-  const planned = page.locator(`${MODULE_ROW}[data-drawn="false"]`)
-  expect(await planned.count()).toBeGreaterThan(0)
-  await expect(planned.locator('.bz-cmod-toggle')).toHaveCount(0)
-  await expect(planned.locator('button')).toHaveCount(0)
-  await expect(planned.first()).toContainText('Planned')
-
-  // And it is still reachable: a planned module has a page — its schedule of
-  // parts — so this list links it.
-  await expect(planned.first().locator('a')).toHaveCount(1)
-})
-
-test('control C is reachable and operable from the keyboard', async ({ page }) => {
-  await page.goto('/')
-  await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
-
-  const toggle = toggleFor(page, SHEETS[0].title)
-  // Pressed with the key, not clicked: a control that answers a click and not
-  // a key is a control half the readers cannot use (SC 2.1.1). `.focus()` is
-  // not a Tab press, so the tab order is walked to it (D17).
-  await page.locator('#main').focus()
-  let reached = false
-  for (let press = 0; press < 40 && !reached; press += 1) {
-    await page.keyboard.press('Tab')
-    reached = await toggle.evaluate((node) => node === document.activeElement)
-  }
-  expect(reached, 'the first toggle was not reachable by Tab').toBe(true)
-
-  await page.keyboard.press('Enter')
-  await expect(
-    page.locator(`${MODULE_ROW}[data-module="${SHEETS[0].module}"] ${TICK}`),
-  ).toBeVisible()
-  await expect
-    .poll(() => saidRevealed(page, SHEETS[0].module), { timeout: 3_000 })
-    .toBe(true)
-})
 
 // ---------------------------------------------------------------------------
 // §15.11 — a record that carries nothing is not a returning reader
@@ -530,7 +170,6 @@ for (const [what, seed] of CARRIES_NOTHING) {
   }) => {
     const problems = watchPage(page)
     await probeFirstPaint(page)
-    await probeHomePaint(page)
     await seedRecord(page, seed)
     await page.goto('/')
 
@@ -541,15 +180,15 @@ for (const [what, seed] of CARRIES_NOTHING) {
     expect((await firstPaint(page))!.record).toBeNull()
     expect((await firstPaint(page))!.storage).toBe('ok')
 
-    const painted = await homePaint(page)
-    expect(painted, 'the first-paint probe never ran').toBeDefined()
-    expect(painted!.continued, `after ${painted!.frames} frame(s)`).toBe(false)
-    expect(painted!.ticked, `after ${painted!.frames} frame(s)`).toEqual([])
+    /* M18 — the STAMP is the whole claim now, and it always was.
 
-    // And as a reader meets it, after hydration: channel B has now read the
-    // same record and must reach the same answer, because a shortcut that
-    // appeared once the store replied would be the same claim one frame later.
-    await expect(page.locator(CONTINUE)).not.toBeVisible()
+       This read the continue block the stamp revealed, and the author had that
+       block removed; what §15.11 says is that an envelope carrying only a
+       schema version or a preference is not a reader who has been here, and
+       that is a fact about `data-hl-record` rather than about any one control.
+       The stamp is asserted above, before first paint, which is stricter than
+       reading what it drew. What the page does with it is `/profile/`'s
+       business now, and `completion.spec.ts` measures that. */
 
     expect(problems.consoleErrors).toEqual([])
     expect(problems.failedRequests).toEqual([])
@@ -565,14 +204,13 @@ test('an identity the reader typed is enough to be a returning reader (§15.11)'
   page,
 }) => {
   await probeFirstPaint(page)
-  await probeHomePaint(page)
   await seedRecord(page, { days: [], identity: { name: 'Ada' } })
   await page.goto('/')
 
+  // Before first paint, and on the stamp itself — see the block above for why
+  // this stopped reading a control.
   expect((await firstPaint(page))!.record).toBe('1')
-  const painted = await homePaint(page)
-  expect(painted, 'the first-paint probe never ran').toBeDefined()
-  expect(painted!.continued, `after ${painted!.frames} frame(s)`).toBe(true)
+  expect((await firstPaint(page))!.storage).toBe('ok')
 })
 
 // ---------------------------------------------------------------------------
@@ -583,7 +221,9 @@ for (const state of ['clean', 'with a record'] as const) {
   test(`one h1 in main and a tab that claims nothing about the reader, ${state} (§15.2.2)`, async ({
     page,
   }) => {
-    if (state === 'with a record') await seedOneCompletion(page)
+    if (state === 'with a record') {
+      await seedRecord(page, { sheets: { [slugOf(A0)]: signedSheet('b7225f8') } })
+    }
     await page.goto('/')
 
     // One document for both readers since M13, so there is one title whatever
@@ -628,7 +268,6 @@ test('a first write during the visit reaches the home page without a reload (§1
   page,
 }) => {
   await page.goto('/')
-  await expect(page.locator(CONTINUE)).not.toBeVisible()
   await expect(page.locator('html')).not.toHaveAttribute('data-hl-record', '1')
 
   // The write, through the control the reader would use.
@@ -650,47 +289,21 @@ test('a first write during the visit reaches the home page without a reload (§1
   await expect(page).toHaveURL(/\/$/)
 
   await expect(page.locator('html')).toHaveAttribute('data-hl-record', '1')
-  await expect(page.locator(CONTINUE)).toBeVisible()
 
   // And it survives the reload, i.e. the two stampers agree rather than one
   // undoing the other.
+  //
+  // M18 — the continue block this used to watch is gone; the stamp it was
+  // revealed by is the claim, and `stampRecordState` is the half that was
+  // broken. `boot.ts` is the other half and the reload is what asks it.
   await page.reload()
-  await expect(page.locator(CONTINUE)).toBeVisible()
+  await expect(page.locator('html')).toHaveAttribute('data-hl-record', '1')
 })
 
 // ---------------------------------------------------------------------------
 // §13.1.4, §10.4 — a level is never told apart by colour alone
 // ---------------------------------------------------------------------------
 
-test('every level card names, numbers and counts itself', async ({ page }) => {
-  await page.goto('/')
-
-  const cards = page.locator(LEVEL_CARD)
-  const count = await cards.count()
-  expect(count).toBeGreaterThan(0)
-
-  for (let index = 0; index < count; index += 1) {
-    const card = cards.nth(index)
-    // The hue arrives through `data-cat`, which is the carrier `category.css`
-    // resolves. Everything else on the card is what a reader in forced colours
-    // reads instead: a number, a name, and both counts.
-    await expect(card).toHaveAttribute('data-cat', /.+/)
-    await expect(card.locator('.bz-cc-order')).toHaveText(/^\d{2}$/)
-    await expect(card.locator('.bz-cc-title')).not.toHaveText('')
-    // The count is the DIAL's denominator now. The card's own count line —
-    // `8 modules · 7 ready` — said in prose what the dial states as a fraction,
-    // and the author had it removed on 2026-09-11. A level is still told apart
-    // by four signals of which colour is one: number, name, dial and hue.
-    await expect(card.locator('.bz-dial-value')).toHaveText(/\d+|--/)
-    // §10.4 — the meter is `aria-hidden`, so the printed tally beside it is the
-    // only statement of its reading, and every card has one.
-    await expect(card.locator('[data-hl-cat-tally]')).toHaveCount(1)
-  }
-})
-
-// ---------------------------------------------------------------------------
-// §15.2.4 — the two doors out
-// ---------------------------------------------------------------------------
 
 test('the lead action opens the first module of the set, and it exists', async ({
   page,
@@ -732,26 +345,3 @@ test(`the second action opens the catalog at ${INDEX_SHEET}`, async ({ page }) =
 // The record survives the page it is edited from
 // ---------------------------------------------------------------------------
 
-test('a completion made on the home page is the same one the module page shows', async ({
-  page,
-}) => {
-  const target = sheetByModule(1)
-  await page.goto('/')
-  await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
-  await toggleFor(page, target.title).click()
-  await waitForRecord(
-    page,
-    (envelope) => envelope?.data.sheets[slugOf(target)]?.signedOff != null,
-    'the completion',
-  )
-
-  // Control A and control C are two controls over one record (D14), so the
-  // module's own button has to report the state the list just wrote — and the
-  // revision is the one thing that differs: a completion recorded from a list
-  // of thirty-three makes no claim about which revision it was made against
-  // rather than claiming the wrong one.
-  await page.goto(target.path)
-  await expect(page.getByRole('button', { name: /^Completed / })).toBeVisible()
-  const stored = await readRecord(page)
-  expect(stored?.data.sheets[slugOf(target)]?.signedRevision).toBeNull()
-})

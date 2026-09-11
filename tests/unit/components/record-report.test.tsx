@@ -513,7 +513,14 @@ describe('§12.14.1 — the copy register', () => {
    * pins the label, since a rename would put the word back.
    */
   function scannable(markup: string): string {
-    return words(markup).replace(/quick check/gi, ' ')
+    /* `<kbd>` is dropped with its CONTENTS, and every other tag only with its
+       markup. A key name is a machine value — `g i` is two keystrokes — and
+       read as prose it is the first person, which is what this scan bans. The
+       exclusion is by ELEMENT rather than by class or by string: `<kbd>` is
+       the element that means "a key", so a future table of keys is exempt for
+       the reason it should be and a paragraph that happens to say `i` is not. */
+    return words(markup.replace(/<kbd\b[^>]*>.*?<\/kbd>/gis, ' '))
+      .replace(/quick check/gi, ' ')
   }
 
   it.each(surfaces)('%s carries no exclamation mark', (_name, markup) => {

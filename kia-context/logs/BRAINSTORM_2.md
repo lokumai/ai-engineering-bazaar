@@ -10,8 +10,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D63, plus open questions O1 to O4 — 2026-09-09 to 2026-09-11"
-last_updated: 2026-09-11
+covers: "D26 to D65, plus open questions O1 to O4 — 2026-09-09 to 2026-09-12"
+last_updated: 2026-09-12
 ---
 
 # 🧠 BRAINSTORM, part 2 — the rebuild, D26 onward
@@ -1302,6 +1302,75 @@ by the hue on a row's leading edge **alone**, which is the rule the same
 document spends a paragraph protecting. The table carries both now, and a level
 page — whose heading says the level once instead of eight times — carries only
 the topics.
+
+### D64 · A number from outside the repository, and where it is allowed to come from — 2026-09-12
+
+The author asked the bar to carry GitHub's mark with a yellow star and **the
+star count**. That number is the one shape `derive-never-restate` has no answer
+for: the rule says derive a fact from the corpus at build time rather than
+typing it into `src/`, and there is nothing in this tree to count. Three ways
+were costed:
+
+1. **Fetched at build time**, baked into the export. Honest, and it makes the
+   build need the network — CI included — and the number is as old as the last
+   deploy.
+2. **Fetched in the browser.** Always current, and a third-party request on
+   every page load from a site whose README promises "no network call while you
+   read". That promise is about the reader's record rather than about assets,
+   and a star counter would be the first thing to test it.
+3. **Typed into `src/lib/site.ts`.** One line, and a number in `src/` that
+   nobody will ever update — exactly what derive-never-restate exists to refuse.
+
+**Taken: 1, with a committed answer — and the build does not run the fetch.**
+`scripts/github-stars.mjs` writes `src/lib/github-stars.json` when somebody runs
+it; `npm run build` reads that file and never reaches the network. So the number
+is never typed, the build works on a plane and in a runner with no egress, and
+the staleness is visible in the file's own `measured` date rather than implied.
+
+**`stars: null` is a real state and the bar draws it** — the mark and the star
+with no figure beside them, which is the house spelling for "nobody counted"
+(§11.25) and never a zero somebody invented. Measured on the first run: 3.
+
+**The mark is not black, and that is a floor rather than a preference.** The
+author asked for GitHub's black icon. **MEASURED: `#000000` on the bar's cobalt
+`#282864` is 1.58:1.** The bar's own sub-palette is the strongest rule the design
+language states, so the mark takes the bar's ink — it is GitHub's own mark
+either way. The star is `--color-caution`, the language's existing gold and the
+same value the band is finished with: **4.16:1 on the bar**, over the 3:1 a
+graphic owes, and it is never the only carrier because the numeral beside it
+says the same thing at 13.31:1.
+
+### D65 · The minute figure was never measured, and now it is counted — 2026-09-12
+
+The home page said *"Five to ten minutes a module"*. It came from `README.md`
+rule 4 and `MANIFESTO.md` §3, and the author named it as wrong.
+
+**MEASURED against the corpus those documents describe: nineteen modules declare
+a duration, the shortest is 20 minutes, the longest 30, the average 26. Not one
+is under twenty.** The claim was wrong by a factor of three and had been in three
+documents and one page for the life of the project.
+
+**What changed is not the number, it is where the number comes from.** The home
+page calls `moduleLengthRange()`, which reads the declared durations — so a
+module that gets longer moves the sentence with it and nobody has to notice.
+§11.25 says every count on a page is measured from the corpus; a sentence with a
+number in it is a count, and this is the first time that has been applied to
+prose rather than to a facts strip.
+
+`README.md` and `MANIFESTO.md` are corrected too, because a page and the document
+it was written from are two statements of one thing and correcting one is how
+they drift. **Those two now state a measured range rather than derive it, so they
+are the only halves that can go stale** — said plainly beside the figure in
+`MANIFESTO.md` §3 rather than left for somebody to discover.
+
+**One place is deliberately NOT corrected and it is the author's.**
+`mini-courses/MANIFEST.md` rule 4 reads *"It takes five to ten minutes to
+read"*, and that is not a description of the corpus — it is the target every
+module is written against, in the half of this repository governed by the corpus
+agreement. Changing it changes what a module is held to, which is a decision
+about the course rather than about the site. **It is raised, not edited.** Until
+he settles it, a module written to that rule and measured at 25 minutes is
+either a rule violation or a stale rule, and the site now says the second.
 
 ## Open questions
 

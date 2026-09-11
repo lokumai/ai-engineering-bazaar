@@ -1,14 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ContinueLine } from '@/components/record/Diagram'
-import { CourseCompletion, type CompletionLevel } from '@/components/record/CourseCompletion'
 import { PageShell } from '@/components/shell/PageShell'
-import { CATEGORIES } from '@/lib/content/curriculum-file'
-import { curriculumFacts } from '@/lib/content/facts'
-import { corpusTotals, sheetRows } from '@/lib/content/manifest'
+import { corpusTotals, moduleLengthRange, sheetRows, type LengthRange } from '@/lib/content/manifest'
 import { INDEX_ROUTE } from '@/lib/route-labels'
 import { SITE_NAME } from '@/lib/site'
-import { hoursMinutes, numberWord } from '@/lib/text'
+import { hoursMinutes } from '@/lib/text'
 
 /**
  * §15.2.2 — one document, so one title, and it claims nothing about the reader.
@@ -34,48 +30,40 @@ export const metadata: Metadata = {
 }
 
 /**
- * M13 — the home page, option **A**: say what it is, then show the levels.
+ * M13 / M18 — the home page. **Two rows: the banner, then the argument.**
  *
- * ## What changed, and what the author asked for
+ * ## What it is now, and what it stopped being
  *
- * The author chose home **A** out of three, having seen all three: a course
- * landing page that answers *what is this, why this and not the hundredth AI
- * blog, and where do I start* in one screen, with the levels doubling as the
- * table of contents. What it replaced was a page in two halves — a first-visit
- * document and a returning-reader document, one of them hidden by CSS — whose
- * own cost the playground stated plainly: nine numbers about an empty record
- * for a stranger, and a hunt for the module you were on for everybody else.
+ * The author chose home **A** out of three in M13: a landing page answering
+ * *what is this, why this and not the hundredth AI blog, and where do I start*
+ * in one screen, with the levels doubling as the table of contents. **M18 took
+ * the levels off it**, on his own shape for the front door: *"Homepage should
+ * have the refined banner row, and the next row should be the existing boxes
+ * which is 'Why this and not the hundredth AI blog'."*
  *
- * **So this is ONE document for both readers, and the branch is gone.** What
- * survives of it is one line: `.bz-home-continue` is the only thing on the page
- * keyed off `data-hl-record`, so a reader with a record gets the shortest path
- * back to work above the fold and a reader without one is not shown a control
- * for a state they are not in. That is the whole of the two-state machinery
- * that is left, and it is still channel A (§12.2, §15.2.1) — stamped before
- * first paint, so it costs no JavaScript and cannot be wrong for a frame.
+ * So what is left is what a stranger needs and nothing that reports on a reader
+ * this document has never met. Three things went, and each one had somewhere
+ * else to be:
  *
- * ## Completion control C is on this page, and that is D14
+ * - **completion control C**, which was D14's second home for it, is on
+ *   `/profile/` — the page named for it, one click away in the bar;
+ *   `CourseCompletion` is unchanged and still carries the reasoning;
+ * - **the continue line**, which read `Continue · Module 01 · LLM
+ *   Fundamentals`. It was the last thing on this page keyed off
+ *   `data-hl-record`, and the stamp stays because the catalog's view reveal and
+ *   the progress page both read the record;
+ * - **the levels as a table of contents**. That is the one real loss and it is
+ *   named in the markup below: the catalog is where the whole course is
+ *   listed, which after M17 is true of exactly one page.
  *
- * *"A at the end of a module, because the reader wants one button there, and C
- * on the home and progress pages."* `CourseCompletion` is C: every level, every
- * module, the reader's own state visible and adjustable without opening
- * anything. It doubles as home A's level grid, which is the property A was
- * chosen for — the levels ARE the table of contents — so the page shows the
- * shape of the course to a stranger and the reader's own progress through it to
- * everybody else, out of one component and one derivation.
+ * ## Every number here is measured, and M18 made one more of them a number
  *
- * Every tick in it is channel A and correct in frame one; every count is
- * channel B and prints `--` until the store answers. That split is M13's
- * acceptance criterion about the flash of an empty record, and
- * `CourseCompletion` carries the reasoning.
- *
- * ## Every number here is measured
- *
- * Not one count in this file is typed (§11.25). The statement is
- * `indexStatement()`, the strip is `corpusTotals()`, the first module is
- * `sheetRows()[0]`, and the levels come from `CATEGORIES` walked against
- * `sheetRows()`. Break one derivation and the page changes, which is the test
- * M13 asks for.
+ * Not one count in this file is typed (§11.25). The strip is `corpusTotals()`,
+ * the first module is `sheetRows()[0]` — and the LEDE is `moduleLengthRange()`,
+ * because it was printing *five to ten minutes* over a corpus whose shortest
+ * module declares twenty. A sentence with a number in it is a count like any
+ * other. Break a derivation and the page changes, which is the test M13 asks
+ * for.
  *
  * **The lead action's target is a slug, not a number.** The first entry point is
  * the first row of the set as the corpus orders it, because the set has been
@@ -102,48 +90,42 @@ export const metadata: Metadata = {
  * carry their own state. A caption under a picture of the same thing is not
  * information, it is noise.
  *
- * Three sentences, from `README.md`'s "Why This Is Valuable": rule 1 (a human
- * writes it), rule 4 (five to ten minutes), rule 5 (pictures do the work), in
- * rule 3's plain language — readable by somebody whose first language is not
- * English, which is the audience `MANIFESTO.md` §4 names.
+ * Three sentences, from `README.md`'s "Why This Is Valuable": rule 1 (people who
+ * build this write it), rule 4 (how long a module takes), rule 5 (pictures do
+ * the work), in rule 3's plain language — readable by somebody whose first
+ * language is not English, which is the audience `MANIFESTO.md` §4 names.
+ *
+ * ## M18 corrected two of the three, and one of them was a number
+ *
+ * **"Five to ten minutes a module" was wrong**, and measurably: nineteen
+ * modules declare a duration, the shortest is 20 minutes and the longest is 30.
+ * So the sentence counts rather than claims — `moduleLengthRange()` reads the
+ * corpus and a module that gets longer moves the promise with it. It is §11.25
+ * applied to a sentence instead of to a facts strip, and it is why this is a
+ * function now rather than a constant array.
+ *
+ * **"Written by an engineer" was singular and the thing is written by AI
+ * engineers.** The author's correction, and it reaches the headline above the
+ * lede too: `08`'s own text reads *"AI engineering, written by someone who
+ * builds it"*. The mockup outranks the design document and the author outranks
+ * the mockup (`DESIGN.md`'s order of authority), so it is a recorded
+ * `DEVIATIONS` entry rather than a quiet edit.
  */
-const LEDE = [
-  'AI engineering, made short and useful.',
-  'Written by an engineer who builds this for a living, in plain words.',
-  'Five to ten minutes a module, and the pictures do most of the work.',
-] as const
+function ledeFor({ shortest, longest }: LengthRange): readonly string[] {
+  return [
+    'AI engineering, made short and useful.',
+    'Written by AI engineers who build this for a living, in plain words.',
+    `${shortest} to ${longest} minutes a module, and the pictures do most of the work.`,
+  ]
+}
 
 export default function HomePage() {
   const rows = sheetRows()
-  const facts = curriculumFacts()
   const totals = corpusTotals()
+  const lede = ledeFor(moduleLengthRange())
 
   // The first row of the set: the module the primary action opens.
   const first = rows[0]
-
-  /**
-   * Control C's input: every level in curriculum order, with every module in
-   * it — drawn or not, because the denominator is the level and not the part of
-   * it somebody has written (§11.25).
-   *
-   * Measured here because `lib/content/*` reaches `node:fs` and control C is a
-   * client island: a single value imported across that line pulls `node:fs`
-   * into the browser bundle and stops the build (§12.2).
-   */
-  const levels: readonly CompletionLevel[] = CATEGORIES.map((category) => ({
-    slug: category.slug,
-    title: category.title,
-    order: category.order,
-    modules: rows
-      .filter((row) => row.subsystem.slug === category.slug)
-      .map((row) => ({
-        slug: row.slug,
-        module: row.module,
-        title: row.title,
-        path: row.path,
-        drawn: row.drawn,
-      })),
-  }))
 
   return (
     <PageShell column={false}>
@@ -151,7 +133,7 @@ export default function HomePage() {
         {/* §15.2.2 — one h1 for one document, and it says what the place is
             rather than repeating the wordmark two rows above it. */}
         <h1 className="bz-hero-title">
-          AI engineering, written by someone who builds it.
+          AI engineering, written by the people who build it.
         </h1>
 
         {/* WHY TO READ IT, NOT WHAT IT CONTAINS.
@@ -164,17 +146,18 @@ export default function HomePage() {
             short sentences, plain enough for a reader whose first language is
             not English, which is rule 3. */}
         <div className="bz-lede">
-          {LEDE.map((line) => (
+          {lede.map((line) => (
             <p key={line}>{line}</p>
           ))}
         </div>
 
-        {/* §15.2.1 — the only thing on this page that knows about the reader
-            before React does. Absent for a browser with no record, which is
-            what makes it a shortcut rather than a prompt. */}
-        <div className="bz-home-continue">
-          <ContinueLine facts={facts} />
-        </div>
+        {/* NO CONTINUE LINE. It read `Continue · Module 01 · LLM Fundamentals`
+            and the author had it removed: the front door is the argument for
+            reading this, and a reader with a record is one click from their
+            place through `Your progress` in the bar. What it cost is that
+            `data-hl-record` has no consumer on this page any more — the stamp
+            stays, because the catalog's own reveal and the progress page both
+            read the record, and `boot.ts` owns it. */}
 
         <div className="bz-hero-actions">
           {/* DESIGN.md, Components — one `button-primary` per screen region,
@@ -207,14 +190,21 @@ export default function HomePage() {
         </ul>
       </div>
 
-      {/* D14's control C, and home A's level grid: one component, because they
-          are the same thing seen by two readers. */}
-      <div className="bz-panel-head">
-        <h2 id="bz-home-levels" className="bz-panel-title">
-          The {numberWord(levels.length)} levels
-        </h2>
-      </div>
-      <CourseCompletion facts={facts} levels={levels} headingId="bz-home-levels" />
+      {/* NO PROGRESS FEATURE. D14 put completion control C here — every level,
+          every module, a dial each, and three statistics above them — and M18
+          takes it off this page and leaves it on `/profile/`, which is the page
+          named for it.
+
+          The author's shape for the front door is two rows: the banner, then
+          the argument. Control C was a third thing, it was the only thing on
+          the page that could say nothing true to a stranger, and `/profile/` is
+          one click away in the bar for a reader who has one.
+
+          **What this costs, named rather than discovered:** the level cards
+          were the home page's table of contents, so `home.spec.ts`'s claim that
+          every module in the course is reachable from here does not survive.
+          It moved to the catalog, which after M17 is the one place the whole
+          course is listed. */}
 
       {/* Home A's second half: the argument for reading this rather than the
           next thing a search returns. Four claims, each one checkable against
@@ -224,7 +214,9 @@ export default function HomePage() {
           <h2 id="bz-home-why" className="bz-panel-title">
             Why this and not the hundredth AI blog
           </h2>
-          <p className="bz-panel-note">Four reasons, all of them checkable</p>
+          {/* NO NOTE. It read `Four reasons, all of them checkable` over four
+              reasons a reader can count, each already stating what it can be
+              checked against. MANIFESTO rule 16. */}
         </div>
         {/* `08:179-182` draws a glyph beside each claim, in a 28px tinted
             tile — and it draws them as LITERAL EMOJI: a writing hand, a speech

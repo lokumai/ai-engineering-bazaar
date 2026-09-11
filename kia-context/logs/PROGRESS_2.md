@@ -4,16 +4,16 @@ description: >
   M16, the interface rebuilt on the design language in ten stages — the stage table, every stage's
   brief, and the seven reports the stages wrote back, including what each one found that its own
   brief had wrong, and then the review pass over the finished milestone and the two defects it found
-  inside a green gate. Then M17, the curriculum fold, with its report. It closes with M18, which is
-  WRITTEN AND NOT STARTED.
+  inside a green gate. Then M17, the curriculum fold, and M18, the front door and the chrome, each
+  with its report. It closes with M19 — the second language — which is WRITTEN AND NOT STARTED.
   Part 1 holds M1 to M15 and is closed.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
   (MANIFESTO.md / ARCHITECTURE.md).
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 and M17, 2026-09-09 to 2026-09-11 — the ten stages, the review pass, the six layout defects a screenshot found, and the curriculum fold. M18 is written and not started."
-last_updated: 2026-09-11
+covers: "M16, M17 and M18, 2026-09-09 to 2026-09-12 — the ten stages, the review pass, the curriculum fold, and the front door. M19, the second language, is written and not started."
+last_updated: 2026-09-12
 ---
 
 # 📈 PROGRESS, part 2 — M16, the interface rebuilt
@@ -1738,5 +1738,212 @@ author's, and whichever it is belongs in `BRAINSTORM` because somebody will ask.
   outcome and a better one than a switcher that changes a flag.
 
 ---
+
+### Report — M18, the front door and the chrome, 2026-09-12
+
+**Shipped, minus the second language, which is lifted into M19 with the reason
+recorded** — the brief itself names that as an acceptable outcome and a better
+one than a switcher that changes a flag.
+
+The home page is two rows. The bar carries three controls instead of five. The
+two ends of a module are shorter and marked. And two sentences that had been
+wrong since the project started are now counted rather than claimed.
+
+#### The home page
+
+`CourseCompletion` — D14's control C, five level cards, three statistics and a
+dial each — is off this page and unchanged on `/profile/`. The continue line is
+gone with it, and so is `Four reasons, all of them checkable` over four reasons
+a reader can count. What is left is the banner and the argument, which is the
+author's own shape for it.
+
+**The cost is named in the markup rather than discovered later**: the level
+cards were the home page's table of contents, so `home.spec.ts`'s claim that
+every module in the course is reachable from here does not survive. It moved to
+the catalog, which after M17 is the one place the whole course is listed.
+
+`data-hl-record` is still stamped and this page is no longer one of its readers.
+The rule that revealed the continue block went in the same edit as the block,
+because a rule for a class no markup carries is what
+`styling-references.test.ts` exists to catch.
+
+#### Two sentences that were never measured
+
+**`Five to ten minutes a module` was wrong by a factor of three** (**D65**).
+MEASURED: nineteen modules declare a duration, the shortest 20 minutes, the
+longest 30, the average 26. The home page counts it now — a sentence with a
+number in it is a count, and §11.25 had only ever been applied to a facts strip.
+`README.md` rule 4 and `MANIFESTO.md` §3 and rule 4 are corrected too, and they
+are the halves that can still go stale, which §3 now says beside the figure.
+
+**`mini-courses/MANIFEST.md` rule 4 is deliberately NOT corrected.** It is the
+target a module is written against, in the half of the repository governed by
+the corpus agreement — changing it changes what the course is held to, which is
+the author's decision and not a copy edit. It is raised in D65, not edited.
+
+**`written by someone who builds it` was singular.** It is `08`'s own text, so
+the correction is a third recorded `DEVIATIONS` entry in `DESIGN.md` — the
+author outranks the mockup, which is the order of authority that file states.
+`README.md` rule 1 said `a working AI engineer` and now says `working AI
+engineers`.
+
+#### The bar
+
+The progress icon is gone (it was `Your progress` twice, three inches apart) and
+so is the `?` button. **The chords still fire and something still says so** —
+that was the trap §12.16 set for anybody removing that button, because it and
+the progress icon's `title` were the only two places on the site that said a
+chord exists. The table is on `/legend/` now, rendered from the same `SHORTCUTS`
+array the sheet renders and the handler dispatches on.
+
+GitHub's own mark replaces the drawn repository glyph, with the language's gold
+star and the count beside it (**D64**). The count is fetched by a script and
+committed; the build never reaches the network. **The mark is not black**: black
+on the bar's cobalt measures 1.58:1, and the bar's sub-palette is the strongest
+rule the language has.
+
+#### Three defects a screenshot found, and no test would have
+
+1. **The keys table painted its two columns on top of each other.**
+   `]Previous / next module`, with no space at all. `.bz-keys` was
+   `display: grid` on a `<table>`, so the tracks sized against the `tbody` and
+   the gap applied between nothing. **It was already wrong in the `?` dialog**
+   and had been since that table was written; M18 put it on a page where
+   somebody finally looked.
+2. **The overview board drew one column a fifth of the page wide.** `03`'s
+   `repeat(5, …)` went in literally, so a board with one level left four fifths
+   of the page empty — which is the shape the author had already objected to on
+   the home page, in capitals. The count comes from the component now, the way
+   `--bz-table-min` does. It was one level chip away on the catalog before M17
+   made it a landing page.
+3. **Module 01's pager said `End of the course`** where its previous module
+   would be. Both empty cells rendered the same string, which is exactly what a
+   symmetry check wants to see.
+
+#### The lists
+
+`What you will be able to do` has its bullets, and so does every authored list
+in the prose — Tailwind's preflight strips `list-style` from every `ul` and
+`ol` in the document and nothing put it back, so a numbered list in a module
+that argues in steps had lost its numbers too. Two declarations.
+
+The pager is one line instead of two — **MEASURED: 65px to 39px** — with a
+chevron in each tile. The glyph reverses a rule `DESIGN.md` states outright;
+**the words stayed**, because §10.4 is that a shape is never the only carrier
+and an icon is a shape.
+
+#### Turkish: lifted into M19, and why
+
+33 `_tr.md` files exist and `loader.ts` reads the English file only. The switcher
+is the last five per cent of the work: the loader has to walk the sibling, the
+static export needs a second tree of files, a module with no translation is a
+real state that has to be told rather than silently served English, and the
+interface's own strings are English in the hundreds and none of them are in the
+corpus. **Shipping a button that changes a flag would be the worst of the three
+outcomes**, and the brief says so itself. M19 is written at the end of this file.
+
+#### The gate
+
+Every number measured on the finished tree:
+
+| | Measured |
+| --- | --- |
+| `npm run typecheck` | clean |
+| `npm test` | **2,153 passed, 82 files, 0 skipped** |
+| `npm run build` | clean, **61 HTML files** — unchanged by M18, which added no route |
+| `npx playwright test` | **1,121 passed, 48 skipped, zero failures** across 1440 / 1024 / 390 |
+
+**25 browser tests went red when the surfaces came off, and not one was
+deleted.** Control C's eight moved to a new `tests/e2e/completion.spec.ts`,
+named for what they are about rather than for where it used to be drawn, with
+their helpers; §12.10.6's two CONTINUE cases moved to `/profile/`'s hero, which
+is the same `nextUnsigned` derivation; §15.11's cases now read the STAMP rather
+than the block it revealed, which is stricter; and *"every module in the course
+is listed"* became a `catalog.spec.ts` test comparing the cards against the
+fixture by NAME rather than by count.
+
+**One regression, found by the suite and not by me.** The one-line pager did not
+fit two tiles on a phone — MEASURED at 390: about 240px of content in a 165px
+tile, and six module routes scrolled the document sideways, which §11.10
+forbids. The pager stacks below 767px, which is the language's own breakpoint
+and what the rest of it already does at that width.
+
+**Two components were deleted as orphaned**: `ContinueLine` (the home page's
+one-line shortcut — `ContinueHero` prints the same answer on `/profile/`) and
+its `ContinueFacts` type, each with a note where it was.
+
+---
+
+## 🏁 Milestone M19: The second language — WRITTEN AND NOT STARTED
+
+M18 lifted this out of itself, which the brief allowed for in as many words:
+*"If M18 runs long, this is the piece to lift out into M19 — the rest of the
+list is genuinely small, and shipping a switcher that only changes a flag would
+be the worst outcome of the three."*
+
+**It is lifted because it is not a button.** Every other item on the author's
+list was chrome; this one is a content pipeline, and the button is the last five
+per cent of it.
+
+### What is true today, measured
+
+| | Measured |
+| --- | --- |
+| `_tr.md` files under `mini-courses/` | **33**, one per module |
+| Modules whose Turkish sibling the site RENDERS | **0** |
+| Where the sibling is opened at all | `derive.ts`'s `langCoverage`, to decide whether a row may print `EN · TR` |
+| HTML files in the export | **61** |
+
+So the site **states** that a translation exists and cannot show it. `EN · TR` in
+the catalog's `Lang` column is a fact about the repository, printed in a table.
+
+### The decision this milestone opens with
+
+**Where the second tree lives.** Every page is prerendered, so a second language
+is a second tree of files and roughly doubles the export.
+
+1. **A route segment: `/tr/courses/<level>/<module>/`.** Every route gains a
+   sibling, `<html lang>` follows the segment, and a reader can send somebody a
+   Turkish URL. It is the shape `generateStaticParams` already expresses and it
+   costs the file count.
+2. **One route, the language on the record.** No new files, and the language is
+   a fact about a reader rather than about an address — so it cannot be shared,
+   it needs channel A to be right in frame one, and a search engine sees one
+   language.
+
+**The recommendation is 1**, on the same grounds M17's shape was chosen: it is
+the only one that works with no script and the only one a reader can send.
+
+### What has to happen, in order
+
+1. **The loader walks the sibling**, so a module has two bodies rather than one.
+   `loader.ts` reads the English file and only the English file today.
+2. **The route shape**, from the decision above.
+3. **A fallback for a module with no translation**, which is a real state —
+   `langCoverage` exists precisely because some modules are English-only, and a
+   reader who switches on one of those must be TOLD, not silently handed
+   English. `mini-courses/intermediate/README.md` already says its Turkish files
+   are placeholders, which is the same problem one level up: a file that exists
+   is not a translation that exists.
+4. **The interface's own strings**, which are English, in components, in the
+   hundreds — every label, every empty state, every `aria-label`. This is the
+   largest part and none of it is in the corpus. It is also the part that
+   decides whether this is one milestone or two.
+5. **`<html lang>` per page**, which is what a screen reader's voice depends on,
+   and `tests/unit/copy-register.test.ts`, which scans reader-visible strings in
+   English and would need to know which language it is reading.
+6. **The switcher itself**, in the bar, beside the theme toggle. M18 left the
+   slot — the mockup draws a `TR` button there and the product has had nothing
+   to put in it.
+
+### Acceptance criteria
+
+- A reader can switch, and the switch is a URL rather than a preference.
+- A translated module is served in Turkish; an untranslated one **says so** and
+  is not silently English.
+- `<html lang>` is right on every page in both trees.
+- The copy register still runs, and knows which language it is reading.
+- The catalog's `EN · TR` stops being a claim the site cannot honour.
+- Full gate, with the HTML file count restated rather than carried (61 today).
 
 > **← Part 1: [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the review pass over M10 to M14.

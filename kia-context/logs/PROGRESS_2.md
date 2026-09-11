@@ -4,13 +4,14 @@ description: >
   M16, the interface rebuilt on the design language in ten stages — the stage table, every stage's
   brief, and the seven reports the stages wrote back, including what each one found that its own
   brief had wrong, and then the review pass over the finished milestone and the two defects it found
-  inside a green gate. Part 1 holds M1 to M15 and is closed.
+  inside a green gate. It closes with M17 and M18, which are WRITTEN AND NOT STARTED.
+  Part 1 holds M1 to M15 and is closed.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
   (MANIFESTO.md / ARCHITECTURE.md).
 authority: state
 writes: agent, every session
 status: active
-covers: "M16, 2026-09-09 to 2026-09-11 — all ten stages shipped, the review pass over it, and the six layout defects a screenshot found"
+covers: "M16, 2026-09-09 to 2026-09-11 — all ten stages shipped, the review pass over it, and the six layout defects a screenshot found. M17 and M18 are written and not started."
 last_updated: 2026-09-11
 ---
 
@@ -1305,6 +1306,313 @@ bleed past the text (**D43**), and whether the pager's direction label should be
 lifted off `on-surface-faint` at a measured 3.30:1 (**D45**, which would be a
 second `DEVIATIONS` entry and is therefore his call). A third joined them in
 stage 3 and is answered rather than open: a rail group's persistence.
+
+---
+
+# 🧭 What comes after M16
+
+Two milestones, from the author's list of 2026-09-11. **They are written and not
+started**, and the codebase was read before each claim in them: every file path,
+line number and count below was checked rather than recalled.
+
+They split where the work splits. **M17 is one decision about routes** and
+everything that follows from it; **M18 is the surfaces a reader meets** — the
+home page, the bar, and the two ends of a module — plus the one item on the list
+that is not a surface at all, which is that the site has never rendered Turkish.
+
+## 🏁 Milestone M17: One catalog, and the pages that fold into it
+
+**The curriculum pages are the catalog in table format.** `/courses/` and
+`/courses/[category]/` render `SheetIndex` directly — no filters, no views —
+and the catalog renders the same component behind a toggle. So the course is
+listed three times in two places, and a reader who wants one level has to know
+which of the two to be on. M17 leaves **one** list, and the level becomes a
+filter on it rather than a route of its own.
+
+The author's framing, 2026-09-11: *"the curriculum pages are just catalog in
+table format. so lets only have a single catalog page which has everything
+there and people can filter there."*
+
+### What is actually there today, measured rather than recalled
+
+| | Today |
+| --- | --- |
+| `/courses/` | Every level, each as a band with its modules. `PageShell column={false}` |
+| `/courses/[category]/` | One level's modules, `SheetIndex` with **`column="topics"`** |
+| `/sheets/` | The same rows, three views, two filters, `SheetIndex` with **`column="subsystem"`** |
+| The navbar dropdown | Six links: `/courses/` plus one per level (`MainNav.tsx:88-93,175-185`) |
+| The catalog's level filter | **`useState` only** (`Catalog.tsx:171`) — not in the URL, not in the record |
+
+**That fourth row is the whole of why the catalog cannot yet answer the
+dropdown**, and the fifth is the one line of code this milestone turns on.
+**And the third row is why "add the topics to the table" is a real deliverable
+rather than a setting**: the catalog's table says `Level` where the level page
+says `Topics`, because the two call sites pass a different `column`. The topics
+column is the one thing the pages being retired can do that the catalog cannot.
+
+### The decision this milestone opens with
+
+**How a preselected level is carried**, because the catalog's filter is
+component state and the dropdown needs to set it from outside. Two shapes, and
+the choice is the author's:
+
+1. **A route per level, prerendered: `/sheets/<slug>/`.** Six static pages, one
+   component, the filter chosen at build time. It keeps every promise the rest
+   of this interface makes — correct with scripting off, correct in frame one,
+   and a level is a URL somebody can send to somebody else. It costs six more
+   HTML files (56 → 62) and a `generateStaticParams`.
+2. **One route and a parameter: `/sheets/?level=expert`.** One page. The filter
+   is read by `boot.ts` before first paint, which is the one thing channel A
+   has never done — it reads the RECORD today, never the URL — so it would be
+   new mechanism in the most load-bearing script in the codebase. With scripting
+   off the parameter does nothing and the reader gets the unfiltered catalog,
+   which is a weaker promise than every other route makes.
+
+**The recommendation is 1**, on the grounds that it is the only one that keeps
+the no-JavaScript guarantee the rest of the interface holds to, and that it
+turns a level into something a reader can bookmark. The cost is honest and
+small. 2 is listed because it is genuinely simpler and the author may prefer
+one route.
+
+### Deliverables
+
+1. **The two curriculum index pages are retired**, and this is narrower than it
+   sounds: `src/app/courses/page.tsx` and `src/app/courses/[category]/page.tsx`
+   go, and **`src/app/courses/[category]/[module]/page.tsx` stays exactly where
+   it is.** The module route lives under the same prefix, so the segment is not
+   deleted — only the two index pages in it. A module's URL does not move, and
+   this milestone must not change one.
+2. **Both retired routes forward**, with the `MovedTo` stub `/dashboard/`,
+   `/path/` and `/report/` already use, including
+   `robots: { index: false, follow: true }` — a redirect a search engine indexes
+   spends a reader's click on a page with no content.
+3. **The dropdown lands on the catalog.** `Every level` opens the whole catalog;
+   each level opens the catalog with that level already filtered, by whichever
+   shape the decision above settles.
+4. **The catalog's table carries Topics.** `column="topics"`, with whatever the
+   width table then needs: `SheetIndex` already computes `Level` and `Topics` as
+   alternatives rather than as two columns, so this is a call-site change plus
+   the width arithmetic beside it.
+5. **The cards carry the topics too**, which is new — `CatalogCards` renders
+   level, number, title and a fact list today and never the topics.
+6. **The cards get room.** The author's words: *"currently cards look too
+   compact"*. Geometry from `03`-A, with the padding and the line-height the
+   mockup gives them rather than the tightest arrangement that fits.
+7. **The table drops its Status column.** The author's reasoning, recorded
+   because it is the kind that gets re-litigated: *"if something is not ready it
+   is not clickable by default and user can understand it already."*
+8. **The Overview view is untouched.** It is the one view whose job is the
+   shape rather than the detail, and the author named it as the exception.
+
+### The trap in deliverable 7, and it is a real one
+
+**`READY` / `PLANNED` in that column is currently a non-colour carrier of the
+row's state**, and §13.1.3 requires one. `index-sheet.spec.ts:81-82` counts the
+two words against the rows, and `colour-not-alone.spec.ts` walks the table under
+`forced-colors: active` on exactly that claim.
+
+So the column may only go once the row states its own state **without colour and
+without that word**. A row already carries `data-draft`, a dashed rule and a
+title that is not a link — the author's own argument is that the missing link IS
+the signal — but *"not a link"* has to be perceivable, not merely true: under
+forced colours, a title that is grey-when-plain and blue-when-linked is
+distinguished by colour alone. **Settle that before deleting the column**, and
+re-express the two tests against whatever carries it rather than deleting them.
+
+### Four more things the codebase says will break
+
+- **`src/lib/content/links.ts:196` rewrites a corpus link to `/courses/`.** A
+  module's markdown that points at `index.md` resolves there today. If the route
+  becomes a stub the link gate still passes and every such link lands on a
+  forward; if it is deleted outright, the build fails. Decide which, and point
+  the rewrite at the catalog.
+- **`tests/e2e/sheets.ts` exports `CATEGORY_PATHS`**, which eight specs walk.
+  Retiring the routes changes what that fixture means, and it is the file
+  `tests/README.md` already names as the one that leaks content into tests.
+- **The breadcrumb, the footer and `chrome.ts`** all build category paths
+  (`PageShell`, `SiteFooter`, `chrome.ts`). A trail that names a level has to
+  point somewhere that exists.
+- **`navigation.spec.ts`, `health.spec.ts`, `redirects.spec.ts`,
+  `not-found.spec.ts`, `accessibility.spec.ts`, `containment.spec.ts`,
+  `record-index.spec.ts` and `layout.spec.ts`'s own `ROUTES`** all name the
+  routes being retired.
+
+### The capability ledger, which is the point of the exercise
+
+One row changes and one row must be proven rather than assumed:
+
+| Capability | Was | Must be |
+| --- | --- | --- |
+| See every module in a level, with its topics | `/courses/`, `/courses/[category]/` | the catalog, filtered — **with the topics column, or the capability is lost** |
+| Find a module three ways, and keep the choice | `/sheets/` | unchanged, and the level filter now arrives from outside |
+
+**"Every capability stays" is this project's rule and it is what a fold like
+this quietly breaks.** The topics column is the capability the retired pages
+carried alone; deliverables 4 and 5 are it, and the ledger row is not ticked
+until a test proves the topics reach a reader on the catalog.
+
+### Acceptance criteria
+
+- `/courses/` and `/courses/[category]/` forward; no internal link points at
+  either; the link gate and `tests/corpus/links.test.ts` are green.
+- Every module route is byte-identical in path to what it is today.
+- The dropdown's six entries all land on the catalog, and a level entry arrives
+  with that level filtered — **provably in frame one**, by whichever shape was
+  chosen, with the no-JavaScript case stated either way.
+- The catalog's table shows Topics; the cards show topics; the overview is
+  unchanged, asserted by a fidelity comparison that still passes against `03`.
+- The Status column is gone **and** a browser test proves a planned row states
+  itself under `forced-colors: active` without it.
+- `layout.spec.ts` passes on the new route list, and the retired routes are out
+  of its `ROUTES`.
+- The capability ledger's two rows above are re-pointed, each with the test that
+  proves it.
+- Full gate: typecheck, unit, build, e2e, with the HTML file count restated
+  (56 today) rather than carried.
+
+## 🏁 Milestone M18: The front door, the chrome, and the second language
+
+M17 settles where the course is listed. M18 is everything a reader meets before
+they get there — the home page, the bar, and the two ends of a module — plus the
+one item on the author's list that is not chrome at all: **the site has never
+rendered a word of Turkish.**
+
+### The one that is not a button: English and Turkish
+
+The author asked for *"a feature or button to allow to switch from english to
+turkish"* in the navbar. Reading the code first, because the button is the last
+five per cent of it:
+
+- **33 `_tr.md` files exist** under `mini-courses/`, one per module.
+- **`loader.ts` reads the English file and only the English file.** The Turkish
+  sibling is opened by `langCoverage` (`derive.ts:281`) to decide whether the
+  module may claim `EN · TR`, and its CONTENT is never loaded, never rendered
+  and reachable from no route.
+- So today the site **states** that a translation exists and cannot show it.
+  `EN · TR` is a fact about the repository printed in a table.
+
+What a switcher actually needs, in the order the work has to happen:
+
+1. **The loader walks the sibling**, so a module has two bodies rather than one.
+2. **A route shape.** `/tr/courses/...` or a segment, decided against the static
+   export: every page is prerendered, so a second language is a second tree of
+   files and roughly doubles the HTML count (56 today).
+3. **A fallback for a module with no translation**, which is a real state —
+   `langCoverage` exists precisely because some modules are English-only, and a
+   reader who switches to Turkish on one of those must be told, not silently
+   handed English.
+4. **The interface's own strings**, which are English, in components, in the
+   hundreds — every label, every empty state, every `aria-label`. This is the
+   largest part and none of it is in the corpus.
+5. **`<html lang>` per page**, which is what a screen reader's voice depends on,
+   and the copy register (`tests/unit/copy-register.test.ts`) which scans
+   reader-visible strings in English and would need to know which language it is
+   reading.
+
+**This is a milestone's worth of work on its own and it is listed first so that
+it is not mistaken for a navbar item.** If M18 runs long, this is the piece to
+lift out into M19 — the rest of the list below is genuinely small, and shipping
+a switcher that only changes a flag would be the worst outcome of the three.
+
+### The home page
+
+The author: *"Homepage should have the refined banner row, and the next row
+should be the existing boxes which is 'Why this and not the hundredth AI blog'"*.
+
+**Remove:**
+- the whole progress feature — `CourseCompletion` on the home page: the three
+  statistics (`Modules completed`, `Reading time`, `Days in a row`), the five
+  level cards, their dials and their module lists;
+- `Four reasons, all of them checkable` from the why-block's header;
+- `Continue Module 01 · LLM Fundamentals` from the banner row;
+- `8 modules in Fundamentals, which assumes you write software and assumes
+  nothing else` — **already removed in `2fd8b4c`**, recorded here because the
+  author listed it and it should not be looked for twice.
+
+**Correct, in the banner:**
+- *"Five to ten minutes a module"* is **wrong**; the author has the right
+  figure. It came from `README.md` rule 4 and `MANIFESTO.md` §3, so whatever
+  replaces it has to replace it there too, or the site and the manifest will
+  disagree — and `MANIFESTO.md` is a promise, so that edit is a decision and
+  not a copy change.
+- *"Written by an engineer who builds this for a living"* and the headline
+  *"AI engineering, written by someone who builds it"* are both **singular**,
+  and it is written by **AI engineers**. Both lines change. The headline is
+  `08`'s own text, so this is a third `DEVIATIONS` entry in `DESIGN.md` — and
+  the order of authority written there says the author outranks the mockup,
+  which is exactly the case this is.
+
+**The consequence to name before doing it:** the level cards were the home
+page's table of contents, and `home.spec.ts` asserts that every module in the
+course is on the page. That claim does not survive, and it should not be
+deleted — it moves to the catalog, which after M17 is the one place the whole
+course is listed. Re-express it there.
+
+### The bar
+
+- **Remove the progress icon** on the right. `Your progress` is already a
+  destination in the nav, and the icon is the same link twice.
+- **Remove the keyboard-shortcuts button.** Trap: `§12.16` makes the chord
+  discoverable by printing it on its own destination *and* on the nav item, and
+  `record-sheet.spec.ts` has chord cases. **The shortcuts themselves keep
+  working** — what goes is the button that opens the sheet listing them, so
+  check what still tells a reader they exist before deleting the only thing
+  that does.
+- **Replace the repository glyph with GitHub's own mark**, black, and a yellow
+  star beside it carrying the star count.
+- **Add the language switcher**, once the section above makes it possible.
+
+**The star count is a fact from outside the repository, and this project's rule
+is derive-never-restate.** Three shapes, none free:
+1. **Fetched at build time** and baked into the export. Honest, and it makes the
+   build need the network — CI included — and the number is as old as the last
+   deploy.
+2. **Fetched in the browser.** Always current; a network request on every page
+   load to a third party, from a site whose own promise is that it makes none
+   while you read (`README.md`, "no network call while you read"). That promise
+   is about the reader's record rather than about assets, but the sentence is
+   there and a star counter would be the first thing to test it.
+3. **Typed into `src/lib/site.ts`.** One line, and it is a number written in
+   `src/` that nobody will ever update — the exact shape the derive-never-restate
+   rule exists to refuse.
+**1 with a committed fallback** is the recommendation; the decision is the
+author's, and whichever it is belongs in `BRAINSTORM` because somebody will ask.
+
+### The two ends of a module
+
+- **The pager** (`PrevNext`, `components/sheet/PrevNext.tsx`): shorter boxes,
+  and a previous/next icon in each. The idiom is settled — 20 inline SVGs in
+  `src/`, a 16-unit viewBox, `fill="none" stroke="currentColor"`, and **no
+  emoji** (**D53**). Its height is a `05`/`01` geometry question, so check the
+  mockup before choosing a number.
+- **`What you will be able to do` gets its bullets.** `Objectives.tsx:36-40`
+  **already renders `<ul><li>`** — the markers are missing because Tailwind's
+  preflight sets `list-style: none` on every list, and nothing in the card
+  restores it. So this is one rule in a surface stylesheet, not a markup change,
+  and the same is true anywhere else in the prose a list has lost its markers.
+
+### Acceptance criteria
+
+- The home page is the banner row and the why-block, and nothing else; no
+  progress feature, no continue line, no counts of the course.
+- Every corrected sentence is corrected **at its source too** — the minute
+  figure in `README.md` and `MANIFESTO.md`, the authorship line wherever it is
+  repeated — so the site and the documents cannot disagree.
+- The headline's departure from `08` is a recorded `DEVIATIONS` entry.
+- "Every module in the course is reachable and listed" is proven on the catalog,
+  by a test that used to prove it on the home page.
+- The bar carries: brand, nav, language, theme, GitHub-with-stars. No progress
+  icon, no shortcuts button. The chords still work and something still says so.
+- The star count's mechanism is whichever the author chose, and the number is
+  never typed by hand.
+- The pager's boxes are shorter, each with an icon, and the fidelity comparison
+  for the reading page still passes.
+- The objectives list shows markers, and `layout.spec.ts` gains nothing —
+  because that is a paint change and not a relationship.
+- Turkish: a reader can switch, a translated module is served in Turkish, an
+  untranslated one says so, and `<html lang>` is right on every page. **Or the
+  item is lifted into M19 with the reason recorded**, which is an acceptable
+  outcome and a better one than a switcher that changes a flag.
 
 ---
 

@@ -34,6 +34,15 @@ trusting its brief.**
 `PROGRESS.md` is part 1 and closed: M1 to M15, and the review pass over M10 to
 M14. New milestones go in part 2.
 
+**M17 and M18 are written and not started**, at the end of
+[`kia-context/logs/PROGRESS_2.md`](kia-context/logs/PROGRESS_2.md). M17 folds
+`/courses/` and `/courses/[category]/` into the catalog and makes a level a
+filter rather than a route — **the module route does not move**. M18 is the home
+page, the bar and the two ends of a module, and it carries the one item that is
+not a surface: **33 `_tr.md` files exist and the app renders none of them**, so
+a language switcher is a content-pipeline milestone rather than a button. Each
+opens with the decision it needs from the author; neither is started.
+
 **The retired vocabulary is out of the markup** — `hl-` in any `className` is
 **0**, from 792 — and what survives of that prefix survives on purpose: the
 twenty-six `data-hl-*` attributes islands and specs query, the three `<html>`

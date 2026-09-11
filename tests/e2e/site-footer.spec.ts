@@ -65,10 +65,17 @@ for (const sheet of SHEETS) {
   })
 }
 
+/**
+ * M17 — three listings became two, and the level kept its own label.
+ *
+ * `/courses/` was `CURRICULUM` and is a forwarding stub now. The level moved
+ * from `/courses/<level>/` to `/sheets/<level>/`, which `sheetLabelFor` had to
+ * be taught in the same commit: without that branch a level page falls through
+ * to the `segments.length > 1` guard and prints no label at all.
+ */
 const LISTINGS: readonly [string, string][] = [
   ['/', 'HOME'],
   ['/sheets/', 'CATALOG'],
-  ['/courses/', 'CURRICULUM'],
   [CATEGORY_PATHS[1], 'LEVEL 02'],
 ]
 

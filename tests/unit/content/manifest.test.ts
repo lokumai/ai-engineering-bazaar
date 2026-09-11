@@ -8,7 +8,6 @@ import {
   categorySummary,
   durationLabel,
   indexStatement,
-  setEyebrow,
   setSummary,
   sheetRows,
 } from '@/lib/content/manifest'
@@ -84,7 +83,9 @@ describe('moduleRows — one row per module in the set (§4.8)', () => {
     expect(rows[12].subsystem).toEqual({
       order: 2,
       title: 'Intermediate',
-      path: '/courses/intermediate/',
+      // M17 — a level's own page is its entry into the catalog. The MODULE
+      // route did not move and is still `/courses/<level>/<module>/`.
+      path: '/sheets/intermediate/',
       // M12 — the slug is carried so the catalog's views can address the
       // level's own colour as `[data-cat="<slug>"]`.
       slug: 'intermediate',

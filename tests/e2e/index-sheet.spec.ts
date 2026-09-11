@@ -77,9 +77,17 @@ test('the ready / not-ready counts match the rows actually rendered', async ({ p
   await expect(ready).toHaveCount(DRAWN_COUNT)
   await expect(notDrawn).toHaveCount(NOT_DRAWN_COUNT)
 
-  // Every one of those rows says so in words as well as in line type (§10.4).
-  await expect(page.locator('.bz-row-status', { hasText: /^READY$/ })).toHaveCount(DRAWN_COUNT)
-  await expect(page.locator('.bz-row-status', { hasText: /^PLANNED$/ })).toHaveCount(NOT_DRAWN_COUNT)
+  /* M17 — the same claim, on what carries it now. §4.8's `STATUS` column is
+     gone; the word it printed is `.bz-said` inside each row's own header, so
+     a screen reader still hears it and the screen no longer repeats what four
+     other cells already say (`ModuleRow`'s `RowState`). Counting it here is
+     what stops the word being dropped along with the column. */
+  await expect(
+    page.locator('.bz-table tbody .bz-row-title .bz-said', { hasText: /^READY$/ }),
+  ).toHaveCount(DRAWN_COUNT)
+  await expect(
+    page.locator('.bz-table tbody .bz-row-title .bz-said', { hasText: /^PLANNED$/ }),
+  ).toHaveCount(NOT_DRAWN_COUNT)
 
   // …and the Overview view states the same set, level by level (§11.25).
   //

@@ -38,8 +38,7 @@ const PAGES = [
   // is still the widest non-prose thing on the site.
   ['home screen', '/'],
   ['manifest', INDEX_SHEET],
-  ['curriculum', '/courses/'],
-  ['category', CATEGORY_PATHS[1]],
+  ['level', CATEGORY_PATHS[1]],
   ['SHORT module', SHORT.path],
   ['A4 module', A4.path],
   ['widest module', WIDEST.path],

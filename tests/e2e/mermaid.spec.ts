@@ -21,7 +21,7 @@ const SPLIT_BUNDLE_ONLY = process.env.E2E_TARGET === 'dev'
 /** A sheet with figures. Module 1 carries `.mermaid-source` markers. */
 const WITH_FIGURES = sheetByModule(1).path
 /** A listing page: chrome only, no prose, no figures. */
-const WITHOUT_FIGURES = '/courses/'
+const WITHOUT_FIGURES = '/sheets/'
 
 test('renders a mermaid marker as an SVG drawing', async ({ page }) => {
   await page.goto(WITH_FIGURES)

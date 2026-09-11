@@ -4,14 +4,15 @@ description: >
   M16, the interface rebuilt on the design language in ten stages — the stage table, every stage's
   brief, and the seven reports the stages wrote back, including what each one found that its own
   brief had wrong, and then the review pass over the finished milestone and the two defects it found
-  inside a green gate. It closes with M17 and M18, which are WRITTEN AND NOT STARTED.
+  inside a green gate. Then M17, the curriculum fold, with its report. It closes with M18, which is
+  WRITTEN AND NOT STARTED.
   Part 1 holds M1 to M15 and is closed.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
   (MANIFESTO.md / ARCHITECTURE.md).
 authority: state
 writes: agent, every session
 status: active
-covers: "M16, 2026-09-09 to 2026-09-11 — all ten stages shipped, the review pass over it, and the six layout defects a screenshot found. M17 and M18 are written and not started."
+covers: "M16 and M17, 2026-09-09 to 2026-09-11 — the ten stages, the review pass, the six layout defects a screenshot found, and the curriculum fold. M18 is written and not started."
 last_updated: 2026-09-11
 ---
 
@@ -1038,7 +1039,9 @@ the milestone's promise and M9 to M14's failure was losing them quietly.
 | --- | --- | --- |
 | Read a module, with its figures, code and diagrams | `/courses/[category]/[module]/` | `module-sheets` (33 instances), `prose-type`, `containment`, `mermaid` (6) |
 | Find a module three ways, and keep the choice | `/sheets/` | `catalog` (11), `views.test.ts`'s five reveal cases |
-| See every module in a level, with its topics | `/courses/`, `/courses/[category]/` | `index-sheet` (4), `record-index` (9) |
+| Filter the catalog by level, with no JavaScript | **M17: the five level addresses** — the chips are links (**D62**), so the one control here that needed a bundle no longer does | `catalog`'s keyboard case, and `redirects`' served-HTML checks |
+| See every module in a level, with its topics | **M17: `/sheets/<level>/`** — five prerendered entries into the one catalog. The topics are a column on the table and a line on every card, so the capability moved with the route rather than after it | `index-sheet` (4), `record-index` (9), `redirects` (18 for the fold), `catalog`'s level-page comparison |
+| Read a level's own README | **M17: `/sheets/<level>/`**, under `General notes`. The retired level page was the only renderer of it, and the brief's ledger did not list it | `health` on a level path, and the `General notes` section itself |
 | Complete a module, and take it back | the module's action row | `record-sheet` (36) |
 | Complete a module from the overview | `/`, `/profile/` | `home` (16) |
 | A self-check, self-marked, no score kept | the module's quick check | `record-sheet` §12.6 cases |
@@ -1490,6 +1493,105 @@ until a test proves the topics reach a reader on the catalog.
   proves it.
 - Full gate: typecheck, unit, build, e2e, with the HTML file count restated
   (56 today) rather than carried.
+
+### Report — M17, one catalog, 2026-09-11
+
+**Shipped.** The two curriculum index pages are forwards, the level is an
+address under `/sheets/`, and the one catalog carries the topics column that was
+the only thing the retired pages could do and it could not.
+
+**The decision the milestone opened with was taken as recommended**: five
+prerendered level pages rather than one route with a parameter (**D62**). What
+was not in the brief, and is the better half of the outcome, is what the pages
+made possible — **the level chips are links now**, so the one control on this
+site that did nothing with the bundle blocked works without it. The state chips
+stay buttons, because two of their six selections read a record no address can
+hold. That split, `<nav>` for the corpus and `role="group"` for the reader, is
+what D62 is actually about.
+
+#### Five things the brief had wrong or did not know
+
+1. **Its capability ledger was one row short, and the missing row was authored
+   prose.** `/courses/<level>/` was the ONLY page on the site that rendered
+   `mini-courses/<level>/README.md`. Retiring it as written would have deleted
+   the author's own writing from the product — including Intermediate's note
+   that its Turkish files are still placeholders, which §7.6 exists to keep
+   visible. The level pages carry it, under the same `General notes` heading.
+2. **Deliverable 4 was backwards.** It said the catalog's table should carry
+   `Topics` *instead of* `Level`, because `SheetIndex` computes them as
+   alternatives. On the flat catalog that leaves a row's level carried by the
+   hue on its leading edge ALONE, which §13.1.4 forbids and which the same
+   document spends a paragraph protecting. The table carries both; a level page
+   carries only the topics, because its heading says the level once instead of
+   eight times.
+3. **Deliverable 7's premise was false.** *"If something is not ready it is not
+   clickable by default"* — a planned module has a page, the A4 anatomy with its
+   schedule of parts. The column went; the link stayed; **D63** records what
+   carries the state instead and none of it is colour.
+4. **Every module's breadcrumb pointed at the two retired routes, and nothing
+   could fail.** The trail gives each URL segment an href, so a module at
+   `/courses/<level>/<module>/` trailed through `/courses/` and
+   `/courses/<level>/` — both forwards. The link gate follows an href to a
+   document and both documents exist, so the whole site would have shipped a
+   trail whose every ancestor cost a redirect. **MEASURED in the export before
+   the fix: 61 links into a retired route across 56 files; after: 0.** It was
+   found by grepping `out/` for the retired shapes, which is the only check
+   that can see it.
+5. **`sheetLabelFor` and `categoryPathOf` both needed the new prefix.** Without
+   a `/sheets/<level>/` branch a level page falls through the
+   `segments.length > 1` guard and prints no footer label; without reading both
+   prefixes, `g c` spends a keystroke on a redirect.
+
+#### What was deleted, and why that is part of the fold
+
+Four build-time helpers existed only to serve the two retired pages and had no
+caller left: `subsystems()`, `SubsystemCoverage`, `setEyebrow()` and
+`ticksFrom()`, plus the `CategoryBlock` component. They are gone, with a comment
+where `subsystems()` was saying so — dead code that a green test keeps alive is
+how somebody builds the retired page again. **One figure went with them and it
+is the only thing this milestone lost**: the whole set's declared reading time,
+which `setEyebrow()` printed on `/courses/`. The catalog dropped its own eyebrow
+in M12 on a recorded decision, so re-adding it would reverse one; the five level
+pages each state their own.
+
+#### The author's copy round had an item left over
+
+`8 modules · 7 ready` came off the HOME page's level cards in `2fd8b4c`, and the
+author's instruction had named **the catalog's cards** — *"in catalog page from
+the cards remove `8 modules · 8 ready` from top of cards. Never we care about
+it."* It was still there. It is gone now, and the cards took `03`-A's summary
+slot in exchange, which is deliverable 6: the card looked compact because it was
+the mockup's card with one of its four blocks missing, and the block it was
+missing is the one the topics now fill. Nothing about its geometry was invented.
+
+#### The gate
+
+Every number measured on the finished tree, not carried:
+
+| | Measured |
+| --- | --- |
+| `npm run typecheck` | clean |
+| `npm test` | **2,153 passed, 82 files, 0 skipped** (2,157 before five `CategoryBlock` cases were deleted with the component) |
+| `npm run build` | clean, **61 HTML files** — 56 before, plus the five level pages. Every module route is at the address it was at, which is the arithmetic saying so: the five level stubs replaced five level pages one for one |
+| `npx playwright test` | **1,123 passed, 48 skipped, zero failures** across 1440 / 1024 / 390 |
+| Links into a retired route, in the export | **0** — 61 before the breadcrumb fix |
+
+**One browser test failed once and did not fail again**: `navigation.spec.ts`'s
+`previous walks 32 back to 1`, under full parallel load, clicking `prev` faster
+than the route settled. It is one of the four known load-flakes and it passed in
+every run since.
+
+#### What M17 did NOT do, deliberately
+
+- **Deliverable 7's second half.** The author's *"not clickable by default"* was
+  not implemented: a planned module keeps its link, because it has a page. If he
+  wants planned modules unreachable that is a separate decision and it deletes a
+  capability, so it is his to make rather than mine to infer.
+- **The level page keeps its eyebrow** — `Level 03 · 11 modules · 6 ready ·
+  ~4 h`. It came over unchanged from the page it replaces and it is the only
+  statement of a level's total length. It is also the shape the author had
+  removed from the CARDS, so it may be the next thing he names; it is one line
+  to delete and nothing else reads it.
 
 ## 🏁 Milestone M18: The front door, the chrome, and the second language
 

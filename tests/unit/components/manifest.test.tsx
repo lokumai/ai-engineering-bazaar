@@ -1,7 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { SIGN_OFF_SELECTORS, SignOffMarks } from '@/components/record/SignOffMarks'
-import { CategoryBlock } from '@/components/sheet/CategoryBlock'
 import { ModuleRow } from '@/components/sheet/ModuleRow'
 import { Catalog, NoMatch } from '@/components/catalog/Catalog'
 import { SheetIndex } from '@/components/sheet/SheetIndex'
@@ -58,8 +57,8 @@ const DASHED: SheetRow = {
 }
 
 describe('ModuleRow — the index row (§5.3)', () => {
-  const drawn = renderToStaticMarkup(<ModuleRow row={DRAWN} column="subsystem" />)
-  const dashed = renderToStaticMarkup(<ModuleRow row={DASHED} column="subsystem" />)
+  const drawn = renderToStaticMarkup(<ModuleRow row={DRAWN} column="both" />)
+  const dashed = renderToStaticMarkup(<ModuleRow row={DASHED} column="both" />)
 
   it('is a table row, never a card (§11.2)', () => {
     expect(drawn.startsWith('<tr')).toBe(true)
@@ -96,9 +95,37 @@ describe('ModuleRow — the index row (§5.3)', () => {
     expect(drawn).toContain('READY')
   })
 
-  it('draws the status tick as a hidden line on an unready module', () => {
-    expect(dashed).toContain('stroke-dasharray="3 2"')
-    expect(drawn).not.toContain('stroke-dasharray')
+  /**
+   * M17 — the same claim, on what carries it now.
+   *
+   * §4.8's `STATUS` column is gone and with it the dashed tick this test used
+   * to read. The claim it was making — a module nobody has written says so
+   * WITHOUT COLOUR — is unchanged and has three carriers left: an em dash where
+   * a length would be, an em dash where a source count would be, and one
+   * completion square marked undrawn where a written module draws its slots.
+   * A border style and an em dash both survive `forced-colors: active`, which
+   * is the whole point of the claim; `colour-not-alone.spec.ts` measures it in
+   * a browser under exactly that.
+   */
+  it('says an unready module is unready without using colour', () => {
+    expect(dashed).toContain('data-draft=""')
+    expect(dashed).toContain('data-drawn="false"')
+    // Length and Sources, both undeclared, both spelled the house way.
+    expect(dashed.match(/<td class="bz-row-value">—<\/td>/g)?.length).toBeGreaterThanOrEqual(2)
+
+    expect(drawn).not.toContain('data-draft')
+    expect(drawn).not.toContain('data-drawn="false"')
+  })
+
+  /**
+   * D61 — the word left the screen and stayed in the accessibility tree. It is
+   * inside the row's own header and OUTSIDE its link, so a list of links still
+   * reads the module's name and nothing else.
+   */
+  it('still says the word, in the row header rather than on the screen', () => {
+    expect(dashed).toContain('<span class="bz-said">PLANNED</span>')
+    expect(drawn).toContain('<span class="bz-said">READY</span>')
+    expect(dashed).not.toMatch(/<a [^>]*>[^<]*PLANNED/)
   })
 
   it('prints the topics instead of the level where asked (§4.9)', () => {
@@ -152,7 +179,7 @@ describe('ModuleRow — the index row (§5.3)', () => {
 
 describe('ModuleIndex — the manifest table (§4.8 item 4)', () => {
   const markup = renderToStaticMarkup(
-    <SheetIndex rows={[DRAWN, DASHED]} column="subsystem" label="The curriculum" />,
+    <SheetIndex rows={[DRAWN, DASHED]} column="both" label="The curriculum" />,
   )
 
   it('heads the columns §4.8 names, in its order', () => {
@@ -161,9 +188,15 @@ describe('ModuleIndex — the manifest table (§4.8 item 4)', () => {
     // Authored in sentence case and uppercased in CSS (§3.2): a screen
     // reader spells out a word written in capitals.
     expect(headers).toEqual([
-      '#', 'Module', 'Level', 'Length', 'Sources', 'Lang', 'Status',
-      // §12.18's ninth column, where §4.8 puts it: after STATUS. REQUIRES is
-      // the column this implementation added, so it is the one at the end.
+      // M17 — `Topics` is beside `Level` rather than instead of it. The one
+      // catalog lists every level at once, so a row's level may not be carried
+      // by the hue on its leading edge alone (SC 1.4.1); and the topics are the
+      // column the retired `/courses/` pages carried and this one did not.
+      '#', 'Module', 'Level', 'Topics', 'Length', 'Sources', 'Lang',
+      // §12.18's ninth column. §4.8 put it after `STATUS`, which M17 removed —
+      // the state is on the cells that were already carrying it, `ModuleRow`'s
+      // `RowState`. REQUIRES is the column this implementation added, so it is
+      // the one at the end.
       'Completion', 'Requirements',
     ])
   })
@@ -192,7 +225,7 @@ describe('ModuleIndex — the manifest table (§4.8 item 4)', () => {
 
   it('renders nothing at all rather than an empty table', () => {
     expect(renderToStaticMarkup(
-      <SheetIndex rows={[]} column="subsystem" label="Nothing" />,
+      <SheetIndex rows={[]} column="both" label="Nothing" />,
     )).toBe('')
   })
 })
@@ -236,45 +269,13 @@ describe('TickGauge — the discrete tick gauge (§7.5)', () => {
   })
 })
 
-describe('CategoryBlock — the level block (§5.4)', () => {
-  const live = renderToStaticMarkup(
-    <CategoryBlock
-      order={2}
-      title="Intermediate"
-      path="/courses/intermediate/"
-      ticks={['drawn', 'drawn']}
-    />,
-  )
-  const undrawn = renderToStaticMarkup(
-    <CategoryBlock
-      order={3}
-      title="Expert"
-      path="/courses/expert/"
-      ticks={['not-drawn', 'not-drawn']}
-    />,
-  )
+/* M17 — `CategoryBlock` was deleted with the page that rendered it.
 
-  it('is three stacked lines, and never a card (§5.4)', () => {
-    expect(live).toContain('Level 02')
-    expect(live).toContain('Intermediate')
-    expect(live).toContain('<svg')
-    expect(live).not.toMatch(/rounded|shadow/)
-  })
-
-  it('links to the level it names', () => {
-    expect(live).toContain('href="/courses/intermediate')
-  })
-
-  it('marks a level with no ready modules, which mutes its name (§5.4)', () => {
-    expect(undrawn).toContain('data-undrawn')
-    expect(live).not.toContain('data-undrawn')
-  })
-
-  it('says its coverage in words, not in the gauge alone (§10.4)', () => {
-    expect(live).toContain('aria-label="2 modules, 2 ready"')
-    expect(undrawn).toContain('aria-label="2 modules, 0 ready"')
-  })
-})
+   It was the band header on `/courses/`: `LEVEL 02 · INTERMEDIATE` as a link
+   over a tick gauge, one per level. The catalog's Overview view is what groups
+   by level now, and its heading is `CatalogOverview`'s own. `ticksFrom` went
+   with it for the same reason — `TickGauge` is still live on `/profile/`,
+   where `Diagram` builds its ticks from the record rather than from rows. */
 
 // ---------------------------------------------------------------------------
 // §4.8 item 5 / §12.13 / §12.18 — the chips, and the island behind column 9
@@ -402,9 +403,15 @@ describe('Catalog — three views over one data source (M12, D13)', () => {
   })
 
   it('opens with both filters at all, and with every module rendered (§12.2)', () => {
-    // One pressed chip per group, and each is the group's `all`.
-    expect(markup.match(/aria-pressed="true"/g)).toHaveLength(2)
-    expect(markup).toMatch(/aria-pressed="true"[^>]*>Every level</)
+    /* M17 / D62 — the two groups answer with different attributes now, because
+       they are different kinds of control. The level group is navigation, so
+       its current chip is `aria-current="page"`; the state group is a toggle a
+       reader presses, so its selected chip is `aria-pressed="true"`. One each,
+       and each is its group's `all`. Asserting both is what stops a future
+       edit turning one of them into the other silently. */
+    expect(markup.match(/aria-pressed="true"/g)).toHaveLength(1)
+    expect(markup.match(/aria-current="page"/g)).toHaveLength(1)
+    expect(markup).toMatch(/aria-current="page"[^>]*>(<[^>]*>)*Every level</)
     expect(markup).toMatch(/aria-pressed="true"[^>]*>All</)
     // Two rows and the header row: the prerender narrows nothing, because a
     // reader-state filter active on load would change the row count between
@@ -448,6 +455,25 @@ describe('NoMatch — §12.13 class 3', () => {
     expect(markup).not.toContain('<a ')
   })
 
+  /**
+   * M17 — the same state, reached with a level chosen, and the one path out is
+   * a LINK because the level is an address. Still exactly one path, still the
+   * same words; what changed is that a reader with the bundle blocked can now
+   * take it, which the button never let them do.
+   */
+  it('leads out by navigating when a level is what narrowed it', () => {
+    const withLevel = renderToStaticMarkup(
+      <NoMatch total={32} onClear={() => {}} clearTo="/sheets/" />,
+    )
+
+    expect(withLevel).toContain('Show the whole catalog')
+    // `trailingSlash` is next.config's business and it is not loaded here, so
+    // the assertion is on the route rather than on its final slash.
+    expect(withLevel).toContain('href="/sheets')
+    expect(withLevel).not.toContain('<button')
+    expect(withLevel.match(/<a /g)).toHaveLength(1)
+  })
+
   it('carries no illustration and no mascot (§8.5)', () => {
     expect(markup).not.toContain('<svg')
     expect(markup).not.toContain('<img')
@@ -465,7 +491,7 @@ describe('SignOffMarks — the island that fills column 9 (§12.2)', () => {
   })
 
   it('looks for the markers ModuleRow actually emits', () => {
-    const row = renderToStaticMarkup(<ModuleRow row={DRAWN} column="subsystem" />)
+    const row = renderToStaticMarkup(<ModuleRow row={DRAWN} column="both" />)
 
     expect(SIGN_OFF_SELECTORS.CELLS).toBe('[data-hl-signoff-cell]')
     expect(SIGN_OFF_SELECTORS.SQUARES).toBe('[data-hl-slot]')

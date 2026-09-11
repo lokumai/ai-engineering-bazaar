@@ -105,7 +105,7 @@ export function PageShell({
         On a route that is deliberately wider than the measure — the catalog,
         the two level listings, the home page — that put the trail in an 814px
         box centred at x=313 while the page's own heading started at x=49.
-        MEASURED on `/`, `/courses/`, `/courses/expert/` and `/sheets/`: the
+        MEASURED on `/`, `/sheets/`, `/sheets/expert/` and a module sheet: the
         same 264px misalignment on every one of them, which is the first thing
         a reader's eye lands on under the bar.
 

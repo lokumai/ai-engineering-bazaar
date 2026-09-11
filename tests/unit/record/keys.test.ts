@@ -249,8 +249,13 @@ describe('routeFor — where each destination goes', () => {
   })
 
   it('reads the current category off the route, from a module or its category page', () => {
-    expect(categoryPathOf('/courses/intermediate/security/')).toBe('/courses/intermediate/')
-    expect(categoryPathOf('/courses/intermediate/')).toBe('/courses/intermediate/')
+    /* M17 — the level a reader is inside is read from either tree, and `g c`
+       always lands on the level's catalog entry. `/courses/<level>/` is a
+       forwarding stub now, so sending the shortcut there would have cost a
+       redirect on every press. */
+    expect(categoryPathOf('/courses/intermediate/security/')).toBe('/sheets/intermediate/')
+    expect(categoryPathOf('/sheets/intermediate/')).toBe('/sheets/intermediate/')
+    expect(categoryPathOf('/courses/intermediate/')).toBe('/sheets/intermediate/')
   })
 
   it('has no current category to offer outside the set, and says so with null', () => {

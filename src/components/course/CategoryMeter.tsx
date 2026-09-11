@@ -34,7 +34,8 @@ import type { CategorySlug } from '@/lib/content/categories'
  * never appears without it, and under `forced-colors: active` the segments
  * keep their borders and the count keeps saying the same thing.
  *
- * It does not duplicate `TickGauge`, which sits beside it on `/courses/`.
+ * It does not duplicate `TickGauge`, which drew one tick per module beside it
+ * on the retired `/courses/` pages and lives on `/profile/` now (M17).
  * `TickGauge` reports the *drawing set* — which sheets are drawn, true for
  * everybody, in every frame. This reports the *reader*. Two strips, two
  * subjects; §11.38 forbids a second surface for one subject, not one surface

@@ -221,11 +221,6 @@ export function categoryEyebrow(category: Category): string {
   return `Level ${pad2(category.order)} · ${coverageLabel(categorySummary(category))}`
 }
 
-/** The same line for the set as a whole. */
-export function setEyebrow(): string {
-  return coverageLabel(setSummary())
-}
-
 // ---------------------------------------------------------------------------
 // §4.8 item 2 — the statement
 // ---------------------------------------------------------------------------
@@ -264,17 +259,15 @@ export function indexStatement(): string[] {
   ]
 }
 
-/** Every subsystem, with the coverage its block prints (§5.4). */
-export interface SubsystemCoverage {
-  category: Category
-  coverage: Coverage
-  path: string
-}
+/* M17 — `subsystems()` and `setEyebrow()` were deleted here, and saying so is
+   cheaper than letting somebody find them and build a page with them.
 
-export function subsystems(): SubsystemCoverage[] {
-  return CATEGORIES.map((category) => ({
-    category,
-    coverage: categorySummary(category),
-    path: categoryPath(category),
-  }))
-}
+   Both existed for `/courses/`, the page that listed every level with its own
+   band. That page folded into the catalog, which groups by level in the
+   Overview view and prints each level's counts beside the modules it counts,
+   so neither function had a caller left. `setEyebrow` also carried the one
+   figure nothing else states — the whole set's declared reading time — and the
+   catalog dropped its own eyebrow on a recorded decision in M12; the five
+   level pages each state their own. `categorySummary`, `coverageLabel` and
+   `setSummary` are all still live and any future caller can have that line
+   back in one expression. */

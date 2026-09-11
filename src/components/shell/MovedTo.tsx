@@ -4,8 +4,10 @@ import { href } from '@/lib/url'
 /**
  * M14 — a redirect, in the only form a static export can ship one.
  *
- * `/dashboard/`, `/report/` and `/path/` folded into `/profile/`, and an old
+ * `/dashboard/`, `/report/` and `/path/` folded into `/profile/` in M14, and
+ * `/courses/` and `/courses/<level>/` folded into the catalog in M17. An old
  * bookmark to any of them has to land somewhere useful rather than on a 404.
+ *
  * There is no server to answer a 301 with: the site is `output: 'export'` on
  * GitHub Pages, so `next.config`'s `redirects` are never applied and a page's
  * own `redirect()` throws at build time. **What ships is the document itself,
@@ -29,6 +31,11 @@ import { href } from '@/lib/url'
  * served from `/ai-engineering-bazaar` on GitHub Pages and `basePath` only
  * rewrites what the router touches. A hardcoded `/profile/` here would work
  * locally and 404 in production, which `lib/url.ts` exists because of.
+ *
+ * **The sentence names no arithmetic.** It read "at one address instead of
+ * four", which was true of M14's fold and false the moment M17 reused this
+ * component for a fold of two. A count of what was folded is a fact about one
+ * milestone, written into a component that serves several.
  *
  * **`robots: noindex` is on each stub's own `metadata`**, not here: a redirect
  * that a search engine indexes is a search result that spends a reader's click
@@ -67,8 +74,8 @@ export function MovedTo({
       <h1 className="bz-display">{name}</h1>
 
       <p className="bz-lead">
-        {what} is part of {name} now, at one address instead of four. This page
-        forwards there; if it has not, the link below does.
+        {what} moved to {name}. This page forwards there; if it has not, the
+        link below does.
       </p>
 
       <p>

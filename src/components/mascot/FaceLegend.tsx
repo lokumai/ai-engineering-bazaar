@@ -78,7 +78,7 @@ export interface FaceLegendProps {
  * render — the count is perfectly derivable, just not by a page prerendered
  * before this reader existed. Printing `—/7` told a reader whose record holds
  * four sign-offs that the number was unobtainable, while the identical meter on
- * `/courses/` printed `4/7`.
+ * the curriculum listing printed `4/7`.
  *
  * The numerator is therefore `--` and carries `data-hl-cat-tally`, the same
  * contract `CategoryMeter` writes, so the one `CategoryTally` island per

@@ -1,6 +1,7 @@
 import { href } from '@/lib/url'
 import { categoryByDir } from './curriculum-file'
 import { type CourseModule, loadAllModules } from './loader'
+import { INDEX_ROUTE } from '@/lib/route-labels'
 
 /**
  * The corpus cross-references itself in the only notation a folder of markdown
@@ -189,11 +190,16 @@ function routeOf(rawHref: string, source: string): string | null {
   // `mini-courses/index.md` — the corpus root file, reached as `../index.md`
   // from a category README. It has no module route because it is not a module:
   // it is the corpus' own table of contents, and the page that does that job
-  // here is `/courses/`. Landing the reader on the course index is what the
-  // link meant. `strip.ts` and `intro.ts` between them already remove the
-  // links that use it, so this branch is a guarantee rather than a live path.
+  // here is the catalog. Landing the reader on the whole list is what the link
+  // meant. `strip.ts` and `intro.ts` between them already remove the links that
+  // use it, so this branch is a guarantee rather than a live path.
+  //
+  // M17 repointed it from `/courses/`, which is a forwarding stub now. The link
+  // gate would still have passed — a stub is a page and it resolves — so this
+  // is the class of defect no test can see: a link that works and lands one
+  // redirect short of where it meant to.
   const segments = walk(dirOf(source), targetOf(rawHref))
-  if (segments.length === 1 && segments[0] === 'index.md') return '/courses/'
+  if (segments.length === 1 && segments[0] === 'index.md') return INDEX_ROUTE
 
   const module = corpusTargetOf(rawHref, source)
   return module === null ? null : `/courses/${module.slug}/`

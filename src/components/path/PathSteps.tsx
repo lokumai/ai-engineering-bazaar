@@ -27,7 +27,7 @@ import { isDrawnStep, type LearningPath, type PathStep, type Tier } from '@/lib/
  * marker — no `hl-signed-<n>` for n ≥ 16 can ever be stamped, because a draft
  * sheet has no sign-off control to produce one — and carries **no link**: a
  * link on a roadmap entry is a promise that there is something there to read.
- * The sheet is still reachable from `/courses/`, which is where a reader goes
+ * The sheet is still reachable from the catalog, which is where a reader goes
  * to see what a draft sheet actually is (§13.4.4 — a path is a view, not a
  * gate, and equally not a wall).
  *

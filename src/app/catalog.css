@@ -346,12 +346,6 @@
     letter-spacing: var(--tracking-section);
   }
 
-  .bz-levelhead-count {
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-item);
-    font-variant-numeric: tabular-nums;
-  }
-
   .bz-levelhead-rule {
     flex: 1;
     height: 1px;
@@ -393,13 +387,18 @@
      floor it has to clear. */
   .bz-catcard[data-drawn="false"] { background: var(--color-surface-sunken); }
 
-  /* AND WITH THE FILL COMES THE INK. The three muted things on this card — the
-     level line, the ordinal and the fact terms — measure 5.81:1 on the raised
+  /* AND WITH THE FILL COMES THE INK. The four muted things on this card — the
+     level line, the topics, the ordinal and the fact terms — measure 5.81:1 on the raised
      fill a written card has and 4.21:1 on the sand this one has, under the
      4.5:1 they owe as text. The fill is what says `Planned`, so the fill stays
      and the ink is what moves; 11.24:1, and the card still reads as the quiet
      one because the sand does that. */
-  .bz-catcard[data-drawn="false"] :is(.bz-catcard-level, .bz-catcard-num, .bz-catcard-facts dt) {
+  .bz-catcard[data-drawn="false"] :is(
+    .bz-catcard-level,
+    .bz-catcard-num,
+    .bz-catcard-topics,
+    .bz-catcard-facts dt
+  ) {
     color: var(--color-on-surface);
   }
 
@@ -439,15 +438,33 @@
 
   .bz-catcard-link { color: var(--color-on-surface); }
 
-  /* `03`'s card prints a one-line summary under its title; the corpus has no
-     such field, and `mini-courses/` is read-only. So the card keeps the four
-     labelled facts it already had — each fact named, because a bare `23` next
-     to a bare `EN · TR` is the meta strip DESIGN.md calls a tell — laid out on
-     `03`'s own footer row. */
+  /* M17 — `03`'s summary slot, filled at last.
+
+     `.card p` in the mockup is `margin:0 0 10px; color:var(--muted);
+     font-size:13.5px; line-height:1.5`, and every one of those is transcribed
+     here: 13.5px is `--text-meta` exactly, so nothing had to be snapped. The
+     corpus still has no summary field — what goes in the slot is the module's
+     topics, which is a fact it already publishes.
+
+     **This is the whole of "the cards look too compact".** The card was the
+     mockup's card with one of its four blocks missing, so it closed up: title,
+     ordinal, facts. Restoring the block the mockup draws is what gives it the
+     room, and it does not cost a single invented value. */
+  .bz-catcard-topics {
+    margin: 0 0 10px;
+    color: var(--color-on-surface-muted);
+    font: var(--text-meta) / 1.5 var(--font-sans);
+  }
+
+  /* Each fact named, because a bare `23` next to a bare `EN · TR` is the meta
+     strip DESIGN.md calls a tell. Laid out on `03`'s own footer row, whose gap
+     is 9px — taken here as 6px down and 14px across, because this row wraps to
+     two lines where the mockup's holds three items on one and a wrapped row
+     needs the leading its own line-height does not supply. */
   .bz-catcard-facts {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px 12px;
+    gap: 6px 14px;
     margin: 0;
     font-size: var(--text-mark);
   }
@@ -472,9 +489,11 @@
      one now — this catalog, the two level listings, the organisation roster
      and the sign-in doors — and a class defined in one surface stylesheet
      and used by another is what the surface discipline exists to prevent.
-     The columns BELOW are the catalog's own and stay: a topics cell, a
-     status cell, a tick and the four sign-off squares are this table's
-     subject matter rather than any table's shape. */
+     The columns BELOW are the catalog's own and stay: a topics cell and the
+     four sign-off squares are this table's subject matter rather than any
+     table's shape. M17 took the status cell, its tick and its flex row with
+     the column they drew — `ModuleRow`'s `RowState` records what carries the
+     state instead, and none of it needs a rule. */
 
 
   .bz-row-topics {
@@ -483,21 +502,6 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-
-  .bz-row-status {
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-mark);
-  }
-
-  /* The row the cell holds, rather than the cell itself — see `ModuleRow.tsx`
-     for what putting this on the `<td>` cost. */
-  .bz-row-status-line {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .bz-row-tick { flex: none; }
 
   /* The completion column, which only the table draws.
 

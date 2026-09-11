@@ -74,10 +74,10 @@ describe('courseLinkFor', () => {
    * The corpus root file is the corpus' own table of contents, and the page that
    * does that job here is the course index.
    */
-  it('sends the corpus index to the course index', () => {
+  it('sends the corpus index to the catalog', () => {
     process.env.NEXT_PUBLIC_SITE_BASE_PATH = ''
     expect(courseLinkFor('../index.md', '1_fundamentals/README.md'))
-      .toBe('/courses/')
+      .toBe('/sheets/')
   })
 
   it('leaves anything that is not an internal markdown link alone', () => {

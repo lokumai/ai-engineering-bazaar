@@ -18,8 +18,9 @@ import { watchPage } from './watch'
 const PAGES: [string, string][] = [
   ['home screen', '/'],
   ['manifest', INDEX_SHEET],
-  ['curriculum', '/courses/'],
-  ['category', CATEGORY_PATHS[1]],
+  // M17 — `/courses/` folded into the catalog, so `manifest` above and this
+  // are the two listings there are.
+  ['level', CATEGORY_PATHS[1]],
   ['A0 module', A0.path],
   ['SHORT module', SHORT.path],
   ['A4 module', A4.path],

@@ -325,7 +325,7 @@ describe('/report/ — the forward (M14)', () => {
   })
 
   it('says where the record of work went, and links there', () => {
-    expect(words(markup)).toContain('The record of work is part of Your progress now')
+    expect(words(markup)).toContain('The record of work moved to Your progress')
     expect(markup).toContain('href="/profile')
   })
 

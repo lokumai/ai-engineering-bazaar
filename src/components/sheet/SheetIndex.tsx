@@ -30,6 +30,14 @@ import { ModuleRow, type RowColumn } from './ModuleRow'
  * than crushing the flexible column (§6.5, §11.10). `ModuleRow` carries the
  * whole change, including why a draft row is left alone (§13.14's amended T6).
  *
+ * ## M17: one table, two shapes, and the `STATUS` column gone
+ *
+ * `/courses/` and `/courses/[category]/` were retired into the catalog, so this
+ * component has two call sites rather than three and they differ by one column.
+ * The whole catalog passes `both`, because its rows come from every level and a
+ * row's level may not be carried by its hue alone; a level page passes `topics`,
+ * because its own heading says the level once instead of eight times.
+ *
  * ## M16 stage 4: the min-width is COMPUTED now, and that is the point of it
  *
  * There used to be a hand-computed `min-width: 1060px` in a stylesheet with the
@@ -67,26 +75,33 @@ interface Column {
  * §4.8's widths, with one column flexible and three measured rather than
  * copied.
  *
- * Which column flexes depends on the page. On the index it is `SHEET`, exactly
- * as §4.8 has it. On a category page it is `TOPICS`: three section titles
- * cannot say anything in 168px, and §4.9's own arithmetic — 9 × 52 + 52 =
- * 520px — pins the row at 52px, so the column cannot buy the room back in
- * height either. Sheet titles run to 29 characters and sit comfortably in
- * 240px, so the two swap.
+ * **`TOPICS` is the flexible one on every page now** (M17). It used to swap
+ * with `SHEET` depending on the route, because the flat manifest printed the
+ * level where a category page printed the topics and only one of the two could
+ * flex. There is one listing left and it prints both, so the choice is settled
+ * rather than made per call: three section titles cannot say anything in 168px,
+ * and §4.9's own arithmetic — 9 × 52 + 52 = 520px — pins the row at 52px, so
+ * the column cannot buy the room back in height either. Sheet titles run to 29
+ * characters and sit comfortably in a fixed 240px.
  *
  * Three of §4.8's widths do not hold §4.8's own values, measured in the
  * browser at the type §3.2 and §5.3 specify — `text-mark`, 11px IBM Plex Mono
  * at `+0.06em`, in a cell padded `10px 14px`:
  *
  *   EXTENT   `5,008 W · 30 MIN` is 116px of text; 104 − 28 leaves 76.
- *   STATUS   the tick, an 8px gap and `NOT DRAWN` are 85px; 104 − 28 leaves 76.
  *   LANG     `EN · TR` is 51px; 72 − 28 leaves 44.
  *
- * Every one of them wrapped onto a second line inside the 52px row. Nothing
- * about the type is negotiable — the tracking is §3.4's rule for machine
- * values and the padding is §5.3's — so the columns take the room they need
- * (152, 116, 80) out of the flexible one, which still has 404px for a 29
- * character title. Every other width here is §4.8's, unchanged.
+ * Both wrapped onto a second line inside the 52px row. Nothing about the type
+ * is negotiable — the tracking is §3.4's rule for machine values and the
+ * padding is §5.3's — so the columns take the room they need (152, 80) out of
+ * the flexible one. §4.8's `STATUS`, which was the third of these and measured
+ * 116, is gone: M17 took the column off the table and left the state to the
+ * cells that were already carrying it (`ModuleRow`'s `RowState`).
+ *
+ * **MEASURED after that change:** `topics` sums to 944 and `both` to 1112. Both
+ * are still wider than a phone and still scroll inside their own container,
+ * which is what §6.5 and §11.10 ask. Nobody re-derives either number — the sum
+ * is taken from this array, once, below.
  *
  * `SIGN-OFF` is 72px, not §4.8's 96, and **the reasoning that used to be here
  * is gone rather than corrected.** It read: the table's `min-width` is 1060px,
@@ -102,26 +117,20 @@ interface Column {
  * stale.
  */
 function columnsFor(column: RowColumn): Column[] {
-  const topics = column === 'topics'
+  const level = column === 'both'
 
   return [
     { key: 'number', label: '#', width: 48 },
     {
       key: 'sheet',
       label: 'Module',
-      width: topics ? 240 : null,
-      floor: topics ? undefined : 240,
+      width: 240,
     },
-    {
-      key: 'context',
-      label: topics ? 'Topics' : 'Level',
-      width: topics ? null : 168,
-      floor: topics ? 168 : undefined,
-    },
+    ...(level ? [{ key: 'level', label: 'Level', width: 168 } as Column] : []),
+    { key: 'topics', label: 'Topics', width: null, floor: 168 },
     { key: 'extent', label: 'Length', width: 152 },
     { key: 'sources', label: 'Sources', width: 88 },
     { key: 'lang', label: 'Lang', width: 80 },
-    { key: 'status', label: 'Status', width: 116 },
     {
       key: 'signoff',
       label: 'Completion',

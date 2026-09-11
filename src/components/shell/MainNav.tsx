@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef } from 'react'
-import { INDEX_ROUTE, INDEX_TITLE, type CategoryLabel } from '@/lib/route-labels'
+import { INDEX_ROUTE, INDEX_TITLE, levelRoute, type CategoryLabel } from '@/lib/route-labels'
 
 /**
  * M10 — the navbar. One row, on every route, with a dropdown per level.
@@ -73,9 +73,14 @@ import { INDEX_ROUTE, INDEX_TITLE, type CategoryLabel } from '@/lib/route-labels
  * reaches `node:fs` may be imported here.
  *
  * The current route is marked on the ROOT it belongs to, not only on an exact
- * match: a module page at `/courses/fundamentals/rag/` lights `Curriculum`, and
+ * match: a module page at `/courses/fundamentals/rag/` lights `Catalog`, and
  * the level inside the dropdown too, because a reader deep in the course
  * should be able to see where they are without reading the URL.
+ *
+ * **M17 made that two trees rather than one.** The catalog owns `/sheets/` and
+ * `/courses/` both — the first is every listing of the course, the second is
+ * every module in it — because the milestone moved the listings and
+ * deliberately left the modules where every existing bookmark expects them.
  */
 
 interface Destination {
@@ -85,12 +90,25 @@ interface Destination {
   owns: readonly string[]
 }
 
-const CURRICULUM = '/courses/'
+/**
+ * M17 — the module tree. It is NOT a destination in this bar any more, and it
+ * is still owned: a reader on `/courses/expert/agents/` is inside the course,
+ * so the catalog lights up and the level inside its dropdown does too.
+ */
+const MODULES = '/courses/'
 
 const DESTINATIONS: readonly Destination[] = [
   { href: '/', label: 'Home', owns: [] },
-  { href: CURRICULUM, label: 'Curriculum', owns: [CURRICULUM] },
-  { href: INDEX_ROUTE, label: INDEX_TITLE, owns: [INDEX_ROUTE] },
+  /**
+   * M17 — ONE list, with the dropdown that used to hang off `Curriculum`.
+   *
+   * There were two entries here and they opened two renderings of the same
+   * thirty-three modules. `/courses/` is a forwarding stub now, so the entry
+   * naming it went and its dropdown moved onto the entry that survived — which
+   * is the author's own framing of the milestone: *"lets only have a single
+   * catalog page which has everything there and people can filter there."*
+   */
+  { href: INDEX_ROUTE, label: INDEX_TITLE, owns: [INDEX_ROUTE, MODULES] },
   {
     href: '/profile/',
     // M14 — `Your progress`, which is the name the page itself carries and the
@@ -107,6 +125,21 @@ const DESTINATIONS: readonly Destination[] = [
     owns: ['/profile/', '/report/', '/dashboard/', '/path/'],
   },
 ]
+
+/**
+ * The level a pathname is inside, or null.
+ *
+ * Two trees carry one: `/sheets/<level>/` is the level's own page and
+ * `/courses/<level>/<module>/` is a module in it. Both name the level in the
+ * same position, which is the only reason this is a segment read and not a
+ * table.
+ */
+function levelOf(pathname: string): string | null {
+  const segments = pathname.split('/').filter(Boolean)
+  if (segments[0] === 'sheets' && segments.length === 2) return segments[1]
+  if (segments[0] === 'courses' && segments.length >= 2) return segments[1]
+  return null
+}
 
 /** `/` is only current when it is the whole path; everything else owns a tree. */
 function isCurrent(destination: Destination, pathname: string): boolean {
@@ -144,11 +177,11 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
       <ul role="list">
         {DESTINATIONS.map((destination) => {
           const current = isCurrent(destination, pathname)
-          const isCurriculum = destination.href === CURRICULUM
+          const hasMenu = destination.href === INDEX_ROUTE
 
           return (
             <li key={destination.href}>
-              {isCurriculum ? (
+              {hasMenu ? (
                 <details ref={panel}>
                   {/* `data-current` and NOT `aria-current`. This is a
                       disclosure trigger, not a link, so it is never itself the
@@ -172,9 +205,9 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
                           is named here instead of implied by the label. */}
                       <li>
                         <Link
-                          href={CURRICULUM}
+                          href={INDEX_ROUTE}
                           className="bz-menu-item"
-                          aria-current={pathname === CURRICULUM ? 'page' : undefined}
+                          aria-current={pathname === INDEX_ROUTE ? 'page' : undefined}
                         >
                           <span aria-hidden="true" className="bz-menu-key" />
                           Every level
@@ -182,14 +215,21 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
                         </Link>
                       </li>
                       {categories.map((category) => {
-                        const href = `${CURRICULUM}${category.slug}/`
                         return (
                           <li key={category.slug}>
                             <Link
-                              href={href}
+                              href={levelRoute(category.slug)}
                               className="bz-menu-item"
                               data-cat={category.slug}
-                              aria-current={pathname.startsWith(href) ? 'page' : undefined}
+                              /* Not `startsWith`, because M17 left the two
+                                 prefixes apart: the level's own page is under
+                                 `/sheets/` and its modules are under
+                                 `/courses/`, so the level a reader is inside is
+                                 a SEGMENT in one of two trees and not a prefix
+                                 of one address. */
+                              aria-current={
+                                levelOf(pathname) === category.slug ? 'page' : undefined
+                              }
                             >
                               {/* The level's own colour, and its number beside
                                   it: the hue is never the only carrier

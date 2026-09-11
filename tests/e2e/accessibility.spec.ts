@@ -20,7 +20,8 @@ import { showTable } from './views'
 const PAGES = [
   '/',
   INDEX_SHEET,
-  '/courses/',
+  // M17 — `/courses/` was the third listing of the course and is a forwarding
+  // stub now. What it listed is on the two addresses above and below it.
   CATEGORY_PATHS[0],
   SHORT.path,
   A0.path,
@@ -123,8 +124,8 @@ test('main is not a tab stop of its own', async ({ page }) => {
 test('the header tab order runs left to right and stops at the repo link', async ({ page }) => {
   await page.goto(A0.path)
 
-  // M10 raised the cap from 16. The header gained a navbar: four destinations
-  // plus the five levels inside the Curriculum panel, which `:focus-within`
+  // M10 raised the cap from 16. The header gained a navbar: three destinations
+  // plus the five levels inside the catalog's panel, which `:focus-within`
   // opens as the trigger takes focus, so every one of them is in the tab order
   // by design. Sixteen presses no longer reach the repo link, and a cap that
   // stops short reads as "the order ends here" rather than "we stopped
@@ -145,7 +146,7 @@ test('the header tab order runs left to right and stops at the repo link', async
   }
 
   // MEASURED in Chrome, and the order is not what it was before M10:
-  //   skip · wordmark · navbar (4) · controls (4) · trail
+  //   skip · wordmark · navbar (3 + the panel's levels) · controls (4) · trail
   // The trail moved to its own row UNDER the navbar row, so it is last in the
   // DOM and therefore last in the tab order. That is why the old
   // `order.at(-1)` assertion for the repo link is gone: the controls are no
@@ -162,11 +163,14 @@ test('the header tab order runs left to right and stops at the repo link', async
   // group's length: the navbar is reached before the controls, and the trail
   // after them.
   expect(at(/^home$/i), 'the navbar').toBe(2)
-  expect(at(/^curriculum$/i)).toBe(3)
-  expect(at(/^catalog$/i)).toBe(4)
-  // M14 — the fourth destination reads `Your progress`. It was `My progress`,
+  // M17 — THREE destinations, not four. `Curriculum` and `Catalog` opened two
+  // listings of the same thirty-three modules; the fold left one, and the
+  // level dropdown moved onto it. The levels inside that panel are still in
+  // the tab order, which is what the cap of 40 above is for.
+  expect(at(/^catalog$/i)).toBe(3)
+  // M14 — the last destination reads `Your progress`. It was `My progress`,
   // and the copy register bans the first person outright.
-  expect(at(/^your progress$/i)).toBe(5)
+  expect(at(/^your progress$/i)).toBe(4)
   expect(at(/toggle theme/i)).toBeGreaterThan(at(/^your progress$/i))
   expect(at(/repository/i)).toBeGreaterThan(at(/toggle theme/i))
 

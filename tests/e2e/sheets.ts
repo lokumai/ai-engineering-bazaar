@@ -104,7 +104,29 @@ export const SHEET_COUNT = SHEETS.length
 export const DRAWN_COUNT = SHEETS.filter((s) => s.drawn).length
 export const NOT_DRAWN_COUNT = SHEET_COUNT - DRAWN_COUNT
 
+/**
+ * The five level pages — the catalog opened at one level.
+ *
+ * **M17 moved them and the move is the point of the constant.** They were
+ * `/courses/<level>/`, a second listing of the course with no filters; those
+ * five addresses are forwarding stubs now and `LEVEL_STUB_PATHS` below is what
+ * names them. A spec walking levels wants these.
+ */
 export const CATEGORY_PATHS = [
+  '/sheets/fundamentals/',
+  '/sheets/intermediate/',
+  '/sheets/expert/',
+  '/sheets/ecosystem/',
+  '/sheets/protocols/',
+] as const
+
+/**
+ * The same five, at the addresses they used to have — every one of which is
+ * now a `MovedTo` forward. Named rather than derived, for the same reason
+ * everything else in this file is: a spec that computed these from the live
+ * routes could not notice one of them being deleted.
+ */
+export const LEVEL_STUB_PATHS = [
   '/courses/fundamentals/',
   '/courses/intermediate/',
   '/courses/expert/',

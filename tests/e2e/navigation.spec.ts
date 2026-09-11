@@ -112,8 +112,11 @@ test('previous walks 32 back to 1', async ({ page }) => {
  */
 const EVERY_ROUTE: readonly string[] = [
   '/',
-  '/courses/',
-  '/courses/fundamentals/',
+  // M17 — the catalog's two listing shapes. `/courses/` and
+  // `/courses/<level>/` are forwards now and are in `redirects.spec.ts` for
+  // the same reason M14's three are: a navbar in a page that is redirecting is
+  // a race with no subject.
+  '/sheets/fundamentals/',
   A0.path,
   INDEX_SHEET,
   '/join/',
@@ -150,7 +153,10 @@ test('every route carries the same navbar', async ({ page }) => {
   await page.goto(EVERY_ROUTE[0])
   const reference = await shapeOf()
   expect(reference, `${EVERY_ROUTE[0]} has no navbar at all`).not.toBeNull()
-  expect(reference!.destinations.length).toBeGreaterThan(3)
+  // M17 — three destinations: Home, Catalog, Your progress. `Curriculum` and
+  // `Catalog` were two entries opening two listings of one course. This is a
+  // non-vacuity floor rather than a count of the bar, so it moves with the bar.
+  expect(reference!.destinations.length).toBeGreaterThanOrEqual(3)
   expect(reference!.levels.length).toBeGreaterThan(1)
 
   for (const route of EVERY_ROUTE.slice(1)) {

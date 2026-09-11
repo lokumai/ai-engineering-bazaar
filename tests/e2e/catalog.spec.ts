@@ -112,7 +112,12 @@ test('the three views show the same set of modules, filtered and unfiltered', as
   // the views; the count beside the toggle is the third witness, and it is one
   // number for the page rather than one per view — a view that rendered a
   // different set would disagree with it.
-  for (const filter of ['Every level', 'Ready', 'Planned', 'Both languages']) {
+  /* M17 / D62 — the level axis left this loop because it left the component.
+     A level is an address now, so `Every level` is a LINK and pressing it is a
+     navigation; the state chips are still buttons because they ask a question
+     about a record no address can hold. The level axis is checked below, on
+     the page it produces. */
+  for (const filter of ['All', 'Ready', 'Planned', 'Both languages']) {
     await page.getByRole('button', { name: filter, exact: true }).click()
 
     const [overview, cards, table] = await Promise.all(
@@ -126,6 +131,20 @@ test('the three views show the same set of modules, filtered and unfiltered', as
     const shown = Number((await page.locator('.bz-filter-count-value').first().innerText()).trim())
     expect(shown, filter).toBe(overview.length)
   }
+
+  /* The level axis, on a prerendered level page — which is the one the fold
+     added and the one that could show a different set per view, because the
+     filter is applied at build time on the server and in the browser on every
+     render after it. */
+  await page.goto(CATEGORY_PATHS[2])
+
+  const [overviewL, cardsL, tableL] = await Promise.all(
+    VIEWS.map((view) => namesIn(page, view.id)),
+  )
+  expect(overviewL, 'the level page').toEqual(cardsL)
+  expect(cardsL, 'the level page').toEqual(tableL)
+  expect(overviewL.length, 'the level page shows nothing').toBeGreaterThan(0)
+  expect(overviewL.length, 'the level page shows everything').toBeLessThan(SHEET_COUNT)
 
   expect(problems.consoleErrors).toEqual([])
 })
@@ -276,22 +295,39 @@ test('both filter axes work from the keyboard and announce the count', async ({ 
   expect(readyCount).toBeGreaterThan(0)
   expect(readyCount).toBeLessThan(SHEET_COUNT)
 
-  // The second axis composes with the first rather than replacing it. The chip
-  // is taken by its position in the named group and not by its title: a level's
-  // title is a fact about the content, which a test may not write down
-  // (`tests/README.md`), and renaming a level in `curriculum.yaml` would turn
-  // this red for no reason. `nth(1)` steps over the `All` chip.
-  const level = page
-    .getByRole('group', { name: 'Filter by level' })
-    .getByRole('button')
-    .nth(1)
-  await level.focus()
-  await page.keyboard.press('Space')
-  await expect(level).toHaveAttribute('aria-pressed', 'true')
-  await expect(ready).toHaveAttribute('aria-pressed', 'true')
+  /* M17 / D62 — the second axis is NAVIGATION, so it answers Enter rather than
+     Space and it marks itself `aria-current="page"` rather than pressed. The
+     chip is taken by its position in the named landmark and not by its title:
+     a level's title is a fact about the content, which a test may not write
+     down (`tests/README.md`). `nth(1)` steps over the `Every level` chip.
 
-  const both = Number((await page.locator('.bz-filter-count-value').first().innerText()).trim())
-  expect(both).toBeLessThanOrEqual(readyCount)
+     **The state filter does not compose across it, and that is the design.**
+     Going to a level is a page load; the chips that read the reader's record
+     cannot survive one, because a prerendered page has never met the reader
+     (§12.2). So the arriving page opens at `all`, which is what it opens at
+     everywhere else on this site. */
+  const level = page
+    .getByRole('navigation', { name: 'Filter by level' })
+    .getByRole('link')
+    .nth(1)
+  const href = await level.getAttribute('href')
+  await level.focus()
+  await page.keyboard.press('Enter')
+
+  await expect(page).toHaveURL(new RegExp(`${href}$`))
+  const arrived = page
+    .getByRole('navigation', { name: 'Filter by level' })
+    .getByRole('link')
+    .nth(1)
+  await expect(arrived).toHaveAttribute('aria-current', 'page')
+
+  const onLevel = Number((await page.locator('.bz-filter-count-value').first().innerText()).trim())
+  expect(onLevel).toBeGreaterThan(0)
+  expect(onLevel).toBeLessThan(SHEET_COUNT)
+  // The denominator is the whole course, not the level: the page is the one
+  // catalog with one filter chosen, and saying `8 of 8` would hide that.
+  const total = Number((await page.locator('.bz-filter-count-value').nth(1).innerText()).trim())
+  expect(total).toBe(SHEET_COUNT)
 })
 
 test('an empty result says what to do next, and the way out works', async ({ page }) => {
@@ -305,8 +341,11 @@ test('an empty result says what to do next, and the way out works', async ({ pag
   )
   expect(readyOnly, 'no level in the corpus is entirely written').toBeDefined()
 
+  /* M17 — the level goes first, because it is a page and the state filter is
+     not. Pressing `Planned` and then a level would navigate away from the very
+     state it was setting up. */
+  await page.goto(`/sheets/${readyOnly}/`)
   await page.getByRole('button', { name: 'Planned', exact: true }).click()
-  await page.locator(`.bz-chip[data-cat="${readyOnly}"]`).click()
 
   const empty = page.locator('.bz-empty')
   await expect(empty).toBeVisible()
@@ -317,7 +356,16 @@ test('an empty result says what to do next, and the way out works', async ({ pag
   // And it says what to do, which is M12's deliverable: not "no results".
   await expect(empty.locator('.bz-empty-cue')).toContainText('Widen either one')
 
-  await empty.getByRole('button', { name: 'Show the whole catalog' }).click()
+  /* The one path out is a LINK here and a button on the catalog's front page,
+     and which it is follows the mechanism: a level was part of what narrowed
+     this, so leaving it is a navigation. The pay-off is that a reader with the
+     bundle blocked can take it — the button never let them.
+
+     It also clears BOTH filters, which is the claim worth making: the state
+     chip resets because the page it lived on was unmounted, not because
+     anything reset it. */
+  await empty.getByRole('link', { name: 'Show the whole catalog' }).click()
+  await expect(page).toHaveURL(new RegExp(`${INDEX_SHEET}$`))
   await expect(empty).toHaveCount(0)
   await expect(page.locator('.bz-filter-count')).toHaveText(
     `Showing ${SHEET_COUNT} of ${SHEET_COUNT}`,

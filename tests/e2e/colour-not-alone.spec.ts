@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test'
 import { openRegisterRow, seedRecord, signedSheet } from './record'
-import { CATEGORY_PATHS } from './sheets'
+import { CATEGORY_PATHS, INDEX_SHEET } from './sheets'
+import { showTable } from './views'
 
 /**
  * §13.1.4 / SC 1.4.1 — every surface that carries a category hue says the same
@@ -45,21 +46,29 @@ test('a category card still reports its standing with no colour (§13.1.3 item 2
   page,
 }) => {
   await seedRecord(page, { identity: { role: 'software-engineer' }, sheets: SIGNED })
-  await page.goto('/courses/')
 
-  // The meter is the surface that carries hue. Its count is what carries the
-  // meaning, and it is real text beside it.
-  const meters = page.locator('.bz-meter')
-  expect(await meters.count()).toBeGreaterThan(0)
+  /* M17 — the band and its meter are on the level's own catalog entry now, one
+     per page rather than five on one. `SIGNED` carries a signed sheet in each
+     of these two levels, so both are asserted: a claim checked on one level is
+     a claim checked on one page, and the failure this replaces was exactly
+     that — a count of five meters that became a count of one. */
+  for (const level of [CATEGORY_PATHS[0], CATEGORY_PATHS[1]]) {
+    await page.goto(level)
 
-  await expect
-    .poll(async () => page.locator('[data-hl-cat-tally]').first().innerText())
-    .toMatch(/^\d+\/\d+$/)
+    // The meter is the surface that carries hue. Its count is what carries the
+    // meaning, and it is real text beside it.
+    await expect(page.locator('.bz-meter'), level).toHaveCount(1)
 
-  // Two categories carry a signed sheet in SIGNED, and each states its count
-  // in words. How many sheets a category holds is the curriculum's business.
-  const body = await page.locator('body').innerText()
-  expect(body.match(/\d+\/\d+\s+COMPLETED/gi)?.length ?? 0).toBeGreaterThanOrEqual(2)
+    await expect
+      .poll(async () => page.locator('[data-hl-cat-tally]').first().innerText())
+      .toMatch(/^\d+\/\d+$/)
+
+    // …and it says what the number means, in words, beside it.
+    const body = await page.locator('body').innerText()
+    expect(body.match(/\d+\/\d+\s+COMPLETED/gi)?.length ?? 0, level).toBe(1)
+  }
+
+  await page.goto(CATEGORY_PATHS[0])
 
   // A segment's border survives forced colours — `forced-color-adjust: none` on
   // the track and a system-colour fill on a signed one — so "signed" is still a
@@ -74,11 +83,35 @@ test('a module row still states its own status with no colour (§13.1.3 item 3)'
   page,
 }) => {
   await seedRecord(page, { sheets: SIGNED })
-  await page.goto('/courses/fundamentals/')
+  /* The WHOLE catalog and not a level page: the claim is that a written row and
+     a planned row are told apart without colour, so both have to be in one
+     table. `Fundamentals` is entirely written — which is why `catalog.spec.ts`
+     picks it for the empty-state case — so a level page is exactly where the
+     comparison cannot be made. */
+  await page.goto(INDEX_SHEET)
+  await showTable(page)
 
-  // The row's leading rule is tinted; the row's own cells are what say so.
+  /* The row's leading rule is tinted; the row's own cells are what say so.
+
+     **M17 changed which cells those are and this is where that is measured.**
+     §4.8's `STATUS` column was the word `READY` beside a tick, and the author
+     had it removed. What is left on a written row and absent from a planned
+     one, with no colour in any of it: a declared length, a source count, and
+     a completion cell holding a square per slot rather than one dashed square.
+     An em dash and a border style both survive `forced-colors: active`; a hue
+     does not, which is the whole of §13.1.3 item 3. */
   const signedRow = page.locator('tr.bz-row').filter({ hasText: 'LLM Fundamentals' })
-  await expect(signedRow).toContainText(/READY/i)
+  await expect(signedRow).toHaveAttribute('data-cat', 'fundamentals')
+  await expect(signedRow.locator('.bz-signoff-square[data-drawn="false"]')).toHaveCount(0)
+  await expect(signedRow.locator('.bz-signoff-square')).not.toHaveCount(0)
+
+  // And a planned row in the same table, told apart from it by the same cells.
+  const planned = page.locator('tr.bz-row[data-draft]').first()
+  await expect(planned.locator('.bz-signoff-square[data-drawn="false"]')).toHaveCount(1)
+  await expect(planned.locator('.bz-row-value').first()).toHaveText('—')
+
+  // The word did not vanish, it left the screen (D61).
+  await expect(planned.locator('.bz-row-title .bz-said')).toHaveText('PLANNED')
 
   // Every hue-bearing row keeps a visible structural border, so the table still
   // reads as a table.

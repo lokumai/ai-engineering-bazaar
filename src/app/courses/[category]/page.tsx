@@ -1,38 +1,9 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { CategoryMeter } from '@/components/course/CategoryMeter'
-import { CategoryTally } from '@/components/course/CategoryTally'
-import { Prose } from '@/components/course/Prose'
-import { SignOffMarks } from '@/components/record/SignOffMarks'
-import { SheetIndex } from '@/components/sheet/SheetIndex'
-import { TickGauge, ticksFrom } from '@/components/sheet/TickGauge'
+import { MovedTo } from '@/components/shell/MovedTo'
 import { PageShell } from '@/components/shell/PageShell'
 import { CATEGORIES, categoryBySlug } from '@/lib/content/curriculum-file'
-import { curriculumFacts } from '@/lib/content/facts'
-import { categoryIntro } from '@/lib/content/intro'
-import { categoryEyebrow, categoryRows } from '@/lib/content/manifest'
-import { renderMarkdown } from '@/lib/content/render'
-import { plural } from '@/lib/text'
-
-/**
- * §4.9 — the category page. A sheet index table, not a card grid: cards would
- * spend a screen saying what a table says in a third of it, and there is no
- * category card in this system (§5.4, §11.2).
- *
- * The five items §4.9 asks for, in its order: the eyebrow, the h1, the one-line
- * blurb, the discrete tick gauge, and the index table with `TOPICS` in place
- * of `SUBSYSTEM`. Every count in the eyebrow and every tick in the gauge is
- * measured from the subsystem's own sheets.
- *
- * Then the subsystem's README, through the prose pipeline. Its `## Modules`
- * manifest is stripped at build time — the table above states all of it and
- * more, and every link in it addresses a `.md` file that this page cannot turn
- * into a route, because a README carries no sheet number for `links.ts` to
- * resolve the path against (see `lib/content/intro.ts`). What is left is the
- * author's own prose about the subsystem, which nothing else on the page says:
- * Intermediate's note that its Turkish files are still placeholders is exactly
- * the kind of thing §7.6 exists to keep visible.
- */
+import { levelRoute } from '@/lib/route-labels'
 
 interface RouteParams {
   category: string
@@ -50,10 +21,34 @@ export async function generateMetadata({
   const category = categoryBySlug((await params).category)
   if (!category) return {}
 
-  return { title: category.title, description: category.blurb }
+  return {
+    title: category.title,
+    description: `${category.title} is part of the catalog now. This page forwards there.`,
+    // A redirect a search engine indexes is a search result that spends a
+    // reader's click on a page with no content.
+    robots: { index: false, follow: true },
+  }
 }
 
-export default async function CategoryPage({
+/**
+ * M17 — `/courses/<level>/` folded into `/sheets/<level>/`, and this is the
+ * forward.
+ *
+ * Everything that was here is there: the header band, the level's blurb, the
+ * meter, the index table with its topics column, and the level's own README
+ * under `General notes`. What is there in addition is the rest of the catalog —
+ * the other two views, the state filter, and five chips to the other levels.
+ *
+ * **Six stubs and not one.** A level is a real address a reader may have
+ * bookmarked, and `generateStaticParams` is what makes each of the six forward
+ * to its own destination rather than dumping all six on the catalog's front
+ * page. A fold that loses which level you asked for is a fold that costs the
+ * reader the click it was supposed to save.
+ *
+ * The module route below this one does not move: a module is still
+ * `/courses/<level>/<module>/`.
+ */
+export default async function CategoryMoved({
   params,
 }: {
   params: Promise<RouteParams>
@@ -61,61 +56,13 @@ export default async function CategoryPage({
   const category = categoryBySlug((await params).category)
   if (!category) notFound()
 
-  const rows = categoryRows(category)
-  const intro = categoryIntro(category.slug)
-  const notes = intro === null ? null : await renderMarkdown(intro)
-
   return (
-    <PageShell column={false}>
-      {/* §13.5 surface 3 — the header band, and the one aggregate hue on this
-          page. `bz-level-tint` paints §13.1.2's 2px rule above the level's
-          own name in its own flavour, resolved on channel A from the class the
-          boot script stamped (§12.2); dormant is the structural line every
-          other component uses, so a level nobody has started looks like
-          everything else rather than like a greyed-out version of itself.
-
-          The meter beside it is what keeps the rule from being the only
-          statement of progress (SC 1.4.1, §13.1.4): the eyebrow states the
-          level's length, and `n/m completed` states the reader's standing
-          in text. Without that count the band's chroma would be the sole
-          carrier of a claim about the reader, which §13.1.4 rules out. */}
-      <div className="bz-level-tint bz-cat-tint pt-3" data-cat={category.slug}>
-        <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
-          <p className="bz-facts m-0">{categoryEyebrow(category)}</p>
-          <CategoryMeter category={category.slug} sheets={rows} />
-        </div>
-
-        <h1 className="bz-display mt-3">{category.title}</h1>
-      </div>
-
-      <p className="bz-lead">{category.blurb}</p>
-
-      {/* §4.9 item 4 — one tick per sheet in this subsystem. The eyebrow above
-          states the same reading in words, so the gauge is decoration here and
-          says so (§10.4). */}
-      <TickGauge ticks={ticksFrom(rows)} className="bz-level-gauge" />
-
-      <SheetIndex
-        rows={rows}
-        column="topics"
-        label={`${category.title}, ${plural(rows.length, 'module')}`}
+    <PageShell>
+      <MovedTo
+        to={levelRoute(category.slug)}
+        name={category.title}
+        what={`The ${category.title} level`}
       />
-
-      {/* §12.2 — the table above is server-only here, so the ninth column's
-          squares are filled by this one island after mount, and the band's
-          `n/m` count by the one beside it. Both are tallies over the record,
-          and every tally is channel B. */}
-      <SignOffMarks facts={curriculumFacts()} />
-      <CategoryTally facts={curriculumFacts()} />
-
-      {notes && (
-        <section className="bz-notes" aria-labelledby="general-notes">
-          <h2 id="general-notes" className="bz-section">
-            General notes
-          </h2>
-          <Prose html={notes.html} />
-        </section>
-      )}
     </PageShell>
   )
 }

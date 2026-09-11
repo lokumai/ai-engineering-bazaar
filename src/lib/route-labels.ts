@@ -77,9 +77,12 @@ function segmentsOf(pathname: string): string[] {
 }
 
 /**
- * The one route segment that is a real page but not a category: `/courses/`
- * is the drawing set, listed by subsystem. Without this it would trail as the
- * literal URL segment, which names a directory rather than a page.
+ * The segment every module still lives under. It was a page — the drawing set,
+ * listed by subsystem — and M17 folded it into the catalog, so what is at that
+ * address now is a forward. It stays named here because a module's trail runs
+ * through it, and an unnamed segment trails as the literal URL, which names a
+ * directory rather than a page. `retargetCourseAncestors` below is what sends
+ * that crumb somewhere a reader should actually land.
  */
 const SET_SEGMENT = 'courses'
 
@@ -107,6 +110,25 @@ const ROUTE_TITLES: Record<string, string> = {
  */
 export const INDEX_ROUTE = `/${INDEX_SEGMENT}/`
 export const INDEX_TITLE = ROUTE_TITLES[INDEX_SEGMENT]
+
+/**
+ * M17 — a level's own entry into the catalog, `/sheets/expert/`.
+ *
+ * The level used to be a route of its own under `/courses/`, listing the same
+ * modules a second time. It is a filter on the one catalog now, and these six
+ * addresses are what let that filter be chosen before any script has run: the
+ * page is prerendered with the level already selected, so the chip that
+ * chooses a level is a LINK and works with the bundle blocked (D62).
+ *
+ * The module route is NOT under this prefix and does not move — a module is
+ * still `/courses/<level>/<module>/`. Only the two index pages were retired.
+ * That asymmetry is deliberate and it is the cheapest of the shapes available:
+ * moving a module would change every URL a reader has ever bookmarked, for a
+ * listing change they did not ask about.
+ */
+export function levelRoute(slug: string): string {
+  return `${INDEX_ROUTE}${slug}/`
+}
 
 /**
  * Ancestor paths that exist in the URL but were never exported as a page.
@@ -189,6 +211,41 @@ export function breadcrumbFor(
       href: last || WITHOUT_A_PAGE.has(path) ? null : path,
     })
   })
+  return retargetCourseAncestors(crumbs, segments)
+}
+
+/**
+ * M17 — a module's ancestors are pages the fold retired, and the trail is the
+ * one place that could not notice.
+ *
+ * A module is still `/courses/<level>/<module>/`, so the walk above gives its
+ * two ancestors the hrefs `/courses/` and `/courses/<level>/`. Both of those
+ * are `MovedTo` stubs now. **Nothing would have failed**: the link gate follows
+ * an href to a document and both documents exist, so every module page on the
+ * site would have shipped a trail whose every ancestor cost the reader a
+ * redirect. It was found by grepping the export for the retired shapes, which
+ * is the only check that can see it.
+ *
+ * So the two ancestors are retargeted, and the LABEL moves with the href rather
+ * than being left behind: the first crumb reads `Catalog` because that is what
+ * it opens. A crumb whose label and destination disagree is the defect this
+ * module's `INDEX_ROUTE` docblock already records once.
+ *
+ * **Ancestors only, and that includes the stubs' own trails.** The last crumb
+ * is the current page and carries no href, so a reader who typed
+ * `/courses/expert/` still sees `Expert` as where they are — but the crumb
+ * above it opens the catalog rather than the forward they are already standing
+ * on. MEASURED on the export: retargeting modules alone left five links into a
+ * retired route, one per level stub, which is the same defect one level down.
+ */
+function retargetCourseAncestors(crumbs: Crumb[], segments: string[]): Crumb[] {
+  if (segments[0] !== SET_SEGMENT || segments.length < 2) return crumbs
+
+  // crumbs[0] is the root; crumbs[1] is `courses` and crumbs[2] is the level.
+  crumbs[1] = { label: INDEX_TITLE, href: INDEX_ROUTE }
+  if (segments.length > 2) {
+    crumbs[2] = { label: crumbs[2].label, href: levelRoute(segments[1]) }
+  }
   return crumbs
 }
 
@@ -208,6 +265,14 @@ export function sheetLabelFor(
     // Two segments past `/courses/` is a module sheet, and its number is a
     // fact about the content, not about the route.
     return rest.length === 1 ? subsystemLabel(rest[0], categories) : null
+  }
+
+  // M17 — `/sheets/<level>/` is the catalog opened at one level, so the footer
+  // names the level exactly as the retired `/courses/<level>/` did. Without
+  // this branch the last `segments.length > 1` guard below returns null and a
+  // reader on a level page gets no sheet label at all.
+  if (segments[0] === INDEX_SEGMENT && segments.length === 2) {
+    return subsystemLabel(segments[1], categories)
   }
 
   if (segments.length > 1) return null

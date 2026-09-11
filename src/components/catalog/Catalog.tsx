@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { SheetIndex } from '@/components/sheet/SheetIndex'
 import { VIEWS, type CatalogViewId } from '@/lib/catalog/views'
@@ -16,6 +17,7 @@ import {
 } from '@/lib/content/rows'
 import { setCatalogView } from '@/lib/record/events'
 import { update, useRecord } from '@/lib/record/store'
+import { INDEX_ROUTE, levelRoute } from '@/lib/route-labels'
 import { plural } from '@/lib/text'
 import { CatalogCards } from './CatalogCards'
 import { CatalogOverview } from './CatalogOverview'
@@ -96,9 +98,17 @@ import { ViewIcon } from './ViewIcon'
  *
  * Two groups, not one row of eleven chips, because the questions compose: "the
  * Expert modules" and "the ones I have not completed" are independent, and one
- * group cannot express the pair. Both are `<button aria-pressed>` inside a
- * named `role="group"`, which gives a screen reader the group's name and each
- * button's state without anyone re-implementing arrow keys (§10.3).
+ * group cannot express the pair.
+ *
+ * **M17 / D62 split them by kind, and the split is the milestone.** The level
+ * group is `<nav>` full of links carrying `aria-current`, because a level is an
+ * address: `/sheets/expert/` is prerendered with that level selected. The state
+ * group stays `<button aria-pressed>` inside a named `role="group"`, because
+ * two of its six selections read the RECORD and no address can hold a fact
+ * about a reader the page has never met. Both shapes give a screen reader the
+ * group's name and each control's state without anyone re-implementing arrow
+ * keys (§10.3) — and neither one invents a widget, which is what a single group
+ * spanning both kinds would have had to do.
  *
  * **Both filters open at `all` and have to** (§12.2). Two of the six selections
  * read the RECORD, which no prerendered page has met, so a reader-state filter
@@ -109,9 +119,11 @@ import { ViewIcon } from './ViewIcon'
  * render, so with `all`/`all` active both renders emit the same 33 modules
  * whatever is in storage.
  *
- * With scripting off the reader gets the overview, the whole set, and controls
- * that do nothing — which is the right failure: everything is shown and nothing
- * is claimed.
+ * With scripting off the reader gets the overview and **a working level
+ * filter**, because that filter is now six links to six prerendered pages. The
+ * state chips still do nothing, which is the right failure for them: they ask
+ * a question about a record only the browser holds. Everything is shown and
+ * nothing is claimed.
  */
 
 /** `data-view` — the contract between a view's box, its button and the CSS. */
@@ -144,17 +156,38 @@ const RESET_ATTR = 'data-hl-filter-reset'
 export function NoMatch({
   total,
   onClear,
+  clearTo = null,
 }: {
   total: number
   onClear: () => void
+  /**
+   * M17 — where the one path out GOES, when going is what clears the filters.
+   *
+   * A level is an address now, so an empty result that a level helped produce
+   * is escaped by navigating rather than by pressing: the state chips reset on
+   * their own when this page unmounts. Null on the catalog's own front page,
+   * where the only filter left is the state one and pressing is the whole of
+   * it.
+   *
+   * The consequence is worth naming because it looks like an inconsistency and
+   * is the opposite: the control is a LINK exactly when it leads somewhere, so
+   * a reader with no JavaScript can still take it.
+   */
+  clearTo?: string | null
 }) {
   return (
     <div className="bz-empty">
       <p className="bz-empty-status">{noMatchReadout(total)}</p>
       <p className="bz-empty-cue">{NO_MATCH_CUE}</p>
-      <button type="button" className="bz-btn bz-empty-path" onClick={onClear}>
-        Show the whole catalog
-      </button>
+      {clearTo === null ? (
+        <button type="button" className="bz-btn bz-empty-path" onClick={onClear}>
+          Show the whole catalog
+        </button>
+      ) : (
+        <Link className="bz-btn bz-empty-path" href={clearTo}>
+          Show the whole catalog
+        </Link>
+      )}
     </div>
   )
 }
@@ -162,13 +195,22 @@ export function NoMatch({
 export function Catalog({
   rows,
   label,
+  level = ALL_LEVELS,
 }: {
   rows: readonly SheetRow[]
   /** Names the table's scroll region and each view's section (§10.3). */
   label: string
+  /**
+   * M17 / D62 — the level this page was prerendered at, or `ALL_LEVELS`.
+   *
+   * It arrives as a prop and never as state, because the six level pages are
+   * six real addresses: the filter is chosen at build time, so it is right in
+   * frame one, right with the bundle blocked, and it is a URL a reader can
+   * send to somebody else.
+   */
+  level?: string
 }) {
   const [select, setSelect] = useState(DEFAULT_FILTER_ID)
-  const [level, setLevel] = useState<string>(ALL_LEVELS)
   const record = useRecord()
 
   /**
@@ -184,7 +226,10 @@ export function Catalog({
     return out
   }, [record])
 
-  const levels = useMemo(() => levelsOf(rows), [rows])
+  /* Over EVERY row and not the visible ones. These chips are the navigation
+     between the six level pages, so a chip that disappeared when its own level
+     was filtered out would remove the only way back to it. */
+  const levelRefs = useMemo(() => levelsOf(rows), [rows])
   const visible = applyLevel(applyFilter(rows, select, signed), level)
   // Gated on `rows` as well: "no module matches" is a claim about a filter, and
   // it would be false where there was nothing to exclude.
@@ -204,7 +249,6 @@ export function Catalog({
    */
   function clear(): void {
     setSelect(DEFAULT_FILTER_ID)
-    setLevel(ALL_LEVELS)
     requestAnimationFrame(() => {
       document.querySelector<HTMLElement>(`[${RESET_ATTR}]`)?.focus()
     })
@@ -229,32 +273,36 @@ export function Catalog({
           bar's height is what the table view's own sticky header is offset by
           and a second row of controls inside it would make that sum wrong. */}
       <div className="bz-filters">
-        <div className="bz-chip-row" role="group" aria-label="Filter by level">
-          <button
-            type="button"
+        {/* M17 / D62 — LINKS, not buttons. The level is an address, so the
+            group is navigation: `aria-current="page"` and not `aria-pressed`,
+            because the chip does not toggle a state this component holds, it
+            goes to the page that holds it. The pay-off is the one thing a
+            button could never do — with scripting off these six chips still
+            filter the catalog. */}
+        <nav className="bz-chip-row" aria-label="Filter by level">
+          <Link
+            href={INDEX_ROUTE}
             className="bz-chip"
             {...{ [RESET_ATTR]: '' }}
-            aria-pressed={level === ALL_LEVELS}
-            onClick={() => setLevel(ALL_LEVELS)}
+            aria-current={level === ALL_LEVELS ? 'page' : undefined}
           >
             Every level
-          </button>
-          {levels.map((one) => (
-            <button
+          </Link>
+          {levelRefs.map((one) => (
+            <Link
               key={one.slug}
-              type="button"
+              href={levelRoute(one.slug)}
               className="bz-chip"
               data-cat={one.slug}
-              aria-pressed={level === one.slug}
-              onClick={() => setLevel(one.slug)}
+              aria-current={level === one.slug ? 'page' : undefined}
             >
               {/* The square is the hue; the name beside it is what a reader in
                   forced colours reads instead (SC 1.4.1). */}
               <span aria-hidden="true" className="bz-chip-key" />
               {one.title}
-            </button>
+            </Link>
           ))}
-        </div>
+        </nav>
 
         {/* `03`'s vertical divider between the two runs of chips is gone with
             the single row it divided. The two groups are one under the other
@@ -311,7 +359,11 @@ export function Catalog({
       </div>
 
       {excluded ? (
-        <NoMatch total={rows.length} onClear={clear} />
+        <NoMatch
+          total={rows.length}
+          onClear={clear}
+          clearTo={level === ALL_LEVELS ? null : INDEX_ROUTE}
+        />
       ) : (
         <div className="bz-views">
           {VIEWS.map((view) => (
@@ -342,7 +394,7 @@ export function Catalog({
               {view.id === 'table' && (
                 <SheetIndex
                   rows={visible}
-                  column="subsystem"
+                  column="both"
                   label={`${label}, ${plural(visible.length, 'module')}`}
                 />
               )}

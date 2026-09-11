@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { levelsOf, type SheetRow } from '@/lib/content/rows'
-import { NOT_MEASURED, plural } from '@/lib/text'
+import { NOT_MEASURED } from '@/lib/text'
 
 /**
  * M12 / D13 — the CARDS view: one card per module, for browsing.
@@ -42,10 +42,19 @@ import { NOT_MEASURED, plural } from '@/lib/text'
  * number are printed beside it. Under `forced-colors: active` the hue goes and
  * the words stay (SC 1.4.1).
  *
- * `03` also prints a one-line summary under each card's title. The corpus has
- * no such field and `mini-courses/` is read-only, so the four labelled facts
- * stay where the mockup puts its summary. That is a difference in content, not
- * in design, and inventing a summary is not this milestone's business.
+ * `03` prints a one-line summary under each card's title, and **M17 filled that
+ * slot without inventing anything**. The corpus has no summary field and
+ * `mini-courses/` is read-only, so the card printed its four labelled facts
+ * there instead and the slot stayed empty in meaning. It now holds the module's
+ * TOPICS — at most three, read out of the sheet itself — which is the one thing
+ * the retired `/courses/<level>/` pages could show that the catalog could not,
+ * and the reason deliverable 5 is a capability rather than a decoration.
+ *
+ * ## M17 also took the count off the level heading
+ *
+ * `03`'s `.lvlhead` carries `8 modules · 7 ready`, and the author's standing
+ * instruction outranks the mockup (`DESIGN.md`'s order of authority). The cards
+ * under the heading are the count, one each.
  */
 export function CatalogCards({ rows }: { rows: readonly SheetRow[] }) {
   const levels = levelsOf(rows)
@@ -54,7 +63,6 @@ export function CatalogCards({ rows }: { rows: readonly SheetRow[] }) {
     <>
       {levels.map((level) => {
         const own = rows.filter((row) => row.subsystem.slug === level.slug)
-        const ready = own.filter((row) => row.drawn).length
 
         return (
           <section key={level.slug} data-cat={level.slug} aria-labelledby={`bz-cards-${level.slug}`}>
@@ -67,13 +75,12 @@ export function CatalogCards({ rows }: { rows: readonly SheetRow[] }) {
               <h3 id={`bz-cards-${level.slug}`} className="bz-levelhead-title">
                 {level.title}
               </h3>
-              {/* Both numbers, and `ready` rather than `done`: this is a fact
-                  about what has been written, which is the same in frame one
-                  for every reader. `03` prints "3 done" here, which is a fact
-                  about the reader and could only arrive after first paint. */}
-              <span className="bz-levelhead-count">
-                {plural(own.length, 'module')} · {ready} ready
-              </span>
+              {/* NO COUNT. It read `8 modules · 7 ready` over eight cards, seven
+                  of which print a length and one of which prints `Planned` —
+                  the heading counted what the reader was about to count for
+                  themselves. The author, naming this line: *"Never we care
+                  about it."* MANIFESTO rule 16, and D61's method: the fact had
+                  a carrier already, so only the sentence went. */}
               <span className="bz-levelhead-rule" aria-hidden="true" />
             </div>
 
@@ -96,6 +103,18 @@ export function CatalogCards({ rows }: { rows: readonly SheetRow[] }) {
                       {row.title}
                     </Link>
                   </h4>
+
+                  {/* M17 deliverable 5 — the topics, which is what the retired
+                      level pages carried and the cards never did. It sits under
+                      the title and above the facts because it is what the
+                      module is ABOUT, and the facts are what it costs. A card
+                      with no topics prints nothing rather than an empty line:
+                      `topicsFor` returns the schedule of parts on a planned
+                      module and its own sections on a written one, so an empty
+                      list means the sheet has neither. */}
+                  {row.topics.length > 0 && (
+                    <p className="bz-catcard-topics">{row.topics.join(' · ')}</p>
+                  )}
 
                   {/* Each fact labelled, because a bare `23` beside a bare
                       `EN · TR` is the kind of meta strip DESIGN.md names as a

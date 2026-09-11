@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { showTable } from './views'
 
 /**
  * LAYOUT INVARIANTS — the check that was missing, and the reason it exists.
@@ -47,9 +48,10 @@ import { expect, test } from '@playwright/test'
 const ROUTES = [
   '/',
   '/sheets/',
-  '/courses/',
-  '/courses/fundamentals/',
-  '/courses/expert/',
+  // M17 — the two listings that were `/courses/` and `/courses/<level>/`. The
+  // MODULE route below them did not move.
+  '/sheets/fundamentals/',
+  '/sheets/expert/',
   '/courses/fundamentals/llms/',
   '/profile/',
   '/legend/',
@@ -109,7 +111,7 @@ test.describe('layout invariants, on every route', () => {
    * `display: none` is exempt and is not a loophole — a hidden cell has no
    * geometry to disagree about, and the catalog hides whole columns by design.
    */
-  for (const route of ['/sheets/', '/courses/expert/', '/profile/'] as const) {
+  for (const route of ['/sheets/', '/sheets/expert/', '/profile/'] as const) {
     test(`every table cell is still a table cell — ${route}`, async ({ page }) => {
       await page.goto(route)
       await page.waitForLoadState('networkidle')
@@ -145,7 +147,13 @@ test.describe('layout invariants, on every route', () => {
    * what matters.
    */
   test('no cell paints its border above its own row', async ({ page }) => {
-    await page.goto('/courses/expert/')
+    /* M17 — the table is INSIDE a catalog view now, and the default view is
+       the overview, so a page load alone leaves it `display: none` with every
+       row measuring zero. `examined` caught that immediately, which is what
+       the non-vacuity guard below is for: without it this test would have gone
+       green over an empty document the moment the route folded. */
+    await page.goto('/sheets/expert/')
+    await showTable(page)
     await page.waitForLoadState('networkidle')
 
     const rows = await page.evaluate(() => {
@@ -186,7 +194,7 @@ test.describe('layout invariants, on every route', () => {
    * table that must scroll sideways can never also have a viewport-sticky
    * header. That is a structural fact and not a bug to be argued with.
    */
-  for (const route of ['/sheets/', '/courses/expert/'] as const) {
+  for (const route of ['/sheets/', '/sheets/expert/'] as const) {
     test(`no sticky offset resolves against a scroller — ${route}`, async ({ page }) => {
       await page.goto(route)
       await page.waitForLoadState('networkidle')
@@ -270,7 +278,7 @@ test.describe('layout invariants, on every route', () => {
    * above a heading at x=49: the same 264px misalignment on four routes, and
    * the first thing under the bar that a reader's eye lands on.
    */
-  for (const route of ['/', '/sheets/', '/courses/', '/courses/expert/', '/courses/fundamentals/llms/'] as const) {
+  for (const route of ['/', '/sheets/', '/sheets/expert/', '/courses/fundamentals/llms/'] as const) {
     test(`the trail starts where the page starts — ${route}`, async ({ page }) => {
       await page.goto(route)
       await page.waitForLoadState('networkidle')

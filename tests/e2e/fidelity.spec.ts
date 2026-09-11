@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { A0, SHEETS, SHORT } from './sheets'
+import { A0, INDEX_SHEET, SHEETS, SHORT } from './sheets'
 import { openRegisterRow, seedRecord, signedSheet, waitForHydratedReadout } from './record'
 import {
   APP_SELECTORS,
@@ -336,10 +336,13 @@ test.describe('M16 stage 1 — the bar and the band', () => {
     await freezeMotion(page)
     const reference = await extractDesignFacts(page, MOCKUP_SELECTORS)
 
-    // `/courses/` rather than `/`: the current-destination chip only exists on
-    // a page that IS one of the bar's destinations, and the comparison would
-    // otherwise read it as absent on both sides and check nothing.
-    await page.goto('/courses/')
+    // A listing rather than `/`: the current-destination chip only exists on a
+    // page that IS one of the bar's destinations, and the comparison would
+    // otherwise read it as absent on both sides and check nothing. M17 made
+    // the catalog that page — `/courses/` was the bar's other destination and
+    // is a forwarding stub now, so a comparison run there would be measuring a
+    // document that is replacing itself.
+    await page.goto(INDEX_SHEET)
     await freezeMotion(page)
     const actual = await extractDesignFacts(page, APP_SELECTORS)
 
@@ -366,7 +369,7 @@ test.describe('M16 stage 1 — the bar and the band', () => {
     await freezeMotion(page)
     const reference = await extractDesignFacts(page, MOCKUP_SELECTORS)
 
-    await page.goto('/courses/')
+    await page.goto(INDEX_SHEET)
     await freezeMotion(page)
     const actual = await extractDesignFacts(page, APP_SELECTORS)
 
@@ -388,7 +391,7 @@ test.describe('M16 stage 1 — the bar and the band', () => {
     await freezeMotion(page)
     const reference = await extractDesignFacts(page, MOCKUP_SELECTORS)
 
-    await page.goto('/courses/')
+    await page.goto(INDEX_SHEET)
     await freezeMotion(page)
     // The exact failure the rejected work shipped: the bar on the page ground
     // instead of on cobalt. DESIGN.md's first Don't, and the one change that
@@ -498,7 +501,7 @@ test.describe('M16 stage 2 — the dropdown a bar item opens', () => {
     await expect(page.locator('.dd').first()).toBeVisible()
     const reference = await extractDesignFacts(page, MOCKUP_SELECTORS)
 
-    await page.goto('/courses/')
+    await page.goto(INDEX_SHEET)
     await freezeMotion(page)
     // A real gesture, not `details.open = true`: the disclosure has to open the
     // way a reader opens it or the test proves nothing about the reader's path.
@@ -533,7 +536,7 @@ test.describe('M16 stage 2 — the dropdown a bar item opens', () => {
     await page.locator('.mainnav > span').first().hover()
     const reference = await extractDesignFacts(page, MOCKUP_SELECTORS)
 
-    await page.goto('/courses/')
+    await page.goto(INDEX_SHEET)
     await freezeMotion(page)
     await page.locator('.bz-bar-nav summary').first().click()
     // The language spends a shadow in exactly two places and this is one:
@@ -556,7 +559,7 @@ test.describe('M16 stage 2 — the dropdown a bar item opens', () => {
    * verification that missed it called `.focus()` instead of pressing Tab.
    */
   test('keeps its rows out of the tab order until it is open', async ({ page }) => {
-    await page.goto('/courses/')
+    await page.goto(INDEX_SHEET)
     await freezeMotion(page)
 
     const rows = page.locator('.bz-menu-item')

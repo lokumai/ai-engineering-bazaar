@@ -13,51 +13,66 @@ import type { SheetRow } from '@/lib/content/rows'
  * get §5.3's "offset -2px so it sits inside the row".
  *
  * A sheet that is not drawn is marked here and drawn as a hidden line in CSS:
- * an ISO 128 `3 2` dash down the `#` cell, the status tick dashed to match,
- * and the words `NOT DRAWN` beside it. Line type first, colour second, words
- * always (§10.4).
+ * an ISO 128 `3 2` dash down the `#` cell, and its one completion square
+ * dashed to match. Line type first, colour second (§10.4) — and the word, which
+ * M17 took off the screen, is still said (see `RowState`).
  *
  * The ninth column (§4.8, §12.18) is the one cell that is about the reader, and
  * it is drawn in the unsigned state on every prerender, because that is the
  * only thing build-time HTML can truthfully claim about a reader it has never
  * met (§12.2). One document-level island fills it after mount; this component
- * stays hook-free, because `Catalog` renders it through `SheetIndex` while
- * `/courses/` and `/courses/[category]/` render the same table from a server
+ * stays hook-free, because `Catalog` renders it through `SheetIndex` as a
+ * client island while the six level pages render the same table from a server
  * component — a hook here works under the island and fails the static export
- * of the other two (§12.2, "where hooks may not go").
+ * of the other six (§12.2, "where hooks may not go").
  */
-
-/** Which column §4.8's `SUBSYSTEM` slot is carrying on this page (§4.9). */
-export type RowColumn = 'subsystem' | 'topics'
 
 /**
- * §4.8 `STATUS` — the word, and the tick beside it. The tick takes the node
- * vocabulary of §5.8: a hairline `--color-line-strong` rectangle, solid where
- * the geometry is drawn and dashed where it is not. It is the same mark the
- * dashboard will draw at 44 × 26, at the size a table row can carry.
+ * Which context columns this page's table carries (§4.8, §4.9).
+ *
+ * M17 collapsed three listings into one, and with them the `subsystem` variant:
+ * every table on the site now prints the topics, because that was the one thing
+ * the retired `/courses/` pages could show and the catalog could not.
+ *
+ * - `both` — the whole catalog, where the level is a column because the rows
+ *   come from every level and the hue on a row's leading edge may not be the
+ *   only thing that says which (SC 1.4.1, §13.1.4).
+ * - `topics` — a level page, where the level is the page's own heading and a
+ *   column repeating it eight times says nothing.
  */
-function StatusTick({ drawn }: { drawn: boolean }) {
-  return (
-    <svg
-      className="bz-row-tick"
-      width="12"
-      height="12"
-      viewBox="0 0 12 12"
-      shapeRendering="crispEdges"
-      aria-hidden="true"
-    >
-      <rect
-        x="0.5"
-        y="0.5"
-        width="11"
-        height="11"
-        fill="none"
-        stroke="var(--color-line-strong)"
-        strokeWidth="1"
-        strokeDasharray={drawn ? undefined : '3 2'}
-      />
-    </svg>
-  )
+export type RowColumn = 'topics' | 'both'
+
+/**
+ * M17 — §4.8's `STATUS` column is gone, and this is what replaced it.
+ *
+ * The author's reasoning: *"if something is not ready it is not clickable by
+ * default and user can understand it already."* The premise is not true here —
+ * a planned module HAS a page, the A4 anatomy that prints its schedule of
+ * parts, and withholding the link would delete a capability rather than
+ * declutter a column — so the column went and the link stayed.
+ *
+ * **What carries the state instead, and none of it is colour.** A planned row
+ * prints `—` in `Length` and `—` in `Sources`, because a sheet nobody has
+ * written declares no length and cites nothing; and its completion cell holds
+ * ONE DASHED square where a written module holds three or four solid ones,
+ * because there is no slot on it that could ever be filled (`SignOffSquares`).
+ * An em dash is typographic content and a border style is not a colour: both
+ * survive `forced-colors: active` exactly as they are, which is what §13.1.3
+ * asks of a non-colour carrier and what the word in that column used to do. The
+ * ISO 128 `3 2` hidden line down the `#` cell is a third (§10.4: line type
+ * first, colour second).
+ *
+ * **The word itself is not lost, it is said rather than shown** (D61). A screen
+ * reader still hears `Planned` as part of the row's own header, so nothing that
+ * could only be read as text has been taken from anybody; it has left the
+ * screen, where four other cells were already saying it.
+ */
+function RowState({ row }: { row: SheetRow }) {
+  // Inside the row header and outside its link: the link names the module, and
+  // the header adds what the drawing is. Putting it in the link would make the
+  // module's own name read `LLM Fundamentals Planned` everywhere a list of
+  // links is read out, including the browser's own.
+  return <span className="bz-said">{row.status}</span>
 }
 
 /**
@@ -135,9 +150,9 @@ export function ModuleRow({ row, column }: { row: SheetRow; column: RowColumn })
   /**
    * §13.5 surface 2 — the leading rule takes the subsystem's hue, resolved
    * on channel A from `hl-cat-<slug>-started` / `-complete` (§12.2). The row
-   * already prints its own status in words in the `STATUS` cell and its
-   * number in the `#` cell, so the hue reports what the page's eyebrow count
-   * reports and carries nothing alone (SC 1.4.1, §13.1.4).
+   * already prints its level in words — in the `Level` column on the whole
+   * catalog, in the page's own heading on a level page — so the hue reports
+   * what the row already states and carries nothing alone (SC 1.4.1, §13.1.4).
    *
    * **Drawn rows only, and that is T6 rather than taste.** A draft row's `#`
    * cell already carries `--color-caution` as its hidden-line ink, and
@@ -162,39 +177,23 @@ export function ModuleRow({ row, column }: { row: SheetRow; column: RowColumn })
         <Link href={row.path} className="bz-row-link">
           {row.title}
         </Link>
+        <RowState row={row} />
       </th>
 
+      {column === 'both' && <td className="bz-row-context">{row.subsystem.title}</td>}
+
       <td className="bz-row-context">
-        {column === 'subsystem' ? (
-          row.subsystem.title
-        ) : (
-          // §4.9 — at most three, joined on one line and truncated where the
-          // column runs out. The sheet itself prints every section it has;
-          // this is the column that says what it is about, not a summary.
-          <span className="bz-row-topics" title={row.topics.join(' · ')}>
-            {row.topics.join(' · ')}
-          </span>
-        )}
+        {/* §4.9 — at most three, joined on one line and truncated where the
+            column runs out. The sheet itself prints every section it has;
+            this is the column that says what it is about, not a summary. */}
+        <span className="bz-row-topics" title={row.topics.join(' · ')}>
+          {row.topics.join(' · ')}
+        </span>
       </td>
 
       <td className="bz-row-value">{row.extent}</td>
       <td className="bz-row-value">{row.sources}</td>
       <td className="bz-row-value">{row.lang}</td>
-
-      {/* THE CELL STAYS A CELL. The tick and the word need to sit on one line
-          with a gap, and that row belongs on a wrapper INSIDE the cell — not
-          on the cell. `display: flex` on a `<td>` takes it out of the table's
-          row layout: it stops stretching to the row's height, so MEASURED on
-          `/courses/expert/` a two-line row was 72px while this cell was 47px,
-          which painted its bottom border 24px above the row's own and left the
-          tick centred against a different box from the sign-off square beside
-          it. Both were visible on every listing route. */}
-      <td className="bz-row-status">
-        <span className="bz-row-status-line">
-          <StatusTick drawn={row.drawn} />
-          <span>{row.status}</span>
-        </span>
-      </td>
 
       <td className="bz-row-signoff">
         <SignOffSquares row={row} />

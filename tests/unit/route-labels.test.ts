@@ -64,11 +64,21 @@ describe('breadcrumbFor', () => {
     ])
   })
 
+  /**
+   * M17 — both parents are still trailed and **neither is at the address the
+   * URL says**. `/courses/` and `/courses/<level>/` are forwarding stubs, so a
+   * trail that used the module's own path for its ancestors would spend a
+   * redirect on every crumb, on every module page, with nothing failing: the
+   * link gate follows an href to a document and both documents exist.
+   *
+   * The label moves with the href. A crumb reading `Curriculum` and opening
+   * the catalog is the defect `INDEX_ROUTE`'s docblock records.
+   */
   it('trails the real module route through both of its parents', () => {
     expect(breadcrumbFor('/courses/intermediate/security/', CATEGORIES)).toEqual([
       { label: 'Home', href: '/' },
-      { label: 'Curriculum', href: '/courses/' },
-      { label: 'Intermediate', href: '/courses/intermediate/' },
+      { label: 'Catalog', href: '/sheets/' },
+      { label: 'Intermediate', href: '/sheets/intermediate/' },
       { label: 'security', href: null },
     ])
   })
@@ -183,9 +193,13 @@ describe('an ancestor segment with no page of its own (§15.1)', () => {
     ])
   })
 
+  /* M17 — the ancestor does still have a page and it is a FORWARD, so the
+     crumb opens what that forward opens. A trail whose every ancestor costs a
+     redirect is the defect `retargetCourseAncestors` exists for, and this is
+     the level stub's half of it. */
   it('still links an ancestor that does have a page', () => {
     const crumbs = breadcrumbFor('/courses/fundamentals/', CATEGORIES)
-    expect(crumbs[1]).toEqual({ label: 'Curriculum', href: '/courses/' })
+    expect(crumbs[1]).toEqual({ label: 'Catalog', href: '/sheets/' })
   })
 
   /**

@@ -9,10 +9,14 @@
  * with no DOM (§12.14.2). The island reads four booleans off the event and one
  * `closest()` off the target, and decides nothing.
  *
- * This module imports nothing — §12.2's import direction. `lib/content/`
- * reaches `node:fs` and a client island holds this file, so a single value
- * carried across that line would pull `node:fs` into the browser bundle and
- * stop the build.
+ * **This module imports one thing, and the rule it is obeying is §12.2's
+ * import direction rather than a count.** `lib/content/` reaches `node:fs` and
+ * a client island holds this file, so a single value carried across that line
+ * would pull `node:fs` into the browser bundle and stop the build.
+ * `lib/route-labels.ts` is the other leaf that imports nothing, which is why it
+ * is the one file safe to take a route from — and taking it is better than
+ * spelling `/sheets/<level>/` out a second time, because M17 is the milestone
+ * that proved a route spelled out twice goes stale in one of the two.
  *
  * Two rules govern the map itself and both are conformance, not taste:
  *
@@ -25,6 +29,8 @@
  *    2.1.1 requires operation without specific keystroke timings, so a tight
  *    sub-second window is a conformance risk as well as a usability one.
  */
+import { levelRoute } from '@/lib/route-labels'
+
 
 /**
  * The `g` destinations. §12.16 named five, §13.14 added `path`, §15.1 added
@@ -246,17 +252,26 @@ export const ROUTES: Readonly<Record<Exclude<NavTarget, 'category'>, string>> = 
 
 /**
  * `g c` — the subsystem the reader is inside, read off the route rather than
- * out of the content: a module sheet and its category page are both under
- * `/courses/<category>/`, and the category is the segment, not a lookup.
+ * out of the content: a module sheet is `/courses/<level>/<module>/` and a
+ * level page is `/sheets/<level>/`, so in both cases the level is a segment and
+ * never a lookup.
  *
- * Null where there is no current category — the catalog, the curriculum, the
- * home page, the progress page. `g c` then does nothing, which is the truth;
+ * **M17 split the two prefixes and this function is where that costs
+ * something.** The level's own page moved to the catalog; the module did not
+ * move at all. So the segment is read from whichever prefix the reader is under
+ * and the destination is always the level's catalog entry — which means `g c`
+ * on a level page is a jump to the page you are already on, and that is the
+ * honest answer rather than nothing.
+ *
+ * Null where there is no current level — the catalog's front page, the home
+ * page, the progress page. `g c` then does nothing, which is the truth;
  * inventing a category to jump to would be §1's failure in one keystroke.
  */
 export function categoryPathOf(pathname: string): string | null {
   const segments = pathname.split('/').filter(Boolean)
-  if (segments[0] !== 'courses' || segments.length < 2) return null
-  return `/courses/${segments[1]}/`
+  const under = segments[0] === 'courses' || segments[0] === 'sheets'
+  if (!under || segments.length < 2) return null
+  return levelRoute(segments[1])
 }
 
 export function routeFor(target: NavTarget, pathname: string): string | null {

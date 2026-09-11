@@ -13,7 +13,7 @@ import type { RoleId } from './roles'
  * **Three honesty rules are encoded here rather than left to the renderer.**
  *
  * 1. **A path is a view, not a gate** (§13.4.4). Nothing here prevents anything.
- *    Every sheet stays reachable from `/courses/`, keeps its own sign-off
+ *    Every sheet stays reachable from the catalog, keeps its own sign-off
  *    control, and a reader with no role has the whole corpus exactly as Phase 2
  *    left it.
  *

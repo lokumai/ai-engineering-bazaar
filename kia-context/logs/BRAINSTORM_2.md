@@ -10,7 +10,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D61, plus open questions O1 to O4 — 2026-09-09 to 2026-09-11"
+covers: "D26 to D63, plus open questions O1 to O4 — 2026-09-09 to 2026-09-11"
 last_updated: 2026-09-11
 ---
 
@@ -1208,6 +1208,100 @@ Valuable" — rule 1 (a human writes it), rule 4 (five to ten minutes), rule 5
 `MANIFESTO.md` §4 names: people new to AI engineering, reading in a second
 language. *(The minute figure in it is wrong and M18 corrects it at its source
 as well as on the page.)*
+
+### D62 · A level is an address, so the chip that chooses one is a link — 2026-09-11
+
+M17 folded `/courses/` and `/courses/<level>/` into the catalog. The brief
+opened with one decision and it was the author's: **how a preselected level
+reaches a filter that lives in `useState`.** Two shapes were costed.
+
+1. **A route per level, prerendered.** Five static pages, one component, the
+   filter chosen at build time. Right in frame one with no script, and a level
+   becomes a URL somebody can send to somebody else. Costs five HTML files and
+   a `generateStaticParams`.
+2. **One route and a parameter**, `?level=expert`, read by `boot.ts` before
+   first paint. One page — and the first time channel A would read the URL
+   rather than the record, which is new mechanism in the most load-bearing
+   script in the codebase. With scripting off the parameter does nothing.
+
+**Taken: 1**, which was the recommendation. It is the only one that keeps the
+no-JavaScript guarantee the rest of this interface holds to.
+
+**And then the shape paid for itself in a way neither option had claimed.**
+With five real addresses, the level chips stopped needing to be buttons: they
+are `<Link>`s carrying `aria-current="page"`, and **the one control on this site
+that did nothing without JavaScript now works without it.** That was not in the
+brief. It came out of asking what the chips should be once the pages existed,
+and it is the argument that settles the shape rather than the file count:
+
+- with buttons, the five new URLs would have been reachable only from the
+  navbar's dropdown. Pressing `Expert` on `/sheets/` would have given the reader
+  Expert with the URL still saying `/sheets/` — two ways to reach one view, one
+  of them not addressable, which is the exact defect M17 exists to remove, put
+  back one level down;
+- the level group is `<nav aria-label="Filter by level">` and the state group
+  stays `role="group"` with `aria-pressed`. **That split is the real finding.**
+  They looked like one row of eleven chips and they are two kinds of control: a
+  level is a fact about the course and can be an address; `Completed` is a fact
+  about the reader, which no prerendered address can hold (§12.2). Anything
+  keyed on the record has to stay a button, and anything keyed on the corpus
+  can be a link.
+
+**What it costs, stated rather than discovered.** The state filter does not
+survive a level change, because changing level is a page load and a prerendered
+page has never met the reader. The arriving page opens at `all` — which is what
+every page on this site opens at, for the same reason — so the cost is one
+selection, and the alternative was a filter that no URL could describe.
+
+Two things had to move with it, and neither was in the brief:
+
+- **`categoryPathOf` in `keys.ts`.** `g c` jumps to "the level you are inside",
+  and the level now lives under two prefixes: `/sheets/<level>/` is the level's
+  page and `/courses/<level>/<module>/` is a module in it. It reads the segment
+  from either and always lands on the catalog entry, so the shortcut does not
+  spend a press on a redirect.
+- **`sheetLabelFor` in `route-labels.ts`.** Without a `/sheets/<level>/` branch
+  a level page falls through the `segments.length > 1` guard and prints no
+  footer label at all. `site-footer.spec.ts` is what says so.
+
+**The module route did not move and that was a condition, not a result.** A
+module is still `/courses/<level>/<module>/`. The two prefixes no longer share a
+meaning, which reads oddly for about a minute and is much cheaper than breaking
+every bookmark a reader has for a change to a listing they did not ask about.
+
+### D63 · Dropping the STATUS column, and what a planned row says instead — 2026-09-11
+
+The author: *"if something is not ready it is not clickable by default and user
+can understand it already."* The column went. **The premise did not survive
+contact with the code and the column went anyway**, which is worth recording
+because the two halves come apart:
+
+- a planned module **has a page** — the A4 anatomy, which prints its schedule of
+  parts — so the row IS clickable, and making it otherwise would delete a
+  capability rather than remove a decoration. The link stayed;
+- §13.1.3 requires a row to state its own state **without colour**, and
+  `READY` / `PLANNED` in that column was the carrier two specs measured.
+
+So the column could only go once something else carried it, and the answer was
+already on the row and had never been counted: a planned row prints `—` in
+`Length` and `—` in `Sources`, and its completion cell holds **one dashed
+square** where a written module holds three or four solid ones. An em dash is
+typographic content and a border style is not a colour — both survive
+`forced-colors: active` exactly as they are. The ISO 128 hidden line down the
+`#` cell is a third.
+
+**The word left the screen and stayed in the accessibility tree** (D61's
+method): `.bz-said` inside the row's own header, outside its link, so a screen
+reader hears `PLANNED` as part of the row and a list of links still reads the
+module's name and nothing else.
+
+**One thing the brief's own deliverable had backwards.** It said the catalog's
+table should carry `Topics` *instead of* `Level`, because `SheetIndex` computes
+them as alternatives. On the flat catalog that would have left the level carried
+by the hue on a row's leading edge **alone**, which is the rule the same
+document spends a paragraph protecting. The table carries both now, and a level
+page — whose heading says the level once instead of eight times — carries only
+the topics.
 
 ## Open questions
 

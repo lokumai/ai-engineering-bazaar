@@ -7,7 +7,7 @@
  * **Hook-free, and it has to stay that way.** This renders inside `SheetIndex`
  * and `CategoryBlock`, and those run in two regimes at once: `Catalog` is
  * `'use client'` and imports `SheetIndex`, so on `/` this component is already
- * in the browser, while `/courses/` and `/courses/[category]/` render the
+ * in the browser, while the level pages under `/sheets/` render the
  * identical components **server-only**. A hook added here works on `/` and
  * fails the static export of the other two (§12.2, "where hooks may not go").
  *
@@ -35,23 +35,6 @@ const PITCH = TICK + GAP
 /** The strip's width at a given tick count. Exported so no caller re-derives it. */
 export function gaugeWidth(count: number): number {
   return count <= 0 ? 0 : count * PITCH - GAP
-}
-
-/**
- * The one mapping the listing pages need, kept where the states live.
- *
- * `approved` is optional and absent on `SheetRow`, so the listing pages get the
- * two-state gauge they had; a caller holding reader state sets it and gets the
- * third. §7.5's accent means "signed off" and nothing else (T1), so a row that
- * does not know cannot claim it.
- */
-export function ticksFrom(
-  rows: readonly { drawn: boolean; approved?: boolean }[],
-): TickState[] {
-  return rows.map((row) => {
-    if (row.approved === true) return 'approved'
-    return row.drawn ? 'drawn' : 'not-drawn'
-  })
 }
 
 export function TickGauge({

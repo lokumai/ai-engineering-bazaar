@@ -82,18 +82,20 @@ export function CatalogOverview({ rows }: { rows: readonly SheetRow[] }) {
                   {level.title}
                 </Link>
               </h3>
-              {/* Both counts, always: the denominator is the level and the
-                  numerator is what somebody has written. `plural` chooses the
-                  word from the number nobody typed. */}
-              <p className="bz-boardcol-count">
-                {plural(own.length, 'module')} · {ready} ready
-              </p>
             </header>
 
-            {/* The track restates the count above it and carries nothing of its
-                own, so it is hidden from assistive software rather than given a
-                role and a label that would read the same sentence twice. */}
-            <div className="bz-track" aria-hidden="true">
+            {/* THE RAIL CARRIES THE COUNT NOW, and that is why it stopped being
+                `aria-hidden`. It used to restate a sentence printed above it —
+                `8 modules · 8 ready` — so hiding it from assistive software was
+                right: the same fact twice is worse than once. With the sentence
+                gone the rail is the only thing that states how much of the
+                level is written, so it takes a role and a name, and the fact
+                reaches a screen reader without reaching the screen. */}
+            <div
+              className="bz-track"
+              role="img"
+              aria-label={`${ready} of ${own.length} written`}
+            >
               <i style={{ width: `${filled}%` }} />
             </div>
 

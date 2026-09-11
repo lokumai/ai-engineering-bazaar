@@ -1,16 +1,14 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { KeepingYourPlace } from '@/components/home/KeepingYourPlace'
 import { ContinueLine } from '@/components/record/Diagram'
 import { CourseCompletion, type CompletionLevel } from '@/components/record/CourseCompletion'
 import { PageShell } from '@/components/shell/PageShell'
 import { CATEGORIES } from '@/lib/content/curriculum-file'
 import { curriculumFacts } from '@/lib/content/facts'
-import { corpusTotals, indexStatement, sheetRows } from '@/lib/content/manifest'
-import { HOME_SCOPE } from '@/lib/record/scope'
+import { corpusTotals, sheetRows } from '@/lib/content/manifest'
 import { INDEX_ROUTE } from '@/lib/route-labels'
 import { SITE_NAME } from '@/lib/site'
-import { hoursMinutes, numberWord, plural } from '@/lib/text'
+import { hoursMinutes, numberWord } from '@/lib/text'
 
 /**
  * §15.2.2 — one document, so one title, and it claims nothing about the reader.
@@ -93,17 +91,35 @@ export const metadata: Metadata = {
  * the browser is already keeping (§15.5.4). And nothing on it requires an
  * account: signed out is the default and it is complete.
  */
+/**
+ * THE PROMISE, IN THE README'S OWN WORDS — and it is the one block of copy on
+ * this page that is written rather than counted.
+ *
+ * The five paragraphs it replaces described the course to itself: how many
+ * modules were ready, how many planned, what a reader may tick, where the
+ * record is kept. All true, and all of it said in prose what the page already
+ * SHOWS three inches lower — the levels carry their own counts and the marks
+ * carry their own state. A caption under a picture of the same thing is not
+ * information, it is noise.
+ *
+ * Three sentences, from `README.md`'s "Why This Is Valuable": rule 1 (a human
+ * writes it), rule 4 (five to ten minutes), rule 5 (pictures do the work), in
+ * rule 3's plain language — readable by somebody whose first language is not
+ * English, which is the audience `MANIFESTO.md` §4 names.
+ */
+const LEDE = [
+  'AI engineering, made short and useful.',
+  'Written by an engineer who builds this for a living, in plain words.',
+  'Five to ten minutes a module, and the pictures do most of the work.',
+] as const
+
 export default function HomePage() {
   const rows = sheetRows()
   const facts = curriculumFacts()
   const totals = corpusTotals()
 
-  // The first row of the set, and the size of the level it opens. Both measured
-  // off the same array, so the card cannot name one module and count another.
+  // The first row of the set: the module the primary action opens.
   const first = rows[0]
-  const firstLevel = rows.filter(
-    (row) => row.subsystem.order === first.subsystem.order,
-  ).length
 
   /**
    * Control C's input: every level in curriculum order, with every module in
@@ -138,11 +154,17 @@ export default function HomePage() {
           AI engineering, written by someone who builds it.
         </h1>
 
-        {/* §15.2.3 — the measured statement, then the one line that is not a
-            measurement but a commitment, kept in `scope.ts` with the other
-            three sentences about where the record goes (§15.9.1). */}
+        {/* WHY TO READ IT, NOT WHAT IT CONTAINS.
+            This was five paragraphs describing the course to itself — how many
+            modules are ready, how many are planned, where the record is kept,
+            what a reader may tick. Every sentence was true and every one of
+            them said something the page already SHOWS: the levels below carry
+            their own counts, the marks carry their own state.
+            What replaces it is the promise, in the README's own words. Three
+            short sentences, plain enough for a reader whose first language is
+            not English, which is rule 3. */}
         <div className="bz-lede">
-          {[...indexStatement(), HOME_SCOPE].map((line) => (
+          {LEDE.map((line) => (
             <p key={line}>{line}</p>
           ))}
         </div>
@@ -171,12 +193,6 @@ export default function HomePage() {
             honest empty form of any of them is a zero somebody counted. */}
         <ul className="bz-facts">
           <li>
-            <span className="bz-facts-value">
-              {totals.ready} of {totals.modules}
-            </span>
-            modules written
-          </li>
-          <li>
             <span className="bz-facts-value">{hoursMinutes(totals.minutes)}</span>
             of reading
           </li>
@@ -197,10 +213,6 @@ export default function HomePage() {
         <h2 id="bz-home-levels" className="bz-panel-title">
           The {numberWord(levels.length)} levels
         </h2>
-        <p className="bz-panel-note">
-          {plural(firstLevel, 'module')} in {first.subsystem.title}, which
-          assumes you write software and assumes nothing else
-        </p>
       </div>
       <CourseCompletion facts={facts} levels={levels} headingId="bz-home-levels" />
 
@@ -290,9 +302,6 @@ export default function HomePage() {
         </dl>
       </section>
 
-      {/* §15.2.5 — identity arrives last and quietly: three rows of fact and
-          two links, with nothing on the page behind them. */}
-      <KeepingYourPlace />
     </PageShell>
   )
 }

@@ -60,12 +60,10 @@ export default function CatalogPage() {
     <PageShell column={false}>
       <h1 className="bz-display">Catalog</h1>
 
-      <p className="bz-lead">
-        Every module in the course, in three views over one list. The overview
-        is the course in its levels, the cards are for browsing, and the table
-        puts every column beside every other. Filter by level, by state or by
-        language; the view you pick is the one you get next time.
-      </p>
+      {/* NO OPENING PARAGRAPH. It explained the three views, the two filters
+          and the fact that a choice is remembered — to a reader looking
+          straight at the toggle, the chips, and the view they were last in.
+          The controls say all three by being controls. */}
 
       <Catalog rows={rows} label="The catalog" />
 

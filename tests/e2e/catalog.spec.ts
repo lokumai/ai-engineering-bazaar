@@ -339,14 +339,25 @@ test.describe('under forced colours', () => {
     await page.emulateMedia({ forcedColors: 'active' })
     await page.goto(INDEX_SHEET)
 
-    // The overview's bands: each names its level and prints both counts, so
-    // dropping every hue costs the reader nothing.
+    // The overview's bands: each NAMES its level in words, so dropping every
+    // hue costs the reader nothing.
+    //
+    // The printed `8 modules · 8 ready` under that name went on 2026-09-11, by
+    // the author's instruction: the rail beside it draws the same fact. So the
+    // count is checked where it lives now — the rail's accessible name, which
+    // is what a reader who cannot see the fill is given, and which did not
+    // exist while the sentence was there to say it (the rail was
+    // `aria-hidden`, correctly, because two statements of one fact is worse
+    // than one).
     for (const path of CATEGORY_PATHS) {
       const slug = path.split('/')[2]
       const band = page.locator(`.bz-boardcol[data-cat="${slug}"]`)
       await expect(band).toHaveCount(1)
-      const text = await band.locator('.bz-boardcol-head').innerText()
-      expect(text, slug).toMatch(/\d+ modules? · \d+ ready/)
+      expect((await band.locator('.bz-boardcol-title').innerText()).trim(), slug).not.toBe('')
+      await expect(band.locator('.bz-track'), slug).toHaveAttribute(
+        'aria-label',
+        /^\d+ of \d+ written$/,
+      )
     }
 
     // The cards: the level's name beside its square, never the square alone.

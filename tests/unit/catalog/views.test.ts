@@ -56,11 +56,10 @@ const MAIN = CSS.slice(0, FORCED_AT)
 const FORCED = CSS.slice(FORCED_AT)
 
 describe('the three views are one closed vocabulary', () => {
-  it('names each view once, with a word and a sentence for the toggle', () => {
+  it('names each view once, with a word for the toggle', () => {
     expect(VIEWS.map((view) => view.id)).toEqual([...VIEW_IDS])
     for (const view of VIEWS) {
       expect(view.name.trim(), view.id).not.toBe('')
-      expect(view.answers.trim(), view.id).not.toBe('')
     }
   })
 

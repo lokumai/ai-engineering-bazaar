@@ -81,34 +81,30 @@ test('the ready / not-ready counts match the rows actually rendered', async ({ p
   await expect(page.locator('.bz-row-status', { hasText: /^READY$/ })).toHaveCount(DRAWN_COUNT)
   await expect(page.locator('.bz-row-status', { hasText: /^PLANNED$/ })).toHaveCount(NOT_DRAWN_COUNT)
 
-  // …and the Overview view's bands count the same set (§11.25), level by
-  // level. M12 retired the ALL-CAPS eyebrow of counts that used to sit above
-  // the table — `kia-context/specs/DESIGN.md` names a tracked-out mono strip as
-  // the clearest tell of a generated interface — and put each count beside the
-  // modules it counts. So the comparison is the sum of the bands against the
-  // rows, which is a stronger statement than the eyebrow's two numbers were.
-  const bands = await page.locator('.bz-boardcol-count').allInnerTexts()
+  // …and the Overview view states the same set, level by level (§11.25).
+  //
+  // It used to print `8 modules · 8 ready` under each level name and this
+  // summed those. The author had the printed counts removed on 2026-09-11 —
+  // the rail beside them draws the same fact — so the sum is taken from where
+  // the fact lives now: each rail's accessible name, which is the statement a
+  // reader who cannot see the fill is given.
+  const bands = await page.locator('.bz-boardcol .bz-track').evaluateAll(
+    (nodes) => nodes.map((node) => node.getAttribute('aria-label') ?? ''),
+  )
+  expect(bands.length, 'the overview draws no rails').toBeGreaterThan(0)
   const summed = bands.reduce(
-    (total, text) => {
-      const [modules, ready] = [...text.matchAll(/(\d+)/g)].map((match) => Number(match[1]))
+    (total, label) => {
+      const [ready, modules] = [...label.matchAll(/(\d+)/g)].map((match) => Number(match[1]))
       return { modules: total.modules + modules, ready: total.ready + ready }
     },
     { modules: 0, ready: 0 },
   )
   expect(summed).toEqual({ modules: SHEET_COUNT, ready: DRAWN_COUNT })
 
-  // The spelt-out form of the same three counts is the home screen's first-visit
-  // statement (§15.2.3). It is prose about the set, not about the reader, so it
-  // has to agree with the rows above — and after §15 nothing else compares the
-  // two, because they are no longer on one page.
-  await page.goto('/')
-  const statement = (await page.locator('.bz-lede').innerText()).replace(/\s+/g, ' ')
-  expect(statement).toContain(`${spellOut(SHEET_COUNT)} modules`)
-  expect(statement).toContain(`${spellOut(DRAWN_COUNT)} are ready to read.`)
-  // M13 rewrote this line: it read "… are dashed — the geometry exists in the
-  // model, the lines do not", which is the retired vocabulary in substance on
-  // the page a stranger meets first.
-  expect(statement).toContain(`${spellOut(NOT_DRAWN_COUNT)} are planned`)
+  // The home page used to spell the same three counts out in its opening
+  // paragraph and this compared them too. That paragraph is gone — it
+  // described the course to itself — so there is no second prose statement of
+  // the set left to disagree with the rows.
 })
 
 test('the filter chips narrow the table to the count they claim', async ({ page }) => {

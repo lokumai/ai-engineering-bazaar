@@ -40,29 +40,20 @@ export interface CatalogView {
   id: CatalogViewId
   /** The word in the toggle. Sentence case; the icon sits beside it. */
   name: string
-  /**
-   * What this view answers, printed under the toggle so the three are a choice
-   * rather than three unexplained icons. D13: they answer three different
-   * questions, which is why one of them cannot be dropped.
-   */
-  answers: string
 }
 
 export const VIEWS: readonly CatalogView[] = [
   {
     id: 'overview',
     name: 'Overview',
-    answers: 'the shape of the course, level by level',
   },
   {
     id: 'cards',
     name: 'Cards',
-    answers: 'one card per module, for browsing',
   },
   {
     id: 'table',
     name: 'Table',
-    answers: 'every column at once, for comparing',
   },
 ]
 

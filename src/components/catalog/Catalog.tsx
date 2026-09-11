@@ -256,10 +256,10 @@ export function Catalog({
           ))}
         </div>
 
-        {/* `03`'s own divider between two runs of chips. Decorative: the two
-            groups are already named to assistive software. */}
-        <div className="bz-filter-sep" aria-hidden="true" />
-
+        {/* `03`'s vertical divider between the two runs of chips is gone with
+            the single row it divided. The two groups are one under the other
+            now, so the gap between them is the separation, and a rule drawn
+            across the bar would be a second one saying the same thing. */}
         <div className="bz-chip-row" role="group" aria-label="Filter by state or language">
           {FILTERS.map((filter) => (
             <button
@@ -326,9 +326,15 @@ export function Catalog({
                   A) rather than rendered from the active id (channel B), which
                   would print one view's purpose above another's contents for
                   every frame before hydration. */}
-              <h2 id={`bz-view-${view.id}`} className="bz-view-head">
+              {/* SAID AND NOT SHOWN. The toggle three inches above already
+                  names the three views and marks the showing one, so a heading
+                  repeating that name — with a sentence explaining what the
+                  view is for under it — told a sighted reader what the view
+                  itself is showing them. The section still needs a name, and
+                  `aria-labelledby` still points here, so the heading stays in
+                  the accessibility tree and leaves the screen. */}
+              <h2 id={`bz-view-${view.id}`} className="bz-said">
                 {view.name}
-                <span className="bz-view-answers">{view.answers}</span>
               </h2>
 
               {view.id === 'overview' && <CatalogOverview rows={visible} />}

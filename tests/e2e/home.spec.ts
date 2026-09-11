@@ -193,12 +193,18 @@ test('a clean browser meets the whole page, and it claims nothing about the read
   const problems = watchPage(page)
   await page.goto('/')
 
-  // What it is: the headline, the measured statement, and the sentence about
-  // where the record goes, which `scope.ts` owns.
+  // What it is: the headline, and a lede that is a PROMISE rather than a
+  // description. It used to carry the measured statement and the sentence
+  // `scope.ts` owns about where the record goes — five paragraphs saying in
+  // prose what the levels below already show. The author had them removed on
+  // 2026-09-11, so what is asserted is what remains true: the page opens with
+  // sentences about the course, and not one of them is about the reader.
   await expect(page.locator('main h1')).toHaveText(
     'AI engineering, written by someone who builds it.',
   )
-  await expect(page.locator('.bz-lede')).toContainText(HOME_SCOPE)
+  const lede = (await page.locator('.bz-lede').innerText()).trim()
+  expect(lede.length, 'the front door says nothing at all').toBeGreaterThan(40)
+  expect(lede, 'the lede claims something about the reader').not.toMatch(/\byou(r)?\b/i)
 
   // Where to start: the two actions, and the first of them opens a module
   // rather than a menu (§15.2.4, §11.3).
@@ -219,8 +225,15 @@ test('a clean browser meets the whole page, and it claims nothing about the read
   // dimmed: nothing on the page describes a state this reader is not in.
   await expect(page.locator(CONTINUE)).not.toBeVisible()
 
-  // Nothing here requires an account, and the identity strip says so.
-  await expect(page.getByRole('heading', { name: 'Keeping your place' })).toBeVisible()
+  // NOTHING HERE REQUIRES AN ACCOUNT, and the way the page says so is now by
+  // not asking. The "Keeping your place" strip — three rows explaining what a
+  // name, an alias and an account each do — was removed by the author on
+  // 2026-09-11: it explained a choice nobody had been asked to make, on the
+  // page a stranger meets first. What is asserted instead is the property it
+  // was there to demonstrate, which is stronger: the front door asks for
+  // nothing at all.
+  await expect(page.locator('main input, main [role="textbox"]')).toHaveCount(0)
+  await expect(page.getByRole('link', { name: /sign in|account/i })).toHaveCount(0)
 
   expect(problems.consoleErrors).toEqual([])
   expect(problems.failedRequests).toEqual([])
@@ -236,45 +249,43 @@ test('every number on the page is derived from the modules it is printed beside'
   // each other: the facts strip summarises the level cards, so summing the
   // cards has to reproduce it. A typed number would drift the moment the
   // corpus moved, and this is what would catch it.
-  const facts = await page.locator('.bz-facts').innerText()
   /*
-    MATCHED FIRST, then destructured. This indexed `[0]` straight off
-    `matchAll` and called `.slice(1)` on it, so a strip that stopped matching
-    threw `Cannot read properties of undefined` — which is not a failure, it is
-    an error, and it says nothing about the page. The same shape as an
-    assertion satisfied by an empty node list: what the test needs is to fail
-    with its own message.
+    THE CROSS-CHECK MOVED WITH THE COUNT. The facts strip used to open with
+    "19 of 33 modules written", and summing the level cards had to reproduce
+    it. The author had that fact removed on 2026-09-11 — the levels below
+    carry their own — so the two sources being compared are now the level
+    DIALS and the module rows they are printed beside.
+
+    Each dial reads `--/N`, where N is the level's own module count, and the
+    rows are rendered by a different component from a different array. Their
+    sum has to be the course. A typed number would drift the moment the corpus
+    moved, and this is still what would catch it.
   */
-  const counted = [...facts.matchAll(/(\d+) of (\d+)\s+modules written/g)]
-  expect(counted, `the facts strip states no written count: "${facts}"`).toHaveLength(1)
-  const [written, total] = counted[0].slice(1).map(Number)
+  const dials = await page.locator('[data-hl-cat-tally]').allInnerTexts()
+  expect(dials.length, 'no level states a tally').toBeGreaterThan(0)
+  const denominators = dials.map((text) => {
+    const match = /\/(\d+)\s*$/.exec(text.trim())
+    expect(match, `a dial states no denominator: "${text}"`).not.toBeNull()
+    return Number(match![1])
+  })
 
   const rows = await page.locator(MODULE_ROW).count()
+  expect(
+    denominators.reduce((sum, one) => sum + one, 0),
+    'the dials and the rows disagree about how many modules there are',
+  ).toBe(rows)
+
+  // The level cards' own count lines used to be summed here as a second,
+  // independent statement of the same two numbers. They are gone with the
+  // strip's count — see above — and the dials are what replaced them.
+
+  // And the fixture, which is an independent statement of what ships. The
+  // written count is no longer printed anywhere on this page, so what is
+  // compared to the fixture is what the page still states: how many modules
+  // there are, and how many of them are drawn as planned.
   const planned = await page.locator(`${MODULE_ROW}[data-drawn="false"]`).count()
-  expect(total).toBe(rows)
-  expect(written).toBe(rows - planned)
-
-  // The same two counts again, from the level cards' own lines, which are
-  // rendered by a different component from a different array.
-  const cards = await page.locator('.bz-cc-count').allInnerTexts()
-  const summed = cards.reduce(
-    (sum, text) => {
-      const numbers = [...text.matchAll(/(\d+)/g)].map((match) => Number(match[1]))
-      // `8 modules` where every module in the level is ready, `11 modules · 0
-      // ready` where they are not: the second number is absent exactly when it
-      // equals the first.
-      return {
-        modules: sum.modules + numbers[0],
-        ready: sum.ready + (numbers.length > 1 ? numbers[1] : numbers[0]),
-      }
-    },
-    { modules: 0, ready: 0 },
-  )
-  expect(summed).toEqual({ modules: total, ready: written })
-
-  // And the fixture, which is an independent statement of what ships.
-  expect(total).toBe(SHEET_COUNT)
-  expect(written).toBe(DRAWN_COUNT)
+  expect(rows).toBe(SHEET_COUNT)
+  expect(rows - planned).toBe(DRAWN_COUNT)
 })
 
 // ---------------------------------------------------------------------------
@@ -666,7 +677,11 @@ test('every level card names, numbers and counts itself', async ({ page }) => {
     await expect(card).toHaveAttribute('data-cat', /.+/)
     await expect(card.locator('.bz-cc-order')).toHaveText(/^\d{2}$/)
     await expect(card.locator('.bz-cc-title')).not.toHaveText('')
-    await expect(card.locator('.bz-cc-count')).toHaveText(/\d+ modules?/)
+    // The count is the DIAL's denominator now. The card's own count line —
+    // `8 modules · 7 ready` — said in prose what the dial states as a fraction,
+    // and the author had it removed on 2026-09-11. A level is still told apart
+    // by four signals of which colour is one: number, name, dial and hue.
+    await expect(card.locator('.bz-dial-value')).toHaveText(/\d+|--/)
     // §10.4 — the meter is `aria-hidden`, so the printed tally beside it is the
     // only statement of its reading, and every card has one.
     await expect(card.locator('[data-hl-cat-tally]')).toHaveCount(1)

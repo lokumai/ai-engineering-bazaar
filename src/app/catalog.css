@@ -86,10 +86,16 @@
      sticky, and `01` draws no full-width white strip anywhere. A hairline is
      what separates it, which is the rule the whole ground is built on.
      --------------------------------------------------------------------------- */
+  /* ONE GROUP PER ROW, by the author's instruction on 2026-09-11. This was a
+     wrapping ROW holding both chip groups, so the level filter and the state
+     filter shared a line whenever they fitted on one and broke across two when
+     they did not — the reader could not tell by looking that they are two
+     independent choices. A column makes the grouping the layout rather than
+     something the divider had to assert. */
   .bz-filters {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
+    flex-direction: column;
+    align-items: stretch;
     gap: 9px;
     padding: var(--bz-filter-pad) 0;
     border-bottom: 1px solid var(--color-line);
@@ -106,6 +112,10 @@
     align-items: center;
     gap: 9px;
   }
+
+  /* The readout keeps the bar's trailing edge, which is where `03` puts it —
+     it just has a row of its own to be at the end of now. */
+  .bz-filters > .bz-filter-count { align-self: flex-end; }
 
   .bz-chip {
     display: inline-flex;
@@ -146,12 +156,6 @@
      a second colour inside a solid — so the key takes the ink of the fill and
      the hue is carried by the unpressed chips it is being compared against. */
   .bz-chip[aria-pressed="true"] .bz-chip-key { background: var(--color-on-primary); }
-
-  .bz-filter-sep {
-    width: 1px;
-    height: 22px;
-    background: var(--color-line);
-  }
 
   /* `03`'s trailing readout, which in the product is a live region: it is what
      announces the count when a chip changes it. Muted and not faint for that

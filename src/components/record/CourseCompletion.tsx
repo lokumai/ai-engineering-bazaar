@@ -188,13 +188,6 @@ export function CourseCompletion({
         </div>
       </dl>
 
-      {/* The reading time is the modules' own estimate and says so once, here,
-          rather than beside the number where it would read as a hedge. */}
-      <p className="bz-cc-note">
-        Reading time is what the completed modules themselves declare, added up.
-        Nothing here measures how long you spent on a page.
-      </p>
-
       <ul className="bz-cc-levels">
         {levels.map((level) => {
           const ready = level.modules.filter((one) => one.drawn)
@@ -209,26 +202,14 @@ export function CourseCompletion({
                   </span>
                   {level.title}
                 </h3>
-                {/* The level is told apart by its name, its number, its count
-                    and its hue — four signals, of which colour is one
-                    (SC 1.4.1, §13.1.4). */}
-                <p className="bz-cc-count">
-                  {ready.length === level.modules.length
-                    ? plural(level.modules.length, 'module')
-                    : `${plural(level.modules.length, 'module')} · ${ready.length} ready`}
-                </p>
-                {/* `05:164-182` gives every dial a caption, and the three
-                    readings it has to express are "37% done", "not started"
-                    and "11 planned". The first two are the reader's and so
-                    cannot be stated until the store has answered; the third is
-                    a build-time fact about the corpus and is true in frame
-                    one. Which is why the planned count is what a level with
-                    unwritten modules says before hydration, rather than a
-                    percentage nobody has measured yet. */}
-                <span className="bz-cc-caption">
-                  {planned > 0 ? plural(planned, 'module') + ' planned' : null}
-                  {planned === 0 ? 'every module written' : null}
-                </span>
+                {/* NO COUNT LINE, AND NO CAPTION. Both said in prose what the
+                    card already draws: the dial states `0/8`, so the
+                    denominator IS the module count, and a planned module is
+                    drawn in its own row with a dashed mark and its own word.
+                    A level is still told apart by four signals of which colour
+                    is one (SC 1.4.1, §13.1.4) — its name, its number, its dial
+                    and its hue — so removing the sentence removes a repetition
+                    rather than a signal. */}
               </div>
 
               {/* `05`-C's ring, and channel A carries it: the boot script

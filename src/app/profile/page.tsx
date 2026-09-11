@@ -501,13 +501,11 @@ export default function ProgressPage() {
         <p className="text-mark m-0 text-on-surface-muted">{PROFILE_CHORD}</p>
       </div>
 
-      <p className="bz-lead">
-        Everything this browser has recorded about your reading, on one page:
-        what is waiting on you, every module and whether you have completed it,
-        the path you chose, and the controls that take a copy out or erase it.
-        All of it is read from this browser after the page loads, because a page
-        prerendered once for everybody knows nothing about the reader until then.
-      </p>
+      {/* NO OPENING PARAGRAPH. It described the page to a reader who is
+          already looking at it — what is waiting on them, every module, the
+          path, the controls — and every one of those is a labelled section
+          below, in that order. A page that lists its own contents in prose
+          makes the reader read it twice. */}
 
       <hr className="bz-rule" aria-hidden="true" />
 

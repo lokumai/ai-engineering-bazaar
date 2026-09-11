@@ -1575,11 +1575,21 @@ Every number measured on the finished tree, not carried:
 | `npm run build` | clean, **61 HTML files** — 56 before, plus the five level pages. Every module route is at the address it was at, which is the arithmetic saying so: the five level stubs replaced five level pages one for one |
 | `npx playwright test` | **1,123 passed, 48 skipped, zero failures** across 1440 / 1024 / 390 |
 | Links into a retired route, in the export | **0** — 61 before the breadcrumb fix |
+| `SITE_BASE_PATH=/ai-engineering-bazaar npm run build` | 61 HTML files, **2,747 internal hrefs all carrying the base path and 0 missing it**. Each of the six forwards agrees across its script, its `<meta refresh>` and its visible link, and each lands on its OWN level rather than the catalog's front page — which is the half of the fold a base-path bug would break silently, because it works locally and 404s on Pages |
 
 **One browser test failed once and did not fail again**: `navigation.spec.ts`'s
 `previous walks 32 back to 1`, under full parallel load, clicking `prev` faster
 than the route settled. It is one of the four known load-flakes and it passed in
 every run since.
+
+**The two review passes did not return.** Four subagents were spawned across the
+two milestones — capability and constraint for each — and not one delivered a
+report; they went idle without answering, twice asked. **Both lenses were run by
+hand instead, and each found something**, which is recorded where it belongs
+rather than here: the capability pass is why the level README is on the level
+pages at all, and the constraint pass is the 3.29:1 correction in **D64**. The
+failed delegation is written down because a milestone that says "reviewed"
+without saying by whom is the kind of claim this log exists to prevent.
 
 #### What M17 did NOT do, deliberately
 
@@ -1852,6 +1862,7 @@ Every number measured on the finished tree:
 | `npm test` | **2,153 passed, 82 files, 0 skipped** |
 | `npm run build` | clean, **61 HTML files** — unchanged by M18, which added no route |
 | `npx playwright test` | **1,121 passed, 48 skipped, zero failures** across 1440 / 1024 / 390 |
+| The base-path build | 61 HTML files, **2,747 internal hrefs prefixed and 0 missing it** — re-run over the whole export after both milestones, because `basePath` rewrites only what the ROUTER touches and M17 had just added six forwards whose targets are strings (`lib/url.ts`'s `href()`, not `<Link>`) |
 
 **25 browser tests went red when the surfaces came off, and not one was
 deleted.** Control C's eight moved to a new `tests/e2e/completion.spec.ts`,

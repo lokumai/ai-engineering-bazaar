@@ -1511,6 +1511,17 @@ what D62 is actually about.
 
 #### Five things the brief had wrong or did not know
 
+0. **And one capability IS reduced rather than moved, which this report should
+   have said.** `/courses/` showed all six levels side by side, each with its own
+   coverage sentence (`8 modules · 8 ready · ~3 h 55 min`) AND its own
+   `n/m completed` meter. The catalog's Overview draws a rail per level, and that
+   rail is a WRITTEN count rather than the reader's — its own docblock says so.
+   So a reader could once see every level's size, readiness, duration and their
+   own standing on one screen, and now sees the first two on the catalog and the
+   rest one level page at a time. **It is a reduction, not a loss** — every fact
+   is still reachable — and it is the only one the fold cost. Whether the catalog
+   should carry the per-level meters is the author's call; adding them would put
+   a fourth progress surface on the site, which §11.38 refuses.
 1. **Its capability ledger was one row short, and the missing row was authored
    prose.** `/courses/<level>/` was the ONLY page on the site that rendered
    `mini-courses/<level>/README.md`. Retiring it as written would have deleted
@@ -1918,6 +1929,53 @@ this report had wrong. They are corrected in `ba1f59b` and after.
    were wrong, and a wrong sentence in a docblock is worse than none.
 4. **These two ledger rows were not re-pointed.** M17 re-pointed its own and
    M18 did not.
+5. **The one-line pager scrolled the document sideways, at a viewport the suite
+   runs.** `.bz-pager` was `grid-template-columns: 1fr 1fr`, transcribed from
+   `01`; a bare `1fr` track carries an automatic minimum of its own min-content,
+   and the new tile's min-content is large because its label is `flex: none` and
+   reads `Previous module · Planned` on a planned neighbour. **MEASURED: 37px of
+   overflow at 1024 and up to 172px between 768 and 1060, on the eight routes
+   whose neighbour is planned.** §4.7's one hard rule.
+
+   **It survived a full green gate because the guard's sample missed on both
+   axes at once.** `responsive.spec.ts`'s `PAGES` names four modules and not one
+   of them is planned, so the wide label never appeared; and the three viewport
+   projects are 1440/1024/390 while most of the overflow sits between 768 and
+   1060. The overlap at 1024 was real and on a route nobody sampled. Two new
+   tests walk EVERY module route instead of four, and reverting the fix names
+   six of them with their overflow.
+
+   `minmax(0, 1fr)` is the fix, and it is a fourth `DEVIATIONS` entry in
+   `DESIGN.md` — the mockup says `1fr 1fr` and a measured floor outranks it
+   (**D34**). The narrow rule below it already said `minmax(0, 1fr)`; only the
+   two-column case was left bare, which is why it survived a phone and failed a
+   laptop.
+6. **The destination title was starved to 18px on twelve routes.** Same cause:
+   the label was the one item that could not yield, so the title took the whole
+   loss — and the title is the only part of the tile that says where the reader
+   is going. The label truncates first now and the title keeps a floor.
+   MEASURED after: narrowest destination across 33 routes × 11 widths is 66px,
+   with an ellipsis.
+7. **`.bz-bar-repo` missed the 44px touch floor**, and `TOUCH_CONTROLS` could
+   not see it — that list is typed out, so a new class is invisible to it until
+   somebody adds one. Both fixed, and the guard's own docblock now says the
+   habit it depends on.
+8. **`accessibility.spec.ts` computed the pager label's painted colour and
+   asserted nothing about it.** Pre-existing, and M18 restyled that exact
+   element. It compares against the faint token now, both values through the
+   canvas because a computed colour serialises as `lab()` or `oklch()` and two
+   spellings of one colour are not string-equal. Swapping faint for muted turns
+   it red.
+9. **The star's hover state was never measured.** 3.29:1 at rest and **3.06:1
+   hovered**, because `--color-bar-hover` lifts the ground — over the 3:1 a
+   graphic owes, by six hundredths. The value stands (the numeral beside it
+   states the count at 9.79:1, so the star is not the only carrier) and a
+   browser test now holds both states in both themes, because
+   `contrast.test.ts` resolves tokens against tokens and cannot composite one
+   over another.
+10. **A dead fixture rode along in the move.** `CARRIES_NOTHING` was copied into
+    `completion.spec.ts` with no loop to feed it; §15.11 is the home page's
+    claim. Deleted — two copies of one fixture is two fixtures, and one drifts.
 
 **A fourth defect, found after the commit by measuring rather than by reading.**
 Restoring the markers as `.bz-card ul { list-style: disc }` also hit

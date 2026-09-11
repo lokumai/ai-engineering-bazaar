@@ -11,7 +11,7 @@ source: playground/01-theme-T4-ground-G3-powder.html (light) · playground/01-th
 authority: blueprint
 writes: agent, as the language evolves
 status: active
-covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-12, with three recorded deviations"
+covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-12, with four recorded deviations"
 last_updated: 2026-09-12
 ---
 
@@ -515,7 +515,28 @@ documents can go stale.
 Nothing about the TYPE moved for either, so neither is a `transcription.test.ts` `DEVIATIONS` entry —
 that registry is about values, and no value changed.
 
-**These are the only entries in this file that the author decided rather than a measurement forcing.**
+**A FOURTH DEVIATION, AND A MEASUREMENT FORCED THIS ONE.** `01`'s `.pn` declares
+`grid-template-columns: 1fr 1fr` and the language transcribed it. **M18 made the
+pager tile one line**, and a bare `1fr` track carries an automatic minimum of its
+own min-content — which that tile now has a great deal of, because its label is
+`Previous module · Planned` on a planned neighbour. MEASURED on the built
+export: **37px of sideways document scroll at 1024px, and up to 172px between
+768 and 1060**, on the eight module routes whose neighbour is planned. §4.7's one
+hard rule is that the page body never scrolls sideways, so this is **D34**'s
+case — a measured floor outranking the mockup.
+
+The language says `minmax(0, 1fr) minmax(0, 1fr)`: the same two equal columns,
+differing only in whether a track may shrink below its contents. The mockup never
+meets the case, because its own pager holds two short titles and no state word.
+`transcription.test.ts` drops that one property from the `.pn` pair with the
+reason beside it and still compares `gap` and `margin-top`, so the pager has not
+left the transcription.
+
+**Two of the four are the author's and two are floors.** The code comment
+deviation and this one were forced; the `20ch` cap and the authorship line were
+chosen.
+
+**The two entries above are the only ones in this file that the author decided rather than a measurement forcing.**
 The rule stands: the mockup outranks this document, a measured accessibility floor outranks the
 mockup (**D34**), and the author outranks all three — stated here so a third entry cannot be added
 by an agent reading the first two as precedent.

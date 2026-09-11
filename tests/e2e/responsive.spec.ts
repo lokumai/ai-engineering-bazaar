@@ -1,5 +1,5 @@
 import { type Page, expect, test } from '@playwright/test'
-import { SHORT, A4, CATEGORY_PATHS, INDEX_SHEET, sheetByPath } from './sheets'
+import { SHORT, A4, CATEGORY_PATHS, INDEX_SHEET, SHEETS, sheetByPath } from './sheets'
 import { showTable } from './views'
 
 /**
@@ -408,11 +408,23 @@ const TOUCH_ROUTES: readonly { path: string; carries: string }[] = [
   { path: '/profile/', carries: 'the completion toggle again, and the buttons' },
 ]
 
+/**
+ * **This list is typed out, and that is its one weakness.** A control added to
+ * the language is invisible here until somebody adds its class — which is
+ * exactly how M18's repository control reached the bar at 33px with no hit area
+ * and nothing said so. There is no derivation available: "a control" is not a
+ * property the DOM exposes, and a sweep over every clickable thing would drag
+ * in the row links, whose floor is the row.
+ *
+ * So the mitigation is the habit rather than the mechanism: **a new class in
+ * the bar, the chips or a card belongs in this list in the same commit.**
+ */
 const TOUCH_CONTROLS = [
   '.bz-slab-copy',
   '.bz-caption-action',
   '.bz-btn',
   '.bz-bar-icon',
+  '.bz-bar-repo',
   '.bz-chip',
   '.bz-viewbtn',
   '.bz-cmod-toggle',
@@ -678,4 +690,65 @@ test('no label paints its text over the text beside it', async ({ page }) => {
     expect(examined, `${route} — the scan found no text to measure`).toBeGreaterThan(20)
     expect(collisions, `${route} — a label's text is painted over its neighbour's`).toEqual([])
   }
+})
+
+
+/**
+ * §4.7's one hard rule, on the routes the sample above cannot reach.
+ *
+ * **M18 shipped 37px of sideways scroll at 1024 and the suite stayed green.**
+ * The pager's one-line tile has a large min-content — its label is a fixed
+ * width and on a planned module reads `Previous module · Planned` — and a bare
+ * `1fr` grid track refuses to shrink below that, so the grid overhung its
+ * container by up to 172px.
+ *
+ * **It survived because the guard's sample missed on both axes at once.**
+ * `PAGES` above names four modules and not one of them is planned, so the wide
+ * label never appeared; and the three viewport projects are 1440 / 1024 / 390,
+ * while most of the overflow is between 768 and 1060. The overlap at 1024 was
+ * real and on a route nobody sampled.
+ *
+ * So this walks EVERY module route rather than four, at the widths either side
+ * of the language's own breakpoints. It is the one place in this file that
+ * iterates the corpus, and it is affordable because it asserts one number per
+ * page and waits for nothing.
+ */
+test('no module route scrolls the document sideways, at any width', async ({ page }) => {
+  const width = page.viewportSize()!.width
+  const overflowing: string[] = []
+
+  for (const sheet of SHEETS) {
+    await page.goto(sheet.path, { waitUntil: 'domcontentloaded' })
+    const over = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    )
+    if (over > 0) overflowing.push(`${sheet.path} by ${over}px`)
+  }
+
+  expect(overflowing, `at ${width}px`).toEqual([])
+
+  /* Non-vacuity: an empty corpus would satisfy the line above, and so would a
+     run that never navigated. The pager is what this exists for, so it is what
+     is proven to have been on screen. */
+  await expect(page.locator('.bz-pager-item')).toHaveCount(2)
+})
+
+/**
+ * And the destination survives the squeeze. The label was the one item in the
+ * tile that could not yield, so when the row ran out of room the TITLE took the
+ * whole loss — measured down to 18px on twelve routes, which is the only part
+ * of the tile saying where the reader is going.
+ */
+test('the pager always says where it goes', async ({ page }) => {
+  const narrowest: { path: string; width: number }[] = []
+
+  for (const sheet of SHEETS) {
+    await page.goto(sheet.path, { waitUntil: 'domcontentloaded' })
+    const title = page.locator('.bz-pager-item[data-end] b')
+    if (await title.count() === 0) continue
+    const box = await title.boundingBox()
+    if (box !== null && box.width < 56) narrowest.push({ path: sheet.path, width: Math.round(box.width) })
+  }
+
+  expect(narrowest, 'a pager tile names a destination nobody can read').toEqual([])
 })

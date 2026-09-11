@@ -474,18 +474,39 @@ test('prev/next puts every destination above the §10.4 floor (§5.7)', async ({
     expect(low.ratio, `${theme}: "${low.text}" at ${low.ratio.toFixed(2)}:1`)
       .toBeGreaterThanOrEqual(4.5)
 
+    /* **This read the label's painted colour and then asserted nothing about
+       it.** `painted` was computed, returned, and dropped; the only assertion
+       left was that the language declares a faint token at all, which is true
+       of every build. Paint this element in the page ground and the test stayed
+       green — while its own docblock says the point is that the label is the
+       faint token "and not something quieter still".
+
+       Both values go through the canvas because a computed colour serialises as
+       `lab()` or `oklch()` depending on how it was authored, and two spellings
+       of one colour are not string-equal. `contrast.ts`'s `paint()` is what
+       `contrastSamples` already uses for the same reason. */
     const label = await page.evaluate(() => {
       const node = document.querySelector('.bz-pager-item small')
       const root = getComputedStyle(document.documentElement)
-      return node === null
-        ? null
-        : {
-          painted: getComputedStyle(node).color,
-          faint: root.getPropertyValue('--color-on-surface-faint').trim(),
-        }
+      if (node === null) return null
+      const paint = (value: string): string => {
+        const canvas = document.createElement('canvas')
+        const context = canvas.getContext('2d')!
+        context.fillStyle = '#000'
+        context.fillStyle = value
+        return context.fillStyle
+      }
+      return {
+        painted: paint(getComputedStyle(node).color),
+        faint: paint(root.getPropertyValue('--color-on-surface-faint').trim()),
+      }
     })
     expect(label, 'the pager prints no direction label').not.toBeNull()
     expect(label!.faint, 'the language declares no faint ink').not.toBe('')
+    expect(
+      label!.painted,
+      `${theme}: the direction label is not the language's faint ink`,
+    ).toBe(label!.faint)
   }
 })
 
@@ -650,5 +671,57 @@ test('the keyboard map is on a page every route links to (§12.16, SC 3.2.6)', a
       page.getByRole('contentinfo').getByRole('link', { name: /legend/i }),
       `${route} does not link to the legend`,
     ).toHaveCount(1)
+  }
+})
+
+
+/**
+ * §10.4 on the bar's repository control, in both of its states.
+ *
+ * **M18 added a gold star to the bar and measured it against the wrong
+ * ground.** The control carries `--color-bar-field`, `rgba(255,255,255,.08)`
+ * over the cobalt, so nothing inside it sits on `#282864`; and on hover that
+ * becomes `--color-bar-hover` at `.10`, which lifts the ground and lowers the
+ * ratio. The first pass reported 4.16:1 by compositing nothing. The truth is
+ * **3.29:1 at rest and 3.06:1 hovered** — over the 3:1 a graphic owes, and the
+ * hovered figure clears it by six hundredths.
+ *
+ * `tests/unit/color/contrast.test.ts` cannot see this: it resolves tokens
+ * against tokens, and this ground is one token laid over another. Only a
+ * browser can composite, which is why the check is here.
+ *
+ * The star is not the only carrier either way — the figure beside it says the
+ * same thing in a numeral — so 3:1 is the right floor rather than 4.5:1. What
+ * this stops is the ratio drifting UNDER it when somebody adjusts a sibling
+ * token, which is the one way a margin of 0.06 disappears.
+ */
+test('the bar’s star clears the graphic floor, resting and hovered (§10.4)', async ({ page }) => {
+  for (const theme of THEMES) {
+    await page.goto('/')
+    await useTheme(page, theme)
+
+    const control = page.locator('.bz-bar-repo')
+    await expect(control, 'the bar carries no repository control').toHaveCount(1)
+
+    for (const state of ['resting', 'hovered'] as const) {
+      if (state === 'hovered') await control.hover()
+
+      const samples = await contrastSamples(page, '.bz-bar-repo .bz-bar-star')
+      expect(samples.length, `${theme} ${state}: the control draws no star`).toBe(1)
+      expect(
+        samples[0].ratio,
+        `${theme} ${state}: the star is ${samples[0].ratio.toFixed(2)}:1 on its own ground`,
+      ).toBeGreaterThanOrEqual(3)
+
+      // And the numeral, which is what actually states the count, takes the
+      // text floor rather than the graphic one.
+      const figure = await contrastSamples(page, '.bz-bar-stars')
+      if (figure.length > 0) {
+        expect(
+          worst(figure).ratio,
+          `${theme} ${state}: the star count is ${worst(figure).ratio.toFixed(2)}:1`,
+        ).toBeGreaterThanOrEqual(4.5)
+      }
+    }
   }
 })

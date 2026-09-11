@@ -475,7 +475,27 @@ describe('M15 — the language is a transcription of the mockup', () => {
       ['.arr', '.bz-arrow', ['padding', 'color', 'font-weight']],
       ['.act', '.bz-actions', ['gap', 'margin-top', 'padding-top', 'border-top']],
       ['.btn', '.bz-btn', ['padding', 'border-radius', 'background', 'border', 'color', 'gap']],
-      ['.pn', '.bz-pager', ['grid-template-columns', 'gap', 'margin-top']],
+      /* `grid-template-columns` is NOT compared, and it is the fourth recorded
+         deviation from the mockup — the third that a measured floor forced
+         rather than the author choosing (**D34**'s rule, and `DESIGN.md`'s
+         order of authority).
+
+         `01`'s `.pn` says `1fr 1fr`. A bare `1fr` track carries an automatic
+         minimum of its own min-content, and the product's tile — one line, with
+         a label that reads `Previous module · Planned` on a planned neighbour —
+         has a large one. MEASURED on the built export: `1fr 1fr` gave **37px of
+         sideways document scroll at 1024px and up to 172px between 768 and
+         1060**, on the eight module routes whose neighbour is planned. §4.7's
+         one hard rule is that the page body never scrolls sideways.
+
+         The language says `minmax(0, 1fr) minmax(0, 1fr)`, which is the same
+         two equal columns the mockup draws and differs only in whether a track
+         may shrink below its contents. The mockup never meets the case: its own
+         pager holds two short titles and no state word.
+
+         `gap` and `margin-top` are still compared, so the pager has not left
+         the transcription — one property did, with its reason. */
+      ['.pn', '.bz-pager', ['gap', 'margin-top']],
       ['.toc', '.bz-aside', ['top', 'padding']],
     ]
 

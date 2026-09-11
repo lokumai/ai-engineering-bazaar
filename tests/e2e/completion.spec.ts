@@ -414,23 +414,12 @@ test('control C is reachable and operable from the keyboard', async ({ page }) =
 // §15.11 — a record that carries nothing is not a returning reader
 // ---------------------------------------------------------------------------
 
-/**
- * `days: []` is the whole point of these seeds. `recordData()` puts today in
- * `days` by default, so the suite's ordinary "empty seed" is already a record
- * that carries something; the state under test is the one the store leaves
- * behind when a reader has touched the site without reading it — a schema
- * stamp, a preference, and nothing else. That envelope used to stamp
- * `data-hl-record` and hand the reader a continue control for a module they had
- * never opened.
- */
-const CARRIES_NOTHING: ReadonlyArray<[string, RecordSeed]> = [
-  ['a migration stamp and nothing else', { days: [] }],
-  ['one preference and nothing else', { days: [], prefs: { charKeys: false } }],
-  // M12's catalog view is the newest member of `prefs`, and the newest way to
-  // write an envelope that carries nothing: pressing a view toggle is not
-  // reading the course.
-  ['a catalog view and nothing else', { days: [], prefs: { catalogView: 'table' } }],
-]
+/* `CARRIES_NOTHING` rode along in the move and had no loop to feed: §15.11 is
+   about the STAMP, which is the home page's claim and not control C's, so the
+   fixture stayed in `home.spec.ts` where it is actually looped. Deleted here
+   rather than left as a copy — two copies of one fixture is two fixtures, and
+   one of them drifts. */
+
 
 test('every level card names, numbers and counts itself', async ({ page }) => {
   await page.goto(CONTROL_C)

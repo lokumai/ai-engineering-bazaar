@@ -1379,14 +1379,24 @@
   @media (max-width: 767px) {
     .bz-btn { min-height: 44px; }
 
-    .bz-bar-icon { position: relative; }
+    /* M18 — the repository control joined the bar and missed this block, which
+       is the shape a new control fails in: it is 33px tall like its siblings
+       and it was the only one without the hit area beneath it. `TOUCH_CONTROLS`
+       in `responsive.spec.ts` could not see it either, because that list is
+       typed out and a new class is invisible to it until somebody adds one. */
+    .bz-bar-icon,
+    .bz-bar-repo { position: relative; }
 
-    .bz-bar-icon::after {
+    .bz-bar-icon::after,
+    .bz-bar-repo::after {
       content: "";
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 41px;
+      /* 41px is the icon button's own width; the repository control is wider
+         because it carries a figure, so the hit area follows the control rather
+         than shrinking it to a square. */
+      width: max(41px, 100%);
       height: 44px;
       translate: -50% -50%;
     }
@@ -1710,9 +1720,21 @@
     font-size: var(--text-item);
   }
 
+  /* `minmax(0, 1fr)` and NOT `1fr`, which is the whole of a defect M18 shipped.
+
+     A bare `1fr` track carries an automatic minimum of its own min-content, and
+     the one-line tile's min-content is large: the label is `flex: none` and on a
+     planned module it reads `Previous module · Planned`. So the track refused to
+     shrink and the grid overhung its container — **MEASURED: 37px of sideways
+     document scroll at 1024, and up to 172px between 768 and 1060**, on the
+     eight routes whose neighbour is a planned module. §4.7's one hard rule is
+     that the page body never scrolls sideways.
+
+     The narrow rule below already said `minmax(0, 1fr)`; only the two-column
+     case was left bare, which is why it survived a phone and failed a laptop. */
   .bz-pager {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 12px;
     margin-top: 34px;
   }
@@ -1738,17 +1760,33 @@
     text-decoration: none;
   }
 
+  /* The label may shrink, and it gives way BEFORE the destination does.
+
+     It was `flex: none`, which made it the one thing in the tile that could not
+     yield — so when the row ran out of room the title took the whole loss and
+     MEASURED down to 18px on twelve routes, which is the only part of the tile
+     that says where you are going. Now the label truncates first and the title
+     keeps its `min-width: 0` floor below. */
   .bz-pager-item small {
-    flex: none;
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
     color: var(--color-on-surface-faint);
     font-size: var(--text-mark);
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   /* The destination is what may be cut, because the label beside it is four
      words that never vary and the title is the part that can be forty
      characters long. `min-width: 0` is what lets a flex item shrink at all. */
   .bz-pager-item b {
-    min-width: 0;
+    flex: 1 1 auto;
+    /* A floor, because `min-width: 0` alone let this be starved to 18px by the
+       label beside it. 96px is about twelve characters — enough for a
+       destination to be recognisable, and small enough to fit beside the label
+       in the narrowest tile the two-column grid draws. */
+    min-width: min(96px, 100%);
     overflow: hidden;
     color: var(--color-on-surface-title);
     font-size: 15px;

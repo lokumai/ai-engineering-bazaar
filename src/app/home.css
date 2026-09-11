@@ -34,8 +34,12 @@
      the largest thing on the page, holds to a short measure, and is the only
      place tracking goes properly negative — so it takes `display` at the
      tightest tracking the language has. */
+  /* FULL WIDTH, BY THE AUTHOR'S INSTRUCTION, 2026-09-11. `08:44` caps the
+     display line at `20ch` and this transcribed it — which measured 529px in a
+     1342px column and left two thirds of the row empty. He asked for the first
+     row to span the whole width, twice. It does. Recorded in DESIGN.md's
+     DEVIATIONS, because the mockup says otherwise and this outranks it. */
   .bz-hero-title {
-    max-width: 20ch;
     margin: 0 0 14px;
     color: var(--color-on-surface-title);
     font: 600 var(--text-display) / var(--text-display--line-height) var(--font-sans);
@@ -45,8 +49,14 @@
   /* `08:45`'s lede: 19px over a 56ch measure. 19px is on no step; `lead` is
      16 and `subsection` 18.5, and the one that is a READING size rather than a
      heading size is `lead`. The measure transfers exactly. */
+  /* The lede keeps a measure, and this is the one place it is not the
+     mockup's 56ch. A line of prose has a readable length whatever is around
+     it — that is why `01:182` gives the reading column one at all — so the
+     sentences under a full-width heading hold to the language's own
+     `--layout-measure` rather than running the width of a 1440px window.
+     The heading is a single line of display type and has no such limit. */
   .bz-lede {
-    max-width: 56ch;
+    max-width: var(--layout-measure);
     margin: 0 0 26px;
   }
 

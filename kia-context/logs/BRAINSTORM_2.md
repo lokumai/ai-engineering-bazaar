@@ -10,7 +10,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D59, plus open questions O1 to O4 — 2026-09-09 to 2026-09-11"
+covers: "D26 to D60, plus open questions O1 to O4 — 2026-09-09 to 2026-09-11"
 last_updated: 2026-09-11
 ---
 
@@ -1118,6 +1118,36 @@ to three lines, and that one pixel of the row's sub-pixel arithmetic rounds up
 into a sideways scroll. **A defect that makes a thing smaller than it should be
 conceals every constraint that thing would otherwise break**, so fixing one
 layout bug is expected to reveal others rather than to finish the work.
+
+### D60 · The author overrules the mockup, and a heading is not prose — 2026-09-11
+
+`08:44` caps the home page's display line at `20ch`, and M16 stage 9 transcribed
+it faithfully. **The author asked twice for the first row to span the whole
+width**, the second time after I had offered him three options instead of doing
+it. Offering a decision back to somebody who has already made it is not
+diligence.
+
+**The measurement that explains why the transcription looked wrong on the page.**
+`ch` resolves against the element's own face: 20ch is 640px in the mockup's 46px
+system sans and **529px in this language's 38px face**. And the mockup hides the
+consequence, because `08` draws its own page 1052px wide, where a 640px heading
+fills most of a row. The product's page is 1342px at 1440, so the same rule left
+**two thirds of the row empty**. A transcribed value can be correct and still be
+wrong once it is placed in a container the mockup never drew.
+
+**The lede does not follow the heading, and that is the part that took a
+decision rather than an instruction.** He asked for the first row. A heading is
+one line of display type, and its length is a composition; a lede is prose, and
+prose has a readable line length whatever is around it — which is exactly why
+`01:182` gives the reading column a measure at all. So the heading takes the
+row and the lede keeps `--layout-measure`. They had been the same kind of thing
+(`20ch` and `56ch`, two caps on one block) and they are not.
+
+**The order of authority, now written down in DESIGN.md because two entries
+could be read as a precedent by the next agent:** the mockup outranks the design
+document; a measured accessibility floor outranks the mockup (**D34**); the
+author outranks all three. A third `DEVIATIONS` entry is still his to add and
+not an agent's.
 
 ## Open questions
 

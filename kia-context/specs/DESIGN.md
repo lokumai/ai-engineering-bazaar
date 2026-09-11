@@ -485,6 +485,24 @@ entry itself for staleness; `tests/unit/color/contrast.test.ts` is what proves t
 the floor. Both have to agree for either to pass. **Adding a second entry is the author's decision,
 never a way past a red test.**
 
+**A SECOND DEVIATION, AND THE FIRST ONE THAT IS A DECISION RATHER THAN A FLOOR.** `08:44` caps the
+home page's display line at `20ch`, and the language transcribed it. **The author overruled it on
+2026-09-11**: the first row spans the whole width. The measurement behind his call is that `ch`
+resolves against the face — 20ch is 640px in the mockup's 46px system sans and **529px in the
+language's 38px face** — and the mockup hides that by drawing its own page 1052px wide, while the
+product's page is 1342px at 1440. A 529px heading in a 1342px row leaves two thirds of it empty.
+
+The lede does NOT follow it. A heading is one line of display type and a lede is prose, and prose
+keeps a readable measure whatever is around it — which is the same reason `01:182` gives the reading
+column one at all. So the lede holds to `--layout-measure` rather than to `08`'s 56ch, and the two
+stopped being the same kind of thing. `fidelity.spec.ts` asserts both halves: the display line is
+exactly its row, the lede is comfortably inside it.
+
+**This is the only entry in this file that the author decided rather than a measurement forcing.**
+The rule stands: the mockup outranks this document, a measured accessibility floor outranks the
+mockup (**D34**), and the author outranks all three — stated here so a third entry cannot be added
+by an agent reading the first two as precedent.
+
 **And one departure of SCOPE rather than of value, recorded here so it is not mistaken for a
 transcription error.** `01:64` states the focus ring once, globally —
 `:focus-visible { outline: 2px solid var(--accent2) }` — and the language now lets two grounds rebind

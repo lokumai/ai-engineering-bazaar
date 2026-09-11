@@ -1446,12 +1446,28 @@ test.describe('M16 stage 9 — the front door', () => {
    * of a 1440px window is the difference between a front door and a banner,
    * and nothing in the type scale settles that.
    */
-  test('holds the display line and the lede to a measure, in `ch`', async ({ page }) => {
-    // A measure only constrains a window wider than it is. Below the
-    // language's own lower breakpoint the column is narrower than 20ch, so the
-    // line fills it and there is nothing here to measure — which is the cap
-    // working, not failing.
-    test.skip(page.viewportSize()!.width < 880, 'the column is narrower than the measure')
+  /**
+   * THE DISPLAY LINE SPANS THE ROW; THE LEDE KEEPS A MEASURE.
+   *
+   * `08:44` caps the display line at `20ch` and this test used to require that
+   * cap. **The author overruled it on 2026-09-11**, twice and in plain terms:
+   * the first row spans the whole width. Transcribed, the cap measured 529px
+   * in a 1342px column and left two thirds of the row empty — which is what a
+   * `ch` measure does when the face is 38px rather than the mockup's 46px, and
+   * what the mockup itself avoids by drawing its page 1052px wide.
+   *
+   * **The author outranks the mockup, and the mockup outranks everything
+   * else** — so this is the second entry in DESIGN.md's `DEVIATIONS`, and the
+   * first one that is a decision rather than a measured floor.
+   *
+   * What still holds, and is what this now asserts: a heading is one line of
+   * display type with no limit, and a LEDE is prose, so it keeps a readable
+   * measure whatever is around it. That is the same reason `01:182` gives the
+   * reading column one at all, and it is why the two are no longer the same
+   * kind of thing.
+   */
+  test('spans the row with its display line and keeps the lede readable', async ({ page }) => {
+    test.skip(page.viewportSize()!.width < 880, 'the column is narrower than any measure')
     await page.goto('/')
 
     const measured = await page.evaluate(() => {
@@ -1462,6 +1478,7 @@ test.describe('M16 stage 9 — the front door', () => {
         return {
           width: Math.round(box.width),
           column: Math.round((node.parentElement as HTMLElement).getBoundingClientRect().width),
+          lines: Math.round(box.height / Number.parseFloat(getComputedStyle(node).lineHeight)),
         }
       }
       return { hero: read('.bz-hero-title'), lede: read('.bz-lede') }
@@ -1469,13 +1486,22 @@ test.describe('M16 stage 9 — the front door', () => {
 
     expect(measured.hero, 'no display line on the front door').not.toBeNull()
     expect(measured.lede, 'no lede on the front door').not.toBeNull()
-    // Capped, and by a real margin rather than by a rounding error: at 1440 the
-    // column is wide enough that an uncapped line would fill it.
-    expect(measured.hero!.width).toBeLessThan(measured.hero!.column - 40)
-    expect(measured.lede!.width).toBeLessThan(measured.lede!.column - 40)
-    // And the lede's measure is the longer of the two, which is what makes one
-    // a heading and the other something to read.
-    expect(measured.lede!.width).toBeGreaterThan(measured.hero!.width)
+
+    // The row, and the whole of it.
+    expect(
+      measured.hero!.width,
+      `the display line is ${measured.hero!.width}px in a ${measured.hero!.column}px row`,
+    ).toBe(measured.hero!.column)
+
+    // Still prose, so still capped — by a real margin and not a rounding error.
+    expect(
+      measured.lede!.width,
+      'the lede runs the width of the window',
+    ).toBeLessThan(measured.lede!.column - 40)
+
+    // And the heading is the wider of the two now, which is the change: it is
+    // the row, and the lede is a column of sentences inside it.
+    expect(measured.hero!.width).toBeGreaterThan(measured.lede!.width)
   })
 
   /**

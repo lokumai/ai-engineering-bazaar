@@ -32,7 +32,7 @@ export function Objectives({ items }: { items: readonly string[] }) {
       <b id="objectives" className="bz-card-title">
         What you will be able to do
       </b>
-      <ul>
+      <ul className="bz-card-list">
         {items.map((item) => (
           <li key={item}>{item}</li>
         ))}

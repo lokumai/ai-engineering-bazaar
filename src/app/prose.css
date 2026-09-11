@@ -374,6 +374,11 @@
   .bz-prose ul { list-style: disc; }
   .bz-prose ol { list-style: decimal; }
 
+  /* A task list carries its own marker — a checkbox per item — so a disc beside
+     it is two markers for one list. GitHub-flavoured markdown emits the class;
+     one module in the corpus uses it today. */
+  .bz-prose ul.contains-task-list { list-style: none; padding-left: 0; }
+
   .bz-prose :is(ul, ol) li { margin: 6px 0; }
 
   .bz-prose hr {

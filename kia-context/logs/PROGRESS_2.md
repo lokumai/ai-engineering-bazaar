@@ -1872,6 +1872,19 @@ and what the rest of it already does at that width.
 one-line shortcut — `ContinueHero` prints the same answer on `/profile/`) and
 its `ContinueFacts` type, each with a note where it was.
 
+**A fourth defect, found after the commit by measuring rather than by reading.**
+Restoring the markers as `.bz-card ul { list-style: disc }` also hit
+`.bz-stamp-grid` — a flex row of approval stamps that happens to be a `ul`
+inside a card — and gave it bullets, because `.bz-card ul` outranks
+`.bz-stamp-grid` by one element. The rule is a CLASS now (`.bz-card-list`): a
+list asks for markers, and is never given them for being in the wrong box. A
+markdown task list is exempted too, because a checkbox is already a marker.
+
+**MEASURED on two module pages after the fix**, every list in the document by
+computed `list-style-type`: the authored prose lists and the objectives card
+carry `disc`; `.bz-stamp-grid`, `.bz-aside-list`, `.bz-group-list` and the task
+list carry `none`. Nothing else moved.
+
 ---
 
 ## 🏁 Milestone M19: The second language — WRITTEN AND NOT STARTED

@@ -1120,16 +1120,23 @@
     font-size: var(--text-item);
   }
 
-  /* M18 — `list-style: disc`, because Tailwind's preflight removes it from
-     every list in the document and this card is the one the author named:
-     `What you will be able to do` was a run of indented sentences that looked
-     like a paragraph somebody had broken. The 20px indent was already here and
-     was indenting nothing. */
   .bz-card ul {
     margin: 0;
     padding-left: 20px;
-    list-style: disc;
   }
+
+  /* M18 — `list-style: disc`, because Tailwind's preflight removes it from every
+     list in the document and this is the list the author named: `What you will
+     be able to do` was a run of indented sentences that looked like a paragraph
+     somebody had broken. The 20px indent above was already here and was
+     indenting nothing.
+
+     **It is a class and not `.bz-card ul`, and MEASURING is what settled that.**
+     Written as `.bz-card ul` it also hit `.bz-stamp-grid` — a flex row of
+     approval stamps that is a `ul` inside a card — and gave it bullets, because
+     `.bz-card ul` outranks `.bz-stamp-grid` by one element. A list asks for
+     markers here; it is never given them for being in the wrong box. */
+  .bz-card-list { list-style: disc; }
 
   .bz-card li {
     margin: 5px 0;

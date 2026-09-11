@@ -1043,11 +1043,11 @@ the milestone's promise and M9 to M14's failure was losing them quietly.
 | See every module in a level, with its topics | **M17: `/sheets/<level>/`** — five prerendered entries into the one catalog. The topics are a column on the table and a line on every card, so the capability moved with the route rather than after it | `index-sheet` (4), `record-index` (9), `redirects` (18 for the fold), `catalog`'s level-page comparison |
 | Read a level's own README | **M17: `/sheets/<level>/`**, under `General notes`. The retired level page was the only renderer of it, and the brief's ledger did not list it | `health` on a level path, and the `General notes` section itself |
 | Complete a module, and take it back | the module's action row | `record-sheet` (36) |
-| Complete a module from the overview | `/`, `/profile/` | `home` (16) |
+| Complete a module from the overview | **M18: `/profile/` alone.** The home page drew control C as well until the author took the level grid off the front door; the component and the mockup are unchanged, and the count of surfaces drawing it went from two to one | `completion` (9), which is where `home.spec.ts`'s eight control-C tests moved, plus the one that measures the dials against the rows |
 | A self-check, self-marked, no score kept | the module's quick check | `record-sheet` §12.6 cases |
 | A checklist that is never a gate | the module | `record-sheet` §12.4.1 cases |
 | Register a repository, refusing a hostile URL | the module's submittal | `record-sheet`'s `HOSTILE_REPOS` loop |
-| See how far through each level you are | `/`, `/profile/`, the rail, the catalog | `fidelity` stage 7 (the annulus, and the channel-A percentage with JS aborted), `rail` |
+| See how far through each level you are | **M18: `/profile/`**, the rail and the catalog. `/` no longer reports on the reader at all | `fidelity` stage 7 (the annulus, and the channel-A percentage with JS aborted), `rail`, and `home.spec.ts`'s assertion that the front door carries no `.bz-cmod` and no tally |
 | A role, and the path it suggests | `/profile/` | `path` (6), `category-surfaces`'s nine-role pair |
 | What is waiting on you | `/profile/` | `record-pages` (28) |
 | Take a copy of the record out, and put one back | `/profile/`'s data row | `record-pages`, `record-report` unit |
@@ -1882,6 +1882,36 @@ and what the rest of it already does at that width.
 **Two components were deleted as orphaned**: `ContinueLine` (the home page's
 one-line shortcut — `ContinueHero` prints the same answer on `/profile/`) and
 its `ContinueFacts` type, each with a note where it was.
+
+#### What the review found, after the milestone was pushed
+
+The two passes did return in the end, and between them they found four things
+this report had wrong. They are corrected in `ba1f59b` and after.
+
+1. **The keyboard map was moved onto a page nobody can reach.** `/legend/` was
+   linked from `/team/` and from nowhere else, and `/team/` only from
+   `/team/assignments/`. That was survivable while the page explained marks; it
+   stopped being survivable the moment the chords went there and the `?` button
+   came off in the same commit, because the only discovery path left was
+   pressing a key you would have to already know about. **It is the exact trap
+   this milestone named for the button it was deleting, walked into one line
+   later.** `/legend/` is in the footer now, which is on every route — and which
+   is what makes the page's own SC 3.2.6 claim true rather than aspirational.
+2. **Nothing turned red if the keys table were deleted.** No test mentioned
+   `.bz-keys` or visited that section: removing the whole block left the full
+   gate green. `accessibility.spec.ts` now asserts the table exists, lists every
+   chord `SHORTCUTS` declares, and that every route links to the page carrying
+   it.
+3. **Two carriers `ModuleRow` claimed do not exist.** There is no ISO 128 dash
+   down a draft row's `#` cell — the leading edge is a transparent 3px border
+   measuring `solid`, because the caution ink was removed for a text floor and
+   the line went with it. And a written module does not hold "three or four"
+   completion squares: MEASURED over the 33 rows, the 14 planned hold exactly
+   one each and the 19 written hold two (7), three (11) or four (1). The
+   argument survives both — the STYLE is what separates them — but the sentences
+   were wrong, and a wrong sentence in a docblock is worse than none.
+4. **These two ledger rows were not re-pointed.** M17 re-pointed its own and
+   M18 did not.
 
 **A fourth defect, found after the commit by measuring rather than by reading.**
 Restoring the markers as `.bz-card ul { list-style: disc }` also hit

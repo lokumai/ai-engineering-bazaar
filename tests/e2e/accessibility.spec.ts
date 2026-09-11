@@ -2,6 +2,7 @@ import { type Page, expect, test } from '@playwright/test'
 import { contrastSamples, useTheme, worst } from './contrast'
 import { A0, SHORT, A4, CATEGORY_PATHS, INDEX_SHEET, SHEETS } from './sheets'
 import { showTable } from './views'
+import { SHORTCUTS } from '@/lib/record/keys'
 
 /**
  * §10.2–§10.3 and §9.6 — the floors only a real engine can confirm.
@@ -603,4 +604,51 @@ test('task-list checkboxes are real, named, and persist (§12.7)', async ({ page
     .toHaveAttribute('data-ticked', 'true')
   await page.reload()
   await expect(page.getByRole('checkbox').first()).toBeChecked()
+})
+
+
+/**
+ * §12.16 — the keyboard map is discoverable, and it says what the handler does.
+ *
+ * **M18 removed the `?` button from the bar and moved the table to `/legend/`,
+ * and set no guard on the replacement** — which is the trap the commit itself
+ * named for the button it was deleting. Measured afterwards: nothing in the
+ * suite mentioned `.bz-keys` or visited that section, so deleting the whole
+ * `Keys` block left 2,153 unit and 1,121 browser tests green while the site's
+ * only discovery surface for the chords disappeared.
+ *
+ * Three claims, and each fails for its own reason:
+ *
+ * 1. **the table exists and is not empty** — the vacuity floor;
+ * 2. **it lists every chord the handler dispatches on.** Derived from
+ *    `SHORTCUTS`, which is the array `Keyboard` reads, so a chord added to the
+ *    map and not to the page fails here rather than being undiscoverable;
+ * 3. **the page carrying it is reachable from every route.** A help slot nobody
+ *    can navigate to is the state this replaced (`/legend/` was linked only
+ *    from `/team/`, itself linked only from `/team/assignments/`), and it is
+ *    the state SC 3.2.6 is about.
+ */
+test('the keyboard map is on a page every route links to (§12.16, SC 3.2.6)', async ({ page }) => {
+  await page.goto('/legend/')
+
+  const rows = page.locator('.bz-keys tr')
+  await expect(rows, 'the legend carries no keyboard map').not.toHaveCount(0)
+  await expect(rows).toHaveCount(SHORTCUTS.length)
+
+  // Every chord the handler knows, printed. Read off the application's own
+  // array rather than a list typed here: a map the page and the handler
+  // disagree about is worse than no map.
+  const printed = await page.locator('.bz-keys kbd').allInnerTexts()
+  expect(printed.map((text) => text.trim())).toEqual(SHORTCUTS.map((row) => row.keys))
+
+  // And the way in, from a route that is not this one. The footer is on every
+  // page, which is what makes the claim `legend/page.tsx` states about itself
+  // true rather than aspirational.
+  for (const route of ['/', INDEX_SHEET, A0.path]) {
+    await page.goto(route)
+    await expect(
+      page.getByRole('contentinfo').getByRole('link', { name: /legend/i }),
+      `${route} does not link to the legend`,
+    ).toHaveCount(1)
+  }
 })

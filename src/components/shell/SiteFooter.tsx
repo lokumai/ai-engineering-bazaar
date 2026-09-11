@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Fragment } from 'react'
 import { categoryLabels } from '@/lib/content/chrome'
 import { AFFILIATION, LICENCE_LABEL, LICENCE_URL, REPO_URL } from '@/lib/site'
@@ -92,6 +93,23 @@ export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
           </a>
           <Dot />
           <span>Marked by LKM-01</span>
+          <Dot />
+          {/* M18 — `/legend/` was reachable from `/team/` and from nowhere else,
+              and `/team/` is itself only reachable from `/team/assignments/`.
+              That was survivable while the page only explained the marks; it
+              stopped being survivable the moment M18 moved the KEYBOARD MAP
+              there, because the bar's `?` button went in the same commit and
+              the only discovery path left was pressing a key you would have to
+              already know about.
+
+              The page's own docblock calls itself *"the fixed help slot WCAG
+              2.2 SC 3.2.6 asks for: the same page, reached the same way, from
+              every route"* — which the footer is what makes true, since the
+              footer is on every route. It was a claim about a link nobody had
+              drawn. */}
+          <Link className="bz-link" href="/legend/">
+            Legend and keys
+          </Link>
           {/* The chain, in `AFFILIATION` order. Names only: the relationship
               between them is stated once, with its labels, in `/legend/`'s
               colophon. A footer is the wrong place to explain a corporate

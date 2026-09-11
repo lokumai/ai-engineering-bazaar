@@ -13,9 +13,16 @@ import type { SheetRow } from '@/lib/content/rows'
  * get §5.3's "offset -2px so it sits inside the row".
  *
  * A sheet that is not drawn is marked here and drawn as a hidden line in CSS:
- * an ISO 128 `3 2` dash down the `#` cell, and its one completion square
- * dashed to match. Line type first, colour second (§10.4) — and the word, which
- * M17 took off the screen, is still said (see `RowState`).
+ * its one completion square is dashed, which is the drawing set's convention for
+ * a line that is planned and not yet cut. Line type first, colour second
+ * (§10.4) — and the word, which M17 took off the screen, is still said (see
+ * `RowState`).
+ *
+ * **There is no dash down the `#` cell, and this docblock claimed one.** The
+ * leading edge of `.bz-row[data-draft]` is a 3px TRANSPARENT border and
+ * measures `solid`; `bazaar.css` records that the caution ink was deliberately
+ * removed for a text-contrast floor, and the line went with it. The only
+ * `dashed` rule any row has is the completion square, in `catalog.css`.
  *
  * The ninth column (§4.8, §12.18) is the one cell that is about the reader, and
  * it is drawn in the unsigned state on every prerender, because that is the
@@ -54,13 +61,18 @@ export type RowColumn = 'topics' | 'both'
  * **What carries the state instead, and none of it is colour.** A planned row
  * prints `—` in `Length` and `—` in `Sources`, because a sheet nobody has
  * written declares no length and cites nothing; and its completion cell holds
- * ONE DASHED square where a written module holds three or four solid ones,
- * because there is no slot on it that could ever be filled (`SignOffSquares`).
- * An em dash is typographic content and a border style is not a colour: both
- * survive `forced-colors: active` exactly as they are, which is what §13.1.3
- * asks of a non-colour carrier and what the word in that column used to do. The
- * ISO 128 `3 2` hidden line down the `#` cell is a third (§10.4: line type
- * first, colour second).
+ * ONE DASHED square where a written module holds SOLID ones, because there is
+ * no slot on it that could ever be filled (`SignOffSquares`). An em dash is
+ * typographic content and a border style is not a colour: both survive
+ * `forced-colors: active` exactly as they are, which is what §13.1.3 asks of a
+ * non-colour carrier and what the word in that column used to do.
+ *
+ * **MEASURED over the 33 rows, because this said "three or four" and that is
+ * not what the corpus draws:** every one of the 14 planned rows holds exactly
+ * one square; the 19 written rows hold two (7 of them), three (11) or four (1).
+ * The count is the slots the sheet SUPPLIES, so it is a fact about the sheet
+ * and not a number this component may promise. What separates the two kinds is
+ * the STYLE, which is the same for all of them either way.
  *
  * **The word itself is not lost, it is said rather than shown** (D61). A screen
  * reader still hears `Planned` as part of the row's own header, so nothing that

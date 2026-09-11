@@ -1543,8 +1543,12 @@
      text a reader reads, so it takes a 4.5:1 floor. The retired drawing set
      put hidden-line yellow there — a convention for a line that is planned and
      not yet cut — and the convention does not survive a text floor. The row
-     still says `PLANNED` in words, carries a dashed status tick and a dashed
-     completion square, so nothing is lost but the colour. */
+     still carries a dashed completion square, and says `PLANNED` where a
+     screen reader can hear it, so nothing is lost but the colour.
+
+     **The "dashed status tick" this named went with §4.8's STATUS column in
+     M17**, and the sentence outlived it by one milestone. `ModuleRow` carries
+     the current list of what a planned row states without colour, measured. */
   .bz-row[data-draft] .bz-row-link { color: var(--color-on-surface-muted); }
 
   /* Ink and not cobalt. A table of 33 rows whose every title is a link reads

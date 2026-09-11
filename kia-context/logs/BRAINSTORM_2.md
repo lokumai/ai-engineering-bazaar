@@ -1370,14 +1370,33 @@ they drift. **Those two now state a measured range rather than derive it, so the
 are the only halves that can go stale** — said plainly beside the figure in
 `MANIFESTO.md` §3 rather than left for somebody to discover.
 
-**One place is deliberately NOT corrected and it is the author's.**
-`mini-courses/MANIFEST.md` rule 4 reads *"It takes five to ten minutes to
-read"*, and that is not a description of the corpus — it is the target every
-module is written against, in the half of this repository governed by the corpus
-agreement. Changing it changes what a module is held to, which is a decision
-about the course rather than about the site. **It is raised, not edited.** Until
-he settles it, a module written to that rule and measured at 25 minutes is
-either a rule violation or a stale rule, and the site now says the second.
+**FOUR places are deliberately NOT corrected, and all four are the author's.**
+This entry first said "one", which was a grep that stopped early; the review
+pass counted them. MEASURED, `grep -rn -i "five to ten"` outside `out/` and
+`kia-context/logs/`:
+
+| File | What it is |
+| --- | --- |
+| `mini-courses/MANIFEST.md:35` | rule 4 — **the target a module is WRITTEN against** |
+| `mini-courses/index.md:14` | the corpus's own front page, reader-facing |
+| `mini-courses/CLAUDE.md:12` | the corpus agreement's summary line, read by every agent working that half |
+| `mini-courses/AGENTS.md:12` | a byte-identical copy of the line above |
+
+Every one of them is inside `mini-courses/`, which has its own working agreement
+and its own author. `MANIFEST.md` is the load-bearing one: it is not a
+description of the corpus, it is the target, so changing it changes what a
+module is held to. The other three follow from it and would be a copy edit made
+against a rule nobody had settled. **They are raised, not edited.** Until he
+settles it, a module written to that rule and measured at 25 minutes is either a
+rule violation or a stale rule, and the site now says the second.
+
+`mini-courses/index.md:11` also still reads *"a working AI engineer"*, singular —
+the same correction `README.md` rule 1 took. Same reason for leaving it, same
+one-pass fix when he takes it.
+
+`kia-context/genesis/GENESIS.md:26` names the author as *"a working AI engineer"*
+too and that one is CORRECT and stays: genesis records who started this, at t=0,
+and one person did.
 
 ## Open questions
 

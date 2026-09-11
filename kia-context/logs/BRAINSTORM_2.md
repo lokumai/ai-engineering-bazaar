@@ -1332,13 +1332,20 @@ with no figure beside them, which is the house spelling for "nobody counted"
 (§11.25) and never a zero somebody invented. Measured on the first run: 3.
 
 **The mark is not black, and that is a floor rather than a preference.** The
-author asked for GitHub's black icon. **MEASURED: `#000000` on the bar's cobalt
-`#282864` is 1.58:1.** The bar's own sub-palette is the strongest rule the design
-language states, so the mark takes the bar's ink — it is GitHub's own mark
-either way. The star is `--color-caution`, the language's existing gold and the
-same value the band is finished with: **4.16:1 on the bar**, over the 3:1 a
-graphic owes, and it is never the only carrier because the numeral beside it
-says the same thing at 13.31:1.
+author asked for GitHub's black icon. The bar's own sub-palette is the strongest
+rule the design language states, so the mark takes the bar's ink — it is
+GitHub's own mark either way.
+
+**The ratios here were measured twice, and the first set was against the wrong
+ground.** The control carries `--color-bar-field`, `rgba(255,255,255,.08)` over
+the cobalt, which composites to `#393970` — so nothing on it sits on `#282864`
+at all. MEASURED on the real ground: black **1.99:1**; the gold star
+**3.29:1**, over the 3:1 a graphic owes and only just; the numeral beside it
+**10.54:1**. Both themes declare the same three values, so both readings hold in
+each. The first pass reported 1.58 and 4.16 by compositing nothing, which is the
+kind of number that looks checked — and it was caught by doing the review lens
+rather than by any guard, because `contrast.test.ts` resolves tokens and this
+ground is not a token, it is two of them over each other.
 
 ### D65 · The minute figure was never measured, and now it is counted — 2026-09-12
 

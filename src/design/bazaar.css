@@ -534,13 +534,21 @@
 
   /* The star is `--color-caution`, which is the language's gold and the same
      value the band is finished with — not a yellow introduced for this control.
-     **MEASURED on the bar's own cobalt (`#b8873b` on `#282864`): 4.16:1**, well
-     over the 3:1 a graphic owes, and it is never the only carrier — the figure
-     beside it is `--color-on-bar` at 13.31:1 and says the same thing in a
-     numeral.
 
-     The author asked for the mark in BLACK. Black on this cobalt measures
-     **1.58:1** and the bar's own sub-palette is the strongest rule the design
+     **MEASURED against the ground it actually sits on, which is not the bar.**
+     `.bz-bar-repo` carries `--color-bar-field`, `rgba(255,255,255,.08)` over the
+     cobalt, and that composites to `#393970`. Gold on THAT is **3.29:1** — over
+     the 3:1 a graphic owes, and only just. On the bare bar it would be 4.16:1,
+     which is the figure this comment gave until somebody composited the fill;
+     a ratio taken against the wrong ground is the kind of number that looks
+     checked. The star is never the only carrier either way: the figure beside
+     it is `--color-on-bar` on the same fill at **10.54:1**, and says the same
+     thing in a numeral.
+
+     Both themes declare the same three values, so both readings hold in each.
+
+     The author asked for the mark in BLACK. Black on this ground measures
+     **1.99:1** and the bar's own sub-palette is the strongest rule the design
      language has, so the mark takes the bar's ink instead; it is GitHub's own
      mark either way. Reversing that is one declaration, and it costs the floor. */
   .bz-bar-star { flex: none; color: var(--color-caution); }

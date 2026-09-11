@@ -1307,6 +1307,27 @@ lifted off `on-surface-faint` at a measured 3.30:1 (**D45**, which would be a
 second `DEVIATIONS` entry and is therefore his call). A third joined them in
 stage 3 and is answered rather than open: a rail group's persistence.
 
+#### The copy came off, and the carriers stayed — 2026-09-11
+
+Between the layout fixes and M17 being written, the author had eleven blocks of
+explanation removed from the product in one pass (`2fd8b4c`), and the rule that
+came out of it is **MANIFESTO rule 16**: the interface talks, it does not explain
+itself. The reasoning, the full list and the method are **D61**.
+
+What shipped: the home page is the banner row, the two actions, three measured
+facts and the level cards; the catalog and the progress page open straight into
+their controls; a level card is a number, a name, a dial and its modules. The
+home lede is three sentences from `README.md`'s own "Why This Is Valuable".
+
+**Nothing lost a fact.** Where a fact lived only in removed prose it moved to a
+carrier: the catalog's rail stopped being `aria-hidden` and took a name, so it
+states `8 of 8 written` to a screen reader and prints nothing; the view heading
+kept its `id` for `aria-labelledby` and took the `.bz-said` clipping. Five
+browser tests were re-expressed against the new carriers rather than deleted.
+
+Gate at that point: typecheck clean, **2,155 unit / 82 files / 0 skipped**,
+build clean at **56 HTML files**, browser **1,115 passed, zero failures**.
+
 ---
 
 # 🧭 What comes after M16

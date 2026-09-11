@@ -10,7 +10,7 @@ authority: law
 writes: agent, from what the human decided
 status: active
 covers: the whole product
-last_updated: "2026-09-08"
+last_updated: "2026-09-11"
 ---
 
 # 📜 MANIFESTO — What we are building, and why
@@ -98,6 +98,10 @@ reason. See `genesis/GENESIS.md` §1 and §2 for where this came from.
     English text, and the translation mirrors its structure exactly.
 15. **Colour is never the only signal.** Anything colour says must also be said by a word, a count or
     a line.
+16. **The interface talks; it does not explain itself.** No sentence describing what the reader is
+    already looking at — a control, a mark, a count or a heading says it by being one. This is rule 5
+    turned on the product rather than on the prose, and the test is one question: does the page
+    already show this? Reasoning and the eleven blocks it removed: `logs/BRAINSTORM_2.md` **D61**.
 
 ## 6. What this is NOT
 

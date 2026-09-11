@@ -10,7 +10,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D60, plus open questions O1 to O4 — 2026-09-09 to 2026-09-11"
+covers: "D26 to D61, plus open questions O1 to O4 — 2026-09-09 to 2026-09-11"
 last_updated: 2026-09-11
 ---
 
@@ -1148,6 +1148,66 @@ could be read as a precedent by the next agent:** the mockup outranks the design
 document; a measured accessibility floor outranks the mockup (**D34**); the
 author outranks all three. A third `DEVIATIONS` entry is still his to add and
 not an agent's.
+
+### D61 · The interface talks; it does not explain itself — 2026-09-11
+
+The author, in the plainest terms he has used: *"I TOLD YOU THOUSAND TIME WE
+HATE TEXT !!! NOT EXPLANATION !!! UI ITSELF SHOULD TALK !!!"* — and separately,
+*"I TOLD YOU I WANT DRY, FAMILIAR ENGLISH, AS IF THEY ARE ALL BEGINNER ENGLISH
+SPEAKERS"*. Eleven blocks of copy came off the product in one pass.
+
+**What they had in common is worth more than the list.** Not one of them was
+untrue, and not one was badly written. Every one of them said in a sentence
+something the page was showing three inches away:
+
+| Removed | What already said it |
+| --- | --- |
+| Five paragraphs opening the home page | The level cards below, each with its own count |
+| `8 modules · 7 ready`, `1 module planned` on a level card | The dial on the same card, reading `0/8` |
+| `19 of 33 modules written` in the facts strip | The same level cards |
+| `Keeping your place` — three rows on names, aliases and accounts | Nothing: it explained a choice nobody had been asked to make |
+| `Overview — the shape of the course, level by level` | The toggle above it, which names Overview and marks it showing |
+| The catalog's and the progress page's opening paragraphs | The controls and the labelled sections below them |
+| `Reading time is what the completed modules declare` | A footnote under the number it hedged |
+
+**The rule that came out of it is now MANIFESTO rule 16**, and the test is one
+question: *does the page already show this?* If a control, a mark, a count or a
+heading says it, the sentence is not information. A caption under a picture of
+the same thing is noise.
+
+**The method matters as much as the rule: keep the FACT, drop the sentence.**
+Every removal above had a carrier already on screen — a dial's denominator, a
+dashed mark on a planned row, a rail's fill. Where a fact lived ONLY in the
+prose it moved rather than died, and both moves are the interesting ones:
+
+- the catalog's rail was `aria-hidden` **because** it restated the sentence
+  beside it, which was right — two statements of one fact is worse than one. With
+  the sentence gone it became the only carrier, so it took `role="img"` and a
+  name: a screen reader is told `8 of 8 written` and nothing is printed;
+- the view heading kept its `id`, because `aria-labelledby` still points at it,
+  and took the `.bz-said` clipping. It is in the accessibility tree and off the
+  screen.
+
+**Removing copy removes carriers, and a carrier is not the same thing as a
+sentence.** That is the trap in obeying this rule carelessly.
+
+**Five browser tests were re-expressed rather than deleted**, which is this
+project's standing answer when a claim outlives its wording. "Every number on
+the page is derived from the modules it is printed beside" was proven by summing
+the level cards' count lines against the facts strip; both are gone, so it is
+proven now by summing the dials' denominators against the module rows — a
+different pair of sources for the same claim. And the test that asserted the
+identity strip was visible now asserts what the strip existed to demonstrate,
+which is strictly stronger: **the front door carries no input and no sign-in
+link at all.**
+
+**What replaced the home lede came from the project's own voice** rather than
+being written fresh: three sentences out of `README.md`'s "Why This Is
+Valuable" — rule 1 (a human writes it), rule 4 (five to ten minutes), rule 5
+(pictures do the work) — in rule 3's plain language, for the audience
+`MANIFESTO.md` §4 names: people new to AI engineering, reading in a second
+language. *(The minute figure in it is wrong and M18 corrects it at its source
+as well as on the page.)*
 
 ## Open questions
 

@@ -1582,14 +1582,20 @@ Every number measured on the finished tree, not carried:
 than the route settled. It is one of the four known load-flakes and it passed in
 every run since.
 
-**The two review passes did not return.** Four subagents were spawned across the
-two milestones — capability and constraint for each — and not one delivered a
-report; they went idle without answering, twice asked. **Both lenses were run by
-hand instead, and each found something**, which is recorded where it belongs
-rather than here: the capability pass is why the level README is on the level
-pages at all, and the constraint pass is the 3.29:1 correction in **D64**. The
-failed delegation is written down because a milestone that says "reviewed"
-without saying by whom is the kind of claim this log exists to prevent.
+**The review passes returned late, and they were worth waiting for.** Four
+subagents were spawned across the two milestones — capability and constraint for
+each — and none reported for the best part of an hour; both lenses were run by
+hand in the meantime, which is what carried the level README onto the level
+pages and what produced **D64**'s 3.29:1 correction. Then all four answered at
+once.
+
+**Between them they found four things the hand pass had missed**, and the
+sharpest is worth stating on its own: **M18 moved the keyboard map onto a page
+nobody can navigate to**, one line after naming that exact trap for the `?`
+button it was deleting. The full list and its fixes are in M18's report below.
+**The lesson is not that the review was slow. It is that the hand pass and the
+review found disjoint sets** — the hand pass found what was WRONG in what I had
+written, and the review found what I had not thought to look at.
 
 #### What M17 did NOT do, deliberately
 

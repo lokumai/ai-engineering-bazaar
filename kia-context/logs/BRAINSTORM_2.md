@@ -10,8 +10,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D58, plus open questions O1 to O4 — 2026-09-09 to 2026-09-10"
-last_updated: 2026-09-10
+covers: "D26 to D59, plus open questions O1 to O4 — 2026-09-09 to 2026-09-11"
+last_updated: 2026-09-11
 ---
 
 # 🧠 BRAINSTORM, part 2 — the rebuild, D26 onward
@@ -1054,6 +1054,70 @@ whole milestone. The guard for it lives in `category-css.test.ts`, which owns
 the generated sheet: every `var()` in it resolves against the language or a
 surface. An exclusion is a statement about which RULES apply, never about
 whether a file is looked at.
+
+### D59 · A fact about one element cannot see a relationship between two — 2026-09-11
+
+The author reported the interface as "still full of errors" the day after M16
+closed with 2,154 unit tests and 1,083 browser tests green, and named the
+method the project was missing: **take a screenshot of each page and look at
+it.** One screenshot of the home page carried four defects. A fifth and a
+sixth were underneath them.
+
+**Why the strongest check in the project could not see any of them.** The
+fidelity harness asks a named element for a named property and compares it to
+the same element in the mockup. It asked the bar's navigation for its computed
+`display`, got `flex`, and agreed with `01` exactly — while the navigation
+rendered as a vertical stack on every route. `01:81` puts the row on
+`.mainnav`, whose children are the items; the app wraps them in a
+`<ul role="list">`, which is better markup, and the rule then laid out one list
+child. **Every fact was right and the picture was wrong**, because the defect
+was not in any element: it was in the relationship between three of them.
+
+That is a whole class, and the five others found in the same sitting are all in
+it — a `<td>` given `display: flex` (correct declaration, wrong element, so the
+cell stopped sharing its row's height), a sticky offset measured against a
+scroller instead of the viewport, a trail centred in a column its page did not
+share, and an ordinal painted against its title because the gap was declared
+one level above the two things it was meant to separate.
+
+**Three ways to catch it, and only one of them holds.**
+
+1. **Screenshot comparison against a stored baseline.** Rejected. The baseline
+   has to come from somewhere, and the only somewhere here is a build somebody
+   already declared correct — which is exactly how five milestones shipped the
+   wrong design. It also fails on a font hint or an antialiasing change, so the
+   failures are mostly noise, and noise is what teaches people to ignore a
+   suite.
+2. **An agent looking at each page.** This is what found them, and it is
+   necessary but not repeatable: it costs a session, it cannot run in CI, and
+   what it notices depends on what it thought to look at. It belongs in the
+   method, not in the gate.
+3. **Geometric invariants over relationships.** What went in:
+   `tests/e2e/layout.spec.ts`, seven rules over every route. A row is not
+   declared above the things it lays out; a table cell is still a table cell; a
+   cell's border reaches its own row; a sticky offset does not resolve against a
+   scroller; nothing in the bar paints outside the bar; a trail starts where
+   its page starts; a number is not painted against a word.
+
+**The line that keeps file 3 honest: every invariant in it is wrong in ANY
+design.** None of them says what the interface should look like — that is the
+mockup's job and `fidelity.spec.ts`'s. They say that the page is put together
+the way its own rules claim. That is why they can be asserted over a route
+nobody has drawn, and why a new route gets them for free.
+
+Mutation-proven as a set, which is the only honest way to prove a suite rather
+than a test: with all five fixes reverted, **27 of the 30 cases go red**, each
+naming its own defect, including "the trail starts at 313px and the page at
+49px".
+
+**And the second finding is the one to remember: the navigation defect was
+hiding four more.** A 120px vertical stack is narrow, so the bar appeared to
+fit a phone. Fixing it exposed that the bar overflows a 390px viewport, that
+the closed dropdown is laid out 53.6px past the edge, that the wordmark folds
+to three lines, and that one pixel of the row's sub-pixel arithmetic rounds up
+into a sideways scroll. **A defect that makes a thing smaller than it should be
+conceals every constraint that thing would otherwise break**, so fixing one
+layout bug is expected to reveal others rather than to finish the work.
 
 ## Open questions
 

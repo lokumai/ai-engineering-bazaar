@@ -10,8 +10,8 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16, 2026-09-09 to 2026-09-10 — all ten stages shipped, plus the review pass over it"
-last_updated: 2026-09-10
+covers: "M16, 2026-09-09 to 2026-09-11 — all ten stages shipped, the review pass over it, and the six layout defects a screenshot found"
+last_updated: 2026-09-11
 ---
 
 # 📈 PROGRESS, part 2 — M16, the interface rebuilt
@@ -1242,6 +1242,60 @@ clean: the rail's three states under `forced-colors: active`, `QuickCheck` and
 `ChecklistIsland`'s state markers, the quarantined-record and no-path empty
 states, stage 10's eight derived routes for contrast specifically, and
 `04`/`06` diffed against `prose.css`'s containment rules.
+
+#### And then the author looked at the pages — 2026-09-11
+
+**Six layout defects, on every route, a day after the milestone closed green.**
+The reviews of 2026-09-10 read code and measured tokens; none of them opened a
+page. The author did, and named the method: screenshot each page and look at it.
+The reasoning is **D59**; the fixes are `08a009d`.
+
+| What a screenshot showed | Measured |
+| --- | --- |
+| The navigation was **vertical on every route** | The nav was 120 x 128 in a 58px bar, overflowing it by 35px above and below |
+| Every dropdown opened under the wrong item | `.bz-menu` was anchored to the LIST, not to its own item |
+| The table header **hid the first two rows** | Sticky at `top: 76px` inside a scroller: header 443-474 over a first row at 398-445 |
+| The Status cell's border stopped 24px short | A `<td>` with `display: flex` is not a cell: 47px inside a 72px row |
+| The trail floated away from its page | 814px centred at x=313 above a heading at x=49, on four routes |
+| Every level card read `01LLM Fundamentals` | The 8px row gap was declared one level above the two things it separates |
+
+**The navigation defect was hiding four more**, and that is the more useful
+finding. A 120px stack is narrow, so the bar appeared to fit a phone. With the
+row restored: the document scrolled sideways at 390 on every route; the CLOSED
+dropdown was a 214px box reaching 53.6px past the viewport, because `<details>`
+hides its panel and Chrome still lays it out; the wordmark folded to two lines
+at 768 and three at 390; and one pixel of the row's sub-pixel arithmetic
+rounded up into a scroll that no element owned. Each needed its own answer, all
+four below the language's own breakpoints, where `01` says nothing at all.
+
+**What the author asked for is now in the gate.** `tests/e2e/layout.spec.ts` —
+seven geometric invariants over every route, every one of them a rule that is
+wrong in any design rather than a matter of taste, so they hold for a route no
+mockup draws. Mutation-proven as a set: with all five fixes reverted, **27 of
+30 cases go red**, each naming its own defect.
+
+Two guards needed the change applied to themselves — the fifth and sixth time
+in this milestone. The transcription pair for `.mainnav` moved to
+`.bz-bar-nav > ul`, because a pair names the element that carries the fact. And
+stage 2's comparison used `differencesIn`, the one variant that does not consult
+`NARROW_DEVIATIONS`, so no narrow deviation could ever have been registered for
+the menu.
+
+**One thing was reported and was not ours.** The module route "takes forever to
+compile and never ends", with `Failed to fetch` in the console. Reproduced on a
+clean cache: `/courses/fundamentals/llms/` compiles in **2.4s cold and serves in
+50-210ms warm**, and the console error was the client talking to a dev server
+that had already died. The cause is in the log — Turbopack panicked inside
+`aggregation_update.rs` and aborted the process, printing its own "this is a bug
+in Turbopack, please report it". `rm -rf .next` clears it. A `.venv/lib64`
+symlink at the repo root is a plausible aggravator, since the panic names
+`realpath_with_links`, and moving that virtualenv out of the project is worth
+trying if it recurs.
+
+**The gate after the fixes**: typecheck clean; **2,155 unit tests in 82 files, 0
+skipped**; build clean at **56 HTML files**; fidelity **618**; and the browser
+suite **1,115 passed with zero failures** — the four habitual load-flakes
+included, which is the first clean full run this milestone has had.
 
 #### What is left, and it is not code
 

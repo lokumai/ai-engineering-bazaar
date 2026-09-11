@@ -70,6 +70,29 @@ throughout, because **not one of them compared anything to the mockup**. They
 measured contrast, keyboard paths, containment and first paint — all real, none
 of them the thing that was wrong.
 
+**`tests/e2e/layout.spec.ts` is the layer under that one, added on 2026-09-11
+for the same kind of reason.** The fidelity harness compares a NAMED ELEMENT's
+named property to the same element in the mockup — and it agreed with `01`
+exactly while the navigation rendered as a vertical stack on every route,
+because `display: flex` was on the `<nav>` and the items were inside a `<ul>`.
+Every fact was right; the relationship between three elements was wrong, and
+nothing that reads elements one at a time can see that.
+
+So this file asserts RELATIONSHIPS, over every route: a row is not declared
+above the things it lays out, a table cell is still a table cell, a cell's
+border reaches its own row, a sticky offset does not resolve against a
+scroller, nothing in the bar paints outside the bar, a trail starts where its
+page starts, and a number is not painted against a word.
+
+**Every invariant in it is wrong in any design**, which is the line that keeps
+it out of the mockup's territory: it never says what the interface should look
+like, only that the page is put together the way its own rules claim. That is
+why it holds for a route no mockup draws, and why a new route gets it for free.
+**Both halves are needed** — fidelity catches a value that drifted from the
+drawing, this catches a page that does not hold together — and a defect visible
+in one screenshot of the home page had escaped 2,154 unit and 1,083 browser
+tests before it existed (**D59**).
+
 The unit half holds `src/design/bazaar.css` to
 `playground/01-theme-T4-ground-G3-powder.html` and its approved dark sibling.
 **It writes no value down**, which is what keeps it inside the rule at the top

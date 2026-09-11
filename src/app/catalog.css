@@ -481,11 +481,16 @@
   }
 
   .bz-row-status {
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-mark);
+  }
+
+  /* The row the cell holds, rather than the cell itself — see `ModuleRow.tsx`
+     for what putting this on the `<td>` cost. */
+  .bz-row-status-line {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-mark);
   }
 
   .bz-row-tick { flex: none; }

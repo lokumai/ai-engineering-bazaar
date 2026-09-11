@@ -379,12 +379,22 @@
     padding: 0 22px;
   }
 
+  /* A WORDMARK DOES NOT WRAP. `flex-shrink` defaults to 1 and `min-width:
+     auto` on a text item resolves to its longest WORD, so the brand was free
+     to fold: MEASURED one line at 880 and above, two at 768 and **three at
+     390**, inside a bar that stays 58px tall. It only began to fold when the
+     navigation became a real row and started competing for the space — one
+     more thing the vertical-nav defect had been hiding.
+     The navigation is the element designed to give way here, and it does, by
+     scrolling inside itself below the breakpoint. */
   .bz-brand {
     display: flex;
+    flex: none;
     align-items: center;
     gap: 10px;
     color: var(--color-on-bar);
     font: 600 var(--text-lead) / 1 var(--font-sans);
+    white-space: nowrap;
   }
 
   .bz-brand:hover { text-decoration: none; }
@@ -404,13 +414,44 @@
     border-radius: var(--radius-hair);
   }
 
+  /* THE ROW IS THE LIST, NOT THE NAV, and getting that wrong made the whole
+     navigation vertical on every route.
+
+     `01:81-82` says `.mainnav { display: flex }` and `.mainnav > * { position:
+     relative }`, and in the mockup the items ARE the nav's children. The app
+     wraps them in a `<ul role="list">`, which is the right markup and which
+     puts one element between the rule and the things it is about. Transcribed
+     literally, `display: flex` laid out a single list child and
+     `> * { position: relative }` made that list the positioning context — so
+     MEASURED at 1440: the nav was 120 x 128 with its four items stacked, and
+     because `.bz-bar-inner` centres its items a 128px box in a 58px bar
+     overflowed 35px above the bar and the same below, across the decorative
+     band and the breadcrumb.
+
+     The dropdown was the second casualty and the quieter one: `.bz-menu` is
+     absolute at `left: 0`, so with the LIST as its containing block every menu
+     opened at the list's left edge instead of under the item that owns it.
+
+     **Nothing in the suite could see either.** The fidelity harness reads the
+     nav's own computed `display`, which was `flex` and matched the mockup
+     exactly. A rule can be present, correct, and applied to the wrong element.
+     So the two declarations now name what they are about: the list is the row,
+     each item is its own positioning context. */
   .bz-bar-nav {
     display: flex;
-    gap: 2px;
     margin-left: 4px;
   }
 
-  .bz-bar-nav > * { position: relative; }
+  .bz-bar-nav > ul {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bz-bar-nav li { position: relative; }
 
   .bz-bar-link {
     display: inline-flex;
@@ -471,6 +512,25 @@
   .bz-bar-icon:hover { background: var(--color-bar-hover); }
 
   /* -- the menu ----------------------------------------------------------- */
+
+  /* A CLOSED MENU HAS NO BOX, and saying so explicitly is the mockup's own
+     mechanism rather than an addition. `01:91` declares `.dd { display: none }`
+     and reveals it on hover or focus-within; this interface uses a native
+     `<details>` instead (stage 2, so it works with no JavaScript), and that
+     was left to hide the panel by itself.
+
+     Chrome does hide a closed `<details>`'s contents — but it still LAYS OUT
+     the panel. MEASURED at 390: the closed Curriculum menu was a 214px box at
+     x=229.6, reaching 53.6px past the viewport, so the document scrolled
+     sideways on every route that has a bar. Invisible, and still moving the
+     page. This surfaced only when the navigation became a real row, because
+     until then the menu was anchored to the list rather than to its own item
+     and happened to fall inside the viewport.
+
+     `display: none` while closed also takes the menu's nine links out of the
+     tab order, which is what `accessibility.spec.ts` requires of a closed
+     disclosure — asserted on both halves, so the open state is checked too. */
+  details:not([open]) > .bz-menu { display: none; }
 
   .bz-menu {
     position: absolute;
@@ -1321,8 +1381,21 @@
     color: var(--color-on-surface);
     font: 600 var(--text-mark) / 1 var(--font-sans);
     text-align: left;
+    /* STICKY TO ITS OWN SCROLLER, AT ZERO, and the offset is the bug it fixes.
+       This was `top: calc(var(--layout-sticky) + var(--bz-filters-h, 0px))`,
+       which is the right offset for sticking beneath the bar and the filter
+       row — and that intent needs the VIEWPORT as the sticky containing block.
+       It is not: `.bz-table-scroll` carries `overflow-x: auto` for the wide
+       table, and the spec computes the other axis to `auto` as well, so the
+       scroller is the scrollport and the offset resolves against IT.
+       MEASURED at scroll 0 on `/courses/expert/`: the first row spanned
+       398-445 and the header 443-474 — the header was pushed 76px down the
+       table and painted over the first two rows, hiding them.
+       Zero is the only correct value here. A header that stays put while the
+       page scrolls would need the scroller to scroll vertically too, which is
+       a layout decision and not a defect fix. */
     position: sticky;
-    top: calc(var(--layout-sticky) + var(--bz-filters-h, 0px));
+    top: 0;
     z-index: 20;
   }
 

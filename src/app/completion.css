@@ -535,7 +535,20 @@
     display: none;
   }
 
+  /* THE ROW'S GAP HAS TO BE ON THE ELEMENT THAT HOLDS THE TWO THINGS.
+     `08:65` says `.lvl li { display: flex; gap: 8px }` and in the mockup the
+     ordinal and the title are the list item's own children. Here the item also
+     holds the completion control, so the ordinal and the title moved inside
+     the link — and `.bz-cmod`'s gap, transcribed correctly onto the item, then
+     had nothing to separate. MEASURED: the rendered text was `01LLM
+     Fundamentals`, on every level card on the home page and on `/profile/`.
+     The mockup's own `textContent` reads `01LLM Fundamentals` too; the
+     difference is entirely the 8px flex gap, which is why reading the markup
+     could never have shown this and looking at the page did. */
   .bz-cmod-link {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
     color: var(--color-on-surface);
   }
 

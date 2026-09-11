@@ -100,9 +100,12 @@ export function SiteHeader() {
     <>
       <header role="banner" className="bz-bar">
         <div className="bz-bar-inner">
+          {/* The wordmark is its own element so a phone can keep the logo and
+              drop the words without losing the link's name — see `shell.css`
+              for the measurement that forced it. */}
           <Link href="/" className="bz-brand">
             <BrandMark />
-            AI Engineering Bazaar
+            <span className="bz-brand-word">AI Engineering Bazaar</span>
           </Link>
 
           <MainNav categories={categoryLabels()} />

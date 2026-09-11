@@ -94,18 +94,39 @@ export function PageShell({
     <>
       {/*
         §17.6 — news about the reader's record, above the page's own content
-        because it is not part of whatever page they happened to land on. It
-        keeps the measure even where the children do not: a sentence of prose
-        measured against 1440px is unreadable whatever is around it.
+        because it is not part of whatever page they happened to land on.
+
+        BOTH OF THESE FOLLOW THE PAGE'S OWN COLUMN, and that is a fix rather
+        than a tidy-up. They used to take `bz-col` unconditionally, on the
+        reasoning that a sentence of prose measured against 1440px is
+        unreadable whatever is around it — which is true of the sentence and
+        false of the page. `bz-col` does two things, and the second one is the
+        problem: it caps the measure AND centres it (`margin-inline: auto`).
+        On a route that is deliberately wider than the measure — the catalog,
+        the two level listings, the home page — that put the trail in an 814px
+        box centred at x=313 while the page's own heading started at x=49.
+        MEASURED on `/`, `/courses/`, `/courses/expert/` and `/sheets/`: the
+        same 264px misalignment on every one of them, which is the first thing
+        a reader's eye lands on under the bar.
+
+        A trail names where THIS page is, so it belongs at this page's left
+        edge. The reading page is unchanged, because there the page is the
+        column and the two already agreed.
       */}
-      <div className="bz-col">
+      {column ? (
+        <div className="bz-col">
+          <ClaimReceipt />
+        </div>
+      ) : (
         <ClaimReceipt />
-      </div>
-      {trail && (
+      )}
+      {trail && (column ? (
         <div className="bz-col">
           <Breadcrumb categories={categoryLabels()} current={trailLabel} />
         </div>
-      )}
+      ) : (
+        <Breadcrumb categories={categoryLabels()} current={trailLabel} />
+      ))}
       {column ? <div className="bz-col">{children}</div> : children}
     </>
   )

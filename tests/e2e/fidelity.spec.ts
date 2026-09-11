@@ -519,7 +519,12 @@ test.describe('M16 stage 2 — the dropdown a bar item opens', () => {
       expect(read.some((key) => actual[key] !== null), `${role} unread on the page`).toBe(true)
     }
 
-    expect(differencesIn(reference, actual, BUILT)).toEqual([])
+    // `differencesAt` and not `differencesIn`, which is what every other stage
+    // uses and what this one should have: only the former consults
+    // `NARROW_DEVIATIONS`, so a fact that legitimately stops being specified
+    // below the breakpoint could never be registered for this block. Found
+    // when the menu had to leave the bar at 390 — see `menu.minWidth`.
+    expect(differencesAt(reference, actual, BUILT, page.viewportSize()!.width)).toEqual([])
   })
 
   test('notices when the menu loses the shadow that lifts it off the page', async ({ page }) => {

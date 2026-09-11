@@ -438,7 +438,16 @@ describe('M15 — the language is a transcription of the mockup', () => {
       ['.top', '.bz-bar', ['background', 'z-index', 'position']],
       ['.top-in', '.bz-bar-inner', ['height', 'padding', 'gap']],
       ['.brand', '.bz-brand', ['gap', 'color']],
-      ['.mainnav', '.bz-bar-nav', ['gap', 'margin-left']],
+      // THE PAIR NAMES THE ELEMENT THAT CARRIES THE FACT, and this one moved.
+      // `01`'s `.mainnav` holds the items directly, so its `gap` is the space
+      // between them. The app wraps them in a `<ul role="list">`, so the same
+      // space lives on the list — and when it was declared on the nav instead
+      // it laid out one list child and the whole navigation went vertical on
+      // every route. `margin-left` is the nav's own offset from the brand and
+      // stays where it was. This is the fourth time in M16 a guard has needed
+      // the change applied to itself rather than around it.
+      ['.mainnav', '.bz-bar-nav > ul', ['gap']],
+      ['.mainnav', '.bz-bar-nav', ['margin-left']],
       ['.dd', '.bz-menu', ['min-width', 'padding', 'border-radius', 'background', 'box-shadow', 'top']],
       ['.band', '.bz-band', ['height', 'background-color', 'background-size', 'background-position', 'border-bottom']],
       ['.shell', '.bz-shell', ['grid-template-columns', 'align-items']],

@@ -1033,6 +1033,21 @@ export const NARROW_DEVIATIONS: Readonly<Record<string, NarrowDeviation>> = {
       + 'takes over below the phone breakpoint — D34\'s rule that a measured '
       + 'accessibility floor outranks a transcribed value. MEASURED 44px at 390.',
   },
+  'menu.minWidth': {
+    below: 768,
+    why:
+      '`01` gives the bar no narrow treatment at all, so what the dropdown '
+      + 'does on a phone is derived (D30). Anchored to its own item — which is '
+      + 'correct, and what `.bz-bar-nav li { position: relative }` restored — a '
+      + '214px panel hanging off an item near the right edge reaches 53.6px '
+      + 'past a 390px viewport and scrolls the document sideways. Anchoring it '
+      + "to the item's other edge only moves the problem, because the list "
+      + 'scrolls and any item can be anywhere. So below the touch breakpoint '
+      + 'it is pinned to the viewport under the chrome and spans it, which '
+      + 'drops the transcribed 214px floor to 0 — the width is the screen. '
+      + 'MEASURED at 390: 12px to 378px, fully inside, with every level and '
+      + 'count still on it.',
+  },
   'chipCurrent.height': {
     below: 768,
     why:

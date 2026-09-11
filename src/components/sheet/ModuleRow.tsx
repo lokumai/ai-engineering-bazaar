@@ -181,9 +181,19 @@ export function ModuleRow({ row, column }: { row: SheetRow; column: RowColumn })
       <td className="bz-row-value">{row.sources}</td>
       <td className="bz-row-value">{row.lang}</td>
 
+      {/* THE CELL STAYS A CELL. The tick and the word need to sit on one line
+          with a gap, and that row belongs on a wrapper INSIDE the cell — not
+          on the cell. `display: flex` on a `<td>` takes it out of the table's
+          row layout: it stops stretching to the row's height, so MEASURED on
+          `/courses/expert/` a two-line row was 72px while this cell was 47px,
+          which painted its bottom border 24px above the row's own and left the
+          tick centred against a different box from the sign-off square beside
+          it. Both were visible on every listing route. */}
       <td className="bz-row-status">
-        <StatusTick drawn={row.drawn} />
-        <span>{row.status}</span>
+        <span className="bz-row-status-line">
+          <StatusTick drawn={row.drawn} />
+          <span>{row.status}</span>
+        </span>
       </td>
 
       <td className="bz-row-signoff">

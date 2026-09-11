@@ -176,6 +176,113 @@
       gap: 8px;
       padding: 0 12px;
     }
+
+    /* AND THE NAVIGATION SCROLLS INSIDE ITSELF, which is the third answer to a
+       problem whose two usual answers DESIGN.md forbids.
+
+       This became visible only when the navigation was fixed. It had been
+       laying out as a 120px vertical stack — the `display: flex` was on the
+       nav and the items were inside a list — and a stack is narrow, so the bar
+       appeared to fit a phone. MEASURED at 390 once it was a row: brand 139 +
+       nav 355 puts the trailing icons at x=599 in a 390px viewport, and the
+       document scrolled sideways on every route. **The vertical-nav defect was
+       hiding a second defect**, which is the honest reason this arrives with
+       the fix for it rather than before.
+
+       DESIGN.md forbids the two usual answers: nothing reflows into a
+       hamburger, and nothing scrolls the page sideways. The third is the one
+       this project already uses for a wide table — the content scrolls inside
+       its own box — so the list does, with `contain` so a swipe cannot chain
+       out to the page. Every link stays reachable, by swipe and by Tab, which
+       scrolls its target into view; no control is hidden, and no destination
+       moves behind a menu.
+
+       `min-width: 0` on the nav is what makes it possible at all: a flex item
+       defaults to `min-width: auto`, so it refuses to shrink below its content
+       and overflows the bar instead of scrolling within it. The scrollbar is
+       suppressed because the bar is 58px tall and a horizontal scrollbar
+       inside it would eat a third of the control height — the affordance is
+       the cut-off item at the edge, which is how the tables do it too. */
+    .bz-bar-nav {
+      min-width: 0;
+      margin-left: 0;
+    }
+
+    .bz-bar-nav > ul {
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+    }
+
+    .bz-bar-nav > ul::-webkit-scrollbar { display: none; }
+
+    /* THE LAST PIXEL, AND IT BELONGS TO NOBODY.
+       With the row fitting and every item shrinkable, MEASURED at 390 the
+       document still reported `scrollWidth: 391` — and hiding ANY item in the
+       bar brought it back to 390, which is the signature of sub-pixel
+       arithmetic rather than of one element being too wide. The brand measures
+       138.58px, the nav absorbs the remainder at 137.42, and the row's right
+       edge lands a fraction over 378 inside 12px of padding; `scrollWidth` is
+       an integer, so it rounds up, and one pixel of sideways scroll on every
+       route is indistinguishable to a reader from a hundred.
+       `clip` and not `hidden`: `hidden` would make this a scroll container in
+       both axes, and `clip` does not — so nothing here can be scrolled, and
+       the vertical axis stays `visible` for the menu that hangs below. */
+    .bz-bar-inner { overflow-x: clip; }
+
+    /* AND THE MENU LEAVES THE BAR ALTOGETHER AT THIS WIDTH.
+       `01` gives the bar no narrow treatment at all, so what the dropdown does
+       on a phone is derived. Anchored to its own item — which is correct, and
+       which is what `.bz-bar-nav li { position: relative }` restored — a 214px
+       panel hanging off an item near the right edge reaches 53.6px past a
+       390px viewport. Anchoring it to the item's other edge only moves the
+       problem: the list scrolls, so any item can be anywhere.
+       So below the breakpoint it is pinned to the viewport under the chrome,
+       which is the one position that cannot depend on where its item happens
+       to be. `fixed` also escapes the `clip` above, because the containing
+       block of a fixed box is the viewport and not an overflow ancestor.
+       Recorded in `NARROW_DEVIATIONS` as `menu.top` and `menu.minWidth`. */
+    .bz-menu {
+      position: fixed;
+      top: var(--layout-sticky);
+      left: 12px;
+      right: 12px;
+      min-width: 0;
+    }
+  }
+
+  /* ---------------------------------------------------------------------------
+     ON A PHONE THE BRAND IS THE LOGO, AND THE WORDS ARE STILL THERE.
+
+     MEASURED at 390: the wordmark is 230px of a 390px bar, which leaves the
+     navigation about 40px and a reader sees `Hom` before the icons. A
+     truncated word in the chrome is worse than no word, and the four remaining
+     answers are all worse than this one: a hamburger is forbidden by
+     DESIGN.md, wrapping the wordmark was the defect this replaced, shrinking
+     its type would make the smallest thing in the bar its title, and dropping
+     a destination loses navigation.
+
+     So below the touch breakpoint the words are said and not shown — the
+     `.bz-said` treatment, written out here rather than borrowed, because a
+     class cannot be conditionally added by a stylesheet. The link keeps its
+     accessible name, because a clipped element is still read; the logo is
+     `aria-hidden` and carries no meaning of its own, which is why it can stay.
+
+     767 and not a new width: the language declares two breakpoints and the
+     touch floor is the third, so this borrows the one that already means
+     "a thumb, not a pointer" rather than inventing a fourth.
+     --------------------------------------------------------------------------- */
+  @media (max-width: 767px) {
+    .bz-brand-word {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
   }
 
   /* ---------------------------------------------------------------------------

@@ -2897,6 +2897,47 @@ and behavioural tests. A redesign that moves them must move their tests with
 them, the way M18 moved control C's eight into `completion.spec.ts` rather than
 deleting them.
 
+### The inventory — deliverable 1, done before anything was designed
+
+**Every capability this page carries, where it is, and the test that proves it.**
+Written first because the point of the exercise is that grouping thirteen rows
+must not quietly drop one, and `/dashboard/`, `/path/` and `/report/` all forward
+here so the ledger's rows for those point at this page.
+
+| # | Row / block | What it does | Proven by |
+| --- | --- | --- | --- |
+| 1 | `readout` · Readout | the standing, as a count | `colour-not-alone.spec.ts` |
+| 2 | `uptime` · Streak | days in a row, from the record | `register.test.tsx` |
+| 3 | `stamps` · Stamps | which sign-off slots are filled | `register.test.tsx` |
+| 4 | `submittals` · What you built | the repositories a reader registered | `record-pages.spec.ts` |
+| 5 | `role` · Role and path | the chosen role and its suggested order | `path.spec.ts`, `record-pages.spec.ts`, `alias-naming.test.ts` |
+| 6 | `diagram` · The curriculum as one diagram | the whole set as one figure | `record-pages.spec.ts`, `record-profile.test.tsx` |
+| 7 | `report` · Record of work | §12.12's exported file, built in the browser | `record-pages.spec.ts`, `record-profile.test.tsx` |
+| 8 | `bz-orgs-head` · Organisation | the org join, when auth is on | `accounts-disabled.spec.ts`, `record-pages.spec.ts`, `chrome.test.tsx` |
+| 9 | `claim` · Last claim | the merge receipt after a sign-in | `accounts.spec.ts`, `record-pages.spec.ts` |
+| 10 | `storage` · Storage | §12.1.7's disclosure of what is kept and where | `record-pages.spec.ts`, `register.test.tsx` |
+| 11 | `raw` · Stored values | the record as its own bytes | `record-pages.spec.ts`, `register.test.tsx` |
+| 12 | `data` · Export, import, erase | §12.15's erase gate, and the two that are not destructive | `erase.test.ts`, `validate.test.ts`, `boot.test.ts`, `record-pages.spec.ts`, `accounts.spec.ts`, `redirects.spec.ts`, `fidelity.spec.ts`, `record-profile.test.tsx` |
+| 13 | `keyboard` · Keyboard | the `charKeys` preference — single-key shortcuts on or off | `record-sheet.spec.ts` (`prefs.charKeys off silences every character shortcut`), `record-pages.spec.ts` |
+| — | `ContinueHero` | the one action a returning reader wants | `record-pages.spec.ts` |
+| — | `QuarantineNote` | §12.1.2 — why every readout below reads empty | `record-pages.spec.ts` |
+| — | `DrafterBlock` | §16.1 — who checks these modules, and the account | `record-pages.spec.ts` |
+| — | `AttentionPanel` | §15.7 — opened and not completed | `record-pages.spec.ts` |
+| — | `CourseCompletion` | D14 — control C, the circles | `completion.spec.ts`, `fidelity.spec.ts` stage 7 |
+
+**Two things the inventory turned up, both worth saying rather than fixing
+quietly:**
+
+- **`keyboard` is the only row whose id no test names.** It is covered — what
+  it toggles is `prefs.charKeys`, and `record-sheet.spec.ts` proves that turning
+  it off silences every character shortcut — but the coverage is of the
+  BEHAVIOUR and not of the row. A row that vanished in a regroup would leave
+  those tests green.
+- **The chord table is not on this page and has not been since M18.** It is on
+  `/legend/`, with its own guard in `accessibility.spec.ts`. The `keyboard` row
+  here is the preference, not the map; the brief's §12.16 citation reads as
+  though they were the same thing.
+
 ### Deliverables
 
 - [ ] **The inventory first.** One row per thing the page can do, where it is now,

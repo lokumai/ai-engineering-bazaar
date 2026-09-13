@@ -7,20 +7,63 @@ description: >
   inside a green gate. Then M17, the curriculum fold, and M18, the front door and the chrome, each
   with its report. It closes with M19 to M22 — the second language, the catalog's descriptions, the
   module page and rail, and the progress redesign — all WRITTEN AND NOT STARTED.
-  Part 1 holds M1 to M15 and is closed.
+  Every milestone carries its deliverables and acceptance criteria as `- [ ]` checkboxes, ticked as
+  the work lands, and closes with a dated report; the loop that governs that is in part 1 and is not
+  restated here. Part 1 holds M1 to M15 and is closed.
   NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
   (MANIFESTO.md / ARCHITECTURE.md).
 authority: state
 writes: agent, every session
 status: active
-covers: "M16, M17 and M18, 2026-09-09 to 2026-09-12 — the ten stages, the review pass, the curriculum fold, and the front door. M19 to M22 are written and not started."
+covers: "M16 to M22, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, all three done; M19 to M22 written and not started. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-09-13
 ---
 
-# 📈 PROGRESS, part 2 — M16, the interface rebuilt
+# 📈 PROGRESS, part 2 — M16 to M22
 
 > **← Part 1: [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the review pass over M10 to M14.
-> This part is M16 alone.
+> This part holds **M16 to M22**, in the order they were worked.
+
+## How to work this file
+
+**The loop and the circuit breakers are written once, in part 1 —
+[`PROGRESS.md` § The loop](PROGRESS.md#the-loop).** Read them there; they are not restated here and
+they govern this part exactly as written. In one line: *take the first unchecked deliverable, build
+it, verify it against its acceptance criteria, then mark `[x]` and write the report.*
+
+**That loop needs a shape from every milestone, and this part stopped providing it.** M16 opened with
+checkboxes and left four of seven unticked on a milestone its own report calls done; M17 wrote its
+deliverables as a numbered list; M18 wrote none at all; M19 to M22 had none either. Repaired
+2026-09-13. What a milestone here owes:
+
+- **Deliverables and acceptance criteria are both `- [ ]` checkboxes**, one per thing that has to
+  become true. A numbered list or a paragraph is not a deliverable: the loop takes *"the first
+  unchecked deliverable"*, so a milestone written in prose has none and the loop cannot start on it.
+- **Tick `[x]` as each one finishes**, not in a batch at the end, and only against something
+  measured. **A commit message is not evidence.** Where a box is ticked later than the work, say so
+  and cite what proves it.
+- **Close with `### Report — YYYY-MM-DD`** carrying the real date, what was built, and what the brief
+  had wrong. Part 1's habit of writing the second of those is why its reports are worth reading.
+- **A deliverable that is dropped or deferred is struck through with its destination** —
+  `- [ ] ~~Thing~~ → **M19**` — never deleted, and never left looking merely unfinished. M8 in part 1
+  is the pattern.
+- A criterion that is met in part says **`Met, except:`** and what is missing, in the shape part 1's
+  M7 uses.
+
+### Where each milestone stands
+
+| | Milestone | Status |
+| --- | --- | --- |
+| **M16** | The interface, rebuilt on the language | **Done** — 2026-09-10 |
+| **M17** | One catalog, and the pages that fold into it | **Done** — 2026-09-11 |
+| **M18** | The front door, the chrome, and the second language | **Done** — 2026-09-12, minus the second language, lifted to M19 |
+| **M19** | The second language | Written, not started — opens with a decision for the author |
+| **M20** | The catalog says what a module IS | Written, not started — opens with decisions for the author |
+| **M21** | The module page and the rail beside it | Written, not started — one item is not written down yet |
+| **M22** | Your progress, redesigned | Written, not started |
+
+---
+
 ## 🏁 Milestone M16: The interface, rebuilt on the language
 
 Every surface rebuilt so it is indistinguishable from its mockup, with **no capability lost**. This
@@ -68,20 +111,25 @@ contributes its three node roles.
       `code-theme.ts` reads it and accepts hex; the invented type family is gone.
 - [x] **The app-side `SelectorMap` exists**, which is the deliverable whose absence let five
       milestones ship the wrong design. `fidelity.spec.ts` compares a built surface to its mockup.
-- [ ] The shell rebuilt: cobalt bar, the lattice band under it, the three-column grid anchored to the
-      window edges, the folding rail, the sticky offset. Every route carries it. **Stage 1: the bar
-      and the band are done and proven identical at three viewports; the grid, the rail and the
-      aside are part 2.**
-- [ ] Each surface above rebuilt against its reference, at 1440, 1024 and 390. **1 of 10 stages, in
-      part.** Stage by stage in *The ten stages* below.
-- [ ] The visual expectations in the browser suite rewritten against the mockups; the behavioural
-      ones kept as they are. **The seven CSS-reading unit test files are done in stage 0; the 141
-      hardcoded classes across the browser specs are re-pointed by the stage that owns their
-      surface.**
-- [ ] Every capability intact: completion and undo, the checklist, the quick check, sources,
+- [x] The shell rebuilt: cobalt bar, the lattice band under it, the three-column grid anchored to the
+      window edges, the folding rail, the sticky offset. Every route carries it. **Stage 1 built the
+      bar and the band; stages 1b, 2 and 3 built the grid, the rail and the aside** — their report
+      is below, 2026-09-10.
+- [x] Each surface above rebuilt against its reference, at 1440, 1024 and 390. **All ten stages
+      landed**, `7ed3bbe` through `f110457`. Stage by stage in *The ten stages* below.
+- [x] The visual expectations in the browser suite rewritten against the mockups; the behavioural
+      ones kept as they are. **The seven CSS-reading unit files went in stage 0, and the 141
+      hardcoded classes were re-pointed by the stage that owned their surface** — after item 0
+      closed the fifteen guards a rename would otherwise have turned green-and-empty.
+- [x] Every capability intact: completion and undo, the checklist, the quick check, sources,
       submittals, both languages, export, import, erase, the streak, role paths, optional sign-in,
-      claim-and-merge, the three retired routes still landing somewhere useful. **Checked off by the
-      stage that touches each, not at the end.**
+      claim-and-merge, the three retired routes still landing somewhere useful. **The capability
+      ledger is in the closing report below**, one row per capability with the test that proves it.
+
+> **These four were ticked on 2026-09-13, not when the work was finished.** They sat `[ ]` under a
+> milestone whose own report opens *"M16 is done"* — which is the drift this file was repaired for:
+> the work landed and nobody came back to the boxes. Each tick cites the stage report that carries
+> its evidence, and the milestone's own meter measured **`hl-` in `className` at 0, from 792**.
 
 ### The stylesheets: deleted, not migrated
 
@@ -98,20 +146,25 @@ treatment rather than dropped, because the corpus depends on them and the mockup
 
 ### Acceptance criteria
 
-- **The fidelity check from M15 passes on every route**, not only on the page the mockup drew.
-- **Side by side with its mockup at 1440px, each surface is indistinguishable** apart from content
-  and the components the author chose differently. Checked by screenshot against the reference, not
-  by reading the CSS.
-- No page body scrolls sideways at 1440, 1024 or 390; wide content scrolls inside its own box, and a
-  figure wider than the column cannot paint outside it.
-- The interface survives `forced-colors: active`, and colour is never the only signal.
-- **A mark a reader sees in frame one is stamped before first paint**, not rendered by an island.
-- Keyboard: every control reachable and operable, a visible focus ring on each, and for every
-  disclosure **both** halves asserted — closed, its contents are out of the tab order; open, they
-  are in it.
-- `npm run typecheck`, `npm test`, `npm run build` and the full browser suite green, with the count
-  of behavioural tests **not lower** than it is today.
-- With no `.env.local` the site is complete and makes zero requests to the account service.
+- [x] **The fidelity check from M15 passes on every route**, not only on the page the mockup drew.
+- [x] **Side by side with its mockup at 1440px, each surface is indistinguishable** apart from content
+      and the components the author chose differently. Checked by screenshot against the reference, not
+      by reading the CSS.
+- [x] No page body scrolls sideways at 1440, 1024 or 390; wide content scrolls inside its own box, and a
+      figure wider than the column cannot paint outside it.
+- [x] The interface survives `forced-colors: active`, and colour is never the only signal.
+- [x] **A mark a reader sees in frame one is stamped before first paint**, not rendered by an island.
+- [x] Keyboard: every control reachable and operable, a visible focus ring on each, and for every
+      disclosure **both** halves asserted — closed, its contents are out of the tab order; open, they
+      are in it.
+- [x] `npm run typecheck`, `npm test`, `npm run build` and the full browser suite green, with the count
+      of behavioural tests **not lower** than it is today.
+- [x] With no `.env.local` the site is complete and makes zero requests to the account service.
+
+> **Ticked 2026-09-13 against the closing report below, which records every closing condition held
+> with the gate green.** A ticked criterion here means *measured and met*, not *nothing was wrong*:
+> three reviews over the finished milestone found thirteen confirmed defects inside that same green
+> gate, and eight more are still the author's call under *Confirmed, NOT fixed*.
 
 ### The honest risk
 
@@ -1401,33 +1454,33 @@ one route.
 
 ### Deliverables
 
-1. **The two curriculum index pages are retired**, and this is narrower than it
-   sounds: `src/app/courses/page.tsx` and `src/app/courses/[category]/page.tsx`
-   go, and **`src/app/courses/[category]/[module]/page.tsx` stays exactly where
-   it is.** The module route lives under the same prefix, so the segment is not
-   deleted — only the two index pages in it. A module's URL does not move, and
-   this milestone must not change one.
-2. **Both retired routes forward**, with the `MovedTo` stub `/dashboard/`,
-   `/path/` and `/report/` already use, including
-   `robots: { index: false, follow: true }` — a redirect a search engine indexes
-   spends a reader's click on a page with no content.
-3. **The dropdown lands on the catalog.** `Every level` opens the whole catalog;
-   each level opens the catalog with that level already filtered, by whichever
-   shape the decision above settles.
-4. **The catalog's table carries Topics.** `column="topics"`, with whatever the
-   width table then needs: `SheetIndex` already computes `Level` and `Topics` as
-   alternatives rather than as two columns, so this is a call-site change plus
-   the width arithmetic beside it.
-5. **The cards carry the topics too**, which is new — `CatalogCards` renders
-   level, number, title and a fact list today and never the topics.
-6. **The cards get room.** The author's words: *"currently cards look too
-   compact"*. Geometry from `03`-A, with the padding and the line-height the
-   mockup gives them rather than the tightest arrangement that fits.
-7. **The table drops its Status column.** The author's reasoning, recorded
-   because it is the kind that gets re-litigated: *"if something is not ready it
-   is not clickable by default and user can understand it already."*
-8. **The Overview view is untouched.** It is the one view whose job is the
-   shape rather than the detail, and the author named it as the exception.
+- [x] **The two curriculum index pages are retired**, and this is narrower than it
+      sounds: `src/app/courses/page.tsx` and `src/app/courses/[category]/page.tsx`
+      go, and **`src/app/courses/[category]/[module]/page.tsx` stays exactly where
+      it is.** The module route lives under the same prefix, so the segment is not
+      deleted — only the two index pages in it. A module's URL does not move, and
+      this milestone must not change one.
+- [x] **Both retired routes forward**, with the `MovedTo` stub `/dashboard/`,
+      `/path/` and `/report/` already use, including
+      `robots: { index: false, follow: true }` — a redirect a search engine indexes
+      spends a reader's click on a page with no content.
+- [x] **The dropdown lands on the catalog.** `Every level` opens the whole catalog;
+      each level opens the catalog with that level already filtered, by whichever
+      shape the decision above settles.
+- [x] **The catalog's table carries Topics.** `column="topics"`, with whatever the
+      width table then needs: `SheetIndex` already computes `Level` and `Topics` as
+      alternatives rather than as two columns, so this is a call-site change plus
+      the width arithmetic beside it.
+- [x] **The cards carry the topics too**, which is new — `CatalogCards` renders
+      level, number, title and a fact list today and never the topics.
+- [x] **The cards get room.** The author's words: *"currently cards look too
+      compact"*. Geometry from `03`-A, with the padding and the line-height the
+      mockup gives them rather than the tightest arrangement that fits.
+- [x] **The table drops its Status column.** The author's reasoning, recorded
+      because it is the kind that gets re-litigated: *"if something is not ready it
+      is not clickable by default and user can understand it already."*
+- [x] **The Overview view is untouched.** It is the one view whose job is the
+      shape rather than the detail, and the author named it as the exception.
 
 ### The trap in deliverable 7, and it is a real one
 
@@ -1478,22 +1531,22 @@ until a test proves the topics reach a reader on the catalog.
 
 ### Acceptance criteria
 
-- `/courses/` and `/courses/[category]/` forward; no internal link points at
-  either; the link gate and `tests/corpus/links.test.ts` are green.
-- Every module route is byte-identical in path to what it is today.
-- The dropdown's six entries all land on the catalog, and a level entry arrives
-  with that level filtered — **provably in frame one**, by whichever shape was
-  chosen, with the no-JavaScript case stated either way.
-- The catalog's table shows Topics; the cards show topics; the overview is
-  unchanged, asserted by a fidelity comparison that still passes against `03`.
-- The Status column is gone **and** a browser test proves a planned row states
-  itself under `forced-colors: active` without it.
-- `layout.spec.ts` passes on the new route list, and the retired routes are out
-  of its `ROUTES`.
-- The capability ledger's two rows above are re-pointed, each with the test that
-  proves it.
-- Full gate: typecheck, unit, build, e2e, with the HTML file count restated
-  (56 today) rather than carried.
+- [x] `/courses/` and `/courses/[category]/` forward; no internal link points at
+      either; the link gate and `tests/corpus/links.test.ts` are green.
+- [x] Every module route is byte-identical in path to what it is today.
+- [x] The dropdown's six entries all land on the catalog, and a level entry arrives
+      with that level filtered — **provably in frame one**, by whichever shape was
+      chosen, with the no-JavaScript case stated either way.
+- [x] The catalog's table shows Topics; the cards show topics; the overview is
+      unchanged, asserted by a fidelity comparison that still passes against `03`.
+- [x] The Status column is gone **and** a browser test proves a planned row states
+      itself under `forced-colors: active` without it.
+- [x] `layout.spec.ts` passes on the new route list, and the retired routes are out
+      of its `ROUTES`.
+- [x] The capability ledger's two rows above are re-pointed, each with the test that
+      proves it.
+- [x] Full gate: typecheck, unit, build, e2e, with the HTML file count restated
+      (56 today) rather than carried.
 
 ### Report — M17, one catalog, 2026-09-11
 
@@ -1742,28 +1795,71 @@ author's, and whichever it is belongs in `BRAINSTORM` because somebody will ask.
   restores it. So this is one rule in a surface stylesheet, not a markup change,
   and the same is true anywhere else in the prose a list has lost its markers.
 
+### Deliverables
+
+*(This milestone opened with its work written as prose across the three sections above and no
+checklist at all. Recovered into the loop's shape on 2026-09-13; every box is ticked against the
+report below, which was written when the work shipped.)*
+
+- [x] **The home page loses the whole progress feature** — `CourseCompletion`, the
+      three statistics, the five level cards, their dials and their module lists —
+      keeping the banner row and the why-block. The continue line and
+      `Four reasons, all of them checkable` go with it.
+- [x] **`Five to ten minutes a module` is corrected at its source**, in
+      `README.md` rule 4 and `MANIFESTO.md` §3 as well as on the page — a manifest
+      is a promise, so the site may not disagree with it (**D65**).
+- [x] **The authorship line and the headline become plural.** Both were singular
+      and the course is written by AI engineers. The headline is `08`'s own text,
+      so it is a third `DEVIATIONS` entry in `DESIGN.md`.
+- [x] **"Every module in the course is reachable and listed" moves to the
+      catalog**, which after M17 is the one place the whole course is listed. The
+      claim is re-expressed, never deleted.
+- [x] **The bar loses the progress icon and the shortcuts button**, and the chords
+      keep working with something still saying so.
+- [x] **The repository glyph becomes GitHub's own mark**, black, with a yellow
+      star beside it carrying the star count.
+- [x] **The star count is fetched once and committed, never typed** — shape 1 with
+      a committed fallback, so the build itself makes no network call (**D64**).
+- [x] **The pager's boxes are shorter and each carries an icon**, on the settled
+      idiom: a 16-unit viewBox, `fill="none" stroke="currentColor"`, no emoji
+      (**D53**).
+- [x] **`What you will be able to do` gets its markers back** — one rule in a
+      surface stylesheet, because Tailwind's preflight had removed them.
+- [ ] ~~**The language switcher in the bar**~~ → **M19**. Lifted with the reason
+      recorded, which this milestone's own last acceptance criterion names as the
+      better of the two outcomes. The author has since placed the control on the
+      reading page rather than in the chrome, so M19 carries both the switcher and
+      its new home.
+
 ### Acceptance criteria
 
-- The home page is the banner row and the why-block, and nothing else; no
-  progress feature, no continue line, no counts of the course.
-- Every corrected sentence is corrected **at its source too** — the minute
-  figure in `README.md` and `MANIFESTO.md`, the authorship line wherever it is
-  repeated — so the site and the documents cannot disagree.
-- The headline's departure from `08` is a recorded `DEVIATIONS` entry.
-- "Every module in the course is reachable and listed" is proven on the catalog,
-  by a test that used to prove it on the home page.
-- The bar carries: brand, nav, language, theme, GitHub-with-stars. No progress
-  icon, no shortcuts button. The chords still work and something still says so.
-- The star count's mechanism is whichever the author chose, and the number is
-  never typed by hand.
-- The pager's boxes are shorter, each with an icon, and the fidelity comparison
-  for the reading page still passes.
-- The objectives list shows markers, and `layout.spec.ts` gains nothing —
-  because that is a paint change and not a relationship.
-- Turkish: a reader can switch, a translated module is served in Turkish, an
-  untranslated one says so, and `<html lang>` is right on every page. **Or the
-  item is lifted into M19 with the reason recorded**, which is an acceptable
-  outcome and a better one than a switcher that changes a flag.
+- [x] The home page is the banner row and the why-block, and nothing else; no
+      progress feature, no continue line, no counts of the course.
+- [x] Every corrected sentence is corrected **at its source too** — the minute
+      figure in `README.md` and `MANIFESTO.md`, the authorship line wherever it is
+      repeated — so the site and the documents cannot disagree.
+- [x] The headline's departure from `08` is a recorded `DEVIATIONS` entry.
+- [x] "Every module in the course is reachable and listed" is proven on the catalog,
+      by a test that used to prove it on the home page.
+- [x] The bar carries: brand, nav, language, theme, GitHub-with-stars. No progress
+      icon, no shortcuts button. The chords still work and something still says so.
+      **Met, except the language control**, which went to M19 with the rest of the
+      second language; the slot is empty rather than filled with a switcher that
+      switches nothing. The chord half was the near-miss: the review found the
+      keyboard map had been moved to a page nothing linked to, and `SiteFooter`
+      now links `/legend/`.
+- [x] The star count's mechanism is whichever the author chose, and the number is
+      never typed by hand.
+- [x] The pager's boxes are shorter, each with an icon, and the fidelity comparison
+      for the reading page still passes.
+- [x] The objectives list shows markers, and `layout.spec.ts` gains nothing —
+      because that is a paint change and not a relationship.
+- [x] Turkish: a reader can switch, a translated module is served in Turkish, an
+      untranslated one says so, and `<html lang>` is right on every page. **Or the
+      item is lifted into M19 with the reason recorded**, which is an acceptable
+      outcome and a better one than a switcher that changes a flag.
+      **Met by its second branch**, deliberately: the criterion was written with
+      two ways to pass and the lift is the one that was taken.
 
 ---
 
@@ -2033,46 +2129,46 @@ is a second tree of files and roughly doubles the export.
 **The recommendation is 1**, on the same grounds M17's shape was chosen: it is
 the only one that works with no script and the only one a reader can send.
 
-### What has to happen, in order
+### Deliverables, in order
 
-1. **The loader walks the sibling**, so a module has two bodies rather than one.
-   `loader.ts` reads the English file and only the English file today.
-2. **The route shape**, from the decision above.
-3. **A fallback for a module with no translation**, which is a real state —
-   `langCoverage` exists precisely because some modules are English-only, and a
-   reader who switches on one of those must be TOLD, not silently handed
-   English. `mini-courses/intermediate/README.md` already says its Turkish files
-   are placeholders, which is the same problem one level up: a file that exists
-   is not a translation that exists.
-4. **The interface's own strings**, which are English, in components, in the
-   hundreds — every label, every empty state, every `aria-label`. This is the
-   largest part and none of it is in the corpus. It is also the part that
-   decides whether this is one milestone or two.
-5. **`<html lang>` per page**, which is what a screen reader's voice depends on,
-   and `tests/unit/copy-register.test.ts`, which scans reader-visible strings in
-   English and would need to know which language it is reading.
-6. **The switcher itself.** The mockup draws a `TR` button in the bar beside the
-   theme toggle and M18 left that slot empty. **The author has since placed it
-   elsewhere** (2026-09-13): *"Language of each module should be selectable from
-   the top-right corner of the box which contains the whole center-aligned module
-   content."* So it is a control on the READING page rather than in the chrome,
-   which is arguably truer — the language is a property of the module being read
-   and not of the site. M21 leaves that corner free and builds nothing there;
-   this milestone is the only one that may put a control in it, because it is the
-   only one that can make it do anything.
+- [ ] **The loader walks the sibling**, so a module has two bodies rather than one.
+      `loader.ts` reads the English file and only the English file today.
+- [ ] **The route shape**, from the decision above.
+- [ ] **A fallback for a module with no translation**, which is a real state —
+      `langCoverage` exists precisely because some modules are English-only, and a
+      reader who switches on one of those must be TOLD, not silently handed
+      English. `mini-courses/intermediate/README.md` already says its Turkish files
+      are placeholders, which is the same problem one level up: a file that exists
+      is not a translation that exists.
+- [ ] **The interface's own strings**, which are English, in components, in the
+      hundreds — every label, every empty state, every `aria-label`. This is the
+      largest part and none of it is in the corpus. It is also the part that
+      decides whether this is one milestone or two.
+- [ ] **`<html lang>` per page**, which is what a screen reader's voice depends on,
+      and `tests/unit/copy-register.test.ts`, which scans reader-visible strings in
+      English and would need to know which language it is reading.
+- [ ] **The switcher itself.** The mockup draws a `TR` button in the bar beside the
+      theme toggle and M18 left that slot empty. **The author has since placed it
+      elsewhere** (2026-09-13): *"Language of each module should be selectable from
+      the top-right corner of the box which contains the whole center-aligned module
+      content."* So it is a control on the READING page rather than in the chrome,
+      which is arguably truer — the language is a property of the module being read
+      and not of the site. M21 leaves that corner free and builds nothing there;
+      this milestone is the only one that may put a control in it, because it is the
+      only one that can make it do anything.
 
-   M20 removes `EN · TR` from the catalog's table and cards in the meantime, so
-   the listing stops stating a translation the site cannot serve.
+      M20 removes `EN · TR` from the catalog's table and cards in the meantime, so
+      the listing stops stating a translation the site cannot serve.
 
 ### Acceptance criteria
 
-- A reader can switch, and the switch is a URL rather than a preference.
-- A translated module is served in Turkish; an untranslated one **says so** and
-  is not silently English.
-- `<html lang>` is right on every page in both trees.
-- The copy register still runs, and knows which language it is reading.
-- The catalog's `EN · TR` stops being a claim the site cannot honour.
-- Full gate, with the HTML file count restated rather than carried (61 today).
+- [ ] A reader can switch, and the switch is a URL rather than a preference.
+- [ ] A translated module is served in Turkish; an untranslated one **says so** and
+      is not silently English.
+- [ ] `<html lang>` is right on every page in both trees.
+- [ ] The copy register still runs, and knows which language it is reading.
+- [ ] The catalog's `EN · TR` stops being a claim the site cannot honour.
+- [ ] Full gate, with the HTML file count restated rather than carried (61 today).
 
 
 ---
@@ -2179,132 +2275,132 @@ Escape, outside click and route change already close it.
 
 ### Deliverables
 
-1. **`Topics` becomes `Description`, and it is the module's `summary`.**
-   `SheetRow` gains the field; `manifest.ts` reads it; a planned module keeps the
-   schedule-of-parts fallback. `topicsFor`'s docblock is the thing to read first
-   — it argues against a hand-written topic line, and a derived `summary` is not
-   one, which is why this does not reverse it.
-2. **The description is an accordion, in the table and on the card.** Closed it
-   reads `Description ▾`; open, the row expands smoothly and the previously open
-   one closes.
+- [ ] **`Topics` becomes `Description`, and it is the module's `summary`.**
+      `SheetRow` gains the field; `manifest.ts` reads it; a planned module keeps the
+      schedule-of-parts fallback. `topicsFor`'s docblock is the thing to read first
+      — it argues against a hand-written topic line, and a derived `summary` is not
+      one, which is why this does not reverse it.
+- [ ] **The description is an accordion, in the table and on the card.** Closed it
+      reads `Description ▾`; open, the row expands smoothly and the previously open
+      one closes.
 
-   **`<details name="…">` does both for free and with no JavaScript, and this was
-   MEASURED rather than assumed.** In the browser the suite actually runs —
-   Chrome 153 — opening one `<details>` in a named group closes its sibling
-   natively, which is exactly the author's "only one at a time"; and
-   `CSS.supports` returns true for both `interpolate-size: allow-keywords` and
-   `selector(::details-content)`, which are what make the open smooth. So the
-   whole deliverable is buildable with zero script.
+      **`<details name="…">` does both for free and with no JavaScript, and this was
+      MEASURED rather than assumed.** In the browser the suite actually runs —
+      Chrome 153 — opening one `<details>` in a named group closes its sibling
+      natively, which is exactly the author's "only one at a time"; and
+      `CSS.supports` returns true for both `interpolate-size: allow-keywords` and
+      `selector(::details-content)`, which are what make the open smooth. So the
+      whole deliverable is buildable with zero script.
 
-   An engine without `interpolate-size` opens the panel instantly instead of
-   easing it, which is the house rule already: the mechanism works everywhere and
-   the easing is an enhancement. **An engine without `name` exclusivity would
-   leave two panels open**, which is a degradation worth knowing about — it is
-   the one part that would need script to guarantee, and it should not be added
-   until some engine that matters is shown to need it.
+      An engine without `interpolate-size` opens the panel instantly instead of
+      easing it, which is the house rule already: the mechanism works everywhere and
+      the easing is an enhancement. **An engine without `name` exclusivity would
+      leave two panels open**, which is a degradation worth knowing about — it is
+      the one part that would need script to guarantee, and it should not be added
+      until some engine that matters is shown to need it.
 
-   **The trap is the TABLE, and the first version of this brief got it exactly
-   backwards.** It said the expanding row must be a second `<tr>` with a
-   `colspan` cell. **That cannot be built with `<details>` at all**: `<tbody>`'s
-   content model admits only `<tr>`, and a `<summary>` has to live inside its own
-   `<details>` — so a disclosure whose trigger is in row 1 and whose panel is
-   row 2 is not expressible. The brief mandated a structure that contradicted its
-   own mechanism, and one of the two had to give.
+      **The trap is the TABLE, and the first version of this brief got it exactly
+      backwards.** It said the expanding row must be a second `<tr>` with a
+      `colspan` cell. **That cannot be built with `<details>` at all**: `<tbody>`'s
+      content model admits only `<tr>`, and a `<summary>` has to live inside its own
+      `<details>` — so a disclosure whose trigger is in row 1 and whose panel is
+      row 2 is not expressible. The brief mandated a structure that contradicted its
+      own mechanism, and one of the two had to give.
 
-   **The `<details>` goes inside the description cell.** A `<td>` is flow
-   content, so it may hold one; opening it grows the cell, the cell grows the
-   row, and the row grows the table. No second `<tr>`, no `colspan`, no script.
-   The card is the same element in a different box.
+      **The `<details>` goes inside the description cell.** A `<td>` is flow
+      content, so it may hold one; opening it grows the cell, the cell grows the
+      row, and the row grows the table. No second `<tr>`, no `colspan`, no script.
+      The card is the same element in a different box.
 
-   What survives of the original warning is the real lesson and it belongs to a
-   different file: `SheetIndex.tsx` is where the table's width arithmetic lives,
-   and `catalog.css` is where a cell that stopped behaving like a cell cost a
-   visible defect. (The earlier draft cited `ModuleRow`'s docblock for the
-   `display: flex` story; **M17 deleted that comment with the status cell it was
-   about**, so the citation pointed at nothing.)
+      What survives of the original warning is the real lesson and it belongs to a
+      different file: `SheetIndex.tsx` is where the table's width arithmetic lives,
+      and `catalog.css` is where a cell that stopped behaving like a cell cost a
+      visible defect. (The earlier draft cited `ModuleRow`'s docblock for the
+      `display: flex` story; **M17 deleted that comment with the status cell it was
+      about**, so the citation pointed at nothing.)
 
-   **And the second trap is not there, which took measuring to find out.**
-   `ModuleRow`'s docblock says twice that the whole row is one click target —
-   *"the anchor lives in the title cell and a stretched pseudo-element covers the
-   row, so a pointer can hit any cell and `Tab` reaches the row exactly once"* —
-   and `SignOffSquares` refuses to put any control in the ninth column on the
-   strength of it: *"a control here would sit under it, unclickable."*
+      **And the second trap is not there, which took measuring to find out.**
+      `ModuleRow`'s docblock says twice that the whole row is one click target —
+      *"the anchor lives in the title cell and a stretched pseudo-element covers the
+      row, so a pointer can hit any cell and `Tab` reaches the row exactly once"* —
+      and `SignOffSquares` refuses to put any control in the ninth column on the
+      strength of it: *"a control here would sit under it, unclickable."*
 
-   **MEASURED on the built catalog: there is no such pseudo-element.**
-   `getComputedStyle(link, '::after').content` is `none`, its `position` is
-   `static`, and clicking the `Length` cell navigates nowhere. Only the title is
-   clickable. The rule went with the eleven stylesheets stage 0 deleted and the
-   docblock was never corrected — the same shape as the ISO 128 dash the M18
-   review caught.
+      **MEASURED on the built catalog: there is no such pseudo-element.**
+      `getComputedStyle(link, '::after').content` is `none`, its `position` is
+      `static`, and clicking the `Length` cell navigates nowhere. Only the title is
+      clickable. The rule went with the eleven stylesheets stage 0 deleted and the
+      docblock was never corrected — the same shape as the ISO 128 dash the M18
+      review caught.
 
-   For this deliverable that is good news: a `<summary>` inside the row is not
-   competing with anything. **But it is a defect in its own right**, because
-   §5.3 and §10.3 specify the stretched target and the row no longer has one, and
-   because `SignOffSquares` is declining a capability on a premise that stopped
-   being true.
+      For this deliverable that is good news: a `<summary>` inside the row is not
+      competing with anything. **But it is a defect in its own right**, because
+      §5.3 and §10.3 specify the stretched target and the row no longer has one, and
+      because `SignOffSquares` is declining a capability on a premise that stopped
+      being true.
 
-   **And the suite cannot see it.** Five places reason from the stretched link —
-   `ModuleRow`'s docblock twice, `SignOffSquares`, and `record-index.spec.ts`'s
-   docblock twice — and exactly one test names it:
-   `accessibility.spec.ts:325`, which asserts ONE TAB STOP PER ROW. A title-only
-   link satisfies that perfectly. The comment above it says *"the whole row is
-   one link target"*; the assertion cannot tell a stretched link from a title,
-   so it has been green through the entire absence.
+      **And the suite cannot see it.** Five places reason from the stretched link —
+      `ModuleRow`'s docblock twice, `SignOffSquares`, and `record-index.spec.ts`'s
+      docblock twice — and exactly one test names it:
+      `accessibility.spec.ts:325`, which asserts ONE TAB STOP PER ROW. A title-only
+      link satisfies that perfectly. The comment above it says *"the whole row is
+      one link target"*; the assertion cannot tell a stretched link from a title,
+      so it has been green through the entire absence.
 
-   Whether to restore the stretched link or to correct the five references is a
-   decision, and it has to be taken BEFORE the disclosure is designed: a row that
-   is one big link and a row with a control in it are two different rows. If the
-   link is restored, that test needs the assertion its comment already claims —
-   that a click in a cell which is not the title still navigates.
-3. **`Lang` leaves the table and the card.** One column and one fact list entry.
-   **The language SELECTOR the author wants is not built here** — it belongs on
-   the module page and it is M19's, which owns the second language. M21 draws the
-   slot; this milestone only stops the listing from stating `EN · TR`.
-4. **The filters are labelled — and the second group is not `Status`.** `Level:`
-   before the level chips is exact. The other row is
-   `aria-label="Filter by state or language"` and its six chips are `All`,
-   `Ready`, `Planned`, **`Both languages`**, `Completed`, `Not completed`
-   (`rows.ts:120-137`). Three of those are states of the DRAWING, two are states
-   of the READER, and one is a language.
+      Whether to restore the stretched link or to correct the five references is a
+      decision, and it has to be taken BEFORE the disclosure is designed: a row that
+      is one big link and a row with a control in it are two different rows. If the
+      link is restored, that test needs the assertion its comment already claims —
+      that a click in a cell which is not the title still navigates.
+- [ ] **`Lang` leaves the table and the card.** One column and one fact list entry.
+      **The language SELECTOR the author wants is not built here** — it belongs on
+      the module page and it is M19's, which owns the second language. M21 draws the
+      slot; this milestone only stops the listing from stating `EN · TR`.
+- [ ] **The filters are labelled — and the second group is not `Status`.** `Level:`
+      before the level chips is exact. The other row is
+      `aria-label="Filter by state or language"` and its six chips are `All`,
+      `Ready`, `Planned`, **`Both languages`**, `Completed`, `Not completed`
+      (`rows.ts:120-137`). Three of those are states of the DRAWING, two are states
+      of the READER, and one is a language.
 
-   **So `Status:` would swallow a filter and mislabel two others** — and it
-   collides with deliverable 3, which takes the `Lang` COLUMN off the table while
-   leaving the language FILTER in place. A reader would be able to filter by a
-   fact the table no longer shows.
+      **So `Status:` would swallow a filter and mislabel two others** — and it
+      collides with deliverable 3, which takes the `Lang` COLUMN off the table while
+      leaving the language FILTER in place. A reader would be able to filter by a
+      fact the table no longer shows.
 
-   **The decision, and it is the author's:** either the language chip goes with
-   the column and the row honestly becomes `Status:`, or it stays and the row is
-   named for what it filters. The visible label should then BE the group's
-   accessible name — `<span id>` plus `aria-labelledby` — rather than a second
-   string beside it, or a screen reader hears it twice.
-5. **The dropdown's first entry reads `View Curriculum`.** It reads `Every level`
-   today, on the trigger and on the chip (the author wrote `Entry Level`, which
-   is neither — worth confirming he means the first menu row). The CHIP on the
-   filter bar and the MENU ROW are two elements with one meaning; rename both or
-   neither.
-6. **A level page's Overview board is one third of the width, not all of it.**
-   M18 made a one-level board fill the page because a fifth of it with four
-   fifths empty was the shape the author had objected to on the home page. He has
-   now named the number: one third. `--bz-board-cols` already carries the count,
-   so this is a `max-width` on the board rather than a new mechanism.
-7. **The level head loses its blurb and gains a shorter eyebrow.** `bz-lead`
-   prints `category.blurb` under the heading; the author wants it replaced by the
-   eyebrow that currently sits above, cut to **modules and total time only** —
-   `8 modules · ~3 h 55 min`, dropping `Level 02` (the heading says it) and
-   `7 ready` (every row says it).
-8. **The dropdown closes when the pointer leaves it**, on the shape decision 2
-   settles: only under `@media (hover: hover)`, after a grace delay, and never
-   while focus is inside. **This was discussed in the decisions and in the
-   acceptance criteria and was missing from the deliverables**, which is how an
-   item on the author's list gets planned and then not built.
-9. **The cards view's level heading gets its clearance, and loses its number.**
-   `.bz-levelhead` is `margin: 26px 0 12px` and the cards above it overlap it.
-   **The number inside the swatch is a carrier and its removal is the trap**:
-   `CatalogCards`'s own comment says *"the swatch is the hue as a shape, and the
-   number inside it is what a reader in forced colours reads instead."* The
-   heading beside it names the level in words, so the fact survives — but the
-   comment must go with the number, or the next reader restores a carrier that is
-   already carried.
+      **The decision, and it is the author's:** either the language chip goes with
+      the column and the row honestly becomes `Status:`, or it stays and the row is
+      named for what it filters. The visible label should then BE the group's
+      accessible name — `<span id>` plus `aria-labelledby` — rather than a second
+      string beside it, or a screen reader hears it twice.
+- [ ] **The dropdown's first entry reads `View Curriculum`.** It reads `Every level`
+      today, on the trigger and on the chip (the author wrote `Entry Level`, which
+      is neither — worth confirming he means the first menu row). The CHIP on the
+      filter bar and the MENU ROW are two elements with one meaning; rename both or
+      neither.
+- [ ] **A level page's Overview board is one third of the width, not all of it.**
+      M18 made a one-level board fill the page because a fifth of it with four
+      fifths empty was the shape the author had objected to on the home page. He has
+      now named the number: one third. `--bz-board-cols` already carries the count,
+      so this is a `max-width` on the board rather than a new mechanism.
+- [ ] **The level head loses its blurb and gains a shorter eyebrow.** `bz-lead`
+      prints `category.blurb` under the heading; the author wants it replaced by the
+      eyebrow that currently sits above, cut to **modules and total time only** —
+      `8 modules · ~3 h 55 min`, dropping `Level 02` (the heading says it) and
+      `7 ready` (every row says it).
+- [ ] **The dropdown closes when the pointer leaves it**, on the shape decision 2
+      settles: only under `@media (hover: hover)`, after a grace delay, and never
+      while focus is inside. **This was discussed in the decisions and in the
+      acceptance criteria and was missing from the deliverables**, which is how an
+      item on the author's list gets planned and then not built.
+- [ ] **The cards view's level heading gets its clearance, and loses its number.**
+      `.bz-levelhead` is `margin: 26px 0 12px` and the cards above it overlap it.
+      **The number inside the swatch is a carrier and its removal is the trap**:
+      `CatalogCards`'s own comment says *"the swatch is the hue as a shape, and the
+      number inside it is what a reader in forced colours reads instead."* The
+      heading beside it names the level in words, so the fact survives — but the
+      comment must go with the number, or the next reader restores a carrier that is
+      already carried.
 
 ### Four traps the review named, none of which the brief had
 
@@ -2373,26 +2469,26 @@ for reviewing it at all.
 
 ### Acceptance criteria
 
-- Every written module's description on the catalog is its own `summary`,
-  byte-identical, and no description is stored anywhere in `src/`.
-- A planned module shows its schedule of parts and says which it is.
-- The accordion is exclusive and works with JavaScript disabled; a browser
-  without `interpolate-size` opens it instantly rather than not at all.
-- The table's expanded row is a row, and `layout.spec.ts`'s cell invariants
-  still pass on it.
-- `Lang` appears in neither view, and no control claims to switch language.
-- Both filter groups have one visible name each, announced once.
-- A reader without a stored view gets Overview on the catalog and Cards on a
-  level page, **proven in the served HTML** — which is provable there precisely
-  because it is the no-preference case. A reader WITH a stored view keeps it,
-  and that is a browser assertion: the export is byte-identical for everybody
-  and the stored view is stamped by script at run time, so no static file can
-  witness it.
-- The dropdown closes on pointer-out only where hover exists, never while focus
-  is inside it, and remains operable by touch and keyboard.
-- Under `forced-colors: active`, a level is still named without its number in
-  the swatch.
-- Full gate, with the HTML file count restated (61 today).
+- [ ] Every written module's description on the catalog is its own `summary`,
+      byte-identical, and no description is stored anywhere in `src/`.
+- [ ] A planned module shows its schedule of parts and says which it is.
+- [ ] The accordion is exclusive and works with JavaScript disabled; a browser
+      without `interpolate-size` opens it instantly rather than not at all.
+- [ ] The table's expanded row is a row, and `layout.spec.ts`'s cell invariants
+      still pass on it.
+- [ ] `Lang` appears in neither view, and no control claims to switch language.
+- [ ] Both filter groups have one visible name each, announced once.
+- [ ] A reader without a stored view gets Overview on the catalog and Cards on a
+      level page, **proven in the served HTML** — which is provable there precisely
+      because it is the no-preference case. A reader WITH a stored view keeps it,
+      and that is a browser assertion: the export is byte-identical for everybody
+      and the stored view is stamped by script at run time, so no static file can
+      witness it.
+- [ ] The dropdown closes on pointer-out only where hover exists, never while focus
+      is inside it, and remains operable by touch and keyboard.
+- [ ] Under `forced-colors: active`, a level is still named without its number in
+      the swatch.
+- [ ] Full gate, with the HTML file count restated (61 today).
 
 ## 🏁 Milestone M21: The module page and the rail beside it — WRITTEN AND NOT STARTED
 
@@ -2418,50 +2514,50 @@ padding.**
 
 ### Deliverables
 
-1. **One fold control, and it is the one in the middle.** There are two today:
-   `.bz-rail-fold` (`aria-label="Hide the curriculum"`) at the top of the rail,
-   and `.bz-rail-restore` (`aria-label="Show the curriculum"`), a 26 × 60 tab
-   `position: fixed; left: 0; top: 50%` that `[data-bz-rail="folded"]` reveals.
-   The author wants the middle tab to do both and the top button gone.
+- [ ] **One fold control, and it is the one in the middle.** There are two today:
+      `.bz-rail-fold` (`aria-label="Hide the curriculum"`) at the top of the rail,
+      and `.bz-rail-restore` (`aria-label="Show the curriculum"`), a 26 × 60 tab
+      `position: fixed; left: 0; top: 50%` that `[data-bz-rail="folded"]` reveals.
+      The author wants the middle tab to do both and the top button gone.
 
-   **The tab is `left: 0` and only exists while folded, so making it the toggle
-   means giving it a resting place while the rail is OPEN** — at the rail's
-   trailing edge rather than the screen's. That is the real work; deleting the
-   top button is one line. Its label has to say which way it goes, and `RailFold`
-   already owns both strings.
-2. **The fold/restore state bug**, as above — reproduced first, then fixed at
-   whatever the reading says, with an invariant that fails on the restored state
-   and not only on the first paint.
+      **The tab is `left: 0` and only exists while folded, so making it the toggle
+      means giving it a resting place while the rail is OPEN** — at the rail's
+      trailing edge rather than the screen's. That is the real work; deleting the
+      top button is one line. Its label has to say which way it goes, and `RailFold`
+      already owns both strings.
+- [ ] **The fold/restore state bug**, as above — reproduced first, then fixed at
+      whatever the reading says, with an invariant that fails on the restored state
+      and not only on the first paint.
 
-   **The suite DOES fold the rail and restore it, and that is the sharper lead.**
-   `rail.spec.ts:187-189` clicks `[data-bz-rail-restore]` and asserts that the
-   grid track and the reading column come back to their open widths — and both
-   do, which is why 1,127 green tests never saw this. **What it never measures is
-   the rail's OWN box**: its left inset, and whether its contents are clipped by
-   the viewport edge. The bug is in the thing the existing assertion does not
-   look at, which means the fix is one more reading in a test that is already in
-   the right place, not a new test in a new file.
-3. **The facts line under a module's title becomes plain text.** `FactsStrip`
-   renders two `.bz-tag` boxes — the level, and `Module 3 of 8` — and then
-   `25 min · 2,317 words · EN · TR`. The author wants only `25 min · 2,317 words`,
-   as text, with no boxes.
+      **The suite DOES fold the rail and restore it, and that is the sharper lead.**
+      `rail.spec.ts:187-189` clicks `[data-bz-rail-restore]` and asserts that the
+      grid track and the reading column come back to their open widths — and both
+      do, which is why 1,127 green tests never saw this. **What it never measures is
+      the rail's OWN box**: its left inset, and whether its contents are clipped by
+      the viewport edge. The bug is in the thing the existing assertion does not
+      look at, which means the fix is one more reading in a test that is already in
+      the right place, not a new test in a new file.
+- [ ] **The facts line under a module's title becomes plain text.** `FactsStrip`
+      renders two `.bz-tag` boxes — the level, and `Module 3 of 8` — and then
+      `25 min · 2,317 words · EN · TR`. The author wants only `25 min · 2,317 words`,
+      as text, with no boxes.
 
-   **The level tag is a colour carrier and this is D63's trap again.** Its own
-   comment: *"The hue rides the dot and the level's NAME is beside it, so forced
-   colours loses the colour and keeps the fact (SC 1.4.1)."* Before it goes,
-   establish what else on a module page names the level in words — the breadcrumb
-   does (`Home / Catalog / Fundamentals / …`) and the rail's open group does —
-   and re-point `colour-not-alone.spec.ts` at whichever survives rather than
-   deleting the case.
+      **The level tag is a colour carrier and this is D63's trap again.** Its own
+      comment: *"The hue rides the dot and the level's NAME is beside it, so forced
+      colours loses the colour and keeps the fact (SC 1.4.1)."* Before it goes,
+      establish what else on a module page names the level in words — the breadcrumb
+      does (`Home / Catalog / Fundamentals / …`) and the rail's open group does —
+      and re-point `colour-not-alone.spec.ts` at whichever survives rather than
+      deleting the case.
 
-   `Module 3 of 8` is stated by the footer (`MODULE 1 OF 33`) and by the rail;
-   `EN · TR` goes because M19 owns the language.
-4. **The language control's slot, top-right of the reading box** — the author's
-   placement. **This milestone does not build the control.** A control that
-   switches nothing is the claim §1 forbids, and it is why the mockup's own `TR`
-   button and search field were both left out of the bar. M19 carries the
-   switcher; this milestone's only job is to leave the corner free and to record
-   where it goes, so M19 does not have to re-decide it.
+      `Module 3 of 8` is stated by the footer (`MODULE 1 OF 33`) and by the rail;
+      `EN · TR` goes because M19 owns the language.
+- [ ] **The language control's slot, top-right of the reading box** — the author's
+      placement. **This milestone does not build the control.** A control that
+      switches nothing is the claim §1 forbids, and it is why the mockup's own `TR`
+      button and search field were both left out of the bar. M19 carries the
+      switcher; this milestone's only job is to leave the corner free and to record
+      where it goes, so M19 does not have to re-decide it.
 
 ### The item that is not written down yet
 
@@ -2475,17 +2571,17 @@ before this milestone opens.
 
 ### Acceptance criteria
 
-- One control folds and restores the rail, it is reachable in both states, and
-  its label says which way it goes.
-- Folding and restoring returns the rail to the box it had on first paint,
-  proven by a test that folds, restores and re-measures.
-- The facts line is `25 min · 2,317 words` and nothing else; a draft still says
-  it is a draft.
-- Every place the module page named its level in colour still names it in words
-  under `forced-colors: active`.
-- No control on the page claims to switch language.
-- Full gate, and a screenshot of a module page at 1440 / 1024 / 390 read by eye
-  before it is called done (**D59**).
+- [ ] One control folds and restores the rail, it is reachable in both states, and
+      its label says which way it goes.
+- [ ] Folding and restoring returns the rail to the box it had on first paint,
+      proven by a test that folds, restores and re-measures.
+- [ ] The facts line is `25 min · 2,317 words` and nothing else; a draft still says
+      it is a draft.
+- [ ] Every place the module page named its level in colour still names it in words
+      under `forced-colors: active`.
+- [ ] No control on the page claims to switch language.
+- [ ] Full gate, and a screenshot of a module page at 1440 / 1024 / 390 read by eye
+      before it is called done (**D59**).
 
 ## 🏁 Milestone M22: Your progress, redesigned — WRITTEN AND NOT STARTED
 
@@ -2540,25 +2636,25 @@ deleting them.
 
 ### Deliverables
 
-1. **The inventory first.** One row per thing the page can do, where it is now,
-   and the test that proves it — the same table the capability ledger is, scoped
-   to this page. Nothing is designed until that table exists, because the point
-   of the exercise is that nothing is lost.
-2. **The circles stay exactly as they are.** `CourseCompletion` is control C and
-   the author named it as the part he likes. **It moves up and it does not
-   change** — no new props, no restyling, and `fidelity.spec.ts`'s stage-7 block
-   still compares it to `05`-C.
-3. **The thirteen rows become a small number of named groups**, each with its own
-   heading, in the order the mockup already argues for: what you have done, what
-   is next, what you can take away, and then settings. A group is a heading and a
-   region, not a thirteenth accordion wrapping twelve others.
-4. **The destructive row is separated and stays gated.** §12.15's erase dialog is
-   gated on a typed word and that does not move. Standard practice puts a
-   destructive action last, alone, visibly apart — which is what this page
-   already believes and does not currently look like.
-5. **`progress.css` is re-read against `07`**, not restyled by eye. The mockup is
-   the specification and it outranks this document; the fidelity harness knows
-   `07` already and stage 8's roles are registered.
+- [ ] **The inventory first.** One row per thing the page can do, where it is now,
+      and the test that proves it — the same table the capability ledger is, scoped
+      to this page. Nothing is designed until that table exists, because the point
+      of the exercise is that nothing is lost.
+- [ ] **The circles stay exactly as they are.** `CourseCompletion` is control C and
+      the author named it as the part he likes. **It moves up and it does not
+      change** — no new props, no restyling, and `fidelity.spec.ts`'s stage-7 block
+      still compares it to `05`-C.
+- [ ] **The thirteen rows become a small number of named groups**, each with its own
+      heading, in the order the mockup already argues for: what you have done, what
+      is next, what you can take away, and then settings. A group is a heading and a
+      region, not a thirteenth accordion wrapping twelve others.
+- [ ] **The destructive row is separated and stays gated.** §12.15's erase dialog is
+      gated on a typed word and that does not move. Standard practice puts a
+      destructive action last, alone, visibly apart — which is what this page
+      already believes and does not currently look like.
+- [ ] **`progress.css` is re-read against `07`**, not restyled by eye. The mockup is
+      the specification and it outranks this document; the fidelity harness knows
+      `07` already and stage 8's roles are registered.
 
 ### What this milestone must NOT do
 
@@ -2572,18 +2668,18 @@ deleting them.
 
 ### Acceptance criteria
 
-- The inventory table exists, every row has a test, and every row is still true
-  at the end.
-- The circles are byte-identical in their rendered facts to what they are today.
-- The register's rows are grouped under headings, and a reader can reach export,
-  erase and the record of work without opening anything that is not one of them.
-- Erase is still gated on the typed word; storage is still disclosed in §12.1.7's
-  own words.
-- `record-pages.spec.ts` is re-pointed rather than reduced — its count before and
-  after is recorded in the report.
-- Screenshots of the page at 1440 / 1024 / 390, read by eye, before it is called
-  done (**D59**).
-- Full gate.
+- [ ] The inventory table exists, every row has a test, and every row is still true
+      at the end.
+- [ ] The circles are byte-identical in their rendered facts to what they are today.
+- [ ] The register's rows are grouped under headings, and a reader can reach export,
+      erase and the record of work without opening anything that is not one of them.
+- [ ] Erase is still gated on the typed word; storage is still disclosed in §12.1.7's
+      own words.
+- [ ] `record-pages.spec.ts` is re-pointed rather than reduced — its count before and
+      after is recorded in the report.
+- [ ] Screenshots of the page at 1440 / 1024 / 390, read by eye, before it is called
+      done (**D59**).
+- [ ] Full gate.
 
 ---
 

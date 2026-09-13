@@ -2164,13 +2164,20 @@ Escape, outside click and route change already close it.
    reads `Description ▾`; open, the row expands smoothly and the previously open
    one closes.
 
-   **`<details name="…">` does both for free and with no JavaScript.** The `name`
-   attribute makes a group exclusive — opening one closes its sibling — which is
-   exactly the author's "only one at a time", natively. Smooth is
-   `interpolate-size: allow-keywords` plus `::details-content`, which Chrome
-   supports and other engines degrade to an instant open. That degradation is
-   acceptable and is the house rule already: the mechanism works everywhere, the
-   easing is an enhancement.
+   **`<details name="…">` does both for free and with no JavaScript, and this was
+   MEASURED rather than assumed.** In the browser the suite actually runs —
+   Chrome 153 — opening one `<details>` in a named group closes its sibling
+   natively, which is exactly the author's "only one at a time"; and
+   `CSS.supports` returns true for both `interpolate-size: allow-keywords` and
+   `selector(::details-content)`, which are what make the open smooth. So the
+   whole deliverable is buildable with zero script.
+
+   An engine without `interpolate-size` opens the panel instantly instead of
+   easing it, which is the house rule already: the mechanism works everywhere and
+   the easing is an enhancement. **An engine without `name` exclusivity would
+   leave two panels open**, which is a degradation worth knowing about — it is
+   the one part that would need script to guarantee, and it should not be added
+   until some engine that matters is shown to need it.
 
    **The trap is the TABLE.** A row that expands is a second `<tr>` with one
    `colspan` cell, not a taller cell — `ModuleRow`'s own docblock records what
@@ -2200,7 +2207,12 @@ Escape, outside click and route change already close it.
    eyebrow that currently sits above, cut to **modules and total time only** —
    `8 modules · ~3 h 55 min`, dropping `Level 02` (the heading says it) and
    `7 ready` (every row says it).
-8. **The cards view's level heading gets its clearance, and loses its number.**
+8. **The dropdown closes when the pointer leaves it**, on the shape decision 2
+   settles: only under `@media (hover: hover)`, after a grace delay, and never
+   while focus is inside. **This was discussed in the decisions and in the
+   acceptance criteria and was missing from the deliverables**, which is how an
+   item on the author's list gets planned and then not built.
+9. **The cards view's level heading gets its clearance, and loses its number.**
    `.bz-levelhead` is `margin: 26px 0 12px` and the cards above it overlap it.
    **The number inside the swatch is a carrier and its removal is the trap**:
    `CatalogCards`'s own comment says *"the swatch is the hue as a shape, and the

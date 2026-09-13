@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { levelsOf, type SheetRow } from '@/lib/content/rows'
 import { NOT_MEASURED } from '@/lib/text'
+import { Description } from '@/components/sheet/Description'
 
 /**
  * M12 / D13 — the CARDS view: one card per module, for browsing.
@@ -37,18 +38,22 @@ import { NOT_MEASURED } from '@/lib/text'
  * carries it would be two views with different reach, which is the drift D13's
  * "no view-specific data" rule exists to stop.
  *
- * **The level is a colour AND a word AND a number.** `data-cat` resolves the
- * hue on the card's top edge and on the heading's swatch; the level's name and
- * number are printed beside it. Under `forced-colors: active` the hue goes and
- * the words stay (SC 1.4.1).
+ * **The level is a colour AND a word**, and M20 took the number out of the
+ * heading's swatch. `data-cat` resolves the hue on the card's top edge and on
+ * the swatch; the level's name is printed beside it, and the card's own level
+ * line names it again. Under `forced-colors: active` the hue goes and the words
+ * stay (SC 1.4.1) — two of them per card, which is what the number was the
+ * third of.
  *
- * `03` prints a one-line summary under each card's title, and **M17 filled that
- * slot without inventing anything**. The corpus has no summary field and
- * `mini-courses/` is read-only, so the card printed its four labelled facts
- * there instead and the slot stayed empty in meaning. It now holds the module's
- * TOPICS — at most three, read out of the sheet itself — which is the one thing
- * the retired `/courses/<level>/` pages could show that the catalog could not,
- * and the reason deliverable 5 is a capability rather than a decoration.
+ * `03` prints a one-line summary under each card's title, and **M20 finally put
+ * a summary in it.**
+ *
+ * M17 filled the slot with the module's topics on the stated grounds that "the
+ * corpus has no summary field". **It does, and it is required:** `schema.ts`
+ * fails the build for a `ready` module without a `summary`, and 19 of the 33
+ * modules carry one — which is every written module. Nothing had to be invented
+ * and nothing in `mini-courses/` had to be touched; the sentence was there the
+ * whole time. See `Description`.
  *
  * ## M17 also took the count off the level heading
  *
@@ -67,11 +72,16 @@ export function CatalogCards({ rows }: { rows: readonly SheetRow[] }) {
         return (
           <section key={level.slug} data-cat={level.slug} aria-labelledby={`bz-cards-${level.slug}`}>
             <div className="bz-levelhead">
-              {/* The swatch is the hue as a shape, and the number inside it is
-                  what a reader in forced colours reads instead. */}
-              <span className="bz-levelhead-key" aria-hidden="true">
-                {level.order}
-              </span>
+              {/* M20 — THE SWATCH IS EMPTY NOW, and the comment that stood here
+                  had to go with the number rather than outlive it. It read:
+                  "the number inside it is what a reader in forced colours reads
+                  instead". That was true and it is no longer the arrangement —
+                  the author does not name a level by number anywhere, so the
+                  heading beside this swatch is the carrier, in words, and words
+                  survive `forced-colors: active` untouched. Leaving the comment
+                  would have had the next reader restore a carrier that is
+                  already carried. */}
+              <span className="bz-levelhead-key" aria-hidden="true" />
               <h3 id={`bz-cards-${level.slug}`} className="bz-levelhead-title">
                 {level.title}
               </h3>
@@ -104,23 +114,24 @@ export function CatalogCards({ rows }: { rows: readonly SheetRow[] }) {
                     </Link>
                   </h4>
 
-                  {/* M17 deliverable 5 — the topics, which is what the retired
-                      level pages carried and the cards never did. It sits under
-                      the title and above the facts because it is what the
-                      module is ABOUT, and the facts are what it costs. A card
-                      with no topics prints nothing rather than an empty line:
-                      `topicsFor` returns the schedule of parts on a planned
-                      module and its own sections on a written one, so an empty
-                      list means the sheet has neither. */}
-                  {row.topics.length > 0 && (
-                    <p className="bz-catcard-topics">{row.topics.join(' · ')}</p>
-                  )}
+                  {/* M17 filled `03`'s summary slot with the module's topics,
+                      because the corpus had no summary field to print. **It
+                      did** — `summary` is required frontmatter on every written
+                      module — so M20 prints the author's own sentence here and
+                      puts it behind the same disclosure the table uses.
+
+                      It sits under the title and above the facts because it is
+                      what the module is ABOUT, and the facts are what it costs.
+                      `Description` renders nothing at all for a module with
+                      neither a summary nor a schedule of parts, so the card
+                      closes up rather than printing an empty line. */}
+                  <Description row={row} />
 
                   {/* Each fact labelled, because a bare `23` beside a bare
-                      `EN · TR` is the kind of meta strip DESIGN.md names as a
-                      tell. A dash is printed with its label rather than
-                      dropped: the reader learns that the module declares no
-                      length, which is what a draft is. */}
+                      `5,008 W · 30 MIN` is the kind of meta strip DESIGN.md
+                      names as a tell. A dash is printed with its label rather
+                      than dropped: the reader learns that the module declares
+                      no length, which is what a draft is. */}
                   <dl className="bz-catcard-facts">
                     <div>
                       <dt>Length</dt>
@@ -130,10 +141,11 @@ export function CatalogCards({ rows }: { rows: readonly SheetRow[] }) {
                       <dt>Sources</dt>
                       <dd>{row.sources}</dd>
                     </div>
-                    <div>
-                      <dt>Languages</dt>
-                      <dd>{row.lang}</dd>
-                    </div>
+                    {/* `Languages` — `EN · TR` — was the third fact and M20
+                        removed it with the table's `Lang` column. The site
+                        renders none of the 33 `_tr.md` files, so the card was
+                        stating a translation nothing can serve; M19 is what
+                        makes the claim true, and it makes it a URL. */}
                     <div>
                       <dt>Requires</dt>
                       <dd>{row.requires === NOT_MEASURED ? 'Nothing' : row.requires}</dd>

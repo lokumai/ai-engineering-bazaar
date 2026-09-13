@@ -175,3 +175,94 @@ test('every route carries the same navbar', async ({ page }) => {
       .toBeLessThanOrEqual(1)
   }
 })
+
+// ---------------------------------------------------------------------------
+// M20 — the bar's dropdown, and the three ways it closes
+// ---------------------------------------------------------------------------
+
+/**
+ * The author: *"even when I move cursor out of the boundaries of dropdown, the
+ * dropdown is still here while I want it to disappear."*
+ *
+ * **Every assertion below is a browser assertion because every one of them is
+ * an engine behaviour**, and the first build of this got two of them wrong in
+ * a way nothing else could see: the type checker was happy, the markup was
+ * right, and a screenshot of an open menu looks the same either way.
+ *
+ * The two it got wrong were `1` — the close never fired, because clicking a
+ * `<summary>` focuses it and the guard asked whether focus was inside the
+ * `<details>`, which contains the summary — and the discovery that Chrome does
+ * NOT close a `<details>` on Escape, which `MainNav`'s docblock had claimed
+ * for three milestones and which the M20 brief reasoned from.
+ */
+const MENU = '.bz-bar-nav details'
+
+test('the dropdown closes when the pointer leaves, and only where hover exists', async ({
+  page,
+}) => {
+  await page.goto(INDEX_SHEET)
+  const menu = page.locator(MENU)
+
+  await page.locator('.bz-bar-nav summary').click()
+  await expect(menu).toHaveAttribute('open', '')
+
+  // Away from the bar entirely. The close is on a grace delay, so this is an
+  // expectation with a timeout rather than a read after a sleep.
+  await page.mouse.move(700, 600)
+  await expect(menu).not.toHaveAttribute('open', '')
+})
+
+test('the dropdown stays open while focus is in the list', async ({ page }) => {
+  await page.goto(INDEX_SHEET)
+  const menu = page.locator(MENU)
+
+  await page.locator('.bz-bar-nav summary').click()
+  await page.locator('.bz-menu a').first().focus()
+  await page.mouse.move(700, 600)
+
+  /* Held rather than sampled: the failure this guards against is a close that
+     fires LATE, so reading once immediately would pass against it. A second is
+     comfortably longer than the grace delay. */
+  await page.waitForTimeout(1000)
+  await expect(menu).toHaveAttribute('open', '')
+})
+
+test('Escape closes the dropdown and hands focus back to the trigger', async ({ page }) => {
+  await page.goto(INDEX_SHEET)
+  const menu = page.locator(MENU)
+
+  await page.locator('.bz-bar-nav summary').click()
+  await page.locator('.bz-menu a').first().focus()
+  await page.keyboard.press('Escape')
+
+  await expect(menu).not.toHaveAttribute('open', '')
+  // The element that had focus is now `display: none`, and focus on a hidden
+  // element is dropped on the floor — so it goes back to the summary.
+  expect(await page.evaluate(() => document.activeElement?.tagName)).toBe('SUMMARY')
+})
+
+/**
+ * **The case that would have broken the menu for every phone**: a finger has
+ * no hover, so `pointerleave` fires at the end of the tap that OPENED the
+ * panel. Closing on it unconditionally would make the menu open and shut on
+ * one touch, and nothing in the desktop projects would ever have said so.
+ */
+test('a tap opens the dropdown and leaves it open', async ({ browser }) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 800 },
+    hasTouch: true,
+    isMobile: true,
+  })
+  const page = await context.newPage()
+  await page.goto(INDEX_SHEET)
+
+  expect(
+    await page.evaluate(() => matchMedia('(hover: hover)').matches),
+    'a touch context that reports hover would not exercise this',
+  ).toBe(false)
+
+  await page.locator('.bz-bar-nav summary').tap()
+  await page.waitForTimeout(800)
+  await expect(page.locator(MENU)).toHaveAttribute('open', '')
+  await context.close()
+})

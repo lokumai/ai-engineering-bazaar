@@ -1,16 +1,31 @@
 import Link from 'next/link'
 import type { SheetRow } from '@/lib/content/rows'
+import { Description } from './Description'
 
 /**
  * §5.3 — the module row. **There is no module card.** A card grid is not used
  * anywhere on this site; if you find yourself building one, the answer is a
  * table row (§11.2).
  *
- * The whole row is one link target: the anchor lives in the title cell and a
- * stretched pseudo-element covers the row, so a pointer can hit any cell and
- * `Tab` reaches the row exactly once (§10.3). Its focus ring is drawn on that
- * pseudo-element rather than around the title text, which is the only way to
- * get §5.3's "offset -2px so it sits inside the row".
+ * **The row is NOT one link target, and this docblock claimed it was.**
+ * §5.3 and §10.3 specify a stretched pseudo-element covering the row so a
+ * pointer can hit any cell; MEASURED on the built catalog in M20,
+ * `getComputedStyle(link, '::after').content` is `none`, its `position` is
+ * `static`, and a click in the `Length` cell navigates nowhere. The rule went
+ * with the eleven stylesheets stage 0 deleted and the comment outlived it —
+ * the same shape as the ISO 128 dash the M18 review caught.
+ *
+ * **M20 corrected the references rather than restoring the target**, and the
+ * reason is this milestone's own work: the description cell now holds a
+ * `<summary>`, and a row that is one big link and a row with a control in it
+ * are two different rows. A stretched link would sit over that control. What
+ * is true today is the simpler thing — the anchor is in the title cell, it is
+ * the row's one tab stop, and its focus ring is its own.
+ *
+ * **The suite could not see the absence**, which is why it lasted. Five places
+ * reason from the stretched link and exactly one test names it —
+ * `accessibility.spec.ts`'s one-tab-stop-per-row assertion — and a title-only
+ * link satisfies that perfectly.
  *
  * A sheet that is not drawn is marked here and drawn as a hidden line in CSS:
  * its one completion square is dashed, which is the drawing set's convention for
@@ -38,16 +53,29 @@ import type { SheetRow } from '@/lib/content/rows'
  * Which context columns this page's table carries (§4.8, §4.9).
  *
  * M17 collapsed three listings into one, and with them the `subsystem` variant:
- * every table on the site now prints the topics, because that was the one thing
- * the retired `/courses/` pages could show and the catalog could not.
+ * every table on the site now prints what the module is about, because that was
+ * the one thing the retired `/courses/` pages could show and the catalog could
+ * not.
  *
  * - `both` — the whole catalog, where the level is a column because the rows
  *   come from every level and the hue on a row's leading edge may not be the
  *   only thing that says which (SC 1.4.1, §13.1.4).
- * - `topics` — a level page, where the level is the page's own heading and a
- *   column repeating it eight times says nothing.
+ * - `description` — a table whose page already names the level once, so a
+ *   column repeating it on every row says nothing.
+ *
+ * **`description` has no production caller and M20 kept it deliberately.**
+ * M17 made a level page render the whole `Catalog`, filtered, and `Catalog`
+ * passes `both`; so the narrow shape survives only in the two unit tests that
+ * render `SheetIndex` directly. It is kept because it is the shape any future
+ * single-level listing takes and because those tests are what prove the level
+ * column is genuinely optional — but nobody should read this union and assume
+ * two tables ship.
+ *
+ * The name was `topics`, after the column it selected. M20 replaced that column
+ * with the module's own sentence, so the old name pointed at a column that no
+ * longer exists.
  */
-export type RowColumn = 'topics' | 'both'
+export type RowColumn = 'description' | 'both'
 
 /**
  * M17 — §4.8's `STATUS` column is gone, and this is what replaced it.
@@ -89,12 +117,15 @@ function RowState({ row }: { row: SheetRow }) {
 
 /**
  * §4.8 column 9 / §5.9 — the sign-off squares: `14 × 14`, no text, the slot
- * name on `title`, and **no interactive control of any kind**. `.bz-row-link`'s
- * stretched pseudo-element covers the row with `inset: 0` so that a pointer can
- * hit any cell and `Tab` reaches the row exactly once (§10.3); a control here
- * would sit under it, unclickable, and lifting it out would give the row a
- * second tab stop. Signing off happens on the sheet, which is the only place
- * the criteria are stated (§12.4.1).
+ * name on `title`, and **no interactive control of any kind**.
+ *
+ * **The reason this cell gives for that is no longer true, and the refusal
+ * stands anyway.** It read: a stretched pseudo-element covers the row, so a
+ * control here would sit under it, unclickable. M20 measured the built catalog
+ * and there is no such element (see this file's own docblock). What keeps the
+ * refusal is the reason under it: signing off happens on the sheet, which is
+ * the only place the criteria are stated (§12.4.1), so a control here would be
+ * a second way to assert something a reader has not read the criteria for.
  *
  * Which squares a sheet draws is `row.slots` — absent, not empty (§5.9, §12.7):
  * a sheet with no self-check draws no `QUIZ` square rather than one that can
@@ -194,18 +225,28 @@ export function ModuleRow({ row, column }: { row: SheetRow; column: RowColumn })
 
       {column === 'both' && <td className="bz-row-context">{row.subsystem.title}</td>}
 
-      <td className="bz-row-context">
-        {/* §4.9 — at most three, joined on one line and truncated where the
-            column runs out. The sheet itself prints every section it has;
-            this is the column that says what it is about, not a summary. */}
-        <span className="bz-row-topics" title={row.topics.join(' · ')}>
-          {row.topics.join(' · ')}
-        </span>
+      {/* M20 — `Topics` became `Description`, and the disclosure lives INSIDE
+          this cell rather than in a second `<tr>`.
+
+          A second row with a `colspan` cell is the obvious shape and it cannot
+          be built: `<tbody>`'s content model admits only `<tr>`, and a
+          `<summary>` has to live inside its own `<details>`, so a disclosure
+          whose trigger is in row 1 and whose panel is row 2 is not
+          expressible. A `<td>` is flow content, so it may hold a `<details>` —
+          opening it grows the cell, the cell grows the row, and the row grows
+          the table. No script, no `colspan`, no second row.
+
+          **And it is not competing with a row-wide link.** This component's
+          docblock said twice that a stretched pseudo-element covers the row;
+          MEASURED on the built catalog, `::after`'s `content` is `none` and
+          clicking a non-title cell navigates nowhere. The rule went with the
+          eleven stylesheets stage 0 deleted. See the docblock above. */}
+      <td className="bz-row-desc">
+        <Description row={row} />
       </td>
 
       <td className="bz-row-value">{row.extent}</td>
       <td className="bz-row-value">{row.sources}</td>
-      <td className="bz-row-value">{row.lang}</td>
 
       <td className="bz-row-signoff">
         <SignOffSquares row={row} />

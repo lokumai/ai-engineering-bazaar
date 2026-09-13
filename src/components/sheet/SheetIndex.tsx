@@ -3,9 +3,9 @@ import { ModuleRow, type RowColumn } from './ModuleRow'
 
 /**
  * §4.8 item 4 — the index table, and §4.9 item 5, which is the same table with
- * `TOPICS` in place of `SUBSYSTEM`. One component, because a category page
- * listing its sheets differently from the index would be two manifests of one
- * set.
+ * the description in place of `SUBSYSTEM`. One component, because a category
+ * page listing its sheets differently from the index would be two manifests of
+ * one set.
  *
  * Column widths are held by a `<colgroup>` against a fixed layout so the mono
  * columns line up down the page; see `columnsFor` for where they come from and
@@ -16,9 +16,9 @@ import { ModuleRow, type RowColumn } from './ModuleRow'
  *
  * §4.8's ninth column, `SIGN-OFF`, is here now that there is a record for it to
  * read: `ModuleRow` draws the squares in the unsigned state and one island fills
- * them after mount (§12.2, §12.18). It carries no interactive control, which is
- * a consequence of the stretched row link rather than a shortcut — see
- * `SignOffSquares`.
+ * them after mount (§12.2, §12.18). It carries no interactive control, and the
+ * reason is §12.4.1 rather than the stretched row link this used to cite —
+ * M20 measured for that element and it is not there. See `SignOffSquares`.
  *
  * It sits where §4.8 puts it, after `STATUS`. `REQUIRES` is the column this
  * implementation added to §4.8's eight, so it is the one that stays at the end.
@@ -35,8 +35,10 @@ import { ModuleRow, type RowColumn } from './ModuleRow'
  * `/courses/` and `/courses/[category]/` were retired into the catalog, so this
  * component has two call sites rather than three and they differ by one column.
  * The whole catalog passes `both`, because its rows come from every level and a
- * row's level may not be carried by its hue alone; a level page passes `topics`,
- * because its own heading says the level once instead of eight times.
+ * row's level may not be carried by its hue alone. The narrow shape is
+ * `description`, and M17 left it with no production caller — a level page
+ * renders the whole `Catalog`, filtered, and `Catalog` passes `both`. See
+ * `RowColumn`.
  *
  * ## M16 stage 4: the min-width is COMPUTED now, and that is the point of it
  *
@@ -50,10 +52,11 @@ import { ModuleRow, type RowColumn } from './ModuleRow'
  * So the columns declare their own widths and the sum is taken from them, once,
  * and handed to the stylesheet as `--bz-table-min`. The flexible column
  * declares a `floor` instead of a width, which is the number it may not shrink
- * below; that is the term the old arithmetic supplied by hand. **MEASURED: both
- * layouts still come to 1060px** — 820 fixed plus a 240 floor on the index, 892
- * fixed plus a 168 floor on a category page — so nothing about the table moved,
- * and now nobody has to check that again.
+ * below; that is the term the old arithmetic supplied by hand. **MEASURED after
+ * M20 moved the flexible column:** `description` sums to 976 and `both` to
+ * 1144 — 736 fixed plus a 240 floor, and 904 fixed plus the same floor. Both
+ * are wider than a phone and both still scroll inside their own container,
+ * which is what §6.5 and §11.10 ask.
  */
 
 interface Column {
@@ -75,33 +78,25 @@ interface Column {
  * §4.8's widths, with one column flexible and three measured rather than
  * copied.
  *
- * **`TOPICS` is the flexible one on every page now** (M17). It used to swap
- * with `SHEET` depending on the route, because the flat manifest printed the
- * level where a category page printed the topics and only one of the two could
- * flex. There is one listing left and it prints both, so the choice is settled
- * rather than made per call: three section titles cannot say anything in 168px,
- * and §4.9's own arithmetic — 9 × 52 + 52 = 520px — pins the row at 52px, so
- * the column cannot buy the room back in height either. Sheet titles run to 29
- * characters and sit comfortably in a fixed 240px.
+ * **`SHEET` is the flexible one now** (M20), and which column flexes has moved
+ * twice. §4.8 flexed `SHEET`; M17 gave it to `TOPICS`, because three section
+ * titles cannot say anything in 168px and §4.9's own arithmetic — 9 × 52 + 52 =
+ * 520px — pins the row at 52px, so that column could not buy the room back in
+ * height either. M20 replaced `TOPICS` with a disclosure trigger, which needs
+ * none of that room closed and a fixed measure open, so the slack goes back to
+ * the module's title. `columnsFor` carries the reasoning per column.
  *
- * Three of §4.8's widths do not hold §4.8's own values, measured in the
- * browser at the type §3.2 and §5.3 specify — `text-mark`, 11px IBM Plex Mono
- * at `+0.06em`, in a cell padded `10px 14px`:
+ * One of §4.8's widths does not hold §4.8's own value, measured in the browser
+ * at the type §3.2 and §5.3 specify — `text-mark`, 11px IBM Plex Mono at
+ * `+0.06em`, in a cell padded `10px 14px`:
  *
  *   EXTENT   `5,008 W · 30 MIN` is 116px of text; 104 − 28 leaves 76.
- *   LANG     `EN · TR` is 51px; 72 − 28 leaves 44.
  *
- * Both wrapped onto a second line inside the 52px row. Nothing about the type
- * is negotiable — the tracking is §3.4's rule for machine values and the
- * padding is §5.3's — so the columns take the room they need (152, 80) out of
- * the flexible one. §4.8's `STATUS`, which was the third of these and measured
- * 116, is gone: M17 took the column off the table and left the state to the
- * cells that were already carrying it (`ModuleRow`'s `RowState`).
- *
- * **MEASURED after that change:** `topics` sums to 944 and `both` to 1112. Both
- * are still wider than a phone and still scroll inside their own container,
- * which is what §6.5 and §11.10 ask. Nobody re-derives either number — the sum
- * is taken from this array, once, below.
+ * It wrapped onto a second line inside the 52px row. Nothing about the type is
+ * negotiable — the tracking is §3.4's rule for machine values and the padding
+ * is §5.3's — so the column takes the room it needs (152) out of the flexible
+ * one. §4.8's `STATUS` is gone (M17, see `ModuleRow`'s `RowState`), and `LANG`
+ * — the second of these, measured at 80 — went with M20.
  *
  * `SIGN-OFF` is 72px, not §4.8's 96, and **the reasoning that used to be here
  * is gone rather than corrected.** It read: the table's `min-width` is 1060px,
@@ -121,23 +116,54 @@ function columnsFor(column: RowColumn): Column[] {
 
   return [
     { key: 'number', label: '#', width: 48 },
-    {
-      key: 'sheet',
-      label: 'Module',
-      width: 240,
-    },
+    /* M20 — THE MODULE IS THE FLEXIBLE COLUMN NOW, and that is forced rather
+       than chosen. `Topics` was flexible with a 168px floor, and the floor was
+       justified by the content: "three section titles cannot say anything in
+       168px". `Description` is a trigger reading one word and a caret, which
+       needs none of that — leave it flexible and the table becomes a short
+       control beside a lake of empty space, which is what the M20 review
+       caught before a line of this was built.
+
+       So the slack moves to the thing that actually varies. Titles run to 29
+       characters and sat in a fixed 240; that number is this column's floor
+       now, so nothing gets narrower than it used to be and a long title has
+       somewhere to go. */
+    { key: 'sheet', label: 'Module', width: null, floor: 240 },
     ...(level ? [{ key: 'level', label: 'Level', width: 168 } as Column] : []),
-    { key: 'topics', label: 'Topics', width: null, floor: 168 },
+    /* Wide enough for the open panel rather than for the closed trigger. The
+       summaries run to about 120 characters and 280px − 28px of padding holds
+       roughly 30 of them a line at `--text-meta`, so a sentence wraps to four
+       lines inside the row instead of to eight. The trigger is the same width
+       either way; it is the open state that has a measure to honour. */
+    { key: 'description', label: 'Description', width: 280 },
     { key: 'extent', label: 'Length', width: 152 },
     { key: 'sources', label: 'Sources', width: 88 },
-    { key: 'lang', label: 'Lang', width: 80 },
+    /* `Lang` was 80px here and it is gone (M20). It printed `EN · TR`, which is
+       a fact about the REPOSITORY — a `_tr.md` file exists — and the site
+       renders none of those files. The listing stated a translation it cannot
+       serve; M19 is what makes the claim true, and it is a URL when it does. */
+    /* **MEASURED at 1440, by screenshotting the table and reading the header
+       row: both of the last two columns were clipping their own headers**, and
+       had been since before M20 — `Completion` wanted 80px of text in 72 and
+       `Requirements` wanted 113 in 96. Neither is a word with a break
+       opportunity in it, so `white-space: normal` could not save them and they
+       were simply cut: `Completio`, `Requireme`.
+
+       Nothing in the suite could see it. A clipped header still has the right
+       `textContent`, so `record-index.spec.ts`'s "the ninth column is
+       COMPLETION" passes on a column that is drawing two thirds of the word.
+
+       So the columns take the width their headers need, plus a little. 72
+       stood on the squares — four 14px squares with 4px gaps are 68px wide,
+       and this cell gives up §5.3's inline padding to hold them — which is why
+       it was the narrower of the two errors. */
     {
       key: 'signoff',
       label: 'Completion',
-      width: 72,
+      width: 84,
       className: 'bz-table-signoff',
     },
-    { key: 'requires', label: 'Requirements', width: 96 },
+    { key: 'requires', label: 'Requirements', width: 118 },
   ]
 }
 

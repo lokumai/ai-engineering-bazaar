@@ -77,7 +77,8 @@ test('the ninth column is COMPLETION, and its squares are 14 × 14 (§4.8, §12.
   await showTable(page)
 
   const headers = page.locator('.bz-table thead th')
-  await expect(headers).toHaveCount(9)
+  // M20 — eight, not nine: `Lang` left the table with the language filter.
+  await expect(headers).toHaveCount(8)
   // The LABEL, and not the case it is painted in. This asserted the rendered
   // `COMPLETION` because §4.8 — the retired design document — wrote its column
   // names in capitals and the old stylesheet had a `text-transform` to match.
@@ -85,7 +86,10 @@ test('the ninth column is COMPLETION, and its squares are 14 × 14 (§4.8, §12.
   // every document (`CLAUDE.md`), so the capitals went with the old drawing
   // set. What is being checked here is which column sits in the ninth slot,
   // which is the part that would break the record if it moved.
-  await expect(headers.nth(7)).toHaveText(/^completion$/i, { useInnerText: true })
+  // Sixth slot now rather than the seventh, for the same reason the count
+  // above dropped. It is still the column immediately before `Requirements`,
+  // which is the relation that would break the record if it moved.
+  await expect(headers.nth(6)).toHaveText(/^completion$/i, { useInnerText: true })
 
   const boxes = squares(page, SEEDED_SLUG)
   await expect(boxes).toHaveCount(4)
@@ -289,7 +293,9 @@ test('All is active on load and the first client render emits the prerender’s 
   await waitForHydratedReadout(page)
 
   await expect(chip(page, 'All')).toHaveAttribute('aria-pressed', 'true')
-  for (const label of ['Ready', 'Planned', 'Both languages', 'Completed', 'Not completed'])
+  // M20 — five chips, all of them states, which is what lets the row be
+  // named `Status`. `Both languages` was the one that was not.
+  for (const label of ['Ready', 'Planned', 'Completed', 'Not completed'])
     await expect(chip(page, label)).toHaveAttribute('aria-pressed', 'false')
 
   await expect(rows(page)).toHaveCount(prerendered)

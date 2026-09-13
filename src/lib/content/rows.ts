@@ -51,8 +51,33 @@ export interface SheetRow {
   bilingual: boolean
   /** The declared `prerequisites`, or `—`. Derived (B7), never typed. */
   requires: string
-  /** §4.9 `TOPICS` — at most three, read out of the sheet itself. */
+  /**
+   * §4.9 — at most three section titles, read out of the sheet itself.
+   *
+   * **M20 took this off the screen for a written module and left it as the
+   * fallback for a planned one.** It was the `Topics` column, and a table of
+   * contents for a page the reader has not opened is not what the listing was
+   * being asked for. What replaced it is `summary` below. A planned module has
+   * no summary to print — nobody has written the module — so its schedule of
+   * parts is what the listing can honestly show, LABELLED as the schedule of
+   * parts rather than dressed as a description.
+   */
   topics: string[]
+  /**
+   * M20 / §11.25 — the module's own sentence, or `null` on a planned one.
+   *
+   * **It is the author's frontmatter, byte for byte.** `schema.ts` already
+   * requires a `summary` of every `ready` module and the build fails without
+   * one, so this is a DERIVATION and not a second description somebody has to
+   * maintain — which is the one thing §11.25 forbids and the reason
+   * `topicsFor`'s docblock argued against a hand-written topic line. A derived
+   * summary is not a hand-written one, which is why this does not reverse it.
+   *
+   * `null` where `schema.ts` permits it: a module nobody has written has
+   * nothing to summarise, and an invented sentence about it would be the worst
+   * available answer.
+   */
+  summary: string | null
   /**
    * §4.8 column 9 / §7.4 — the sign-off slots THIS sheet supplies, in
    * `sheetStamps`' order, as `Stamp.id` spells them: `SIGN-OFF`, and then
@@ -121,7 +146,14 @@ export const FILTERS: readonly SheetFilter[] = [
   { id: 'all', label: 'All', basis: 'drawing', keep: () => true },
   { id: 'ready', label: 'Ready', basis: 'drawing', keep: (row) => row.drawn },
   { id: 'not-drawn', label: 'Planned', basis: 'drawing', keep: (row) => !row.drawn },
-  { id: 'bilingual', label: 'Both languages', basis: 'drawing', keep: (row) => row.bilingual },
+  /* `Both languages` was here, and **M20 removed it with the `Lang` column**.
+     It filtered on `row.bilingual`, which is a fact about the REPOSITORY — a
+     `_tr.md` file exists — and not about anything the site can serve: 33 of
+     those files exist and the app renders none of them (M19). Leaving the chip
+     while the column went would have let a reader filter by a fact no view
+     shows, and calling the row `Status:` with a language chip in it would have
+     mislabelled the chip as well. `row.bilingual` and `row.lang` stay on the
+     model: they are build-time facts M19 needs, and nothing renders them. */
   {
     id: 'signed',
     label: 'Completed',
@@ -159,6 +191,22 @@ export function levelsOf(rows: readonly SheetRow[]): SubsystemRef[] {
 export function applyLevel(rows: readonly SheetRow[], level: string): SheetRow[] {
   return level === ALL_LEVELS ? [...rows] : rows.filter((row) => row.subsystem.slug === level)
 }
+
+/**
+ * M20 — the visible name of this group, and its accessible name, in one place.
+ *
+ * The author asked for `Level:` before the level chips and a word before these.
+ * With the language chip gone (above) every chip here is a state — three of the
+ * DRAWING and two of the READER — so `Status` is exact rather than a label that
+ * swallows one filter and mislabels two others.
+ *
+ * The visible text IS the group's accessible name (`aria-labelledby`), never a
+ * second string beside it, or a screen reader announces the group twice.
+ */
+export const STATE_GROUP_LABEL = 'Status'
+
+/** The other axis, named the same way and for the same reason. */
+export const LEVEL_GROUP_LABEL = 'Level'
 
 /** The chip that is active on load, and the only one that may be (§12.2). */
 export const DEFAULT_FILTER_ID: string = FILTERS[0].id

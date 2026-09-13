@@ -243,6 +243,25 @@
     .bz-viewbtn { height: 44px; }
   }
 
+  /* M20 — `Level:` and `Status:`, the two chip groups' visible names.
+
+     `label` and not `mark`: DESIGN.md gives `label` — the one tracked size —
+     to "a caption above a group of controls", which is exactly what this is,
+     and `mark` to a count or a tag. It is NOT uppercase and NOT mono; the
+     shell mockup writes `text-transform: none` on its own rail label and the
+     language's don't-list rules out a small uppercase mono label.
+
+     `flex: none` so the name never wraps into the chips, and the baseline is
+     `center` rather than the row's own alignment because a chip is 34px tall
+     and a word is not. */
+  .bz-chip-label {
+    flex: none;
+    align-self: center;
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-label) / 1 var(--font-sans);
+    letter-spacing: var(--tracking-label);
+  }
+
   .bz-view-icon { flex: none; }
 
   /* ---------------------------------------------------------------------------
@@ -271,10 +290,23 @@
   html[data-hl-view="overview"] [data-view="overview"],
   html[data-hl-view="cards"] [data-view="cards"],
   html[data-hl-view="table"] [data-view="table"],
-  /* The reader who has not chosen, and every reader with scripting off: the
-     prerender is in the default view, so this is what makes the document
-     correct before anybody has a preference. */
-  html:not([data-hl-view]) [data-view="overview"] {
+  /* THE READER WHO HAS NOT CHOSEN, and every reader with scripting off — and
+     M20 made it depend on the route.
+
+     The author asked the catalog's front page to open in Overview and a level
+     page to open in Cards. The view is also a remembered preference (D13), so
+     the route's default applies ONLY here, under `html:not([data-hl-view])`:
+     the moment `boot.ts` stamps a stored view, or the toggle sets one, these
+     two rules stop matching and the reader's own choice wins. A page that
+     stamped the attribute on arrival would be a third writer of it and would
+     override a choice made one click earlier, which is what D13 exists to
+     prevent — so no page ever sets it. `SCOPE_ATTR` carries the reasoning.
+
+     Both of these have a twin on the toggle's `Showing` mark at the foot of
+     this file. Change one and not the other and the page draws Cards under a
+     toggle marking Overview — the picture and the sentence coming apart. */
+  html:not([data-hl-view]) [data-bz-catalog-scope="index"] [data-view="overview"],
+  html:not([data-hl-view]) [data-bz-catalog-scope="level"] [data-view="cards"] {
     --bz-showing: block;
     --bz-showing-edge: 2px;
   }
@@ -313,29 +345,47 @@
   /* ---------------------------------------------------------------------------
      5. THE LEVEL HEAD — the cards view's grouping, from `03`-A.
      --------------------------------------------------------------------------- */
+  /* M20 — the clearance the author asked for, and the reason it was missing.
+     *"the separator lines of each level … have little to no vertical space
+     from the top and as a result they are overlapped by the cards of previous
+     level."*
+
+     **The margin was being zeroed on EVERY level head.** The rule under this
+     one read `.bz-levelhead:first-child { margin-top: 0 }` and was meant for
+     the first heading in the list — but `CatalogCards` puts the head first
+     inside each level's own `<section>`, so `:first-child` matched all of
+     them and the 26px never applied anywhere. The head was not short of
+     clearance; it had none.
+
+     So the reset is scoped to the section that is actually first, and the
+     margin is raised to 40px: the heading carries a rule across the page and
+     a card above it has a 3px coloured top edge, so 26px between two strong
+     horizontals read as a collision even once it applied. */
   .bz-levelhead {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin: 26px 0 12px;
+    margin: 40px 0 12px;
   }
 
-  .bz-levelhead:first-child { margin-top: 0; }
+  .bz-view > section:first-of-type .bz-levelhead { margin-top: 0; }
 
   /* `flex: none`, because a hue swatch that shrinks is not a swatch. MEASURED
      at 390px: `03`'s own `.swatch` squashes from 26px to 18.55px, since it is
      a flex item next to a level name that has no reason to yield first. The
      title yields instead — `min-width: 0` below is what lets it. */
+  /* M20 emptied it: the level is named in words beside it and the author does
+     not number a level anywhere, so the digit inside had nothing to add. The
+     grid centring and the type went with the number rather than sitting here
+     unread — a rule for content an element cannot have is the same dead weight
+     as a class no stylesheet answers. The SHAPE is unchanged, which is what
+     `03` specifies and what the hue needs. */
   .bz-levelhead-key {
     flex: none;
-    display: grid;
-    place-items: center;
     width: 26px;
     height: 26px;
     border-radius: var(--radius-lg);
     background: var(--bz-cat);
-    color: var(--color-on-primary);
-    font: 600 var(--text-mark) / 1 var(--font-sans);
   }
 
   .bz-levelhead-title {
@@ -450,11 +500,17 @@
      mockup's card with one of its four blocks missing, so it closed up: title,
      ordinal, facts. Restoring the block the mockup draws is what gives it the
      room, and it does not cost a single invented value. */
-  .bz-catcard-topics {
-    margin: 0 0 10px;
-    color: var(--color-on-surface-muted);
-    font: var(--text-meta) / 1.5 var(--font-sans);
-  }
+  /* `.bz-catcard-topics` was here and M20 deleted it with the markup, in the
+     SAME commit: `styling-references.test.ts` fails a `bz-` class no stylesheet
+     answers to and this file's own discipline fails a rule nothing carries, so
+     splitting the two across two commits makes one of them red for the other's
+     reason. What sits in `03`'s summary slot now is `.bz-desc`, in section 11,
+     because the same disclosure is on the card and in the row and one rule is
+     what keeps them the same thing. */
+
+  /* The card's own box for it: the slot `03` gives a summary, spaced as `03`
+     spaces it — `margin: 0 0 10px`, which the mockup's `.card p` declares. */
+  .bz-catcard .bz-desc { margin: 0 0 10px; }
 
   /* Each fact named, because a bare `23` next to a bare `EN · TR` is the meta
      strip DESIGN.md calls a tell. Laid out on `03`'s own footer row, whose gap
@@ -496,11 +552,18 @@
      state instead, and none of it needs a rule. */
 
 
-  .bz-row-topics {
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  /* `.bz-row-topics` was here — one line, clipped with an ellipsis — and M20
+     deleted it with the cell it lived in. The description is a disclosure now,
+     so there is nothing to clip: closed it is a short trigger, and open it
+     wraps inside the cell and grows the row. The cell's own rule is below. */
+
+  /* The description cell. `vertical-align: top` because an OPEN row is as tall
+     as this cell and the mono values beside it would otherwise float to the
+     middle of it; `white-space: normal` because `.bz-table` sets `nowrap` for
+     the value columns and a sentence has to wrap. */
+  .bz-row-desc {
+    vertical-align: top;
+    white-space: normal;
   }
 
   /* The completion column, which only the table draws.
@@ -571,9 +634,28 @@
        `--bz-table-min`, and for the same reason: a board with no count to
        honour draws `03`'s five. */
     --bz-board-cols: 5;
+    /* Declared for the same reason the count above is: an undeclared custom
+       property resolves to nothing and `styling-references.test.ts` refuses a
+       `var()` the language does not declare — it caught this one. `1` is the
+       full width, which is what a board with no instance value should take. */
+    --bz-board-share: 1;
     display: grid;
     grid-template-columns: repeat(var(--bz-board-cols), minmax(0, 1fr));
     gap: 12px;
+  }
+
+  /* M20 — a board with fewer columns than `03`'s five does not stretch them
+     across the page. `--bz-board-share` is the fraction of the width its own
+     columns would have had, floored at one third, which is the number the
+     author named for the one-level case; `CatalogOverview` computes it beside
+     the column count so one measurement answers both.
+
+     Only at the widths where the board still draws every column. Below 1180px
+     it is two columns and below 880px it is one, and a third of a phone is not
+     a column — so the share is not applied there and the board fills the page
+     as it did before. */
+  @media (min-width: 1181px) {
+    .bz-board { max-width: calc(100% * var(--bz-board-share)); }
   }
 
   /* Two columns, or the board's own count where that is fewer — `min()` on a
@@ -706,6 +788,94 @@
   }
 
   /* ---------------------------------------------------------------------------
+     11. THE DESCRIPTION — M20's disclosure, shared by the row and the card.
+
+     ONE set of rules for both, because it is one component (`Description`) in
+     two boxes. The author asked for a dropdown arrow, a smooth open, and only
+     one panel showing at a time; `<details name="…">` gives all three with no
+     script, which also means it works with the bundle blocked — the state
+     every island on this site has to survive (§12.2).
+     --------------------------------------------------------------------------- */
+  .bz-desc { min-width: 0; }
+
+  /* `list-style: none` removes the native triangle in every current engine and
+     the `::-webkit-details-marker` rule removes it in the older WebKit that
+     ignores the first. The arrow is ours (`Description`'s `Caret`), because the
+     native marker cannot take the language's stroke weight. */
+  .bz-desc-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    width: fit-content;
+    padding: 2px 0;
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-mark) / 1.2 var(--font-sans);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .bz-desc-trigger::-webkit-details-marker { display: none; }
+
+  .bz-desc-trigger:hover { color: var(--color-on-surface); }
+
+  /* The arrow turns INSTANTLY and that is the house rule rather than an
+     omission: DESIGN.md's don't-list refuses a transition on a transform, and
+     `surface-stylesheets.test.ts` fails this file if one appears. The easing
+     that matters is the panel's height, below, which is a size and not a
+     transform. */
+  .bz-desc-caret { flex: none; }
+
+  .bz-desc[open] > .bz-desc-trigger .bz-desc-caret { rotate: 180deg; }
+
+  /* THE SMOOTH OPEN. `block-size: auto` is only interpolable because the
+     language opts in with `interpolate-size: allow-keywords` on `:root`
+     (`bazaar.css`), and `content-visibility` needs `allow-discrete` or the
+     panel's contents appear at the end of the transition instead of the
+     start. An engine with neither opens the panel instantly — the mechanism
+     is the disclosure and the easing is the enhancement. */
+  .bz-desc::details-content {
+    block-size: 0;
+    overflow: hidden;
+    content-visibility: hidden;
+    transition:
+      block-size 200ms ease,
+      content-visibility 200ms allow-discrete;
+  }
+
+  .bz-desc[open]::details-content {
+    block-size: auto;
+    content-visibility: visible;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bz-desc::details-content { transition: none; }
+  }
+
+  .bz-desc-body {
+    padding: 6px 0 2px;
+    color: var(--color-on-surface-muted);
+    font: var(--text-meta) / 1.5 var(--font-sans);
+  }
+
+  .bz-desc-text { margin: 0; }
+
+  /* A planned module says which it is before it lists anything, so the
+     headings under it are read as a schedule of parts and not as a summary
+     somebody wrote. That distinction is the whole of the author's objection to
+     the old `Topics` column. */
+  .bz-desc-said {
+    margin: 0 0 4px;
+    color: var(--color-on-surface);
+  }
+
+  .bz-desc-parts {
+    margin: 0;
+    padding-left: 16px;
+  }
+
+  .bz-desc-parts li { margin: 0; }
+
+  /* ---------------------------------------------------------------------------
      10. FORCED COLOURS.
 
      The system takes over every colour here and keeps every width, so the
@@ -724,7 +894,10 @@
     html[data-hl-view="overview"] .bz-viewbtn[data-view="overview"],
     html[data-hl-view="cards"] .bz-viewbtn[data-view="cards"],
     html[data-hl-view="table"] .bz-viewbtn[data-view="table"],
-    html:not([data-hl-view]) .bz-viewbtn[data-view="overview"] {
+    /* The route default's twin. It is the same pair as the carrier's, and it
+       is the half that keeps the mark on the button the page is showing. */
+    html:not([data-hl-view]) [data-bz-catalog-scope="index"] .bz-viewbtn[data-view="overview"],
+    html:not([data-hl-view]) [data-bz-catalog-scope="level"] .bz-viewbtn[data-view="cards"] {
       border-bottom-width: 2px;
     }
   }

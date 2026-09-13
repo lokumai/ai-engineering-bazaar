@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { SIGN_OFF_SELECTORS, SignOffMarks } from '@/components/record/SignOffMarks'
+import { DESCRIPTION_GROUP } from '@/components/sheet/Description'
 import { ModuleRow } from '@/components/sheet/ModuleRow'
 import { Catalog, NoMatch } from '@/components/catalog/Catalog'
 import { SheetIndex } from '@/components/sheet/SheetIndex'
@@ -35,6 +36,9 @@ const DRAWN: SheetRow = {
   bilingual: false,
   requires: '12',
   topics: ['What is actually different', 'The vocabulary, pinned down'],
+  // M20 — a written module carries one, and `schema.ts` fails the build for a
+  // `ready` module that does not. The listing prints it verbatim.
+  summary: 'What changes about security when the thing you ship writes its own next step.',
 }
 
 const DASHED: SheetRow = {
@@ -54,6 +58,9 @@ const DASHED: SheetRow = {
   bilingual: true,
   requires: '—',
   topics: ['THREAD', 'ReAct', 'CodeAct'],
+  // A module nobody has written has nothing to summarise, and `schema.ts`
+  // permits the null (M20). The listing falls back to its schedule of parts.
+  summary: null,
 }
 
 describe('ModuleRow — the index row (§5.3)', () => {
@@ -80,7 +87,8 @@ describe('ModuleRow — the index row (§5.3)', () => {
   it('prints every derived value the manifest measured', () => {
     expect(drawn).toContain('4,883 W · 30 MIN')
     expect(drawn).toContain('>23<')
-    expect(drawn).toContain('>EN<')
+    // `>EN<` was here and M20 took the `Lang` column off the table. The row's
+    // own "states no language" case below is what holds that in place.
     expect(drawn).toContain('Intermediate')
     expect(drawn).toContain('>12<')
   })
@@ -128,10 +136,55 @@ describe('ModuleRow — the index row (§5.3)', () => {
     expect(dashed).not.toMatch(/<a [^>]*>[^<]*PLANNED/)
   })
 
-  it('prints the topics instead of the level where asked (§4.9)', () => {
-    const topics = renderToStaticMarkup(<ModuleRow row={DASHED} column="topics" />)
-    expect(topics).toContain('CodeAct')
-    expect(topics).not.toContain('Expert')
+  it('prints the description instead of the level where asked (§4.9)', () => {
+    const narrow = renderToStaticMarkup(<ModuleRow row={DASHED} column="description" />)
+    expect(narrow).toContain('CodeAct')
+    expect(narrow).not.toContain('Expert')
+  })
+
+  /**
+   * M20 — the description is the module's OWN sentence, byte for byte, and
+   * never a second one somebody maintains in `src/` (§11.25).
+   */
+  it('prints the module’s own summary, unaltered', () => {
+    expect(DRAWN.summary).not.toBeNull()
+    expect(drawn).toContain(DRAWN.summary as string)
+  })
+
+  /**
+   * The disclosure, and the one attribute that makes it exclusive. Without
+   * `name` every panel a reader opens stays open, which is the opposite of
+   * what was asked for — and nothing else in the markup would say so.
+   */
+  it('puts the description behind a named disclosure, inside the cell', () => {
+    expect(drawn).toContain('<details')
+    expect(drawn).toContain(`name="${DESCRIPTION_GROUP}"`)
+    expect(drawn).toContain('<summary')
+    // Inside the cell, never a second `<tr>`: `<tbody>` admits only rows, so a
+    // trigger in row 1 with its panel in row 2 cannot be built at all.
+    expect(drawn).toMatch(/<td class="bz-row-desc"><details/)
+    expect(drawn.match(/<tr/g)).toHaveLength(1)
+  })
+
+  /**
+   * A planned module says WHICH IT IS before it lists anything. The author
+   * objected to a run of section headings standing in for a description; the
+   * objection is to the impersonation, so the headings stay and the label is
+   * what answers it.
+   */
+  it('labels a planned module’s schedule of parts rather than passing it off', () => {
+    expect(dashed).toContain('Planned. Its schedule of parts:')
+    expect(dashed).toContain('CodeAct')
+  })
+
+  /**
+   * M20 — `Lang` left the table with the `Both languages` chip. The site
+   * renders none of the 33 `_tr.md` files, so `EN · TR` was a claim it could
+   * not honour; M19 is what makes it true.
+   */
+  it('states no language, having none to serve', () => {
+    expect(drawn).not.toContain('EN · TR')
+    expect(drawn).not.toContain('>EN<')
   })
 
   it('draws the sign-off squares this module supplies, and only those (§5.9)', () => {
@@ -192,7 +245,9 @@ describe('ModuleIndex — the manifest table (§4.8 item 4)', () => {
       // catalog lists every level at once, so a row's level may not be carried
       // by the hue on its leading edge alone (SC 1.4.1); and the topics are the
       // column the retired `/courses/` pages carried and this one did not.
-      '#', 'Module', 'Level', 'Topics', 'Length', 'Sources', 'Lang',
+      // M20: `Topics` became `Description` and `Lang` went with the language
+      // filter — the listing stops stating a translation the site cannot serve.
+      '#', 'Module', 'Level', 'Description', 'Length', 'Sources',
       // §12.18's ninth column. §4.8 put it after `STATUS`, which M17 removed —
       // the state is on the cells that were already carrying it, `ModuleRow`'s
       // `RowState`. REQUIRES is the column this implementation added, so it is
@@ -201,11 +256,11 @@ describe('ModuleIndex — the manifest table (§4.8 item 4)', () => {
     ])
   })
 
-  it('swaps one column for the topics on a category page (§4.9 item 5)', () => {
+  it('drops the level column where the page already names it (§4.9 item 5)', () => {
     const category = renderToStaticMarkup(
-      <SheetIndex rows={[DRAWN]} column="topics" label="Intermediate" />,
+      <SheetIndex rows={[DRAWN]} column="description" label="Intermediate" />,
     )
-    expect(category).toContain('>Topics<')
+    expect(category).toContain('>Description<')
     expect(category).not.toContain('>Level<')
   })
 
@@ -393,10 +448,24 @@ describe('Catalog — three views over one data source (M12, D13)', () => {
     expect(markup.slice(markup.indexOf('bz-viewtoggle'))).not.toContain('aria-pressed')
   })
 
-  it('offers both filter axes, at the top, each as a named group', () => {
+  /**
+   * M20 — each group's VISIBLE name is its accessible name. The author asked
+   * for `Level:` and a word before the second row; an `aria-label` beside a
+   * visible label is two names for one group and a screen reader reads both,
+   * so the text is an element and the group points at it.
+   */
+  it('offers both filter axes, at the top, each named once and visibly', () => {
     const controls = markup.slice(0, markup.indexOf('bz-views'))
-    expect(controls).toContain('aria-label="Filter by level"')
-    expect(controls).toContain('aria-label="Filter by state or language"')
+    expect(controls).toContain('aria-labelledby="bz-chips-level"')
+    expect(controls).toContain('id="bz-chips-level"')
+    expect(controls).toContain('aria-labelledby="bz-chips-state"')
+    expect(controls).toContain('id="bz-chips-state"')
+    // One name each: a group carrying both would be announced twice.
+    expect(controls).not.toContain('aria-label="Filter by level"')
+    expect(controls).not.toContain('aria-label="Filter by state or language"')
+    // `Status` is exact only because the language chip went with the column.
+    expect(controls).toContain('Status:')
+    expect(controls).toContain('Level:')
     // The chips come before the views in the document, which is the M12
     // deliverable: filters at the top of the page, not down a side.
     expect(markup.indexOf('bz-chip-row')).toBeLessThan(markup.indexOf('bz-views'))
@@ -411,7 +480,9 @@ describe('Catalog — three views over one data source (M12, D13)', () => {
        edit turning one of them into the other silently. */
     expect(markup.match(/aria-pressed="true"/g)).toHaveLength(1)
     expect(markup.match(/aria-current="page"/g)).toHaveLength(1)
-    expect(markup).toMatch(/aria-current="page"[^>]*>(<[^>]*>)*Every level</)
+    // `View Curriculum` since M20, and it is the same string the bar's
+    // dropdown uses for the same destination — two elements, one meaning.
+    expect(markup).toMatch(/aria-current="page"[^>]*>(<[^>]*>)*\s*View Curriculum\s*</)
     expect(markup).toMatch(/aria-pressed="true"[^>]*>All</)
     // Two rows and the header row: the prerender narrows nothing, because a
     // reader-state filter active on load would change the row count between

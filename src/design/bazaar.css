@@ -262,6 +262,22 @@
     real answer; `line` reads as "this thing has no group", which is true.
   */
   :root {
+    /* M20 — what lets a disclosure EASE open instead of snapping.
+       `block-size: auto` is not an animatable value on its own; this is the
+       opt-in that makes `auto` interpolable, and `::details-content` is what
+       reads it (`catalog.css`'s description accordion). It is declared on the
+       root because it is a document-level capability rather than a component's
+       rule, and it is in the language for the same reason every other
+       primitive is: the second surface that needs a smooth disclosure must not
+       re-declare it somewhere else.
+
+       **MEASURED in the browser this suite runs — Chrome 153:** `CSS.supports`
+       returns true for both `interpolate-size: allow-keywords` and
+       `selector(::details-content)`. An engine without them opens the panel
+       instantly, which is the house rule rather than a fallback — the
+       mechanism works everywhere and the easing is the enhancement. */
+    interpolate-size: allow-keywords;
+
     --bz-cat: var(--color-line);
     /* The second hook a caller binds, and the only reading channel A carries
        as a NUMBER. `0%` is the neutral default for the same reason

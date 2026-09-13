@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { levelsOf, type SheetRow } from '@/lib/content/rows'
-import { plural } from '@/lib/text'
 
 /**
  * M12 / D13 — the OVERVIEW view: the shape of the course, level by level.
@@ -68,11 +67,31 @@ export function CatalogOverview({ rows }: { rows: readonly SheetRow[] }) {
      and the rule went in literally. A filter that leaves one level then drew one
      column a fifth of the page wide with four fifths empty — which is the shape
      the author had already objected to on the home page, in capitals, and it
-     was one level chip away on the catalog before M17 made it a landing page. */
+     was one level chip away on the catalog before M17 made it a landing page.
+
+     **M20 answers the other end of the same question**, which M18 overshot: the
+     one-level board then filled the whole width, and the author named what it
+     should be instead — *"when people select its Overview view, its box should
+     not span the whole width but one third of it."*
+
+     So neither extreme. The board takes the share of the page its columns
+     would have had, with one third as the floor. One level is a third, two are
+     two thirds, three or more is the whole width — one expression, no special
+     case for the level pages, and nothing to keep in step when a sixth level
+     is added. `catalog.css` applies it only above the breakpoint where the
+     board still draws its full column count; below that it stacks and a third
+     of a phone is not a column. */
+  const share = Math.round(Math.min(1, Math.max(levels.length, 1) / 3) * 1e4) / 1e4
+
   return (
     <div
       className="bz-board"
-      style={{ '--bz-board-cols': levels.length } as React.CSSProperties}
+      style={
+        {
+          '--bz-board-cols': levels.length,
+          '--bz-board-share': share,
+        } as React.CSSProperties
+      }
     >
       {levels.map((level) => {
         const own = rows.filter((row) => row.subsystem.slug === level.slug)

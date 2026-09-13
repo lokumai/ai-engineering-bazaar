@@ -53,17 +53,38 @@ import { INDEX_ROUTE, INDEX_TITLE, levelRoute, type CategoryLabel } from '@/lib/
  * the curriculum index — so the destination the trigger used to be is still one
  * click away and is now *named* rather than implied.
  *
- * ## One thing `<details>` does not do for us: close on navigation
+ * ## Two things `<details>` does not do for us
+ *
+ * **Close on navigation**, and close when the pointer leaves. The first is
+ * below; the second is M20's and its three conditions are on `leave`.
+ *
+ * ### Close on navigation
  *
  * `open` is DOM state on an element the layout keeps across a client
  * navigation, so choosing a level left the panel hanging open over the page it
- * had just opened — measured, not reasoned about. Chrome closes it on Escape
- * natively, and an outside click is answered by the reader clicking something
- * else, but a route change is not an interaction with this element at all. So
- * the one effect in this file closes it when the path changes. It writes the
- * attribute through a ref rather than making `open` controlled state, because a
- * controlled disclosure has to re-implement Escape, Enter, Space and the
- * summary's own toggle, and all four already work.
+ * had just opened — measured, not reasoned about. A route change is not an
+ * interaction with this element at all, so the first effect in this file closes
+ * it when the path changes. It writes the attribute through a ref rather than
+ * making `open` controlled state, because a controlled disclosure has to
+ * re-implement Enter, Space and the summary's own toggle, and those three do
+ * already work.
+ *
+ * **This paragraph used to name two ways out that do not exist**, and M20
+ * measured both in Chrome 153 against the built site.
+ *
+ * It said Chrome closes the panel on Escape natively — **it does not**, with
+ * the summary focused or with a menu link focused. `keyDown` below supplies
+ * the behaviour the claim had promised.
+ *
+ * It said an outside click is "answered by the reader clicking something
+ * else" — **a click on empty page ground leaves the panel open**; what looked
+ * like an outside click closing it was the route-change effect firing after
+ * the reader clicked a LINK. That one is corrected rather than implemented: a
+ * document-level listener is new global mechanism, and the case is covered —
+ * on a pointer device by `leave`, and on a touch screen by tapping the summary
+ * again, which is what every `<details>` on the web does. So the ways out are
+ * the summary, Escape, a route change, and the pointer leaving where there is
+ * a pointer to leave.
  *
  * ## Why this is a client island at all
  *
@@ -164,13 +185,115 @@ function Chevron() {
   )
 }
 
+/**
+ * M20 — how long the menu waits after the pointer leaves before it closes.
+ *
+ * Long enough to cross the gap between the summary and the panel, or between
+ * two rows, without the menu shutting under the pointer; short enough that a
+ * reader who has moved on does not find it still open. It is a grace period
+ * and not an animation, so it is not in the motion scale.
+ */
+const CLOSE_DELAY_MS = 260
+
 export function MainNav({ categories }: { categories: readonly CategoryLabel[] }) {
   const pathname = usePathname() ?? '/'
   const panel = useRef<HTMLDetailsElement>(null)
+  /**
+   * The PANEL, not the disclosure — and the difference is the whole of a bug
+   * this had on its first build.
+   *
+   * The grace timer must not fire while a reader has focus in the menu. Asked
+   * as `details.contains(document.activeElement)` that is ALWAYS true straight
+   * after a click, because clicking a `<summary>` focuses it and the summary
+   * is inside its own `<details>` — so the menu never closed on pointer-out at
+   * all, which is the thing the author asked for. **MEASURED in a browser; the
+   * type checker and a screenshot both saw a correct-looking component.**
+   *
+   * What the guard is actually protecting is a reader who has moved INTO the
+   * list, so the list is what it asks about.
+   */
+  const menu = useRef<HTMLDivElement>(null)
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     if (panel.current) panel.current.open = false
   }, [pathname])
+
+  /* Clearing on unmount, because the timer outlives the component otherwise
+     and fires against a detached element. */
+  useEffect(() => () => {
+    if (timer.current !== null) clearTimeout(timer.current)
+  }, [])
+
+  /**
+   * M20 — the author: *"even when I move cursor out of the boundaries of
+   * dropdown, the dropdown is still here while I want it to disappear."*
+   *
+   * **Closing on `mouseleave` alone would break the two ways this menu is
+   * mainly operated**, which is why it is three conditions rather than one.
+   *
+   * 1. **Only where hover exists.** A finger has no hover, so on a touch
+   *    screen `pointerleave` fires at the end of the tap that OPENED the menu
+   *    — it would open and close on one touch. `(hover: hover)` is the media
+   *    query that tells the two apart, asked at the moment of the event rather
+   *    than at render, because the answer changes when a laptop is undocked
+   *    and no re-render is coming.
+   * 2. **Never while focus is inside the LIST.** A keyboard reader tabs
+   *    through the rows; the pointer may be nowhere near, and a stray mouse
+   *    movement must not take the panel out from under them. The trigger does
+   *    not count — see `menu` above, which is the bug this had.
+   * 3. **After a grace delay**, so the diagonal from the summary to the
+   *    bottom row does not close it on the way.
+   *
+   * Escape, an outside click and a route change already close it, and none of
+   * those changed. This adds a fourth way in and takes none away.
+   */
+  function leave(): void {
+    const details = panel.current
+    if (!details || !details.open) return
+    if (!window.matchMedia('(hover: hover)').matches) return
+
+    cancelClose()
+    timer.current = setTimeout(() => {
+      const current = panel.current
+      if (!current) return
+      // Re-asked on the way out, not captured on the way in: focus may have
+      // moved into the list during the grace period.
+      if (menu.current?.contains(document.activeElement)) return
+      current.open = false
+    }, CLOSE_DELAY_MS)
+  }
+
+  function cancelClose(): void {
+    if (timer.current === null) return
+    clearTimeout(timer.current)
+    timer.current = null
+  }
+
+  /**
+   * M20 — **Escape closes it, and this docblock used to say Chrome did that
+   * for us.** It does not.
+   *
+   * MEASURED in Chrome 153 against the built site: with the summary focused
+   * and with a menu link focused, Escape leaves the panel open. The comment
+   * above listed Escape among the ways out that "already work", and the M20
+   * brief reasoned from the same sentence when it argued that closing on
+   * pointer-out takes nothing away from a keyboard reader. It would have —
+   * there was no keyboard way out but Enter on the summary, and a reader whose
+   * focus is three rows down cannot reach that without tabbing backwards.
+   *
+   * Focus goes back to the summary, because the element that had it is about
+   * to be `display: none` and focus on a hidden element is dropped on the
+   * floor — the same hand-off `Catalog`'s `clear()` makes for the same reason.
+   */
+  function keyDown(event: React.KeyboardEvent<HTMLDetailsElement>): void {
+    if (event.key !== 'Escape') return
+    const details = panel.current
+    if (!details?.open) return
+    cancelClose()
+    details.open = false
+    details.querySelector('summary')?.focus()
+  }
 
   return (
     <nav aria-label="Main" className="bz-bar-nav">
@@ -182,7 +305,13 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
           return (
             <li key={destination.href}>
               {hasMenu ? (
-                <details ref={panel}>
+                <details
+                  ref={panel}
+                  onPointerLeave={leave}
+                  onPointerEnter={cancelClose}
+                  onFocus={cancelClose}
+                  onKeyDown={keyDown}
+                >
                   {/* `data-current` and NOT `aria-current`. This is a
                       disclosure trigger, not a link, so it is never itself the
                       current page — and a level page would otherwise carry two
@@ -198,7 +327,7 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
                     <Chevron />
                   </summary>
 
-                  <div className="bz-menu">
+                  <div className="bz-menu" ref={menu}>
                     <ul role="list">
                       {/* The destination the trigger used to be. A disclosure
                           cannot also be a link, so the whole-curriculum page
@@ -210,7 +339,12 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
                           aria-current={pathname === INDEX_ROUTE ? 'page' : undefined}
                         >
                           <span aria-hidden="true" className="bz-menu-key" />
-                          Every level
+                          {/* M20 — the author's own words for this row. It read
+                              `Every level`, and the same string is on the
+                              catalog's first level chip: two elements, one
+                              meaning, so they are renamed together or not at
+                              all. */}
+                          View Curriculum
                           <span className="bz-menu-count">All</span>
                         </Link>
                       </li>

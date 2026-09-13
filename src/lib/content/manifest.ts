@@ -84,6 +84,10 @@ export function sheetRows(): SheetRow[] {
       bilingual: sheet.lang === 'EN·TR',
       requires: requires.length === 0 ? DASH : requires.join(', '),
       topics: topicsFor({ status: sheet.frontmatter.status, body: sheet.body }),
+      // M20 — the author's own sentence, carried rather than rewritten. It is
+      // `null` on a planned module and `schema.ts` is what guarantees it is
+      // not null on a written one, so the listing never has to check twice.
+      summary: sheet.frontmatter.summary,
       // §4.8 column 9. Taken from `sheetStamps` rather than re-derived from
       // the same three facts, because the island that fills the squares asks
       // `sheetStamps` which slots exist: two derivations of one slot set would
@@ -239,23 +243,22 @@ function joinMarks(parts: readonly (string | null)[]): string {
 }
 
 /**
- * `8 modules · 8 ready · ~3 h 55 min` — what any group of modules states about
- * itself. The duration is dropped where nothing in the group declares one, so
- * a level with no written modules reads `9 modules · 0 ready` and stops there.
+ * M20 — the line under a level's heading: `8 modules · ~3 h 55 min`.
  *
- * `ready` here is a COUNT and not the status token. The table's STATUS cell
- * still reads `READY` and `PLANNED`, one spelling each, because those are
- * enumerated states a reader matches against each other; this is a sentence
- * about a group, and the copy register's rule is about a status having one
- * spelling, not about a count borrowing its word.
+ * **It was `Level 02 · 8 modules · 7 ready · ~3 h 55 min`, an eyebrow ABOVE the
+ * heading, and the blurb is what sat here.** The author asked for the blurb to
+ * go and this line to take its place, cut to the modules and the total time.
+ * Both of the parts it lost were already said: `Level 02` is the heading
+ * itself — in words, which is the better spelling of it — and `7 ready` is on
+ * every row of the table under it, and in the board's own rail.
+ *
+ * The name changed with the position. It is no longer an eyebrow, and a
+ * function called `categoryEyebrow` printing a lead line is the kind of stale
+ * name the next reader has to work out from the call site.
  */
-export function coverageLabel({ sheets, drawn, minutes }: Coverage): string {
-  return joinMarks([plural(sheets, 'module'), `${drawn} ready`, durationLabel(minutes)])
-}
-
-/** §4.9 item 1 — `Level 02 · 8 modules · 8 ready · ~3 h 55 min`. */
-export function categoryEyebrow(category: Category): string {
-  return `Level ${pad2(category.order)} · ${coverageLabel(categorySummary(category))}`
+export function categoryCoverage(category: Category): string {
+  const { sheets, minutes } = categorySummary(category)
+  return joinMarks([plural(sheets, 'module'), durationLabel(minutes)])
 }
 
 // ---------------------------------------------------------------------------
@@ -305,6 +308,12 @@ export function indexStatement(): string[] {
    so neither function had a caller left. `setEyebrow` also carried the one
    figure nothing else states — the whole set's declared reading time — and the
    catalog dropped its own eyebrow on a recorded decision in M12; the five
-   level pages each state their own. `categorySummary`, `coverageLabel` and
-   `setSummary` are all still live and any future caller can have that line
-   back in one expression. */
+   level pages each state their own.
+
+   **M20 deleted `coverageLabel` here too, and for the same reason rather than
+   a new one.** It returned `8 modules · 8 ready · ~3 h 55 min` and had exactly
+   one caller, the level head's eyebrow; the author cut that line to the
+   modules and the total time, so `categoryCoverage` above says what is left
+   and the three-part version had nobody to serve. `categorySummary`,
+   `durationLabel` and `setSummary` are all still live and any future caller
+   can have the long line back in one expression. */

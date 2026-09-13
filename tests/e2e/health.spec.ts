@@ -43,7 +43,9 @@ test('the manifest survives being used', async ({ page }) => {
   const problems = watchPage(page)
   await page.goto(INDEX_SHEET)
 
-  for (const chip of ['Ready', 'Planned', 'Both languages', 'All']) {
+  // M20 — four chips became three: `Both languages` went with the `Lang`
+  // column, so the catalog stops offering a filter for a fact no view shows.
+  for (const chip of ['Ready', 'Planned', 'All']) {
     await page.getByRole('button', { name: chip, exact: true }).click()
   }
   await page.getByRole('button', { name: 'Toggle theme' }).click()

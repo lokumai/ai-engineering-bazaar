@@ -9,7 +9,7 @@ import { PageShell } from '@/components/shell/PageShell'
 import { CATEGORIES, categoryBySlug } from '@/lib/content/curriculum-file'
 import { curriculumFacts } from '@/lib/content/facts'
 import { categoryIntro } from '@/lib/content/intro'
-import { categoryEyebrow, categoryRows, sheetRows } from '@/lib/content/manifest'
+import { categoryCoverage, categoryRows, sheetRows } from '@/lib/content/manifest'
 import { renderMarkdown } from '@/lib/content/render'
 
 /**
@@ -103,15 +103,29 @@ export default async function LevelCatalogPage({
           text. Without that count the band's chroma would be the sole carrier
           of a claim about the reader, which §13.1.4 rules out. */}
       <div className="bz-level-tint bz-cat-tint pt-3" data-cat={category.slug}>
-        <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
-          <p className="bz-facts m-0">{categoryEyebrow(category)}</p>
-          <CategoryMeter category={category.slug} sheets={own} />
-        </div>
-
-        <h1 className="bz-display mt-3">{category.title}</h1>
+        <h1 className="bz-display">{category.title}</h1>
       </div>
 
-      <p className="bz-lead">{category.blurb}</p>
+      {/* M20 — the blurb was here and the eyebrow was above the heading; the
+          author asked for one line in one place. `category.blurb` was a second
+          description of the level beside a catalog that now prints each
+          module's own sentence, and the eyebrow's `Level 02` was the heading
+          said again in digits.
+
+          **The non-colour carrier survives the move**, which is the thing to
+          check rather than assume: §13.1.4 asks that the band's hue never be
+          the sole statement, and what answers it is the meter beside the
+          heading (`n/m completed`, in words) plus this line's own counts. Both
+          are text, both are still on the page, and neither moved off it. */}
+      {/* The counts on the left, the reader's standing on the right — the
+          pairing the eyebrow row used to have, moved under the heading with
+          the line itself. M20 left the meter alone in the old row for one
+          build and it read as an orphan floating above the title; screenshot,
+          not test, is what said so (**D59**). */}
+      <div className="flex flex-wrap items-baseline justify-between gap-x-6">
+        <p className="bz-lead">{categoryCoverage(category)}</p>
+        <CategoryMeter category={category.slug} sheets={own} />
+      </div>
 
       {/* §4.9's discrete tick gauge is NOT here, and that is M17 rather than an
           oversight. It drew one tick per module in this level, under a table

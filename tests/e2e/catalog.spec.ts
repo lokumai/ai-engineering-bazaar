@@ -1,4 +1,5 @@
 import { type Page, expect, test } from '@playwright/test'
+import { LEVEL_GROUP_LABEL } from '@/lib/content/rows'
 import { readRecord, seedRecord, slugOf, waitForRecord } from './record'
 import { CATEGORY_PATHS, INDEX_SHEET, SHEETS, SHEET_COUNT, sheetByModule } from './sheets'
 import { CATALOG_VIEWS, showCatalogView } from './views'
@@ -113,11 +114,13 @@ test('the three views show the same set of modules, filtered and unfiltered', as
   // number for the page rather than one per view — a view that rendered a
   // different set would disagree with it.
   /* M17 / D62 — the level axis left this loop because it left the component.
-     A level is an address now, so `Every level` is a LINK and pressing it is a
-     navigation; the state chips are still buttons because they ask a question
+     A level is an address now, so `View Curriculum` is a LINK and pressing it
+     is a navigation; the state chips are still buttons because they ask a question
      about a record no address can hold. The level axis is checked below, on
      the page it produces. */
-  for (const filter of ['All', 'Ready', 'Planned', 'Both languages']) {
+  /* M20 — `Both languages` left this list with the chip. It filtered on
+     whether a `_tr.md` file exists, and the site renders none of them. */
+  for (const filter of ['All', 'Ready', 'Planned']) {
     await page.getByRole('button', { name: filter, exact: true }).click()
 
     const [overview, cards, table] = await Promise.all(
@@ -299,7 +302,12 @@ test('both filter axes work from the keyboard and announce the count', async ({ 
      Space and it marks itself `aria-current="page"` rather than pressed. The
      chip is taken by its position in the named landmark and not by its title:
      a level's title is a fact about the content, which a test may not write
-     down (`tests/README.md`). `nth(1)` steps over the `Every level` chip.
+     down (`tests/README.md`). `nth(1)` steps over the `View Curriculum` chip.
+
+     **M20 named the group on the screen**, and the visible name IS the
+     accessible one — `aria-labelledby` at a `<span>` reading `Level:`, never a
+     second string in an `aria-label`, or a screen reader announces the group
+     twice. So the landmark is taken by the label the reader can see.
 
      **The state filter does not compose across it, and that is the design.**
      Going to a level is a page load; the chips that read the reader's record
@@ -307,7 +315,7 @@ test('both filter axes work from the keyboard and announce the count', async ({ 
      (§12.2). So the arriving page opens at `all`, which is what it opens at
      everywhere else on this site. */
   const level = page
-    .getByRole('navigation', { name: 'Filter by level' })
+    .getByRole('navigation', { name: `${LEVEL_GROUP_LABEL}:` })
     .getByRole('link')
     .nth(1)
   const href = await level.getAttribute('href')
@@ -316,7 +324,7 @@ test('both filter axes work from the keyboard and announce the count', async ({ 
 
   await expect(page).toHaveURL(new RegExp(`${href}$`))
   const arrived = page
-    .getByRole('navigation', { name: 'Filter by level' })
+    .getByRole('navigation', { name: `${LEVEL_GROUP_LABEL}:` })
     .getByRole('link')
     .nth(1)
   await expect(arrived).toHaveAttribute('aria-current', 'page')
@@ -484,4 +492,109 @@ test('every module in the course is listed here, and reachable', async ({ page }
   // a count, the actual set, so a module that silently stopped rendering fails
   // by name rather than by arithmetic.
   expect(links).toEqual(SHEETS.map((sheet) => ({ href: sheet.path, title: sheet.title })))
+})
+
+// ---------------------------------------------------------------------------
+// M20 — what the author asked for, and none of it is provable by unit test
+// ---------------------------------------------------------------------------
+
+/**
+ * The accordion, and the one attribute that makes it exclusive.
+ *
+ * `<details name="…">` is a native exclusive group: opening one closes its
+ * sibling with no script. That is the author's *"at a time only one description
+ * should be shown"*, and it is checked in a browser because it is an engine
+ * behaviour rather than a rendering — the markup looks identical either way.
+ */
+test('only one description is open at a time, anywhere in the document', async ({ page }) => {
+  await page.goto(INDEX_SHEET)
+  await showCatalogView(page, 'table')
+
+  const panels = page.locator('[data-view="table"] details.bz-desc')
+  const triggers = page.locator('[data-view="table"] summary.bz-desc-trigger')
+  await expect(panels.locator('[open]')).toHaveCount(0)
+
+  await triggers.nth(0).click()
+  await expect(page.locator('[data-view="table"] details.bz-desc[open]')).toHaveCount(1)
+
+  // A second, far enough down the table that it is a different row.
+  await triggers.nth(5).click()
+  await expect(page.locator('[data-view="table"] details.bz-desc[open]')).toHaveCount(1)
+})
+
+/**
+ * And it opens with the bundle blocked, which is the state every island on
+ * this site has to survive (§12.2). A disclosure that needs React is a
+ * disclosure a reader on a slow connection does not have.
+ */
+test('the description opens with JavaScript disabled', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false })
+  const page = await context.newPage()
+  await page.goto(INDEX_SHEET)
+
+  // Cards is not the default here, so the OVERVIEW view is showing — the
+  // disclosure is checked on the view a no-script reader actually gets.
+  const first = page.locator('.bz-view[data-view="cards"] details.bz-desc').first()
+  // `evaluate` rather than `click`: the view is `display: none` without a
+  // toggle to press, and what is being proven is that the ELEMENT works.
+  await first.evaluate((node: HTMLDetailsElement) => { node.open = true })
+  await expect(first).toHaveAttribute('open', '')
+  await context.close()
+})
+
+/**
+ * D68 — a route's default view, which applies ONLY where nothing is stored.
+ *
+ * The no-preference half is provable in the served file, because it is the
+ * case a static export can witness: no script has run, so `<html>` carries no
+ * `data-hl-view` and the stylesheet's own fallback is what decides.
+ */
+for (const [path, expected] of [[INDEX_SHEET, 'overview'], [CATEGORY_PATHS[1], 'cards']] as const) {
+  test(`${path} opens in ${expected} for a reader who has chosen no view`, async ({ browser }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false })
+    const page = await context.newPage()
+    await page.goto(path)
+
+    const showing = await page.evaluate(() =>
+      [...document.querySelectorAll('.bz-view')]
+        .filter((view) => getComputedStyle(view).display !== 'none')
+        .map((view) => view.getAttribute('data-view')))
+    expect(showing).toEqual([expected])
+
+    /* THE TOGGLE HAS THE SAME FALLBACK AND IT HAS TO AGREE. Two rules, and a
+       change to one of them draws Cards under a toggle marking Overview — the
+       picture and the sentence coming apart, which is the failure `Catalog`'s
+       docblock spends a paragraph preventing. */
+    const marked = await page.evaluate(() =>
+      [...document.querySelectorAll('.bz-viewbtn')]
+        .filter((button) => {
+          const said = button.querySelector('.bz-view-said')
+          return said !== null && getComputedStyle(said).display !== 'none'
+        })
+        .map((button) => button.getAttribute('data-view')))
+    expect(marked).toEqual([expected])
+    await context.close()
+  })
+}
+
+/**
+ * And the other half: a stored view beats the route's default.
+ *
+ * This one cannot be read out of a file and never could — the export is
+ * byte-identical for everybody and the stored view is stamped by script at run
+ * time, so only a browser with a record in it can witness it. D13's criterion
+ * is that the reader's choice is kept, and a route default is the exact shape
+ * of change that would quietly take it back.
+ */
+test('a stored view survives following a level link', async ({ page }) => {
+  await page.goto(INDEX_SHEET)
+  await showCatalogView(page, 'table')
+
+  await page.goto(CATEGORY_PATHS[1])
+  await expect(page.locator('html')).toHaveAttribute('data-hl-view', 'table')
+  const showing = await page.evaluate(() =>
+    [...document.querySelectorAll('.bz-view')]
+      .filter((view) => getComputedStyle(view).display !== 'none')
+      .map((view) => view.getAttribute('data-view')))
+  expect(showing).toEqual(['table'])
 })

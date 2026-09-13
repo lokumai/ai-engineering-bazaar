@@ -1,7 +1,15 @@
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { DEFAULT_VIEW_ID, VIEWS, VIEW_IDS, isViewId } from '@/lib/catalog/views'
+import {
+  DEFAULT_VIEW_ID,
+  DEFAULT_VIEW_OF,
+  SCOPES,
+  SCOPE_ATTR,
+  VIEWS,
+  VIEW_IDS,
+  isViewId,
+} from '@/lib/catalog/views'
 import { CATALOG_VIEWS, EMPTY_RECORD } from '@/lib/record/schema'
 import { setCatalogView } from '@/lib/record/events'
 import { coerceRecordData } from '@/lib/record/validate'
@@ -107,9 +115,38 @@ describe.skipIf(!REVEALED)('the reveal list covers every view, and one fallback'
     expect(mismatched).toEqual([])
   })
 
-  it('falls back to the default view when nothing is stamped', () => {
-    // The reader who has not chosen, and every reader with scripting off.
-    expect(MAIN).toContain(`html:not([data-hl-view]) [data-view="${DEFAULT_VIEW_ID}"]`)
+  /**
+   * M20 / D68 — the fallback is PER ROUTE now, and it is still only a fallback.
+   *
+   * The catalog's front page opens in Overview and a level page in Cards, for
+   * a reader who has chosen neither. Both rules are under
+   * `html:not([data-hl-view])`, so the moment a stored view is stamped they
+   * stop matching — which is what keeps D13's promise that the choice is kept.
+   * Derived from `DEFAULT_VIEW_OF` rather than typed out, so adding a scope
+   * cannot leave this test describing two of three.
+   */
+  it('falls back to a route’s own default when nothing is stamped', () => {
+    for (const scope of SCOPES) {
+      expect(MAIN).toContain(
+        `html:not([data-hl-view]) [${SCOPE_ATTR}="${scope}"] [data-view="${DEFAULT_VIEW_OF[scope]}"]`,
+      )
+    }
+  })
+
+  /**
+   * **No page may SET the attribute**, only fall back under its absence. Two
+   * writers already share it — `boot.ts` before first paint and the toggle on
+   * every press — and a third that fired on arrival would override a choice
+   * the reader made one click earlier. A scoped rule that is not under
+   * `:not([data-hl-view])` is that third writer expressed in CSS.
+   */
+  it('never lets a route scope outrank a stored view', () => {
+    for (const [, before] of CSS.matchAll(
+      new RegExp(`([^,{}]*)\\[${SCOPE_ATTR}=`, 'g'),
+    )) {
+      expect(before, `${before}[${SCOPE_ATTR}=…] is not gated on the absence`)
+        .toContain('html:not([data-hl-view])')
+    }
   })
 
   it('repeats the same list under forced colours, for the showing button', () => {
@@ -118,7 +155,14 @@ describe.skipIf(!REVEALED)('the reveal list covers every view, and one fallback'
       FORCED,
     )
     expect(named.sort()).toEqual([...VIEW_IDS].sort())
-    expect(FORCED).toContain(`html:not([data-hl-view]) .bz-viewbtn[data-view="${DEFAULT_VIEW_ID}"]`)
+    // And the route default's twin, which is the half that keeps the toggle's
+    // mark on the view the page is actually showing.
+    for (const scope of SCOPES) {
+      expect(FORCED).toContain(
+        `html:not([data-hl-view]) [${SCOPE_ATTR}="${scope}"] `
+        + `.bz-viewbtn[data-view="${DEFAULT_VIEW_OF[scope]}"]`,
+      )
+    }
   })
 
   /**
@@ -128,11 +172,14 @@ describe.skipIf(!REVEALED)('the reveal list covers every view, and one fallback'
    * second author.
    */
   it('leaves the view ids to the carrier and the forced-colours twin', () => {
-    // Three views plus one fallback, twice: the carrier and the forced block.
+    // Three views plus one fallback PER ROUTE SCOPE, twice: the carrier and
+    // the forced block. Derived from both lists, so a fourth view or a third
+    // scope moves the budget with it and nobody edits a literal.
+    //
     // Counted as occurrences rather than lines, because stripping a multi-line
     // comment joins the lines around it.
     const named = [...CSS.matchAll(/data-hl-view[\])=]/g)]
-    expect(named).toHaveLength((VIEW_IDS.length + 1) * 2)
+    expect(named).toHaveLength((VIEW_IDS.length + SCOPES.length) * 2)
   })
 })
 

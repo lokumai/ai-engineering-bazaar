@@ -117,38 +117,52 @@ for (const sheet of NOT_DRAWN) {
   })
 }
 
-test('the index agrees with the modules about which are bilingual', async ({ page }) => {
-  // §4.8's table left `/` for `/sheets/` when the home screen took the front
-  // door (§15.1); the cross-check is unchanged, because the fact it checks is
-  // not about the route. `INDEX_SHEET` rather than a typed path so a second
-  // move costs one line in `sheets.ts` and nothing here.
+/**
+ * M20 — **THE INDEX NO LONGER STATES A LANGUAGE, so this checks the surface
+ * that still does.**
+ *
+ * It used to read the `LANG` column off §4.8's table and cross-check it
+ * against every module's own facts strip: two renderings of one fact, which is
+ * the right shape for a test. M20 took the column off the table, because
+ * `EN · TR` is a fact about the REPOSITORY — a `_tr.md` file exists — and the
+ * site renders none of those 33 files. The listing was stating a translation
+ * it cannot serve.
+ *
+ * **The invariant did not go with the column.** That a draft is `EN` and a
+ * drawn sheet is `EN` or `EN · TR` is checked against the loader in
+ * `tests/unit/content/derive.test.ts`, over every module. What only a browser
+ * can check is that the surface a reader sees agrees with it, and there is one
+ * such surface left — the module's own facts strip. So this reads that.
+ *
+ * M21 removes it from there too, and when it does this test has nothing left
+ * to read: the language stops being a printed fact and becomes M19's switcher,
+ * which is a URL. That is the milestone that deletes this, and it deletes it
+ * with the capability moved rather than dropped.
+ */
+test('every module states its own language, and no listing states one', async ({ page }) => {
   await page.goto(INDEX_SHEET)
 
-  // The `LANG` column is found by its own header rather than by an index, so
-  // adding a column to §4.8's table does not silently retarget this test.
-  const langs = await page.evaluate(() => {
-    const heads = [...document.querySelectorAll('.bz-table thead th')]
-    const column = heads.findIndex((th) => th.textContent?.trim().toUpperCase() === 'LANG')
-    return [...document.querySelectorAll('.bz-table tbody tr')].map((row) => ({
-      module: Number(row.querySelector('td, th')?.textContent?.trim()),
-      lang: [...row.children][column]?.textContent?.trim() ?? '',
-      draft: row.hasAttribute('data-draft'),
-    }))
-  })
+  // Nowhere in the catalog — not a column, not a card fact, not a filter chip.
+  // Checked on the whole document because all three views are in it at once.
+  const stated = await page.evaluate(() => document.body.innerText)
+  expect(stated).not.toContain('EN · TR')
+  expect(
+    await page.getByRole('button', { name: 'Both languages', exact: true }).count(),
+    'a filter for a fact no view shows',
+  ).toBe(0)
 
-  expect(langs).toHaveLength(SHEETS.length)
-
-  // A sheet that is not drawn is `EN` on its own sheet (§4.5), so it is `EN`
-  // here too — the index and the sheet are two renderings of one fact.
-  for (const row of langs) {
-    if (row.draft) expect(row.lang, `module ${row.module}`).toBe('EN')
+  // And on the sheets themselves, where the fact is still printed. A drawn
+  // sheet reads `EN · TR` or `EN` and nothing else; which sheets are
+  // translated changes as they are translated, so the shape is asserted and
+  // the list is not written down here (`tests/README.md`).
+  let bilingual = 0
+  for (const sheet of DRAWN) {
+    await page.goto(sheet.path)
+    const facts = await page.evaluate(read)
+    expect(facts.facts, `${sheet.path} states no facts`).not.toBeNull()
+    const lang = (facts.facts as string).split('·').pop()?.trim() ?? ''
+    expect(lang, `module ${sheet.module}`).toMatch(/^EN( · TR)?$|^TR$/)
+    if ((facts.facts as string).includes('EN · TR')) bilingual += 1
   }
-
-  // Which sheets are translated changes as they are translated, so the index
-  // is checked against the sheets rather than against a list written here: a
-  // drawn sheet reads `EN · TR` or `EN`, and nothing else.
-  for (const row of langs) {
-    if (!row.draft) expect(row.lang, `module ${row.module}`).toMatch(/^EN( · TR)?$/)
-  }
-  expect(langs.some((row) => row.lang === 'EN · TR')).toBe(true)
+  expect(bilingual, 'no module claims a translation').toBeGreaterThan(0)
 })

@@ -4,7 +4,7 @@ import { categoryBySlug } from '@/lib/content/curriculum-file'
 import { LANG_DISPLAY } from '@/lib/content/derive'
 import { loadAllModules } from '@/lib/content/loader'
 import {
-  categoryEyebrow,
+  categoryCoverage,
   categorySummary,
   durationLabel,
   indexStatement,
@@ -113,9 +113,20 @@ describe('the filter chips (§4.8 item 5)', () => {
    * ids are untouched, because `DEFAULT_FILTER_ID` and the record chips are
    * addressed by id and a label is not an identity.
    */
-  it('offers the six selections in order, in the case a reader reads', () => {
+  /**
+   * M20 — five, not six. `Both languages` left with the table's `Lang` column:
+   * it filtered on whether a `_tr.md` file exists, which is a fact about the
+   * repository and not about anything the site can serve. Keeping it would
+   * also have made `Status:` a lie about its own row.
+   */
+  it('offers the five selections in order, in the case a reader reads', () => {
     expect(FILTERS.map((filter) => filter.label))
-      .toEqual(['All', 'Ready', 'Planned', 'Both languages', 'Completed', 'Not completed'])
+      .toEqual(['All', 'Ready', 'Planned', 'Completed', 'Not completed'])
+  })
+
+  /** Every chip is a state now, which is what lets the row be named `Status`. */
+  it('states no language, having none to serve', () => {
+    expect(FILTERS.map((filter) => filter.id)).not.toContain('bilingual')
   })
 
   it('keeps the set in module order — filtering never re-sorts', () => {
@@ -183,13 +194,18 @@ describe('the counts each page states about itself', () => {
     // Sentence case since M16: these strings were pre-cased to match a class
     // that applied `text-transform: uppercase`, and the design language has no
     // uppercase at all.
-    expect(categoryEyebrow(categoryBySlug('intermediate')!))
-      .toMatch(/^Level 02 · \d+ modules · \d+ ready · ~\d+ h( \d+ min)?$/)
+    // M20 cut this line to the modules and the total time and moved it under
+    // the heading. `Level 02` is the heading itself, in words; `n ready` is on
+    // every row of the table under it and in the board's own rail.
+    expect(categoryCoverage(categoryBySlug('intermediate')!))
+      .toMatch(/^\d+ modules · ~\d+ h( \d+ min)?$/)
   })
 
   it('counts a level of one in the singular', () => {
-    expect(categoryEyebrow(categoryBySlug('protocols')!))
-      .toBe('Level 05 · 1 module · 0 ready')
+    // No duration either: nothing in this level is written, so nothing
+    // declares one and `durationLabel` drops the part rather than saying `~0`.
+    expect(categoryCoverage(categoryBySlug('protocols')!))
+      .toBe('1 module')
   })
 
 })

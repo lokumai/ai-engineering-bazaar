@@ -3,12 +3,14 @@
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { SheetIndex } from '@/components/sheet/SheetIndex'
-import { VIEWS, type CatalogViewId } from '@/lib/catalog/views'
+import { SCOPE_ATTR, VIEWS, type CatalogViewId } from '@/lib/catalog/views'
 import {
   ALL_LEVELS,
   DEFAULT_FILTER_ID,
   FILTERS,
+  LEVEL_GROUP_LABEL,
   NO_MATCH_CUE,
+  STATE_GROUP_LABEL,
   applyFilter,
   applyLevel,
   levelsOf,
@@ -266,8 +268,16 @@ export function Catalog({
     update((data) => setCatalogView(data, view))
   }
 
+  /**
+   * M20 / D68 — which view this ROUTE opens in for a reader who has chosen
+   * none. It is an attribute on this wrapper and never a stamp on `<html>`:
+   * `catalog.css` reads it only under `html:not([data-hl-view])`, so a reader
+   * who toggled to Table one click ago still gets Table here. See `SCOPE_ATTR`.
+   */
+  const scope = level === ALL_LEVELS ? 'index' : 'level'
+
   return (
-    <div className="bz-catalog">
+    <div className="bz-catalog" {...{ [SCOPE_ATTR]: scope }}>
       {/* `03`'s sticky filter bar. It carries the two chip groups and the
           count, and nothing else: the view toggle sits below it, because the
           bar's height is what the table view's own sticky header is offset by
@@ -279,14 +289,26 @@ export function Catalog({
             goes to the page that holds it. The pay-off is the one thing a
             button could never do — with scripting off these six chips still
             filter the catalog. */}
-        <nav className="bz-chip-row" aria-label="Filter by level">
+        {/* M20 — the group's name is VISIBLE and it is the same string the
+            group is announced by. The author asked for `Level:` before these
+            chips and a word before the others; an `aria-label` beside a visible
+            label is two names for one group, and a screen reader reads both. So
+            the text is an element with an id and the group points at it. */}
+        <nav className="bz-chip-row" aria-labelledby="bz-chips-level">
+          <span className="bz-chip-label" id="bz-chips-level">
+            {LEVEL_GROUP_LABEL}:
+          </span>
           <Link
             href={INDEX_ROUTE}
             className="bz-chip"
             {...{ [RESET_ATTR]: '' }}
             aria-current={level === ALL_LEVELS ? 'page' : undefined}
           >
-            Every level
+            {/* M20 — the author's words for this destination, and it is named
+                the same here and in the bar's dropdown: they are two elements
+                with one meaning, and renaming one of them is how a product
+                ends up with two words for one page. It read `Every level`. */}
+            View Curriculum
           </Link>
           {levelRefs.map((one) => (
             <Link
@@ -308,7 +330,15 @@ export function Catalog({
             the single row it divided. The two groups are one under the other
             now, so the gap between them is the separation, and a rule drawn
             across the bar would be a second one saying the same thing. */}
-        <div className="bz-chip-row" role="group" aria-label="Filter by state or language">
+        {/* `Status` is exact HERE and would not have been a week ago. This row
+            held `Both languages` beside the five states, so a single word could
+            not name it; that chip went with the `Lang` column (`rows.ts`), and
+            what is left is three states of the drawing and two of the reader —
+            all of them states. */}
+        <div className="bz-chip-row" role="group" aria-labelledby="bz-chips-state">
+          <span className="bz-chip-label" id="bz-chips-state">
+            {STATE_GROUP_LABEL}:
+          </span>
           {FILTERS.map((filter) => (
             <button
               key={filter.id}

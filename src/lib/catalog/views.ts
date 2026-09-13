@@ -70,6 +70,39 @@ export const VIEWS: readonly CatalogView[] = [
  */
 export const DEFAULT_VIEW_ID: CatalogViewId = VIEW_IDS[0]
 
+/**
+ * M20 / **D68** — which view a ROUTE opens in, for a reader who has chosen none.
+ *
+ * The author asked the catalog's front page to open in Overview and a level
+ * page to open in Cards. The view is also a remembered preference (D13), so
+ * the two could contradict each other, and the shape that avoids it is the
+ * narrow one: **a route default applies only where nothing is stored.**
+ *
+ * That is why this is a SCOPE and not a second stamp. The level page never
+ * writes `data-hl-view` — two writers already share it, `boot.ts` before first
+ * paint and the toggle island on every press, and a third claimant that fired
+ * on arrival would override a choice the reader made one click earlier, which
+ * is the thing D13 exists to prevent. The page emits this attribute on its own
+ * wrapper instead, and `catalog.css` reads it only under
+ * `html:not([data-hl-view])` — so a stored view still wins, with no script and
+ * no new mechanism.
+ *
+ * Both halves of the fallback move together or the picture and the sentence
+ * come apart: the view's rule and the toggle's `Showing` mark have the same
+ * fallback, and changing one would draw Cards under a toggle marking Overview.
+ */
+export const SCOPE_ATTR = 'data-bz-catalog-scope'
+
+export type CatalogScope = 'index' | 'level'
+
+/** The scopes in a fixed order, so a stylesheet guard can count them. */
+export const SCOPES = ['index', 'level'] as const
+
+export const DEFAULT_VIEW_OF: Readonly<Record<CatalogScope, CatalogViewId>> = {
+  index: 'overview',
+  level: 'cards',
+}
+
 /** A stored value is untrusted input wherever it is read (§12.1.3). */
 export function isViewId(value: unknown): value is CatalogViewId {
   return typeof value === 'string' && (VIEW_IDS as readonly string[]).includes(value)

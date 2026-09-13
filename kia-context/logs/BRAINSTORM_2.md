@@ -10,8 +10,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D65, plus open questions O1 to O4 — 2026-09-09 to 2026-09-12"
-last_updated: 2026-09-12
+covers: "D26 to D67, plus open questions O1 to O4 — 2026-09-09 to 2026-09-13"
+last_updated: 2026-09-13
 ---
 
 # 🧠 BRAINSTORM, part 2 — the rebuild, D26 onward
@@ -1397,6 +1397,70 @@ one-pass fix when he takes it.
 `kia-context/genesis/GENESIS.md:26` names the author as *"a working AI engineer"*
 too and that one is CORRECT and stays: genesis records who started this, at t=0,
 and one person did.
+
+### D66 · A description the catalog can print already exists, and it is `summary` — 2026-09-13
+
+The author, on the catalog's `Topics` column: *"it should be renamed to
+Description and it should include one or two sentences describing the whole
+module in high-level manner instead of having things like 'Why RAG' or 'Why rag
+exists'."*
+
+**The obvious reading is that somebody has to write 33 descriptions. They are
+already written.** `summary` is a required frontmatter field —
+`src/lib/content/schema.ts:72` fails the build for a `ready` module without one —
+and MEASURED, 19 of the 33 modules carry one, which is every written module. They
+read as the author asked:
+
+> *"Traces are the only record of what an agent actually did, and the loop that
+> turns them into a better agent."*
+
+So the deliverable is a DERIVATION and the corpus stays read-only. That matters
+beyond the saved effort: a description typed into `src/` is the exact shape
+§11.25 refuses, and `topics.ts`'s own docblock argues against precisely that —
+*"neither is a summary somebody wrote for the listing … a hand-maintained topic
+line drifts the first time a section is renamed."* A field the author maintains
+in the module, validated by the build, is not that.
+
+**The 14 planned modules have no summary and should not get one.** The schema
+only requires it of a `ready` module, because a module nobody has written has
+nothing to summarise, and `topicsFor` already falls back to the schedule of
+parts. A planned row keeps saying what it is scheduled to contain.
+
+**The reason this is a decision and not a task**: it reverses nothing. `Topics`
+was the right column while the only thing the file could offer was its own
+headings; `summary` did not exist as a required field when that column was
+designed.
+
+### D67 · A remembered preference and a route's default are not the same thing — 2026-09-13
+
+The author wants `View Curriculum` to open the catalog in Overview and a level
+link to open it in Cards. **The catalog's view is a remembered preference**:
+`boot.ts:169` stamps `data-hl-view` on `<html>` from `prefs.catalogView` before
+first paint, and D13's criterion is that a reader who chose Table meets Table.
+The two collide on every level link.
+
+Three shapes were costed and the milestone opens with the choice:
+
+1. **The route's default applies only to a reader with no stored view.** Every
+   first-time reader gets exactly what the author described; a returning reader
+   keeps their choice. One condition in `boot.ts`.
+2. **The route's default wins on arrival, always.** The words, taken literally —
+   and it overrides the reader's own choice every time they follow a level link,
+   which is the thing D13 protects.
+3. **Two remembered views, one per route shape.** Twice the state for a
+   preference nobody asked to split.
+
+**The recommendation is 1**, on the grounds that a default is what you get when
+you have not chosen, and a preference is what you get when you have. Shape 2
+would make the preference unreachable from the only links that lead to it.
+
+**The same distinction settles the dropdown's hover behaviour**, which is why it
+is recorded here rather than as two entries. The menu is a `<details>` and is
+keyboard- and touch-operable BECAUSE it does not depend on hover; closing it on
+`mouseleave` alone would make a finger open and close it on one tap. So it closes
+on pointer-out only where hover exists, after a grace delay, and never while
+focus is inside it — a pointer affordance added for pointers, not a mechanism
+change.
 
 ## Open questions
 

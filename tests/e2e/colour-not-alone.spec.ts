@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { openRegisterRow, seedRecord, signedSheet } from './record'
-import { CATEGORY_PATHS, INDEX_SHEET } from './sheets'
+import { A0, CATEGORY_PATHS, INDEX_SHEET } from './sheets'
 import { showCatalogView, showTable } from './views'
 
 /**
@@ -377,4 +377,50 @@ test('a level head names its level in words, with nothing in the swatch', async 
     const named = (await head.locator('.bz-levelhead-title').innerText()).trim()
     expect(named.length, 'a level head with no name is a hue alone').toBeGreaterThan(0)
   }
+})
+
+/**
+ * M21 — **the rail keeps a visible boundary in forced colours**, and this
+ * exists because the milestone briefly took it away.
+ *
+ * The rail's trailing hairline was a `border-right`, and a border takes its
+ * pixel out of the content box — which made the rail overflow itself by one
+ * pixel and let the fold latch a scroll offset that could never come back (the
+ * bug the author reported). M21 painted the line as a background layer instead,
+ * which takes no space.
+ *
+ * **MEASURED under `forced-colors: active`: a background image is not painted
+ * at all.** `backgroundImage` computes to `none`, and with the border already
+ * gone the rail had no boundary of any kind — the column and the reading
+ * surface ran together with nothing between them. An independent review named
+ * it and the browser confirmed it.
+ *
+ * So the border comes back in this mode and the inner gives up the pixel, which
+ * keeps both true at once. Asserted here rather than in `rail.spec.ts` because
+ * it is a forced-colours fact and this is the file that runs in that mode.
+ */
+test('the curriculum rail is still bounded under forced colours', async ({ page }) => {
+  await page.emulateMedia({ forcedColors: 'active' })
+  await page.goto(A0.path)
+
+  const rail = await page.evaluate(() => {
+    const node = document.querySelector('.bz-rail')
+    if (!node) return null
+    const style = getComputedStyle(node)
+    return {
+      painted: style.backgroundImage !== 'none',
+      border: parseFloat(style.borderRightWidth),
+      // The fix must not reintroduce the defect it replaced: a border here
+      // costs a pixel of the content box, and the inner has to give it back.
+      inlineOverflow: node.scrollWidth - node.clientWidth,
+    }
+  })
+
+  expect(rail, 'no rail on this route').not.toBeNull()
+  // Either mechanism is fine; having NEITHER is the failure.
+  expect(
+    rail!.painted || rail!.border > 0,
+    'the rail has no boundary at all in forced colours',
+  ).toBe(true)
+  expect(rail!.inlineOverflow, 'the forced-colours border reintroduced the overflow').toBe(0)
 })

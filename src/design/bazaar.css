@@ -781,6 +781,27 @@
     padding: 16px 12px 48px;
   }
 
+  /* **A PAINTED LINE IS NOT PAINTED IN FORCED COLOURS**, and that is a
+     regression this milestone introduced and a review caught.
+
+     MEASURED under `forced-colors: active` in Chrome 153: `background-image`
+     computes to `none` — the mode drops background images outright — and with
+     the border already gone the rail had **no visible boundary at all**. A
+     border survives forced colours and is recoloured to the system's own ink,
+     which is exactly why it was the right choice for the mockup and the wrong
+     one for the box model.
+
+     So both are true, each where it works. The border comes back here, and the
+     inner gives up the pixel it takes — which keeps the inline overflow at zero
+     and the fold's round trip clean in this mode too, rather than trading one
+     defect for the other. `calc()` rather than a second literal: the border is
+     the language's hairline and 1px is what `--stroke-hair` means. */
+  @media (forced-colors: active) {
+    .bz-rail { border-right: 1px solid; }
+
+    .bz-rail-inner { width: calc(var(--layout-rail) - 1px); }
+  }
+
   /* `visibility`/`opacity` and `pointer-events: none` together: a folded rail
      must not be reachable by Tab, or a keyboard reader traverses a column that
      is not on screen. */
@@ -865,7 +886,13 @@
      The rail is `display: none` under `--layout-rail-at`, and a tab offering to
      show a column that cannot be shown is a control that does nothing — which
      is what the old restore tab did at 390px with a folded rail, because
-     nothing hid it there either. */
+     nothing hid it there either.
+
+     **The 880 is written out and it has to be**: a media query cannot read a
+     custom property, so `--layout-rail-at` and every `max-width: 880px` in this
+     file are one number in several places — the shell's own track rules above
+     do the same. Moving the breakpoint means moving all of them together, and a
+     review flagged the drift risk rather than a defect. */
   @media (max-width: 880px) {
     .bz-rail-tab { display: none; }
   }

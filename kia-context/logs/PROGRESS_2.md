@@ -15,7 +15,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M22, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions and M21 the module page, all five done; M19 and M22 written and not started. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M22, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page and M22 the progress redesign, all six done; M19 alone is written and not started. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-09-13
 ---
 
@@ -60,7 +60,7 @@ deliverables as a numbered list; M18 wrote none at all; M19 to M22 had none eith
 | **M19** | The second language | Written, not started — opens with a decision for the author |
 | **M20** | The catalog says what a module IS | **Done** — 2026-09-13. Its four decisions were taken on the author's behalf and are flagged in its report |
 | **M21** | The module page and the rail beside it | **Done** — 2026-09-13. One item is still not written down: see its report |
-| **M22** | Your progress, redesigned | Written, not started |
+| **M22** | Your progress, redesigned | **Done** — 2026-09-13 |
 
 ---
 
@@ -2846,7 +2846,7 @@ and transition — and every reading came back correct because the element simpl
 had no rule at all. The mutation test is what said so; the probe before it had
 reported the bug fixed.
 
-## 🏁 Milestone M22: Your progress, redesigned — WRITTEN AND NOT STARTED
+## 🏁 Milestone M22: Your progress, redesigned — SHIPPED 2026-09-13
 
 The author: *"Your progress page is a mess. Refactor and redesign it. On the top
 I want the circles that show progress, and then the rest should come. Except for
@@ -2940,23 +2940,23 @@ quietly:**
 
 ### Deliverables
 
-- [ ] **The inventory first.** One row per thing the page can do, where it is now,
+- [x] **The inventory first.** One row per thing the page can do, where it is now,
       and the test that proves it — the same table the capability ledger is, scoped
       to this page. Nothing is designed until that table exists, because the point
       of the exercise is that nothing is lost.
-- [ ] **The circles stay exactly as they are.** `CourseCompletion` is control C and
+- [x] **The circles stay exactly as they are.** `CourseCompletion` is control C and
       the author named it as the part he likes. **It moves up and it does not
       change** — no new props, no restyling, and `fidelity.spec.ts`'s stage-7 block
       still compares it to `05`-C.
-- [ ] **The thirteen rows become a small number of named groups**, each with its own
+- [x] **The thirteen rows become a small number of named groups**, each with its own
       heading, in the order the mockup already argues for: what you have done, what
       is next, what you can take away, and then settings. A group is a heading and a
       region, not a thirteenth accordion wrapping twelve others.
-- [ ] **The destructive row is separated and stays gated.** §12.15's erase dialog is
+- [x] **The destructive row is separated and stays gated.** §12.15's erase dialog is
       gated on a typed word and that does not move. Standard practice puts a
       destructive action last, alone, visibly apart — which is what this page
       already believes and does not currently look like.
-- [ ] **`progress.css` is re-read against `07`**, not restyled by eye. The mockup is
+- [x] **`progress.css` is re-read against `07`**, not restyled by eye. The mockup is
       the specification and it outranks this document; the fidelity harness knows
       `07` already and stage 8's roles are registered.
 
@@ -2972,18 +2972,138 @@ quietly:**
 
 ### Acceptance criteria
 
-- [ ] The inventory table exists, every row has a test, and every row is still true
+- [x] The inventory table exists, every row has a test, and every row is still true
       at the end.
-- [ ] The circles are byte-identical in their rendered facts to what they are today.
-- [ ] The register's rows are grouped under headings, and a reader can reach export,
+- [x] The circles are byte-identical in their rendered facts to what they are today.
+- [x] The register's rows are grouped under headings, and a reader can reach export,
       erase and the record of work without opening anything that is not one of them.
-- [ ] Erase is still gated on the typed word; storage is still disclosed in §12.1.7's
+- [x] Erase is still gated on the typed word; storage is still disclosed in §12.1.7's
       own words.
-- [ ] `record-pages.spec.ts` is re-pointed rather than reduced — its count before and
+- [x] `record-pages.spec.ts` is re-pointed rather than reduced — its count before and
       after is recorded in the report.
-- [ ] Screenshots of the page at 1440 / 1024 / 390, read by eye, before it is called
+- [x] Screenshots of the page at 1440 / 1024 / 390, read by eye, before it is called
       done (**D59**).
-- [ ] Full gate.
+- [x] Full gate.
+
+### Report — M22, your progress redesigned, 2026-09-13
+
+Shipped as `d31573b`, with `69a535f` for what the reviews found.
+
+**The inventory came first and it is above**, which is what let the rest of this
+be a rearrangement rather than a gamble: three retired routes forward to this
+page, so a row lost in a regroup takes a ledger entry with it.
+
+### What moved, and what deliberately did not
+
+**The circles moved and did not change.** Same component, same props, same
+`headingId`, and `fidelity.spec.ts`'s stage-7 block still compares them to
+`05`-C. They were SEVENTH on the page — under a continue hero, a quarantine
+note, a drafter block and an attention panel — and the author named them as the
+part he likes and asked for them on top.
+
+**`QuarantineNote` is still above them**, and a review argued it should not be.
+It is the only thing on the page that explains why every readout below it is
+empty, **including the circles**: a quarantined record draws `0/33` with nothing
+saying why. It renders nothing at all unless there is a quarantined record to
+report, so for every reader who does not have one the circles ARE first. Kept
+deliberately, and recorded because it is a defensible reading and not the only
+one.
+
+**The continue hero is second.** `07`-A puts it first and says why; the author's
+instruction outranks the mockup (`DESIGN.md`'s order of authority), and the two
+arguments are about different things — the mockup's is about what a returning
+reader wants, the author's is about what this page is FOR.
+
+### Thirteen peers became five groups, and the heading level is half of it
+
+The rows are four kinds of thing wearing one costume, which is why a reader
+looking for their export opened rows until they found it. They are five named
+groups now in `07`-A's own order, with settings at the bottom where settings
+belong and the destructive row last, alone, behind a rule.
+
+**Grouping only reaches assistive software if the rows are subordinate.** A
+reader navigating by heading heard thirteen `h2` peers; visual grouping alone
+would have left that outline exactly as it was. So the rows are `h3` — and
+`ReportPanel`'s three headings had to become `h4`, or a reader leaving `Record
+of work` landed on something that read like a new section of the page.
+
+**The table is still one flat ordered list.** The sequence is the specification
+(§16.4) and two suites pin it, so the grouping is a FIELD and not a nesting: a
+row assigned to a group the page does not render fails a test rather than
+disappearing, which is the whole point of having written the inventory.
+
+### A depth cap replaced by the property it stood for
+
+`record-profile.test.tsx` asserted no `h4` on this page, with the reasoning that
+"M14 folded three routes in here without adding a level". M22 added one on
+purpose. **A depth cap was never the invariant — a SKIPPED level is**: an
+outline that goes h2 → h4 is broken at any depth and one that goes h1 → h2 → h3
+→ h4 is sound at four. The test reads the levels in document order and checks
+every step down is one. MEASURED on the built page: no level is skipped.
+
+### Three defects found by looking, none of which any test could see
+
+1. **The group headings had no clearance** and read as belonging to the row
+   above them. `.bz-panel-head` declares a bottom margin and no top one, which
+   was right until five headings sat inside a list of rows. **The same defect
+   class M20 found on the catalog's level heads** — the second time in two
+   milestones that a heading introduced nothing because nothing separated it.
+2. **The account block's mark rendered 137px wide at x=312 inside a 662px
+   track.** `margin: 0 auto` makes a grid item shrink to fit and centre, which
+   is right in the stacked case it was written for and leaves 525px of white
+   beside it at 1440. Its two children are a small graphic and everything else,
+   so `repeat(auto-fit, minmax(240px, 1fr))` — which computed to
+   `662px 662px 0px 0px 0px` — was never their shape.
+3. **MEASURED across the ten routes that draw a trail: EIGHT named their page
+   differently from its own `h1`.** `Home / profile` above `Your progress`,
+   `Home / legend / specimen` above `Specimen record`, `Home / sign in / alias`
+   above `Choose an alias`. `ROUTE_TITLES` held two entries and everything else
+   fell back to the de-hyphenated slug. **Nothing in the build or the suite
+   could see it**: the export's link gate checks that a href resolves and every
+   one of these did — a trail calling a page by its folder name is
+   indistinguishable from a correct one to anything not comparing the two
+   strings. The guard compares them now, derived from the routes rather than
+   from a list of expected labels, and the mutation named the route and the
+   mismatch.
+
+### What the reviews found, and one of them was rule 16 pointed back at me
+
+**Nothing was lost** — both reviews checked the thirteen rows and the blocks
+against the inventory and agreed.
+
+The strongest finding was about the five group notes the first draft gave every
+group: *"page-explaining meta-commentary the project's own rule 16 / D61
+removed elsewhere"*. Correct, and this page had already made that decision once
+— it deleted an opening paragraph for the same reason. **Three went.** `Built in
+this browser` was the clearest: the row underneath it prints that string
+verbatim as its own reading, which is the same fact twice in two idioms. Two
+stayed, because they say something no row can — §16's rule that the role is
+advisory, and the warning that erasing is the one irreversible thing here.
+
+The same review caught that the group headings rendered through the same
+`.bz-panel-title` as the page's real sections, so five of them outweighed
+`Every module` and `Waiting on you` — the flat outline moved up a level rather
+than removed. **The first attempt to fix it made them BIGGER**: reaching for
+`--text-subsection` on the assumption that a token named for a structural role
+is a size, measured at 18.5px against `.bz-panel-title`'s 16.
+
+### The gate
+
+| | Measured |
+| --- | --- |
+| Typecheck | clean |
+| Unit | **2,157 passed, 82 files** |
+| Build | **61 HTML files** — unchanged |
+| Browser | **1,142 passed / 47 skipped / 0 failed** at 1440 / 1024 / 390 |
+| Screenshots | `/profile/` full page and both halves, at 1440, read by eye (**D59**) |
+| `record-pages.spec.ts` | **28 before, 28 after** — re-pointed rather than reduced, and it gained the grouping assertion |
+
+**Two long specs flake under parallel load and neither is M22's.** `previous
+walks 32 back to 1` and `the pager always says where it goes` each walk the
+whole set; both pass alone and on a re-run, and the same pair flaked during M20.
+Worth the author's decision whether it is worth chasing, along with
+`theme.spec.ts`'s three first-paint cases, which were measured on the tree with
+M20 stashed and flake identically.
 
 ---
 

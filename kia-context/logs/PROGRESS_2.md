@@ -15,7 +15,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M22, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, all three done; M19 to M22 written and not started. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M22, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door and M20 the catalog's descriptions, all four done; M19, M21 and M22 written and not started. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-09-13
 ---
 
@@ -58,7 +58,7 @@ deliverables as a numbered list; M18 wrote none at all; M19 to M22 had none eith
 | **M17** | One catalog, and the pages that fold into it | **Done** — 2026-09-11 |
 | **M18** | The front door, the chrome, and the second language | **Done** — 2026-09-12, minus the second language, lifted to M19 |
 | **M19** | The second language | Written, not started — opens with a decision for the author |
-| **M20** | The catalog says what a module IS | Written, not started — opens with decisions for the author |
+| **M20** | The catalog says what a module IS | **Done** — 2026-09-13. Its four decisions were taken on the author's behalf and are flagged in its report |
 | **M21** | The module page and the rail beside it | Written, not started — one item is not written down yet |
 | **M22** | Your progress, redesigned | Written, not started |
 
@@ -2186,7 +2186,7 @@ and the one thing it never said; M21 is the page a reader actually reads and the
 rail beside it; M22 is the progress page, which is a redesign rather than a
 pass of styling.
 
-## 🏁 Milestone M20: The catalog says what a module IS — WRITTEN AND NOT STARTED
+## 🏁 Milestone M20: The catalog says what a module IS — SHIPPED 2026-09-13
 
 The author's list of 2026-09-13. **The catalog tells a reader the shape of every
 module and not one word about what any of them is about.** The `Topics` column
@@ -2275,12 +2275,12 @@ Escape, outside click and route change already close it.
 
 ### Deliverables
 
-- [ ] **`Topics` becomes `Description`, and it is the module's `summary`.**
+- [x] **`Topics` becomes `Description`, and it is the module's `summary`.**
       `SheetRow` gains the field; `manifest.ts` reads it; a planned module keeps the
       schedule-of-parts fallback. `topicsFor`'s docblock is the thing to read first
       — it argues against a hand-written topic line, and a derived `summary` is not
       one, which is why this does not reverse it.
-- [ ] **The description is an accordion, in the table and on the card.** Closed it
+- [x] **The description is an accordion, in the table and on the card.** Closed it
       reads `Description ▾`; open, the row expands smoothly and the previously open
       one closes.
 
@@ -2352,11 +2352,11 @@ Escape, outside click and route change already close it.
       is one big link and a row with a control in it are two different rows. If the
       link is restored, that test needs the assertion its comment already claims —
       that a click in a cell which is not the title still navigates.
-- [ ] **`Lang` leaves the table and the card.** One column and one fact list entry.
+- [x] **`Lang` leaves the table and the card.** One column and one fact list entry.
       **The language SELECTOR the author wants is not built here** — it belongs on
       the module page and it is M19's, which owns the second language. M21 draws the
       slot; this milestone only stops the listing from stating `EN · TR`.
-- [ ] **The filters are labelled — and the second group is not `Status`.** `Level:`
+- [x] **The filters are labelled — and the second group is not `Status`.** `Level:`
       before the level chips is exact. The other row is
       `aria-label="Filter by state or language"` and its six chips are `All`,
       `Ready`, `Planned`, **`Both languages`**, `Completed`, `Not completed`
@@ -2373,27 +2373,27 @@ Escape, outside click and route change already close it.
       named for what it filters. The visible label should then BE the group's
       accessible name — `<span id>` plus `aria-labelledby` — rather than a second
       string beside it, or a screen reader hears it twice.
-- [ ] **The dropdown's first entry reads `View Curriculum`.** It reads `Every level`
+- [x] **The dropdown's first entry reads `View Curriculum`.** It reads `Every level`
       today, on the trigger and on the chip (the author wrote `Entry Level`, which
       is neither — worth confirming he means the first menu row). The CHIP on the
       filter bar and the MENU ROW are two elements with one meaning; rename both or
       neither.
-- [ ] **A level page's Overview board is one third of the width, not all of it.**
+- [x] **A level page's Overview board is one third of the width, not all of it.**
       M18 made a one-level board fill the page because a fifth of it with four
       fifths empty was the shape the author had objected to on the home page. He has
       now named the number: one third. `--bz-board-cols` already carries the count,
       so this is a `max-width` on the board rather than a new mechanism.
-- [ ] **The level head loses its blurb and gains a shorter eyebrow.** `bz-lead`
+- [x] **The level head loses its blurb and gains a shorter eyebrow.** `bz-lead`
       prints `category.blurb` under the heading; the author wants it replaced by the
       eyebrow that currently sits above, cut to **modules and total time only** —
       `8 modules · ~3 h 55 min`, dropping `Level 02` (the heading says it) and
       `7 ready` (every row says it).
-- [ ] **The dropdown closes when the pointer leaves it**, on the shape decision 2
+- [x] **The dropdown closes when the pointer leaves it**, on the shape decision 2
       settles: only under `@media (hover: hover)`, after a grace delay, and never
       while focus is inside. **This was discussed in the decisions and in the
       acceptance criteria and was missing from the deliverables**, which is how an
       item on the author's list gets planned and then not built.
-- [ ] **The cards view's level heading gets its clearance, and loses its number.**
+- [x] **The cards view's level heading gets its clearance, and loses its number.**
       `.bz-levelhead` is `margin: 26px 0 12px` and the cards above it overlap it.
       **The number inside the swatch is a carrier and its removal is the trap**:
       `CatalogCards`'s own comment says *"the swatch is the hue as a shape, and the
@@ -2469,26 +2469,159 @@ for reviewing it at all.
 
 ### Acceptance criteria
 
-- [ ] Every written module's description on the catalog is its own `summary`,
+- [x] Every written module's description on the catalog is its own `summary`,
       byte-identical, and no description is stored anywhere in `src/`.
-- [ ] A planned module shows its schedule of parts and says which it is.
-- [ ] The accordion is exclusive and works with JavaScript disabled; a browser
+- [x] A planned module shows its schedule of parts and says which it is.
+- [x] The accordion is exclusive and works with JavaScript disabled; a browser
       without `interpolate-size` opens it instantly rather than not at all.
-- [ ] The table's expanded row is a row, and `layout.spec.ts`'s cell invariants
+- [x] The table's expanded row is a row, and `layout.spec.ts`'s cell invariants
       still pass on it.
-- [ ] `Lang` appears in neither view, and no control claims to switch language.
-- [ ] Both filter groups have one visible name each, announced once.
-- [ ] A reader without a stored view gets Overview on the catalog and Cards on a
+- [x] `Lang` appears in neither view, and no control claims to switch language.
+- [x] Both filter groups have one visible name each, announced once.
+- [x] A reader without a stored view gets Overview on the catalog and Cards on a
       level page, **proven in the served HTML** — which is provable there precisely
       because it is the no-preference case. A reader WITH a stored view keeps it,
       and that is a browser assertion: the export is byte-identical for everybody
       and the stored view is stamped by script at run time, so no static file can
       witness it.
-- [ ] The dropdown closes on pointer-out only where hover exists, never while focus
+- [x] The dropdown closes on pointer-out only where hover exists, never while focus
       is inside it, and remains operable by touch and keyboard.
-- [ ] Under `forced-colors: active`, a level is still named without its number in
+- [x] Under `forced-colors: active`, a level is still named without its number in
       the swatch.
-- [ ] Full gate, with the HTML file count restated (61 today).
+- [x] Full gate, with the HTML file count restated (61 today).
+
+### Report — M20, the catalog says what a module is, 2026-09-13
+
+Shipped as `d735bc5`, one commit, because the milestone deletes markup and the
+CSS that answered it and a guard points in each direction.
+
+**The finding that made it small was in the brief and it held:** every written
+module already carries the sentence. `summary` is required frontmatter,
+`schema.ts` fails the build for a `ready` module without one, and **19 of the
+33 carry one — which is every written module.** So `Description` is a
+derivation. Nothing in `mini-courses/` was touched and no description is stored
+anywhere in `src/`.
+
+### The four decisions the author has not answered, taken on his behalf
+
+He was away and the loop said proceed, so each was settled with the
+recommendation already recorded and each is cheap to reverse.
+
+1. **A route default applies only where nothing is stored** — the brief's own
+   shape 1, and **D68**. The level page emits `data-bz-catalog-scope` on its own
+   wrapper and never touches `data-hl-view`; the stylesheet reads the scope only
+   under `html:not([data-hl-view])`.
+2. **`Both languages` went with the `Lang` column.** It filtered on whether a
+   `_tr.md` file exists — a fact about the repository, not about anything the
+   site can serve — so keeping it would have let a reader filter by a fact no
+   view shows, and would have made `Status:` a lie about its own row. With it
+   gone every chip in that row is a state and the label is exact.
+3. **A planned module keeps its schedule of parts, labelled as one.** The
+   author's objection was to a run of section headings standing in for a
+   description; the objection is to the impersonation. So the panel opens with
+   `Planned. Its schedule of parts:` and then the list. The acceptance criterion
+   above asked for exactly this. **The independent review flagged it as the one
+   mismatch against his literal words** ("one or two sentences"), which is fair
+   — there is no sentence to derive for a module nobody has written, and the
+   only other option §11.30 permits is an empty cell. **His call.**
+4. **The stretched row link is not restored; the five references to it are
+   corrected.** See below.
+
+### Five things measured, none of which any test could see
+
+Four were found by screenshotting the built page and reading the images, and
+one by probing behaviour in a real browser — **D59's method, again, and it
+found more than 1,138 green tests did.**
+
+1. **`.bz-levelhead:first-child { margin-top: 0 }` zeroed the margin on EVERY
+   level head.** It was written for the first heading in the list, but
+   `CatalogCards` puts the head first inside each level's own `<section>`, so
+   `:first-child` matched all of them. The heads had **no clearance at all** —
+   which is exactly the overlap the author reported, and the 26px everyone
+   assumed was too small had never applied. Measured after the fix: `0px, 40px,
+   40px, 40px, 40px`.
+2. **The row is not one link target.** `ModuleRow`'s docblock said twice that a
+   stretched pseudo-element covers the row; MEASURED on the built catalog,
+   `::after`'s `content` is `none`, its `position` is `static`, and clicking the
+   `Length` cell navigates nowhere. The rule went with the eleven stylesheets
+   stage 0 deleted. **Corrected rather than restored**, because this milestone
+   puts a `<summary>` in the row and a stretched link would sit over it —
+   `SignOffSquares` keeps its refusal on §12.4.1's grounds instead.
+3. **`Completion` and `Requirements` were clipping their own headers** — 80px of
+   text in a 72px cell and 113px in 96px, drawing `Completio` and `Requireme`.
+   Pre-existing, and invisible to the suite: a clipped header still has the right
+   `textContent`, so `record-index.spec.ts`'s "the ninth column is COMPLETION"
+   passed throughout. The columns are 84 and 118 now.
+4. **The dropdown's pointer-out close never fired.** Clicking a `<summary>`
+   focuses it, and the guard asked whether focus was inside the `<details>` —
+   which contains the summary. So the condition was always true and the timer
+   always returned. The guard asks the LIST now.
+5. **Chrome does not close a `<details>` on Escape**, and `MainNav`'s docblock
+   had claimed it did since M10. The M20 brief reasoned from that sentence when
+   it argued that closing on pointer-out costs a keyboard reader nothing — it
+   would have, because the only other way out was Enter on the summary. Escape
+   is implemented, and focus goes back to the trigger. **The outside-click claim
+   beside it was false too** — a click on empty ground leaves the panel open;
+   what looked like it closing was the route-change effect firing after a click
+   on a link. That one is corrected rather than implemented.
+
+### What the two reviews found
+
+**The independent review of the author's own words** (Hermes, `glm-5.3-flash`)
+checked the commit against his nine bullets: **eight DONE, one MISMATCH** — the
+planned-module fallback, decision 3 above.
+
+### Three guards, each mutated and each red
+
+Per the project's own rule, a check seen only passing is indistinguishable from
+one that reads nothing:
+
+| Mutation | What went red |
+| --- | --- |
+| `name` dropped from `<details>` | two panels open at once |
+| the level scope not gated on `html:not([data-hl-view])` | a stored view stops surviving a level link |
+| the focus guard asks the `<details>` again | the pointer-out close stops firing |
+
+### Two acceptance criteria that no existing test proved
+
+Both were ticked only after a test was written for them, which is the whole
+point of not ticking on the strength of a green run:
+
+- **The expanded row is still a row.** `layout.spec.ts` checks every cell is a
+  `table-cell`, and it never opened a panel. The new case opens one and measures
+  the row while open — and it had to **poll rather than sample**, because
+  `::details-content` eases over 200ms and a reading taken the instant `[open]`
+  appears catches the row at 71px against a 72px closed row, which reads as a
+  shrink.
+- **A level is still named without its number in the swatch.**
+  `.bz-levelhead-key` had a fidelity role and **no behavioural assertion
+  anywhere in the suite**, so the number could have been removed with no carrier
+  left and a green run either way. The new case runs under
+  `forced-colors: active`.
+
+### The gate
+
+| | Measured |
+| --- | --- |
+| Typecheck | clean |
+| Unit | **2,159 passed, 82 files, 0 skipped** |
+| Build | **61 HTML files** — unchanged |
+| Browser | **1,138 passed / 48 skipped / 0 failed** at 1440 / 1024 / 390 |
+| Base-path build | **3,625 of 3,625** internal absolute references carry the prefix |
+| Table minimum | `description` 1010, `both` 1178 — both still scroll inside their own container |
+
+**Three theme specs are flaky and it is not M20's.** `theme.spec.ts`'s three
+first-paint cases went flaky in one full run; **measured on the tree with this
+milestone stashed, the same three flake identically.** Pre-existing, and the
+author's to decide whether it is worth chasing.
+
+### One thing this milestone leaves standing
+
+`/sheets/<level>/`'s `General notes` still opens with the level README's own
+first paragraph, which says roughly what `category.blurb` said. That is the
+corpus's prose in the corpus's own section at the bottom of the page, not a
+second description under the heading, so it is left alone — but it is the
+sentence the author was objecting to, one section lower, and worth his eye.
 
 ## 🏁 Milestone M21: The module page and the rail beside it — WRITTEN AND NOT STARTED
 

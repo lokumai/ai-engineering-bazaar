@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 import { openRegisterRow, seedRecord, signedSheet } from './record'
 import { CATEGORY_PATHS, INDEX_SHEET } from './sheets'
-import { showTable } from './views'
+import { showCatalogView, showTable } from './views'
 
 /**
  * §13.1.4 / SC 1.4.1 — every surface that carries a category hue says the same
@@ -339,4 +339,42 @@ test('the account block and a closed row read as text with no colour (§16.2.3, 
   // The whole summary reads as one line of text: name, reading, and the mono
   // chevron, which is `aria-hidden` and therefore not in this reading.
   expect((await row.locator('summary').innerText()).trim()).toContain(name)
+})
+
+/**
+ * M20 — the level swatch in the Cards view, which lost the number inside it.
+ *
+ * The swatch carried its level's ordinal, and `CatalogCards`' own comment said
+ * why: *"the number inside it is what a reader in forced colours reads
+ * instead."* The author does not name a level by number anywhere, so the digit
+ * went — and the moment it did, the swatch became a hue with nothing in it.
+ *
+ * That is only safe because the heading BESIDE it names the level in words,
+ * and a word survives `forced-colors: active` untouched. This is the test that
+ * says so, because nothing else did: `.bz-levelhead-key` had a fidelity role
+ * and no behavioural assertion anywhere in the suite, so the number could have
+ * been removed with no carrier left and a green run either way.
+ */
+test('a level head names its level in words, with nothing in the swatch', async ({ page }) => {
+  await page.emulateMedia({ forcedColors: 'active' })
+  await page.goto('/sheets/')
+  await showCatalogView(page, 'cards')
+
+  const heads = page.locator('[data-view="cards"] .bz-levelhead')
+  const count = await heads.count()
+  expect(count, 'the cards view groups by level').toBeGreaterThan(1)
+
+  for (let i = 0; i < count; i += 1) {
+    const head = heads.nth(i)
+    const swatch = head.locator('.bz-levelhead-key')
+
+    // The hue is decoration and says so, in both senses: hidden from assistive
+    // software, and empty of anything a sighted reader could fall back on.
+    await expect(swatch).toHaveAttribute('aria-hidden', 'true')
+    expect((await swatch.innerText()).trim(), 'the swatch carries text again').toBe('')
+
+    // And the fact it used to carry is beside it, as a word.
+    const named = (await head.locator('.bz-levelhead-title').innerText()).trim()
+    expect(named.length, 'a level head with no name is a hue alone').toBeGreaterThan(0)
+  }
 })

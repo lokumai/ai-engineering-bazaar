@@ -139,6 +139,68 @@ test.describe('layout invariants, on every route', () => {
   }
 
   /**
+   * M20 — **and the same invariant with a description OPEN**, which is the
+   * state the loop above never reaches.
+   *
+   * The milestone put a `<details>` inside the description cell. That is the
+   * shape the brief originally forbade in favour of a second `<tr>` with a
+   * `colspan`, which cannot be built at all — `<tbody>` admits only `<tr>` and
+   * a `<summary>` must live inside its own `<details>` — so the disclosure is
+   * in the cell and opening it grows the cell, the cell grows the row.
+   *
+   * A cell that stopped being a cell when it grew is exactly the defect this
+   * file exists for (case 2 in its own docblock: a `<td>` with `display: flex`
+   * left the row layout), and a closed accordion would never show it. So the
+   * panel is opened first and the row it is in is measured while open.
+   */
+  test('a row with an open description is still a row', async ({ page }) => {
+    await page.goto('/sheets/')
+    await showTable(page)
+
+    const ROW = '[data-view="table"] .bz-table tbody tr'
+    const shut = await page.evaluate((sel) => {
+      const row = [...document.querySelectorAll(sel)]
+        .find((candidate) => candidate.querySelector('details.bz-desc:not([open])'))
+      return row ? Math.round(row.getBoundingClientRect().height) : null
+    }, ROW)
+    expect(shut, 'no closed description to compare against').not.toBeNull()
+
+    await page.locator('[data-view="table"] summary.bz-desc-trigger').first().click()
+    await expect(page.locator('[data-view="table"] details.bz-desc[open]')).toHaveCount(1)
+
+    /* POLLED, NOT SAMPLED. `::details-content` eases open over 200ms, so a
+       reading taken the instant `[open]` appears catches the row at its closed
+       height and the growth this is about has not happened yet — measured: 71px
+       against a 72px closed row, which read as a shrink. */
+    await expect.poll(async () => page.evaluate((sel) => {
+      const open = document.querySelector(sel + ' details.bz-desc[open]')
+      const row = open?.closest('tr')
+      return row ? Math.round(row.getBoundingClientRect().height) : 0
+    }, ROW)).toBeGreaterThan(shut!)
+
+    const measured = await page.evaluate((sel) => {
+      const open = document.querySelector(sel + ' details.bz-desc[open]')
+      const row = open?.closest('tr')
+      if (!row) return null
+      const cells = [...row.children] as HTMLElement[]
+      return {
+        displays: [...new Set(cells.map((cell) => getComputedStyle(cell).display))],
+        heights: [...new Set(cells.map((cell) => Math.round(cell.getBoundingClientRect().height)))],
+        rowHeight: Math.round(row.getBoundingClientRect().height),
+        cells: cells.length,
+      }
+    }, ROW)
+
+    expect(measured, 'no open panel sits inside a row').not.toBeNull()
+    expect(measured!.cells).toBeGreaterThan(5)
+    expect(measured!.displays, 'a cell left the row layout when the panel opened')
+      .toEqual(['table-cell'])
+    // Every cell still shares the row's height, which is the visible half of
+    // the rule above and the thing a reader would actually see go wrong.
+    expect(measured!.heights).toEqual([measured!.rowHeight])
+  })
+
+  /**
    * Every cell in one row shares that row's height, which is the visible
    * consequence of the rule above and the thing a reader actually sees: a
    * border that stops halfway, and a mark sitting lower than the word beside

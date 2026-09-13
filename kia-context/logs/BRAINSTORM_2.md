@@ -1482,6 +1482,79 @@ on pointer-out only where hover exists, after a grace delay, and never while
 focus is inside it — a pointer affordance added for pointers, not a mechanism
 change.
 
+**Two corrections from building it, 2026-09-13. Both are in the paragraph
+above and both were wrong in a way that read as right.**
+
+*"Never while focus is inside it"* — **inside WHAT.** Written as
+`details.contains(document.activeElement)` the condition is always true, because
+clicking a `<summary>` focuses it and the summary is inside its own `<details>`.
+So the close never fired at all, which is the opposite of the deliverable. What
+the guard protects is a reader who has moved into the LIST, and the list is what
+it has to ask about.
+
+And this entry's *"Escape … already"* — **Chrome does not close a `<details>` on
+Escape**, with the summary focused or with a link inside it focused; MEASURED in
+Chrome 153 against the built site. `MainNav`'s docblock had claimed it since M10
+and this entry inherited the claim, then reasoned from it: closing on pointer-out
+*does* take something from a keyboard reader if Enter on the summary is the only
+other way out. M20 implemented Escape rather than correcting the sentence.
+
+### D68 · The row was never one link target, and the references are what moved — 2026-09-13
+
+§5.3 and §10.3 specify a stretched pseudo-element covering a catalog row, so a
+pointer can hit any cell and `Tab` reaches the row once. **MEASURED on the built
+catalog in M20: there is no such element.** `getComputedStyle(link, '::after')`
+reports `content: none` and `position: static`, and clicking the `Length` cell
+navigates nowhere. The rule went with the eleven stylesheets stage 0 deleted;
+only the prose survived.
+
+**Five places reason from it** — `ModuleRow`'s docblock twice, `SignOffSquares`,
+and `record-index.spec.ts`'s docblock twice — and **exactly one test names it**:
+`accessibility.spec.ts`'s one-tab-stop-per-row assertion, which a title-only link
+satisfies perfectly. So the suite has been green through the entire absence, and
+the comment above that assertion still says "the whole row is one link target".
+
+Two ways out, and the milestone's own work decides it:
+
+1. **Restore the stretched link.** It is what the spec says, and it would need
+   the tab-order test to gain the assertion its comment already claims — that a
+   click in a non-title cell navigates.
+2. **Correct the five references.** The row keeps one link, in the title.
+
+**Taken: 2.** M20 puts a `<summary>` in the description cell, and a row that is
+one big link and a row with a control in it are two different rows — a stretched
+link would sit over the disclosure, which is precisely the argument
+`SignOffSquares` was making when it declined to put a control in the ninth
+column. That refusal now stands on §12.4.1 instead: signing off happens on the
+sheet, which is the only place the criteria are stated.
+
+Recorded rather than fixed quietly, because this reverses the direction of a
+written specification on measured grounds, and because it is the third comment
+in three milestones found describing behaviour that no longer exists — after the
+ISO 128 dash and `boot.ts`'s reader of a deleted stylesheet.
+
+### D69 · A filter for a fact no view shows — 2026-09-13
+
+The author asked for `Lang` to leave the table and the card, and for the second
+chip row to be labelled `Status:`. Those two are the same decision, which is not
+obvious until both are on the page at once.
+
+`Both languages` filtered on `row.bilingual` — **whether a `_tr.md` file exists
+in the repository.** 33 of them do and the app renders none of them (M19). So
+the chip selected on a fact about the repository, and with the column gone it
+selected on a fact no view shows: a reader could narrow the catalog to nineteen
+modules and see nothing on screen that said why.
+
+It is also what made the label wrong. That row held three states of the DRAWING,
+two of the READER, and one language, and `Status:` would have swallowed the
+language and mislabelled it. Keeping the chip meant naming the row for what it
+filtered — *"state or language"*, which is the label nobody can act on.
+
+**Taken: the chip goes with the column.** `row.lang` and `row.bilingual` stay on
+the model, because they are build-time facts M19 needs and nothing renders them.
+When the second language is real it is an address (M19's shape 1), not a filter —
+a reader asks for Turkish by going to it.
+
 ## Open questions
 
 ### ~~O1 · Which direction the interface takes~~ — opened and closed 2026-09-08

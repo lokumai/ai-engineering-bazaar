@@ -1555,6 +1555,50 @@ the model, because they are build-time facts M19 needs and nothing renders them.
 When the second language is real it is an address (M19's shape 1), not a filter —
 a reader asks for Turkish by going to it.
 
+### D70 · The line a border draws is not the line a painted background draws — 2026-09-13
+
+The catalog rail's trailing hairline was a `border-right`, transcribed from the
+mockup. A border takes its pixel out of the content box, and `.bz-rail-inner` is
+`--layout-rail` wide — so the rail overflowed itself by exactly one pixel in the
+inline axis, permanently. At rest that is invisible: `scrollLeft` is 0 and the
+pixel clips on the right. **After one fold and restore `scrollLeft` was 1 and
+could never return**, because `overflow-x: hidden` is still a scroll container
+and a browser scrolls one to reveal a focused element — which the fold's focus
+hand-off did on every press. That is the bug the author reported as happening
+*only* after closing the sidebar and opening it again.
+
+Three ways out were costed and **two of them were tried and measured**:
+
+1. **`overflow-x: clip`.** It makes no scroll container at all, so there is
+   nothing to latch. **It does not work here, and it shipped before that was
+   found out:** CSS Overflow 3 computes `clip` to `hidden` when the other axis
+   is `auto`, and this rail needs `overflow-y: auto`. The declaration went in as
+   `overflow: clip auto`, `getComputedStyle` returned `hidden`, and the bug
+   survived untouched.
+2. **Narrow the inner by the border** — `calc(var(--layout-rail) - 1px)`. It
+   works and it couples the inner's width to a border's existence, so anything
+   that narrows the content box again (a classic scrollbar) brings the defect
+   back.
+3. **Paint the line instead of bordering it.** A background layer takes no space
+   out of the content box, so the overflow is ZERO rather than managed. It is
+   also already this language's answer where a border cannot be trusted —
+   `.bz-cat-rule` paints for a different reason (Chrome floors a border width to
+   whole pixels).
+
+**Taken: 3 — and then 2 as well, in one place.** MEASURED under
+`forced-colors: active`: **a background image is not painted at all.** The mode
+drops them, so with the border gone the rail had no visible boundary of any
+kind. An independent review named it and the browser confirmed it. So the border
+comes back inside a forced-colours block and the inner gives up the pixel there,
+which keeps the overflow at zero in that mode too.
+
+**The general fact, which is what earns this an entry:** a border and a painted
+line look identical and behave differently in two ways that matter — a border
+costs layout space and survives forced colours; a painted line costs nothing and
+is dropped by it. Neither is the safe default. Choose by which of the two
+properties the element actually needs, and if it needs both, say so in both
+places.
+
 ## Open questions
 
 ### ~~O1 · Which direction the interface takes~~ — opened and closed 2026-09-08

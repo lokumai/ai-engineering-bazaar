@@ -15,7 +15,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M22, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door and M20 the catalog's descriptions, all four done; M19, M21 and M22 written and not started. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M22, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions and M21 the module page, all five done; M19 and M22 written and not started. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-09-13
 ---
 
@@ -59,7 +59,7 @@ deliverables as a numbered list; M18 wrote none at all; M19 to M22 had none eith
 | **M18** | The front door, the chrome, and the second language | **Done** — 2026-09-12, minus the second language, lifted to M19 |
 | **M19** | The second language | Written, not started — opens with a decision for the author |
 | **M20** | The catalog says what a module IS | **Done** — 2026-09-13. Its four decisions were taken on the author's behalf and are flagged in its report |
-| **M21** | The module page and the rail beside it | Written, not started — one item is not written down yet |
+| **M21** | The module page and the rail beside it | **Done** — 2026-09-13. One item is still not written down: see its report |
 | **M22** | Your progress, redesigned | Written, not started |
 
 ---
@@ -2623,7 +2623,7 @@ corpus's prose in the corpus's own section at the bottom of the page, not a
 second description under the heading, so it is left alone — but it is the
 sentence the author was objecting to, one section lower, and worth his eye.
 
-## 🏁 Milestone M21: The module page and the rail beside it — WRITTEN AND NOT STARTED
+## 🏁 Milestone M21: The module page and the rail beside it — SHIPPED 2026-09-13
 
 Three of the author's items are about the page a reader actually reads, and one
 of them is a reproducible bug with a condition attached — which is the most
@@ -2647,7 +2647,7 @@ padding.**
 
 ### Deliverables
 
-- [ ] **One fold control, and it is the one in the middle.** There are two today:
+- [x] **One fold control, and it is the one in the middle.** There are two today:
       `.bz-rail-fold` (`aria-label="Hide the curriculum"`) at the top of the rail,
       and `.bz-rail-restore` (`aria-label="Show the curriculum"`), a 26 × 60 tab
       `position: fixed; left: 0; top: 50%` that `[data-bz-rail="folded"]` reveals.
@@ -2658,7 +2658,7 @@ padding.**
       trailing edge rather than the screen's. That is the real work; deleting the
       top button is one line. Its label has to say which way it goes, and `RailFold`
       already owns both strings.
-- [ ] **The fold/restore state bug**, as above — reproduced first, then fixed at
+- [x] **The fold/restore state bug**, as above — reproduced first, then fixed at
       whatever the reading says, with an invariant that fails on the restored state
       and not only on the first paint.
 
@@ -2670,7 +2670,7 @@ padding.**
       the viewport edge. The bug is in the thing the existing assertion does not
       look at, which means the fix is one more reading in a test that is already in
       the right place, not a new test in a new file.
-- [ ] **The facts line under a module's title becomes plain text.** `FactsStrip`
+- [x] **The facts line under a module's title becomes plain text.** `FactsStrip`
       renders two `.bz-tag` boxes — the level, and `Module 3 of 8` — and then
       `25 min · 2,317 words · EN · TR`. The author wants only `25 min · 2,317 words`,
       as text, with no boxes.
@@ -2685,7 +2685,7 @@ padding.**
 
       `Module 3 of 8` is stated by the footer (`MODULE 1 OF 33`) and by the rail;
       `EN · TR` goes because M19 owns the language.
-- [ ] **The language control's slot, top-right of the reading box** — the author's
+- [x] **The language control's slot, top-right of the reading box** — the author's
       placement. **This milestone does not build the control.** A control that
       switches nothing is the claim §1 forbids, and it is why the mockup's own `TR`
       button and search field were both left out of the bar. M19 carries the
@@ -2704,17 +2704,147 @@ before this milestone opens.
 
 ### Acceptance criteria
 
-- [ ] One control folds and restores the rail, it is reachable in both states, and
+- [x] One control folds and restores the rail, it is reachable in both states, and
       its label says which way it goes.
-- [ ] Folding and restoring returns the rail to the box it had on first paint,
+- [x] Folding and restoring returns the rail to the box it had on first paint,
       proven by a test that folds, restores and re-measures.
-- [ ] The facts line is `25 min · 2,317 words` and nothing else; a draft still says
+- [x] The facts line is `25 min · 2,317 words` and nothing else; a draft still says
       it is a draft.
-- [ ] Every place the module page named its level in colour still names it in words
+- [x] Every place the module page named its level in colour still names it in words
       under `forced-colors: active`.
-- [ ] No control on the page claims to switch language.
-- [ ] Full gate, and a screenshot of a module page at 1440 / 1024 / 390 read by eye
+- [x] No control on the page claims to switch language.
+- [x] Full gate, and a screenshot of a module page at 1440 / 1024 / 390 read by eye
       before it is called done (**D59**).
+
+### Report — M21, the module page and the rail beside it, 2026-09-13
+
+Shipped as `23fd5cc`, with `06a415e` for what the review found.
+
+### The bug was a state bug, and his condition is what found it
+
+*"BUT THIS ONLY HAPPENS AFTER I CLOSE THE LEFT SIDEBAR AND OPEN IT AGAIN!"* A
+defect that appears only after fold → restore is something the fold sets and the
+restore does not put back, so the milestone opened by reading the box in both
+states rather than guessing at a padding — which is what the brief asked for and
+it was the right instruction.
+
+**MEASURED at 1440 / 1366 / 1280 / 1200, by pointer and by keyboard alike.**
+`.bz-rail-inner` is `--layout-rail` wide (262px) and a `border-right` left the
+rail's content box at 261px, so the rail overflowed itself by one pixel in the
+inline axis **at all times**. At rest `scrollLeft` is 0 and that pixel is
+clipped on the right, where nobody sees it. **After one fold and restore
+`scrollLeft` was 1 and could never return** — `overflow-x: hidden` still makes a
+scroll container, a browser scrolls one to reveal a focused element, and the
+fold's focus hand-off is exactly that. The magnitude is whatever the rail
+overflows by, so a classic space-taking scrollbar or a zoom level makes it worse
+than a pixel, which is why he saw a word disappear where this machine measured
+one.
+
+**`overflow-x: clip` is not the fix and it looked like one.** It makes no scroll
+container, which would settle it — but CSS Overflow 3 computes `clip` to
+`hidden` when the other axis is `auto`. MEASURED: the declaration shipped as
+`overflow: clip auto`, `getComputedStyle` returned `hidden`, and the bug
+survived intact. The hairline is painted instead, which takes no space at all.
+
+**`rail.spec.ts` has folded and restored since M16 and asserts the grid track
+and the reading column come back — and both always did.** What it never
+measured is the rail's OWN box. That reading is in the spec now, it compares
+against first paint rather than a constant, and it cycles twice because a defect
+that latches does it once and then looks stable.
+
+### What the two reviews found
+
+**One of them found a regression in the fix itself**, which is the best
+argument for running it.
+
+- **A painted line is not painted in forced colours.** MEASURED under
+  `forced-colors: active`: `background-image` computes to `none` — the mode
+  drops them outright — and with the border already gone the rail had **no
+  visible boundary of any kind**. The border comes back inside a forced-colours
+  block and the inner gives up the pixel it costs, so both are true at once and
+  the overflow stays 0 in that mode too (`06a415e`).
+- **The 880 in the tab's media query is a literal.** A media query cannot read
+  `--layout-rail-at`, so that number lives in several places in this file and
+  moves as a set. A drift risk, not a defect; noted in the rule.
+- **The tab carries no `aria-expanded`.** Deliberate, and it is D25's own
+  reasoning one screen over: a single ARIA state would have to be rendered from
+  React, which puts a fact a reader meets in frame one on channel B. What
+  carries the state instead is the control's own NAME — both faces are in the
+  markup and CSS reveals one off the `<html>` attribute, so the hidden face is
+  `display: none` and out of the accessible name computation. **Worth the
+  author's eye**: it is a defensible reading and not the only one.
+
+The other review (Hermes, `glm-5.3-flash`) checked the commit against the four
+requests and returned **four DONE**, including the judgement that leaving the
+language slot empty is defensible rather than missing.
+
+### Three things the tests found that the brief did not
+
+1. **Tab did not reach the one fold control in 30 presses.** Rendered inside the
+   page's own content, as the tab it replaced was, the control that hides the
+   rail sat behind the rail's 33 links. It cannot go INSIDE the rail either — a
+   folded rail is `visibility: hidden`, which is deliberately what takes its
+   contents out of the tab order — so it is in `PageShell`, immediately before
+   the rail. The assertion is the ORDER rather than a count: a number would be
+   the bar's control total written down in a second place.
+2. **The trail's last crumb was the raw slug.** `Home / Catalog / Fundamentals /
+   llms`, under a heading reading `LLM Fundamentals` — `breadcrumbFor` labels a
+   segment no route table names by de-hyphenating it. Found by screenshot, and
+   it matters more than it did: **with the level tag gone, the trail is what
+   names a module's level in words.** The existing `current` prop COLLAPSES the
+   trail, so reaching for it deleted `Fundamentals` and the carrier with it; a
+   new `leaf` renames the last crumb and leaves the rest alone.
+3. **Four guards named the removed things in their own registries**, and each
+   was re-pointed in the same commit rather than around it — the fifth, sixth,
+   seventh and eighth time this has been needed since M16. The transcription
+   pairs for both fold controls and for the rail's `border-right`; the fidelity
+   role for `tag`; and `rail.borderRightColor`.
+
+### What the facts line dropped, and where each fact went
+
+Nothing was lost, which is the check this milestone owed:
+
+| Left the strip | Still stated by |
+| --- | --- |
+| the level, as a hue-carrying tag | the trail, in words, on every module page — and the rail's open group |
+| `Module 3 of 8` | the footer's `MODULE 1 OF 33`, asserted on all thirty-three by `site-footer.spec.ts` |
+| `EN · TR` | **nothing, deliberately** — the site renders none of the 33 `_tr.md` files, so it was a claim it could not honour (M19 makes it an address) |
+
+A planned module prints **no strip at all** rather than a row of dashes, which
+is what `StatusBand`'s `Planned · Schedule of parts only` already says. `.bz-tag`
+stays in the language, transcribed from `01`'s own `.tag` and still compared —
+its fidelity role moved to `DELIBERATELY_ABSENT`, which is the bargain `node`
+already makes there.
+
+### The item that is STILL not written down
+
+> *"In module pages for the right navigation bar which we can move to headings"*
+
+**Unchanged and not guessed at.** `.bz-aside` is that rail — `On this page`, the
+h2 spine, `j`/`k`. Nothing was built for it and nothing about it was changed. It
+is the first question to ask before anything touches that column.
+
+### The gate
+
+| | Measured |
+| --- | --- |
+| Typecheck | clean |
+| Unit | **2,157 passed, 82 files** — two fewer than M20's 2,159, which is the two transcription pairs deleted with the two fold controls |
+| Build | **61 HTML files** — unchanged |
+| Browser | **1,141 passed / 47 skipped / 0 failed** at 1440 / 1024 / 390 |
+| Screenshots | the module page open, folded, draft, and at 1024, read by eye (**D59**) |
+
+Two guards were mutated and both went red: restoring the rail's border fails
+*"the rail overflows itself before anything is clicked"*, and deleting the
+forced-colours block fails *"the rail has no boundary at all in forced
+colours"*.
+
+**And one mutation caught a mistake in the fix rather than in the guard.** The
+first attempt at the painted hairline replaced a slice of the file that included
+the whole `.bz-rail` rule, deleting it — position, height, overflow, background
+and transition — and every reading came back correct because the element simply
+had no rule at all. The mutation test is what said so; the probe before it had
+reported the bug fixed.
 
 ## 🏁 Milestone M22: Your progress, redesigned — WRITTEN AND NOT STARTED
 

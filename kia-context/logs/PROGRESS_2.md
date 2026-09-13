@@ -3250,6 +3250,59 @@ Worth the author's decision whether it is worth chasing, along with
 M20 stashed and flake identically.
 
 
+
+### The late reviews, and what they found — 2026-09-13
+
+**Four spawned reviewers looked idle and unresponsive for the length of three
+milestones, then all four reported, one to three hours late.** They were written
+off in the M20 report as not having delivered. That was wrong, and the
+correction matters more than the reports: **theirs were the deepest findings of
+the whole series.** Never block a milestone on one; never write one off either.
+
+**Eight defects, fixed in `dc7c6e1`:**
+
+| | |
+| --- | --- |
+| The bar's dropdown could **wedge open with no way out** | the grace timer returned without re-arming when focus was in the list; the pointer was already outside so nothing else could fire, and Escape is bound to the `<details>` |
+| `accessibility.spec.ts` asserted **one tab stop per row against 65 on 33 rows** | its selector cannot see a `<summary>`, and M20 put a disclosure in every written row. It asserts the composition now |
+| `/auth/callback/` still named itself by its folders | M22 filled the route table from ten routes it walked BY HAND, so the guard could not fail on the eleventh. It reads the export now |
+| **Two crumbs claiming `aria-current="page"`** on that route | a crumb has no href either because it is the page or because it is an unlinked ancestor, and the markup could not tell them apart |
+| The account block's prose lost its measure | 1187px, ~176 characters a line, where every other paragraph sets at 584 |
+| The heading guard was **one-directional** | reverting the report panel's `h4`s produced zero skips, so the inversion M22 claims to fix was unguarded |
+| **114 of 5,274 references missing the base path** | `alternates` reached past `lib/url.ts`; Next applies `basePath` to the router, not to a metadata string |
+| Turkish runs left bare | the heading, the contents rail and the trail's last crumb |
+
+**Five wrong things I had written**, all corrected: the table sums (the numbers
+from before the same milestone widened two columns), `99` elements where there
+are 64, a `white-space` rule that was a no-op on a false premise, a guard named
+as the wrong file, and a comment in the present tense saying the language slot
+was empty directly above the control filling it.
+
+### One fix was built, measured and reverted
+
+**`<html lang="en">` with a Turkish `<title>` is a real SC 3.1.1 problem** and a
+`<title>` cannot carry its own `lang`. Only a root layout may render `<html>`,
+so the fix is one root layout per route group — which was built: both trees
+moved into `(site)` and `(tr)`, a shared `SiteDocument` took the language as a
+parameter, and it worked. `<html lang="tr">` on the Turkish tree, chrome marked
+English on the body, every Turkish run marked.
+
+**Then `404.html` rendered with no layout at all** — no shell, no bar, no
+footer, and no boot script, so the theme broke. That is Next's documented
+behaviour with multiple root layouts, and `not-found.spec.ts` caught it.
+
+**Reverted**, because losing the 404's whole shell is worse than a title
+announced in the wrong voice. **It is the one known gap left in M19**: every
+visible Turkish run is marked and the document declares English, so the only
+string a screen reader gets wrong is the `<title>`. Fixing it costs the 404 page
+its layout unless somebody finds a third way, and that is the author's call.
+
+**And two findings did not survive measurement**: 67 of 96 figure captions
+reported as English inside Turkish prose (they are the author's Turkish), and a
+claim that the English tree lost something in the page's move to a component (it
+did not).
+
+
 ## 🏁 Milestone M23: The interface's own strings — WRITTEN AND NOT STARTED
 
 M19 lifted this out of itself, and the brief it came from allowed for it in as

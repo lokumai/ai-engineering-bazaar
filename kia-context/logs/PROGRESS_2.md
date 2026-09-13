@@ -2306,6 +2306,47 @@ Escape, outside click and route change already close it.
    comment must go with the number, or the next reader restores a carrier that is
    already carried.
 
+### Four traps the review named, none of which the brief had
+
+1. **`Topics` is the table's ONLY flexible column and it declares the floor the
+   table is sized from** (`SheetIndex.tsx`, `--bz-table-min`). Replacing a run of
+   section titles with a short `Description ▾` control takes away the thing that
+   was filling it — the 168px floor was justified by *"three section titles
+   cannot say anything in 168px"*, and a trigger needs none of that. **The column
+   widths have to be re-derived in the same change**, or the table is a narrow
+   control beside a lake of empty space.
+
+2. **Deleting markup and deleting its CSS are one commit, not two.** This
+   milestone removes the `Lang` column, the swatch's number and two `bz-tag`s —
+   and the project has a guard pointing in each direction:
+   `styling-references.test.ts` fails a `bz-` class no stylesheet answers to, and
+   `category-css.test.ts` fails a generated selector no component carries. Split
+   the change across two commits and one of them is red for a reason that reads
+   like the other one's fault.
+
+3. **All three views are in one document, so a description renders three times.**
+   MEASURED on the built catalog: 33 rows, 33 cards and 33 board items, and a
+   given module's title appears in the document three times over. 33 authored
+   sentences therefore become 99 copies of themselves.
+
+   The `<details name>` group is document-wide, which is harmless and in fact
+   exactly right — only one panel can be open anywhere, which is what the author
+   asked for. **What is not harmless is any `id` derived from a module's slug**:
+   three copies of `id="description-fundamentals-llms"` is invalid HTML and makes
+   every `aria-labelledby` pointing at it ambiguous. Scope generated ids per
+   VIEW, not per module.
+
+4. **Two writers already share `data-hl-view`**: `boot.ts` stamps it before first
+   paint and the toggle island sets it on every press (`Catalog.tsx`). Adding a
+   route default makes a third claimant, and the tie-break has to be stated
+   rather than discovered — **the level page must never SET the attribute.** Its
+   default is a fallback that only applies under `html:not([data-hl-view])`, so a
+   reader who toggles to Table and then follows another level link keeps Table,
+   because the attribute is already there and the fallback does not fire. Written
+   the other way — the page setting the attribute on arrival — the route would
+   override a choice the reader made one click earlier, which is the exact thing
+   D13 exists to prevent.
+
 ### What the review of this plan found, before a line of it was built
 
 The plan was reviewed on 2026-09-13 and **four of its factual claims were
@@ -2323,7 +2364,8 @@ read as instructions:
 
 And two things it decided that were not its to decide: the planned modules'
 fallback, and — in M21 — a claim that the suite never folds and restores the
-rail, when it does.
+rail, when it does. **It also named none of the four traps above**, three of
+which would have been met on the first afternoon of building.
 
 **None of these would have failed a test, because nothing had been built yet.**
 A plan is the one artefact whose only reviewer is a reader, which is the argument

@@ -794,6 +794,30 @@ describe('§16.1, §16.4 — the page itself: the account block, then your progr
       .filter((step) => step.level - step.previous > 1)
       .map((step) => `h${step.previous} → h${step.level}`)
     expect(skipped, 'the outline skips a level').toEqual([])
+
+    /* **AND THE INVERSION, which the check above cannot see.** A review proved
+       it: putting `ReportPanel`'s three headings back to `h2` — the defect M22
+       says it fixed — produces ZERO downward skips, because h3 → h2 is a step
+       UP and that check is one-directional. Nothing else pinned those levels,
+       so the fix was unguarded.
+
+       A heading inside a register row may not outrank the row it sits in.
+       Stated as the RELATION rather than as a level, so it survives §16.7
+       gaining or losing one. */
+    const levelOf = new Map(
+      [...PAGE.matchAll(/<h([1-6])[^>]*id="([^"]+)"/g)]
+        .map(([, level, id]) => [id, Number(level)] as const),
+    )
+    const rowLevels = REGISTER_ROWS
+      .map((row) => levelOf.get(row.id))
+      .filter((level): level is number => level !== undefined)
+    expect(rowLevels.length, 'no register row carries a heading').toBe(REGISTER_ROWS.length)
+
+    const deepestRow = Math.max(...rowLevels)
+    const outranking = [...levelOf.entries()]
+      .filter(([id, level]) => id.startsWith('hl-report-') && level <= deepestRow)
+      .map(([id, level]) => `${id} is h${level}, the rows are h${deepestRow}`)
+    expect(outranking, 'a panel heading outranks the register row it is inside').toEqual([])
   })
 
   /**

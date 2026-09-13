@@ -186,10 +186,16 @@ describe('an ancestor segment with no page of its own (§15.1)', () => {
    * router-tree case that follows them, which reads the filesystem instead.
    */
   it('names the segment but does not link it', () => {
+    /* The claim is the two `href: null`s. **The labels were the raw folder
+       names until M22's follow-up** — `auth` and `callback` over a heading
+       reading `Completing sign-in` — which is the defect M22 measured across
+       eight routes and missed on this one, because the guard it wrote for it
+       walked a hand-written list of routes that did not include this one. A
+       review walked all 61 exported routes and found it. */
     expect(breadcrumbFor('/auth/callback/', CATEGORIES)).toEqual([
       { label: 'Home', href: '/' },
-      { label: 'auth', href: null },
-      { label: 'callback', href: null },
+      { label: 'Signing in', href: null },
+      { label: 'Completing sign-in', href: null },
     ])
   })
 

@@ -16,9 +16,18 @@ import type { TocEntry } from '@/lib/content/render'
 export function TableOfContents({
   entries,
   activeId,
+  lang,
 }: {
   entries: readonly TocEntry[]
   activeId: string | null
+  /**
+   * M19 — the entries are the module's own headings, so on a Turkish page they
+   * are Turkish. It goes on the LIST rather than on the `<nav>`, because the
+   * nav's accessible name (`Sections`) is the interface's own word and stays
+   * English — one attribute per run of text, which is the rule the prose and
+   * the objectives card already follow.
+   */
+  lang?: string
 }) {
   if (entries.length === 0) return null
 
@@ -32,7 +41,12 @@ export function TableOfContents({
 
   return (
     <nav aria-label="Sections">
-      <ol role="list" className="bz-aside-list" data-hl-marks={marks ? '' : undefined}>
+      <ol
+        role="list"
+        className="bz-aside-list"
+        lang={lang}
+        data-hl-marks={marks ? '' : undefined}
+      >
         {entries.map((entry) => (
           <li key={entry.id}>
             <a

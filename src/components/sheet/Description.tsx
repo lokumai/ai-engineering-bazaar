@@ -28,8 +28,11 @@ import type { SheetRow } from '@/lib/content/rows'
  *
  * ## Why the group name is document-wide, and why that is right
  *
- * **MEASURED on the built catalog: a module renders three times** — 33 rows, 33
- * cards and 33 board items in one document — so 33 sentences are 99 elements.
+ * **MEASURED on the built catalog: 64 of these in one document.** A module
+ * renders three times — 33 rows, 33 cards and 33 board items — but the board
+ * draws no description, and one module has neither a summary nor a schedule of
+ * parts, so it is 32 in the table and 32 on the cards. (This said 99, which is
+ * what three views WOULD cost if the board carried one; a review counted.)
  * One `name` across all of them means only one panel can be open ANYWHERE,
  * which is exactly what the author asked for and costs nothing: two of the
  * three views are `display: none`, so the reader can only ever see one.

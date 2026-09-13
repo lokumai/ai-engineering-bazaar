@@ -1,3 +1,5 @@
+import { existsSync, readdirSync } from 'node:fs'
+import { join } from 'node:path'
 import { expect, test } from '@playwright/test'
 import { A0, INDEX_SHEET, SHEETS } from './sheets'
 
@@ -289,28 +291,46 @@ test('a tap opens the dropdown and leaves it open', async ({ browser }) => {
  * of "what each crumb should say" is a second author of the same names, which
  * is the defect `INDEX_TITLE` exists to prevent one route over.
  */
-const TRAILED = [
-  '/sheets/',
-  '/sheets/expert/',
-  '/courses/fundamentals/llms/',
-  '/profile/',
-  '/team/',
-  '/team/assignments/',
-  '/legend/',
-  '/legend/specimen/',
-  '/sign-in/',
-  '/sign-in/alias/',
-  '/join/',
-  /* M19 — the Turkish tree. `/tr/` is a language prefix and not a place, so the
-     trail runs `Home / Catalog / Fundamentals / <module>` exactly as the
-     English one does — the prefix is dropped before a crumb is built. It read
-     `Home / tr / Curriculum / …` before that: a raw slug naming a directory,
-     AND a third crumb pointing at a route M17 retired, because the retarget is
-     guarded on the first segment being `courses`. */
-  '/tr/courses/fundamentals/llms/',
-] as const
+/**
+ * **DERIVED FROM THE EXPORT, because a hand-written list missed one.** M22
+ * wrote this out by hand from the ten routes it had walked, and `/auth/callback/`
+ * was not among them — so the one route whose crumb it had NOT fixed was also
+ * the one route this could not fail on. A review walked all 61 exported routes
+ * and found it.
+ *
+ * The router tree is read from the filesystem, the same source
+ * `route-labels.test.ts` uses for `WITHOUT_A_PAGE`, so a route added tomorrow is
+ * covered the day it is added rather than the day somebody remembers this list.
+ */
+const TRAILED: string[] = (() => {
+  // `process.cwd()` and not `import.meta.dirname`: Playwright's transform
+  // does not give this file an `import.meta`, and the runner starts at the
+  // repo root.
+  const root = join(process.cwd(), 'out')
+  const found: string[] = []
+  const walk = (dir: string, route: string) => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      if (!entry.isDirectory()) continue
+      if (entry.name === '_next' || entry.name.startsWith('.')) continue
+      const next = `${route}${entry.name}/`
+      if (existsSync(join(dir, entry.name, 'index.html'))) found.push(next)
+      walk(join(dir, entry.name), next)
+    }
+  }
+  walk(root, '/')
+  /* `/` heads itself and the trail is its own single crumb, and `/404/` is the
+     not-found document served at every unknown address — neither names a page
+     the way the others do. Everything else is compared. */
+  return found.filter((route) => !['/404/', '/_not-found/'].includes(route)).sort()
+})()
 
 test('every trail names its page the way the page names itself', async ({ page }) => {
+  /* It visits every exported route — 61 of them since the list stopped being
+     hand-written — which is slower than the default budget allows under eight
+     parallel workers. MEASURED at 11s alone. The coverage is the point: the one
+     route M22 missed was the one its hand-written list left out. */
+  test.slow()
+
   const wrong: string[] = []
 
   for (const route of TRAILED) {

@@ -259,7 +259,19 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
       if (!current) return
       // Re-asked on the way out, not captured on the way in: focus may have
       // moved into the list during the grace period.
-      if (menu.current?.contains(document.activeElement)) return
+      //
+      // **AND IF IT HAS, WAIT FOR IT TO LEAVE RATHER THAN GIVING UP.** This
+      // returned, and returning wedged the panel open with no way out: the
+      // pointer is already outside so no second `pointerleave` can fire, and
+      // Escape is bound to this `<details>` so it never sees the key once focus
+      // has moved on to the page. MEASURED in Chrome — open, focus a menu link,
+      // move the pointer away, then focus something in `main`: the panel stayed
+      // open and Escape did nothing. A review found it; the docblock above was
+      // claiming four ways out while that state had none.
+      if (menu.current?.contains(document.activeElement)) {
+        armFocusOut()
+        return
+      }
       current.open = false
     }, CLOSE_DELAY_MS)
   }
@@ -268,6 +280,31 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
     if (timer.current === null) return
     clearTimeout(timer.current)
     timer.current = null
+  }
+
+  /**
+   * The one-shot that closes the panel when focus finally leaves the list.
+   *
+   * Only ever armed by `leave` above, and only in the state that used to wedge:
+   * the pointer has already gone, so the menu is open for a reader who is
+   * keyboarding through it and nothing else will ask it to close. `focusout`
+   * fires as focus moves; `relatedTarget` is where it is going, and `null`
+   * means it left the document entirely, which is not a reason to close.
+   */
+  function armFocusOut(): void {
+    const list = menu.current
+    if (!list) return
+
+    const onFocusOut = (event: FocusEvent) => {
+      const next = event.relatedTarget
+      if (next === null) return
+      if (next instanceof Node && list.contains(next)) return
+      list.removeEventListener('focusout', onFocusOut)
+      const current = panel.current
+      if (current) current.open = false
+    }
+
+    list.addEventListener('focusout', onFocusOut)
   }
 
   /**

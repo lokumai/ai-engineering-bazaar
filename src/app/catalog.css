@@ -559,11 +559,14 @@
 
   /* The description cell. `vertical-align: top` because an OPEN row is as tall
      as this cell and the mono values beside it would otherwise float to the
-     middle of it; `white-space: normal` because `.bz-table` sets `nowrap` for
-     the value columns and a sentence has to wrap. */
+     middle of it.
+
+     **`white-space: normal` was here and it was a no-op**, on a reason that was
+     simply untrue: it said `.bz-table` sets `nowrap` for the value columns, and
+     MEASURED on the built page `getComputedStyle(td.bz-row-value).whiteSpace`
+     is `normal`. Nothing had to be undone, so nothing is. */
   .bz-row-desc {
     vertical-align: top;
-    white-space: normal;
   }
 
   /* The completion column, which only the table draws.

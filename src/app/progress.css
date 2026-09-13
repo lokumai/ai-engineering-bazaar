@@ -327,6 +327,21 @@
     }
   }
 
+  /* **AND THE PROSE KEEPS A MEASURE**, which the fix above took away.
+
+     `auto-fit` had been capping this column at 662px by accident — badly, since
+     it also centred a 137px graphic in a 662px track — and giving the body the
+     rest of the row meant **1187px at 1440, about 176 characters a line**,
+     where every other paragraph on this page sets at 584. A review measured it
+     and it is the better defect to have: the block is no longer broken-looking,
+     it was merely unreadable.
+
+     `--layout-measure` rather than a number, because it is the same measure the
+     reading column uses and a second constant would be a second opinion. */
+  .bz-drafter-body {
+    max-width: var(--layout-measure);
+  }
+
   .bz-drafter-half {
     min-width: 0;
   }

@@ -53,8 +53,11 @@ import { ModuleRow, type RowColumn } from './ModuleRow'
  * and handed to the stylesheet as `--bz-table-min`. The flexible column
  * declares a `floor` instead of a width, which is the number it may not shrink
  * below; that is the term the old arithmetic supplied by hand. **MEASURED after
- * M20 moved the flexible column:** `description` sums to 976 and `both` to
- * 1144 — 736 fixed plus a 240 floor, and 904 fixed plus the same floor. Both
+ * M20 moved the flexible column:** `description` sums to 1010 and `both` to
+ * 1178 — 770 fixed plus a 240 floor, and 938 fixed plus the same floor. (It
+ * said 976 and 1144 for one commit: those were the sums BEFORE the same
+ * milestone widened `Completion` and `Requirements` to stop them clipping their
+ * own headers, and the second change did not move the first number.) Both
  * are wider than a phone and both still scroll inside their own container,
  * which is what §6.5 and §11.10 ask.
  */
@@ -194,8 +197,9 @@ export function SheetIndex({
       tabIndex={0}
       aria-label={label}
       // §6.5's overflow fade, measured by `Affordances` in the shell. At 390px
-      // this table is 1060px wide in a 350px box and five of its columns are
-      // off-screen; without the cue nothing says so.
+      // this table is 1178px wide in a 350px box and most of its columns are
+      // off-screen; without the cue nothing says so. (It read 1060px, which was
+      // the hand-computed constant M16 stage 4 replaced with this sum.)
       data-hl-scroller=""
     >
       <table

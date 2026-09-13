@@ -339,18 +339,54 @@ test('the home page is titled once, and the title claims no state (§15.2.2)', a
   expect(await page.locator('main h1').count(), 'the front door has one h1').toBe(1)
 })
 
-test('a row in the manifest is one tab stop, and it is reachable', async ({ page }) => {
+/**
+ * **This asserted ONE tab stop per row and it was passing against 65 on 33
+ * rows** — found by a review, and it had been wrong since the commit that made
+ * it wrong.
+ *
+ * Its selector was `tbody a, tbody [tabindex]`, which **cannot see a
+ * `<summary>`**. M20 put a description disclosure in every written row, so the
+ * real count is one link per row plus one summary per row that has a
+ * description — and the assertion went on comparing links to rows and agreeing
+ * with itself. The same commit corrected five prose references to the stretched
+ * row link and left the one test that asserts the consequence untouched.
+ *
+ * **Two stops per row is correct, and that is the point.** §5.3's "the whole
+ * row is one link target" described a stretched pseudo-element that M20
+ * measured out of existence; what a reader needs now is the title AND the
+ * disclosure, and both must be reachable. What may never happen is an
+ * UNBOUNDED or unpredictable number — a third control, or a focusable cell —
+ * so the claim is the composition rather than the total.
+ */
+test('a row in the manifest has exactly its link and its disclosure', async ({ page }) => {
   await page.goto(INDEX_SHEET)
   // M12 — the table is one of the catalog's three views and CSS reveals one
   // (D13). A hidden view's links are out of the tab order by design, which is
   // the point of that arrangement; the claim here is about the showing table.
   await showTable(page)
 
-  // §5.3 — the whole row is one link target, so it must not be two or three
-  // tab stops per row. One per row, however many rows the set has.
-  const stops = await page.locator('.bz-table tbody a, .bz-table tbody [tabindex]:not([tabindex="-1"])').count()
-  const rows = await page.locator('.bz-table tbody tr').count()
-  expect(stops).toBe(rows)
+  const counted = await page.evaluate(() => {
+    const rows = [...document.querySelectorAll('[data-view="table"] .bz-table tbody tr')]
+    return rows.map((row) => ({
+      links: row.querySelectorAll('a').length,
+      // `<summary>` IS a tab stop and matches neither `a` nor `[tabindex]`,
+      // which is exactly how this went unnoticed.
+      summaries: row.querySelectorAll('summary').length,
+      other: row.querySelectorAll(
+        'button, input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      ).length,
+    }))
+  })
+
+  expect(counted.length, 'the showing table has no rows').toBeGreaterThan(10)
+  // One link each, a disclosure on the rows that have something to disclose,
+  // and nothing else focusable anywhere in the row.
+  expect([...new Set(counted.map((row) => row.links))], 'a row has more than one link')
+    .toEqual([1])
+  expect([...new Set(counted.map((row) => row.summaries))].sort(), 'a row has two disclosures')
+    .toEqual([0, 1])
+  expect([...new Set(counted.map((row) => row.other))], 'a row grew a third control')
+    .toEqual([0])
 
   // The scroll region itself is focusable so a keyboard can reach the columns
   // that scroll (§10.3).

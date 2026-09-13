@@ -52,6 +52,7 @@ import { railLevels } from '@/lib/content/rail'
 import { type CourseModule, loadAllModules, loadModuleIn } from '@/lib/content/loader'
 import { quickCheckOf, summarySection } from '@/lib/content/quickcheck'
 import { renderMarkdown } from '@/lib/content/render'
+import { href } from '@/lib/url'
 import { scheduleOfParts, summarySentence } from '@/lib/content/schedule'
 import {
   carriesCheckedBy,
@@ -148,13 +149,20 @@ export async function sheetMetadata(
 
        Only where there IS a pair: a module with no translation declares
        nothing, for the same reason it has no picker. */
+    /* **`href()` and not a bare path.** MEASURED on the base-path build:
+       these three went out as `/courses/…` on every one of the 19 pairs —
+       **114 of 5,274 internal references missing the prefix**, where every
+       other reference on the site carries it. Next applies `basePath` to the
+       router and to `<Link>`, and NOT to a string in `alternates`; `lib/url.ts`
+       is what the rest of the codebase uses for exactly this reason, and this
+       is the one place M19 reached past it. */
     alternates: sheet.translation === null
       ? undefined
       : {
-          canonical: translatedPage ? `/tr/courses/${slug}/` : `/courses/${slug}/`,
+          canonical: href(translatedPage ? `/tr/courses/${slug}/` : `/courses/${slug}/`),
           languages: {
-            en: `/courses/${slug}/`,
-            tr: `/tr/courses/${slug}/`,
+            en: href(`/courses/${slug}/`),
+            tr: href(`/tr/courses/${slug}/`),
           },
         },
   }
@@ -325,8 +333,11 @@ export async function ModuleSheet({
   // M11 — the RIGHT rail: what is on this page, and what sits either side of
   // it in the dependency graph. A draft has neither: no sections, because §4.5
   // gives it one sentence and a schedule, and nothing to depend on it.
+  /* The contents rail is a list of the module's own h2s, so on a Turkish page
+     every entry is Turkish — `LLM nedir?`, `Bir LLM ne kadar büyük?`. Marked
+     for the same reason the heading is. */
   const rail = drawn ? (
-    <SheetRail toc={rendered?.toc.filter((entry) => entry.depth === 2) ?? []} />
+    <SheetRail toc={rendered?.toc.filter((entry) => entry.depth === 2) ?? []} lang={lang} />
   ) : null
 
   /* M16 stage 5 — the relations left the rail. `01` puts them behind the
@@ -383,6 +394,7 @@ export async function ModuleSheet({
          facts strip, the trail is what names the level on this page, so it
          had better be the part of the chrome that is right. */
       trailLeaf={sheet.frontmatter.title}
+      trailLeafLang={translated ? 'tr' : undefined}
     >
       <div className="bz-sheet" data-format={format}>
         {/* The rail's fold control used to be rendered here and M21 moved it
@@ -436,13 +448,12 @@ export async function ModuleSheet({
             center-aligned module content."* That is this box, level with the
             heading below, on its trailing edge.
 
-            **M21 builds nothing in it.** 33 `_tr.md` files exist and the
-            loader renders none of them, so a control here would switch
-            nothing — the claim §1 forbids, and the same reason the mockup's own
-            `TR` button and search field were both left out of the bar. M19 owns
-            the second language and is the only milestone that can make this do
-            something; this comment exists so M19 does not have to re-decide
-            where it goes.
+            **M21 built nothing in it and M19 filled it.** For three
+            milestones 33 `_tr.md` files existed and the loader rendered none,
+            so a control here would have switched nothing — the claim §1
+            forbids, and the same reason the mockup's own `TR` button and search
+            field were left out of the bar. M19 made the second language real,
+            so the slot holds `LanguagePicker` now.
 
             When it lands it is an ADDRESS and not a preference (M19's shape 1),
             which is what lets a reader send somebody a Turkish URL and what
@@ -454,7 +465,13 @@ export async function ModuleSheet({
           <LanguagePicker slug={slug} current={lang} />
         )}
 
-        <h1 className="bz-display">{sheet.frontmatter.title}</h1>
+        {/* M19 — a review enumerated every `lang` on a built Turkish page and
+            found exactly two: the picker's own link and the prose. The heading
+            is Turkish and was unmarked, which is the same defect as leaving the
+            objectives unmarked, pointed the other way. */}
+        <h1 className="bz-display" lang={translated ? 'tr' : undefined}>
+          {sheet.frontmatter.title}
+        </h1>
 
         <FactsStrip facts={facts} />
 

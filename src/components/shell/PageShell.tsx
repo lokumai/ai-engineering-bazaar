@@ -62,6 +62,7 @@ export function PageShell({
   trail = true,
   trailLabel,
   trailLeaf,
+  trailLeafLang,
 }: {
   children: React.ReactNode
   /** §5.2 — `MODULE 13 OF 33`. Omitted, the footer names the route instead. */
@@ -89,6 +90,8 @@ export function PageShell({
    * from `trailLabel`, which COLLAPSES the trail; see `Breadcrumb`.
    */
   trailLeaf?: string
+  /** M19 — which language `trailLeaf` is in, where that is not the page's. */
+  trailLeafLang?: string
   /**
    * What the trail's last crumb says, for the one route whose address names
    * nothing. See `Breadcrumb`'s own note: the not-found page hands this over
@@ -130,10 +133,10 @@ export function PageShell({
       )}
       {trail && (column ? (
         <div className="bz-col">
-          <Breadcrumb categories={categoryLabels()} current={trailLabel} leaf={trailLeaf} />
+          <Breadcrumb categories={categoryLabels()} current={trailLabel} leaf={trailLeaf} leafLang={trailLeafLang} />
         </div>
       ) : (
-        <Breadcrumb categories={categoryLabels()} current={trailLabel} leaf={trailLeaf} />
+        <Breadcrumb categories={categoryLabels()} current={trailLabel} leaf={trailLeaf} leafLang={trailLeafLang} />
       ))}
       {column ? <div className="bz-col">{children}</div> : children}
     </>

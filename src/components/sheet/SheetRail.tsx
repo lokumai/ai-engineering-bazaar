@@ -42,7 +42,20 @@ import { SectionSpine } from './SectionSpine'
  * numbers beside the prose. `04`'s aside kept a facts block; `01` dropped it
  * for the same reason.
  */
-export function SheetRail({ toc }: { toc: readonly TocEntry[] }) {
+export function SheetRail({
+  toc,
+  lang,
+}: {
+  toc: readonly TocEntry[]
+  /**
+   * M19 — which language the ENTRIES are in. The label above them is the
+   * interface's own word and stays English either way, so the attribute goes on
+   * the list and not on this fragment: `On this page` sitting inside a
+   * `lang="tr"` box would be read in the wrong voice, which is the defect the
+   * marking exists to prevent.
+   */
+  lang?: 'en' | 'tr'
+}) {
   return (
     <>
       {toc.length > 0 && (
@@ -50,7 +63,7 @@ export function SheetRail({ toc }: { toc: readonly TocEntry[] }) {
           On this page
         </b>
       )}
-      <SectionSpine entries={toc} />
+      <SectionSpine entries={toc} lang={lang === 'tr' ? 'tr' : undefined} />
     </>
   )
 }

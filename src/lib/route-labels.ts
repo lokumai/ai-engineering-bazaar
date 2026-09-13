@@ -129,7 +129,10 @@ const INDEX_SEGMENT = 'sheets'
  * and the rest came with it because it is one table.
  *
  * **The invariant is that a crumb matches the heading of the page it opens** —
- * `route-labels.test.ts` asserts it against the built export now, which is the
+ * `tests/e2e/navigation.spec.ts` asserts it against the built export, walking
+ * the routes and comparing each trail's last crumb to that page's own `h1`.
+ * (This named `route-labels.test.ts`, which is a unit test of this module and
+ * has no such comparison in it; a review caught the wrong file.) It is the
  * same argument the block below makes about `INDEX_TITLE`: a label and its
  * destination need one author. A module's own leaf comes from the page instead
  * (`PageShell`'s `trailLeaf`), because only the server knows a module's title.
@@ -145,6 +148,13 @@ const ROUTE_TITLES: Record<string, string> = {
   'sign-in': 'Sign in',
   alias: 'Choose an alias',
   join: 'Join an organisation',
+  /* M22 filled this table from the ten routes it walked and MISSED ONE, which
+     is the argument against a hand-written list twice over: `/auth/callback/`
+     read `Home / auth / callback` over a heading saying `Completing sign-in`,
+     and it went unnoticed because the guard's own route list was hand-written
+     too. A review walked all 61 exported routes instead and found it. */
+  auth: 'Signing in',
+  callback: 'Completing sign-in',
 }
 
 /**

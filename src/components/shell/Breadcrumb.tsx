@@ -54,6 +54,7 @@ export function Breadcrumb({
   categories,
   current,
   leaf,
+  leafLang,
 }: {
   categories: readonly CategoryLabel[]
   /** COLLAPSES the trail to the root and this name. See below. */
@@ -74,6 +75,12 @@ export function Breadcrumb({
    * gone — so collapsing the trail would have taken the carrier out with it.
    */
   leaf?: string
+  /**
+   * M19 — which language `leaf` is in, where that is not the document's. A
+   * module's last crumb is its own title, so on a Turkish page it is Turkish;
+   * every other crumb is the interface's word for a route and stays English.
+   */
+  leafLang?: string
 }) {
   const derived = breadcrumbFor(usePathname() ?? '/', categories, useSelectedLayoutSegment())
   /* The ROOT and the page's own name, and nothing between them. Overriding
@@ -85,7 +92,7 @@ export function Breadcrumb({
   const named = current === undefined ? derived : [derived[0], { label: current, href: null }]
   const crumbs = leaf === undefined || named.length === 0
     ? named
-    : [...named.slice(0, -1), { ...named[named.length - 1], label: leaf }]
+    : [...named.slice(0, -1), { ...named[named.length - 1], label: leaf, lang: leafLang }]
 
   return (
     <nav aria-label="Curriculum" className="bz-crumb">
@@ -104,7 +111,19 @@ export function Breadcrumb({
                 </span>
               )}
               {crumb.href === null ? (
-                <span aria-current="page" className="truncate">
+                /* **`aria-current="page"` ONLY on the last crumb.** A crumb
+                   carries no href for two different reasons — it is this page,
+                   or it is an ancestor with no page of its own
+                   (`WITHOUT_A_PAGE`, which `/auth/` is) — and this marked both.
+                   MEASURED on `/auth/callback/`: two elements in one nav both
+                   claiming to be the current page, which a screen reader has to
+                   resolve for the reader and cannot. Found by the trail guard
+                   the moment it stopped walking a hand-written route list. */
+                <span
+                  aria-current={last ? 'page' : undefined}
+                  className="truncate"
+                  lang={'lang' in crumb ? (crumb as { lang?: string }).lang : undefined}
+                >
                   {crumb.label}
                 </span>
               ) : (

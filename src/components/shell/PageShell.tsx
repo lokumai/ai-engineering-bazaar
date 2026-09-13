@@ -1,3 +1,4 @@
+import { RailTab } from '@/components/curriculum/RailFold'
 import { ClaimReceipt } from '@/components/record/ClaimReceipt'
 import { Readout } from '@/components/record/Readout'
 import { categoryLabels } from '@/lib/content/chrome'
@@ -60,6 +61,7 @@ export function PageShell({
   column = true,
   trail = true,
   trailLabel,
+  trailLeaf,
 }: {
   children: React.ReactNode
   /** §5.2 — `MODULE 13 OF 33`. Omitted, the footer names the route instead. */
@@ -81,6 +83,12 @@ export function PageShell({
   column?: boolean
   /** The breadcrumb. Off only where a trail would name a page nobody navigated to. */
   trail?: boolean
+  /**
+   * M21 — the last crumb's own name, where the address does not supply one.
+   * A module's segment is its slug, so the trail read `… / llms`. Distinct
+   * from `trailLabel`, which COLLAPSES the trail; see `Breadcrumb`.
+   */
+  trailLeaf?: string
   /**
    * What the trail's last crumb says, for the one route whose address names
    * nothing. See `Breadcrumb`'s own note: the not-found page hands this over
@@ -122,10 +130,10 @@ export function PageShell({
       )}
       {trail && (column ? (
         <div className="bz-col">
-          <Breadcrumb categories={categoryLabels()} current={trailLabel} />
+          <Breadcrumb categories={categoryLabels()} current={trailLabel} leaf={trailLeaf} />
         </div>
       ) : (
-        <Breadcrumb categories={categoryLabels()} current={trailLabel} />
+        <Breadcrumb categories={categoryLabels()} current={trailLabel} leaf={trailLeaf} />
       ))}
       {column ? <div className="bz-col">{children}</div> : children}
     </>
@@ -146,6 +154,21 @@ export function PageShell({
     <>
       {rail === undefined ? main : (
         <div className="bz-shell" data-bz-aside={aside === undefined ? undefined : ''}>
+          {/* M21 — THE FOLD CONTROL, and it is here rather than in the page
+              because of the TAB ORDER.
+
+              It is `position: fixed`, so where it sits in the document decides
+              nothing about where it draws — and everything about when a
+              keyboard reader reaches it. The module page rendered it inside its
+              own content, which put it after the rail's 33 links and the whole
+              reading column: MEASURED, Tab did not reach it in 30 presses, so
+              the one control that hides the rail sat behind the rail.
+
+              It cannot go INSIDE the rail either, which is where the button it
+              replaces lived: a folded rail is `visibility: hidden`, and that is
+              deliberately what takes its contents out of the tab order. So it
+              sits immediately before the rail — outside it, ahead of it. */}
+          <RailTab />
           <aside className="bz-rail">
             <div className="bz-rail-inner">{rail}</div>
           </aside>

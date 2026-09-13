@@ -799,8 +799,15 @@ test.describe('M16 stage 4 — the catalog', () => {
 
 test.describe('M16 stage 5 — the reading page', () => {
   /** What every reading page has, whatever the module says. */
+  /* `tag` left this list in M21 and it is in `DELIBERATELY_ABSENT` with the
+     reason. The author asked for the line under a module's title to be plain
+     text, so the two tags went and nothing in the product renders a `.bz-tag`
+     any more — while `.bz-tag` itself stays in the language, transcribed from
+     `01`'s own `.tag` and still compared by `transcription.test.ts`. Leaving
+     it here would fail on the mockup drawing one and the page drawing none,
+     which is exactly what the self-check above is for. */
   const BUILT: readonly Role[] = [
-    'crumb', 'display', 'tag', 'section', 'card',
+    'crumb', 'display', 'section', 'card',
     'actions', 'buttonPrimary', 'buttonQuiet', 'pager', 'pagerItem', 'asideLink',
   ]
 

@@ -29,10 +29,17 @@ import { INDEX_SHEET, SHEETS } from './sheets'
  */
 
 interface Sheet {
-  /** The strip's third span, or `null` where the module prints none. */
+  /**
+   * The strip's whole text, or `null` where the module prints no strip.
+   *
+   * M21 — it was the strip's THIRD SPAN, because the first two were tags
+   * naming the level and the module's place in it. The author asked for the
+   * line to be plain text and both tags went; a drawn module's strip is the
+   * one line, and a module nobody has written has no strip at all.
+   */
   facts: string | null
-  /** Every tag in the strip, in order. */
-  tags: string[]
+  /** The breadcrumb's own segments, which is where the level is named now. */
+  crumbs: string[]
   diagrams: number
   images: number
   tables: number
@@ -42,14 +49,17 @@ interface Sheet {
 
 const read = () => {
   const strip = document.querySelector('.bz-facts')
-  const tags = [...(strip?.querySelectorAll('.bz-tag') ?? [])].map(
-    (tag) => tag.textContent?.trim() ?? '',
-  )
-  const spans = [...(strip?.children ?? [])].filter((node) => !node.classList.contains('bz-tag'))
+  const text = strip?.textContent?.trim() ?? ''
 
   return {
-    facts: spans[0]?.textContent?.trim() ?? null,
-    tags,
+    facts: text === '' ? null : text,
+    // Named by the landmark rather than by a class: the level has to be
+    // readable off something a fold cannot hide and forced colours cannot
+    // flatten, and the trail is that. The rail names it too and the rail can
+    // be folded away.
+    crumbs: [...document.querySelectorAll('nav[aria-label="Curriculum"] a, nav[aria-label="Curriculum"] span')]
+      .map((node) => node.textContent?.trim() ?? '')
+      .filter((word) => word !== '' && word !== '/'),
     diagrams: document.querySelectorAll('.bz-fig.bz-diagram').length,
     images: document.querySelectorAll('.bz-fig.bz-image').length,
     tables: document.querySelectorAll('.bz-fig.bz-tablefig').length,
@@ -69,18 +79,24 @@ for (const sheet of DRAWN) {
     await page.goto(sheet.path)
     const found: Sheet = await page.evaluate(read)
 
-    // Two tags: the level it belongs to, and its place in that level. Both
-    // named rather than counted, so neither can be a number from another
-    // module's page.
-    expect(found.tags, `${sheet.path} tags`).toHaveLength(2)
-    expect(found.tags[0], `${sheet.path} level`).not.toBe('')
-    expect(found.tags[1], `${sheet.path} position`).toMatch(/^Module \d+ of \d+$/)
+    /* M21 — the strip is `25 min · 2,317 words` and nothing else. It was two
+       tags and a third span carrying the language as well; the author asked
+       for plain text, and every fact that left is still stated somewhere:
+       the level by the trail below, the position by the footer (which
+       `site-footer.spec.ts` asserts on all thirty-three), and the language by
+       nothing, because the site cannot serve it (M19).
 
-    // A drawn module has been counted, so it prints what it counted — in the
-    // mockup's own grammar, and every term of it non-empty. The dash means
-    // "nobody counted this" and belongs to the modules nobody has drawn.
-    expect(found.facts, `${sheet.path} facts`)
-      .toMatch(/^\d+ min · [\d,]+ words · EN( · TR)?$/)
+       A drawn module has been counted, so it prints what it counted, and
+       every term of it is non-empty. The dash means "nobody counted this" and
+       belongs to the modules nobody has drawn. */
+    expect(found.facts, `${sheet.path} facts`).toMatch(/^\d+ min · [\d,]+ words$/)
+
+    // THE LEVEL IS STILL NAMED, in words, on something no fold can hide: the
+    // trail. This is the carrier the level tag handed off to, and asserting it
+    // here is what makes removing the tag a move rather than a loss.
+    expect(found.crumbs.length, `${sheet.path} has no trail to name a level in`)
+      .toBeGreaterThan(2)
+    expect(found.crumbs[2] ?? '', `${sheet.path} names no level in its trail`).not.toBe('')
 
     // The figures are still on the page even though no row counts them now, and
     // a module that renders none is a module whose strip should not be implying
@@ -99,16 +115,19 @@ for (const sheet of NOT_DRAWN) {
 
     /*
       §4.5 item 4 asked for a row of dashes — `EXTENT —`, `FIGURES —`,
-      `SOURCES —`. A module nobody has drawn now prints NO third span at all,
-      which says the same thing without four dashes saying it four times: the
-      status band above it already reads `Planned · Schedule of parts only`.
+      `SOURCES —`. A module nobody has drawn prints NO STRIP AT ALL, which says
+      the same thing without four dashes saying it four times: the status band
+      above it already reads `Planned · Schedule of parts only`. (It used to
+      print two tags and no third span; M21 took the tags off every module, so
+      what was an empty slot is now an absent element.)
 
       Absence rather than a dash is the stronger check too. A dash is a string
       a bug could produce; a missing span cannot be produced by a derivation
       that has started counting a draft as drawn.
     */
-    expect(found.tags, `${sheet.path} tags`).toHaveLength(2)
     expect(found.facts, `${sheet.path} claims a length it has not drawn`).toBeNull()
+    // And its level is still named, by the trail, exactly as a drawn one's is.
+    expect(found.crumbs[2] ?? '', `${sheet.path} names no level in its trail`).not.toBe('')
 
     // And it renders nothing to count either, which is what makes the absence
     // above honest rather than merely quiet.
@@ -118,8 +137,7 @@ for (const sheet of NOT_DRAWN) {
 }
 
 /**
- * M20 — **THE INDEX NO LONGER STATES A LANGUAGE, so this checks the surface
- * that still does.**
+ * M20 and M21 — **NOTHING STATES A LANGUAGE ANY MORE, and this is what says so.**
  *
  * It used to read the `LANG` column off §4.8's table and cross-check it
  * against every module's own facts strip: two renderings of one fact, which is
@@ -128,16 +146,20 @@ for (const sheet of NOT_DRAWN) {
  * site renders none of those 33 files. The listing was stating a translation
  * it cannot serve.
  *
- * **The invariant did not go with the column.** That a draft is `EN` and a
- * drawn sheet is `EN` or `EN · TR` is checked against the loader in
- * `tests/unit/content/derive.test.ts`, over every module. What only a browser
- * can check is that the surface a reader sees agrees with it, and there is one
- * such surface left — the module's own facts strip. So this reads that.
+ * M20 took `EN · TR` off the catalog's table and cards; **M21 took it off the
+ * module's own facts strip**, which was the last surface printing it. The site
+ * renders none of the 33 `_tr.md` files, so every one of those was a claim it
+ * could not honour.
  *
- * M21 removes it from there too, and when it does this test has nothing left
- * to read: the language stops being a printed fact and becomes M19's switcher,
- * which is a URL. That is the milestone that deletes this, and it deletes it
- * with the capability moved rather than dropped.
+ * **The invariant did not go with them.** That a draft is `EN` and a drawn
+ * sheet is `EN` or `EN · TR` is checked against the loader in
+ * `tests/unit/content/derive.test.ts`, over every module — the fact is still
+ * true of the repository and still tested where it lives. What this asserts is
+ * the thing only a browser can: that no surface a reader meets makes the claim.
+ *
+ * **M19 is what makes it true, and it makes it an address rather than a
+ * printed word.** When it lands, this test gains the switcher instead of
+ * losing the case.
  */
 test('every module states its own language, and no listing states one', async ({ page }) => {
   await page.goto(INDEX_SHEET)
@@ -160,9 +182,9 @@ test('every module states its own language, and no listing states one', async ({
     await page.goto(sheet.path)
     const facts = await page.evaluate(read)
     expect(facts.facts, `${sheet.path} states no facts`).not.toBeNull()
-    const lang = (facts.facts as string).split('·').pop()?.trim() ?? ''
-    expect(lang, `module ${sheet.module}`).toMatch(/^EN( · TR)?$|^TR$/)
-    if ((facts.facts as string).includes('EN · TR')) bilingual += 1
+    expect(facts.facts as string, `${sheet.path} still states a language`)
+      .not.toMatch(/\bEN\b|\bTR\b/)
+    bilingual += 1
   }
-  expect(bilingual, 'no module claims a translation').toBeGreaterThan(0)
+  expect(bilingual, 'no module was checked').toBeGreaterThan(0)
 })

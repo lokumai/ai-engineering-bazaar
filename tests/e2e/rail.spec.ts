@@ -54,8 +54,10 @@ async function tabWalk(page: Page, presses: number): Promise<string[]> {
       await page.evaluate(() => {
         const active = document.activeElement
         if (!active) return 'none'
-        if (active.hasAttribute('data-bz-rail-hide')) return 'hide'
-        if (active.hasAttribute('data-bz-rail-restore')) return 'restore'
+        // M21 — one control, one identity. It was two (`hide` in the rail's
+        // head and `restore` on the window's edge) and the author asked for
+        // one; `toggle` is what both used to be.
+        if (active.hasAttribute('data-bz-rail-toggle')) return 'toggle'
         const classes = (active.className ?? '').toString()
         // Scoped to the rail on purpose: the bar's own level dropdown is a
         // `<summary>` as well, and an unscoped check reported the navbar's
@@ -172,7 +174,7 @@ test.describe('the fold', () => {
     const openColumn = await columnWidth(page)
     expect(open).toBeGreaterThan(0)
 
-    await page.locator('[data-bz-rail-hide]').click()
+    await page.locator('[data-bz-rail-toggle]').click()
     // Measured after the 200ms fold rather than at a frame count.
     await expect.poll(() => railTrack(page), { timeout: 2_000 }).toBe(0)
     const foldedColumn = await columnWidth(page)
@@ -184,9 +186,74 @@ test.describe('the fold', () => {
     expect(foldedColumn).toBeGreaterThan(openColumn)
     expect(foldedColumn - openColumn).toBe(open)
 
-    await page.locator('[data-bz-rail-restore]').click()
+    await page.locator('[data-bz-rail-toggle]').click()
     await expect.poll(() => railTrack(page), { timeout: 2_000 }).toBe(open)
     expect(await columnWidth(page)).toBe(openColumn)
+  })
+
+  /**
+   * M21 — **and the rail's OWN box comes back, which is the thing the test
+   * above never looked at.**
+   *
+   * The author reported it with the condition attached, which is what made it
+   * findable: *"the left sidebar has no margin with the left of the screen and
+   * some parts of it … is hidden under the laptop display edge. BUT THIS ONLY
+   * HAPPENS AFTER I CLOSE THE LEFT SIDEBAR AND OPEN IT AGAIN!"*
+   *
+   * The test above folds and restores and asserts the grid track and the
+   * reading column, and **both of those always came back correctly** — which is
+   * why 1,138 green tests ran straight through this for three milestones. What
+   * did not come back was `scrollLeft`: `.bz-rail-inner` was a pixel wider than
+   * the rail's content box, `overflow-x: hidden` is still a scroll container,
+   * and the fold's focus hand-off scrolled it by that pixel with no way back.
+   *
+   * So this measures the box rather than the track, and it measures it against
+   * FIRST PAINT rather than against a constant — the numbers are the language's
+   * to change, and what may never change is that folding and restoring is a
+   * round trip.
+   */
+  test('folding and restoring returns the rail to the box it had', async ({ page }) => {
+    await page.goto(A0.path)
+    await waitForHydratedReadout(page)
+
+    const box = () => page.evaluate(() => {
+      const rail = document.querySelector('.bz-rail')
+      const head = document.querySelector('.bz-rail-head')
+      if (!rail || !head) return null
+      return {
+        scrollLeft: rail.scrollLeft,
+        // Zero is the invariant, not a small number: any inline overflow at all
+        // is an offset waiting to be latched by the next focus move.
+        inlineOverflow: rail.scrollWidth - rail.clientWidth,
+        left: Math.round(rail.getBoundingClientRect().left),
+        headLeft: Math.round(head.getBoundingClientRect().left),
+      }
+    })
+
+    const open = await railTrack(page)
+    expect(open, 'no rail on this route').toBeGreaterThan(0)
+
+    const first = await box()
+    expect(first, 'no rail on this route').not.toBeNull()
+    expect(first!.scrollLeft, 'the rail starts scrolled').toBe(0)
+    expect(first!.inlineOverflow, 'the rail overflows itself before anything is clicked').toBe(0)
+    expect(first!.headLeft).toBeGreaterThan(first!.left)
+
+    // Twice, because a defect that latches does it once and then looks stable.
+    for (let cycle = 0; cycle < 2; cycle += 1) {
+      await page.locator('[data-bz-rail-toggle]').click()
+      await expect.poll(() => railTrack(page), { timeout: 2_000 }).toBe(0)
+      await page.locator('[data-bz-rail-toggle]').click()
+      /* Back to the FULL open width, not merely to non-zero. The fold eases
+         over 200ms, and a reading taken the moment the track leaves zero
+         catches the column part-way: MEASURED, the rail reported 149px of
+         inline overflow, which is its 262px inner against a column still
+         opening. Every number here is a mid-flight artefact until this
+         settles. */
+      await expect.poll(() => railTrack(page), { timeout: 2_000 }).toBe(open)
+    }
+
+    expect(await box(), 'the rail did not come back to the box it had').toEqual(first)
   })
 
   test('is remembered per reader, and is right in the first frame', async ({ page }) => {
@@ -199,7 +266,7 @@ test.describe('the fold', () => {
     // an independent review caught red in a full run at 8 workers (railWidth
     // 203, expected 0) while it passed 6/6 alone.
     await waitForHydratedReadout(page)
-    await page.locator('[data-bz-rail-hide]').click()
+    await page.locator('[data-bz-rail-toggle]').click()
     await expect.poll(() => railTrack(page), { timeout: 2_000 }).toBe(0)
 
     // Written through the record store and nowhere else
@@ -285,7 +352,7 @@ test.describe('the fold', () => {
           })
       })
 
-      await page.locator('[data-bz-rail-hide]').click()
+      await page.locator('[data-bz-rail-toggle]').click()
       await expect.poll(() => railTrack(page), { timeout: 3_000 }).toBe(0)
 
       const ran = await page.evaluate(
@@ -322,66 +389,146 @@ test.describe('the fold', () => {
     await page.goto(A0.path)
 
     const open = await tabWalk(page, 26)
-    expect(open, 'the fold control is not reachable by Tab').toContain('hide')
+    expect(open, 'the fold control is not reachable by Tab').toContain('toggle')
     expect(open, 'the levels are not reachable by Tab').toContain('level')
     expect(open, 'the module links are not reachable by Tab').toContain('module')
     expect(open, 'the restore tab is reachable while the rail is open')
       .not.toContain('restore')
 
-    await page.locator('[data-bz-rail-hide]').click()
+    await page.locator('[data-bz-rail-toggle]').click()
     await expect.poll(() => railTrack(page), { timeout: 2_000 }).toBe(0)
 
     // A fresh document so the walk starts at the top rather than wherever the
     // click left focus, and folded from the first frame by channel A.
     await page.goto(A0.path)
     const folded = await tabWalk(page, 26)
-    expect(folded, 'the restore tab is not reachable by Tab').toContain('restore')
+    expect(folded, 'the fold control is not reachable by Tab').toContain('toggle')
     expect(folded, 'a folded rail still puts its modules in the tab order')
       .not.toContain('module')
     expect(folded, 'a folded rail still puts its levels in the tab order')
       .not.toContain('level')
-    expect(folded, 'a folded rail still puts its fold control in the tab order')
-      .not.toContain('hide')
   })
 
-  test('hands focus to whichever control is on screen', async ({ page }) => {
+  /**
+   * M21 — **the hand-off is gone because the control no longer moves**, and
+   * what replaces it is the stronger property.
+   *
+   * D17 recorded a real hole: folding hid the button that did the folding, and
+   * `visibility: hidden` removes an element from the tab order, so focus was
+   * dropped on the floor unless each control handed it to its counterpart.
+   * With ONE control that is on screen in both states there is nothing to hand
+   * off — and the hand-off was the very thing that scrolled the rail's box and
+   * latched the offset this milestone also fixes.
+   *
+   * So the assertion is that focus NEVER MOVES: press the control, the rail
+   * folds, and the same element still has focus — which is what D17 was trying
+   * to buy in the first place.
+   */
+  test('keeps focus on the one control through a fold and a restore', async ({ page }) => {
     await page.goto(A0.path)
+    const toggle = page.locator('[data-bz-rail-toggle]')
 
-    await page.locator('[data-bz-rail-hide]').click()
-    await expect(page.locator('[data-bz-rail-restore]')).toBeFocused()
+    await toggle.focus()
+    await page.keyboard.press('Enter')
+    await expect(page.locator('html')).toHaveAttribute('data-bz-rail', 'folded')
+    await expect(toggle, 'focus was dropped when the rail folded').toBeFocused()
 
     await page.keyboard.press('Enter')
-    await expect(page.locator('[data-bz-rail-hide]')).toBeFocused()
+    await expect(page.locator('html')).not.toHaveAttribute('data-bz-rail', 'folded')
+    await expect(toggle, 'focus was dropped when the rail came back').toBeFocused()
   })
 
-  test('rings both controls when the keyboard reaches them', async ({ page }) => {
+  /**
+   * And its NAME changes with the state, on channel A rather than in React.
+   *
+   * A single control has to say which way it goes, and a reader whose rail was
+   * folded last week meets it in frame one — so both faces are in the markup
+   * and CSS reveals one. The hidden face is `display: none`, which takes it out
+   * of the accessible name computation, so exactly one name is announced.
+   */
+  test('says which way it goes, and says only one thing at a time', async ({ page }) => {
+    await page.goto(A0.path)
+    const toggle = page.locator('[data-bz-rail-toggle]')
+
+    const named = () => toggle.evaluate((node) => (node.textContent ?? '').trim())
+    const announced = () => toggle.evaluate((node) =>
+      [...node.querySelectorAll('*')]
+        .filter((child) => child.children.length === 0
+          && (child.textContent ?? '').trim() !== ''
+          && getComputedStyle(child).display !== 'none'
+          && getComputedStyle(child.parentElement as Element).display !== 'none')
+        .map((child) => (child.textContent ?? '').trim()))
+
+    // Both faces are in the DOM — that is what makes the label right before
+    // any script runs — and exactly one of them is in the accessible tree.
+    expect(await named()).toContain('Hide the curriculum')
+    expect(await named()).toContain('Show the curriculum')
+    expect(await announced()).toEqual(['Hide the curriculum'])
+
+    await toggle.click()
+    await expect(page.locator('html')).toHaveAttribute('data-bz-rail', 'folded')
+    expect(await announced()).toEqual(['Show the curriculum'])
+  })
+
+  /**
+   * M21 — **and it is reached BEFORE the rail, not after it.**
+   *
+   * One control replaced two, and the one that is left is `position: fixed` —
+   * so where it sits in the document decides nothing about where it draws and
+   * everything about when Tab arrives at it. Rendered inside the page's own
+   * content, as the tab it replaced was, **Tab did not reach it in 30 presses**:
+   * the control that hides the rail sat behind the rail's 33 links. It is
+   * rendered immediately before the rail now.
+   *
+   * The bound is deliberately tight. `toBeLessThan(30)` would pass on a control
+   * reached after the whole curriculum; what this is protecting is that the
+   * fold is one of the first things a keyboard reader meets, so the number is
+   * small enough to fail if it ever goes back behind the rail.
+   */
+  test('is reached early by Tab, and rings when it is', async ({ page }) => {
     await page.goto(A0.path)
 
-    const ring = (selector: string) =>
-      page.locator(selector).evaluate((node) => {
+    const ring = () =>
+      page.locator('[data-bz-rail-toggle]').evaluate((node) => {
         const style = getComputedStyle(node)
         return { width: parseFloat(style.outlineWidth), style: style.outlineStyle }
       })
 
-    // The ring is a `:focus-visible` treatment, so focus has to arrive from
-    // the keyboard for it to be painted at all.
-    let walked = 0
-    while (walked < 30) {
-      await page.keyboard.press('Tab')
-      walked += 1
-      const onHide = await page.evaluate(
-        () => document.activeElement?.hasAttribute('data-bz-rail-hide') ?? false,
-      )
-      if (onHide) break
-    }
-    expect(walked, 'Tab never reached the fold control').toBeLessThan(30)
-    const hideRing = await ring('[data-bz-rail-hide]')
-    expect(hideRing.width, 'no focus ring on the fold control').toBeGreaterThan(0)
+    /* BEFORE THE RAIL, stated as the relation rather than as a count. A
+       number would be the bar's control count written down in a second place,
+       and it would go stale the day the bar gains one — MEASURED at 8 today,
+       which is the skip link, the brand, three nav items, the theme toggle and
+       the repository link. What may never change is the ORDER: a reader must
+       not have to tab through the thing in order to reach the control that
+       hides it. */
+    const walk = await tabWalk(page, 30)
+    const control = walk.indexOf('toggle')
+    const firstInRail = walk.findIndex((stop) => stop === 'level' || stop === 'module')
 
+    expect(control, 'Tab never reached the fold control').toBeGreaterThanOrEqual(0)
+    expect(firstInRail, 'the walk never entered the rail, so nothing was compared')
+      .toBeGreaterThanOrEqual(0)
+    expect(control, 'the fold control sits behind the rail it folds')
+      .toBeLessThan(firstInRail)
+
+    // Focus is wherever the walk left it; put it back on the control by the
+    // keyboard, because the ring is a `:focus-visible` treatment and a
+    // `.focus()` call does not paint one.
+    while (walk.length > 0) {
+      const on = await page.evaluate(
+        () => document.activeElement?.hasAttribute('data-bz-rail-toggle') ?? false,
+      )
+      if (on) break
+      await page.keyboard.press('Shift+Tab')
+    }
+    expect((await ring()).width, 'no focus ring on the fold control').toBeGreaterThan(0)
+
+    // And again in the folded state, because it is the same element and the
+    // ring is the only thing telling a keyboard reader where they are.
     await page.keyboard.press('Enter')
-    await expect(page.locator('[data-bz-rail-restore]')).toBeFocused()
-    const restoreRing = await ring('[data-bz-rail-restore]')
-    expect(restoreRing.width, 'no focus ring on the restore tab').toBeGreaterThan(0)
+    await expect(page.locator('html')).toHaveAttribute('data-bz-rail', 'folded')
+    await expect(page.locator('[data-bz-rail-toggle]')).toBeFocused()
+    expect((await ring()).width, 'no focus ring once folded').toBeGreaterThan(0)
   })
 
   /**
@@ -400,10 +547,10 @@ test.describe('the fold', () => {
     // full suite at 8 workers produced a different one of them red on each of
     // four runs until all three waited.
     await waitForHydratedReadout(page)
-    await page.locator('[data-bz-rail-hide]').click()
+    await page.locator('[data-bz-rail-toggle]').click()
     await expect.poll(() => railTrack(page), { timeout: 2_000 }).toBe(0)
 
-    const box = await page.locator('[data-bz-rail-restore]').boundingBox()
+    const box = await page.locator('[data-bz-rail-toggle]').boundingBox()
     expect(box, 'the restore tab has no box').not.toBeNull()
 
     // Against the window's left edge, and clear of the sticky bar.
@@ -416,7 +563,7 @@ test.describe('the fold', () => {
     const hit = await page.evaluate(
       ([x, y]) => {
         const element = document.elementFromPoint(x, y)
-        return element?.closest('[data-bz-rail-restore]') !== null
+        return element?.closest('[data-bz-rail-toggle]') !== null
       },
       [box!.x + box!.width / 2, box!.y + box!.height / 2],
     )

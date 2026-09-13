@@ -356,9 +356,19 @@ test.describe('A4 — the detail module', () => {
     expect(drawing.leadIn).toBe(0)
     expect(drawing.leadOut).toBe(0)
 
-    // The module's facts are the strip here too, and no prose is rendered:
-    // §4.5's body is one sentence and the schedule.
-    await expect(page.locator('.bz-facts')).toBeVisible()
+    /* M21 — **A4 PRINTS NO FACTS STRIP AT ALL**, and that is the statement
+       rather than the absence of one. A module nobody has written declares no
+       duration and has no words to count, so the strip has nothing true to
+       say; it used to carry two tags naming the level and the position, and
+       the author asked for that line to be plain text. What says which kind of
+       module this is, in words, is the status band — `Planned · Schedule of
+       parts only` — which is asserted above.
+
+       Absence is the stronger check here, for the reason `title-block.spec.ts`
+       gives about the dash: a dash is a string a bug could produce, and a
+       missing element cannot be produced by a derivation that has started
+       counting a draft as drawn. */
+    await expect(page.locator('.bz-facts')).toHaveCount(0)
     await expect(page.locator('[data-hl-prose]')).toHaveCount(0)
   })
 

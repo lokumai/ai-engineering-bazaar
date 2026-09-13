@@ -40,6 +40,11 @@ function focusDescription(page: Page) {
       inHeader: !!el.closest('header'),
       inMain: !!el.closest('main'),
       inRail: !!el.closest('.bz-rail'),
+      // M21 — the rail's fold control, which sits just OUTSIDE the rail: a
+      // folded rail is `visibility: hidden`, and that is deliberately what
+      // takes its contents out of the tab order, so a control inside it would
+      // become unreachable in exactly the state it exists to undo.
+      isRailToggle: el.hasAttribute('data-bz-rail-toggle'),
       outline: getComputedStyle(el).outlineWidth,
       outlineStyle: getComputedStyle(el).outlineStyle,
     }
@@ -175,17 +180,36 @@ test('the header tab order runs left to right and stops at the repo link', async
   expect(at(/toggle theme/i)).toBeGreaterThan(at(/^your progress$/i))
   expect(at(/repository/i)).toBeGreaterThan(at(/toggle theme/i))
 
-  // WHERE THE HEADER HANDS OVER, and this changed twice in M16.
-  //
-  // This used to read "the trail is what follows the controls", because the
-  // retired header gave the breadcrumb a second row of its own inside
-  // `<header>`. Stage 1 moved the trail into the reading column, where the
-  // mockup puts it — and on a module page the mockup's DOM order is
-  // `.shell > .side > main`, so the CURRICULUM RAIL sits between the controls
-  // and the column. The first stop after the header is therefore the rail, and
-  // asserting otherwise would be asserting the rail is unreachable.
+  /* WHERE THE HEADER HANDS OVER, and this has now changed three times.
+     It used to read "the trail is what follows the controls", because the
+     retired header gave the breadcrumb a second row inside `<header>`. Stage 1
+     moved the trail into the reading column, where the mockup puts it — and on
+     a module page the DOM order is `.shell > .side > main`, so the CURRICULUM
+     RAIL sat between the controls and the column.
+
+     **M21 put the rail's fold control ahead of the rail**, which is the point
+     of it: one control replaced two, it is `position: fixed`, and rendered
+     inside the page's own content Tab did not reach it in 30 presses — the
+     control that hides the rail sat behind the rail. It cannot go INSIDE the
+     rail either, because a folded rail is `visibility: hidden` and that is what
+     takes its contents out of the tab order.
+
+     So the header hands over to the fold, and the rail follows it. Both halves
+     are asserted: a handover to the fold with no rail behind it would mean the
+     rail had become unreachable, which is the thing the old assertion was
+     really protecting. */
   expect(handover, 'the walk never left the header').not.toBeNull()
-  expect(handover?.inRail, `the header hands over to ${handover?.text}`).toBe(true)
+  expect(
+    handover?.isRailToggle,
+    `the header hands over to ${handover?.text}, not to the rail's fold control`,
+  ).toBe(true)
+
+  let reachedRail = false
+  for (let i = 0; i < 6 && !reachedRail; i += 1) {
+    await page.keyboard.press('Tab')
+    reachedRail = (await focusDescription(page))?.inRail ?? false
+  }
+  expect(reachedRail, 'the rail does not follow its own fold control').toBe(true)
 
   // And the trail is still there, still in the tab order, and still starts at
   // the front door. Read off the landmark rather than by tabbing to it: every

@@ -53,10 +53,27 @@ import { breadcrumbFor, type CategoryLabel } from '@/lib/route-labels'
 export function Breadcrumb({
   categories,
   current,
+  leaf,
 }: {
   categories: readonly CategoryLabel[]
-  /** Overrides the last crumb, for a route whose address names nothing. */
+  /** COLLAPSES the trail to the root and this name. See below. */
   current?: string
+  /**
+   * M21 — renames the LAST crumb and leaves the rest of the trail alone.
+   *
+   * `breadcrumbFor` labels a segment no route table names by de-hyphenating
+   * it, which is right for `/team/assignments/` and wrong for a module: the
+   * trail read `Home / Catalog / Fundamentals / llms` under a heading saying
+   * `LLM Fundamentals`. Only the page itself knows the title — `route-labels`
+   * is a client module and may not reach `node:fs` (§12.2) — so it is passed
+   * in, the same arrangement `categories` already has.
+   *
+   * **Distinct from `current`, which is a different operation**, and using
+   * that one here deleted `Fundamentals` from the trail. Since M21 that crumb
+   * is what names a module's level in words — the facts strip's level tag is
+   * gone — so collapsing the trail would have taken the carrier out with it.
+   */
+  leaf?: string
 }) {
   const derived = breadcrumbFor(usePathname() ?? '/', categories, useSelectedLayoutSegment())
   /* The ROOT and the page's own name, and nothing between them. Overriding
@@ -65,8 +82,10 @@ export function Breadcrumb({
      differently at two addresses that are the same page, and §5.1's promise is
      that the 404 never prints the address it was asked for. This is the shape
      `breadcrumbFor` already produces for `NOT_FOUND_SEGMENT`. */
-  const crumbs =
-    current === undefined ? derived : [derived[0], { label: current, href: null }]
+  const named = current === undefined ? derived : [derived[0], { label: current, href: null }]
+  const crumbs = leaf === undefined || named.length === 0
+    ? named
+    : [...named.slice(0, -1), { ...named[named.length - 1], label: leaf }]
 
   return (
     <nav aria-label="Curriculum" className="bz-crumb">

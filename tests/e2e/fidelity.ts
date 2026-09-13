@@ -288,7 +288,16 @@ const FACTS: readonly Fact[] = [
   // The rails anchor to the window's edges; the sticky offset is the bar plus
   // the band, which is the number that lets the band exist at all.
   { role: 'rail', property: 'top', mutate: '99px' },
-  { role: 'rail', property: 'borderRightColor', mutate: 'magenta' },
+  /* `rail.borderRightColor` was here. **M21 paints the rail's trailing hairline
+     instead of bordering it**, because a border takes its pixel out of the
+     content box and that pixel was a scroll offset the fold latched and the
+     restore could not undo — the bug the author reported as happening *only*
+     after closing the sidebar and opening it again. There is no border left to
+     read a colour off, so the fact is removed rather than left comparing a
+     browser default against the mockup's sand. `.bz-rail`'s `top` is still
+     compared here and its `background` still is in `transcription.test.ts`, so
+     the rail has not left either comparison — one property did, with its
+     reason. This is the same shape as the pager's `grid-template-columns`. */
   { role: 'railInner', property: 'width', mutate: '99px' },
   // `arch` — the doorway that makes a list of groups read as an arcade.
   { role: 'group', property: 'borderRadius', mutate: '99px' },
@@ -968,7 +977,11 @@ export const APP_SELECTORS: SelectorMap = {
      button and at most one white one, and which is which is the point. */
   crumb: '.bz-crumb',
   display: '.bz-display',
-  tag: '.bz-facts .bz-tag',
+  /* `tag: '.bz-facts .bz-tag'` was here, and M21 took both tags off the module
+     page — see `DELIBERATELY_ABSENT`, which is where the reason lives. A role
+     may not be in both maps: one says "the app renders this" and the other says
+     "the app deliberately does not", and the harness's own self-check fails a
+     role that claims both. */
   section: '.bz-prose .bz-section',
   subsection: '.bz-prose .bz-subsection',
   card: '.bz-card',
@@ -1126,6 +1139,16 @@ export function differencesAt(
  */
 export const DELIBERATELY_ABSENT: Readonly<Partial<Record<Role, string>>> = {
   barField: 'the command palette is deferred; a control that opens nothing is refused',
+  tag:
+    'M21 — the author asked for the line under a module title to be plain ' +
+    'text: *"Remove all just keep the minutes and words as pure text."* The ' +
+    'two tags were the only `.bz-tag` in the product, so nothing renders one ' +
+    'any more. Every fact they carried is still stated — the level by the ' +
+    'breadcrumb and the rail, the position by the footer, and the language by ' +
+    'nothing, because the site cannot serve it (M19). `.bz-tag` stays in the ' +
+    'language as the transcription of `01`\'s own `.tag` and ' +
+    '`transcription.test.ts` still compares it, which is the same bargain ' +
+    '`node` makes below.',
   node:
     'the mockup draws a flow BY HAND, so a node there is a `.bz-node` box with ' +
     'a background and a border. Every figure in this corpus is a mermaid ' +

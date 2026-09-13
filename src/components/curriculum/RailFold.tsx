@@ -37,24 +37,36 @@ import { update } from '@/lib/record/store'
  * hand-off is asserted by pressing the key rather than by calling `.focus()`,
  * which is the correction recorded in `kia-context/logs/BRAINSTORM.md` D17.
  *
- * ## Why two buttons and not one with `aria-expanded`
+ * ## M21 — ONE control, and how it keeps its label on channel A
  *
- * A disclosure has one trigger; this has two, because the trigger has to be
- * reachable in both states and the rail is 262px of the window in one of them
- * and nothing in the other. Two buttons, each labelled with what it does, is
- * unambiguous without anyone claiming an ARIA state by hand — the same call
- * `MainNav` makes about `<details>`. A single `aria-expanded` button shared
- * between two positions would have to be state-rendered, which puts it back on
- * channel B and reintroduces the first-frame flash that point 1 exists to
- * remove.
+ * There were two: a 28px square in the rail's head, and this tab. The author
+ * wants the tab to do both jobs and the head's button gone.
+ *
+ * **The reason there were two is real and it is not the reason it looked
+ * like.** It was never about ARIA. A trigger has to be reachable in both
+ * states, and the old tab lived at `left: 0` and existed only while folded —
+ * so making it the toggle means giving it a resting place while the rail is
+ * OPEN, at the rail's trailing edge rather than the window's. That is the
+ * whole of the work; deleting the head's button is one line.
+ *
+ * **And the label still cannot be React state.** Point 1 above is why: a
+ * reader who folded the rail last week meets a folded rail in frame one, so a
+ * control whose words are rendered from state would say the wrong thing until
+ * hydration. So BOTH labels are in the markup and CSS reveals one, keyed off
+ * the same `<html>` attribute everything else here reads — the arrangement the
+ * catalog's view toggle already uses for its `Showing` mark. The hidden face is
+ * `display: none`, which takes it out of the accessible name computation too,
+ * so the button is announced with exactly one name.
+ *
+ * **Point 3 above is retired with the second button.** Focus was handed from
+ * each control to its counterpart because folding hid the one that did the
+ * folding. One control that stays on screen needs no hand-off — and that
+ * hand-off was the mechanism that latched the rail's scroll offset, which is
+ * the bug this milestone also fixes (`bazaar.css`, `.bz-rail`).
  */
 
 const ATTRIBUTE = 'data-bz-rail'
 const FOLDED = 'folded'
-
-/** The counterpart control, so focus is never dropped on the floor. */
-const HIDE = '[data-bz-rail-hide]'
-const RESTORE = '[data-bz-rail-restore]'
 
 function setFold(folded: boolean): void {
   const root = document.documentElement
@@ -62,77 +74,66 @@ function setFold(folded: boolean): void {
   else root.removeAttribute(ATTRIBUTE)
 
   update((data) => setRailFolded(data, folded))
-
-  // Next frame, not this one: the element about to take focus is the one the
-  // attribute has just revealed, and a `focus()` on an element still computing
-  // `visibility: hidden` does nothing at all.
-  requestAnimationFrame(() => {
-    document.querySelector<HTMLElement>(folded ? RESTORE : HIDE)?.focus()
-  })
 }
 
-/** In the rail's own head. Only ever on screen while the rail is open. */
-export function RailFoldButton() {
+/** Points the way the press will move the rail. Mirrored for the other face. */
+function Chevron({ back }: { back: boolean }) {
   return (
-    <button
-      type="button"
-      data-bz-rail-hide=""
-      className="bz-rail-fold"
-      /* The mockup's fold control is a 28px square holding a glyph and
-         nothing else, so the word that used to sit beside it becomes the
-         button's accessible name. It says the ACTION, not the state: a single
-         `aria-expanded` trigger would have to be state-rendered, which puts a
-         mark a reader meets in frame one on channel B. */
-      aria-label="Hide the curriculum"
-      onClick={() => setFold(true)}
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 12 12"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      aria-hidden="true"
     >
-      <svg
-        width="12"
-        height="12"
-        viewBox="0 0 12 12"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        aria-hidden="true"
-      >
-        <path d="M7.5 2.5L4 6l3.5 3.5" />
-        <path d="M1.5 1.5v9" />
-      </svg>
-    </button>
+      {back ? <path d="M7.5 2.5L4 6l3.5 3.5" /> : <path d="M4.5 2.5L8 6l-3.5 3.5" />}
+      <path d={back ? 'M1.5 1.5v9' : 'M10.5 1.5v9'} />
+    </svg>
   )
 }
 
 /**
- * The tab pinned to the left edge, vertically centred. Only ever on screen
- * while the rail is folded.
+ * The tab on the rail's edge — the ONE fold control (M21).
  *
- * **Vertically centred rather than under the bar, and that is a fix.** The
- * first version of this tab was fixed at `top: 88px`, directly under a sticky
- * header at `z-index: 40`, and could not be clicked at all — found by driving
- * it in a browser, not by reading the CSS (D15). Centred, it cannot collide
- * with the bar whatever the bar's height becomes.
+ * **Vertically centred rather than under the bar, and that is a fix that
+ * predates this milestone.** The first version was fixed at `top: 88px`,
+ * directly under a sticky header at `z-index: 40`, and could not be clicked at
+ * all — found by driving it in a browser, not by reading the CSS (D15).
+ * Centred, it cannot collide with the bar whatever the bar's height becomes.
+ *
+ * It rides the rail's trailing edge when the rail is open and the window's
+ * edge when it is folded, moving between the two on the same duration the
+ * shell's own columns take, so the tab and the column arrive together.
+ *
+ * **It carries no `aria-expanded`.** The two faces below name the ACTION the
+ * press performs, and exactly one of them is in the accessible tree at a time —
+ * so the state a reader is told is the state CSS is drawing, and no React
+ * render is a second author of it.
  */
-export function RailRestoreTab() {
+export function RailTab() {
   return (
     <button
       type="button"
-      data-bz-rail-restore=""
-      className="bz-rail-restore"
-      aria-label="Show the curriculum"
-      onClick={() => setFold(false)}
+      data-bz-rail-toggle=""
+      className="bz-rail-tab"
+      onClick={() => {
+        setFold(!document.documentElement.hasAttribute(ATTRIBUTE))
+      }}
     >
-      <svg
-        width="12"
-        height="12"
-        viewBox="0 0 12 12"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        aria-hidden="true"
-      >
-        <path d="M4.5 2.5L8 6l-3.5 3.5" />
-        <path d="M10.5 1.5v9" />
-      </svg>
+      {/* Both faces always render. Which one is in the document's accessible
+          tree is CSS's answer, keyed off the `<html>` attribute the boot script
+          stamps before first paint — so a reader who folded the rail last week
+          meets a tab that says `Show the curriculum` in frame one. */}
+      <span className="bz-rail-tab-face" data-when="open">
+        <Chevron back />
+        <span className="sr-only">Hide the curriculum</span>
+      </span>
+      <span className="bz-rail-tab-face" data-when="folded">
+        <Chevron back={false} />
+        <span className="sr-only">Show the curriculum</span>
+      </span>
     </button>
   )
 }

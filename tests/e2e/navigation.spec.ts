@@ -71,8 +71,11 @@ test('next walks 1 to 32 straight through every category boundary', async ({ pag
     await expect(page.locator('main h1')).toHaveText(expected.title)
 
     if (expected.category !== previous.category) {
-      // The boundary is a subsystem label, not a stop (§4.4 / §5.7).
-      await expect(page.locator('.bz-facts')).toContainText(
+      /* The boundary is a subsystem label, not a stop (§4.4 / §5.7). Read off
+         the TRAIL since M21: the facts strip named the level in a tag, and the
+         author asked for that line to be plain text. The trail names it in
+         words on every module page and no fold can hide it. */
+      await expect(page.locator('nav[aria-label="Curriculum"]')).toContainText(
         new RegExp(expected.category.replace('-', '[ -]'), 'i'),
       )
     }

@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import type { RailLevel } from '@/lib/content/rail'
-import { RailFoldButton } from './RailFold'
 
 /**
  * M10 — the curriculum as an accordion, and the left rail of a module page.
@@ -102,8 +101,11 @@ export function CurriculumRail({
             fuller name: a region is named for what it contains, and a reader
             arriving by landmark has no column in front of them to read a
             label off. */}
+        {/* M21 — the head's own fold button was here and it is gone. There is
+            one fold control now and it is the tab on the rail's edge, which is
+            reachable in both states; two controls for one action was the shape
+            the author asked to lose. */}
         <span className="bz-rail-head-label">Curriculum</span>
-        <RailFoldButton />
       </div>
 
       {levels.map((level) => {

@@ -719,13 +719,58 @@
 
   /* -- the rail ----------------------------------------------------------- */
 
+  /* M21 — **THE HAIRLINE IS PAINTED, NOT BORDERED, and that one change is a
+     state bug the author reported which 1,138 green tests could not see.**
+
+     His condition was the finding: *"BUT THIS ONLY HAPPENS AFTER I CLOSE THE
+     LEFT SIDEBAR AND OPEN IT AGAIN! Normally such bug does not exist when I
+     open a module for the first time."* A defect that appears only after fold
+     → restore is something the fold sets and the restore does not put back.
+
+     **MEASURED on the built site at 1440 / 1366 / 1280 / 1200, by pointer and
+     by keyboard alike.** `.bz-rail-inner` is `--layout-rail` wide (262px); with
+     a `border-right` this element's content box was 261px, so the rail
+     overflowed itself by exactly one pixel in the inline axis at all times. At
+     rest `scrollLeft` is 0 and that pixel is clipped on the right, where nobody
+     sees it. **After one fold and restore `scrollLeft` was 1 and could never
+     return** — `overflow-x: hidden` still makes a scroll container, and a
+     browser scrolls one to reveal a focused element, which is precisely what
+     the fold's focus hand-off does. The rail's contents then sit under the
+     window edge until a reload. The magnitude is whatever the rail overflows
+     by, so anything narrowing the content box further — a classic space-taking
+     scrollbar, a zoom level — makes it worse than a pixel, which is why the
+     author saw a word disappear where this machine measured one pixel.
+
+     **`overflow-x: clip` is NOT the fix, and it looked like one.** It makes no
+     scroll container, which would settle it — but CSS Overflow 3 computes
+     `clip` to `hidden` when the other axis is `auto`, and this rail needs
+     `overflow-y: auto`. MEASURED: the declaration shipped as `overflow: clip
+     auto`, `getComputedStyle` returned `hidden`, and the bug survived intact.
+
+     So the overflow is removed at its source instead. A painted hairline takes
+     no space out of the content box, the inner fits the column exactly, and
+     there is no offset left to latch. Painting a line rather than bordering it
+     is already this language's answer where a border cannot be trusted — see
+     `.bz-cat-rule`, which does it for a different reason.
+
+     `rail.spec.ts` folded and restored and asserted the grid track and the
+     reading column, and both always came back; it never measured this
+     element's OWN box, which is the one thing that did not. That reading is in
+     the spec now, and reverting this declaration turns it red. */
   .bz-rail {
     position: sticky;
     top: var(--layout-sticky);
     height: calc(100vh - var(--layout-sticky));
     overflow: hidden auto;
-    border-right: 1px solid var(--color-line);
+    /* The fill is the mockup's, unchanged, and it is declared as the shorthand
+       so `transcription.test.ts` can still compare it. The hairline is added
+       as longhands AFTER it — the shorthand resets `background-image` to
+       `none`, so the order is what makes both true at once. */
     background: var(--color-surface);
+    background-image: linear-gradient(var(--color-line), var(--color-line));
+    background-repeat: no-repeat;
+    background-position: 100% 0;
+    background-size: 1px 100%;
     transition:
       opacity var(--duration-fade) var(--ease-bazaar),
       transform var(--duration-fold) var(--ease-bazaar);
@@ -750,7 +795,9 @@
     opacity: 0;
     transform: translateX(-14px);
     overflow: hidden;
-    border-right-color: transparent;
+    /* The painted hairline goes with it, which `border-right-color:
+       transparent` used to do. */
+    background-image: none;
     pointer-events: none;
   }
 
@@ -767,36 +814,34 @@
     letter-spacing: var(--tracking-label);
   }
 
-  .bz-rail-fold {
-    display: grid;
-    place-items: center;
-    width: 28px;
-    height: 28px;
-    margin-left: auto;
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-md);
-    background: var(--color-surface-raised);
-    color: var(--color-on-surface-muted);
-    cursor: pointer;
-  }
+  /* M21 — **ONE fold control, and it rides the rail's edge.**
 
-  .bz-rail-fold:hover {
-    background: var(--color-surface-sunken);
-    color: var(--color-on-surface);
-  }
+     There were two — a 28px square in the rail's head (`.bz-rail-fold`) and
+     this tab, which existed only while folded at `left: 0`. The author asked
+     for the middle tab to do both and the top button to go. The head's rule is
+     deleted with its markup, in the same commit, because a `bz-` class no
+     stylesheet answers to is what `styling-references.test.ts` fails on.
 
-  /* Vertically centred, so it can never collide with the sticky chrome
-     whatever the chrome's height becomes. */
-  .bz-rail-restore {
+     **Making the tab the toggle is a question of where it rests while the rail
+     is OPEN**, which is the one thing the old tab never had to answer. It sits
+     at the rail's trailing edge, and the fold moves it to the window's on the
+     same duration the shell's columns take — so the tab and the column arrive
+     together rather than the tab jumping ahead. The movement is a `transform`,
+     which is what `.bz-rail` itself animates and therefore already this
+     language's way of moving a column-sized thing.
+
+     Vertically centred, so it can never collide with the sticky chrome
+     whatever the chrome's height becomes (D15). */
+  .bz-rail-tab {
     position: fixed;
-    left: 0;
+    left: var(--layout-rail);
     top: 50%;
     z-index: 50;
-    display: none;
+    display: grid;
     place-items: center;
     width: 26px;
     height: 60px;
-    transform: translateY(-50%);
+    transform: translate(0, -50%);
     border: 1px solid var(--color-line);
     border-left: 0;
     border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
@@ -804,13 +849,42 @@
     color: var(--color-on-surface-muted);
     box-shadow: var(--shadow-tab);
     cursor: pointer;
+    transition: transform var(--duration-fold) var(--ease-bazaar);
   }
 
-  [data-bz-rail="folded"] .bz-rail-restore { display: grid; }
+  [data-bz-rail="folded"] .bz-rail-tab {
+    transform: translate(calc(-1 * var(--layout-rail)), -50%);
+  }
 
-  .bz-rail-restore:hover {
+  .bz-rail-tab:hover {
     background: var(--color-surface-sunken);
     color: var(--color-on-surface);
+  }
+
+  /* **Below the width where the rail exists at all, neither does its control.**
+     The rail is `display: none` under `--layout-rail-at`, and a tab offering to
+     show a column that cannot be shown is a control that does nothing — which
+     is what the old restore tab did at 390px with a folded rail, because
+     nothing hid it there either. */
+  @media (max-width: 880px) {
+    .bz-rail-tab { display: none; }
+  }
+
+  /* THE LABEL IS ON CHANNEL A. Both faces are in the markup and this reveals
+     one, off the same `<html>` attribute the fold itself reads — so a reader
+     whose rail was folded last week meets a tab saying `Show the curriculum`
+     in frame one, with no hydration and no flash of the wrong word. The hidden
+     face is `display: none`, which also takes its text out of the accessible
+     name, so the button is announced with exactly one name. */
+  .bz-rail-tab-face { display: none; }
+
+  .bz-rail-tab-face[data-when="open"] { display: grid; place-items: center; }
+
+  [data-bz-rail="folded"] .bz-rail-tab-face[data-when="open"] { display: none; }
+
+  [data-bz-rail="folded"] .bz-rail-tab-face[data-when="folded"] {
+    display: grid;
+    place-items: center;
   }
 
   /* -- a group, as an arch ------------------------------------------------

@@ -451,11 +451,34 @@ describe('M15 — the language is a transcription of the mockup', () => {
       ['.dd', '.bz-menu', ['min-width', 'padding', 'border-radius', 'background', 'box-shadow', 'top']],
       ['.band', '.bz-band', ['height', 'background-color', 'background-size', 'background-position', 'border-bottom']],
       ['.shell', '.bz-shell', ['grid-template-columns', 'align-items']],
-      ['.side', '.bz-rail', ['top', 'height', 'overflow', 'border-right', 'background']],
+      /* M21 — **`border-right` left this list and the reason is a measured
+         defect, not a preference.** `01` draws the rail's trailing hairline as
+         a border; a border takes its pixel out of the content box, and
+         `.bz-rail-inner` is `--layout-rail` wide, so the rail overflowed itself
+         by exactly one pixel in the inline axis. `overflow-x: hidden` is still
+         a scroll container, the fold's focus hand-off scrolled it by that
+         pixel, and nothing could scroll it back — which is the bug the author
+         reported as *"only after I close the left sidebar and open it again"*.
+         The language paints the same 1px line with a background layer instead,
+         which takes no space. See `.bz-rail` in `bazaar.css`.
+
+         `background` is STILL compared, because the fill did not change: the
+         shorthand declares the mockup's own paper and the hairline is added as
+         longhands after it. Only the mechanism of one line moved. */
+      ['.side', '.bz-rail', ['top', 'height', 'overflow', 'background']],
       ['.side-in', '.bz-rail-inner', ['width', 'padding']],
       ['.foldbar', '.bz-rail-head', ['gap', 'padding']],
-      ['.fold', '.bz-rail-fold', ['width', 'height', 'border', 'border-radius', 'background', 'color']],
-      ['.unfold', '.bz-rail-restore', ['width', 'height', 'border-radius', 'background', 'box-shadow', 'left', 'top']],
+      /* `.fold → .bz-rail-fold` and `.unfold → .bz-rail-restore` were here and
+         **M21 deleted both primitives, not their transcriptions.** The author
+         asked for one fold control rather than two; the tab on the rail's edge
+         does both jobs now and the head's 28px button is gone. The surviving
+         control is `.bz-rail-tab`, which `01` does not draw in this shape — it
+         draws the tab only in its folded position — so it is derived rather
+         than transcribed (**D30**) and has no pair here. Leaving the two rows
+         behind would have compared the mockup against nothing: `resolved()`
+         returns null for a selector no stylesheet carries, and the assertion
+         reads `declares no width`, which is a rename failure and not a design
+         one. */
       ['.arch > summary', '.bz-group > summary', ['padding', 'border', 'border-radius', 'background', 'margin-top', 'gap']],
       ['.arch .key', '.bz-group-key', ['width', 'height', 'border-radius']],
       ['.arch .n', '.bz-group-count', ['margin-left', 'color']],

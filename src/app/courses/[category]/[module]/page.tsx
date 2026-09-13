@@ -8,7 +8,6 @@ import { ChecklistIsland } from '@/components/record/ChecklistIsland'
 import { SourceTracking } from '@/components/record/SourceTracking'
 import { Submittal } from '@/components/record/Submittal'
 import { CurriculumRail } from '@/components/curriculum/CurriculumRail'
-import { RailRestoreTab } from '@/components/curriculum/RailFold'
 import { ContentsDrawer } from '@/components/sheet/ContentsDrawer'
 import type { DependencyRelation, SheetLink } from '@/components/sheet/DependencyBlock'
 import { Objectives } from '@/components/sheet/Objectives'
@@ -276,13 +275,20 @@ export default async function ModuleSheetPage({
       revision={sheet.revision}
       rail={curriculum}
       aside={rail ?? undefined}
+      /* M21 — **the trail's last crumb was the raw slug.** `breadcrumbFor`
+         falls back to `segment.replaceAll('-', ' ')` for a segment no route
+         table names, so a module read `Home / Catalog / Fundamentals / llms`
+         while its own heading said `LLM Fundamentals`. Found by screenshot,
+         and it matters more than it did: with the level tag gone from the
+         facts strip, the trail is what names the level on this page, so it
+         had better be the part of the chrome that is right. */
+      trailLeaf={sheet.frontmatter.title}
     >
       <div className="bz-sheet" data-format={format}>
-        {/* `position: fixed` against the window's left edge and vertically
-            centred, so it cannot collide with the sticky bar the way the first
-            version of it did (D15). Its place in the document does not matter;
-            the fold reveals it from an ancestor attribute. */}
-        <RailRestoreTab />
+        {/* The rail's fold control used to be rendered here and M21 moved it
+            into `PageShell`, immediately before the rail. It is `position:
+            fixed`, so its place in the document decides only the TAB ORDER —
+            and from here a keyboard reader could not reach it in 30 presses. */}
 
         {format === 'A4' && <StatusBand />}
 
@@ -322,9 +328,28 @@ export default async function ModuleSheetPage({
           surface that reports that category's progress, and this page reports
           one module's.
         */}
+        {/* M21 — **THE LANGUAGE CONTROL'S SLOT IS HERE, AND IT IS EMPTY ON
+            PURPOSE.**
+
+            The author placed it: *"Language of each module should be selectable
+            from the top-right corner of the box which contains the whole
+            center-aligned module content."* That is this box, level with the
+            heading below, on its trailing edge.
+
+            **M21 builds nothing in it.** 33 `_tr.md` files exist and the
+            loader renders none of them, so a control here would switch
+            nothing — the claim §1 forbids, and the same reason the mockup's own
+            `TR` button and search field were both left out of the bar. M19 owns
+            the second language and is the only milestone that can make this do
+            something; this comment exists so M19 does not have to re-decide
+            where it goes.
+
+            When it lands it is an ADDRESS and not a preference (M19's shape 1),
+            which is what lets a reader send somebody a Turkish URL and what
+            makes it right with the bundle blocked. */}
         <h1 className="bz-display">{sheet.frontmatter.title}</h1>
 
-        <FactsStrip facts={facts} category={sheet.category.slug} />
+        <FactsStrip facts={facts} />
 
         {drawn && rendered ? (
           <Prose

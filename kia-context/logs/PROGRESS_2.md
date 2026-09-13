@@ -2114,10 +2114,16 @@ One sentence, high level, no buzzwords, already in the author's own voice.
 `Description` is a DERIVATION and not a writing job, and §11.25 is satisfied
 without anybody maintaining a second description anywhere.
 
-**The 14 planned modules carry no summary and that is correct** — `schema.ts`
-only requires one of a `ready` module, because a module nobody has written has
-nothing to summarise. `topicsFor` already falls back to the schedule of parts
-for those, and that fallback is the honest thing to keep.
+**The 14 planned modules carry no summary**, because `schema.ts` only requires
+one of a `ready` module — a module nobody has written has nothing to summarise.
+`topicsFor` falls back to their schedule of parts.
+
+**That fallback is a list of headings, which is the exact shape the author
+objected to, and he has not agreed to keep it.** The first draft of this brief
+defended it as "the honest thing"; that was the brief deciding something on his
+behalf. The choice is his and it is small: the schedule of parts as it is today,
+or an empty cell — §11.30 already permits one, and a planned module saying
+nothing about itself is at least not saying the wrong kind of thing.
 
 ### The decisions this milestone opens with
 
@@ -2137,8 +2143,26 @@ choice is kept. Three shapes:
      preference nobody asked to split.
 
 **The recommendation is 1.** It is the only one that gives the author the
-behaviour he described without taking something back from a returning reader,
-and it costs one condition in `boot.ts`.
+behaviour he described without taking something back from a returning reader.
+
+**It costs nothing in `boot.ts`, and the first draft of this brief said it cost
+one condition there — which is impossible.** `boot.ts:163` is
+`if(!ok||!raw)return;`, so the script returns BEFORE it stamps a view for exactly
+the reader this default exists for: the one with no record. The no-preference
+default is not in the script at all. It is a CSS fallback, `catalog.css:277`:
+
+    html:not([data-hl-view]) [data-view="overview"] { --bz-showing: block }
+
+`<html>`'s attributes come from the root layout, so no route segment can set one
+either. What a level page CAN do is emit a scope attribute on its own wrapper —
+the server knows which route it is — and let a sibling fallback key off that. A
+reader with a stored view is untouched, because `html[data-hl-view="…"]` is what
+wins today and still would. No script, correct with the bundle blocked.
+
+**The trap is one rule away:** the toggle's own `Showing` mark has the same
+fallback at `catalog.css:727`. Change the view's and not the toggle's and the
+page draws Cards while the toggle marks Overview — the picture and the sentence
+coming apart, which is what `Catalog`'s docblock spends a paragraph preventing.
 
 **2. Does the dropdown close on pointer-out?** The author's words: *"even when I
 move cursor out of the boundaries of dropdown, the dropdown is still here while
@@ -2179,10 +2203,25 @@ Escape, outside click and route change already close it.
    the one part that would need script to guarantee, and it should not be added
    until some engine that matters is shown to need it.
 
-   **The trap is the TABLE.** A row that expands is a second `<tr>` with one
-   `colspan` cell, not a taller cell — `ModuleRow`'s own docblock records what
-   `display: flex` on a `<td>` cost, and this is the same class of mistake one
-   step further on. The card has no such constraint.
+   **The trap is the TABLE, and the first version of this brief got it exactly
+   backwards.** It said the expanding row must be a second `<tr>` with a
+   `colspan` cell. **That cannot be built with `<details>` at all**: `<tbody>`'s
+   content model admits only `<tr>`, and a `<summary>` has to live inside its own
+   `<details>` — so a disclosure whose trigger is in row 1 and whose panel is
+   row 2 is not expressible. The brief mandated a structure that contradicted its
+   own mechanism, and one of the two had to give.
+
+   **The `<details>` goes inside the description cell.** A `<td>` is flow
+   content, so it may hold one; opening it grows the cell, the cell grows the
+   row, and the row grows the table. No second `<tr>`, no `colspan`, no script.
+   The card is the same element in a different box.
+
+   What survives of the original warning is the real lesson and it belongs to a
+   different file: `SheetIndex.tsx` is where the table's width arithmetic lives,
+   and `catalog.css` is where a cell that stopped behaving like a cell cost a
+   visible defect. (The earlier draft cited `ModuleRow`'s docblock for the
+   `display: flex` story; **M17 deleted that comment with the status cell it was
+   about**, so the citation pointed at nothing.)
 
    **And the second trap is not there, which took measuring to find out.**
    `ModuleRow`'s docblock says twice that the whole row is one click target —
@@ -2221,11 +2260,23 @@ Escape, outside click and route change already close it.
    **The language SELECTOR the author wants is not built here** — it belongs on
    the module page and it is M19's, which owns the second language. M21 draws the
    slot; this milestone only stops the listing from stating `EN · TR`.
-4. **The filters are labelled.** `Level:` before the level chips and `Status:`
-   before the state chips, as plain text with no box. Both groups already carry
-   an `aria-label` saying the same thing, so the visible label should BE that
-   name — `<span id>` plus `aria-labelledby` — rather than a second string
-   beside it, or a screen reader hears the label twice.
+4. **The filters are labelled — and the second group is not `Status`.** `Level:`
+   before the level chips is exact. The other row is
+   `aria-label="Filter by state or language"` and its six chips are `All`,
+   `Ready`, `Planned`, **`Both languages`**, `Completed`, `Not completed`
+   (`rows.ts:120-137`). Three of those are states of the DRAWING, two are states
+   of the READER, and one is a language.
+
+   **So `Status:` would swallow a filter and mislabel two others** — and it
+   collides with deliverable 3, which takes the `Lang` COLUMN off the table while
+   leaving the language FILTER in place. A reader would be able to filter by a
+   fact the table no longer shows.
+
+   **The decision, and it is the author's:** either the language chip goes with
+   the column and the row honestly becomes `Status:`, or it stays and the row is
+   named for what it filters. The visible label should then BE the group's
+   accessible name — `<span id>` plus `aria-labelledby` — rather than a second
+   string beside it, or a screen reader hears it twice.
 5. **The dropdown's first entry reads `View Curriculum`.** It reads `Every level`
    today, on the trigger and on the chip (the author wrote `Entry Level`, which
    is neither — worth confirming he means the first menu row). The CHIP on the
@@ -2255,6 +2306,29 @@ Escape, outside click and route change already close it.
    comment must go with the number, or the next reader restores a carrier that is
    already carried.
 
+### What the review of this plan found, before a line of it was built
+
+The plan was reviewed on 2026-09-13 and **four of its factual claims were
+wrong** — each corrected above rather than in a footnote, because a brief is
+read as instructions:
+
+1. it mandated an expanding `<tr>` that **cannot exist** alongside the
+   `<details>` mechanism it chose in the same paragraph;
+2. it cited `ModuleRow`'s docblock for a `display: flex` story **M17 had already
+   deleted**;
+3. it called the second chip row `Status`, which **swallows a language filter**
+   and collides with the deliverable that removes the language column;
+4. it claimed a stored view could be **proven in the served HTML**, which no
+   static file can witness.
+
+And two things it decided that were not its to decide: the planned modules'
+fallback, and — in M21 — a claim that the suite never folds and restores the
+rail, when it does.
+
+**None of these would have failed a test, because nothing had been built yet.**
+A plan is the one artefact whose only reviewer is a reader, which is the argument
+for reviewing it at all.
+
 ### Acceptance criteria
 
 - Every written module's description on the catalog is its own `summary`,
@@ -2266,8 +2340,12 @@ Escape, outside click and route change already close it.
   still pass on it.
 - `Lang` appears in neither view, and no control claims to switch language.
 - Both filter groups have one visible name each, announced once.
-- A reader with a stored view keeps it; a reader without one gets Overview on
-  the catalog and Cards on a level page, **proven in the served HTML**.
+- A reader without a stored view gets Overview on the catalog and Cards on a
+  level page, **proven in the served HTML** — which is provable there precisely
+  because it is the no-preference case. A reader WITH a stored view keeps it,
+  and that is a browser assertion: the export is byte-identical for everybody
+  and the stored view is stamped by script at run time, so no static file can
+  witness it.
 - The dropdown closes on pointer-out only where hover exists, never while focus
   is inside it, and remains operable by touch and keyboard.
 - Under `forced-colors: active`, a level is still named without its number in
@@ -2310,9 +2388,17 @@ padding.**
    top button is one line. Its label has to say which way it goes, and `RailFold`
    already owns both strings.
 2. **The fold/restore state bug**, as above — reproduced first, then fixed at
-   whatever the reading says, with a `layout.spec.ts` invariant that fails on the
-   restored state and not only on the first paint. **The suite has never folded
-   the rail and restored it**, which is why 1,127 green tests never saw this.
+   whatever the reading says, with an invariant that fails on the restored state
+   and not only on the first paint.
+
+   **The suite DOES fold the rail and restore it, and that is the sharper lead.**
+   `rail.spec.ts:187-189` clicks `[data-bz-rail-restore]` and asserts that the
+   grid track and the reading column come back to their open widths — and both
+   do, which is why 1,127 green tests never saw this. **What it never measures is
+   the rail's OWN box**: its left inset, and whether its contents are clipped by
+   the viewport edge. The bug is in the thing the existing assertion does not
+   look at, which means the fix is one more reading in a test that is already in
+   the right place, not a new test in a new file.
 3. **The facts line under a module's title becomes plain text.** `FactsStrip`
    renders two `.bz-tag` boxes — the level, and `Module 3 of 8` — and then
    `25 min · 2,317 words · EN · TR`. The author wants only `25 min · 2,317 words`,

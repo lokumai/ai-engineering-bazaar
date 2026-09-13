@@ -262,6 +262,42 @@
     margin-top: 30px;
   }
 
+  /* **A group heading is subordinate to the page's own blocks, and it has to
+     LOOK it.** A review caught this: the five group heads were rendering
+     through the same `.bz-panel-title` as `Every module` and `Waiting on you`,
+     so five headings over a list of rows carried the same weight as the page's
+     real sections — which is the flat outline the regroup was fixing, moved up
+     one level rather than removed.
+
+     The heading LEVEL is already right (§16.7: group `h2`, row `h3`); this is
+     the other half of it, for a reader who is looking rather than navigating by
+     heading.
+
+     One step DOWN the scale — `control`, 14.5px, against `.bz-panel-title`'s
+     `lead` at 16. **The first attempt reached for `subsection` and made them
+     BIGGER**: 18.5px, measured on the built page, which is the scale's step in
+     the other direction. A token named for a structural role is not a size, and
+     reading it as one is how a heading ends up outweighing the section it is
+     inside — which was the criticism being answered. */
+  [data-bz-register-group] > .bz-panel-head > .bz-panel-title {
+    font-size: var(--text-control);
+  }
+
+  /* **The destructive group is set apart, and a margin is not apart enough.**
+     §12.15's erase is the only irreversible thing on this page, and standard
+     practice puts a destructive action last, alone, and visibly separated — the
+     brief's own words. It is last and alone by the group order; this is the
+     third. A rule above it and the extra room, so the eye stops there rather
+     than reading it as one more settings row.
+
+     Keyed on the id rather than on `:last-child`, which would move to whatever
+     group happened to end the list. */
+  [data-bz-register-group="group-data"] {
+    margin-top: 44px;
+    padding-top: 22px;
+    border-top: 1px solid var(--color-line);
+  }
+
   .bz-drafter {
     margin: 0 0 26px;
   }

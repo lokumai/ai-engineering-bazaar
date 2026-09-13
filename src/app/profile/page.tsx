@@ -252,13 +252,35 @@ function sheetRefs(): SheetRefs {
  * keeps erase behind a typed word; what changes is that it stops sitting
  * between `Stored values` and `Keyboard` as though it were one more readout.
  */
+/**
+ * **Two of these carry a note and three do not, and the cut is rule 16's.**
+ *
+ * The first draft gave all five one, and a review named them for what they
+ * were: *"page-explaining meta-commentary the project's own rule 16 / D61
+ * removed elsewhere"*. It was right, and this page had already made the same
+ * decision once — see the `NO OPENING PARAGRAPH` note below, which deleted a
+ * paragraph describing the page to a reader who was looking at it.
+ *
+ * What went: `Counted from your record` and `Closed, and each row states its
+ * reading`, which describe the list rather than say anything; and `Built in
+ * this browser`, which the row under it already prints **verbatim** as its own
+ * reading — the same fact twice in two idioms, which is exactly what rule 16
+ * is about.
+ *
+ * What stayed says something the rows cannot. `Suggested, never a gate` is
+ * §16's rule about the role, and `07:152` states it in as many words: *"Your
+ * role picks a suggested order through the modules. You can ignore it."* And
+ * the note on `group-data` is the warning that a destructive action earns —
+ * the only irreversible thing on this page, said before the row rather than
+ * inside the dialog that gates it.
+ */
 export const REGISTER_GROUPS = [
-  { id: 'group-done', name: 'What you have done', note: 'Counted from your record' },
+  { id: 'group-done', name: 'What you have done', note: null },
   { id: 'group-next', name: 'What comes next', note: 'Suggested, never a gate' },
-  { id: 'group-take', name: 'What you can take away', note: 'Built in this browser' },
-  { id: 'group-settings', name: 'Settings, and what is stored', note: 'Closed, and each row states its reading' },
+  { id: 'group-take', name: 'What you can take away', note: null },
+  { id: 'group-settings', name: 'Settings, and what is stored', note: null },
   { id: 'group-data', name: 'Your data', note: 'Export and import are reversible. Erasing is not' },
-] as const
+] as const satisfies ReadonlyArray<{ id: string; name: string; note: string | null }>
 
 export type RegisterGroupId = (typeof REGISTER_GROUPS)[number]['id']
 
@@ -643,7 +665,7 @@ export default function ProgressPage() {
               <h2 id={group.id} className="bz-panel-title">
                 {group.name}
               </h2>
-              <p className="bz-panel-note">{group.note}</p>
+              {group.note !== null && <p className="bz-panel-note">{group.note}</p>}
             </div>
 
             <Register labelledBy={group.id}>

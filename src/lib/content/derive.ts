@@ -220,6 +220,23 @@ export function distinctExternalLinks(body: string): string[] {
   return [...new Set(externalLinks(body))]
 }
 
+/**
+ * M19 — a module's Turkish sibling, named ONCE.
+ *
+ * This convention was spelled inline here and, once the loader started reading
+ * the file rather than only measuring it, would have been spelled a second time
+ * there. Two spellings of one convention is how a rename leaves one of them
+ * pointing at a file that is not there — and the failure would be silent in
+ * exactly the wrong direction: a missing sibling measures zero words, which
+ * this module's own rule reads as "no translation" rather than as an error.
+ *
+ * It lives in `derive.ts` and not in `loader.ts` because `loader.ts` already
+ * imports from here; the other direction is a cycle.
+ */
+export function translationOf(englishFile: string): string {
+  return englishFile.replace(/\.md$/, '_tr.md')
+}
+
 /** §7.6 — the rule, in one line, with no division by zero. */
 export function langFromExtents(en: number, tr: number): Lang {
   if (en <= 0 || tr <= 0) return 'EN'
@@ -280,8 +297,9 @@ function extentOfFile(file: string): number {
  */
 export function langCoverage(englishFile: string, status: 'ready' | 'draft'): Lang {
   if (status === 'draft') return 'EN'
-  return langFromExtents(
-    extentOfFile(englishFile),
-    extentOfFile(englishFile.replace(/\.md$/, '_tr.md')),
-  )
+  // M19 — the sibling's path is `loader.ts`'s `translationOf`, and this used
+  // to spell it a second time. Two spellings of one convention is how a rename
+  // leaves one of them measuring a file that is not there, which would read as
+  // "no translation" rather than as an error.
+  return langFromExtents(extentOfFile(englishFile), extentOfFile(translationOf(englishFile)))
 }

@@ -65,6 +65,24 @@ export interface RenderOptions {
    * `intermediate/coding-agents` and `personal-agents`.
    */
   excerptOf?: number
+  /**
+   * M19 — **where a cross-reference LANDS, when the reader is in Turkish.**
+   *
+   * `rehypeCourseLinks` turns `llms_tr.md` into a route, and it turned it into
+   * the ENGLISH route — MEASURED on the built Turkish tree before this existed:
+   * all 8 cross-references out of one page, and 121 across the corpus, dropped
+   * the reader back into English. Nothing failed and nothing could: every one
+   * of them resolved. The Turkish tree was nineteen one-way doors.
+   *
+   * It is a function the CALLER supplies rather than a language flag, because
+   * answering it needs to know which modules have a translation — and that is
+   * the loader's knowledge. `render.ts` must not import the loader: the module
+   * page already does, and the other direction is a cycle. So this file applies
+   * a mapping it is handed and has no opinion about the second language at all.
+   *
+   * Given the resolved route, return the one to use. The default is identity.
+   */
+  localiseRoute?: (route: string) => string
 }
 
 /** §6.1 — the section-mark rule, exactly as the spec writes it. */
@@ -773,7 +791,7 @@ function rehypeTaskListMarkers() {
  * is for the reader: the two plugins are the whole of §6.3, translation first
  * and then the mark that says a link leaves the site.
  */
-function rehypeCourseLinks(sheet: number | undefined) {
+function rehypeCourseLinks(sheet: number | undefined, localise?: (route: string) => string) {
   return (tree: Root) => {
     let source: string | null | undefined
 
@@ -804,7 +822,7 @@ function rehypeCourseLinks(sheet: number | undefined) {
       // already rejected, so this is narrowing rather than a branch: a link it
       // recognises and cannot resolve throws instead.
       const route = courseLinkFor(value, source)
-      if (route !== null) node.properties.href = route
+      if (route !== null) node.properties.href = localise ? localise(route) : route
     })
   }
 }
@@ -952,7 +970,7 @@ export async function renderMarkdown(
     .use(rehypeCollectChecklist, checklist)
     .use(rehypeTaskListMarkers)
     // §6.3 — file paths become routes, then external links get their mark.
-    .use(rehypeCourseLinks, options.sheet ?? options.excerptOf)
+    .use(rehypeCourseLinks, options.sheet ?? options.excerptOf, options.localiseRoute)
     .use(rehypeExternalLinks)
     // B8 — both variants, written as CSS custom properties on every token, so
     // flipping `.dark` re-themes the block with no re-highlight (§9.2).

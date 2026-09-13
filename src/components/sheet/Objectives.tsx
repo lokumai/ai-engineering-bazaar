@@ -24,11 +24,27 @@
  * Returns `null` on an empty list: a card with a promise and no promises in it
  * is the claim §1 forbids.
  */
-export function Objectives({ items }: { items: readonly string[] }) {
+export function Objectives({
+  items,
+  lang,
+}: {
+  items: readonly string[]
+  /**
+   * M19 — which language these are in, where that is not the document's.
+   *
+   * **MEASURED: a `_tr.md` carries no frontmatter at all**, so `objectives`
+   * exists in English and nowhere else. On a Turkish page this card is the one
+   * run of English inside the reading column, and saying so is what stops a
+   * screen reader reading it in a Turkish voice. Printing it unmarked or
+   * dropping it were the other two answers: the first is wrong and the second
+   * takes a capability off the translated page.
+   */
+  lang?: string
+}) {
   if (items.length === 0) return null
 
   return (
-    <section className="bz-card" aria-labelledby="objectives">
+    <section className="bz-card" aria-labelledby="objectives" lang={lang}>
       <b id="objectives" className="bz-card-title">
         What you will be able to do
       </b>

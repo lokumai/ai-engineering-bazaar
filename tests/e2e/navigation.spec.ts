@@ -301,6 +301,13 @@ const TRAILED = [
   '/sign-in/',
   '/sign-in/alias/',
   '/join/',
+  /* M19 — the Turkish tree. `/tr/` is a language prefix and not a place, so the
+     trail runs `Home / Catalog / Fundamentals / <module>` exactly as the
+     English one does — the prefix is dropped before a crumb is built. It read
+     `Home / tr / Curriculum / …` before that: a raw slug naming a directory,
+     AND a third crumb pointing at a route M17 retired, because the retarget is
+     guarded on the first segment being `courses`. */
+  '/tr/courses/fundamentals/llms/',
 ] as const
 
 test('every trail names its page the way the page names itself', async ({ page }) => {

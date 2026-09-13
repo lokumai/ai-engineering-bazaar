@@ -455,4 +455,41 @@
     border-radius: var(--radius-md);
     background: var(--color-surface-raised);
   }
+
+  /* ---------------------------------------------------------------------------
+     M19 — THE LANGUAGE OF THIS MODULE, in the corner the author named.
+
+     *"Language of each module should be selectable from the top-right corner of
+     the box which contains the whole center-aligned module content."* So it
+     rides the reading column's trailing edge, level with the heading below it
+     and above the facts line — the first thing in the box, and out of the
+     prose's own flow.
+
+     Two LINKS and not a control: the language is an address, so this is
+     navigation and it works with the bundle blocked (see `LanguagePicker`).
+     The current one is marked by weight and a full-ink colour, never by colour
+     alone — `aria-current` is what says it to assistive software and the
+     underline is what says it to a reader in forced colours.
+     --------------------------------------------------------------------------- */
+  .bz-langs {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin: 0 0 6px;
+  }
+
+  .bz-lang {
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-mark) / 1 var(--font-sans);
+    text-decoration: none;
+  }
+
+  .bz-lang:hover { color: var(--color-on-surface); }
+
+  .bz-lang[aria-current="page"] {
+    color: var(--color-on-surface-title);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
 }

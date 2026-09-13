@@ -72,8 +72,28 @@ export const NOT_FOUND_TITLE = 'No such module'
  */
 export const NOT_FOUND_SHEET_LABEL = NOT_FOUND_TITLE.toUpperCase()
 
+/**
+ * M19 — **a language prefix is not a place, so it is not a crumb.**
+ *
+ * `/tr/courses/fundamentals/llms/` is the same module at a second address, and
+ * `/tr/` is what says which language — there is no page there and nothing to
+ * navigate to. Left in, the trail read `Home / tr / Curriculum / Fundamentals /
+ * LLM Temelleri`: a raw slug naming a directory, which is exactly the defect
+ * M22 measured across eight routes and fixed one milestone ago.
+ *
+ * **And it broke a second thing, one crumb further along.**
+ * `retargetCourseAncestors` sends a module's ancestors to `/sheets/` — it is
+ * what makes the third crumb read `Catalog` and not `Curriculum` — and it is
+ * guarded on `segments[0] === 'courses'`. With `tr` in front, that guard
+ * stopped firing and the trail named a route M17 retired. Dropping the prefix
+ * here fixes both, because everything downstream then sees the shape it was
+ * written for.
+ */
+const LANGUAGE_SEGMENT = 'tr'
+
 function segmentsOf(pathname: string): string[] {
-  return pathname.split('/').filter(Boolean)
+  const segments = pathname.split('/').filter(Boolean)
+  return segments[0] === LANGUAGE_SEGMENT ? segments.slice(1) : segments
 }
 
 /**

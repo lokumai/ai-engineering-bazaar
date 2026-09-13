@@ -84,12 +84,28 @@ export function CurriculumRail({
   levels,
   currentSlug,
   currentLevel,
+  localise,
 }: {
   levels: readonly RailLevel[]
   /** The module being read, or null on a page that is not one. */
   currentSlug: string | null
   /** The level being read. Its section opens and is enlarged. */
   currentLevel: string | null
+  /**
+   * M19 — where a rail link GOES, when the reader is in Turkish.
+   *
+   * MEASURED before this existed: a Turkish module page's rail linked every one
+   * of the thirty-three modules to its English address, so the column a reader
+   * navigates the course with took them out of the language they were reading
+   * in. The prose's own cross-references were already localised; this was the
+   * other half of the same defect and the pager was the third.
+   *
+   * A function rather than a language flag, for the same reason `render.ts`
+   * takes one: which modules have a translation is the loader's knowledge, and
+   * the caller is the one that has it. Identity by default, so every other page
+   * that draws a rail passes nothing and nothing branches.
+   */
+  localise?: (route: string) => string
 }) {
   return (
     /* Not named `Curriculum`: the trail under the navbar already owns that
@@ -146,7 +162,7 @@ export function CurriculumRail({
               {level.modules.map((module) => (
                 <li key={module.slug}>
                   <Link
-                    href={module.path}
+                    href={localise ? localise(module.path) : module.path}
                     className="bz-item"
                     data-module={module.module}
                     data-draft={module.drawn ? undefined : ''}

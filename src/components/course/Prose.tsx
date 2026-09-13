@@ -32,9 +32,20 @@ export function Prose({
   html,
   className,
   opening,
+  lang,
 }: {
   html: string
   className?: string
+  /**
+   * M19 — which language the CORPUS HTML is in, where that is not the
+   * document's own.
+   *
+   * It goes on the inner box that holds the markdown and not on this element,
+   * because the `opening` slot beside it is a different language: the
+   * objectives card has no translation anywhere in the corpus and stays
+   * English. One attribute per run of text, and `lang` inherits from there.
+   */
+  lang?: string
   /**
    * Rendered as the FIRST child of the prose, before the corpus's own HTML.
    * `01` puts the objectives card exactly there — `.goals` is `.prose`'s first
@@ -47,7 +58,7 @@ export function Prose({
     <>
       <div data-hl-prose="" className={className === undefined ? 'bz-prose' : `bz-prose ${className}`}>
         {opening}
-        <div dangerouslySetInnerHTML={{ __html: html }} />
+        <div lang={lang} dangerouslySetInnerHTML={{ __html: html }} />
       </div>
       {/* §6.10 — the diagram island. It reads the page before it imports
           anything, so prose with no figures never fetches mermaid. */}

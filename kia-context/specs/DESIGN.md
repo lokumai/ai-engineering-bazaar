@@ -12,7 +12,7 @@ authority: blueprint
 writes: agent, as the language evolves
 status: active
 covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-12, with four recorded deviations"
-last_updated: 2026-09-12
+last_updated: 2026-09-13
 ---
 
 ---
@@ -532,11 +532,40 @@ meets the case, because its own pager holds two short titles and no state word.
 reason beside it and still compares `gap` and `margin-top`, so the pager has not
 left the transcription.
 
-**Two of the four are the author's and two are floors.** The code comment
-deviation and this one were forced; the `20ch` cap and the authorship line were
-chosen.
+**A FIFTH DEVIATION, AND IT IS THE SAME SHAPE AS THE FOURTH: A BORDER THAT
+COST LAYOUT SPACE.** `01`'s `.side` draws the curriculum rail's trailing
+hairline as a `border-right`, and the language transcribed it. **M21 measured
+what that pixel does.** A border comes out of the content box, and
+`.bz-rail-inner` is `--layout-rail` wide — so the rail overflowed itself by
+exactly 1px in the inline axis at all times. At rest `scrollLeft` is 0 and the
+pixel clips on the right where nobody sees it; **after one fold and restore
+`scrollLeft` was 1 and could never return**, because `overflow-x: hidden` is
+still a scroll container and a browser scrolls one to reveal a focused element —
+which the fold's focus hand-off did on every press. MEASURED at 1440 / 1366 /
+1280 / 1200, by pointer and by keyboard. The author reported it as happening
+*only* after closing the sidebar and opening it again, and that condition is
+what identified it as state rather than layout.
 
-**The two entries above are the only ones in this file that the author decided rather than a measurement forcing.**
+The language paints the line as a background layer instead, which takes no space
+at all. **`overflow-x: clip` is not the fix and it looked like one**: CSS
+Overflow 3 computes `clip` to `hidden` when the other axis is `auto`, and this
+rail needs `overflow-y: auto` — the declaration shipped, `getComputedStyle`
+returned `hidden`, and the bug survived.
+
+**And the border comes back under `forced-colors: active`, where a painted line
+is not painted at all** — that mode drops background images, so the rail briefly
+had no visible boundary of any kind. A review caught it and the browser
+confirmed it. Both mechanisms are declared, each where it works, and the inner
+gives up its pixel in the forced-colours case so the overflow stays zero there
+too. `transcription.test.ts` drops `border-right` from the `.side` pair with the
+reason beside it and still compares `top`, `height`, `overflow` and
+`background`, so the rail has not left the transcription.
+
+**Three of the five are floors and two are the author's.** The code comment
+deviation, the pager's tracks and the rail's hairline were forced; the `20ch`
+cap and the authorship line were chosen.
+
+**The `20ch` cap and the authorship line are the only entries in this file that the author decided rather than a measurement forcing.**
 The rule stands: the mockup outranks this document, a measured accessibility floor outranks the
 mockup (**D34**), and the author outranks all three — stated here so a third entry cannot be added
 by an agent reading the first two as precedent.

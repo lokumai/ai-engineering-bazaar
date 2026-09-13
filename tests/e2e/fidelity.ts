@@ -908,9 +908,17 @@ export const APP_SELECTORS: SelectorMap = {
 
   /* Stage 4 — the catalog, on `/sheets/`. Two of these need saying:
 
-     `chip` resolves to the first UNPRESSED chip, which is the first level
-     chip, and that is the one carrying a hue key — `Every level` is the
-     pressed one on load and has no key, so `chipKey` finds the right box.
+     `chip` resolves to the first chip carrying no `aria-pressed="true"`, which
+     is the first LEVEL chip — and that is the one carrying a hue key.
+
+     **The reason is not the one this used to give**, and it has changed twice.
+     It said the first chip is `Every level`, which is pressed on load and has
+     no key. Since **D62** the level chips are LINKS: they carry
+     `aria-current="page"` and never `aria-pressed`, so every one of them
+     matches this selector and the first one simply comes first. And M20 renamed
+     that chip to `View Curriculum` — it is still the one without a hue key, so
+     `chipKey` still finds the right box, for a different reason than the one
+     written here.
 
      `tableCell` reads the fourth cell rather than the first for the same
      reason the mockup map does: the first is the mono number column and

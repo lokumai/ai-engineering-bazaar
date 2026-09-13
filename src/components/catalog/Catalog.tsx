@@ -242,7 +242,8 @@ export function Catalog({
    * state is replaced by the three views — so focus would be dropped on the
    * floor, and a keyboard reader would lose their place at exactly the moment
    * the empty state told them to act. Focus therefore goes to the control that
-   * now expresses the state they just chose: the `Every level` chip.
+   * now expresses the state they just chose: the `View Curriculum` chip (it
+   * read `Every level` until M20).
    *
    * Next frame and not this one, and by query rather than by ref, which is the
    * shape `RailFold` uses for the same hand-off and for the same measured

@@ -726,9 +726,11 @@ test('§16.4 — the account block arrives open, and every row arrives closed', 
   const state = await rows.evaluateAll((nodes) =>
     nodes.map((node) => ({
       row: node.getAttribute('aria-labelledby'),
-      // The `h2` lives inside the `<summary>` so the panel's id stays on a
-      // heading at the level it already occupied (§16.7).
-      heading: node.querySelector(':scope > details > summary > h2')?.id ?? null,
+      // The heading lives inside the `<summary>` so the panel's id stays on a
+      // heading. M22 made it an `h3`: the rows are inside named groups now, and
+      // thirteen `h2` peers with one heading over them was the flat list the
+      // author reported (§16.7 gains a level rather than losing one).
+      heading: node.querySelector(':scope > details > summary > h3')?.id ?? null,
       open: node.querySelector(':scope > details')?.hasAttribute('open') ?? null,
     })),
   )
@@ -739,6 +741,27 @@ test('§16.4 — the account block arrives open, and every row arrives closed', 
   const expected = REGISTER_ROWS.map((row) => row.id)
   expect(state.map((row) => row.row)).toEqual(expected)
   expect(state.map((row) => row.heading)).toEqual(expected)
+
+  /* M22 — **and each row is inside the group it names**, which is what the
+     regroup is FOR: a reader looking for their export should be able to find
+     it without opening anything. Read off the DOM rather than off the table, so
+     a row assigned to a group the page does not render fails here instead of
+     disappearing quietly. */
+  const grouped = await page.evaluate(() =>
+    [...document.querySelectorAll('[data-bz-register-group]')].map((group) => ({
+      group: group.getAttribute('data-bz-register-group'),
+      heading: group.querySelector(':scope > .bz-panel-head > h2')?.id ?? null,
+      rows: [...group.querySelectorAll('section.bz-register-row')]
+        .map((row) => row.getAttribute('aria-labelledby')),
+    })))
+
+  expect(grouped.length, 'the register draws no groups').toBeGreaterThan(1)
+  for (const group of grouped) {
+    expect(group.heading, `${group.group} has no heading`).toBe(group.group)
+    expect(group.rows.length, `${group.group} is an empty heading`).toBeGreaterThan(0)
+  }
+  // Every row lands in exactly one group, and between them they are all of them.
+  expect(grouped.flatMap((group) => group.rows)).toEqual(expected)
 
   // §16.4.3 — which rows were open is not remembered, so every load is every
   // row closed. Reported as the offending rows rather than as a count.

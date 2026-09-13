@@ -423,9 +423,16 @@ export function ReportPanel({ facts, counts }: ReportPanelProps) {
     <div data-hl-report data-hydrated={hydrated ? 'true' : 'false'}>
       <section className="bz-panel" aria-labelledby="hl-report-preview">
         <div className="bz-panel-head">
-          <h2 id="hl-report-preview" className="bz-panel-title">
+          {/* M22 — **`h4`, because this panel is inside a register row.**
+              These three were `h2`, which put them level with the page's own
+              blocks while sitting inside one — and the register's rows became
+              `h3` when M22 grouped them, so an `h2` here inverted the outline
+              outright: a reader navigating by heading left `Record of work` and
+              landed on something that read like a new section of the page.
+              The styling is unchanged; only the level is. */}
+          <h4 id="hl-report-preview" className="bz-panel-title">
             What the file will say
-          </h2>
+          </h4>
           <p className="text-mark m-0 text-on-surface-faint">Counted from this browser</p>
         </div>
 
@@ -458,9 +465,9 @@ export function ReportPanel({ facts, counts }: ReportPanelProps) {
 
       <section className="bz-panel" aria-labelledby="hl-report-limits">
         <div className="bz-panel-head">
-          <h2 id="hl-report-limits" className="bz-panel-title">
+          <h4 id="hl-report-limits" className="bz-panel-title">
             Status and limits
-          </h2>
+          </h4>
           <p className="text-mark m-0 text-on-surface-faint">Second block of the file</p>
         </div>
 
@@ -477,9 +484,9 @@ export function ReportPanel({ facts, counts }: ReportPanelProps) {
 
       <section className="bz-panel" aria-labelledby="hl-report-save">
         <div className="bz-panel-head">
-          <h2 id="hl-report-save" className="bz-panel-title">
+          <h4 id="hl-report-save" className="bz-panel-title">
             Save
-          </h2>
+          </h4>
           <p className="text-mark m-0 text-on-surface-faint">One self-contained file</p>
         </div>
 

@@ -246,14 +246,49 @@
 
   /* -- §16.1 the drafter block -------------------------------------------- */
 
+  /* M22 — **the clearance the groups need, and it is the same defect M20 found
+     one page over.**
+
+     `.bz-panel-head` declares `margin-bottom: 4px` and no top margin, because
+     until now it sat under a rule or at the top of a block. Five group headings
+     in a row of register rows have nothing above them at all, so each one
+     butted against the row before it and read as belonging to what it followed
+     rather than to what it introduced — which is most of what "a mess" means
+     for a list like this.
+
+     Declared on the GROUP and not on `.bz-panel-head`, which every panel on
+     every page uses: a rule there would move six other surfaces to fix one. */
+  [data-bz-register-group] {
+    margin-top: 30px;
+  }
+
   .bz-drafter {
     margin: 0 0 26px;
   }
 
+  /* M22 — **the mark took half the page and stood in the middle of it.**
+
+     MEASURED at 1440: `repeat(auto-fit, minmax(240px, 1fr))` computed to
+     `662px 662px 0px 0px 0px`, and `.bz-drafter-mark` rendered **137px wide at
+     x=312** — its own `margin: 0 auto` makes a grid item shrink to fit and
+     centre, which is right in the stacked case it was written for and leaves
+     525px of white beside it here. The block read as broken, and it is the
+     first thing under the circles.
+
+     The two children are not a pair of halves: one is a small fixed graphic and
+     the other is everything else, so `1fr 1fr` was never their shape. The mark
+     takes what it needs and the body takes the rest. `07`'s own breakpoint is
+     760px and this stacks under it, where the centring is correct again. */
   .bz-drafter-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 18px;
+  }
+
+  @media (min-width: 761px) {
+    .bz-drafter-grid {
+      grid-template-columns: minmax(0, max-content) minmax(0, 1fr);
+    }
   }
 
   .bz-drafter-half {

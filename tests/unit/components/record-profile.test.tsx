@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { NAME_FROM_ADDRESS, RECORD_SCOPE } from '@/lib/record/scope'
 import { describe, expect, it } from 'vitest'
-import ProfilePage, { REGISTER_ROWS } from '@/app/profile/page'
+import ProfilePage, { REGISTER_GROUPS, REGISTER_ROWS } from '@/app/profile/page'
 import { DataPanel, printedDigestFrom } from '@/components/record/DataPanel'
 import { DrafterBlock } from '@/components/record/DrafterBlock'
 import { ERASE_COPY, EraseDialog } from '@/components/record/EraseDialog'
@@ -119,12 +119,14 @@ function noteLineOf(markup: string): string {
 }
 
 /**
- * One register row's closed line, located by the id on its `h2`. The row is a
+ * One register row's closed line, located by the id on its heading. M22 made
+ * that an `h3`: the rows sit inside named groups now, and a flat list of
+ * thirteen `h2` peers was the defect. The row is a
  * `<summary>`, so this is exactly the text a reader sees before opening
  * anything — which is what §16.4.1 is a rule about.
  */
 function summaryOf(markup: string, id: string): string {
-  const found = new RegExp(`<summary[^>]*><h2 id="${id}"[\\s\\S]*?</summary>`).exec(markup)
+  const found = new RegExp(`<summary[^>]*><h3 id="${id}"[\\s\\S]*?</summary>`).exec(markup)
   expect(found, id).not.toBeNull()
   return (found as RegExpExecArray)[0]
 }
@@ -637,9 +639,24 @@ describe('§16.1, §16.4 — the page itself: the account block, then your progr
   })
 
   it('renders exactly REGISTER_ROWS, in exactly that order', () => {
-    const rows = [...PAGE.matchAll(/<h2 id="([^"]+)" class="bz-register-name">([^<]+)</g)]
+    const rows = [...PAGE.matchAll(/<h3 id="([^"]+)" class="bz-register-name">([^<]+)</g)]
       .map(([, id, name]) => ({ id, name }))
     expect(rows).toEqual(REGISTER_ROWS.map(({ id, name }) => ({ id, name })))
+
+    /* M22 — **and every row is under the group it names.** The table is one
+       flat ordered list with a `group` field rather than a nesting, so the
+       sequence above is still the specification; what this adds is that the
+       rendering honours the field. A row assigned to a group the page does not
+       render would vanish silently, which is the exact failure the milestone's
+       inventory exists to prevent. */
+    for (const group of REGISTER_GROUPS) {
+      const heading = PAGE.indexOf(`id="${group.id}"`)
+      expect(heading, `${group.id} has no heading on the page`).toBeGreaterThan(-1)
+      for (const row of REGISTER_ROWS.filter((one) => one.group === group.id)) {
+        expect(PAGE.indexOf(`id="${row.id}"`), `${row.id} is not under ${group.id}`)
+          .toBeGreaterThan(heading)
+      }
+    }
     // Every row is a `bz-register-fold` and nothing else on the page is, so
     // the count is the count of rows — a row rendered outside the register, or
     // a row in the table and not rendered, moves one of these two numbers.
@@ -657,8 +674,17 @@ describe('§16.1, §16.4 — the page itself: the account block, then your progr
     // single-attribute mutation this catches.
     expect(PAGE).not.toContain('<details open')
     expect(PAGE.indexOf('id="drafter"')).toBeGreaterThan(-1)
-    expect(PAGE.indexOf('id="drafter"')).toBeLessThan(PAGE.indexOf('id="register"'))
-    expect(PAGE.indexOf('id="register"')).toBeLessThan(PAGE.indexOf('<details'))
+
+    /* M22 — **`id="register"` no longer exists**, and that is the milestone
+       rather than a rename. One heading reading `What else is on record` sat
+       over thirteen rows of four different kinds; it named the container and
+       not the contents, which is what let a reader open rows until they found
+       their export. There are five group headings now, each naming what is
+       inside it, so the ordering is asserted against the FIRST of them. */
+    const firstGroup = PAGE.indexOf(`id="${REGISTER_GROUPS[0].id}"`)
+    expect(firstGroup, 'the register has no group headings').toBeGreaterThan(-1)
+    expect(PAGE.indexOf('id="drafter"')).toBeLessThan(firstGroup)
+    expect(firstGroup).toBeLessThan(PAGE.indexOf('class="bz-register-fold"'))
   })
 
   it('resolves every aria-labelledby against an id in the same document', () => {
@@ -741,15 +767,33 @@ describe('§16.1, §16.4 — the page itself: the account block, then your progr
     expect(occurrences(PAGE, /name="hl-mark"/g)).toBe(MARK_PICKER_IDS.length)
   })
 
-  it('keeps one h1 and goes no deeper than h3 in the outline (§16.7)', () => {
+  it('keeps one h1 and skips no level in the outline (§16.7)', () => {
     expect(occurrences(PAGE, /<h1/g)).toBe(1)
-    // Every register row is an h2, and so is each open panel above them; the
-    // account block's two halves and the level cards inside control C are h3.
-    // What is asserted is the DEPTH rather than the count: an h4 would mean
-    // something on this page is three levels deep, and M14 folded three routes
-    // in here without adding a level.
-    expect(occurrences(PAGE, /<h3/g)).toBeGreaterThan(0)
-    expect(PAGE).not.toContain('<h4')
+
+    /* **M22 replaced a depth cap with the property the cap stood for.**
+       This read "no `h4`, because M14 folded three routes in here without
+       adding a level". M22 added one on purpose: the thirteen register rows
+       became `h3` under five group headings, because a flat list of thirteen
+       `h2` peers is exactly what a reader navigating by heading hears as "a
+       mess", and a visual grouping alone would have left that outline
+       untouched. The rows' own panels then had to move to `h4`, or a reader
+       leaving `Record of work` landed on something that read like a new
+       section of the page.
+
+       A depth cap was never the invariant — a SKIPPED LEVEL is. An outline
+       that goes h2 → h4 is broken at any depth, and one that goes h1 → h2 →
+       h3 → h4 is sound at four. So the levels are read in document order and
+       every step down is checked to be one. */
+    const levels = [...PAGE.matchAll(/<h([1-6])[ >]/g)].map(([, digit]) => Number(digit))
+    expect(levels.length, 'no headings found, so nothing was checked')
+      .toBeGreaterThan(REGISTER_ROWS.length)
+    expect(levels[0], 'the page does not open on its h1').toBe(1)
+
+    const skipped = levels
+      .map((level, i) => ({ level, previous: levels[i - 1] ?? level }))
+      .filter((step) => step.level - step.previous > 1)
+      .map((step) => `h${step.previous} → h${step.level}`)
+    expect(skipped, 'the outline skips a level').toEqual([])
   })
 
   /**

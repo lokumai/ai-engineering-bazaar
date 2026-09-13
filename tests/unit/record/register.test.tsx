@@ -143,11 +143,18 @@ describe('§16.7 — your progress and its rows are named', () => {
     expect(REGISTER).toContain('<section class="bz-register-row" aria-labelledby="raw">')
   })
 
-  it('carries the row id on an h2, at the heading level the panel had', () => {
-    expect(ROW).toMatch(/<h2[^>]*id="storage"/)
-    // One h2 per row and no h3 smuggled in beside it: §16.7 fixes the page at
-    // one h1, h2 for the blocks, h3 for the drafter block's two halves.
-    expect((ROW.match(/<h2/g) ?? []).length).toBe(1)
+  it('carries the row id on an h3, one level under its group', () => {
+    /* M22 — it was an `h2`, a sibling of the register's own single heading.
+       Thirteen rows at that level meant a reader navigating by heading heard
+       thirteen peers with no way to tell which held their export, which is the
+       flat list the author reported as "a mess". Grouping only reaches
+       assistive software if the rows are genuinely subordinate, so §16.7's
+       structure gains a level: one h1, h2 for the blocks AND for each register
+       group, h3 for a row inside one. */
+    expect(ROW).toMatch(/<h3[^>]*id="storage"/)
+    // One heading per row and no second one smuggled in beside it.
+    expect((ROW.match(/<h3/g) ?? []).length).toBe(1)
+    expect((ROW.match(/<h2/g) ?? []).length).toBe(0)
   })
 
   it('renders the rows in the order it was given them', () => {

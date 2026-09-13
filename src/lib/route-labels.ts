@@ -93,9 +93,38 @@ const SET_SEGMENT = 'courses'
  */
 const INDEX_SEGMENT = 'sheets'
 
+/**
+ * What each segment is CALLED, where the address does not say.
+ *
+ * **M22 — this held two entries and every other route fell back to
+ * `segment.replaceAll('-', ' ')`.** MEASURED across the ten routes that draw a
+ * trail: **eight named their page differently from the page's own `<h1>`**, and
+ * most of them in lowercase slug — `Home / profile` above a heading reading
+ * `Your progress`, `Home / legend / specimen` above `Specimen record`,
+ * `Home / sign in / alias` above `Choose an alias`.
+ *
+ * Nothing could see it. The export's link gate checks that a href resolves, and
+ * every one of these resolved; the trail was simply calling the page by its
+ * folder name. It surfaced on `/profile/` while M22 was redesigning that page,
+ * and the rest came with it because it is one table.
+ *
+ * **The invariant is that a crumb matches the heading of the page it opens** —
+ * `route-labels.test.ts` asserts it against the built export now, which is the
+ * same argument the block below makes about `INDEX_TITLE`: a label and its
+ * destination need one author. A module's own leaf comes from the page instead
+ * (`PageShell`'s `trailLeaf`), because only the server knows a module's title.
+ */
 const ROUTE_TITLES: Record<string, string> = {
   [SET_SEGMENT]: 'Curriculum',
   [INDEX_SEGMENT]: 'Catalog',
+  profile: 'Your progress',
+  team: 'Team',
+  assignments: 'Assignments',
+  legend: 'Legend',
+  specimen: 'Specimen record',
+  'sign-in': 'Sign in',
+  alias: 'Choose an alias',
+  join: 'Join an organisation',
 }
 
 /**

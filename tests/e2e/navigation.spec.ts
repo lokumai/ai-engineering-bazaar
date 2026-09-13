@@ -269,3 +269,61 @@ test('a tap opens the dropdown and leaves it open', async ({ browser }) => {
   await expect(page.locator(MENU)).toHaveAttribute('open', '')
   await context.close()
 })
+
+/**
+ * M22 — **a crumb calls a page what the page calls itself.**
+ *
+ * `breadcrumbFor` labels a segment no route table names by de-hyphenating it,
+ * which is right for nothing and was reached by almost everything: the table
+ * held two entries. MEASURED across the ten routes that draw a trail, **eight
+ * named their page differently from its own `<h1>`** — `Home / profile` above
+ * `Your progress`, `Home / legend / specimen` above `Specimen record`,
+ * `Home / sign in / alias` above `Choose an alias`.
+ *
+ * **Nothing in the suite or the build could see it.** The export's link gate
+ * checks that a href resolves and every one of these resolved; a trail calling
+ * a page by its folder name is indistinguishable from a correct one to anything
+ * that is not comparing the two strings. So this compares them.
+ *
+ * Derived from the routes rather than from a list of expected labels: a table
+ * of "what each crumb should say" is a second author of the same names, which
+ * is the defect `INDEX_TITLE` exists to prevent one route over.
+ */
+const TRAILED = [
+  '/sheets/',
+  '/sheets/expert/',
+  '/courses/fundamentals/llms/',
+  '/profile/',
+  '/team/',
+  '/team/assignments/',
+  '/legend/',
+  '/legend/specimen/',
+  '/sign-in/',
+  '/sign-in/alias/',
+  '/join/',
+] as const
+
+test('every trail names its page the way the page names itself', async ({ page }) => {
+  const wrong: string[] = []
+
+  for (const route of TRAILED) {
+    await page.goto(route)
+    const found = await page.evaluate(() => {
+      const trail = document.querySelector('nav[aria-label="Curriculum"]')
+      return {
+        last: trail?.querySelector('[aria-current="page"]')?.textContent?.trim() ?? null,
+        heading: document.querySelector('main h1')?.textContent?.trim() ?? null,
+      }
+    })
+
+    // Both halves, so a route that stops drawing a trail — or stops having a
+    // heading — fails here rather than passing on two nulls.
+    if (found.last === null || found.heading === null) {
+      wrong.push(`${route}: trail ${found.last}, heading ${found.heading}`)
+      continue
+    }
+    if (found.last !== found.heading) wrong.push(`${route}: "${found.last}" vs "${found.heading}"`)
+  }
+
+  expect(wrong, 'a crumb calls its page something the page does not').toEqual([])
+})

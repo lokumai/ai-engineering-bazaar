@@ -37,7 +37,7 @@ import type { ReactNode } from 'react'
  * `<details role="group">` would have renamed nothing and rewritten twenty
  * tests.
  *
- * **Why the `h2` sits inside the `<summary>`.** The panel's id has to stay on a
+ * **Why the heading sits inside the `<summary>`.** The panel's id has to stay on a
  * heading at the level it already occupied, so the document outline is
  * unchanged by a purely visual fold; moving the id to the `<section>` and
  * dropping the heading would flatten the page's outline to a single h1 and
@@ -104,7 +104,7 @@ export function Register({
  * H-P).
  */
 export interface RegisterRowProps {
-  /** The row's own h2 id. Preserved verbatim from the panel it replaces. */
+  /** The row's own heading id. Preserved verbatim from the panel it replaces. */
   id: string
   /** The row's name, printed in the summary. Sentence case. */
   name: string
@@ -140,9 +140,19 @@ export function RegisterRow({ id, name, reading, kind, children }: RegisterRowPr
     <section className="bz-register-row" aria-labelledby={id}>
       <details className="bz-register-fold">
         <summary className="bz-register-summary">
-          <h2 id={id} className="bz-register-name">
+          {/* M22 — **an `h3`, because the row is inside a named group now.**
+
+              It was an `h2`, a sibling of the register's own heading — so a
+              reader navigating by heading heard thirteen peers with no way to
+              tell which of them held their export. That flat list is the defect
+              the author reported as "a mess", and grouping only fixes it if the
+              rows are genuinely subordinate to the group: a heading level is
+              how that reaches assistive software, and a visual grouping alone
+              would leave the outline exactly as it was. §16.7's structure gains
+              a level here rather than losing one. */}
+          <h3 id={id} className="bz-register-name">
             {name}
-          </h2>
+          </h3>
           <span className="bz-register-reading" data-reading={kind}>
             {reading}
           </span>

@@ -233,21 +233,61 @@ function sheetRefs(): SheetRefs {
  * belong to the row that already states the role, and a second row would have
  * been two rows for one subject.
  */
+/**
+ * M22 — **the four kinds of thing the register holds, which is what was wrong
+ * with it.**
+ *
+ * The author: *"Your progress page is a mess."* Thirteen rows, flat, in one
+ * list, at equal weight — and they are four different KINDS of thing wearing
+ * one costume. A reader looking for their export opened rows until they found
+ * it, because nothing on the page said which of the thirteen was the one; and
+ * a reader navigating by heading heard thirteen peers.
+ *
+ * The order is `07`-A's own argument, which M16's stage-8 brief already
+ * recorded and the page then drifted from: what you have, then what is next,
+ * then what you can take away, and *"settings sit at the bottom where settings
+ * belong"*.
+ *
+ * **The destructive group is last, alone, and its gate does not move.** §12.15
+ * keeps erase behind a typed word; what changes is that it stops sitting
+ * between `Stored values` and `Keyboard` as though it were one more readout.
+ */
+export const REGISTER_GROUPS = [
+  { id: 'group-done', name: 'What you have done', note: 'Counted from your record' },
+  { id: 'group-next', name: 'What comes next', note: 'Suggested, never a gate' },
+  { id: 'group-take', name: 'What you can take away', note: 'Built in this browser' },
+  { id: 'group-settings', name: 'Settings, and what is stored', note: 'Closed, and each row states its reading' },
+  { id: 'group-data', name: 'Your data', note: 'Export and import are reversible. Erasing is not' },
+] as const
+
+export type RegisterGroupId = (typeof REGISTER_GROUPS)[number]['id']
+
+/**
+ * The rows, in order, each naming the group it belongs to.
+ *
+ * **The SEQUENCE is still the specification** (§16.4) and two suites pin it, so
+ * the table stays one flat ordered list and the grouping is a field rather than
+ * a nesting — which also means a row cannot be lost by being in no group: the
+ * page renders every group's rows and a row naming a group that does not exist
+ * fails to type-check.
+ */
 export const REGISTER_ROWS = [
-  { id: 'readout', name: 'Readout' },
-  { id: 'uptime', name: 'Streak' },
-  { id: 'stamps', name: 'Stamps' },
-  { id: 'submittals', name: 'What you built' },
-  { id: 'role', name: 'Role and path' },
-  { id: 'diagram', name: 'The curriculum as one diagram' },
-  { id: 'report', name: 'Record of work' },
-  { id: 'bz-orgs-head', name: 'Organisation' },
-  { id: 'claim', name: 'Last claim' },
-  { id: 'storage', name: 'Storage' },
-  { id: 'raw', name: 'Stored values' },
-  { id: 'data', name: 'Export, import, erase' },
-  { id: 'keyboard', name: 'Keyboard' },
-] as const satisfies ReadonlyArray<Pick<RegisterRowProps, 'id' | 'name'>>
+  { id: 'readout', name: 'Readout', group: 'group-done' },
+  { id: 'uptime', name: 'Streak', group: 'group-done' },
+  { id: 'stamps', name: 'Stamps', group: 'group-done' },
+  { id: 'submittals', name: 'What you built', group: 'group-done' },
+  { id: 'role', name: 'Role and path', group: 'group-next' },
+  { id: 'diagram', name: 'The curriculum as one diagram', group: 'group-next' },
+  { id: 'report', name: 'Record of work', group: 'group-take' },
+  { id: 'bz-orgs-head', name: 'Organisation', group: 'group-settings' },
+  { id: 'claim', name: 'Last claim', group: 'group-settings' },
+  { id: 'storage', name: 'Storage', group: 'group-settings' },
+  { id: 'raw', name: 'Stored values', group: 'group-settings' },
+  { id: 'keyboard', name: 'Keyboard', group: 'group-settings' },
+  { id: 'data', name: 'Export, import, erase', group: 'group-data' },
+] as const satisfies ReadonlyArray<
+  Pick<RegisterRowProps, 'id' | 'name'> & { group: RegisterGroupId }
+>
 
 /**
  * §16.4.2's escape hatch again: the record-of-work row has no selector to read.
@@ -259,8 +299,11 @@ export const REGISTER_ROWS = [
  */
 const REPORT_READING = 'ONE FILE, BUILT IN THIS BROWSER'
 
-/** The register's own heading id (§16.7: the register carries an `h2`). */
-const REGISTER_HEADING_ID = 'register'
+/* `REGISTER_HEADING_ID` was here — one `h2` reading `What else is on record`
+   over all thirteen rows. **M22 replaced it with five**, one per group, and
+   each group's heading id is the group's own id (`REGISTER_GROUPS`). A single
+   heading over four different kinds of thing is what made the list read as a
+   pile: it named the container and not the contents. */
 
 /** Which row needs a session, so exactly one row is wrapped in a provider. */
 type RegisterRowId = (typeof REGISTER_ROWS)[number]['id']
@@ -509,21 +552,50 @@ export default function ProgressPage() {
 
       <hr className="bz-rule" aria-hidden="true" />
 
-      {/* `07`-A puts this first, and its own note says why: "one page, and the
-          first thing on it is the one action a returning reader wants."
+      {/* §12.1.2 — the one surface where a quarantined record can be
+          discovered. Above everything, and it has to stay there: it is the only
+          thing on the page that explains why every readout below it is empty,
+          including the circles. It renders nothing unless there is a
+          quarantined record to report. */}
+      <QuarantineNote />
+
+      {/* M22 — **THE CIRCLES ARE FIRST NOW, and nothing about them changed.**
+
+          The author: *"On the top I want the circles that show progress, and
+          then the rest should come. Except for the circles that show progress
+          which I love the design, please revise the design of the rest."* So
+          this moved and did not change — same component, same props, same
+          `headingId`, and `fidelity.spec.ts`'s stage-7 block still compares it
+          to `05`-C.
+
+          It was seventh on the page, under a continue hero, a quarantine note,
+          a drafter block and an attention panel. D14 already said what it is:
+          the whole course, visible and adjustable, without opening anything —
+          which is the answer to *"how far am I"*, and that is the question this
+          page's name asks. */}
+      <div className="bz-panel-head">
+        <h2 id="progress-levels" className="bz-panel-title">
+          Every module
+        </h2>
+        <p className="bz-panel-note">Yours to set, and to take back</p>
+      </div>
+      <CourseCompletion facts={facts} levels={levels} headingId="progress-levels" />
+
+      {/* `07`-A puts the continue hero first and its own note says why: "one
+          page, and the first thing on it is the one action a returning reader
+          wants." **It is second here, under the circles, on the author's
+          instruction** — which is a deviation from the mockup recorded rather
+          than drifted into, and a small one: both are still above everything
+          else, and the mockup's argument is about what a RETURNING reader wants
+          while the author's is about what this page is FOR.
+
           Channel B, so a reader with nothing to continue — a fresh browser
           before the store answers, or somebody who has finished every written
-          module — gets nothing here rather than a shortcut that is not a
-          shortcut. */}
+          module — gets nothing here rather than a shortcut that is not one. */}
       <ContinueHero
         facts={facts}
         levels={Object.fromEntries(CATEGORIES.map((one) => [one.slug, one.title]))}
       />
-
-      {/* §12.1.2 — the one surface where a quarantined record can be
-          discovered. Above everything, because it is the only thing on the page
-          that explains why every readout below it is empty. */}
-      <QuarantineNote />
 
       {/* §16.1 — the block that arrives open: who is checking these modules,
           and the account, if there is one. */}
@@ -544,47 +616,62 @@ export default function ProgressPage() {
         <AttentionPanel sheets={attentionSheets(facts)} />
       </section>
 
-      {/* D14 — completion control C, the same control the home page carries:
-          the whole course, visible and adjustable, without opening anything. */}
-      <div className="bz-panel-head">
-        <h2 id="progress-levels" className="bz-panel-title">
-          Every module
-        </h2>
-        <p className="bz-panel-note">Yours to set, and to take back</p>
-      </div>
-      <CourseCompletion facts={facts} levels={levels} headingId="progress-levels" />
-
       {/* §17.6 — `/profile/#claim` and `/profile/#data` are affordances two
           other surfaces offer, and both ids sit inside a closed `<summary>`.
           One island for the whole page opens the fold the fragment names; it
           renders nothing, here or in the prerender. */}
       <FoldFragment />
 
-      {/* §16.4 — and everything else, one line each. */}
-      <div className="bz-panel-head">
-        <h2 id={REGISTER_HEADING_ID} className="bz-panel-title">
-          What else is on record
-        </h2>
-        <p className="bz-panel-note">Closed, and each row states its reading</p>
-      </div>
+      {/* M22 — **the register is four named groups and a fifth kept apart**,
+          rather than thirteen rows at equal weight. `REGISTER_GROUPS` carries
+          the reasoning; the order is `07`-A's, which puts settings at the
+          bottom where settings belong.
 
-      <Register labelledBy={REGISTER_HEADING_ID}>
-        {REGISTER_ROWS.map(({ id, name }) => {
-          const panel = panels[id]
-          const rendered = (
-            <RegisterRow key={id} id={id} name={name} reading={panel.reading} kind={panel.kind}>
-              {panel.body}
-            </RegisterRow>
-          )
-          // `SessionProvider` renders context and no element, so the register's
-          // grid still sees the row itself as its child.
-          return panel.needsSession === true ? (
-            <SessionProvider key={id}>{rendered}</SessionProvider>
-          ) : (
-            rendered
-          )
-        })}
-      </Register>
+          A group is a heading and a region, never a fourteenth accordion
+          wrapping the other thirteen — a reader should not have to open
+          something to find out that the thing they want is inside it. */}
+      {REGISTER_GROUPS.map((group) => {
+        const rows = REGISTER_ROWS.filter((row) => row.group === group.id)
+        // A group with no rows draws no heading. Nothing produces one today —
+        // every group is populated above — and the guard is what stops a
+        // regroup leaving an empty heading behind.
+        if (rows.length === 0) return null
+
+        return (
+          <div key={group.id} data-bz-register-group={group.id}>
+            <div className="bz-panel-head">
+              <h2 id={group.id} className="bz-panel-title">
+                {group.name}
+              </h2>
+              <p className="bz-panel-note">{group.note}</p>
+            </div>
+
+            <Register labelledBy={group.id}>
+              {rows.map(({ id, name }) => {
+                const panel = panels[id]
+                const rendered = (
+                  <RegisterRow
+                    key={id}
+                    id={id}
+                    name={name}
+                    reading={panel.reading}
+                    kind={panel.kind}
+                  >
+                    {panel.body}
+                  </RegisterRow>
+                )
+                // `SessionProvider` renders context and no element, so the
+                // register's grid still sees the row itself as its child.
+                return panel.needsSession === true ? (
+                  <SessionProvider key={id}>{rendered}</SessionProvider>
+                ) : (
+                  rendered
+                )
+              })}
+            </Register>
+          </div>
+        )
+      })}
     </PageShell>
   )
 }

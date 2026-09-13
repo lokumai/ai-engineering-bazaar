@@ -2183,6 +2183,40 @@ Escape, outside click and route change already close it.
    `colspan` cell, not a taller cell — `ModuleRow`'s own docblock records what
    `display: flex` on a `<td>` cost, and this is the same class of mistake one
    step further on. The card has no such constraint.
+
+   **And the second trap is not there, which took measuring to find out.**
+   `ModuleRow`'s docblock says twice that the whole row is one click target —
+   *"the anchor lives in the title cell and a stretched pseudo-element covers the
+   row, so a pointer can hit any cell and `Tab` reaches the row exactly once"* —
+   and `SignOffSquares` refuses to put any control in the ninth column on the
+   strength of it: *"a control here would sit under it, unclickable."*
+
+   **MEASURED on the built catalog: there is no such pseudo-element.**
+   `getComputedStyle(link, '::after').content` is `none`, its `position` is
+   `static`, and clicking the `Length` cell navigates nowhere. Only the title is
+   clickable. The rule went with the eleven stylesheets stage 0 deleted and the
+   docblock was never corrected — the same shape as the ISO 128 dash the M18
+   review caught.
+
+   For this deliverable that is good news: a `<summary>` inside the row is not
+   competing with anything. **But it is a defect in its own right**, because
+   §5.3 and §10.3 specify the stretched target and the row no longer has one, and
+   because `SignOffSquares` is declining a capability on a premise that stopped
+   being true.
+
+   **And the suite cannot see it.** Five places reason from the stretched link —
+   `ModuleRow`'s docblock twice, `SignOffSquares`, and `record-index.spec.ts`'s
+   docblock twice — and exactly one test names it:
+   `accessibility.spec.ts:325`, which asserts ONE TAB STOP PER ROW. A title-only
+   link satisfies that perfectly. The comment above it says *"the whole row is
+   one link target"*; the assertion cannot tell a stretched link from a title,
+   so it has been green through the entire absence.
+
+   Whether to restore the stretched link or to correct the five references is a
+   decision, and it has to be taken BEFORE the disclosure is designed: a row that
+   is one big link and a row with a control in it are two different rows. If the
+   link is restored, that test needs the assertion its comment already claims —
+   that a click in a cell which is not the title still navigates.
 3. **`Lang` leaves the table and the card.** One column and one fact list entry.
    **The language SELECTOR the author wants is not built here** — it belongs on
    the module page and it is M19's, which owns the second language. M21 draws the

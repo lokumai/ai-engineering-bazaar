@@ -15,14 +15,14 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M22, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page and M22 the progress redesign, all six done; M19 alone is written and not started. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M23, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-09-13
 ---
 
-# 📈 PROGRESS, part 2 — M16 to M22
+# 📈 PROGRESS, part 2 — M16 to M23
 
 > **← Part 1: [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the review pass over M10 to M14.
-> This part holds **M16 to M22**, in the order they were worked.
+> This part holds **M16 to M23**, in the order they were worked.
 
 ## How to work this file
 
@@ -57,10 +57,11 @@ deliverables as a numbered list; M18 wrote none at all; M19 to M22 had none eith
 | **M16** | The interface, rebuilt on the language | **Done** — 2026-09-10 |
 | **M17** | One catalog, and the pages that fold into it | **Done** — 2026-09-11 |
 | **M18** | The front door, the chrome, and the second language | **Done** — 2026-09-12, minus the second language, lifted to M19 |
-| **M19** | The second language | Written, not started — opens with a decision for the author |
+| **M19** | The second language | **Done** — 2026-09-13, the pipeline. The interface's own strings are **M23** |
 | **M20** | The catalog says what a module IS | **Done** — 2026-09-13. Its four decisions were taken on the author's behalf and are flagged in its report |
 | **M21** | The module page and the rail beside it | **Done** — 2026-09-13. One item is still not written down: see its report |
 | **M22** | Your progress, redesigned | **Done** — 2026-09-13 |
+| **M23** | The interface's own strings, in Turkish | Written, not started — several hundred strings, and the author's own language |
 
 ---
 
@@ -2089,7 +2090,7 @@ list carry `none`. Nothing else moved.
 
 ---
 
-## 🏁 Milestone M19: The second language — WRITTEN AND NOT STARTED
+## 🏁 Milestone M19: The second language — SHIPPED 2026-09-13, less the chrome
 
 M18 lifted this out of itself, which the brief allowed for in as many words:
 *"If M18 runs long, this is the piece to lift out into M19 — the rest of the
@@ -2131,23 +2132,35 @@ the only one that works with no script and the only one a reader can send.
 
 ### Deliverables, in order
 
-- [ ] **The loader walks the sibling**, so a module has two bodies rather than one.
+- [x] **The loader walks the sibling**, so a module has two bodies rather than one.
       `loader.ts` reads the English file and only the English file today.
-- [ ] **The route shape**, from the decision above.
-- [ ] **A fallback for a module with no translation**, which is a real state —
+- [x] **The route shape**, from the decision above.
+- [x] **A fallback for a module with no translation**, which is a real state —
       `langCoverage` exists precisely because some modules are English-only, and a
       reader who switches on one of those must be TOLD, not silently handed
       English. `mini-courses/intermediate/README.md` already says its Turkish files
       are placeholders, which is the same problem one level up: a file that exists
       is not a translation that exists.
-- [ ] **The interface's own strings**, which are English, in components, in the
+- [ ] ~~**The interface's own strings**, which are English, in components, in the
       hundreds — every label, every empty state, every `aria-label`. This is the
       largest part and none of it is in the corpus. It is also the part that
-      decides whether this is one milestone or two.
-- [ ] **`<html lang>` per page**, which is what a screen reader's voice depends on,
+      decides whether this is one milestone or two.~~ → **M23**
+
+      **It decided: two.** Everything else here is a pipeline and it shipped;
+      this is several hundred strings of authored Turkish, in the author's own
+      language, and he is the one to write or approve them. Shipping machine
+      Turkish in the chrome under his name is the one outcome worse than leaving
+      it English.
+
+      **What M19 did instead, so the gap is honest rather than hidden:** every
+      run of English inside a Turkish page says so with a `lang` attribute — the
+      objectives card, the figures' `Expand` control — so a screen reader reads
+      each in the right voice, and `lang` is on the prose rather than on `<html>`
+      precisely because the document is mixed.
+- [x] **`<html lang>` per page**, which is what a screen reader's voice depends on,
       and `tests/unit/copy-register.test.ts`, which scans reader-visible strings in
       English and would need to know which language it is reading.
-- [ ] **The switcher itself.** The mockup draws a `TR` button in the bar beside the
+- [x] **The switcher itself.** The mockup draws a `TR` button in the bar beside the
       theme toggle and M18 left that slot empty. **The author has since placed it
       elsewhere** (2026-09-13): *"Language of each module should be selectable from
       the top-right corner of the box which contains the whole center-aligned module
@@ -2162,13 +2175,144 @@ the only one that works with no script and the only one a reader can send.
 
 ### Acceptance criteria
 
-- [ ] A reader can switch, and the switch is a URL rather than a preference.
-- [ ] A translated module is served in Turkish; an untranslated one **says so** and
+- [x] A reader can switch, and the switch is a URL rather than a preference.
+- [x] A translated module is served in Turkish; an untranslated one **says so** and
       is not silently English.
-- [ ] `<html lang>` is right on every page in both trees.
-- [ ] The copy register still runs, and knows which language it is reading.
-- [ ] The catalog's `EN · TR` stops being a claim the site cannot honour.
-- [ ] Full gate, with the HTML file count restated rather than carried (61 today).
+- [x] `<html lang>` is right on every page in both trees.
+- [x] The copy register still runs, and knows which language it is reading.
+- [x] The catalog's `EN · TR` stops being a claim the site cannot honour.
+- [x] Full gate, with the HTML file count restated rather than carried (61 today).
+
+
+### Report — M19, the second language, 2026-09-13
+
+Shipped as `a6268b9`, with `934e467` for what the reviews found. **The pipeline
+is done and the chrome is not** — see the struck deliverable above and **M23**.
+
+### Both of this brief's premises were stale, and measuring came first
+
+It said *"some modules are English-only"* and cited a README calling the
+Turkish files placeholders. **Neither is true any more.** No README in
+`mini-courses/` says "placeholder", and **all 33 modules carry a real
+translation** at 0.70 to 1.03 of the English word count.
+
+Run through the site's own rule (§7.6, a 0.4 ratio): **19 `EN·TR`, 14 `EN`, and
+not one WRITTEN module is `EN`.** Every one of the fourteen is a draft, which
+§7.6 forces to `EN` whatever its stub sibling says — their `_tr.md` files sit at
+0.9 to 1.0 and are stubs translated from stubs. So the fallback for "a module
+with no translation" is built, and today it is reachable only through a draft.
+
+### The decision: an address, and only for a module
+
+**Shape 1**, on D62's grounds: it works with the bundle blocked and **a reader
+can send somebody the link**, which is the thing a preference can never do.
+
+**Only modules have a second address.** The author placed the control — *"the
+top-right corner of the box which contains the whole center-aligned module
+content"* — so the language is a property of the MODULE being read, not of the
+site, and the catalog, the chrome and the progress page have one address each.
+19 new files, 61 → 80.
+
+### The whole of the second language is one function
+
+`loadModuleIn` returns the module with its body already in the language asked
+for. A module page derives the quick check, the authored summary, the figure
+sequence, the sources and the word count from `body` — so every one of those
+runs against the Turkish text with **no page code knowing a second language
+exists**, and a derivation that was right in English cannot be wrong in Turkish
+because it is the same derivation. The alternative was to thread a `lang`
+through the page and choose per reading: the same choice made eight times, and
+eventually made seven.
+
+The page moved to `components/sheet/ModuleSheet.tsx` and the two route files are
+a few lines each. A second copy of 300 lines is the shape M9 to M14 already
+cost this project.
+
+### What a `_tr.md` does not have, and what that decided
+
+**MEASURED: they carry no frontmatter at all** — the files open on their `# `
+heading. So:
+
+- **the title is the body's own heading**, which `render.ts` drops from the tree
+  (B6.1) precisely so the page can print it;
+- **`objectives` exists in English and nowhere else**, so on a Turkish page that
+  card is marked `lang="en"`. Dropping it takes a capability off the translated
+  page; leaving it unmarked has a screen reader read English in a Turkish voice.
+
+**`lang` is on the prose and not on `<html>`, and that is more accurate rather
+than a compromise.** A Turkish module page is a MIXED-LANGUAGE document — the
+bar, the rail, the footer and the objectives are English — so stamping the whole
+of it would put every one of those in a Turkish voice, which is the defect the
+attribute exists to prevent, pointed the other way.
+
+### The defect this nearly shipped, four times over
+
+**Every cross-reference on a Turkish page resolved perfectly — to the English
+page.** 121 links across the corpus. Nothing failed and nothing could.
+
+It was fixed in the prose first, and the **pager and the rail** were still
+sending readers out of the language — the two controls a reader uses most. Then
+**the review found a fourth region**: `Requirements`, `Unlocks` and `See also`,
+**64 more links**.
+
+**The test could not have caught the fourth, and that is the lesson.** It named
+three regions, so a region nobody had thought of was outside what it could fail
+on — the same shape as a guard that names a class inside its own regex, which
+this milestone series has had to re-point four times. It asserts over **every
+link on the page** now, exempting only the picker's own English half, and
+separately proves the scan reached more than one region so a silently narrowed
+sweep cannot pass it.
+
+### Two capabilities were being dropped on all 19 Turkish pages, in silence
+
+The sharpest finding of the four milestones, and it came from the review.
+
+`quickCheckOf` matches `**Quick Check**`; `summarySection` matches
+`## Summary`. **MEASURED: 0 of 32 `_tr.md` files carry either, and 18 carry
+`**Hızlı Kontrol**` and `## Özet`.** So every Turkish page rendered no
+self-check and no authored summary.
+
+**Nothing could fail**, because "this module asks nothing" is a real state that
+15 English modules are already in — and §12.6's own trap note is what made it
+silent: the component keys on the extractor returning non-null rather than on
+`status === 'ready'`, which is right, and which means an extractor that stops
+finding things looks exactly like content that has nothing to find. Both
+extractors take the Turkish label now: **18/19 in both trees**.
+
+**The general fact** is worth more than the fix: *a matcher written in one
+language silently deletes a capability in the other*, and the deletion is
+invisible wherever "absent" is a legitimate answer.
+
+### What else the reviews found
+
+| | |
+| --- | --- |
+| **SEO** | 19 pairs of near-duplicate pages with nothing saying they are translations, and all 19 Turkish pages carrying the English meta description verbatim. Both trees emit `canonical` and `hreflang` now, and the description follows the body. |
+| **The trail** | It read `Home / tr / Curriculum / …` — a language prefix showing as a place, the same defect M22 measured across eight routes — and it also stopped `retargetCourseAncestors` firing, so the third crumb named a route M17 retired. The prefix is dropped before a crumb is built, which fixes both. |
+| **A number I wrote** | A comment claimed 13 of 19 Turkish titles are identical to the English. Measured: **11**. Rule 7. |
+| **NOT confirmed** | The review reported 67 of 96 figure captions as English inside the Turkish prose. MEASURED across all 19 pages: they are the author's Turkish — both its heuristic and my first one were too crude to tell. It did surface something smaller and real: the figure's `Expand` control is an English interface word, and it says `lang="en"` now. |
+
+### The gate
+
+| | Measured |
+| --- | --- |
+| Typecheck | clean |
+| Unit | **2,157 passed, 82 files** |
+| Build | **80 HTML files** — 61 plus 19 Turkish |
+| Browser | **1,150 passed / 47 skipped / 0 failed**, no flakes |
+| Base-path build | **5,179 of 5,179** internal references carry the prefix |
+| Mutations | three, three red: the rail stops localising, the Turkish tree prerenders every module, the objectives stop declaring their language |
+
+### What the author still has to decide
+
+1. **The chrome** — M23, and it is his language.
+2. **A pager names its neighbour in English** even when it links to the Turkish
+   page, because the neighbour's Turkish title lives in its own body and the
+   pager has the English module. The smaller wrong than loading nineteen more
+   files to name a link; say if it should be the other way.
+3. **A Turkish page's trail and its rail lead to the English catalog**, because
+   the catalog has one address. Consistent with the language being a property of
+   the module — worth confirming it is what he wants.
 
 
 ---
@@ -3104,6 +3248,75 @@ whole set; both pass alone and on a re-run, and the same pair flaked during M20.
 Worth the author's decision whether it is worth chasing, along with
 `theme.spec.ts`'s three first-paint cases, which were measured on the tree with
 M20 stashed and flake identically.
+
+
+## 🏁 Milestone M23: The interface's own strings — WRITTEN AND NOT STARTED
+
+M19 lifted this out of itself, and the brief it came from allowed for it in as
+many words: *"It is also the part that decides whether this is one milestone or
+two."* **It decided: two.**
+
+### Why it is not code
+
+Everything else in M19 was a pipeline, and a pipeline is right or wrong. This is
+**several hundred strings of authored Turkish** — every label, every empty
+state, every `aria-label`, every button — in the author's own language, in a
+product that carries his name. Shipping machine Turkish in the chrome is the one
+outcome worse than leaving it English, and he is the only person who can say
+whether a string is right.
+
+### What is true today, measured
+
+| | Measured |
+| --- | --- |
+| Turkish module pages served | **19**, at `/tr/courses/<level>/<module>/` |
+| Interface strings in Turkish | **0** |
+| Runs of English inside a Turkish page that SAY they are English | the objectives card, the figure `Expand` control |
+
+**The gap is marked rather than hidden**, which is what makes shipping without
+it honest: `lang` is on the prose rather than on `<html>` precisely because the
+document is mixed, so a screen reader already reads each run in the right voice.
+A reader is never told the chrome is Turkish.
+
+### The decision this milestone opens with
+
+**Where the strings live.** Today they are literals in components, which is
+where a `copy-register` test can still read them.
+
+1. **A message catalogue** — one file per language, keyed. Every string moves,
+   `copy-register.test.ts` has to learn to read the catalogue instead of the
+   components, and the register's rules (no exclamation marks, no praise, no
+   "just"/"simply") need a Turkish equivalent or an explicit exemption.
+2. **Per-component pairs**, the string beside its use. Nothing moves and nothing
+   central exists; the cost is that no one can list what needs translating.
+
+**The recommendation is 1**, on one ground: the author cannot review what he
+cannot see in one place. It is also the only shape that can answer "how much of
+the interface is translated" with a number.
+
+### Deliverables
+
+- [ ] **The inventory first** — every reader-visible string, where it is, and
+      whether it is chrome or corpus. M22's own first deliverable, for the same
+      reason: nobody can translate a list that does not exist, and the count is
+      what says whether this is one sitting or ten.
+- [ ] **The decision above**, and the catalogue if it is 1.
+- [ ] **The copy register learns a second language**, or states which of its
+      rules are English-only and why.
+- [ ] **The author writes or approves the Turkish.** Not an agent, and not a
+      draft dressed as a translation.
+- [ ] **The `lang="en"` marks come off** exactly as each string is translated,
+      and no sooner — a marked English string is honest, an unmarked Turkish-ish
+      one is not.
+
+### Acceptance criteria
+
+- [ ] Every reader-visible string on a Turkish page is Turkish, or says it is
+      English.
+- [ ] The number of untranslated strings is derivable, not estimated.
+- [ ] The copy register still runs on both languages.
+- [ ] Full gate, with the HTML file count restated (80 today).
+
 
 ---
 

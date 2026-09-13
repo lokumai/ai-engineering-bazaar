@@ -1454,6 +1454,26 @@ Three shapes were costed and the milestone opens with the choice:
 you have not chosen, and a preference is what you get when you have. Shape 2
 would make the preference unreachable from the only links that lead to it.
 
+**And shape 1 costs nothing in `boot.ts`, which is the opposite of what this
+entry first implied.** MEASURED: `boot.ts` never reads `location`, `pathname` or
+`URL` — channel A has never seen the address, and M17 chose prerendered level
+pages partly to keep it that way. But the no-preference default is not in the
+script at all; it is a CSS fallback, `catalog.css:277`:
+
+    html:not([data-hl-view]) [data-view="overview"] { --bz-showing: block }
+
+So the level page carries its own default by emitting a scope attribute on its
+own wrapper — the server already knows which route it is — and a sibling
+fallback keys off that. A reader WITH a stored view is untouched, because their
+`html[data-hl-view="…"]` rules are what win today and still do. **No script, no
+boot change, correct with the bundle blocked.**
+
+**The trap, and it is one line away:** the toggle's own "showing" mark has the
+same fallback (`catalog.css:727`). Change the view fallback without it and the
+page draws Cards while the toggle marks Overview — the picture and the sentence
+coming apart, which is the thing `Catalog`'s docblock spends a paragraph
+preventing.
+
 **The same distinction settles the dropdown's hover behaviour**, which is why it
 is recorded here rather than as two entries. The menu is a `<details>` and is
 keyboard- and touch-operable BECAUSE it does not depend on hover; closing it on

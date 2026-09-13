@@ -588,9 +588,27 @@ function rehypeFigures(options: RenderOptions) {
               [marker],
             ),
             caption(name, section, {
+              /* M19 — **`lang="en"` on an interface word inside translated
+                 prose.** This control is one of the hundreds of English strings
+                 the interface is made of, and none of them are in the corpus;
+                 translating them is a milestone of its own. What it costs
+                 nothing to do NOW is say which language it is, so a screen
+                 reader on a Turkish page does not pronounce `Expand` as
+                 Turkish — the same answer the objectives card gets, and the
+                 reason `lang` is on the prose rather than on `<html>`.
+
+                 Marked unconditionally rather than per tree: this element is
+                 built by the renderer, which has no opinion about language, and
+                 `lang="en"` inside an English document is a true statement that
+                 changes nothing. */
               action: element(
                 'button',
-                { type: 'button', className: ['bz-caption-action'], 'data-hl-expand': '' },
+                {
+                  type: 'button',
+                  className: ['bz-caption-action'],
+                  lang: 'en',
+                  'data-hl-expand': '',
+                },
                 [text('Expand')],
               ),
             }),

@@ -34,6 +34,12 @@ test('the corpus has something to serve, and something to withhold', () => {
 })
 
 test('every translated module is served in Turkish at its own address', async ({ page }) => {
+  /* It visits every translated module TWICE — once at each address — which is
+     38 documents. That is deliberate (the claim is about every module, not a
+     sample) and it is slower than the default budget allows under eight
+     parallel workers: MEASURED at 9.6s alone and timing out in a full run. */
+  test.slow()
+
   const wrong: string[] = []
   const prose = new Map<string, string>()
 
@@ -47,7 +53,7 @@ test('every translated module is served in Turkish at its own address', async ({
     /* **The PROSE is the proof, and the title is not** — which took a red test
        to find out. A `_tr.md` carries no frontmatter, so the Turkish title is
        the body's own `# ` heading, and the first draft of this asserted that
-       heading differs from the English one. **MEASURED: 13 of the 19 are
+       heading differs from the English one. **MEASURED: 11 of the 19 are
        identical**, because the author leaves the technical term alone — `#
        Memory`, `# Security`, `# Prompt Engineering`, `# Context Engineering`
        are what those modules are called in Turkish too. The assertion was
@@ -113,33 +119,62 @@ test('the picker offers both languages, and only where both exist', async ({ pag
  * page. MEASURED before the fix: 121 links across the corpus, all of them
  * one-way doors out of the language the reader had chosen.
  *
- * Three regions, because the first fix only caught one of them. The prose's own
- * links were localised while the pager and the rail — the two controls a reader
- * uses most — were not.
+ * **This asserted three NAMED REGIONS and a review found a fourth.** The prose,
+ * the pager and the rail were localised; `Requirements`, `Unlocks` and
+ * `See also` were not, and **64 links across the Turkish tree** still took a
+ * reader back to English. A test that lists the places to look can only fail on
+ * a place somebody thought of — which is the same shape as a guard that names a
+ * class in its own regex, four of which this project has had to re-point.
+ *
+ * So it looks at EVERY link on the page and exempts the one that is supposed to
+ * leave: the picker's own English half.
  */
-test('a Turkish page keeps the reader in Turkish, in all three regions', async ({ page }) => {
-  await page.goto(tr(TRANSLATED[0].slug))
-
-  const region = (selector: string) =>
-    page.evaluate((sel) => [...document.querySelectorAll(`${sel} a[href*="courses/"]`)]
-      .map((link) => new URL((link as HTMLAnchorElement).href).pathname), selector)
-
+test('a Turkish page keeps the reader in Turkish, everywhere on it', async ({ page }) => {
   const translated = new Set(TRANSLATED.map((sheet) => en(sheet.slug)))
 
-  for (const [name, selector] of [
-    ['the prose', '[data-hl-prose]'],
-    ['the pager', '.bz-pager'],
-    ['the rail', '.bz-rail'],
-  ] as const) {
-    const hrefs = await region(selector)
-    expect(hrefs.length, `${name} links to no module, so nothing was checked`).toBeGreaterThan(0)
+  // Two modules, because one page cannot carry every kind of link: the first
+  // has cross-references in its prose, and a later one has prerequisites.
+  for (const sheet of [TRANSLATED[0], TRANSLATED[TRANSLATED.length - 1]]) {
+    await page.goto(tr(sheet.slug))
 
-    /* Every link to a TRANSLATED module goes to its Turkish address, and every
-       link to one without stays English — a `/tr/` href for a module that has
+    const hrefs = await page.evaluate(() =>
+      [...document.querySelectorAll('a[href]')]
+        .filter((link) => !link.closest('[aria-label="Language of this module"]'))
+        .map((link) => ({
+          path: new URL((link as HTMLAnchorElement).href).pathname,
+          where: link.closest('[data-hl-prose]') ? 'prose'
+            : link.closest('.bz-pager') ? 'pager'
+            : link.closest('.bz-rail') ? 'rail'
+            : link.closest('main') ? 'the reading column'
+            : 'the chrome',
+        })))
+
+    expect(hrefs.length, 'the page links to nothing, so nothing was checked')
+      .toBeGreaterThan(10)
+
+    /* Every link to a TRANSLATED module goes to its Turkish address. A link to
+       a module without one stays English — a `/tr/` href for a module that has
        no Turkish page would be a 404, which is worse than a language change. */
-    const escaped = hrefs.filter((href) => translated.has(href))
-    expect(escaped, `${name} sends a Turkish reader back to English`).toEqual([])
+    const escaped = hrefs
+      .filter((link) => translated.has(link.path))
+      .map((link) => `${link.where}: ${link.path}`)
+
+    expect([...new Set(escaped)], `${sheet.slug} sends a Turkish reader back to English`)
+      .toEqual([])
   }
+
+  /* And the regions are named ONLY to prove the scan reached them — a sweep
+     that silently covered one region would pass the assertion above while
+     testing almost nothing. */
+  await page.goto(tr(TRANSLATED[0].slug))
+  const reached = await page.evaluate(() => new Set(
+    [...document.querySelectorAll('a[href*="courses/"]')].map((link) =>
+      link.closest('[data-hl-prose]') ? 'prose'
+        : link.closest('.bz-pager') ? 'pager'
+        : link.closest('.bz-rail') ? 'rail'
+        : 'other')).size)
+  expect(reached, 'the scan did not reach the page\'s separate link regions')
+    .toBeGreaterThanOrEqual(3)
 })
 
 test('the English tree links to no Turkish address', async ({ page }) => {

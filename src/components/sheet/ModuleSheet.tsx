@@ -125,29 +125,71 @@ export async function sheetMetadata(
   const sheet = loadModuleIn(`${category}/${module}`, lang)
   if (!sheet) return {}
 
+  const slug = `${category}/${module}`
+  const translatedPage = lang === 'tr'
+
   return {
     title: sheet.frontmatter.title,
-    description: sheet.frontmatter.summary ?? summarySentence(sheet.body) ?? undefined,
+    /* **The DESCRIPTION follows the body, not the frontmatter, on the Turkish
+       tree.** MEASURED before this: all 19 Turkish pages carried the English
+       summary verbatim, because a `_tr.md` has no frontmatter and
+       `loadModuleIn` leaves `summary` as the English module's. The honest
+       description of a Turkish page is its own opening sentence, which
+       `summarySentence` reads out of the body it was handed. */
+    description: translatedPage
+      ? summarySentence(sheet.body) ?? undefined
+      : sheet.frontmatter.summary ?? summarySentence(sheet.body) ?? undefined,
+    /* **Nineteen pairs of near-duplicate pages with nothing saying they are
+       translations of each other**, which a review caught. `hreflang` is how
+       one says so, and `canonical` is how each says it is the original of
+       itself rather than a copy of its sibling. Emitted on BOTH trees and
+       pointing at both, because an alternate declared in one direction only is
+       the half of it a crawler ignores.
+
+       Only where there IS a pair: a module with no translation declares
+       nothing, for the same reason it has no picker. */
+    alternates: sheet.translation === null
+      ? undefined
+      : {
+          canonical: translatedPage ? `/tr/courses/${slug}/` : `/courses/${slug}/`,
+          languages: {
+            en: `/courses/${slug}/`,
+            tr: `/tr/courses/${slug}/`,
+          },
+        },
   }
 }
 
-/** A dependency edge, resolved from a module number to something linkable. */
-function link(module: number): SheetLink | null {
+/**
+ * A dependency edge, resolved from a module number to something linkable.
+ *
+ * **M19 — the FOURTH region that had to be localised**, and it was found by a
+ * review rather than by the test written for exactly this. The prose, the pager
+ * and the rail were done; `Requirements`, `Unlocks` and `See also` were not, so
+ * **64 links across the Turkish tree** still took a reader out of the language
+ * they were reading in. The test named three regions, so the fourth could not
+ * fail it — it asserts over every link on the page now.
+ */
+function link(module: number, localise: (route: string) => string): SheetLink | null {
   const target = moduleByNumber(module)
   if (!target) return null
   return {
     module,
     title: target.frontmatter.title,
-    path: sheetPath(target),
+    path: localise(sheetPath(target)),
     draft: target.frontmatter.status === 'draft',
   }
 }
 
-function relation(label: string, modules: readonly number[]): DependencyRelation {
+function relation(
+  label: string,
+  modules: readonly number[],
+  localise: (route: string) => string,
+): DependencyRelation {
   return {
     label,
     targets: modules
-      .map(link)
+      .map((module) => link(module, localise))
       .filter((target): target is SheetLink => target !== null),
   }
 }
@@ -292,9 +334,9 @@ export async function ModuleSheet({
      reader opens once when deciding whether they can start, rather than a
      permanent column of module numbers beside the prose. */
   const relations = [
-    relation('Requirements', graph.requires(number)),
-    relation('Unlocks', graph.feeds(number)),
-    relation('See also', graph.seeAlso(number)),
+    relation('Requirements', graph.requires(number), localise),
+    relation('Unlocks', graph.feeds(number), localise),
+    relation('See also', graph.seeAlso(number), localise),
   ]
 
   // M10 — the LEFT rail: the curriculum, one accordion section per level, with

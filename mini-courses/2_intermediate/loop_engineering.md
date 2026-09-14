@@ -211,4 +211,5 @@ Next: everything in this module made an agent harder to supervise. Security is w
 - [Orchestrate subagents at scale with dynamic workflows](https://code.claude.com/docs/en/workflows): what a workflow script looks like, its limits, and the four-way comparison
 - [Executable Code Actions Elicit Better LLM Agents](https://arxiv.org/abs/2402.01030): CodeAct, where code becomes the action space
 - [Recursive Language Models](https://arxiv.org/abs/2512.24601): the paper, with [Alex Zhang's write-up](https://alexzhang13.github.io/blog/2025/rlm/) and the [rlm](https://github.com/alexzhang13/rlm) library
+- [Loop Engineering explained in 8min..](https://www.youtube.com/watch?v=4biXYSNkn9Y): this module's own subject in eight minutes, if you would rather watch it
 - [Advanced Agent Architectures](../3_expert/advanced_agent_architectures.md): CodeAct, recursive language models and the rest, properly

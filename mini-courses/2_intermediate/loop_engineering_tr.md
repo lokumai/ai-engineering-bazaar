@@ -201,4 +201,5 @@ Sırada: bu modüldeki her şey bir agent'ı denetlemeyi zorlaştırdı. Securit
 - [Orchestrate subagents at scale with dynamic workflows](https://code.claude.com/docs/en/workflows): bir workflow script'i neye benziyor, limitleri, ve dörtlü karşılaştırma
 - [Executable Code Actions Elicit Better LLM Agents](https://arxiv.org/abs/2402.01030): CodeAct, kodun action space olduğu yer
 - [Recursive Language Models](https://arxiv.org/abs/2512.24601): makale, [Alex Zhang'in yazısı](https://alexzhang13.github.io/blog/2025/rlm/) ve [rlm](https://github.com/alexzhang13/rlm) library'si ile
+- [Loop Engineering explained in 8min..](https://www.youtube.com/watch?v=4biXYSNkn9Y): bu modülün konusu sekiz dakikada, okumaktansa izlemeyi tercih edersen
 - [Advanced Agent Architectures](../3_expert/advanced_agent_architectures_tr.md): CodeAct, recursive language model'ler ve gerisi, düzgün hâliyle

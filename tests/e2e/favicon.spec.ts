@@ -64,7 +64,7 @@ test('no page asks for an icon that is not there', async ({ page }) => {
     if (request.url().includes('favicon')) asked.push(request.url())
   })
 
-  for (const path of ['/', '/courses/', A0.path]) {
+  for (const path of ['/', '/sheets/', A0.path]) {
     await page.goto(path)
     await page.waitForLoadState('networkidle')
   }

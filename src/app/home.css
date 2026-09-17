@@ -1,295 +1,174 @@
 /* ===========================================================================
-   §15.2, §15.3 — the home screen: one document, two states.
+   §15 — THE FRONT DOOR.
 
-   Three rules govern this file.
+   Reference: `playground/08-home.html`, variant A — "Say what it is, then show
+   the five levels", whose own note is the argument for it: *"a stranger
+   understands the product in one screen, and the five level cards double as
+   the table of contents."*
 
-   ONE — the state switch is CSS and nothing else. `lib/record/boot.ts` stamps
-   `data-hl-record="1"` on <html> before first paint whenever it finds a
-   readable record, and has done since Phase 2, so the choice between the two
-   blocks costs no JavaScript, no hook and no hydration: it is right in frame
-   one (§15.2.1, §12.2). Both blocks stay in the DOM. `display: none` is
-   admissible for the block that was not chosen — and only here — because the
-   two express the same information for two record states, so the hidden one
-   carries nothing the reader is missing. Contrast §12.10.3's dependency table,
-   which is never `display: none` because it is the only verifiable form of a
-   claim the diagram makes.
+   `08`'s closing note prefers variant C, the two-state page that shows a
+   returning reader a shortcut and a stranger the pitch — and then says what to
+   do if only one state gets built: *"If you would rather build one state, take
+   A: the pitch matters more than the shortcut, because a returning reader can
+   use the sidebar from any page, while a stranger who bounces never comes
+   back."*
 
-   TWO — a structural weight is PAINTED, never bordered. Chrome floors every
-   `border-*-width` to a whole CSS pixel, so `border: var(--stroke-struct)`
-   paints a hairline and §2.2's middle weight disappears. `background-size` is
-   not floored, so every rule at 1.5px or 2px here is a one-stop gradient — the
-   house pattern from `.skip-link`, which `tests/unit/stroke-weights.test.ts`
-   fails the build for abandoning.
+   THAT IS WHAT THIS IS, and it is also what the page already was. The branch
+   was removed before M16 — `page.tsx` records it — and what survived of C is
+   one line: the continue block, which is the shortcut, on channel A. So the
+   page is A with C's one useful half, which is the recommendation and the
+   fallback taken together.
 
-   THREE — the accent pen is not spent on emphasis. §15.2.4's lead card is
-   distinguished by a 2px CUT-PLANE rule, not a vermilion one: under T1 the
-   accent means "signed off" and nothing else, and the approved mockup's accent
-   edge on that card would have made a first-time reader's entry point look like
-   a completed one. `.hl-chip[aria-pressed="true"]` made the same substitution
-   for the same reason.
+   D31: colour from `01`, geometry from `08`.
    =========================================================================== */
 
 @layer components {
-  /* -- §15.2.1 — the state switch --------------------------------------- */
-
-  /* The prerendered document is the first-visit page: it is what a page built
-     once for everybody can honestly say, it is what a reader with no record
-     gets, and it is what a reader with scripting off gets. Only a stamped
-     record swaps the two, and the swap is symmetrical so that neither block can
-     ever be visible beside the other. */
-  .hl-home-resume {
-    display: none;
+  .bz-hero {
+    margin: 0 0 34px;
   }
 
-  html[data-hl-record="1"] .hl-home-new {
-    display: none;
+  /* `08:44` — `700 46px/1.1` at `-.035em`, and the language's display step is
+     38px at 600 with `-0.015em`. THE LANGUAGE WINS, as it did for `03`'s
+     weights and `05`'s dial: the scale is a closed set and `700` is in no
+     mockup's type block but this one's. What transfers is that the heading is
+     the largest thing on the page, holds to a short measure, and is the only
+     place tracking goes properly negative — so it takes `display` at the
+     tightest tracking the language has. */
+  /* FULL WIDTH, BY THE AUTHOR'S INSTRUCTION, 2026-09-11. `08:44` caps the
+     display line at `20ch` and this transcribed it — which measured 529px in a
+     1342px column and left two thirds of the row empty. He asked for the first
+     row to span the whole width, twice. It does. Recorded in DESIGN.md's
+     DEVIATIONS, because the mockup says otherwise and this outranks it. */
+  .bz-hero-title {
+    margin: 0 0 14px;
+    color: var(--color-on-surface-title);
+    font: 600 var(--text-display) / var(--text-display--line-height) var(--font-sans);
+    letter-spacing: var(--tracking-display);
   }
 
-  html[data-hl-record="1"] .hl-home-resume {
-    display: block;
+  /* `08:45`'s lede: 19px over a 56ch measure. 19px is on no step; `lead` is
+     16 and `subsection` 18.5, and the one that is a READING size rather than a
+     heading size is `lead`. The measure transfers exactly. */
+  /* The lede keeps a measure, and this is the one place it is not the
+     mockup's 56ch. A line of prose has a readable length whatever is around
+     it — that is why `01:182` gives the reading column one at all — so the
+     sentences under a full-width heading hold to the language's own
+     `--layout-measure` rather than running the width of a 1440px window.
+     The heading is a single line of display type and has no such limit. */
+  .bz-lede {
+    max-width: var(--layout-measure);
+    margin: 0 0 26px;
   }
 
-  /* -- §15.2.3–§15.2.5 — the first visit -------------------------------- */
-
-  /* Three entry cards, hairline-separated on a single ground: one grid, one set
-     of rules, and no card that can lose an edge at a wrap. Below 1024 they
-     stack, because the lead card's own type does not survive a 240px column. */
-  .hl-home-cards {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--stroke-hair);
-    margin: 0 0 32px;
-    padding: 0;
-    list-style: none;
-    background: var(--color-line-strong);
-    /* The outer edge, painted on all four sides — see rule TWO. */
-    border: var(--stroke-hair) solid var(--color-line-strong);
+  .bz-lede p {
+    margin: 0 0 10px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-lead);
+    line-height: 1.6;
   }
 
-  .hl-home-card {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 18px;
-    background: var(--color-cleared);
+  .bz-lede p:last-child {
+    margin-bottom: 0;
   }
 
-  /* §15.2.4 — the primary action. A 2px cut-plane rule down the left edge,
-     painted rather than bordered, and never the accent (rule THREE). */
-  .hl-home-card-lead {
-    background:
-      linear-gradient(var(--color-line-cut) 0 0) 0 0 / var(--stroke-cut) 100% no-repeat,
-      var(--color-paper);
-  }
+  /* M18 — THE CONTINUE BLOCK IS GONE, and so is its rule.
 
-  .hl-home-card-title {
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: var(--text-h4);
-    line-height: var(--text-h4--line-height);
-    font-weight: 600;
-    color: var(--color-ink);
-  }
+     It read `Continue · Module 01 · LLM Fundamentals` above the fold, hidden by
+     default and revealed on channel A by `html[data-hl-record]` — a stamp
+     `boot.ts` sets for a record that CARRIES SOMETHING, and deliberately not
+     for one carrying only preferences (§15.11).
 
-  .hl-home-card-note {
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: var(--text-ui);
-    line-height: var(--text-ui--line-height);
-    color: var(--color-ink-muted);
-  }
+     The mechanism was right and the author removed the block: the front door is
+     the argument for reading this, and a reader who has a record reaches their
+     place through `Your progress` in the bar. `data-hl-record` keeps being
+     stamped — `boot.ts` owns it and the progress page reads it — and this page
+     is no longer one of its consumers. **A rule for a class no markup carries
+     is the failure `styling-references.test.ts` exists to catch**, which is
+     why the rule went in the same edit as the block. */
 
-  /* The control sits on the card's own baseline whatever the note above it
-     measures, so three cards of unequal prose still read as one row. */
-  .hl-home-card-go {
-    margin: auto 0 0;
-    padding-top: 10px;
-  }
-
-  /* Six subsystem rows: §5.4's block in a 176px column, its own line of prose
-     beside it, and its measured coverage at the end. The hue is a 1.5px rule
-     down the left edge and never the carrier of anything (SC 1.4.1, §13.1.4) —
-     the row prints the subsystem's name and its count either way. */
-  .hl-home-rows {
-    display: grid;
-    gap: var(--stroke-hair);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    background: var(--color-line);
-  }
-
-  .hl-home-row {
-    display: grid;
-    grid-template-columns: 176px minmax(0, 1fr) auto;
-    gap: 8px 24px;
-    align-items: start;
-    padding: 12px 12px 12px 16px;
-    background:
-      linear-gradient(var(--hl-cat, var(--color-line-strong)) 0 0)
-        0 0 / var(--stroke-struct) 100% no-repeat,
-      var(--color-paper);
-  }
-
-  .hl-home-row-note {
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: var(--text-meta);
-    line-height: 1.55;
-    color: var(--color-ink-muted);
-  }
-
-  .hl-home-row-stat {
-    margin: 0;
-    white-space: nowrap;
-    color: var(--color-ink-muted);
-  }
-
-  /* -- §15.3 — the resume block ----------------------------------------- */
-
-  .hl-home-resume-title {
-    margin: 0 0 16px;
-    font-family: var(--font-display);
-    font-size: var(--text-h2);
-    line-height: var(--text-h2--line-height);
-    font-weight: 700;
-    letter-spacing: -0.015em;
-    text-wrap: pretty;
-    color: var(--color-ink);
-  }
-
-  /* One outlined block holding the five fields §15.3 names, so that a reader
-     sees one instrument rather than five loose readouts. Hairline bordered:
-     1px is a weight a border can carry honestly. */
-  .hl-resume {
-    margin: 0 0 32px;
-    border: var(--stroke-hair) solid var(--color-line-strong);
-    background: var(--color-cleared);
-  }
-
-  .hl-resume-open {
-    display: grid;
-    gap: 4px;
-    padding: 16px 16px 14px;
-  }
-
-  /* §7.1's strip paints its own two hairlines, so it supplies the divider
-     under the open sheet and needs nothing but its gutters. The padding is on a
-     wrapper rather than on `.hl-readout` itself: overriding another
-     stylesheet's `padding` shorthand would make this block's layout depend on
-     which of the two files `globals.css` imports last. */
-  .hl-resume-readout {
-    padding: 0 16px;
-  }
-
-  .hl-resume-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--stroke-hair);
-    background: var(--color-line);
-  }
-
-  .hl-resume-grid > div {
-    padding: 14px 16px 16px;
-    background: var(--color-cleared);
-  }
-
-  /* One meter per subsystem, each with its own printed count under it. The
-     track is `CategoryMeter`'s own 176px, so the cell is sized to it rather
-     than stretching a meter whose segment count is the information. */
-  .hl-home-meters {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(184px, 1fr));
-    gap: 16px 24px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  /* -- Shared by both blocks -------------------------------------------- */
-
-  .hl-home-actions {
+  .bz-hero-actions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
-    margin: 16px 0 32px;
+    gap: 11px;
+    margin: 0 0 22px;
   }
 
-  /* A line of prose inside a mono-set instrument: the display cut at 13px, the
-     same shape the dashboard's role bodies use, so the path cell here and the
-     path panel there read as one component. */
-  .hl-home-note-line {
-    margin: 4px 0 0;
-    font-family: var(--font-display);
+  /* `08:53-54` — the four measured facts, value first and label after, in one
+     wrapping row with no card and no icons. The language's `.bz-facts` is the
+     same primitive from `01`'s reading column, so this only adds the emphatic
+     value: 650 is the weight `01` gives an emphasised number in prose. */
+  .bz-facts-value {
+    color: var(--color-on-surface);
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bz-facts > li {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+  }
+
+  /* `08:53` spaces the four facts 24px apart; `01`'s reading-column strip,
+     which is where `.bz-facts` was transcribed from, spaces its three at 11px.
+     Two mockups, one primitive, two contexts — and a surface arranging its own
+     instance is exactly what a surface stylesheet is for. The primitive keeps
+     `01`'s value for the page `01` draws. */
+  .bz-hero .bz-facts {
+    gap: 24px;
+  }
+
+  /* -- `08:80-87` the four claims -----------------------------------------
+     `repeat(auto-fit, minmax(230px, 1fr))`, a glyph tile beside each, and the
+     block set off by a rule above it. */
+
+  .bz-why {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 16px;
+    margin: 0;
+  }
+
+  .bz-why > div {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 4px 11px;
+  }
+
+  .bz-why dt {
+    grid-column: 2;
+    color: var(--color-on-surface);
+    font-size: var(--text-item);
+    font-weight: 600;
+  }
+
+  .bz-why dd {
+    grid-column: 2;
+    margin: 0;
+    color: var(--color-on-surface-muted);
     font-size: var(--text-meta);
-    line-height: 1.55;
-    color: var(--color-ink-muted);
+    line-height: 1.5;
   }
 
-  /* §4.7, §11.10 — 1024 and below. The three-column card row and the
-     two-column resume grid both stack; the subsystem row drops its 176px
-     column into a stacked block, because a 176px gauge column beside 13px prose
-     at 390px leaves the prose four words wide. */
-  @media (max-width: 1023px) {
-    .hl-home-cards {
-      grid-template-columns: minmax(0, 1fr);
-    }
-
-    .hl-resume-grid {
-      grid-template-columns: minmax(0, 1fr);
-    }
+  /* `08:84` tints this tile with a pair of tokens the language does not
+     have — the same `--soft` / `--accent-ink` pair `07`'s ordinal badge
+     wanted — so it is an EDGE, which is the answer **D33** already gave twice.
+     Sized for a glyph either way, which is what let the emoji be replaced by
+     an SVG without touching it. */
+  .bz-why-mark {
+    grid-row: span 2;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xl);
+    color: var(--color-primary);
   }
 
-  @media (max-width: 767px) {
-    .hl-home-row {
-      grid-template-columns: minmax(0, 1fr);
-    }
-
-    .hl-home-row-stat {
-      white-space: normal;
-    }
-  }
-}
-
-/* ===========================================================================
-   §12.17 — forced-colors.
-
-   Every painted rule in this file is a `background-image`, and the mode forces
-   non-URL background images to none: the card grid, the lead card's cut line
-   and each subsystem row's hue all disappear at once. They come back as real
-   borders, at system colours, which are honoured in place of the forced value.
-   Nothing is lost, because none of them was ever the only carrier — the lead
-   card is first and says `START`, and every subsystem row prints its name and
-   its count in words (§10.4).
-
-   `forced-color-adjust` is never used here: it would opt out of the reader's
-   own explicit choice.
-   =========================================================================== */
-
-@media (forced-colors: active) {
-  .hl-home-cards,
-  .hl-resume {
-    border: 1px solid CanvasText;
-    background: Canvas;
-  }
-
-  .hl-home-card,
-  .hl-resume-grid > div {
-    border: 1px solid CanvasText;
-    background: Canvas;
-  }
-
-  .hl-home-card-lead {
-    border: 2px solid Highlight;
-  }
-
-  .hl-home-rows {
-    background: Canvas;
-  }
-
-  .hl-home-row {
-    border: 1px solid CanvasText;
-    background: Canvas;
+  .bz-why-mark > svg {
+    width: 15px;
+    height: 15px;
   }
 }

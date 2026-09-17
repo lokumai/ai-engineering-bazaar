@@ -298,17 +298,17 @@ export function DataPanel() {
     <div className="grid gap-6">
       {/* ---- EXPORT ------------------------------------------------------- */}
       <div>
-        <div className="hl-signoff-actions">
-          <button type="button" className="hl-btn" onClick={onExport}>
+        <div className="bz-actions">
+          <button type="button" className="bz-btn" onClick={onExport}>
             EXPORT YOUR RECORD
           </button>
           {exported !== null && (
-            <span className="hl-mark text-ink-muted" role="status">
+            <span className="text-mark text-on-surface-muted" role="status">
               {`EXPORTED ${exported.slice(0, 10)}`}
             </span>
           )}
         </div>
-        <p className="mt-2 mb-0 font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-2 mb-0 text-meta leading-normal text-on-surface-muted">
           One JSON file, indented so it can be read in a text editor. It is
           written by this page and downloaded by this browser; nothing is
           uploaded. An export taken with nothing recorded says exactly that.
@@ -317,18 +317,18 @@ export function DataPanel() {
 
       {/* ---- IMPORT ------------------------------------------------------- */}
       <div>
-        <label className="hl-field">
-          <span className="hl-field-label">Import a record from a file</span>
+        <label className="bz-field">
+          <span className="bz-field-label">Import a record from a file</span>
           <input
             type="file"
             accept=".json,.html,application/json,text/html"
             onChange={(event) => void onImport(event)}
-            // `.hl-field input` already gives the border, the ground and the
+            // `.bz-field input` already gives the border, the ground and the
             // type; a file input needs its own height and vertical padding.
             className="block h-auto w-full p-2"
           />
         </label>
-        <p className="hl-field-hint">
+        <p className="bz-field-hint">
           Either the exported .json or the RECORD OF WORK .html that carries it.
           Importing replaces the record in this browser with the one in the file.
         </p>
@@ -337,19 +337,19 @@ export function DataPanel() {
           <div className="mt-2" role="status">
             {imported.kind === 'imported' && (
               <>
-                <p className="hl-mark m-0 text-ink">
+                <p className="text-mark m-0 text-on-surface">
                   {`RECORD IMPORTED · SCHEMA ${imported.schema}`}
                 </p>
                 <p
                   className={
                     imported.digest === 'edited'
-                      ? 'hl-not-saved hl-mark'
-                      : 'hl-mark m-0 mt-1 text-ink-muted'
+                      ? 'bz-not-saved text-mark'
+                      : 'text-mark m-0 mt-1 text-on-surface-muted'
                   }
                 >
                   {DIGEST_READOUT[imported.digest]}
                 </p>
-                <p className="mt-1 mb-0 font-display text-meta leading-normal text-ink-muted">
+                <p className="mt-1 mb-0 text-meta leading-normal text-on-surface-muted">
                   {imported.digest === 'edited'
                     ? 'The record in this file does not hash to the digest printed '
                       + 'in it. The file was imported anyway, because a hash '
@@ -363,8 +363,8 @@ export function DataPanel() {
             )}
             {imported.kind === 'empty' && (
               <>
-                <p className="hl-mark m-0 text-ink">NO RECORD IN THIS FILE</p>
-                <p className="mt-1 mb-0 font-display text-meta leading-normal text-ink-muted">
+                <p className="text-mark m-0 text-on-surface">NO RECORD IN THIS FILE</p>
+                <p className="mt-1 mb-0 text-meta leading-normal text-on-surface-muted">
                   Nothing was changed. The exported .json and the RECORD OF WORK
                   .html both carry the record; another file does not.
                 </p>
@@ -372,12 +372,12 @@ export function DataPanel() {
             )}
             {imported.kind === 'unreadable' && (
               <>
-                <p className="hl-mark m-0 text-ink">
+                <p className="text-mark m-0 text-on-surface">
                   {imported.reason === 'newer'
                     ? 'FILE WRITTEN BY A NEWER VERSION OF THIS SITE — NOT READ'
                     : 'FILE IS NOT THE SHAPE THIS SITE WRITES — NOT READ'}
                 </p>
-                <p className="mt-1 mb-0 font-display text-meta leading-normal text-ink-muted">
+                <p className="mt-1 mb-0 text-meta leading-normal text-on-surface-muted">
                   Nothing was changed, and the file on disk is untouched.
                   {imported.reason === 'newer'
                     ? ' Reload this site to pick up the newer version, then import it again.'
@@ -386,7 +386,7 @@ export function DataPanel() {
               </>
             )}
             {imported.kind === 'unopened' && (
-              <p className="hl-mark m-0 text-ink">THIS FILE COULD NOT BE OPENED</p>
+              <p className="text-mark m-0 text-on-surface">THIS FILE COULD NOT BE OPENED</p>
             )}
           </div>
         )}
@@ -394,10 +394,10 @@ export function DataPanel() {
 
       {/* ---- ERASE -------------------------------------------------------- */}
       <div>
-        <div className="hl-signoff-actions">
+        <div className="bz-actions">
           <EraseDialog onConfirm={onErase} onExport={onExport} exportedAt={exported} />
           {undo !== null && left > 0 && (
-            <button type="button" className="hl-btn" onClick={onUndo}>
+            <button type="button" className="bz-btn" onClick={onUndo}>
               UNDO
             </button>
           )}
@@ -408,7 +408,7 @@ export function DataPanel() {
             session made; the server has nothing to say about it. */}
         {erasedAt !== null && hydrated && (
           <div className="mt-2" role="status">
-            <p className="hl-mark m-0 text-ink">
+            <p className="text-mark m-0 text-on-surface">
               {undo !== null && left > 0 ? undoLabel(left) : UNDO_CLOSED}
             </p>
             {/* §14.6 — said only when it needs saying. `remoteEraseNote`
@@ -418,14 +418,14 @@ export function DataPanel() {
                 row that never existed. */}
             {remoteErase !== null && remoteEraseNote(remoteErase) !== null && (
               <>
-                <p className="hl-mark mt-1 mb-0 text-ink">{REMOTE_ERASE_FAILED}</p>
-                <p className="mt-1 mb-0 font-display text-meta leading-normal text-ink-muted">
+                <p className="text-mark mt-1 mb-0 text-on-surface">{REMOTE_ERASE_FAILED}</p>
+                <p className="mt-1 mb-0 text-meta leading-normal text-on-surface-muted">
                   {remoteEraseNote(remoteErase)}
                 </p>
               </>
             )}
-            <p className="mt-1 mb-0 font-display text-meta leading-normal text-ink-muted">
-              The sign-off marks drawn before this page loaded stay on screen
+            <p className="mt-1 mb-0 text-meta leading-normal text-on-surface-muted">
+              The completion marks ready before this page loaded stay on screen
               until the page is reloaded: they are painted by the boot script,
               which reads the record once, before anything else runs.
             </p>

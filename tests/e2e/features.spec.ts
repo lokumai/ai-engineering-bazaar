@@ -19,34 +19,34 @@ import { SHEETS } from './sheets'
  */
 
 const DRAWN = SHEETS.filter((sheet) => sheet.drawn)
-const signOff = (page: Page) => page.getByRole('button', { name: 'SIGN OFF', exact: true })
+const signOff = (page: Page) => page.getByRole('button', { name: 'Complete', exact: true })
 
-test('the reader can sign a sheet off, and it is still signed after a reload', async ({
+test('the reader can sign a module off, and it is still signed after a reload', async ({
   page,
 }) => {
   const sheet = DRAWN[0]
   await page.goto(sheet.path)
   await waitForHydratedReadout(page)
 
-  const readout = page.locator('footer .hl-readout').first()
+  const readout = page.locator('footer .bz-readout').first()
   const before = await readout.innerText()
   await expect(signOff(page)).toHaveAttribute('aria-pressed', 'false')
 
   await signOff(page).click()
 
   // The control flips, and the running tally in the footer moves with it.
-  await expect(page.getByRole('button', { name: /^SIGNED OFF / })).toBeVisible()
+  await expect(page.getByRole('button', { name: /^Completed / })).toBeVisible()
   await expect.poll(async () => readout.innerText()).not.toBe(before)
   const after = await readout.innerText()
 
   // The point of the feature: it survives leaving the page.
   await page.reload()
   await waitForHydratedReadout(page)
-  await expect(page.getByRole('button', { name: /^SIGNED OFF / })).toBeVisible()
+  await expect(page.getByRole('button', { name: /^Completed / })).toBeVisible()
   await expect.poll(async () => readout.innerText()).toBe(after)
 
   // And it can be taken back.
-  await page.getByRole('button', { name: 'UNSIGN', exact: true }).click()
+  await page.getByRole('button', { name: 'Un-complete', exact: true }).click()
   await expect(signOff(page)).toHaveAttribute('aria-pressed', 'false')
 })
 
@@ -54,7 +54,7 @@ test('the reader is given a name and a mark once there is a record', async ({ pa
   await page.goto(DRAWN[0].path)
   await waitForHydratedReadout(page)
   await signOff(page).click()
-  await expect(page.getByRole('button', { name: /^SIGNED OFF / })).toBeVisible()
+  await expect(page.getByRole('button', { name: /^Completed / })).toBeVisible()
 
   // Somewhere on the record pages the reader is named, and the name is real
   // words rather than an empty slot or the literal word "undefined".
@@ -65,11 +65,15 @@ test('the reader is given a name and a mark once there is a record', async ({ pa
 })
 
 test('the mascot draws itself', async ({ page }) => {
-  await page.goto('/')
+  // `/profile/` and not `/`, and `svg:has(.bz-face)` and not `header svg`. The
+  // header's first SVG is `01`'s four-square brand tile since M16 stage 1, so
+  // this asserted real geometry about a different drawing entirely and passed
+  // on it. The mark renders at 132px in the drafter block here.
+  await page.goto('/profile/')
 
   // Drawn in code, so "it rendered" means real geometry with real size, not an
   // empty <svg> box.
-  const mascot = page.locator('header svg').first()
+  const mascot = page.locator('svg:has(.bz-face)').first()
   await expect(mascot).toBeVisible()
   const box = await mascot.boundingBox()
   expect(box?.width ?? 0).toBeGreaterThan(8)
@@ -107,6 +111,6 @@ test('every picture the export names is in the export', () => {
       }
     }
   }
-  expect(pictures, 'no sheet exported a single picture').toBeGreaterThan(0)
+  expect(pictures, 'no module exported a single picture').toBeGreaterThan(0)
   expect(missing).toEqual([])
 })

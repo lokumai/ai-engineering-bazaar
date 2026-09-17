@@ -130,15 +130,24 @@ describe('§12.1.3 — what the two fields store', () => {
 })
 
 describe('§15.4.3 — the correction rides on the artefact', () => {
-  it('prints UNVERIFIED inside the stamp block, in caution ink', () => {
+  /**
+   * M16 removed the colour half of this, and the test's own reasoning is why it
+   * costs nothing. The retired palette had a `caution-ink` that could carry
+   * text; this language has `caution` for a fill and `on-caution` for type
+   * sitting on one, and no ink for a warning word on the page ground — because
+   * gold on the ground measures 3.09:1, under the text floor. DESIGN.md's rule
+   * covers the rest: "Don't let a faint status word be the only thing that says
+   * what state something is in", read the other way, means the WORD is the
+   * signal and the colour was never allowed to be.
+   */
+  it('prints UNVERIFIED inside the stamp block, as a word rather than a colour', () => {
     const preview = SHEET.slice(SHEET.indexOf('<aside'))
     expect(words(preview)).toContain('UNVERIFIED')
-    expect(preview).toContain('text-caution-ink')
-    // Colour is never the only signal: the word carries it on its own.
-    expect(words(preview.replace(/text-caution-ink/g, ''))).toContain('UNVERIFIED')
+    // Stripped of every class, the state is still stated.
+    expect(words(preview.replace(/class="[^"]*"/g, ''))).toContain('UNVERIFIED')
   })
 
-  it('previews an empty name as UNSIGNED, which is what the title block prints', () => {
+  it('previews an empty name as UNSIGNED, which is what the module info prints', () => {
     const preview = SHEET.slice(SHEET.indexOf('<aside'))
     expect(words(preview)).toContain('UNSIGNED')
     // Never a placeholder person and never a fabricated example name.
@@ -157,9 +166,9 @@ describe('§15.4.5 — two controls of one weight', () => {
   it('gives the keep and the exit the same class and no primary variant', () => {
     expect(words(SHEET)).toContain('KEEP THIS ALIAS')
     expect(words(SHEET)).toContain('READ WITHOUT ONE')
-    expect(SHEET.match(/class="hl-btn"/g) ?? []).toHaveLength(2)
+    expect(SHEET.match(/class="bz-btn"/g) ?? []).toHaveLength(2)
     // The accent means signed off (T1) and nothing on this screen is one.
-    expect(SHEET).not.toContain('hl-btn-danger')
+    expect(SHEET).not.toContain('bz-btn-danger')
     expect(SHEET).not.toContain('aria-pressed')
   })
 
@@ -178,7 +187,7 @@ describe('§15.9.1 — the claims about the record have one author', () => {
   })
 
   it('states the limit before the offer, and never the banned promise (§15.5.4)', () => {
-    expect(words(PAGE)).toContain('LOCAL ONLY')
+    expect(words(PAGE)).toContain('Local only')
     expect(words(PAGE)).not.toMatch(/save your progress/i)
   })
 })

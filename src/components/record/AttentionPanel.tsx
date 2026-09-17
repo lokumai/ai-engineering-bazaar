@@ -105,9 +105,9 @@ export function AttentionPanel({ sheets }: { sheets: readonly AttentionSheet[] }
   return (
     <>
       {flags === null ? (
-        <p className="hl-mark m-0 text-ink-muted">NO READING — THE RECORD IN THIS BROWSER HAS NOT BEEN READ YET</p>
+        <p className="text-mark m-0 text-on-surface-muted">NO READING — THE RECORD IN THIS BROWSER HAS NOT BEEN READ YET</p>
       ) : flags.length === 0 ? (
-        <p className="hl-mark m-0 text-ink-muted">NOTHING OPENED AND LEFT</p>
+        <p className="text-mark m-0 text-on-surface-muted">NOTHING OPENED AND LEFT</p>
       ) : (
         <ul className="m-0 grid list-none gap-2 p-0">
           {flags.map((flag) => {
@@ -117,43 +117,43 @@ export function AttentionPanel({ sheets }: { sheets: readonly AttentionSheet[] }
                 key={`${flag.why}:${flag.sheetSlug}`}
                 className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-line pb-2"
               >
-                <span className="font-display text-ui leading-normal text-ink">
+                <span className="text-item leading-normal text-on-surface">
                   {sheet === undefined ? (
                     // A slug the corpus no longer answers to — a renamed sheet,
                     // an imported record. It is named as it stands in the
                     // record rather than dropped (§12.1.3).
-                    <span className="hl-mark">{flag.sheetSlug}</span>
+                    <span className="text-mark">{flag.sheetSlug}</span>
                   ) : (
                     <>
                       {sheet.drawn ? (
-                        <Link href={`/courses/${sheet.slug}/`} className="hl-link">
-                          Sheet {String(sheet.module).padStart(2, '0')} · {sheet.title}
+                        <Link href={`/courses/${sheet.slug}/`} className="bz-link">
+                          Module {String(sheet.module).padStart(2, '0')} · {sheet.title}
                         </Link>
                       ) : (
                         <>
-                          Sheet {String(sheet.module).padStart(2, '0')} · {sheet.title}{' '}
-                          <span className="hl-mark text-ink-muted">NOT DRAWN</span>
+                          Module {String(sheet.module).padStart(2, '0')} · {sheet.title}{' '}
+                          <span className="text-mark text-on-surface-muted">PLANNED</span>
                         </>
                       )}
-                      <span className="hl-mark ms-2 text-ink-muted">{sheet.subsystem}</span>
+                      <span className="text-mark ms-2 text-on-surface-muted">{sheet.subsystem}</span>
                     </>
                   )}
                 </span>
-                <span className="hl-mark text-ink-muted">{reasonWords(flag)}</span>
+                <span className="text-mark text-on-surface-muted">{reasonWords(flag)}</span>
               </li>
             )
           })}
         </ul>
       )}
 
-      <p className="mt-3 mb-0 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
-        A sheet is listed here when the last dated write against it — a Quick
+      <p className="mt-3 mb-0 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
+        A module is listed here when the last dated write against it — a Quick
         Check answer or a filed submittal — is {STALL_DAYS} or more days old. A
         checklist tick and a followed source carry no date in this record, so
         they neither start nor reset that count. A Quick Check recorded as
         missed is not listed on its own: the count of attempts is held in the
-        event log, which this page does not read. A sheet leaves the list when
-        it is signed off, never because more time passed.
+        event log, which this page does not read. A module leaves the list when
+        it is completed, never because more time passed.
       </p>
     </>
   )

@@ -53,7 +53,7 @@ export const metadata: Metadata = {
  * **The alias is a door, not a footnote (§15.5.1).** It is first, and it is the
  * one carrying the accent edge — the order is ascending cost and the accent
  * marks the cheapest door rather than the one that suits us. Accent normally
- * means "signed off" on this site (T1, `.hl-btn[aria-pressed="true"]`), and
+ * means "signed off" on this site (T1, `.bz-btn[aria-pressed="true"]`), and
  * that reading cannot arise here: this sheet has no sign-off state on it at
  * all, and the badge beside the mark says in words what the edge is marking, so
  * the colour is never the only signal (§2.6). Putting an account first, or
@@ -105,52 +105,56 @@ export const metadata: Metadata = {
  * its own and names the reader's act as the thing that moves it, which is the
  * sequence-of-states shape `RECORD_SCOPE` and `ALIAS_SCOPE` both use.
  */
+/** The doors table's two column widths, and the only place they are stated. */
+const DOOR_LABEL_WIDTH = 220
+const DOOR_COL_WIDTH = 140
+
 export default function SignInPage() {
   return (
     <PageShell sheet="SIGN IN">
-      <p className="hl-eyebrow hl-mark">OPTIONAL · NOTHING IS GATED BEHIND IT</p>
+      <p className="bz-facts">Optional · nothing is gated behind it</p>
 
-      <h1 className="hl-listing-title">Sign in</h1>
+      <h1 className="bz-display">Sign in</h1>
 
-      <p className="hl-lead">
+      <p className="bz-lead">
         Three ways to put your name on this record, and they cost different
         things. The first asks for nothing and sends nothing on its own. The
         other two move a copy off this browser, carrying the name with it, so
-        the record survives a cleared cache and a second machine. Every sheet,
-        every Quick Check and every sign-off works the same under all three,
+        the record survives a cleared cache and a second machine. Every module,
+        every Quick Check and every completion works the same under all three,
         and under none of them.
       </p>
 
-      <hr className="hl-rule-struct" aria-hidden="true" />
+      <hr className="bz-rule" aria-hidden="true" />
 
       {/* Door 1 — the cheapest, and therefore the first and the marked one.
           The 2px left edge is `--stroke-cut` spent as a border, which is a
           whole pixel and paints (§2.2); the struct weight is the one that may
           never be a border. */}
       <section
-        className="hl-panel border border-line-strong border-l-2 border-l-accent bg-cleared p-5"
+        className="bz-panel border border-line-strong border-l-2 border-l-primary bg-surface-raised p-5"
         aria-labelledby="hl-door-alias"
       >
-        <div className="hl-panel-head">
+        <div className="bz-panel-head">
           <h2
             id="hl-door-alias"
-            className="m-0 font-display text-h4 leading-tight font-semibold text-ink"
+            className="m-0 text-subsection leading-tight font-semibold text-on-surface"
           >
             Use an alias
           </h2>
-          <p className="hl-mark m-0 text-accent-ink">LOCAL ONLY · NOT AN ACCOUNT</p>
+          <p className="text-mark m-0 text-primary">LOCAL ONLY · NOT AN ACCOUNT</p>
         </div>
 
         {/* §15.9.1 — what an alias is, what it proves and where it goes, from
             the one module allowed to say so. This door and `/sign-in/alias/`
             print the same characters. */}
-        <p className="mt-0 mb-3 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-0 mb-3 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
           {ALIAS_SCOPE}
         </p>
 
         {/* §15.5.3 — the door's own limit, in the door's own paragraph: only
             the facts `ALIAS_SCOPE` does not state. */}
-        <p className="mt-0 mb-4 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-0 mb-4 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
           No email and no password, and the form that asks for them sends
           nothing. Its limits: an alias cannot join an organisation, and a
           submittal recorded under it stays a typed claim rather than a checked
@@ -158,7 +162,7 @@ export default function SignInPage() {
         </p>
 
         <p className="m-0">
-          <Link className="hl-btn" href="/sign-in/alias/">
+          <Link className="bz-btn" href="/sign-in/alias/">
             Choose an alias
           </Link>
         </p>
@@ -169,21 +173,21 @@ export default function SignInPage() {
           this deployment has is a runtime answer, and these two paragraphs are
           true either way, so they are prerendered and a reader with scripting
           off still gets them. */}
-      <section className="hl-panel" aria-labelledby="hl-door-accounts">
-        <div className="hl-panel-head">
+      <section className="bz-panel" aria-labelledby="hl-door-accounts">
+        <div className="bz-panel-head">
           {/* Counted, never typed. This heading said "two" while
               `SIGN_IN_PROVIDERS` carried three provider buttons and
               `ALL_PROVIDERS` turned the third on whenever the settings probe
               could not be read — so the page contradicted the panel under it in
               a state a deployment can actually be in (§11.25). */}
-          <h2 id="hl-door-accounts" className="hl-panel-title">
+          <h2 id="hl-door-accounts" className="bz-panel-title">
             The {numberWord(ACCOUNT_DOOR_COUNT)} account doors
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">A COPY OFF THIS BROWSER</p>
+          <p className="text-mark m-0 text-on-surface-faint">A COPY OFF THIS BROWSER</p>
         </div>
 
-        <p className="mt-0 mb-3 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
-          <span className="hl-mark text-ink">EMAIL A SIGN-IN LINK</span> — one
+        <p className="mt-0 mb-3 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
+          <span className="text-mark text-on-surface">EMAIL A SIGN-IN LINK</span> — one
           link to your inbox, and no password to keep. Opening it is what proves
           the mailbox, and a proven mailbox is what an organisation admitting
           people by their email domain checks. Its limit: this site learns an
@@ -191,16 +195,16 @@ export default function SignInPage() {
           typed claim — there is no repository owner to compare it against.
         </p>
 
-        <p className="m-0 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
-          <span className="hl-mark text-ink">CONTINUE WITH GITHUB</span> — one
+        <p className="m-0 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
+          <span className="text-mark text-on-surface">CONTINUE WITH GITHUB</span> — one
           press, and it brings along the handle a roster prints and a submittal
           is checked against. Its limit: GitHub hands this site no address it
           can prove, so joining an organisation by its email domain does not
           work under a GitHub-only account.
         </p>
 
-        <p className="m-0 mt-3 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
-          <span className="hl-mark text-ink">CONTINUE WITH GOOGLE</span> — one
+        <p className="m-0 mt-3 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
+          <span className="text-mark text-on-surface">CONTINUE WITH GOOGLE</span> — one
           press, and the copy off this browser that any account gives. It is the
           GitHub door without the handle: no address this site can prove, so no
           domain join, and no repository owner to compare a submittal against,
@@ -218,12 +222,12 @@ export default function SignInPage() {
         <SignInPanel />
       </SessionProvider>
 
-      <section className="hl-panel" aria-labelledby="hl-door-table">
-        <div className="hl-panel-head">
-          <h2 id="hl-door-table" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-door-table">
+        <div className="bz-panel-head">
+          <h2 id="hl-door-table" className="bz-panel-title">
             What each door does
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">READ ACROSS BEFORE YOU PICK</p>
+          <p className="text-mark m-0 text-on-surface-faint">READ ACROSS BEFORE YOU PICK</p>
         </div>
 
         {/* Every wide thing scrolls inside its own container, and the page body
@@ -232,25 +236,33 @@ export default function SignInPage() {
             because a scroll container a keyboard cannot reach is unusable
             (§10.3). */}
         <div
-          className="hl-index-scroll"
+          className="bz-table-scroll"
           role="region"
           tabIndex={0}
           aria-label="What each sign-in door does"
           data-hl-scroller=""
         >
-          <table className="hl-index">
+          <table
+            className="bz-table"
+            style={
+              { '--bz-table-min': `${DOOR_LABEL_WIDTH + DOOR_CONSEQUENCES.length * DOOR_COL_WIDTH}px` } as React.CSSProperties
+            }
+          >
             <caption className="sr-only">
               {`One row per door, and six consequences read across. ${DOOR_CONSEQUENCES
                 .map((consequence) => consequence.question)
                 .join(' ')}`}
             </caption>
             <colgroup>
-              {/* Sums to `.hl-index`'s hand-computed 1060px `min-width`:
-                  220 + six columns of 140. Below that the table scrolls
-                  rather than crushing `In your orgs` into three lines. */}
-              <col style={{ width: '220px' }} />
+              {/* The minimum is COMPUTED from these two widths and the number
+                  of doors, above, rather than restated as `1060px` in a
+                  comment — which is what this said, in the third of three
+                  files repeating that arithmetic against a rule stage 0 had
+                  deleted. Below the sum the table scrolls rather than crushing
+                  `In your orgs` into three lines. */}
+              <col style={{ width: `${DOOR_LABEL_WIDTH}px` }} />
               {DOOR_CONSEQUENCES.map((consequence) => (
-                <col key={consequence.id} style={{ width: '140px' }} />
+                <col key={consequence.id} style={{ width: `${DOOR_COL_WIDTH}px` }} />
               ))}
             </colgroup>
             <thead>
@@ -265,21 +277,21 @@ export default function SignInPage() {
             </thead>
             <tbody>
               {DOOR_ROWS.map((row) => (
-                <tr key={row.id} className="hl-row">
-                  <th scope="row" className="hl-row-title">
+                <tr key={row.id} className="bz-row">
+                  <th scope="row" className="bz-row-title">
                     {row.label}
                   </th>
                   {/* One ink for all four answers, and the word is the whole
                       signal. The mockup tinted `Yes` verify-green, `No` faint
                       and `In your orgs` caution-amber; three of those readings
                       are wrong here. T6 reserves the semantic inks for
-                      diagrams and status ticks, `--color-ink-faint` is
+                      diagrams and status ticks, `--color-on-surface-faint` is
                       decorative only (T5) and would put the most common answer
                       on this table below the contrast floor, and a colour that
                       vanishes under `forced-colors` cannot be carrying a
                       consequence (§2.6, §10.4). The reader compares words. */}
                   {DOOR_CONSEQUENCES.map((consequence) => (
-                    <td key={consequence.id} className="hl-mark">
+                    <td key={consequence.id} className="text-mark">
                       {ANSWER_WORDS[row.cells[consequence.id]]}
                     </td>
                   ))}
@@ -290,11 +302,11 @@ export default function SignInPage() {
         </div>
       </section>
 
-      <div className="hl-note">
+      <div className="bz-note">
         <p>
           Whichever door you take, the record already in this browser is not
           discarded. If the account has a record too, the two are merged
-          field by field — a sign-off is never taken back, and no submittal is
+          field by field — a completion is never taken back, and no submittal is
           dropped — and you are shown what the merge did before it is kept.
         </p>
         <p>
@@ -303,7 +315,7 @@ export default function SignInPage() {
         </p>
         <p className="m-0">
           <Link href="/profile/">
-            The profile sheet is where the record itself lives
+            The account page is where the record itself lives
           </Link>
           .
         </p>

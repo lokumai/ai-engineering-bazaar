@@ -1,0 +1,114 @@
+/* ===========================================================================
+   THE CURRICULUM RAIL — M16 stage 3.
+
+   Reference: `playground/01-theme-T4-ground-G3-powder.html`'s `details.arch`,
+   which is `playground/09-sidebar.html` variant 1 with a current-group
+   treatment added. `09` holds no T4 variant, so the shell is the ratified one.
+
+   Small for the same reason `shell.css` is: the language already carries the
+   whole rail — the sticky column, the arch-topped groups, the hue key, the
+   count, the item rows, the completion disc, the fold and its restore tab.
+   What is left here is the two things a design language cannot hold, because
+   both are about this product's own data.
+   =========================================================================== */
+
+@layer components {
+
+  /* ---------------------------------------------------------------------------
+     1. THE HUE, AS A SHAPE.
+
+     The key reads `--bz-cat` rather than being told a colour, so a level's hue
+     is written down in exactly one place. That place is `category.css`, which
+     is where the slug-to-hue mapping moved in stage 4 once the catalog started
+     reading the same five hues off the same attribute; the language declares
+     the hook and a neutral default.
+     --------------------------------------------------------------------------- */
+  .bz-group-key { background: var(--bz-cat); }
+
+  /* ---------------------------------------------------------------------------
+     2. THE COMPLETION DISC IS HIDDEN UNTIL CHANNEL A REVEALS IT.
+
+     This is the whole reason the disc is rendered for every module that can be
+     completed rather than only for the ones that are. `src/lib/record/boot.ts`
+     stamps `hl-signed-<n>` on `<html>` in a blocking script before first paint,
+     and `src/app/lokum-modules.css` — generated, one selector per written
+     module — flips this back to `grid` for that module alone. No React, no
+     hydration, correct in frame one.
+
+     `display` and not `opacity` or `visibility`: a hidden disc must take no
+     space, or every row would carry a gap for a mark it may never show. The
+     word inside it goes with it, which is what keeps the shape and its
+     statement from ever disagreeing.
+     --------------------------------------------------------------------------- */
+  .bz-item .bz-tick { display: none; }
+
+  /* ---------------------------------------------------------------------------
+     3. THE RAIL'S NARROW FORM.
+
+     Below the width where a rail can sit beside the prose, its content moves
+     behind one control. So the control exists only there — above that width the
+     rail itself is on screen and a second way to reach it would be a claim that
+     something is hidden when it is not.
+
+     `data-bz-at` says WHICH width, because that depends on which rails the page
+     has: `narrow` opens at the point the curriculum list goes, `wide` at the
+     point the contents rail goes ahead of it.
+     --------------------------------------------------------------------------- */
+  .bz-drawer-bar { display: none; }
+
+  @media (max-width: 1180px) {
+    .bz-drawer-bar[data-bz-at="wide"] { display: flex; padding: 12px 0 0; }
+  }
+
+  @media (max-width: 880px) {
+    .bz-drawer-bar[data-bz-at="narrow"] { display: flex; padding: 12px 0 0; }
+  }
+
+  /* The panel. Radix owns the focus trap, the Escape key and the focus
+     restore; what the language owns is that it is a raised surface with a
+     hairline, over a ground that dims. Deliberately unanimated: it is a way
+     to reach a list, not a moment. */
+  .bz-drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    /* The slab's ground at half strength. The language declares no translucent
+       surface — its only rgba values belong to the bar's sub-palette — so the
+       dimming comes from `opacity` on the overlay rather than from a colour
+       invented for it. */
+    background: var(--color-slab-surface);
+    opacity: 0.5;
+  }
+
+  .bz-drawer {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 71;
+    width: min(88vw, var(--layout-rail));
+    overflow: hidden auto;
+    padding: 14px 12px 48px;
+    border-right: 1px solid var(--color-line);
+    background: var(--color-surface);
+  }
+
+  .bz-drawer-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  /* No `text-transform`. The drawer is mockup-less and derives this from
+     `.bz-rail-head-label`, which transcribes `01`'s fold-bar caption — and
+     `01:136-137` writes `text-transform: none` on that caption EXPLICITLY,
+     which is an author turning the old idiom off rather than an omission.
+     DESIGN.md's don't-list says the same thing in words. This carried
+     `uppercase` from stage 3 and was the only one left in any surface
+     stylesheet; `surface-stylesheets.test.ts` now refuses it. */
+  .bz-drawer-title {
+    color: var(--color-on-surface-faint);
+    font: 600 var(--text-label) / 1 var(--font-sans);
+    letter-spacing: var(--tracking-label);
+  }
+}

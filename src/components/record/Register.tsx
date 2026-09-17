@@ -32,12 +32,12 @@ import type { ReactNode } from 'react'
  * gives the row an accessible name a reader can navigate to whether or not it
  * is open. Second, roughly twenty assertions across the four suites address
  * these panels as `section[aria-labelledby="storage"|"raw"|"data"|"submittals"]`
- * and two in-tree links point at `#hl-account-head`; the ids survive the
+ * and two in-tree links point at `#bz-account-head`; the ids survive the
  * redesign verbatim, and so does the shape that borrows them as a name. A bare
  * `<details role="group">` would have renamed nothing and rewritten twenty
  * tests.
  *
- * **Why the `h2` sits inside the `<summary>`.** The panel's id has to stay on a
+ * **Why the heading sits inside the `<summary>`.** The panel's id has to stay on a
  * heading at the level it already occupied, so the document outline is
  * unchanged by a purely visual fold; moving the id to the `<section>` and
  * dropping the heading would flatten the page's outline to a single h1 and
@@ -58,7 +58,7 @@ import type { ReactNode } from 'react'
  * reading taken" (§16.4.2) and is a reading, not a gap.
  */
 export const BLANK_READING_MESSAGE =
-  'A register row may not print a blank reading (§16.4.1). '
+  'A row may not print a blank reading (§16.4.1). '
   + 'Pass the reading the row exists to report, or `--` when nothing has been '
   + 'measured yet.'
 
@@ -88,7 +88,7 @@ export function Register({
   labelledBy: string
 }) {
   return (
-    <section className="hl-register" aria-labelledby={labelledBy}>
+    <section className="bz-register" aria-labelledby={labelledBy}>
       {children}
     </section>
   )
@@ -104,7 +104,7 @@ export function Register({
  * H-P).
  */
 export interface RegisterRowProps {
-  /** The row's own h2 id. Preserved verbatim from the panel it replaces. */
+  /** The row's own heading id. Preserved verbatim from the panel it replaces. */
   id: string
   /** The row's name, printed in the summary. Sentence case. */
   name: string
@@ -113,29 +113,58 @@ export interface RegisterRowProps {
    * that a closed row states it. Not optional, and not blank.
    */
   reading: ReactNode
+  /**
+   * WHAT KIND of reading it is, stated rather than inferred.
+   *
+   * §16.4.1 allows a row three things and no fourth: a count, the `--` that
+   * means no reading, or a NAMED STATE. Never a sentence of prose. That rule
+   * used to be checked by CASING — the readings were pre-cased to match a
+   * class that uppercased them, so `record-pages.spec.ts` could take capitals
+   * as the mark of a named state and a lowercase sentence as prose.
+   *
+   * The design language has no uppercase, so that distinction evaporated: with
+   * every reading in sentence case, "Software Engineer" and a sentence of
+   * prose look alike to a regular expression. So the row says which it is, and
+   * the test asks the row instead of guessing from its shape. Which is the
+   * lesson this project keeps relearning — ask by location, not by what the
+   * text says.
+   */
+  kind: 'count' | 'none' | 'state'
   children: ReactNode
 }
 
-export function RegisterRow({ id, name, reading, children }: RegisterRowProps) {
+export function RegisterRow({ id, name, reading, kind, children }: RegisterRowProps) {
   if (readingIsBlank(reading)) throw new Error(BLANK_READING_MESSAGE)
 
   return (
-    <section className="hl-register-row" aria-labelledby={id}>
-      <details className="hl-register-fold">
-        <summary className="hl-register-summary">
-          <h2 id={id} className="hl-register-name">
+    <section className="bz-register-row" aria-labelledby={id}>
+      <details className="bz-register-fold">
+        <summary className="bz-register-summary">
+          {/* M22 — **an `h3`, because the row is inside a named group now.**
+
+              It was an `h2`, a sibling of the register's own heading — so a
+              reader navigating by heading heard thirteen peers with no way to
+              tell which of them held their export. That flat list is the defect
+              the author reported as "a mess", and grouping only fixes it if the
+              rows are genuinely subordinate to the group: a heading level is
+              how that reaches assistive software, and a visual grouping alone
+              would leave the outline exactly as it was. §16.7's structure gains
+              a level here rather than losing one. */}
+          <h3 id={id} className="bz-register-name">
             {name}
-          </h2>
-          <span className="hl-register-reading">{reading}</span>
+          </h3>
+          <span className="bz-register-reading" data-reading={kind}>
+            {reading}
+          </span>
           {/* The native triangle is not in ISO 128's line language, so it is
               replaced by a mono `›` — in CSS with `list-style: none` only,
               never `display: none`, which costs Safari the click target
               (§16.4.4). Decoration: `<details>` already carries the state. */}
-          <span className="hl-register-chev" aria-hidden="true">
+          <span className="bz-register-chev" aria-hidden="true">
             ›
           </span>
         </summary>
-        <div className="hl-register-body">{children}</div>
+        <div className="bz-register-body">{children}</div>
       </details>
     </section>
   )

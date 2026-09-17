@@ -14,6 +14,5 @@ Seri boyunca bahsedilen tüm protokolleri (MCP, A2A, ACP, AG-UI ve daha fazlası
 
 ```mermaid
 graph LR
-    A[Protocols Reference]
     style A fill:#FFFF00
 ```

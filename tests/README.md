@@ -48,12 +48,105 @@ for a Roman numeral." "A two-column table's first column is not a row header."
 "A URL inside a code span is not an external link." Keep these. They are the
 part of the suite that pays.
 
+**`tests/e2e/redirects.spec.ts`** is the only place the site's three forwarding
+routes are checked. A redirect in a static export is a document rather than a
+status code, so it is measured as one: the retired address lands on `/profile/`,
+keeps the fragment it was bookmarked with, says where it went with every module
+refused, and forwards to the same URL its own visible link carries — read out of
+`out/`, because the base-path failure only exists in the other build.
+
 **`tests/e2e/features.spec.ts`** asks whether each feature works at all: sign a
 sheet off and it survives a reload, the reader gets a name, the mascot draws
 itself, every picture on every page loads. Four browser tests stand in for 865
 unit tests that used to check the insides of those features. That trade is
 deliberate: these cannot prove an internal calculation is right, and they do
 catch every version of "it is broken", which is what a reader would meet.
+
+**`tests/unit/design/transcription.test.ts` and `tests/e2e/fidelity.*` are the
+design-fidelity layer, added in M15, and they exist because of a specific
+failure.** Five milestones re-themed the old interface instead of rebuilding it
+to the chosen mockup, and 2,149 unit tests plus 467 browser tests stayed green
+throughout, because **not one of them compared anything to the mockup**. They
+measured contrast, keyboard paths, containment and first paint — all real, none
+of them the thing that was wrong.
+
+**`tests/e2e/layout.spec.ts` is the layer under that one, added on 2026-09-11
+for the same kind of reason.** The fidelity harness compares a NAMED ELEMENT's
+named property to the same element in the mockup — and it agreed with `01`
+exactly while the navigation rendered as a vertical stack on every route,
+because `display: flex` was on the `<nav>` and the items were inside a `<ul>`.
+Every fact was right; the relationship between three elements was wrong, and
+nothing that reads elements one at a time can see that.
+
+So this file asserts RELATIONSHIPS, over every route: a row is not declared
+above the things it lays out, a table cell is still a table cell, a cell's
+border reaches its own row, a sticky offset does not resolve against a
+scroller, nothing in the bar paints outside the bar, a trail starts where its
+page starts, and a number is not painted against a word.
+
+**Every invariant in it is wrong in any design**, which is the line that keeps
+it out of the mockup's territory: it never says what the interface should look
+like, only that the page is put together the way its own rules claim. That is
+why it holds for a route no mockup draws, and why a new route gets it for free.
+**Both halves are needed** — fidelity catches a value that drifted from the
+drawing, this catches a page that does not hold together — and a defect visible
+in one screenshot of the home page had escaped 2,154 unit and 1,083 browser
+tests before it existed (**D59**).
+
+The unit half holds `src/design/bazaar.css` to
+`playground/01-theme-T4-ground-G3-powder.html` and its approved dark sibling.
+**It writes no value down**, which is what keeps it inside the rule at the top
+of this file: colours are compared as *sets* in both directions, so renaming a
+token changes nothing and inventing a colour fails naming it; dimensions are
+checked one direction, because the reverse is noise from incidental padding; and
+each primitive is resolved through its own file's token map and compared to the
+other's, so the mockup stays the only source of every number.
+
+**M16 grew it to five reference documents and three registries, and made D31
+mechanical.** The harness knows which mockup specifies which role, and **a role
+whose reference is not the shell may carry no colour fact at all** — so a
+component mockup can only ever be compared on lengths and type steps, which is
+what stops a green accent arriving on a powder ground. Beside that,
+`WITHOUT_REFERENCE` holds a component no mockup draws and `NARROW_DEVIATIONS` a
+fact that stops being specified below the language's own lower breakpoint; every
+entry states a reason, and a guard fails any narrow deviation that has stopped
+deviating, because a stale exemption hides the next difference.
+
+**Not every mockup value is a fact to compare, and deciding which is the
+judgement the harness cannot make.** Three kinds are deliberately not roles, and
+each is recorded where it would otherwise look forgotten. A value snapped to a
+closed scale — a `700` weight where the language's emphatic weight is `600`, a
+24px numeral where the nearest step is 25 — was always going to differ, so
+comparing it is an exemption waiting to be written rather than a comparison. A
+measure declared in `ch` resolves against the element's own font, so the same
+rule computes two different numbers in two documents. And a modifier whose
+geometry comes from the shell cannot be compared to a component mockup's version
+of the same control: that is comparing two mockups to each other.
+
+**Three guards cover one failure from three sides, and none of them is an error
+to any other tool in this project.** `unit/design/styling-references.test.ts`
+refuses a utility named after a token the language does not declare — such a
+utility emits nothing at all — **and** a `bz-` class no stylesheet answers to,
+which is the state the whole interface was in for one commit after stage 0
+deleted the eleven stylesheets. `unit/color/category-css.test.ts` refuses a
+generated selector no component carries, which four of its five groups were for
+four commits. Together they are why "the build is green" now means something
+about the design and not only about the code.
+
+The browser half reads the design-carrying facts off a live page and diffs two
+pages. It is **keyed by role with a selector map per document** — the mockup
+calls the bar `.top` and the application is free to call it anything, which is
+what makes the language portable — and it carries no colour maths, because two
+documents in the same engine serialise one colour to one string. `contrast.ts`
+remains the place for absolute ratios.
+
+**Every fact carries the value used to overwrite it**, and there is one mutation
+case per fact. So a fact cannot be added to that table without also being proven
+to be checked. Two holes were found that way and both mattered: swapping the
+type stack to Manrope passed until `--font-` joined the declared-token sweep,
+and the harness reported that overriding a background changed nothing because
+`.arch > summary` carries a 120ms transition and the value was read before it
+moved.
 
 ## Before adding a test
 
@@ -65,7 +158,12 @@ catch every version of "it is broken", which is what a reader would meet.
 4. Prove it can fail. Break the thing on purpose, watch the test go red, put it
    back. A test never seen failing is decoration.
 
-## Known flakes
+## Known flakes, and the family they nearly all belong to
+
+`responsive.spec.ts`'s "tells the reader where a scroller continues" fails at
+1024 roughly one run in three. Mermaid renders client-side, so whether a
+diagram's scroller has been marked as continuing depends on when the injection
+lands. Measured: one failure in three consecutive runs of that test alone.
 
 `theme.spec.ts` and `path.spec.ts` read `<html>`'s class list inside a
 `requestAnimationFrame` with the page's scripts blocked. The reading is
@@ -73,7 +171,27 @@ sometimes taken before the frame fires: observed failing three then passing six
 on a re-run with nothing changed. Both files retry twice. A genuine break still
 fails all three attempts.
 
-## Eight checks that fail for a reason, not because they broke
+**Before calling anything else a flake, check whether it is a race you can
+close.** Five failures were read as regressions in M10 and every one of them was
+a check that counted frames, waited on `networkidle`, or sampled once a value
+that arrives asynchronously — see `kia-context/logs/BRAINSTORM.md` **D20**. The
+signature is the same every time: **passes run alone, fails under parallel
+load.** That is not a flake to retry around, it is a wait that was never
+written. Three specific traps, each of which cost a red run:
+
+- **A frame count is not a wait.** Lifting `transition: none !important` and
+  changing the value in the same frame makes Chrome start the transition on the
+  NEXT frame, so a sample taken one frame later reads the OLD value. `useTheme`
+  in `tests/e2e/contrast.ts` waits for `document.getAnimations()` to settle.
+- **`networkidle` is not "the island has run".** Mermaid arrives behind a
+  dynamic import and injects its SVG afterwards. Wait on the island's own
+  `data-hl-ready`, which is what `containment.spec.ts` does.
+- **A proxy is not the property.** "React cannot have hydrated before the first
+  paint" was used to mean "this reading is pre-React", and under CPU contention
+  with a warm cache it is false. If the property is structural, assert it
+  structurally.
+
+## Twelve checks that fail for a reason, not because they broke
 
 Moved here from `README.md`, which was the only place they were written down.
 When one of these goes red, the cause is usually the thing it names rather than
@@ -91,6 +209,18 @@ the test.
 - **The contrast check** (`tests/unit/color/contrast.test.ts`) recomputes every
   WCAG ratio in §10.1 from the live token values in `src/app/globals.css`.
   Change a colour and it fails until the spec's table is re-derived.
+- **The containment check** (`tests/e2e/containment.spec.ts`) measures the
+  PAINTED rectangle of every element of every diagram — its own box intersected
+  with every clipping ancestor's — against the reading column, at all three
+  viewports, after mermaid has injected. It is not "no element extends past the
+  column": a drawing inside a scroll container legitimately does. Mutation-tested
+  at 57 elements and 275px of overflow.
+- **The control-border check** (`tests/unit/color/slab-and-controls.test.ts`)
+  names each interactive control and asserts its border is
+  `--color-line-control` and is NOT a grouping token. The second half is the one
+  that protects the rule; without it a control moved back onto `line-strong`
+  passes. It also holds the slab's local palette equal to the `.dark` values it
+  duplicates, because two copies of a value are two values.
 - **The stroke-weight check** fails on any `border-width: var(--stroke-struct)`.
   Chrome floors a border to a whole pixel, so the middle weight has to be
   *painted*, as a gradient or a height, never bordered. It caught this exact
@@ -103,7 +233,7 @@ the test.
   status: the register says `NOT DRAWN`, and `NOT YET DRAWN` fails, because both
   read as correct on their own.
 - **The palette check** (`tests/unit/color/lokum.test.ts`) recomputes all six
-  category hues from `src/app/lokum.css`: 3:1 against three grounds in both
+  category hues from `src/design/bazaar.css`: 3:1 against three grounds in both
   themes at full and half chroma, in gamut, mutually distinguishable, and 20°
   clear of the accent pen. It also asserts the copy of those values inlined in
   the `RECORD OF WORK` matches the stylesheet, because that file has no
@@ -112,6 +242,22 @@ the test.
   routes to §13.4.2: real slugs, no duplicates, prerequisite order, denominators
   over written sheets only, and no unwritten sheet described as though it teaches
   something. It found two defects that twelve independent agents had passed.
+- **The three-views check** (`tests/e2e/catalog.spec.ts`) compares the module
+  names the catalog's three views RENDER **with each other**, for four filter
+  states, and never against a written list. That is D13's binding criterion —
+  three renderings of one array — and comparing against a list would both pin a
+  fact about the content and pass if all three views were wrong the same way.
+  The same file walks the tab order by pressing Tab until a link inside the
+  showing view has focus, and asserts the hidden views' links are unreachable:
+  either half alone passes for the wrong reason (D17).
+- **The reveal-list check** (`tests/unit/catalog/views.test.ts`) holds
+  `catalog.css`'s channel-A selector list to `VIEW_IDS` in both places it
+  appears, and pairs each selector's two view ids. A mismatched pair shows one
+  view for another's stored preference: plausible, and wrong. It is the same
+  shape as `category-css.test.ts`'s per-module lists, and for the same reason —
+  CSS cannot relate a class on `<html>` to an attribute value on a descendant,
+  so the relation is a list, and a list is what a fourth view silently
+  invalidates.
 - **The path evidence check** (`tests/unit/path/evidence.test.ts`) measures each
   of the 123 reasons against the sheet it cites. Genuine citations score a median
   of 100%; the same citations pointed at a different sheet score a median of 33%.

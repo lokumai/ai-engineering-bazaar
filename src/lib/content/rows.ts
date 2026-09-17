@@ -11,6 +11,16 @@ export interface SubsystemRef {
   order: number
   title: string
   path: string
+  /**
+   * M12 — the level's own slug, which is also its identity.
+   *
+   * Added for the catalog's three views: every level colour in the palette is
+   * addressed as `[data-cat="<slug>"]` (`category.css`), so a view that groups by
+   * level needs the slug and not only the title. It was derivable from `path`
+   * by string surgery, which is exactly the kind of derivation that breaks the
+   * day a route changes; the loader knows it, so it is carried.
+   */
+  slug: string
 }
 
 export interface SheetRow {
@@ -41,8 +51,33 @@ export interface SheetRow {
   bilingual: boolean
   /** The declared `prerequisites`, or `—`. Derived (B7), never typed. */
   requires: string
-  /** §4.9 `TOPICS` — at most three, read out of the sheet itself. */
+  /**
+   * §4.9 — at most three section titles, read out of the sheet itself.
+   *
+   * **M20 took this off the screen for a written module and left it as the
+   * fallback for a planned one.** It was the `Topics` column, and a table of
+   * contents for a page the reader has not opened is not what the listing was
+   * being asked for. What replaced it is `summary` below. A planned module has
+   * no summary to print — nobody has written the module — so its schedule of
+   * parts is what the listing can honestly show, LABELLED as the schedule of
+   * parts rather than dressed as a description.
+   */
   topics: string[]
+  /**
+   * M20 / §11.25 — the module's own sentence, or `null` on a planned one.
+   *
+   * **It is the author's frontmatter, byte for byte.** `schema.ts` already
+   * requires a `summary` of every `ready` module and the build fails without
+   * one, so this is a DERIVATION and not a second description somebody has to
+   * maintain — which is the one thing §11.25 forbids and the reason
+   * `topicsFor`'s docblock argued against a hand-written topic line. A derived
+   * summary is not a hand-written one, which is why this does not reverse it.
+   *
+   * `null` where `schema.ts` permits it: a module nobody has written has
+   * nothing to summarise, and an invented sentence about it would be the worst
+   * available answer.
+   */
+  summary: string | null
   /**
    * §4.8 column 9 / §7.4 — the sign-off slots THIS sheet supplies, in
    * `sheetStamps`' order, as `Stamp.id` spells them: `SIGN-OFF`, and then
@@ -103,28 +138,75 @@ function isSignedOff(row: SheetRow, signed: ReadonlySet<string>): boolean {
  *
  * The first four select on a property of the drawing. The last two select on
  * the record, which is a claim about the reader, so they are marked `record`
- * and the chip row is honest about which is which. `UNSIGNED` counts a sheet
+ * and the chip row is honest about which is which. `NOT COMPLETED` counts a module
  * nobody has drawn — it is not signed off, and §12.5.2's `TO GO` counts it the
  * same way, out of the whole set rather than out of the drawn ones.
  */
 export const FILTERS: readonly SheetFilter[] = [
-  { id: 'all', label: 'ALL', basis: 'drawing', keep: () => true },
-  { id: 'ready', label: 'READY', basis: 'drawing', keep: (row) => row.drawn },
-  { id: 'not-drawn', label: 'NOT DRAWN', basis: 'drawing', keep: (row) => !row.drawn },
-  { id: 'bilingual', label: 'EN · TR', basis: 'drawing', keep: (row) => row.bilingual },
+  { id: 'all', label: 'All', basis: 'drawing', keep: () => true },
+  { id: 'ready', label: 'Ready', basis: 'drawing', keep: (row) => row.drawn },
+  { id: 'not-drawn', label: 'Planned', basis: 'drawing', keep: (row) => !row.drawn },
+  /* `Both languages` was here, and **M20 removed it with the `Lang` column**.
+     It filtered on `row.bilingual`, which is a fact about the REPOSITORY — a
+     `_tr.md` file exists — and not about anything the site can serve: 33 of
+     those files exist and the app renders none of them (M19). Leaving the chip
+     while the column went would have let a reader filter by a fact no view
+     shows, and calling the row `Status:` with a language chip in it would have
+     mislabelled the chip as well. `row.bilingual` and `row.lang` stay on the
+     model: they are build-time facts M19 needs, and nothing renders them. */
   {
     id: 'signed',
-    label: 'SIGNED OFF',
+    label: 'Completed',
     basis: 'record',
     keep: (row, signed) => isSignedOff(row, signed),
   },
   {
     id: 'unsigned',
-    label: 'UNSIGNED',
+    label: 'Not completed',
     basis: 'record',
     keep: (row, signed) => !isSignedOff(row, signed),
   },
 ]
+
+/**
+ * M12 — the id the level filter takes when it is selecting nothing.
+ *
+ * The level filter is a second axis rather than six more chips on the first
+ * one, because the two questions are independent: "the Expert modules" and
+ * "the ones I have not completed" compose, and a single row of eleven chips
+ * cannot express the pair. It is `'all'` on load for the same §12.2 reason
+ * `DEFAULT_FILTER_ID` is: the prerendered HTML has met no reader, so the first
+ * client render has to emit the same rows the server did.
+ */
+export const ALL_LEVELS = 'all'
+
+/** The levels the rows themselves contain, in curriculum order. */
+export function levelsOf(rows: readonly SheetRow[]): SubsystemRef[] {
+  const seen = new Map<string, SubsystemRef>()
+  for (const row of rows) if (!seen.has(row.subsystem.slug)) seen.set(row.subsystem.slug, row.subsystem)
+  return [...seen.values()].sort((a, b) => a.order - b.order)
+}
+
+/** The rows of one level, or every row for `ALL_LEVELS`. Never re-sorted. */
+export function applyLevel(rows: readonly SheetRow[], level: string): SheetRow[] {
+  return level === ALL_LEVELS ? [...rows] : rows.filter((row) => row.subsystem.slug === level)
+}
+
+/**
+ * M20 — the visible name of this group, and its accessible name, in one place.
+ *
+ * The author asked for `Level:` before the level chips and a word before these.
+ * With the language chip gone (above) every chip here is a state — three of the
+ * DRAWING and two of the READER — so `Status` is exact rather than a label that
+ * swallows one filter and mislabels two others.
+ *
+ * The visible text IS the group's accessible name (`aria-labelledby`), never a
+ * second string beside it, or a screen reader announces the group twice.
+ */
+export const STATE_GROUP_LABEL = 'Status'
+
+/** The other axis, named the same way and for the same reason. */
+export const LEVEL_GROUP_LABEL = 'Level'
 
 /** The chip that is active on load, and the only one that may be (§12.2). */
 export const DEFAULT_FILTER_ID: string = FILTERS[0].id
@@ -144,11 +226,33 @@ export function applyFilter(
 }
 
 /**
- * §12.13 class 3 — NO MATCH, the one empty state a filter can produce. The
- * denominator is the set the chips were handed, so a subsystem's table says
- * `0 of 8` and the index says `0 of 33`; SC 4.1.3's own examples are "5 results
- * returned" / "No results returned", so the count is announced, not implied.
+ * §12.13 class 3 — the one empty state a filter can produce, as the sentence
+ * the live region announces.
+ *
+ * The denominator is the set the chips were handed, so a level's table says
+ * `0 of 8` and the catalog says `0 of 33`; SC 4.1.3's own examples are "5
+ * results returned" / "No results returned", so the count is announced rather
+ * than implied.
+ *
+ * **M12 rewrote it and the rewrite is the deliverable, not the casing.** It
+ * read `NO MODULES MATCH FILTER — 0 of 33`, which is a status and not an
+ * instruction: M12 asks an empty result to say what to do next. The cause is
+ * named as the filter rather than the reader, the sentence points at the
+ * control that undoes it, and `NO_MATCH_CUE` beside it is the paragraph that
+ * says which control.
  */
 export function noMatchReadout(total: number): string {
-  return `NO SHEETS MATCH FILTER — 0 of ${total}`
+  return `No module matches both filters · 0 of ${total}`
 }
+
+/**
+ * The line under it: what to do, in one sentence, naming the control.
+ *
+ * Separate from the readout above because only the readout belongs in the live
+ * region — a status message is announced on change and this is standing prose,
+ * so a screen reader would hear the whole paragraph again on every keystroke of
+ * a filter it was not describing.
+ */
+export const NO_MATCH_CUE =
+  'The two filters select different modules. Widen either one, or clear both to '
+  + 'see the whole catalog again.'

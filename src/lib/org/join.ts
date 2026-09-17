@@ -374,8 +374,8 @@ export const JOIN_COPY = {
 export function disclosureStatements(orgName: string, otherOrgCount: number): readonly string[] {
   const lines: string[] = [
     `You are joining ${orgName}.`,
-    `Managers of ${orgName} will see your whole record: every sheet you have `
-      + 'signed off, every quiz attempt including the ones you missed, every '
+    `Managers of ${orgName} will see your whole record: every module you have `
+      + 'completed, every quiz attempt including the ones you missed, every '
       + 'submittal, and the timeline of when you did each of those things.',
   ]
 
@@ -435,7 +435,7 @@ export function disclosureStatements(orgName: string, otherOrgCount: number): re
 export function noEmailCopy(
   why: NoEmailReason,
 ): { status: string; detail: string; link: { href: string; label: string } } {
-  const profile = { href: '/profile/', label: 'Your profile sheet' }
+  const profile = { href: '/profile/', label: 'Your account' }
 
   switch (why) {
     case 'missing':
@@ -445,7 +445,7 @@ export function noEmailCopy(
           'Both routes into an organisation compare the address on your '
           + 'account, and this account carries none — a sign-in that keeps the '
           + 'address private hands over nothing to compare. Add and confirm an '
-          + 'address on your profile sheet, then return here.',
+          + 'address on your account page, then return here.',
         link: profile,
       }
     case 'unprovenMailbox':
@@ -460,10 +460,10 @@ export function noEmailCopy(
           + 'has stood behind, and the database refuses the membership row on '
           + 'both routes — an invitation entered by a manager is not a way '
           + 'round it. Nothing on this site adds an email sign-in to an account '
-          + 'that already exists; the sign-in sheet names that limit and holds '
+          + 'that already exists; the sign-in page names that limit and holds '
           + 'the sign-out this browser needs before the email door is in '
           + 'reach.',
-        link: { href: '/sign-in/', label: 'The sign-in sheet' },
+        link: { href: '/sign-in/', label: 'The sign-in page' },
       }
     case 'malformed':
       return {
@@ -471,7 +471,7 @@ export function noEmailCopy(
         detail:
           'The address on your account has no single domain part, so there is '
           + 'nothing to compare against an organisation domain. Change it on '
-          + 'your profile sheet, then return here.',
+          + 'your account page, then return here.',
         link: profile,
       }
   }

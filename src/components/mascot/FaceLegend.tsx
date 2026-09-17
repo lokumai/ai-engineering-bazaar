@@ -19,7 +19,7 @@ import { FACES, FLAVOURS } from './geometry'
  * hides, which is exactly why the legend is needed to read them.
  *
  * **The colour is channel A, the count is not.** The swatch is
- * `.hl-legend-swatch .hl-cat-tint` with `data-cat`, so `lokum.css` resolves it
+ * `.bz-legend-swatch .bz-cat-tint` with `data-cat`, so `category.css` resolves it
  * to the structural line, half chroma or full chroma from the classes the boot
  * script stamped on `<html>` — correct in frame one, no React. A count is a
  * computed number and §12.2 allows a number on exactly one other channel: it
@@ -31,7 +31,7 @@ import { FACES, FLAVOURS } from './geometry'
  *
  * **§13.1.4 — the hue is never alone.** Every row prints its flavour name, its
  * subsystem title and its count as text, so the swatch is redundant
- * reinforcement; under `forced-colors: active` `lokum.css` drops the swatch to
+ * reinforcement; under `forced-colors: active` `derived.css` drops the swatch to
  * `Canvas` on a `CanvasText` border and the legend still reports everything.
  *
  * It has no voice (§8.5, §13.8): the legend states counts and never comments
@@ -78,7 +78,7 @@ export interface FaceLegendProps {
  * render — the count is perfectly derivable, just not by a page prerendered
  * before this reader existed. Printing `—/7` told a reader whose record holds
  * four sign-offs that the number was unobtainable, while the identical meter on
- * `/courses/` printed `4/7`.
+ * the curriculum listing printed `4/7`.
  *
  * The numerator is therefore `--` and carries `data-hl-cat-tally`, the same
  * contract `CategoryMeter` writes, so the one `CategoryTally` island per
@@ -92,7 +92,7 @@ function count(row: FaceLegendRow): string {
   // word for that state (§12.14.1), used by the manifest, the module row, the
   // diagram and the report, and it answers the SIGNED OFF column's question
   // exactly.
-  if (row.total <= 0) return 'NOT DRAWN'
+  if (row.total <= 0) return 'PLANNED'
   return `${row.signed === null ? NO_READING : row.signed}/${row.total}`
 }
 
@@ -113,15 +113,15 @@ const TABLE = 'w-full border-collapse text-left font-mono text-mark tabular-nums
 export function FaceLegend({ rows, className }: FaceLegendProps) {
   return (
     <table className={className ? `${TABLE} ${className}` : TABLE}>
-      <caption className="hl-mark mb-2 text-left text-ink-muted">
-        The six faces of the mark, the subsystem each one reports, and the
-        sheets signed off in it
+      <caption className="text-mark mb-2 text-left text-on-surface-muted">
+        The six faces of the mark, the level each one reports, and the
+        modules completed in it
       </caption>
       <thead>
-        <tr className="border-b border-line-strong text-ink-muted uppercase">
+        <tr className="border-b border-line-strong text-on-surface-muted">
           <th scope="col" className="py-1 pr-3 font-medium">Flavour</th>
-          <th scope="col" className="py-1 pr-3 font-medium">Subsystem</th>
-          <th scope="col" className="py-1 font-medium">Signed off</th>
+          <th scope="col" className="py-1 pr-3 font-medium">Level</th>
+          <th scope="col" className="py-1 font-medium">Completed</th>
         </tr>
       </thead>
       <tbody>
@@ -133,16 +133,16 @@ export function FaceLegend({ rows, className }: FaceLegendProps) {
                   swatch beside it is named by, and it is the one string §13.9
                   prints in Turkish. Stored uppercase in `FLAVOURS`, never cased
                   at render time, because Turkish `i` uppercases to `İ`. */}
-              <th scope="row" className="py-1 pr-3 font-normal whitespace-nowrap text-ink">
+              <th scope="row" className="py-1 pr-3 font-normal whitespace-nowrap text-on-surface">
                 <span
                   aria-hidden="true"
-                  className="hl-legend-swatch hl-cat-tint me-2 align-middle"
+                  className="bz-legend-swatch bz-cat-tint me-2 align-middle"
                   data-cat={face.category}
                 />
                 {FLAVOURS[face.category]}
               </th>
-              <td className="py-1 pr-3 whitespace-nowrap text-ink-muted">{row.title}</td>
-              <td className="py-1 whitespace-nowrap text-ink-muted">
+              <td className="py-1 pr-3 whitespace-nowrap text-on-surface-muted">{row.title}</td>
+              <td className="py-1 whitespace-nowrap text-on-surface-muted">
                 {/* `row.total <= 0` prints a bare em dash and must NOT be
                     filled: there is no fraction for the island to write. */}
                 {row.total <= 0 ? (

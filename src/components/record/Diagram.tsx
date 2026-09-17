@@ -20,7 +20,7 @@ import {
   type LayoutNode,
   type RovingKey,
 } from '@/lib/record/layout'
-import { useRecord } from '@/lib/record/store'
+import { useHydrated, useRecord } from '@/lib/record/store'
 import type { RecordData } from '@/lib/record/schema'
 import { href } from '@/lib/url'
 
@@ -71,9 +71,9 @@ import { href } from '@/lib/url'
  * every other holds `-1`; the arithmetic is `rovingTarget` in `layout.ts`, so it
  * is node-testable and this file only moves focus and pushes a route.
  *
- * The focus ring is drawn INSIDE the SVG, via `.hl-node-focus`, because the UA
+ * The focus ring is drawn INSIDE the SVG, via `.bz-diagram-node-focus`, because the UA
  * outline on a `<g>` is unreliable. It is a `<path>` rather than a `<rect>` on
- * purpose: `.hl-node[data-state="draft"] rect` sets `stroke-dasharray: 3 2`,
+ * purpose: `.bz-diagram-node[data-state="draft"] rect` sets `stroke-dasharray: 3 2`,
  * and a dashed focus ring would fail the AAA numbers §12.10.2 asks for. At a
  * 3px offset the ring is 50 × 32 at 2px, which is 328px² of indicator against
  * the 280px² a 2px perimeter of the unfocused node would give.
@@ -130,15 +130,15 @@ function viewOf(node: LayoutNode, record: RecordData): NodeView {
 
 /** §12.14.1 — a status readout: a key, a value, and no terminal period. */
 const STATE_TEXT: Record<NodeState, string> = {
-  draft: 'NOT DRAWN',
-  unread: 'NOT SIGNED OFF',
-  started: 'IN PROGRESS · NOT SIGNED OFF',
-  signed: 'SIGNED OFF',
+  draft: 'PLANNED',
+  unread: 'NOT COMPLETED',
+  started: 'IN PROGRESS · NOT COMPLETED',
+  signed: 'COMPLETED',
 }
 
 function stateText(view: NodeView): string {
   if (view.state === 'signed' && view.signedOn !== null) {
-    return `SIGNED OFF ${view.signedOn.slice(0, 10)}`
+    return `COMPLETED ${view.signedOn.slice(0, 10)}`
   }
   return STATE_TEXT[view.state]
 }
@@ -150,7 +150,7 @@ function stateText(view: NodeView): string {
  * the accent fill and the solid outline are not in the accessibility tree.
  */
 function nodeLabel(view: NodeView): string {
-  const parts = [`Sheet ${view.node.module}`, view.node.title, stateLabel(view)]
+  const parts = [`Module ${view.node.module}`, view.node.title, stateLabel(view)]
   if (view.node.requires.length > 0) {
     parts.push(`requires ${view.node.requires.join(', ')}`)
   }
@@ -160,21 +160,21 @@ function nodeLabel(view: NodeView): string {
 function stateLabel(view: NodeView): string {
   switch (view.state) {
     case 'draft':
-      return 'not drawn'
+      return 'planned'
     case 'unread':
-      return 'not signed off'
+      return 'not completed'
     case 'started':
-      return 'in progress, not signed off'
+      return 'in progress, not completed'
     case 'signed':
       return view.signedOn === null
-        ? 'signed off'
-        : `signed off ${view.signedOn.slice(0, 10)}`
+        ? 'completed'
+        : `completed ${view.signedOn.slice(0, 10)}`
   }
 }
 
 /** §12.10.1's band name. Both numbers are counted, never typed (§11.25). */
 function bandLabel(band: LayoutBand, signed: number): string {
-  return `Subsystem ${band.ordinal} — ${band.title} — ${signed} of ${band.total} signed off`
+  return `Level ${band.ordinal} — ${band.title} — ${signed} of ${band.total} completed`
 }
 
 /** A DOM handle, from the identity rather than the number (§12.1.3). */
@@ -191,8 +191,8 @@ const ROVING: ReadonlySet<string> = new Set<RovingKey>([
   'End',
 ])
 
-const TITLE_ID = 'hl-diagram-name'
-const DESC_ID = 'hl-diagram-desc'
+const TITLE_ID = 'bz-diagram-name'
+const DESC_ID = 'bz-diagram-desc'
 
 export function Diagram({
   facts,
@@ -254,9 +254,13 @@ export function Diagram({
 
   return (
     <figure className="m-0">
-      <figcaption className="hl-diagram-title">
-        Single-line diagram · {layout.nodes.length} sheets ·{' '}
-        {layout.bands.length} subsystems · {layout.traces.length} traces
+      <figcaption className="bz-diagram-title">
+        {/* M14 — `subsystems` was the last reader-visible use of the retired
+            word on the site, found by the export grep rather than by the copy
+            register: `layout.bands.length` is a count of LEVELS, and the
+            caption is the one place this drawing names them. */}
+        Single-line diagram · {layout.nodes.length} modules ·{' '}
+        {layout.bands.length} levels · {layout.traces.length} traces
       </figcaption>
 
       {/* §4.10.5 — below 1024px the graph degrades to six stacked blocks, not
@@ -264,7 +268,7 @@ export function Diagram({
           shipping something you already know does not work. */}
       <div className="mt-3 max-lg:hidden">
         <svg
-          className="hl-diagram"
+          className="bz-diagram"
           viewBox={`0 0 ${layout.width} ${layout.height}`}
           width={layout.width}
           height={layout.height}
@@ -277,15 +281,15 @@ export function Diagram({
               leave `aria-labelledby` pointing at nothing and the drawing
               nameless. */}
           <title id={TITLE_ID}>
-            {`Drawing set — ${layout.nodes.length} sheets in ${layout.bands.length} subsystems`}
+            {`Curriculum — ${layout.nodes.length} modules in ${layout.bands.length} levels`}
           </title>
           <desc id={DESC_ID}>
-            One horizontal band per subsystem, each holding its sheets as
-            numbered nodes in sheet order. Traces above a band are prerequisites;
-            traces below it are cross-references. A solid outline is a sheet
-            that has been drawn, a dashed outline is a sheet not yet drawn, and
-            an accent outline with a wash is a sheet this browser records as
-            signed off. The same graph is listed as a table below the diagram.
+            One horizontal band per level, each holding its modules as
+            numbered nodes in module order. Traces above a band are prerequisites;
+            traces below it are cross-references. A solid outline is a module
+            that has been written, a dashed outline is a module planned, and
+            an accent outline with a wash is a module this browser records as
+            completed. The same graph is listed as a table below the diagram.
           </desc>
 
           {/* Rails and traces first, so the node rects paint over them; and
@@ -295,7 +299,7 @@ export function Diagram({
             {layout.rails.map((rail) => (
               <line
                 key={rail.id}
-                className="hl-rail"
+                className="bz-diagram-rail"
                 x1={rail.x1}
                 y1={rail.y1}
                 x2={rail.x2}
@@ -305,7 +309,7 @@ export function Diagram({
             {layout.traces.map((trace) => (
               <path
                 key={trace.id}
-                className="hl-trace"
+                className="bz-trace"
                 d={trace.path}
                 data-kind={trace.kind}
                 // §5.8 — live means BOTH endpoints are signed off. A trace with
@@ -337,21 +341,21 @@ export function Diagram({
                     column and kept clear of the bus, which runs vertically
                     through this region. */}
                 <text
-                  className="hl-mark"
+                  className="text-mark"
                   x={HEADER_TEXT_X}
                   y={band.nodeY + 9}
                   textAnchor="end"
-                  fill="var(--color-ink-muted)"
+                  fill="var(--color-on-surface-muted)"
                   aria-hidden="true"
                 >
-                  Subsystem {band.ordinal}
+                  Level {band.ordinal}
                 </text>
                 <text
                   x={HEADER_TEXT_X}
                   y={band.nodeY + 23}
                   textAnchor="end"
-                  fill="var(--color-ink)"
-                  fontFamily="var(--font-display)"
+                  fill="var(--color-on-surface)"
+                  fontFamily="var(--font-sans)"
                   fontSize="12"
                   fontWeight={600}
                   aria-hidden="true"
@@ -376,7 +380,7 @@ export function Diagram({
                     <g
                       key={node.slug}
                       id={nodeId(node)}
-                      className="hl-node cursor-pointer"
+                      className="bz-diagram-node cursor-pointer"
                       data-state={view.state}
                       role="graphics-symbol"
                       aria-label={nodeLabel(view)}
@@ -394,7 +398,7 @@ export function Diagram({
                       {/* §5.8 — the 2px accent left edge of an approved node. */}
                       {view.state === 'signed' && (
                         <line
-                          className="hl-node-edge"
+                          className="bz-diagram-node-edge"
                           x1={node.x}
                           y1={node.y}
                           x2={node.x}
@@ -410,7 +414,7 @@ export function Diagram({
                         {node.label}
                       </text>
                       <path
-                        className="hl-node-focus"
+                        className="bz-diagram-node-focus"
                         d={`M ${node.x - 3} ${node.y - 3} h ${NODE_WIDTH + 6} v ${NODE_HEIGHT + 6} h ${-(NODE_WIDTH + 6)} z`}
                       />
                     </g>
@@ -443,7 +447,7 @@ function tickOf(view: NodeView): TickState {
  * nodes at 52px row pitch with their titles, then that band's edges as
  * `text-meta` plain text.
  *
- * Its nodes reuse `.hl-node` so the line types and the four states are the same
+ * Its nodes reuse `.bz-diagram-node` so the line types and the four states are the same
  * markup and the same CSS as the wide drawing, and they carry no `id`: two
  * copies of the graph are in the DOM at all times and only one is displayed, so
  * a shared id would be a duplicate id in every document.
@@ -472,15 +476,15 @@ function StackedBands({
             className="mb-6"
             aria-label={bandLabel(band, signed)}
           >
-            <p className="hl-mark m-0 text-ink-muted">Subsystem {band.ordinal}</p>
-            <p className="m-0 font-display text-micro font-semibold text-ink">
+            <p className="text-mark m-0 text-on-surface-muted">Level {band.ordinal}</p>
+            <p className="m-0 text-label font-semibold text-on-surface">
               {band.title}
             </p>
             {/* §10.4 — the count is stated in text beside the gauge, which is
                 what lets the gauge itself be decoration rather than a second
                 announcement of the same number. */}
-            <p className="hl-mark m-0 text-ink-faint">
-              {band.total} sheets · {signed} signed off
+            <p className="text-mark m-0 text-on-surface-faint">
+              {band.total} modules · {signed} completed
             </p>
             <TickGauge className="mt-1" ticks={members.map(tickOf)} />
 
@@ -494,7 +498,7 @@ function StackedBands({
                   {/* The half-pixel inset is a rendering inset, not geometry:
                       a 1px stroke on the viewBox edge is clipped in half. */}
                   <svg
-                    className="hl-node shrink-0"
+                    className="bz-diagram-node shrink-0"
                     data-state={view.state}
                     width={NODE_WIDTH}
                     height={NODE_HEIGHT}
@@ -516,10 +520,10 @@ function StackedBands({
                       {view.node.label}
                     </text>
                   </svg>
-                  <Link href={view.node.path} className="hl-link text-meta">
+                  <Link href={view.node.path} className="bz-link text-meta">
                     {view.node.title}
                   </Link>
-                  <span className="hl-mark ml-auto shrink-0 text-ink-faint">
+                  <span className="text-mark ml-auto shrink-0 text-on-surface-faint">
                     {stateText(view)}
                   </span>
                 </li>
@@ -527,7 +531,7 @@ function StackedBands({
             </ul>
 
             {bandEdgeLines(band).length > 0 && (
-              <ul className="m-0 list-none p-0 font-mono text-meta text-ink-muted">
+              <ul className="m-0 list-none p-0 font-mono text-meta text-on-surface-muted">
                 {bandEdgeLines(band).map((line) => (
                   <li key={line}>{line}</li>
                 ))}
@@ -549,23 +553,23 @@ function StackedBands({
  */
 function Legend() {
   return (
-    <div className="hl-diagram-legend mt-4">
+    <div className="bz-diagram-legend mt-4">
       <p className="m-0 mb-2">Legend</p>
-      <dl className="hl-defs">
+      <dl className="bz-defs">
         <dt>Solid outline</dt>
-        <dd>Sheet drawn</dd>
+        <dd>Module ready</dd>
         <dt>Dashed outline</dt>
-        <dd>Sheet not yet drawn</dd>
+        <dd>Module planned</dd>
         <dt>Accent outline, wash, 2px left edge</dt>
-        <dd>Signed off in this browser</dd>
+        <dd>Completed in this browser</dd>
         <dt>Hairline between nodes</dt>
         <dd>Sequence, not a dependency</dd>
         <dt>Solid trace above a band</dt>
-        <dd>Requires</dd>
+        <dd>Requirements</dd>
         <dt>Dashed trace below a band</dt>
         <dd>See also</dd>
         <dt>Accent trace</dt>
-        <dd>Both ends signed off</dd>
+        <dd>Both ends completed</dd>
       </dl>
     </div>
   )
@@ -575,7 +579,7 @@ function Legend() {
  * §12.10.3 — the table equivalent, which is mandatory and not optional.
  *
  * **Always in the DOM**, revealed by a labelled `<details>`, and forced visible
- * in print by record.css. Never `display: none` when collapsed, because it is
+ * in print by progress.css. Never `display: none` when collapsed, because it is
  * the only form in which a reader can actually *verify* a dependency claim —
  * the SVG can be read but not checked — and it is what serialises straight into
  * the record document.
@@ -593,44 +597,44 @@ function DiagramTable({
   const title = new Map(layout.bands.map((band) => [band.slug, band.title]))
 
   return (
-    <details className="hl-diagram-table">
-      <summary>The same graph as a table · {rows.length} sheets</summary>
+    <details className="bz-diagram-table">
+      <summary>The same graph as a table · {rows.length} modules</summary>
       <div className="mt-3 overflow-x-auto">
         <table className="w-full border-collapse text-left font-mono text-mark tabular-nums">
-          <caption className="hl-mark mb-2 text-left text-ink-muted">
-            Every sheet in the set, the state this browser records for it, and
-            the sheets it requires and feeds
+          <caption className="text-mark mb-2 text-left text-on-surface-muted">
+            Every module in the curriculum, the state this browser records for it, and
+            the modules it needs and unlocks
           </caption>
           <thead>
-            <tr className="border-b border-line-strong text-ink-muted uppercase">
+            <tr className="border-b border-line-strong text-on-surface-muted">
               <th scope="col" className="py-1 pr-3 font-medium">#</th>
-              <th scope="col" className="py-1 pr-3 font-medium">Sheet</th>
-              <th scope="col" className="py-1 pr-3 font-medium">Subsystem</th>
+              <th scope="col" className="py-1 pr-3 font-medium">Module</th>
+              <th scope="col" className="py-1 pr-3 font-medium">Level</th>
               <th scope="col" className="py-1 pr-3 font-medium">State</th>
-              <th scope="col" className="py-1 pr-3 font-medium">Requires</th>
-              <th scope="col" className="py-1 font-medium">Feeds</th>
+              <th scope="col" className="py-1 pr-3 font-medium">Requirements</th>
+              <th scope="col" className="py-1 font-medium">Unlocks</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((view) => (
               <tr key={view.node.slug} className="border-b border-line">
-                <td className="py-1 pr-3 text-ink-muted">{view.node.label}</td>
-                <th scope="row" className="py-1 pr-3 font-normal text-ink">
-                  <Link href={view.node.path} className="hl-link">
+                <td className="py-1 pr-3 text-on-surface-muted">{view.node.label}</td>
+                <th scope="row" className="py-1 pr-3 font-normal text-on-surface">
+                  <Link href={view.node.path} className="bz-link">
                     {view.node.title}
                   </Link>
                 </th>
-                <td className="py-1 pr-3 text-ink-muted uppercase">
+                <td className="py-1 pr-3 text-on-surface-muted">
                   {title.get(view.node.category) ?? view.node.category}
                 </td>
-                <td className="py-1 pr-3 text-ink-muted uppercase">
+                <td className="py-1 pr-3 text-on-surface-muted">
                   {stateText(view)}
                 </td>
                 {/* §11.25 — a dash where there is nothing, never a zero. */}
-                <td className="py-1 pr-3 text-ink-muted">
+                <td className="py-1 pr-3 text-on-surface-muted">
                   {view.node.requires.length > 0 ? view.node.requires.join(', ') : '—'}
                 </td>
-                <td className="py-1 text-ink-muted">
+                <td className="py-1 text-on-surface-muted">
                   {view.node.feeds.length > 0 ? view.node.feeds.join(', ') : '—'}
                 </td>
               </tr>
@@ -657,34 +661,16 @@ function DiagramTable({
  * has signed off nothing and is exactly what §12.13's class 1 offers as its one
  * path. Nothing about that frame is a lie.
  */
-/**
- * Both shapes at once, because both are needed and both are the same object:
- * `nextUnsigned` reads the record's view of the corpus, and the line prints the
- * sheet's own title. Narrowing the member rather than intersecting the two
- * interfaces is what keeps `sheets.find` returning one element type instead of
- * an intersection of two array types. `curriculumFacts()` satisfies it.
- */
-interface ContinueFacts extends CurriculumFacts {
-  sheets: ReadonlyArray<CurriculumFacts['sheets'][number] & { title: string }>
-}
+/* M18 — `ContinueLine` was deleted here, and saying so is cheaper than
+   letting somebody find `ContinueFacts` and wonder what drew it.
 
-export function ContinueLine({ facts }: { facts: ContinueFacts }) {
-  const record = useRecord()
-  const slug = nextUnsigned(record, facts)
-  if (slug === null) return null
+   It was the home page's one-line shortcut, `Continue · Module 02 · RAG &
+   Embeddings`, revealed on channel A by `data-hl-record`. The author had the
+   whole reader-state block taken off the front door. The DERIVATION is not
+   lost and never was this component's: `nextUnsigned` is the function, and
+   `ContinueHero` on `/profile/` prints the same answer as a hero rather than a
+   sentence. §12.10.6's two cases moved there with it. */
 
-  const sheet = facts.sheets.find((candidate) => candidate.slug === slug)
-  if (!sheet) return null
-
-  return (
-    <p className="hl-mark m-0 text-ink-muted">
-      Continue{' '}
-      <Link href={`/courses/${slug}/`} className="hl-link">
-        Sheet {String(sheet.module).padStart(2, '0')} · {sheet.title}
-      </Link>
-    </p>
-  )
-}
 
 /**
  * §7.1 / §5.8 — the full readout strip, with the one value only this page can
@@ -708,15 +694,55 @@ export function DiagramReadout({
   facts: CurriculumFacts
   edges: readonly LayoutEdgeInput[]
 }) {
+  return <Readout variant="full" facts={facts} traces={useTraces(facts, edges)} />
+}
+
+/**
+ * §5.8 — the edges with BOTH endpoints completed, which is the one number only
+ * the surface holding the graph can count.
+ *
+ * §5.8 is exact about the rule: a trace with one completed end is not
+ * energized, because the dependency has not been satisfied end to end. The
+ * record's facts carry the denominator (`facts.traces`) and not the graph, so
+ * every other surface prints no `TRACES` cell at all rather than a dash
+ * standing in for a number nobody looked for (§11.25).
+ *
+ * Extracted from `DiagramReadout` by M14 so the register row that HOLDS the
+ * diagram can state the same reading in its summary line (§16.4.2: a summary
+ * reading comes from the body it summarises, and never from a second
+ * derivation).
+ */
+function useTraces(
+  facts: CurriculumFacts,
+  edges: readonly LayoutEdgeInput[],
+): number {
   const record = useRecord()
 
   const signed = new Set<number>()
   for (const sheet of facts.sheets) {
     if (sheet.drawn && record.sheets[sheet.slug]?.signedOff) signed.add(sheet.module)
   }
-  const live = edges.filter(
-    (edge) => signed.has(edge.from) && signed.has(edge.to),
-  ).length
+  return edges.filter((edge) => signed.has(edge.from) && signed.has(edge.to)).length
+}
 
-  return <Readout variant="full" facts={facts} traces={live} />
+/**
+ * §16.4.1 — the diagram row's summary line: `14 OF 32 TRACES`.
+ *
+ * The numerator is the reader's — the same `useTraces` the strip inside the row
+ * uses, so the fold removes prose and never a fact and the two cannot disagree.
+ * The denominator is the corpus's and prints in frame one, because refusing a
+ * number somebody did count is §11.25 in reverse. `--` until the store has
+ * answered, which is the house spelling for "no reading taken yet".
+ */
+export function TracesReading({
+  facts,
+  edges,
+}: {
+  facts: CurriculumFacts
+  edges: readonly LayoutEdgeInput[]
+}) {
+  const hydrated = useHydrated()
+  const live = useTraces(facts, edges)
+
+  return <>{`${hydrated ? live : '--'} of ${facts.traces} traces`}</>
 }

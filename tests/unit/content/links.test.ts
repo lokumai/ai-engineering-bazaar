@@ -25,8 +25,8 @@ describe('courseLinkFor', () => {
 
   it('resolves a link into another category directory', () => {
     process.env.NEXT_PUBLIC_SITE_BASE_PATH = ''
-    expect(courseLinkFor('../3_expert/advanced_architectures.md', HARNESS))
-      .toBe('/courses/expert/advanced-architectures/')
+    expect(courseLinkFor('../3_expert/advanced_agent_architectures.md', HARNESS))
+      .toBe('/courses/expert/advanced-agent-architectures/')
   })
 
   it('refuses a target that still carries a number, because no such file exists', () => {
@@ -74,10 +74,10 @@ describe('courseLinkFor', () => {
    * The corpus root file is the corpus' own table of contents, and the page that
    * does that job here is the course index.
    */
-  it('sends the corpus index to the course index', () => {
+  it('sends the corpus index to the catalog', () => {
     process.env.NEXT_PUBLIC_SITE_BASE_PATH = ''
     expect(courseLinkFor('../index.md', '1_fundamentals/README.md'))
-      .toBe('/courses/')
+      .toBe('/sheets/')
   })
 
   it('leaves anything that is not an internal markdown link alone', () => {
@@ -128,7 +128,7 @@ describe('courseLinkFor', () => {
 })
 
 describe('sheetSource', () => {
-  it('names the file a numbered sheet was loaded from', () => {
+  it('names the file a numbered module was loaded from', () => {
     // The path is derived from the sheet, not transcribed: renumbering the
     // corpus must not fail this.
     for (const module of loadAllModules()) {
@@ -137,7 +137,7 @@ describe('sheetSource', () => {
     }
   })
 
-  it('returns null for a number no sheet carries', () => {
+  it('returns null for a number no module carries', () => {
     expect(sheetSource(999)).toBeNull()
   })
 })

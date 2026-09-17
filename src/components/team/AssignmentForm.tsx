@@ -55,7 +55,7 @@ const PROBLEM_COPY: Readonly<Record<AssignmentProblem, string>> = {
   noTitle: 'The assignment needs a title. It is what a member will see first.',
   longTitle: `The title is longer than ${MAX_ASSIGNMENT_TITLE} characters.`,
   noSheets:
-    'Select at least one sheet. An assignment with no sheets has no deadline '
+    'Select at least one module. An assignment with no modules has no deadline '
     + 'anything can be measured against, so it would produce no signal at all.',
   badDueDate: 'The due date is not a real calendar date.',
 }
@@ -77,21 +77,21 @@ type Write =
   | { kind: 'failed'; message: string }
 
 /**
- * `record.css`'s `.hl-field input` rules, as utilities, for the two controls it
+ * `src/design/bazaar.css`'s `.bz-field input` rules, as utilities, for the two controls it
  * does not reach.
  *
- * `.hl-field` styles `input` and nothing else, so a `<select>` and a
+ * `.bz-field` styles `input` and nothing else, so a `<select>` and a
  * `<textarea>` inside one would render as unstyled browser widgets in the
  * middle of a technical drawing. The right fix is one more selector in
- * `record.css`; this file may not touch it (another agent owns that surface in
+ * `src/design/bazaar.css`; this file may not touch it (another agent owns that surface in
  * this change), so the rules are restated here against the SAME custom
  * properties — never a hardcoded colour — and the duplication is named so it
- * can be deleted the moment `.hl-field :is(input, select, textarea)` exists.
+ * can be deleted the moment `.bz-field :is(input, select, textarea)` exists.
  * Reported to the orchestrator.
  */
 const FIELD_CONTROL =
-  'block w-full rounded-none border border-line-strong bg-sunken px-2.5 '
-  + 'font-display text-ui text-ink hover:border-line-cut'
+  'block w-full rounded-none border border-line-strong bg-surface-sunken px-2.5 '
+  + 'text-item text-on-surface hover:border-line-cut'
 
 function toggle(list: readonly string[], value: string): string[] {
   return list.includes(value) ? list.filter((entry) => entry !== value) : [...list, value]
@@ -156,15 +156,15 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
   if (state.kind !== 'ready') {
     const copy = panelStateCopy(state)
     return (
-      <section className="hl-panel" aria-labelledby="hl-assign-state">
-        <div className="hl-panel-head">
-          <h2 id="hl-assign-state" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-assign-state">
+        <div className="bz-panel-head">
+          <h2 id="hl-assign-state" className="bz-panel-title">
             New assignment
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">{copy.status}</p>
+          <p className="text-mark m-0 text-on-surface-faint">{copy.status}</p>
         </div>
         <p
-          className="m-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted"
+          className="m-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted"
           role="status"
         >
           {copy.detail}
@@ -229,12 +229,12 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
 
   return (
     <>
-      <section className="hl-panel" aria-labelledby="hl-assign-new">
-        <div className="hl-panel-head">
-          <h2 id="hl-assign-new" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-assign-new">
+        <div className="bz-panel-head">
+          <h2 id="hl-assign-new" className="bz-panel-title">
             New assignment
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">
+          <p className="text-mark m-0 text-on-surface-faint">
             {draft.targets.length === 0 ? 'SCOPE — WHOLE ORGANISATION' : `SCOPE — ${draft.targets.length} NAMED`}
           </p>
         </div>
@@ -244,8 +244,8 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
             browser writes on its behalf. */}
         <form onSubmit={(event) => void onSubmit(event)} noValidate>
           {snapshot.orgs.length > 1 && (
-            <label className="hl-field" data-invalid={problems.includes('noOrg') ? 'true' : 'false'}>
-              <span className="hl-field-label">Organisation</span>
+            <label className="bz-field" data-invalid={problems.includes('noOrg') ? 'true' : 'false'}>
+              <span className="bz-field-label">Organisation</span>
               <select
                 className={`${FIELD_CONTROL} h-9`}
                 value={draft.orgId}
@@ -262,12 +262,12 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
           )}
 
           <label
-            className="hl-field mt-4"
+            className="bz-field mt-4"
             data-invalid={
               problems.includes('noTitle') || problems.includes('longTitle') ? 'true' : 'false'
             }
           >
-            <span className="hl-field-label">Title</span>
+            <span className="bz-field-label">Title</span>
             <input
               type="text"
               value={draft.title}
@@ -277,10 +277,10 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
             />
           </label>
 
-          <label className="hl-field mt-4">
-            <span className="hl-field-label">
+          <label className="bz-field mt-4">
+            <span className="bz-field-label">
               Note
-              <span className="hl-field-optional">Optional</span>
+              <span className="bz-field-optional">Optional</span>
             </span>
             <textarea
               className={`${FIELD_CONTROL} py-2`}
@@ -292,12 +292,12 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
           </label>
 
           <label
-            className="hl-field mt-4"
+            className="bz-field mt-4"
             data-invalid={problems.includes('badDueDate') ? 'true' : 'false'}
           >
-            <span className="hl-field-label">
+            <span className="bz-field-label">
               Due date
-              <span className="hl-field-optional">Optional</span>
+              <span className="bz-field-optional">Optional</span>
             </span>
             <input
               type="date"
@@ -306,10 +306,10 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
             />
           </label>
           {/* The deadline's meaning, stated where it is typed. §14.8.1 calls a
-              deadline missed only when it is strictly past, so a sheet assigned
+              deadline missed only when it is strictly past, so a module assigned
               for the 1st starts asking for attention during the 2nd. */}
-          <span className="hl-field-hint block">
-            Stored as the start of that day, UTC. A sheet is flagged overdue from
+          <span className="bz-field-hint block">
+            Stored as the start of that day, UTC. A module is flagged overdue from
             the first day after it.
           </span>
 
@@ -318,20 +318,20 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
             className="mt-6 border-0 p-0"
             data-invalid={problems.includes('noSheets') ? 'true' : 'false'}
           >
-            <legend className="hl-mark p-0 text-ink">
-              {`SHEETS — ${draft.sheets.length} SELECTED`}
+            <legend className="text-mark p-0 text-on-surface">
+              {`MODULES — ${draft.sheets.length} SELECTED`}
             </legend>
             <div className="mt-2 max-h-72 overflow-y-auto border border-line-strong p-3">
               {sheets.map((sheet) => (
-                <label key={sheet.slug} className="hl-check">
+                <label key={sheet.slug} className="bz-check">
                   <input
                     type="checkbox"
                     checked={draft.sheets.includes(sheet.slug)}
                     onChange={() => setDraft({ ...draft, sheets: toggle(draft.sheets, sheet.slug) })}
                   />
-                  <span className="hl-check-label">
-                    <span className="hl-mark text-ink-muted">
-                      {`SHEET ${String(sheet.module).padStart(2, '0')} `}
+                  <span className="bz-check-label">
+                    <span className="text-mark text-on-surface-muted">
+                      {`MODULE ${String(sheet.module).padStart(2, '0')} `}
                     </span>
                     {sheet.slug}
                     {/* §4.8's hidden line in words: a sheet nobody has drawn
@@ -339,7 +339,7 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
                         assigning it would create a deadline that can never be
                         met. It is offered — the corpus changes — and labelled. */}
                     {!sheet.drawn && (
-                      <span className="hl-mark text-ink-muted"> · NOT DRAWN</span>
+                      <span className="text-mark text-on-surface-muted"> · PLANNED</span>
                     )}
                   </span>
                 </label>
@@ -349,20 +349,20 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
 
           {/* ---- who ------------------------------------------------------- */}
           <fieldset className="mt-6 border-0 p-0">
-            <legend className="hl-mark p-0 text-ink">WHO</legend>
-            <p className="m-0 mb-2 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+            <legend className="text-mark p-0 text-on-surface">WHO</legend>
+            <p className="m-0 mb-2 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
               Select nobody and the assignment applies to the whole organisation,
               including anyone who joins later (§14.2.4). Naming people limits it
               to exactly those accounts.
             </p>
             {inOrg.length === 0 ? (
-              <p className="hl-mark m-0 text-ink-muted">
+              <p className="text-mark m-0 text-on-surface-muted">
                 NO MEMBERS TO NAME — THE ASSIGNMENT WILL APPLY TO THE WHOLE ORGANISATION
               </p>
             ) : (
               <div className="max-h-56 overflow-y-auto border border-line-strong p-3">
                 {inOrg.map((member) => (
-                  <label key={member.userId} className="hl-check">
+                  <label key={member.userId} className="bz-check">
                     <input
                       type="checkbox"
                       checked={draft.targets.includes(member.userId)}
@@ -370,7 +370,7 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
                         setDraft({ ...draft, targets: toggle(draft.targets, member.userId) })
                       }
                     />
-                    <span className="hl-check-label">{memberLabel(member)}</span>
+                    <span className="bz-check-label">{memberLabel(member)}</span>
                   </label>
                 ))}
               </div>
@@ -378,15 +378,15 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
           </fieldset>
 
           {problems.length > 0 && (
-            <ul className="hl-field-error mt-4 list-none p-0" role="alert">
+            <ul className="bz-field-error mt-4 list-none p-0" role="alert">
               {problems.map((problem) => (
                 <li key={problem}>{PROBLEM_COPY[problem]}</li>
               ))}
             </ul>
           )}
 
-          <div className="hl-signoff-actions mt-6">
-            <button type="submit" className="hl-btn" disabled={write.kind === 'writing'}>
+          <div className="bz-actions mt-6">
+            <button type="submit" className="bz-btn" disabled={write.kind === 'writing'}>
               {write.kind === 'writing' ? 'WRITING…' : 'CREATE ASSIGNMENT'}
             </button>
           </div>
@@ -395,12 +395,12 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
               this page the reader caused, so a failure is an `alert` and a
               success is a `status` (§12.13's split). */}
           {write.kind === 'written' && (
-            <p className="hl-mark m-0 mt-3" role="status">
+            <p className="text-mark m-0 mt-3" role="status">
               {`WRITTEN — ${write.title}`}
             </p>
           )}
           {write.kind === 'failed' && (
-            <p className="hl-field-error m-0 mt-3" role="alert">
+            <p className="bz-field-error m-0 mt-3" role="alert">
               {write.message}
             </p>
           )}
@@ -408,41 +408,41 @@ export function AssignmentForm({ facts }: { facts: CurriculumFacts }) {
       </section>
 
       {/* ---- what already exists ------------------------------------------- */}
-      <section className="hl-panel" aria-labelledby="hl-assign-existing">
-        <div className="hl-panel-head">
-          <h2 id="hl-assign-existing" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-assign-existing">
+        <div className="bz-panel-head">
+          <h2 id="hl-assign-existing" className="bz-panel-title">
             Existing assignments
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">
+          <p className="text-mark m-0 text-on-surface-faint">
             {snapshot.orgs.map((org) => org.name).join(' · ')}
           </p>
         </div>
 
         {snapshot.assignments.length === 0 ? (
-          <p className="hl-mark m-0 text-ink-muted" role="status">
+          <p className="text-mark m-0 text-on-surface-muted" role="status">
             NONE
           </p>
         ) : (
           <ul className="m-0 list-none p-0">
             {snapshot.assignments.map((assignment) => (
               <li key={assignment.id} className="border-b border-line py-3 last:border-b-0">
-                <p className="hl-mark m-0">
+                <p className="text-mark m-0">
                   {assignment.title}
                   {' · '}
                   {assignment.dueAt === null ? 'NO DEADLINE' : `DUE ${assignment.dueAt.slice(0, 10)}`}
                   {' · '}
-                  {`${assignment.sheets.length} SHEETS`}
+                  {`${assignment.sheets.length} MODULES`}
                   {' · '}
                   {assignment.targets.length === 0
                     ? 'WHOLE ORGANISATION'
                     : `${assignment.targets.length} NAMED`}
                 </p>
                 {assignment.note !== null && (
-                  <p className="m-0 mt-1 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+                  <p className="m-0 mt-1 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
                     {assignment.note}
                   </p>
                 )}
-                <p className="hl-mark m-0 mt-1 text-ink-faint">
+                <p className="text-mark m-0 mt-1 text-on-surface-faint">
                   {assignment.sheets.join(' · ')}
                 </p>
               </li>

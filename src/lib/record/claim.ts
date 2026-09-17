@@ -327,7 +327,7 @@ function count(n: number, singular: string, plural: string): string {
 }
 
 function sheets(n: number): string {
-  return count(n, 'signed-off sheet', 'signed-off sheets')
+  return count(n, 'completed module', 'completed modules')
 }
 
 /**
@@ -382,7 +382,7 @@ export function claimSummaryLines(summary: ClaimSummary): string[] {
   if (summary.droppedSubmittals.length > 0) {
     lines.push(
       `${count(summary.droppedSubmittals.length, 'submittal was', 'submittals were')} dropped: `
-      + `a sheet keeps its ${MAX_SUBMITTALS} most recent `
+      + `a module keeps its ${MAX_SUBMITTALS} most recent `
       + `(${summary.droppedSubmittals.join(', ')}).`,
     )
   }
@@ -394,7 +394,7 @@ export function claimSummaryLines(summary: ClaimSummary): string[] {
   // reader can see. A rule that fired invisibly is not news.
   if (summary.identity.markChanged) {
     lines.push(
-      'The mark drawn beside your signatures is now your account’s, not this '
+      'The mark ready beside your signatures is now your account’s, not this '
       + 'browser’s.',
     )
   }

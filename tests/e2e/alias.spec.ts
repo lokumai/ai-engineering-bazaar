@@ -50,7 +50,7 @@ import { readRecord, waitForRecord } from './record'
 const ALIAS = '/sign-in/alias/'
 
 /** The preview, addressed the way §15.4.3 makes it addressable. */
-const STAMP = 'aside[aria-label="Your stamp, as a sheet will print it"]'
+const STAMP = 'aside[aria-label="Your stamp, as a module will print it"]'
 
 /** §15.4.3 — the correction rides on the artefact, in every draft state. */
 const UNVERIFIED = 'UNVERIFIED'
@@ -176,7 +176,7 @@ function markRadio(page: Page, id: string) {
  * `<label>` carrying the glyph and the mark's name with the native radio
  * visually hidden inside it — `opacity: 0` and `pointer-events: none`, never
  * `display: none`, so the group keeps its single tab stop and its arrow-key
- * navigation (`profile.css`, §16.2.3). `.check()` acts on the input itself and
+ * navigation (`progress.css`, §16.2.3). `.check()` acts on the input itself and
  * fails on a control that cannot be hit, which is correct of Playwright and
  * wrong of this test: the input was never the target. So the gesture is the
  * label, and the ASSERTION is that the native radio ended up checked — the
@@ -324,7 +324,7 @@ test.describe('§15.4 /sign-in/alias/', () => {
 
     // Colour is never the only signal (T6): the word carries it and the
     // caution ink only agrees. So the word must be readable text, not a class.
-    const status = stamp.locator('.hl-title-block-row', { hasText: 'Status' })
+    const status = stamp.locator('.bz-defs-row', { hasText: 'Status' })
     await expect(status).toContainText(UNVERIFIED)
   })
 })

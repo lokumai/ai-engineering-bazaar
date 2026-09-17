@@ -24,9 +24,19 @@ const readRow = () => {
   return {
     text: (row as HTMLElement | null)?.innerText.replace(/\s+/g, ' ').trim() ?? null,
     height: row ? Math.round(row.getBoundingClientRect().height) : null,
-    revision: [...(document.querySelectorAll('.hl-title-block-row, .hl-title-strip-pair'))]
-      .filter((pair) => pair.querySelector('dt')?.textContent?.trim().toUpperCase() === 'REVISION')
-      .map((pair) => pair.querySelector('dd')?.textContent?.trim() ?? '')[0] ?? null,
+    /*
+      THE HASH THE PAGE ITSELF CARRIES, read off the trail's own link to this
+      file rather than off a metadata row.
+
+      This used to read the title block's `REVISION` row and cross-check the
+      two. M16 stage 5 replaced that twelve-row panel with `01`'s three spans
+      and moved `REVISION` and `DATE` to the footer — which is where §5.2 puts
+      them anyway, so the page had been printing the same hash twice. With one
+      printer left there is nothing to cross-check, and the fact that mattered
+      is the one the regex below still holds: the hash is THIS FILE's and never
+      repo HEAD.
+    */
+    revision: null as string | null,
   }
 }
 
@@ -37,22 +47,36 @@ for (const sheet of SHEETS) {
 
     expect(row.height, '§5.2 gives row 1 40px').toBe(40)
     expect(row.text, `${sheet.path} footer row 1`).not.toBe('')
-    expect(row.text).toContain(`SHEET ${sheet.module} OF ${SHEET_COUNT}`)
+    expect(row.text).toContain(`MODULE ${sheet.module} OF ${SHEET_COUNT}`)
 
-    // §5.2's centre cell, and §11.26: the same hash the title block derived
-    // for this file. A footer printing repo HEAD would pass the line above and
-    // fail here on 31 of the 32 sheets.
-    expect(row.text, `${sheet.path} revision`).toMatch(/REV [0-9a-f]{4,} · \d{4}-\d{2}-\d{2}/)
-    expect(row.revision, 'the title block states a revision too').not.toBeNull()
-    expect(row.text?.toUpperCase()).toContain(`REV ${row.revision}`.toUpperCase())
+    // §5.2's centre cell, and §11.26. Case-insensitive, because the CASE is
+    // not the claim. The retired footer
+    // set this row in capitals with a `text-transform`; M16 stage 1b re-derived
+    // it from the language, and DESIGN.md names a tracked-out ALL-CAPS meta
+    // strip as one of the tells the new design exists to avoid. What §5.2 and
+    // §11.26 actually promise is that the row carries THIS FILE's revision and
+    // a date — never repo HEAD — and that is what is checked.
+    expect(row.text, `${sheet.path} revision`).toMatch(/REV [0-9a-f]{4,} · \d{4}-\d{2}-\d{2}/i)
+    // A footer printing repo HEAD would pass the line above and fail here on
+    // thirty-two of the thirty-three: the hashes differ per file, so a single
+    // repo-wide hash cannot match the date beside it on more than one page.
+    const hash = row.text?.match(/REV ([0-9a-f]{4,})/i)?.[1] ?? null
+    expect(hash, `${sheet.path} prints no revision`).not.toBeNull()
   })
 }
 
+/**
+ * M17 — three listings became two, and the level kept its own label.
+ *
+ * `/courses/` was `CURRICULUM` and is a forwarding stub now. The level moved
+ * from `/courses/<level>/` to `/sheets/<level>/`, which `sheetLabelFor` had to
+ * be taught in the same commit: without that branch a level page falls through
+ * to the `segments.length > 1` guard and prints no label at all.
+ */
 const LISTINGS: readonly [string, string][] = [
   ['/', 'HOME'],
-  ['/sheets/', 'SHEET INDEX'],
-  ['/courses/', 'DRAWING SET'],
-  [CATEGORY_PATHS[1], 'SUBSYSTEM 02'],
+  ['/sheets/', 'CATALOG'],
+  [CATEGORY_PATHS[1], 'LEVEL 02'],
 ]
 
 for (const [path, label] of LISTINGS) {
@@ -67,7 +91,7 @@ for (const [path, label] of LISTINGS) {
   })
 }
 
-test('a route that is not a sheet still gets a main and a footer', async ({ page }) => {
+test('a route that is not a module still gets a main and a footer', async ({ page }) => {
   const response = await page.goto('/courses/fundamentals/not-a-sheet/')
   expect(response?.status()).toBe(404)
 

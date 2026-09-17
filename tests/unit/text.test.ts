@@ -3,12 +3,12 @@ import { plural } from '@/lib/text'
 
 describe('plural', () => {
   it('counts one in the singular', () => {
-    expect(plural(1, 'sheet')).toBe('1 sheet')
+    expect(plural(1, 'module')).toBe('1 module')
   })
 
   it('counts everything else in the plural', () => {
-    expect(plural(0, 'sheet')).toBe('0 sheets')
-    expect(plural(9, 'sheet')).toBe('9 sheets')
+    expect(plural(0, 'module')).toBe('0 modules')
+    expect(plural(9, 'module')).toBe('9 modules')
   })
 
   it('takes an irregular plural where the -s rule does not hold', () => {

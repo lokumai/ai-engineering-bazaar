@@ -14,6 +14,5 @@ A single reference page collecting every protocol mentioned across the series (M
 
 ```mermaid
 graph LR
-    A[Protocols Reference]
     style A fill:#FFFF00
 ```

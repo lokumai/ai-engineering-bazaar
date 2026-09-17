@@ -10,7 +10,7 @@ import { useRecord } from '@/lib/record/store'
  *
  * The squares themselves are drawn by `ModuleRow`, in the unsigned state, at
  * build time. They cannot be filled by React, and that is a structural fact
- * about this codebase rather than a preference: `SheetFilters` is `'use client'`
+ * about this codebase rather than a preference: `Catalog` is `'use client'`
  * and imports `SheetIndex`, which imports `ModuleRow`, so on `/` both already
  * run in the browser — while `/courses/` and `/courses/[category]/` render the
  * identical components server-only. A hook in either of them works on `/` and
@@ -27,7 +27,7 @@ import { useRecord } from '@/lib/record/store'
  * carries one. Attribute selectors match a whole name, so the two contracts
  * cannot be confused for each other — and a cell here is not a control there.
  *
- * Channel A was the other candidate and record.css explains why it is not used
+ * Channel A was the other candidate and completion.css explains why it is not used
  * for these: a CSS selector cannot compare an attribute on `<html>` against an
  * attribute on a descendant, so the boot script would need one generated rule
  * per module to remove one frame of flicker from a column of 14px squares.

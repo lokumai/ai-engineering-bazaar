@@ -16,6 +16,7 @@ import {
   extent,
   langCoverage,
   sheetFormat,
+  translationOf,
 } from './derive'
 import { CONTENT_ROOT } from './paths'
 import { type Revision, revisionFor } from './revision'
@@ -48,6 +49,26 @@ export interface CourseModule {
   sources: number
   /** §7.6 `LANG` — `EN·TR` only where the Turkish is a real translation */
   lang: Lang
+  /**
+   * M19 — the Turkish body, or `null` where there is not a usable one.
+   *
+   * **It is `null` on exactly the modules `lang` calls `EN`, and that is one
+   * rule rather than two.** `langCoverage` already decides whether a `_tr.md`
+   * sibling is a real translation or a stub translated from a stub, and it
+   * decides it by extent (§7.6, a 0.4 ratio). A second opinion here would
+   * eventually let the catalog say a module is bilingual while the route that
+   * serves it has nothing to serve — so the body is read only when that
+   * function has already said yes.
+   *
+   * **MEASURED across the corpus on 2026-09-13:** 33 modules, **19 `EN·TR` and
+   * 14 `EN`, and not one written module is `EN`.** Every one of the fourteen is
+   * a draft, which §7.6 forces to `EN` unconditionally — their `_tr.md` files
+   * exist at a 0.9 to 1.0 ratio and are stubs translated from stubs. So the
+   * null case is real and reachable only through a draft today; it is handled
+   * because a module written tomorrow can be `EN` before anyone translates it,
+   * not because anything is currently in that state.
+   */
+  translation: string | null
   /** §5.5 `REVISION` / `DATE` — this file's last-touching commit, or null */
   revision: Revision | null
   /** Absolute path, for diagnostics */
@@ -149,6 +170,15 @@ export function loadAllModules(): CourseModule[] {
         // draft sheets would claim `LANG EN · TR` on the strength of their stub
         // translations sitting at a 0.83 to 1.00 ratio.
         lang: langCoverage(filePath, entry.status),
+        // Read only where `lang` has already said there is one to read — see
+        // `translation` above for why that is one rule and not two. The same
+        // `stripBuildFurniture` and `trimStart` the English body gets, because
+        // the two are rendered by the same pipeline and a difference here would
+        // show up as a difference in the prose.
+        translation: langCoverage(filePath, entry.status) === 'EN·TR'
+          ? stripBuildFurniture(matter(fs.readFileSync(translationOf(filePath), 'utf8')).content)
+            .trimStart()
+          : null,
         revision: revisionFor(filePath),
         filePath,
         source,
@@ -162,6 +192,78 @@ export function loadAllModules(): CourseModule[] {
 
 export function loadModule(slug: string): CourseModule | undefined {
   return loadAllModules().find((m) => m.slug === slug)
+}
+
+/**
+ * M19 — the same module, READ IN ONE LANGUAGE.
+ *
+ * **The whole of the second language is this function**, and that is the point
+ * of doing it here rather than in the page. A module's page derives everything
+ * from `body`: the quick check, the authored summary, the figure sequence, the
+ * external sources, the word count. Swapping the body at the loader means every
+ * one of those derivations runs against the Turkish text with no page code
+ * knowing a second language exists — and a derivation that was correct in
+ * English cannot be wrong in Turkish, because it is the same derivation.
+ *
+ * The alternative was to thread a `lang` through the page and pick per
+ * reading, which is the same choice made eight times in one file and eventually
+ * made seven.
+ *
+ * **What is NOT re-derived, and why.** `lang`, `revision`, `filePath` and
+ * `source` stay the English module's: they are facts about the drawing and
+ * about the repository, not about which body a reader is looking at — and
+ * `revision` in particular is the English file's commit, which is what §5.5
+ * means by the sheet's revision. `extent` and `figures` ARE re-derived, because
+ * they are measurements OF the words on the page and the words on the page are
+ * Turkish.
+ *
+ * Returns `undefined` for a module that has no usable translation, which the
+ * route turns into a 404 rather than quietly serving English at a Turkish
+ * address — the `EN` half of §7.6 is a real state and a reader who asked for
+ * Turkish must not be handed English without being told.
+ */
+export function loadModuleIn(slug: string, lang: 'en' | 'tr'): CourseModule | undefined {
+  const english = loadModule(slug)
+  if (!english || lang === 'en') return english
+  if (english.translation === null) return undefined
+
+  const body = english.translation
+  return {
+    ...english,
+    body,
+    frontmatter: {
+      ...english.frontmatter,
+      // **MEASURED: a `_tr.md` carries NO frontmatter at all** — the files open
+      // straight on their `# ` heading. So the translated title is in the body
+      // and nowhere else, and `render.ts` drops that heading from the tree
+      // (B6.1) exactly so the page can print it itself.
+      title: headingOf(body) ?? english.frontmatter.title,
+      // `summary` and `objectives` stay ENGLISH and the page says so with a
+      // `lang` attribute, because there is no Turkish for them anywhere in the
+      // corpus. Dropping them would take a capability off the Turkish page;
+      // printing them unmarked would have a screen reader read English in a
+      // Turkish voice. Marked English is the honest third answer, and it is
+      // visible to the author as the next thing to translate.
+    },
+    extent: extent(stripLeadIn(body)),
+    figures: countFigures(body),
+    sources: countSources(body),
+  }
+}
+
+/**
+ * The first `# ` heading of a body, or `null`. Fenced lines are skipped, so a
+ * `#` comment inside a shell block is not mistaken for the module's name.
+ */
+function headingOf(body: string): string | null {
+  let fenced = false
+  for (const line of body.split('\n')) {
+    if (/^\s*(```|~~~)/.test(line)) fenced = !fenced
+    if (fenced) continue
+    const heading = /^#[ \t]+(.+?)[ \t]*$/.exec(line)
+    if (heading) return heading[1]
+  }
+  return null
 }
 
 export function loadCategoryIntro(slug: CategorySlug): string | null {

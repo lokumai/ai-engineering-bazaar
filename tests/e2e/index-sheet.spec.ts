@@ -5,18 +5,26 @@ import {
   NOT_DRAWN_COUNT,
   SHEETS,
   SHEET_COUNT,
+  CATEGORY_PATHS,
 } from './sheets'
+import { showTable } from './views'
 import { watchPage } from './watch'
 
 /**
- * §4.8 — the index sheet, and the one promise it makes that is easy to break
- * silently: every count the page prints is measured from the set it is
+ * §4.8, as M12 left it — the catalog, and the one promise it makes that is easy
+ * to break silently: every count the page prints is measured from the set it is
  * printing.
  *
- * The sheet lives at `INDEX_SHEET` since §15.1 gave `/` to the home screen. The
- * table moved verbatim, so every test here moved with it — the subject was
- * never the route, it was the flat manifest — and the route is imported rather
- * than typed so a second move costs one line in `sheets.ts`.
+ * The page lives at `INDEX_SHEET` since §15.1 gave `/` to the home screen, and
+ * M12 turned it into three views over one array (D13). **The table is one of
+ * the three now, and it is not the one showing by default**, so every test here
+ * that reads the table selects the Table view first. That is a real change in
+ * what these tests exercise and it is the right one: the table's counts are
+ * still the subject, and the toggle is now part of reaching them.
+ *
+ * `catalog.spec.ts` is the file about the three views themselves — that they
+ * render the same set, that the choice is remembered and that only the showing
+ * one is in the tab order. This file stayed with the counts.
  *
  * "Fifteen are drawn" is prose, so nothing type-checks it and no unit test of
  * the loader can catch the day it stops matching the table it is counting. So
@@ -40,15 +48,16 @@ function spellOut(n: number): string {
   return word.charAt(0).toUpperCase() + word.slice(1)
 }
 
-test('lists every sheet in the set, once, in sheet order', async ({ page }) => {
+test('lists every module in the set, once, in module order', async ({ page }) => {
   await page.goto(INDEX_SHEET)
+  await showTable(page)
 
-  const rows = page.locator('.hl-index tbody tr')
+  const rows = page.locator('.bz-table tbody tr')
   await expect(rows).toHaveCount(SHEET_COUNT)
 
   // The manifest and `sheets.ts` are two independent statements of what ships.
   // Reconciling them here is what lets every other spec trust the fixture.
-  const links = await page.locator('.hl-index tbody .hl-row-link').evaluateAll(
+  const links = await page.locator('.bz-table tbody .bz-row-link').evaluateAll(
     (nodes) => nodes.map((node) => ({
       href: new URL((node as HTMLAnchorElement).href).pathname,
       title: node.textContent?.trim() ?? '',
@@ -58,64 +67,94 @@ test('lists every sheet in the set, once, in sheet order', async ({ page }) => {
   expect(links).toEqual(SHEETS.map((s) => ({ href: s.path, title: s.title })))
 })
 
-test('the drawn / not-drawn counts match the rows actually rendered', async ({ page }) => {
+test('the ready / not-ready counts match the rows actually rendered', async ({ page }) => {
   await page.goto(INDEX_SHEET)
+  await showTable(page)
 
-  const ready = page.locator('.hl-index tbody tr:not([data-draft])')
-  const notDrawn = page.locator('.hl-index tbody tr[data-draft]')
+  const ready = page.locator('.bz-table tbody tr:not([data-draft])')
+  const notDrawn = page.locator('.bz-table tbody tr[data-draft]')
 
   await expect(ready).toHaveCount(DRAWN_COUNT)
   await expect(notDrawn).toHaveCount(NOT_DRAWN_COUNT)
 
-  // Every one of those rows says so in words as well as in line type (§10.4).
-  await expect(page.locator('.hl-row-status', { hasText: /^READY$/ })).toHaveCount(DRAWN_COUNT)
-  await expect(page.locator('.hl-row-status', { hasText: /^NOT DRAWN$/ })).toHaveCount(NOT_DRAWN_COUNT)
+  /* M17 — the same claim, on what carries it now. §4.8's `STATUS` column is
+     gone; the word it printed is `.bz-said` inside each row's own header, so
+     a screen reader still hears it and the screen no longer repeats what four
+     other cells already say (`ModuleRow`'s `RowState`). Counting it here is
+     what stops the word being dropped along with the column. */
+  await expect(
+    page.locator('.bz-table tbody .bz-row-title .bz-said', { hasText: /^READY$/ }),
+  ).toHaveCount(DRAWN_COUNT)
+  await expect(
+    page.locator('.bz-table tbody .bz-row-title .bz-said', { hasText: /^PLANNED$/ }),
+  ).toHaveCount(NOT_DRAWN_COUNT)
 
-  // …and the eyebrow above the table counts the same set (§11.25), in the
-  // marks register rather than in words.
-  const eyebrow = await page.locator('.hl-eyebrow').innerText()
-  expect(eyebrow).toContain(`${SHEET_COUNT} SHEETS`)
-  expect(eyebrow).toContain(`${DRAWN_COUNT} DRAWN`)
+  // …and the Overview view states the same set, level by level (§11.25).
+  //
+  // It used to print `8 modules · 8 ready` under each level name and this
+  // summed those. The author had the printed counts removed on 2026-09-11 —
+  // the rail beside them draws the same fact — so the sum is taken from where
+  // the fact lives now: each rail's accessible name, which is the statement a
+  // reader who cannot see the fill is given.
+  const bands = await page.locator('.bz-boardcol .bz-track').evaluateAll(
+    (nodes) => nodes.map((node) => node.getAttribute('aria-label') ?? ''),
+  )
+  expect(bands.length, 'the overview draws no rails').toBeGreaterThan(0)
+  const summed = bands.reduce(
+    (total, label) => {
+      const [ready, modules] = [...label.matchAll(/(\d+)/g)].map((match) => Number(match[1]))
+      return { modules: total.modules + modules, ready: total.ready + ready }
+    },
+    { modules: 0, ready: 0 },
+  )
+  expect(summed).toEqual({ modules: SHEET_COUNT, ready: DRAWN_COUNT })
 
-  // The spelt-out form of the same three counts is the home screen's first-visit
-  // statement (§15.2.3). It is prose about the set, not about the reader, so it
-  // has to agree with the rows above — and after §15 nothing else compares the
-  // two, because they are no longer on one page.
-  await page.goto('/')
-  const statement = (await page.locator('.hl-statement').innerText()).replace(/\s+/g, ' ')
-  expect(statement).toContain(`${spellOut(SHEET_COUNT)} sheets`)
-  expect(statement).toContain(`${spellOut(DRAWN_COUNT)} are drawn.`)
-  expect(statement).toContain(`${spellOut(NOT_DRAWN_COUNT)} are dashed`)
+  // The home page used to spell the same three counts out in its opening
+  // paragraph and this compared them too. That paragraph is gone — it
+  // described the course to itself — so there is no second prose statement of
+  // the set left to disagree with the rows.
 })
 
 test('the filter chips narrow the table to the count they claim', async ({ page }) => {
   await page.goto(INDEX_SHEET)
+  await showTable(page)
 
-  const rows = page.locator('.hl-index tbody tr')
-  const count = page.locator('.hl-chip-count')
+  const rows = page.locator('.bz-table tbody tr')
+  const count = page.locator('.bz-filter-count')
 
   await expect(count).toHaveText(`Showing ${SHEET_COUNT} of ${SHEET_COUNT}`)
 
-  await page.getByRole('button', { name: 'READY', exact: true }).click()
+  // M12 — the same six selections in sentence case. The ids did not move; the
+  // labels did, because a tracked-out all-caps chip is one of DESIGN.md's
+  // do-nots and `EN · TR` was two of them at once.
+  await page.getByRole('button', { name: 'Ready', exact: true }).click()
   await expect(rows).toHaveCount(DRAWN_COUNT)
   await expect(count).toHaveText(`Showing ${DRAWN_COUNT} of ${SHEET_COUNT}`)
 
-  await page.getByRole('button', { name: 'NOT DRAWN', exact: true }).click()
+  await page.getByRole('button', { name: 'Planned', exact: true }).click()
   await expect(rows).toHaveCount(NOT_DRAWN_COUNT)
   await expect(count).toHaveText(`Showing ${NOT_DRAWN_COUNT} of ${SHEET_COUNT}`)
 
-  await page.getByRole('button', { name: 'ALL', exact: true }).click()
+  await page.getByRole('button', { name: 'All', exact: true }).click()
   await expect(rows).toHaveCount(SHEET_COUNT)
 })
 
-test('links every subsystem, and each row reaches its sheet', async ({ page }) => {
+test('links every level, and each row reaches its module', async ({ page }) => {
   const problems = watchPage(page)
   await page.goto(INDEX_SHEET)
 
-  await expect(page.locator('.hl-subsystem-list > li')).toHaveCount(6)
+  // M12 — the level links are the Overview view's bands. They replaced the
+  // block of category cards that used to sit under the table, which was a
+  // second, shorter rendering of the same grouping (D13's cost paragraph).
+  await expect(page.locator('.bz-boardcol')).toHaveCount(CATEGORY_PATHS.length)
+  const levelLinks = await page.locator('.bz-boardcol-link').evaluateAll((nodes) =>
+    nodes.map((node) => new URL((node as HTMLAnchorElement).href).pathname),
+  )
+  expect(levelLinks.sort()).toEqual([...CATEGORY_PATHS].sort())
 
-  // One row, followed end to end: the manifest is only useful if it navigates.
-  await page.locator('.hl-index tbody .hl-row-link').first().click()
+  // One row, followed end to end: the catalog is only useful if it navigates.
+  await showTable(page)
+  await page.locator('.bz-table tbody .bz-row-link').first().click()
   await expect(page).toHaveURL(new RegExp(`${SHEETS[0].path}$`))
   await expect(page.locator('main h1')).toHaveText(SHEETS[0].title)
 

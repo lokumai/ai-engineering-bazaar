@@ -60,7 +60,7 @@ export function Uptime() {
   return (
     <div className="flex flex-wrap items-end gap-x-3 gap-y-2">
       <div
-        className="hl-uptime"
+        className="bz-uptime"
         role="img"
         aria-label={strip(reading?.days ?? null)}
       >
@@ -69,13 +69,13 @@ export function Uptime() {
             // Keyed by position: the strip is always UPTIME_DAYS long and the
             // window slides, so the index is the stable thing, not the date.
             key={index}
-            className="hl-uptime-tick"
+            className="bz-uptime-tick"
             data-active={tick.active ? 'true' : 'false'}
             data-today={tick.today ? 'true' : undefined}
           />
         ))}
       </div>
-      <p className="hl-mark m-0 text-ink-muted">{label(reading)}</p>
+      <p className="text-mark m-0 text-on-surface-muted">{label(reading)}</p>
     </div>
   )
 }
@@ -90,11 +90,11 @@ export function Uptime() {
 function label(
   reading: { streak: number; lastActive: string | null; days: Array<{ date: string }> } | null,
 ): string {
-  if (reading === null) return 'UPTIME --'
-  if (reading.streak > 0) return `UPTIME ${reading.streak}D`
+  if (reading === null) return 'STREAK --'
+  if (reading.streak > 0) return `STREAK ${reading.streak}D`
   const gap = daysAgo(reading)
-  if (gap === null) return 'UPTIME 0D'
-  return `UPTIME 0D · LAST ${gap}D AGO`
+  if (gap === null) return 'STREAK 0D'
+  return `STREAK 0D · LAST ${gap}D AGO`
 }
 
 function daysAgo(reading: {

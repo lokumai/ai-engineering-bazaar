@@ -4,7 +4,7 @@ import { EMPTY_RECORD } from '../record/schema'
 import { plural } from '../text'
 import { CATEGORIES, type Category } from './curriculum-file'
 import { categoryPath, sheetPath } from './curriculum'
-import { LANG_DISPLAY } from './derive'
+import { LANG_DISPLAY, countFigures } from './derive'
 import { moduleGraph } from './edges'
 import { curriculumFacts } from './facts'
 import { loadAllModules } from './loader'
@@ -61,11 +61,14 @@ export function sheetRows(): SheetRow[] {
       title: sheet.frontmatter.title,
       path: sheetPath(sheet),
       drawn,
-      status: drawn ? 'READY' : 'NOT DRAWN',
+      status: drawn ? 'READY' : 'PLANNED',
       subsystem: {
         order: sheet.category.order,
         title: sheet.category.title,
         path: categoryPath(sheet.category),
+        // M12 — carried rather than recovered from the path: the catalog's
+        // views address a level's colour as `[data-cat="<slug>"]`.
+        slug: sheet.category.slug,
       },
       // The same refusal §5.5 makes in the title block: a stub's words are its
       // schedule of parts and its duration is undeclared, so there is no
@@ -81,6 +84,10 @@ export function sheetRows(): SheetRow[] {
       bilingual: sheet.lang === 'EN·TR',
       requires: requires.length === 0 ? DASH : requires.join(', '),
       topics: topicsFor({ status: sheet.frontmatter.status, body: sheet.body }),
+      // M20 — the author's own sentence, carried rather than rewritten. It is
+      // `null` on a planned module and `schema.ts` is what guarantees it is
+      // not null on a written one, so the listing never has to check twice.
+      summary: sheet.frontmatter.summary,
       // §4.8 column 9. Taken from `sheetStamps` rather than re-derived from
       // the same three facts, because the island that fills the squares asks
       // `sheetStamps` which slots exist: two derivations of one slot set would
@@ -126,6 +133,81 @@ export function setSummary(): Coverage {
   return coverage(sheetRows(), declaredMinutes(() => true))
 }
 
+/** The shortest and the longest module the course declares, in minutes. */
+export interface LengthRange {
+  shortest: number
+  longest: number
+}
+
+/**
+ * M18 — how long a module takes, DERIVED, because the site has been printing a
+ * number nobody measured.
+ *
+ * The home page said *"Five to ten minutes a module"*, which came from
+ * `README.md` rule 4 and `MANIFESTO.md` §3. **MEASURED against the corpus that
+ * sentence describes: nineteen modules declare a duration, the shortest is 20
+ * minutes and the longest is 30.** Not one of them is under twenty. The
+ * author's list of 2026-09-11 names the figure as wrong, and it was wrong by a
+ * factor of three.
+ *
+ * So the sentence takes its numbers from the modules instead of from a
+ * document, which is §11.25 applied to prose rather than to a facts strip: a
+ * module that gets longer moves the promise with it, and nobody has to notice.
+ * A written module needs a positive duration — `curriculum-file.ts` fails the
+ * build without one — so there is no empty case to spell.
+ *
+ * Only the written ones. A planned module declares nothing, and averaging a
+ * zero into a promise is how the figure went wrong in the first place.
+ */
+export function moduleLengthRange(): LengthRange {
+  const declared = loadAllModules()
+    .map((sheet) => sheet.frontmatter.duration)
+    .filter((minutes) => minutes > 0)
+
+  return {
+    shortest: Math.min(...declared),
+    longest: Math.max(...declared),
+  }
+}
+
+/**
+ * M13 — the four facts the home page states about the course, measured.
+ *
+ * The home page's strip of numbers is the one place on the site that says how
+ * big this thing is, and §11.25 does not make an exception for a number in a
+ * headline: every one of these is counted from the corpus at build time, so
+ * breaking a derivation changes the page rather than leaving it confidently
+ * wrong. The strip prints `19 of 33 written`, a reading time, a figure count
+ * and a source count, and it prints nothing this function did not count.
+ *
+ * `figures` is diagrams plus images, which is what a module's own info panel
+ * counts (`countFigures`), so the total and the per-module rows cannot
+ * disagree. `sources` is the sum of each module's distinct external links —
+ * per module, so a paper cited by two modules is two citations here. The home
+ * page says "sources cited" rather than "distinct sources" for exactly that
+ * reason.
+ */
+export interface CorpusTotals {
+  modules: number
+  ready: number
+  /** Declared minutes across the ready modules. */
+  minutes: number
+  figures: number
+  sources: number
+}
+
+export function corpusTotals(): CorpusTotals {
+  const modules = loadAllModules()
+  const { sheets, drawn, minutes } = setSummary()
+  return {
+    modules: sheets,
+    ready: drawn,
+    minutes,
+    figures: modules.reduce((total, module) => total + countFigures(module.body), 0),
+    sources: modules.reduce((total, module) => total + module.sources, 0),
+  }
+}
+
 export function categorySummary(category: Category): Coverage {
   return coverage(
     categoryRows(category),
@@ -134,18 +216,26 @@ export function categorySummary(category: Category): Coverage {
 }
 
 /**
- * `~3 H 55 MIN`. The tilde is doing real work: this is the sum of the
+ * `~3 h 55 min`. The tilde is doing real work: this is the sum of the
  * durations the sheets themselves declare, not a measurement of anyone's
  * reading. Returns null where nothing declares one, so a subsystem with no
- * drawn sheets prints no duration at all rather than `~0 MIN`.
+ * drawn sheets prints no duration at all rather than `~0 min`.
+ *
+ * NOT SHOUTED, since M16. These strings were written in capitals because the
+ * class that carried them applied `text-transform: uppercase`, and writing
+ * them pre-cased kept the two in step. The design language has no uppercase
+ * anywhere — `01:136-137` turns it off explicitly on the one element that
+ * would have carried it — so a pre-cased string is now the only thing
+ * shouting on the page. `01`'s own facts line is the reference:
+ * `30 min · 1,814 words · English & Türkçe`.
  */
 export function durationLabel(minutes: number): string | null {
   if (minutes <= 0) return null
 
   const hours = Math.floor(minutes / 60)
   const rest = minutes % 60
-  if (hours === 0) return `~${rest} MIN`
-  return rest === 0 ? `~${hours} H` : `~${hours} H ${rest} MIN`
+  if (hours === 0) return `~${rest} min`
+  return rest === 0 ? `~${hours} h` : `~${hours} h ${rest} min`
 }
 
 function joinMarks(parts: readonly (string | null)[]): string {
@@ -153,26 +243,22 @@ function joinMarks(parts: readonly (string | null)[]): string {
 }
 
 /**
- * `8 SHEETS · 8 DRAWN · ~3 H 55 MIN` — what any group of sheets states about
- * itself. The duration is dropped where nothing in the group declares one, so
- * a subsystem with no drawn sheets reads `9 SHEETS · 0 DRAWN` and stops there.
+ * M20 — the line under a level's heading: `8 modules · ~3 h 55 min`.
+ *
+ * **It was `Level 02 · 8 modules · 7 ready · ~3 h 55 min`, an eyebrow ABOVE the
+ * heading, and the blurb is what sat here.** The author asked for the blurb to
+ * go and this line to take its place, cut to the modules and the total time.
+ * Both of the parts it lost were already said: `Level 02` is the heading
+ * itself — in words, which is the better spelling of it — and `7 ready` is on
+ * every row of the table under it, and in the board's own rail.
+ *
+ * The name changed with the position. It is no longer an eyebrow, and a
+ * function called `categoryEyebrow` printing a lead line is the kind of stale
+ * name the next reader has to work out from the call site.
  */
-export function coverageLabel({ sheets, drawn, minutes }: Coverage): string {
-  return joinMarks([
-    plural(sheets, 'SHEET').toUpperCase(),
-    `${drawn} DRAWN`,
-    durationLabel(minutes),
-  ])
-}
-
-/** §4.9 item 1 — `SUBSYSTEM 02 · 8 SHEETS · 8 DRAWN · ~3 H 55 MIN`. */
-export function categoryEyebrow(category: Category): string {
-  return `SUBSYSTEM ${pad2(category.order)} · ${coverageLabel(categorySummary(category))}`
-}
-
-/** The same line for the set as a whole. */
-export function setEyebrow(): string {
-  return coverageLabel(setSummary())
+export function categoryCoverage(category: Category): string {
+  const { sheets, minutes } = categorySummary(category)
+  return joinMarks([plural(sheets, 'module'), durationLabel(minutes)])
 }
 
 // ---------------------------------------------------------------------------
@@ -196,28 +282,38 @@ export function indexStatement(): string[] {
   const { sheets, drawn, notDrawn } = setSummary()
 
   return [
-    `${sentenceCount(sheets)} sheets on becoming an AI-powered software engineer.`,
+    `${sentenceCount(sheets)} modules on becoming an AI-powered software engineer.`,
+    // M13 — this line read "… are dashed — the geometry exists in the model,
+    // the lines do not", which is the drawing-set metaphor in substance on the
+    // one page a stranger meets first. The copy register's word boundaries
+    // could not catch it (`dashed` is not in §9's table) and the export grep
+    // could not either. Set C says what the state is: a planned module has a
+    // page, and that page is a schedule of what it will cover.
     notDrawn === 0
-      ? 'Every sheet is drawn.'
-      : `${sentenceCount(drawn)} are drawn. ${sentenceCount(notDrawn)} are `
-        + 'dashed — the geometry exists in the model, the lines do not.',
+      ? 'Every module is ready.'
+      : `${sentenceCount(drawn)} are ready to read. ${sentenceCount(notDrawn)} are `
+        + 'planned, and each one lists what it will cover.',
     'Every claim is fetched from a primary source and dated. Nothing is cited '
     + 'from memory.',
     'Read in any order the dependency graph allows.',
   ]
 }
 
-/** Every subsystem, with the coverage its block prints (§5.4). */
-export interface SubsystemCoverage {
-  category: Category
-  coverage: Coverage
-  path: string
-}
+/* M17 — `subsystems()` and `setEyebrow()` were deleted here, and saying so is
+   cheaper than letting somebody find them and build a page with them.
 
-export function subsystems(): SubsystemCoverage[] {
-  return CATEGORIES.map((category) => ({
-    category,
-    coverage: categorySummary(category),
-    path: categoryPath(category),
-  }))
-}
+   Both existed for `/courses/`, the page that listed every level with its own
+   band. That page folded into the catalog, which groups by level in the
+   Overview view and prints each level's counts beside the modules it counts,
+   so neither function had a caller left. `setEyebrow` also carried the one
+   figure nothing else states — the whole set's declared reading time — and the
+   catalog dropped its own eyebrow on a recorded decision in M12; the five
+   level pages each state their own.
+
+   **M20 deleted `coverageLabel` here too, and for the same reason rather than
+   a new one.** It returned `8 modules · 8 ready · ~3 h 55 min` and had exactly
+   one caller, the level head's eyebrow; the author cut that line to the
+   modules and the total time, so `categoryCoverage` above says what is left
+   and the three-part version had nobody to serve. `categorySummary`,
+   `durationLabel` and `setSummary` are all still live and any future caller
+   can have the long line back in one expression. */

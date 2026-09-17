@@ -227,8 +227,8 @@ describe('coercion — prototype pollution', () => {
   })
 })
 
-describe('coercion — the sheets map', () => {
-  it('coerces a sheets array to an empty map: a slug-keyed map is never an array', () => {
+describe('coercion — the modules map', () => {
+  it('coerces a modules array to an empty map: a slug-keyed map is never an array', () => {
     expect(ok(wrap({ sheets: [{ signedOff: '2026-08-14T00:00:00.000Z' }] })).sheets).toEqual({})
   })
 
@@ -247,7 +247,7 @@ describe('coercion — the sheets map', () => {
     expect(Object.keys(data.sheets)).toEqual(['i/j'])
   })
 
-  it('drops a sheet record that holds nothing at all (§11.25 absent, not empty)', () => {
+  it('drops a module record that holds nothing at all (§11.25 absent, not empty)', () => {
     expect(ok(wrap({ sheets: { 'a/b': {} } })).sheets).toEqual({})
     expect(ok(wrap({ sheets: { 'a/b': { dwellSeconds: 0, reachedEnd: false } } })).sheets).toEqual({})
   })
@@ -434,7 +434,7 @@ describe('coercion — submittals', () => {
     expect(kept.map((s) => s.url)).toEqual(['https://github.com/owner/repo'])
   })
 
-  it('drops a duplicate owner/repo on the same sheet, case-insensitively', () => {
+  it('drops a duplicate owner/repo on the same module, case-insensitively', () => {
     const kept = ok(
       wrap({ sheets: { 'a/b': { submittals: [submittal('Own', 'Repo'), submittal('own', 'repo')] } } }),
     ).sheets['a/b'].submittals

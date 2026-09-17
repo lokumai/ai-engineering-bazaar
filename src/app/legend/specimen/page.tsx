@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description:
     'A record document generated at build time from labelled sample data and '
     + 'stamped as a specimen, so the artefact can be read before anything has '
-    + 'been signed off.',
+    + 'been completed.',
 }
 
 /**
@@ -49,48 +49,48 @@ export default function SpecimenPage() {
   const specimen = specimenDocument()
 
   return (
-    <PageShell sheet="SHEET 00 · SPECIMEN">
-      <p className="hl-eyebrow hl-mark">SHEET 00 — LEGEND &amp; SPECIMEN</p>
+    <PageShell sheet="MODULE 00 · SPECIMEN">
+      <p className="bz-facts">Module 00 · legend and specimen</p>
 
-      <h1 className="hl-listing-title">Specimen record</h1>
+      <h1 className="bz-display">Specimen record</h1>
 
       {/* The stamp, before the prose and before the control. It is a mono line
           in a hairline box rather than an alarm: the fact is unmissable without
           spending the caution colour, which §12.15 needs for the one
           destructive action on the site. */}
-      <p className="hl-mark m-0 mb-4 inline-block border border-line-strong bg-cleared px-3 py-2 text-meta text-ink">
+      <p className="text-mark m-0 mb-4 inline-block border border-line-strong bg-surface-raised px-3 py-2 text-meta text-on-surface">
         {SPECIMEN_STAMP}
       </p>
 
-      <p className="hl-lead">
+      <p className="bz-lead">
         This is a real record document, generated from sample data at build
         time. Every name, date, repository and answer in it is invented for the
         specimen. It holds nothing about you, it reads nothing out of this
         browser, and it changes nothing. Your own record is built on the
-        record-of-work sheet.
+        record-of-work module.
       </p>
 
-      <hr className="hl-rule-struct" aria-hidden="true" />
+      <hr className="bz-rule" aria-hidden="true" />
 
-      <section className="hl-panel" aria-labelledby="hl-specimen-facts">
-        <div className="hl-panel-head">
-          <h2 id="hl-specimen-facts" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-specimen-facts">
+        <div className="bz-panel-head">
+          <h2 id="hl-specimen-facts" className="bz-panel-title">
             What is in this specimen
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">Sample data</p>
+          <p className="text-mark m-0 text-on-surface-faint">Sample data</p>
         </div>
 
-        <dl className="hl-defs">
+        <dl className="bz-defs">
           {/* The name is the field the document's header prints first, which is
               where the stamp rides so that it cannot be separated from the file
               (§12.12.2). Printed here as typed, in a `<bdi>` for the same
               reason the document does it: a name must not reorder what is
               around it. */}
-          <dt>Drafter</dt>
+          <dt>Account</dt>
           <dd>
             <bdi dir="auto">{specimen.data.identity.name}</bdi>
           </dd>
-          <dt>Sheets signed off</dt>
+          <dt>Modules completed</dt>
           <dd>
             {String(specimen.signedOff).padStart(String(specimen.of).length, '0')} /{' '}
             {specimen.of}
@@ -111,12 +111,12 @@ export default function SpecimenPage() {
           </dd>
         </dl>
 
-        <p className="hl-mark mt-4 mb-1 text-ink-muted">Content digest</p>
-        {/* `.hl-mark` without its uppercasing: a hex digest a reader compares
+        <p className="text-mark mt-4 mb-1 text-on-surface-muted">Content digest</p>
+        {/* `.text-mark` without its uppercasing: a hex digest a reader compares
             against the one inside the file has to be printed in the case it is
             written in. */}
-        <p className="hl-mark m-0 break-all normal-case text-ink">{specimen.digest}</p>
-        <p className="mt-2 mb-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        <p className="text-mark m-0 break-all normal-case text-on-surface">{specimen.digest}</p>
+        <p className="mt-2 mb-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           SHA-256 over the canonicalised sample record, computed at build time.
           It shows that the file has not changed since it was generated. It shows
           nothing at all about whether the facts inside it are true, which is why
@@ -124,62 +124,62 @@ export default function SpecimenPage() {
         </p>
       </section>
 
-      <section className="hl-panel" aria-labelledby="hl-specimen-blocks">
-        <div className="hl-panel-head">
-          <h2 id="hl-specimen-blocks" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-specimen-blocks">
+        <div className="bz-panel-head">
+          <h2 id="hl-specimen-blocks" className="bz-panel-title">
             The five blocks of the file
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">In this order</p>
+          <p className="text-mark m-0 text-on-surface-faint">In this order</p>
         </div>
 
         {/* §12.12.2 — the order is the argument. A certificate puts its limits
             in a footer in small type; this puts them second, above the ledger
             they qualify, and ends on the audit path rather than on a flourish. */}
-        <ol className="m-0 max-w-[var(--width-prose)] list-none p-0 font-display text-meta leading-normal text-ink-muted">
+        <ol className="m-0 max-w-[var(--layout-measure)] list-none p-0 text-meta leading-normal text-on-surface-muted">
           <li className="mb-2">
-            <span className="hl-mark text-ink">01 Header</span> — the title, the
-            drafter&rsquo;s name as typed, their mark, the generation timestamp
+            <span className="text-mark text-on-surface">01 Header</span> — the title, the
+            account&rsquo;s name as typed, their mark, the generation timestamp
             and the content digest
           </li>
           <li className="mb-2">
-            <span className="hl-mark text-ink">02 Status and limits</span> —
+            <span className="text-mark text-on-surface">02 Status and limits</span> —
             seven statements about what the document is not, above the fold
           </li>
           <li className="mb-2">
-            <span className="hl-mark text-ink">03 Sheet ledger</span> — all{' '}
-            {specimen.of} sheets: number, sheet, subsystem, state, date signed,
-            the revision it was signed against, and the Quick Check state
+            <span className="text-mark text-on-surface">03 Module ledger</span> — all{' '}
+            {specimen.of} modules: number, module, level, state, date completed,
+            the revision it was completed against, and the Quick Check state
           </li>
           <li className="mb-2">
-            <span className="hl-mark text-ink">04 Evidence register</span> — one
+            <span className="text-mark text-on-surface">04 Evidence</span> — one
             entry per repository, with the reader&rsquo;s note, the commit hash
-            as supplied, and the sheet it answers
+            as supplied, and the module it answers
           </li>
           <li className="mb-2">
-            <span className="hl-mark text-ink">05 How to check this</span> — five
+            <span className="text-mark text-on-surface">05 How to check this</span> — five
             instructions addressed to a reviewer, and the line that the
             repositories are the part worth reading
           </li>
         </ol>
 
-        <p className="mt-4 mb-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
-          It also lists the sheets that are not signed off, the sources opened
-          from each sheet, the checklist items with the reader&rsquo;s own ticks
-          labelled unscored, the criteria a sign-off asserted against, and a
+        <p className="mt-4 mb-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
+          It also lists the modules that are not completed, the sources opened
+          from each module, the checklist items with the reader&rsquo;s own ticks
+          labelled unscored, the criteria a completion asserted against, and a
           legend for the line types. It carries its own record inside it, so the
           file is also a backup that can be imported into another browser.
         </p>
       </section>
 
-      <section className="hl-panel" aria-labelledby="hl-specimen-open">
-        <div className="hl-panel-head">
-          <h2 id="hl-specimen-open" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-specimen-open">
+        <div className="bz-panel-head">
+          <h2 id="hl-specimen-open" className="bz-panel-title">
             Open it from disk
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">One file, no network</p>
+          <p className="text-mark m-0 text-on-surface-faint">One file, no network</p>
         </div>
 
-        <p className="mt-0 mb-4 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-0 mb-4 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           The document is one HTML file with its stylesheet, its drawings and its
           data inside it. It fetches nothing, stores nothing, and works from a
           local file, an attachment or a memory stick years from now — which is
@@ -187,17 +187,19 @@ export default function SpecimenPage() {
           specimen is how you can check that for yourself before you rely on it.
         </p>
 
-        <div className="hl-signoff-actions">
+        <div className="bz-actions">
           <DocumentDownload
             html={specimen.html}
             filename={specimen.filename}
             label="DOWNLOAD THE SPECIMEN"
           />
-          <Link className="hl-btn" href="/report/">
+          {/* M14 — the builder is the progress page's `report` row now, and
+              the fragment opens it on arrival (`FoldFragment`). */}
+          <Link className="bz-btn" href="/profile/#report">
             BUILD YOUR OWN RECORD
           </Link>
-          <Link className="hl-btn" href="/legend/">
-            BACK TO SHEET 00
+          <Link className="bz-btn" href="/legend/">
+            BACK TO MODULE 00
           </Link>
         </div>
       </section>

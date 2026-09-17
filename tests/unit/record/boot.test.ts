@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { RECORD_BOOT_SCRIPT, recordBootScript } from '@/lib/record/boot'
+import { stampProgressFor } from '@/lib/record/stamp'
 import { coerceRecordData } from '@/lib/record/validate'
 import {
   EMPTY_RECORD,
@@ -27,18 +28,38 @@ const MODULES = {
 interface Stamped {
   classes: Set<string>
   attributes: Map<string, string>
+  /** The custom properties, which is where the one numeric reading goes. */
+  properties: Map<string, string>
 }
 
-/** Runs the emitted script with every global it touches stubbed out. */
+/**
+ * Runs the emitted script with every global it touches stubbed out.
+ *
+ * `style` is part of that slice since M16, and it is not optional: the script
+ * body is wrapped in one `try`, so a stub missing it would not merely fail to
+ * record the properties — the throw would abandon the loop and the remaining
+ * categories would lose their `-started` and `-complete` classes too, silently.
+ * A stub that is missing a member the script touches is a stub that tests a
+ * different script.
+ */
 function run(
   script: string,
   options: { stored?: string | null; getterThrows?: boolean; getItemThrows?: boolean } = {},
   into?: Stamped,
 ): Stamped {
-  const stamped: Stamped = into ?? { classes: new Set<string>(), attributes: new Map<string, string>() }
+  const stamped: Stamped =
+    into ?? {
+      classes: new Set<string>(),
+      attributes: new Map<string, string>(),
+      properties: new Map<string, string>(),
+    }
   const documentElement = {
     classList: { add: (token: string) => { stamped.classes.add(token) } },
     setAttribute: (name: string, value: string) => { stamped.attributes.set(name, value) },
+    style: {
+      setProperty: (name: string, value: string) => { stamped.properties.set(name, value) },
+      removeProperty: (name: string) => { stamped.properties.delete(name) },
+    },
   }
   const window = {
     get localStorage() {
@@ -121,7 +142,7 @@ describe('data-hl-storage — what tells empty state 4 from empty state 1 (§12.
 describe('the marks CSS draws from (§12.2 Channel A)', () => {
   const script = recordBootScript(TOTALS, MODULES)
 
-  it('stamps one class per signed-off module number', () => {
+  it('stamps one class per completed module number', () => {
     const stamped = run(script, { stored: envelope(signedSheets('fundamentals/llms', 'intermediate/security')) })
     expect(stamped.attributes.get('data-hl-record')).toBe('1')
     expect([...stamped.classes].sort()).toEqual([
@@ -132,14 +153,14 @@ describe('the marks CSS draws from (§12.2 Channel A)', () => {
     ])
   })
 
-  it('marks a category complete only when every sheet in it is signed', () => {
+  it('marks a category complete only when every module in it is signed', () => {
     const all = Object.keys(MODULES).filter((slug) => slug.startsWith('fundamentals/'))
     const stamped = run(script, { stored: envelope(signedSheets(...all)) })
     expect(stamped.classes.has('hl-cat-fundamentals-complete')).toBe(true)
     expect(stamped.classes.has('hl-cat-fundamentals-started')).toBe(false)
   })
 
-  it('ignores a sheet that is present but not signed off', () => {
+  it('ignores a module that is present but not completed', () => {
     const stored = envelope({ sheets: { 'fundamentals/llms': { signedOff: null, reachedEnd: true } } })
     const stamped = run(script, { stored })
     expect(stamped.attributes.get('data-hl-record')).toBe('1')
@@ -173,7 +194,7 @@ describe('the marks CSS draws from (§12.2 Channel A)', () => {
     }
   })
 
-  it('survives a hostile sheets map', () => {
+  it('survives a hostile modules map', () => {
     const stored = envelope({ sheets: [{ signedOff: 'x' }] })
     expect(run(script, { stored }).classes.size).toBe(0)
     const polluting = envelope({ sheets: { __proto__: { signedOff: 'x' } } })
@@ -223,6 +244,79 @@ describe('the marks CSS draws from (§12.2 Channel A)', () => {
  * script has no module graph to import from — and these cases are the only thing
  * keeping the two copies honest.
  */
+describe('the one numeric reading, and both channels agreeing on it (§12.2)', () => {
+  const script = recordBootScript(TOTALS, MODULES)
+
+  /*
+    Every other reading channel A carries is a class, because CSS cannot count.
+    This one is a percentage, because a `conic-gradient` stop is a length and
+    `05`-C's dial needs a number in the cascade before first paint. The script
+    can do arithmetic; the stylesheet cannot.
+  */
+  it('states how far through a level the reader is, as a percentage', () => {
+    const stamped = run(script, {
+      stored: envelope(signedSheets('fundamentals/llms', 'fundamentals/training')),
+    })
+    // Two of seven, rounded: a ring is read at a glance and half a percent of
+    // 360 degrees is 1.8, which nobody can see.
+    expect(stamped.properties.get('--bz-done-fundamentals')).toBe('29%')
+    expect(stamped.properties.has('--bz-done-intermediate')).toBe(false)
+  })
+
+  it('says 100% exactly when a level is finished', () => {
+    const stamped = run(script, { stored: envelope(signedSheets('protocols/mcp')) })
+    // `protocols` has one module in TOTALS, and this is also the case where
+    // `-complete` is stamped, so the two readings agree by construction.
+    expect(stamped.properties.get('--bz-done-protocols')).toBe('100%')
+    expect(stamped.classes.has('hl-cat-protocols-complete')).toBe(true)
+  })
+
+  it('states nothing for a level with no total to divide by', () => {
+    // The same asymmetry `-complete` has: with no denominator the honest answer
+    // is silence, and `0%` would be a claim.
+    const stamped = run(recordBootScript({}, MODULES), {
+      stored: envelope(signedSheets('fundamentals/llms')),
+    })
+    expect(stamped.properties.size).toBe(0)
+    expect(stamped.classes.has('hl-cat-fundamentals-started')).toBe(true)
+  })
+
+  it('does not abandon the classes when it writes a property', () => {
+    // The loop stamps a class and then a property per category. A throw in the
+    // second half would cost the rest of the first, and the whole script is
+    // inside one `try` — so this walks two categories and requires both.
+    const stamped = run(script, {
+      stored: envelope(signedSheets('fundamentals/llms', 'intermediate/security')),
+    })
+    expect(stamped.classes.has('hl-cat-fundamentals-started')).toBe(true)
+    expect(stamped.classes.has('hl-cat-intermediate-started')).toBe(true)
+    expect(stamped.properties.size).toBe(2)
+  })
+
+  /**
+   * The cross-test. Two implementations of one derivation — the inlined ES5 and
+   * `stamp.ts` for after mount — and the failure mode is a dial that is right
+   * in frame one and wrong the moment the reader completes something, or the
+   * reverse. Neither can import the other: the script is a source string in
+   * `<head>`.
+   */
+  it('agrees with the after-mount writer, module for module', () => {
+    for (const slugs of [
+      ['fundamentals/llms'],
+      ['fundamentals/llms', 'fundamentals/training', 'fundamentals/rag'],
+      ['protocols/mcp'],
+      ['fundamentals/llms', 'intermediate/security'],
+      [],
+    ]) {
+      const data = coerceRecordData(signedSheets(...slugs))
+      const stamped = run(script, { stored: envelope(signedSheets(...slugs)) })
+      const after = stampProgressFor(data, { categoryTotals: TOTALS, slugToModule: MODULES })
+
+      expect(Object.fromEntries(stamped.properties), slugs.join(' + ') || 'nothing').toEqual(after)
+    }
+  })
+})
+
 describe('data-hl-record only goes on a record that carries something (§15.11)', () => {
   const script = recordBootScript(TOTALS, MODULES)
 
@@ -235,19 +329,19 @@ describe('data-hl-record only goes on a record that carries something (§15.11)'
     ['a freshly minted record, which is what a migration stamp leaves behind', EMPTY_RECORD],
     [
       'a record holding only a preference',
-      { ...EMPTY_RECORD, prefs: { charKeys: false, aliasNamedFor: null } },
+      { ...EMPTY_RECORD, prefs: { charKeys: false, railFolded: false, aliasNamedFor: null, catalogView: null } },
     ],
-    ['a record holding only an empty sheet entry', withSheet({})],
+    ['a record holding only an empty module entry', withSheet({})],
     ['a name the reader typed', { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, name: 'Ada' } }],
     ['a mark seed', { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, markSeed: 'a1b2c3d4' } }],
     ['a role the reader chose', { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, role: 'qa' } }],
     ['a day on which something was written', { ...EMPTY_RECORD, days: ['2026-08-31'] }],
     ['an export the reader took', { ...EMPTY_RECORD, meta: { lastExport: '2026-08-31T09:00:00.000Z', persisted: null, lastClaim: null } }],
-    ['a sheet reached the end of', withSheet({ reachedEnd: true })],
-    ['dwell on a sheet and nothing else', withSheet({ dwellSeconds: 41 })],
+    ['a module reached the end of', withSheet({ reachedEnd: true })],
+    ['dwell on a module and nothing else', withSheet({ dwellSeconds: 41 })],
     ['one checklist box', withSheet({ checklist: { '7': true } })],
     ['one source opened', withSheet({ sources: ['https://example.invalid/paper'] })],
-    ['a sheet signed off', withSheet({ signedOff: '2026-08-14T09:00:00.000Z' })],
+    ['a module completed', withSheet({ signedOff: '2026-08-14T09:00:00.000Z' })],
   ]
 
   /**
@@ -280,8 +374,8 @@ describe('data-hl-record only goes on a record that carries something (§15.11)'
     ['a quiz holding neither an answer nor an assessment', { sheets: { 'fundamentals/llms': { quiz: { answer: '  ' } } } }],
     ['a quiz holding an assessment', { sheets: { 'fundamentals/llms': { quiz: { assessed: 'missed' } } } }],
     ['a signedRevision too short to be a hash', { sheets: { 'fundamentals/llms': { signedRevision: 'abc' } } }],
-    ['a sheet key over the safe length', { sheets: { ['f/' + 'x'.repeat(250)]: { reachedEnd: true } } }],
-    ['sheets as an array', { sheets: [{ reachedEnd: true }] }],
+    ['a module key over the safe length', { sheets: { ['f/' + 'x'.repeat(250)]: { reachedEnd: true } } }],
+    ['modules as an array', { sheets: [{ reachedEnd: true }] }],
   ]
 
   const both: ReadonlyArray<[string, unknown]> = [...CASES, ...MALFORMED]
@@ -322,6 +416,44 @@ describe('data-hl-record only goes on a record that carries something (§15.11)'
     const stamped = run(script, { stored: envelope(data) })
     expect(stamped.attributes.get('data-hl-record')).toBe('1')
     expect([...stamped.classes]).toEqual(['hl-role-qa'])
+  })
+
+  /**
+   * M12 — the two layout preferences are stamped BEFORE the gate, and that
+   * order is the whole reason they are stamped in this script at all.
+   *
+   * A record whose only content is "fold the rail" or "show me the table"
+   * carries nothing by §15.11's rule, so the gate returns before any class is
+   * touched. Stamping either after it would mean the rail sprang open, and the
+   * catalog fell back to the overview, on every load for exactly the readers
+   * who had asked for something else. Both attributes are asserted together
+   * with the ABSENCE of `data-hl-record`, which is what makes this a test of
+   * the order rather than of the attribute.
+   */
+  it('stamps a layout preference on a record that carries nothing (M10, M12)', () => {
+    const stamped = run(script, {
+      stored: envelope({ prefs: { railFolded: true, catalogView: 'table' } }),
+    })
+    expect(stamped.attributes.get('data-bz-rail')).toBe('folded')
+    expect(stamped.attributes.get('data-hl-view')).toBe('table')
+    expect(stamped.attributes.has('data-hl-record')).toBe(false)
+    expect([...stamped.classes]).toEqual([])
+  })
+
+  it('stamps no view for one it does not know, because the id reaches a selector', () => {
+    for (const view of ['everything', '', 7, null, {}, 'TABLE'])
+      expect(
+        run(script, { stored: envelope({ prefs: { catalogView: view } }) })
+          .attributes.has('data-hl-view'),
+        JSON.stringify(view),
+      ).toBe(false)
+    // And the three it does know, so the check above cannot be passing because
+    // the stamp is broken for every value.
+    for (const view of ['overview', 'cards', 'table'])
+      expect(
+        run(script, { stored: envelope({ prefs: { catalogView: view } }) })
+          .attributes.get('data-hl-view'),
+      ).toBe(view)
   })
 
   it('does not throw on a hand-edited record whose fields are the wrong shape', () => {

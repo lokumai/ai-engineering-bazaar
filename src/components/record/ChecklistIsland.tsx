@@ -41,7 +41,7 @@ export const CHECKLIST_SELECTORS = {
   /** `<li class="task-list-item" data-hl-check="0">` — index within the sheet. */
   item: '[data-hl-check]',
   box: 'input[type="checkbox"]',
-  /** The attribute the ticked styling in record.css keys off. */
+  /** The attribute the ticked styling in completion.css keys off. */
   ticked: 'data-ticked',
 } as const
 

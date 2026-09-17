@@ -8,7 +8,6 @@ import { RecordStateSync } from '@/components/record/RecordStateSync'
 import { recordBootScript } from '@/lib/record/boot'
 import { SITE_DESCRIPTION, SITE_NAME } from '@/lib/site'
 import { THEME_BOOT_SCRIPT } from '@/lib/theme'
-import { plexCondensed, plexMono, sourceSerif } from './fonts'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -50,12 +49,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   }
   const recordBoot = recordBootScript(stampFacts.categoryTotals, stampFacts.slugToModule)
 
+  /**
+   * No `className` on <html> any more, and that is M16.
+   *
+   * M9 wired two `next/font/google` families here — Manrope for everything a
+   * person wrote, IBM Plex Mono for what a machine measured — and defended the
+   * choice in a written decision. Neither was in the mockup, which names one
+   * stack and names a SYSTEM stack: `"Avenir Next", ui-sans-serif, system-ui,
+   * …`. So type varies with the reader's OS, exactly as the mockup's own does.
+   * `--font-sans` and `--font-mono` in `src/design/bazaar.css` are the only
+   * place a family is named now, and nothing is downloaded.
+   */
   return (
-    <html
-      lang="en"
-      className={`${plexCondensed.variable} ${sourceSerif.variable} ${plexMono.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang="en" suppressHydrationWarning>
       <head>
         {/* Blocking, before any paint: no flash of the wrong theme (§2.5). */}
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
@@ -64,9 +70,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           marks, the six category faces and `data-hl-storage` on <html> so CSS
           draws every one of them in frame one — no React, nothing to hydrate,
           and no header repainting itself on every load. Second because the
-          theme decides what colour the page is and this decides what is drawn
+          theme decides what colour the page is and this decides what is ready
           on it; both are inside try/catch and do nothing on failure, which
-          lands the page in the honest empty state rather than a half-drawn one.
+          lands the page in the honest empty state rather than a half-ready one.
 
           `suppressHydrationWarning` above covers exactly this: <html> is the
           one element two boot scripts legitimately mutate before React sees it.
@@ -90,7 +96,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <RecordStateSync facts={stampFacts} />
         {/* §14.7 — THE SEAM, mounted once per document.
             The session and the record's sync are document-level concerns, not
-            page-level ones: a sign-off happens on a sheet, so a sync that lived
+            page-level ones: a completion happens on a module, so a sync that lived
             on `/profile/` would only reach the account when the reader visited
             the page that has nothing to do with the work. Every navigation here
             is a client transition, so once per document is once per session.

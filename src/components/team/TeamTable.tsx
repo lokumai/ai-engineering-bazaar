@@ -1,5 +1,6 @@
 'use client'
 
+import type React from 'react'
 import { useCallback, useEffect, useState } from 'react'
 import { selectAttention } from '@/lib/record/attention'
 import type { CurriculumFacts } from '@/lib/record/derive'
@@ -60,16 +61,45 @@ import { PersonDetail } from './PersonDetail'
  * is not the same statement as "your org has no members".
  */
 
-/** The columns, summing to `.hl-index`'s hand-computed 1060px `min-width`. */
-const COLUMNS: ReadonlyArray<{ key: string; label: string; width: number | null }> = [
+/**
+ * The columns, and the minimum width is TAKEN FROM THEM rather than typed
+ * beside them.
+ *
+ * This said "summing to `.bz-table`'s hand-computed 1060px `min-width`", and
+ * three things were wrong with that. The rule carrying the 1060 was in a
+ * stylesheet stage 0 deleted, so the minimum did not exist and nothing forced
+ * the horizontal scroll the `role="region"` container was built to hold. Two
+ * other surfaces repeated the same number with their own arithmetic —
+ * `PersonDetail` sums 300+230+200+330 and `sign-in` sums 220 plus six columns
+ * of 140. And these six do not come to 1060 at all: they come to 920 plus one
+ * flexible column, which is why the comment could be wrong for as long as it
+ * liked without anything noticing.
+ *
+ * `SheetIndex` fixed this for the catalog in stage 4 and named the pattern:
+ * the columns declare their widths, the sum is taken once, and it reaches the
+ * stylesheet as `--bz-table-min`. The flexible column declares a `floor`
+ * instead — the number it may not shrink below, which is what the hand
+ * arithmetic used to supply. MEASURED: 920 fixed plus a 140 floor is 1,060, so
+ * the table is exactly as wide as it always claimed to be, and now nobody has
+ * to check that again.
+ */
+const COLUMNS: ReadonlyArray<{
+  key: string
+  label: string
+  width: number | null
+  floor?: number
+}> = [
   { key: 'member', label: 'Member', width: 220 },
   { key: 'github', label: 'GitHub', width: 150 },
   { key: 'progress', label: 'Progress', width: 110 },
   // §14.8.2's two columns. Adjacent, equally weighted, never merged.
   { key: 'claim', label: 'Claim', width: 190 },
   { key: 'evidence', label: 'Evidence', width: 250 },
-  { key: 'attention', label: 'Attention', width: null },
+  { key: 'attention', label: 'Attention', width: null, floor: 140 },
 ]
+
+/** The sum the stylesheet is handed, from the table it is about to draw. */
+const MIN_WIDTH = COLUMNS.reduce((total, col) => total + (col.width ?? col.floor ?? 0), 0)
 
 /** §14.8.1 — how many flags fit in a 52px-ish row before the rest is counted. */
 const FLAGS_IN_ROW = 2
@@ -180,7 +210,7 @@ function AttentionCell({ flags }: { flags: readonly AttentionFlag[] }) {
   if (flags.length === 0) {
     // Not "all clear": §14.8.1 flags three specific conditions and their
     // absence is the absence of those three, which is what this says.
-    return <span className="text-ink-muted">NO FLAGS</span>
+    return <span className="text-on-surface-muted">NO FLAGS</span>
   }
   const shown = flags.slice(0, FLAGS_IN_ROW)
   const rest = flags.length - shown.length
@@ -191,7 +221,7 @@ function AttentionCell({ flags }: { flags: readonly AttentionFlag[] }) {
           {attentionReason(flag)}
         </li>
       ))}
-      {rest > 0 && <li className="text-ink-muted">{`${rest} MORE — OPEN THE DETAIL`}</li>}
+      {rest > 0 && <li className="text-on-surface-muted">{`${rest} MORE — OPEN THE DETAIL`}</li>}
     </ul>
   )
 }
@@ -219,14 +249,14 @@ function MemberRow({
       : []
 
   return (
-    <tr className="hl-row">
-      <th scope="row" className="hl-row-title">
+    <tr className="bz-row">
+      <th scope="row" className="bz-row-title">
         {/* The whole row is the link target, as everywhere else on the site.
             It is a real `href` so it can be middle-clicked and copied, and the
             handler cancels the navigation so the query the island already
             answered is not thrown away and re-issued. */}
         <a
-          className="hl-row-link"
+          className="bz-row-link"
           href={`?u=${encodeURIComponent(member.userId)}`}
           onClick={(event) => {
             if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return
@@ -238,48 +268,48 @@ function MemberRow({
         </a>
       </th>
 
-      <td className="hl-row-context hl-mark">
+      <td className="bz-row-context text-mark">
         {login === undefined || login === null ? (
           // §14.8.2 — no login means the submittal check cannot run, and the
           // cell says which of the two it is rather than printing a dash.
-          <span className="text-ink-muted">NOT LINKED</span>
+          <span className="text-on-surface-muted">NOT LINKED</span>
         ) : (
           login
         )}
       </td>
 
-      <td className="hl-mark">
+      <td className="text-mark">
         {computed === null ? (
-          <span className="text-ink-muted">
+          <span className="text-on-surface-muted">
             {member.record.kind === 'absent' ? 'NO SERVER COPY' : 'UNREADABLE'}
           </span>
         ) : (
           <>
             {`${computed.progress.signedOff} / ${computed.progress.attainable}`}
             {computed.stale && (
-              <span className="block text-ink-muted">STORED PROGRESS STALE</span>
+              <span className="block text-on-surface-muted">STORED PROGRESS STALE</span>
             )}
           </>
         )}
       </td>
 
       {/* §14.8.2 — THE CLAIM. The reader's own assertion, and labelled as one. */}
-      <td className="hl-row-context hl-mark">
+      <td className="bz-row-context text-mark">
         {member.record.kind !== 'record' ? (
-          <span className="text-ink-muted">—</span>
+          <span className="text-on-surface-muted">—</span>
         ) : latestSignOff(member.record.data) === null ? (
-          <span className="text-ink-muted">NO SIGN-OFF</span>
+          <span className="text-on-surface-muted">NO COMPLETION</span>
         ) : (
-          `SIGNED OFF · LATEST ${day(latestSignOff(member.record.data))}`
+          `COMPLETED · LATEST ${day(latestSignOff(member.record.data))}`
         )}
       </td>
 
       {/* §14.8.2 — THE EVIDENCE. A separate column, never folded into the one
           on its left: the left column is what this person says about
           themselves, this one is what can be checked independently of them. */}
-      <td className="hl-row-context hl-mark">
+      <td className="bz-row-context text-mark">
         {member.record.kind !== 'record' ? (
-          <span className="text-ink-muted">—</span>
+          <span className="text-on-surface-muted">—</span>
         ) : (
           evidenceLines(evidenceSummary(rows)).map((line) => (
             <span key={line} className="block">
@@ -289,9 +319,9 @@ function MemberRow({
         )}
       </td>
 
-      <td className="hl-row-context hl-mark">
+      <td className="bz-row-context text-mark">
         {computed === null ? (
-          <span className="text-ink-muted">—</span>
+          <span className="text-on-surface-muted">—</span>
         ) : (
           <AttentionCell flags={computed.progress.attention} />
         )}
@@ -369,18 +399,18 @@ export function TeamTable({ facts }: { facts: CurriculumFacts }) {
   if (state.kind !== 'ready') {
     const copy = panelStateCopy(state)
     return (
-      <section className="hl-panel" aria-labelledby="hl-team-state">
-        <div className="hl-panel-head">
-          <h2 id="hl-team-state" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-team-state">
+        <div className="bz-panel-head">
+          <h2 id="hl-team-state" className="bz-panel-title">
             Roster
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">{copy.status}</p>
+          <p className="text-mark m-0 text-on-surface-faint">{copy.status}</p>
         </div>
         {/* §12.13's live-region split: a query's progress and its outcome are
             both status, not alerts — nothing here is an error the reader
             caused. */}
         <p
-          className="m-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted"
+          className="m-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted"
           role="status"
         >
           {copy.detail}
@@ -401,12 +431,12 @@ export function TeamTable({ facts }: { facts: CurriculumFacts }) {
 
   return (
     <>
-      <section className="hl-panel" aria-labelledby="hl-team-roster">
-        <div className="hl-panel-head">
-          <h2 id="hl-team-roster" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-team-roster">
+        <div className="bz-panel-head">
+          <h2 id="hl-team-roster" className="bz-panel-title">
             Roster
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">
+          <p className="text-mark m-0 text-on-surface-faint">
             {snapshot.orgs.map((org) => org.name).join(' · ')}
           </p>
         </div>
@@ -415,24 +445,27 @@ export function TeamTable({ facts }: { facts: CurriculumFacts }) {
             conclude. An undercounted attempt tally can only hide a flag, never
             invent one, and a reader is entitled to know which way it fails. */}
         {snapshot.eventsTruncated && (
-          <p className="hl-mark m-0 mb-3 text-ink-muted">
+          <p className="text-mark m-0 mb-3 text-on-surface-muted">
             EVENT LOG TRUNCATED — QUIZ ATTEMPT COUNTS MAY BE LOW
           </p>
         )}
 
         {members.length === 0 ? (
-          <p className="hl-mark m-0 text-ink-muted" role="status">
+          <p className="text-mark m-0 text-on-surface-muted" role="status">
             NO MEMBERS IN THIS ORGANISATION
           </p>
         ) : (
           <div
-            className="hl-index-scroll"
+            className="bz-table-scroll"
             role="region"
             tabIndex={0}
             aria-label="Organisation roster"
             data-hl-scroller=""
           >
-            <table className="hl-index">
+            <table
+              className="bz-table"
+              style={{ '--bz-table-min': `${MIN_WIDTH}px` } as React.CSSProperties}
+            >
               <caption className="sr-only">
                 One row per member: progress, the claim, the evidence beside it,
                 and what needs attention.
@@ -484,14 +517,14 @@ export function TeamTable({ facts }: { facts: CurriculumFacts }) {
         />
       )}
       {selected !== null && person === null && (
-        <section className="hl-panel" aria-labelledby="hl-team-unknown">
-          <div className="hl-panel-head">
-            <h2 id="hl-team-unknown" className="hl-panel-title">
+        <section className="bz-panel" aria-labelledby="hl-team-unknown">
+          <div className="bz-panel-head">
+            <h2 id="hl-team-unknown" className="bz-panel-title">
               Person
             </h2>
-            <p className="hl-mark m-0 text-ink-faint">NOT IN THIS ROSTER</p>
+            <p className="text-mark m-0 text-on-surface-faint">NOT IN THIS ROSTER</p>
           </div>
-          <p className="m-0 font-display text-meta leading-normal text-ink-muted" role="status">
+          <p className="m-0 text-meta leading-normal text-on-surface-muted" role="status">
             {`No member of your organisation has the id ${selected}.`}
           </p>
         </section>

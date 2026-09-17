@@ -5,7 +5,7 @@ import { isDrawnStep, type LearningPath, type PathStep, type Tier } from '@/lib/
  * §13.4.3 items 3 and 4 — one path's ordered steps, as server markup.
  *
  * **A server component with no hooks, and that is the whole design.** Every
- * step's *state* is channel A (§12.2): `lokum.css` reveals `.hl-step-tick` from
+ * step's *state* is channel A (§12.2): `lokum-modules.css` reveals `.bz-step-tick` from
  * the `hl-signed-<n>` class the boot script stamped on `<html>`, so a signed
  * step says `SIGNED OFF` in frame one with zero React and nothing to hydrate.
  * Nine paths and 124 steps therefore cost nine mounted islands fewer than the
@@ -27,7 +27,7 @@ import { isDrawnStep, type LearningPath, type PathStep, type Tier } from '@/lib/
  * marker — no `hl-signed-<n>` for n ≥ 16 can ever be stamped, because a draft
  * sheet has no sign-off control to produce one — and carries **no link**: a
  * link on a roadmap entry is a promise that there is something there to read.
- * The sheet is still reachable from `/courses/`, which is where a reader goes
+ * The sheet is still reachable from the catalog, which is where a reader goes
  * to see what a draft sheet actually is (§13.4.4 — a path is a view, not a
  * gate, and equally not a wall).
  *
@@ -74,7 +74,7 @@ const TIER_LABEL: Readonly<Record<Tier, string>> = {
 export const PATH_BODY_ATTR = 'data-hl-path'
 export const PATH_STEP_ATTR = 'data-hl-path-slug'
 
-/** §12.2 — the attribute `lokum.css` reveals `.hl-step-next` from. */
+/** §12.2 — the attribute `progress.css` reveals `.bz-step-next` from. */
 export const PATH_NEXT_ATTR = 'data-next'
 
 /**
@@ -116,7 +116,7 @@ function Step({
 
   return (
     <li
-      className="hl-step hl-cat-tint ps-3"
+      className="bz-step bz-cat-tint ps-3"
       data-module={sheet?.module}
       data-cat={categoryOf(step.slug)}
       data-tier={step.tier}
@@ -132,48 +132,54 @@ function Step({
         <span
           className={
             draft
-              ? 'hl-mark hl-hidden-y ps-2 text-ink-faint'
-              : 'hl-mark text-ink-muted'
+              ? 'text-mark bz-hidden-y ps-2 text-on-surface-faint'
+              : 'text-mark text-on-surface-muted'
           }
         >
           {sheet?.number ?? NO_READING}
         </span>
 
         {draft || sheet === undefined ? (
-          <span className="text-ink-muted">{title}</span>
+          <span className="text-on-surface-muted">{title}</span>
         ) : (
-          <Link className="hl-link" href={sheet.path}>
+          <Link className="bz-link" href={sheet.path}>
             {title}
           </Link>
         )}
 
-        <span className="hl-mark text-ink-faint">{TIER_LABEL[step.tier]}</span>
+        <span className="text-mark text-on-surface-faint">{TIER_LABEL[step.tier]}</span>
         {sheet !== undefined && (
-          <span className="hl-mark text-ink-faint">{sheet.subsystem}</span>
+          <span className="text-mark text-on-surface-faint">{sheet.subsystem}</span>
         )}
 
         {/* The state, in words. A draft says what it is; a drawn step says
-            `SIGNED OFF` only when this reader's own record says so, which is
+            `COMPLETED` only when this reader's own record says so, which is
             channel A's to decide — the markup is identical for every reader. */}
         {draft ? (
-          <span className="hl-mark text-ink-faint">NOT DRAWN</span>
+          <span className="text-mark text-on-surface-faint">PLANNED</span>
         ) : (
-          <span className="hl-step-tick hl-mark">SIGNED OFF</span>
+          <span className="bz-step-tick text-mark">COMPLETED</span>
         )}
 
         {/* Revealed by `data-next="true"`, which only a client island can set
             (§12.2). Absent on a draft step: a sheet nobody has written is not
-            the one to read next. */}
+            the one to read next.
+
+            Sentence case, and **D48** is why: an enumerated record state keeps
+            its spelling because a reader matches those against each other —
+            `PLANNED` above is one — and this is not a state. It is an
+            instruction, so it stops shouting, and it shouted only because the
+            retired design's `hl-mark` uppercased everything in this line. */}
         {!draft && (
-          <span className="hl-step-next hl-mark">TAKE THIS NEXT</span>
+          <span className="bz-step-next text-mark">Take this next</span>
         )}
       </div>
 
       {/* §13.4.1 — why THIS role reads THIS sheet, naming something the sheet
-          contains. On a draft step it says what the sheet is planned to cover,
+          contains. On a draft step it says what the module is planned to cover,
           and `honesty.test.ts` refuses the present-tense teaching verbs that
           would read as a promise. */}
-      <p className="mt-1 mb-0 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
+      <p className="mt-1 mb-0 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
         {step.reason}
       </p>
     </li>

@@ -45,23 +45,23 @@ function summaryOf(markup: string): string {
 }
 
 const ROW = renderToStaticMarkup(
-  <RegisterRow id="storage" name="Storage" reading="PERSISTENT · QUERIED">
+  <RegisterRow kind="count" id="storage" name="Storage" reading="PERSISTENT · QUERIED">
     <p>How this browser answered the persistence question.</p>
   </RegisterRow>,
 )
 
 const REGISTER = renderToStaticMarkup(
   <Register labelledBy="register-head">
-    <RegisterRow id="stamps" name="Stamps" reading="2 OF 9 EARNED">
+    <RegisterRow kind="count" id="stamps" name="Stamps" reading="2 OF 9 EARNED">
       <p>The shelf.</p>
     </RegisterRow>
-    <RegisterRow id="raw" name="Stored values" reading="--">
+    <RegisterRow kind="count" id="raw" name="Stored values" reading="--">
       <p>Every key this origin holds.</p>
     </RegisterRow>
   </Register>,
 )
 
-describe('§16.4 — a register row arrives closed', () => {
+describe('§16.4 — a row arrives closed', () => {
   it('renders a native <details> with no `open` attribute', () => {
     expect(ROW).toContain('<details')
     // MEASURED: React serialises a boolean attribute as `open=""`, so the
@@ -114,7 +114,7 @@ describe('§16.4.1 — the mutation guard', () => {
     it(`refuses to render a row whose reading is ${JSON.stringify(reading)}`, () => {
       expect(() =>
         renderToStaticMarkup(
-          <RegisterRow id="uptime" name="Uptime" reading={reading}>
+          <RegisterRow kind="count" id="uptime" name="Streak" reading={reading}>
             <p>body</p>
           </RegisterRow>,
         ),
@@ -129,8 +129,8 @@ describe('§16.4.1 — the mutation guard', () => {
   })
 })
 
-describe('§16.7 — the register and its rows are named', () => {
-  it('wires the register to the heading id it is given', () => {
+describe('§16.7 — your progress and its rows are named', () => {
+  it('wires your progress to the heading id it is given', () => {
     expect(REGISTER).toContain('aria-labelledby="register-head"')
   })
 
@@ -139,15 +139,22 @@ describe('§16.7 — the register and its rows are named', () => {
     // `section[aria-labelledby="raw"]`, and `/profile/` is the target of
     // in-tree links. The id moves inside the `<summary>`; it does not change,
     // and neither does the section that borrows it as a name.
-    expect(REGISTER).toContain('<section class="hl-register-row" aria-labelledby="stamps">')
-    expect(REGISTER).toContain('<section class="hl-register-row" aria-labelledby="raw">')
+    expect(REGISTER).toContain('<section class="bz-register-row" aria-labelledby="stamps">')
+    expect(REGISTER).toContain('<section class="bz-register-row" aria-labelledby="raw">')
   })
 
-  it('carries the row id on an h2, at the heading level the panel had', () => {
-    expect(ROW).toMatch(/<h2[^>]*id="storage"/)
-    // One h2 per row and no h3 smuggled in beside it: §16.7 fixes the page at
-    // one h1, h2 for the blocks, h3 for the drafter block's two halves.
-    expect((ROW.match(/<h2/g) ?? []).length).toBe(1)
+  it('carries the row id on an h3, one level under its group', () => {
+    /* M22 — it was an `h2`, a sibling of the register's own single heading.
+       Thirteen rows at that level meant a reader navigating by heading heard
+       thirteen peers with no way to tell which held their export, which is the
+       flat list the author reported as "a mess". Grouping only reaches
+       assistive software if the rows are genuinely subordinate, so §16.7's
+       structure gains a level: one h1, h2 for the blocks AND for each register
+       group, h3 for a row inside one. */
+    expect(ROW).toMatch(/<h3[^>]*id="storage"/)
+    // One heading per row and no second one smuggled in beside it.
+    expect((ROW.match(/<h3/g) ?? []).length).toBe(1)
+    expect((ROW.match(/<h2/g) ?? []).length).toBe(0)
   })
 
   it('renders the rows in the order it was given them', () => {

@@ -61,9 +61,30 @@ export interface QuickCheck {
  * (sheet 1), 7 `**Hızlı Kontrol**` (all in `_tr.md` siblings, which the loader
  * never reads — see the note on the Turkish form below).
  */
-const QUICK_CHECK = /^\*\*(?:Quick Check|Quiz Yourself)\*\*[ \t]*:[ \t]*(.*)$/
+/**
+ * M19 — **and the Turkish label, because a matcher written in one language
+ * silently deletes a capability in the other.**
+ *
+ * MEASURED across `mini-courses/` on 2026-09-13: **0 of the 32 `_tr.md` files
+ * say `Quick Check` and 18 say `Hızlı Kontrol`.** Serving the Turkish body
+ * through a matcher that knows only the English label meant every one of the
+ * nineteen Turkish pages rendered NO self-check at all — and nothing failed,
+ * because "this module asks nothing" is a real state that 15 English modules
+ * were already in when this was written. §12.6 trap 2 is the note that keyed
+ * the component on the extractor returning non-null rather than on
+ * `status === 'ready'`; that is exactly what made this silent.
+ *
+ * The labels are CONTENT, so they belong to the corpus and the extractor
+ * follows it. A third language adds a word here and nothing else.
+ */
+const QUICK_CHECK = /^\*\*(?:Quick Check|Quiz Yourself|Hızlı Kontrol)\*\*[ \t]*:[ \t]*(.*)$/
 /** §12.6 item 3 — the sheet's own summary, English only, h2 only. */
-const SUMMARY_HEADING = /^##[ \t]+Summary[ \t]*$/
+/**
+ * M19 — `Özet` beside `Summary`, and the same measurement: **0 of 32 `_tr.md`
+ * files carry `## Summary` and 18 carry `## Özet`**, so the authored summary
+ * §12.6 reveals after an answer was dropped on every Turkish page.
+ */
+const SUMMARY_HEADING = /^##[ \t]+(?:Summary|Özet)[ \t]*$/
 /** Any ATX heading: where a section, and a paragraph, ends. */
 const HEADING = /^#{1,6}[ \t]/
 /**

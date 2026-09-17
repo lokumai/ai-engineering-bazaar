@@ -1,13 +1,11 @@
 'use client'
 
 import { useMemo } from 'react'
-import Link from 'next/link'
 import { RolePicker } from '@/components/path/RolePicker'
 import { MARKS, type MarkId } from '@/lib/identity/mark'
-import { pathStanding } from '@/lib/path/derive'
 import { drawnCount, pathFor } from '@/lib/path/paths'
 import { roleById, type Role } from '@/lib/path/roles'
-import { useHydrated, useRecord } from '@/lib/record/store'
+import { useRecord } from '@/lib/record/store'
 
 /**
  * §13.3, §13.6 — the role the reader has stated, the standing of the path that
@@ -56,7 +54,7 @@ import { useHydrated, useRecord } from '@/lib/record/store'
  */
 
 /** §13.3 — the absence is the information. Never a placeholder occupation. */
-const NO_ROLE = 'NO ROLE ON RECORD'
+const NO_ROLE = 'No role on record'
 
 /** The instrument convention for "no reading", and it is true. */
 const NO_READING = '--'
@@ -107,19 +105,29 @@ export function RolePanel({ drawnSlugs }: RolePanelProps) {
  * It offers the picker and draws no path, because there is no path to draw.
  */
 function RoleEmpty({ drawnSlugs }: { drawnSlugs: readonly string[] }) {
+  /*
+    `bz-path-empty` is what lets CHANNEL A settle this in frame one. React
+    renders this branch whenever the record it can see has no role, and the
+    record it can see before the store answers is the frozen empty one — so a
+    reader who HAS chosen a role would meet "no role on record" for a frame.
+    The negation chain in `progress.css` hides it unless `<html>` carries no
+    `hl-role-<id>` at all, which the boot script decided before first paint;
+    then the hydrated render replaces it with the standing. Two channels, one
+    answer, and neither has to wait for the other.
+  */
   return (
-    <>
-      <p className="hl-mark m-0 text-ink-muted">{NO_ROLE}</p>
+    <div className="bz-path-empty">
+      <p className="text-mark m-0 text-on-surface-muted">{NO_ROLE}</p>
 
-      <p className="m-0 font-display text-meta leading-normal text-ink-muted">
-        A role is never worked out from your name, from the sheets you have
-        signed off, or from anything else this browser holds. It is on record
+      <p className="m-0 text-meta leading-normal text-on-surface-muted">
+        A role is never worked out from your name, from the modules you have
+        completed, or from anything else this browser holds. It is on record
         only if you state it here, and it can be changed or removed at any time
-        without touching a single sign-off.
+        without touching a single completion.
       </p>
 
       <RolePicker drawnSlugs={drawnSlugs} />
-    </>
+    </div>
   )
 }
 
@@ -143,8 +151,6 @@ function RoleStanding({
   role: Role
   drawnSlugs: readonly string[]
 }) {
-  const record = useRecord()
-  const hydrated = useHydrated()
   const drawnSet = useMemo(() => new Set(drawnSlugs), [drawnSlugs])
 
   // The offer's label, resolved through `offeredMark` so the id is checked
@@ -154,70 +160,72 @@ function RoleStanding({
 
   const path = pathFor(role.id)
   const drawn = path === undefined ? null : drawnCount(path, drawnSet)
-  const standing = path === undefined ? null : pathStanding(path, record, drawnSet)
   const drafts = path === undefined || drawn === null ? null : path.steps.length - drawn
 
   return (
     <>
-      <dl className="hl-defs">
+      {/* M14 — two rows left this list, and the reason is that the path's own
+          steps are on this row now.
+ 
+          `Completed on this path` and `To go` were here because `/path/` was a
+          different page and this panel was a reader's only sight of the
+          standing. Since M14 folded that route in, `PathStanding` sits directly
+          above the ordered steps in this same row — one derivation
+          (`pathStanding`), one live region, one place a reader reads it. Two
+          renderings of one reading inside one row is the drift §16.4.2 exists
+          to stop, and the one that survives is the one beside the steps it
+          describes.
+
+          `Steps planned` stays, because nothing else states it: it is the
+          count `PathStanding`'s denominator deliberately leaves out (§13.4.2),
+          and leaving it out silently is what would make the denominator look
+          like the length of the list. */}
+      <dl className="bz-defs">
         <dt>Role</dt>
         <dd>{role.label}</dd>
 
-        <dt>Signed off on this path</dt>
-        <dd>
-          {/* Gated on `hydrated` even though a role on record implies the store
-              has answered: the gate is what tells "nothing recorded" from "not
-              yet read", and only one of those is a fact about the reader. */}
-          {hydrated && standing !== null && drawn !== null
-            ? `${standing.signed} OF ${drawn}`
-            : NO_READING}
-        </dd>
-
-        <dt>To go</dt>
-        <dd>{hydrated && standing !== null ? String(standing.remaining) : NO_READING}</dd>
-
-        <dt>Steps not yet drawn</dt>
+        <dt>Steps planned</dt>
+        {/* Gated on `hydrated` nowhere: this is a count of the corpus, true for
+            every reader in every frame, and dashing it would refuse a number
+            somebody did measure (§11.25). */}
         <dd>{drafts === null ? NO_READING : String(drafts)}</dd>
       </dl>
 
-      <p className="m-0 font-display text-meta leading-normal text-ink">{role.blurb}</p>
+      <p className="m-0 text-meta leading-normal text-on-surface">{role.blurb}</p>
 
       {/* §13.6, §16.2.1 — the reasoning behind the offered mark, kept as one
           line of reader-visible prose where the role is stated, and marked as an
-          offer on the shared mark row rather than drawn again here. Nothing on
+          offer on the shared mark row rather than ready again here. Nothing on
           this line is on record: an offer is a marking, and the only write is
           the reader's own click on a glyph. */}
       {offered !== undefined && (
-        <p className="m-0 font-display text-meta leading-normal text-ink-muted">
+        <p className="m-0 text-meta leading-normal text-on-surface-muted">
           {`The mark offered for this role is ${offered.label}. ${role.markRationale} It is marked as the offer on the mark row above, and an offer writes nothing: the mark on record is whichever glyph is chosen there.`}
         </p>
       )}
 
       {/* §13.4.2 — stated where the two numbers sit, so the denominator cannot
           be misread as the length of the list. */}
-      <p className="m-0 font-display text-meta leading-normal text-ink-muted">
-        The tally counts sheets that are drawn. Steps pointing at a sheet nobody
+      {/* M14 — the ordered steps used to be a link to `/path/` from here. They
+          are in this same register row now, immediately below the picker, so
+          the link would have pointed at the page it is already on. */}
+      <p className="m-0 text-meta leading-normal text-on-surface-muted">
+        The tally counts modules that are ready. Steps pointing at a module nobody
         has written yet are on the path as a roadmap and are left out of it,
-        because a sheet with no content has nothing to sign off.
-      </p>
-
-      <p className="m-0 font-display text-ui leading-normal">
-        <Link href="/path/" className="hl-link">
-          The steps on this path, in order
-        </Link>
+        because a module with no content has nothing to complete.
       </p>
 
       {/* §13.3 — no dialog, and the summary says why there is none. A reader
           who has to be warned about a control will not use it. */}
       <details>
-        <summary className="cursor-pointer font-mono text-mark uppercase tracking-[0.06em] text-ink-muted">
+        <summary className="bz-btn bz-btn-quiet">
           Another role
         </summary>
 
-        <p className="mt-2 mb-2 font-display text-meta leading-normal text-ink-muted">
-          Changing the role changes which sheets the path recommends and in what
-          order. It changes nothing that is on record: sign-offs are recorded
-          against sheets, so every one of them survives, and choosing this role
+        <p className="mt-2 mb-2 text-meta leading-normal text-on-surface-muted">
+          Changing the role changes which modules the path recommends and in what
+          order. It changes nothing that is on record: completions are recorded
+          against modules, so every one of them survives, and choosing this role
           again brings this path back exactly as it stands now.
         </p>
 

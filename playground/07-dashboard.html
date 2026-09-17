@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My progress &amp; account — 3 alternatives</title>
+<style>
+:root{
+  --paper:#fff;--wash:#f7f8fa;--sunken:#eef1f5;--ink:#1a1d23;--muted:#5b6472;--faint:#8a929e;
+  --line:#e3e6eb;--line-2:#cfd4dc;--accent:#0b6e5f;--soft:#e6f2ef;--accent-ink:#08594c;
+  --l1:#0b6e5f;--l2:#1d63b8;--l3:#7a4fb5;--l4:#b5761d;--l5:#5b6472;--warn:#a0503c;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--wash);color:var(--ink);font:16px/1.6 var(--sans)}
+a{text-decoration:none;color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.head{max-width:1040px;margin:0 auto;padding:40px 24px 8px}
+.head h1{font-size:28px;letter-spacing:-.02em;margin:0 0 8px}
+.head p{color:var(--muted);max-width:72ch;margin:0 0 8px}
+.opt{max-width:1040px;margin:34px auto 0;padding:0 24px}
+.tag{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}
+.tag b{background:var(--ink);color:#fff;border-radius:6px;min-width:30px;padding:0 8px;
+  font:700 13.5px/26px var(--sans);text-align:center}
+.tag h2{font-size:19px;margin:0;letter-spacing:-.01em}
+.tag span{color:var(--muted);font-size:14.5px}
+.frame{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.pad{padding:24px 26px 28px}
+.why{padding:12px 16px;background:var(--wash);border-top:1px solid var(--line);color:var(--muted);font-size:14px}
+.why b{color:var(--ink)}
+.sub{font:600 12.5px/1 var(--sans);color:var(--faint);margin:26px 0 12px}
+.sub:first-child{margin-top:0}
+
+/* the "continue" hero, shared idea, styled per option */
+.cont{border:1px solid var(--line);border-radius:11px;padding:18px 20px;display:flex;
+  align-items:center;gap:18px;flex-wrap:wrap}
+.cont .num{width:46px;height:46px;border-radius:11px;background:var(--soft);color:var(--accent-ink);
+  display:grid;place-items:center;font:700 16px/1 var(--sans);flex:none}
+.cont div{min-width:0;flex:1}
+.cont small{display:block;color:var(--faint);font-size:13px}
+.cont b{display:block;font:650 19px/1.25 var(--sans);letter-spacing:-.015em;margin:2px 0 3px}
+.cont p{margin:0;color:var(--muted);font-size:14px}
+.go{border:1px solid var(--accent);background:var(--accent);color:#fff;font:600 15px/1 var(--sans);
+  padding:11px 19px;border-radius:8px;cursor:pointer;flex:none}
+.go:hover{background:var(--accent-ink)}
+
+.rings{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px}
+.ring{border:1px solid var(--line);border-radius:10px;padding:14px 12px;text-align:center}
+.ring .dial{width:62px;height:62px;margin:0 auto 9px;border-radius:50%;display:grid;place-items:center}
+.ring .dial span{background:var(--paper);width:47px;height:47px;border-radius:50%;display:grid;
+  place-items:center;font:700 13.5px/1 var(--sans)}
+.ring b{display:block;font-size:13.5px;font-weight:600}
+.ring small{color:var(--muted);font-size:12px}
+
+.bars{display:grid;gap:9px}
+.brow{display:grid;grid-template-columns:150px 1fr 62px;align-items:center;gap:12px;font-size:14px}
+.brow .t{height:9px;border-radius:5px;background:var(--sunken);overflow:hidden}
+.brow .t i{display:block;height:9px}
+.brow .v{color:var(--muted);font-size:13px;text-align:right;font-variant-numeric:tabular-nums}
+.brow a{color:var(--ink);font-weight:550}
+
+.feed{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.feed li{display:flex;align-items:center;gap:12px;padding:12px 15px;border-bottom:1px solid var(--line);
+  font-size:14.5px}
+.feed li:last-child{border-bottom:0}
+.feed .ic{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;flex:none;
+  font-size:13px;background:var(--soft);color:var(--accent-ink)}
+.feed .when{margin-left:auto;color:var(--faint);font-size:13px;white-space:nowrap}
+.feed b{font-weight:600}
+
+.stats{display:flex;gap:28px;flex-wrap:wrap}
+.stats div b{display:block;font:700 26px/1.1 var(--sans);letter-spacing:-.025em}
+.stats div span{color:var(--muted);font-size:13px}
+
+.cards2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){.cards2{grid-template-columns:1fr}}
+.panel{border:1px solid var(--line);border-radius:11px;padding:18px 20px}
+.panel h3{margin:0 0 4px;font-size:16px;letter-spacing:-.01em}
+.panel > p{margin:0 0 14px;color:var(--muted);font-size:14px}
+.field{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+.field label{font-size:14px;color:var(--muted);width:96px;flex:none}
+.field input,.field select{flex:1;height:36px;border:1px solid var(--line-2);border-radius:7px;
+  padding:0 10px;font:14.5px var(--sans);color:var(--ink);background:var(--paper);min-width:0}
+.btn{border:1px solid var(--line-2);background:var(--paper);color:var(--ink);
+  font:600 14px/1 var(--sans);padding:9px 15px;border-radius:7px;cursor:pointer}
+.btn:hover{background:var(--wash)}
+.btn.danger{color:var(--warn);border-color:#e6cdc6}
+.btn.danger:hover{background:#fbf2ef}
+.btnrow{display:flex;gap:9px;flex-wrap:wrap}
+.hint{color:var(--faint);font-size:13px;margin:10px 0 0}
+.tabs{display:flex;gap:3px;border-bottom:1px solid var(--line);padding:0 26px;background:var(--wash)}
+.tabs a{padding:12px 14px;font:600 14.5px/1 var(--sans);color:var(--muted);border-bottom:2px solid transparent;
+  margin-bottom:-1px}
+.tabs a[aria-current]{color:var(--ink);border-bottom-color:var(--accent)}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>My progress and account &mdash; three alternatives</h1>
+  <p>
+    You said you cannot tell what the dashboard and the profile are for. Part of the reason is that
+    they are <b>two pages for one subject</b>: /dashboard, /profile, /path, /report and /sheets all
+    answer some version of &ldquo;where am I&rdquo;. Each option below folds them differently.
+  </p>
+  <p style="font-size:14.5px">
+    Nothing here removes a capability. Export, import, erase, the role-based path, the repository
+    links and the sign-in are all still reachable; the question is how many pages they need.
+  </p>
+</div>
+
+<!-- ============================ A ============================ -->
+<section class="opt">
+  <div class="tag"><b>A</b><h2>One page: continue, then progress, then settings</h2>
+    <span>replaces /dashboard, /profile, /path and /report</span></div>
+  <div class="frame">
+    <div class="pad">
+      <p class="sub">The only thing most visits need</p>
+      <div class="cont">
+        <span class="num">04</span>
+        <div>
+          <small>Continue where you left off</small>
+          <b>Tool Calling</b>
+          <p>Fundamentals &middot; 25 min &middot; you finished the module before this one on Friday</p>
+        </div>
+        <button class="go">Continue</button>
+      </div>
+
+      <p class="sub">Progress</p>
+      <div class="bars">
+        <div class="brow"><a href="#">Fundamentals</a><span class="t"><i style="width:37%;background:var(--l1)"></i></span><span class="v">3 / 8</span></div>
+        <div class="brow"><a href="#">Intermediate</a><span class="t"><i style="width:0;background:var(--l2)"></i></span><span class="v">0 / 8</span></div>
+        <div class="brow"><a href="#">Expert</a><span class="t"><i style="width:0;background:var(--l3)"></i></span><span class="v">0 / 11</span></div>
+        <div class="brow"><a href="#">Ecosystem</a><span class="t"><i style="width:0;background:var(--l4)"></i></span><span class="v">0 / 5</span></div>
+        <div class="brow"><a href="#">Protocols</a><span class="t"><i style="width:0;background:var(--l5)"></i></span><span class="v">0 / 1</span></div>
+      </div>
+      <div class="stats" style="margin-top:20px;padding-top:18px;border-top:1px solid var(--line)">
+        <div><b>3</b><span>modules done</span></div>
+        <div><b>1h 20m</b><span>read so far</span></div>
+        <div><b>4 days</b><span>in a row</span></div>
+      </div>
+
+      <p class="sub">Settings</p>
+      <div class="cards2">
+        <div class="panel">
+          <h3>You</h3>
+          <p>Used on the page and nowhere else.</p>
+          <div class="field"><label for="n1">Name</label><input id="n1" value="Amirkia"></div>
+          <div class="field"><label for="r1">Your role</label>
+            <select id="r1"><option>Software engineer</option><option selected>Data analyst</option><option>QA</option></select></div>
+          <p class="hint">Your role picks a suggested order through the modules. You can ignore it.</p>
+        </div>
+        <div class="panel">
+          <h3>Your data</h3>
+          <p>Everything is in this browser unless you sign in.</p>
+          <div class="btnrow">
+            <button class="btn">Download a copy</button>
+            <button class="btn">Restore from a file</button>
+            <button class="btn danger">Erase everything</button>
+          </div>
+          <p class="hint">Signing in is optional and unlocks nothing. It copies your progress
+            between devices.</p>
+        </div>
+      </div>
+    </div>
+    <div class="why"><b>Why it works:</b> one page, and the first thing on it is the one action a
+      returning reader wants. Settings sit at the bottom where settings belong.
+      <b>Cost:</b> it is a long page, and team features would need somewhere else to live.</div>
+  </div>
+</section>
+
+<!-- ============================ B ============================ -->
+<section class="opt">
+  <div class="tag"><b>B</b><h2>Tabs: Progress, Activity, Account</h2>
+    <span>one page, three tabs, nothing scrolls forever</span></div>
+  <div class="frame">
+    <div class="tabs">
+      <a href="#" aria-current="page">Progress</a>
+      <a href="#">Activity</a>
+      <a href="#">Account</a>
+      <a href="#">Team</a>
+    </div>
+    <div class="pad">
+      <div class="cont">
+        <span class="num">04</span>
+        <div>
+          <small>Continue where you left off</small>
+          <b>Tool Calling</b>
+          <p>Fundamentals &middot; 25 min</p>
+        </div>
+        <button class="go">Continue</button>
+      </div>
+      <p class="sub">By level</p>
+      <div class="rings">
+        <div class="ring">
+          <div class="dial" style="background:conic-gradient(var(--l1) 0 37%,var(--sunken) 37%)"><span style="color:var(--l1)">3/8</span></div>
+          <b>Fundamentals</b><small>37%</small>
+        </div>
+        <div class="ring">
+          <div class="dial" style="background:conic-gradient(var(--l2) 0 0,var(--sunken) 0)"><span style="color:var(--faint)">0/8</span></div>
+          <b>Intermediate</b><small>not started</small>
+        </div>
+        <div class="ring">
+          <div class="dial" style="background:conic-gradient(var(--l3) 0 0,var(--sunken) 0)"><span style="color:var(--faint)">0/11</span></div>
+          <b>Expert</b><small>11 planned</small>
+        </div>
+        <div class="ring">
+          <div class="dial" style="background:conic-gradient(var(--l4) 0 0,var(--sunken) 0)"><span style="color:var(--faint)">0/5</span></div>
+          <b>Ecosystem</b><small>not started</small>
+        </div>
+        <div class="ring">
+          <div class="dial" style="background:conic-gradient(var(--l5) 0 0,var(--sunken) 0)"><span style="color:var(--faint)">0/1</span></div>
+          <b>Protocols</b><small>1 planned</small>
+        </div>
+      </div>
+      <p class="sub">Suggested order for a data analyst</p>
+      <div class="bars">
+        <div class="brow"><a href="#">1. LLM Fundamentals</a><span class="t"><i style="width:100%;background:var(--accent)"></i></span><span class="v">done</span></div>
+        <div class="brow"><a href="#">2. RAG &amp; Embeddings</a><span class="t"><i style="width:100%;background:var(--accent)"></i></span><span class="v">done</span></div>
+        <div class="brow"><a href="#">3. Tool Calling</a><span class="t"><i style="width:0;background:var(--accent)"></i></span><span class="v">next</span></div>
+        <div class="brow"><a href="#">4. Observability</a><span class="t"><i style="width:0;background:var(--accent)"></i></span><span class="v">&mdash;</span></div>
+      </div>
+      <p class="hint">This is what /path is today. As a tab it stops being a page nobody finds.</p>
+    </div>
+    <div class="why"><b>Why it works:</b> four short screens instead of five pages, and the tab
+      names say exactly what is behind them. <b>Cost:</b> tabs hide things, so a reader who never
+      clicks Account never discovers export and erase.</div>
+  </div>
+</section>
+
+<!-- ============================ C ============================ -->
+<section class="opt">
+  <div class="tag"><b>C</b><h2>No progress page at all</h2>
+    <span>progress lives where the modules are; only Account survives</span></div>
+  <div class="frame">
+    <div class="pad">
+      <p class="sub">On the home page, and nowhere else</p>
+      <div class="cont">
+        <span class="num">04</span>
+        <div>
+          <small>Continue where you left off</small>
+          <b>Tool Calling</b>
+          <p>Fundamentals &middot; 3 of 8 done in this level</p>
+        </div>
+        <button class="go">Continue</button>
+      </div>
+      <p class="hint" style="margin-top:12px">
+        Per-level progress is already in the sidebar and the catalog, on every page. Repeating it on
+        a page of its own is the duplication that makes the dashboard feel pointless.
+      </p>
+
+      <p class="sub">What you did, if you want it</p>
+      <ul class="feed">
+        <li><span class="ic">&#10003;</span><b>RAG &amp; Embeddings</b> marked complete<span class="when">Friday</span></li>
+        <li><span class="ic">&#10003;</span><b>Training LLMs</b> marked complete<span class="when">Thursday</span></li>
+        <li><span class="ic" style="background:#fbf3e6;color:#8a5a15">&#8599;</span>Opened 2 sources in <b>RAG &amp; Embeddings</b><span class="when">Thursday</span></li>
+        <li><span class="ic">&#10003;</span><b>LLM Fundamentals</b> marked complete<span class="when">2 Sep</span></li>
+      </ul>
+
+      <p class="sub">Account</p>
+      <div class="panel">
+        <h3>Name, role and your data</h3>
+        <p>One small page, reached from the avatar in the navbar.</p>
+        <div class="btnrow">
+          <button class="btn">Change name</button>
+          <button class="btn">Change role</button>
+          <button class="btn">Download a copy</button>
+          <button class="btn">Sign in to sync</button>
+          <button class="btn danger">Erase everything</button>
+        </div>
+      </div>
+    </div>
+    <div class="why"><b>Why it works:</b> it deletes the page you cannot explain instead of
+      redesigning it. Progress belongs next to the thing being progressed through.
+      <b>Cost:</b> no single place shows the whole picture, which some readers do want, and the
+      team and report features need a home.</div>
+  </div>
+</section>
+
+<div class="head" style="padding-top:34px">
+  <p style="color:var(--muted)"><b>My read:</b> <b>A</b>. It is one page, it opens with the only
+  action that matters, and it absorbs four routes that currently compete. <b>B</b> is the right
+  answer instead if the team features are going to grow, because tabs scale and a single scroll
+  does not. <b>C</b> is the boldest and I would only take it if you are happy to drop /report.</p>
+</div>
+
+</body>
+</html>

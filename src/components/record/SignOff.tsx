@@ -4,13 +4,12 @@ import Link from 'next/link'
 import { NAME_SCOPE } from '@/lib/record/scope'
 import { useState } from 'react'
 import type { SignOffCriteria } from '@/lib/content/criteria'
-import { seedFrom } from '@/lib/identity/mark'
 import { MAX_NAME_GRAPHEMES, countGraphemes, sanitiseName } from '@/lib/identity/name'
+import { toggleCompletion } from '@/lib/record/complete'
 import { revisionDrift } from '@/lib/record/derive'
-import { mintMarkSeed, setIdentity, signOff, unsign } from '@/lib/record/events'
+import { setIdentity, unsign } from '@/lib/record/events'
 import {
   nowIso,
-  requestPersistence,
   update,
   useHydrated,
   useRecord,
@@ -39,10 +38,18 @@ import { DrafterStamp } from './DrafterStamp'
  * the one dialog that matters — the §12.15 erase, which is the only
  * confirmation anywhere on this site.
  *
- * `SignOff` is also where two once-per-record things happen, because the first
- * sign-off is the only genuine user gesture the record gets:
- * `navigator.storage.persist()` may only be asked on one (§12.1.6), and the
- * mark seed is minted here and never again (§12.3.5).
+ * **The write itself is not here any more, and that is D14's constraint.** M13
+ * and M14 put completion control **C** on the home and progress pages, and the
+ * first completion on a record is three writes rather than one: the sign-off,
+ * the mark seed minted once and never again (§12.3.5), and the single permitted
+ * `navigator.storage.persist()` (§12.1.6). Two controls implementing that
+ * separately is two implementations of one thing, so it lives in
+ * `lib/record/complete.ts` and both controls call it — two controls, one path
+ * through `store.ts`, which is the only writer of learner state.
+ *
+ * What stays here is the one thing that belongs to this page: §12.3.2's name
+ * prompt, asked in the module's own `CHECKED BY` field, which control C has no
+ * module to ask inside.
  *
  * The import of `SignOffCriteria` is a **type-only** import. `criteria.ts`
  * reaches the loader and therefore `node:fs`; the values arrive as serialised
@@ -52,26 +59,8 @@ import { DrafterStamp } from './DrafterStamp'
 /** The three write outcomes §12.1.4 makes the UI say `NOT SAVED` about. */
 const REFUSED: Record<string, string> = {
   quota: "THIS BROWSER'S STORAGE IS FULL",
-  blocked: 'THIS BROWSER IS NOT STORING DATA FOR THIS SITE',
-  'too-large': 'THE RECORD IS LARGER THAN THIS PAGE WILL WRITE',
-}
-
-/**
- * §12.3.5 — four bytes from the CSPRNG, once. The bytes are generated here and
- * the hex is built by the pure function, which is why `seedFrom` has no
- * parameter a name could arrive through: a name-derived mark would silently
- * change on every already-signed sheet the moment the reader renamed
- * themselves. Returns null where Web Crypto is unavailable, and the mark then
- * renders as nothing rather than as a pattern from a predictable seed.
- */
-function mintSeed(): string | null {
-  try {
-    const bytes = new Uint8Array(4)
-    crypto.getRandomValues(bytes)
-    return seedFrom(bytes)
-  } catch {
-    return null
-  }
+  blocked: 'This browser is not storing data for this site',
+  'too-large': 'The record is larger than this page will write',
 }
 
 export function SignOff({
@@ -79,6 +68,7 @@ export function SignOff({
   criteria,
   revision,
   drawn,
+  beside,
 }: {
   slug: string
   /** §12.4.1 — the sheet's own `objectives`, plus the one sentence §12.4.1 authors. */
@@ -87,6 +77,8 @@ export function SignOff({
   revision: string | null
   /** §12.4.1 — a draft sheet gets no control at all: absent, not disabled. */
   drawn: boolean
+  /** The one quiet control `01` allows beside the primary. */
+  beside?: React.ReactNode
 }) {
   const record = useRecord()
   const hydrated = useHydrated()
@@ -109,37 +101,18 @@ export function SignOff({
   const refused = REFUSED[write] ?? null
 
   function onToggle(): void {
-    if (signedOff !== null) {
-      update((data) => unsign(data, slug), { kind: 'unsign', sheetSlug: slug })
-      return
-    }
-
-    const now = nowIso()
-    // The seed is minted once and never regenerated, so its absence is the
-    // honest test for "this is the first sign-off" (§12.3.5).
-    const first = record.identity.markSeed === null
-    update((data) => signOff(data, slug, revision, now), {
-      // §12.4.3's drift line needs the revision the reader signed AGAINST, and
-      // the log is where a later un-sign-and-re-sign stays visible.
-      kind: 'signOff',
-      sheetSlug: slug,
-      payload: { revision },
-    })
-    if (!first) return
-
-    const seed = mintSeed()
-    if (seed !== null) {
-      update((data) => mintMarkSeed(data, seed, now), { kind: 'mintMarkSeed' })
-    }
-    // §12.1.6 — called once, on a genuine user gesture. A `false` answer is
-    // normal, not an error, and the store records the queried value.
-    void requestPersistence()
+    // D14 — the write itself is `toggleCompletion`, shared with control C on
+    // the home and progress pages: two controls, one path, because the first
+    // completion is three writes and not one (`lib/record/complete.ts`).
+    const outcome = toggleCompletion(record, slug, revision)
     // §12.3.2 — the name is asked for at exactly one moment, and only when
     // there is not one already. No first-run gate, no modal, no coach mark: a
     // controlled study of 70 users across 4 apps found tutorial-viewers rated
     // tasks significantly harder (4.92 vs 5.49, p=0.047) with no gain in
-    // success or speed.
-    if (record.identity.name === null) setPrompting(true)
+    // success or speed. It stays HERE rather than in the shared write, because
+    // the field it asks in is this module's own `CHECKED BY` and control C has
+    // no module to ask inside.
+    if (outcome.first && record.identity.name === null) setPrompting(true)
   }
 
   function onNameChange(event: React.ChangeEvent<HTMLInputElement>): void {
@@ -171,16 +144,16 @@ export function SignOff({
   }
 
   return (
-    <section className="hl-signoff" aria-labelledby={headId}>
-      <div className="hl-signoff-head hl-mark">
-        <span id={headId}>SIGN-OFF</span>
+    <section className="bz-signoff" aria-labelledby={headId}>
+      <div className="bz-signoff-head">
+        <span id={headId}>Completion</span>
         {/* §12.4.1 / §12.12.1 — who is asserting is the one thing about this
             block a reader must not have to infer. The state itself is on the
             control, which is where §12.4.1 puts it. */}
-        <span>SELF-ASSERTED</span>
+        <span>Self-asserted</span>
       </div>
 
-      <div className="hl-signoff-body">
+      <div className="bz-signoff-body">
         {/* §12.4.1 requires the control to sit beside the criteria it asserts
             against, and it does — the criteria ARE §5.5's objectives block,
             immediately above this one, and `signOffCriteria` derives from the
@@ -191,13 +164,13 @@ export function SignOff({
             a mistake rather than as thoroughness; and the count comes from the
             list itself, so the two can never disagree about how many there are.
 
-            record.css authors no class for these two sentences, so they take the
+            completion.css authors no class for these two sentences, so they take the
             same tokens directly. */}
-        <p className="mb-1 font-display text-meta text-ink-muted">
+        <p className="mb-1 text-meta text-on-surface-muted">
           {criteria.objectives.length > 0 && (
             <>
               Asserted against the{' '}
-              <a className="hl-link" href="#hl-objectives-head">
+              <a className="bz-link" href="#hl-objectives-head">
                 {criteria.objectives.length} objectives above
               </a>
               .{' '}
@@ -206,46 +179,90 @@ export function SignOff({
           {criteria.assertion}
         </p>
 
-        <div className="hl-signoff-actions">
+        {/* THE ACTION ROW `01` DRAWS: a 2px top rule, one primary button, at
+            most one quiet one beside it, and a note. This is the language's
+            `bz-actions` primitive, and stage 5 put the row and its two buttons
+            in place; the completion behaviour inside it — the states, the
+            drift notice, the identity prompt — is stage 7's to rebuild. */}
+        <div className="bz-actions">
           {/* §12.16's `s` clicks this control by attribute, because the
               shortcut handler lives in the shell and has no page data in scope.
               The manifest's ninth column deliberately uses
               `data-hl-signoff-cell` instead, so 32 non-interactive squares on
               the index can never answer this selector and swallow the key. */}
+          {/* M11 / D14 — COMPLETION CONTROL A, and `kia-context/specs/DESIGN.md`
+              names this the canonical `button-primary`: cobalt, filled, with a
+              check glyph. It is the only filled button on the page, which is
+              what makes it the one thing a reader who has finished reading
+              looks for. Sentence case, because a tracked-out all-caps label is
+              the tell DESIGN.md refuses; the label was `COMPLETE`. */}
           <button
             type="button"
-            className="hl-btn"
+            className="bz-btn"
             {...{ [SIGN_OFF_ATTR]: slug }}
             aria-pressed={signedOff !== null}
             onClick={onToggle}
           >
-            {signedOff === null ? 'SIGN OFF' : `SIGNED OFF ${signedOff.slice(0, 10)}`}
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M3 8.5l3.5 3.5L13 5" />
+            </svg>
+            {signedOff === null ? 'Complete' : `Completed ${signedOff.slice(0, 10)}`}
           </button>
-          {/* §12.4.1 — `UNSIGN` adjacent, and the toggle itself un-signs too: a
-              pressed toggle whose click did nothing would be a control lying
-              about what it is. */}
+          {/* §12.4.1 — the un-complete control adjacent, and the toggle itself
+              un-completes too: a pressed toggle whose click did nothing would
+              be a control lying about what it is.
+
+              It read `UNSIGN` until M11. That is the drawing-set vocabulary
+              §9 retired — sign-off became Complete — and it survived the M9
+              rename because the copy register matches on word boundaries and
+              `UNSIGN` carries no hyphen for `sign-off` to be found inside. The
+              keyboard sheet already printed "Complete or un-complete the
+              current module", so the two now say the same word. */}
           {signedOff !== null && (
             <button
               type="button"
-              className="hl-btn"
+              className="bz-btn bz-btn-quiet"
               onClick={() => update((data) => unsign(data, slug), { kind: 'unsign', sheetSlug: slug })}
             >
-              UNSIGN
+              Un-complete
             </button>
           )}
+
+          {/* `01`'s row holds one primary and AT MOST ONE quiet button, and on
+              a module the reader has not finished the quiet slot is the
+              mockup's `Requirements (n)`. Passed in rather than built here,
+              because the relations are build-time facts and this component is
+              a client island — the page hands over the finished disclosure. */}
+          {beside}
         </div>
 
         {/* §12.4.3 — a completion claim that quietly became false. No LMS
-            handles this. Not an error state and no caution colour: the sheet
+            handles this. Not an error state and no caution colour: the module
             changing after you signed it is a fact, not something you did wrong.
-            The short hashes keep their own case — a git hash is not ours to
-            recase, and `.hl-mark` uppercases everything else in the line. */}
+
+            The line used to be written in capitals, because the class it
+            carried applied `text-transform: uppercase` and pre-casing the
+            string kept the two in step. The design language has no uppercase
+            at all, so both went: the sentence is secondary prose in the `meta`
+            size, and the two `normal-case` spans that existed only to protect
+            the git hashes from the transform went with it — there is nothing
+            left to protect them from. */}
         {drift !== null && signedOff !== null && (
-          <p className="hl-signoff-drift hl-mark">
-            {`SIGNED OFF ${signedOff.slice(0, 10)} AGAINST REV `}
-            <span className="normal-case">{drift.signedAgainst}</span>
-            {' · SHEET NOW AT REV '}
-            <span className="normal-case">{drift.nowAt}</span>
+          <p className="bz-signoff-drift">
+            {`Completed ${signedOff.slice(0, 10)} against rev `}
+            <span>{drift.signedAgainst}</span>
+            {' · module now at rev '}
+            <span>{drift.nowAt}</span>
           </p>
         )}
 
@@ -255,16 +272,16 @@ export function SignOff({
             is the §1 failure in its purest form. */}
         {refused !== null && (
           <>
-            <p className="hl-not-saved hl-mark" role="alert">
+            <p className="bz-not-saved" role="alert">
               {`NOT SAVED · ${refused}`}
             </p>
-            <p className="mt-1 font-display text-meta text-ink-muted">
+            <p className="mt-1 text-meta text-on-surface-muted">
               The record is held in memory on this page only. Export it to a file to keep it.
             </p>
             {/* §12.1.4 — the safe path is the adjacent action, not a paragraph
                 the reader has to act on somewhere else. */}
-            <div className="hl-signoff-actions mt-2">
-              <Link href="/profile/" className="hl-btn hl-no-print">
+            <div className="bz-actions mt-2">
+              <Link href="/profile/" className="bz-btn bz-no-print">
                 EXPORT YOUR RECORD
               </Link>
             </div>
@@ -277,15 +294,15 @@ export function SignOff({
             `UNSIGNED`, never a placeholder person. */}
         {prompting && (
           <form className="mt-3" onSubmit={onNameSubmit}>
-            <div className="hl-identity">
+            <div className="bz-identity">
               {/* The seed was minted a moment ago by the click that opened
                   this, so the mark it draws is the reader's own from here on. */}
               <DrafterStamp mark={record.identity.mark} seed={record.identity.markSeed} />
-              <label className="hl-field flex-1" data-invalid={nameError ? 'true' : 'false'}>
-                <span className="hl-field-label">
+              <label className="bz-field flex-1" data-invalid={nameError ? 'true' : 'false'}>
+                <span className="bz-field-label">
                   Name or initials, as you would sign a drawing
                   {/* Optional in words, never by the absence of an asterisk. */}
-                  <span className="hl-field-optional">Optional</span>
+                  <span className="bz-field-optional">Optional</span>
                 </span>
                 <input
                   type="text"
@@ -306,21 +323,21 @@ export function SignOff({
                 local storage is not a transmission; the export is precisely
                 where that stops being true, and the reader is the one who
                 crosses the line. */}
-            <p className="hl-field-hint" id={hintId}>
+            <p className="bz-field-hint" id={hintId}>
               {NAME_SCOPE}
             </p>
 
             {nameError && (
-              <p className="hl-field-error" id={errorId} role="alert">
+              <p className="bz-field-error" id={errorId} role="alert">
                 Enter the name to print on the report
               </p>
             )}
 
-            <div className="hl-signoff-actions mt-2">
-              <button type="submit" className="hl-btn">
+            <div className="bz-actions mt-2">
+              <button type="submit" className="bz-btn">
                 SAVE NAME
               </button>
-              <button type="button" className="hl-btn" onClick={() => setPrompting(false)}>
+              <button type="button" className="bz-btn" onClick={() => setPrompting(false)}>
                 SKIP
               </button>
             </div>

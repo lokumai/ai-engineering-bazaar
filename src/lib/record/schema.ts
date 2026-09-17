@@ -55,6 +55,21 @@ import { type RoleId, ROLE_IDS as PATH_ROLE_IDS } from '../path/roles'
 export type { RoleId }
 export const ROLE_IDS: readonly RoleId[] = PATH_ROLE_IDS
 
+/**
+ * M12 / D13 — which catalog view the reader chose.
+ *
+ * The third vocabulary this file takes from an fs-free leaf, on the same terms
+ * as `MarkId` and `RoleId` above: `lib/catalog/views.ts` is the module that
+ * knows what a view is offered as — its name, its icon and the question it
+ * answers — so the union lives there and is re-exported here. It imports
+ * nothing, so this crosses no boundary (§12.2), and the boot script embeds the
+ * same `VIEW_IDS` array rather than a second list of three strings.
+ */
+import { type CatalogViewId, VIEW_IDS as CATALOG_VIEW_IDS } from '../catalog/views'
+
+export type { CatalogViewId }
+export const CATALOG_VIEWS: readonly CatalogViewId[] = CATALOG_VIEW_IDS
+
 /** §12.6 — self-report, unscored. `null` is `unknown`, a first-class value. */
 export interface QuizRecord {
   answer: string
@@ -112,6 +127,25 @@ export interface RecordData {
     /** §12.16 — character-key shortcuts, default true for this audience. */
     charKeys: boolean
     /**
+     * M10 — whether the curriculum rail on a module page is folded away.
+     *
+     * It lives in `prefs` for the same reason `charKeys` does: it is a fact
+     * about the browser in front of the reader rather than about the reader,
+     * and `prefs` is the field `carriesNothing` ignores and `mergeRecords`
+     * resolves local-wins. A reader who folds the rail on a laptop has not
+     * said anything about their phone.
+     *
+     * The record store is the only writer of learner state
+     * (`kia-context/specs/ARCHITECTURE.md` §5), so the fold is written here or
+     * it is not written at all. It is NOT a second `localStorage` key: two
+     * writers to one reader's state is the defect that rule exists to prevent.
+     *
+     * Default false — the rail is open — because a reader who has never met
+     * this site has not asked for it to be hidden, and the honest empty form
+     * of a preference is the one the reader did not set.
+     */
+    railFolded: boolean
+    /**
      * §16.3 — the account id whose address the alias was offered from, or
      * `null` for "no account has named this record".
      *
@@ -137,6 +171,28 @@ export interface RecordData {
      * and four acts to reach, and the one-account case it was built for holds.
      */
     aliasNamedFor: string | null
+    /**
+     * M12 / D13 — which of the catalog's three views the reader last chose, or
+     * `null` for "has not chosen".
+     *
+     * The same argument as `railFolded`, one screen over: it is a fact about
+     * the layout this reader prefers, not about their work on the curriculum,
+     * so it lives in `prefs` — the field `carriesNothing` ignores and
+     * `mergeRecords` resolves local-wins. A reader who picked Table on a
+     * desktop has not said anything about their phone, where the table is the
+     * view a 390px window can least afford.
+     *
+     * `null` and not `'overview'`, and the distinction is load-bearing: it is
+     * what tells "has not chosen" from "chose the one that happens to be the
+     * default". The boot script stamps nothing for null, the stylesheet's
+     * fallback rule reveals the default view, and a later change of default
+     * therefore moves the reader who never chose and leaves the reader who did
+     * exactly where they put themselves.
+     *
+     * `store.ts` is the only writer (`kia-context/specs/ARCHITECTURE.md` §5),
+     * and `setCatalogView` is the one reducer that touches it.
+     */
+    catalogView: CatalogViewId | null
   }
   meta: {
     lastExport: string | null
@@ -226,7 +282,7 @@ export const EMPTY_RECORD: RecordData = deepFreeze<RecordData>({
   identity: { name: null, markSeed: null, mark: null, role: null },
   sheets: {},
   days: [],
-  prefs: { charKeys: true, aliasNamedFor: null },
+  prefs: { charKeys: true, railFolded: false, aliasNamedFor: null, catalogView: null },
   meta: { lastExport: null, persisted: null, lastClaim: null },
 })
 

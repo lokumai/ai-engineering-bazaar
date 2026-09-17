@@ -32,12 +32,47 @@ for (const sheet of SHEETS) {
     await expect(h1).toHaveCount(1)
     await expect(h1).toHaveText(sheet.title)
 
-    await expect(page.locator('.hl-sheet')).toHaveAttribute('data-format', sheet.format)
+    await expect(page.locator('.bz-sheet')).toHaveAttribute('data-format', sheet.format)
 
-    // The eyebrow states the sheet's own place in the set (§4.5 item 2, §5.5).
-    await expect(page.locator('.hl-eyebrow')).toContainText(
-      new RegExp(`SHEET ${sheet.module} OF ${SHEETS.length}`, 'i'),
-    )
+    /*
+      The FACTS STRIP names the level and gives the module's place IN THAT
+      LEVEL, which is what `01` draws — its tag reads `Module 3 of 8`, and 8 is
+      the level's size rather than the course's.
+
+      This assertion used to read `.bz-facts` and pin `MODULE n OF 33`: a
+      tracked-out all-caps meta line above the title, which DESIGN.md names as
+      a tell and stage 5 removed. The module's place in the WHOLE SET is still
+      stated, by the footer, and `site-footer.spec.ts` asserts it on every one
+      of the thirty-three — so pinning it a second time here would be one fact
+      with two tests and one of them would be about the wrong surface. What is
+      checked here is that the strip is populated and says which level this is.
+    */
+    /* M21 — the strip is `25 min · 2,317 words` and nothing else. The author
+       asked for plain text under the title, so the two tags went with the
+       level and the position they carried. Both facts are still stated:
+       the level by the trail, which is checked here because it is the carrier
+       the tag handed off to, and the position by the footer, which
+       `site-footer.spec.ts` asserts on all thirty-three — pinning it a second
+       time here would be one fact with two tests. */
+    if (sheet.drawn) {
+      await expect(page.locator('.bz-facts')).toHaveText(/^\d+ min · [\d,]+ words$/)
+    } else {
+      // A module nobody has written declares neither, so there is no strip.
+      await expect(page.locator('.bz-facts')).toHaveCount(0)
+    }
+    await expect(page.locator('nav[aria-label="Curriculum"]'))
+      .toContainText(new RegExp(sheet.category.replace('-', '[ -]'), 'i'))
+
+    /* M21 — **and the last crumb is the module's NAME, not its slug.**
+       `breadcrumbFor` labels a segment no route table knows by de-hyphenating
+       it, so this read `… / llms` under a heading saying `LLM Fundamentals`.
+       Found by screenshot. It is asserted per sheet rather than on one of them
+       because the fallback is per segment: a module whose slug happens to look
+       like its title would hide the defect on every other one. */
+    await expect(
+      page.locator('nav[aria-label="Curriculum"] [aria-current="page"]'),
+      `${sheet.path} names itself by its slug in the trail`,
+    ).toHaveText(sheet.title)
 
     expect(problems.consoleErrors, `${sheet.path} console`).toEqual([])
     expect(problems.failedRequests, `${sheet.path} network`).toEqual([])

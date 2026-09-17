@@ -6,7 +6,7 @@ import type { TocEntry } from '@/lib/content/render'
  * the viewport is the template tell this replaces.
  *
  * What it tracks is scroll position, not completion (§5.8). Nothing in here
- * ever takes `--color-accent`: the current row moves to `--color-ink`, its
+ * ever takes `--color-primary`: the current row moves to `--color-on-surface`, its
  * spine segment to the cut-plane weight, and its tick 6px into the gutter.
  * There is no visited state either — a TOC is not a progress meter.
  *
@@ -16,20 +16,42 @@ import type { TocEntry } from '@/lib/content/render'
 export function TableOfContents({
   entries,
   activeId,
+  lang,
 }: {
   entries: readonly TocEntry[]
   activeId: string | null
+  /**
+   * M19 — the entries are the module's own headings, so on a Turkish page they
+   * are Turkish. It goes on the LIST rather than on the `<nav>`, because the
+   * nav's accessible name (`Sections`) is the interface's own word and stays
+   * English — one attribute per run of text, which is the rule the prose and
+   * the objectives card already follow.
+   */
+  lang?: string
 }) {
   if (entries.length === 0) return null
 
+  // MEASURED: 96 of the corpus's h2s carry a Roman numeral and the rest carry
+  // none, so the 24px gutter the numeral hangs in is dead space on the modules
+  // that have no numerals — 30px of a 204px rail, which is where the contents
+  // moved in M11. The gutter is reserved per LIST rather than per row, because
+  // sizing it per row would let two entries of one module disagree about where
+  // their titles start.
+  const marks = entries.some((entry) => entry.mark)
+
   return (
     <nav aria-label="Sections">
-      <ol role="list" className="hl-toc">
+      <ol
+        role="list"
+        className="bz-aside-list"
+        lang={lang}
+        data-hl-marks={marks ? '' : undefined}
+      >
         {entries.map((entry) => (
           <li key={entry.id}>
             <a
               href={`#${entry.id}`}
-              className="hl-toc-entry"
+              className="bz-aside-link"
               // `aria-current` is on the row in view, which is a statement
               // about where the reader is, not about what they have read.
               aria-current={entry.id === activeId ? 'true' : undefined}
@@ -37,10 +59,12 @@ export function TableOfContents({
               {/* MEASURED: 96 of the corpus's h2s carry a Roman numeral, split
                   off at build time (B6.3). The rest get no numeral and no
                   gutter mark rather than an invented one. */}
-              <span className="hl-toc-mark" aria-hidden="true">
-                {entry.mark ?? ''}
-              </span>
-              <span className="hl-toc-text">{entry.text}</span>
+              {marks && (
+                <span className="bz-aside-mark" aria-hidden="true">
+                  {entry.mark ?? ''}
+                </span>
+              )}
+              <span className="bz-aside-text">{entry.text}</span>
             </a>
           </li>
         ))}

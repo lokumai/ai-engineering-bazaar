@@ -42,50 +42,66 @@ import type { MermaidConfig } from 'mermaid'
  */
 export const MERMAID_THEME_CSS = `
   .node rect, .node polygon, .node circle, .node ellipse, .node path {
-    fill: var(--color-cleared);
+    fill: var(--color-surface-raised);
     stroke: var(--color-line-strong);
     stroke-width: 1px;
     rx: 0;
     ry: 0;
   }
   .cluster rect {
-    fill: var(--color-paper);
+    fill: var(--color-surface);
     stroke: var(--color-line-strong);
     stroke-width: 1px;
     rx: 0;
     ry: 0;
   }
+  /* The four semantics ride the node's EDGE and never become a fill
+     (BRAINSTORM D33). The retired palette gave each of them a base, an ink and
+     a pale wash; this language has no tint scale at all, and inventing one for
+     four diagram classes is the shape of the mistake M16 exists to correct. So
+     the fill stays the node's own and the hue moves to the stroke, taken from
+     colours the language already declares: verify is success, caution is
+     caution, fault is the clay of category-5, info is the cobalt primary.
+
+     The 2px stroke is not decoration. A hue must never be the only carrier of
+     meaning, and a diagram node's own label is the other one — but a weight a
+     viewer can see without separating teal from cobalt is worth having, and it
+     is the one signal available inside a shape mermaid controls. */
+  .node.fault rect, .node.fault polygon, .node.fault path,
+  .node.verify rect, .node.verify polygon, .node.verify path,
+  .node.info rect, .node.info polygon, .node.info path,
+  .node.caution rect, .node.caution polygon, .node.caution path,
+  .cluster.fault rect, .cluster.verify rect,
+  .cluster.info rect, .cluster.caution rect {
+    stroke-width: 2px;
+  }
   .node.fault rect, .node.fault polygon, .node.fault path,
   .cluster.fault rect {
-    fill: var(--color-fault-wash);
-    stroke: var(--color-fault);
+    stroke: var(--color-category-5);
   }
   .node.verify rect, .node.verify polygon, .node.verify path,
   .cluster.verify rect {
-    fill: var(--color-verify-wash);
-    stroke: var(--color-verify);
+    stroke: var(--color-success);
   }
   .node.info rect, .node.info polygon, .node.info path,
   .cluster.info rect {
-    fill: var(--color-info-wash);
-    stroke: var(--color-info);
+    stroke: var(--color-primary);
   }
   .node.caution rect, .node.caution polygon, .node.caution path,
   .cluster.caution rect {
-    fill: var(--color-caution-wash);
     stroke: var(--color-caution);
   }
   .nodeLabel, .edgeLabel, .cluster-label, .label, .label text, text,
   .nodeLabel p, .edgeLabel p, .cluster-label span,
   .cluster-label text, .cluster text {
-    color: var(--color-ink);
-    fill: var(--color-ink);
+    color: var(--color-on-surface);
+    fill: var(--color-on-surface);
   }
   .edgeLabel, .edgeLabel p, .edgeLabel span {
-    background-color: var(--color-paper);
+    background-color: var(--color-surface);
   }
   .edgeLabel rect, .labelBkg, .edgeLabel .label-container {
-    fill: var(--color-paper);
+    fill: var(--color-surface);
     stroke: none;
     opacity: 1;
   }
@@ -133,7 +149,7 @@ export function mermaidConfig(): MermaidConfig {
       rankSpacing: 48,
     },
     themeVariables: {
-      fontFamily: 'var(--font-display)',
+      fontFamily: 'var(--font-sans)',
       fontSize: '13px',
     },
     themeCSS: MERMAID_THEME_CSS,

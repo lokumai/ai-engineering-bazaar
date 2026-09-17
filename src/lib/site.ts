@@ -3,7 +3,7 @@
 export const SITE_NAME = 'AI Engineering Bazaar'
 
 export const SITE_DESCRIPTION =
-  'Thirty-two sheets on becoming an AI-powered software engineer.'
+  'Thirty-two modules on becoming an AI-powered software engineer.'
 
 export const REPO_URL = 'https://github.com/lokumai/ai-engineering-bazaar'
 

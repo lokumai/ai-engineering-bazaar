@@ -1,5 +1,6 @@
 import { CATEGORIES, type Category } from './curriculum-file'
 import { type CourseModule, loadAllModules } from './loader'
+import { levelRoute } from '@/lib/route-labels'
 
 /**
  * The drawing set as an ordered whole (§4.4, §4.9, §5.7).
@@ -77,9 +78,18 @@ export function sheetPath(module: CourseModule): string {
   return `/courses/${module.category.slug}/${module.moduleSlug}/`
 }
 
-/** The subsystem's own page. Same rule as `sheetPath`: app-relative, slashed. */
+/**
+ * The subsystem's own page. Same rule as `sheetPath`: app-relative, slashed.
+ *
+ * **M17 moved it and left the module route where it was.** A level used to be
+ * `/courses/<level>/`, a second listing of the same modules; it is
+ * `/sheets/<level>/` now, the one catalog opened at that level. The module
+ * under it did not move, which is why this function and `sheetPath` no longer
+ * share a prefix — they never shared a meaning either, and the prefix was the
+ * only thing suggesting they did.
+ */
 export function categoryPath(category: Category): string {
-  return `/courses/${category.slug}/`
+  return levelRoute(category.slug)
 }
 
 /** The sheet a dependency edge names. Edges carry numbers, not slugs. */

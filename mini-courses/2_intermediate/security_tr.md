@@ -123,6 +123,8 @@ Yukarıdaki her şey bir LLM'i korumakla ilgili. Aynı yeteneği dışa çevir v
 
 Son madde şık olan, çünkü yeni bir yazılım gerektirmiyor. İki modül önceki genişletme mekanizması yetiyor.
 
+Ve aynı kolaylıkla ters yöne de çevrilebiliyor. Cloudflare'in [security-audit-skill](https://github.com/cloudflare/security-audit-skill)'i aynı şeyin kendi kodunu hedef alan hâli: her bulgunun raporlanmadan önce bağımsız olarak doğrulandığı çok fazlı bir audit, ve çıktısı bir yığın "belki" yerine makine tarafından okunabilir. Saldırı ile savunma, farklı bir `SKILL.md` ile aynı mekanizma çıkıyor.
+
 > **NOT:** saldırıların gerçekte nasıl kurulduğunu görmek istersen birkaç makale. Önce okunacak önemli olan [Great, Now Write an Article About That: The Crescendo Multi-Turn LLM Jailbreak Attack](https://www.usenix.org/conference/usenixsecurity25/presentation/russinovich): sadece masum, insan okuyabilir sorular kullanıyor, birkaç tur boyunca kademeli tırmandırıyor, ve GPT-4'te %56, Gemini Pro'da %83 başarıya ulaştı. [DeepInception](https://arxiv.org/abs/2311.03191) isteği hayalî sahnelerin içine yerleştiriyor. [FlipAttack](https://arxiv.org/abs/2410.02832) zararlı bir prompt'u metni ters çevirip modelden düzeltmesini isteyerek gizliyor, GPT-4o'da tek sorguda yaklaşık %98 başarı. [Sugar-Coated Poison](https://arxiv.org/abs/2504.05652) modele önce bir sürü zararsız içerik ürettiriyor, bu da sonrasını gevşetiyor. Ve bizim [BreakFun](https://arxiv.org/abs/2510.17904) çalışmamız modelin yapılandırılmış veriyle olan yetkinliğini saldırı yüzeyine çeviriyor; özel hazırlanmış schema'larla 13 modelde ortalama %89 başarıya ulaşıyor.
 
 ## Bu serinin neresindeyiz
@@ -133,14 +135,16 @@ graph LR
     B --> C[Coding Agents]
     C --> D[Harness Engineering]
     D --> E[Loop Engineering]
-    E --> F[Security]
-    F --> G[Personal Agents]
+    E --> F[Generative UI]
+    F --> G[Security]
+    G --> H[Personal Agents]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
     style D fill:#90EE90
     style E fill:#90EE90
-    style F fill:#FFFF00
+    style F fill:#90EE90
+    style G fill:#FFFF00
 ```
 
 ## Özet
@@ -188,5 +192,6 @@ Sırada: bir repo'da değil seninle birlikte yaşayan agent'lar, ve bunun bu mod
 - [AI Red Teaming Playground Labs](https://github.com/microsoft/AI-Red-Teaming-Playground-Labs): bunu ellerinle öğrenmek için laboratuvarlar ve altyapı
 - [Strix](https://github.com/usestrix/strix), [Shannon](https://github.com/KeygraphHQ/shannon), [PentAGI](https://github.com/vxcontrol/pentagi) ve [Pentest Swarm AI](https://github.com/Armur-Ai/Pentest-Swarm-AI): penetration testing'i yapan agent'lar
 - [claude-red](https://github.com/SnailSploit/Claude-Red): zaten sahip olduğun bir agent için skill kütüphanesi hâlinde saldırı güvenliği
+- [security-audit-skill](https://github.com/cloudflare/security-audit-skill): aynı mekanizmanın savunma yarısı, Cloudflare'den, her bulgu raporlanmadan önce doğrulanıyor
 - [The Crescendo Multi-Turn LLM Jailbreak Attack](https://www.usenix.org/conference/usenixsecurity25/presentation/russinovich): masum sorular, kademeli tırmandırılmış, ve anlaşılması en önemli saldırı şekli
 - [DeepInception](https://arxiv.org/abs/2311.03191), [FlipAttack](https://arxiv.org/abs/2410.02832), [Sugar-Coated Poison](https://arxiv.org/abs/2504.05652) ve [BreakFun](https://arxiv.org/abs/2510.17904): dört saldırı makalesi daha, bizimki sonda

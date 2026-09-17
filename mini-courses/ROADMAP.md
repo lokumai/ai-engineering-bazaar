@@ -55,7 +55,7 @@ this. What exactly we take from it is still to be decided.
 
 ## 6. The remaining material
 
-Ecosystem, Protocols and Specs, and the optional modules: Agent Frameworks through Runtime.
+Ecosystem, and Protocols and Specs: Agent Frameworks through the Protocols Reference.
 
 ## 7. Generative and agentic UI
 

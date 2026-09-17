@@ -15,7 +15,7 @@ import { useRecord } from '@/lib/record/store'
  *
  * It writes into the DOM rather than rendering the count itself, and that is a
  * structural fact about this codebase rather than a preference — the same one
- * `SignOffMarks` documents. `/courses/` renders its meters from a **server**
+ * `SignOffMarks` documents. A level page renders its meter from a **server**
  * component, so no hook may sit inside `CategoryMeter`: it would work wherever
  * a client parent already existed and fail the static export everywhere else
  * (§12.2, "where hooks may not go"). So the server writes the contract into

@@ -101,8 +101,18 @@ export interface RecordData {
    * the store — they read as data loss when the only difference is a key the
    * seed forgot. Measured: omitting it made those three specs red while the
    * app was correct.
+   *
+   * M10's `railFolded` is here for exactly that reason: it is the third
+   * widening of `prefs`, and the three round trips above compare raw storage
+   * against a record that went through the store. M12's `catalogView` is the
+   * fourth, on the same terms.
    */
-  prefs: { charKeys: boolean; aliasNamedFor: string | null }
+  prefs: {
+    charKeys: boolean
+    railFolded: boolean
+    aliasNamedFor: string | null
+    catalogView: 'overview' | 'cards' | 'table' | null
+  }
   /**
    * §17.3 — `lastClaim` is typed out the same structural way as everything
    * else here (see the module docblock): a shape drift in `lib/record/claim.ts`
@@ -186,7 +196,7 @@ export function recordData(seed: RecordSeed = {}): RecordData {
     identity: { name: null, markSeed: null, mark: null, role: null, ...seed.identity },
     sheets,
     days: seed.days ?? [SEED_DAY],
-    prefs: { charKeys: true, aliasNamedFor: null, ...seed.prefs },
+    prefs: { charKeys: true, railFolded: false, aliasNamedFor: null, catalogView: null, ...seed.prefs },
     meta: { lastExport: null, persisted: null, lastClaim: null, ...seed.meta },
   }
 }
@@ -418,16 +428,38 @@ export async function probeFirstPaint(page: Page): Promise<void> {
         className: root.className,
         record: root.getAttribute('data-hl-record'),
         storage: root.getAttribute('data-hl-storage'),
-        hydrated: document.querySelector('.hl-readout')?.getAttribute('data-hydrated') ?? null,
+        hydrated: document.querySelector('.bz-readout')?.getAttribute('data-hydrated') ?? null,
       }
     })
   })
 }
 
-export function firstPaint(page: Page): Promise<FirstPaint | undefined> {
-  return page.evaluate(
+/**
+ * The reading the probe took, WAITING for it rather than sampling it once.
+ *
+ * `page.evaluate` right after `goto` can land before the probe's
+ * `requestAnimationFrame` callback has run, and the old version of this
+ * function then returned `undefined` — which every caller read as "channel A
+ * did not stamp" and reported as a first-paint regression. It passed alone and
+ * failed under parallel load, which is the signature of a race rather than of a
+ * defect, and it is the same mistake `contrast.ts`'s `useTheme` was making one
+ * frame over: **a frame count, or a single sample, is not a wait**
+ * (`kia-context/logs/BRAINSTORM.md` D20).
+ *
+ * The claim is unchanged and it is still the strong one: the reading is taken
+ * in a `requestAnimationFrame` scheduled from an init script, which runs before
+ * the first paint and before any React effect. Waiting for that callback does
+ * not weaken it — the callback either ran before the paint or it did not run at
+ * all, and a timeout here says so out loud instead of returning a value that
+ * looks like an empty `<html>`.
+ */
+export async function firstPaint(page: Page): Promise<FirstPaint | undefined> {
+  const handle = await page.waitForFunction(
     () => (window as unknown as PaintWindow).__hlRecordFirstPaint,
+    null,
+    { timeout: 10_000 },
   )
+  return handle.jsonValue()
 }
 
 /** The class list alone, the shape `theme.spec.ts` reads. */
@@ -469,7 +501,7 @@ export function documentLoads(page: Page): Promise<number> {
  * so a spec that means the second has to wait for it.
  */
 export async function waitForHydratedReadout(page: Page): Promise<void> {
-  await expect(page.locator('.hl-readout[data-hydrated="true"]').first()).toBeAttached()
+  await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
 }
 
 /**
@@ -482,7 +514,7 @@ export async function waitForHydratedReadout(page: Page): Promise<void> {
  * not.
  */
 export function readoutCells(page: Page, scope = 'footer'): Locator {
-  return page.locator(`${scope} .hl-readout > span:not(.hl-readout-sep)`)
+  return page.locator(`${scope} .bz-readout > span:not(.bz-readout-sep)`)
 }
 
 /** One cell of the readout, found by the label it prints (`XP`, `Class`). */
@@ -506,7 +538,7 @@ export function slugOf(sheet: Sheet): string {
 
 export function sheetBySlug(slug: string): Sheet {
   const found = SHEETS.find((sheet) => slugOf(sheet) === slug)
-  if (!found) throw new Error(`no sheet ${slug} in the set`)
+  if (!found) throw new Error(`no module ${slug} in the set`)
   return found
 }
 
@@ -543,17 +575,17 @@ export const CATEGORY_SLUGS: readonly string[] = [
  *
  * The row is addressed by `aria-labelledby`, not by position: the ids are
  * verbatim from the panels these rows replaced (`storage`, `raw`, `data`,
- * `submittals`, `hl-orgs-head`) and §16.4's order is asserted on its own, in
+ * `submittals`, `bz-orgs-head`) and §16.4's order is asserted on its own, in
  * `record-pages.spec.ts`, rather than assumed here by every caller.
  */
 export async function openRegisterRow(page: Page, id: string): Promise<Locator> {
-  const row = page.locator(`section.hl-register-row[aria-labelledby="${id}"]`)
-  const fold = row.locator('details.hl-register-fold')
-  const body = fold.locator('.hl-register-body')
+  const row = page.locator(`section.bz-register-row[aria-labelledby="${id}"]`)
+  const fold = row.locator('details.bz-register-fold')
+  const body = fold.locator('.bz-register-body')
 
   await expect(fold, `no register row is labelled by "${id}"`).toHaveCount(1)
   if (!(await fold.evaluate((node) => (node as HTMLDetailsElement).open))) {
-    await fold.locator('summary.hl-register-summary').click()
+    await fold.locator('summary.bz-register-summary').click()
   }
   await expect(body).toBeVisible()
   return body
@@ -562,6 +594,6 @@ export async function openRegisterRow(page: Page, id: string): Promise<Locator> 
 /** One register row's summary reading (§16.4.1), addressed by its heading id. */
 export function registerReading(page: Page, id: string): Locator {
   return page.locator(
-    `section.hl-register-row[aria-labelledby="${id}"] .hl-register-reading`,
+    `section.bz-register-row[aria-labelledby="${id}"] .bz-register-reading`,
   )
 }

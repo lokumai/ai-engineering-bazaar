@@ -30,7 +30,7 @@ export function StampShelf({ facts }: { facts: CurriculumFacts }) {
   const shelf = stamps(record, facts)
 
   return (
-    <ul className="hl-stamp-shelf">
+    <ul className="bz-stamp-shelf">
       {shelf.map((stamp) => (
         <li key={stamp.id}>
           <Stamp stamp={stamp} size="set" />

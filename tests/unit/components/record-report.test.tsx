@@ -12,7 +12,7 @@ import {
 } from '@/components/record/ReportPanel'
 import LegendPage from '@/app/legend/page'
 import SpecimenPage from '@/app/legend/specimen/page'
-import ReportPage from '@/app/report/page'
+import ReportPage, { metadata as REPORT_META } from '@/app/report/page'
 import { signedCount, tally, type CurriculumFacts } from '@/lib/record/derive'
 import {
   buildRecordOfWork,
@@ -65,9 +65,9 @@ const DIGEST = 'a'.repeat(64)
 function sheet(module: number): ReportSheetFact {
   const drawn = module <= 6
   return {
-    slug: `band/sheet-${module}`,
+    slug: `band/module-${module}`,
     module,
-    title: `Sheet ${module}`,
+    title: `Module ${module}`,
     categorySlug: module <= 4 ? 'fundamentals' : 'intermediate',
     categoryTitle: module <= 4 ? 'Fundamentals' : 'Intermediate',
     categoryOrder: module <= 4 ? 1 : 2,
@@ -83,7 +83,7 @@ const FACTS: ReportFacts = {
   sheets: Array.from({ length: 8 }, (_, i) => sheet(i + 1)),
   curriculumName: 'AI Engineering Bazaar',
   criteriaUrl: 'https://lokumai.github.io/ai-engineering-bazaar/legend/',
-  assertion: 'Signing off is your own assertion that you have read this sheet.',
+  assertion: 'Marking a module complete is your own assertion that you have read this module.',
 }
 
 /**
@@ -98,6 +98,12 @@ const COUNTS: CurriculumFacts = {
     category: fact.categorySlug,
     drawn: fact.drawn,
     hasQuickCheck: fact.question !== null,
+    // M13 — the module's own declared minutes, which `readingMinutes` sums over
+    // the completed ones. `ReportSheetFact` carries no duration (the report
+    // document reprints text, not the schedule), so the two ready modules in
+    // this fixture declare one here and the draft declares none, which is the
+    // shape the curriculum validator enforces.
+    duration: fact.drawn ? 30 : 0,
     checklistItems: fact.checklistItems.length,
     sources: 0,
   })),
@@ -114,15 +120,15 @@ const COUNTS: CurriculumFacts = {
 /** A record with something in every field the preview reports. */
 function fullRecord(): RecordData {
   let data = setIdentity(EMPTY_RECORD, { name: 'Ada Lovelace' }, AT)
-  data = signOff(data, 'band/sheet-1', 'a1b2c3d', AT)
-  data = signOff(data, 'band/sheet-2', 'a1b2c3d', AT)
-  data = setQuizAnswer(data, 'band/sheet-2', 'Because the window is finite.', AT)
-  data = assessQuiz(data, 'band/sheet-2', 'matched', AT)
-  data = recordSourceOpened(data, 'band/sheet-1', 'https://example.org/spec', AT)
-  data = recordSourceOpened(data, 'band/sheet-2', 'https://example.org/other', AT)
+  data = signOff(data, 'band/module-1', 'a1b2c3d', AT)
+  data = signOff(data, 'band/module-2', 'a1b2c3d', AT)
+  data = setQuizAnswer(data, 'band/module-2', 'Because the window is finite.', AT)
+  data = assessQuiz(data, 'band/module-2', 'matched', AT)
+  data = recordSourceOpened(data, 'band/module-1', 'https://example.org/spec', AT)
+  data = recordSourceOpened(data, 'band/module-2', 'https://example.org/other', AT)
   // The same URL twice, so `sources` is asserted to be DISTINCT (§12.8).
-  data = recordSourceOpened(data, 'band/sheet-2', 'https://example.org/spec', AT)
-  data = addSubmittal(data, 'band/sheet-2', {
+  data = recordSourceOpened(data, 'band/module-2', 'https://example.org/spec', AT)
+  data = addSubmittal(data, 'band/module-2', {
     owner: 'cevheri',
     repo: 'agent-harness',
     url: 'https://github.com/cevheri/agent-harness',
@@ -178,7 +184,7 @@ describe('reportPreview — what the file will say (§12.12.1, §12.12.2)', () =
     const preview = reportPreview(data, COUNTS)
     const html = buildRecordOfWork({ data, facts: FACTS, generatedAt: GENERATED, digest: DIGEST })
 
-    expect(html).toContain(`<dt>Signed off</dt><dd>${preview.signed} / ${preview.of}</dd>`)
+    expect(html).toContain(`<dt>Completed</dt><dd>${preview.signed} / ${preview.of}</dd>`)
     expect(html).toContain(`<dt>To go</dt><dd>${preview.toGo}</dd>`)
     expect(html).toContain(`<dt>Repositories</dt><dd>${preview.repositories}</dd>`)
     expect(html).toContain(`<dt>Sources opened</dt><dd>${preview.sources}</dd>`)
@@ -296,49 +302,44 @@ describe('the filename reaches the control that saves it (§12.12.1)', () => {
   })
 })
 
-describe('/report/ — the route (§12.12)', () => {
+/**
+ * M14 — `/report/` is a forward now, and this is what a redirect has to be in a
+ * static export.
+ *
+ * The builder itself did not move: `ReportPanel` is the subject of everything
+ * above, and it is rendered by `/profile/`'s `report` register row, where the
+ * assertions about the document it builds still apply. What is asserted here is
+ * only that the retired address lands a reader somewhere useful, three ways
+ * (`MovedTo` carries why three), and that it does not ask a search engine to
+ * index a page with no content.
+ */
+describe('/report/ — the forward (M14)', () => {
   const markup = renderToStaticMarkup(<ReportPage />)
 
-  it('is a server page that measures the real corpus for both consumers', () => {
-    expect(markup).toContain('Record of work')
-    expect(markup).toContain('data-hl-report')
-    // The lead states the size of the set. Counted here too, never typed:
-    // the corpus is reordered and added to constantly, and a number written
-    // into this file would turn an ordinary edit into a failure.
-    const sheets = curriculumFacts().sheets.length
-    expect(words(markup)).toMatch(new RegExp(`ledger of all ${sheets} sheets`))
+  it('forwards to the one progress route, with the fragment kept', () => {
+    // The script is first and is the only one of the three that can carry a
+    // fragment, because `location.hash` is only knowable in the browser.
+    expect(markup).toContain('location.replace("/profile/"+location.hash)')
+    expect(markup).toContain('http-equiv="refresh"')
+    expect(markup).toContain('0; url=/profile/')
   })
 
-  it('names no authority and claims none (§12.12.1)', () => {
-    expect(markup).toContain('SELF-ATTESTED · NO ISSUING AUTHORITY')
-    // The seven limits are removed before the scan rather than exempted from
-    // it: "This is not a W3C Verifiable Credential" is a denial, and a denial
-    // is the one place the forbidden vocabulary belongs. What is being checked
-    // is the page's own prose around them.
-    let text = words(markup)
-    for (const line of REPORT_LIMITS) text = text.replace(line, ' ')
-    expect(text).not.toMatch(
-      /\b(?:certificate|certified|credential|diploma|qualification|badge|verified)\b/i,
-    )
+  it('says where the record of work went, and links there', () => {
+    expect(words(markup)).toContain('The record of work moved to Your progress')
+    expect(markup).toContain('href="/profile')
   })
 
-  /**
-   * Asserted without the trailing slash: `trailingSlash: true` is applied by
-   * the router and the export, not by `Link` in a bare `renderToStaticMarkup`,
-   * so the rendered `href` here is one character shorter than the one the built
-   * page carries. The prefix is the part this test is about.
-   */
-  it('routes a reader to the specimen before they build anything', () => {
-    expect(markup).toContain('href="/legend/specimen')
-    expect(markup).toContain('href="/legend"')
+  it('asks not to be indexed, because it has no content to find', () => {
+    expect(ReportPage).toBeDefined()
+    expect(REPORT_META.robots).toEqual({ index: false, follow: true })
   })
 })
 
-describe('SHEET 00 — the legend (§12.13)', () => {
+describe('MODULE 00 — the legend (§12.13)', () => {
   const markup = renderToStaticMarkup(<LegendPage />)
 
-  it('is SHEET 00, and it is a page rather than a gate', () => {
-    expect(markup).toContain('SHEET 00 — LEGEND &amp; SPECIMEN')
+  it('is MODULE 00, and it is a page rather than a gate', () => {
+    expect(markup).toContain('Module 00 · legend and specimen')
     // No first-run gate anywhere on this site: no modal, no tour, no step
     // counter, nothing that opens by itself.
     expect(markup).not.toContain('role="dialog"')
@@ -348,15 +349,15 @@ describe('SHEET 00 — the legend (§12.13)', () => {
 
   it('draws the key with the site’s own marks, not a picture of them', () => {
     // The same classes and the same `data-*` attributes the index rows, the
-    // gauges and the dashboard write, so record.css draws the legend from the
+    // gauges and the dashboard write, so the site stylesheets draw the legend from the
     // rules it draws the site from.
-    expect(markup).toContain('class="hl-signoff-square" data-drawn="false"')
-    expect(markup).toContain('class="hl-signoff-square" data-signed="false"')
-    expect(markup).toContain('class="hl-signoff-square" data-signed="true"')
-    expect(markup).toContain('class="hl-gauge-tick" data-state="approved"')
-    expect(markup).toContain('class="hl-gauge-tick" data-state="undrawn"')
+    expect(markup).toContain('class="bz-signoff-square" data-drawn="false"')
+    expect(markup).toContain('class="bz-signoff-square" data-signed="false"')
+    expect(markup).toContain('class="bz-signoff-square" data-signed="true"')
+    expect(markup).toContain('class="bz-gauge-tick" data-state="approved"')
+    expect(markup).toContain('class="bz-gauge-tick" data-state="undrawn"')
     for (const state of ['draft', 'unread', 'started', 'signed']) {
-      expect(markup).toContain(`class="hl-node" data-state="${state}"`)
+      expect(markup).toContain(`class="bz-diagram-node" data-state="${state}"`)
     }
   })
 
@@ -377,9 +378,9 @@ describe('SHEET 00 — the legend (§12.13)', () => {
     expect(text).toMatch(/Browser storage can be cleared without warning/)
     expect(text).toMatch(/Safari deletes it after seven days without a visit/)
     expect(text).toContain('Export your record to a file to keep it.')
-    expect(markup).toContain('class="hl-note"')
+    expect(markup).toContain('class="bz-note"')
     // Not a banner: nothing to dismiss, no icon, no caution colour.
-    expect(markup).not.toMatch(/dismiss|hl-btn-danger|caution/i)
+    expect(markup).not.toMatch(/dismiss|bz-btn-danger|caution/i)
   })
 
   /**
@@ -502,7 +503,7 @@ describe('§12.14.1 — the copy register', () => {
   const surfaces: Array<[string, string]> = [
     ['ReportPanel', renderToStaticMarkup(<ReportPanel facts={FACTS} counts={COUNTS} />)],
     ['/report/', renderToStaticMarkup(<ReportPage />)],
-    ['SHEET 00', renderToStaticMarkup(<LegendPage />)],
+    ['MODULE 00', renderToStaticMarkup(<LegendPage />)],
     ['the specimen', renderToStaticMarkup(<SpecimenPage />)],
   ]
 
@@ -512,7 +513,14 @@ describe('§12.14.1 — the copy register', () => {
    * pins the label, since a rename would put the word back.
    */
   function scannable(markup: string): string {
-    return words(markup).replace(/quick check/gi, ' ')
+    /* `<kbd>` is dropped with its CONTENTS, and every other tag only with its
+       markup. A key name is a machine value — `g i` is two keystrokes — and
+       read as prose it is the first person, which is what this scan bans. The
+       exclusion is by ELEMENT rather than by class or by string: `<kbd>` is
+       the element that means "a key", so a future table of keys is exempt for
+       the reason it should be and a paragraph that happens to say `i` is not. */
+    return words(markup.replace(/<kbd\b[^>]*>.*?<\/kbd>/gis, ' '))
+      .replace(/quick check/gi, ' ')
   }
 
   it.each(surfaces)('%s carries no exclamation mark', (_name, markup) => {

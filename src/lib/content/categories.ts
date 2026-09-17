@@ -15,10 +15,10 @@
 
 export type CategorySlug =
   | 'fundamentals' | 'intermediate' | 'expert'
-  | 'ecosystem' | 'protocols' | 'optional'
+  | 'ecosystem' | 'protocols'
 
 /**
- * The six slugs, in the union's own order, as a value.
+ * The five slugs, in the union's own order, as a value.
  *
  * The union is erased at runtime, and two things need to walk it: `CATEGORY_DIRS`
  * has to be total over it, and `curriculum.yaml` has to list its categories in
@@ -26,13 +26,13 @@ export type CategorySlug =
  * keeps the first honest.
  */
 export const CATEGORY_SLUGS: readonly CategorySlug[] = [
-  'fundamentals', 'intermediate', 'expert', 'ecosystem', 'protocols', 'optional',
+  'fundamentals', 'intermediate', 'expert', 'ecosystem', 'protocols',
 ]
 
 /**
  * The one place a category slug meets the directory its markdown sits in.
  *
- * Total over `CategorySlug` by type, so adding a seventh category without a
+ * Total over `CategorySlug` by type, so adding a sixth category without a
  * directory is a compile error rather than a category whose sheets never load.
  */
 export const CATEGORY_DIRS: Readonly<Record<CategorySlug, string>> = {
@@ -41,5 +41,4 @@ export const CATEGORY_DIRS: Readonly<Record<CategorySlug, string>> = {
   expert: '3_expert',
   ecosystem: '4_ecosystem',
   protocols: '5_protocols_specs',
-  optional: '6_optional',
 }

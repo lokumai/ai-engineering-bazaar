@@ -118,7 +118,7 @@ describe('§12.15 — the enumeration', () => {
     expect(
       eraseTallyLines({ sheets: 7, name: 1, submittals: 3, quizzes: 2, sources: 9 }),
     ).toEqual([
-      '7 sheet states',
+      '7 module states',
       '1 name',
       '3 submittals',
       '2 self-checks',
@@ -129,12 +129,12 @@ describe('§12.15 — the enumeration', () => {
   it('singularises every clause it can hold', () => {
     expect(
       eraseTallyLines({ sheets: 1, name: 1, submittals: 1, quizzes: 1, sources: 1 }),
-    ).toEqual(['1 sheet state', '1 name', '1 submittal', '1 self-check', '1 source opened'])
+    ).toEqual(['1 module state', '1 name', '1 submittal', '1 self-check', '1 source opened'])
   })
 
   it('omits a zero rather than padding the list with what erase will not destroy', () => {
     expect(eraseTallyLines({ sheets: 4, name: 0, submittals: 0, quizzes: 0, sources: 2 })).toEqual([
-      '4 sheet states',
+      '4 module states',
       '2 sources opened',
     ])
   })
@@ -146,7 +146,7 @@ describe('§12.15 — the enumeration', () => {
 
   it('joins the clauses into §12.15’s own example sentence', () => {
     expect(eraseTallySentence({ sheets: 7, name: 1, submittals: 3, quizzes: 0, sources: 0 })).toBe(
-      '7 sheet states, 1 name, 3 submittals',
+      '7 module states, 1 name, 3 submittals',
     )
   })
 
@@ -162,7 +162,7 @@ describe('§12.15 — the enumeration', () => {
       { owner: 'lokumai', repo: 'thing', url: '', commit: null, note: '', at: '' },
       NOW,
     )
-    expect(eraseTallySentence(tally(data))).toBe('1 sheet state, 1 name, 1 submittal, 1 self-check')
+    expect(eraseTallySentence(tally(data))).toBe('1 module state, 1 name, 1 submittal, 1 self-check')
   })
 })
 

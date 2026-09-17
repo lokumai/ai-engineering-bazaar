@@ -45,7 +45,7 @@ import { numberWord } from '@/lib/text'
  * `STORABLE_MARK_IDS`, so a reshuffle fails rather than ships.
  *
  * **The artefact is on screen while it is being made** (§15.4.3). The preview is
- * built from `.hl-title-block`, the same block a sheet prints, because the
+ * built from `.bz-panel`, the same block a sheet prints, because the
  * reader is choosing how their name will appear on every sign-off and in the
  * exported document — not filling in a form field. That is also why the empty
  * name previews as `UNSIGNED`: it is what the title block genuinely prints for a
@@ -75,7 +75,7 @@ const UNSIGNED = 'UNSIGNED'
 /** §15.4.3 — printed on the stamp, in caution ink, in every draft state. */
 const UNVERIFIED = 'UNVERIFIED'
 
-/** The preview draws the mark at 48px, twice the 24px `.hl-mark-stamp` fixes. */
+/** The preview draws the mark at 48px, twice the 24px `.bz-mark-stamp` fixes. */
 const PREVIEW_SIZE = 48
 
 /**
@@ -189,12 +189,12 @@ export function AliasSheet({ accountDoors }: { accountDoors: number }) {
     <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,260px)] md:items-start">
       <div className="grid gap-6">
         <form onSubmit={onSubmit} noValidate className="grid gap-6">
-          <label className="hl-field" data-invalid={error ? 'true' : 'false'}>
+          <label className="bz-field" data-invalid={error ? 'true' : 'false'}>
             {/* Visible and persistent, never a placeholder standing in for a
                 label, and optional IN WORDS (§12.3.3). */}
-            <span className="hl-field-label">
+            <span className="bz-field-label">
               Alias, as you would sign a drawing
-              <span className="hl-field-optional">Optional</span>
+              <span className="bz-field-optional">Optional</span>
             </span>
             <input
               type="text"
@@ -214,7 +214,7 @@ export function AliasSheet({ accountDoors }: { accountDoors: number }) {
               is allowed to say so. Not restated here in this screen's own
               words: four copies of this claim is how all four came to be
               wrong. */}
-          <p className="hl-field-hint" id="hl-alias-hint">
+          <p className="bz-field-hint" id="hl-alias-hint">
             {NAME_SCOPE}
           </p>
 
@@ -222,7 +222,7 @@ export function AliasSheet({ accountDoors }: { accountDoors: number }) {
               on the input, and it names the other way out rather than implying
               the field has to be filled (§12.3.3, §15.4.5). */}
           {error && (
-            <p className="hl-field-error" id="hl-alias-error" role="alert">
+            <p className="bz-field-error" id="hl-alias-error" role="alert">
               Enter an alias, or read without one
             </p>
           )}
@@ -242,31 +242,31 @@ export function AliasSheet({ accountDoors }: { accountDoors: number }) {
             }}
           />
 
-          {/* §15.4.5 — two controls of one weight. Both are `.hl-btn`, the same
+          {/* §15.4.5 — two controls of one weight. Both are `.bz-btn`, the same
               height and the same border, and the exit is beside the keep rather
               than in grey text beneath it: reading with no alias is a choice
               the screen has no standing to discourage. Neither takes
-              `aria-pressed` or `.hl-btn-danger`; the accent means signed off
+              `aria-pressed` or `.bz-btn-danger`; the accent means signed off
               (T1) and nothing here is a sign-off. */}
-          <div className="hl-signoff-actions">
-            <button type="submit" className="hl-btn">
+          <div className="bz-actions">
+            <button type="submit" className="bz-btn">
               KEEP THIS ALIAS
             </button>
-            <Link className="hl-btn" href="/">
+            <Link className="bz-btn" href="/">
               READ WITHOUT ONE
             </Link>
             {/* A readout, not praise: the record logged it, and that is the
                 whole of what is worth saying (§12.5.7). Gated on `hydrated` so
                 it can only follow a write this session made. */}
             {saved && hydrated && (
-              <span className="hl-mark text-ink-muted" role="status">
+              <span className="text-mark text-on-surface-muted" role="status">
                 NAME ON RECORD
               </span>
             )}
           </div>
         </form>
 
-        <div className="hl-note">
+        <div className="bz-note">
           <p>
             An alias can be carried into an account later. Signing in from this
             browser takes the name and the mark with the record, and the name
@@ -286,30 +286,30 @@ export function AliasSheet({ accountDoors }: { accountDoors: number }) {
         </div>
       </div>
 
-      {/* The artefact, not a form preview (§15.4.3). `.hl-title-block` is the
-          block a sheet prints, so what is on screen here is the thing being
+      {/* The artefact, not a form preview (§15.4.3). `.bz-panel` is the
+          block a module prints, so what is on screen here is the thing being
           chosen. The label is written out rather than imported from
           `lib/content/title-block.ts`: that module reaches `node:fs` through
           `derive.ts` and this island may not (§12.2, §15.4.4). */}
-      <aside aria-label="Your stamp, as a sheet will print it" className="hl-title-block">
-        <div className="hl-title-block-head hl-mark">Checked by</div>
+      <aside aria-label="Your stamp, as a module will print it" className="bz-panel">
+        <div className="bz-panel-title text-mark">Checked by</div>
 
         <div className="grid justify-items-center gap-2 px-3 py-4">
           <DrafterStamp mark={storedMark(chosen)} seed={seed} size={PREVIEW_SIZE} />
           {previewName === null ? (
-            <p className="hl-mark m-0 text-ink-muted">{UNSIGNED}</p>
+            <p className="text-mark m-0 text-on-surface-muted">{UNSIGNED}</p>
           ) : (
             // As typed, not uppercased: CSS `text-transform` cases off the
             // element's `lang`, and `ilker` under `lang="en"` uppercases to a
             // dotless I where a Turkish reader expects İ (§12.3.4).
-            <bdi dir="auto" className="hl-identity-name text-center">
+            <bdi dir="auto" className="bz-identity-name text-center">
               {previewName}
             </bdi>
           )}
         </div>
 
-        <dl className="hl-title-block-rows">
-          <div className="hl-title-block-row hl-mark">
+        <dl className="bz-defs">
+          <div className="bz-defs-row text-mark">
             <dt>Mark</dt>
             <dd>{selected.label}</dd>
           </div>
@@ -317,20 +317,20 @@ export function AliasSheet({ accountDoors }: { accountDoors: number }) {
               for a named glyph and absent before the seed exists — never a
               hollow row and never a plausible-looking placeholder (§11.25). */}
           {chosen === 'seeded' && seed !== null && (
-            <div className="hl-title-block-row hl-mark">
+            <div className="bz-defs-row text-mark">
               <dt>Seed</dt>
               <dd className="normal-case">{seed}</dd>
             </div>
           )}
-          <div className="hl-title-block-row hl-mark">
+          <div className="bz-defs-row text-mark">
             <dt>Held in</dt>
             <dd>THIS BROWSER</dd>
           </div>
-          <div className="hl-title-block-row hl-mark">
+          <div className="bz-defs-row text-mark">
             {/* Colour is never the only signal: the word is the signal, and the
                 caution ink only agrees with it (T6). */}
             <dt>Status</dt>
-            <dd className="text-caution-ink">{UNVERIFIED}</dd>
+            <dd className="text-on-surface">{UNVERIFIED}</dd>
           </div>
         </dl>
       </aside>

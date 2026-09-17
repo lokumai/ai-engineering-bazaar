@@ -21,8 +21,15 @@
 export interface CategoryLabel {
   slug: string
   title: string
-  /** 1-based position in the curriculum, for `SUBSYSTEM 02`. */
+  /** 1-based position in the curriculum. Also which category hue it binds. */
   order: number
+  /**
+   * How many modules the level holds. M16: the mockup's menu row is a hue key
+   * on the leading edge, the level's name, and a count on the trailing edge, so
+   * the count is part of the label rather than something a caller looks up.
+   * Derived from the curriculum, never written down.
+   */
+  total: number
 }
 
 export interface Crumb {
@@ -55,7 +62,7 @@ export const NOT_FOUND_SEGMENT = '/_not-found'
  * one honest thing it can say is that no such sheet exists — never the URL
  * that was asked for, which names nothing.
  */
-export const NOT_FOUND_TITLE = 'No such sheet'
+export const NOT_FOUND_TITLE = 'No such module'
 
 /**
  * The same name in the case chrome labels are written in (§3.4). The footer
@@ -65,14 +72,37 @@ export const NOT_FOUND_TITLE = 'No such sheet'
  */
 export const NOT_FOUND_SHEET_LABEL = NOT_FOUND_TITLE.toUpperCase()
 
+/**
+ * M19 — **a language prefix is not a place, so it is not a crumb.**
+ *
+ * `/tr/courses/fundamentals/llms/` is the same module at a second address, and
+ * `/tr/` is what says which language — there is no page there and nothing to
+ * navigate to. Left in, the trail read `Home / tr / Curriculum / Fundamentals /
+ * LLM Temelleri`: a raw slug naming a directory, which is exactly the defect
+ * M22 measured across eight routes and fixed one milestone ago.
+ *
+ * **And it broke a second thing, one crumb further along.**
+ * `retargetCourseAncestors` sends a module's ancestors to `/sheets/` — it is
+ * what makes the third crumb read `Catalog` and not `Curriculum` — and it is
+ * guarded on `segments[0] === 'courses'`. With `tr` in front, that guard
+ * stopped firing and the trail named a route M17 retired. Dropping the prefix
+ * here fixes both, because everything downstream then sees the shape it was
+ * written for.
+ */
+const LANGUAGE_SEGMENT = 'tr'
+
 function segmentsOf(pathname: string): string[] {
-  return pathname.split('/').filter(Boolean)
+  const segments = pathname.split('/').filter(Boolean)
+  return segments[0] === LANGUAGE_SEGMENT ? segments.slice(1) : segments
 }
 
 /**
- * The one route segment that is a real page but not a category: `/courses/`
- * is the drawing set, listed by subsystem. Without this it would trail as the
- * literal URL segment, which names a directory rather than a page.
+ * The segment every module still lives under. It was a page — the drawing set,
+ * listed by subsystem — and M17 folded it into the catalog, so what is at that
+ * address now is a forward. It stays named here because a module's trail runs
+ * through it, and an unnamed segment trails as the literal URL, which names a
+ * directory rather than a page. `retargetCourseAncestors` below is what sends
+ * that crumb somewhere a reader should actually land.
  */
 const SET_SEGMENT = 'courses'
 
@@ -83,9 +113,48 @@ const SET_SEGMENT = 'courses'
  */
 const INDEX_SEGMENT = 'sheets'
 
+/**
+ * What each segment is CALLED, where the address does not say.
+ *
+ * **M22 — this held two entries and every other route fell back to
+ * `segment.replaceAll('-', ' ')`.** MEASURED across the ten routes that draw a
+ * trail: **eight named their page differently from the page's own `<h1>`**, and
+ * most of them in lowercase slug — `Home / profile` above a heading reading
+ * `Your progress`, `Home / legend / specimen` above `Specimen record`,
+ * `Home / sign in / alias` above `Choose an alias`.
+ *
+ * Nothing could see it. The export's link gate checks that a href resolves, and
+ * every one of these resolved; the trail was simply calling the page by its
+ * folder name. It surfaced on `/profile/` while M22 was redesigning that page,
+ * and the rest came with it because it is one table.
+ *
+ * **The invariant is that a crumb matches the heading of the page it opens** —
+ * `tests/e2e/navigation.spec.ts` asserts it against the built export, walking
+ * the routes and comparing each trail's last crumb to that page's own `h1`.
+ * (This named `route-labels.test.ts`, which is a unit test of this module and
+ * has no such comparison in it; a review caught the wrong file.) It is the
+ * same argument the block below makes about `INDEX_TITLE`: a label and its
+ * destination need one author. A module's own leaf comes from the page instead
+ * (`PageShell`'s `trailLeaf`), because only the server knows a module's title.
+ */
 const ROUTE_TITLES: Record<string, string> = {
-  [SET_SEGMENT]: 'Drawing set',
-  [INDEX_SEGMENT]: 'Sheet index',
+  [SET_SEGMENT]: 'Curriculum',
+  [INDEX_SEGMENT]: 'Catalog',
+  profile: 'Your progress',
+  team: 'Team',
+  assignments: 'Assignments',
+  legend: 'Legend',
+  specimen: 'Specimen record',
+  'sign-in': 'Sign in',
+  alias: 'Choose an alias',
+  join: 'Join an organisation',
+  /* M22 filled this table from the ten routes it walked and MISSED ONE, which
+     is the argument against a hand-written list twice over: `/auth/callback/`
+     read `Home / auth / callback` over a heading saying `Completing sign-in`,
+     and it went unnoticed because the guard's own route list was hand-written
+     too. A review walked all 61 exported routes instead and found it. */
+  auth: 'Signing in',
+  callback: 'Completing sign-in',
 }
 
 /**
@@ -100,6 +169,25 @@ const ROUTE_TITLES: Record<string, string> = {
  */
 export const INDEX_ROUTE = `/${INDEX_SEGMENT}/`
 export const INDEX_TITLE = ROUTE_TITLES[INDEX_SEGMENT]
+
+/**
+ * M17 — a level's own entry into the catalog, `/sheets/expert/`.
+ *
+ * The level used to be a route of its own under `/courses/`, listing the same
+ * modules a second time. It is a filter on the one catalog now, and these six
+ * addresses are what let that filter be chosen before any script has run: the
+ * page is prerendered with the level already selected, so the chip that
+ * chooses a level is a LINK and works with the bundle blocked (D62).
+ *
+ * The module route is NOT under this prefix and does not move — a module is
+ * still `/courses/<level>/<module>/`. Only the two index pages were retired.
+ * That asymmetry is deliberate and it is the cheapest of the shapes available:
+ * moving a module would change every URL a reader has ever bookmarked, for a
+ * listing change they did not ask about.
+ */
+export function levelRoute(slug: string): string {
+  return `${INDEX_ROUTE}${slug}/`
+}
 
 /**
  * Ancestor paths that exist in the URL but were never exported as a page.
@@ -153,7 +241,7 @@ function titleFor(segment: string, categories: readonly CategoryLabel[]): string
 function subsystemLabel(slug: string, categories: readonly CategoryLabel[]): string {
   const category = categories.find((candidate) => candidate.slug === slug)
   return category
-    ? `SUBSYSTEM ${String(category.order).padStart(2, '0')}`
+    ? `LEVEL ${String(category.order).padStart(2, '0')}`
     : titleFor(slug, categories).toUpperCase()
 }
 
@@ -182,6 +270,41 @@ export function breadcrumbFor(
       href: last || WITHOUT_A_PAGE.has(path) ? null : path,
     })
   })
+  return retargetCourseAncestors(crumbs, segments)
+}
+
+/**
+ * M17 — a module's ancestors are pages the fold retired, and the trail is the
+ * one place that could not notice.
+ *
+ * A module is still `/courses/<level>/<module>/`, so the walk above gives its
+ * two ancestors the hrefs `/courses/` and `/courses/<level>/`. Both of those
+ * are `MovedTo` stubs now. **Nothing would have failed**: the link gate follows
+ * an href to a document and both documents exist, so every module page on the
+ * site would have shipped a trail whose every ancestor cost the reader a
+ * redirect. It was found by grepping the export for the retired shapes, which
+ * is the only check that can see it.
+ *
+ * So the two ancestors are retargeted, and the LABEL moves with the href rather
+ * than being left behind: the first crumb reads `Catalog` because that is what
+ * it opens. A crumb whose label and destination disagree is the defect this
+ * module's `INDEX_ROUTE` docblock already records once.
+ *
+ * **Ancestors only, and that includes the stubs' own trails.** The last crumb
+ * is the current page and carries no href, so a reader who typed
+ * `/courses/expert/` still sees `Expert` as where they are — but the crumb
+ * above it opens the catalog rather than the forward they are already standing
+ * on. MEASURED on the export: retargeting modules alone left five links into a
+ * retired route, one per level stub, which is the same defect one level down.
+ */
+function retargetCourseAncestors(crumbs: Crumb[], segments: string[]): Crumb[] {
+  if (segments[0] !== SET_SEGMENT || segments.length < 2) return crumbs
+
+  // crumbs[0] is the root; crumbs[1] is `courses` and crumbs[2] is the level.
+  crumbs[1] = { label: INDEX_TITLE, href: INDEX_ROUTE }
+  if (segments.length > 2) {
+    crumbs[2] = { label: crumbs[2].label, href: levelRoute(segments[1]) }
+  }
   return crumbs
 }
 
@@ -203,6 +326,14 @@ export function sheetLabelFor(
     return rest.length === 1 ? subsystemLabel(rest[0], categories) : null
   }
 
+  // M17 — `/sheets/<level>/` is the catalog opened at one level, so the footer
+  // names the level exactly as the retired `/courses/<level>/` did. Without
+  // this branch the last `segments.length > 1` guard below returns null and a
+  // reader on a level page gets no sheet label at all.
+  if (segments[0] === INDEX_SEGMENT && segments.length === 2) {
+    return subsystemLabel(segments[1], categories)
+  }
+
   if (segments.length > 1) return null
   return subsystemLabel(segments[0], categories)
 }
@@ -217,8 +348,8 @@ export interface MarkToken {
 const VALUE = /(\d[\d,./:-]*)/
 
 /**
- * Spec §5.2 gives a footer label two inks: `--color-ink-muted` for the words,
- * `--color-ink` for the values. Splitting is the only way to paint both from
+ * Spec §5.2 gives a footer label two inks: `--color-on-surface-muted` for the words,
+ * `--color-on-surface` for the values. Splitting is the only way to paint both from
  * one string.
  */
 export function markTokens(label: string): MarkToken[] {

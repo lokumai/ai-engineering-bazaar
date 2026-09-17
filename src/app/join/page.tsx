@@ -66,45 +66,45 @@ export const metadata: Metadata = {
 export default function JoinPage() {
   return (
     <PageShell>
-      <h1 className="hl-listing-title">Join an organisation</h1>
+      <h1 className="bz-display">Join an organisation</h1>
 
-      <p className="hl-lead">
+      <p className="bz-lead">
         An organisation is a group whose managers follow the progress of the
         people in it. Joining one is a decision with a consequence for
-        everything this browser has recorded about you, so this sheet states the
+        everything this browser has recorded about you, so this module states the
         consequence before it offers the control, and the row that makes you a
         member is written by you from here — not by a manager, and not by a link
         in a message.
       </p>
 
-      <hr className="hl-rule-struct" aria-hidden="true" />
+      <hr className="bz-rule" aria-hidden="true" />
 
-      <section className="hl-panel" aria-labelledby="routes">
-        <div className="hl-panel-head">
-          <h2 id="routes" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="routes">
+        <div className="bz-panel-head">
+          <h2 id="routes" className="bz-panel-title">
             The two routes in
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">Each with its own limit</p>
+          <p className="text-mark m-0 text-on-surface-faint">Each with its own limit</p>
         </div>
 
         <ol className="m-0 grid list-none gap-3 p-0">
           <li>
-            <p className="hl-mark m-0 text-ink">1 · The organisation domain</p>
-            <p className="m-0 mt-1 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
+            <p className="text-mark m-0 text-on-surface">1 · The organisation domain</p>
+            <p className="m-0 mt-1 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
               An organisation may register the domain of its own addresses. If
               the address on your account is on that domain, the organisation
               appears below and you write your own membership row. No code is
               involved. The domain is compared exactly, capital letters
               included, so an address at{' '}
-              <span className="font-mono text-ink">Example.com</span> does not
+              <span className="font-mono text-on-surface">Example.com</span> does not
               match an organisation that registered{' '}
-              <span className="font-mono text-ink">example.com</span>.
+              <span className="font-mono text-on-surface">example.com</span>.
             </p>
             {/* The clause `app_metadata -> 'providers' ? 'email'`, in the
                 reader's terms. It is the one requirement that cannot be read
                 off the screen the reader is looking at, and the refusal it
                 produces is otherwise unexplainable. */}
-            <p className="m-0 mt-2 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
+            <p className="m-0 mt-2 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
               The limit: the account must carry a sign-in by email that the mail
               service itself completed. The rule reads the list of providers on
               your account rather than the address written on it, because an
@@ -117,15 +117,15 @@ export default function JoinPage() {
             </p>
           </li>
           <li>
-            <p className="hl-mark m-0 text-ink">2 · An address a manager entered</p>
-            <p className="m-0 mt-1 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
+            <p className="text-mark m-0 text-on-surface">2 · An address a manager entered</p>
+            <p className="m-0 mt-1 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
               A manager can enter your address at their organisation. Nothing
               is sent to you and nothing happens to your record: the entry
-              makes the organisation visible on this sheet, and writing the
+              makes the organisation visible on this module, and writing the
               membership row is still your action. You can read only the entry
               that names your own address.
             </p>
-            <p className="m-0 mt-2 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
+            <p className="m-0 mt-2 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
               The limit, stated as what the entry is: one organisation, one
               address, and the date a manager entered it. It admits the account
               that holds that address and no other, so it cannot be forwarded or
@@ -143,9 +143,9 @@ export default function JoinPage() {
             §15.8: it is also where the missing use count and expiry are
             accounted for, since a reader who has used another site's invite
             code will look for both. */}
-        <div className="hl-note">
-          <p className="hl-mark m-0 text-ink">There is no invitation code</p>
-          <p className="m-0 mt-1 max-w-[68ch] font-display text-meta leading-normal text-ink-muted">
+        <div className="bz-note">
+          <p className="text-mark m-0 text-on-surface">There is no invitation code</p>
+          <p className="m-0 mt-1 max-w-[68ch] text-meta leading-normal text-on-surface-muted">
             A code would have to be checked against a stored list, and this site
             has no server of its own to check it: authority lives entirely in
             the database rules. A rule that lets a reader read the code they
@@ -158,30 +158,30 @@ export default function JoinPage() {
         </div>
       </section>
 
-      <section className="hl-panel" aria-labelledby="offers">
-        <div className="hl-panel-head">
-          <h2 id="offers" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="offers">
+        <div className="bz-panel-head">
+          <h2 id="offers" className="bz-panel-title">
             Open to you
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">Read after the page loads</p>
+          <p className="text-mark m-0 text-on-surface-faint">Read after the page loads</p>
         </div>
         <JoinPanel />
       </section>
 
-      <section className="hl-panel" aria-labelledby="leaving">
-        <div className="hl-panel-head">
-          <h2 id="leaving" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="leaving">
+        <div className="bz-panel-head">
+          <h2 id="leaving" className="bz-panel-title">
             Leaving, and erasing
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">Stated here as well</p>
+          <p className="text-mark m-0 text-on-surface-faint">Stated here as well</p>
         </div>
-        <p className="m-0 max-w-[68ch] font-display text-meta leading-normal text-ink">
+        <p className="m-0 max-w-[68ch] text-meta leading-normal text-on-surface">
           You can leave an organisation, and leaving stops its managers reading
           your record from that moment. It does not withdraw the training
           history the organisation already holds: that log belongs to the
           organisation and stays with it. Erasing your own record on the{' '}
-          <Link href="/profile/" className="hl-link">
-            profile sheet
+          <Link href="/profile/" className="bz-link">
+            account page
           </Link>{' '}
           removes it from this browser and removes the copy your account
           holds, and leaves that same organisation history in place. Closing

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Fragment } from 'react'
 import { categoryLabels } from '@/lib/content/chrome'
 import { AFFILIATION, LICENCE_LABEL, LICENCE_URL, REPO_URL } from '@/lib/site'
@@ -39,8 +40,8 @@ export interface SiteFooterProps {
  */
 export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
   return (
-    <footer role="contentinfo" className="border-t border-line-strong bg-paper">
-      <div className="mx-auto w-full max-w-[var(--width-shell)] px-6">
+    <footer role="contentinfo" className="border-t border-line-strong bg-surface">
+      <div className="w-full px-[22px]">
         {/* §5.2 row 1 — the three-part flex, which is what puts the sheet
             label left, the revision centre and the readout right. On a page
             with no revision the two survivors take the two ends, which is the
@@ -57,10 +58,10 @@ export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
           <SheetLabel sheet={sheet} categories={categoryLabels()} />
 
           {/* §3.4 — a machine-derived value never wraps. At 390px the row is
-              342px wide and `SHEET 13 OF 32` broken after the number reads as
+              342px wide and `MODULE 13 OF 32` broken after the number reads as
               two facts instead of one. */}
           {revision && (
-            <span className="hl-mark whitespace-nowrap text-ink-muted">
+            <span className="text-mark whitespace-nowrap text-on-surface-muted">
               Rev <span className="normal-case">{revision.hash}</span>
               <span aria-hidden="true"> · </span>
               {revision.date}
@@ -82,16 +83,33 @@ export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
             pushed the document sideways — the one thing no page may do. On any
             width where the six fit, `min-h-8` is 32px and §5.2's 72px total is
             unchanged. */}
-        <div className="flex min-h-8 flex-wrap items-center gap-x-3 font-display text-meta text-ink-muted">
-          <a className="hl-link" href={REPO_URL}>
+        <div className="flex min-h-8 flex-wrap items-center gap-x-3 text-meta text-on-surface-muted">
+          <a className="bz-link" href={REPO_URL}>
             Repository
           </a>
           <Dot />
-          <a className="hl-link" href={LICENCE_URL}>
+          <a className="bz-link" href={LICENCE_URL}>
             {LICENCE_LABEL}
           </a>
           <Dot />
-          <span className="font-mono uppercase tracking-[0.06em]">Drawn by LKM-01</span>
+          <span>Marked by LKM-01</span>
+          <Dot />
+          {/* M18 — `/legend/` was reachable from `/team/` and from nowhere else,
+              and `/team/` is itself only reachable from `/team/assignments/`.
+              That was survivable while the page only explained the marks; it
+              stopped being survivable the moment M18 moved the KEYBOARD MAP
+              there, because the bar's `?` button went in the same commit and
+              the only discovery path left was pressing a key you would have to
+              already know about.
+
+              The page's own docblock calls itself *"the fixed help slot WCAG
+              2.2 SC 3.2.6 asks for: the same page, reached the same way, from
+              every route"* — which the footer is what makes true, since the
+              footer is on every route. It was a claim about a link nobody had
+              drawn. */}
+          <Link className="bz-link" href="/legend/">
+            Legend and keys
+          </Link>
           {/* The chain, in `AFFILIATION` order. Names only: the relationship
               between them is stated once, with its labels, in `/legend/`'s
               colophon. A footer is the wrong place to explain a corporate
@@ -99,7 +117,7 @@ export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
           {AFFILIATION.map((affiliate) => (
             <Fragment key={affiliate.name}>
               <Dot />
-              <a className="hl-link" href={affiliate.url}>
+              <a className="bz-link" href={affiliate.url}>
                 {affiliate.name}
               </a>
             </Fragment>
@@ -120,7 +138,7 @@ export function SiteFooter({ sheet, revision, readout }: SiteFooterProps) {
  */
 function Dot() {
   return (
-    <span aria-hidden="true" className="text-ink-faint">
+    <span aria-hidden="true" className="text-on-surface-faint">
       ·
     </span>
   )

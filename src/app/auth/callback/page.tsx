@@ -39,18 +39,18 @@ export const metadata: Metadata = {
 export default function AuthCallbackPage() {
   return (
     <PageShell sheet="COMPLETING SIGN-IN">
-      <p className="hl-eyebrow hl-mark">RETURN FROM A SIGN-IN PROVIDER</p>
+      <p className="bz-facts">Return from a sign-in provider</p>
 
-      <h1 className="hl-listing-title">Completing sign-in</h1>
+      <h1 className="bz-display">Completing sign-in</h1>
 
-      <p className="hl-lead">
+      <p className="bz-lead">
         This page finishes a sign-in that has just come back from GitHub, Google
         or an emailed link. It runs in this browser — there is no server in this
         site to run it on — and then sends you where you were going. If it
         cannot finish, it says so here rather than leaving you on a blank page.
       </p>
 
-      <hr className="hl-rule-struct" aria-hidden="true" />
+      <hr className="bz-rule" aria-hidden="true" />
 
       <CallbackPanel />
     </PageShell>

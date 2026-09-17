@@ -60,8 +60,7 @@ graph LR
     A[Agent Frameworks] --> B[Inference Providers]
     B --> C[Inference Engines]
     C --> D[UI Design]
-    D --> E[Observability]
-    E --> F[Choosing a Tech Stack]
+    D --> E[Choosing a Tech Stack]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90

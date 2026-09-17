@@ -60,6 +60,7 @@ function facts(): CurriculumFacts {
         hasQuickCheck: drawn,
         checklistItems: module === 13 ? 8 : 0,
         sources: drawn ? 25 : 0,
+        duration: drawn ? 30 : 0,
       })
     }
   }
@@ -135,7 +136,7 @@ describe('§14.9 buildProgress', () => {
     expect(progress.byCategory.fundamentals).toEqual({ signedOff: 0, attainable: 7 })
   })
 
-  it('never yields NaN for a curriculum with no sheets', () => {
+  it('never yields NaN for a curriculum with no modules', () => {
     const progress = buildProgress({
       data: EMPTY_RECORD,
       facts: { sheets: [], categories: [], traces: 0 },
@@ -163,7 +164,7 @@ describe('§14.9 buildProgress', () => {
     expect(progress.byCategory.expert).toEqual({ signedOff: 0, attainable: 9 })
   })
 
-  it('reports a fully written record, and keeps the undrawn sheets in the denominator', () => {
+  it('reports a fully written record, and keeps the unready modules in the denominator', () => {
     const data = fullish()
     const progress = buildProgress({
       data,
@@ -223,8 +224,8 @@ describe('§14.9 buildProgress', () => {
     const cases: ReadonlyArray<[string, RecordData]> = [
       ['empty', EMPTY_RECORD],
       ['partial', signed(1, 2, 3, 8)],
-      ['drawn set complete', fullish()],
-      ['a sign-off on a sheet nobody has drawn', signed(1, 30)],
+      ['ready set complete', fullish()],
+      ['a sign-off on a module nobody has ready', signed(1, 30)],
     ]
 
     for (const [name, data] of cases) {

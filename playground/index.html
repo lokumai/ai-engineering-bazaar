@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UI playground — AI Engineering Bazaar</title>
+<style>
+:root{
+  --paper:#fff;--wash:#f7f8fa;--sunken:#eef1f5;--ink:#1a1d23;--muted:#5b6472;--faint:#8a929e;
+  --line:#e3e6eb;--line-2:#cfd4dc;--accent:#0b6e5f;--soft:#e6f2ef;--accent-ink:#08594c;
+  --warn:#a0503c;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--wash);color:var(--ink);font:16px/1.65 var(--sans)}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1000px;margin:0 auto;padding:52px 24px 100px}
+h1{font-size:34px;line-height:1.15;letter-spacing:-.028em;margin:0 0 12px}
+.lede{color:var(--muted);font-size:17.5px;max-width:64ch;margin:0 0 10px}
+h2{font-size:21px;letter-spacing:-.015em;margin:52px 0 6px}
+h2 + p{color:var(--muted);margin:0 0 18px;max-width:70ch}
+.deck{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:14px}
+.item{display:block;background:var(--paper);border:1px solid var(--line);border-radius:11px;
+  padding:16px 17px;text-decoration:none;color:inherit;border-left:3px solid var(--edge,var(--line-2))}
+.item:hover{border-color:var(--line-2);box-shadow:0 8px 22px -14px rgba(20,25,35,.26)}
+.item .id{display:inline-block;background:var(--ink);color:#fff;border-radius:5px;padding:1px 7px;
+  font:700 12px/18px var(--sans);margin-bottom:9px}
+.item b{display:block;font-size:16px;letter-spacing:-.01em;margin-bottom:5px}
+.item p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.5}
+.item em{display:block;margin-top:9px;font-style:normal;font-size:12.5px;color:var(--accent);
+  font-weight:600}
+table{width:100%;border-collapse:collapse;background:var(--paper);border:1px solid var(--line);
+  border-radius:10px;overflow:hidden;margin-top:6px}
+th,td{text-align:left;padding:10px 13px;font-size:14.5px;vertical-align:top}
+thead th{background:var(--wash);color:var(--muted);font:600 13px/1.4 var(--sans);
+  border-bottom:1px solid var(--line)}
+tbody tr + tr td{border-top:1px solid var(--line)}
+td.q{color:var(--warn);width:38%}
+td.a code{background:var(--wash);padding:1px 5px;border-radius:4px;font:12.5px var(--mono)}
+.note{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--accent);
+  border-radius:9px;padding:15px 17px;margin:20px 0 0;font-size:15px}
+.note b{color:var(--accent-ink)}
+.bug{border-left-color:var(--warn)}
+.bug b{color:var(--warn)}
+ol.pick{counter-reset:s;list-style:none;padding:0;margin:14px 0 0}
+ol.pick li{background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:13px 16px;
+  margin-bottom:9px;display:flex;gap:13px;align-items:baseline}
+ol.pick li::before{counter-increment:s;content:counter(s);background:var(--soft);
+  color:var(--accent-ink);border-radius:6px;min-width:24px;height:24px;display:grid;
+  place-items:center;font:700 12.5px/1 var(--sans);flex:none}
+ol.pick b{font-weight:650}
+ol.pick span{color:var(--muted);font-size:14.5px}
+.kbd{font:12.5px var(--mono);background:var(--wash);border:1px solid var(--line-2);border-radius:4px;
+  padding:2px 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>UI playground</h1>
+<p class="lede">
+  Standalone HTML. Open any file in a browser; nothing is wired to the app and nothing here changes
+  the site. Everything below keeps the features you already have &mdash; progress in the browser,
+  the checklist, the quick check, the role-based path, optional sign-in, English and Turkish
+  &mdash; and changes only how they look and where they sit.
+</p>
+<p class="lede" style="font-size:16px">
+  Reply with letters and numbers. For example: <span class="kbd">T1, vocab C, navbar A, catalog C,
+  layout A, progress A+C, code 2, diagrams 3, home C, sidebar 1</span>.
+</p>
+
+<h2>Start here</h2>
+<p>Naming first, because every screen inherits it.</p>
+<div class="deck">
+  <a class="item" href="00-vocabulary.html" style="--edge:#a0503c">
+    <span class="id">A B C</span>
+    <b>Three vocabulary sets</b>
+    <p>Replacements for subsystem, sheet, sign-off, feeds, drawing, register and drafter, as three
+      complete sets rather than word by word.</p>
+    <em>Decide this one first</em>
+  </a>
+</div>
+
+<h2>The four themes</h2>
+<p>
+  The same module page rendered four ways, so you are comparing like with like. Each is a different
+  UI language, not a different colour scheme.
+</p>
+<div class="deck">
+  <a class="item" href="01-theme-T1-handbook.html" style="--edge:#0b6e5f">
+    <span class="id">T1</span>
+    <b>Handbook</b>
+    <p>The documentation lens: MDN, Stripe, Astro. Permanent left nav, one accent colour, nothing
+      to learn.</p>
+    <em>Safest, most familiar</em>
+  </a>
+  <a class="item" href="01-theme-T2-reader.html" style="--edge:#1d4ed8">
+    <span class="id">T2</span>
+    <b>Reader</b>
+    <p>The Medium lens. No side rails at all, serif body, contents in a drawer, a progress line
+      under the bar.</p>
+    <em>Best for pure reading</em>
+  </a>
+  <a class="item" href="01-theme-T3-workbench.html" style="--edge:#7c6cf0">
+    <span class="id">T3</span>
+    <b>Workbench</b>
+    <p>The dev-tool lens: Linear, Vercel, Raycast. Dark by default, compact, command palette.</p>
+    <em>Snappiest, most technical</em>
+  </a>
+  <a class="item" href="01-theme-T4-bazaar.html" style="--edge:#282864">
+    <span class="id">T4</span>
+    <b>Bazaar</b>
+    <p>Built from your banner. Every colour sampled from <code>assets/banner-tiles.jpeg</code>:
+      cobalt, cream, clay, ochre, teal. A tile band is the one ornament.</p>
+    <em>The only one that looks like you</em>
+  </a>
+</div>
+
+<div class="note">
+  <b>On T4.</b> Cobalt leads rather than the cream, and the headings are a geometric sans rather
+  than a serif, on purpose: cream plus serif plus a clay accent is the single most common
+  machine-generated look right now, and it would have made your own artwork read as a template.
+  The ornament is spent once, on the tile band, and every other surface is quiet.
+</div>
+
+<h2>Bazaar, four grounds &mdash; chosen: G3 Powder</h2>
+<p>
+  T4's palette is unchanged: cobalt <code>#282864</code>, clay <code>#A0503C</code>, ochre
+  <code>#C8A078</code>, teal <code>#2F8C86</code>, gold <code>#B8873B</code>. One token moves, the
+  <b>ground</b> &mdash; the fill behind the page, which is also the fill of the active item in the
+  navbar. Today it is <code>#F4ECE0</code> at 84.6% relative luminance; these four run 89.3% to 96.6%.
+</p>
+<div class="deck">
+  <a class="item" href="01-theme-T4-grounds.html" style="--edge:#282864">
+    <span class="id">G1&ndash;G4</span>
+    <b>All four, side by side</b>
+    <p>Miniatures, swatch strips and the measured contrast of each, against today's ground for
+      reference.</p>
+    <em>Start here, then open the one you like</em>
+  </a>
+  <a class="item" href="01-theme-T4-ground-G1-sugared.html" style="--edge:#f8f2e8">
+    <span class="id">G1</span>
+    <b>Sugared &mdash; <code>#F8F2E8</code></b>
+    <p>One step up. Still unmistakably a cream, just off the floor. 89.3%.</p>
+  </a>
+  <a class="item" href="01-theme-T4-ground-G2-icing.html" style="--edge:#fbf7f0">
+    <span class="id">G2</span>
+    <b>Icing &mdash; <code>#FBF7F0</code></b>
+    <p>Clearly lighter, and raised surfaces go to pure white to keep their edge. 93.3%.</p>
+  </a>
+  <a class="item" href="01-theme-T4-ground-G3-powder.html" style="--edge:#0b6e5f">
+    <span class="id">G3</span>
+    <b>Powder &mdash; <code>#FDFBF7</code></b>
+    <p>Almost white, still warm. Cards separate on their hairline rather than their fill. 96.6%.</p>
+    <em>Chosen</em>
+  </a>
+  <a class="item" href="01-theme-T4-ground-G4-lokum-cream.html" style="--edge:#fff8e9">
+    <span class="id">G4</span>
+    <b>Lokum cream &mdash; <code>#FFF8E9</code></b>
+    <p>The logo's own ground, sampled from <code>final.png</code>. Lighter than today, and warmer
+      with it. 94.3%.</p>
+  </a>
+</div>
+
+<div class="note">
+  <b>What moves with the ground, and why.</b> Only the raised surface. A card cannot be darker than
+  the page it sits on, so <code>--paper</code> goes to white on G2, G3 and G4. Nothing else in the
+  palette changes, and the active navbar chip gains contrast against the cobalt bar for free: 11.36:1
+  today, up to 12.88:1 on G3.
+</div>
+
+<div class="note">
+  <b>What changed besides the ground.</b> All four also carry the three fixes you asked for, so you
+  are judging the real thing: the content column is centred and spans its container with gutters that
+  clear both rails, the module list folds away in 200ms with a tab on the left edge to bring it back,
+  the completion tick is a filled disc rather than a hairline glyph, and the level you are in is
+  enlarged with a coloured edge.
+</div>
+
+<div class="note bug">
+  <b>Measured while building these.</b> Two things. The teal tick sits at 3.44:1 against the old cream
+  and only reaches 3.90:1 on G3, so lightening the page cannot fix it: as a filled disc with a white
+  check it is a graphical indicator at a 3:1 floor, which it clears, and as a hairline glyph it would
+  not. And on a ground this light <b>no line colour in the palette reaches 3:1</b> &mdash;
+  <code>#D8CBB4</code> is 1.55:1, <code>#C3B299</code> is 2.00:1. Fine for a border that groups a
+  card, not fine for the border that identifies a control, so those move to
+  <code>#948D7D</code> at 3.19:1. That is a fix in M9, not a restyle.
+</div>
+
+<h2>Decided, on 2026-09-08</h2>
+<p>Your answers, recorded so the build has one source. The full milestone with acceptance criteria
+  is in <code>kia-context/logs/PROGRESS.md</code>.</p>
+<table>
+  <thead><tr><th>Question</th><th>Chosen</th></tr></thead>
+  <tbody>
+    <tr><td>Vocabulary</td><td class="a"><b>C &mdash; Engineering curriculum.</b> Catalog, Level,
+      Module, Complete, Requires.</td></tr>
+    <tr><td>Theme</td><td class="a"><b>T4 Bazaar</b>, colours unchanged, ground
+      <b>G3 Powder <code>#FDFBF7</code></b>.</td></tr>
+    <tr><td>Navbar</td><td class="a"><b>A</b> &mdash; one row, a dropdown per level.</td></tr>
+    <tr><td>Catalog</td><td class="a"><b>All three, as a view toggle</b> with an icon each:
+      <b>Overview</b> (was C), <b>Cards</b> (was A), <b>Table</b> (was B).</td></tr>
+    <tr><td>Module layout</td><td class="a">The layout already in <b>T4</b>, plus the centred
+      full-width column and the collapsible sidebar.</td></tr>
+    <tr><td>Completion and progress</td><td class="a"><b>A</b> at the end of a module, one button
+      where the reader is. <b>C</b> on the home and progress pages.</td></tr>
+    <tr><td>Code and diagrams</td><td class="a"><b>Dark slab</b>.</td></tr>
+    <tr><td>Progress and account</td><td class="a"><b>A</b>.</td></tr>
+    <tr><td>Home</td><td class="a"><b>A</b>.</td></tr>
+    <tr><td>Left sidebar</td><td class="a">The one already in <b>T4</b>, with the current level
+      enlarged and a heavier tick.</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+  <b>Nothing is open.</b> All ten answers are in and the ground is <b>G3</b>. The design system is
+  <code>kia-context/specs/DESIGN.md</code>, the build is milestones <b>M9 to M14</b> in
+  <code>kia-context/logs/PROGRESS.md</code>, and M9 starts on your approval.
+</div>
+
+</div>
+</body>
+</html>

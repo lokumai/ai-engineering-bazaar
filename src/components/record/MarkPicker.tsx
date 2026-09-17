@@ -56,7 +56,7 @@ import { DrafterStamp } from './DrafterStamp'
  * forced-colors rendering for nothing, and every one of those is a thing a
  * hand-rolled listbox gets subtly wrong. The explicit `radiogroup` role
  * overrides `<fieldset>`'s implicit `group`, which is what §12.3.5's control
- * actually is. The radio is transparent and out of the flow (`.hl-markrow-input`)
+ * actually is. The radio is transparent and out of the flow (`.bz-markrow-input`)
  * and never `display: none`, which would take it out of the tab order and lose
  * every one of those behaviours; `forced-colors` puts it back in the flow, where
  * the selection is read from the platform's own dot rather than from a wash.
@@ -82,7 +82,7 @@ import { DrafterStamp } from './DrafterStamp'
  * dead weight in the accessibility tree's place too: `aria-hidden` content
  * inside a `<label>` still cannot be read, while §16.2.3 needs the accessible
  * name to stay the mark's own name. So the cell carries §12.4.1's dashed
- * leader-line rule ("proposed, not drawn", drawn in `profile.css` by
+ * leader-line rule ("proposed, not drawn", drawn in `progress.css` by
  * `[data-hl-offered]`) and nothing else, and the row's height is the same for
  * every reader.
  *
@@ -171,11 +171,11 @@ export function MarkPicker({
 
   return (
     <fieldset role="radiogroup" aria-labelledby={legendId} className="m-0 border-0 p-0">
-      <legend id={legendId} className="hl-field-label">
+      <legend id={legendId} className="bz-field-label">
         Approval mark
       </legend>
 
-      <div className="hl-markrow" onMouseLeave={() => setPointed(null)}>
+      <div className="bz-markrow" onMouseLeave={() => setPointed(null)}>
         {MARKS.map((option) => {
           // The seeded option draws the minted pattern; a named one draws its
           // glyph, which needs no seed at all.
@@ -183,7 +183,7 @@ export function MarkPicker({
           return (
             <label
               key={option.id}
-              className="hl-markrow-cell"
+              className="bz-markrow-cell"
               /* §16.9, hazard C — the attribute lands on the label and on
                  nothing else: `responsive.spec.ts` counts `label[data-hl-mark]`
                  and a copy on an inner wrapper makes that count sixteen. The
@@ -208,18 +208,18 @@ export function MarkPicker({
                 onFocus={() => setFocused(option.id)}
                 onBlur={() => setFocused(null)}
                 aria-describedby={noteId}
-                // record.css authors no radio rule and this file may not add
+                // progress.css authors no radio rule and this file may not add
                 // one, so the control keeps its native appearance and takes
                 // the accent through `accent-color` — which the platform
                 // draws, and which forced-colors overrides correctly (§12.17).
                 // Painting a square one by hand would have carried the
                 // checked state in a `box-shadow`, and forced-colors deletes
                 // every shadow on the page.
-                style={{ accentColor: 'var(--color-accent)' }}
-                className="hl-markrow-input"
+                style={{ accentColor: 'var(--color-primary)' }}
+                className="bz-markrow-input"
               />
               <DrafterStamp mark={mark} seed={seed} />
-              <span className="hl-markrow-name">{option.label}</span>
+              <span className="bz-markrow-name">{option.label}</span>
             </label>
           )
         })}
@@ -229,7 +229,7 @@ export function MarkPicker({
           words (§16.2.1). `min-height` in the stylesheet holds its space, so
           arrowing across the row moves nothing below it — including when the
           offered option's extra clause appears. */}
-      <p className="hl-markrow-note" id={noteId}>
+      <p className="bz-markrow-note" id={noteId}>
         {described !== undefined && (
           <>
             <b>{described.label}</b> — {described.description}
@@ -242,13 +242,13 @@ export function MarkPicker({
           absence is named rather than filled with a substitute glyph. Printed
           on the seed's own account, not on the selection's: the empty cell is
           there to be seen whether or not it is the one chosen. */}
-      {seed === null && <p className="hl-mark m-0 text-ink-faint">{NO_SEED_MINTED}</p>}
+      {seed === null && <p className="text-mark m-0 text-on-surface-faint">{NO_SEED_MINTED}</p>}
 
       {/* §12.0 / §12.3.5 — naming the absence of the control that is
           deliberately not here, in one line rather than the three the card grid
           could afford. The rest of the argument is `MARKS`' own description of
           the seeded option, which the line above prints when it is pointed at. */}
-      <p className="mt-2 mb-0 font-display text-meta leading-normal text-ink-muted">
+      <p className="mt-2 mb-0 text-meta leading-normal text-on-surface-muted">
         The seeded pattern comes from an 8-character seed minted once with this
         record, and it is never regenerated.
       </p>

@@ -4,6 +4,7 @@ import { AFFILIATION, LICENCE_LABEL } from '@/lib/site'
 import Link from 'next/link'
 import { Lkm01 } from '@/components/mascot/Lkm01'
 import { PageShell } from '@/components/shell/PageShell'
+import { SHORTCUTS } from '@/lib/record/keys'
 import { NODE_HEIGHT, NODE_WIDTH } from '@/lib/record/layout'
 
 export const metadata: Metadata = {
@@ -37,9 +38,9 @@ export const metadata: Metadata = {
  * **A server page, and hook-free on purpose.** Every mark below is drawn in a
  * fixed state — this is a key, not a readout — so there is nothing here for
  * channel B to fill in and nothing to hydrate (§12.2). The marks are the real
- * ones: `.hl-signoff-square`, `.hl-gauge-tick` and `.hl-node` with the same
+ * ones: `.bz-signoff-square`, `.bz-gauge-tick` and `.bz-diagram-node` with the same
  * `data-*` attributes the index rows, the tick gauges and the dashboard write,
- * so `record.css` draws the legend from the same rules it draws the site from.
+ * so `derived.css` draws the legend from the same rules it draws the site from.
  * A hand-drawn picture of the marks would be a fourth place for them to be
  * defined, and it would start disagreeing the first time a token moved.
  */
@@ -69,10 +70,10 @@ function NodeSample({ state }: { state: NodeSampleState }) {
       aria-hidden="true"
       focusable="false"
     >
-      <g className="hl-node" data-state={state}>
+      <g className="bz-diagram-node" data-state={state}>
         <rect x={2} y={2} width={NODE_WIDTH} height={NODE_HEIGHT} />
         {state === 'signed' && (
-          <line className="hl-node-edge" x1={2} y1={2} x2={2} y2={2 + NODE_HEIGHT} />
+          <line className="bz-diagram-node-edge" x1={2} y1={2} x2={2} y2={2 + NODE_HEIGHT} />
         )}
         <text
           x={2 + NODE_WIDTH / 2}
@@ -91,7 +92,7 @@ function NodeSample({ state }: { state: NodeSampleState }) {
  * One row of the key: the state named, every mark that carries it, and what it
  * means.
  *
- * A plain grid rather than `.hl-defs`, which uppercases its whole content — the
+ * A plain grid rather than `.bz-defs`, which uppercases its whole content — the
  * right treatment for a machine-derived value and the wrong one for a sentence.
  * The term is the same wording the dashboard's own table prints for that state,
  * so a reader who has met one has met the other.
@@ -113,10 +114,10 @@ function KeyRow({
   return (
     <>
       <dt className="flex items-center gap-2">
-        <span className="hl-mark text-ink">{term}</span>
+        <span className="text-mark text-on-surface">{term}</span>
         {marks}
       </dt>
-      <dd className="m-0 font-display text-meta leading-normal text-ink-muted">
+      <dd className="m-0 text-meta leading-normal text-on-surface-muted">
         {children}
       </dd>
     </>
@@ -169,31 +170,31 @@ const REFUSED: readonly string[] = [
 
 export default function LegendPage() {
   return (
-    <PageShell sheet="SHEET 00">
-      <p className="hl-eyebrow hl-mark">SHEET 00 — LEGEND &amp; SPECIMEN</p>
+    <PageShell sheet="MODULE 00">
+      <p className="bz-facts">Module 00 · legend and specimen</p>
 
-      <h1 className="hl-listing-title">Legend</h1>
+      <h1 className="bz-display">Legend</h1>
 
-      <p className="hl-lead">
-        This site is drawn as a set of engineering sheets, and it reports only
+      <p className="bz-lead">
+        This site reports only
         what it can observe. This page is the key to the marks it draws with, the
         disclosure of where your record is kept, and the list of what it does not
         have. Nothing here opens by itself, and nothing here is a step in a
         sequence.
       </p>
 
-      <hr className="hl-rule-struct" aria-hidden="true" />
+      <hr className="bz-rule" aria-hidden="true" />
 
       {/* ---- 1 · the line-type key (§12.10.4, §12.13) --------------------- */}
-      <section className="hl-panel" aria-labelledby="hl-legend-lines">
-        <div className="hl-panel-head">
-          <h2 id="hl-legend-lines" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-legend-lines">
+        <div className="bz-panel-head">
+          <h2 id="hl-legend-lines" className="bz-panel-title">
             Line types
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">ISO 128</p>
+          <p className="text-mark m-0 text-on-surface-faint">ISO 128</p>
         </div>
 
-        <p className="mt-0 mb-4 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-0 mb-4 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           Line type carries every state first and the accent repeats it second.
           That is why the drawing still reads in print, in a forced-colours
           theme, and for a reader who sees no colour at all: remove the accent
@@ -203,84 +204,84 @@ export default function LegendPage() {
         {/* Two columns above 640px and stacked below it: the marks and their
             names are the widest thing here, and squeezing the meaning into
             what is left on a phone would set it four words to the line. */}
-        <dl className="m-0 grid max-w-[var(--width-wide)] items-start gap-y-3 sm:grid-cols-[minmax(0,224px)_minmax(0,1fr)] sm:gap-x-5">
+        <dl className="m-0 grid max-w-[var(--layout-measure)] items-start gap-y-3 sm:grid-cols-[minmax(0,224px)_minmax(0,1fr)] sm:gap-x-5">
           <KeyRow
-            term="Not drawn"
+            term="Planned"
             marks={
               <>
-                <span className="hl-signoff-square" data-drawn="false" aria-hidden="true" />
+                <span className="bz-signoff-square" data-drawn="false" aria-hidden="true" />
                 <NodeSample state="draft" />
               </>
             }
           >
-            A hidden line, dashed 3 2. The sheet is in the set and its geometry
-            is not: it has no sign-off control at all, and it awards nothing.
+            A hidden line, dashed 3 2. The module is in the set and its geometry
+            is not: it has no completion control at all, and it awards nothing.
           </KeyRow>
 
           <KeyRow
-            term="Not signed off"
+            term="Not completed"
             marks={
               <>
-                <span className="hl-signoff-square" data-signed="false" aria-hidden="true" />
+                <span className="bz-signoff-square" data-signed="false" aria-hidden="true" />
                 <NodeSample state="unread" />
               </>
             }
           >
-            A solid hairline. Every drawn sheet is in this state until you say
+            A solid hairline. Every ready module is in this state until you say
             otherwise.
           </KeyRow>
 
           <KeyRow term="In progress" marks={<NodeSample state="started" />}>
-            Something is recorded against the sheet — an answer written, an item
-            ticked, a source opened — and it is still not signed off.
+            Something is recorded against the module — an answer written, an item
+            ticked, a source opened — and it is still not completed.
           </KeyRow>
 
           <KeyRow
-            term="Signed off"
+            term="Completed"
             marks={
               <>
-                <span className="hl-signoff-square" data-signed="true" aria-hidden="true" />
+                <span className="bz-signoff-square" data-signed="true" aria-hidden="true" />
                 <NodeSample state="signed" />
               </>
             }
           >
             The accent outline, the accent wash, and the 2px left edge an
             approved node carries everywhere on the site. You asserted it;
-            nothing here inferred it, and you can un-sign it at any time.
+            nothing here inferred it, and you can un-complete it at any time.
           </KeyRow>
 
           <KeyRow
             term="Tick gauge"
             marks={
-              <span className="hl-gauge" aria-hidden="true">
-                <span className="hl-gauge-tick" data-state="approved" />
-                <span className="hl-gauge-tick" />
-                <span className="hl-gauge-tick" data-state="undrawn" />
+              <span className="bz-gauge" aria-hidden="true">
+                <span className="bz-gauge-tick" data-state="approved" />
+                <span className="bz-gauge-tick" />
+                <span className="bz-gauge-tick" data-state="undrawn" />
               </span>
             }
           >
-            One tick per sheet in the subsystem: accent signed off, solid drawn,
-            dashed hairline not yet drawn. Never a percentage, because counting
-            in sheets is what lets what is done and what is left both be stated
+            One tick per module in the level: accent completed, solid ready,
+            dashed hairline planned. Never a percentage, because counting
+            in modules is what lets what is done and what is left both be stated
             truthfully.
           </KeyRow>
         </dl>
 
-        <p className="mt-4 mb-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-4 mb-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           On the dashboard a solid trace above a band is a prerequisite, a dashed
           trace below it is a cross-reference, and a trace goes accent when both
-          of the sheets it joins are signed off. The hairline chain between nodes
-          is sheet order, which is not a dependency.
+          of the modules it joins are completed. The hairline chain between nodes
+          is module order, which is not a dependency.
         </p>
       </section>
 
       {/* ---- 2 · the storage disclosure (§12.1.7) ------------------------- */}
-      <section className="hl-panel" aria-labelledby="hl-legend-storage">
-        <div className="hl-panel-head">
-          <h2 id="hl-legend-storage" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-legend-storage">
+        <div className="bz-panel-head">
+          <h2 id="hl-legend-storage" className="bz-panel-title">
             Where your record is
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">This browser’s copy</p>
+          <p className="text-mark m-0 text-on-surface-faint">This browser’s copy</p>
         </div>
 
         {/*
@@ -290,11 +291,11 @@ export default function LegendPage() {
           spends the alarm budget the erase dialog needs (§12.15).
 
           Word for word the same three lines the name field carries on the
-          profile sheet. They are stated twice because §12.1.7 places them in
+          account page. They are stated twice because §12.1.7 places them in
           both slots, and the wording is identical so that a reader who has read
           one has read the other.
         */}
-        <div className="hl-note">
+        <div className="bz-note">
           <p>{RECORD_SCOPE}</p>
           <p>
             Browser storage can be cleared without warning — by you, by the
@@ -309,7 +310,7 @@ export default function LegendPage() {
           hold anything, so there is nothing to sign in to and nothing to delete
           on request." True in Phase 3, false the moment §14 landed, and missed
           when `scope.ts` fixed the other four copies of the same claim: the
-          panel above it had already been corrected, so Sheet 00 was
+          panel above it had already been corrected, so Module 00 was
           contradicting itself two paragraphs apart.
 
           It states the whole shape unconditionally rather than switching on
@@ -321,42 +322,98 @@ export default function LegendPage() {
           removes. That promise has one home (§14.6), and a second copy here is
           how the first one came to be wrong.
         */}
-        <p className="mt-4 mb-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-4 mb-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           The record is one key in this browser&rsquo;s local storage, it is
-          readable in a text editor, and the profile sheet prints it verbatim.
+          readable in a text editor, and the account page prints it verbatim.
           Signed out, that key is the whole of it. With an account there is a
           second copy, held under your account, and the erase dialog on the
-          profile sheet states what each half removes and what an organisation
+          account page states what each half removes and what an organisation
           keeps.
         </p>
 
-        <div className="hl-signoff-actions mt-4">
-          <Link className="hl-btn" href="/profile/">
-            OPEN THE PROFILE SHEET
+        <div className="bz-actions mt-4">
+          {/* M14 — one destination where there were two: the record of work is
+              a row of the progress page's register now, and `#report` opens
+              that row on arrival (`FoldFragment`). */}
+          <Link className="bz-btn" href="/profile/">
+            OPEN YOUR PROGRESS
           </Link>
-          <Link className="hl-btn" href="/report/">
+          <Link className="bz-btn" href="/profile/#report">
             BUILD A RECORD OF WORK
           </Link>
         </div>
       </section>
 
-      {/* ---- 3 · what is not here (§12.19, §12.0) ------------------------- */}
-      <section className="hl-panel" aria-labelledby="hl-legend-absent">
-        <div className="hl-panel-head">
-          <h2 id="hl-legend-absent" className="hl-panel-title">
-            What this site does not have
+      {/* ---- 2b · the keyboard (§12.16) ---------------------------------- */}
+      <section className="bz-panel" aria-labelledby="hl-legend-keys">
+        <div className="bz-panel-head">
+          <h2 id="hl-legend-keys" className="bz-panel-title">
+            Keys
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">Named, not stubbed</p>
         </div>
 
-        <p className="mt-0 mb-4 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        {/*
+          M18 — the chords are HERE because the bar stopped saying they exist.
+
+          §12.16 made a chord discoverable by printing it on the control it
+          fires and on the button that opened the sheet listing them all. The
+          author had that button removed, and the progress icon whose `title`
+          carried `(g p)` with it — which between them were every mention on the
+          site. The keys still work; this is where a reader finds out.
+
+          **Rendered from `SHORTCUTS`, which is the same array the sheet renders
+          and the same array the handler dispatches on.** Typing the table here
+          would be a second vocabulary to drift out of step with the first, and
+          a keyboard map nobody can trust is worse than none.
+
+          Single-character keys are behind `prefs.charKeys` (SC 2.1.4) and the
+          switch is on the account page. That is said once, under the table,
+          rather than repeated per row.
+        */}
+        <table className="bz-keys">
+          <tbody>
+            {SHORTCUTS.map((row) => (
+              <tr key={row.keys}>
+                <td>
+                  {/* `<kbd>`, because a key name is a machine value and not
+                      prose. It is also what stops the copy register reading
+                      `g i` as the first person — see `record-report.test.ts`. */}
+                  <kbd>{row.keys}</kbd>
+                </td>
+                <td>{row.action}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <div className="bz-note">
+          <p>
+            Every key above except Esc can be switched off, on the{' '}
+            <Link href="/profile/" className="bz-link">
+              account page
+            </Link>
+            .
+          </p>
+        </div>
+      </section>
+
+      {/* ---- 3 · what is not here (§12.19, §12.0) ------------------------- */}
+      <section className="bz-panel" aria-labelledby="hl-legend-absent">
+        <div className="bz-panel-head">
+          <h2 id="hl-legend-absent" className="bz-panel-title">
+            What this site does not have
+          </h2>
+          <p className="text-mark m-0 text-on-surface-faint">Named, not stubbed</p>
+        </div>
+
+        <p className="mt-0 mb-4 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           Naming an absence is honest. A control that looks like a feature and
           does nothing is not, so nothing below is present as a disabled button
           or a greyed-out menu item. It is not built.
         </p>
 
-        <h3 className="hl-mark m-0 mb-2 text-ink">Deferred to a following slice</h3>
-        <ul className="m-0 mb-6 max-w-[var(--width-prose)] list-none p-0 font-display text-meta leading-normal text-ink-muted">
+        <h3 className="text-mark m-0 mb-2 text-on-surface">Deferred to a following slice</h3>
+        <ul className="m-0 mb-6 max-w-[var(--layout-measure)] list-none p-0 text-meta leading-normal text-on-surface-muted">
           {DEFERRED.map((item) => (
             <li key={item} className="mb-1">
               {item}
@@ -364,10 +421,10 @@ export default function LegendPage() {
           ))}
         </ul>
 
-        <h3 className="hl-mark m-0 mb-2 text-ink">
+        <h3 className="text-mark m-0 mb-2 text-on-surface">
           Nobody here can do these, and therefore not coming
         </h3>
-        <ul className="m-0 mb-6 max-w-[var(--width-prose)] list-none p-0 font-display text-meta leading-normal text-ink-muted">
+        <ul className="m-0 mb-6 max-w-[var(--layout-measure)] list-none p-0 text-meta leading-normal text-on-surface-muted">
           {NO_SECOND_PARTY.map((item) => (
             <li key={item} className="mb-1">
               {item}
@@ -375,8 +432,8 @@ export default function LegendPage() {
           ))}
         </ul>
 
-        <h3 className="hl-mark m-0 mb-2 text-ink">Refused, not missing</h3>
-        <ul className="m-0 mb-4 max-w-[var(--width-prose)] list-none p-0 font-display text-meta leading-normal text-ink-muted">
+        <h3 className="text-mark m-0 mb-2 text-on-surface">Refused, not missing</h3>
+        <ul className="m-0 mb-4 max-w-[var(--layout-measure)] list-none p-0 text-meta leading-normal text-on-surface-muted">
           {REFUSED.map((item) => (
             <li key={item} className="mb-1">
               {item}
@@ -384,7 +441,7 @@ export default function LegendPage() {
           ))}
         </ul>
 
-        <p className="mt-0 mb-4 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-0 mb-4 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           The first three need a party this system does not have: no instructor
           exists in it, no peer is asked to judge anybody, and there is no
           issuing key to sign a credential with. Built here anyway, each would
@@ -398,36 +455,36 @@ export default function LegendPage() {
           Stated because the two lists above no longer state it, and a reader
           who read this page before §14 shipped was told the opposite.
         */}
-        <p className="m-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        <p className="m-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           Accounts and cross-device sync are not on either list: they exist.
-          Signing in is optional and gates nothing &mdash; every sheet, every
-          quick check and every sign-off behaves the same signed out &mdash; and
+          Signing in is optional and gates nothing &mdash; every module, every
+          quick check and every completion behaves the same signed out &mdash; and
           what an account changes is stated in <em>Where your record is</em>
-          {' '}above. An organisation can also assign sheets with due dates,
+          {' '}above. An organisation can also assign modules with due dates,
           which is the nearest thing here to enrolment; it recommends an order
           and gates nothing either.
         </p>
       </section>
 
       {/* ---- 4 · the specimen (§12.13) ------------------------------------ */}
-      <section className="hl-panel" aria-labelledby="hl-legend-specimen">
-        <div className="hl-panel-head">
-          <h2 id="hl-legend-specimen" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-legend-specimen">
+        <div className="bz-panel-head">
+          <h2 id="hl-legend-specimen" className="bz-panel-title">
             Specimen record
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">Sample data</p>
+          <p className="text-mark m-0 text-on-surface-faint">Sample data</p>
         </div>
 
-        <p className="mt-0 mb-4 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-0 mb-4 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           The document this site can produce is a single self-contained HTML
           file. The specimen is one of those, generated at build time from
           labelled sample data and stamped as a specimen, so you can read the
           real artefact — the ledger, the evidence register, the seven limits,
-          the audit instructions — before you have signed anything off.
+          the audit instructions — before you have completed anything.
         </p>
 
-        <div className="hl-signoff-actions">
-          <Link className="hl-btn" href="/legend/specimen/">
+        <div className="bz-actions">
+          <Link className="bz-btn" href="/legend/specimen/">
             OPEN THE SPECIMEN
           </Link>
         </div>
@@ -437,17 +494,17 @@ export default function LegendPage() {
           two sentences below are the whole prose personality budget for the
           site, spent here, once. It sits in the panel body rather than beside a
           heading, and it never speaks. */}
-      <section className="hl-panel" aria-labelledby="hl-legend-mark">
-        <div className="hl-panel-head">
-          <h2 id="hl-legend-mark" className="hl-panel-title">
-            Drawn by
+      <section className="bz-panel" aria-labelledby="hl-legend-mark">
+        <div className="bz-panel-head">
+          <h2 id="hl-legend-mark" className="bz-panel-title">
+            Marked by
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">LKM-01</p>
+          <p className="text-mark m-0 text-on-surface-faint">LKM-01</p>
         </div>
 
         <div className="flex items-center gap-4">
           <Lkm01 size={96} idPrefix="legend" />
-          <p className="m-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+          <p className="m-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
             LKM-01 (Lokum) is a 1-unit cube. It has drawn every figure in this
             curriculum.
           </p>
@@ -464,28 +521,28 @@ export default function LegendPage() {
         the sheet that already answers "what am I looking at". Nothing here
         praises anybody, because §12.14.1's register scans this route and
         because a curriculum that spends its credibility on a slogan has less of
-        it left for the sheets.
+        it left for the modules.
 
         The rows are `AFFILIATION`, in order. The order is the claim (§4), which
         is why neither this file nor the footer keeps a list of its own.
       */}
-      <section className="hl-panel" aria-labelledby="hl-legend-colophon">
-        <div className="hl-panel-head">
-          <h2 id="hl-legend-colophon" className="hl-panel-title">
+      <section className="bz-panel" aria-labelledby="hl-legend-colophon">
+        <div className="bz-panel-head">
+          <h2 id="hl-legend-colophon" className="bz-panel-title">
             Colophon
           </h2>
-          <p className="hl-mark m-0 text-ink-faint">Who publishes this</p>
+          <p className="text-mark m-0 text-on-surface-faint">Who publishes this</p>
         </div>
 
-        <dl className="m-0 max-w-[var(--width-prose)]">
+        <dl className="m-0 max-w-[var(--layout-measure)]">
           {AFFILIATION.map((affiliate) => (
             <div
               key={affiliate.name}
               className="flex items-baseline justify-between gap-4 border-b border-line py-2 last:border-b-0"
             >
-              <dt className="hl-mark flex-none text-ink-muted">{affiliate.role}</dt>
-              <dd className="m-0 font-display text-meta text-ink">
-                <a className="hl-link" href={affiliate.url}>
+              <dt className="text-mark flex-none text-on-surface-muted">{affiliate.role}</dt>
+              <dd className="m-0 text-meta text-on-surface">
+                <a className="bz-link" href={affiliate.url}>
                   {affiliate.name}
                 </a>
               </dd>
@@ -493,10 +550,10 @@ export default function LegendPage() {
           ))}
         </dl>
 
-        <p className="mt-4 mb-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-4 mb-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           The chain reads outward. LokumAI publishes this site and is part of
           Intellica; Intellica is a PIA Group company. The curriculum itself is
-          open source under the {LICENCE_LABEL}, and the sheets carry no
+          open source under the {LICENCE_LABEL}, and the modules carry no
           endorsement from any of the three.
         </p>
       </section>

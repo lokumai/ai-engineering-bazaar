@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { NAME_FROM_ADDRESS, RECORD_SCOPE } from '@/lib/record/scope'
 import { describe, expect, it } from 'vitest'
-import ProfilePage, { REGISTER_ROWS } from '@/app/profile/page'
+import ProfilePage, { REGISTER_GROUPS, REGISTER_ROWS } from '@/app/profile/page'
 import { DataPanel, printedDigestFrom } from '@/components/record/DataPanel'
 import { DrafterBlock } from '@/components/record/DrafterBlock'
 import { ERASE_COPY, EraseDialog } from '@/components/record/EraseDialog'
@@ -113,18 +113,20 @@ function cellOf(markup: string, id: string): string {
 
 /** The shared description line's own content, by the id every radio points at. */
 function noteLineOf(markup: string): string {
-  const found = /class="hl-markrow-note" id="[^"]*">(.*?)<\/p>/.exec(markup)
+  const found = /class="bz-markrow-note" id="[^"]*">(.*?)<\/p>/.exec(markup)
   expect(found, 'the shared description line').not.toBeNull()
   return (found as RegExpExecArray)[1]
 }
 
 /**
- * One register row's closed line, located by the id on its `h2`. The row is a
+ * One register row's closed line, located by the id on its heading. M22 made
+ * that an `h3`: the rows sit inside named groups now, and a flat list of
+ * thirteen `h2` peers was the defect. The row is a
  * `<summary>`, so this is exactly the text a reader sees before opening
  * anything — which is what §16.4.1 is a rule about.
  */
 function summaryOf(markup: string, id: string): string {
-  const found = new RegExp(`<summary[^>]*><h2 id="${id}"[\\s\\S]*?</summary>`).exec(markup)
+  const found = new RegExp(`<summary[^>]*><h3 id="${id}"[\\s\\S]*?</summary>`).exec(markup)
   expect(found, id).not.toBeNull()
   return (found as RegExpExecArray)[0]
 }
@@ -147,7 +149,7 @@ describe('§12.2 — the honest empty first frame of every panel', () => {
     // The identity line only — the picker below it draws six named glyphs,
     // which are facts about the vocabulary rather than about the reader.
     const line = IDENTITY.split('<dl')[0]
-    expect(line).toContain('hl-identity')
+    expect(line).toContain('bz-identity')
     expect(line).not.toContain('<svg')
     expect(line).not.toContain('?')
   })
@@ -166,8 +168,8 @@ describe('§12.2 — the honest empty first frame of every panel', () => {
     expect(text).toContain('Safari deletes it after seven days without a visit.')
     expect(text).toContain('Export your record to a file to keep it.')
     // Not dismissible, no icon, no caution colour: a note, one painted rule.
-    expect(IDENTITY).toContain('class="hl-note"')
-    expect(IDENTITY).not.toMatch(/dismiss|hl-btn-danger|role="alert"/)
+    expect(IDENTITY).toContain('class="bz-note"')
+    expect(IDENTITY).not.toMatch(/dismiss|bz-btn bz-btn-danger|role="alert"/)
   })
 
   it('carries §12.1.7’s export-boundary sentence beside the field', () => {
@@ -184,14 +186,14 @@ describe('§12.2 — the honest empty first frame of every panel', () => {
   })
 
   it('prints the raw keys as unread rather than as empty (§12.11 item 7)', () => {
-    expect(occurrences(RAW, /<pre class="hl-raw">--<\/pre>/g)).toBe(2)
+    expect(occurrences(RAW, /<pre class="bz-raw">--<\/pre>/g)).toBe(2)
     expect(words(RAW)).toContain('hl-record')
     expect(words(RAW)).toContain('hl-record-quarantine')
   })
 
   it('states an empty register instead of nagging for one (§12.9.1)', () => {
-    expect(REGISTER).toContain('NO SUBMITTAL REGISTERED')
-    expect(REGISTER).toContain('hl-submittal-empty')
+    expect(REGISTER).toContain('NOTHING ADDED YET')
+    expect(REGISTER).toContain('bz-submittal-empty')
     // No table at all when there is nothing in it: a header row over no rows
     // is a claim that there are columns worth reading.
     expect(REGISTER).not.toContain('<table')
@@ -236,13 +238,13 @@ describe('§12.13, §12.15 — the export control at zero data', () => {
 
 describe('§12.3.3 — the name field', () => {
   it('has a visible, persistent label and no placeholder standing in for one', () => {
-    expect(IDENTITY).toContain('class="hl-field-label"')
+    expect(IDENTITY).toContain('class="bz-field-label"')
     expect(words(IDENTITY)).toContain('Name or initials, as you would sign a drawing')
     expect(IDENTITY).not.toMatch(/placeholder=/i)
   })
 
   it('is marked optional IN WORDS, never by the absence of an asterisk', () => {
-    expect(IDENTITY).toContain('<span class="hl-field-optional">Optional</span>')
+    expect(IDENTITY).toContain('<span class="bz-field-optional">Optional</span>')
     expect(IDENTITY).not.toContain('*')
   })
 
@@ -259,7 +261,7 @@ describe('§12.3.3 — the name field', () => {
   })
 
   it('shows no error before a submit: validation is on submit only', () => {
-    expect(IDENTITY).not.toContain('hl-field-error')
+    expect(IDENTITY).not.toContain('bz-field-error')
     expect(IDENTITY).toContain('data-invalid="false"')
   })
 
@@ -273,7 +275,7 @@ describe('§12.3.3 — the name field', () => {
 
   it('states what an edit reaches and what it cannot (§12.3.2, §12.3.5)', () => {
     const text = words(IDENTITY)
-    expect(text).toContain('It does not change the dates sheets were signed off on')
+    expect(text).toContain('It does not change the dates modules were completed on')
     expect(text).toContain('it does not change the mark')
   })
 })
@@ -454,7 +456,7 @@ describe('§16.2.1 — the offered mark is a marking, and it is words', () => {
   })
 
   it('carries the offer into the shared description, which is not aria-hidden', () => {
-    const note = /class="hl-markrow-note" id="[^"]*">(.*?)<\/p>/.exec(
+    const note = /class="bz-markrow-note" id="[^"]*">(.*?)<\/p>/.exec(
       MARK_OFFERED_SEEDED,
     ) as RegExpExecArray
     expect(words(note[1])).toContain('OFFERED FOR YOUR ROLE')
@@ -506,7 +508,7 @@ describe('§12.1.2 — the quarantine state, the only surface that discloses it'
 
 describe('§12.15 — the erase dialog', () => {
   it('offers one danger control, and it is the trigger', () => {
-    expect(ERASE_TRIGGER).toContain('hl-btn hl-btn-danger')
+    expect(ERASE_TRIGGER).toContain('bz-btn bz-btn-danger')
     expect(ERASE_TRIGGER).toContain(`>${ERASE_COPY.trigger}<`)
     expect(ERASE_TRIGGER).toContain('aria-haspopup="dialog"')
   })
@@ -588,7 +590,7 @@ describe('§12.15, §12.12.5 — the content digest, read back out of a file', (
   })
 })
 
-describe('§12.9.2 — the register’s link is reconstructed, never echoed', () => {
+describe('§12.9.2 — the repository link is reconstructed, never echoed', () => {
   it('builds the href and the label from the two validated segments alone', () => {
     expect(repoUrl({ owner: 'lokumai', repo: 'ai-engineering-bazaar' })).toBe(
       'https://github.com/lokumai/ai-engineering-bazaar',
@@ -607,7 +609,7 @@ describe('§12.9.2 — the register’s link is reconstructed, never echoed', ()
 describe('§12.1.6, §11.35 — the storage panel prints bytes and nothing else', () => {
   it('draws no percentage, gauge, ring or fill bar', () => {
     expect(STORAGE).not.toContain('%')
-    expect(STORAGE).not.toMatch(/progressbar|meter|hl-gauge|hl-uptime|<svg/)
+    expect(STORAGE).not.toMatch(/progressbar|meter|bz-gauge|bz-uptime|<svg/)
   })
 })
 
@@ -616,7 +618,7 @@ describe('§12.1.6, §11.35 — the storage panel prints bytes and nothing else'
  *
  * **What the two assertions below replaced, and why they are not a list any
  * more.** Both pinned the eleven panels as a hand-typed sequence: eleven
- * `hl-panel-title` strings in order, and the same eleven ids again as a second
+ * `bz-panel-title` strings in order, and the same eleven ids again as a second
  * literal. §16 folds nine of those panels into register rows, so a list would
  * have had to be retyped — and a list retyped is a second author of an order the
  * page already holds. `REGISTER_ROWS` is exported from `profile/page.tsx` for
@@ -628,29 +630,61 @@ describe('§12.1.6, §11.35 — the storage panel prints bytes and nothing else'
  * values, Export/import/erase, Keyboard — because a reader who has been here
  * before finds a row by where it sits. `toEqual` over an array, never a set.
  */
-describe('§16.1, §16.4 — the page itself: the drafter block, then the register', () => {
+describe('§16.1, §16.4 — the page itself: the account block, then your progress', () => {
   it('prints its own chord beside its title (§12.16)', () => {
     expect(PAGE).toContain('>G P<')
-    expect(PAGE).toContain('Profile')
+    // M14 — one progress-and-account route where there were four, and the
+    // title is what it is for rather than what the URL is called.
+    expect(PAGE).toContain('Your progress')
   })
 
   it('renders exactly REGISTER_ROWS, in exactly that order', () => {
-    const rows = [...PAGE.matchAll(/<h2 id="([^"]+)" class="hl-register-name">([^<]+)</g)]
+    const rows = [...PAGE.matchAll(/<h3 id="([^"]+)" class="bz-register-name">([^<]+)</g)]
       .map(([, id, name]) => ({ id, name }))
     expect(rows).toEqual(REGISTER_ROWS.map(({ id, name }) => ({ id, name })))
-    // A row is a `<details>` and there are no others on this page, so the count
-    // is also the count of folds — a row rendered outside the register, or a
-    // row in the table and not rendered, moves one of these two numbers.
-    expect(occurrences(PAGE, /<details/g)).toBe(REGISTER_ROWS.length)
+
+    /* M22 — **and every row is under the group it names.** The table is one
+       flat ordered list with a `group` field rather than a nesting, so the
+       sequence above is still the specification; what this adds is that the
+       rendering honours the field. A row assigned to a group the page does not
+       render would vanish silently, which is the exact failure the milestone's
+       inventory exists to prevent. */
+    for (const group of REGISTER_GROUPS) {
+      const heading = PAGE.indexOf(`id="${group.id}"`)
+      expect(heading, `${group.id} has no heading on the page`).toBeGreaterThan(-1)
+      for (const row of REGISTER_ROWS.filter((one) => one.group === group.id)) {
+        expect(PAGE.indexOf(`id="${row.id}"`), `${row.id} is not under ${group.id}`)
+          .toBeGreaterThan(heading)
+      }
+    }
+    // Every row is a `bz-register-fold` and nothing else on the page is, so
+    // the count is the count of rows — a row rendered outside the register, or
+    // a row in the table and not rendered, moves one of these two numbers.
+    //
+    // Counted on the CLASS rather than on `<details`, which is what it was
+    // until M14: the rows that arrived with the fold of `/dashboard/` bring
+    // disclosures of their own inside their bodies (the diagram's dependency
+    // table is one), and a bare `<details` count would have made this
+    // assertion about how many nested folds the page's panels happen to use.
+    expect(occurrences(PAGE, /class="bz-register-fold"/g)).toBe(REGISTER_ROWS.length)
   })
 
-  it('opens with the drafter block and closes every register row', () => {
+  it('opens with the account block and closes every row', () => {
     // §16.4: the rows are always closed on arrival. `<details open>` is the
     // single-attribute mutation this catches.
     expect(PAGE).not.toContain('<details open')
     expect(PAGE.indexOf('id="drafter"')).toBeGreaterThan(-1)
-    expect(PAGE.indexOf('id="drafter"')).toBeLessThan(PAGE.indexOf('id="register"'))
-    expect(PAGE.indexOf('id="register"')).toBeLessThan(PAGE.indexOf('<details'))
+
+    /* M22 — **`id="register"` no longer exists**, and that is the milestone
+       rather than a rename. One heading reading `What else is on record` sat
+       over thirteen rows of four different kinds; it named the container and
+       not the contents, which is what let a reader open rows until they found
+       their export. There are five group headings now, each naming what is
+       inside it, so the ordering is asserted against the FIRST of them. */
+    const firstGroup = PAGE.indexOf(`id="${REGISTER_GROUPS[0].id}"`)
+    expect(firstGroup, 'the register has no group headings').toBeGreaterThan(-1)
+    expect(PAGE.indexOf('id="drafter"')).toBeLessThan(firstGroup)
+    expect(firstGroup).toBeLessThan(PAGE.indexOf('class="bz-register-fold"'))
   })
 
   it('resolves every aria-labelledby against an id in the same document', () => {
@@ -663,7 +697,7 @@ describe('§16.1, §16.4 — the page itself: the drafter block, then the regist
   })
 
   it('gives every heading id exactly one reference, so no anchor is ambiguous', () => {
-    // Hazard 2's other half. `hl-orgs-head` and `hl-account-head` are pointed at
+    // Hazard 2's other half. `bz-orgs-head` and `bz-account-head` are pointed at
     // from elsewhere in the tree, and `AuthShell` drops both in inline chrome so
     // that the register row and the drafter half own them. Two elements carrying
     // one id is not redundancy: the browser jumps to whichever comes first.
@@ -687,7 +721,12 @@ describe('§16.1, §16.4 — the page itself: the drafter block, then the regist
   it('states a reading on every closed row (§16.4.1)', () => {
     for (const { id } of REGISTER_ROWS) {
       const summary = summaryOf(PAGE, id)
-      const reading = /class="hl-register-reading">([\s\S]*?)<\/span>/.exec(summary)
+      // `[^>]*` between the class and the `>`: the span carries `data-reading`
+      // too, and a pattern that assumed the tag ended right after the class
+      // stopped matching the moment it did — reporting `null` rather than a
+      // blank reading, which is the same failure shape as a selector inside a
+      // regex going quietly stale.
+      const reading = /class="bz-register-reading"[^>]*>([\s\S]*?)<\/span>/.exec(summary)
       expect(reading, id).not.toBeNull()
       expect(words((reading as RegExpExecArray)[1]).trim(), id).not.toBe('')
     }
@@ -717,7 +756,7 @@ describe('§16.1, §16.4 — the page itself: the drafter block, then the regist
    * — the mark row and §13.3's role picker, which `path.spec.ts:48` pins at
    * nine options and hazard H-N keeps to a single group.
    */
-  it('draws the mark picker once and only once on the whole sheet (§16.2.2)', () => {
+  it('draws the mark picker once and only once on the whole module (§16.2.2)', () => {
     const marks = [...PAGE.matchAll(/<label[^>]*data-hl-mark="([^"]+)"/g)].map(([, id]) => id)
     expect(marks).toEqual([...MARK_PICKER_IDS])
     // Every occurrence of the attribute is one of those labels: a nested copy
@@ -728,21 +767,75 @@ describe('§16.1, §16.4 — the page itself: the drafter block, then the regist
     expect(occurrences(PAGE, /name="hl-mark"/g)).toBe(MARK_PICKER_IDS.length)
   })
 
-  it('keeps one h1 and puts the block above the register in the outline (§16.7)', () => {
+  it('keeps one h1 and skips no level in the outline (§16.7)', () => {
     expect(occurrences(PAGE, /<h1/g)).toBe(1)
-    // The block is an h2 with two h3 halves; every register row is an h2. No h4
-    // anywhere, because nothing on this sheet is three levels deep.
-    expect(occurrences(PAGE, /<h3/g)).toBe(2)
-    expect(PAGE).not.toContain('<h4')
+
+    /* **M22 replaced a depth cap with the property the cap stood for.**
+       This read "no `h4`, because M14 folded three routes in here without
+       adding a level". M22 added one on purpose: the thirteen register rows
+       became `h3` under five group headings, because a flat list of thirteen
+       `h2` peers is exactly what a reader navigating by heading hears as "a
+       mess", and a visual grouping alone would have left that outline
+       untouched. The rows' own panels then had to move to `h4`, or a reader
+       leaving `Record of work` landed on something that read like a new
+       section of the page.
+
+       A depth cap was never the invariant — a SKIPPED LEVEL is. An outline
+       that goes h2 → h4 is broken at any depth, and one that goes h1 → h2 →
+       h3 → h4 is sound at four. So the levels are read in document order and
+       every step down is checked to be one. */
+    const levels = [...PAGE.matchAll(/<h([1-6])[ >]/g)].map(([, digit]) => Number(digit))
+    expect(levels.length, 'no headings found, so nothing was checked')
+      .toBeGreaterThan(REGISTER_ROWS.length)
+    expect(levels[0], 'the page does not open on its h1').toBe(1)
+
+    const skipped = levels
+      .map((level, i) => ({ level, previous: levels[i - 1] ?? level }))
+      .filter((step) => step.level - step.previous > 1)
+      .map((step) => `h${step.previous} → h${step.level}`)
+    expect(skipped, 'the outline skips a level').toEqual([])
+
+    /* **AND THE INVERSION, which the check above cannot see.** A review proved
+       it: putting `ReportPanel`'s three headings back to `h2` — the defect M22
+       says it fixed — produces ZERO downward skips, because h3 → h2 is a step
+       UP and that check is one-directional. Nothing else pinned those levels,
+       so the fix was unguarded.
+
+       A heading inside a register row may not outrank the row it sits in.
+       Stated as the RELATION rather than as a level, so it survives §16.7
+       gaining or losing one. */
+    const levelOf = new Map(
+      [...PAGE.matchAll(/<h([1-6])[^>]*id="([^"]+)"/g)]
+        .map(([, level, id]) => [id, Number(level)] as const),
+    )
+    const rowLevels = REGISTER_ROWS
+      .map((row) => levelOf.get(row.id))
+      .filter((level): level is number => level !== undefined)
+    expect(rowLevels.length, 'no register row carries a heading').toBe(REGISTER_ROWS.length)
+
+    const deepestRow = Math.max(...rowLevels)
+    const outranking = [...levelOf.entries()]
+      .filter(([id, level]) => id.startsWith('hl-report-') && level <= deepestRow)
+      .map(([id, level]) => `${id} is h${level}, the rows are h${deepestRow}`)
+    expect(outranking, 'a panel heading outranks the register row it is inside').toEqual([])
   })
 
-  it('omits TRACES, which only the dashboard can count (§11.25)', () => {
-    expect(PAGE).not.toContain('Traces')
+  /**
+   * M14 — `TRACES` used to be absent from this page, because only the
+   * dashboard built the graph and a dash standing in for a number nobody
+   * counted is what §11.25 forbids. The dashboard folded in here, so the cell
+   * is now on this page — and it must appear ONLY inside the row that counts
+   * it, which is the same rule stated where the graph now lives.
+   */
+  it('prints TRACES only inside the row that counts it (§11.25, §5.8)', () => {
+    const row = PAGE.slice(PAGE.indexOf('id="diagram"'), PAGE.indexOf('id="report"'))
+    expect(row).toContain('Traces')
+    expect(occurrences(PAGE, /Traces/g)).toBe(occurrences(row, /Traces/g))
   })
 
   it('is inside the shell, so it has a main region and a footer', () => {
     expect(PAGE).toContain('id="main"')
-    expect(PAGE).toContain('hl-readout')
+    expect(PAGE).toContain('bz-readout')
   })
 })
 
@@ -793,7 +886,7 @@ describe('§12.14.1 — the copy register, over every string this task authors',
     ['DATA_READING', DATA_READING],
     // And every closed row's own line: the name and the reading it states.
     ...REGISTER_ROWS.map(
-      ({ id }): [string, string] => [`register row ${id}`, words(summaryOf(PAGE, id))],
+      ({ id }): [string, string] => [`row ${id}`, words(summaryOf(PAGE, id))],
     ),
   ]
 
@@ -867,7 +960,7 @@ describe('§12.14.1 — the copy register, over every string this task authors',
    * drawing's two mono lines, the drafter halves' marks — without any of them
    * being enrolled by hand.
    */
-  it('ends every readout on the sheet without a full stop', () => {
+  it('ends every readout on the module without a full stop', () => {
     const found = readouts(PAGE)
     // A floor, so a broken extractor reads as a failure rather than as a page
     // with nothing to check: every register row prints one, at least.
@@ -875,7 +968,7 @@ describe('§12.14.1 — the copy register, over every string this task authors',
     for (const readout of found) expect(readout, readout).not.toMatch(/\.$/)
     // The three the old fixed list named are still among them, so the property
     // did not become weaker than the assertion it replaced.
-    for (const readout of ['NO NAME ON RECORD', 'NO SUBMITTAL REGISTERED', NO_SEED_MINTED]) {
+    for (const readout of ['NO NAME ON RECORD', 'NOTHING ADDED YET', NO_SEED_MINTED]) {
       expect(found, readout).toContain(readout)
     }
   })

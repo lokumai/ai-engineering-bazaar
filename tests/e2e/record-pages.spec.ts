@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { type Page, expect, test } from '@playwright/test'
 import { REGISTER_ROWS } from '@/app/profile/page'
+import { DRAFTER_HEADING_ID } from '@/components/record/DrafterBlock'
 import {
   QUARANTINE_KEY,
   RECORD_KEY,
@@ -17,6 +18,7 @@ import {
   slugOf,
 } from './record'
 import { CATEGORY_PATHS, DRAWN_COUNT, SHEETS, SHEET_COUNT, sheetByModule } from './sheets'
+import { QUARANTINE_COPY } from '@/components/record/ProfilePanels'
 import { watchPage } from './watch'
 
 /**
@@ -96,7 +98,7 @@ async function storedData(page: Page): Promise<RecordData | null> {
  * see, not an inference from a side effect.
  */
 async function settled(page: Page): Promise<RecordData> {
-  await expect(page.locator('.hl-readout[data-hydrated="true"]').first()).toBeAttached()
+  await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
   return (await storedData(page)) as RecordData
 }
 
@@ -138,7 +140,7 @@ const SEEDED: RecordSeed = {
       signedOff: '2026-07-20T11:30:00.000Z',
       signedRevision: 'bc23de4',
       quiz: {
-        answer: 'Retrieval before generation, and the sheet says why.',
+        answer: 'Retrieval before generation, and the module says why.',
         assessed: 'matched',
         at: '2026-07-20T11:20:00.000Z',
       },
@@ -159,7 +161,7 @@ const SEEDED: RecordSeed = {
           repo: 'hidden-line',
           url: 'https://github.com/cevheri/hidden-line',
           commit: '9f2c1ab',
-          note: 'A prompt-injection harness for the sheet 13 criteria.',
+          note: 'A prompt-injection harness for the module 13 criteria.',
           at: '2026-08-11T16:00:00.000Z',
         },
       ],
@@ -168,7 +170,7 @@ const SEEDED: RecordSeed = {
   days: ['2026-07-01', '2026-07-20', '2026-08-11'],
 }
 
-/** The `<dd>` beside a `<dt>`, matched on the DOM's own text: `.hl-defs`
+/** The `<dd>` beside a `<dt>`, matched on the DOM's own text: `.bz-defs`
  * uppercases in CSS, so the source still reads `Last export`. */
 function definition(page: Page, scope: string, term: string): Promise<string | null> {
   return page.evaluate(
@@ -186,17 +188,33 @@ function definition(page: Page, scope: string, term: string): Promise<string | n
 }
 
 // ===========================================================================
-// §12.10 — THE DASHBOARD
+// §12.10 — THE CURRICULUM DIAGRAM
 // ===========================================================================
 
 const DIAGRAM = 'svg[role="graphics-document"]'
+
+/**
+ * M14 — the diagram, opened.
+ *
+ * It was `/dashboard/`'s centrepiece; that route folded into `/profile/` and
+ * the drawing is the `diagram` row of its register. Every assertion below is
+ * the same claim about the same drawing — it moved rather than changing — but a
+ * closed `<details>` has no box, so the row has to be opened before anything
+ * measures geometry, focus or visibility. `openRegisterRow` is idempotent and
+ * waits for the body to be rendered, which is why it is the gesture rather
+ * than a click on the summary.
+ */
+async function openDiagram(page: Page): Promise<void> {
+  await page.goto('/profile/')
+  await openRegisterRow(page, 'diagram')
+}
 
 test('§12.10.1 — the diagram is a graphics-document, and role="img" appears nowhere on it', async ({
   page,
 }) => {
   const problems = watchPage(page)
   await seedRecord(page, SEEDED)
-  await page.goto('/dashboard/')
+  await openDiagram(page)
 
   const svg = page.locator(DIAGRAM)
   await expect(svg).toHaveCount(1)
@@ -225,7 +243,7 @@ test('§12.10.1 — the diagram is a graphics-document, and role="img" appears n
   })
   expect(names.labelledby).not.toBe('')
   expect(names.describedby).not.toBe('')
-  expect(names.title).toContain(`${SHEET_COUNT} sheets`)
+  expect(names.title).toContain(`${SHEET_COUNT} modules`)
   expect(names.desc.length).toBeGreaterThan(40)
 
   expect(problems.consoleErrors).toEqual([])
@@ -236,7 +254,7 @@ test('§12.10.1 — every band is a graphics-object and states its own counted t
   page,
 }) => {
   await seedRecord(page, SEEDED)
-  await page.goto('/dashboard/')
+  await openDiagram(page)
 
   const bands = page.locator(`${DIAGRAM} > g[role="graphics-object"]`)
   await expect(bands).toHaveCount(CATEGORY_PATHS.length)
@@ -246,7 +264,7 @@ test('§12.10.1 — every band is a graphics-object and states its own counted t
   )
   for (const label of labels) {
     // §12.10.1's exact form. Both numbers are counted, never typed (§11.25).
-    expect(label).toMatch(/^Subsystem \d\d — .+ — \d+ of \d+ signed off$/)
+    expect(label).toMatch(/^Level \d\d — .+ — \d+ of \d+ completed$/)
   }
 
   // The record is in the labels, which is the only place a screen-reader user
@@ -262,7 +280,7 @@ test('§12.10.1 — every band is a graphics-object and states its own counted t
     SHEETS.filter((sheet) => sheet.category === category).length
 
   for (const category of ['fundamentals', 'intermediate']) {
-    const stated = new RegExp(`— ${signedIn(category)} of ${sizeOf(category)} signed off$`)
+    const stated = new RegExp(`— ${signedIn(category)} of ${sizeOf(category)} completed$`)
     expect(labels.filter((label) => stated.test(label)), category).toHaveLength(1)
   }
 })
@@ -271,7 +289,7 @@ test('§12.10.1 — every node is named from aria-label, never from its visible 
   page,
 }) => {
   await seedRecord(page, SEEDED)
-  await page.goto('/dashboard/')
+  await openDiagram(page)
 
   const nodes = page.locator(`${DIAGRAM} g[role="graphics-symbol"]`)
   await expect(nodes).toHaveCount(SHEET_COUNT)
@@ -286,26 +304,31 @@ test('§12.10.1 — every node is named from aria-label, never from its visible 
 
   for (const [index, node] of read.entries()) {
     const sheet = SHEETS[index]
-    expect(node.label, `sheet ${sheet.module} has no accessible name`).not.toBe('')
+    expect(node.label, `module ${sheet.module} has no accessible name`).not.toBe('')
     // The visible `<text>` is the zero-padded module number and does NOT
     // compute into the accessible name, so the name has to carry everything a
     // reader of the drawing gets for free — the title and the state.
     expect(node.visible).toMatch(/^\d\d$/)
     expect(node.label).not.toBe(node.visible)
-    expect(node.label).toContain(`Sheet ${sheet.module}`)
+    expect(node.label).toContain(`Module ${sheet.module}`)
     expect(node.label).toContain(sheet.title)
     expect(node.id).toBe(`hl-node-${sheet.path.split('/').slice(2, 4).join('-')}`)
   }
 
-  // §12.10.1's state clause, for the three sheets this record holds.
-  expect(read[0].label).toContain('signed off 2026-07-01')
-  expect(read[12].label).toContain('signed off 2026-08-11')
-  expect(read[15].label).toContain('not drawn')
+  // §12.10.1's state clause, for the sheets this record holds. Found by route,
+  // not by position: these were `read[0]`, `read[12]` and `read[15]` until the
+  // September 2026 reorder moved Security from 13 to 15 and turned 16 into a
+  // drawn sheet, at which point two of the three were asserting about the
+  // wrong module.
+  const at = (path: string) => read[SHEETS.findIndex((sheet) => sheet.path === path)]
+  expect(at('/courses/fundamentals/llms/').label).toContain('completed 2026-07-01')
+  expect(at('/courses/intermediate/security/').label).toContain('completed 2026-08-11')
+  expect(read[SHEETS.findIndex((sheet) => !sheet.drawn)].label).toContain('planned')
 })
 
 test('§12.10.2 — the whole diagram is one tab stop', async ({ page }) => {
   await seedRecord(page, SEEDED)
-  await page.goto('/dashboard/')
+  await openDiagram(page)
 
   const tabindexes = await page
     .locator(`${DIAGRAM} g[role="graphics-symbol"]`)
@@ -322,7 +345,7 @@ test('§12.10.2 — ArrowRight moves within a band, ArrowDown moves between band
   page,
 }) => {
   await seedRecord(page, SEEDED)
-  await page.goto('/dashboard/')
+  await openDiagram(page)
 
   const focusedId = () => page.evaluate(() => document.activeElement?.id ?? null)
   const roving = () =>
@@ -357,9 +380,9 @@ test('§12.10.2 — ArrowRight moves within a band, ArrowDown moves between band
   expect((await focusedId())!.startsWith('hl-node-fundamentals-')).toBe(true)
 })
 
-test('§12.10.2 — Enter on a focused node opens that sheet', async ({ page }) => {
+test('§12.10.2 — Enter on a focused node opens that module', async ({ page }) => {
   await seedRecord(page, SEEDED)
-  await page.goto('/dashboard/')
+  await openDiagram(page)
 
   await page.locator(`${DIAGRAM} g[role="graphics-symbol"][tabindex="0"]`).focus()
   await page.keyboard.press('Enter')
@@ -372,9 +395,9 @@ test('§12.10.3 — the table equivalent is in the DOM with the disclosure close
   page,
 }) => {
   await seedRecord(page, SEEDED)
-  await page.goto('/dashboard/')
+  await openDiagram(page)
 
-  const details = page.locator('details.hl-diagram-table')
+  const details = page.locator('details.bz-diagram-table')
   await expect(details).toHaveCount(1)
   // Closed on arrival, and mandatory rather than optional: it is the only form
   // in which a reader can VERIFY a dependency claim, and it is what serialises
@@ -397,7 +420,7 @@ test('§12.10.3 — the table equivalent is in the DOM with the disclosure close
     await details.locator('thead th').evaluateAll((nodes) =>
       nodes.map((node) => (node.textContent ?? '').trim()),
     ),
-  ).toEqual(['#', 'Sheet', 'Subsystem', 'State', 'Requires', 'Feeds'])
+  ).toEqual(['#', 'Module', 'Level', 'State', 'Requirements', 'Unlocks'])
 
   await details.locator('summary').click()
   await expect(rows.first()).toBeVisible()
@@ -455,7 +478,7 @@ test('§12.10 — the emitted geometry is byte-identical across two loads', asyn
     }, { coordinates: COORDINATES })
 
   await seedRecord(page, SEEDED)
-  await page.goto('/dashboard/')
+  await openDiagram(page)
   // §12.2 channel B: the record reaches the drawing after the hydration commit,
   // so both captures have to be taken on the same side of it. Otherwise this
   // test compares a pre-hydration frame with a post-hydration one and reports a
@@ -478,23 +501,39 @@ test('§12.10 — the emitted geometry is byte-identical across two loads', asyn
   expect(first!.floats).toEqual([])
 })
 
-test('§12.10.6 — CONTINUE names the next ready sheet that is not signed off', async ({ page }) => {
+/**
+ * M13/M14 — `ContinueLine` is on the HOME page now, not on a progress page.
+ *
+ * It was the dashboard's one line above the graph. The dashboard folded into
+ * `/profile/` and the line did not go with it: a reader who wants the next
+ * module is on the front door, not on the page about their own record, and home
+ * A shows it inside `.bz-home-continue` — the one block on that page keyed off
+ * `data-hl-record`, so a reader with no record is not offered a shortcut into a
+ * course they have not started.
+ *
+ * The claim is unchanged and so is the component; only the surface moved.
+ */
+test('§12.10.6 — CONTINUE names the next ready module that is not completed', async ({ page }) => {
   await seedRecord(page, SEEDED)
-  await page.goto('/dashboard/')
+  /* M18 — `/profile/` and not `/`. The home page's one-line `ContinueLine` went
+     with the rest of the reader-state block; the SAME DERIVATION is the hero at
+     the top of this page (`ContinueHero`, and `nextUnsigned` is the function
+     both called). So the claim did not move surface so much as lose its second
+     drawing — which is why the assertions below read the hero's parts rather
+     than the line's sentence. */
+  await page.goto('/profile/')
 
-  // Sheets 1, 8 and 13 are signed off in this record, so the next ready sheet
-  // is 2. The link text carries the number as well as the title, which is what
-  // makes it unambiguous against the 32 titles in the table below it.
+  // Modules 1, 8 and 13 are completed in this record, so the next ready one is
+  // 2 — stated by the hero's ordinal, its title, and the target of its control.
   const next = sheetByModule(2)
-  const link = page.getByRole('link', { name: `Sheet 02 · ${next.title}` })
-  await expect(link).toHaveCount(1)
-  await expect(link).toBeVisible()
-  await expect(link).toHaveAttribute('href', next.path)
-  // One line, above the graph.
-  await expect(page.locator('p', { has: link })).toContainText(/^Continue Sheet 02 · /)
+  const hero = page.locator('.bz-cont')
+  await expect(hero).toHaveCount(1)
+  await expect(hero.locator('.bz-cont-num')).toHaveText('02')
+  await expect(hero.locator('.bz-cont-title')).toHaveText(next.title)
+  await expect(hero.getByRole('link', { name: 'Continue' })).toHaveAttribute('href', next.path)
 })
 
-test('§12.10.6 — CONTINUE is absent when there is no next sheet', async ({ page }) => {
+test('§12.10.6 — CONTINUE is absent when there is no next module', async ({ page }) => {
   // Every drawn sheet signed off. §12.10.6 makes the line ABSENT rather than
   // congratulatory, and its absence is the whole design: it is cheap, and it is
   // the first thing a returning senior engineer notices.
@@ -508,15 +547,16 @@ test('§12.10.6 — CONTINUE is absent when there is no next sheet', async ({ pa
   }
 
   await seedRecord(page, { identity: { name: READER }, sheets: everything })
-  await page.goto('/dashboard/')
+  await page.goto('/profile/')
 
-  // The drawing has to have taken the record on board before an absence means
-  // anything: on the server frame nothing is signed off and CONTINUE is there.
-  await expect(
-    page.locator(`${DIAGRAM} g[role="graphics-symbol"][data-state="signed"]`),
-  ).toHaveCount(SHEETS.filter((sheet) => sheet.drawn).length)
-  await expect(page.getByRole('link', { name: /^Sheet \d\d · / })).toHaveCount(0)
-  await expect(page.getByText('Continue', { exact: false })).toHaveCount(0)
+  // The island has to have taken the record on board before an absence means
+  // anything: on the server frame nothing is completed and CONTINUE is there.
+  // Control C's own ticks are the witness — one per completed module, all of
+  // them channel A — and they are painted from the same record.
+  await expect(page.locator('.bz-cmod .bz-cmod-mark:visible')).toHaveCount(
+    SHEETS.filter((sheet) => sheet.drawn).length,
+  )
+  await expect(page.locator('.bz-cont')).toHaveCount(0)
 })
 
 // ===========================================================================
@@ -527,7 +567,7 @@ test('§12.10.6 — CONTINUE is absent when there is no next sheet', async ({ pa
  * §16.4 — the register, from the outside.
  *
  * **What these three tests replace.** One assertion pinned the eleven panel ids
- * as an ordered sequence off `main section.hl-panel h2.hl-panel-title`. §16
+ * as an ordered sequence off `main section.bz-panel h2.bz-panel-title`. §16
  * folded nine of those panels into `<details>` rows and moved two into the
  * drafter block, so that selector now matches a different set of things and the
  * sequence it pinned no longer exists. Order is still part of the
@@ -555,22 +595,35 @@ const NO_READING = '--'
  * §16.4.1 — what a summary line is allowed to say: a count, `--`, or a named
  * state. Never nothing, and never a sentence of prose.
  *
- * Three alternatives rather than one regular expression, because they are three
- * different claims and a failure should say which one it is. The reading is read
- * with `innerText`, so `.hl-register-reading`'s `text-transform: uppercase` has
- * already been applied — the components write `Software Engineer` and the reader
- * sees `SOFTWARE ENGINEER`, which is why the named-state branch is an uppercase
- * test and prose fails it.
+ * THIS USED TO ASK ABOUT CASING, and it could, because the readings were
+ * pre-cased to match a class that uppercased them: capitals meant a named
+ * state and a lowercase sentence meant prose. M16's design language has no
+ * uppercase anywhere, so in sentence case "Software Engineer" and a sentence
+ * of prose are the same shape and the distinction was gone.
+ *
+ * So the row states which of the three it is, in `data-reading`, and this asks
+ * by that — the project's own lesson about asking by location rather than by
+ * what the text says. What is left for the text to prove is the part a kind
+ * cannot: a `count` really does carry a digit or the no-reading dash, and no
+ * reading of any kind runs to the length of a sentence.
  */
-function isReading(text: string): boolean {
+const READING_WORD_CEILING = 6
+
+function isReading(text: string, kind: string): boolean {
   if (text === NO_READING) return true
-  if (/\d/.test(text)) return true
-  return /^[A-Z][A-Z0-9 ·'’,./()+-]*$/.test(text)
+  if (kind === 'count') return /\d/.test(text)
+  if (kind === 'none') return false
+  // A named state: short, and not a sentence — no terminal punctuation and no
+  // more words than a label can carry.
+  if (/[.!?]$/.test(text)) return false
+  return text.split(/\s+/).length <= READING_WORD_CEILING
 }
 
 interface RowSnapshot {
   /** The summary reading, as the reader sees it. */
   reading: string
+  /** Which of §16.4.1's three shapes the row says it is. */
+  kind: string
   /**
    * Everything the row's body states, whether the row is open or closed.
    *
@@ -588,11 +641,12 @@ interface RowSnapshot {
 
 function registerSnapshot(page: Page): Promise<Record<string, RowSnapshot>> {
   return page.evaluate(() => {
-    const out: Record<string, { reading: string; body: string }> = {}
-    for (const row of document.querySelectorAll('section.hl-register-row')) {
+    const out: Record<string, { reading: string; kind: string; body: string }> = {}
+    for (const row of document.querySelectorAll('section.bz-register-row')) {
       const id = row.getAttribute('aria-labelledby') ?? ''
-      const reading = row.querySelector('.hl-register-reading') as HTMLElement | null
-      const body = row.querySelector('.hl-register-body')
+      const reading = row.querySelector('.bz-register-reading') as HTMLElement | null
+      const kind = reading?.getAttribute('data-reading') ?? ''
+      const body = row.querySelector('.bz-register-body')
       const parts = [(body?.textContent ?? '').replace(/\s+/g, ' ').trim()]
       const stateful = body?.querySelectorAll(
         'input, [aria-label], [data-active], [data-state], [data-hl-selected]',
@@ -610,7 +664,7 @@ function registerSnapshot(page: Page): Promise<Record<string, RowSnapshot>> {
           ].join(':'),
         )
       }
-      out[id] = { reading: (reading?.innerText ?? '').trim(), body: parts.join('\n') }
+      out[id] = { reading: (reading?.innerText ?? '').trim(), kind, body: parts.join('\n') }
     }
     return out
   })
@@ -629,7 +683,7 @@ function registerSnapshot(page: Page): Promise<Record<string, RowSnapshot>> {
  * for.
  */
 async function settledRegister(page: Page): Promise<Record<string, RowSnapshot>> {
-  await expect(page.locator('.hl-readout[data-hydrated="true"]').first()).toBeAttached()
+  await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
 
   let previous = ''
   let snapshot: Record<string, RowSnapshot> = {}
@@ -642,14 +696,14 @@ async function settledRegister(page: Page): Promise<Record<string, RowSnapshot>>
         previous = now
         return settled
       },
-      { message: 'the register never stopped changing' },
+      { message: 'the record never stopped changing' },
     )
     .toBe(true)
 
   return snapshot
 }
 
-test('§16.4 — the drafter block arrives open, and every register row arrives closed', async ({
+test('§16.4 — the account block arrives open, and every row arrives closed', async ({
   page,
 }) => {
   const problems = watchPage(page)
@@ -660,21 +714,23 @@ test('§16.4 — the drafter block arrives open, and every register row arrives 
   // disclosure at all: both of the controls a reader comes here for are on
   // screen with nothing clicked. `IdentityPanel`'s field and §16.2's mark row
   // are asserted rather than the box, because they are what "open" is for.
-  await expect(page.locator('h2#drafter')).toBeVisible()
+  await expect(page.locator(`h2#${DRAFTER_HEADING_ID}`)).toBeVisible()
   await expect(page.getByRole('textbox', { name: /Name or initials/ })).toBeVisible()
   await expect(page.locator('label[data-hl-mark]').first()).toBeVisible()
   // …and it is not itself inside a fold, which is the other half of "open".
-  await expect(page.locator('details .hl-drafter')).toHaveCount(0)
+  await expect(page.locator('details .bz-drafter')).toHaveCount(0)
 
-  const rows = page.locator('main section.hl-register-row')
+  const rows = page.locator('main section.bz-register-row')
   await expect(rows).toHaveCount(REGISTER_ROWS.length)
 
   const state = await rows.evaluateAll((nodes) =>
     nodes.map((node) => ({
       row: node.getAttribute('aria-labelledby'),
-      // The `h2` lives inside the `<summary>` so the panel's id stays on a
-      // heading at the level it already occupied (§16.7).
-      heading: node.querySelector(':scope > details > summary > h2')?.id ?? null,
+      // The heading lives inside the `<summary>` so the panel's id stays on a
+      // heading. M22 made it an `h3`: the rows are inside named groups now, and
+      // thirteen `h2` peers with one heading over them was the flat list the
+      // author reported (§16.7 gains a level rather than losing one).
+      heading: node.querySelector(':scope > details > summary > h3')?.id ?? null,
       open: node.querySelector(':scope > details')?.hasAttribute('open') ?? null,
     })),
   )
@@ -686,12 +742,43 @@ test('§16.4 — the drafter block arrives open, and every register row arrives 
   expect(state.map((row) => row.row)).toEqual(expected)
   expect(state.map((row) => row.heading)).toEqual(expected)
 
+  /* M22 — **and each row is inside the group it names**, which is what the
+     regroup is FOR: a reader looking for their export should be able to find
+     it without opening anything. Read off the DOM rather than off the table, so
+     a row assigned to a group the page does not render fails here instead of
+     disappearing quietly. */
+  const grouped = await page.evaluate(() =>
+    [...document.querySelectorAll('[data-bz-register-group]')].map((group) => ({
+      group: group.getAttribute('data-bz-register-group'),
+      heading: group.querySelector(':scope > .bz-panel-head > h2')?.id ?? null,
+      rows: [...group.querySelectorAll('section.bz-register-row')]
+        .map((row) => row.getAttribute('aria-labelledby')),
+    })))
+
+  expect(grouped.length, 'the register draws no groups').toBeGreaterThan(1)
+  for (const group of grouped) {
+    expect(group.heading, `${group.group} has no heading`).toBe(group.group)
+    expect(group.rows.length, `${group.group} is an empty heading`).toBeGreaterThan(0)
+  }
+  // Every row lands in exactly one group, and between them they are all of them.
+  expect(grouped.flatMap((group) => group.rows)).toEqual(expected)
+
   // §16.4.3 — which rows were open is not remembered, so every load is every
   // row closed. Reported as the offending rows rather than as a count.
   expect(state.filter((row) => row.open !== false).map((row) => row.row)).toEqual([])
 
   // §12.1.2's quarantine note renders nothing when there is nothing to report.
-  await expect(page.getByText('NOT READ', { exact: false })).toHaveCount(0)
+  //
+  // Asserted on the note's own words rather than on the substring `NOT READ`,
+  // which is what this line looked for until M14: the attention panel folded
+  // in from `/dashboard/` explains that "the count of attempts is held in the
+  // event log, which this page does not read", and Playwright's text matching
+  // is case-insensitive and whitespace-normalised, so `not read` matched a
+  // sentence about something else entirely. The full readout is the note's, and
+  // `QUARANTINE_COPY` is exported for exactly this kind of assertion.
+  for (const { readout } of Object.values(QUARANTINE_COPY)) {
+    await expect(page.getByText(readout, { exact: false })).toHaveCount(0)
+  }
 
   expect(problems.consoleErrors).toEqual([])
   expect(problems.failedRequests).toEqual([])
@@ -710,9 +797,13 @@ test('§16.4.1 — every closed row states a reading, and not one of them is bla
   // something, and a list would have to be rewritten by whoever breaks it.
   expect(Object.keys(snapshot).sort()).toEqual(REGISTER_ROWS.map((row) => row.id).sort())
   for (const { id } of REGISTER_ROWS) {
-    const reading = snapshot[id].reading
+    const { reading, kind } = snapshot[id]
     expect(reading, `${id} states nothing while closed`).not.toBe('')
-    expect(isReading(reading), `${id}'s reading is prose, not a reading: "${reading}"`).toBe(true)
+    expect(kind, `${id} does not say what kind of reading it is`).toMatch(/^(count|none|state)$/)
+    expect(
+      isReading(reading, kind),
+      `${id}'s reading is prose, not a ${kind}: "${reading}"`,
+    ).toBe(true)
   }
 })
 
@@ -764,7 +855,7 @@ const EVERYTHING_RECORDED: RecordSeed = (() => {
         repo: 'hidden-line',
         url: 'https://github.com/cevheri/hidden-line',
         commit: '9f2c1ab',
-        note: 'A prompt-injection harness for the sheet 13 criteria.',
+        note: 'A prompt-injection harness for the module 13 criteria.',
         at: '2026-08-11T16:00:00.000Z',
       },
     ],
@@ -914,7 +1005,7 @@ test('§16.4.1 / §16.4.2 — a summary reading comes from the body it summarise
       expect(
         readingMoved,
         `${id}: a counted reading printed "${rich[id].reading}" for both an empty `
-          + 'record and a fully signed-off one, so it is not counting the record',
+          + 'record and a fully completed one, so it is not counting the record',
       ).toBe(true)
     }
   }
@@ -971,35 +1062,56 @@ const STORAGE_ANSWERS = /^(PERSISTENT|BEST-EFFORT|UNAVAILABLE|UNKNOWN)$/
 
 const EXPECTED_READINGS = {
   readout: {
-    thin: `0 OF ${SHEET_COUNT} SIGNED OFF`,
+    thin: `0 of ${SHEET_COUNT} completed`,
     // Every drawn sheet is signed off in the rich seed; the denominator is the
     // whole set, drawn or not, which is what the strip counts against.
-    rich: `${DRAWN_COUNT} OF ${SHEET_COUNT} SIGNED OFF`,
+    rich: `${DRAWN_COUNT} of ${SHEET_COUNT} completed`,
   },
   // 14 is §7.3's window, which the strip in this row's body draws as fourteen
   // ticks; the numerator is the seed's own day list.
   uptime: {
-    thin: '0 OF LAST 14 DAYS',
-    rich: `${(EVERYTHING_RECORDED.days ?? []).length} OF LAST 14 DAYS`,
+    thin: '0 of last 14 days',
+    rich: `${(EVERYTHING_RECORDED.days ?? []).length} of last 14 days`,
   },
-  stamps: { thin: '0 OF # EARNED', rich: '# OF # EARNED' },
-  submittals: { thin: 'NO SUBMITTAL REGISTERED', rich: '1 FILED' },
-  // `SOFTWARE ENGINEER` is `roles.ts`'s label for the seeded `software-engineer`,
-  // upper-cased by `.hl-register-reading` rather than by the component.
-  role: { thin: 'NO ROLE ON RECORD', rich: 'SOFTWARE ENGINEER' },
+  stamps: { thin: '0 of # earned', rich: '# of # earned' },
+  submittals: { thin: 'Nothing added yet', rich: '1 filed' },
+  /* `roles.ts`'s own label for the seeded `software-engineer`, and now printed
+     as written: it used to be upper-cased by the row's class rather than by the
+     component, and M16 removed the class. A role's name is a proper noun and
+     not a status token, so sentence case is what it should have been reading
+     all along — and the rest of the register's readings went with it. They had
+     been written in mixed case and looked uniform only because the row's class
+     uppercased every one: with that gone, `0 of 43 traces` sat next to
+     `2 OF 9 EARNED` on the same page. Twelve summary lines, one voice. */
+  role: { thin: 'No role on record', rich: 'Software Engineer' },
   // The default build ships accounts off, and this is the one spelling of that
   // status (§16.6) — so this row also pins the wording the four surfaces in the
   // fold share.
-  'hl-orgs-head': { thin: 'ACCOUNTS NOT ENABLED YET', rich: 'ACCOUNTS NOT ENABLED YET' },
+  'bz-orgs-head': { thin: 'Accounts not enabled yet', rich: 'Accounts not enabled yet' },
+  // M14's two rows, folded in from `/dashboard/` and `/report/`.
+  //
+  // The diagram's reading is `TRACES` — the edges with BOTH endpoints completed
+  // (§5.8) — because that is the one number only the surface holding the graph
+  // can count, and it is the same `useTraces` the strip inside the row uses. It
+  // moves with the record, which is what the case below this table requires of
+  // any reading with a digit in it. The first version of this row printed the
+  // corpus's own two counts and read identically for an empty record and a
+  // completed one; that is what that case caught.
+  //
+  // The record of work has no count at all — there is no measure of how much
+  // record of work a reader has — so it prints its subject the way the export
+  // row does (§16.4.2).
+  diagram: { thin: '0 of # traces', rich: '# of # traces' },
+  report: { thin: 'ONE FILE, BUILT IN THIS BROWSER', rich: 'ONE FILE, BUILT IN THIS BROWSER' },
   // §17.6's notation. The thin seed has met no account; the rich seed carries a
   // merge of four with nothing lost.
   claim: { thin: 'NO CLAIM ON RECORD', rich: '4 MERGED · 0 LOST' },
   storage: { thin: STORAGE_ANSWERS, rich: STORAGE_ANSWERS },
   // One key: the record's. The quarantine key is absent in both seeds, and a
   // second key appearing here would be a payload no reader asked for.
-  raw: { thin: '1 KEYS · # BYTES', rich: '1 KEYS · # BYTES' },
+  raw: { thin: '1 keys · # bytes', rich: '1 keys · # bytes' },
   data: { thin: 'YOUR COPY OF THE RECORD', rich: 'YOUR COPY OF THE RECORD' },
-  keyboard: { thin: 'CHARACTER KEYS ON', rich: 'CHARACTER KEYS OFF' },
+  keyboard: { thin: 'Character keys on', rich: 'Character keys off' },
 } as const satisfies Record<RowId, { thin: string | RegExp; rich: string | RegExp }>
 
 /**
@@ -1079,7 +1191,7 @@ test('§16.4.1 — each row reads in its own notation, and the notation is pinne
 
   const storage = await page.evaluate((scope) => {
     const root = document.querySelector(scope) as HTMLElement
-    const reading = (root.querySelector('.hl-register-reading') as HTMLElement).innerText.trim()
+    const reading = (root.querySelector('.bz-register-reading') as HTMLElement).innerText.trim()
     let body = ''
     for (const dt of root.querySelectorAll('dt')) {
       if ((dt.textContent ?? '').trim().toLowerCase() !== 'storage') continue
@@ -1130,10 +1242,10 @@ test('§12.1.6 — STORAGE prints the answer the browser gave, never an assumpti
   expect(await page.locator(`${STORAGE} progress, ${STORAGE} meter`).count()).toBe(0)
 
   // §12.15 — a dashed, unsigned state, in §12.15's own words, before any export.
-  expect(await definition(page, STORAGE, 'Last export')).toBe('NO EXPORT ON RECORD')
+  expect(await definition(page, STORAGE, 'Last export')).toBe('No export on record')
   expect(
     await page
-      .locator(`${STORAGE} dd`, { hasText: 'NO EXPORT ON RECORD' })
+      .locator(`${STORAGE} dd`, { hasText: 'No export on record' })
       .locator('span')
       .evaluate((node) => getComputedStyle(node).borderStyle),
   ).toBe('dashed')
@@ -1147,7 +1259,7 @@ test('§12.11 item 7 — the raw stored values are printed verbatim', async ({ p
   await seedRecord(page, SEEDED)
   await page.goto('/profile/')
 
-  const raw = page.locator('section[aria-labelledby="raw"] pre.hl-raw')
+  const raw = page.locator('section[aria-labelledby="raw"] pre.bz-raw')
   await expect(raw).toHaveCount(2)
 
   // The cheapest possible proof that §1 reaches the storage layer: not this
@@ -1159,7 +1271,7 @@ test('§12.11 item 7 — the raw stored values are printed verbatim', async ({ p
     .poll(() =>
       page.evaluate((key) => {
         const shown =
-          document.querySelector('section[aria-labelledby="raw"] pre.hl-raw')?.textContent ?? null
+          document.querySelector('section[aria-labelledby="raw"] pre.bz-raw')?.textContent ?? null
         const stored = window.localStorage.getItem(key)
         return { identical: shown !== null && shown === stored, empty: stored === null }
       }, RECORD_KEY),
@@ -1230,10 +1342,10 @@ test('§12.15 — the erase dialog names its scope and enumerates the real count
   // 1 self-check, 2 sources opened. Zeros are omitted rather than padding the
   // list a reader is meant to read.
   const enumerated = await dialog
-    .locator('.hl-dialog-tally li')
+    .locator('.bz-dialog-tally li')
     .evaluateAll((nodes) => nodes.map((node) => (node.textContent ?? '').trim()))
   expect(enumerated).toEqual([
-    '3 sheet states',
+    '3 module states',
     '1 name',
     '1 submittal',
     '1 self-check',
@@ -1247,7 +1359,7 @@ test('§12.15 — the erase dialog names its scope and enumerates the real count
   // §12.14.1 — the buttons state OUTCOMES, and the decline states the SAFE
   // outcome with no shame and no loss framing. Never Yes/No.
   const buttons = await dialog
-    .locator('.hl-dialog-actions button')
+    .locator('.bz-actions button')
     .evaluateAll((nodes) => nodes.map((node) => (node.textContent ?? '').trim()))
   expect(buttons).toEqual(['Erase all data', 'Keep my data', 'EXPORT YOUR RECORD'])
   for (const label of buttons) {
@@ -1344,7 +1456,7 @@ test('§12.15 — a confirmed erase removes both keys and offers a working UNDO'
   await expect
     .poll(() => Promise.all([readRawRecord(page), readRawRecord(page, QUARANTINE_KEY)]))
     .toEqual([null, null])
-  await expect(page.locator('section[aria-labelledby="raw"] pre.hl-raw').first()).toHaveText(
+  await expect(page.locator('section[aria-labelledby="raw"] pre.bz-raw').first()).toHaveText(
     'NO VALUE STORED UNDER THIS KEY',
   )
 
@@ -1530,7 +1642,7 @@ test('§12.15 — export, erase, import: the record comes back identical', async
   // the export's own day in `days` are stamped AFTER the payload is serialised,
   // so a file cannot carry them and a round trip does not restore them.
   expect(readerWork((await storedData(page)) as RecordData)).toEqual(readerWork(before))
-  await expect(page.locator('section[aria-labelledby="raw"] pre.hl-raw').first()).toContainText(
+  await expect(page.locator('section[aria-labelledby="raw"] pre.bz-raw').first()).toContainText(
     READER,
   )
 })
@@ -1541,10 +1653,13 @@ test('§12.12.6 — the importer accepts the RECORD OF WORK .html and matches it
   await seedRecord(page, SEEDED)
   await installSaveProbe(page)
 
-  // The document is generated on `/report/`, which is the only page that builds
-  // it. The failure mode §12.12.6 removes is a learner who keeps the pretty
-  // document and loses the record, so the pretty document has to import.
-  await page.goto('/report/')
+  // The document is generated by the `report` row of the progress page's
+  // register, which is the only place that builds it: M14 folded `/report/`
+  // into `/profile/`. The failure mode §12.12.6 removes is a learner who keeps
+  // the pretty document and loses the record, so the pretty document has to
+  // import — and both halves of that round trip are now on one page.
+  await page.goto('/profile/')
+  await openRegisterRow(page, 'report')
   await expect(page.locator('[data-hl-report][data-hydrated="true"]')).toHaveCount(1)
   const generatedFrom = await settled(page)
   await expect
@@ -1666,14 +1781,14 @@ test('§17.1 — a receipt on the record outlives the document that reported it'
  * plain visit still finds every row closed, which is what stops the island from
  * being a switch that opens the whole register.
  */
-test('§17.6 — a fragment opens the register row it names, and only it', async ({ page }) => {
+test('§17.6 — a fragment opens the row it names, and only it', async ({ page }) => {
   await seedRecord(page, EVERYTHING_RECORDED)
 
   await page.goto('/profile/#claim')
   await settledRegister(page)
 
   const fold = page.locator(
-    'section.hl-register-row[aria-labelledby="claim"] details.hl-register-fold',
+    'section.bz-register-row[aria-labelledby="claim"] details.bz-register-fold',
   )
   await expect
     .poll(() => fold.evaluate((node) => (node as HTMLDetailsElement).open), {
@@ -1682,13 +1797,13 @@ test('§17.6 — a fragment opens the register row it names, and only it', async
     .toBe(true)
   // Open as the reader experiences it, not merely as an attribute: the body's
   // own text is on screen.
-  await expect(fold.locator('.hl-register-body')).toContainText('CLAIMED 2026-08-11')
+  await expect(fold.locator('.bz-register-body')).toContainText('CLAIMED 2026-08-11')
 
   // The export controls' row is the other fragment two surfaces point at.
   await page.goto('/profile/#data')
   await settledRegister(page)
   await expect(
-    page.locator('section.hl-register-row[aria-labelledby="data"] details.hl-register-fold'),
+    page.locator('section.bz-register-row[aria-labelledby="data"] details.bz-register-fold'),
   ).toHaveAttribute('open', '')
 
   // And a plain visit opens nothing. Asserted over every row, because an island
@@ -1696,7 +1811,7 @@ test('§17.6 — a fragment opens the register row it names, and only it', async
   await page.goto('/profile/')
   await settledRegister(page)
   const openCount = await page
-    .locator('details.hl-register-fold[open]')
+    .locator('details.bz-register-fold[open]')
     .count()
   expect(openCount, 'a plain visit to the register opened a row').toBe(0)
 })

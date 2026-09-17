@@ -1,0 +1,2100 @@
+/* ===========================================================================
+   BAZAAR — the design language, as CSS.
+
+   THIS FILE IS A TRANSCRIPTION, NOT A DESIGN. Every value in it is read out of
+   `playground/01-theme-T4-ground-G3-powder.html`, which is the specification;
+   `kia-context/specs/DESIGN.md` is the same language written as prose and
+   tokens. Where any of the three disagree, **the mockup is right**, this file
+   is second, and DESIGN.md is the bug. Do not "improve" a value here: the last
+   interface was rejected because a design document was allowed to drift from
+   the mockup it came from, and a substituted type family, a re-hued category
+   series and a light top bar all shipped from that drift (BRAINSTORM D26).
+
+   `tests/unit/design/transcription.test.ts` holds that line mechanically: the
+   set of colours declared here must equal the set of colours in the mockup, in
+   both directions, and every dimension declared here must appear in it.
+
+   THIS IS THE TOKEN LAYER THE SITE LOADS, since M16 stage 0: `src/app/globals.css`
+   imports it before anything that could use a utility, and the eleven
+   stylesheets of the retired interface were deleted rather than migrated.
+
+   IT LIVES OUTSIDE `src/app/` FOR A REASON. Several unit tests glob every
+   `.css` in that directory and hold each one to the discipline a SURFACE
+   stylesheet is held to — no `--color-*` declarations, no `.dark` rule, no
+   invented radius. This file is the language rather than a surface, so it does
+   the opposite of all three, and a token layer sitting in `src/app/` would fail
+   those tests the moment it was written.
+
+   `src/lib/content/code-theme.ts` READS THIS FILE, by name and positionally:
+   it takes each `--color-slab-*` role from above the `.dark` scope and again
+   from inside it, and requires both. It accepts hex, which is what the mockup
+   writes and therefore what this file writes. `npm run build` is the only thing
+   that catches a break in that path.
+   =========================================================================== */
+
+@theme {
+
+  /* -- ground and structure ------------------------------------------------
+     The neutral family is warm and it is a LADDER: surface, raised, sunken.
+     White on the ground is a ~1.03 luminance ratio, so a raised surface is
+     told apart by its hairline and never by its fill. `sunken` is the one
+     neutral fill that reads, and it is a hover/pressed state rather than a
+     resting surface for text. */
+  --color-surface:              #fdfbf7;
+  --color-surface-raised:       #ffffff;
+  --color-surface-sunken:       #e6dac6;
+  --color-line:                 #d8cbb4;
+  --color-line-strong:          #c3b299;
+
+  /* -- ink -----------------------------------------------------------------
+     Four weights, and the top two are not interchangeable: `on-surface` reads,
+     `on-surface-title` is deeper and bluer and belongs to display and section
+     headings only. `faint` is for something a reader may ignore entirely and
+     does not meet a text floor on this ground. */
+  --color-on-surface:           #20242e;
+  --color-on-surface-title:     #1b1b47;
+  --color-on-surface-muted:     #6a6558;
+  --color-on-surface-faint:     #948d7d;
+
+  /* -- the bar, and its own palette ----------------------------------------
+     The chrome is dark and the page is light. This is the language's strongest
+     signal: a bar drawn on the ground instead of in cobalt turns Bazaar into a
+     generic light theme. A control sitting on cobalt cannot borrow the values
+     of one sitting on powder, which is why these five exist at all.
+     `bar-edge` is a fully transparent cobalt: the bar declares a bottom border
+     and then declines to paint it, because the band below supplies the edge. */
+  --color-bar:                  #282864;
+  --color-on-bar:               #ffffff;
+  --color-on-bar-dim:           #c9c6e4;
+  --color-bar-edge:             #28286400;
+  --color-bar-hover:            rgba(255, 255, 255, 0.10);
+  --color-bar-chip:             #fdfbf7;
+  --color-on-bar-chip:          #1b1b47;
+  --color-bar-field:            rgba(255, 255, 255, 0.08);
+  --color-bar-field-line:       rgba(255, 255, 255, 0.25);
+
+  /* -- action, focus, state ------------------------------------------------
+     `primary` does three jobs — the bar, the primary action, and the link —
+     and that overlap has one consequence: no category hue may sit within ~20°
+     of it, or a category marker reads as a link.
+     `focus` is clay and NOT cobalt, deliberately: it is the one warm chromatic
+     in the set, so the ring is visible on cobalt chrome, on white cards and on
+     the dark slab without being restyled per surface.
+     `on-caution` is the only place in the language where type on a chromatic
+     fill is not white — white on gold does not clear a text floor. */
+  --color-primary:              #282864;
+  --color-on-primary:           #ffffff;
+  --color-focus:                #a0503c;
+  --color-success:              #2f8c86;
+  --color-caution:              #b8873b;
+  --color-on-caution:           #20201c;
+  /* `fault` completes the trio, and it is a GRAPHIC token: an edge, a rule or
+     a mark, and NEVER type. MEASURED — the clay reads 5.48:1 on `surface` in
+     light and 3.02:1 on `surface-raised` in dark, so it clears a 3:1 graphical
+     floor in both themes and a 4.5:1 text floor in only one, and a floor that
+     holds in one theme is not a floor. Neither mockup ever sets it as type
+     either, which is the same finding from the other direction: `01` spends
+     this value on the focus ring and the band, both shapes.
+
+     So a destructive control says so in its WORD and its EDGE, not in the
+     colour of its label — which is `on-surface` like any other. That is also
+     the §13.1.3 answer: "Erase everything" is the signal, and the hue agrees
+     with it rather than carrying it.
+
+     The value is `category-5`'s and `focus`'s. Three names, one hex, and the
+     jobs are distinct: a group's identity, a focus ring, and a fault. The
+     language already accepted that split when `focus` was named rather than
+     spending `category-5` on a ring. */
+  --color-fault:                #a0503c;
+  --color-ornament:             #c8a078;
+
+  /* -- the categorical series ----------------------------------------------
+     Five glazes that tell groups apart. A product binds one to each of its own
+     groups; the language only says there are five, that they are used with a
+     second signal beside colour, and that `category-2` IS the cobalt — the
+     exception that proves the 20° rule, since that group is identified by the
+     bar's own colour and nothing about it is ambiguous. */
+  --color-category-1:           #2f8c86;
+  --color-category-2:           #282864;
+  --color-category-3:           #7a4a86;
+  --color-category-4:           #b8873b;
+  --color-category-5:           #a0503c;
+
+  /* -- the ornament --------------------------------------------------------
+     One band, once per page, and it is the only decoration in the language. */
+  --color-band-ground:          #282864;
+  --color-band-a:               #2f8c86;
+  --color-band-b:               #c8a078;
+  --color-band-c:               #a0503c;
+
+  /* -- the slab: a second, complete palette --------------------------------
+     Code and diagrams sit on their own dark ground and every value they need
+     is prefixed. Self-contained on purpose, so a slab can be dropped anywhere
+     without the surrounding ground leaking into it — and so it does not
+     re-theme. The syntax colours are tuned against `slab-surface` alone. */
+  --color-slab-surface:         #1d1f27;
+  --color-slab-surface-raised:  #262933;
+  --color-slab-on-surface:      #e7e3d8;
+  --color-slab-on-surface-muted:#9aa0ad;
+  --color-slab-line:            #33363f;
+  --color-slab-line-raised:     #444854;
+  --color-slab-on-raised:       #dcd8cd;
+  --color-slab-arrow:           #6e737f;
+  --color-slab-keyword:         #c48ce0;
+  --color-slab-string:          #8fcf9a;
+  --color-slab-comment:         #8b91a0;
+  --color-slab-function:        #7fb8e8;
+  --color-slab-number:          #e0a45c;
+  /* The two SEMANTICS a diagram needs that the page's own chromatics cannot
+     supply. `success` and `caution` are the same value in both themes and work
+     on either ground; `primary` and `category-5` are not — cobalt is #282864
+     on powder and lifts to #848bd0 on a dark one. A frame that never flips
+     needs the lifted values at all times, or `info` is a navy stroke on a
+     near-black ground. Both are already the language's own dark values. */
+  --color-slab-info:            #848bd0;
+  --color-slab-fault:           #ad5b47;
+
+  /* -- type ----------------------------------------------------------------
+     One sans family does all the work; mono appears only inside a slab and on
+     the smallest code metadata. No serif, and no small uppercase mono label —
+     that is a different design idiom and it fights the glaze.
+     The stack is the mockup's, unchanged and unsubstituted: Avenir Next where
+     the reader has it, the platform's own sans everywhere else. */
+  --font-sans: "Avenir Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --text-body:                  16px;
+  --text-body--line-height:     1.68;
+  --text-display:               38px;
+  --text-display--line-height:  1.16;
+  --text-section:               25px;
+  --text-section--line-height:  1.28;
+  --text-subsection:            18.5px;
+  --text-subsection--line-height: 1.35;
+  --text-lead:                  16px;
+  --text-control:               14.5px;
+  --text-item:                  14px;
+  --text-item--line-height:     1.3;
+  /* No line-height: the mockup never sets one on a caption or a breadcrumb, so
+     meta inherits the body's. The 1.6 that looks like it belongs here comes
+     from the mockup's own annotation strip, which is not part of the design. */
+  --text-meta:                  13.5px;
+  --text-mark:                  12.5px;
+  --text-label:                 12px;
+  --text-code:                  13.5px;
+  --text-code--line-height:     1.75;
+
+  --tracking-display:           -0.015em;
+  --tracking-section:           -0.012em;
+  --tracking-label:             0.06em;
+
+  /* -- layout --------------------------------------------------------------
+     `sticky` is the sum of `bar` and `band`, and that single number is why the
+     band can exist at all without pushing content under the bar. */
+  --layout-bar:                 58px;
+  --layout-band:                18px;
+  --layout-sticky:              76px;
+  --layout-rail:                262px;
+  --layout-aside:               204px;
+  --layout-measure:             80ch;
+  --layout-fold-at:             1180px;
+  --layout-rail-at:             880px;
+
+  /* -- shape ---------------------------------------------------------------
+     Many radii, because each belongs to a SIZE of thing: a 2px corner on a 9px
+     swatch and a 7px corner on a slab are the same visual softness at
+     different scales. Pick the one that matches the element, not a default.
+     Two shapes carry the signature and both are asymmetric: `arch` is the top
+     of a group, a doorway, and it is what makes a list of groups read as an
+     arcade; `leaf` is a callout, a tile set at an angle. Never as a general
+     radius, and never both on one element. */
+  --radius-hair:                2px;
+  --radius-xs:                  3px;
+  --radius-sm:                  4px;
+  --radius-base:                5px;
+  --radius-md:                  6px;
+  --radius-lg:                  7px;
+  --radius-xl:                  8px;
+  --radius-pill:                9px;
+  --shape-arch:                 14px 14px 4px 4px;
+  --shape-leaf:                 4px 14px 4px 14px;
+
+  /* -- motion and depth ----------------------------------------------------
+     Almost no elevation, and that is the point: a shadow appears only where
+     something is genuinely temporary — a menu opened over content, and the
+     restore tab, which overlaps the page from outside it. Both are warm and
+     brown-tinted; a grey shadow on a sand ground reads as dirt. */
+  --ease-bazaar:                cubic-bezier(0.22, 0.61, 0.36, 1);
+  --duration-swift:             120ms;
+  --duration-fade:              150ms;
+  --duration-shift:             160ms;
+  --duration-fold:              200ms;
+  --shadow-menu:                0 12px 28px rgba(40, 30, 10, 0.13);
+  --shadow-tab:                 2px 0 10px rgba(40, 30, 10, 0.10);
+}
+
+/* ===========================================================================
+   THE PRIMITIVES
+
+   One class per thing the language names. A product's own markup is its own
+   business — these are the shapes, not the page.
+
+   `--bz-cat` is the ONE custom property a caller has to bind: the current
+   group's own hue, set per instance from the categorical series. The language
+   cannot know which group is which, so the binding is the product's.
+   =========================================================================== */
+
+@layer base {
+
+  /*
+    The binding hook, declared with a NEUTRAL default rather than left
+    undeclared — and both halves of that are deliberate.
+
+    Declared, because an undeclared custom property resolves to nothing and
+    `tests/unit/design/styling-references.test.ts` refuses a `var()` the
+    language does not declare. Two surfaces now read this one — the curriculum
+    rail's group key and the catalog's level heads, cards, rows and columns —
+    and neither of them owns the product's slug-to-hue mapping, so neither can
+    be the file that declares it.
+
+    Neutral, because the default is what an element with no category shows. A
+    default of `category-1` would paint every unbound key teal and read as a
+    real answer; `line` reads as "this thing has no group", which is true.
+  */
+  :root {
+    /* M20 — what lets a disclosure EASE open instead of snapping.
+       `block-size: auto` is not an animatable value on its own; this is the
+       opt-in that makes `auto` interpolable, and `::details-content` is what
+       reads it (`catalog.css`'s description accordion). It is declared on the
+       root because it is a document-level capability rather than a component's
+       rule, and it is in the language for the same reason every other
+       primitive is: the second surface that needs a smooth disclosure must not
+       re-declare it somewhere else.
+
+       **MEASURED in the browser this suite runs — Chrome 153:** `CSS.supports`
+       returns true for both `interpolate-size: allow-keywords` and
+       `selector(::details-content)`. An engine without them opens the panel
+       instantly, which is the house rule rather than a fallback — the
+       mechanism works everywhere and the easing is the enhancement. */
+    interpolate-size: allow-keywords;
+
+    --bz-cat: var(--color-line);
+    /* The second hook a caller binds, and the only reading channel A carries
+       as a NUMBER. `0%` is the neutral default for the same reason
+       `--bz-cat`'s is a line colour: a ring with nothing bound reads empty,
+       which is the true statement that no record has been read. `stamp.ts`
+       and the boot script set the per-level values; `category.css` joins them
+       to this name, because CSS cannot build a property name out of an
+       attribute. */
+    --bz-done: 0%;
+    /* The focus ring's colour, so a ground with its own sub-palette can rebind
+       it. Clay by default, which is what the page grounds take. See the
+       `:focus-visible` rule for why this hook exists at all. */
+    --bz-ring: var(--color-focus);
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-surface);
+    color: var(--color-on-surface);
+    font: var(--text-body) / var(--text-body--line-height) var(--font-sans);
+  }
+
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* Clay, 2px, offset — and REBOUND on the two grounds that have their own
+     sub-palette, which is a correction rather than a refinement.
+
+     This said "never restyled per surface", and DESIGN.md said the clay was
+     chosen "so the ring is visible on cobalt chrome, on white cards and on the
+     dark slab without being restyled per surface". MEASURED, and that is false
+     on two of those three: clay on `--color-bar` is **2.35:1** in light and
+     2.77:1 in dark, and on the slab's two surfaces 2.56:1 and 2.90:1 — against
+     SC 1.4.11's 3:1 for a focus indicator. It clears the floor only on the page
+     grounds, where it measures 5.48:1 and 5.66:1.
+
+     **The bar holds the first controls in the tab order on every route**, so
+     this is the ring a keyboard reader meets first, everywhere, and it was the
+     weakest one on the site. D34's rule applies: a measured accessibility floor
+     outranks a transcribed value.
+
+     Nothing is invented to fix it. Each ground rebinds the ring to its OWN ink,
+     which is what its sub-palette exists for — `on-bar` measures 13.31:1 on
+     cobalt and `slab-on-surface` 11.31:1 to 12.82:1 on the slab — and the
+     rebinding travels by inheritance, so a control nested anywhere inside
+     either ground gets it without a second selector.
+
+     The contrast suite missed this because `graphical('focus')` walks only the
+     two RESTING grounds. A floor checked on one ground is not checked. */
+  :focus-visible {
+    outline: 2px solid var(--bz-ring);
+    outline-offset: 2px;
+  }
+
+  .bz-bar {
+    --bz-ring: var(--color-on-bar);
+  }
+
+  .bz-slab,
+  .bz-figure {
+    --bz-ring: var(--color-slab-on-surface);
+  }
+}
+
+@layer components {
+
+  /* -- said, and not shown ------------------------------------------------- */
+
+  /* THE ONE WAY TO SAY SOMETHING TO A SCREEN READER AND NOT TO A SCREEN.
+     Clipped rather than `display: none`, because a hidden element is not
+     announced and contributes no accessible name; and clipped rather than
+     positioned off-screen, because a 9999px indent moves the box and can
+     lengthen the document.
+
+     It lived in `shell.css` with one consumer. **D51: two consumers means a
+     class moves into the language** — the second is the planned module's mark,
+     which draws a shape and needs the word beside it — and a primitive owned by
+     the first surface that needed it is a primitive the others depend on
+     invisibly. */
+  .bz-said {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* -- the bar ------------------------------------------------------------ */
+
+  .bz-bar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: var(--color-bar);
+    color: var(--color-on-bar);
+    border-bottom: 1px solid var(--color-bar-edge);
+  }
+
+  .bz-bar-inner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: var(--layout-bar);
+    padding: 0 22px;
+  }
+
+  /* A WORDMARK DOES NOT WRAP. `flex-shrink` defaults to 1 and `min-width:
+     auto` on a text item resolves to its longest WORD, so the brand was free
+     to fold: MEASURED one line at 880 and above, two at 768 and **three at
+     390**, inside a bar that stays 58px tall. It only began to fold when the
+     navigation became a real row and started competing for the space — one
+     more thing the vertical-nav defect had been hiding.
+     The navigation is the element designed to give way here, and it does, by
+     scrolling inside itself below the breakpoint. */
+  .bz-brand {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 10px;
+    color: var(--color-on-bar);
+    font: 600 var(--text-lead) / 1 var(--font-sans);
+    white-space: nowrap;
+  }
+
+  .bz-brand:hover { text-decoration: none; }
+
+  /* A tile, not a logo: four glazed squares from the same series, one left as
+     the ground. */
+  .bz-brand-mark {
+    display: grid;
+    grid-template-columns: 9px 9px;
+    gap: 2px;
+  }
+
+  .bz-brand-mark > * {
+    display: block;
+    width: 9px;
+    height: 9px;
+    border-radius: var(--radius-hair);
+  }
+
+  /* THE ROW IS THE LIST, NOT THE NAV, and getting that wrong made the whole
+     navigation vertical on every route.
+
+     `01:81-82` says `.mainnav { display: flex }` and `.mainnav > * { position:
+     relative }`, and in the mockup the items ARE the nav's children. The app
+     wraps them in a `<ul role="list">`, which is the right markup and which
+     puts one element between the rule and the things it is about. Transcribed
+     literally, `display: flex` laid out a single list child and
+     `> * { position: relative }` made that list the positioning context — so
+     MEASURED at 1440: the nav was 120 x 128 with its four items stacked, and
+     because `.bz-bar-inner` centres its items a 128px box in a 58px bar
+     overflowed 35px above the bar and the same below, across the decorative
+     band and the breadcrumb.
+
+     The dropdown was the second casualty and the quieter one: `.bz-menu` is
+     absolute at `left: 0`, so with the LIST as its containing block every menu
+     opened at the list's left edge instead of under the item that owns it.
+
+     **Nothing in the suite could see either.** The fidelity harness reads the
+     nav's own computed `display`, which was `flex` and matched the mockup
+     exactly. A rule can be present, correct, and applied to the wrong element.
+     So the two declarations now name what they are about: the list is the row,
+     each item is its own positioning context. */
+  .bz-bar-nav {
+    display: flex;
+    margin-left: 4px;
+  }
+
+  .bz-bar-nav > ul {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bz-bar-nav li { position: relative; }
+
+  .bz-bar-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 7px 11px;
+    border: 0;
+    border-radius: var(--radius-base);
+    background: none;
+    color: var(--color-on-bar-dim);
+    font: 500 var(--text-control) / 1 var(--font-sans);
+    cursor: pointer;
+  }
+
+  .bz-bar-link:hover {
+    background: var(--color-bar-hover);
+    color: var(--color-on-bar);
+    text-decoration: none;
+  }
+
+  /* A solid powder chip on cobalt: the strongest contrast the language can
+     make, and therefore the right way to say "you are here". */
+  .bz-bar-link[aria-current] {
+    background: var(--color-bar-chip);
+    color: var(--color-on-bar-chip);
+    font-weight: 600;
+  }
+
+  .bz-bar-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 180px;
+    height: 33px;
+    padding: 0 11px;
+    border: 1px solid var(--color-bar-field-line);
+    border-radius: var(--radius-base);
+    background: var(--color-bar-field);
+    color: var(--color-on-bar-dim);
+    font-size: var(--text-item);
+    cursor: text;
+  }
+
+  .bz-bar-icon {
+    display: grid;
+    place-items: center;
+    width: 33px;
+    height: 33px;
+    border: 1px solid var(--color-bar-field-line);
+    border-radius: var(--radius-base);
+    background: var(--color-bar-field);
+    color: var(--color-on-bar);
+    font: 600 11px / 1 var(--font-sans);
+    cursor: pointer;
+  }
+
+  .bz-bar-icon:hover { background: var(--color-bar-hover); }
+
+  /* M18 — the repository control, which is an icon button that also carries a
+     number, so it is the one bar control that is not square.
+
+     `01` has no such thing: its bar holds four equal `.ib` squares. This takes
+     the same height, the same edge and the same fill, and gives up the fixed
+     width — the primitive is the SLOT rather than the square, and a control
+     that prints a figure cannot be 33px wide without clipping it. */
+  .bz-bar-repo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 33px;
+    padding: 0 9px;
+    border: 1px solid var(--color-bar-field-line);
+    border-radius: var(--radius-base);
+    background: var(--color-bar-field);
+    color: var(--color-on-bar);
+  }
+
+  .bz-bar-repo:hover { background: var(--color-bar-hover); }
+
+  /* The star is `--color-caution`, which is the language's gold and the same
+     value the band is finished with — not a yellow introduced for this control.
+
+     **MEASURED against the ground it actually sits on, which is not the bar.**
+     `.bz-bar-repo` carries `--color-bar-field`, `rgba(255,255,255,.08)` over the
+     cobalt, and that composites to `#393970`. Gold on THAT is **3.29:1** — over
+     the 3:1 a graphic owes, and only just. On the bare bar it would be 4.16:1,
+     which is the figure this comment gave until somebody composited the fill;
+     a ratio taken against the wrong ground is the kind of number that looks
+     checked. The star is never the only carrier either way: the figure beside
+     it is `--color-on-bar` on the same fill at **10.54:1**, and says the same
+     thing in a numeral.
+
+     Both themes declare the same three values, so both readings hold in each.
+
+     The author asked for the mark in BLACK. Black on this ground measures
+     **1.99:1** and the bar's own sub-palette is the strongest rule the design
+     language has, so the mark takes the bar's ink instead; it is GitHub's own
+     mark either way. Reversing that is one declaration, and it costs the floor. */
+  .bz-bar-star { flex: none; color: var(--color-caution); }
+
+  /* §12.16 — the keyboard map, wherever it is drawn. Two surfaces render it:
+     the shortcut sheet a `?` opens, and `/legend/`, which is where M18 put the
+     table when the bar stopped saying the chords exist. Two consumers is why
+     it is here and not in either surface's own stylesheet. */
+  .bz-keys {
+    border-collapse: collapse;
+    margin: 0;
+    font-size: var(--text-item);
+  }
+
+  /* **A TABLE, LAID OUT AS ONE.** It read `display: grid` with two tracks and a
+     14px gap, over `<table><tbody><tr><td>` — and a grid container's only child
+     here is the `tbody`, so the tracks sized against the wrong boxes and the
+     gap applied between nothing. MEASURED on `/legend/`: the two widest chords
+     painted their key against their action, `]Previous / next module` and
+     `kNext / previous section`, with no space at all.
+     It was wrong in the `?` dialog before M18 put the same table on a page
+     where somebody finally looked at it. */
+  .bz-keys td {
+    padding: 2px 0;
+    vertical-align: baseline;
+  }
+
+  .bz-keys td:first-child {
+    padding-right: 14px;
+    white-space: nowrap;
+  }
+
+  /* A key name is a machine value, so it takes the machine face at the machine
+     size — the same pair `.bz-catcard-num` uses for an ordinal. It is NOT the
+     small uppercase mono LABEL `DESIGN.md` forbids: nothing re-cases it, and
+     `g` and `G` are different keystrokes. */
+  .bz-keys kbd {
+    font: 600 var(--text-mark) / 1.6 var(--font-mono);
+    color: var(--color-on-surface);
+  }
+
+  .bz-bar-stars {
+    font: 600 var(--text-mark) / 1 var(--font-sans);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* -- the menu ----------------------------------------------------------- */
+
+  /* A CLOSED MENU HAS NO BOX, and saying so explicitly is the mockup's own
+     mechanism rather than an addition. `01:91` declares `.dd { display: none }`
+     and reveals it on hover or focus-within; this interface uses a native
+     `<details>` instead (stage 2, so it works with no JavaScript), and that
+     was left to hide the panel by itself.
+
+     Chrome does hide a closed `<details>`'s contents — but it still LAYS OUT
+     the panel. MEASURED at 390: the closed Curriculum menu was a 214px box at
+     x=229.6, reaching 53.6px past the viewport, so the document scrolled
+     sideways on every route that has a bar. Invisible, and still moving the
+     page. This surfaced only when the navigation became a real row, because
+     until then the menu was anchored to the list rather than to its own item
+     and happened to fall inside the viewport.
+
+     `display: none` while closed also takes the menu's nine links out of the
+     tab order, which is what `accessibility.spec.ts` requires of a closed
+     disclosure — asserted on both halves, so the open state is checked too. */
+  details:not([open]) > .bz-menu { display: none; }
+
+  .bz-menu {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    z-index: 60;
+    min-width: 214px;
+    padding: 6px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-raised);
+    box-shadow: var(--shadow-menu);
+  }
+
+  .bz-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 10px;
+    border-radius: var(--radius-base);
+    color: var(--color-on-surface);
+    font: 500 var(--text-item) / var(--text-item--line-height) var(--font-sans);
+  }
+
+  .bz-menu-item:hover {
+    background: var(--color-surface-sunken);
+    text-decoration: none;
+  }
+
+  .bz-menu-key {
+    flex: none;
+    width: 4px;
+    height: 15px;
+    border-radius: var(--radius-hair);
+  }
+
+  .bz-menu-count {
+    margin-left: auto;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-label);
+  }
+
+  /* -- the ornament -------------------------------------------------------
+     A lattice of three glazes on cobalt, finished with a gold rule. */
+
+  .bz-band {
+    height: var(--layout-band);
+    background-color: var(--color-band-ground);
+    background-image:
+      linear-gradient(45deg, var(--color-band-a) 25%, transparent 25% 75%, var(--color-band-a) 75%),
+      linear-gradient(45deg, var(--color-band-b) 25%, transparent 25% 75%, var(--color-band-b) 75%),
+      linear-gradient(45deg, var(--color-band-c) 25%, transparent 25% 75%, var(--color-band-c) 75%);
+    background-size: 18px 18px, 18px 18px, 54px 18px;
+    background-position: 0 0, 9px 9px, 27px 0;
+    border-bottom: 2px solid var(--color-caution);
+  }
+
+  /* -- the shell ----------------------------------------------------------
+     Three columns and the middle one takes everything left over. The rails are
+     anchored to the window's edges, not to a centred container: the language
+     reads as a workbench, not a document floating in a page. */
+
+  .bz-shell {
+    display: grid;
+    grid-template-columns: var(--layout-rail) minmax(0, 1fr) var(--layout-aside);
+    align-items: start;
+    transition: grid-template-columns var(--duration-fold) var(--ease-bazaar);
+  }
+
+  [data-bz-rail="folded"] .bz-shell {
+    grid-template-columns: 0px minmax(0, 1fr) var(--layout-aside);
+  }
+
+  /* Drop the least important thing first: an in-page index is the most
+     redundant of the three columns, so the aside goes before the rail. */
+  @media (max-width: 1180px) {
+    .bz-shell { grid-template-columns: var(--layout-rail) minmax(0, 1fr); }
+    [data-bz-rail="folded"] .bz-shell { grid-template-columns: 0px minmax(0, 1fr); }
+    .bz-aside { display: none; }
+  }
+
+  @media (max-width: 880px) {
+    .bz-shell { grid-template-columns: minmax(0, 1fr); }
+    .bz-rail { display: none; }
+  }
+
+  /* -- the rail ----------------------------------------------------------- */
+
+  /* M21 — **THE HAIRLINE IS PAINTED, NOT BORDERED, and that one change is a
+     state bug the author reported which 1,138 green tests could not see.**
+
+     His condition was the finding: *"BUT THIS ONLY HAPPENS AFTER I CLOSE THE
+     LEFT SIDEBAR AND OPEN IT AGAIN! Normally such bug does not exist when I
+     open a module for the first time."* A defect that appears only after fold
+     → restore is something the fold sets and the restore does not put back.
+
+     **MEASURED on the built site at 1440 / 1366 / 1280 / 1200, by pointer and
+     by keyboard alike.** `.bz-rail-inner` is `--layout-rail` wide (262px); with
+     a `border-right` this element's content box was 261px, so the rail
+     overflowed itself by exactly one pixel in the inline axis at all times. At
+     rest `scrollLeft` is 0 and that pixel is clipped on the right, where nobody
+     sees it. **After one fold and restore `scrollLeft` was 1 and could never
+     return** — `overflow-x: hidden` still makes a scroll container, and a
+     browser scrolls one to reveal a focused element, which is precisely what
+     the fold's focus hand-off does. The rail's contents then sit under the
+     window edge until a reload. The magnitude is whatever the rail overflows
+     by, so anything narrowing the content box further — a classic space-taking
+     scrollbar, a zoom level — makes it worse than a pixel, which is why the
+     author saw a word disappear where this machine measured one pixel.
+
+     **`overflow-x: clip` is NOT the fix, and it looked like one.** It makes no
+     scroll container, which would settle it — but CSS Overflow 3 computes
+     `clip` to `hidden` when the other axis is `auto`, and this rail needs
+     `overflow-y: auto`. MEASURED: the declaration shipped as `overflow: clip
+     auto`, `getComputedStyle` returned `hidden`, and the bug survived intact.
+
+     So the overflow is removed at its source instead. A painted hairline takes
+     no space out of the content box, the inner fits the column exactly, and
+     there is no offset left to latch. Painting a line rather than bordering it
+     is already this language's answer where a border cannot be trusted — see
+     `.bz-cat-rule`, which does it for a different reason.
+
+     `rail.spec.ts` folded and restored and asserted the grid track and the
+     reading column, and both always came back; it never measured this
+     element's OWN box, which is the one thing that did not. That reading is in
+     the spec now, and reverting this declaration turns it red. */
+  .bz-rail {
+    position: sticky;
+    top: var(--layout-sticky);
+    height: calc(100vh - var(--layout-sticky));
+    overflow: hidden auto;
+    /* The fill is the mockup's, unchanged, and it is declared as the shorthand
+       so `transcription.test.ts` can still compare it. The hairline is added
+       as longhands AFTER it — the shorthand resets `background-image` to
+       `none`, so the order is what makes both true at once. */
+    background: var(--color-surface);
+    background-image: linear-gradient(var(--color-line), var(--color-line));
+    background-repeat: no-repeat;
+    background-position: 100% 0;
+    background-size: 1px 100%;
+    transition:
+      opacity var(--duration-fade) var(--ease-bazaar),
+      transform var(--duration-fold) var(--ease-bazaar);
+  }
+
+  .bz-rail-inner {
+    width: var(--layout-rail);
+    padding: 16px 12px 48px;
+  }
+
+  /* **A PAINTED LINE IS NOT PAINTED IN FORCED COLOURS**, and that is a
+     regression this milestone introduced and a review caught.
+
+     MEASURED under `forced-colors: active` in Chrome 153: `background-image`
+     computes to `none` — the mode drops background images outright — and with
+     the border already gone the rail had **no visible boundary at all**. A
+     border survives forced colours and is recoloured to the system's own ink,
+     which is exactly why it was the right choice for the mockup and the wrong
+     one for the box model.
+
+     So both are true, each where it works. The border comes back here, and the
+     inner gives up the pixel it takes — which keeps the inline overflow at zero
+     and the fold's round trip clean in this mode too, rather than trading one
+     defect for the other. `calc()` rather than a second literal: the border is
+     the language's hairline and 1px is what `--stroke-hair` means. */
+  @media (forced-colors: active) {
+    .bz-rail { border-right: 1px solid; }
+
+    .bz-rail-inner { width: calc(var(--layout-rail) - 1px); }
+  }
+
+  /* `visibility`/`opacity` and `pointer-events: none` together: a folded rail
+     must not be reachable by Tab, or a keyboard reader traverses a column that
+     is not on screen. */
+  /* `visibility: hidden` is the one declaration here the mockup does not have,
+     and it is a correctness fix rather than a taste. Opacity, a transform and
+     `pointer-events` all stop the MOUSE; none of them removes anything from the
+     tab order, so a folded rail transcribed faithfully leaves every link in it
+     reachable by Tab — a reader would tab into a column they cannot see. It
+     changes no value the mockup declares and nothing a viewer can see. */
+  [data-bz-rail="folded"] .bz-rail {
+    visibility: hidden;
+    opacity: 0;
+    transform: translateX(-14px);
+    overflow: hidden;
+    /* The painted hairline goes with it, which `border-right-color:
+       transparent` used to do. */
+    background-image: none;
+    pointer-events: none;
+  }
+
+  .bz-rail-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 2px 4px;
+  }
+
+  .bz-rail-head-label {
+    color: var(--color-on-surface-faint);
+    font: 600 var(--text-label) / 1 var(--font-sans);
+    letter-spacing: var(--tracking-label);
+  }
+
+  /* M21 — **ONE fold control, and it rides the rail's edge.**
+
+     There were two — a 28px square in the rail's head (`.bz-rail-fold`) and
+     this tab, which existed only while folded at `left: 0`. The author asked
+     for the middle tab to do both and the top button to go. The head's rule is
+     deleted with its markup, in the same commit, because a `bz-` class no
+     stylesheet answers to is what `styling-references.test.ts` fails on.
+
+     **Making the tab the toggle is a question of where it rests while the rail
+     is OPEN**, which is the one thing the old tab never had to answer. It sits
+     at the rail's trailing edge, and the fold moves it to the window's on the
+     same duration the shell's columns take — so the tab and the column arrive
+     together rather than the tab jumping ahead. The movement is a `transform`,
+     which is what `.bz-rail` itself animates and therefore already this
+     language's way of moving a column-sized thing.
+
+     Vertically centred, so it can never collide with the sticky chrome
+     whatever the chrome's height becomes (D15). */
+  .bz-rail-tab {
+    position: fixed;
+    left: var(--layout-rail);
+    top: 50%;
+    z-index: 50;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 60px;
+    transform: translate(0, -50%);
+    border: 1px solid var(--color-line);
+    border-left: 0;
+    border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface-muted);
+    box-shadow: var(--shadow-tab);
+    cursor: pointer;
+    transition: transform var(--duration-fold) var(--ease-bazaar);
+  }
+
+  [data-bz-rail="folded"] .bz-rail-tab {
+    transform: translate(calc(-1 * var(--layout-rail)), -50%);
+  }
+
+  .bz-rail-tab:hover {
+    background: var(--color-surface-sunken);
+    color: var(--color-on-surface);
+  }
+
+  /* **Below the width where the rail exists at all, neither does its control.**
+     The rail is `display: none` under `--layout-rail-at`, and a tab offering to
+     show a column that cannot be shown is a control that does nothing — which
+     is what the old restore tab did at 390px with a folded rail, because
+     nothing hid it there either.
+
+     **The 880 is written out and it has to be**: a media query cannot read a
+     custom property, so `--layout-rail-at` and every `max-width: 880px` in this
+     file are one number in several places — the shell's own track rules above
+     do the same. Moving the breakpoint means moving all of them together, and a
+     review flagged the drift risk rather than a defect. */
+  @media (max-width: 880px) {
+    .bz-rail-tab { display: none; }
+  }
+
+  /* THE LABEL IS ON CHANNEL A. Both faces are in the markup and this reveals
+     one, off the same `<html>` attribute the fold itself reads — so a reader
+     whose rail was folded last week meets a tab saying `Show the curriculum`
+     in frame one, with no hydration and no flash of the wrong word. The hidden
+     face is `display: none`, which also takes its text out of the accessible
+     name, so the button is announced with exactly one name. */
+  .bz-rail-tab-face { display: none; }
+
+  .bz-rail-tab-face[data-when="open"] { display: grid; place-items: center; }
+
+  [data-bz-rail="folded"] .bz-rail-tab-face[data-when="open"] { display: none; }
+
+  [data-bz-rail="folded"] .bz-rail-tab-face[data-when="folded"] {
+    display: grid;
+    place-items: center;
+  }
+
+  /* -- a group, as an arch ------------------------------------------------
+     THE CURRENT GROUP IS UNMISTAKABLE, and it is emphasised four ways at once:
+     a larger type size, a sunken fill, a strong border, and a thick leading
+     edge in the group's own hue. Its count moves from muted to full ink.
+     Four signals because one of them is colour, and colour is never alone. */
+
+  .bz-group > summary {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-top: 8px;
+    padding: 9px 12px;
+    list-style: none;
+    border: 1px solid var(--color-line);
+    border-radius: var(--shape-arch);
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface);
+    font: 600 var(--text-control) / 1.2 var(--font-sans);
+    cursor: pointer;
+    transition:
+      background var(--duration-swift) var(--ease-bazaar),
+      border-color var(--duration-swift) var(--ease-bazaar);
+  }
+
+  .bz-group > summary::-webkit-details-marker { display: none; }
+
+  .bz-group > summary:hover {
+    background: var(--color-surface-sunken);
+    border-color: var(--color-line-strong);
+  }
+
+  .bz-group-key {
+    flex: none;
+    width: 5px;
+    height: 17px;
+    border-radius: var(--radius-hair);
+    transition:
+      height var(--duration-shift) var(--ease-bazaar),
+      width var(--duration-shift) var(--ease-bazaar);
+  }
+
+  .bz-group-count {
+    margin-left: auto;
+    color: var(--color-on-surface-muted);
+    font: 500 var(--text-mark) / 1 var(--font-sans);
+  }
+
+  .bz-group[data-here] > summary {
+    padding: 12px 12px 12px 11px;
+    border-color: var(--color-line-strong);
+    border-left: 4px solid var(--bz-cat);
+    background: var(--color-surface-sunken);
+    font-size: var(--text-lead);
+  }
+
+  .bz-group[data-here] > summary .bz-group-key {
+    width: 6px;
+    height: 23px;
+  }
+
+  .bz-group[data-here] > summary .bz-group-count {
+    color: var(--color-on-surface);
+    font-weight: 600;
+  }
+
+  .bz-group-list {
+    margin: 0 0 4px 16px;
+    padding: 6px 0 4px 14px;
+    list-style: none;
+    border-left: 1px solid var(--color-line);
+  }
+
+  .bz-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 9px;
+    border-radius: var(--radius-base);
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-item);
+  }
+
+  .bz-item:hover {
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface);
+    text-decoration: none;
+  }
+
+  .bz-item[aria-current] {
+    background: var(--bz-cat);
+    color: var(--color-on-primary);
+    font-weight: 600;
+  }
+
+  .bz-item-pending {
+    margin-left: auto;
+    padding: 1px 5px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xs);
+    color: var(--color-on-surface-faint);
+    font-size: 11px;
+  }
+
+  /* A FILLED DISC with a white check, and the shape is load-bearing: the teal
+     clears a 3:1 graphical floor against the ground but not a 4.5:1 text
+     floor, so the meaning has to be carried by a shape with a fill. A stroked
+     tick fails for exactly the viewers it matters most to. */
+  .bz-tick {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    background: var(--color-success);
+  }
+
+  .bz-tick > svg {
+    width: 11px;
+    height: 11px;
+    fill: none;
+    stroke: var(--color-on-primary);
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* On the current item the disc inverts, because the row is already filled
+     with the hue. */
+  .bz-item[aria-current] .bz-tick { background: var(--color-on-primary); }
+  .bz-item[aria-current] .bz-tick > svg { stroke: var(--bz-cat); }
+
+  /* -- the progress rail --------------------------------------------------
+     THE ONE PRIMITIVE THE SHELL MOCKUP DOES NOT CONTAIN. `01` has no meter of
+     any kind: it states progress in words, as `3/8` beside a group and
+     "Module 3 of 8" in a tag. Every other mockup draws a rail, and they draw
+     it four different ways — `05` at 7px/4px radius, `07` at 9px/5px, `03`
+     and `08` at 4px with no radius and a translucent white fill over the
+     level's hue. So this is a derivation (D30) with four references rather
+     than a transcription of one, and the choices are recorded here because
+     nothing else records them.
+
+     It lived in `catalog.css` from stage 4, where the board column was its
+     only consumer. Stages 7, 8 and 9 add three more — the completion row, the
+     progress row and the home level card — and a class defined in one surface
+     stylesheet and used by another is exactly what the surface discipline
+     exists to prevent, so it moves up here. The same move `--bz-cat` made out
+     of `rail.css` when a second surface read it.
+
+     TWO SHAPES, not four. A SEAM sits flush under a coloured header and is
+     square, which is `03`'s and `08`'s 4px; a BAR stands alone in a row and is
+     rounded. `05` and `07` disagree about the bar by 2px for no stated reason,
+     and the language picks one rather than carrying both: 9px, because `07` is
+     the mockup whose surface draws five of them in a grid and it is the more
+     legible of the two. Both radii the mockups use — 4px at 7px tall, 5px at
+     9px — are already exactly the scale's `sm` and `base`, so nothing had to be
+     reconciled.
+
+     `03` paints the track in translucent white over the hue. The language
+     declares no translucent surface — the same wall the drawer's backdrop met
+     in `rail.css` — so the track is `surface-sunken` and the fill is the hue
+     itself, which is `--bz-cat` unless a caller rebinds it. */
+
+  .bz-track {
+    --bz-track-height: 4px;
+    --bz-track-fill: var(--bz-cat);
+    display: flex;
+    overflow: hidden;
+    height: var(--bz-track-height);
+    border-radius: var(--bz-track-radius, 0);
+    background: var(--color-surface-sunken);
+  }
+
+  .bz-track > * {
+    flex: none;
+    height: var(--bz-track-height);
+  }
+
+  /* The done portion. Its width is the one thing a caller passes, as an inline
+     percentage, because it is a build-time or record fact and not a design
+     one. */
+  .bz-track > i { background: var(--bz-track-fill); }
+
+  /* `05`'s legend names THREE states and not two — "done", "not yet" and "not
+     written yet" — and the third is the reason this is not simply a two-tone
+     bar. It is drawn as a HATCH rather than as a third hue, because colour is
+     never the only signal (§13.1.3), and as a hatch rather than as the
+     legend's own dashed border, because a dash on a 4px-tall box paints two
+     visible teeth and reads as nothing. A level with unwritten modules puts
+     this after the fill; a level with none omits it and the rail is two-tone. */
+  .bz-track > [data-planned] {
+    margin-left: auto;
+    background: repeating-linear-gradient(
+      135deg,
+      var(--color-line) 0 3px,
+      var(--color-surface-sunken) 3px 6px
+    );
+  }
+
+  .bz-track-bar {
+    --bz-track-height: 9px;
+    --bz-track-radius: var(--radius-base);
+  }
+
+  /* -- the reading column -------------------------------------------------
+     Centred inside the fluid middle and capped at the measure. The cap keeps
+     the line length readable; the centring keeps the gutters even. The column
+     padding is fluid, so the gutters grow with the window rather than the
+     measure growing. */
+
+  .bz-main {
+    min-width: 0;
+    padding: 30px clamp(24px, 3.4vw, 56px) 96px;
+  }
+
+  .bz-col {
+    max-width: min(100%, var(--layout-measure));
+    margin-inline: auto;
+  }
+
+  .bz-crumb {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  .bz-crumb a { color: var(--color-on-surface-muted); }
+
+  .bz-display {
+    margin: 0 0 12px;
+    color: var(--color-on-surface-title);
+    font: 600 var(--text-display) / var(--text-display--line-height) var(--font-sans);
+    letter-spacing: var(--tracking-display);
+  }
+
+  /* The dashed ochre rule is the one place ornament touches the reading
+     column. */
+  .bz-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 44px 0 14px;
+    color: var(--color-on-surface-title);
+    font: 600 var(--text-section) / var(--text-section--line-height) var(--font-sans);
+    letter-spacing: var(--tracking-section);
+  }
+
+  .bz-section::after {
+    content: "";
+    flex: 1;
+    height: 2px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--color-ornament) 0 6px,
+      transparent 6px 12px
+    );
+  }
+
+  .bz-subsection {
+    margin: 30px 0 8px;
+    font: 600 var(--text-subsection) / var(--text-subsection--line-height) var(--font-sans);
+  }
+
+  .bz-facts {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 11px;
+    margin: 0 0 28px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-item);
+  }
+
+  .bz-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 4px 10px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-raised);
+    font: 600 var(--text-mark) / 1 var(--font-sans);
+  }
+
+  .bz-tag > i {
+    width: 7px;
+    height: 7px;
+    border-radius: var(--radius-hair);
+  }
+
+  /* -- prose --------------------------------------------------------------
+     Links are underlined in ochre rather than coloured differently from body
+     text; emphasis is 650 rather than 700, because the ground is light enough
+     that ordinary bold under-reads. */
+
+  .bz-prose p { margin: 0 0 17px; }
+
+  .bz-prose a {
+    font-weight: 500;
+    text-decoration: underline;
+    text-decoration-color: var(--color-ornament);
+    text-underline-offset: 2px;
+  }
+
+  .bz-prose ul {
+    margin: 0 0 17px;
+    padding-left: 22px;
+  }
+
+  .bz-prose li { margin: 6px 0; }
+  .bz-prose strong { font-weight: 650; }
+
+  /* A tile set at an angle: the callout, and the only other place `leaf`
+     appears. */
+  .bz-card {
+    margin: 0 0 28px;
+    padding: 17px 20px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--shape-leaf);
+    background: var(--color-surface-raised);
+  }
+
+  .bz-card-title {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--color-on-surface-title);
+    font-size: var(--text-item);
+  }
+
+  .bz-card ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+
+  /* M18 — `list-style: disc`, because Tailwind's preflight removes it from every
+     list in the document and this is the list the author named: `What you will
+     be able to do` was a run of indented sentences that looked like a paragraph
+     somebody had broken. The 20px indent above was already here and was
+     indenting nothing.
+
+     **It is a class and not `.bz-card ul`, and MEASURING is what settled that.**
+     Written as `.bz-card ul` it also hit `.bz-stamp-grid` — a flex row of
+     approval stamps that is a `ul` inside a card — and gave it bullets, because
+     `.bz-card ul` outranks `.bz-stamp-grid` by one element. A list asks for
+     markers here; it is never given them for being in the wrong box. */
+  .bz-card-list { list-style: disc; }
+
+  .bz-card li {
+    margin: 5px 0;
+    font-size: 15px;
+  }
+
+  /* -- the slab ----------------------------------------------------------- */
+
+  .bz-slab {
+    overflow: hidden;
+    margin: 0 0 24px;
+    border: 1px solid var(--color-slab-line);
+    border-radius: var(--radius-lg);
+    background: var(--color-slab-surface);
+  }
+
+  .bz-slab-head {
+    display: flex;
+    padding: 9px 13px;
+    border-bottom: 1px solid var(--color-slab-line);
+    color: var(--color-slab-on-surface-muted);
+    font: var(--text-mark) / 1 var(--font-mono);
+  }
+
+  .bz-slab-head > span:last-child { margin-left: auto; }
+
+  .bz-slab-code {
+    margin: 0;
+    padding: 15px 17px;
+    overflow-x: auto;
+    color: var(--color-slab-on-surface);
+    font: var(--text-code) / var(--text-code--line-height) var(--font-mono);
+  }
+
+  .bz-tok-keyword  { color: var(--color-slab-keyword);  font-weight: 600; }
+  .bz-tok-string   { color: var(--color-slab-string); }
+  .bz-tok-comment  { color: var(--color-slab-comment); }
+  .bz-tok-function { color: var(--color-slab-function); }
+  .bz-tok-number   { color: var(--color-slab-number);   font-weight: 600; }
+
+  /* -- figures ------------------------------------------------------------
+     The same dark palette, and the contents scroll INSIDE the frame: a diagram
+     wider than the column never widens the page. */
+
+  .bz-figure {
+    margin: 0 0 28px;
+    border: 1px solid var(--color-slab-line);
+    border-radius: var(--radius-lg);
+    background: var(--color-slab-surface);
+
+    /*
+      THE SLAB, REBOUND — and this is the mechanism the whole diagram palette
+      rests on.
+
+      A mermaid drawing is inline SVG generated in the browser, and mermaid's
+      `classDef` grammar rejects a CSS function: `stroke:var(--color-x)` is a
+      parse error on the `(` and a parse error blanks the figure. So
+      `src/lib/figure/mermaid-config.ts` paints everything through `themeCSS`,
+      which IS real CSS, and every declaration in it names a PAGE token —
+      `surface-raised` for a node's fill, `line-strong` for its stroke,
+      `on-surface` for a label.
+
+      Custom properties cascade into inline SVG, so redeclaring them HERE puts
+      fifty-three diagrams on the dark ground with no second stylesheet, no
+      per-diagram class and no re-render. Without it the page's own values win
+      and a diagram is a near-white box inside a near-black frame, which is
+      exactly what shipped between stage 0 and stage 6.
+
+      It belongs in the language and not in a surface stylesheet, and that is
+      not a preference: `tests/unit/color/slab-and-controls.test.ts` forbids a
+      surface from declaring any `--color-*` token at all. The two tests that
+      describe this mechanism looked contradictory until it was put here.
+    */
+    --color-surface: var(--color-slab-surface);
+    --color-surface-raised: var(--color-slab-surface-raised);
+    /* THE DRAWING LINE, and not the slab's raised hairline.
+
+       A node's border in the mockup is `slab-line-raised`, which is the quiet
+       edge a raised surface takes — and DESIGN.md's own "accepted risk" says a
+       control's boundary supports its identity rather than carrying it.
+       **A diagram's strokes are not a control's edge: they are the content.**
+       SC 1.4.11 asks 3:1 of a graphic that conveys meaning, and MEASURED,
+       `slab-line-raised` on the slab ground is 1.80:1 — `mermaid.spec.ts` is
+       what said so. `slab-arrow` is the value this palette already has for a
+       line somebody has to follow, and it measures 3.47:1 on the frame and
+       3.09:1 on a node's own fill. */
+    --color-line-strong: var(--color-slab-arrow);
+    --color-on-surface: var(--color-slab-on-raised);
+    --color-primary: var(--color-slab-info);
+    --color-category-5: var(--color-slab-fault);
+    /* DESIGN.md's dark-theme rule, applied to the one component that is dark
+       in both themes: white on the lifted accent measures 3.19:1 and fails a
+       text floor, while the ground on it reaches 5.15:1. So a filled accent
+       inside a figure carries DARK type, exactly as it does on a dark page. */
+    --color-on-primary: var(--color-slab-surface);
+  }
+
+  .bz-figure-body {
+    min-width: 0;
+    padding: 20px 18px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+
+  .bz-figure-body > svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .bz-caption {
+    margin-top: 9px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  .bz-flow {
+    display: flex;
+    align-items: center;
+    min-width: min-content;
+  }
+
+  .bz-node {
+    padding: 9px 13px;
+    border: 1px solid var(--color-slab-line-raised);
+    border-radius: var(--radius-base);
+    background: var(--color-slab-surface-raised);
+    color: var(--color-slab-on-raised);
+    font-size: var(--text-meta);
+    white-space: nowrap;
+  }
+
+  .bz-node[data-active] {
+    border-color: var(--color-category-1);
+    background: var(--color-category-1);
+    color: var(--color-on-primary);
+    font-weight: 600;
+  }
+
+  /*
+    THE THIRD NODE ROLE — M16 stage 6.
+
+    `playground/06-code-diagrams.html` proposes three: done, you-are-here, and
+    not-yet. The language had two — a bare node and `[data-active]` — because
+    `01` draws only two, and `01` is the ratified shell. `06` contributes the
+    third and nothing else about a figure (**D31**): its own slab is a
+    Tokyo-Night palette on a cool grey ground, and only its `t3` variant is on
+    this palette at all.
+
+    Read off `t3`, which is the one that is: done is `.nd.b` = #2f8c86, which is
+    `category-1` and therefore the state the language already had; you-are-here
+    is `.nd.a` = #282864, the cobalt; later is a bare `.nd`. So the missing
+    state is a cobalt node and its value was already declared — nothing here is
+    a colour anybody invented, which matters because
+    `tests/unit/design/transcription.test.ts` compares the colour SET against
+    the two `01` mockups in both directions and would refuse one.
+
+    `data-here` and NOT `data-state`, deliberately. The rail already spends
+    `data-here` on "the current group", so one word carries one meaning across
+    the language (**D38**). `data-state` is taken: the record's own diagram uses
+    `.hl-node[data-state]` with four values, and a second four-value
+    `data-state` on a different kind of node is how two vocabularies start
+    agreeing on nothing.
+  */
+  .bz-node[data-here] {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    font-weight: 600;
+  }
+
+  .bz-arrow {
+    padding: 0 8px;
+    color: var(--color-slab-arrow);
+    font-weight: 700;
+  }
+
+  /* -- actions ------------------------------------------------------------
+     One primary beside at most one quiet. Primary hover brightens the fill
+     rather than changing the hue. */
+
+  .bz-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 13px;
+    margin-top: 44px;
+    padding-top: 22px;
+    border-top: 2px solid var(--color-line);
+  }
+
+  .bz-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 20px;
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-base);
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    font: 600 15px / 1 var(--font-sans);
+    cursor: pointer;
+  }
+
+  .bz-btn:hover { filter: brightness(1.12); }
+
+  /* ---------------------------------------------------------------------------
+     §10.4'S TOUCH FLOOR, FOR THE CONTROLS THE LANGUAGE ITSELF DRAWS.
+
+     Until 2026-09-10 this floor existed in exactly ONE place in the whole
+     project — a `min-height` on the form field — and the browser test named
+     "every control reaches the §10.4 touch floor below 768px" measured two
+     classes on one page, both of which already had a hit area. A review
+     enumerated every narrow block and found the rest of the controls sitting
+     under the floor at 390px: MEASURED `.bz-btn` at 39px (11 + 15 + 11 + 2,
+     border-box under Tailwind's preflight) and `.bz-bar-icon` at 33px — and
+     the bar's two icons are on every route.
+
+     Two shapes of answer, and which one applies is about the neighbours.
+     A button sits in a wrapping action row with 13px of gap, so it can simply
+     GROW: nothing is beside it that a taller box would collide with. The bar's
+     icons sit in a fixed strip where growing the box grows the bar, so they
+     take the hit-area idiom `prose.css` established instead — the painted
+     control keeps the size the mockup gives it and an invisible `::after`
+     carries the target. The 8px gap between them means two 44px targets would
+     overlap by 3px on each side, so the pseudo is 44 tall and the width it can
+     have without stealing from its neighbour, which is the honest trade at
+     this width: the vertical axis is where a thumb misses.
+
+     Above 768px nothing here applies and every transcribed value holds, which
+     is what `NARROW_DEVIATIONS` exists to record.
+     --------------------------------------------------------------------------- */
+  @media (max-width: 767px) {
+    .bz-btn { min-height: 44px; }
+
+    /* M18 — the repository control joined the bar and missed this block, which
+       is the shape a new control fails in: it is 33px tall like its siblings
+       and it was the only one without the hit area beneath it. `TOUCH_CONTROLS`
+       in `responsive.spec.ts` could not see it either, because that list is
+       typed out and a new class is invisible to it until somebody adds one. */
+    .bz-bar-icon,
+    .bz-bar-repo { position: relative; }
+
+    .bz-bar-icon::after,
+    .bz-bar-repo::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      /* 41px is the icon button's own width; the repository control is wider
+         because it carries a figure, so the hit area follows the control rather
+         than shrinking it to a square. */
+      width: max(41px, 100%);
+      height: 44px;
+      translate: -50% -50%;
+    }
+  }
+
+  .bz-btn-quiet {
+    border-color: var(--color-line-strong);
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface);
+  }
+
+  .bz-btn-quiet:hover {
+    background: var(--color-surface-sunken);
+    filter: none;
+  }
+
+  /* A destructive action, and it is a QUIET BUTTON WITH AN EDGE rather than a
+     filled red one — which is what `07:88-89` draws too: a colour-only
+     modifier that changes nothing geometric. The label keeps `on-surface`
+     because `fault` is a graphic token (see its declaration), and the meaning
+     is carried by the word, then the edge, then the hue, in that order. */
+  .bz-btn-danger {
+    border-color: var(--color-fault);
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface);
+  }
+
+  .bz-btn-danger:hover {
+    background: var(--color-surface-sunken);
+    filter: none;
+  }
+
+  /* -- the table ----------------------------------------------------------
+     IN THE LANGUAGE because four surfaces draw one: the catalog, the two level
+     listings, the organisation roster and the sign-in doors. It was authored in
+     `catalog.css` in stage 4 when the catalog was the only one, and the team
+     and sign-in tables were still pointing at a class name from the retired
+     vocabulary with a `1060px` minimum width copied into three separate
+     comments — a number whose rule stage 0 had deleted, so it constrained
+     nothing and could be wrong in one of the three without anything noticing.
+     It was: those six columns come to 920 plus a flexible one.
+
+     What each table declares for itself is `--bz-table-min`, computed from the
+     columns it is about to draw. What the language declares is the shape.
+
+     The catalog's own columns — a topics cell, a status cell, a tick, the four
+     sign-off squares — stay in `catalog.css`: they are that table's subject
+     matter rather than any table's shape.
+     ------------------------------------------------------------------------ */
+
+  .bz-table-scroll {
+    min-width: 0;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+
+  /* `--bz-table-min` is the sum of the column widths, computed by `SheetIndex`
+     from the table it is about to draw and passed in per instance. It used to
+     be a hand-computed `1060px` in a deleted stylesheet with the arithmetic
+     written out in a comment beside it, which is two places for one number and
+     is how the ninth column's width came to be justified by subtraction. */
+  .bz-table {
+    /* Declared here so the name resolves even where nothing passes one, and
+       overridden per instance. A table with no sum to honour is simply as wide
+       as the box it is in. */
+    --bz-table-min: 100%;
+    width: 100%;
+    min-width: var(--bz-table-min);
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  /* THE COLUMN LABEL TAKES FULL INK, AND THAT IS A MEASUREMENT RATHER THAN A
+     preference. On the sand fill this header needs to be told apart by,
+     `on-surface-muted` measures 4.21:1 — under the 4.5:1 a column label owes,
+     because a label naming what a column MEANS is content and not decoration —
+     while measuring 5.62 and 5.81 on the two page grounds, which is why the
+     pairing looked safe everywhere it was checked. `on-surface` is 11.24:1 on
+     the same fill, and the header stays quiet the way the rest of the language
+     does it: at `mark` size, at 600, against body text at `body` and 400.
+     `.bz-group[data-here] > summary` already takes full ink on this fill, so
+     this is the language agreeing with itself rather than a new idea.
+     No mockup specifies this pair: `01` draws a table with no `thead` at all,
+     and `03`, which draws one, supplies geometry only (D31). */
+  .bz-table thead th {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--color-line);
+    background: var(--color-surface-sunken);
+    color: var(--color-on-surface);
+    font: 600 var(--text-mark) / 1 var(--font-sans);
+    text-align: left;
+    /* STICKY TO ITS OWN SCROLLER, AT ZERO, and the offset is the bug it fixes.
+       This was `top: calc(var(--layout-sticky) + var(--bz-filters-h, 0px))`,
+       which is the right offset for sticking beneath the bar and the filter
+       row — and that intent needs the VIEWPORT as the sticky containing block.
+       It is not: `.bz-table-scroll` carries `overflow-x: auto` for the wide
+       table, and the spec computes the other axis to `auto` as well, so the
+       scroller is the scrollport and the offset resolves against IT.
+       MEASURED at scroll 0 on `/courses/expert/`: the first row spanned
+       398-445 and the header 443-474 — the header was pushed 76px down the
+       table and painted over the first two rows, hiding them.
+       Zero is the only correct value here. A header that stays put while the
+       page scrolls would need the scroller to scroll vertically too, which is
+       a layout decision and not a defect fix. */
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+
+  .bz-table tbody td,
+  .bz-table tbody th {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--color-line);
+    font-size: var(--text-control);
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  /* The title cell is a `th[scope="row"]`, so the weight is set per element
+     type rather than on `.bz-row-title`: a rule qualified by `tbody th` beats
+     a bare class, and the class would silently lose. */
+  .bz-table tbody td { font-weight: 400; }
+  .bz-table tbody th { font-weight: 600; }
+
+  .bz-row:hover { background: var(--color-surface-sunken); }
+
+  /* The leading rule is reserved on every row and painted only where there is
+     something to paint, so no column changes width between a drawn row and a
+     draft one.
+
+     **Drawn rows only, and that is the amended T6 rather than taste.** A draft
+     row's `#` cell already carries `--color-caution` as its hidden-line ink,
+     and a category hue and a semantic token may not sit on one element. `03`
+     tints every row including its planned ones; it has no hidden-line ink to
+     collide with. */
+  .bz-row > :first-child { border-left: 3px solid transparent; }
+  .bz-row[data-cat] > :first-child { border-left-color: var(--bz-cat); }
+
+  /* MUTED and not `03`'s faint. A module's number is its identity — prose
+     names another module by it and the rail lists it — so it is a word the
+     reader reads rather than one they may ignore, and DESIGN.md's own rule is
+     that such a word takes `on-surface-muted` however small it is. MEASURED:
+     faint puts it at 3.09:1 on the row, under the 4.5:1 a text floor asks.
+     A measured floor outranks the transcription, which is D34's precedent. */
+  .bz-row-number {
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-mark) / 1 var(--font-mono);
+  }
+
+  /* A draft row recedes in its TITLE, which is `03`'s own treatment for a
+     planned module, and NOT in the caution ink on its number.
+
+     MEASURED: caution on the page ground is 3.09:1, and a module's number is
+     text a reader reads, so it takes a 4.5:1 floor. The retired drawing set
+     put hidden-line yellow there — a convention for a line that is planned and
+     not yet cut — and the convention does not survive a text floor. The row
+     still carries a dashed completion square, and says `PLANNED` where a
+     screen reader can hear it, so nothing is lost but the colour.
+
+     **The "dashed status tick" this named went with §4.8's STATUS column in
+     M17**, and the sentence outlived it by one milestone. `ModuleRow` carries
+     the current list of what a planned row states without colour, measured. */
+  .bz-row[data-draft] .bz-row-link { color: var(--color-on-surface-muted); }
+
+  /* Ink and not cobalt. A table of 33 rows whose every title is a link reads
+     as a wall of accent otherwise, and the row's hover plus the pointer are
+     what say it is one — which is `03`'s call as well. */
+  .bz-row-link { color: var(--color-on-surface); }
+
+  .bz-row-context,
+  .bz-row-value {
+    color: var(--color-on-surface-muted);
+  }
+
+  .bz-row-value { font-variant-numeric: tabular-nums; }
+  /* -- the panel ----------------------------------------------------------
+     `07:78-80`, and it is `01`'s card with the corner straightened: the same
+     hairline, the same 1px edge, the same raised fill, and a plain radius
+     instead of the asymmetric `leaf`. DESIGN.md is explicit that `leaf` is "a
+     callout, a tile set at an angle" and "never as a general radius", and a
+     settings panel is not a callout — so `.bz-card` cannot be reused here and
+     this is not a second card either. It is the same box with the one detail
+     that distinguishes a callout from a container.
+
+     IT IS IN THE LANGUAGE because four surfaces reach for it: the progress
+     page's settings, the home page's blocks, and the team, sign-in and join
+     screens. 113 occurrences under one name in the retired vocabulary, which
+     is what a primitive looks like from the outside.
+
+     `07:80`'s `>` matters and is kept: it styles the panel's own intro
+     paragraph and not every `p` inside it, so a hint further down keeps its
+     own voice. */
+
+  .bz-panel {
+    padding: 18px 20px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-raised);
+  }
+
+  .bz-panel-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .bz-panel-title {
+    margin: 0;
+    color: var(--color-on-surface-title);
+    font: 600 var(--text-lead) / 1.3 var(--font-sans);
+    letter-spacing: -0.01em;
+  }
+
+  .bz-panel > p,
+  .bz-panel-note {
+    margin: 0 0 14px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-item);
+  }
+
+  /* -- the field ----------------------------------------------------------
+     THE OTHER PRIMITIVE THE SHELL MOCKUP DOES NOT CONTAIN. `01` has no
+     `<input>` anywhere: its search is a `<div role="button">` dressed as a
+     field, which is why `barField` sits in the fidelity harness's
+     `DELIBERATELY_ABSENT`. `07:81-84` draws the real one, and it is the only
+     mockup that does.
+
+     Transcribed from it, and it lands on the scale exactly: 14.5px is
+     `control`, the label's 14px is `item`, and the 7px radius is `lg`. The
+     96px label gutter is `07`'s own. Colour comes from `01`, as always — the
+     edge is `line-strong`, because DESIGN.md gives that weight to an
+     interactive or hovered edge and a field is the most interactive thing on
+     a settings page.
+
+     ONE DEPARTURE, and it is D34's kind: `07` sets the control 36px tall, and
+     §10.4 wants 44px for a thumb. The transcribed height holds where there is
+     a pointer and the floor takes over below the language's own phone
+     breakpoint, which is the same shape as every other touch target here. A
+     measured accessibility floor outranks a transcribed value.
+
+     `07` gives the field no focus rule of its own; the global ring covers it,
+     and `focus` is clay precisely so it needs no per-surface restyling. */
+
+  .bz-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 10px;
+  }
+
+  .bz-field-label {
+    flex: none;
+    width: 96px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-item);
+  }
+
+  .bz-field > input,
+  .bz-field > select,
+  .bz-field > textarea {
+    flex: 1;
+    min-width: 0;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface);
+    font: var(--text-control) / 1 var(--font-sans);
+  }
+
+  .bz-field > textarea {
+    height: auto;
+    padding: 8px 10px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 767px) {
+    .bz-field > input,
+    .bz-field > select,
+    .bz-field > textarea {
+      min-height: 44px;
+    }
+  }
+
+  /* The two notes a field can carry. `hint` explains, `error` refuses, and the
+     error is announced rather than merely coloured — `fault` on the edge, the
+     sentence in ordinary ink. */
+  .bz-field-hint {
+    margin: 4px 0 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  .bz-field-error {
+    margin: 4px 0 0;
+    color: var(--color-on-surface);
+    font-size: var(--text-meta);
+  }
+
+  .bz-field[data-invalid="true"] > input,
+  .bz-field[data-invalid="true"] > select,
+  .bz-field[data-invalid="true"] > textarea {
+    border-color: var(--color-fault);
+    border-width: 2px;
+  }
+
+  .bz-field-optional {
+    margin-left: 6px;
+    color: var(--color-on-surface-faint);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
+  }
+
+  .bz-actions .bz-note {
+    margin: 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-item);
+  }
+
+  /* `minmax(0, 1fr)` and NOT `1fr`, which is the whole of a defect M18 shipped.
+
+     A bare `1fr` track carries an automatic minimum of its own min-content, and
+     the one-line tile's min-content is large: the label is `flex: none` and on a
+     planned module it reads `Previous module · Planned`. So the track refused to
+     shrink and the grid overhung its container — **MEASURED: 37px of sideways
+     document scroll at 1024, and up to 172px between 768 and 1060**, on the
+     eight routes whose neighbour is a planned module. §4.7's one hard rule is
+     that the page body never scrolls sideways.
+
+     The narrow rule below already said `minmax(0, 1fr)`; only the two-column
+     case was left bare, which is why it survived a phone and failed a laptop. */
+  .bz-pager {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
+    margin-top: 34px;
+  }
+
+  /* M18 — ONE LINE. It stacked a faint label over a titled destination and was
+     two lines tall whatever its padding did; the author asked for shorter
+     boxes, and the row is where the height was. MEASURED: 65px to 39px, with
+     no length in the language changed — 13px of padding either side of a 13px
+     line is the arithmetic, and the 13px padding is the tile's own from before. */
+  .bz-pager-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 13px 15px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-raised);
+  }
+
+  .bz-pager-item:hover {
+    border-color: var(--color-line-strong);
+    background: var(--color-surface-sunken);
+    text-decoration: none;
+  }
+
+  /* The label may shrink, and it gives way BEFORE the destination does.
+
+     It was `flex: none`, which made it the one thing in the tile that could not
+     yield — so when the row ran out of room the title took the whole loss and
+     MEASURED down to 18px on twelve routes, which is the only part of the tile
+     that says where you are going. Now the label truncates first and the title
+     keeps its `min-width: 0` floor below. */
+  .bz-pager-item small {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    color: var(--color-on-surface-faint);
+    font-size: var(--text-mark);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* The destination is what may be cut, because the label beside it is four
+     words that never vary and the title is the part that can be forty
+     characters long. `min-width: 0` is what lets a flex item shrink at all. */
+  .bz-pager-item b {
+    flex: 1 1 auto;
+    /* A floor, because `min-width: 0` alone let this be starved to 18px by the
+       label beside it. 96px is about twelve characters — enough for a
+       destination to be recognisable, and small enough to fit beside the label
+       in the narrowest tile the two-column grid draws. */
+    min-width: min(96px, 100%);
+    overflow: hidden;
+    color: var(--color-on-surface-title);
+    font-size: 15px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* `baseline` on the row would sit the glyph on the text baseline, where a
+     16-unit box centred on an x-height looks dropped. It is the one item that
+     centres. */
+  .bz-pager-arrow {
+    flex: none;
+    align-self: center;
+    color: var(--color-on-surface-faint);
+  }
+
+  /* The next tile reads right to left: its glyph is last in the DOM already, so
+     only the packing changes. */
+  .bz-pager-item[data-end] { justify-content: flex-end; }
+
+  /* ONE COLUMN ON A PHONE, and this is what the one-line tile cost.
+
+     Two tiles side by side were two lines tall each and fitted 390px happily.
+     One line needs the label, the glyph and a truncated title on the same row,
+     and MEASURED at 390 that is about 240px of content in a 165px tile — six
+     module routes scrolled the document sideways, which §11.10 forbids and
+     `responsive.spec.ts` caught immediately. Stacking is the answer the rest of
+     the language already uses at this width, and it costs nothing: a pager with
+     two rows of one line is still shorter than one row of two. */
+  @media (max-width: 767px) {
+    .bz-pager { grid-template-columns: minmax(0, 1fr); }
+    .bz-pager-item[data-end] { justify-content: flex-start; }
+  }
+
+  /* -- the aside ---------------------------------------------------------- */
+
+  .bz-aside {
+    position: sticky;
+    top: var(--layout-sticky);
+    padding: 30px 20px 40px 8px;
+  }
+
+  .bz-aside-label {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-mark);
+    font-weight: 600;
+  }
+
+  .bz-aside-link {
+    display: block;
+    padding: 5px 0 5px 12px;
+    border-left: 2px solid var(--color-line);
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  .bz-aside-link:hover {
+    color: var(--color-on-surface);
+    text-decoration: none;
+  }
+
+  .bz-aside-link[aria-current] {
+    border-left-color: var(--color-primary);
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+}
+
+/* ===========================================================================
+   THE DARK SIBLING
+
+   Approved 2026-09-09 from `playground/01-theme-T4-G3-DARK.html`, which is a
+   derivation rather than a design: no mockup defines a dark theme, so every
+   value below was computed and the steps are stated.
+
+   **The surfaces ARE the slab, promoted from a component to the whole page.**
+   The mockup already contains a complete dark surface with ink proven on it,
+   which is why almost nothing here is new. One accepted consequence, decided
+   rather than overlooked: the page ground and the slab are now the same fill,
+   so a code block is told apart by its hairline. That is the same rule the
+   light theme lives by, where a white card on a near-white ground is also
+   separated by its border and not its fill.
+
+   **Every chromatic was lifted in OKLCH lightness with hue and chroma held**,
+   until it cleared its floor on ALL THREE grounds — a floor checked against
+   one ground is not checked (D19). Hues moved by at most 0.3°, and five of the
+   ten did not have to move at all.
+
+   **The bar does not move.** Cobalt, its five on-bar values, the band and the
+   completion disc are identical in both themes, and that is what keeps the two
+   looking like siblings rather than two designs.
+   =========================================================================== */
+
+.dark {
+  /* The slab's own three, promoted. `raised` is LIGHTER here and `sunken`
+     darker, which is the inversion a dark ground requires. */
+  --color-surface:              #1d1f27;
+  --color-surface-raised:       #262933;
+  --color-surface-sunken:       #181a21;
+  --color-line:                 #33363f;
+  --color-line-strong:          #444854;
+
+  /* `title` stays a voice of its own: in the light theme it is further from the
+     ground than the ink, so here it is lighter by the same distance. */
+  --color-on-surface:           #e7e3d8;
+  --color-on-surface-title:     #e9e6e0;
+  --color-on-surface-muted:     #9aa0ad;
+  /* A CEILING, not a floor. `faint` is for something a reader may ignore, so it
+     was lowered until it sits under 3:1 on every ground: 2.49 to 2.98. */
+  --color-on-surface-faint:     #606571;
+
+  /* Untouched, all nine. The chrome is the anchor. */
+  --color-bar:                  #282864;
+  --color-on-bar:               #ffffff;
+  --color-on-bar-dim:           #c9c6e4;
+  --color-bar-edge:             #28286400;
+  --color-bar-hover:            rgba(255, 255, 255, 0.10);
+  --color-bar-chip:             #fdfbf7;
+  --color-on-bar-chip:          #1b1b47;
+  --color-bar-field:            rgba(255, 255, 255, 0.08);
+  --color-bar-field-line:       rgba(255, 255, 255, 0.25);
+
+  /* Cobalt cannot be a link on a dark ground, so `primary` lifts — and it can,
+     without touching the bar, because the language keeps those two separate.
+     `on-primary` becomes the ground: white on the lifted accent measures
+     3.19:1 and fails a text floor, while the ground on it reaches 5.15:1. That
+     is the one genuine addition the dark theme needs. */
+  --color-primary:              #848bd0;
+  --color-on-primary:           #1d1f27;
+  --color-focus:                #ad5b47;
+  /* Teal, gold and ochre already cleared 3:1 on this ground and so are
+     unchanged — the derivation moved only what had to move. */
+  --color-success:              #2f8c86;
+  --color-caution:              #b8873b;
+  --color-on-caution:           #20201c;
+  /* Lifted with `category-5` and `focus`, to the dark mockup's own `--accent2`.
+     3.02:1 on `surface-raised` is the tightest pair in the language, and it is
+     why this token is graphic-only. */
+  --color-fault:                #ad5b47;
+  --color-ornament:             #c8a078;
+
+  /* Three of five lifted; teal and gold already cleared. `category-2` remains
+     the cobalt family, which is the documented exception to the 20° rule. */
+  --color-category-1:           #2f8c86;
+  --color-category-2:           #676daf;
+  --color-category-3:           #91609d;
+  --color-category-4:           #b8873b;
+  --color-category-5:           #ad5b47;
+
+  --color-band-ground:          #282864;
+  --color-band-a:               #2f8c86;
+  --color-band-b:               #c8a078;
+  --color-band-c:               #ad5b47;
+
+  /* The slab does not re-theme: it is already dark, and a code block that
+     changed colour with the page would stop being the same object. Redeclared
+     rather than inherited because `src/lib/content/code-theme.ts` reads each of
+     these out of the token layer and requires every one of them to appear in
+     both halves, above and inside the dark block. */
+  --color-slab-surface:         #1d1f27;
+  --color-slab-surface-raised:  #262933;
+  --color-slab-on-surface:      #e7e3d8;
+  --color-slab-on-surface-muted:#9aa0ad;
+  --color-slab-line:            #33363f;
+  --color-slab-line-raised:     #444854;
+  --color-slab-on-raised:       #dcd8cd;
+  --color-slab-arrow:           #6e737f;
+  --color-slab-keyword:         #c48ce0;
+  --color-slab-string:          #8fcf9a;
+  --color-slab-comment:         #8b91a0;
+  --color-slab-function:        #7fb8e8;
+  --color-slab-number:          #e0a45c;
+  /* The two SEMANTICS a diagram needs that the page's own chromatics cannot
+     supply. `success` and `caution` are the same value in both themes and work
+     on either ground; `primary` and `category-5` are not — cobalt is #282864
+     on powder and lifts to #848bd0 on a dark one. A frame that never flips
+     needs the lifted values at all times, or `info` is a navy stroke on a
+     near-black ground. Both are already the language's own dark values. */
+  --color-slab-info:            #848bd0;
+  --color-slab-fault:           #ad5b47;
+}
+
+/* The fold is instant, not animated. */
+@media (prefers-reduced-motion: reduce) {
+  .bz-shell,
+  .bz-rail,
+  .bz-group > summary,
+  .bz-group-key {
+    transition: none;
+  }
+}

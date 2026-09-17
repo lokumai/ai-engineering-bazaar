@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home page — 3 alternatives</title>
+<style>
+:root{
+  --paper:#fff;--wash:#f7f8fa;--sunken:#eef1f5;--ink:#1a1d23;--muted:#5b6472;--faint:#8a929e;
+  --line:#e3e6eb;--line-2:#cfd4dc;--accent:#0b6e5f;--soft:#e6f2ef;--accent-ink:#08594c;
+  --l1:#0b6e5f;--l2:#1d63b8;--l3:#7a4fb5;--l4:#b5761d;--l5:#5b6472;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--wash);color:var(--ink);font:16px/1.6 var(--sans)}
+a{text-decoration:none;color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.head{max-width:1100px;margin:0 auto;padding:40px 24px 8px}
+.head h1{font-size:28px;letter-spacing:-.02em;margin:0 0 8px}
+.head p{color:var(--muted);max-width:72ch;margin:0 0 8px}
+.opt{max-width:1100px;margin:34px auto 0;padding:0 24px}
+.tag{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}
+.tag b{background:var(--ink);color:#fff;border-radius:6px;min-width:30px;padding:0 8px;
+  font:700 13.5px/26px var(--sans);text-align:center}
+.tag h2{font-size:19px;margin:0;letter-spacing:-.01em}
+.tag span{color:var(--muted);font-size:14.5px}
+.frame{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.why{padding:12px 16px;background:var(--wash);border-top:1px solid var(--line);color:var(--muted);font-size:14px}
+.why b{color:var(--ink)}
+
+.bar{display:flex;align-items:center;gap:16px;height:54px;padding:0 20px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:9px;font:650 15px/1 var(--sans);color:var(--ink)}
+.brand .g{width:23px;height:23px;border-radius:6px;background:var(--ink);color:#fff;display:grid;
+  place-items:center;font:700 11.5px/1 var(--sans)}
+.bnav{display:flex;gap:2px;margin-left:6px}
+.bnav a{padding:6px 11px;border-radius:6px;color:var(--muted);font-size:14px;font-weight:500}
+.bnav a[aria-current]{background:var(--soft);color:var(--accent-ink);font-weight:600}
+.sp{flex:1}
+.ib{width:32px;height:32px;border:1px solid var(--line-2);border-radius:7px;background:var(--paper);
+  display:grid;place-items:center;color:var(--muted);cursor:pointer;font:600 11px/1 var(--sans)}
+
+.body{padding:44px 40px 46px}
+h2.hero{font:700 46px/1.1 var(--sans);letter-spacing:-.035em;margin:0 0 14px;max-width:20ch}
+.lede{font-size:19px;line-height:1.6;color:var(--muted);max-width:56ch;margin:0 0 26px}
+.ctas{display:flex;gap:11px;flex-wrap:wrap;align-items:center}
+.pri{border:1px solid var(--accent);background:var(--accent);color:#fff;font:600 15.5px/1 var(--sans);
+  padding:13px 22px;border-radius:8px;cursor:pointer}
+.pri:hover{background:var(--accent-ink)}
+.sec{border:1px solid var(--line-2);background:var(--paper);color:var(--ink);
+  font:600 15.5px/1 var(--sans);padding:13px 20px;border-radius:8px;cursor:pointer}
+.sec:hover{background:var(--wash)}
+.facts{display:flex;gap:24px;flex-wrap:wrap;color:var(--muted);font-size:14px;margin:22px 0 0}
+.facts b{color:var(--ink);font-weight:650}
+
+.levels{display:grid;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));gap:13px;margin-top:34px}
+.lvl{border:1px solid var(--line);border-radius:11px;padding:0;overflow:hidden;display:block}
+.lvl:hover{box-shadow:0 8px 22px -14px rgba(20,25,35,.28)}
+.lvl header{padding:13px 15px;color:#fff}
+.lvl header b{display:block;font:650 15.5px/1.2 var(--sans)}
+.lvl header span{font-size:12.5px;opacity:.88}
+.lvl .t{height:4px;background:rgba(255,255,255,.32)}
+.lvl .t i{display:block;height:4px;background:#fff}
+.lvl ul{list-style:none;margin:0;padding:9px 10px}
+.lvl li{padding:4px 6px;font-size:13.5px;color:var(--muted);display:flex;gap:8px}
+.lvl li .k{color:var(--faint);font:600 11.5px/1.5 var(--mono)}
+.lvl li.done{color:var(--ink)}
+.lvl li.done .k{color:var(--accent)}
+.lvl footer{padding:9px 15px 13px;font-size:13px;color:var(--accent);font-weight:600}
+
+.cont{display:flex;align-items:center;gap:18px;flex-wrap:wrap;border:1px solid var(--line);
+  border-radius:11px;padding:18px 20px;background:var(--wash)}
+.cont .num{width:46px;height:46px;border-radius:11px;background:var(--soft);color:var(--accent-ink);
+  display:grid;place-items:center;font:700 16px/1 var(--sans);flex:none}
+.cont div{flex:1;min-width:0}
+.cont small{display:block;color:var(--faint);font-size:13px}
+.cont b{display:block;font:650 19px/1.25 var(--sans);letter-spacing:-.015em;margin:2px 0 3px}
+.cont p{margin:0;color:var(--muted);font-size:14px}
+
+.rulebox{margin-top:34px;border-top:1px solid var(--line);padding-top:26px}
+.rulebox h3{margin:0 0 14px;font-size:17px;letter-spacing:-.01em}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.rule{display:flex;gap:11px}
+.rule .ic{width:28px;height:28px;border-radius:8px;background:var(--soft);color:var(--accent-ink);
+  display:grid;place-items:center;flex:none;font-size:14px}
+.rule b{display:block;font-size:14.5px;font-weight:600;margin-bottom:1px}
+.rule p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.5}
+.searchbig{display:flex;align-items:center;gap:11px;height:50px;padding:0 16px;max-width:520px;
+  border:1px solid var(--line-2);border-radius:10px;color:var(--faint);font-size:15.5px;cursor:text;
+  margin:0 0 26px}
+.searchbig kbd{margin-left:auto;font:11.5px/1 var(--mono);border:1px solid var(--line-2);
+  border-radius:4px;padding:4px 6px;background:var(--wash)}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>Home page &mdash; three alternatives</h1>
+  <p>
+    Today the home page opens with &ldquo;OPEN DRAWING SET &middot; NO ACCOUNT &middot; NOTHING
+    GATED&rdquo; and then shows nine numbers about a record that is empty. A first-time visitor
+    learns nothing about the course, and a returning one has to hunt for the module they were on.
+  </p>
+</div>
+
+<!-- ============================ A ============================ -->
+<section class="opt">
+  <div class="tag"><b>A</b><h2>Say what it is, then show the five levels</h2>
+    <span>the course landing page: what, why, start</span></div>
+  <div class="frame">
+    <div class="bar">
+      <span class="brand"><span class="g">L</span>AI Engineering Bazaar</span>
+      <nav class="bnav"><a href="#" aria-current="page">Home</a><a href="#">Curriculum</a><a href="#">Catalog</a><a href="#">My progress</a></nav>
+      <div class="sp"></div><button class="ib">&#9680;</button><button class="ib">TR</button>
+    </div>
+    <div class="body">
+      <h2 class="hero">AI engineering, written by someone who builds it.</h2>
+      <p class="lede">
+        Thirty-three short modules on how modern AI systems are actually put together, from what a
+        token is to how a team runs agents in production. Free, no account, English and Turkish.
+      </p>
+      <div class="ctas">
+        <button class="pri">Start with LLM Fundamentals</button>
+        <button class="sec">Browse the catalog</button>
+      </div>
+      <div class="facts">
+        <span><b>19</b> of 33 written</span>
+        <span><b>8 hours</b> of reading</span>
+        <span><b>200</b> diagrams and figures</span>
+        <span><b>165</b> cited sources</span>
+      </div>
+
+      <div class="levels">
+        <a class="lvl" href="#">
+          <header style="background:var(--l1)"><b>1 &middot; Fundamentals</b><span>8 modules</span></header>
+          <div class="t"><i style="width:37%"></i></div>
+          <ul>
+            <li class="done"><span class="k">01</span>LLM Fundamentals</li>
+            <li class="done"><span class="k">02</span>Training LLMs</li>
+            <li><span class="k">03</span>RAG &amp; Embeddings</li>
+          </ul>
+          <footer>Start here</footer>
+        </a>
+        <a class="lvl" href="#">
+          <header style="background:var(--l2)"><b>2 &middot; Intermediate</b><span>8 modules</span></header>
+          <div class="t"><i style="width:0"></i></div>
+          <ul>
+            <li><span class="k">09</span>Prompt Engineering</li>
+            <li><span class="k">10</span>Context Engineering</li>
+            <li><span class="k">11</span>Coding Agents</li>
+          </ul>
+          <footer>7 ready</footer>
+        </a>
+        <a class="lvl" href="#">
+          <header style="background:var(--l3)"><b>3 &middot; Expert</b><span>11 modules</span></header>
+          <div class="t"><i style="width:0"></i></div>
+          <ul>
+            <li><span class="k">17</span>Advanced Tools</li>
+            <li><span class="k">18</span>Advanced Memory</li>
+            <li><span class="k">19</span>Advanced Multi-Agent</li>
+          </ul>
+          <footer>In progress</footer>
+        </a>
+        <a class="lvl" href="#">
+          <header style="background:var(--l4)"><b>4 &middot; Ecosystem</b><span>5 modules</span></header>
+          <div class="t"><i style="width:0"></i></div>
+          <ul>
+            <li><span class="k">28</span>Agent Frameworks</li>
+            <li><span class="k">29</span>Inference Providers</li>
+            <li><span class="k">30</span>Inference Engines</li>
+          </ul>
+          <footer>4 ready</footer>
+        </a>
+      </div>
+
+      <div class="rulebox">
+        <h3>Why this and not the hundredth AI blog</h3>
+        <div class="rules">
+          <div class="rule"><span class="ic">&#9997;</span><div><b>A person wrote it</b><p>Most of this is too new for a model to have read anything reliable about.</p></div></div>
+          <div class="rule"><span class="ic">&#128172;</span><div><b>It sounds like talking</b><p>Ask an engineer in real life and you get a straight answer. That is the register.</p></div></div>
+          <div class="rule"><span class="ic">&#128207;</span><div><b>Short on purpose</b><p>Five to ten minutes a module, then links out when you want more.</p></div></div>
+          <div class="rule"><span class="ic">&#128200;</span><div><b>Pictures do the work</b><p>Two hundred diagrams, because a loop is easier to see than to read.</p></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="why"><b>Why it works:</b> a stranger understands the product in one screen, and the
+      five level cards double as the table of contents. <b>Cost:</b> a returning reader has to
+      scroll or click to get back to work.</div>
+  </div>
+</section>
+
+<!-- ============================ B ============================ -->
+<section class="opt">
+  <div class="tag"><b>B</b><h2>Search first, catalog immediately</h2>
+    <span>the reference-site landing: MDN, DevDocs</span></div>
+  <div class="frame">
+    <div class="bar">
+      <span class="brand"><span class="g">L</span>AI Engineering Bazaar</span>
+      <nav class="bnav"><a href="#" aria-current="page">Home</a><a href="#">Curriculum</a><a href="#">Catalog</a><a href="#">My progress</a></nav>
+      <div class="sp"></div><button class="ib">&#9680;</button><button class="ib">TR</button>
+    </div>
+    <div class="body" style="padding-top:36px">
+      <h2 class="hero" style="font-size:34px;max-width:28ch">What do you want to understand?</h2>
+      <div class="searchbig" role="button" tabindex="0">
+        <svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M10 10l4.5 4.5"/></svg>
+        Search 33 modules: embeddings, MCP, guardrails&hellip;
+        <kbd>/</kbd>
+      </div>
+      <div class="levels" style="margin-top:0">
+        <a class="lvl" href="#">
+          <header style="background:var(--l1)"><b>Fundamentals</b><span>8 modules &middot; 3 done</span></header>
+          <div class="t"><i style="width:37%"></i></div>
+          <ul>
+            <li class="done"><span class="k">01</span>LLM Fundamentals</li>
+            <li class="done"><span class="k">02</span>Training LLMs</li>
+            <li class="done"><span class="k">03</span>RAG &amp; Embeddings</li>
+            <li><span class="k">04</span>Tool Calling</li>
+            <li><span class="k">05</span>Memory</li>
+            <li><span class="k">06</span>AI Agents</li>
+            <li><span class="k">07</span>Multi-Agent Systems</li>
+            <li><span class="k">08</span>Observability</li>
+          </ul>
+        </a>
+        <a class="lvl" href="#">
+          <header style="background:var(--l2)"><b>Intermediate</b><span>8 modules</span></header>
+          <div class="t"><i style="width:0"></i></div>
+          <ul>
+            <li><span class="k">09</span>Prompt Engineering</li>
+            <li><span class="k">10</span>Context Engineering</li>
+            <li><span class="k">11</span>Coding Agents</li>
+            <li><span class="k">12</span>Harness Engineering</li>
+            <li><span class="k">13</span>Loop Engineering</li>
+            <li><span class="k">14</span>Generative UI</li>
+            <li><span class="k">15</span>Security</li>
+            <li><span class="k">16</span>Personal Agents</li>
+          </ul>
+        </a>
+        <a class="lvl" href="#">
+          <header style="background:var(--l3)"><b>Expert</b><span>11 modules</span></header>
+          <div class="t"><i style="width:0"></i></div>
+          <ul>
+            <li><span class="k">17</span>Advanced Tools</li>
+            <li><span class="k">18</span>Advanced Memory</li>
+            <li><span class="k">19</span>Advanced Multi-Agent</li>
+            <li><span class="k">20</span>Advanced Prompting</li>
+            <li><span class="k">21</span>Adv. Context Eng.</li>
+          </ul>
+        </a>
+        <a class="lvl" href="#">
+          <header style="background:var(--l4)"><b>Ecosystem</b><span>5 modules</span></header>
+          <div class="t"><i style="width:0"></i></div>
+          <ul>
+            <li><span class="k">28</span>Agent Frameworks</li>
+            <li><span class="k">29</span>Inference Providers</li>
+            <li><span class="k">30</span>Inference Engines</li>
+            <li><span class="k">31</span>UI Design</li>
+            <li><span class="k">32</span>Choosing a Stack</li>
+          </ul>
+        </a>
+      </div>
+    </div>
+    <div class="why"><b>Why it works:</b> no marketing, straight to the material, and the whole
+      course is visible without scrolling far. Best for people arriving from a search engine at a
+      specific topic. <b>Cost:</b> it never explains why the course is worth reading, which matters
+      because that is your actual differentiator.</div>
+  </div>
+</section>
+
+<!-- ============================ C ============================ -->
+<section class="opt">
+  <div class="tag"><b>C</b><h2>Two states: continue if you have started, pitch if you have not</h2>
+    <span>one page that knows which visitor it has</span></div>
+  <div class="frame">
+    <div class="bar">
+      <span class="brand"><span class="g">L</span>AI Engineering Bazaar</span>
+      <nav class="bnav"><a href="#" aria-current="page">Home</a><a href="#">Curriculum</a><a href="#">Catalog</a><a href="#">My progress</a></nav>
+      <div class="sp"></div><button class="ib">&#9680;</button><button class="ib">TR</button>
+    </div>
+    <div class="body">
+      <p style="margin:0 0 12px;color:var(--faint);font-size:13.5px">Returning reader</p>
+      <div class="cont">
+        <span class="num">04</span>
+        <div>
+          <small>Continue where you left off</small>
+          <b>Tool Calling</b>
+          <p>Fundamentals &middot; 3 of 8 done &middot; 25 min</p>
+        </div>
+        <button class="pri">Continue</button>
+      </div>
+      <div class="levels">
+        <a class="lvl" href="#">
+          <header style="background:var(--l1)"><b>Fundamentals</b><span>3 of 8 done</span></header>
+          <div class="t"><i style="width:37%"></i></div>
+          <ul><li class="done"><span class="k">03</span>RAG &amp; Embeddings</li><li><span class="k">04</span>Tool Calling</li></ul>
+        </a>
+        <a class="lvl" href="#">
+          <header style="background:var(--l2)"><b>Intermediate</b><span>0 of 8</span></header>
+          <div class="t"><i style="width:0"></i></div>
+          <ul><li><span class="k">09</span>Prompt Engineering</li><li><span class="k">10</span>Context Engineering</li></ul>
+        </a>
+        <a class="lvl" href="#">
+          <header style="background:var(--l3)"><b>Expert</b><span>0 of 11</span></header>
+          <div class="t"><i style="width:0"></i></div>
+          <ul><li><span class="k">17</span>Advanced Tools</li><li><span class="k">18</span>Advanced Memory</li></ul>
+        </a>
+        <a class="lvl" href="#">
+          <header style="background:var(--l4)"><b>Ecosystem</b><span>0 of 5</span></header>
+          <div class="t"><i style="width:0"></i></div>
+          <ul><li><span class="k">28</span>Agent Frameworks</li><li><span class="k">29</span>Inference Providers</li></ul>
+        </a>
+      </div>
+
+      <hr style="border:0;border-top:1px dashed var(--line-2);margin:38px 0 26px">
+      <p style="margin:0 0 12px;color:var(--faint);font-size:13.5px">First visit &mdash; same page, no stored progress</p>
+      <h2 class="hero" style="font-size:38px">AI engineering, written by someone who builds it.</h2>
+      <p class="lede">Thirty-three short modules, free, no account, English and Turkish.</p>
+      <div class="ctas">
+        <button class="pri">Start with LLM Fundamentals</button>
+        <button class="sec">Browse the catalog</button>
+      </div>
+    </div>
+    <div class="why"><b>Why it works:</b> each visitor gets the one thing they came for, and it
+      needs no new machinery: you already store enough to know which state to render.
+      <b>Cost:</b> two states to design, test and keep honest, and the first paint has to decide
+      which one before the page appears.</div>
+  </div>
+</section>
+
+<div class="head" style="padding-top:34px">
+  <p style="color:var(--muted)"><b>My read:</b> <b>C</b>, because your two audiences want opposite
+  things and you already have the data to tell them apart. If you would rather build one state,
+  take <b>A</b>: the pitch matters more than the shortcut, because a returning reader can use the
+  sidebar from any page, while a stranger who bounces never comes back.</p>
+</div>
+
+</body>
+</html>

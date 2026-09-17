@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test'
-import { seedRecord, signedSheet } from './record'
+import { openRegisterRow, seedRecord, signedSheet } from './record'
+import { A0, CATEGORY_PATHS, INDEX_SHEET } from './sheets'
+import { showCatalogView, showTable } from './views'
 
 /**
  * §13.1.4 / SC 1.4.1 — every surface that carries a category hue says the same
@@ -13,13 +15,13 @@ import { seedRecord, signedSheet } from './record'
  *
  * `forcedColors: 'active'` is the real thing rather than a simulation: Chrome
  * discards author colours and substitutes the system palette, which is what a
- * reader in Windows High Contrast actually gets. `lokum.css`'s
+ * reader in Windows High Contrast actually gets. The generated sheet's
  * `@media (forced-colors: active)` block drops every hue to `Canvas` /
  * `CanvasText` deliberately, so if any surface depended on its hue, it goes
  * blank here and nowhere else.
  *
  * The same pass doubles as the colour-blindness argument. Two of the six hues
- * are 38° apart (FISTIK and KAYMAK) and a deuteranope may not separate them at
+ * are 45° apart (KİREMİT and BAL) and a deuteranope may not separate them at
  * all; that is tolerable precisely because nothing here rests on telling two
  * hues apart.
  */
@@ -44,26 +46,34 @@ test('a category card still reports its standing with no colour (§13.1.3 item 2
   page,
 }) => {
   await seedRecord(page, { identity: { role: 'software-engineer' }, sheets: SIGNED })
-  await page.goto('/courses/')
 
-  // The meter is the surface that carries hue. Its count is what carries the
-  // meaning, and it is real text beside it.
-  const meters = page.locator('.hl-meter')
-  expect(await meters.count()).toBeGreaterThan(0)
+  /* M17 — the band and its meter are on the level's own catalog entry now, one
+     per page rather than five on one. `SIGNED` carries a signed sheet in each
+     of these two levels, so both are asserted: a claim checked on one level is
+     a claim checked on one page, and the failure this replaces was exactly
+     that — a count of five meters that became a count of one. */
+  for (const level of [CATEGORY_PATHS[0], CATEGORY_PATHS[1]]) {
+    await page.goto(level)
 
-  await expect
-    .poll(async () => page.locator('[data-hl-cat-tally]').first().innerText())
-    .toMatch(/^\d+\/\d+$/)
+    // The meter is the surface that carries hue. Its count is what carries the
+    // meaning, and it is real text beside it.
+    await expect(page.locator('.bz-meter'), level).toHaveCount(1)
 
-  // Two categories carry a signed sheet in SIGNED, and each states its count
-  // in words. How many sheets a category holds is the curriculum's business.
-  const body = await page.locator('body').innerText()
-  expect(body.match(/\d+\/\d+\s+SIGNED OFF/gi)?.length ?? 0).toBeGreaterThanOrEqual(2)
+    await expect
+      .poll(async () => page.locator('[data-hl-cat-tally]').first().innerText())
+      .toMatch(/^\d+\/\d+$/)
+
+    // …and it says what the number means, in words, beside it.
+    const body = await page.locator('body').innerText()
+    expect(body.match(/\d+\/\d+\s+COMPLETED/gi)?.length ?? 0, level).toBe(1)
+  }
+
+  await page.goto(CATEGORY_PATHS[0])
 
   // A segment's border survives forced colours — `forced-color-adjust: none` on
   // the track and a system-colour fill on a signed one — so "signed" is still a
   // filled cell against an empty one. A difference in FILL, not in hue.
-  const fills = await page.locator('.hl-seg[data-cat="fundamentals"]').evaluateAll(
+  const fills = await page.locator('.bz-seg[data-cat="fundamentals"]').evaluateAll(
     (nodes) => nodes.map((node) => getComputedStyle(node).backgroundColor),
   )
   expect(new Set(fills).size).toBeGreaterThan(1)
@@ -73,100 +83,157 @@ test('a module row still states its own status with no colour (§13.1.3 item 3)'
   page,
 }) => {
   await seedRecord(page, { sheets: SIGNED })
-  await page.goto('/courses/fundamentals/')
+  /* The WHOLE catalog and not a level page: the claim is that a written row and
+     a planned row are told apart without colour, so both have to be in one
+     table. `Fundamentals` is entirely written — which is why `catalog.spec.ts`
+     picks it for the empty-state case — so a level page is exactly where the
+     comparison cannot be made. */
+  await page.goto(INDEX_SHEET)
+  await showTable(page)
 
-  // The row's leading rule is tinted; the row's own cells are what say so.
-  const signedRow = page.locator('tr.hl-row').filter({ hasText: 'LLM Fundamentals' })
-  await expect(signedRow).toContainText(/READY/i)
+  /* The row's leading rule is tinted; the row's own cells are what say so.
+
+     **M17 changed which cells those are and this is where that is measured.**
+     §4.8's `STATUS` column was the word `READY` beside a tick, and the author
+     had it removed. What is left on a written row and absent from a planned
+     one, with no colour in any of it: a declared length, a source count, and
+     a completion cell holding a square per slot rather than one dashed square.
+     An em dash and a border style both survive `forced-colors: active`; a hue
+     does not, which is the whole of §13.1.3 item 3. */
+  const signedRow = page.locator('tr.bz-row').filter({ hasText: 'LLM Fundamentals' })
+  await expect(signedRow).toHaveAttribute('data-cat', 'fundamentals')
+  await expect(signedRow.locator('.bz-signoff-square[data-drawn="false"]')).toHaveCount(0)
+  await expect(signedRow.locator('.bz-signoff-square')).not.toHaveCount(0)
+
+  // And a planned row in the same table, told apart from it by the same cells.
+  const planned = page.locator('tr.bz-row[data-draft]').first()
+  await expect(planned.locator('.bz-signoff-square[data-drawn="false"]')).toHaveCount(1)
+  await expect(planned.locator('.bz-row-value').first()).toHaveText('—')
+
+  // The word did not vanish, it left the screen (D61).
+  await expect(planned.locator('.bz-row-title .bz-said')).toHaveText('PLANNED')
 
   // Every hue-bearing row keeps a visible structural border, so the table still
   // reads as a table.
-  const borders = await page.locator('tr.hl-row.hl-cat-tint > :first-child').evaluateAll(
+  const borders = await page.locator('tr.bz-row.bz-cat-tint > :first-child').evaluateAll(
     (nodes) => nodes.map((node) => getComputedStyle(node).borderInlineStartColor),
   )
   expect(borders.length).toBeGreaterThan(0)
   expect(borders.every((colour) => colour !== 'rgba(0, 0, 0, 0)')).toBe(true)
 })
 
-test('LKM-01 still reports six subsystems with no colour (§13.1.3 item 1)', async ({
+test('LKM-01 still reports every level with no colour (§13.1.3 item 1)', async ({
   page,
 }) => {
   await seedRecord(page, { sheets: SIGNED })
-  await page.goto('/dashboard/')
+  // M14 — the mark and its face legend are the `readout` row of the progress
+  // page's register: `/dashboard/` folded into `/profile/`. The row is opened
+  // because a closed `<details>` has no box, and `getComputedStyle` on an
+  // unrendered element answers about a box that is not there.
+  await page.goto('/profile/')
+  await openRegisterRow(page, 'readout')
 
-  // The faces lose their fill entirely under forced colours — `lokum.css` sets
-  // `.hl-face { fill: none }` there on purpose. What is left is §8.2's line
-  // types and the face legend, and the legend is the accessible content: the SVG
-  // is `aria-hidden` in every state and at every size (§12.2, §12.18).
-  const fills = await page.locator('.hl-face').evaluateAll(
-    (nodes) => nodes.map((node) => getComputedStyle(node).fill),
-  )
+  /*
+    The faces carry no fill. What is left is §8.2's line types and the face
+    legend, and the legend is the accessible content: the SVG is `aria-hidden`
+    in every state and at every size (§12.2, §12.18).
+
+    WHERE THE `none` COMES FROM CHANGED, and this comment used to name
+    `lokum.css`, which set `.bz-face { fill: none }` inside a forced-colours
+    block. M16 stage 0 deleted that stylesheet, and the fill is now the `fill`
+    attribute on the path itself — so the claim is no longer conditional on
+    forced colours at all, and asserting it only under forced colours had
+    stopped distinguishing anything. It is checked in BOTH modes below, which
+    is the stronger statement the markup now actually makes: a face reports its
+    subsystem by stroke and shape, never by a fill, whatever the display is
+    doing.
+  */
+  const faceFills = () =>
+    page
+      .locator('.bz-face')
+      .evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).fill))
+
+  const fills = await faceFills()
   // Two cubes on this page, not one: the 28px mark in the header and the 128px
-  // hero (§13.2's four sizes). So the count is a positive multiple of six faces
-  // rather than six — asserting six would have been a claim about the page's
-  // furniture, and it would break the day a third mark appears.
+  // hero (§13.2's four sizes). So the count is a positive multiple of the face
+  // count rather than the face count itself — asserting it directly would have
+  // been a claim about the page's furniture, and it would break the day a third
+  // mark appears. The face count comes off the subsystem list, because there is
+  // one face per subsystem.
   expect(fills.length).toBeGreaterThan(0)
-  expect(fills.length % 6).toBe(0)
+  expect(fills.length % CATEGORY_PATHS.length).toBe(0)
   expect(fills.every((fill) => fill === 'none')).toBe(true)
 
-  // Six rows, each naming its flavour, its subsystem and its count in words.
-  const legend = page.locator('.hl-legend-swatch')
-  await expect(legend).toHaveCount(6)
+  // And again with forced colours off, because the mechanism is the markup now
+  // and not a media query. Same count, same answer.
+  await page.emulateMedia({ forcedColors: 'none' })
+  const unforced = await faceFills()
+  expect(unforced.length).toBe(fills.length)
+  expect(unforced.every((fill) => fill === 'none')).toBe(true)
+  await page.emulateMedia({ forcedColors: 'active' })
+
+  // One row per subsystem, each naming its flavour, its subsystem and its
+  // count in words.
+  const legend = page.locator('.bz-legend-swatch')
+  await expect(legend).toHaveCount(CATEGORY_PATHS.length)
 
   const text = await page.locator('body').innerText()
-  for (const flavour of ['GÜL', 'FISTIK', 'LAVANTA', 'NANE', 'KAHVE', 'KAYMAK']) {
+  for (const flavour of ['TURKUAZ', 'LACİVERT', 'ERİK', 'BAL', 'KİREMİT']) {
     expect(text, flavour).toContain(flavour)
   }
-  for (const title of ['Fundamentals', 'Intermediate', 'Expert', 'Ecosystem', 'Optional']) {
+  for (const title of ['Fundamentals', 'Intermediate', 'Expert', 'Ecosystem']) {
     expect(text, title).toContain(title)
   }
 
   // A subsystem holding no drawn sheets says so in the register's own word
   // rather than as a bare dash or as `0/9`, which would each imply something
   // untrue (§11.25, §13.14a).
-  expect(text).toContain('NOT DRAWN')
+  expect(text).toContain('PLANNED')
 })
 
 test('a path step still states its state with no colour (§13.1.3 item 6)', async ({ page }) => {
   await seedRecord(page, { identity: { role: 'software-engineer' }, sheets: SIGNED })
-  await page.goto('/path/')
+  // M14 — the nine paths are the `role` row of the progress page's register.
+  await page.goto('/profile/')
+  await openRegisterRow(page, 'role')
 
-  const body = page.locator('.hl-path-body[data-role="software-engineer"]')
+  const body = page.locator('.bz-path-body[data-role="software-engineer"]')
   await expect(body).toBeVisible()
 
   // Every step names its subsystem and its tier in text, so the leading rule's
   // hue repeats a fact rather than carrying one.
-  const first = body.locator('.hl-step').first()
+  const first = body.locator('.bz-step').first()
   await expect(first).toContainText(/FUNDAMENTALS/i)
   await expect(first).toContainText(/CORE|SUPPORTING|CONTEXT/i)
 
   // And the two states a step can be in are words, not colours.
-  await expect(body.locator('.hl-step-tick:visible').first()).toContainText('SIGNED OFF')
+  await expect(body.locator('.bz-step-tick:visible').first()).toContainText('COMPLETED')
   await expect(body).toContainText(/REMAINING ON THIS PATH/i)
 })
 
 test('the swatch is labelled by the row it sits in, never by hue alone', async ({ page }) => {
   await seedRecord(page, { sheets: SIGNED })
-  await page.goto('/dashboard/')
+  await page.goto('/profile/')
+  await openRegisterRow(page, 'readout')
 
   // §13.1.3 item 8 — the swatch is the one place a hue appears without an
   // adjacent count of its own, which is why it is `aria-hidden` and why its row
   // carries the flavour name, the subsystem and the count as text. Under forced
   // colours it is a bordered box with the system ground, and the row is
   // unchanged.
-  for (const swatch of await page.locator('.hl-legend-swatch').all()) {
+  for (const swatch of await page.locator('.bz-legend-swatch').all()) {
     await expect(swatch).toHaveAttribute('aria-hidden', 'true')
   }
 
-  const rows = page.locator('tr', { has: page.locator('.hl-legend-swatch') })
-  await expect(rows).toHaveCount(6)
+  const rows = page.locator('tr', { has: page.locator('.bz-legend-swatch') })
+  await expect(rows).toHaveCount(CATEGORY_PATHS.length)
   for (const row of await rows.all()) {
     // Flavour, subsystem, and a reading: three cells, all of them words.
     expect((await row.innerText()).trim().length).toBeGreaterThan(8)
   }
 })
 
-test('the drafter block and a closed register row read as text with no colour (§16.2.3, §16.7)', async ({
+test('the account block and a closed row read as text with no colour (§16.2.3, §16.7)', async ({
   page,
 }) => {
   /**
@@ -199,43 +266,71 @@ test('the drafter block and a closed register row read as text with no colour (�
     sheets: SIGNED,
   })
   await page.goto('/profile/')
-  await expect(page.locator('.hl-readout[data-hydrated="true"]').first()).toBeAttached()
+  await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
 
   // ---- the drafter block, in words -----------------------------------------
-  const drafter = page.locator('.hl-drafter')
+  const drafter = page.locator('.bz-drafter')
   await expect(drafter).toBeVisible()
 
   // The mark and the seed are two mono lines under the drawing, and they are the
   // information the deleted definition list described without printing: the mark
   // is a choice, the seed is the record of a past act.
-  const lines = await drafter.locator('.hl-drafter-line').allInnerTexts()
+  const lines = await drafter.locator('.bz-drafter-line').allInnerTexts()
   expect(lines.length, 'the drawing states neither its mark nor its seed').toBeGreaterThan(1)
   expect(lines.join('\n')).toMatch(/MARK ·/)
   expect(lines.join('\n')).toMatch(/SEED ·|NO SEED MINTED YET/)
 
   // Both halves name themselves, and the naming is the substitute for the
   // painted 1.5px rule between them, which this mode has just deleted.
-  const halves = await drafter.locator('.hl-drafter-half h3').allInnerTexts()
+  const halves = await drafter.locator('.bz-drafter-half h3').allInnerTexts()
   expect(halves.length).toBe(2)
   for (const half of halves) expect(half.trim().length).toBeGreaterThan(3)
 
-  // §16.2.3 — the chosen mark is readable from the native control, not from the
-  // wash. The radio is visible in this mode BY DESIGN, and `opacity: 0` rather
-  // than `display: none` in every other mode is what makes that possible.
+  /*
+    §16.2.3 — the chosen mark is readable from the native control, not from the
+    wash.
+
+    THE DESIGN IS A SWAP, SO BOTH HALVES ARE ASSERTED. The glyph and its name
+    are the control at every other width, so the radio is `opacity: 0` there;
+    under forced colours it comes back, because the platform's own widget is
+    then the only thing that can say which option is chosen. `progress.css`
+    states both, and stage 8 restored them after stage 0 deleted the stylesheet
+    that used to.
+
+    This comment said the rule was missing and that `toBeVisible()` "can no
+    longer tell the design from its absence" — true when it was written, stale
+    since stage 8, and the second half is the part worth keeping: **it is still
+    true of `toBeVisible()`**, because Playwright counts an `opacity: 0` element
+    as visible. It has a box and it is not `visibility: hidden`. So the swap is
+    read from the COMPUTED OPACITY in both modes, which is the only assertion
+    that can fail if either half of the rule goes away.
+  */
   const chosen = page.locator('label[data-hl-mark="datum"] input[name="hl-mark"]')
   await expect(chosen).toBeChecked()
+
+  await page.emulateMedia({ forcedColors: 'none' })
+  expect(
+    await chosen.evaluate((node) => getComputedStyle(node).opacity),
+    'the native radio is meant to be out of sight while the glyph is the control',
+  ).toBe('0')
+
+  await page.emulateMedia({ forcedColors: 'active' })
+  expect(
+    await chosen.evaluate((node) => getComputedStyle(node).opacity),
+    'with no colour at all the native radio is what says which mark is chosen',
+  ).toBe('1')
   await expect(chosen).toBeVisible()
   // And the cell says which mark it is in text, because the glyph is decoration:
   // it is `aria-hidden` in every state and its fill is gone here.
   await expect(page.locator('label[data-hl-mark="datum"]')).toContainText(/\S/)
 
   // ---- one closed row, in words -------------------------------------------
-  const row = page.locator('section.hl-register-row').first()
-  const fold = row.locator('details.hl-register-fold')
+  const row = page.locator('section.bz-register-row').first()
+  const fold = row.locator('details.bz-register-fold')
   expect(await fold.evaluate((node) => (node as HTMLDetailsElement).open)).toBe(false)
 
-  const name = (await row.locator('.hl-register-name').innerText()).trim()
-  const reading = (await row.locator('.hl-register-reading').innerText()).trim()
+  const name = (await row.locator('.bz-register-name').innerText()).trim()
+  const reading = (await row.locator('.bz-register-reading').innerText()).trim()
   expect(name.length, 'a closed row does not name itself').toBeGreaterThan(2)
   // §16.4.1 — folding removes prose and never a fact, and with no colour at all
   // the fact is still the only thing that has to survive.
@@ -244,4 +339,88 @@ test('the drafter block and a closed register row read as text with no colour (�
   // The whole summary reads as one line of text: name, reading, and the mono
   // chevron, which is `aria-hidden` and therefore not in this reading.
   expect((await row.locator('summary').innerText()).trim()).toContain(name)
+})
+
+/**
+ * M20 — the level swatch in the Cards view, which lost the number inside it.
+ *
+ * The swatch carried its level's ordinal, and `CatalogCards`' own comment said
+ * why: *"the number inside it is what a reader in forced colours reads
+ * instead."* The author does not name a level by number anywhere, so the digit
+ * went — and the moment it did, the swatch became a hue with nothing in it.
+ *
+ * That is only safe because the heading BESIDE it names the level in words,
+ * and a word survives `forced-colors: active` untouched. This is the test that
+ * says so, because nothing else did: `.bz-levelhead-key` had a fidelity role
+ * and no behavioural assertion anywhere in the suite, so the number could have
+ * been removed with no carrier left and a green run either way.
+ */
+test('a level head names its level in words, with nothing in the swatch', async ({ page }) => {
+  await page.emulateMedia({ forcedColors: 'active' })
+  await page.goto('/sheets/')
+  await showCatalogView(page, 'cards')
+
+  const heads = page.locator('[data-view="cards"] .bz-levelhead')
+  const count = await heads.count()
+  expect(count, 'the cards view groups by level').toBeGreaterThan(1)
+
+  for (let i = 0; i < count; i += 1) {
+    const head = heads.nth(i)
+    const swatch = head.locator('.bz-levelhead-key')
+
+    // The hue is decoration and says so, in both senses: hidden from assistive
+    // software, and empty of anything a sighted reader could fall back on.
+    await expect(swatch).toHaveAttribute('aria-hidden', 'true')
+    expect((await swatch.innerText()).trim(), 'the swatch carries text again').toBe('')
+
+    // And the fact it used to carry is beside it, as a word.
+    const named = (await head.locator('.bz-levelhead-title').innerText()).trim()
+    expect(named.length, 'a level head with no name is a hue alone').toBeGreaterThan(0)
+  }
+})
+
+/**
+ * M21 — **the rail keeps a visible boundary in forced colours**, and this
+ * exists because the milestone briefly took it away.
+ *
+ * The rail's trailing hairline was a `border-right`, and a border takes its
+ * pixel out of the content box — which made the rail overflow itself by one
+ * pixel and let the fold latch a scroll offset that could never come back (the
+ * bug the author reported). M21 painted the line as a background layer instead,
+ * which takes no space.
+ *
+ * **MEASURED under `forced-colors: active`: a background image is not painted
+ * at all.** `backgroundImage` computes to `none`, and with the border already
+ * gone the rail had no boundary of any kind — the column and the reading
+ * surface ran together with nothing between them. An independent review named
+ * it and the browser confirmed it.
+ *
+ * So the border comes back in this mode and the inner gives up the pixel, which
+ * keeps both true at once. Asserted here rather than in `rail.spec.ts` because
+ * it is a forced-colours fact and this is the file that runs in that mode.
+ */
+test('the curriculum rail is still bounded under forced colours', async ({ page }) => {
+  await page.emulateMedia({ forcedColors: 'active' })
+  await page.goto(A0.path)
+
+  const rail = await page.evaluate(() => {
+    const node = document.querySelector('.bz-rail')
+    if (!node) return null
+    const style = getComputedStyle(node)
+    return {
+      painted: style.backgroundImage !== 'none',
+      border: parseFloat(style.borderRightWidth),
+      // The fix must not reintroduce the defect it replaced: a border here
+      // costs a pixel of the content box, and the inner has to give it back.
+      inlineOverflow: node.scrollWidth - node.clientWidth,
+    }
+  })
+
+  expect(rail, 'no rail on this route').not.toBeNull()
+  // Either mechanism is fine; having NEITHER is the failure.
+  expect(
+    rail!.painted || rail!.border > 0,
+    'the rail has no boundary at all in forced colours',
+  ).toBe(true)
+  expect(rail!.inlineOverflow, 'the forced-colours border reintroduced the overflow').toBe(0)
 })

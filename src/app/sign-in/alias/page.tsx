@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: 'Alias',
   description:
     'Put a name and a mark on the record this browser holds. It is not an '
-    + 'account and it proves nothing; every sheet works without one.',
+    + 'account and it proves nothing; every module works without one.',
 }
 
 /**
@@ -52,13 +52,13 @@ export const metadata: Metadata = {
 export default function AliasPage() {
   return (
     <PageShell sheet="ALIAS">
-      <p className="hl-eyebrow hl-mark">LOCAL ONLY · THIS FORM SENDS NOTHING</p>
+      <p className="bz-facts">Local only · this form sends nothing</p>
 
-      <h1 className="hl-listing-title">Choose an alias</h1>
+      <h1 className="bz-display">Choose an alias</h1>
 
-      <p className="hl-lead">{ALIAS_SCOPE}</p>
+      <p className="bz-lead">{ALIAS_SCOPE}</p>
 
-      <hr className="hl-rule-struct" aria-hidden="true" />
+      <hr className="bz-rule" aria-hidden="true" />
 
       <AliasSheet accountDoors={ACCOUNT_DOOR_COUNT} />
     </PageShell>

@@ -16,6 +16,36 @@
  *   `class="hl-role-<id>"`                the reader's role (§13.3)
  *   `data-hl-record="1"`                  a record CARRYING SOMETHING exists
  *   `data-hl-storage="ok" | "blocked"`    tells empty state 1 from 4 (§12.13)
+ *   `data-bz-rail="folded"`               M10 — the curriculum rail is folded
+ *   `data-hl-view="<id>"`                 M12 — the catalog view last chosen
+ *   `style --bz-done-<slug>: <n>%`        M16 — how far through that level
+ *
+ * **The last one is a number and not a class, and it is the only one.** CSS
+ * cannot count, which is why every other reading here is a class and why
+ * `CategoryMeter` draws one segment per module rather than a bar. The channel
+ * can count, though — this is a script, and it has the counts in hand three
+ * lines above — so a `conic-gradient` stop can be handed a percentage it only
+ * has to substitute. That is what lets `05`-C's dial be correct in frame one
+ * instead of being a mark on the channel §12.2 forbids for exactly that.
+ * `stamp.ts`'s `stampProgressFor` is the same derivation for after mount, and
+ * `boot.test.ts` compares the two.
+ *
+ * **The rail and the view stamps are written BEFORE the `carriesNothing`
+ * gate**, and that order is the whole reason either is stamped here at all. A
+ * reader whose only stored state is a folded rail carries nothing by §15.11's
+ * rule, so the gate returns before the class list is touched; stamping the
+ * fold after it would mean the rail sprang open on every load for exactly the
+ * readers who had asked for it to be shut. It is not a claim that a record
+ * exists — it is a layout preference, and the two questions are answered
+ * separately. M12's catalog view is the same case one screen over: a reader
+ * whose only stored state is "show me the table" would otherwise meet the
+ * overview on every load.
+ *
+ * The view id is matched against the embedded `VIEW_IDS` before it reaches the
+ * attribute, for the same reason the nine role ids are: the value comes out of
+ * Web Storage, it is untrusted input wherever it is read (§12.1.3), and the
+ * only thing done with it here is to put it where a stylesheet's attribute
+ * selector will answer to it.
  *
  * The whole body is inside try/catch and does nothing on failure, which lands
  * the page in the honest empty state rather than a half-drawn one.
@@ -72,7 +102,13 @@
  * bundle targets, in whatever browser the reader brought.
  */
 
-import { MARK_IDS, RECORD_STORAGE_KEY, ROLE_IDS, SCHEMA_VERSION } from './schema'
+import {
+  CATALOG_VIEWS,
+  MARK_IDS,
+  RECORD_STORAGE_KEY,
+  ROLE_IDS,
+  SCHEMA_VERSION,
+} from './schema'
 
 /** Neither `<` nor a line separator may reach the inline script's text. */
 function embed(value: unknown): string {
@@ -94,7 +130,7 @@ export function recordBootScript(
   slugToModule: Record<string, number>,
 ): string {
   return `(function(){try{
-var T=${embed(categoryTotals)},M=${embed(slugToModule)},R=${embed(ROLE_IDS)},MK=${embed(MARK_IDS)};
+var T=${embed(categoryTotals)},M=${embed(slugToModule)},R=${embed(ROLE_IDS)},MK=${embed(MARK_IDS)},V=${embed(CATALOG_VIEWS)};
 var r=document.documentElement;
 var isObj=function(v){return Object.prototype.toString.call(v)==="[object Object]"};
 var own=function(o,k){return Object.prototype.hasOwnProperty.call(o,k)};
@@ -129,6 +165,8 @@ var env=JSON.parse(raw);
 if(!isObj(env)||typeof env.schema!=="number"||env.schema<1||env.schema>${SCHEMA_VERSION})return;
 var d=env.data;
 if(!isObj(d))return;
+if(isObj(d.prefs)&&d.prefs.railFolded===true)r.setAttribute("data-bz-rail","folded");
+if(isObj(d.prefs)&&inL(V,d.prefs.catalogView))r.setAttribute("data-hl-view",d.prefs.catalogView);
 var counts={},k,c,i,n,rec,id,ro=null,sh=d.sheets,has=0;
 if(arr(d.days)&&someDay(d.days))has=1;
 if(isObj(d.meta)&&inst(d.meta.lastExport))has=1;
@@ -155,7 +193,8 @@ if(typeof n==="number")r.classList.add("hl-signed-"+n)}
 for(c in counts){
 if(!own(counts,c))continue;
 n=typeof T[c]==="number"?T[c]:0;
-r.classList.add("hl-cat-"+c+(n>0&&counts[c]>=n?"-complete":"-started"))}
+r.classList.add("hl-cat-"+c+(n>0&&counts[c]>=n?"-complete":"-started"));
+if(n>0)r.style.setProperty("--bz-done-"+c,Math.round(counts[c]/n*100)+"%")}
 }catch(e){}})();`
 }
 

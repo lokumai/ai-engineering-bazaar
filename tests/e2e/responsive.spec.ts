@@ -1,5 +1,6 @@
 import { type Page, expect, test } from '@playwright/test'
-import { SHORT, A4, CATEGORY_PATHS, INDEX_SHEET, sheetByModule } from './sheets'
+import { SHORT, A4, CATEGORY_PATHS, INDEX_SHEET, SHEETS, sheetByPath } from './sheets'
+import { showTable } from './views'
 
 /**
  * §4.7's closing sentence, which is the only hard rule in the whole section:
@@ -19,12 +20,16 @@ import { SHORT, A4, CATEGORY_PATHS, INDEX_SHEET, sheetByModule } from './sheets'
  * the longest prose. Rewriting them moved both records. A table is still the
  * thing that pushes a document sideways at 390px, so the widest one is what
  * this file has to load.
+ *
+ * They are named by route rather than by number. They were `sheetByModule(12)`
+ * and `sheetByModule(9)` until the September 2026 reorder, which quietly moved
+ * both onto other modules while every test stayed green.
  */
 
-/** Module 12, Loop Engineering: the widest table in the corpus, at five columns. */
-const WIDEST = sheetByModule(12)
-/** Module 9, Context Engineering: the longest sheet, and the most figures. */
-const LONGEST = sheetByModule(9)
+/** Loop Engineering: the widest table in the corpus, at five columns. */
+const WIDEST = sheetByPath('/courses/intermediate/loop-engineering/')
+/** Context Engineering: the longest sheet, and the most figures. */
+const LONGEST = sheetByPath('/courses/intermediate/context-engineering/')
 
 const PAGES = [
   // §15.1 — `/` is the home screen and the flat manifest is `/sheets/`. Both
@@ -33,19 +38,18 @@ const PAGES = [
   // is still the widest non-prose thing on the site.
   ['home screen', '/'],
   ['manifest', INDEX_SHEET],
-  ['drawing set', '/courses/'],
-  ['category', CATEGORY_PATHS[1]],
-  ['SHORT sheet', SHORT.path],
-  ['A4 sheet', A4.path],
-  ['module 10', WIDEST.path],
-  ['module 13', LONGEST.path],
+  ['level', CATEGORY_PATHS[1]],
+  ['SHORT module', SHORT.path],
+  ['A4 module', A4.path],
+  ['widest module', WIDEST.path],
+  ['longest module', LONGEST.path],
   // §16, hazard H-O — `/profile/` was never loaded below 1440 by any spec, and
   // §16.1's drafter block is the site's first two-column block outside a module
   // sheet: a 168px drawing column beside a form, a register whose summary is a
   // three-column grid, and an eight-cell mark row that has to wrap at 390. It is
   // here as a general property (the document never scrolls sideways) rather than
   // as a string match, which is what the rest of this list is for.
-  ['profile sheet', '/profile/'],
+  ['account page', '/profile/'],
 ] as const
 
 /**
@@ -142,7 +146,7 @@ test('the widest table scrolls inside its own container', async ({ page }) => {
   await page.waitForLoadState('networkidle')
 
   const viewport = page.viewportSize()!.width
-  const report = await page.locator('[data-hl-prose] .hl-figure.hl-table').evaluateAll(
+  const report = await page.locator('[data-hl-prose] .bz-tablefig').evaluateAll(
     (nodes) => nodes.map((node) => {
       const scroller = (node.querySelector('[class*="scroll"]') ?? node) as HTMLElement
       return {
@@ -171,8 +175,12 @@ test('the widest table scrolls inside its own container', async ({ page }) => {
 
 test('the manifest table scrolls inside its region rather than the page', async ({ page }) => {
   await page.goto(INDEX_SHEET)
+  // M12 — the table is one of the catalog's three views and CSS reveals one
+  // (D13). A `display: none` scroller measures zero on both axes, so the view
+  // has to be the showing one before its overflow means anything.
+  await showTable(page)
 
-  const region = page.locator('.hl-index-scroll')
+  const region = page.locator('.bz-table-scroll')
   const measured = await region.evaluate((el) => ({
     clientWidth: el.clientWidth,
     scrollWidth: el.scrollWidth,
@@ -203,9 +211,13 @@ test('the manifest table scrolls inside its region rather than the page', async 
  * subject rather than the presence of an affordance. What §4.7 still demands of
  * it is asserted directly, below.
  */
-for (const [name, path] of [['manifest', INDEX_SHEET], ['module 13', LONGEST.path]] as const) {
+for (const [name, path] of [['manifest', INDEX_SHEET], ['longest module', LONGEST.path]] as const) {
   test(`${name} tells the reader where a scroller continues`, async ({ page }) => {
     await page.goto(path)
+    // M12 — the catalog's table view, selected, for the same reason: a hidden
+    // scroller has no box, so `Affordances` has nothing to mark and this loop
+    // would assert the absence of a subject.
+    if (path === INDEX_SHEET) await showTable(page)
     await page.waitForLoadState('networkidle')
 
     const scrollers = await page.locator('[data-hl-scroller]').evaluateAll(
@@ -260,15 +272,24 @@ test('the home screen cannot be nudged sideways at any width', async ({ page }) 
 
   const viewport = page.viewportSize()!.width
 
-  // Exactly one of §15.2's two blocks is laid out, and it fills the column.
-  const shown = await page.locator('.hl-home-new, .hl-home-resume').evaluateAll(
+  /* M13 — one document rather than two blocks with one hidden, so what is
+     measured is every block the page lays out: each fills the column and none
+     overhangs at any of the three widths.
+
+     M18 — the level grid was the second of the two and is on `/profile/` now,
+     so the pair is the hero and the why-panel. The SELECTOR is what matters
+     here rather than the count: the mutation this guards against is an empty
+     page, which cannot be dragged either, so the length assertion has to keep
+     naming real blocks. */
+  const shown = await page.locator('.bz-hero, .bz-panel').evaluateAll(
     (nodes) => nodes
       .filter((node) => node.checkVisibility())
       .map((node) => Math.round(node.getBoundingClientRect().width)),
   )
-  expect(shown, 'the home screen renders one of its two blocks').toHaveLength(1)
-  expect(shown[0], 'the visible block has no width to overhang with')
-    .toBeGreaterThan(viewport / 2)
+  expect(shown, 'the home page renders its hero and its argument').toHaveLength(2)
+  for (const width of shown) {
+    expect(width, 'a block with no width to overhang with').toBeGreaterThan(viewport / 2)
+  }
 
   await page.evaluate(() => window.scrollTo(4000, 0))
   expect(await page.evaluate(() => window.scrollX)).toBe(0)
@@ -290,13 +311,20 @@ test('the home screen cannot be nudged sideways at any width', async ({ page }) 
 test('the mark options reach the §10.4 touch floor below 768px', async ({ page }) => {
   test.skip(page.viewportSize()!.width >= 768, '§10.4 sets the floor below 768')
 
-  // §16.2.2 — one picker, three call sites, and two of them are routes a reader
-  // reaches on a phone. `/sign-in/alias/` is the first-run screen this test was
-  // written for; `/profile/` renders the same component at its default prefix
-  // inside the drafter block, and it is the one that changed — the floor is now
-  // stated once in `profile.css` as an unconditional `min-height` on the cell
-  // rather than by `max-md:min-h-11` on this screen's own label, so a
-  // measurement on one route no longer says anything about the other.
+  /*
+    §16.2.2 — one picker, three call sites, and two of them are routes a reader
+    reaches on a phone. `/sign-in/alias/` is the first-run screen this test was
+    written for; `/profile/` renders the same component at its default prefix
+    inside the drafter block, so a measurement on one route says nothing about
+    the other and both are walked.
+
+    WHERE THE FLOOR IS STATED. `progress.css`, on `.bz-markrow-cell`, and
+    exactly once. It used to be `profile.css`, which M16 stage 0 deleted with
+    the other ten — so this test was red at 390 with the cell MEASURED at 19px
+    against 44 — and stage 8 restored it while building the picker's surface.
+    Stated once is the point: three call sites render this picker, and a floor
+    written per call site is a floor one of them will be missing.
+  */
   for (const route of ['/sign-in/alias/', '/profile/']) {
     await page.goto(route)
     await page.waitForLoadState('networkidle')
@@ -323,79 +351,404 @@ test('the mark options reach the §10.4 touch floor below 768px', async ({ page 
   }
 })
 
+/**
+ * EVERY CONTROL, ON THE ROUTES THE CONTROLS ARE ON.
+ *
+ * This test's name was true and its body was not. It visited one module sheet
+ * and located three classes, of which one — `.bz-btn bz-btn-quiet` — was a
+ * DESCENDANT selector for a `<bz-btn-quiet>` element and could never match
+ * anything, and the other two already carried a hit area. So it measured the
+ * two controls that were already right, on the one route that had them, and
+ * reported that as "every control".
+ *
+ * A review enumerated the narrow blocks instead and found the floor stated in
+ * exactly ONE place in the whole project — a `min-height` on the form field.
+ * MEASURED at 390px: the completion toggle 17 x 17, the bar's two icons 33 x 33,
+ * the catalog's chips and view buttons 33, every button 39. The comment above
+ * the old locator even recorded `.hl-icon-btn` being deleted from the list for
+ * being dead — and `.bz-bar-icon`, its successor, was never put in its place,
+ * which is how the deletion of a dead entry removed real coverage.
+ *
+ * Two floors, because two shapes of answer are correct.
+ * A control with room GROWS; one in a fixed strip or a dense row keeps its
+ * painted size and takes an invisible `::after`. So the target here is the
+ * LARGER of the painted box and the pseudo, per axis, which is the only
+ * measurement that treats both shapes fairly.
+ *
+ * Height is 44 for everything, with no exceptions: the vertical axis is where
+ * a thumb misses. Width is 44 unless the control has a neighbour it must not
+ * steal a tap from, and each of those is registered below with the reason and
+ * the width it can actually have. A registered control whose width has reached
+ * 44 fails as a stale exemption, the same rule `NARROW_DEVIATIONS` follows.
+ */
+const BOUNDED: Readonly<Record<string, { width: number; why: string }>> = {
+  'bz-bar-icon': {
+    width: 41,
+    why:
+      'two icons 8px apart in a fixed strip: 44 each would overlap by 3px on '
+      + 'a side, so each takes the width it can have without reaching into its '
+      + "neighbour's target. Growing the box instead would grow the bar.",
+  },
+  'bz-cmod-toggle': {
+    width: 25,
+    why:
+      'the module title link sits 8px away, and a 44px target centred on the '
+      + '17px disc would cover the link\'s leading edge — a tap meant for the '
+      + 'module would toggle its completion. The target stops at the gap. A '
+      + 'true 44 needs the title to start 27px further right at 390px, which '
+      + 'is a layout decision rather than a defect fix.',
+  },
+}
+
+/** Where each control actually lives. A floor measured elsewhere is not measured. */
+const TOUCH_ROUTES: readonly { path: string; carries: string }[] = [
+  { path: '/', carries: 'the completion toggle, one per written module' },
+  { path: INDEX_SHEET, carries: 'eleven filter chips and three view buttons' },
+  { path: LONGEST.path, carries: "the slab's copy control and a figure's actions" },
+  { path: '/profile/', carries: 'the completion toggle again, and the buttons' },
+]
+
+/**
+ * **This list is typed out, and that is its one weakness.** A control added to
+ * the language is invisible here until somebody adds its class — which is
+ * exactly how M18's repository control reached the bar at 33px with no hit area
+ * and nothing said so. There is no derivation available: "a control" is not a
+ * property the DOM exposes, and a sweep over every clickable thing would drag
+ * in the row links, whose floor is the row.
+ *
+ * So the mitigation is the habit rather than the mechanism: **a new class in
+ * the bar, the chips or a card belongs in this list in the same commit.**
+ */
+const TOUCH_CONTROLS = [
+  '.bz-slab-copy',
+  '.bz-caption-action',
+  '.bz-btn',
+  '.bz-bar-icon',
+  '.bz-bar-repo',
+  '.bz-chip',
+  '.bz-viewbtn',
+  '.bz-cmod-toggle',
+].join(', ')
+
 test('every control reaches the §10.4 touch floor below 768px', async ({ page }) => {
   test.skip(page.viewportSize()!.width >= 768, '§10.4 sets the floor below 768')
 
-  await page.goto(LONGEST.path)
+  const seen = new Set<string>()
+
+  for (const route of TOUCH_ROUTES) {
+    await page.goto(route.path)
+    await page.waitForLoadState('networkidle')
+
+    const controls = await page
+      .locator(TOUCH_CONTROLS)
+      // A control the reader cannot reach has no floor to meet. §12's
+      // `Keyboard shortcuts` trigger is `display: none` below 768px — a table
+      // of keystrokes is a control for a device with keys — and an undisplayed
+      // element's pseudo has no used width, so measuring it yields `auto` and
+      // then `NaN`. Filter first, and assert below that something survived, so
+      // this can never become a scan of nothing.
+      .evaluateAll((nodes) => nodes.filter((node) => node.checkVisibility()).map((node) => {
+        const hit = getComputedStyle(node, '::after')
+        const painted = node.getBoundingClientRect()
+        const pseudo = hit.content === 'none'
+          ? { width: 0, height: 0 }
+          : { width: Number.parseFloat(hit.width) || 0, height: Number.parseFloat(hit.height) || 0 }
+        const classes = (typeof node.className === 'string' ? node.className : '').split(' ')
+        return {
+          kind: classes.find((one) => one.startsWith('bz-')) ?? classes[0] ?? '(unclassed)',
+          // The target is whichever box is larger in each axis: a control that
+          // grew needs no pseudo, and one with a pseudo keeps its painted size.
+          width: Math.max(Math.round(painted.width), Math.round(pseudo.width)),
+          height: Math.max(Math.round(painted.height), Math.round(pseudo.height)),
+        }
+      }))
+
+    expect(controls.length, `${route.path} carries ${route.carries}`).toBeGreaterThan(0)
+
+    for (const control of controls) {
+      seen.add(control.kind)
+      expect(
+        control.height,
+        `${control.kind} is ${control.height}px tall to hit on ${route.path}`,
+      ).toBeGreaterThanOrEqual(44)
+
+      const bounded = BOUNDED[control.kind]
+      if (bounded === undefined) {
+        expect(
+          control.width,
+          `${control.kind} is ${control.width}px wide to hit on ${route.path}`,
+        ).toBeGreaterThanOrEqual(44)
+      } else {
+        expect(
+          control.width,
+          `${control.kind} is ${control.width}px wide on ${route.path}, under its own bound`,
+        ).toBeGreaterThanOrEqual(bounded.width)
+      }
+    }
+  }
+
+  // The half that keeps the list above honest. A selector that stops matching
+  // takes its coverage with it silently — which is exactly how `.hl-icon-btn`
+  // came to be deleted from this test while the control it named lived on.
+  for (const kind of Object.keys(BOUNDED)) {
+    expect(seen, `${kind} is exempted horizontally and was never measured`).toContain(kind)
+  }
+  expect(seen.size, 'the routes above no longer reach four kinds of control')
+    .toBeGreaterThanOrEqual(4)
+})
+
+test('no horizontal touch exemption has stopped being needed', async ({ page }) => {
+  test.skip(page.viewportSize()!.width >= 768, '§10.4 sets the floor below 768')
+
+  // A stale exemption hides the next difference, so each one has to still be
+  // true: a control registered as horizontally bounded must actually be under
+  // 44px wide. If it has reached the floor, the entry is what is wrong now.
+  await page.goto('/')
   await page.waitForLoadState('networkidle')
 
-  // MEASURED: `COPY` painted 47 × 24 and `EXPAND` 61.6 × 24 with no hit area
-  // at all, and the two controls that did have one reached 42 × 42 — Tailwind's
-  // preflight makes them border-box and both carry a transparent hairline
-  // border, so a hand-tuned `inset` resolved against a padding box 2px smaller
-  // than the painted one.
-  const controls = await page
-    .locator('.hl-code-copy, .hl-cap-action, .hl-icon-btn, .hl-button')
-    // A control the reader cannot reach has no floor to meet. §12 added a
-    // `Keyboard shortcuts` trigger that is `display: none` below 768px — a
-    // table of keystrokes is a control for a device with keys — and an
-    // undisplayed element's pseudo has no used width, so measuring it yields
-    // `auto` and then `NaN`. Filter first, and assert below that something
-    // survived, so this can never become a scan of nothing.
-    .evaluateAll((nodes) => nodes.filter((node) => node.checkVisibility()).map((node) => {
-      const hit = getComputedStyle(node, '::after')
-      const painted = node.getBoundingClientRect()
-      return {
-        kind: (typeof node.className === 'string' ? node.className : '').split(' ')[0],
-        painted: [Math.round(painted.width), Math.round(painted.height)],
-        content: hit.content,
-        width: Number.parseFloat(hit.width),
-        height: Number.parseFloat(hit.height),
-        position: hit.position,
-      }
-    }))
-
-  expect(controls.length, 'sheet 13 still has controls to hit').toBeGreaterThan(3)
-  for (const control of controls) {
-    expect(control.content, `${control.kind} has no hit area`).not.toBe('none')
-    expect(control.position, `${control.kind}'s hit area is not positioned`)
-      .toBe('absolute')
-    expect(control.width, `${control.kind} is ${control.width}px wide to hit`)
-      .toBeGreaterThanOrEqual(44)
-    expect(control.height, `${control.kind} is ${control.height}px tall to hit`)
-      .toBeGreaterThanOrEqual(44)
+  for (const [kind, bound] of Object.entries(BOUNDED)) {
+    const widths = await page.locator(`.${kind}`)
+      .evaluateAll((nodes) => nodes
+        .filter((node) => node.checkVisibility())
+        .map((node) => {
+          const hit = getComputedStyle(node, '::after')
+          const painted = node.getBoundingClientRect()
+          const pseudo = hit.content === 'none' ? 0 : Number.parseFloat(hit.width) || 0
+          return Math.max(Math.round(painted.width), Math.round(pseudo))
+        }))
+    if (widths.length === 0) continue
+    expect(bound.why.length, `${kind} is exempted with no reason`).toBeGreaterThan(60)
+    expect(
+      Math.min(...widths),
+      `${kind} reaches ${Math.min(...widths)}px wide now — delete its exemption`,
+    ).toBeLessThan(44)
   }
 })
 
-test('the sheet gives up its zones in §4.7 order as the viewport narrows', async ({ page }) => {
+/**
+ * §4.7's order, as M10 and M11 rewrote it. Two breakpoints, both from
+ * `kia-context/specs/DESIGN.md`'s Layout: **at 1180px the contents rail goes,
+ * at 880px the curriculum list does.** They used to be 1280 and 1024, and the
+ * rails held the other way round.
+ *
+ * Whichever rails the window has taken away are behind one control, and the
+ * module's own facts stay in the column at every width, because since M11 that
+ * is the only place they live.
+ */
+test('the module gives up its zones in §4.7 order as the viewport narrows', async ({ page }) => {
   const width = page.viewportSize()!.width
-  await page.goto(LONGEST.path) // an A0 sheet — the only format with three zones
+  await page.goto(LONGEST.path) // a written module — the only format with three zones
 
-  const rightRail = page.locator('.hl-rail-right')
-  const leftRail = page.locator('.hl-rail-left')
+  const contents = page.locator('.bz-aside')
+  const curriculum = page.locator('.bz-rail')
   const drawer = page.getByRole('button', { name: 'Contents', exact: true })
 
-  if (width >= 1280) {
-    await expect(rightRail).toBeVisible()
-    await expect(leftRail).toBeVisible()
+  // The module's facts are in the column in all three cases.
+  await expect(page.locator('.bz-facts')).toBeVisible()
+
+  if (width >= 1180) {
+    await expect(contents).toBeVisible()
+    await expect(curriculum).toBeVisible()
     await expect(drawer).toBeHidden()
-  } else if (width >= 1024) {
-    // Right rail collapses; the title block becomes the strip (§4.7).
-    await expect(rightRail).toBeHidden()
-    await expect(leftRail).toBeVisible()
-    await expect(page.locator('.hl-title-strip')).toBeVisible()
-  } else {
-    // Left rail becomes a drawer; one column.
-    await expect(rightRail).toBeHidden()
-    await expect(leftRail).toBeHidden()
+  } else if (width >= 880) {
+    // The contents rail goes first, behind the control; the curriculum stays.
+    await expect(contents).toBeHidden()
+    await expect(curriculum).toBeVisible()
     await expect(drawer).toBeVisible()
-    await expect(page.locator('.hl-title-strip')).toBeVisible()
+  } else {
+    // Both are behind the control, and the drawer carries both.
+    await expect(contents).toBeHidden()
+    await expect(curriculum).toBeHidden()
+    await expect(drawer).toBeVisible()
+
+    await drawer.click()
+    const panel = page.locator('[role="dialog"]')
+    await expect(panel.locator('nav[aria-label="Sections"]')).toBeVisible()
+    await expect(panel.locator('nav[aria-label="Course modules"]')).toBeVisible()
   }
 })
 
-test('the A4 sheet keeps its band and schedule at every width', async ({ page }) => {
+/**
+ * A draft module. It has no contents rail at any width — §4.5 gives it one
+ * sentence and a schedule, so there are no sections to list — but it DOES get
+ * the curriculum, which M10 gave to every module page: the rail is navigation
+ * rather than module info, and a reader who lands on a stub needs a way out of
+ * it more than anyone does.
+ */
+test('the draft module keeps its band and schedule at every width', async ({ page }) => {
+  const width = page.viewportSize()!.width
   await page.goto(A4.path)
-  await expect(page.locator('.hl-status-band')).toBeVisible()
-  await expect(page.locator('table.hl-schedule')).toBeVisible()
-  await expect(page.locator('.hl-rail-left')).toHaveCount(0)
+  await expect(page.locator('.bz-status-band')).toBeVisible()
+  await expect(page.locator('table.bz-schedule')).toBeVisible()
+  await expect(page.locator('.bz-aside')).toHaveCount(0)
+
+  const curriculum = page.locator('.bz-rail')
+  const drawer = page.getByRole('button', { name: 'Contents', exact: true })
+
+  if (width >= 880) {
+    await expect(curriculum).toBeVisible()
+    // …and NO control, because there is nothing for it to open: a draft has no
+    // contents rail to lose, so a `Contents` button here would open an empty
+    // panel, which is a control that cannot do its job (§1).
+    await expect(drawer).toBeHidden()
+  } else {
+    await expect(curriculum).toBeHidden()
+    await expect(drawer).toBeVisible()
+  }
+})
+
+/**
+ * A label in a fixed-width box may not paint its text over the text beside it.
+ *
+ * This is a rule about any label and any width, not a fact about one page: it
+ * asks every element whose box is narrower than its own text whether that text
+ * reaches the next element's text. It exists because a 28px box was chosen to
+ * line up with the completion toggle beside it and then given the word
+ * `Planned`, which measures 39px at 11px mono with 0.06em tracking. With
+ * `overflow: visible` the last glyph landed on top of the module number on all
+ * fourteen planned rows, on the home screen and on `/profile/`, at 1440, 1024
+ * and 390 — the two surfaces this phase built, and the front door of the site.
+ *
+ * MEASURED before the fix: text box 444→494 inside a box of 455→483, with the
+ * link starting at x=491; 14 of 14 rows collided at every width. After: 0.
+ *
+ * The check reads the TEXT box with a `Range` rather than the element box,
+ * because an overflowing element reports the box it was given and not the ink
+ * it actually painted, and reading the element box is what let this ship.
+ */
+test('no label paints its text over the text beside it', async ({ page }) => {
+  for (const route of ['/', '/profile/']) {
+    await page.goto(route)
+    const { bad: collisions, examined } = await page.evaluate(() => {
+      const bad: string[] = []
+      /*
+        COUNTED, because this scan can stop having anything to look at.
+
+        Every element short-circuits at the `ink.width <= box.width` line unless
+        it overflows its own box, and M16 stage 0 deleted the fixed-width label
+        rules that made any element do that — so the scan currently examines a
+        real page and finds nothing, which is the right answer and also
+        indistinguishable from a scan whose premise has broken. `examined`
+        counts the elements that got as far as being measured, so a page that
+        renders no text, or a `querySelectorAll` that stops matching, fails here
+        instead of reporting a clean sweep of nothing. The collision count
+        itself stays at zero; it is the one that matters when stage 7 gives the
+        completion toggle its width back.
+      */
+      let examined = 0
+      /*
+        SAID AND NOT SHOWN IS NOT A COLLISION, and this scan found out the hard
+        way. A screen-reader-only element is clipped on purpose: its ink is a
+        whole word and its box is 1px, so it trips the overflow line by
+        definition, and its ink coordinates then land on top of whatever is
+        beside it. When the planned module's row was given a drawn mark and its
+        word moved into `.bz-said`, this test reported sixteen collisions — all
+        of them the same deliberately clipped word.
+
+        Excluded by MECHANISM rather than by class name: an element whose
+        `clip-path` removes its own painted area paints nothing, so it cannot
+        paint over anything. A rule that named `.bz-said` would go quiet the
+        day the primitive is renamed; this one holds for any element clipped
+        that way, and still catches a label that overflows while visible —
+        which is the thing the test is for.
+      */
+      const clipped = (el: HTMLElement): boolean => {
+        const clip = getComputedStyle(el).clipPath
+        return clip !== 'none' && clip !== ''
+      }
+      for (const el of document.querySelectorAll<HTMLElement>('body *')) {
+        if (!el.firstChild || el.firstChild.nodeType !== Node.TEXT_NODE) continue
+        const text = (el.textContent ?? '').trim()
+        if (!text || el.offsetParent === null) continue
+        if (clipped(el)) continue
+        examined += 1
+        const range = document.createRange()
+        range.selectNodeContents(el)
+        const ink = range.getBoundingClientRect()
+        const box = el.getBoundingClientRect()
+        if (ink.width <= box.width + 1) continue
+        // It overflows its own box. Does the ink reach a sibling's ink?
+        for (const sib of Array.from(el.parentElement?.children ?? [])) {
+          if (sib === el) continue
+          const other = document.createRange()
+          other.selectNodeContents(sib)
+          const oink = other.getBoundingClientRect()
+          if (!oink.width || !(sib as HTMLElement).offsetParent) continue
+          // The neighbour, too: a clipped sibling has no painted text to be
+          // covered, so an overlap with its ink coordinates is not a defect.
+          if (clipped(sib as HTMLElement)) continue
+          const overlapsX = ink.right > oink.left + 0.5 && ink.left < oink.right - 0.5
+          const overlapsY = ink.bottom > oink.top + 0.5 && ink.top < oink.bottom - 0.5
+          if (overlapsX && overlapsY) {
+            bad.push(`"${text.slice(0, 24)}" over "${(sib.textContent ?? '').trim().slice(0, 24)}"`)
+            break
+          }
+        }
+      }
+      return { bad, examined }
+    })
+    expect(examined, `${route} — the scan found no text to measure`).toBeGreaterThan(20)
+    expect(collisions, `${route} — a label's text is painted over its neighbour's`).toEqual([])
+  }
+})
+
+
+/**
+ * §4.7's one hard rule, on the routes the sample above cannot reach.
+ *
+ * **M18 shipped 37px of sideways scroll at 1024 and the suite stayed green.**
+ * The pager's one-line tile has a large min-content — its label is a fixed
+ * width and on a planned module reads `Previous module · Planned` — and a bare
+ * `1fr` grid track refuses to shrink below that, so the grid overhung its
+ * container by up to 172px.
+ *
+ * **It survived because the guard's sample missed on both axes at once.**
+ * `PAGES` above names four modules and not one of them is planned, so the wide
+ * label never appeared; and the three viewport projects are 1440 / 1024 / 390,
+ * while most of the overflow is between 768 and 1060. The overlap at 1024 was
+ * real and on a route nobody sampled.
+ *
+ * So this walks EVERY module route rather than four, at the widths either side
+ * of the language's own breakpoints. It is the one place in this file that
+ * iterates the corpus, and it is affordable because it asserts one number per
+ * page and waits for nothing.
+ */
+test('no module route scrolls the document sideways, at any width', async ({ page }) => {
+  const width = page.viewportSize()!.width
+  const overflowing: string[] = []
+
+  for (const sheet of SHEETS) {
+    await page.goto(sheet.path, { waitUntil: 'domcontentloaded' })
+    const over = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    )
+    if (over > 0) overflowing.push(`${sheet.path} by ${over}px`)
+  }
+
+  expect(overflowing, `at ${width}px`).toEqual([])
+
+  /* Non-vacuity: an empty corpus would satisfy the line above, and so would a
+     run that never navigated. The pager is what this exists for, so it is what
+     is proven to have been on screen. */
+  await expect(page.locator('.bz-pager-item')).toHaveCount(2)
+})
+
+/**
+ * And the destination survives the squeeze. The label was the one item in the
+ * tile that could not yield, so when the row ran out of room the TITLE took the
+ * whole loss — measured down to 18px on twelve routes, which is the only part
+ * of the tile saying where the reader is going.
+ */
+test('the pager always says where it goes', async ({ page }) => {
+  const narrowest: { path: string; width: number }[] = []
+
+  for (const sheet of SHEETS) {
+    await page.goto(sheet.path, { waitUntil: 'domcontentloaded' })
+    const title = page.locator('.bz-pager-item[data-end] b')
+    if (await title.count() === 0) continue
+    const box = await title.boundingBox()
+    if (box !== null && box.width < 56) narrowest.push({ path: sheet.path, width: Math.round(box.width) })
+  }
+
+  expect(narrowest, 'a pager tile names a destination nobody can read').toEqual([])
 })

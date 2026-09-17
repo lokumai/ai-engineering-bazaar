@@ -135,42 +135,42 @@ export function EraseDialog({
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Trigger className="hl-btn hl-btn-danger">{ERASE_COPY.trigger}</Dialog.Trigger>
+      <Dialog.Trigger className="bz-btn bz-btn-danger">{ERASE_COPY.trigger}</Dialog.Trigger>
 
       <Dialog.Portal>
-        <Dialog.Overlay className="hl-dialog-backdrop" />
+        <Dialog.Overlay className="bz-dialog-backdrop" />
         {/* `aria-describedby={undefined}`: Radix otherwise warns about a
             `Description` this dialog has no single honest sentence for — the
             enumeration below is a list, and the list IS the description. */}
-        <Dialog.Content className="hl-dialog" aria-describedby={undefined}>
-          <div className="hl-dialog-head hl-mark">{ERASE_COPY.head}</div>
+        <Dialog.Content className="bz-dialog" aria-describedby={undefined}>
+          <div className="bz-dialog-head text-mark">{ERASE_COPY.head}</div>
 
-          <div className="hl-dialog-body">
-            <Dialog.Title className="hl-dialog-title">{ERASE_COPY.title}</Dialog.Title>
+          <div className="bz-dialog-body">
+            <Dialog.Title className="bz-dialog-title">{ERASE_COPY.title}</Dialog.Title>
 
             {lines.length === 0 ? (
-              <p className="hl-dialog-tally">{NOTHING_RECORDED}</p>
+              <p className="bz-dialog-tally">{NOTHING_RECORDED}</p>
             ) : (
-              <ul className="hl-dialog-tally" aria-label={eraseTallySentence(counts)}>
+              <ul className="bz-dialog-tally" aria-label={eraseTallySentence(counts)}>
                 {lines.map((line) => (
                   <li key={line}>{line}</li>
                 ))}
               </ul>
             )}
 
-            <p className="m-0 mb-2 font-display text-meta leading-normal text-ink-muted">
+            <p className="m-0 mb-2 text-meta leading-normal text-on-surface-muted">
               {ERASE_COPY.scope}
             </p>
             {/* §14.6 — its own paragraph, not a fourth clause of the one above.
                 This is the sentence a reader in an organisation has to leave
                 the dialog having read, and a sentence appended to a paragraph
                 about storage keys is a sentence that gets skimmed. */}
-            <p className="m-0 mb-3 font-display text-meta leading-normal text-ink-muted">
+            <p className="m-0 mb-3 text-meta leading-normal text-on-surface-muted">
               {ERASE_COPY.history}
             </p>
 
-            <label className="hl-field">
-              <span className="hl-field-label">{ERASE_COPY.confirmLabel}</span>
+            <label className="bz-field">
+              <span className="bz-field-label">{ERASE_COPY.confirmLabel}</span>
               <input
                 type="text"
                 value={typed}
@@ -181,10 +181,10 @@ export function EraseDialog({
               />
             </label>
 
-            <div className="hl-dialog-actions">
+            <div className="bz-actions">
               <button
                 type="button"
-                className="hl-btn hl-btn-danger"
+                className="bz-btn bz-btn-danger"
                 disabled={!armed}
                 onClick={() => {
                   if (!confirmsErase(typed)) return
@@ -196,13 +196,13 @@ export function EraseDialog({
               </button>
               {/* The safe outcome, stated. Not "Cancel", which describes the
                   dialog rather than the data, and never a decline that shames. */}
-              <Dialog.Close className="hl-btn">{ERASE_COPY.decline}</Dialog.Close>
+              <Dialog.Close className="bz-btn">{ERASE_COPY.decline}</Dialog.Close>
               {/* §12.15 — one click from the destructive path. */}
-              <button type="button" className="hl-btn" onClick={onExport}>
+              <button type="button" className="bz-btn" onClick={onExport}>
                 {ERASE_COPY.export}
               </button>
               {exportedAt !== null && (
-                <span className="hl-mark self-center text-ink-muted" role="status">
+                <span className="text-mark self-center text-on-surface-muted" role="status">
                   {`EXPORTED ${exportedAt.slice(0, 10)}`}
                 </span>
               )}

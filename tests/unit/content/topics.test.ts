@@ -45,7 +45,7 @@ Advanced UI patterns for agent applications.
 - Terminal-style output
 `
 
-describe('sectionTitles — the h2s a drawn sheet is made of (§5.6)', () => {
+describe('sectionTitles — the h2s a ready module is made of (§5.6)', () => {
   it('lists the sections in document order', () => {
     expect(sectionTitles(DRAWN)).toEqual([
       'What is actually different about an agent',
@@ -86,8 +86,8 @@ describe('sectionTitles — the h2s a drawn sheet is made of (§5.6)', () => {
   })
 })
 
-describe('topicsFor — what the category page prints per sheet (§4.9)', () => {
-  it('takes the first three sections of a drawn sheet', () => {
+describe('topicsFor — what the category page prints per module (§4.9)', () => {
+  it('takes the first three sections of a ready module', () => {
     expect(topicsFor({ status: 'ready', body: DRAWN })).toEqual([
       'What is actually different about an agent',
       'The vocabulary, pinned down',
@@ -95,7 +95,7 @@ describe('topicsFor — what the category page prints per sheet (§4.9)', () => 
     ])
   })
 
-  it('takes the first three scheduled parts of a sheet that is not drawn', () => {
+  it('takes the first three scheduled parts of a module that is planned', () => {
     expect(topicsFor({ status: 'draft', body: DRAFT })).toEqual([
       'Streaming interfaces',
       'Approval flows',
@@ -107,7 +107,7 @@ describe('topicsFor — what the category page prints per sheet (§4.9)', () => 
     expect(topicsFor({ status: 'ready', body: '## I. One' })).toEqual(['One'])
   })
 
-  it('returns nothing rather than a placeholder when the sheet says nothing', () => {
+  it('returns nothing rather than a placeholder when the module says nothing', () => {
     expect(topicsFor({ status: 'draft', body: 'Just a sentence.' })).toEqual([])
   })
 })

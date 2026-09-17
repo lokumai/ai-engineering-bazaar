@@ -89,7 +89,7 @@ function count(n: number, singular: string, plural: string): string {
  */
 export function eraseTallyLines(t: EraseTally): string[] {
   const lines: string[] = []
-  if (t.sheets > 0) lines.push(count(t.sheets, 'sheet state', 'sheet states'))
+  if (t.sheets > 0) lines.push(count(t.sheets, 'module state', 'module states'))
   if (t.name > 0) lines.push(count(t.name, 'name', 'names'))
   if (t.submittals > 0) lines.push(count(t.submittals, 'submittal', 'submittals'))
   if (t.quizzes > 0) lines.push(count(t.quizzes, 'self-check', 'self-checks'))

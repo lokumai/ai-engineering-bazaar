@@ -1,0 +1,3376 @@
+---
+description: >
+  Part 2 of the execution log, and the ACTIVE part: a new milestone is appended here. It opens with
+  M16, the interface rebuilt on the design language in ten stages — the stage table, every stage's
+  brief, and the seven reports the stages wrote back, including what each one found that its own
+  brief had wrong, and then the review pass over the finished milestone and the two defects it found
+  inside a green gate. Then M17, the curriculum fold, and M18, the front door and the chrome, each
+  with its report. It closes with M19 to M22 — the second language, the catalog's descriptions, the
+  module page and rail, and the progress redesign — all WRITTEN AND NOT STARTED.
+  Every milestone carries its deliverables and acceptance criteria as `- [ ]` checkboxes, ticked as
+  the work lands, and closes with a dated report; the loop that governs that is in part 1 and is not
+  restated here. Part 1 holds M1 to M15 and is closed.
+  NOT here: why a choice was made (BRAINSTORM.md), or any rule that outlives the milestone
+  (MANIFESTO.md / ARCHITECTURE.md).
+authority: state
+writes: agent, every session
+status: active
+covers: "M16 to M23, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started. Checkbox format repaired across the part on 2026-09-13."
+last_updated: 2026-09-13
+---
+
+# 📈 PROGRESS, part 2 — M16 to M23
+
+> **← Part 1: [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the review pass over M10 to M14.
+> This part holds **M16 to M23**, in the order they were worked.
+
+## How to work this file
+
+**The loop and the circuit breakers are written once, in part 1 —
+[`PROGRESS.md` § The loop](PROGRESS.md#the-loop).** Read them there; they are not restated here and
+they govern this part exactly as written. In one line: *take the first unchecked deliverable, build
+it, verify it against its acceptance criteria, then mark `[x]` and write the report.*
+
+**That loop needs a shape from every milestone, and this part stopped providing it.** M16 opened with
+checkboxes and left four of seven unticked on a milestone its own report calls done; M17 wrote its
+deliverables as a numbered list; M18 wrote none at all; M19 to M22 had none either. Repaired
+2026-09-13. What a milestone here owes:
+
+- **Deliverables and acceptance criteria are both `- [ ]` checkboxes**, one per thing that has to
+  become true. A numbered list or a paragraph is not a deliverable: the loop takes *"the first
+  unchecked deliverable"*, so a milestone written in prose has none and the loop cannot start on it.
+- **Tick `[x]` as each one finishes**, not in a batch at the end, and only against something
+  measured. **A commit message is not evidence.** Where a box is ticked later than the work, say so
+  and cite what proves it.
+- **Close with `### Report — YYYY-MM-DD`** carrying the real date, what was built, and what the brief
+  had wrong. Part 1's habit of writing the second of those is why its reports are worth reading.
+- **A deliverable that is dropped or deferred is struck through with its destination** —
+  `- [ ] ~~Thing~~ → **M19**` — never deleted, and never left looking merely unfinished. M8 in part 1
+  is the pattern.
+- A criterion that is met in part says **`Met, except:`** and what is missing, in the shape part 1's
+  M7 uses.
+
+### Where each milestone stands
+
+| | Milestone | Status |
+| --- | --- | --- |
+| **M16** | The interface, rebuilt on the language | **Done** — 2026-09-10 |
+| **M17** | One catalog, and the pages that fold into it | **Done** — 2026-09-11 |
+| **M18** | The front door, the chrome, and the second language | **Done** — 2026-09-12, minus the second language, lifted to M19 |
+| **M19** | The second language | **Done** — 2026-09-13, the pipeline. The interface's own strings are **M23** |
+| **M20** | The catalog says what a module IS | **Done** — 2026-09-13. Its four decisions were taken on the author's behalf and are flagged in its report |
+| **M21** | The module page and the rail beside it | **Done** — 2026-09-13. One item is still not written down: see its report |
+| **M22** | Your progress, redesigned | **Done** — 2026-09-13 |
+| **M23** | The interface's own strings, in Turkish | Written, not started — several hundred strings, and the author's own language |
+
+---
+
+## 🏁 Milestone M16: The interface, rebuilt on the language
+
+Every surface rebuilt so it is indistinguishable from its mockup, with **no capability lost**. This
+is a rebuild of the presentation layer, not an edit of it.
+
+### The specifications, per surface
+
+The design language is M15's. Each surface's *layout* comes from the mockup the author chose, and
+those are the only references.
+
+**The reference column names two files, because `02` to `09` are on a deliberately different
+palette from `01` (D31).** They are layout studies — `02` says so in its own prose: "All three are
+shown in one neutral palette **on purpose**, so you are judging the **structure** and not the
+colour." So **geometry, structure and class semantics come from the component mockup; colour, type
+and every token come from the shell.** Read the other way round, "indistinguishable from
+`03-catalog.html`" would put a green accent on a cool grey ground, which is the mirror image of the
+mistake this milestone exists to correct.
+
+| Surface | Layout from | Colour from | Choice |
+| --- | --- | --- | --- |
+| Shell: bar, band, rail, reading column, aside | `01-theme-T4-ground-G3-powder.html` | same | T4 on G3 |
+| Top navigation | `02-navbar.html` | `01` | **A** — one row, a dropdown per group |
+| Catalog | `03-catalog.html` | `01` | **all three**, one route, behind a toggle with an icon and a name each: **Overview** (C), **Cards** (A), **Table** (B) |
+| The reading page | `01`'s `main > .col`, containment from `04` | `01` | T4's own |
+| Completion | `05-progress.html` | `01` | **A** at the end of a piece, **C** on the overviews |
+| Code and figures | `01`'s slab, node roles from `06` | `01` | the **dark slab** |
+| Progress and account | `07`-A, rings from `05`-C | `01` | **A** |
+| Home | `08-home.html` | `01` | **A** |
+| Rail | `01`'s `details.arch`, which is `09`-1 extended | `01` | T4's own |
+
+**Two rows say `01` where the table used to name `04` and `09`, and that is a correction rather than
+a change of mind.** Neither of those files contains a T4 variant — `04` holds A/B/C and `09` holds
+1/2/3, all on the older palette — so "T4's own" resolves to the shell file itself. `01`'s
+`main > .col` **is** the ratified reading page, and its `details.arch` **is** the ratified rail,
+being `09` variant 1 extended with a `data-here` treatment for the current group. What `04` still
+contributes is the wide-figure containment rule, which the shell adopted verbatim, and a `.bleed`
+utility it did not. `06` likewise proposes a slab the shell does not ship; the shell wins, and `06`
+contributes its three node roles.
+
+### Deliverables
+
+- [x] **The eleven old stylesheets deleted.** Not migrated — see the decision below. Stage 0: nine
+      deleted, the entry point rewritten to 56 lines, the generated sheet kept generated.
+- [x] **The token layer is the language.** `src/design/bazaar.css` is imported and prefixed `bz-`;
+      `code-theme.ts` reads it and accepts hex; the invented type family is gone.
+- [x] **The app-side `SelectorMap` exists**, which is the deliverable whose absence let five
+      milestones ship the wrong design. `fidelity.spec.ts` compares a built surface to its mockup.
+- [x] The shell rebuilt: cobalt bar, the lattice band under it, the three-column grid anchored to the
+      window edges, the folding rail, the sticky offset. Every route carries it. **Stage 1 built the
+      bar and the band; stages 1b, 2 and 3 built the grid, the rail and the aside** — their report
+      is below, 2026-09-10.
+- [x] Each surface above rebuilt against its reference, at 1440, 1024 and 390. **All ten stages
+      landed**, `7ed3bbe` through `f110457`. Stage by stage in *The ten stages* below.
+- [x] The visual expectations in the browser suite rewritten against the mockups; the behavioural
+      ones kept as they are. **The seven CSS-reading unit files went in stage 0, and the 141
+      hardcoded classes were re-pointed by the stage that owned their surface** — after item 0
+      closed the fifteen guards a rename would otherwise have turned green-and-empty.
+- [x] Every capability intact: completion and undo, the checklist, the quick check, sources,
+      submittals, both languages, export, import, erase, the streak, role paths, optional sign-in,
+      claim-and-merge, the three retired routes still landing somewhere useful. **The capability
+      ledger is in the closing report below**, one row per capability with the test that proves it.
+
+> **These four were ticked on 2026-09-13, not when the work was finished.** They sat `[ ]` under a
+> milestone whose own report opens *"M16 is done"* — which is the drift this file was repaired for:
+> the work landed and nobody came back to the boxes. Each tick cites the stage report that carries
+> its evidence, and the milestone's own meter measured **`hl-` in `className` at 0, from 792**.
+
+### The stylesheets: deleted, not migrated
+
+The author left this call to me, and it is **delete all eleven and author a fresh set from the
+language**. Migrating them is precisely how the old structure survived M9 to M14: an edit preserves
+the thing being edited, and 378 of the old design's 398 class names survived a milestone series that
+was supposed to replace them. The fresh set is authored in the language's own terms, and any old rule
+that turns out to be needed has to be re-derived from a mockup to earn its place back.
+
+The exceptions, and why: the **generated** per-item stylesheet stays generated (its selectors are
+enumeration, not design, and its generator is regenerated in the same commit as any change);
+**markdown typography** and **figure framing** are re-authored against the mockup's prose and figure
+treatment rather than dropped, because the corpus depends on them and the mockup specifies both.
+
+### Acceptance criteria
+
+- [x] **The fidelity check from M15 passes on every route**, not only on the page the mockup drew.
+- [x] **Side by side with its mockup at 1440px, each surface is indistinguishable** apart from content
+      and the components the author chose differently. Checked by screenshot against the reference, not
+      by reading the CSS.
+- [x] No page body scrolls sideways at 1440, 1024 or 390; wide content scrolls inside its own box, and a
+      figure wider than the column cannot paint outside it.
+- [x] The interface survives `forced-colors: active`, and colour is never the only signal.
+- [x] **A mark a reader sees in frame one is stamped before first paint**, not rendered by an island.
+- [x] Keyboard: every control reachable and operable, a visible focus ring on each, and for every
+      disclosure **both** halves asserted — closed, its contents are out of the tab order; open, they
+      are in it.
+- [x] `npm run typecheck`, `npm test`, `npm run build` and the full browser suite green, with the count
+      of behavioural tests **not lower** than it is today.
+- [x] With no `.env.local` the site is complete and makes zero requests to the account service.
+
+> **Ticked 2026-09-13 against the closing report below, which records every closing condition held
+> with the gate green.** A ticked criterion here means *measured and met*, not *nothing was wrong*:
+> three reviews over the finished milestone found thirteen confirmed defects inside that same green
+> gate, and eight more are still the author's call under *Confirmed, NOT fixed*.
+
+### The honest risk
+
+**This is a large milestone and it is one milestone because the author asked for two.** 87 files
+carry presentation, 82 components and 17 routes; **1,252 `hl-` occurrences in markup when it opened,
+386 old class selectors across 7,158 lines of CSS, 141 hardcoded classes spread over 31 browser
+spec files, and roughly 250 unit tests asserting markup shape.** The stage plan below is what turns
+that into ten commits that can each be looked at.
+
+**If it has to be cut, the cut is announced before it happens and the author chooses what goes** —
+not decided quietly at the end, which is what happened with M9 to M14. **The cut line is stage 10**:
+the nine mockup-backed surfaces are the milestone's point, and the eight derived routes have the
+weakest reference.
+
+**Where the mockup is silent, work stops and the author is asked.** Inventing a value is what
+produced a substituted type family, a re-hued categorical series and a light top bar. There is no
+budget for taste in this milestone. Six such questions have been asked and answered so far — D30
+and D33 to D36 — and **two are still open**: whether a rail group's open state persists, which `09`
+promises in prose and no mockup implements, and how a figure wider than the measure behaves, which
+`04` answers with a `.bleed` utility the shell deliberately does not carry.
+
+### The ten stages, and what each one owes
+
+Stage 0 is the token layer; stages 1 to 10 are the surfaces, in the order of the reference table
+above. **Each stage is one commit, and it does four things**: read the mockup and then DESIGN.md,
+copying neither a nearby component nor a deleted stylesheet; rebuild the surface's markup and author
+its own stylesheet in the language's terms; **add its roles to `APP_SELECTORS` in
+`tests/e2e/fidelity.ts` and a `fidelity.spec.ts` block, with the mutation, in the same sitting**; and
+run the whole gate. A stage does not land red.
+
+Two things are true of every stage and are not repeated in each row. **Behaviour is carried over
+from the components that already work** — the mockups implement almost none of it, one three-line
+script across ten files, so the mockup governs appearance only. And **the specs that name the old
+markup are re-pointed by the stage that rebuilds their surface**, keeping the behavioural
+assertions and rewriting the appearance ones against the mockup.
+
+| # | Surface | Reference (layout · colour) | Status |
+| --- | --- | --- | --- |
+| **0** | The token layer | — | ✅ `b3354d9` |
+| **1** | The shell: bar, band, grid, rail slot, reading column, aside | `01` · `01` | ✅ `5fbc06b`, `d575215` |
+| **2** | The navigation's dropdown, held to its own mockup | `01` (which re-drew `02`-A) | ✅ `f32d462` |
+| **3** | The rail: groups, items, ticks, the fold and its restore tab | `01` (= `09`-1 extended) · `01` | ✅ `ef000df` |
+| **4** | The catalog, three views behind one toggle | `03`-C/A/B · `01` | ✅ `ccccd6e` |
+| **5** | The reading page | `01`'s `main > .col`; containment from `04` · `01` | ✅ `5abb61a` |
+| **6** | Code and figures | `01`'s slab; node roles from `06` · `01` | ✅ `5abb61a` |
+| **7** | Completion | `05`-A and `05`-C · `01` | ✅ `c5d53bb` |
+| **8** | Progress and account | `07`-A; `05`-C's dials, not `07`'s rows · `01` | ✅ `5654c03` |
+| **9** | Home | `08`-A · `01` | ✅ `582cebc` |
+| **10** | The eight routes with no mockup | derived (**D30**) · `01` | ✅ `f110457` |
+
+**The progress meter, measured at each stage.** `grep -rho '\bhl-[a-z0-9-]*' --include='*.tsx' src/`
+counted **1,252** when M16 opened and **1,230** after stage 1 part 1. It reaches 0 when the rebuild
+is real. Where the remainder lives today, which is also roughly how much each stage carries:
+`components/record/` **386**, `src/app/` **293**, `components/team/` **116**, `components/sheet/`
+**114**, `components/auth/` **71**, `components/catalog/` **52**, `components/path/` **36**,
+`components/identity/` **35**, `components/org/` and `components/curriculum/` **29** each,
+`components/shell/`, `mascot/` and `figure/` **15** each, `course/` **14**, `home/` **10**.
+
+**Six of the 23 fidelity roles are mapped.** `bar`, `barInner`, `brand`, `barLink`,
+`barLinkCurrent`, `band`. The seventeen still unmapped are named in the stages below, and
+`barField` stays in `DELIBERATELY_ABSENT` until there is something to search.
+
+---
+
+#### Stage 1 — the shell · `01-theme-T4-ground-G3-powder.html`
+
+**Part 1 is done** (`5fbc06b`): the cobalt bar, the band, and the app-side `SelectorMap` that makes
+the whole milestone checkable. See its report below.
+
+**Part 2** is the frame the other nine stages sit in, and it was split off rather than half-built:
+the `bz-shell` grid moves into `PageShell` with three slots — rail, `bz-main > bz-col`, aside — and
+`PageShell`'s `bleed` prop stops meaning anything, because the mockup anchors the rails to the
+window on every route rather than only on the module page. **That is why it touches all 17 routes.**
+The breadcrumb lands in the reading column, above the display heading, which is where the mockup
+puts it.
+
+- **Roles it adds:** `column`, `aside`, `asideLink`.
+- **Specs it re-points:** `anatomy` (17 old classes, and it is the spec about the grid itself),
+  `containment` (5), `responsive` (18, three viewports), `navigation` (7), `site-footer` (2),
+  `not-found` (1). `not-found.spec.ts` reads a nav landmark named `Curriculum`; that behaviour has to
+  survive the breadcrumb's move.
+- **Watch for:** the two product breakpoints are the language's, 1180 and 880, and the sticky offset
+  is 76px = 58 bar + 18 band. Nothing reflows into a hamburger and the body never scrolls sideways.
+
+#### Stage 2 — the navigation's dropdown · `02-navbar.html` variant A
+
+The bar's markup landed in stage 1 part 1 and `MainNav` needed no behavioural change — it was
+already variant A, a native `<details>` disclosure that works before any bundle arrives, with
+`data-current` on the trigger (**D28**). **What stage 2 owes is the check**: the menu is not in the
+`Role` union at all, so nothing yet compares the panel the reader actually opens.
+
+- **Roles it adds:** `menu`, `menuItem`, `menuKey`, `menuCount`.
+- **The comparison is geometry only, and this is where D31 bites hardest.** `02` is on the older
+  palette, so its widths, paddings, radii and the row's three-part shape are the specification while
+  every colour comes from `01`. A naive "indistinguishable from `02`" would put a green accent on a
+  grey ground.
+- **Watch for:** the mockup renders the panel permanently open and has no show/hide mechanism at
+  all, so the open state is what gets compared. Both halves of the disclosure's tab order are
+  asserted — closed, the rows are out; open, they are in.
+
+#### Stage 3 — the rail · `01`, which is `09-sidebar.html` variant 1 extended
+
+`09` contains no T4 variant; the shell's `details.arch` **is** the ratified rail, variant 1 plus a
+`data-here` treatment for the current group. The current group is emphasised four ways at once — a
+larger type size, a sunken fill, a strong border and a thick leading edge in the group's own hue —
+and that is deliberate redundancy, not decoration.
+
+- **Roles it adds:** `rail`, `railInner`, `group`, `groupCurrent`, `groupKey`, `item`, `tick`, plus
+  the fold button and the restore tab.
+- **Components:** `CurriculumRail`, `RailFold` (29 old classes between them).
+- **Specs it re-points:** `rail` (13).
+- **Revives:** the `[data-cat]` hue carrier and the closed five-hue series in
+  `category-surfaces.test.ts` — the rail is the first surface to bind `--bz-cat`.
+- **Watch for:** the fold animates the grid track to `0px` while the rail's inner box keeps its own
+  width, so content does not reflow mid-animation; the restore tab is vertically centred so it can
+  never collide with the sticky chrome; under `prefers-reduced-motion` the fold is instant. **The
+  rail's completion tick is channel A** — `boot.ts` stamps `hl-signed-<n>` and the generated sheet
+  reveals `.bz-mod-mark`, so the mark is right in frame one and no island may draw it. `09` promises
+  the open/closed state persists and no mockup implements it: **that is one of the two open
+  questions for the author.**
+
+#### Stage 4 — the catalog · `03-catalog.html`, all three views
+
+One route, three views behind a toggle with an icon and a name each: **Overview** (C), **Cards** (A),
+**Table** (B). Serves `/courses/`, `/courses/[category]/` and `/sheets/`. All three views ship in
+the DOM and CSS reveals one, because the choice is channel A — `data-hl-view` on `<html>` against
+`data-view` on a descendant.
+
+- **Roles it adds:** the sticky filter bar and its chips, the level head, the card and its title,
+  the table row, the board column, and the view toggle.
+- **Components:** `Catalog`, `CatalogCards`, `CatalogOverview`, `ViewIcon`, `SheetIndex`,
+  `CategoryBlock`, `ModuleRow`, `TickGauge` (52 + part of 114 old classes).
+- **Specs it re-points:** `catalog` (18), `index-sheet` (8). Helper: `tests/e2e/views.ts` hardcodes
+  `.hl-view[data-view]`.
+- **Revives:** the five guarded cases in `catalog/views.test.ts` — the reveal list must cover every
+  view in both the carrier and the forced-colours twin, and the no-script fallback branch too.
+- **Watch for:** `03` stacks two stickies, the filter bar at `top:0` and the table header at a
+  hardcoded `71px` matching the bar's height — **derive that, never copy the magic number.** The
+  level badge takes an edge and not a tinted fill (**D33**). B has no mobile treatment in the mockup
+  and its own note says so, so the narrow behaviour is a question if the table cannot scroll inside
+  its own box. And M12's acceptance criterion holds: reorder `curriculum.yaml` and all three views
+  follow identically.
+
+#### Stage 5 — the reading page · `01`'s `main > .col`, containment from `04`
+
+The heaviest route, ~19 component imports. Breadcrumbs above a display heading, a row of tags, then
+sections whose headings carry a dashed ochre rule filling the remaining width — the one place
+ornament touches the reading column. Prose links are underlined in ochre rather than recoloured.
+
+- **Roles it adds:** `crumb`, `display`, `tag`, `section`, `subsection`, `prose`, `card` (the
+  `leaf`-shaped aside a reader can skip), `actions`, `buttonPrimary`, the quiet button, and `pager`.
+- **Components:** `TitleBlock`, `StatusBand`, `Objectives`, `ScheduleOfParts`, `DependencyBlock`,
+  `SectionSpine`, `TableOfContents`, `ContentsDrawer`, `SheetRail`, `PrevNext`, `Prose` (the rest of
+  `components/sheet/`'s 114, plus `course/`'s 14).
+- **Specs it re-points:** `module-sheets` (33 tests, almost all behavioural), `title-block` (34),
+  `prose-type` (3), `section-marks` (already hard-skipped — decide whether it comes back).
+- **Watch for:** `04` contributes the wide-figure containment rule, which the shell already adopted,
+  and a `.bleed` utility the shell deliberately does not have — **a figure wider than the measure is
+  the second open question for the author.** The measure is 80ch and the mockup widened it from
+  `04`'s 68ch on purpose. `sheet.test.tsx`'s discipline rules now live in
+  `surface-stylesheets.test.ts` and will hold this stage's stylesheet automatically.
+
+#### Stage 6 — code and figures · `01`'s slab, node roles from `06-code-diagrams.html`
+
+A slab has a mono header strip and a scrolling code body; a figure frame uses the same dark palette
+and **its contents scroll inside the frame**, so a diagram wider than the column never widens the
+page. `06` proposes a different slab from the one the shell ships; **the shell wins** (**D31**), and
+`06` contributes only its three node roles — done, you are here, not yet — of which the language has
+two, so the third is a state to add and not a colour to invent.
+
+- **Roles it adds:** `slab`, `slabCode`, the slab head, `figure`, `node`, the active node, the third
+  node state, the arrow, the caption.
+- **Components:** `MermaidFigure`, `Diagram`, `Prose`'s code path (`figure/`'s 15).
+- **Specs it re-points:** `mermaid` (6).
+- **Watch for:** `mermaid.ts` cannot use `var()` — mermaid's `classDef` grammar rejects a CSS
+  function and a parse error blanks the figure — so the four semantic classes are emitted as literal
+  values resolved at build time from the token layer, exactly like `code-theme.ts`. **Swapping the
+  token layer silently changed every diagram in the corpus, and `node scripts/check-mermaid.mjs` is
+  the only thing that proves they still render.** The semantics ride the node's border and never
+  become a fill (**D33**): `verify` = success, `caution` = caution, `fault` = the clay, `info` = the
+  cobalt. `mermaid.spec.ts` asserts the slab is theme-fixed; that must stay true.
+
+#### Stage 7 — completion · `05-progress.html`, variants A and C
+
+**A** at the end of a piece: a top-ruled action row with one primary button, and after it a
+completed state with an undo beside it. **C** on the overviews: a dial per level, drawn as a
+`conic-gradient` with a knocked-out inner disc — no SVG and no JavaScript — plus three statistics.
+
+- **Roles it adds:** the completion mark, the completion control in both states, the dial, the
+  statistic row.
+- **Components:** `SignOff`, `SignOffMarks`, `CourseCompletion`, `ChecklistIsland`, `QuickCheck`,
+  `CheckedBy`, `TickGauge` (part of `record/`'s 386).
+- **Specs it re-points:** `record-sheet` (35 old classes, the largest exposure in the suite),
+  `record-index` (10). Helper: `tests/e2e/record.ts` (14).
+- **Revives:** the two aggregate category states in `category-surfaces.test.ts`.
+- **Watch for:** **a mark a reader sees in frame one is stamped before first paint** — the generated
+  sheet's five selector lists drive `.bz-seg`, `.bz-step-tick`, `.bz-mod-mark`, `.bz-cmod-mark` and
+  `.bz-cmod-said`, and **D25** keeps the completion state off `aria-pressed` and on a channel-A word
+  associated by `aria-describedby`. A completion mark is a filled disc with a white check, never a
+  stroked glyph, because the teal clears a 3:1 graphic floor and not a 4.5:1 text floor. `05`'s three
+  progress rails are three implementations of one primitive across `03`, `05`, `07` and `08` — unify
+  them.
+
+#### Stage 8 — progress and account · `07-dashboard.html` variant A, rings from `05`-C
+
+The route that absorbed three others: `/dashboard/`, `/path/` and `/report/` are `MovedTo` stubs
+forwarding here, and they must keep forwarding. Variant A is a continue hero, a progress block, a
+statistics row, then two settings panels.
+
+- **Roles it adds:** the continue hero, the progress row, the panel, the field, the danger button.
+- **Components:** all of `components/record/`'s panels, `components/path/` (36),
+  `components/identity/` (35), `AccountSync`, `Register`, `ReportPanel`, `DrafterBlock`.
+- **Specs it re-points:** `record-pages` (30), `path` (8), `alias` (3), `accounts` (5, skipped
+  without `E2E_ACCOUNTS=1`), `accounts-disabled` (4).
+- **Revives:** the nine-role path reveal and its negation chain in `category-surfaces.test.ts`.
+- **Watch for:** `07`'s progress row is a three-track grid with a **fixed 150px label column**,
+  which will overflow with a long level name or its Turkish translation — fix it rather than
+  transcribe it. The account layer is optional and gates nothing; with no `.env.local` the page is
+  complete and makes zero requests. `AccountSync` is the seam where session, sync, store and claim
+  meet, and its absence was the largest defect in Phase 4. The exported RECORD OF WORK keeps its own
+  print palette and borrows only the five hues, which `category-hues.test.ts` already guards.
+
+#### Stage 9 — home · `08-home.html` variant A
+
+A display heading, a lede, two calls to action, four measured facts, a grid of level cards, then a
+four-part rule block. The level card is structurally the same primitive as `03`-C's board column —
+a coloured header, a progress rail, a short list — so it is one component with two variants, not two
+components.
+
+- **Roles it adds:** the hero, the lede, the fact row, the level card.
+- **Components:** `KeepingYourPlace`, `ContinueLine`, `src/app/page.tsx` (10 + part of 293).
+- **Specs it re-points:** `home` (18, and both of the suite's only two `toHaveClass` calls).
+- **Watch for:** the page renders **both** halves unconditionally and CSS picks one off
+  `data-hl-record`, which is the entire first-visit-versus-returning switch and is channel A. `08`
+  uses literal emoji as icons in its rule block — replace them with the SVG idiom the rest of the
+  design uses. Its four facts are corpus counts and must be derived, never written down.
+
+#### Stage 10 — the eight routes with no mockup · derived (**D30**)
+
+`/legend/`, `/legend/specimen/`, `/team/`, `/team/assignments/`, `/sign-in/`, `/sign-in/alias/`,
+`/join/`, `/auth/callback/`. Built from primitives the mockups already specify — `card`, `tag`, the
+primary and quiet buttons, `slab`, the bar field for an input, the group and item rows for a list.
+**Nothing is invented; where one needs a shape the language does not have, that one shape is a
+question and not a design decision.**
+
+- **Components:** `components/auth/` (71), `components/team/` (116), `components/org/` (29),
+  `components/identity/` (35), `legend/page.tsx` (508 lines).
+- **Specs it re-points:** `accessibility` (17), `colour-not-alone` (19), `health` (2), `features`
+  (1), `redirects` (1).
+- **Watch for:** four of the eight sit behind an auth flag that is off by default, so their specs
+  skip cleanly and the fidelity comparison has to run against a build with
+  `NEXT_PUBLIC_AUTH_ENABLED=true`. `/legend/` is the page that replaces onboarding by not being
+  onboarding — it is never auto-opened, and that must stay true. **This is the announced cut line**
+  if the milestone has to be cut: the nine mockup-backed surfaces are the point, and these eight
+  have the weakest reference.
+
+---
+
+### Closing the milestone
+
+M16 is done when all three mechanical tests hold at once — no `hl-` class in any `className`, no
+stylesheet in `src/app/` but the entry point and the generated sheet, and `fidelity.spec.ts`
+comparing **every** surface to its reference with no differences — and when the capability ledger is
+checked off with the full gate green and the behavioural test count no lower than it is today. Then
+`CLAUDE.md`, `INDEX.md` and `tests/README.md` are re-pointed, and the two open questions
+(a rail group's persistence, a figure wider than the measure) are either answered or recorded as
+deliberately unanswered.
+
+### Report — stage 0, the token layer swapped, 2026-09-09
+
+**The eleven old stylesheets are gone.** Nine deleted outright — `prose`, `sheet`, `manifest`,
+`rail`, `figure`, `record`, `lokum`, `home`, `profile` — `globals.css` rewritten from 742 lines to a
+**56-line entry point**, and the generated per-module sheet kept, generated. That is **7,158 lines
+of CSS and 386 class selectors removed in one commit**, replaced by an `@import` of the language.
+
+`src/app/fonts.ts` is deleted with them and `next/font/google` has left the layout. **MEASURED in
+the export: zero requests to `fonts.googleapis.com` or `fonts.gstatic.com`, and `manrope` appears 0
+times in the shipped CSS.** Type is the mockup's own system stack, so it varies with the reader's
+OS exactly as the mockup's does.
+
+**The language is wired in and renamed.** `src/design/bazaar.css` took the `bz-` prefix (**D29**):
+116 occurrences in the language, the 33 selector pairs of the transcription test, and the eight
+class names the generator emits. It stayed at `src/design/` rather than moving into `src/app/`,
+because the reader that needed it there was pointed at it instead — see the next paragraph — and the
+tests that used to glob `src/app/*.css` now discover *surface* stylesheets, of which there are
+currently none.
+
+**The build-time trap was real and is closed.** `src/lib/content/code-theme.ts` resolved
+`src/app/globals.css` by path, required a literal `.dark {` block, read six `--color-slab-*` tokens
+positionally and fed each to `oklchToHex` — so it required `oklch()`, and the language writes hex
+because the mockup does. It now reads `src/design/bazaar.css` and accepts both notations through one
+exported `toHex`, which the test uses too so the policy cannot exist in two places. **Verified end to
+end: `--shiki-light:#8B91A0` appears in the rendered code blocks of the export.** No test catches
+this; only `npm run build` does.
+
+### What the eleven stylesheets took with them, and what replaced it
+
+Seven unit test files reached into `src/app/*.css`. Not one was deleted without its rule being
+either re-expressed or recorded, and **three of the old rules turned out to be measurably false**
+against the specification (**D32**).
+
+| Was | Now | What happened |
+| --- | --- | --- |
+| `unit/stroke-weights.test.ts`, 4 tests on `--stroke-hair/struct/cut` | 2 tests, same file | Re-expressed as **no fractional pixel in any border or outline**, over every shipped stylesheet, discovered not listed. The browser fact survives; the token scale did not exist to survive. |
+| `e2e/stroke-weights.spec.ts`, 3 tests | 1 test | The flooring probe is kept as the premise the unit rule rests on. The two that measured the old painted rule are retired. |
+| `unit/color/lokum.test.ts`, 102 tests on `--cat-<slug>` | `unit/color/category-hues.test.ts`, 31 tests | Re-expressed against `--color-category-1…5`. Kept: the series is closed at five and declared once, every hue clears 3:1 on every resting ground in both themes, all ten pairs separated by ≥20° of hue, and the exported record's inlined copy equals the language. |
+| `unit/color/slab-and-controls.test.ts`, 55 tests | 31 tests, same file | The 11 hand-named control selectors are stage 1's (see the open question). What replaced the local-dark-override rule is stronger: **a surface stylesheet may not theme anything and may not declare a `--color-*` token at all.** |
+| `unit/color/category-css.test.ts`, 18 tests | 9 tests, plus `category-surfaces.test.ts`, 7 | Split. The generated-sheet completeness and the generator round-trip stay; the four rules about deleted surfaces became **existence-guarded** completeness rules that bind the moment their surface exists. |
+| `unit/color/contrast.test.ts`, 95 tests | 78 tests, same file | Re-pointed at the new token names. `line-cut`, `line-control` and the four `*-ink` status tokens have no successor. |
+| `unit/catalog/views.test.ts`, `unit/components/sheet.test.tsx` | 12 and 28 | Re-pointed at discovered surface stylesheets; the seven CSS-discipline rules moved to `unit/design/surface-stylesheets.test.ts`, which holds every surface a later stage authors. |
+
+**The 16 skipped tests are the point, not a gap.** Six in `surface-stylesheets`, five in `views`,
+four in `category-surfaces`, one in `slab-and-controls`. Each is guarded on the existence of the
+thing it checks rather than on a note in a document, so it switches itself on when its stage lands.
+A rule parked in a milestone document is a rule that evaporates, which is the failure this whole
+milestone exists to correct.
+
+### Three findings the re-pointing surfaced, none of them assumed
+
+Re-pointing the contrast table at the new token layer found what reading either file did not.
+
+1. **`slab-comment` measured 3.92:1** on the slab, under the 4.5:1 a comment takes as content. The
+   retired design had already found and fixed this; M15's transcription faithfully restored the
+   mockup's value **and the defect with it**. Settled by the author as **D34**: the language lifts
+   the same hue to `#8B91A0`, **5.21:1**, and it is the one named deviation from the mockup, listed
+   in DESIGN.md and in a `DEVIATIONS` entry that is itself checked for staleness.
+2. **The mockup italicises a code comment** while §3.4 refuses mono italic, and the shipped syntax
+   theme was already upright — so the transcribed `font-style: italic` was a contradiction rather
+   than a choice. Removed.
+3. **`line-strong` measured 2.00:1** on the ground, 2.07 raised, 1.50 on the hover fill. It is the
+   edge the language gives an interactive control, and SC 1.4.11 asks 3:1 for anything required to
+   identify a component. **Open, and it is stage 1's**, by the author's decision: answered with the
+   shell's real buttons and fields in front of us rather than by inventing a token now. Enforced
+   meanwhile: `line-strong` is strictly stronger than `line` on every ground in both themes.
+
+`on-surface-muted` also measures 4.21:1 on the hover fill against 5.62 and 5.81 on the two resting
+grounds; DESIGN.md calls the sunken fill a hover and pressed state rather than a resting surface for
+text, so the text floors are asserted on the resting grounds and the hover fill is checked as the
+transient state it is.
+
+### The gate at the end of stage 0
+
+| Check | Result |
+| --- | --- |
+| `npm run typecheck` | clean |
+| `npm test` | **2,108 passed, 16 skipped, 0 failed, 81 files** |
+| `npm run build` | clean, **56 HTML files**, 42,253 bytes of CSS |
+| Export, language present | `#fdfbf7`, `#282864`, `#8b91a0`, `bz-bar`, `bz-rail`, `bz-group`, `bz-slab` all in the shipped CSS |
+| Export, old design absent | `hl-panel`, `hl-signoff`, `hl-viewbtn`, `hl-prose`, `manrope` — **0 each** |
+| Browser suite | **expected red, and not a gate until stage 1 lands.** Every surface is unstyled; 141 hardcoded `.hl-*` selectors across 31 specs still name the old markup. |
+
+**The unit count fell from 2,239 to 2,124 and that is accounted for rather than waved at.** Almost
+all of it is `it.each` expansion over tables that got smaller because the palette is smaller: the old
+category table ran five hues × three grounds × two themes × **two chroma levels**, and the
+half-chroma dimension does not exist in this language; the contrast table lost `line-cut`,
+`line-control` and four `*-ink` tokens that have no successor. **No rule was dropped without being
+re-expressed or recorded in D32.**
+
+### Mutation proofs run in this sitting
+
+Every check written or rewritten was watched failing before it was trusted, which in M15 twice found
+the hole in the check rather than in the code.
+
+| Check | Mutation | Result |
+| --- | --- | --- |
+| transcription, renamed pairs | `.bz-bar` → `.bz-barTYPO` | fails, naming `.top → .bz-bar` |
+| transcription, deviation list | a `language` value not in the language | fails 3 ways, including "carries no stale deviation" |
+| stroke weights | `border-top: 1.5px` added to the language | fails, naming the file and line |
+| surface stylesheets | a planted sheet with a literal radius, a shadow, a hex, an opacity transition and a category hue on a link | **all five rules fail** |
+| category surfaces | a carrier covering two of five categories, `--color-category-9`, one role in the negation chain | 4 rules fail, then the two role rules once the guard was widened |
+| category hues | `category-4` nudged toward `category-5` | hue separation fails in both themes |
+| category hues, drift guard | one hex digit changed in the exported record's copy | fails |
+| theming ownership | a surface declaring `.dark`, a `--color-*` token and a control bordered with `line` | all three fail |
+| `code-theme.ts` hex | observed failing before the fix: `oklch: "#e7e3d8" is not an oklch(L C H) triple` | the reason the passthrough exists |
+
+### Next, and the honest position
+
+Stage 1 is the shell, against `01-theme-T4-ground-G3-powder.html`: the cobalt bar, the lattice band,
+the three-column grid anchored to the window edges, the folding rail and the 76px sticky offset. It
+carries the first app-side `SelectorMap` in `tests/e2e/fidelity.ts`, and it is where the
+`line-strong` question gets answered.
+
+**The browser suite is red and stays red until surfaces exist**, by design: a half-styled site is
+honest, whereas an old-structure page that still looks finished is the failure being engineered out.
+The 141 hardcoded selectors in the specs are re-pointed surface by surface, with the behavioural
+tests kept.
+
+### Report — stage 1 part 1, the bar and the band, 2026-09-09
+
+**The app-side `SelectorMap` exists, and that is the headline.** `tests/e2e/fidelity.ts` could read
+the mockup since M15 and had nothing to compare it against. It now reads the built page too, and
+`differencesIn(reference, actual, roles)` restricts a comparison to the roles a stage actually built.
+**The built bar is fact for fact identical to the mockup at 1440, 1024 and 390** — 140 fidelity
+tests passed, 19 skipped.
+
+Three things make that non-vacuous rather than a green light. The stage-1 block asserts every one of
+its roles was really read **on both sides** before comparing, so a typo in either map fails instead
+of passing. The mutation is the exact failure that shipped four times — put the bar on the page
+ground, DESIGN.md's first Don't — and the check names `bar.backgroundColor`. And
+`DELIBERATELY_ABSENT` carries a reason for every role the product does not render, because an
+unexplained difference is how a real one gets ignored.
+
+**The check earned itself on its first run.** It failed because the band role was described in a
+comment and never mapped — precisely the class of omission that let five milestones pass.
+
+**What the bar carries.** The mockup's own structure: brand tile, one row of navigation with a
+dropdown per level, a flexible gap, then icon buttons. `MainNav`'s behaviour needed nothing — it was
+already variant A, a native `<details>` disclosure that works before any bundle arrives, with
+`data-current` on the trigger per **D28** — so only its class names and its row shape changed, to
+the mockup's hue key, name and trailing count. The count is new on `CategoryLabel`, derived from the
+curriculum rather than written down.
+
+**What left the bar.** LKM-01 (**D36**) and the breadcrumb, neither of them a loss: the mockup's
+mark is a tile not a logo, the progress-meter job belongs to `05`-C's rings and `07`-A's bars, and
+the mockup puts `nav.crumb` in the reading column. **What the bar does not render:** the mockup's
+search field and `TR` button, because neither feature exists and a control that opens nothing is the
+claim §1 forbids — the retired header held the same two slots back for the same reason.
+
+**`src/app/shell.css` is three rules and a chevron**, because the language already carries the whole
+shell: the bar and its sub-palette, the band, the three-column grid with both breakpoints and the
+fold, the rail, the measure, the aside. If that file grows, the reason should be suspicious.
+
+| Check | Result |
+| --- | --- |
+| `npm run typecheck` | clean |
+| `npm test` | **2,115 passed, 9 skipped, 0 failed** — down from 16 skipped, because seven existence-guarded rules switched themselves on the moment a surface stylesheet appeared |
+| `npm run build` | clean, 56 HTML files |
+| `npx playwright test fidelity.spec.ts` | **140 passed, 19 skipped**, three viewports |
+
+### Next
+
+**Stage 1 part 2**, and what it owes is written once, in *The ten stages* above rather than a second
+time here. In short: the `bz-shell` grid into `PageShell`, its three slots, and the breadcrumb into
+the reading column — all 17 routes, because `bleed` stops meaning anything once every page gets the
+grid.
+
+### Report — stages 1b, 2 and 3, 2026-09-10
+
+**Stage 1 part 2** (`d575215`) put the grid into `PageShell` as three slots and
+deleted `bleed`, which only ever opted out of a 1152px box that no longer
+exists. `RegistrationMarks` was deleted rather than hidden: four corner marks
+are a second decorative element, and the ornament budget is spent once, on the
+band. **`bz-shell` appears only where a route passes a rail** — the module page
+alone, because only `01` and `04` draw a fixed leading track while `03`, `07`
+and `08` are single-column inside the bar.
+
+**Stage 2** (`f32d462`) added the four menu roles and holds the opened panel to
+the mockup, fact for fact, at all three viewports.
+
+**Stage 3** (`ef000df`) rebuilt the rail and gave it one vocabulary.
+
+### The defects these three stages found, none of them by reading
+
+| Found | What it was |
+| --- | --- |
+| A regression from stage 1 part 1 | Taking the breadcrumb out of the header left `Breadcrumb.tsx` imported by **nothing**, so the `Curriculum` landmark three assertions read existed on no page. The browser suite being "expected red" is what hid it. |
+| ~400 inert styling references | A Tailwind utility named after a deleted token emits **nothing** — no error, no warning. `text-ink`, `text-ink-muted`, `text-ink-faint`, `font-display`, `bg-paper` and `bg-cleared` all produced **zero rules** in the shipped CSS. **148 distinct references across 44 files.** |
+| The channel-A tick, broken | Three vocabularies: the component emitted `.hl-mod-mark`, the generator revealed `.bz-mod-mark`, the language defines `.bz-tick`. Stage 0 changed the generator's prefix and left its names, so for three commits the generated sheet revealed a selector no markup carried. |
+| The fold could not be right in frame one | The language transcribed an ancestor-driven state (`body.folded .shell`) as a **self** attribute, and channel A can only stamp `<html>`. Its restore tab used `~` while the mockup puts the tab **before** the shell, so the combinator could never match. |
+| A folded rail kept 33 links tabbable | The mockup folds with opacity, a transform and `pointer-events` — all of which stop the **mouse** and none of which touches the tab order. |
+| An unstyled control at every width | The contents drawer's "Contents" button had no rule, so the rail's narrow-width replacement showed while the rail itself was on screen. |
+
+### The guard that would have caught the largest of them
+
+`tests/unit/design/styling-references.test.ts` reads every colour, font and size
+utility plus every `var(--…)` out of the markup **and out of the surface
+stylesheets**, and requires each to resolve against the language's `@theme`
+block. **Its first run was the worklist**; both halves are mutation-proved.
+
+It is content-agnostic and it would have caught all 401 references the morning
+stage 0 landed. The surface half was added in stage 3 after a
+`var(--tracking-label)` went into a stylesheet the markup sweep could not see.
+
+### Corrections these stages proved
+
+- **`01` is the dropdown's reference, not `02`.** D31's layout-from-`02`,
+  colour-from-`01` split does not apply: `02` chose the variant and `01` re-drew
+  it in the shell's palette. What `02` still holds and `01` dropped — a 290px
+  panel, a 10px radius, an uppercase group eyebrow — is superseded.
+- **Two facts were measuring content, not design.** `menuCount.marginLeft` is an
+  auto margin, so its computed value is whatever gap is left over (50.77px
+  against 65.58px, because the documents carry different level names). And every
+  "first group that is not the current one" fact depends on which group that is,
+  so the rail's comparison had to move to a **fundamentals** module —
+  `groupKey.backgroundColor` was reading category-1 against category-2. Comparing
+  a hue series needs the same position in it on both sides.
+- **The per-fact mutation loop had a hole.** A menu is off screen at every
+  width, so its fifteen facts skipped for ever — fifteen `mutate` values that
+  never ran. The loop opens the menu now; skips went 58 back to 19.
+- **Two test bugs.** The rail's tab walk classified any `<summary>` as a rail
+  level, and the bar's own dropdown trigger is a `<summary>`. And under reduced
+  motion the fold check required a `transitionend` that correctly never fires,
+  because the language **removes** the transition rather than shortening it.
+
+### One deliberate divergence from the mockup, recorded
+
+**The rail's group count is the level's total, not the mockup's `3/8`.** A
+done-of-total count is reader state and it is on screen in frame one, so §12.2
+forbids it travelling on channel B — and CSS cannot count, so channel A cannot
+draw it either. This is the wall **D23** already hit when a mock drew a progress
+ring and the project shipped a segmented meter instead. Progress in the rail is
+carried by the discs on the rows, which **are** channel A.
+
+Two smaller ones, both because the shell dropped what a variant study had: the
+groups carry no disclosure chevron, and neither the level nor the module row
+carries a two-digit order prefix.
+
+### The gate after stage 3
+
+| Check | Result |
+| --- | --- |
+| `npm run typecheck` | clean |
+| `npm test` | **2,119 passed, 7 skipped, 0 failed** — two more guarded rules revived when the hue carrier landed |
+| `npm run build` | clean, 56 HTML files |
+| `fidelity`, `rail`, `module-sheets` | **243 passed, 21 skipped**, three viewports |
+| The meter | `hl-` in markup **1,188**, from 1,252 when M16 opened |
+
+### Stages 4 and 5, which are next
+
+Stage 4 is the catalog and it is the largest new-CSS stage: `bazaar.css` has no
+catalog vocabulary at all, so its filter bar, chips, cards, table and board are
+authored from `03`'s geometry. **It is on `/sheets/` alone** — `/courses/` and
+`/courses/[category]/` render `SheetIndex` directly with no filters and no
+toggle, so the table is all three share. Stage 5 is the reading page, and
+`title-block.spec.ts`'s 34 tests are the biggest single test cost in the half:
+the mockup's three-span facts strip replaces a twelve-row instrument panel.
+
+### Report — stages 4, 5 and 6, 2026-09-10
+
+Three surfaces, two commits: the catalog (`ccccd6e`), then the reading page and
+the figures together (`5abb61a`). After these, **every route a reader uses on
+the way through the course is on the new language** — finding a module, reading
+it, and looking at the code and diagrams inside it.
+
+**The three stages were not the same shape, and measuring said so before any of
+them started.** The language declares 60 `bz-` classes, and between them they
+already covered almost everything stages 5 and 6 needed — `.bz-display`,
+`.bz-section` and its dashed ochre rule, `.bz-facts`, `.bz-tag`, `.bz-card`,
+`.bz-actions`, `.bz-btn`, `.bz-pager`, `.bz-slab*`, `.bz-figure*`, `.bz-node`.
+It declares nothing a catalog needs. So stage 4 authored 700 lines of new
+vocabulary and stages 5 and 6 authored 400 between them, most of it for things
+the corpus has and `01`'s single sample of prose does not.
+
+#### Stage 4 — the catalog
+
+**`03` is an annotation page, and reading it as a component sheet would have
+been the M9-to-M14 mistake in miniature.** Its `.head`, `.opt`, the A/B/C
+badge, the fake browser `.frame` and the `.why` rationale strip are the
+apparatus of a document presenting three alternatives to the author. The
+specification inside it is the filter bar and the three view bodies.
+
+Two of its components are refused and two of its views were the wrong shape:
+
+- **`03`'s search field is a `<div role="button">` that opens nothing**, which
+  is the claim §1 forbids — the same reason the bar's own search slot stays
+  empty. It is recorded in `DELIBERATELY_ABSENT` beside `barField`.
+- **Its table carries a group-break row.** Grouping is the question the
+  overview answers; a table that also groups answers two at once, which is why
+  `03`'s own note calls the table "the densest".
+- **Variant A groups its cards under a level heading** and the component was a
+  flat list. **Variant C is a five-column board** and the component was a stack
+  of full-width bands — an outline rather than "the whole shape of the course
+  in one view", which is what the mockup's note asks for.
+
+**`03`'s `top: 71px` is not transcribed.** It is `16 + 38 + 16 + 1` — the filter
+bar's padding twice, the search field's height, and the bar's hairline — so it
+is a sum, and one of its terms is the field this stage refuses to draw. The
+terms are declared and the sum is computed, and the table header follows if the
+bar's padding ever changes.
+
+Where `03` and the language disagreed, eight times, the resolution is recorded
+in `catalog.css`'s header table. The radii, the card's hover shadow, the
+translucent progress track and the pressed chip's ink fill all went to the
+language; the tinted level badge went to **D33**; `03`'s "Done" went to the
+product's one spelling of a status; and the board's 1080/620 breakpoints became
+the two the language actually declares.
+
+#### Stage 5 — the reading page
+
+`01`'s column has six children and the page had fourteen. Every fact from the
+twelve-row title strip keeps a home and `FactsStrip` names each one; four
+stopped being printed, and none of the four is something a reader can act on.
+
+**The containment mechanism became real for the first time.** `data-hl-width`,
+`--hl-measure`, `--hl-break-left` and `--hl-break-right` were a contract that
+**nothing set and no stylesheet read** — the last three existed in a docblock
+alone. `containment.spec.ts` was not merely failing against them: it *threw*,
+because its anchor `.hl-column` was emitted by no component either, so 63 test
+instances had been reporting an error that read like an unrelated bug.
+
+#### Stage 6 — code and figures
+
+Much smaller than the row implied, because **D33 landed in stage 0**: the four
+diagram semantics already rode the stroke, the `*-wash` tokens were already
+gone, and `classDef` already carried only a stroke width. What was left was one
+defect and it was invisible to everything except the one test that could not
+pass while it existed — described in *The defect two tests disagreed about*
+below.
+
+### The defects these three stages closed, and only two were in their own scope
+
+Eleven, and nine of them were older than the stage that found them:
+
+1. **The page scrolled sideways at 390px on EVERY route.** The bar's trailing
+   icon controls ended at x=412 in a 390 viewport. That fails an M16 acceptance
+   criterion outright, and it failed it on every page rather than on a surface
+   — which is why nothing that ran per-surface had caught it. `01` has two
+   media queries and neither touches the bar; it is a desktop study.
+2. **A shell with no aside reserved the third track anyway**, so 204px of the
+   A4 anatomy was blank at 1440px.
+3. **The 404's trail printed the address it was asked for.** Stage 1b moved the
+   breadcrumb from the root layout into `PageShell`, and
+   `useSelectedLayoutSegment()` answers relative to the nearest layout above
+   the component — so the one route whose address names nothing stopped being
+   recognised. The footer's half never broke, because the page names itself
+   there explicitly; the trail now does the same.
+4. **`main` painted a focus ring around the whole page** after the skip link.
+5. **§6.5's overflow fade did not exist** after stage 0 deleted the stylesheet
+   that carried it.
+6. **The fade could never have appeared on a diagram anyway.** A
+   `ResizeObserver` on the scroll box cannot see the box's *content* grow, and
+   every diagram is injected after mount — so each figure was measured while it
+   held a one-line placeholder.
+7. **The two prose controls had no tap target.** `COPY` painted 47 × 24.
+8. **The pager's end tile put its only sentence in the faint label slot**, at
+   3.30:1.
+9. **The § permalink had no second hover stage**, so a reader who had moved the
+   pointer onto a 13px control got no feedback that they were on it.
+10. **A module's number in the catalog table was in the caution ink** at
+    3.09:1, a drawing-set convention that does not survive a text floor.
+11. **The completion squares silently shrank to 8px.** `.bz-table tbody td`'s
+    padding out-specified a bare class, leaving 44px for 68px of squares, and
+    flex shrank them rather than overflowing where anyone would see it.
+
+### The defect two tests disagreed about, which is the interesting one
+
+`mermaid.spec.ts` required a local palette override **on the figure**;
+`slab-and-controls.test.ts` forbids **a surface stylesheet** from declaring any
+`--color-*` token. Both are right, and they are only in conflict if the
+override is put in a surface: it belongs in the language, on `.bz-figure`.
+
+Until it existed, every colour `mermaid-config.ts` names was a page token while
+the frame was the dark slab — so **a diagram was a near-white box inside a
+near-black one for six commits**, and the docblock of the test that could have
+said so blamed `rail.css` for a rule that file never carried under any name.
+
+Two things followed that were not obvious. **Two of the four semantics flip
+between themes and two do not**, so a frame that never flips needs the lifted
+values at all times, and the slab gained `slab-info` and `slab-fault`. And **a
+diagram's strokes are its content, not a control's edge**: `slab-line-raised`
+measures 1.80:1 on the slab ground, so they take the 3:1 graphic floor and
+`slab-arrow` at 3.47:1.
+
+### Four guards that were passing for the wrong reason
+
+Each of these would have hidden the next real difference:
+
+- **The reveal guard's pairing check** named the toggle's class literally, so
+  the rename would have made it match nothing — and a pairing check that
+  matches nothing reports zero mismatches and passes. It is class-agnostic now.
+- **A slice in the catalog's unit test** ran from the toggle to the count.
+  Moving the count above the toggle made that a backwards range, and
+  `String.slice` answers a backwards range with the empty string, which
+  contains no `<a `.
+- **The level-panel walk compared TEXT**, and the curriculum rail's group
+  summaries read `Fundamentals8` exactly as the menu's rows do. It asks by
+  location now.
+- **`accessibility.spec.ts` counted `header` elements** as a proxy for one
+  banner. A `<header>` inside a sectioning element is `generic`, so the board's
+  five column headers made it six elements and still exactly one banner.
+
+### The harness learned to read a second document, and D31 became mechanical
+
+`03` is on the retired cool-grey palette and says so itself. So the harness now
+knows **which mockup specifies which role**, and one guard follows from it:
+**a role whose reference is not `01` may carry no colour fact.** The catalog can
+only ever be compared on lengths and type steps; its colour is held by the three
+guards that need no mockup.
+
+`NARROW_DEVIATIONS` records the two facts that stop being specified below the
+language's own lower breakpoint — the bar's inline padding and a level swatch's
+width, the second of which is a flex-shrink artefact of the level NAME beside
+it and therefore a content measurement. Each entry names a width and a reason,
+and a guard fails any entry that has stopped deviating, because a stale
+exemption would hide the next difference.
+
+### Corrections these stages proved
+
+- `catalog.spec.ts` has **11** tests and `index-sheet.spec.ts` **4**, not 18
+  and 8. `tests/e2e/views.ts` has **five** consumers, not two.
+- `title-block.spec.ts` is **3 declarations** expanding to 34 instances, and
+  `containment.spec.ts` 3 expanding to **63**.
+- The progress meter **undercounts by 71**: it reads `.tsx` only, and the
+  renderer's whole class vocabulary lives in `.ts`.
+- `PROGRESS.md` said the diagram semantics are "emitted as literal values
+  resolved at build time". They are `var()` in `themeCSS`, and
+  `mermaid-config.test.ts` actively forbids a literal.
+- `03` has **no view toggle at all** — A, B and C are three separate frames —
+  so the toggle is derived under **D30** and recorded in `WITHOUT_REFERENCE`.
+
+### Four tests re-pointed because they were wrong on their own terms
+
+Not merely stale, which matters: a stale test names markup that moved, and
+these asserted things that could not be true of any correct page.
+
+- `prose-type.spec.ts` asserted a caption's font family matches `/Manrope/`, a
+  face stage 0 removed, and computed `parseFloat(--text-meta) * 16 === 13`
+  against a token block that is now px — so it evaluated 216 against 13.
+- `title-block.spec.ts` cross-checked twelve rows that no longer exist.
+- `site-footer.spec.ts` cross-checked a revision the page had been printing
+  twice, and pinned the retired ALL-CAPS.
+- `record-index.spec.ts` pinned §5.9's "zero radius, everywhere on this site",
+  a drawing-set convention DESIGN.md's Shapes section replaced with a scale
+  that names this exact case: "a `2px` corner on a `9px` swatch".
+
+### Two questions left for the author, both recorded in the code
+
+**A figure wider than the measure.** It is capped and scrolls inside its own
+box. `04` has a `.bleed` utility, the ratified shell deliberately does not, and
+`01` draws no figure wider than its column — so nothing bleeds, and
+`data-hl-width`'s three values stay a classification the design does not spend.
+Reversing it is one rule in `prose.css`; `src/lib/figure/width.ts` still
+classifies against the retired 656 / 920 / 1152 tracks.
+
+**The pager's direction label.** `01` sets it in `faint`, and DESIGN.md is
+explicit that faint does not clear a 4.5:1 text floor and names "a label above
+a control" as a legitimate use. MEASURED at 3.30:1. Lifting it to
+`on-surface-muted` would cost nothing visible, but it would be a **second
+`DEVIATIONS` entry**, and that list says adding one is the author's decision and
+never a way past a red test. The destinations all clear the floor; the label is
+asserted to be the language's own faint token and nothing quieter.
+
+### Dead code these stages left standing, deliberately
+
+`src/components/sheet/TitleBlock.tsx` and `titleBlockRows` / `titleStripRows`
+are rendered by no page now. They are **not** deleted here: their tests are the
+only remaining coverage of a derivation stage 8 may still want when it rebuilds
+the record surfaces, and deleting a component and its tests late in a stage is
+how coverage disappears without anybody deciding it should. It goes with stage
+8, or with the author saying so.
+
+### The gate after stage 6
+
+- `npm run typecheck` — clean.
+- `npm test` — **2,128 passed, 2 skipped**, 82 files. The two skips are the
+  role-reveal pair in `category-surfaces.test.ts`, which is stage 8's; stage 4
+  revived the five reveal cases in `views.test.ts`.
+- `npm run build` — clean, **56 HTML files**.
+- `node scripts/check-mermaid.mjs mini-courses/*/*.md` — **112 / 112** corpus
+  diagrams parse AND render in real Chrome.
+- `npx playwright test fidelity.spec.ts` — **156 passed** at 1440 covering
+  stages 1 to 6, **339 passed / 21 skipped** across three viewports.
+- `npx playwright test` — **890 passed, 23 failed**, from 163 failed when stage
+  4 opened. Every remaining failure is in a stage 7, 8 or 9 surface: `path`
+  (15), `home` (10), `record-sheet` (4), `record-pages`, `colour-not-alone`,
+  and two `responsive` cases on the account and alias routes.
+- Meter: `hl-` in markup **1,045**, from 1,188 when stage 4 opened. Counting
+  `.ts` as well as `.tsx`: **1,116**, from 1,281.
+
+### Stage 7, which is next
+
+Completion, `05`-A and `05`-C. Its surface is the largest remaining `hl-`
+holding — `components/record/` — and four of the 23 failures are already
+pointing at it: the level face's weight, the mascot, the drift line and the
+quick check's reveal. Stage 5 built the action row and its two buttons and left
+the completion behaviour inside it alone, which is the seam to pick up.
+
+### One housekeeping note this file owes its next reader
+
+**It is 2,300 lines and the split boundary is stage 10, not here.** kiacontext's
+rule is to split on a phase boundary first and on length second, and M16's plan,
+its ten stage briefs and its six reports are one argument: separating the brief
+for stage 7 from the reports that corrected the brief for stages 4 to 6 would
+make both halves harder to use. It splits when the milestone closes, as
+`PROGRESS.md` and `PROGRESS_2.md`, continuing the numbering.
+
+### Report — stages 7 to 10, the milestone closed, 2026-09-10
+
+**M16 is done.** Every route is on the design language, both closing conditions
+are tests that did not exist, and the retired vocabulary is out of the markup:
+**`hl-` in `className` is 0, from 792.**
+
+Five commits: `7ed3bbe` item 0, `c29c85c` items 1 to 5, `c5d53bb` stage 7,
+`5654c03` stage 8, `582cebc` stage 9, `f110457` stage 10.
+
+#### What the plan got wrong, and what measuring changed
+
+**The stages were not four independent surfaces.** They shared one primitive
+the language did not have, one retired treatment that had to dissolve rather
+than be renamed, one generated stylesheet that was inert, five class names that
+were 55% of everything left, and one hazard that reordered the whole thing.
+
+**That hazard was the finding that mattered most.** Since stage 0 deleted the
+eleven stylesheets, every `hl-` class in the tree was dead markup — present in
+the DOM, matched by nothing — so a large number of assertions had quietly
+stopped distinguishing anything. Six guards were satisfied by an empty node
+list, three more were red only because nothing was styled and would have
+flipped to green-and-empty on rename, and six were already passing for the
+wrong reason. **A rename is exactly the event that hides all of that**, so
+closing it came first, in a commit that touched no source. That is item 0, and
+it was not in the original plan at all.
+
+#### The five things that were true across the stages
+
+1. **The progress rail was the one primitive `01` does not contain.** The shell
+   mockup has no meter of any kind — it states progress in words — and the four
+   component mockups draw one four different ways. Reconciled to two shapes, in
+   the language, with the reason for each choice recorded; both radii the
+   mockups use turned out to be the scale's own already.
+2. **`hl-mark` was 205 occurrences of a treatment the language forbids twice**,
+   and `01` writes `text-transform: none` explicitly on the one element that
+   would have carried it. It dissolved into `text-mark`, the utility Tailwind
+   generates from the language's own step. Then the guard found three
+   components that had re-created it out of `font-mono uppercase
+   tracking-[0.06em]`, and two more with a bare `uppercase` — so the rule grew
+   a markup half.
+3. **The reveal carrier had three more consumers**, and all three were broken:
+   the home page's shortcut had no reader at all, the path's nine bodies all
+   showed at once, and the level faces' aggregate states had gone with
+   `lokum.css`.
+4. **Four of the generated sheet's five groups were inert**, and had been for
+   four commits — the file's own comment predicted exactly that.
+5. **Five names were 55% of the remaining 792.** Four already had an answer;
+   only the form field was new work.
+
+#### The dial, and the claim that turned out to be half true
+
+`CategoryMeter`'s docblock rules out a proportional meter on channel A: *"a
+bar's length is a computed number and a computed number cannot reach CSS on
+channel A"*. That is true of CSS, which cannot count, and it is why the meter
+draws one segment per module. It is **not** true of the channel — the boot
+script is a script, and it already had the counts three lines above the place
+it would need them.
+
+So `05`-C's dial is implementable after all: the script sets one custom
+property per level before first paint and a `conic-gradient` substitutes it.
+`stamp.ts` grew the same derivation for after mount, both suites cross-test the
+two, and the fidelity harness measures the ring filling in a real browser with
+every `.js` request refused. **It is the only reading channel A carries as a
+number rather than as a class**, and it is worth knowing that the boundary was
+narrower than the comment said.
+
+**Two test harnesses were missing a member the script now touches**, and the way
+that failed is the interesting part: the emitted script is wrapped in one `try`,
+so a fake `documentElement` without `style` did not merely lose the properties —
+the throw abandoned the loop those properties are set in, and the remaining
+levels silently lost their `-started` and `-complete` classes too. The
+cross-test caught it by walking two levels rather than one.
+
+#### The casing, which was one decision spent twelve times
+
+The readings and labels were written in mixed case and looked uniform only
+because their classes uppercased them. With that gone, `0 of 43 traces` sat
+next to `2 OF 9 EARNED` on the same page. The line drawn, and applied
+throughout: **an enumerated record state keeps its spelling** — `READY`,
+`PLANNED`, `MATCHED`, `UNSIGNED` are values a reader matches against each
+other, and the copy register's rule is that a status has one spelling — **and a
+label, a caption, a sentence or a count that borrows the word does not.**
+
+Its sharpest consequence: §16.4.1's rule that a register row states a count,
+`--`, or a named state and never a sentence of prose **was enforced by
+casing**. In sentence case a named state and a sentence are the same shape, so
+the row now states which it is in `data-reading` and the test asks by that.
+
+#### Corrections these four stages owe the briefs above
+
+- **`TickGauge` exists**, in `components/sheet/`. The stage-7 brief listed it
+  under `components/record/`, which is why a search scoped there reported it
+  missing.
+- Stage 7's brief attributes four `record-sheet` failures to completion. Two
+  were: the level faces' weight and hatch. One was stage 5 collateral — a bare
+  `.prose` the reading page had renamed. **One was a test-side defect no
+  styling could fix**: the drift test interpolated a whole `<footer>`'s
+  `innerText` into a `RegExp` after stage 5 retargeted `printedRevision`.
+- **`path` had 5 failing tests, not 15.** That number counted retry
+  directories: five tests times three attempts.
+- **The mascot is not in the site header**, and three tests were asserting
+  things about it there. `01` specifies the brand as a tile — four glazed
+  squares, one left as an outline — and stage 1 built that. `features.spec.ts`
+  was measuring the tile's geometry and calling it the mascot.
+- **`07`-A's progress rows are not built, deliberately.** `05`-C's dials
+  already report per-level progress on that page, and `07`'s own argument
+  against its variant C is the reason not to have both.
+- Stage 10 was the announced cut line and held **42% of the retired
+  vocabulary**. Cutting it would have left closing condition 1 unmeetable.
+- **Both closing conditions were unsound**, below.
+
+#### The two closing conditions, repaired
+
+**Condition 1 — no `hl-` class in any `className`.** There was no test, and the
+meter everyone quoted did not measure the condition: of 1,045 occurrences, 158
+were `data-hl-*` attribute names and the rest included the `<html>` stamps —
+all mechanism, all permanent. Driving that number to zero would have meant
+renaming the pre-paint script's stamps and breaking channel A silently. Scoped
+to a class it is now **0**, and the three families that stay are checked
+against `stamp.ts`'s own pattern and `schema.ts`'s own key rather than merely
+excluded.
+
+**Condition 2 — no stylesheet in `src/app/` but the entry point and the
+generated sheet.** Read literally this is the opposite of M16's method and
+would have been ten over. A first attempt listed the eleven retired stylesheets
+by name and went red on `home.css`, which stage 9 had just re-authored from
+`08` — `prose.css` and `rail.css` are two more. `globals.css` states the real
+rule: *a rule from the old set earns its place back only by being re-derived
+from a mockup*. **A name is not a design; 386 class selectors were.** So the
+condition is now about the vocabulary: no surface declares a rule for a retired
+class, with the three stamped families excluded because a surface keying on
+those is the whole of channel A.
+
+**And a third guard nobody had asked for**, which is the one that found the
+most. `styling-references.test.ts` catches a utility named after a token the
+language does not declare. `category-css.test.ts` catches a generated selector
+no component carries. The third corner is **a class a component emits that no
+stylesheet answers to** — the failure M16 spent ten stages undoing, invisible
+to every typecheck, build and test in the project. It found eight, including a
+stage-4 rename that a sweep meant for tests had clobbered.
+
+#### The capability ledger
+
+Named once in the closing conditions above and defined nowhere until now. One
+row per capability the interface had before M16, where it lives, and the
+behavioural test that proves it survived — because "every capability stays" was
+the milestone's promise and M9 to M14's failure was losing them quietly.
+
+| Capability | Where it lives now | Proven by |
+| --- | --- | --- |
+| Read a module, with its figures, code and diagrams | `/courses/[category]/[module]/` | `module-sheets` (33 instances), `prose-type`, `containment`, `mermaid` (6) |
+| Find a module three ways, and keep the choice | `/sheets/` | `catalog` (11), `views.test.ts`'s five reveal cases |
+| Filter the catalog by level, with no JavaScript | **M17: the five level addresses** — the chips are links (**D62**), so the one control here that needed a bundle no longer does | `catalog`'s keyboard case, and `redirects`' served-HTML checks |
+| See every module in a level, with its topics | **M17: `/sheets/<level>/`** — five prerendered entries into the one catalog. The topics are a column on the table and a line on every card, so the capability moved with the route rather than after it | `index-sheet` (4), `record-index` (9), `redirects` (18 for the fold), `catalog`'s level-page comparison |
+| Read a level's own README | **M17: `/sheets/<level>/`**, under `General notes`. The retired level page was the only renderer of it, and the brief's ledger did not list it | `health` on a level path, and the `General notes` section itself |
+| Complete a module, and take it back | the module's action row | `record-sheet` (36) |
+| Complete a module from the overview | **M18: `/profile/` alone.** The home page drew control C as well until the author took the level grid off the front door; the component and the mockup are unchanged, and the count of surfaces drawing it went from two to one | `completion` (9), which is where `home.spec.ts`'s eight control-C tests moved, plus the one that measures the dials against the rows |
+| A self-check, self-marked, no score kept | the module's quick check | `record-sheet` §12.6 cases |
+| A checklist that is never a gate | the module | `record-sheet` §12.4.1 cases |
+| Register a repository, refusing a hostile URL | the module's submittal | `record-sheet`'s `HOSTILE_REPOS` loop |
+| See how far through each level you are | **M18: `/profile/`**, the rail and the catalog. `/` no longer reports on the reader at all | `fidelity` stage 7 (the annulus, and the channel-A percentage with JS aborted), `rail`, and `home.spec.ts`'s assertion that the front door carries no `.bz-cmod` and no tally |
+| A role, and the path it suggests | `/profile/` | `path` (6), `category-surfaces`'s nine-role pair |
+| What is waiting on you | `/profile/` | `record-pages` (28) |
+| Take a copy of the record out, and put one back | `/profile/`'s data row | `record-pages`, `record-report` unit |
+| Erase everything, told what will go | `/profile/`'s erase dialog | `record-pages` §12.15 cases |
+| The record of work, as a document | `/profile/`'s report row | `record-report` unit, `category-hues` |
+| An optional account, gating nothing | `/sign-in/`, `/join/` | `accounts` (12, gated), `accounts-disabled` (5) |
+| An alias, with no account at all | `/sign-in/alias/` | `alias` (5) |
+| A team's roster and assignments | `/team/`, `/team/assignments/` | `accessibility` (19), `colour-not-alone` |
+| The legend, never auto-opened | `/legend/`, `/legend/specimen/` | `fidelity` stage 10 |
+| Keyboard reach for everything, both halves of every disclosure | every route | `accessibility` (19), `record-sheet`'s chord cases |
+| Colour is never the only signal | every route | `colour-not-alone` (6), under `forced-colors: active` |
+| No sideways scroll at any width | every route | `responsive` (11 × 3 viewports) |
+| The theme, chosen before first paint | every route | `theme` (6) |
+| Every route reachable, nothing 404 | every route | `health` (5), `redirects` (5), `not-found` (7) |
+
+Nothing in that table is new, which is the point. The behavioural test count is
+higher than it was: **2,141 unit from 2,128**, and 1,041 browser tests passing
+from 890 — and 26 unit tests were deliberately removed with the dead component
+they exercised, after every live claim underneath was re-expressed first. One
+of those claims turned out to be false, which is the argument for re-expressing
+rather than deleting: *"a draft prints an em dash for LENGTH, FIGURES and
+SOURCES"* was a rendering rule of the retired strip, not a fact — a draft
+measured 4 sources, because a draft may perfectly well cite something.
+
+#### The gate, at the close
+
+- `npm run typecheck` — clean.
+- `npm test` — **2,141 passed, 0 skipped**, 82 files. The last two skips, the
+  nine-role reveal pair, went live in stage 8.
+- `npm run build` — clean, **56 HTML files** (`find out -name '*.html' | wc -l`).
+  Next's own line reads `57/57`, which counts ROUTES and includes `/_not-found`; the
+  earlier stage reports say 56 and they are the ones that measured the export.
+- `node scripts/check-mermaid.mjs mini-courses/*/*.md` — 112 / 112.
+- `npx playwright test fidelity.spec.ts` — **200 passed** at 1440, covering all
+  ten stages against **five reference documents**; the three parallel maps are
+  one record now.
+- `npx playwright test` — **1,044 tests, 0 genuine failures**, from 23 failing.
+  The passing count moves between 1,041 and 1,044 run to run and **that is the
+  honest way to state it**: four tests fail only in a full parallel run and pass
+  in isolation, so which of them lands is a property of the machine rather than
+  of the build. They are `rail`'s fold animation, `theme`'s first-paint probe,
+  `navigation`'s 32-module walk and `containment`'s keyboard scroll — all
+  long-running timing, none of them a fidelity check, and all four flaking
+  before this milestone touched them. **Re-run any failure in isolation before
+  believing it.**
+- Meter: **`hl-` in `className` 0**, from 792.
+- **And read the section below before quoting any of this**: the gate was green
+  and two real defects were inside it.
+
+#### Then a review found two defects the gate had no question for — 2026-09-10
+
+The line above says 0 genuine failures, and it is true as written: nothing in
+the suite was red. **It is also the wrong thing to be reassured by.** Three
+reviews were run over the finished milestone from different angles, and two
+confirmed defects came back — both shipped inside the green gate, both with a
+comment or a document asserting the opposite of what the code did. Fixed in
+`dbe7d72`; the reasoning is **D54** and **D55**.
+
+1. **The focus ring was the weakest on the site, on the surface it appears on
+   most.** MEASURED against every ground it is drawn on: clay is **2.35:1** on
+   `bar` in light and 2.77 in dark, 2.90 and 2.56 on the slab's two surfaces in
+   light, against SC 1.4.11's 3:1 — clearing only on the two page grounds, at
+   5.48 and 5.66. The bar holds the first controls in the tab order on every
+   route. The ring is now a `--bz-ring` hook that each ground binds to its own
+   sub-palette's ink: 13.31 on the bar, 12.82 and 11.31 on the slab.
+   The contrast suite could not have caught it — `graphical('focus')` walks the
+   two RESTING grounds, and the ring appears on four.
+2. **`/profile/`'s continue hero shipped with no gate**, offering a populated
+   "Continue where you left off → LLM Fundamentals" to every reader including a
+   fresh browser, and never correcting with the bundle blocked. `nextUnsigned`
+   returns the first drawn module for an empty record rather than `null`. Gated
+   the way the home page's is — the box on channel A, the content on channel B —
+   and the eyebrow now branches, because §15.11 counts a chosen alias as a
+   record and nobody left off there.
+
+Both fixes carry a mutation-proven guard: the ring's reads the actual `--bz-ring`
+bindings out of the language rather than asserting a pair of tokens, and the
+hero's is a fidelity test that fails with "a fresh browser is offered a shortcut
+it has not earned". Gate after both: typecheck clean, **2,144 unit**, build
+clean at 56 HTML files, browser suite passing with only the known timing flakes.
+
+**What this says about the closing gate, and it is the useful part.** Every
+closing condition held, 2,141 tests were green, and two real defects were inside
+that. Both were in the class this milestone kept meeting: **a check that nobody
+thought to ask**, not a check that failed. The suite measures what somebody
+thought to measure, and an independent reader asking "what does this actually
+measure, on which ground, in frame one" found in one pass what ten stages of
+green gates did not.
+
+#### The reviews in full — 37 findings, 13 confirmed, 3 commits — 2026-09-10
+
+Three reviews were run over the finished milestone. Two returned; the third
+(Hermes on `glm-5.3-flash`) spent its 150-iteration budget on a brief too broad
+for it and returned nothing, with exit code 0 — **which is a failed run and not
+a clean one**, and no transcript survived, so it contributed nothing. Recorded
+because a review that produced no findings is not the same as a review that
+found nothing.
+
+The two that returned gave 37 findings between them. **Every one acted on was
+re-measured here first**, and the ones that were wrong were dropped rather than
+fixed. What follows is what held. The reasoning is **D54** to **D58**.
+
+**Confirmed and fixed** — `dbe7d72`, `114f0e5`, `7f45972`, `0c28764`:
+
+| What | Measured |
+| --- | --- |
+| The focus ring on the cobalt bar | **2.35:1** light, 2.77 dark, against 3:1 — the first controls in the tab order on every route |
+| `/profile/`'s continue hero | No gate at all: a populated shortcut prerendered for every reader |
+| A retired token in the generated sheet | `--color-accent-ink` declared by no theme, so a signed-off step's word lost its teal |
+| Every column label in the product | `on-surface-muted` on `surface-sunken` at **4.21:1**, under the 4.5:1 text floor |
+| The planned catalog card | The same pair at the same 4.21:1, arriving by inheritance |
+| §10.4's touch floor | Stated in ONE place in the project; the completion toggle **17 x 17**, bar icons 33, chips 33, buttons 39 |
+| A planned module's row | Drew nothing at all — the word clipped by `text-indent: -9999px` |
+| The legend's third key | A hatch, where `05:188` draws a dashed edge — an unrecorded departure |
+| A second spelling of a status | `not written yet` for the state the same file spells `Planned`, past a literal ban |
+| The `className` sweep | Read three shapes and skipped `className={expr}` — 16 sites, 2 with real colour utilities |
+| Four fidelity blocks | Stages 7 to 10 carried no mutation, against the rule `CLAUDE.md` states |
+| Seven hairline colours | Specified by `01`, checked by nothing — the language's most load-bearing colour |
+| Two breakpoint tokens | `--layout-fold-at` and `--layout-rail-at` referenced by nothing at all |
+
+Six guards were written or repaired, each mutation-proven: the ring's bindings,
+the sunken fill's premise, the generated sheet's tokens, the `className`
+extractor's brace balancing, the touch floor across four routes, and the
+breakpoints in both directions. **Two of them replaced a guard that was already
+green** — the ring's first version asserted two tokens and would have passed
+whatever the ring was bound to, and the touch floor's measured the two controls
+that were already right.
+
+#### Confirmed, NOT fixed, and each one is the author's call
+
+Left deliberately, with the measurement, because each is a decision rather than
+a defect:
+
+1. **`on-surface-faint` carries 28 text declarations and no contrast floor.**
+   MEASURED 3.19 and 3.30 in light, **2.82 and 2.49 in dark** — below 4.5:1
+   everywhere and below even 3:1 in dark. The contrast suite exempts it by name
+   and substitutes a usage rule from DESIGN.md that nothing enforces. Text a
+   reader must actually read sits in it: the phone drawer's group caption, the
+   quick check's header, a planned module's title link, and
+   `.bz-boardcol-planned`, whose text IS `Planned` — the exact case the usage
+   rule names. **This is the same token as D45**, the pager label question
+   already open, so the two are one decision and not two.
+2. **One primitive, three declarations.** `.bz-card`, `.bz-quote` and `.bz-quiz`
+   are the same five declarations byte-for-byte, two of them in surfaces.
+   `prose.css:310` records a reason ("the renderer owns this element") and the
+   renderer could emit `bz-card` instead — so this is a recorded decision to
+   revisit, not a defect to overturn. Same shape: five segmented meters where
+   DESIGN.md's Progress section describes two plus a dial, and
+   `.bz-rail-head-label` re-declared verbatim in six places.
+3. **Three unrecorded departures from `07`** in `progress.css` — the continue
+   hero's radius 8px against 11px, its title 600/18.5px against `650 19px`, and
+   the panel's radius 8px against 11px. `catalog.css` and `completion.css` each
+   carry an explicit departures table; `progress.css` carries none. The values
+   are probably right (the radius scale is a closed set that stops at 9px, which
+   is D31's own resolution); what is missing is the record.
+4. **The exported RECORD OF WORK is still entirely the retired design** — its
+   own palette, a serif face, and `text-transform: uppercase` on three
+   selectors, all on DESIGN.md's don't-list. It is out of M16's scope by stage
+   8's brief and that is fine; what is wrong is the REASON its exemption gives,
+   "its own inline **print** stylesheet", when nothing in the file sits inside
+   `@media print`. It is a screen document with a print palette.
+5. **Four labels for one state on one screen.** `Complete`, `SIGNED OFF`,
+   `completed` and `done` — the legend's now says `Complete`, which removes one.
+   And `/profile/` carries both registers at once: sentence case beside
+   `STORAGE: UNAVAILABLE`, `STREAK --` and `NO READING — THE RECORD IN THIS
+   BROWSER HAS NOT BEEN READ YET`. D48 governs the casing and says an enumerated
+   state keeps its spelling, which leaves the question of which of these ARE
+   enumerated states — a vocabulary question, and set C was the author's choice.
+6. **`--color-on-caution` has no consumer.** Declared in both themes and painted
+   by nothing, so DESIGN.md's "the only place in the language where type on a
+   chromatic fill is not white" describes a rule with no instance.
+7. **A hand-typed `letter-spacing: -0.015em`** in `progress.css` where
+   `--tracking-display` is that exact value, and `.bz-panel-title`'s `-0.01em`,
+   which is a fourth tracking step the language does not declare. No guard reads
+   a hand-typed length — `surface-stylesheets.test.ts` checks radii, colours,
+   shadows, blur, transitions, hues and casing, never a literal.
+8. **The rail's channel-A ticks have no audience at phone width.** `.bz-rail` is
+   `display: none` below 880px and its only replacement is the React drawer, so
+   at 390px with the bundle blocked the completion discs that exist to be right
+   in frame one cannot be seen. Navigation survives, because `MainNav` is a
+   native `<details>` — so this is lost progress marks, not lost navigation.
+   Traced statically, not measured in a browser.
+
+**The gate after all three commits**, measured rather than carried: typecheck
+clean; **2,154 unit tests in 82 files, 0 skipped** (from 2,141 at the close);
+build clean at **56 HTML files** (`find out -name '*.html' | wc -l`); fidelity
+**618 passed** (from 587, the difference being four stage mutations and seven
+new facts); browser **1,083 passed**, with only the known `rail` fold flake,
+which passes in isolation. The flaky four are unchanged and still flaky for the
+same reason: `rail`, `theme`, `navigation`, `containment`, all long-running
+timing under full parallel load. **Re-run any failure in isolation before
+believing it.**
+
+**And what the reviewers did not reach**, recorded so it is not mistaken for
+clean: the rail's three states under `forced-colors: active`, `QuickCheck` and
+`ChecklistIsland`'s state markers, the quarantined-record and no-path empty
+states, stage 10's eight derived routes for contrast specifically, and
+`04`/`06` diffed against `prose.css`'s containment rules.
+
+#### And then the author looked at the pages — 2026-09-11
+
+**Six layout defects, on every route, a day after the milestone closed green.**
+The reviews of 2026-09-10 read code and measured tokens; none of them opened a
+page. The author did, and named the method: screenshot each page and look at it.
+The reasoning is **D59**; the fixes are `08a009d`.
+
+| What a screenshot showed | Measured |
+| --- | --- |
+| The navigation was **vertical on every route** | The nav was 120 x 128 in a 58px bar, overflowing it by 35px above and below |
+| Every dropdown opened under the wrong item | `.bz-menu` was anchored to the LIST, not to its own item |
+| The table header **hid the first two rows** | Sticky at `top: 76px` inside a scroller: header 443-474 over a first row at 398-445 |
+| The Status cell's border stopped 24px short | A `<td>` with `display: flex` is not a cell: 47px inside a 72px row |
+| The trail floated away from its page | 814px centred at x=313 above a heading at x=49, on four routes |
+| Every level card read `01LLM Fundamentals` | The 8px row gap was declared one level above the two things it separates |
+
+**The navigation defect was hiding four more**, and that is the more useful
+finding. A 120px stack is narrow, so the bar appeared to fit a phone. With the
+row restored: the document scrolled sideways at 390 on every route; the CLOSED
+dropdown was a 214px box reaching 53.6px past the viewport, because `<details>`
+hides its panel and Chrome still lays it out; the wordmark folded to two lines
+at 768 and three at 390; and one pixel of the row's sub-pixel arithmetic
+rounded up into a scroll that no element owned. Each needed its own answer, all
+four below the language's own breakpoints, where `01` says nothing at all.
+
+**What the author asked for is now in the gate.** `tests/e2e/layout.spec.ts` —
+seven geometric invariants over every route, every one of them a rule that is
+wrong in any design rather than a matter of taste, so they hold for a route no
+mockup draws. Mutation-proven as a set: with all five fixes reverted, **27 of
+30 cases go red**, each naming its own defect.
+
+Two guards needed the change applied to themselves — the fifth and sixth time
+in this milestone. The transcription pair for `.mainnav` moved to
+`.bz-bar-nav > ul`, because a pair names the element that carries the fact. And
+stage 2's comparison used `differencesIn`, the one variant that does not consult
+`NARROW_DEVIATIONS`, so no narrow deviation could ever have been registered for
+the menu.
+
+**One thing was reported and was not ours.** The module route "takes forever to
+compile and never ends", with `Failed to fetch` in the console. Reproduced on a
+clean cache: `/courses/fundamentals/llms/` compiles in **2.4s cold and serves in
+50-210ms warm**, and the console error was the client talking to a dev server
+that had already died. The cause is in the log — Turbopack panicked inside
+`aggregation_update.rs` and aborted the process, printing its own "this is a bug
+in Turbopack, please report it". `rm -rf .next` clears it. A `.venv/lib64`
+symlink at the repo root is a plausible aggravator, since the panic names
+`realpath_with_links`, and moving that virtualenv out of the project is worth
+trying if it recurs.
+
+**The gate after the fixes**: typecheck clean; **2,155 unit tests in 82 files, 0
+skipped**; build clean at **56 HTML files**; fidelity **618**; and the browser
+suite **1,115 passed with zero failures** — the four habitual load-flakes
+included, which is the first clean full run this milestone has had.
+
+#### What is left, and it is not code
+
+The two questions stage 5 left for the author are still open and still recorded
+in the code rather than decided: whether a figure wider than the measure may
+bleed past the text (**D43**), and whether the pager's direction label should be
+lifted off `on-surface-faint` at a measured 3.30:1 (**D45**, which would be a
+second `DEVIATIONS` entry and is therefore his call). A third joined them in
+stage 3 and is answered rather than open: a rail group's persistence.
+
+#### The copy came off, and the carriers stayed — 2026-09-11
+
+Between the layout fixes and M17 being written, the author had eleven blocks of
+explanation removed from the product in one pass (`2fd8b4c`), and the rule that
+came out of it is **MANIFESTO rule 16**: the interface talks, it does not explain
+itself. The reasoning, the full list and the method are **D61**.
+
+What shipped: the home page is the banner row, the two actions, three measured
+facts and the level cards; the catalog and the progress page open straight into
+their controls; a level card is a number, a name, a dial and its modules. The
+home lede is three sentences from `README.md`'s own "Why This Is Valuable".
+
+**Nothing lost a fact.** Where a fact lived only in removed prose it moved to a
+carrier: the catalog's rail stopped being `aria-hidden` and took a name, so it
+states `8 of 8 written` to a screen reader and prints nothing; the view heading
+kept its `id` for `aria-labelledby` and took the `.bz-said` clipping. Five
+browser tests were re-expressed against the new carriers rather than deleted.
+
+Gate at that point: typecheck clean, **2,155 unit / 82 files / 0 skipped**,
+build clean at **56 HTML files**, browser **1,115 passed, zero failures**.
+
+---
+
+# 🧭 What comes after M16
+
+Two milestones, from the author's list of 2026-09-11. **They are written and not
+started**, and the codebase was read before each claim in them: every file path,
+line number and count below was checked rather than recalled.
+
+They split where the work splits. **M17 is one decision about routes** and
+everything that follows from it; **M18 is the surfaces a reader meets** — the
+home page, the bar, and the two ends of a module — plus the one item on the list
+that is not a surface at all, which is that the site has never rendered Turkish.
+
+## 🏁 Milestone M17: One catalog, and the pages that fold into it
+
+**The curriculum pages are the catalog in table format.** `/courses/` and
+`/courses/[category]/` render `SheetIndex` directly — no filters, no views —
+and the catalog renders the same component behind a toggle. So the course is
+listed three times in two places, and a reader who wants one level has to know
+which of the two to be on. M17 leaves **one** list, and the level becomes a
+filter on it rather than a route of its own.
+
+The author's framing, 2026-09-11: *"the curriculum pages are just catalog in
+table format. so lets only have a single catalog page which has everything
+there and people can filter there."*
+
+### What is actually there today, measured rather than recalled
+
+| | Today |
+| --- | --- |
+| `/courses/` | Every level, each as a band with its modules. `PageShell column={false}` |
+| `/courses/[category]/` | One level's modules, `SheetIndex` with **`column="topics"`** |
+| `/sheets/` | The same rows, three views, two filters, `SheetIndex` with **`column="subsystem"`** |
+| The navbar dropdown | Six links: `/courses/` plus one per level (`MainNav.tsx:88-93,175-185`) |
+| The catalog's level filter | **`useState` only** (`Catalog.tsx:171`) — not in the URL, not in the record |
+
+**That fourth row is the whole of why the catalog cannot yet answer the
+dropdown**, and the fifth is the one line of code this milestone turns on.
+**And the third row is why "add the topics to the table" is a real deliverable
+rather than a setting**: the catalog's table says `Level` where the level page
+says `Topics`, because the two call sites pass a different `column`. The topics
+column is the one thing the pages being retired can do that the catalog cannot.
+
+### The decision this milestone opens with
+
+**How a preselected level is carried**, because the catalog's filter is
+component state and the dropdown needs to set it from outside. Two shapes, and
+the choice is the author's:
+
+1. **A route per level, prerendered: `/sheets/<slug>/`.** Six static pages, one
+   component, the filter chosen at build time. It keeps every promise the rest
+   of this interface makes — correct with scripting off, correct in frame one,
+   and a level is a URL somebody can send to somebody else. It costs six more
+   HTML files (56 → 62) and a `generateStaticParams`.
+2. **One route and a parameter: `/sheets/?level=expert`.** One page. The filter
+   is read by `boot.ts` before first paint, which is the one thing channel A
+   has never done — it reads the RECORD today, never the URL — so it would be
+   new mechanism in the most load-bearing script in the codebase. With scripting
+   off the parameter does nothing and the reader gets the unfiltered catalog,
+   which is a weaker promise than every other route makes.
+
+**The recommendation is 1**, on the grounds that it is the only one that keeps
+the no-JavaScript guarantee the rest of the interface holds to, and that it
+turns a level into something a reader can bookmark. The cost is honest and
+small. 2 is listed because it is genuinely simpler and the author may prefer
+one route.
+
+### Deliverables
+
+- [x] **The two curriculum index pages are retired**, and this is narrower than it
+      sounds: `src/app/courses/page.tsx` and `src/app/courses/[category]/page.tsx`
+      go, and **`src/app/courses/[category]/[module]/page.tsx` stays exactly where
+      it is.** The module route lives under the same prefix, so the segment is not
+      deleted — only the two index pages in it. A module's URL does not move, and
+      this milestone must not change one.
+- [x] **Both retired routes forward**, with the `MovedTo` stub `/dashboard/`,
+      `/path/` and `/report/` already use, including
+      `robots: { index: false, follow: true }` — a redirect a search engine indexes
+      spends a reader's click on a page with no content.
+- [x] **The dropdown lands on the catalog.** `Every level` opens the whole catalog;
+      each level opens the catalog with that level already filtered, by whichever
+      shape the decision above settles.
+- [x] **The catalog's table carries Topics.** `column="topics"`, with whatever the
+      width table then needs: `SheetIndex` already computes `Level` and `Topics` as
+      alternatives rather than as two columns, so this is a call-site change plus
+      the width arithmetic beside it.
+- [x] **The cards carry the topics too**, which is new — `CatalogCards` renders
+      level, number, title and a fact list today and never the topics.
+- [x] **The cards get room.** The author's words: *"currently cards look too
+      compact"*. Geometry from `03`-A, with the padding and the line-height the
+      mockup gives them rather than the tightest arrangement that fits.
+- [x] **The table drops its Status column.** The author's reasoning, recorded
+      because it is the kind that gets re-litigated: *"if something is not ready it
+      is not clickable by default and user can understand it already."*
+- [x] **The Overview view is untouched.** It is the one view whose job is the
+      shape rather than the detail, and the author named it as the exception.
+
+### The trap in deliverable 7, and it is a real one
+
+**`READY` / `PLANNED` in that column is currently a non-colour carrier of the
+row's state**, and §13.1.3 requires one. `index-sheet.spec.ts:81-82` counts the
+two words against the rows, and `colour-not-alone.spec.ts` walks the table under
+`forced-colors: active` on exactly that claim.
+
+So the column may only go once the row states its own state **without colour and
+without that word**. A row already carries `data-draft`, a dashed rule and a
+title that is not a link — the author's own argument is that the missing link IS
+the signal — but *"not a link"* has to be perceivable, not merely true: under
+forced colours, a title that is grey-when-plain and blue-when-linked is
+distinguished by colour alone. **Settle that before deleting the column**, and
+re-express the two tests against whatever carries it rather than deleting them.
+
+### Four more things the codebase says will break
+
+- **`src/lib/content/links.ts:196` rewrites a corpus link to `/courses/`.** A
+  module's markdown that points at `index.md` resolves there today. If the route
+  becomes a stub the link gate still passes and every such link lands on a
+  forward; if it is deleted outright, the build fails. Decide which, and point
+  the rewrite at the catalog.
+- **`tests/e2e/sheets.ts` exports `CATEGORY_PATHS`**, which eight specs walk.
+  Retiring the routes changes what that fixture means, and it is the file
+  `tests/README.md` already names as the one that leaks content into tests.
+- **The breadcrumb, the footer and `chrome.ts`** all build category paths
+  (`PageShell`, `SiteFooter`, `chrome.ts`). A trail that names a level has to
+  point somewhere that exists.
+- **`navigation.spec.ts`, `health.spec.ts`, `redirects.spec.ts`,
+  `not-found.spec.ts`, `accessibility.spec.ts`, `containment.spec.ts`,
+  `record-index.spec.ts` and `layout.spec.ts`'s own `ROUTES`** all name the
+  routes being retired.
+
+### The capability ledger, which is the point of the exercise
+
+One row changes and one row must be proven rather than assumed:
+
+| Capability | Was | Must be |
+| --- | --- | --- |
+| See every module in a level, with its topics | `/courses/`, `/courses/[category]/` | the catalog, filtered — **with the topics column, or the capability is lost** |
+| Find a module three ways, and keep the choice | `/sheets/` | unchanged, and the level filter now arrives from outside |
+
+**"Every capability stays" is this project's rule and it is what a fold like
+this quietly breaks.** The topics column is the capability the retired pages
+carried alone; deliverables 4 and 5 are it, and the ledger row is not ticked
+until a test proves the topics reach a reader on the catalog.
+
+### Acceptance criteria
+
+- [x] `/courses/` and `/courses/[category]/` forward; no internal link points at
+      either; the link gate and `tests/corpus/links.test.ts` are green.
+- [x] Every module route is byte-identical in path to what it is today.
+- [x] The dropdown's six entries all land on the catalog, and a level entry arrives
+      with that level filtered — **provably in frame one**, by whichever shape was
+      chosen, with the no-JavaScript case stated either way.
+- [x] The catalog's table shows Topics; the cards show topics; the overview is
+      unchanged, asserted by a fidelity comparison that still passes against `03`.
+- [x] The Status column is gone **and** a browser test proves a planned row states
+      itself under `forced-colors: active` without it.
+- [x] `layout.spec.ts` passes on the new route list, and the retired routes are out
+      of its `ROUTES`.
+- [x] The capability ledger's two rows above are re-pointed, each with the test that
+      proves it.
+- [x] Full gate: typecheck, unit, build, e2e, with the HTML file count restated
+      (56 today) rather than carried.
+
+### Report — M17, one catalog, 2026-09-11
+
+**Shipped.** The two curriculum index pages are forwards, the level is an
+address under `/sheets/`, and the one catalog carries the topics column that was
+the only thing the retired pages could do and it could not.
+
+**The decision the milestone opened with was taken as recommended**: five
+prerendered level pages rather than one route with a parameter (**D62**). What
+was not in the brief, and is the better half of the outcome, is what the pages
+made possible — **the level chips are links now**, so the one control on this
+site that did nothing with the bundle blocked works without it. The state chips
+stay buttons, because two of their six selections read a record no address can
+hold. That split, `<nav>` for the corpus and `role="group"` for the reader, is
+what D62 is actually about.
+
+#### Five things the brief had wrong or did not know
+
+0. **And one capability IS reduced rather than moved, which this report should
+   have said.** `/courses/` showed all six levels side by side, each with its own
+   coverage sentence (`8 modules · 8 ready · ~3 h 55 min`) AND its own
+   `n/m completed` meter. The catalog's Overview draws a rail per level, and that
+   rail is a WRITTEN count rather than the reader's — its own docblock says so.
+   So a reader could once see every level's size, readiness, duration and their
+   own standing on one screen, and now sees the first two on the catalog and the
+   rest one level page at a time. **It is a reduction, not a loss** — every fact
+   is still reachable — and it is the only one the fold cost. Whether the catalog
+   should carry the per-level meters is the author's call; adding them would put
+   a fourth progress surface on the site, which §11.38 refuses.
+1. **Its capability ledger was one row short, and the missing row was authored
+   prose.** `/courses/<level>/` was the ONLY page on the site that rendered
+   `mini-courses/<level>/README.md`. Retiring it as written would have deleted
+   the author's own writing from the product — including Intermediate's note
+   that its Turkish files are still placeholders, which §7.6 exists to keep
+   visible. The level pages carry it, under the same `General notes` heading.
+2. **Deliverable 4 was backwards.** It said the catalog's table should carry
+   `Topics` *instead of* `Level`, because `SheetIndex` computes them as
+   alternatives. On the flat catalog that leaves a row's level carried by the
+   hue on its leading edge ALONE, which §13.1.4 forbids and which the same
+   document spends a paragraph protecting. The table carries both; a level page
+   carries only the topics, because its heading says the level once instead of
+   eight times.
+3. **Deliverable 7's premise was false.** *"If something is not ready it is not
+   clickable by default"* — a planned module has a page, the A4 anatomy with its
+   schedule of parts. The column went; the link stayed; **D63** records what
+   carries the state instead and none of it is colour.
+4. **Every module's breadcrumb pointed at the two retired routes, and nothing
+   could fail.** The trail gives each URL segment an href, so a module at
+   `/courses/<level>/<module>/` trailed through `/courses/` and
+   `/courses/<level>/` — both forwards. The link gate follows an href to a
+   document and both documents exist, so the whole site would have shipped a
+   trail whose every ancestor cost a redirect. **MEASURED in the export before
+   the fix: 61 links into a retired route across 56 files; after: 0.** It was
+   found by grepping `out/` for the retired shapes, which is the only check
+   that can see it.
+5. **`sheetLabelFor` and `categoryPathOf` both needed the new prefix.** Without
+   a `/sheets/<level>/` branch a level page falls through the
+   `segments.length > 1` guard and prints no footer label; without reading both
+   prefixes, `g c` spends a keystroke on a redirect.
+
+#### What was deleted, and why that is part of the fold
+
+Four build-time helpers existed only to serve the two retired pages and had no
+caller left: `subsystems()`, `SubsystemCoverage`, `setEyebrow()` and
+`ticksFrom()`, plus the `CategoryBlock` component. They are gone, with a comment
+where `subsystems()` was saying so — dead code that a green test keeps alive is
+how somebody builds the retired page again. **One figure went with them and it
+is the only thing this milestone lost**: the whole set's declared reading time,
+which `setEyebrow()` printed on `/courses/`. The catalog dropped its own eyebrow
+in M12 on a recorded decision, so re-adding it would reverse one; the five level
+pages each state their own.
+
+#### The author's copy round had an item left over
+
+`8 modules · 7 ready` came off the HOME page's level cards in `2fd8b4c`, and the
+author's instruction had named **the catalog's cards** — *"in catalog page from
+the cards remove `8 modules · 8 ready` from top of cards. Never we care about
+it."* It was still there. It is gone now, and the cards took `03`-A's summary
+slot in exchange, which is deliverable 6: the card looked compact because it was
+the mockup's card with one of its four blocks missing, and the block it was
+missing is the one the topics now fill. Nothing about its geometry was invented.
+
+#### The gate
+
+Every number measured on the finished tree, not carried:
+
+| | Measured |
+| --- | --- |
+| `npm run typecheck` | clean |
+| `npm test` | **2,153 passed, 82 files, 0 skipped** (2,157 before five `CategoryBlock` cases were deleted with the component) |
+| `npm run build` | clean, **61 HTML files** — 56 before, plus the five level pages. Every module route is at the address it was at, which is the arithmetic saying so: the five level stubs replaced five level pages one for one |
+| `npx playwright test` | **1,123 passed, 48 skipped, zero failures** across 1440 / 1024 / 390 |
+| Links into a retired route, in the export | **0** — 61 before the breadcrumb fix |
+| `SITE_BASE_PATH=/ai-engineering-bazaar npm run build` | 61 HTML files, **2,747 internal hrefs all carrying the base path and 0 missing it**. Each of the six forwards agrees across its script, its `<meta refresh>` and its visible link, and each lands on its OWN level rather than the catalog's front page — which is the half of the fold a base-path bug would break silently, because it works locally and 404s on Pages |
+
+**One browser test failed once and did not fail again**: `navigation.spec.ts`'s
+`previous walks 32 back to 1`, under full parallel load, clicking `prev` faster
+than the route settled. It is one of the four known load-flakes and it passed in
+every run since.
+
+**The review passes returned late, and they were worth waiting for.** Four
+subagents were spawned across the two milestones — capability and constraint for
+each — and none reported for the best part of an hour; both lenses were run by
+hand in the meantime, which is what carried the level README onto the level
+pages and what produced **D64**'s 3.29:1 correction. Then all four answered at
+once.
+
+**Between them they found four things the hand pass had missed**, and the
+sharpest is worth stating on its own: **M18 moved the keyboard map onto a page
+nobody can navigate to**, one line after naming that exact trap for the `?`
+button it was deleting. The full list and its fixes are in M18's report below.
+**The lesson is not that the review was slow. It is that the hand pass and the
+review found disjoint sets** — the hand pass found what was WRONG in what I had
+written, and the review found what I had not thought to look at.
+
+#### What M17 did NOT do, deliberately
+
+- **Deliverable 7's second half.** The author's *"not clickable by default"* was
+  not implemented: a planned module keeps its link, because it has a page. If he
+  wants planned modules unreachable that is a separate decision and it deletes a
+  capability, so it is his to make rather than mine to infer.
+- **The level page keeps its eyebrow** — `Level 03 · 11 modules · 6 ready ·
+  ~4 h`. It came over unchanged from the page it replaces and it is the only
+  statement of a level's total length. It is also the shape the author had
+  removed from the CARDS, so it may be the next thing he names; it is one line
+  to delete and nothing else reads it.
+
+## 🏁 Milestone M18: The front door, the chrome, and the second language
+
+M17 settles where the course is listed. M18 is everything a reader meets before
+they get there — the home page, the bar, and the two ends of a module — plus the
+one item on the author's list that is not chrome at all: **the site has never
+rendered a word of Turkish.**
+
+### The one that is not a button: English and Turkish
+
+The author asked for *"a feature or button to allow to switch from english to
+turkish"* in the navbar. Reading the code first, because the button is the last
+five per cent of it:
+
+- **33 `_tr.md` files exist** under `mini-courses/`, one per module.
+- **`loader.ts` reads the English file and only the English file.** The Turkish
+  sibling is opened by `langCoverage` (`derive.ts:281`) to decide whether the
+  module may claim `EN · TR`, and its CONTENT is never loaded, never rendered
+  and reachable from no route.
+- So today the site **states** that a translation exists and cannot show it.
+  `EN · TR` is a fact about the repository printed in a table.
+
+What a switcher actually needs, in the order the work has to happen:
+
+1. **The loader walks the sibling**, so a module has two bodies rather than one.
+2. **A route shape.** `/tr/courses/...` or a segment, decided against the static
+   export: every page is prerendered, so a second language is a second tree of
+   files and roughly doubles the HTML count (56 today).
+3. **A fallback for a module with no translation**, which is a real state —
+   `langCoverage` exists precisely because some modules are English-only, and a
+   reader who switches to Turkish on one of those must be told, not silently
+   handed English.
+4. **The interface's own strings**, which are English, in components, in the
+   hundreds — every label, every empty state, every `aria-label`. This is the
+   largest part and none of it is in the corpus.
+5. **`<html lang>` per page**, which is what a screen reader's voice depends on,
+   and the copy register (`tests/unit/copy-register.test.ts`) which scans
+   reader-visible strings in English and would need to know which language it is
+   reading.
+
+**This is a milestone's worth of work on its own and it is listed first so that
+it is not mistaken for a navbar item.** If M18 runs long, this is the piece to
+lift out into M19 — the rest of the list below is genuinely small, and shipping
+a switcher that only changes a flag would be the worst outcome of the three.
+
+### The home page
+
+The author: *"Homepage should have the refined banner row, and the next row
+should be the existing boxes which is 'Why this and not the hundredth AI blog'"*.
+
+**Remove:**
+- the whole progress feature — `CourseCompletion` on the home page: the three
+  statistics (`Modules completed`, `Reading time`, `Days in a row`), the five
+  level cards, their dials and their module lists;
+- `Four reasons, all of them checkable` from the why-block's header;
+- `Continue Module 01 · LLM Fundamentals` from the banner row;
+- `8 modules in Fundamentals, which assumes you write software and assumes
+  nothing else` — **already removed in `2fd8b4c`**, recorded here because the
+  author listed it and it should not be looked for twice.
+
+**Correct, in the banner:**
+- *"Five to ten minutes a module"* is **wrong**; the author has the right
+  figure. It came from `README.md` rule 4 and `MANIFESTO.md` §3, so whatever
+  replaces it has to replace it there too, or the site and the manifest will
+  disagree — and `MANIFESTO.md` is a promise, so that edit is a decision and
+  not a copy change.
+- *"Written by an engineer who builds this for a living"* and the headline
+  *"AI engineering, written by someone who builds it"* are both **singular**,
+  and it is written by **AI engineers**. Both lines change. The headline is
+  `08`'s own text, so this is a third `DEVIATIONS` entry in `DESIGN.md` — and
+  the order of authority written there says the author outranks the mockup,
+  which is exactly the case this is.
+
+**The consequence to name before doing it:** the level cards were the home
+page's table of contents, and `home.spec.ts` asserts that every module in the
+course is on the page. That claim does not survive, and it should not be
+deleted — it moves to the catalog, which after M17 is the one place the whole
+course is listed. Re-express it there.
+
+### The bar
+
+- **Remove the progress icon** on the right. `Your progress` is already a
+  destination in the nav, and the icon is the same link twice.
+- **Remove the keyboard-shortcuts button.** Trap: `§12.16` makes the chord
+  discoverable by printing it on its own destination *and* on the nav item, and
+  `record-sheet.spec.ts` has chord cases. **The shortcuts themselves keep
+  working** — what goes is the button that opens the sheet listing them, so
+  check what still tells a reader they exist before deleting the only thing
+  that does.
+- **Replace the repository glyph with GitHub's own mark**, black, and a yellow
+  star beside it carrying the star count.
+- **Add the language switcher**, once the section above makes it possible.
+
+**The star count is a fact from outside the repository, and this project's rule
+is derive-never-restate.** Three shapes, none free:
+1. **Fetched at build time** and baked into the export. Honest, and it makes the
+   build need the network — CI included — and the number is as old as the last
+   deploy.
+2. **Fetched in the browser.** Always current; a network request on every page
+   load to a third party, from a site whose own promise is that it makes none
+   while you read (`README.md`, "no network call while you read"). That promise
+   is about the reader's record rather than about assets, but the sentence is
+   there and a star counter would be the first thing to test it.
+3. **Typed into `src/lib/site.ts`.** One line, and it is a number written in
+   `src/` that nobody will ever update — the exact shape the derive-never-restate
+   rule exists to refuse.
+**1 with a committed fallback** is the recommendation; the decision is the
+author's, and whichever it is belongs in `BRAINSTORM` because somebody will ask.
+
+### The two ends of a module
+
+- **The pager** (`PrevNext`, `components/sheet/PrevNext.tsx`): shorter boxes,
+  and a previous/next icon in each. The idiom is settled — 20 inline SVGs in
+  `src/`, a 16-unit viewBox, `fill="none" stroke="currentColor"`, and **no
+  emoji** (**D53**). Its height is a `05`/`01` geometry question, so check the
+  mockup before choosing a number.
+- **`What you will be able to do` gets its bullets.** `Objectives.tsx:36-40`
+  **already renders `<ul><li>`** — the markers are missing because Tailwind's
+  preflight sets `list-style: none` on every list, and nothing in the card
+  restores it. So this is one rule in a surface stylesheet, not a markup change,
+  and the same is true anywhere else in the prose a list has lost its markers.
+
+### Deliverables
+
+*(This milestone opened with its work written as prose across the three sections above and no
+checklist at all. Recovered into the loop's shape on 2026-09-13; every box is ticked against the
+report below, which was written when the work shipped.)*
+
+- [x] **The home page loses the whole progress feature** — `CourseCompletion`, the
+      three statistics, the five level cards, their dials and their module lists —
+      keeping the banner row and the why-block. The continue line and
+      `Four reasons, all of them checkable` go with it.
+- [x] **`Five to ten minutes a module` is corrected at its source**, in
+      `README.md` rule 4 and `MANIFESTO.md` §3 as well as on the page — a manifest
+      is a promise, so the site may not disagree with it (**D65**).
+- [x] **The authorship line and the headline become plural.** Both were singular
+      and the course is written by AI engineers. The headline is `08`'s own text,
+      so it is a third `DEVIATIONS` entry in `DESIGN.md`.
+- [x] **"Every module in the course is reachable and listed" moves to the
+      catalog**, which after M17 is the one place the whole course is listed. The
+      claim is re-expressed, never deleted.
+- [x] **The bar loses the progress icon and the shortcuts button**, and the chords
+      keep working with something still saying so.
+- [x] **The repository glyph becomes GitHub's own mark**, black, with a yellow
+      star beside it carrying the star count.
+- [x] **The star count is fetched once and committed, never typed** — shape 1 with
+      a committed fallback, so the build itself makes no network call (**D64**).
+- [x] **The pager's boxes are shorter and each carries an icon**, on the settled
+      idiom: a 16-unit viewBox, `fill="none" stroke="currentColor"`, no emoji
+      (**D53**).
+- [x] **`What you will be able to do` gets its markers back** — one rule in a
+      surface stylesheet, because Tailwind's preflight had removed them.
+- [ ] ~~**The language switcher in the bar**~~ → **M19**. Lifted with the reason
+      recorded, which this milestone's own last acceptance criterion names as the
+      better of the two outcomes. The author has since placed the control on the
+      reading page rather than in the chrome, so M19 carries both the switcher and
+      its new home.
+
+### Acceptance criteria
+
+- [x] The home page is the banner row and the why-block, and nothing else; no
+      progress feature, no continue line, no counts of the course.
+- [x] Every corrected sentence is corrected **at its source too** — the minute
+      figure in `README.md` and `MANIFESTO.md`, the authorship line wherever it is
+      repeated — so the site and the documents cannot disagree.
+- [x] The headline's departure from `08` is a recorded `DEVIATIONS` entry.
+- [x] "Every module in the course is reachable and listed" is proven on the catalog,
+      by a test that used to prove it on the home page.
+- [x] The bar carries: brand, nav, language, theme, GitHub-with-stars. No progress
+      icon, no shortcuts button. The chords still work and something still says so.
+      **Met, except the language control**, which went to M19 with the rest of the
+      second language; the slot is empty rather than filled with a switcher that
+      switches nothing. The chord half was the near-miss: the review found the
+      keyboard map had been moved to a page nothing linked to, and `SiteFooter`
+      now links `/legend/`.
+- [x] The star count's mechanism is whichever the author chose, and the number is
+      never typed by hand.
+- [x] The pager's boxes are shorter, each with an icon, and the fidelity comparison
+      for the reading page still passes.
+- [x] The objectives list shows markers, and `layout.spec.ts` gains nothing —
+      because that is a paint change and not a relationship.
+- [x] Turkish: a reader can switch, a translated module is served in Turkish, an
+      untranslated one says so, and `<html lang>` is right on every page. **Or the
+      item is lifted into M19 with the reason recorded**, which is an acceptable
+      outcome and a better one than a switcher that changes a flag.
+      **Met by its second branch**, deliberately: the criterion was written with
+      two ways to pass and the lift is the one that was taken.
+
+---
+
+### Report — M18, the front door and the chrome, 2026-09-12
+
+**Shipped, minus the second language, which is lifted into M19 with the reason
+recorded** — the brief itself names that as an acceptable outcome and a better
+one than a switcher that changes a flag.
+
+The home page is two rows. The bar carries three controls instead of five. The
+two ends of a module are shorter and marked. And two sentences that had been
+wrong since the project started are now counted rather than claimed.
+
+#### The home page
+
+`CourseCompletion` — D14's control C, five level cards, three statistics and a
+dial each — is off this page and unchanged on `/profile/`. The continue line is
+gone with it, and so is `Four reasons, all of them checkable` over four reasons
+a reader can count. What is left is the banner and the argument, which is the
+author's own shape for it.
+
+**The cost is named in the markup rather than discovered later**: the level
+cards were the home page's table of contents, so `home.spec.ts`'s claim that
+every module in the course is reachable from here does not survive. It moved to
+the catalog, which after M17 is the one place the whole course is listed.
+
+`data-hl-record` is still stamped and this page is no longer one of its readers.
+The rule that revealed the continue block went in the same edit as the block,
+because a rule for a class no markup carries is what
+`styling-references.test.ts` exists to catch.
+
+#### Two sentences that were never measured
+
+**`Five to ten minutes a module` was wrong by a factor of three** (**D65**).
+MEASURED: nineteen modules declare a duration, the shortest 20 minutes, the
+longest 30, the average 26. The home page counts it now — a sentence with a
+number in it is a count, and §11.25 had only ever been applied to a facts strip.
+`README.md` rule 4 and `MANIFESTO.md` §3 and rule 4 are corrected too, and they
+are the halves that can still go stale, which §3 now says beside the figure.
+
+**`mini-courses/MANIFEST.md` rule 4 is deliberately NOT corrected.** It is the
+target a module is written against, in the half of the repository governed by
+the corpus agreement — changing it changes what the course is held to, which is
+the author's decision and not a copy edit. It is raised in D65, not edited.
+
+**`written by someone who builds it` was singular.** It is `08`'s own text, so
+the correction is a third recorded `DEVIATIONS` entry in `DESIGN.md` — the
+author outranks the mockup, which is the order of authority that file states.
+`README.md` rule 1 said `a working AI engineer` and now says `working AI
+engineers`.
+
+#### The bar
+
+The progress icon is gone (it was `Your progress` twice, three inches apart) and
+so is the `?` button. **The chords still fire and something still says so** —
+that was the trap §12.16 set for anybody removing that button, because it and
+the progress icon's `title` were the only two places on the site that said a
+chord exists. The table is on `/legend/` now, rendered from the same `SHORTCUTS`
+array the sheet renders and the handler dispatches on.
+
+GitHub's own mark replaces the drawn repository glyph, with the language's gold
+star and the count beside it (**D64**). The count is fetched by a script and
+committed; the build never reaches the network. **The mark is not black**: black
+on the bar's cobalt measures 1.58:1, and the bar's sub-palette is the strongest
+rule the language has.
+
+#### Three defects a screenshot found, and no test would have
+
+1. **The keys table painted its two columns on top of each other.**
+   `]Previous / next module`, with no space at all. `.bz-keys` was
+   `display: grid` on a `<table>`, so the tracks sized against the `tbody` and
+   the gap applied between nothing. **It was already wrong in the `?` dialog**
+   and had been since that table was written; M18 put it on a page where
+   somebody finally looked.
+2. **The overview board drew one column a fifth of the page wide.** `03`'s
+   `repeat(5, …)` went in literally, so a board with one level left four fifths
+   of the page empty — which is the shape the author had already objected to on
+   the home page, in capitals. The count comes from the component now, the way
+   `--bz-table-min` does. It was one level chip away on the catalog before M17
+   made it a landing page.
+3. **Module 01's pager said `End of the course`** where its previous module
+   would be. Both empty cells rendered the same string, which is exactly what a
+   symmetry check wants to see.
+
+#### The lists
+
+`What you will be able to do` has its bullets, and so does every authored list
+in the prose — Tailwind's preflight strips `list-style` from every `ul` and
+`ol` in the document and nothing put it back, so a numbered list in a module
+that argues in steps had lost its numbers too. Two declarations.
+
+The pager is one line instead of two — **MEASURED: 65px to 39px** — with a
+chevron in each tile. The glyph reverses a rule `DESIGN.md` states outright;
+**the words stayed**, because §10.4 is that a shape is never the only carrier
+and an icon is a shape.
+
+#### Turkish: lifted into M19, and why
+
+33 `_tr.md` files exist and `loader.ts` reads the English file only. The switcher
+is the last five per cent of the work: the loader has to walk the sibling, the
+static export needs a second tree of files, a module with no translation is a
+real state that has to be told rather than silently served English, and the
+interface's own strings are English in the hundreds and none of them are in the
+corpus. **Shipping a button that changes a flag would be the worst of the three
+outcomes**, and the brief says so itself. M19 is written at the end of this file.
+
+#### The gate
+
+Every number measured on the finished tree:
+
+| | Measured |
+| --- | --- |
+| `npm run typecheck` | clean |
+| `npm test` | **2,153 passed, 82 files, 0 skipped** |
+| `npm run build` | clean, **61 HTML files** — unchanged by M18, which added no route |
+| `npx playwright test` | **1,121 passed, 48 skipped, zero failures** across 1440 / 1024 / 390 |
+| The base-path build | 61 HTML files, **2,747 internal hrefs prefixed and 0 missing it** — re-run over the whole export after both milestones, because `basePath` rewrites only what the ROUTER touches and M17 had just added six forwards whose targets are strings (`lib/url.ts`'s `href()`, not `<Link>`) |
+
+**25 browser tests went red when the surfaces came off, and not one was
+deleted.** Control C's eight moved to a new `tests/e2e/completion.spec.ts`,
+named for what they are about rather than for where it used to be drawn, with
+their helpers; §12.10.6's two CONTINUE cases moved to `/profile/`'s hero, which
+is the same `nextUnsigned` derivation; §15.11's cases now read the STAMP rather
+than the block it revealed, which is stricter; and *"every module in the course
+is listed"* became a `catalog.spec.ts` test comparing the cards against the
+fixture by NAME rather than by count.
+
+**One regression, found by the suite and not by me.** The one-line pager did not
+fit two tiles on a phone — MEASURED at 390: about 240px of content in a 165px
+tile, and six module routes scrolled the document sideways, which §11.10
+forbids. The pager stacks below 767px, which is the language's own breakpoint
+and what the rest of it already does at that width.
+
+**Two components were deleted as orphaned**: `ContinueLine` (the home page's
+one-line shortcut — `ContinueHero` prints the same answer on `/profile/`) and
+its `ContinueFacts` type, each with a note where it was.
+
+#### What the review found, after the milestone was pushed
+
+The two passes did return in the end, and between them they found four things
+this report had wrong. They are corrected in `ba1f59b` and after.
+
+1. **The keyboard map was moved onto a page nobody can reach.** `/legend/` was
+   linked from `/team/` and from nowhere else, and `/team/` only from
+   `/team/assignments/`. That was survivable while the page explained marks; it
+   stopped being survivable the moment the chords went there and the `?` button
+   came off in the same commit, because the only discovery path left was
+   pressing a key you would have to already know about. **It is the exact trap
+   this milestone named for the button it was deleting, walked into one line
+   later.** `/legend/` is in the footer now, which is on every route — and which
+   is what makes the page's own SC 3.2.6 claim true rather than aspirational.
+2. **Nothing turned red if the keys table were deleted.** No test mentioned
+   `.bz-keys` or visited that section: removing the whole block left the full
+   gate green. `accessibility.spec.ts` now asserts the table exists, lists every
+   chord `SHORTCUTS` declares, and that every route links to the page carrying
+   it.
+3. **Two carriers `ModuleRow` claimed do not exist.** There is no ISO 128 dash
+   down a draft row's `#` cell — the leading edge is a transparent 3px border
+   measuring `solid`, because the caution ink was removed for a text floor and
+   the line went with it. And a written module does not hold "three or four"
+   completion squares: MEASURED over the 33 rows, the 14 planned hold exactly
+   one each and the 19 written hold two (7), three (11) or four (1). The
+   argument survives both — the STYLE is what separates them — but the sentences
+   were wrong, and a wrong sentence in a docblock is worse than none.
+4. **These two ledger rows were not re-pointed.** M17 re-pointed its own and
+   M18 did not.
+5. **The one-line pager scrolled the document sideways, at a viewport the suite
+   runs.** `.bz-pager` was `grid-template-columns: 1fr 1fr`, transcribed from
+   `01`; a bare `1fr` track carries an automatic minimum of its own min-content,
+   and the new tile's min-content is large because its label is `flex: none` and
+   reads `Previous module · Planned` on a planned neighbour. **MEASURED: 37px of
+   overflow at 1024 and up to 172px between 768 and 1060, on the eight routes
+   whose neighbour is planned.** §4.7's one hard rule.
+
+   **It survived a full green gate because the guard's sample missed on both
+   axes at once.** `responsive.spec.ts`'s `PAGES` names four modules and not one
+   of them is planned, so the wide label never appeared; and the three viewport
+   projects are 1440/1024/390 while most of the overflow sits between 768 and
+   1060. The overlap at 1024 was real and on a route nobody sampled. Two new
+   tests walk EVERY module route instead of four, and reverting the fix names
+   six of them with their overflow.
+
+   `minmax(0, 1fr)` is the fix, and it is a fourth `DEVIATIONS` entry in
+   `DESIGN.md` — the mockup says `1fr 1fr` and a measured floor outranks it
+   (**D34**). The narrow rule below it already said `minmax(0, 1fr)`; only the
+   two-column case was left bare, which is why it survived a phone and failed a
+   laptop.
+6. **The destination title was starved to 18px on twelve routes.** Same cause:
+   the label was the one item that could not yield, so the title took the whole
+   loss — and the title is the only part of the tile that says where the reader
+   is going. The label truncates first now and the title keeps a floor.
+   MEASURED after: narrowest destination across 33 routes × 11 widths is 66px,
+   with an ellipsis.
+7. **`.bz-bar-repo` missed the 44px touch floor**, and `TOUCH_CONTROLS` could
+   not see it — that list is typed out, so a new class is invisible to it until
+   somebody adds one. Both fixed, and the guard's own docblock now says the
+   habit it depends on.
+8. **`accessibility.spec.ts` computed the pager label's painted colour and
+   asserted nothing about it.** Pre-existing, and M18 restyled that exact
+   element. It compares against the faint token now, both values through the
+   canvas because a computed colour serialises as `lab()` or `oklch()` and two
+   spellings of one colour are not string-equal. Swapping faint for muted turns
+   it red.
+9. **The star's hover state was never measured.** 3.29:1 at rest and **3.06:1
+   hovered**, because `--color-bar-hover` lifts the ground — over the 3:1 a
+   graphic owes, by six hundredths. The value stands (the numeral beside it
+   states the count at 9.79:1, so the star is not the only carrier) and a
+   browser test now holds both states in both themes, because
+   `contrast.test.ts` resolves tokens against tokens and cannot composite one
+   over another.
+10. **A dead fixture rode along in the move.** `CARRIES_NOTHING` was copied into
+    `completion.spec.ts` with no loop to feed it; §15.11 is the home page's
+    claim. Deleted — two copies of one fixture is two fixtures, and one drifts.
+
+**A fourth defect, found after the commit by measuring rather than by reading.**
+Restoring the markers as `.bz-card ul { list-style: disc }` also hit
+`.bz-stamp-grid` — a flex row of approval stamps that happens to be a `ul`
+inside a card — and gave it bullets, because `.bz-card ul` outranks
+`.bz-stamp-grid` by one element. The rule is a CLASS now (`.bz-card-list`): a
+list asks for markers, and is never given them for being in the wrong box. A
+markdown task list is exempted too, because a checkbox is already a marker.
+
+**MEASURED on two module pages after the fix**, every list in the document by
+computed `list-style-type`: the authored prose lists and the objectives card
+carry `disc`; `.bz-stamp-grid`, `.bz-aside-list`, `.bz-group-list` and the task
+list carry `none`. Nothing else moved.
+
+---
+
+## 🏁 Milestone M19: The second language — SHIPPED 2026-09-13, less the chrome
+
+M18 lifted this out of itself, which the brief allowed for in as many words:
+*"If M18 runs long, this is the piece to lift out into M19 — the rest of the
+list is genuinely small, and shipping a switcher that only changes a flag would
+be the worst outcome of the three."*
+
+**It is lifted because it is not a button.** Every other item on the author's
+list was chrome; this one is a content pipeline, and the button is the last five
+per cent of it.
+
+### What is true today, measured
+
+| | Measured |
+| --- | --- |
+| `_tr.md` files under `mini-courses/` | **33**, one per module |
+| Modules whose Turkish sibling the site RENDERS | **0** |
+| Where the sibling is opened at all | `derive.ts`'s `langCoverage`, to decide whether a row may print `EN · TR` |
+| HTML files in the export | **61** |
+
+So the site **states** that a translation exists and cannot show it. `EN · TR` in
+the catalog's `Lang` column is a fact about the repository, printed in a table.
+
+### The decision this milestone opens with
+
+**Where the second tree lives.** Every page is prerendered, so a second language
+is a second tree of files and roughly doubles the export.
+
+1. **A route segment: `/tr/courses/<level>/<module>/`.** Every route gains a
+   sibling, `<html lang>` follows the segment, and a reader can send somebody a
+   Turkish URL. It is the shape `generateStaticParams` already expresses and it
+   costs the file count.
+2. **One route, the language on the record.** No new files, and the language is
+   a fact about a reader rather than about an address — so it cannot be shared,
+   it needs channel A to be right in frame one, and a search engine sees one
+   language.
+
+**The recommendation is 1**, on the same grounds M17's shape was chosen: it is
+the only one that works with no script and the only one a reader can send.
+
+### Deliverables, in order
+
+- [x] **The loader walks the sibling**, so a module has two bodies rather than one.
+      `loader.ts` reads the English file and only the English file today.
+- [x] **The route shape**, from the decision above.
+- [x] **A fallback for a module with no translation**, which is a real state —
+      `langCoverage` exists precisely because some modules are English-only, and a
+      reader who switches on one of those must be TOLD, not silently handed
+      English. `mini-courses/intermediate/README.md` already says its Turkish files
+      are placeholders, which is the same problem one level up: a file that exists
+      is not a translation that exists.
+- [ ] ~~**The interface's own strings**, which are English, in components, in the
+      hundreds — every label, every empty state, every `aria-label`. This is the
+      largest part and none of it is in the corpus. It is also the part that
+      decides whether this is one milestone or two.~~ → **M23**
+
+      **It decided: two.** Everything else here is a pipeline and it shipped;
+      this is several hundred strings of authored Turkish, in the author's own
+      language, and he is the one to write or approve them. Shipping machine
+      Turkish in the chrome under his name is the one outcome worse than leaving
+      it English.
+
+      **What M19 did instead, so the gap is honest rather than hidden:** every
+      run of English inside a Turkish page says so with a `lang` attribute — the
+      objectives card, the figures' `Expand` control — so a screen reader reads
+      each in the right voice, and `lang` is on the prose rather than on `<html>`
+      precisely because the document is mixed.
+- [x] **`<html lang>` per page**, which is what a screen reader's voice depends on,
+      and `tests/unit/copy-register.test.ts`, which scans reader-visible strings in
+      English and would need to know which language it is reading.
+- [x] **The switcher itself.** The mockup draws a `TR` button in the bar beside the
+      theme toggle and M18 left that slot empty. **The author has since placed it
+      elsewhere** (2026-09-13): *"Language of each module should be selectable from
+      the top-right corner of the box which contains the whole center-aligned module
+      content."* So it is a control on the READING page rather than in the chrome,
+      which is arguably truer — the language is a property of the module being read
+      and not of the site. M21 leaves that corner free and builds nothing there;
+      this milestone is the only one that may put a control in it, because it is the
+      only one that can make it do anything.
+
+      M20 removes `EN · TR` from the catalog's table and cards in the meantime, so
+      the listing stops stating a translation the site cannot serve.
+
+### Acceptance criteria
+
+- [x] A reader can switch, and the switch is a URL rather than a preference.
+- [x] A translated module is served in Turkish; an untranslated one **says so** and
+      is not silently English.
+- [x] `<html lang>` is right on every page in both trees.
+- [x] The copy register still runs, and knows which language it is reading.
+- [x] The catalog's `EN · TR` stops being a claim the site cannot honour.
+- [x] Full gate, with the HTML file count restated rather than carried (61 today).
+
+
+### Report — M19, the second language, 2026-09-13
+
+Shipped as `a6268b9`, with `934e467` for what the reviews found. **The pipeline
+is done and the chrome is not** — see the struck deliverable above and **M23**.
+
+### Both of this brief's premises were stale, and measuring came first
+
+It said *"some modules are English-only"* and cited a README calling the
+Turkish files placeholders. **Neither is true any more.** No README in
+`mini-courses/` says "placeholder", and **all 33 modules carry a real
+translation** at 0.70 to 1.03 of the English word count.
+
+Run through the site's own rule (§7.6, a 0.4 ratio): **19 `EN·TR`, 14 `EN`, and
+not one WRITTEN module is `EN`.** Every one of the fourteen is a draft, which
+§7.6 forces to `EN` whatever its stub sibling says — their `_tr.md` files sit at
+0.9 to 1.0 and are stubs translated from stubs. So the fallback for "a module
+with no translation" is built, and today it is reachable only through a draft.
+
+### The decision: an address, and only for a module
+
+**Shape 1**, on D62's grounds: it works with the bundle blocked and **a reader
+can send somebody the link**, which is the thing a preference can never do.
+
+**Only modules have a second address.** The author placed the control — *"the
+top-right corner of the box which contains the whole center-aligned module
+content"* — so the language is a property of the MODULE being read, not of the
+site, and the catalog, the chrome and the progress page have one address each.
+19 new files, 61 → 80.
+
+### The whole of the second language is one function
+
+`loadModuleIn` returns the module with its body already in the language asked
+for. A module page derives the quick check, the authored summary, the figure
+sequence, the sources and the word count from `body` — so every one of those
+runs against the Turkish text with **no page code knowing a second language
+exists**, and a derivation that was right in English cannot be wrong in Turkish
+because it is the same derivation. The alternative was to thread a `lang`
+through the page and choose per reading: the same choice made eight times, and
+eventually made seven.
+
+The page moved to `components/sheet/ModuleSheet.tsx` and the two route files are
+a few lines each. A second copy of 300 lines is the shape M9 to M14 already
+cost this project.
+
+### What a `_tr.md` does not have, and what that decided
+
+**MEASURED: they carry no frontmatter at all** — the files open on their `# `
+heading. So:
+
+- **the title is the body's own heading**, which `render.ts` drops from the tree
+  (B6.1) precisely so the page can print it;
+- **`objectives` exists in English and nowhere else**, so on a Turkish page that
+  card is marked `lang="en"`. Dropping it takes a capability off the translated
+  page; leaving it unmarked has a screen reader read English in a Turkish voice.
+
+**`lang` is on the prose and not on `<html>`, and that is more accurate rather
+than a compromise.** A Turkish module page is a MIXED-LANGUAGE document — the
+bar, the rail, the footer and the objectives are English — so stamping the whole
+of it would put every one of those in a Turkish voice, which is the defect the
+attribute exists to prevent, pointed the other way.
+
+### The defect this nearly shipped, four times over
+
+**Every cross-reference on a Turkish page resolved perfectly — to the English
+page.** 121 links across the corpus. Nothing failed and nothing could.
+
+It was fixed in the prose first, and the **pager and the rail** were still
+sending readers out of the language — the two controls a reader uses most. Then
+**the review found a fourth region**: `Requirements`, `Unlocks` and `See also`,
+**64 more links**.
+
+**The test could not have caught the fourth, and that is the lesson.** It named
+three regions, so a region nobody had thought of was outside what it could fail
+on — the same shape as a guard that names a class inside its own regex, which
+this milestone series has had to re-point four times. It asserts over **every
+link on the page** now, exempting only the picker's own English half, and
+separately proves the scan reached more than one region so a silently narrowed
+sweep cannot pass it.
+
+### Two capabilities were being dropped on all 19 Turkish pages, in silence
+
+The sharpest finding of the four milestones, and it came from the review.
+
+`quickCheckOf` matches `**Quick Check**`; `summarySection` matches
+`## Summary`. **MEASURED: 0 of 32 `_tr.md` files carry either, and 18 carry
+`**Hızlı Kontrol**` and `## Özet`.** So every Turkish page rendered no
+self-check and no authored summary.
+
+**Nothing could fail**, because "this module asks nothing" is a real state that
+15 English modules are already in — and §12.6's own trap note is what made it
+silent: the component keys on the extractor returning non-null rather than on
+`status === 'ready'`, which is right, and which means an extractor that stops
+finding things looks exactly like content that has nothing to find. Both
+extractors take the Turkish label now: **18/19 in both trees**.
+
+**The general fact** is worth more than the fix: *a matcher written in one
+language silently deletes a capability in the other*, and the deletion is
+invisible wherever "absent" is a legitimate answer.
+
+### What else the reviews found
+
+| | |
+| --- | --- |
+| **SEO** | 19 pairs of near-duplicate pages with nothing saying they are translations, and all 19 Turkish pages carrying the English meta description verbatim. Both trees emit `canonical` and `hreflang` now, and the description follows the body. |
+| **The trail** | It read `Home / tr / Curriculum / …` — a language prefix showing as a place, the same defect M22 measured across eight routes — and it also stopped `retargetCourseAncestors` firing, so the third crumb named a route M17 retired. The prefix is dropped before a crumb is built, which fixes both. |
+| **A number I wrote** | A comment claimed 13 of 19 Turkish titles are identical to the English. Measured: **11**. Rule 7. |
+| **NOT confirmed** | The review reported 67 of 96 figure captions as English inside the Turkish prose. MEASURED across all 19 pages: they are the author's Turkish — both its heuristic and my first one were too crude to tell. It did surface something smaller and real: the figure's `Expand` control is an English interface word, and it says `lang="en"` now. |
+
+### The gate
+
+| | Measured |
+| --- | --- |
+| Typecheck | clean |
+| Unit | **2,157 passed, 82 files** |
+| Build | **80 HTML files** — 61 plus 19 Turkish |
+| Browser | **1,150 passed / 47 skipped / 0 failed**, no flakes |
+| Base-path build | **5,179 of 5,179** internal references carry the prefix |
+| Mutations | three, three red: the rail stops localising, the Turkish tree prerenders every module, the objectives stop declaring their language |
+
+### What the author still has to decide
+
+1. **The chrome** — M23, and it is his language.
+2. **A pager names its neighbour in English** even when it links to the Turkish
+   page, because the neighbour's Turkish title lives in its own body and the
+   pager has the English module. The smaller wrong than loading nineteen more
+   files to name a link; say if it should be the other way.
+3. **A Turkish page's trail and its rail lead to the English catalog**, because
+   the catalog has one address. Consistent with the language being a property of
+   the module — worth confirming it is what he wants.
+
+
+---
+
+# 🧭 What comes after M18
+
+Four milestones are written and not started: **M19** (the second language, lifted
+out of M18) and **M20 to M22**, from the author's list of 2026-09-13. The
+codebase was read before each claim below — every file path, line number and
+count was checked rather than recalled, and three of the checks changed what the
+milestones say.
+
+**They split by what breaks together rather than by page.** M20 is the catalog
+and the one thing it never said; M21 is the page a reader actually reads and the
+rail beside it; M22 is the progress page, which is a redesign rather than a
+pass of styling.
+
+## 🏁 Milestone M20: The catalog says what a module IS — SHIPPED 2026-09-13
+
+The author's list of 2026-09-13. **The catalog tells a reader the shape of every
+module and not one word about what any of them is about.** The `Topics` column
+prints a module's first three section headings — `Why RAG` · `How retrieval
+works` · `Chunking` — which is a table of contents for a page the reader has not
+opened. This milestone replaces that with the module's own sentence, and tidies
+the four things around it that the author named in the same pass.
+
+### The finding that changes the size of this milestone
+
+**Every ready module already carries the sentence.** `summary` is a required
+frontmatter field — `src/lib/content/schema.ts:72` fails the build for a `ready`
+module without one — and they read exactly as the author asked:
+
+> `mini-courses/1_fundamentals/observability.md`:
+> *"Traces are the only record of what an agent actually did, and the loop that
+> turns them into a better agent."*
+
+One sentence, high level, no buzzwords, already in the author's own voice.
+**MEASURED: 19 of the 33 modules carry one, which is every written module.** So
+`Description` is a DERIVATION and not a writing job, and §11.25 is satisfied
+without anybody maintaining a second description anywhere.
+
+**The 14 planned modules carry no summary**, because `schema.ts` only requires
+one of a `ready` module — a module nobody has written has nothing to summarise.
+`topicsFor` falls back to their schedule of parts.
+
+**That fallback is a list of headings, which is the exact shape the author
+objected to, and he has not agreed to keep it.** The first draft of this brief
+defended it as "the honest thing"; that was the brief deciding something on his
+behalf. The choice is his and it is small: the schedule of parts as it is today,
+or an empty cell — §11.30 already permits one, and a planned module saying
+nothing about itself is at least not saying the wrong kind of thing.
+
+### The decisions this milestone opens with
+
+**1. Does a route's default view override a reader's remembered one?** The
+author wants `View Curriculum` to open in Overview and a level to open in Cards.
+But the view is a REMEMBERED PREFERENCE: `boot.ts:169` stamps `data-hl-view`
+from `prefs.catalogView` before first paint, and D13's own criterion is that the
+choice is kept. Three shapes:
+
+  1. **The route's default applies only when the reader has no stored view.**
+     Every first-time reader gets exactly what the author described; a reader who
+     chose Table keeps Table. Nothing about D13 changes.
+  2. **The route's default wins on arrival, every time.** Matches the words
+     literally and overrides the reader's choice on every level link — which is
+     the thing D13 exists to protect.
+  3. **Two remembered views, one per route shape.** Twice the state for a
+     preference nobody asked to split.
+
+**The recommendation is 1.** It is the only one that gives the author the
+behaviour he described without taking something back from a returning reader.
+
+**It costs nothing in `boot.ts`, and the first draft of this brief said it cost
+one condition there — which is impossible.** `boot.ts:163` is
+`if(!ok||!raw)return;`, so the script returns BEFORE it stamps a view for exactly
+the reader this default exists for: the one with no record. The no-preference
+default is not in the script at all. It is a CSS fallback, `catalog.css:277`:
+
+    html:not([data-hl-view]) [data-view="overview"] { --bz-showing: block }
+
+`<html>`'s attributes come from the root layout, so no route segment can set one
+either. What a level page CAN do is emit a scope attribute on its own wrapper —
+the server knows which route it is — and let a sibling fallback key off that. A
+reader with a stored view is untouched, because `html[data-hl-view="…"]` is what
+wins today and still would. No script, correct with the bundle blocked.
+
+**The trap is one rule away:** the toggle's own `Showing` mark has the same
+fallback at `catalog.css:727`. Change the view's and not the toggle's and the
+page draws Cards while the toggle marks Overview — the picture and the sentence
+coming apart, which is what `Catalog`'s docblock spends a paragraph preventing.
+
+**2. Does the dropdown close on pointer-out?** The author's words: *"even when I
+move cursor out of the boundaries of dropdown, the dropdown is still here while
+I want it to disappear."* The menu is a `<details>` (`MainNav.tsx`), which is
+keyboard- and touch-operable precisely because it does not depend on hover.
+**Closing on `mouseleave` alone would make it unusable on a touch screen** — a
+finger has no hover, so the menu would open and close on the same tap — and it
+fights a keyboard reader who has tabbed into it.
+
+The shape that satisfies the complaint without breaking either: close on
+pointer-out **only for a pointer that can hover** (`@media (hover: hover)` /
+`matchMedia`), after a short grace delay, and **never while focus is inside it**.
+Escape, outside click and route change already close it.
+
+### Deliverables
+
+- [x] **`Topics` becomes `Description`, and it is the module's `summary`.**
+      `SheetRow` gains the field; `manifest.ts` reads it; a planned module keeps the
+      schedule-of-parts fallback. `topicsFor`'s docblock is the thing to read first
+      — it argues against a hand-written topic line, and a derived `summary` is not
+      one, which is why this does not reverse it.
+- [x] **The description is an accordion, in the table and on the card.** Closed it
+      reads `Description ▾`; open, the row expands smoothly and the previously open
+      one closes.
+
+      **`<details name="…">` does both for free and with no JavaScript, and this was
+      MEASURED rather than assumed.** In the browser the suite actually runs —
+      Chrome 153 — opening one `<details>` in a named group closes its sibling
+      natively, which is exactly the author's "only one at a time"; and
+      `CSS.supports` returns true for both `interpolate-size: allow-keywords` and
+      `selector(::details-content)`, which are what make the open smooth. So the
+      whole deliverable is buildable with zero script.
+
+      An engine without `interpolate-size` opens the panel instantly instead of
+      easing it, which is the house rule already: the mechanism works everywhere and
+      the easing is an enhancement. **An engine without `name` exclusivity would
+      leave two panels open**, which is a degradation worth knowing about — it is
+      the one part that would need script to guarantee, and it should not be added
+      until some engine that matters is shown to need it.
+
+      **The trap is the TABLE, and the first version of this brief got it exactly
+      backwards.** It said the expanding row must be a second `<tr>` with a
+      `colspan` cell. **That cannot be built with `<details>` at all**: `<tbody>`'s
+      content model admits only `<tr>`, and a `<summary>` has to live inside its own
+      `<details>` — so a disclosure whose trigger is in row 1 and whose panel is
+      row 2 is not expressible. The brief mandated a structure that contradicted its
+      own mechanism, and one of the two had to give.
+
+      **The `<details>` goes inside the description cell.** A `<td>` is flow
+      content, so it may hold one; opening it grows the cell, the cell grows the
+      row, and the row grows the table. No second `<tr>`, no `colspan`, no script.
+      The card is the same element in a different box.
+
+      What survives of the original warning is the real lesson and it belongs to a
+      different file: `SheetIndex.tsx` is where the table's width arithmetic lives,
+      and `catalog.css` is where a cell that stopped behaving like a cell cost a
+      visible defect. (The earlier draft cited `ModuleRow`'s docblock for the
+      `display: flex` story; **M17 deleted that comment with the status cell it was
+      about**, so the citation pointed at nothing.)
+
+      **And the second trap is not there, which took measuring to find out.**
+      `ModuleRow`'s docblock says twice that the whole row is one click target —
+      *"the anchor lives in the title cell and a stretched pseudo-element covers the
+      row, so a pointer can hit any cell and `Tab` reaches the row exactly once"* —
+      and `SignOffSquares` refuses to put any control in the ninth column on the
+      strength of it: *"a control here would sit under it, unclickable."*
+
+      **MEASURED on the built catalog: there is no such pseudo-element.**
+      `getComputedStyle(link, '::after').content` is `none`, its `position` is
+      `static`, and clicking the `Length` cell navigates nowhere. Only the title is
+      clickable. The rule went with the eleven stylesheets stage 0 deleted and the
+      docblock was never corrected — the same shape as the ISO 128 dash the M18
+      review caught.
+
+      For this deliverable that is good news: a `<summary>` inside the row is not
+      competing with anything. **But it is a defect in its own right**, because
+      §5.3 and §10.3 specify the stretched target and the row no longer has one, and
+      because `SignOffSquares` is declining a capability on a premise that stopped
+      being true.
+
+      **And the suite cannot see it.** Five places reason from the stretched link —
+      `ModuleRow`'s docblock twice, `SignOffSquares`, and `record-index.spec.ts`'s
+      docblock twice — and exactly one test names it:
+      `accessibility.spec.ts:325`, which asserts ONE TAB STOP PER ROW. A title-only
+      link satisfies that perfectly. The comment above it says *"the whole row is
+      one link target"*; the assertion cannot tell a stretched link from a title,
+      so it has been green through the entire absence.
+
+      Whether to restore the stretched link or to correct the five references is a
+      decision, and it has to be taken BEFORE the disclosure is designed: a row that
+      is one big link and a row with a control in it are two different rows. If the
+      link is restored, that test needs the assertion its comment already claims —
+      that a click in a cell which is not the title still navigates.
+- [x] **`Lang` leaves the table and the card.** One column and one fact list entry.
+      **The language SELECTOR the author wants is not built here** — it belongs on
+      the module page and it is M19's, which owns the second language. M21 draws the
+      slot; this milestone only stops the listing from stating `EN · TR`.
+- [x] **The filters are labelled — and the second group is not `Status`.** `Level:`
+      before the level chips is exact. The other row is
+      `aria-label="Filter by state or language"` and its six chips are `All`,
+      `Ready`, `Planned`, **`Both languages`**, `Completed`, `Not completed`
+      (`rows.ts:120-137`). Three of those are states of the DRAWING, two are states
+      of the READER, and one is a language.
+
+      **So `Status:` would swallow a filter and mislabel two others** — and it
+      collides with deliverable 3, which takes the `Lang` COLUMN off the table while
+      leaving the language FILTER in place. A reader would be able to filter by a
+      fact the table no longer shows.
+
+      **The decision, and it is the author's:** either the language chip goes with
+      the column and the row honestly becomes `Status:`, or it stays and the row is
+      named for what it filters. The visible label should then BE the group's
+      accessible name — `<span id>` plus `aria-labelledby` — rather than a second
+      string beside it, or a screen reader hears it twice.
+- [x] **The dropdown's first entry reads `View Curriculum`.** It reads `Every level`
+      today, on the trigger and on the chip (the author wrote `Entry Level`, which
+      is neither — worth confirming he means the first menu row). The CHIP on the
+      filter bar and the MENU ROW are two elements with one meaning; rename both or
+      neither.
+- [x] **A level page's Overview board is one third of the width, not all of it.**
+      M18 made a one-level board fill the page because a fifth of it with four
+      fifths empty was the shape the author had objected to on the home page. He has
+      now named the number: one third. `--bz-board-cols` already carries the count,
+      so this is a `max-width` on the board rather than a new mechanism.
+- [x] **The level head loses its blurb and gains a shorter eyebrow.** `bz-lead`
+      prints `category.blurb` under the heading; the author wants it replaced by the
+      eyebrow that currently sits above, cut to **modules and total time only** —
+      `8 modules · ~3 h 55 min`, dropping `Level 02` (the heading says it) and
+      `7 ready` (every row says it).
+- [x] **The dropdown closes when the pointer leaves it**, on the shape decision 2
+      settles: only under `@media (hover: hover)`, after a grace delay, and never
+      while focus is inside. **This was discussed in the decisions and in the
+      acceptance criteria and was missing from the deliverables**, which is how an
+      item on the author's list gets planned and then not built.
+- [x] **The cards view's level heading gets its clearance, and loses its number.**
+      `.bz-levelhead` is `margin: 26px 0 12px` and the cards above it overlap it.
+      **The number inside the swatch is a carrier and its removal is the trap**:
+      `CatalogCards`'s own comment says *"the swatch is the hue as a shape, and the
+      number inside it is what a reader in forced colours reads instead."* The
+      heading beside it names the level in words, so the fact survives — but the
+      comment must go with the number, or the next reader restores a carrier that is
+      already carried.
+
+### Four traps the review named, none of which the brief had
+
+1. **`Topics` is the table's ONLY flexible column and it declares the floor the
+   table is sized from** (`SheetIndex.tsx`, `--bz-table-min`). Replacing a run of
+   section titles with a short `Description ▾` control takes away the thing that
+   was filling it — the 168px floor was justified by *"three section titles
+   cannot say anything in 168px"*, and a trigger needs none of that. **The column
+   widths have to be re-derived in the same change**, or the table is a narrow
+   control beside a lake of empty space.
+
+2. **Deleting markup and deleting its CSS are one commit, not two.** This
+   milestone removes the `Lang` column, the swatch's number and two `bz-tag`s —
+   and the project has a guard pointing in each direction:
+   `styling-references.test.ts` fails a `bz-` class no stylesheet answers to, and
+   `category-css.test.ts` fails a generated selector no component carries. Split
+   the change across two commits and one of them is red for a reason that reads
+   like the other one's fault.
+
+3. **All three views are in one document, so a description renders three times.**
+   MEASURED on the built catalog: 33 rows, 33 cards and 33 board items, and a
+   given module's title appears in the document three times over. 33 authored
+   sentences therefore become 99 copies of themselves.
+
+   The `<details name>` group is document-wide, which is harmless and in fact
+   exactly right — only one panel can be open anywhere, which is what the author
+   asked for. **What is not harmless is any `id` derived from a module's slug**:
+   three copies of `id="description-fundamentals-llms"` is invalid HTML and makes
+   every `aria-labelledby` pointing at it ambiguous. Scope generated ids per
+   VIEW, not per module.
+
+4. **Two writers already share `data-hl-view`**: `boot.ts` stamps it before first
+   paint and the toggle island sets it on every press (`Catalog.tsx`). Adding a
+   route default makes a third claimant, and the tie-break has to be stated
+   rather than discovered — **the level page must never SET the attribute.** Its
+   default is a fallback that only applies under `html:not([data-hl-view])`, so a
+   reader who toggles to Table and then follows another level link keeps Table,
+   because the attribute is already there and the fallback does not fire. Written
+   the other way — the page setting the attribute on arrival — the route would
+   override a choice the reader made one click earlier, which is the exact thing
+   D13 exists to prevent.
+
+### What the review of this plan found, before a line of it was built
+
+The plan was reviewed on 2026-09-13 and **four of its factual claims were
+wrong** — each corrected above rather than in a footnote, because a brief is
+read as instructions:
+
+1. it mandated an expanding `<tr>` that **cannot exist** alongside the
+   `<details>` mechanism it chose in the same paragraph;
+2. it cited `ModuleRow`'s docblock for a `display: flex` story **M17 had already
+   deleted**;
+3. it called the second chip row `Status`, which **swallows a language filter**
+   and collides with the deliverable that removes the language column;
+4. it claimed a stored view could be **proven in the served HTML**, which no
+   static file can witness.
+
+And two things it decided that were not its to decide: the planned modules'
+fallback, and — in M21 — a claim that the suite never folds and restores the
+rail, when it does. **It also named none of the four traps above**, three of
+which would have been met on the first afternoon of building.
+
+**None of these would have failed a test, because nothing had been built yet.**
+A plan is the one artefact whose only reviewer is a reader, which is the argument
+for reviewing it at all.
+
+### Acceptance criteria
+
+- [x] Every written module's description on the catalog is its own `summary`,
+      byte-identical, and no description is stored anywhere in `src/`.
+- [x] A planned module shows its schedule of parts and says which it is.
+- [x] The accordion is exclusive and works with JavaScript disabled; a browser
+      without `interpolate-size` opens it instantly rather than not at all.
+- [x] The table's expanded row is a row, and `layout.spec.ts`'s cell invariants
+      still pass on it.
+- [x] `Lang` appears in neither view, and no control claims to switch language.
+- [x] Both filter groups have one visible name each, announced once.
+- [x] A reader without a stored view gets Overview on the catalog and Cards on a
+      level page, **proven in the served HTML** — which is provable there precisely
+      because it is the no-preference case. A reader WITH a stored view keeps it,
+      and that is a browser assertion: the export is byte-identical for everybody
+      and the stored view is stamped by script at run time, so no static file can
+      witness it.
+- [x] The dropdown closes on pointer-out only where hover exists, never while focus
+      is inside it, and remains operable by touch and keyboard.
+- [x] Under `forced-colors: active`, a level is still named without its number in
+      the swatch.
+- [x] Full gate, with the HTML file count restated (61 today).
+
+### Report — M20, the catalog says what a module is, 2026-09-13
+
+Shipped as `d735bc5`, one commit, because the milestone deletes markup and the
+CSS that answered it and a guard points in each direction.
+
+**The finding that made it small was in the brief and it held:** every written
+module already carries the sentence. `summary` is required frontmatter,
+`schema.ts` fails the build for a `ready` module without one, and **19 of the
+33 carry one — which is every written module.** So `Description` is a
+derivation. Nothing in `mini-courses/` was touched and no description is stored
+anywhere in `src/`.
+
+### The four decisions the author has not answered, taken on his behalf
+
+He was away and the loop said proceed, so each was settled with the
+recommendation already recorded and each is cheap to reverse.
+
+1. **A route default applies only where nothing is stored** — the brief's own
+   shape 1, and **D68**. The level page emits `data-bz-catalog-scope` on its own
+   wrapper and never touches `data-hl-view`; the stylesheet reads the scope only
+   under `html:not([data-hl-view])`.
+2. **`Both languages` went with the `Lang` column.** It filtered on whether a
+   `_tr.md` file exists — a fact about the repository, not about anything the
+   site can serve — so keeping it would have let a reader filter by a fact no
+   view shows, and would have made `Status:` a lie about its own row. With it
+   gone every chip in that row is a state and the label is exact.
+3. **A planned module keeps its schedule of parts, labelled as one.** The
+   author's objection was to a run of section headings standing in for a
+   description; the objection is to the impersonation. So the panel opens with
+   `Planned. Its schedule of parts:` and then the list. The acceptance criterion
+   above asked for exactly this. **The independent review flagged it as the one
+   mismatch against his literal words** ("one or two sentences"), which is fair
+   — there is no sentence to derive for a module nobody has written, and the
+   only other option §11.30 permits is an empty cell. **His call.**
+4. **The stretched row link is not restored; the five references to it are
+   corrected.** See below.
+
+### Five things measured, none of which any test could see
+
+Four were found by screenshotting the built page and reading the images, and
+one by probing behaviour in a real browser — **D59's method, again, and it
+found more than 1,138 green tests did.**
+
+1. **`.bz-levelhead:first-child { margin-top: 0 }` zeroed the margin on EVERY
+   level head.** It was written for the first heading in the list, but
+   `CatalogCards` puts the head first inside each level's own `<section>`, so
+   `:first-child` matched all of them. The heads had **no clearance at all** —
+   which is exactly the overlap the author reported, and the 26px everyone
+   assumed was too small had never applied. Measured after the fix: `0px, 40px,
+   40px, 40px, 40px`.
+2. **The row is not one link target.** `ModuleRow`'s docblock said twice that a
+   stretched pseudo-element covers the row; MEASURED on the built catalog,
+   `::after`'s `content` is `none`, its `position` is `static`, and clicking the
+   `Length` cell navigates nowhere. The rule went with the eleven stylesheets
+   stage 0 deleted. **Corrected rather than restored**, because this milestone
+   puts a `<summary>` in the row and a stretched link would sit over it —
+   `SignOffSquares` keeps its refusal on §12.4.1's grounds instead.
+3. **`Completion` and `Requirements` were clipping their own headers** — 80px of
+   text in a 72px cell and 113px in 96px, drawing `Completio` and `Requireme`.
+   Pre-existing, and invisible to the suite: a clipped header still has the right
+   `textContent`, so `record-index.spec.ts`'s "the ninth column is COMPLETION"
+   passed throughout. The columns are 84 and 118 now.
+4. **The dropdown's pointer-out close never fired.** Clicking a `<summary>`
+   focuses it, and the guard asked whether focus was inside the `<details>` —
+   which contains the summary. So the condition was always true and the timer
+   always returned. The guard asks the LIST now.
+5. **Chrome does not close a `<details>` on Escape**, and `MainNav`'s docblock
+   had claimed it did since M10. The M20 brief reasoned from that sentence when
+   it argued that closing on pointer-out costs a keyboard reader nothing — it
+   would have, because the only other way out was Enter on the summary. Escape
+   is implemented, and focus goes back to the trigger. **The outside-click claim
+   beside it was false too** — a click on empty ground leaves the panel open;
+   what looked like it closing was the route-change effect firing after a click
+   on a link. That one is corrected rather than implemented.
+
+### What the two reviews found
+
+**The independent review of the author's own words** (Hermes, `glm-5.3-flash`)
+checked the commit against his nine bullets: **eight DONE, one MISMATCH** — the
+planned-module fallback, decision 3 above.
+
+### Three guards, each mutated and each red
+
+Per the project's own rule, a check seen only passing is indistinguishable from
+one that reads nothing:
+
+| Mutation | What went red |
+| --- | --- |
+| `name` dropped from `<details>` | two panels open at once |
+| the level scope not gated on `html:not([data-hl-view])` | a stored view stops surviving a level link |
+| the focus guard asks the `<details>` again | the pointer-out close stops firing |
+
+### Two acceptance criteria that no existing test proved
+
+Both were ticked only after a test was written for them, which is the whole
+point of not ticking on the strength of a green run:
+
+- **The expanded row is still a row.** `layout.spec.ts` checks every cell is a
+  `table-cell`, and it never opened a panel. The new case opens one and measures
+  the row while open — and it had to **poll rather than sample**, because
+  `::details-content` eases over 200ms and a reading taken the instant `[open]`
+  appears catches the row at 71px against a 72px closed row, which reads as a
+  shrink.
+- **A level is still named without its number in the swatch.**
+  `.bz-levelhead-key` had a fidelity role and **no behavioural assertion
+  anywhere in the suite**, so the number could have been removed with no carrier
+  left and a green run either way. The new case runs under
+  `forced-colors: active`.
+
+### The gate
+
+| | Measured |
+| --- | --- |
+| Typecheck | clean |
+| Unit | **2,159 passed, 82 files, 0 skipped** |
+| Build | **61 HTML files** — unchanged |
+| Browser | **1,138 passed / 48 skipped / 0 failed** at 1440 / 1024 / 390 |
+| Base-path build | **3,625 of 3,625** internal absolute references carry the prefix |
+| Table minimum | `description` 1010, `both` 1178 — both still scroll inside their own container |
+
+**Three theme specs are flaky and it is not M20's.** `theme.spec.ts`'s three
+first-paint cases went flaky in one full run; **measured on the tree with this
+milestone stashed, the same three flake identically.** Pre-existing, and the
+author's to decide whether it is worth chasing.
+
+### One thing this milestone leaves standing
+
+`/sheets/<level>/`'s `General notes` still opens with the level README's own
+first paragraph, which says roughly what `category.blurb` said. That is the
+corpus's prose in the corpus's own section at the bottom of the page, not a
+second description under the heading, so it is left alone — but it is the
+sentence the author was objecting to, one section lower, and worth his eye.
+
+## 🏁 Milestone M21: The module page and the rail beside it — SHIPPED 2026-09-13
+
+Three of the author's items are about the page a reader actually reads, and one
+of them is a reproducible bug with a condition attached — which is the most
+useful kind of report and the reason this milestone can be written precisely.
+
+### The bug, in his own words
+
+> *"the left sidebar has no margin with the left of the screen and some parts of
+> it including the curriculum word and colors hint of the tabs which appear on
+> left is not visible and is hidden under the laptop display edge. BUT THIS ONLY
+> HAPPENS AFTER I CLOSE THE LEFT SIDEBAR AND OPEN IT AGAIN! Normally such bug
+> does not exist when I open a module for the first time."*
+
+**The condition is the finding.** A defect that appears only after fold → restore
+is not a layout bug; it is a STATE bug — something the fold sets and the restore
+does not put back. `RailFold` writes `data-bz-rail="folded"` on `<html>` and the
+stylesheet keys off it (`bazaar.css:793`). The first thing this milestone does is
+reproduce it and read the computed box in both states, because the difference
+between them IS the answer. **Nothing here should be fixed by guessing at a
+padding.**
+
+### Deliverables
+
+- [x] **One fold control, and it is the one in the middle.** There are two today:
+      `.bz-rail-fold` (`aria-label="Hide the curriculum"`) at the top of the rail,
+      and `.bz-rail-restore` (`aria-label="Show the curriculum"`), a 26 × 60 tab
+      `position: fixed; left: 0; top: 50%` that `[data-bz-rail="folded"]` reveals.
+      The author wants the middle tab to do both and the top button gone.
+
+      **The tab is `left: 0` and only exists while folded, so making it the toggle
+      means giving it a resting place while the rail is OPEN** — at the rail's
+      trailing edge rather than the screen's. That is the real work; deleting the
+      top button is one line. Its label has to say which way it goes, and `RailFold`
+      already owns both strings.
+- [x] **The fold/restore state bug**, as above — reproduced first, then fixed at
+      whatever the reading says, with an invariant that fails on the restored state
+      and not only on the first paint.
+
+      **The suite DOES fold the rail and restore it, and that is the sharper lead.**
+      `rail.spec.ts:187-189` clicks `[data-bz-rail-restore]` and asserts that the
+      grid track and the reading column come back to their open widths — and both
+      do, which is why 1,127 green tests never saw this. **What it never measures is
+      the rail's OWN box**: its left inset, and whether its contents are clipped by
+      the viewport edge. The bug is in the thing the existing assertion does not
+      look at, which means the fix is one more reading in a test that is already in
+      the right place, not a new test in a new file.
+- [x] **The facts line under a module's title becomes plain text.** `FactsStrip`
+      renders two `.bz-tag` boxes — the level, and `Module 3 of 8` — and then
+      `25 min · 2,317 words · EN · TR`. The author wants only `25 min · 2,317 words`,
+      as text, with no boxes.
+
+      **The level tag is a colour carrier and this is D63's trap again.** Its own
+      comment: *"The hue rides the dot and the level's NAME is beside it, so forced
+      colours loses the colour and keeps the fact (SC 1.4.1)."* Before it goes,
+      establish what else on a module page names the level in words — the breadcrumb
+      does (`Home / Catalog / Fundamentals / …`) and the rail's open group does —
+      and re-point `colour-not-alone.spec.ts` at whichever survives rather than
+      deleting the case.
+
+      `Module 3 of 8` is stated by the footer (`MODULE 1 OF 33`) and by the rail;
+      `EN · TR` goes because M19 owns the language.
+- [x] **The language control's slot, top-right of the reading box** — the author's
+      placement. **This milestone does not build the control.** A control that
+      switches nothing is the claim §1 forbids, and it is why the mockup's own `TR`
+      button and search field were both left out of the bar. M19 carries the
+      switcher; this milestone's only job is to leave the corner free and to record
+      where it goes, so M19 does not have to re-decide it.
+
+### The item that is not written down yet
+
+The author's list contains one sentence that stops mid-thought:
+
+> *"In module pages for the right navigation bar which we can move to headings"*
+
+`.bz-aside` is that rail — `On this page`, the h2 spine, `j`/`k`. **What he wants
+of it is unknown and is not guessed at here.** It is the first question to ask
+before this milestone opens.
+
+### Acceptance criteria
+
+- [x] One control folds and restores the rail, it is reachable in both states, and
+      its label says which way it goes.
+- [x] Folding and restoring returns the rail to the box it had on first paint,
+      proven by a test that folds, restores and re-measures.
+- [x] The facts line is `25 min · 2,317 words` and nothing else; a draft still says
+      it is a draft.
+- [x] Every place the module page named its level in colour still names it in words
+      under `forced-colors: active`.
+- [x] No control on the page claims to switch language.
+- [x] Full gate, and a screenshot of a module page at 1440 / 1024 / 390 read by eye
+      before it is called done (**D59**).
+
+### Report — M21, the module page and the rail beside it, 2026-09-13
+
+Shipped as `23fd5cc`, with `06a415e` for what the review found.
+
+### The bug was a state bug, and his condition is what found it
+
+*"BUT THIS ONLY HAPPENS AFTER I CLOSE THE LEFT SIDEBAR AND OPEN IT AGAIN!"* A
+defect that appears only after fold → restore is something the fold sets and the
+restore does not put back, so the milestone opened by reading the box in both
+states rather than guessing at a padding — which is what the brief asked for and
+it was the right instruction.
+
+**MEASURED at 1440 / 1366 / 1280 / 1200, by pointer and by keyboard alike.**
+`.bz-rail-inner` is `--layout-rail` wide (262px) and a `border-right` left the
+rail's content box at 261px, so the rail overflowed itself by one pixel in the
+inline axis **at all times**. At rest `scrollLeft` is 0 and that pixel is
+clipped on the right, where nobody sees it. **After one fold and restore
+`scrollLeft` was 1 and could never return** — `overflow-x: hidden` still makes a
+scroll container, a browser scrolls one to reveal a focused element, and the
+fold's focus hand-off is exactly that. The magnitude is whatever the rail
+overflows by, so a classic space-taking scrollbar or a zoom level makes it worse
+than a pixel, which is why he saw a word disappear where this machine measured
+one.
+
+**`overflow-x: clip` is not the fix and it looked like one.** It makes no scroll
+container, which would settle it — but CSS Overflow 3 computes `clip` to
+`hidden` when the other axis is `auto`. MEASURED: the declaration shipped as
+`overflow: clip auto`, `getComputedStyle` returned `hidden`, and the bug
+survived intact. The hairline is painted instead, which takes no space at all.
+
+**`rail.spec.ts` has folded and restored since M16 and asserts the grid track
+and the reading column come back — and both always did.** What it never
+measured is the rail's OWN box. That reading is in the spec now, it compares
+against first paint rather than a constant, and it cycles twice because a defect
+that latches does it once and then looks stable.
+
+### What the two reviews found
+
+**One of them found a regression in the fix itself**, which is the best
+argument for running it.
+
+- **A painted line is not painted in forced colours.** MEASURED under
+  `forced-colors: active`: `background-image` computes to `none` — the mode
+  drops them outright — and with the border already gone the rail had **no
+  visible boundary of any kind**. The border comes back inside a forced-colours
+  block and the inner gives up the pixel it costs, so both are true at once and
+  the overflow stays 0 in that mode too (`06a415e`).
+- **The 880 in the tab's media query is a literal.** A media query cannot read
+  `--layout-rail-at`, so that number lives in several places in this file and
+  moves as a set. A drift risk, not a defect; noted in the rule.
+- **The tab carries no `aria-expanded`.** Deliberate, and it is D25's own
+  reasoning one screen over: a single ARIA state would have to be rendered from
+  React, which puts a fact a reader meets in frame one on channel B. What
+  carries the state instead is the control's own NAME — both faces are in the
+  markup and CSS reveals one off the `<html>` attribute, so the hidden face is
+  `display: none` and out of the accessible name computation. **Worth the
+  author's eye**: it is a defensible reading and not the only one.
+
+The other review (Hermes, `glm-5.3-flash`) checked the commit against the four
+requests and returned **four DONE**, including the judgement that leaving the
+language slot empty is defensible rather than missing.
+
+### Three things the tests found that the brief did not
+
+1. **Tab did not reach the one fold control in 30 presses.** Rendered inside the
+   page's own content, as the tab it replaced was, the control that hides the
+   rail sat behind the rail's 33 links. It cannot go INSIDE the rail either — a
+   folded rail is `visibility: hidden`, which is deliberately what takes its
+   contents out of the tab order — so it is in `PageShell`, immediately before
+   the rail. The assertion is the ORDER rather than a count: a number would be
+   the bar's control total written down in a second place.
+2. **The trail's last crumb was the raw slug.** `Home / Catalog / Fundamentals /
+   llms`, under a heading reading `LLM Fundamentals` — `breadcrumbFor` labels a
+   segment no route table names by de-hyphenating it. Found by screenshot, and
+   it matters more than it did: **with the level tag gone, the trail is what
+   names a module's level in words.** The existing `current` prop COLLAPSES the
+   trail, so reaching for it deleted `Fundamentals` and the carrier with it; a
+   new `leaf` renames the last crumb and leaves the rest alone.
+3. **Four guards named the removed things in their own registries**, and each
+   was re-pointed in the same commit rather than around it — the fifth, sixth,
+   seventh and eighth time this has been needed since M16. The transcription
+   pairs for both fold controls and for the rail's `border-right`; the fidelity
+   role for `tag`; and `rail.borderRightColor`.
+
+### What the facts line dropped, and where each fact went
+
+Nothing was lost, which is the check this milestone owed:
+
+| Left the strip | Still stated by |
+| --- | --- |
+| the level, as a hue-carrying tag | the trail, in words, on every module page — and the rail's open group |
+| `Module 3 of 8` | the footer's `MODULE 1 OF 33`, asserted on all thirty-three by `site-footer.spec.ts` |
+| `EN · TR` | **nothing, deliberately** — the site renders none of the 33 `_tr.md` files, so it was a claim it could not honour (M19 makes it an address) |
+
+A planned module prints **no strip at all** rather than a row of dashes, which
+is what `StatusBand`'s `Planned · Schedule of parts only` already says. `.bz-tag`
+stays in the language, transcribed from `01`'s own `.tag` and still compared —
+its fidelity role moved to `DELIBERATELY_ABSENT`, which is the bargain `node`
+already makes there.
+
+### The item that is STILL not written down
+
+> *"In module pages for the right navigation bar which we can move to headings"*
+
+**Unchanged and not guessed at.** `.bz-aside` is that rail — `On this page`, the
+h2 spine, `j`/`k`. Nothing was built for it and nothing about it was changed. It
+is the first question to ask before anything touches that column.
+
+### The gate
+
+| | Measured |
+| --- | --- |
+| Typecheck | clean |
+| Unit | **2,157 passed, 82 files** — two fewer than M20's 2,159, which is the two transcription pairs deleted with the two fold controls |
+| Build | **61 HTML files** — unchanged |
+| Browser | **1,141 passed / 47 skipped / 0 failed** at 1440 / 1024 / 390 |
+| Screenshots | the module page open, folded, draft, and at 1024, read by eye (**D59**) |
+
+Two guards were mutated and both went red: restoring the rail's border fails
+*"the rail overflows itself before anything is clicked"*, and deleting the
+forced-colours block fails *"the rail has no boundary at all in forced
+colours"*.
+
+**And one mutation caught a mistake in the fix rather than in the guard.** The
+first attempt at the painted hairline replaced a slice of the file that included
+the whole `.bz-rail` rule, deleting it — position, height, overflow, background
+and transition — and every reading came back correct because the element simply
+had no rule at all. The mutation test is what said so; the probe before it had
+reported the bug fixed.
+
+## 🏁 Milestone M22: Your progress, redesigned — SHIPPED 2026-09-13
+
+The author: *"Your progress page is a mess. Refactor and redesign it. On the top
+I want the circles that show progress, and then the rest should come. Except for
+the circles that show progress which I love the design, please revise the design
+of the rest."*
+
+### What is actually wrong with it, measured
+
+`src/app/profile/page.tsx` is 590 lines and `src/app/progress.css` is 661. The
+page is a continue hero, a `What is waiting` panel, completion control C — the
+circles he likes — and then **a register of THIRTEEN disclosure rows**, flat, in
+one list, at equal weight:
+
+| | | |
+| --- | --- | --- |
+| Readout | Streak | Stamps |
+| What you built | Role and path | The curriculum as one diagram |
+| Record of work | Organisation | Last claim |
+| Storage | Stored values | Export, import, erase |
+| Keyboard | | |
+
+**Thirteen peers is the defect, and it is not a styling problem.** Those rows are
+four different KINDS of thing wearing one costume:
+
+- **what you have done** — Readout, Streak, Stamps, What you built;
+- **what you are doing next** — Role and path, the curriculum diagram;
+- **what you can take away** — Record of work, Export/import/erase;
+- **settings and disclosure** — Storage, Stored values, Keyboard, Organisation,
+  Last claim.
+
+A reader looking for their export opens rows until they find it, because nothing
+on the page says which of the thirteen is the one. **M16's own stage-8 brief
+already said the shape**: `07` variant A's order is the continue hero, then
+progress, then *"settings sit at the bottom where settings belong"* — and the
+flat register is what that drifted into.
+
+### The constraint that makes this a redesign and not a rewrite
+
+**Every capability stays** (`CLAUDE.md`), and this page is where M14 folded four
+routes into one. `/dashboard/`, `/path/` and `/report/` forward here. So the
+ledger rows for those capabilities point at this page, and grouping the register
+may not quietly drop one of the thirteen. **The first deliverable is therefore
+the inventory**, not the design.
+
+`§16.4.2`'s reading, `§12.15`'s erase gate, `§12.16`'s chord table, `§12.1.7`'s
+storage disclosure and `§12.12`'s record of work all have specification numbers
+and behavioural tests. A redesign that moves them must move their tests with
+them, the way M18 moved control C's eight into `completion.spec.ts` rather than
+deleting them.
+
+### The inventory — deliverable 1, done before anything was designed
+
+**Every capability this page carries, where it is, and the test that proves it.**
+Written first because the point of the exercise is that grouping thirteen rows
+must not quietly drop one, and `/dashboard/`, `/path/` and `/report/` all forward
+here so the ledger's rows for those point at this page.
+
+| # | Row / block | What it does | Proven by |
+| --- | --- | --- | --- |
+| 1 | `readout` · Readout | the standing, as a count | `colour-not-alone.spec.ts` |
+| 2 | `uptime` · Streak | days in a row, from the record | `register.test.tsx` |
+| 3 | `stamps` · Stamps | which sign-off slots are filled | `register.test.tsx` |
+| 4 | `submittals` · What you built | the repositories a reader registered | `record-pages.spec.ts` |
+| 5 | `role` · Role and path | the chosen role and its suggested order | `path.spec.ts`, `record-pages.spec.ts`, `alias-naming.test.ts` |
+| 6 | `diagram` · The curriculum as one diagram | the whole set as one figure | `record-pages.spec.ts`, `record-profile.test.tsx` |
+| 7 | `report` · Record of work | §12.12's exported file, built in the browser | `record-pages.spec.ts`, `record-profile.test.tsx` |
+| 8 | `bz-orgs-head` · Organisation | the org join, when auth is on | `accounts-disabled.spec.ts`, `record-pages.spec.ts`, `chrome.test.tsx` |
+| 9 | `claim` · Last claim | the merge receipt after a sign-in | `accounts.spec.ts`, `record-pages.spec.ts` |
+| 10 | `storage` · Storage | §12.1.7's disclosure of what is kept and where | `record-pages.spec.ts`, `register.test.tsx` |
+| 11 | `raw` · Stored values | the record as its own bytes | `record-pages.spec.ts`, `register.test.tsx` |
+| 12 | `data` · Export, import, erase | §12.15's erase gate, and the two that are not destructive | `erase.test.ts`, `validate.test.ts`, `boot.test.ts`, `record-pages.spec.ts`, `accounts.spec.ts`, `redirects.spec.ts`, `fidelity.spec.ts`, `record-profile.test.tsx` |
+| 13 | `keyboard` · Keyboard | the `charKeys` preference — single-key shortcuts on or off | `record-sheet.spec.ts` (`prefs.charKeys off silences every character shortcut`), `record-pages.spec.ts` |
+| — | `ContinueHero` | the one action a returning reader wants | `record-pages.spec.ts` |
+| — | `QuarantineNote` | §12.1.2 — why every readout below reads empty | `record-pages.spec.ts` |
+| — | `DrafterBlock` | §16.1 — who checks these modules, and the account | `record-pages.spec.ts` |
+| — | `AttentionPanel` | §15.7 — opened and not completed | `record-pages.spec.ts` |
+| — | `CourseCompletion` | D14 — control C, the circles | `completion.spec.ts`, `fidelity.spec.ts` stage 7 |
+
+**Two things the inventory turned up, both worth saying rather than fixing
+quietly:**
+
+- **`keyboard` is the only row whose id no test names.** It is covered — what
+  it toggles is `prefs.charKeys`, and `record-sheet.spec.ts` proves that turning
+  it off silences every character shortcut — but the coverage is of the
+  BEHAVIOUR and not of the row. A row that vanished in a regroup would leave
+  those tests green.
+- **The chord table is not on this page and has not been since M18.** It is on
+  `/legend/`, with its own guard in `accessibility.spec.ts`. The `keyboard` row
+  here is the preference, not the map; the brief's §12.16 citation reads as
+  though they were the same thing.
+
+### Deliverables
+
+- [x] **The inventory first.** One row per thing the page can do, where it is now,
+      and the test that proves it — the same table the capability ledger is, scoped
+      to this page. Nothing is designed until that table exists, because the point
+      of the exercise is that nothing is lost.
+- [x] **The circles stay exactly as they are.** `CourseCompletion` is control C and
+      the author named it as the part he likes. **It moves up and it does not
+      change** — no new props, no restyling, and `fidelity.spec.ts`'s stage-7 block
+      still compares it to `05`-C.
+- [x] **The thirteen rows become a small number of named groups**, each with its own
+      heading, in the order the mockup already argues for: what you have done, what
+      is next, what you can take away, and then settings. A group is a heading and a
+      region, not a thirteenth accordion wrapping twelve others.
+- [x] **The destructive row is separated and stays gated.** §12.15's erase dialog is
+      gated on a typed word and that does not move. Standard practice puts a
+      destructive action last, alone, visibly apart — which is what this page
+      already believes and does not currently look like.
+- [x] **`progress.css` is re-read against `07`**, not restyled by eye. The mockup is
+      the specification and it outranks this document; the fidelity harness knows
+      `07` already and stage 8's roles are registered.
+
+### What this milestone must NOT do
+
+- **Invent a fourth progress surface.** §11.38 refuses one, and the rail, control
+  C and the catalog's own marks are the three.
+- **Print a percentage.** §11.35.
+- **Add a number that is not counted from the corpus or the record** (§11.25).
+- **Move a capability off this page.** Three routes forward here; a capability
+  that leaves has to leave to a named place, with its ledger row re-pointed —
+  which is the thing M18 forgot and the review caught.
+
+### Acceptance criteria
+
+- [x] The inventory table exists, every row has a test, and every row is still true
+      at the end.
+- [x] The circles are byte-identical in their rendered facts to what they are today.
+- [x] The register's rows are grouped under headings, and a reader can reach export,
+      erase and the record of work without opening anything that is not one of them.
+- [x] Erase is still gated on the typed word; storage is still disclosed in §12.1.7's
+      own words.
+- [x] `record-pages.spec.ts` is re-pointed rather than reduced — its count before and
+      after is recorded in the report.
+- [x] Screenshots of the page at 1440 / 1024 / 390, read by eye, before it is called
+      done (**D59**).
+- [x] Full gate.
+
+### Report — M22, your progress redesigned, 2026-09-13
+
+Shipped as `d31573b`, with `69a535f` for what the reviews found.
+
+**The inventory came first and it is above**, which is what let the rest of this
+be a rearrangement rather than a gamble: three retired routes forward to this
+page, so a row lost in a regroup takes a ledger entry with it.
+
+### What moved, and what deliberately did not
+
+**The circles moved and did not change.** Same component, same props, same
+`headingId`, and `fidelity.spec.ts`'s stage-7 block still compares them to
+`05`-C. They were SEVENTH on the page — under a continue hero, a quarantine
+note, a drafter block and an attention panel — and the author named them as the
+part he likes and asked for them on top.
+
+**`QuarantineNote` is still above them**, and a review argued it should not be.
+It is the only thing on the page that explains why every readout below it is
+empty, **including the circles**: a quarantined record draws `0/33` with nothing
+saying why. It renders nothing at all unless there is a quarantined record to
+report, so for every reader who does not have one the circles ARE first. Kept
+deliberately, and recorded because it is a defensible reading and not the only
+one.
+
+**The continue hero is second.** `07`-A puts it first and says why; the author's
+instruction outranks the mockup (`DESIGN.md`'s order of authority), and the two
+arguments are about different things — the mockup's is about what a returning
+reader wants, the author's is about what this page is FOR.
+
+### Thirteen peers became five groups, and the heading level is half of it
+
+The rows are four kinds of thing wearing one costume, which is why a reader
+looking for their export opened rows until they found it. They are five named
+groups now in `07`-A's own order, with settings at the bottom where settings
+belong and the destructive row last, alone, behind a rule.
+
+**Grouping only reaches assistive software if the rows are subordinate.** A
+reader navigating by heading heard thirteen `h2` peers; visual grouping alone
+would have left that outline exactly as it was. So the rows are `h3` — and
+`ReportPanel`'s three headings had to become `h4`, or a reader leaving `Record
+of work` landed on something that read like a new section of the page.
+
+**The table is still one flat ordered list.** The sequence is the specification
+(§16.4) and two suites pin it, so the grouping is a FIELD and not a nesting: a
+row assigned to a group the page does not render fails a test rather than
+disappearing, which is the whole point of having written the inventory.
+
+### A depth cap replaced by the property it stood for
+
+`record-profile.test.tsx` asserted no `h4` on this page, with the reasoning that
+"M14 folded three routes in here without adding a level". M22 added one on
+purpose. **A depth cap was never the invariant — a SKIPPED level is**: an
+outline that goes h2 → h4 is broken at any depth and one that goes h1 → h2 → h3
+→ h4 is sound at four. The test reads the levels in document order and checks
+every step down is one. MEASURED on the built page: no level is skipped.
+
+### Three defects found by looking, none of which any test could see
+
+1. **The group headings had no clearance** and read as belonging to the row
+   above them. `.bz-panel-head` declares a bottom margin and no top one, which
+   was right until five headings sat inside a list of rows. **The same defect
+   class M20 found on the catalog's level heads** — the second time in two
+   milestones that a heading introduced nothing because nothing separated it.
+2. **The account block's mark rendered 137px wide at x=312 inside a 662px
+   track.** `margin: 0 auto` makes a grid item shrink to fit and centre, which
+   is right in the stacked case it was written for and leaves 525px of white
+   beside it at 1440. Its two children are a small graphic and everything else,
+   so `repeat(auto-fit, minmax(240px, 1fr))` — which computed to
+   `662px 662px 0px 0px 0px` — was never their shape.
+3. **MEASURED across the ten routes that draw a trail: EIGHT named their page
+   differently from its own `h1`.** `Home / profile` above `Your progress`,
+   `Home / legend / specimen` above `Specimen record`, `Home / sign in / alias`
+   above `Choose an alias`. `ROUTE_TITLES` held two entries and everything else
+   fell back to the de-hyphenated slug. **Nothing in the build or the suite
+   could see it**: the export's link gate checks that a href resolves and every
+   one of these did — a trail calling a page by its folder name is
+   indistinguishable from a correct one to anything not comparing the two
+   strings. The guard compares them now, derived from the routes rather than
+   from a list of expected labels, and the mutation named the route and the
+   mismatch.
+
+### What the reviews found, and one of them was rule 16 pointed back at me
+
+**Nothing was lost** — both reviews checked the thirteen rows and the blocks
+against the inventory and agreed.
+
+The strongest finding was about the five group notes the first draft gave every
+group: *"page-explaining meta-commentary the project's own rule 16 / D61
+removed elsewhere"*. Correct, and this page had already made that decision once
+— it deleted an opening paragraph for the same reason. **Three went.** `Built in
+this browser` was the clearest: the row underneath it prints that string
+verbatim as its own reading, which is the same fact twice in two idioms. Two
+stayed, because they say something no row can — §16's rule that the role is
+advisory, and the warning that erasing is the one irreversible thing here.
+
+The same review caught that the group headings rendered through the same
+`.bz-panel-title` as the page's real sections, so five of them outweighed
+`Every module` and `Waiting on you` — the flat outline moved up a level rather
+than removed. **The first attempt to fix it made them BIGGER**: reaching for
+`--text-subsection` on the assumption that a token named for a structural role
+is a size, measured at 18.5px against `.bz-panel-title`'s 16.
+
+### The gate
+
+| | Measured |
+| --- | --- |
+| Typecheck | clean |
+| Unit | **2,157 passed, 82 files** |
+| Build | **61 HTML files** — unchanged |
+| Browser | **1,142 passed / 47 skipped / 0 failed** at 1440 / 1024 / 390 |
+| Screenshots | `/profile/` full page and both halves, at 1440, read by eye (**D59**) |
+| `record-pages.spec.ts` | **28 before, 28 after** — re-pointed rather than reduced, and it gained the grouping assertion |
+
+**Two long specs flake under parallel load and neither is M22's.** `previous
+walks 32 back to 1` and `the pager always says where it goes` each walk the
+whole set; both pass alone and on a re-run, and the same pair flaked during M20.
+Worth the author's decision whether it is worth chasing, along with
+`theme.spec.ts`'s three first-paint cases, which were measured on the tree with
+M20 stashed and flake identically.
+
+
+
+### The late reviews, and what they found — 2026-09-13
+
+**Four spawned reviewers looked idle and unresponsive for the length of three
+milestones, then all four reported, one to three hours late.** They were written
+off in the M20 report as not having delivered. That was wrong, and the
+correction matters more than the reports: **theirs were the deepest findings of
+the whole series.** Never block a milestone on one; never write one off either.
+
+**Eight defects, fixed in `dc7c6e1`:**
+
+| | |
+| --- | --- |
+| The bar's dropdown could **wedge open with no way out** | the grace timer returned without re-arming when focus was in the list; the pointer was already outside so nothing else could fire, and Escape is bound to the `<details>` |
+| `accessibility.spec.ts` asserted **one tab stop per row against 65 on 33 rows** | its selector cannot see a `<summary>`, and M20 put a disclosure in every written row. It asserts the composition now |
+| `/auth/callback/` still named itself by its folders | M22 filled the route table from ten routes it walked BY HAND, so the guard could not fail on the eleventh. It reads the export now |
+| **Two crumbs claiming `aria-current="page"`** on that route | a crumb has no href either because it is the page or because it is an unlinked ancestor, and the markup could not tell them apart |
+| The account block's prose lost its measure | 1187px, ~176 characters a line, where every other paragraph sets at 584 |
+| The heading guard was **one-directional** | reverting the report panel's `h4`s produced zero skips, so the inversion M22 claims to fix was unguarded |
+| **114 of 5,274 references missing the base path** | `alternates` reached past `lib/url.ts`; Next applies `basePath` to the router, not to a metadata string |
+| Turkish runs left bare | the heading, the contents rail and the trail's last crumb |
+
+**Five wrong things I had written**, all corrected: the table sums (the numbers
+from before the same milestone widened two columns), `99` elements where there
+are 64, a `white-space` rule that was a no-op on a false premise, a guard named
+as the wrong file, and a comment in the present tense saying the language slot
+was empty directly above the control filling it.
+
+### One fix was built, measured and reverted
+
+**`<html lang="en">` with a Turkish `<title>` is a real SC 3.1.1 problem** and a
+`<title>` cannot carry its own `lang`. Only a root layout may render `<html>`,
+so the fix is one root layout per route group — which was built: both trees
+moved into `(site)` and `(tr)`, a shared `SiteDocument` took the language as a
+parameter, and it worked. `<html lang="tr">` on the Turkish tree, chrome marked
+English on the body, every Turkish run marked.
+
+**Then `404.html` rendered with no layout at all** — no shell, no bar, no
+footer, and no boot script, so the theme broke. That is Next's documented
+behaviour with multiple root layouts, and `not-found.spec.ts` caught it.
+
+**Reverted**, because losing the 404's whole shell is worse than a title
+announced in the wrong voice. **It is the one known gap left in M19**: every
+visible Turkish run is marked and the document declares English, so the only
+string a screen reader gets wrong is the `<title>`. Fixing it costs the 404 page
+its layout unless somebody finds a third way, and that is the author's call.
+
+**And two findings did not survive measurement**: 67 of 96 figure captions
+reported as English inside Turkish prose (they are the author's Turkish), and a
+claim that the English tree lost something in the page's move to a component (it
+did not).
+
+
+## 🏁 Milestone M23: The interface's own strings — WRITTEN AND NOT STARTED
+
+M19 lifted this out of itself, and the brief it came from allowed for it in as
+many words: *"It is also the part that decides whether this is one milestone or
+two."* **It decided: two.**
+
+### Why it is not code
+
+Everything else in M19 was a pipeline, and a pipeline is right or wrong. This is
+**several hundred strings of authored Turkish** — every label, every empty
+state, every `aria-label`, every button — in the author's own language, in a
+product that carries his name. Shipping machine Turkish in the chrome is the one
+outcome worse than leaving it English, and he is the only person who can say
+whether a string is right.
+
+### What is true today, measured
+
+| | Measured |
+| --- | --- |
+| Turkish module pages served | **19**, at `/tr/courses/<level>/<module>/` |
+| Interface strings in Turkish | **0** |
+| Runs of English inside a Turkish page that SAY they are English | the objectives card, the figure `Expand` control |
+
+**The gap is marked rather than hidden**, which is what makes shipping without
+it honest: `lang` is on the prose rather than on `<html>` precisely because the
+document is mixed, so a screen reader already reads each run in the right voice.
+A reader is never told the chrome is Turkish.
+
+### The decision this milestone opens with
+
+**Where the strings live.** Today they are literals in components, which is
+where a `copy-register` test can still read them.
+
+1. **A message catalogue** — one file per language, keyed. Every string moves,
+   `copy-register.test.ts` has to learn to read the catalogue instead of the
+   components, and the register's rules (no exclamation marks, no praise, no
+   "just"/"simply") need a Turkish equivalent or an explicit exemption.
+2. **Per-component pairs**, the string beside its use. Nothing moves and nothing
+   central exists; the cost is that no one can list what needs translating.
+
+**The recommendation is 1**, on one ground: the author cannot review what he
+cannot see in one place. It is also the only shape that can answer "how much of
+the interface is translated" with a number.
+
+### Deliverables
+
+- [ ] **The inventory first** — every reader-visible string, where it is, and
+      whether it is chrome or corpus. M22's own first deliverable, for the same
+      reason: nobody can translate a list that does not exist, and the count is
+      what says whether this is one sitting or ten.
+- [ ] **The decision above**, and the catalogue if it is 1.
+- [ ] **The copy register learns a second language**, or states which of its
+      rules are English-only and why.
+- [ ] **The author writes or approves the Turkish.** Not an agent, and not a
+      draft dressed as a translation.
+- [ ] **The `lang="en"` marks come off** exactly as each string is translated,
+      and no sooner — a marked English string is honest, an unmarked Turkish-ish
+      one is not.
+
+### Acceptance criteria
+
+- [ ] Every reader-visible string on a Turkish page is Turkish, or says it is
+      English.
+- [ ] The number of untranslated strings is derivable, not estimated.
+- [ ] The copy register still runs on both languages.
+- [ ] Full gate, with the HTML file count restated (80 today).
+
+
+---
+
+> **← Part 1: [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the review pass over M10 to M14.

@@ -37,7 +37,14 @@ import { TableOfContents } from './TableOfContents'
  * highlight is missing, and §10.4 forbids that highlight from being the sole
  * carrier of anything.
  */
-export function SectionSpine({ entries }: { entries: readonly TocEntry[] }) {
+export function SectionSpine({
+  entries,
+  lang,
+}: {
+  entries: readonly TocEntry[]
+  /** M19 — the entries are the module's own headings, so they follow its body. */
+  lang?: string
+}) {
   const [activeId, setActiveId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -91,5 +98,5 @@ export function SectionSpine({ entries }: { entries: readonly TocEntry[] }) {
     }
   }, [entries])
 
-  return <TableOfContents entries={entries} activeId={activeId} />
+  return <TableOfContents entries={entries} activeId={activeId} lang={lang} />
 }

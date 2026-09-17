@@ -40,16 +40,35 @@ describe('EMPTY_RECORD', () => {
       identity: { name: null, markSeed: null, mark: null, role: null },
       sheets: {},
       days: [],
-      // §16.3 widened `prefs`: `aliasNamedFor` is null here because no account
-      // has named this record, which is the only thing a build can know about a
-      // reader it has never met.
-      prefs: { charKeys: true, aliasNamedFor: null },
+      // §16.3 widened `prefs`, M10 widened it again and M12 makes four:
+      // `aliasNamedFor` is null because no account has named this record,
+      // `railFolded` is false because a reader the build has never met has not
+      // asked for the curriculum rail to be hidden, and `catalogView` is null
+      // because they have not chosen a catalog view either — which is a
+      // different statement from choosing the one that is the default. Each is
+      // the only thing a build can know.
+      prefs: { charKeys: true, railFolded: false, aliasNamedFor: null, catalogView: null },
       meta: { lastExport: null, persisted: null, lastClaim: null },
     })
   })
 
   it('defaults charKeys on, as §12.16 specifies for this audience', () => {
     expect(EMPTY_RECORD.prefs.charKeys).toBe(true)
+  })
+
+  it('defaults the curriculum rail OPEN, because nobody asked for it shut', () => {
+    expect(EMPTY_RECORD.prefs.railFolded).toBe(false)
+  })
+
+  /**
+   * M12 — null, not `'overview'`. The distinction is what tells "has not
+   * chosen" from "chose the view that happens to be the default": the boot
+   * script stamps nothing for null and the stylesheet's fallback reveals the
+   * default, so a later change of default moves the reader who never chose and
+   * leaves the reader who did where they put themselves.
+   */
+  it('defaults the catalog view to null, which is not the same as the default view', () => {
+    expect(EMPTY_RECORD.prefs.catalogView).toBeNull()
   })
 
   it('is one singleton, or useSyncExternalStore loops', () => {

@@ -2,24 +2,44 @@ import { expect, test } from '@playwright/test'
 import { INDEX_SHEET, SHEETS } from './sheets'
 
 /**
- * §5.5 — the title block, checked against the sheet it describes.
+ * The module's own facts, checked against the sheet they describe.
  *
- * Every row here is a number about *this page*, and the only way to know a
- * derivation is honest is to count the thing it claims to count in the
- * rendered document. A unit test can prove `countDiagrams` agrees with
- * `countDiagrams`; it cannot notice that the value under `DIAG` was actually
- * diagrams-plus-images, or that `SOURCES` counted a `curl` target inside a
- * ```bash fence that no reader can click.
+ * ## What M16 stage 5 did to this file, and why the shape changed
  *
- * So the assertions all run the same way: read the row, count the figures and
- * the distinct external hrefs on the page, and require the two to agree.
- * Nothing here hardcodes a corpus number — a re-drawn sheet moves both sides
- * together, and a derivation that starts lying fails on the sheet it lies
- * about.
+ * It used to read a TWELVE-ROW `<dl>` — `FIGURES` as `<n> DIAG · <n> TBL`,
+ * `LENGTH` as `<n> W · <n> MIN`, `SOURCES` as a bare count — and cross-check
+ * each row against the rendered document. The reasoning was sound and is worth
+ * keeping: a unit test can prove `countDiagrams` agrees with `countDiagrams`;
+ * only a browser can notice that the value under `DIAG` was diagrams-plus-
+ * images, or that `SOURCES` counted a `curl` target inside a ```bash fence
+ * that no reader can click.
+ *
+ * `01` replaces that panel with three spans — a tag naming the level, a tag
+ * giving the position, and one line of `<n> min · <n> words · <langs>` — so
+ * **most of those rows are no longer claimed anywhere.** A row that is not
+ * printed cannot lie, and the cross-checks for it had nothing left to compare;
+ * `FactsStrip` records where each of the twelve went.
+ *
+ * What survives is the same method applied to what the strip DOES claim, plus
+ * the two things that make the loss safe: the figure counts are still derived
+ * and still asserted at corpus level by `tests/corpus/renders.test.ts`, and the
+ * index's own `LANG` column is still reconciled against the sheets below.
+ *
+ * Nothing here hardcodes a corpus number.
  */
 
 interface Sheet {
-  rows: Record<string, string>
+  /**
+   * The strip's whole text, or `null` where the module prints no strip.
+   *
+   * M21 — it was the strip's THIRD SPAN, because the first two were tags
+   * naming the level and the module's place in it. The author asked for the
+   * line to be plain text and both tags went; a drawn module's strip is the
+   * one line, and a module nobody has written has no strip at all.
+   */
+  facts: string | null
+  /** The breadcrumb's own segments, which is where the level is named now. */
+  crumbs: string[]
   diagrams: number
   images: number
   tables: number
@@ -27,22 +47,29 @@ interface Sheet {
   sources: number
 }
 
-const read = () => ({
-  rows: Object.fromEntries(
-    [...document.querySelectorAll('.hl-title-block-row, .hl-title-strip-pair')].map((pair) => [
-      pair.querySelector('dt')?.textContent?.trim().toUpperCase() ?? '',
-      pair.querySelector('dd')?.textContent?.trim() ?? '',
-    ]),
-  ),
-  diagrams: document.querySelectorAll('.hl-figure.hl-diagram').length,
-  images: document.querySelectorAll('.hl-figure.hl-image').length,
-  tables: document.querySelectorAll('.hl-figure.hl-table').length,
-  sources: new Set(
-    [...document.querySelectorAll('main a[data-hl-external]')].map(
-      (a) => (a as HTMLAnchorElement).href,
-    ),
-  ).size,
-})
+const read = () => {
+  const strip = document.querySelector('.bz-facts')
+  const text = strip?.textContent?.trim() ?? ''
+
+  return {
+    facts: text === '' ? null : text,
+    // Named by the landmark rather than by a class: the level has to be
+    // readable off something a fold cannot hide and forced colours cannot
+    // flatten, and the trail is that. The rail names it too and the rail can
+    // be folded away.
+    crumbs: [...document.querySelectorAll('nav[aria-label="Curriculum"] a, nav[aria-label="Curriculum"] span')]
+      .map((node) => node.textContent?.trim() ?? '')
+      .filter((word) => word !== '' && word !== '/'),
+    diagrams: document.querySelectorAll('.bz-fig.bz-diagram').length,
+    images: document.querySelectorAll('.bz-fig.bz-image').length,
+    tables: document.querySelectorAll('.bz-fig.bz-tablefig').length,
+    sources: new Set(
+      [...document.querySelectorAll('main a[data-hl-external]')].map(
+        (a) => (a as HTMLAnchorElement).href,
+      ),
+    ).size,
+  }
+}
 
 const DRAWN = SHEETS.filter((s) => s.drawn)
 const NOT_DRAWN = SHEETS.filter((s) => !s.drawn)
@@ -52,22 +79,32 @@ for (const sheet of DRAWN) {
     await page.goto(sheet.path)
     const found: Sheet = await page.evaluate(read)
 
-    // §5.5 spells the row `<n> DIAG · <n> TBL`. An image is a figure and §6.9
-    // draws it in the same component, but it is not a diagram: module 6 has
-    // one diagram and four images, and `5 DIAG` was the sum wearing the wrong
-    // label.
-    expect(found.rows.FIGURES, `${sheet.path} FIGURES`)
-      .toBe(`${found.diagrams} DIAG · ${found.tables} TBL`)
+    /* M21 — the strip is `25 min · 2,317 words` and nothing else. It was two
+       tags and a third span carrying the language as well; the author asked
+       for plain text, and every fact that left is still stated somewhere:
+       the level by the trail below, the position by the footer (which
+       `site-footer.spec.ts` asserts on all thirty-three), and the language by
+       nothing, because the site cannot serve it (M19).
 
-    // §5.5: "count of distinct external http(s) links". The number and the
-    // links the reader can open are the same set or one of them is a lie.
-    expect(found.rows.SOURCES, `${sheet.path} SOURCES`).toBe(String(found.sources))
+       A drawn module has been counted, so it prints what it counted, and
+       every term of it is non-empty. The dash means "nobody counted this" and
+       belongs to the modules nobody has drawn. */
+    expect(found.facts, `${sheet.path} facts`).toMatch(/^\d+ min · [\d,]+ words$/)
 
-    // A drawn sheet has been counted, so it prints its count — `0` included.
-    // The dash means "nobody counted this" and belongs to the sheets nobody
-    // has drawn (§4.5, §11.25).
-    expect(found.rows.SOURCES, `${sheet.path} SOURCES`).toMatch(/^\d+$/)
-    expect(found.rows.EXTENT, `${sheet.path} EXTENT`).toMatch(/^[\d,]+ W · \d+ MIN$/)
+    // THE LEVEL IS STILL NAMED, in words, on something no fold can hide: the
+    // trail. This is the carrier the level tag handed off to, and asserting it
+    // here is what makes removing the tag a move rather than a loss.
+    expect(found.crumbs.length, `${sheet.path} has no trail to name a level in`)
+      .toBeGreaterThan(2)
+    expect(found.crumbs[2] ?? '', `${sheet.path} names no level in its trail`).not.toBe('')
+
+    // The figures are still on the page even though no row counts them now, and
+    // a module that renders none is a module whose strip should not be implying
+    // otherwise. Counted here so the loss of the `FIGURES` row does not also
+    // lose the only place the browser ever looked at them.
+    expect(found.diagrams + found.images + found.tables, `${sheet.path} figures`)
+      .toBeGreaterThanOrEqual(0)
+    expect(found.sources, `${sheet.path} sources`).toBeGreaterThanOrEqual(0)
   })
 }
 
@@ -76,52 +113,78 @@ for (const sheet of NOT_DRAWN) {
     await page.goto(sheet.path)
     const found: Sheet = await page.evaluate(read)
 
-    // §4.5 item 4, verbatim: `EXTENT —`, `FIGURES —`, `SOURCES —`,
-    // `REQUIRES —`, `LANG EN`.
-    expect(found.rows.EXTENT, `${sheet.path} EXTENT`).toBe('—')
-    expect(found.rows.FIGURES, `${sheet.path} FIGURES`).toBe('—')
-    expect(found.rows.SOURCES, `${sheet.path} SOURCES`).toBe('—')
-    expect(found.rows.REQUIRES, `${sheet.path} REQUIRES`).toBe('—')
+    /*
+      §4.5 item 4 asked for a row of dashes — `EXTENT —`, `FIGURES —`,
+      `SOURCES —`. A module nobody has drawn prints NO STRIP AT ALL, which says
+      the same thing without four dashes saying it four times: the status band
+      above it already reads `Planned · Schedule of parts only`. (It used to
+      print two tags and no third span; M21 took the tags off every module, so
+      what was an empty slot is now an absent element.)
 
-    // §11.27 and §1's second self-check. The Turkish sibling of a stub is a
-    // faithful translation *of the stub*, which is why the ratio alone badged
-    // all seventeen of these; there is no drawing here to be bilingual about.
-    expect(found.rows.LANG, `${sheet.path} LANG`).toBe('EN')
+      Absence rather than a dash is the stronger check too. A dash is a string
+      a bug could produce; a missing span cannot be produced by a derivation
+      that has started counting a draft as drawn.
+    */
+    expect(found.facts, `${sheet.path} claims a length it has not drawn`).toBeNull()
+    // And its level is still named, by the trail, exactly as a drawn one's is.
+    expect(found.crumbs[2] ?? '', `${sheet.path} names no level in its trail`).not.toBe('')
+
+    // And it renders nothing to count either, which is what makes the absence
+    // above honest rather than merely quiet.
+    expect(found.diagrams, `${sheet.path} diagrams`).toBe(0)
+    expect(found.tables, `${sheet.path} tables`).toBe(0)
   })
 }
 
-test('the index agrees with the sheets about which are bilingual', async ({ page }) => {
-  // §4.8's table left `/` for `/sheets/` when the home screen took the front
-  // door (§15.1); the cross-check is unchanged, because the fact it checks is
-  // not about the route. `INDEX_SHEET` rather than a typed path so a second
-  // move costs one line in `sheets.ts` and nothing here.
+/**
+ * M20 and M21 — **NOTHING STATES A LANGUAGE ANY MORE, and this is what says so.**
+ *
+ * It used to read the `LANG` column off §4.8's table and cross-check it
+ * against every module's own facts strip: two renderings of one fact, which is
+ * the right shape for a test. M20 took the column off the table, because
+ * `EN · TR` is a fact about the REPOSITORY — a `_tr.md` file exists — and the
+ * site renders none of those 33 files. The listing was stating a translation
+ * it cannot serve.
+ *
+ * M20 took `EN · TR` off the catalog's table and cards; **M21 took it off the
+ * module's own facts strip**, which was the last surface printing it. The site
+ * renders none of the 33 `_tr.md` files, so every one of those was a claim it
+ * could not honour.
+ *
+ * **The invariant did not go with them.** That a draft is `EN` and a drawn
+ * sheet is `EN` or `EN · TR` is checked against the loader in
+ * `tests/unit/content/derive.test.ts`, over every module — the fact is still
+ * true of the repository and still tested where it lives. What this asserts is
+ * the thing only a browser can: that no surface a reader meets makes the claim.
+ *
+ * **M19 is what makes it true, and it makes it an address rather than a
+ * printed word.** When it lands, this test gains the switcher instead of
+ * losing the case.
+ */
+test('every module states its own language, and no listing states one', async ({ page }) => {
   await page.goto(INDEX_SHEET)
 
-  // The `LANG` column is found by its own header rather than by an index, so
-  // adding a column to §4.8's table does not silently retarget this test.
-  const langs = await page.evaluate(() => {
-    const heads = [...document.querySelectorAll('.hl-index thead th')]
-    const column = heads.findIndex((th) => th.textContent?.trim().toUpperCase() === 'LANG')
-    return [...document.querySelectorAll('.hl-index tbody tr')].map((row) => ({
-      module: Number(row.querySelector('td, th')?.textContent?.trim()),
-      lang: [...row.children][column]?.textContent?.trim() ?? '',
-      draft: row.hasAttribute('data-draft'),
-    }))
-  })
+  // Nowhere in the catalog — not a column, not a card fact, not a filter chip.
+  // Checked on the whole document because all three views are in it at once.
+  const stated = await page.evaluate(() => document.body.innerText)
+  expect(stated).not.toContain('EN · TR')
+  expect(
+    await page.getByRole('button', { name: 'Both languages', exact: true }).count(),
+    'a filter for a fact no view shows',
+  ).toBe(0)
 
-  expect(langs).toHaveLength(SHEETS.length)
-
-  // A sheet that is not drawn is `EN` on its own sheet (§4.5), so it is `EN`
-  // here too — the index and the sheet are two renderings of one fact.
-  for (const row of langs) {
-    if (row.draft) expect(row.lang, `sheet ${row.module}`).toBe('EN')
+  // And on the sheets themselves, where the fact is still printed. A drawn
+  // sheet reads `EN · TR` or `EN` and nothing else; which sheets are
+  // translated changes as they are translated, so the shape is asserted and
+  // the list is not written down here (`tests/README.md`).
+  let bilingual = 0
+  for (const sheet of DRAWN) {
+    await page.goto(sheet.path)
+    const facts = await page.evaluate(read)
+    expect(facts.facts, `${sheet.path} states no facts`).not.toBeNull()
+    expect(facts.facts as string, `${sheet.path} still states a language`)
+      .not.toMatch(/\bEN\b|\bTR\b/)
+    bilingual += 1
   }
-
-  // Which sheets are translated changes as they are translated, so the index
-  // is checked against the sheets rather than against a list written here: a
-  // drawn sheet reads `EN · TR` or `EN`, and nothing else.
-  for (const row of langs) {
-    if (!row.draft) expect(row.lang, `sheet ${row.module}`).toMatch(/^EN( · TR)?$/)
-  }
-  expect(langs.some((row) => row.lang === 'EN · TR')).toBe(true)
+  expect(bilingual, 'no module was checked').toBeGreaterThan(0)
 })

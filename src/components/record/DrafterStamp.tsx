@@ -33,17 +33,17 @@ export function DrafterStamp({
   mark: MarkId | null
   /** 8 lowercase hex, minted once at the first sign-off. */
   seed: string | null
-  /** record.css fixes the class at 24px; a caller wanting another size says so. */
+  /** progress.css fixes the class at 24px; a caller wanting another size says so. */
   size?: number
 }) {
   const paths = markPaths(mark ?? 'seeded', seed)
   if (paths.length === 0) return null
 
   return (
-    // The dimensions are inline on both boxes because `.hl-mark-stamp` and
-    // `.hl-mark-stamp svg` both hard-code 24px, and a stylesheet beats an
+    // The dimensions are inline on both boxes because `.bz-mark-stamp` and
+    // `.bz-mark-stamp svg` both hard-code 24px, and a stylesheet beats an
     // attribute. At the default they restate what the class already says.
-    <span className="hl-mark-stamp" style={{ width: size, height: size }}>
+    <span className="bz-mark-stamp" style={{ width: size, height: size }}>
       <svg
         viewBox={MARK_VIEW_BOX}
         width={size}

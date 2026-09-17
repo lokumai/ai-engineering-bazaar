@@ -159,12 +159,18 @@ describe('the g mode — a mode, not a race (§12.16)', () => {
     expect(result.handled).toBe(true)
   })
 
-  it('resolves all five destinations §12.16 names', () => {
+  /**
+   * M14 unbound three of them by deletion: `d`, `r` and `l` named routes that
+   * folded into `/profile/`, and a chord whose destination is gone is unbound
+   * rather than repointed — four keystrokes reaching one page is a shortcut
+   * sheet that reads as a mistake. The next case is what says they are gone
+   * rather than silently still bound.
+   */
+  it('resolves every destination the chord table names', () => {
     const cases: Array<[string, string]> = [
-      ['d', 'dashboard'],
+      ['h', 'home'],
       ['i', 'index'],
       ['p', 'profile'],
-      ['r', 'record'],
       ['c', 'category'],
     ]
     for (const [key, target] of cases) {
@@ -172,6 +178,18 @@ describe('the g mode — a mode, not a race (§12.16)', () => {
       expect(result.action, key).toEqual({ kind: 'nav', target })
       expect(result.handled, key).toBe(true)
       expect(result.state, key).toEqual(IDLE)
+    }
+  })
+
+  it('has nothing bound to the three chords M14 retired', () => {
+    // `g d`, `g r` and `g l` went to the dashboard, the record of work and the
+    // learning path. Each is a mistyped chord now: it does nothing at all and
+    // is swallowed, which is what every unbound second key does.
+    for (const key of ['d', 'r', 'l']) {
+      const result = resolveKey(PENDING_G, press(key), ON)
+      expect(result.action, key).toBeNull()
+      expect(result.state, key).toEqual(IDLE)
+      expect(result.handled, key).toBe(true)
     }
   })
 
@@ -220,19 +238,24 @@ describe('routeFor — where each destination goes', () => {
     for (const path of Object.values(ROUTES)) expect(path.endsWith('/')).toBe(true)
   })
 
-  it('resolves the five fixed destinations', () => {
-    // §15.1 — `index` follows the register it names: the flat manifest is at
-    // `/sheets/` now, and `/` is the home screen `home` goes to.
+  it('resolves the fixed destinations', () => {
+    // §15.1 — `index` follows the catalog it names: the flat manifest is at
+    // `/sheets/` now, and `/` is the home page `home` goes to. M14 left three
+    // of these behind with the routes they named.
     expect(routeFor('index', '/courses/intermediate/security/')).toBe('/sheets/')
     expect(routeFor('home', '/courses/intermediate/security/')).toBe('/')
-    expect(routeFor('dashboard', '/')).toBe('/dashboard/')
     expect(routeFor('profile', '/')).toBe('/profile/')
-    expect(routeFor('record', '/')).toBe('/report/')
+    expect(Object.keys(ROUTES).sort()).toEqual(['home', 'index', 'profile'])
   })
 
-  it('reads the current category off the route, from a sheet or its category page', () => {
-    expect(categoryPathOf('/courses/intermediate/security/')).toBe('/courses/intermediate/')
-    expect(categoryPathOf('/courses/intermediate/')).toBe('/courses/intermediate/')
+  it('reads the current category off the route, from a module or its category page', () => {
+    /* M17 — the level a reader is inside is read from either tree, and `g c`
+       always lands on the level's catalog entry. `/courses/<level>/` is a
+       forwarding stub now, so sending the shortcut there would have cost a
+       redirect on every press. */
+    expect(categoryPathOf('/courses/intermediate/security/')).toBe('/sheets/intermediate/')
+    expect(categoryPathOf('/sheets/intermediate/')).toBe('/sheets/intermediate/')
+    expect(categoryPathOf('/courses/intermediate/')).toBe('/sheets/intermediate/')
   })
 
   it('has no current category to offer outside the set, and says so with null', () => {
@@ -243,7 +266,7 @@ describe('routeFor — where each destination goes', () => {
   })
 })
 
-describe('the table the ? sheet prints (§12.16)', () => {
+describe('the table the ? module prints (§12.16)', () => {
   it('lists every row of §12.16, in its order', () => {
     // §13.14 amends §12.16: `g l` (Learning path) joins the `g` mode, after
     // `g r` and before `g c` — `g c` stays last because it is the only one
@@ -251,15 +274,18 @@ describe('the table the ? sheet prints (§12.16)', () => {
     // §15.1 amends it again: `g h` (Home) joins ahead of `g i`, because the
     // front door is now a page of its own and `g i` kept the register it has
     // always named. `g c` stays last for the reason above.
+    // M14 amends it by deletion: `g d`, `g r` and `g l` named the dashboard,
+    // the record of work and the learning path, and all three folded into
+    // `/profile/`. The remaining four are in the order they were in.
     expect(SHORTCUTS.map((row) => row.keys)).toEqual([
-      'g d', 'g h', 'g i', 'g p', 'g r', 'g l', 'g c',
+      'g h', 'g i', 'g p', 'g c',
       '[ / ]', 'j / k', '.', 's', '?', 'Esc',
     ])
   })
 
   it('gives every g row a destination, so each is also a plain link', () => {
     const go = SHORTCUTS.filter((row) => row.keys.startsWith('g '))
-    expect(go).toHaveLength(7)
+    expect(go).toHaveLength(4)
     for (const row of go) expect(row.target, row.keys).not.toBeNull()
   })
 

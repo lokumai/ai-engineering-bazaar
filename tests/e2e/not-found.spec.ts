@@ -1,5 +1,5 @@
 import { type Page, expect, test } from '@playwright/test'
-import { INDEX_SHEET } from './sheets'
+import { CATEGORY_PATHS, INDEX_SHEET } from './sheets'
 import { watchPage } from './watch'
 
 /**
@@ -34,7 +34,7 @@ const ADDRESSES: [string, number][] = [
 ]
 
 /** §8.4 — the caption, in the words the spec fixes for this page. */
-const CAPTION = 'ASSEMBLY NOT FOUND · SHEET DOES NOT EXIST IN THIS DRAWING SET'
+const CAPTION = 'PAGE NOT FOUND · NO SUCH MODULE IN THIS CURRICULUM'
 
 /**
  * A static host answers an unknown address with `404.html` *and* a 404 status.
@@ -96,17 +96,25 @@ for (const [address, expectedStatus] of ADDRESSES) {
 
     // §5.1 — the trail, and §5.2 — the footer's sheet slot. Both are derived
     // from the route, and on this one route the URL is not it.
-    const trail = await page.locator('nav[aria-label="Drawing set"]').innerText()
+    const trail = await page.locator('nav[aria-label="Curriculum"]').innerText()
     const sheet = await page.locator('footer').innerText()
 
     for (const [where, text] of [['trail', trail], ['footer', sheet]] as const) {
+      // The forbidden pattern is the URL SEGMENT, hyphenated, and it has to
+      // stay that way. M9 renamed the page's own title from `No such sheet` to
+      // `No such module`, and the guard as written used `.` for the separator
+      // — so the honest title started matching the pattern meant to catch the
+      // address, and this test failed while asserting two things that could no
+      // longer both be true. The segment is `no-such-module`; the page says
+      // `No such module`. One hyphen is the whole difference, and the two
+      // assertions below are only meaningful together.
       expect(text, `${where} printed a URL segment`)
-        .not.toMatch(/_not.?found|no.such.module|\b404\b/i)
-      expect(text.toUpperCase(), `${where} does not name the page`).toContain('NO SUCH SHEET')
+        .not.toMatch(/_not-?found|no-such-module|\b404\b/i)
+      expect(text.toUpperCase(), `${where} does not name the page`).toContain('NO SUCH MODULE')
     }
 
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('No such sheet')
-    await expect(page).toHaveTitle('No such sheet · AI Engineering Bazaar')
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('No such module')
+    await expect(page).toHaveTitle('No such module · AI Engineering Bazaar')
   })
 }
 
@@ -115,7 +123,7 @@ test('the trail and the footer read the same at every address', async ({ page })
   for (const address of [...ADDRESSES.map(([path]) => path), '/nothing/at/all/']) {
     await page.goto(address)
     readings.push([
-      await page.locator('nav[aria-label="Drawing set"]').innerText(),
+      await page.locator('nav[aria-label="Curriculum"]').innerText(),
       await page.locator('footer').innerText(),
     ])
   }
@@ -136,10 +144,12 @@ test('draws §8.4’s exploded axonometric, and only one of it', async ({ page }
   expect(box?.height).toBe(96)
   await expect(svg).toHaveAttribute('aria-hidden', 'true')
 
-  // Six faces, six leader lines: the cube taken apart, not a cube with a line
-  // through it.
-  await expect(page.locator('main [data-face]')).toHaveCount(6)
-  await expect(page.locator('main [data-leader]')).toHaveCount(6)
+  // One face and one leader line per subsystem: the cube taken apart, not a
+  // cube with a line through it. Counted off the subsystem list rather than
+  // written as 6, which is what it said until the Optional subsystem went away
+  // and took the cube's hidden bottom face with it.
+  await expect(page.locator('main [data-face]')).toHaveCount(CATEGORY_PATHS.length)
+  await expect(page.locator('main [data-leader]')).toHaveCount(CATEGORY_PATHS.length)
 
   await expect(page.getByText(CAPTION, { exact: true })).toHaveCount(1)
 })
@@ -155,7 +165,7 @@ test('keeps §8.2’s line types once the faces no longer touch', async ({ page 
   // every state" — which is the only thing left telling a reader the cube's
   // front from its back once it is disassembled.
   for (const visible of ['F1', 'F2', 'F3']) expect(await dashOf(visible), visible).toBe('none')
-  for (const hidden of ['F4', 'F5', 'F6']) {
+  for (const hidden of ['F4', 'F5']) {
     expect(await dashOf(hidden), hidden).toMatch(/^2px,\s*2px$/)
   }
 })
@@ -187,18 +197,18 @@ test('sits in the normal shell flow, with its footer above the fold', async ({ p
  * names. The URL is asserted as well as the heading, because a page that
  * happens to share a title would otherwise pass.
  */
-test('the way out leads to the register the page names, not merely somewhere', async ({
+test('the way out leads to the page it names, not merely somewhere', async ({
   page,
 }) => {
   await page.goto(ADDRESSES[1][0])
 
   // The prose immediately above the link promises the index. Asserted here so
   // that changing the link without changing the sentence cannot pass.
-  await expect(page.locator('main')).toContainText('The index lists every one that is.')
+  await expect(page.locator('main')).toContainText('The catalog lists every one that is.')
 
-  await page.locator('main').getByRole('link', { name: 'Sheet index' }).click()
+  await page.locator('main').getByRole('link', { name: 'Catalog' }).click()
   await expect(page).toHaveURL(new RegExp(`${INDEX_SHEET}$`))
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sheet index')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Catalog')
 
   // The register itself, not a page that merely carries the title.
   await expect(page.locator('main table')).toHaveCount(1)

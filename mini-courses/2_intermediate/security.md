@@ -133,6 +133,8 @@ Everything above is about protecting an LLM. Point the same capability outward a
 
 That last one is the neat one, because it needs no new software. The extension mechanism from two modules ago turns out to be enough.
 
+And it points the other way just as easily. Cloudflare's [security-audit-skill](https://github.com/cloudflare/security-audit-skill) is the same shape aimed at your own code: a multi-phase audit where every finding is verified independently before it is reported, and the output is machine-readable rather than a wall of maybes. Offence and defence turn out to be the same mechanism with a different `SKILL.md`.
+
 > **NOTE:** a few papers if you want to see how the attacks are actually built. [Great, Now Write an Article About That: The Crescendo Multi-Turn LLM Jailbreak Attack](https://www.usenix.org/conference/usenixsecurity25/presentation/russinovich) is the important one to read first: it uses only benign, human-readable questions, escalates gradually over several turns, and reached 56% success on GPT-4 and 83% on Gemini Pro. [DeepInception](https://arxiv.org/abs/2311.03191) nests the request inside imagined scenes. [FlipAttack](https://arxiv.org/abs/2410.02832) disguises a harmful prompt by flipping the text and asking the model to unflip it, at roughly 98% success on GPT-4o in a single query. [Sugar-Coated Poison](https://arxiv.org/abs/2504.05652) has the model generate a lot of harmless content first, which loosens what follows. And our own [BreakFun](https://arxiv.org/abs/2510.17904) turns the model's competence with structured data into the attack surface, using crafted schemas to reach an 89% average success rate across 13 models.
 
 ## Where this fits in the series
@@ -143,14 +145,16 @@ graph LR
     B --> C[Coding Agents]
     C --> D[Harness Engineering]
     D --> E[Loop Engineering]
-    E --> F[Security]
-    F --> G[Personal Agents]
+    E --> F[Generative UI]
+    F --> G[Security]
+    G --> H[Personal Agents]
     style A fill:#90EE90
     style B fill:#90EE90
     style C fill:#90EE90
     style D fill:#90EE90
     style E fill:#90EE90
-    style F fill:#FFFF00
+    style F fill:#90EE90
+    style G fill:#FFFF00
 ```
 
 ## Summary
@@ -198,5 +202,6 @@ Next: agents that live with you rather than in a repository, and what that does 
 - [AI Red Teaming Playground Labs](https://github.com/microsoft/AI-Red-Teaming-Playground-Labs): labs and infrastructure for learning this hands on
 - [Strix](https://github.com/usestrix/strix), [Shannon](https://github.com/KeygraphHQ/shannon), [PentAGI](https://github.com/vxcontrol/pentagi) and [Pentest Swarm AI](https://github.com/Armur-Ai/Pentest-Swarm-AI): agents that do the penetration testing
 - [claude-red](https://github.com/SnailSploit/Claude-Red): offensive security as a skill library for an agent you already have
+- [security-audit-skill](https://github.com/cloudflare/security-audit-skill): the defensive half of the same mechanism, from Cloudflare, with every finding verified before it is reported
 - [The Crescendo Multi-Turn LLM Jailbreak Attack](https://www.usenix.org/conference/usenixsecurity25/presentation/russinovich): benign questions, escalated gradually, and the most important attack shape to understand
 - [DeepInception](https://arxiv.org/abs/2311.03191), [FlipAttack](https://arxiv.org/abs/2410.02832), [Sugar-Coated Poison](https://arxiv.org/abs/2504.05652) and [BreakFun](https://arxiv.org/abs/2510.17904): four more attack papers, ours last

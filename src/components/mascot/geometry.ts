@@ -13,8 +13,12 @@ import type { CategorySlug } from '@/lib/content/categories'
  * animation or transition at any size in any variant (§9.1). A state change
  * here is a repaint, not a tween.
  *
- * A cube has six faces and this curriculum has six categories, so the mark is
- * not a logo standing next to a progress indicator; it *is* the indicator.
+ * A cube has six faces and this curriculum has five categories, so the mark is
+ * not a logo standing next to a progress indicator; it *is* the indicator. The
+ * sixth face is the one facing away and down: it was the Optional category
+ * until that category's two modules were folded into Advanced Deployment, and
+ * it has never been drawn in any variant, so losing its mapping changes no
+ * pixel. `FACES` is deliberately not total over `CategorySlug`.
  * Everything a caller needs to decide what is drawn lives here, in plain data,
  * so it can be tested without a renderer.
  */
@@ -79,37 +83,42 @@ function defineFace(
   return { id, name, category, visible, points, path: polyline(points, true) }
 }
 
-/** §8.1 — six rhombi, mapped to the six categories in order. */
+/** §8.1 — the five drawn-or-hidden rhombi a category maps to, in order. */
 export const FACES: readonly Face[] = [
   defineFace('F1', 'TOP', 'fundamentals', true, ['T', 'R', 'C', 'L']),
   defineFace('F2', 'LEFT', 'intermediate', true, ['L', 'C', 'Bp', 'Lp']),
   defineFace('F3', 'RIGHT', 'expert', true, ['C', 'R', 'Rp', 'Bp']),
   defineFace('F4', 'BACK-LEFT', 'ecosystem', false, ['T', 'C', 'Lp', 'L']),
   defineFace('F5', 'BACK-RIGHT', 'protocols', false, ['T', 'R', 'Rp', 'C']),
-  defineFace('F6', 'BOTTOM', 'optional', false, ['Lp', 'C', 'Rp', 'Bp']),
 ]
 
 /**
- * §13.1.1, §13.9 — the six flavour names, in the same order as the faces.
+ * §13.1.1, §13.9 — the five flavour names, in the same order as the faces.
  *
  * Held UPPERCASE as literals so no locale-dependent casing ever runs over
  * them. Turkish casing is the trap: `toLocaleUpperCase('tr')` turns `i` into
  * `İ`, and a name cased at render time is cased in whatever locale the
  * renderer happened to be handed. Stored this way the question never arises.
- * FISTIK is spelled correctly — the lower-case form is `fıstık`, and the
- * uppercase of a dotless ı is the same glyph as an English capital I.
+ * **M9 renamed all five.** They are proper nouns for the colours themselves,
+ * so when the palette was re-hued to Bazaar (`logs/BRAINSTORM.md` D12) every
+ * one of them became false: Fundamentals was GÜL, rose, and is now teal. A
+ * colour name that no longer names its colour is worse than no name, because
+ * §13.9 prints it to a reader as the thing the hue is called.
  *
- * They are proper nouns for colours, the way a paint chart names its colours,
- * so §13.9 requires the English category title printed beside every one of
- * them. `FaceLegend` is where that pairing happens.
+ * The five now are İznik's own: turquoise, the navy the tiles are known for,
+ * plum, honey and roof-tile red. `İ` is held pre-cased for the same reason it
+ * always was — `toLocaleUpperCase('tr')` turns `i` into `İ`, so a name cased at
+ * render time is cased in whatever locale the renderer happened to be handed.
+ *
+ * §13.9 requires the English category title printed beside every one of them.
+ * `FaceLegend` is where that pairing happens.
  */
 export const FLAVOURS = {
-  fundamentals: 'GÜL',
-  intermediate: 'FISTIK',
-  expert: 'LAVANTA',
-  ecosystem: 'NANE',
-  protocols: 'KAHVE',
-  optional: 'KAYMAK',
+  fundamentals: 'TURKUAZ',
+  intermediate: 'LACİVERT',
+  expert: 'ERİK',
+  ecosystem: 'BAL',
+  protocols: 'KİREMİT',
 } as const satisfies Record<CategorySlug, string>
 
 /**
@@ -230,7 +239,7 @@ export function edgeStateOf(states: FaceStates, edge: Edge): FaceState {
 /** §8.3 — the header mark's accessible name, updated from state. */
 export function progressLabel(states: FaceStates): string {
   const started = FACES.filter((face) => states[face.id] !== 'dormant').length
-  return `Progress: ${started} of ${FACES.length} subsystems started`
+  return `Progress: ${started} of ${FACES.length} levels started`
 }
 
 /**

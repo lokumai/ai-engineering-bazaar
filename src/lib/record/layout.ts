@@ -299,7 +299,7 @@ export function validateGraph(
     }
     if (from > to) {
       throw new Error(
-        `diagram layout: REQUIRES ${edge.from} → ${edge.to} runs backwards `
+        `diagram layout: REQUIREMENTS ${edge.from} → ${edge.to} runs backwards `
           + `(band ${from} → band ${to})`,
       )
     }
@@ -654,7 +654,7 @@ export function diagramLayout(
   for (const sheet of facts.sheets) {
     if (!bandIndex.has(sheet.category)) {
       throw new Error(
-        `diagram layout: sheet ${sheet.slug} is in category "${sheet.category}", `
+        `diagram layout: module ${sheet.slug} is in category "${sheet.category}", `
           + 'which the curriculum does not declare',
       )
     }
@@ -781,12 +781,12 @@ export function diagramLayout(
 
   categories.forEach((category, index) => {
     for (const [lanes, channel] of [
-      [upperLanes[index], 'REQUIRES'],
+      [upperLanes[index], 'REQUIREMENTS'],
       [lowerLanes[index], 'SEE ALSO'],
     ] as const) {
       if (lanes > MAX_CHANNEL_LANES) {
         throw new Error(
-          `diagram layout: the ${channel} channel of subsystem ${category.slug} `
+          `diagram layout: the ${channel} channel of level ${category.slug} `
             + `needs ${lanes} lanes and ${MAX_CHANNEL_LANES} are reserved`,
         )
       }

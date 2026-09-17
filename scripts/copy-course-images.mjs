@@ -10,7 +10,6 @@ const DIR_TO_SLUG = {
   '3_expert': 'expert',
   '4_ecosystem': 'ecosystem',
   '5_protocols_specs': 'protocols',
-  '6_optional': 'optional',
 }
 
 fs.rmSync(TARGET_ROOT, { recursive: true, force: true })

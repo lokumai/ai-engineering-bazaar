@@ -18,11 +18,12 @@ import { watchPage } from './watch'
 const PAGES: [string, string][] = [
   ['home screen', '/'],
   ['manifest', INDEX_SHEET],
-  ['drawing set', '/courses/'],
-  ['category', CATEGORY_PATHS[1]],
-  ['A0 sheet', A0.path],
-  ['SHORT sheet', SHORT.path],
-  ['A4 sheet', A4.path],
+  // M17 — `/courses/` folded into the catalog, so `manifest` above and this
+  // are the two listings there are.
+  ['level', CATEGORY_PATHS[1]],
+  ['A0 module', A0.path],
+  ['SHORT module', SHORT.path],
+  ['A4 module', A4.path],
 ]
 
 for (const [name, path] of PAGES) {
@@ -42,7 +43,9 @@ test('the manifest survives being used', async ({ page }) => {
   const problems = watchPage(page)
   await page.goto(INDEX_SHEET)
 
-  for (const chip of ['READY', 'NOT DRAWN', 'EN · TR', 'ALL']) {
+  // M20 — four chips became three: `Both languages` went with the `Lang`
+  // column, so the catalog stops offering a filter for a fact no view shows.
+  for (const chip of ['Ready', 'Planned', 'All']) {
     await page.getByRole('button', { name: chip, exact: true }).click()
   }
   await page.getByRole('button', { name: 'Toggle theme' }).click()
@@ -57,15 +60,15 @@ test('the manifest survives being used', async ({ page }) => {
  *
  * It is the most-visited page on the site and no other spec watches it for
  * console errors, which is reason enough; the record states are the reason it
- * is watched twice. Both blocks are always in the DOM and `home.css` hides one
- * with `display: none` (§15.2.1), so the resume block's islands —
- * `ContinueLine`, `Readout`, `Uptime`, `PathStanding`, the meters and
- * `CategoryTally` — hydrate and read the record even on the visit where the
- * reader never sees them. A throw inside a hidden block looks like a clean page
- * to every assertion that reads the DOM, and only this watchdog would notice.
+ * is watched twice. M13 made it one document rather than two blocks with one
+ * hidden, but the islands on it still read the record in both states —
+ * `ContinueLine`, `CourseCompletion`'s thirty-three toggles, `CategoryTally`
+ * and the footer's strip — and a throw inside any of them looks like a clean
+ * page to every assertion that reads the DOM. Only this watchdog would notice.
  *
- * The way out of the page differs by state because the visible block differs;
- * both lead to the manifest, and coming back exercises §12.2 channel A across a
+ * The way out is the same for both states now, which is itself the M13 change:
+ * one document, one set of controls, and the record decides nothing but the
+ * returning reader's shortcut. Coming back exercises §12.2 channel A across a
  * router transition, with the islands mounting a second time.
  */
 const HOME_STATES: [string, RecordSeed | null, string][] = [
@@ -73,8 +76,8 @@ const HOME_STATES: [string, RecordSeed | null, string][] = [
   // today in `days` — and the boot script would stamp `data-hl-record` for it,
   // which is the returning reader's page. The first visit is the one with no
   // key in `localStorage` at all.
-  ['a first visit', null, 'Open the index'],
-  ['a return', { sheets: { [slugOf(A0)]: signedSheet('b7225f8') } }, 'Sheet index'],
+  ['a first visit', null, 'Browse the catalog'],
+  ['a return', { sheets: { [slugOf(A0)]: signedSheet('b7225f8') } }, 'Browse the catalog'],
 ]
 
 for (const [state, seed, out] of HOME_STATES) {
@@ -84,7 +87,12 @@ for (const [state, seed, out] of HOME_STATES) {
     await page.goto('/')
 
     await page.getByRole('button', { name: 'Toggle theme' }).click()
-    await page.getByRole('link', { name: out, exact: true }).click()
+    // Scoped to `main`, and that is M10's fault rather than a nicety: the
+    // navbar added a `Catalog` link to every page, so an unscoped locator for
+    // that name now matches two elements and Playwright refuses in strict
+    // mode. This test is about the home screen's own way out, so it looks for
+    // it where the home screen is.
+    await page.locator('main').getByRole('link', { name: out, exact: true }).click()
     await expect(page).toHaveURL(new RegExp(`${INDEX_SHEET}$`))
     await page.goBack()
     await page.waitForLoadState('networkidle')
@@ -94,7 +102,7 @@ for (const [state, seed, out] of HOME_STATES) {
   })
 }
 
-test('an A0 sheet survives being read', async ({ page }) => {
+test('an A0 module survives being read', async ({ page }) => {
   const problems = watchPage(page)
   await page.goto(A0.path)
   await page.waitForLoadState('networkidle')
@@ -103,7 +111,7 @@ test('an A0 sheet survives being read', async ({ page }) => {
   // diagram island and the sticky rails all run on this.
   await page.keyboard.press('End')
   await page.waitForTimeout(300)
-  await page.locator('.hl-toc-entry').last().click()
+  await page.locator('.bz-aside-link').last().click()
   await page.keyboard.press('Home')
   await page.waitForTimeout(300)
 
@@ -111,7 +119,7 @@ test('an A0 sheet survives being read', async ({ page }) => {
   expect(problems.failedRequests).toEqual([])
 })
 
-test('a route that does not exist answers 404 rather than a blank sheet', async ({ page }) => {
+test('a route that does not exist answers 404 rather than a blank module', async ({ page }) => {
   const response = await page.goto('/courses/fundamentals/not-a-sheet/')
   expect(response?.status()).toBe(404)
   await expect(page.locator('body')).not.toHaveText('')

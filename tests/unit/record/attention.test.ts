@@ -62,7 +62,7 @@ describe('the constants', () => {
 })
 
 describe('rule 1 — opened but unsigned for N days', () => {
-  it('flags a sheet whose last write is N days old', () => {
+  it('flags a module whose last write is N days old', () => {
     const data = record({ 'fundamentals/llms': openedAt(daysAgo(STALL_DAYS)) })
     expect(selectAttention(data, NO_ASSIGNMENTS, NOW)).toEqual([
       {
@@ -90,7 +90,7 @@ describe('rule 1 — opened but unsigned for N days', () => {
     expect(selectAttention(data, NO_ASSIGNMENTS, NOW).map((flag) => flag.why)).toEqual(['stalled'])
   })
 
-  it('flags a sheet whose only evidence of being opened is a filed submittal', () => {
+  it('flags a module whose only evidence of being opened is a filed submittal', () => {
     // This assertion was the other way round while `wasOpened` read only
     // `reachedEnd` and `dwellSeconds`. Both are recorded by nobody — Phase 2
     // shipped `observeReachedEnd` and `observeDwell` and never shipped a caller
@@ -106,7 +106,7 @@ describe('rule 1 — opened but unsigned for N days', () => {
     expect(selectAttention(data, NO_ASSIGNMENTS, NOW).map((flag) => flag.why)).toEqual(['stalled'])
   })
 
-  it('does not flag a sheet the record has never held anything for', () => {
+  it('does not flag a module the record has never held anything for', () => {
     // The honest "never opened": no entry at all. §12.1.3's
     // `isEmptySheetRecord` means a sheet with nothing recorded is dropped from
     // the envelope on read, so this — and not an all-defaults sheet record — is
@@ -135,7 +135,7 @@ describe('rule 1 — opened but unsigned for N days', () => {
     ])
   })
 
-  it('measures the sheet, not the reader — activity elsewhere does not refresh it', () => {
+  it('measures the module, not the reader — activity elsewhere does not refresh it', () => {
     const data: RecordData = {
       ...EMPTY_RECORD,
       days: ['2026-09-01'],
@@ -197,7 +197,7 @@ describe('rule 3 — assigned, due date passed, no signature', () => {
     { sheetSlug: 'protocols/mcp', dueAt: '2026-08-20T00:00:00.000Z' },
   ]
 
-  it('flags an assigned sheet past its deadline even with no record of it', () => {
+  it('flags an assigned module past its deadline even with no record of it', () => {
     expect(selectAttention(EMPTY_RECORD, assignments, NOW)).toEqual([
       {
         sheetSlug: 'protocols/mcp',
@@ -209,7 +209,7 @@ describe('rule 3 — assigned, due date passed, no signature', () => {
     ])
   })
 
-  it('does not flag the same untouched sheet with no assignment present', () => {
+  it('does not flag the same untouched module with no assignment present', () => {
     expect(selectAttention(EMPTY_RECORD, NO_ASSIGNMENTS, NOW)).toEqual([])
     const data = record({ 'protocols/mcp': sheet({ reachedEnd: true }) })
     expect(selectAttention(data, NO_ASSIGNMENTS, NOW)).toEqual([])
@@ -223,7 +223,7 @@ describe('rule 3 — assigned, due date passed, no signature', () => {
     expect(selectAttention(EMPTY_RECORD, future, NOW)).toEqual([])
   })
 
-  it('takes the earliest deadline when a sheet is assigned twice', () => {
+  it('takes the earliest deadline when a module is assigned twice', () => {
     const twice: readonly AssignedSheet[] = [
       { sheetSlug: 'protocols/mcp', dueAt: '2026-08-25T00:00:00.000Z' },
       { sheetSlug: 'protocols/mcp', dueAt: '2026-08-10T00:00:00.000Z' },
@@ -281,7 +281,7 @@ describe('two rules at once', () => {
   })
 })
 
-describe('a signed-off sheet', () => {
+describe('a completed module', () => {
   it('is never flagged by any of the three rules', () => {
     const data = record({
       'protocols/mcp': sheet({

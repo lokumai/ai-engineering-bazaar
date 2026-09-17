@@ -53,7 +53,7 @@ const NO_READING = '--'
  */
 function Unsigned({ children }: { children: string }) {
   return (
-    <span className="inline-block border border-dashed border-line-strong px-1.5 text-ink-faint">
+    <span className="inline-block border border-dashed border-line-strong px-1.5 text-on-surface-faint">
       {children}
     </span>
   )
@@ -82,8 +82,8 @@ export function AccountPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
     // A wiring bug, said out loud rather than rendered as a reader-facing
     // state. `SessionProvider` records why this is not a permanent "checking".
     return (
-      <AuthShell chrome={chrome} headingId="hl-account-head" heading="Account">
-        <p className="hl-mark m-0 text-ink-muted">NO SESSION IS BEING TRACKED ON THIS PAGE</p>
+      <AuthShell chrome={chrome} headingId="bz-account-head" heading="Account">
+        <p className="text-mark m-0 text-on-surface-muted">NO SESSION IS BEING TRACKED ON THIS PAGE</p>
       </AuthShell>
     )
   }
@@ -93,17 +93,17 @@ export function AccountPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
   return (
     <AuthShell
       chrome={chrome}
-      headingId="hl-account-head"
+      headingId="bz-account-head"
       heading="Account"
       mark={
-        <p className="hl-mark m-0 text-ink-faint">
+        <p className="text-mark m-0 text-on-surface-faint">
           {view.status === 'signedIn'
             ? 'RECORD CONNECTED TO AN ACCOUNT'
             : 'THIS BROWSER ONLY'}
         </p>
       }
     >
-      <dl className="hl-defs">
+      <dl className="bz-defs">
         <dt>Session</dt>
         <dd aria-live="polite">
           {view.status === 'unknown' && 'CHECKING'}
@@ -135,41 +135,41 @@ export function AccountPanel({ chrome = 'panel' }: { chrome?: AuthChrome }) {
           ) : (
             <>
               {view.user.githubLogin}
-              <span className="ml-2 text-ink-faint">UNVERIFIED HERE</span>
+              <span className="ml-2 text-on-surface-faint">UNVERIFIED HERE</span>
             </>
           )}
         </dd>
       </dl>
 
       {view.status === 'signedIn' && (
-        <p className="mt-4 mb-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+        <p className="mt-4 mb-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
           Signing out clears the session from this browser. It does not delete
           anything: your record stays in this browser, and the copy connected to
-          this account stays on the account. The erase control on this sheet is
+          this account stays on the account. The erase control on this module is
           the one that deletes.
         </p>
       )}
 
-      <div className="hl-signoff-actions mt-4">
+      <div className="bz-actions mt-4">
         {view.status === 'signedOut' && (
-          <Link className="hl-btn" href="/sign-in/">
+          <Link className="bz-btn" href="/sign-in/">
             Sign in
           </Link>
         )}
         {view.status === 'signedIn' && (
-          <button type="button" className="hl-btn" onClick={() => void signOut()}>
+          <button type="button" className="bz-btn" onClick={() => void signOut()}>
             Sign out of this browser
           </button>
         )}
       </div>
 
       {error !== null && (
-        <div className="hl-note" role="alert">
+        <div className="bz-note" role="alert">
           <p>
             The account could not be read, so this panel is not claiming to
             know its state. Nothing was changed.
           </p>
-          <p className="hl-mark text-ink-muted">REPORTED · {error}</p>
+          <p className="text-mark text-on-surface-muted">REPORTED · {error}</p>
         </div>
       )}
     </AuthShell>
@@ -277,9 +277,9 @@ export function OrgMembershipPanel({ chrome = 'panel' }: { chrome?: AuthChrome }
   return (
     <AuthShell
       chrome={chrome}
-      headingId="hl-orgs-head"
+      headingId="bz-orgs-head"
       heading="Organisations"
-      mark={<p className="hl-mark m-0 text-ink-faint">READ ONLY IN THIS REVISION</p>}
+      mark={<p className="text-mark m-0 text-on-surface-faint">READ ONLY IN THIS REVISION</p>}
     >
       {status !== 'signedIn' ? (
         /**
@@ -300,7 +300,7 @@ export function OrgMembershipPanel({ chrome = 'panel' }: { chrome?: AuthChrome }
          * from that same author, so the two cannot drift into a second
          * spelling.
          */
-        <p className="hl-mark m-0 text-ink-muted">
+        <p className="text-mark m-0 text-on-surface-muted">
           {status === 'unknown'
             ? 'CHECKING'
             : status === 'disabled'
@@ -308,31 +308,31 @@ export function OrgMembershipPanel({ chrome = 'panel' }: { chrome?: AuthChrome }
               : 'NOT SIGNED IN · NO MEMBERSHIP TO REPORT'}
         </p>
       ) : state.kind === 'loading' || state.kind === 'idle' ? (
-        <p className="hl-mark m-0 text-ink-muted" aria-live="polite">
+        <p className="text-mark m-0 text-on-surface-muted" aria-live="polite">
           READING MEMBERSHIPS
         </p>
       ) : state.kind === 'failed' ? (
-        <div className="hl-note" role="alert">
+        <div className="bz-note" role="alert">
           <p>
             The membership list could not be read, so none is shown. This is not
             a statement that you belong to no organisation — it is a statement
             that this page does not know.
           </p>
-          <p className="hl-mark text-ink-muted">REPORTED · {state.message}</p>
+          <p className="text-mark text-on-surface-muted">REPORTED · {state.message}</p>
         </div>
       ) : state.rows.length === 0 ? (
-        <p className="hl-submittal-empty">
+        <p className="bz-submittal-empty">
           NOT A MEMBER OF ANY ORGANISATION. NOBODY BUT YOU CAN SEE THIS RECORD.
         </p>
       ) : (
-        <ul className="hl-submittal-list">
+        <ul className="bz-submittal-list">
           {state.rows.map((row) => (
-            <li className="hl-submittal-item" key={row.orgId}>
+            <li className="bz-submittal-item" key={row.orgId}>
               <div className="min-w-0 flex-1">
-                <p className="hl-submittal-repo m-0">
+                <p className="bz-submittal-repo m-0">
                   {row.orgName ?? row.orgId}
                 </p>
-                <p className="hl-submittal-commit">
+                <p className="bz-submittal-commit">
                   {row.joinedAt === null ? 'JOINED · NOT RECORDED' : `JOINED ${row.joinedAt}`}
                 </p>
               </div>
@@ -342,10 +342,10 @@ export function OrgMembershipPanel({ chrome = 'panel' }: { chrome?: AuthChrome }
       )}
 
       {status === 'signedIn' && state.kind === 'loaded' && state.rows.length > 0 && (
-        <div className="hl-note">
+        <div className="bz-note">
           <p>
             Managers of the organisations listed above can see your whole record:
-            the sheets you have signed off, every quiz attempt, your submittals
+            the modules you have completed, every quiz attempt, your submittals
             and your timeline. Erasing your record in this browser does not
             withdraw the history an organisation already holds.
           </p>
@@ -584,14 +584,14 @@ function CallbackBody() {
   }, [phase, status, goOn])
 
   return (
-    <section className="hl-panel" aria-labelledby="hl-callback-head">
-      <div className="hl-panel-head">
-        <h2 id="hl-callback-head" className="hl-panel-title">
+    <section className="bz-panel" aria-labelledby="hl-callback-head">
+      <div className="bz-panel-head">
+        <h2 id="hl-callback-head" className="bz-panel-title">
           Completing sign-in
         </h2>
       </div>
 
-      <p className="hl-mark m-0 text-ink-muted" aria-live="polite">
+      <p className="text-mark m-0 text-on-surface-muted" aria-live="polite">
         {phase.kind === 'reading' && 'READING THE RETURN ADDRESS'}
         {phase.kind === 'waiting' && 'EXCHANGING THE SIGN-IN CODE'}
         {phase.kind === 'done' && 'SIGNED IN · RETURNING'}
@@ -600,7 +600,7 @@ function CallbackBody() {
       </p>
 
       {phase.kind === 'nothing' && (
-        <div className="hl-note">
+        <div className="bz-note">
           <p>
             This page only does something when a sign-in provider sends a reader
             back to it, and this visit carries nothing to complete. Nothing was
@@ -610,17 +610,17 @@ function CallbackBody() {
       )}
 
       {phase.kind === 'error' && (
-        <div className="hl-note" role="alert">
+        <div className="bz-note" role="alert">
           <p>{phase.note}</p>
         </div>
       )}
 
       {(phase.kind === 'error' || phase.kind === 'nothing') && (
-        <div className="hl-signoff-actions mt-4">
-          <Link className="hl-btn" href="/sign-in/">
+        <div className="bz-actions mt-4">
+          <Link className="bz-btn" href="/sign-in/">
             Back to sign in
           </Link>
-          <Link className="hl-btn" href={phase.returnPath}>
+          <Link className="bz-btn" href={phase.returnPath}>
             Continue without signing in
           </Link>
         </div>

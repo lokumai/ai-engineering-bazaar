@@ -1,0 +1,747 @@
+/* ===========================================================================
+   §16 — YOUR PROGRESS, and the account.
+
+   Reference: `playground/07-dashboard.html`, variant A, whose own note is the
+   brief: *"one page, and the first thing on it is the one action a returning
+   reader wants. Settings sit at the bottom where settings belong."* And its
+   governing constraint, at `07:107-110`: *"Nothing here removes a capability.
+   Export, import, erase, the role-based path, the repository links and the
+   sign-in are all still reachable; the question is how many pages they need."*
+
+   `/profile/` is the route that absorbed three others — `/dashboard/`,
+   `/path/` and `/report/` are `MovedTo` stubs forwarding here and must keep
+   forwarding.
+
+   WHAT `07`-A DRAWS THAT THIS DOES NOT BUILD. Its `.bars` block is five
+   per-level rails, and stage 7 already put `05`-C's dials on this page for the
+   same fact. `07`'s own variant-C argument is the reason not to have both:
+   *"Per-level progress is already in the sidebar and the catalog, on every
+   page. Repeating it on a page of its own is the duplication that makes the
+   dashboard feel pointless."* So the page takes `07`'s ORDER — continue, then
+   progress, then settings — and `05`-C's rendering of the middle.
+
+   D31: colour from `01`, geometry from `07`.
+   =========================================================================== */
+
+@layer components {
+  /* -- the continue hero, `07:36-45` --------------------------------------- */
+
+  /* -- the gate, and it was missing -----------------------------------------
+     §15.11 — this is revealed only for a record that CARRIES SOMETHING, which
+     `boot.ts` decides before first paint and stamps as `data-hl-record`. It
+     had no gate at all, so the prerendered page shipped a populated "Continue
+     where you left off" to every reader including a fresh browser, and with
+     the bundle blocked it never corrected. The home page's own shortcut has
+     had this rule since stage 9; `/profile/` was built in stage 8 and never
+     got it.
+
+     The BOX is channel A and the CONTENT is channel B, which is the only split
+     available: a module's title is text, and channel A stamps classes. */
+  .bz-cont {
+    display: none;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px;
+    margin: 0 0 26px;
+    padding: 18px 20px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-raised);
+  }
+
+  html[data-hl-record] .bz-cont {
+    display: flex;
+  }
+
+  /* `07:38` fills this 46px square with a tint and prints the ordinal on it.
+     The language has no tint scale, and stage 4 met the same shape in `03`'s
+     level badge: **D33** answers a pale tinted fill with an edge. The hue is
+     the level's own, read from `data-cat` by `category.css`. */
+  .bz-cont-num {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border: 1px solid var(--bz-cat);
+    border-radius: var(--radius-xl);
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-lead) / 1 var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bz-cont-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .bz-cont-eyebrow {
+    display: block;
+    color: var(--color-on-surface-faint);
+    font-size: var(--text-meta);
+  }
+
+  .bz-cont-title {
+    display: block;
+    margin: 2px 0 3px;
+    color: var(--color-on-surface-title);
+    font: 600 var(--text-subsection) / 1.25 var(--font-sans);
+    letter-spacing: -0.015em;
+  }
+
+  .bz-cont-meta {
+    margin: 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-item);
+  }
+
+  /* -- §13.3 the role path, and the reveal that shows exactly one ----------
+     THE SECOND CARRIER. All nine ordered paths are in the prerendered
+     document, and channel A shows one: `boot.ts` stamps `hl-role-<id>` on
+     `<html>` before first paint. CSS has no operator that compares a class on
+     the root with an attribute on a descendant, so there is one selector per
+     role and there has to be — the same shape as the generated per-module
+     sheet and the aggregate level states.
+
+     A reader with no role gets NONE of them, which is the honest state rather
+     than a placeholder: a drawn route for a role nobody chose is a page
+     claiming something untrue of them (§1). That is what the negation chain
+     below is for, and `category-surfaces.test.ts` holds both halves to the
+     frozen nine — a role missing from the chain would show the empty state AND
+     that role's path at once, which is two contradictory answers on one
+     screen. */
+
+  .bz-path-body {
+    display: none;
+  }
+
+  html.hl-role-software-engineer .bz-path-body[data-role="software-engineer"],
+  html.hl-role-devops .bz-path-body[data-role="devops"],
+  html.hl-role-data-engineer .bz-path-body[data-role="data-engineer"],
+  html.hl-role-data-analyst .bz-path-body[data-role="data-analyst"],
+  html.hl-role-analyst .bz-path-body[data-role="analyst"],
+  html.hl-role-qa .bz-path-body[data-role="qa"],
+  html.hl-role-project-manager .bz-path-body[data-role="project-manager"],
+  html.hl-role-dba .bz-path-body[data-role="dba"],
+  html.hl-role-pre-sales .bz-path-body[data-role="pre-sales"] {
+    display: block;
+  }
+
+  /* The empty state, negating every role at once. */
+  html:not(.hl-role-software-engineer):not(.hl-role-devops):not(.hl-role-data-engineer):not(.hl-role-data-analyst):not(.hl-role-analyst):not(.hl-role-qa):not(.hl-role-project-manager):not(.hl-role-dba):not(.hl-role-pre-sales)
+    .bz-path-empty {
+    display: grid;
+  }
+
+  /* `display: none` here and `grid` on the reveal, NOT a `grid` utility in the
+     markup: Tailwind's utilities layer sits above `components`, so a `grid`
+     class on this element beat the hiding rule and the empty state stayed
+     visible beside a chosen path — two contradictory answers on one screen,
+     which is exactly what the negation chain exists to prevent. A layer is not
+     a suggestion. */
+  .bz-path-empty {
+    display: none;
+    gap: 16px;
+  }
+
+  /* -- one step on a path -------------------------------------------------- */
+
+  .bz-step {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: var(--text-item);
+  }
+
+  /* THE BASE THE GENERATED SHEET NEEDS, for the same reason the completion
+     disc has one: `lokum-modules.css` reveals this for the modules the reader
+     has signed off and states only `display` and a colour, so without a base
+     rule here every drawn step reads as completed. */
+  .bz-step-tick {
+    display: none;
+    color: var(--color-success);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
+  }
+
+  /* Channel B — the island marks the ONE step to take next, scoped to the body
+     the reader's own role reveals. HIDDEN BY DEFAULT and shown only on the step
+     the island has marked: every step renders the marker, and without a base
+     rule all eleven of them claim to be next at once. Same shape as the
+     completion disc and the step's own tick. */
+  .bz-step-next {
+    display: none;
+    margin-left: auto;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
+  }
+
+  .bz-step[data-next="true"] .bz-step-next {
+    display: inline;
+  }
+
+  .bz-hidden-y {
+    overflow-y: hidden;
+  }
+
+  /* -- §16.4 the register -------------------------------------------------
+     One `<details>` per subject. Folding removes prose and never a fact
+     (§16.4.1), which is why the summary carries a reading and not just a
+     name. */
+
+  .bz-register {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bz-register-row {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .bz-register-fold {
+    margin: 0;
+  }
+
+  .bz-register-summary {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 11px 2px;
+    cursor: pointer;
+  }
+
+  .bz-register-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .bz-register-name {
+    color: var(--color-on-surface);
+    font-weight: 500;
+  }
+
+  /* §16.4.1's reading. It used to be uppercased by the retired label
+     treatment, and `record-pages.spec.ts` read it with `innerText` and
+     required capitals to tell a named state from a sentence of prose. Neither
+     the case nor that test's mechanism survives: the row states WHAT it is in
+     `data-reading`, and the spec asks by that instead of by casing. */
+  .bz-register-reading {
+    margin-left: auto;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-mark);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bz-register-chev {
+    flex: none;
+    color: var(--color-on-surface-faint);
+    font: var(--text-mark) / 1 var(--font-mono);
+  }
+
+  .bz-register-body {
+    padding: 0 2px 16px;
+  }
+
+  /* -- §16.1 the drafter block -------------------------------------------- */
+
+  /* M22 — **the clearance the groups need, and it is the same defect M20 found
+     one page over.**
+
+     `.bz-panel-head` declares `margin-bottom: 4px` and no top margin, because
+     until now it sat under a rule or at the top of a block. Five group headings
+     in a row of register rows have nothing above them at all, so each one
+     butted against the row before it and read as belonging to what it followed
+     rather than to what it introduced — which is most of what "a mess" means
+     for a list like this.
+
+     Declared on the GROUP and not on `.bz-panel-head`, which every panel on
+     every page uses: a rule there would move six other surfaces to fix one. */
+  [data-bz-register-group] {
+    margin-top: 30px;
+  }
+
+  /* **A group heading is subordinate to the page's own blocks, and it has to
+     LOOK it.** A review caught this: the five group heads were rendering
+     through the same `.bz-panel-title` as `Every module` and `Waiting on you`,
+     so five headings over a list of rows carried the same weight as the page's
+     real sections — which is the flat outline the regroup was fixing, moved up
+     one level rather than removed.
+
+     The heading LEVEL is already right (§16.7: group `h2`, row `h3`); this is
+     the other half of it, for a reader who is looking rather than navigating by
+     heading.
+
+     One step DOWN the scale — `control`, 14.5px, against `.bz-panel-title`'s
+     `lead` at 16. **The first attempt reached for `subsection` and made them
+     BIGGER**: 18.5px, measured on the built page, which is the scale's step in
+     the other direction. A token named for a structural role is not a size, and
+     reading it as one is how a heading ends up outweighing the section it is
+     inside — which was the criticism being answered. */
+  [data-bz-register-group] > .bz-panel-head > .bz-panel-title {
+    font-size: var(--text-control);
+  }
+
+  /* **The destructive group is set apart, and a margin is not apart enough.**
+     §12.15's erase is the only irreversible thing on this page, and standard
+     practice puts a destructive action last, alone, and visibly separated — the
+     brief's own words. It is last and alone by the group order; this is the
+     third. A rule above it and the extra room, so the eye stops there rather
+     than reading it as one more settings row.
+
+     Keyed on the id rather than on `:last-child`, which would move to whatever
+     group happened to end the list. */
+  [data-bz-register-group="group-data"] {
+    margin-top: 44px;
+    padding-top: 22px;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .bz-drafter {
+    margin: 0 0 26px;
+  }
+
+  /* M22 — **the mark took half the page and stood in the middle of it.**
+
+     MEASURED at 1440: `repeat(auto-fit, minmax(240px, 1fr))` computed to
+     `662px 662px 0px 0px 0px`, and `.bz-drafter-mark` rendered **137px wide at
+     x=312** — its own `margin: 0 auto` makes a grid item shrink to fit and
+     centre, which is right in the stacked case it was written for and leaves
+     525px of white beside it here. The block read as broken, and it is the
+     first thing under the circles.
+
+     The two children are not a pair of halves: one is a small fixed graphic and
+     the other is everything else, so `1fr 1fr` was never their shape. The mark
+     takes what it needs and the body takes the rest. `07`'s own breakpoint is
+     760px and this stacks under it, where the centring is correct again. */
+  .bz-drafter-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  @media (min-width: 761px) {
+    .bz-drafter-grid {
+      grid-template-columns: minmax(0, max-content) minmax(0, 1fr);
+    }
+  }
+
+  /* **AND THE PROSE KEEPS A MEASURE**, which the fix above took away.
+
+     `auto-fit` had been capping this column at 662px by accident — badly, since
+     it also centred a 137px graphic in a 662px track — and giving the body the
+     rest of the row meant **1187px at 1440, about 176 characters a line**,
+     where every other paragraph on this page sets at 584. A review measured it
+     and it is the better defect to have: the block is no longer broken-looking,
+     it was merely unreadable.
+
+     `--layout-measure` rather than a number, because it is the same measure the
+     reading column uses and a second constant would be a second opinion. */
+  .bz-drafter-body {
+    max-width: var(--layout-measure);
+  }
+
+  .bz-drafter-half {
+    min-width: 0;
+  }
+
+  .bz-drafter-halfhead {
+    margin: 0 0 6px;
+    color: var(--color-on-surface-faint);
+    font: 600 var(--text-label) / 1 var(--font-sans);
+    letter-spacing: var(--tracking-label);
+  }
+
+  .bz-drafter-body {
+    margin: 0;
+  }
+
+  .bz-drafter-mark {
+    display: block;
+    margin: 0 auto 10px;
+  }
+
+  .bz-drafter-line {
+    margin: 2px 0 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-mark);
+  }
+
+  /* -- §16.2 the mark picker ---------------------------------------------
+     Eight options, and `07` draws no such control — so this is derived
+     (**D30**) from the item row and the field.
+
+     THE FLOOR IS STATED HERE, ONCE. §10.4 wants 44px for a thumb, the cell
+     used to get it from a utility on one of the picker's three call sites, and
+     the rule that replaced that was in a stylesheet stage 0 deleted — so both
+     routes shipped a 19px target. It is unconditional rather than behind the
+     phone breakpoint because a pointer on a 44px cell costs nothing and a
+     second rule is a second place for this to go missing. */
+
+  .bz-markrow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .bz-markrow-cell {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 44px;
+    padding: 4px 8px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+  }
+
+  .bz-markrow-cell:hover {
+    border-color: var(--color-line-strong);
+  }
+
+  /* §16.2.3 — the selected cell, and the native radio is the carrier under
+     forced colours. Three signals: the edge, the weight, and the platform's
+     own control, which is the one thing forced colours cannot take away. */
+  .bz-markrow-cell[data-hl-selected="true"] {
+    border-color: var(--color-primary);
+    border-width: 2px;
+    font-weight: 600;
+  }
+
+  /* The glyph and its name are the control at every other width, so the radio
+     is hidden without being removed — `opacity` and not `display`, because it
+     has to come back under forced colours and a removed control cannot. */
+  .bz-markrow-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  @media (forced-colors: active) {
+    .bz-markrow-input {
+      position: static;
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  .bz-markrow-name {
+    color: var(--color-on-surface);
+    font-size: var(--text-item);
+  }
+
+  .bz-markrow-note {
+    margin: 6px 0 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  .bz-mark-stamp {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .bz-identity-initials {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--color-line);
+    border-radius: 50%;
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-mark) / 1 var(--font-sans);
+  }
+
+  .bz-identity-name {
+    color: var(--color-on-surface);
+  }
+
+  /* -- the readout strip -------------------------------------------------- */
+
+  .bz-readout {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+    margin: 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-mark);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bz-readout-value {
+    color: var(--color-on-surface);
+    font-weight: 600;
+  }
+
+  .bz-readout-sep {
+    color: var(--color-on-surface-faint);
+  }
+
+  .bz-readout-togo {
+    color: var(--color-on-surface-muted);
+  }
+
+  /* -- §12.15 the erase dialog -------------------------------------------
+     Derived (**D30**): `07` draws no dialog, and the language's one elevation
+     is the menu's. A confirmation is genuinely temporary, which is the only
+     condition under which a shadow appears at all. */
+
+  .bz-dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    /* The slab's ground, dimmed by `opacity` rather than by a colour invented
+       for it — the language declares no translucent surface, and its only
+       rgba values belong to the bar's sub-palette. The same answer
+       `.bz-drawer-backdrop` reached in `rail.css`. */
+    background: var(--color-slab-surface);
+    opacity: 0.42;
+  }
+
+  .bz-dialog {
+    position: fixed;
+    z-index: 71;
+    top: 50%;
+    left: 50%;
+    width: min(440px, calc(100vw - 32px));
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    transform: translate(-50%, -50%);
+    padding: 20px 22px;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-raised);
+    /* NO SHADOW, and not because a surface may not declare one — though it may
+       not. The language has exactly two, both on primitives, and both exist
+       because something overlaps content that is still visible behind it. A
+       modal has a backdrop, which separates it far more strongly than an
+       elevation could, so the hairline is enough — which is the ground's whole
+       premise: a raised surface is told apart by its edge and not its fill. */
+  }
+
+  .bz-dialog-head {
+    margin-bottom: 4px;
+    color: var(--color-on-surface-faint);
+    font: 600 var(--text-label) / 1 var(--font-sans);
+    letter-spacing: var(--tracking-label);
+  }
+
+  .bz-dialog-title {
+    margin: 0 0 10px;
+    color: var(--color-on-surface-title);
+    font: 600 var(--text-subsection) / 1.3 var(--font-sans);
+  }
+
+  .bz-dialog-body {
+    margin: 0 0 14px;
+    color: var(--color-on-surface);
+    font-size: var(--text-item);
+  }
+
+  /* §12.15 — the real counts, enumerated, because "Are you sure?" asks a
+     reader to confirm a decision the dialog has not described. */
+  .bz-dialog-tally {
+    margin: 0 0 14px;
+    padding-left: 18px;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-item);
+  }
+
+  /* -- the stamps, the definitions, and the rest of the register's bodies -- */
+
+  .bz-stamp-set {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bz-stamp,
+  .bz-stamp-slot {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 8px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-base);
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-mark);
+  }
+
+  /* §12.15's dashed, unsigned state: a slot nobody has earned is drawn as
+     hidden geometry, which is the same treatment a planned module's segment
+     gets and for the same reason. */
+  .bz-stamp-slot {
+    border-style: dashed;
+  }
+
+  .bz-stamp-name {
+    color: var(--color-on-surface);
+  }
+
+  .bz-stamp-cond {
+    color: var(--color-on-surface-faint);
+  }
+
+  .bz-defs {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 2px 14px;
+    margin: 0;
+    font-size: var(--text-item);
+  }
+
+  .bz-defs dt {
+    color: var(--color-on-surface-muted);
+  }
+
+  .bz-defs dd {
+    margin: 0;
+    color: var(--color-on-surface);
+  }
+
+  /* An exact string a reader may need to copy — a digest, a stored key. Mono,
+     because it is a machine's word and not a label. */
+  .bz-raw {
+    margin: 0;
+    padding: 9px 11px;
+    overflow-x: auto;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-base);
+    background: var(--color-surface);
+    color: var(--color-on-surface);
+    font: var(--text-code) / 1.5 var(--font-mono);
+  }
+
+  .bz-account-head,
+  .bz-orgs-head,
+  .bz-signin-state {
+    margin: 0 0 8px;
+    color: var(--color-on-surface-faint);
+    font: 600 var(--text-label) / 1 var(--font-sans);
+    letter-spacing: var(--tracking-label);
+  }
+
+  .bz-signin-email-hint,
+  .bz-needs-mailbox {
+    margin: 6px 0 0;
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  .bz-receipt {
+    margin: 0 0 14px;
+    padding: 12px 14px;
+    border: 1px solid var(--color-line);
+    border-left: 2px solid var(--color-success);
+    border-radius: var(--radius-base);
+  }
+
+  .bz-receipt-full {
+    font-size: var(--text-item);
+  }
+
+  .bz-uptime {
+    display: flex;
+    gap: 2px;
+  }
+
+  .bz-uptime-tick {
+    width: 7px;
+    height: 7px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-hair);
+  }
+
+  /* `.bz-keys` moved into `src/design/bazaar.css` in M18: `/legend/` renders
+     the same table now, and a class defined in one surface stylesheet and used
+     by another is what the surface discipline exists to prevent. It is the same
+     move `.bz-track` made in M17's predecessor when a second surface needed it. */
+
+  /* §12.16 — the chord's own hint, held while `g` is down. `role="status"`
+     carries it to a screen reader; this is what a sighted reader sees. */
+  .bz-pending {
+    position: fixed;
+    z-index: 60;
+    right: 16px;
+    bottom: 16px;
+    padding: 6px 10px;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-base);
+    background: var(--color-surface-raised);
+    color: var(--color-on-surface);
+    font: var(--text-mark) / 1 var(--font-mono);
+  }
+
+  /* -- §12.13 the empty states ------------------------------------------- */
+
+  .bz-empty {
+    margin: 0 0 26px;
+    padding: 16px 18px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xl);
+  }
+
+  .bz-empty-status {
+    margin: 0 0 6px;
+    color: var(--color-on-surface-faint);
+  }
+
+  .bz-empty-cue {
+    margin: 0;
+    color: var(--color-on-surface);
+    font-size: var(--text-item);
+  }
+
+  .bz-empty-path {
+    margin: 8px 0 0;
+  }
+
+  /* -- §12.10 the curriculum diagram -------------------------------------
+     Its own vocabulary, and deliberately NOT the language's `node`: the
+     figure's `.bz-node` is a hand-drawn box in a mermaid figure, and this is
+     an SVG the record draws with four states of its own. Two things named the
+     same would be two things agreeing on nothing. */
+
+  .bz-diagram-rail {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+
+  /* §4.10.5 — the drawing SCALES to the column rather than overflowing it.
+     MEASURED: the layout is 1,189px wide and the wrapper hides it below
+     Tailwind's `lg`, which is 1023.98px — so at exactly 1024 the full diagram
+     was shown at full width and pushed the document 165px sideways.
+
+     Scaled and not scrolled, deliberately: the component's own note rejects
+     pan/zoom — "pan/zoom on a phone is a way of shipping something you already
+     know does not work" — and it has a `viewBox`, so `height: auto` is the one
+     line that makes it fit. Below `lg` it is still the six stacked blocks. */
+  .bz-diagram {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .bz-diagram-node-edge {
+    fill: none;
+    stroke: var(--color-line-strong);
+  }
+
+  .bz-diagram-node-focus {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .bz-trace {
+    fill: none;
+    stroke: var(--color-line);
+  }
+}

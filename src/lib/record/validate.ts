@@ -28,6 +28,7 @@
  * two escapers of §12.12.7 — removing the sink, not fencing the input.
  */
 
+import { isViewId } from '../catalog/views'
 import type { ClaimIdentitySource, ClaimReceipt, ClaimSummary } from './claim'
 import { migrate } from './migrate'
 import {
@@ -370,6 +371,15 @@ export function coerceRecordData(input: unknown): RecordData {
     prefs: {
       charKeys: asBoolean(prefs.charKeys, EMPTY_RECORD.prefs.charKeys),
       /**
+       * M10. A record written before this field existed reads back false — the
+       * rail open — which needs no rung on the migration ladder, because the
+       * default IS the honest answer for a reader who never expressed a
+       * preference. Only a real boolean folds it, for the same reason only a
+       * real boolean turns `charKeys` off: a truthy string out of a
+       * hand-edited record must not decide the layout.
+       */
+      railFolded: asBoolean(prefs.railFolded, EMPTY_RECORD.prefs.railFolded),
+      /**
        * §16.3. A string stays, everything else — a number, a boolean, an
        * object, an absent key, the empty string — becomes null, which is the
        * value that means "no account has named this record" and so is the only
@@ -383,6 +393,15 @@ export function coerceRecordData(input: unknown): RecordData {
        * needs no rung on the migration ladder; see `migrate.ts` on widening.
        */
       aliasNamedFor: asString(prefs.aliasNamedFor),
+      /**
+       * M12. One of the three ids or null, matched against `CATALOG_VIEWS`
+       * rather than trusted, for the reason §12.1.3 gives about every value
+       * read back out of storage: the id reaches a class name and an attribute
+       * selector, so a hand-edited record must not be able to choose its own.
+       * Null is "has not chosen", which is what a record written before this
+       * field existed says and needs no rung on the migration ladder.
+       */
+      catalogView: isViewId(prefs.catalogView) ? prefs.catalogView : null,
     },
     meta: {
       lastExport: asInstant(meta.lastExport),

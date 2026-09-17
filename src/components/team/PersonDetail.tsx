@@ -37,13 +37,23 @@ import type { TeamSnapshot } from '@/lib/org/queries'
  * arguments, so the summary above and the table below cannot disagree.
  */
 
-/** SHEET 300 + CLAIM 230 + QUIZ 200 + SUBMITTAL 330 = `.hl-index`'s 1060px. */
+/**
+ * The columns, and the minimum is taken from them.
+ *
+ * This read "SHEET 300 + CLAIM 230 + QUIZ 200 + SUBMITTAL 330 = 1060px", which
+ * was one of three copies of that arithmetic in three files, against a rule
+ * stage 0 had deleted. `SheetIndex` named the pattern in stage 4: the columns
+ * declare their widths and the sum reaches the stylesheet once, as
+ * `--bz-table-min`. MEASURED: still 1,060.
+ */
 const COLUMNS: ReadonlyArray<{ key: string; label: string; width: number }> = [
-  { key: 'sheet', label: 'Sheet', width: 300 },
+  { key: 'sheet', label: 'Module', width: 300 },
   { key: 'claim', label: 'Claim', width: 230 },
   { key: 'quiz', label: 'Evidence · quiz', width: 200 },
   { key: 'submittal', label: 'Evidence · submittal', width: 330 },
 ]
+
+const MIN_WIDTH = COLUMNS.reduce((total, col) => total + col.width, 0)
 
 /**
  * §12.6 — the quiz outcome in words.
@@ -85,7 +95,7 @@ function submittalWords(evidence: SubmittalEvidence): { text: string; muted: boo
     case 'unattributable':
       return { text: 'NO GITHUB LINK ON PROFILE', muted: true }
     case 'none':
-      return { text: 'NONE REGISTERED', muted: true }
+      return { text: 'NOTHING ADDED YET', muted: true }
   }
 }
 
@@ -99,34 +109,34 @@ function ClaimRow({ row, login }: { row: SheetClaimRow; login: string | null }) 
   const submittal = submittalWords(row.submittal)
 
   return (
-    <tr className="hl-row">
-      <th scope="row" className="hl-row-title">
-        <span className="hl-mark block text-ink-muted">
-          {row.module === null ? 'NOT IN THIS CORPUS' : `SHEET ${String(row.module).padStart(2, '0')}`}
+    <tr className="bz-row">
+      <th scope="row" className="bz-row-title">
+        <span className="text-mark block text-on-surface-muted">
+          {row.module === null ? 'NOT IN THIS CORPUS' : `MODULE ${String(row.module).padStart(2, '0')}`}
         </span>
         {row.slug}
       </th>
 
       {/* §14.8.2 — THE CLAIM: an instant the reader asserted, and the revision
           they asserted it against (§12.4.3). Never a tick. */}
-      <td className="hl-row-context hl-mark">
-        {`SIGNED OFF ${day(row.signedOff)}`}
-        <span className="block text-ink-muted">
+      <td className="bz-row-context text-mark">
+        {`COMPLETED ${day(row.signedOff)}`}
+        <span className="block text-on-surface-muted">
           {row.signedRevision === null ? 'NO REV RECORDED' : `REV ${row.signedRevision}`}
         </span>
       </td>
 
-      <td className={`hl-row-context hl-mark${quiz.muted ? ' text-ink-muted' : ''}`}>
+      <td className={`bz-row-context text-mark ${quiz.muted ? 'text-on-surface-muted' : ''}`}>
         {quiz.text}
       </td>
 
-      <td className="hl-row-context hl-mark">
-        <span className={submittal.muted ? 'text-ink-muted' : undefined}>{submittal.text}</span>
+      <td className="bz-row-context text-mark">
+        <span className={submittal.muted ? 'text-on-surface-muted' : undefined}>{submittal.text}</span>
         {/* The reason, always — §14.8's rule that a flag is never a bare glyph.
             The owners are printed as recorded, so a manager can see that
             `torvalds` is not the person in front of them. */}
         {row.submittalOwners.length > 0 && (
-          <span className="block text-ink-muted">
+          <span className="block text-on-surface-muted">
             {`OWNER ${row.submittalOwners.join(', ')}`}
             {row.submittal === 'ownerMismatch' && login !== null && ` · GITHUB ${login}`}
           </span>
@@ -159,12 +169,12 @@ export function PersonDetail({
   )
 
   return (
-    <section className="hl-panel" aria-labelledby={headId}>
-      <div className="hl-panel-head">
-        <h2 id={headId} className="hl-panel-title">
+    <section className="bz-panel" aria-labelledby={headId}>
+      <div className="bz-panel-head">
+        <h2 id={headId} className="bz-panel-title">
           {label}
         </h2>
-        <button type="button" className="hl-btn hl-no-print" onClick={onClose}>
+        <button type="button" className="bz-btn bz-no-print" onClick={onClose}>
           CLOSE
         </button>
       </div>
@@ -173,34 +183,34 @@ export function PersonDetail({
           value on the right, no invented values. The uuid in full, because this
           panel is where it is the thing that matters — `?u=` carries it and a
           manager may need to quote it. */}
-      <dl className="hl-mark m-0 mb-5 grid grid-cols-[max-content_1fr] gap-x-6 gap-y-1">
-        <dt className="text-ink-muted">USER</dt>
+      <dl className="text-mark m-0 mb-5 grid grid-cols-[max-content_1fr] gap-x-6 gap-y-1">
+        <dt className="text-on-surface-muted">USER</dt>
         <dd className="m-0">{member.userId}</dd>
-        <dt className="text-ink-muted">GITHUB</dt>
+        <dt className="text-on-surface-muted">GITHUB</dt>
         <dd className="m-0">
-          {login === null ? <span className="text-ink-muted">NOT LINKED</span> : login}
+          {login === null ? <span className="text-on-surface-muted">NOT LINKED</span> : login}
         </dd>
-        <dt className="text-ink-muted">ROLE</dt>
+        <dt className="text-on-surface-muted">ROLE</dt>
         <dd className="m-0">
           {/* §13.3 — the reader's own statement, never inferred. Absent stays
               absent. */}
-          {member.profile?.roleId ?? <span className="text-ink-muted">NOT STATED</span>}
+          {member.profile?.roleId ?? <span className="text-on-surface-muted">NOT STATED</span>}
         </dd>
-        <dt className="text-ink-muted">SERVER COPY</dt>
+        <dt className="text-on-surface-muted">SERVER COPY</dt>
         <dd className="m-0">
           {member.record.kind === 'record' ? (
             `SAVED ${day(member.record.savedAt)} · SCHEMA ${member.record.schema}`
           ) : member.record.kind === 'absent' ? (
-            <span className="text-ink-muted">NONE — THIS ACCOUNT HAS NEVER PUSHED</span>
+            <span className="text-on-surface-muted">NONE — THIS ACCOUNT HAS NEVER PUSHED</span>
           ) : (
-            <span className="text-ink-muted">{`UNREADABLE BY THIS BUILD (${member.record.reason})`}</span>
+            <span className="text-on-surface-muted">{`UNREADABLE BY THIS BUILD (${member.record.reason})`}</span>
           )}
         </dd>
       </dl>
 
       {member.record.kind !== 'record' ? (
         <p
-          className="m-0 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted"
+          className="m-0 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted"
           role="status"
         >
           {member.record.kind === 'absent'
@@ -262,10 +272,10 @@ function PersonBody({
 
   return (
     <>
-      <hr className="hl-rule-struct" aria-hidden="true" />
+      <hr className="bz-rule" aria-hidden="true" />
 
-      <p className="hl-mark m-0 mb-1">
-        {`SIGNED OFF ${progress.signedOff} / ${progress.attainable}`}
+      <p className="text-mark m-0 mb-1">
+        {`COMPLETED ${progress.signedOff} / ${progress.attainable}`}
         {' · '}
         {`ACTIVE ${progress.days} OF THE LAST 14 DAYS`}
         {' · '}
@@ -278,19 +288,19 @@ function PersonBody({
           were computed here, from this build's corpus, so they are current
           whatever the column says. */}
       {curriculumRev !== null && (
-        <p className="hl-mark m-0 mb-5 text-ink-muted">
+        <p className="text-mark m-0 mb-5 text-on-surface-muted">
           {`STORED PROGRESS COMPUTED AT CURRICULUM REV ${curriculumRev}`}
         </p>
       )}
 
       {/* ---- §14.8.1 — attention, with reasons ----------------------------- */}
-      <h3 className="hl-mark m-0 mb-2 text-ink">Attention</h3>
+      <h3 className="text-mark m-0 mb-2 text-on-surface">Attention</h3>
       {progress.attention.length === 0 ? (
-        <p className="hl-mark m-0 mb-5 text-ink-muted">
+        <p className="text-mark m-0 mb-5 text-on-surface-muted">
           NO FLAGS — NOTHING OVERDUE, STALLED OR REPEATEDLY MISSED
         </p>
       ) : (
-        <ul className="hl-mark m-0 mb-5 list-none p-0">
+        <ul className="text-mark m-0 mb-5 list-none p-0">
           {progress.attention.map((flag) => (
             <li key={`${flag.why}:${flag.sheetSlug}`} className="py-0.5">
               {attentionReason(flag)}
@@ -300,18 +310,18 @@ function PersonBody({
       )}
 
       {/* ---- §14.2.4 — what this person has been assigned ------------------ */}
-      <h3 className="hl-mark m-0 mb-2 text-ink">Assignments</h3>
+      <h3 className="text-mark m-0 mb-2 text-on-surface">Assignments</h3>
       {assignments.length === 0 ? (
-        <p className="hl-mark m-0 mb-5 text-ink-muted">NONE</p>
+        <p className="text-mark m-0 mb-5 text-on-surface-muted">NONE</p>
       ) : (
-        <ul className="hl-mark m-0 mb-5 list-none p-0">
+        <ul className="text-mark m-0 mb-5 list-none p-0">
           {assignments.map((assignment) => (
             <li key={assignment.id} className="py-0.5">
               {assignment.title}
               {' · '}
               {assignment.dueAt === null ? 'NO DEADLINE' : `DUE ${day(assignment.dueAt)}`}
               {' · '}
-              {`${assignment.sheets.length} SHEETS`}
+              {`${assignment.sheets.length} MODULES`}
               {/* §14.2.4 — an empty target set is the whole org, and the row
                   says so rather than leaving a manager to infer why someone
                   they never named is on the hook. */}
@@ -322,30 +332,33 @@ function PersonBody({
       )}
 
       {/* ---- §14.8.2 — the two columns, one row per sign-off --------------- */}
-      <h3 className="hl-mark m-0 mb-2 text-ink">Claim and evidence</h3>
-      <p className="m-0 mb-3 max-w-[var(--width-prose)] font-display text-meta leading-normal text-ink-muted">
+      <h3 className="text-mark m-0 mb-2 text-on-surface">Claim and evidence</h3>
+      <p className="m-0 mb-3 max-w-[var(--layout-measure)] text-meta leading-normal text-on-surface-muted">
         The left column is what this person asserted about themselves (§12.4.4:
         observed, printed as evidence, gating nothing). The two on the right are
         what can be checked without them — the Quick Check they assessed
-        themselves against the sheet, and the repository owner compared with the
+        themselves against the module, and the repository owner compared with the
         GitHub login their sign-in supplied, which they cannot edit.
       </p>
 
       {rows.length === 0 ? (
-        <p className="hl-mark m-0 text-ink-muted" role="status">
-          NO SIGN-OFF RECORDED
+        <p className="text-mark m-0 text-on-surface-muted" role="status">
+          NO COMPLETION RECORDED
         </p>
       ) : (
         <div
-          className="hl-index-scroll"
+          className="bz-table-scroll"
           role="region"
           tabIndex={0}
           aria-label={`Claims and evidence for ${memberLabel(member)}`}
           data-hl-scroller=""
         >
-          <table className="hl-index">
+          <table
+            className="bz-table"
+            style={{ '--bz-table-min': `${MIN_WIDTH}px` } as React.CSSProperties}
+          >
             <caption className="sr-only">
-              One row per sign-off: the claim, and the evidence beside it.
+              One row per completion: the claim, and the evidence beside it.
             </caption>
             <colgroup>
               {COLUMNS.map((column) => (

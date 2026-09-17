@@ -2,21 +2,35 @@
 
 import Link from 'next/link'
 import {
-  classOf,
+  readingMinutes,
   signedCount,
   uptime,
-  xp,
   type CurriculumFacts,
 } from '@/lib/record/derive'
 import { nowIso, useHydrated, useRecord, useSyncState } from '@/lib/record/store'
+import { hoursMinutes } from '@/lib/text'
 
 /**
  * §7.1, §12.5.2 — the readout strip. A tmux statusline or a lab instrument,
  * never a profile header.
  *
  * ```
- * SIGNED OFF 07/32 · TO GO 25 · TRACES 14/32 · UPTIME 6d · XP 940 · CLASS I · II AT 16
+ * Completed 07/33 · To go 26 · Traces 14/32 · Streak 6d · Reading time 3 h 10 m
  * ```
+ *
+ * **M13 / O2 — three cells left the strip and one arrived.** `XP`, `Rank` and
+ * `II at 16` are gone. O2 asked what question each answered and nobody named
+ * one: a weighted sum of three unlike acts is not a quantity a reader can act
+ * on, and a Roman numeral for any 8 modules of 33 is a rank that claims no
+ * capability by its own rule (§12.5.3). `Reading time` took XP's place because
+ * minutes are the one unit on this site a reader already thinks in, and it is
+ * the author's own resolution of O2 — *"XP 0 becomes minutes read"*. The
+ * selectors behind the retired cells are still in `derive.ts` and say there why.
+ *
+ * `Reading time` is the modules' own declared minutes over the modules the
+ * reader has completed, never a measurement of the reader: nothing on this site
+ * writes `dwellSeconds`, so a reader-measured figure would read `0 m` for
+ * everybody. `readingMinutes` carries that reasoning.
  *
  * **Channel B (§12.2).** Every value here is text, so none of it can travel on
  * the pre-paint boot script: the server renders the honest empty form and the
@@ -33,12 +47,8 @@ import { nowIso, useHydrated, useRecord, useSyncState } from '@/lib/record/store
  * first — but in ink: for a high-commitment goal, remaining-actions feedback
  * raises aspiration more than present position does, and the study that tested
  * this exact readout found that stating the position reached raised it least.
- * So the undrawn count takes `.hl-readout-togo` (ink, weight 500) and the Roman
+ * So the undrawn count takes `.bz-readout-togo` (ink, weight 500) and the Roman
  * numeral stays quiet.
- *
- * **The next CLASS threshold is always printed** — instrumentation, not mystery
- * (§7.1) — and CLASS is a count of sheets that may never claim a capability
- * (§12.5.3): any 8 of the 32 reach `CLASS I`.
  *
  * **No percentage, anywhere, ever** (§11.35, §12.5.7). Counting in sheets is
  * what lets to-date and to-go coexist truthfully; one percentage silently picks
@@ -90,13 +100,6 @@ export interface ReadoutProps {
 /** `--` is the instrument convention for "no reading", and it is true. */
 const NO_READING = '--'
 
-/** §7.1 — `XP 1,240`. Locale-free, so the strip reads the same everywhere. */
-function group(value: number): string {
-  const digits = String(Math.trunc(Math.abs(value)))
-  const grouped = digits.replace(/\B(?=(\d{3})+$)/g, ',')
-  return value < 0 ? `-${grouped}` : grouped
-}
-
 /** §12.13 — `SIGNED OFF 00 / 32`: the numerator is padded to the total's width. */
 function fraction(count: number | null, of: number): string {
   const total = String(of)
@@ -117,7 +120,7 @@ function Cell({
   return (
     <span>
       {label}{' '}
-      <span className={togo ? 'hl-readout-value hl-readout-togo' : 'hl-readout-value'}>
+      <span className={togo ? 'bz-readout-value bz-readout-togo' : 'bz-readout-value'}>
         {value}
       </span>
     </span>
@@ -130,8 +133,7 @@ export function Readout({ variant, facts, traces = null, className }: ReadoutPro
   const sync = useSyncState()
 
   const counts = signedCount(data, facts)
-  const points = xp(data, facts)
-  const rank = classOf(counts.signed)
+  const minutes = readingMinutes(data, facts)
 
   /**
    * The clock is read only once the store has answered, which is after the
@@ -145,7 +147,7 @@ export function Readout({ variant, facts, traces = null, className }: ReadoutPro
   cells.push(
     <Cell
       key="signed"
-      label="Signed off"
+      label="Completed"
       value={fraction(hydrated ? counts.signed : null, counts.of)}
     />,
   )
@@ -169,34 +171,31 @@ export function Readout({ variant, facts, traces = null, className }: ReadoutPro
       )
     }
     cells.push(
-      <Cell key="uptime" label="Uptime" value={streak === null ? NO_READING : `${streak}d`} />,
+      <Cell key="uptime" label="Streak" value={streak === null ? NO_READING : `${streak}d`} />,
     )
   }
 
-  cells.push(<Cell key="xp" label="XP" value={hydrated ? group(points.total) : NO_READING} />)
-
-  // §12.5.3 — the numeral is a count of sheets. `—` where the reader has not
-  // reached the first threshold: the count is zero, but the class is not, and a
-  // `0` would read as a class nobody has.
+  // M13 / O2 — where `XP`, `Rank` and the next threshold used to be. One cell
+  // instead of three, in a unit the reader already thinks in. The full strip
+  // states the denominator as well, because a reading time with nothing beside
+  // it does not say how much course there is.
   cells.push(
     <Cell
-      key="class"
-      label="Class"
-      value={hydrated ? (rank.numeral ?? '—') : NO_READING}
+      key="minutes"
+      label="Reading time"
+      value={
+        hydrated
+          ? variant === 'full'
+            ? `${hoursMinutes(minutes.done)} of ${hoursMinutes(minutes.of)}`
+            : hoursMinutes(minutes.done)
+          : NO_READING
+      }
     />,
   )
 
-  // §7.1 — always named, so a reader who has signed off all 15 drawn sheets and
-  // holds CLASS I can see why. Absent only at 32 of 32, where there is no next.
-  if (!hydrated) {
-    cells.push(<Cell key="next" label={`${NO_READING} at`} value={NO_READING} />)
-  } else if (rank.next !== null) {
-    cells.push(<Cell key="next" label={`${rank.next.numeral} at`} value={String(rank.next.at)} />)
-  }
-
   /**
    * §14.7.3 — the push did not land, so the strip says so and puts the export
-   * beside it rather than a route away from it. `.hl-not-saved`'s fault ink is
+   * beside it rather than a route away from it. `.bz-not-saved`'s fault ink is
    * borrowed as a utility rather than the class itself: that class carries a
    * `margin-top` written for a block under a control, and inside a 40px flex
    * row it would push the line off its baseline. §12.10.4 — the colour is not
@@ -210,9 +209,9 @@ export function Readout({ variant, facts, traces = null, className }: ReadoutPro
   if (sync === 'failed') {
     cells.push(
       <span key="sync" role="status" className="whitespace-nowrap">
-        <span className="hl-readout-value text-fault-ink">Not synced</span>
-        <span aria-hidden="true" className="hl-readout-sep">{' · '}</span>
-        <Link href="/profile/" className="hl-link hl-no-print">
+        <span className="bz-readout-value text-on-surface">Not synced</span>
+        <span aria-hidden="true" className="bz-readout-sep">{' · '}</span>
+        <Link href="/profile/" className="bz-link bz-no-print">
           Export your record
         </Link>
       </span>,
@@ -222,7 +221,7 @@ export function Readout({ variant, facts, traces = null, className }: ReadoutPro
   return (
     <div
       className={[
-        'hl-readout',
+        'bz-readout',
         // §5.2 — the compact form sits inside footer row 1, which already has
         // the footer's own top rule above it. §7.1's two painted rules belong to
         // the full strip on the dashboard; a second pair inside a 40px row is
@@ -243,7 +242,7 @@ export function Readout({ variant, facts, traces = null, className }: ReadoutPro
         index === 0
           ? [cell]
           : [
-              <span key={`sep-${index}`} aria-hidden="true" className="hl-readout-sep">
+              <span key={`sep-${index}`} aria-hidden="true" className="bz-readout-sep">
                 ·
               </span>,
               cell,

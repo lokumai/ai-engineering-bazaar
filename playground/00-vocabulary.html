@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vocabulary sets — AI Engineering Bazaar</title>
+<style>
+  :root {
+    --ink: #1a1d23;
+    --muted: #5b6472;
+    --line: #e3e6eb;
+    --paper: #fff;
+    --wash: #f7f8fa;
+    --pick: #0b6e5f;
+    --warn: #a0503c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--wash);
+    color: var(--ink);
+    font: 16px/1.65 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 48px 24px 96px; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 0 0 8px; letter-spacing: -.02em; }
+  .lede { color: var(--muted); max-width: 62ch; margin: 0 0 40px; }
+  h2 { font-size: 20px; margin: 48px 0 4px; letter-spacing: -.01em; }
+  h2 .id {
+    display: inline-block; min-width: 26px; height: 26px; line-height: 26px;
+    text-align: center; border-radius: 6px; background: var(--ink); color: #fff;
+    font-size: 13px; font-weight: 700; margin-right: 10px; vertical-align: 2px;
+  }
+  .sub { color: var(--muted); margin: 0 0 18px; max-width: 66ch; font-size: 15px; }
+  table { width: 100%; border-collapse: collapse; background: var(--paper);
+          border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  th, td { padding: 11px 14px; text-align: left; vertical-align: top; font-size: 15px; }
+  thead th { background: var(--wash); font-size: 13px; color: var(--muted); font-weight: 600;
+             border-bottom: 1px solid var(--line); }
+  tbody tr + tr td { border-top: 1px solid var(--line); }
+  td.now { color: var(--warn); width: 22%; }
+  td.now code { background: #fbf2ef; }
+  code { font: 13.5px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+         background: var(--wash); padding: 1px 5px; border-radius: 4px; }
+  .note { background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--pick);
+          border-radius: 8px; padding: 14px 16px; margin: 16px 0 0; font-size: 15px; }
+  .note b { color: var(--pick); }
+  .pick { color: var(--pick); font-weight: 600; }
+  .demo { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 0; }
+  .chip { border: 1px solid var(--line); background: var(--paper); border-radius: 999px;
+          padding: 6px 13px; font-size: 14px; }
+  .chip b { font-weight: 600; }
+  footer { margin-top: 64px; color: var(--muted); font-size: 14px; }
+  a { color: var(--pick); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Three vocabulary sets</h1>
+<p class="lede">
+  The words are the signposting. Every screen inherits them, so this is the first thing to settle.
+  Pick one set, or take rows from different sets and I will assemble it. Each set is internally
+  consistent, which matters more than any single word.
+</p>
+
+<h2><span class="id">A</span>Course platform</h2>
+<p class="sub">
+  The words used by Coursera, Udemy, Duolingo and every corporate learning tool. Least surprising
+  to a beginner, and the only set where nobody has to learn anything. It costs you the engineering
+  register: this set sounds like a course, not like a handbook for professionals.
+</p>
+<table>
+  <thead><tr><th>Now</th><th>Set A</th><th>Where it shows</th></tr></thead>
+  <tbody>
+    <tr><td class="now"><code>Drawing set</code></td><td><b>Course</b></td><td>the whole thing</td></tr>
+    <tr><td class="now"><code>Sheet</code></td><td><b>Lesson</b></td><td>one page of content</td></tr>
+    <tr><td class="now"><code>Subsystem</code></td><td><b>Section</b></td><td>Fundamentals, Intermediate…</td></tr>
+    <tr><td class="now"><code>Index sheet</code></td><td><b>All lessons</b></td><td>the flat list</td></tr>
+    <tr><td class="now"><code>Sign off</code></td><td><b>Mark complete</b></td><td>the button on a lesson</td></tr>
+    <tr><td class="now"><code>Drawn / Not drawn</code></td><td><b>Available / Coming soon</b></td><td>status badge</td></tr>
+    <tr><td class="now"><code>Requires</code></td><td><b>Prerequisites</b></td><td>what to read first</td></tr>
+    <tr><td class="now"><code>Feeds</code></td><td><b>Next up</b></td><td>what this leads to</td></tr>
+    <tr><td class="now"><code>Title block</code></td><td><b>About this lesson</b></td><td>the side panel</td></tr>
+    <tr><td class="now"><code>The register</code></td><td><b>Activity</b></td><td>what you have done</td></tr>
+    <tr><td class="now"><code>The drafter</code></td><td><b>Your profile</b></td><td>name, settings</td></tr>
+    <tr><td class="now"><code>Extent</code></td><td><b>Length</b></td><td>1,800 words · 30 min</td></tr>
+    <tr><td class="now"><code>Class</code></td><td><b>Level</b></td><td>the learner's rank</td></tr>
+    <tr><td class="now"><code>XP</code></td><td><b>Points</b></td><td>the score</td></tr>
+    <tr><td class="now"><code>Uptime</code></td><td><b>Streak</b></td><td>days in a row</td></tr>
+  </tbody>
+</table>
+<div class="demo">
+  <span class="chip">Fundamentals · <b>Lesson 3 of 8</b></span>
+  <span class="chip"><b>Mark complete</b></span>
+  <span class="chip">Prerequisites: <b>LLM Fundamentals</b></span>
+  <span class="chip"><b>30 min</b></span>
+</div>
+
+<h2><span class="id">B</span>Handbook</h2>
+<p class="sub">
+  The words used by MDN, the Rust book, Stripe docs. It tells the truth about what this is: a
+  written reference you read, not a course you enrol in. Quietest of the three, and it drops the
+  game layer almost entirely, so points and ranks would have to go or be renamed.
+</p>
+<table>
+  <thead><tr><th>Now</th><th>Set B</th><th>Where it shows</th></tr></thead>
+  <tbody>
+    <tr><td class="now"><code>Drawing set</code></td><td><b>Handbook</b></td><td>the whole thing</td></tr>
+    <tr><td class="now"><code>Sheet</code></td><td><b>Chapter</b></td><td>one page of content</td></tr>
+    <tr><td class="now"><code>Subsystem</code></td><td><b>Part</b></td><td>Part 1 · Fundamentals</td></tr>
+    <tr><td class="now"><code>Index sheet</code></td><td><b>Contents</b></td><td>the flat list</td></tr>
+    <tr><td class="now"><code>Sign off</code></td><td><b>Mark as read</b></td><td>the button on a chapter</td></tr>
+    <tr><td class="now"><code>Drawn / Not drawn</code></td><td><b>Written / Planned</b></td><td>status badge</td></tr>
+    <tr><td class="now"><code>Requires</code></td><td><b>Read first</b></td><td>what to read first</td></tr>
+    <tr><td class="now"><code>Feeds</code></td><td><b>Continue with</b></td><td>what this leads to</td></tr>
+    <tr><td class="now"><code>Title block</code></td><td><b>On this page</b></td><td>the side panel</td></tr>
+    <tr><td class="now"><code>The register</code></td><td><b>Reading history</b></td><td>what you have read</td></tr>
+    <tr><td class="now"><code>The drafter</code></td><td><b>Settings</b></td><td>name, theme, data</td></tr>
+    <tr><td class="now"><code>Extent</code></td><td><b>Reading time</b></td><td>30 min read</td></tr>
+    <tr><td class="now"><code>Class</code></td><td><b>drop it</b></td><td>&mdash;</td></tr>
+    <tr><td class="now"><code>XP</code></td><td><b>drop it</b></td><td>&mdash;</td></tr>
+    <tr><td class="now"><code>Uptime</code></td><td><b>drop it</b></td><td>&mdash;</td></tr>
+  </tbody>
+</table>
+<div class="demo">
+  <span class="chip">Part 1 · <b>Chapter 3</b></span>
+  <span class="chip"><b>Mark as read</b></span>
+  <span class="chip">Read first: <b>LLM Fundamentals</b></span>
+  <span class="chip"><b>30 min read</b></span>
+</div>
+
+<h2><span class="id">C</span>Engineering curriculum <span class="pick">&nbsp;my recommendation</span></h2>
+<p class="sub">
+  Your own suggestion, finished. It keeps the words a working engineer already uses, keeps the
+  progress layer without sounding like a game for children, and every term is one a
+  non-native English speaker meets in ordinary technical work. It is also the only set where
+  <b>Module</b> survives, which is what your own notes and the config already call these files.
+</p>
+<table>
+  <thead><tr><th>Now</th><th>Set C</th><th>Where it shows</th></tr></thead>
+  <tbody>
+    <tr><td class="now"><code>Drawing set</code></td><td><b>Curriculum</b></td><td>the whole thing</td></tr>
+    <tr><td class="now"><code>Sheet</code></td><td><b>Module</b></td><td>one page of content</td></tr>
+    <tr><td class="now"><code>Subsystem</code></td><td><b>Level</b></td><td>Level 1 · Fundamentals</td></tr>
+    <tr><td class="now"><code>Index sheet</code></td><td><b>Catalog</b></td><td>the flat list</td></tr>
+    <tr><td class="now"><code>Sign off</code></td><td><b>Complete</b></td><td>the button on a module</td></tr>
+    <tr><td class="now"><code>Drawn / Not drawn</code></td><td><b>Ready / Planned</b></td><td>status badge</td></tr>
+    <tr><td class="now"><code>Requires</code></td><td><b>Requirements</b></td><td>what to read first</td></tr>
+    <tr><td class="now"><code>Feeds</code></td><td><b>Unlocks</b></td><td>what this leads to</td></tr>
+    <tr><td class="now"><code>Title block</code></td><td><b>Module info</b></td><td>the side panel</td></tr>
+    <tr><td class="now"><code>The register</code></td><td><b>Your progress</b></td><td>what you have done</td></tr>
+    <tr><td class="now"><code>The drafter</code></td><td><b>Account</b></td><td>name, settings, data</td></tr>
+    <tr><td class="now"><code>Extent</code></td><td><b>Length</b></td><td>1,800 words · 30 min</td></tr>
+    <tr><td class="now"><code>Class</code></td><td><b>Rank</b></td><td>the learner's rank</td></tr>
+    <tr><td class="now"><code>XP</code></td><td><b>XP</b></td><td>engineers accept this one</td></tr>
+    <tr><td class="now"><code>Uptime</code></td><td><b>Streak</b></td><td>days in a row</td></tr>
+  </tbody>
+</table>
+<div class="demo">
+  <span class="chip">Level 1 · <b>Module 3 of 8</b></span>
+  <span class="chip"><b>Complete</b></span>
+  <span class="chip">Requirements: <b>LLM Fundamentals</b></span>
+  <span class="chip"><b>30 min</b></span>
+</div>
+
+<div class="note">
+  <b>Three words are worth deciding separately</b>, whichever set you pick, because each one
+  carries a claim rather than a label.
+  <br><br>
+  <b>Complete</b> vs <b>Mark as read</b>. Today the button asserts you read it and met the
+  objectives. If it stays self-asserted, <i>Mark as read</i> is the honest word and nobody
+  expects a test. If it should mean something stronger, <i>Complete</i> earns it.
+  <br><br>
+  <b>Level</b> is used twice in Set C: the level of the curriculum (Fundamentals) and the rank of
+  the reader. Pick one. I would keep <i>Level</i> for the curriculum and use <i>Rank</i> for the
+  person, because the curriculum's levels are on every screen and the rank is on one.
+  <br><br>
+  <b>Turkish.</b> Set C survives translation best: Seviye, Modül, Tamamla, Gereksinimler. Set A's
+  <i>Section</i> and Set B's <i>Part</i> both collapse to <i>Bölüm</i>, which already means
+  chapter, section and part, so the hierarchy would go flat in Turkish.
+</div>
+
+<footer>
+  Tell me a letter, or mix rows: for example &ldquo;<span class="pick">Set C, but Mark as read
+  instead of Complete</span>&rdquo;.
+</footer>
+</div>
+</body>
+</html>

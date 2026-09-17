@@ -4,11 +4,10 @@ import { categoryBySlug } from '@/lib/content/curriculum-file'
 import { LANG_DISPLAY } from '@/lib/content/derive'
 import { loadAllModules } from '@/lib/content/loader'
 import {
-  categoryEyebrow,
+  categoryCoverage,
   categorySummary,
   durationLabel,
   indexStatement,
-  setEyebrow,
   setSummary,
   sheetRows,
 } from '@/lib/content/manifest'
@@ -22,33 +21,33 @@ import { sheetCount } from '@/lib/content/curriculum'
 
 const rows = sheetRows()
 
-describe('sheetRows — one row per sheet in the set (§4.8)', () => {
-  it('covers the whole drawing set, in sheet order', () => {
+describe('moduleRows — one row per module in the set (§4.8)', () => {
+  it('covers the whole curriculum, in module order', () => {
     expect(rows.map((row) => row.module)).toEqual(
       Array.from({ length: sheetCount() }, (_, i) => i + 1),
     )
   })
 
-  it('numbers the drawing column the way the title block does', () => {
+  it('numbers the drawing column the way the module info does', () => {
     expect(rows[0].number).toBe('01')
     expect(rows[31].number).toBe('32')
   })
 
-  it('addresses each sheet at its own route', () => {
+  it('addresses each module at its own route', () => {
     for (const sheet of loadAllModules()) {
       const row = rows.find((candidate) => candidate.module === sheet.frontmatter.module)
       expect(row?.path, sheet.slug).toBe(`/courses/${sheet.slug}/`)
     }
   })
 
-  it('states extent as words and declared minutes on a drawn sheet', () => {
+  it('states extent as words and declared minutes on a ready module', () => {
     // The shape, not the measurement: the word count moves with every edit.
     for (const row of rows.filter((candidate) => candidate.drawn)) {
       expect(row.extent, row.title).toMatch(/^[\d,]+ W · \d+ MIN$/)
     }
   })
 
-  it('prints an em dash for the extent of a sheet that is not drawn', () => {
+  it('prints an em dash for the extent of a module that is planned', () => {
     // Its words are the schedule of parts and its duration is undeclared; a
     // reading time for a drawing that does not exist would be an estimate.
     expect(rows[16].extent).toBe('—')
@@ -69,36 +68,68 @@ describe('sheetRows — one row per sheet in the set (§4.8)', () => {
   })
 
   it('carries the declared prerequisites, and an em dash where there are none', () => {
-    expect(rows[13].requires).toBe('12, 13')
-    expect(rows[0].requires).toBe('—')
+    // Was `rows[13].requires` pinned to '12, 13', a fact about whichever sheet
+    // sat at 14. Read off the corpus instead, so it holds for any curriculum.
+    const modules = loadAllModules()
+    for (const [i, row] of rows.entries()) {
+      const declared = modules[i].frontmatter.prerequisites
+      expect(row.requires, modules[i].slug)
+        .toBe(declared.length === 0 ? '—' : declared.join(', '))
+    }
+    expect(rows.some((row) => row.requires === '—')).toBe(true)
   })
 
-  it('names the subsystem each sheet belongs to, and links to it', () => {
+  it('names the level each module belongs to, and links to it', () => {
     expect(rows[12].subsystem).toEqual({
       order: 2,
       title: 'Intermediate',
-      path: '/courses/intermediate/',
+      // M17 — a level's own page is its entry into the catalog. The MODULE
+      // route did not move and is still `/courses/<level>/<module>/`.
+      path: '/sheets/intermediate/',
+      // M12 — the slug is carried so the catalog's views can address the
+      // level's own colour as `[data-cat="<slug>"]`.
+      slug: 'intermediate',
     })
   })
 
-  it('takes at most three topics from the sheet itself', () => {
+  it('takes at most three topics from the module itself', () => {
     for (const row of rows) expect(row.topics.length, row.title).toBeLessThanOrEqual(3)
   })
 
   it('claims nothing about a reader: no progress, no completion, no score', () => {
     const serialised = JSON.stringify(rows)
     expect(serialised)
-      .not.toMatch(/completed|completion|progress|approved|percent|\bxp\b/i)
+      .not.toMatch(/signedOff|reachedEnd|progress|approved|percent|\bxp\b/i)
   })
 })
 
 describe('the filter chips (§4.8 item 5)', () => {
-  it('offers §4.8\'s four names in its order, then §12.18\'s two', () => {
+  /**
+   * M12 — the same six selections, in the same order, in sentence case.
+   *
+   * `kia-context/specs/DESIGN.md` names a tracked-out all-caps label as the
+   * single clearest tell of a generated interface, and `EN · TR` was two of
+   * its do-nots at once: caps, and a meta string joined with a middle dot. The
+   * ids are untouched, because `DEFAULT_FILTER_ID` and the record chips are
+   * addressed by id and a label is not an identity.
+   */
+  /**
+   * M20 — five, not six. `Both languages` left with the table's `Lang` column:
+   * it filtered on whether a `_tr.md` file exists, which is a fact about the
+   * repository and not about anything the site can serve. Keeping it would
+   * also have made `Status:` a lie about its own row.
+   */
+  it('offers the five selections in order, in the case a reader reads', () => {
     expect(FILTERS.map((filter) => filter.label))
-      .toEqual(['ALL', 'READY', 'NOT DRAWN', 'EN · TR', 'SIGNED OFF', 'UNSIGNED'])
+      .toEqual(['All', 'Ready', 'Planned', 'Completed', 'Not completed'])
   })
 
-  it('keeps the set in sheet order — filtering never re-sorts', () => {
+  /** Every chip is a state now, which is what lets the row be named `Status`. */
+  it('states no language, having none to serve', () => {
+    expect(FILTERS.map((filter) => filter.id)).not.toContain('bilingual')
+  })
+
+  it('keeps the set in module order — filtering never re-sorts', () => {
     const drawn = applyFilter(rows, 'ready').map((row) => row.module)
     expect(drawn).toEqual([...drawn].sort((a, b) => a - b))
   })
@@ -136,32 +167,45 @@ describe('indexStatement — §4.8 item 2, with its counts derived', () => {
 
 describe('durationLabel — hours and minutes, never a bare estimate', () => {
   it('states hours and minutes together', () => {
-    expect(durationLabel(235)).toBe('~3 H 55 MIN')
+    expect(durationLabel(235)).toBe('~3 h 55 min')
   })
 
   it('drops the minutes on a whole hour', () => {
-    expect(durationLabel(120)).toBe('~2 H')
+    expect(durationLabel(120)).toBe('~2 h')
   })
 
   it('drops the hours below one', () => {
-    expect(durationLabel(45)).toBe('~45 MIN')
+    expect(durationLabel(45)).toBe('~45 min')
   })
 
-  it('says nothing at all when no sheet declares a duration', () => {
+  it('says nothing at all when no module declares a duration', () => {
     expect(durationLabel(0)).toBeNull()
   })
 })
 
 describe('the counts each page states about itself', () => {
 
-  it('writes the subsystem eyebrow §4.9 item 1 asks for', () => {
-    expect(categoryEyebrow(categoryBySlug('intermediate')!))
-      .toBe('SUBSYSTEM 02 · 7 SHEETS · 7 DRAWN · ~3 H 30 MIN')
+  it('writes the level eyebrow §4.9 item 1 asks for', () => {
+    // The format rather than the counts: a two-digit level number, the plural
+    // for a level of more than one, the ready count, and a rounded duration.
+    // The counts were written in as `7 SHEETS · 7 DRAWN` and went red the
+    // moment Generative UI joined the level.
+    //
+    // Sentence case since M16: these strings were pre-cased to match a class
+    // that applied `text-transform: uppercase`, and the design language has no
+    // uppercase at all.
+    // M20 cut this line to the modules and the total time and moved it under
+    // the heading. `Level 02` is the heading itself, in words; `n ready` is on
+    // every row of the table under it and in the board's own rail.
+    expect(categoryCoverage(categoryBySlug('intermediate')!))
+      .toMatch(/^\d+ modules · ~\d+ h( \d+ min)?$/)
   })
 
-  it('counts a subsystem of one in the singular', () => {
-    expect(categoryEyebrow(categoryBySlug('protocols')!))
-      .toBe('SUBSYSTEM 05 · 1 SHEET · 0 DRAWN')
+  it('counts a level of one in the singular', () => {
+    // No duration either: nothing in this level is written, so nothing
+    // declares one and `durationLabel` drops the part rather than saying `~0`.
+    expect(categoryCoverage(categoryBySlug('protocols')!))
+      .toBe('1 module')
   })
 
 })

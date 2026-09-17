@@ -26,7 +26,7 @@ describe('quickCheckOf', () => {
       .toEqual({ question: 'Why do LLMs need tools?' })
   })
 
-  it('returns null where the sheet asks nothing', () => {
+  it('returns null where the module asks nothing', () => {
     expect(quickCheckOf('## Summary\n\nNothing to ask here.\n')).toBeNull()
   })
 
@@ -80,7 +80,7 @@ describe('quickCheckOf', () => {
    * extractor never looks at status.
    */
 
-  it('finds none on any undrawn sheet', () => {
+  it('finds none on any unready module', () => {
     for (const m of modules.filter((c) => c.frontmatter.status === 'draft')) {
       expect(quickCheckOf(m.body), m.slug).toBeNull()
     }
@@ -110,11 +110,11 @@ describe('summarySection', () => {
       .toBe('The short of it.')
   })
 
-  it('returns null where the sheet authored no summary', () => {
+  it('returns null where the module authored no summary', () => {
     expect(summarySection('## I. Something\n\nProse.\n')).toBeNull()
   })
 
-  it('drops the Quick Check paragraph, which the sheet prints inside Summary', () => {
+  it('drops the Quick Check paragraph, which the module prints inside Summary', () => {
     // All 14 Quick Checks sit inside the `## Summary` section. Reprinting the
     // question underneath the reader's own answer is §12.6's other trap.
     expect(summarySection('## Summary\n\nThe short of it.\n\n**Quick Check**: why?\n'))

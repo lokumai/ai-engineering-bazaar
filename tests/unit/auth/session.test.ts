@@ -433,7 +433,7 @@ describe('the constants a panel must not re-type', () => {
     expect(CALLBACK_TIMEOUT_MS).toBeLessThanOrEqual(30_000)
   })
 
-  it('returns readers to the sheet that actually holds their record', () => {
+  it('returns readers to the module that actually holds their record', () => {
     expect(DEFAULT_RETURN_PATH).toBe('/profile/')
   })
 })

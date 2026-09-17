@@ -77,8 +77,8 @@ export function emptyStateCopy(state: EmptyStateSpec): Copy {
       return {
         status: `SIGNED OFF 00 / ${String(state.of).padStart(2, '0')}`,
         cue:
-          'Sheets you sign off are drawn with a solid outline. Nothing is '
-          + 'signed off yet.',
+          'Modules you complete have a solid outline. Nothing is '
+          + 'completed yet.',
         path: state.firstSheet,
         live: null,
       }
@@ -100,7 +100,7 @@ export function emptyStateCopy(state: EmptyStateSpec): Copy {
       // filter is hiding them. Inventing a third line here would be copy the
       // spec did not write.
       return {
-        status: `NO SHEETS MATCH FILTER — ${state.matched} of ${state.of}`,
+        status: `NO MODULES MATCH FILTER — ${state.matched} of ${state.of}`,
         cue: null,
         path: null,
         live: 'status',
@@ -152,18 +152,18 @@ export function EmptyState({ state }: { state: EmptyStateSpec }) {
     <>
       {copy.status !== null && (
         <p
-          className="hl-mark hl-empty-status m-0"
+          className="text-mark bz-empty-status m-0"
           role={copy.live === 'status' ? 'status' : undefined}
         >
           {copy.status}
         </p>
       )}
-      {copy.cue !== null && <p className="hl-empty-cue">{copy.cue}</p>}
+      {copy.cue !== null && <p className="bz-empty-cue">{copy.cue}</p>}
     </>
   )
 
   return (
-    <div className="hl-empty" data-hl-empty={effective.kind}>
+    <div className="bz-empty" data-hl-empty={effective.kind}>
       {copy.live === 'alert' ? (
         <div role="alert" className="grid gap-2">
           {lines}
@@ -174,14 +174,14 @@ export function EmptyState({ state }: { state: EmptyStateSpec }) {
       {effective.kind === 'no-match' ? (
         <button
           type="button"
-          className="hl-btn hl-empty-path"
+          className="bz-btn bz-empty-path"
           onClick={effective.clear}
         >
           Clear the filter
         </button>
       ) : (
         copy.path !== null && (
-          <Link className="hl-btn hl-empty-path" href={copy.path.path}>
+          <Link className="bz-btn bz-empty-path" href={copy.path.path}>
             {copy.path.label}
           </Link>
         )

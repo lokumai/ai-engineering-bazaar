@@ -247,7 +247,7 @@ describe('§14.5 — no address in the JWT', () => {
   // three reasons. `/profile/` prints the address on the account and says
   // nothing about which sign-ins it carries, so the one reader who needed
   // another sheet was sent to the page that cannot answer.
-  it('sends the unproven mailbox to the sign-in sheet and the rest to the profile sheet', () => {
+  it('sends the unproven mailbox to the sign-in page and the rest to the account page', () => {
     expect(noEmailCopy('unprovenMailbox').link.href).toBe('/sign-in/')
     expect(noEmailCopy('missing').link.href).toBe('/profile/')
     expect(noEmailCopy('malformed').link.href).toBe('/profile/')
@@ -433,7 +433,7 @@ describe('§14.5.1 — the disclosure debt', () => {
   it('states that managers see the WHOLE record, itemised', () => {
     const text = statements.join(' ')
     expect(text).toContain('whole record')
-    for (const item of ['signed off', 'quiz attempt', 'submittal', 'timeline']) {
+    for (const item of ['completed', 'quiz attempt', 'submittal', 'timeline']) {
       expect(text).toContain(item)
     }
   })
@@ -491,7 +491,7 @@ describe('classifyJoinError — from the code, never the message', () => {
     // the first clause of both policies.
     expect(copy).toContain('email sign-in')
     expect(copy).toContain('dnext-technology')
-    expect(copy).not.toContain('withdrawn')
+    expect(copy).not.toContain('withready')
   })
 
   it('keeps the three failures in three distinct sentences', () => {

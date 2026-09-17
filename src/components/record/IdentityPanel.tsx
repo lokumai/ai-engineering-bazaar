@@ -39,7 +39,7 @@ import { DrafterStamp } from './DrafterStamp'
  * `offeredMark` resolves against the role, which this panel does not read. Two
  * call sites would have put two `data-hl-mark` groups and two `#hl-mark-legend`
  * ids on `/profile/`, which is §11.38's breach and an ambiguous anchor. The
- * field, its `SAVE NAME` button and `.hl-identity-initials` all stay here,
+ * field, its `SAVE NAME` button and `.bz-identity-initials` all stay here,
  * whole and unreworded: two e2e specs locate them by accessible name and read a
  * computed style off the initials.
  *
@@ -211,18 +211,18 @@ function IdentityFields() {
       {/* The identity line: stamp, initials, name — all three absent rather
           than substituted when there is nothing to draw (§12.3.4 refuses `?`
           and the silhouette for exactly this state). */}
-      <div className="hl-identity">
+      <div className="bz-identity">
         <DrafterStamp mark={record.identity.mark} seed={record.identity.markSeed} />
         {initials !== null && (
           // As typed, not uppercased: CSS `text-transform` cases off the
           // element's `lang`, and `ilker` under `lang="en"` uppercases to a
           // dotless I where a Turkish reader expects İ (§12.3.4).
-          <span className="hl-identity-initials normal-case">{initials}</span>
+          <span className="bz-identity-initials normal-case">{initials}</span>
         )}
         {stored === null || stored.trim() === '' ? (
-          <span className="hl-mark text-ink-muted">{NO_NAME}</span>
+          <span className="text-mark text-on-surface-muted">{NO_NAME}</span>
         ) : (
-          <bdi dir="auto" className="hl-identity-name">
+          <bdi dir="auto" className="bz-identity-name">
             {stored}
           </bdi>
         )}
@@ -232,13 +232,13 @@ function IdentityFields() {
           the name; a sheet signed with no name on record prints `UNSIGNED`, and
           a sheet nobody has signed prints `—`. Printing it here is what makes
           the field's effect checkable before a reader signs anything. */}
-      <dl className="hl-defs">
+      <dl className="bz-defs">
         <dt>Checked by</dt>
         <dd>
           {stored === null || stored.trim() === '' ? (
             'UNSIGNED'
           ) : (
-            <bdi dir="auto" className="font-display normal-case tracking-normal">
+            <bdi dir="auto" className="normal-case tracking-normal">
               {stored}
             </bdi>
           )}
@@ -246,13 +246,13 @@ function IdentityFields() {
       </dl>
 
       <form onSubmit={onSubmit} noValidate>
-        <label className="hl-field" data-invalid={error ? 'true' : 'false'}>
+        <label className="bz-field" data-invalid={error ? 'true' : 'false'}>
           {/* Visible and persistent, never a placeholder standing in for a
               label, and optional IN WORDS (§12.3.3): marking only the required
               fields makes readers mistake the optional ones for required. */}
-          <span className="hl-field-label">
+          <span className="bz-field-label">
             Name or initials, as you would sign a drawing
-            <span className="hl-field-optional">Optional</span>
+            <span className="bz-field-optional">Optional</span>
           </span>
           <input
             type="text"
@@ -278,7 +278,7 @@ function IdentityFields() {
             while it is still true of that value. One author (`scope.ts`), and
             never the address itself. */}
         {fromAddress && (
-          <p className="hl-mark m-0 text-ink-muted" id={SOURCE_HINT}>
+          <p className="text-mark m-0 text-on-surface-muted" id={SOURCE_HINT}>
             {NAME_FROM_ADDRESS}
           </p>
         )}
@@ -286,24 +286,24 @@ function IdentityFields() {
         {/* §12.1.7 — the boundary that actually matters. Reading your own local
             storage is not a transmission; the export is precisely where that
             stops being true, and the reader is the one who crosses the line. */}
-        <p className="hl-field-hint" id="hl-name-hint">
+        <p className="bz-field-hint" id="hl-name-hint">
           {NAME_SCOPE}
         </p>
 
         {/* GOV.UK register: imperative, and it describes the fix. No "please",
             no "sorry", no verdict on the input (§12.3.3, §12.14.1). */}
         {error && (
-          <p className="hl-field-error" id="hl-name-error" role="alert">
+          <p className="bz-field-error" id="hl-name-error" role="alert">
             Enter the name to print on the report
           </p>
         )}
 
-        <div className="hl-signoff-actions mt-2">
-          <button type="submit" className="hl-btn">
+        <div className="bz-actions mt-2">
+          <button type="submit" className="bz-btn">
             SAVE NAME
           </button>
           {stored !== null && stored.trim() !== '' && (
-            <button type="button" className="hl-btn" onClick={onRemove}>
+            <button type="button" className="bz-btn" onClick={onRemove}>
               REMOVE NAME
             </button>
           )}
@@ -311,7 +311,7 @@ function IdentityFields() {
               of what is worth saying (§12.5.7, §12.14.1). Gated on `hydrated`
               so it can only ever follow a write this session made. */}
           {saved && hydrated && (
-            <span className="hl-mark text-ink-muted" role="status">
+            <span className="text-mark text-on-surface-muted" role="status">
               NAME ON RECORD
             </span>
           )}
@@ -319,9 +319,9 @@ function IdentityFields() {
       </form>
 
       {/* §12.3.2, §12.3.5 — what an edit reaches, and what it cannot. */}
-      <p className="m-0 font-display text-meta leading-normal text-ink-muted">
-        Changing the name changes what every sheet prints as CHECKED BY. It does
-        not change the dates sheets were signed off on, and it does not change
+      <p className="m-0 text-meta leading-normal text-on-surface-muted">
+        Changing the name changes what every module prints as CHECKED BY. It does
+        not change the dates modules were completed on, and it does not change
         the mark: both are records of something that already happened.
       </p>
 
@@ -329,7 +329,7 @@ function IdentityFields() {
           not a banner: no dismiss, no icon, no caution colour. Escalating a
           routine architectural fact to alarm styling both overstates it and
           spends the alarm budget the erase dialog needs (§12.15). */}
-      <div className="hl-note">
+      <div className="bz-note">
         <p>{RECORD_SCOPE}</p>
         <p>
           Browser storage can be cleared without warning — by you, by the

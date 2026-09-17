@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T4 Bazaar — theme preview</title>
+<style>
+/* ===========================================================================
+   THEME T4 — "Bazaar"
+   Built from assets/banner-tiles.jpeg. Every colour below was sampled from
+   that file rather than guessed:
+       cobalt   #282864   the dominant tile blue
+       cream    #EDE3D0   the ground (sampled #C8B48C, lightened for text)
+       clay     #A0503C   the coral-red in the vines
+       ochre    #C8A078   the tan
+       teal     #2F8C86   the vine green
+   Cobalt leads, not the cream, and the headings are a geometric sans rather
+   than a serif, so this reads as glazed ceramic rather than as parchment.
+   The ornament is spent in ONE place: the tile band under the header. Arches
+   mark a level. Everything else is quiet.
+   =========================================================================== */
+:root {
+  --cobalt:#282864; --cobalt-2:#3a3a86; --cobalt-ink:#1b1b47;
+  --cream:#f4ece0; --paper:#fffdf9; --sand:#e6dac6; --line:#d8cbb4; --line-2:#c3b299;
+  --ink:#20242e; --muted:#6a6558; --faint:#948d7d;
+  --clay:#a0503c; --ochre:#c8a078; --teal:#2f8c86; --gold:#b8873b;
+  --l1:#2f8c86; --l2:#282864; --l3:#7a4a86; --l4:#b8873b; --l5:#a0503c;
+  --sans:"Avenir Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --nav:258px;
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--cream); color:var(--ink); font:16px/1.68 var(--sans); }
+a { color:var(--cobalt); text-decoration:none; }
+a:hover { text-decoration:underline; text-underline-offset:2px; }
+:focus-visible { outline:2px solid var(--clay); outline-offset:2px; }
+
+.pg { background:var(--cobalt-ink); color:var(--cream); padding:10px 20px; font-size:13.5px; }
+.pg b { background:var(--ochre); color:var(--cobalt-ink); padding:1px 7px; border-radius:3px; margin-right:8px; }
+.pg span { color:#b9b2d4; }
+
+/* ---- header in cobalt, with the tile band as its base ------------------ */
+.top { background:var(--cobalt); color:#fff; position:sticky; top:0; z-index:40; }
+.top-in { display:flex; align-items:center; gap:18px; height:58px; padding:0 22px; }
+.brand { display:flex; align-items:center; gap:10px; color:#fff; font:600 16px/1 var(--sans);
+        letter-spacing:.005em; }
+.brand:hover { text-decoration:none; }
+/* the mark: four glazed squares, the lokum cubes from the banner */
+.cubes { display:grid; grid-template-columns:9px 9px; grid-gap:2px; }
+.cubes i { width:9px; height:9px; border-radius:1.5px; display:block; }
+.mainnav { display:flex; gap:3px; margin-left:6px; }
+.mainnav a { color:#c9c6e4; padding:7px 12px; border-radius:5px; font-size:14.5px; font-weight:500; }
+.mainnav a:hover { background:rgba(255,255,255,.1); color:#fff; text-decoration:none; }
+.mainnav a[aria-current] { background:var(--cream); color:var(--cobalt-ink); font-weight:600; }
+.sp{flex:1}
+.srch { display:flex; align-items:center; gap:8px; height:33px; padding:0 11px;
+        border:1px solid rgba(255,255,255,.25); border-radius:5px;
+        background:rgba(255,255,255,.08); color:#c9c6e4; font-size:14px; min-width:180px; cursor:text; }
+.ib { width:33px; height:33px; border:1px solid rgba(255,255,255,.25); border-radius:5px;
+      background:rgba(255,255,255,.08); color:#e7e5f2; display:grid; place-items:center;
+      cursor:pointer; font:600 11px/1 var(--sans); }
+.ib:hover { background:rgba(255,255,255,.18); }
+
+/* THE ornamental moment: an İznik diamond lattice, drawn in CSS, on a gold rule */
+.band { height:20px; background-color:var(--cobalt);
+  background-image:
+    linear-gradient(45deg, var(--teal) 25%, transparent 25% 75%, var(--teal) 75%),
+    linear-gradient(45deg, var(--ochre) 25%, transparent 25% 75%, var(--ochre) 75%),
+    linear-gradient(45deg, var(--clay) 25%, transparent 25% 75%, var(--clay) 75%);
+  background-size:20px 20px, 20px 20px, 60px 20px;
+  background-position:0 0, 10px 10px, 30px 0;
+  border-bottom:2px solid var(--gold); }
+
+/* ---- shell ------------------------------------------------------------- */
+.shell { display:grid; grid-template-columns:var(--nav) minmax(0,1fr) 200px; align-items:start; }
+@media (max-width:1180px){ .shell{grid-template-columns:var(--nav) minmax(0,1fr)} .toc{display:none} }
+@media (max-width:880px){ .shell{grid-template-columns:minmax(0,1fr)} .side{display:none} }
+
+.side { position:sticky; top:74px; height:calc(100vh - 74px); overflow-y:auto;
+        padding:20px 12px 48px; border-right:1px solid var(--line); }
+/* an arch for each level, which is the banner's own shape */
+.arch > summary { list-style:none; cursor:pointer; display:flex; align-items:center; gap:9px;
+        padding:9px 12px; font:600 14.5px/1.2 var(--sans); color:var(--cobalt-ink);
+        background:var(--paper); border:1px solid var(--line);
+        border-radius:14px 14px 4px 4px; margin-top:8px; }
+.arch > summary::-webkit-details-marker{display:none}
+.arch > summary:hover { background:#fff; border-color:var(--line-2); }
+.arch .key { width:4px; height:16px; border-radius:2px; flex:none; }
+.arch .n { margin-left:auto; font-size:12.5px; color:var(--muted); font-weight:500; }
+.arch ul { list-style:none; margin:0 0 4px; padding:6px 0 4px 14px; border-left:1px solid var(--line);
+        margin-left:16px; }
+.arch li a { display:flex; align-items:center; gap:8px; padding:6px 10px; border-radius:5px;
+        color:var(--muted); font-size:14px; }
+.arch li a:hover { background:var(--paper); color:var(--ink); text-decoration:none; }
+.arch li a[aria-current] { background:var(--cobalt); color:#fff; font-weight:600; }
+.arch li a .tick { color:var(--teal); font-size:11px; }
+.arch li a[aria-current] .tick { color:#9fe6e0; }
+.arch li a .soon { margin-left:auto; font-size:11px; color:var(--faint);
+        border:1px solid var(--line); border-radius:3px; padding:1px 5px; }
+
+/* ---- content ----------------------------------------------------------- */
+main { padding:34px 42px 96px; min-width:0; }
+.crumb { color:var(--muted); font-size:13.5px; margin-bottom:14px; display:flex; gap:8px; }
+.crumb a{color:var(--muted)}
+h1 { font:600 38px/1.16 var(--sans); letter-spacing:-.015em; margin:0 0 12px; color:var(--cobalt-ink); }
+.row { display:flex; align-items:center; gap:11px; flex-wrap:wrap; margin:0 0 28px;
+       color:var(--muted); font-size:14px; }
+.tag { display:inline-flex; align-items:center; gap:7px; border-radius:4px; padding:4px 10px;
+       font:600 12.5px/1 var(--sans); background:var(--paper); border:1px solid var(--line); }
+.tag i { width:7px; height:7px; border-radius:2px; }
+.prose { max-width:70ch; }
+h2 { font:600 25px/1.28 var(--sans); margin:44px 0 14px; color:var(--cobalt-ink);
+     letter-spacing:-.012em; display:flex; align-items:center; gap:12px; }
+h2::after { content:""; flex:1; height:2px;
+     background:repeating-linear-gradient(90deg,var(--ochre) 0 6px,transparent 6px 12px); }
+h3 { font:600 18.5px/1.35 var(--sans); margin:30px 0 8px; color:var(--ink); }
+p { margin:0 0 17px; }
+.prose a { font-weight:500; text-decoration:underline; text-underline-offset:2px;
+     text-decoration-color:var(--ochre); }
+.prose ul{margin:0 0 17px;padding-left:22px}.prose li{margin:6px 0}
+.prose strong{font-weight:650}
+
+.goals { background:var(--paper); border:1px solid var(--line); border-radius:4px 14px 4px 14px;
+     padding:17px 20px; margin:0 0 28px; }
+.goals b { display:block; font-size:14px; margin-bottom:8px; color:var(--cobalt-ink); }
+.goals ul{margin:0;padding-left:20px}.goals li{margin:5px 0;font-size:15px}
+
+.code { margin:0 0 24px; border:1px solid var(--line); border-radius:6px; overflow:hidden; }
+.code header { display:flex; padding:8px 13px; background:var(--sand); color:var(--muted);
+     font:12.5px/1 var(--mono); border-bottom:1px solid var(--line); }
+.code header span{margin-left:auto}
+.code pre { margin:0; padding:15px 17px; overflow-x:auto; font:13.5px/1.75 var(--mono);
+     background:var(--paper); color:var(--ink); }
+.k{color:var(--cobalt);font-weight:600}.s{color:var(--teal)}.c{color:var(--faint);font-style:italic}
+.f{color:var(--clay)}.n{color:var(--gold);font-weight:600}
+
+figure{margin:0 0 28px}
+.diagram { border:1px solid var(--line); border-radius:6px; background:var(--paper); }
+.diagram .in { overflow-x:auto; overscroll-behavior-x:contain; padding:20px 18px; min-width:0; }
+.diagram .in > svg { max-width:100%; height:auto; }
+figcaption { color:var(--muted); font-size:13.5px; margin-top:9px; }
+.flow{display:flex;align-items:center;min-width:min-content}
+.node { border:1px solid var(--line-2); border-radius:4px; padding:9px 13px; font-size:13.5px;
+     white-space:nowrap; background:var(--cream); }
+.node.on { background:var(--cobalt); color:#fff; border-color:var(--cobalt); font-weight:600; }
+.arr{color:var(--ochre);padding:0 8px;font-weight:700}
+
+.act { display:flex; align-items:center; gap:13px; flex-wrap:wrap; margin-top:44px; padding-top:22px;
+     border-top:2px solid var(--line); max-width:70ch; }
+.btn { border:1px solid var(--cobalt); background:var(--cobalt); color:#fff;
+     font:600 15px/1 var(--sans); padding:11px 20px; border-radius:5px; cursor:pointer; }
+.btn:hover{background:var(--cobalt-2)}
+.btn.g{background:var(--paper);color:var(--cobalt-ink);border-color:var(--line-2)}
+.btn.g:hover{background:#fff}
+.act .m{color:var(--muted);font-size:14px;margin:0}
+.pn{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:34px;max-width:70ch}
+.pn a{border:1px solid var(--line);border-radius:4px;padding:13px 15px;background:var(--paper)}
+.pn a:hover{border-color:var(--line-2);text-decoration:none;background:#fff}
+.pn small{display:block;color:var(--faint);font-size:12.5px;margin-bottom:3px}
+.pn b{color:var(--cobalt-ink);font-weight:600;font-size:15px}
+.pn .r{text-align:right}
+
+.toc { position:sticky; top:74px; padding:34px 20px 40px 6px; }
+.toc b { display:block; font-size:12.5px; color:var(--muted); margin-bottom:10px; font-weight:600; }
+.toc a { display:block; padding:5px 0 5px 12px; font-size:13.5px; color:var(--muted);
+     border-left:2px solid var(--line); }
+.toc a:hover{color:var(--ink);text-decoration:none}
+.toc a[aria-current]{color:var(--cobalt);border-left-color:var(--clay);font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="pg"><b>T4</b><span>Bazaar &mdash; palette sampled from assets/banner-tiles.jpeg. Cobalt leads; ornament spent once, on the tile band. Same content as T1, T2, T3.</span></div>
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="#">
+      <span class="cubes"><i style="background:var(--clay)"></i><i style="background:var(--teal)"></i><i style="background:var(--ochre)"></i><i style="background:var(--cream)"></i></span>
+      AI Engineering Bazaar
+    </a>
+    <nav class="mainnav">
+      <a href="#">Home</a>
+      <a href="#" aria-current="page">Curriculum</a>
+      <a href="#">Catalog</a>
+      <a href="#">My progress</a>
+    </nav>
+    <div class="sp"></div>
+    <div class="srch" role="button" tabindex="0">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M10 10l4.5 4.5"/></svg>
+      Search
+    </div>
+    <button class="ib" title="Theme">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3.4"/><path d="M8 1v1.6M8 13.4V15M1 8h1.6M13.4 8H15"/></svg>
+    </button>
+    <button class="ib" title="Türkçe">TR</button>
+  </div>
+</header>
+<div class="band" aria-hidden="true"></div>
+
+<div class="shell">
+  <aside class="side">
+    <details class="arch" open>
+      <summary><span class="key" style="background:var(--l1)"></span>Fundamentals<span class="n">3/8</span></summary>
+      <ul>
+        <li><a href="#">LLM Fundamentals <span class="tick">&#10003;</span></a></li>
+        <li><a href="#">Training LLMs <span class="tick">&#10003;</span></a></li>
+        <li><a href="#" aria-current="page">RAG &amp; Embeddings</a></li>
+        <li><a href="#">Tool Calling</a></li>
+        <li><a href="#">Memory</a></li>
+        <li><a href="#">AI Agents</a></li>
+        <li><a href="#">Multi-Agent Systems</a></li>
+        <li><a href="#">Observability</a></li>
+      </ul>
+    </details>
+    <details class="arch">
+      <summary><span class="key" style="background:var(--l2)"></span>Intermediate<span class="n">0/8</span></summary>
+      <ul>
+        <li><a href="#">Prompt Engineering</a></li>
+        <li><a href="#">Context Engineering</a></li>
+        <li><a href="#">Coding Agents</a></li>
+        <li><a href="#">Harness Engineering</a></li>
+        <li><a href="#">Loop Engineering</a></li>
+        <li><a href="#">Generative UI <span class="soon">soon</span></a></li>
+        <li><a href="#">Security</a></li>
+        <li><a href="#">Personal Agents</a></li>
+      </ul>
+    </details>
+    <details class="arch">
+      <summary><span class="key" style="background:var(--l3)"></span>Expert<span class="n">0/11</span></summary>
+      <ul>
+        <li><a href="#">Advanced Tools <span class="soon">soon</span></a></li>
+        <li><a href="#">Advanced Memory <span class="soon">soon</span></a></li>
+      </ul>
+    </details>
+    <details class="arch">
+      <summary><span class="key" style="background:var(--l4)"></span>Ecosystem<span class="n">0/5</span></summary>
+      <ul>
+        <li><a href="#">Agent Frameworks</a></li>
+        <li><a href="#">Inference Providers</a></li>
+      </ul>
+    </details>
+    <details class="arch">
+      <summary><span class="key" style="background:var(--l5)"></span>Protocols &amp; Specs<span class="n">0/1</span></summary>
+      <ul><li><a href="#">Protocols Reference <span class="soon">soon</span></a></li></ul>
+    </details>
+  </aside>
+
+  <main>
+    <nav class="crumb"><a href="#">Curriculum</a>/<a href="#">Fundamentals</a>/<span>RAG &amp; Embeddings</span></nav>
+    <h1>RAG &amp; Embeddings</h1>
+    <div class="row">
+      <span class="tag"><i style="background:var(--l1)"></i>Fundamentals</span>
+      <span class="tag">Module 3 of 8</span>
+      <span>30 min &middot; 1,814 words &middot; English &amp; Türkçe</span>
+    </div>
+
+    <div class="prose">
+      <div class="goals">
+        <b>What you will be able to do</b>
+        <ul>
+          <li>Explain why retrieval beats fine-tuning for facts that change</li>
+          <li>Describe how text becomes an embedding, and how similarity is measured</li>
+          <li>Walk through the retrieve-then-generate pipeline end to end</li>
+          <li>Decide, for a given problem, whether you want RAG or fine-tuning</li>
+        </ul>
+      </div>
+
+      <p><a href="#">LLM Fundamentals</a> gave you the context window: the model's working desk, and
+      everything on it has to fit. <a href="#">Training LLMs</a> gave you fine-tuning: changing the
+      model itself. This module is about the third option, and the one you will reach for most.</p>
+
+      <h2>Why RAG exists</h2>
+      <p>A model knows what it was trained on. Ask it about your company's internal handbook and it
+      has three ways to answer, and only one of them is any good: guess, be retrained, or be handed
+      the relevant page at the moment you ask.</p>
+
+      <figure>
+        <div class="diagram"><div class="in"><div class="flow">
+          <span class="node">Question</span><span class="arr">&rarr;</span>
+          <span class="node">Search your data</span><span class="arr">&rarr;</span>
+          <span class="node">Find the relevant page</span><span class="arr">&rarr;</span>
+          <span class="node">Question + page in the context</span><span class="arr">&rarr;</span>
+          <span class="node on">Model answers from what it sees</span>
+        </div></div></div>
+        <figcaption>The model is never changed. Everything happens in the input, which is why a
+        document added this morning can be answered about this afternoon.</figcaption>
+      </figure>
+
+      <h3>What an embedding actually is</h3>
+      <p>An embedding is a list of numbers that stands for a piece of text, arranged so that texts
+      meaning similar things end up close together. Similarity becomes distance, and distance is
+      something a database can sort by.</p>
+
+      <div class="code">
+        <header>rag.py<span>python</span></header>
+<pre><span class="c"># one embedding, then one nearest-neighbour search</span>
+<span class="k">from</span> openai <span class="k">import</span> OpenAI
+
+client = <span class="f">OpenAI</span>()
+vector = client.embeddings.<span class="f">create</span>(
+    model=<span class="s">"text-embedding-3-small"</span>,
+    input=<span class="s">"How do I rotate the signing key?"</span>,
+).data[<span class="n">0</span>].embedding
+
+hits = store.<span class="f">query</span>(vector, top_k=<span class="n">4</span>)
+</pre>
+      </div>
+
+      <p>Four passages come back, they go into the context alongside the question, and the model
+      answers from what it can see rather than from what it remembers.</p>
+    </div>
+
+    <div class="act">
+      <button class="btn">Mark complete</button>
+      <button class="btn g">Requirements (2)</button>
+      <p class="m">Saved in this browser</p>
+    </div>
+
+    <nav class="pn">
+      <a href="#"><small>Previous</small><b>Training LLMs</b></a>
+      <a class="r" href="#"><small>Next</small><b>Tool Calling</b></a>
+    </nav>
+  </main>
+
+  <aside class="toc">
+    <b>On this page</b>
+    <a href="#" aria-current="true">Why RAG exists</a>
+    <a href="#">What an embedding is</a>
+    <a href="#">Where embeddings live</a>
+    <a href="#">The RAG process</a>
+    <a href="#">Tools</a>
+    <a href="#">Summary</a>
+  </aside>
+</div>
+</body>
+</html>

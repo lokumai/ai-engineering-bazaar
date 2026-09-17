@@ -9,6 +9,7 @@ import {
   waitForHydratedReadout,
 } from './record'
 import { A0, DRAWN_COUNT, INDEX_SHEET, SHEETS, SHEET_COUNT, sheetByModule } from './sheets'
+import { showTable } from './views'
 import { watchPage } from './watch'
 
 /**
@@ -33,7 +34,7 @@ import { watchPage } from './watch'
  *    class of hydration mismatch, and one React 19 answers by discarding the
  *    subtree and repainting the table. Comparing the served bytes against the
  *    hydrated DOM is the only way to ask that question.
- * 3. **The squares must stay non-interactive.** `.hl-row-link::after` covers
+ * 3. **The squares must stay non-interactive.** `.bz-row-link::after` covers
  *    the whole row with `inset: 0`, so a control in that cell would be
  *    unclickable and lifting it out would give the row a second tab stop
  *    (§10.3). Whether anything in there is focusable is a DOM fact.
@@ -61,23 +62,34 @@ function slotState(page: Page, slug: string, slot: string) {
   return page.locator(`[data-hl-signoff-cell="${slug}"] [data-hl-slot="${slot}"]`)
 }
 
-const rows = (page: Page) => page.locator('.hl-index tbody tr')
+const rows = (page: Page) => page.locator('.bz-table tbody tr')
 const chip = (page: Page, label: string) => page.getByRole('button', { name: label, exact: true })
+
 
 // ---------------------------------------------------------------------------
 // §4.8 column 9 / §12.18 — the column itself
 // ---------------------------------------------------------------------------
 
-test('the ninth column is SIGN-OFF, and its squares are 14 × 14 (§4.8, §12.18)', async ({
+test('the ninth column is COMPLETION, and its squares are 14 × 14 (§4.8, §12.18)', async ({
   page,
 }) => {
   await page.goto(INDEX_SHEET)
+  await showTable(page)
 
-  const headers = page.locator('.hl-index thead th')
-  await expect(headers).toHaveCount(9)
-  // The rendered case, because this one is a §4.8 column name the reader reads
-  // off the drawing, and `SIGN-OFF` is how §4.8 writes it.
-  await expect(headers.nth(7)).toHaveText('SIGN-OFF', { useInnerText: true })
+  const headers = page.locator('.bz-table thead th')
+  // M20 — eight, not nine: `Lang` left the table with the language filter.
+  await expect(headers).toHaveCount(8)
+  // The LABEL, and not the case it is painted in. This asserted the rendered
+  // `COMPLETION` because §4.8 — the retired design document — wrote its column
+  // names in capitals and the old stylesheet had a `text-transform` to match.
+  // `03-catalog.html` heads its table in sentence case, and the mockup outranks
+  // every document (`CLAUDE.md`), so the capitals went with the old drawing
+  // set. What is being checked here is which column sits in the ninth slot,
+  // which is the part that would break the record if it moved.
+  // Sixth slot now rather than the seventh, for the same reason the count
+  // above dropped. It is still the column immediately before `Requirements`,
+  // which is the relation that would break the record if it moved.
+  await expect(headers.nth(6)).toHaveText(/^completion$/i, { useInnerText: true })
 
   const boxes = squares(page, SEEDED_SLUG)
   await expect(boxes).toHaveCount(4)
@@ -90,8 +102,13 @@ test('the ninth column is SIGN-OFF, and its squares are 14 × 14 (§4.8, §12.18
   for (const box of measured) {
     expect(box.width).toBe('14px')
     expect(box.height).toBe('14px')
-    // §5.9 — zero radius, everywhere on this site.
-    expect(box.radius).toBe('0px')
+    // The language's smallest radius step, and not §5.9's "zero everywhere".
+    // That was the retired drawing set's convention; DESIGN.md's Shapes
+    // section replaces it with a scale and states this case by name — "a `2px`
+    // corner on a `9px` swatch and a `7px` corner on a slab are the same
+    // visual softness at different scales". A 14px square takes the smallest
+    // step there is. The square's STATES are stage 7's, its size is §12.18's.
+    expect(box.radius).toBe('2px')
   }
 })
 
@@ -99,20 +116,28 @@ test('nothing in the sign-off column is interactive or announced (§4.8, §10.3,
   page,
 }) => {
   await page.goto(INDEX_SHEET)
+  await showTable(page)
 
-  // §12.18 — a control here would sit under `.hl-row-link`'s stretched
+  // §12.18 — a control here would sit under `.bz-row-link`'s stretched
   // pseudo-element, unclickable, and lifting it out would add a second tab stop
   // to every row. Signing off happens on the sheet, which is the only place the
   // criteria are stated (§12.4.1).
-  const focusable = await page
-    .locator('.hl-row-signoff')
-    .evaluateAll((cells) =>
-      cells.reduce(
-        (total, cell) =>
-          total + cell.querySelectorAll('a, button, input, select, textarea, [tabindex]').length,
-        0,
-      ),
-    )
+  const cells = page.locator('.bz-row-signoff')
+  /*
+    COUNTED FIRST, because `reduce` over an empty list returns the seed and the
+    seed is `0`, which is this test's pass condition. Renaming the class — or
+    dropping the column — would prove "the sign-off column grew a control" false
+    by having no column at all, and report green. One assertion closes it.
+  */
+  expect(await cells.count(), 'no sign-off column to check').toBeGreaterThan(0)
+
+  const focusable = await cells.evaluateAll((found) =>
+    found.reduce(
+      (total, cell) =>
+        total + cell.querySelectorAll('a, button, input, select, textarea, [tabindex]').length,
+      0,
+    ),
+  )
   expect(focusable, 'the sign-off column grew a control').toBe(0)
 
   // They carry no text by specification, so they are hidden rather than
@@ -120,7 +145,7 @@ test('nothing in the sign-off column is interactive or announced (§4.8, §10.3,
   // over elsewhere: the sheet states its own sign-off in words, and this page
   // states it through the chips and their announced count.
   const hidden = await page
-    .locator('.hl-signoff-square')
+    .locator('.bz-signoff-square')
     .evaluateAll((nodes) => nodes.map((node) => node.getAttribute('aria-hidden')))
   expect(hidden.length).toBeGreaterThan(SHEET_COUNT)
   for (const value of hidden) expect(value).toBe('true')
@@ -136,11 +161,12 @@ test('a seeded record paints the squares its record has earned (§12.2 channel B
     },
   })
   await page.goto(INDEX_SHEET)
+  await showTable(page)
 
   // `sheetStamps` decides what is filled — the same function the manifest asked
   // which squares to draw — so a square is filled when its slot's count has
   // reached its threshold, one rule for all four slots.
-  await expect(slotState(page, SEEDED_SLUG, 'SIGN-OFF')).toHaveAttribute('data-signed', 'true')
+  await expect(slotState(page, SEEDED_SLUG, 'COMPLETION')).toHaveAttribute('data-signed', 'true')
   await expect(slotState(page, SEEDED_SLUG, 'QUIZ')).toHaveAttribute('data-signed', 'true')
   // Nothing was ticked and no source was opened, so those two stay as drawn.
   await expect(slotState(page, SEEDED_SLUG, 'CHECKLIST')).toHaveAttribute('data-signed', 'false')
@@ -149,7 +175,7 @@ test('a seeded record paints the squares its record has earned (§12.2 channel B
   // Every other sheet's cell is untouched: one island paints all of them, and a
   // selector that matched too broadly would fill the whole column.
   const other = slugOf(sheetByModule(1))
-  await expect(slotState(page, other, 'SIGN-OFF')).toHaveAttribute('data-signed', 'false')
+  await expect(slotState(page, other, 'COMPLETION')).toHaveAttribute('data-signed', 'false')
 
   expect(problems.consoleErrors).toEqual([])
 })
@@ -162,28 +188,29 @@ test('a seeded record paints the squares its record has earned (§12.2 channel B
  * rows React re-mounts are the server's markup again, and React has no reason
  * to think anything else wrote to them.
  */
-test('pressing a filter chip and returning to ALL keeps the squares painted (§12.2)', async ({
+test('pressing a filter chip and returning to All keeps the squares painted (§12.2)', async ({
   page,
 }) => {
   await seedRecord(page, { sheets: { [SEEDED_SLUG]: signedSheet('b7225f8') } })
   await page.goto(INDEX_SHEET)
-  const painted = slotState(page, SEEDED_SLUG, 'SIGN-OFF')
+  await showTable(page)
+  const painted = slotState(page, SEEDED_SLUG, 'COMPLETION')
   await expect(painted).toHaveAttribute('data-signed', 'true')
 
-  // `READY` is a drawing filter, so it re-mounts rows without changing which
+  // `Ready` is a drawing filter, so it re-mounts rows without changing which
   // sheets the record says are signed off — the cleanest way to make the DOM
   // move under the paint.
-  await chip(page, 'READY').click()
+  await chip(page, 'Ready').click()
   await expect(rows(page)).toHaveCount(DRAWN_COUNT)
   await expect(painted).toHaveAttribute('data-signed', 'true')
 
-  await chip(page, 'NOT DRAWN').click()
+  await chip(page, 'Planned').click()
   await expect(rows(page)).toHaveCount(SHEET_COUNT - DRAWN_COUNT)
   // The seeded sheet is not in this table at all; the assertion is that coming
   // back finds it painted rather than that it stayed painted while absent.
   await expect(squares(page, SEEDED_SLUG)).toHaveCount(0)
 
-  await chip(page, 'ALL').click()
+  await chip(page, 'All').click()
   await expect(rows(page)).toHaveCount(SHEET_COUNT)
   await expect(painted).toHaveAttribute('data-signed', 'true')
 })
@@ -192,7 +219,7 @@ test('pressing a filter chip and returning to ALL keeps the squares painted (§1
 // §12.18 — the two chips that select on the record
 // ---------------------------------------------------------------------------
 
-test('the SIGNED OFF and UNSIGNED chips filter on the reader’s own assertions (§12.18)', async ({
+test('the Completed and Not completed chips filter on the reader’s own assertions (§12.18)', async ({
   page,
 }) => {
   const signed = [sheetByModule(13), sheetByModule(8)]
@@ -200,18 +227,19 @@ test('the SIGNED OFF and UNSIGNED chips filter on the reader’s own assertions 
     sheets: Object.fromEntries(signed.map((sheet) => [slugOf(sheet), signedSheet('b7225f8')])),
   })
   await page.goto(INDEX_SHEET)
+  await showTable(page)
   await waitForHydratedReadout(page)
 
-  await chip(page, 'SIGNED OFF').click()
+  await chip(page, 'Completed').click()
   await expect(rows(page)).toHaveCount(signed.length)
-  const titles = await page.locator('.hl-index tbody .hl-row-link').allTextContents()
+  const titles = await page.locator('.bz-table tbody .bz-row-link').allTextContents()
   expect(titles.sort()).toEqual(signed.map((sheet) => sheet.title).sort())
 
-  // §12.4.1 — a draft can never carry a sign-off, so it is always `UNSIGNED`
+  // §12.4.1 — a draft can never be completed, so it is always `Not completed`
   // rather than excluded from both: the two chips partition the whole set.
-  await chip(page, 'UNSIGNED').click()
+  await chip(page, 'Not completed').click()
   await expect(rows(page)).toHaveCount(SHEET_COUNT - signed.length)
-  await expect(page.locator('.hl-index tbody tr[data-draft]')).toHaveCount(
+  await expect(page.locator('.bz-table tbody tr[data-draft]')).toHaveCount(
     SHEET_COUNT - DRAWN_COUNT,
   )
 })
@@ -228,19 +256,19 @@ test('the count of what is shown is announced, not implied (§12.13, SC 4.1.3)',
   // appears at the moment it has something to say. SC 4.1.3's own examples are
   // literally "5 results returned" / "No results returned", so the count itself
   // is in the region.
-  const count = page.locator('.hl-chip-count')
+  const count = page.locator('.bz-filter-count')
   await expect(count).toHaveAttribute('role', 'status')
   await expect(count).toHaveText(`Showing ${SHEET_COUNT} of ${SHEET_COUNT}`)
 
-  await chip(page, 'SIGNED OFF').click()
+  await chip(page, 'Completed').click()
   await expect(count).toHaveText(`Showing 1 of ${SHEET_COUNT}`)
 
-  await chip(page, 'UNSIGNED').click()
+  await chip(page, 'Not completed').click()
   await expect(count).toHaveText(`Showing ${SHEET_COUNT - 1} of ${SHEET_COUNT}`)
 })
 
 /**
- * §12.2 — `DEFAULT_FILTER_ID` is `ALL` and has to stay `ALL`.
+ * §12.2 — `DEFAULT_FILTER_ID` is `all` and has to stay `all`.
  *
  * The served bytes are one witness and the hydrated DOM is the other. Reading
  * the row count out of the response body rather than out of a constant is what
@@ -248,7 +276,7 @@ test('the count of what is shown is announced, not implied (§12.13, SC 4.1.3)',
  * suite with itself: if a record chip were ever active on load, the numbers
  * would differ and React would repaint the table.
  */
-test('ALL is active on load and the first client render emits the prerender’s rows (§12.2)', async ({
+test('All is active on load and the first client render emits the prerender’s rows (§12.2)', async ({
   page,
 }) => {
   const problems = watchPage(page)
@@ -264,8 +292,10 @@ test('ALL is active on load and the first client render emits the prerender’s 
   await page.goto(INDEX_SHEET)
   await waitForHydratedReadout(page)
 
-  await expect(chip(page, 'ALL')).toHaveAttribute('aria-pressed', 'true')
-  for (const label of ['READY', 'NOT DRAWN', 'EN · TR', 'SIGNED OFF', 'UNSIGNED'])
+  await expect(chip(page, 'All')).toHaveAttribute('aria-pressed', 'true')
+  // M20 — five chips, all of them states, which is what lets the row be
+  // named `Status`. `Both languages` was the one that was not.
+  for (const label of ['Ready', 'Planned', 'Completed', 'Not completed'])
     await expect(chip(page, label)).toHaveAttribute('aria-pressed', 'false')
 
   await expect(rows(page)).toHaveCount(prerendered)
@@ -276,7 +306,7 @@ test('ALL is active on load and the first client render emits the prerender’s 
 
   // The readout on the same page reads the same record (§12.2 channel B), so a
   // painted column and a printed count cannot disagree.
-  await expect(readoutCells(page).first()).toHaveText(`Signed off 02/${SHEET_COUNT}`)
+  await expect(readoutCells(page).first()).toHaveText(`Completed 02/${SHEET_COUNT}`)
 })
 
 test('the boot script stamps the index before its first paint too (§12.2 channel A)', async ({
@@ -332,13 +362,14 @@ for (const [width, height] of WIDTHS) {
     })
     await page.setViewportSize({ width, height })
     await page.goto(INDEX_SHEET)
+    await showTable(page)
     // Every drawn sheet signed off, so every fillable square in the column is
     // painted — the widest the column can ever be.
-    await expect(slotState(page, SEEDED_SLUG, 'SIGN-OFF')).toHaveAttribute('data-signed', 'true')
+    await expect(slotState(page, SEEDED_SLUG, 'COMPLETION')).toHaveAttribute('data-signed', 'true')
 
     const measured = await page.evaluate(() => {
       const root = document.documentElement
-      const scroller = document.querySelector('.hl-index-scroll') as HTMLElement
+      const scroller = document.querySelector('.bz-table-scroll') as HTMLElement
       return {
         documentOverflow: root.scrollWidth - root.clientWidth,
         bodyOverflow: document.body.scrollWidth - root.clientWidth,

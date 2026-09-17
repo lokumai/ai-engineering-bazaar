@@ -127,7 +127,7 @@ Recitation kelimesini akılda tut. Bu modülün sonunda geri geliyor, çünkü t
 
 ## Deep agent'lar
 
-**Deep agent'lar**, bütün bunlar olurken popüler olan bir agent mimarisi. Yukarıdaki her tekniği kendi agent'ına elle kurmak zorunda değilsin, ve onları paketleyen şekil bu. Bilinmeye değer birkaç mimari var, [Advanced Architectures](../3_expert/advanced_architectures_tr.md)'da işleniyor; bu modüle ait olan bu, çünkü tasarıma dönüşmüş context engineering.
+**Deep agent'lar**, bütün bunlar olurken popüler olan bir agent mimarisi. Yukarıdaki her tekniği kendi agent'ına elle kurmak zorunda değilsin, ve onları paketleyen şekil bu. Bilinmeye değer birkaç mimari var, [Advanced Agent Architectures](../3_expert/advanced_agent_architectures_tr.md)'da işleniyor; bu modüle ait olan bu, çünkü tasarıma dönüşmüş context engineering.
 
 Deep sayılmak için bir agent'ın en azından bunlara ihtiyacı var:
 
@@ -190,8 +190,9 @@ graph LR
     B --> C[Coding Agents]
     C --> D[Harness Engineering]
     D --> E[Loop Engineering]
-    E --> F[Security]
-    F --> G[Personal Agents]
+    E --> F[Generative UI]
+    F --> G[Security]
+    G --> H[Personal Agents]
     style A fill:#90EE90
     style B fill:#FFFF00
 ```

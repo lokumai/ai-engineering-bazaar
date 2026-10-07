@@ -94,6 +94,7 @@ Which brings us to the models built only to judge safety. You run one alongside 
 - **[Prompt Guard 86M](https://huggingface.co/meta-llama/Prompt-Guard-86M)** from Meta is the small one, and the place to start. 86M parameters with a 512-token window, and it sorts an input into benign, injection or jailbreak. It is small enough to run in front of every single request.
 - **[Llama Guard 4](https://developer.meta.com/ai/docs/model-cards-and-prompt-formats/llama-guard-4/)**, 12B, multimodal so it reads images as well as text. It checks both user input and model output against a taxonomy of 14 hazard categories, and answers "safe" or "unsafe" plus which category was violated. **[Llama Guard 3](https://ollama.com/library/llama-guard3)** is the previous generation and is on Ollama, which makes it the easiest one to try locally.
 - **[Granite 4.1 Guardian](https://ollama.com/library/granite4.1-guardian)** is IBM's, also on Ollama, and covers hallucination and groundedness checks alongside the usual harm categories.
+- **[ShieldGemma](https://ollama.com/library/shieldgemma)** is Google's, built on Gemma 2 in 2B, 9B and 27B, and also on Ollama. It checks both input and output against four harm categories (sexually explicit, dangerous content, hate and harassment) and answers a plain `Yes` or `No`.
 - **[gpt-oss-safeguard](https://ollama.com/library/gpt-oss-safeguard)**, 20B and 120B, does something the others do not: **you give it your own written policy** and it judges against that, instead of a taxonomy fixed at training time. It also shows its reasoning rather than only a label, which matters when you have to explain why something was blocked.
 - **[Llama 3.1 Nemotron Safety Guard 8B v3](https://build.nvidia.com/nvidia/llama-3_1-nemotron-safety-guard-8b-v3)** from NVIDIA covers 23 safety categories across 9 languages, and checks prompts and responses both.
 
@@ -105,6 +106,7 @@ Side by side, so you can pick on what you actually need:
 | Llama Guard 4 | 12B | Input and output | Multimodal, so it reads images too. 14 hazard categories |
 | Llama Guard 3 | on Ollama | Input and output | The previous generation, and the easiest to try locally |
 | Granite 4.1 Guardian | on Ollama | Input and output | IBM's. Adds hallucination and groundedness checks |
+| ShieldGemma | 2B, 9B, 27B | Input and output | Google's, on Ollama. Four harm categories, answers Yes or No |
 | gpt-oss-safeguard | 20B, 120B | Input and output | Judges against a policy you write, and shows its reasoning |
 | Nemotron Safety Guard v3 | 8B | Input and output | 23 categories across 9 languages |
 
@@ -191,7 +193,7 @@ Next: agents that live with you rather than in a repository, and what that does 
 - [LangChain guardrails](https://docs.langchain.com/oss/python/langchain/guardrails): the before-agent and after-agent middleware, plus PII and human-in-the-loop
 - [Prompt Guard 86M](https://huggingface.co/meta-llama/Prompt-Guard-86M): a small classifier that sorts input into benign, injection or jailbreak
 - [Llama Guard 4](https://developer.meta.com/ai/docs/model-cards-and-prompt-formats/llama-guard-4/): 12B, multimodal, 14 hazard categories, input and output
-- [Llama Guard 3](https://ollama.com/library/llama-guard3) and [Granite 4.1 Guardian](https://ollama.com/library/granite4.1-guardian): both on Ollama, so the easiest place to start locally
+- [Llama Guard 3](https://ollama.com/library/llama-guard3), [Granite 4.1 Guardian](https://ollama.com/library/granite4.1-guardian) and [ShieldGemma](https://ollama.com/library/shieldgemma): all three on Ollama, so the easiest place to start locally
 - [gpt-oss-safeguard](https://ollama.com/library/gpt-oss-safeguard): judges against a policy you write, and shows its reasoning
 - [Llama 3.1 Nemotron Safety Guard 8B v3](https://build.nvidia.com/nvidia/llama-3_1-nemotron-safety-guard-8b-v3): 23 categories across 9 languages
 - [promptfoo](https://github.com/promptfoo/promptfoo): red teaming and scanning from a config, in CI

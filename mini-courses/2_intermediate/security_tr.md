@@ -84,6 +84,7 @@ Bu da bizi sadece güvenliğe karar vermek için yapılmış modellere getiriyor
 - **Meta'nın [Prompt Guard 86M](https://huggingface.co/meta-llama/Prompt-Guard-86M)** modeli küçük olanı, ve başlanacak yer. 86M parameter ve 512 token'lık bir pencere, ve bir input'u benign, injection ya da jailbreak diye ayırıyor. Her bir isteğin önünde çalışacak kadar küçük.
 - **[Llama Guard 4](https://developer.meta.com/ai/docs/model-cards-and-prompt-formats/llama-guard-4/)**, 12B, multimodal olduğu için metnin yanında görüntü de okuyor. Hem user input'u hem model output'unu 14 tehlike kategorisinden oluşan bir taksonomiye karşı kontrol ediyor, ve "safe" ya da "unsafe" artı hangi kategorinin ihlal edildiğini söylüyor. **[Llama Guard 3](https://ollama.com/library/llama-guard3)** önceki nesil ve Ollama'da, bu da onu lokalde denemesi en kolay olan yapıyor.
 - **[Granite 4.1 Guardian](https://ollama.com/library/granite4.1-guardian)** IBM'in, o da Ollama'da, ve alışılmış zarar kategorilerinin yanında hallucination ile groundedness kontrolleri de yapıyor.
+- **[ShieldGemma](https://ollama.com/library/shieldgemma)** Google'ın, Gemma 2 üzerine kurulu, 2B, 9B ve 27B boyutlarında, o da Ollama'da. Hem girişi hem çıkışı dört zarar kategorisine göre kontrol ediyor (cinsel içerik, tehlikeli içerik, nefret söylemi ve taciz) ve düz bir `Yes` ya da `No` ile cevap veriyor.
 - **[gpt-oss-safeguard](https://ollama.com/library/gpt-oss-safeguard)**, 20B ve 120B, diğerlerinin yapmadığı bir şey yapıyor: **kendi yazdığın politikayı ona veriyorsun** ve eğitim zamanında sabitlenmiş bir taksonom yerine ona göre karar veriyor. Ayrıca sadece bir etiket değil gerekçesini de gösteriyor, ki bir şeyin neden engellendiğini açıklamak zorunda kaldığında bu önemli.
 - **NVIDIA'nın [Llama 3.1 Nemotron Safety Guard 8B v3](https://build.nvidia.com/nvidia/llama-3_1-nemotron-safety-guard-8b-v3)** modeli 9 dilde 23 güvenlik kategorisi kapsıyor, ve hem prompt'ları hem cevapları kontrol ediyor.
 
@@ -95,6 +96,7 @@ Yan yana, böylece gerçekten neye ihtiyacın olduğuna göre seçebilirsin:
 | Llama Guard 4 | 12B | Giriş ve çıkış | Multimodal, yani görüntü de okuyor. 14 tehlike kategorisi |
 | Llama Guard 3 | Ollama'da | Giriş ve çıkış | Önceki nesil, ve lokalde denemesi en kolay olan |
 | Granite 4.1 Guardian | Ollama'da | Giriş ve çıkış | IBM'in. Hallucination ve groundedness kontrolleri ekliyor |
+| ShieldGemma | 2B, 9B, 27B | Giriş ve çıkış | Google'ın, Ollama'da. Dört zarar kategorisi, Yes ya da No ile cevap veriyor |
 | gpt-oss-safeguard | 20B, 120B | Giriş ve çıkış | Senin yazdığın politikaya göre karar veriyor, ve gerekçesini gösteriyor |
 | Nemotron Safety Guard v3 | 8B | Giriş ve çıkış | 9 dilde 23 kategori |
 
@@ -181,7 +183,7 @@ Sırada: bir repo'da değil seninle birlikte yaşayan agent'lar, ve bunun bu mod
 - [LangChain guardrails](https://docs.langchain.com/oss/python/langchain/guardrails): before-agent ve after-agent middleware, artı PII ve human-in-the-loop
 - [Prompt Guard 86M](https://huggingface.co/meta-llama/Prompt-Guard-86M): input'u benign, injection ya da jailbreak diye ayıran küçük bir classifier
 - [Llama Guard 4](https://developer.meta.com/ai/docs/model-cards-and-prompt-formats/llama-guard-4/): 12B, multimodal, 14 tehlike kategorisi, giriş ve çıkış
-- [Llama Guard 3](https://ollama.com/library/llama-guard3) ve [Granite 4.1 Guardian](https://ollama.com/library/granite4.1-guardian): ikisi de Ollama'da, yani lokalde başlamanın en kolay yeri
+- [Llama Guard 3](https://ollama.com/library/llama-guard3), [Granite 4.1 Guardian](https://ollama.com/library/granite4.1-guardian) ve [ShieldGemma](https://ollama.com/library/shieldgemma): üçü de Ollama'da, yani lokalde başlamanın en kolay yeri
 - [gpt-oss-safeguard](https://ollama.com/library/gpt-oss-safeguard): senin yazdığın politikaya göre karar veriyor, ve gerekçesini gösteriyor
 - [Llama 3.1 Nemotron Safety Guard 8B v3](https://build.nvidia.com/nvidia/llama-3_1-nemotron-safety-guard-8b-v3): 9 dilde 23 kategori
 - [promptfoo](https://github.com/promptfoo/promptfoo): config'den red teaming ve tarama, CI içinde

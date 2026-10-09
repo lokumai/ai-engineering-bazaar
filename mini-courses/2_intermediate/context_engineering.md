@@ -49,7 +49,7 @@ than with 800K. Not because the window overflowed. Because of what was already i
 ![Two jars, same model](./images/context-pollution-jars.jpeg)  
 *The three things the model needs are in both jars. On the right they are still there, still legible, and still lost, because everything else in the jar is competing for the same attention.*
 
-The phenomenon has two names in the wild: **context rot** and **context pollution**.
+The phenomenon has two names in the wild: **context rot** and **context pollution**. Drew Breunig's [How Long Contexts Fail](https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html) goes one step further and names four specific ways it happens: poisoning, distraction, confusion and clash.
 
 The reason is **attention**, the mechanism a model uses to decide which parts of its input matter
 for the token it is about to write. We are not going into the theory of it. What you need is the
@@ -370,6 +370,7 @@ actually save you?
 ## References
 
 - [Context Rot: How Increasing Input Tokens Impacts LLM Performance](https://www.trychroma.com/research/context-rot): the Chroma study behind all of this, 18 models, and the needle-and-distractor experiments
+- [How Long Contexts Fail](https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html): Drew Breunig's four named failures, from an early hallucination that keeps getting cited to new information that contradicts the old
 - [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents): the fullest treatment, and the source of the compaction and subagent guidance
 - [The New Skill in AI is Not Prompting, It's Context Engineering](https://www.philschmid.de/context-engineering): the shortest good definition
 - [Context Engineering](https://www.langchain.com/blog/context-engineering-for-agents): the four verbs, write, select, compress and isolate

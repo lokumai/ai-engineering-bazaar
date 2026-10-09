@@ -23,7 +23,7 @@ GPT-4.1, Claude 4 ve Gemini 2.5 dahil 18 model çalıştırdılar, ve desen heps
 ![Two jars, same model](./images/context-pollution-jars.jpeg)  
 *Modelin ihtiyaç duyduğu üç şey iki kavanozun da içinde. Sağdakinde hâlâ orada, hâlâ okunur, ve hâlâ kaybolmuş durumda; çünkü kavanozdaki geri kalan her şey aynı dikkat için yarışıyor.*
 
-Bu olgunun sahada iki adı var: **context rot** ve **context pollution**.
+Bu olgunun sahada iki adı var: **context rot** ve **context pollution**. Drew Breunig'in [How Long Contexts Fail](https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html) yazısı bir adım daha ileri gidip bunun nasıl olduğunu dört ayrı adla tanımlıyor: poisoning, distraction, confusion ve clash.
 
 Sebebi **attention**, yani modelin yazmak üzere olduğu token için input'un hangi kısımlarının önemli olduğuna karar vermek için kullandığı mekanizma. Teorisine girmiyoruz. İhtiyacın olan şey sonucu: attention sabit bir bütçe, ve window'daki her şeye bölünüyor. İnsanla aynı. Kafanda bir anda birkaç şey tutabiliyorsun, fazlasını değil, ve agent'ının beyni olan model de farklı değil. Context'ini birbiriyle gevşek ilgili bir sürü malzemeyle doldur, bir insanın taşıyacağı yükü taşıyor ve aynı tür hataları yapıyor.
 
@@ -210,6 +210,7 @@ Sırada: agent'ların kendisi, ve birini genişletmenin altı yolu.
 ## Kaynaklar
 
 - [Context Rot: How Increasing Input Tokens Impacts LLM Performance](https://www.trychroma.com/research/context-rot): bütün bunların arkasındaki Chroma çalışması, 18 model, ve needle ile distractor deneyleri
+- [How Long Contexts Fail](https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html): Drew Breunig'in adlandırdığı dört hata, sürekli alıntılanan erken bir hallucination'dan eski bilgiyle çelişen yeni bilgiye kadar
 - [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents): en dolu işlenişi, ve compaction ile subagent rehberliğinin kaynağı
 - [The New Skill in AI is Not Prompting, It's Context Engineering](https://www.philschmid.de/context-engineering): en kısa iyi tanım
 - [Context Engineering](https://www.langchain.com/blog/context-engineering-for-agents): dört fiil, write, select, compress ve isolate

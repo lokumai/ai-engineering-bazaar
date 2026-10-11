@@ -4,7 +4,7 @@ import type { SheetLink } from './DependencyBlock'
 /**
  * The modules to read before this one, at the top of the page, by name.
  *
- * The author, 2026-10-11: *"for the requirements, again use a component or
+ * The author, 2026-10-12: *"for the requirements, again use a component or
  * mechanism that is intuitive and familiar in best practice"*. They were a
  * `Requirements (n)` disclosure beside the completion button at the END of the
  * page, and opening it showed module NUMBERS — `1, 3` — under three labels

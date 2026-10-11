@@ -154,7 +154,7 @@ test.describe('A0 — the assembly module', () => {
     await expect(contents.getByText('Requirements', { exact: false })).toHaveCount(0)
 
     /*
-      THE END OF A MODULE, in the order the author set on 2026-10-11: after the
+      THE END OF A MODULE, in the order the author set on 2026-10-12: after the
       prose (which ends with its references), the completion checkbox, then
       Previous and Next, then the quick quiz, collapsed. Asserted as an ORDER in
       the document, because the order is the design: a reader finishes, marks
@@ -290,7 +290,7 @@ test.describe('A short ready module — the same anatomy as a long one', () => {
     expect(drawing.leadOut).toBe(0)
 
     // The stamps that once closed every ready module (§7.4) left the page with
-    // the rest of the `Marked by` card on 2026-10-11; what closes it now is the
+    // the rest of the `Marked by` card on 2026-10-12; what closes it now is the
     // completion checkbox.
     await expect(page.locator('.bz-stamp:visible')).toHaveCount(0)
     await expect(page.getByRole('checkbox', { name: 'Mark this module as complete' })).toBeVisible()

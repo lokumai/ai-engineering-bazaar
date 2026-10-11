@@ -11,8 +11,8 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24, and the quiz and the end of a module for M25, on 2026-10-11
-last_updated: "2026-10-11"
+covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12
+last_updated: "2026-10-12"
 ---
 
 # 🏗️ ARCHITECTURE — How this project is built

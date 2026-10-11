@@ -55,7 +55,7 @@ rather than merely excluding them.
 One thing is still the author's to settle, recorded in the code rather than
 left implicit: whether a figure wider than the measure may bleed past the text
 (it does not, and reversing that is one rule in `prose.css` — **D43**). The
-other, the pager's faint direction label (**D45**), was settled on 2026-10-11
+other, the pager's faint direction label (**D45**), was settled on 2026-10-12
 when the author redesigned the end of a module: the label now clears the text
 floor (DESIGN.md's eighth deviation).
 

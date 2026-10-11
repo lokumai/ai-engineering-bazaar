@@ -511,7 +511,7 @@ test('the manifest keeps a hierarchy across its columns (§4.8)', async ({ page 
  * §10.4 in the pager: every word on it clears the 4.5:1 text floor, in both
  * themes — the direction labels as well as the destinations.
  *
- * Until 2026-10-11 the label was `01`'s faint ink at a measured 3.30:1, kept
+ * Until 2026-10-12 the label was `01`'s faint ink at a measured 3.30:1, kept
  * deliberately and left as an open question for the author (**D45**). The
  * author's redesign of the end of a module settled it the other way: `Previous`
  * is cobalt on the raised surface and `Next` is the inverse on a cobalt tile,
@@ -633,7 +633,7 @@ test('task-list checkboxes are real, named, and persist (§12.7)', async ({ page
   // SIBLING of the box, so it contributes nothing to the accessible name and
   // the island has to supply one.
   // The module's own task items: the completion checkbox at the end of the
-  // module is a checkbox too since 2026-10-11, and it is not a task item.
+  // module is a checkbox too since 2026-10-12, and it is not a task item.
   const named = page.locator('[data-hl-prose]').getByRole('checkbox')
   expect(await named.count()).toBe(await boxes.count())
   for (const box of await named.all()) {

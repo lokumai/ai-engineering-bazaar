@@ -16,8 +16,8 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M25, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — on branch feat/module-end-redesign. Checkbox format repaired across the part on 2026-09-13."
-last_updated: 2026-10-11
+covers: "M16 to M26, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — written and not committed. Checkbox format repaired across the part on 2026-09-13."
+last_updated: 2026-10-12
 ---
 
 # 📈 PROGRESS, part 2 — M16 to M23
@@ -3503,10 +3503,11 @@ Two more requests from the author, and two defects they exposed.
 
 ---
 
-## 🏁 Milestone M25: The end of a module, rebuilt, and a quick quiz — SHIPPED ON A BRANCH
+## 🏁 Milestone M25: The end of a module, rebuilt, and a quick quiz — SHIPPED, MERGED AS PR #25
 
-Branch `feat/module-end-redesign`, from `main` after PR #24. The author's
-request, 2026-10-11, in one message: everything at the end of a module after
+Branch `feat/module-end-redesign`, from `main` after PR #24, merged to `main` as PR #25
+(`d001ae0`) once CI passed, when the author asked. The author's
+request, 2026-10-12, in one message: everything at the end of a module after
 the references goes (*"I DO NOT NEED ANY SUCH THING"*), and in its place a
 familiar completion control, Previous and Next that stand out, and a collapsed
 quiz written for every ready module by parallel Opus agents. Three more arrived
@@ -3538,7 +3539,7 @@ right-hand `On this page` index scrolling itself, and the module-end order.
 - [x] **The page index scrolls itself** under the bar, with the rail's 8px bar,
       and a wheel over it leaves the page still (`rail-scrollbar.spec.ts`).
 
-### Report — M25, 2026-10-11
+### Report — M25, 2026-10-12
 
 **The agents' reports found two gaps in the corpus** that are the author's:
 `training_tr.md` has no `When not to fine-tune` section (12 `##` in the English,
@@ -3576,6 +3577,113 @@ the rest of the heading list.
 and passed alone three times out of three and in the final full run: it measures
 first paint, and it is timing-sensitive under load rather than broken by this
 milestone, which does not touch the page it reads.
+
+
+---
+
+## 🏁 Milestone M26: Headings, requested additions, and ASD-STE-like English — WRITTEN, NOT COMMITTED
+
+Branch `content/headings-and-readability`, from `main` after PR #25. Corpus only:
+no file under `src/` or `tests/` changed for it. The author's request,
+2026-10-12, in one message: new headings for fifteen modules, a list of content
+additions, title case for headings, and then *"an English similar to ASD-STE
+English"* across every written module, *"Do not add to content or remove but
+revise what exists"*, English first and the Turkish lightly.
+
+### Deliverables
+
+- [x] **The heading list, in both languages**, with every heading in the nineteen
+      written modules in title case (**D78**): 278 heading lines changed. Two
+      calls taken against the literal list, both recorded in D78: title case on
+      the unlisted headings too, and Security's two red-teaming names swapped to
+      fit their sections.
+- [x] **`Coding Agents: Extending Them` is now `Code Agents`**: `curriculum.yaml`,
+      both H1s, every prose cross-reference (Turkish suffixes re-harmonised:
+      `'deki` → `'daki`, `'nin` → `'ın`), the quiz header and sixteen series maps.
+      The slug `coding_agents` and its URL did not move.
+- [x] **RAG & Embeddings**: the linear four-step chain became a two-phase
+      `flowchart` (index once, answer per question, one shared vector
+      database); seven ready-to-run RAG projects under `Tools for RAG`, each
+      described from its README.
+- [x] **Memory**: the `Where working memory actually lives` diagram moved into
+      `Working Memory` and its section is gone.
+- [x] **Harness Engineering**: Böckeler's computational versus inferential split
+      (with the LSP point, from the article itself) and Schmid's
+      `The importance of Agent Harness in 2026`.
+- [x] **Loop Engineering**: level 0, the autoregressive token loop, so five
+      levels; agent teams and dynamic workflows named as advanced multi-agent
+      architectures that enable loop engineering; a `Recursive Language Models`
+      section replacing the NOTE.
+- [x] **Personal Agents**: `More Personal Agents` (dots, Muse, Grok Bot, Gemini
+      Spark). **Agent Frameworks**: real links for Lovable and Bolt, plus Replit.
+      **Inference Providers**: Portkey against OpenRouter, and AgentRouter against
+      an LLM router.
+- [x] **The readability pass**: nineteen agents in parallel, one module each,
+      English then a light Turkish pass, every one passing the guard. Words, the
+      nineteen modules: English 42,950 → 45,649 (**+6.3%**), Turkish 33,098 →
+      34,588 (**+4.5%**), measured from the post-addition snapshot.
+- [x] **Two rules into `mini-courses/CLAUDE.md`** (and `AGENTS.md`, byte-identical):
+      ASD-STE-like English, and short familiar title-case headings.
+
+### Report — M26, 2026-10-12
+
+**Every external fact was fetched before it was written.** Three research agents
+read the eighteen pages first, and three things they found changed the text:
+the martinfowler.com article is Birgitta Böckeler's, not Martin Fowler's;
+Grok Bot's site presents its company as SpaceXAI and never says xAI, so the
+module says "from the makers of Grok"; and agentrouter.to is not a coding-agent
+relay but an API router with a prepaid wallet and no named owner, which the
+module now says.
+
+**Corrected while there, each a defect rather than a style point**: the smolagents
+samples in AI Agents and Multi-Agent Systems used `HfApiModel`, which no longer
+exists (v1.26.0 docs: `InferenceClientModel`), and the managed workers lacked the
+`description` the docs call mandatory; AI Agents counted six model calls over a
+table with five; Personal Agents' summary said a million agents against a body
+of more than 1.5 million; Security said Code Agents was "two modules ago"; a
+duplicated AutoGen line and a missing reference in the Turkish; one English
+image line without the two trailing spaces that attach its caption.
+
+**Left for the author**, reported by the agents and not changed because each is a
+claim rather than wording: Memory's opening list calls long-term memory
+"temporary" against its own table; Tool Calling says the parameter description
+comes from the Python, which the sample does not show; Harness Engineering says
+Claude Code's harness is open; Prompt Engineering dates the first LLM APIs to
+2023; Code Agents' "eight sections" against ten; Security's PyRIT bullet cites
+attacks "named earlier" that are not; UI Design credits Google's Stitch
+announcement with DESIGN.md, which that page never mentions. Still open from M25:
+the Turkish Training and Tool Calling gaps.
+
+**One test failed for the right reason.** `tests/e2e/sheets.ts` types out every
+module's title on purpose, so that a rename goes red and someone looks; the
+`Code Agents` rename turned seven tests red across five specs, all on that one
+string, and they passed once it was updated. The diagrams were parsed and
+rendered by `scripts/check-mermaid.mjs`, and the new RAG figure, the five loop
+levels, the RLM section, the moved memory diagram and `More Personal Agents`
+were looked at in the export. A left-to-right RAG layout was rendered and
+rejected: at the page's measure its text scaled below reading size.
+
+**A review subagent read the branch before the merge, as the author asked.** It
+found no factual error in the new content and no broken markdown, covered all
+nineteen English modules for meaning drift, and checked every quiz against its
+module. It found two real problems in Loop Engineering, both in text written for
+this milestone rather than by the readability pass: the module claimed Multi-Agent
+Systems had pointed at agent teams and workflows, which it never names, and the
+RLM section had lost the sentence tying a script of agents to one model with an
+unbounded window. Both were fixed, with nine smaller wording slips it found
+(an "It" that lost its referent after a split, "a third kind of router" that
+counted wrong, "about six providers" that turned an idiom into a count) and one
+older fault it surfaced: Multi-Agent Systems said "That is the end of
+Fundamentals" with Observability still to come.
+
+**The gate.**
+
+| | Measured |
+| --- | --- |
+| Typecheck | clean |
+| Unit | **2,171 passed / 84 files** |
+| Build | **80 HTML files**; the base-path build carries the prefix on **5,306 of 5,306** internal `href`/`src` |
+| Browser | **1,183 passed / 60 skipped / 0 failed** once `sheets.ts` named the new title (1,176 / 7 failed before it) |
 
 ---
 

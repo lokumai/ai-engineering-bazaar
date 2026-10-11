@@ -2,7 +2,7 @@
 
 *(Bu bir placeholder modül: şimdilik kısa bir özet, tam ders içeriği yakında geliyor.)*
 
-Coding Agent'lar: Genişletme modülünün kurduğu şeyin üzerine, varsayılanların ötesine geçen
+Code Agent'lar modülünün kurduğu şeyin üzerine, varsayılanların ötesine geçen
 pratikler.
 
 **Bu modülde işlenecek konular**:

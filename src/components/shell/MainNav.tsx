@@ -376,7 +376,7 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
                           aria-current={pathname === INDEX_ROUTE ? 'page' : undefined}
                         >
                           <span aria-hidden="true" className="bz-menu-key" />
-                          {/* `Curriculum`, the author's word on 2026-10-11. It
+                          {/* `Curriculum`, the author's word on 2026-10-12. It
                               read `Every level` and then `View Curriculum`
                               (M20), when it shared one string with the
                               catalog's first level chip; that chip became

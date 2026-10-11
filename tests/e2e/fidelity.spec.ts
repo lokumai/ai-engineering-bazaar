@@ -852,7 +852,7 @@ test.describe('M16 stage 5 — the reading page', () => {
      it here would fail on the mockup drawing one and the page drawing none,
      which is exactly what the self-check above is for. */
   /* `actions`, `buttonPrimary` and `buttonQuiet` left this list on
-     2026-10-11. They were the module's action row — `01`'s `.act` with
+     2026-10-12. They were the module's action row — `01`'s `.act` with
      `Complete` and `Requirements (n)` in it — and the author replaced that row
      with one completion checkbox, a pager that stands out and a collapsed quiz,
      so the reading page no longer draws an action row at all. The three stay
@@ -937,7 +937,7 @@ test.describe('M16 stage 5 — the reading page', () => {
     await freezeMotion(page)
     await page.addStyleTag({
       // The action row half of this mutation left with the action row
-      // (2026-10-11); the reading page draws none.
+      // (2026-10-12); the reading page draws none.
       content: '.bz-prose .bz-section { gap: 0px !important; }',
     })
     const mutated = await extractDesignFacts(page, APP_SELECTORS)

@@ -10,23 +10,35 @@ objectives:
 
 # Inference Engines
 
-[LLM Fundamentals](../1_fundamentals/llms.md) named the engines and then said you rarely touch them directly, which is true and is why that module moved straight on to Ollama. This one is about the times you do touch them.
+[LLM Fundamentals](../1_fundamentals/llms.md) named the engines. Then it said that you rarely touch them directly. That is true, and it is why that module moved straight on to Ollama. This module is about the times when you do touch them.
 
-An **inference engine** is the program that loads the weights and turns your tokens into the next token. It manages GPU memory, batches requests together, caches attention state between turns and decides what runs in what order. [Inference Providers](inference_providers.md) is somebody else running one of these for you and charging per token.
+An **inference engine** is the program that loads the weights and turns your tokens into the next token. It has these jobs:
 
-## Why you would run it yourself
+- It manages GPU memory.
+- It batches requests together.
+- It caches attention state between turns.
+- It decides what runs in what order.
 
-Three reasons, and only three worth the trouble.
+An inference provider, the subject of [Inference Providers](inference_providers.md), is somebody else who runs one of these engines for you and charges you per token.
 
-**The data cannot leave.** Health records, legal documents, anything under a rule that says the text stays on your infrastructure. This is the most common reason by a wide margin and it settles the question on its own.
+## Why You Would Run it Yourself
 
-**The volume makes it cheaper.** Per-token pricing is excellent until it is not. There is a crossover point where a rented GPU running all day beats the same work bought by the token, and if you are past it the arithmetic is not close.
+There are three reasons, and only these three are worth the trouble.
 
-**You need something a provider will not give you.** A fine-tuned model of your own from [Training LLMs](../1_fundamentals/training.md), a model nobody hosts, an unusual quantization, or control over the exact version so an upgrade never surprises you.
+**The data cannot leave.** Examples are health records, legal documents, and anything under a rule that says the text must stay on your infrastructure. This is the most common reason, much more common than the other two. If it applies to you, it decides the question on its own.
 
-If none of those is true, use a provider. Self-hosting is a real operational job and the first month is mostly learning what you did not budget for.
+**The volume makes it cheaper.** Per-token pricing is excellent, until it is not. There is a crossover point. Past that point, a rented GPU that runs all day costs less than the same work bought by the token. If you are past it, the arithmetic is not close: the difference is large.
 
-## The engines, by the size of the problem
+**You need something a provider will not give you.** For example:
+
+- a fine-tuned model of your own, from [Training LLMs](../1_fundamentals/training.md)
+- a model that nobody hosts
+- an unusual quantization
+- control over the exact version, so that an upgrade never surprises you
+
+If none of those is true, use a provider. Self-hosting is a real operational job. In the first month, you mostly learn what you did not budget for.
+
+## The Engines, by the Size of the Problem
 
 ```mermaid
 graph TD
@@ -34,29 +46,29 @@ graph TD
     B --> C["Many machines<br/>llm-d on Kubernetes"]
 ```
 
-**On your own machine**, use the wrappers. [LLM Fundamentals](../1_fundamentals/llms.md) covered [Ollama](https://ollama.com/) and [LM Studio](https://lmstudio.ai/), and they are the right answer: they hide the engine and get you running in minutes. Underneath, both lean on **[llama.cpp](https://github.com/ggml-org/llama.cpp)**, which is LLM inference in C and C++ and the reason a quantized model runs on a laptop at all. Go to llama.cpp directly when you want a build flag the wrapper does not expose, or you are putting a model on hardware nobody else supports.
+**On your own machine**, use the wrappers. [LLM Fundamentals](../1_fundamentals/llms.md) covered [Ollama](https://ollama.com/) and [LM Studio](https://lmstudio.ai/), and they are the right answer here. They hide the engine, and they get you running in minutes. Underneath, both of them are built on **[llama.cpp](https://github.com/ggml-org/llama.cpp)**. It is LLM inference written in C and C++. It is also the reason that a quantized model can run on a laptop at all. Use llama.cpp directly in two cases: when you want a build flag that the wrapper does not expose, or when you are putting a model on hardware that nobody else supports.
 
-**On a GPU server with real users**, the wrappers stop being enough and you want a serving engine.
+**On a GPU server with real users**, the wrappers are no longer enough. Here you want a serving engine.
 
-- **vLLM** is the usual default. Broad hardware support, and its continuous batching is what makes throughput respectable.
-- **[SGLang](https://github.com/sgl-project/sglang)** is a high-performance serving framework for language and multimodal models, and it is strong where requests share a long common prefix. If every request starts with the same big system prompt, that is exactly your case.
-- **[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)** is NVIDIA's, and goes furthest on NVIDIA hardware specifically. You compile the model into an optimised engine ahead of time, which costs you a build step and buys you latency.
+- **vLLM** is the usual default. It supports a broad range of hardware. Its continuous batching is what gives it good throughput.
+- **[SGLang](https://github.com/sgl-project/sglang)** is a high-performance serving framework for language and multimodal models. It is strong when requests share a long common prefix. If every request starts with the same big system prompt, that is exactly your case.
+- **[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)** comes from NVIDIA. It gets the most out of NVIDIA hardware specifically. You compile the model into an optimised engine ahead of time. That costs you a build step, and it gives you lower latency.
 
-**Across many machines**, serving becomes a cluster problem rather than a process problem, and that is what **[llm-d](https://github.com/llm-d/llm-d)** is for: inference on Kubernetes with modern accelerators, so scheduling, routing and cache-aware placement are handled by the platform rather than by you.
+**Across many machines**, serving stops being a process problem and becomes a cluster problem. That is what **[llm-d](https://github.com/llm-d/llm-d)** is for. It runs inference on Kubernetes with modern accelerators. The platform then handles scheduling, routing and cache-aware placement, so you do not have to.
 
-## The one idea that explains the numbers
+## The One Idea That Explains the Numbers
 
-If you take away one mechanism, take **batching**.
+If you remember only one mechanism from this module, remember **batching**.
 
-A GPU running one request at a time is mostly idle, because generating a token is a small amount of arithmetic against a huge amount of memory traffic. Run many requests together and the same weight-loading pays for all of them at once. That is why throughput on these engines is measured with many concurrent users, and why the same hardware can look brilliant or hopeless depending only on how full the batch is.
+A GPU that runs one request at a time is mostly idle. The reason is that generating a token takes a small amount of arithmetic and a huge amount of memory traffic. If you run many requests together, the same weight-loading pays for all of them at once. That is why people measure throughput on these engines with many concurrent users. It is also why the same hardware can look brilliant or hopeless. It depends only on how full the batch is.
 
-Continuous batching is the refinement that matters in practice: instead of waiting for a batch to finish, the engine slots new requests in as older ones complete, so the GPU never drains. This is also why your own benchmark of one request at a time will mislead you badly about what the server can do.
+Continuous batching is the improvement that matters in practice. The engine does not wait for a batch to finish. Instead, it puts new requests into the batch as older ones complete, so the GPU is never left without work. This is also why your own benchmark, with one request at a time, will badly mislead you about what the server can do.
 
-And it connects to [Context Engineering](../2_intermediate/context_engineering.md) from the other side. The attention state for a long context has to live in GPU memory, so a full context window is not only slower to reason over, it is also taking room that another user's request needed.
+And batching connects to [Context Engineering](../2_intermediate/context_engineering.md) from the other side. The attention state for a long context has to stay in GPU memory. So a full context window is slower to reason over. It also takes up memory that another user's request needed.
 
-## Something to put in front of it
+## Something to Put in Front of it
 
-An engine gives you an API and nothing to look at. **[Open WebUI](https://github.com/open-webui/open-webui)** is the interface people put in front of one: a chat UI that talks to Ollama or to anything speaking the OpenAI API shape, with accounts, conversation history and model switching. For a team that wants a private ChatGPT on its own hardware, that is the whole stack in two pieces.
+An engine gives you an API and nothing to look at. **[Open WebUI](https://github.com/open-webui/open-webui)** is the interface that people put in front of an engine. It is a chat UI that talks to Ollama, or to anything that uses the same API shape as OpenAI. It has accounts, conversation history and model switching. Some teams want a private ChatGPT on their own hardware. For them, that is the whole stack, in two pieces: the engine and Open WebUI.
 
 ## Where this fits in the series
 
@@ -73,21 +85,34 @@ graph LR
 
 ## Summary
 
-An inference engine is the program that actually runs the weights: GPU memory, batching, attention cache, scheduling. A provider is somebody else operating one for you.
+An inference engine is the program that actually runs the weights. It takes care of:
 
-Run your own for one of three reasons. The data cannot leave your infrastructure, the volume has passed the point where renting a GPU is cheaper than buying tokens, or you need a model or a version nobody hosts. Otherwise use a provider, because self-hosting is an operational job.
+- GPU memory
+- batching
+- the attention cache
+- scheduling
 
-Match the engine to the size of the problem. Ollama or LM Studio on your own machine, with llama.cpp underneath. vLLM, SGLang or TensorRT-LLM on a GPU server with real users, where SGLang suits a shared long prefix and TensorRT-LLM goes furthest on NVIDIA. llm-d when it becomes a cluster.
+A provider is somebody else who operates an engine for you.
 
-Batching is the idea that explains every number in this module. A GPU serving one request is mostly idle, and continuous batching keeps it full, which is why benchmarking one request at a time tells you almost nothing.
+Run your own engine for one of three reasons:
 
-**Quick Check**: you measure your self-hosted model with one request at a time and it looks fast. Why might it collapse with fifty users, and what would you have measured instead?
+- The data cannot leave your infrastructure.
+- The volume has passed the point where renting a GPU is cheaper than buying tokens.
+- You need a model or a version that nobody hosts.
+
+Otherwise, use a provider, because self-hosting is an operational job.
+
+Match the engine to the size of the problem. On your own machine, use Ollama or LM Studio, with llama.cpp underneath. On a GPU server with real users, use vLLM, SGLang or TensorRT-LLM. SGLang suits a shared long prefix, and TensorRT-LLM gets the most out of NVIDIA hardware. When the problem becomes a cluster, use llm-d.
+
+Batching is the idea that explains every number in this module. A GPU that serves one request is mostly idle. Continuous batching keeps it full. That is why a benchmark with one request at a time tells you almost nothing.
+
+**Quick Check**: you measure your self-hosted model with one request at a time, and it looks fast. Why might it collapse with fifty users? And what should you have measured instead?
 
 ## References
 
-- [llama.cpp](https://github.com/ggml-org/llama.cpp): inference in C and C++, and what the local wrappers are built on
-- [SGLang](https://github.com/sgl-project/sglang): high-performance serving, strong on a shared prefix
-- [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM): NVIDIA's, compiled ahead of time for latency
+- [llama.cpp](https://github.com/ggml-org/llama.cpp): LLM inference in C and C++, and the base that the local wrappers are built on
+- [SGLang](https://github.com/sgl-project/sglang): high-performance serving, strong when requests share a prefix
+- [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM): from NVIDIA, compiled ahead of time for lower latency
 - [llm-d](https://github.com/llm-d/llm-d): serving across many machines on Kubernetes
 - [Open WebUI](https://github.com/open-webui/open-webui): the chat interface to put in front of any of them
 - [Ollama](https://ollama.com/) and [LM Studio](https://lmstudio.ai/): the local wrappers, covered in [LLM Fundamentals](../1_fundamentals/llms.md)

@@ -61,7 +61,7 @@ export const SHEETS: readonly Sheet[] = [
   sheet(8, '/courses/fundamentals/observability/', 'Observability', 'A0'),
   sheet(9, '/courses/intermediate/prompt-engineering/', 'Prompt Engineering', 'A0'),
   sheet(10, '/courses/intermediate/context-engineering/', 'Context Engineering', 'A0'),
-  sheet(11, '/courses/intermediate/coding-agents/', 'Coding Agents: Extending Them', 'A0'),
+  sheet(11, '/courses/intermediate/coding-agents/', 'Code Agents', 'A0'),
   sheet(12, '/courses/intermediate/harness-engineering/', 'Harness Engineering', 'A0'),
   sheet(13, '/courses/intermediate/loop-engineering/', 'Loop Engineering', 'A0'),
   sheet(14, '/courses/intermediate/ui/', 'Generative UI', 'A4'),

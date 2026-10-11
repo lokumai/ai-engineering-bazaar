@@ -80,7 +80,7 @@
   }
 
   /* -- the end of a module: completion, then the quick quiz -------------
-     2026-10-11, on the author's word: one familiar check-or-uncheck control,
+     2026-10-12, on the author's word: one familiar check-or-uncheck control,
      Previous and Next, then a collapsed quiz. `SignOff.tsx` and
      `QuickQuiz.tsx` carry the reasoning; what is here is their shape. The old
      quick check's rules stood here under the same `bz-quiz` names and went with

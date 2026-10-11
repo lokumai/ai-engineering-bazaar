@@ -4,7 +4,7 @@ import { quizFor } from '@/lib/content/quiz'
 import { A4, SHEETS, SHORT } from './sheets'
 
 /**
- * The end of a module and its top, as the author rebuilt them on 2026-10-11:
+ * The end of a module and its top, as the author rebuilt them on 2026-10-12:
  * a `Before you start` box naming the prerequisites, and at the end one
  * completion checkbox, Previous and Next, and a quick quiz that stays closed
  * until asked for.

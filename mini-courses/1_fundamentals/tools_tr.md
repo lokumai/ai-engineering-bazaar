@@ -1,48 +1,48 @@
 # LLM Tool Calling
 
-[LLM Fundamentals](llms_tr.md) , [Training LLMs](training_tr.md) ve [RAG & Embeddings](rag_tr.md)
-bir modelin ne olduğunu, nasıl eğitildiğini ve kendi verini onun önüne nasıl koyacağını anlattı.
-Bunların hepsi hâlâ okumak. Bu modül, bir modelin *yapmaya* başladığı yer: bir dosya okumak, bir
-komut çalıştırmak, bir API çağırmak.
+[LLM Fundamentals](llms_tr.md), [Training LLMs](training_tr.md) ve [RAG & Embeddings](rag_tr.md)
+üç şeyi anlattı: bir modelin ne olduğunu, nasıl eğitildiğini ve kendi verini onun önüne nasıl
+koyacağını. Bunların hepsinde model hâlâ yalnızca okuyor. Bu modülde model bir şeyler *yapmaya*
+başlıyor: bir dosya okuyor, bir komut çalıştırıyor ya da bir API çağırıyor.
 
-Her agent'ın altındaki mekanizma bu, dolayısıyla tam olarak doğru anlamaya değer.
+Her agent'ın altındaki mekanizma bu. Bu yüzden onu tam olarak anlamak için emek vermeye değer.
 
-## Tool nedir
+## Tool Nedir?
 
 ![An LLM reaching out through tools](./images/tools.jpg)  
-*Tool'lar, bir modelin kendi kafasının dışına uzanma yolu: web'de arama, matematik, kod çalıştırma, ve sonra bir cevapla geri dönme.*
+*Tool'lar, bir modelin kendi kafasının dışına uzanma yolu. Model web'de arama yapıyor, matematik yapıyor ya da kod çalıştırıyor, sonra bir cevapla geri dönüyor.*
 
 **Tool**, senin yazdığın bir fonksiyondan başka bir şey değil. Adı, birkaç input'u ve bir dönüş
 değeri olan sıradan bir Python fonksiyonu. Özel hiçbir yanı yok.
 
 İnsanların yanlış anladığı kısım şu: **model senin fonksiyonunu asla çalıştırmıyor.**
-Çalıştıramaz, bilgisayarı yok. Yapabildiği tek şey, "`read_file`'ı `filename="main.py"` ile
-çağırmak istiyorum" diyen bir mesaj üretmek. Senin tarafındaki bir şey o mesajı okuyor, fonksiyonu
-çalıştırıyor ve dönüş değerini geri veriyor.
+Çalıştıramaz. Bilgisayarı yok. Yapabildiği tek şey, "`read_file`'ı `filename="main.py"` ile
+çağırmak istiyorum" diyen bir mesaj yazmak. Senin tarafındaki bir şey o mesajı okuyor ve
+fonksiyonu çalıştırıyor. Sonra dönüş değerini geri veriyor.
 
-## Bir tool call etrafında context nasıl büyür
+## Tool Call'lar Context'i Büyütür
+
 [LLM Fundamentals](llms_tr.md) context'i bir mesaj yığını olarak tanıtmıştı. Bir tool call o yığına
-iki yeni tür ekliyor, ve bütün akış tek bir resimde:
-ve bütün akış tek bir resimde:
+iki yeni mesaj türü ekliyor. Bütün akış bu resimde:
 
 ![The context of a single tool call](./images/context-tool-call.jpeg)  
-*Tek bir tool call, sırayla. Tool, kimse konuşmadan önce system prompt'ta tanımlanıyor. Sonra sen soruyorsun, LLM bir Tool Call yazıyor, host makine onu çalıştırıp Tool Result'ı yazıyor, ve LLM bunu okuyup cevabı yazıyor.*
+*Tek bir tool call, sırayla. Tool, kimse konuşmadan önce system prompt'ta tanımlanıyor. Sonra sen soruyorsun ve LLM bir Tool Call yazıyor. Host makine onu çalıştırıp Tool Result'ı yazıyor. Sonra LLM bu sonucu okuyup cevabı yazıyor.*
 
 Dört oku takip et, çünkü kimin ne yazdığı önemli:
 
 1. **Sen** Human Message'ı yazıyorsun.
 2. **LLM** Tool Call'ı yazıyor. İstiyor, yapmıyor.
-3. **Host makine** Tool Result'ı yazıyor. Python'un kurulu olduğu ve okunacak bir dosya sisteminin
-   bulunduğu yer senin laptop'un ya da senin sunucun.
-4. **LLM** artık o sonucu da içeren bütün context'i okuyup cevabı yazıyor.
+3. **Host makine** Tool Result'ı yazıyor. Python'un kurulu olduğu ve okunacak bir dosya sistemi
+   olan makine, senin laptop'un ya da sunucun.
+4. **LLM** bütün context'i okuyor. Bu context artık o sonucu da içeriyor. Sonra LLM cevabı yazıyor.
 
-İki yeni mesaj da context'te kalıyor. Bir agent'ın context'inin bir chat'ten çok daha hızlı
-büyümesinin sebebi bu: tek bir tur, iki mesaj yerine birkaç mesaj ekleyebiliyor.
+İki yeni mesaj da context'te kalıyor. Bu yüzden bir agent'ın context'i, bir chat'in context'inden
+çok daha hızlı büyüyor. Tek bir tur, iki mesaj yerine birkaç mesaj ekleyebiliyor.
 
-## Tool'lar neden var
+## Tool'lar Neden Var
 
-Bir model sabit veri üzerinde eğitiliyor, dolayısıyla kendi başına ne yeni bir şey bilebiliyor ne
-de bir şeyi değiştirebiliyor. Tool'lar iki sınırı da kaldırıyor.
+Bir model sabit veri üzerinde eğitiliyor. Bu yüzden kendi başına ne yeni bir şey bilebiliyor ne de
+bir şeyi değiştirebiliyor. Tool'lar iki sınırı da kaldırıyor.
 
 **Web'de arama yapamaz.** O yüzden bir query alıp arama motoruna soran ve sonuçları döndüren bir
 fonksiyon yazıyorsun. Artık yapabiliyor.
@@ -50,17 +50,18 @@ fonksiyon yazıyorsun. Artık yapabiliyor.
 **Dosyalarını okuyamaz.** O yüzden bir dosya adı alıp içeriğini döndüren bir fonksiyon yazıyorsun.
 Artık kodunu görebiliyor.
 
-Tool'lar olmadan bir model bir chatbot. Tool'larla birlikte bir agent.
+Tool'lar olmadan bir model, bir chatbot. Tool'larla birlikte bir agent.
 
-## Schema'yı sen yazmıyorsun, framework yazıyor
+## Tool Schema
 
 İnsanları şaşırtan kısım burası.
 
-Modelin bir tool seçebilmesi için, o tool'un var olduğunun, ne yaptığının ve hangi argümanları
-aldığının ona söylenmesi gerekiyor. Bu tarife **tool schema** deniyor, ve JSON.
+Modelin bir tool seçebilmesi için birinin ona üç şey söylemesi gerekiyor: tool'un var olduğunu, ne
+yaptığını ve hangi argümanları aldığını. Bu tarife **tool schema** deniyor. Tool schema JSON ile
+yazılıyor.
 
-O JSON'ı neredeyse hiç sen yazmıyorsun. Sıradan bir fonksiyon yazıyorsun ve schema'yı ondan
-framework'ün üretmesine bırakıyorsun:
+O JSON'ı neredeyse hiçbir zaman kendin yazmıyorsun. Sıradan bir fonksiyon yazıyorsun, framework de
+schema'yı ondan üretiyor:
 
 ```python
 @tool
@@ -75,22 +76,23 @@ O tek decorator'dan framework şunları okuyor:
 - **description**, docstring'den
 - **parameters**, type hint'lerden; yani `city: str` zorunlu bir string oluyor
 
-Sonra bu schema'yı isteğinle birlikte gönderiyor, ve model onu en başta, system prompt'un yanında
-alıyor. Sen fonksiyonu kaydediyorsun; tesisat senin yazacağın şey değil.
+Sonra framework bu schema'yı isteğinle birlikte gönderiyor. Model onu en başta, system prompt'un
+yanında alıyor. Sen fonksiyonu kaydediyorsun. Onu modele bağlayan kodu yazmak senin işin değil.
 
-**Yani name ve description dokümantasyon değil. Arayüzün kendisi.** Model hangi tool'a uzanacağına
-karar verirken elindeki tek şey onlar. `get_data` adında ve "gets data" docstring'i olan bir
-fonksiyon yanlış anlarda seçilir, doğru anlarda atlanır, ve bunu hiçbir prompt düzeltmez. Tool'a ne
-yaptığını anlatan bir isim ver, ve docstring'i seçim yapmak zorunda olan model için yaz.
+**Bu da şu demek: name ve description dokümantasyon değil. Onlar arayüzün kendisi.** Model hangi
+tool'u kullanacağına karar verirken elindeki tek bilgi onlar. `get_data` adında ve "gets data"
+docstring'i olan bir fonksiyon düşün. Model onu yanlış anlarda seçer, doğru anlarda atlar. Bunu
+hiçbir prompt düzeltemez. Tool'a ne yaptığını anlatan bir isim ver. Docstring'i model için yaz,
+çünkü seçim yapmak zorunda olan o.
 
-## Gerçek bir tool call, baştan sona
+## Tool Call İş Başında
 
-Tarif yeter. Aşağıda bir weather tool ile gerçek bir alışveriş var.
+Tarif yeter. Aşağıda bir weather tool ile gerçek bir mesajlaşma var.
 
-### Modelin aldığı şey
+### Modelin Aldığı Şey
 
-Talimatlar ve tool schema birlikte geliyor. API'da ayrı field'lar, ama modelin bakış açısından
-context'in tepesindeki tek bir blok:
+Talimatlar ve tool schema birlikte geliyor. API'da bunlar ayrı field'lar. Ama modelin bakış
+açısından, context'in tepesindeki tek bir blok:
 
 ```text
 SYSTEM
@@ -104,7 +106,7 @@ get_weather
   city (string, required) - The city name, for example "Istanbul"
 ```
 
-O okunabilir blok, framework'ün ürettiği schema. Hat üzerinde şöyle görünüyor:
+O okunabilir blok, framework'ün ürettiği schema. API'a giden istekte ise şöyle görünüyor:
 
 ```json
 {
@@ -126,18 +128,18 @@ O okunabilir blok, framework'ün ürettiği schema. Hat üzerinde şöyle görü
 }
 ```
 
-Dikkat et: hem description hem parameter description'ı, senin Python'da yazdığın şeylerden geldi.
+Dikkat et: hem description hem de parameter description, senin Python'da yazdığın şeylerden geldi.
 
-### Senin sorduğun şey
+### Senin Sorduğun Şey
 
 ```text
 USER
 What's the weather in Istanbul right now?
 ```
 
-### Modelin ürettiği şey
+### Modelin Ürettiği Şey
 
-Düz metin değil. Bu:
+Düz metin üretmiyor. Şunu üretiyor:
 
 ```json
 {
@@ -156,20 +158,21 @@ Düz metin değil. Bu:
 }
 ```
 
-Fark edilmeye değer üç şey. `content` boş, çünkü model henüz cevaplamadı, sordu. Bir `id` var, ki
-sonucun tam olarak bu çağrıyla eşleştirilmesini sağlayan şey o. Ve `arguments` bir JSON *string*'i,
-JSON object'i değil, ki bu neredeyse herkesi bir kez yakalıyor.
+Burada dikkat edilecek üç şey var. Birincisi, `content` boş, çünkü model henüz cevaplamadı. Sordu.
+İkincisi, bir `id` var. Sonucu tam olarak bu çağrıyla eşleştiren şey bu `id`. Üçüncüsü,
+`arguments` bir JSON *string*'i. JSON object'i değil. Neredeyse herkes bunu bir kez yanlış anlıyor.
 
-### Host makinenin yaptığı şey
+### Host Makinenin Yaptığı Şey
 
-Bu mesaj, framework'ün devraldığı yer. Argümanları parse ediyor, `get_weather` adıyla kayıtlı
-Python fonksiyonunu buluyor ve onu çağırıyor:
+Bu mesaj gelince işi framework devralıyor. Argümanları parse ediyor ve `get_weather` adıyla kayıtlı
+Python fonksiyonunu buluyor. Sonra o fonksiyonu çağırıyor:
 
 ```python
 get_weather(city="Istanbul")   # -> '{"city":"Istanbul","temp_c":34,"conditions":"clear"}'
 ```
 
-Dönüş değeri, çağrıdaki `id` ile etiketlenmiş yeni bir mesaj olarak konuşmaya geri giriyor:
+Dönüş değeri, yeni bir mesaj olarak konuşmaya geri giriyor. Framework bu mesajı çağrıdaki `id` ile
+etiketliyor:
 
 ```json
 {
@@ -179,10 +182,16 @@ Dönüş değeri, çağrıdaki `id` ile etiketlenmiş yeni bir mesaj olarak konu
 }
 ```
 
-### Modelin cevapladığı şey
+### Modelin Cevapladığı Şey
 
-Şimdi bütün context modele geri gidiyor: system prompt, senin sorun, kendi tool call'ı, ve sonuç.
-Hepsini okuyup şunu yazıyor:
+Şimdi bütün context modele geri gidiyor:
+
+- system prompt
+- senin sorun
+- modelin kendi tool call'ı
+- sonuç
+
+Model hepsini okuyup şunu yazıyor:
 
 ```text
 ASSISTANT
@@ -191,13 +200,16 @@ It's currently 34°C and clear in Istanbul.
 
 Bütün mekanizma bu. Kuracağın her agent, bu döngünün tekrarı.
 
-Field isimleri sağlayıcılar arasında biraz farklılık gösteriyor, ama şekil değişmiyor: senin
-yazmadığın bir schema, modelin ürettiği bir çağrı, senin yaptığın bir çalıştırma, ve geri verdiğin
-bir sonuç.
+Field isimleri sağlayıcılar arasında biraz farklı. Ama şekil değişmiyor:
 
-## İnsanların gerçekten yazdığı tool'lar
+- senin yazmadığın bir schema
+- modelin yazdığı bir çağrı
+- senin yaptığın bir çalıştırma
+- senin geri verdiğin bir sonuç
 
-Fonksiyon olarak yazabildiğin her şey bir tool olabilir. Birkaç gerçek örnek:
+## Örnek Tool'lar
+
+Fonksiyon olarak yazabildiğin her şey bir tool olabilir. Aşağıda birkaç gerçek örnek var:
 
 ```python
 @tool
@@ -222,10 +234,10 @@ def search_docs(query: str) -> list:
     return vector_db.search(encode(query), top_k=5)
 ```
 
-Sondakine bir kez daha bakmaya değer: bu, [RAG & Embeddings](rag_tr.md) modülündeki RAG
-pipeline'ının tool'a dönüşmüş hali. Artık *ne zaman* retrieval yapılacağına sen her soruda karar
-vermiyorsun, model karar veriyor. Bir RAG uygulamasını bir agent'tan ayıran şeyin büyük kısmı bu
-küçük kayma.
+Doküman arayan tool'a da bir kez daha bakmaya değer. Bu, [RAG & Embeddings](rag_tr.md) modülündeki
+RAG pipeline'ının tool'a dönüşmüş hali. Artık *ne zaman* retrieval yapılacağına model karar veriyor.
+Retrieval'ı her soruda sen yapmıyorsun. Bir RAG uygulamasını bir agent'tan ayıran şeyin büyük kısmı
+bu küçük değişiklik.
 
 ```mermaid
 graph TD
@@ -256,19 +268,19 @@ graph LR
 
 ## Özet
 
-Tool, senin yazdığın bir fonksiyon. Model onu çalıştıramaz, o yüzden bir Tool Call üretiyor ve
-fonksiyonu senin makinen çalıştırıp bir Tool Result geri veriyor. İkisi de context'e düşüyor, ki
-agent context'lerinin hızlı büyümesinin sebebi bu.
+Tool, senin yazdığın bir fonksiyon. Model onu çalıştıramaz. O yüzden model bir Tool Call yazıyor,
+senin makinen de fonksiyonu çalıştırıp bir Tool Result geri veriyor. İki mesaj da context'e giriyor.
+Agent context'lerinin hızlı büyümesinin sebebi bu.
 
-Schema'yı sen yazmıyorsun; framework'ün onu fonksiyondan, docstring'inden ve type hint'lerinden
-üretiyor. Bu da name ve docstring'i asıl arayüz yapıyor: model neye uzanacağına karar verirken
-elinde olan tek şey onlar.
+Schema'yı sen yazmıyorsun. Framework'ün onu fonksiyondan, docstring'inden ve type hint'lerinden
+üretiyor. Bu da name ve docstring'i asıl arayüz yapıyor. Model hangi tool'u kullanacağına karar
+verirken elinde olan tek şey onlar.
 
-Sırada memory var, ve context dolarken bütün bu mesajlara ne olduğu.
+Sırada memory var: context dolarken bütün bu mesajlara ne oluyor?
 
-**Hızlı Kontrol**: bir tool'u kim çalıştırıyor, model mi host mu, ve bir tool'un docstring'i neden
+**Hızlı Kontrol**: bir tool'u kim çalıştırıyor, model mi host mu? Ve bir tool'un docstring'i neden
 implementasyonundan daha çok önemli?
 
 ## Kaynaklar
 
-- [Mastering LLM tool calling](https://machinelearningmastery.com/mastering-llm-tool-calling-the-complete-framework-for-connecting-models-to-the-real-world/): bütün çerçeve, hat formatının burada ihtiyaç duyduğumuzdan fazlasıyla
+- [Mastering LLM tool calling](https://machinelearningmastery.com/mastering-llm-tool-calling-the-complete-framework-for-connecting-models-to-the-real-world/): bütün çerçeve, wire format hakkında burada ihtiyacımız olandan daha fazla ayrıntıyla

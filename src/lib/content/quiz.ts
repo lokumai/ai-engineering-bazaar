@@ -8,7 +8,7 @@ import { CONTENT_ROOT } from './paths'
  * A module's quick quiz, read from `<category dir>/<name>.quiz.yaml` beside
  * the module's markdown.
  *
- * The author, 2026-10-11: at the very end of a module, a collapsed *"Want a
+ * The author, 2026-10-12: at the very end of a module, a collapsed *"Want a
  * quick quiz?"* that asks 3 to 5 four-choice questions and explains each
  * answer in a sentence or two. **Reinforcement, not assessment** — the goal is
  * to make a reader recall the module's main points, not to grade them, so

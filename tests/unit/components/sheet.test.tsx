@@ -118,7 +118,7 @@ describe('PrevNext (§5.7)', () => {
 
   it('prints both directions', () => {
     const markup = renderToStaticMarkup(<PrevNext previous={drawn} next={drawn} />)
-    // `Previous` and `Next` since 2026-10-11 — the author's words, over the
+    // `Previous` and `Next` since 2026-10-12 — the author's words, over the
     // destination's title — where they read `Previous module` and `Next module`.
     expect(markup).toContain('<small>Previous</small>')
     expect(markup).toContain('<small>Next</small>')

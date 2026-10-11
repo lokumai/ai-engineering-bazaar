@@ -10,8 +10,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D67, plus open questions O1 to O4 — 2026-09-09 to 2026-09-13"
-last_updated: 2026-09-13
+covers: "D26 to D71, plus open questions O1 to O4 — 2026-09-09 to 2026-10-11"
+last_updated: 2026-10-11
 ---
 
 # 🧠 BRAINSTORM, part 2 — the rebuild, D26 onward
@@ -1598,6 +1598,32 @@ costs layout space and survives forced colours; a painted line costs nothing and
 is dropped by it. Neither is the safe default. Choose by which of the two
 properties the element actually needs, and if it needs both, say so in both
 places.
+
+### D71 · The bar's mark is the Lokum AI logo, not the mockup's tile — 2026-10-11
+
+`01` draws the wordmark's mark as `.cubes`, a 2×2 tile of three category hues
+and one square of ground, and M16 transcribed it with DESIGN.md's line "a tile,
+not a logo". **The author asked for the logo instead**: *"use this svg logo
+`assets/icon.svg` on the navbar on the left hand side of the navbar as our
+logo"*. The mockup outranks every document, and the author outranks the mockup,
+so this is DESIGN.md's sixth deviation and the third the author chose.
+
+**The file the author supplied was not shipped as it is.** `assets/icon.svg` has
+no vector paths: it is two 1024px PNGs, a picture and a luminance mask, wrapped
+in an SVG, **696KB**, which a header would load on all 80 pages. Three options:
+
+1. **Serve it unchanged.** Rejected on size alone. The visible part also fills
+   only about 60% of its canvas (opaque bounding box 610 of 1024 wide), so at
+   32px the cubes would draw at about 19.
+2. **Rasterise it to a PNG.** Small, but it stops being the SVG the author named.
+3. **An SVG derived from it**: mask merged into the picture's alpha, margin
+   cropped, 128px (32px at 4×), one WebP inside. **8.8KB**, still an SVG, and
+   cached once for every page. Taken.
+
+`public/lokum-logo.svg` is that copy; `assets/icon.svg` stays the source.
+32px rather than the tile's 20: rendered at 20, 24, 28 and 32 the cubes read as
+three at every size, so the choice is presence, and 32 matches the bar's 33px
+controls. The bar's height, colour and type did not move.
 
 ## Open questions
 

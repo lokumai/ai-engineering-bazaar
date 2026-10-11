@@ -11,8 +11,8 @@ source: playground/01-theme-T4-ground-G3-powder.html (light) · playground/01-th
 authority: blueprint
 writes: agent, as the language evolves
 status: active
-covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with five recorded deviations"
-last_updated: 2026-09-13
+covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with six recorded deviations (the sixth, the logo, 2026-10-11)"
+last_updated: 2026-10-11
 ---
 
 ---
@@ -561,11 +561,21 @@ too. `transcription.test.ts` drops `border-right` from the `.side` pair with the
 reason beside it and still compares `top`, `height`, `overflow` and
 `background`, so the rail has not left the transcription.
 
-**Three of the five are floors and two are the author's.** The code comment
-deviation, the pager's tracks and the rail's hairline were forced; the `20ch`
-cap and the authorship line were chosen.
+**A SIXTH DEVIATION, AND THE AUTHOR'S: THE WORDMARK IS A LOGO.** `01:77-80`
+draws the bar's mark as `.cubes`, a 2×2 tile of three category hues and one
+square of ground, and the language transcribed it as "a tile, not a logo".
+**The author replaced it on 2026-10-11** with the Lokum AI logo, three lokum
+cubes, at 32px beside the name (**D71**). The tile's own idea survives in the
+picture: rose, orange and green, the tile's three colours, photographed rather
+than taken from tokens. Nothing about the bar's colour, type
+or height moved, and `transcription.test.ts` compares `.brand` on `gap` and
+`color` only, so no `DEVIATIONS` entry is needed — that list is about values.
 
-**The `20ch` cap and the authorship line are the only entries in this file that the author decided rather than a measurement forcing.**
+**Three of the six are floors and three are the author's.** The code comment
+deviation, the pager's tracks and the rail's hairline were forced; the `20ch`
+cap, the authorship line and the logo were chosen.
+
+**The `20ch` cap, the authorship line and the logo are the only entries in this file that the author decided rather than a measurement forcing.**
 The rule stands: the mockup outranks this document, a measured accessibility floor outranks the
 mockup (**D34**), and the author outranks all three — stated here so a third entry cannot be added
 by an agent reading the first two as precedent.
@@ -679,8 +689,9 @@ cobalt, which is the strongest contrast the language can make and therefore the 
 softly shadowed, its rows carrying a small hue `key` on the leading edge and a count on the trailing
 edge.
 
-**The wordmark is a 2×2 grid of glazed squares**, one per category hue with one square left as the
-ground. It is a tile, not a logo, and it is drawn from the same series as everything else.
+**The wordmark is the product's logo beside its name**, at the height of the bar's controls. The
+source draws a 2×2 tile of glazed squares here; the author replaced it, and the sixth deviation above
+records why.
 
 **The rail.** A `label` caption and a `fold-button` sit at the top. Below them, one `rail-group` per
 group, each an `arch`-topped disclosure carrying its hue key, its name and its count. **The current

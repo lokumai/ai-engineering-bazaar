@@ -415,19 +415,17 @@
 
   .bz-brand:hover { text-decoration: none; }
 
-  /* A tile, not a logo: four glazed squares from the same series, one left as
-     the ground. */
+  /* The Lokum AI logo, which replaced the mockup's 2×2 tile on the author's
+     word (**D71**). 32px and not the tile's 20: the cubes still read as three
+     at 20, but a picture is quieter than four solid squares at the same size,
+     and 32 matches the bar's 33px controls, so the bar keeps its height.
+     `flex: none` because an image in a flex row shrinks before the wordmark
+     does. */
   .bz-brand-mark {
-    display: grid;
-    grid-template-columns: 9px 9px;
-    gap: 2px;
-  }
-
-  .bz-brand-mark > * {
     display: block;
-    width: 9px;
-    height: 9px;
-    border-radius: var(--radius-hair);
+    flex: none;
+    width: 32px;
+    height: 32px;
   }
 
   /* THE ROW IS THE LIST, NOT THE NAV, and getting that wrong made the whole

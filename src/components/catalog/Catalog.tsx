@@ -71,7 +71,10 @@ import { ViewIcon } from './ViewIcon'
  *
  * `playground/03-catalog.html` puts the filters in a STICKY bar at the top of
  * the frame, which is where they already were — so the arrangement survived and
- * the appearance was rebuilt around it. Three things did change.
+ * the appearance was rebuilt around it. (It stopped being sticky on
+ * 2026-10-11, on the author's word: *"the level-status-view should not be
+ * attached to the scroll and should not come down with it"* — `catalog.css`.)
+ * Three things did change.
  *
  * **The two views this component composes are different components now.**
  * `CatalogCards` groups its cards under a level heading and `CatalogOverview`
@@ -244,8 +247,8 @@ export function Catalog({
    * state is replaced by the three views — so focus would be dropped on the
    * floor, and a keyboard reader would lose their place at exactly the moment
    * the empty state told them to act. Focus therefore goes to the control that
-   * now expresses the state they just chose: the `View Curriculum` chip (it
-   * read `Every level` until M20).
+   * now expresses the state they just chose: the level row's `All` chip (it
+   * read `Every level` until M20 and `View Curriculum` until M24's follow-up).
    *
    * Next frame and not this one, and by query rather than by ref, which is the
    * shape `RailFold` uses for the same hand-off and for the same measured
@@ -281,8 +284,8 @@ export function Catalog({
 
   return (
     <div className="bz-catalog" {...{ [SCOPE_ATTR]: scope }}>
-      {/* `03`'s sticky filter bar: the two chip groups, the view toggle and
-          the count. The toggle sat below the bar's hairline once, on the
+      {/* `03`'s filter bar: the two chip groups, the view toggle and the
+          count. Not sticky since 2026-10-11 (`catalog.css`). The toggle sat below the bar's hairline once, on the
           argument that the table's sticky header was offset by the bar's
           height. That offset has been zero since stage 4's review moved the
           header onto its own scroller, so the argument guarded nothing. */}
@@ -308,11 +311,19 @@ export function Catalog({
             {...{ [RESET_ATTR]: '' }}
             aria-current={level === ALL_LEVELS ? 'page' : undefined}
           >
-            {/* M20 — the author's words for this destination, and it is named
-                the same here and in the bar's dropdown: they are two elements
-                with one meaning, and renaming one of them is how a product
-                ends up with two words for one page. It read `Every level`. */}
-            View Curriculum
+            {/* `All`, the author's word on 2026-10-11, and the same word the
+                `Status:` row opens on — so both rows read the way they are
+                labelled: `Level: All`, `Status: All`.
+
+                It read `View Curriculum` from M20, chosen to match the bar's
+                dropdown, on the argument that two words for one destination is
+                how a product drifts. That argument holds for two LABELS of a
+                page, and this chip is not one any more: it is a value under a
+                `Level:` heading, where `View Curriculum` read as a command in a
+                row of names. The dropdown has no heading over it, so it keeps
+                the phrase; the two now differ on purpose, recorded here. It read
+                `Every level` before M20. */}
+            All
           </Link>
           {levelRefs.map((one) => (
             <Link

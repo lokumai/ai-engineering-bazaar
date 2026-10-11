@@ -401,9 +401,9 @@ const FACTS: readonly Fact[] = [
      shipped stylesheet rather than asserting a table.
      --------------------------------------------------------------------------- */
 
-  // The bar the filters sit in. Its `top` is NOT a fact: `03` has no site bar
-  // above it and sticks to 0, while the product sticks below the bar and the
-  // band. The gap between chips and the hairline under them are the design.
+  // The bar the filters sit in. Its `top` is NOT a fact: `03` sticks it to 0,
+  // and the product does not stick it at all since 2026-10-11, on the author's
+  // word. The gap between chips and the hairline under them are the design.
   { role: 'filterBar', property: 'gap', mutate: '99px' },
   { role: 'filterBar', property: 'paddingTop', mutate: '99px' },
   { role: 'filterBar', property: 'borderBottomWidth', mutate: '9px' },
@@ -916,7 +916,8 @@ export const APP_SELECTORS: SelectorMap = {
      no key. Since **D62** the level chips are LINKS: they carry
      `aria-current="page"` and never `aria-pressed`, so every one of them
      matches this selector and the first one simply comes first. And M20 renamed
-     that chip to `View Curriculum` — it is still the one without a hue key, so
+     that chip to `View Curriculum`, and 2026-10-11 to `All` — it is still the
+     one without a hue key, so
      `chipKey` still finds the right box, for a different reason than the one
      written here.
 

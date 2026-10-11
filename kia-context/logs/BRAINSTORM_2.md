@@ -10,7 +10,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D74, plus open questions O1 to O4 — 2026-09-09 to 2026-10-11"
+covers: "D26 to D75, plus open questions O1 to O4 — 2026-09-09 to 2026-10-11"
 last_updated: 2026-10-11
 ---
 
@@ -1689,6 +1689,35 @@ author's words, honoured at every width by `differencesAt`, and held stale-proof
 the way the narrow one is — a guard fails an entry whose fact matches the mockup
 again, or whose recorded mockup value is wrong. Twelve entries on first use.
 
+### D75 · A value under a heading is not a label of a page — 2026-10-11
+
+M20 renamed the catalog's first level chip and the bar dropdown's first row to
+`View Curriculum` together, on a rule it wrote down: *"two elements with one
+meaning; rename both or neither"*. On 2026-10-11 the author asked for the chip
+alone to read `All`.
+
+**The rule was right for what it was about, and the chip stopped being that.**
+Since M24 the chip sits in a row headed `Level:`, beside a `Status:` row that
+opens on `All` and a `View:` row. In that position it is a VALUE — `Level: All`
+— and `View Curriculum` read as a command dropped into a row of names. The
+dropdown row has no heading over it; there the phrase is the name of a
+destination, and `All` alone would say nothing. So the two now differ, and the
+alternatives were both rejected: renaming the dropdown to `All` too (a menu row
+reading `All` under `Catalog` names nothing), and keeping both `View Curriculum`
+(the author's request, and a row that reads wrongly). The divergence is recorded
+in the chip's own comment, so the next reader of the M20 rule finds the
+exception beside it.
+
+The same request surfaced an older gap: the current level chip had carried no
+visible mark since M17 made the chips links (**D62**) — only `aria-pressed` was
+filled, and a link says `aria-current`. Not a decision, a defect; it is in
+M24's follow-up.
+
+## Open questions
+
+<!-- This heading went missing on 2026-10-11 when D72–D74 were appended — the
+     edit that added them replaced it instead of keeping it — and was restored
+     with D75 the same day. -->
 
 ### ~~O1 · Which direction the interface takes~~ — opened and closed 2026-09-08
 

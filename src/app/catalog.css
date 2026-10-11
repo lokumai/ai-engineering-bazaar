@@ -60,7 +60,12 @@
 @layer components {
 
   /* ---------------------------------------------------------------------------
-     1. THE PAGE, AND THE ONE NUMBER EVERYTHING STICKY IS DERIVED FROM.
+     1. THE PAGE, AND THE TWO LENGTHS THE FILTER BAR IS BUILT FROM.
+
+     (The heading said "the one number everything sticky is derived from".
+     Nothing on this page is sticky any more — the table's header sticks to its
+     own scroller at zero, and the filter bar stopped sticking on 2026-10-11 —
+     so what is left here is the bar's padding and its control height.)
 
      `03` hardcodes `top: 71px` on the table header to clear its filter bar,
      which is `16 + 38 + 16 + 1` — the bar's padding twice, the search field's
@@ -94,10 +99,16 @@
   /* ---------------------------------------------------------------------------
      2. THE FILTER BAR.
 
-     At the top, above the thing it changes. The ground is the page's own
-     `surface` and not a raised white band: the bar has to be opaque to be
-     sticky, and `01` draws no full-width white strip anywhere. A hairline is
-     what separates it, which is the rule the whole ground is built on.
+     At the top, above the thing it changes, and it SCROLLS AWAY WITH THE PAGE.
+     `03` makes it sticky and so did this file until 2026-10-11, when the
+     author asked otherwise: *"when I scroll down in catalog, the
+     level-status-view should not be attached to the scroll and should not
+     come-down with it. it should not stick to the scroll"*. MEASURED, the bar
+     is 168px tall — 18.7% of a 1440×900 window, 21.9% of 1366×768 and 23.3%
+     of 1280×720 — held under the site bar on every scroll of the catalog. A hairline is what separates the bar from the
+     views, which is the rule the whole ground is built on; with nothing
+     passing under it, it no longer needs an opaque ground or a stacking
+     level, so it has neither.
      --------------------------------------------------------------------------- */
   /* ONE GROUP PER ROW, by the author's instruction on 2026-09-11. This was a
      wrapping ROW holding both chip groups, so the level filter and the state
@@ -112,11 +123,6 @@
     gap: 14px;
     padding: var(--bz-filter-pad) 0;
     border-bottom: 1px solid var(--color-line);
-    background: var(--color-surface);
-    position: sticky;
-    top: var(--layout-sticky);
-    /* Under the bar (40) and the menu it opens (60), over the page. */
-    z-index: 30;
   }
 
   /* The view toggle is the third of these rows, so it takes the row's rule
@@ -162,7 +168,14 @@
   /* Pressed is a fill and a word, never a fill alone: the chip's label says
      which level or state it selects, so forced colours loses the hue and keeps
      the sentence. */
-  .bz-chip[aria-pressed="true"] {
+  /* AND THE CURRENT LEVEL, which is a link and says so with `aria-current`.
+     Since M17 made the level chips links (**D62**) only the pressed state was
+     filled, so the selected level carried no mark a sighted reader could see —
+     on every level page, for every commit since. It surfaced when the first
+     chip became `All` beside the status row's filled `All`, and the two read
+     as one selected and one not. */
+  .bz-chip[aria-pressed="true"],
+  .bz-chip[aria-current="page"] {
     border-color: var(--color-primary);
     background: var(--color-primary);
     color: var(--color-on-primary);
@@ -178,7 +191,8 @@
   /* A pressed level chip fills with cobalt, and its own hue key would then be
      a second colour inside a solid — so the key takes the ink of the fill and
      the hue is carried by the unpressed chips it is being compared against. */
-  .bz-chip[aria-pressed="true"] .bz-chip-key { background: var(--color-on-primary); }
+  .bz-chip[aria-pressed="true"] .bz-chip-key,
+  .bz-chip[aria-current="page"] .bz-chip-key { background: var(--color-on-primary); }
 
   /* `03`'s trailing readout, which in the product is a live region: it is what
      announces the count when a chip changes it. Muted and not faint for that

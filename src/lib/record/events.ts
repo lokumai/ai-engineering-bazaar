@@ -29,6 +29,7 @@ import {
   emptySheetRecord,
   isSafeKey,
   type CatalogViewId,
+  type PaletteId,
   type RecordData,
   type RoleId,
   type SheetRecord,
@@ -478,6 +479,22 @@ export function setRailFolded(data: RecordData, folded: boolean): RecordData {
 export function setCatalogView(data: RecordData, view: CatalogViewId): RecordData {
   if (data.prefs.catalogView === view) return data
   return { ...data, prefs: { ...data.prefs, catalogView: view } }
+}
+
+/**
+ * The palette a reader chose for the diagrams. `setCatalogView`'s shape and its
+ * reasons: written through the store or not at all, and no day stamped, because
+ * choosing a colour is not work on the curriculum.
+ */
+export function setFigurePalette(data: RecordData, palette: PaletteId): RecordData {
+  if (data.prefs.figurePalette === palette) return data
+  return { ...data, prefs: { ...data.prefs, figurePalette: palette } }
+}
+
+/** The same, for the code blocks. */
+export function setCodePalette(data: RecordData, palette: PaletteId): RecordData {
+  if (data.prefs.codePalette === palette) return data
+  return { ...data, prefs: { ...data.prefs, codePalette: palette } }
 }
 
 /** §12.15 — `lastExport`, so `NO EXPORT ON RECORD` can be a truthful state. */

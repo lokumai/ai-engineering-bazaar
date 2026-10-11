@@ -58,6 +58,15 @@ export const VIEWS: readonly CatalogView[] = [
 ]
 
 /**
+ * The toggle's visible name, and its accessible name, in one string — the
+ * arrangement `Level` and `Status` have in `rows.ts`, for the same reason. The
+ * author asked for the three views to sit as a third row of the filter bar
+ * under a `View:` heading rather than as a section of their own, so the toggle
+ * is named the way its two neighbours are and stopped needing an `aria-label`.
+ */
+export const VIEW_GROUP_LABEL = 'View'
+
+/**
  * The view a reader who has never chosen gets, and the one the prerendered
  * document is in.
  *

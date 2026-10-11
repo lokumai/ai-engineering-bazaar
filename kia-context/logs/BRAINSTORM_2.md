@@ -10,8 +10,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D67, plus open questions O1 to O4 — 2026-09-09 to 2026-09-13"
-last_updated: 2026-09-13
+covers: "D26 to D74, plus open questions O1 to O4 — 2026-09-09 to 2026-10-11"
+last_updated: 2026-10-11
 ---
 
 # 🧠 BRAINSTORM, part 2 — the rebuild, D26 onward
@@ -1599,7 +1599,96 @@ is dropped by it. Neither is the safe default. Choose by which of the two
 properties the element actually needs, and if it needs both, say so in both
 places.
 
-## Open questions
+### D71 · The bar's mark is the Lokum AI logo, not the mockup's tile — 2026-10-11
+
+`01` draws the wordmark's mark as `.cubes`, a 2×2 tile of three category hues
+and one square of ground, and M16 transcribed it with DESIGN.md's line "a tile,
+not a logo". **The author asked for the logo instead**: *"use this svg logo
+`assets/icon.svg` on the navbar on the left hand side of the navbar as our
+logo"*. The mockup outranks every document, and the author outranks the mockup,
+so this is DESIGN.md's sixth deviation and the third the author chose.
+
+**The file the author supplied was not shipped as it is.** `assets/icon.svg` has
+no vector paths: it is two 1024px PNGs, a picture and a luminance mask, wrapped
+in an SVG, **696KB**, which a header would load on all 80 pages. Three options:
+
+1. **Serve it unchanged.** Rejected on size alone. The visible part also fills
+   only about 60% of its canvas (opaque bounding box 610 of 1024 wide), so at
+   32px the cubes would draw at about 19.
+2. **Rasterise it to a PNG.** Small, but it stops being the SVG the author named.
+3. **An SVG derived from it**: mask merged into the picture's alpha, margin
+   cropped, 128px (32px at 4×), one WebP inside. **8.8KB**, still an SVG, and
+   cached once for every page. Taken.
+
+`public/lokum-logo.svg` is that copy; `assets/icon.svg` stays the source.
+32px rather than the tile's 20: rendered at 20, 24, 28 and 32 the cubes read as
+three at every size, so the choice is presence, and 32 matches the bar's 33px
+controls. The bar's height, colour and type did not move.
+
+### D72 · Three palettes from colours the language already has, chosen like the catalog view — 2026-10-11
+
+The author asked for three colourings for the diagrams (*"I do not like the
+colors"*) and three highlightings for the code. Three things had to be decided,
+and each had a cheaper wrong answer.
+
+1. **New colours or existing ones.** The obvious build is three new syntax
+   themes and three new diagram palettes. **Rejected**: `transcription.test.ts`
+   holds the language's colour set to the shell mockups in both directions, and
+   a palette is the exact shape of the drift M16 exists to stop. So each palette
+   REBINDS the slab tokens (and, for a figure, the page tokens mermaid paints
+   with) to values already declared and fixed in both themes — the bar's, the
+   band's, the slab's. MEASURED, every pair against its own ground; one
+   substitution came out of it: the clay that is `fault` measures **2.77:1** on
+   cobalt and fails the graphic floor, so Blueprint's faults take the slab's
+   orchid at 5.18:1.
+2. **One choice or two.** One list (`Night`, `Paper`, `Blueprint`) for both
+   subjects, so the words mean the same thing on a diagram and a code block —
+   but two choices, because light diagrams beside dark code is a reasonable
+   thing to want.
+3. **Where the choice lives.** A `localStorage` key per palette, the way the
+   theme has one, was rejected for the reason `railFolded` gave in M10: a second
+   writer of learner state, invisible to the export, the erase dialog and the
+   account merge. Two `prefs` fields instead, `null` for "never chose", stamped
+   on `<html>` by the boot script before the `carriesNothing` gate — so a reader
+   who chose Paper never sees Night first — and the menus' own check mark is
+   drawn by the same attribute rather than by React.
+
+### D73 · A code token's colour becomes its class, because nothing read the colour — 2026-10-11
+
+Building the code palettes started from the assumption that highlighting
+worked. **MEASURED, it did not**: every token on a module painted one colour,
+`rgb(231, 227, 216)`, because shiki writes each token's colour inline as
+`--shiki-light:#…` and the rule that turned that property into a `color` went
+with the stylesheets stage 0 deleted. Two unit tests asserted the properties
+were EMITTED, and they were, on every commit since — a check that read the
+output and not the result.
+
+Two ways back. **Restore the reader** — one rule mapping `--shiki-light` to
+`color` — was rejected: the colour would stay a hex literal in the HTML, and a
+palette would then have to override an inline value per token, which CSS cannot
+do from outside. **Take the colour off the span** and put the role's class on it
+instead (`bz-tok-keyword` and four siblings, which the language already
+transcribed from `01` and nothing emitted), so the token colour is a token and
+the palette is one rebinding. Taken. The role is recognised by the theme's own
+colour, which is safe because the theme gives every role a distinct one and a
+test holds that.
+
+### D74 · An author's overruling of a pinned length is recorded, not deleted — 2026-10-11
+
+The author asked for the catalog spaced wider and the current rail group no
+longer enlarged. Both move lengths the fidelity harness pins against a mockup,
+and until now every author decision it had met was a removed role
+(`DELIBERATELY_ABSENT`) or a value nothing compared.
+
+**Deleting the pinned facts was the easy answer and it was rejected**: a fact
+that is no longer compared is how the next drift gets in, and the reason for
+the difference would live nowhere. **Widening `NARROW_DEVIATIONS`** was rejected
+too — it means "unspecified below a width", which is not what happened.
+`AUTHOR_DEVIATIONS` is a third registry: the fact, the mockup's value and the
+author's words, honoured at every width by `differencesAt`, and held stale-proof
+the way the narrow one is — a guard fails an entry whose fact matches the mockup
+again, or whose recorded mockup value is wrong. Twelve entries on first use.
+
 
 ### ~~O1 · Which direction the interface takes~~ — opened and closed 2026-09-08
 

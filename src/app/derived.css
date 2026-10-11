@@ -151,37 +151,134 @@
      language's one genuinely temporary surface — and it keeps its place in the
      tab order, which is the half a mockup would not have shown either way. */
 
-  .bz-expand {
+  /* THE AUTHOR'S MODAL, 2026-10-11: *"an industry standard modal which fits
+     and does not overlaps the users screen and has options for zoom in and
+     out and for grabbing"*. It was a sheet covering the whole window edge to
+     edge, with a word for its only control. Now: the page dimmed behind it, a
+     box inset from every edge so it never meets the screen's, a header of
+     icon controls, and a viewport the drawing opens FITTED into and is dragged
+     around in. */
+  .bz-expand-overlay {
     position: fixed;
     inset: 0;
     z-index: 70;
+    /* The slab's ground and not a translucent token, because the language
+       declares none: the dimming is the element's opacity over it, the same
+       in both themes. */
+    background: var(--color-slab-surface);
+    opacity: 0.62;
+  }
+
+  .bz-expand {
+    position: fixed;
+    inset: clamp(12px, 4vw, 48px);
+    z-index: 71;
     display: grid;
-    grid-template-rows: auto 1fr;
-    background: var(--color-surface);
+    /* The column is bounded, and that is what lets the title ellipsize. An
+       implicit column sizes to its content: MEASURED at 390, the header was
+       448px wide inside a 358px dialog and the last two controls were cut
+       off by the box's own `overflow: hidden`. */
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    max-width: 1440px;
+    margin: 0 auto;
+    overflow: hidden;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-raised);
   }
 
   .bz-expand-head {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 12px clamp(16px, 3vw, 32px);
+    padding: 8px 10px 8px 18px;
     border-bottom: 1px solid var(--color-line);
   }
 
-  .bz-expand-view {
-    overflow: auto;
-    overscroll-behavior: contain;
-    padding: clamp(16px, 3vw, 32px);
+  /* One line, cut with an ellipsis on a phone: the caption is a name for the
+     dialog, and the controls beside it must never be pushed off the box. */
+  .bz-expand-title {
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    color: var(--color-on-surface);
+    font: 600 var(--text-meta) / 1.3 var(--font-sans);
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
+  .bz-expand-controls {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .bz-expand-btn {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-base);
+    background: transparent;
+    color: var(--color-on-surface-muted);
+    cursor: pointer;
+  }
+
+  .bz-expand-btn:hover {
+    border-color: var(--color-line-strong);
+    background: var(--color-surface-sunken);
+    color: var(--color-on-surface);
+  }
+
+  .bz-expand-scale {
+    min-width: 46px;
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-mark) / 1 var(--font-sans);
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+  }
+
+  /* The drawing on its palette's ground. It is DRAGGED, not scrolled: no
+     scrollbars, a grab cursor, and `touch-action: none` so a finger moves the
+     drawing rather than the page under the dialog.
+
+     The paper is pinned by its CENTRE to the viewport's centre and zooms about
+     it. A grid did not do that: its one `auto` column grew to the drawing's
+     natural width, so a drawing wider than the box started at the left edge
+     and ran off the right — MEASURED at 390, fitted to 39% and still outside
+     the viewport, because it was being scaled about a centre that was not the
+     box's. */
+  .bz-expand-view {
+    position: relative;
+    overflow: hidden;
+    overscroll-behavior: contain;
+    background: var(--color-slab-surface);
+    cursor: grab;
+    touch-action: none;
+  }
+
+  .bz-expand-view[data-hl-dragging] { cursor: grabbing; }
+
   .bz-expand-paper {
-    margin: 0 auto;
-    padding: 18px 20px;
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-xl);
-    background: var(--color-surface-raised);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max-content;
+    padding: 24px;
+    transform-origin: center;
+  }
+
+  /* §10.4's touch floor: on a phone the controls grow to a thumb, and the
+     header has the room. */
+  @media (max-width: 767px) {
+    .bz-expand-btn {
+      width: 44px;
+      height: 44px;
+    }
   }
 
   /* -- the contents drawer's two lists ------------------------------------

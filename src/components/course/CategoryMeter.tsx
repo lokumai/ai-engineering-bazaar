@@ -77,7 +77,7 @@ export function CategoryMeter({
       {/* Decoration, deliberately: the count below states the same reading in
           text, which is the only condition under which a gauge may be silent
           (§10.4). */}
-      <div className="bz-meter w-44" aria-hidden="true">
+      <div className="bz-meter" aria-hidden="true">
         {ordered.map((sheet) => (
           <span
             key={sheet.module}

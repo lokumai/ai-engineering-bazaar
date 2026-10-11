@@ -18,6 +18,8 @@
  *   `data-hl-storage="ok" | "blocked"`    tells empty state 1 from 4 (§12.13)
  *   `data-bz-rail="folded"`               M10 — the curriculum rail is folded
  *   `data-hl-view="<id>"`                 M12 — the catalog view last chosen
+ *   `data-hl-figures="<id>"`              the diagram palette last chosen
+ *   `data-hl-code="<id>"`                 the code palette last chosen
  *   `style --bz-done-<slug>: <n>%`        M16 — how far through that level
  *
  * **The last one is a number and not a class, and it is the only one.** CSS
@@ -39,7 +41,8 @@
  * exists — it is a layout preference, and the two questions are answered
  * separately. M12's catalog view is the same case one screen over: a reader
  * whose only stored state is "show me the table" would otherwise meet the
- * overview on every load.
+ * overview on every load. The two palettes are the same case again: a reader
+ * who chose Paper and nothing else would otherwise meet Night every time.
  *
  * The view id is matched against the embedded `VIEW_IDS` before it reaches the
  * attribute, for the same reason the nine role ids are: the value comes out of
@@ -105,6 +108,7 @@
 import {
   CATALOG_VIEWS,
   MARK_IDS,
+  PALETTE_IDS,
   RECORD_STORAGE_KEY,
   ROLE_IDS,
   SCHEMA_VERSION,
@@ -130,7 +134,7 @@ export function recordBootScript(
   slugToModule: Record<string, number>,
 ): string {
   return `(function(){try{
-var T=${embed(categoryTotals)},M=${embed(slugToModule)},R=${embed(ROLE_IDS)},MK=${embed(MARK_IDS)},V=${embed(CATALOG_VIEWS)};
+var T=${embed(categoryTotals)},M=${embed(slugToModule)},R=${embed(ROLE_IDS)},MK=${embed(MARK_IDS)},V=${embed(CATALOG_VIEWS)},P=${embed(PALETTE_IDS)};
 var r=document.documentElement;
 var isObj=function(v){return Object.prototype.toString.call(v)==="[object Object]"};
 var own=function(o,k){return Object.prototype.hasOwnProperty.call(o,k)};
@@ -167,6 +171,8 @@ var d=env.data;
 if(!isObj(d))return;
 if(isObj(d.prefs)&&d.prefs.railFolded===true)r.setAttribute("data-bz-rail","folded");
 if(isObj(d.prefs)&&inL(V,d.prefs.catalogView))r.setAttribute("data-hl-view",d.prefs.catalogView);
+if(isObj(d.prefs)&&inL(P,d.prefs.figurePalette))r.setAttribute("data-hl-figures",d.prefs.figurePalette);
+if(isObj(d.prefs)&&inL(P,d.prefs.codePalette))r.setAttribute("data-hl-code",d.prefs.codePalette);
 var counts={},k,c,i,n,rec,id,ro=null,sh=d.sheets,has=0;
 if(arr(d.days)&&someDay(d.days))has=1;
 if(isObj(d.meta)&&inst(d.meta.lastExport))has=1;

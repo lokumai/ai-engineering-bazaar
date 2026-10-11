@@ -1117,11 +1117,64 @@ export const NARROW_DEVIATIONS: Readonly<Record<string, NarrowDeviation>> = {
 }
 
 /**
+ * FACTS THE AUTHOR OVERRULED, AT EVERY WIDTH.
+ *
+ * The mockup outranks every document and the author outranks the mockup
+ * (DESIGN.md, "Where this file knowingly parts from its source"). Until
+ * 2026-10-11 every author decision this harness met was a removed role
+ * (`DELIBERATELY_ABSENT`) or a value nothing compared; the catalog's spacing
+ * is the first author decision that moves a LENGTH the harness pins. Deleting those facts
+ * would stop comparing them at all, and a comparison that has stopped is how
+ * the next drift gets in, so they stay in `DESIGN_FACTS` and are exempted
+ * here, each with the reason.
+ *
+ * **Held to its claim the way `NARROW_DEVIATIONS` is**: `fidelity.spec.ts`
+ * fails an entry whose fact has stopped differing from the mockup, because a
+ * stale exemption is one that would hide the next difference.
+ */
+export interface AuthorDeviation {
+  /** The mockup's value, written down so the entry says what it overrules. */
+  readonly mockup: string
+  readonly why: string
+}
+
+/** The author's words for the catalog's spacing, once, for every entry below. */
+const MORE_GENEROUS =
+  'The author, 2026-10-11: *"in the catalog page, make the spacing more '
+  + 'generous among cards and sections and etc both vertically and '
+  + 'horizontally"*. `03` draws the catalog at its own density; the product '
+  + 'spaces it wider. Geometry only — no colour, type step or radius moved.'
+
+export const AUTHOR_DEVIATIONS: Readonly<Record<string, AuthorDeviation>> = {
+  'filterBar.gap': { mockup: '9px', why: MORE_GENEROUS },
+  'filterBar.paddingTop': { mockup: '16px', why: MORE_GENEROUS },
+  'levelHead.marginBottom': { mockup: '12px', why: MORE_GENEROUS },
+  'catalogCard.paddingTop': { mockup: '14px', why: MORE_GENEROUS },
+  'catalogCard.paddingLeft': { mockup: '15px', why: MORE_GENEROUS },
+  'cardTitle.marginTop': { mockup: '6px', why: MORE_GENEROUS },
+  'board.gap': { mockup: '12px', why: MORE_GENEROUS },
+  'boardHead.paddingTop': { mockup: '11px', why: MORE_GENEROUS },
+  'boardHead.paddingLeft': { mockup: '13px', why: MORE_GENEROUS },
+  'boardList.paddingTop': { mockup: '7px', why: MORE_GENEROUS },
+  'boardMod.paddingTop': { mockup: '8px', why: MORE_GENEROUS },
+  'groupCurrent.fontSize': {
+    mockup: '16px',
+    why:
+      'The author, 2026-10-11: *"when in curriculum left navbar a header or tab '
+      + 'is selected, it has both a different color and becomes larger. no need '
+      + 'to become larger. showing it with cream color is enough"*. `01` enlarges '
+      + 'the current group four ways; the product keeps the fill, the strong edge '
+      + 'and the hued leading bar, and draws the head at its siblings\' size.',
+  },
+}
+
+/**
  * The differences that are really differences at this width.
  *
  * Every viewport-aware comparison goes through here rather than through
  * `differencesIn`, so an exemption cannot be applied by accident: it has to be
- * in `NARROW_DEVIATIONS` with a width and a reason.
+ * in `NARROW_DEVIATIONS` with a width and a reason, or in `AUTHOR_DEVIATIONS`
+ * with the mockup's value and the author's.
  */
 export function differencesAt(
   reference: DesignFacts,
@@ -1130,6 +1183,7 @@ export function differencesAt(
   width: number,
 ): Difference[] {
   return differencesIn(reference, actual, roles).filter((difference) => {
+    if (AUTHOR_DEVIATIONS[difference.fact] !== undefined) return false
     const allowed = NARROW_DEVIATIONS[difference.fact]
     return allowed === undefined || width >= allowed.below
   })

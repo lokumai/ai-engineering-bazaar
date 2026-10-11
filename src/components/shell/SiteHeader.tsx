@@ -2,7 +2,9 @@ import Link from 'next/link'
 import { Keyboard } from '@/components/record/Keyboard'
 import GITHUB from '@/lib/github-stars.json'
 import { REPO_URL } from '@/lib/site'
+import { href } from '@/lib/url'
 import { categoryLabels } from '@/lib/content/chrome'
+import { LanguageMenu } from './LanguageMenu'
 import { MainNav } from './MainNav'
 import { ThemeToggle } from './ThemeToggle'
 
@@ -20,8 +22,8 @@ import { ThemeToggle } from './ThemeToggle'
  *
  * **The mascot.** LKM-01 sat here as a live progress meter, its six faces
  * painted before first paint by the record's boot script. The mockup's bar has
- * no mascot: its mark is a 2×2 tile of glazed squares, and DESIGN.md is
- * explicit that "it is a tile, not a logo". The progress-meter job is specified
+ * no mascot: its mark was a 2×2 tile of glazed squares, which the author has
+ * since replaced with the Lokum AI logo (**D71**). The progress-meter job is specified
  * elsewhere by the mockups the author chose — `05` variant C's level rings and
  * `07` variant A's bars — and LKM-01 keeps the 404, the legend page, the
  * exported record's cover and the drafter's stamp (BRAINSTORM **D36**).
@@ -37,7 +39,9 @@ import { ThemeToggle } from './ThemeToggle'
  * control that opens nothing is exactly the claim §1 forbids, which is why the
  * retired header held those two slots back as well. So the mockup specifies the
  * slot and the product fills it with the controls it actually has: the profile
- * link, the shortcut sheet, the theme toggle and the repository. Each is a
+ * link, the shortcut sheet, the theme toggle and the repository — and, on a
+ * module with a Turkish page, the language menu, which is the mockup's `TR`
+ * slot filled at last now that there is a second language to switch to. Each is a
  * `bz-bar-icon`, which is the primitive the mockup's own `.ib` buttons use. The
  * search field returns when there is something to search.
  *
@@ -46,15 +50,29 @@ import { ThemeToggle } from './ThemeToggle'
  * arrangement the whole shell uses.
  */
 
-/** The mockup's `.cubes`: three category hues and one square left as the ground. */
+/**
+ * The Lokum AI logo, in place of the mockup's `.cubes` tile (**D71**).
+ *
+ * `public/lokum-logo.svg` is derived from the author's `assets/icon.svg`, which
+ * is two 1024px PNGs inside an SVG — 696KB, every page. The copy merges the
+ * mask into the picture's own alpha, crops the empty margin and keeps 128px,
+ * enough for 32px at 4×: 8.8KB. A plain `<img>` and not `next/image`, because
+ * the export is static and there is nothing to optimise at request time; the
+ * `src` goes through `href()` because `public/` is under the base path.
+ *
+ * `alt=""`: the link is named by the wordmark beside it, which a phone hides
+ * visually and still reads (`shell.css`).
+ */
 function BrandMark() {
   return (
-    <span className="bz-brand-mark" aria-hidden="true">
-      <i style={{ background: 'var(--color-category-5)' }} />
-      <i style={{ background: 'var(--color-category-1)' }} />
-      <i style={{ background: 'var(--color-category-4)' }} />
-      <i style={{ background: 'var(--color-surface)' }} />
-    </span>
+    <img
+      className="bz-brand-mark"
+      src={href('/lokum-logo.svg')}
+      alt=""
+      width={32}
+      height={32}
+      decoding="async"
+    />
   )
 }
 
@@ -101,7 +119,7 @@ function StarGlyph() {
   )
 }
 
-export function SiteHeader() {
+export function SiteHeader({ translated }: { translated: readonly string[] }) {
   const { stars } = GITHUB
 
   return (
@@ -132,6 +150,9 @@ export function SiteHeader() {
               table moved to `/legend/`, the page whose whole job is what the
               marks on this site mean. `?` still opens the sheet. */}
           <Keyboard />
+          {/* Left of the theme toggle, where the author asked for it, and only
+              on a module that has a second language (`LanguageMenu`). */}
+          <LanguageMenu translated={translated} />
           <ThemeToggle />
 
           <a

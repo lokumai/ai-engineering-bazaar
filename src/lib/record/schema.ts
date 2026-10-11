@@ -70,6 +70,17 @@ import { type CatalogViewId, VIEW_IDS as CATALOG_VIEW_IDS } from '../catalog/vie
 export type { CatalogViewId }
 export const CATALOG_VIEWS: readonly CatalogViewId[] = CATALOG_VIEW_IDS
 
+/**
+ * The fourth vocabulary from an fs-free leaf, on the same terms: the palettes a
+ * reader can put the diagrams and the code in (`lib/reading/palettes.ts`). The
+ * boot script embeds this array to match a stored id before it reaches an
+ * attribute.
+ */
+import { type PaletteId, PALETTE_IDS as READING_PALETTE_IDS } from '../reading/palettes'
+
+export type { PaletteId }
+export const PALETTE_IDS: readonly PaletteId[] = READING_PALETTE_IDS
+
 /** §12.6 — self-report, unscored. `null` is `unknown`, a first-class value. */
 export interface QuizRecord {
   answer: string
@@ -193,6 +204,17 @@ export interface RecordData {
      * and `setCatalogView` is the one reducer that touches it.
      */
     catalogView: CatalogViewId | null
+    /**
+     * 2026-10-11 — the palette the reader put the diagrams in, or `null` for
+     * "has not chosen". `catalogView`'s argument exactly: a fact about how this
+     * reader likes a page drawn, not about their work, so it lives in `prefs`,
+     * which `carriesNothing` ignores and `mergeRecords` resolves local-wins.
+     * Null and not `'night'`, so a later change of default moves only the
+     * readers who never chose.
+     */
+    figurePalette: PaletteId | null
+    /** The same, for the code blocks. A separate choice on purpose. */
+    codePalette: PaletteId | null
   }
   meta: {
     lastExport: string | null
@@ -282,7 +304,14 @@ export const EMPTY_RECORD: RecordData = deepFreeze<RecordData>({
   identity: { name: null, markSeed: null, mark: null, role: null },
   sheets: {},
   days: [],
-  prefs: { charKeys: true, railFolded: false, aliasNamedFor: null, catalogView: null },
+  prefs: {
+    charKeys: true,
+    railFolded: false,
+    aliasNamedFor: null,
+    catalogView: null,
+    figurePalette: null,
+    codePalette: null,
+  },
   meta: { lastExport: null, persisted: null, lastClaim: null },
 })
 

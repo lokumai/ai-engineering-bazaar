@@ -169,48 +169,88 @@
     color: var(--color-on-surface-muted);
   }
 
-  .bz-caption-action,
-  .bz-slab-copy {
-    margin-left: 8px;
-    padding: 4px 9px;
-    border: 1px solid var(--color-line-strong);
-    border-radius: var(--radius-sm);
-    background: var(--color-surface-raised);
-    color: var(--color-on-surface);
-    font: 600 var(--text-mark) / 1 var(--font-sans);
-    cursor: pointer;
-    /* §10.4's touch floor. A 24px control is what the retired design shipped
-       and what `responsive.spec.ts` measured at 47 × 24 with no hit area. */
-    min-height: 30px;
+  /* ---------------------------------------------------------------------------
+     THE TOOLS IN A DIAGRAM'S CORNER AND A CODE BLOCK'S HEAD.
+
+     Both are icon buttons now (`tools.ts`, the `.bz-tool` primitive and the
+     palette menu in `bazaar.css`): the author asked for a transparent expand
+     control in the top-right corner with no word on it, a square palette
+     button beside it, and the copy control as its icon. They replaced
+     `.bz-caption-action` — the word `Expand` in the caption strip — and the
+     word `Copy` in the slab's head.
+
+     THE DIAGRAM'S STRIP sits over the frame's top-right corner. It is the
+     figure's child and not the frame's, because the frame is the horizontal
+     scroller and a child of it would scroll away with a wide drawing; the
+     figure is the positioning box instead. The frame gives up 32px more at the
+     top than the language's 20 so the strip never sits on the drawing —
+     MEASURED 8 + 32 + 12 — and the drawing itself is untouched.
+
+     Hidden until the drawing exists. `MermaidFigure` sets `data-hl-ready` once
+     a diagram has rendered, and its comment has said since M11 that the
+     control was hidden until then — but the rule that did it went with the
+     old stylesheets, so for every commit since stage 0 the word `Expand` sat
+     under a placeholder that said `Rendering`. A control that cannot do its
+     job is not drawn (§1).
+     --------------------------------------------------------------------------- */
+  .bz-diagram { position: relative; }
+
+  .bz-diagram > .bz-figure-body { padding-top: 52px; }
+
+  .bz-figure-tools {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 2;
+    display: none;
+    /* 12px, so two 32px tools have centres 44px apart and their 44px hit
+       areas (below) meet without overlapping: a tap meant for one never
+       lands on the other. */
+    gap: 12px;
+    /* The FRAME'S OWN GROUND behind the strip, which matches the frame and
+       cannot be seen — until the drawing overflows. Then `shell.css` masks the
+       frame's last 34px to transparent and the page shows through exactly
+       where the expand control sits: MEASURED, the slab's muted ink on the
+       powder ground, an icon a reader could barely find. */
+    border-radius: var(--radius-base);
+    background: var(--color-slab-surface);
   }
 
-  .bz-caption-action:hover,
-  .bz-slab-copy:hover {
-    background: var(--color-surface-sunken);
+  .bz-fig[data-hl-ready] > .bz-figure-tools { display: flex; }
+
+  /* The slab's head: the language name leads, the tools take the trailing
+     edge. The head is a 32px-tall strip once it holds a 32px tool, so its
+     own padding gives the height back. */
+  .bz-slab-tools {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: -6px -8px -6px auto;
   }
+
+  /* The copy control's two glyphs: the sheets at rest, a check for the
+     moment after a copy. `Affordances` sets `data-hl-copied` and writes the
+     word into the hidden live region beside them. */
+  .bz-copy-done { display: none; }
+
+  .bz-slab-copy[data-hl-copied] .bz-copy-idle { display: none; }
+
+  .bz-slab-copy[data-hl-copied] .bz-copy-done { display: block; }
 
   /* ---------------------------------------------------------------------------
      §10.4'S TOUCH FLOOR, AS A HIT AREA RATHER THAN A BIGGER BUTTON.
 
-     Both of these controls sit inside a caption or a mono header strip, where
-     a 44px button would be taller than the line it belongs to. So the painted
-     control stays the size the design wants and an invisible `::after`
-     centred on it carries the tap target.
-
-     MEASURED, from the retired design's own note: `COPY` painted 47 × 24 and
-     `EXPAND` 61.6 × 24 with no hit area at all. The floor is 44 × 44 below
-     768px, and the pseudo is given it outright rather than by `inset`, because
-     Tailwind's preflight makes these border-box and a hand-tuned inset
-     resolves against a padding box 2px smaller than the painted one — which is
-     how two earlier controls came to measure 42 × 42 and fail by 2px.
+     A tool sits in a corner strip or a mono header, where a 44px button would
+     be taller than the strip it belongs to. So the painted control stays 32px
+     and an invisible `::after` centred on it carries the tap target — given
+     outright rather than by `inset`, because Tailwind's preflight makes these
+     border-box and a hand-tuned inset resolves against a padding box 2px
+     smaller than the painted one, which is how two earlier controls came to
+     measure 42 × 42 and fail by 2px.
      --------------------------------------------------------------------------- */
-  .bz-caption-action,
-  .bz-slab-copy {
-    position: relative;
-  }
+  .bz-tool { position: relative; }
 
-  .bz-caption-action::after,
-  .bz-slab-copy::after {
+  .bz-tool::after {
     content: "";
     position: absolute;
     top: 50%;
@@ -221,29 +261,15 @@
   }
 
   /* ---------------------------------------------------------------------------
-     5. THE CODE SLAB'S HEAD, AND THE COPY CONTROL IN IT.
+     5. THE CODE SLAB'S HEAD.
 
      The language's `.bz-slab-head` puts its LAST child on the trailing edge,
-     which in the mockup is the language name. Here the last child is the copy
-     button, and the language name leads — same rule, read the other way round.
+     which in the mockup is the language name. Here the last child is the tool
+     strip, and the language name leads — same rule, read the other way round.
      --------------------------------------------------------------------------- */
   .bz-slab-head { align-items: center; }
 
   .bz-slab-lang { color: var(--color-slab-on-surface-muted); }
-
-  /* On the slab the control sits on the slab's own sub-palette, because a
-     white button on a dark ground is the one thing DESIGN.md says a slab must
-     never borrow from the page. */
-  .bz-slab .bz-slab-copy {
-    margin-left: auto;
-    border-color: var(--color-slab-line-raised);
-    background: var(--color-slab-surface-raised);
-    color: var(--color-slab-on-raised);
-  }
-
-  .bz-slab .bz-slab-copy:hover {
-    background: var(--color-slab-line-raised);
-  }
 
   /* ---------------------------------------------------------------------------
      6. A DATA TABLE FROM THE CORPUS.
@@ -456,40 +482,9 @@
     background: var(--color-surface-raised);
   }
 
-  /* ---------------------------------------------------------------------------
-     M19 — THE LANGUAGE OF THIS MODULE, in the corner the author named.
-
-     *"Language of each module should be selectable from the top-right corner of
-     the box which contains the whole center-aligned module content."* So it
-     rides the reading column's trailing edge, level with the heading below it
-     and above the facts line — the first thing in the box, and out of the
-     prose's own flow.
-
-     Two LINKS and not a control: the language is an address, so this is
-     navigation and it works with the bundle blocked (see `LanguagePicker`).
-     The current one is marked by weight and a full-ink colour, never by colour
-     alone — `aria-current` is what says it to assistive software and the
-     underline is what says it to a reader in forced colours.
-     --------------------------------------------------------------------------- */
-  .bz-langs {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin: 0 0 6px;
-  }
-
-  .bz-lang {
-    color: var(--color-on-surface-muted);
-    font: 600 var(--text-mark) / 1 var(--font-sans);
-    text-decoration: none;
-  }
-
-  .bz-lang:hover { color: var(--color-on-surface); }
-
-  .bz-lang[aria-current="page"] {
-    color: var(--color-on-surface-title);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
+  /* M19's two language links lived here, in the reading column's top-right
+     corner, until the author moved the switch into the bar on 2026-10-11. It
+     is `LanguageMenu` now and its rules are in the language with the rest of
+     the bar (`bazaar.css`, `.bz-langmenu`). */
 
 }

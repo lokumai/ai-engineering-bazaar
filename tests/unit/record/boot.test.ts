@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { PALETTE_IDS } from '@/lib/reading/palettes'
 import { RECORD_BOOT_SCRIPT, recordBootScript } from '@/lib/record/boot'
 import { stampProgressFor } from '@/lib/record/stamp'
 import { coerceRecordData } from '@/lib/record/validate'
@@ -329,7 +330,7 @@ describe('data-hl-record only goes on a record that carries something (§15.11)'
     ['a freshly minted record, which is what a migration stamp leaves behind', EMPTY_RECORD],
     [
       'a record holding only a preference',
-      { ...EMPTY_RECORD, prefs: { charKeys: false, railFolded: false, aliasNamedFor: null, catalogView: null } },
+      { ...EMPTY_RECORD, prefs: { charKeys: false, railFolded: false, aliasNamedFor: null, catalogView: null, figurePalette: null, codePalette: null } },
     ],
     ['a record holding only an empty module entry', withSheet({})],
     ['a name the reader typed', { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, name: 'Ada' } }],
@@ -454,6 +455,31 @@ describe('data-hl-record only goes on a record that carries something (§15.11)'
         run(script, { stored: envelope({ prefs: { catalogView: view } }) })
           .attributes.get('data-hl-view'),
       ).toBe(view)
+  })
+
+  it('stamps both palettes on a record that carries nothing, and only ids it knows', () => {
+    const stamped = run(script, {
+      stored: envelope({ prefs: { figurePalette: 'paper', codePalette: 'blueprint' } }),
+    })
+    // Before the gate, like the rail and the view: a reader whose only stored
+    // state is a colour choice would otherwise meet Night on every load.
+    expect(stamped.attributes.get('data-hl-figures')).toBe('paper')
+    expect(stamped.attributes.get('data-hl-code')).toBe('blueprint')
+    expect(stamped.attributes.has('data-hl-record')).toBe(false)
+
+    for (const palette of ['sepia', '', 7, null, {}, 'PAPER'])
+      for (const [field, attribute] of [['figurePalette', 'data-hl-figures'], ['codePalette', 'data-hl-code']])
+        expect(
+          run(script, { stored: envelope({ prefs: { [field]: palette } }) }).attributes.has(attribute),
+          `${field}: ${JSON.stringify(palette)}`,
+        ).toBe(false)
+    // Every id it does know, read from the list rather than typed out, so the
+    // refusal above cannot be passing because the stamp is broken for all.
+    for (const palette of PALETTE_IDS)
+      expect(
+        run(script, { stored: envelope({ prefs: { codePalette: palette } }) })
+          .attributes.get('data-hl-code'),
+      ).toBe(palette)
   })
 
   it('does not throw on a hand-edited record whose fields are the wrong shape', () => {

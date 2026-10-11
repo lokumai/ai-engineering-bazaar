@@ -88,10 +88,12 @@ test.describe('the accordion', () => {
     await expect(current).toHaveAttribute('open', '')
     await expect(current).toHaveAttribute('data-cat', A0.category)
 
-    // ENLARGED, and measured rather than read off the stylesheet: the current
-    // level's head is bigger than a sibling's, which is what the author asked
-    // for. Plus a coloured edge and the count in the reader's own ink, so the
-    // level is never told apart by size alone.
+    // NOT ENLARGED, and measured rather than read off the stylesheet. The
+    // author asked for the current level's head to be bigger once, and on
+    // 2026-10-11 took it back: *"no need to become larger. showing it with
+    // cream color is enough"*. So it is a sibling's size, and what tells it
+    // apart is a coloured edge, its weight and the count in the reader's own
+    // ink — never size, and never colour alone.
     const sizes = await page.evaluate(() => {
       const head = (element: Element) => element.querySelector(':scope > summary')!
       const current = document.querySelector('.bz-group[data-here]')!
@@ -115,7 +117,7 @@ test.describe('the accordion', () => {
       }
     })
 
-    expect(sizes.currentSize).toBeGreaterThan(sizes.otherSize)
+    expect(sizes.currentSize).toBe(sizes.otherSize)
     // A 4px edge in the level's own hue against a transparent one.
     expect(sizes.currentEdge).not.toBe(sizes.otherEdge)
     // NOT "the other edge is transparent", which was the retired design's

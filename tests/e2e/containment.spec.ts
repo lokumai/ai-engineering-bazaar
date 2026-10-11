@@ -100,12 +100,12 @@ function probe(): Overflow {
   let worst = 0
   let widest = 0
 
-  for (const svg of document.querySelectorAll('[data-hl-prose] .bz-diagram svg')) {
+  for (const svg of document.querySelectorAll('[data-hl-prose] .bz-diagram .mermaid-source svg')) {
     widest = Math.max(widest, svg.getBoundingClientRect().width)
   }
 
   const parts = document.querySelectorAll(
-    '[data-hl-prose] .bz-diagram svg, [data-hl-prose] .bz-diagram svg *',
+    '[data-hl-prose] .bz-diagram .mermaid-source svg, [data-hl-prose] .bz-diagram .mermaid-source svg *',
   )
   for (const part of parts) {
     const box = part.getBoundingClientRect()

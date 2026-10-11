@@ -263,17 +263,31 @@ describe('renderMarkdown — §6.7 code blocks', () => {
     expect(html).not.toContain('--shiki-light')
   })
 
-  it('emphasises keywords at weight 500, never 700 (§6.7)', async () => {
-    const { html } = await renderMarkdown('```python\nreturn 1\n```')
-    expect(html).toContain('--shiki-light-font-weight:500')
-    expect(html).toContain('--shiki-dark-font-weight:500')
-    expect(html).not.toContain('font-weight:bold')
+  /**
+   * THE TOKEN COLOURS ARE CLASSES, and that replaced a mechanism nothing read.
+   * Shiki writes each token's colour inline as `--shiki-light:#…`; the rule
+   * that turned those properties into a colour went with the stylesheets stage
+   * 0 deleted, and the two tests that stood here asserted the properties were
+   * EMITTED — which they were, on every commit, while every token on the site
+   * painted in one ink. So the contract is the class the language styles and
+   * the palette recolours, and no colour left on the span.
+   */
+  it('names every highlighted token by its role, and paints none inline', async () => {
+    const { html } = await renderMarkdown(
+      '```python\n# note\ndef add(a):\n    return len("x") + 1\n```',
+    )
+    for (const role of ['keyword', 'string', 'comment', 'number', 'function']) {
+      expect(html, role).toContain(`class="bz-tok-${role}"`)
+    }
+    expect(html).not.toContain('--shiki-')
+    expect(html).not.toMatch(/<span[^>]*style="[^"]*color/)
   })
 
-  it('emits both theme variants so .dark re-themes with no re-highlight (B8)', async () => {
-    const { html } = await renderMarkdown('```python\n# note\n```')
-    expect(html).toContain('--shiki-light:')
-    expect(html).toContain('--shiki-dark:')
+  it('leaves plain text unclassed, so it takes the slab ink by inheritance', async () => {
+    const { html } = await renderMarkdown('```python\nvalue\n```')
+    const line = /<span data-line="">([\s\S]*?)<\/span><\/code>/.exec(html)?.[1] ?? ''
+    expect(line, 'no line rendered, so nothing was checked').not.toBe('')
+    expect(line).not.toContain('bz-tok-')
   })
 
   it('lets a keyboard user scroll a long line (§10.3)', async () => {

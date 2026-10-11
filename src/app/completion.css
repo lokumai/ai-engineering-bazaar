@@ -588,14 +588,22 @@
      becoming a second dial: it says WHICH modules are done and not just how
      many, and it is the reading the listing pages carry beside their tables. */
 
+  /* SQUARES, and of a size a reader can count. They were `flex: 1` slivers 7px
+     tall inside a fixed 176px box — about 20 by 7 for an eight-module level —
+     and the author asked for them *"a bit larger"*. 14px is the catalog
+     table's completion square (`.bz-signoff-square`), so the two marks that
+     say "this module is completed" are one size wherever they appear, and the
+     meter is as wide as its modules rather than a box they are stretched to. */
   .bz-meter {
     display: flex;
-    gap: 2px;
+    flex-wrap: wrap;
+    gap: 4px;
   }
 
   .bz-seg {
-    flex: 1;
-    height: 7px;
+    flex: none;
+    width: 14px;
+    height: 14px;
     border: 1px solid var(--color-line);
     border-radius: var(--radius-hair);
     background: var(--color-surface-raised);

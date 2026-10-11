@@ -1,4 +1,4 @@
-import { DIAGRAM_HEADING, unfenced } from './lines'
+import { DIAGRAM_HEADING, SERIES_HEADINGS, unfenced } from './lines'
 import { scheduleOfParts } from './schedule'
 
 /**
@@ -38,6 +38,9 @@ export function sectionTitles(markdown: string): string[] {
     // topic. The sheet still prints the heading — see `DIAGRAM_HEADING` — so
     // this column is deliberately one entry shorter than the section spine.
     if (DIAGRAM_HEADING.test(text)) continue
+    // The series map never reaches the site (`SERIES_HEADINGS`), so a listing
+    // naming it would describe a section the module page does not have.
+    if (SERIES_HEADINGS.includes(text.trim())) continue
     titles.push(text.replace(ROMAN_H2, ''))
   }
 

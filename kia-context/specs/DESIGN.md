@@ -11,8 +11,8 @@ source: playground/01-theme-T4-ground-G3-powder.html (light) · playground/01-th
 authority: blueprint
 writes: agent, as the language evolves
 status: active
-covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with five recorded deviations"
-last_updated: 2026-09-13
+covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with seven recorded deviations (the sixth and seventh, the logo and the rail group, 2026-10-11) and the three reader palettes"
+last_updated: 2026-10-11
 ---
 
 ---
@@ -449,7 +449,16 @@ near-white ground is separated by its border and not its fill.
 **The dark slab is a second, complete palette.** Code and diagrams sit on `slab-surface`, and every
 value they need is prefixed `slab-`. It is a self-contained set precisely so a slab can be dropped
 anywhere without the surrounding ground leaking into it. Syntax colours are tuned against
-`slab-surface` alone; a slab on a light card is not a thing in this language.
+`slab-surface` alone.
+
+**And a reader may choose another ground for it — three in all, under the same names for code and
+for diagrams.** `Night` is the slab as above and the default. `Paper` is the bar's own fixed powder
+with cobalt, clay and the slab's arrow grey for ink; `Blueprint` is the bar's cobalt carrying the
+slab's own token hues, which were tuned for a dark ground and clear it. **None of the three adds a
+colour**: each is the slab tokens REBOUND to values the language already declares and that do not flip
+with the theme, so a palette a reader chose looks the same in both themes, and every pair is measured
+against the ground it is painted on (the source of the palettes lists them). It is the figure's own
+rebinding mechanism, below, applied a second time.
 
 ### The accepted risk, named
 
@@ -561,11 +570,30 @@ too. `transcription.test.ts` drops `border-right` from the `.side` pair with the
 reason beside it and still compares `top`, `height`, `overflow` and
 `background`, so the rail has not left the transcription.
 
-**Three of the five are floors and two are the author's.** The code comment
-deviation, the pager's tracks and the rail's hairline were forced; the `20ch`
-cap and the authorship line were chosen.
+**A SIXTH DEVIATION, AND THE AUTHOR'S: THE WORDMARK IS A LOGO.** `01:77-80`
+draws the bar's mark as `.cubes`, a 2×2 tile of three category hues and one
+square of ground, and the language transcribed it as "a tile, not a logo".
+**The author replaced it on 2026-10-11** with the Lokum AI logo, three lokum
+cubes, at 32px beside the name (**D71**). The tile's own idea survives in the
+picture: rose, orange and green, the tile's three colours, photographed rather
+than taken from tokens. Nothing about the bar's colour, type
+or height moved, and `transcription.test.ts` compares `.brand` on `gap` and
+`color` only, so no `DEVIATIONS` entry is needed — that list is about values.
 
-**The `20ch` cap and the authorship line are the only entries in this file that the author decided rather than a measurement forcing.**
+**A SEVENTH DEVIATION, AND THE AUTHOR'S: THE CURRENT RAIL GROUP DOES NOT GROW.**
+`01:160-162` draws the current group's head at 16px with 3px more padding and a
+taller key, and the language transcribed all of it as one of four ways the group
+is told apart. **The author took the size out on 2026-10-11**: *"it has both a
+different color and becomes larger. no need to become larger. showing it with
+cream color is enough"*. The head is its siblings' size; the fill, the strong
+edge and the hued leading bar remain, so it is still told apart three ways and
+never by colour alone. The fidelity harness records it in `AUTHOR_DEVIATIONS`.
+
+**Three of the seven are floors and four are the author's.** The code comment
+deviation, the pager's tracks and the rail's hairline were forced; the `20ch`
+cap, the authorship line, the logo and the rail group's size were chosen.
+
+**The `20ch` cap, the authorship line, the logo and the rail group's size are the only entries in this file that the author decided rather than a measurement forcing.**
 The rule stands: the mockup outranks this document, a measured accessibility floor outranks the
 mockup (**D34**), and the author outranks all three — stated here so a third entry cannot be added
 by an agent reading the first two as precedent.
@@ -679,14 +707,15 @@ cobalt, which is the strongest contrast the language can make and therefore the 
 softly shadowed, its rows carrying a small hue `key` on the leading edge and a count on the trailing
 edge.
 
-**The wordmark is a 2×2 grid of glazed squares**, one per category hue with one square left as the
-ground. It is a tile, not a logo, and it is drawn from the same series as everything else.
+**The wordmark is the product's logo beside its name**, at the height of the bar's controls. The
+source draws a 2×2 tile of glazed squares here; the author replaced it, and the sixth deviation above
+records why.
 
 **The rail.** A `label` caption and a `fold-button` sit at the top. Below them, one `rail-group` per
 group, each an `arch`-topped disclosure carrying its hue key, its name and its count. **The current
-group is unmistakable and it is emphasised four ways at once**: a larger type size, a sunken fill, a
-strong border, and a thick leading edge in the group's own hue. Its count moves from muted to full
-ink. Inside a group, `rail-item`s are quiet muted rows; the current item takes the group's hue as a
+group is unmistakable and it is emphasised three ways at once**: a sunken fill, a strong border, and a
+thick leading edge in the group's own hue. Its count moves from muted to full ink. It is the size of
+its siblings: the source also enlarges it, and the author took that out (seventh deviation). Inside a group, `rail-item`s are quiet muted rows; the current item takes the group's hue as a
 solid fill with white type; an item that is not yet available carries a small faint outlined badge.
 
 **Reading.** Breadcrumbs in `meta` above a `display` heading, then a row of `tag`s for the piece's
@@ -699,6 +728,21 @@ reader can skip.
 the same dark palette, and **its contents scroll inside the frame** — a diagram wider than the
 column never widens the page. **The caption is outside the frame**, because it is page ink and would
 be unreadable inside it.
+
+**Each carries its tools as icons, in its top-right corner.** A `tool` is a 32px square that is
+TRANSPARENT at rest — the glyph alone, in the ground's muted ink — and takes an edge and a raised fill
+on hover, on focus and while its menu is open. A figure's tools are a palette menu and an expand
+control, on a strip carrying the frame's own ground so an overflowing drawing's fade never sits under
+them; a slab's are a palette menu and a copy control whose glyph becomes a check for a moment. Every
+tool is named by a label and never by its glyph alone. The palette menu is a raised page surface even
+over a dark block, as the bar's own menu is — three rows, each a small diagonal swatch of its ground
+and ink, the chosen one carrying a check.
+
+**An opened figure is a dialog inset from the window**, over the page dimmed by the slab's ground at
+partial opacity — the language declares no translucent surface, so the dimming is the element's own.
+Its header holds the caption as its name and a row of icon controls: zoom out, the scale, zoom in,
+fit, close. Its body is the figure's ground with the drawing opened FITTED, dragged rather than
+scrolled.
 
 **Progress, and the two shapes it takes.** A `track` is a two-tone bar: a sunken groove, a fill in
 the group's own hue, and — where a group holds things nobody has written yet — a hatched tail rather

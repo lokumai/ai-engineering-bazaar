@@ -27,6 +27,30 @@
  */
 export const DIAGRAM_HEADING = /^Mermaid Diagram:\s*/i
 
+/**
+ * The series map: an h2 most written modules close with, holding a small
+ * mermaid chart of the course with this module highlighted.
+ *
+ * **It stays in the markdown and leaves the site**, on the author's word: *"it
+ * should remain in case someone wants to continue from raw markdown, but it
+ * should be removed and not shown in the website or UI."* A reader of a raw
+ * file on GitHub has no rail and no breadcrumb, and the chart is how they see
+ * where they are; a reader of the site has both, so the chart said a third
+ * time what the chrome already says twice.
+ *
+ * **Both languages, and the list is the whole mechanism.** A matcher written
+ * in English silently keeps the section on every Turkish page — the failure
+ * M19 met twice, in silence, with the quick check and the summary. So both
+ * headings are here, in the one place `render.ts` (which drops the section)
+ * and `topics.ts` (which must not list it) both read, and
+ * `tests/corpus/series-section.test.ts` fails a translation that names the
+ * section in a way this list does not know.
+ */
+export const SERIES_HEADINGS: readonly string[] = [
+  'Where this fits in the series',
+  'Bu serinin neresindeyiz',
+]
+
 /** A fence, of either marker, at any indent. */
 const FENCE = /^[ \t]*(`{3,}|~{3,})/
 

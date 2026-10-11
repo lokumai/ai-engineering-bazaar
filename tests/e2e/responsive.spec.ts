@@ -420,8 +420,10 @@ const TOUCH_ROUTES: readonly { path: string; carries: string }[] = [
  * the bar, the chips or a card belongs in this list in the same commit.**
  */
 const TOUCH_CONTROLS = [
-  '.bz-slab-copy',
-  '.bz-caption-action',
+  // A diagram's two corner tools and a code block's two, all one primitive
+  // since they became icons (`tools.ts`); they replaced the slab's `Copy` and
+  // the caption's `Expand`.
+  '.bz-tool',
   '.bz-btn',
   '.bz-bar-icon',
   '.bz-bar-repo',

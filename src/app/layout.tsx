@@ -2,7 +2,9 @@ import type { Metadata } from 'next'
 import { AccountSync } from '@/components/record/AccountSync'
 import { SessionProvider } from '@/components/auth/SessionProvider'
 import { Affordances } from '@/components/shell/Affordances'
+import { ReadingOptions } from '@/components/shell/ReadingOptions'
 import { SiteHeader } from '@/components/shell/SiteHeader'
+import { translatedModuleParam } from '@/components/sheet/ModuleSheet'
 import { curriculumFacts } from '@/lib/content/facts'
 import { RecordStateSync } from '@/components/record/RecordStateSync'
 import { recordBootScript } from '@/lib/record/boot'
@@ -83,12 +85,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a href="#main" className="skip-link">
           Skip to content
         </a>
-        <SiteHeader />
+        {/* The bar's language menu needs to know which modules HAVE a Turkish
+            address, and only the build can say: it is the list the `/tr/` route
+            emits, measured here for the same reason the facts above are. */}
+        <SiteHeader
+          translated={translatedModuleParam().map((one) => `${one.category}/${one.module}`)}
+        />
         {children}
         {/* §6.5 / §6.7 — the overflow fade and the COPY control, once per
             document. In the shell rather than in the prose column because the
             index sheet's manifest table scrolls too and has no prose. */}
         <Affordances />
+        {/* The palette menus in every figure and code block, once per
+            document, for the same reason `Affordances` is. */}
+        <ReadingOptions />
         {/* §12.2 — the boot script above stamps `<html>` for frame one; this
             keeps it true for every frame after, because a client transition
             never reloads the document and the mascot would otherwise freeze at

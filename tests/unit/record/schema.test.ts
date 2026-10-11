@@ -46,8 +46,16 @@ describe('EMPTY_RECORD', () => {
       // asked for the curriculum rail to be hidden, and `catalogView` is null
       // because they have not chosen a catalog view either — which is a
       // different statement from choosing the one that is the default. Each is
-      // the only thing a build can know.
-      prefs: { charKeys: true, railFolded: false, aliasNamedFor: null, catalogView: null },
+      // the only thing a build can know. The two palettes make six, null for
+      // the same reason `catalogView` is.
+      prefs: {
+        charKeys: true,
+        railFolded: false,
+        aliasNamedFor: null,
+        catalogView: null,
+        figurePalette: null,
+        codePalette: null,
+      },
       meta: { lastExport: null, persisted: null, lastClaim: null },
     })
   })

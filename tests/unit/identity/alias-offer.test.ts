@@ -136,7 +136,7 @@ describe('prefs.aliasNamedFor — the schema slot (§16.3)', () => {
       meta: { lastExport: null, persisted: null },
     })
     const data = coerceRecordData(before.data)
-    expect(data.prefs).toEqual({ charKeys: false, railFolded: false, aliasNamedFor: null, catalogView: null })
+    expect(data.prefs).toEqual({ charKeys: false, railFolded: false, aliasNamedFor: null, catalogView: null, figurePalette: null, codePalette: null })
     expect(data.identity.name).toBe('Ada')
     expect(data.days).toEqual(['2026-08-01'])
   })
@@ -146,14 +146,14 @@ describe('prefs.aliasNamedFor — the schema slot (§16.3)', () => {
     // Every pref the coercer knows, and only those. A new pref belongs on this
     // list; anything else in a stored envelope is dropped.
     expect(Object.keys(data.prefs).sort())
-      .toEqual(['aliasNamedFor', 'catalogView', 'charKeys', 'railFolded'])
+      .toEqual(['aliasNamedFor', 'catalogView', 'charKeys', 'codePalette', 'figurePalette', 'railFolded'])
   })
 })
 
 describe('carriesNothing still ignores prefs (schema.ts, §16.3)', () => {
   const flagged: RecordData = {
     ...EMPTY_RECORD,
-    prefs: { charKeys: true, railFolded: false, aliasNamedFor: 'user-1', catalogView: null },
+    prefs: { charKeys: true, railFolded: false, aliasNamedFor: 'user-1', catalogView: null, figurePalette: null, codePalette: null },
   }
 
   it('an erased record is not resurrected by the naming flag', () => {

@@ -29,6 +29,7 @@
  */
 
 import { isViewId } from '../catalog/views'
+import { isPaletteId } from '../reading/palettes'
 import type { ClaimIdentitySource, ClaimReceipt, ClaimSummary } from './claim'
 import { migrate } from './migrate'
 import {
@@ -402,6 +403,14 @@ export function coerceRecordData(input: unknown): RecordData {
        * field existed says and needs no rung on the migration ladder.
        */
       catalogView: isViewId(prefs.catalogView) ? prefs.catalogView : null,
+      /**
+       * The two palettes, on `catalogView`'s terms: matched against the list,
+       * because the id reaches an attribute selector, and null for anything
+       * else — including every record written before these fields existed,
+       * which needs no rung on the migration ladder.
+       */
+      figurePalette: isPaletteId(prefs.figurePalette) ? prefs.figurePalette : null,
+      codePalette: isPaletteId(prefs.codePalette) ? prefs.codePalette : null,
     },
     meta: {
       lastExport: asInstant(meta.lastExport),

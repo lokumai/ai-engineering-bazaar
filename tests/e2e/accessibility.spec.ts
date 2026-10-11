@@ -1,4 +1,5 @@
 import { type Page, expect, test } from '@playwright/test'
+import { PALETTE_IDS } from '@/lib/reading/palettes'
 import { contrastSamples, useTheme, worst } from './contrast'
 import { A0, SHORT, A4, CATEGORY_PATHS, INDEX_SHEET, SHEETS } from './sheets'
 import { showTable } from './views'
@@ -242,7 +243,9 @@ test('the level panel is inert when closed and reachable when open', async ({ pa
   await page.goto(A0.path)
 
   const summary = page.locator('summary.bz-bar-link')
-  const levels = page.locator('.bz-menu-item')
+  // Inside the main navigation: the bar's language menu is a `.bz-menu` too
+  // since 2026-10-11, with two rows of its own on a translated module.
+  const levels = page.locator('.bz-bar-nav .bz-menu-item')
 
   /**
    * Each stop, and whether it is INSIDE THE PANEL — which is the question, and
@@ -417,10 +420,15 @@ const THEMES = ['light', 'dark'] as const
  * painted on.
  */
 
-test('code comments clear the text floor on the code ground (§6.7, T5)', async ({ page }) => {
+test('code clears the text floor on the code ground, in every palette (§6.7, T5)', async ({ page }) => {
+  // Every token, not only comments, and in each of the three palettes a
+  // reader can choose (2026-10-11). The token colours were inert until then —
+  // every token painted in one ink — so this measured one colour and passed.
+  for (const palette of PALETTE_IDS)
   for (const theme of THEMES) {
     await page.goto(SHORT.path)
     await useTheme(page, theme)
+    await page.evaluate((id) => document.documentElement.setAttribute('data-hl-code', id), palette)
 
     // Leaf spans only: shiki nests a line wrapper around each row.
     const samples = (
@@ -431,8 +439,12 @@ test('code comments clear the text floor on the code ground (§6.7, T5)', async 
     const low = worst(samples)
     expect(
       low.ratio,
-      `${theme}: "${low.text}" is ${low.ratio.toFixed(2)}:1 (${low.color} on ${low.background})`,
+      `${palette}/${theme}: "${low.text}" is ${low.ratio.toFixed(2)}:1 (${low.color} on ${low.background})`,
     ).toBeGreaterThanOrEqual(4.5)
+    // And the highlighting is ON: more than one ink across the block, or the
+    // floor above was measured on a single colour and proves little.
+    expect(new Set(samples.map((sample) => sample.color)).size, `${palette}: one ink only`)
+      .toBeGreaterThan(3)
   }
 })
 

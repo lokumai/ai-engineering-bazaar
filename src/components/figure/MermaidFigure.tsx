@@ -12,7 +12,9 @@ import { widthForNaturalWidth } from '@/lib/figure/width'
 import {
   RESET_VIEW,
   type View,
+  fitView,
   panBy,
+  panIntent,
   transformOf,
   wheelFactor,
   zoomBy,
@@ -62,19 +64,67 @@ interface Expanded {
 }
 
 /**
- * The caption strip's own text, without the `EXPAND` button's. The strip is a
- * `figcaption` holding a text node and a button (§10.2), so the text nodes are
- * the caption.
+ * The caption's label, which names the dialog.
+ *
+ * It read the strip's bare TEXT nodes, from when the strip was a text node and
+ * a button. The label has been a `.bz-caption-label` span since stage 5, so
+ * there were no bare text nodes left and every opened figure was titled with
+ * the empty string — a dialog with no name, which is what a screen reader then
+ * announced. The label is read by its class now.
  */
 function captionOf(figure: Element): string {
-  const strip = figure.querySelector('.bz-caption')
-  if (!strip) return 'Figure'
-  return [...strip.childNodes]
-    .filter((node) => node.nodeType === Node.TEXT_NODE)
-    .map((node) => node.textContent ?? '')
-    .join('')
-    .trim()
+  const label = figure.querySelector('.bz-caption-label')?.textContent?.trim()
+  return label === undefined || label === '' ? 'Figure' : label
 }
+
+/* The dialog's controls, on the codebase's glyph idiom (`tools.ts`): a 16-unit
+   box, stroked in the current colour, hidden from assistive software because
+   each button is named by its own label. */
+function Glyph({ children }: { children: React.ReactNode }) {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      {children}
+    </svg>
+  )
+}
+
+const ZoomInGlyph = () => (
+  <Glyph>
+    <circle cx="7" cy="7" r="4.75" />
+    <path d="M10.5 10.5L14 14M5 7h4M7 5v4" />
+  </Glyph>
+)
+
+const ZoomOutGlyph = () => (
+  <Glyph>
+    <circle cx="7" cy="7" r="4.75" />
+    <path d="M10.5 10.5L14 14M5 7h4" />
+  </Glyph>
+)
+
+/** Four corners pulled IN: the opposite of the expand control's glyph. */
+const FitGlyph = () => (
+  <Glyph>
+    <path d="M6.25 2.75v3.5h-3.5M9.75 2.75v3.5h3.5M9.75 13.25v-3.5h3.5M6.25 13.25v-3.5h-3.5" />
+  </Glyph>
+)
+
+const CloseGlyph = () => (
+  <Glyph>
+    <path d="M4 4l8 8M12 4l-8 8" />
+  </Glyph>
+)
 
 /**
  * B5 — the natural width mermaid drew at, which decides the width class. The
@@ -127,6 +177,8 @@ export function MermaidFigure() {
   const renderer = useRef<Mermaid | null>(null)
   const trigger = useRef<HTMLElement | null>(null)
   const drag = useRef<{ pointer: number; x: number; y: number } | null>(null)
+  /** The fitted view for the figure that is open, which `Fit` and `0` return to. */
+  const fitted = useRef<View>(RESET_VIEW)
 
   const expand = useCallback(async (button: HTMLElement) => {
     const mermaid = renderer.current
@@ -230,10 +282,23 @@ export function MermaidFigure() {
   const attachViewport = useCallback((box: HTMLDivElement | null) => {
     if (!box) return
 
-    // §6.10 B5 — "the SVG at natural size". The overlay's copy is a fresh
-    // render, so it arrives sized to its container like any other.
+    // The overlay's copy is a fresh render and arrives sized to its container,
+    // so it is pinned to its natural size first — and then the view OPENS
+    // FITTED to the screen, the way an image viewer does: the whole drawing is
+    // visible before anybody zooms, on a phone and on a desktop alike.
     const drawing = box.querySelector('svg')
-    if (drawing) pinToNaturalSize(drawing, naturalWidth(drawing))
+    if (drawing) {
+      pinToNaturalSize(drawing, naturalWidth(drawing))
+      // The paper and not the SVG: it carries the padding the drawing sits in,
+      // and `offsetWidth` is a layout size, untouched by the transform.
+      const paper = box.querySelector<HTMLElement>('.bz-expand-paper') ?? box
+      const view = fitView(
+        { width: box.clientWidth, height: box.clientHeight },
+        { width: paper.offsetWidth, height: paper.offsetHeight },
+      )
+      fitted.current = view
+      setView(view)
+    }
 
     // Scroll-to-zoom has to stop the page scrolling underneath it, which a
     // React wheel handler cannot do — React registers wheel passively at the
@@ -247,6 +312,8 @@ export function MermaidFigure() {
     return () => box.removeEventListener('wheel', onWheel)
   }, [])
 
+  const percent = `${Math.round(view.scale * 100)}%`
+
   return (
     <Dialog.Root
       open={expanded !== null}
@@ -255,6 +322,10 @@ export function MermaidFigure() {
       }}
     >
       <Dialog.Portal>
+        {/* The page dimmed behind the dialog, which is what tells a reader the
+            figure is ON the page and the page is still there. A press on it
+            closes the dialog, as Radix does by default. */}
+        <Dialog.Overlay className="bz-expand-overlay" />
         {/* No description: the content is the figure, whose caption is the
             title. Radix would otherwise warn about one this dialog has no
             honest text for. */}
@@ -262,11 +333,22 @@ export function MermaidFigure() {
           className="bz-expand"
           aria-describedby={undefined}
           onCloseAutoFocus={(event) => {
-            // §10.3 — focus returns to the EXPAND control that opened it.
+            // §10.3 — focus returns to the expand control that opened it.
             event.preventDefault()
             trigger.current?.focus()
           }}
           onKeyDown={(event) => {
+            if (event.key === '0') {
+              event.preventDefault()
+              setView(fitted.current)
+              return
+            }
+            const pan = panIntent(event.key)
+            if (pan) {
+              event.preventDefault()
+              setView((current) => panBy(current, pan.dx, pan.dy))
+              return
+            }
             const intent = zoomIntent(event.key)
             if (!intent) return
             event.preventDefault()
@@ -274,12 +356,45 @@ export function MermaidFigure() {
           }}
         >
           <div className="bz-expand-head">
-            <Dialog.Title className="text-mark">{expanded?.label ?? ''}</Dialog.Title>
-            {/* It says what the keyboard does and it is also the button, so a
-                reader with no keyboard is not stranded inside the overlay. */}
-            <Dialog.Close className="bz-btn bz-btn-quiet text-mark" aria-label="Close figure">
-              Esc to close
-            </Dialog.Close>
+            <Dialog.Title className="bz-expand-title">{expanded?.label ?? ''}</Dialog.Title>
+            {/* The controls an image viewer has, each an icon named by its
+                label: zoom out, the scale, zoom in, fit, close. The keyboard
+                does all of it too — `-`, `+`, `0`, the arrows and Esc. */}
+            <div className="bz-expand-controls" role="toolbar" aria-label="Zoom">
+              <button
+                type="button"
+                className="bz-expand-btn"
+                aria-label="Zoom out"
+                title="Zoom out (−)"
+                onClick={() => setView((current) => zoomOut(current))}
+              >
+                <ZoomOutGlyph />
+              </button>
+              <span className="bz-expand-scale" role="status">
+                {percent}
+              </span>
+              <button
+                type="button"
+                className="bz-expand-btn"
+                aria-label="Zoom in"
+                title="Zoom in (+)"
+                onClick={() => setView((current) => zoomIn(current))}
+              >
+                <ZoomInGlyph />
+              </button>
+              <button
+                type="button"
+                className="bz-expand-btn"
+                aria-label="Fit to screen"
+                title="Fit to screen (0)"
+                onClick={() => setView(fitted.current)}
+              >
+                <FitGlyph />
+              </button>
+              <Dialog.Close className="bz-expand-btn" aria-label="Close figure" title="Close (Esc)">
+                <CloseGlyph />
+              </Dialog.Close>
+            </div>
           </div>
 
           <div
@@ -322,7 +437,9 @@ export function MermaidFigure() {
           >
             <div
               className="bz-expand-paper"
-              style={{ transform: transformOf(view) }}
+              // Centred on its own middle first (`derived.css` pins its corner to
+              // the viewport's centre), then the reader's pan and zoom.
+              style={{ transform: `translate(-50%, -50%) ${transformOf(view)}` }}
               // The markup is mermaid's own sanitised output (securityLevel
               // 'strict'), re-rendered from the source the build remapped.
               dangerouslySetInnerHTML={{ __html: expanded?.svg ?? '' }}

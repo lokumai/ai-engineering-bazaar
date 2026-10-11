@@ -40,9 +40,16 @@ async function copyBlock(button: HTMLButtonElement): Promise<void> {
     return
   }
 
-  button.textContent = 'Copied'
+  /* The control is an icon now, so the glyph swaps to a check by attribute
+     (`prose.css`) and the WORD goes to the hidden live region inside it: an
+     icon changing shape is not something a screen reader hears. The text is
+     cleared afterwards so the next copy is announced again. */
+  const said = button.querySelector<HTMLElement>('[data-hl-copy-said]')
+  button.setAttribute('data-hl-copied', '')
+  if (said) said.textContent = 'Copied'
   window.setTimeout(() => {
-    button.textContent = 'Copy'
+    button.removeAttribute('data-hl-copied')
+    if (said) said.textContent = ''
   }, COPIED_MS)
 }
 

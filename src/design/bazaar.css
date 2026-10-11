@@ -291,6 +291,17 @@
        it. Clay by default, which is what the page grounds take. See the
        `:focus-visible` rule for why this hook exists at all. */
     --bz-ring: var(--color-focus);
+    /* The three palettes' swatches (`.bz-swatch`), CAPTURED here. A custom
+       property's `var()` is resolved where it is declared, so these hold the
+       slab's own values even inside a block whose palette rebinds the
+       `--color-slab-*` tokens — without that, the swatch for Night inside a
+       Paper code block would draw in Paper's colours. */
+    --bz-swatch-night-ground: var(--color-slab-surface);
+    --bz-swatch-night-ink: var(--color-slab-keyword);
+    --bz-swatch-paper-ground: var(--color-bar-chip);
+    --bz-swatch-paper-ink: var(--color-bar);
+    --bz-swatch-blueprint-ground: var(--color-bar);
+    --bz-swatch-blueprint-ink: var(--color-on-bar-dim);
   }
 
   body {
@@ -344,7 +355,10 @@
   }
 
   .bz-slab,
-  .bz-figure {
+  .bz-figure,
+  /* The diagram's tools sit OVER the frame without being inside it (the
+     frame is the scroller), so they bind the ring the frame binds. */
+  .bz-figure-tools {
     --bz-ring: var(--color-slab-on-surface);
   }
 }
@@ -1400,7 +1414,13 @@
     border: 1px solid var(--color-slab-line);
     border-radius: var(--radius-lg);
     background: var(--color-slab-surface);
+  }
 
+  /* The opened figure's viewport takes the same rebinding as the frame, so a
+     diagram opens in the palette it is drawn in on the page. Split out of the
+     rule above for that one reason: the frame's geometry is not the dialog's. */
+  .bz-figure,
+  .bz-expand-view {
     /*
       THE SLAB, REBOUND — and this is the mechanism the whole diagram palette
       rests on.
@@ -1525,6 +1545,223 @@
     padding: 0 8px;
     color: var(--color-slab-arrow);
     font-weight: 700;
+  }
+
+  /* -- the palettes: Night, Paper, Blueprint ------------------------------
+     The author asked for three colourings for the diagrams and three
+     highlightings for the code (`src/lib/reading/palettes.ts` carries the
+     words). Night is the slab as designed and needs no rule here — it is what
+     `.bz-figure` and `.bz-slab` already bind. The other two REBIND, the way
+     `.bz-figure` rebinds the page palette onto the slab: a diagram's SVG and a
+     code block's token classes read custom properties, so redeclaring those on
+     the block recolours it with no re-render and no re-highlight.
+
+     **No new colour, and every value fixed in both themes.** Each palette is
+     assembled from tokens the language already declares and that do not flip
+     with the page — the bar's, the band's and the slab's — because
+     `transcription.test.ts` refuses a colour the shell mockups do not have, and
+     because a palette a reader CHOSE must look the same in both themes.
+
+     MEASURED, every pair against the ground it is painted on (the diagram
+     lines owe 3:1 as graphics, code owes 4.5:1 as text):
+       Paper   — ground #fdfbf7, nodes #ffffff. Lines #6e737f 4.60 / 4.75;
+                 labels #1b1b47 15.7; verify #2f8c86 3.90; caution #b8873b
+                 3.09; info #282864 12.9; fault #a0503c 5.48. Code: keyword
+                 #7a4a86 6.45 (#91609d 4.66 in the dark theme, where the token
+                 lifts), string #a0503c 5.48, comment #6e737f 4.60, function
+                 and number #282864 12.9, plain #1b1b47 15.7.
+       Blueprint — ground #282864, nodes #1b1b47. Lines #c9c6e4 8.04 / 9.80;
+                 labels #ffffff 13.3; verify 3.31; caution 4.16; info #848bd0
+                 4.17; fault takes the slab's orchid #c48ce0 at 5.18, because
+                 the clay measures 2.77 on cobalt and fails. Code keeps the
+                 slab's five hues, which were tuned for a dark ground and clear
+                 this one (5.18 to 7.33); comment #c9c6e4 8.04; plain 13.3.
+     `mermaid.spec.ts` and `accessibility.spec.ts` re-measure them off the
+     painted pixels in every palette. */
+
+  /* The SLAB half of a palette: the frame, its tools and its fallback text.
+     Applied to the figure's tool strip as well as its frame, because the
+     strip sits over the frame and has to take the frame's ink. */
+  html[data-hl-figures="paper"] :is(.bz-figure, .bz-figure-tools, .bz-expand-view),
+  html[data-hl-code="paper"] .bz-slab {
+    --color-slab-surface: var(--color-bar-chip);
+    --color-slab-surface-raised: var(--color-on-bar);
+    --color-slab-on-surface: var(--color-on-bar-chip);
+    --color-slab-on-surface-muted: var(--color-slab-arrow);
+    --color-slab-line: var(--color-band-b);
+    --color-slab-line-raised: var(--color-band-b);
+    --color-slab-on-raised: var(--color-on-bar-chip);
+  }
+
+  html[data-hl-figures="blueprint"] :is(.bz-figure, .bz-figure-tools, .bz-expand-view),
+  html[data-hl-code="blueprint"] .bz-slab {
+    --color-slab-surface: var(--color-bar);
+    --color-slab-surface-raised: var(--color-bar-hover);
+    --color-slab-on-surface: var(--color-on-bar);
+    --color-slab-on-surface-muted: var(--color-on-bar-dim);
+    --color-slab-line: var(--color-bar-field-line);
+    --color-slab-line-raised: var(--color-bar-field-line);
+    --color-slab-on-raised: var(--color-on-bar);
+  }
+
+  /* The CODE half: the five token roles, read by `.bz-tok-*`. */
+  html[data-hl-code="paper"] .bz-slab {
+    --color-slab-keyword: var(--color-category-3);
+    --color-slab-string: var(--color-band-c);
+    --color-slab-comment: var(--color-slab-arrow);
+    --color-slab-function: var(--color-bar);
+    --color-slab-number: var(--color-bar);
+  }
+
+  html[data-hl-code="blueprint"] .bz-slab {
+    --color-slab-comment: var(--color-on-bar-dim);
+  }
+
+  /* The DIAGRAM half: the page tokens mermaid's `themeCSS` paints with, which
+     `.bz-figure` already redeclares for Night. */
+  html[data-hl-figures="paper"] :is(.bz-figure, .bz-expand-view) {
+    --color-surface: var(--color-bar-chip);
+    --color-surface-raised: var(--color-on-bar);
+    --color-line-strong: var(--color-slab-arrow);
+    --color-on-surface: var(--color-on-bar-chip);
+    --color-primary: var(--color-bar);
+    --color-category-5: var(--color-band-c);
+    --color-on-primary: var(--color-on-bar);
+  }
+
+  html[data-hl-figures="blueprint"] :is(.bz-figure, .bz-expand-view) {
+    --color-surface: var(--color-bar);
+    --color-surface-raised: var(--color-on-bar-chip);
+    --color-line-strong: var(--color-on-bar-dim);
+    --color-on-surface: var(--color-on-bar);
+    --color-primary: var(--color-slab-info);
+    --color-category-5: var(--color-slab-keyword);
+    --color-on-primary: var(--color-bar);
+  }
+
+  /* -- a tool: the icon button a diagram or a code block carries ---------
+     TRANSPARENT at rest, as the author asked for the expand control: no fill
+     and no edge, only the glyph in the ground's muted ink, so the corner of a
+     drawing is not a toolbar. It takes an edge and a fill on hover, on focus
+     and while its menu is open, which is when a reader is working it. The
+     ink is the slab's, so it follows whichever palette the block is in. */
+  .bz-tool {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-base);
+    background: transparent;
+    color: var(--color-slab-on-surface-muted);
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .bz-tool::-webkit-details-marker { display: none; }
+
+  .bz-tool:hover,
+  details[open] > .bz-tool {
+    border-color: var(--color-slab-line-raised);
+    background: var(--color-slab-surface-raised);
+    color: var(--color-slab-on-surface);
+  }
+
+  /* -- the palette menu -------------------------------------------------- */
+  .bz-optmenu { position: relative; }
+
+  /* The menu needs a script to choose anything, so with none it is not drawn
+     (§1): `data-hl-storage` is stamped by the boot script whenever script
+     runs, whatever storage then allows. */
+  html:not([data-hl-storage]) .bz-optmenu { display: none; }
+
+  details:not([open]) > .bz-optmenu-panel { display: none; }
+
+  /* A raised page surface even over a dark block, as the bar's own menu is:
+     a menu is a page object that happens to open here. Hung from the
+     trigger's trailing edge, because both triggers sit at a right edge. */
+  .bz-optmenu-panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 30;
+    display: grid;
+    min-width: 172px;
+    padding: 6px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-raised);
+    box-shadow: var(--shadow-menu);
+  }
+
+  .bz-optmenu-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    padding: 7px 10px;
+    border: 0;
+    border-radius: var(--radius-base);
+    background: transparent;
+    color: var(--color-on-surface);
+    font: 500 var(--text-item) / var(--text-item--line-height) var(--font-sans);
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .bz-optmenu-item:hover { background: var(--color-surface-sunken); }
+
+  /* The chosen palette: a check and the word `current`, both revealed by the
+     carrier below and never by React, so the menu says what the page shows
+     in frame one. */
+  .bz-optmenu-check {
+    flex: none;
+    margin-left: auto;
+    display: var(--bz-chosen, none);
+    color: var(--color-primary);
+  }
+
+  .bz-optmenu-said { display: var(--bz-chosen, none); }
+
+  /* THE CARRIER: each stamped palette with its own item, plus Night where
+     nothing is stamped — the reader who never chose, and every reader with
+     no script. One custom property, read by the two things above. */
+  html[data-hl-figures="night"] [data-hl-options="figures"] [data-hl-palette="night"],
+  html[data-hl-figures="paper"] [data-hl-options="figures"] [data-hl-palette="paper"],
+  html[data-hl-figures="blueprint"] [data-hl-options="figures"] [data-hl-palette="blueprint"],
+  html:not([data-hl-figures]) [data-hl-options="figures"] [data-hl-palette="night"],
+  html[data-hl-code="night"] [data-hl-options="code"] [data-hl-palette="night"],
+  html[data-hl-code="paper"] [data-hl-options="code"] [data-hl-palette="paper"],
+  html[data-hl-code="blueprint"] [data-hl-options="code"] [data-hl-palette="blueprint"],
+  html:not([data-hl-code]) [data-hl-options="code"] [data-hl-palette="night"] {
+    --bz-chosen: block;
+    font-weight: 600;
+  }
+
+  /* Each palette's ground and ink, split on the diagonal, from the values
+     captured on the root (see `--bz-swatch-*`). */
+  .bz-swatch {
+    flex: none;
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-hair);
+    background: linear-gradient(135deg, var(--bz-sw-ground) 50%, var(--bz-sw-ink) 50%);
+  }
+
+  .bz-swatch[data-swatch="night"] {
+    --bz-sw-ground: var(--bz-swatch-night-ground);
+    --bz-sw-ink: var(--bz-swatch-night-ink);
+  }
+
+  .bz-swatch[data-swatch="paper"] {
+    --bz-sw-ground: var(--bz-swatch-paper-ground);
+    --bz-sw-ink: var(--bz-swatch-paper-ink);
+  }
+
+  .bz-swatch[data-swatch="blueprint"] {
+    --bz-sw-ground: var(--bz-swatch-blueprint-ground);
+    --bz-sw-ink: var(--bz-swatch-blueprint-ink);
   }
 
   /* -- actions ------------------------------------------------------------

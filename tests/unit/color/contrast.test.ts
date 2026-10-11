@@ -369,6 +369,8 @@ describe('the focus ring clears 3:1 on every ground it is bound on', () => {
     '.bz-bar': ['bar'],
     '.bz-slab': ['slab-surface'],
     '.bz-figure': ['slab-surface', 'slab-surface-raised'],
+    // Over the frame's ground at rest, over the raised fill while hovered.
+    '.bz-figure-tools': ['slab-surface', 'slab-surface-raised'],
   }
 
   /**

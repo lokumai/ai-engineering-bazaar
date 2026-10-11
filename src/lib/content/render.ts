@@ -10,10 +10,11 @@ import { toString as hastToString } from 'hast-util-to-string'
 import type { Element, ElementContent, Root, RootContent, Text } from 'hast'
 import { widthForColumns } from '@/lib/figure/width'
 import type { ChecklistItem } from './checklist'
-import { codeThemes } from './code-theme'
 import { DIAGRAM_HEADING, SERIES_HEADINGS } from './lines'
 import { courseLinkFor, isCourseLink, sheetSource } from './links'
 import { assertNoRawHex, remapMermaidFills } from './mermaid'
+import { CODE_TOKEN_ROLES, codeThemes, readDesignToken, toHex } from './code-theme'
+import { icon, paletteMenu } from './tools'
 
 export interface TocEntry {
   id: string
@@ -91,8 +92,20 @@ const ROMAN_H2 = /^([IVXLC]+)\.\s+/
 const EXTERNAL_HREF = /^https?:\/\//i
 /** B6.2 — the dek line, in both languages the corpus is written in. */
 const DEK = /^(Category|Kategori):\s/
-/** §6.7 — shiki writes bold as a keyword; §6.7 wants weight 500, not 700. */
-const BOLD_WEIGHT = /-font-weight:\s*bold/g
+/**
+ * Each code role's colour in the theme shiki is handed, mapped to the class
+ * that names the role (`--color-slab-keyword` → `bz-tok-keyword`). Derived the
+ * way `code-theme.ts` derives the theme — the token, read out of the language
+ * — and NOT read back off the theme object: shiki normalises that object in
+ * place and adds a scopeless rule to it, MEASURED as a 500 on every module
+ * page the first time this map was built from it.
+ */
+const TOKEN_CLASS_OF_COLOUR: ReadonlyMap<string, string> = new Map(
+  CODE_TOKEN_ROLES.map((role) => [
+    toHex(readDesignToken(role.token).light).toLowerCase(),
+    role.token.replace('--color-slab-', 'bz-tok-'),
+  ]),
+)
 
 function isElement(node: RootContent | ElementContent | undefined): node is Element {
   return node?.type === 'element'
@@ -620,31 +633,37 @@ function rehypeFigures(options: RenderOptions) {
               name.replace('FIG.', 'Figure'),
               [marker],
             ),
-            caption(name, section, {
-              /* M19 — **`lang="en"` on an interface word inside translated
-                 prose.** This control is one of the hundreds of English strings
-                 the interface is made of, and none of them are in the corpus;
-                 translating them is a milestone of its own. What it costs
-                 nothing to do NOW is say which language it is, so a screen
-                 reader on a Turkish page does not pronounce `Expand` as
-                 Turkish — the same answer the objectives card gets, and the
-                 reason `lang` is on the prose rather than on `<html>`.
+            /*
+              THE TOOLS, in the frame's top-right corner: the palette menu and
+              the expand control, both icons (`tools.ts`). A sibling of the
+              frame and not a child, because the frame is the horizontal
+              scroller and a child would scroll away with a wide drawing; the
+              figure is the positioning box and pins them to the corner.
 
-                 Marked unconditionally rather than per tree: this element is
-                 built by the renderer, which has no opinion about language, and
-                 `lang="en"` inside an English document is a true statement that
-                 changes nothing. */
-              action: element(
+              **`lang="en"`** for the reason the expand control carried it
+              before (M19): these are interface words inside translated prose,
+              and a screen reader on a Turkish page must not pronounce
+              `Expand diagram` as Turkish.
+
+              Hidden until the drawing exists (`data-hl-ready`), as the old
+              caption control was: a control that cannot do its job must not
+              be drawn (§1), and with no script there is no drawing.
+            */
+            element('div', { className: ['bz-figure-tools'], lang: 'en' }, [
+              paletteMenu('figures'),
+              element(
                 'button',
                 {
                   type: 'button',
-                  className: ['bz-caption-action'],
-                  lang: 'en',
+                  className: ['bz-tool'],
                   'data-hl-expand': '',
+                  'aria-label': 'Expand diagram',
+                  title: 'Expand diagram',
                 },
-                [text('Expand')],
+                [icon('expand')],
               ),
-            }),
+            ]),
+            caption(name, section),
           ],
         )
         return [SKIP, index + 1]
@@ -937,11 +956,25 @@ function rehypeCodeBlocks() {
       const declared = pre.properties?.['data-language']
       const language = typeof declared === 'string' && declared !== '' ? declared : 'output'
 
+      /* THE TOKEN COLOURS, as classes. Shiki writes each token's colour
+         inline as `--shiki-light:#…`, and for every commit since stage 0
+         deleted the rule that read those properties NOTHING read them — every
+         token on the site painted in the slab's default ink, MEASURED one
+         colour across a whole module's code. So the colour is taken back off
+         the span and turned into the language's own `bz-tok-<role>` class,
+         and the palette the reader chose decides what that class paints
+         (`bazaar.css`). The weight goes with it: `.bz-tok-keyword` carries it.
+
+         The colour identifies the role because the theme gives every role a
+         distinct one (`code-theme.test.ts` holds that), and a token in the
+         default ink takes no class and inherits. */
       visit(pre, 'element', (span: Element) => {
         const style = span.properties?.style
-        if (typeof style === 'string') {
-          span.properties.style = style.replace(BOLD_WEIGHT, '-font-weight:500')
-        }
+        if (typeof style !== 'string' || !style.includes('--shiki-')) return
+        const colour = /--shiki-light:\s*(#[0-9a-f]{6})/i.exec(style)?.[1]?.toLowerCase()
+        const role = colour === undefined ? undefined : TOKEN_CLASS_OF_COLOUR.get(colour)
+        delete span.properties.style
+        if (role !== undefined) span.properties.className = [role]
       })
 
       pre.properties = {
@@ -972,17 +1005,28 @@ function rehypeCodeBlocks() {
         [
           element('div', { className: ['bz-slab-head'] }, [
             element('span', { className: ['bz-slab-lang'] }, [text(language)]),
-            element(
-              'button',
-              {
-                type: 'button',
-                className: ['bz-slab-copy'],
-                'data-hl-copy': '',
-                // The label changes to COPIED for 1200ms; say so out loud.
-                'aria-live': 'polite',
-              },
-              [text('Copy')],
-            ),
+            /* The palette menu and the copy control, both icons now
+               (`tools.ts`). Copy is named by `aria-label`; what it says after
+               a press goes through the hidden live word inside it, because an
+               icon swap is not something a screen reader hears. */
+            element('div', { className: ['bz-slab-tools'], lang: 'en' }, [
+              paletteMenu('code'),
+              element(
+                'button',
+                {
+                  type: 'button',
+                  className: ['bz-tool', 'bz-slab-copy'],
+                  'data-hl-copy': '',
+                  'aria-label': 'Copy code',
+                  title: 'Copy code',
+                },
+                [
+                  icon('copy', 16, 'bz-copy-idle'),
+                  icon('check', 16, 'bz-copy-done'),
+                  element('span', { className: ['sr-only'], 'aria-live': 'polite', 'data-hl-copy-said': '' }),
+                ],
+              ),
+            ]),
           ]),
           pre,
         ],

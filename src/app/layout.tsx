@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { AccountSync } from '@/components/record/AccountSync'
 import { SessionProvider } from '@/components/auth/SessionProvider'
 import { Affordances } from '@/components/shell/Affordances'
+import { ReadingOptions } from '@/components/shell/ReadingOptions'
 import { SiteHeader } from '@/components/shell/SiteHeader'
 import { translatedModuleParam } from '@/components/sheet/ModuleSheet'
 import { curriculumFacts } from '@/lib/content/facts'
@@ -95,6 +96,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             document. In the shell rather than in the prose column because the
             index sheet's manifest table scrolls too and has no prose. */}
         <Affordances />
+        {/* The palette menus in every figure and code block, once per
+            document, for the same reason `Affordances` is. */}
+        <ReadingOptions />
         {/* §12.2 — the boot script above stamps `<html>` for frame one; this
             keeps it true for every frame after, because a client transition
             never reloads the document and the mascot would otherwise freeze at

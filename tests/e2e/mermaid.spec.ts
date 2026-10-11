@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { A0, A4, sheetByModule } from './sheets'
+import { PALETTE_IDS } from '@/lib/reading/palettes'
 import { contrastSamples, useTheme, worst } from './contrast'
 import { watchPage } from './watch'
 
@@ -168,7 +169,12 @@ test('a module that is planned downloads no mermaid bundle', async ({ page }) =>
  * MEASURED on the widest module: 16 labels at worst 12.82:1 and 28 strokes at
  * worst 5.21:1, identical in both themes.
  */
-test('a diagram on the slab clears its floors, in both themes', async ({ page }) => {
+test('a diagram clears its floors in every palette, in both themes', async ({ page }) => {
+  // 2026-10-11 — the reader can put the diagrams in three palettes, and each
+  // is a claim about contrast that only the painted pixels can check. Night is
+  // what this test always measured; Paper and Blueprint are the author's two
+  // additions, stamped the way the boot script stamps them.
+  for (const palette of PALETTE_IDS)
   for (const theme of ['light', 'dark'] as const) {
     await page.goto(A0.path)
     await page.waitForFunction(
@@ -183,6 +189,7 @@ test('a diagram on the slab clears its floors, in both themes', async ({ page })
       { timeout: 20_000 },
     )
     await useTheme(page, theme)
+    await page.evaluate((id) => document.documentElement.setAttribute('data-hl-figures', id), palette)
 
     // The labels, in both the shapes mermaid emits them in. MEASURED on this
     // module: 13 `<text>` elements of which 2 carry their own text, and 14
@@ -195,14 +202,14 @@ test('a diagram on the slab clears its floors, in both themes', async ({ page })
     const labels = (
       await contrastSamples(
         page,
-        '[data-hl-prose] .bz-diagram svg .nodeLabel, [data-hl-prose] .bz-diagram svg text',
+        '[data-hl-prose] .bz-diagram .mermaid-source svg .nodeLabel, [data-hl-prose] .bz-diagram .mermaid-source svg text',
       )
     ).filter((sample) => sample.text !== '')
-    expect(labels.length, `${theme}: no diagram label to measure`).toBeGreaterThan(5)
+    expect(labels.length, `${palette}/${theme}: no diagram label to measure`).toBeGreaterThan(5)
     const quietest = worst(labels)
     expect(
       quietest.ratio,
-      `${theme}: "${quietest.text}" at ${quietest.ratio.toFixed(2)}:1 ` +
+      `${palette}/${theme}: "${quietest.text}" at ${quietest.ratio.toFixed(2)}:1 ` +
       `(${quietest.color} on ${quietest.background})`,
     ).toBeGreaterThanOrEqual(4.5)
 
@@ -234,7 +241,7 @@ test('a diagram on the slab clears its floors, in both themes', async ({ page })
         return (hi + 0.05) / (lo + 0.05)
       }
       const found: number[] = []
-      for (const svg of document.querySelectorAll('[data-hl-prose] .bz-diagram svg')) {
+      for (const svg of document.querySelectorAll('[data-hl-prose] .bz-diagram .mermaid-source svg')) {
         // The slab is the first opaque ancestor of the drawing, by construction.
         const figure = svg.closest('.bz-figure')!
         const ground = paint(getComputedStyle(figure).backgroundColor)
@@ -242,15 +249,21 @@ test('a diagram on the slab clears its floors, in both themes', async ({ page })
           const stroke = getComputedStyle(node).stroke
           if (!stroke || stroke === 'none') continue
           found.push(ratio(paint(stroke), ground))
+          // A node's edge also bounds its own fill, and in Paper and
+          // Blueprint the fill is not the frame's ground.
+          const fill = getComputedStyle(node).fill
+          if (node.matches('.node rect') && fill && fill !== 'none') {
+            found.push(ratio(paint(stroke), paint(fill)))
+          }
         }
       }
       return found
     })
 
-    expect(strokes.length, `${theme}: no diagram geometry to measure`).toBeGreaterThan(5)
+    expect(strokes.length, `${palette}/${theme}: no diagram geometry to measure`).toBeGreaterThan(5)
     expect(
       Math.min(...strokes),
-      `${theme}: a diagram stroke is ${Math.min(...strokes).toFixed(2)}:1`,
+      `${palette}/${theme}: a diagram stroke is ${Math.min(...strokes).toFixed(2)}:1`,
     ).toBeGreaterThanOrEqual(3.0)
   }
 })

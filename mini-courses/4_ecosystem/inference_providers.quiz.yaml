@@ -1,0 +1,87 @@
+# Quick quiz: Inference Providers. Reinforcement, not assessment.
+questions:
+  - answer: 2
+    en:
+      question: "What does an inference provider sell you?"
+      options:
+        - "A copy of the model weights to run on your own machines"
+        - "The machines, so that you can host the model yourself"
+        - "Access to a model that runs on their hardware, paid per token"
+        - "One fixed monthly price for unlimited calls to one model"
+      explain: "The provider runs the model on its own hardware, and you pay per token. You own none of the machines and none of the weights."
+    tr:
+      question: "Bir inference provider sana ne satar?"
+      options:
+        - "Kendi makinelerinde çalıştırman için modelin weight'lerinin bir kopyasını"
+        - "Modeli kendin barındırabilmen için makinelerin kendisini"
+        - "Kendi donanımlarında çalışan bir modele, token başına ödemeli erişimi"
+        - "Tek bir modele sınırsız çağrı için sabit bir aylık fiyatı"
+      explain: "Provider modeli kendi donanımında çalıştırır ve sen token başına ödersin. Ne makinelerin ne de weight'lerin sahibi sensin."
+  - answer: 0
+    en:
+      question: "A gateway such as OpenRouter gives you one key for many models. What is the cost?"
+      options:
+        - "One extra hop through another company's infrastructure"
+        - "A separate account and rate limit for each vendor"
+        - "No failover when one provider has an outage"
+        - "Only one seller for each open-weights model"
+      explain: "Your request goes through another company's infrastructure, which adds a little latency. Separate accounts for each vendor are what a gateway removes."
+    tr:
+      question: "OpenRouter gibi bir gateway sana birçok model için tek key verir. Bunun maliyeti nedir?"
+      options:
+        - "Başka bir şirketin altyapısından geçen fazladan bir sıçrama (hop)"
+        - "Her vendor için ayrı bir hesap ve rate limit"
+        - "Bir provider'da kesinti olduğunda failover olmaması"
+        - "Her açık ağırlıklı (open-weights) model için tek bir satıcı"
+      explain: "İsteğin başka bir şirketin altyapısından geçer, bu da biraz gecikme (latency) ekler. Vendor başına ayrı hesapları ise gateway ortadan kaldırır."
+  - answer: 3
+    en:
+      question: "Why does a team go direct to the model maker, such as OpenAI, Anthropic or Google?"
+      options:
+        - "To use one key and one API shape for many models"
+        - "To choose between several sellers of one open-weights model"
+        - "To move each request to another provider during an outage"
+        - "To get features only the maker ships, such as prompt caching"
+      explain: "The maker usually ships new models first, and it offers prompt caching, batch discounts and higher rate limits. One key for many models is what a gateway gives you."
+    tr:
+      question: "Bir ekip neden doğrudan modeli yapan şirkete, örneğin OpenAI, Anthropic ya da Google'a gider?"
+      options:
+        - "Birçok model için tek key ve tek API şekli kullanmak için"
+        - "Aynı açık ağırlıklı (open-weights) model için birkaç satıcı arasında seçmek için"
+        - "Bir kesinti sırasında her isteği başka bir provider'a taşımak için"
+        - "Prompt caching gibi sadece yapanın sunduğu feature'ları almak için"
+      explain: "Yapan şirket yeni modelleri genelde önce sunar, ayrıca prompt caching, batch indirimleri ve daha yüksek rate limit'ler verir. Birçok model için tek key ise bir gateway'in verdiği şeydir."
+  - answer: 1
+    en:
+      question: "Your agent sends the same long system prompt on every turn. Which line of a provider's pricing page matters most?"
+      options:
+        - "The price per million tokens"
+        - "Prompt caching for the repeated prompt"
+        - "The size of the context window"
+        - "The daily limit of the free tier"
+      explain: "A provider that caches a long, stable prompt charges a fraction for each repeat. The price per token alone is the worst number to decide on."
+    tr:
+      question: "Agent'ın her turda aynı uzun system prompt'u gönderir. Bir provider'ın fiyat sayfasındaki hangi satır en çok önemlidir?"
+      options:
+        - "Milyon token başına fiyat"
+        - "Tekrarlanan prompt için prompt caching"
+        - "Context window'un boyutu"
+        - "Bedava katmanın (free tier) günlük limiti"
+      explain: "Uzun ve durağan bir prompt'u cache'leyen bir provider, her tekrar için bir kesir ödetir. Token başına fiyat tek başına karar vermek için en kötü sayıdır."
+  - answer: 2
+    en:
+      question: "You test a model on a free tier. What does the free tier tell you?"
+      options:
+        - "How fast your product will feel to its users"
+        - "The rate limits you will get when you pay"
+        - "Whether the model can do the task you need"
+        - "Which paid provider will give you the lowest latency"
+      explain: "A free tier shows whether the model can do your task. Free capacity is slower and more rate limited, so measure latency on the tier you will pay for."
+    tr:
+      question: "Bir modeli bedava katmanda (free tier) deniyorsun. Bedava katman sana ne söyler?"
+      options:
+        - "Ürününün kullanıcılarına ne kadar hızlı hissettireceğini"
+        - "Ödeme yaptığında alacağın rate limit'leri"
+        - "Modelin ihtiyacın olan işi yapıp yapamadığını"
+        - "Hangi ücretli provider'ın sana en düşük gecikmeyi (latency) vereceğini"
+      explain: "Bedava katman (free tier), modelin işini yapıp yapamadığını gösterir. Bedava kapasite daha yavaş ve daha sert rate limit'li olduğu için gecikmeyi (latency) ödeyeceğin katmanda ölç."

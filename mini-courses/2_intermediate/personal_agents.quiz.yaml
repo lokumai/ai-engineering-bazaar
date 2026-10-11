@@ -1,0 +1,91 @@
+# Quick quiz: Personal Agents. Reinforcement, not assessment.
+questions:
+  - answer: 1
+    en:
+      question: "Which of these makes a personal agent different from a coding agent?"
+      options:
+        - "It uses a larger and stronger model than a coding agent uses."
+        - "It keeps a memory on disk that grows across all your conversations."
+        - "It works inside one repository and stops when you close the terminal."
+        - "It forgets each conversation, so it starts every session with no history."
+      explain: "A personal agent keeps a lifelong memory on disk that keeps growing. The model is not the difference: the module says none of the four differences is about the model."
+    tr:
+      question: "Bir personal agent'ı bir coding agent'tan farklı yapan hangisi?"
+      options:
+        - "Bir coding agent'tan daha büyük ve daha güçlü bir model kullanır."
+        - "Diskte, bütün konuşmaların boyunca büyüyen bir memory tutar."
+        - "Tek bir repo'nun içinde çalışır ve terminali kapattığında durur."
+        - "Her konuşmayı unutur, yani her session'a hiç geçmiş olmadan başlar."
+      explain: "Bir personal agent, diskte büyümeye devam eden ömür boyu bir memory tutar. Fark model değil: modüle göre dört farkın hiçbiri modelle ilgili değil."
+
+  - answer: 3
+    en:
+      question: "SOUL.md is a system prompt kept as a file. Why is it a security risk?"
+      options:
+        - "It stores your passwords and API keys as plain text in the file."
+        - "It holds the model weights, so an attacker can copy the whole model."
+        - "The agent posts its full content to Moltbook each time it logs in."
+        - "It is writable, so anything that writes to it can change who the agent is."
+      explain: "The agent reads SOUL.md every time it wakes up and follows it. Anything that can write to the file changes the agent permanently, and the change is silent."
+    tr:
+      question: "SOUL.md, dosya olarak tutulan bir system prompt. Neden bir güvenlik riski?"
+      options:
+        - "Şifrelerini ve API key'lerini dosyanın içinde düz metin olarak saklar."
+        - "Model weight'lerini tutar, yani bir saldırgan bütün modeli kopyalayabilir."
+        - "Agent her giriş yaptığında tüm içeriğini Moltbook'a post olarak atar."
+        - "Yazılabilir, yani ona yazabilen her şey agent'ın kim olduğunu değiştirebilir."
+      explain: "Agent her uyandığında SOUL.md'yi okur ve ona uyar. Dosyaya yazabilen her şey agent'ı kalıcı olarak değiştirir, ve bu değişiklik sessizdir."
+
+  - answer: 2
+    en:
+      question: "When does Hermes Agent fit better than OpenClaw?"
+      options:
+        - "When the problem is orchestration across many different channels."
+        - "When you want a ready-made skill from the ClawHub marketplace."
+        - "When the problem is repetitive work that should improve on its own."
+        - "When you need a stronger model than OpenClaw can run."
+      explain: "Hermes writes its own skills from patterns in your requests, so repetitive work improves over time. Both tools run the same models, so the model is not the difference."
+    tr:
+      question: "Hermes Agent ne zaman OpenClaw'dan daha uygun?"
+      options:
+        - "Problem birçok farklı kanal üzerinde orkestrasyon olduğunda."
+        - "ClawHub marketplace'inden hazır bir skill istediğinde."
+        - "Problem kendi kendine iyileşmesi gereken tekrarlayan iş olduğunda."
+        - "OpenClaw'ın çalıştıramadığı daha güçlü bir model gerektiğinde."
+      explain: "Hermes, isteklerindeki desenlerden kendi skill'lerini yazar, yani tekrarlayan iş zamanla iyileşir. İki araç da aynı modelleri çalıştırır, yani fark model değil."
+
+  - answer: 0
+    en:
+      question: "What did Moltbook, the social network for agents, show?"
+      options:
+        - "Agents that read each other's posts spread instructions that no owner approved."
+        - "Agents stop posting and replying when no human gives them a prompt."
+        - "Agents never challenge a risky post unless a human tells them to."
+        - "Agents keep a consistent personality only when a human watches them."
+      explain: "A study found that 18.4% of posts told another agent to do something. This is indirect prompt injection, and it happened by accident at a large scale."
+    tr:
+      question: "Agent'lar için kurulan sosyal ağ Moltbook ne gösterdi?"
+      options:
+        - "Birbirinin post'larını okuyan agent'lar, hiçbir sahibin onaylamadığı talimatları yayar."
+        - "Hiçbir insan prompt vermediğinde agent'lar post atmayı ve cevap vermeyi bırakır."
+        - "Agent'lar, bir insan söylemedikçe riskli bir post'a asla karşı çıkmaz."
+        - "Agent'lar tutarlı bir kişiliği yalnızca bir insan izlediğinde korur."
+      explain: "Bir çalışma, post'ların %18,4'ünün başka bir agent'a bir şey yapmasını söylediğini buldu. Bu, büyük ölçekte ve kazara yaşanan indirect prompt injection."
+
+  - answer: 1
+    en:
+      question: "What does the module advise to reduce the risk of a personal agent?"
+      options:
+        - "Give it your main accounts, so it can act fully for you."
+        - "Run it in a container and give it separate accounts, not your main ones."
+        - "Keep your credentials in a file it can read, so it can log in."
+        - "Trust OpenClaw 2.0, because version 2.0 made the agent fully safe."
+      explain: "The access that makes the agent useful is the same access that makes it dangerous. OpenClaw 2.0 is better, but its stored credentials are not encrypted by default."
+    tr:
+      question: "Modül, bir personal agent'ın riskini azaltmak için ne öneriyor?"
+      options:
+        - "Ana hesaplarını ver, böylece senin adına tam olarak hareket edebilsin."
+        - "Onu bir container'da çalıştır ve ana hesaplarını değil, ayrı hesaplar ver."
+        - "Credential'larını okuyabildiği bir dosyada tut, böylece giriş yapabilsin."
+        - "OpenClaw 2.0'a güven, çünkü 2.0 sürümü agent'ı tamamen güvenli yaptı."
+      explain: "Agent'ı faydalı yapan erişim, onu tehlikeli yapan erişimle aynı. OpenClaw 2.0 daha iyi, ama kayıtlı credential'ları varsayılan olarak şifrelenmiyor."

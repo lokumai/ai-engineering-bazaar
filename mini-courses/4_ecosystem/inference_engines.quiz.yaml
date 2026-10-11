@@ -1,0 +1,87 @@
+# Quick quiz: Inference Engines. Reinforcement, not assessment.
+questions:
+  - answer: 2
+    en:
+      question: "What does an inference engine do?"
+      options:
+        - "It trains the weights of a model on new data."
+        - "It shows a chat interface where users talk to a model."
+        - "It loads the weights and produces the next token."
+        - "It sells access to a model and charges per token."
+      explain: "An inference engine loads the weights, turns tokens into the next token, and manages GPU memory and batching. Charging per token is what a provider does when it runs an engine for you."
+    tr:
+      question: "Bir inference engine ne yapar?"
+      options:
+        - "Bir modelin weight'lerini yeni veriyle eğitir (training)."
+        - "Kullanıcıların bir modelle konuştuğu bir sohbet arayüzü (chat UI) gösterir."
+        - "Weight'leri yükler ve sıradaki token'ı üretir."
+        - "Bir modele erişim satar ve token başına ücret alır."
+      explain: "Bir inference engine weight'leri yükler, token'ları sıradaki token'a çevirir, GPU memory'yi ve batching'i yönetir. Token başına ücret almak, senin için bir engine çalıştıran bir provider'ın işidir."
+  - answer: 0
+    en:
+      question: "The module gives three reasons to run a model yourself. Which reason is the most common?"
+      options:
+        - "The data must stay on your own infrastructure."
+        - "Self-hosting takes less work than a provider."
+        - "Per-token pricing always costs more than a GPU."
+        - "Your own GPU always answers faster than a provider."
+      explain: "Data that must stay on your own infrastructure is the most common reason, and it settles the question alone. Cost is a reason only after you pass a crossover point, not always."
+    tr:
+      question: "Modül, bir modeli kendin çalıştırmak için üç sebep veriyor. En yaygın sebep hangisi?"
+      options:
+        - "Veri kendi altyapında (infrastructure) kalmak zorunda."
+        - "Self-hosting, bir provider kullanmaktan daha az iş ister."
+        - "Token başına fiyatlama her zaman bir GPU'dan pahalıdır."
+        - "Kendi GPU'n her zaman bir provider'dan daha hızlı cevap verir."
+      explain: "Verinin kendi altyapında (infrastructure) kalması gerekmesi en yaygın sebeptir ve soruyu tek başına çözer. Maliyet ancak bir kesişme noktasını (crossover point) geçtikten sonra bir sebeptir, her zaman değil."
+  - answer: 1
+    en:
+      question: "Your team serves many users from one GPU server. Every request starts with the same long system prompt. Which engine fits this case best?"
+      options:
+        - "Ollama"
+        - "SGLang"
+        - "llm-d"
+        - "llama.cpp"
+      explain: "SGLang is a serving engine that is strong when requests share a long common prefix. Ollama and llama.cpp are for one machine, and llm-d is for many machines."
+    tr:
+      question: "Ekibin tek bir GPU sunucusundan (server) çok kullanıcıya hizmet veriyor. Her istek aynı uzun system prompt'la başlıyor. Bu duruma en uygun engine hangisi?"
+      options:
+        - "Ollama"
+        - "SGLang"
+        - "llm-d"
+        - "llama.cpp"
+      explain: "SGLang, isteklerin uzun bir ortak öneki (prefix) paylaştığı yerde güçlü bir serving engine'dir. Ollama ve llama.cpp tek makine içindir, llm-d ise çok makine içindir."
+  - answer: 3
+    en:
+      question: "You test your self-hosted model with one request at a time. Why does this test mislead you about the server?"
+      options:
+        - "Generating a token is mostly arithmetic, so one request fills the GPU."
+        - "The engine waits for a full batch before it starts any request."
+        - "Batching only matters when you serve a model across many machines."
+        - "A GPU with one request is mostly idle, and the batch decides throughput."
+      explain: "Generating a token needs little arithmetic and a lot of memory traffic, so one request leaves the GPU mostly idle. When many requests run together, one weight loading serves all of them."
+    tr:
+      question: "Kendi barındırdığın (self-hosted) modeli bir seferde tek istekle test ediyorsun. Bu test seni sunucu (server) hakkında neden yanıltır?"
+      options:
+        - "Bir token üretmek çoğunlukla aritmetiktir, yani tek istek GPU'yu doldurur."
+        - "Engine, herhangi bir isteğe başlamadan önce dolu bir batch bekler."
+        - "Batching sadece bir modeli çok makine boyunca sunduğunda önemlidir."
+        - "Tek istekle GPU çoğunlukla boştur ve throughput'u batch belirler."
+      explain: "Bir token üretmek az aritmetik ama çok memory trafiği ister, yani tek istek GPU'yu çoğunlukla boş bırakır. Birçok istek birlikte çalışınca tek bir weight yüklemesi hepsine hizmet eder."
+  - answer: 1
+    en:
+      question: "An engine gives you an API and nothing to look at. What is Open WebUI?"
+      options:
+        - "A serving engine that batches many requests on one GPU."
+        - "A chat interface with accounts, history and model switching."
+        - "A tool that compiles a model ahead of time for NVIDIA."
+        - "A platform that runs inference across many Kubernetes machines."
+      explain: "Open WebUI is a chat interface that talks to Ollama or to any engine with the OpenAI API shape. The other options describe engines: vLLM, TensorRT-LLM and llm-d."
+    tr:
+      question: "Bir engine sana bir API verir ama bakacak bir şey vermez. Open WebUI nedir?"
+      options:
+        - "Tek bir GPU'da birçok isteği batch'leyen bir serving engine."
+        - "Hesaplar, konuşma geçmişi ve model değiştirme sunan bir sohbet arayüzü (chat UI)."
+        - "Bir modeli NVIDIA için önceden derleyen (compile) bir araç (tool)."
+        - "Inference'ı birçok Kubernetes makinesi boyunca çalıştıran bir platform."
+      explain: "Open WebUI, Ollama'yla ya da OpenAI API şeklini konuşan herhangi bir engine'le konuşan bir sohbet arayüzüdür (chat UI). Diğer seçenekler engine'leri anlatır: vLLM, TensorRT-LLM ve llm-d."

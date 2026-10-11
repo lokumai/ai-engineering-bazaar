@@ -376,12 +376,14 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
                           aria-current={pathname === INDEX_ROUTE ? 'page' : undefined}
                         >
                           <span aria-hidden="true" className="bz-menu-key" />
-                          {/* M20 — the author's own words for this row. It read
-                              `Every level`, and the same string is on the
-                              catalog's first level chip: two elements, one
-                              meaning, so they are renamed together or not at
-                              all. */}
-                          View Curriculum
+                          {/* `Curriculum`, the author's word on 2026-10-11. It
+                              read `Every level` and then `View Curriculum`
+                              (M20), when it shared one string with the
+                              catalog's first level chip; that chip became
+                              `All` under its `Level:` heading (D75), and this
+                              row, which has no heading over it, names the
+                              destination instead. */}
+                          Curriculum
                           <span className="bz-menu-count">All</span>
                         </Link>
                       </li>

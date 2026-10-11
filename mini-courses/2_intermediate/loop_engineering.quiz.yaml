@@ -1,0 +1,70 @@
+# Quick quiz: Loop Engineering. Reinforcement, not assessment.
+questions:
+  - answer: 1
+    en:
+      question: "In loop engineering, which single question does the whole design follow from?"
+      options:
+        - "Which model runs the agent?"
+        - "What is the stop condition?"
+        - "Which tools can the agent call?"
+        - "Who writes the first prompt?"
+      explain: "The module says everything else follows from the stop condition. If it is wrong, the loop stops too early or runs too long and costs too much."
+    tr:
+      question: "Loop engineering'de tasarımın tamamı hangi tek sorudan çıkıyor?"
+      options:
+        - "Agent'ı hangi model çalıştırıyor?"
+        - "Stop condition nedir?"
+        - "Agent hangi tool'ları çağırabilir?"
+        - "İlk prompt'u kim yazıyor?"
+      explain: "Modüle göre geri kalan her şey stop condition'dan çıkıyor. Yanlışsa loop ya iş bitmeden duruyor ya da çok uzun çalışıp çok maliyet çıkarıyor."
+  - answer: 2
+    en:
+      question: "In the verification loop, the /goal command in Claude Code has a goal and a cap on the number of tries. Why is the cap necessary?"
+      options:
+        - "It tells the grader which criteria to check."
+        - "It stops the context window from filling up."
+        - "It makes the loop stop when success is impossible."
+        - "It decides when a clock starts the next run."
+      explain: "A loop whose only stop condition is success does not stop when success is impossible. The cap gives the loop a second way to stop."
+    tr:
+      question: "Verification loop'ta Claude Code'un /goal komutunun bir hedefi (goal) ve bir deneme üst sınırı (cap) var. Üst sınır neden gerekli?"
+      options:
+        - "Grader'a hangi kriterleri kontrol edeceğini söylüyor."
+        - "Context window'un dolmasını engelliyor."
+        - "Başarı imkânsız olduğunda loop'un durmasını sağlıyor."
+        - "Sonraki çalışmayı bir saatin ne zaman başlatacağına karar veriyor."
+      explain: "Tek stop condition'ı başarı olan bir loop, başarı imkânsız olduğunda durmuyor. Üst sınır (cap) loop'a ikinci bir durma yolu veriyor."
+  - answer: 0
+    en:
+      question: "What is the most important rule of the Ralph loop?"
+      options:
+        - "Each iteration does one task from the plan, then exits."
+        - "Each iteration works through the whole backlog at once."
+        - "Each iteration keeps the context from the pass before."
+        - "Each iteration waits for a person to accept the result."
+      explain: "Ralph does one task per loop, and each pass starts with a fresh context window. The state lives on disk, not in the window."
+    tr:
+      question: "Ralph loop'un en önemli kuralı nedir?"
+      options:
+        - "Her iterasyon plandan tek bir iş yapıyor, sonra çıkıyor."
+        - "Her iterasyon bütün backlog'u bir seferde işliyor."
+        - "Her iterasyon önceki geçişin context'ini koruyor."
+        - "Her iterasyon sonucu bir insanın kabul etmesini bekliyor."
+      explain: "Ralph loop başına bir iş yapıyor, ve her geçiş temiz bir context window ile başlıyor. State window'da değil, diskte duruyor."
+  - answer: 3
+    en:
+      question: "What makes a dynamic workflow different from an agent team?"
+      options:
+        - "A workflow uses one agent, and a team uses many."
+        - "A workflow waits for a person to press enter each turn."
+        - "A workflow keeps its results in a shared task list."
+        - "A workflow puts the plan in a script, not in an agent."
+      explain: "In a workflow, the script decides what runs next and holds the intermediate results. The shared task list belongs to agent teams."
+    tr:
+      question: "Dynamic workflow'u bir agent team'den ayıran şey nedir?"
+      options:
+        - "Workflow tek bir agent kullanıyor, team ise çok sayıda."
+        - "Workflow her turda bir insanın enter'a basmasını bekliyor."
+        - "Workflow sonuçlarını paylaşılan bir task listesinde tutuyor."
+        - "Workflow planı bir agent'ta değil, bir script'te tutuyor."
+      explain: "Workflow'da sırada ne çalışacağına script karar veriyor ve ara sonuçları script tutuyor. Paylaşılan task listesi agent teams'e ait."

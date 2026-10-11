@@ -188,8 +188,9 @@ test.describe('§14.1 accounts are switched off', () => {
     const readout = page.locator('footer .bz-readout')
     await expect(readout).toHaveAttribute('data-hydrated', 'true')
 
-    await page.getByRole('button', { name: 'Complete', exact: true }).click()
-    await expect(page.getByRole('button', { name: /^Completed / })).toBeVisible()
+    const completion = page.getByRole('checkbox', { name: 'Mark this module as complete' })
+    await completion.check()
+    await expect(completion).toBeChecked()
 
     // The record is in this browser, exactly as it was before §14 existed.
     //

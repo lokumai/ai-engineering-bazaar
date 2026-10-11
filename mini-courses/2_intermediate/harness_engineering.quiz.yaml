@@ -1,0 +1,87 @@
+# Quick quiz: Harness Engineering. Reinforcement, not assessment.
+questions:
+  - answer: 2
+    en:
+      question: "An agent must never push to main. Why is the instruction \"do not push to main\" not enough for this rule?"
+      options:
+        - "The model does not read the instructions in AGENTS.md."
+        - "The instruction uses too much space in the context window."
+        - "The model is non-deterministic, so an instruction gives no guarantee."
+        - "The model follows instructions only in the first turn."
+      explain: "The same input can give a different result next time. An instruction works most of the time, but this rule needs a mechanical part that acts the same every run."
+    tr:
+      question: "Bir agent main'e asla push etmemeli. Talimatlara \"main'e push etme\" yazmak bu kural için neden yeterli değil?"
+      options:
+        - "Model, AGENTS.md içindeki talimatları okumuyor."
+        - "Talimat, context window'da çok fazla yer kaplıyor."
+        - "Model non-deterministic, yani bir talimat garanti vermiyor."
+        - "Model talimatlara yalnızca ilk turda uyuyor."
+      explain: "Aynı input bir sonraki seferde farklı bir sonuç verebilir. Talimat çoğu zaman işe yarıyor, ama bu kural her çalışmada aynı davranan mekanik bir parçaya ihtiyaç duyuyor."
+  - answer: 0
+    en:
+      question: "How does the harness relate to prompt engineering and context engineering?"
+      options:
+        - "The harness is the outer layer. It contains your prompt and context work."
+        - "The harness replaces them. You use it instead of prompt and context work."
+        - "The harness is a part of the context. It sits inside the context window."
+        - "The harness is a new name for context engineering. They are the same thing."
+      explain: "Each layer contains the one inside it, so the three are not alternatives. You do context engineering inside the harness you chose."
+    tr:
+      question: "Harness, prompt engineering ve context engineering ile nasıl bir ilişki içinde?"
+      options:
+        - "Harness dış katman (layer). Prompt ve context işini içine alıyor."
+        - "Harness onların yerine geçiyor. Prompt ve context işi yerine onu kullanıyorsun."
+        - "Harness, context'in bir parçası. Context window'un içinde duruyor."
+        - "Harness, context engineering'in yeni adı. İkisi aynı şey."
+      explain: "Her katman (layer) içindekini kapsıyor, bu yüzden üçü alternatif değil. Context engineering'i seçtiğin harness'ın içinde yapıyorsun."
+  - answer: 1
+    en:
+      question: "Böckeler splits a harness into guides and sensors. What is the difference?"
+      options:
+        - "Guides report how the work went. Sensors tell the agent what to do before it acts."
+        - "Guides tell the agent what to do before it acts. Sensors report how the work went."
+        - "Guides are written by the vendor. Sensors are written by the user of the agent."
+        - "Guides change the model weights. Sensors change the size of the context window."
+      explain: "Guides, such as AGENTS.md and tool descriptions, come before the work. Sensors, such as tests and linters, report after the work, so the agent can fix what it broke."
+    tr:
+      question: "Böckeler bir harness'ı rehberler (guides) ve sensörler (sensors) olarak ikiye ayırıyor. Fark ne?"
+      options:
+        - "Rehberler işin nasıl gittiğini bildiriyor. Sensörler agent'a davranmadan önce ne yapacağını söylüyor."
+        - "Rehberler agent'a davranmadan önce ne yapacağını söylüyor. Sensörler işin nasıl gittiğini bildiriyor."
+        - "Rehberleri vendor yazıyor. Sensörleri agent'ı kullanan kişi yazıyor."
+        - "Rehberler model weight'lerini değiştiriyor. Sensörler context window'un boyutunu değiştiriyor."
+      explain: "AGENTS.md ve tool açıklamaları gibi rehberler (guides) işten önce geliyor. Testler ve linter'lar gibi sensörler (sensors) işten sonra rapor veriyor, böylece agent bozduğu şeyi düzeltebiliyor."
+  - answer: 3
+    en:
+      question: "LangChain made five changes to the harness of their coding agent. What was the result on Terminal Bench 2.0?"
+      options:
+        - "The score increased, because they also used a larger model."
+        - "The score did not change, because only the model controls the score."
+        - "The score decreased, because more hooks make the agent slower."
+        - "The score increased from 52.8% to 66.5%, and the model did not change."
+      explain: "The model weights were the same in both runs. Nearly fourteen points came from changes to the environment around the model."
+    tr:
+      question: "LangChain, coding agent'larının harness'ında beş değişiklik yaptı. Terminal Bench 2.0'da sonuç ne oldu?"
+      options:
+        - "Skor arttı, çünkü daha büyük bir model de kullandılar."
+        - "Skor değişmedi, çünkü skoru yalnızca model belirliyor."
+        - "Skor düştü, çünkü daha fazla hook agent'ı yavaşlatıyor."
+        - "Skor %52,8'den %66,5'e çıktı ve model değişmedi."
+      explain: "İki çalışmada da model weight'leri aynıydı. Neredeyse on dört puan, modelin etrafındaki ortamı (environment) değiştirmekten geldi."
+  - answer: 2
+    en:
+      question: "Composio ran one model through eight harnesses on the same tasks. What is the main lesson?"
+      options:
+        - "Pi Agent scored highest, so every team should use Pi Agent."
+        - "The harness has little effect, because the model was the same."
+        - "The pairing matters: a harness fits the model it was built for."
+        - "The fastest harness is always the cheapest harness per success."
+      explain: "A harness makes assumptions about the model it was built for, so another model can do worse in it. Pi Agent won here, but the lesson is the pairing."
+    tr:
+      question: "Composio bir modeli aynı işlerde sekiz harness üzerinden çalıştırdı. Asıl ders ne?"
+      options:
+        - "Pi Agent en yüksek skoru aldı, yani her ekip Pi Agent kullanmalı."
+        - "Harness'ın etkisi az, çünkü model aynıydı."
+        - "Eşleşme (pairing) önemli: bir harness, kendisi için kurulduğu modele uyuyor."
+        - "En hızlı harness her zaman başarı başına en ucuz harness."
+      explain: "Bir harness, kendisi için kurulduğu model hakkında varsayımlar yapıyor, bu yüzden başka bir model onun içinde daha kötü çalışabiliyor. Pi Agent burada kazandı, ama ders eşleşme (pairing)."

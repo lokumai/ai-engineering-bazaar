@@ -1,0 +1,87 @@
+# Quick quiz: Tool Calling. Reinforcement, not assessment.
+questions:
+  - answer: 2
+    en:
+      question: "A model decides to call the tool `read_file`. Who runs the function?"
+      options:
+        - "The model runs the function inside its own weights."
+        - "The framework sends the function to the model, and the model runs it."
+        - "The host machine runs the function and writes the Tool Result."
+        - "The user runs the function and types the result into the chat."
+      explain: "The model has no computer, so it only writes a Tool Call that asks for the function. The host machine, your laptop or your server, runs it and writes the Tool Result."
+    tr:
+      question: "Model `read_file` tool'unu çağırmaya karar veriyor. Fonksiyonu kim çalıştırıyor?"
+      options:
+        - "Model, fonksiyonu kendi weight'lerinin içinde çalıştırıyor."
+        - "Framework fonksiyonu modele gönderiyor ve model onu çalıştırıyor."
+        - "Host makine fonksiyonu çalıştırıyor ve Tool Result'ı yazıyor."
+        - "Kullanıcı fonksiyonu çalıştırıyor ve sonucu chat'e yazıyor."
+      explain: "Modelin bilgisayarı yok, bu yüzden model yalnızca fonksiyonu isteyen bir Tool Call yazıyor. Fonksiyonu host makine (senin laptop'un ya da sunucun) çalıştırıyor ve Tool Result'ı yazıyor."
+  - answer: 0
+    en:
+      question: "Why does an agent's context grow faster than a chat's context?"
+      options:
+        - "Each Tool Call and each Tool Result stay in the context."
+        - "Each tool call adds a new system prompt to the context."
+        - "The model must write a longer answer after each tool call."
+        - "The user must ask the question again after each tool call."
+      explain: "A tool call adds two new messages: the Tool Call and the Tool Result. Both stay in the context, so one turn can add several messages instead of two."
+    tr:
+      question: "Bir agent'ın context'i neden bir chat'in context'inden daha hızlı büyüyor?"
+      options:
+        - "Her Tool Call ve her Tool Result context'te kalıyor."
+        - "Her tool call context'e yeni bir system prompt ekliyor."
+        - "Model her tool call'dan sonra daha uzun bir cevap yazmak zorunda."
+        - "Kullanıcı her tool call'dan sonra soruyu tekrar sormak zorunda."
+      explain: "Bir tool call iki yeni mesaj ekliyor: Tool Call ve Tool Result. İkisi de context'te kalıyor, bu yüzden tek bir tur iki mesaj yerine birkaç mesaj ekleyebiliyor."
+  - answer: 3
+    en:
+      question: "You write a function with the `@tool` decorator. Where does the framework get the tool's description?"
+      options:
+        - "From the function name, `get_weather`."
+        - "From the type hints, for example `city: str`."
+        - "From a JSON file that you write by hand."
+        - "From the docstring of the function."
+      explain: "The framework generates the tool schema for you, and it reads the description from the docstring. The name comes from the function name, and the parameters come from the type hints."
+    tr:
+      question: "`@tool` decorator'ı ile bir fonksiyon yazıyorsun. Framework, tool'un description'ını nereden alıyor?"
+      options:
+        - "Fonksiyonun adından, `get_weather`."
+        - "Type hint'lerden, örneğin `city: str`."
+        - "Elle yazdığın bir JSON dosyasından."
+        - "Fonksiyonun docstring'inden."
+      explain: "Tool schema'yı senin yerine framework üretiyor, ve description'ı docstring'den okuyor. Name fonksiyonun adından, parameters ise type hint'lerden geliyor."
+  - answer: 1
+    en:
+      question: "Your tool is called `get_data` and its docstring says \"gets data\". The model picks it at the wrong moments. What fixes this?"
+      options:
+        - "Add more instructions about the tool to the system prompt."
+        - "Rename the tool and rewrite its docstring for the model."
+        - "Make the code inside the function faster and more correct."
+        - "Add longer comments inside the body of the function."
+      explain: "The name and the description are the only things the model uses to choose a tool. More prompting does not fix a vague name and docstring."
+    tr:
+      question: "Tool'unun adı `get_data` ve docstring'i \"gets data\" diyor. Model onu yanlış anlarda seçiyor. Bunu ne düzeltir?"
+      options:
+        - "System prompt'a tool hakkında daha fazla talimat eklemek."
+        - "Tool'un adını değiştirmek ve docstring'ini model için yeniden yazmak."
+        - "Fonksiyonun içindeki kodu daha hızlı ve daha doğru yapmak."
+        - "Fonksiyonun gövdesine daha uzun yorumlar (comment) eklemek."
+      explain: "Model bir tool seçerken yalnızca name ve description'ı kullanıyor. Daha fazla prompt yazmak, belirsiz bir isim ve docstring'i düzeltmez."
+  - answer: 2
+    en:
+      question: "In the Tool Call message, the model writes an `id`, for example `call_9k2m4Xq7`. What is it for?"
+      options:
+        - "It tells the host machine which Python file to open."
+        - "It counts how many tools the model called in this chat."
+        - "It matches the Tool Result back to this specific call."
+        - "It identifies the user who asked the question."
+      explain: "The host machine tags the Tool Result with the same `id`, in the field `tool_call_id`. This links the result to the call that asked for it."
+    tr:
+      question: "Tool Call mesajında model bir `id` yazıyor, örneğin `call_9k2m4Xq7`. Bu ne işe yarıyor?"
+      options:
+        - "Host makineye hangi Python dosyasını açacağını söylüyor."
+        - "Modelin bu chat'te kaç tool çağırdığını sayıyor."
+        - "Tool Result'ı tam olarak bu çağrıyla eşleştiriyor."
+        - "Soruyu soran kullanıcıyı tanımlıyor."
+      explain: "Host makine, Tool Result'ı aynı `id` ile, `tool_call_id` field'ında etiketliyor. Bu, sonucu onu isteyen çağrıya bağlıyor."

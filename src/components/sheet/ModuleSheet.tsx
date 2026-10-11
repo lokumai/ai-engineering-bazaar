@@ -19,12 +19,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Prose } from '@/components/course/Prose'
-import { CheckedBy, Repositories, SheetStamps } from '@/components/record/CheckedBy'
-import { QuickCheck } from '@/components/record/QuickCheck'
 import { SignOff } from '@/components/record/SignOff'
 import { ChecklistIsland } from '@/components/record/ChecklistIsland'
-import { SourceTracking } from '@/components/record/SourceTracking'
-import { Submittal } from '@/components/record/Submittal'
 import { CurriculumRail } from '@/components/curriculum/CurriculumRail'
 import { ContentsDrawer } from '@/components/sheet/ContentsDrawer'
 import type { DependencyRelation, SheetLink } from '@/components/sheet/DependencyBlock'
@@ -32,7 +28,8 @@ import { Objectives } from '@/components/sheet/Objectives'
 import { PrevNext, type PrevNextTarget } from '@/components/sheet/PrevNext'
 import { ScheduleOfParts } from '@/components/sheet/ScheduleOfParts'
 import { FactsStrip } from '@/components/sheet/FactsStrip'
-import { Requirements } from '@/components/sheet/Requirements'
+import { Prerequisites } from '@/components/sheet/Prerequisites'
+import { QuickQuiz } from '@/components/sheet/QuickQuiz'
 import { SheetRail } from '@/components/sheet/SheetRail'
 import { StatusBand } from '@/components/sheet/StatusBand'
 import { PageShell } from '@/components/shell/PageShell'
@@ -43,22 +40,15 @@ import {
   sheetCount,
   sheetPath,
 } from '@/lib/content/curriculum'
-import { signOffCriteria } from '@/lib/content/criteria'
 import { moduleGraph } from '@/lib/content/edges'
-import { curriculumFacts } from '@/lib/content/facts'
 import { imageBaseFor } from '@/lib/content/images'
 import { railLevels } from '@/lib/content/rail'
 import { type CourseModule, loadAllModules, loadModuleIn } from '@/lib/content/loader'
-import { quickCheckOf, summarySection } from '@/lib/content/quickcheck'
+import { quizFor } from '@/lib/content/quiz'
 import { renderMarkdown } from '@/lib/content/render'
 import { href } from '@/lib/url'
 import { scheduleOfParts, summarySentence } from '@/lib/content/schedule'
-import {
-  carriesCheckedBy,
-  carriesRepositories,
-  sheetFacts,
-  sheetLabel,
-} from '@/lib/content/title-block'
+import { sheetFacts, sheetLabel } from '@/lib/content/title-block'
 
 /**
  * M19 — keep a Turkish reader in Turkish when they follow a cross-reference.
@@ -269,54 +259,9 @@ export async function ModuleSheet({
      pager and the rail. Identity on the English tree, so nothing branches. */
   const localise = translated ? turkishRouteMap() : (route: string) => route
 
-  // §12.4.1 — the criteria the reader is asserting against, which are the
-  // sheet's own declared objectives plus one sentence naming who is asserting.
-  const criteria = drawn ? signOffCriteria(slug) : null
-
-  // §12.6 trap 2 — the component keys on the extractor returning non-null,
-  // never on `status === 'ready'`. That all 15 drawn sheets happen to ask
-  // something is a measurement of the corpus today, not a rule.
-  const quickCheck = drawn ? quickCheckOf(sheet.body) : null
-  const summaryMarkdown = quickCheck === null ? null : summarySection(sheet.body)
-  // §12.6 item 3 — the sheet's own authored `## Summary`, rendered by the same
-  // pipeline as the prose so it is typeset as prose. Deliberately WITHOUT the
-  // sheet number: a summary that one day carries a table would then be numbered
-  // `TBL. 1` in its own sequence rather than colliding with the prose's
-  // `TBL. 13.1`, and two figures with one number is the lie to avoid. The
-  // extractor has already removed the question from it, so the reader's own
-  // answer is never printed above the question again.
-  //
-  // `excerptOf` rather than `sheet` is that same distinction held to: the
-  // summary needs the origin its internal links resolve against — three sheets
-  // cross-reference a neighbour inside their summary, and without it four
-  // `.md` hrefs shipped into this panel and 404'd — but it must not take the
-  // body's figure sequence with it.
-  const summaryHtml =
-    summaryMarkdown === null
-      ? null
-      : (
-          await renderMarkdown(summaryMarkdown, {
-            imageBase: imageBaseFor(sheet.category.slug),
-            excerptOf: number,
-            localiseRoute: translated ? localise : undefined,
-          })
-        ).html
-
-  // §7.4 — which stamp slots this sheet has is a fact about the corpus, so it
-  // is measured here; how full they are is reader state and is filled in by the
-  // island (§12.2). One sheet's facts, not the whole set's: `sheetStamps` reads
-  // nothing else, and serialising 32 sheets into every page to look one of them
-  // up would be payload for nothing.
-  const stampFact = drawn
-    ? (curriculumFacts().sheets.find((entry) => entry.slug === slug) ?? null)
-    : null
-
-  // §12.3.1 — absent on a draft: a sheet nobody has drawn cannot be checked.
-  const checkedBy = carriesCheckedBy(facts) ? <CheckedBy slug={slug} /> : null
-  // §12.9 — the register's count, in the block that summarises the sheet. A
-  // reader registered three repositories and this panel said nothing about
-  // them; `title-block.ts` carries the rest of the reasoning beside the label.
-  const repositories = carriesRepositories(facts) ? <Repositories slug={slug} /> : null
+  // The quick quiz, in the page's language, or null where the module has none
+  // (`quiz.ts`). A draft never has one: there is nothing yet to recall.
+  const quiz = drawn ? quizFor(sheet.category.dir, sheet.name, lang) : null
 
   // A4 sheets render no prose: §4.5's body is one sentence and a schedule, and
   // the markdown holds nothing else once the h1, the dek, the placeholder note
@@ -339,15 +284,11 @@ export async function ModuleSheet({
     <SheetRail toc={rendered?.toc.filter((entry) => entry.depth === 2) ?? []} lang={lang} />
   ) : null
 
-  /* M16 stage 5 — the relations left the rail. `01` puts them behind the
-     action row's quiet `Requirements (n)` button, so they are a disclosure a
-     reader opens once when deciding whether they can start, rather than a
-     permanent column of module numbers beside the prose. */
-  const relations = [
-    relation('Requirements', graph.requires(number), localise),
-    relation('Unlocks', graph.feeds(number), localise),
-    relation('See also', graph.seeAlso(number), localise),
-  ]
+  /* The prerequisites, and only them. They were one of three relations
+     (`Requirements`, `Unlocks`, `See also`) behind a disclosure beside the
+     completion button; since 2026-10-11 they are a `Before you start` box at the
+     top (`Prerequisites`), and where a module leads is the pager's job. */
+  const prerequisites = relation('Requirements', graph.requires(number), localise).targets
 
   // M10 — the LEFT rail: the curriculum, one accordion section per level, with
   // this module's level open and enlarged. Every module page gets it, draft
@@ -475,6 +416,10 @@ export async function ModuleSheet({
 
         <FactsStrip facts={facts} />
 
+        {/* What to read first, before the reader starts rather than after they
+            finish (`Prerequisites`). Nothing where there is nothing. */}
+        <Prerequisites targets={prerequisites} />
+
         {/* M19 — **THE LANGUAGE IS AN ATTRIBUTE ON THE PROSE, not on `<html>`,
             and that is more accurate rather than a compromise.**
 
@@ -511,80 +456,41 @@ export async function ModuleSheet({
           </>
         )}
 
-        {/* M11 / D14 — COMPLETION CONTROL A: one button, at the end of the
-            module, where the reader already is. §12.4.1 put it above the
-            content; the author chose the opposite and chose it for both
-            surfaces at once (BRAINSTORM D14). A draft has no control at all,
-            so on those the row carries the quiet button alone. */}
-        {criteria !== null ? (
-          <SignOff
-            slug={slug}
-            criteria={criteria}
-            revision={sheet.revision?.hash ?? null}
-            drawn={drawn}
-            beside={<Requirements relations={relations} />}
-          />
-        ) : (
-          <div className="bz-actions">
-            <Requirements relations={relations} />
-          </div>
-        )}
-
-        {/*
-          WHAT A READER DOES AFTER READING, as `leaf` cards below the action
-          row and above the pager.
-
-          None of these five has a mockup: `01` draws a module and stops at the
-          pager. So **D30** applies, and the derivation is the mockup's own
-          reading order — the action row is where the page turns from reading
-          to doing, and everything a reader can do belongs after it. The honest
-          cost is a longer column; the alternative was inventing a shape for
-          five components at once, which is how M9 to M14 went wrong.
-        */}
-        {quickCheck !== null && (
-          <QuickCheck slug={slug} question={quickCheck.question} summaryHtml={summaryHtml} />
-        )}
-
-        {drawn && <Submittal slug={slug} />}
-
-        {stampFact !== null && (
-          <section className="bz-card" aria-labelledby="marked-by">
-            <b id="marked-by" className="bz-card-title">
-              Marked by
-            </b>
-            <SheetStamps slug={slug} fact={stampFact} variant="strip" />
-
-            {/* Labelled, because `CheckedBy` and `Repositories` render a bare
-                value — they were written to be the `<dd>` of a title-block row,
-                and the row they belonged to is gone. A name and a count with
-                nothing saying which is which is the meta strip DESIGN.md calls
-                a tell, so the pair keeps its labels and the `<dl>` that makes
-                them a pair to a screen reader. */}
-            <dl className="bz-card-facts">
-              {checkedBy !== null && (
-                <div>
-                  <dt>Checked by</dt>
-                  <dd>{checkedBy}</dd>
-                </div>
-              )}
-              {repositories !== null && (
-                <div>
-                  <dt>Repositories</dt>
-                  <dd>{repositories}</dd>
-                </div>
-              )}
-            </dl>
-          </section>
-        )}
+        {/* THE END OF A MODULE, rebuilt on 2026-10-11 to the author's order:
+            the references (the last section of the prose above), then ONE
+            completion checkbox, then Previous and Next, then the quick quiz,
+            collapsed. Everything else that stood here — the name prompt, the
+            module's own Quick Check, `What you built`, the `Marked by` card
+            with its stamps, `Checked by` and `Repositories`, and the sources
+            counter — left the page on the author's word: *"I DO NOT NEED ANY
+            SUCH THING"*. The record still holds what they wrote; the profile
+            page still shows it. A draft has no completion and no quiz. */}
+        <SignOff slug={slug} revision={sheet.revision?.hash ?? null} drawn={drawn} />
 
         <PrevNext previous={target(previous, localise)} next={target(next, localise)} />
 
-        {/* §12.8 — one delegated listener for the whole document, mounted
-            once. Evidence, not currency: no XP, no click counting. */}
-        {drawn && <SourceTracking slug={slug} />}
-        {/* §12.7 — the checklist is upgraded where it already stands, inside
-            the section that explains it, rather than lifted out and stacked
-            below the prose. */}
+        {quiz !== null && (
+          /* Hidden until asked for: a native disclosure, so it opens with no
+             script, and its questions are the island inside it. */
+          <details className="bz-quiz">
+            <summary className="bz-quiz-head" lang="en">
+              <span className="bz-quiz-icon" aria-hidden="true">?</span>
+              <span className="bz-quiz-head-text">
+                <span className="bz-quiz-title">Want a quick quiz?</span>
+                <span className="bz-quiz-sub">
+                  {quiz.length} questions on the main points of this module
+                </span>
+              </span>
+              <svg className="bz-quiz-caret" width="16" height="16" viewBox="0 0 16 16" fill="none"
+                stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
+                aria-hidden="true">
+                <path d="M4 6l4 4 4-4" />
+              </svg>
+            </summary>
+            <QuickQuiz items={quiz} lang={lang} />
+          </details>
+        )}
+
         {drawn && rendered !== null && rendered.checklist.length > 0 && (
           <ChecklistIsland slug={slug} />
         )}

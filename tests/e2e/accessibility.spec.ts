@@ -508,30 +508,15 @@ test('the manifest keeps a hierarchy across its columns (§4.8)', async ({ page 
 })
 
 /**
- * §10.4 in the pager, and **the one place in this stage where the design
- * language and a blanket floor genuinely disagree.**
+ * §10.4 in the pager: every word on it clears the 4.5:1 text floor, in both
+ * themes — the direction labels as well as the destinations.
  *
- * `01`'s tile is `.pn small` over `.pn b` — a faint direction label above a
- * titled destination — and the language transcribes the label as
- * `on-surface-faint`. DESIGN.md is explicit that faint *"does not meet a 4.5:1
- * text floor on this ground"* and names its legitimate uses, one of which is
- * "a label above a control". MEASURED: `Next module` lands at 3.30:1.
- *
- * So this test asserts what is actually true of the language rather than a
- * blanket rule the language deliberately does not keep:
- *
- * - every DESTINATION clears 4.5:1, because that is the text carrying the
- *   information — including the end-of-course tile, whose sentence moved into
- *   the destination slot for exactly this reason;
- * - the LABEL is the language's own faint token and not something quieter
- *   still, so a regression past it is caught even though 4.5:1 is not the bar.
- *
- * **The remaining tension is the author's to settle, not this test's.** Lifting
- * the pager label to `on-surface-muted` would clear the floor and cost nothing
- * visible, but it would be a second entry in DESIGN.md's `DEVIATIONS` list —
- * and that list says in as many words that adding one is the author's decision
- * and never a way past a red test. The first entry, `slab-comment`, is the
- * precedent for how it would be recorded (**D34**).
+ * Until 2026-10-11 the label was `01`'s faint ink at a measured 3.30:1, kept
+ * deliberately and left as an open question for the author (**D45**). The
+ * author's redesign of the end of a module settled it the other way: `Previous`
+ * is cobalt on the raised surface and `Next` is the inverse on a cobalt tile,
+ * so the label is now text that has to clear the text floor like any other,
+ * and this test holds it to that instead of to the faint token.
  */
 test('prev/next puts every destination above the §10.4 floor (§5.7)', async ({ page }) => {
   for (const theme of THEMES) {
@@ -539,46 +524,12 @@ test('prev/next puts every destination above the §10.4 floor (§5.7)', async ({
     await useTheme(page, theme)
 
     // Sheet 1 has no previous, so it prints the end-of-course tile as well as
-    // a live one, and both destinations are read out.
-    const samples = await contrastSamples(page, '.bz-pager-item b')
+    // a live one, and both are read out.
+    const samples = await contrastSamples(page, '.bz-pager-item b, .bz-pager-item small')
     expect(samples.length, 'the pager prints no destinations').toBeGreaterThan(1)
     const low = worst(samples)
     expect(low.ratio, `${theme}: "${low.text}" at ${low.ratio.toFixed(2)}:1`)
       .toBeGreaterThanOrEqual(4.5)
-
-    /* **This read the label's painted colour and then asserted nothing about
-       it.** `painted` was computed, returned, and dropped; the only assertion
-       left was that the language declares a faint token at all, which is true
-       of every build. Paint this element in the page ground and the test stayed
-       green — while its own docblock says the point is that the label is the
-       faint token "and not something quieter still".
-
-       Both values go through the canvas because a computed colour serialises as
-       `lab()` or `oklch()` depending on how it was authored, and two spellings
-       of one colour are not string-equal. `contrast.ts`'s `paint()` is what
-       `contrastSamples` already uses for the same reason. */
-    const label = await page.evaluate(() => {
-      const node = document.querySelector('.bz-pager-item small')
-      const root = getComputedStyle(document.documentElement)
-      if (node === null) return null
-      const paint = (value: string): string => {
-        const canvas = document.createElement('canvas')
-        const context = canvas.getContext('2d')!
-        context.fillStyle = '#000'
-        context.fillStyle = value
-        return context.fillStyle
-      }
-      return {
-        painted: paint(getComputedStyle(node).color),
-        faint: paint(root.getPropertyValue('--color-on-surface-faint').trim()),
-      }
-    })
-    expect(label, 'the pager prints no direction label').not.toBeNull()
-    expect(label!.faint, 'the language declares no faint ink').not.toBe('')
-    expect(
-      label!.painted,
-      `${theme}: the direction label is not the language's faint ink`,
-    ).toBe(label!.faint)
   }
 })
 
@@ -681,7 +632,9 @@ test('task-list checkboxes are real, named, and persist (§12.7)', async ({ page
   // §6.4's problem, now solved rather than avoided: the item's text is a
   // SIBLING of the box, so it contributes nothing to the accessible name and
   // the island has to supply one.
-  const named = page.getByRole('checkbox')
+  // The module's own task items: the completion checkbox at the end of the
+  // module is a checkbox too since 2026-10-11, and it is not a task item.
+  const named = page.locator('[data-hl-prose]').getByRole('checkbox')
   expect(await named.count()).toBe(await boxes.count())
   for (const box of await named.all()) {
     const name = await box.getAttribute('aria-label')

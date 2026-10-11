@@ -1,0 +1,70 @@
+# Quick quiz: Multi-Agent Systems. Reinforcement, not assessment.
+questions:
+  - answer: 2
+    en:
+      question: "According to the module, when should you split one agent into several agents?"
+      options:
+        - "When the task needs more than one step to finish."
+        - "When the agent has to call more than one tool."
+        - "When one system prompt tries to teach two unrelated jobs."
+        - "Always, because several agents are an upgrade over one agent."
+      explain: "Splitting then gives each agent a short prompt, a small tool list and one job. Multi-agent is a trade, not an upgrade."
+    tr:
+      question: "Modüle göre, tek bir agent'ı ne zaman birkaç agent'a bölmelisin?"
+      options:
+        - "Görevin bitmesi için birden fazla adım gerektiğinde."
+        - "Agent'ın birden fazla tool çağırması gerektiğinde."
+        - "Tek bir system prompt iki alakasız işi öğretmeye çalıştığında."
+        - "Her zaman, çünkü birkaç agent tek agent'a göre bir yükseltmedir."
+      explain: "Bölmek o zaman her agent'a kısa bir prompt, küçük bir tool listesi ve tek bir iş verir. Multi-agent bir yükseltme değil, bir alışveriş."
+  - answer: 0
+    en:
+      question: "The module tells you to start with a supervisor. Why?"
+      options:
+        - "Every decision passes through one place, so it is easier to debug."
+        - "Every agent can hand work to any other agent, so it is more flexible."
+        - "The workers decide among themselves who does each next step."
+        - "Workers need no handover, so context transfer is not a problem."
+      explain: "In a supervisor design, every decision passes through one place, so you can see and debug what the system decided. A network is more flexible, but it is much harder to predict."
+    tr:
+      question: "Modül, işe supervisor ile başlamanı söylüyor. Neden?"
+      options:
+        - "Her karar tek bir yerden geçer, bu yüzden debug etmesi daha kolaydır."
+        - "Her agent işi herhangi bir agent'a devredebilir, bu yüzden daha esnektir."
+        - "Worker'lar sıradaki adımı kimin yapacağına kendi aralarında karar verir."
+        - "Worker'lar devir (handover) gerektirmez, bu yüzden context transfer bir problem değildir."
+      explain: "Supervisor tasarımında her karar tek bir yerden geçer, bu yüzden sistemin neye karar verdiğini görüp debug edebilirsin. Network daha esnektir, ama tahmin etmesi çok daha zordur."
+  - answer: 3
+    en:
+      question: "Splitting the work across several agents creates two hard problems. Which two?"
+      options:
+        - "Long system prompts and long tool lists"
+        - "Wrong tool choices and confusion between two jobs"
+        - "Tool calling and memory across turns"
+        - "Coordination and context transfer between agents"
+      explain: "Splitting the work creates both problems, and a single agent has neither. Long prompts and long tool lists are single-agent problems that splitting solves."
+    tr:
+      question: "İşi birkaç agent'a bölmek iki zor problem yaratır. Hangi ikisi?"
+      options:
+        - "Uzun system prompt'lar ve uzun tool listeleri"
+        - "Yanlış tool seçimi ve iki işin birbirine karışması"
+        - "Tool calling ve turlar boyunca memory"
+        - "Agent'lar arasında coordination ve context transfer"
+      explain: "İki problemi de işi bölmenin kendisi yaratır, ve tek bir agent'ta ikisi de yoktur. Uzun prompt'lar ve uzun tool listeleri, bölmenin çözdüğü tek agent problemleridir."
+  - answer: 1
+    en:
+      question: "What is the difference between shared context and isolated context?"
+      options:
+        - "Shared: each agent sees only what it receives. Isolated: every agent sees everything."
+        - "Shared: every agent sees everything. Isolated: each agent sees only what it receives."
+        - "Shared: only the supervisor sees the context. Isolated: only the workers see it."
+        - "Shared: all agents use one model. Isolated: each agent uses its own model."
+      explain: "With shared context, nothing gets lost in handover, but the context grows fast. With isolated context, each agent stays cheap and focused, but anything you forgot to pass is gone."
+    tr:
+      question: "Shared context ile isolated context arasındaki fark nedir?"
+      options:
+        - "Shared: her agent sadece kendisine verileni görür. Isolated: her agent her şeyi görür."
+        - "Shared: her agent her şeyi görür. Isolated: her agent sadece kendisine verileni görür."
+        - "Shared: context'i sadece supervisor görür. Isolated: context'i sadece worker'lar görür."
+        - "Shared: bütün agent'lar tek bir model kullanır. Isolated: her agent kendi modelini kullanır."
+      explain: "Shared context'te devirde (handover) hiçbir şey kaybolmaz, ama context hızla büyür. Isolated context'te her agent ucuz ve odaklı kalır, ama geçirmeyi unuttuğun şey yok olur."

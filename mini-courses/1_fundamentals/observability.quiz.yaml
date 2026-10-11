@@ -1,0 +1,87 @@
+# Quick quiz: Observability. Reinforcement, not assessment.
+questions:
+  - answer: 1
+    en:
+      question: "In ordinary software, the code tells you what the system does. Why is this not true for an agent?"
+      options:
+        - "The model rewrites the agent code on each run, so the code never stays the same."
+        - "The code describes only the loop. What happened on a given run exists only in the trace."
+        - "The final output lists every step, so you read the output instead of the code."
+        - "The prompt holds all the logic, so you read the prompt instead of the code."
+      explain: "The code only describes the loop: call the model, run the tool, repeat. The trace records every model call, tool call and subagent of one request."
+    tr:
+      question: "Sıradan yazılımda kod, sistemin ne yaptığını söyler. Bu neden bir agent için doğru değil?"
+      options:
+        - "Model her çalışmada agent kodunu yeniden yazar, bu yüzden kod hiç aynı kalmaz."
+        - "Kod sadece loop'u anlatır. Belirli bir çalışmada ne olduğu sadece trace'te vardır."
+        - "Son çıktı (final output) her adımı listeler, bu yüzden kod yerine çıktıyı okursun."
+        - "Bütün mantık prompt'ta durur, bu yüzden kod yerine prompt'u okursun."
+      explain: "Kod sadece loop'u anlatır: modeli çağır, tool'u çalıştır, tekrarla. Trace ise tek bir isteğin her model çağrısını, tool çağrısını ve subagent'ını kaydeder."
+  - answer: 3
+    en:
+      question: "Your agent gives a confident answer that is wrong. Where do you usually find the cause?"
+      options:
+        - "In the final output, because the agent explains its mistakes in the answer."
+        - "Inside one model call, because one step usually holds the whole failure."
+        - "In the agent code, because the code shows which tools the agent chose."
+        - "In the trace, because failures usually happen in the gaps between steps."
+      explain: "Failures like a slightly wrong tool argument happen in the gaps between steps. The final output hides them, but the trace shows them."
+    tr:
+      question: "Agent'ın kendinden emin ama yanlış bir cevap veriyor. Sebebini genelde nerede bulursun?"
+      options:
+        - "Son çıktıda (final output), çünkü agent hatalarını cevabın içinde açıklar."
+        - "Tek bir model çağrısının içinde, çünkü genelde tek bir adım bütün hatayı taşır."
+        - "Agent kodunda, çünkü kod agent'ın hangi tool'ları seçtiğini gösterir."
+        - "Trace'te, çünkü hatalar genelde adımlar arasındaki boşluklarda olur."
+      explain: "Biraz yanlış bir tool argümanı gibi hatalar adımlar arasındaki boşluklarda olur. Son çıktı (final output) bunları saklar, trace ise gösterir."
+  - answer: 0
+    en:
+      question: "What should you check before you choose a platform for your traces?"
+      options:
+        - "Whether it collects from what you already run, and keeps traces where your data policy says."
+        - "Whether it offers more features than the other platforms, such as evals and datasets."
+        - "Whether it is the most popular platform among the teams that build agents."
+        - "Whether it stores only the final output of each run, so it uses less storage."
+      explain: "The module says the feature list is not the main check. Prompts and tool results hold customer text, so your data policy decides where you keep the traces."
+    tr:
+      question: "Trace'lerin için bir platform seçmeden önce neyi kontrol etmelisin?"
+      options:
+        - "Zaten çalıştırdığın şeyden toplayıp toplamadığını ve trace'leri veri politikanın (data policy) istediği yerde tutup tutmadığını."
+        - "Eval'ler ve dataset'ler gibi, diğer platformlardan daha fazla feature sunup sunmadığını."
+        - "Agent geliştiren ekipler arasında en popüler platform olup olmadığını."
+        - "Daha az yer kaplamak için her çalışmanın sadece son çıktısını (final output) tutup tutmadığını."
+      explain: "Modüle göre ana kontrol feature listesi değil. Prompt'lar ve tool sonuçları müşteri metni taşır, bu yüzden trace'leri nerede tutacağına veri politikan (data policy) karar verir."
+  - answer: 2
+    en:
+      question: "In the improvement loop, what connects each stage to the next stage?"
+      options:
+        - "The final output, because the evaluators score only the answer of each run."
+        - "The agent code, because each pass writes its change into the code."
+        - "The trace, because evaluators, annotations and the offline dataset all use it."
+        - "The analytics dashboard, because it counts the failure rate of each check."
+      explain: "Evaluators score traces, annotations attach to traces, and the offline dataset is made of traces. Without the trace, the steps cannot reach each other."
+    tr:
+      question: "İyileştirme döngüsünde (improvement loop) her aşamayı bir sonrakine ne bağlar?"
+      options:
+        - "Son çıktı (final output), çünkü evaluator'lar her çalışmanın sadece cevabını puanlar."
+        - "Agent kodu, çünkü her geçiş kendi değişikliğini koda yazar."
+        - "Trace, çünkü evaluator'lar, annotation'lar ve offline dataset hep onu kullanır."
+        - "Analitik paneli (analytics dashboard), çünkü her kontrolün hata oranını sayar."
+      explain: "Evaluator'lar trace'leri puanlar, annotation'lar trace'lere eklenir ve offline dataset trace'lerden yapılır. Trace olmadan bu adımlar birbirine ulaşamaz."
+  - answer: 1
+    en:
+      question: "A team records over 100,000 traces a day, and nobody reads them. What does the module name as the newest answer?"
+      options:
+        - "More online evaluators, one for each failure mode the team can think of."
+        - "An agent that clusters the traces and finds failure modes nobody asked about."
+        - "Product analytics that report the failure rate of each check the team wrote."
+        - "Fewer traces each day, so that a person can read every one of them."
+      explain: "Analytics and evaluators answer only the questions you already thought of. An agent such as LangSmith's Insights Agent clusters traces and finds failure modes nobody specified."
+    tr:
+      question: "Bir ekip günde 100.000'den fazla trace kaydediyor ve kimse onları okumuyor. Modül en yeni cevap olarak neyi gösteriyor?"
+      options:
+        - "Daha fazla online evaluator, ekibin aklına gelen her hata modu (failure mode) için bir tane."
+        - "Trace'leri kümeleyen (cluster) ve kimsenin sormadığı hata modlarını (failure mode) bulan bir agent."
+        - "Ekibin yazdığı her kontrolün hata oranını raporlayan ürün analitiği (product analytics)."
+        - "Günde daha az trace, böylece bir insan her birini okuyabilir."
+      explain: "Analitik ve evaluator'lar sadece zaten düşündüğün soruları cevaplar. LangSmith'in Insights Agent'ı gibi bir agent trace'leri kümeler ve kimsenin belirtmediği hata modlarını bulur."

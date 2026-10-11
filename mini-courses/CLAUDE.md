@@ -353,6 +353,7 @@ Three things, and the third is the one that is easy to forget.
 3. **Add one line to `curriculum.yaml`**, in the position the module should hold. That line is what
    gives it a number, a title, a status and a place in the sequence; without it the file is one
    nobody listed, and the build says so by name.
+4. **Once it is written, give it a quick quiz**: `<name>.quiz.yaml` beside it (next section).
 
 The template carries the two frontmatter fields a file still declares (`summary` and `objectives`)
 and an annotated body showing every structure the renderer understands: figures, mermaid, tables,
@@ -452,6 +453,44 @@ both directions**, and every module needs a `_tr.md` sibling. That fifth one is 
 module you list without writing the file, and a file you write without listing it, are the two ways
 this can go wrong while everything else still passes.
 
+## The quick quiz
+
+A written module carries a quick quiz in `<name>.quiz.yaml` beside its markdown. The module page
+shows it at the very end, collapsed under **Want a quick quiz?**, after the completion checkbox and
+Previous / Next. The author asked for it on 2026-10-11.
+
+**It is for reinforcement, not assessment.** It helps a reader recall the module's main points right
+after reading. Nothing is tricky, nothing is scored on a record, and nothing is stored.
+
+- **3 to 5 questions**, each with **4 options** and exactly one correct, and **an explanation of one
+  or two short sentences** that the reader sees after answering, right or wrong.
+- **Every fact comes from the module text.** A question about something the module does not say is
+  a question the reader cannot answer from the module.
+- **ASD-STE-style English**: one idea per sentence, 20 words or fewer, active voice, common words,
+  no idioms. The quiz is for readers whose English is basic as well as for everyone else.
+- **Turkish beside the English, under one shared answer index**, so the two languages cannot
+  disagree about which option is right. Technical words stay English, as in the module. Where a
+  Turkish word stands for a technical concept, the English follows in parentheses: `yetenek (skill)`.
+- Options of similar length; no "all of the above" or "none of the above"; the correct answer moves
+  around between questions. No em dashes, no exclamation marks.
+
+The file is YAML, every string in double quotes:
+
+```yaml
+questions:
+  - answer: 1          # zero-based index of the correct option, shared by both languages
+    en: { question: "...", options: ["...", "...", "...", "..."], explain: "..." }
+    tr: { question: "...", options: ["...", "...", "...", "..."], explain: "..." }
+```
+
+The build validates the shape (`src/lib/content/quiz.ts`) and fails on a malformed file by name;
+`tests/corpus/quizzes.test.ts` holds the rules that hold for any quiz. **When a module changes,
+re-read its quiz**: a question about a section that moved or was cut is the one thing nothing
+automated catches.
+
+The module's own `**Quick Check**:` line stays in the markdown for a reader of the raw file, as the
+series map does, but the site no longer shows it: the quick quiz replaced it.
+
 ## Repo map
 
 ```
@@ -464,6 +503,7 @@ mini-courses/            the authored corpus, and all this file governs
   _module_template.md    copy this to start a module
   index.md               site homepage, mirrors README.md
   curriculum.yaml        the course shape: the one place a module's position lives
+  <level>/<name>.quiz.yaml  a written module's quick quiz, both languages
   1_fundamentals/        rewritten, both languages
   2_intermediate/        being rewritten from scratch
   3_expert/              draft

@@ -152,7 +152,26 @@ test.describe('A0 — the assembly module', () => {
       whether they can start, so it is a disclosure rather than a column.
     */
     await expect(contents.getByText('Requirements', { exact: false })).toHaveCount(0)
-    await expect(page.locator('.bz-actions .bz-requires > summary')).toContainText(/Requirements/)
+
+    /*
+      THE END OF A MODULE, in the order the author set on 2026-10-11: after the
+      prose (which ends with its references), the completion checkbox, then
+      Previous and Next, then the quick quiz, collapsed. Asserted as an ORDER in
+      the document, because the order is the design: a reader finishes, marks
+      it, moves on, and may stop for the quiz. The `Requirements (n)` disclosure
+      that sat in the action row is a `Before you start` box at the top now.
+    */
+    const order = await page.evaluate(() => {
+      const at = (selector: string) => {
+        const node = document.querySelector(selector)
+        return node === null ? -1 : [...document.querySelectorAll('*')].indexOf(node)
+      }
+      return ['[data-hl-prose]', '.bz-complete', '.bz-pager', '.bz-quiz'].map(at)
+    })
+    expect(order.every((index) => index >= 0), `missing: ${order}`).toBe(true)
+    expect([...order].sort((a, b) => a - b)).toEqual(order)
+    await expect(page.locator('.bz-quiz')).not.toHaveAttribute('open', '')
+    await expect(page.locator('.bz-actions .bz-requires')).toHaveCount(0)
     expect(await widthOf(contents)).toBe(await track(page, '--layout-aside'))
 
     /*
@@ -270,8 +289,11 @@ test.describe('A short ready module — the same anatomy as a long one', () => {
     expect(drawing.leadIn).toBe(0)
     expect(drawing.leadOut).toBe(0)
 
-    // §7.4 — the stamps used to render only inside the old right rail.
-    await expect(page.locator('.bz-stamp:visible')).not.toHaveCount(0)
+    // The stamps that once closed every ready module (§7.4) left the page with
+    // the rest of the `Marked by` card on 2026-10-11; what closes it now is the
+    // completion checkbox.
+    await expect(page.locator('.bz-stamp:visible')).toHaveCount(0)
+    await expect(page.getByRole('checkbox', { name: 'Mark this module as complete' })).toBeVisible()
 
     // …and none of the draft furniture.
     await expect(page.locator('.bz-status-band')).toHaveCount(0)
@@ -304,7 +326,7 @@ test.describe('A short ready module — the same anatomy as a long one', () => {
       // live in (M16 stage 3 rebuilt it as `.bz-drawer-bar`).
       await expect(page.locator('.bz-drawer-bar[data-bz-at="wide"]')).toBeVisible()
       await expect(page.locator('.bz-facts')).toBeVisible()
-      await expect(page.locator('.bz-stamp:visible')).not.toHaveCount(0)
+      await expect(page.getByRole('checkbox', { name: 'Mark this module as complete' })).toBeVisible()
 
       // The curriculum is still beside the prose: 1100px is above the width
       // where it becomes a sheet.

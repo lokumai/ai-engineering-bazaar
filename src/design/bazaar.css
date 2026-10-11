@@ -857,11 +857,16 @@
      `::-webkit-scrollbar` pseudo-elements and stop drawing them the moment the
      standard properties are set, so the standard pair is applied only where
      the pseudo-elements do not exist — Firefox, whose `thin` is 8px. */
-  .bz-rail::-webkit-scrollbar { width: 8px; }
+  /* The page index on the right scrolls the same way and takes the same bar
+     (`.bz-aside`). */
+  .bz-rail::-webkit-scrollbar,
+  .bz-aside::-webkit-scrollbar { width: 8px; }
 
-  .bz-rail::-webkit-scrollbar-track { background: transparent; }
+  .bz-rail::-webkit-scrollbar-track,
+  .bz-aside::-webkit-scrollbar-track { background: transparent; }
 
-  .bz-rail::-webkit-scrollbar-thumb {
+  .bz-rail::-webkit-scrollbar-thumb,
+  .bz-aside::-webkit-scrollbar-thumb {
     border: 2px solid transparent;
     border-radius: var(--radius-pill);
     background: var(--color-line-strong);
@@ -869,12 +874,15 @@
   }
 
   .bz-rail::-webkit-scrollbar-thumb:hover,
-  .bz-rail::-webkit-scrollbar-thumb:active {
+  .bz-rail::-webkit-scrollbar-thumb:active,
+  .bz-aside::-webkit-scrollbar-thumb:hover,
+  .bz-aside::-webkit-scrollbar-thumb:active {
     background-color: var(--color-on-surface-muted);
   }
 
   @supports not selector(::-webkit-scrollbar) {
-    .bz-rail {
+    .bz-rail,
+    .bz-aside {
       scrollbar-width: thin;
       scrollbar-color: var(--color-line-strong) transparent;
     }
@@ -2182,94 +2190,114 @@
     margin-top: 34px;
   }
 
-  /* M18 — ONE LINE. It stacked a faint label over a titled destination and was
-     two lines tall whatever its padding did; the author asked for shorter
-     boxes, and the row is where the height was. MEASURED: 65px to 39px, with
-     no length in the language changed — 13px of padding either side of a 13px
-     line is the arithmetic, and the 13px padding is the tile's own from before. */
+  /* 2026-10-11 — THE TILES STAND OUT, on the author's word: *"Next and
+     Previous with proper color, if necessary icon, etc that actually stands
+     out from the remaining of the center panel"*. They were M18's one-line
+     tiles: a faint `Previous module` beside the title on a white hairlined box,
+     the quietest thing at the end of a module, which is exactly where a reader
+     is looking for the way on.
+
+     So: `Previous` and `Next` over the title, an arrow on the outer side, a
+     strong edge, and the PRIMARY doing the work — Next filled with it (the
+     direction most readers take, so the one filled control on the row), and
+     Previous outlined with its label and arrow in it. `01`'s tile geometry
+     (13×15 padding, a 4px radius, the grouping hairline) is overruled for this
+     and recorded in `AUTHOR_DEVIATIONS`; the grid, its gap and its margin are
+     still `01`'s. */
   .bz-pager-item {
     display: flex;
-    align-items: baseline;
-    gap: 8px;
-    padding: 13px 15px;
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-sm);
+    align-items: center;
+    gap: 12px;
+    min-height: 64px;
+    padding: 12px 18px;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-lg);
     background: var(--color-surface-raised);
+    color: var(--color-on-surface-title);
   }
 
-  .bz-pager-item:hover {
-    border-color: var(--color-line-strong);
+  a.bz-pager-item:hover {
+    border-color: var(--color-primary);
     background: var(--color-surface-sunken);
     text-decoration: none;
   }
 
-  /* The label may shrink, and it gives way BEFORE the destination does.
-
-     It was `flex: none`, which made it the one thing in the tile that could not
-     yield — so when the row ran out of room the title took the whole loss and
-     MEASURED down to 18px on twelve routes, which is the only part of the tile
-     that says where you are going. Now the label truncates first and the title
-     keeps its `min-width: 0` floor below. */
-  .bz-pager-item small {
-    flex: 0 1 auto;
-    min-width: 0;
-    overflow: hidden;
-    color: var(--color-on-surface-faint);
-    font-size: var(--text-mark);
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  .bz-pager-item[data-dir="next"] {
+    justify-content: flex-end;
+    text-align: right;
   }
 
-  /* The destination is what may be cut, because the label beside it is four
-     words that never vary and the title is the part that can be forty
-     characters long. `min-width: 0` is what lets a flex item shrink at all. */
+  a.bz-pager-item[data-dir="next"] {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+
+  a.bz-pager-item[data-dir="next"]:hover {
+    background: var(--color-primary);
+    filter: brightness(1.12);
+  }
+
+  /* The label over the title; `min-width: 0` so a long title is cut with an
+     ellipsis inside the tile rather than widening it. */
+  .bz-pager-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  .bz-pager-item small {
+    color: var(--color-primary);
+    font: 600 var(--text-mark) / 1.2 var(--font-sans);
+  }
+
+  a.bz-pager-item[data-dir="next"] small { color: var(--color-on-primary); }
+
   .bz-pager-item b {
-    flex: 1 1 auto;
-    /* A floor, because `min-width: 0` alone let this be starved to 18px by the
-       label beside it. 96px is about twelve characters — enough for a
-       destination to be recognisable, and small enough to fit beside the label
-       in the narrowest tile the two-column grid draws. */
-    min-width: min(96px, 100%);
     overflow: hidden;
-    color: var(--color-on-surface-title);
     font-size: 15px;
     font-weight: 600;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  /* `baseline` on the row would sit the glyph on the text baseline, where a
-     16-unit box centred on an x-height looks dropped. It is the one item that
-     centres. */
   .bz-pager-arrow {
     flex: none;
-    align-self: center;
-    color: var(--color-on-surface-faint);
+    color: var(--color-primary);
   }
 
-  /* The next tile reads right to left: its glyph is last in the DOM already, so
-     only the packing changes. */
-  .bz-pager-item[data-end] { justify-content: flex-end; }
+  a.bz-pager-item[data-dir="next"] .bz-pager-arrow { color: var(--color-on-primary); }
 
-  /* ONE COLUMN ON A PHONE, and this is what the one-line tile cost.
+  /* The first and the last module: no destination, a quiet tile saying so in
+     the muted ink, never a disabled button pretending to be one. */
+  .bz-pager-item[data-none] {
+    border-style: dashed;
+    color: var(--color-on-surface-muted);
+  }
 
-     Two tiles side by side were two lines tall each and fitted 390px happily.
-     One line needs the label, the glyph and a truncated title on the same row,
-     and MEASURED at 390 that is about 240px of content in a 165px tile — six
-     module routes scrolled the document sideways, which §11.10 forbids and
-     `responsive.spec.ts` caught immediately. Stacking is the answer the rest of
-     the language already uses at this width, and it costs nothing: a pager with
-     two rows of one line is still shorter than one row of two. */
+  /* One column on a phone, as before: a two-line tile with a title needs the
+     width. */
   @media (max-width: 767px) {
     .bz-pager { grid-template-columns: minmax(0, 1fr); }
-    .bz-pager-item[data-end] { justify-content: flex-start; }
   }
 
   /* -- the aside ---------------------------------------------------------- */
 
+  /* THE INDEX SCROLLS ITSELF, on the author's word (2026-10-11): on a long
+     module — the author's example was Context Engineering — the index was
+     taller than the window, and since it is sticky its foot could only be
+     reached by scrolling the whole page to the bottom. So it is capped at the
+     window under the bar, scrolls inside, and `overscroll-behavior: contain`
+     keeps a wheel over it on the headings rather than handing the scroll to
+     the page at either end. The scrollbar is the rail's (below), which sits in
+     the 20px of right padding and covers no word. */
   .bz-aside {
     position: sticky;
     top: var(--layout-sticky);
+    max-height: calc(100vh - var(--layout-sticky));
+    overflow-y: auto;
+    overscroll-behavior: contain;
     padding: 30px 20px 40px 8px;
   }
 

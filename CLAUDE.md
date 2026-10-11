@@ -52,12 +52,12 @@ origin. **Renaming any of those costs a keyboard shortcut, a mark that is right
 in frame one, or every existing reader's record.** A guard checks all three
 rather than merely excluding them.
 
-Two things are still the author's to settle, both recorded in the code rather
-than left implicit: whether a figure wider than the measure may bleed past the
-text (it does not, and reversing that is one rule in `prose.css` — **D43**), and
-whether the pager's direction label should be lifted off `on-surface-faint` at a
-measured 3.30:1, which would be a **second** entry in DESIGN.md's `DEVIATIONS`
-list (**D45**).
+One thing is still the author's to settle, recorded in the code rather than
+left implicit: whether a figure wider than the measure may bleed past the text
+(it does not, and reversing that is one rule in `prose.css` — **D43**). The
+other, the pager's faint direction label (**D45**), was settled on 2026-10-11
+when the author redesigned the end of a module: the label now clears the text
+floor (DESIGN.md's eighth deviation).
 
 Two things every stage does. It compares the built surface to its mockup by
 adding roles to `APP_SELECTORS` in `tests/e2e/fidelity.ts` **and** a

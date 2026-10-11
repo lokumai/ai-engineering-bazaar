@@ -1,0 +1,87 @@
+# Quick quiz: Security. Reinforcement, not assessment.
+questions:
+  - answer: 1
+    en:
+      question: "What does a white-box attacker have that a black-box attacker does not have?"
+      options:
+        - "A copy of the system prompt of the product."
+        - "The model itself, including all of its weights."
+        - "A list of the topics that the model refuses."
+        - "A password for the servers of the provider."
+      explain: "With the weights, the attacker can search for the exact tokens that push the model hardest. Attacks on your own product are almost always black box, because it is a text box."
+    tr:
+      question: "Bir white-box saldırganın elinde olup bir black-box saldırganın elinde olmayan şey nedir?"
+      options:
+        - "Ürünün system prompt'unun bir kopyası."
+        - "Modelin kendisi, bütün weight'leri dahil."
+        - "Modelin reddettiği konuların bir listesi."
+        - "Sağlayıcının sunucuları için bir şifre."
+      explain: "Weight'ler elindeyse, saldırgan modeli en çok iten token'ları tam olarak arayabilir. Senin ürününe yapılan saldırılar neredeyse her zaman black box'tır, çünkü ürünün bir metin kutusudur."
+  - answer: 2
+    en:
+      question: "Which attack defeats the safety training of the model itself?"
+      options:
+        - "Prompt injection"
+        - "Prompt leaking"
+        - "Jailbreaking"
+        - "Indirect prompt injection"
+      explain: "Jailbreaking gets past the refusals of the model by rewording the request, like the DAN example. Prompt injection redirects behaviour, and prompt leaking exposes the system prompt."
+    tr:
+      question: "Hangi saldırı, modelin güvenlik eğitiminin (safety training) kendisini yener?"
+      options:
+        - "Prompt injection"
+        - "Prompt leaking"
+        - "Jailbreaking"
+        - "Indirect prompt injection"
+      explain: "Jailbreaking, isteği farklı kelimelerle yazarak modelin ret cevaplarını (refusal) geçer, DAN örneğindeki gibi. Prompt injection davranışı yönlendirir, prompt leaking ise system prompt'u açığa çıkarır."
+  - answer: 0
+    en:
+      question: "A system prompt has higher priority than a user message by design. Why does prompt injection still work?"
+      options:
+        - "The model reads one stream of text, and persuasive text can outrank the system prompt."
+        - "The system prompt sits in a protected region of memory, and the attacker unlocks it."
+        - "The provider gives every user message a higher priority than the system prompt."
+        - "The attacker breaks a permission check that protects the system prompt in memory."
+      explain: "The system prompt is text in the same stream as the user message, not a protected region of memory. So the attacker does not break any permission check."
+    tr:
+      question: "Bir system prompt, tasarım gereği bir user mesajından daha yüksek önceliğe sahiptir. Prompt injection neden yine de işler?"
+      options:
+        - "Model tek bir metin akışı okur, ve ikna edici bir metin system prompt'tan üstün gelebilir."
+        - "System prompt korunan bir hafıza (memory) bölgesinde durur, ve saldırgan onun kilidini açar."
+        - "Sağlayıcı her user mesajına system prompt'tan daha yüksek bir öncelik verir."
+        - "Saldırgan, system prompt'u hafızada koruyan bir izin kontrolünü (permission check) kırar."
+      explain: "System prompt korunan bir hafıza (memory) bölgesi değildir, user mesajıyla aynı akıştaki bir metindir. Bu yüzden saldırgan hiçbir izin kontrolünü (permission check) kırmaz."
+  - answer: 3
+    en:
+      question: "What is a guardrail, and where does it sit?"
+      options:
+        - "A rule inside the weights of the model, added during safety training."
+        - "A single check after the model, because the input cannot carry an attack."
+        - "An extra line in the system prompt that asks the model to stay safe."
+        - "A check that runs outside the model, before the model or after it."
+      explain: "A guardrail runs outside the model, on the way in or on the way out. Because it is not model behaviour, it still works when an attacker persuades the model."
+    tr:
+      question: "Guardrail nedir, ve nerede durur?"
+      options:
+        - "Güvenlik eğitimi (safety training) sırasında modelin weight'lerine eklenen bir kural."
+        - "Modelden sonra tek bir kontrol, çünkü input bir saldırı taşıyamaz."
+        - "System prompt'ta modelden güvenli kalmasını isteyen ek bir satır."
+        - "Modelin dışında, modelden önce ya da sonra çalışan bir kontrol."
+      explain: "Guardrail modelin dışında çalışır, girişte ya da çıkışta. Model davranışı olmadığı için, bir saldırgan modeli ikna etse bile yine de çalışır."
+  - answer: 1
+    en:
+      question: "What is red teaming?"
+      options:
+        - "Waiting for real attackers and recording what they try."
+        - "Attacking your own system on purpose, often with a tool."
+        - "Putting a guard model in front of every request."
+        - "Training the model again on examples of known attacks."
+      explain: "You cannot defend against attacks you have not tried. Tools such as promptfoo do the attacking, and the attack success rate is the number to watch over time."
+    tr:
+      question: "Red teaming nedir?"
+      options:
+        - "Gerçek saldırganları beklemek ve ne denediklerini kaydetmek."
+        - "Kendi sistemine bilerek saldırmak, çoğu zaman bir araçla (tool)."
+        - "Her isteğin önüne bir guard model koymak."
+        - "Modeli bilinen saldırı örnekleriyle yeniden eğitmek."
+      explain: "Denemediğin saldırılara karşı savunma yapamazsın. Saldırıyı promptfoo gibi araçlar (tool) senin yerine yapar, ve zaman içinde izlenecek sayı attack success rate'tir."

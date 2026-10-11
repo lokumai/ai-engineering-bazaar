@@ -1,0 +1,70 @@
+# Quick quiz: Memory. Reinforcement, not assessment.
+questions:
+  - answer: 2
+    en:
+      question: "What is working memory?"
+      options:
+        - "Knowledge that training stores in the model's weights"
+        - "A summary of past sessions in an external database"
+        - "The text that is inside the context window right now"
+        - "A record of the chat that the model keeps by itself"
+      explain: "Working memory is the text in the context window at this moment. The model does not keep it by itself, so it is gone when a new session starts."
+    tr:
+      question: "Working memory nedir?"
+      options:
+        - "Training'in modelin weight'lerine kaydettiği bilgi"
+        - "Geçmiş session'ların dış bir veritabanındaki (database) özeti"
+        - "Şu anda context window'un içinde duran metin"
+        - "Modelin kendi başına tuttuğu bir konuşma kaydı"
+      explain: "Working memory, şu anda context window'un içinde duran metindir. Model bu metni kendi başına tutmaz, bu yüzden yeni bir session başladığında metin kaybolur."
+  - answer: 1
+    en:
+      question: "Parametric memory is permanent. Why is it still imprecise?"
+      options:
+        - "The model deletes it when the session ends"
+        - "Your document is mixed with billions of others in the weights"
+        - "The context window is too small to hold all of it"
+        - "It is stored in a database outside the model"
+      explain: "The weights hold information from billions of documents, so the model cannot recall one document exactly. Parametric memory does not disappear when a session ends."
+    tr:
+      question: "Parametric memory kalıcıdır. Buna rağmen neden belirsizdir?"
+      options:
+        - "Model onu session bitince siler"
+        - "Senin dokümanın, weight'lerdeki milyarlarca başka dokümanla karışıktır"
+        - "Context window onun tamamını tutmak için çok küçüktür"
+        - "Modelin dışındaki bir veritabanında (database) saklanır"
+      explain: "Weight'ler milyarlarca dokümandan gelen bilgiyi tutar, bu yüzden model tek bir dokümanı tam olarak hatırlayamaz. Parametric memory, session bittiğinde kaybolmaz."
+  - answer: 3
+    en:
+      question: "An LLM is stateless during generation. How does a chat still feel like one continuous conversation?"
+      options:
+        - "The model saves each new message in its weights"
+        - "The model remembers the previous call by itself"
+        - "The app sends only the newest message to the model"
+        - "The app sends the whole message stack on every call"
+      explain: "The app keeps a growing stack of all messages and sends the whole stack on every call. The model remembers nothing from the previous call, so the newest message alone is not enough."
+    tr:
+      question: "Bir LLM, generation sırasında stateless'tır. O hâlde bir sohbet nasıl kesintisiz bir konuşma gibi görünür?"
+      options:
+        - "Model her yeni mesajı weight'lerine kaydeder"
+        - "Model önceki çağrıyı kendi başına hatırlar"
+        - "Uygulama modele sadece en yeni mesajı gönderir"
+        - "Uygulama her çağrıda mesaj yığınının (stack) tamamını gönderir"
+      explain: "Uygulama, bütün mesajların büyüyen bir yığınını (stack) tutar ve her çağrıda yığının tamamını gönderir. Model önceki çağrıdan hiçbir şey hatırlamaz, bu yüzden sadece en yeni mesaj yeterli değildir."
+  - answer: 0
+    en:
+      question: "You upload 5 PDFs to ChatGPT. Later, in a new session, it answers a question about them. How can it do this?"
+      options:
+        - "ChatGPT indexed the PDFs and retrieves the relevant parts into context"
+        - "The upload stored the PDFs permanently in the model's weights"
+        - "The PDFs are still in the new session's context window"
+        - "The LLM keeps the earlier session in its own state"
+      explain: "This is long-term memory: the PDFs were indexed outside the model and retrieved back into context, often with RAG. A new session starts with an empty context window, so working memory cannot explain it."
+    tr:
+      question: "ChatGPT'ye 5 PDF yüklüyorsun. Daha sonra yeni bir session'da ChatGPT bu PDF'ler hakkındaki bir soruyu cevaplıyor. Bunu nasıl yapabiliyor?"
+      options:
+        - "ChatGPT PDF'leri index'ledi ve ilgili parçaları context'e geri getiriyor"
+        - "Yükleme, PDF'leri modelin weight'lerine kalıcı olarak kaydetti"
+        - "PDF'ler hâlâ yeni session'ın context window'unun içinde duruyor"
+        - "LLM önceki session'ı kendi state'inde tutuyor"
+      explain: "Bu long-term memory'dir: PDF'ler modelin dışında index'lendi ve context'e geri getirildi, genelde RAG ile. Yeni session boş bir context window ile başlar, bu yüzden working memory bunu açıklayamaz."

@@ -1,0 +1,87 @@
+# Quick quiz: Coding Agents: Extending Them. Reinforcement, not assessment.
+questions:
+  - answer: 1
+    en:
+      question: "Why can a coding agent help with tasks that are not about software?"
+      options:
+        - "It has a ready tool for each common job, such as image conversion."
+        - "It can write and run code, so it installs a library or writes what it needs."
+        - "It sends each job to a separate agent that has tools for that one domain."
+        - "It connects to an MCP server that already has a tool for every job."
+      explain: "Code reaches almost anything a computer can do, so the agent installs a library or writes the code itself. The PNG and slide deck jobs were not in its tool list."
+    tr:
+      question: "Bir coding agent neden yazılımla ilgisi olmayan işlerde de yardımcı olabilir?"
+      options:
+        - "Her yaygın iş için hazır bir tool'u vardır, örneğin görsel dönüştürme için."
+        - "Kod yazıp çalıştırabilir, bu yüzden bir library kurar ya da ihtiyacı olanı yazar."
+        - "Her işi, sadece o alan için tool'ları olan ayrı bir agent'a gönderir."
+        - "Her iş için zaten bir tool'u olan bir MCP server'a bağlanır."
+      explain: "Kod, bir bilgisayarın yapabildiği hemen her şeye ulaşır, bu yüzden agent bir library kurar ya da kodu kendisi yazar. PNG ve sunum işleri onun tool listesinde yoktu."
+  - answer: 3
+    en:
+      question: "Which content belongs in AGENTS.md?"
+      options:
+        - "Details about this week's work, so the agent knows the newest state of the code."
+        - "Notes the agent writes about your corrections, so it remembers them next session."
+        - "A new system prompt that replaces the one the vendor wrote for the agent."
+        - "Build and test commands, the directory layout, and team rules that rarely change."
+      explain: "AGENTS.md holds what stays true across the whole repository. A file with details that no longer match the code is worse than no file, because the agent believes it."
+    tr:
+      question: "AGENTS.md içine ne girmeli?"
+      options:
+        - "Bu haftaki işin detayları, agent kodun en yeni hâlini bilsin diye."
+        - "Agent'ın senin düzeltmelerine göre yazdığı notlar, sonraki session'da hatırlasın diye."
+        - "Vendor'ın agent için yazdığı system prompt'un yerine geçen yeni bir system prompt."
+        - "Build ve test komutları, dizin düzeni ve pek değişmeyen ekip kuralları."
+      explain: "AGENTS.md, bütün repo boyunca doğru kalan şeyleri tutar. Koda artık uymayan detaylarla dolu bir dosya, hiç dosya olmamasından kötüdür, çünkü agent ona inanır."
+  - answer: 0
+    en:
+      question: "What does MCP (Model Context Protocol) change for a tool that you write?"
+      options:
+        - "You write it once in a standard shape, and every agent that speaks MCP can use it."
+        - "Its name and description no longer take any space in the context window."
+        - "The service behind it no longer needs an API, because the model calls the service directly."
+        - "The agent reads its full description only at the moment a task needs the tool."
+      explain: "Before MCP, you wrote the same Jira tools again for each agent. With MCP the tool lives in an MCP server, and any agent that speaks the protocol can connect to it."
+    tr:
+      question: "MCP (Model Context Protocol), senin yazdığın bir tool için neyi değiştirir?"
+      options:
+        - "Tool'u bir kez standart bir şekilde yazarsın, MCP konuşan her agent onu kullanabilir."
+        - "Tool'un adı ve açıklaması artık context window'da hiç yer kaplamaz."
+        - "Tool'un arkasındaki servisin artık bir API'ye ihtiyacı olmaz, çünkü model servisi doğrudan çağırır."
+        - "Agent, tool'un tam açıklamasını ancak bir iş o tool'a ihtiyaç duyduğunda okur."
+      explain: "MCP'den önce aynı Jira tool'larını her agent için yeniden yazıyordun. MCP ile tool bir MCP server'da durur ve protokolü konuşan her agent ona bağlanabilir."
+  - answer: 2
+    en:
+      question: "What does an agent load from each installed skill when a session starts?"
+      options:
+        - "The full SKILL.md of every skill, so every instruction is in the window from the start."
+        - "Nothing, until you type the skill's name as a slash command yourself."
+        - "Only the name and the description of each skill, a line or two for each one."
+        - "Only the skills that belong to the directory where the agent works now."
+      explain: "This is progressive disclosure: the agent reads the full instructions only when it decides a skill fits the task. So twenty skills cost almost nothing."
+    tr:
+      question: "Bir session başladığında agent, kurulu her skill'den neyi yükler?"
+      options:
+        - "Her skill'in tam SKILL.md dosyasını, böylece her talimat baştan window'da olur."
+        - "Hiçbir şeyi, sen skill'in adını bir slash command olarak yazana kadar."
+        - "Sadece her skill'in adını (name) ve açıklamasını (description), her biri için bir iki satır."
+        - "Sadece agent'ın şu an çalıştığı dizine ait olan skill'leri."
+      explain: "Bu, progressive disclosure: agent tam talimatları ancak bir skill'in işe uyduğuna karar verdiğinde okur. Bu yüzden yirmi skill neredeyse hiçbir şeye mal olmaz."
+  - answer: 1
+    en:
+      question: "AGENTS.md asks the agent never to edit a file. A PreToolUse hook blocks that edit. What is the difference?"
+      options:
+        - "The hook is advice that the model follows most of the time, like AGENTS.md."
+        - "The AGENTS.md line is a request, and the hook is a rule that runs every time."
+        - "The hook works only when the model decides that the edit is a mistake."
+        - "The two are the same, because the model reads both of them in the system prompt."
+      explain: "AGENTS.md is advice that the model follows most of the time. A hook is a shell command that runs whether the model wants it or not."
+    tr:
+      question: "AGENTS.md, agent'tan bir dosyayı asla düzenlememesini istiyor. Bir PreToolUse hook'u ise o edit'i engelliyor. Aradaki fark nedir?"
+      options:
+        - "Hook da AGENTS.md gibi, modelin çoğu zaman uyduğu bir tavsiyedir."
+        - "AGENTS.md satırı bir ricadır, hook ise her seferinde çalışan bir kuraldır."
+        - "Hook, sadece model edit'in bir hata olduğuna karar verdiğinde çalışır."
+        - "İkisi aynıdır, çünkü model ikisini de system prompt'ta okur."
+      explain: "AGENTS.md, modelin çoğu zaman uyduğu bir tavsiyedir. Hook ise model istesin istemesin çalışan bir shell komutudur."

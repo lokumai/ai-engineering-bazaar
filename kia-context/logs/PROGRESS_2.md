@@ -7,7 +7,7 @@ description: >
   inside a green gate. Then M17, the curriculum fold, and M18, the front door and the chrome, each
   with its report. It closes with M19 to M22 — the second language, the catalog's descriptions, the
   module page and rail, and the progress redesign — all four SHIPPED — then M23, the interface's own
-  strings, written and not started, and M24, the author's requests of 2026-10-11, shipped on a branch.
+  strings, written and not started, and M24, the author's requests of 2026-10-11, shipped and merged.
   Every milestone carries its deliverables and acceptance criteria as `- [ ]` checkboxes, ticked as
   the work lands, and closes with a dated report; the loop that governs that is in part 1 and is not
   restated here. Part 1 holds M1 to M15 and is closed.
@@ -16,7 +16,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M24, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped on branch feat/reader-options-and-catalog-polish, not merged. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M24, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked). Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-10-11
 ---
 
@@ -3374,14 +3374,15 @@ the interface is translated" with a number.
 
 ---
 
-## 🏁 Milestone M24: The author's requests of 2026-10-11 — SHIPPED ON A BRANCH, NOT MERGED
+## 🏁 Milestone M24: The author's requests of 2026-10-11 — SHIPPED, MERGED AS PR #23
 
 Branch `feat/reader-options-and-catalog-polish`, three commits — `aa1c63c`
 (the logo and the banner), `9724e6f` (the catalog, the rail, the language menu,
 the series map) and `c83591c` (the palettes, the highlighting, the tools, the
-dialog) — plus the context sync. **Not merged to `main`**, on the author's word:
-*"do it in a new single branch. do not merge to main yet"*. M23 is untouched and
-still the next written milestone.
+dialog) — plus the context sync. Held on the branch first, on the author's word
+(*"do not merge to main yet"*), then merged to `main` as PR #23 (`3327cfe`) once
+CI passed and the author asked for it. M23 is untouched and still the next
+written milestone.
 
 ### Deliverables
 
@@ -3474,6 +3475,31 @@ The first full browser run had three failures, all of them the suite rather
 than the app: two §12 round trips whose seed record was two `prefs` keys short
 (`tests/e2e/record.ts`), and the new author-deviation guard failing rather than
 skipping at 390, where the rail is not drawn.
+
+### Follow-up, the same afternoon — branch `fix/catalog-level-all-and-static-filters`
+
+Two more requests from the author, and two defects they exposed.
+
+- [x] **The level row's first chip reads `All`**, so the rows read `Level: All`
+      and `Status: All`. The bar's dropdown keeps `View Curriculum` on purpose
+      (**D75**, which reverses M20's "rename both or neither" for this chip).
+- [x] **The filter bar no longer sticks.** *"the level-status-view should not be
+      attached to the scroll and should not come-down with it"*. MEASURED, the
+      bar is 168px — 18.7% of a 1440×900 window, 21.9% of 1366×768, 23.3% of
+      1280×720 — that was held under the site bar on every scroll. `03` makes it
+      sticky; position is not a fact the harness pins, so nothing had to be
+      recorded as an author deviation. `catalog.spec.ts` now asserts the bar
+      moves by exactly what the page moved, mutation-proven against `sticky`.
+- [x] **The current level is marked.** Since M17 made the level chips links
+      (**D62**) the selected one carried `aria-current="page"` and the only fill
+      rule answered `aria-pressed`, so every level page showed no selected level.
+      It became obvious the moment the first chip read `All` beside the status
+      row's filled `All`. One selector added; `catalog.spec.ts` compares the two
+      fills, and fails with the selector removed.
+- [x] **A heading this milestone deleted, restored.** Appending D72–D74 replaced
+      `BRAINSTORM_2.md`'s `## Open questions` heading instead of keeping it, so
+      O1–O4 sat under D74 on `main`. Put back with D75; nothing else in that
+      file moved.
 
 ---
 

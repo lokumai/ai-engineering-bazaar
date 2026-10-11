@@ -480,9 +480,10 @@ describe('Catalog — three views over one data source (M12, D13)', () => {
        edit turning one of them into the other silently. */
     expect(markup.match(/aria-pressed="true"/g)).toHaveLength(1)
     expect(markup.match(/aria-current="page"/g)).toHaveLength(1)
-    // `View Curriculum` since M20, and it is the same string the bar's
-    // dropdown uses for the same destination — two elements, one meaning.
-    expect(markup).toMatch(/aria-current="page"[^>]*>(<[^>]*>)*\s*View Curriculum\s*</)
+    // `All` since 2026-10-11 — the word the status row opens on, so both rows
+    // read `Level: All` and `Status: All`. The bar's dropdown keeps `View
+    // Curriculum`, deliberately (see the chip's comment in `Catalog.tsx`).
+    expect(markup).toMatch(/aria-current="page"[^>]*>(<[^>]*>)*\s*All\s*</)
     expect(markup).toMatch(/aria-pressed="true"[^>]*>All</)
     // Two rows and the header row: the prerender narrows nothing, because a
     // reader-state filter active on load would change the row count between

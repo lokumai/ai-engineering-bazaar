@@ -114,7 +114,7 @@ test('the three views show the same set of modules, filtered and unfiltered', as
   // number for the page rather than one per view — a view that rendered a
   // different set would disagree with it.
   /* M17 / D62 — the level axis left this loop because it left the component.
-     A level is an address now, so `View Curriculum` is a LINK and pressing it
+     A level is an address now, so the level row's `All` is a LINK and pressing it
      is a navigation; the state chips are still buttons because they ask a question
      about a record no address can hold. The level axis is checked below, on
      the page it produces. */
@@ -302,7 +302,7 @@ test('both filter axes work from the keyboard and announce the count', async ({ 
      Space and it marks itself `aria-current="page"` rather than pressed. The
      chip is taken by its position in the named landmark and not by its title:
      a level's title is a fact about the content, which a test may not write
-     down (`tests/README.md`). `nth(1)` steps over the `View Curriculum` chip.
+     down (`tests/README.md`). `nth(1)` steps over the level row's `All` chip.
 
      **M20 named the group on the screen**, and the visible name IS the
      accessible one — `aria-labelledby` at a `<span>` reading `Level:`, never a
@@ -597,4 +597,49 @@ test('a stored view survives following a level link', async ({ page }) => {
       .filter((view) => getComputedStyle(view).display !== 'none')
       .map((view) => view.getAttribute('data-view')))
   expect(showing).toEqual(['table'])
+})
+
+/**
+ * 2026-10-11 — the selected chip is marked the same way in both filter rows.
+ *
+ * Since M17 made the level chips links (D62) the current one carries
+ * `aria-current="page"` and only `aria-pressed` was filled, so for every commit
+ * since a level page showed no selected level at all. It surfaced when the
+ * first chip became `All` beside the status row's filled `All`.
+ */
+test('the current level is filled the way the pressed status is', async ({ page }) => {
+  for (const path of [INDEX_SHEET, CATEGORY_PATHS[0]]) {
+    await page.goto(path)
+    const fill = (selector: string) =>
+      page.locator(selector).first().evaluate((node) => getComputedStyle(node).backgroundColor)
+
+    const pressed = await fill('.bz-chip[aria-pressed="true"]')
+    const current = await fill('.bz-filters nav .bz-chip[aria-current="page"]')
+    const resting = await fill('.bz-filters nav .bz-chip:not([aria-current])')
+    expect(current, `${path}: the current level is not marked`).toBe(pressed)
+    // Non-vacuity: a fill every chip has marks nothing.
+    expect(resting, `${path}: every level chip is filled`).not.toBe(pressed)
+  }
+})
+
+/**
+ * 2026-10-11 — the filter bar scrolls away with the page. The author: *"the
+ * level-status-view should not be attached to the scroll and should not come
+ * down with it."* Asked of the page by position after a scroll, so a sticky or
+ * fixed bar fails however it is achieved.
+ */
+test('the filter bar scrolls away with the page', async ({ page }) => {
+  await page.goto(INDEX_SHEET)
+  const bar = page.locator('.bz-filters')
+  const top = () => bar.evaluate((node) => node.getBoundingClientRect().top)
+  const before = await top()
+
+  // As far as the page goes. How far that is depends on the content and the
+  // view, so the claim is not "it leaves the screen" but the property itself:
+  // the bar moves by exactly what the page moved. A sticky bar stops at its
+  // offset and a fixed one never moves, and either fails here.
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight))
+  const scrolled = await page.evaluate(() => window.scrollY)
+  expect(scrolled, 'the page did not scroll, so nothing was measured').toBeGreaterThan(100)
+  expect(Math.round(await top())).toBe(Math.round(before - scrolled))
 })

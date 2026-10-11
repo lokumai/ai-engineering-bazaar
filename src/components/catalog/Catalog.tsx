@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { SheetIndex } from '@/components/sheet/SheetIndex'
-import { SCOPE_ATTR, VIEWS, type CatalogViewId } from '@/lib/catalog/views'
+import { SCOPE_ATTR, VIEWS, VIEW_GROUP_LABEL, type CatalogViewId } from '@/lib/catalog/views'
 import {
   ALL_LEVELS,
   DEFAULT_FILTER_ID,
@@ -85,10 +85,12 @@ import { ViewIcon } from './ViewIcon'
  *
  * **The toggle is derived, and it is the one thing here with no reference.**
  * `03` presents A, B and C as three separate frames; neither it nor `01` draws
- * a segmented control anywhere. So it is built from primitives the language
- * does have — the 33px control height, `.bz-btn-quiet`'s edge — and the
- * showing one is marked by a thicker bottom rule rather than a fill, because
- * forced colours keeps a border's width and takes its colour.
+ * a segmented control anywhere. It was a row of its own under the filter
+ * bar's hairline until the author asked for it to be *"similar to Level: and
+ * Status:, with a header named View:"* — so it is the bar's third row now,
+ * built from the chip, and the showing view is filled the way a pressed chip
+ * is. The thicker bottom rule stays under the fill, because forced colours
+ * drops the fill and keeps a border's width.
  *
  * ## The two filters
  *
@@ -279,10 +281,11 @@ export function Catalog({
 
   return (
     <div className="bz-catalog" {...{ [SCOPE_ATTR]: scope }}>
-      {/* `03`'s sticky filter bar. It carries the two chip groups and the
-          count, and nothing else: the view toggle sits below it, because the
-          bar's height is what the table view's own sticky header is offset by
-          and a second row of controls inside it would make that sum wrong. */}
+      {/* `03`'s sticky filter bar: the two chip groups, the view toggle and
+          the count. The toggle sat below the bar's hairline once, on the
+          argument that the table's sticky header was offset by the bar's
+          height. That offset has been zero since stage 4's review moved the
+          header onto its own scroller, so the argument guarded nothing. */}
       <div className="bz-filters">
         {/* M17 / D62 — LINKS, not buttons. The level is an address, so the
             group is navigation: `aria-current="page"` and not `aria-pressed`,
@@ -353,39 +356,44 @@ export function Catalog({
           ))}
         </div>
 
-        {/*
-          The count goes in a `role="status"` live region and the count itself
-          is announced: SC 4.1.3 is Level AA and its own examples are "5 results
-          returned" / "No results returned". One region, rendered in both
-          states, so the announcement comes from an element the reader's
-          software has already seen rather than from one that appears at the
-          moment it has something to say. It sits on the bar's trailing edge,
-          which is where `03` puts its own readout.
-        */}
-        <p className="bz-filter-count" role="status">
-          Showing <span className="bz-filter-count-value">{visible.length}</span> of{' '}
-          <span className="bz-filter-count-value">{rows.length}</span>
-        </p>
-      </div>
+        {/* The last row carries the toggle and the count, so the count keeps
+            the bar's trailing edge where `03` puts it without a row of its own.
+            D13 — three buttons, an icon and a word each, and the state carried
+            by the hidden `Showing` rather than by an ARIA attribute React would
+            have to render (see the docblock). */}
+        <div className="bz-filter-last">
+          <div className="bz-viewtoggle" role="group" aria-labelledby="bz-chips-view">
+            <span className="bz-chip-label" id="bz-chips-view">
+              {VIEW_GROUP_LABEL}:
+            </span>
+            {VIEWS.map((view) => (
+              <button
+                key={view.id}
+                type="button"
+                className="bz-viewbtn"
+                {...{ [VIEW_ATTR]: view.id }}
+                onClick={() => choose(view.id)}
+              >
+                <ViewIcon id={view.id} />
+                {view.name}
+                <span className="sr-only bz-view-said">Showing</span>
+              </button>
+            ))}
+          </div>
 
-      <div className="bz-viewbar">
-        {/* D13 — the toggle. Three buttons, an icon and a word each, and the
-            state carried by the hidden `Showing` rather than by an ARIA
-            attribute React would have to render (see the docblock). */}
-        <div className="bz-viewtoggle" role="group" aria-label="Catalog view">
-          {VIEWS.map((view) => (
-            <button
-              key={view.id}
-              type="button"
-              className="bz-viewbtn"
-              {...{ [VIEW_ATTR]: view.id }}
-              onClick={() => choose(view.id)}
-            >
-              <ViewIcon id={view.id} />
-              {view.name}
-              <span className="sr-only bz-view-said">Showing</span>
-            </button>
-          ))}
+          {/*
+            The count goes in a `role="status"` live region and the count itself
+            is announced: SC 4.1.3 is Level AA and its own examples are "5 results
+            returned" / "No results returned". One region, rendered in both
+            states, so the announcement comes from an element the reader's
+            software has already seen rather than from one that appears at the
+            moment it has something to say. It sits on the bar's trailing edge,
+            which is where `03` puts its own readout.
+          */}
+          <p className="bz-filter-count" role="status">
+            Showing <span className="bz-filter-count-value">{visible.length}</span> of{' '}
+            <span className="bz-filter-count-value">{rows.length}</span>
+          </p>
         </div>
       </div>
 

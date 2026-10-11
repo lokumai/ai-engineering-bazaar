@@ -3,6 +3,7 @@ import { A0, INDEX_SHEET, SHEETS, SHORT } from './sheets'
 import { openRegisterRow, seedRecord, signedSheet, waitForHydratedReadout } from './record'
 import {
   APP_SELECTORS,
+  AUTHOR_DEVIATIONS,
   CATALOG_SELECTORS,
   CATALOG_URL,
   DELIBERATELY_ABSENT,
@@ -249,6 +250,41 @@ test.describe('the fidelity harness', () => {
             'is stale and would hide the next difference',
         ).not.toBe(reference[key])
       }
+    })
+  }
+
+  /**
+   * EVERY AUTHOR DEVIATION IS STILL DEVIATING, AND IS THE ONE IT SAYS.
+   *
+   * The same two halves as the narrow guard above, with no width: the mockup
+   * still draws the value the entry says it overrules, and the page no longer
+   * does. The first half is what stops an entry being written against the
+   * wrong number; the second is what retires it the moment the author's
+   * change is undone, so it cannot quietly exempt the next difference.
+   */
+  for (const [key, deviation] of Object.entries(AUTHOR_DEVIATIONS)) {
+    const role = key.split('.')[0] as Role
+    const source = REFERENCE_OF[role]!
+
+    test(`keeps the author's ${key} away from the mockup's ${deviation.mockup}`, async ({ page }) => {
+      await page.goto(REFERENCE_URL[source])
+      await freezeMotion(page)
+      const reference = await extractDesignFacts(page, REFERENCE_SELECTORS[source])
+
+      await page.goto(source === '03' ? '/sheets/' : SHORT.path)
+      await freezeMotion(page)
+      if (source === '03') {
+        await page.addStyleTag({ content: '.bz-view { display: block !important; }' })
+      }
+      const actual = await extractDesignFacts(page, APP_SELECTORS)
+
+      expect(reference[key], `the mockup no longer draws ${key} at all`).not.toBeNull()
+      expect(actual[key], `the page no longer draws ${key} at all`).not.toBeNull()
+      expect(reference[key], `${key}: the entry names the wrong mockup value`).toBe(deviation.mockup)
+      expect(
+        actual[key],
+        `${key} matches the mockup again — the exemption is stale and would hide the next difference`,
+      ).not.toBe(reference[key])
     })
   }
 
@@ -649,14 +685,17 @@ test.describe('M16 stage 3 — the rail', () => {
     }
     expect(BUILT.some((role) => shown(reference, role)), 'no role on screen here').toBe(true)
 
-    expect(differencesIn(reference, actual, BUILT)).toEqual([])
+    // `differencesAt`, so an author's recorded decision about the current
+    // group (`AUTHOR_DEVIATIONS`) is honoured here as everywhere else.
+    expect(differencesAt(reference, actual, BUILT, page.viewportSize()!.width)).toEqual([])
   })
 
   /**
-   * The current group is emphasised four ways at once — a larger type size, a
-   * sunken fill, a strong border and a thick leading edge in its own hue — and
-   * the redundancy is the design. Losing any one of the four is what this
-   * notices, because a reader who cannot separate the hues still has three.
+   * The current group is emphasised three ways at once — a sunken fill, a
+   * strong border and a thick leading edge in its own hue — and the redundancy
+   * is the design. `01` adds a fourth, a larger type size, which the author
+   * took out (`AUTHOR_DEVIATIONS`); the size is still mutated here because the
+   * comparator has to notice it moving AWAY from the sibling size too.
    */
   test('notices when the current group stops being unmistakable', async ({ page }) => {
     await page.goto(MOCKUP_URL)

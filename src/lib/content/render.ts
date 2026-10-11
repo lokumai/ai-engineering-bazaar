@@ -11,7 +11,7 @@ import type { Element, ElementContent, Root, RootContent, Text } from 'hast'
 import { widthForColumns } from '@/lib/figure/width'
 import type { ChecklistItem } from './checklist'
 import { codeThemes } from './code-theme'
-import { DIAGRAM_HEADING } from './lines'
+import { DIAGRAM_HEADING, SERIES_HEADINGS } from './lines'
 import { courseLinkFor, isCourseLink, sheetSource } from './links'
 import { assertNoRawHex, remapMermaidFills } from './mermaid'
 
@@ -212,6 +212,39 @@ function rehypeDropSelfCheck() {
       (child) => isElement(child) && opensSelfCheck(child),
     )
     if (index !== -1) tree.children.splice(index, 1)
+  }
+}
+
+/**
+ * The series map, lifted out of the page and left in the file
+ * (`SERIES_HEADINGS` carries the author's reason and both languages).
+ *
+ * The section is the h2 and everything after it up to the next heading of the
+ * same rank or higher — which is the next section, in every module that has
+ * one, and the end of the document in a module that ends with it.
+ *
+ * **Pipeline position**, the same as `rehypeDropSelfCheck`'s and for the same
+ * reasons: before `rehypeFigures`, or the chart inside the section consumes a
+ * `FIG. n.n` number and leaves a gap in the sequence; before `rehypeSlug` and
+ * `rehypeCollectToc`, or the page's own index lists a section the page does
+ * not show.
+ */
+function rehypeDropSeriesSection() {
+  return (tree: Root) => {
+    const start = tree.children.findIndex(
+      (child) => isElement(child)
+        && child.tagName === 'h2'
+        && SERIES_HEADINGS.includes(hastToString(child).trim()),
+    )
+    if (start === -1) return
+
+    let end = start + 1
+    while (end < tree.children.length) {
+      const next = tree.children[end]
+      if (isElement(next) && (next.tagName === 'h1' || next.tagName === 'h2')) break
+      end += 1
+    }
+    tree.children.splice(start, end - start)
   }
 }
 
@@ -976,6 +1009,8 @@ export async function renderMarkdown(
     .use(rehypeDropDek)
     // §12.6 — before the lead class is spent and before figures are numbered.
     .use(rehypeDropSelfCheck)
+    // The series map — same position, same reasons (`rehypeDropSeriesSection`).
+    .use(rehypeDropSeriesSection)
     .use(rehypeLeadParagraph)
     .use(rehypeSectionMarks)
     .use(rehypeRewriteImages, options.imageBase)

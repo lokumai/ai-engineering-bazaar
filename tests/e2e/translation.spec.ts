@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { loadAllModules } from '@/lib/content/loader'
-import { LANGUAGE_PICKER_LABEL } from '@/components/sheet/LanguagePicker'
+import { LANGUAGE_PICKER_LABEL } from '@/components/shell/LanguageMenu'
 
 /**
  * M19 — the second language, which is an ADDRESS.
@@ -94,16 +94,33 @@ test('a module with no translation has no Turkish address at all', async ({ page
   expect(served, 'a Turkish address exists for a module with no translation').toEqual([])
 })
 
+/**
+ * The switch is a disclosure in the bar since 2026-10-11, so its two links are
+ * hidden until it is opened — and a role query does not see a hidden link,
+ * which is the right behaviour to rely on: it is what a reader meets.
+ */
+async function openLanguages(page: import('@playwright/test').Page): Promise<void> {
+  const trigger = page
+    .getByRole('navigation', { name: LANGUAGE_PICKER_LABEL })
+    .locator('summary')
+  await trigger.click()
+  await expect(trigger.locator('xpath=..')).toHaveAttribute('open', '')
+}
+
 test('the picker offers both languages, and only where both exist', async ({ page }) => {
   const picker = (label: string) =>
     page.getByRole('navigation', { name: LANGUAGE_PICKER_LABEL }).getByRole('link', { name: label })
 
   await page.goto(en(TRANSLATED[0].slug))
+  // Closed, it offers nothing to click by accident; open, both languages.
+  await expect(picker('Türkçe')).toHaveCount(0)
+  await openLanguages(page)
   await expect(picker('English')).toHaveAttribute('aria-current', 'page')
   await expect(picker('Türkçe')).not.toHaveAttribute('aria-current', 'page')
   await expect(picker('Türkçe')).toHaveAttribute('href', new RegExp(`${tr(TRANSLATED[0].slug)}$`))
 
   await page.goto(tr(TRANSLATED[0].slug))
+  await openLanguages(page)
   await expect(picker('Türkçe')).toHaveAttribute('aria-current', 'page')
   await expect(picker('English')).not.toHaveAttribute('aria-current', 'page')
 
@@ -179,13 +196,19 @@ test('a Turkish page keeps the reader in Turkish, everywhere on it', async ({ pa
 
 test('the English tree links to no Turkish address', async ({ page }) => {
   await page.goto(en(TRANSLATED[0].slug))
-  const hrefs = await page.evaluate(() =>
-    [...document.querySelectorAll('main a[href], .bz-rail a[href]')]
+  const turkish = (scope: string) => page.evaluate((selector) =>
+    [...document.querySelectorAll(selector)]
       .map((link) => new URL((link as HTMLAnchorElement).href).pathname)
-      .filter((path) => path.startsWith('/tr/')))
+      .filter((path) => path.startsWith('/tr/')), scope)
 
-  // Exactly one: the picker's own link, which is the whole point of it.
-  expect(hrefs).toEqual([tr(TRANSLATED[0].slug)])
+  // None in the reading column or the rail…
+  expect(await turkish('main a[href], .bz-rail a[href]')).toEqual([])
+  // …and exactly one in the whole document: the bar's language menu, which is
+  // the whole point of it. Counted over the document rather than inside the
+  // menu, so a second Turkish link anywhere else in the chrome fails here too.
+  expect(await turkish('a[href]')).toEqual([tr(TRANSLATED[0].slug)])
+  expect(await turkish(`[aria-label="${LANGUAGE_PICKER_LABEL}"] a[href]`))
+    .toEqual([tr(TRANSLATED[0].slug)])
 })
 
 /**
@@ -220,6 +243,8 @@ test('the switch works with JavaScript disabled', async ({ browser }) => {
      chips. A `<select>` or a toggle would be an island and would do nothing
      here at all. */
   await page.goto(en(TRANSLATED[0].slug))
+  // A native disclosure opens with no script, which is why the switch is one.
+  await openLanguages(page)
   await page.getByRole('navigation', { name: LANGUAGE_PICKER_LABEL })
     .getByRole('link', { name: 'Türkçe' })
     .click()

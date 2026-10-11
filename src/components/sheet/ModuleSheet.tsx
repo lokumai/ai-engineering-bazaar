@@ -32,7 +32,6 @@ import { Objectives } from '@/components/sheet/Objectives'
 import { PrevNext, type PrevNextTarget } from '@/components/sheet/PrevNext'
 import { ScheduleOfParts } from '@/components/sheet/ScheduleOfParts'
 import { FactsStrip } from '@/components/sheet/FactsStrip'
-import { LanguagePicker } from '@/components/sheet/LanguagePicker'
 import { Requirements } from '@/components/sheet/Requirements'
 import { SheetRail } from '@/components/sheet/SheetRail'
 import { StatusBand } from '@/components/sheet/StatusBand'
@@ -453,17 +452,18 @@ export async function ModuleSheet({
             so a control here would have switched nothing — the claim §1
             forbids, and the same reason the mockup's own `TR` button and search
             field were left out of the bar. M19 made the second language real,
-            so the slot holds `LanguagePicker` now.
+            so the slot held `LanguagePicker`.
 
             When it lands it is an ADDRESS and not a preference (M19's shape 1),
             which is what lets a reader send somebody a Turkish URL and what
-            makes it right with the bundle blocked. */}
-        {/* M21 recorded this slot and built nothing in it; M19 is the
-            milestone that can make it do something, so this is it. It renders
-            only where there is a second address to go to. */}
-        {sheet.translation !== null && (
-          <LanguagePicker slug={slug} current={lang} />
-        )}
+            makes it right with the bundle blocked.
+
+            **And on 2026-10-11 it left again, for the bar.** The author asked
+            for the switch as *"a square button in navbar right to the left of
+            the toggle theme in a drop-down-like industry-standard component"*,
+            so it is `LanguageMenu` in `SiteHeader` now — still two links,
+            still only where a second address exists, still working with the
+            bundle blocked. This corner is empty again. */}
 
         {/* M19 — a review enumerated every `lang` on a built Turkish page and
             found exactly two: the picker's own link and the prose. The heading

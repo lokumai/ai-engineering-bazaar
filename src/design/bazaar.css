@@ -525,6 +525,36 @@
 
   .bz-bar-icon:hover { background: var(--color-bar-hover); }
 
+  /* THE LANGUAGE MENU — `01`'s `TR` slot, filled now that a second language
+     exists (M19), and placed where the author asked: a square in the bar, left
+     of the theme toggle, opening a dropdown.
+
+     The trigger IS a `.bz-bar-icon`, so it is the same square as its
+     neighbours in every length and colour; what is added here is only what a
+     `<summary>` needs to stop looking like one (no marker) and what an open
+     disclosure says (the hover fill, held). The panel is the bar's own
+     `.bz-menu` — the Catalog dropdown's — hung from the trigger's TRAILING
+     edge, because this one sits near the right of the window and a panel
+     hung from its leading edge would run off it. Below the touch breakpoint
+     `shell.css` pins every `.bz-menu` to the viewport, this one included. */
+  .bz-langmenu details { position: relative; }
+
+  .bz-langmenu-trigger { list-style: none; }
+
+  .bz-langmenu-trigger::-webkit-details-marker { display: none; }
+
+  .bz-langmenu details[open] > .bz-langmenu-trigger { background: var(--color-bar-hover); }
+
+
+  /* The check beside the language being read. `aria-current` is what says it
+     to assistive software; the check is what says it to a reader in forced
+     colours, where the system recolours it and keeps the shape. */
+  .bz-langmenu-check {
+    flex: none;
+    margin-left: auto;
+    color: var(--color-primary);
+  }
+
   /* M18 — the repository control, which is an icon button that also carries a
      number, so it is the one bar control that is not square.
 
@@ -671,6 +701,18 @@
     font-size: var(--text-label);
   }
 
+  /* The language menu's panel, hung from its trigger's trailing edge (see
+     `.bz-langmenu` above). AFTER `.bz-menu` and at its specificity, on
+     purpose: written above it, `.bz-menu`'s own `left: 0` won by source order
+     and the panel ran 26px off a 1440 window, MEASURED; written with more
+     specificity, it would beat the phone rule in `shell.css` that pins every
+     menu to the viewport. */
+  .bz-langmenu-panel {
+    right: 0;
+    left: auto;
+    min-width: 160px;
+  }
+
   /* -- the ornament -------------------------------------------------------
      A lattice of three glazes on cobalt, finished with a gold rule. */
 
@@ -777,6 +819,51 @@
   .bz-rail-inner {
     width: var(--layout-rail);
     padding: 16px 12px 48px;
+  }
+
+  /* THE RAIL'S SCROLLBAR: thin and quiet, and narrower than the padding.
+
+     The author: *"change the style of scrollbar and make it something subtle
+     and industry-standard rather than the default, heavy scrollbar which takes
+     a lot of space."* A desktop browser with classic scrollbars — Chrome and
+     Firefox on Linux and Windows — takes a 15px gutter out of a 262px column
+     for a bar the reader rarely drags.
+
+     8px wide, a 4px thumb inside a transparent 2px border, no track, no
+     arrows: the shape every reading surface converged on. **8 sits under a
+     ceiling, and the ceiling is the padding.** The inner is `--layout-rail`
+     wide with 12px of right padding, so a gutter of 12px or less takes the
+     padding and never covers a word; the default 15px one ran 3px into the
+     content. MEASURED with classic scrollbars on, every group open: 254px of
+     262 left to the content, and `scrollLeft` still 0 after tabbing through
+     every link and folding twice. `rail.spec.ts` holds the gutter under the
+     padding in a window that draws real scrollbars.
+
+     Two mechanisms, because the engines split. Chromium and WebKit draw the
+     `::-webkit-scrollbar` pseudo-elements and stop drawing them the moment the
+     standard properties are set, so the standard pair is applied only where
+     the pseudo-elements do not exist — Firefox, whose `thin` is 8px. */
+  .bz-rail::-webkit-scrollbar { width: 8px; }
+
+  .bz-rail::-webkit-scrollbar-track { background: transparent; }
+
+  .bz-rail::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: var(--radius-pill);
+    background: var(--color-line-strong);
+    background-clip: padding-box;
+  }
+
+  .bz-rail::-webkit-scrollbar-thumb:hover,
+  .bz-rail::-webkit-scrollbar-thumb:active {
+    background-color: var(--color-on-surface-muted);
+  }
+
+  @supports not selector(::-webkit-scrollbar) {
+    .bz-rail {
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-line-strong) transparent;
+    }
   }
 
   /* **A PAINTED LINE IS NOT PAINTED IN FORCED COLOURS**, and that is a
@@ -913,10 +1000,17 @@
   }
 
   /* -- a group, as an arch ------------------------------------------------
-     THE CURRENT GROUP IS UNMISTAKABLE, and it is emphasised four ways at once:
-     a larger type size, a sunken fill, a strong border, and a thick leading
-     edge in the group's own hue. Its count moves from muted to full ink.
-     Four signals because one of them is colour, and colour is never alone. */
+     THE CURRENT GROUP IS UNMISTAKABLE, and it is emphasised three ways at
+     once: a sunken fill, a strong border, and a thick leading edge in the
+     group's own hue. Its count moves from muted to full ink. Three signals
+     because one of them is colour, and colour is never alone.
+
+     It was four, and the fourth was SIZE — `01` sets the current head at 16px
+     with 3px more padding and a taller key. The author took it out on
+     2026-10-11: *"it has both a different color and becomes larger. no need
+     to become larger. showing it with cream color is enough"*. So the head is
+     the size of its siblings, and a group no longer grows when the reader
+     moves into it. `groupCurrent.fontSize` is in `AUTHOR_DEVIATIONS`. */
 
   .bz-group > summary {
     display: flex;
@@ -959,17 +1053,14 @@
     font: 500 var(--text-mark) / 1 var(--font-sans);
   }
 
+  /* 9px on the leading side and not the base 12: the edge is 3px thicker
+     than a sibling's hairline, so the padding gives the 3px back and the name
+     sits where every other group's does. */
   .bz-group[data-here] > summary {
-    padding: 12px 12px 12px 11px;
+    padding-left: 9px;
     border-color: var(--color-line-strong);
     border-left: 4px solid var(--bz-cat);
     background: var(--color-surface-sunken);
-    font-size: var(--text-lead);
-  }
-
-  .bz-group[data-here] > summary .bz-group-key {
-    width: 6px;
-    height: 23px;
   }
 
   .bz-group[data-here] > summary .bz-group-count {

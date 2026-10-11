@@ -4,6 +4,7 @@ import GITHUB from '@/lib/github-stars.json'
 import { REPO_URL } from '@/lib/site'
 import { href } from '@/lib/url'
 import { categoryLabels } from '@/lib/content/chrome'
+import { LanguageMenu } from './LanguageMenu'
 import { MainNav } from './MainNav'
 import { ThemeToggle } from './ThemeToggle'
 
@@ -38,7 +39,9 @@ import { ThemeToggle } from './ThemeToggle'
  * control that opens nothing is exactly the claim §1 forbids, which is why the
  * retired header held those two slots back as well. So the mockup specifies the
  * slot and the product fills it with the controls it actually has: the profile
- * link, the shortcut sheet, the theme toggle and the repository. Each is a
+ * link, the shortcut sheet, the theme toggle and the repository — and, on a
+ * module with a Turkish page, the language menu, which is the mockup's `TR`
+ * slot filled at last now that there is a second language to switch to. Each is a
  * `bz-bar-icon`, which is the primitive the mockup's own `.ib` buttons use. The
  * search field returns when there is something to search.
  *
@@ -116,7 +119,7 @@ function StarGlyph() {
   )
 }
 
-export function SiteHeader() {
+export function SiteHeader({ translated }: { translated: readonly string[] }) {
   const { stars } = GITHUB
 
   return (
@@ -147,6 +150,9 @@ export function SiteHeader() {
               table moved to `/legend/`, the page whose whole job is what the
               marks on this site mean. `?` still opens the sheet. */}
           <Keyboard />
+          {/* Left of the theme toggle, where the author asked for it, and only
+              on a module that has a second language (`LanguageMenu`). */}
+          <LanguageMenu translated={translated} />
           <ThemeToggle />
 
           <a

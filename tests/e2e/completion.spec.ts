@@ -470,7 +470,7 @@ test('a completion made on the progress page is the same one the module page sho
   // of thirty-three makes no claim about which revision it was made against
   // rather than claiming the wrong one.
   await page.goto(target.path)
-  await expect(page.getByRole('button', { name: /^Completed / })).toBeVisible()
+  await expect(page.getByRole('checkbox', { name: 'Mark this module as complete' })).toBeChecked()
   const stored = await readRecord(page)
   expect(stored?.data.sheets[slugOf(target)]?.signedRevision).toBeNull()
 })

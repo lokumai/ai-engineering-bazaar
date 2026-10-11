@@ -1,5 +1,5 @@
 import { type Page, expect, test } from '@playwright/test'
-import { A0 } from './sheets'
+import { A0, SHEETS } from './sheets'
 /**
  * THE SCROLLBAR, measured in a window that draws one.
  *
@@ -51,5 +51,48 @@ test.describe('the rail scrollbar', () => {
     await page.addStyleTag({ content: '.bz-rail::-webkit-scrollbar { width: 15px !important; }' })
     const heavy = await gutter(page)
     expect(heavy.gutter, 'a default-width bar would pass this check').toBeGreaterThan(heavy.padding)
+  })
+})
+
+/**
+ * The page index on the right, which the author found taller than the window on
+ * a long module: *"people have to scroll down the whole page for it"*. It is
+ * capped at the window under the bar and scrolls itself, and a wheel over it
+ * moves the headings and not the page. Measured on every drawn module so the
+ * test does not depend on which one happens to be long: wherever the index
+ * overflows, it must scroll inside and keep the page still; and somewhere it
+ * must overflow, or nothing was checked.
+ */
+test.describe('the page index', () => {
+  test('scrolls itself, with the rail’s bar, and leaves the page where it is', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 640 })
+    let overflowed = 0
+
+    for (const sheet of SHEETS.filter((one) => one.drawn)) {
+      await page.goto(sheet.path)
+      const aside = page.locator('.bz-aside')
+      const box = await aside.evaluate((node) => ({
+        scrolls: node.scrollHeight > node.clientHeight,
+        fits: node.getBoundingClientRect().height <= window.innerHeight,
+        gutter: (node as HTMLElement).offsetWidth - node.clientWidth,
+        padding: parseFloat(getComputedStyle(node).paddingRight),
+      }))
+      expect(box.fits, `${sheet.path}: the index is taller than the window`).toBe(true)
+      if (!box.scrolls) continue
+      overflowed += 1
+      expect(box.gutter, sheet.path).toBeGreaterThan(0)
+      expect(box.gutter, sheet.path).toBeLessThanOrEqual(box.padding)
+
+      // Scroll the page so the sticky index is in view, then wheel over it.
+      await page.evaluate(() => window.scrollTo(0, 400))
+      const pageBefore = await page.evaluate(() => window.scrollY)
+      const at = (await aside.boundingBox())!
+      await page.mouse.move(at.x + at.width / 2, at.y + at.height / 2)
+      await page.mouse.wheel(0, 300)
+      await expect.poll(() => aside.evaluate((node) => node.scrollTop)).toBeGreaterThan(0)
+      expect(await page.evaluate(() => window.scrollY), sheet.path).toBe(pageBefore)
+    }
+
+    expect(overflowed, 'no index overflowed at this height, so nothing was checked').toBeGreaterThan(0)
   })
 })

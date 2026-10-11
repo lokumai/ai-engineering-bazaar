@@ -10,7 +10,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D75, plus open questions O1 to O4 — 2026-09-09 to 2026-10-11"
+covers: "D26 to D77, plus open questions O1 to O4 — 2026-09-09 to 2026-10-11"
 last_updated: 2026-10-11
 ---
 
@@ -1712,6 +1712,65 @@ The same request surfaced an older gap: the current level chip had carried no
 visible mark since M17 made the chips links (**D62**) — only `aria-pressed` was
 filled, and a link says `aria-current`. Not a decision, a defect; it is in
 M24's follow-up.
+
+### D76 · The end of a module is one checkbox, and the rest leaves the page — 2026-10-11
+
+The author, of the end of every module: a `Save name` / `Skip` prompt, `What you
+built` with a repository form, `Marked by` with four stamps, `Sources opened`,
+`Checked by: UNSIGNED`, `Repositories: 0` — *"I DO NOT NEED ANY SUCH THING"* —
+and in their place a familiar check-or-uncheck control, Previous and Next that
+stand out, and a quiz.
+
+**Kept behind a disclosure, or kept on the page restyled, was the cheaper
+answer and it was rejected.** Each of those blocks had a spec section and a
+test behind it, and folding them under a `More` toggle would have kept every
+test green; it would also have kept everything the author called noise one
+click away, which is not what was asked. They left the page. **What did not
+leave is the record**: `quiz`, `submittals` and `sources` stay in the schema, so
+every existing reader's record parses, exports and merges as before, and
+`/profile/` still reports them. Only the controls that add to them are gone,
+and the capability ledger says so row by row.
+
+**A checkbox, not a toggle button.** The old control was a `Complete` button
+that became `Completed 2026-…` with an `Un-complete` beside it — two controls
+and a label that rewrote itself. A real checkbox with a fixed label (`Mark this
+module as complete`) is the shape every course platform uses, its state is the
+box, and a screen reader announces "checkbox, checked" instead of a new name.
+The `s` shortcut kept working with no change, because it clicks the element
+carrying the attribute and a click toggles a checkbox.
+
+**The prerequisites moved to the top.** They were module numbers behind
+`Requirements (n)` beside the completion button; a reader decides whether they
+can start before reading, so they are a `Before you start` box above the prose,
+by title. `Unlocks` and `See also` did not come with them: where a module leads
+is the pager's job, and the rail holds the course.
+
+### D77 · A quiz lives beside its module, both languages in one file, and nothing is stored — 2026-10-11
+
+The author asked for 3 to 5 four-choice questions per written module, written
+by parallel Opus agents, in simple ASD-STE-style English and in Turkish with
+the English technical term kept or in parentheses, for reinforcement and not
+evaluation.
+
+- **Where they live: the corpus, not the app.** A quiz is course content — it is
+  wrong the day its module changes — so it sits at `<name>.quiz.yaml` beside the
+  markdown, governed by `mini-courses/CLAUDE.md`, and the app reads it the way it
+  reads everything else. A JSON file under `src/` would have put content where
+  the author does not edit.
+- **One file for both languages, one `answer` index.** Two files per module
+  (`_tr` beside the English, the corpus's usual pairing) were rejected because
+  the answer index would then be stated twice and could drift: a Turkish
+  question whose right answer is a different letter is a bug nothing would see.
+- **Nothing stored.** Recording answers would make a quiz a score, and a score is
+  the assessment the author ruled out; the record's old `quiz` field belonged
+  to the self-check this replaced. Start over is a reset of the page's state,
+  and a reload is a fresh quiz.
+- **An answer is final until Start over.** Letting a reader click until the
+  green one appears would teach the colour of the button, not the module.
+
+The agents' own reports surfaced two gaps in the corpus that are the author's to
+close: `training_tr.md` has no `When not to fine-tune` section and `tools_tr.md`
+lacks the `send_email` example and the paragraph on wrapping APIs.
 
 ## Open questions
 

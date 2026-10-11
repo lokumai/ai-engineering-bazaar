@@ -460,26 +460,69 @@
   }
 
   /* ---------------------------------------------------------------------------
-     10. THE ACTION ROW'S QUIET DISCLOSURE.
+     10. BEFORE YOU START — the prerequisites, at the top of the module.
 
-     `01` draws `Requirements (2)` as a quiet button and stops there, so what
-     opening it reveals is derived: the panel sits under the row it belongs to
-     and is a raised surface with a hairline, like every other panel here.
+     They were `01`'s quiet `Requirements (2)` disclosure at the end of the
+     page; on 2026-10-11 the author asked for something familiar, and every
+     course platform answers that the same way: a box above the lesson naming
+     what to read first. A raised surface and a cobalt leading edge — the
+     language's `primary`, which is the colour of a way to go — and the module
+     titles as links. `Prerequisites.tsx` carries the reasoning.
      --------------------------------------------------------------------------- */
-  .bz-requires > summary {
-    /* A summary is a list-item by default, and the marker would sit inside the
-       button's own box. */
+  .bz-prereq {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 18px 0 16px;
+    padding: 14px 16px;
+    border: 1px solid var(--color-line);
+    border-left: 3px solid var(--color-primary);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-raised);
+  }
+
+  .bz-prereq-icon {
+    flex: none;
+    margin-top: 1px;
+    color: var(--color-primary);
+  }
+
+  .bz-prereq-body { min-width: 0; }
+
+  .bz-prereq-title {
+    margin: 0 0 6px;
+    color: var(--color-on-surface-title);
+    font: 600 var(--text-item) / 1.3 var(--font-sans);
+  }
+
+  .bz-prereq-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin: 0;
+    padding: 0;
     list-style: none;
   }
 
-  .bz-requires > summary::-webkit-details-marker { display: none; }
+  .bz-prereq-list li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
 
-  .bz-requires-body {
-    margin-top: 12px;
-    padding: 14px 16px;
+  .bz-prereq-link {
+    color: var(--color-primary);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .bz-prereq-tag {
+    padding: 1px 6px;
     border: 1px solid var(--color-line);
-    border-radius: var(--radius-md);
-    background: var(--color-surface-raised);
+    border-radius: var(--radius-xs);
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-label);
   }
 
   /* M19's two language links lived here, in the reading column's top-right

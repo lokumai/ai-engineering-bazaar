@@ -320,9 +320,9 @@ export function Catalog({
                 how a product drifts. That argument holds for two LABELS of a
                 page, and this chip is not one any more: it is a value under a
                 `Level:` heading, where `View Curriculum` read as a command in a
-                row of names. The dropdown has no heading over it, so it keeps
-                the phrase; the two now differ on purpose, recorded here. It read
-                `Every level` before M20. */}
+                row of names. The dropdown has no heading over it and reads
+                `Curriculum`; the two differ on purpose, recorded here (D75). It
+                read `Every level` before M20. */}
             All
           </Link>
           {levelRefs.map((one) => (

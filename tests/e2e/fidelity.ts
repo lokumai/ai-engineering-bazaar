@@ -1146,6 +1146,14 @@ const MORE_GENEROUS =
   + 'horizontally"*. `03` draws the catalog at its own density; the product '
   + 'spaces it wider. Geometry only — no colour, type step or radius moved.'
 
+/** The author's words for the pager, once, for the entries that need them. */
+const PAGER_STANDS_OUT =
+  'The author, 2026-10-11: *"Next and Previous with proper color, if necessary '
+  + 'icon, etc that actually stands out from the remaining of the center '
+  + 'panel"*. `01` draws the tile as a quiet hairlined box; the product draws '
+  + 'it as a control, taller, rounder and edged in `line-strong`, with Next '
+  + 'filled in the primary. The grid, its gap and its margin are still `01`\'s.'
+
 export const AUTHOR_DEVIATIONS: Readonly<Record<string, AuthorDeviation>> = {
   'filterBar.gap': { mockup: '9px', why: MORE_GENEROUS },
   'filterBar.paddingTop': { mockup: '16px', why: MORE_GENEROUS },
@@ -1158,6 +1166,9 @@ export const AUTHOR_DEVIATIONS: Readonly<Record<string, AuthorDeviation>> = {
   'boardHead.paddingLeft': { mockup: '13px', why: MORE_GENEROUS },
   'boardList.paddingTop': { mockup: '7px', why: MORE_GENEROUS },
   'boardMod.paddingTop': { mockup: '8px', why: MORE_GENEROUS },
+  'pagerItem.padding': { mockup: '13px 15px', why: PAGER_STANDS_OUT },
+  'pagerItem.borderRadius': { mockup: '4px', why: PAGER_STANDS_OUT },
+  'pagerItem.borderTopColor': { mockup: 'rgb(216, 203, 180)', why: PAGER_STANDS_OUT },
   'groupCurrent.fontSize': {
     mockup: '16px',
     why:

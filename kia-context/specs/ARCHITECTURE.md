@@ -11,7 +11,7 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11
+covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24, and the quiz and the end of a module for M25, on 2026-10-11
 last_updated: "2026-10-11"
 ---
 
@@ -486,6 +486,19 @@ page prints none.
 5. `derive.ts` counts everything the page states about itself; `facts.ts` is the spine every page asks
    for the corpus.
 6. `boot.ts` emits the channel-A script into `<head>`.
+7. `quiz.ts` (M25) reads a written module's `<name>.quiz.yaml` beside its markdown — 3 to 5 four-choice
+   questions, English and Turkish side by side under one shared answer index — and validates it with
+   zod, so a malformed quiz fails the build by name. The module page renders it at the very end, after
+   the completion checkbox and the pager, closed. **Nothing a reader answers is stored**: the quiz is
+   reinforcement, and the record has no field for it.
+
+**The end of a module page (M25)** is the completion checkbox, Previous / Next, and the quiz, in that
+order, and a `Before you start` box above the prose names the prerequisites. The module's own
+self-check, the submittal form, the stamps, `Checked by` and the sources counter left the page on the
+author's word. **The record still carries every field they wrote** — `quiz`, `submittals`,
+`sources` — so an existing reader's record parses, exports and merges unchanged, and `/profile/`
+still reports what it holds; there is simply no longer a control on a module page that adds to them.
+The module's task-list checkboxes are untouched and still write `checklist`.
 
 **In the browser**, mermaid renders client-side from that `data-mermaid` source. This is the cause of
 the diagram overflow measured on 2026-09-08: the injected SVG arrives at its natural content width —

@@ -61,15 +61,6 @@
     margin: 0;
   }
 
-  /* §12.4.3 — a completion claim that quietly became false. Secondary prose,
-     in the `meta` voice, and NOT in a caution colour: the module changing
-     after you signed it is a fact, not something the reader did wrong. */
-  .bz-signoff-drift {
-    margin: 10px 0 0;
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-meta);
-  }
-
   /* A write the browser refused. `role="alert"` carries the urgency, so the
      hue only has to agree with it — and `fault` is a graphic token, so the
      sentence is ordinary ink and the edge does the work. */
@@ -88,84 +79,381 @@
     flex-wrap: wrap;
   }
 
-  /* -- §12.6 the quick check ----------------------------------------------
-     `05`-B's four rows were rejected — "B replaces A", and A is what the
-     author chose — but the self-check itself is an existing capability and
-     keeps its place under the action row. Derived from the leaf card (**D30**),
-     which is `01`'s own shape for a thing set aside from the reading. */
+  /* -- the end of a module: completion, then the quick quiz -------------
+     2026-10-11, on the author's word: one familiar check-or-uncheck control,
+     Previous and Next, then a collapsed quiz. `SignOff.tsx` and
+     `QuickQuiz.tsx` carry the reasoning; what is here is their shape. The old
+     quick check's rules stood here under the same `bz-quiz` names and went with
+     the component, so nothing below inherits from it. */
+
+  .bz-complete { margin: 40px 0 0; }
+
+  /* The whole row is the label, so the target is the row. A raised surface
+     with a strong edge — a control, not a grouping — that takes the success
+     edge once the module is done. */
+  .bz-complete-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-raised);
+    cursor: pointer;
+  }
+
+  .bz-complete-row:hover { border-color: var(--color-primary); }
+
+  .bz-complete[data-done] .bz-complete-row { border-color: var(--color-success); }
+
+  /* The native checkbox is the control — what the keyboard, the `s` shortcut
+     and assistive software operate — laid over the WHOLE row and transparent,
+     so a press anywhere on the row is a press on the box itself and the drawn
+     box beside the words is what the eye reads. Not clipped to a pixel: a
+     control with no area is one a pointer, and a test, cannot find. */
+  .bz-complete-box {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .bz-complete-mark {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border: 2px solid var(--color-line-strong);
+    border-radius: var(--radius-base);
+    background: var(--color-surface-raised);
+    color: var(--color-on-primary);
+  }
+
+  /* Hidden by visibility and not by a transparent colour: forced colours
+     repaints `color` and would draw a check in an empty box. */
+  .bz-complete-mark svg { visibility: hidden; }
+
+  .bz-complete-box:checked + .bz-complete-mark {
+    border-color: var(--color-success);
+    background: var(--color-success);
+  }
+
+  .bz-complete-box:checked + .bz-complete-mark svg { visibility: visible; }
+
+  .bz-complete-box:focus-visible + .bz-complete-mark {
+    outline: 2px solid var(--bz-ring);
+    outline-offset: 2px;
+  }
+
+  .bz-complete-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .bz-complete-label {
+    color: var(--color-on-surface-title);
+    font: 600 var(--text-body) / 1.3 var(--font-sans);
+  }
+
+  .bz-complete-when {
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  /* A write the browser refused: the one thing that stays from the old block
+     (§12.1.4). `role="alert"` carries the urgency and the edge agrees. */
+  .bz-complete-refused {
+    margin: 10px 0 0;
+    padding: 8px 11px;
+    border-left: 2px solid var(--color-fault);
+    color: var(--color-on-surface);
+    font-size: var(--text-meta);
+  }
+
+  /* -- the quick quiz -------------------------------------------------------
+     A card that stands out by its edge and its one filled mark — the cobalt
+     disc — rather than by a fill, because this language has no tint scale.
+     Closed, it is one row asking the question; open, the questions follow. */
+
+  /* The questions need a script to answer them, so with none the quiz is not
+     drawn (§1), the way the palette menus are not: `data-hl-storage` is the
+     boot script's mark that script ran at all. */
+  html:not([data-hl-storage]) .bz-quiz { display: none; }
 
   .bz-quiz {
-    margin: 0 0 28px;
-    padding: 17px 20px;
-    border: 1px solid var(--color-line);
-    border-radius: var(--shape-leaf);
+    margin: 28px 0 0;
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-xl);
     background: var(--color-surface-raised);
   }
 
   .bz-quiz-head {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-    color: var(--color-on-surface-faint);
-    font: 600 var(--text-label) / 1 var(--font-sans);
-    letter-spacing: var(--tracking-label);
+    gap: 14px;
+    padding: 16px 18px;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .bz-quiz-head::-webkit-details-marker { display: none; }
+
+  .bz-quiz-icon {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-pill);
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    font: 600 17px / 1 var(--font-sans);
+  }
+
+  .bz-quiz-head-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  .bz-quiz-title {
+    color: var(--color-on-surface-title);
+    font: 600 var(--text-body) / 1.3 var(--font-sans);
+  }
+
+  .bz-quiz-sub {
+    color: var(--color-on-surface-muted);
+    font-size: var(--text-meta);
+  }
+
+  .bz-quiz-caret {
+    flex: none;
+    color: var(--color-on-surface-muted);
+  }
+
+  .bz-quiz[open] .bz-quiz-caret { rotate: 180deg; }
+
+  .bz-quiz-body {
+    padding: 4px 18px 18px;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .bz-quiz-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0 14px;
+  }
+
+  .bz-quiz-progress {
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-mark) / 1 var(--font-sans);
+  }
+
+  .bz-quiz-steps {
+    display: flex;
+    gap: 5px;
+  }
+
+  /* Decoration beside the words `Question n of m`, which carry the position;
+     right and wrong are also the check and the cross on the question itself. */
+  .bz-quiz-step {
+    width: 22px;
+    height: 6px;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-sunken);
+  }
+
+  .bz-quiz-step[data-state="right"] { background: var(--color-success); }
+
+  .bz-quiz-step[data-state="wrong"] { background: var(--color-fault); }
+
+  .bz-quiz-step[data-here] {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 1px;
+  }
+
+  .bz-quiz-restart {
+    margin-left: auto;
+    padding: 6px 4px;
+    border: 0;
+    background: transparent;
+    color: var(--color-primary);
+    font: 600 var(--text-meta) / 1 var(--font-sans);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
   }
 
   .bz-quiz-question {
-    margin: 0 0 12px;
+    margin: 0 0 14px;
+    color: var(--color-on-surface-title);
+    font: 600 var(--text-lead) / 1.4 var(--font-sans);
+  }
+
+  .bz-quiz-options {
+    display: grid;
+    gap: 10px;
+  }
+
+  .bz-quiz-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-raised);
     color: var(--color-on-surface);
+    font: 400 var(--text-body) / 1.45 var(--font-sans);
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .bz-quiz-option:not([aria-disabled]):hover {
+    border-color: var(--color-primary);
+    background: var(--color-surface-sunken);
+  }
+
+  .bz-quiz-option[aria-disabled] { cursor: default; }
+
+  /* A flex item's minimum is its content, so without this a long option would
+     push the button wider than the card instead of wrapping inside it. */
+  .bz-quiz-option-text { min-width: 0; }
+
+  .bz-quiz-letter {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-pill);
+    color: var(--color-on-surface-muted);
+    font: 600 var(--text-meta) / 1 var(--font-sans);
+  }
+
+  /* Right and wrong: an edge, a filled disc and a check or a cross — never
+     the hue alone. */
+  .bz-quiz-option[data-state="right"] { border-color: var(--color-success); }
+
+  .bz-quiz-option[data-state="right"] .bz-quiz-letter {
+    border-color: var(--color-success);
+    background: var(--color-success);
+    color: var(--color-on-primary);
+  }
+
+  .bz-quiz-option[data-state="wrong"] { border-color: var(--color-fault); }
+
+  .bz-quiz-option[data-state="wrong"] .bz-quiz-letter {
+    border-color: var(--color-fault);
+    background: var(--color-fault);
+    color: var(--color-on-primary);
+  }
+
+  .bz-quiz-option[data-state="other"] { color: var(--color-on-surface-muted); }
+
+  .bz-quiz-feedback { margin-top: 14px; }
+
+  .bz-quiz-feedback[data-correct] {
+    padding: 12px 14px;
+    border-left: 3px solid var(--color-success);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-sunken);
+  }
+
+  .bz-quiz-feedback[data-correct="false"] { border-left-color: var(--color-fault); }
+
+  .bz-quiz-verdict {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 4px;
+    color: var(--color-on-surface-title);
+    font-weight: 600;
+  }
+
+  .bz-quiz-feedback[data-correct="true"] .bz-quiz-verdict svg { color: var(--color-success); }
+
+  .bz-quiz-feedback[data-correct="false"] .bz-quiz-verdict svg { color: var(--color-fault); }
+
+  .bz-quiz-explain {
+    margin: 0;
+    color: var(--color-on-surface);
+    line-height: 1.5;
+  }
+
+  .bz-quiz-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 18px;
+  }
+
+  /* A step that is not open yet: `Next` before an answer, `Previous` on the
+     first question. The word stays legible and the control says it is off. */
+  .bz-quiz-nav .bz-btn:disabled {
+    filter: none;
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .bz-quiz-result { margin-top: 16px; }
+
+  .bz-quiz-score {
+    margin: 0 0 12px;
+    color: var(--color-on-surface-title);
     font-size: var(--text-lead);
   }
 
-  .bz-quiz-body {
+  .bz-quiz-recap {
+    display: grid;
+    gap: 4px;
     margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
-  .bz-quiz-note {
-    margin: 10px 0 0;
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-meta);
+  .bz-quiz-recap-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: var(--radius-base);
+    background: transparent;
+    color: var(--color-on-surface);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
   }
 
-  /* The reveal, and it is the module's own summary rather than a model answer
-     (§12.6). Set aside by a rule down its leading edge, which is the language's
-     way of saying "this is quoted from elsewhere". */
-  .bz-quiz-reveal {
-    margin: 14px 0 0;
-    padding-left: 13px;
-    border-left: 2px solid var(--color-line-strong);
+  .bz-quiz-recap-item:hover { background: var(--color-surface-sunken); }
+
+  .bz-quiz-recap-mark {
+    flex: none;
+    margin-top: 3px;
   }
 
-  .bz-quiz-reveal-label {
-    margin: 0 0 6px;
-    color: var(--color-on-surface-faint);
-    font: 600 var(--text-label) / 1 var(--font-sans);
-    letter-spacing: var(--tracking-label);
-  }
+  [data-correct="true"] > .bz-quiz-recap-item .bz-quiz-recap-mark { color: var(--color-success); }
 
-  .bz-quiz-award {
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-meta);
-  }
+  [data-correct="false"] > .bz-quiz-recap-item .bz-quiz-recap-mark { color: var(--color-fault); }
 
   /* -- the submittal, and the stamps --------------------------------------
      `05:134` — "Optional. Paste a repository link if you want a record of it."
      A form, so it is the language's field primitive and nothing local. */
-
-  .bz-submittal {
-    margin: 0 0 28px;
-  }
-
-  .bz-submittal-head {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-    color: var(--color-on-surface-faint);
-    font: 600 var(--text-label) / 1 var(--font-sans);
-    letter-spacing: var(--tracking-label);
-  }
 
   .bz-submittal-form {
     margin: 0 0 12px;

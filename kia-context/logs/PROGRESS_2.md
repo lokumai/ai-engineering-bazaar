@@ -16,7 +16,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M24, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked). Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M25, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — on branch feat/module-end-redesign. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-10-11
 ---
 
@@ -1093,16 +1093,16 @@ the milestone's promise and M9 to M14's failure was losing them quietly.
 
 | Capability | Where it lives now | Proven by |
 | --- | --- | --- |
-| Read a module, with its figures, code and diagrams | `/courses/[category]/[module]/` | `module-sheets` (33 instances), `prose-type`, `containment`, `mermaid` (6) |
+| Read a module, with its figures, code and diagrams | `/courses/[category]/[module]/`; since M25 its prerequisites are a `Before you start` box at the top | `module-sheets` (33 instances), `prose-type`, `containment`, `mermaid` (6) |
 | Find a module three ways, and keep the choice | `/sheets/` | `catalog` (11), `views.test.ts`'s five reveal cases |
 | Filter the catalog by level, with no JavaScript | **M17: the five level addresses** — the chips are links (**D62**), so the one control here that needed a bundle no longer does | `catalog`'s keyboard case, and `redirects`' served-HTML checks |
 | See every module in a level, with its topics | **M17: `/sheets/<level>/`** — five prerendered entries into the one catalog. The topics are a column on the table and a line on every card, so the capability moved with the route rather than after it | `index-sheet` (4), `record-index` (9), `redirects` (18 for the fold), `catalog`'s level-page comparison |
 | Read a level's own README | **M17: `/sheets/<level>/`**, under `General notes`. The retired level page was the only renderer of it, and the brief's ledger did not list it | `health` on a level path, and the `General notes` section itself |
-| Complete a module, and take it back | the module's action row | `record-sheet` (36) |
+| Complete a module, and take it back | **M25: one checkbox at the end of the module**, `Mark this module as complete` — the action row's `Complete` / `Un-complete` pair is gone (**D76**) | `record-sheet`, `features`, `anatomy`'s end-of-module order |
 | Complete a module from the overview | **M18: `/profile/` alone.** The home page drew control C as well until the author took the level grid off the front door; the component and the mockup are unchanged, and the count of surfaces drawing it went from two to one | `completion` (9), which is where `home.spec.ts`'s eight control-C tests moved, plus the one that measures the dials against the rows |
-| A self-check, self-marked, no score kept | the module's quick check | `record-sheet` §12.6 cases |
+| ~~A self-check, self-marked, no score kept~~ | **Removed from the site in M25 on the author's word**, replaced by the quick quiz: 3 to 5 four-choice questions with an explanation each, nothing stored (**D77**). The `**Quick Check**:` line stays in the markdown | `module-end` (7), `quizzes.test.ts` |
 | A checklist that is never a gate | the module | `record-sheet` §12.4.1 cases |
-| Register a repository, refusing a hostile URL | the module's submittal | `record-sheet`'s `HOSTILE_REPOS` loop |
+| ~~Register a repository, refusing a hostile URL~~ | **Removed in M25 on the author's word** — no page adds a submittal any more. The record keeps the ones it holds and `/profile/` still lists them; the URL allowlist stays in `lib/` with its unit tests | — |
 | See how far through each level you are | **M18: `/profile/`**, the rail and the catalog. `/` no longer reports on the reader at all | `fidelity` stage 7 (the annulus, and the channel-A percentage with JS aborted), `rail`, and `home.spec.ts`'s assertion that the front door carries no `.bz-cmod` and no tally |
 | A role, and the path it suggests | `/profile/` | `path` (6), `category-surfaces`'s nine-role pair |
 | What is waiting on you | `/profile/` | `record-pages` (28) |
@@ -3500,6 +3500,82 @@ Two more requests from the author, and two defects they exposed.
       `BRAINSTORM_2.md`'s `## Open questions` heading instead of keeping it, so
       O1–O4 sat under D74 on `main`. Put back with D75; nothing else in that
       file moved.
+
+---
+
+## 🏁 Milestone M25: The end of a module, rebuilt, and a quick quiz — SHIPPED ON A BRANCH
+
+Branch `feat/module-end-redesign`, from `main` after PR #24. The author's
+request, 2026-10-11, in one message: everything at the end of a module after
+the references goes (*"I DO NOT NEED ANY SUCH THING"*), and in its place a
+familiar completion control, Previous and Next that stand out, and a collapsed
+quiz written for every ready module by parallel Opus agents. Three more arrived
+while it was built: the Catalog dropdown's `View Curriculum` → `Curriculum`, the
+right-hand `On this page` index scrolling itself, and the module-end order.
+
+### Deliverables
+
+- [x] **One completion checkbox** (`SignOff.tsx`, **D76**): `Mark this module as
+      complete`, the date beside it once true, the `s` shortcut unchanged. Gone:
+      `Completion · Self-asserted`, the objectives sentence, `Un-complete`, the
+      drift line and the `Save name` / `Skip` prompt.
+- [x] **Previous and Next that stand out**: `Previous` outlined in `primary`,
+      `Next` filled with it, each a label over the title with an arrow. Three
+      `01` facts in `AUTHOR_DEVIATIONS`; DESIGN.md's eighth deviation; **D45**
+      settled, the label now clears 4.5:1.
+- [x] **A quick quiz at the very end**, closed under `Want a quick quiz?`: one
+      question at a time, an answer final until Start over, a check or cross
+      and an explanation, Previous / Next, a results list, Start over. Hidden
+      with no script. Nothing stored (**D77**).
+- [x] **Nineteen quizzes**, one per written module, from nineteen Opus agents in
+      parallel against one brief; every one validated by the agent, by the
+      build (`quiz.ts`) and by `tests/corpus/quizzes.test.ts`.
+- [x] **Prerequisites as `Before you start`** at the top, by title.
+- [x] **Removed from the module page**: the quick check, the submittal form, the
+      `Marked by` card (stamps, `Checked by`, `Repositories`) and the sources
+      counter. The record keeps their fields.
+- [x] **The Catalog dropdown reads `Curriculum`.**
+- [x] **The page index scrolls itself** under the bar, with the rail's 8px bar,
+      and a wheel over it leaves the page still (`rail-scrollbar.spec.ts`).
+
+### Report — M25, 2026-10-11
+
+**The agents' reports found two gaps in the corpus** that are the author's:
+`training_tr.md` has no `When not to fine-tune` section (12 `##` in the English,
+11 in the Turkish) and `tools_tr.md` lacks the `send_email` example and the
+paragraph on wrapping APIs. Each agent wrote its Turkish for those questions
+itself, with the English terms in parentheses.
+
+**Three things measured rather than assumed.** A clipped native checkbox — the
+first way the completion control was built — is invisible to Playwright and has
+no area a pointer can find; laid over its whole row at zero opacity it is a real
+target, which is the shape that shipped. The dialog-free quiz renders its
+buttons on the server, so with no script it drew controls that did nothing; it
+is hidden then, by the boot script's mark. And the `On this page` index overflowed
+the window on long modules; it now scrolls inside, proven by a test that fails
+with the height cap removed.
+
+**Every guard added was broken on purpose and went red**: the quiz's final
+answer, the quiz with no script, the index's height cap, the current-level and
+filter-bar checks before it.
+
+**Not part of this milestone**: the five LLM Fundamentals heading renames the
+author asked for earlier are in the working tree and not committed, waiting for
+the rest of the heading list.
+
+**The gate.**
+
+| | Measured |
+| --- | --- |
+| Typecheck | clean |
+| Unit | **2,171 passed / 84 files** |
+| Build | **80 HTML files**; the base-path build carries the prefix on **5,304 of 5,304** internal `href`/`src` |
+| Browser | **1,183 passed / 60 skipped / 0 failed** at 1440 / 1024 / 390, on the export |
+
+`completion.spec.ts`'s frame-one case failed twice in batch runs during the work
+and passed alone three times out of three and in the final full run: it measures
+first paint, and it is timing-sensitive under load rather than broken by this
+milestone, which does not touch the page it reads.
 
 ---
 

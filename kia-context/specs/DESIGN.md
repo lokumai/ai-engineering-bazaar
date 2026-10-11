@@ -11,7 +11,7 @@ source: playground/01-theme-T4-ground-G3-powder.html (light) · playground/01-th
 authority: blueprint
 writes: agent, as the language evolves
 status: active
-covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with seven recorded deviations (the sixth and seventh, the logo and the rail group, 2026-10-11) and the three reader palettes"
+covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with eight recorded deviations (the sixth to eighth, the logo, the rail group and the pager, 2026-10-11), the three reader palettes, and the end of a reading page"
 last_updated: 2026-10-11
 ---
 
@@ -589,11 +589,22 @@ cream color is enough"*. The head is its siblings' size; the fill, the strong
 edge and the hued leading bar remain, so it is still told apart three ways and
 never by colour alone. The fidelity harness records it in `AUTHOR_DEVIATIONS`.
 
-**Three of the seven are floors and four are the author's.** The code comment
-deviation, the pager's tracks and the rail's hairline were forced; the `20ch`
-cap, the authorship line, the logo and the rail group's size were chosen.
+**AN EIGHTH DEVIATION, AND THE AUTHOR'S: THE PAGER STANDS OUT.** `01:240-243`
+draws a pager tile as a quiet white box with a hairline, 13×15 padding, a 4px
+radius and a faint direction label over the title. **The author replaced it on
+2026-10-11** with tiles that *"actually stand out from the remaining of the
+center panel"*: taller, at the `lg` radius, edged in `line-strong`, `Previous`
+outlined with its label and arrow in `primary`, `Next` filled with `primary`.
+The grid, its gap and its margin are still `01`'s. The fidelity harness
+records the three facts in `AUTHOR_DEVIATIONS`, and the label now clears the
+4.5:1 text floor in both themes, which settles **D45**.
 
-**The `20ch` cap, the authorship line, the logo and the rail group's size are the only entries in this file that the author decided rather than a measurement forcing.**
+**Three of the eight are floors and five are the author's.** The code comment
+deviation, the pager's tracks and the rail's hairline were forced; the `20ch`
+cap, the authorship line, the logo, the rail group's size and the pager's look
+were chosen.
+
+**The `20ch` cap, the authorship line, the logo, the rail group's size and the pager's look are the only entries in this file that the author decided rather than a measurement forcing.**
 The rule stands: the mockup outranks this document, a measured accessibility floor outranks the
 mockup (**D34**), and the author outranks all three — stated here so a third entry cannot be added
 by an agent reading the first two as precedent.
@@ -796,8 +807,21 @@ the same word the rail spends on its current group: one word, one meaning, acros
 
 **Actions.** A top-ruled action row holds one `button-primary` — cobalt, white type — beside at most
 one `button-quiet`, which is white with a strong hairline. Primary hover brightens the fill rather
-than changing the hue. Below that, a two-up `pager` of white hairlined tiles, each with a faint
-`mark` label over a titled destination.
+than changing the hue. Below that, a two-up `pager`: `Previous` outlined in `primary` and `Next`
+filled with it, each a `mark` label over a titled destination with an arrow on the outer side (the
+eighth deviation above).
+
+**The end of a reading page** is three things in this order, and nothing else: a completion row —
+one real checkbox, the whole row its label, a drawn box that fills with `success` and a white check
+when it is ticked, the date beside it once true — then the pager, then a quiz card closed under one
+row: a `primary` disc with a question mark, a title and a count. Open, the card asks one question at
+a time; four options are rows with a lettered disc that becomes a check in `success` or a cross in
+`fault`, never the hue alone, and an explanation follows on a sunken panel edged in the verdict's
+colour.
+
+**A prerequisite box** sits above the prose when a page has prerequisites: a raised surface with a
+`primary` leading edge, a book glyph, `Before you start`, and the prerequisites as underlined titled
+links.
 
 **The aside** is a sticky in-page index: a `label` heading, then items indented behind a `line` rail
 that turns `primary` on the current item. It is the first thing to go when the window narrows.

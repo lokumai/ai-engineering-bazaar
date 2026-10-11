@@ -81,44 +81,6 @@ const EMPTY_READOUT = [`Completed 00/${SHEETS.length}`, 'Reading time 0 m']
 const NO_READING = [`Completed --/${SHEETS.length}`, 'Reading time --']
 
 /**
- * §7.4 / §5.9 — sheet 13's four slots, every one at zero against its real
- * threshold.
- *
- * `SOURCES OPENED`, not `SOURCES`: the title block prints its own `SOURCES` row
- * counting the citations ON the sheet, and a reader read the two side by side
- * and took the stamp for a broken meter. Seven other places in the project
- * already said "sources opened"; the stamps were the outlier.
- */
-const EMPTY_STAMPS = [
-  'COMPLETION 0 OF 1',
-  'QUIZ 0 OF 1',
-  `CHECKLIST 0 OF ${CHECKLIST_ITEMS}`,
-  'SOURCES OPENED 0 OF 5',
-]
-
-/**
- * §12.3.1's row, wherever the layout puts it.
- *
- * It used to be TWO — the 240px right-rail panel and the strip below the h1,
- * one of them hidden at any given width — and this helper collected both so
- * neither could go stale unnoticed. M11 cut the rail back to the sections and
- * the dependency block and moved the module's facts into the column, so there
- * is exactly one now. Both selectors are kept: the panel is still built
- * (the retired title block said why) and this helper should find it if a page ever
- * renders it again.
- */
-function checkedBy(page: Page) {
-  return page
-    .locator('.bz-card-facts > div')
-    .filter({ has: page.locator('dt', { hasText: /^checked by$/i }) })
-    .locator('dd')
-}
-
-/**
- * The module's own printed `REVISION` — what §12.4.3 records a completion
- * against. Same story as `checkedBy`: it is in the strip now.
- */
-/**
  * The hash the page prints for THIS FILE, read off the footer.
  *
  * It used to be the title block's `REVISION` row. M16 stage 5 replaced that
@@ -132,43 +94,12 @@ function printedRevision(page: Page) {
 }
 
 /**
- * §5.9's slot text, whitespace-normalised: `SIGN-OFF 0 OF 1`.
- *
- * VISIBLE slots only. §7.4's grid now renders in both of §5.5's title-block
- * variants, so an A0 sheet carries two of them: the right rail's panel, and the
- * horizontal strip that stands in for it below 1280px. Exactly one is ever on
- * screen — the strip is `xl:hidden`, which is `display: none` and therefore out
- * of the accessibility tree as well — but both are in the DOM, and an unfiltered
- * locator reported each stamp twice.
+ * 2026-10-11 — a module is completed with ONE checkbox, `Mark this module as
+ * complete`, where it was a `Complete` button with a separate `Un-complete`
+ * beside it. Found by its role and its name, so a restyle cannot hide it.
  */
-function stampConditions(page: Page): Promise<string[]> {
-  return page
-    .locator('.bz-stamp-slot')
-    .evaluateAll((slots) =>
-      slots
-        .filter((slot) => (slot as HTMLElement).checkVisibility())
-        /*
-          Each CHILD's text, joined by a space, rather than the slot's rendered
-          `innerText`. A stamp is a name span beside a condition span, and
-          whether the two are separated by whitespace when rendered is a
-          LAYOUT fact — stage 7 owns the completion mark's design and the
-          spans are unstyled until it lands, so `innerText` ran them together
-          as `COMPLETION0 OF 1`. What this test is about is the words and the
-          numbers, and those did not change.
-        */
-        .map((slot) =>
-          [...slot.children]
-            .map((child) => (child.textContent ?? '').replace(/\s+/g, ' ').trim())
-            .filter((text) => text !== '')
-            .join(' ')
-            .trim(),
-        ),
-    )
-}
-
-const signOff = (page: Page) => page.getByRole('button', { name: 'Complete', exact: true })
-const signedOff = (page: Page) => page.getByRole('button', { name: /^Completed / })
-const unsign = (page: Page) => page.getByRole('button', { name: 'Un-complete', exact: true })
+const completion = (page: Page) =>
+  page.getByRole('checkbox', { name: 'Mark this module as complete' })
 const anyDialog = (page: Page) => page.locator('[role="dialog"], [role="alertdialog"], dialog')
 
 /*
@@ -187,10 +118,7 @@ const anyDialog = (page: Page) => page.locator('[role="dialog"], [role="alertdia
   already been bitten by four times, and the rename that these four are waiting
   for is stages 7 and 8.
 */
-const drift = (page: Page) => page.locator('.bz-signoff-drift')
-const quizReveal = (page: Page) => page.locator('.bz-quiz-reveal')
 const pendingHint = (page: Page) => page.locator('.bz-pending')
-const submittalItems = (page: Page) => page.locator('.bz-submittal-item')
 
 /**
  * Every `window.confirm`, `alert` and `beforeunload` this page raised.
@@ -231,19 +159,15 @@ test('the module as exported is the honest empty form (§12.2, §12.13 class 1)'
   await page.goto(SHEET.path)
 
   // §12.4.1 — the control is on the sheet from the first visit, unpressed.
-  await expect(signOff(page)).toHaveAttribute('aria-pressed', 'false')
-  await expect(unsign(page)).toHaveCount(0)
+  await expect(completion(page)).not.toBeChecked()
 
-  // §12.3.1 — both rows print `—`, which is the ISO 128 hidden line the rest of
-  // the set already reads as "not yet", not a missing value.
-  // One row now, not two: see `checkedBy` above.
-  await expect(checkedBy(page)).toHaveCount(1)
-  await expect(checkedBy(page)).toHaveText(['—'])
+  // The `Checked by` and `Repositories` rows left the module page with the
+  // `Marked by` card on 2026-10-11; the profile page still prints them.
+  await expect(page.locator('.bz-card-facts')).toHaveCount(0)
 
-  // §12.5.4 — every slot states its exact threshold and its current count. That
-  // single rule is what makes a stamp informational rather than controlling, and
-  // it holds in the state where every count is zero.
-  expect(await stampConditions(page)).toEqual(EMPTY_STAMPS)
+  // The module's stamps (§7.4) left the page with the rest of the `Marked by`
+  // card on 2026-10-11.
+  await expect(page.locator('.bz-stamp')).toHaveCount(0)
 
   // §12.2 — `--` is not `00/32`. The first says "no reading", the second says
   // "nothing recorded", and only the second is a fact about the reader.
@@ -261,9 +185,7 @@ test('with nothing recorded the module settles on 00/32, not on -- (§12.2 chann
   await waitForHydratedReadout(page)
 
   await expect(readoutCells(page)).toHaveText(EMPTY_READOUT)
-  await expect(signOff(page)).toHaveAttribute('aria-pressed', 'false')
-  await expect(checkedBy(page)).toHaveText(['—'])
-  expect(await stampConditions(page)).toEqual(EMPTY_STAMPS)
+  await expect(completion(page)).not.toBeChecked()
 
   // A channel-B readout that mismatched its own prerender would be logged here
   // as a recoverable hydration error, which is the failure `suppressHydrationWarning`
@@ -337,8 +259,7 @@ test('a seeded record stamps <html> inside the first frame (§12.2 channel A)', 
   await expect(page.locator('footer .bz-readout')).toHaveAttribute('data-hydrated', /true|false/)
   await waitForHydratedReadout(page)
   await expect(page.locator('footer .bz-readout')).toHaveAttribute('data-hydrated', 'true')
-  await expect(signOff(page)).toHaveCount(0)
-  await expect(signedOff(page)).toBeVisible()
+  await expect(completion(page)).toBeChecked()
 })
 
 test('with nothing stored the first frame claims no record (§12.2, §12.13)', async ({ page }) => {
@@ -502,8 +423,8 @@ test('channel A stays true across a client transition (§12.2)', async ({ page }
 
   await page.goto(SHEET.path)
   await waitForHydratedReadout(page)
-  await signOff(page).click()
-  await expect(signedOff(page)).toBeVisible()
+  await completion(page).check()
+  await expect(completion(page)).toBeChecked()
   expect(await hasRootClass(page, `hl-signed-${SHEET.module}`)).toBe(true)
   expect(await hasRootClass(page, `hl-cat-${SHEET.category}-started`)).toBe(true)
   expect(await hasRootClass(page, `hl-cat-${OTHER.category}-started`)).toBe(false)
@@ -558,8 +479,8 @@ test('channel A stays true across a client transition (§12.2)', async ({ page }
   await expect(page.locator('main h1')).toHaveText(OTHER.title)
   expect(await documentLoads(page), 'the router did a full page load').toBe(1)
 
-  await signOff(page).click()
-  await expect(signedOff(page)).toBeVisible()
+  await completion(page).check()
+  await expect(completion(page)).toBeChecked()
 
   // The stamp the boot script could not have known about, applied with no reload.
   expect(await hasRootClass(page, `hl-cat-${OTHER.category}-started`)).toBe(true)
@@ -587,14 +508,13 @@ test('sign-off records the module’s own revision and survives a reload (§12.4
   const revision = printed.match(/Rev ([0-9a-f]{7,40})/i)?.[1] ?? ''
   expect(revision, 'the module printed no revision to sign against').toMatch(/^[0-9a-f]{7,40}$/)
 
-  await signOff(page).click()
+  await completion(page).check()
 
   // §12.4.1 — the control states the assertion and its date, and `UNSIGN` is
   // adjacent rather than hidden behind the pressed toggle.
-  await expect(signedOff(page)).toHaveAttribute('aria-pressed', 'true')
-  await expect(signedOff(page)).toHaveText(/^Completed \d{4}-\d{2}-\d{2}$/)
-  await expect(unsign(page)).toBeVisible()
-  await expect(checkedBy(page)).toHaveText(['Ada Lovelace'])
+  await expect(completion(page)).toBeChecked()
+  // The date it was completed, said once beside the box.
+  await expect(page.locator('.bz-complete-when')).toHaveText(/^Completed \d{1,2} \w{3} \d{4}$/)
 
   // §12.4.3 — the hash AT sign-off, which is what makes the drift line possible
   // later. The record must hold the sheet's own printed REV, not HEAD.
@@ -604,8 +524,7 @@ test('sign-off records the module’s own revision and survives a reload (§12.4
 
   // The whole point of §12.1.4's flush: it came back.
   await page.reload()
-  await expect(signedOff(page)).toHaveAttribute('aria-pressed', 'true')
-  await expect(checkedBy(page)).toHaveText(['Ada Lovelace'])
+  await expect(completion(page)).toBeChecked()
   expect(await hasRootClass(page, `hl-signed-${SHEET.module}`)).toBe(true)
 })
 
@@ -620,16 +539,13 @@ test('un-complete reverses the assertion and clears its channel-A stamp (§12.4.
   await waitForHydratedReadout(page)
   expect(await hasRootClass(page, `hl-signed-${SHEET.module}`)).toBe(true)
 
-  await unsign(page).click()
+  await completion(page).uncheck()
 
-  await expect(signOff(page)).toHaveAttribute('aria-pressed', 'false')
-  await expect(unsign(page)).toHaveCount(0)
+  await expect(completion(page)).not.toBeChecked()
   // §12.3.1 — not signed off prints `—`, which is a different state from
   // `UNSIGNED`: the first is "nobody signed this", the second is "signed by
   // somebody who declined to give a name".
-  await expect(checkedBy(page)).toHaveText(['—'])
   // §12.4.3 — with no assertion there is no revision to be adrift from.
-  await expect(drift(page)).toHaveCount(0)
 
   const cleared = await waitForSheet(page, SLUG, (sheet) => sheet?.signedOff == null)
   expect(cleared.signedRevision).toBeNull()
@@ -643,44 +559,17 @@ test('neither sign-off nor un-complete raises a confirmation (§12.4.1, §12.15)
   await page.goto(SHEET.path)
   await waitForHydratedReadout(page)
 
-  await signOff(page).click()
-  await expect(signedOff(page)).toBeVisible()
+  await completion(page).check()
+  await expect(completion(page)).toBeChecked()
   expect(raised, 'sign-off raised a dialog').toEqual([])
   await expect(anyDialog(page)).toHaveCount(0)
 
-  await unsign(page).click()
-  await expect(signOff(page)).toBeVisible()
+  await completion(page).uncheck()
+  await expect(completion(page)).not.toBeChecked()
   // Un-sign is its own undo. §12.15's erase is the only confirmation on this
   // site, and it only works because nothing else spends the reader's attention.
   expect(raised, 'un-complete raised a dialog').toEqual([])
   await expect(anyDialog(page)).toHaveCount(0)
-})
-
-test('§12.4.3 prints the drift when the module has moved under a sign-off', async ({ page }) => {
-  await seedRecord(page, {
-    sheets: { [SLUG]: signedSheet('a1b2c3d') },
-    identity: { name: 'Ada Lovelace', markSeed: '0123abcd' },
-  })
-  await page.goto(SHEET.path)
-  await waitForHydratedReadout(page)
-
-  /*
-    THE HASH, not the whole footer. `printedRevision` used to be the title
-    block's `REVISION` row and M16 stage 5 retargeted it to the `<footer>`,
-    which prints the revision inside a line of other facts — so trimming its
-    `innerText` and interpolating the result into a `RegExp` could never match,
-    and would not even be a valid pattern once the footer grew a `(` or a `?`.
-    The sign-off test above already extracts it correctly; this is the same
-    expression, and it is the reason a helper that returns a whole element
-    should never be read as if it returned a field.
-  */
-  const printed = await printedRevision(page).innerText()
-  const revision = printed.match(/Rev ([0-9a-f]{7,40})/i)?.[1] ?? ''
-  expect(revision, 'the footer prints no revision to be adrift from').not.toBe('')
-
-  await expect(drift(page)).toHaveText(
-    new RegExp(`Completed 2026-08-14 against rev a1b2c3d . module now at rev ${revision}`),
-  )
 })
 
 // ---------------------------------------------------------------------------
@@ -694,18 +583,17 @@ test('the first sign-off mints one mark seed and nothing mints a second (§12.3.
   await waitForHydratedReadout(page)
   expect((await readRecord(page))?.data.identity.markSeed ?? null).toBeNull()
 
-  await signOff(page).click()
+  await completion(page).check()
   const minted = (await waitForRecord(page, (env) => env?.data.identity.markSeed != null)).data
     .identity.markSeed
   // §12.3.5 — 8 lowercase hex, four bytes from the CSPRNG, never derived from
   // the name: a name-derived mark would silently change on every already-signed
   // sheet the moment the reader renamed themselves.
   expect(minted).toMatch(/^[0-9a-f]{8}$/)
-  await page.getByRole('button', { name: 'SKIP', exact: true }).click()
 
   // A SECOND sign-off, on another sheet, is not a second mint.
   await page.goto(OTHER.path)
-  await signOff(page).click()
+  await completion(page).check()
   await waitForSheet(page, OTHER_SLUG, (sheet) => sheet?.signedOff != null)
   expect((await readRecord(page))?.data.identity.markSeed).toBe(minted)
 
@@ -723,66 +611,6 @@ test('the first sign-off mints one mark seed and nothing mints a second (§12.3.
 // §12.3.2, §12.3.3 — the name, asked for once
 // ---------------------------------------------------------------------------
 
-test('the name is asked for inline at the first sign-off (§12.3.2, §12.3.3)', async ({ page }) => {
-  await page.goto(SHEET.path)
-  await waitForHydratedReadout(page)
-  // Nothing has asked yet: the sheet is the first-run experience.
-  await expect(page.locator('.bz-signoff form')).toHaveCount(0)
-
-  await signOff(page).click()
-  const form = page.locator('.bz-signoff form')
-  await expect(form).toBeVisible()
-
-  // §12.3.2 — not a modal. The drawing is asking who is checking it, and it asks
-  // in the empty `CHECKED BY` field of its own title block.
-  await expect(anyDialog(page)).toHaveCount(0)
-
-  // §12.3.3 — the label is visible and persistent, never a placeholder standing
-  // in for one, and the field is marked optional IN WORDS.
-  const label = form.locator('label')
-  await expect(label).toBeVisible()
-  await expect(label).toContainText('Name or initials, as you would sign a drawing')
-  await expect(label.locator('.bz-field-optional')).toHaveText('Optional')
-
-  const field = form.getByRole('textbox', { name: /Name or initials, as you would sign a drawing/ })
-  await expect(field).toBeVisible()
-  await expect(field).not.toHaveAttribute('placeholder', /.*/)
-  // The WHATWG token for "a typically short name used instead of the full
-  // name", which is also what satisfies SC 1.3.5.
-  await expect(field).toHaveAttribute('autocomplete', 'nickname')
-  await expect(field).toHaveAttribute('autocapitalize', 'off')
-  await expect(field).toHaveAttribute('spellcheck', 'false')
-  await expect(field).toHaveAttribute('dir', 'auto')
-
-  // §12.1.7 — the boundary that actually matters, in the reader's own hands.
-  //
-  // The old assertion pinned "Never sent anywhere", which §14 made false: the
-  // name now reaches `record_state`, and `profiles.display_name` besides. The
-  // sentence lives in `lib/record/scope.ts` so that the promise and the
-  // behaviour cannot drift, and it is asserted through the constant here for
-  // the same reason. What has NOT changed is the clause the section is about:
-  // the export is where the name leaves the reader's device by their own hand.
-  await expect(form.locator('.bz-field-hint')).toHaveText(NAME_SCOPE)
-
-  // §12.3.2 — genuinely skippable, and stated as a control rather than implied
-  // by a dismissal.
-  await expect(page.getByRole('button', { name: 'SKIP', exact: true })).toBeVisible()
-})
-
-test('skipping the name is a legitimate state and prints UNSIGNED (§12.3.2)', async ({ page }) => {
-  await page.goto(SHEET.path)
-  await waitForHydratedReadout(page)
-  await signOff(page).click()
-  await page.getByRole('button', { name: 'SKIP', exact: true }).click()
-
-  await expect(page.locator('.bz-signoff form')).toHaveCount(0)
-  // Never a placeholder person: no "Anonymous", no "Reader", no invented name.
-  // Absence of a name is information; a fake name would be a claim.
-  await expect(checkedBy(page)).toHaveText(['UNSIGNED'])
-  expect((await waitForSheet(page, SLUG, (s) => s?.signedOff != null)).signedOff).not.toBeNull()
-  expect((await readRecord(page))?.data.identity.name ?? null).toBeNull()
-})
-
 test('there is no first-run gate anywhere on the index (§12.3.2)', async ({ page }) => {
   const problems = watchPage(page)
   await page.goto('/')
@@ -797,151 +625,9 @@ test('there is no first-run gate anywhere on the index (§12.3.2)', async ({ pag
   expect(problems.consoleErrors).toEqual([])
 })
 
-test('a Turkish name keeps its dotted İ and its whole stored value (§12.3.4)', async ({
-  page,
-}) => {
-  // For an audience of Turkish engineers, mis-casing the first letter of
-  // somebody's own name in their own title block is the single most visible i18n
-  // failure available: `"ilker".toUpperCase()` yields a dotless I.
-  const NAME = 'İlker Cevheri'
-
-  await page.goto(SHEET.path)
-  await waitForHydratedReadout(page)
-  await signOff(page).click()
-  await page.locator('.bz-signoff form input').fill(NAME)
-  await page.getByRole('button', { name: 'SAVE NAME', exact: true }).click()
-
-  // §12.3.4 — never truncate the stored value; ellipsis is a layout affordance
-  // only, and the full string must appear unabbreviated on the sheet.
-  const stored = await waitForRecord(page, (env) => env?.data.identity.name === NAME)
-  expect(stored.data.identity.name).toBe(NAME)
-
-  /*
-    §12.3.1 — `<bdi dir="auto">`, so a name cannot re-order the label and value
-    around it.
-
-    WHAT IS PAINTED, not which rule paints it. This asserted
-    `textTransform === 'none'`, which was a real check while the row carried an
-    uppercase treatment and something had to override it — and which M16 stage 0
-    made vacuously true by deleting every uppercase rule in the project. An
-    assertion that passes because its subject no longer exists has stopped
-    testing anything.
-
-    `innerText` has `text-transform` applied by the time Chrome hands it over
-    (`record-pages.spec.ts` depends on exactly that), so comparing it to the
-    typed string tests the OUTCOME: this name reaches the reader's eye with its
-    dot, whatever the cascade above it does. That holds under the current
-    language, would have failed under the old one without the override, and
-    fails again the day somebody reintroduces an uppercase on this row.
-  */
-  const printed = checkedBy(page).first().locator('bdi[dir="auto"]')
-  await expect(printed).toHaveText(NAME)
-  expect(await printed.evaluate((node) => (node as HTMLElement).innerText)).toBe(NAME)
-
-  // §12.3.4 — the initials are graphemes taken AS TYPED. `İC`, with the dot,
-  // and measured the same way: `"ilker".toUpperCase()` gives a dotless I, and
-  // so does `text-transform: uppercase` off the wrong `lang`.
-  await page.goto('/profile/')
-  const initials = page.locator('.bz-identity-initials')
-  await expect(initials).toHaveText('İC')
-  expect(await initials.evaluate((node) => (node as HTMLElement).innerText)).toBe('İC')
-})
-
 // ---------------------------------------------------------------------------
 // §12.6 — the Quick Check
 // ---------------------------------------------------------------------------
-
-test('nothing is revealed before an answer is written (§12.6)', async ({ page }) => {
-  await page.goto(SHEET.path)
-  await expect(page.locator('.bz-quiz-question')).toHaveText(/\S/)
-
-  // ABSENT, not disabled (§11.25): a reveal-before-attempt control destroys the
-  // retrieval effect, which is the one mechanism here the evidence strongly
-  // supports, and a greyed-out button still tells the reader an answer is behind
-  // it. `getByRole` finds a disabled button too, which is what makes this the
-  // right assertion rather than `toBeDisabled`.
-  await expect(page.getByRole('button', { name: /COMPARE/ })).toHaveCount(0)
-  await expect(page.getByRole('button', { name: 'MATCHED', exact: true })).toHaveCount(0)
-  await expect(page.getByRole('button', { name: 'DID NOT MATCH', exact: true })).toHaveCount(0)
-  await expect(quizReveal(page)).toHaveCount(0)
-
-  // And it says why, without praise, blame or an exclamation mark (§12.14.1).
-  await expect(page.locator('.bz-quiz-note').first()).toHaveText(
-    'The module’s summary can be compared once an answer is written.',
-  )
-})
-
-test('the reveal is the module’s own summary, named as that (§12.6)', async ({ page }) => {
-  await page.goto(SHEET.path)
-  const question = (await page.locator('.bz-quiz-question').innerText()).trim()
-
-  await page.locator('.bz-quiz textarea').fill('Read, act, exfiltrate — the trifecta.')
-  const compare = page.getByRole('button', { name: /^Compare with the module/ })
-  await expect(compare).toHaveText('Compare with the module’s summary')
-  await compare.click()
-
-  // Labelled exactly what it is. It is the closest authored thing that exists,
-  // and naming it accurately costs nothing — whereas a reveal button over an
-  // absent or generated answer is the §1 failure this codebase exists to
-  // prevent.
-  await expect(page.locator('.bz-quiz-reveal-label')).toHaveText('The module’s summary')
-  // `.bz-prose`, which is what `QuickCheck` renders. The bare `.prose` this
-  // asked for was the retired design's name and M16 stage 5 replaced it, so
-  // the locator resolved to nothing and the assertion timed out rather than
-  // failing on merit. Nothing about the reveal itself was wrong.
-  await expect(quizReveal(page).locator('.bz-prose')).toHaveText(/\S/)
-
-  // §12.6 — `summarySection` removes the self-check paragraph from the section
-  // it returns, because every one of them is authored INSIDE `## Summary`. Without
-  // that the sheet reprints the question directly beneath the reader's own answer
-  // to it. Counting occurrences over the whole page is what catches it.
-  const body = await page.locator('body').innerText()
-  expect(body.split(question).length - 1, 'the question is printed twice').toBe(1)
-
-  // §5.10's `REVEAL MODEL ANSWER` is withdrawn, and the phrase goes with it.
-  expect(body).not.toMatch(/model answer/i)
-})
-
-/**
- * §12.5.1, amending §5.10's 60/40/20 tier: the act worth paying for is the
- * retrieval attempt, so both outcomes pay the same. Tiering rewards "matched"
- * and penalises retries, which inverts the retrieval-practice evidence.
- */
-for (const outcome of ['MATCHED', 'DID NOT MATCH'] as const) {
-  test(`${outcome} records the self-assessment and pays the flat 60 (§12.5.1, §12.6)`, async ({
-    page,
-  }) => {
-    await page.goto(SHEET.path)
-    await waitForHydratedReadout(page)
-    await page.locator('.bz-quiz textarea').fill('An answer, written before anything is revealed.')
-    await page.getByRole('button', { name: /^Compare with the module/ }).click()
-
-    const button = page.getByRole('button', { name: outcome, exact: true })
-    await expect(button).toHaveAttribute('aria-pressed', 'false')
-    await button.click()
-    await expect(button).toHaveAttribute('aria-pressed', 'true')
-
-    // §12.4.2 — self-assessment is its own axis and NOTHING else moves with
-    // it: no pass, no grade, no mark, and since M13 no points either. Both
-    // cells of the readout are asserted unchanged, which is the stronger form
-    // of the claim the old `XP 60` assertion made — it read the one cell that
-    // did move and said nothing about the two that must not.
-    await expect(readoutCell(page, /^Completed/)).toHaveText(`Completed 00/${SHEETS.length}`)
-    await expect(readoutCell(page, /^Reading time/)).toHaveText('Reading time 0 m')
-    await expect(page.locator('.bz-quiz-note').filter({ hasText: 'SELF-ASSESSED' })).toHaveText(
-      `SELF-ASSESSED: ${outcome}`,
-    )
-    await expect(page.locator('.bz-quiz-body')).toContainText(
-      'Self-assessment. Not graded by anyone.',
-    )
-
-    const stored = await waitForSheet(page, SLUG, (sheet) => sheet?.quiz?.assessed != null)
-    expect(stored.quiz?.assessed).toBe(outcome === 'MATCHED' ? 'matched' : 'missed')
-    expect(stored.quiz?.answer).toBe('An answer, written before anything is revealed.')
-    // The assessment is not a completion claim (§12.4.2).
-    expect(stored.signedOff).toBeNull()
-  })
-}
 
 // ---------------------------------------------------------------------------
 // §12.7 — the checklist
@@ -952,7 +638,7 @@ test('the task items are real, named checkboxes and a tick survives a reload (§
 }) => {
   await page.goto(SHEET.path)
 
-  const boxes = page.getByRole('checkbox')
+  const boxes = page.locator('[data-hl-prose]').getByRole('checkbox')
   await expect(boxes).toHaveCount(CHECKLIST_ITEMS)
 
   for (const box of await boxes.all()) {
@@ -969,7 +655,7 @@ test('the task items are real, named checkboxes and a tick survives a reload (§
   await expect(first).toHaveAttribute('data-ticked', 'true')
 
   await page.reload()
-  await expect(page.getByRole('checkbox').first()).toBeChecked()
+  await expect(page.locator('[data-hl-prose]').getByRole('checkbox').first()).toBeChecked()
   await expect(page.locator('li.task-list-item').first()).toHaveAttribute('data-ticked', 'true')
   expect((await readRecord(page))?.data.sheets[SLUG]?.checklist).toEqual({ '0': true })
 })
@@ -980,7 +666,7 @@ test('ticking every item moves no instrument, and a ticked item is not struck th
   await page.goto(SHEET.path)
   await waitForHydratedReadout(page)
 
-  const boxes = page.getByRole('checkbox')
+  const boxes = page.locator('[data-hl-prose]').getByRole('checkbox')
   const total = await boxes.count()
   for (let index = 0; index < total; index += 1) await boxes.nth(index).check()
 
@@ -1006,101 +692,6 @@ test('ticking every item moves no instrument, and a ticked item is not struck th
   expect(decorations).toHaveLength(total)
   for (const decoration of decorations) expect(decoration).toBe('none')
 })
-
-// ---------------------------------------------------------------------------
-// §12.9 — the submittal register
-// ---------------------------------------------------------------------------
-
-test('a deep link is stored and printed as the reconstructed repository URL (§12.9.2)', async ({
-  page,
-}) => {
-  const RECONSTRUCTED = 'https://github.com/cevheri/hidden-line'
-
-  await page.goto(SHEET.path)
-  await expect(page.locator('.bz-submittal-empty')).toHaveText('Nothing added yet')
-
-  await page
-    .getByRole('textbox', { name: 'Repository' })
-    .fill(`${RECONSTRUCTED}/tree/main/lms?tab=readme#top`)
-  await page.getByRole('textbox', { name: /What you built/ }).fill('A harness for the trifecta')
-  await page.getByRole('button', { name: 'ADD REPOSITORY', exact: true }).click()
-
-  // §12.9.2 — render only the reconstructed string, as BOTH the href and the
-  // visible label. That is what makes a link whose text lies about its
-  // destination impossible rather than merely unlikely.
-  const link = page.locator('.bz-submittal-repo')
-  await expect(link).toHaveText(RECONSTRUCTED)
-  expect(await link.getAttribute('href')).toBe(RECONSTRUCTED)
-  await expect(link).toHaveAttribute('rel', 'noopener noreferrer')
-  await expect(link).toHaveAttribute('target', '_blank')
-
-  // Not merely absent from the href: absent from the register's markup, so no
-  // `title`, `aria-label` or data attribute quietly carries the query string
-  // the reader pasted.
-  const markup = await page.locator('.bz-submittal').innerHTML()
-  expect(markup).not.toContain('tab=readme')
-  expect(markup).not.toContain('tree/main')
-  expect(markup).not.toContain('#top')
-
-  const stored = await waitForSheet(page, SLUG, (sheet) => (sheet?.submittals.length ?? 0) === 1)
-  expect(stored.submittals[0]).toMatchObject({
-    owner: 'cevheri',
-    repo: 'hidden-line',
-    url: RECONSTRUCTED,
-  })
-})
-
-test('a reader-supplied commit is lowercased and printed unverified (§12.9.3)', async ({
-  page,
-}) => {
-  await page.goto(SHEET.path)
-  await page
-    .getByRole('textbox', { name: 'Repository' })
-    .fill('https://github.com/cevheri/hidden-line')
-  await page.getByRole('textbox', { name: /^Commit/ }).fill('9F2C1AB')
-  await page.getByRole('button', { name: 'ADD REPOSITORY', exact: true }).click()
-
-  const commit = page.locator('.bz-submittal-commit')
-  await expect(commit).toContainText('COMMIT 9f2c1ab')
-  // §12.9.3 — this is the single cheapest thing in the slice that raises the
-  // record from "self-reported" to "checkable", and the caveat is what keeps it
-  // honest: verification moves to the party who actually has a network.
-  await expect(commit).toContainText('supplied by reader; not fetched or verified by this application')
-
-  const stored = await waitForSheet(page, SLUG, (sheet) => (sheet?.submittals.length ?? 0) === 1)
-  expect(stored.submittals[0].commit).toBe('9f2c1ab')
-})
-
-/**
- * §12.9.2 — an allowlist over the *parsed* URL, never a regex over the raw
- * string. Each of these defeats a regex specifically: the scheme survives
- * whitespace and case games, the host of the third one is `evil.example`, and
- * the second differs from `github.com` by one Cyrillic code point.
- */
-const HOSTILE_REPOS: readonly [string, string][] = [
-  ['javascript:', 'javascript:alert(1)'],
-  ['a homograph host', 'https://gіthub.com/cevheri/hidden-line'],
-  ['userinfo', 'https://github.com@evil.example/a/b'],
-]
-
-for (const [what, input] of HOSTILE_REPOS) {
-  test(`the submittal form refuses ${what} (§12.9.2)`, async ({ page }) => {
-    await page.goto(SHEET.path)
-    await page.getByRole('textbox', { name: 'Repository' }).fill(input)
-    await page.getByRole('button', { name: 'ADD REPOSITORY', exact: true }).click()
-
-    // Imperative, describing the fix; no "please", no verdict on the input.
-    await expect(page.locator('.bz-field-error')).toHaveText(
-      'Enter the repository as https://github.com/owner/name',
-    )
-    // Refused, not silently swallowed: a form that clears itself and records
-    // nothing is the page telling the reader something untrue.
-    await expect(submittalItems(page)).toHaveCount(0)
-    await expect(page.locator('.bz-submittal-empty')).toHaveText('Nothing added yet')
-    await expect(page.locator('.bz-submittal a')).toHaveCount(0)
-    expect((await readRecord(page))?.data.sheets[SLUG]?.submittals ?? []).toEqual([])
-  })
-}
 
 // ---------------------------------------------------------------------------
 // §12.16 — the keyboard map
@@ -1195,27 +786,31 @@ test('. toggles the theme and s signs off the current module (§12.16)', async (
   // the assertion (the criteria, the date, the revision) stays on the sheet and
   // the shortcut carries none of it.
   await page.keyboard.press('s')
-  await expect(signedOff(page)).toHaveAttribute('aria-pressed', 'true')
+  await expect(completion(page)).toBeChecked()
   await waitForSheet(page, SLUG, (record) => record?.signedOff != null)
 
   // It is a toggle, and un-sign needs no confirmation either.
   await page.keyboard.press('s')
-  await expect(signOff(page)).toHaveAttribute('aria-pressed', 'false')
+  await expect(completion(page)).not.toBeChecked()
 })
 
 test('no character shortcut fires from inside a text field (§12.16)', async ({ page }) => {
   await seedTheme(page, 'light')
-  await page.goto(SHEET.path)
+  // The progress page's name field. A module page has no text field since the
+  // module's own written quick check left it on 2026-10-11, and the guard is
+  // about any field the reader types into, wherever it is.
+  await page.goto('/profile/')
   await waitForHydratedReadout(page)
 
-  const answer = page.locator('.bz-quiz textarea')
+  // On screen at load: the drafter block is the one part of the page that is
+  // not a disclosure (§16.1).
+  const answer = page.getByRole('textbox', { name: /Name or initials/ })
   await answer.focus()
   for (const key of ['s', '.', '?', 'g', 'j', '[']) await page.keyboard.press(key)
 
   // Every one of them is a character the reader was typing. The guard is what
-  // stops a reader writing about `s3` from signing the sheet off mid-sentence.
+  // stops a reader typing `s3` from completing a module mid-word.
   expect(await answer.inputValue()).toBe('s.?gj[')
-  await expect(signedOff(page)).toHaveCount(0)
   await expect(anyDialog(page)).toHaveCount(0)
   await expect(pendingHint(page)).toHaveCount(0)
   expect(await hasRootClass(page, 'dark')).toBe(false)
@@ -1233,7 +828,7 @@ test('no character shortcut fires with a modifier held (§12.16)', async ({ page
   await page.keyboard.press('Alt+.')
   await page.keyboard.press('Alt+g')
 
-  await expect(signedOff(page)).toHaveCount(0)
+  await expect(completion(page)).not.toBeChecked()
   expect(await hasRootClass(page, 'dark')).toBe(false)
   await expect(pendingHint(page)).toHaveCount(0)
 })
@@ -1252,7 +847,7 @@ test('prefs.charKeys off silences every character shortcut (§12.16, SC 2.1.4)',
   // SC 2.1.4's off switch. `?` is itself a character shortcut, so the sheet
   // that documents the map is inside the switch that turns the map off rather
   // than exempt from it.
-  await expect(signedOff(page)).toHaveCount(0)
+  await expect(completion(page)).not.toBeChecked()
   await expect(anyDialog(page)).toHaveCount(0)
   await expect(pendingHint(page)).toHaveCount(0)
   expect(await hasRootClass(page, 'dark')).toBe(false)
@@ -1304,79 +899,3 @@ test('reading the site writes nothing until the reader records something (§12.1
   expect(problems.failedRequests).toEqual([])
 })
 
-/**
- * §12.9 — the register, and the title block that now reports it.
- *
- * A reader registered three repositories and told us the title block never
- * mentioned them. It did not: the register said `3 OF 3` under the sheet and
- * the panel beside it had no row for them, while the exported RECORD OF WORK
- * had been printing `REPOSITORIES n` all along. These two cases are the round
- * trip that was missing — type it in, and read it back out of the panel.
- */
-test('§12.9 — registering a repository reaches the module info’s own row', async ({ page }) => {
-  await page.goto(SHEET.path)
-
-  const row = page
-    .locator('.bz-card-facts > div')
-    .filter({ has: page.locator('dt', { hasText: /^repositories$/i }) })
-    .locator('dd')
-    .first()
-
-  // Nothing read yet, and nothing registered: a count that was taken and came
-  // to zero, not §11.25's dash for a count nobody took.
-  await expect(row).toHaveText('0')
-
-  // Scoped to the form on purpose: the site header's GitHub icon also carries
-  // `aria-label="Repository"`, so an unscoped lookup matches a link and a field.
-  // Worth knowing rather than working around — see the note on the second case.
-  const form = page.locator('.bz-submittal-form')
-  await form.getByLabel('Repository').fill('https://github.com/libredb/libredb-studio')
-  await page.getByRole('button', { name: 'ADD REPOSITORY' }).click()
-
-  await expect(row).toHaveText('1')
-
-  // And it survives a reload, because it is read from the record rather than
-  // held in the form's state.
-  await page.reload()
-  await expect(row).toHaveText('1')
-})
-
-test('§12.9.3 — the commit field states its format before it is typed in', async ({ page }) => {
-  await page.goto(SHEET.path)
-
-  /**
-   * Everything here is scoped to the form. The header's repository icon is
-   * labelled `Repository` too, which makes an unscoped `getByLabel` ambiguous —
-   * and that ambiguity is real for a screen reader as well, not just for this
-   * test: one page, two controls, one name. Recorded here because it is a
-   * pre-existing smell in the shell rather than anything §12.9 introduced.
-   */
-  const form = page.locator('.bz-submittal-form')
-  const commit = form.getByLabel(/^Commit/)
-  const hintId = await commit.getAttribute('aria-describedby')
-  expect(hintId).not.toBeNull()
-
-  // Visible, not merely present: the whole defect was that the rule existed
-  // only inside the error branch, so a reader met it after failing.
-  const hint = page.locator(`#${hintId?.split(/\s+/)[0]}`)
-  await expect(hint).toBeVisible()
-  await expect(hint).toContainText('7 to 40 hexadecimal characters')
-
-  // And the error, when it comes, says the same thing rather than a second
-  // wording of it.
-  await form.getByLabel('Repository').fill('https://github.com/libredb/libredb-studio')
-  await commit.fill('project added')
-  await page.getByRole('button', { name: 'ADD REPOSITORY' }).click()
-
-  const error = page.locator('.bz-field-error')
-  await expect(error).toContainText('7 to 40 hexadecimal characters')
-
-  // Nothing was registered, so the title block's count did not move.
-  await expect(
-    page
-      .locator('.bz-card-facts > div')
-      .filter({ has: page.locator('dt', { hasText: /^repositories$/i }) })
-      .locator('dd')
-      .first(),
-  ).toHaveText('0')
-})

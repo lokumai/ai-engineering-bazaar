@@ -92,7 +92,7 @@ function Cell({
 }) {
   if (target === null) {
     return (
-      <div className="bz-pager-item" data-end={rel === 'next' ? '' : undefined}>
+      <div className="bz-pager-item" data-dir={rel} data-none="">
         {/* The TILE'S OWN TEXT, in the destination slot rather than the label
             slot. `01`'s tile is a faint `small` over a titled `b`, and faint is
             for something a reader may ignore — which the label is, since the
@@ -111,18 +111,24 @@ function Cell({
       href={target.path}
       rel={rel}
       className="bz-pager-item"
-      data-end={back ? undefined : ''}
+      data-dir={rel}
       data-draft={target.draft ? '' : undefined}
     >
       {back && <Chevron back />}
-      {/* The label and the destination on ONE line. The module NUMBER the
-          retired cell printed beside the label is in the trail, the footer and
-          the rail, and a fourth copy of it in a two-tile pager is noise. */}
-      <small>
-        {label}
-        {target.draft && ' · Planned'}
-      </small>
-      <b>{target.title}</b>
+      {/* 2026-10-11 — `Previous` and `Next` over the destination's title, the
+          shape every course and docs site uses, and in the colours that make
+          them the strongest thing at the end of the page: Next filled with
+          the primary, Previous outlined in it. They were one quiet line each,
+          `Previous module` and `Next module` in the faint ink, which the
+          author found did not stand out from the column. The module NUMBER
+          stays out: it is in the trail, the footer and the rail. */}
+      <span className="bz-pager-text">
+        <small>
+          {label}
+          {target.draft && ' · Planned'}
+        </small>
+        <b>{target.title}</b>
+      </span>
       {!back && <Chevron />}
     </Link>
   )
@@ -140,12 +146,12 @@ export function PrevNext({
       <Cell
         target={previous}
         rel="prev"
-        label="Previous module"
+        label="Previous"
       />
       <Cell
         target={next}
         rel="next"
-        label="Next module"
+        label="Next"
       />
     </div>
   )

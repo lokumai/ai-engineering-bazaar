@@ -16,7 +16,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M26, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — written and not committed. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M26, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — shipped as PR #26. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-10-12
 ---
 
@@ -3581,9 +3581,9 @@ milestone, which does not touch the page it reads.
 
 ---
 
-## 🏁 Milestone M26: Headings, requested additions, and ASD-STE-like English — WRITTEN, NOT COMMITTED
+## 🏁 Milestone M26: Headings, requested additions, and ASD-STE-like English — SHIPPED AS PR #26
 
-Branch `content/headings-and-readability`, from `main` after PR #25. Corpus only:
+Branch `content/headings-and-readability`, from `main` after PR #25, opened as PR #26 to merge once CI passed, on the author's word ("ask a subagent to review then merge to main"). Corpus only:
 no file under `src/` or `tests/` changed for it. The author's request,
 2026-10-12, in one message: new headings for fifteen modules, a list of content
 additions, title case for headings, and then *"an English similar to ASD-STE

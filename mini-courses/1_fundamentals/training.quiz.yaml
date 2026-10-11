@@ -1,0 +1,70 @@
+# Quick quiz: Training LLMs. Reinforcement, not assessment.
+questions:
+  - answer: 2
+    en:
+      question: "What does training change inside a model?"
+      options:
+        - "It adds rules and facts that you can read."
+        - "It changes the size and shape of the network."
+        - "It adjusts the numbers inside the parameters."
+        - "It saves a copy of every text that it reads."
+      explain: "Training only adjusts numbers, and the knowledge is spread across billions of them. The shape of the network does not change."
+    tr:
+      question: "Training, bir modelin içinde neyi değiştirir?"
+      options:
+        - "Okuyabileceğin kurallar ve bilgiler ekler."
+        - "Network'ün boyutunu ve şeklini değiştirir."
+        - "Parameter'ların içindeki sayıları ayarlar."
+        - "Okuduğu her metnin bir kopyasını saklar."
+      explain: "Training sadece sayıları ayarlar ve bilgi milyarlarca sayının arasına yayılır. Network'ün şekli değişmez."
+  - answer: 0
+    en:
+      question: "How is the data for pre-training different from the data for fine-tuning?"
+      options:
+        - "Pre-training uses unlabelled text, and fine-tuning uses input and output pairs."
+        - "Pre-training uses input and output pairs, and fine-tuning uses unlabelled text."
+        - "Both steps use unlabelled text, but fine-tuning uses a smaller amount of it."
+        - "Both steps use pairs that people wrote, but pre-training uses many more of them."
+      explain: "In pre-training, the next word is the answer, so nobody writes labels. Fine-tuning uses thousands of pairs that people wrote or checked."
+    tr:
+      question: "Pre-training verisi, fine-tuning verisinden nasıl farklıdır?"
+      options:
+        - "Pre-training label'lanmamış metin kullanır, fine-tuning ise input ve output çiftleri kullanır."
+        - "Pre-training input ve output çiftleri kullanır, fine-tuning ise label'lanmamış metin kullanır."
+        - "İki adım da label'lanmamış metin kullanır, ama fine-tuning bunun daha azını kullanır."
+        - "İki adım da insanların yazdığı çiftleri kullanır, ama pre-training çok daha fazlasını kullanır."
+      explain: "Pre-training'de sonraki kelimenin kendisi cevaptır, bu yüzden kimse label yazmaz. Fine-tuning, insanların yazdığı veya kontrol ettiği binlerce çifti kullanır."
+  - answer: 3
+    en:
+      question: "What does PEFT, for example LoRA, do during fine-tuning?"
+      options:
+        - "It updates all parameters, but on a smaller dataset."
+        - "It compresses the model so that it runs more cheaply."
+        - "It starts from random weights, but it uses less data."
+        - "It freezes most of the model and trains a few extra parameters."
+      explain: "PEFT freezes almost the whole model and trains a small number of new parameters, often under 1%. Quantization is the different idea that makes a model cheaper to run."
+    tr:
+      question: "PEFT, örneğin LoRA, fine-tuning sırasında ne yapar?"
+      options:
+        - "Bütün parameter'ları günceller, ama daha küçük bir dataset üzerinde."
+        - "Modeli sıkıştırır, böylece model daha ucuza çalışır."
+        - "Rastgele weight'lerden başlar, ama daha az veri kullanır."
+        - "Modelin çoğunu dondurur (freeze) ve birkaç ek parameter eğitir."
+      explain: "PEFT modelin neredeyse tamamını dondurur (freeze) ve az sayıda yeni parameter eğitir, genelde toplamın %1'inden azını. Modeli ucuza çalıştıran farklı fikir ise quantization'dır."
+  - answer: 1
+    en:
+      question: "Your company wants a model that knows its codebase and its policies. Both change often. What should you use?"
+      options:
+        - "Fine-tune the model again each time a file changes."
+        - "Use retrieval (RAG), and do not fine-tune for this."
+        - "Pre-train a new model on the company's own data."
+        - "Use PEFT on the documents, because PEFT is cheap."
+      explain: "Fine-tuning is a snapshot, and it teaches a behaviour well but facts poorly. For knowledge that changes often, use retrieval with RAG."
+    tr:
+      question: "Şirketin, kendi codebase'ini ve politikalarını bilen bir model istiyor. İkisi de sık değişiyor. Ne kullanmalısın?"
+      options:
+        - "Her dosya değiştiğinde modeli yeniden fine-tune et."
+        - "Retrieval (RAG) kullan, bunun için fine-tune etme."
+        - "Şirketin kendi verisiyle yeni bir model pre-train et."
+        - "Dokümanlar üzerinde PEFT kullan, çünkü PEFT ucuz."
+      explain: "Fine-tuning bir anlık görüntüdür (snapshot) ve bilgiyi (facts) değil, davranışı (behaviour) iyi öğretir. Sık değişen bilgi için RAG ile retrieval kullan."

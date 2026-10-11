@@ -1,0 +1,91 @@
+# Quick quiz: UI Design. Reinforcement, not assessment.
+questions:
+  - answer: 2
+    en:
+      question: "What do Google Stitch and Claude Design have in common?"
+      options:
+        - "They need a finished design in Figma before they can start."
+        - "They check each screen for contrast and focus problems."
+        - "They turn a description into a screen and output real code."
+        - "They keep every screen consistent without any extra file."
+      explain: "Both tools turn a description into a screen and produce real HTML and CSS, not only a picture. Stitch can also export to Figma, and Claude Design can read the design system in a codebase."
+    tr:
+      question: "Google Stitch ve Claude Design'ın ortak noktası ne?"
+      options:
+        - "Başlamadan önce Figma'da bitmiş bir tasarıma ihtiyaç duyuyorlar."
+        - "Her ekranı kontrast ve focus sorunları için kontrol ediyorlar."
+        - "Bir açıklamayı ekrana çeviriyorlar ve gerçek kod üretiyorlar."
+        - "Ek bir dosya olmadan her ekranı tutarlı tutuyorlar."
+      explain: "İki tool da bir açıklamayı ekrana çeviriyor ve sadece bir resim değil, gerçek HTML ve CSS üretiyor. Stitch ayrıca Figma'ya export edebiliyor, Claude Design ise bir codebase'teki design system'i okuyabiliyor."
+
+  - answer: 0
+    en:
+      question: "An agent writes a different interface every time. What is the cause?"
+      options:
+        - "It must invent every design decision each time, because it cannot know yours."
+        - "It reads an old DESIGN.md file that no longer matches the product."
+        - "It cannot write real HTML and CSS, so it draws a new picture each time."
+        - "It follows the palette in the prompt too strictly on every screen."
+      explain: "Without your decisions in a file, the agent invents plausible ones, and they change each time. A palette in the prompt works for one screen, but not for the second."
+    tr:
+      question: "Bir agent her seferinde farklı bir arayüz (interface) yazıyor. Sebebi ne?"
+      options:
+        - "Her tasarım kararını her seferinde uydurmak zorunda, çünkü seninkileri bilemiyor."
+        - "Artık ürüne uymayan eski bir DESIGN.md dosyasını okuyor."
+        - "Gerçek HTML ve CSS yazamıyor, bu yüzden her seferinde yeni bir resim çiziyor."
+        - "Prompt'taki paleti her ekranda fazla katı biçimde uyguluyor."
+      explain: "Kararların bir dosyada yazılı değilse, agent inandırıcı kararlar uyduruyor ve bunlar her seferinde değişiyor. Prompt'taki bir palet tek ekran için işe yarıyor, ama ikinci ekran için yaramıyor."
+
+  - answer: 3
+    en:
+      question: "DESIGN.md holds two kinds of content. What are they?"
+      options:
+        - "Screenshots of each screen, and the HTML that produced them."
+        - "The rules for the repository, and a description of who the agent is."
+        - "A list of brand names, and a link to the website of each brand."
+        - "Tokens with exact values, and the intent of the design in words."
+      explain: "The tokens are exact values, such as hex codes, the type scale and spacing steps. The intent says what the design tries to feel like and what it avoids, which a token list cannot carry."
+    tr:
+      question: "DESIGN.md iki tür içerik tutuyor. Bunlar ne?"
+      options:
+        - "Her ekranın ekran görüntüsü (screenshot) ve onu üreten HTML."
+        - "Repo'da çalışmanın kuralları ve agent'ın kim olduğunun tarifi."
+        - "Marka isimlerinin bir listesi ve her markanın web sitesine bir link."
+        - "Tam değerleri olan token'lar ve tasarımın kelimelerle anlatılan niyeti (intent)."
+      explain: "Token'lar tam değerler: hex kodları, tipografi ölçeği (type scale) ve boşluk adımları (spacing steps) gibi. Niyet (intent), tasarımın neye benzemeye çalıştığını ve neden kaçındığını söylüyor; bunu bir token listesi taşıyamaz."
+
+  - answer: 1
+    en:
+      question: "The module compares DESIGN.md with AGENTS.md and SOUL.md. What do the three files share?"
+      options:
+        - "They each hold the colour palette and the spacing steps of the product."
+        - "They are markdown files in the repository, for humans and models to read."
+        - "They are each produced by Google Stitch from a prompt or a sketch."
+        - "They are written for human designers only, and agents do not read them."
+      explain: "A human can write markdown comfortably, and a model can parse it reliably. DESIGN.md goes at the repository root with that exact name, so most agents find it."
+    tr:
+      question: "Modül DESIGN.md'yi AGENTS.md ve SOUL.md ile karşılaştırıyor. Üç dosyanın ortak noktası ne?"
+      options:
+        - "Üçü de ürünün renk paletini ve boşluk adımlarını (spacing steps) tutuyor."
+        - "Üçü de repo'da duran ve insanların da modellerin de okuduğu markdown dosyaları."
+        - "Üçü de Google Stitch ile bir prompt'tan ya da bir karalamadan (sketch) üretiliyor."
+        - "Üçü de sadece insan tasarımcılar için yazılıyor, agent'lar onları okumuyor."
+      explain: "Bir insan markdown'ı rahatça yazabiliyor, bir model de onu güvenilir biçimde ayrıştırabiliyor (parse). DESIGN.md tam olarak bu isimle repo kökünde (repository root) duruyor, böylece çoğu agent onu kendi başına buluyor."
+
+  - answer: 2
+    en:
+      question: "A generated interface looks right in a screenshot. What does the module tell you to check yourself?"
+      options:
+        - "The Figma export, because the layout often breaks when it leaves Stitch."
+        - "The HTML, because these tools often return a picture instead of code."
+        - "Accessibility: contrast, focus states, keyboard access and icon button names."
+        - "The token names, because agents cannot read hex codes from DESIGN.md."
+      explain: "Generated interfaces often fail on contrast, focus and keyboard access, and a screenshot does not show these problems. The tools also do not know what the screen is for."
+    tr:
+      question: "Üretilen bir arayüz (interface) bir ekran görüntüsünde (screenshot) doğru görünüyor. Modül neyi kendin kontrol etmeni söylüyor?"
+      options:
+        - "Figma export'unu, çünkü layout Stitch'ten çıkınca sık sık bozuluyor."
+        - "HTML'i, çünkü bu tool'lar sık sık kod yerine bir resim döndürüyor."
+        - "Erişilebilirliği (accessibility): kontrast, focus durumları, klavye erişimi ve ikon butonu adları."
+        - "Token adlarını, çünkü agent'lar DESIGN.md'deki hex kodlarını okuyamıyor."
+      explain: "Üretilen arayüzler sık sık kontrast, focus ve klavye erişiminde başarısız oluyor, ve bir ekran görüntüsü bu sorunları göstermiyor. Bu tool'lar ekranın ne için olduğunu da bilmiyor."

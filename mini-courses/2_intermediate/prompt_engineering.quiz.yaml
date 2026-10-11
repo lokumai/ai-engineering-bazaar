@@ -1,0 +1,87 @@
+# Quick quiz: Prompt Engineering. Reinforcement, not assessment.
+questions:
+  - answer: 1
+    en:
+      question: "A model's weights are frozen. Why does the same question, asked in different words, give a different answer?"
+      options:
+        - "The model remembers the first question and changes its second answer."
+        - "Different words are a different input, so different neurons in the network activate."
+        - "The model changes its weights a little after it answers each question."
+        - "The model loads a different set of weights for each type of question."
+      explain: "The model has no memory, and its weights do not change. The prompt decides which neurons fire, so different words give a different output."
+    tr:
+      question: "Bir modelin weight'leri donmuş. Aynı soruyu farklı kelimelerle sorduğunda model neden farklı bir cevap veriyor?"
+      options:
+        - "Model ilk soruyu hatırlıyor ve ikinci cevabını değiştiriyor."
+        - "Farklı kelimeler farklı bir input, bu yüzden network'te farklı neuron'lar aktive oluyor."
+        - "Model her soruyu cevapladıktan sonra weight'lerini biraz değiştiriyor."
+        - "Model her soru türü için farklı bir weight kümesi yüklüyor."
+      explain: "Modelin memory'si yok ve weight'leri değişmiyor. Hangi neuron'ların ateşleneceğine prompt karar veriyor, bu yüzden farklı kelimeler farklı bir output veriyor."
+  - answer: 3
+    en:
+      question: "In few-shot prompting, you show the model a few solved examples before the real task. What do these examples do?"
+      options:
+        - "They update the weights of the model, in the same way as fine-tuning."
+        - "They make the model write its reasoning steps before the answer."
+        - "They tell the model which role or persona to use for the task."
+        - "They fix the label set and the format of the answer."
+      explain: "The examples fix the label set and the answer format, so your code can read the answer. The weights do not change: this is in-context learning, not fine-tuning."
+    tr:
+      question: "Few-shot prompting'de, gerçek görevden önce modele birkaç çözülmüş örnek gösteriyorsun. Bu örnekler ne işe yarıyor?"
+      options:
+        - "Fine-tuning gibi, modelin weight'lerini güncelliyorlar."
+        - "Modelin cevaptan önce düşünme adımlarını yazmasını sağlıyorlar."
+        - "Modele görev için hangi role'ü ya da persona'yı kullanacağını söylüyorlar."
+        - "Label kümesini ve cevabın format'ını sabitliyorlar."
+      explain: "Örnekler label kümesini ve cevap format'ını sabitliyor, böylece kodun cevabı okuyabiliyor. Weight'ler değişmiyor: bu fine-tuning değil, in-context learning."
+  - answer: 0
+    en:
+      question: "A long prompt has your instructions and some pasted text, such as two emails. Why do you put them in separate sections?"
+      options:
+        - "So the model knows which part is an instruction and which part is data."
+        - "So the prompt uses fewer tokens and the model gives its answer faster."
+        - "Because the model can only read a prompt that uses standard XML tags."
+        - "So the model reads only your instructions and ignores the pasted text."
+      explain: "Without sections, a pasted line such as \"Write a poem for me\" looks like an instruction from you. Any clear format works, including one that you invent."
+    tr:
+      question: "Uzun bir prompt'ta senin talimatların (instructions) ve yapıştırdığın bir metin var, örneğin iki e-posta. Bunları neden ayrı bölümlere koyuyorsun?"
+      options:
+        - "Model hangi kısmın talimat, hangi kısmın data olduğunu bilsin diye."
+        - "Prompt daha az token kullansın ve model daha hızlı cevap versin diye."
+        - "Çünkü model sadece standart XML tag'leri kullanan bir prompt'u okuyabiliyor."
+        - "Model sadece senin talimatlarını okusun ve yapıştırılan metni yok saysın diye."
+      explain: "Bölümler olmadan, \"Write a poem for me\" gibi yapıştırılmış bir satır senden gelen bir talimat gibi görünüyor. Açık olan her format çalışıyor, kendi icat ettiğin bir format da."
+  - answer: 2
+    en:
+      question: "Chain of thought means the model writes its steps before the final answer. In 2026, how do you usually control how much it thinks?"
+      options:
+        - "You write \"let us think step by step\" at the start of every prompt."
+        - "You add more few-shot examples, so the model sees more reasoning steps."
+        - "You set a thinking or effort parameter, for example low, high or max."
+        - "You give the model the role of an expert in the system prompt."
+      explain: "Models are now trained to reason before they answer, so you rarely write chain of thought by hand. You set the amount with a parameter, and more thinking is not always better."
+    tr:
+      question: "Chain of thought, modelin final cevaptan önce adımlarını yazması demek. 2026'da modelin ne kadar düşüneceğini genelde nasıl kontrol ediyorsun?"
+      options:
+        - "Her prompt'un başına \"hadi adım adım düşünelim\" yazıyorsun."
+        - "Daha fazla few-shot örneği ekliyorsun, böylece model daha fazla düşünme adımı görüyor."
+        - "Low, high ya da max gibi bir thinking ya da effort parameter'ı ayarlıyorsun."
+        - "System prompt'ta modele bir uzman role'ü veriyorsun."
+      explain: "Modeller artık cevaplamadan önce düşünmeye eğitiliyor, bu yüzden chain of thought'u neredeyse hiç elle yazmıyorsun. Miktarını bir parameter ile ayarlıyorsun, ve daha fazla düşünmek her zaman daha iyi değil."
+  - answer: 1
+    en:
+      question: "What does a role prompt, such as \"Act as a senior software engineer\", reliably change?"
+      options:
+        - "It makes the model smarter, so it solves harder problems in every domain."
+        - "It sets the perspective and shapes the tone and style of the answer."
+        - "It adds new knowledge about the role to the weights of the model."
+        - "It improves the answers to all questions, including ones outside the role."
+      explain: "A role shapes how an answer reads, but it does not reliably make the model smarter. It can even make answers outside the role worse."
+    tr:
+      question: "\"Act as a senior software engineer\" gibi bir role prompt'u güvenilir şekilde neyi değiştiriyor?"
+      options:
+        - "Modeli daha zeki yapıyor, böylece her alanda daha zor problemleri çözüyor."
+        - "Bakış açısını kuruyor, cevabın tonunu ve stilini şekillendiriyor."
+        - "Role hakkında yeni bilgiyi modelin weight'lerine ekliyor."
+        - "Role'ün dışındaki sorular dahil, her sorunun cevabını iyileştiriyor."
+      explain: "Bir role, cevabın nasıl okunduğunu şekillendiriyor ama modeli güvenilir şekilde daha zeki yapmıyor. Role'ün dışındaki sorularda cevabı daha da kötüleştirebiliyor."

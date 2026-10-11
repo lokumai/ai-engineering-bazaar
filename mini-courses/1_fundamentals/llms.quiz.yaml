@@ -1,0 +1,87 @@
+# Quick quiz: LLM Fundamentals. Reinforcement, not assessment.
+questions:
+  - answer: 2
+    en:
+      question: "An LLM is trained on a huge amount of text. What one skill does it learn from that text?"
+      options:
+        - "It learns to search the internet for the answer to each prompt."
+        - "It learns to run functions on your own machine."
+        - "It learns to guess the most likely next word."
+        - "It learns to pick answers from a stored list of facts."
+      explain: "An LLM learns one skill: it guesses the most likely next word. Everything it writes is this one guess, repeated one word at a time."
+    tr:
+      question: "Bir LLM çok büyük miktarda metinle eğitilir. Bu metinden hangi tek beceriyi öğrenir?"
+      options:
+        - "Her prompt için cevabı internette aramayı öğrenir."
+        - "Senin makinende fonksiyon çalıştırmayı öğrenir."
+        - "En olası sonraki kelimeyi tahmin etmeyi öğrenir."
+        - "Cevapları kayıtlı bir bilgi listesinden seçmeyi öğrenir."
+      explain: "Bir LLM tek bir beceri öğrenir: en olası sonraki kelimeyi tahmin etmek. Yazdığı her şey, bu tek tahminin kelime kelime tekrarıdır."
+  - answer: 0
+    en:
+      question: "What is the context window of an LLM?"
+      options:
+        - "The maximum text the model can process at one time, input and output together."
+        - "The maximum length of the reply only, which you set with a hyperparameter."
+        - "The number of parameters in the model, which decides how big the model is."
+        - "The list of tools that the SystemMessage allows the model to call."
+      explain: "The context window limits the input and the output together, and you get an error if you exceed it. Max output tokens limits only the reply."
+    tr:
+      question: "Bir LLM'in context window'u nedir?"
+      options:
+        - "Modelin tek seferde işleyebileceği maksimum metin, input ve output birlikte."
+        - "Sadece yanıtın maksimum uzunluğu; bunu bir hyperparameter ile ayarlarsın."
+        - "Modeldeki parameter sayısı; modelin ne kadar büyük olduğunu belirler."
+        - "SystemMessage'ın modele çağırma izni verdiği tool'ların listesi."
+      explain: "Context window input ve output'u birlikte sınırlar, ve onu aşarsan hata alırsın. Max output tokens ise sadece yanıtı sınırlar."
+  - answer: 3
+    en:
+      question: "In an agent, who writes the ToolCall, and who writes the ToolResult?"
+      options:
+        - "The host machine writes the ToolCall, and the LLM writes the ToolResult."
+        - "The LLM writes the ToolCall, and the LLM also writes the ToolResult."
+        - "The host machine writes the ToolCall, and it also writes the ToolResult."
+        - "The LLM writes the ToolCall, and the host machine writes the ToolResult."
+      explain: "The LLM asks for a tool with a ToolCall. The host machine runs the function, so the host machine writes the ToolResult."
+    tr:
+      question: "Bir agent'ta ToolCall'ı kim yazar, ToolResult'ı kim yazar?"
+      options:
+        - "ToolCall'ı host makine yazar, ToolResult'ı LLM yazar."
+        - "ToolCall'ı LLM yazar, ToolResult'ı da yine LLM yazar."
+        - "ToolCall'ı host makine yazar, ToolResult'ı da yine host makine yazar."
+        - "ToolCall'ı LLM yazar, ToolResult'ı host makine yazar."
+      explain: "LLM, bir ToolCall ile tool çalıştırmak istediğini söyler. Fonksiyonu host makine çalıştırır, bu yüzden ToolResult'ı host makine yazar."
+  - answer: 1
+    en:
+      question: "You want predictable and consistent answers from the model. What do you do?"
+      options:
+        - "Use a model with more parameters."
+        - "Set the temperature low, for example 0.1."
+        - "Set the temperature high, for example 0.9."
+        - "Set a higher value for max output tokens."
+      explain: "A low temperature such as 0.1 gives predictable, consistent answers. A high temperature such as 0.9 gives more creative but less reliable answers."
+    tr:
+      question: "Modelden öngörülebilir ve tutarlı yanıtlar istiyorsun. Ne yaparsın?"
+      options:
+        - "Daha fazla parameter'a sahip bir model kullanırsın."
+        - "Temperature'ı düşük bir değere, örneğin 0.1'e ayarlarsın."
+        - "Temperature'ı yüksek bir değere, örneğin 0.9'a ayarlarsın."
+        - "Max output tokens değerini daha yükseğe ayarlarsın."
+      explain: "0.1 gibi düşük bir temperature öngörülebilir ve tutarlı yanıtlar verir. 0.9 gibi yüksek bir temperature daha yaratıcı ama daha az güvenilir yanıtlar verir."
+  - answer: 2
+    en:
+      question: "Compared with cloud inference, what is the main limit of local inference?"
+      options:
+        - "You need an internet connection to use it."
+        - "You pay money for every request you send."
+        - "You can only run the smaller models."
+        - "You must quantize every model yourself."
+      explain: "Local inference is free after setup and works offline, but it limits you to the smaller models. Cost and the need for internet are limits of cloud inference."
+    tr:
+      question: "Cloud inference ile karşılaştırınca, local inference'ın ana kısıtı nedir?"
+      options:
+        - "İnternet bağlantısı gerekir."
+        - "Gönderdiğin her request için para ödersin."
+        - "Sadece küçük modelleri çalıştırabilirsin."
+        - "Her modeli kendin quantize etmen gerekir."
+      explain: "Local inference kurulumdan sonra bedavadır ve internetsiz çalışır, ama seni küçük modellerle sınırlar. Para ve internet ihtiyacı cloud inference'ın eksileridir."

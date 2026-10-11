@@ -1,0 +1,73 @@
+# Quick quiz: RAG & Embeddings. Reinforcement, not assessment.
+questions:
+  - answer: 1
+    en:
+      question: "What is the main idea of Retrieval-Augmented Generation (RAG)?"
+      options:
+        - "Put all of your data into the context window for every question."
+        - "Keep the data outside the model and fetch only the relevant parts per question."
+        - "Train the model on your data so that it remembers the facts."
+        - "Make the context window larger so that all of your data fits in it."
+      explain: "RAG keeps the data outside the model and puts only the relevant parts in the context for each question. Putting all the data in the context does not work, because the context window is a hard limit."
+    tr:
+      question: "Retrieval-Augmented Generation (RAG) fikrinin özü nedir?"
+      options:
+        - "Her soru için bütün verini context window'a koymak."
+        - "Veriyi modelin dışında tutmak ve her soru için sadece ilgili parçaları getirmek."
+        - "Modeli kendi verinle train etmek, böylece model bilgileri hatırlar."
+        - "Context window'u büyütmek, böylece bütün verin ona sığar."
+      explain: "RAG veriyi modelin dışında tutuyor ve her soru için sadece ilgili parçaları context'e koyuyor. Bütün veriyi context'e koymak işe yaramaz, çünkü context window katı bir sınır."
+
+  - answer: 2
+    en:
+      question: "A contract clause has the same meaning as the question, but almost no words in common. Why does retrieval with embeddings still find it?"
+      options:
+        - "The search counts the words that the two texts have in common."
+        - "The LLM reads every clause in the database and picks the best one."
+        - "Similar meaning gives similar numbers, so the two vectors are close."
+        - "Cosine similarity gives a high score to texts of the same length."
+      explain: "Embeddings catch meaning, not matching words, so texts with the same meaning get close vectors. Keyword search counts shared words, so it misses this clause."
+    tr:
+      question: "Bir sözleşme maddesi soruyla aynı anlamı taşıyor, ama neredeyse hiç ortak kelimesi yok. Embedding'lerle yapılan retrieval onu neden yine de buluyor?"
+      options:
+        - "Arama, iki metnin ortak kelimelerini sayıyor."
+        - "LLM, database'deki her maddeyi okuyup en iyisini seçiyor."
+        - "Benzer anlam benzer sayılar veriyor, bu yüzden iki vector birbirine yakın."
+        - "Cosine similarity, aynı uzunluktaki metinlere yüksek skor veriyor."
+      explain: "Embedding'ler eşleşen kelimeleri değil, anlamı yakalıyor, bu yüzden aynı anlamdaki metinlerin vector'leri yakın oluyor. Keyword arama ortak kelimeleri sayıyor, bu yüzden bu maddeyi kaçırıyor."
+
+  - answer: 3
+    en:
+      question: "RAG has a setup part and an answering part. In the answering part, what happens after the question becomes an embedding?"
+      options:
+        - "RAG breaks the source data into chunks and stores them in the database."
+        - "RAG fine-tunes the model on the closest chunks, then asks the question."
+        - "RAG sends the closest vectors to the LLM, which answers from the numbers."
+        - "RAG finds the closest chunks and puts their real text in the context."
+      explain: "RAG searches the database for the closest chunks and puts their real text in the context. Breaking the data into chunks is setup, which happens once and again when the data changes."
+    tr:
+      question: "RAG'in bir kurulum (setup) kısmı ve bir cevaplama kısmı var. Cevaplama kısmında, soru bir embedding'e dönüştükten sonra ne oluyor?"
+      options:
+        - "RAG kaynak veriyi chunk'lara bölüp database'de saklıyor."
+        - "RAG modeli en yakın chunk'larla fine-tune ediyor, sonra soruyu soruyor."
+        - "RAG en yakın vector'leri LLM'e gönderiyor, LLM de sayılardan cevaplıyor."
+        - "RAG en yakın chunk'ları bulup onların gerçek metnini context'e koyuyor."
+      explain: "RAG database'de en yakın chunk'ları arıyor ve onların gerçek metnini context'e koyuyor. Veriyi chunk'lara bölmek kurulumun (setup) parçası: bir kez yapılıyor, veri değiştikçe yeniden yapılıyor."
+
+  - answer: 0
+    en:
+      question: "Your company's documents change every day. Why is RAG better than fine-tuning for these facts?"
+      options:
+        - "Fine-tuning is slow and costly, so you cannot repeat it after every change."
+        - "Fine-tuning makes the context window smaller, so fewer documents fit in it."
+        - "Fine-tuning is good at teaching facts but bad at teaching a format."
+        - "RAG updates the model's weights faster than fine-tuning can update them."
+      explain: "Fine-tuning takes hours or days and costs money, so you cannot repeat it each time a file changes. RAG changes what the model sees, not what it knows."
+    tr:
+      question: "Şirketinin dokümanları her gün değişiyor. Bu bilgiler için RAG neden fine-tuning'den daha iyi?"
+      options:
+        - "Fine-tuning yavaş ve pahalı, bu yüzden onu her değişiklikten sonra tekrarlayamazsın."
+        - "Fine-tuning context window'u küçültüyor, bu yüzden daha az doküman sığıyor."
+        - "Fine-tuning bilgi öğretmekte iyi, ama bir format öğretmekte kötü."
+        - "RAG modelin weight'lerini fine-tuning'den daha hızlı güncelliyor."
+      explain: "Fine-tuning saatler ya da günler sürüyor ve para tutuyor, bu yüzden her dosya değiştiğinde onu tekrarlayamazsın. RAG modelin bildiğini değil, gördüğünü değiştiriyor."

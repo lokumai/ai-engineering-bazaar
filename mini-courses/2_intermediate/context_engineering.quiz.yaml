@@ -1,0 +1,87 @@
+# Quick quiz: Context Engineering. Reinforcement, not assessment.
+questions:
+  - answer: 2
+    en:
+      question: "What is context rot?"
+      options:
+        - "The model loses the oldest context when the history is larger than the window."
+        - "The model gives better answers when you add more context to the window."
+        - "The model does the task worse as the context grows, before the window is full."
+        - "The model changes its weights when a session becomes very long."
+      explain: "Context rot means the answers get worse as the context grows, long before the window is full. The cause is attention, a fixed budget divided across everything in the window."
+    tr:
+      question: "Context rot nedir?"
+      options:
+        - "Geçmiş window'dan büyük olunca model en eski context'i kaybediyor."
+        - "Window'a daha fazla context ekledikçe model daha iyi cevaplar veriyor."
+        - "Context büyüdükçe model işi daha kötü yapıyor, window dolmadan önce bile."
+        - "Session çok uzayınca model kendi weight'lerini değiştiriyor."
+      explain: "Context rot, context büyüdükçe ve window dolmadan çok önce cevapların kötüleşmesi demek. Sebebi attention: window'daki her şeye bölünen sabit bir bütçe."
+  - answer: 0
+    en:
+      question: "Which question does context engineering answer?"
+      options:
+        - "How do you choose what goes into the context and what does not?"
+        - "How do you write one prompt so that the model gives a good answer?"
+        - "How do you get a bigger context window for a long session?"
+        - "How do you add every useful document to the context on each turn?"
+      explain: "The window is limited, so context engineering decides what goes in, again on every turn. Writing one good prompt is the job of prompt engineering."
+    tr:
+      question: "Context engineering hangi soruyu cevaplıyor?"
+      options:
+        - "Context'e neyin girip neyin girmeyeceği nasıl seçilir?"
+        - "Model iyi bir cevap versin diye tek bir prompt nasıl yazılır?"
+        - "Uzun bir session için daha büyük bir context window nasıl alınır?"
+        - "Her faydalı doküman her turda context'e nasıl eklenir?"
+      explain: "Window sınırlı, bu yüzden context engineering içeri neyin gireceğine her turda yeniden karar veriyor. Tek bir iyi prompt yazmak ise prompt engineering'in işi."
+  - answer: 3
+    en:
+      question: "An agent must read many files to answer one short question. Why does it give this work to a subagent?"
+      options:
+        - "The subagent uses the main agent's window, so no new context is needed."
+        - "The subagent makes the main agent's window larger for the rest of the session."
+        - "The subagent sends every intermediate step back to the main agent."
+        - "The subagent reads in its own context and returns only the conclusion."
+      explain: "The subagent does the reading in its own empty context and returns only the conclusion. The main agent's context gains one sentence, not every file."
+    tr:
+      question: "Bir agent, kısa bir soruyu cevaplamak için birçok dosya okumalı. Bu işi neden bir subagent'a veriyor?"
+      options:
+        - "Subagent ana agent'ın window'unu kullanıyor, bu yüzden yeni context gerekmiyor."
+        - "Subagent, session'ın geri kalanı için ana agent'ın window'unu büyütüyor."
+        - "Subagent her ara adımı ana agent'a geri gönderiyor."
+        - "Subagent kendi context'inde okuyor ve sadece sonucu döndürüyor."
+      explain: "Subagent okumayı kendi boş context'inde yapıyor ve sadece sonucu döndürüyor. Ana agent'ın context'i bütün dosyaları değil, tek bir cümle kazanıyor."
+  - answer: 1
+    en:
+      question: "What must an agent have, at least, to count as a deep agent?"
+      options:
+        - "A very large context window and a sliding window for old tokens"
+        - "Planning with a to-do list, subagents, and a filesystem"
+        - "A full RAG pipeline that adds all documents to every prompt"
+        - "One model in a plain loop, with a short system prompt"
+      explain: "A deep agent needs at least planning, subagents and a filesystem. Claude Code, Codex, Copilot and OpenCode have all three, so they are already deep agents."
+    tr:
+      question: "Bir agent'ın deep agent sayılması için en azından neye ihtiyacı var?"
+      options:
+        - "Çok büyük bir context window ve eski token'lar için bir sliding window"
+        - "To-do listesiyle planlama (planning), subagent'lar ve bir filesystem"
+        - "Bütün dokümanları her prompt'a ekleyen tam bir RAG pipeline'ı"
+        - "Kısa bir system prompt'la düz bir loop içinde tek bir model"
+      explain: "Bir deep agent'ın en azından planlama (planning), subagent'lar ve bir filesystem'e ihtiyacı var. Claude Code, Codex, Copilot ve OpenCode'da üçü de var, yani bunlar zaten deep agent."
+  - answer: 2
+    en:
+      question: "In a long session, how do a to-do list and chain of thought both help the model follow the goal?"
+      options:
+        - "They delete old tokens, so the window has more free space."
+        - "They add new documents from the knowledge base to the window."
+        - "They repeat the important thing close to where the model writes."
+        - "They put the goal at the start of the window, where it stays."
+      explain: "Both work by recitation: they say the important thing again, near where the model is about to write. Attention goes to what is near and repeated."
+    tr:
+      question: "Uzun bir session'da bir to-do listesi ve chain of thought, modelin hedefi takip etmesine nasıl yardım ediyor?"
+      options:
+        - "Eski token'ları siliyorlar, böylece window'da daha çok boş yer kalıyor."
+        - "Knowledge base'den window'a yeni dokümanlar ekliyorlar."
+        - "Önemli olan şeyi, modelin yazdığı yerin yakınında tekrar söylüyorlar."
+        - "Hedefi window'un başına koyuyorlar ve hedef orada kalıyor."
+      explain: "İkisi de recitation ile çalışıyor: önemli olan şeyi, modelin yazmak üzere olduğu yerin yakınında tekrar söylüyorlar. Attention yakın ve tekrarlanan şeye gidiyor."

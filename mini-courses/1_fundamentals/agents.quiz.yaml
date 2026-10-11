@@ -1,0 +1,70 @@
+# Quick quiz: AI Agents. Reinforcement, not assessment.
+questions:
+  - answer: 2
+    en:
+      question: "What ends the agent loop?"
+      options:
+        - "A counter stops the loop after a fixed number of passes."
+        - "A supervisor checks the work and decides that it is finished."
+        - "The LLM calls no tool, and its output becomes the final answer."
+        - "The host stops the loop when every tool has run once."
+      explain: "The absence of a tool call is the termination condition, and the text the model writes is the answer. The loop has no counter and no supervisor."
+    tr:
+      question: "Agent loop'unu ne bitiriyor?"
+      options:
+        - "Bir sayaç (counter), sabit sayıda turdan sonra loop'u durduruyor."
+        - "Bir denetleyici (supervisor) işi kontrol ediyor ve bittiğine karar veriyor."
+        - "LLM hiç tool çağırmıyor ve onun output'u final cevap oluyor."
+        - "Host, her tool bir kez çalıştığında loop'u durduruyor."
+      explain: "Tool call'ın yokluğu, sonlanma koşulunun (termination condition) kendisi. Modelin yazdığı metin cevap oluyor, ve loop'ta bir sayaç (counter) ya da denetleyici (supervisor) yok."
+  - answer: 0
+    en:
+      question: "What is the difference between a plain LLM and an agent?"
+      options:
+        - "The same model is called many times, and each call can ask for a tool."
+        - "The agent uses a different model that was trained to run tools."
+        - "The agent's model keeps the past messages stored inside itself."
+        - "The agent's model runs the tools itself between two answers."
+      explain: "A plain LLM is single-turn: one input, one output. An agent calls the same model again and again, and nothing is added to the model."
+    tr:
+      question: "Düz bir LLM ile bir agent arasındaki fark nedir?"
+      options:
+        - "Aynı model birçok kez çağrılıyor ve her çağrıda bir tool isteyebiliyor."
+        - "Agent, tool çalıştırmak için eğitilmiş farklı bir model kullanıyor."
+        - "Agent'ın modeli geçmiş mesajları kendi içinde saklıyor."
+        - "Agent'ın modeli iki cevap arasında tool'ları kendisi çalıştırıyor."
+      explain: "Düz bir LLM single-turn: bir input, bir output. Bir agent aynı modeli tekrar tekrar çağırıyor, ve modele hiçbir şey eklenmiyor."
+  - answer: 1
+    en:
+      question: "A single LLM call needs no framework. Why does an agent use one?"
+      options:
+        - "The framework makes each model call faster and cheaper to run."
+        - "The host must run the loop, parse tool calls, and keep the message stack."
+        - "The framework adds new reasoning skills to the model's weights."
+        - "The framework moves the loop inside the LLM, so the model runs it."
+      explain: "All of the loop runs on the host machine, and a framework writes that boilerplate once. A single call has no loop, no tool parsing and no message stack, so it needs no framework."
+    tr:
+      question: "Tek bir LLM çağrısı framework'e ihtiyaç duymuyor. Bir agent neden bir framework kullanıyor?"
+      options:
+        - "Framework, her model çağrısını daha hızlı ve daha ucuz yapıyor."
+        - "Host loop'u çalıştırmalı, tool call'ları parse etmeli ve mesaj yığınını (message stack) tutmalı."
+        - "Framework, modelin weight'lerine yeni akıl yürütme (reasoning) becerileri ekliyor."
+        - "Framework loop'u LLM'in içine taşıyor, böylece loop'u model çalıştırıyor."
+      explain: "Loop'un tamamı host makinede çalışıyor, ve framework bu boilerplate'i bir kez yazıyor. Tek bir çağrıda loop, tool parse etme ve mesaj yığını (message stack) yok, bu yüzden framework gerekmiyor."
+  - answer: 3
+    en:
+      question: "How does the LLM in an agent know which tools it can call?"
+      options:
+        - "The model learned the tools during its training on text."
+        - "The model remembers the tool list from its first call in the loop."
+        - "The model reads the Python files on the host to find the tools."
+        - "The system prompt lists them, and the host sends it before every call."
+      explain: "The host rebuilds the system prompt before every call, and it lists each tool's name and description. The @tool decorator builds that list from your function's name, docstring and type hints."
+    tr:
+      question: "Bir agent'taki LLM hangi tool'ları çağırabileceğini nasıl biliyor?"
+      options:
+        - "Model, tool'ları metin üzerindeki eğitimi (training) sırasında öğrendi."
+        - "Model, tool listesini loop'taki ilk çağrısından hatırlıyor."
+        - "Model, tool'ları bulmak için host'taki Python dosyalarını okuyor."
+        - "System prompt onları listeliyor, ve host onu her çağrıdan önce gönderiyor."
+      explain: "Host, system prompt'u her çağrıdan önce yeniden kuruyor, ve bu prompt her tool'un adını ve açıklamasını listeliyor. Bu listeyi @tool decorator'ı, fonksiyonunun adından, docstring'inden ve type hint'lerinden kuruyor."

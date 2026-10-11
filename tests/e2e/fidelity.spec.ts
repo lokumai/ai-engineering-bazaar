@@ -278,6 +278,12 @@ test.describe('the fidelity harness', () => {
       }
       const actual = await extractDesignFacts(page, APP_SELECTORS)
 
+      // A role the page does not draw at this width — the rail is gone below
+      // `rail-at` — has nothing to deviate. The narrow guard above skips the
+      // same way; what it may never do is pass silently at the WIDE width.
+      if (reference[key] === null || actual[key] === null) {
+        test.skip(page.viewportSize()!.width < 880, `${key} is absent at this viewport`)
+      }
       expect(reference[key], `the mockup no longer draws ${key} at all`).not.toBeNull()
       expect(actual[key], `the page no longer draws ${key} at all`).not.toBeNull()
       expect(reference[key], `${key}: the entry names the wrong mockup value`).toBe(deviation.mockup)

@@ -11,8 +11,8 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language
-last_updated: "2026-09-10"
+covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11
+last_updated: "2026-10-11"
 ---
 
 # 🏗️ ARCHITECTURE — How this project is built
@@ -306,21 +306,23 @@ RecordData
   sheets     { [slug]: { signedOff, signedRevision, reachedEnd, dwellSeconds,
                          quiz { answer, assessed }, checklist {}, sources [], submittals [] } }
   days       [ ISO dates ]          the streak
-  prefs      { charKeys, railFolded, aliasNamedFor, catalogView }
+  prefs      { charKeys, railFolded, aliasNamedFor, catalogView, figurePalette, codePalette }
   meta       { lastExport, persisted, lastClaim }
 ```
 
 `dwellSeconds` is capped at 3600 and `submittals` at 3, both in `schema.ts`.
 
 **`prefs` holds the browser's preferences, not the reader's history.** `charKeys` is SC 2.1.4's off
-switch, `railFolded` (M10) is whether the curriculum rail on a module page is folded away, and
-`catalogView` (M12) is which of the catalog's three views the reader last chose. All three are facts
-about the machine in front of the reader rather than about the reader, which is why `prefs` is the one
+switch, `railFolded` (M10) is whether the curriculum rail on a module page is folded away,
+`catalogView` (M12) is which of the catalog's three views the reader last chose, and `figurePalette`
+and `codePalette` (M24) are which of three palettes the reader put the diagrams and the code in. All
+of them are facts about the machine in front of the reader rather than about the reader, which is why `prefs` is the one
 field `carriesNothing` ignores and the one `mergeRecords` resolves local-wins. A widening here needs
 no migration rung: `coerceRecordData` defaults a missing key, and the default is the honest answer for
 a reader who never expressed a preference.
 
-**`catalogView` is `null` rather than `'overview'` by default, and the distinction is load-bearing.**
+**`catalogView` is `null` rather than `'overview'` by default, and the distinction is load-bearing** —
+and the two palettes are `null` rather than `'night'` for the same reason.
 Null is "has not chosen", which is not the same as "chose the view that happens to be the default":
 the boot script stamps nothing for null, the stylesheet's fallback rule reveals the default view, and
 a later change of default therefore moves the reader who never chose and leaves the reader who did
@@ -368,9 +370,11 @@ Both are needed and neither replaces the other.
 - **Channel A** — `src/lib/record/boot.ts` generates a blocking inline `<script>` in `<head>` that
   reads `localStorage`, stamps classes and attributes onto `<html>`, and lets CSS draw the progress
   marks **before first paint**. No React. Correct in frame one. It carries layout state as well as
-  progress: `data-hl-rail="folded"` (M10) is stamped **before** the `carriesNothing` gate, because a
+  progress: `data-bz-rail="folded"` (M10) is stamped **before** the `carriesNothing` gate, because a
   reader whose only stored state is a folded rail carries nothing by that rule and the rail would
-  spring open on every load for exactly the readers who asked for it to be shut.
+  spring open on every load for exactly the readers who asked for it to be shut. `data-hl-view`
+  (M12) and the two palettes, `data-hl-figures` and `data-hl-code` (M24), are stamped before it for
+  the same reason, each matched against its id list first because the value came out of storage.
 - **Channel B** — React islands after mount. `getServerSnapshot` returns a frozen empty record,
   because the prerendered HTML has never met the reader.
 
@@ -472,7 +476,12 @@ page prints none.
    position.
 3. `render.ts` turns markdown into HTML: it strips raw HTML, numbers figures, builds `<figure>` from
    an image plus its italic caption line, rewrites image paths to the copied `/course-images/`
-   location, and leaves mermaid as a `data-mermaid` source div.
+   location, and leaves mermaid as a `data-mermaid` source div. It also REMOVES what the page states
+   elsewhere: the first `h1`, the category dek, the self-check paragraph, and since M24 the series map
+   (`## Where this fits in the series` / `## Bu serinin neresindeyiz`), which stays in the file for a
+   reader of raw markdown. `SERIES_HEADINGS` in `lines.ts` holds both languages. And it turns each
+   highlighted code token's colour into a `bz-tok-<role>` class, so the stylesheet — and the reader's
+   code palette — decides what a token paints.
 4. `links.ts` rewrites every internal `.md` link to its route, and throws if one names no module.
 5. `derive.ts` counts everything the page states about itself; `facts.ts` is the spine every page asks
    for the corpus.

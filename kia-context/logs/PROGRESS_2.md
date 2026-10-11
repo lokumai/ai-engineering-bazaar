@@ -6,7 +6,8 @@ description: >
   brief had wrong, and then the review pass over the finished milestone and the two defects it found
   inside a green gate. Then M17, the curriculum fold, and M18, the front door and the chrome, each
   with its report. It closes with M19 to M22 — the second language, the catalog's descriptions, the
-  module page and rail, and the progress redesign — all WRITTEN AND NOT STARTED.
+  module page and rail, and the progress redesign — all four SHIPPED — then M23, the interface's own
+  strings, written and not started, and M24, the author's requests of 2026-10-11, shipped on a branch.
   Every milestone carries its deliverables and acceptance criteria as `- [ ]` checkboxes, ticked as
   the work lands, and closes with a dated report; the loop that governs that is in part 1 and is not
   restated here. Part 1 holds M1 to M15 and is closed.
@@ -15,8 +16,8 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M23, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started. Checkbox format repaired across the part on 2026-09-13."
-last_updated: 2026-09-13
+covers: "M16 to M24, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped on branch feat/reader-options-and-catalog-polish, not merged. Checkbox format repaired across the part on 2026-09-13."
+last_updated: 2026-10-11
 ---
 
 # 📈 PROGRESS, part 2 — M16 to M23
@@ -3370,6 +3371,109 @@ the interface is translated" with a number.
 - [ ] The copy register still runs on both languages.
 - [ ] Full gate, with the HTML file count restated (80 today).
 
+
+---
+
+## 🏁 Milestone M24: The author's requests of 2026-10-11 — SHIPPED ON A BRANCH, NOT MERGED
+
+Branch `feat/reader-options-and-catalog-polish`, three commits — `aa1c63c`
+(the logo and the banner), `9724e6f` (the catalog, the rail, the language menu,
+the series map) and `c83591c` (the palettes, the highlighting, the tools, the
+dialog) — plus the context sync. **Not merged to `main`**, on the author's word:
+*"do it in a new single branch. do not merge to main yet"*. M23 is untouched and
+still the next written milestone.
+
+### Deliverables
+
+- [x] **The banner at 1 to 2MB.** 4.04MB → 1.39MB, the same 4144×1024, JPEG
+      quality 100 → 90, PSNR 37.7dB against the original.
+- [x] **The Lokum AI logo at the left of the bar** (**D71**, DESIGN.md's sixth
+      deviation), from an 8.8KB copy of the author's 696KB `assets/icon.svg`.
+- [x] **The catalog's views as a `View:` row** beside `Level:` and `Status:`,
+      built from the chip, the showing view filled by the channel-A carrier;
+      the count shares its line.
+- [x] **The level meter's squares larger** — 14px squares, the table's own
+      completion square, where they were ~20×7px slivers.
+- [x] **More generous catalog spacing**, both axes: filter bar, rows, card
+      grid, card padding, board, board columns. Eleven pinned facts recorded in
+      `AUTHOR_DEVIATIONS` (**D74**).
+- [x] **The current rail group no longer enlarged** — DESIGN.md's seventh
+      deviation, `groupCurrent.fontSize` in `AUTHOR_DEVIATIONS`.
+- [x] **A subtle rail scrollbar**: 8px with a 4px thumb, Firefox `thin`, held
+      under the inner's 12px padding by `rail-scrollbar.spec.ts` in a window
+      that draws classic scrollbars.
+- [x] **English/Türkçe as a square globe button in the bar**, left of the theme
+      toggle, a native disclosure over the bar's menu — still two links, still
+      only where a Turkish address exists, still working with no script.
+- [x] **"Where this fits in the series" off the site, kept in the markdown**,
+      in both languages, by `SERIES_HEADINGS` and a render-time removal;
+      `tests/corpus/series-section.test.ts`, mutation-proven on both halves.
+- [x] **Three palettes for diagrams and three for code** — Night, Paper,
+      Blueprint (**D72**) — from a square palette button in each block's corner.
+- [x] **The diagram's expand control as a transparent icon**, opening a dialog
+      inset from the window, fitted, with zoom out / scale / zoom in / fit /
+      close and dragging.
+- [x] **The copy control as its icon**, with the word in a hidden live region.
+
+### Acceptance criteria
+
+- [x] Every request above is on the branch and measured on the rendered page,
+      at 1440 and 390, in both themes where colour moved.
+- [x] Nothing pinned to a mockup was deleted to make room: each author
+      overruling is a recorded entry the harness holds stale-proof.
+- [x] Every new colour pairing is measured on the ground it is painted on, by
+      a browser spec, in every palette.
+- [x] Full gate (below).
+
+### Report — M24, 2026-10-11
+
+**Six things were broken before anyone asked, and the requests are what found
+them.** None was visible to the suite as it stood.
+
+1. **Code highlighting was inert.** Every token on the site painted one colour —
+   MEASURED `rgb(231, 227, 216)` across a whole module — because shiki's
+   inline `--shiki-light` properties lost their reader with stage 0's deleted
+   stylesheets, and two unit tests asserted the properties were emitted (**D73**).
+2. **The expand dialog had no name.** `captionOf` read bare text nodes, and the
+   caption label had been a span since stage 5, so every opened figure was
+   titled with the empty string.
+3. **`EXPAND` was never hidden before a drawing existed.** `MermaidFigure`'s
+   comment said it was; no rule did since stage 0. The new tool strip is hidden
+   until `data-hl-ready`.
+4. **The rail's inner was wider than its content box wherever a classic
+   scrollbar appears** — 262px against 247 with the default 15px bar. Headless
+   Chrome hides scrollbars, so no test could see it. An 8px bar fits inside the
+   12px padding; MEASURED in a window with real scrollbars, `scrollLeft` stays 0
+   after tabbing every link and folding twice.
+5. **`--bz-filters-h` was read by nothing.** The comment that kept the view
+   toggle out of the filter bar guarded a sum stage 4's review had already made
+   dead.
+6. **A test-side one**: `.bz-diagram svg` stopped meaning "the drawing" the
+   moment a diagram carried icons, in `mermaid.spec.ts` and
+   `containment.spec.ts`; both now read `.mermaid-source svg`.
+
+**Found by looking, as usual.** The language menu's panel ran 26px off a 1440
+window — `.bz-menu`'s `left: 0` won by source order over the override written
+above it. The expand icon sat in the frame's overflow fade, muted ink on the
+powder showing through the mask. The dialog's header was 448px wide inside a
+358px box at 390, because an implicit grid column sizes to its content. And on a
+phone the dialog's drawing opened outside its own viewport until the paper was
+pinned by its centre rather than centred by a grid. Every one of these came out
+of a screenshot or a measurement of computed style, not a red test.
+
+**The gate.**
+
+| | Measured |
+| --- | --- |
+| Typecheck | clean |
+| Unit | **2,164 passed / 83 files** |
+| Build | **80 HTML files**; the base-path build carries the prefix on **5,390 of 5,390** internal `href`/`src` |
+| Browser | **1,182 passed / 57 skipped / 0 failed** at 1440 / 1024 / 390, on the export |
+
+The first full browser run had three failures, all of them the suite rather
+than the app: two §12 round trips whose seed record was two `prefs` keys short
+(`tests/e2e/record.ts`), and the new author-deviation guard failing rather than
+skipping at 390, where the rail is not drawn.
 
 ---
 

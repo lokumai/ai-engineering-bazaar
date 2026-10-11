@@ -105,13 +105,18 @@ export interface RecordData {
    * M10's `railFolded` is here for exactly that reason: it is the third
    * widening of `prefs`, and the three round trips above compare raw storage
    * against a record that went through the store. M12's `catalogView` is the
-   * fourth, on the same terms.
+   * fourth, on the same terms, and M24's two palettes the fifth and sixth —
+   * which the full suite measured the same way: two round trips red, the app
+   * correct, the seed a key short.
    */
   prefs: {
     charKeys: boolean
     railFolded: boolean
     aliasNamedFor: string | null
     catalogView: 'overview' | 'cards' | 'table' | null
+    /** M24 — the two palettes, `null` until a reader chooses. */
+    figurePalette: 'night' | 'paper' | 'blueprint' | null
+    codePalette: 'night' | 'paper' | 'blueprint' | null
   }
   /**
    * §17.3 — `lastClaim` is typed out the same structural way as everything
@@ -196,7 +201,15 @@ export function recordData(seed: RecordSeed = {}): RecordData {
     identity: { name: null, markSeed: null, mark: null, role: null, ...seed.identity },
     sheets,
     days: seed.days ?? [SEED_DAY],
-    prefs: { charKeys: true, railFolded: false, aliasNamedFor: null, catalogView: null, ...seed.prefs },
+    prefs: {
+      charKeys: true,
+      railFolded: false,
+      aliasNamedFor: null,
+      catalogView: null,
+      figurePalette: null,
+      codePalette: null,
+      ...seed.prefs,
+    },
     meta: { lastExport: null, persisted: null, lastClaim: null, ...seed.meta },
   }
 }

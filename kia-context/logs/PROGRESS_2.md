@@ -20,7 +20,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M30, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — the same day. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M30, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-10-12
 ---
 
@@ -73,7 +73,7 @@ deliverables as a numbered list; M18 wrote none at all; M19 to M22 had none eith
 | **M27** | The front door is Bazaar Street | **Done** — 2026-10-12, merged as PR #27 |
 | **M28** | Persian, the third language | **Done** — 2026-10-12, merged as PR #30 |
 | **M29** | Translations written in their own language | **Done** — 2026-10-12, merged as PR #31 |
-| **M30** | Persian by meaning, and every sentence for a beginner | **Done** — 2026-10-12 |
+| **M30** | Persian by meaning, and every sentence for a beginner | **Done** — 2026-10-12, merged as PR #32 |
 
 ---
 
@@ -3952,9 +3952,10 @@ brief asked; Turkish writes `18,4` and `1.000`, so one agent rewrote two large n
 
 ---
 
-## 🏁 Milestone M30: Persian by meaning, and every sentence for a beginner — SHIPPED
+## 🏁 Milestone M30: Persian by meaning, and every sentence for a beginner — SHIPPED, MERGED AS PR #32
 
-Branch `content/persian-idiomatic`, from `main` at `18ac98f` (M29 merged), after the Observability
+Branch `content/persian-idiomatic`, from `main` at `18ac98f` (M29 merged), committed as `95ad0fe`
+and merged to `main` as PR #32 once CI passed, after the Observability
 trace figure (`fd39bba`, the author's screenshot of a Langfuse trace of a smolagents run, placed
 after the paragraph that introduces the trace, in all three languages). Two requests of the author,
 2026-10-12, one after the other:

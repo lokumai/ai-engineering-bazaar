@@ -10,7 +10,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D80, plus open questions O1 to O4 — 2026-09-09 to 2026-10-12"
+covers: "D26 to D81, plus open questions O1 to O4 — 2026-09-09 to 2026-10-12"
 last_updated: 2026-10-12
 ---
 
@@ -1898,7 +1898,9 @@ stack; `[lang="fa"]` sets `font-family` as well. The token is outside the mockup
 transcription guard carries it as a named, reasoned exemption that fails if it goes stale, and
 DESIGN.md records it as the tenth deviation.
 
-**How the translation was held.** One brief for nineteen agents fixed the Persian titles, the four
+**How the translation was held.** *(Superseded the same day by **D81**: the register below, `شما`
+and formal written Persian, and the sentence-by-sentence mirroring were what the author rejected,
+and the Persian was rewritten.)* One brief for nineteen agents fixed the Persian titles, the four
 strings the site matches (`## کجای این مجموعه هستیم`, `## خلاصه`, `## منابع`, `**بررسی سریع**:`),
 the link rule (`_fa.md` for a written module, the English file for a planned one), ASCII digits, no
 dashes, and `شما` as the register. The review then measured structure (headings, fences, mermaid
@@ -1918,6 +1920,38 @@ more.
 **What it changed in the law, and what it did not.** MANIFESTO §1, §4 and rule 14 name Persian
 beside Turkish; the promise itself (English first, translated once, structure mirrored) is the same
 one, and rule 14 keeps its number and its title.
+
+### D81 · A translation is written in its own language, and readability beats faithfulness — 2026-10-12
+
+M28's Persian was translated sentence by sentence from the English, under a brief that asked for
+"plain, simple, standard written Persian" and checked structure. The author read it and rejected all
+of it: *"the persian translation is very very bad. it is like a literal translation which I hate. it
+should be in daily, natural farsi ... You are allowed not to be truthful to english ... NEVER USE
+DENSE AND VERY SHORT SENTENCES"*. Minutes later, for both languages and as a rule: **"WE CARE MORE
+ABOUT READABILITY AND CLARITY IN OTHER LANGUAGES THAN TO LITERAL TRANSLATION AND TRUTHFULNESS."**
+
+**The measurement that explains it.** The English is ASD-STE by design (M26): one idea per sentence,
+twenty words or fewer. Mirrored one for one, that is not plain Persian, it is telegraphic Persian.
+MEASURED on the rejected files (whitespace words per sentence, Persian prose only): **mean 11,
+median 10, and 29% of sentences 7 words or fewer.** The structural review M28 ran (headings, fences,
+links, digits) could not see any of it, because every count was right.
+
+**What was rejected.** *Mirroring the English sentence by sentence*, which `mini-courses/CLAUDE.md`
+asked for in as many words ("mirror the structure exactly") and which produced exactly this. *Formal
+written Persian addressed to `شما`*, which M28's brief chose and which reads as a translation even
+when the sentences are long. *Applying ASD-STE to the translations* ("the Turkish gets the same
+treatment, more lightly"), which is the English's rule leaking into languages it was never meant for.
+
+**What replaced it.** A translation keeps the MODULE (its sections, figures, code, tables, links,
+facts and numbers) and is free at the level of the sentence and the paragraph. Persian is everyday
+spoken Persian written down (colloquial verbs, `یه`, `رو`, the reader as `تو`); Turkish is natural
+professional Turkish (the reader as `sen`). Both keep technical words in English. Sentences flow and
+are joined by connectives; a run of short ones is the failure, and a dense line is the other one.
+The check is a sentence-length measurement plus reading, never counts alone.
+
+It is a promise rather than a fact about the build, so it is MANIFESTO rule 17, and rule 14 now says
+a translation keeps its structure rather than "mirrors its structure exactly". All 19 written modules
+were rewritten from the English in both languages by parallel agents under that rule (M29).
 
 ## Open questions
 

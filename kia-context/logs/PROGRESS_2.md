@@ -9,8 +9,8 @@ description: >
   module page and rail, and the progress redesign — all four SHIPPED — then M23, the interface's own
   strings, written and not started, and M24 to M27, the author's requests of 2026-10-11 and
   2026-10-12, all shipped and merged: the end of a module and its quiz, the readability pass, and the
-  Bazaar Street front door. Then the v1.0.0 release, and M28, Persian modules read right to left,
-  merged as PR #30.
+  Bazaar Street front door. Then the v1.0.0 release, M28, Persian modules read right to left,
+  merged as PR #30, and M29, both translations rewritten in their own language.
   Every milestone carries its deliverables and acceptance criteria as `- [ ]` checkboxes, ticked as
   the work lands, and closes with a dated report; the loop that governs that is in part 1 and is not
   restated here. Part 1 holds M1 to M15 and is closed.
@@ -19,14 +19,14 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M28, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M29, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-10-12
 ---
 
-# 📈 PROGRESS, part 2 — M16 to M28
+# 📈 PROGRESS, part 2 — M16 to M29
 
 > **← Part 1: [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the review pass over M10 to M14.
-> This part holds **M16 to M28**, in the order they were worked.
+> This part holds **M16 to M29**, in the order they were worked.
 
 ## How to work this file
 
@@ -71,6 +71,7 @@ deliverables as a numbered list; M18 wrote none at all; M19 to M22 had none eith
 | **M26** | Headings, requested additions, and ASD-STE-like English | **Done** — 2026-10-12, merged as PR #26 |
 | **M27** | The front door is Bazaar Street | **Done** — 2026-10-12, merged as PR #27 |
 | **M28** | Persian, the third language | **Done** — 2026-10-12, merged as PR #30 |
+| **M29** | Translations written in their own language | **Done** — 2026-10-12, merged as PR #31 |
 
 ---
 
@@ -3883,6 +3884,69 @@ say "We only cover what matters": the author asked for the website, and when ask
 should remain same. we just want multilinguality in this project for the content of each markdown
 or module thats it."* MANIFEST rule 4 still says "five to ten
 minutes" while README says twenty to thirty (D65), as before.
+
+---
+
+## 🏁 Milestone M29: Translations written in their own language — SHIPPED, MERGED AS PR #31
+
+Branch `feat/persian-natural`, from `main` at `e48a417` (M28 merged), committed as `f531429` and
+merged to `main` as PR #31 once CI passed. The author, 2026-10-12, on
+M28's Persian: *"the persian translation is very very bad. it is like a lietral translation which I
+hate ... You are allowed not to be truthful to english ... NEVER USE DENSE AND VERY SHORT SENTENCES
+!!!! keep it clear similar to the way persian people talk daily. use haikus. commit and push and
+merge to main"*; and minutes later, for Turkish too and as a rule: *"please make sure that turkish
+version is also the way normal people talk or write professionally. Please save it to your rules and
+in kia-context: WE CARE MORE ABOUT REDABILITY AND CLARITY IN OTHER LANGUAGES THAN TO LITERAL
+TRANSLATION AND TRUTHFULNESS !!!!!"*. **D81** carries the reasoning.
+
+### Deliverables
+
+- [x] **The rule, written down where it governs**: MANIFESTO rule 17 (a translation reads as if it
+      was written in its own language), rule 14 reworded from "mirrors its structure exactly" to
+      "keeps its structure", the top of the corpus agreement's *Translating a module* (and its
+      quiz section), and a memory note. The ASD-STE bullet now says it is for the English only.
+- [x] **19 Persian modules rewritten from the English** by 19 parallel agents, none of which opened
+      the old file: everyday spoken Persian written down (`می‌شه`، `یه`، `رو`, the reader as `تو`),
+      sentences joined by connectives, technical words in English.
+- [x] **19 Turkish modules rewritten from the English** the same way, in natural professional
+      Turkish (the reader as `sen`). The fourteen draft stubs were left alone.
+- [x] **All 89 quiz questions** got new `tr:` and `fa:` sides; no `en:` side and no `answer:` moved
+      (checked against `HEAD`). The Turkish quiz sides were done in a second step by the same
+      agents, after every Persian agent had finished, so no two agents wrote one file at once.
+- [x] **The review**: the structural guard over all 38 files (sections, byte-identical code and
+      series map, mermaid skeletons, images, URLs, the link mapping, the matched strings, dashes,
+      digits, quiz shape), `check-mermaid.mjs` over all 38 (**84/84** diagrams render), reading,
+      and one mechanical fix: 16 Persian copulas written `این‌ه` with a non-joiner, joined to `اینه`.
+
+### Acceptance criteria
+
+- [x] No translation is sentence-for-sentence: MEASURED on paragraph prose, old against new —
+      Turkish mean **8.0 → 10.6** words a sentence, 7 words or fewer **49% → 28%**, 15 or more
+      **5% → 21%**; Persian mean **11.4 → 12.5**, short **26% → 18%**, long **26% → 33%**, and its
+      register moved from formal written Persian to everyday spoken Persian.
+- [x] Every section, figure, code block, table, link, fact and number is still there (the guard).
+- [x] The full gate: typecheck clean, **2,194** unit and corpus tests, build **99** HTML pages,
+      Playwright **1,201 passed, 59 skipped, 0 failed** on all three viewports.
+
+### Report — M29, 2026-10-12
+
+**What the structural review could never have caught.** M28's Persian passed every count M28 had,
+and it was the wrong Persian. The guard proves nothing was dropped; whether a page reads like a
+person wrote it is a reading, and the sentence-length measure is the part of that reading a script
+can do. It is now in the corpus agreement as the check, beside the counts.
+
+**The Turkish was choppier than the Persian.** Nobody had complained about it, and it measured
+worse: half of its prose sentences were seven words or fewer, because the M26 readability pass
+applied ASD-STE to it "more lightly". Turkish carries more per word than English or Persian, so its
+numbers read shorter than they are; the comparison that matters is old against new, in one language.
+
+**What the agents found in the English, left for the author.** `memory.md` calls long-term memory
+"(online, temporary)" in its list while its table says it persists across sessions;
+`loop_engineering.md` says "four lines of bash" over a three-line block, and its LangChain reference
+says "the four levels" where the module has five.
+
+**Open for the author.** Turkish numbers keep the English separators (`18.4%`, `1,000`), as the
+brief asked; Turkish writes `18,4` and `1.000`, so one agent rewrote two large numbers in words.
 
 ---
 

@@ -17,7 +17,7 @@ last_updated: "2026-10-12"
 
 > **Rules 1 to 7 are not new here.** They were written by the author in
 > `mini-courses/MANIFEST.md`, which is a public document for readers. This file restates them as the
-> boundary an agent may not cross, and adds the working rules 8 to 16 that came out of building it.
+> boundary an agent may not cross, and adds the working rules 8 to 17 that came out of building it.
 > Where the two disagree, `MANIFEST.md` is the one the readers see and the one that wins.
 
 ---
@@ -88,7 +88,7 @@ reason, and so does a Persian version of every written one (**D80**). See `genes
 7. **Only what matters.** A cheatsheet, not a textbook. Knowing what to leave out comes from building
    things.
 
-**Rules 8 to 16 came out of the work, and each one exists because breaking it cost something.**
+**Rules 8 to 17 came out of the work, and each one exists because breaking it cost something.**
 
 8. **Never dense. Being concise is not a goal here.** Plain English and compressed English are not the
    same thing, and compression is the failure mode this project keeps hitting. Loosening a module makes
@@ -105,14 +105,19 @@ reason, and so does a Persian version of every written one (**D80**). See `genes
 13. **Verify every external claim.** Fetch every link and use its real title. Check the arithmetic in
     a draft rather than passing it through.
 14. **English is finished before Turkish starts.** Each module is translated once, from a final
-    English text, and the translation mirrors its structure exactly. Persian is held to the same
-    rule (**D80**).
+    English text, and the translation keeps its structure: the sections, figures, code, links and
+    facts. Persian is held to the same rule (**D80**). How its sentences are written is rule 17.
 15. **Colour is never the only signal.** Anything colour says must also be said by a word, a count or
     a line.
 16. **The interface talks; it does not explain itself.** No sentence describing what the reader is
     already looking at — a control, a mark, a count or a heading says it by being one. This is rule 5
     turned on the product rather than on the prose, and the test is one question: does the page
     already show this? Reasoning and the eleven blocks it removed: `logs/BRAINSTORM_2.md` **D61**.
+17. **A translation reads as if it was written in its own language.** The author's words: *"WE
+    CARE MORE ABOUT READABILITY AND CLARITY IN OTHER LANGUAGES THAN TO LITERAL TRANSLATION AND
+    TRUTHFULNESS."* Turkish reads the way people talk or write professionally, Persian the way
+    Iranians talk every day, and neither copies the English sentence by sentence. Reasoning and the
+    measurement behind it: `logs/BRAINSTORM_2.md` **D81**.
 
 ## 6. What this is NOT
 

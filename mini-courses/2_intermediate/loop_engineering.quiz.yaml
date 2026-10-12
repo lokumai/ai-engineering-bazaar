@@ -10,21 +10,21 @@ questions:
         - "Who writes the first prompt?"
       explain: "The module says everything else follows from the stop condition. If it is wrong, the loop stops too early or runs too long and costs too much."
     tr:
-      question: "Loop engineering'de tasarımın tamamı hangi tek sorudan çıkıyor?"
+      question: "Loop engineering'de bütün tasarım hangi tek sorunun cevabına bağlıdır?"
       options:
         - "Agent'ı hangi model çalıştırıyor?"
-        - "Stop condition nedir?"
+        - "Durma koşulu (stop condition) nedir?"
         - "Agent hangi tool'ları çağırabilir?"
         - "İlk prompt'u kim yazıyor?"
-      explain: "Modüle göre geri kalan her şey stop condition'dan çıkıyor. Yanlışsa loop ya iş bitmeden duruyor ya da çok uzun çalışıp çok maliyet çıkarıyor."
+      explain: "Modüle göre geri kalan her şey durma koşulundan çıkar. Yanlış kurulursa döngü ya iş bitmeden durur ya da gereğinden uzun çalışıp fazla maliyet çıkarır."
     fa:
-      question: "کل طراحی از کدام سؤال واحد نتیجه می‌شود؟"
+      question: "توی loop engineering، کل طراحی از کدوم یک سؤال نتیجه می‌شه؟"
       options:
-        - "کدام مدل agent را اجرا می‌کند؟"
-        - "stop condition چیست؟"
-        - "agent می‌تواند کدام tool‌ها را فراخوانی کند؟"
-        - "چه کسی اولین prompt را می‌نویسد؟"
-      explain: "ماژول می‌گوید بقیه چیزها از stop condition نتیجه می‌شوند. اگر این شرط اشتباه باشد، loop یا زود متوقف می‌شود یا خیلی طولانی اجرا می‌شود و هزینه زیادی دارد."
+        - "کدوم مدل agent رو اجرا می‌کنه؟"
+        - "stop condition چیه؟"
+        - "agent چه tool‌هایی می‌تونه صدا بزنه؟"
+        - "چه کسی اولین prompt رو می‌نویسه؟"
+      explain: "ماژول می‌گه بقیه‌ی چیزها از stop condition نتیجه می‌شن. اگه این شرط غلط باشه، loop یا زودتر از موعد می‌ایسته، یا اون‌قدر ادامه پیدا می‌کنه که هزینه‌ش بالا بره."
   - answer: 2
     en:
       question: "In the verification loop, the /goal command in Claude Code has a goal and a cap on the number of tries. Why is the cap necessary?"
@@ -35,21 +35,21 @@ questions:
         - "It decides when a clock starts the next run."
       explain: "A loop whose only stop condition is success does not stop when success is impossible. The cap gives the loop a second way to stop."
     tr:
-      question: "Verification loop'ta Claude Code'un /goal komutunun bir hedefi (goal) ve bir deneme üst sınırı (cap) var. Üst sınır neden gerekli?"
+      question: "Doğrulama döngüsünde (verification loop) Claude Code'un /goal komutunun bir hedefi ve bir deneme üst sınırı var. Bu üst sınır neden gerekli?"
       options:
         - "Grader'a hangi kriterleri kontrol edeceğini söylüyor."
-        - "Context window'un dolmasını engelliyor."
-        - "Başarı imkânsız olduğunda loop'un durmasını sağlıyor."
-        - "Sonraki çalışmayı bir saatin ne zaman başlatacağına karar veriyor."
-      explain: "Tek stop condition'ı başarı olan bir loop, başarı imkânsız olduğunda durmuyor. Üst sınır (cap) loop'a ikinci bir durma yolu veriyor."
+        - "Context window'un dolmasını önlüyor."
+        - "Başarı imkânsız hâle geldiğinde loop'u durduruyor."
+        - "Bir saat, bir sonraki çalışmanın ne zaman başlayacağına karar veriyor."
+      explain: "Tek durma koşulu başarı olan bir loop, başarı imkânsız olduğunda durmaz. Üst sınır (cap) ise loop'a ikinci bir durma yolu verir."
     fa:
-      question: "در verification loop، دستور /goal در Claude Code یک هدف و یک سقف (cap) برای تعداد تلاش‌ها دارد. چرا این سقف لازم است؟"
+      question: "توی verification loop، دستور /goal توی Claude Code یه هدف داره و یه سقف برای تعداد تلاش‌ها. این سقف چرا لازمه؟"
       options:
-        - "به grader می‌گوید کدام معیارها را بررسی کند."
-        - "نمی‌گذارد context window پر شود."
-        - "وقتی موفقیت غیرممکن است، loop را متوقف می‌کند."
-        - "تعیین می‌کند که کی یک clock اجرای بعدی را شروع کند."
-      explain: "loopی که تنها شرط توقفش موفقیت است، وقتی موفقیت غیرممکن باشد متوقف نمی‌شود. سقف به loop یک راه دوم برای توقف می‌دهد."
+        - "به grader می‌گه کدوم معیارها رو چک کنه."
+        - "نمی‌ذاره context window پر بشه."
+        - "وقتی موفقیت غیرممکن باشه، loop رو متوقف می‌کنه."
+        - "تعیین می‌کنه کی یه clock اجرای بعدی رو شروع کنه."
+      explain: "loop‌ای که تنها شرط توقفش موفقیته، وقتی موفقیت غیرممکن باشه متوقف نمی‌شه. سقف به loop یه راه دوم برای توقف می‌ده."
   - answer: 0
     en:
       question: "What is the most important rule of the Ralph loop?"
@@ -62,19 +62,19 @@ questions:
     tr:
       question: "Ralph loop'un en önemli kuralı nedir?"
       options:
-        - "Her iterasyon plandan tek bir iş yapıyor, sonra çıkıyor."
-        - "Her iterasyon bütün backlog'u bir seferde işliyor."
-        - "Her iterasyon önceki geçişin context'ini koruyor."
-        - "Her iterasyon sonucu bir insanın kabul etmesini bekliyor."
-      explain: "Ralph loop başına bir iş yapıyor, ve her geçiş temiz bir context window ile başlıyor. State window'da değil, diskte duruyor."
+        - "Her tur, plandan tek bir görev yapar ve sonra çıkar."
+        - "Her tur, bütün backlog'u tek seferde işler."
+        - "Her tur, bir önceki geçişin context'ini korur."
+        - "Her tur, sonucun bir insan tarafından kabul edilmesini bekler."
+      explain: "Ralph her döngüde tek bir görev yapar ve her geçiş temiz bir context penceresiyle başlar. Durum pencerede değil, diskte tutulur."
     fa:
-      question: "مهم‌ترین قاعده Ralph loop چیست؟"
+      question: "مهم‌ترین قاعده‌ی Ralph loop چیه؟"
       options:
-        - "هر iteration یک task از plan را انجام می‌دهد، بعد خارج می‌شود."
-        - "هر iteration کل backlog را یک‌جا پیش می‌برد."
-        - "هر iteration context دور قبلی را نگه می‌دارد."
-        - "هر iteration منتظر می‌ماند تا یک آدم نتیجه را بپذیرد."
-      explain: "Ralph در هر loop یک task انجام می‌دهد، و هر دور با یک context window تازه شروع می‌شود. state در window نیست، روی دیسک است."
+        - "هر iteration یه task از plan رو انجام می‌ده، بعد خارج می‌شه."
+        - "هر iteration کل backlog رو یک‌جا جلو می‌بره."
+        - "هر iteration context دور قبل رو نگه می‌داره."
+        - "هر iteration منتظر می‌مونه تا یه آدم نتیجه رو قبول کنه."
+      explain: "Ralph توی هر loop یه task انجام می‌ده، و هر دور با یه context window تازه شروع می‌شه. state توی window نیست، روی دیسکه."
   - answer: 3
     en:
       question: "What makes a dynamic workflow different from an agent team?"
@@ -85,18 +85,18 @@ questions:
         - "A workflow puts the plan in a script, not in an agent."
       explain: "In a workflow, the script decides what runs next and holds the intermediate results. The shared task list belongs to agent teams."
     tr:
-      question: "Dynamic workflow'u bir agent team'den ayıran şey nedir?"
+      question: "Dinamik workflow'u agent team'den ayıran şey nedir?"
       options:
-        - "Workflow tek bir agent kullanıyor, team ise çok sayıda."
-        - "Workflow her turda bir insanın enter'a basmasını bekliyor."
-        - "Workflow sonuçlarını paylaşılan bir task listesinde tutuyor."
-        - "Workflow planı bir agent'ta değil, bir script'te tutuyor."
-      explain: "Workflow'da sırada ne çalışacağına script karar veriyor ve ara sonuçları script tutuyor. Paylaşılan task listesi agent teams'e ait."
+        - "Workflow tek bir agent kullanır, team ise birçok agent kullanır."
+        - "Workflow her turda bir insanın enter tuşuna basmasını bekler."
+        - "Workflow sonuçlarını ortak bir görev listesinde tutar."
+        - "Workflow planı bir agent'ta değil, bir betikte tutar."
+      explain: "Workflow'da sıradaki işi betik belirler ve ara sonuçları da betik tutar. Ortak görev listesi ise agent team'lere aittir."
     fa:
-      question: "چه چیزی dynamic workflow را از agent team متفاوت می‌کند؟"
+      question: "چی باعث می‌شه dynamic workflow با agent team فرق داشته باشه؟"
       options:
-        - "یک workflow از یک agent استفاده می‌کند و یک team از چند agent."
-        - "یک workflow در هر نوبت منتظر می‌ماند تا یک آدم Enter را بزند."
-        - "یک workflow نتیجه‌هایش را در یک فهرست مشترک task نگه می‌دارد."
-        - "یک workflow plan را در یک script می‌گذارد، نه در یک agent."
-      explain: "در یک workflow، script تعیین می‌کند چه چیزی بعد اجرا شود و نتیجه‌های میانی را نگه می‌دارد. فهرست مشترک task مربوط به agent teams است."
+        - "workflow از یه agent استفاده می‌کنه، و team از چندتا."
+        - "workflow توی هر نوبت منتظر می‌مونه تا یه آدم Enter بزنه."
+        - "workflow نتیجه‌هاش رو توی یه فهرست مشترک task نگه می‌داره."
+        - "workflow برنامه‌ش رو توی یه script می‌ذاره، نه توی یه agent."
+      explain: "توی workflow، script تعیین می‌کنه بعدش چی اجرا بشه و نتیجه‌های میانی رو هم خودش نگه می‌داره. فهرست مشترک task مال agent teams هست."

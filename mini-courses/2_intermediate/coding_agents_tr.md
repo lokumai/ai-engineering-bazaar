@@ -1,116 +1,116 @@
 # Code Agent'lar
 
-[Context Engineering](context_engineering_tr.md) şu noktada bitiyordu: şu an kullandığın coding agent'lar zaten deep agent. Plan yapıyorlar, subagent'lara iş devrediyorlar, dosya okuyup yazıyorlar. Bu modül o agent'ların kendisiyle ilgili. Önce neden "kod yazan bir şey" olmanın çok ötesinde faydalı çıktıklarına bakıyoruz. Sonra da birini genişletmenin sekiz yolunu tek tek geçiyoruz.
+[Context Engineering](context_engineering_tr.md) modülü tek bir noktayla bitmişti: zaten kullandığın code agent'lar birer deep agent'tır. Plan yaparlar, işin bir kısmını subagent'lara devrederler ve dosyaları okuyup yazarlar. Bu modül ise tam da bu agent'ların kendisini konu alıyor. Önce, neden sadece "kod yazan bir araç" olmaktan çok daha faydalı olduklarını anlatacağız. Ardından bir agent'ı genişletmenin sekiz yolunu ele alacağız.
 
-## Bir Coding Agent Neden Koddan Fazlasını Yapabiliyor
+## Bir Code Agent Neden Koddan Fazlasını Yapabilir
 
-Elinde bir PNG dosyası var ve onu sıkıştırmak ya da JPEG'e çevirmek istiyorsun. Agent olmadan birinin bunun için bir tool yazıp modele vermesi gerekir.
+Diyelim ki elinde bir PNG dosyası var ve onu sıkıştırmak ya da JPEG'e çevirmek istiyorsun. Agent olmadan bu iş için birinin bir tool yazıp modele vermesi gerekir.
 
-Bir coding agent'ın tool'a ihtiyacı yok. Bir Python imaging library'si kurup dönüşümü yapan dört satır kodu yazabilir. Ondan bir sunum iste, aynı şeyi yapar. Bir pptx library'si bulup kuruyor. Kodu yazıyor. Sonra dosyayı sana veriyor. Bu işlerin hiçbiri onun tool listesinde yoktu.
+Code agent'ın ise bir tool'a ihtiyacı yoktur; Python'un bir görüntü kütüphanesini (imaging library) kurabilir ve dönüşümü yapan dört satırlık kodu kendisi yazabilir. Ondan bir slayt sunumu istediğinde de bir pptx kütüphanesi bulup kurar, kodu yazar ve dosyayı sana verir. İki işin de tool listesinde olmadığına dikkat et.
 
-Burada biraz durup düşün. Bu agent'lar sadece var olanı *kullanmıyor*. Olmayanı da *inşa ediyor*. Dolaşan bir hikâye vardı: yazıcısı için Linux driver'ı olmayan biri, bir coding agent'a driver yazdırmış. Detaylar anlatıldıkça değişmiş olabilir, ama ana fikir doğru: kod yazıp çalıştırabilen bir model, bir bilgisayarın ulaşabildiği hemen her şeye ulaşabilir.
+Bu kısmı bir an durup düşün: bu agent'lar yalnızca var olanı *kullanmakla* kalmaz, olmayanı da *üretebilir*. İnsanların paylaştığı hikâyelerden birinde, bir kişinin yazıcısı için Linux sürücüsü (driver) yoktu. Bu yüzden ona bir code agent'tan sürücüyü yazmasını istediler. Hikâye anlatıldıkça ayrıntılar değişmiş olabilir, ama genel fikir doğrudur: kod yazıp çalıştırabilen bir model, bilgisayarın yapabildiği neredeyse her şeye ulaşmanın bir yolunu bulur.
 
-![Code is the universal interface](./images/code-is-universal.png)  
-*Üst sıra eski yöntem: her alan için bir agent, her birine kendi tool'ları yazılmış. Alt sıra coding agent'ların neden öne geçtiği. Kod web'e, takvime, bankaya ve havayoluna erişebiliyor. Yani kod yazan bir agent dördünü de kapsıyor ve kimsenin dört ayrı tool seti yazması gerekmiyor.*
+![Kod evrensel arayüzdür](./images/code-is-universal.png)  
+*Üst sıra eski yöntemdir: her alan için ayrı bir agent vardır ve her agent'ın kendine özel tool'lara ihtiyacı vardır. Alt sıra ise code agent'ların neden bu yerini aldığını gösterir. Kod web'e, takvime, bankaya ve havayolu şirketine ulaşabilir. Yani kod yazan bir agent dördünü de kapsar ve kimsenin dört ayrı tool seti yazmasına gerek kalmaz.*
 
-Yani coding sadece birçok beceriden biri değil. Diğerlerinin yerine geçebilen beceri bu. Bir coding agent'ın yazılımla ilgisi olmayan işlerde de yardımcı olmasının sebebi de bu. Yukarıdaki örneklere bir daha bak: her biri coding dışı bir işti.
+Yani kodlama, birçok beceriden yalnızca biri değildir; diğer becerilerin yerini alabilen temel beceri odur. Bu yüzden bir code agent, yazılımla ilgisi olmayan işlerde de işe yarar. Yukarıdaki örneklerin hepsi, kod yazmakla ilgisi olmayan işlerdi.
 
-Modülün kalanı standart donanım. Hemen her modern coding agent'ta bunlar var: Claude Code, Codex, Antigravity, Copilot ve OpenCode. İsimler ve dosya yolları aralarında biraz değişiyor. Buradaki somut örnekler Claude Code'dan ve hepsi [Claude Code features](https://code.claude.com/docs/en/agent-sdk/claude-code-features) sayfasında bir arada.
+Bu modülün geri kalanı, standart donanımı anlatıyor. Güncel code agent'ların neredeyse hepsinde bu özellikler bulunur: Claude Code, Codex, Antigravity, Copilot ve OpenCode. Adlar ve dosya yolları her birinde biraz farklı olsa da buradaki somut örnekler Claude Code'dan geliyor. [Claude Code features](https://code.claude.com/docs/en/agent-sdk/claude-code-features) sayfası, bu özelliklerin hepsini tek bir yerde topluyor.
 
 ## AGENTS.md
 
-README insanlar için. AGENTS.md agent'lar için.
+README insanlar içindir. AGENTS.md ise agent'lar içindir.
 
-AGENTS.md, repo'nun içinde duran düz bir markdown dosyası. Coding agent onu mevcut system prompt'unun sonuna, vendor'ın yazdığı system prompt'un ardına ekliyor. Mekanizma bundan ibaret. Arkasındaki açık format [agents.md](https://agents.md/) ve dosyayı şöyle tanımlıyor: "AI coding agent'ların projende çalışmasına yardım edecek context ve talimatlar için ayrılmış, öngörülebilir bir yer".
+AGENTS.md, repository'nin içinde duran sade bir markdown dosyasıdır. Code agent, bu dosyayı üreticinin yazdığı mevcut sistem prompt'una, onun arkasından ekler; mekanizma bu kadar basit. Bunun arkasındaki açık format [agents.md](https://agents.md/)'dir. Bu sayfa dosyayı, AI code agent'ların projen üzerinde çalışmasına yardım etmek için bağlam ve talimat verebileceğin, ayrılmış ve öngörülebilir bir yer olarak tanımlar.
 
-İçine girecek olan şey, bütün repo boyunca doğru kalan ve pek değişmeyen bilgiler:
+Dosyaya, tüm repository için geçerli kalan ve pek değişmeyen bilgiler girer:
 
 - build ve test komutları
 - dizinlerin nasıl düzenlendiği
-- ekibinin uyduğu convention'lar
-- agent'ın yoksa iki kez yanlış yapacağı kurallar
+- ekibinin uyduğu kurallar ve gelenekler
+- bir agent'ın aksi halde iki kez yanlış yapacağı kurallar
 
-Girmemesi gereken şey ise bir hafta içinde eskiyen her şey. Koda artık uymayan detaylarla dolu bir dosya, hiç dosya olmamasından kötüdür. Agent dosyada yazana inanıyor.
+Dosyaya girmemesi gerekenler ise bir haftada eskiyecek şeylerdir. Kodla artık uyuşmayan ayrıntılarla dolu bir dosya, hiç dosya olmamasından daha kötüdür; çünkü agent, dosyada yazanlara inanır.
 
-Elle yazmak zorunda değilsin. `/init` çalıştırırsan agent codebase'i okuyup ilk taslağı yazıyor. Sonra sen onu düzeltiyorsun.
+Dosyayı elle yazmak zorunda değilsin. `/init` komutunu çalıştırırsan agent kod tabanını okur ve ilk taslağı yazar; sonra sen onu düzeltirsin.
 
-İki pratik not var. Birincisi, Claude Code `AGENTS.md` yerine `CLAUDE.md` okuyor. Repo'nda başka tool'lar için zaten bir AGENTS.md olabilir. Bu durumda dokümanda önerilen yol, onu `@AGENTS.md` ile import eden bir `CLAUDE.md` yazmak. Sonra Claude'a özel şeyleri onun altına ekliyorsun.
+Burada iki pratik not var. Birincisi, Claude Code `AGENTS.md` değil, `CLAUDE.md` dosyasını okur. Repository'nde başka araçlar için hazırlanmış bir AGENTS.md zaten olabilir. Bu durumda belgelenmiş çözüm, `@AGENTS.md` ile onu içe aktaran bir `CLAUDE.md` yazmaktır. Claude'a özel her şeyi de bu satırın altına eklersin.
 
-İkincisi, iki format da **iç içe** dosyaları destekliyor. Kökte bir tane, `frontend/` veya `backend/` içinde bir tane daha tutabiliyorsun. İçteki dosya sadece agent o dizinde çalışırken yükleniyor. Frontend kurallarını bir backend işinden uzak tutmak, kendi talimatlarına uygulanmış context engineering.
+İkincisi, iki format da **iç içe** dosyaları destekler. Kök dizinde bir dosya, `frontend/` ya da `backend/` içinde başka bir dosya tutabilirsin. İç içe dosya yalnızca agent o dizinde çalışırken yüklenir. Frontend kurallarını bir backend işinden uzak tutmak, kendi talimatlarına uygulanmış context engineering'dir.
 
 ## Slash Command'lar
 
-Slash command, bir kez yazdığın bir prompt. `/isim` yazarak onu tekrar çalıştırabiliyorsun. Claude Code'da slash command'lar `.claude/commands/` içinde duruyor.
+Slash command, bir kez yazdığın ve `/name` yazarak yeniden çalıştırabildiğin bir prompt'tur. Claude Code'da slash command'lar `.claude/commands/` klasöründe durur.
 
-İşe yarayan üç tanesi:
+Sahip olmaya değer üç tanesi şunlar:
 
-- `/commit`, commit mesajını ekibinin yazdığı gibi yazıyor.
-- `/review`, review checklist'ini mevcut diff'e uyguluyor.
-- `/changelog`, merge edilmiş pull request'leri release notlarına çeviriyor.
+- `/commit` commit mesajını ekibinin yazdığı biçimde yazar.
+- `/review`, mevcut diff üzerinde review kontrol listeni çalıştırır.
+- `/changelog`, merge edilmiş pull request'leri sürüm notlarına (release notes) çevirir.
 
-Bunlar olmasa, üç prompt'u da her hafta yeniden yazarsın.
+Bunlar olmasa, üç prompt'un hepsini her hafta baştan yazman gerekirdi.
 
-Bilinmesi gereken bir şey var, çünkü aşağıdaki tabloyu değiştiriyor: **custom command'lar skill'lerin içine alındı.** `.claude/commands/deploy.md` dosyası sana `/deploy` veriyor. `.claude/skills/deploy/SKILL.md` skill'i de sana `/deploy` veriyor, ve ikisi aynı şekilde davranıyor. Mevcut `commands/` dosyaların çalışmaya devam ediyor. İkisi arasındaki eski fark artık bir frontmatter alanı. Onu skill'ler bölümünde anlatıyoruz.
+Burada bilmen gereken bir şey var, çünkü aşağıdaki anlatımı değiştiriyor: **custom command'lar artık skill'lerle birleşti.** `.claude/commands/deploy.md` dosyası sana `/deploy` komutunu verir. `.claude/skills/deploy/SKILL.md` konumundaki bir skill de `/deploy` komutunu verir ve ikisi aynı şekilde davranır. Mevcut `commands/` dosyaların çalışmaya devam eder. İkisi arasındaki eski fark ise artık bir frontmatter alanıyla belirleniyor ve bunu aşağıdaki skill bölümünde açıklıyoruz.
 
 ## Model Context Protocol (MCP)
 
-MCP'nin çözdüğü problem şu.
+MCP'nin çözdüğü problemi bir örnekle görelim.
 
-LangChain agent'ın Jira'nla çalışabilsin diye tool'lar yazıyorsun. Bu tool'lar Jira API'sini sarıyor: biri issue açıyor, biri arama yapıyor, biri yorum ekliyor. Şimdi aynı şeyi Claude Code'da, ya da Codex'te, ya da bir smolagents script'inde istiyorsun. Her biri tool tanımlarını kendi şeklinde bekliyor. Yani Jira tool'larını yeniden yazıyorsun. Ve bir daha.
+Diyelim ki LangChain agent'ının Jira ile çalışabilmesi için ona tool'lar yazdın. Bu tool'lar Jira API'sini sarmalıyor: biri issue oluşturuyor, biri arama yapıyor, biri de yoruma ekliyor. Şimdi aynısını Claude Code'da, Codex'te ya da bir smolagents script'inde istediğinde, her birinin tool tanımlarını kendi biçiminde beklediğini görürsün. Yani Jira tool'larını baştan yazmak zorunda kalırsın, sonra bir kez daha ve bir kez daha.
 
-**Model Context Protocol** bunu dört iş yerine tek iş yapıyor. Tool'lar tek bir standart şekilde tanımlanıyor. Protokolü konuşan her agent da onları kullanabiliyor.
+**Model Context Protocol**, bu işi dört ayrı iş olmaktan çıkarıp tek bir işe indirir: tool'ları tek bir standart yolla tanımlarsın ve protokolü konuşan her agent bu tool'ları kullanabilir.
 
-![Before and after MCP](./images/mcp-unified-before-after.png)  
-*Solda her servis, konuştuğu model için yazılmış kendi entegrasyonuna ihtiyaç duyuyor. Yani iş, model sayısıyla birlikte çoğalıyor. Sağda servislerin API'leri hiç değişmedi. Değişen şey, modelin onlara nasıl eriştiği: modelin zaten konuştuğu tek bir arayüz üzerinden. Yani her servisi her agent için ayrı ayrı değil, bir kez entegre ediyorsun.*
+![MCP öncesi ve sonrası](./images/mcp-unified-before-after.png)  
+*Solda her servisin, onunla konuşan modele göre yazılmış ayrı bir entegrasyona ihtiyacı var. Bu yüzden iş, model sayısıyla birlikte çoğalır. Sağda ise her servisin API'si hiç değişmiyor. Değişen, modelin onlara nasıl ulaştığı: modelin zaten konuştuğu tek bir arayüz üzerinden. Bu yüzden her servisi her agent için değil, yalnızca bir kez entegre edersin.*
 
-Bundan elde ettiklerin:
+Bunun sana kazandırdıkları:
 
-- **Vendor lock-in yok.** Agent değiştirdiğinde tool'larını yeniden yazman gerekmiyor.
-- **Tool setleri taşınabilir hâle geliyor.** Bir kez yaz, her yerde kullan.
-- **İhtiyacın olanı bir başkası çoktan yazmış.** İnsanları şaşırtan kısım bu.
+- **Satıcıya bağlı kalmazsın.** Agent değiştirdiğinde tool'larını yeniden yazmak zorunda kalmazsın.
+- **Tool setleri taşınabilir hale gelir.** Bir kez yaz, her yerde kullan.
+- **İhtiyacın olanı başka biri zaten yazmıştır.** İnsanları şaşırtan kısım tam olarak bu.
 
-MCP'yi ünlü yapan da son madde. MCP işi bir client ile bir server arasında bölüyor. Tool'lar bir **MCP server**'da duruyor, agent da o server'a bağlanan bir client. Yani bir MCP server bir tool paketi. Birini eklemek için kod değil, konfigürasyon değiştiriyorsun. Agent'ını Jira MCP server'ına yönlendir, artık Jira'nla çalışabiliyor.
+MCP'yi asıl öne çıkaran da bu son noktadır. MCP işi bir client ile bir server arasında böler: tool'lar bir **MCP server**'ın içinde durur, agent ise ona bağlanan bir client'tır. Yani bir MCP server, tool'lardan oluşan bir pakettir. Bir tane eklemek için kod değil, yapılandırma değiştirirsin; agent'ını Jira MCP server'ına yönlendirdiğinde artık Jira'yla çalışabilir.
 
-Claude Code'da bu tek bir komut. [Connect to MCP servers](https://code.claude.com/docs/en/mcp-quickstart) sayfası bunu anlatıyor:
+Claude Code'da bu, tek bir komutla yapılır. [Connect to MCP servers](https://code.claude.com/docs/en/mcp-quickstart) sayfası bunu şöyle belgeliyor:
 
 ```bash
-# hosted bir server, HTTP üzerinden
+# a hosted server, reached over HTTP
 claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
 
-# lokal olan, makinende bir process olarak çalışan
+# a local one, run as a process on your machine
 claude mcp add playwright -- npx -y @playwright/mcp@latest
 ```
 
-Sonra `claude mcp list`, server'ın gerçekten bağlanıp bağlanmadığını söylüyor. `--scope project` eklersen Claude Code server'ı bir `.mcp.json` dosyasına yazıyor. Takım arkadaşların repo'yu klonladığında bu dosyayı alıyor.
+Sonra `claude mcp list` komutu, server'ın gerçekten bağlanıp bağlanmadığını sana söyler. `--scope project` eklersen Claude Code server'ı bir `.mcp.json` dosyasına yazar; repository'yi klonlayan ekip arkadaşların da bu dosyayı alır.
 
-Hangi server'ların zaten var olduğunu görmek için topluluk listesine bak: [awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers).
+Hangi server'ların zaten var olduğuna bakmak için topluluk listesi olan [awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers) sayfasına göz at.
 
-> **NOT:** bağlı her server context window'un bir kısmını kullanıyor. Tool isimleri ve açıklamaları her session'a yükleniyor. Hiç çağırmadığın on server bile sana maliyet çıkarıyor. [Context Engineering](context_engineering_tr.md)'deki sebeplerle, kullanmadıklarını kaldır.
+> **NOT:** Bağlı her server, context window'un bir kısmını kullanır. Tool adları ve açıklamaları her oturuma yüklenir; hiç çağırmadığın on server bile sana maliyet çıkarır. Kullanmadıklarını, [Context Engineering](context_engineering_tr.md) modülünde verilen nedenlerle kaldır.
 
 ## Subagent'lar
 
-[Context Engineering](context_engineering_tr.md) subagent'ların neden var olduğunu anlatmıştı. Subagent, pahalı bir işe temiz bir context window veriyor. Böylece ana window'a bütün araştırma yerine bir sonuç geliyor.
+[Context Engineering](context_engineering_tr.md) modülü subagent'ların neden var olduğunu anlatmıştı. Subagent, maliyetli bir işe taze bir context window verir. Böylece ana pencere, tüm araştırmanın yerine yalnızca sonucunu alır.
 
-Genişletme noktası, kendi subagent'larını tanımlayabilmen. Her agent genel amaçlı bir subagent ile geliyor. Yanına bir security analyst, bir frontend uzmanı ve bir test yazarı ekleyebiliyorsun. Her birinin kendi system prompt'u ve kendi tool listesi var. Claude Code'da bunlar `.claude/agents/` içindeki markdown dosyaları.
+Genişletme noktası ise kendi subagent'larını tanımlayabilmendir. Her agent genel amaçlı bir subagent ile gelir ve onun yanına bir güvenlik analisti, bir frontend uzmanı ya da bir test yazarı ekleyebilirsin. Her birinin kendi sistem prompt'u ve kendi tool listesi vardır; Claude Code'da bunlar `.claude/agents/` klasöründeki markdown dosyalarıdır.
 
-Custom bir subagent sabit bir rol. Talimatlarını bir kez yazıyorsun. O subagent her çağrıldığında, temiz bir window'da bu talimatlardan başlıyor. Başkasının yazdığından başlamak istersen [awesome-claude-code-subagents](https://github.com/VoltAgent/awesome-claude-code-subagents) yüzden fazlasını topluyor.
+Custom subagent sabit bir roldür: talimatlarını bir kez yazarsın ve agent o subagent'ı her çağırdığında, subagent bu talimatlarla temiz bir pencereden başlar. Başkalarının subagent'larından başlamayı tercih edersen, [awesome-claude-code-subagents](https://github.com/VoltAgent/awesome-claude-code-subagents) yüzü aşkın hazır tanım içeren bir koleksiyondur.
 
 ## Skill'ler
 
-Skill bir talimat klasörü. Agent, bir iş gerektirdiğinde onu okuyabiliyor. Anthropic'in [Equipping agents for the real world with Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills) yazısı şöyle tanımlıyor: "agent'ların belirli işlerde daha iyi olmak için keşfedip dinamik olarak yükleyebildiği, düzenlenmiş talimat, script ve kaynak klasörleri". Claude Code'da bir skill `.claude/skills/<isim>/SKILL.md` içinde duruyor.
+Skill, talimatlardan oluşan bir klasördür ve bir iş ona ihtiyaç duyduğunda agent onu okuyabilir. Anthropic'in [Equipping agents for the real world with Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills) başlıklı yazısı skill'leri şöyle tanımlar: agent'ların belirli görevlerde daha iyi performans göstermek için keşfedip dinamik olarak yükleyebileceği, talimatlardan, script'lerden ve kaynaklardan oluşan düzenli klasörler. Claude Code'da bir skill `.claude/skills/<name>/SKILL.md` konumunda durur.
 
-Önemli olan mekanizma. Akılda tutman gereken bir adı da var: **progressive disclosure**.
+Asıl önemli olan ise mekanizmadır; hatırlaman gereken bir adı var: **kademeli açılım (progressive disclosure)**.
 
-Agent açılışta kurulu her skill'in sadece `name` ve `description`'ını yüklüyor. Bu her biri için bir iki satır, yani yirmi skill neredeyse hiçbir şeye mal olmuyor. Agent tam talimatları ancak bir skill'in üzerinde çalıştığı işe uyduğuna karar verdiğinde okuyor.
+Başlangıçta agent, kurulu her skill'in yalnızca `name` ve `description` alanını yükler. Bu her skill için bir ya da iki satır eder, yani yirmi skill bile neredeyse hiç yer kaplamaz. Agent tam talimatları ancak bir skill'in üzerinde çalıştığı göreve uyduğuna karar verdiğinde okur.
 
-![Skills and the context window](./images/skill-and-context-window.png)  
-*Üstteki gri bant, kullanılmayan yirmi skill'in bütün maliyeti: her biri için kısa bir satır. PDF işi geldiğinde agent `SKILL.md`'yi sıradan bir Bash çağrısıyla okuyor. Sonra içindeki bir referansı takip edip ikinci bir dosyaya gidiyor. Skill'in context'e bir tool result olarak girdiğine dikkat et. Yani bu yeni bir mekanizma değil. Tool Calling'in loop'u, data yerine talimat okumak için kullanılıyor.*
+![Skill'ler ve context window](./images/skill-and-context-window.png)  
+*Üstteki gri şerit, kullanılmadıkları sürece yirmi skill'in tam maliyetini gösterir: her biri için tek kısa bir satır. PDF görevi geldiğinde agent `SKILL.md` dosyasını sıradan bir Bash çağrısıyla okur. Sonra bu dosyanın içindeki bir referansı izleyerek ikinci bir dosyaya geçer. Dikkat et, skill context'e bir tool sonucu olarak girer. Yani bu yeni bir mekanizma değil. Veri yerine talimat okumak için kullanılan, LLM Tool Calling modülündeki tool döngüsüdür.*
 
-Peki neden tek bir kocaman system prompt yerine skill'ler var? Sebebi context engineering. Agent'ın ihtiyaç duyabileceği her şey erişilebilir. Sadece gerçekten ihtiyaç duyduğu şey window'da.
+Peki neden tek ve çok büyük bir sistem prompt'u yerine skill'ler var? Nedeni context engineering'dir: agent'ın ihtiyaç duyabileceği her şey erişilebilir durumdadır, ama pencerede yalnızca gerçekten ihtiyaç duyduğu şey bulunur.
 
-**Skill'lere karşı custom subagent'lar.** Bir subagent'ın talimatları sabit. Subagent izole bir window'da çalışıyor: gidiyor ve bir cevapla dönüyor. Skill ise ana agent'ı değiştiriyor. *Bu* agent security skill'ini okuduğunda, işin kalanı için bir security reviewer oluyor. Aynı window'da kalıyor ve zaten bildiği her şeyi koruyor. Maske değiştiren aynı agent bu, ve bir dakika sonra maskesini yine değiştirebilir.
+**Skill'ler ile custom subagent'lar.** Bir subagent'ın talimatları sabittir ve yalıtılmış bir pencerede çalışır; işini bitirip bir cevapla geri döner. Skill ise ana agent'ı değiştirir. *Bu* agent güvenlik skill'ini okuduğunda, görevin geri kalanı boyunca bir güvenlik gözden geçiricisine dönüşür; aynı pencerede kalır ve zaten bildiği her şeyi korur. Bu, aynı agent'ın farklı bir maske takmış hali gibidir ve isterse bir dakika sonra maskesini yeniden değiştirebilir.
 
-**Skill'lere karşı slash command'lar.** Birleşmeden sonra ayakta kalan fark bu. Konu, skill'i kimin çağırabildiği. Varsayılan olarak hem sen hem agent çağırabiliyor. İki frontmatter alanı bunu sınırlıyor:
+**Skill'ler ile slash command'lar.** Birleşmeden sonra da varlığını koruyan fark, skill'i kimin çağırabileceğiyle ilgilidir. Varsayılan olarak hem sen hem agent onu çağırabilirsin. Bunu sınırlayan iki frontmatter alanı var:
 
 ```yaml
 ---
@@ -120,85 +120,85 @@ disable-model-invocation: true
 ---
 ```
 
-`disable-model-invocation: true`, skill'i sadece senin çalıştırabileceğin anlamına geliyor. Yan etkisi olan her şey için istediğin de bu. Kod ona hazır göründüğü için agent'ın deploy etmeye karar vermesini istemiyorsun. Tersi olan alan `user-invocable: false`. Bu alan, skill'e sadece agent'ın erişebileceği anlamına geliyor. Arka plan bilgisine uygun: bir insanın komut olarak yazmasının hiç anlamı olmayacak türden şeylere.
+`disable-model-invocation: true`, skill'i yalnızca senin çalıştırabileceğin anlamına gelir ve yan etkisi olan her şey için bunu istersin. Kod hazır göründü diye agent'ın kendi kararıyla deploy etmesini istemezsin. Tersi olan alan `user-invocable: false`'tur; skill'e yalnızca agent'ın erişebileceğini söyler. Bu alan, bir kişinin yazacağı bir komut olarak hiç anlam taşımayacak türden arka plan bilgisi için uygundur.
 
-Açık skill koleksiyonları için [anthropics/skills](https://github.com/anthropics/skills) resmî olanı. [awesome-claude](https://github.com/webfuse-com/awesome-claude) ise daha geniş bir derleme.
+Herkese açık skill koleksiyonları için resmî olanı [anthropics/skills](https://github.com/anthropics/skills)'tir. [awesome-claude](https://github.com/webfuse-com/awesome-claude) ise daha geniş, derlenmiş bir listedir.
 
 ## Hook'lar
 
-Yukarıdaki her şey bir modele verilen tavsiye. Yani model ona çoğu zaman uyuyor. Hook tavsiye değil. Hook, agent'ın yaşam döngüsündeki sabit bir noktaya bağlanmış bir shell komutu. Model istesin istemesin çalışıyor.
+Yukarıdaki her şey modele verilen bir tavsiyedir, yani model çoğu zaman bunlara uyar. Hook ise tavsiye değildir: agent'ın yaşam döngüsündeki sabit bir noktaya bağlı bir shell komutudur ve model isteyip istemese de çalışır.
 
-[Hooks reference](https://code.claude.com/docs/en/hooks) otuzdan fazla event listeliyor. Pratikte kullanılanlar şunlar:
+[hooks reference](https://code.claude.com/docs/en/hooks) otuzdan fazla olay listeler. Pratikte insanların kullandığı olaylar şunlar:
 
-- **`PreToolUse`**, bir tool çağrısı çalışmadan önce. Kimsenin dokunmaması gereken bir dosyadaki edit'i engelle, ya da main'e push edecek bir komutu reddet.
-- **`PostToolUse`**, bir tool çağrısı başarılı olduktan sonra. Agent'ın az önce düzenlediği her dosyada formatter'ı çalıştır. Böylece stil, agent'ın hatırlamasına bağlı olmaktan çıkar.
-- **`Stop`**, agent turunu bitirdiğinde. Test suite'ini çalıştır ve kırmızı bir şey varsa devam etmesini söyle.
-- **`SessionStart`**, bir session başladığında. Mevcut branch'i ve açık ticket'ları context'e yazdır.
+- **`PreToolUse`**: bir tool çağrısı çalışmadan önce. Kimsenin dokunmaması gereken bir dosyaya yapılan düzenlemeyi engelleyebilirsin ya da main'e push edecek bir komutu reddedebilirsin.
+- **`PostToolUse`**: bir tool çağrısı başarıyla bittikten sonra. Agent'ın az önce düzenlediği her dosyada formatter'ı çalıştırabilirsin. Böylece stil, agent'ın hatırlayıp hatırlamadığına hiç bağlı kalmaz.
+- **`Stop`**: agent turunu bitirdiğinde. Test paketini çalıştırabilir ve bir test kırmızıysa agent'a devam etmesini söyleyebilirsin.
+- **`SessionStart`**: bir oturum başladığında. Mevcut branch'i ve açık ticket'ları context'e yazdırabilirsin.
 
-İlkini aklında tut, çünkü asıl noktayı o taşıyor. Agent'a bir dosyaya asla dokunmamasını söyleyen bir AGENTS.md talimatı bir ricadır. Yazmayı engelleyen bir `PreToolUse` hook'u ise bir kuraldır. Sonraki modül bu fikirle başlıyor, ve o modülün var olma sebebi de bu.
+İlkini aklında tut, çünkü ana fikri o taşıyor. AGENTS.md içinde agent'tan bir dosyaya hiç dokunmamasını isteyen bir talimat bir istektir; yazmayı engelleyen bir `PreToolUse` hook'u ise bir kuraldır. Bu fikir bir sonraki modülde açılıyor ve o modülün var olma sebebi de tam olarak budur.
 
 ## Plugin'ler
 
-Plugin, yukarıdakilerin bir paketi: command'lar, skill'ler, subagent'lar, hook'lar ve MCP server'ları. Hepsi birlikte geliyor ve tek adımda kuruluyor. Yeni bir takım arkadaşından altı dosyayı `.claude/` dizinine kopyalamasını istemiyorsun. Onun yerine ona tek bir plugin veriyorsun.
+Plugin, yukarıdaki şeylerden oluşan bir pakettir: command'lar, skill'ler, subagent'lar, hook'lar ve MCP server'lar. Hepsi birlikte gelir ve tek adımda kurulur. Yeni bir ekip arkadaşının `.claude/` klasörüne altı dosya kopyalaması gerekmez; ona tek bir plugin vermek yeter.
 
-Düzen vendor'dan vendor'a değişiyor. Claude Code için plugin, manifest'i olan bir dizin. Manifest, plugin'in hangi parçaları sağladığını söylüyor. [Discover plugins](https://code.claude.com/docs/en/discover-plugins) kurmayı, [plugins reference](https://code.claude.com/docs/en/plugins-reference) ise yapmayı anlatıyor. [claude-plugins-official](https://github.com/anthropics/claude-plugins-official) da Anthropic'in yönettiği dizin.
+Yapı her üreticiye göre farklıdır; Claude Code'da plugin, bir manifest dosyası olan bir klasördür ve manifest, plugin'in bu parçalardan hangilerini sağladığını söyler. [Discover plugins](https://code.claude.com/docs/en/discover-plugins) plugin'lerin nasıl kurulacağını, [plugins reference](https://code.claude.com/docs/en/plugins-reference) ise nasıl oluşturulacağını anlatır. [claude-plugins-official](https://github.com/anthropics/claude-plugins-official) ise Anthropic'in yönettiği dizindir.
 
 ## MEMORY.md
 
-Her session boş bir context window'la başlıyor. Bilgiyi bir session'dan sonrakine taşıyan iki şey var, ve ikisi aynı şey değil.
+Her oturum boş bir context window ile başlar. Bilgiyi bir oturumdan diğerine taşıyan iki şey vardır ve bu ikisi aynı şey değildir.
 
-**AGENTS.md senin yazdığın.** **Auto memory agent'ın yazdığı.** Aşağıdaki tablo [How Claude remembers your project](https://code.claude.com/docs/en/memory) sayfasından:
+**AGENTS.md, senin yazdığın şeydir.** Auto memory ise agent'ın yazdığı şeydir. Aşağıdaki tablo [How Claude remembers your project](https://code.claude.com/docs/en/memory) sayfasından alınmıştır:
 
-| | CLAUDE.md dosyaları | Auto memory |
+| | CLAUDE.md files | Auto memory |
 | --- | --- | --- |
-| Kim yazıyor | Sen | Claude |
-| Ne içeriyor | Talimatlar ve kurallar | Öğrenilenler ve desenler |
-| Kapsam | Proje, kullanıcı veya organizasyon | Repo başına, worktree'ler arasında paylaşılan |
-| Nereye yükleniyor | Her session | Her session (ilk 200 satır veya 25KB) |
-| Ne için | Coding standartları, workflow'lar, proje mimarisi | Tercihlerin, Claude'a verdiğin düzeltmeler, koddan çıkaramayacağı proje context'i |
+| Kim yazar | Sen | Claude |
+| Ne içerir | Talimatlar ve kurallar | Öğrenilenler ve kalıplar |
+| Kapsam | Proje, kullanıcı veya organizasyon | Repository başına, worktree'ler arasında paylaşılır |
+| Nereye yüklenir | Her oturumda | Her oturumda (ilk 200 satır veya 25KB) |
+| Ne için kullanılır | Kodlama standartları, iş akışları, proje mimarisi | Tercihlerin, Claude'a verdiğin düzeltmeler ve kodundan çıkarılamayan proje bağlamı |
 
-Agent bu notları, ona verdiğin düzeltmelere dayanarak yazıyor. Yani bu hafta iki kez açıklamak zorunda kaldığın şey önümüzdeki pazartesi hâlâ orada. Dosyalar `~/.claude/projects/<project>/memory/` içinde duruyor. Agent her session'da bir `MEMORY.md` index'i yüklüyor. Ayrıntılı notlar onun yanında duruyor ve agent onları ancak ihtiyaç olduğunda okuyor. Bu yine progressive disclosure, bu sefer agent'ın kendi notlarına uygulanmış hâli.
+Agent bu notları, sana verdiğin düzeltmelerden yazar. Böylece bu hafta iki kez anlatmak zorunda kaldığın şey, gelecek pazartesi de hâlâ orada olur. Dosyalar `~/.claude/projects/<project>/memory/` klasöründe durur. Agent her oturumda bir `MEMORY.md` dizinini yükler; ayrıntılı notlar ise bunun yanında durur ve agent bunları yalnızca ihtiyaç duyduğunda okur. Bu, kademeli açılımın agent'ın kendi notlarına uygulanmış hali.
 
-Bilerek yapmaya değer bir şey var: agent'a bir şeyi hatırlamasını söylemek. "API testlerinin lokal bir Redis'e ihtiyacı olduğunu hatırla" dersen agent bunu not ediyor. `/memory`, agent'ın kaydettiği her şeyi gösteriyor. Hepsi düzenleyip silebileceğin düz markdown.
+İsteyerek yapabileceğin faydalı bir şey, agent'a bir şeyi hatırlamasını söylemektir. "API test'lerinin yerel bir Redis'e ihtiyacı olduğunu hatırla" dersen agent bunu yazıp kaydeder. `/memory` komutu agent'ın kaydettiği her şeyi sana gösterir ve hepsi düzenleyebileceğin ya da silebileceğin sade markdown dosyalarıdır.
 
 ## Plan Mode
 
-Elinde büyük bir refactor, ya da aynı anda teslim edilecek birkaç feature var. Kod yazmaya başlamak yanlış ilk adım. Sebebini [Context Engineering](context_engineering_tr.md) vermişti: planı yazmamış bir agent haritayı kaybediyor.
+Diyelim ki büyük bir refactor'ın var ya da aynı anda teslim etmen gereken birkaç özellik var. Hemen kod yazmaya başlamak yanlış bir ilk adımdır. [Context Engineering](context_engineering_tr.md) bunun sebebini vermişti: planı yazıya dökmeyen agent haritayı kaybeder.
 
-Plan mode, tam bu durum için salt okunur (read-only) bir mod. Agent codebase'i geziyor ama tek bir satırını bile değiştiremiyor. Yani ilk aşamanın tamamı, gerçekte ne olduğunu anlamakla geçiyor. Sonra bir plan yazıyor ve sen okuyorsun. Agent ancak sen onayladıktan sonra düzenlemeye başlıyor.
+Plan mode, bu durum için salt okunur bir moddur. Agent kod tabanını inceler ama tek bir satırını bile değiştiremez. Bu yüzden ilk aşamanın tamamı, gerçekte neyin olduğunu anlamakla geçer. Sonra agent bir plan yazar, sen de onu okursun ve agent ancak sen planı onayladıktan sonra düzenlemeye başlar.
 
-Claude Code'un versiyonu bir adım daha gidiyor. Herhangi bir plan yapmadan önce sana açıklayıcı sorular soruyor. Birkaç yaklaşım sunup birini seçmene de izin verebiliyor. Gerçekten faydalı kısım da bu, çünkü kötü bir planı yakalamanın doğru zamanı henüz hiç kod yokken.
+Claude Code'un sürümü bir adım daha ileri gider: herhangi bir plan yapmadan önce sana açıklayıcı sorular sorar ve birkaç yaklaşım sunup birini seçmene izin verebilir. Bu kısım gerçekten faydalı, çünkü kötü bir planı yakalamanın doğru zamanı, henüz hiç kod yokken.
 
-Bu aynı zamanda long-horizon işe geri bağlanıyor. Senin onayladığın yazılı bir plandan çalışan bir agent saatlerce tutarlı kalıyor. Sebebi, planın diskte durması ve hedefi sürekli context'e geri okuması. Aynı hedef bir context window'da bırakılsaydı sessizce çürüyüp giderdi.
+Bu durum uzun soluklu (long-horizon) işlere de bağlanır: onayladığın yazılı bir plandan çalışan bir agent saatlerce tutarlı kalır. Sebebi, planın diskte durması ve agent'ın oradan hedefi sürekli context'e geri okumasıdır. Aynı hedef bunun yerine bir context window'da kalsaydı, sessizce kaybolup giderdi.
 
 ## Reasoning Effort
 
-[Prompt Engineering](prompt_engineering_tr.md)'de chain of thought, modele cevaplamadan önce düşündürmekle ilgiliydi. `/effort`, ne kadar düşüneceğini ayarlayan kadran.
+[Prompt Engineering](prompt_engineering_tr.md) modülünde chain of thought (düşünce zinciri), modelin cevap vermeden önce akıl yürütmesini sağlamakla ilgiliydi. `/effort` ise modelin ne kadar akıl yürüteceğini ayarlayan düğmedir.
 
-Kabaca şöyle:
+Kabaca bir rehber şöyle:
 
-- **medium**: soru cevaplama, dokümantasyon, küçük düzeltmeler, basit edit'ler.
-- **high**: normal iş. Yaptığın şeylerin çoğu bu.
-- **xhigh**: ağır coding: gerçek bir refactor, ince bir bug, bir tasarım kararı.
-- **max**: bir şey gerçekten zor olduğunda ve alt seviyeler başarısız olduğunda.
+- **medium**: soru cevaplama, dokümantasyon, küçük düzeltmeler ve basit düzenlemeler için.
+- **high**: normal iş için. Yaptığın işlerin çoğu bu kapsamdadır.
+- **xhigh**: ağır kodlama için. Gerçek bir refactor, ince bir bug ya da bir tasarım kararı bu gruba girer.
+- **max**: iş gerçekten zorsa ve daha düşük ayarlar yetmediyse.
 
-Yüksek ayar bedava değil. Her turda token ve zaman harcıyor. Yani bir yazım hatasını düzeltmek için onu sonuna kadar açmak, paranı çöpe atmak demek. Ne kadar kazandırdığını görmek istersen [Artificial Analysis](https://artificialanalysis.ai/) sitesine bak. Model başına ve reasoning ayarı başına benchmark sonuçları yayınlıyor. Bir ayarla sonraki arasındaki fark, oradaki sayılarda görülüyor.
+Daha yüksek bir ayar bedava değildir, çünkü her turda token ve zaman harcar. Bu yüzden bir yazım hatasını düzeltmek için ayarı sonuna kadar açarsan parayı boşa harcamış olursun. Daha yüksek bir ayarın sana gerçekte ne kazandırdığını görmek istersen [Artificial Analysis](https://artificialanalysis.ai/) sitesine bak; orada her model için farklı akıl yürütme ayarlarında yayımlanan benchmark sonuçları var ve sayılar, bir ayar ile bir sonraki arasındaki farkı gösteriyor.
 
 ## Bunların Hepsinin Ne Olduğuna Dikkat Et
 
-Sekiz bölüme geri bak: AGENTS.md, slash command'lar, subagent'lar, skill'ler, hook'lar, plugin'ler, memory ve planlar.
+Sekiz bölüme bir daha bak: AGENTS.md, slash command'lar, subagent'lar, skill'ler, hook'lar, plugin'ler, memory ve planlar.
 
-Neredeyse hepsi **bir klasördeki markdown**. Bir veritabanı değiller. Karşısında derleme yaptığın bir plugin API'si değiller. Birinin uydurduğu bir config formatı da değiller. Bunlar diskteki dosyalar, ve onları:
+Neredeyse hepsi bir klasörde duran **markdown dosyasıdır**. Veritabanı değildirler, üzerine derleme yaptığın bir plugin API'si de değildirler ve birinin icat ettiği bir yapılandırma formatı da değildirler. Diskte duran dosyalardır ve sen bunları şöyle yapabilirsin:
 
-- herhangi bir editörde açabilirsin
-- diff'leyebilirsin
-- bir pull request'te review edebilirsin
+- istediğin editörde açabilirsin
+- diff alabilirsin
+- pull request'te review edebilirsin
 - başka bir makineye kopyalayabilirsin
 
-Bu tembellik değil. İki tarafın da iyi idare ettiği tek format. Sen onu özel bir araç olmadan okuyup düzenleyebiliyorsun. Modeller de markdown'da ve bir filesystem'de dolaşmakta alışılmadık ölçüde iyi, çünkü eğitildikleri verinin çok büyük bir kısmı tam olarak bu. Yani bir coding agent'ın genişletme mekanizması, onun zaten en iyi olduğu şey çıktı.
+Bu tembellik değildir; iki tarafın da iyi kullandığı tek format budur. Bu dosyaları özel bir tool'a ihtiyaç duymadan okuyup düzenleyebilirsin. Modeller markdown'da ve dosya sisteminde gezinmede olağanüstü iyidir, çünkü eğitim verilerinin çok büyük bir kısmı tam olarak bu. Sonuçta, bir code agent'ı genişletme mekanizması, agent'ın zaten en iyi olduğu şeydir.
 
-![One agent, three extension points](./images/mcp-skill-subagent.png)  
-*Bunlar üç farklı problem, o yüzden hangisinin hangisi olduğunu adlandırmak işe yarar. Soldaki skill'ler agent'ın davranışını değiştirmek için okuduğu talimatlar. Sağdaki MCP server'ları, yoksa erişemeyeceği sistemlere ulaşmasını sağlayan tool'lar. Alttaki subagent'lar ise fazladan context window'ları. Buradaki her şey ya bilinecek bir şey, ya yapılacak bir şey, ya da düşünülecek bir yer.*
+![Bir agent, üç genişletme noktası](./images/mcp-skill-subagent.png)  
+*Bunlar üç ayrı sorun olduğu için hangisinin hangisi olduğunu adlandırmak işe yarar. Solda duran skill'ler, agent'ın davranışını değiştirmek için okuduğu talimatlardır. Sağdaki MCP server'lar, agent'ın başka türlü ulaşamayacağı sistemlere erişmesini sağlayan tool'lardır. Aşağıdaki subagent'lar ise ekstra context window'lardır. Buradaki her şey ya bilmen gereken, ya yapman gereken ya da düşünmen gereken bir şeydir.*
 
 ## Bu serinin neresindeyiz
 
@@ -218,33 +218,33 @@ graph LR
 
 ## Özet
 
-Bir coding agent adının ima ettiğinden çok daha güçlü, çünkü kod yazıp çalıştırmak hemen her şeye ulaşmanın bir yolu. Her iş için bir tool'a ihtiyacı yok, çünkü bir library kurabiliyor ya da yazabiliyor. Coding olmayan işlerde de yardımcı olmasının sebebi bu.
+Bir code agent, adından çok daha güçlüdür; çünkü kod yazıp çalıştırmak neredeyse her şeye ulaşmanın bir yoludur. Her iş için ayrı bir tool'a ihtiyaç duymaz, çünkü bir kütüphaneyi kurabilir ya da yazabilir. İşte bu yüzden kodlamayla hiç ilgisi olmayan işlerde de yardımcı olur.
 
-Birini sekiz standart yolla genişletiyorsun. Üçü agent'ın ne bildiğiyle ilgili. AGENTS.md ona repo'nun kurallarını veriyor. Auto memory, senin hakkında öğrendiğini sonraki session'a taşıyor. Skill'ler de talimatları ancak bir iş gerçekten gerektirdiğinde yüklemesini sağlıyor. O son madde progressive disclosure, ve yirmi skill'i karşılayabilmenin sebebi bu.
+Bir code agent'ı sekiz standart yolla genişletebilirsin ve bunlardan üçü agent'ın neyi bildiğiyle ilgilidir. AGENTS.md ona repository'nin kurallarını verir, auto memory hakkında öğrendiklerini bir sonraki oturuma taşır. Skill'ler ise talimatları yalnızca bir görev gerçekten ihtiyaç duyduğunda yüklemesine izin verir; bu sonuncusu kademeli açılımdır ve yirmi skill bulundurabilmenin sebebi de budur.
 
-Üçü ne yapabildiğiyle ilgili. Slash command'lar, yoksa yeniden yazacağın bir prompt'u kaydediyor. MCP bütün bir tool setini taşınabilir yapıyor, yani tool agent başına bir kez değil, toplamda bir kez yazılıyor. Custom subagent'lar da iş devredeceği sabit roller veriyor, her biri temiz bir context window'da.
+Üçü de agent'ın ne yapabileceğiyle ilgilidir: slash command'lar aksi halde yeniden yazacağın bir prompt'u saklar, MCP tüm bir tool setini taşınabilir hale getirir ve böylece tool'u her agent için ayrı ayrı değil, bir kez yazarsın. Custom subagent'lar ise ona, her biri temiz bir context window'da çalışan ve kendilerine iş devredilebilen sabit roller verir.
 
-Son ikisi kontrolle ilgili. Hook'lar mekanik kısım: model seçmese de olan şeyler. Plan mode da agent'ın, bir şeyi düzenlemesine izin verilmeden önce kodu anlamasını sağlıyor. Plugin'ler yukarıdakilerin herhangi birini tek bir kuruluma paketliyor, effort da bütün bunları yaparken ne kadar yoğun düşüneceğini ayarlıyor.
+Son ikisi kontrolle ilgilidir. Hook'lar, model onları seçse de seçmese de gerçekleşen mekanik kısımdır. Plan mode, agent'ın kodun tek bir satırını bile düzenlemeden önce kodu anlamasını sağlar. Plugin'ler yukarıdakilerin herhangi birini tek bir kurulumda toplar, effort ise agent tüm bunları yaparken ne kadar derin düşüneceğini belirler.
 
-Neredeyse tamamı bir klasördeki markdown. Bu da senin ve modelin iyi idare ettiği format.
+Neredeyse tamamı klasörde duran markdown'dır; hem sen hem modelin iyi kullandığı format da budur.
 
-Sırada: bu modülde modelin oy hakkı olmayan ilk şey hook'lardı. O fikrin bir adı ve bir modülü var.
+Sırada: bu modülde modelin söz hakkı olmadığı ilk şey hook'lardı. Bu fikrin bir adı var ve onu anlatan bir modül de var.
 
-**Hızlı Kontrol**: bir skill de custom bir subagent da agent'a bir uzmanlık kazandırıyor. Aradaki gerçek fark nedir, ve hangisi ne zaman uygun?
+**Hızlı Kontrol**: bir skill ile bir custom subagent, ikisi de agent'a bir uzmanlık alanı kazandırır. Aralarındaki gerçek fark nedir ve her biri ne zaman uygundur?
 
 ## Kaynaklar
 
-- [Claude Code features](https://code.claude.com/docs/en/agent-sdk/claude-code-features): bütün genişletme yüzeyi tek sayfada, kendi agent'ının neyi desteklediğini kontrol etmek için liste gibi
-- [agents.md](https://agents.md/): açık format, monorepo'da iç içe dosyaların nasıl çalıştığı dahil
-- [How Claude remembers your project](https://code.claude.com/docs/en/memory): CLAUDE.md ve auto memory ayrımı, ve dosyaların nerede durduğu
-- [Connect to MCP servers](https://code.claude.com/docs/en/mcp-quickstart): bir server'ı baştan sona eklemek, ve bağlanmadığında neye bakılacağı
-- [awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers): topluluk listesi, tool'unun zaten var olup olmadığını kontrol etmek için
-- [Equipping agents for the real world with Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills): progressive disclosure'ın doğru anlatıldığı yer
-- [Extend Claude with skills](https://code.claude.com/docs/en/skills): pratik versiyon, bir skill'i kimin çağırabileceğine karar veren iki alan dahil
-- [anthropics/skills](https://github.com/anthropics/skills): resmî skill koleksiyonu
-- [awesome-claude](https://github.com/webfuse-com/awesome-claude): Claude araçlarının daha geniş bir derlemesi
-- [awesome-claude-code-subagents](https://github.com/VoltAgent/awesome-claude-code-subagents): başlangıç için yüzden fazla subagent tanımı
-- [Hooks reference](https://code.claude.com/docs/en/hooks): her yaşam döngüsü event'i, ve her birinin aldığı input
-- [Discover plugins](https://code.claude.com/docs/en/discover-plugins) ve [plugins reference](https://code.claude.com/docs/en/plugins-reference): önce kurmak, sonra yapmak
-- [claude-plugins-official](https://github.com/anthropics/claude-plugins-official): yönetilen plugin dizini
-- [Artificial Analysis](https://artificialanalysis.ai/): model ve reasoning ayarı başına benchmark sayıları, effort'un ne kazandırdığını görmek istersen
+- [Claude Code features](https://code.claude.com/docs/en/agent-sdk/claude-code-features): tüm genişletme yüzeyi tek sayfada. Kendi agent'ının neleri desteklediğini kontrol etmek için bir liste olarak işe yarar.
+- [agents.md](https://agents.md/): açık format. Monorepo'da iç içe dosyaların nasıl çalıştığı da bu sayfada.
+- [How Claude remembers your project](https://code.claude.com/docs/en/memory): CLAUDE.md ile auto memory arasındaki ayrım ve dosyaların nerede durduğu.
+- [Connect to MCP servers](https://code.claude.com/docs/en/mcp-quickstart): bir server'ı baştan sona nasıl ekleyeceğin ve bağlanmadığında nelere bakman gerektiği.
+- [awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers): topluluk listesi. İhtiyacın olan tool'un zaten var olup olmadığını kontrol etmek için.
+- [Equipping agents for the real world with Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills): kademeli açılımın doğru şekilde anlatıldığı yer.
+- [Extend Claude with skills](https://code.claude.com/docs/en/skills): pratik sürüm. Bir skill'i kimin çağırabileceğini belirleyen iki alan da burada.
+- [anthropics/skills](https://github.com/anthropics/skills): resmî skill koleksiyonu.
+- [awesome-claude](https://github.com/webfuse-com/awesome-claude): Claude araçlarının daha geniş, derlenmiş bir listesi.
+- [awesome-claude-code-subagents](https://github.com/VoltAgent/awesome-claude-code-subagents): başlamak için yüzü aşkın subagent tanımı.
+- [Hooks reference](https://code.claude.com/docs/en/hooks): her yaşam döngüsü olayı ve her birinin aldığı girdi.
+- [Discover plugins](https://code.claude.com/docs/en/discover-plugins) ve [plugins reference](https://code.claude.com/docs/en/plugins-reference): önce bir plugin'in nasıl kurulacağı, sonra nasıl oluşturulacağı.
+- [claude-plugins-official](https://github.com/anthropics/claude-plugins-official): Anthropic'in yönettiği plugin dizini.
+- [Artificial Analysis](https://artificialanalysis.ai/): her model ve her akıl yürütme ayarı için benchmark sayıları. Effort'un sana ne kazandırdığını görmek istersen.

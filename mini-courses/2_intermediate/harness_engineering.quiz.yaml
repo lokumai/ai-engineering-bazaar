@@ -10,21 +10,21 @@ questions:
         - "The model follows instructions only in the first turn."
       explain: "The same input can give a different result next time. An instruction works most of the time, but this rule needs a mechanical part that acts the same every run."
     tr:
-      question: "Bir agent main'e asla push etmemeli. Talimatlara \"main'e push etme\" yazmak bu kural için neden yeterli değil?"
+      question: "Bir agent asla main'e push atmamalı. Talimatta 'main'e push atma' yazmak bu kural için neden yeterli değil?"
       options:
-        - "Model, AGENTS.md içindeki talimatları okumuyor."
+        - "Model AGENTS.md içindeki talimatları okumuyor."
         - "Talimat, context window'da çok fazla yer kaplıyor."
-        - "Model non-deterministic, yani bir talimat garanti vermiyor."
+        - "Model deterministik değil, yani bir talimat garanti vermiyor."
         - "Model talimatlara yalnızca ilk turda uyuyor."
-      explain: "Aynı input bir sonraki seferde farklı bir sonuç verebilir. Talimat çoğu zaman işe yarıyor, ama bu kural her çalışmada aynı davranan mekanik bir parçaya ihtiyaç duyuyor."
+      explain: "Aynı girdi bir dahaki sefer farklı bir sonuç verebilir. Talimat çoğu zaman işe yarar, ama bu kural için her çalışmada aynı davranan mekanik bir parça gerekir."
     fa:
-      question: "یک agent هرگز نباید به main push کند. چرا دستور «به main push نکن» برای این قانون کافی نیست؟"
+      question: "یه agent نباید هیچ‌وقت به main push کنه. چرا دستور «به main push نکن» برای این قانون کافی نیست؟"
       options:
-        - "model، دستورهای AGENTS.md را نمی‌خواند."
-        - "این دستور فضای زیادی در context window اشغال می‌کند."
-        - "model، non-deterministic است، پس یک دستور هیچ تضمینی نمی‌دهد."
-        - "model فقط در نوبت اول از دستورها پیروی می‌کند."
-      explain: "همان input ممکن است دفعه‌ی بعد نتیجه‌ی دیگری بدهد. یک دستور بیشتر وقت‌ها کار می‌کند، اما این قانون به یک بخش مکانیکی نیاز دارد که در هر اجرا به یک شکل عمل کند."
+        - "مدل دستورهای AGENTS.md رو نمی‌خونه."
+        - "این دستور توی context window جای زیادی می‌گیره."
+        - "مدل non-deterministic هست، پس یه دستور هیچ تضمینی نمی‌ده."
+        - "مدل فقط توی نوبت اول از دستورها پیروی می‌کنه."
+      explain: "همون ورودی ممکنه دفعه‌ی بعد جواب دیگه‌ای بده. یه دستور بیشتر وقت‌ها کار می‌کنه، ولی این قانون یه بخش مکانیکی لازم داره که توی هر اجرا یه جور رفتار کنه."
   - answer: 0
     en:
       question: "How does the harness relate to prompt engineering and context engineering?"
@@ -37,19 +37,19 @@ questions:
     tr:
       question: "Harness, prompt engineering ve context engineering ile nasıl bir ilişki içinde?"
       options:
-        - "Harness dış katman (layer). Prompt ve context işini içine alıyor."
-        - "Harness onların yerine geçiyor. Prompt ve context işi yerine onu kullanıyorsun."
-        - "Harness, context'in bir parçası. Context window'un içinde duruyor."
-        - "Harness, context engineering'in yeni adı. İkisi aynı şey."
-      explain: "Her katman (layer) içindekini kapsıyor, bu yüzden üçü alternatif değil. Context engineering'i seçtiğin harness'ın içinde yapıyorsun."
+        - "Harness dış katmandır. Prompt ve context çalışmanı içinde barındırır."
+        - "Harness onların yerini alır. Prompt ve context işi yerine onu kullanırsın."
+        - "Harness, context'in bir parçasıdır. Context window'un içinde durur."
+        - "Harness, context engineering'in yeni adıdır. İkisi aynı şeydir."
+      explain: "Her katman, içindeki katmanı kapsar, bu yüzden üçü birbirinin alternatifi değildir. Context engineering'i seçtiğin harness'in içinde yaparsın."
     fa:
-      question: "harness چه ارتباطی با prompt engineering و context engineering دارد؟"
+      question: "harness چه ارتباطی با prompt engineering و context engineering داره؟"
       options:
-        - "harness لایه‌ی بیرونی است. کار prompt و context شما را در خود دارد."
-        - "harness جای آن‌ها را می‌گیرد. به‌جای کار prompt و context از آن استفاده می‌کنید."
-        - "harness بخشی از context است. داخل context window قرار دارد."
-        - "harness نام تازه‌ی context engineering است. هر دو یک چیزند."
-      explain: "هر لایه، لایه‌ی داخلی‌اش را در بر دارد، پس این سه جایگزین هم نیستند. شما context engineering را داخل harness‌ای که انتخاب کرده‌اید انجام می‌دهید."
+        - "harness لایه‌ی بیرونیه. کار prompt و context تو رو توی خودش داره."
+        - "harness جای اون‌ها رو می‌گیره. به‌جای کار prompt و context ازش استفاده می‌کنی."
+        - "harness بخشی از context هست. داخل context window قرار داره."
+        - "harness اسم تازه‌ی context engineering هست. هر دو یه چیزن."
+      explain: "هر لایه، لایه‌ی داخلی‌اش رو در خودش داره، پس این سه تا جایگزین هم نیستن. context engineering رو داخل همون harnessی انجام می‌دی که انتخاب کردی."
   - answer: 1
     en:
       question: "Böckeler splits a harness into guides and sensors. What is the difference?"
@@ -60,21 +60,21 @@ questions:
         - "Guides change the model weights. Sensors change the size of the context window."
       explain: "Guides, such as AGENTS.md and tool descriptions, come before the work. Sensors, such as tests and linters, report after the work, so the agent can fix what it broke."
     tr:
-      question: "Böckeler bir harness'ı rehberler (guides) ve sensörler (sensors) olarak ikiye ayırıyor. Fark ne?"
+      question: "Böckeler, bir harness'ı guide'lar ve sensor'lar olarak ikiye ayırıyor. Aralarındaki fark ne?"
       options:
-        - "Rehberler işin nasıl gittiğini bildiriyor. Sensörler agent'a davranmadan önce ne yapacağını söylüyor."
-        - "Rehberler agent'a davranmadan önce ne yapacağını söylüyor. Sensörler işin nasıl gittiğini bildiriyor."
-        - "Rehberleri vendor yazıyor. Sensörleri agent'ı kullanan kişi yazıyor."
-        - "Rehberler model weight'lerini değiştiriyor. Sensörler context window'un boyutunu değiştiriyor."
-      explain: "AGENTS.md ve tool açıklamaları gibi rehberler (guides) işten önce geliyor. Testler ve linter'lar gibi sensörler (sensors) işten sonra rapor veriyor, böylece agent bozduğu şeyi düzeltebiliyor."
+        - "Guide'lar işin nasıl gittiğini bildirir. Sensor'lar ise agent harekete geçmeden önce ne yapacağını söyler."
+        - "Guide'lar agent harekete geçmeden önce ne yapacağını söyler. Sensor'lar işin nasıl gittiğini bildirir."
+        - "Guide'ları sağlayıcı yazar. Sensor'ları agent'ı kullanan kişi yazar."
+        - "Guide'lar model weight'lerini değiştirir. Sensor'lar context window'un boyutunu değiştirir."
+      explain: "AGENTS.md ve tool açıklamaları gibi guide'lar işten önce gelir. Testler ve linter'lar gibi sensor'lar ise işten sonra bilgi verir, böylece agent bozduğu şeyi düzeltebilir."
     fa:
-      question: "Böckeler یک harness را به guide‌ها و sensor‌ها تقسیم می‌کند. تفاوت آن‌ها چیست؟"
+      question: "Böckeler یه harness رو به guide‌ها و sensor‌ها تقسیم می‌کنه. فرقشون چیه؟"
       options:
-        - "guide‌ها گزارش می‌دهند کار چطور پیش رفته است. sensor‌ها پیش از عمل به agent می‌گویند چه کند."
-        - "guide‌ها پیش از عمل به agent می‌گویند چه کند. sensor‌ها گزارش می‌دهند کار چطور پیش رفته است."
-        - "guide‌ها را vendor می‌نویسد. sensor‌ها را کاربر agent می‌نویسد."
-        - "guide‌ها weight‌های model را تغییر می‌دهند. sensor‌ها اندازه‌ی context window را تغییر می‌دهند."
-      explain: "guide‌ها، مثل AGENTS.md و توضیحات tool، پیش از کار می‌آیند. sensor‌ها، مثل تست‌ها و linter‌ها، بعد از کار گزارش می‌دهند، تا agent بتواند چیزی را که خراب کرده درست کند."
+        - "guide‌ها گزارش می‌دن کار چطور پیش رفته. sensor‌ها قبل از عمل به agent می‌گن چی کار کنه."
+        - "guide‌ها قبل از عمل به agent می‌گن چی کار کنه. sensor‌ها گزارش می‌دن کار چطور پیش رفته."
+        - "guide‌ها رو vendor می‌نویسه. sensor‌ها رو کاربر agent می‌نویسه."
+        - "guide‌ها وزن‌های مدل رو عوض می‌کنن. sensor‌ها اندازه‌ی context window رو عوض می‌کنن."
+      explain: "guide‌ها، مثل AGENTS.md و توضیح tool‌ها، قبل از کار میان. sensor‌ها، مثل تست‌ها و linter‌ها، بعد از کار گزارش می‌دن، تا agent بتونه چیزی رو که خراب کرده درست کنه."
   - answer: 3
     en:
       question: "LangChain made five changes to the harness of their coding agent. What was the result on Terminal Bench 2.0?"
@@ -88,18 +88,18 @@ questions:
       question: "LangChain, coding agent'larının harness'ında beş değişiklik yaptı. Terminal Bench 2.0'da sonuç ne oldu?"
       options:
         - "Skor arttı, çünkü daha büyük bir model de kullandılar."
-        - "Skor değişmedi, çünkü skoru yalnızca model belirliyor."
-        - "Skor düştü, çünkü daha fazla hook agent'ı yavaşlatıyor."
-        - "Skor %52,8'den %66,5'e çıktı ve model değişmedi."
+        - "Skor değişmedi, çünkü skoru yalnızca model belirler."
+        - "Skor düştü, çünkü daha fazla hook agent'ı yavaşlatır."
+        - "Skor 52.8%'ten 66.5%'e çıktı ve model değişmedi."
       explain: "İki çalışmada da model weight'leri aynıydı. Neredeyse on dört puan, modelin etrafındaki ortamı (environment) değiştirmekten geldi."
     fa:
-      question: "LangChain پنج تغییر در harness مربوط به coding agent خود ایجاد کرد. نتیجه روی Terminal Bench 2.0 چه بود؟"
+      question: "LangChain پنج تغییر توی harness مربوط به coding agent خودش داد. نتیجه روی Terminal Bench 2.0 چی بود؟"
       options:
-        - "امتیاز بالا رفت، چون یک model بزرگ‌تر هم استفاده کردند."
-        - "امتیاز تغییری نکرد، چون فقط model امتیاز را کنترل می‌کند."
-        - "امتیاز پایین آمد، چون hook‌های بیشتر agent را کندتر می‌کنند."
-        - "امتیاز از 52.8% به 66.5% رسید، و model تغییر نکرد."
-      explain: "weight‌های model در هر دو اجرا یکسان بودند. نزدیک به چهارده امتیاز از تغییر در محیط اطراف model آمد."
+        - "امتیاز بالا رفت، چون یه مدل بزرگ‌تر هم استفاده کردن."
+        - "امتیاز تغییری نکرد، چون فقط مدل امتیاز رو کنترل می‌کنه."
+        - "امتیاز پایین اومد، چون hook‌های بیشتر agent رو کندتر می‌کنن."
+        - "امتیاز از 52.8% به 66.5% رسید، و مدل عوض نشد."
+      explain: "وزن‌های مدل توی هر دو اجرا یکی بود. نزدیک به چهارده امتیاز از تغییر دادن محیط اطراف مدل اومد."
   - answer: 2
     en:
       question: "Composio ran one model through eight harnesses on the same tasks. What is the main lesson?"
@@ -110,18 +110,18 @@ questions:
         - "The fastest harness is always the cheapest harness per success."
       explain: "A harness makes assumptions about the model it was built for, so another model can do worse in it. Pi Agent won here, but the lesson is the pairing."
     tr:
-      question: "Composio bir modeli aynı işlerde sekiz harness üzerinden çalıştırdı. Asıl ders ne?"
+      question: "Composio, bir modeli aynı görevlerde sekiz harness'ten geçirdi. Ana ders ne?"
       options:
-        - "Pi Agent en yüksek skoru aldı, yani her ekip Pi Agent kullanmalı."
+        - "Pi Agent en yüksek skoru aldı, o yüzden her ekip Pi Agent kullanmalı."
         - "Harness'ın etkisi az, çünkü model aynıydı."
-        - "Eşleşme (pairing) önemli: bir harness, kendisi için kurulduğu modele uyuyor."
-        - "En hızlı harness her zaman başarı başına en ucuz harness."
-      explain: "Bir harness, kendisi için kurulduğu model hakkında varsayımlar yapıyor, bu yüzden başka bir model onun içinde daha kötü çalışabiliyor. Pi Agent burada kazandı, ama ders eşleşme (pairing)."
+        - "Eşleşme (pairing) önemli: bir harness, kendisi için kurulduğu modele uyar."
+        - "En hızlı harness her zaman başarı başına en ucuz harness demektir."
+      explain: "Bir harness, kendisi için kurulduğu modele dair varsayımlar yapar, bu yüzden başka bir model onun içinde daha kötü çalışabilir. Pi Agent burada kazandı, ama asıl ders eşleşmenin önemi."
     fa:
-      question: "Composio یک model را روی همان کارها از هشت harness گذراند. درس اصلی چیست؟"
+      question: "Composio یه مدل رو روی همون کارها از هشت harness گذروند. درس اصلی چیه؟"
       options:
-        - "Pi Agent بالاترین امتیاز را گرفت، پس هر تیم باید از Pi Agent استفاده کند."
-        - "harness تأثیر کمی دارد، چون model یکسان بود."
-        - "تطابق (pairing) مهم است: یک harness با model‌ای جور است که برایش ساخته شده است."
-        - "سریع‌ترین harness همیشه به ازای هر موفقیت ارزان‌ترین هم هست."
-      explain: "یک harness درباره‌ی model‌ای که برایش ساخته شده فرض‌هایی می‌کند، پس یک model دیگر ممکن است داخل آن بدتر عمل کند. Pi Agent این‌جا برنده شد، اما درس، تطابق (pairing) است."
+        - "Pi Agent بالاترین امتیاز رو گرفت، پس هر تیمی باید Pi Agent استفاده کنه."
+        - "harness اثر کمی داره، چون مدل یکی بود."
+        - "تطابق (pairing) مهمه: یه harness به مدلی می‌خوره که براش ساخته شده."
+        - "سریع‌ترین harness همیشه به ازای هر موفقیت ارزون‌ترین هم هست."
+      explain: "یه harness درباره‌ی مدلی که براش ساخته شده فرض‌هایی می‌کنه، پس یه مدل دیگه ممکنه داخلش بدتر عمل کنه. Pi Agent اینجا برنده شد، ولی درس، تطابق (pairing) هست."

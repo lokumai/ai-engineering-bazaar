@@ -1,132 +1,126 @@
 # Harness Engineering
 
-[Code Agent'lar](coding_agents_tr.md) hook'larla bitiyordu. Hook'lar o modüldeki her şeyden farklıydı. Diğer bütün genişletme noktaları (extension point) modele verdiğin tavsiyeler. İyi tavsiyeler ve model genelde onlara uyuyor, ama kararı yine model veriyor. Hook öyle değil. Hook, agent'ın yaşam döngüsündeki sabit bir noktaya bağlanmış bir shell komutu. Model istesin istemesin çalışıyor.
+[Code Agent'lar](coding_agents_tr.md) modülü hook'larla bitiyordu. Hook'lar ise o modüldeki diğer genişletme noktalarının hiçbirine benzemiyordu, çünkü diğerleri modele verdiğin tavsiyelerdi. Bu tavsiyeler iyiydi ve model çoğunlukla onlara uyuyordu, ama son kararı yine model veriyordu. Hook ise agent'ın yaşamındaki sabit bir noktaya bağlı bir shell komutudur ve model isteyip istemediğine bakmadan çalışır.
 
-O fark, bu modülün bütün konusu.
+Bu modülün konusu tam olarak bu farktır. Modelin kararına bırakılmadan, her çalışmada aynı şekilde davranan mekanik bir düzen kurma işine **harness engineering** deniyor. Bu modül, bu işin ne olduğunu, bir harness'in neyden oluştuğunu ve neden her model için tek bir en iyi harness bulunmadığını anlatıyor.
 
-## Prompt'ların Çözmediği Problem
+## Promptların Çözemediği Sorun
 
-LLM'ler non-deterministic. Prompt'la ne yaparsan yap, context'e ne koyarsan koy, aynı input bir sonraki seferde farklı bir çıktı verebilir. İki saat çalışan bir agent'ın da çok "sonraki sefer"i var.
+LLM'ler deterministik değildir. Prompt'la ne yaparsan yap, context'e ne koyarsan koy, aynı girdi bir dahaki sefere farklı bir cevap verebilir. İki saat boyunca çalışan bir agent ise bu riski çok kez yaşar.
 
-Yani kibarca istemek sana garanti getirmiyor. Diyelim agent main'e asla push etmemeli. Talimatlarına "lütfen main'e push etme" yazmak çoğu zaman işe yarıyor. Ama bu kural için "çoğu zaman" yeterli değil. Bunun yerine mekanik bir şeye ihtiyacın var: modelin etrafına kurulmuş, her çalışmada aynı davranan bir kablolama. Model ne yaparsa yapsın, bu kablolama ayakta kalmalı.
+Yani nazikçe istemek, ne kadar sık tekrarlarsan tekrarla, hiçbir garanti vermez. Diyelim ki agent'ın asla main'e push atmaması gerekiyor. Talimatlarına "lütfen main'e push atma" yazabilirsin. Bu çoğu zaman işe yarar. Ama bu kural için "çoğu zaman" yeterli değildir. İhtiyacın olan şey mekanik bir şeydir: modelin ne yaptığından bağımsız olarak her çalışmada aynı davranan bir düzen. Bu düzen, model ne yapmaya karar verirse versin yerinde durmalıdır.
 
-O kablolamayı tasarlamak **harness engineering**.
+![Prompt, Context ve Harness Tek Çizimde](./images/car-analogy.png)  
+*Motor prompt'tur: güç üreten parça. Araba context'tir: motorun etrafına kurulmuş, gücün neye yarayacağını belirleyen gövde. Pist ve bariyerler ise harness'tir. Dikkat et, bariyerler direksiyon çevirmez ve asıl nokta da budur. Arabayı doğru yöne sokmazlar. Yanlış yöne gitmeyi imkânsız hale getirirler.*
 
-![Prompt, context and harness on one drawing](./images/car-analogy.png)  
-*Motor prompt: gücü üreten şey. Araba context: motorun etrafına kurulan ve o gücün ne yapabileceğine karar veren gövde. Pist ve bariyerler ise harness. Bariyerlerin direksiyon çevirmediğine dikkat et: asıl nokta bu. Arabayı doğru yöne götürmüyorlar. Yanlış yöne gitmeyi imkânsız kılıyorlar.*
+Bu analoji, [Harness Engineering: What It Is and How It Complements Context Engineering](https://medium.com/@amirkiarafiei/harness-engineering-what-it-is-and-how-it-complements-context-engineering-6545b40bfc84) yazısından alındı. Sonraki iki modül de bu analojiyi tekrar kullanıyor, bu yüzden akılda tutmaya değer.
 
-Analoji [Harness Engineering: What It Is and How It Complements Context Engineering](https://medium.com/@amirkiarafiei/harness-engineering-what-it-is-and-how-it-complements-context-engineering-6545b40bfc84) yazısından. Sonraki iki modül de onu kullanıyor, o yüzden aklında tutmaya değer.
+## Agent Harness Nedir
 
-## Agent Harness Ne Demek
+Harness engineering yaptığında ortaya çıkan şeye **agent harness** denir. Agent'ın kendisi, etrafındaki bütün mekanik düzenek ve agent'ın içinde çalıştığı ortam, hepsi birlikte bir agent harness'i oluşturur.
 
-Harness engineering yaptığında elde ettiğin şeye **agent harness** deniyor. Bu, agent'ın kendisi, artı etrafındaki bütün mekanik kablolama, artı içinde çalıştığı ortam.
+LangChain'in [The Anatomy of an Agent Harness](https://www.langchain.com/blog/the-anatomy-of-an-agent-harness) yazısı bunu tek satırda özetliyor: **Agent = Model + Harness**. Model zekâyı sağlar. Harness ise bu zekânın gerçek bir ortamda, gerçek dosyalarla yararlı iş yapmasını sağlar.
 
-LangChain'in [The Anatomy of an Agent Harness](https://www.langchain.com/blog/the-anatomy-of-an-agent-harness) yazısı bunu tek satıra indiriyor: **Agent = Model + Harness.** Zekâyı model sağlıyor. Harness ise o zekâyı gerçek dosyaların olduğu gerçek bir yerde işe yarar hâle getiren şey.
+Bu da demek oluyor ki zaten kullandığın ürünler birer harness'tir. Claude Code, Codex ve Pi, hepsi bir harness'tir. Bunların hiçbiri bir model değildir. Birinin içindeki modeli değiştirirsen, sandığından çok daha az şey değişir.
 
-Yani zaten kullandığın ürünler harness. Claude Code bir harness. Codex bir harness. Pi bir harness. Hiçbiri model değil. Birinin içindeki modeli değiştirirsen, beklediğinden daha az şey değişiyor.
+Philipp Schmid'in [The importance of Agent Harness in 2026](https://www.philschmid.de/agent-harness-2026) yazısı aynı şeyi bilgisayar diliyle anlatıyor. Burada model CPU'dur, context window ise RAM: küçüktür ve her çalışmadan sonra temizlenir. Harness, işletim sistemi gibidir. Bu belleğe neyin gireceğine karar verir ve CPU'ya sürücülerini sağlar. Buradaki sürücüler tool'lardır, agent ise bunların üzerinde çalışan uygulamadır. Schmid'in pratik tavsiyesi bu resimden çıkıyor: harness'i basit tut ve kolayca silinebilir olsun. Çünkü bir sonraki model güncellemesi, bugün özenle kurduğun düzeneklerin bir kısmını gereksiz hale getirecek.
 
-Philipp Schmid'in [The importance of Agent Harness in 2026](https://www.philschmid.de/agent-harness-2026) yazısı aynı fikri bilgisayar terimleriyle anlatıyor. Model CPU. Context window RAM: küçük ve çalışmalar arasında siliniyor. Harness işletim sistemi. O belleğe neyin yükleneceğine karar veriyor ve CPU'ya driver'larını veriyor. Burada driver'lar, tool'lar. Agent ise üstte çalışan uygulama. Pratik tavsiyesi de buradan çıkıyor. Harness'ı basit ve kolayca silinebilir tut, çünkü bir sonraki model güncellemesi bugünkü özenli kablolamanın bir kısmını gereksiz yapacak.
+Bir noktayı netleştirmek gerekiyor, çünkü insanlar "harness" kelimesini gelişigüzel kullanıyor. Harness **dış** katmandır: prompt ve context çalışmanı içinde barındırır, ama o çalışmanın yerini almaz ve diğer iki katmanla yarışmaz.
 
-Bir şeyi netleştirmek gerekiyor, çünkü insanlar "harness" kelimesini gelişigüzel kullanıyor. Harness **dış** katman. Diğer iki katmanla yarışmıyor. Prompt ve context işinin yerini almıyor, onu içine alıyor.
-
-![Prompt, context and harness as three layers](./images/onion-model.png)  
-*Her halka içindekini kapsıyor. Bu yüzden bunlar asla birbirinin alternatifi değil. Bir harness seçtiğinde, context'inle ilgili bazı şeylere zaten karar vermiş oluyorsun. Çünkü context window'u sıkıştıran, subagent'ları açan ve system prompt'u yazan şey harness. Context engineering'i harness engineering'in "yerine" yapamıyorsun. Onu seçtiğin harness'ın içinde yapıyorsun.*
+![Prompt, Context ve Harness Üç Katman Olarak](./images/onion-model.png)  
+*Her halka, içindeki halkayı barındırır. Bu yüzden bunlar asla birbirinin alternatifi değildir. Bir harness seçtiğinde, context hakkındaki bazı kararları çoktan vermiş olursun. Çünkü harness, context window'u sıkıştırır (compaction), subagent'ları başlatır ve system prompt'u yazar. Context engineering'i harness engineering'in yerine yapamazsın. Onu, seçtiğin harness'in içinde yaparsın.*
 
 ## Dört Disiplin, Dört Soru
 
-2026'ya gelindiğinde bu alan dört ayrı işe bölündü. Her iş farklı bir soru soruyor.
+2026'ya gelindiğinde bu çalışma dört ayrı alana bölünmüştü ve her alan farklı bir soru soruyor.
 
-![What to say, what to see, and the world to build](./images/prompt-vs-context-vs-harness.jpeg)  
-*Aşağıdan yukarı oku. Her katman altındakini içine alıyor. Söylemek tek bir tur. Görmek bütün context window. Dünyayı inşa etmek ise agent'ın erişebildiği her şey ve onu durduran her şey. Yukarı çıktıkça insanın işi de değişiyor. En altta insan robotla konuşuyor. En üstte robotun çalıştığı yeri kuruyor.*
+![Söylemek, Görmek ve Dünyayı İnşa Etmek](./images/prompt-vs-context-vs-harness.jpeg)  
+*Şekli alttan yukarıya doğru oku. Her katman, altındakini içine alır. Söylemek tek bir turluk iştir. Görmek, bütün context window'dur. Dünyayı inşa etmek ise agent'ın ulaşabildiği her şeyi ve onu durduran her şeyi kapsar. İnsanın rolü de yukarı çıktıkça değişir. En altta insan robotla konuşur. En üstte ise robotun çalışacağı yeri insan kurar.*
 
-- **Prompt engineering**: ne sormalıyım ve nasıl sormalıyım?
-- **Context engineering**: model context'inde ne görmeli ve hangi biçimde?
-- **Harness engineering**: agent'ın etrafındaki ortamı nasıl tasarlamalıyım?
-- **Loop engineering**: tekrar ne zaman çalışacağına ve ne zaman duracağına kim karar veriyor? Bu, sonraki modülün konusu.
+- **Prompt engineering**: Ne sormalıyım ve bunu nasıl sormalıyım?
+- **Context engineering**: Modelin context'inde neyi görmesi gerekir ve bu bilgi hangi biçimde sunulmalı?
+- **Harness engineering**: Agent'ın etrafındaki ortamı nasıl tasarlamalıyım?
+- **Loop engineering**: Agent'ın ne zaman yeniden çalışacağına ve ne zaman duracağına kim karar verir? Bu, bir sonraki modülün konusu.
 
-## Bir Harness Neden Oluşuyor
+## Bir Harness Neyden Oluşur
 
-[The Anatomy of an Agent Harness](https://www.langchain.com/blog/the-anatomy-of-an-agent-harness) parçaları listeliyor. Çoğunu geçen modülden tanıyacaksın:
+[The Anatomy of an Agent Harness](https://www.langchain.com/blog/the-anatomy-of-an-agent-harness) yazısı parçaları sayıyor. Bunların çoğunu önceki modülden tanıyacaksın:
 
 ```mermaid
 mindmap
   root((Agent harness))
     System prompt
-      Vendor'ın yazdığı
-      Artı senin AGENTS.md'in
-    Tools
-      Açıklamalar, ki onlar da prompt
-      Skill'ler ve MCP server'ları
-    Infrastructure
-      Bir filesystem
-      Kod çalıştıracak bir sandbox
-      Bir browser
-    Orchestration
-      Subagent açmak
+      Sağlayıcı tarafından yazılır
+      Senin AGENTS.md dosyan eklenir
+    Tool'lar
+      Açıklamalar da birer prompt
+      Skill'ler ve MCP sunucuları
+    Altyapı
+      Bir dosya sistemi
+      Kod çalıştırmak için bir sandbox
+      Bir tarayıcı
+    Orkestrasyon
+      Subagent başlatmak
       Aralarındaki devirler
-      Hangi adımı hangi model çalıştırıyor
-    Hooks and middleware
+      Hangi adımı hangi model çalıştırır
+    Hook'lar ve middleware
       Compaction
-      Devam etme
+      Continuation
       Lint ve test kapıları
 ```
 
-Tool *açıklamalarının* da listede olduğuna dikkat et. Açıklama bir prompt. Model o tool'u çağırıp çağırmayacağına karar verirken bu metni okuyor. Yani bir tool'un adını değiştirirsen ya da açıklamasının bir cümlesini yeniden yazarsan, agent farklı davranıyor. Bu, prompt işi değil harness işi sayılıyor, çünkü düzenlediğin şey istek değil, ortam.
+Listede tool *açıklamalarının* da yer aldığına dikkat et. Açıklama bir prompt'tur: model, o tool'u çağırıp çağırmayacağına karar verirken okuduğu metin budur. Bu yüzden bir tool'un adını değiştirirsen ya da açıklamasındaki tek bir cümleyi yeniden yazarsan, agent farklı davranır. Bu bir prompt işi değil, harness işidir. Çünkü isteği değil, ortamı değiştirmiş olursun.
 
-Bütün bunları düzenlemenin en net yolu Birgitta Böckeler'in [Harness engineering for coding agent users](https://martinfowler.com/articles/harness-engineering.html) yazısından geliyor. Yazı, harness'ı iki tür şeye ayırıyor:
+Bütün bunları düzenlemenin en net yolunu Birgitta Böckeler'in [Harness engineering for coding agent users](https://martinfowler.com/articles/harness-engineering.html) yazısı sunuyor. Yazıya göre bir harness iki tür şeyden oluşur:
 
 ```mermaid
 graph LR
-    A["Rehberler: agent'a davranmadan önce söylenenler<br/>system prompt, AGENTS.md, tool açıklamaları, onaylanmış plan"] --> B["Agent çalışıyor"]
-    B --> C["Sensörler: işin nasıl gittiğini söyleyenler<br/>testler, linter'lar, type check'ler, hook çıktısı, build hataları"]
+    A["Guide'lar: agent harekete geçmeden önce ona söylenenler<br/>system prompt, AGENTS.md, tool açıklamaları, onaylanmış plan"] --> B["Agent çalışır"]
+    B --> C["Sensor'lar: işin nasıl gittiğini bildirenler<br/>testler, linter'lar, tip kontrolleri, hook çıktıları, build hataları"]
     C --> B
 ```
 
-Rehberler (guides) işten önce geliyor. Sensörler (sensors) işten sonra geliyor. Sensörlerin raporladığı şey agent'a geri gidiyor, böylece agent neyi bozduysa onu düzeltebiliyor. Harness engineering'in neredeyse tamamı bu ikisinden birini eklemek. Yani bir şeyin harness işi olup olmadığından emin değilsen, kendine hangisi olduğunu sor.
+Guide'lar işten önce gelir, sensor'lar ise işten sonra. Sensor'ların bildirdiği şey agent'a geri döner ve agent böylece kırdığı her şeyi düzeltebilir. Harness engineering'in neredeyse tamamı bu iki şeyden birini eklemekten ibarettir. Bu yüzden bir şeyin harness işi sayılıp sayılmadığından emin değilsen kendine şunu sor: bu iki türden hangisi?
 
-Aynı yazı ikinci bir ayrım daha yapıyor. Bu ayrım hem rehberler hem sensörler için geçerli. Her rehber ve her sensör iki türden biri:
+Aynı yazı ikinci bir ayrım daha yapıyor ve bu ayrım hem guide'lar hem sensor'lar için geçerli. Her guide ve her sensor iki tipten birine girer:
 
-- **Computational**: CPU üzerinde sıradan kodla çalışıyor. Testler, linter'lar, type checker'lar ve yapısal analiz computational. Deterministic ve hızlılar. Milisaniyelerle saniyeler arasında bitiyorlar ve yazı sonuçlarını güvenilir buluyor. Aynı kontrolü iki kez çalıştırırsan aynı cevabı alırsın.
-- **Inferential**: onu bir model çalıştırıyor. AI code review, anlamsal (semantic) analiz ve bir "LLM as judge" inferential. Sıradan kodun yapamadığı şekilde anlamı yargılayabiliyorlar. Ama daha yavaşlar, daha pahalılar ve sonuçları bir çalıştırmadan diğerine değişebiliyor.
+- **Computational**: Bunları sıradan kod çalıştırır, CPU üzerinde. Testler, linter'lar, tip denetleyicileri ve yapısal analiz hepsi computational türdendir. Bu kontroller deterministiktir ve sonuçlarını milisaniyeler ya da birkaç saniye içinde verir. Yazı bu sonuçları güvenilir sayıyor. Aynı kontrolü iki kez çalıştırırsan, iki kez aynı cevabı alırsın.
+- **Inferential**: Bunu bir model çalıştırır. AI kod incelemesi, anlamsal analiz ve "LLM as judge" hepsi inferential türdendir. Anlamı değerlendirebilirler, sıradan kod ise bunu yapamaz. Ama daha yavaştırlar, daha pahalıdırlar ve sonuçları bir çalıştırmadan diğerine değişebilir.
 
-Bu, bütün modülün ana fikri, bir kez daha. Computational bir kontrol sabit, yani her çalışmada aynı şekilde davranıyor. Bir prompt'un sana veremeyeceği garanti tam olarak bu. O yüzden bir computational kontrol işi görebiliyorsa onu kullan, çünkü her değişiklikte çalıştıracak kadar ucuz. Inferential kontrolleri sadece bir modelin cevaplayabileceği sorulara sakla.
+Bu, modülün bütün konusunu bir kez daha özetliyor. Computational bir kontrol sabittir, dolayısıyla her çalıştırmada aynı davranır. Prompt'un sana veremediği garanti tam olarak budur. Bu yüzden iş görebiliyorsa computational kontrolü tercih et, çünkü her değişiklikte çalıştırılacak kadar ucuzdur. Inferential kontrolleri ise yalnızca bir modelin cevaplayabildiği sorulara ayır.
 
-Yazıdaki bir örnek insanları şaşırtıyor. Şu sıralar coding agent'lara yapılan popüler bir ekleme **language server** (LSP) ve code intelligence. Bunlar, editörüne go-to-definition'ı ve canlı type hatalarını veren araçların aynısı. Yazı, gittikçe daha fazla geliştiricinin bunlardan bahsettiğini belirtiyor ve onları computational rehberler olarak sınıflıyor. Agent'a davranmadan önce kod hakkında kesin bilgiler veriyorlar, böylece agent tahmin etmek zorunda kalmıyor.
+Yazıdaki bir örnek insanları şaşırtıyor. Bugünlerde coding agent'lara eklenen en popüler şeylerden biri **dil sunucusu** (language server, LSP) ve kod zekâsı. Bunlar, editörünün sana verdiği tanıma git (go-to-definition) ve anlık tip hataları gibi özelliklerin arkasındaki araçlardır. Yazı, bu araçlardan söz eden geliştirici sayısının arttığını belirtiyor ve bunları computational guide'lar olarak sınıflandırıyor. Agent harekete geçmeden önce koda dair kesin bilgiler alır, böylece tahmin yürütmek zorunda kalmaz.
 
-## Birkaç Gerçek Örnek
+## Gerçek Örnekler
 
-İşte insanların gerçekten yaptığı birkaç somut şey. Hiçbiri büyük değil:
+İnsanların gerçekten yaptığı birkaç somut şey var. Hiçbiri büyük değil:
 
-- **Bir sandbox.** Agent komutlarını bir container'da çalıştırıyor. Container'ın network'ü yok ve içine repo'nun bir kopyası bağlanmış. Artık "her şeyi sil" sana bir container'a mal oluyor.
-- **Bir izin kapısı.** Bir `PreToolUse` hook'u `src/` dışındaki yazmaları reddediyor ve `git push`'u tamamen reddediyor. Model deneyebiliyor, ama yapamıyor.
-- **Bitirmede bir test kapısı.** Bir `Stop` hook'u test suite'ini çalıştırıyor. Kırmızı bir şey varsa agent'a işin bitmediğini söylüyor. İşin bittiğine agent karar vermiyor.
-- **Yazmada format hook'u.** Bir `PostToolUse` hook'u düzenlenen her dosyada formatter'ı çalıştırıyor. Böylece stil, agent'ın stili hatırlamasına bağlı olmaktan çıkıyor.
-- **Bir loop dedektörü.** Her dosyadaki edit'leri say. Aynı dosyadaki beşinci edit'ten sonra agent'a durup yeniden düşünmesini söyle. Tek dosyaya beş edit genelde agent'ın bir döngüye takıldığı anlamına geliyor.
+- **Bir sandbox.** Agent komutlarını bir container içinde çalıştırır. Bu container'ın ağ bağlantısı yoktur ve repository'nin bağlanmış bir kopyasını içerir. Böylece "her şeyi sil" komutu sana yalnızca bir container'a mal olur.
+- **Bir izin kapısı.** Bir `PreToolUse` hook'u `src/` dışındaki yazmaları reddeder ve `git push` komutunu tamamen engeller. Model deneyebilir, ama yapamaz.
+- **Bitirme için test kapısı.** Bir `Stop` hook'u test paketini çalıştırır. Başarısız bir test varsa hook, agent'a işinin bitmediğini söyler. Bitti olup olmadığına karar veren agent değildir.
+- **Yazınca biçimlendiren bir hook.** Bir `PostToolUse` hook'u, düzenlenen her dosyada formatter'ı çalıştırır. Böylece kod stili, agent'ın stili hatırlamasına bağlı olmaktan çıkar.
+- **Bir döngü dedektörü.** Her dosyaya yapılan düzenlemeleri say. Aynı dosyaya beşinci düzenlemeden sonra agent'a durup yeniden düşünmesini söyle. Bir dosyaya beş kez dokunmak, genellikle agent'ın bir döngüye takıldığı anlamına gelir.
 
-Son madde gerçek ve yanında sayılarla geldi. LangChain'in [Improving Deep Agents with harness engineering](https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering) yazısı coding agent'larının harness'ında yaptıkları beş değişikliği anlatıyor:
+Son örnek gerçek ve arkasında sayılar da var. LangChain'in [Improving Deep Agents with harness engineering](https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering) yazısı, kendi coding agent'larının harness'inde yaptıkları beş değişikliği anlatıyor:
 
-- **Yeniden yazılmış bir system prompt**, dört aşama etrafında düzenlenmiş: plan, build, verify, fix.
-- **Bir checklist adımı**, agent'ı tam çıkmadan önce yakalıyor. Agent'ı kendi işini spec'e karşı kontrol etmeye zorluyor.
-- **Bir açılış adımı**, dizin ağacını ve mevcut tool'ları haritalıyor. Böylece agent başlamadan önce nerede olduğunu biliyor.
-- **Yukarıdaki listedeki dosya başına edit sayacı.**
-- **Bir "reasoning sandwich"**: planlama ve doğrulama için maksimum reasoning, ortadaki mekanik iş için daha azı.
+- **Yeniden yazılmış bir system prompt**, dört aşamaya göre düzenlenmiş: planlama, build, doğrulama ve düzeltme.
+- **Bir kontrol listesi adımı.** Agent çıkmadan hemen önce devreye girer ve agent, işini spec'e karşılaştırarak kendisi kontrol eder.
+- **Bir başlangıç adımı.** Dizin ağacını ve kullanılabilir tool'ları haritalandırır. Bu sayede agent başlamadan önce nerede olduğunu bilir.
+- **Yukarıda geçen dosya başına düzenleme sayacı.**
+- **Bir "reasoning sandwich"**: planlama ve doğrulama için en fazla akıl yürütme (reasoning), ortadaki mekanik iş için ise daha az.
 
-**Model değişmedi.** Terminal Bench 2.0 skoru %52,8'den %66,5'e çıktı.
+**Model değişmedi.** Terminal Bench 2.0 skoru 52.8%'ten 66.5%'e çıktı. Bu sayıyı akılda tut, çünkü bu modülün var olma sebebi tam olarak bu. Neredeyse on dört puanlık artış ortamı düzenlemekten geldi. Düşünme işini yapan model ağırlıkları ise iki çalıştırmada da aynıydı.
 
-Bu sayıyı aklında tut, çünkü bu modülün var olma sebebi bu. Neredeyse on dört puan ortamı düzenlemekten geldi. İki çalışmada da düşünmeyi yapan weight'ler aynıydı.
+Sadece okumakla kalmayıp kendi harness'ini kurmak istiyorsan, [How to Build a Custom Agent Harness](https://www.langchain.com/blog/how-to-build-a-custom-agent-harness) yazısı bunu middleware ile adım adım gösteriyor. OpenAI'ın [Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/) yazısı aynı disiplini başka bir açıdan anlatıyor. Ana dersi bilgi yönetimiyle ilgili. Yapılandırılmış bir `docs/` dizinini tek doğruluk kaynağı olarak tutuyorlar. `AGENTS.md` dosyasını kısa tutuyorlar, o dizine işaret eden bir harita gibi. Sonra bu dokümantasyon üzerinde linter'ları ve CI işlerini çalıştırıyorlar. Ayrıca düzenli çalışan bir bahçıvan agent'ı (gardening agent) var. Tek işi, güncelliğini yitirmiş parçaları bulmak. Bu, guide'lara yönelmiş bir sensor'dur.
 
-Okumak yerine bir tane inşa etmek istersen [How to Build a Custom Agent Harness](https://www.langchain.com/blog/how-to-build-a-custom-agent-harness) middleware ile bunu adım adım gösteriyor. OpenAI'ın [Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/) yazısı aynı disiplini öbür taraftan anlatıyor. Asıl dersi bilgiyle ilgili. Yapılandırılmış bir `docs/` dizinini tek doğru kaynak olarak tutuyorlar. `AGENTS.md`'yi ise oraya işaret eden kısa bir harita olarak bırakıyorlar. Sonra o dokümantasyonun üzerinde linter'lar ve CI job'ları çalıştırıyorlar. Ayrıca düzenli çalışan bir bahçıvan agent'ları var. Onun tek işi, eskimiş kısımları bulmak. Bu da rehberlere yöneltilmiş bir sensör.
+## Her Model İçin En İyi Harness Yok
 
-## Hiçbir Harness Her Model için En İyisi Değil
+İnsanları şaşırtan bulgu şu: Bir model al, onu tek bir benchmark üzerinde çalıştır ve harness dışında hiçbir şeyi değiştirme. Bu durumda skorlar ciddi ölçüde değişiyor.
 
-İnsanları şaşırtan bulgu şu.
+![DeepSeek V4 Flash, Sekiz Harness'te](./images/harness-comparison.png)  
+*Tek bir model, tek bir görev kümesi, sekiz harness. Skorlar 30 üzerinden 14 ile 20 arasında değişiyor. En alttaki ve en üstteki çubukta aynı model ağırlıkları düşünme işini yapıyor. Ayrıca kazananın ötesine de bak. Kaynak maliyeti ve hızı da ölçmüş. Buradaki en hızlı harness, aynı zamanda başarı başına en pahalı olandı, çünkü prompt cache'ini neredeyse hiç yeniden kullanmıyordu.*
 
-Bir model al, bir benchmark'ta çalıştır ve harness dışında hiçbir şeyi değiştirme. Skorlar ciddi biçimde oynuyor.
-
-![DeepSeek V4 Flash across eight harnesses](./images/harness-comparison.png)  
-*Bir model, bir iş kümesi, sekiz harness ve skorlar 30 üzerinden 14 ile 20 arasında. En alttaki çubukta da en üstteki çubukta da düşünmeyi yapan weight'ler aynı. Kazananın ötesini de oku. Kaynak maliyeti ve hızı da ölçmüş. Buradaki en hızlı harness aynı zamanda başarı başına en pahalı olanıydı, çünkü prompt cache'ini neredeyse hiç yeniden kullanmıyordu.*
-
-Bu grafik Composio'nun [Finding the Best Harness for DeepSeek V4 Flash](https://composio.dev/content/best-agent-harness-deepseek-v4-flash) çalışmasından. Çalışma modeli sekiz harness üzerinden geçirmiş:
+Bu grafik, Composio'nun [Finding the Best Harness for DeepSeek V4 Flash](https://composio.dev/content/best-agent-harness-deepseek-v4-flash) yazısından alındı. Yazarda model şu sekiz harness'te denenmiş:
 
 - Pi Agent
 - Prime Agent
@@ -137,28 +131,28 @@ Bu grafik Composio'nun [Finding the Best Harness for DeepSeek V4 Flash](https://
 - Hermes Agent
 - OpenCode
 
-Pi Agent %66,7 ile birinci oldu, yani otuz workflow'un yirmisi. Claude Code iş başına 122,7 saniyeyle en hızlısıydı, ama başarı başına en pahalısı da oydu.
+Pi Agent, 66.7%'yle birinci oldu. Bu da otuz iş akışından yirmisinin başarılı olması demek. Claude Code ise görev başına 122.7 saniyeyle en hızlısıydı, ama başarı başına en pahalı olan da oydu.
 
-Ders "Pi Agent kullan" değil. Asıl ders şu: **eşleşme önemli**. Bu biraz tişört gibi: herkese uyan tek bir beden yok. Claude Code'un harness'ı Claude modellerine göre ayarlı. Codex'in harness'ı GPT modellerine göre ayarlı. Bir harness, kendisi için kurulduğu model hakkında varsayımlar yapıyor: o model nasıl plan yapıyor, uzun tool çıktılarıyla nasıl baş ediyor, bir tool'u çağırmaya ne kadar istekli. Harness'a farklı alışkanlıkları olan bir model verirsen, o varsayımlar artık uymuyor. O zaman model, kendi alışkanlıklarına göre kurulmuş bir harness'ta olacağından daha kötü çalışıyor.
+Buradaki ders "Pi Agent'ı kullan" değil. Asıl ders şu: **eşleşme önemli**. Bu, biraz tişörte benziyor: herkese uyan tek bir beden yok. Claude Code'un harness'i Claude modelleri için, Codex'in harness'i ise GPT modelleri için ayarlanmış. Bir harness, tasarlandığı modele dair varsayımlar içerir. Bu varsayımlar, modelin nasıl plan yaptığını, uzun tool çıktılarını nasıl işlediğini ve bir tool'u çağırmaya ne kadar istekli olduğunu kapsar. Harness'e farklı alışkanlıkları olan bir model verirsen bu varsayımlar tutmaz hale gelir. O zaman model, kendi alışkanlıklarına göre kurulmuş bir harness'te yapabileceğinden daha kötü sonuç verir.
 
-Yani bir modelin state of the art olduğunu okuduğunda dürüst soruyu sor: bu sayı hangi harness'tan geldi?
+Bu yüzden bir modelin "state of the art" olduğunu okuduğunda dürüst bir soru sor: Bu sayı hangi harness'ten çıktı?
 
-## Harness'lar Artık Açık
+## Harness'ler Artık Açık Kaynak
 
-2026'ya gelirken değişen öbür şey şu: bu harness'ların çoğu artık açık kaynak, ticari olanlar da dahil.
+2026'da bir diğer değişiklik de bu harness'lerin çoğunun açık kaynak olması. Bu listeye ticari olanlar da giriyor.
 
-Claude Code'un harness'ı açık. [DeepSeek'in](https://github.com/deepseek-ai/deepseek-harness) de öyle. DeepSeek onu, ayarlandığı modelin hemen yanında yayınladı. Bu da sana ikisinin birlikte tasarlandığını gösteriyor. OpenCode, Pi ve LangChain'in [deepagents](https://github.com/langchain-ai/deepagents)'ı açık. Kişisel agent harness'ları Hermes ve OpenClaw da öyle. Onların kendi modülü var: [Personal Agent'lar](personal_agents_tr.md).
+Claude Code'un harness'i açık, [DeepSeek'in](https://github.com/deepseek-ai/deepseek-harness) harness'i de öyle. DeepSeek bunu, ayarlandığı modelin hemen yanında yayımladı. Bu da ikisinin birlikte tasarlandığını gösteriyor. OpenCode, Pi ve LangChain'in [deepagents](https://github.com/langchain-ai/deepagents) projesi de açık. Kişisel agent harness'leri olan Hermes ve OpenClaw da öyle. Bunların kendi modülü var: [Personal Agent'lar](personal_agents_tr.md).
 
-Bu gerçekten faydalı, ve sadece kodu okuyabildiğin için değil. İşe yarayan bir harness'ı alıp işine uymayan parçalarını değiştirebiliyorsun:
+Bu gerçekten işe yarıyor, yalnızca kodu okuyabildiğin için değil. Çalışan bir harness alıp işine uymayan kısımları değiştirebilirsin. Şunları yapabilirsin:
 
-- system prompt'u değiştir;
-- bir middleware ekle;
-- bir tool açıklamasını değiştir;
-- başka bir modele yönlendir.
+- system prompt'u değiştirmek;
+- bir middleware eklemek;
+- bir tool açıklamasını değiştirmek;
+- harness'i farklı bir modele yönlendirmek.
 
-Harness'ları karşılaştırmak istersen, güncel tutulan iki liste var. [best-of-Agent-Harnesses](https://github.com/RyanAlberts/best-of-Agent-Harnesses) yüzden fazlasını sıralıyor ve her hafta yeniden puanlıyor. [awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering) ise araçları ve rehberleri topluyor.
+Harness'leri karşılaştırmak istersen düzenli olarak güncellenen iki liste var. [best-of-Agent-Harnesses](https://github.com/RyanAlberts/best-of-Agent-Harnesses) yüzden fazla harness'i sıralıyor ve her hafta yeniden puanlıyor. [awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering) ise araçları ve rehberleri bir araya getiriyor.
 
-> **NOT:** bu modül bir harness'ın ne olduğu ve neden önemli olduğu seviyesinde kalıyor. [Advanced Harness Engineering](../3_expert/advanced_harness_engineering_tr.md) harness profillerini, kendi kendini geliştiren harness'ları ve harness'ın ne kadarının modelin içine taşındığı sorusunu ele alıyor. Böckeler'in [Harness engineering for coding agent users](https://martinfowler.com/articles/harness-engineering.html) yazısı yukarıdaki iki ayrımdan çok daha derine iniyor. Devam etmek için doğru yer orası.
+> **NOT:** Bu modül, bir harness'in ne olduğu ve neden önemli olduğu düzeyinde kalıyor. [İleri Seviye Harness Engineering](../3_expert/advanced_harness_engineering_tr.md) harness profillerini, kendini evrimleştiren harness'leri ve harness'in ne kadarının modelin içine taşındığı sorusunu işliyor. Böckeler'in [Harness engineering for coding agent users](https://martinfowler.com/articles/harness-engineering.html) yazısı ise yukarıdaki iki ayrımdan çok daha derine iniyor. Devam etmek için doğru yer orası.
 
 ## Bu serinin neresindeyiz
 
@@ -179,36 +173,36 @@ graph LR
 
 ## Özet
 
-Bir model non-deterministic. Yani talimatlar sana yüksek bir başarı oranı veriyor, ama asla garanti vermiyor. Harness, buna rağmen ayakta kalan mekanik kısım. İçinde şunlar var:
+Model deterministik olmadığı için talimatlar sana iyi bir başarı oranı kazandırır, ama hiçbir zaman garanti vermez. Harness ise model ne yaparsa yapsın ayakta kalan mekanik kısımdır. Şunları içerir:
 
-- system prompt;
-- tool'lar ve nasıl tarif edildikleri;
-- filesystem ve sandbox;
-- subagent'ların nasıl açılıp iş aldığı;
-- model istesin istemesin tetiklenen hook'lar.
+- system prompt'u;
+- tool'ları ve onların nasıl tanımlandığını;
+- dosya sistemini ve sandbox'ı;
+- subagent'ların nasıl başlatılıp kendilerine nasıl iş devredildiğini;
+- model isteyip istemese de tetiklenen hook'ları.
 
-Agent = Model + Harness. Claude Code, Codex ve Pi'nin hepsi birer harness. Harness dış halka. Yani prompt ve context işinle yarışmıyor, onu içine alıyor. İçinde ne olduğunu düşünmenin basit bir yolu var. Rehberler, agent'ın davranmadan önce okuduğu şeyler. Sensörler de ona işin nasıl gittiğini söyleyen şeyler.
+Agent = Model + Harness. Claude Code, Codex ve Pi, hepsi birer harness'tir. Harness dış halkadır, bu yüzden prompt ve context çalışmanı içinde barındırır ve onunla yarışmaz. İçinde ne olduğunu düşünmenin basit bir yolu var: guide'lar agent'ın harekete geçmeden önce okuduğu şeylerdir, sensor'lar ise işin nasıl gittiğini ona söyleyen şeylerdir.
 
-Bütün bunlar gerçek emek harcamaya değer, çünkü etkisi sayılarda görünüyor. Beş harness değişikliği bir agent'ı Terminal Bench 2.0'da %52,8'den %66,5'e taşıdı ve model hiç değişmedi. Uyum da modele özgü. Sekiz farklı harness'tan geçirilen tek bir model, 30 üzerinden 14 ile 20 arasında değişen skorlar aldı. Yani en iyi harness yok. Sadece en iyi eşleşme var.
+Bütün bunlar gerçek bir emeğe değer, çünkü etkisini sayılarda görebilirsin. Beş harness değişikliği, bir agent'ı Terminal Bench 2.0'da 52.8%'ten 66.5%'e taşıdı ve model hiç değişmedi. Uyum da modele özgüdür: tek bir model sekiz farklı harness'ten geçirildiğinde, 30 üzerinden 14 ile 20 arasında skor aldı. Yani en iyi harness diye bir şey yok. Yalnızca en iyi eşleşme var.
 
-Sırada: buraya kadar her şeyde sürücü koltuğunda sen varsın. Sen prompt'u yazıyorsun, çıktıyı okuyorsun ve sırada ne olacağına karar veriyorsun. Sonraki modül o insanın yerine geçiyor.
+Şimdiye kadar hâlâ direksiyonun başındasın. Prompt'u sen yazıyorsun, çıktıyı sen okuyorsun ve sonrasında ne olacağına sen karar veriyorsun. Bir sonraki modül bu kişinin yerini alıyor.
 
-**Hızlı Kontrol**: AGENTS.md'deki bir talimat da bir `PreToolUse` hook'u da agent'ın bir dosyaya dokunmasını engelleyebilir. Neden sadece biri harness engineering? Ve bu fark gerçekte ne zaman önemli oluyor?
+**Hızlı Kontrol**: AGENTS.md içindeki bir talimat ile bir `PreToolUse` hook'u, ikisi de agent'ın bir dosyaya dokunmasını engelleyebilir. Peki neden yalnızca biri harness engineering sayılır? Ve bu fark gerçekten ne zaman önem kazanır?
 
 ## Kaynaklar
 
-- [Harness Engineering: What It Is and How It Complements Context Engineering](https://medium.com/@amirkiarafiei/harness-engineering-what-it-is-and-how-it-complements-context-engineering-6545b40bfc84): araba, pist ve bariyerler, ayrıntılı hâliyle
-- [The Anatomy of an Agent Harness](https://www.langchain.com/blog/the-anatomy-of-an-agent-harness): Agent = Model + Harness, ve bu modülün dayandığı parça listesi
-- [How to Build a Custom Agent Harness](https://www.langchain.com/blog/how-to-build-a-custom-agent-harness): middleware ile kendi harness'ını nasıl kurarsın
-- [Improving Deep Agents with harness engineering](https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering): beş somut değişiklik ve ürettikleri %52,8'den %66,5'e sıçrama
-- [Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/): agent'larla ürün kuran bir ekip, ve önce repo'larına ne yapmak zorunda kaldıkları
-- [Harness engineering for coding agent users](https://martinfowler.com/articles/harness-engineering.html): rehberler ve sensörler fikri, computational ve inferential ayrımı, ve konunun en kapsamlı işlenişi
-- [The importance of Agent Harness in 2026](https://www.philschmid.de/agent-harness-2026): modelin etrafındaki işletim sistemi olarak harness, ve neden kolayca silinebilir olması gerektiği
-- [Finding the Best Harness for DeepSeek V4 Flash](https://composio.dev/content/best-agent-harness-deepseek-v4-flash): sekiz harness, bir model, pass oranının yanında maliyet ve hız
-- [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness): ayarlandığı modelin yanında yayınlanmış bir harness
-- [deepagents](https://github.com/langchain-ai/deepagents): anatomi yazısındaki açık harness
-- [best-of-Agent-Harnesses](https://github.com/RyanAlberts/best-of-Agent-Harnesses): yüzden fazlasının sıralı listesi, her hafta yeniden puanlanıyor
-- [awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering): pratiğe dair araçlar ve rehberler
-- [Agent Harness Explained in 2 minutes](https://youtube.com/shorts/IVdJj_aNwhE): izlemeyi tercih edersen kısa versiyon
-- [Agent Harness explained in 8min..](https://www.youtube.com/watch?v=1a1VXDdIyrk): uzun versiyon, üç pratiği yukarıdaki halkalar gibi yan yana koyuyor
-- [Advanced Harness Engineering](../3_expert/advanced_harness_engineering_tr.md): profiller, kendi kendini geliştiren harness'lar, ve modelin içine ne taşınıyor
+- [Harness Engineering: What It Is and How It Complements Context Engineering](https://medium.com/@amirkiarafiei/harness-engineering-what-it-is-and-how-it-complements-context-engineering-6545b40bfc84): Arabayı, pisti ve bariyerleri tüm ayrıntılarıyla anlatıyor.
+- [The Anatomy of an Agent Harness](https://www.langchain.com/blog/the-anatomy-of-an-agent-harness): Agent = Model + Harness ve bu modülün dayandığı parça listesi.
+- [How to Build a Custom Agent Harness](https://www.langchain.com/blog/how-to-build-a-custom-agent-harness): Kendi harness'ini middleware ile nasıl kuracağını gösteriyor.
+- [Improving Deep Agents with harness engineering](https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering): Beş somut değişiklik ve bunların getirdiği 52.8%'ten 66.5%'e sıçrama.
+- [Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/): Ürünü agent'larla geliştiren bir ekip ve önce repository'lerinde neleri değiştirmek zorunda kaldıkları.
+- [Harness engineering for coding agent users](https://martinfowler.com/articles/harness-engineering.html): Guide ve sensor fikri, computational ile inferential ayrımı ve konunun en eksiksiz metni.
+- [The importance of Agent Harness in 2026](https://www.philschmid.de/agent-harness-2026): Harness'i model etrafındaki işletim sistemi olarak ele alıyor ve neden kolayca silinebilir olması gerektiğini açıklıyor.
+- [Finding the Best Harness for DeepSeek V4 Flash](https://composio.dev/content/best-agent-harness-deepseek-v4-flash): Sekiz harness ve tek bir model; geçme oranının yanında maliyet ve hız da var.
+- [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness): Ayarlandığı modelin yanında yayımlanmış bir harness.
+- [deepagents](https://github.com/langchain-ai/deepagents): Anatomi yazısındaki açık harness.
+- [best-of-Agent-Harnesses](https://github.com/RyanAlberts/best-of-Agent-Harnesses): Yüzden fazla harness'in sıralandığı, her hafta yeniden puanlanan bir liste.
+- [awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering): Bu pratik için araçlar ve rehberler.
+- [Agent Harness Explained in 2 minutes](https://youtube.com/shorts/IVdJj_aNwhE): Kısa versiyon, izlemeyi tercih edersen.
+- [Agent Harness explained in 8min..](https://www.youtube.com/watch?v=1a1VXDdIyrk): Daha uzun versiyon. Yukarıdaki halkalar gibi üç pratiği yan yana koyuyor.
+- [İleri Seviye Harness Engineering](../3_expert/advanced_harness_engineering_tr.md): Profiller, kendini evrimleştiren harness'ler ve modelin içine taşınanlar.

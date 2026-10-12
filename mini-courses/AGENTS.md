@@ -69,7 +69,8 @@ actually changed. Name the files, and read `git status` before every commit.
   per sentence, about 20 words or fewer, active voice, common words, one term for one thing, no
   idioms and no buzzwords. Technical terms stay, because they are the subject. So do the author's
   voice and rhetorical turns: simplifying is not flattening, and the revised text is usually
-  longer. The Turkish gets the same treatment, more lightly.
+  longer. **This is for the English only.** A translation does not copy its short sentences:
+  see [Translating a module](#translating-a-module).
 - **Headings are short, familiar, and in title case.** The same day the author renamed the headings
   of fifteen modules, "Embeddings: numbers that carry meaning" to "Vector Embeddings" and "Skills,
   which the agent picks up when it needs them" to "Skills". A heading names the topic the way an
@@ -193,16 +194,34 @@ slightly between providers while the shape does not.
 
 ## Translating a module
 
-Write the Turkish only once the English is final, then:
+**The author, 2026-10-12: "WE CARE MORE ABOUT READABILITY AND CLARITY IN OTHER LANGUAGES THAN TO
+LITERAL TRANSLATION AND TRUTHFULNESS."** That is the rule every other line here serves. A Turkish or
+Persian module reads the way people of that language talk and write, never like English translated
+word by word. The first Persian pass was translated sentence by sentence and he rejected all of it:
+*"like a literal translation which I hate ... NEVER USE DENSE AND VERY SHORT SENTENCES"*. Measured, it
+averaged 11 words a sentence, with 29% of sentences at 7 words or fewer, because it copied the
+English's ASD-STE sentences one for one.
 
-- **Mirror the structure exactly** and check it: heading counts, figures, mermaid blocks, code
-  blocks. Those counts are what prove nothing was dropped.
+So **translate the module, not the sentences.** Keep what the site and the reader depend on: the
+sections and their order, every figure, code block, table, link, fact and number. Everything below
+that is free: merge sentences, reorder them, add the connectives a native speaker would use, drop a
+phrase that only works in English, use a native idiom for an English one. Sentences flow, joined
+with `ve`, `ama`, `çünkü`, `yani` or `و`، `ولی`، `چون`، `یعنی`; a run of short sentences is the failure,
+and so is the opposite, a dense line packed with clauses.
+
+Write a translation only once the English is final, then:
+
+- **Keep the structure** and check it: heading counts, figures, mermaid blocks, code blocks. Those
+  counts prove nothing was dropped. They prove nothing about how it reads, so read it too.
 - **Then read the opening and the closing of both.** Matching counts prove nothing was dropped,
   not that the right thing is there. `harness_engineering_tr.md` shipped with Loop Engineering's
   opening paragraphs, so the module introduced itself as the wrong module while every count
   matched perfectly. Nothing automated can catch that; two minutes of reading can.
+- **Turkish is natural, professional Turkish**, the register of a good Turkish tech blog or a
+  senior engineer talking to a teammate, with the reader as `sen`. Not stiff, not slang.
 - **Technical vocabulary stays English**, inflected with Turkish suffixes: `context'in`,
-  `parameter'lar`, `weight'ler`, `chunk'ları`. Translate the ordinary words around them.
+  `parameter'lar`, `weight'ler`, `chunk'ları`. Words Turks already say in Turkish stay Turkish
+  (`model`, `veri`, `kod`, `dosya`).
 - **Translate a teaching example, keep a data example.** "The capital of Turkey" becomes
   "Türkiye'nin başkenti", because that example only works if the reader completes the sentence in
   their own head. The article-and-summary pairs stay in English, because they are a record of what
@@ -219,7 +238,10 @@ planned module has none, and none is created as a stub. Everything above holds f
   `prompt`, `token`, `context window`, `Agent`, `SQL`, `database`. A Persian suffix joins it with a
   zero-width non-joiner: `Agent‌ها`, `prompt‌های`. Where a Persian word stands for a technical
   concept, the English follows in parentheses the first time: `استدلال (reasoning)`.
-- **Plain written Persian, addressed to `شما`**, with everyday words: `است`, not `می‌باشد`.
+- **Everyday spoken Persian, written down**, the way Iranian developers write in blog posts and
+  Telegram channels: colloquial verbs (`می‌شه`، `می‌تونی`، `داره`)، `یه` for "a", `رو` after an
+  object, and the reader as `تو`. Never formal book Persian. Words Persians already say in Persian
+  stay Persian (`مدل`، `داده`، `کد`، `فایل`).
 - **ASCII digits** (`2026`, `52.8%`), never Persian ones, so numbers match the English and the code.
   Persian punctuation in Persian sentences: `،` `؛` `؟`.
 - **Four strings the site matches by their words**, so they are spelled exactly:
@@ -515,6 +537,9 @@ after reading. Nothing is tricky, nothing is scored on a record, and nothing is 
   Turkish word stands for a technical concept, the English follows in parentheses: `yetenek (skill)`.
 - **Persian too, wherever the module has a `_fa.md`**: an `fa:` side after the `tr:` side of every
   question, the options in the same order. The build fails a Persian page whose quiz lacks one.
+- **Each translated side is written, not translated**: natural Turkish and everyday Persian, by the
+  rule at the top of [Translating a module](#translating-a-module), with only the options' order and
+  meaning held to the English.
 - Options of similar length; no "all of the above" or "none of the above"; the correct answer moves
   around between questions. No em dashes, no exclamation marks.
 

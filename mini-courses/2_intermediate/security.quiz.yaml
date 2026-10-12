@@ -10,21 +10,21 @@ questions:
         - "A password for the servers of the provider."
       explain: "With the weights, the attacker can search for the exact tokens that push the model hardest. Attacks on your own product are almost always black box, because it is a text box."
     tr:
-      question: "Bir white-box saldırganın elinde olup bir black-box saldırganın elinde olmayan şey nedir?"
+      question: "Bir white-box saldırganın, black-box saldırganın sahip olmadığı ne vardır?"
       options:
         - "Ürünün system prompt'unun bir kopyası."
-        - "Modelin kendisi, bütün weight'leri dahil."
+        - "Modelin kendisi, bütün weight'leriyle birlikte."
         - "Modelin reddettiği konuların bir listesi."
-        - "Sağlayıcının sunucuları için bir şifre."
-      explain: "Weight'ler elindeyse, saldırgan modeli en çok iten token'ları tam olarak arayabilir. Senin ürününe yapılan saldırılar neredeyse her zaman black box'tır, çünkü ürünün bir metin kutusudur."
+        - "Sağlayıcının sunucuları için bir parola."
+      explain: "Weight'lere sahip olan saldırgan, modeli en çok iten token'ları tam olarak arayabilir. Kendi ürününe yapılan saldırıların neredeyse hepsi black box olur, çünkü ürün bir metin kutusudur."
     fa:
-      question: "یک مهاجم white-box چه چیزی دارد که یک مهاجم black-box ندارد؟"
+      question: "یه مهاجم white-box چی داره که یه مهاجم black-box نداره؟"
       options:
-        - "یک کپی از system prompt محصول."
-        - "خود مدل، شامل تمام weight‌هایش."
-        - "فهرستی از موضوع‌هایی که مدل امتناع می‌کند."
-        - "یک رمز عبور برای سرورهای ارائه‌دهنده."
-      explain: "با داشتن weight‌ها، مهاجم می‌تواند دقیقاً token‌هایی را پیدا کند که مدل را بیشتر از همه تحت فشار قرار می‌دهند. حمله به محصول خودتان تقریباً همیشه black box است، چون محصول شما یک جعبه‌ی متن است."
+        - "یه کپی از system prompt محصول."
+        - "خود مدل، با همه‌ی weight‌هاش."
+        - "فهرستی از موضوع‌هایی که مدل ازشون امتناع می‌کنه."
+        - "یه رمز عبور برای سرورهای ارائه‌دهنده."
+      explain: "با داشتن weight‌ها، مهاجم می‌تونه دقیقاً token‌هایی رو پیدا کنه که مدل رو بیشتر از همه به سمت یه جواب می‌برن. حمله به محصول خودت تقریباً همیشه black box هست، چون محصولت یه جعبه‌ی متنه."
   - answer: 2
     en:
       question: "Which attack defeats the safety training of the model itself?"
@@ -35,21 +35,21 @@ questions:
         - "Indirect prompt injection"
       explain: "Jailbreaking gets past the refusals of the model by rewording the request, like the DAN example. Prompt injection redirects behaviour, and prompt leaking exposes the system prompt."
     tr:
-      question: "Hangi saldırı, modelin güvenlik eğitiminin (safety training) kendisini yener?"
+      question: "Modelin kendi güvenlik eğitimini (safety training) hangi saldırı etkisiz bırakır?"
       options:
         - "Prompt injection"
         - "Prompt leaking"
         - "Jailbreaking"
         - "Indirect prompt injection"
-      explain: "Jailbreaking, isteği farklı kelimelerle yazarak modelin ret cevaplarını (refusal) geçer, DAN örneğindeki gibi. Prompt injection davranışı yönlendirir, prompt leaking ise system prompt'u açığa çıkarır."
+      explain: "Jailbreaking, isteği farklı kelimelerle yazarak modelin reddetmelerini (refusal) aşar, tıpkı DAN örneğindeki gibi. Prompt injection davranışı yönlendirir, prompt leaking ise system prompt'u açığa çıkarır."
     fa:
-      question: "کدام حمله، خود آموزش ایمنی مدل را شکست می‌دهد؟"
+      question: "کدوم حمله خود آموزش ایمنی مدل رو دور می‌زنه؟"
       options:
         - "Prompt injection"
         - "Prompt leaking"
         - "Jailbreaking"
         - "Indirect prompt injection"
-      explain: "Jailbreaking با بازنویسی درخواست، از امتناع‌های مدل عبور می‌کند، مثل مثال DAN. Prompt injection رفتار را منحرف می‌کند، و prompt leaking، system prompt را فاش می‌کند."
+      explain: "Jailbreaking با بازنویسی درخواست، از امتناع‌های مدل رد می‌شه، مثل مثال DAN. Prompt injection رفتار مدل رو عوض می‌کنه، و prompt leaking هم system prompt رو لو می‌ده."
   - answer: 0
     en:
       question: "A system prompt has higher priority than a user message by design. Why does prompt injection still work?"
@@ -60,21 +60,21 @@ questions:
         - "The attacker breaks a permission check that protects the system prompt in memory."
       explain: "The system prompt is text in the same stream as the user message, not a protected region of memory. So the attacker does not break any permission check."
     tr:
-      question: "Bir system prompt, tasarım gereği bir user mesajından daha yüksek önceliğe sahiptir. Prompt injection neden yine de işler?"
+      question: "Bir system prompt, tasarım gereği bir kullanıcı mesajından daha yüksek önceliğe sahiptir. Peki prompt injection neden yine de işe yarar?"
       options:
-        - "Model tek bir metin akışı okur, ve ikna edici bir metin system prompt'tan üstün gelebilir."
-        - "System prompt korunan bir hafıza (memory) bölgesinde durur, ve saldırgan onun kilidini açar."
-        - "Sağlayıcı her user mesajına system prompt'tan daha yüksek bir öncelik verir."
+        - "Model tek bir metin akışını okur ve ikna edici bir metin system prompt'un önüne geçebilir."
+        - "System prompt, hafızada korunan bir bölgede durur ve saldırgan bu bölgenin kilidini açar."
+        - "Sağlayıcı her kullanıcı mesajına system prompt'tan daha yüksek bir öncelik verir."
         - "Saldırgan, system prompt'u hafızada koruyan bir izin kontrolünü (permission check) kırar."
-      explain: "System prompt korunan bir hafıza (memory) bölgesi değildir, user mesajıyla aynı akıştaki bir metindir. Bu yüzden saldırgan hiçbir izin kontrolünü (permission check) kırmaz."
+      explain: "System prompt, korunan bir hafıza bölgesi değildir. Kullanıcı mesajıyla aynı metin akışındaki bir metindir. Bu yüzden saldırgan hiçbir izin kontrolünü kırmaz."
     fa:
-      question: "یک system prompt بنا بر طراحی اولویت بالاتری از یک پیام user دارد. پس چرا prompt injection باز هم کار می‌کند؟"
+      question: "system prompt بنا بر طراحی از یه پیام user اولویت بالاتری داره. پس چرا prompt injection باز هم جواب می‌ده؟"
       options:
-        - "مدل یک جریان متن را می‌خواند، و متن قانع‌کننده می‌تواند بر system prompt غلبه کند."
-        - "system prompt در یک ناحیه‌ی محافظت‌شده‌ی حافظه (memory) است، و مهاجم قفل آن را باز می‌کند."
-        - "ارائه‌دهنده به هر پیام user اولویتی بالاتر از system prompt می‌دهد."
-        - "مهاجم یک permission check را می‌شکند که system prompt را در حافظه (memory) محافظت می‌کند."
-      explain: "system prompt متنی در همان جریان پیام user است، نه یک ناحیه‌ی محافظت‌شده‌ی حافظه (memory). پس مهاجم هیچ permission check را نمی‌شکند."
+        - "مدل یه جریان متن رو می‌خونه، و یه متن قانع‌کننده می‌تونه از system prompt جلو بزنه."
+        - "system prompt توی یه ناحیه‌ی محافظت‌شده‌ی حافظه (memory) قرار داره، و مهاجم قفلش رو باز می‌کنه."
+        - "ارائه‌دهنده به هر پیام user یه اولویت بالاتر از system prompt می‌ده."
+        - "مهاجم یه permission check رو می‌شکنه که system prompt رو توی حافظه (memory) محافظت می‌کنه."
+      explain: "system prompt یه ناحیه‌ی محافظت‌شده‌ی حافظه (memory) نیست، بلکه متنیه توی همون جریانی که پیام user هم توشه. پس مهاجم هیچ permission check رو نمی‌شکنه."
   - answer: 3
     en:
       question: "What is a guardrail, and where does it sit?"
@@ -85,21 +85,21 @@ questions:
         - "A check that runs outside the model, before the model or after it."
       explain: "A guardrail runs outside the model, on the way in or on the way out. Because it is not model behaviour, it still works when an attacker persuades the model."
     tr:
-      question: "Guardrail nedir, ve nerede durur?"
+      question: "Guardrail nedir ve nerede durur?"
       options:
-        - "Güvenlik eğitimi (safety training) sırasında modelin weight'lerine eklenen bir kural."
-        - "Modelden sonra tek bir kontrol, çünkü input bir saldırı taşıyamaz."
-        - "System prompt'ta modelden güvenli kalmasını isteyen ek bir satır."
-        - "Modelin dışında, modelden önce ya da sonra çalışan bir kontrol."
-      explain: "Guardrail modelin dışında çalışır, girişte ya da çıkışta. Model davranışı olmadığı için, bir saldırgan modeli ikna etse bile yine de çalışır."
+        - "Güvenlik eğitimi (safety training) sırasında eklenmiş, modelin weight'leri içinde bir kural."
+        - "Yalnızca modelden sonra çalışan tek bir kontrol, çünkü girdi bir saldırı taşıyamaz."
+        - "System prompt'a eklenen, modelden güvenli kalmasını isteyen bir satır."
+        - "Modelin dışında çalışan ve modelden önce ya da sonra devreye giren bir kontrol."
+      explain: "Guardrail, girişte ya da çıkışta, modelin dışında çalışır. Model davranışı olmadığı için, bir saldırgan modeli ikna etse bile çalışmaya devam eder."
     fa:
-      question: "guardrail چیست، و کجا قرار می‌گیرد؟"
+      question: "guardrail چیه، و کجا قرار می‌گیره؟"
       options:
-        - "یک قانون درون weight‌های مدل که در زمان آموزش ایمنی (safety training) اضافه شده است."
-        - "یک کنترل تنها بعد از مدل، چون input نمی‌تواند حمله‌ای را حمل کند."
-        - "یک خط اضافه در system prompt که از مدل می‌خواهد امن بماند."
-        - "یک کنترل که بیرون از مدل اجرا می‌شود، قبل از مدل یا بعد از آن."
-      explain: "guardrail بیرون از مدل اجرا می‌شود، در مسیر input یا output. چون رفتار مدل نیست، حتی وقتی مهاجم مدل را متقاعد می‌کند، باز هم کار می‌کند."
+        - "یه قانون داخل weight‌های مدل که موقع آموزش ایمنی اضافه شده."
+        - "یه کنترل تنها بعد از مدل، چون input نمی‌تونه حمله‌ای رو با خودش داشته باشه."
+        - "یه خط اضافه توی system prompt که از مدل می‌خواد امن بمونه."
+        - "یه کنترل که بیرون از مدل اجرا می‌شه، قبل از مدل یا بعد از اون."
+      explain: "guardrail بیرون از مدل اجرا می‌شه، توی مسیر ورودی یا خروجی. چون رفتار مدل نیست، حتی وقتی مهاجم مدل رو قانع می‌کنه، باز هم کار می‌کنه."
   - answer: 1
     en:
       question: "What is red teaming?"
@@ -116,12 +116,12 @@ questions:
         - "Kendi sistemine bilerek saldırmak, çoğu zaman bir araçla (tool)."
         - "Her isteğin önüne bir guard model koymak."
         - "Modeli bilinen saldırı örnekleriyle yeniden eğitmek."
-      explain: "Denemediğin saldırılara karşı savunma yapamazsın. Saldırıyı promptfoo gibi araçlar (tool) senin yerine yapar, ve zaman içinde izlenecek sayı attack success rate'tir."
+      explain: "Denemediğin saldırılara karşı savunma yapamazsın. promptfoo gibi araçlar saldırıyı senin yerine yapar, zaman içinde izlemen gereken sayı ise attack success rate'tir."
     fa:
-      question: "Red teaming چیست؟"
+      question: "Red teaming چیه؟"
       options:
-        - "منتظر ماندن برای مهاجمان واقعی و ثبت آنچه امتحان می‌کنند."
-        - "عمداً به سیستم خودتان حمله کردن، اغلب با یک ابزار."
-        - "گذاشتن یک guard model جلوی هر درخواست."
-        - "آموزش دوباره‌ی مدل با نمونه‌هایی از حمله‌های شناخته‌شده."
-      explain: "نمی‌توانید در برابر حمله‌هایی که امتحان نکرده‌اید دفاع کنید. ابزارهایی مثل promptfoo حمله را انجام می‌دهند، و attack success rate عددی است که باید در طول زمان زیر نظر داشته باشید."
+        - "منتظر موندن برای مهاجم‌های واقعی و ثبت اینکه چی امتحان می‌کنن."
+        - "عمداً به سیستم خودت حمله کردن، اغلب با یه ابزار."
+        - "گذاشتن یه guard model جلوی هر درخواست."
+        - "دوباره آموزش دادن مدل با نمونه‌هایی از حمله‌های شناخته‌شده."
+      explain: "نمی‌شه در برابر حمله‌هایی که امتحانشون نکردی دفاع کرد. ابزارهایی مثل promptfoo خودشون حمله رو انجام می‌دن، و attack success rate عددیه که باید توی طول زمان زیرنظرش داشته باشی."

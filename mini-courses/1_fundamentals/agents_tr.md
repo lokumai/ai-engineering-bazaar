@@ -1,158 +1,117 @@
 # AI Agents
 
-Buraya kadar her şey bunun için kuruluyordu. Tanım ise beklediğinden küçük.
+Şimdiye kadar anlattığımız her şey bu tanıma doğru ilerliyordu, ama tanım beklediğinden çok daha küçük.
 
-> **Bir AI agent, bir LLM'in hedefine ulaşana kadar tool çağırdığı bir loop'tan başka bir şey
-> değil. LLM hiç tool çağırmadığında, bir final cevap üretiyor ve loop kırılıyor.**
+> **Bir AI agent, aslında LLM'in hedefine ulaşana kadar tool çağırdığı bir döngüdür. LLM tool çağırmadığında ise son cevabını üretir ve döngü sona erer.**
 
-Bütün olay bu. İki kez oku. Agent'lar hakkındaki kafa karışıklığının çoğu, daha büyük bir şey
-beklemekten geliyor.
+Tanım bu kadar, yine de bunu iki kez okumakta fayda var. Agent'lar hakkındaki karışıklığın çoğu, insanın bundan daha büyük bir şey beklemesinden doğuyor.
 
-![An LLM in a loop with an objective](./images/agent-wrapper-meme.jpg)  
-*Eğrinin iki ucu da aynı cevaba varıyor. Ortadakiler ise bunun yerine bir mimari aramaya gidiyor.*
+![Bir hedefle döngüye girmiş bir LLM](./images/agent-wrapper-meme.jpg)  
+*Eğrinin iki ucu da aynı cevaba varıyor. Ortadakiler ise bunun yerine bir mimari aramaya koyuluyor.*
 
-## Single Turn ve Multi Turn
+## Tek turlu ve çok turlu
 
-Önemli olan fark şu.
+Asıl önemli fark şu: düz bir LLM tek turludur. Ona bir girdi verirsin, o da bir çıktı döndürür ve iş biter. [LLM Temelleri](llms_tr.md) modülünde anlattığımız şey tam olarak budur, yani bir modelin yapabildiği tek şey.
 
-**Düz bir LLM single-turn.** Ona input veriyorsun, o da sana output veriyor. Bitti.
-[LLM Fundamentals](llms_tr.md) modülü bunu anlatmıştı. Bir modelin yaptığı şey bundan fazlası
-değil.
+Bir **agent ise çok turludur.** Aynı modeli tekrar tekrar çağırırsın ve her seferinde model bir tool isteyebilir. İhtiyacı olan her şeyi topladığında son cevabını yazar, ama bundan önce değil.
 
-**Bir agent multi-turn.** Aynı modeli tekrar tekrar çağırıyorsun. Model her seferinde bir tool
-isteyebiliyor. İhtiyacı olanı elde edene kadar devam ediyor. Final cevabı ancak ondan sonra
-yazıyor.
+İki durumda da model aynıdır ve modele hiçbir şey eklenmedi. Aradaki fark, onu kaç kez çağırdığında ve her seferinde ona ne gönderdiğinde yatıyor.
 
-İki durumda da model aynı. Ona hiçbir şey eklenmedi. Bütün fark, onu kaç kez çağırdığında ve her
-seferinde ona ne gönderdiğinde.
+![Bu bir agent mı?](./images/agent-multi-step-example.jpg)  
+*Evet, tanım tam olarak bu. Espri şurada: insanlar bunun daha büyük bir şey olmasını bekliyor.*
 
-![Is this an agent?](./images/agent-multi-step-example.jpg)  
-*Evet. Tanım gerçekten bu. Şaka da insanların bundan fazlasını beklemesi.*
+## Döngünün tek bir geçişi
 
-## Loop'un Bir Turu
+[LLM Tool Calling](tools_tr.md) modülünde tek bir tool çağrısını görmüştük. Bir agent turu ise tam olarak bu çağrının tekrar tekrar yapılmasından ibarettir:
 
-[Tool Calling](tools_tr.md) tek bir tool call göstermişti. Bir agent turu da tam olarak onun
-tekrarlanmış hâli:
-
-![The context of an agent](./images/agent-context.jpeg)  
-*Bir tur: sen soruyorsun ve model düşünüyor. Model bir tool istiyor. Host tool'u çalıştırıp sonucu geri yazıyor. Sonra model cevaplıyor. Sonraki turda mesaj yığınının tamamı yine modele gidiyor ve artık iki mesaj daha uzun.*
+![Bir agent'ın context'i](./images/agent-context.jpeg)  
+*Tek bir geçiş şöyle işliyor: sen soruyorsun, model düşünüyor ve bir tool istiyor. Host tool'u çalıştırıp sonucu geri yazar, ardından model cevap verir. Bir sonraki geçişte bütün mesaj yığını (message stack) modele yeniden gönderilir ve artık iki mesaj daha uzundur.*
 
 ```mermaid
 graph TD
-    A["Hedef geliyor"] --> B["LLM bütün context'i okuyor"]
-    B --> C{"Tool istedi mi?"}
-    C -->|evet| D["Host tool'u çalıştırıyor"]
-    D --> E["Sonuç context'e ekleniyor"]
+    A["Hedef gelir"] --> B["LLM tüm context'i okur"]
+    B --> C{"Bir tool istedi mi?"}
+    C -->|evet| D["Host tool'u çalıştırır"]
+    D --> E["Sonuç context'e eklenir"]
     E --> B
-    C -->|hayır| F["O output final cevap, loop kırılıyor"]
+    C -->|hayır| F["Bu çıktı son cevaptır, döngü sona erer"]
 ```
 
-**Loop'u neyin bitirdiğine bak.** Bir sayaç yok. Agent'ın bittiğine karar veren bir denetleyici de
-yok. Loop, model tool istemeyi bıraktığı için kırılıyor. Bir tool call'ın olmaması, sonlanma
-koşulunun (termination condition) *kendisi*. Modelin tool call yerine yazdığı metin de cevap.
+**Döngüyü neyin bitirdiğine bak.** Ortada bir sayaç yok ve agent'ın işinin bittiğine karar veren bir denetleyici de yok. Döngü, model tool istemeyi bıraktığı için sona erer. Yani tool çağrısının yokluğu, *tam da* bitiş koşulunun kendisidir. Model tool çağrısı yerine yazdığı metin ise cevaptır.
 
-### Karar Vermenin Ne Kadarını Devrediyorsun
+### Kararın ne kadarını modele bıraktığın
 
-"Agent" evet ya da hayır diye cevaplanan bir şey değil. Asıl soru, karar vermenin ne kadarını
-modele devrettiğin.
+"Agent" her şeyi ya da hiçbir şeyi ifade eden ikili bir kavram değil. Asıl soru, kararların ne kadarını modele devrettiğindir.
 
-Bir uçta düz bir LLM çağrısı var. Her şeye sen karar veriyorsun, model sadece metin yazıyor.
-Ortada **sabit workflow'lar** var. Bunlara bazen state machine de deniyor. Sabit bir workflow'da
-adımları ve sıralarını *sen* yazdın, model sadece her adımı dolduruyor. Diğer uçta gerçek bir agent
-var. Orada adımları, tool'ları ve ne zaman duracağını model seçiyor.
+Bir ucunda düz bir LLM çağrısı var. Her kararı sen verirsin ve model yalnızca metin yazar. Ortada ise **sabit iş akışları** (fixed workflows) var, bunlara bazen durum makinesi (state machine) de denir. Sabit bir iş akışında adımları ve sırasını *sen* yazarsın, model de her adımı yalnızca doldurur. Diğer ucunda gerçek bir agent var ve orada adımları, tool'ları ve ne zaman duracağını model seçer.
 
-![Three points on the autonomy spectrum](./images/llm-tool-agent-compare.png)  
-*Üç panelde de aynı model var. Değişen iki şey var: modelin kaç kez çağrıldığı ve sonraki adımı kimin seçtiği. İlk iki panelde sen seçiyorsun. Üçüncüsünde modelin kendisi seçiyor.*
+![Özerklik spektrumunda üç nokta](./images/llm-tool-agent-compare.png)  
+*Üç panelde de aynı model var. Değişen iki şey var: modelin kaç kez çağrıldığı ve bir sonraki adımı kimin seçtiği. İlk iki panelde adımı sen seçiyorsun. Üçüncüde ise adımı model seçiyor.*
 
-Production sistemlerinin çoğu en uçta değil. Bu da genelde doğru bir seçim. Daha az autonomy,
-işlerin ters gidebileceği daha az yol demek. LangChain'in
-[what is an agent](https://www.langchain.com/blog/what-is-an-agent) yazısı bu spektrumu iyi
-anlatıyor. Modele ne kadar serbestlik vereceğine karar vermeden önce okumaya değer.
+Üretimdeki sistemlerin çoğu spektrumun en uç noktasında durmaz ve bu genellikle doğru bir tercihtir. Daha az özerklik, işlerin ters gidebileceği daha az yol demek. LangChain'in [what is an agent](https://www.langchain.com/blog/what-is-an-agent) yazısı bu spektrumu iyi özetliyor ve modele ne kadar özgürlük vereceğine karar vermeden önce okumaya değer.
 
-## Agent Loop Nerede Çalışır?
+## Agent döngüsü nerede çalışır?
 
-Bu kısımda net olmaya değer. İnsanların, modelin yapamayacağı şeyleri yaptığını hayal ettiği yer
-burası.
+Bu kısmı net bilmekte fayda var, çünkü insanların modelin yapamayacağı şeyleri yaptığını hayal ettiği yer tam burasıdır.
 
-Loop'un hiçbir parçası LLM'in içinde olmuyor. **Hepsi host makinede oluyor**, yani laptop'unda ya da
-sunucunda:
+Döngünün hiçbir parçası LLM'in içinde gerçekleşmez. **Hepsi host makinede çalışır**, yani senin laptop'unda ya da sunucunda:
 
-- loop'u çalıştırmak ve ne zaman bittiğine karar vermek
-- agent'ın [memory](memory_tr.md)'si olan mesaj yığınını tutmak
-- her çağrıdan önce system prompt'u kurmak
-- tool'ları çalıştırmak, çünkü onlar senin Python fonksiyonların ([Tool Calling](tools_tr.md))
-- artık daha uzun olan context'in tamamını sonraki tur için modele geri göndermek
+- döngüyü çalıştırmak ve ne zaman bittiğine karar vermek
+- agent'ın [hafızası](memory_tr.md) olan mesaj yığınını tutmak
+- her çağrıdan önce system prompt'u oluşturmak
+- tool'ları çalıştırmak, çünkü bunlar senin Python fonksiyonların ([LLM Tool Calling](tools_tr.md))
+- bir sonraki geçiş için, artık daha uzun olan tüm context'i modele geri göndermek
 
-![An agent, unmasked](./images/agents-in-action.jpeg)  
-*Kostümün altında: prompt'lar, if-else'ler, loop'lar ve fonksiyonlar. İçinde başka bir şey yok.*
+![Maskesi indirilmiş bir agent](./images/agents-in-action.jpeg)  
+*Kostümün altında prompt'lar, if-else, döngüler ve fonksiyonlardan başka bir şey yok.*
 
-Bu liste, agent'ların neden bir **framework** kullandığının cevabı. Kavram zor değil. Sorun,
-bunların hepsini elle yapmanın çok fazla boilerplate kod gerektirmesi:
+Yukarıdaki liste, agent'ların neden bir **framework** kullandığını açıklıyor. Kavramın kendisi zor değildir, asıl sorun ise bunların hepsini elle yazmanın çok fazla boilerplate kod gerektirmesidir:
 
-- bir cevabın içinden tool call'ları parse etmek
+- tool çağrılarını bir yanıttan ayıklamak
 - sonuçları çağrı id'leriyle eşleştirmek
-- mesaj yığınını büyütüp budamak
-- prompt'u yeniden kurmak
+- mesaj yığınını büyütmek ve kısaltmak
+- prompt'u yeniden oluşturmak
 - ne zaman duracağına karar vermek
 
-[smolagents](https://github.com/huggingface/smolagents) ve
-[LangChain](https://github.com/langchain-ai/langchain) bu kodu bir kez yazmak için var.
+[smolagents](https://github.com/huggingface/smolagents) ve [LangChain](https://github.com/langchain-ai/langchain), bu kodu bir kez yazıp herkesin kullanabilmesi için var.
 
-**Şimdi [LLM Fundamentals](llms_tr.md) modülünü hatırla**. Orada bir LLM'i hiç framework olmadan,
-doğrudan terminalden çalıştırmıştık. Orada neden framework'e ihtiyaç yoktu? Çünkü o tek bir
-çağrıydı. Input, output, bitti. Loop yoktu, tool parse etme yoktu, sürdürülecek bir mesaj yığını
-yoktu. Single-turn bir LLM hiçbir iskeleye (scaffolding) ihtiyaç duymuyor. Bir agent ise neredeyse
-tamamen iskele.
+**Şimdi de [LLM Temelleri](llms_tr.md) modülüne dön.** Orada bir LLM'i hiçbir framework olmadan doğrudan terminalden çalıştırmıştık. Neden bir framework'e ihtiyacımız olmadı? Çünkü ortada tek bir çağrı vardı: girdi, çıktı, bitti. Döngü yoktu, tool ayrıştırması yoktu ve tutulacak bir mesaj yığını da yoktu. Tek turlu bir LLM böyle bir iskele kod (scaffolding) ihtiyacı duymaz, bir agent ise neredeyse tamamen bu iskele koddan oluşur.
 
-Bu da seriyi asıl noktasına getiriyor. **LLM gerçekten sadece bir beyin: metin girer, metin
-çıkar, hiçbir şey saklamaz, başka hiçbir şey yapmaz.** Buraya kadar anlattığımız her yetenek, o
-beynin etrafına kurulmuş bir çevre. Bu çevre sayesinde beyin şunları yapabiliyor:
+Serinin ana noktasına bu noktada varıyoruz: **LLM gerçekten sadece bir beyin. Metin girer, metin çıkar, hiçbir şey saklamaz ve başka hiçbir şey yapmaz.** Şimdiye kadar anlattığımız her yetenek, bu beynin etrafına kurulmuş bir ortamdır. Bu ortam sayesinde model şunları yapabiliyor:
 
-- turlar boyunca çalışmak (bu modül)
-- kendi dışına uzanmak ([Tool Calling](tools_tr.md))
-- hatırlamak ([Memory](memory_tr.md))
-- hiç eğitilmediği veriyi okumak ([RAG & Embeddings](rag_tr.md))
+- birden fazla tur boyunca çalışabilir (bu modül)
+- kendi dışındaki dünyaya uzanabilir ([LLM Tool Calling](tools_tr.md))
+- hatırlayabilir ([Memory](memory_tr.md))
+- hiç eğitilmediği verileri okuyabilir ([Retrieval-Augmented Generation (RAG)](rag_tr.md))
 
-[LLM Fundamentals](llms_tr.md) modülünde fazla basitleştirmiyorduk. Model gerçekten o kadar basit.
-Geri kalan her şey onun etrafındaki mühendislik.
+[LLM Temelleri](llms_tr.md) modülünde işi basitleştirmiş değildik. Model gerçekten bu kadar basit ve geri kalan her şey, onun etrafındaki mühendislik.
 
-Aynı loop'u anlatmanın daha eski bir yolu **observe, decide, act**. Model context'i gözlemliyor ve
-bir aksiyona karar veriyor. Host aksiyonu uyguluyor. Sonuç da sonraki gözlemin parçası oluyor. Aynı
-mekanizma, daha eski kelimelerle.
+Aynı döngü, eskiden **observe, decide, act** (gözlemle, karar ver, eyleme geç) diye tarif edilirdi. Model context'i gözlemler ve bir eylem seçer, host bu eylemi gerçekleştirir ve sonuç bir sonraki gözlemin parçası olur. Mekanizma aynıdır, yalnızca kelimeler daha eskidir.
 
-## LLM Hangi Tool'lara Sahip Olduğunu Nasıl Biliyor
+## LLM hangi tool'lara sahip olduğunu nasıl biliyor?
 
-Özünde bir agent hâlâ tekrar tekrar çağırdığın bir LLM'den başka bir şey değil. O zaman hangi
-tool'ları çağırmasına izin verildiğini nasıl biliyor?
+Altta yatan şey yine de tekrar tekrar çağırdığın bir LLM. Peki hangi tool'ları çağırmasına izin verildiğini nereden biliyor?
 
-Cevap **system prompt**. Host onu loop'taki her çağrıdan önce yeniden kurup gönderiyor. System
-prompt, agent'ın rolünü ve kullanılabilir tool'ların listesini, adları ve açıklamalarıyla birlikte
-taşıyor. Ayrıca bir tool call'ın nasıl formatlanacağını da söylüyor. Böylece host onu parse
-edebiliyor.
+Cevap **system prompt**'tur. Host, döngüdeki her çağrıdan önce bunu yeniden oluşturup modele gönderir. System prompt; agent'ın rolünü, kullanılabilir tool'ların adlarını ve açıklamalarını taşır ve bir tool çağrısının nasıl biçimlendirileceğini anlatır. Böylece host çağrıyı ayrıştırabilir.
 
-O listeyi elle yazmıyorsun. [Tool Calling](tools_tr.md) modülünde anlattığımız gibi, bunu `@tool`
-decorator'ı yapıyor. Framework fonksiyonunun adını, docstring'ini ve type hint'lerini okuyor. Sonra
-schema'yı modelin gördüğü içeriğe ekliyor. O kodun bu kadar kısa olmasının sebebi bu. Decorator,
-fonksiyonu kaydetmekten fazlasını yapıyor. Framework, o fonksiyonun var olduğunu modele decorator
-sayesinde söylüyor.
+Bu listeyi elle yazman gerekmez, çünkü [LLM Tool Calling](tools_tr.md) modülünde anlattığımız gibi bunu `@tool` dekoratörü yapar. Framework, fonksiyonunun adını, docstring'ini ve type hint'lerini okur ve ardından şemayı modelin göreceği içeriğe yerleştirir. O kodun bu kadar kısa olmasının sebebi de bu. Dekoratör yalnızca fonksiyonu kaydetmekle kalmaz; framework bu sayede modele fonksiyonun var olduğunu da bildirir.
 
-## Bir Örnek
+## Bir örnek
 
-"Kodumdaki bug'ı düzelt" tek bir soru değil. O yüzden loop birkaç kez çalışıyor:
+"Kodumdaki hatayı düzelt" tek bir soru olmadığı için döngü birkaç kez çalışıyor:
 
-| Tur | Agent ne yapıyor | LLM neden çağrılıyor |
+| Geçiş | Agent ne yapar | LLM neden çağrılır |
 |---|---|---|
-| 0 | Hedef geliyor | henüz değil |
-| 1 | İlgili dosyaları oku (`read_file`) | hangi dosyaların açılacağına karar vermek için |
-| 2 | Başarısız olan bir test yaz | kod üretmek için |
-| 3 | Düzeltmeyi yaz | kod üretmek için |
-| 4 | Testleri çalıştır (`run_shell`) | komuta karar vermek için |
-| 5 | Testlerin geçtiğini bildir | cevabı yazmak için. Hiç tool çağırmadığı için loop bitiyor |
+| 0 | Hedef gelir | henüz değil |
+| 1 | İlgili dosyaları okur (`read_file`) | hangi dosyaları açacağına karar vermek için |
+| 2 | Başarısız bir test yazar | kod üretmek için |
+| 3 | Düzeltmeyi yazar | kod üretmek için |
+| 4 | Testleri çalıştırır (`run_shell`) | komutu belirlemek için |
+| 5 | Testlerin geçtiğini raporlar | cevabı yazmak için. Hiçbir tool çağırmadığı için döngü sona erer |
 
-Altı tur, beş model çağrısı, bir hedef. Düz bir LLM'in bunların hepsi için sadece tek bir çağrısı
-olurdu. Bu yüzden tahmin ederdi.
+Altı geçiş, beş model çağrısı ve tek bir hedef var. Düz bir LLM ise bütün bunlar için yalnızca bir çağrı alırdı ve bu yüzden tahmin yürütmek zorunda kalırdı.
 
-## Bir Agent Kurmak
+## Bir agent kurmak
 
 ```python
 from smolagents import CodeAgent, tool, InferenceClientModel
@@ -167,22 +126,19 @@ agent = CodeAgent(tools=[read_file], model=InferenceClientModel())
 result = agent.run("Read main.py and summarise it")
 ```
 
-Bu tam bir agent. Orada *olmayan* şeylere dikkat et:
+İşte tam bir agent, ama şunların *yok* olduğuna dikkat et:
 
-- loop yok
-- tool call parse etme yok
+- döngü yok
+- tool çağrılarını ayrıştıran kod yok
 - mesaj yığını yok
 - system prompt yok
 
-Hepsini `CodeAgent` yapıyor. `agent.run` de loop'un kendisi.
+Bunların hepsini `CodeAgent` yapıyor, döngünün kendisi ise `agent.run`.
 
-Başka framework'ler aynı problemi farklı şekillerde çözüyor:
-[LangChain](https://github.com/langchain-ai/langchain),
-[crewAI](https://github.com/crewAIInc/crewAI) ve [AutoGen](https://github.com/microsoft/autogen).
-[Agent Framework'leri](../4_ecosystem/agent_frameworks_tr.md) onları karşılaştırıyor.
+Aynı sorunu farklı yollarla çözen başka framework'ler de var: [LangChain](https://github.com/langchain-ai/langchain), [crewAI](https://github.com/crewAIInc/crewAI) ve [AutoGen](https://github.com/microsoft/autogen). [Agent Framework'leri](../4_ecosystem/agent_frameworks_tr.md) bunları karşılaştırıyor.
 
-![LLM as brain, agent as body](./images/agent-analogy.png)  
-*LLM beyin, agent etrafındaki beden, tool'lar da onun elleri.*
+![LLM beyin, agent gövde](./images/agent-analogy.png)  
+*LLM beyin, agent onu çevreleyen gövde, tool'lar ise ellerdir.*
 
 ## Bu serinin neresindeyiz
 
@@ -205,29 +161,26 @@ graph LR
 
 ## Özet
 
-Bir agent, bir LLM'in hedefine ulaşana kadar tool çağırdığı bir loop. Loop, model tool çağırmayı
-bırakıp onun yerine bir cevap yazdığında bitiyor.
+Bir agent, LLM'in hedefine ulaşana kadar tool çağırdığı bir döngüdür. Döngü, model tool çağırmayı bırakıp bunun yerine bir cevap yazdığında sona erer.
 
-Model değişmiyor. Şu parçaların hepsi senin makinende çalışıyor:
+Model aynı kalır, ama şu parçaların hepsi senin makinende çalışır:
 
-- loop
-- memory
+- döngü
+- hafıza
 - system prompt
-- tool çalıştırma
+- tool'ların çalıştırılması
 
-Framework de bunları yönetmek için var. [LLM Fundamentals](llms_tr.md) modülünde single-turn bir
-LLM'in neden framework'e ihtiyaç duymadığının cevabı da bu.
+Bunları yönetmek de framework'lerin asıl işidir ve tek turlu bir LLM'in [LLM Temelleri](llms_tr.md) modülünde bir framework'e ihtiyaç duymamasının sebebi de budur.
 
-Sırada bir agent'ın birden fazlaya dönüşmesi var.
+Sırada ise bir agent birden fazlaya dönüştüğünde neler olduğu var.
 
-**Hızlı Kontrol**: agent loop'unu ne bitiriyor ve bir agent'ın hangi parçaları modelin dışında
-çalışıyor?
+**Hızlı Kontrol**: Agent döngüsünü ne bitirir ve bir agent'ın hangi parçaları model dışında çalışır?
 
 ## Kaynaklar
 
-- [LLM agents](https://www.promptingguide.ai/research/llm-agents): aynı fikrin daha geniş bir incelemesi
-- [Agent components](https://www.promptingguide.ai/agents/components): bir agent'ın parçaları, tek tek
-- [What is an agent?](https://www.langchain.com/blog/what-is-an-agent): agent'ları, workflow'ları ve state machine'leri tek bir autonomy spektrumuna yerleştiriyor
+- [LLM agents](https://www.promptingguide.ai/research/llm-agents): aynı fikri daha geniş ele alan bir derleme
+- [Agent components](https://www.promptingguide.ai/agents/components): bir agent'ın parçaları tek tek
+- [What is an agent?](https://www.langchain.com/blog/what-is-an-agent): agent'ları, iş akışlarını ve durum makinelerini tek bir özerklik spektrumunda yerleştiriyor
 - [smolagents](https://github.com/huggingface/smolagents): yukarıda kullanılan framework
-- [Tool Calling](tools_tr.md): tool schema'sının nereden geldiği
-- [Memory](memory_tr.md): loop'un büyütmeye devam ettiği mesaj yığını
+- [LLM Tool Calling](tools_tr.md): tool şemasının nereden geldiği
+- [Memory](memory_tr.md): döngünün büyüttüğü mesaj yığını

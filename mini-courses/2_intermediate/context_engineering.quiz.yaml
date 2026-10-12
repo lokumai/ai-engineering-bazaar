@@ -18,13 +18,13 @@ questions:
         - "Session çok uzadığında model kendi weight'lerini değiştirir."
       explain: "Context rot, context büyüdükçe cevapların window dolmadan çok önce kötüleşmesi demek. Bunun nedeni attention: window'daki her şeye bölünen, sabit bir bütçe."
     fa:
-      question: "context rot چیه؟"
+      question: "context rot یعنی چی؟"
       options:
-        - "وقتی تاریخچه از window بزرگ‌تره، مدل قدیمی‌ترین context رو از دست می‌ده."
-        - "وقتی context بیشتری به window اضافه می‌کنی، مدل جواب بهتری می‌ده."
-        - "با بزرگ‌تر شدن context، مدل کارش رو بدتر انجام می‌ده، حتی پیش از اینکه window پر بشه."
-        - "وقتی session خیلی طولانی می‌شه، مدل weight‌های خودش رو عوض می‌کنه."
-      explain: "context rot یعنی هرچی context بزرگ‌تر بشه، جواب‌ها بدتر می‌شن، خیلی پیش از اینکه window پر بشه. دلیلش attention ه، یعنی یه بودجه‌ی ثابت که بین همه‌ی چیزهایی که توی window هست تقسیم می‌شه."
+        - "وقتی history از window بزرگ‌تر بشه، مدل قدیمی‌ترین قسمت context رو از دست می‌ده."
+        - "هر چی context بیشتری بریزی توی window، مدل جواب بهتری می‌ده."
+        - "هر چی context بزرگ‌تر بشه، مدل کار رو بدتر انجام می‌ده، حتی قبل از اینکه window پر بشه."
+        - "وقتی session خیلی طولانی می‌شه، مدل وزن‌های خودش رو تغییر می‌ده."
+      explain: "context rot یعنی با بزرگ‌تر شدن context جواب‌ها بدتر می‌شن، خیلی قبل از اینکه window پر بشه. علتش attention‌ه، یعنی یه بودجه‌ی ثابت که بین همه‌ی چیزهای توی window پخش می‌شه."
   - answer: 0
     en:
       question: "Which question does context engineering answer?"
@@ -43,13 +43,13 @@ questions:
         - "Her faydalı doküman her turda context'e nasıl eklenir?"
       explain: "Window sınırlı olduğu için context engineering, içeri neyin gireceğine her turda yeniden karar verir. Tek bir iyi prompt yazmak ise prompt engineering'in işi."
     fa:
-      question: "Context engineering به کدوم سؤال جواب می‌ده؟"
+      question: "context engineering جواب کدوم سواله؟"
       options:
-        - "چطور انتخاب کنیم که چی وارد context بشه و چی نشه؟"
-        - "چطور یه prompt خوب بنویسیم تا مدل جواب خوبی بده؟"
-        - "چطور برای یه session طولانی یه context window بزرگ‌تر بگیریم؟"
-        - "چطور هر سند مفیدی رو توی هر نوبت به context اضافه کنیم؟"
-      explain: "window محدوده، پس context engineering هر نوبت دوباره تصمیم می‌گیره چی وارد بشه. نوشتن یه prompt خوب کار prompt engineering ه."
+        - "چطور انتخاب کنیم چی بره توی context و چی بیرون بمونه؟"
+        - "چطور یه prompt بنویسیم که مدل جواب خوبی بده؟"
+        - "چطور برای یه session طولانی context window بزرگ‌تری گیر بیاریم؟"
+        - "چطور توی هر نوبت همه‌ی سندهای مفید رو به context اضافه کنیم؟"
+      explain: "window محدوده، پس context engineering توی هر نوبت از نو تصمیم می‌گیره چی بره تو. نوشتن یه prompt خوب کار prompt engineering‌ه."
   - answer: 3
     en:
       question: "An agent must read many files to answer one short question. Why does it give this work to a subagent?"
@@ -68,13 +68,13 @@ questions:
         - "Subagent okumayı kendi context'inde yapar ve yalnızca sonucu döndürür."
       explain: "Subagent okumayı kendi boş context'inde yapar ve yalnızca sonucu geri döndürür. Ana agent'ın context'ine ise bütün dosyalar değil, tek bir cümle eklenir."
     fa:
-      question: "یه agent باید برای جواب دادن به یه سؤال کوتاه، کلی فایل بخونه. چرا این کار رو به یه subagent می‌سپاره؟"
+      question: "یه agent برای جواب دادن به یه سوال کوتاه باید کلی فایل بخونه. چرا این کار رو می‌سپره به یه subagent؟"
       options:
-        - "subagent از window agent اصلی استفاده می‌کنه، پس context تازه‌ای لازم نیست."
-        - "subagent برای بقیه‌ی session، window agent اصلی رو بزرگ‌تر می‌کنه."
-        - "subagent هر مرحله‌ی میانی رو برمی‌گردونه به agent اصلی."
+        - "subagent از window خود agent اصلی استفاده می‌کنه، پس context تازه‌ای لازم نیست."
+        - "subagent باعث می‌شه window agent اصلی تا آخر session بزرگ‌تر بشه."
+        - "subagent همه‌ی قدم‌های وسط کار رو برمی‌گردونه به agent اصلی."
         - "subagent توی context خودش می‌خونه و فقط نتیجه رو برمی‌گردونه."
-      explain: "subagent خوندن رو توی context خالی خودش انجام می‌ده و فقط نتیجه رو برمی‌گردونه. context agent اصلی فقط یه جمله بیشتر پیدا می‌کنه، نه همه‌ی فایل‌ها."
+      explain: "subagent خوندن رو توی context خالی خودش انجام می‌ده و فقط نتیجه رو برمی‌گردونه. این‌جوری به context agent اصلی فقط یه جمله اضافه می‌شه، نه همه‌ی اون فایل‌ها."
   - answer: 1
     en:
       question: "What must an agent have, at least, to count as a deep agent?"
@@ -93,13 +93,13 @@ questions:
         - "Kısa bir system prompt ile çalışan, düz bir loop içinde tek bir model"
       explain: "Bir deep agent'ın en azından planlama (planning), subagent'lar ve bir filesystem'e ihtiyacı var. Claude Code, Codex, Copilot ve OpenCode bu üçünün hepsine sahip, dolayısıyla zaten deep agent'tır."
     fa:
-      question: "یه agent حداقل به چی نیاز داره تا deep agent حساب بشه؟"
+      question: "یه agent دست‌کم چی باید داشته باشه تا deep agent حساب بشه؟"
       options:
-        - "یه context window خیلی بزرگ و یه sliding window برای توکن‌های قدیمی"
-        - "planning با یه to-do list، subagent‌ها و یه filesystem"
+        - "یه context window خیلی بزرگ، و یه sliding window برای token‌های قدیمی"
+        - "planning با to-do list، subagent و filesystem"
         - "یه RAG pipeline کامل که همه‌ی سندها رو به هر prompt اضافه می‌کنه"
         - "یه مدل توی یه loop ساده، با یه system prompt کوتاه"
-      explain: "deep agent حداقل به planning، subagent‌ها و یه filesystem نیاز داره. Claude Code، Codex، Copilot و OpenCode هر سه تا رو دارن، پس همین الان هم deep agent هستن."
+      explain: "deep agent دست‌کم planning، subagent و filesystem لازم داره. Claude Code، Codex، Copilot و OpenCode هر سه تا رو دارن، پس همین حالا هم deep agent‌ان."
   - answer: 2
     en:
       question: "In a long session, how do a to-do list and chain of thought both help the model follow the goal?"
@@ -118,10 +118,10 @@ questions:
         - "Hedefi window'un başına koyarlar ve hedef orada öylece kalır."
       explain: "İkisi de recitation ile çalışır: önemli olanı, modelin yazmak üzere olduğu yerin yakınında yeniden söylerler. Attention, yakında olan ve tekrar edilen şeye gider."
     fa:
-      question: "توی یه session طولانی، to-do list و chain of thought هر دو چطور به مدل کمک می‌کنن تا هدف رو دنبال کنه؟"
+      question: "توی یه session طولانی، to-do list و chain of thought هر دو چطور کمک می‌کنن مدل هدف رو گم نکنه؟"
       options:
-        - "توکن‌های قدیمی رو پاک می‌کنن، پس window جای خالی بیشتری داره."
-        - "سندهای تازه رو از knowledge base به window اضافه می‌کنن."
-        - "چیز مهم رو نزدیک جایی که مدل داره می‌نویسه، دوباره تکرار می‌کنن."
-        - "هدف رو توی ابتدای window می‌ذارن و اون‌جا می‌مونه."
-      explain: "هر دو با recitation کار می‌کنن: چیز مهم رو دوباره می‌گن، نزدیک جایی که مدل می‌خواد بنویسه. attention به چیزی می‌ره که نزدیک و تکرارشده باشه."
+        - "token‌های قدیمی رو پاک می‌کنن تا window جای خالی بیشتری داشته باشه."
+        - "سندهای تازه رو از knowledge base میارن توی window."
+        - "چیز مهم رو نزدیک همون جایی که مدل داره می‌نویسه، دوباره تکرار می‌کنن."
+        - "هدف رو اول window می‌ذارن که همون‌جا بمونه."
+      explain: "هر دو با recitation کار می‌کنن، یعنی چیز مهم رو دوباره نزدیک جایی می‌گن که مدل الان می‌خواد بنویسه. attention می‌ره سمت چیزی که نزدیک باشه و تکرار شده باشه."

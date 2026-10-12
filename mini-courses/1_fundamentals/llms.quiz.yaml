@@ -18,13 +18,13 @@ questions:
         - "Cevapları saklı bir gerçek listesinden seçmeyi öğrenir."
       explain: "Bir LLM tek bir yetenek (skill) öğrenir: en olası sonraki kelimeyi tahmin etmek. Yazdığı her şey, bu tek tahminin kelime kelime tekrarından ibarettir."
     fa:
-      question: "یک LLM روی حجم زیادی متن آموزش دیده. از همین متن، چه مهارت واحدی یاد می‌گیره؟"
+      question: "LLM با حجم خیلی زیادی متن آموزش می‌بینه. از این همه متن، فقط چه کاری رو یاد می‌گیره؟"
       options:
-        - "یاد می‌گیره که برای هر prompt، جواب رو توی اینترنت جستجو کنه."
-        - "یاد می‌گیره که function‌ها رو روی ماشین خودت اجرا کنه."
-        - "یاد می‌گیره که محتمل‌ترین کلمه‌ی بعدی رو حدس بزنه."
-        - "یاد می‌گیره که جواب‌ها رو از یه فهرست ذخیره‌شده از واقعیت‌ها انتخاب کنه."
-      explain: "یه LLM فقط یه مهارت یاد می‌گیره: حدس زدن محتمل‌ترین کلمه‌ی بعدی. هر چیزی که می‌نویسه، همون یه حدسه که کلمه به کلمه تکرار می‌شه."
+        - "یاد می‌گیره برای هر prompt، جواب رو توی اینترنت پیدا کنه."
+        - "یاد می‌گیره function‌ها رو روی ماشین خودت اجرا کنه."
+        - "یاد می‌گیره محتمل‌ترین کلمه‌ی بعدی رو حدس بزنه."
+        - "یاد می‌گیره جواب‌ها رو از یه فهرست آماده از دانسته‌ها برداره."
+      explain: "LLM فقط یه کار یاد می‌گیره: حدس زدن محتمل‌ترین کلمه‌ی بعدی. هر چیزی هم که می‌نویسه، همین یه حدسه که کلمه به کلمه تکرار می‌شه."
   - answer: 0
     en:
       question: "What is the context window of an LLM?"
@@ -43,13 +43,13 @@ questions:
         - "SystemMessage'ın modelin çağırabileceği tool'ların listesi."
       explain: "Context window, girdi ve çıktıyı birlikte sınırlar ve bu sınırı aşarsan hata alırsın. Max output tokens ise yalnızca yanıtı sınırlar."
     fa:
-      question: "context window یک LLM چیه؟"
+      question: "context window یه LLM چیه؟"
       options:
-        - "بیشترین مقدار متنی که مدل می‌تونه در یه لحظه پردازش کنه، ورودی و خروجی با هم."
-        - "فقط بیشترین طول جواب، که با یه hyperparameter تنظیم می‌شه."
-        - "تعداد parameter‌های مدل، که نشون می‌ده مدل چقدر بزرگه."
-        - "فهرست tool‌هایی که SystemMessage به مدل اجازه می‌ده صدا بزنه."
-      explain: "context window ورودی و خروجی رو با هم محدود می‌کنه، و اگه ازش رد بشی خطا می‌گیری. Max output tokens فقط جواب رو محدود می‌کنه."
+        - "سقف متنی که مدل می‌تونه یک‌جا پردازش کنه، ورودی و خروجی روی هم."
+        - "فقط سقف طول جواب، که با یه hyperparameter تنظیمش می‌کنی."
+        - "تعداد parameter‌های مدل، که اندازه‌ی مدل رو معلوم می‌کنه."
+        - "فهرست tool‌هایی که SystemMessage به مدل اجازه می‌ده صداشون بزنه."
+      explain: "context window ورودی و خروجی رو با هم محدود می‌کنه و اگه ازش رد بشی خطا می‌گیری. Max output tokens فقط طول جواب رو محدود می‌کنه."
   - answer: 3
     en:
       question: "In an agent, who writes the ToolCall, and who writes the ToolResult?"
@@ -68,13 +68,13 @@ questions:
         - "ToolCall'ı LLM üretir, ToolResult'ı host makine üretir."
       explain: "LLM, bir ToolCall ile bir tool'u çalıştırmak istediğini belirtir. Fonksiyonu host makine çalıştırır, bu yüzden ToolResult'ı host makine üretir."
     fa:
-      question: "توی یه agent، چه کسی ToolCall رو می‌نویسه و چه کسی ToolResult رو؟"
+      question: "توی یه agent، ToolCall رو کی می‌نویسه و ToolResult رو کی؟"
       options:
-        - "host machine، ToolCall رو می‌نویسه و LLM، ToolResult رو."
-        - "LLM، ToolCall رو می‌نویسه و LLM، ToolResult رو هم می‌نویسه."
-        - "host machine، ToolCall رو می‌نویسه و host machine، ToolResult رو هم می‌نویسه."
-        - "LLM، ToolCall رو می‌نویسه و host machine، ToolResult رو."
-      explain: "LLM با یه ToolCall درخواست می‌ده که یه tool اجرا بشه. host machine، function رو اجرا می‌کنه، پس ToolResult رو host machine می‌نویسه."
+        - "ToolCall رو host machine می‌نویسه و ToolResult رو LLM."
+        - "ToolCall رو LLM می‌نویسه، ToolResult رو هم خود LLM."
+        - "ToolCall رو host machine می‌نویسه، ToolResult رو هم خود host machine."
+        - "ToolCall رو LLM می‌نویسه و ToolResult رو host machine."
+      explain: "LLM با یه ToolCall درخواست می‌کنه که یه tool اجرا بشه. function رو host machine اجرا می‌کنه، پس ToolResult رو هم همون می‌نویسه."
   - answer: 1
     en:
       question: "You want predictable and consistent answers from the model. What do you do?"
@@ -93,13 +93,13 @@ questions:
         - "Max output tokens değerini daha yükseğe ayarlarsın."
       explain: "0.1 gibi düşük bir temperature öngörülebilir ve tutarlı yanıtlar verir. 0.9 gibi yüksek bir temperature ise daha yaratıcı, ama daha az güvenilir yanıtlar verir."
     fa:
-      question: "می‌خوای مدل جواب‌های قابل‌پیش‌بینی و یکدست بده. چه کار می‌کنی؟"
+      question: "می‌خوای جواب‌های مدل قابل‌پیش‌بینی و یکدست باشه. چی کار می‌کنی؟"
       options:
-        - "یه مدل با parameter‌های بیشتر رو استفاده می‌کنی."
+        - "سراغ یه مدل با parameter‌های بیشتر می‌ری."
         - "temperature رو پایین می‌ذاری، مثلاً 0.1."
         - "temperature رو بالا می‌ذاری، مثلاً 0.9."
-        - "مقدار max output tokens رو بالاتر می‌ذاری."
-      explain: "temperature پایینی مثل 0.1 جواب‌های قابل‌پیش‌بینی و یکدست می‌ده. temperature بالایی مثل 0.9 جواب‌های خلاقانه‌تری می‌ده، ولی کمتر قابل‌اعتمادن."
+        - "max output tokens رو بیشتر می‌کنی."
+      explain: "temperature پایین، مثلاً 0.1، جواب‌های قابل‌پیش‌بینی و یکدست می‌ده. temperature بالا، مثلاً 0.9، جواب‌ها رو خلاقانه‌تر می‌کنه، ولی کمتر می‌شه بهشون تکیه کرد."
   - answer: 2
     en:
       question: "Compared with cloud inference, what is the main limit of local inference?"
@@ -118,10 +118,10 @@ questions:
         - "Her modeli kendin quantize etmen gerekir."
       explain: "Local inference, kurulumdan sonra ücretsizdir ve internetsiz çalışır. Ama seni yalnızca küçük modellerle sınırlar. Maliyet ve internet ihtiyacı ise cloud inference'ın eksileridir."
     fa:
-      question: "در مقایسه با cloud inference، محدودیت اصلی local inference چیه؟"
+      question: "local inference در مقایسه با cloud inference، بزرگ‌ترین محدودیتش چیه؟"
       options:
-        - "برای استفاده ازش به اتصال اینترنت نیاز داری."
-        - "برای هر درخواستی که می‌فرستی پول می‌دی."
-        - "فقط می‌تونی مدل‌های کوچک‌تر رو اجرا کنی."
-        - "باید هر مدل رو خودت quantize کنی."
-      explain: "local inference بعد از راه‌اندازی رایگانه و آفلاین هم کار می‌کنه، ولی تو رو به مدل‌های کوچک‌تر محدود می‌کنه. هزینه و نیاز به اینترنت، محدودیت‌های cloud inference هستن."
+        - "برای استفاده ازش اینترنت لازم داری."
+        - "بابت هر درخواستی که می‌فرستی پول می‌دی."
+        - "فقط مدل‌های کوچیک‌تر رو می‌تونی اجرا کنی."
+        - "باید همه‌ی مدل‌ها رو خودت quantize کنی."
+      explain: "local inference بعد از راه‌اندازی رایگانه و آفلاین هم کار می‌کنه، ولی دستت فقط به مدل‌های کوچیک‌تر می‌رسه. هزینه و نیاز به اینترنت، محدودیت‌های cloud inference‌ان."

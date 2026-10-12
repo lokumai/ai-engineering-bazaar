@@ -18,13 +18,13 @@ questions:
         - "Host, her tool bir kez çalıştığında döngüyü durdurur."
       explain: "Tool çağrısının olmaması, bitiş koşulunun ta kendisidir. Modelin yazdığı metin ise cevaptır; döngüde ne bir sayaç (counter) ne de bir denetleyici (supervisor) vardır."
     fa:
-      question: "چه چیزی loop یک agent رو تموم می‌کنه؟"
+      question: "loop یه agent رو چی تموم می‌کنه؟"
       options:
-        - "یه counter بعد از تعداد ثابتی دور، loop رو متوقف می‌کنه."
-        - "یه supervisor کار رو بررسی می‌کنه و تصمیم می‌گیره که کار تموم شده."
-        - "LLM هیچ tool‌ای صدا نمی‌زنه، و خروجی‌اش همون جواب نهایی می‌شه."
-        - "وقتی هر tool یه بار اجرا شد، host loop رو متوقف می‌کنه."
-      explain: "نبودن tool call همون شرط پایانه، و متنی که مدل می‌نویسه جوابه. loop نه counter داره، نه supervisor."
+        - "یه counter که بعد از تعداد مشخصی دور، loop رو نگه می‌داره."
+        - "یه supervisor که کار رو بررسی می‌کنه و تشخیص می‌ده تموم شده."
+        - "LLM دیگه هیچ tool‌ای صدا نمی‌زنه و خروجیش می‌شه جواب نهایی."
+        - "host وقتی همه‌ی tool‌ها یه بار اجرا شدن، loop رو نگه می‌داره."
+      explain: "شرط پایان، نبودن tool call‌ه و متنی که مدل می‌نویسه همون جوابه. loop نه counter داره، نه supervisor."
   - answer: 0
     en:
       question: "What is the difference between a plain LLM and an agent?"
@@ -43,13 +43,13 @@ questions:
         - "Agent'ın modeli, iki cevap arasında tool'ları kendisi çalıştırır."
       explain: "Düz bir LLM tek turlu (single-turn) çalışır: bir girdi, bir çıktı. Bir agent aynı modeli tekrar tekrar çağırır ve modele hiçbir şey eklenmez."
     fa:
-      question: "تفاوت یه LLM ساده با یه agent چیه؟"
+      question: "فرق یه LLM معمولی با یه agent چیه؟"
       options:
-        - "همون مدل چند بار صدا زده می‌شه، و هر فراخوانی می‌تونه یه tool بخواد."
-        - "agent از یه مدل دیگه استفاده می‌کنه که برای اجرای tool‌ها آموزش دیده."
-        - "مدل agent پیام‌های گذشته رو داخل خودش نگه می‌داره."
-        - "مدل agent بین دو جواب، خودش tool‌ها رو اجرا می‌کنه."
-      explain: "یه LLM ساده single-turn هست: یه ورودی و یه خروجی. یه agent همون مدل رو بارها صدا می‌زنه، و به خود مدل چیزی اضافه نمی‌شه."
+        - "توی agent همون مدل چند بار صدا زده می‌شه و هر بار می‌تونه یه tool بخواد."
+        - "agent از یه مدل دیگه استفاده می‌کنه که برای اجرای tool‌ها train شده."
+        - "مدل agent پیام‌های قبلی رو داخل خودش نگه می‌داره."
+        - "مدل agent بین دو تا جواب، خودش tool‌ها رو اجرا می‌کنه."
+      explain: "LLM معمولی single-turn‌ه: یه ورودی، یه خروجی. agent همون مدل رو بارها و بارها صدا می‌زنه و هیچ چیزی به خود مدل اضافه نمی‌شه."
   - answer: 1
     en:
       question: "A single LLM call needs no framework. Why does an agent use one?"
@@ -68,13 +68,13 @@ questions:
         - "Framework, döngüyü LLM'in içine taşır ve döngüyü model çalıştırır."
       explain: "Döngünün tamamı host makinede çalışır ve framework bu boilerplate kodunu bir kez yazar. Tek bir çağrıda döngü, tool ayrıştırması ya da mesaj yığını bulunmaz; bu yüzden framework gerekmez."
     fa:
-      question: "یه فراخوانی تکی LLM به framework نیاز نداره. چرا یه agent ازش استفاده می‌کنه؟"
+      question: "برای یه call ساده به LLM هیچ framework‌ای لازم نیست. پس چرا agent‌ها از framework استفاده می‌کنن؟"
       options:
-        - "framework هر فراخوانی مدل رو سریع‌تر و ارزون‌تر اجرا می‌کنه."
-        - "host باید loop رو اجرا کنه، tool call‌ها رو parse کنه و message stack رو نگه داره."
-        - "framework مهارت‌های استدلال (reasoning) تازه‌ای به وزن‌های مدل اضافه می‌کنه."
-        - "framework loop رو داخل LLM می‌بره، و در نتیجه خود مدل اون رو اجرا می‌کنه."
-      explain: "کل loop روی host machine اجرا می‌شه، و framework اون boilerplate رو یه بار می‌نویسه. یه فراخوانی تکی نه loop داره، نه parse کردن tool، نه message stack، پس framework هم لازم نداره."
+        - "چون framework هر call به مدل رو سریع‌تر و ارزون‌تر می‌کنه."
+        - "چون host باید loop رو اجرا کنه، tool call‌ها رو parse کنه و message stack رو نگه داره."
+        - "چون framework مهارت‌های استدلال تازه‌ای به weight‌های مدل اضافه می‌کنه."
+        - "چون framework، loop رو می‌بره داخل LLM تا خود مدل اجراش کنه."
+      explain: "کل loop روی host machine اجرا می‌شه و framework این کد boilerplate رو یه بار برای همیشه می‌نویسه. یه call ساده نه loop داره، نه parse کردن tool call، نه message stack، پس framework هم لازم نداره."
   - answer: 3
     en:
       question: "How does the LLM in an agent know which tools it can call?"
@@ -93,10 +93,10 @@ questions:
         - "System prompt onları listeler ve host bunu her çağrıdan önce gönderir."
       explain: "Host, system prompt'u her çağrıdan önce yeniden oluşturur ve bu prompt her tool'un adını ile açıklamasını listeler. @tool dekoratörü bu listeyi fonksiyonunun adından, docstring'inden ve type hint'lerinden üretir."
     fa:
-      question: "LLM داخل یه agent از کجا می‌دونه کدوم tool‌ها رو می‌تونه صدا بزنه؟"
+      question: "LLM داخل یه agent از کجا می‌فهمه کدوم tool‌ها رو می‌تونه صدا بزنه؟"
       options:
-        - "مدل tool‌ها رو موقع training از روی متن یاد گرفته."
-        - "مدل فهرست tool‌ها رو از اولین فراخوانی‌اش توی loop به یاد داره."
-        - "مدل فایل‌های Python روی host رو می‌خونه تا tool‌ها رو پیدا کنه."
-        - "system prompt اون‌ها رو فهرست می‌کنه، و host اون رو قبل از هر فراخوانی می‌فرسته."
-      explain: "host قبل از هر فراخوانی system prompt رو دوباره می‌سازه، و نام و توضیح هر tool رو توش فهرست می‌کنه. دکوریتور @tool این فهرست رو از نام تابع، docstring و type hint‌هات می‌سازه."
+        - "موقع training از روی متن‌ها tool‌ها رو یاد گرفته."
+        - "فهرست tool‌ها رو از اولین call توی loop یادشه."
+        - "فایل‌های Python روی host رو می‌خونه تا tool‌ها رو پیدا کنه."
+        - "system prompt فهرستشون رو داره و host قبل از هر call می‌فرستدش."
+      explain: "host قبل از هر call، system prompt رو از نو می‌سازه و اسم و توضیح همه‌ی tool‌ها رو توش می‌ذاره. این فهرست رو decorator @tool از اسم تابع، docstring و type hint‌هات درمیاره."

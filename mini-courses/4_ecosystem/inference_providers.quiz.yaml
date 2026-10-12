@@ -18,13 +18,13 @@ questions:
         - "Tek bir modele sınırsız çağrı için sabit bir aylık ücreti"
       explain: "Provider modeli kendi donanımında çalıştırır ve sen token başına ödersin. Ne makinelerin ne de weight'lerin sana ait değil."
     fa:
-      question: "یه inference provider دقیقاً چی بهت می‌فروشه؟"
+      question: "inference provider دقیقاً چی بهت می‌فروشه؟"
       options:
-        - "یه کپی از model weights تا روی ماشین‌های خودت اجراش کنی"
-        - "خود ماشین‌ها، تا خودت مدل رو میزبانی کنی"
+        - "یه کپی از weight‌های مدل، که روی سرورهای خودت اجراش کنی"
+        - "خود سرورها، که مدل رو خودت host کنی"
         - "دسترسی به مدلی که روی سخت‌افزار خودش اجرا می‌شه، با پرداخت به ازای هر token"
         - "یه قیمت ثابت ماهانه برای call نامحدود به یه مدل"
-      explain: "provider مدل رو روی سخت‌افزار خودش اجرا می‌کنه و تو به ازای هر token پول می‌دی. نه ماشین‌ها مال توئه و نه model weights."
+      explain: "provider مدل رو روی سخت‌افزار خودش اجرا می‌کنه و تو به ازای هر token پول می‌دی. نه سرورها مال توئه، نه weight‌ها."
   - answer: 0
     en:
       question: "A gateway such as OpenRouter gives you one key for many models. What is the cost?"
@@ -43,13 +43,13 @@ questions:
         - "Her açık ağırlıklı (open-weights) model için yalnızca tek bir satıcı"
       explain: "İsteğin başka bir şirketin altyapısından geçer, bu da biraz gecikme (latency) ekler. Üretici başına ayrı hesapları ise gateway ortadan kaldırır."
     fa:
-      question: "یه gateway مثل OpenRouter یه key برای چندین مدل بهت می‌ده. هزینه‌اش چیه؟"
+      question: "یه gateway مثل OpenRouter برای کلی مدل یه key بهت می‌ده. هزینه‌ش چیه؟"
       options:
         - "یه hop اضافه از زیرساخت یه شرکت دیگه"
-        - "یه حساب و یه rate limit جدا برای هر vendor"
-        - "نبودن failover وقتی یه provider دچار قطعی می‌شه"
+        - "یه اکانت و یه rate limit جدا برای هر vendor"
+        - "نبودن failover وقتی یه provider قطع می‌شه"
         - "فقط یه فروشنده برای هر مدل open-weights"
-      explain: "درخواستت از زیرساخت یه شرکت دیگه رد می‌شه و این یه کم latency اضافه می‌کنه. حساب‌های جدا برای هر vendor چیزی هستن که یه gateway حذفشون می‌کنه."
+      explain: "درخواستت از زیرساخت یه شرکت دیگه رد می‌شه و این یه کم latency اضافه می‌کنه. اکانت جدا برای هر vendor دقیقاً چیزیه که gateway از شرش خلاصت می‌کنه."
   - answer: 3
     en:
       question: "Why does a team go direct to the model maker, such as OpenAI, Anthropic or Google?"
@@ -68,13 +68,13 @@ questions:
         - "Prompt caching gibi yalnızca üreticinin sunduğu özelliklere ulaşmak için"
       explain: "Üretici şirket yeni modelleri genellikle önce çıkarır ve prompt caching, batch indirimleri ile daha yüksek rate limit'ler sunar. Birçok model için tek key ise gateway'in sana verdiği bir şeydir."
     fa:
-      question: "چرا یه تیم مستقیم سراغ سازندهٔ مدل می‌ره، مثلاً OpenAI، Anthropic یا Google؟"
+      question: "چرا یه تیم مستقیم می‌ره سراغ سازنده‌ی مدل، مثلاً OpenAI، Anthropic یا Google؟"
       options:
-        - "تا با یه key و یه شکل API از چندین مدل استفاده کنه"
-        - "تا بین چند فروشنده برای یه مدل open-weights انتخاب کنه"
-        - "تا هر درخواست رو هنگام قطعی به یه provider دیگه ببره"
-        - "تا به ویژگی‌هایی برسه که فقط سازنده ارائه می‌ده، مثل prompt caching"
-      explain: "سازنده معمولاً مدل‌های جدید رو اول منتشر می‌کنه و prompt caching، تخفیف batch و rate limit‌های بالاتر رو ارائه می‌ده. یه key برای چندین مدل همون چیزیه که یه gateway بهت می‌ده."
+        - "که با یه key و یه شکل API از کلی مدل استفاده کنه"
+        - "که بین چند فروشنده‌ی یه مدل open-weights انتخاب کنه"
+        - "که موقع قطعی، هر درخواست رو بفرسته سراغ یه provider دیگه"
+        - "که قابلیت‌هایی مثل prompt caching رو بگیره که فقط سازنده ارائه می‌ده"
+      explain: "مدل‌های جدید معمولاً اول پیش سازنده میان، و prompt caching، تخفیف batch و rate limit‌های بالاتر هم همون‌جاست. یه key برای کلی مدل چیزیه که gateway بهت می‌ده."
   - answer: 1
     en:
       question: "Your agent sends the same long system prompt on every turn. Which line of a provider's pricing page matters most?"
@@ -93,13 +93,13 @@ questions:
         - "Ücretsiz katmanın (free tier) günlük limiti"
       explain: "Uzun ve değişmeyen bir prompt'u önbelleğe alan provider, her tekrar için yalnızca fiyatın küçük bir kısmını ücretlendirir. Token başına fiyat tek başına karar vermek için en az işe yarayan sayıdır."
     fa:
-      question: "agent تو توی هر turn همون system prompt طولانی رو می‌فرسته. کدوم خط از صفحهٔ قیمت‌گذاری یه provider بیشترین اهمیت رو داره؟"
+      question: "agent‌ت توی هر turn همون system prompt طولانی رو می‌فرسته. کدوم خط از صفحه‌ی قیمت‌های provider از همه مهم‌تره؟"
       options:
-        - "قیمت هر میلیون token"
+        - "قیمت هر یک میلیون token"
         - "prompt caching برای prompt تکراری"
-        - "اندازهٔ context window"
-        - "محدودیت روزانهٔ free tier"
-      explain: "provider‌ای که یه prompt طولانی و ثابت رو cache کنه، برای هر تکرار فقط بخشی از قیمت رو ازت می‌گیره. قیمت هر token به تنهایی بدترین عددیه که بشه بر اساسش تصمیم گرفت."
+        - "اندازه‌ی context window"
+        - "سقف روزانه‌ی free tier"
+      explain: "provider‌ی که یه prompt طولانی و ثابت رو cache کنه، برای هر تکرار فقط کسری از قیمت رو می‌گیره. قیمت هر token به‌تنهایی بدترین معیار برای تصمیم گرفتنه."
   - answer: 2
     en:
       question: "You test a model on a free tier. What does the free tier tell you?"
@@ -118,10 +118,10 @@ questions:
         - "Hangi ücretli provider'ın sana en düşük gecikmeyi (latency) vereceğini"
       explain: "Ücretsiz katman, modelin işini yapıp yapamayacağını gösterir. Ücretsiz kapasite daha yavaş ve daha sıkı rate limit'li olduğundan, gecikmeyi parasını ödeyeceğin katmanda ölç."
     fa:
-      question: "یه مدل رو روی free tier امتحان می‌کنی. free tier چی بهت می‌گه؟"
+      question: "یه مدل رو روی free tier امتحان می‌کنی. free tier چی رو بهت نشون می‌ده؟"
       options:
-        - "این‌که محصولت برای کاربرهاش چقدر سریع حس می‌شه"
-        - "rate limit‌هایی که وقتی پول بدی گیرت می‌آد"
-        - "این‌که آیا مدل می‌تونه کاری رو که لازمت داری انجام بده"
-        - "کدوم provider پولی کمترین latency رو بهت می‌ده"
-      explain: "free tier نشون می‌ده که مدل می‌تونه کارت رو انجام بده یا نه. ظرفیت رایگان کندتره و rate limit سخت‌گیرانه‌تری داره، پس latency رو روی لایه‌ای اندازه بگیر که برایش پول می‌دی."
+        - "اینکه محصولت برای کاربرها چقدر سریع به نظر میاد"
+        - "rate limit‌هایی که وقتی پول بدی گیرت میاد"
+        - "اینکه مدل از پس کاری که لازم داری برمیاد یا نه"
+        - "اینکه کدوم provider پولی کمترین latency رو داره"
+      explain: "free tier فقط نشون می‌ده مدل از پس کارت برمیاد یا نه. ظرفیت رایگان کندتره و rate limit سخت‌گیرانه‌تری داره، پس latency رو روی tier‌ی اندازه بگیر که قراره پولش رو بدی."

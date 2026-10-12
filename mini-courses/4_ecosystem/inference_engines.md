@@ -27,7 +27,7 @@ There are three reasons, and only these three are worth the trouble.
 
 **The data cannot leave.** Examples are health records, legal documents, and anything under a rule that says the text must stay on your infrastructure. This is the most common reason, much more common than the other two. If it applies to you, it decides the question on its own.
 
-**The volume makes it cheaper.** Per-token pricing is excellent, until it is not. There is a crossover point. Past that point, a rented GPU that runs all day costs less than the same work bought by the token. If you are past it, the arithmetic is not close: the difference is large.
+**The volume makes it cheaper.** Paying per token is a very good deal at first, but it stops being one when your volume grows large enough. There is a crossover point. Past that point, a rented GPU that runs all day costs less than the same work bought by the token. If you are past it, the arithmetic is not close: the difference is large.
 
 **You need something a provider will not give you.** For example:
 
@@ -54,13 +54,13 @@ graph TD
 - **[SGLang](https://github.com/sgl-project/sglang)** is a high-performance serving framework for language and multimodal models. It is strong when requests share a long common prefix. If every request starts with the same big system prompt, that is exactly your case.
 - **[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)** comes from NVIDIA. It gets the most out of NVIDIA hardware specifically. You compile the model into an optimised engine ahead of time. That costs you a build step, and it gives you lower latency.
 
-**Across many machines**, serving stops being a process problem and becomes a cluster problem. That is what **[llm-d](https://github.com/llm-d/llm-d)** is for. It runs inference on Kubernetes with modern accelerators. The platform then handles scheduling, routing and cache-aware placement, so you do not have to.
+**Across many machines**, the problem is no longer how to run one server program well. The problem becomes how to coordinate a whole cluster of machines. That is what **[llm-d](https://github.com/llm-d/llm-d)** is for. It runs inference on Kubernetes with modern accelerators. The platform then handles scheduling and routing for you, which means that it decides which machine runs each request. It also does cache-aware placement: it prefers a machine that already holds the needed data in its cache.
 
 ## The One Idea That Explains the Numbers
 
 If you remember only one mechanism from this module, remember **batching**.
 
-A GPU that runs one request at a time is mostly idle. The reason is that generating a token takes a small amount of arithmetic and a huge amount of memory traffic. If you run many requests together, the same weight-loading pays for all of them at once. That is why people measure throughput on these engines with many concurrent users. It is also why the same hardware can look brilliant or hopeless. It depends only on how full the batch is.
+A GPU that runs one request at a time is mostly idle. The reason is that generating a token takes a small amount of arithmetic and a huge amount of memory traffic. If you run many requests together, the GPU reads the weights from memory once and uses them for every request in the group. That is why people measure throughput on these engines with many concurrent users. It is also why the same hardware can look brilliant or hopeless. It depends only on how full the batch is.
 
 Continuous batching is the improvement that matters in practice. The engine does not wait for a batch to finish. Instead, it puts new requests into the batch as older ones complete, so the GPU is never left without work. This is also why your own benchmark, with one request at a time, will badly mislead you about what the server can do.
 

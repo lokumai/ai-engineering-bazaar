@@ -12,7 +12,7 @@ objectives:
 
 Everything up to here was about how agents work. This module is about what you actually install when you build one.
 
-Here is the honest starting point: you do not need a framework. [AI Agents](../1_fundamentals/agents.md) showed the loop. It is a `while` loop around a model call, with a tool dispatch in the middle. You can write that in an afternoon.
+Here is the honest starting point: you do not need a framework. [AI Agents](../1_fundamentals/agents.md) showed the loop. It is a `while` loop around a model call. In the middle of the loop, your code runs whichever tool the model asked for. You can write that in an afternoon.
 
 What you get from a framework is everything around the loop:
 
@@ -56,7 +56,7 @@ None of these is wrong. They make different trade-offs. Usually the trade-off is
 
 - **[Agno](https://github.com/agno-agi/agno)** looks past the single agent to the whole platform. It helps you build, run and manage agents as a system rather than as a script.
 - **[CrewAI](https://github.com/crewAIInc/crewAI)** organises everything around roles. You describe a crew of agents, each with a job, and let them work together. This fits well with the multi-agent shapes from [Multi-Agent Systems](../1_fundamentals/multi_agent.md).
-- **[smolagents](https://github.com/huggingface/smolagents)** from Hugging Face is the small one, and it is small on purpose. It is a barebones library for agents that think in code. It is the CodeAct idea from [Loop Engineering](../2_intermediate/loop_engineering.md), packaged as a library. It is also the best one to read if you want to understand a loop rather than use one.
+- **[smolagents](https://github.com/huggingface/smolagents)** from Hugging Face is the small one, and it is small on purpose. It is a barebones library for agents that act by writing and running code, instead of by sending JSON tool calls. It is the CodeAct idea from [Loop Engineering](../2_intermediate/loop_engineering.md), packaged as a library. It is also the best one to read if you want to understand a loop rather than use one.
 - **[Pydantic AI](https://github.com/pydantic/pydantic-ai)** brings the thing Pydantic is good at: types. Every model and every interface is typed from end to end. So a malformed tool call becomes a validation error, not a mystery.
 
 ## If Your Project is TypeScript
@@ -64,7 +64,7 @@ None of these is wrong. They make different trade-offs. Usually the trade-off is
 Two frameworks are worth knowing here. The reason is that the whole stack above is Python-first, and most product code is not written in Python.
 
 - **[Mastra](https://github.com/mastra-ai/mastra)** is the modern TypeScript framework for agents and AI applications. It is the closest thing to LangChain in that language.
-- **[VoltAgent](https://github.com/VoltAgent/voltagent)** is an agent engineering platform built on top of an open-source TypeScript framework. So it focuses more on the operational side.
+- **[VoltAgent](https://github.com/VoltAgent/voltagent)** is an agent engineering platform built on top of an open-source TypeScript framework. So it focuses more on running, watching and managing your agents after you have built them.
 
 ## AI Workflows
 
@@ -72,7 +72,7 @@ Here is a distinction that is important to get right. If you choose wrong, it co
 
 An **AI workflow** runs a path that somebody wrote down. The steps are fixed. Code decides what happens next. The code calls the model at specific points to do specific jobs. An **AI agent** decides for itself. It picks the tools and the order, and the path is different on every run. The [Prompt Engineering Guide's comparison](https://www.promptingguide.ai/agents/ai-workflows-vs-ai-agents) describes this as hard-coded logic versus LLM-driven reasoning.
 
-The mistake is to assume that the agent is the grown-up version. It is not. If the requirements are stable and you know the steps, a workflow is more predictable, cheaper and easier to debug. And predictable is usually what production wants. Keep the agent for open-ended work, where nobody can write down the steps in advance.
+The mistake is to assume that the agent is the grown-up version. It is not. If the requirements are stable and you know the steps, a workflow is more predictable, cheaper and easier to debug. And when real users depend on a system in production, you usually want that system to be predictable. Keep the agent for open-ended work, where nobody can write down the steps in advance.
 
 **[n8n](https://github.com/n8n-io/n8n)** is the tool that most people finally choose for the workflow half. With it, you:
 

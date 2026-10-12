@@ -93,7 +93,7 @@ Agent'ların nasıl işlediğinin temeli tam olarak bu ayrımdır. Bunu [LLM Too
 
 ## LLM Hiperparametreleri
 
-Modelin nasıl yanıt verdiğini **hiperparametre (hyperparameter)** ayarlarıyla değiştirebilirsin. Bu kelimedeki "hyper" kısmına dikkat et. Hiperparametreler üretimi etkiler. Yukarıda andığımız parametreler ise başka bir şeydir: onlar modelin boyutudur.
+Modelin nasıl yanıt verdiğini **hiperparametre (hyperparameter)** ayarlarıyla değiştirebilirsin. Bu kelimedeki "hyper" kısmına dikkat et, çünkü bu kısım bunların yukarıdaki parametrelerle aynı şey olmadığını gösteriyor. Hiperparametreler üretimi etkiler. Yukarıda andığımız parametreler ise başka bir şeydir: onlar ağın içindeki sayılardır ve bu sayıların adedi modelin boyutunu belirler.
 
 Bunlardan ikisini sürekli kullanacaksın:
 
@@ -132,7 +132,7 @@ Rakamlar bunu açıkça gösteriyor. Örnek olarak 32B'lik bir modele bakalım:
 | 16-bit (dağıtıldığı haliyle) | ~64 GB | Hayır |
 | 4-bit (quantized) | ~16 GB, bir miktar context için ek | Evet, 24 GB ya da 32 GB'lık bir kartta rahatlıkla |
 
-Aynı model, aynı ağırlıklar, ama bellek ihtiyacı dörtte bir. Fark, "bunu hiç çalıştıramam" ile "bu masaüstümde çalışıyor" arasındaki farktır.
+Model de ağırlıkları da aynı kalır, ama artık belleğin yalnızca dörtte birine ihtiyaç duyar. Fark, "bunu hiç çalıştıramam" ile "bu masaüstümde çalışıyor" arasındaki farktır.
 
 **Modelleri kendin quantize etmen gerekir mi?** Hayır, ve neredeyse hiç etmemelisin. [Ollama](https://ollama.com/) ve [Unsloth](https://unsloth.ai/), Qwen, Llama, Mistral, Gemma ve daha fazlası gibi popüler modellerin hazır quantize edilmiş sürümlerini zaten yayımlıyor. Bunlardan birini çekip çalıştırman yeterli.
 
@@ -196,7 +196,7 @@ Senin prompt'un *tam olarak* bu context'tir. Bu yüzden senin işin, istediğin 
 best prompt = the prompt that maximises P(the output you want | prompt)
 ```
 
-Disiplinin tamamı bu tek satırda özetlenebilir. Adı konmuş pek çok teknik var ve bunları [Prompt Engineering](../2_intermediate/prompt_engineering_tr.md) modülünde anlatıyoruz. Ama işin büyük kısmı deneyerek ilerler: bir ifadeyi dene, çıktıya bak, değiştir ve yeniden dene.
+Prompt engineering'in bütün mantığı bu tek satırda özetlenebilir. Adı konmuş pek çok teknik var ve bunları [Prompt Engineering](../2_intermediate/prompt_engineering_tr.md) modülünde anlatıyoruz. Ama işin büyük kısmı deneyerek ilerler: bir ifadeyi dene, çıktıya bak, değiştir ve yeniden dene.
 
 Gerçek ürünlerdeki prompt'lara ne kadar emek verildiğini görmek için şunlara bakmaya değer:
 

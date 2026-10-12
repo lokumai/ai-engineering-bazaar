@@ -76,7 +76,7 @@ The **Model Context Protocol** makes this one job instead of four. You describe 
 What you get from it:
 
 - **No vendor lock-in.** When you change agents, you do not have to rewrite your tools.
-- **Tool sets become portable.** Write once, use everywhere.
+- **Tool sets become portable.** You write a tool once, and every agent that supports MCP can use it.
 - **Somebody else has already written the one you need.** This is the part that surprises people.
 
 That last point is what MCP is famous for. MCP splits the work between a client and a server. The tools live in an **MCP server**, and the agent is a client that connects to it. So an MCP server is a package of tools. To add one, you change configuration, not code. Point your agent at the Jira MCP server, and now it can work with your Jira.
@@ -205,10 +205,10 @@ Almost every one of them is **markdown in a folder**. They are not a database. T
 - review them in a pull request
 - copy them to another machine
 
-That is not laziness. It is the one format that both sides handle well. You can read and edit it without special tools. Models are unusually good at markdown and at moving around a filesystem, because a very large share of their training data is exactly that. So, in the end, the extension mechanism for a coding agent is the thing that it was already best at.
+That is not laziness. It is the one format that both you and the model handle well. You can read and edit it without special tools. Models are unusually good at markdown and at moving around a filesystem, because a very large share of their training data is exactly that. So, in the end, the extension mechanism for a coding agent is the thing that it was already best at.
 
 ![One agent, three extension points](./images/mcp-skill-subagent.png)  
-*These are three different problems, so it helps to name which is which. The skills on the left are instructions that the agent reads to change how it behaves. The MCP servers on the right are tools that let it reach systems it could not reach otherwise. The subagents below are extra context windows. Everything here is either something to know, something to do, or somewhere to think.*
+*These are three different problems, so it helps to name which is which. The skills on the left are instructions that the agent reads to change how it behaves. The MCP servers on the right are tools that let it reach systems it could not reach otherwise. The subagents below are extra context windows. So each extension gives the agent one of three things: something to know (a skill), something it can do (an MCP server), or a separate place to think (a subagent).*
 
 ## Where this fits in the series
 
@@ -238,7 +238,7 @@ The last two are about control. Hooks are the mechanical part: the things that h
 
 Almost all of it is markdown in a folder. That is the format that you and the model both handle well.
 
-Next: hooks were the first thing in this module that the model does not get a vote on. That idea has a name, and a module.
+Next: hooks were the first thing in this module that the model does not get a vote on. That idea is called harness engineering, and it is the subject of the next module.
 
 **Quick Check**: a skill and a custom subagent both give an agent a specialism. What is the real difference between them, and when does each one fit?
 

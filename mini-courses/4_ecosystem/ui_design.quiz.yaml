@@ -20,11 +20,11 @@ questions:
     fa:
       question: "Google Stitch و Claude Design چه وجه مشترکی دارن؟"
       options:
-        - "قبل از شروع، باید یه طرح کامل توی Figma داشته باشن."
-        - "هر صفحه رو برای مشکل‌های contrast و focus چک می‌کنن."
-        - "یه توصیف رو تبدیل به صفحه می‌کنن و کد واقعی تحویل می‌دن."
-        - "بدون هیچ فایل اضافه‌ای، همه‌ی صفحه‌ها رو یکدست نگه می‌دارن."
-      explain: "هر دو tool یه توصیف رو تبدیل به صفحه می‌کنن و HTML و CSS واقعی درمیارن، نه فقط یه عکس. Stitch هم می‌تونه به Figma export کنه، و Claude Design هم می‌تونه design system رو توی یه codebase بخونه."
+        - "قبل از شروع، یه طرح کامل توی Figma لازم دارن."
+        - "هر صفحه رو از نظر contrast و focus چک می‌کنن."
+        - "از یه توضیح صفحه می‌سازن و خروجیشون کد واقعیه."
+        - "بدون هیچ فایل اضافه‌ای، همه‌ی صفحه‌ها رو یه‌دست نگه می‌دارن."
+      explain: "هر دو از یه توضیح صفحه می‌سازن و HTML و CSS واقعی تحویل می‌دن، نه فقط یه عکس. Stitch می‌تونه به Figma هم export کنه، و Claude Design می‌تونه design system رو از یه codebase بخونه."
 
   - answer: 0
     en:
@@ -44,13 +44,13 @@ questions:
         - "Prompt'taki paleti her ekranda gereğinden fazla katı biçimde uyguluyor."
       explain: "Kararların bir dosyada yazılı olmadığında agent makul görünen kararlar uyduruyor ve bunlar her seferinde değişiyor. Prompt'taki bir palet tek bir ekranda işe yarar, ama ikinci ekranda yaramaz."
     fa:
-      question: "یه agent هر بار یه interface متفاوت می‌سازه. علتش چیه؟"
+      question: "agent هر بار یه interface متفاوت می‌سازه. علتش چیه؟"
       options:
-        - "هر بار باید همه‌ی تصمیم‌های طراحی رو خودش اختراع کنه، چون تصمیم‌های تو رو نمی‌دونه."
-        - "فایل قدیمی DESIGN.md رو می‌خونه که دیگه با محصول جور نیست."
-        - "نمی‌تونه HTML و CSS واقعی بنویسه، پس هر بار یه تصویر تازه می‌کشه."
-        - "palette توی prompt رو توی هر صفحه بیش از حد سخت‌گیرانه دنبال می‌کنه."
-      explain: "اگه تصمیم‌های تو توی یه فایل نوشته نشده باشن، agent تصمیم‌های باورپذیر اختراع می‌کنه، و اون‌ها هم هر بار عوض می‌شن. یه palette توی prompt برای یه صفحه جواب می‌ده، ولی برای صفحه‌ی دوم نه."
+        - "مجبوره هر بار همه‌ی تصمیم‌های طراحی رو خودش بگیره، چون از تصمیم‌های تو خبر نداره."
+        - "یه فایل DESIGN.md قدیمی رو می‌خونه که دیگه با محصول جور نیست."
+        - "نمی‌تونه HTML و CSS واقعی بنویسه، پس هر بار یه عکس جدید می‌کشه."
+        - "palette داخل prompt رو روی هر صفحه زیادی سفت‌وسخت رعایت می‌کنه."
+      explain: "وقتی تصمیم‌هات توی یه فایل نیست، agent یه چیزهای معقول از خودش درمیاره که هر بار فرق می‌کنه. palette توی prompt برای یه صفحه جواب می‌ده، ولی برای صفحه‌ی دوم نه."
 
   - answer: 3
     en:
@@ -70,13 +70,13 @@ questions:
         - "Tam değerleri olan token'lar ve tasarımın kelimelerle anlatılan niyeti (intent)."
       explain: "Token'lar hex kodları, tip ölçeği (type scale) ve boşluk adımları (spacing steps) gibi tam değerlerdir. Niyet (intent) ise tasarımın neye benzemeye çalıştığını ve neyden kaçındığını anlatır. Bunu bir token listesi taşıyamaz."
     fa:
-      question: "DESIGN.md دو نوع محتوا داره. این دو تا چی هستن؟"
+      question: "DESIGN.md دو جور محتوا داره. اون دو تا چی‌ان؟"
       options:
-        - "screenshot هر صفحه، و HTML‌ای که اون‌ها رو ساخته."
-        - "قوانین repository، و توضیحی درباره‌ی اینکه agent کیه."
-        - "فهرستی از اسم برندها، و لینک سایت هر برند."
-        - "token‌هایی با مقدارهای دقیق، و نیت طراحی به صورت کلمات."
-      explain: "token‌ها مقدارهای دقیق هستن، مثل hex code‌ها، type scale و spacing steps. intent می‌گه طراحی قراره چه حسی بده و از چی دوری می‌کنه، و یه لیست token نمی‌تونه این رو بگه."
+        - "screenshot هر صفحه، و HTML‌ی که اون صفحه رو ساخته."
+        - "قانون‌های repository، و توضیح اینکه agent کیه."
+        - "یه لیست از اسم برندها، و لینک سایت هر کدوم."
+        - "token‌ها با مقدارهای دقیق، و نیت طراحی به زبون ساده."
+      explain: "token‌ها مقدارهای دقیقن، مثل hex code‌ها، type scale و پله‌های spacing. intent می‌گه طراحی قراره چه حسی بده و از چی دوری می‌کنه، و این چیزیه که توی یه لیست token جا نمی‌شه."
 
   - answer: 1
     en:
@@ -96,13 +96,13 @@ questions:
         - "Üçü de yalnızca insan tasarımcılar için yazılır, agent'lar bunları okumaz."
       explain: "İnsan markdown'ı rahatça yazabilir, model de onu güvenilir biçimde ayrıştırabilir (parse). DESIGN.md tam bu adla repository kökünde (repository root) durur, bu yüzden çoğu agent onu kendi başına bulur."
     fa:
-      question: "این module، DESIGN.md رو با AGENTS.md و SOUL.md مقایسه می‌کنه. این سه تا چه چیزی مشترک دارن؟"
+      question: "درس DESIGN.md رو با AGENTS.md و SOUL.md مقایسه می‌کنه. این سه تا فایل چه وجه مشترکی دارن؟"
       options:
-        - "هر سه palette رنگ و spacing steps محصول رو نگه می‌دارن."
-        - "هر سه فایل markdown توی repository هستن که هم آدم‌ها و هم مدل‌ها می‌خونن‌شون."
-        - "هر سه رو Google Stitch از روی یه prompt یا یه کروکی می‌سازه."
-        - "فقط برای طراح‌های آدم نوشته شدن و agent‌ها اون‌ها رو نمی‌خونن."
-      explain: "آدم می‌تونه markdown رو راحت بنویسه و مدل هم می‌تونه با اطمینان parse‌اش کنه. DESIGN.md دقیقاً با همین اسم توی ریشه‌ی repository قرار می‌گیره، پس بیشتر agent‌ها خودشون پیداش می‌کنن."
+        - "هر سه palette رنگ و پله‌های spacing محصول رو نگه می‌دارن."
+        - "هر سه فایل markdown توی repository‌ان که هم آدم می‌خونه هم مدل."
+        - "هر سه رو Google Stitch از روی یه prompt یا طرح دستی می‌سازه."
+        - "هر سه فقط برای طراح‌ها نوشته می‌شن و agent‌ها نمی‌خوننشون."
+      explain: "markdown رو آدم راحت می‌نویسه و مدل با اطمینان parse می‌کنه. DESIGN.md دقیقاً با همین اسم توی ریشه‌ی repository می‌ره، که بیشتر agent‌ها خودشون پیداش کنن."
 
   - answer: 2
     en:
@@ -122,10 +122,10 @@ questions:
         - "Token adlarını, çünkü agent'lar DESIGN.md'deki hex kodlarını okuyamıyor."
       explain: "Üretilen arayüzler sık sık kontrast, focus ve klavye erişiminde sorun çıkarır, ve bir ekran görüntüsü bu sorunları göstermez. Bu araçlar ekranın ne işe yaradığını da bilmez."
     fa:
-      question: "یه interface تولیدشده توی screenshot درست به نظر می‌رسه. این module می‌گه خودت چی رو باید بررسی کنی؟"
+      question: "یه interface تولیدشده توی screenshot درست به نظر میاد. درس می‌گه چی رو خودت چک کنی؟"
       options:
-        - "خروجی Figma رو، چون layout معمولاً وقتی از Stitch بیرون میاد خراب می‌شه."
-        - "HTML رو، چون این tool‌ها اغلب به جای کد یه تصویر برمی‌گردونن."
-        - "accessibility، یعنی contrast، حالت‌های focus، دسترسی با keyboard و اسم دکمه‌های icon."
+        - "export به Figma رو، چون layout معمولاً بعد از بیرون اومدن از Stitch به هم می‌ریزه."
+        - "HTML رو، چون این ابزارها اغلب به‌جای کد یه عکس تحویل می‌دن."
+        - "accessibility رو: contrast، حالت‌های focus، کار با keyboard و اسم دکمه‌های آیکونی."
         - "اسم token‌ها رو، چون agent‌ها نمی‌تونن hex code‌ها رو از DESIGN.md بخونن."
-      explain: "interface‌های تولیدشده اغلب توی contrast و focus و دسترسی با keyboard شکست می‌خورن، و یه screenshot این مشکل‌ها رو نشون نمی‌ده. این tool‌ها هم نمی‌دونن صفحه برای چیه."
+      explain: "interface‌های تولیدشده اغلب توی contrast و focus و کار با keyboard کم میارن، و screenshot این مشکل‌ها رو نشون نمی‌ده. این ابزارها نمی‌دونن صفحه اصلاً برای چیه."

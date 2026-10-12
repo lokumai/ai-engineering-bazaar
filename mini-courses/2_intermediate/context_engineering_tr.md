@@ -29,7 +29,7 @@ Bunun nedeni **dikkat (attention)**. Dikkat, bir modelin yazmak üzere olduğu t
 
 Burada sık yapılan bir hataya dikkat et: mesele pencerenin "dolması" değil. Performans, limite ulaşmadan çok önce düşmeye başlar. %40 dolu bir pencere, aynı pencere %5 doluyken verdiğinden bile daha kötü cevaplar verebilir.
 
-Pratikte nasıl hissettirdiğine bir bakalım. Bir kitap yazmak için uzun bir oturum başlattığını düşün. Başta modele açık ve akademik bir tonla yazmasını söylüyorsun ve bir süre öyle yazıyor. 800K'yı biraz geçtikten sonra ise ton muğlak ve sohbet havasında bir şeye kayar, model de şeyler uydurmaya başlar. Hiçbir şey silinmedi ve pencere hiç taşmadı. Talimat hâlâ orada duruyor, ama dikkatten aldığı pay sonradan eklediğin her şeyle yarışmak zorunda kaldı ve kaybetti. Model haritayı kaybetti.
+Pratikte nasıl hissettirdiğine bir bakalım. Bir kitap yazmak için uzun bir oturum başlattığını düşün. Başta modele açık ve akademik bir tonla yazmasını söylüyorsun ve bir süre öyle yazıyor. 800K'yı biraz geçtikten sonra ise ton muğlak ve sohbet havasında bir şeye kayar, model de şeyler uydurmaya başlar. Hiçbir şey silinmedi ve pencere hiç taşmadı. Talimat hâlâ orada duruyor, ama dikkatten aldığı pay sonradan eklediğin her şeyle yarışmak zorunda kaldı ve kaybetti. Model haritayı kaybetti, yani başta verdiğin hedefi artık takip etmiyor.
 
 ![İğne, dikkat dağıtıcı ve samanlık](./images/distractor_irrelevance.png)  
 *Soru, sınıf arkadaşının tavsiyesini istiyor ve iğne bu tavsiyenin kendisi. Dikkat dağıtıcı ise aynı cümle, ama bu kez bir hocayla ilgili. Chroma, tek bir dikkat dağıtıcının bile zarar verdiğini buldu. Ayrıca iğne soruya ne kadar az benziyorsa, samanlık büyüdükçe performansın o kadar hızlı çöktüğünü de gördüler.*
@@ -94,7 +94,7 @@ Kodlama agent'ının sana, bir milyon satırlık bir deponun hangi mimariyi kull
 Çözüm, okuma işini hiç bu context'te yapmamaktır. Ana agent, kendi boş context'i olan ikinci bir agent'ı çağırır ve bu ikinci agent bir **subagent**'tır. Subagent 800K token'lık taramayı yapar, sonuç dışında her şeyi atar ve o tek cümleyi geri verir. Böylece ana agent'ın context'ine yalnızca bir cümle eklenmiş olur.
 
 ![Kendi pencereleri olan iki subagent](./images/subagent.png)  
-*Her kutu ayrı bir context. Boş olarak başlar ve iş bitince atılır. Ana agent ara adımları hiç görmez, bütün mesele de bu: göremediği şey pencereyi çürütemez.*
+*Her kutu ayrı bir context. Boş olarak başlar ve iş bitince atılır. Ana agent ara adımları hiç görmez, bütün mesele de bu: o adımlar ana agent'ın penceresine hiç girmediği için onu dolduramaz ve cevaplarını kötüleştiremez.*
 
 **Nasıl çalışır?** Subagent, temiz bir context'e sahip yeni bir agent. Ana agent, diğer herhangi bir aracı çağırdığı gibi onu çağırır. Örneğin şuna benzer bir çağrı yapar: `Task("find out what architecture this repo uses")`. [LLM Tool Calling](../1_fundamentals/tools_tr.md) açısından bakınca ortada yeni bir şey yok: bir araç çağrıldı ve bir araç sonucu geri geldi. Subagent kendi döngüsünü çalıştırır, her ara adımı gizler ve son cevabı bu araç sonucu olarak geri döndürür. Anthropic, bu özetlerin genellikle 1,000 ile 2,000 token civarında olduğunu bildiriyor.
 
@@ -205,7 +205,7 @@ examples.
 
 Hiçbir şey çekilmedi, pencereye de hiçbir şey eklenmedi. Model talimatı, dikkatin en az çaba gerektirdiği yere, kendi yakın context'ine geri yazdı.
 
-Bu, yapılacaklar listesinin de yaptığı şeydir ve recitation kelimesini hatırlamaya değmesinin nedeni de budur. İki teknik de **önemli olanı, modelin yazmak üzere olduğu yerin hemen yakınında tekrar söyleyerek** çalışır: yapılacaklar listesi planı, düşünce zinciri ise kısıtı tekrar eder. Dikkat, yakında olan ve tekrar edilen şeye gider. Dolayısıyla model 800K token'da bile bir şeyi önemsemeye devam etsin istiyorsan, o şeyin bir yolla tekrar edilmesi gerekir; kendi haline bırakılırsa silikleşir. Düşünce zincirinin bir context engineering aracı olarak işlemesi budur. Üstelik bu modüldeki en ucuz araç: onu kurman gerekmez, yalnızca açman yeter.
+Bu, yapılacaklar listesinin de yaptığı şeydir ve recitation kelimesini hatırlamaya değmesinin nedeni de budur. İki teknik de **önemli olanı, modelin yazmak üzere olduğu yerin hemen yakınında tekrar söyleyerek** çalışır: yapılacaklar listesi planı, düşünce zinciri ise kısıtı tekrar eder. Model, yazmakta olduğu yere yakın duran ve birden fazla kez geçen metne daha fazla dikkat verir. Dolayısıyla model 800K token'da bile bir şeyi önemsemeye devam etsin istiyorsan, o şeyin bir yolla tekrar edilmesi gerekir; kendi haline bırakılırsa silikleşir. Düşünce zincirinin bir context engineering aracı olarak işlemesi budur. Üstelik bu modüldeki en ucuz araç: onu kurman gerekmez, yalnızca açman yeter.
 
 ## Bu serinin neresindeyiz
 

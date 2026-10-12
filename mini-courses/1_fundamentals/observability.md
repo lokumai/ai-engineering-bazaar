@@ -10,7 +10,7 @@ objectives:
 
 # Observability
 
-In ordinary software, when you want to know what the system does, you read the code. The code is the behaviour.
+In ordinary software, when you want to know what the system does, you read the code. The code describes the behaviour completely, so reading it tells you what the system will do.
 
 With an agent, that stops being true. The code says "call the model, then run whatever tool it asks for, then do it all again". The code does not tell you what actually happened on a given run:
 
@@ -73,7 +73,7 @@ Nobody reads a hundred thousand of anything. And the usual ways of measuring do 
 
 So the newest tool in this module is **an agent that reads the traces**. LangSmith's Insights Agent clusters thousands of conversations. In this way, it finds the usage patterns and the failure modes on its own. Nobody has to say in advance what to look for. It does exploratory analysis on a pile that is too big for a person. And the same technology that produced the pile does the analysis.
 
-This is where the series is heading. [Loop Engineering](../2_intermediate/loop_engineering.md) arrives at an agent that designs the loop. The agent in this module checks the output. Also notice why any of this is necessary. The reason is the same fact that [Harness Engineering](../2_intermediate/harness_engineering.md) starts from. These systems are non-deterministic. They take unbounded natural language as input. So most of their failures appear in production, not in your tests.
+This is the direction the whole series is moving in. At the end of [Loop Engineering](../2_intermediate/loop_engineering.md), an agent designs the loop that other agents run in. In this module, an agent checks what other agents produced. Also notice why any of this is necessary. The reason is the same fact that [Harness Engineering](../2_intermediate/harness_engineering.md) starts from. These systems are non-deterministic, which means the same input can give a different result on each run. Their input is natural language, and a person can type almost anything, which means your tests cannot cover every possible input. So most of their failures appear in production, not in your tests.
 
 ## Where this fits in the series
 
@@ -109,7 +109,7 @@ The trace is where you can see agent failures, because they happen in the gaps b
 
 The final output hides all of it.
 
-LangSmith is the integrated choice. Langfuse is the open-source one, for when traces must stay on your own infrastructure. Latitude is another open-source option, and it focuses on production monitoring.
+LangSmith is LangChain's own tool, so it fits most easily if you already build with LangChain. Langfuse is the open-source one, for when traces must stay on your own infrastructure. Latitude is another open-source option, and it focuses on production monitoring.
 
 Collecting traces is not the point. The loop is the point:
 

@@ -21,11 +21,11 @@ Ask for a settings page today and a dashboard tomorrow. You get two screens that
 
 Each one looks fine alone. Together, they look like nobody was in charge.
 
-This module is about the two tools that generate interfaces properly. It is also about the fix for that problem. The fix turns out to be the same trick as in [Code Agents](../2_intermediate/coding_agents.md).
+This module is about the two tools that generate interfaces properly. It is also about the fix for that problem. The fix turns out to be the same idea as `AGENTS.md` in [Code Agents](../2_intermediate/coding_agents.md): a plain file in the repository that the agent reads.
 
 ## Two Tools That Turn a Description into a Screen
 
-**[Google Stitch](https://stitch.withgoogle.com/)** takes a prompt, an image, a rough sketch or a spoken description. From that, it produces a high-fidelity interface, plus the HTML and CSS behind it. It came out of Google Labs at I/O 2025, and it runs on Gemini. The part that designers care about is the export. One click sends the whole design into Figma, and the layout, the components and the structure arrive unchanged. So it fits either side of the handoff from design to development. It works whether you want a picture to argue about or markup to build on.
+**[Google Stitch](https://stitch.withgoogle.com/)** takes a prompt, an image, a rough sketch or a spoken description. From that, it produces a high-fidelity interface, plus the HTML and CSS behind it. It came out of Google Labs at I/O 2025, and it runs on Gemini. The part that designers care about is the export. One click sends the whole design into Figma, and the layout, the components and the structure arrive unchanged. So it is useful on both sides of the handoff, which is the moment when designers pass their work on to developers. It works whether you want a picture to argue about or markup to build on.
 
 **[Claude Design](https://claude.ai/design)** comes from Anthropic Labs and launched in April 2026. It does the same job from the other direction. It produces prototypes, slides, one-pagers and interactive pieces as real HTML, CSS and JavaScript. Two things make it interesting. First, it can take an existing **codebase** as the input. It finds the design system that is already in that code, and it applies that design system to whatever you ask for next. Second, it passes the work directly to Claude Code. That closes the gap between a prototype and the actual repository.
 
@@ -66,7 +66,7 @@ It is worth being honest about this, because the demos are persuasive.
 
 These tools give you a plausible screen fast. They do not give you what a designer gives you, which is knowing what the screen is for. That means knowing what the user is trying to finish, what should be hard to do by accident, and what to leave out. A tool can generate the third-best layout instantly, and you can still be solving the wrong problem instantly.
 
-Accessibility is the concrete version of that. A generated interface is often wrong in these ways:
+Accessibility is a clear example of that gap. It means that every person can use the screen, including a person who uses only a keyboard or a screen reader. A generated interface is often wrong in these ways:
 
 - contrast that fails the ratio check
 - focus states that were left out

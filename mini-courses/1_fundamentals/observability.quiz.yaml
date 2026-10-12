@@ -18,13 +18,13 @@ questions:
         - "Bütün mantık prompt'ta durur, bu yüzden kod yerine prompt'u okursun."
       explain: "Kod yalnızca döngüyü tarif eder: modeli çağır, tool'u çalıştır, tekrarla. Trace ise tek bir isteğin her model çağrısını, tool çağrısını ve subagent'ını kaydeder."
     fa:
-      question: "توی نرم‌افزار معمولی، کد بهت می‌گه سیستم چیکار می‌کنه. چرا این حرف برای یه agent درست نیست؟"
+      question: "توی نرم‌افزار معمولی، از روی کد می‌فهمی سیستم چیکار می‌کنه. چرا توی agent این‌طور نیست؟"
       options:
-        - "مدل توی هر اجرا کد agent رو بازنویسی می‌کنه، پس کد هیچ‌وقت ثابت نمی‌مونه."
-        - "کد فقط loop رو توصیف می‌کنه. اون چیزی که توی یه اجرای مشخص اتفاق افتاده، فقط توی trace هست."
-        - "خروجی نهایی همه‌ی مراحل رو فهرست می‌کنه، پس به جای کد، خروجی رو می‌خونی."
-        - "کل منطق توی prompt هست، پس به جای کد، prompt رو می‌خونی."
-      explain: "کد فقط loop رو توصیف می‌کنه: مدل رو صدا می‌زنه، tool رو اجرا می‌کنه و دوباره تکرار می‌کنه. trace هر model call، هر tool call و هر subagent یک درخواست رو ثبت می‌کنه."
+        - "مدل هر بار که اجرا می‌شه کد agent رو از نو می‌نویسه، برای همین کد هیچ‌وقت ثابت نمی‌مونه."
+        - "کد فقط loop رو توصیف می‌کنه و اینکه توی یه اجرای مشخص چی گذشته، فقط توی trace پیدا می‌شه."
+        - "خروجی نهایی همه‌ی مرحله‌ها رو لیست می‌کنه، پس به‌جای کد، خروجی رو می‌خونی."
+        - "کل منطق توی prompt‌ه، پس به‌جای کد، prompt رو می‌خونی."
+      explain: "کد فقط loop رو توصیف می‌کنه، یعنی مدل رو صدا بزن، tool رو اجرا کن و دوباره از اول. trace برای یه request همه‌ی model call‌ها، tool call‌ها و subagent‌ها رو ثبت می‌کنه."
   - answer: 3
     en:
       question: "Your agent gives a confident answer that is wrong. Where do you usually find the cause?"
@@ -43,13 +43,13 @@ questions:
         - "Trace'te, çünkü hatalar genellikle adımlar arasındaki boşluklarda olur."
       explain: "Biraz yanlış bir tool argümanı gibi hatalar adımlar arasındaki boşluklarda oluşur. Son çıktı (final output) bu hataları saklar, trace ise gösterir."
     fa:
-      question: "agent تو یه جواب مطمئن ولی اشتباه می‌ده. معمولاً علتش رو کجا پیدا می‌کنی؟"
+      question: "agent‌ت با اطمینان کامل یه جواب غلط داده. معمولاً علتش رو کجا پیدا می‌کنی؟"
       options:
-        - "توی خروجی نهایی، چون agent اشتباهاتش رو توی جوابش توضیح می‌ده."
-        - "داخل یه model call، چون معمولاً یه مرحله کل خطا رو توی خودش داره."
+        - "توی خروجی نهایی، چون agent اشتباه‌هاش رو توی همون جواب توضیح می‌ده."
+        - "توی یکی از model call‌ها، چون معمولاً کل خرابی زیر سر یه مرحله‌ست."
         - "توی کد agent، چون کد نشون می‌ده agent کدوم tool‌ها رو انتخاب کرده."
-        - "توی trace، چون خطاها معمولاً توی فاصله‌ی بین مراحل اتفاق می‌افتن."
-      explain: "خطاهایی مثل یه آرگومان کمی غلط توی tool، توی فاصله‌ی بین مراحل رخ می‌دن. خروجی نهایی اون‌ها رو پنهون می‌کنه، ولی trace نشونشون می‌ده."
+        - "توی trace، چون خطا معمولاً لابه‌لای مرحله‌ها پیش میاد."
+      explain: "خطایی مثل آرگومانی که یه کم غلط به tool داده شده، لابه‌لای مرحله‌ها پیش میاد. توی خروجی نهایی پیدا نیست، ولی trace نشونش می‌ده."
   - answer: 0
     en:
       question: "What should you check before you choose a platform for your traces?"
@@ -68,13 +68,13 @@ questions:
         - "Daha az yer kaplasın diye her çalıştırmanın yalnızca son çıktısını tutup tutmadığını."
       explain: "Modüle göre ana kontrol özellik listesi değildir. Prompt'lar ve tool sonuçları müşteri metni taşır, bu yüzden trace'leri nerede tutacağına veri politikan karar verir."
     fa:
-      question: "قبل از اینکه یه پلتفرم برای trace‌هات انتخاب کنی، چی رو باید چک کنی؟"
+      question: "قبل از اینکه برای trace‌هات پلتفرم انتخاب کنی، چی رو باید بررسی کنی؟"
       options:
-        - "اینکه آیا از چیزهایی که از قبل اجرا می‌کنی trace جمع می‌کنه، و trace‌ها رو همون‌جایی نگه می‌داره که data policy‌ت می‌گه."
-        - "اینکه آیا feature‌های بیشتری نسبت به پلتفرم‌های دیگه داره، مثل eval‌ها و dataset‌ها."
-        - "اینکه آیا بین تیم‌هایی که agent می‌سازن محبوب‌ترین پلتفرمه."
-        - "اینکه آیا فقط خروجی نهایی هر اجرا رو ذخیره می‌کنه تا فضای کمتری مصرف کنه."
-      explain: "این درس می‌گه لیست feature‌ها اصلی‌ترین بررسی نیست. prompt‌ها و نتیجه‌ی tool‌ها پر از متن مشتری‌ان، پس data policy‌ت مشخص می‌کنه trace‌ها کجا نگه داشته بشن."
+        - "اینکه از چیزهایی که همین الان اجرا می‌کنی trace جمع می‌کنه یا نه، و trace‌ها رو همون‌جایی نگه می‌داره که data policy‌ت می‌گه یا نه."
+        - "اینکه feature‌هاش، مثل eval و dataset، از پلتفرم‌های دیگه بیشتره یا نه."
+        - "اینکه بین تیم‌هایی که agent می‌سازن، از همه محبوب‌تره یا نه."
+        - "اینکه فقط خروجی نهایی هر اجرا رو ذخیره می‌کنه یا نه، تا جای کمتری بگیره."
+      explain: "به گفته‌ی این درس، ملاک اصلی لیست feature‌ها نیست. prompt‌ها و نتیجه‌ی tool‌ها پر از متن مشتری‌ان، پس اینکه trace‌ها کجا بمونن رو data policy‌ت تعیین می‌کنه."
   - answer: 2
     en:
       question: "In the improvement loop, what connects each stage to the next stage?"
@@ -93,13 +93,13 @@ questions:
         - "Analitik paneli (analytics dashboard), çünkü her kontrolün hata oranını sayar."
       explain: "Evaluator'lar trace'leri puanlar, annotation'lar trace'lere eklenir ve offline dataset trace'lerden oluşur. Trace olmadan bu adımlar birbirine ulaşamaz."
     fa:
-      question: "توی حلقه‌ی بهبود (improvement loop)، چی هر مرحله رو به مرحله‌ی بعدی وصل می‌کنه؟"
+      question: "توی حلقه‌ی بهبود (improvement loop)، چی هر مرحله رو به مرحله‌ی بعد وصل می‌کنه؟"
       options:
-        - "خروجی نهایی، چون evaluator‌ها فقط جواب هر اجرا رو نمره می‌دن."
+        - "خروجی نهایی، چون evaluator‌ها فقط به جواب هر اجرا نمره می‌دن."
         - "کد agent، چون هر دور تغییرش رو توی کد می‌نویسه."
-        - "trace، چون evaluator‌ها، annotation‌ها و dataset آفلاین همه ازش استفاده می‌کنن."
-        - "داشبورد analytics، چون نرخ خطای هر کنترل رو می‌شماره."
-      explain: "evaluator‌ها trace‌ها رو نمره می‌دن، annotation‌ها به trace‌ها وصل می‌شن و dataset آفلاین از trace‌ها ساخته می‌شه. بدون trace، این مرحله‌ها به هم نمی‌رسن."
+        - "trace، چون evaluator‌ها، annotation‌ها و dataset آفلاین همه با همون کار می‌کنن."
+        - "داشبورد analytics، چون نرخ خطای هر چک رو می‌شمره."
+      explain: "evaluator‌ها به trace نمره می‌دن، annotation‌ها روی trace می‌شینن و dataset آفلاین هم از trace‌ها ساخته می‌شه. trace که نباشه، دست هیچ مرحله‌ای به بقیه نمی‌رسه."
   - answer: 1
     en:
       question: "A team records over 100,000 traces a day, and nobody reads them. What does the module name as the newest answer?"
@@ -118,10 +118,10 @@ questions:
         - "Günde daha az trace olsun, böylece bir insan hepsini okuyabilsin."
       explain: "Analitik ve evaluator'lar yalnızca zaten düşündüğün soruları yanıtlar. LangSmith'in Insights Agent'ı gibi bir agent trace'leri kümeler ve kimsenin belirtmediği hata türlerini bulur."
     fa:
-      question: "یه تیم هر روز بیش از 100,000 trace ثبت می‌کنه و هیچ‌کس اون‌ها رو نمی‌خونه. این درس، جدیدترین جواب رو چی معرفی می‌کنه؟"
+      question: "یه تیم روزی بیشتر از 100,000 trace ثبت می‌کنه و کسی هم نمی‌خونه‌شون. این درس تازه‌ترین راه‌حل رو چی می‌دونه؟"
       options:
-        - "evaluator‌های آنلاین بیشتر، یکی برای هر failure mode که تیم بتونه بهش فکر کنه."
-        - "یه agent که trace‌ها رو خوشه‌بندی می‌کنه و failure mode‌هایی رو پیدا می‌کنه که کسی درباره‌شون نپرسیده بود."
-        - "product analytics که نرخ خطای هر کنترلی رو که تیم نوشته گزارش می‌کنه."
-        - "trace‌های کمتری توی هر روز، تا یه آدم بتونه همه‌شون رو بخونه."
-      explain: "analytics و evaluator‌ها فقط به سوال‌هایی جواب می‌دن که قبلاً به ذهنت رسیده. یه agent مثل Insights Agent توی LangSmith، trace‌ها رو خوشه‌بندی می‌کنه و failure mode‌هایی رو پیدا می‌کنه که کسی مشخص نکرده بود."
+        - "online evaluator‌های بیشتر، برای هر failure mode‌ای که به فکر تیم می‌رسه یکی."
+        - "یه agent که trace‌ها رو خوشه‌بندی می‌کنه و failure mode‌هایی رو پیدا می‌کنه که کسی سراغشون رو نگرفته بود."
+        - "product analytics‌ای که نرخ خطای هر چکی رو که تیم نوشته گزارش می‌ده."
+        - "trace کمتر در روز، تا یه آدم بتونه همه‌شون رو بخونه."
+      explain: "analytics و evaluator‌ها فقط جواب سوال‌هایی رو می‌دن که خودت از قبل به فکرشون بودی. agent‌ای مثل Insights Agent توی LangSmith، trace‌ها رو خوشه‌بندی می‌کنه و failure mode‌هایی رو پیدا می‌کنه که هیچ‌کس از قبل تعریف نکرده بود."

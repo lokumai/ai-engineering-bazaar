@@ -34,7 +34,7 @@ Avusturyalı geliştirici Peter Steinberger, **Clawd** adında bir kişisel asis
 
 Sonra Anthropic'in avukatları ona yazdı, çünkü "Clawd" adı Claude'a biraz fazla benziyordu. Steinberger istenileni hemen yaptı: 27 Ocak 2026'da projenin adını **Moltbot** yaptı ve ıstakoz temasını korudu. Üç gün sonra adı bir kez daha değiştirdi ve **OpenClaw** oldu; gerekçesi, Moltbot adının bir türlü kolay söylenememesiydi.
 
-Yeniden adlandırma sırasında iki şey daha yaşandı. Birincisi, eski GitHub organizasyonunu ve X kullanıcı adını bırakıp yenilerini aldı. Ama bu iki adım arasındaki yaklaşık on saniyede başka biri ikisini de kaptı. İkincisi, Solana üzerinde sahte bir `$CLAWD` token'ı ortaya çıktı. Kısa bir süre piyasa değeri 16 milyon dolara ulaştı ve sonra çöktü. Bunun dersi açık: isimler de altyapının bir parçası.
+Yeniden adlandırma sırasında iki şey daha yaşandı. Birincisi, eski GitHub organizasyonunu ve X kullanıcı adını bırakıp yenilerini aldı. Ama bu iki adım arasındaki yaklaşık on saniyede başka biri ikisini de kaptı. İkincisi, Solana üzerinde sahte bir `$CLAWD` token'ı ortaya çıktı. Kısa bir süre piyasa değeri 16 milyon dolara ulaştı ve sonra çöktü. Bunun dersi açık: bir projenin isimleri ve hesapları da altyapısının bir parçasıdır, bu yüzden onları da kodun kadar dikkatle korumalısın.
 
 Şubat 2026'da Steinberger OpenAI'da çalışmaya başladı; projenin devamını sağlamak için de kâr amacı gütmeyen **OpenClaw Foundation**'ı kurdu. Bugün proje, 380 binin çok üzerinde GitHub yıldızına sahip.
 
@@ -46,7 +46,7 @@ Bütün bunlar olurken girişimci Matt Schlicht **Moltbook**'u yayına aldı. Re
 
 Bu bir gösteri gibi görünüyor, ama gerçek bulgular üretti. Konuyla ilgili bir çalışma, [OpenClaw Agents on Moltbook](https://arxiv.org/abs/2602.02625), gönderilerin **%18.4'ünün eylem tetikleyici talimat içerdiğini** ölçtü. Bu talimatlar, başka bir agent'a bir şeyi yapmasını söyleyen metin parçaları. Çok sayıda agent'ı aynı odaya koyduğunu düşün: birbirlerinin yazdıklarını okuyup girdi olarak kabul eden bu agent'ların epey bir kısmı, hiçbir sahibinin onaylamadığı talimatları ileri taşır. Bu, [Security](security_tr.md) bölümündeki dolaylı prompt injection'ın ta kendisi; fark, burada bu durumun bütün bir popülasyon ölçeğinde ve kazara yaşanmasıdır.
 
-Aynı çalışmanın daha umut verici bir bulgusu da var: agent'lar riskli gönderilere, zararsız olanlardan daha sık itiraz etti ve bunu yapmaları için kimse onlara talimat vermemişti. Yazarlar buna ortaya çıkan normatif davranış (emergent normative behaviour) diyor. Bunun ne anlama geldiğine sen karar verebilirsin; ama bu davranış tasarımın bir parçası değildi.
+Aynı çalışmanın daha umut verici bir bulgusu da var: agent'lar riskli gönderilere, zararsız olanlardan daha sık itiraz etti ve bunu yapmaları için kimse onlara talimat vermemişti. Yazarlar buna ortaya çıkan normatif davranış (emergent normative behaviour) diyor; yani grubun içinde, kimse tasarlamadan ortak davranış kuralları kendiliğinden oluştu. Bunun ne anlama geldiğine sen karar verebilirsin; ama bu davranış tasarımın bir parçası değildi.
 
 ## SOUL.md
 
@@ -69,7 +69,7 @@ OpenClaw o kadar hızlı büyüdü ki mühendislik buna yetişemedi. İlk kurulu
 - **Aynı kanallar**, bir de görsel algılamayla web'de gezinme; ayrıca Nous Portal üzerinden 300'den fazla modele erişim sağlıyor.
 
 ![Hermes ve OpenClaw yan yana](./images/hermes-vs-openclaw-archi.png)  
-*Asıl argüman şekillerin kendisinde. Hermes, kendini kullanıcıya geri bağlayan bir daire olarak çizilmiş; hatırladığı şeyler ve yazdığı skill'ler bir sonraki turu besliyor. Bu, kendini geliştirme iddiasının diyagrama dökülmüş hali. OpenClaw'da ise hiç döngü yok, her şey bir gateway'e bağlanıyor ve bu bir yönlendirme şekli. Birincisi daha iyi olmakla, ikincisi işi doğru yere taşımakla ilgili.*
+*Asıl argüman şekillerin kendisinde. Hermes, kendini kullanıcıya geri bağlayan bir daire olarak çizilmiş; hatırladığı şeyler ve yazdığı skill'ler bir sonraki turu besliyor. Bu, kendini geliştirme iddiasının diyagrama dökülmüş hali. OpenClaw'da ise hiç döngü yok, her şey bir gateway'e bağlanıyor. Gateway, gelen her mesajı onu işlemesi gereken parçaya ileten merkezi bir noktadır. Birincisi daha iyi olmakla, ikincisi işi doğru yere taşımakla ilgili.*
 
 Composio'nun [OpenClaw vs Hermes Agent: The best agent harness in 2026](https://composio.dev/content/openclaw-vs-hermes-agent) yazısı farkı olabildiğince net anlatıyor. Sorun birçok kanal genelinde orkestrasyon ise ve hazır skill'lerden oluşan bir marketplace'e ihtiyacın varsa OpenClaw'ı kullan. Sorun, kendiliğinden daha iyi olması gereken tekrarlayan bir işse Hermes'i kullan. Firecrawl'ün [OpenClaw vs Hermes Agent: Which one should you actually run?](https://www.firecrawl.dev/blog/openclaw-vs-hermes) yazısı aynı karşılaştırmayı yapıyor ve benchmark sonuçlarını da ekliyor.
 
@@ -131,7 +131,7 @@ Bu yüzden şu dört şeye dikkat et:
 - Kimlik bilgilerini, agent'ın okuyabildiği dosyaların dışında tut.
 - Geri alınamayan herhangi bir şeye dokunan araçların etrafına [Security](security_tr.md) bölümündeki koruma önlemlerini koy.
 
-Bu modülün Security'den sonra gelmesinin bir nedeni var ve bu neden müfredattaki sıra değil.
+Bu modülün Security'den sonra gelmesinin bir nedeni var ve bu neden müfredattaki sıra değil. Asıl neden şu: bir agent'a bu kadar erişim vermeden önce o modüldeki savunmaları bilmen gerekiyor.
 
 ## Bu serinin neresindeyiz
 

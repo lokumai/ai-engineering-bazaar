@@ -99,7 +99,7 @@ graph LR
 
 ## Summary
 
-There are three kinds of memory, and you cannot use one in place of another. **Parametric memory** is permanent but fuzzy at scale, and training puts it into the weights. **Working memory** is precise but temporary: it is just a growing stack of messages that we send again on every call. **Long-term memory** is saved outside the model and retrieved back into working memory when needed, often with RAG. Next come agents. They depend on this same working memory to plan and act across many steps.
+There are three kinds of memory, and you cannot use one in place of another. **Parametric memory** is permanent, and training puts it into the weights. But it is fuzzy, because your data is mixed in with billions of other documents. **Working memory** is precise but temporary: it is just a growing stack of messages that we send again on every call. **Long-term memory** is saved outside the model and retrieved back into working memory when needed, often with RAG. Next come agents. They depend on this same working memory to plan and act across many steps.
 
 **Quick Check**: What are the three types of memory? Why is parametric memory imprecise even though it is permanent? Why do we call short-term memory "working memory"? How does information from long-term memory get back into the LLM's context?
 

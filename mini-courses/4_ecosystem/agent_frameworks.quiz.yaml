@@ -18,13 +18,13 @@ questions:
         - "Kod yazmadan entegrasyonları bağladığın görsel bir canvas"
       explain: "Loop, bir model çağrısının etrafındaki bir while döngüsüdür ve bunu kendin de yazabilirsin. Framework ise yeniden denemeleri, streaming'i, tool şemalarını, yeniden başlatıldıktan sonra da kalan memory'yi ve trace'ler için bir yeri ekler."
     fa:
-      question: "طبق این ماژول، مهم‌ترین چیزی که یک agent framework بهت می‌ده چیه؟"
+      question: "طبق این درس، مهم‌ترین چیزی که یه agent framework بهت می‌ده چیه؟"
       options:
         - "خود agent loop، چون نوشتنش با دست خیلی سخته"
-        - "یه مدل بهتر از اون چیزی که provider بهت می‌ده"
-        - "همه‌ی چیزهایی که دور loop هستن، مثل retry، streaming و tool schema"
-        - "یه canvas بصری که توش بدون نوشتن کد، integration‌ها رو وصل می‌کنی"
-      explain: "loop یه while loop دور یه فراخوانی مدل هست و خودت هم می‌تونی بنویسیش. framework اینا رو اضافه می‌کنه: retry، streaming، tool schema، Memory‌ای که بعد از restart باقی می‌مونه، و جایی برای trace‌ها."
+        - "مدلی بهتر از اونی که provider‌ت بهت می‌ده"
+        - "همه‌ی چیزهای دور loop، مثل retry، streaming و tool schema"
+        - "یه canvas تصویری که بدون کد نوشتن، integration‌ها رو بهش وصل می‌کنی"
+      explain: "loop یه while loop دور یه call به مدله و خودت هم می‌تونی بنویسیش. framework این‌ها رو بهش اضافه می‌کنه: retry، streaming، tool schema، memory‌ای که بعد از restart سر جاش بمونه، و یه جا برای trace‌ها."
   - answer: 0
     en:
       question: "The LangChain stack has three libraries at three levels. Which statement is correct?"
@@ -43,13 +43,13 @@ questions:
         - "LangChain, LangGraph ve deepagents aslında üç farklı adı olan tek bir kütüphane"
       explain: "LangChain ana arayüzdür ve başlanacak yerdir. LangGraph en alt seviyedir, yani runtime'dır ve akışı kendin kontrol etmen gerektiğinde onu kullanırsın."
     fa:
-      question: "LangChain stack از سه کتابخونه در سه سطح تشکیل شده. کدوم جمله درسته؟"
+      question: "استک LangChain سه تا کتابخونه‌ست توی سه سطح. کدوم جمله درسته؟"
       options:
-        - "از LangChain شروع کن، و وقتی خودت باید جریان رو کنترل کنی، سراغ LangGraph برو"
-        - "از LangGraph شروع کن، چون بالاترین سطحه و بیشترین کار رو انجام می‌ده"
-        - "از deepagents شروع کن، و LangChain رو فقط برای کارهای multi-agent استفاده کن"
+        - "با LangChain شروع کن، و هر وقت لازم شد جریان کار رو خودت کنترل کنی، برو سراغ LangGraph"
+        - "با LangGraph شروع کن، چون بالاترین سطحه و بیشترین کار رو انجام می‌ده"
+        - "با deepagents شروع کن، و LangChain رو فقط برای کارهای multi-agent بیار"
         - "LangChain، LangGraph و deepagents یه کتابخونه‌ان با سه تا اسم مختلف"
-      explain: "LangChain رابط اصلی و جای شروعه. LangGraph پایین‌ترین سطحه، یعنی runtime، و وقتی خودت باید جریان رو کنترل کنی به کارت میاد."
+      explain: "LangChain رابط اصلیه و جای شروع. LangGraph پایین‌ترین سطح، یعنی همون runtime‌ه، و وقتی به کار میاد که بخوای جریان کار رو خودت کنترل کنی."
   - answer: 3
     en:
       question: "You can describe every step of a job in advance, and the requirements are stable. What does the module recommend?"
@@ -68,13 +68,13 @@ questions:
         - "Bir workflow kur, çünkü daha öngörülebilir, daha ucuz ve debug etmesi daha kolay"
       explain: "Workflow sabit adımları çalıştırır, bu yüzden daha öngörülebilirdir ve production genellikle bunu ister. Agent bir yükseltme değildir; onu, adımların kimse tarafından önceden yazılamadığı açık uçlu işler için kullan."
     fa:
-      question: "همه‌ی مراحل یه کار رو از قبل می‌دونی و نیازمندی‌ها هم ثابتن. ماژول چی پیشنهاد می‌کنه؟"
+      question: "همه‌ی مراحل یه کار رو از قبل می‌تونی توضیح بدی و نیازمندی‌ها هم ثابتن. درس چی پیشنهاد می‌کنه؟"
       options:
-        - "یه agent بساز، چون agent نسخه‌ی بالغ‌تر workflow‌ه"
-        - "یه agent بساز، چون workflow توی هیچ مرحله‌ای نمی‌تونه مدل رو صدا بزنه"
-        - "یه workflow بساز، و بذار مدل ترتیب مراحل رو تصمیم بگیره"
-        - "یه workflow بساز، چون قابل‌پیش‌بینی‌تره، ارزون‌تره و debug کردنش راحت‌تره"
-      explain: "workflow مراحل ثابت رو اجرا می‌کنه، برای همین قابل‌پیش‌بینی‌تره، و production معمولاً همین رو می‌خواد. agent ارتقای workflow نیست. اون رو برای کارهای open-ended نگه دار، یعنی جاهایی که هیچ‌کس نمی‌تونه مراحل رو از قبل بنویسه."
+        - "agent بساز، چون agent نسخه‌ی پیشرفته‌تر workflow‌ه"
+        - "agent بساز، چون workflow توی هیچ مرحله‌ای نمی‌تونه مدل رو صدا بزنه"
+        - "workflow بساز، و بذار مدل ترتیب مرحله‌ها رو انتخاب کنه"
+        - "workflow بساز، چون قابل‌پیش‌بینی‌تر و ارزون‌تره و debug کردنش راحت‌تره"
+      explain: "workflow مرحله‌های ثابت رو اجرا می‌کنه، پس قابل‌پیش‌بینی‌تره، و production معمولاً همین رو می‌خواد. agent نسخه‌ی ارتقایافته‌ی workflow نیست؛ بذارش برای کارهایی که هیچ‌کس نمی‌تونه مراحلشون رو از قبل بنویسه."
   - answer: 1
     en:
       question: "n8n runs an MCP server. What does this let your coding agent do?"
@@ -93,13 +93,13 @@ questions:
         - "Workflow'u yalnızca okumak, çünkü MCP server değişikliğe izin vermiyor"
       explain: "Coding agent senin n8n instance'ına bağlanır, node'ları bir araya getirir, sonucu doğrular, çalıştırır ve bozulan şeyi düzeltir. Böylece agent ile workflow alternatif değil, ortak olur."
     fa:
-      question: "n8n یه MCP server اجرا می‌کنه. این کار چه کمکی به coding agent تو می‌کنه؟"
+      question: "n8n یه MCP server داره. این به coding agent‌ت اجازه‌ی چه کاری رو می‌ده؟"
       options:
-        - "جای workflow رو بگیره، و توی هر اجرا کل کار رو به‌عنوان یه agent انجام بده"
-        - "از یه توصیف با زبون ساده، workflow رو برات بسازه"
-        - "هر workflow رو به یه agent تبدیل کنه که مسیر خودش رو انتخاب می‌کنه"
+        - "جای workflow رو بگیره و هر بار کل کار رو خودش مثل یه agent انجام بده"
+        - "از روی توضیحی که با زبون ساده می‌دی، workflow رو برات بسازه"
+        - "هر workflow رو تبدیل کنه به یه agent که مسیرش رو خودش انتخاب می‌کنه"
         - "فقط workflow رو بخونه، چون MCP server اجازه‌ی تغییر نمی‌ده"
-      explain: "coding agent به n8n instance تو وصل می‌شه، node‌ها رو کنار هم می‌ذاره، نتیجه رو اعتبارسنجی می‌کنه، اجرا می‌کنه و هر چی خراب شده رو درست می‌کنه. این‌جوری agent و workflow شریک می‌شن، نه رقیب."
+      explain: "coding agent به n8n خودت وصل می‌شه، node‌ها رو کنار هم می‌چینه، نتیجه رو validate و اجرا می‌کنه، و هر جا خراب شد درستش می‌کنه. این‌طوری agent و workflow شریک هم می‌شن، نه رقیب."
   - answer: 2
     en:
       question: "What trade do you make when you use a no-code platform such as Lovable or Bolt?"
@@ -118,10 +118,10 @@ questions:
         - "Şimdi tam kontrol, ama her prompt'ta yavaş ilerleyen değişiklikler"
       explain: "Lovable ve Bolt bir açıklamayı haftalar yerine saatler içinde çalışan bir uygulamaya çevirir. Bedeli, sonra daha az kontrole sahip olmak; platformdan ayrılmak ise uygulamayı yeniden kurmak anlamına gelir."
     fa:
-      question: "وقتی از یه پلتفرم no-code مثل Lovable یا Bolt استفاده می‌کنی، چه معامله‌ای انجام می‌دی؟"
+      question: "وقتی از یه پلتفرم no-code مثل Lovable یا Bolt استفاده می‌کنی، چی می‌دی و چی می‌گیری؟"
       options:
-        - "الان کارت کندتر پیش می‌ره، ولی بعداً کنترل کامل روی کد داری"
-        - "الان قیمت بالاتره، ولی بعداً هیچ‌وقت نیازی به ساختن دوباره نیست"
-        - "الان سرعت می‌گیری، ولی بعداً کنترل کمتری داری، و اگه از پلتفرم بری بیرون، باید دوباره بسازی"
-        - "الان کنترل کامل داری، ولی هر بار که prompt می‌دی، تغییرات کندن"
-      explain: "Lovable و Bolt یه توصیف رو توی چند ساعت، به‌جای هفته‌ها، به یه اپلیکیشن کارکن تبدیل می‌کنن. هزینه‌ش اینه که بعداً کنترل کمتری داری، و خارج شدن از پلتفرم یعنی ساختن دوباره."
+        - "الان کارت کندتر پیش می‌ره، ولی بعداً کنترل کامل کد دستته"
+        - "الان گرون‌تر درمیاد، ولی بعداً هیچ‌وقت لازم نیست از نو بسازی"
+        - "الان سرعت می‌گیری، ولی بعداً کنترلت کمتره و اگه بری، باید از نو بسازی"
+        - "الان کنترل کامل داری، ولی هر بار که prompt می‌دی، تغییرات کند انجام می‌شه"
+      explain: "Lovable و Bolt از روی یه توضیح، به‌جای چند هفته، توی چند ساعت یه اپلیکیشن کارکن تحویل می‌دن. هزینه‌ش اینه که بعداً کنترلت کمتره، و رفتن از پلتفرم یعنی از نو ساختن."

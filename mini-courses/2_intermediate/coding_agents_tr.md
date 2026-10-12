@@ -66,7 +66,7 @@ Diyelim ki LangChain agent'ının Jira ile çalışabilmesi için ona tool'lar y
 Bunun sana kazandırdıkları:
 
 - **Satıcıya bağlı kalmazsın.** Agent değiştirdiğinde tool'larını yeniden yazmak zorunda kalmazsın.
-- **Tool setleri taşınabilir hale gelir.** Bir kez yaz, her yerde kullan.
+- **Tool setleri taşınabilir hale gelir.** Bir tool'u bir kez yazarsın ve MCP'yi destekleyen her agent onu kullanabilir.
 - **İhtiyacın olanı başka biri zaten yazmıştır.** İnsanları şaşırtan kısım tam olarak bu.
 
 MCP'yi asıl öne çıkaran da bu son noktadır. MCP işi bir client ile bir server arasında böler: tool'lar bir **MCP server**'ın içinde durur, agent ise ona bağlanan bir client'tır. Yani bir MCP server, tool'lardan oluşan bir pakettir. Bir tane eklemek için kod değil, yapılandırma değiştirirsin; agent'ını Jira MCP server'ına yönlendirdiğinde artık Jira'yla çalışabilir.
@@ -195,10 +195,10 @@ Neredeyse hepsi bir klasörde duran **markdown dosyasıdır**. Veritabanı deği
 - pull request'te review edebilirsin
 - başka bir makineye kopyalayabilirsin
 
-Bu tembellik değildir; iki tarafın da iyi kullandığı tek format budur. Bu dosyaları özel bir tool'a ihtiyaç duymadan okuyup düzenleyebilirsin. Modeller markdown'da ve dosya sisteminde gezinmede olağanüstü iyidir, çünkü eğitim verilerinin çok büyük bir kısmı tam olarak bu. Sonuçta, bir code agent'ı genişletme mekanizması, agent'ın zaten en iyi olduğu şeydir.
+Bu tembellik değildir; hem senin hem de modelin iyi kullandığı tek format budur. Bu dosyaları özel bir tool'a ihtiyaç duymadan okuyup düzenleyebilirsin. Modeller markdown'da ve dosya sisteminde gezinmede olağanüstü iyidir, çünkü eğitim verilerinin çok büyük bir kısmı tam olarak bu. Sonuçta, bir code agent'ı genişletme mekanizması, agent'ın zaten en iyi olduğu şeydir.
 
 ![Bir agent, üç genişletme noktası](./images/mcp-skill-subagent.png)  
-*Bunlar üç ayrı sorun olduğu için hangisinin hangisi olduğunu adlandırmak işe yarar. Solda duran skill'ler, agent'ın davranışını değiştirmek için okuduğu talimatlardır. Sağdaki MCP server'lar, agent'ın başka türlü ulaşamayacağı sistemlere erişmesini sağlayan tool'lardır. Aşağıdaki subagent'lar ise ekstra context window'lardır. Buradaki her şey ya bilmen gereken, ya yapman gereken ya da düşünmen gereken bir şeydir.*
+*Bunlar üç ayrı sorun olduğu için hangisinin hangisi olduğunu adlandırmak işe yarar. Solda duran skill'ler, agent'ın davranışını değiştirmek için okuduğu talimatlardır. Sağdaki MCP server'lar, agent'ın başka türlü ulaşamayacağı sistemlere erişmesini sağlayan tool'lardır. Aşağıdaki subagent'lar ise ekstra context window'lardır. Yani her genişletme agent'a üç şeyden birini verir: bilmesi gereken bir şey (skill), yapabileceği bir şey (MCP server) ya da düşünmek için ayrı bir yer (subagent).*
 
 ## Bu serinin neresindeyiz
 
@@ -228,7 +228,7 @@ Son ikisi kontrolle ilgilidir. Hook'lar, model onları seçse de seçmese de ger
 
 Neredeyse tamamı klasörde duran markdown'dır; hem sen hem modelin iyi kullandığı format da budur.
 
-Sırada: bu modülde modelin söz hakkı olmadığı ilk şey hook'lardı. Bu fikrin bir adı var ve onu anlatan bir modül de var.
+Sırada: bu modülde modelin söz hakkı olmadığı ilk şey hook'lardı. Bu fikre harness engineering deniyor ve bir sonraki modülün konusu da bu.
 
 **Hızlı Kontrol**: bir skill ile bir custom subagent, ikisi de agent'a bir uzmanlık alanı kazandırır. Aralarındaki gerçek fark nedir ve her biri ne zaman uygundur?
 

@@ -75,7 +75,7 @@ Yukarıdaki liste, agent'ların neden bir **framework** kullandığını açıkl
 
 [smolagents](https://github.com/huggingface/smolagents) ve [LangChain](https://github.com/langchain-ai/langchain), bu kodu bir kez yazıp herkesin kullanabilmesi için var.
 
-**Şimdi de [LLM Temelleri](llms_tr.md) modülüne dön.** Orada bir LLM'i hiçbir framework olmadan doğrudan terminalden çalıştırmıştık. Neden bir framework'e ihtiyacımız olmadı? Çünkü ortada tek bir çağrı vardı: girdi, çıktı, bitti. Döngü yoktu, tool ayrıştırması yoktu ve tutulacak bir mesaj yığını da yoktu. Tek turlu bir LLM böyle bir iskele kod (scaffolding) ihtiyacı duymaz, bir agent ise neredeyse tamamen bu iskele koddan oluşur.
+**Şimdi de [LLM Temelleri](llms_tr.md) modülüne dön.** Orada bir LLM'i hiçbir framework olmadan doğrudan terminalden çalıştırmıştık. Neden bir framework'e ihtiyacımız olmadı? Çünkü ortada tek bir çağrı vardı: bir girdi gönderdin, bir çıktı aldın ve iş orada bitti. Döngü yoktu, tool ayrıştırması yoktu ve tutulacak bir mesaj yığını da yoktu. Tek turlu bir LLM, modelin etrafına yazılan bu ek koda, yani iskele koda (scaffolding) ihtiyaç duymaz. Bir agent ise neredeyse tamamen bu iskele koddan oluşur.
 
 Serinin ana noktasına bu noktada varıyoruz: **LLM gerçekten sadece bir beyin. Metin girer, metin çıkar, hiçbir şey saklamaz ve başka hiçbir şey yapmaz.** Şimdiye kadar anlattığımız her yetenek, bu beynin etrafına kurulmuş bir ortamdır. Bu ortam sayesinde model şunları yapabiliyor:
 

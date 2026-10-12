@@ -18,13 +18,13 @@ questions:
         - "İlk prompt'u kim yazıyor?"
       explain: "Modüle göre geri kalan her şey durma koşulundan çıkar. Yanlış kurulursa döngü ya iş bitmeden durur ya da gereğinden uzun çalışıp fazla maliyet çıkarır."
     fa:
-      question: "توی loop engineering، کل طراحی از کدوم یک سؤال نتیجه می‌شه؟"
+      question: "کل طراحی loop engineering به جواب کدوم سؤال بستگی داره؟"
       options:
-        - "کدوم مدل agent رو اجرا می‌کنه؟"
+        - "agent با کدوم مدل اجرا می‌شه؟"
         - "stop condition چیه؟"
-        - "agent چه tool‌هایی می‌تونه صدا بزنه؟"
-        - "چه کسی اولین prompt رو می‌نویسه؟"
-      explain: "ماژول می‌گه بقیه‌ی چیزها از stop condition نتیجه می‌شن. اگه این شرط غلط باشه، loop یا زودتر از موعد می‌ایسته، یا اون‌قدر ادامه پیدا می‌کنه که هزینه‌ش بالا بره."
+        - "agent می‌تونه کدوم tool‌ها رو صدا بزنه؟"
+        - "اولین prompt رو کی می‌نویسه؟"
+      explain: "طبق درس، بقیه‌ی تصمیم‌ها همه از stop condition درمیان. اگه این شرط اشتباه باشه، loop یا قبل از تموم شدن کار وایمیسه، یا اون‌قدر می‌چرخه که هزینه‌ش زیادی بالا می‌ره."
   - answer: 2
     en:
       question: "In the verification loop, the /goal command in Claude Code has a goal and a cap on the number of tries. Why is the cap necessary?"
@@ -43,13 +43,13 @@ questions:
         - "Bir saat, bir sonraki çalışmanın ne zaman başlayacağına karar veriyor."
       explain: "Tek durma koşulu başarı olan bir loop, başarı imkânsız olduğunda durmaz. Üst sınır (cap) ise loop'a ikinci bir durma yolu verir."
     fa:
-      question: "توی verification loop، دستور /goal توی Claude Code یه هدف داره و یه سقف برای تعداد تلاش‌ها. این سقف چرا لازمه؟"
+      question: "دستور /goal توی Claude Code که برای verification loop‌ه، یه هدف داره و یه سقف برای تعداد تلاش‌ها. چرا این سقف لازمه؟"
       options:
         - "به grader می‌گه کدوم معیارها رو چک کنه."
         - "نمی‌ذاره context window پر بشه."
-        - "وقتی موفقیت غیرممکن باشه، loop رو متوقف می‌کنه."
-        - "تعیین می‌کنه کی یه clock اجرای بعدی رو شروع کنه."
-      explain: "loop‌ای که تنها شرط توقفش موفقیته، وقتی موفقیت غیرممکن باشه متوقف نمی‌شه. سقف به loop یه راه دوم برای توقف می‌ده."
+        - "اگه موفقیت ممکن نباشه، loop رو متوقف می‌کنه."
+        - "تعیین می‌کنه یه زمان‌بندی کِی اجرای بعدی رو شروع کنه."
+      explain: "loop‌ی که تنها شرط توقفش موفقیت باشه، وقتی موفقیت ممکن نیست هیچ‌وقت وانمیسه. سقف یه راه دوم برای توقف بهش می‌ده."
   - answer: 0
     en:
       question: "What is the most important rule of the Ralph loop?"
@@ -68,13 +68,13 @@ questions:
         - "Her tur, sonucun bir insan tarafından kabul edilmesini bekler."
       explain: "Ralph her döngüde tek bir görev yapar ve her geçiş temiz bir context penceresiyle başlar. Durum pencerede değil, diskte tutulur."
     fa:
-      question: "مهم‌ترین قاعده‌ی Ralph loop چیه؟"
+      question: "مهم‌ترین قانون Ralph loop چیه؟"
       options:
-        - "هر iteration یه task از plan رو انجام می‌ده، بعد خارج می‌شه."
+        - "هر iteration فقط یه task از plan رو انجام می‌ده و بعد خارج می‌شه."
         - "هر iteration کل backlog رو یک‌جا جلو می‌بره."
-        - "هر iteration context دور قبل رو نگه می‌داره."
-        - "هر iteration منتظر می‌مونه تا یه آدم نتیجه رو قبول کنه."
-      explain: "Ralph توی هر loop یه task انجام می‌ده، و هر دور با یه context window تازه شروع می‌شه. state توی window نیست، روی دیسکه."
+        - "هر iteration، context دور قبلی رو نگه می‌داره."
+        - "هر iteration منتظر می‌مونه تا یه آدم نتیجه رو تأیید کنه."
+      explain: "Ralph توی هر loop فقط یه task انجام می‌ده و هر دور با یه context window تمیز شروع می‌شه. state روی دیسک می‌مونه، نه توی window."
   - answer: 3
     en:
       question: "What makes a dynamic workflow different from an agent team?"
@@ -93,10 +93,10 @@ questions:
         - "Workflow planı bir agent'ta değil, bir betikte tutar."
       explain: "Workflow'da sıradaki işi betik belirler ve ara sonuçları da betik tutar. Ortak görev listesi ise agent team'lere aittir."
     fa:
-      question: "چی باعث می‌شه dynamic workflow با agent team فرق داشته باشه؟"
+      question: "فرق اصلی dynamic workflow با agent team چیه؟"
       options:
-        - "workflow از یه agent استفاده می‌کنه، و team از چندتا."
-        - "workflow توی هر نوبت منتظر می‌مونه تا یه آدم Enter بزنه."
-        - "workflow نتیجه‌هاش رو توی یه فهرست مشترک task نگه می‌داره."
-        - "workflow برنامه‌ش رو توی یه script می‌ذاره، نه توی یه agent."
-      explain: "توی workflow، script تعیین می‌کنه بعدش چی اجرا بشه و نتیجه‌های میانی رو هم خودش نگه می‌داره. فهرست مشترک task مال agent teams هست."
+        - "workflow فقط یه agent داره، ولی team چند تا."
+        - "workflow هر نوبت منتظر می‌مونه یه آدم enter بزنه."
+        - "workflow نتیجه‌هاش رو توی یه task list مشترک نگه می‌داره."
+        - "توی workflow، plan دست یه script‌ه، نه یه agent."
+      explain: "توی workflow، script تصمیم می‌گیره بعدش چی اجرا بشه و نتیجه‌های میانی رو هم خودش نگه می‌داره. task list مشترک مال agent team‌هاست."

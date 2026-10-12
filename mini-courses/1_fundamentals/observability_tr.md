@@ -1,6 +1,6 @@
 # Observability
 
-Sıradan bir yazılımda sistemin ne yaptığını öğrenmek istiyorsan kodu okursun, çünkü kod sistemin davranışının ta kendisidir.
+Sıradan bir yazılımda sistemin ne yaptığını öğrenmek istiyorsan kodu okursun, çünkü kod sistemin davranışını eksiksiz anlatır ve onu okuyunca sistemin ne yapacağını bilirsin.
 
 Agent'larda ise bu geçerli olmaktan çıkar, çünkü kod yalnızca "modeli çağır, sonra modelin istediği tool'u çalıştır, sonra her şeyi baştan yap" der. Ama bu kod, belirli bir çalıştırmada gerçekte neler olduğunu söylemez:
 
@@ -63,7 +63,7 @@ Kimse yüz bin şeyi okuyamaz, üstelik alışılmış ölçüm yöntemleri de s
 
 Bu yüzden modüldeki en yeni araç, **trace'leri okuyan bir agent**. LangSmith'in Insights Agent'ı binlerce konuşmayı kümeler ve kullanım örüntülerini ve hata türlerini kendi başına bulur; önceden neye bakılacağını kimsenin söylemesi gerekmez. Bu, bir insanın altından kalkamayacağı kadar büyük bir yığın üzerinde keşifsel analiz yapmak demektir ve yığını üreten aynı teknoloji bu analizi de yapar.
 
-Serinin gideceği yön de tam olarak burasıdır: [Loop Engineering](../2_intermediate/loop_engineering_tr.md) döngünün kendisini tasarlayan bir agent'a varır, bu modüldeki agent ise çıktıyı kontrol eder. Bunun neden gerekli olduğu, [Harness Engineering](../2_intermediate/harness_engineering_tr.md) modülünün de yola çıktığı olgudan anlaşılır. Bu sistemler deterministik değildir ve girdi olarak sınırı olmayan doğal dil alırlar. Bu yüzden hatalarının çoğu, kendi testlerinde değil production'da ortaya çıkar.
+Serinin bütünü de bu yöne doğru ilerliyor. [Loop Engineering](../2_intermediate/loop_engineering_tr.md) modülünün sonunda bir agent, başka agent'ların içinde çalıştığı döngüyü tasarlar; bu modülde ise bir agent, başka agent'ların ürettiği çıktıyı kontrol eder. Bunun neden gerekli olduğu, [Harness Engineering](../2_intermediate/harness_engineering_tr.md) modülünün de yola çıktığı olgudan anlaşılır. Bu sistemler deterministik değildir, yani aynı girdi her çalıştırmada farklı bir sonuç verebilir. Girdileri de doğal dildir ve bir kullanıcı neredeyse her şeyi yazabilir, dolayısıyla testlerin olası her girdiyi kapsayamaz. Bu yüzden hatalarının çoğu, kendi testlerinde değil production'da ortaya çıkar.
 
 ## Bu serinin neresindeyiz
 
@@ -99,7 +99,7 @@ Agent hatalarını görebildiğin yer trace'tir, çünkü bu hatalar adımlar ar
 
 Son çıktı ise bunların hepsini gizler.
 
-LangSmith, entegre seçenektir; Langfuse ise açık kaynaklı olup trace'lerin kendi altyapında kalması gerektiğinde kullanılır. Latitude da bir başka açık kaynaklı seçenektir ve odağı üretim ortamındaki izlemeye yöneliktir.
+LangSmith, LangChain'in kendi aracıdır, bu yüzden zaten LangChain ile geliştiriyorsan en kolay uyum sağlayan seçenek odur. Langfuse ise açık kaynaklı olup trace'lerin kendi altyapında kalması gerektiğinde kullanılır. Latitude da bir başka açık kaynaklı seçenektir ve odağı üretim ortamındaki izlemeye yöneliktir.
 
 Trace toplamak tek başına amaç değildir; asıl amaç, aşağıdaki döngüdür:
 

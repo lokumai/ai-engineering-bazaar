@@ -28,7 +28,7 @@ this again and again, until its guesses stop being random and start being right.
 ![An untrained network next to a trained one](./images/training-network.jpg)  
 *The same network before and after training. The input is "The students opened their". The random weights on the left produce "Sun". The learned weights on the right produce "Laptops". The shape of the network did not change. Only the numbers inside it changed.*
 
-That is the whole trick. Training does not add rules or facts in a form that you can open and
+That small change, repeated many times, is all that training does. Training does not add rules or facts in a form that you can open and
 read. It only adjusts numbers. The knowledge ends up spread across billions of them. This is why
 people still use Andrej Karpathy's description: you can think of training as **compressing the
 internet**.
@@ -210,7 +210,8 @@ open-source library that does both of these jobs.
 
 What you get from it:
 
-- **Fine-tuning that fits.** It rewrites the expensive parts of training. Because of this, LoRA
+- **Fine-tuning that fits.** It rewrites the parts of the training code that use the most memory
+  and time. Because of this, LoRA
   and quantized-LoRA runs need far less GPU memory, and they finish faster. Often, this decides
   whether a job can run on a free Colab GPU or not.
 - **Ready-made notebooks.** The [notebook collection](https://unsloth.ai/docs/get-started/unsloth-notebooks)
@@ -252,7 +253,8 @@ Most people who think they need fine-tuning do not need it. So it is useful to k
 cases where the answer is no.
 
 **Do not fine-tune to teach a model your company's knowledge.** That knowledge is alive. The
-codebase gets new commits, contracts get updated, and policies change. Fine-tuning is a snapshot.
+codebase gets new commits, contracts get updated, and policies change. Fine-tuning is a snapshot:
+it captures what your data said on one day, and it does not change after that.
 It takes hours and real money, so you cannot run it again every time a file changes. What you want
 there is retrieval, which is the topic of [RAG & Embeddings](rag.md).
 

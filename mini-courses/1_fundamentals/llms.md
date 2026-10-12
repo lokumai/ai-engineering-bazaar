@@ -108,8 +108,8 @@ there is nothing between the two: you send the prompt, and you get the reply. Th
 shows two turns.
 
 That stack has several names, and the name depends on who is talking: **context**,
-**working memory**, **message history**, or **short-term memory**. Don't rush. Short-term
-memory gets its own module: [Memory](memory.md).
+**working memory**, **message history**, or **short-term memory**. You do not have to learn these
+names now, because short-term memory gets its own module: [Memory](memory.md).
 
 The SystemMessage deserves a closer look, because it is not one plain piece of text. It
 normally holds the behaviour instructions *and* the **tool schemas**. The tool schemas are
@@ -152,9 +152,10 @@ That split is the whole basis of how agents work. We come back to it in
 
 ## LLM Hyperparameters
 
-You can change how the model responds with **hyperparameters**. Note the "hyper" part.
-Hyperparameters affect generation. The parameters above are different: they are the model's
-size.
+You can change how the model responds with **hyperparameters**. Note the "hyper" part, because
+it tells you that these are not the parameters from earlier. Hyperparameters affect generation.
+The parameters above are different: they are the numbers inside the network, and their count is
+the model's size.
 
 You will use two of them all the time:
 
@@ -201,8 +202,8 @@ The numbers make this clear. Take a 32B model as an example:
 | 16-bit (as it ships) | ~64 GB | No |
 | 4-bit (quantized) | ~16 GB, plus a little for context | Yes, easily on a 24 GB or 32 GB card |
 
-Same model, same weights, one quarter of the memory. That is the difference between "I
-cannot run this at all" and "this runs on my desktop".
+The model and its weights stay the same, but they now need only one quarter of the memory. That
+is the difference between "I cannot run this at all" and "this runs on my desktop".
 
 **Do you have to quantize models yourself?** No, and you almost never should.
 [Ollama](https://ollama.com/) and [Unsloth](https://unsloth.ai/) already publish
@@ -285,7 +286,7 @@ want the most likely one:
 best prompt = the prompt that maximises P(the output you want | prompt)
 ```
 
-That is the whole discipline in one line. There are many named techniques, and we cover
+That one line describes the whole field of prompt engineering. There are many named techniques, and we cover
 them in [Prompt Engineering](../2_intermediate/prompt_engineering.md). But most of the real
 work is experimenting: try a wording, look at the output, change it, and try again.
 

@@ -36,7 +36,7 @@ Bu ikisiyle kolayca karıştırılabilen farklı bir tür router daha var. **[Ag
 - web araması
 - seyahat rezervasyonu
 
-Model inference, onun kapsadığı alanlardan yalnızca biridir ve asıl fark da kapsamda yatar. OpenRouter ya da Portkey gibi bir LLM router model çağrılarını yönlendirirken, AgentRouter bir agent'ın ihtiyacı olduğuna karar verdiği her türlü ücretli API'yi yönlendirir.
+Model inference, onun kapsadığı alanlardan yalnızca biridir. Yani bu iki tür router arasındaki asıl fark, her birinin kaç türde API'yi kapsadığıdır. OpenRouter ya da Portkey gibi bir LLM router model çağrılarını yönlendirirken, AgentRouter bir agent'ın ihtiyacı olduğuna karar verdiği her türlü ücretli API'yi yönlendirir.
 
 AgentRouter cüzdanını o tutar ve ona gönderdiğin her çağrıyı görür. Üstelik sitesi arkasındaki şirketin adını da vermiyor. Bu yüzden onu, verilerini işleyen herhangi bir üçüncü taraf gibi düşün.
 
@@ -59,7 +59,7 @@ Tek bir model üzerine kuruyorsan ve deneme aşamasını geçtiysen, çoğu zama
 
 Herkesin verdiği sayı milyon token başına fiyattır, ama aynı zamanda tek başına karar vermek için en az işe yarayan sayı da budur. Faturada ve üründe ortaya çıkan şeyler şunlardır:
 
-- **Prompt caching.** System prompt'un uzunsa ve değişmiyorsa, onu önbelleğe alan bir provider her tekrar için yalnızca fiyatın küçük bir kısmını ücretlendirir. Her turda aynı 5.000 token'lık talimat bloğunu gönderen bir agent'ı düşün. Bu agent için prompt caching, maliyeti düşürmenin tek başına en büyük yoludur. Ayrıca [Harness Engineering](../2_intermediate/harness_engineering_tr.md) bölümündeki harness karşılaştırmasının bir bulgusunu da açıklar. Orada en hızlı araç, başarı başına en pahalı olandı, çünkü önbelleğini neredeyse hiç yeniden kullanmıyordu.
+- **Prompt caching.** System prompt'un uzunsa ve değişmiyorsa, onu önbelleğe alan bir provider her tekrar için yalnızca fiyatın küçük bir kısmını ücretlendirir. Her turda aynı 5.000 token'lık talimat bloğunu gönderen bir agent'ı düşün. Bu agent için prompt caching, maliyeti düşürmenin tek başına en büyük yoludur. Ayrıca [Harness Engineering](../2_intermediate/harness_engineering_tr.md) bölümündeki harness karşılaştırmasının bir bulgusunu da açıklar. Orada en hızlı araç, başarıyla tamamladığı her görev için en yüksek maliyete sahip olandı, çünkü önbelleğini neredeyse hiç yeniden kullanmıyordu.
 - **Rate limit'ler.** Bunlar, dakika başına istek ve token sayısına konan sınırlardır. İstekler bir kuyrukta bekliyorsa, token başına iyi bir fiyat sana pek yardımcı olmaz.
 - **Gecikme ve hangi türünün önemli olduğu.** Bir sohbette beklerken insanın hissettiği şey ilk token'a kadar geçen süredir (time to first token), bir batch işinin hissettiği şey ise toplam süre. Bunlar farklı sayılar olduğu için provider'lar ikisinde birden iyi olmakta pek başarılı değil.
 - **Context window ve çıktı sınırı.** Bunlar birbirinden ayrı iki sınırdır ve çıktı sınırını insanlar çoğu zaman, uzun bir cevap yarıda kesilene kadar unutur.
@@ -97,7 +97,7 @@ Bilmen gereken gateway OpenRouter'dır ve bir gateway sana şunları verir:
 - bir provider çalışmadığında failover
 - aynı açık ağırlıklı model için satıcı seçimi
 
-Bunun bedeli bir ek adımdır (hop). Portkey aynı işi kendi provider key'lerinle yapar ve gateway'i açık kaynak olduğu için onu kendin barındırabilirsin. AgentRouter ise başka bir şeydir: bir agent'ın çağırdığı her ücretli API'yi yönlendirir, yalnızca model çağrılarını değil.
+Bunun bedeli bir ek adımdır (hop), çünkü her istek provider'a giderken gateway'in sunucularından geçer. Portkey aynı işi kendi provider key'lerinle yapar ve gateway'i açık kaynak olduğu için onu kendin barındırabilirsin. AgentRouter ise başka bir şeydir: bir agent'ın çağırdığı her ücretli API'yi yönlendirir, yalnızca model çağrılarını değil.
 
 Doğrudan gitmek ise yalnızca üreticinin sunduğu şeyleri sana verir:
 

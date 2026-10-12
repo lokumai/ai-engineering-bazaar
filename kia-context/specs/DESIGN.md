@@ -11,7 +11,7 @@ source: playground/01-theme-T4-ground-G3-powder.html (light) · playground/01-th
 authority: blueprint
 writes: agent, as the language evolves
 status: active
-covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with eight recorded deviations (the sixth and seventh, the logo and the rail group, 2026-10-11; the eighth, the pager, 2026-10-12), the three reader palettes, and the end of a reading page"
+covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with nine recorded deviations (the sixth and seventh, the logo and the rail group, 2026-10-11; the eighth, the pager, and the ninth, the Bazaar Street front door, 2026-10-12), the three reader palettes, and the end of a reading page"
 last_updated: 2026-10-12
 ---
 
@@ -494,6 +494,9 @@ entry itself for staleness; `tests/unit/color/contrast.test.ts` is what proves t
 the floor. Both have to agree for either to pass. **Adding a second entry is the author's decision,
 never a way past a red test.**
 
+*(The second and third deviations are about `08`'s front door, which the ninth replaced on
+2026-10-12. They stay as the record of what was decided; `08` no longer specifies the home page.)*
+
 **A SECOND DEVIATION, AND THE FIRST ONE THAT IS A DECISION RATHER THAN A FLOOR.** `08:44` caps the
 home page's display line at `20ch`, and the language transcribed it. **The author overruled it on
 2026-09-11**: the first row spans the whole width. The measurement behind his call is that `ch`
@@ -599,12 +602,35 @@ The grid, its gap and its margin are still `01`'s. The fidelity harness
 records the three facts in `AUTHOR_DEVIATIONS`, and the label now clears the
 4.5:1 text floor in both themes, which settles **D45**.
 
-**Three of the eight are floors and five are the author's.** The code comment
-deviation, the pager's tracks and the rail's hairline were forced; the `20ch`
-cap, the authorship line, the logo, the rail group's size and the pager's look
-were chosen.
+**A NINTH DEVIATION, AND THE AUTHOR'S: THE FRONT DOOR IS A SCENE.** On 2026-10-12 the author asked
+for a home page that makes a reader say *"WoW"*, with art and with things that *"attach and release
+and move and evolve"* as the page scrolls. He was shown three standalone concepts and chose **Bazaar
+Street** (**D79**), which is now the home page's reference: `playground/10-home-bazaar-street.html`,
+replacing `08`. It departs from this document in four ways, all of them the author's choice and all
+of them scoped to `/`:
 
-**The `20ch` cap, the authorship line, the logo, the rail group's size and the pager's look are the only entries in this file that the author decided rather than a measurement forcing.**
+- **A display face.** The headline and the signs are set in **Fraunces**, against the don't-list's
+  "no serif". It is the only downloaded face on the site, fetched by `next/font` at build time and
+  served from the site itself, so a reader's browser asks Google for nothing. Every other page keeps
+  the system stack.
+- **An illustration with its own palette.** The stone, wood, brass and lantern colours live in the
+  art's SVG (`src/components/home/street/art/`), the way a mindmap keeps its own colours. Nothing a
+  reader READS is in the art: the headline, the mottos, the doors and the way in are markup on this
+  document's tokens, and where they sit on the art (which is light in both themes) they take the
+  tokens that do not flip.
+- **More than one ornament.** The scene is ornament by nature. The chrome's own band is unchanged.
+- **Motion beyond the token durations.** Lamps sway, signs swing and the street pans with the scroll.
+  Under `prefers-reduced-motion` all of it stops and the page is a still, complete picture.
+
+It adds no shadow and no new token: the sign boards are told apart by their hairline, and every CSS
+colour on the page is a token.
+
+**Three of the nine are floors and six are the author's.** The code comment
+deviation, the pager's tracks and the rail's hairline were forced; the `20ch`
+cap, the authorship line, the logo, the rail group's size, the pager's look and
+the front door were chosen.
+
+**The `20ch` cap, the authorship line, the logo, the rail group's size, the pager's look and the front door are the only entries in this file that the author decided rather than a measurement forcing.**
 The rule stands: the mockup outranks this document, a measured accessibility floor outranks the
 mockup (**D34**), and the author outranks all three — stated here so a third entry cannot be added
 by an agent reading the first two as precedent.

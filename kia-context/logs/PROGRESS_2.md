@@ -16,7 +16,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M26, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — shipped as PR #26. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M27, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — shipped as PR #26. M27 — the Bazaar Street front door — shipped as PR #27. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-10-12
 ---
 
@@ -3684,6 +3684,68 @@ Fundamentals" with Observability still to come.
 | Unit | **2,171 passed / 84 files** |
 | Build | **80 HTML files**; the base-path build carries the prefix on **5,306 of 5,306** internal `href`/`src` |
 | Browser | **1,183 passed / 60 skipped / 0 failed** once `sheets.ts` named the new title (1,176 / 7 failed before it) |
+
+
+---
+
+## 🏁 Milestone M27: The front door is Bazaar Street — SHIPPED AS PR #27
+
+Branch `feat/home-bazaar-street`, from `main` after PR #26, opened as PR #27 to merge once CI passed, on the author's word ("apply design 3, commit and push and merge"). The author's request, 2026-10-12: the
+home page was *"too verbose ... has no art"*, and he wanted it to surprise a reader. Three
+standalone concepts were built in `tmp-designs/` (not committed); he chose the third, changed its
+stalls, and asked for it to be applied, committed and merged (**D79**).
+
+### Deliverables
+
+- [x] **The page** (`src/app/page.tsx`): the headline and lede over the gate, four mottos on hanging
+      signs, one door per level from `curriculum.yaml` opening that level, and `Open the curriculum`
+      at both ends. Server-rendered and complete with no script.
+- [x] **The art** as the designer's SVG files in `src/components/home/street/art/`, read at build time
+      by `street/art.ts`.
+- [x] **The motion**, `BazaarStreetMotion` plus `street/motion.ts`: `gsap` from npm, imported on
+      demand; walk on a wide screen, stalls animating in a stack otherwise, a still picture under
+      reduced motion.
+- [x] **`home.css`** rewritten on tokens only, no shadow, no transform transition.
+- [x] **Fraunces**, home only, self-hosted by `next/font`.
+- [x] **The fidelity harness** points the home at `playground/10-home-bazaar-street.html`. There are
+      three roles (`signBoard`, `signTitle`, `plaque`) with seven facts, a mutation, and a test that
+      every motto and one door per level survive the walk. `08`'s four roles are gone with the page
+      they described.
+- [x] **The specs re-expressed rather than deleted**:
+      - `home`: the way in and the derived doors replace the old buttons and the facts strip;
+      - `theme`, `health` and `record-sheet`: the new way in;
+      - `responsive`: the street and its gate;
+      - `layout`: `/` has no trail, asserted on its own.
+- [x] **The specs updated**: DESIGN.md's ninth deviation, MANIFESTO.md's note on the home page's
+      count, and ARCHITECTURE.md's line on `/`.
+
+### Report — M27, 2026-10-12
+
+**Two things only the real page showed.**
+
+- **The shell's padding and breadcrumb.** The first screenshot put the street inside the content
+  gutter, with a `Home` crumb over it. The page now takes the shell's padding back with
+  `.bz-main:has(> .bz-street)` and passes `trail={false}`.
+- **A false positive in the collision scan.** The text scan in `responsive.spec.ts` treats any
+  element whose first child is a text node as a label. The walk template's indentation made
+  `.street` one, so its "ink" was every sign along a 7,000px street, overlapping the headline. The
+  fix is to drop the whitespace between tags in the art files. The scan keeps its full strength.
+
+**The dark theme is deliberate.** The scene is drawn light in both themes. Every word that sits on
+it takes a token that does not flip (`on-bar`, `on-bar-chip`, `bar-chip`), so a sign reads the same
+at night. The page around it follows the theme.
+
+**Weight.** The home page's HTML is 890 KB, and 146 KB gzipped, because the art is in the document
+and in React's payload. The walk's 200 KB template is only cloned on a wide screen.
+
+**The gate.**
+
+| | Measured |
+| --- | --- |
+| Typecheck | clean |
+| Unit | **2,171 passed / 84 files** |
+| Build | **80 HTML files**; the base-path build carries the prefix on **5,314 of 5,314** internal `href`/`src`, and on the font files |
+| Browser | **1,187 passed / 59 skipped / 0 failed** at 1440 / 1024 / 390 |
 
 ---
 

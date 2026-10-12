@@ -340,7 +340,17 @@ test.describe('layout invariants, on every route', () => {
    * above a heading at x=49: the same 264px misalignment on four routes, and
    * the first thing under the bar that a reader's eye lands on.
    */
-  for (const route of ['/', '/sheets/', '/sheets/expert/', '/courses/fundamentals/llms/'] as const) {
+  /* `/` is not in the list: the front door has no trail since D79. The street
+     runs edge to edge under the bar, and a crumb reading `Home` on the home
+     page names the page the bar's current chip already marks. That absence is
+     asserted on its own, below, so it cannot come back unnoticed either. */
+  test('the front door carries no trail', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.locator('main h1')).toHaveCount(1)
+    await expect(page.locator('.bz-crumb')).toHaveCount(0)
+  })
+
+  for (const route of ['/sheets/', '/sheets/expert/', '/courses/fundamentals/llms/'] as const) {
     test(`the trail starts where the page starts — ${route}`, async ({ page }) => {
       await page.goto(route)
       await page.waitForLoadState('networkidle')

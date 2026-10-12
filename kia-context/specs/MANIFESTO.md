@@ -10,7 +10,7 @@ authority: law
 writes: agent, from what the human decided
 status: active
 covers: the whole product
-last_updated: "2026-09-12"
+last_updated: "2026-10-12"
 ---
 
 # 📜 MANIFESTO — What we are building, and why
@@ -42,9 +42,10 @@ browser, without asking them for anything.
 > **The figure was `five to ten` until 2026-09-11 and it was never true.** MEASURED against the
 > corpus this document describes: nineteen modules declare a duration, the shortest twenty minutes
 > and the longest thirty, average twenty-six. The author named it as wrong; **D65** records the
-> correction and what it does not settle. The home page states the same figure by COUNTING the
-> modules rather than by quoting this line, so the site cannot drift from the corpus again — only
-> this document can.
+> correction and what it does not settle. The home page stated the same figure by COUNTING the
+> modules rather than by quoting this line until 2026-10-12, when the author's Bazaar Street front
+> door (**D79**) dropped every count from it; it now states no duration at all, so only this document
+> can drift.
 
 ## 4. Who it is for
 

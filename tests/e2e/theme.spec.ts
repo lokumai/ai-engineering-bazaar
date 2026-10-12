@@ -1,5 +1,5 @@
 import { type Page, expect, test } from '@playwright/test'
-import { A0, sheetByModule } from './sheets'
+import { A0, INDEX_SHEET } from './sheets'
 
 /**
  * These read `<html>`'s class list inside a requestAnimationFrame, with the
@@ -143,14 +143,12 @@ test('the theme carries across a navigation', async ({ page }) => {
     ;(window as unknown as { __hlSameDocument?: true }).__hlSameDocument = true
   })
 
-  // The home page's lead action, by the name it prints, so an action that
-  // stopped opening the first module fails here rather than being clicked
-  // anyway. M13 renamed it: home A's primary control names the module it opens
-  // (`Start with LLM Fundamentals`) rather than its number, because a slug is
-  // an identity and a number is a label (§12.1.3).
-  const first = sheetByModule(1)
-  await page.getByRole('link', { name: `Start with ${first.title}` }).click()
-  await expect(page).toHaveURL(new RegExp(`${first.path}$`))
+  // The home page's way in, by the name it prints, so a control that stopped
+  // opening the catalog fails here rather than being clicked anyway. It read
+  // `Start with LLM Fundamentals` until the author's Bazaar Street front door
+  // (D79), whose one way in is the catalog.
+  await page.locator('#gate').getByRole('link', { name: 'Open the curriculum', exact: true }).click()
+  await expect(page).toHaveURL(new RegExp(`${INDEX_SHEET}$`))
   await expect(page.locator('main h1')).toBeVisible()
 
   expect(

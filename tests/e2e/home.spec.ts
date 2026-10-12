@@ -78,16 +78,12 @@ test('a clean browser meets the whole page, and it claims nothing about the read
   expect(lede.length, 'the front door says nothing at all').toBeGreaterThan(40)
   expect(lede, 'the lede claims something about the reader').not.toMatch(/\byou(r)?\b/i)
 
-  // Where to start: the two actions, and the first of them opens a module
-  // rather than a menu (§15.2.4, §11.3).
-  await expect(page.getByRole('link', { name: `Start with ${SHEETS[0].title}` })).toHaveAttribute(
-    'href',
-    SHEETS[0].path,
-  )
-  await expect(page.getByRole('link', { name: 'Browse the catalog' })).toHaveAttribute(
-    'href',
-    INDEX_SHEET,
-  )
+  // Where to start: the way in is the catalog, which lists the whole course
+  // (D79). `Start with <first module>` and `Browse the catalog` were the
+  // author's to remove, and he did, with the Bazaar Street front door.
+  await expect(
+    page.locator('#gate').getByRole('link', { name: 'Open the curriculum', exact: true }),
+  ).toHaveAttribute('href', INDEX_SHEET)
 
   /* M18 — THE LEVELS ARE NOT HERE ANY MORE, and neither is the shortcut.
 
@@ -104,18 +100,18 @@ test('a clean browser meets the whole page, and it claims nothing about the read
   await expect(page.locator('.bz-cmod, .bz-home-continue')).toHaveCount(0)
   await expect(page.locator('[data-hl-cat-tally]')).toHaveCount(0)
 
-  /* The three figures the strip still prints are counted from the corpus, and
-     the only honest check a browser can make on a derivation is that it is not
-     a placeholder: every one is a positive number, and NONE of them is a count
-     of modules — the page states the size of the thing in reading time,
-     figures and sources, and says how many modules there are nowhere at all.
-     Summing the level dials against the module rows is the strong version of
-     this claim and it is in `completion.spec.ts`, on the page that draws them. */
-  const figures = await page.locator('.bz-facts-value').allInnerTexts()
-  expect(figures.length, 'the facts strip states nothing').toBeGreaterThan(2)
-  for (const figure of figures) {
-    expect(figure.trim(), 'a fact is not a measured number').toMatch(/\d/)
-    expect(Number(figure.replace(/[^\d]/g, '')), figure).toBeGreaterThan(0)
+  /* THE DOORS ARE THE LEVELS, DERIVED. The facts strip that stood here was
+     removed by the author with the old front door, so the page states no
+     count. What it does draw from the corpus is one door per level, named by
+     the level and opening it, and that is checkable against the drawing set
+     without writing a fact about the content down. */
+  const levels = [...new Set(SHEETS.map((sheet) => sheet.category))]
+  await expect(page.locator('.bz-street .door')).toHaveCount(levels.length)
+  for (const level of levels) {
+    await expect(page.locator(`.bz-street .door[data-cat="${level}"]`)).toHaveAttribute(
+      'href',
+      `${INDEX_SHEET}${level}/`,
+    )
   }
 
   // NOTHING HERE REQUIRES AN ACCOUNT, and the way the page says so is now by
@@ -305,37 +301,38 @@ test('a first write during the visit reaches the home page without a reload (§1
 // ---------------------------------------------------------------------------
 
 
-test('the lead action opens the first module of the set, and it exists', async ({
-  page,
-}) => {
+test(`the way in opens the catalog at ${INDEX_SHEET}`, async ({ page }) => {
   const problems = watchPage(page)
-  const first = SHEETS[0]
   await page.goto('/')
 
-  const lead = page.getByRole('link', { name: `Start with ${first.title}` })
-  await expect(lead).toHaveAttribute('href', first.path)
+  const way = page.locator('#gate').getByRole('link', { name: 'Open the curriculum', exact: true })
+  await expect(way).toHaveAttribute('href', INDEX_SHEET)
   // DESIGN.md, Components — one `button-primary` per screen region, and this is
-  // the home page's.
-  await expect(lead).toHaveClass(/bz-btn/)
-  await lead.click()
-  await expect(page).toHaveURL(new RegExp(`${first.path}$`))
-  await expect(page.locator('main h1')).toHaveText(first.title)
+  // the gate's.
+  await expect(way).toHaveClass(/bz-btn/)
+  await way.click()
+  await expect(page).toHaveURL(new RegExp(`${INDEX_SHEET}$`))
+  // What the door opens on is the catalog's default view (D13); the table is
+  // one keystroke away and `catalog.spec.ts` owns the toggle.
+  await expect(page.locator('.bz-view[data-view="overview"]')).toBeVisible()
 
   expect(problems.consoleErrors).toEqual([])
   expect(problems.failedRequests).toEqual([])
 })
 
-test(`the second action opens the catalog at ${INDEX_SHEET}`, async ({ page }) => {
+test('a level door opens that level, and the page it leaves still works', async ({ page }) => {
   const problems = watchPage(page)
+  await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
 
-  const catalog = page.getByRole('link', { name: 'Browse the catalog' })
-  await expect(catalog).toHaveAttribute('href', INDEX_SHEET)
-  await catalog.click()
-  await expect(page).toHaveURL(new RegExp(`${INDEX_SHEET}$`))
-  // What the door opens on is the catalog's default view (D13); the table is
-  // one keystroke away and `catalog.spec.ts` owns the toggle.
-  await expect(page.locator('.bz-view[data-view="overview"]')).toBeVisible()
+  const level = SHEETS[0].category
+  const door = page.locator(`.bz-street .door[data-cat="${level}"]`)
+  await door.click()
+  await expect(page).toHaveURL(new RegExp(`${INDEX_SHEET}${level}/$`))
+  await page.goBack()
+  await expect(page.locator('main h1')).toHaveText(
+    'AI engineering, written by the people who build it.',
+  )
 
   expect(problems.consoleErrors).toEqual([])
   expect(problems.failedRequests).toEqual([])

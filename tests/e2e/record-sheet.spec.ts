@@ -468,7 +468,7 @@ test('channel A stays true across a client transition (§12.2)', async ({ page }
   await page.getByRole('link', { name: 'Home', exact: true }).first().click()
   await expect(page.locator('h1.bz-hero-title')).toBeVisible()
 
-  await page.getByRole('link', { name: 'Browse the catalog' }).click()
+  await page.getByRole('link', { name: 'Open the curriculum', exact: true }).first().click()
   await expect(page).toHaveURL(new RegExp(`${INDEX_SHEET}$`))
   // M12 — the catalog renders three views over one array and CSS reveals one
   // (D13). The row link is in the table view, which is not the one showing by

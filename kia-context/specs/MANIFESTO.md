@@ -17,7 +17,7 @@ last_updated: "2026-10-12"
 
 > **Rules 1 to 7 are not new here.** They were written by the author in
 > `mini-courses/MANIFEST.md`, which is a public document for readers. This file restates them as the
-> boundary an agent may not cross, and adds the working rules 8 to 15 that came out of building it.
+> boundary an agent may not cross, and adds the working rules 8 to 16 that came out of building it.
 > Where the two disagree, `MANIFEST.md` is the one the readers see and the one that wins.
 
 ---
@@ -88,7 +88,7 @@ reason. See `genesis/GENESIS.md` §1 and §2 for where this came from.
 7. **Only what matters.** A cheatsheet, not a textbook. Knowing what to leave out comes from building
    things.
 
-**Rules 8 to 15 came out of the work, and each one exists because breaking it cost something.**
+**Rules 8 to 16 came out of the work, and each one exists because breaking it cost something.**
 
 8. **Never dense. Being concise is not a goal here.** Plain English and compressed English are not the
    same thing, and compression is the failure mode this project keeps hitting. Loosening a module makes

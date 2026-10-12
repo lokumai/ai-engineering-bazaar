@@ -3,11 +3,13 @@ description: >
   Part 2 of the execution log, and the ACTIVE part: a new milestone is appended here. It opens with
   M16, the interface rebuilt on the design language in ten stages — the stage table, every stage's
   brief, and the seven reports the stages wrote back, including what each one found that its own
-  brief had wrong, and then the review pass over the finished milestone and the two defects it found
+  brief had wrong, and then the review pass over the finished milestone and the thirteen defects it confirmed
   inside a green gate. Then M17, the curriculum fold, and M18, the front door and the chrome, each
   with its report. It closes with M19 to M22 — the second language, the catalog's descriptions, the
   module page and rail, and the progress redesign — all four SHIPPED — then M23, the interface's own
-  strings, written and not started, and M24, the author's requests of 2026-10-11, shipped and merged.
+  strings, written and not started, and M24 to M27, the author's requests of 2026-10-11 and
+  2026-10-12, all shipped and merged: the end of a module and its quiz, the readability pass, and the
+  Bazaar Street front door.
   Every milestone carries its deliverables and acceptance criteria as `- [ ]` checkboxes, ticked as
   the work lands, and closes with a dated report; the loop that governs that is in part 1 and is not
   restated here. Part 1 holds M1 to M15 and is closed.
@@ -16,14 +18,14 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M27, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — shipped as PR #26. M27 — the Bazaar Street front door — shipped as PR #27. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M27, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-10-12
 ---
 
-# 📈 PROGRESS, part 2 — M16 to M23
+# 📈 PROGRESS, part 2 — M16 to M27
 
 > **← Part 1: [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the review pass over M10 to M14.
-> This part holds **M16 to M23**, in the order they were worked.
+> This part holds **M16 to M27**, in the order they were worked.
 
 ## How to work this file
 
@@ -63,6 +65,10 @@ deliverables as a numbered list; M18 wrote none at all; M19 to M22 had none eith
 | **M21** | The module page and the rail beside it | **Done** — 2026-09-13. One item is still not written down: see its report |
 | **M22** | Your progress, redesigned | **Done** — 2026-09-13 |
 | **M23** | The interface's own strings, in Turkish | Written, not started — several hundred strings, and the author's own language |
+| **M24** | The author's requests of 2026-10-11 | **Done** — 2026-10-11, merged as PR #23, with a follow-up as PR #24 |
+| **M25** | The end of a module, rebuilt, and a quick quiz | **Done** — 2026-10-12, merged as PR #25 |
+| **M26** | Headings, requested additions, and ASD-STE-like English | **Done** — 2026-10-12, merged as PR #26 |
+| **M27** | The front door is Bazaar Street | **Done** — 2026-10-12, merged as PR #27 |
 
 ---
 
@@ -1391,8 +1397,8 @@ build clean at **56 HTML files**, browser **1,115 passed, zero failures**.
 
 # 🧭 What comes after M16
 
-Two milestones, from the author's list of 2026-09-11. **They are written and not
-started**, and the codebase was read before each claim in them: every file path,
+Two milestones, from the author's list of 2026-09-11. ~~**They are written and not
+started**~~ *(both shipped: M17 on 2026-09-11, M18 on 2026-09-12)*, and the codebase was read before each claim in them: every file path,
 line number and count below was checked rather than recalled.
 
 They split where the work splits. **M17 is one decision about routes** and
@@ -1400,7 +1406,7 @@ everything that follows from it; **M18 is the surfaces a reader meets** — the
 home page, the bar, and the two ends of a module — plus the one item on the list
 that is not a surface at all, which is that the site has never rendered Turkish.
 
-## 🏁 Milestone M17: One catalog, and the pages that fold into it
+## 🏁 Milestone M17: One catalog, and the pages that fold into it — SHIPPED
 
 **The curriculum pages are the catalog in table format.** `/courses/` and
 `/courses/[category]/` render `SheetIndex` directly — no filters, no views —
@@ -1676,7 +1682,7 @@ written, and the review found what I had not thought to look at.
   removed from the CARDS, so it may be the next thing he names; it is one line
   to delete and nothing else reads it.
 
-## 🏁 Milestone M18: The front door, the chrome, and the second language
+## 🏁 Milestone M18: The front door, the chrome, and the second language — SHIPPED
 
 M17 settles where the course is listed. M18 is everything a reader meets before
 they get there — the home page, the bar, and the two ends of a module — plus the
@@ -2320,7 +2326,7 @@ invisible wherever "absent" is a legitimate answer.
 
 # 🧭 What comes after M18
 
-Four milestones are written and not started: **M19** (the second language, lifted
+Four milestones ~~are written and not started~~ *(all four shipped on 2026-09-13)*: **M19** (the second language, lifted
 out of M18) and **M20 to M22**, from the author's list of 2026-09-13. The
 codebase was read before each claim below — every file path, line number and
 count was checked rather than recalled, and three of the checks changed what the
@@ -3581,9 +3587,9 @@ milestone, which does not touch the page it reads.
 
 ---
 
-## 🏁 Milestone M26: Headings, requested additions, and ASD-STE-like English — SHIPPED AS PR #26
+## 🏁 Milestone M26: Headings, requested additions, and ASD-STE-like English — SHIPPED, MERGED AS PR #26
 
-Branch `content/headings-and-readability`, from `main` after PR #25, opened as PR #26 to merge once CI passed, on the author's word ("ask a subagent to review then merge to main"). Corpus only:
+Branch `content/headings-and-readability`, from `main` after PR #25, merged to `main` as PR #26 (`e055c93`) once CI passed, on the author's word ("ask a subagent to review then merge to main"). Corpus only:
 no file under `src/` or `tests/` changed for it. The author's request,
 2026-10-12, in one message: new headings for fifteen modules, a list of content
 additions, title case for headings, and then *"an English similar to ASD-STE
@@ -3688,9 +3694,9 @@ Fundamentals" with Observability still to come.
 
 ---
 
-## 🏁 Milestone M27: The front door is Bazaar Street — SHIPPED AS PR #27
+## 🏁 Milestone M27: The front door is Bazaar Street — SHIPPED, MERGED AS PR #27
 
-Branch `feat/home-bazaar-street`, from `main` after PR #26, opened as PR #27 to merge once CI passed, on the author's word ("apply design 3, commit and push and merge"). The author's request, 2026-10-12: the
+Branch `feat/home-bazaar-street`, from `main` after PR #26, merged to `main` as PR #27 (`cde2985`) once CI passed, on the author's word ("apply design 3, commit and push and merge"). The author's request, 2026-10-12: the
 home page was *"too verbose ... has no art"*, and he wanted it to surprise a reader. Three
 standalone concepts were built in `tmp-designs/` (not committed); he chose the third, changed its
 stalls, and asked for it to be applied, committed and merged (**D79**).

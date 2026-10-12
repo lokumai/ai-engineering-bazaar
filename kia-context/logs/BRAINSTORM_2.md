@@ -145,7 +145,11 @@ attribute, no ARIA claim — satisfies both.
 **Rule that follows:** M16, the top-navigation row. `specs/DESIGN.md` already says the current
 destination is a solid powder chip on cobalt and needs no change.
 
-### O2 · Where the retired progress vocabulary lands — opened 2026-09-08, HALF ANSWERED 2026-09-09
+### ~~O2 · Where the retired progress vocabulary lands~~ — opened 2026-09-08, half answered 2026-09-09, closed 2026-09-13
+
+**Closed by M21 (2026-09-13).** The author had the module's info strip cut to its minutes and its
+words (`src/components/sheet/FactsStrip.tsx`), so all four unnamed rows below are gone and the strip is
+no longer in tracked-out mono. What follows is kept as the record of the question.
 
 **The first half is closed. See D22.** M13 took `XP`, `Rank` and `II at 16` off every instrument on
 the site, `Uptime` was already `Streak` from M9, and `Reading time` replaced XP — the modules' own
@@ -666,6 +670,9 @@ moved out of the label slot into the destination slot for exactly this reason �
 and the label is asserted to be the language's own faint token and nothing
 quieter still. The remaining tension is written down in the test and in
 `CLAUDE.md` rather than resolved by whoever was passing.
+
+**Settled 2026-10-12 (M25, D76).** The author redesigned the pager, and its direction label now
+clears 4.5:1 in both themes; DESIGN.md records it as the eighth deviation.
 
 The same reasoning settled three smaller collisions in the same sitting, each
 of which had the retired drawing set on one side and the language on the other:

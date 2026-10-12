@@ -24,15 +24,15 @@ The internet already has plenty of AI content. Adding more only makes sense if i
 
 ## Structure
 
-| Category | Sheets | Description |
+| Category | Modules | Description |
 | --- | --- | --- |
 | [Fundamentals](mini-courses/1_fundamentals/README.md) | 8 | LLMs, training, RAG, tools, memory, agents, multi-agent systems, observability. **Start here.** |
-| [Intermediate](mini-courses/2_intermediate/README.md) | 8 | Prompt engineering, context engineering, coding agents, harness engineering, loop engineering, generative UI, security, personal agents. |
+| [Intermediate](mini-courses/2_intermediate/README.md) | 8 | Prompt engineering, context engineering, code agents, harness engineering, loop engineering, generative UI, security, personal agents. |
 | [Ecosystem](mini-courses/4_ecosystem/README.md) | 5 | Agent frameworks, inference providers, inference engines, UI design, choosing a tech stack. |
 | [IN PROGRESS] [Expert](mini-courses/3_expert/README.md) | 11 | Advanced tools, memory, multi-agent, prompting, context engineering, coding agents, harness engineering, agent architectures, UI, deployment, training. |
 | [IN PROGRESS] [Protocols & Specs](mini-courses/5_protocols_specs/README.md) | 1 | A single reference of every protocol and spec mentioned across the series. |
 
-Every module is written in English first, with a Turkish version alongside it once the English is final. Each category page says how many of its sheets are finished, so the number is never stale here.
+Every module is written in English first, with a Turkish version alongside it once the English is final. Each category page says how many of its modules are finished, so the number is never stale here.
 
 ### How to Use
 
@@ -46,9 +46,9 @@ Every module is written in English first, with a Turkish version alongside it on
 
 ## Your progress stays in your browser
 
-The site keeps a record of which sheets you have signed off, your answers to the quick checks, the sources you opened, and the repositories you register against each module. All of it lives on your own device. Signed out, it goes nowhere else: no account, and no network call while you read.
+The site keeps a record of which modules you have marked complete. All of it lives on your own device. Signed out, it goes nowhere else: no account, and no network call while you read. Each written module also ends with a short quiz, and your answers to it are not stored at all.
 
-Signing in is optional and nothing is gated behind it. Every sheet works exactly the same signed out. An account only means the record survives a cleared cache, a second machine or a lost laptop.
+Signing in is optional and nothing is gated behind it. Every module works exactly the same signed out. An account only means the record survives a cleared cache, a second machine or a lost laptop.
 
 Because browser storage can be cleared without warning, **export is a real feature**. Everything about your own record is on one page, `/profile/`: from there you can write the whole record to a file, and the `RECORD OF WORK` is a single HTML file you keep, which works offline years later and can be imported into another browser.
 

@@ -38,7 +38,7 @@ survives the browser, and joining an organisation lets its managers follow it.
 
 ```
 mini-courses/*.md  ──build──▶  static export  ──▶  the reader's browser
-   (read-only)                  56 pages            record in localStorage
+   (read-only)                  80 pages            record in localStorage
                                                           │
                                                     optional account
                                                           ▼
@@ -155,7 +155,7 @@ mini-courses/                    src/
 | Lives in | `mini-courses/` | `src/`, `tests/`, `scripts/`, `supabase/` |
 | Written by | the author, by hand | a colleague |
 | Governed by | `mini-courses/CLAUDE.md` and `MANIFEST.md` | the root `CLAUDE.md` |
-| Measured | 77 markdown files (`find mini-courses -name '*.md' -not -path '*scratchpad*' \| wc -l`) | 175 TypeScript files, 39,344 lines (`find src -name '*.ts' -o -name '*.tsx' \| xargs wc -l`) |
+| Measured | 77 markdown files (`find mini-courses -name '*.md' -not -path '*scratchpad*' \| wc -l`) | 194 TypeScript files, 43,678 lines (`find src -name '*.ts' -o -name '*.tsx' \| xargs wc -l`) |
 
 **The application never restates a fact that lives in markdown.** No module count, no title, no
 category total is typed into `src/`. Everything is derived at build time. This is enforced socially by
@@ -184,10 +184,9 @@ Adding `module:` or `status:` back to a markdown file fails the build. Reorderin
 one line.
 
 **A module file** is markdown. A `ready` module has a frontmatter fence carrying `summary` and
-`objectives`; a `draft` has no fence at all. Every module has an `_tr.md` Turkish sibling, and the
-application **skips every `_tr.md`**: Turkish is readable on GitHub only, and the site shows a
-language badge computed by comparing the two files' extents (`src/lib/content/derive.ts`,
-`langCoverage`).
+`objectives`; a `draft` has no fence at all. Every module has an `_tr.md` Turkish sibling. Since
+**M19** the application renders the Turkish of every `ready` module as its own page under `/tr/`
+(`src/app/tr/courses/[category]/[module]/page.tsx`); a draft's Turkish is not rendered.
 
 **A reader's record** is the only mutable state in the system, and §5 describes it.
 
@@ -273,9 +272,8 @@ things zod cannot express, each error naming the module at fault:
 7. a module with no `_tr.md` sibling.
 
 **The link resolver** (`src/lib/content/links.ts`) throws on an internal markdown link that names no
-module, which fails the build rather than shipping a dead link. `tests/corpus/links.test.ts` also
-asserts that no rendered HTML anywhere carries a non-external `href` ending in `.md`; it checks every
-surface that renders markdown, because a body-only gate once passed while four dead links shipped.
+module, which fails the build rather than shipping a dead link. `tests/corpus/renders.test.ts` also
+asserts that no rendered module body carries a non-external `href` ending in `.md`.
 
 **The copy register** (`tests/unit/copy-register.test.ts`) rejects exclamation marks, praise,
 anthropomorphism, the words "just", "simply", "easy", "please" and "sorry", confirmshaming, and any
@@ -286,7 +284,7 @@ number rather than by title, a number in a filename or frontmatter, a raw `<img>
 literal surviving into a rendered diagram, an image path that does not exist, and a missing Turkish
 sibling.
 
-**`border-width: var(--stroke-struct)` fails** (`tests/unit/color/stroke-weights.test.ts`). Chrome
+**`border-width: var(--stroke-struct)` fails** (`tests/unit/stroke-weights.test.ts`). Chrome
 floors border widths to whole pixels, so the 1.5px weight must be painted as a gradient or a height,
 never as a border.
 
@@ -511,7 +509,7 @@ Four components import `CategorySlug` from `categories.ts` and all four use `imp
 erased; a value import from `curriculum-file.ts` into a client island pulls the file system into the
 browser bundle and stops the build.
 
-**17 routes** (`find src/app -name page.tsx | wc -l`), producing 57 HTML pages. `/` is a home page
+**19 routes** (`find src/app -name page.tsx | wc -l`), producing 80 HTML pages. `/` is a home page
 built from components; `mini-courses/index.md` is no longer the published home page and is read only as
 a link target. Since **D79** `/` is Bazaar Street: its words, its level doors (one per category in
 `curriculum.yaml`) and its way in are server-rendered markup, its illustration is SVG read from
@@ -519,9 +517,10 @@ a link target. Since **D79** `/` is Bazaar Street: its words, its level doors (o
 motion is one client island that imports `gsap` on demand and turns the stacked page into a walk on a
 wide screen.
 
-**Three of the seventeen are forwards, and a static export has no other way to redirect.** M14 folded
-`/dashboard/`, `/report/` and `/path/` into `/profile/`; `output: 'export'` means `next.config`'s
-`redirects` are never applied and a page's own `redirect()` throws at build time, so each of the three
+**Five of the nineteen are forwards, and a static export has no other way to redirect.** M14 folded
+`/dashboard/`, `/report/` and `/path/` into `/profile/`, and M17 folded `/courses/` and
+`/courses/[category]/` into the catalog; `output: 'export'` means `next.config`'s
+`redirects` are never applied and a page's own `redirect()` throws at build time, so each of the five
 renders `MovedTo` instead — an inline script (the only one of the three mechanisms that can carry the
 fragment), a `<meta http-equiv="refresh">` for a reader with scripting off, and a visible link. The
 target goes through `lib/url.ts`'s `href()`, because `basePath` rewrites only what the router touches
@@ -541,7 +540,7 @@ against the corpus's own set. A path whose every step is readable is the goal, n
 
 **All nine live on one surface and channel A shows one.** They were `/path/` until M14 and are the
 `role` row of `/profile/`'s register now: every body is in the prerendered document and
-`.hl-path-body[data-role="<id>"]` is revealed against the `hl-role-<id>` class the boot script stamps
+`.bz-path-body[data-role="<id>"]` is revealed against the `hl-role-<id>` class the boot script stamps
 before first paint. There are no per-role routes and there must not be — a static export would
 prerender a nine-way fan-out once for every reader, putting eight pages on the site describing
 somebody else's route.
@@ -552,7 +551,7 @@ somebody else's route.
 
 **The reader-facing rename landed on 2026-09-08** (`logs/PROGRESS.md` M9, vocabulary set C). The right
 column is what a reader now sees. **The left column is still what the code says**, everywhere:
-`sheetStamps`, `data-drawn`, `hl-sheet`, `kind: 'sign-off'`, `sheet_slug`. That is deliberate and it is
+`sheetStamps`, `data-drawn`, `kind: 'sign-off'`, `sheet_slug`. That is deliberate and it is
 not laziness — a storage key or a DB column carries a reader's saved history, and renaming one to match
 a label would invalidate every record for a cosmetic gain. So the two columns are both live, and the
 line between them is: **anything a reader can see uses the right column, anything the machine reads
@@ -602,8 +601,8 @@ Three words did **not** move, and each for a reason:
 register matches on word boundaries, and neither carried one where `sign-off` or `drawing set` could
 be found inside it.
 
-- `UNSIGN`, the button beside the completion control, is now **Un-complete** — which is the word the
-  keyboard sheet had been printing beside `s` all along.
+- `UNSIGN`, the button beside the completion control, became **Un-complete**, and since **D76** there
+  is no separate button: one checkbox marks a module complete and clears it.
 - `— END OF SET`, the cell where the prev/next chain runs out, is now **End of the course**.
 
 The hole itself is not closed: the ban is a lexer, so a retired word inside a longer token, inside a
@@ -653,8 +652,8 @@ misleading; use `gh api repos/.../rulesets`.
 
 ## 11. The test suite, and the one rule it lives by
 
-**76** test files (`find tests -name '*.test.ts*' | wc -l`) holding **2,033** unit and corpus tests,
-plus **26** Playwright spec files, in four suites that each answer something the others cannot.
+**85** test files (`find tests -name '*.test.ts*' | wc -l`; vitest runs 84 of them) holding **2,171**
+unit and corpus tests, plus **37** Playwright spec files, in four suites that each answer something the others cannot.
 
 | Suite | Runs | Answers |
 |---|---|---|

@@ -211,7 +211,7 @@ def send_email(to: str, subject: str, body: str) -> str:
     return gmail.users().messages().send(userId='me', body=compose(to, subject, body)).execute()
 ```
 
-**En faydalı tool'ların çoğu bir API'nin sarmalayıcısıdır.** Son örnekte on parçanın dokuzu Gmail'ın kendi API'si, onda biri ise tool'dur. Tool kısmı bir fonksiyon imzası, bir docstring ve bir çağrıdan ibarettir. Aynı yapı, bir agent'e şunlara erişim verebilir:
+**En faydalı tool'ların çoğu bir API'nin sarmalayıcısıdır.** Son örnekte işin onda dokuzunu Gmail'in kendi API'si yapar, tool ise yalnızca kalan onda biri ekler. Tool kısmı bir fonksiyon imzası, bir docstring ve bir çağrıdan ibarettir. Aynı yapı, bir agent'e şunlara erişim verebilir:
 
 - Jira'n (issue açma, arama, yorum ekleme)
 - takvimin
@@ -220,7 +220,7 @@ def send_email(to: str, subject: str, body: str) -> str:
 
 API'si olan her şey modelin erişebileceği bir şeye dönüşebilir. Bu, bir agent'i işte faydalı hale getirmenin genellikle en hızlı yoludur, çünkü ihtiyacın olan API neredeyse her zaman zaten vardır.
 
-Bundan iki sonuç çıkar. Birincisi, bir tool ona verdiğin kimlik bilgileri kadar güçlüdür: hesabından mail gönderebilen bir tool, herkese her şeyi gönderebilir. İkincisi, bu tool'ları kendin yazmak zorunda kalman artık nadir. [Code Agent'lar](../2_intermediate/coding_agents_tr.md) MCP'yi anlatır ve MCP ile, sarmalamak üzere olduğun API'yi biri çoktan sarmış olur.
+Bundan iki sonuç çıkar. Birincisi, bir tool ona verdiğin kimlik bilgileri kadar güçlüdür: hesabından mail gönderebilen bir tool, herkese her şeyi gönderebilir. İkincisi, bu tool'ları kendin yazmak zorunda kalman artık nadir. [Code Agent'lar](../2_intermediate/coding_agents_tr.md) MCP'yi anlatır. MCP, tool'ları paketlemenin standart bir yoludur ve bir kez yazılan bir tool'un her agent'ta çalışmasını sağlar. MCP ile, sarmalamak üzere olduğun API'yi biri çoktan sarmış olur.
 
 Dokümantasyon araması yapan tool'a da ikinci bir bakmaya değer, çünkü bu, [Retrieval-Augmented Generation (RAG)](rag_tr.md) modülündeki RAG akışının bir tool'a dönüştürülmüş hali. Artık *ne zaman* arama yapılacağına model karar veriyor ve her soruda arama yapmak zorunda değilsin. Bir RAG uygulamasını agent'ten ayıran şeyin büyük kısmı, işte bu küçük değişiklik.
 

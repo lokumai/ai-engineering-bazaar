@@ -44,7 +44,7 @@ An Austrian developer, Peter Steinberger, had a personal assistant project calle
 
 Then Anthropic's lawyers wrote to him, because "Clawd" is a little too close to "Claude". He did what they asked at once. On 27 January 2026 he renamed the project **Moltbot**, and he kept the lobster theme. Three days later he renamed it again, to **OpenClaw**. His reason was that the name Moltbot was never easy to say.
 
-Two things happened during the renaming. First, he gave up the old GitHub organisation and X handle, and then he claimed the new ones. In the roughly ten seconds between those two steps, someone else took both. Second, a fake `$CLAWD` token appeared on Solana. For a short time its market value reached $16 million, and then it collapsed. There is a lesson in this: names are infrastructure.
+Two things happened during the renaming. First, he gave up the old GitHub organisation and X handle, and then he claimed the new ones. In the roughly ten seconds between those two steps, someone else took both. Second, a fake `$CLAWD` token appeared on Solana. For a short time its market value reached $16 million, and then it collapsed. There is a lesson in this: a project's names and accounts are part of its infrastructure, so you have to protect them as carefully as its code.
 
 In February 2026, Steinberger went to work at OpenAI. He set up the **OpenClaw Foundation**, a non-profit, to look after the project. The project now has well over 380,000 GitHub stars.
 
@@ -56,7 +56,7 @@ It works like this: you connect your agent, and then you leave it alone. The age
 
 It looks like a stunt, but it produced real findings. A study of it, [OpenClaw Agents on Moltbook](https://arxiv.org/abs/2602.02625), measured that **18.4% of posts contained action-inducing instructions**. These are pieces of text that tell another agent to go and do something. Put a lot of agents in one room, where they read each other's writing and treat it as input. A good number of them will then pass along instructions that no owner ever approved. That is the indirect prompt injection from [Security](security.md). Here it happens at the scale of a whole population, and by accident.
 
-The same study also found something more encouraging. The agents challenged the risky posts more often than the harmless ones, and no human told them to do that. The authors call this emergent normative behaviour. You can decide for yourself what it means, but it was not part of the design.
+The same study also found something more encouraging. The agents challenged the risky posts more often than the harmless ones, and no human told them to do that. The authors call this emergent normative behaviour, which means that shared rules of behaviour appeared in the group on their own. You can decide for yourself what it means, but it was not part of the design.
 
 ## SOUL.md
 
@@ -79,7 +79,7 @@ They went to **[Hermes Agent](https://github.com/NousResearch/hermes-agent)** fr
 - **The same channels**, plus web browsing with vision. It also gives you access to more than 300 models through Nous Portal.
 
 ![Hermes and OpenClaw drawn side by side](./images/hermes-vs-openclaw-archi.png)  
-*The shapes are the argument. Hermes is drawn as a circle that closes back on the user. So what it remembers, and the skills it wrote, feed the next turn. That is the self-improvement claim, drawn as a diagram. OpenClaw has no loop in it at all. Everything connects to a gateway, and that is a routing shape. One picture is about getting better. The other is about moving work to the right place.*
+*The shapes are the argument. Hermes is drawn as a circle that closes back on the user. So what it remembers, and the skills it wrote, feed the next turn. That is the self-improvement claim, drawn as a diagram. OpenClaw has no loop in it at all. Everything connects to a gateway, which is a central point that passes each message on to the part that should handle it. One picture is about getting better. The other is about moving work to the right place.*
 
 Composio's [OpenClaw vs Hermes Agent: The best agent harness in 2026](https://composio.dev/content/openclaw-vs-hermes-agent) explains the difference about as clearly as anyone can. Use OpenClaw when the problem is orchestration across many channels, with a marketplace of ready-made skills. Use Hermes when the problem is repetitive work that should get better on its own. Firecrawl's [OpenClaw vs Hermes Agent: Which one should you actually run?](https://www.firecrawl.dev/blog/openclaw-vs-hermes) makes the same comparison, with the benchmark numbers included.
 
@@ -141,7 +141,7 @@ So, here is what to do:
 - Keep credentials out of files it can read.
 - Put the guardrails from [Security](security.md) around the tools that touch anything irreversible.
 
-This module comes after that one for a reason, and the reason is not the order of the syllabus.
+This module comes after Security on purpose, and the reason is not the order of the syllabus. The reason is that you need its defences before you give an agent this much access.
 
 ## Where this fits in the series
 

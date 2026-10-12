@@ -27,7 +27,7 @@ This module is about removing that person.
 
 Loop engineering is the practice of designing loops that repeat automatically. Each loop carries an agent through cycles of acting, observing and adjusting, until the agent meets a defined goal. You do not prompt the agent turn by turn. Instead, you build the control system: what starts a run, what the agent gets, and above all **when it stops**.
 
-That last one is the design. Loop engineering asks one single question: **what is the stop condition?** Everything else follows from it. If you get it wrong in one direction, the loop stops before the work is done. If you get it wrong in the other direction, the loop runs until your bill arrives.
+The last of those three, when the agent stops, is the most important part of the design. Loop engineering asks one single question: **what is the stop condition?** Everything else follows from it. If you get it wrong in one direction, the loop stops before the work is done. If you get it wrong in the other direction, the loop runs until your bill arrives.
 
 Back to the car. The engine is the prompt, the body is the context, and the track and barriers are the harness. Until now, the driver was a human. Loop engineering is the AI driving. It is the difference between a car and a car that drives itself. Everything that follows is about how much of the steering you are willing to give to the AI.
 
@@ -103,7 +103,7 @@ while true; do
 done
 ```
 
-That really is most of the idea. The loop keeps prompting until the job is done. Each fresh session starts with a fresh context window. Because of this, the rot problem from [Context Engineering](context_engineering.md) never gets a chance to build up. The state lives on disk, in the plan and the code, not in a context window.
+That really is most of the idea. The loop keeps prompting until the job is done. Each fresh session starts with a fresh context window. Because of this, context rot never gets a chance to build up. Context rot is the problem from [Context Engineering](context_engineering.md) where a model gets worse at its task as its context grows. The state lives on disk, in the plan and the code, not in a context window.
 
 ![Ralph Wiggum](./images/ralph.png)  
 *The name comes from the Simpsons character. The joke is friendly, and it does not look down on the technique. The technique works exactly because it is too simple to be clever. It keeps going after setbacks that would stop something more sophisticated.*
@@ -206,7 +206,7 @@ Put the last four modules next to each other, and the direction is easy to see:
 - then better environments around the models
 - then better loops around those environments
 
-Every layer added length. One good answer became a session that stays coherent. That became hours of unattended work, and then runs measured in days.
+Each new layer let the agent work for longer before a person had to step in. One good answer became a session that stays coherent. That became hours of unattended work, and then runs measured in days.
 
 None of the layers replaced the one before it. They stacked. That is why the whole series has been one drawing, with more parts added to it.
 
@@ -242,7 +242,7 @@ The loops stack, one inside the next:
 
 Above all of that, the agent designs the loop itself. Agent teams give you peer sessions with a shared task list, and a lead that coordinates them. Dynamic workflows move the plan into a script. That gives you three things: it scales to hundreds of agents, it makes the orchestration itself the reusable part, and it lets agents check each other's work. Both are advanced multi-agent architectures. They make loop engineering possible, but they are not loop engineering. A recursive language model is different again. It is a single-agent architecture: one model calls itself through code, so it can work through more text than its window holds.
 
-Next: everything in this module made an agent harder to supervise. Security is what that costs.
+Next: everything in this module made an agent harder to supervise. The Security module is about the cost of that: the risks that appear when nobody is watching what the agent does.
 
 **Quick Check**: a verification loop and an autonomous loop both keep going until something is satisfied. What is the difference, and which one needs a maximum number of tries?
 

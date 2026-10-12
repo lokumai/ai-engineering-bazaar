@@ -18,13 +18,13 @@ questions:
         - "Her iş için tool'u hazır olan bir MCP server'a bağlanır."
       explain: "Kod, bir bilgisayarın yapabildiği neredeyse her şeye ulaşabildiği için agent bir library kurar ya da kodu kendisi yazar. PNG ve sunum işleri ise tool listesinde yoktu."
     fa:
-      question: "چرا یه coding agent می‌تونه توی کارهایی که ربطی به نرم‌افزار ندارن کمک کنه؟"
+      question: "چرا یه coding agent توی کارهایی هم کمک می‌کنه که ربطی به نرم‌افزار ندارن؟"
       options:
-        - "هر کار رایج یه tool آماده داره، مثلاً تبدیل تصویر."
-        - "کد می‌نویسه و اجرا می‌کنه، پس یه library نصب می‌کنه یا کدی رو که لازم داره خودش می‌نویسه."
-        - "هر کار رو می‌فرسته پیش یه agent جدا که tool‌هاش فقط برای همون حوزه‌ست."
-        - "به یه MCP server وصل می‌شه که از قبل برای هر کار یه tool داره."
-      explain: "کد به تقریباً هر کاری که یه کامپیوتر بتونه انجام بده می‌رسه، پس agent یه library نصب می‌کنه یا خود کد رو می‌نویسه. کارهای PNG و slide deck توی لیست tool‌هاش نبودن."
+        - "برای هر کار رایجی، مثل تبدیل عکس، یه tool آماده داره."
+        - "می‌تونه کد بنویسه و اجرا کنه، پس یه کتابخونه نصب می‌کنه یا هر چی لازم داره رو خودش می‌نویسه."
+        - "هر کار رو می‌فرسته برای یه agent جدا که tool‌هاش فقط مال همون حوزه‌ست."
+        - "به یه MCP server وصل می‌شه که از قبل برای هر کاری یه tool داره."
+      explain: "با کد تقریباً به هر کاری که از کامپیوتر برمیاد می‌شه رسید، پس agent یه کتابخونه نصب می‌کنه یا کد رو خودش می‌نویسه. کار PNG و پرزنتیشن هیچ‌کدوم توی لیست tool‌هاش نبودن."
   - answer: 3
     en:
       question: "Which content belongs in AGENTS.md?"
@@ -43,13 +43,13 @@ questions:
         - "Build ve test komutları, dizin yapısı ve nadiren değişen ekip kuralları."
       explain: "AGENTS.md, repository'nin tamamında doğru kalan şeyleri tutar. Koda artık uymayan ayrıntılarla dolu bir dosya, hiç dosya olmamasından daha kötüdür, çünkü agent dosyadaki her şeye inanır."
     fa:
-      question: "کدوم محتوا باید توی AGENTS.md باشه؟"
+      question: "چه چیزهایی جاشون توی AGENTS.md‌ه؟"
       options:
-        - "جزئیات کار این هفته، تا agent جدیدترین وضعیت کد رو بدونه."
-        - "یادداشت‌هایی که agent درباره‌ی اصلاح‌های تو می‌نویسه، تا session بعدی یادش بمونه."
-        - "یه system prompt جدید که جای system prompt‌ای رو بگیره که vendor برای agent نوشته."
-        - "دستورهای build و test، چیدمان directory‌ها، و قواعد تیمی که به ندرت عوض می‌شن."
-      explain: "AGENTS.md چیزهایی رو نگه می‌داره که توی کل repository درست می‌مونن. فایلی که جزئیاتش دیگه با کد جور نیست، از نداشتن فایل بدتره، چون agent بهش باور داره."
+        - "جزئیات کار همین هفته، تا agent از آخرین وضعیت کد باخبر باشه."
+        - "یادداشت‌هایی که agent از اصلاح‌های تو برمی‌داره، تا session بعدی یادش بمونه."
+        - "یه system prompt تازه که جای system prompt‌ی رو بگیره که سازنده‌ی agent نوشته."
+        - "دستورهای build و test، چیدمان پوشه‌ها، و قانون‌های تیم که کم پیش میاد عوض بشن."
+      explain: "AGENTS.md چیزهایی رو نگه می‌داره که توی کل repository درست می‌مونن. فایلی که جزئیاتش دیگه با کد نمی‌خونه، از نبودنش بدتره، چون agent هر چی توشه رو باور می‌کنه."
   - answer: 0
     en:
       question: "What does MCP (Model Context Protocol) change for a tool that you write?"
@@ -68,13 +68,13 @@ questions:
         - "Agent, tool'un tam açıklamasını yalnızca bir görev o tool'a ihtiyaç duyduğunda okur."
       explain: "MCP'den önce aynı Jira tool'larını her agent için yeniden yazıyordun. MCP ile tool bir MCP server'da durur ve protokolü konuşan her agent bu server'a bağlanabilir."
     fa:
-      question: "MCP (Model Context Protocol) چه تغییری توی یه tool که خودت می‌نویسی ایجاد می‌کنه؟"
+      question: "MCP (Model Context Protocol) برای tool‌ی که خودت می‌نویسی چه فرقی ایجاد می‌کنه؟"
       options:
-        - "یه بار با شکل استاندارد می‌نویسیش، و هر agent که MCP رو بلد باشه می‌تونه ازش استفاده کنه."
-        - "اسم و توضیحش دیگه هیچ جای context window رو اشغال نمی‌کنه."
-        - "سرویس پشتش دیگه به API نیاز نداره، چون مدل مستقیم سرویس رو صدا می‌زنه."
-        - "agent توضیح کامل tool رو فقط توی لحظه‌ای می‌خونه که یه کار بهش نیاز داره."
-      explain: "قبل از MCP، همون tool‌های Jira رو برای هر agent دوباره می‌نوشتی. با MCP، tool توی یه MCP server نگهداری می‌شه و هر agent که پروتکل رو بلد باشه می‌تونه بهش وصل بشه."
+        - "یه بار با یه شکل استاندارد می‌نویسیش و هر agent‌ی که MCP بلده، می‌تونه ازش استفاده کنه."
+        - "اسم و توضیحش دیگه هیچ جایی از context window رو نمی‌گیره."
+        - "سرویس پشتش دیگه API لازم نداره، چون مدل مستقیم خود سرویس رو صدا می‌زنه."
+        - "agent توضیح کامل tool رو فقط همون لحظه‌ای می‌خونه که یه کار لازمش داره."
+      explain: "قبل از MCP، باید همون tool‌های Jira رو برای هر agent از نو می‌نوشتی. با MCP، tool توی یه MCP server می‌مونه و هر agent‌ی که این پروتکل رو بلده، می‌تونه بهش وصل بشه."
   - answer: 2
     en:
       question: "What does an agent load from each installed skill when a session starts?"
@@ -93,13 +93,13 @@ questions:
         - "Yalnızca agent'ın o an çalıştığı dizine ait skill'leri."
       explain: "Bu bir kademeli açılımdır (progressive disclosure): agent tam talimatları yalnızca bir skill'in işe uyduğuna karar verdiğinde okur. Bu yüzden yirmi skill neredeyse hiçbir yer kaplamaz."
     fa:
-      question: "وقتی یه session شروع می‌شه، agent از هر skill نصب‌شده چی لود می‌کنه؟"
+      question: "وقتی یه session شروع می‌شه، agent از هر skill نصب‌شده چی رو لود می‌کنه؟"
       options:
-        - "کل فایل SKILL.md هر skill، تا همه‌ی دستورالعمل‌ها از همون اول توی window باشن."
-        - "هیچی، تا وقتی که خودت اسم skill رو به‌عنوان slash command تایپ کنی."
-        - "فقط اسم و توضیح هر skill، یه یا دو خط برای هر کدوم."
-        - "فقط skill‌هایی که مال directory‌ای هستن که agent الان توش کار می‌کنه."
-      explain: "این progressive disclosure هست: agent دستورالعمل کامل رو فقط وقتی می‌خونه که تشخیص بده یه skill به کار می‌خوره. پس بیست تا skill تقریباً هزینه‌ای نداره."
+        - "کل SKILL.md همه‌ی skill‌ها رو، تا همه‌ی دستورالعمل‌ها از همون اول توی window باشن."
+        - "هیچی، تا وقتی که خودت اسم skill رو مثل یه slash command تایپ کنی."
+        - "فقط اسم و توضیح هر skill رو، که برای هر کدوم یکی دو خطه."
+        - "فقط skill‌هایی رو که مال پوشه‌ای‌ان که agent الان داره توش کار می‌کنه."
+      explain: "این همون progressive disclosure‌ه: agent دستورالعمل کامل رو فقط وقتی می‌خونه که به این نتیجه برسه یه skill به کار فعلی می‌خوره. برای همین بیست تا skill تقریباً هیچ هزینه‌ای ندارن."
   - answer: 1
     en:
       question: "AGENTS.md asks the agent never to edit a file. A PreToolUse hook blocks that edit. What is the difference?"
@@ -118,10 +118,10 @@ questions:
         - "İkisi aynıdır, çünkü model ikisini de sistem prompt'unda okur."
       explain: "AGENTS.md, modelin çoğu zaman uyduğu bir tavsiyedir. Hook ise model isterse de istemezse de çalışan bir shell komutudur."
     fa:
-      question: "AGENTS.md از agent می‌خواد هیچ‌وقت یه فایل رو ویرایش نکنه. یه PreToolUse hook اون ویرایش رو مسدود می‌کنه. فرقشون چیه؟"
+      question: "توی AGENTS.md از agent خواستی هیچ‌وقت یه فایل رو ویرایش نکنه، و یه hook از نوع PreToolUse هم جلوی همین ویرایش رو می‌گیره. فرق این دو تا چیه؟"
       options:
-        - "hook هم مثل AGENTS.md یه توصیه‌ست که مدل بیشتر وقت‌ها ازش پیروی می‌کنه."
-        - "خط AGENTS.md یه درخواسته، ولی hook یه قانونه که هر بار اجرا می‌شه."
-        - "hook فقط وقتی کار می‌کنه که مدل تصمیم بگیره ویرایش اشتباهه."
-        - "این دو یکی‌ان، چون مدل هر دو رو توی system prompt می‌خونه."
-      explain: "AGENTS.md یه توصیه‌ست که مدل بیشتر وقت‌ها ازش پیروی می‌کنه. hook یه shell command هست که مدل بخواد یا نخواد اجرا می‌شه."
+        - "hook هم مثل AGENTS.md یه توصیه‌ست که مدل بیشتر وقت‌ها بهش عمل می‌کنه."
+        - "خطی که توی AGENTS.md نوشتی یه خواهشه، ولی hook قانونیه که هر بار اجرا می‌شه."
+        - "hook فقط وقتی کار می‌کنه که خود مدل به این نتیجه برسه که اون ویرایش اشتباهه."
+        - "این دو تا هیچ فرقی ندارن، چون مدل هر دو رو توی system prompt می‌خونه."
+      explain: "AGENTS.md توصیه‌ایه که مدل بیشتر وقت‌ها بهش عمل می‌کنه. hook یه shell command‌ه که چه مدل بخواد چه نخواد، اجرا می‌شه."

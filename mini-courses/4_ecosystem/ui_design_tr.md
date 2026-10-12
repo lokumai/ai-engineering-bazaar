@@ -11,7 +11,7 @@ Bugün bir ayarlar sayfası, yarın bir dashboard istediğini düşün. Sonunda 
 
 Tek başına bakıldığında ikisi de iyi görünüyor. Yan yana gelince ise sanki işin başında kimse yokmuş gibi duruyorlar.
 
-Bu modül, arayüzü düzgün biçimde üreten iki araçtan ve bu sorunun çözümünden söz ediyor. Çözüm ise [Code Agent'lar](../2_intermediate/coding_agents_tr.md) modülünde gördüğün yöntemin aynısı çıkıyor.
+Bu modül, arayüzü düzgün biçimde üreten iki araçtan ve bu sorunun çözümünden söz ediyor. Çözüm ise [Code Agent'lar](../2_intermediate/coding_agents_tr.md) modülündeki `AGENTS.md` fikrinin aynısı çıkıyor: agent'ın okuduğu, repository'deki sade bir dosya.
 
 ## Bir Açıklamayı Ekrana Dönüştüren İki Araç
 

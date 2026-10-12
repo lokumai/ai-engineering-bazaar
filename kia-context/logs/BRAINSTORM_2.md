@@ -10,7 +10,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D81, plus open questions O1 to O4 — 2026-09-09 to 2026-10-12"
+covers: "D26 to D83, plus open questions O1 to O4 — 2026-09-09 to 2026-10-12"
 last_updated: 2026-10-12
 ---
 
@@ -1952,6 +1952,55 @@ The check is a sentence-length measurement plus reading, never counts alone.
 It is a promise rather than a fact about the build, so it is MANIFESTO rule 17, and rule 14 now says
 a translation keeps its structure rather than "mirrors its structure exactly". All 19 written modules
 were rewritten from the English in both languages by parallel agents under that rule (M29).
+
+### D82 · Persian says the meaning in Persian expressions, and it is written by a stronger model — 2026-10-12
+
+D81's rewrite fixed the register (spoken Persian, the reader as `تو`, flowing sentences) and the
+author still rejected the Persian: *"it is still trying to say the same english sentence in
+persian. WRONG !!! it should find the persian equivalent that has the same meaning. no need to for
+example convert «گرفتنش یکیه» for 'the same grip'. it is wrong. no one in persian uses that."* The
+example is Prompt Engineering's two drivers with "the same engine, the same horsepower, the same
+grip and the same corners".
+
+**What D81 could not see.** Its brief asked for a voice and measured sentence length, and both
+improved. But a sentence can be colloquial, long and flowing and still be an English sentence in
+Persian words: an idiom carried over literally, an English skeleton ("Here is the thing.", "That is
+the whole point."), the dictionary twin of an English verb. None of that shows in a length
+measurement or a structure count; it shows to a native reader.
+
+**What was rejected.** *Another pass with the same model and a tighter register brief*: the
+nineteen Haiku agents had followed their brief faithfully, so the defect was in what the brief could
+ask a model to notice. *Patching the author's one example*: it is one instance of a pattern on every
+page.
+
+**What replaced it.** Three Opus agents rewrite the Persian paragraph by paragraph from the
+MEANING: read the English, understand the point, then write how an Iranian engineer would make that
+point with expressions Persians use. The brief names the calque families to hunt (literal idioms,
+English sentence skeletons, dictionary verb twins, literal collocations, dramatic English fragments)
+and asks each agent to report examples of what it replaced. The rule is the corpus agreement's
+first Persian bullet, "say the meaning, never the phrase"; MANIFESTO rule 17 already covers it and
+is unchanged.
+
+### D83 · Every sentence is for a beginner in every language, applied as a hunt and not a rewrite — 2026-10-12
+
+The author, while the Persian was being rewritten (D82), for all three languages: *"we hate very
+short and dense sentences. we prefer sentences that are simpler to understand by human even if it
+costs the sentence to include no buzzword, no jargon and become longer. We prefer a tone that is
+easy to understand and does not try to say many things with a few words, but similar to an academic
+paper or similar to ASD-STE english, tries to be clear, as if everyone is beginner here."*
+
+**This is not a contradiction of ASD-STE, and it is worth saying why.** ASD-STE asks for short
+sentences with ONE idea each. The failure the author names is a short sentence carrying SEVERAL
+ideas, or a buzzword standing in for an explanation: "Cheap, fast, and wrong." is short and dense; a
+sentence that says what is cheap, what is fast and why the result is wrong is longer and plainer.
+Rule 18 is the corpus agreement's "never dense" rule stated for every language and every reader.
+
+**How it was applied, and the alternative rejected.** *Another full rewrite* was rejected by the
+author himself: *"since we have made many changes, we do not have to re-write the content or all
+sentences, but do an adversary analysis and try to find those sentences in each module (maybe in each
+module there is 1 or 2 of them) and fix them only."* So three Opus agents hunt module by module for
+the few offending sentences and rewrite only those, English first and then Turkish and Persian,
+after D82's agents had finished so no two agents wrote one file.
 
 ## Open questions
 

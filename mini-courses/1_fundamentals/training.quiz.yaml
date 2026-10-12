@@ -18,13 +18,13 @@ questions:
         - "Okuduğu her metnin bir kopyasını saklar."
       explain: "Training yalnızca sayıları ayarlar, bilgi ise milyarlarca sayının arasına yayılır. Ağın şekli değişmez."
     fa:
-      question: "training داخل یه مدل دقیقاً چی رو عوض می‌کنه؟"
+      question: "training دقیقاً چی رو توی مدل عوض می‌کنه؟"
       options:
-        - "یه سری قانون و واقعیت اضافه می‌کنه که می‌تونی بخونیشون."
-        - "اندازه و شکل شبکه رو عوض می‌کنه."
+        - "یه سری قانون و اطلاعات بهش اضافه می‌کنه که می‌تونی بخونیشون."
+        - "اندازه و شکل شبکه رو تغییر می‌ده."
         - "عددهای داخل parameter‌ها رو تنظیم می‌کنه."
-        - "از هر متنی که می‌خونه یه کپی نگه می‌داره."
-      explain: "training فقط عددها رو تنظیم می‌کنه و دانش توی میلیاردها عدد پخش می‌شه. شکل شبکه هم عوض نمی‌شه."
+        - "از هر متنی که می‌خونه یه کپی برای خودش نگه می‌داره."
+      explain: "training فقط عددها رو تنظیم می‌کنه و دانش مدل بین میلیاردها عدد پخش می‌شه. شکل شبکه هم هیچ تغییری نمی‌کنه."
   - answer: 0
     en:
       question: "How is the data for pre-training different from the data for fine-tuning?"
@@ -43,13 +43,13 @@ questions:
         - "İki adım da insanların yazdığı çiftleri kullanır, ama pre-training bunlardan çok daha fazlasını kullanır."
       explain: "Pre-training'de bir sonraki kelime zaten cevaptır, bu yüzden kimse etiket yazmaz. Fine-tuning ise insanların yazdığı ya da kontrol ettiği binlerce çifti kullanır."
     fa:
-      question: "داده‌ی pre-training با داده‌ی fine-tuning چه فرقی داره؟"
+      question: "داده‌ای که pre-training لازم داره، با داده‌ی fine-tuning چه فرقی داره؟"
       options:
-        - "pre-training از متن بدون برچسب استفاده می‌کنه، و fine-tuning از جفت‌های input و output."
-        - "pre-training از جفت‌های input و output استفاده می‌کنه، و fine-tuning از متن بدون برچسب."
-        - "هر دو مرحله از متن بدون برچسب استفاده می‌کنن، ولی fine-tuning مقدار کمتری ازش رو به کار می‌گیره."
-        - "هر دو مرحله از جفت‌هایی استفاده می‌کنن که آدم‌ها نوشتن، ولی pre-training خیلی بیشتر ازشون رو به کار می‌گیره."
-      explain: "توی pre-training کلمه‌ی بعدی خودش جوابه، پس کسی برچسب نمی‌نویسه. fine-tuning از هزاران جفتی استفاده می‌کنه که آدم‌ها نوشتن یا بررسی کردن."
+        - "pre-training با متن بدون برچسب کار می‌کنه و fine-tuning با جفت‌های ورودی و خروجی."
+        - "pre-training با جفت‌های ورودی و خروجی کار می‌کنه و fine-tuning با متن بدون برچسب."
+        - "هر دو با متن بدون برچسب کار می‌کنن، فقط fine-tuning مقدار کمتری ازش می‌خواد."
+        - "هر دو با جفت‌هایی کار می‌کنن که آدم‌ها نوشتن، فقط pre-training خیلی بیشترش رو می‌خواد."
+      explain: "توی pre-training جواب خود کلمه‌ی بعدیه، پس کسی برچسب نمی‌نویسه. ولی fine-tuning با هزاران جفت کار می‌کنه که آدم‌ها نوشتن یا بررسی کردن."
   - answer: 3
     en:
       question: "What does PEFT, for example LoRA, do during fine-tuning?"
@@ -70,11 +70,11 @@ questions:
     fa:
       question: "PEFT، مثلاً LoRA، موقع fine-tuning چی کار می‌کنه؟"
       options:
-        - "همه‌ی parameter‌ها رو به‌روز می‌کنه، ولی روی یه dataset کوچیک‌تر."
-        - "مدل رو فشرده می‌کنه تا ارزون‌تر اجرا بشه."
-        - "از weight‌های تصادفی شروع می‌کنه، ولی داده‌ی کمتری مصرف می‌کنه."
-        - "بیشتر مدل رو freeze می‌کنه و چند تا parameter اضافه رو train می‌کنه."
-      explain: "PEFT تقریباً کل مدل رو freeze می‌کنه و تعداد کمی parameter جدید رو train می‌کنه، معمولاً کمتر از 1%. Quantization یه ایده‌ی دیگه‌ست که مدل رو ارزون‌تر اجرا می‌کنه."
+        - "همه‌ی parameter‌ها رو به‌روز می‌کنه، فقط روی یه dataset کوچیک‌تر."
+        - "مدل رو فشرده می‌کنه تا اجراش ارزون‌تر دربیاد."
+        - "از weight‌های تصادفی شروع می‌کنه، ولی داده‌ی کمتری لازم داره."
+        - "بیشتر مدل رو freeze می‌کنه و فقط چند تا parameter اضافه رو train می‌کنه."
+      explain: "PEFT تقریباً کل مدل رو freeze می‌کنه و فقط تعداد کمی parameter جدید رو train می‌کنه، معمولاً زیر 1%. ارزون اجرا کردن مدل کار quantization‌ه که یه بحث جداست."
   - answer: 1
     en:
       question: "Your company wants a model that knows its codebase and its policies. Both change often. What should you use?"
@@ -93,10 +93,10 @@ questions:
         - "Dokümanlar üzerinde PEFT kullan, çünkü PEFT ucuz."
       explain: "Fine-tuning bir anlık görüntüdür (snapshot) ve davranışı iyi öğretirken bilgiyi zayıf öğretir. Sık değişen bilgi için RAG ile retrieval kullan."
     fa:
-      question: "شرکتت یه مدل می‌خواد که codebase و سیاست‌هاش رو بلد باشه. هر دو هم زیاد عوض می‌شن. باید چی به کار ببری؟"
+      question: "شرکتت مدلی می‌خواد که codebase و سیاست‌هاش رو بشناسه، و هر دو هم مدام عوض می‌شن. سراغ چی می‌ری؟"
       options:
-        - "هر بار که یه فایل عوض می‌شه، مدل رو دوباره fine-tune کن."
-        - "از retrieval (RAG) استفاده کن و برای این کار fine-tune نکن."
-        - "یه مدل جدید رو روی داده‌ی خود شرکت pre-train کن."
-        - "روی سندها PEFT به کار ببر، چون PEFT ارزونه."
-      explain: "fine-tuning یه snapshot هست و رفتار رو خوب یاد می‌ده، ولی واقعیت‌ها رو ضعیف. برای دانشی که زیاد عوض می‌شه، از retrieval با RAG استفاده کن."
+        - "هر بار که یه فایل عوض شد، مدل رو از نو fine-tune می‌کنی."
+        - "از retrieval (RAG) استفاده می‌کنی و برای این کار fine-tune نمی‌کنی."
+        - "یه مدل جدید رو با داده‌های خود شرکت pre-train می‌کنی."
+        - "روی سندها PEFT اجرا می‌کنی، چون PEFT ارزونه."
+      explain: "fine-tuning یه snapshot‌ه؛ رفتار رو خوب یاد می‌ده ولی اطلاعات رو نه. برای اطلاعاتی که مدام عوض می‌شن، باید با RAG سراغ retrieval بری."

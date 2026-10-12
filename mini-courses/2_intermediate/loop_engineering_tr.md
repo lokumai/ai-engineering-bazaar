@@ -20,7 +20,7 @@ Asıl tasarım kararı işte bu son unsurdur. Loop engineering de tek bir soru s
 Arabaya geri dönelim: motor prompt'tur, gövde context'tir, pist ve engeller de harness'tir. Şimdiye kadar sürücü bir insandı, loop engineering'de ise sürücü AI'dır. Bu, sürücüsü insan olan bir araba ile kendi kendine giden bir araba arasındaki farktır. Bundan sonra anlatılan her şey, direksiyonun ne kadarını AI'a bırakmaya razı olduğunla ilgili.
 
 ![Dört yılın iş unvanları](./images/loop-unemployment.jpeg)  
-*Şaka işe yarıyor, çünkü her panelde gerçekten var olmuş bir iş anlatılıyor. Asıl argüman oklarda. Ok 2026'da insandan agent'lara gidiyor; 2026.5'te insan tek bir agent'a işaret ediyor ve o agent diğerlerine işaret ediyor. Sonraki panel ise dürüst bir soru soruyor: bu nereye gidiyor? Son iki panelde otomatikleşen şey kodlama değil, denetleme.*
+*Şaka işe yarıyor, çünkü her panelde gerçekten var olmuş bir iş anlatılıyor. Şakanın asıl söylediği şey, okların kimden kime gittiğinde saklı. Ok 2026'da insandan agent'lara gidiyor; 2026.5'te insan tek bir agent'a işaret ediyor ve o agent diğerlerine işaret ediyor. Sonraki panel ise dürüst bir soru soruyor: bu nereye gidiyor? Son iki panelde otomatikleşen şey kodlama değil, denetleme.*
 
 ## Döngüler beş seviyede oluşur
 
@@ -91,7 +91,7 @@ while true; do
 done
 ```
 
-Fikrin büyük kısmı gerçekten bu: döngü, iş bitene kadar prompt göndermeye devam eder. Her yeni oturum taze bir context penceresiyle başladığı için, [Context Engineering](context_engineering_tr.md) modülündeki bozulma (rot) sorunu birikme fırsatı bulamaz. Durum context penceresinde değil, planda ve kodda, yani diskte yaşar.
+Fikrin büyük kısmı gerçekten bu: döngü, iş bitene kadar prompt göndermeye devam eder. Her yeni oturum taze bir context penceresiyle başladığı için context rot birikme fırsatı bulamaz. Context rot, [Context Engineering](context_engineering_tr.md) modülünde gördüğün sorundur: context büyüdükçe model görevini giderek daha kötü yapar. Durum context penceresinde değil, planda ve kodda, yani diskte yaşar.
 
 ![Ralph Wiggum](./images/ralph.png)  
 *Ad, Simpsons'taki bir karakterden geliyor ama şaka dostane ve tekniğe tepeden bakmıyor. Teknik, tam da zekice olmayacak kadar basit olduğu için işe yarıyor. Daha sofistike bir sistemi durduracak aksiliklerin ardından bile devam ediyor.*
@@ -183,7 +183,7 @@ Dinamik bir workflow aynı fikri daha büyük ölçekte kullanır: betik girdiyi
 Burada karıştırması kolay iki şey var, bunları açıkça söylemekte fayda var.
 
 - **RLM, loop engineering değildir.** Bir çalışmayı neyin başlattığına ya da ne zaman durduğuna karar vermez; ama loop engineering'i mümkün kılar ve onu daha iyi hâle getirir. Günlerce çalışan bir döngü, tek bir pencerenin tutabileceğinden fazla metinle çalışmanın bir yoluna ihtiyaç duyar.
-- **RLM, tek agent'lı bir mimaridir.** Tek bir agent'ın içeride nasıl çalıştığını anlatır: kodla kendini çağıran tek bir model. Çok sayıda model çağrısı yapar, ama bu, onu yukarıdaki multi-agent mimarileriyle karıştırmamak için bir nedendir.
+- **RLM, tek agent'lı bir mimaridir.** Tek bir agent'ın içeride nasıl çalıştığını anlatır: kodla kendini çağıran tek bir model. Çok sayıda model çağrısı yapsa da onu yukarıdaki multi-agent mimarileriyle karıştırma, çünkü bütün bu çağrıları tek bir agent yapar.
 
 **CodeAct** ise bu fikrin yakın bir akrabası: [Executable Code Actions Elicit Better LLM Agents](https://arxiv.org/abs/2402.01030) makalesinde tanıtılır ve JSON tool çağrıları yerine çalıştırılabilir kodu agent'ın eylem alanı yapar. İkisi de [İleri Seviye Mimariler](../3_expert/advanced_agent_architectures_tr.md) modülünde ayrıntılı olarak işlenir. Alex Zhang'in [yazısı](https://alexzhang13.github.io/blog/2025/rlm/) makalenin daha rahat okunan hâlidir, [rlm](https://github.com/alexzhang13/rlm) ise kütüphanedir.
 
@@ -220,7 +220,7 @@ graph LR
 
 ## Özet
 
-Loop engineering, bir agent'ı bir hedefe taşıyan tekrarlayan döngüyü, bu döngünün içinde hiç insan olmadan tasarlamak demektir ve tasarımın kendisi durma koşuludur.
+Loop engineering, bir agent'ı bir hedefe taşıyan tekrarlayan döngüyü, bu döngünün içinde hiç insan olmadan tasarlamak demektir. Bu tasarımdaki en önemli karar da döngünün ne zaman duracağı, yani durma koşuludur.
 
 Döngüler birbirinin içine yığılır:
 

@@ -81,6 +81,12 @@ actually changed. Name the files, and read `git status` before every commit.
   "What a Harness is Made Of" but "What Loop Engineering is". Two headings keep their exact text because the app matches them:
   `## Summary` / `## Özet` and `## Where this fits in the series` / `## Bu serinin neresindeyiz`
   (the Persian spellings are under [Translating a module](#persian)).
+- **Every sentence is written for a beginner, in every language.** The author, 2026-10-12: *"we hate
+  very short and dense sentences. we prefer sentences that are simpler to understand by human even
+  if it costs the sentence to include no buzzword, no jargon and become longer ... does not try to
+  say many things with a few words, but ... tries to be clear, as if everyone is beginner here."*
+  This holds for English, Turkish and Persian alike. A short sentence that packs several ideas or a
+  run of jargon into a few words is the failure; the fix is a longer, plainer sentence.
 - **Never dense. Being concise is not a goal here.** Plain English and compressed English are not
   the same thing, and compression is the failure mode this project keeps hitting. Amirkia, after
   reading modules 10 to 12: "Make sure you did not make the language too dense solely to make it
@@ -232,6 +238,16 @@ Write a translation only once the English is final, then:
 
 A written module may also have a Persian sibling, `<name>_fa.md`. Unlike Turkish it is optional: a
 planned module has none, and none is created as a stub. Everything above holds for it, plus:
+
+- **Say the meaning, never the phrase.** The second Persian pass had the right register and still
+  read as English: it carried English expressions over word by word. The author's example, from
+  Prompt Engineering's two drivers with "the same engine, the same horsepower, the same grip": *"no
+  need to convert «گرفتنش یکیه» for 'the same grip'. It is wrong. No one in Persian uses that."* So
+  read the English paragraph, understand its point, and write how an Iranian engineer would make
+  that point, with expressions Persians actually use. An English idiom ("under the hood", "pays
+  off", "the heavy lifting") becomes its meaning or a real Persian idiom; an English sentence
+  skeleton ("Here is the thing.", "That is the whole point.") becomes a Persian sentence built
+  around its own verb. A calque is grammatical and still wrong.
 
 - **No frontmatter.** The file opens on its `# ` title, as a `_tr.md` does.
 - **Technical vocabulary stays English, in Latin letters**, written as the English writes it:

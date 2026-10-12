@@ -20,11 +20,11 @@ questions:
     fa:
       question: "ایده‌ی اصلی Retrieval-Augmented Generation (RAG) چیه؟"
       options:
-        - "همه‌ی داده‌هاتو برای هر سؤال توی context window بذار."
-        - "داده رو بیرون از مدل نگه دار و برای هر سؤال فقط بخش‌های مرتبط رو بیار."
-        - "مدل رو روی داده‌هات train کن تا حقایق رو یادش بمونه."
-        - "context window رو بزرگ‌تر کن تا همه‌ی داده‌هات توش جا بشه."
-      explain: "RAG داده رو بیرون از مدل نگه می‌داره و برای هر سؤال فقط بخش‌های مرتبط رو توی context می‌ذاره. گذاشتن همه‌ی داده توی context جواب نمی‌ده، چون context window یه سقف سخته."
+        - "برای هر سوال، کل داده‌هات رو بریزی توی context window."
+        - "داده رو بیرون از مدل نگه داری و برای هر سوال فقط تیکه‌های مربوط رو بیاری."
+        - "مدل رو روی داده‌هات train کنی تا اطلاعاتشون یادش بمونه."
+        - "context window رو بزرگ‌تر کنی تا همه‌ی داده‌هات توش جا بشه."
+      explain: "RAG داده رو بیرون از مدل نگه می‌داره و برای هر سوال فقط تیکه‌های مربوط رو می‌ذاره توی context. ریختن کل داده توی context جواب نمی‌ده، چون از سقف context window نمی‌شه رد شد."
 
   - answer: 2
     en:
@@ -44,13 +44,13 @@ questions:
         - "Cosine similarity, aynı uzunluktaki metinlere yüksek skor veriyor."
       explain: "Embedding'ler eşleşen kelimeleri değil anlamı yakalar, bu yüzden aynı anlamdaki metinlerin vector'leri birbirine yakın olur. Keyword arama ise ortak kelimeleri sayar, bu yüzden bu maddeyi kaçırır."
     fa:
-      question: "یه بند قرارداد همون معنای سؤال رو داره، ولی تقریباً هیچ کلمه‌ی مشترکی باهاش نداره. با این حال، retrieval با embedding‌ها چرا اون رو پیدا می‌کنه؟"
+      question: "یه بند قرارداد همون معنی سوال رو می‌رسونه، ولی تقریباً هیچ کلمه‌ی مشترکی باهاش نداره. پس چرا retrieval با embedding‌ها باز هم پیداش می‌کنه؟"
       options:
-        - "جستجو تعداد کلمه‌های مشترک دو متن رو می‌شمره."
-        - "LLM همه‌ی بندهای توی database رو می‌خونه و بهترینش رو انتخاب می‌کنه."
-        - "معنای مشابه، عددهای مشابه می‌ده، پس دو تا vector به هم نزدیکن."
-        - "Cosine similarity به متن‌هایی با طول یکسان امتیاز بالا می‌ده."
-      explain: "embedding‌ها معنا رو می‌گیرن، نه کلمه‌های یکسان، برای همین متن‌هایی با معنای یکسان vector‌های نزدیک دارن. جستجوی keyword کلمه‌های مشترک رو می‌شمره، پس این بند رو از دست می‌ده."
+        - "جستجو می‌شمره که دو تا متن چند تا کلمه‌ی مشترک دارن."
+        - "LLM همه‌ی بندهای database رو می‌خونه و بهترینش رو انتخاب می‌کنه."
+        - "متن‌های هم‌معنی عددهای نزدیک به هم می‌گیرن، پس دو تا vector نزدیک همن."
+        - "cosine similarity به متن‌هایی که طولشون یکیه امتیاز بالا می‌ده."
+      explain: "embedding‌ها معنا رو تشخیص می‌دن، نه کلمه‌های یکسان رو، واسه همین متن‌های هم‌معنی vector‌های نزدیک به هم دارن. جستجوی keyword کلمه‌های مشترک رو می‌شمره و این بند رو پیدا نمی‌کنه."
 
   - answer: 3
     en:
@@ -70,13 +70,13 @@ questions:
         - "RAG en yakın chunk'ları bulur ve onların gerçek metnini context'e koyar."
       explain: "RAG, database'de en yakın chunk'ları arar ve onların gerçek metnini context'e koyar. Veriyi chunk'lara bölmek ise kurulumun parçasıdır: bir kez yapılır, veri değiştikçe yeniden yapılır."
     fa:
-      question: "RAG یه بخش راه‌اندازی (setup) و یه بخش جواب دادن داره. توی بخش جواب دادن، بعد از اینکه سؤال تبدیل شد به embedding، چی می‌شه؟"
+      question: "RAG یه بخش آماده‌سازی داره و یه بخش جواب دادن. توی بخش جواب دادن، بعد از این‌که سوال به embedding تبدیل شد، چی کار می‌کنه؟"
       options:
-        - "RAG داده‌ی منبع رو به chunk تقسیم می‌کنه و توی database ذخیره‌شون می‌کنه."
-        - "RAG مدل رو روی نزدیک‌ترین chunk‌ها fine-tune می‌کنه و بعد سؤال رو می‌پرسه."
-        - "RAG نزدیک‌ترین vector‌ها رو به LLM می‌فرسته و LLM از روی عددها جواب می‌ده."
-        - "RAG نزدیک‌ترین chunk‌ها رو پیدا می‌کنه و متن واقعی‌شون رو توی context می‌ذاره."
-      explain: "RAG توی database دنبال نزدیک‌ترین chunk‌ها می‌گرده و متن واقعی‌شون رو توی context می‌ذاره. تقسیم داده به chunk‌ها بخشی از راه‌اندازیه: یه بار انجام می‌شه، و هر وقت داده عوض شه دوباره انجام می‌شه."
+        - "داده‌های منبع رو به chunk می‌شکنه و توی database ذخیره می‌کنه."
+        - "مدل رو روی نزدیک‌ترین chunk‌ها fine-tune می‌کنه و بعد سوال رو می‌پرسه."
+        - "نزدیک‌ترین vector‌ها رو به LLM می‌ده و LLM از روی عددها جواب می‌ده."
+        - "نزدیک‌ترین chunk‌ها رو پیدا می‌کنه و متن اصلی‌شون رو می‌ذاره توی context."
+      explain: "RAG توی database دنبال نزدیک‌ترین chunk‌ها می‌گرده و متن اصلی‌شون رو می‌ذاره توی context. شکستن داده به chunk جزو آماده‌سازیه که یه بار انجام می‌شه و هر وقت داده عوض شد، دوباره."
 
   - answer: 0
     en:
@@ -96,10 +96,10 @@ questions:
         - "RAG, modelin weight'lerini fine-tuning'den daha hızlı günceller."
       explain: "Fine-tuning saatler ya da günler sürer ve para tutar, bu yüzden her dosya değiştiğinde onu tekrarlayamazsın. RAG modelin bildiğini değil, gördüğünü değiştirir."
     fa:
-      question: "اسناد شرکتت هر روز عوض می‌شن. چرا برای این اطلاعات RAG از fine-tuning بهتره؟"
+      question: "سندهای شرکتت هر روز عوض می‌شن. چرا برای این اطلاعات RAG از fine-tuning بهتره؟"
       options:
-        - "Fine-tuning کنده و پرهزینه‌ست، پس نمی‌تونی بعد از هر تغییر دوباره‌ش انجام بدی."
-        - "Fine-tuning، context window رو کوچیک‌تر می‌کنه، پس سند کمتری توش جا می‌شه."
-        - "Fine-tuning توی یاد دادن حقایق خوبه، ولی توی یاد دادن یه فرمت بده."
-        - "RAG، weights مدل رو سریع‌تر از fine-tuning به‌روز می‌کنه."
-      explain: "Fine-tuning ساعت‌ها یا روزها طول می‌کشه و هزینه داره، پس نمی‌تونی هر بار که یه فایل عوض می‌شه دوباره‌ش کنی. RAG چیزی رو عوض می‌کنه که مدل می‌بینه، نه چیزی که می‌دونه."
+        - "fine-tuning کند و پرهزینه‌ست، پس نمی‌شه بعد از هر تغییر از نو انجامش داد."
+        - "fine-tuning، context window رو کوچیک‌تر می‌کنه و سندهای کمتری توش جا می‌شن."
+        - "fine-tuning توی یاد دادن اطلاعات خوبه، ولی توی یاد دادن یه فرمت ضعیفه."
+        - "RAG، weight‌های مدل رو سریع‌تر از fine-tuning به‌روز می‌کنه."
+      explain: "fine-tuning ساعت‌ها یا روزها طول می‌کشه و خرج داره، پس نمی‌تونی با هر تغییر یه فایل از نو اجراش کنی. RAG چیزی رو عوض می‌کنه که مدل می‌بینه، نه چیزی که می‌دونه."

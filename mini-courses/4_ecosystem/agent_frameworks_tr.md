@@ -46,7 +46,7 @@ Bunların hiçbiri yanlış değil; hepsi farklı takaslar (trade-off) yapıyor 
 
 - **[Agno](https://github.com/agno-agi/agno)** tek bir agent'ın ötesine, tüm platforma bakar. Agent'ları bir script olarak değil, bir sistem olarak kurmana, çalıştırmana ve yönetmene yardım eder.
 - **[CrewAI](https://github.com/crewAIInc/crewAI)** her şeyi roller etrafında düzenler. Her biri ayrı bir işi olan bir agent ekibi (crew) tarif edersin ve onların birlikte çalışmasını sağlarsın. Bu yapı, [Multi-Agent Systems](../1_fundamentals/multi_agent_tr.md) modülündeki çoklu agent yapılarına iyi oturur.
-- **[smolagents](https://github.com/huggingface/smolagents)**, Hugging Face'in küçük olanıdır ve bu küçüklük bilerek seçilmiş bir tercih. Kodla düşünen agent'lar için yalın bir kütüphane. Bu, [Loop Engineering](../2_intermediate/loop_engineering_tr.md) modülünde anlatılan CodeAct fikrinin kütüphane olarak paketlenmiş hali. Bir döngüyü kullanmaktan çok anlamak istiyorsan, okumak için de en iyi seçenek.
+- **[smolagents](https://github.com/huggingface/smolagents)**, Hugging Face'in küçük olanıdır ve bu küçüklük bilerek seçilmiş bir tercih. JSON tool çağrıları göndermek yerine kod yazıp çalıştırarak iş yapan agent'lar için yalın bir kütüphane. Bu, [Loop Engineering](../2_intermediate/loop_engineering_tr.md) modülünde anlatılan CodeAct fikrinin kütüphane olarak paketlenmiş hali. Bir döngüyü kullanmaktan çok anlamak istiyorsan, okumak için de en iyi seçenek.
 - **[Pydantic AI](https://github.com/pydantic/pydantic-ai)** Pydantic'in iyi yaptığı şeyi, yani tipleri getiriyor. Her model ve her arayüz baştan sona tiplenmiş. Bu yüzden hatalı bir tool çağrısı gizemli bir hataya değil, açık bir validation hatasına dönüşür.
 
 ## Projen TypeScript İse
@@ -54,7 +54,7 @@ Bunların hiçbiri yanlış değil; hepsi farklı takaslar (trade-off) yapıyor 
 Burada bilmeye değer iki framework var, çünkü yukarıdaki stack'in tamamı Python öncelikli ve ürün kodunun çoğu Python ile yazılmıyor.
 
 - **[Mastra](https://github.com/mastra-ai/mastra)** agent'lar ve AI uygulamaları için modern bir TypeScript framework'ü. Bu dilde LangChain'e en çok benzeyen seçenek.
-- **[VoltAgent](https://github.com/VoltAgent/voltagent)** ise açık kaynaklı bir TypeScript framework'ü üzerine kurulu bir agent engineering platformu. Bu yüzden daha çok operasyonel tarafa odaklanıyor.
+- **[VoltAgent](https://github.com/VoltAgent/voltagent)** ise açık kaynaklı bir TypeScript framework'ü üzerine kurulu bir agent engineering platformu. Bu yüzden daha çok agent'larını kurduktan sonraki kısma odaklanıyor: onları çalıştırmaya, izlemeye ve yönetmeye.
 
 ## AI Workflow'ları
 

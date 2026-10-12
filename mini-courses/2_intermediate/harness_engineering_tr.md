@@ -35,7 +35,7 @@ Bir noktayı netleştirmek gerekiyor, çünkü insanlar "harness" kelimesini gel
 2026'ya gelindiğinde bu çalışma dört ayrı alana bölünmüştü ve her alan farklı bir soru soruyor.
 
 ![Söylemek, Görmek ve Dünyayı İnşa Etmek](./images/prompt-vs-context-vs-harness.jpeg)  
-*Şekli alttan yukarıya doğru oku. Her katman, altındakini içine alır. Söylemek tek bir turluk iştir. Görmek, bütün context window'dur. Dünyayı inşa etmek ise agent'ın ulaşabildiği her şeyi ve onu durduran her şeyi kapsar. İnsanın rolü de yukarı çıktıkça değişir. En altta insan robotla konuşur. En üstte ise robotun çalışacağı yeri insan kurar.*
+*Şekli alttan yukarıya doğru oku. Her katman, altındakini içine alır. En alttaki katman olan söylemek, tek bir turun sözlerini kapsar; ortadaki katman olan görmek ise bütün context window'u kapsar. Dünyayı inşa etmek ise agent'ın ulaşabildiği her şeyi ve onu durduran her şeyi kapsar. İnsanın rolü de yukarı çıktıkça değişir. En altta insan robotla konuşur. En üstte ise robotun çalışacağı yeri insan kurar.*
 
 - **Prompt engineering**: Ne sormalıyım ve bunu nasıl sormalıyım?
 - **Context engineering**: Modelin context'inde neyi görmesi gerekir ve bu bilgi hangi biçimde sunulmalı?
@@ -95,7 +95,7 @@ Yazıdaki bir örnek insanları şaşırtıyor. Bugünlerde coding agent'lara ek
 
 İnsanların gerçekten yaptığı birkaç somut şey var. Hiçbiri büyük değil:
 
-- **Bir sandbox.** Agent komutlarını bir container içinde çalıştırır. Bu container'ın ağ bağlantısı yoktur ve repository'nin bağlanmış bir kopyasını içerir. Böylece "her şeyi sil" komutu sana yalnızca bir container'a mal olur.
+- **Bir sandbox.** Agent komutlarını bir container içinde çalıştırır. Bu container'ın ağ bağlantısı yoktur ve repository'nin bağlanmış bir kopyasını içerir. Böylece agent her şeyi silen bir komut çalıştırsa bile yalnızca container'ı ve içindeki kopyayı kaybedersin, kendi dosyaların yerinde kalır.
 - **Bir izin kapısı.** Bir `PreToolUse` hook'u `src/` dışındaki yazmaları reddeder ve `git push` komutunu tamamen engeller. Model deneyebilir, ama yapamaz.
 - **Bitirme için test kapısı.** Bir `Stop` hook'u test paketini çalıştırır. Başarısız bir test varsa hook, agent'a işinin bitmediğini söyler. Bitti olup olmadığına karar veren agent değildir.
 - **Yazınca biçimlendiren bir hook.** Bir `PostToolUse` hook'u, düzenlenen her dosyada formatter'ı çalıştırır. Böylece kod stili, agent'ın stili hatırlamasına bağlı olmaktan çıkar.
@@ -111,7 +111,7 @@ Son örnek gerçek ve arkasında sayılar da var. LangChain'in [Improving Deep A
 
 **Model değişmedi.** Terminal Bench 2.0 skoru 52.8%'ten 66.5%'e çıktı. Bu sayıyı akılda tut, çünkü bu modülün var olma sebebi tam olarak bu. Neredeyse on dört puanlık artış ortamı düzenlemekten geldi. Düşünme işini yapan model ağırlıkları ise iki çalıştırmada da aynıydı.
 
-Sadece okumakla kalmayıp kendi harness'ini kurmak istiyorsan, [How to Build a Custom Agent Harness](https://www.langchain.com/blog/how-to-build-a-custom-agent-harness) yazısı bunu middleware ile adım adım gösteriyor. OpenAI'ın [Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/) yazısı aynı disiplini başka bir açıdan anlatıyor. Ana dersi bilgi yönetimiyle ilgili. Yapılandırılmış bir `docs/` dizinini tek doğruluk kaynağı olarak tutuyorlar. `AGENTS.md` dosyasını kısa tutuyorlar, o dizine işaret eden bir harita gibi. Sonra bu dokümantasyon üzerinde linter'ları ve CI işlerini çalıştırıyorlar. Ayrıca düzenli çalışan bir bahçıvan agent'ı (gardening agent) var. Tek işi, güncelliğini yitirmiş parçaları bulmak. Bu, guide'lara yönelmiş bir sensor'dur.
+Sadece okumakla kalmayıp kendi harness'ini kurmak istiyorsan, [How to Build a Custom Agent Harness](https://www.langchain.com/blog/how-to-build-a-custom-agent-harness) yazısı bunu middleware ile adım adım gösteriyor. OpenAI'ın [Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/) yazısı aynı disiplini başka bir açıdan anlatıyor. Ana dersi bilgi yönetimiyle ilgili. Yapılandırılmış bir `docs/` dizinini tek doğruluk kaynağı olarak tutuyorlar. `AGENTS.md` dosyasını kısa tutuyorlar, o dizine işaret eden bir harita gibi. Sonra bu dokümantasyon üzerinde linter'ları ve CI işlerini çalıştırıyorlar. Ayrıca düzenli çalışan bir bahçıvan agent'ı (gardening agent) var. Tek işi, güncelliğini yitirmiş parçaları bulmak. Yukarıdaki ayrımın diliyle bu agent bir sensor'dur ve kontrol ettiği şey de guide'lardır.
 
 ## Her Model İçin En İyi Harness Yok
 
@@ -173,7 +173,7 @@ graph LR
 
 ## Özet
 
-Model deterministik olmadığı için talimatlar sana iyi bir başarı oranı kazandırır, ama hiçbir zaman garanti vermez. Harness ise model ne yaparsa yapsın ayakta kalan mekanik kısımdır. Şunları içerir:
+Model deterministik olmadığı için talimatlar sana iyi bir başarı oranı kazandırır, ama hiçbir zaman garanti vermez. Harness ise mekanik kısımdır ve model talimatlara uymasa bile çalışmaya devam eder. Şunları içerir:
 
 - system prompt'u;
 - tool'ları ve onların nasıl tanımlandığını;

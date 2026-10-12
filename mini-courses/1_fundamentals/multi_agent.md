@@ -76,12 +76,13 @@ agent has neither.
 With one agent, the loop answered these questions. With several agents, something has to decide,
 and that decision can be wrong. Two agents can do the same work. An agent can wait for something
 that never arrives. A supervisor can keep delegating and never stop. More agents means more ways
-to deadlock, or to loop without end.
+to deadlock, which is when agents wait for each other forever. It also means more ways to loop
+without end.
 
 **Context transfer.** Each agent has its own context: its own message stack. So when the SQL agent
 finishes, what exactly does the visualisation agent get? Does it get only the rows? Does it also
 get the original question? Does it get the SQL that produced the rows? If you hand over too little,
-the second agent works blind. If you hand over everything, you pay for a huge context. You also
+the second agent has to work without information that it needs. If you hand over everything, you pay for a huge context. You also
 bring back the confusion that you split the agents to avoid.
 
 Getting this wrong is the usual reason why a multi-agent system performs *worse* than the single
@@ -105,7 +106,8 @@ topic is deep enough to deserve its own discussion, so we come back to it in
 
 We name these here so that the words are familiar. We cover all of them later:
 
-- **Hierarchical:** supervisors of supervisors. You use this when one layer is not enough.
+- **Hierarchical:** a top supervisor manages other supervisors, and each of them manages its own
+  workers. You use this when one layer is not enough.
 - **Agent-as-a-tool:** one agent is given to another agent as if it were a plain tool. This fits
   directly into the mechanism from [Tool Calling](tools.md).
 - **Subagents:** an agent starts short-lived helpers, and each helper has its own isolated context.

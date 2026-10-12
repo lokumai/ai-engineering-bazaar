@@ -47,7 +47,7 @@ One thing needs to be clear, because people use the word "harness" loosely. The 
 By 2026 this work has divided into four jobs, and each job asks a different question.
 
 ![What to say, what to see, and the world to build](./images/prompt-vs-context-vs-harness.jpeg)  
-*Read it from the bottom to the top. Each layer takes in the one below it. Saying is one turn. Seeing is the whole context window. Building the world is everything that the agent can reach, and everything that stops it. The human's job also changes on the way up. At the bottom, the human talks to the robot. At the top, the human builds the place where the robot works.*
+*Read it from the bottom to the top. Each layer takes in the one below it. The bottom layer, saying, covers the words of one turn, and the middle layer, seeing, covers the whole context window. Building the world is everything that the agent can reach, and everything that stops it. The human's job also changes on the way up. At the bottom, the human talks to the robot. At the top, the human builds the place where the robot works.*
 
 - **Prompt engineering**: what should I ask, and how should I ask it?
 - **Context engineering**: what should the model see in its context, and in what form?
@@ -107,7 +107,7 @@ One example in the article surprises people. A popular addition to coding agents
 
 Here are a few concrete things that people really do. None of them is big:
 
-- **A sandbox.** The agent runs commands in a container. The container has no network and a mounted copy of the repository. Now "delete everything" costs you a container.
+- **A sandbox.** The agent runs commands in a container. The container has no network and a mounted copy of the repository. Now, if the agent runs a command that deletes everything, you lose only the container and the copy inside it, not your own files.
 - **A permission gate.** A `PreToolUse` hook refuses writes outside `src/`, and it refuses `git push` completely. The model can try, but it cannot do it.
 - **A test gate on finishing.** A `Stop` hook runs the test suite. If anything is red, the hook tells the agent that it is not done. The agent is not the one that decides it has finished.
 - **A format-on-write hook.** A `PostToolUse` hook runs the formatter on every edited file. So the style no longer depends on the agent remembering the style.
@@ -125,7 +125,7 @@ That last one is real, and it came with numbers. LangChain's [Improving Deep Age
 
 Remember that number, because it is the reason this module exists. Nearly fourteen points came from editing the environment. The weights that did the thinking were the same in both runs.
 
-If you want to build a harness and not only read about one, [How to Build a Custom Agent Harness](https://www.langchain.com/blog/how-to-build-a-custom-agent-harness) shows you how, step by step, with middleware. OpenAI's [Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/) shows the same discipline from the other side. Its main lesson is about knowledge. They keep a structured `docs/` directory as the single source of truth. They keep `AGENTS.md` short, as a map that points into that directory. Then they run linters and CI jobs over that documentation. They also have a gardening agent that runs regularly, and its only job is to find the parts that are out of date. That is a sensor pointed at the guides.
+If you want to build a harness and not only read about one, [How to Build a Custom Agent Harness](https://www.langchain.com/blog/how-to-build-a-custom-agent-harness) shows you how, step by step, with middleware. OpenAI's [Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/) shows the same discipline from the other side. Its main lesson is about knowledge. They keep a structured `docs/` directory as the single source of truth. They keep `AGENTS.md` short, as a map that points into that directory. Then they run linters and CI jobs over that documentation. They also have a gardening agent that runs regularly, and its only job is to find the parts that are out of date. In the terms of the split above, that agent is a sensor, and the thing it checks is the guides.
 
 ## No Harness is Best for Every Model
 
@@ -189,7 +189,7 @@ graph LR
 
 ## Summary
 
-A model is non-deterministic. So instructions get you a good success rate, but never a guarantee. The harness is the mechanical part that holds anyway. It includes:
+A model is non-deterministic. So instructions get you a good success rate, but never a guarantee. The harness is the mechanical part, and it keeps working even when the model does not follow its instructions. It includes:
 
 - the system prompt;
 - the tools, and the way they are described;

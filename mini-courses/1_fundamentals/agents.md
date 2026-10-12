@@ -107,11 +107,12 @@ of it by hand means a lot of boilerplate code:
 
 **And now think back to [LLM Fundamentals](llms.md)**. There, we ran an LLM straight from the
 terminal with no framework at all. Why did we not need a framework there? Because that was one
-call. Input, output, done. There was no loop, no tool parsing, and no message stack to maintain. A
-single-turn LLM needs no scaffolding. An agent is almost entirely scaffolding.
+call. You sent one input, you got one output back, and then it was finished. There was no loop, no
+tool parsing, and no message stack to maintain. A single-turn LLM needs no scaffolding, which means
+no extra code around the model. An agent is almost entirely scaffolding.
 
-This brings the series to its main point. **The LLM really is just a brain: text in, text out,
-storing nothing, doing nothing else.** Every capability we have covered is an environment built
+This brings the series to its main point. **The LLM really is just a brain. Text goes in and text
+comes out, and the LLM stores nothing and does nothing else.** Every capability we have covered is an environment built
 around that brain, so that it can:
 
 - work across turns (this module)
@@ -153,7 +154,7 @@ function. It is how the framework tells the model that the function exists.
 | 4 | Run the tests (`run_shell`) | to decide the command |
 | 5 | Report that the tests pass | to write the answer. It calls no tool, so the loop ends |
 
-Six passes, five model calls, one goal. A plain LLM would get only one call for all of that. That is
+So this one goal took six passes and five model calls. A plain LLM would get only one call for all of that. That is
 why it would guess.
 
 ## Building an Agent

@@ -46,7 +46,7 @@ There is a different kind of router, and it is easy to confuse with these two. *
 - web search
 - travel booking
 
-Model inference is only one of its domains. So the difference is the scope. An LLM router like OpenRouter or Portkey routes model calls. AgentRouter routes whatever paid API an agent decides it needs.
+Model inference is only one of its domains. So the difference between the two kinds of router is how many kinds of API each one covers. An LLM router like OpenRouter or Portkey routes model calls. AgentRouter routes whatever paid API an agent decides it needs.
 
 AgentRouter holds your wallet and sees every call you send through it. Its site also does not name the company behind it. So treat it like any third party that handles your data.
 
@@ -69,7 +69,7 @@ Nothing stops you from doing both. A common pattern is to go direct for the mode
 
 The price per million tokens is the number that everyone quotes. It is also the worst number to decide on by itself. Here is what shows up on the bill and in the product:
 
-- **Prompt caching.** If your system prompt is long and does not change, a provider that caches it charges you only a fraction of the price for each repeat. Take an agent that sends the same 5,000-token block of instructions on every turn. For that agent, prompt caching is the biggest single way to cut cost. It also explains a result of the harness comparison in [Harness Engineering](../2_intermediate/harness_engineering.md): the fastest tool was the most expensive per success, because it almost never reused its cache.
+- **Prompt caching.** If your system prompt is long and does not change, a provider that caches it charges you only a fraction of the price for each repeat. Take an agent that sends the same 5,000-token block of instructions on every turn. For that agent, prompt caching is the biggest single way to cut cost. It also explains a result of the harness comparison in [Harness Engineering](../2_intermediate/harness_engineering.md): the fastest tool had the highest cost for each task that it completed successfully, because it almost never reused its cache.
 - **Rate limits.** These are the limits on requests and tokens per minute. A good per-token price does not help you if your requests wait in a queue.
 - **Latency, and which kind.** Time to the first token is what a person feels while they wait in a chat. Total time is what a batch job feels. These are different numbers, and providers are not good at both.
 - **Context window and output limit.** These are two separate limits. The output limit is the one that people forget, until a long answer gets cut off.
@@ -107,7 +107,7 @@ OpenRouter is the gateway to know. A gateway gives you:
 - failover when a provider is down
 - a choice of sellers for the same open-weights model
 
-It costs you one extra hop. Portkey does the same job with your own provider keys. Its gateway is open source, so you can host it yourself. AgentRouter is a different thing: it routes any paid API that an agent calls, not only model calls.
+It costs you one extra hop, because every request passes through the gateway's servers on its way to the provider. Portkey does the same job with your own provider keys. Its gateway is open source, so you can host it yourself. AgentRouter is a different thing: it routes any paid API that an agent calls, not only model calls.
 
 Going direct gives you the things that only the maker ships:
 

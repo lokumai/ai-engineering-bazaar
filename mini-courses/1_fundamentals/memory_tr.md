@@ -89,7 +89,7 @@ graph LR
 
 ## Özet
 
-Üç tür bellek vardır ve birini diğerinin yerine kullanamazsın. **Parametrik bellek** kalıcıdır ama ölçek büyüdükçe bulanıklaşır. Bunu eğitim, modelin ağırlıklarına yazar. **Çalışma belleği** kesindir ama geçicidir: her çağrıda yeniden gönderdiğimiz büyüyen bir mesaj yığınından başka bir şey değildir. **Uzun süreli bellek** modelin dışında saklanır ve gerektiğinde, çoğu zaman [RAG](rag_tr.md) ile, çalışma belleğine geri getirilir. Sıradaki konu agent'lar: onlar, birçok adım boyunca plan yapıp eylem almak için bu aynı çalışma belleğine dayanır.
+Üç tür bellek vardır ve birini diğerinin yerine kullanamazsın. **Parametrik bellek** kalıcıdır, ama senin verin milyarlarca başka dokümanın arasına karıştığı için bulanıktır. Bunu eğitim, modelin ağırlıklarına yazar. **Çalışma belleği** kesindir ama geçicidir: her çağrıda yeniden gönderdiğimiz büyüyen bir mesaj yığınından başka bir şey değildir. **Uzun süreli bellek** modelin dışında saklanır ve gerektiğinde, çoğu zaman [RAG](rag_tr.md) ile, çalışma belleğine geri getirilir. Sıradaki konu agent'lar: onlar, birçok adım boyunca plan yapıp eylem almak için bu aynı çalışma belleğine dayanır.
 
 **Hızlı Kontrol**: Üç bellek türü nedir? Parametrik bellek kalıcı olmasına rağmen neden kesin değildir? Kısa süreli belleğe neden "çalışma belleği" diyoruz? Uzun süreli bellekteki bilgi LLM'in context'ine nasıl geri döner?
 

@@ -69,7 +69,7 @@ beginning, you tell the model to write in a clear academic tone. For a while, it
 past 800K, it stops: the tone drifts to something vague and chatty, and the model starts to invent
 things. Nothing was deleted, and the window never overflowed. The instruction is still there. But
 its share of the attention had to compete with everything you added after it, and it lost. The
-model has lost the map.
+model has lost the map, which means it no longer keeps track of the goal you set at the start.
 
 ![A needle, a distractor and a haystack](./images/distractor_irrelevance.png)  
 *The question asks for the classmate's advice. The needle answers it. The distractor is the same sentence, but about a professor. Chroma found that one distractor is enough to hurt. They also found that the less the needle looks like the question, the faster performance collapses as the haystack grows.*
@@ -185,7 +185,7 @@ has an empty context of its own. This second agent is a **subagent**. The subage
 The main agent's context gains one sentence.
 
 ![Two subagents with their own windows](./images/subagent.png)  
-*Each box is a separate context. It starts empty, and it is thrown away when the work is done. The main agent never sees the intermediate steps, and that is the whole point: what it cannot see cannot rot its window.*
+*Each box is a separate context. It starts empty, and it is thrown away when the work is done. The main agent never sees the intermediate steps, and that is the whole point: because those steps never reach its window, they cannot fill it and make its answers worse.*
 
 **How it works.** A subagent is a new agent with a clean context. The main agent calls it in the
 same way it calls any other tool, with something like
@@ -278,7 +278,8 @@ Agents](https://medium.com/@amirkiarafiei/the-agent-2-0-era-mastering-long-horiz
 walks through it from start to finish.
 
 To build one, the simplest place to start is [deepagents](https://github.com/langchain-ai/deepagents)
-from LangChain. It calls itself a batteries-included agent harness. The batteries are exactly this
+from LangChain. It calls itself a batteries-included agent harness. That means it comes with the main parts already
+built in, so you do not have to add them yourself. The batteries are exactly this
 list:
 
 - planning
@@ -356,7 +357,8 @@ into its own recent context, where attention is cheapest.
 That is the same move the to-do list makes, and it is why the word recitation was worth
 remembering. Both techniques work by **saying the important thing again, close to where the model
 is about to write**. A to-do list recites the plan. A chain of thought recites the constraint.
-Attention goes to what is near and repeated. So if you want the model to still care about something
+The model gives more attention to text that is close to where it is writing, and to text that
+appears more than once. So if you want the model to still care about something
 at 800K tokens, something has to repeat it. Left alone, it fades. That is chain of thought working
 as a context engineering tool. It is also the cheapest tool in this module: you do not build it,
 you turn it on.

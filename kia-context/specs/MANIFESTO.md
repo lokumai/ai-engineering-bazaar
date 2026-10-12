@@ -17,7 +17,7 @@ last_updated: "2026-10-12"
 
 > **Rules 1 to 7 are not new here.** They were written by the author in
 > `mini-courses/MANIFEST.md`, which is a public document for readers. This file restates them as the
-> boundary an agent may not cross, and adds the working rules 8 to 17 that came out of building it.
+> boundary an agent may not cross, and adds the working rules 8 to 18 that came out of building it.
 > Where the two disagree, `MANIFEST.md` is the one the readers see and the one that wins.
 
 ---
@@ -88,7 +88,7 @@ reason, and so does a Persian version of every written one (**D80**). See `genes
 7. **Only what matters.** A cheatsheet, not a textbook. Knowing what to leave out comes from building
    things.
 
-**Rules 8 to 17 came out of the work, and each one exists because breaking it cost something.**
+**Rules 8 to 18 came out of the work, and each one exists because breaking it cost something.**
 
 8. **Never dense. Being concise is not a goal here.** Plain English and compressed English are not the
    same thing, and compression is the failure mode this project keeps hitting. Loosening a module makes
@@ -118,6 +118,11 @@ reason, and so does a Persian version of every written one (**D80**). See `genes
     TRUTHFULNESS."* Turkish reads the way people talk or write professionally, Persian the way
     Iranians talk every day, and neither copies the English sentence by sentence. Reasoning and the
     measurement behind it: `logs/BRAINSTORM_2.md` **D81**.
+18. **Every sentence is written for a beginner, in every language.** A very short sentence that packs
+    several ideas, a buzzword or a run of jargon into a few words is the failure, and the fix is a
+    longer, plainer sentence. The author's words: *"we hate very short and dense sentences ... as if
+    everyone is beginner here."* Reasoning, and why it was applied as a hunt and not a rewrite:
+    `logs/BRAINSTORM_2.md` **D83**.
 
 ## 6. What this is NOT
 

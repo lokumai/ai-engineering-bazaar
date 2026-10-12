@@ -20,11 +20,11 @@ questions:
     fa:
       question: "working memory چیه؟"
       options:
-        - "دانشی که training داخل weight‌های مدل ذخیره می‌کنه"
+        - "اطلاعاتی که training توی weight‌های مدل ذخیره می‌کنه"
         - "یه خلاصه از session‌های قبلی توی یه database بیرونی"
-        - "متنی که همین الان داخل context window هست"
-        - "یه سابقه‌ی گفتگو که مدل خودش برای خودش نگه می‌داره"
-      explain: "working memory همون متنیه که همین لحظه داخل context window هست. مدل خودش این متن رو نگه نمی‌داره، برای همین با شروع یه session جدید از بین می‌ره."
+        - "متنی که همین الان توی context window هست"
+        - "سابقه‌ی چتی که مدل خودش پیش خودش نگه می‌داره"
+      explain: "working memory همون متنیه که همین لحظه توی context window هست. مدل خودش این متن رو نگه نمی‌داره، واسه همین با شروع یه session جدید پاک می‌شه."
   - answer: 1
     en:
       question: "Parametric memory is permanent. Why is it still imprecise?"
@@ -43,13 +43,13 @@ questions:
         - "Modelin dışındaki bir veritabanında saklanır"
       explain: "Ağırlıklar milyarlarca dokümanın bilgisini tutar, bu yüzden model tek bir dokümanı tam olarak hatırlayamaz. Parametrik bellek ise oturum bittiğinde kaybolmaz."
     fa:
-      question: "parametric memory دائمیه. با این حال چرا بازم نادقیقه؟"
+      question: "parametric memory دائمیه. پس چرا باز هم دقیق نیست؟"
       options:
-        - "مدل وقتی session تموم می‌شه اون رو پاک می‌کنه"
-        - "سند تو با میلیاردها سند دیگه توی weight‌ها قاطی شده"
-        - "context window اونقدر کوچیکه که نمی‌تونه همه‌ی اون رو نگه داره"
-        - "توی یه database بیرون از مدل ذخیره می‌شه"
-      explain: "weight‌ها اطلاعات میلیاردها سند رو با هم نگه می‌دارن، برای همین مدل نمی‌تونه یه سند رو دقیق به یاد بیاره. parametric memory وقتی session تموم می‌شه از بین نمی‌ره."
+        - "چون مدل با تموم شدن session پاکش می‌کنه"
+        - "چون سند تو توی weight‌ها با میلیاردها سند دیگه قاطی شده"
+        - "چون context window اون‌قدر کوچیکه که همه‌ش توش جا نمی‌شه"
+        - "چون توی یه database بیرون از مدل ذخیره می‌شه"
+      explain: "weight‌ها اطلاعات میلیاردها سند رو با هم نگه می‌دارن، واسه همین مدل نمی‌تونه یه سند رو مو به مو به یاد بیاره. parametric memory با تموم شدن session از بین نمی‌ره."
   - answer: 3
     en:
       question: "An LLM is stateless during generation. How does a chat still feel like one continuous conversation?"
@@ -68,13 +68,13 @@ questions:
         - "Uygulama her çağrıda mesaj yığınının (stack) tamamını gönderir"
       explain: "Uygulama, bütün mesajların büyüyen bir yığınını (stack) tutar ve her çağrıda yığının tamamını gönderir. Model önceki çağrıdan hiçbir şey hatırlamaz, bu yüzden yalnızca en yeni mesaj yeterli değildir."
     fa:
-      question: "LLM موقع generation stateless هست. پس چطور یه چت باز هم حس یه گفتگوی پیوسته رو می‌ده؟"
+      question: "LLM موقع generation، stateless‌ه. پس چطور یه چت باز هم مثل یه گفتگوی پیوسته به نظر میاد؟"
       options:
-        - "مدل هر پیام تازه رو توی weight‌هاش ذخیره می‌کنه"
-        - "مدل خودش call قبلی رو به یاد می‌آره"
-        - "اپ فقط جدیدترین پیام رو برای مدل می‌فرسته"
-        - "اپ توی هر call کل stack پیام‌ها رو می‌فرسته"
-      explain: "اپ یه stack در حال رشد از همه‌ی پیام‌ها نگه می‌داره و توی هر call کل stack رو می‌فرسته. مدل از call قبلی چیزی به یاد نداره، برای همین فقط جدیدترین پیام کافی نیست."
+        - "مدل هر پیام جدید رو توی weight‌هاش ذخیره می‌کنه"
+        - "مدل خودش call قبلی رو یادشه"
+        - "اپ فقط آخرین پیام رو برای مدل می‌فرسته"
+        - "اپ با هر call کل stack پیام‌ها رو می‌فرسته"
+      explain: "اپ همه‌ی پیام‌ها رو توی یه stack نگه می‌داره که مدام بزرگ‌تر می‌شه، و با هر call کل stack رو می‌فرسته. مدل از call قبلی هیچی یادش نیست، پس فرستادن آخرین پیام به‌تنهایی کافی نیست."
   - answer: 0
     en:
       question: "You upload 5 PDFs to ChatGPT. Later, in a new session, it answers a question about them. How can it do this?"
@@ -93,10 +93,10 @@ questions:
         - "LLM önceki oturumu kendi state'inde tutuyor"
       explain: "Bu long-term memory'dir: PDF'ler modelin dışında index'lendi ve context'e geri getirildi, çoğu zaman RAG ile. Yeni oturum boş bir context window ile başlar, bu yüzden working memory bunu açıklayamaz."
     fa:
-      question: "تو 5 تا PDF رو توی ChatGPT آپلود می‌کنی. بعداً، توی یه session جدید، ChatGPT به یه سؤال درباره‌شون جواب می‌ده. این کار رو چطوری انجام می‌ده؟"
+      question: "5 تا PDF توی ChatGPT آپلود می‌کنی. بعداً توی یه session جدید، ChatGPT به یه سوال درباره‌شون جواب می‌ده. چطور این کار رو می‌کنه؟"
       options:
-        - "ChatGPT اون PDF‌ها رو index کرده و بخش‌های مرتبط رو دوباره به context برمی‌گردونه"
-        - "آپلود، PDF‌ها رو برای همیشه توی weight‌های مدل ذخیره کرد"
+        - "ChatGPT اون PDF‌ها رو index کرده و تیکه‌های مربوط رو برمی‌گردونه توی context"
+        - "آپلود باعث شده PDF‌ها برای همیشه توی weight‌های مدل ذخیره بشن"
         - "PDF‌ها هنوز توی context window این session جدید هستن"
-        - "LLM وضعیت session قبلی رو توی state خودش نگه می‌داره"
-      explain: "این long-term memory هست: PDF‌ها بیرون از مدل index شدن و معمولاً با RAG دوباره به context برگشتن. یه session جدید با context window خالی شروع می‌شه، پس working memory نمی‌تونه توضیحش بده."
+        - "LLM کل session قبلی رو توی state خودش نگه داشته"
+      explain: "این long-term memory‌ه: PDF‌ها بیرون از مدل index شدن و معمولاً با RAG برگشتن توی context. هر session جدید با یه context window خالی شروع می‌شه، پس کار working memory نمی‌تونه باشه."

@@ -42,7 +42,7 @@ remembers nothing, why do you get two different answers when you ask the same qu
 different ways?
 
 Because two phrasings are not the same input. And the model does not answer questions. It runs a
-network.
+neural network on the words you give it, and the answer is whatever that network produces.
 
 That network contains neurons, and the prompt decides which ones fire. Some activate strongly,
 some activate weakly, and some do not activate at all. When you change the words, you change that
@@ -110,7 +110,8 @@ output, and changing the prompt.
 
 The rule is simple: a clearer and more detailed prompt gets a better answer. But two templates are
 still useful to know, because they show what "clear and detailed" means in practice. It means a
-prompt whose boundaries are defined.
+prompt that states the goal, the context, the format of the answer and the point where the model
+should stop.
 
 The simple one:
 
@@ -340,7 +341,7 @@ Step 2: final number after buying more. 3 + 6 = 9 apples.
 Final Answer: 9 apples
 ```
 
-It feels like magic. It is closer to housekeeping. A model is **autoregressive**: every token it
+It feels like magic, but the reason behind it is a simple, mechanical one. A model is **autoregressive**: every token it
 writes becomes part of the input it reads for the next token. When it writes `23 - 20 = 3`, that
 result is now in its context. So the model no longer has to hold the result in its head while it
 works on the rest. For a model, writing is thinking.
@@ -431,7 +432,7 @@ team:
    maintainability. Apply DRY and standard naming. Do not change the logic or look for bugs.
    Tools: `execute_linter_auto_fix`, `generate_docstrings`.
 
-Three agents, one model. The only differences are the role, the instructions and the tools.
+These are three different agents, but all three run on the same model. The only differences are the role, the instructions and the tools.
 [Multi-Agent Systems](../1_fundamentals/multi_agent.md) quietly assumed this when it drew a
 supervisor that gives work to specialists.
 

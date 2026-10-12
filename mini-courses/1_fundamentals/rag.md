@@ -89,9 +89,10 @@ a city, where close addresses mean nearby places. We measure how close two finge
 The classic picture of this uses four words:
 
 ![King, queen, man and woman as vectors in space](./images/vector-king-queen.png)  
-*Four words become four vectors, and those vectors become positions in space. "king" lands near "queen", and "man" lands near "woman". Now look at the two arrows. They are parallel, so the step from king to queen is the same move as the step from man to woman. Meaning has turned into geometry.*
+*Four words become four vectors, and those vectors become positions in space. "king" lands near "queen", and "man" lands near "woman". Now look at the two arrows. They are parallel, so the step from king to queen is the same move as the step from man to woman. In this way, the meaning of the words has turned into distances and directions in space.*
 
-Look at that parallel for a second. It is what makes the numbers more than a lookup table. The
+Look at that parallel for a second. It shows that the numbers are more than a lookup table, which
+only gives each word its own fixed entry. The
 embedding did more than place similar things together. It also placed the *relationship* between
 them in a consistent direction.
 
@@ -218,7 +219,8 @@ open-source projects are ready to use:
   lighter alternative to Microsoft's GraphRAG.
 - **[PageIndex](https://github.com/VectifyAI/PageIndex)** uses no vector database and no chunking.
   It builds a tree of each document, like a table of contents. Then an LLM reasons its way down the
-  tree to the right section. Its argument is that similar is not the same as relevant.
+  tree to the right section. Its argument is that a passage that is similar to the question is not
+  always the passage that answers it.
 - **[RAG-Anything](https://github.com/HKUDS/RAG-Anything)** is built on LightRAG. It handles
   documents that mix text with images, tables and equations. Since 2026, LightRAG itself includes
   this ability too.
@@ -249,8 +251,8 @@ confuse your details with something it half-remembers from pre-training.
 **Because you are in a race against a moving target.** Suppose you spend a month fine-tuning a
 model on your task. By the time you finish, the next frontier model is out. A lab trained it with resources
 that you do not have. Even without any fine-tuning, it is probably better at your task than
-your fine-tuned model from the last generation. You cannot win that race, and RAG does not enter
-it.
+your fine-tuned model from the last generation. You cannot win that race. RAG does not take part
+in it, because the same retrieval works with whichever model is the newest.
 
 **Because retrieval puts the answer in front of the model.** Go back to the desktop and the
 library. Fine-tuning tries to put your documents on a shelf somewhere in a library of billions.

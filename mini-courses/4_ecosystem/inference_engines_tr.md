@@ -44,13 +44,13 @@ graph TD
 - **[SGLang](https://github.com/sgl-project/sglang)**, dil ve multimodal modeller için yüksek performanslı bir serving framework'üdür. Özellikle isteklerin uzun ve ortak bir önek (prefix) paylaştığı durumlarda güçlüdür. Her isteğin aynı büyük system prompt'la başladığı bir durumdaysan, tam olarak senin durumun budur.
 - **[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)**, NVIDIA'dan gelir ve özellikle o donanımdan en fazla verimi çıkarmak için tasarlanmıştır. Modeli önceden optimize edilmiş bir engine'e derlersin. Bunun bir build adımı maliyeti vardır, ama karşılığında daha düşük gecikme (latency) elde edersin.
 
-**Birden fazla makineye yayıldığında** serving bir süreç sorunu olmaktan çıkar ve bir cluster sorununa dönüşür. [llm-d](https://github.com/llm-d/llm-d) tam bu iş için tasarlanmıştır ve modern hızlandırıcılarla Kubernetes üzerinde inference çalıştırır. Zamanlamayı, yönlendirmeyi ve önbellek farkındalıklı yerleştirmeyi (cache-aware placement) platform üstlenir, böylece sen bunlarla uğraşmak zorunda kalmazsın.
+**Birden fazla makineye yayıldığında** sorun artık tek bir sunucu programını iyi çalıştırmak değildir. Sorun, bütün bir makine cluster'ını birlikte yönetmeye dönüşür. [llm-d](https://github.com/llm-d/llm-d) tam bu iş için tasarlanmıştır ve modern hızlandırıcılarla Kubernetes üzerinde inference çalıştırır. Zamanlamayı ve yönlendirmeyi platform üstlenir, yani her isteği hangi makinenin çalıştıracağına o karar verir. Ayrıca önbellek farkındalıklı yerleştirme (cache-aware placement) yapar: gereken veriyi zaten önbelleğinde tutan bir makineyi tercih eder. Böylece sen bunlarla uğraşmak zorunda kalmazsın.
 
 ## Sayıları Açıklayan Tek Fikir
 
 Bu modülden yalnızca tek bir mekanizmayı hatırlayacaksan, o **batching**'dir.
 
-Tek seferde tek istek çalıştıran bir GPU çoğunlukla boştadır, çünkü bir token üretmek çok az hesaplama ama çok büyük bir bellek trafiği gerektirir. Aynı anda birçok isteği birlikte çalıştırırsan, aynı weight yüklemesi hepsinin maliyetini bir kerede öder.
+Tek seferde tek istek çalıştıran bir GPU çoğunlukla boştadır, çünkü bir token üretmek çok az hesaplama ama çok büyük bir bellek trafiği gerektirir. Aynı anda birçok isteği birlikte çalıştırırsan, GPU weight'leri bellekten bir kez okur ve gruptaki bütün istekler için kullanır.
 
 İnsanlar bu engine'lerin verimini (throughput) çok sayıda eş zamanlı kullanıcıyla ölçer. Aynı donanımın bazen harika, bazen umutsuz görünmesinin nedeni de budur. Belirleyici olan tek şey, batch'in ne kadar dolu olduğudur.
 

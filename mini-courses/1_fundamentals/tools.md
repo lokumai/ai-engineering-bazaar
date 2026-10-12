@@ -212,7 +212,8 @@ ASSISTANT
 It's currently 34°C and clear in Istanbul.
 ```
 
-That is the entire mechanism. Every agent you will ever build is this loop, repeated.
+That is the entire mechanism. Every agent that you will ever build runs these same steps in a loop,
+again and again.
 
 The exact field names differ a little between providers. But the shape does not change:
 
@@ -253,8 +254,8 @@ def send_email(to: str, subject: str, body: str) -> str:
     return gmail.users().messages().send(userId='me', body=compose(to, subject, body)).execute()
 ```
 
-**Most useful tools are a wrapper around an API.** That last one is nine tenths Gmail's own API and
-one tenth tool. The tool part is a function signature, a docstring, and a call. The same shape can
+**Most useful tools are a wrapper around an API.** In that last one, Gmail's own API does nine
+tenths of the work, and the tool adds only the last tenth. The tool part is a function signature, a docstring, and a call. The same shape can
 give an agent access to:
 
 - your Jira (create an issue, search, comment)
@@ -268,7 +269,7 @@ fastest way to make an agent useful at work, because the API you need almost alw
 Two things follow from this. First, the tool is exactly as powerful as the credentials that you give
 it. So a tool that can send mail from your account can send anything to anyone. Second, you rarely
 have to write these tools yourself any more. [Code Agents](../2_intermediate/coding_agents.md)
-covers MCP. With MCP, somebody has already wrapped the API that you were about to wrap.
+covers MCP, which is a standard way to package tools so that one tool works in any agent. With MCP, somebody has already wrapped the API that you were about to wrap.
 
 The docs tool is also worth a second look. It is the RAG pipeline from [RAG & Embeddings](rag.md),
 turned into a tool. Now the model decides *when* to retrieve. You no longer retrieve on every

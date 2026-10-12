@@ -24,7 +24,7 @@ Bundan sonra anlatılan her teknik tek bir soruya cevap veriyor: çıktıyı bek
 
 Muhtemelen aklına şöyle bir itiraz gelmiştir: ağırlıklar donmuşsa ve model hiçbir şey hatırlamıyorsa, aynı soruyu iki farklı şekilde sorduğunda neden iki farklı cevap alıyorsun?
 
-Çünkü iki farklı ifade, iki farklı girdi demektir. Üstelik model, soruları gerçekten cevaplamaktan çok bir sinir ağını çalıştırıyor.
+Çünkü iki farklı ifade, iki farklı girdi demektir. Üstelik model soruları gerçekten cevaplamıyor; verdiğin kelimeler üzerinde bir sinir ağını çalıştırıyor ve cevap, o ağın ürettiği şey oluyor.
 
 Bu ağın içinde nöronlar var ve prompt, hangilerinin ateşleneceğine karar veriyor. Bazıları güçlü bir şekilde devreye giriyor, bazıları zayıf kalıyor, bazıları da hiç devreye girmiyor. Kelimeleri değiştirdiğinde bu örüntü değişiyor ve örüntü değiştiğinde çıktı da değişiyor.
 
@@ -66,7 +66,7 @@ Tüm kataloğu istiyorsan, [Prompt Engineering Guide](https://www.promptingguide
 
 ## İki Prompt Şablonu
 
-Kural basit: prompt ne kadar açık ve ayrıntılıysa cevap o kadar iyi olur. Yine de iki şablonu bilmek işe yarar, çünkü "açık ve ayrıntılı" ifadesinin pratikte ne anlama geldiğini gösteriyorlar. Pratikte bu, sınırları belli bir prompt demek.
+Kural basit: prompt ne kadar açık ve ayrıntılıysa cevap o kadar iyi olur. Yine de iki şablonu bilmek işe yarar, çünkü "açık ve ayrıntılı" ifadesinin pratikte ne anlama geldiğini gösteriyorlar. Pratikte bu, hedefi, context'i, cevabın biçimini ve modelin nerede durması gerektiğini açıkça söyleyen bir prompt demek.
 
 Basit olan şu:
 
@@ -269,7 +269,7 @@ Step 2: final number after buying more. 3 + 6 = 9 apples.
 Final Answer: 9 apples
 ```
 
-Bu sihirli gibi duruyor, ama aslında bir düzen meselesi. Model **autoregressive** çalışır: yazdığı her token, bir sonraki token'ı okurken kullandığı girdinin parçası olur. `23 - 20 = 3` yazdığında bu sonuç artık context'inde ve model geri kalan işi yaparken sonucu kafasında tutmak zorunda kalmıyor. Model için yazmak, düşünmek demek.
+Bu sihirli gibi duruyor, ama arkasındaki sebep basit ve mekanik bir sebep. Model **autoregressive** çalışır: yazdığı her token, bir sonraki token'ı okurken kullandığı girdinin parçası olur. `23 - 20 = 3` yazdığında bu sonuç artık context'inde ve model geri kalan işi yaparken sonucu kafasında tutmak zorunda kalmıyor. Model için yazmak, düşünmek demek.
 
 Bu kursun yazarı, bir dizi bulmaca üzerinde iki yaklaşımı yan yana izleyebilmen için bir [Chain of Thought Visualizer](https://cot-visualizer.online/) geliştirdi. Bu bir demo, bir benchmark değil: düşünmeden cevap veren taraf, kasıtlı olarak kötü cevap verecek şekilde yönlendirildi. Bunun neden işe yaradığını öğrenmek için ek okuma olarak [Why Can Large Language Models Generate Correct Chain-of-Thoughts?](https://arxiv.org/abs/2310.13571) makalesi var.
 
@@ -319,7 +319,7 @@ Roller en çok agent kurarken işe yarar. Bir agent tasarladığımızda genelli
 2. **Security Auditor Agent.** System prompt: yalnızca güvenlik açıklarını, veri sızıntılarını ve bağımlılık risklerini tara. Her birini High, Medium ya da Low olarak derecelendir. Özellik ya da refactoring önerme. Araçlar: `run_sast_scanner`, `check_cve_database`.
 3. **Clean Code Formatter Agent.** System prompt: çalışan kodu okunabilirlik ve bakım kolaylığı için yeniden düzenle. DRY ilkesini ve standart isimlendirmeyi uygula. Mantığı değiştirme ve hata arama. Araçlar: `execute_linter_auto_fix`, `generate_docstrings`.
 
-Üç agent, tek bir model. Aralarındaki tek fark rol, talimatlar ve araçlar. [Multi-Agent Systems](../1_fundamentals/multi_agent_tr.md) modülü, işleri uzmanlara dağıtan bir supervisor çizerken bunu sessizce varsaymıştı.
+Bunlar üç ayrı agent, ama üçü de aynı model üzerinde çalışıyor. Aralarındaki tek fark rol, talimatlar ve araçlar. [Multi-Agent Systems](../1_fundamentals/multi_agent_tr.md) modülü, işleri uzmanlara dağıtan bir supervisor çizerken bunu sessizce varsaymıştı.
 
 Ama dikkatli ol: bir rol, yalnızca değiştirmek istediğin kısmı değil, bütün davranışı değiştirir. Modele bir güvenlik uzmanı rolü verip sonra sanat tarihi hakkında soru sorarsan, cevap hiç rol olmadan sorduğundan daha kötü olabilir.
 

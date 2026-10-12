@@ -18,9 +18,11 @@ behavioural test that proves it.
 `playground/01-theme-T4-ground-G3-powder.html` is what the interface must look
 like. [`kia-context/specs/DESIGN.md`](kia-context/specs/DESIGN.md) is a
 transcription of its design *language* and names it in `source:`; where the two
-disagree, **the mockup is right and DESIGN.md is the bug** — with one named
-exception, listed in DESIGN.md itself, because a measured accessibility floor
-outranks a transcribed value (**D34**).
+disagree, **the mockup is right and DESIGN.md is the bug** — except where
+DESIGN.md records a deviation: nine of them, three forced by a measured floor
+(**D34**: a measured accessibility floor outranks a transcribed value) and six
+decided by the author. One of the six is the home page, whose reference is
+`playground/10-home-bazaar-street.html` (**D79**).
 
 **M16 was ten stages and all ten shipped**, in
 [`kia-context/logs/PROGRESS_2.md`](kia-context/logs/PROGRESS_2.md) — the token
@@ -34,18 +36,17 @@ trusting its brief.**
 `PROGRESS.md` is part 1 and closed: M1 to M15, and the review pass over M10 to
 M14. New milestones go in part 2.
 
-**M17 and M18 are written and not started**, at the end of
-[`kia-context/logs/PROGRESS_2.md`](kia-context/logs/PROGRESS_2.md). M17 folds
-`/courses/` and `/courses/[category]/` into the catalog and makes a level a
-filter rather than a route — **the module route does not move**. M18 is the home
-page, the bar and the two ends of a module, and it carries the one item that is
-not a surface: **33 `_tr.md` files exist and the app renders none of them**, so
-a language switcher is a content-pipeline milestone rather than a button. Each
-opens with the decision it needs from the author; neither is started.
+**M17 to M22 and M24 to M27 have shipped**, recorded in
+[`kia-context/logs/PROGRESS_2.md`](kia-context/logs/PROGRESS_2.md): one catalog
+with a level as an address, the module page, the progress page, the end of a
+module with its quick quiz, the readability pass over the corpus, and the
+Bazaar Street front door. **M19 renders the second language**: every ready
+module has a Turkish page under `/tr/`. **M23 is written and not started**: the
+interface's own strings in Turkish, which are authored content rather than code.
 
 **The retired vocabulary is out of the markup** — `hl-` in any `className` is
 **0**, from 792 — and what survives of that prefix survives on purpose: the
-twenty-six `data-hl-*` attributes islands and specs query, the three `<html>`
+`data-hl-*` attributes islands and specs query, the three `<html>`
 stamp families whose pattern `src/lib/record/stamp.ts` owns, and the storage
 keys, whose prefix is the only isolation available on a shared `github.io`
 origin. **Renaming any of those costs a keyboard shortcut, a mark that is right
@@ -157,8 +158,8 @@ npx playwright test theme.spec.ts --project=chrome-1440
 npx playwright test responsive.spec.ts --project=chrome-390 -g "no sideways"
 ```
 
-Only `responsive.spec.ts` runs on all three viewport projects (1440/1024/390);
-everything else runs on `chrome-1440` only. First run on a machine needs real
+`responsive`, `containment` and `fidelity` run on all three viewport projects
+(1440/1024/390); everything else runs on `chrome-1440` only. First run on a machine needs real
 Chrome: `npx playwright install --with-deps chrome`, or set
 `E2E_CHANNEL=chromium` to use the bundled build.
 
@@ -259,9 +260,8 @@ only `INSERT` raises, which is why that suite has both `expectRefused` and
   because `tests/e2e/sheets.ts` names representative sheets by number and specs
   then measure prose on them.
 - **An unresolvable internal `.md` link fails the build**, and
-  `tests/corpus/links.test.ts` also asserts no rendered HTML anywhere carries a
-  non-external `href` ending in `.md`. It checks every surface that renders
-  markdown, because a body-only gate once passed while four dead links shipped.
+  `tests/corpus/renders.test.ts` also asserts that no rendered module body
+  carries a non-external `href` ending in `.md`.
 - **The copy register** (`tests/unit/copy-register.test.ts`) bans exclamation
   marks, praise, anthropomorphism, "just"/"simply"/"easy", "please"/"sorry",
   confirmshaming, and a second spelling of any status (`NOT DRAWN`, never

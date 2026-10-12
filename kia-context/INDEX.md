@@ -44,11 +44,14 @@ and the same explanation given in person for the third time. See `genesis/GENESI
 | 2026-08 | The site becomes an application, themed as a drawing set | M2 |
 | 2026-09 (early) | Accounts, a rebuilt test suite, one central curriculum config | M3, M4, M5 |
 | 2026-09 (mid) | Intermediate and Ecosystem written and translated | M6 |
-| **2026-09-08** | **The curriculum reordered, and the interface being replaced** | **M7, M8 — active** |
+| **2026-09-08** | **The curriculum reordered, and the interface being replaced** | **M7, M8 done** |
 | **2026-09-08** | **The interface revision planned in six stages, and the design system replaced** | **M9 to M14** |
-| **2026-09-08** | **The vocabulary and the palette replaced; the navbar built** | **M9 done, M10 in progress** |
+| **2026-09-08** | **The vocabulary and the palette replaced; the navbar built** | **M9 and M10 done** |
 | **2026-09-09** | **The rails swapped, the module list folded, the diagram contained** | **M10 and M11 done** |
 | **2026-09-09** | **The catalog's three views, home A with completion control C, and four progress routes folded into one** | **M12, M13 and M14 done — the interface revision is built** |
+| 2026-09-10 | The interface rebuilt from scratch on the design language, in ten stages | `logs/PROGRESS_2.md` M16 |
+| 2026-09-11 to 13 | One catalog, the front door and the chrome, the Turkish pages, the module page, the progress page | M17 to M22 |
+| 2026-10-11 to 12 | The logo and the reader palettes; the end of a module and its quiz; the readability pass; the Bazaar Street front door | M24 to M27, merged as PRs #23 to #27 |
 
 **The harness itself was installed on 2026-09-08**, 105 commits in. Everything before that date was
 reconstructed from git and is labelled as inferred inside each file.
@@ -69,7 +72,7 @@ reconstructed from git and is labelled as inferred inside each file.
 | File | What it holds | State |
 |---|---|---|
 | `MANIFESTO.md` | 16 non-negotiable rules, what this is and is NOT | Rules 1–7 are the author's own, from `mini-courses/MANIFEST.md`. Rules 8–16 came out of the work; **16 is the newest and the one an agent breaks most easily** — the interface talks, it does not explain itself. |
-| `ARCHITECTURE.md` | The six rules, the domain, the two lifecycles, what the system refuses, the record, accounts, the build, deployment, the vocabulary | Current as of 2026-09-09. **The only architecture document**: the root `ARCHITECTURE.md` was folded into it and deleted (D11). 706 lines, sections 1 to 12; read the six rules, then §2, §3 and §9. |
+| `ARCHITECTURE.md` | The six rules, the domain, the two lifecycles, what the system refuses, the record, accounts, the build, deployment, the vocabulary | Current as of 2026-10-12. **The only architecture document**: the root `ARCHITECTURE.md` was folded into it and deleted (D11). 748 lines, sections 1 to 12; read the six rules, then §2, §3 and §9. |
 | `DESIGN.md` | The design **language**: tokens for both themes, colour roles, type scale, layout, elevation, shapes, components, and the do-nots | **Deleted and rewritten from scratch 2026-09-09** against the mockups it names in `source:` — `playground/01-theme-T4-ground-G3-powder.html` and its approved dark sibling `01-theme-T4-G3-DARK.html`. Where they disagree the mockup is right and this file is the bug (**D26**). A portable language, not a project specification: no framework class, route, feature or content vocabulary, and **no page layout** — layout belongs to M16, against the mockup for that surface. Held to the mockups mechanically by `tests/unit/design/transcription.test.ts`; the dark palette is a derivation, not a design (**D27**). |
 
 ### `kia-context/logs/` — state · written every session
@@ -77,9 +80,9 @@ reconstructed from git and is labelled as inferred inside each file.
 | File | What it holds | State |
 |---|---|---|
 | `PROGRESS.md` | **Part 1, closed.** M1 to M15, their deliverables and acceptance criteria, the order they go in, and the review pass over M10 to M14 | M1–M6 inferred; **M7 to M15 live and done.** The milestone table at the top still lists every milestone including M16, and points at part 2 for it. |
-| `PROGRESS_2.md` | **Part 2, and the ACTIVE part** — a new milestone is appended here. M16: the interface rebuilt on the design language, in ten stages; M17: three listings folded into one; M18: the home page, the bar and the two ends of a module | **All ten stages shipped.** The stage table, every stage's brief, and seven reports — each of which records what its own brief had wrong, so **read a stage's report before trusting its brief**. It closes with the capability ledger — one row per capability, where it lives, and the behavioural test that proves it survived — then with the review pass: 37 findings, **13 confirmed defects inside a green gate**, and eight more left deliberately as the author's call — read that before quoting any figure from this file — then **M17, the curriculum fold — SHIPPED**, whose report names five things its own brief had wrong, including a breadcrumb that pointed every module page at a retired route with nothing able to fail; then **M18, the front door and the chrome — SHIPPED**, whose report names three defects a screenshot found and no test could. **Every milestone here states its deliverables and acceptance criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report** — the loop that governs that lives in part 1 and is linked from the top of part 2. Then **M20, the catalog's descriptions — SHIPPED**, whose report names five things measured rather than assumed, four of them found by screenshot and one by probing a browser, and none of them visible to 1,138 green tests. Then **M21, the module page and the rail — SHIPPED**, whose report records a one-pixel overflow that a fold latched and a restore could not undo, and a review that caught a regression inside the fix itself. Then **M22, the progress page redesigned — SHIPPED**, whose report records that eight of the ten routes drawing a trail named their page differently from its own heading, and a review that pointed the project's own rule 16 back at the milestone. Then **M19, the second language — SHIPPED less its chrome**: 19 Turkish module pages at `/tr/`, whose report records two capabilities that were being dropped on every one of them in silence because a matcher was written in one language. Then **M23, written and not started** — the interface's own strings, which are authored content in the author's language rather than code. It closes with **M24, the author's requests of 2026-10-11 — SHIPPED and merged as PR #23**, with a same-day follow-up: the logo, the catalog's `View:` row and spacing, a quieter rail, the language menu in the bar, the series map off the site, and three palettes for diagrams and code — whose report records six defects the requests uncovered, among them code highlighting that had been inert since stage 0 — and a follow-up that found the current level chip had carried no visible mark since M17. Then **M25, the end of a module rebuilt — SHIPPED and merged as PR #25**: one completion checkbox, Previous / Next that stand out, and a quick quiz for every written module written by nineteen parallel agents, with the old self-check, submittal, stamps and name prompt gone from the page and their record fields kept. Then **M26, headings and ASD-STE-like English across the corpus — SHIPPED as PR #26**: the author's heading list in both languages, the content additions they asked for, and a wording-only rewrite of all nineteen written modules by nineteen parallel agents under a guard that proved no heading, code block, link or number moved. Then **M27, the front door is Bazaar Street — SHIPPED as PR #27**: an illustrated bazaar the reader walks through on scroll, the four mottos on hanging signs and one door per level, chosen by the author out of three concepts (D79). **This part is 3,752 lines, past the ~1,500 at which the harness says to split; splitting is the author's call.** |
+| `PROGRESS_2.md` | **Part 2, and the ACTIVE part** — a new milestone is appended here. M16: the interface rebuilt on the design language, in ten stages; M17: three listings folded into one; M18: the home page, the bar and the two ends of a module | **All ten stages shipped.** The stage table, every stage's brief, and seven reports — each of which records what its own brief had wrong, so **read a stage's report before trusting its brief**. It closes with the capability ledger — one row per capability, where it lives, and the behavioural test that proves it survived — then with the review pass: 37 findings, **13 confirmed defects inside a green gate**, and eight more left deliberately as the author's call — read that before quoting any figure from this file — then **M17, the curriculum fold — SHIPPED**, whose report names five things its own brief had wrong, including a breadcrumb that pointed every module page at a retired route with nothing able to fail; then **M18, the front door and the chrome — SHIPPED**, whose report names three defects a screenshot found and no test could. **Every milestone here states its deliverables and acceptance criteria as `- [ ]` checkboxes, ticked as the work lands, and closes with a dated report** — the loop that governs that lives in part 1 and is linked from the top of part 2. Then **M20, the catalog's descriptions — SHIPPED**, whose report names five things measured rather than assumed, four of them found by screenshot and one by probing a browser, and none of them visible to 1,138 green tests. Then **M21, the module page and the rail — SHIPPED**, whose report records a one-pixel overflow that a fold latched and a restore could not undo, and a review that caught a regression inside the fix itself. Then **M22, the progress page redesigned — SHIPPED**, whose report records that eight of the ten routes drawing a trail named their page differently from its own heading, and a review that pointed the project's own rule 16 back at the milestone. Then **M19, the second language — SHIPPED less its chrome**: 19 Turkish module pages at `/tr/`, whose report records two capabilities that were being dropped on every one of them in silence because a matcher was written in one language. Then **M23, written and not started** — the interface's own strings, which are authored content in the author's language rather than code. It closes with **M24, the author's requests of 2026-10-11 — SHIPPED and merged as PR #23**, with a same-day follow-up: the logo, the catalog's `View:` row and spacing, a quieter rail, the language menu in the bar, the series map off the site, and three palettes for diagrams and code — whose report records six defects the requests uncovered, among them code highlighting that had been inert since stage 0 — and a follow-up that found the current level chip had carried no visible mark since M17. Then **M25, the end of a module rebuilt — SHIPPED and merged as PR #25**: one completion checkbox, Previous / Next that stand out, and a quick quiz for every written module written by nineteen parallel agents, with the old self-check, submittal, stamps and name prompt gone from the page and their record fields kept. Then **M26, headings and ASD-STE-like English across the corpus — SHIPPED as PR #26**: the author's heading list in both languages, the content additions they asked for, and a wording-only rewrite of all nineteen written modules by nineteen parallel agents under a guard that proved no heading, code block, link or number moved. Then **M27, the front door is Bazaar Street — SHIPPED as PR #27**: an illustrated bazaar the reader walks through on scroll, the four mottos on hanging signs and one door per level, chosen by the author out of three concepts (D79). **This part is 3,758 lines, past the ~1,500 at which the harness says to split; splitting is the author's call.** |
 | `BRAINSTORM.md` | **Part 1, closed.** D1 to D25 — the application, and the two attempts at its interface that D26 replaced. It also carries the entry test and the house style for writing an entry | D1–D6 inferred; **D7–D25 recorded live.** Split at **D26** because that is where the subject changes, not merely where the line count did. |
-| `BRAINSTORM_2.md` | **Part 2, and the ACTIVE part** — a new decision is appended here. D26 to D79, the rebuild that D26 itself decided, plus open questions O1 to O4 | O1, O3 and O4 are closed; **O2 is half closed** — D22 answered the progress vocabulary, and the module info panel's four unnamed rows are still open. The open questions live in this part because a closed file may not be appended to. Two M16 questions are open in the milestone rather than here: whether a wide figure may bleed past the measure (**D43**) and whether the pager's direction label leaves `on-surface-faint` (**D45**). |
+| `BRAINSTORM_2.md` | **Part 2, and the ACTIVE part** — a new decision is appended here. D26 to D79, the rebuild that D26 itself decided, plus open questions O1 to O4 | O1 to O4 are all closed: D22 answered O2's progress vocabulary, and M21 answered its second half by cutting the module's info strip to minutes and words. The open questions live in this part because a closed file may not be appended to. One M16 question is still open in the milestone rather than here: whether a wide figure may bleed past the measure (**D43**). The pager's direction label (**D45**) was settled on 2026-10-12. |
 
 ---
 
@@ -123,7 +126,7 @@ maintained by an agent, and do not need reading to do the work. The root `CLAUDE
 | Where does the course get listed? | **One place: `/sheets/`.** `/courses/` and `/courses/<level>/` are forwards (**M17**); a level is `/sheets/<level>/` and a MODULE is still `/courses/<level>/<module>/` |
 | Should this control be a link or a button? | **`logs/BRAINSTORM_2.md` D62** — a fact about the CORPUS can be an address, so it is a link that works with no script; a fact about the READER cannot, so it stays a button |
 | Where can a number in a SENTENCE come from? | The corpus, counted at build time — **D65**, after `five to ten minutes a module` sat in SIX documents and one page, wrong by a factor of three, for the life of the project — two are corrected and the four in `mini-courses/` are the author's. A number from outside the repository is **D64** |
-| Is the second language done? | **No.** 33 `_tr.md` files exist and the app renders none. **M19** in `logs/PROGRESS_2.md`, written and not started |
+| Is the second language done? | **The module pages, yes**: every ready module has a Turkish page under `/tr/` (**M19**). **The interface's own strings, no**: that is **M23**, written and not started |
 | Where does a module's one-line description come from? | Its own `summary` frontmatter, which every READY module is required to carry — **D66**. Never write one into `src/` |
 | A reader chose a view; a route wants a different one. Which wins? | The reader — a route's default is for somebody who has not chosen (**D67**), which is also why the nav menu closes on pointer-out only where hover exists |
 | The suite is green and the page still looks wrong. | `logs/BRAINSTORM_2.md` **D59** — a fact about one element cannot see a relationship between two, and `tests/e2e/layout.spec.ts` is what checks the relationships |
@@ -149,7 +152,7 @@ maintained by an agent, and do not need reading to do the work. The root `CLAUDE
 ## 6. The numbering, and why it never restarts
 
 `M1…M15` are milestones in `logs/PROGRESS.md` and `M16…M27` are in `logs/PROGRESS_2.md`. `D1…D25` are decisions in `logs/BRAINSTORM.md` and `D26…D79` are in `logs/BRAINSTORM_2.md`, where `O1…O4` are the open questions
-in `logs/BRAINSTORM_2.md`, of which O1, O3 and O4 are closed and O2 is half closed. Rules `1…15` are in
+in `logs/BRAINSTORM_2.md`, of which all four are closed. Rules `1…16` are in
 `specs/MANIFESTO.md`.
 
 **M8 did not become M9.** It stayed open as the umbrella for the whole interface revision and M9 to
@@ -191,37 +194,40 @@ every other file.
 runs straight through — `M1…M27`, `D1…D79` — so a citation never has to say
 which part it means, only the number.
 
-The heaviest edges, measured with `grep` on 2026-09-10 rather than estimated:
+The heaviest edges, measured with `grep` on 2026-10-12 rather than estimated:
 
 | From | To | Times |
 |---|---|---|
-| `logs/BRAINSTORM_2.md` | `specs/DESIGN.md` | 22 |
+| `logs/BRAINSTORM_2.md` | `specs/DESIGN.md` | 28 |
+| `logs/PROGRESS_2.md` | `specs/DESIGN.md` | 21 |
 | `logs/PROGRESS.md` | `specs/ARCHITECTURE.md` | 17 |
 | `logs/BRAINSTORM.md` | `specs/ARCHITECTURE.md` | 17 |
 | `logs/PROGRESS.md` | `specs/DESIGN.md` | 14 |
+| `logs/PROGRESS_2.md` | `logs/PROGRESS.md` | 8 |
 | `logs/BRAINSTORM_2.md` | `specs/ARCHITECTURE.md` | 7 |
 | `logs/PROGRESS.md` | `logs/BRAINSTORM.md` | 7 |
-| `logs/PROGRESS_2.md` | `specs/DESIGN.md` | 6 |
-| `logs/PROGRESS_2.md` | `logs/PROGRESS.md` | 5 |
+| `logs/BRAINSTORM_2.md` | `specs/MANIFESTO.md` | 6 |
 | `logs/BRAINSTORM.md` | `specs/MANIFESTO.md` | 3 |
 | `logs/BRAINSTORM.md` | `specs/DESIGN.md` | 3 |
 
 **Measuring this is what confirmed D26 was the right place to cut the decision
 log**, and the number is more convincing than the argument was. Part 1 cites
-`ARCHITECTURE.md` 17 times and `DESIGN.md` 3; part 2 cites `DESIGN.md` 22 times
+`ARCHITECTURE.md` 17 times and `DESIGN.md` 3; part 2 cites `DESIGN.md` 28 times
 and `ARCHITECTURE.md` 7. The two halves are about different subjects — how the
 system is built, and how it looks — and the split fell on that seam rather than
 merely on a line count.
 
-**`PROGRESS_2.md` is the light one, and deliberately.** M16's reasoning went
+**`PROGRESS_2.md` is the longest file, and still light on reasoning, deliberately.** M16's reasoning went
 into `BRAINSTORM_2.md` as D26 to D53 and its rules into `DESIGN.md`; what part 2
 of the progress log holds is the work and what the work found, which is what a
 log is for. A stage report that had to explain a decision would be a decision in
 two files.
 
-The sketch above no longer draws an edge it used to: **`specs/DESIGN.md`'s body now cites nothing in
-this repository — zero references to any `kia-context/` path** — and its one mention of
-`logs/BRAINSTORM.md` is in its frontmatter, saying what does not belong in the file. That is the
+The sketch above no longer draws an edge it used to: **`specs/DESIGN.md`'s body names no
+`kia-context/` path** — its one mention of `logs/BRAINSTORM.md` is in its frontmatter, saying what does
+not belong in the file. It does cite five decisions by number (D34, D45, D65, D71, D79), and since
+D79 the home page's own reference file and art folder, because those deviations are the author's and
+say so. That is the
 point of it rather than an omission: as of **D26** the design document is a portable *language*, and
 a language that cites this project's decision log cannot be adopted by another project. It points
 outward instead, at the mockup named in its `source:` field, which outranks it.
@@ -230,5 +236,5 @@ outward instead, at the mockup named in its `source:` field, which outranks it.
 what it says, and the blueprint never explains itself.
 
 `specs/MANIFESTO.md` and `genesis/GENESIS.md` both point at `mini-courses/MANIFEST.md` — three times
-each — because the author's own public document is the source of the founding rules and neither file
+and twice — because the author's own public document is the source of the founding rules and neither file
 copies them without saying where they came from.

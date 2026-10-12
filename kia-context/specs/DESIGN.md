@@ -521,8 +521,8 @@ already had the plural. **A sentence on a page and the document it came from are
 one thing, so correcting one without the other is how they drift** — which is the same failure the
 minute figure had, in the other direction: the site said `five to ten minutes a module` because
 `README.md` rule 4 and `MANIFESTO.md` §3 said so, and none of the three had been measured against a
-corpus whose shortest module declares twenty (**D65**). The home page counts it now, so only the
-documents can go stale.
+corpus whose shortest module declares twenty (**D65**). The home page counted it from M18 to M26;
+since **D79** it states no duration at all, so only the documents can go stale.
 
 Nothing about the TYPE moved for either, so neither is a `transcription.test.ts` `DEVIATIONS` entry —
 that registry is about values, and no value changed.

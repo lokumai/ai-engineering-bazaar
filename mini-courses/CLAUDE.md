@@ -116,7 +116,7 @@ italics on the next line:
 
 This matters more than it looks. The app turns that into a real `<figure>`: it numbers it
 (`FIG. 4.2`), uses the alt text as the caption label, puts the italic line in a `<p
-class="hl-cap-note">`, applies a width class, and rewrites the path to the copied
+class="bz-caption-note">`, applies a width class, and rewrites the path to the copied
 `/course-images/` location. **Raw HTML is stripped out of the markdown entirely**, so an
 `<img>` tag written by hand does not render on the published site at all. It was tried, and eight
 figures silently disappeared from the site while still showing on GitHub.
@@ -125,12 +125,12 @@ So the alt text is not just accessibility text, it is the printed figure label: 
 title, capitalised.
 
 **A caption note only attaches to an image, never to a mermaid diagram.** Measured in the export
-2026-09-03. For a markdown image the italic line becomes the figure's `<p class="hl-cap-note">`.
+2026-09-03. For a markdown image the italic line becomes the figure's `<p class="bz-caption-note">`.
 For a mermaid fence the build writes the `<figcaption>` label from the nearest heading instead
 (`FIG. 29.1`, then that heading), and an italic line after the closing fence stays an ordinary
 `<p><em>` paragraph. That is still worth writing, because it reads as a caption to anyone on the page or on
 GitHub and it is where the punchline a mermaid node cannot hold belongs. Just do not count on it
-showing up as a caption, and do not count `hl-cap-note` to check a diagram has one.
+showing up as a caption, and do not count `bz-caption-note` to check a diagram has one.
 
 
 ## How a module gets written
@@ -224,7 +224,7 @@ the other in the same commit.** The transform from README to index:
 **`index.md` is no longer the published home page.** It used to be, and this rule used to say so.
 The app's §15 work replaced `/` with a home screen built from components, and `lib/content/` now
 reads `index.md` only as a link target: `../index.md` from inside a category resolves to
-`/courses/`. So `index.md` is a page for people browsing `mini-courses/` on GitHub, nothing more.
+`/sheets/`, the catalog. So `index.md` is a page for people browsing `mini-courses/` on GitHub, nothing more.
 Keeping it in step with `README.md` is still worth doing for that reader, but do not expect to find
 its prose in the export, and do not go looking for a bug when you cannot.
 
@@ -359,7 +359,7 @@ sides can see the whole board, so nothing moves.
 
 ## Starting a new module
 
-Three things, and the third is the one that is easy to forget.
+Four things, and the third is the one that is easy to forget.
 
 1. Copy `mini-courses/_module_template.md` to `<category>/<name>.md`, where `<name>` is lowercase
    with underscores and no number.
@@ -516,13 +516,13 @@ mini-courses/            the authored corpus, and all this file governs
   ROADMAP.md             the order we intend to build in
   CLAUDE.md / AGENTS.md  this file
   _module_template.md    copy this to start a module
-  index.md               site homepage, mirrors README.md
+  index.md               the GitHub page for mini-courses/, mirrors README.md
   curriculum.yaml        the course shape: the one place a module's position lives
   <level>/<name>.quiz.yaml  a written module's quick quiz, both languages
   1_fundamentals/        rewritten, both languages
-  2_intermediate/        being rewritten from scratch
+  2_intermediate/        rewritten, both languages; one module still a draft
   3_expert/              draft
-  4_ecosystem/           draft
+  4_ecosystem/           written, both languages; one module still a draft
   5_protocols_specs/     draft
   scratchpad/            research notes and diagram prompts, never published
 src/ tests/ scripts/     the Next.js app that renders the corpus (not ours)

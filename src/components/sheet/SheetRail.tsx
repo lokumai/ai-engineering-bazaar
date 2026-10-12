@@ -1,6 +1,7 @@
 import type { TocEntry } from '@/lib/content/render'
 import { DependencyBlock, type DependencyRelation } from './DependencyBlock'
 import { SectionSpine } from './SectionSpine'
+import { type ReadingLang, langAttr } from '@/lib/content/languages'
 
 /**
  * M11 — the RIGHT rail: what is on this page, and what this page depends on.
@@ -54,7 +55,7 @@ export function SheetRail({
    * `lang="tr"` box would be read in the wrong voice, which is the defect the
    * marking exists to prevent.
    */
-  lang?: 'en' | 'tr'
+  lang?: ReadingLang
 }) {
   return (
     <>
@@ -63,7 +64,7 @@ export function SheetRail({
           On this page
         </b>
       )}
-      <SectionSpine entries={toc} lang={lang === 'tr' ? 'tr' : undefined} />
+      <SectionSpine entries={toc} lang={lang === undefined ? undefined : langAttr(lang)} />
     </>
   )
 }

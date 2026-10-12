@@ -17,6 +17,14 @@ questions:
         - "LLM hiç tool çağırmıyor ve onun output'u final cevap oluyor."
         - "Host, her tool bir kez çalıştığında loop'u durduruyor."
       explain: "Tool call'ın yokluğu, sonlanma koşulunun (termination condition) kendisi. Modelin yazdığı metin cevap oluyor, ve loop'ta bir sayaç (counter) ya da denetleyici (supervisor) yok."
+    fa:
+      question: "چه چیزی loop یک agent را تمام می‌کند؟"
+      options:
+        - "یک counter بعد از تعداد ثابتی pass، loop را متوقف می‌کند."
+        - "یک supervisor کار را بررسی می‌کند و تصمیم می‌گیرد که کار تمام شده است."
+        - "LLM هیچ tool‌ای صدا نمی‌زند، و خروجی آن پاسخ نهایی می‌شود."
+        - "وقتی هر tool یک بار اجرا شد، host loop را متوقف می‌کند."
+      explain: "نبودن tool call همان شرط پایان است، و متنی که مدل می‌نویسد پاسخ است. loop هیچ counter و هیچ supervisor ندارد."
   - answer: 0
     en:
       question: "What is the difference between a plain LLM and an agent?"
@@ -34,6 +42,14 @@ questions:
         - "Agent'ın modeli geçmiş mesajları kendi içinde saklıyor."
         - "Agent'ın modeli iki cevap arasında tool'ları kendisi çalıştırıyor."
       explain: "Düz bir LLM single-turn: bir input, bir output. Bir agent aynı modeli tekrar tekrar çağırıyor, ve modele hiçbir şey eklenmiyor."
+    fa:
+      question: "تفاوت یک LLM ساده با یک agent چیست؟"
+      options:
+        - "همان مدل چند بار صدا زده می‌شود، و هر فراخوانی می‌تواند یک tool بخواهد."
+        - "agent از یک مدل متفاوت استفاده می‌کند که برای اجرای tool‌ها آموزش دیده است."
+        - "مدل agent پیام‌های گذشته را داخل خودش ذخیره می‌کند."
+        - "مدل agent بین دو پاسخ، خودش tool‌ها را اجرا می‌کند."
+      explain: "یک LLM ساده single-turn است: یک input و یک output. یک agent همان مدل را بارها صدا می‌زند، و به خود مدل چیزی اضافه نمی‌شود."
   - answer: 1
     en:
       question: "A single LLM call needs no framework. Why does an agent use one?"
@@ -51,6 +67,14 @@ questions:
         - "Framework, modelin weight'lerine yeni akıl yürütme (reasoning) becerileri ekliyor."
         - "Framework loop'u LLM'in içine taşıyor, böylece loop'u model çalıştırıyor."
       explain: "Loop'un tamamı host makinede çalışıyor, ve framework bu boilerplate'i bir kez yazıyor. Tek bir çağrıda loop, tool parse etme ve mesaj yığını (message stack) yok, bu yüzden framework gerekmiyor."
+    fa:
+      question: "یک فراخوانی تکی LLM به framework نیاز ندارد. چرا یک agent از framework استفاده می‌کند؟"
+      options:
+        - "framework هر فراخوانی مدل را سریع‌تر و ارزان‌تر اجرا می‌کند."
+        - "host باید loop را اجرا کند، tool call‌ها را parse کند و message stack را نگه دارد."
+        - "framework مهارت‌های جدیدی برای استدلال (reasoning) به model weights اضافه می‌کند."
+        - "framework، loop را داخل LLM می‌برد، پس مدل آن را اجرا می‌کند."
+      explain: "کل loop روی host machine اجرا می‌شود، و framework آن boilerplate را یک بار می‌نویسد. یک فراخوانی تکی نه loop دارد، نه parse کردن tool و نه message stack، پس به framework نیاز ندارد."
   - answer: 3
     en:
       question: "How does the LLM in an agent know which tools it can call?"
@@ -68,3 +92,11 @@ questions:
         - "Model, tool'ları bulmak için host'taki Python dosyalarını okuyor."
         - "System prompt onları listeliyor, ve host onu her çağrıdan önce gönderiyor."
       explain: "Host, system prompt'u her çağrıdan önce yeniden kuruyor, ve bu prompt her tool'un adını ve açıklamasını listeliyor. Bu listeyi @tool decorator'ı, fonksiyonunun adından, docstring'inden ve type hint'lerinden kuruyor."
+    fa:
+      question: "LLM داخل یک agent از کجا می‌داند کدام tool‌ها را می‌تواند صدا بزند؟"
+      options:
+        - "مدل tool‌ها را در زمان training روی متن یاد گرفته است."
+        - "مدل فهرست tool‌ها را از اولین فراخوانی‌اش در loop به یاد دارد."
+        - "مدل فایل‌های Python روی host را می‌خواند تا tool‌ها را پیدا کند."
+        - "system prompt آن‌ها را فهرست می‌کند، و host آن را قبل از هر فراخوانی می‌فرستد."
+      explain: "host قبل از هر فراخوانی system prompt را دوباره می‌سازد، و نام و توضیح هر tool را در آن فهرست می‌کند. دکوریتور @tool این فهرست را از نام تابع، docstring و type hint‌های شما می‌سازد."

@@ -60,7 +60,7 @@ actually changed. Name the files, and read `git status` before every commit.
   workflow, AI assistance, or internal directory paths.
 - **First person:** "me" for the author, "we" for the project. Never a bare "I".
 - **No em dashes.** Never use `—` as punctuation. Use a colon, a comma, parentheses, or split
-  the sentence in two. This applies to English and Turkish, to captions and list items, and to
+  the sentence in two. This applies to English, Turkish and Persian, to captions and list items, and to
   the working files as well as the modules.
 - **Plain English.** Short sentences, common words, readable by a non-native speaker. Not a
   textbook, so no Roman-numeral outlines or lettered subsections.
@@ -78,7 +78,8 @@ actually changed. Name the files, and read `git status` before every commit.
   at, for, with, from, as, by, vs) and the ones the author named (it, is, are, be, don't). The
   first word is always capitalised, and so is the last unless it is one the author named, so
   "What a Harness is Made Of" but "What Loop Engineering is". Two headings keep their exact text because the app matches them:
-  `## Summary` / `## Özet` and `## Where this fits in the series` / `## Bu serinin neresindeyiz`.
+  `## Summary` / `## Özet` and `## Where this fits in the series` / `## Bu serinin neresindeyiz`
+  (the Persian spellings are under [Translating a module](#persian)).
 - **Never dense. Being concise is not a goal here.** Plain English and compressed English are not
   the same thing, and compression is the failure mode this project keeps hitting. Amirkia, after
   reading modules 10 to 12: "Make sure you did not make the language too dense solely to make it
@@ -208,6 +209,30 @@ Write the Turkish only once the English is final, then:
   a model was actually shown and produced.
 - Turkish runs roughly 20% shorter than the English. That is the language, not missing content.
 
+### Persian
+
+A written module may also have a Persian sibling, `<name>_fa.md`. Unlike Turkish it is optional: a
+planned module has none, and none is created as a stub. Everything above holds for it, plus:
+
+- **No frontmatter.** The file opens on its `# ` title, as a `_tr.md` does.
+- **Technical vocabulary stays English, in Latin letters**, written as the English writes it:
+  `prompt`, `token`, `context window`, `Agent`, `SQL`, `database`. A Persian suffix joins it with a
+  zero-width non-joiner: `Agent‌ها`, `prompt‌های`. Where a Persian word stands for a technical
+  concept, the English follows in parentheses the first time: `استدلال (reasoning)`.
+- **Plain written Persian, addressed to `شما`**, with everyday words: `است`, not `می‌باشد`.
+- **ASCII digits** (`2026`, `52.8%`), never Persian ones, so numbers match the English and the code.
+  Persian punctuation in Persian sentences: `،` `؛` `؟`.
+- **Four strings the site matches by their words**, so they are spelled exactly:
+  `## کجای این مجموعه هستیم` (the series map), `## خلاصه`, `## منابع`, and
+  `**بررسی سریع**:` at the start of the quick check line. The callout label is `**نکته:**`.
+- **Links**: a link to a written module points at its `_fa.md` with that module's Persian title; a
+  link to a planned module stays exactly as in the English, target and text.
+- **Code blocks and the series map's mermaid stay byte-identical.** Other diagrams translate their
+  labels only, never a node id or an arrow, and `node scripts/check-mermaid.mjs <file>_fa.md` must
+  pass. Image alt text is translated, because the site prints it as the figure's label.
+- The site renders it under `/fa/` right to left. The objectives card stays English, as on a
+  Turkish page.
+
 ## Two files that move together
 
 `README.md` and `mini-courses/index.md` are the same page for two audiences. **Change one, update
@@ -237,8 +262,9 @@ deleted.
 
 ## Language
 
-Modules are written and finalized in **English first**. The Turkish `*_tr.md` files are
-translated only once the English is final, so each module is translated once.
+Modules are written and finalized in **English first**. The Turkish `*_tr.md` files, and the
+Persian `*_fa.md` files of the written modules, are translated only once the English is final, so
+each module is translated once per language.
 
 ## Where a visual comes from
 
@@ -464,7 +490,8 @@ moves, and `git status --short` will show four paths: the config, the two new fi
 module at fault: the categories must be in the app's own order, every name must be unique, every
 `needs` entry must resolve and must sit earlier in the file, a `ready` module needs minutes above
 zero, **the `.md` files on disk in a category and the names listed for it must be the same set,
-both directions**, and every module needs a `_tr.md` sibling. That fifth one is the valuable one: a
+both directions**, every module needs a `_tr.md` sibling, and an `_fa.md` must translate a listed
+module. That fifth one is the valuable one: a
 module you list without writing the file, and a file you write without listing it, are the two ways
 this can go wrong while everything else still passes.
 
@@ -486,6 +513,8 @@ after reading. Nothing is tricky, nothing is scored on a record, and nothing is 
 - **Turkish beside the English, under one shared answer index**, so the two languages cannot
   disagree about which option is right. Technical words stay English, as in the module. Where a
   Turkish word stands for a technical concept, the English follows in parentheses: `yetenek (skill)`.
+- **Persian too, wherever the module has a `_fa.md`**: an `fa:` side after the `tr:` side of every
+  question, the options in the same order. The build fails a Persian page whose quiz lacks one.
 - Options of similar length; no "all of the above" or "none of the above"; the correct answer moves
   around between questions. No em dashes, no exclamation marks.
 
@@ -518,11 +547,11 @@ mini-courses/            the authored corpus, and all this file governs
   _module_template.md    copy this to start a module
   index.md               the GitHub page for mini-courses/, mirrors README.md
   curriculum.yaml        the course shape: the one place a module's position lives
-  <level>/<name>.quiz.yaml  a written module's quick quiz, both languages
-  1_fundamentals/        rewritten, both languages
-  2_intermediate/        rewritten, both languages; one module still a draft
+  <level>/<name>.quiz.yaml  a written module's quick quiz, every language it has
+  1_fundamentals/        rewritten, in English, Turkish and Persian
+  2_intermediate/        rewritten, in English, Turkish and Persian; one module still a draft
   3_expert/              draft
-  4_ecosystem/           written, both languages; one module still a draft
+  4_ecosystem/           written, in English, Turkish and Persian; one module still a draft
   5_protocols_specs/     draft
   scratchpad/            research notes and diagram prompts, never published
 src/ tests/ scripts/     the Next.js app that renders the corpus (not ours)

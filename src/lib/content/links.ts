@@ -2,6 +2,7 @@ import { href } from '@/lib/url'
 import { categoryByDir } from './curriculum-file'
 import { type CourseModule, loadAllModules } from './loader'
 import { INDEX_ROUTE } from '@/lib/route-labels'
+import { TRANSLATED_LANGS } from './languages'
 
 /**
  * The corpus cross-references itself in the only notation a folder of markdown
@@ -31,12 +32,13 @@ import { INDEX_ROUTE } from '@/lib/route-labels'
 const OFF_SITE = /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i
 
 /**
- * A module file: the name the yaml lists, plus an optional Turkish suffix.
+ * A module file: the name the yaml lists, plus an optional translation suffix
+ * (`_tr`, and `_fa` since M28 — `languages.ts` names them).
  *
  * There is no numeric prefix to allow for any more, and allowing one would let
  * a link keep naming a file that no longer exists.
  */
-const MODULE_FILE = /^([a-z0-9_]+?)(_tr)?\.md$/
+const MODULE_FILE = new RegExp(`^([a-z0-9_]+?)(_(?:${TRANSLATED_LANGS.join('|')}))?\\.md$`)
 
 /**
  * The modules the app actually serves, indexed by `dir/name`.
@@ -171,7 +173,7 @@ export function corpusTargetOf(rawHref: string, source: string): CourseModule | 
   const parts = MODULE_FILE.exec(filename)
   if (parts === null) return null
 
-  // A `_tr.md` target resolves to its English sibling, deliberately. The app
+  // A `_tr.md` (or `_fa.md`) target resolves to its English sibling, deliberately. The app
   // serves no Turkish route at all — the loader reads one file per module, so
   // no such page exists to link to — and a sheet reports its own language
   // coverage in its title block (§7.6 `LANG`), which is where a reader learns

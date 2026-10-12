@@ -2,7 +2,14 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
+import {
+  type ReadingLang,
+  type TranslatedLang,
+  TRANSLATED_LANGS,
+  TRANSLATIONS,
+  dirOf,
+} from '@/lib/content/languages'
 
 /**
  * M19's language switch, moved into the bar on the author's word: *"the
@@ -11,10 +18,11 @@ import { useEffect, useRef } from 'react'
  * and should have proper icon of changing language."* It sat in the top-right
  * corner of the reading column until 2026-10-11, as two text links.
  *
- * ## Still two LINKS, now behind a disclosure
+ * ## Still LINKS, now behind a disclosure
  *
  * The language is an ADDRESS (the `/tr/` route's own docblock), so the menu's
- * contents are navigation: two links, the current one marked
+ * contents are navigation: one link per language the module has (two, and
+ * three since M28 added Persian), the current one marked
  * `aria-current="page"`. The trigger is a native `<details>`/`<summary>`, the
  * mechanism the bar's own Catalog menu uses, so the whole switch **still works
  * with the bundle blocked** — the summary opens by itself, the links are plain
@@ -40,17 +48,30 @@ import { useEffect, useRef } from 'react'
  */
 export const LANGUAGE_PICKER_LABEL = 'Language of this module'
 
-/** `/courses/<level>/<module>/` and its Turkish twin, as one parse. */
-const MODULE = /^\/(tr\/)?courses\/([^/]+\/[^/]+)\/?$/
+/** `/courses/<level>/<module>/` and its translated twins, as one parse. */
+const MODULE = new RegExp(`^/(?:(${TRANSLATED_LANGS.join('|')})/)?courses/([^/]+/[^/]+)/?$`)
 
-/** The two addresses of the module at `pathname`, or null where there is one. */
+/**
+ * Every address of the module at `pathname` — English first, then each
+ * language it has a page in — or null where there is only the one.
+ *
+ * M28 — the set is per language now, because Persian covers the written
+ * modules only where a translation exists and Turkish covers the same nineteen
+ * for a different reason; a module listed under one language says nothing
+ * about the other.
+ */
 export function alternatesOf(
   pathname: string,
-  translated: ReadonlySet<string>,
-): { slug: string; current: 'en' | 'tr' } | null {
+  translated: Readonly<Record<TranslatedLang, ReadonlySet<string>>>,
+): { slug: string; current: ReadingLang; available: readonly ReadingLang[] } | null {
   const match = MODULE.exec(pathname)
-  if (!match || !translated.has(match[2])) return null
-  return { slug: match[2], current: match[1] ? 'tr' : 'en' }
+  if (!match) return null
+  const slug = match[2]
+  const others = TRANSLATED_LANGS.filter((lang) => translated[lang].has(slug))
+  if (others.length === 0) return null
+  const current = (match[1] as TranslatedLang | undefined) ?? 'en'
+  if (current !== 'en' && !others.includes(current)) return null
+  return { slug, current, available: ['en', ...others] }
 }
 
 /** A globe: the mark every product uses for "the language of this page". */
@@ -90,15 +111,30 @@ function CheckGlyph() {
   )
 }
 
-const LANGUAGES = [
-  { id: 'en', label: 'English', href: (slug: string) => `/courses/${slug}/` },
-  { id: 'tr', label: 'Türkçe', href: (slug: string) => `/tr/courses/${slug}/` },
-] as const
+const LANGUAGES: readonly { id: ReadingLang; label: string; href: (slug: string) => string }[] = [
+  { id: 'en', label: 'English', href: (slug) => `/courses/${slug}/` },
+  ...TRANSLATIONS.map((one) => ({
+    id: one.id,
+    label: one.label,
+    href: (slug: string) => `/${one.id}/courses/${slug}/`,
+  })),
+]
 
-export function LanguageMenu({ translated }: { translated: readonly string[] }) {
+export function LanguageMenu({
+  translated,
+}: {
+  translated: Readonly<Record<TranslatedLang, readonly string[]>>
+}) {
   const pathname = usePathname() ?? '/'
   const panel = useRef<HTMLDetailsElement>(null)
-  const here = alternatesOf(pathname, new Set(translated))
+  const sets = useMemo(
+    () =>
+      Object.fromEntries(
+        TRANSLATED_LANGS.map((lang) => [lang, new Set(translated[lang])]),
+      ) as unknown as Record<TranslatedLang, ReadonlySet<string>>,
+    [translated],
+  )
+  const here = alternatesOf(pathname, sets)
 
   // Arriving at the other language is a client transition and the bar is not
   // re-rendered from scratch, so the panel would stay open over the new page.
@@ -130,7 +166,7 @@ export function LanguageMenu({ translated }: { translated: readonly string[] }) 
   }
 
   // Focus leaving the whole control closes it, so a keyboard reader who tabs
-  // past the two links does not leave a panel hanging over the page. Read off
+  // past the links does not leave a panel hanging over the page. Read off
   // `relatedTarget`, never off `activeElement`: after a press on the summary
   // the active element is inside the details, always.
   function blur(event: React.FocusEvent<HTMLDetailsElement>): void {
@@ -153,13 +189,14 @@ export function LanguageMenu({ translated }: { translated: readonly string[] }) 
           <GlobeGlyph />
         </summary>
         <div className="bz-menu bz-langmenu-panel">
-          {LANGUAGES.map((one) => (
+          {LANGUAGES.filter((one) => here.available.includes(one.id)).map((one) => (
             <Link
               key={one.id}
               className="bz-menu-item"
               href={one.href(here.slug)}
               hrefLang={one.id}
               lang={one.id}
+              dir={dirOf(one.id)}
               aria-current={here.current === one.id ? 'page' : undefined}
             >
               {one.label}

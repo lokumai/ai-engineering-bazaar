@@ -1,4 +1,5 @@
 import type { TocEntry } from '@/lib/content/render'
+import { type ReadingLang, dirOf } from '@/lib/content/languages'
 
 /**
  * §5.6 — the table of contents, which **is** the section spine of §4.6. There
@@ -64,7 +65,15 @@ export function TableOfContents({
                   {entry.mark ?? ''}
                 </span>
               )}
-              <span className="bz-aside-text">{entry.text}</span>
+              {/* M28 — a right-to-left entry is isolated in its own direction
+                  and the list keeps the rail's left-to-right geometry: the
+                  spine's rule and its current-row mark are drawn on the left
+                  edge, and the rail around it is English. Without the
+                  isolation a Persian title ending in `؟` prints the mark at
+                  the wrong end. */}
+              <span className="bz-aside-text" dir={dirOf(lang as ReadingLang | undefined)}>
+                {entry.text}
+              </span>
             </a>
           </li>
         ))}

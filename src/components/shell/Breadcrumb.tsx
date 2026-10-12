@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useSelectedLayoutSegment } from 'next/navigation'
 import { breadcrumbFor, type CategoryLabel } from '@/lib/route-labels'
+import { type ReadingLang, dirOf } from '@/lib/content/languages'
 
 /**
  * The trail: `Curriculum / Fundamentals / RAG & Embeddings`. It is also the
@@ -123,6 +124,7 @@ export function Breadcrumb({
                   aria-current={last ? 'page' : undefined}
                   className="truncate"
                   lang={'lang' in crumb ? (crumb as { lang?: string }).lang : undefined}
+                  dir={dirOf('lang' in crumb ? (crumb as { lang?: ReadingLang }).lang : undefined)}
                 >
                   {crumb.label}
                 </span>

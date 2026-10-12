@@ -49,6 +49,13 @@ import { renderMarkdown } from '@/lib/content/render'
 import { href } from '@/lib/url'
 import { scheduleOfParts, summarySentence } from '@/lib/content/schedule'
 import { sheetFacts, sheetLabel } from '@/lib/content/title-block'
+import {
+  type ReadingLang,
+  type TranslatedLang,
+  TRANSLATED_LANGS,
+  dirOf,
+  langAttr,
+} from '@/lib/content/languages'
 
 /**
  * M19 — keep a Turkish reader in Turkish when they follow a cross-reference.
@@ -69,16 +76,17 @@ import { sheetFacts, sheetLabel } from '@/lib/content/title-block'
  * have a translation" is the loader's knowledge, and `render.ts` may not import
  * the loader — the module page already does and the other direction is a cycle.
  */
-function turkishRouteMap(): (route: string) => string {
+function routeMapFor(lang: TranslatedLang): (route: string) => string {
   const translated = new Set(
     loadAllModules()
-      .filter((sheet) => sheet.translation !== null)
+      .filter((sheet) => sheet.translations[lang] !== null)
       .map((sheet) => `/courses/${sheet.slug}/`),
   )
-  return (route) => (translated.has(route) ? `/tr${route}` : route)
+  return (route) => (translated.has(route) ? `/${lang}${route}` : route)
 }
 
-export type SheetLang = 'en' | 'tr'
+/** M28 — `'en' | 'tr'` until Persian; `languages.ts` owns the list now. */
+export type SheetLang = ReadingLang
 
 export interface SheetRouteParams {
   category: string
@@ -94,17 +102,32 @@ export function everyModuleParam(): SheetRouteParams[] {
 }
 
 /**
- * Only the modules that HAVE a translation, for the Turkish tree.
+ * Only the modules that HAVE a translation in `lang`, for that language's tree.
  *
- * **MEASURED: 19 of 33** — every written module, because §7.6 forces a draft to
- * `EN` whatever its stub sibling says. A Turkish address is prerendered only
- * where there is Turkish to serve, so a reader who edits a URL by hand gets a
- * 404 rather than an English page wearing a Turkish address.
+ * **MEASURED: 19 of 33** for Turkish — every written module, because §7.6
+ * forces a draft to `EN` whatever its stub sibling says. An address is
+ * prerendered only where there is that language to serve, so a reader who
+ * edits a URL by hand gets a 404 rather than an English page wearing a Turkish
+ * or Persian address.
  */
-export function translatedModuleParam(): SheetRouteParams[] {
+export function translatedModuleParam(lang: TranslatedLang): SheetRouteParams[] {
   return loadAllModules()
-    .filter((sheet) => sheet.translation !== null)
+    .filter((sheet) => sheet.translations[lang] !== null)
     .map((sheet) => ({ category: sheet.category.slug, module: sheet.moduleSlug }))
+}
+
+/**
+ * M28 — which modules have a second address, per language, as `level/module`
+ * slugs: what the bar's language menu needs, measured by the build because only
+ * the build knows.
+ */
+export function translatedSlugs(): Record<TranslatedLang, string[]> {
+  return Object.fromEntries(
+    TRANSLATED_LANGS.map((lang) => [
+      lang,
+      translatedModuleParam(lang).map((one) => `${one.category}/${one.module}`),
+    ]),
+  ) as Record<TranslatedLang, string[]>
 }
 
 export async function sheetMetadata(
@@ -116,7 +139,10 @@ export async function sheetMetadata(
   if (!sheet) return {}
 
   const slug = `${category}/${module}`
-  const translatedPage = lang === 'tr'
+  const translatedPage = lang !== 'en'
+  const pathIn = (one: ReadingLang) =>
+    one === 'en' ? `/courses/${slug}/` : `/${one}/courses/${slug}/`
+  const available = TRANSLATED_LANGS.filter((one) => sheet.translations[one] !== null)
 
   return {
     title: sheet.frontmatter.title,
@@ -145,14 +171,13 @@ export async function sheetMetadata(
        router and to `<Link>`, and NOT to a string in `alternates`; `lib/url.ts`
        is what the rest of the codebase uses for exactly this reason, and this
        is the one place M19 reached past it. */
-    alternates: sheet.translation === null
+    alternates: available.length === 0
       ? undefined
       : {
-          canonical: href(translatedPage ? `/tr/courses/${slug}/` : `/courses/${slug}/`),
-          languages: {
-            en: href(`/courses/${slug}/`),
-            tr: href(`/tr/courses/${slug}/`),
-          },
+          canonical: href(pathIn(lang)),
+          languages: Object.fromEntries(
+            (['en', ...available] as ReadingLang[]).map((one) => [one, href(pathIn(one))]),
+          ),
         },
   }
 }
@@ -248,16 +273,21 @@ export async function ModuleSheet({
   const format = sheet.sheetFormat
   const drawn = format !== 'A4'
 
-  /* M19 — is THIS page the translated one. Only two things read it: the `lang`
-     attributes below, which are `undefined` on the English tree because an
-     attribute restating the document's own language is noise; and the switcher,
-     which needs to know which way it goes. Every other difference between the
-     two trees was settled in `loadModuleIn`. */
-  const translated = lang === 'tr'
+  /* M19 — is THIS page a translated one. Only the `lang` attributes below read
+     it, which are `undefined` on the English tree because an attribute restating
+     the document's own language is noise. Every other difference between the
+     trees was settled in `loadModuleIn`.
+
+     M28 — and `dir`, which is `rtl` on the Persian tree and absent otherwise,
+     on exactly the elements that carry `lang`: the page around them is English
+     and stays left-to-right. */
+  const translated = lang !== 'en'
+  const contentLang = langAttr(lang)
+  const contentDir = dirOf(lang)
 
   /* One map for every link out of this page — the prose's cross-references, the
      pager and the rail. Identity on the English tree, so nothing branches. */
-  const localise = translated ? turkishRouteMap() : (route: string) => route
+  const localise = lang !== 'en' ? routeMapFor(lang) : (route: string) => route
 
   // The quick quiz, in the page's language, or null where the module has none
   // (`quiz.ts`). A draft never has one: there is nothing yet to recall.
@@ -334,7 +364,7 @@ export async function ModuleSheet({
          facts strip, the trail is what names the level on this page, so it
          had better be the part of the chrome that is right. */
       trailLeaf={sheet.frontmatter.title}
-      trailLeafLang={translated ? 'tr' : undefined}
+      trailLeafLang={contentLang}
     >
       <div className="bz-sheet" data-format={format}>
         {/* The rail's fold control used to be rendered here and M21 moved it
@@ -410,7 +440,7 @@ export async function ModuleSheet({
             found exactly two: the picker's own link and the prose. The heading
             is Turkish and was unmarked, which is the same defect as leaving the
             objectives unmarked, pointed the other way. */}
-        <h1 className="bz-display" lang={translated ? 'tr' : undefined}>
+        <h1 className="bz-display" lang={contentLang} dir={contentDir}>
           {sheet.frontmatter.title}
         </h1>
 
@@ -437,7 +467,8 @@ export async function ModuleSheet({
         {drawn && rendered ? (
           <Prose
             html={rendered.html}
-            lang={translated ? 'tr' : undefined}
+            lang={contentLang}
+            dir={contentDir}
             opening={
               <Objectives
                 items={sheet.frontmatter.objectives}

@@ -4,7 +4,14 @@ import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import type { CategorySlug } from '@/lib/content/categories'
 import { CATEGORIES } from '@/lib/content/curriculum-file'
-import { fileFor, loadAllModules, loadCategoryIntro, loadModule } from '@/lib/content/loader'
+import { TRANSLATED_LANGS } from '@/lib/content/languages'
+import {
+  fileFor,
+  loadAllModules,
+  loadCategoryIntro,
+  loadModule,
+  loadModuleIn,
+} from '@/lib/content/loader'
 import {
   countDiagrams,
   countImages,
@@ -103,6 +110,41 @@ describe('loadAllModules', () => {
 
   it('ignores Turkish translations', () => {
     expect(modules.some((m) => m.filePath.endsWith('_tr.md'))).toBe(false)
+  })
+
+  it('ignores Persian translations, too: a translation is never a module of its own', () => {
+    expect(modules.some((m) => m.filePath.endsWith('_fa.md'))).toBe(false)
+  })
+
+  /**
+   * M28 — `translation` is Turkish's own name and `translations.tr` is the same
+   * body; two fields that could disagree would be two rules.
+   */
+  it('reads Turkish once, under both names', () => {
+    for (const m of modules) expect(m.translations.tr, m.slug).toBe(m.translation)
+  })
+
+  it('has no translation of a draft in any language', () => {
+    for (const m of modules.filter((one) => one.frontmatter.status === 'draft')) {
+      for (const [lang, body] of Object.entries(m.translations)) expect(body, `${m.slug} ${lang}`).toBeNull()
+    }
+  })
+
+  it('serves a translated module in its language, titled from its own body, and no other', () => {
+    for (const lang of TRANSLATED_LANGS) {
+      const translated = modules.filter((m) => m.translations[lang] !== null)
+      expect(translated.length, lang).toBeGreaterThan(0)
+      for (const m of modules) {
+        const read = loadModuleIn(m.slug, lang)
+        if (m.translations[lang] === null) {
+          expect(read, `${m.slug} ${lang}`).toBeUndefined()
+          continue
+        }
+        expect(read!.body, `${m.slug} ${lang}`).toBe(m.translations[lang])
+        expect(`# ${read!.frontmatter.title}`, `${m.slug} ${lang}`)
+          .toBe(read!.body.split('\n')[0])
+      }
+    }
   })
 
   it('serves a body with the progress rail and the prev/next furniture gone', () => {

@@ -9,7 +9,8 @@ description: >
   module page and rail, and the progress redesign — all four SHIPPED — then M23, the interface's own
   strings, written and not started, and M24 to M27, the author's requests of 2026-10-11 and
   2026-10-12, all shipped and merged: the end of a module and its quiz, the readability pass, and the
-  Bazaar Street front door.
+  Bazaar Street front door. Then the v1.0.0 release, and M28, Persian modules read right to left,
+  merged as PR #30.
   Every milestone carries its deliverables and acceptance criteria as `- [ ]` checkboxes, ticked as
   the work lands, and closes with a dated report; the loop that governs that is in part 1 and is not
   restated here. Part 1 holds M1 to M15 and is closed.
@@ -18,14 +19,14 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M27, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M28, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-10-12
 ---
 
-# 📈 PROGRESS, part 2 — M16 to M27
+# 📈 PROGRESS, part 2 — M16 to M28
 
 > **← Part 1: [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the review pass over M10 to M14.
-> This part holds **M16 to M27**, in the order they were worked.
+> This part holds **M16 to M28**, in the order they were worked.
 
 ## How to work this file
 
@@ -69,6 +70,7 @@ deliverables as a numbered list; M18 wrote none at all; M19 to M22 had none eith
 | **M25** | The end of a module, rebuilt, and a quick quiz | **Done** — 2026-10-12, merged as PR #25 |
 | **M26** | Headings, requested additions, and ASD-STE-like English | **Done** — 2026-10-12, merged as PR #26 |
 | **M27** | The front door is Bazaar Street | **Done** — 2026-10-12, merged as PR #27 |
+| **M28** | Persian, the third language | **Done** — 2026-10-12, merged as PR #30 |
 
 ---
 
@@ -3772,6 +3774,115 @@ What it contains, measured from `curriculum.yaml`:
 - The site is as M27 left it.
 
 Later milestones land on `main`. The release branch takes fixes only.
+
+---
+
+## 🏁 Milestone M28: Persian, the third language — SHIPPED, MERGED AS PR #30
+
+Branch `feat/persian-modules`, from `main` at `a870aa9` (v1.0.0 plus its record), committed as
+`b711a70` and merged to `main` as PR #30 once CI passed, on the author's word ("commit push and
+merge and update kia-context"). The author's
+request, 2026-10-12: *"please add support for persian language for the modules. the persian
+support should be only at the module content level and not website level such as navbars etc.
+similar to turkish version, english technical words should remain in english such as Agent or SQL
+or Database"*, translated by *"multiple haiku 5.5 subagents ... in parallel"* and then reviewed and
+fixed by the session; and, in the same message, the home page's second motto: *"instead of saying
+'We only cover what matters.' say 'We only cover essentials'"*. **D80** carries the reasoning.
+
+### Deliverables
+
+- [x] **19 Persian modules**, `<name>_fa.md` beside every written module, no frontmatter, translated
+      from the English by 19 parallel agents against one brief (the titles, the four matched
+      strings, the link rule, ASCII digits, `شما`).
+- [x] **A Persian side on every question of the 19 quizzes**, inserted after the `tr:` side; no
+      existing quiz line changed (`git diff --numstat` shows insertions only).
+- [x] **The review**, by the session: a structural guard over all 19 pairs (heading levels, fences,
+      byte-identical code and series map, mermaid skeletons, image paths, URLs, the link mapping,
+      dashes, digits, the quiz shape), `check-mermaid.mjs` over every Persian file (**42/42**
+      diagrams parse and render), every opening and summary read against the English, and three
+      normalisations applied across the set: 27 image alt texts translated, the callout label made
+      `نکته` everywhere, and 12 Latin `module`s made `ماژول`.
+- [x] **`src/lib/content/languages.ts`**, the one list of translations, and everything that said
+      `'tr'` reading it: `derive.ts` (`translationOf`, `hasTranslation`), `loader.ts`
+      (`translations`), `curriculum-file.ts` (rule 7 per language, with the orphan direction),
+      `links.ts`, `quiz.ts` (an optional `fa` side, required where the page exists), `route-labels.ts`,
+      `ModuleSheet` (route map, metadata alternates, `lang` and `dir`), `LanguageMenu` (one link per
+      language the module has), and the rail, quiz, prose and breadcrumb components.
+- [x] **The route** `src/app/fa/courses/[category]/[module]/page.tsx`, with Vazirmatn loaded there
+      only, through `next/font`, served from the site.
+- [x] **Right to left in `prose.css`**: lists, task lists, table cells and the subsection anchor
+      flip; code slabs and figure frames stay left to right; inline code is isolated.
+- [x] **The matchers**: `SERIES_HEADINGS`, `QUICK_CHECK` and `SUMMARY_HEADING` know the Persian
+      strings.
+- [x] **The motto**: `We only cover essentials.` in `src/app/page.tsx` and in the mockup it is
+      compared against, `playground/10-home-bazaar-street.html`.
+- [x] **Tests**, each a rule over any content:
+      - `tests/corpus/translations.test.ts`, new: every translation has a quick check and a summary
+        exactly where its English does, and opens on its own title;
+      - `quizzes.test.ts`: every language a module has a page in, on every question;
+      - `series-section.test.ts`: per language;
+      - `renders.test.ts`: no module named by number in Persian either (`ماژول`);
+      - `loader.test.ts`, `links.test.ts`, and `tests/unit/components/language-menu.test.ts`, new;
+      - `transcription.test.ts`: `--font-persian` as a named, reasoned exemption that fails when
+        stale;
+      - `translation.spec.ts`: a Persian block of eight, from the 404 for a module with no Persian
+        page to the face and the direction;
+      - `responsive.spec.ts`: the widest and the longest module, in Persian, at all three widths.
+- [x] **The specs**: DESIGN.md's tenth deviation, ARCHITECTURE.md's pipeline and counts, MANIFESTO.md
+      §1, §4 and rule 14, the corpus agreement's Persian section, root `CLAUDE.md`, and README with
+      `mini-courses/index.md`.
+
+### Acceptance criteria
+
+- [x] Every written module is served in Persian at `/fa/courses/<level>/<module>/`, and a module with
+      no Persian page 404s there.
+- [x] Only the content is Persian: `<html lang="en">` and no `dir` on it; the bar, the rails and the
+      objectives card are English and left to right (`translation.spec.ts`).
+- [x] Technical words stay English; no em dash, no Persian digit in any `_fa.md` (the review's
+      guard).
+- [x] A Persian reader stays in Persian: every link to a module with a Persian page goes to it.
+- [x] Full gate: typecheck clean; **2,194** unit and corpus tests in 86 files; build **99** HTML
+      pages (80 before, 19 Persian); Playwright **1,201 passed, 59 skipped, 0 failed** on all three
+      viewports.
+
+### Report — M28, 2026-10-12
+
+**Two things only the real page showed.**
+
+- **The face reached the headings and not one paragraph.** The first build rebound `--font-sans`
+  under `[lang="fa"]`, and the computed style said the h2s were Vazirmatn and every `p` was `"Avenir
+  Next"`: a paragraph names no face, it inherits one, and what it inherits is the body's family
+  already resolved. `[lang="fa"]` now sets `font-family` too, and the e2e test reads a paragraph,
+  not a heading.
+- **The suffix on an English word looked wrong at screenshot size and was right.** `Subagent‌ها`
+  was checked at 3× and renders with the suffix on the left of the Latin word, which is the right
+  order for right-to-left text.
+
+**Every new guard was watched failing.** Five unit mutations (the Persian summary matcher removed,
+the Persian series heading removed, one `fa` side removed from a quiz, the exempted token removed,
+an orphan `_fa.md` added: rule 7 named it) and one e2e pair (`dir` removed from the prose and the
+paragraph's face removed: the direction test and the face test both went red, the other six stayed
+green).
+
+**What the agents disagreed on, and how it was settled.** Seven of the nineteen kept image alt text
+in English, as the Turkish does; the review translated all 27, because the site prints alt text as
+the figure's label. Three different callout labels became one (`نکته`). Four files kept `module` in
+Latin where the rest wrote `ماژول`. Every agent reported its own judgement calls, and none of them
+edited a file it was not given.
+
+**Two slips in the session, both caught.** A mutation was restored with `git checkout`, which put
+`quickcheck.ts` back to `HEAD` and silently removed both Persian matchers with the mutation; the next
+diff showed it and they were re-applied before anything was built. And `pkill -f "serve-static.mjs
+out 3111"` in a compound command killed its own shell again, so one rebuild never ran.
+
+**Found in the English and left for the author.** `loop_engineering.md` says "four lines of bash"
+over a three-line block; the Persian follows the English.
+
+**Left alone on purpose, and confirmed.** README, `mini-courses/index.md` and MANIFEST rule 7 still
+say "We only cover what matters": the author asked for the website, and when asked said *"motto etc
+should remain same. we just want multilinguality in this project for the content of each markdown
+or module thats it."* MANIFEST rule 4 still says "five to ten
+minutes" while README says twenty to thirty (D65), as before.
 
 ---
 

@@ -253,3 +253,129 @@ test('the switch works with JavaScript disabled', async ({ browser }) => {
   await expect(page.locator('[data-hl-prose] > div[lang]')).toHaveAttribute('lang', 'tr')
   await context.close()
 })
+
+/* ---------------------------------------------------------------------------
+   M28 — PERSIAN, the third language and the first right-to-left one.
+
+   Everything above holds for it unchanged (the address, the 404, the links
+   that stay in the language), and is restated here per language rather than
+   looped, because what Persian adds is DIRECTION: the run of text that is
+   Persian carries `dir="rtl"`, and the English page around it does not move.
+   --------------------------------------------------------------------------- */
+const PERSIAN = MODULES.filter((sheet) => sheet.translations.fa !== null)
+const NOT_PERSIAN = MODULES.filter((sheet) => sheet.translations.fa === null)
+const fa = (slug: string) => `/fa/courses/${slug}/`
+const PERSIAN_LETTERS = /[؀-ۿ]/
+
+test.describe('the Persian tree', () => {
+  test('has something to serve, and something to withhold', () => {
+    expect(PERSIAN.length, 'no module has a Persian translation').toBeGreaterThan(0)
+    expect(NOT_PERSIAN.length, 'every module is in Persian, so the null case is untested')
+      .toBeGreaterThan(0)
+  })
+
+  test('serves every Persian module at its own address, and no other', async ({ page }) => {
+    const wrong: string[] = []
+    for (const sheet of PERSIAN) {
+      const response = await page.goto(fa(sheet.slug))
+      if (response?.status() !== 200) wrong.push(`${sheet.slug}: ${response?.status()}`)
+      const prose = await page.locator('[data-hl-prose] > div[lang]').innerText()
+      if (!PERSIAN_LETTERS.test(prose)) wrong.push(`${sheet.slug}: the prose is not Persian`)
+    }
+    for (const sheet of NOT_PERSIAN) {
+      const response = await page.goto(fa(sheet.slug))
+      if (response?.status() !== 404) wrong.push(`${sheet.slug}: served at ${fa(sheet.slug)}`)
+    }
+    expect(wrong).toEqual([])
+  })
+
+  test('turns the Persian text right-to-left and leaves the page around it alone', async ({ page }) => {
+    await page.goto(fa(PERSIAN[0].slug))
+
+    for (const selector of ['[data-hl-prose] > div[lang]', 'h1.bz-display']) {
+      await expect(page.locator(selector)).toHaveAttribute('lang', 'fa')
+      await expect(page.locator(selector)).toHaveAttribute('dir', 'rtl')
+    }
+
+    const direction = (selector: string) =>
+      page.locator(selector).first().evaluate((element) => getComputedStyle(element).direction)
+
+    // The document is English: the bar, the rail and the objectives card are
+    // the interface's own words and stay left-to-right (the author: content
+    // level only, "not website level such as navbars").
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en')
+    await expect(page.locator('html')).not.toHaveAttribute('dir', 'rtl')
+    expect(await direction('header')).toBe('ltr')
+    expect(await direction('.bz-rail')).toBe('ltr')
+    expect(await direction('.bz-card[aria-labelledby="objectives"]')).toBe('ltr')
+    await expect(page.locator('.bz-card[aria-labelledby="objectives"]')).toHaveAttribute('lang', 'en')
+
+    // Inside it, what reads turns round and what is drawn does not.
+    expect(await direction('[data-hl-prose] > div[lang] p')).toBe('rtl')
+  })
+
+  test('keeps code left-to-right inside right-to-left prose', async ({ page }) => {
+    // Derived, not named: the first Persian module that has a code block.
+    for (const sheet of PERSIAN) {
+      await page.goto(fa(sheet.slug))
+      const slab = page.locator('[data-hl-prose] .bz-slab')
+      if ((await slab.count()) === 0) continue
+      expect(await slab.first().evaluate((element) => getComputedStyle(element).direction)).toBe('ltr')
+      return
+    }
+    throw new Error('no Persian module has a code block, so nothing was checked')
+  })
+
+  test('sets Persian in a face that has Persian forms', async ({ page }) => {
+    await page.goto(fa(PERSIAN[0].slug))
+    const family = await page.locator('[data-hl-prose] > div[lang] p').first()
+      .evaluate((element) => getComputedStyle(element).fontFamily)
+    expect(family).toMatch(/vazirmatn/i)
+
+    // …and only there: the English page keeps the system stack.
+    await page.goto(en(PERSIAN[0].slug))
+    const english = await page.locator('[data-hl-prose] p').first()
+      .evaluate((element) => getComputedStyle(element).fontFamily)
+    expect(english).not.toMatch(/vazirmatn/i)
+  })
+
+  test('keeps the reader in Persian, everywhere on the page', async ({ page }) => {
+    const persian = new Set(PERSIAN.map((sheet) => en(sheet.slug)))
+    for (const sheet of [PERSIAN[0], PERSIAN[PERSIAN.length - 1]]) {
+      await page.goto(fa(sheet.slug))
+      const paths = await page.evaluate(() =>
+        [...document.querySelectorAll('a[href]')]
+          .filter((link) => !link.closest('[aria-label="Language of this module"]'))
+          .map((link) => new URL((link as HTMLAnchorElement).href).pathname))
+      expect(paths.length, 'the page links to nothing, so nothing was checked').toBeGreaterThan(10)
+      const escaped = paths.filter((path) => persian.has(path))
+      expect([...new Set(escaped)], `${sheet.slug} sends a Persian reader back to English`).toEqual([])
+      expect(paths.filter((path) => path.startsWith('/fa/')).length, 'no link stayed in Persian')
+        .toBeGreaterThan(0)
+    }
+  })
+
+  test('is offered by the picker beside the others, and current on its own page', async ({ page }) => {
+    const picker = (label: string) =>
+      page.getByRole('navigation', { name: LANGUAGE_PICKER_LABEL }).getByRole('link', { name: label })
+
+    await page.goto(fa(PERSIAN[0].slug))
+    await openLanguages(page)
+    await expect(picker('فارسی')).toHaveAttribute('aria-current', 'page')
+    await expect(picker('فارسی')).toHaveAttribute('dir', 'rtl')
+    await expect(picker('English')).toHaveAttribute('href', new RegExp(`${en(PERSIAN[0].slug)}$`))
+
+    await page.goto(en(PERSIAN[0].slug))
+    await openLanguages(page)
+    await expect(picker('فارسی')).toHaveAttribute('href', new RegExp(`${fa(PERSIAN[0].slug)}$`))
+  })
+
+  test('the English tree links to Persian from the picker and nowhere else', async ({ page }) => {
+    await page.goto(en(PERSIAN[0].slug))
+    const persian = await page.evaluate(() =>
+      [...document.querySelectorAll('a[href]')]
+        .map((link) => new URL((link as HTMLAnchorElement).href).pathname)
+        .filter((path) => path.startsWith('/fa/')))
+    expect(persian).toEqual([fa(PERSIAN[0].slug)])
+  })
+})

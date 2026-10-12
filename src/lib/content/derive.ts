@@ -7,6 +7,7 @@ import { unified } from 'unified'
 import { visit } from 'unist-util-visit'
 import type { Element } from 'hast'
 import { stripBuildFurniture, stripLeadIn } from './strip'
+import { type TranslatedLang, siblingSuffix } from './languages'
 
 /**
  * Requirement B6 — every value the module header block (§5.5) prints is
@@ -221,7 +222,8 @@ export function distinctExternalLinks(body: string): string[] {
 }
 
 /**
- * M19 — a module's Turkish sibling, named ONCE.
+ * M19 — a module's translated sibling, named ONCE (Turkish then; M28 passes
+ * the language, and `languages.ts` owns the suffix).
  *
  * This convention was spelled inline here and, once the loader started reading
  * the file rather than only measuring it, would have been spelled a second time
@@ -233,8 +235,8 @@ export function distinctExternalLinks(body: string): string[] {
  * It lives in `derive.ts` and not in `loader.ts` because `loader.ts` already
  * imports from here; the other direction is a cycle.
  */
-export function translationOf(englishFile: string): string {
-  return englishFile.replace(/\.md$/, '_tr.md')
+export function translationOf(englishFile: string, lang: TranslatedLang): string {
+  return englishFile.replace(/\.md$/, siblingSuffix(lang))
 }
 
 /** §7.6 — the rule, in one line, with no division by zero. */
@@ -301,5 +303,30 @@ export function langCoverage(englishFile: string, status: 'ready' | 'draft'): La
   // to spell it a second time. Two spellings of one convention is how a rename
   // leaves one of them measuring a file that is not there, which would read as
   // "no translation" rather than as an error.
-  return langFromExtents(extentOfFile(englishFile), extentOfFile(translationOf(englishFile)))
+  return langFromExtents(extentOfFile(englishFile), extentOfFile(translationOf(englishFile, 'tr')))
+}
+
+/**
+ * M28 — whether `lang`'s sibling is a real translation of a drawn module, by
+ * the same two rules `langCoverage` applies to Turkish: a draft has none, and a
+ * drawn module has one when the sibling reaches §7.6's ratio of its extent.
+ *
+ * `langCoverage` stays as it is because `Lang` is a §7.6 VALUE (`EN·TR`) that
+ * the facts strip and the manifest print; this is the question the loader and
+ * the routes ask, for any language. For Turkish the two always agree, because
+ * this is that function's rule with the language passed in.
+ *
+ * A Persian word is a whitespace-separated run like an English one, and a
+ * translation that keeps the technical words in English lands near the
+ * English count, so the ratio needs no second value for a second script.
+ */
+export function hasTranslation(
+  englishFile: string,
+  status: 'ready' | 'draft',
+  lang: TranslatedLang,
+): boolean {
+  if (status === 'draft') return false
+  const english = extentOfFile(englishFile)
+  const translated = extentOfFile(translationOf(englishFile, lang))
+  return english > 0 && translated / english >= TRANSLATION_RATIO
 }

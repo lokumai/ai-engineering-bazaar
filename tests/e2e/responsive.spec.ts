@@ -1,6 +1,7 @@
 import { type Page, expect, test } from '@playwright/test'
 import { SHORT, A4, CATEGORY_PATHS, INDEX_SHEET, SHEETS, sheetByPath } from './sheets'
 import { showTable } from './views'
+import { loadModule } from '@/lib/content/loader'
 
 /**
  * §4.7's closing sentence, which is the only hard rule in the whole section:
@@ -50,6 +51,14 @@ const PAGES = [
   // here as a general property (the document never scrolls sideways) rather than
   // as a string match, which is what the rest of this list is for.
   ['account page', '/profile/'],
+  // M28 — the same two modules turned right-to-left, wherever they have a
+  // Persian page: a table that fits at 390 left-to-right is not proof that it
+  // fits mirrored, and the list indents and the figure frames are exactly what
+  // the direction moves. Derived from the corpus, so a module that loses its
+  // Persian page drops out of this list instead of failing it.
+  ...[WIDEST, LONGEST]
+    .filter((sheet) => loadModule(sheet.path.replace(/^\/courses\/|\/$/g, ''))?.translations.fa != null)
+    .map((sheet) => [`${sheet.title}, in Persian`, `/fa${sheet.path}`] as const),
 ] as const
 
 /**

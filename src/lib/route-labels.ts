@@ -14,8 +14,12 @@
  * `mini-courses/curriculum.yaml`, which only `node:fs` can read, and the two
  * components that call these functions are client islands (§12.2). So their
  * server parents measure the labels once and hand them down, the same way every
- * other build-time fact crosses that line. This module still imports nothing.
+ * other build-time fact crosses that line. This module still imports nothing
+ * that reaches `node:fs`: since M28 its one import is `languages.ts`, which is
+ * plain data so that client islands can read it too.
  */
+
+import { TRANSLATED_LANGS } from './content/languages'
 
 /** What the chrome needs to know about one subsystem. */
 export interface CategoryLabel {
@@ -89,11 +93,11 @@ export const NOT_FOUND_SHEET_LABEL = NOT_FOUND_TITLE.toUpperCase()
  * here fixes both, because everything downstream then sees the shape it was
  * written for.
  */
-const LANGUAGE_SEGMENT = 'tr'
+const LANGUAGE_SEGMENTS: readonly string[] = TRANSLATED_LANGS
 
 function segmentsOf(pathname: string): string[] {
   const segments = pathname.split('/').filter(Boolean)
-  return segments[0] === LANGUAGE_SEGMENT ? segments.slice(1) : segments
+  return LANGUAGE_SEGMENTS.includes(segments[0]) ? segments.slice(1) : segments
 }
 
 /**

@@ -77,14 +77,14 @@ export interface QuickCheck {
  * The labels are CONTENT, so they belong to the corpus and the extractor
  * follows it. A third language adds a word here and nothing else.
  */
-const QUICK_CHECK = /^\*\*(?:Quick Check|Quiz Yourself|Hızlı Kontrol)\*\*[ \t]*:[ \t]*(.*)$/
+const QUICK_CHECK = /^\*\*(?:Quick Check|Quiz Yourself|Hızlı Kontrol|بررسی سریع)\*\*[ \t]*:[ \t]*(.*)$/
 /** §12.6 item 3 — the sheet's own summary, English only, h2 only. */
 /**
  * M19 — `Özet` beside `Summary`, and the same measurement: **0 of 32 `_tr.md`
  * files carry `## Summary` and 18 carry `## Özet`**, so the authored summary
  * §12.6 reveals after an answer was dropped on every Turkish page.
  */
-const SUMMARY_HEADING = /^##[ \t]+(?:Summary|Özet)[ \t]*$/
+const SUMMARY_HEADING = /^##[ \t]+(?:Summary|Özet|خلاصه)[ \t]*$/
 /** Any ATX heading: where a section, and a paragraph, ends. */
 const HEADING = /^#{1,6}[ \t]/
 /**

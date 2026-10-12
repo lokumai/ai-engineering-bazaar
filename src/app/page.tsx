@@ -72,7 +72,7 @@ const STALLS: ReadonlyArray<{
     icon: 'icon-2',
     hue: 'var(--color-category-4)',
     x: 2710,
-    title: 'We only cover what matters.',
+    title: 'We only cover essentials.',
     sub: 'A cheatsheet for AI engineering, not a textbook.',
     body:
       'Learn the most important topics here. Learn the details yourself later. We teach the ideas '

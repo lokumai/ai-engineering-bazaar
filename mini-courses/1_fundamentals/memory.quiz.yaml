@@ -17,6 +17,14 @@ questions:
         - "Şu anda context window'un içinde duran metin"
         - "Modelin kendi başına tuttuğu bir konuşma kaydı"
       explain: "Working memory, şu anda context window'un içinde duran metindir. Model bu metni kendi başına tutmaz, bu yüzden yeni bir session başladığında metin kaybolur."
+    fa:
+      question: "working memory چیست؟"
+      options:
+        - "دانشی که training در weight‌های مدل ذخیره می‌کند"
+        - "خلاصه‌ای از session‌های گذشته در یک database بیرونی"
+        - "متنی که هم‌اکنون درون context window قرار دارد"
+        - "سابقه گفتگویی که مدل خودش نگه می‌دارد"
+      explain: "working memory متنی است که در این لحظه درون context window قرار دارد. مدل خودش آن را نگه نمی‌دارد، بنابراین وقتی یک session جدید شروع شود از بین می‌رود."
   - answer: 1
     en:
       question: "Parametric memory is permanent. Why is it still imprecise?"
@@ -34,6 +42,14 @@ questions:
         - "Context window onun tamamını tutmak için çok küçüktür"
         - "Modelin dışındaki bir veritabanında (database) saklanır"
       explain: "Weight'ler milyarlarca dokümandan gelen bilgiyi tutar, bu yüzden model tek bir dokümanı tam olarak hatırlayamaz. Parametric memory, session bittiğinde kaybolmaz."
+    fa:
+      question: "Parametric memory دائمی است. با این حال چرا همچنان نادقیق است؟"
+      options:
+        - "مدل آن را وقتی session تمام می‌شود پاک می‌کند"
+        - "سند شما در weight‌ها با میلیاردها سند دیگر قاطی شده است"
+        - "context window آن‌قدر کوچک است که نمی‌تواند همه‌اش را نگه دارد"
+        - "در یک database بیرون از مدل ذخیره می‌شود"
+      explain: "weight‌ها اطلاعات میلیاردها سند را نگه می‌دارند، بنابراین مدل نمی‌تواند یک سند را دقیقاً به یاد بیاورد. Parametric memory وقتی session تمام می‌شود از بین نمی‌رود."
   - answer: 3
     en:
       question: "An LLM is stateless during generation. How does a chat still feel like one continuous conversation?"
@@ -51,6 +67,14 @@ questions:
         - "Uygulama modele sadece en yeni mesajı gönderir"
         - "Uygulama her çağrıda mesaj yığınının (stack) tamamını gönderir"
       explain: "Uygulama, bütün mesajların büyüyen bir yığınını (stack) tutar ve her çağrıda yığının tamamını gönderir. Model önceki çağrıdan hiçbir şey hatırlamaz, bu yüzden sadece en yeni mesaj yeterli değildir."
+    fa:
+      question: "LLM در زمان generation stateless است. پس چطور یک چت باز هم مثل یک گفتگوی پیوسته به نظر می‌رسد؟"
+      options:
+        - "مدل هر پیام تازه را در weight‌هایش ذخیره می‌کند"
+        - "مدل خودش call قبلی را به یاد دارد"
+        - "اپ فقط جدیدترین پیام را برای مدل می‌فرستد"
+        - "اپ در هر call کل stack پیام‌ها را می‌فرستد"
+      explain: "اپ یک stack در حال رشد از همه پیام‌ها را نگه می‌دارد و در هر call کل stack را می‌فرستد. مدل از call قبلی چیزی به یاد ندارد، بنابراین فقط جدیدترین پیام کافی نیست."
   - answer: 0
     en:
       question: "You upload 5 PDFs to ChatGPT. Later, in a new session, it answers a question about them. How can it do this?"
@@ -68,3 +92,11 @@ questions:
         - "PDF'ler hâlâ yeni session'ın context window'unun içinde duruyor"
         - "LLM önceki session'ı kendi state'inde tutuyor"
       explain: "Bu long-term memory'dir: PDF'ler modelin dışında index'lendi ve context'e geri getirildi, genelde RAG ile. Yeni session boş bir context window ile başlar, bu yüzden working memory bunu açıklayamaz."
+    fa:
+      question: "5 فایل PDF را در ChatGPT upload می‌کنید. بعداً، در یک session جدید، ChatGPT به سؤالی درباره آن‌ها جواب می‌دهد. این کار را چطور انجام می‌دهد؟"
+      options:
+        - "ChatGPT آن PDF‌ها را index کرده و بخش‌های مرتبط را به context retrieve می‌کند"
+        - "upload کردن، PDF‌ها را به‌طور دائمی در weight‌های مدل ذخیره کرد"
+        - "PDF‌ها هنوز درون context window این session جدید هستند"
+        - "LLM وضعیت session قبلی را در state خودش نگه می‌دارد"
+      explain: "این long-term memory است: PDF‌ها بیرون از مدل index شده‌اند و اغلب با RAG دوباره به context retrieve شده‌اند. یک session جدید با context window خالی شروع می‌شود، بنابراین working memory نمی‌تواند این را توضیح دهد."

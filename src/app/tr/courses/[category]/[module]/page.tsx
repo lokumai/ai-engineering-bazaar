@@ -40,7 +40,7 @@ import {
  * claims something the page cannot do, and an address is a claim.
  */
 export function generateStaticParams(): SheetRouteParams[] {
-  return translatedModuleParam()
+  return translatedModuleParam('tr')
 }
 
 export function generateMetadata({

@@ -7,6 +7,7 @@ import { categoryLabels } from '@/lib/content/chrome'
 import { LanguageMenu } from './LanguageMenu'
 import { MainNav } from './MainNav'
 import { ThemeToggle } from './ThemeToggle'
+import type { TranslatedLang } from '@/lib/content/languages'
 
 /**
  * The bar and the band — M16 stage 1.
@@ -119,7 +120,11 @@ function StarGlyph() {
   )
 }
 
-export function SiteHeader({ translated }: { translated: readonly string[] }) {
+export function SiteHeader({
+  translated,
+}: {
+  translated: Readonly<Record<TranslatedLang, readonly string[]>>
+}) {
   const { stars } = GITHUB
 
   return (

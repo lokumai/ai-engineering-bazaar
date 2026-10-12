@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { imageBaseFor } from '@/lib/content/images'
 import { SERIES_HEADINGS, unfenced } from '@/lib/content/lines'
 import { loadAllModules } from '@/lib/content/loader'
+import { TRANSLATED_LANGS } from '@/lib/content/languages'
 import { renderMarkdown } from '@/lib/content/render'
 
 /**
@@ -35,23 +36,24 @@ const hasSeries = (markdown: string) =>
 
 const modules = loadAllModules()
 
-/** Every body the site renders, English and Turkish, as one list. */
+/** Every body the site renders, English and every translation, as one list. */
 const bodies = modules.flatMap((module) => [
   { slug: module.slug, lang: 'en', body: module.body, module },
-  ...(module.translation === null
-    ? []
-    : [{ slug: module.slug, lang: 'tr', body: module.translation, module }]),
+  ...TRANSLATED_LANGS.flatMap((lang) =>
+    module.translations[lang] === null
+      ? []
+      : [{ slug: module.slug, lang, body: module.translations[lang]!, module }]),
 ])
 
 describe('the series map', () => {
-  it('is named in a way the list knows, in both languages', () => {
-    const translated = modules.filter((module) => module.translation !== null)
-    // Non-vacuity: with no module carrying the map, the comparison below is
-    // over nothing and passes.
+  it.each(TRANSLATED_LANGS)('is named in a way the list knows, in English and in %s', (lang) => {
+    const translated = modules.filter((module) => module.translations[lang] !== null)
+    // Non-vacuity: with no module carrying the map, or no module translated
+    // into this language, the comparison below is over nothing and passes.
     expect(translated.filter((module) => hasSeries(module.body)).length).toBeGreaterThan(0)
 
     const disagree = translated
-      .filter((module) => hasSeries(module.body) !== hasSeries(module.translation!))
+      .filter((module) => hasSeries(module.body) !== hasSeries(module.translations[lang]!))
       .map((module) => module.slug)
     expect(disagree, 'a translation names the series map in a way the list does not know')
       .toEqual([])

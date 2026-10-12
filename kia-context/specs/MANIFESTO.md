@@ -25,7 +25,7 @@ last_updated: "2026-10-12"
 ## 1. One sentence
 
 A short, human-written course on how modern AI systems are actually built, free to read, in English
-and Turkish.
+and Turkish, and in Persian wherever a module is written.
 
 ## 2. The North Star
 
@@ -64,7 +64,7 @@ Three groups, in the order they created the need:
 
 Much of that audience does not read English as a first language, so the language has to be plain
 enough to read at speed in a second one. A Turkish version of every module exists for the same
-reason. See `genesis/GENESIS.md` §1 and §2 for where this came from.
+reason, and so does a Persian version of every written one (**D80**). See `genesis/GENESIS.md` §1 and §2 for where this came from.
 
 ## 5. Non-negotiable rules
 
@@ -105,7 +105,8 @@ reason. See `genesis/GENESIS.md` §1 and §2 for where this came from.
 13. **Verify every external claim.** Fetch every link and use its real title. Check the arithmetic in
     a draft rather than passing it through.
 14. **English is finished before Turkish starts.** Each module is translated once, from a final
-    English text, and the translation mirrors its structure exactly.
+    English text, and the translation mirrors its structure exactly. Persian is held to the same
+    rule (**D80**).
 15. **Colour is never the only signal.** Anything colour says must also be said by a word, a count or
     a line.
 16. **The interface talks; it does not explain itself.** No sentence describing what the reader is

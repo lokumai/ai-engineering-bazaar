@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js" integrity="sha384-sG0Hv1tP1lZCk9KQmrIbY/XNwi+OY84GQqhMscbnsoBFqAz8KNCil1kvfL3Hbbk2" crossorigin="anonymous"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #000;
+      }
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #FDFBF7;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="30"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div
+        id="el-01-hook"
+        class="scene"
+        data-composition-id="01-hook"
+        data-composition-src="compositions/frames/01-hook.html"
+        data-start="0"
+        data-duration="3.623"
+        data-track-index="0"
+      ></div>
+
+      <div
+        id="el-02-gate"
+        class="scene"
+        data-composition-id="02-gate"
+        data-composition-src="compositions/frames/02-gate.html"
+        data-start="3.273"
+        data-duration="4.364"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-03-humans"
+        class="scene"
+        data-composition-id="03-humans"
+        data-composition-src="compositions/frames/03-humans.html"
+        data-start="7.6370000000000005"
+        data-duration="3.818"
+        data-track-index="0"
+      ></div>
+
+      <div
+        id="el-04-essentials"
+        class="scene"
+        data-composition-id="04-essentials"
+        data-composition-src="compositions/frames/04-essentials.html"
+        data-start="11.455"
+        data-duration="3.273"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-05-pictures"
+        class="scene"
+        data-composition-id="05-pictures"
+        data-composition-src="compositions/frames/05-pictures.html"
+        data-start="14.728"
+        data-duration="4.218"
+        data-track-index="0"
+      ></div>
+
+      <div
+        id="el-06-modules"
+        class="scene"
+        data-composition-id="06-modules"
+        data-composition-src="compositions/frames/06-modules.html"
+        data-start="18.546"
+        data-duration="4.318"
+        data-track-index="1"
+      ></div>
+
+      <div
+        id="el-07-languages"
+        class="scene"
+        data-composition-id="07-languages"
+        data-composition-src="compositions/frames/07-languages.html"
+        data-start="22.364"
+        data-duration="4.118"
+        data-track-index="0"
+      ></div>
+
+      <div
+        id="el-08-cta"
+        class="scene"
+        data-composition-id="08-cta"
+        data-composition-src="compositions/frames/08-cta.html"
+        data-start="26.182000000000002"
+        data-duration="3.818"
+        data-track-index="1"
+      ></div>
+
+      <video id="f02-gate-walk" src="assets/walk.mp4" preload="auto" data-media-start="0" muted playsinline
+        class="clip"
+        style="position:absolute;left:-76.8px;top:-86.4px;width:2073.6px;height:1166.4px;object-fit:cover"
+        data-start="3.273"
+        data-duration="4.364"
+        data-track-index="2001"
+      ></video>
+
+      <video id="f03-humans-walk" src="assets/walk.mp4" preload="auto" data-media-start="4.364" muted playsinline
+        class="clip"
+        style="position:absolute;left:-76.8px;top:-86.4px;width:2073.6px;height:1166.4px;object-fit:cover"
+        data-start="7.637"
+        data-duration="3.818"
+        data-track-index="3001"
+      ></video>
+
+      <video id="f04-essentials-walk" src="assets/walk.mp4" preload="auto" data-media-start="8.182" muted playsinline
+        class="clip"
+        style="position:absolute;left:-76.8px;top:-86.4px;width:2073.6px;height:1166.4px;object-fit:cover"
+        data-start="11.455"
+        data-duration="3.273"
+        data-track-index="4001"
+      ></video>
+
+      <video id="f05-pictures-walk" src="assets/walk.mp4" preload="auto" data-media-start="11.455" muted playsinline
+        class="clip"
+        style="position:absolute;left:-76.8px;top:-86.4px;width:2073.6px;height:1166.4px;object-fit:cover"
+        data-start="14.728"
+        data-duration="3.818"
+        data-track-index="5001"
+      ></video>
+
+      <!-- BGM -->
+      <audio
+        id="el-bgm"
+        src="assets/bgm/bazaar-theme.mp3"
+        data-start="0"
+        data-duration="30"
+        data-track-index="11"
+        data-volume="0.85"
+      ></audio>
+
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+      // ── frame transitions (injected by transitions.mjs) ──
+      (function () { var tl = window.__timelines["main"];
+        tl.to("#el-01-hook", { opacity: 0, duration: 0.35, ease: "power2.inOut" }, 3.273);
+        tl.fromTo("#el-02-gate", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.inOut" }, 3.273);
+        tl.to("#el-05-pictures", { scale: 2.5, opacity: 0, filter: "blur(8px)", duration: 0.4, ease: "power3.in" }, 18.546);
+        tl.fromTo("#el-06-modules", { scale: 0.5, opacity: 0, filter: "blur(8px)" }, { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "power3.out" }, 18.546);
+        tl.to("#el-06-modules", { x: -1920, duration: 0.5, ease: "power3.inOut" }, 22.364);
+        tl.fromTo("#el-07-languages", { x: 1920, opacity: 1 }, { x: 0, opacity: 1, duration: 0.5, ease: "power3.inOut" }, 22.364);
+        tl.to("#el-07-languages", { opacity: 0, duration: 0.3, ease: "power2.inOut" }, 26.182);
+        tl.fromTo("#el-08-cta", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.inOut" }, 26.182);
+        tl.to({}, { duration: 30 }, 0); // full-span anchor — main.duration() == composition total (Studio master duration)
+      })();
+    </script>
+  </body>
+</html>

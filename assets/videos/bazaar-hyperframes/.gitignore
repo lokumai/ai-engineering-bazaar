@@ -1,0 +1,9 @@
+# Regenerable or bulky; everything here is rebuilt by the workflow or the two scripts in scripts/.
+capture/
+assets/walk.mp4
+snapshots/
+renders/*
+!renders/video.mp4
+.hyperframes/frame-packets/
+node_modules/
+*.loop.mp3

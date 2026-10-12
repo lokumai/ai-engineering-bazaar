@@ -1,0 +1,31 @@
+<template>
+  <div id="root" data-composition-id="02-gate" data-start="0" data-duration="4.364" data-width="1920" data-height="1080">
+    <style>
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+      }
+    </style>
+
+    <!-- Paper ground under the footage, the same paper as every neighbouring frame. -->
+    <div id="f02-gate-ground" class="clip f02-gate-ground" style="position: absolute; inset: 0; background: #FDFBF7" data-start="0" data-duration="4.364" data-track-index="0"></div>
+
+    <!-- The approved Bazaar Street walk. Identical host geometry in frames 02-05 (scale 1.08
+         about the bottom centre, cropping the site bar off the top) so the cuts are invisible;
+         only data-media-start advances. The footage has no audio track. -->
+    <!-- approved frame video hoisted by assemble-index -->
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+        window.__timelines = window.__timelines || {};
+        // The footage is the shot: no overlay, no motion. The timeline only spans the frame.
+        const tl = gsap.timeline({ paused: true });
+        tl.set({}, {}, 4.364);
+        window.__timelines["02-gate"] = tl;
+      })();
+    </script>
+  </div>
+</template>

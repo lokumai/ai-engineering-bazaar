@@ -1,0 +1,243 @@
+<template>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    @font-face{font-family:"Nunito Sans";font-style:normal;font-weight:200 1000;src:url("assets/fonts/nunito-sans-latin-wght-normal.woff2")format("woff2")}
+    @font-face{font-family:Vazirmatn;font-style:normal;font-weight:100 900;src:url("assets/fonts/vazirmatn-arabic-wght-normal.woff2")format("woff2")}
+    @font-face{font-family:Fraunces;font-style:normal;font-weight:100 900;font-display:swap;src:url("assets/fonts/captured-85fcf895b86d74a6-s.3pdm20a023wv-.woff2")format("woff2");unicode-range:U+102-103,U+110-111,U+128-129,U+168-169,U+1A0-1A1,U+1AF-1B0,U+300-301,U+303-304,U+308-309,U+323,U+329,U+1EA0-1EF9,U+20AB}
+    @font-face{font-family:Fraunces;font-style:normal;font-weight:100 900;font-display:swap;src:url("assets/fonts/captured-5307092570128b5a-s.16191ingcc7md.woff2")format("woff2");unicode-range:U+100-2BA,U+2BD-2C5,U+2C7-2CC,U+2CE-2D7,U+2DD-2FF,U+304,U+308,U+329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+    @font-face{font-family:Fraunces;font-style:normal;font-weight:100 900;font-display:swap;src:url("assets/fonts/captured-b67966e0b83b2cd0-s.p.0fuf3937kiol3.woff2")format("woff2");unicode-range:U+??,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+    }
+
+    /* Ground: paper, one centred sun bloom, a faint ember counter-bloom top right. */
+    #f08-cta-ground {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 30% 30% at 50% 53%, rgba(200, 160, 120, 0.22) 0%, rgba(200, 160, 120, 0) 100%),
+        radial-gradient(ellipse 56% 58% at 50% 53%, rgba(230, 218, 198, 0.50) 0%, rgba(239, 230, 214, 0.30) 48%, rgba(253, 251, 247, 0) 100%),
+        radial-gradient(ellipse 36% 46% at 100% 0%, rgba(160, 80, 60, 0.10) 0%, rgba(160, 80, 60, 0) 100%),
+        #FDFBF7;
+    }
+
+    #f08-cta-stage {
+      position: absolute;
+      inset: 0;
+      container-type: size;
+    }
+
+    /* "Free. No account needed." Fraunces headline, centred; later shrinks to a small line above centre. */
+    #f08-cta-line {
+      position: absolute;
+      left: 0;
+      top: 513px;
+      width: 1920px;
+      margin: 0;
+      text-align: center;
+      white-space: nowrap;
+      font-family: Fraunces, serif;
+      font-weight: 650;
+      font-variation-settings: "SOFT" 100, "opsz" 96;
+      font-size: 4.6cqw;
+      line-height: 1.06;
+      letter-spacing: -0.005em;
+      color: #1B1B47;
+      transform-origin: 50% 50%;
+    }
+    #f08-cta-line > span {
+      display: inline-block;
+    }
+
+    /* The lockup: mark + wordmark + address, laid out at its final, centred position. */
+    #f08-cta-lockup {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    #f08-cta-mark {
+      position: absolute;
+      left: 421px;
+      top: 480px;
+      width: 208px;
+      height: 208px;
+    }
+    #f08-cta-mark svg {
+      display: block;
+      width: 208px;
+      height: 208px;
+      overflow: visible;
+    }
+    #f08-cta-words {
+      position: absolute;
+      left: 669px;
+      top: 505px;
+      width: 840px;
+    }
+    #f08-cta-wordmark {
+      margin: 0;
+      white-space: nowrap;
+      font-family: Fraunces, serif;
+      font-weight: 650;
+      font-variation-settings: "SOFT" 100, "opsz" 96;
+      font-size: 4.6cqw;
+      line-height: 1.06;
+      letter-spacing: -0.005em;
+      color: #1B1B47;
+    }
+    #f08-cta-address {
+      margin: 14px 0 0 4px;
+      white-space: nowrap;
+      font-family: "Nunito Sans", sans-serif;
+      font-weight: 500;
+      font-size: 1.6cqw;
+      line-height: 1.4;
+      color: #282864;
+    }
+
+    /* The Iznik tile band (the site's .bz-band at video scale, 18px -> 27px). */
+    #f08-cta-band {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 1920px;
+      height: 27px;
+      background-color: #282864;
+      background-image:
+        linear-gradient(45deg, #2F8C86 25%, transparent 25% 75%, #2F8C86 75%),
+        linear-gradient(45deg, #C8A078 25%, transparent 25% 75%, #C8A078 75%),
+        linear-gradient(45deg, #A0503C 25%, transparent 25% 75%, #A0503C 75%);
+      background-size: 27px 27px, 27px 27px, 81px 27px;
+      background-position: 0 0, 13.5px 13.5px, 40.5px 0;
+      border-bottom: 3px solid #B8873B;
+    }
+  </style>
+
+  <div id="root" data-composition-id="08-cta" data-width="1920" data-height="1080">
+    <div id="f08-cta-ground" class="clip" data-start="0" data-duration="3.818" data-track-index="0"></div>
+
+    <div id="f08-cta-stage" class="clip" data-start="0" data-duration="3.818" data-track-index="1">
+      <p id="f08-cta-line"><span>Free.</span> <span>No</span> <span>account</span> <span>needed.</span></p>
+
+      <div id="f08-cta-lockup">
+        <div id="f08-cta-mark">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="208" height="208" role="img" aria-label="AI Engineering Bazaar">
+            <defs>
+              <image id="f08-cta-logo-img" width="128" height="128" href="data:image/webp;base64,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"/>
+              <clipPath id="f08-cta-clip-orange" clipPathUnits="userSpaceOnUse">
+                <polygon points="0,0 26.5,0 26.5,58 40,65.5 50,70 60,73.3 65,74 65,128 0,128"/>
+              </clipPath>
+              <clipPath id="f08-cta-clip-green" clipPathUnits="userSpaceOnUse">
+                <polygon points="91,0 128,0 128,128 65,128 65,74 91,58.5"/>
+              </clipPath>
+              <clipPath id="f08-cta-clip-red" clipPathUnits="userSpaceOnUse">
+                <polygon points="26.5,0 91,0 91,58.5 65,74 60,73.3 50,70 40,65.5 26.5,58"/>
+              </clipPath>
+            </defs>
+            <g id="f08-cta-cubes">
+              <g id="f08-cta-cube-orange"><use href="#f08-cta-logo-img" clip-path="url(#f08-cta-clip-orange)"/></g>
+              <g id="f08-cta-cube-green"><use href="#f08-cta-logo-img" clip-path="url(#f08-cta-clip-green)"/></g>
+              <g id="f08-cta-cube-red"><use href="#f08-cta-logo-img" clip-path="url(#f08-cta-clip-red)"/></g>
+            </g>
+            <use id="f08-cta-logo-whole" href="#f08-cta-logo-img" opacity="0"/>
+          </svg>
+        </div>
+        <div id="f08-cta-words">
+          <p id="f08-cta-wordmark" data-layout-allow-overflow>AI Engineering Bazaar</p>
+          <p id="f08-cta-address">lokumai.github.io/ai-engineering-bazaar</p>
+        </div>
+      </div>
+
+      <div id="f08-cta-band"></div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var byId = function (name) { return document.getElementById("f08-cta-" + name); };
+      var INK = "#1B1B47";
+      var LINE_STRONG = "#C3B299";
+      // Lockup geometry (px). The mark pops at the frame's centre, then the whole
+      // lockup slides left by this much so mark + wordmark sit centred together.
+      var SLIDE_FROM_CENTRE = 435;
+      var LINE_LIFT = -156;
+
+      var tl = gsap.timeline({ paused: true });
+
+      // Scene 1 (0.0-1.0s): "Free. No account needed." word by word, quiet fade through grey.
+      var words = Array.prototype.slice.call(byId("line").children);
+      words.forEach(function (w, i) {
+        tl.fromTo(
+          w,
+          { opacity: 0, y: 22, color: LINE_STRONG },
+          { opacity: 1, y: 0, color: INK, duration: 0.42, ease: "power3.out" },
+          0.06 + i * 0.14
+        );
+      });
+
+      // Scene 2 (1.0-1.35s): the line lifts and shrinks to a small line above centre
+      // (scale-swap) while the mark springs up at centre, cube by cube.
+      tl.fromTo(
+        byId("line"),
+        { y: 0, scale: 1 },
+        { y: LINE_LIFT, scale: 0.5, duration: 0.5, ease: "power3.out" },
+        1.0
+      );
+
+      var cubes = [
+        ["cube-orange", "34 88"],
+        ["cube-green", "96 80"],
+        ["cube-red", "59 44"]
+      ];
+      cubes.forEach(function (c, i) {
+        tl.fromTo(
+          byId(c[0]),
+          { scale: 0, opacity: 0, y: 12, svgOrigin: c[1] },
+          { scale: 1, opacity: 1, y: 0, svgOrigin: c[1], duration: 0.36, ease: "power3.out" },
+          1.02 + i * 0.07
+        );
+      });
+      // Once every cube has landed, show the untouched mark in place of the three cut pieces.
+      tl.set(byId("logo-whole"), { opacity: 1 }, 1.56);
+      tl.set(byId("cubes"), { opacity: 0 }, 1.56);
+
+      // Scene 3 (1.35-1.9s): the mark slides left as the wordmark wipes in to its right,
+      // the address rises under it, and the tile band wipes across the bottom edge.
+      tl.fromTo(
+        byId("lockup"),
+        { x: SLIDE_FROM_CENTRE },
+        { x: 0, duration: 0.52, ease: "power3.inOut" },
+        1.38
+      );
+      tl.fromTo(
+        byId("wordmark"),
+        { clipPath: "inset(-20% 100% -30% -2%)" },
+        { clipPath: "inset(-20% -2% -30% -2%)", duration: 0.44, ease: "power2.out" },
+        1.47
+      );
+      tl.fromTo(
+        byId("address"),
+        { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, duration: 0.38, ease: "power3.out" },
+        1.54
+      );
+      tl.fromTo(
+        byId("band"),
+        { clipPath: "inset(0% 100% 0% 0%)" },
+        { clipPath: "inset(0% 0% 0% 0%)", duration: 0.5, ease: "power3.inOut" },
+        1.4
+      );
+
+      // Scene 4 (1.9-3.818s): perfect stillness to the last frame.
+      window.__timelines = window.__timelines || {};
+      window.__timelines["08-cta"] = tl;
+    })();
+  </script>
+</template>

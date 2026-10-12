@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AI Engineering Bazaar, the brain-rot cut</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+:root{
+  --ground:#fdfbf7; --raised:#ffffff; --sand:#e6dac6; --wall:#efe6d6; --line:#d8cbb4; --line-strong:#c3b299;
+  --ink:#20242e; --title:#1b1b47; --muted:#6a6558;
+  --cobalt:#282864; --teal:#2f8c86; --plum:#7a4a86; --ochre:#b8873b; --brick:#a0503c; --orn:#c8a078;
+  --on-bar-dim:#c9c6e4;
+  --serif:"Fraunces", Georgia, serif;
+  --sans:"Figtree", system-ui, sans-serif;
+  --fa:"Vazirmatn", "Figtree", sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:var(--ground)}
+body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+#stage{position:absolute;inset:0;overflow:hidden;background:var(--ground)}
+.scene{position:absolute;inset:0;overflow:hidden;display:none;will-change:transform}
+.abs{position:absolute}
+.serif{font-family:var(--serif);font-variation-settings:"SOFT" 100,"opsz" 96}
+svg.defs{position:absolute;width:0;height:0}
+
+/* the site's own ornament, .bz-band in src/design/bazaar.css, at 1.5x */
+.band{height:27px;background-color:var(--cobalt);
+  background-image:
+    linear-gradient(45deg,var(--teal) 25%,transparent 25% 75%,var(--teal) 75%),
+    linear-gradient(45deg,var(--orn) 25%,transparent 25% 75%,var(--orn) 75%),
+    linear-gradient(45deg,var(--brick) 25%,transparent 25% 75%,var(--brick) 75%);
+  background-size:27px 27px,27px 27px,81px 27px;background-position:0 0,13.5px 13.5px,40.5px 0;
+  border-bottom:3px solid var(--ochre)}
+
+/* stickers: a meme prop, not a UI element */
+.sticker{position:absolute;font:900 64px/1 var(--sans);letter-spacing:-.01em;padding:18px 32px 20px;border-radius:20px;
+  color:#fff;white-space:nowrap;box-shadow:6px 6px 0 var(--title);border:4px solid var(--title)}
+
+/* ---------- 1. hook: the feed ---------- */
+#feed{position:absolute;left:60px;width:960px;top:0}
+.post{background:var(--raised);border:3px solid var(--line);border-radius:26px;padding:30px 34px 34px;margin-bottom:30px;height:290px}
+.post .who{display:flex;align-items:center;gap:18px;font:700 32px/1 var(--sans);color:var(--muted)}
+.post .av{width:62px;height:62px;border-radius:50%}
+.post .take{font:800 58px/1.08 var(--sans);color:var(--title);margin-top:26px;letter-spacing:-.01em}
+#povblock{position:absolute;left:50px;right:50px;top:690px;background:var(--cobalt);border-radius:30px;padding:46px 56px 60px;overflow:hidden}
+#povblock .band{position:absolute;left:0;right:0;bottom:0}
+#pov{display:inline-block;font:900 60px/1 var(--sans);background:var(--ochre);color:var(--title);padding:14px 26px 16px;border-radius:14px}
+#povline{font:600 104px/1.04 var(--serif);font-variation-settings:"SOFT" 100,"opsz" 120;color:#fff;margin-top:30px;letter-spacing:-.015em}
+#povline span{display:inline-block;white-space:pre}
+
+/* ---------- 2. the crash ---------- */
+#dim{position:absolute;inset:0;background:var(--title)}
+#brain{position:absolute;left:290px;top:250px;width:500px}
+#dialog{position:absolute;left:70px;top:900px;width:940px;background:var(--raised);border:4px solid var(--line-strong);border-radius:30px;overflow:hidden;transform-origin:50% 40%}
+#dialog .tb{background:var(--cobalt);height:92px;display:flex;align-items:center;padding:0 34px;gap:14px;position:relative}
+#dialog .tb .dot{width:22px;height:22px;border-radius:50%;background:#ffffff40}
+#dialog .tb .nm{font:700 38px/1 var(--sans);color:#fff;margin-left:14px}
+#dialog .tb .band{position:absolute;left:0;right:0;bottom:-30px}
+#dialog .bd{padding:74px 54px 50px}
+#dialog .ttl{display:flex;gap:30px;align-items:flex-start}
+#dialog .ttl h2{margin:0;font:700 74px/1.04 var(--serif);font-variation-settings:"SOFT" 100,"opsz" 96;color:var(--title);letter-spacing:-.015em}
+#dialog .cause{font:600 44px/1.2 var(--sans);color:var(--muted);margin:22px 0 0 124px}
+#dialog .cause b{color:var(--brick);font-weight:900}
+#dialog .btns{display:flex;gap:22px;margin-top:52px;justify-content:flex-end}
+.btn{font:800 40px/1 var(--sans);padding:28px 34px;border-radius:18px;white-space:nowrap}
+.btn.quiet{border:3px solid var(--line-strong);color:var(--title);background:#fff}
+.btn.primary{background:var(--cobalt);color:#fff;border:3px solid var(--cobalt)}
+#cursor{position:absolute;width:76px;left:0;top:0;transform-origin:0 0}
+#flood{position:absolute;background:var(--cobalt)}
+
+/* ---------- 3. reveal ---------- */
+#s3 .wallbg{position:absolute;inset:0;background:var(--wall)}
+#bar3{position:absolute;left:0;right:0;top:0;background:var(--cobalt);overflow:hidden}
+#bar3 .brand{position:absolute;left:0;right:0;top:56px;display:flex;justify-content:center;align-items:center;gap:26px}
+#bar3 .brand img{width:118px;height:118px}
+#bar3 .brand span{font:800 64px/1 var(--sans);color:#fff;letter-spacing:-.01em}
+#band3{position:absolute;left:0;right:0}
+#head3{position:absolute;left:40px;right:40px;top:330px;text-align:center;font:700 112px/1.02 var(--serif);font-variation-settings:"SOFT" 100,"opsz" 144;color:var(--title);letter-spacing:-.02em}
+#head3 div{display:block}
+#gatebox{position:absolute;left:-135px;width:1350px;top:880px;height:837px;transform-origin:50% 62%}
+#gatebox svg{width:100%;height:100%;display:block}
+#floor3{position:absolute;left:0;right:0;top:1700px;bottom:0;background:#dcceb5}
+.cube{position:absolute;width:132px}
+/* the cubes drop from behind an edge under the tagline, never across it (world y 860 is 752 to 860 on screen) */
+#cubes3{position:absolute;inset:0;clip-path:inset(860px 0 0 0)}
+.lamp{position:absolute;transform-origin:50% 0}
+
+/* ---------- 4 to 6. the street ---------- */
+.street .wallbg{position:absolute;inset:0;background:var(--wall)}
+.street .brick{position:absolute;inset:0;
+  background-image:linear-gradient(var(--sand) 3px,transparent 3px),linear-gradient(90deg,var(--sand) 3px,transparent 3px);
+  background-size:200px 96px,200px 96px;opacity:.9}
+.street .stall{position:absolute;left:0;width:1080px;top:649px;height:1271px}
+.street .stall svg{width:100%;height:100%;display:block}
+.rail{position:absolute;left:90px;right:90px;top:150px;height:14px;background:var(--title);border-radius:7px}
+.rail::before,.rail::after{content:"";position:absolute;top:-10px;width:18px;height:34px;border-radius:6px;background:var(--title)}
+.rail::before{left:-6px}.rail::after{right:-6px}
+.sign{position:absolute;left:60px;width:960px;top:164px;transform-origin:50% 0}
+.sign .str{position:absolute;top:0;width:5px;height:64px;background:var(--title)}
+.sign .str.l{left:170px}.sign .str.r{right:170px}
+.sign .card{position:absolute;top:60px;left:0;right:0;background:#fff;border-radius:10px;padding:50px 56px 54px;
+  box-shadow:0 24px 40px rgba(27,27,71,.22),0 2px 0 rgba(27,27,71,.08)}
+.sign .card::before{content:"";position:absolute;left:0;right:0;top:0;height:16px;border-radius:10px 10px 0 0;background:var(--edge)}
+.sign .ico{width:76px;height:76px;display:block;margin-bottom:22px}
+.sign h3{margin:0;font:700 90px/1.03 var(--serif);font-variation-settings:"SOFT" 100,"opsz" 144;color:var(--title);letter-spacing:-.02em}
+.sign p{margin:26px 0 0;font:600 56px/1.14 var(--serif);font-variation-settings:"SOFT" 100,"opsz" 72;color:var(--title)}
+.shade{position:absolute;inset:0;background:var(--wall)}
+.polaroid{position:absolute;background:#fff;padding:18px 18px 22px;border-radius:8px;box-shadow:0 22px 40px rgba(27,27,71,.25);border:2px solid var(--line)}
+.polaroid img{display:block;width:100%}
+
+/* ---------- 7. the receipts ---------- */
+#s7 .bg{position:absolute;inset:0;background:var(--wall)}
+#s7 .lat{position:absolute;inset:0;opacity:.55;
+  background-image:linear-gradient(45deg,transparent 46%,var(--sand) 46% 54%,transparent 54%),linear-gradient(-45deg,transparent 46%,var(--sand) 46% 54%,transparent 54%);
+  background-size:84px 84px}
+#printer{position:absolute;left:30px;right:30px;top:120px;height:120px;background:var(--cobalt);border-radius:30px 30px 18px 18px}
+#printer .slot{position:absolute;left:60px;right:60px;bottom:22px;height:16px;background:#14143a;border-radius:8px}
+#paperclip{position:absolute;left:70px;width:940px;top:224px;height:1500px;overflow:hidden}
+#paper{position:absolute;left:0;right:0;top:0;background:#fff;padding:66px 44px 250px;
+  -webkit-mask:linear-gradient(#000,#000) top/100% calc(100% - 28px) no-repeat,conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) bottom/56px 28px repeat-x}
+#paper .hd{font:800 100px/1 var(--serif);font-variation-settings:"SOFT" 100,"opsz" 144;color:var(--title);text-align:center;letter-spacing:-.01em}
+#paper .sub{font:700 38px/1 var(--sans);color:var(--muted);text-align:center;margin-top:20px}
+#paper hr{border:0;border-top:5px dashed var(--line-strong);margin:42px 0 30px}
+.row{display:flex;justify-content:space-between;align-items:center;font:700 54px/1.1 var(--sans);color:var(--title);height:110px}
+.row .ck{width:60px;height:60px;flex:none}
+.row bdi{font-family:var(--fa);font-weight:700}
+.tot{display:flex;justify-content:space-between;align-items:baseline;margin-top:6px}
+.tot .l{font:900 58px/1 var(--sans);color:var(--title);letter-spacing:.02em}
+.tot .r{font:800 96px/1 var(--serif);font-variation-settings:"SOFT" 100,"opsz" 144;color:var(--brick)}
+#stamp{position:absolute;left:330px;top:1490px;font:900 120px/1 var(--sans);color:var(--teal);border:10px solid var(--teal);border-radius:22px;padding:14px 34px 18px;letter-spacing:.04em;background:rgba(255,255,255,.25)}
+
+/* ---------- 8. outro ---------- */
+#s8 .ground{position:absolute;left:0;right:0;top:0;height:1920px;background:var(--cobalt)}
+#s8 .band.top{position:absolute;left:0;right:0;top:0}
+#s8 .band.bot{position:absolute;left:0;right:0;bottom:0;border-bottom:0;border-top:3px solid var(--ochre)}
+#logo8{position:absolute;left:50%;top:360px;width:300px;height:300px;margin-left:-150px}
+#head8{position:absolute;left:30px;right:30px;top:745px;text-align:center;font:700 116px/1.02 var(--serif);font-variation-settings:"SOFT" 100,"opsz" 144;color:#fff;letter-spacing:-.02em}
+#url8{position:absolute;left:50%;top:1330px;transform:translateX(-50%);background:var(--ground);color:var(--title);font:800 41px/1 var(--sans);padding:28px 38px;border-radius:999px;white-space:nowrap}
+#name8{position:absolute;left:0;right:0;top:1460px;text-align:center;font:700 40px/1 var(--sans);color:var(--on-bar-dim)}
+</style>
+</head>
+<body>
+<!--ART:defs-->
+<svg class="defs" aria-hidden="true">
+  <filter id="vblur" x="-5%" y="-20%" width="110%" height="140%"><feGaussianBlur stdDeviation="0 14"/></filter>
+  <filter id="rgb" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
+    <feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="r"/>
+    <feOffset id="rgbR" in="r" dx="0" dy="0" result="r2"/>
+    <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" result="gb"/>
+    <feOffset id="rgbG" in="gb" dx="0" dy="0" result="gb2"/>
+    <feBlend in="r2" in2="gb2" mode="screen"/>
+  </filter>
+</svg>
+<div id="stage">
+
+<!-- 1 + 2: the feed, then the crash -->
+<section class="scene" id="s1">
+  <div id="feedwrap" class="abs" style="inset:0"><div id="feed"></div></div>
+  <div id="dim"></div>
+  <div id="povblock">
+    <span id="pov">POV:</span>
+    <div id="povline"></div>
+    <div class="band"></div>
+  </div>
+  <svg id="brain" viewBox="0 0 400 420" aria-hidden="true">
+    <ellipse id="puddle" cx="205" cy="372" rx="40" ry="14" fill="#f0c4b8" stroke="#a0503c" stroke-width="7"/>
+    <g id="drips" fill="#f0c4b8" stroke="#a0503c" stroke-width="7">
+      <rect id="d1" x="104" y="196" width="38" height="60" rx="19"/>
+      <rect id="d2" x="176" y="214" width="30" height="60" rx="15"/>
+      <rect id="d3" x="244" y="206" width="40" height="60" rx="20"/>
+      <rect id="d4" x="300" y="190" width="28" height="60" rx="14"/>
+    </g>
+    <path d="M80 220 C30 220 20 160 55 140 C30 100 70 55 115 70 C125 30 185 25 205 60 C230 25 290 35 295 75 C345 65 375 115 350 150 C385 175 365 235 315 230 C305 265 255 275 230 250 C210 275 160 275 145 248 C120 265 80 255 80 220 Z" fill="#f0c4b8" stroke="#a0503c" stroke-width="8" stroke-linejoin="round"/>
+    <g fill="none" stroke="#a0503c" stroke-width="6" stroke-linecap="round">
+      <path d="M200 66 C188 120 214 170 200 248"/>
+      <path d="M110 105 q22 -16 44 0"/><path d="M240 92 q24 -14 46 4"/>
+      <path d="M84 178 q18 14 38 4"/><path d="M296 190 q22 -4 36 -22"/>
+    </g>
+    <g fill="none" stroke="#1b1b47" stroke-width="5" stroke-linecap="round">
+      <path id="eyeL"/><path id="eyeR"/>
+      <path id="mouth" d="M168 214 q16 10 32 0 t32 0"/>
+    </g>
+  </svg>
+  <div id="dialog">
+    <div class="tb"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="nm">brain.exe</span><div class="band"></div></div>
+    <div class="bd">
+      <div class="ttl">
+        <svg width="94" height="94" viewBox="0 0 94 94" style="flex:none;margin-top:4px"><path d="M47 6 L90 84 H4 Z" fill="#b8873b" stroke="#1b1b47" stroke-width="5" stroke-linejoin="round"/><rect x="42" y="32" width="10" height="28" rx="5" fill="#1b1b47"/><circle cx="47" cy="70" r="6" fill="#1b1b47"/></svg>
+        <h2>brain.exe has stopped responding</h2>
+      </div>
+      <div class="cause">Cause: <b>brain rot</b></div>
+      <div class="btns"><span class="btn quiet" id="b1">keep scrolling</span><span class="btn primary" id="b2">read something human</span></div>
+    </div>
+  </div>
+  <svg id="cursor" viewBox="0 0 30 44"><path d="M2 2 L2 36 L10.5 28.5 L16 41 L22.5 38 L17 25.5 L28 25.5 Z" fill="#fff" stroke="#1b1b47" stroke-width="2.6" stroke-linejoin="round"/></svg>
+  <div id="flood"></div>
+</section>
+
+<!-- 3: reveal -->
+<section class="scene" id="s3">
+  <div class="wallbg"></div>
+  <div id="gatebox"><!--ART:gate--></div>
+  <div id="floor3"></div>
+  <div id="head3"><div>AI engineering,</div><div>made simple,</div><div>short and useful.</div></div>
+  <div id="cubes3"></div>
+  <div id="bar3"><div class="brand"><img src="assets/lokum-logo.svg" alt=""><span>AI Engineering Bazaar</span></div></div>
+  <div id="band3" class="band"></div>
+</section>
+
+<!-- 4: sign 1 -->
+<section class="scene street" id="s4">
+  <div class="wallbg"></div><div class="brick"></div>
+  <div class="stall"><!--ART:stall-scribe--></div>
+  <div class="rail"></div>
+  <div class="sign" id="sign4" style="--edge:var(--teal)">
+    <span class="str l"></span><span class="str r"></span>
+    <div class="card"><span class="ico"><!--ART:icon-1--></span><h3>Written by humans.<br>No AI slop.</h3></div>
+  </div>
+  <div class="sticker" id="st4" style="background:var(--brick);left:600px;top:760px">no cap</div>
+</section>
+
+<!-- 5: sign 2 -->
+<section class="scene street" id="s5">
+  <div class="wallbg"></div><div class="brick"></div>
+  <div class="stall"><!--ART:stall-scale--></div>
+  <div class="rail"></div>
+  <div class="sign" id="sign5" style="--edge:var(--ochre)">
+    <span class="str l"></span><span class="str r"></span>
+    <div class="card"><span class="ico"><!--ART:icon-2--></span><h3>We only cover essentials.</h3><p>A cheatsheet for AI engineering, not a textbook.</p></div>
+  </div>
+</section>
+
+<!-- 6: sign 3 -->
+<section class="scene street" id="s6">
+  <div class="wallbg"></div><div class="brick"></div>
+  <div class="stall"><!--ART:stall-pictures--></div>
+  <div class="shade" id="shade6"></div>
+  <div class="rail"></div>
+  <div class="sign" id="sign6" style="--edge:var(--brick)">
+    <span class="str l"></span><span class="str r"></span>
+    <div class="card"><span class="ico"><!--ART:icon-3--></span><h3>Pictures do most<br>of the work.</h3></div>
+  </div>
+  <div class="polaroid" id="pol1" style="left:70px;top:820px;width:600px"><img src="assets/onion-model.png" alt=""></div>
+  <div class="polaroid" id="pol2" style="left:430px;top:1010px;width:560px"><img src="assets/loop-unemployment.jpeg" alt=""></div>
+  <div class="sticker" id="st6" style="background:var(--plum);left:120px;top:1450px">memes included</div>
+</section>
+
+<!-- 7: the receipts -->
+<section class="scene" id="s7">
+  <div class="bg"></div><div class="lat"></div>
+  <div id="paperclip"><div id="paper">
+    <div class="hd">THE RECEIPTS</div>
+    <div class="sub">AI Engineering Bazaar</div>
+    <hr>
+    <div class="row" id="r1"><span>19 modules</span><svg class="ck"></svg></div>
+    <div class="row" id="r2"><span>20 to 30 min each</span><svg class="ck"></svg></div>
+    <div class="row" id="r3"><span>English, Türkçe, <bdi dir="rtl">فارسی</bdi></span><svg class="ck"></svg></div>
+    <div class="row" id="r4"><span>a quiz after each module</span><svg class="ck"></svg></div>
+    <div class="row" id="r5"><span>no account needed</span><svg class="ck"></svg></div>
+    <div class="row" id="r6"><span>progress stays in your browser</span><svg class="ck"></svg></div>
+    <hr id="hr2">
+    <div class="tot" id="tot"><span class="l">TOTAL</span><span class="r">+1000 aura</span></div>
+  </div></div>
+  <div id="printer"><div class="slot"></div></div>
+  <div id="stamp">FREE</div>
+</section>
+
+<!-- 8: outro -->
+<section class="scene" id="s8">
+  <div class="ground"></div>
+  <div class="band top"></div>
+  <div id="lamps8"></div>
+  <img id="logo8" src="assets/lokum-logo.svg" alt="">
+  <div id="head8"><div>AI engineering,</div><div>minus the brain rot.</div></div>
+  <div class="sticker" id="st8" style="background:var(--ochre);color:var(--title);left:560px;top:1050px">(ok, a little)</div>
+  <div id="url8">lokumai.github.io/ai-engineering-bazaar</div>
+  <div id="name8">AI Engineering Bazaar</div>
+  <div class="band bot"></div>
+</section>
+
+</div>
+<template id="lampsrc"><!--LAMPS--></template>
+<script src="timeline.js"></script>
+</body>
+</html>

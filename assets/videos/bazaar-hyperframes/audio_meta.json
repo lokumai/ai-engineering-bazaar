@@ -1,0 +1,10 @@
+{
+  "bgm": {
+    "path": "assets/bgm/bazaar-theme.mp3",
+    "source": "host",
+    "volume": 0.85,
+    "credit": "ende.app, Happy Beats / Business Moves vol. 12, CC BY 4.0; trimmed 8.74 s to 38.74 s, faded"
+  },
+  "voices": [],
+  "sfx": []
+}

@@ -1,0 +1,194 @@
+<template>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js" integrity="sha384-sG0Hv1tP1lZCk9KQmrIbY/XNwi+OY84GQqhMscbnsoBFqAz8KNCil1kvfL3Hbbk2" crossorigin="anonymous"></script>
+  <style>
+    /* Fraunces, captured from the site (the home page's display face, SOFT + opsz axes). */
+    @font-face{font-family:Fraunces;font-style:normal;font-weight:100 900;font-display:swap;src:url("assets/fonts/captured-85fcf895b86d74a6-s.3pdm20a023wv-.woff2")format("woff2");unicode-range:U+102-103,U+110-111,U+128-129,U+168-169,U+1A0-1A1,U+1AF-1B0,U+300-301,U+303-304,U+308-309,U+323,U+329,U+1EA0-1EF9,U+20AB}
+    @font-face{font-family:Fraunces;font-style:normal;font-weight:100 900;font-display:swap;src:url("assets/fonts/captured-5307092570128b5a-s.16191ingcc7md.woff2")format("woff2");unicode-range:U+100-2BA,U+2BD-2C5,U+2C7-2CC,U+2CE-2D7,U+2DD-2FF,U+304,U+308,U+329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+    @font-face{font-family:Fraunces;font-style:normal;font-weight:100 900;font-display:swap;src:url("assets/fonts/captured-b67966e0b83b2cd0-s.p.0fuf3937kiol3.woff2")format("woff2");unicode-range:U+??,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+    /* Bazaar additions. */
+    @font-face{font-family:"Nunito Sans";font-style:normal;font-weight:200 1000;src:url("assets/fonts/nunito-sans-latin-wght-normal.woff2")format("woff2")}
+    @font-face{font-family:Vazirmatn;font-style:normal;font-weight:100 900;src:url("assets/fonts/vazirmatn-arabic-wght-normal.woff2")format("woff2")}
+
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: "Nunito Sans", sans-serif;
+    }
+
+    /* Ground: paper, one lantern bloom upper left (sun core at ~30%), a faint brick
+       counter-bloom in the opposite corner. No drift: the ground never moves. */
+    .f01-hook-ground {
+      position: absolute;
+      inset: 0;
+      background-color: #FDFBF7;
+      background-image:
+        radial-gradient(ellipse 58% 72% at 19% 17%,
+          rgba(200, 160, 120, 0.30) 0%,
+          rgba(230, 218, 198, 0.30) 30%,
+          rgba(239, 230, 214, 0.22) 52%,
+          rgba(253, 251, 247, 0) 78%),
+        radial-gradient(ellipse 42% 52% at 94% 98%,
+          rgba(160, 80, 60, 0.12) 0%,
+          rgba(160, 80, 60, 0.05) 42%,
+          rgba(160, 80, 60, 0) 74%);
+    }
+
+    /* The one Iznik tile band, the site's .bz-band scaled 18px -> 27px. */
+    .f01-hook-band {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 27px;
+      background-color: #282864;
+      background-image:
+        linear-gradient(45deg, #2F8C86 25%, transparent 25% 75%, #2F8C86 75%),
+        linear-gradient(45deg, #C8A078 25%, transparent 25% 75%, #C8A078 75%),
+        linear-gradient(45deg, #A0503C 25%, transparent 25% 75%, #A0503C 75%);
+      background-size: 27px 27px, 27px 27px, 81px 27px;
+      background-position: 0 0, 13.5px 13.5px, 40.5px 0;
+      border-bottom: 3px solid #B8873B;
+    }
+
+    /* Copy region: below the band, above the bottom keep-out (y <= 900), the headline
+       centred in it and anchored on the left; the right ~30% stays open. */
+    .f01-hook-stage {
+      position: absolute;
+      inset: 0;
+      container-type: size;
+    }
+    .f01-hook-copy {
+      position: absolute;
+      left: 9cqw;
+      width: 70cqw;
+      top: 30px;
+      bottom: 180px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .f01-hook-headline {
+      margin: 0;
+      font-family: Fraunces, Georgia, serif;
+      font-weight: 650;
+      font-variation-settings: "SOFT" 100, "opsz" 96;
+      font-size: 5.8cqw;
+      line-height: 1.06;
+      letter-spacing: -0.012em;
+      color: #1B1B47;
+    }
+    .f01-hook-line {
+      display: block;
+      white-space: nowrap;
+    }
+    .f01-hook-word {
+      display: inline-block;
+    }
+    .f01-hook-payoff {
+      position: relative;
+    }
+    .f01-hook-payoff-text {
+      position: relative;
+    }
+    /* Hand-drawn brick underline. Its viewBox matches the word's aspect closely, so the
+       stroke is barely stretched; the draw is stroke-dashoffset only. It sits behind the
+       glyphs by DOM order (both are positioned, the text comes second), so the g's
+       descender crosses over the stroke, as ink over a marker line. */
+    .f01-hook-underline {
+      position: absolute;
+      left: -0.04em;
+      width: calc(100% + 0.02em);
+      top: 0.92em;
+      height: 0.3em;
+      overflow: visible;
+    }
+    .f01-hook-underline path {
+      fill: none;
+      stroke: #A0503C;
+      stroke-width: 11;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+  </style>
+
+  <div id="root" data-composition-id="01-hook" data-start="0" data-duration="3.623" data-width="1920" data-height="1080">
+    <div id="f01-hook-ground" class="clip f01-hook-ground" data-start="0" data-duration="3.623" data-track-index="0"></div>
+
+    <div id="f01-hook-band" class="clip f01-hook-band" data-start="0" data-duration="3.623" data-track-index="1"></div>
+
+    <div id="f01-hook-stage" class="clip f01-hook-stage" data-start="0" data-duration="3.623" data-track-index="2">
+      <div class="f01-hook-copy">
+        <h1 id="f01-hook-headline" class="f01-hook-headline">
+          <span class="f01-hook-line"><span class="f01-hook-word">A</span> <span class="f01-hook-word">lot</span> <span class="f01-hook-word">of</span> <span class="f01-hook-word">AI</span> <span class="f01-hook-word">content</span> <span class="f01-hook-word" data-line-end="1">online</span></span>
+          <span class="f01-hook-line"><span class="f01-hook-word">is</span> <span id="f01-hook-payoff" class="f01-hook-word f01-hook-payoff"><svg class="f01-hook-underline" viewBox="0 0 520 34" preserveAspectRatio="none" aria-hidden="true"><path id="f01-hook-stroke" d="M6 20 C 70 15, 150 12, 240 13 C 330 14, 420 18, 470 15 C 492 13.6, 505 11, 514 7" /></svg><span class="f01-hook-payoff-text">guesswork.</span></span></span>
+        </h1>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      window.__timelines = window.__timelines || {};
+      const DURATION = 3.273;
+      const tl = gsap.timeline({ paused: true });
+
+      // Scene 1 (0.00-0.25s): the tile band wipes in left to right across the top edge.
+      const band = document.getElementById("f01-hook-band");
+      tl.fromTo(
+        band,
+        { clipPath: "inset(0% 100% 0% 0%)" },
+        { clipPath: "inset(0% 0% 0% 0%)", duration: 0.25, ease: "power2.inOut" },
+        0,
+      );
+
+      // Scenes 2-3: the sentence assembles word by word (dynamic-content-sequencing).
+      // Each word's start is computed once from content length: a longer word earns a
+      // longer dwell before the next arrives, and the line break carries a short beat.
+      // Line 1 lands by ~1.1s, "is guesswork." follows on the same left edge.
+      const FIRST_START = 0.18;
+      const BASE = 0.06;
+      const SEC_PER_CHAR = 0.02;
+      const LINE_BREAK = 0.06;
+      const WORD_IN = 0.34;
+
+      const headline = document.getElementById("f01-hook-headline");
+      const words = Array.prototype.slice.call(headline.getElementsByClassName("f01-hook-word"));
+      let cumulative = FIRST_START;
+      const TIMELINE = words.map(function (el) {
+        const text = (el.textContent || "").trim();
+        const start = cumulative;
+        cumulative += BASE + text.length * SEC_PER_CHAR + (el.getAttribute("data-line-end") ? LINE_BREAK : 0);
+        return { el: el, start: start };
+      });
+
+      TIMELINE.forEach(function (entry) {
+        tl.fromTo(
+          entry.el,
+          { opacity: 0, y: 30, filter: "blur(10px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: WORD_IN, ease: "power3.out" },
+          entry.start,
+        );
+      });
+
+      // Scene 3 tail: the brick underline self-draws beneath "guesswork." (svg-path-draw),
+      // starting as the word settles, a hand lifting at the end of the stroke.
+      const payoffStart = TIMELINE[TIMELINE.length - 1].start;
+      const stroke = document.getElementById("f01-hook-stroke");
+      const measured = stroke.getTotalLength ? stroke.getTotalLength() : 0;
+      const len = (measured > 0 ? measured : 520) * 1.05;
+      stroke.style.strokeDasharray = len + " " + len;
+      stroke.style.strokeDashoffset = String(len);
+      const DRAW_START = payoffStart + 0.22;
+      // Hidden until the pen touches down, so a round cap never shows as a dot early.
+      tl.fromTo(stroke, { opacity: 0 }, { opacity: 1, duration: 0.01, ease: "none" }, DRAW_START);
+      tl.fromTo(stroke, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: 0.36, ease: "power2.out" }, DRAW_START);
+
+      // Scene 4: hold still to the end of the frame. No drift, no exit.
+      tl.set({}, {}, DURATION);
+
+      window.__timelines["01-hook"] = tl;
+    })();
+  </script>
+</template>

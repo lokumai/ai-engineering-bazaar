@@ -18,7 +18,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M27, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M27, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-10-12
 ---
 
@@ -3752,6 +3752,26 @@ and in React's payload. The walk's 200 KB template is only cloned on a wide scre
 | Unit | **2,171 passed / 84 files** |
 | Build | **80 HTML files**; the base-path build carries the prefix on **5,314 of 5,314** internal `href`/`src`, and on the font files |
 | Browser | **1,187 passed / 59 skipped / 0 failed** at 1440 / 1024 / 390 |
+
+
+---
+
+## 🏷️ Release v1.0.0 — 2026-10-12
+
+The author asked for a release branch and a release from `main` once the README was current. Cut
+from `e48a984`, the merge of PR #28, which brought the README and every stale statement in these
+files up to date first:
+
+- branch **`release/v1.0.0`** and annotated tag **`v1.0.0`**, both on `e48a984`;
+- the GitHub release: https://github.com/lokumai/ai-engineering-bazaar/releases/tag/v1.0.0.
+
+What it contains, measured from `curriculum.yaml`:
+- 19 written modules in English and Turkish: Fundamentals 8 of 8, Intermediate 7 of 8 and
+  Ecosystem 4 of 5. Expert and Protocols & Specs are planned.
+- Each written module has a quick quiz.
+- The site is as M27 left it.
+
+Later milestones land on `main`. The release branch takes fixes only.
 
 ---
 

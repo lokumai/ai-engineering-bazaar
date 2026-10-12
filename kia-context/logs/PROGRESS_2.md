@@ -9,8 +9,8 @@ description: >
   module page and rail, and the progress redesign — all four SHIPPED — then M23, the interface's own
   strings, written and not started, and M24 to M27, the author's requests of 2026-10-11 and
   2026-10-12, all shipped and merged: the end of a module and its quiz, the readability pass, and the
-  Bazaar Street front door. Then the v1.0.0 release, and M28, Persian, built and awaiting the
-  author's word to commit.
+  Bazaar Street front door. Then the v1.0.0 release, and M28, Persian modules read right to left,
+  merged as PR #30.
   Every milestone carries its deliverables and acceptance criteria as `- [ ]` checkboxes, ticked as
   the work lands, and closes with a dated report; the loop that governs that is in part 1 and is not
   restated here. Part 1 holds M1 to M15 and is closed.
@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M28, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — built the same day, not yet committed. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M28, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-10-12
 ---
 
@@ -70,7 +70,7 @@ deliverables as a numbered list; M18 wrote none at all; M19 to M22 had none eith
 | **M25** | The end of a module, rebuilt, and a quick quiz | **Done** — 2026-10-12, merged as PR #25 |
 | **M26** | Headings, requested additions, and ASD-STE-like English | **Done** — 2026-10-12, merged as PR #26 |
 | **M27** | The front door is Bazaar Street | **Done** — 2026-10-12, merged as PR #27 |
-| **M28** | Persian, the third language | **Built** — 2026-10-12, on `feat/persian-modules`, full gate green; not committed, awaiting the author's word |
+| **M28** | Persian, the third language | **Done** — 2026-10-12, merged as PR #30 |
 
 ---
 
@@ -3777,9 +3777,11 @@ Later milestones land on `main`. The release branch takes fixes only.
 
 ---
 
-## 🏁 Milestone M28: Persian, the third language — BUILT, NOT YET COMMITTED
+## 🏁 Milestone M28: Persian, the third language — SHIPPED, MERGED AS PR #30
 
-Branch `feat/persian-modules`, from `main` at `a870aa9` (v1.0.0 plus its record). The author's
+Branch `feat/persian-modules`, from `main` at `a870aa9` (v1.0.0 plus its record), committed as
+`b711a70` and merged to `main` as PR #30 once CI passed, on the author's word ("commit push and
+merge and update kia-context"). The author's
 request, 2026-10-12: *"please add support for persian language for the modules. the persian
 support should be only at the module content level and not website level such as navbars etc.
 similar to turkish version, english technical words should remain in english such as Agent or SQL

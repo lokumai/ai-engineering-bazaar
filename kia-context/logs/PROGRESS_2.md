@@ -16,7 +16,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M27, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — shipped as PR #26. M27 — the Bazaar Street front door — shipped. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M27, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — shipped as PR #26. M27 — the Bazaar Street front door — shipped as PR #27. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-10-12
 ---
 
@@ -3688,9 +3688,9 @@ Fundamentals" with Observability still to come.
 
 ---
 
-## 🏁 Milestone M27: The front door is Bazaar Street — SHIPPED
+## 🏁 Milestone M27: The front door is Bazaar Street — SHIPPED AS PR #27
 
-Branch `feat/home-bazaar-street`, from `main` after PR #26. The author's request, 2026-10-12: the
+Branch `feat/home-bazaar-street`, from `main` after PR #26, opened as PR #27 to merge once CI passed, on the author's word ("apply design 3, commit and push and merge"). The author's request, 2026-10-12: the
 home page was *"too verbose ... has no art"*, and he wanted it to surprise a reader. Three
 standalone concepts were built in `tmp-designs/` (not committed); he chose the third, changed its
 stalls, and asked for it to be applied, committed and merged (**D79**).

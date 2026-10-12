@@ -1,299 +1,237 @@
+import type { CSSProperties } from 'react'
 import type { Metadata } from 'next'
+import { Fraunces } from 'next/font/google'
 import Link from 'next/link'
+import { BazaarStreetMotion } from '@/components/home/BazaarStreetMotion'
+import { art, type ArtName } from '@/components/home/street/art'
 import { PageShell } from '@/components/shell/PageShell'
-import { corpusTotals, moduleLengthRange, sheetRows, type LengthRange } from '@/lib/content/manifest'
-import { INDEX_ROUTE } from '@/lib/route-labels'
+import { CATEGORIES } from '@/lib/content/curriculum-file'
+import { INDEX_ROUTE, levelRoute } from '@/lib/route-labels'
 import { SITE_NAME } from '@/lib/site'
-import { hoursMinutes } from '@/lib/text'
 
 /**
  * §15.2.2 — one document, so one title, and it claims nothing about the reader.
  *
- * `title.absolute` rather than a bare string: the root layout sets the template
- * `%s · AI Engineering Bazaar`, and a plain `title: SITE_NAME` here would print
- * the site's name twice in the tab. The rejected alternative was to export no
- * `metadata` at all and inherit the layout's default — which gives the right
- * title but leaves the front door describing itself with the site-wide
- * description, the one string on the site that spells a module count into prose.
- * The home page states its counts where they are measured, so the description
- * states the shape of the place and no number.
- *
- * "Where you left off" and "Welcome back" are both refused here: one document
- * serves every reader and the tab is written once, at build time, for a reader
- * the build has never met.
+ * `title.absolute`, because the root layout's template would print the site's
+ * name twice. The description says what the place is and states no number.
  */
 export const metadata: Metadata = {
   title: { absolute: SITE_NAME },
   description:
-    'The front door: what this course is, the module to start on, how far you '
-    + 'are through it, and where your reading is kept.',
+    'The front door: what this course is, why it is written the way it is, and '
+    + 'the way in to every level.',
 }
 
 /**
- * M13 / M18 — the home page. **Two rows: the banner, then the argument.**
+ * The display face of the front door, and of nothing else (D79).
  *
- * ## What it is now, and what it stopped being
- *
- * The author chose home **A** out of three in M13: a landing page answering
- * *what is this, why this and not the hundredth AI blog, and where do I start*
- * in one screen, with the levels doubling as the table of contents. **M18 took
- * the levels off it**, on his own shape for the front door: *"Homepage should
- * have the refined banner row, and the next row should be the existing boxes
- * which is 'Why this and not the hundredth AI blog'."*
- *
- * So what is left is what a stranger needs and nothing that reports on a reader
- * this document has never met. Three things went, and each one had somewhere
- * else to be:
- *
- * - **completion control C**, which was D14's second home for it, is on
- *   `/profile/` — the page named for it, one click away in the bar;
- *   `CourseCompletion` is unchanged and still carries the reasoning;
- * - **the continue line**, which read `Continue · Module 01 · LLM
- *   Fundamentals`. It was the last thing on this page keyed off
- *   `data-hl-record`, and the stamp stays because the catalog's view reveal and
- *   the progress page both read the record;
- * - **the levels as a table of contents**. That is the one real loss and it is
- *   named in the markup below: the catalog is where the whole course is
- *   listed, which after M17 is true of exactly one page.
- *
- * ## Every number here is measured, and M18 made one more of them a number
- *
- * Not one count in this file is typed (§11.25). The strip is `corpusTotals()`,
- * the first module is `sheetRows()[0]` — and the LEDE is `moduleLengthRange()`,
- * because it was printing *five to ten minutes* over a corpus whose shortest
- * module declares twenty. A sentence with a number in it is a count like any
- * other. Break a derivation and the page changes, which is the test M13 asks
- * for.
- *
- * **The lead action's target is a slug, not a number.** The first entry point is
- * the first row of the set as the corpus orders it, because the set has been
- * renumbered once already: a number is a label and a slug is an identity
- * (§12.1.3).
- *
- * ## What the page refuses to draw
- *
- * No hero image, no gradient, and no "get started" control that leads to a
- * second choice (§11.3, §15.2.4) — the primary action is the first module. No
- * percentage (§11.35). No modal, no banner and no dismissible box over the
- * identity strip, and no sentence anywhere claiming that signing in saves what
- * the browser is already keeping (§15.5.4). And nothing on it requires an
- * account: signed out is the default and it is complete.
+ * M16 took downloaded fonts off the site: the mockup names a system stack, so
+ * type follows the reader's OS. The author's chosen home page sets its headline
+ * and its signs in Fraunces, and the concept is the reference for this page, so
+ * the face comes back HERE ONLY: `next/font` fetches it at build time and serves
+ * it from the site, so a reader's browser makes no request to Google. Every
+ * other page keeps the system stack.
  */
+const display = Fraunces({ subsets: ['latin'], axes: ['SOFT', 'opsz'], display: 'swap' })
+
 /**
- * THE PROMISE, IN THE README'S OWN WORDS — and it is the one block of copy on
- * this page that is written rather than counted.
+ * The four stalls: the author's mottos, in the author's words (2026-10-12).
  *
- * The five paragraphs it replaces described the course to itself: how many
- * modules were ready, how many planned, what a reader may tick, where the
- * record is kept. All true, and all of it said in prose what the page already
- * SHOWS three inches lower — the levels carry their own counts and the marks
- * carry their own state. A caption under a picture of the same thing is not
- * information, it is noise.
+ * Written rather than counted, and on purpose: these are what the course
+ * promises, not facts about the corpus, so there is nothing to derive them from.
+ * The numbers that used to stand here ("20 to 30 minutes a module", "86
+ * diagrams and figures", the hours of reading) were cut by the author, so the
+ * page states no count at all.
  *
- * Three sentences, from `README.md`'s "Why This Is Valuable": rule 1 (people who
- * build this write it), rule 4 (how long a module takes), rule 5 (pictures do
- * the work), in rule 3's plain language — readable by somebody whose first
- * language is not English, which is the audience `MANIFESTO.md` §4 names.
- *
- * ## M18 corrected two of the three, and one of them was a number
- *
- * **"Five to ten minutes a module" was wrong**, and measurably: nineteen
- * modules declare a duration, the shortest is 20 minutes and the longest is 30.
- * So the sentence counts rather than claims — `moduleLengthRange()` reads the
- * corpus and a module that gets longer moves the promise with it. It is §11.25
- * applied to a sentence instead of to a facts strip, and it is why this is a
- * function now rather than a constant array.
- *
- * **"Written by an engineer" was singular and the thing is written by AI
- * engineers.** The author's correction, and it reaches the headline above the
- * lede too: `08`'s own text reads *"AI engineering, written by someone who
- * builds it"*. The mockup outranks the design document and the author outranks
- * the mockup (`DESIGN.md`'s order of authority), so it is a recorded
- * `DEVIATIONS` entry rather than a quiet edit.
+ * `x` is where the sign hangs on the street, in the art's own units; `art` names
+ * the scene behind it; `hue` is a category token borrowed as an accent, the way
+ * the concept drew them.
  */
-function ledeFor({ shortest, longest }: LengthRange): readonly string[] {
-  return [
-    'AI engineering, made short and useful.',
-    'Written by AI engineers who build this for a living, in plain words.',
-    `${shortest} to ${longest} minutes a module, and the pictures do most of the work.`,
-  ]
+const STALLS: ReadonlyArray<{
+  art: ArtName
+  icon: ArtName
+  hue: string
+  x: number
+  title: string
+  sub?: string
+  body: string
+}> = [
+  {
+    art: 'stall-scribe',
+    icon: 'icon-1',
+    hue: 'var(--color-category-1)',
+    x: 1510,
+    title: 'Written by Humans. No AI Slop.',
+    body:
+      'LLMs only know what shows up often enough in their training data. The newest AI engineering '
+      + 'topics are not there yet, so a model cannot teach them well. Every module here is written '
+      + 'by AI engineers who build this for a living.',
+  },
+  {
+    art: 'stall-scale',
+    icon: 'icon-2',
+    hue: 'var(--color-category-4)',
+    x: 2710,
+    title: 'We only cover what matters.',
+    sub: 'A cheatsheet for AI engineering, not a textbook.',
+    body:
+      'Learn the most important topics here. Learn the details yourself later. We teach the ideas '
+      + 'that matter most, and nothing else.',
+  },
+  {
+    art: 'stall-pictures',
+    icon: 'icon-3',
+    hue: 'var(--color-category-5)',
+    x: 3910,
+    title: 'Pictures do most of the work.',
+    body:
+      'Every module comes with pictures, diagrams and code. Often there are memes too, and '
+      + 'sometimes even a little brain rot, because a good meme can explain an idea in one look.',
+  },
+  {
+    art: 'stall-papers',
+    icon: 'icon-4',
+    hue: 'var(--color-category-3)',
+    x: 5110,
+    title: 'Every module points you somewhere next.',
+    body:
+      'Each module ends with links to extra articles, sources and videos, for when you want to go deeper.',
+  },
+]
+
+/** The concept draws five doors; a sixth level would reuse the first drawing. */
+const DOOR_ART = 5
+
+/** Where the doors and the way in stand in the hall, in the art's own units. */
+const DOOR_X = 6485
+const DOOR_STEP = 230
+const DOOR_Y = 252
+const CTA_AT = { x: 7040, y: 800 }
+
+/** A custom property on an element; React writes custom properties unitless. */
+function at(props: Record<string, string | number>): CSSProperties {
+  return props as CSSProperties
 }
 
+/**
+ * The front door: Bazaar Street (D79).
+ *
+ * ## What it is
+ *
+ * The author asked for a home page that surprises a reader, with art and with
+ * things that move as the page scrolls, and chose this one of three concepts on
+ * 2026-10-12. A reader walks into a covered bazaar: the headline sits over its
+ * gate, each of the four mottos hangs on a sign over a stall that acts it out,
+ * and the street ends at one door per level.
+ *
+ * ## How it is built, and why that way round
+ *
+ * **Everything a reader reads is here, server-rendered, on the language's
+ * tokens**: the headline, the lede, the four mottos, the five doors and the way
+ * in. With no script, with reduced motion and on a phone, that is the whole
+ * page, laid out as a stack, and it is complete. **The art is beside it**, read
+ * from files at build time (`street/art.ts`), and **the motion is one island**
+ * (`BazaarStreetMotion`) that turns the stack into a walk on a wide screen.
+ *
+ * ## What is derived
+ *
+ * The doors are the course's levels, from `curriculum.yaml`: one per category,
+ * in its order, named by its title, opening its own level page, and coloured by
+ * `data-cat` like every other level mark on the site. A level added to the
+ * curriculum gets a door without this file changing.
+ *
+ * ## What left, and where it went
+ *
+ * The lead action `Start with <first module>` and the facts strip were removed
+ * by the author; the way in is the catalog, which lists the whole course. The
+ * "Why this and not the hundredth AI blog" panel became the four stalls.
+ */
 export default function HomePage() {
-  const rows = sheetRows()
-  const totals = corpusTotals()
-  const lede = ledeFor(moduleLengthRange())
-
-  // The first row of the set: the module the primary action opens.
-  const first = rows[0]
+  const doors = CATEGORIES.map((category, i) => ({
+    slug: category.slug,
+    title: category.title,
+    href: levelRoute(category.slug),
+    art: `door-${(i % DOOR_ART) + 1}` as ArtName,
+    x: DOOR_X + i * DOOR_STEP,
+  }))
 
   return (
-    <PageShell column={false}>
-      <div className="bz-hero">
-        {/* §15.2.2 — one h1 for one document, and it says what the place is
-            rather than repeating the wordmark two rows above it. */}
-        <h1 className="bz-hero-title">
-          AI engineering, written by the people who build it.
-        </h1>
+    /* No trail: a crumb reading `Home` on the home page names the page the
+       bar's current chip already marks, and the street runs edge to edge
+       under the bar. */
+    <PageShell column={false} trail={false}>
+      <div id="bazaar" className="bz-street">
+        <div aria-hidden="true" dangerouslySetInnerHTML={{ __html: art('defs') }} />
 
-        {/* WHY TO READ IT, NOT WHAT IT CONTAINS.
-            This was five paragraphs describing the course to itself — how many
-            modules are ready, how many are planned, where the record is kept,
-            what a reader may tick. Every sentence was true and every one of
-            them said something the page already SHOWS: the levels below carry
-            their own counts, the marks carry their own state.
-            What replaces it is the promise, in the README's own words. Three
-            short sentences, plain enough for a reader whose first language is
-            not English, which is rule 3. */}
-        <div className="bz-lede">
-          {lede.map((line) => (
-            <p key={line}>{line}</p>
-          ))}
-        </div>
+        <section className="gate" id="gate" aria-labelledby="home-title">
+          <div className="gate-copy">
+            {/* §15.2.2 — one h1 for one document. The break is the author's line
+                break; the space before it keeps the text one sentence. */}
+            <h1 id="home-title" className={`bz-hero-title ${display.className}`}>
+              AI engineering,{' '}
+              <br />
+              written by the people who build it.
+            </h1>
+            <p className="bz-lede">AI engineering, made simple, short and useful.</p>
+            <Link className="bz-btn" href={INDEX_ROUTE}>
+              Open the curriculum
+            </Link>
+          </div>
+          <div className="gate-arch" aria-hidden="true">
+            <div className="arch-box" id="archBox" dangerouslySetInnerHTML={{ __html: art('gate') }} />
+          </div>
+        </section>
 
-        {/* NO CONTINUE LINE. It read `Continue · Module 01 · LLM Fundamentals`
-            and the author had it removed: the front door is the argument for
-            reading this, and a reader with a record is one click from their
-            place through `Your progress` in the bar. What it cost is that
-            `data-hl-record` has no consumer on this page any more — the stamp
-            stays, because the catalog's own reveal and the progress page both
-            read the record, and `boot.ts` owns it. */}
+        <section className="mottos" aria-label="Why this course">
+          <div className="mottos-in">
+            {STALLS.map((stall) => (
+              <article key={stall.art} className="stall" style={at({ '--hue': stall.hue })}>
+                <div className="stall-art" aria-hidden="true" dangerouslySetInnerHTML={{ __html: art(stall.art) }} />
+                <div className="sign" style={at({ '--x': stall.x, '--y': 224, '--hue': stall.hue })}>
+                  <div className="rail" />
+                  <div className="swing">
+                    <div className="board">
+                      <h2 className={display.className}>
+                        <span className="ico-slot" aria-hidden="true" dangerouslySetInnerHTML={{ __html: art(stall.icon) }} />
+                        {stall.title}
+                      </h2>
+                      {stall.sub && <p className={`sub ${display.className}`}>{stall.sub}</p>}
+                      <p>{stall.body}</p>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
 
-        <div className="bz-hero-actions">
-          {/* DESIGN.md, Components — one `button-primary` per screen region,
-              and this is the home page's. §15.2.4: the primary action opens a
-              module rather than a menu. */}
-          <Link className="bz-btn" href={first.path}>
-            Start with {first.title}
-          </Link>
-          <Link className="bz-btn" href={INDEX_ROUTE}>
-            Browse the catalog
-          </Link>
-        </div>
+        <section className="end">
+          <nav className="doors" aria-label="Levels">
+            {doors.map((door) => (
+              <Link
+                key={door.slug}
+                className="door"
+                href={door.href}
+                data-cat={door.slug}
+                style={at({ '--x': door.x, '--y': DOOR_Y })}
+              >
+                <span className="plaque">{door.title}</span>
+                <span className="door-art" aria-hidden="true" dangerouslySetInnerHTML={{ __html: art(door.art) }} />
+              </Link>
+            ))}
+          </nav>
+          <div className="cta-wrap" style={at({ '--x': CTA_AT.x, '--y': CTA_AT.y })}>
+            <Link className="bz-btn" href={INDEX_ROUTE}>
+              Open the curriculum
+            </Link>
+          </div>
+        </section>
 
-        {/* The four facts, each one counted from the corpus. A dash is
-            impossible here: these are measurements of the repository, so the
-            honest empty form of any of them is a zero somebody counted. */}
-        <ul className="bz-facts">
-          <li>
-            <span className="bz-facts-value">{hoursMinutes(totals.minutes)}</span>
-            of reading
-          </li>
-          <li>
-            <span className="bz-facts-value">{totals.figures}</span>
-            diagrams and figures
-          </li>
-          <li>
-            <span className="bz-facts-value">{totals.sources}</span>
-            sources cited
-          </li>
-        </ul>
+        {/* The walk: a template the motion clones on a wide screen. Inert
+            otherwise, and hidden so its art is never laid out twice. */}
+        <div hidden dangerouslySetInnerHTML={{ __html: art('walk') }} />
       </div>
-
-      {/* NO PROGRESS FEATURE. D14 put completion control C here — every level,
-          every module, a dial each, and three statistics above them — and M18
-          takes it off this page and leaves it on `/profile/`, which is the page
-          named for it.
-
-          The author's shape for the front door is two rows: the banner, then
-          the argument. Control C was a third thing, it was the only thing on
-          the page that could say nothing true to a stranger, and `/profile/` is
-          one click away in the bar for a reader who has one.
-
-          **What this costs, named rather than discovered:** the level cards
-          were the home page's table of contents, so `home.spec.ts`'s claim that
-          every module in the course is reachable from here does not survive.
-          It moved to the catalog, which after M17 is the one place the whole
-          course is listed. */}
-
-      {/* Home A's second half: the argument for reading this rather than the
-          next thing a search returns. Four claims, each one checkable against
-          the corpus itself, and none of them about the reader. */}
-      <section className="bz-panel" aria-labelledby="bz-home-why">
-        <div className="bz-panel-head">
-          <h2 id="bz-home-why" className="bz-panel-title">
-            Why this and not the hundredth AI blog
-          </h2>
-          {/* NO NOTE. It read `Four reasons, all of them checkable` over four
-              reasons a reader can count, each already stating what it can be
-              checked against. MANIFESTO rule 16. */}
-        </div>
-        {/* `08:179-182` draws a glyph beside each claim, in a 28px tinted
-            tile — and it draws them as LITERAL EMOJI: a writing hand, a speech
-            balloon, a ruler, a rising chart. Emoji are not this design's icon
-            idiom and never have been: `src/` carries twenty inline SVGs and no
-            emoji at all, on a 16-unit viewBox with `fill="none"` and
-            `stroke="currentColor"`, and `01:172-178` records why a shape with a
-            fill beats a hairline glyph where meaning depends on it. An emoji
-            also renders in whatever face the reader's platform ships, at a size
-            nothing here chose, and says something different on each one.
-
-            So the four are redrawn on that grid, keeping what each one MEANT
-            rather than tracing it: a nib, a pair of quotes, a rule with two
-            ticks, and a rising line. The tile survives the swap unchanged
-            because it was always sized for a glyph — and it is an edge rather
-            than `08`'s tint, which is the answer D33 already gave for the level
-            badge. */}
-        <dl className="bz-why">
-          <div>
-            <span className="bz-why-mark" aria-hidden="true">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"
-                strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 13l1-3 7-7 2 2-7 7-3 1z" />
-                <path d="M10.5 3.5l2 2" />
-              </svg>
-            </span>
-            <dt>A person wrote it</dt>
-            <dd>
-              Most of this is too new for a model to have read anything reliable
-              about. Every claim comes from a primary source, dated, and the
-              module says which.
-            </dd>
-          </div>
-          <div>
-            <span className="bz-why-mark" aria-hidden="true">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"
-                strokeLinecap="round" strokeLinejoin="round">
-                <path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z" />
-              </svg>
-            </span>
-            <dt>It reads like being told</dt>
-            <dd>
-              Ask an engineer in person and you get a straight answer with the
-              caveats attached. That is the voice here.
-            </dd>
-          </div>
-          <div>
-            <span className="bz-why-mark" aria-hidden="true">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"
-                strokeLinecap="round" strokeLinejoin="round">
-                <path d="M1.5 6h13v4h-13z" />
-                <path d="M5 6v2M8 6v2.8M11 6v2" />
-              </svg>
-            </span>
-            <dt>Short on purpose</dt>
-            <dd>
-              {hoursMinutes(Math.round(totals.minutes / Math.max(1, totals.ready)))} a
-              module on average, then links out when you want more.
-            </dd>
-          </div>
-          <div>
-            <span className="bz-why-mark" aria-hidden="true">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"
-                strokeLinecap="round" strokeLinejoin="round">
-                <path d="M2 12l4-4 3 2 5-5" />
-                <path d="M10.5 5h3.5v3.5" />
-              </svg>
-            </span>
-            <dt>The pictures do the work</dt>
-            <dd>
-              {totals.figures} diagrams and figures, because a loop is easier to
-              see than to read.
-            </dd>
-          </div>
-        </dl>
-      </section>
-
+      <BazaarStreetMotion rootId="bazaar" />
     </PageShell>
   )
 }

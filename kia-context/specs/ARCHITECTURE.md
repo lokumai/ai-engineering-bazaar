@@ -11,7 +11,7 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12
+covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, and the Bazaar Street front door for M27 the same day
 last_updated: "2026-10-12"
 ---
 
@@ -513,7 +513,11 @@ browser bundle and stops the build.
 
 **17 routes** (`find src/app -name page.tsx | wc -l`), producing 57 HTML pages. `/` is a home page
 built from components; `mini-courses/index.md` is no longer the published home page and is read only as
-a link target.
+a link target. Since **D79** `/` is Bazaar Street: its words, its level doors (one per category in
+`curriculum.yaml`) and its way in are server-rendered markup, its illustration is SVG read from
+`src/components/home/street/art/` at build time (`street/art.ts`, `node:fs`, so server only), and its
+motion is one client island that imports `gsap` on demand and turns the stacked page into a walk on a
+wide screen.
 
 **Three of the seventeen are forwards, and a static export has no other way to redirect.** M14 folded
 `/dashboard/`, `/report/` and `/path/` into `/profile/`; `output: 'export'` means `next.config`'s

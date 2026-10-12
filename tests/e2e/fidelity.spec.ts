@@ -1450,10 +1450,16 @@ test.describe('M16 stage 8 — progress and account', () => {
   })
 })
 
-test.describe('M16 stage 9 — the front door', () => {
-  const BUILT: readonly Role[] = ['heroActions', 'factRow', 'whyMark', 'whyGrid']
+test.describe('M27 — the front door, from `10` (D79)', () => {
+  const BUILT: readonly Role[] = ['signBoard', 'signTitle', 'plaque']
 
-  test('is indistinguishable from `08`, in the measures and the lengths', async ({ page }) => {
+  /* Both pages with motion reduced: the walk sizes every sign off the window's
+     height, and with motion reduced both lay the stalls out by plain CSS. */
+  test.beforeEach(async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+  })
+
+  test('is indistinguishable from `10`, in the lengths and the type steps', async ({ page }) => {
     await page.goto(HOME_URL)
     await freezeMotion(page)
     const reference = await extractDesignFacts(page, HOME_SELECTORS)
@@ -1471,18 +1477,14 @@ test.describe('M16 stage 9 — the front door', () => {
         `${role}: mockup ${shown(reference, role)}, page ${shown(actual, role)}`,
       ).toBe(shown(reference, role))
     }
-    expect(BUILT.every((role) => shown(reference, role)), 'a role `08` does not draw').toBe(true)
+    expect(BUILT.every((role) => shown(reference, role)), 'a role `10` does not draw').toBe(true)
 
     expect(differencesAt(reference, actual, BUILT, page.viewportSize()!.width)).toEqual([])
   })
 
-  /**
-   * THE MUTATION, owed since this block was written. Pointed at the rule
-   * block's grid gap and the mark's size: `08` states both, and a grid that
-   * has drifted a few pixels reads as a design choice rather than as a
-   * difference — which is what makes it worth a check and not an eye.
-   */
-  test('notices when the rule block stops matching `08`', async ({ page }) => {
+  /** The mutation: a sign that lost its padding and a plaque set a size off
+   *  the reference are both reported, by name. */
+  test('notices when a sign or a plaque stops matching `10`', async ({ page }) => {
     await page.goto(HOME_URL)
     await freezeMotion(page)
     const reference = await extractDesignFacts(page, HOME_SELECTORS)
@@ -1490,131 +1492,43 @@ test.describe('M16 stage 9 — the front door', () => {
     await page.goto('/')
     await freezeMotion(page)
     await page.addStyleTag({
-      content: '.bz-why { gap: 3px !important; }'
-        + ' .bz-why-mark { width: 12px !important; height: 12px !important; }',
+      content: '.bz-street .sign .board { padding-top: 3px !important; }'
+        + ' .bz-street .plaque { font-size: 30px !important; }',
     })
     const mutated = await extractDesignFacts(page, APP_SELECTORS)
 
     const facts = differencesIn(reference, mutated, BUILT).map((one) => one.fact)
-    expect(facts).toContain('whyGrid.gap')
-    expect(facts).toContain('whyMark.width')
+    expect(facts).toContain('signBoard.paddingTop')
+    expect(facts).toContain('plaque.fontSize')
   })
 
-  /**
-   * The two measures, asserted as DECLARATIONS rather than as lengths.
-   *
-   * `08` holds the display line to `20ch` and the lede to `56ch`, and `ch`
-   * resolves against each element's own font — so the same rule computes 640px
-   * in a 46px system sans and 529px in the language's 38px face. The number is
-   * not the fact; the unit and the cap are. A display line that runs the width
-   * of a 1440px window is the difference between a front door and a banner,
-   * and nothing in the type scale settles that.
-   */
-  /**
-   * THE DISPLAY LINE SPANS THE ROW; THE LEDE KEEPS A MEASURE.
-   *
-   * `08:44` caps the display line at `20ch` and this test used to require that
-   * cap. **The author overruled it on 2026-09-11**, twice and in plain terms:
-   * the first row spans the whole width. Transcribed, the cap measured 529px
-   * in a 1342px column and left two thirds of the row empty — which is what a
-   * `ch` measure does when the face is 38px rather than the mockup's 46px, and
-   * what the mockup itself avoids by drawing its page 1052px wide.
-   *
-   * **The author outranks the mockup, and the mockup outranks everything
-   * else** — so this is the second entry in DESIGN.md's `DEVIATIONS`, and the
-   * first one that is a decision rather than a measured floor.
-   *
-   * What still holds, and is what this now asserts: a heading is one line of
-   * display type with no limit, and a LEDE is prose, so it keeps a readable
-   * measure whatever is around it. That is the same reason `01:182` gives the
-   * reading column one at all, and it is why the two are no longer the same
-   * kind of thing.
-   */
-  test('spans the row with its display line and keeps the lede readable', async ({ page }) => {
-    test.skip(page.viewportSize()!.width < 880, 'the column is narrower than any measure')
+  /** What the page says survives what the page does: every motto and every
+   *  level door is in the document whether it walks or stacks, and the walk
+   *  is what a wide window with motion allowed gets. */
+  test('keeps every motto and one door per level, walking or not', async ({ page }) => {
+    const levels = [...new Set(SHEETS.map((sheet) => sheet.category))]
+
     await page.goto('/')
+    await expect(page.locator('html')).not.toHaveClass(/\bis-walk\b/)
+    const still = await page.locator('.bz-street .sign h2').allInnerTexts()
+    expect(still.length, 'the mottos are gone').toBeGreaterThan(0)
+    await expect(page.locator('.bz-street .door')).toHaveCount(levels.length)
 
-    const measured = await page.evaluate(() => {
-      const read = (selector: string) => {
-        const node = document.querySelector(selector)
-        if (node === null) return null
-        const box = node.getBoundingClientRect()
-        return {
-          width: Math.round(box.width),
-          column: Math.round((node.parentElement as HTMLElement).getBoundingClientRect().width),
-          lines: Math.round(box.height / Number.parseFloat(getComputedStyle(node).lineHeight)),
-        }
-      }
-      return { hero: read('.bz-hero-title'), lede: read('.bz-lede') }
-    })
-
-    expect(measured.hero, 'no display line on the front door').not.toBeNull()
-    expect(measured.lede, 'no lede on the front door').not.toBeNull()
-
-    // The row, and the whole of it.
-    expect(
-      measured.hero!.width,
-      `the display line is ${measured.hero!.width}px in a ${measured.hero!.column}px row`,
-    ).toBe(measured.hero!.column)
-
-    // Still prose, so still capped — by a real margin and not a rounding error.
-    expect(
-      measured.lede!.width,
-      'the lede runs the width of the window',
-    ).toBeLessThan(measured.lede!.column - 40)
-
-    // And the heading is the wider of the two now, which is the change: it is
-    // the row, and the lede is a column of sentences inside it.
-    expect(measured.hero!.width).toBeGreaterThan(measured.lede!.width)
-  })
-
-  /**
-   * §15.2.1 — the shortcut, on channel A, and the whole of the two-state
-   * machinery this page had left. **M18 removed it, and this is the record.**
-   *
-   * `boot.ts` stamps `data-hl-record` for a record that CARRIES SOMETHING and
-   * deliberately not for one holding only preferences; `.bz-home-continue` was
-   * hidden by default and revealed by that stamp, so a reader with a record met
-   * their shortcut in frame one with no JavaScript. The mechanism was right and
-   * the author had the BLOCK removed: the front door is the argument for
-   * reading this, and a reader who has a record reaches their place through
-   * `Your progress` in the bar.
-   *
-   * **The stamp is still stamped and still asserted** — `home.spec.ts` holds
-   * §15.11's cases on the attribute itself, which is stricter than reading what
-   * it drew, and `completion.spec.ts` reads it before first paint on the page
-   * that still draws from it. Nothing about channel A was weakened; one of its
-   * two consumers was deleted.
-   */
-
-  /**
-   * `08:179-182` draws its four claims with literal emoji. This is the check
-   * that they did not survive the rebuild: `src/` carries twenty inline SVGs
-   * and no emoji, on a 16-unit viewBox with `stroke="currentColor"`, and an
-   * emoji renders in whatever face the reader's platform ships at a size
-   * nothing here chose.
-   */
-  test('draws the four claims in the design’s own icon idiom', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' })
     await page.goto('/')
-
-    const marks = await page.locator('.bz-why-mark').evaluateAll((nodes) =>
-      nodes.map((node) => ({
-        svg: node.querySelector('svg') !== null,
-        viewBox: node.querySelector('svg')?.getAttribute('viewBox') ?? null,
-        stroke: node.querySelector('svg')?.getAttribute('stroke') ?? null,
-        hidden: node.getAttribute('aria-hidden'),
-        text: (node.textContent ?? '').trim(),
-      })),
-    )
-
-    expect(marks, 'the claims carry no marks at all').toHaveLength(4)
-    for (const mark of marks) {
-      expect(mark.svg, 'a claim’s mark is not an SVG').toBe(true)
-      expect(mark.viewBox).toBe('0 0 16 16')
-      expect(mark.stroke).toBe('currentColor')
-      expect(mark.hidden, 'a decorative mark is announced').toBe('true')
-      // No text node at all, which is what an emoji would have been.
-      expect(mark.text, `a mark carries text: "${mark.text}"`).toBe('')
+    /* The walk is for a window it fits in; the motion's own query decides. */
+    const walks = await page.evaluate(() => matchMedia(
+      '(min-width: 900px) and (min-height: 560px) and (min-aspect-ratio: 6/5)',
+    ).matches)
+    if (walks) await expect(page.locator('html')).toHaveClass(/\bis-walk\b/)
+    else await expect(page.locator('html')).not.toHaveClass(/\bis-walk\b/)
+    expect(await page.locator('.bz-street .sign h2').allInnerTexts()).toEqual(still)
+    await expect(page.locator('.bz-street .door')).toHaveCount(levels.length)
+    for (const level of levels) {
+      await expect(page.locator(`.bz-street .door[data-cat="${level}"]`)).toHaveAttribute(
+        'href',
+        new RegExp(`${INDEX_SHEET}${level}/$`),
+      )
     }
   })
 })

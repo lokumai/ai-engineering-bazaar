@@ -76,8 +76,8 @@ const HOME_STATES: [string, RecordSeed | null, string][] = [
   // today in `days` — and the boot script would stamp `data-hl-record` for it,
   // which is the returning reader's page. The first visit is the one with no
   // key in `localStorage` at all.
-  ['a first visit', null, 'Browse the catalog'],
-  ['a return', { sheets: { [slugOf(A0)]: signedSheet('b7225f8') } }, 'Browse the catalog'],
+  ['a first visit', null, 'Open the curriculum'],
+  ['a return', { sheets: { [slugOf(A0)]: signedSheet('b7225f8') } }, 'Open the curriculum'],
 ]
 
 for (const [state, seed, out] of HOME_STATES) {
@@ -92,7 +92,9 @@ for (const [state, seed, out] of HOME_STATES) {
     // that name now matches two elements and Playwright refuses in strict
     // mode. This test is about the home screen's own way out, so it looks for
     // it where the home screen is.
-    await page.locator('main').getByRole('link', { name: out, exact: true }).click()
+    // The way in is printed twice, at the gate and at the end of the street;
+    // the gate's is the one a reader meets first.
+    await page.locator('main').getByRole('link', { name: out, exact: true }).first().click()
     await expect(page).toHaveURL(new RegExp(`${INDEX_SHEET}$`))
     await page.goBack()
     await page.waitForLoadState('networkidle')

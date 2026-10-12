@@ -10,7 +10,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D78, plus open questions O1 to O4 — 2026-09-09 to 2026-10-12"
+covers: "D26 to D79, plus open questions O1 to O4 — 2026-09-09 to 2026-10-12"
 last_updated: 2026-10-12
 ---
 
@@ -1810,6 +1810,43 @@ One framing is the author's and differs from the source: the Loop Engineering
 section calls a recursive language model a **single-agent architecture**. Its
 authors' own write-up says "RLMs are not agents". Both agree it is not a
 multi-agent system, which is the distinction the section exists to draw.
+
+### D79 · The front door is Bazaar Street, built as words plus art plus one island — 2026-10-12
+
+The author found the home page *"too verbose ... too simple, has no icons, no 3d element, nothing
+animative"* and asked for something that makes a reader say *"WoW"*, with objects that *"attach and
+release and move and evolve"* on scroll, its copy limited to the course's mottos. Three standalone
+concepts were built in parallel against one brief and shown to him as local files:
+
+- **Lokum Assembly**: three.js lokum cubes that lock into a five-layer tower as the page scrolls.
+- **The Token Loop**: the headline generated token by token, a wall of AI slop struck out, a
+  context window filling with the mottos.
+- **Bazaar Street**: an illustrated covered bazaar, walked sideways as the page scrolls, one motto
+  per stall and one door per level.
+
+**He chose Bazaar Street** ("I love design 3"), merged two of its stalls ("We only cover what
+matters" now carries "learn the details yourself later"), dropped "Plain English, for everyone", and
+added two: pictures, diagrams, code and memes; and every module pointing somewhere next.
+
+**How it was built, and the two alternatives rejected.**
+
+- *Re-typing the art as JSX* was rejected. It is about 390 KB of SVG that nothing on the server
+  needs to understand, and converting every attribute by hand would have made the next change to
+  the drawing a hunt through a component. The art stays as the designer's files and is read at
+  build time (`street/art.ts`). The words, the doors and the way in are JSX on the language's
+  tokens, so the page is complete with no script, under reduced motion and on a phone.
+- *The concept's CDN scripts* were rejected for `gsap` from npm, imported on demand by one island,
+  so the live site makes no third-party request. The island uses a **layout** effect, because on a
+  wide screen the motion moves nodes React rendered into the walk, and a layout effect's cleanup
+  puts them back before React removes the page.
+
+**What it costs, named.** `08` stops being the home page's reference and `playground/10-home-bazaar-street.html`
+replaces it in the fidelity harness, compared with motion reduced (the walk sizes itself off the
+window height). DESIGN.md records the ninth deviation: a downloaded display face (Fraunces, home
+only, self-hosted), an illustration with its own palette, more than one ornament, and scene motion.
+The breadcrumb leaves `/`, because a crumb reading `Home` on the home page names the page the bar
+already marks. The facts strip and `Start with <first module>` went at the author's word; the way in
+is the catalog, and the doors open each level.
 
 ## Open questions
 

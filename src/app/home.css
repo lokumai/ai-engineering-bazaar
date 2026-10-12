@@ -1,174 +1,656 @@
 /* ===========================================================================
-   §15 — THE FRONT DOOR.
+   §15 — THE FRONT DOOR: BAZAAR STREET (D79).
 
-   Reference: `playground/08-home.html`, variant A — "Say what it is, then show
-   the five levels", whose own note is the argument for it: *"a stranger
-   understands the product in one screen, and the five level cards double as
-   the table of contents."*
+   Reference: `playground/10-home-bazaar-street.html`, the concept the author
+   chose on 2026-10-12 out of three. It replaced `08-home.html` as this page's
+   reference, and `08` no longer specifies anything here.
 
-   `08`'s closing note prefers variant C, the two-state page that shows a
-   returning reader a shortcut and a stranger the pitch — and then says what to
-   do if only one state gets built: *"If you would rather build one state, take
-   A: the pitch matters more than the shortcut, because a returning reader can
-   use the sidebar from any page, while a stranger who bounces never comes
-   back."*
+   What this sheet does and does not do:
 
-   THAT IS WHAT THIS IS, and it is also what the page already was. The branch
-   was removed before M16 — `page.tsx` records it — and what survived of C is
-   one line: the continue block, which is the shortcut, on channel A. So the
-   page is A with C's one useful half, which is the recommendation and the
-   fallback taken together.
-
-   D31: colour from `01`, geometry from `08`.
+   - Everything is scoped under `.bz-street`. The vocabulary inside it (`gate`,
+     `stall`, `sign`, `door`, `walk`, `layer`…) is the illustration's own, shared
+     with the art files and the motion, which find their nodes by it.
+   - Every colour is a token. The illustration's own stone, wood and brass live
+     in its SVG and never reach this file. Where text sits on the art, which is
+     drawn light in both themes, it takes tokens that DO NOT FLIP (`on-bar`,
+     `on-bar-chip`, `bar-chip`), so a sign reads the same at night.
+   - No shadow (DESIGN.md: a raised surface is told apart by its hairline), and
+     no transform transition. The motion is the island's, through GSAP, and
+     every CSS animation stops under `prefers-reduced-motion`.
    =========================================================================== */
 
 @layer components {
-  .bz-hero {
-    margin: 0 0 34px;
+  /* The defaults of every custom property the art, the page and the motion set
+     per element, declared once so each `var()` below resolves to something. */
+  .bz-street {
+    --u: 1;
+    --x: 0;
+    --y: 0;
+    --w: 0;
+    --s: 1;
+    --hue: var(--color-category-1);
+    --amp: 3deg;
+    --sd: 5s;
+    --sdel: 0s;
+    --d: 14s;
+    --t: 3s;
+    --del: 0s;
+    --dx: 24px;
+    --dy: -70px;
+    overflow-x: clip;
   }
 
-  /* `08:44` — `700 46px/1.1` at `-.035em`, and the language's display step is
-     38px at 600 with `-0.015em`. THE LANGUAGE WINS, as it did for `03`'s
-     weights and `05`'s dial: the scale is a closed set and `700` is in no
-     mockup's type block but this one's. What transfers is that the heading is
-     the largest thing on the page, holds to a short measure, and is the only
-     place tracking goes properly negative — so it takes `display` at the
-     tightest tracking the language has. */
-  /* FULL WIDTH, BY THE AUTHOR'S INSTRUCTION, 2026-09-11. `08:44` caps the
-     display line at `20ch` and this transcribed it — which measured 529px in a
-     1342px column and left two thirds of the row empty. He asked for the first
-     row to span the whole width, twice. It does. Recorded in DESIGN.md's
-     DEVIATIONS, because the mockup says otherwise and this outranks it. */
-  .bz-hero-title {
-    margin: 0 0 14px;
+  /* Edge to edge: the street is a scene, not a column. The shell's main pads
+     every page; this page takes the padding back, and nothing else does. */
+  .bz-main:has(> .bz-street) {
+    padding: 0;
+  }
+
+  .bz-street .defs {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+
+  /* ---------- the gate (the hero) ---------- */
+  .bz-street .gate {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--color-surface);
+  }
+
+  .bz-street .gate-copy {
+    position: relative;
+    z-index: 3;
+    padding: 40px 16px 0;
+    text-align: center;
+  }
+
+  .bz-street .bz-hero-title {
+    margin: 0;
+    font-size: clamp(34px, 9.4vw, 84px);
+    font-weight: 700;
+    line-height: 1.04;
+    letter-spacing: -0.018em;
+    font-variation-settings: "SOFT" 50, "opsz" 120;
+    text-wrap: balance;
     color: var(--color-on-surface-title);
-    font: 600 var(--text-display) / var(--text-display--line-height) var(--font-sans);
-    letter-spacing: var(--tracking-display);
   }
 
-  /* `08:45`'s lede: 19px over a 56ch measure. 19px is on no step; `lead` is
-     16 and `subsection` 18.5, and the one that is a READING size rather than a
-     heading size is `lead`. The measure transfers exactly. */
-  /* The lede keeps a measure, and this is the one place it is not the
-     mockup's 56ch. A line of prose has a readable length whatever is around
-     it — that is why `01:182` gives the reading column one at all — so the
-     sentences under a full-width heading hold to the language's own
-     `--layout-measure` rather than running the width of a 1440px window.
-     The heading is a single line of display type and has no such limit. */
-  .bz-lede {
-    max-width: var(--layout-measure);
-    margin: 0 0 26px;
+  .bz-street .bz-lede {
+    margin: 14px 0 22px;
+    font-size: clamp(17px, 1.6vw, 21px);
+    font-weight: 500;
+    color: var(--color-on-surface);
   }
 
-  .bz-lede p {
-    margin: 0 0 10px;
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-lead);
-    line-height: 1.6;
+  .bz-street .gate-copy .bz-btn,
+  .bz-street .cta-wrap .bz-btn {
+    font-size: 17px;
+    padding: 13px 22px;
   }
 
-  .bz-lede p:last-child {
-    margin-bottom: 0;
+  .bz-street .gate-arch {
+    position: relative;
+    margin-top: 26px;
   }
 
-  /* M18 — THE CONTINUE BLOCK IS GONE, and so is its rule.
+  .bz-street .arch-box {
+    position: relative;
+    left: 50%;
+    width: max(100%, 560px);
+    aspect-ratio: 1000 / 620;
+    transform: translateX(-50%);
+  }
 
-     It read `Continue · Module 01 · LLM Fundamentals` above the fold, hidden by
-     default and revealed on channel A by `html[data-hl-record]` — a stamp
-     `boot.ts` sets for a record that CARRIES SOMETHING, and deliberately not
-     for one carrying only preferences (§15.11).
+  .bz-street .arch-box > svg {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
 
-     The mechanism was right and the author removed the block: the front door is
-     the argument for reading this, and a reader who has a record reaches their
-     place through `Your progress` in the bar. `data-hl-record` keeps being
-     stamped — `boot.ts` owns it and the progress page reads it — and this page
-     is no longer one of its consumers. **A rule for a class no markup carries
-     is the failure `styling-references.test.ts` exists to catch**, which is
-     why the rule went in the same edit as the block. */
+  @media (min-width: 700px) {
+    .bz-street .arch-box {
+      width: min(94%, 920px);
+    }
+    .bz-street .bz-hero-title {
+      font-size: clamp(40px, 5.6vw, 84px);
+    }
+  }
 
-  .bz-hero-actions {
+  /* lamps and dust, shared by the gate and the street */
+  .bz-street .lamp {
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .bz-street .lamp svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    transform-origin: 50% 0;
+    animation: bz-street-sway var(--sd) ease-in-out infinite alternate;
+    animation-delay: var(--sdel);
+  }
+
+  @keyframes bz-street-sway {
+    from { transform: rotate(calc(var(--amp) * -1)); }
+    to { transform: rotate(var(--amp)); }
+  }
+
+  .bz-street .mote {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    margin: -3px 0 0 -3px;
+    border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(circle, var(--color-bar-chip) 0 30%, transparent 72%);
+    opacity: 0;
+    animation:
+      bz-street-drift var(--d) linear infinite,
+      bz-street-twinkle var(--t) ease-in-out infinite alternate;
+    animation-delay: var(--del), var(--del);
+  }
+
+  @keyframes bz-street-drift {
+    from { transform: translate(0, 0); }
+    to { transform: translate(var(--dx), var(--dy)); }
+  }
+
+  @keyframes bz-street-twinkle {
+    0% { opacity: 0; }
+    40% { opacity: 0.25; }
+    100% { opacity: 0.95; }
+  }
+
+  .bz-street .gate-motes {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .bz-street .twinkle {
+    animation: bz-street-spark 2.6s ease-in-out infinite alternate;
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+  }
+
+  @keyframes bz-street-spark {
+    from { opacity: 0.25; transform: scale(0.6); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* ---------- the mottos, stacked: a phone, reduced motion, no script ---------- */
+  .bz-street .mottos {
+    padding: clamp(56px, 8vw, 104px) 16px clamp(40px, 6vw, 72px);
+    background: var(--color-surface);
+  }
+
+  .bz-street .mottos-in {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 72px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .bz-street .stall {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .bz-street .stall-art {
+    overflow: hidden;
+    border: 1px solid var(--color-line);
+    border-radius: var(--shape-arch);
+    background: var(--color-bar-chip);
+  }
+
+  .bz-street .stall-art svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .bz-street .stall .sign {
+    order: -1;
+    position: relative;
+    z-index: 2;
+    margin: 0 10px 26px;
+  }
+
+  @media (min-width: 700px) {
+    .bz-street .mottos-in {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 64px 32px;
+    }
+    .bz-street .stall .sign {
+      order: 0;
+      margin: 0 14px;
+    }
+    .bz-street .stall .sign .rail {
+      display: none;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .bz-street .mottos-in {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      column-gap: 0;
+    }
+    .bz-street .stall-art {
+      border-right: 0;
+      border-left: 0;
+      border-radius: 0;
+    }
+    .bz-street .stall:first-child .stall-art {
+      border-left: 1px solid var(--color-line);
+    }
+    .bz-street .stall:last-child .stall-art {
+      border-right: 1px solid var(--color-line);
+    }
+  }
+
+  /* the hanging sign: a rail on the wall, two cords, a board that swings.
+     The board is drawn in both themes the way the art is, light, so its text
+     takes the tokens that do not flip. */
+  .bz-street .sign {
+    perspective: 900px;
+  }
+
+  .bz-street .sign .rail {
+    position: relative;
+    height: 7px;
+    margin: 0 -6px;
+    border-radius: var(--radius-sm);
+    background: var(--color-on-bar-chip);
+  }
+
+  .bz-street .sign .rail::before,
+  .bz-street .sign .rail::after {
+    content: "";
+    position: absolute;
+    top: -5px;
+    width: 10px;
+    height: 17px;
+    border-radius: var(--radius-xs);
+    background: var(--color-on-bar-chip);
+  }
+
+  .bz-street .sign .rail::before { left: -4px; }
+  .bz-street .sign .rail::after { right: -4px; }
+
+  .bz-street .sign .swing {
+    position: relative;
+    padding-top: 30px;
+    transform-origin: 50% 0;
+  }
+
+  .bz-street .sign .swing::before,
+  .bz-street .sign .swing::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 2px;
+    height: 34px;
+    background: var(--color-on-bar-chip);
+  }
+
+  .bz-street .sign .swing::before { left: 16%; }
+  .bz-street .sign .swing::after { right: 16%; }
+
+  .bz-street .sign .board {
+    position: relative;
+    padding: 22px 24px 24px;
+    border: 1px solid var(--color-line);
+    border-top: 7px solid var(--hue);
+    border-radius: var(--shape-arch);
+    background: var(--color-on-bar);
+  }
+
+  .bz-street .sign .board::before,
+  .bz-street .sign .board::after {
+    content: "";
+    position: absolute;
+    top: -13px;
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--color-on-bar-chip);
+    border-radius: 50%;
+    background: var(--color-on-bar);
+  }
+
+  .bz-street .sign .board::before { left: calc(16% - 5px); }
+  .bz-street .sign .board::after { right: calc(16% - 5px); }
+
+  .bz-street .sign h2 {
+    margin: 0 0 12px;
+    font-size: clamp(22px, 2.1vw, 27px);
+    font-weight: 650;
+    line-height: 1.14;
+    letter-spacing: -0.01em;
+    font-variation-settings: "SOFT" 40, "opsz" 60;
+    text-wrap: balance;
+    color: var(--color-on-bar-chip);
+  }
+
+  .bz-street .sign .ico-slot,
+  .bz-street .sign .ico-slot svg {
+    display: block;
+    width: 30px;
+    height: 30px;
+  }
+
+  .bz-street .sign .ico-slot {
+    margin-bottom: 10px;
+  }
+
+  .bz-street .sign p {
+    margin: 0;
+    font-size: 16.5px;
+    line-height: 1.55;
+    color: var(--color-on-bar-chip);
+  }
+
+  .bz-street .sign .sub {
+    margin: -2px 0 10px;
+    font-size: clamp(18px, 1.6vw, 20px);
+    font-weight: 560;
+    line-height: 1.3;
+    font-variation-settings: "SOFT" 100, "opsz" 30;
+    text-wrap: balance;
+  }
+
+  @media (min-width: 700px) {
+    .bz-street .stall .sign .swing {
+      padding-top: 0;
+    }
+    .bz-street .stall .sign .swing::before,
+    .bz-street .stall .sign .swing::after,
+    .bz-street .stall .sign .board::before,
+    .bz-street .stall .sign .board::after {
+      display: none;
+    }
+    .bz-street .stall .sign .board {
+      border-top-width: 1px;
+      border-bottom: 7px solid var(--hue);
+      border-radius: var(--radius-xl);
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .bz-street .stall .sign {
+      margin: 0;
+      padding: 0 12px;
+    }
+    .bz-street .stall .sign .board {
+      border-top: 0;
+    }
+  }
+
+  /* ---------- the doors, one per level, and the way in ---------- */
+  .bz-street .end {
+    padding: clamp(40px, 6vw, 72px) 16px clamp(56px, 7vw, 96px);
+    text-align: center;
+    border-top: 6px solid var(--color-category-5);
+    background:
+      linear-gradient(to bottom, transparent calc(100% - 64px), var(--color-surface-sunken) calc(100% - 64px)),
+      repeating-linear-gradient(to bottom, var(--color-surface) 0 47px, var(--color-line) 47px 49px);
+  }
+
+  .bz-street .doors {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: 11px;
-    margin: 0 0 22px;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 26px 12px;
+    max-width: 1120px;
+    margin: 0 auto 44px;
   }
 
-  /* `08:53-54` — the four measured facts, value first and label after, in one
-     wrapping row with no card and no icons. The language's `.bz-facts` is the
-     same primitive from `01`'s reading column, so this only adds the emphatic
-     value: 650 is the weight `01` gives an emphasised number in prose. */
-  .bz-facts-value {
-    color: var(--color-on-surface);
-    font-weight: 650;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .bz-facts > li {
+  .bz-street .door {
+    position: relative;
     display: flex;
-    align-items: baseline;
-    gap: 5px;
+    flex-direction: column;
+    align-items: center;
+    width: calc((100% - 24px) / 3);
+    border-radius: var(--shape-arch);
+    text-decoration: none;
+    color: var(--color-on-surface-title);
   }
 
-  /* `08:53` spaces the four facts 24px apart; `01`'s reading-column strip,
-     which is where `.bz-facts` was transcribed from, spaces its three at 11px.
-     Two mockups, one primitive, two contexts — and a surface arranging its own
-     instance is exactly what a surface stylesheet is for. The primitive keeps
-     `01`'s value for the page `01` draws. */
-  .bz-hero .bz-facts {
-    gap: 24px;
+  .bz-street .door-art,
+  .bz-street .door-art svg {
+    display: block;
+    width: 100%;
+    height: auto;
   }
 
-  /* -- `08:80-87` the four claims -----------------------------------------
-     `repeat(auto-fit, minmax(230px, 1fr))`, a glyph tile beside each, and the
-     block set off by a rule above it. */
-
-  .bz-why {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 16px;
-    margin: 0;
+  .bz-street .door-art {
+    margin-top: -4px;
   }
 
-  .bz-why > div {
-    display: grid;
-    grid-template-columns: 28px 1fr;
-    gap: 4px 11px;
-  }
-
-  .bz-why dt {
-    grid-column: 2;
-    color: var(--color-on-surface);
-    font-size: var(--text-item);
-    font-weight: 600;
-  }
-
-  .bz-why dd {
-    grid-column: 2;
-    margin: 0;
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-meta);
-    line-height: 1.5;
-  }
-
-  /* `08:84` tints this tile with a pair of tokens the language does not
-     have — the same `--soft` / `--accent-ink` pair `07`'s ordinal badge
-     wanted — so it is an EDGE, which is the answer **D33** already gave twice.
-     Sized for a glyph either way, which is what let the emoji be replaced by
-     an SVG without touching it. */
-  .bz-why-mark {
-    grid-row: span 2;
-    display: grid;
-    place-items: center;
-    width: 28px;
-    height: 28px;
+  .bz-street .plaque {
+    position: relative;
+    z-index: 1;
+    padding: 5px 6px 4px;
     border: 1px solid var(--color-line);
-    border-radius: var(--radius-xl);
-    color: var(--color-primary);
+    border-bottom: 4px solid var(--bz-cat);
+    border-radius: var(--shape-arch);
+    background: var(--color-on-bar);
+    font-size: 12.5px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-on-bar-chip);
   }
 
-  .bz-why-mark > svg {
-    width: 15px;
-    height: 15px;
+  .bz-street .door:hover .plaque {
+    border-color: var(--color-line-strong);
+    border-bottom-color: var(--bz-cat);
+  }
+
+  @media (min-width: 521px) {
+    .bz-street .doors {
+      gap: 30px 14px;
+    }
+    .bz-street .door {
+      width: clamp(96px, 27vw, 176px);
+    }
+    .bz-street .plaque {
+      padding: 7px 13px 6px;
+      font-size: 15px;
+      white-space: nowrap;
+    }
+  }
+
+  /* ---------- the walk: a wide screen with motion allowed ---------- */
+  html.is-walk .bz-street .mottos,
+  html.is-walk .bz-street .end {
+    display: none;
+  }
+
+  /* The bar is sticky, so the walk is the window less the bar. */
+  .bz-street .walk {
+    position: relative;
+    height: calc(100vh - var(--layout-bar));
+    overflow: clip;
+  }
+
+  .bz-street .stage {
+    position: absolute;
+    inset: 0;
+    overflow: clip;
+    background: var(--color-bar-chip);
+  }
+
+  html.is-walk .bz-street .gate {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    height: 100%;
+    background: transparent;
+  }
+
+  /* On the walk the headline sits on the art, which is light in both themes. */
+  html.is-walk .bz-street .bz-hero-title {
+    font-size: clamp(40px, min(4.7vw, 7.6vh), 86px);
+    color: var(--color-on-bar-chip);
+  }
+
+  html.is-walk .bz-street .bz-lede {
+    margin: clamp(10px, 1.6vh, 16px) 0 clamp(14px, 2.4vh, 24px);
+    color: var(--color-on-bar-chip);
+  }
+
+  html.is-walk .bz-street .gate-copy {
+    padding: clamp(26px, 5vh, 60px) 24px 0;
+  }
+
+  html.is-walk .bz-street .gate-arch {
+    flex: 1 1 0;
+    min-height: 0;
+    margin-top: clamp(16px, 3.6vh, 44px);
+  }
+
+  html.is-walk .bz-street .arch-box {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: auto;
+    height: 100%;
+    aspect-ratio: 1000 / 620;
+    transform: translateX(-50%);
+  }
+
+  .bz-street .street {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    transform-origin: 50% 56%;
+  }
+
+  .bz-street .layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    will-change: transform;
+  }
+
+  .bz-street .layer > svg {
+    position: absolute;
+    top: 0;
+    left: calc(var(--x) * var(--u) * 1px);
+    width: calc(var(--w) * var(--u) * 1px);
+    height: 100%;
+    overflow: visible;
+  }
+
+  .bz-street .layer .lamp {
+    top: calc(var(--y) * var(--u) * 1px);
+    left: calc((var(--x) - 40 * var(--s)) * var(--u) * 1px);
+    width: calc(80px * var(--s) * var(--u));
+  }
+
+  .bz-street .layer .mote {
+    top: calc(var(--y) * var(--u) * 1px);
+    left: calc(var(--x) * var(--u) * 1px);
+  }
+
+  .bz-street .layer-top {
+    z-index: 3;
+  }
+
+  html.is-walk .bz-street .sign {
+    position: absolute;
+    top: calc(var(--y) * var(--u) * 1px);
+    left: calc(var(--x) * var(--u) * 1px);
+    width: max(380px, calc(432px * var(--u)));
+    margin: 0;
+  }
+
+  html.is-walk .bz-street .sign .swing {
+    padding-top: calc(34px * var(--u));
+  }
+
+  html.is-walk .bz-street .sign .swing::before,
+  html.is-walk .bz-street .sign .swing::after {
+    height: calc(38px * var(--u));
+  }
+
+  html.is-walk .bz-street .sign .board {
+    padding: max(18px, calc(24px * var(--u))) max(20px, calc(27px * var(--u))) max(20px, calc(26px * var(--u)));
+  }
+
+  html.is-walk .bz-street .sign h2 {
+    font-size: max(22px, calc(29px * var(--u)));
+  }
+
+  html.is-walk .bz-street .sign .ico-slot,
+  html.is-walk .bz-street .sign .ico-slot svg {
+    width: max(26px, calc(32px * var(--u)));
+    height: max(26px, calc(32px * var(--u)));
+  }
+
+  html.is-walk .bz-street .sign p {
+    font-size: max(15px, calc(16.8px * var(--u)));
+  }
+
+  html.is-walk .bz-street .sign .sub {
+    font-size: max(17px, calc(20px * var(--u)));
+  }
+
+  html.is-walk .bz-street .door {
+    position: absolute;
+    top: calc(var(--y) * var(--u) * 1px);
+    left: calc(var(--x) * var(--u) * 1px);
+    display: block;
+    width: calc(190px * var(--u));
+    height: calc(522px * var(--u));
+  }
+
+  html.is-walk .bz-street .door-art {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    margin: 0;
+  }
+
+  html.is-walk .bz-street .door .plaque {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-size: max(14px, calc(17px * var(--u)));
+  }
+
+  html.is-walk .bz-street .cta-wrap {
+    position: absolute;
+    top: calc(var(--y) * var(--u) * 1px);
+    left: calc(var(--x) * var(--u) * 1px);
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bz-street .lamp svg,
+    .bz-street .twinkle {
+      animation: none;
+    }
+    .bz-street .mote {
+      animation: none;
+      opacity: 0.7;
+    }
   }
 }

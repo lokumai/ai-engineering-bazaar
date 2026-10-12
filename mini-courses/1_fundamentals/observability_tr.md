@@ -13,6 +13,9 @@ Bunların hiçbiri kodda yer almaz; bu bilgi yalnızca o çalıştırmanın kayd
 
 Bu kayda **trace** denir ve bu modül, o kaydın nasıl tutulacağını ve nasıl kullanılacağını anlatıyor.
 
+![Langfuse'ta Bir Trace](./images/smolagents-trace-langfuse.png)  
+*Langfuse'ta açılmış gerçek bir agent çalışmasının trace'i. Solda çalışmanın ağacını görüyorsun: her adım, her model çağrısı ve her tool çağrısı, ne kadar sürdüğü ve kaç token girip çıktığıyla birlikte. Çalışmanın tamamı 4 dakika 49 saniye sürmüş ve bunun 3 dakika 20 saniyesi, ikinci bir agent'ın kendi web aramalarını yaptığı ilk adımda geçmiş. Sağdaki cevap ise bunların hiçbirinden bahsetmiyor.*
+
 ## Bir Trace'te Neler Var
 
 Bir trace, tek bir isteğin tüm ağacıdır ve içinde şunlar yer alır:

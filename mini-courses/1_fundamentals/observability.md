@@ -23,6 +23,9 @@ None of that is in the code at all. It exists only in the record of that run.
 
 That record is a **trace**. This module is about how to keep it and how to use it.
 
+![A Trace in Langfuse](./images/smolagents-trace-langfuse.png)  
+*A real trace of one agent run, opened in Langfuse. On the left is the tree of the run: every step, model call and tool call. Each one shows how long it took and how many tokens went in and out. The whole run took 4m 49s, and 3m 20s of that was the first step, where a second agent ran its own web searches. The answer on the right says none of this.*
+
 ## What a Trace Holds
 
 A trace is the whole tree of one request. It holds:

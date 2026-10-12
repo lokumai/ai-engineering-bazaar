@@ -19,7 +19,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M29, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — the same day. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M29, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-10-12
 ---
 
@@ -71,7 +71,7 @@ deliverables as a numbered list; M18 wrote none at all; M19 to M22 had none eith
 | **M26** | Headings, requested additions, and ASD-STE-like English | **Done** — 2026-10-12, merged as PR #26 |
 | **M27** | The front door is Bazaar Street | **Done** — 2026-10-12, merged as PR #27 |
 | **M28** | Persian, the third language | **Done** — 2026-10-12, merged as PR #30 |
-| **M29** | Translations written in their own language | **Done** — 2026-10-12 |
+| **M29** | Translations written in their own language | **Done** — 2026-10-12, merged as PR #31 |
 
 ---
 
@@ -3887,9 +3887,10 @@ minutes" while README says twenty to thirty (D65), as before.
 
 ---
 
-## 🏁 Milestone M29: Translations written in their own language — SHIPPED
+## 🏁 Milestone M29: Translations written in their own language — SHIPPED, MERGED AS PR #31
 
-Branch `feat/persian-natural`, from `main` at `e48a417` (M28 merged). The author, 2026-10-12, on
+Branch `feat/persian-natural`, from `main` at `e48a417` (M28 merged), committed as `f531429` and
+merged to `main` as PR #31 once CI passed. The author, 2026-10-12, on
 M28's Persian: *"the persian translation is very very bad. it is like a lietral translation which I
 hate ... You are allowed not to be truthful to english ... NEVER USE DENSE AND VERY SHORT SENTENCES
 !!!! keep it clear similar to the way persian people talk daily. use haikus. commit and push and

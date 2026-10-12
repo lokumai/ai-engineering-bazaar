@@ -1,292 +1,209 @@
 # LLM Temelleri
 
-Bu serideki her şey bu modülün üstüne kuruluyor. Bir LLM'i tanımlamak kolay: metin girer,
-metin çıkar. Ama sonraki konuların neredeyse tamamı (RAG, tools, memory, agents) tek bir
-sınır yüzünden var. Birazdan o sınıra geliyoruz.
+Serideki diğer her şey bu modülün üzerine kurulu. Bir LLM'i anlatmak aslında kolay: içeri metin girer, dışarıya metin çıkar. Ancak seride ele alacağımız neredeyse her fikir, yani RAG, tool'lar, hafıza (memory) ve agent'lar, tek bir sınırın yüzünden ortaya çıktı. O sınıra birazdan geleceğiz.
 
-Önce modelin kendisiyle başlayalım. Sonra sınıra, sonra da bir modeli nasıl çalıştırdığına
-bakalım.
+Önce modelin kendisine bakalım. Sonra o sınırı inceleyeceğiz, en sonunda da bir modeli nasıl çalıştırabileceğini göreceğiz.
 
 ## LLM Nedir?
 
-Bir LLM, input olarak metin alıp output olarak metin veren bir modeldir. Ona birkaç kelime
-yollarsın (**prompt**), o da sana daha fazla kelime yollar (**generation**).
+Bir LLM, metni girdi (input) olarak alıp metin çıktı (output) olarak veren bir modeldir. Ona birkaç kelime (**prompt**) gönderirsin, o da daha fazla kelimeyle (**generation**) geri döner.
 
-İçeride, çok büyük miktarda metinle eğitilmiş derin bir neural network var: kitaplar, web
-siteleri, kod. Bütün o metinden tek bir beceri öğrendi: en olası sonraki kelimeyi tahmin
-etmek.
+İçeride ise bir derin sinir ağı (deep neural network) var. Bu ağ; kitaplar, web siteleri ve kod gibi çok büyük bir metin yığınıyla eğitildi. Bütün bu metinden tek bir yetenek (skill) öğrendi: bir sonraki kelimeyi en olası şekilde tahmin etmek.
 
 ```mermaid
 graph LR
-    A["Prompt: Türkiye'nin başkenti ___"] --> B[LLM]
-    B -->|sonraki kelimeleri tahmin eder| C["Output: Ankara'dır"]
+    A["Prompt: 'Türkiye'nin başkenti ___'"] --> B[LLM]
+    B -->|bir sonraki kelimeleri tahmin eder| C["Çıktı: Ankara'dır"]
 ```
 
-Yaptığı gerçekten bundan fazlası değil. Bir LLM'in yaptığı etkileyici görünen her şey bu tek
-tahmin. Model bunu tekrar tekrar, kelime kelime yapar.
+Yaptığı iş aslında bundan ibaret. Bir LLM'in yaptığı etkileyici her şey bu tek tahminin sonucudur. Model bu tahmini, bir seferde bir kelime olacak şekilde, tekrar tekrar yapar.
 
 ## Bir LLM Ne Kadar Büyük?
 
-Bir LLM, çok sayıda **parameter**'a sahip bir neural network'tür. Parameter'ları biraz
-beyindeki bağlantılar gibi düşün. Sayısı arttıkça network'ün tutabildiği de artar.
+Bir LLM, son derece çok sayıda **parametre (parameter)** barındıran bir sinir ağıdır. Bu parametreleri bir beyindeki bağlantılara benzetebilirsin. Parametre sayısı ne kadar fazlaysa ağ o kadar çok şey tutabilir.
 
-Bu senin için neden önemli? Genel olarak, daha fazla parameter daha yetenekli ve daha iyi
-reasoning yapan bir model demek. Aynı zamanda onu çalıştırmak için daha büyük bir makine
-gerektiği anlamına gelir. Bir modeli çalıştırıp çalıştıramayacağını belirleyen ana şey model
-boyutudur.
+Bunun neden önemli olduğuna gelince: genel olarak parametre sayısı arttıkça model daha yetenekli olur ve daha iyi akıl yürütür. Öte yandan modeli çalıştırmak için daha büyük bir makineye de ihtiyaç duyarsın. Bir modeli hiç çalıştırıp çalıştıramayacağını belirleyen ana etken model boyutudur.
 
-Bu sadece kulaktan dolma bir bilgi değil. Ölçüldü. 2020'de yayınlanan
-[Scaling Laws for Neural Language Models](https://arxiv.org/abs/2001.08361) makalesi,
-parameter, training data ve compute birlikte büyüdüğünde ne olduğunu gösterdi. Performans
-düzgün ve öngörülebilir biçimde artar. Zıplamalar yapmaz, bir power law'a uyar. Bu
-**scaling laws**, sektörün sonraki yıllarını neden sadece daha büyük model üretmekle
-geçirdiğini açıklıyor.
+Bu yalnızca bir söz değil, ölçülmüş bir gerçek. 2020'de yayımlanan [Scaling Laws for Neural Language Models](https://arxiv.org/abs/2001.08361) makalesi, parametre sayısı, eğitim verisi ve hesaplama gücü (compute) birlikte büyüdüğünde neler olduğunu gösterdi. Performans düzgün ve öngörülebilir biçimde artıyor. Bu artış bir power law'a (kuvvet yasası) uyar, rastgele zıplamaz. İşte bu **scaling laws** (ölçekleme yasaları), sektörün sonraki yıllarda neden tek bir hedefe, yani daha büyük modeller yapmaya odaklandığını açıklıyor.
 
-Kabaca üç boyut var:
+Modeller kabaca üç boyutta gelir:
 
-| Boyut | Parameter | Nerede çalışır |
+| Boyut | Parametre | Nerede çalışır |
 | --- | --- | --- |
-| Küçük | 0.6B – 8B | GPU'n varsa kendi makinende |
-| Orta | 8B – 128B | Server sınıfı ve kurumsal GPU'lar |
-| Büyük | 128B – 2.4T (evet, trilyon) | Sadece data center'lar |
+| Küçük | 0.6B ile 8B arası | Kendi makinen, eğer bir GPU'n varsa |
+| Orta | 8B ile 128B arası | Sunucu sınıfı ya da kurumsal GPU'lar |
+| Büyük | 128B ile 2.4T arası (evet, trilyon) | Yalnızca veri merkezlerinde |
 
-Büyük olanlar, Claude Code ve ChatGPT gibi araçların arkasındaki frontier model'ler. Onları
-local'de asla çalıştıramayacaksın. Bu sorun değil, çünkü onları API üzerinden çağırırsın.
+Büyük olanlar, Claude Code ve ChatGPT gibi araçların arkasındaki öncü (frontier) modellerdir. Bunları asla kendi bilgisayarında çalıştıramazsın. Bu bir sorun değil, çünkü onları bir API üzerinden çağırırsın.
 
-Belirli modelleri ve benchmark puanlarını karşılaştırmak için
-[artificialanalysis.ai](https://artificialanalysis.ai/) kullan.
+Belirli modelleri ve onların benchmark skorlarını karşılaştırmak için [artificialanalysis.ai](https://artificialanalysis.ai/) sitesini kullan.
 
 ## Context Window
 
-Geri kalan her şeyi şekillendiren sınır burada.
+İşte her şeyi şekillendiren sınır budur.
 
-Her LLM'in bir **context window**'u vardır. Bu, modelin input ve output birlikte, tek seferde
-işleyebileceği maksimum metin miktarıdır. Bunu modelin çalışma masası gibi düşün. Şu anda
-bakmasına izin verilen her şeyin o masaya sığması gerekir.
+Her LLM'in bir **context window**'u vardır. Bu, modelin tek seferde işleyebildiği en fazla metin miktarıdır ve girdi ile çıktı bu sınırın içinde birlikte sayılır. Bunu modelin çalışma masası gibi düşünebilirsin. Model o an bakmasına izin verilen her şeyin bu masaya sığması gerekir.
 
-Bunu gözünde canlandırmanın en kolay yolu, ChatGPT'deki chat geçmişin. Yeni bir chat'in
-başında geçmiş boştur. Karşılıklı yazdıkça her mesajın ve modelin her yanıtı oraya eklenir.
-Sonunda dolar.
+Bunu gözünde canlandırmanın en kolay yolu, ChatGPT ile yaptığın sohbet geçmişine bakmak. Yeni bir konuşmaya başladığında geçmiş boştur. Karşılıklı konuştukça hem senin her mesajın hem de modelin her yanıtı bu geçmişe eklenir ve zamanla geçmiş dolar.
 
-Yani context aslında sadece bir **message stack**'tir. Bu stack mesaj mesaj oluşturulur ve
-modele gönderilir. LLM bu stack'in tamamını input olarak alır, işler ve sıradaki mesajı üretir.
+Yani **context** dediğimiz şey aslında bir **mesaj yığını (stack)**. Yığın her seferinde bir mesaj eklenerek oluşur ve sonra bütünüyle modele gönderilir. LLM bu yığının tamamını girdi olarak alır, işler ve bir sonraki mesajı üretir.
 
-**Sınırı aşarsan ne olur?** Hata alırsın. Bu kadar. Request basitçe fail eder.
+**Sınır aşılırsa ne olur?** Bir hata alırsın, hepsi bu. İstek başarısız olur.
 
-Bu sınırın etrafından dolaşmak için teknikler var. Bunlar kendi başlığını hak edecek kadar
-önemli: Intermediate bölümündeki
-[Context Engineering](../2_intermediate/context_engineering_tr.md).
+Bu sınırı aşmak için kullanılan teknikler var. Bunlar, ileride kendi modülünü hak edecek kadar önemli. Bunlara Intermediate bölümündeki [Context Engineering](../2_intermediate/context_engineering_tr.md) modülünde bakacağız.
 
-### Context'in İçinde Ne Var
+### Context'e Ne Girer?
 
-Normal bir chat'i üç tür mesaj oluşturur:
+Normal bir sohbet üç tür mesajdan oluşur:
 
-- **HumanMessage**: senin yazdığın şey, yani isteğin. İnsanların "prompt" derken kastettiği
-  bu.
+- **HumanMessage**: yazdığın şey, yani isteğin. İnsanların "prompt" dediği şey tam olarak budur.
 - **AIMessage**: modelin yanıtı.
-- **SystemMessage**: modelin sağlayıcısı ya da geliştiricisi (OpenAI, Anthropic veya sen)
-  tarafından yazılan default instruction seti. En tepeye bir kez konur. Modele nasıl
-  davranacağını söyler: ne yapacağını, ne zaman yapacağını ve hangi tool'u kullanacağını.
+- **SystemMessage**: geliştirici ya da satıcı (OpenAI, Anthropic veya sen) tarafından yazılmış, varsayılan bir talimat seti. En üste bir kez konur ve modele nasıl davranacağını söyler: ne yapacağını, ne zaman yapacağını ve hangi tool'u kullanacağını.
 
-Bu mesajlar sistemle her etkileşiminde üst üste birikir:
+Bu mesajlar, sistemi her kullandığında üst üste yığılır:
 
-![Düz bir LLM chat'inin context'i](./images/llm-context.jpeg)  
-*Düz bir chat'in iki turu: iki Human Message ve iki AI Message. Hiçbir şey silinmez. Bu yüzden ikinci turda model birinci turdaki her şeyi de okur.*
+![Düz LLM sohbetinin context'i](./images/llm-context.jpeg)  
+*İki turn'lük düz bir sohbet: iki HumanMessage ve iki AIMessage. Hiçbir şey silinmez. Bu yüzden ikinci turn'de model birinci turn'deki her şeyi de okur.*
 
-Bir HumanMessage ile ona cevap veren AIMessage'a birlikte **tur** denir. Düz bir LLM chat'inde
-aralarında hiçbir şey yoktur: prompt'u yollarsın, cevabı alırsın. Yukarıdaki figürde iki tur
-var.
+Bir HumanMessage ile onu yanıtlayan AIMessage'a birlikte bir **turn** denir. Düz bir LLM sohbetinde bu ikisinin arasında başka bir şey yoktur: prompt'u gönderirsin, yanıtı alırsın. Yukarıdaki şekilde iki turn var.
 
-Bu stack'in, kimin konuştuğuna göre birkaç adı var: **context**, **working memory**,
-**message history** ya da **short-term memory**. Acele etme. Short-term memory'nin kendi
-modülü var: [Memory](memory_tr.md).
+Bu yığının birkaç adı var ve hangisinin kullanıldığı kimin konuştuğuna bağlı: **context**, **working memory**, **message history** ya da **short-term memory**. İsimlerin hepsini şimdiden ezberlemene gerek yok. Kısa süreli hafıza kendi modülünü hak ediyor: [Memory](memory_tr.md).
 
-SystemMessage'a daha yakından bakmaya değer, çünkü tek parça düz bir metin değildir. Genelde
-davranış instruction'larını *ve* **tool schema**'larını tutar. Tool schema'lar, modelin
-çağırmasına izin verilen tool'ların isimleri ve argümanlarıyla birlikte listesidir:
+SystemMessage'a daha yakından bakmak gerekiyor, çünkü o tek bir düz metin değil. Normalde hem davranış talimatlarını *hem de* **tool schema'larını** taşır. Tool schema'ları, modelin çağırmasına izin verilen tool'ların listesidir ve her birinin adını ile argümanlarını içerir:
 
 ![System prompt'un içi](./images/system-prompt-context.jpeg)  
-*Bir system prompt'un içi: davranış instruction'ları, tool schema'ları ve bazen bir blok static reference metni. Hepsi context'in en tepesinde durur.*
+*Bir system prompt'un içinde davranış talimatları, tool schema'ları ve bazen sabit bir referans metin bloğu bulunur. Hepsi context'in en üstünde yer alır.*
 
-API tarafında tool schema'lar system metninin parçası değil, ayrı bir field'dır. Ama model
-onları en başta tek blok olarak alır. Bu yüzden ikisini birlikte düşünmek yanlış olmaz.
+API'de tool schema'ları system metninin parçası değildir, ayrı bir alan olarak gelir. Ancak model bunları başta tek bir blok halinde alır. Bu yüzden onları birlikte hayal etmek makul.
 
-Birçok üründen sızmış gerçek system prompt'ları burada okuyabilirsin:
-[system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks).
+Birçok üründen sızdırılmış gerçek system prompt'ları şu adreste okuyabilirsin: [system_prompts_leaks](https://github.com/asgeirtj/system_prompts_leaks).
 
-Agent'lara geldiğimizde tanışacağın **iki mesaj türü daha** var. Agent, tool çağırabilen bir
-LLM'den başka bir şey değil. Tool ise özel bir şey değil: sadece bir fonksiyon, genelde senin
-yazdığın düz bir Python fonksiyonu.
+Bunlara ek olarak **iki mesaj türü daha** var ve bunlarla agent'lara geldiğimizde karşılaşacaksın. Agent, tool çağırabilen bir LLM'den ibarettir. Tool ise özel bir şey değildir: genellikle senin yazdığın sade bir Python fonksiyonudur.
 
-Diyelim İstanbul'un hava durumunu sordun. Model buna kendisi bakamaz. Bu yüzden
-fonksiyonlarından birini çalıştırmak istediğini söyler: bir **ToolCall** üretir, mesela
-`get_weather(city="Istanbul")`. Python kurulu olan makine senin makinen. Bu yüzden fonksiyonu
-senin makinen çalıştırır ve `34°C` sonucunu alır. Sonra bunu modele **ToolResult** olarak
-verir. İki mesaj da aynı message stack'e eklenir.
+Diyelim ki İstanbul'daki hava durumunu soruyorsun. Model bunu kendi başına öğrenemez. Bu yüzden senin fonksiyonlarından birini çalıştırmak istediğini belirtir: `get_weather(city="Istanbul")` gibi bir **ToolCall** üretir. Python kurulu olan makine senin bilgisayarındır. Fonksiyonu da o çalıştırır ve `34°C` sonucunu alır. Sonra bu sonucu bir **ToolResult** olarak modele verir. İki mesaj da aynı yığına eklenir.
 
-Yani aklında tutman gereken kısım şu: **ToolCall'ı LLM üretir, ama ToolResult'ı host makine
-üretir**. Host makine senin laptop'un ya da bir server'dır. ToolResult'ı o üretir, çünkü
-fonksiyonu asıl çalıştıran odur. Model ister. İşi başka bir şey yapar.
+Burada hatırlaman gereken kısım şu: **ToolCall'u LLM üretir, ToolResult'u ise host makine üretir**. Host makine (host machine), senin laptop'un ya da bir sunucu olabilir. ToolResult'u o üretir, çünkü fonksiyonu gerçekten çalıştıran odur. Model sorar, iş başka bir şey tarafından yapılır.
 
-Bir agent turunun içinde daha fazla şey olur. HumanMessage'ından sonra model, sana cevap vermek
-için bir tool'a ihtiyacı olup olmadığına karar verir. İhtiyacı varsa ToolCall ve ToolResult da
-context'e eklenir. Model final cevabı ancak ondan sonra yazar. Bunların hepsi hâlâ **tek bir
-tur**: bir HumanMessage, varsa tool mesajları, ve sonda AIMessage.
+Bir agent turn'ünün içi daha kalabalıktır. HumanMessage'ından sonra model, sana cevap verebilmek için bir tool'a ihtiyacı olup olmadığına karar verir. İhtiyacı varsa ToolCall ve ToolResult de context'e eklenir. Model son cevabı ancak bundan sonra yazar. Bütün bunlar yine **tek bir turn**: bir HumanMessage, varsa tool mesajları ve en sonda bir AIMessage.
 
 ![Bir agent'ın context'i](./images/agent-context.jpeg)  
-*Bir agent'ın tek turu: sen prompt yazarsın, AI düşünür, AI tool çağırır, sonra AI cevaplar. Kimin ne yazdığına dikkat et. Thinking'i, Tool Call'ı ve cevabı LLM üretir. Tool Result ise fonksiyonu çalıştıran host makineden gelir.*
+*Bir agent'ın tek turn'ü: sen prompt'u yazarsın, AI düşünür, bir tool'u çağırır ve sonra cevap verir. Kimin neyi yazdığına bak. LLM düşünceyi, Tool Call'u ve cevabı üretir. Tool Result ise fonksiyonu çalıştıran host makineden gelir.*
 
-Bu ayrım, agent'ların nasıl çalıştığının temeli. [LLM Tool Calling](tools_tr.md) ve
-[AI Agents](agents_tr.md) modüllerinde buna geri döneceğiz.
+Agent'ların nasıl işlediğinin temeli tam olarak bu ayrımdır. Bunu [LLM Tool Calling](tools_tr.md) ve [AI Agents](agents_tr.md) modüllerinde yeniden ele alacağız.
 
-## LLM Hyperparameter'ları
+## LLM Hiperparametreleri
 
-Modelin nasıl yanıt verdiğini **hyperparameter**'larla değiştirebilirsin. "Hyper" kısmına
-dikkat. Hyperparameter'lar generation'ı etkiler. Yukarıda konuştuğumuz parameter'lar ise
-farklı: onlar modelin boyutuydu.
+Modelin nasıl yanıt verdiğini **hiperparametre (hyperparameter)** ayarlarıyla değiştirebilirsin. Bu kelimedeki "hyper" kısmına dikkat et. Hiperparametreler üretimi etkiler. Yukarıda andığımız parametreler ise başka bir şeydir: onlar modelin boyutudur.
 
-Sürekli kullanacağın iki tanesi:
+Bunlardan ikisini sürekli kullanacaksın:
 
-- **Temperature**: yaratıcılık ayarı, genelde 0.0 ile 1.0 arası. Düşük (0.1) öngörülebilir ve
-  tutarlı yanıtlar verir. Yüksek (0.9) daha yaratıcı yanıtlar verir, ama bunlar daha az
-  güvenilirdir.
-- **Max output tokens**: yanıtın maksimum uzunluğu. Maliyeti kontrol etmek ve modelin
-  gereğinden fazla yazmasını engellemek için ayarla. Kısa yanıtlar için 2K bol bol yeter.
+- **Temperature**: yaratıcılık düğmesi, genellikle 0.0 ile 1.0 arasında. Düşük bir değer (0.1) öngörülebilir ve tutarlı cevaplar verir. Yüksek bir değer (0.9) daha yaratıcı cevaplar verir, ama bunlar daha az güvenilirdir.
+- **Max output tokens**: cevabın en fazla uzunluğu. Maliyeti kontrol etmek ve modelin ihtiyacından fazla yazmasını önlemek için bunu ayarlarsın. Kısa cevaplar için 2K fazlasıyla yeterli.
 
-## LLM Çalıştırmak (Inference)
+## Bir LLM'i Çalıştırmak (Inference)
 
-Bir modeli çalıştırmaya **inference** denir. Tam da yukarıda anlattığımız şey: context'i
-gönderirsin, model onu işler ve sonra tamamlar.
+Bir modeli çalıştırmaya **inference** denir. Bu, daha önce anlattığımız şeyin tam karşılığıdır: context'i gönderirsin, model onu işler ve sonra cevabı tamamlar.
 
-Large Language Model adından da anlaşıldığı gibi bu modeller büyük. Bu yüzden inference GPU
-gerektirir. Bu da sana iki seçenek bırakır.
+Adındaki "Large" kelimesinin de belirttiği gibi bu modeller çok büyük. Bu yüzden inference için bir GPU gerekir. Bu da sana iki seçenek sunar.
 
-**1. Cloud inference (API çağrıları).** ChatGPT ya da Google AI Studio gibi bir servisi
-çağırırsın. Devasa GPU'lar onların, modeli senin için onlar çalıştırır.
+**1. Cloud inference (API çağrıları).** ChatGPT ya da Google AI Studio gibi bir servisi çağırırsın. Devasa GPU'lar onların elinde olduğu için modeli senin yerine onlar çalıştırır.
 
-- **Artıları:** en büyük ve en yetenekli modellere erişirsin, ve satın alacağın donanım yok.
-- **Eksileri:** para tutar, internet gerekir, yavaş olabilir.
+- **Artılar:** en büyük ve en yetenekli modellere erişirsin ve satın alman gereken bir donanım yoktur.
+- **Eksiler:** para gerektirir, internet bağlantısı ister ve yavaş olabilir.
 
 **2. Local inference.** Model kendi bilgisayarında çalışır.
 
-- **Gereksinim:** yeterli belleğe (VRAM) sahip iyi bir GPU.
-- **Artıları:** kurulumdan sonra bedava (sadece elektrik ödersin), ve internetsiz çalışır.
-- **Eksileri:** küçük modellerle sınırlı kalırsın.
+- **Gereksinim:** iyi bir GPU ve yeterince büyük bir video belleği (VRAM).
+- **Artılar:** kurulumdan sonra ücretsizdir (yalnızca elektrik faturası ödersin) ve internet olmadan da çalışır.
+- **Eksiler:** yalnızca daha küçük modellerle sınırlısın.
 
-Sırayla bakalım.
+Şimdi bunlara tek tek bakalım.
 
-## Local LLM'ler
+## Yerel LLM'ler
 
 ### Quantization
 
-**Quantization nedir?** Modeli daha az belleğe sığacak şekilde sıkıştırmanın bir yoludur.
-Modeller normalde 16-bit weight'lerle dağıtılır. Quantization her weight'i 4 bite düşürür. Bu,
-gereken belleği yaklaşık dörde böler.
+**Quantization nedir?** Modeli daha az belleğe sığacak şekilde sıkıştırmanın bir yoludur. Modeller normalde 16 bit'lik ağırlıklarla (weight) dağıtılır. Quantization her ağırlığı 4 bit'e indirir ve bu da ihtiyaç duyulan belleği yaklaşık dört kat azaltır.
 
-Sayılar durumu netleştiriyor. Örnek olarak 32B'lik bir modeli ele al:
+Rakamlar bunu açıkça gösteriyor. Örnek olarak 32B'lik bir modele bakalım:
 
-| Precision | Gereken bellek | Consumer GPU'ya sığar mı? |
+| Precision | Gereken bellek | Tüketici GPU'suna sığar mı? |
 | --- | --- | --- |
-| 16-bit (dağıtıldığı hali) | ~64 GB | Hayır |
-| 4-bit (quantize edilmiş) | ~16 GB, artı context için biraz | Evet, 24 GB veya 32 GB'lık bir kartta rahatça |
+| 16-bit (dağıtıldığı haliyle) | ~64 GB | Hayır |
+| 4-bit (quantized) | ~16 GB, bir miktar context için ek | Evet, 24 GB ya da 32 GB'lık bir kartta rahatlıkla |
 
-Aynı model, aynı weight'ler, belleğin dörtte biri. "Bunu hiç çalıştıramam" ile "bu benim
-masaüstümde çalışır" arasındaki fark bu.
+Aynı model, aynı ağırlıklar, ama bellek ihtiyacı dörtte bir. Fark, "bunu hiç çalıştıramam" ile "bu masaüstümde çalışıyor" arasındaki farktır.
 
-**Modelleri kendin quantize etmen gerekir mi?** Hayır, ve neredeyse hiç gerekmez.
-[Ollama](https://ollama.com/) ve [Unsloth](https://unsloth.ai/) popüler modellerin hazır
-quantize edilmiş sürümlerini yayınlıyor: Qwen, Llama, Mistral, Gemma ve daha fazlası. Sadece
-çek ve çalıştır.
+**Modelleri kendin quantize etmen gerekir mi?** Hayır, ve neredeyse hiç etmemelisin. [Ollama](https://ollama.com/) ve [Unsloth](https://unsloth.ai/), Qwen, Llama, Mistral, Gemma ve daha fazlası gibi popüler modellerin hazır quantize edilmiş sürümlerini zaten yayımlıyor. Bunlardan birini çekip çalıştırman yeterli.
 
-### Modeli Asıl Çalıştıran Engine'ler
+### Modeli Gerçekte Çalıştıran Motorlar
 
-Her şeyin altında gerçek işi yapan bir **inference engine** var:
+Her şeyin altında, asıl işi yapan bir **inference engine** var:
 
 - **llama.cpp**
-- **vLLM** (NVIDIA, AMD, TPU)
-- **SGLang** (sadece NVIDIA)
+- **vLLM** (NVIDIA, AMD, TPU'lar)
+- **SGLang** (yalnızca NVIDIA)
 - **TensorRT-LLM** (NVIDIA, AMD)
-- **MLX** (sadece Apple)
+- **MLX** (yalnızca Apple)
 
-Bunlar yeni başlayanlar için kolay değil ve çalışır hale getirmek epey uğraş gerektirir. Neyse
-ki onlara doğrudan pek dokunmazsın. Başka araçlar bunları arka planda kullanır ve
-interface'lerini saklar. Bu araçlarla birkaç satır kodla, hatta doğrudan terminalden çalışan
-bir modele ulaşırsın.
+Bu motorlar yeni başlayanlar için kolay değildir ve çalışmaya başlamadan önce ciddi bir kurulum işi gerektirir. Neyse ki çoğu zaman onlara doğrudan dokunmazsın. Başka araçlar bunları arka planda kullanır ve arayüzlerini gizler. Bu araçlarla sıfırdan çalışan bir modele birkaç satır kodla ya da doğrudan terminalden ulaşabilirsin.
 
 ### Kolay Araçlar
 
-- **[LMStudio](https://lmstudio.ai/)**: model indirip chat etmek için basit bir GUI. Başlamak
-  için harika.
-- **[Ollama](https://ollama.com/)**: modelleri hızlıca çekip serve etmek için bir CLI aracı.
-  Terminalde rahatsan daha iyi bir seçim.
+- **[LMStudio](https://lmstudio.ai/)**: modelleri indirip onlarla sohbet etmeye yarayan basit bir GUI. Başlamak için harika bir seçenek.
+- **[Ollama](https://ollama.com/)**: modelleri hızla çekip sunmak için bir komut satırı aracı. Terminalde rahat etmeye başladığında daha iyi bir seçim olur.
 
-**Hemen dene:** Ollama CLI ile çok küçük bir 0.6B model çek ve terminalde onunla chat et. İki
-dakika sürer. Yukarıdaki her şeyi uygulamada görmeni de sağlar.
+**Şimdi dene:** Ollama CLI ile çok küçük bir 0.6B modeli çek ve onunla terminalde sohbet et. Birkaç dakikanı alır. Yukarıda anlattığımız her şeyi pratikte görmene de yardımcı olur.
 
-## Cloud LLM'ler
+## Bulut LLM'leri
 
-Daha büyük modeller için, ya da hiç kurulum yapmak istemediğinde, bir **inference provider**
-kullanırsın. Provider sana bir API key verir. Sen de kodundan bir client kütüphanesiyle onların
-modellerini çağırırsın.
+Daha büyük modellere ihtiyacın olduğunda ya da hiç kurulum yapmak istemediğinde bir **inference provider** kullanırsın. Sağlayıcı sana bir API anahtarı (API key) verir. Sonra bu anahtarla, kendi kodundan bir istemci kütüphanesi (client library) üzerinden modellerini çağırırsın.
 
-Aşağıdaki ikisinin de günlük limitli bir free tier'ı var. Bu, öğrenmek için yeter.
+Aşağıdaki iki sağlayıcının da günlük limitli bir ücretsiz katmanı (free tier) var. Öğrenmek için bu fazlasıyla yeterli.
 
 ### Google AI Studio
 
-Buradan başla: [aistudio.google.com](https://aistudio.google.com/). Kaydol ve kendi API
-key'ini al. Free tier temel modelleri günlük limitlerle kapsıyor.
+Buradan başla: [aistudio.google.com](https://aistudio.google.com/). Kaydol ve kişisel API anahtarını al. Ücretsiz katman, günlük limitlerle birlikte temel modelleri kapsar.
 
 ### OpenRouter
 
-[OpenRouter](https://openrouter.ai/) bir gateway. Request'ini birçok farklı provider'a
-yönlendirir. Bir router olduğu için tek bir API key neredeyse her modele ulaşır. Google,
-OpenAI, Qwen ve diğerleri için ayrı ayrı key yönetmen gerekmez.
+[OpenRouter](https://openrouter.ai/) bir **gateway** (geçit) gibi çalışır. İsteğini birçok farklı sağlayıcıya iletir. Bir yönlendirici (router) olduğu için tek bir API anahtarı hemen hemen her modele ulaşmanı sağlar. Google, OpenAI, Qwen ve diğerleri için ayrı anahtarlar yönetmen gerekmez.
 
 ```mermaid
 graph LR
     A[Uygulaman] --> B[OpenRouter API]
-    B --> C[Google Models]
-    B --> D[OpenAI Models]
-    B --> E[Anthropic Models]
-    B --> F["Qwen ve Diğerleri"]
+    B --> C[Google Modelleri]
+    B --> D[OpenAI Modelleri]
+    B --> E[Anthropic Modelleri]
+    B --> F[Qwen ve Diğerleri]
 ```
 
-Ayrıca günlük limitli free model'leri var. Başka bir modele geçmek için tek bir satırı
-değiştirirsin. Bu da OpenRouter'ı, kendi görevinde modelleri karşılaştırmanın en hızlı yolu
-yapıyor.
+Ayrıca günlük limitli ücretsiz modelleri de var. Başka bir modele geçmek istediğinde ise yalnızca bir satır değiştirirsin. Bu da OpenRouter'ı kendi işin üzerinde modelleri karşılaştırmanın en hızlı yolu yapar.
 
-## LLM Prompting
+## LLM'lere Prompt Yazmak
 
-**Prompt engineering**, istediğin output'u alacak şekilde input'u yazmaktır. Öğrencilere
-talimat vermekle aynı fikir. Net talimat, ödevin düzgün yapılmasını sağlar. Muğlak talimat ise
-her öğrencinin canının istediğini yapmasıyla sonuçlanır.
+**Prompt engineering**, istediğin çıktıyı alabilmek için girdiyi özenle yazma işidir. Bu, öğrencilere talimat vermeye benzer. Net bir talimat ödevin düzgün yapılmasını sağlar. Belirsiz bir talimat ise her öğrencinin o an canının istediğini yapmasına yol açar.
 
-Modelin gerçekte ne hesapladığını hatırla. Model, context'teki her şey verildiğinde sonraki
-token'ın olasılığını hesaplar:
+Modelin gerçekte ne hesapladığını hatırla. Model, context'teki her şeyi göz önünde bulundurarak bir sonraki token'ın olasılığını hesaplar:
 
 ```
-P(sonraki token | context)
+P(next token | context)
 ```
 
-Senin prompt'un o context'in kendisi. Yani işin, istediğin output'u en olası hale getiren
-input'u bulmak:
+Senin prompt'un *tam olarak* bu context'tir. Bu yüzden senin işin, istediğin çıktıyı en olası hale getiren girdiyi bulmaktır:
 
 ```
-en iyi prompt = P(istediğin output | prompt) değerini en büyük yapan prompt
+best prompt = the prompt that maximises P(the output you want | prompt)
 ```
 
-Bütün disiplin tek satırda bu. İsimlendirilmiş birçok teknik var ve onları
-[Prompt Engineering](../2_intermediate/prompt_engineering_tr.md) modülünde ele
-alıyoruz. Ama asıl işin çoğu denemekten oluşur: bir ifade dene, output'a bak, değiştir ve
-tekrar dene.
+Disiplinin tamamı bu tek satırda özetlenebilir. Adı konmuş pek çok teknik var ve bunları [Prompt Engineering](../2_intermediate/prompt_engineering_tr.md) modülünde anlatıyoruz. Ama işin büyük kısmı deneyerek ilerler: bir ifadeyi dene, çıktıya bak, değiştir ve yeniden dene.
 
-Production prompt'larına ne kadar emek gittiğini görmek için bunları okumaya değer:
+Gerçek ürünlerdeki prompt'lara ne kadar emek verildiğini görmek için şunlara bakmaya değer:
 
-- [AI araçlarının system prompt'ları](https://github.com/x1xhlol/system-prompts-and-models-of-ai-tools)
-- [System prompt sızıntıları](https://github.com/asgeirtj/system_prompts_leaks)
-- [Large Language Models explained briefly](https://youtu.be/LPZh9BOjkQs?si=8kH-lzHbfHRL1_8h): aynı
-  konuları anlatan bir video, okumak yerine izlemek istersen
-- [Sızmış system prompt'lar](https://github.com/jujumilk3/leaked-system-prompts)
+- [System prompts of AI tools](https://github.com/x1xhlol/system-prompts-and-models-of-ai-tools)
+- [System prompt leaks](https://github.com/asgeirtj/system_prompts_leaks)
+- [Large Language Models explained briefly](https://youtu.be/LPZh9BOjkQs?si=8kH-lzHbfHRL1_8h): aynı konuları işleyen bir video, okumak yerine izlemeyi tercih ediyorsan.
+- [Leaked system prompts](https://github.com/jujumilk3/leaked-system-prompts)
 
 ## Bu serinin neresindeyiz
 
@@ -302,21 +219,18 @@ graph LR
     style A fill:#FFFF00
 ```
 
-Artık bir LLM'in ne olduğunu, önemli olan tek sınırı (context window), o context'in içinde ne
-yaşadığını, ve bir modeli local'de ya da cloud'da nasıl çalıştıracağını biliyorsun.
+Artık LLM'in ne olduğunu, önemli olan tek sınırı (context window), bu sınırın içinde neler olduğunu ve bir modeli yerelde ya da bulutta nasıl çalıştıracağını anlıyorsun.
 
-İlerlerken context window'u aklında tut. RAG, memory, agents ve context engineering, hepsi bir
-şekilde şu sorunun cevabı: *o kısıtlı masaya ne koyacağız?*
+Serinin geri kalanında context window'u aklında tut. RAG, memory, agent'lar ve context engineering, bir biçimde hepsi aynı soruya verilen cevaplardır: *bu sınırlı masaya ne koyacağız?*
 
 ## Kaynaklar
 
-- [Scaling Laws for Neural Language Models](https://arxiv.org/abs/2001.08361): Kaplan ve
-  arkadaşları, 2020, "daha büyük model daha iyi" fikrinin arkasındaki ölçüm
+- [Scaling Laws for Neural Language Models](https://arxiv.org/abs/2001.08361): Kaplan et al., 2020. "Büyük modeller daha iyidir" fikrinin arkasındaki ölçüm.
 - [Artificial Analysis](https://artificialanalysis.ai/): model karşılaştırmaları ve benchmark'lar
-- [Ollama](https://ollama.com/): modelleri local'de çekip serve etme
-- [LMStudio](https://lmstudio.ai/): local'de model çalıştırmak için GUI
-- [Unsloth](https://unsloth.ai/): hazır quantize edilmiş model sürümleri
-- [Google AI Studio](https://aistudio.google.com/): free tier API key'leri
-- [OpenRouter](https://openrouter.ai/): birçok provider için tek key
-- [System prompt sızıntıları](https://github.com/asgeirtj/system_prompts_leaks)
-- [Large Language Models explained briefly](https://youtu.be/LPZh9BOjkQs?si=8kH-lzHbfHRL1_8h): okumak yerine izlemeyi tercih edersen aynı konuları anlatan bir video
+- [Ollama](https://ollama.com/): modelleri yerelde indirip sunmak
+- [LMStudio](https://lmstudio.ai/): modelleri yerelde çalıştırmak için bir GUI
+- [Unsloth](https://unsloth.ai/): önceden quantize edilmiş model sürümleri
+- [Google AI Studio](https://aistudio.google.com/): ücretsiz katman için API anahtarları
+- [OpenRouter](https://openrouter.ai/): birçok sağlayıcı için tek anahtar
+- [System prompt leaks](https://github.com/asgeirtj/system_prompts_leaks)
+- [Large Language Models explained briefly](https://youtu.be/LPZh9BOjkQs?si=8kH-lzHbfHRL1_8h): aynı konuları işleyen bir video, okumak yerine izlemeyi tercih edenler için

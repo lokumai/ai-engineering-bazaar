@@ -1,209 +1,211 @@
 # Context Engineering
 
-[Prompt Engineering](prompt_engineering_tr.md) tek bir iyi input yazmakla ilgiliydi. Bu modül, modelin önüne giden geri kalan her şeyle ilgili. Bir de şu sorunla: hepsi için yeterli yer yok.
+[Prompt Engineering](prompt_engineering_tr.md) bir tane iyi girdi yazmakla ilgiliydi. Bu modül ise modelin önüne konan geri kalan her şeyi konu alıyor. Bunun yanında tek bir sorunu da ele alıyor: hepsine yetecek kadar yer yok.
 
-Prompt engineering'den sonra context engineering geldi ve 2025'in sonlarının trendi oldu. Burada nereden çıktığını, nasıl geliştiğini ve bilinmeye değer teknikleri işliyoruz.
+Prompt engineering'den sonra ise context engineering geldi ve 2025'in sonlarında büyük bir trend oldu. Bu modülde, bu yaklaşımın nereden çıktığını, nasıl geliştiğini ve bilmeye değer hangi tekniklerin bulunduğunu anlatacağız.
 
-## Context Engineering'in Yükselişi
+## Context Engineering'in yükselişi
 
-O zamanlar herkes boyuttan konuşuyordu. İnsanlar daha büyük context window'u olan modeller istiyordu. Modele durmadan daha fazlasını veriyorlardı, çünkü daha fazla context gerçekten daha iyi sonuç demekti.
+O dönemde bütün tartışma boyut üzerine dönüyordu. İnsanlar daha büyük bir context window'a sahip modeller istiyordu. Daha fazla context gerçekten daha iyi sonuç verdiği için modele giderek daha fazla şey veriyorlardı.
 
-Bir coding agent'la uzun bir session'da çalıştıysan bu hissi biliyorsun. Beyin fırtınası yapıyorsun, tasarlıyorsun, ileri geri gidiyorsun. Sonra hiçbir uyarı olmadan window'un %95'indesin. Daha fazla context işe yaradığı için insanlar prompt'larına durmadan ek malzeme koydu. Bu yüzden window her zamankinden hızlı doldu.
+Bir kodlama agent'ıyla uzun bir oturum yürüttüysen bu hissi bilirsin. Fikir üretirsin, tasarlarsın, bir ileri bir geri gidersin; derken habersizce pencerenin %95'ine gelmişsindir. Daha fazla context işe yaradığı için insanlar prompt'larına sürekli ek malzeme koymayı sürdürdü, bu da pencerenin her zamankinden hızlı dolmasına yol açtı.
 
-Peki stack window'dan büyüdüğünde sistemler ne yapıyordu? Çoğunlukla bir **sliding window** kullanıyorlardı. Diyelim model 1M token tutuyor ve geçmişin 1.4M'ye ulaştı. Window ileri kayıyor ve model sadece son 1M'i görüyor, yani 0.4M'den 1.4M'ye kadarını. İlk 0.4M gitmiş oluyor.
+Peki birikmiş içerik pencereye sığmayacak kadar büyüdüğünde sistemler ne yapıyordu? Çoğunlukla bir **kayan pencere (sliding window)** kullanıyorlardı. Diyelim ki model 1M token tutabiliyor, ama geçmişin 1.4M token'a ulaşmış. Bu durumda pencere ileri doğru kayar, model yalnızca son 1M'i, yani 0.4M'den 1.4M'e kadar olan kısmı görür ve ilk 0.4M tamamen düşer.
 
-Bu, kulağa geldiğinden daha kötü. Sınırı geçtiğin anda *en eski* context'i bırakmak zorunda kalıyorsun. Orası da genelde ne yapmaya çalıştığını anlattığın yer. Yani modelle kurduğun ortak anlayış, sistemin attığı ilk şey oluyor. Sonunda işin ne olduğunu modele hatırlatmak için kendi eski prompt'larını elle geri kopyalıyorsun.
+Bu durum göründüğünden de kötü. Limiti aştığın an en eski context'i atmak zorunda kalırsın. Bu en eski kısım ise çoğu zaman neyi yapmaya çalıştığını anlattığın yerdir. Yani modelle birlikte kurduğun ortak anlayış, sistemin ilk attığı şey olur. Sonunda modele işin ne olduğunu hatırlatmak için kendi eski prompt'larını elle yeniden kopyalamak zorunda kalırsın.
 
-## Context Rot (Pollution)
+## Context rot (pollution)
 
-Herkes dolu bir window'a çözüm ararken, Chroma ekibi [Context Rot: How Increasing Input Tokens Impacts LLM Performance](https://www.trychroma.com/research/context-rot) çalışmasını yayınladı. Bulgu büyük bir sürpriz oldu: **context büyüdükçe model işi yapmakta kötüleşiyor.**
+Herkes dolu bir pencereyi aşmanın yollarını ararken, Chroma ekibi [Context Rot: How Increasing Input Tokens Impacts LLM Performance](https://www.trychroma.com/research/context-rot) başlıklı bir çalışma yayımladı. Sonuç büyük bir sürpriz oldu: **context büyüdükçe model görevi giderek daha kötü yapar.**
 
-GPT-4.1, Claude 4 ve Gemini 2.5 dahil 18 modeli test ettiler. Sonuç hepsinde aynıydı. Aynı iş verilen aynı model, context'inde 25K token varken bu işi, 800K token varken olduğundan belirgin biçimde daha iyi yapıyor. Bunun sebebi window'un taşması değil. Sebebi, içinde zaten olan şey.
+Ekip 18 modeli test etti. Aralarında GPT-4.1, Claude 4 ve Gemini 2.5 de vardı ve hepsinde aynı örüntü görüldü. Aynı modele aynı işi verdiğinde, context'inde 800K token yerine 25K token olduğunda işi belirgin biçimde daha iyi yapıyor. Bu etkinin nedeni pencerenin taşması değil, pencerede zaten ne olduğu.
 
-![Two jars, same model](./images/context-pollution-jars.jpeg)  
-*Modelin ihtiyaç duyduğu üç şey iki kavanozun da içinde. Sağdakinde hâlâ oradalar, hâlâ okunabiliyorlar ve yine de kayboluyorlar. Kavanozdaki geri kalan her şey aynı attention için yarışıyor.*
+![İki kavanoz, aynı model](./images/context-pollution-jars.jpeg)  
+*Modelin ihtiyaç duyduğu üç şey iki kavanozda da var. Sağdakinde hâlâ duruyor, hâlâ okunabiliyor, ama kaybolmuş durumda. Kavanozdaki diğer her şey aynı dikkat için yarışıyor.*
 
-Bu etkinin iki adı var: **context rot** ve **context pollution**. Drew Breunig'in [How Long Contexts Fail](https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html) yazısı bir adım daha ileri gidiyor. Bunun nasıl olduğunu dört ayrı adla tanımlıyor: poisoning, distraction, confusion ve clash.
+İnsanlar buna iki ad veriyor: **context rot** ve **context pollution**. Drew Breunig'in [How Long Contexts Fail](https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html) yazısı bir adım daha ileri gidiyor. Bu etkinin ortaya çıkmasının dört belirli yolunu adlandırıyor: zehirlenme (poisoning), dikkat dağılması (distraction), karışıklık (confusion) ve çatışma (clash).
 
-Sebebi **attention**. Attention, modelin yazmak üzere olduğu token için input'un hangi kısımlarının önemli olduğuna karar verdiği mekanizma. Teorisine girmiyoruz. Sana gereken, sonucu: attention sabit bir bütçe ve model onu window'daki her şeye bölüyor. İnsan da aynı şekilde çalışıyor. Kafanda aynı anda birkaç şey tutabiliyorsun, fazlasını değil. Agent'ının beyni olan model de farklı değil. Context'ini birbiriyle az ilgili bir sürü malzemeyle doldurursan, bir insanın taşıyacağı yükü taşıyor. Aynı tür hataları da yapıyor.
+Bunun nedeni **dikkat (attention)**. Dikkat, bir modelin yazmak üzere olduğu token için girdisinin hangi kısımlarının önemli olduğunu seçtiği mekanizmadır. Burada teorisine girmeyeceğiz; senin bilmen gereken sonuç şu: dikkat sabit bir bütçedir ve model bu bütçeyi pencerede bulunan her şeye böler. İnsan da tam böyle çalışır, çünkü aynı anda kafanda birkaç şeyi tutabilirsin ve daha fazlasını tutamazsın. Agent'ının beyni olan model de bundan farklı değildir. Context'ini gevşek bağlantılı malzemeyle doldurursan, insanın taşıyacağı yükü o da taşır ve insanın yaptığı türden hatalara o da düşer.
 
-Bir noktaya dikkat et, çünkü insanların yanlış anladığı kısım bu: bu, window'un "dolması" değil. Performans limite gelmeden çok önce düşmeye başlıyor. %40 dolu bir window, aynı window %5 doluyken verdiğinden daha kötü cevaplar veriyor olabilir.
+Burada sık yapılan bir hataya dikkat et: mesele pencerenin "dolması" değil. Performans, limite ulaşmadan çok önce düşmeye başlar. %40 dolu bir pencere, aynı pencere %5 doluyken verdiğinden bile daha kötü cevaplar verebilir.
 
-Pratikte şöyle hissediliyor. Bir kitap yazmak için uzun bir session başlatıyorsun. En başta modele net bir akademik tonda yazmasını söylüyorsun. Bir süre öyle yapıyor. 800K'yı geçtikten sonra bir yerde bırakıyor: ton belirsiz ve sohbet havasına kayıyor, model de bir şeyler uydurmaya başlıyor. Hiçbir şey silinmedi ve window hiç taşmadı. Talimat hâlâ orada duruyor. Ama attention'daki payı, ondan sonra eklediğin her şeyle yarışmak zorunda kaldı ve kaybetti. Model haritayı kaybetti.
+Pratikte nasıl hissettirdiğine bir bakalım. Bir kitap yazmak için uzun bir oturum başlattığını düşün. Başta modele açık ve akademik bir tonla yazmasını söylüyorsun ve bir süre öyle yazıyor. 800K'yı biraz geçtikten sonra ise ton muğlak ve sohbet havasında bir şeye kayar, model de şeyler uydurmaya başlar. Hiçbir şey silinmedi ve pencere hiç taşmadı. Talimat hâlâ orada duruyor, ama dikkatten aldığı pay sonradan eklediğin her şeyle yarışmak zorunda kaldı ve kaybetti. Model haritayı kaybetti.
 
-![A needle, a distractor and a haystack](./images/distractor_irrelevance.png)  
-*Soru sınıf arkadaşının tavsiyesini istiyor. Needle onu cevaplıyor. Distractor ise aynı cümle, ama bir profesör hakkında. Chroma, tek bir distractor'ın zarar vermeye yettiğini buldu. Ayrıca needle soruya ne kadar az benzerse, haystack büyüdükçe performansın o kadar hızlı çöktüğünü buldu.*
+![İğne, dikkat dağıtıcı ve samanlık](./images/distractor_irrelevance.png)  
+*Soru, sınıf arkadaşının tavsiyesini istiyor ve iğne bu tavsiyenin kendisi. Dikkat dağıtıcı ise aynı cümle, ama bu kez bir hocayla ilgili. Chroma, tek bir dikkat dağıtıcının bile zarar verdiğini buldu. Ayrıca iğne soruya ne kadar az benziyorsa, samanlık büyüdükçe performansın o kadar hızlı çöktüğünü de gördüler.*
 
-Bu testin adını sürekli duyacaksın: **needle in a haystack**. Yukarıdaki, testin zor versiyonu. Kolay versiyon metne tam bir ifade gizliyor ve onu geri istiyor. Modeller bunu neredeyse kusursuz yapıyor. Chroma'nın katkısı, bulmak için *akıl yürütmen* gereken bir şeyi gizlemek ve yanına neredeyse doğru görünen yanlış cümleler koymak oldu.
+Bu testin adını sürekli duyacaksın: **needle in a haystack** (samanlıkta iğne). Yukarıdaki örnek bunun daha zor sürümü. Kolay sürümde metnin içine tam bir ifade gizlenir ve modelden onu geri istersin; modeller bu işi neredeyse kusursuz yapar. Chroma'nın katkısı ise bulmak için *akıl yürütmen* gereken bir şeyi gizlemek ve yanına neredeyse doğru görünen yanlış cümleler koymak oldu.
 
-Bütün bunlardan bir pratikler kümesi ve onlara bir isim çıktı.
+Bütün bunlardan bir dizi uygulama ve bunlar için bir ad çıktı.
 
-## Context Engineering Nedir?
+## Context Engineering nedir?
 
-Context engineering tek bir soruyu cevaplıyor: **context'e ne girmeli, ve ne dışarıda tutulmalı?**
+Context engineering tek bir soruya cevap verir: **context'e neler girmeli, neler dışarıda tutulmalı?**
 
-Window sınırlı, yani bir şeyin karar vermesi gerekiyor. Window'a girebilecek şeylerin sürekli büyüyen bir evreni var. Context engineering, bunlardan hangilerinin gerçekten gireceğini seçme sanatı ve bilimi. Amaç, gerçek sinyal taşıyan token'ları olabildiğince çoğaltmak ve gürültü olanları olabildiğince azaltmak. Böylece context çürümüyor.
+Pencere sınırlı olduğu için bir yerde karar verilmesi gerekiyor. Pencereye girebilecek şeylerin evreni sürekli büyürken, context engineering bunların hangilerinin gerçekten içeri gireceğini seçme sanatı ve bilimidir. Amaç, gerçek sinyal taşıyan token'ların mümkün olduğunca çok, gürültü olanların ise mümkün olduğunca az olduğu bir context kurmaktır; böylece context çürümez.
 
-![Prompt engineering next to context engineering](./images/prompt-vs-context-eng.png)  
-*Solda tek bir tur ve tek bir karar var: bu, [Prompt Engineering](prompt_engineering_tr.md). Sağda window'a girebilecek şeylerin bir evreni ve gerçekte neyin girdiğine dair bir karar var. Bu karar her turda yeniden alınıyor.*
+![Prompt engineering ve context engineering yan yana](./images/prompt-vs-context-eng.png)  
+*Solda tek bir etkileşim turu ve tek bir karar var: bu, [Prompt Engineering](prompt_engineering_tr.md) konusu. Sağda ise pencereye girebilecek şeylerin evreni ve bunların hangilerinin gerçekten gireceğine dair bir karar var. Bu karar her turda yeniden verilir.*
 
-Terim, 2025 ortalarında [Andrej Karpathy'nin bir post'undan](https://x.com/karpathy/status/1937902205765607626) sonra yayıldı. En kapsamlı işlenişini Anthropic'in [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) yazısında buldu. Orada "LLM inference sırasında en uygun token kümesini seçme ve koruma stratejileri kümesi" diye tanımlanıyor. Philipp Schmid'in [The New Skill in AI is Not Prompting, It's Context Engineering](https://www.philschmid.de/context-engineering) yazısı aynı fikri bir iş tanımı gibi anlatıyor: modele doğru bilgiyi ve tool'ları, doğru biçimde, doğru zamanda ver. LangChain teknikleri dört fiile ayırıyor: write, select, compress, isolate. Bu ayrımı [Context Engineering](https://www.langchain.com/blog/context-engineering-for-agents) yazısında ve Lance Martin'in [Context Engineering for Agents](https://rlancemartin.github.io/2025/06/23/context_engineering/) yazısında bulabilirsin.
+Terim, 2025'in ortasında [Andrej Karpathy'nin bu konudaki paylaşımından](https://x.com/karpathy/status/1937902205765607626) sonra yaygınlaştı. Anthropic'in [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) yazısı konuyu en eksiksiz biçimde ele aldı. Anthropic bunu şöyle tanımlıyor: "the set of strategies for curating and maintaining the optimal set of tokens during LLM inference". Philipp Schmid'in [The New Skill in AI is Not Prompting, It's Context Engineering](https://www.philschmid.de/context-engineering) yazısı aynı fikri bir iş tanımı gibi anlatıyor: doğru bilgiyi ve araçları, doğru biçimde, doğru anda modele vermek. LangChain teknikleri dört fiile ayırıyor: write (yazmak), select (seçmek), compress (sıkıştırmak) ve isolate (izole etmek). Bu sınıflandırmayı [Context Engineering](https://www.langchain.com/blog/context-engineering-for-agents) yazısında ve Lance Martin'in [Context Engineering for Agents](https://rlancemartin.github.io/2025/06/23/context_engineering/) yazısında bulabilirsin.
 
-Şimdi bilinmeye değer teknikler.
+Şimdi bilmeye değer tekniklere bakalım.
 
-## Context Summarization (Compaction)
+## Context özetleme (compaction)
 
-Bu, en basit olanı. Context uzayınca onu kendi özetiyle değiştir. Böylece 800K token'lık konuşma, 20K token'lık "şuna karar verdik, şu hâlâ bozuk, şurada kalmıştık"a dönüşüyor.
+Bu tekniklerin en basiti, context uzadığında onu kendi özetiyle değiştirmektir. Böylece 800K token'lık konuşma, "burada neye karar verdik, neyin hâlâ bozuk olduğu, nerede kaldık" diyen 20K token'lık bir özete dönüşür.
 
-Çoğu agent artık limite yaklaşınca bunu kendi başına yapıyor. Bazıları bunu senin başlatmana da izin veriyor. Claude Code'da `/compact` yazıyorsun ve anında oluyor.
+Çoğu agent bunu artık limite yaklaşınca kendiliğinden yapıyor. Bazıları ise bunu seni başlatmana da izin veriyor. Claude Code'da `/compact` yazarsan işlem hemen gerçekleşir.
 
-![A window before and after compaction](./images/compaction-before-after.png)  
-*Neyin tutulduğuna ve neyin tutulmadığına dikkat et. Tool sonuçları window'un büyük kısmı ve onlar gidiyor. Özet kararları tutuyor. Son kullanılan birkaç dosya tutuluyor, çünkü agent onları hemen tekrar okuyacak. Alttaki ayrılmış blok, agent'ın kendi özetlemesi için ayırdığı yer. Böylece hiçbir zaman dolu bir window'la ve yazacak yeri olmadan kalmıyor.*
+![Compaction öncesi ve sonrasında bir pencere](./images/compaction-before-after.png)  
+*Neyin tutulup neyin atıldığına dikkat et. Araç (tool) sonuçları pencerenin büyük kısmını oluşturuyor ve bunlar gidiyor. Özet kararları tutuyor. Agent'ın hemen yeniden okuyacağı birkaç dosya da korunuyor. En alttaki ayrılmış blok, agent'ın kendi özetini yazması için bırakılan alan. Böylece agent, pencere dolmuşken yazacak yer bulamayacağı bir durumda hiç kalmaz.*
 
-Maliyeti gerçek ve bunu açıkça söylemek gerek. Bir özet, kimsenin bir daha ihtiyaç duymadığı bir terminal komutunun 40.000 token'lık çıktısını atıyor. Amaç da zaten bu. Ama ihtiyacın olan bir şeyi de atabiliyor. Bu kazara olabilir. Ya da özeti yazan şey onu önemsiz sayıp yanılmış olabilir. Anthropic'in compaction hakkındaki kendi rehberi de tam bu yüzden mimari kararların, çözülmemiş bug'ların ve implementasyon detaylarının korunmasını söylüyor.
+Bunun bedeli gerçek ve açıkça söylenmeye değer. Özet, kimsenin bir daha ihtiyaç duymayacağı bir terminal komutunun 40,000 token'lık çıktısını atar ve asıl amaç da budur. Ama senin ihtiyacın olan bir şeyi de atabilir. Bu kazayla olabilir, ya da özeti yazan şey bir ayrıntının önemsiz olduğuna karar verip yanılmış olabilir. Tam da bu yüzden Anthropic'in compaction hakkındaki kendi rehberi, mimari kararları, çözülmemiş hataları ve uygulama ayrıntılarını korumayı öneriyor.
 
-## Context Offloading
+## Context offloading
 
-Bir şeyi context'te tutmak yerine agent onu sonradan okuyabileceği bir yere yazıyor. Bu yer genelde bir markdown dosyası. Önemli bilgiler window'dan çıkıp diskte yaşıyor. Agent gerçekten ihtiyaç duyduğunda onları geri getiriyor.
+Bir şeyi context'te tutmak yerine agent, sonra okuyabileceği bir yere yazar. Bu yer genellikle bir markdown dosyasıdır. Önemli bilgiler böylece pencereden çıkıp diskte yaşar ve agent onları gerçekten ihtiyaç duyduğunda geri çeker.
 
-Manus ekibi bunu [Context Engineering for AI Agents: Lessons from Building Manus](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus) yazısında anlatıyor. Onlara göre bu, filesystem'i context olarak kullanmak. Filesystem'in boyutu sınırsız, doğası gereği kalıcı ve agent onunla doğrudan çalışabiliyor.
+Manus ekibi bunu [Context Engineering for AI Agents: Lessons from Building Manus](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus) yazısında anlattı ve dosya sistemini context olarak kullanmak diye tarif etti. Dosya sisteminin boyutu sınırsızdır, doğası gereği kalıcıdır ve agent onunla doğrudan çalışabilir.
 
-Birçok agent bunu **long-term memory** adlı bir feature olarak içine kuruyor. Bu, tutulmaya değer şeylerin bir index'i. Böylece context özetlendikten sonra bile bilgiler kalıyor ve agent onları hâlâ arayabiliyor.
+Birçok agent bunu **uzun vadeli bellek (long-term memory)** adlı bir özelliğe dönüştürüyor. Bu özellik, saklanmaya değer şeylerin bir indeksini tutar. Böylece context özetlendikten sonra bile bilgiler kalır ve agent bunların içinde hâlâ arama yapabilir.
 
-Aynı uyarı burada da geçerli, kök sebep de aynı. Neyin tutulmaya değer olduğuna karar vermek bir yargı meselesi ve bu yargı ya senden ya modelden geliyor. İkisi de yanılıyor. Değerli bir şeyi böyle kaybetmek nadir değil, yaygın.
+Buradaki uyarı aynıdır ve kökü de aynıdır. Neyin saklanmaya değer olduğuna karar vermek bir muhakeme işidir. Bu muhakemeyi ya sen yaparsın ya da model, ve ikisi de yanılabilir. Bu yoldan değerli bir şeyi kaybetmek nadir değil, oldukça yaygındır.
 
-[Memory](../1_fundamentals/memory_tr.md) memory'yi parametrik, working ve long-term diye ayırmıştı. Bu, long-term olanı. Pratikte genelde üç türe ayrılıyor:
+[Memory](../1_fundamentals/memory_tr.md) belleği parametrik, çalışma (working) ve uzun vadeli olmak üzere üçe ayırmıştı. Bu bölümde uzun vadeli olanına bakıyoruz. Pratikte bu bellek genellikle üç türe ayrılır:
 
-![Three kinds of long-term memory](./images/semantic-episodic-procedural.png)  
-*Ayrım önemli, çünkü agent bu üçünü farklı zamanlarda yazıp okuyor. Senin hakkındaki bilgiler zamanla sessizce birikiyor. Geçmiş eylemler, bir agent'ın aynı hatayı tekrarlamasını engelleyen şey. Talimatlar katmanı da [LLM Tool Calling](../1_fundamentals/tools_tr.md)'deki system prompt'un başka bir isim altındaki hâli.*
+![Uzun vadeli belleğin üç türü](./images/semantic-episodic-procedural.png)  
+*Bu ayrım önemli, çünkü agent üçünü farklı zamanlarda yazar ve okur. Senin hakkındaki bilgiler zamanla sessizce birikir. Geçmiş eylemler, agent'ın aynı hatayı tekrarlamasını engeller. Talimat katmanı ise [LLM Tool Calling](../1_fundamentals/tools_tr.md) bölümündeki system prompt'un başka bir adla anılmasından ibaret.*
 
-## Knowledge Base'i Keşfedilebilir Context Olarak Kullanmak
+## Keşfedilebilir bağlam olarak bilgi tabanı
 
-Bazı bilgiler gerçekten değerli ve pek değişmiyor, mesela şirketinin iç API'sinin nasıl çalıştığı. Bunları her prompt'a yapıştırma. Agent'ın gidip bakabileceği bir yere koy: okuyup arayabileceği markdown dosyalarından oluşan bir klasöre.
+Bazı bilgiler gerçekten değerlidir ve sık sık değişmez; örneğin şirketinin iç API'sinin nasıl çalıştığı gibi. Bunları her prompt'a yapıştırmak yerine agent'ın gidip bakabileceği bir yere koy: okuyup arayabileceği bir markdown dosyaları klasörüne.
 
-Sonra agent dokümantasyonuna ihtiyacı olduğuna karar verdiğinde onu getiriyor. Önemli olan kısmı okuyor ve o kadarını context'te öğreniyor. Getirme (retrieval) işi [RAG & Embeddings](../1_fundamentals/rag_tr.md)'deki tam RAG olabilir ya da sadece dosya açan bir agent. Her iki durumda da alternatifi, bütün API referansını window'a boşaltmak ve her turda bunun bedelini ödemek.
+Agent dokümantasyona ihtiyaç duyduğuna karar verdiğinde onu çeker. Yalnızca önemli kısmı okur ve context'inde o kadarını öğrenmiş olur. Bu çekme işi [Retrieval-Augmented Generation (RAG)](../1_fundamentals/rag_tr.md) gibi tam bir RAG ile yapılabilir, ya da agent sadece dosyaları açar. Hangisi olursa olsun alternatif, tüm API referansını pencereye dökmek ve bunun bedelini her turda ödemektir.
 
-Burada bilinmeye değer bir tool var. [DeepWiki](https://deepwiki.org/) bir GitHub repo'su için wiki üretiyor. Diyelim agent'ının bir library'nin iç yapısı, mimarisi ya da API'si hakkında bir sorusu var. Repo'yu kendisi tarayıp context'ini kaynak dosyalarla doldurmak yerine, DeepWiki'nin yazdığını okuyabiliyor.
+Burada bilmeye değer bir araç daha var: [DeepWiki](https://deepwiki.org/) bir GitHub deposu için wiki üretir. Diyelim ki agent'ın bir kütüphanenin iç yapısı, mimarisi ya da API'si hakkında bir sorusu var. Depoyu kendisi tarayıp context'ini kaynak dosyalarla doldurmak yerine, DeepWiki'nin yazdığı metni okuyabilir.
 
-## Context Isolation
+## Context izolasyonu
 
-Konuyu netleştiren örnek şu.
+Bunu açıkça gösteren bir örnek var.
 
-Coding agent'ının sana bir repo'nun hangi mimariyi kullandığını söylemesi gerekiyor. Repo bir milyon satır. Cevaplamak için agent'ın bir sürü dosya açması lazım. Diyelim bu 800K token'lık context'e mal oluyor ve cevap tek bir cümle: sistem, dağıtık Kafka stream'lerini gerçek zamanlı geospatial işlemeyle harmanlayan event-driven bir microservices dokusunu orkestre ediyor. Tek bir cümle almak için 800K token'lık context harcadın. Şimdi o 800K window'da duruyor ve sonra gelen her şeyi çürütüyor.
+Kodlama agent'ının sana, bir milyon satırlık bir deponun hangi mimariyi kullandığını söylemesi gerekiyor. Cevap verebilmek için agent çok sayıda dosya açmak zorunda. Diyelim ki bu iş 800K token'lık context'e mal oluyor, cevap ise tek bir cümle: sistem, dağıtık Kafka akışlarını gerçek zamanlı coğrafi veri işlemeyle birleştiren, olay güdümlü bir mikroservis yapısı üzerine kurulu. Yani tek bir cümle için 800K token context harcadın. Şimdi bu 800K, pencerede oturup sıradaki her şeyi çürütüyor.
 
-Çözüm, okumayı o context'te hiç yapmamak. Ana agent, kendi boş context'i olan ikinci bir agent'ı çağırıyor. Bu ikinci agent bir **subagent**. Subagent 800K token'lık taramayı yapıyor. Sonuç dışındaki her şeyi atıyor ve cümleyi geri veriyor. Ana agent'ın context'i bir cümle kazanıyor.
+Çözüm, okuma işini hiç bu context'te yapmamaktır. Ana agent, kendi boş context'i olan ikinci bir agent'ı çağırır ve bu ikinci agent bir **subagent**'tır. Subagent 800K token'lık taramayı yapar, sonuç dışında her şeyi atar ve o tek cümleyi geri verir. Böylece ana agent'ın context'ine yalnızca bir cümle eklenmiş olur.
 
-![Two subagents with their own windows](./images/subagent.png)  
-*Her kutu ayrı bir context. Boş başlıyor ve iş bitince atılıyor. Ana agent ara adımları hiç görmüyor ve bütün amaç da bu: göremediği şey window'unu çürütemiyor.*
+![Kendi pencereleri olan iki subagent](./images/subagent.png)  
+*Her kutu ayrı bir context. Boş olarak başlar ve iş bitince atılır. Ana agent ara adımları hiç görmez, bütün mesele de bu: göremediği şey pencereyi çürütemez.*
 
-**Nasıl çalışıyor.** Subagent, temiz context'i olan yeni bir agent. Ana agent onu başka herhangi bir tool'u çağırdığı gibi çağırıyor, `Task("bu repo'nun hangi mimariyi kullandığını bul")` gibi bir şeyle. [Tool Calling](../1_fundamentals/tools_tr.md)'in bakış açısından yeni bir şey olmuyor: bir tool çağrıldı ve bir tool sonucu geldi. Subagent kendi loop'unu çalıştırıyor ve her ara adımı saklıyor. Sonra son cevabı o tool sonucu olarak döndürüyor. Anthropic bu özetlerin genelde 1.000 ile 2.000 token civarında olduğunu bildiriyor.
+**Nasıl çalışır?** Subagent, temiz bir context'e sahip yeni bir agent. Ana agent, diğer herhangi bir aracı çağırdığı gibi onu çağırır. Örneğin şuna benzer bir çağrı yapar: `Task("find out what architecture this repo uses")`. [LLM Tool Calling](../1_fundamentals/tools_tr.md) açısından bakınca ortada yeni bir şey yok: bir araç çağrıldı ve bir araç sonucu geri geldi. Subagent kendi döngüsünü çalıştırır, her ara adımı gizler ve son cevabı bu araç sonucu olarak geri döndürür. Anthropic, bu özetlerin genellikle 1,000 ile 2,000 token civarında olduğunu bildiriyor.
 
-Modern agent'lar subagent'ları sırayla ya da paralel çağırıyor. Böylece ana agent, gerçekten iyi olduğu şeyi yapmakta serbest kalıyor: planı tutmak ve sırada ne olacağına karar vermek.
+Günümüzün agent'ları subagent'ları ya art arda ya da paralel çağırıyor. Bu sayede ana agent, gerçekten iyi olduğu işe odaklanabilir: planı tutmak ve sonra neyin olacağına karar vermek.
 
-## Explicit Planning (TODO'lar)
+## Açık planlama (TODO'lar)
 
-Diyelim bir agent'tan sana bir portfolyo sitesi yapmasını istiyorsun. Bu, şu adımların hepsi demek:
+Diyelim ki bir agent'a portfolyo sitesi yaptırmak istiyorsun. Bu, şu adımların hepsi demek:
 
-- kapsamı tanımlamak
-- bir stack seçmek
-- layout'ları kurmak
-- içeriği yazmak
-- bir CMS bağlamak
-- deployment'ı yapılandırmak
+- kapsamı belirlemek
+- bir teknoloji yığını seçmek
+- sayfa düzenlerini kurmak
+- içeriği yazıp eklemek
+- bir CMS'i bağlamak
+- yayına alma (deployment) ayarlarını yapmak
 
-Agent hemen kod yazmaya başlarsa haritayı kaybediyor. Bir adımı unutuyor ya da tamamen başka bir yere kayıyor. Bu yüzden önce planı yazıyor. Plan, her maddesinde bir durum olan bir to-do listesi:
+Agent hemen koda başlarsa haritayı kaybeder: bir adımı unutur ya da işi tamamen başka bir yöne kaydırır. Bu yüzden önce planı yazar. Bu plan, her maddesinin bir durumu olan bir yapılacaklar listesidir:
 
 ```text
-[x] Kapsamı tanımla: tek sayfa, üç proje, bir iletişim formu
-[x] Stack'i seç: Next.js, static export, veritabanı yok
-[~] Layout'ları kur: header ve hero bitti, proje grid'i devam ediyor
-[ ] İçeriği yaz
-[ ] Bir CMS bağla
-[ ] Deployment'ı yapılandır
+[x] Define the scope: one page, three projects, a contact form
+[x] Choose the stack: Next.js, static export, no database
+[~] Build the layouts: header and hero done, project grid in progress
+[ ] Write the content in
+[ ] Wire up a CMS
+[ ] Configure deployment
 ```
 
-Sonra listede ilerliyor. Her adımdan sonra geri dönüp bitirdiğini işaretliyor ve sıradakini alıyor. Büyük iş küçük işlere dönüştü. Artık hangilerinin bittiğine dair yazılı bir kayıt var, yani hiçbir şey agent'ın hatırlamasına bağlı değil.
+Sonra listeyi tek tek işler. Her adımdan sonra listeye döner, bitirdiğini işaretler ve sıradaki maddeye geçer. Böylece büyük iş küçük işlere bölünmüş olur ve hangilerinin bittiğine dair yazılı bir kayıt bulunduğu için hiçbir şey agent'ın hatırlamasına bağlı kalmaz.
 
-İkinci etki daha az belli, ama daha önemli. Agent o listeyi her okuyup yeniden yazdığında, hedefi yakın context'e geri getiriyor. Bu tekrar tekrar oluyor. Manus buna **recitation ile attention'ı yönlendirmek** diyor. Bu, yukarıdaki akademik ton probleminin en doğrudan cevabı. Talimat attention payını kaybediyor, çünkü hiçbir şey onu tekrarlamıyor. Bir to-do listesi onu tekrarlıyor.
+İkinci etki daha az belli ama daha önemli. Agent o listeyi her okuyup yeniden yazdığında hedefi yakın context'e yeniden getirir ve bu, defalarca tekrarlanır. Manus buna **tekrar yoluyla dikkati yönlendirme (manipulating attention through recitation)** diyor. Bu, yukarıdaki akademik ton sorununa en doğrudan cevaptır: talimat, onu tekrar edecek bir şey olmadığı için dikkatteki payını kaybeder, yapılacaklar listesi ise onu tekrar eder.
 
-Recitation kelimesini akılda tut. Bu modülün sonunda geri geliyor, çünkü to-do listesi bunu yapan tek şey değil.
+Recitation (tekrar) kelimesini aklında tut; bu modülün sonunda yeniden karşına çıkacak, çünkü bunu yapan tek şey yapılacaklar listesi değil.
 
-**Nasıl çalışıyor.** Modern agent'lar bunu yerleşik bir tool olarak sunuyor. Senin agent'ında böyle bir tool yoksa ama agent bir filesystem'e ulaşabiliyorsa, bir markdown dosyası tutup aynı sonucu alabilir.
+**Nasıl çalışır?** Günümüzün agent'ları bunu hazır bir araç olarak sunuyor. Agent'ın böyle bir aracı yoksa ama bir dosya sistemine erişebiliyorsa, bir markdown dosyası tutarak aynı sonucu alabilir.
 
-> **NOT:** bunlar tekniklerin hepsi değil. [Advanced Context Engineering](../3_expert/advanced_context_engineering_tr.md) daha zor olanları, özellikle yazılım işi için olanları ele alıyor.
+> **NOT:** Bunlar tekniklerin tamamı değil. [İleri Seviye Context Engineering](../3_expert/advanced_context_engineering_tr.md) daha zor olanları ele alıyor,
+> özellikle yazılım işleri için.
 
-## Deep Agent'lar
+## Deep agent'lar
 
-**Deep agent'lar**, bütün bunlar olurken popüler olan bir agent mimarisi. Yukarıdaki her tekniği kendi agent'ına elle kurmak zorunda değilsin. Deep agent, onları bir arada paketleyen yapı. Bilinmeye değer birkaç mimari var ve [Advanced Agent Architectures](../3_expert/advanced_agent_architectures_tr.md) modülü bunları işliyor. Bu modüle ait olan ise bu, çünkü bu, tasarıma dönüşmüş context engineering.
+**Deep agent'lar**, bütün bunlar olurken yaygınlaşan bir agent mimarisi. Yukarıdaki tekniklerin hepsini kendi agent'ına elle tek tek eklemek zorunda değilsin. Deep agent, bunları bir araya getiren biçimdir. Bilmeye değer birkaç mimari var ve bunları [İleri Seviye Mimariler](../3_expert/advanced_agent_architectures_tr.md) modülü ele alıyor. Bu modülde anlatılması gereken mimari ise bu, çünkü context engineering'in bir tasarıma dönüşmüş hâli.
 
-Deep sayılmak için bir agent'ın en azından bunlara ihtiyacı var:
+Bir agent'ın deep sayılması için en azından şunlara sahip olması gerekir:
 
 ```mermaid
 mindmap
   root((Deep agent))
-    Planning
-      Sürekli güncellediği bir to-do listesi
+    Planlama
+      Sürekli güncellediği bir yapılacaklar listesi
       Context'e geri okunan hedef
     Subagents
-      Temiz bir window'a devretme
-      Sadece sonuç geri geliyor
-    Filesystem
-      Oku, yaz, ara
-      Window'dan uzun yaşayan memory
+      Temiz bir pencereye devretme
+      Yalnızca sonuç geri döner
+    Dosya sistemi
+      Okuma, yazma, arama
+      Pencereden uzun yaşayan bellek
 ```
 
-Philipp Schmid'in [Agents 2.0: From Shallow Loops to Deep Agents](https://www.philschmid.de/agents-2.0-deep-agents) yazısı bir dördüncüsünü ekliyor: çok uzun ve çok ayrıntılı bir system prompt. Bu prompt bazen binlerce token uzunluğunda. Agent'a ne zaman plan yapacağını, ne zaman subagent açacağını ve dosyalarını nasıl düzenleyeceğini söylüyor. NVIDIA'nın [What Is a Deep Agent?](https://www.nvidia.com/en-us/glossary/deep-agents/) sayfası aynı mimariyi aynı terimlerle anlatıyor. Bütün fikri **Agents 2.0** diye de duyacaksın. Bu, aynı şeyin başka bir adı. Bu ad, [AI Agent'lar](../1_fundamentals/agents_tr.md)'daki düz loop'tan kopuşu gerçekte olduğu kadar büyük gösteriyor. [The Agent 2.0 Era: Mastering Long-Horizon Tasks with Deep Agents](https://medium.com/@amirkiarafiei/the-agent-2-0-era-mastering-long-horizon-tasks-with-deep-agents-part-3-745705e13b16) onu baştan sona anlatıyor.
+Philipp Schmid'in [Agents 2.0: From Shallow Loops to Deep Agents](https://www.philschmid.de/agents-2.0-deep-agents) yazısı dördüncü bir unsur ekliyor: çok uzun ve çok özel bir system prompt. Bazen binlerce token'a ulaşıyor. Bu prompt, agent'a ne zaman plan yapacağını, ne zaman bir subagent başlatacağını ve dosyalarını nasıl düzenleyeceğini söylüyor. NVIDIA'nın [What Is a Deep Agent?](https://www.nvidia.com/en-us/glossary/deep-agents/) sayfası aynı mimariyi aynı terimlerle anlatıyor. Tüm bu fikre **Agents 2.0** dendiğini de duyacaksın. Aslında bu, başka bir adla anılan aynı şey. Bu ad, [AI Agents](../1_fundamentals/agents_tr.md) modülünde anlatılan düz döngüden kopuşun gerçek boyutunu yansıtıyor. [The Agent 2.0 Era: Mastering Long-Horizon Tasks with Deep Agents](https://medium.com/@amirkiarafiei/the-agent-2-0-era-mastering-long-horizon-tasks-with-deep-agents-part-3-745705e13b16) ise bunu baştan sona adım adım anlatıyor.
 
-Bir tane kurmak için başlanacak en kolay yer, LangChain'in [deepagents](https://github.com/langchain-ai/deepagents) kütüphanesi. Kendisine batteries-included bir agent harness diyor. Bataryalar tam olarak bu liste:
+Bir tane kurmak istersen en basit başlangıç noktası LangChain'in [deepagents](https://github.com/langchain-ai/deepagents) kütüphanesi. Kendini bir "batteries-included agent harness" (hazır parçalarla gelen bir agent iskeleti) olarak tanımlıyor. İçinde hazır gelen parçalar tam olarak şunlar:
 
 - planlama
-- takılabilir bir filesystem
-- izole window'ları olan subagent'lar
-- uzun thread'lerin özetlenmesi
+- takılabilir bir dosya sistemi
+- izole pencereli subagent'lar
+- uzun konuşmaların özetlenmesi
 
-[Deep Agents overview](https://docs.langchain.com/oss/python/deepagents/overview) de dokümantasyonu.
+Dokümantasyon için [Deep Agents overview](https://docs.langchain.com/oss/python/deepagents/overview) sayfasına bak.
 
-Asıl fayda şu: bir deep agent context engineering'in çoğunu senin için yapıyor. Özetliyor, offload ediyor, devrediyor, plan yapıyor. Bunların hiçbirini senin bağlaman gerekmiyor. Bazı teknikler hâlâ bir insan gerektiriyor. Onlar da advanced modülün konusu.
+Asıl kazanç şu: deep agent, context engineering'in büyük kısmını senin yerine yapar. Özetler, dosyalara taşır, işi devreder ve plan yapar; bunların hiçbirini kendin kurmak zorunda kalmazsın. Yine de bazı teknikler insan müdahalesi gerektirir ve bunlar ileri seviye modülün konusu.
 
-Ve dikkat edilecek nokta şu: zaten kullandığın agent'ların çoğu deep agent. Claude Code, Codex, Copilot ve OpenCode'un hepsinde planlama, subagent'lar ve bir filesystem var.
+Dikkat etmen gereken bir şey daha var: zaten kullandığın agent'ların çoğu deep agent. Claude Code, Codex, Copilot ve OpenCode'un hepsinde planlama, subagent'lar ve bir dosya sistemi var.
 
-## Long-horizon İşler
+## Uzun ufuklu (long-horizon) görevler
 
-Bütün bunları bir araya koyduğunda yeni bir şey ortaya çıkıyor: kimse izlemeden saatlerce çalışan agent'lar.
+Bütün bunları bir araya getirince yeni bir şey ortaya çıkıyor: kimse izlemeden saatlerce çalışan agent'lar.
 
-Birinin tek bir prompt'tan koca bir web sitesi ya da çalışan bir oyun çıkardığını muhtemelen gördün. Bunlar **long-horizon** işler. Bu modüldeki teknikler sayesinde mümkün oldular. Şunların hepsini yapabilen bir agent düşün:
+Muhtemelen birinin tek bir prompt'tan koca bir web sitesi ya da çalışan bir oyun çıkardığını görmüşsündür. Bunlara **long-horizon görevler** denir ve bunlar, bu modüldeki tekniklerin sayesinde mümkün oldu. Şunların hepsini yapabilen bir agent düşün:
 
-- kocaman bir işi adımlara bölmek
+- devasa bir işi adımlara bölmek
 - bu adımları planlamak
 - kendi notlarını yazmak
-- ihtiyaç duymadığını offload etmek
-- pahalı kısımlar için subagent açmak
+- ihtiyaç duymadığı şeyleri dosyalara taşımak
+- pahalı kısımlar için subagent'lar başlatmak
 - kendi context'ini özetlemek
 
-Böyle bir agent, eskiden işin takibini kaybedeceği noktanın çok ötesine kadar devam edebiliyor.
+Böyle bir agent, eskiden görevi kaybedeceği noktanın çok ötesine kadar devam edebilir.
 
-Bunun ne kadar ilerlediğinin gerçek bir ölçümü var ve bu ölçüm pazarlamadan daha faydalı. METR'in [Measuring AI Ability to Complete Long Software Tasks](https://arxiv.org/abs/2503.14499) çalışması basit bir soru soruyor. Bir modelin denemelerin yaklaşık yarısında bitirebildiği işleri al. O işler bir insanın ne kadar zamanını alıyor? O sayı modelin **time horizon**'u. Makale çıktığında Claude 3.7 Sonnet kabaca 50 dakikalık insan işindeydi. Trend çizgisi de 2019'dan beri yaklaşık yedi ayda bir ikiye katlanıyor. Bu çizgiyi uzatırsan, bir ay süren işler beş yıl içinde geliyor. METR her frontier model için [güncel sayıları](https://metr.org/time-horizons/) tek bir grafikte, hem %50 hem %80 başarıda tutuyor. Bir agent'ın "altı saat çalıştığı" iddiasını okumanın dürüst yolu da bu grafik.
+Bunun ne kadar ilerlediğine dair gerçek bir ölçüm var ve bu, pazarlama dilinden çok daha faydalı. METR'ın [Measuring AI Ability to Complete Long Software Tasks](https://arxiv.org/abs/2503.14499) çalışması basit bir soru soruyor: Bir modelin yaklaşık yarısında başarıyla tamamladığı görevleri al. Bu görevleri bir insan ne kadar sürede yapardı? Bu sayı, modelin **time horizon**'ıdır (zaman ufku). Makale yayımlandığında Claude 3.7 Sonnet, yaklaşık 50 dakikalık insan çalışmasına denk geliyordu. 2019'dan beri trend çizgisi yaklaşık her yedi ayda bir ikiye katlanıyor. Bu çizgiyi uzatırsan, beş yıl içinde aylar süren görevler gelir. METR, her öncü model için [güncel sayıları](https://metr.org/time-horizons/) tek bir grafikte tutuyor; hem %50 hem de %80 başarı oranında. Bir agent'ın "altı saat boyunca çalıştığı" iddiasını dürüstçe okumanın yolu bu grafik.
 
-Long-horizon 2026'nın anahtar kelimesi ve her şirket onun peşinde. Çünkü sana işinde yardım eden bir agent ile işi kendisi yapan bir agent arasındaki fark bu. Manşet yerine araştırma manzarasını istersen [Awesome-Long-Horizon-Agents](https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents) listesine bak. Bu, güncel tutulan bir okuma listesi. Bütün alanı iki kısma ayırıyor: modelin etrafında ne kurduğun ve modelin içinde ne değiştirdiğin.
+Long-horizon, 2026'nın anahtar kelimesi ve her şirket peşinde. Peşinde olmalarının nedeni basit: sana iş yapmada yardımcı olan bir agent ile işi kendisi yapan bir agent arasındaki fark bu. Manşetler yerine araştırmanın genel manzarasına bakmak istersen, [Awesome-Long-Horizon-Agents](https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents) deposuna bak. Bu, sürekli güncellenen bir okuma listesi; tüm alanı iki parçaya ayırıyor: modelin etrafında ne inşa ettiğin ve modelin içinde neyi değiştirdiğin.
 
-## Bir Context Engineering Tool'u Olarak Chain of Thought
+## Bir context engineering aracı olarak düşünce zinciri (chain of thought)
 
-Son bir şey daha var ve tam olarak bu modülle bir öncekinin arasında duruyor.
+Son bir şey kaldı ve bu, tam olarak bu modül ile bir öncekinin arasında duruyor.
 
-[Prompt Engineering](prompt_engineering_tr.md)'deki chain of thought tek bir cevabı iyileştirmekten fazlasını yapıyor. Uzun bir session'ı da yolunda tutuyor. Model akıl yürütmesini yazarken hedefi kendine tekrarlıyor. Akademik tonundan kayan kitabı düşün. Reasoning açıkken, session'ın aynı noktasındaki trace şuna benzer bir şey oluyor:
+[Prompt Engineering](prompt_engineering_tr.md) modülündeki düşünce zinciri (chain of thought) yalnızca tek bir cevabı iyileştirmekle kalmaz. Uzun bir oturumu da yolunda tutar. Model akıl yürütmesini yazdığında hedefi kendi kendine tekrar eder. Akademik tonundan sapan kitap örneğine dönelim. Akıl yürütme açıkken oturumun aynı noktasındaki iz şöyle bir şeye benziyor:
 
 ```text
 <thinking>
-Kullanıcı 8. bölümü istiyor, konusu Amerikan toplumunda argo. Başlamadan
-önce: bu projenin başındaki talimatı baştan sona net bir akademik tondu,
-ve o geri alınmadı. Konu resmî değil, ama işlenişi öyle olmamalı.
-Akademik register, argo sadece alıntılanan örnekler olarak.
+The user wants section 8, which is about slang in American society. Before I
+start: their instruction from the beginning of this project was a clear academic
+tone throughout, and that has not been withdrawn. The subject is informal, but
+the treatment of it should not be. Academic register, slang only as quoted
+examples.
 </thinking>
 ```
 
-Hiçbir şey getirilmedi ve window'a hiçbir şey eklenmedi. Model talimatı kendi yakın context'ine geri yazdı. Attention'ın en ucuz olduğu yer de orası.
+Hiçbir şey çekilmedi, pencereye de hiçbir şey eklenmedi. Model talimatı, dikkatin en az çaba gerektirdiği yere, kendi yakın context'ine geri yazdı.
 
-Bu, to-do listesinin yaptığı hamlenin aynısı. Recitation kelimesini akılda tutmaya değmesinin sebebi de bu. İki teknik de **önemli olan şeyi, modelin yazmak üzere olduğu yerin yakınında tekrar söyleyerek** çalışıyor. To-do listesi planı tekrarlıyor. Chain of thought kısıtı tekrarlıyor. Attention yakın ve tekrarlanan şeye gidiyor. Yani modelin 800K token'da hâlâ önemsemesini istediğin bir şey varsa, onu bir şeyin tekrarlaması gerekiyor. Kendi hâline bırakılırsa soluyor. Bu, chain of thought'un bir context engineering tool'u olarak çalışması. Modüldeki en ucuz tool da bu: onu kurmuyorsun, açıyorsun.
+Bu, yapılacaklar listesinin de yaptığı şeydir ve recitation kelimesini hatırlamaya değmesinin nedeni de budur. İki teknik de **önemli olanı, modelin yazmak üzere olduğu yerin hemen yakınında tekrar söyleyerek** çalışır: yapılacaklar listesi planı, düşünce zinciri ise kısıtı tekrar eder. Dikkat, yakında olan ve tekrar edilen şeye gider. Dolayısıyla model 800K token'da bile bir şeyi önemsemeye devam etsin istiyorsan, o şeyin bir yolla tekrar edilmesi gerekir; kendi haline bırakılırsa silikleşir. Düşünce zincirinin bir context engineering aracı olarak işlemesi budur. Üstelik bu modüldeki en ucuz araç: onu kurman gerekmez, yalnızca açman yeter.
 
 ## Bu serinin neresindeyiz
 
@@ -222,39 +224,39 @@ graph LR
 
 ## Özet
 
-Bir context window sınırlı ve dolmadan önce kalitesi düşmeye başlıyor. Daha fazla context cevabı kötüleştiriyor. Bu, 2025'te herkesin varsaydığının tersi. Sebebi, attention'ın window'da ne varsa ona bölünen sabit bir bütçe olması.
+Bir context penceresi sınırlıdır ve dolmadan önce kalitesi düşer. Daha fazla context ise cevabı daha kötü yapar; bu, 2025'te herkesin varsaydığının tam tersidir. Nedeni, dikkatin sabit bir bütçe olması ve pencerede ne varsa aralarında bölünmesi.
 
-Context engineering, oraya neyin girmeyi hak ettiğine karar vermek. Tekniklerin hepsi aynı hamlenin versiyonları: token'ları window'dan çıkar ve onlara geri dönen bir yol bırak.
+Context engineering, pencerede neyin yer alacağına karar vermektir. Bütün teknikler aynı hamlenin farklı biçimleri: token'ları pencereden çıkarmak ve onlara geri dönmenin bir yolunu tutmak.
 
 - Geçmişi özetle.
-- Bilgileri dosyalara offload et.
+- Bilgileri dosyalara taşı.
 - Dokümantasyonu agent'ın gidip okuyabileceği bir yerde bırak.
-- Pahalı işi kendi window'u olan bir subagent'a devret.
-- Hedefi yakın context'e geri okuyan bir to-do listesi tut.
+- Maliyetli işi kendi penceresi olan bir subagent'a devret.
+- Hedefi yakın context'e geri okutan bir yapılacaklar listesi tut.
 
-Deep agent, bunun çoğunu senin için yapan agent. Her gün kullandığın coding agent'ların zaten birer deep agent olmasının sebebi de bu.
+Deep agent, bunların çoğunu senin yerine yapan agent'tır. Bu yüzden her gün kullandığın kodlama agent'ları zaten deep agent'tır.
 
-Sırada: coding agent'ların kendisi ve birini genişletmenin altı yolu.
+Sırada kodlama agent'larının kendisi ve birini genişletmenin altı yolu var.
 
-**Hızlı Kontrol**: bir model neden window'u dolmadan önce kötüleşiyor, ve bir subagent gerçekte sana neyi kazandırıyor?
+**Hızlı Kontrol**: Model pencere dolmadan neden daha kötü yanıt verir ve bir subagent sana aslında neyi kazandırır?
 
 ## Kaynaklar
 
-- [Context Rot: How Increasing Input Tokens Impacts LLM Performance](https://www.trychroma.com/research/context-rot): bütün bunların arkasındaki Chroma çalışması, 18 model, ve needle ile distractor deneyleri
-- [How Long Contexts Fail](https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html): Drew Breunig'in adlandırdığı dört hata, sürekli alıntılanan erken bir hallucination'dan eski bilgiyle çelişen yeni bilgiye kadar
-- [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents): en kapsamlı işlenişi, ve compaction ile subagent rehberliğinin kaynağı
-- [The New Skill in AI is Not Prompting, It's Context Engineering](https://www.philschmid.de/context-engineering): en kısa iyi tanım
-- [Context Engineering](https://www.langchain.com/blog/context-engineering-for-agents): dört fiil (write, select, compress ve isolate)
-- [Context Engineering for Agents](https://rlancemartin.github.io/2025/06/23/context_engineering/): aynı dördü, yeniden kullanmaya değer diyagramlarla
-- [Karpathy on context engineering](https://x.com/karpathy/status/1937902205765607626): terimi herkesin önüne koyan post
-- [Context Engineering for AI Agents: Lessons from Building Manus](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus): gerçek deneyimden gelen somut dersler, özellikle filesystem ile recitation dersleri
-- [Stop stuffing your context window (here's why)](https://youtube.com/shorts/9P36wMntNSI): izlemeyi tercih edersen kısa versiyon
-- [DeepWiki](https://deepwiki.org/): repo başına bir wiki, böylece agent'ın kodu okumak yerine kod hakkında okuyor
-- [Agents 2.0: From Shallow Loops to Deep Agents](https://www.philschmid.de/agents-2.0-deep-agents): bir agent'ı deep yapan şey, ve neden bir feature değil mimari olduğu
-- [What Is a Deep Agent?](https://www.nvidia.com/en-us/glossary/deep-agents/): aynı tanım, sade bir dille
-- [The Agent 2.0 Era: Mastering Long-Horizon Tasks with Deep Agents](https://medium.com/@amirkiarafiei/the-agent-2-0-era-mastering-long-horizon-tasks-with-deep-agents-part-3-745705e13b16): aynı mimari, baştan sona anlatılmış
-- [deepagents](https://github.com/langchain-ai/deepagents): kütüphane, ve onu dokümante eden [Deep Agents overview](https://docs.langchain.com/oss/python/deepagents/overview)
-- [Measuring AI Ability to Complete Long Software Tasks](https://arxiv.org/abs/2503.14499): time-horizon sayısının çıktığı yer, ve ikiye katlanma trendi
-- [Task-completion time horizons](https://metr.org/time-horizons/): model başına güncel sayılar, güncel tutuluyor
-- [Awesome-Long-Horizon-Agents](https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents): araştırma manzarası, sıralanmış, bu modülden daha derine gitmek istersen
-- [Advanced Context Engineering](../3_expert/advanced_context_engineering_tr.md): bu modülün dışarıda bıraktığı teknikler
+- [Context Rot: How Increasing Input Tokens Impacts LLM Performance](https://www.trychroma.com/research/context-rot): bütün bunların arkasındaki Chroma çalışması. 18 model ve iğne ile dikkat dağıtıcı deneylerini içerir.
+- [How Long Contexts Fail](https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html): Drew Breunig'in adlandırdığı dört hata türü. Bunlar, sürekli alıntılanan erken bir halüsinasyondan eskiyle çelişen yeni bilgiye kadar uzanıyor.
+- [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents): en eksiksiz ele alış ve compaction ile subagent rehberinin kaynağı.
+- [The New Skill in AI is Not Prompting, It's Context Engineering](https://www.philschmid.de/context-engineering): en kısa iyi tanım.
+- [Context Engineering](https://www.langchain.com/blog/context-engineering-for-agents): dört fiil: write (yazmak), select (seçmek), compress (sıkıştırmak) ve isolate (izole etmek).
+- [Context Engineering for Agents](https://rlancemartin.github.io/2025/06/23/context_engineering/): aynı dört fiil, yeniden kullanmaya değer diyagramlarla.
+- [Karpathy'nin context engineering üzerine paylaşımı](https://x.com/karpathy/status/1937902205765607626): terimi herkesin önüne koyan paylaşım.
+- [Context Engineering for AI Agents: Lessons from Building Manus](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus): gerçek deneyimden somut dersler, özellikle dosya sistemi ve recitation dersleri.
+- [Stop stuffing your context window (here's why)](https://youtube.com/shorts/9P36wMntNSI): kısa versiyonu, izlemeyi tercih edersen.
+- [DeepWiki](https://deepwiki.org/): her depo için bir wiki. Böylece agent kodu okumak yerine kod hakkında okur.
+- [Agents 2.0: From Shallow Loops to Deep Agents](https://www.philschmid.de/agents-2.0-deep-agents): bir agent'ı deep yapan şeyin ne olduğu ve neden bir özellik değil de bir mimari olduğu.
+- [What Is a Deep Agent?](https://www.nvidia.com/en-us/glossary/deep-agents/): aynı tanım, sade bir dille.
+- [The Agent 2.0 Era: Mastering Long-Horizon Tasks with Deep Agents](https://medium.com/@amirkiarafiei/the-agent-2-0-era-mastering-long-horizon-tasks-with-deep-agents-part-3-745705e13b16): aynı mimari, baştan sona anlatılmış.
+- [deepagents](https://github.com/langchain-ai/deepagents): kütüphane. Belgeleri için [Deep Agents overview](https://docs.langchain.com/oss/python/deepagents/overview).
+- [Measuring AI Ability to Complete Long Software Tasks](https://arxiv.org/abs/2503.14499): zaman ufku sayısının kaynağı ve ikiye katlanma trendi.
+- [Task-completion time horizons](https://metr.org/time-horizons/): her model için güncel sayılar.
+- [Awesome-Long-Horizon-Agents](https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents): araştırma manzarası, sıralanmış. Bu modülden daha derine inmek istersen.
+- [İleri Seviye Context Engineering](../3_expert/advanced_context_engineering_tr.md): bu modülün dışarıda bıraktığı teknikler.

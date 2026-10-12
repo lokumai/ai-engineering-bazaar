@@ -1,106 +1,74 @@
 # Prompt Engineering
 
-[LLM Fundamentals](../1_fundamentals/llms_tr.md), prompt engineering hakkında tek bir paragrafla
-bitiyordu. Bu modül o paragrafın açılmış hâli.
+[LLM Temelleri](../1_fundamentals/llms_tr.md) modülü, prompt engineering hakkında tek bir paragrafla bitiyordu. Bu modül o paragrafı açıp genişletiyor.
 
-> **Prompt engineering, modeli beklediğin output'a götüren bir input yazmak.**
+> **Prompt engineering, modelin beklediğin çıktıya ulaşmasını sağlayan bir girdi yazmaktır.**
 
-Bir modelin ne olduğundan başla. Model pre-trained bir neural network. Weight'leri donmuş,
-state'i ve memory'si yok. Her seferinde input girer, output çıkar ve hiçbir şey bir sonrakine
-taşınmaz. Yani model sabit ve senin kontrol ettiğin tek şey input. Bu yüzden geri gelen cevabın
-kalitesine karar verebilecek tek şey de input.
+Önce modelin ne olduğuna bakalım. Model, önceden eğitilmiş bir sinir ağıdır; ağırlıkları donmuştur ve durumu ya da hafızası yoktur. Her seferinde girdi alır, çıktı üretir ve bir sonraki seferde önceki seferden hiçbir şey hatırlamaz. Bu yüzden model sabit kalır, kontrol edebildiğin tek şey de girdidir. Çıktının kalitesini belirleyebilecek tek şey bu girdi olur.
 
-[LLM Fundamentals](../1_fundamentals/llms_tr.md) modelin ne hesapladığını yazmıştı:
+[LLM Temelleri](../1_fundamentals/llms_tr.md) modelin neyi hesapladığını şöyle yazmıştı:
 
 ```
 P(next token | context)
 ```
 
-Senin prompt'un *o* context. Yani bütün iş tek bir arama problemi:
+Prompt'un kendisi tam olarak bu context'tir. Yani bütün iş tek bir arama problemine dönüşüyor:
 
 ```
 best prompt = the prompt that maximises P(the output you want | prompt)
 ```
 
-Aşağıdaki her şey tek bir soruyu cevaplayan bir teknik: prompt'u nasıl yazarsan beklediğin
-output'u alırsın?
+Bundan sonra anlatılan her teknik tek bir soruya cevap veriyor: çıktıyı beklediğin gibi almak için prompt'u nasıl yazarsın?
 
-## Prompt Engineering Neden Gerekli?
+## Peki Prompt Engineering Neden Hâlâ Gerekli?
 
-Muhtemelen aklına zaten gelmiş bir itiraz var. Weight'ler donmuşsa ve model hiçbir şey
-hatırlamıyorsa, aynı soruyu iki farklı şekilde sorduğunda neden iki farklı cevap alıyorsun?
+Muhtemelen aklına şöyle bir itiraz gelmiştir: ağırlıklar donmuşsa ve model hiçbir şey hatırlamıyorsa, aynı soruyu iki farklı şekilde sorduğunda neden iki farklı cevap alıyorsun?
 
-Çünkü iki farklı ifade aynı input değil. Ve model soruları cevaplamıyor. Bir network çalıştırıyor.
+Çünkü iki farklı ifade, iki farklı girdi demektir. Üstelik model, soruları gerçekten cevaplamaktan çok bir sinir ağını çalıştırıyor.
 
-O network'ün içinde neuron'lar var ve hangilerinin ateşleneceğine prompt karar veriyor. Bazıları
-güçlü aktive oluyor, bazıları zayıf, bazıları hiç aktive olmuyor. Kelimeleri değiştirdiğinde o
-deseni değiştiriyorsun. Desen değişince output da değişiyor.
+Bu ağın içinde nöronlar var ve prompt, hangilerinin ateşleneceğine karar veriyor. Bazıları güçlü bir şekilde devreye giriyor, bazıları zayıf kalıyor, bazıları da hiç devreye girmiyor. Kelimeleri değiştirdiğinde bu örüntü değişiyor ve örüntü değiştiğinde çıktı da değişiyor.
 
-![Which neurons light up](./images/neurons-activation.jpeg)  
-*İki durumda da weight'ler aynı. Prompt sadece hangilerinin kullanılacağına karar veriyor. Aynı modelin bir aritmetik sorusunu kendisinin bir parçasıyla, bir resim sorusunu başka bir parçasıyla cevaplamasının sebebi bu.*
+![Hangi nöronların yandığı](./images/neurons-activation.jpeg)  
+*Ağırlıklar iki durumda da aynı. Prompt yalnızca hangilerinin kullanılacağına karar veriyor. Aynı model, aritmetik soruyu kendisinin bir bölümüyle, resim sorusunu başka bir bölümüyle yanıtlamasının sebebi bu.*
 
-Bir DJ mixer'ı düşün. Volume, bass ve echo için birer düğmesi var. DJ donanımı hiç değiştirmiyor.
-Düğmeleri çeviriyor, dinliyor ve oda doğru duyulana kadar tekrar çeviriyor. Senin prompt'un o
-düğmelerin bir ayarı. Prompt engineering de network'ün bu iş için ihtiyacın olan kısımlarını
-yükselten metni yazmak.
+Bir DJ mikserini düşün. Ses seviyesi, bas ve eko için birer düğmesi var ama DJ donanımı hiç değiştirmez. DJ düğmeleri çevirir, dinler ve odanın doğru ses çıkarana kadar tekrar çevirir. Senin prompt'un ise bu düğmelerin bir ayarıdır. Prompt engineering de bu iş için gereken ağ bölümlerini açacak metni yazmak demek.
 
-![Turning the knobs](./images/prompt-mixer.jpeg)  
-*Buradaki her düğme bu modülün kapsadığı bir şey. Hiçbiri elini uzatabileceğin bir panelde değil: onları oynatan tek şey prompt metni.*
+![Düğmeleri çevirmek](./images/prompt-mixer.jpeg)  
+*Her düğme bu modülde anlatılan bir şeye karşılık gelir. Ama hiçbiri dokunabileceğin bir panelde değil. Düğmeleri oynatan tek şey prompt metni.*
 
-Ama o düğmelerin etiketi yok ve elin onlara yetişmiyor. Onları oynatmanın tek yolu metin. Bu işin
-teorik değil deneysel olmasının sebebi bu. Senin görevin için doğru prompt'u kimsenin sana
-verememesinin sebebi de bu.
+Ama düğmelerin üzerinde etiket yok ve sana erişilebilir de değiller; onları hareket ettirmenin tek yolu metin. İşte bu yüzden prompt engineering teorik bir konu değil, deneysel bir iş. Aynı sebeple kimse, senin görevin için doğru prompt'u önceden veremez.
 
-## Kötü Bir Prompt'un Sana Maliyeti
+## Zayıf Bir Prompt'un Bedeli
 
-İki sürücü aynı arabayla aynı pistte tur atıyor ve farklı süreler çıkarıyor. Motor aynı, beygir
-gücü aynı, yol tutuş aynı, virajlar aynı. İyi sürücü aynı makineden daha fazlasını çıkarıyor, o
-kadar.
+İki sürücü aynı arabayla aynı pistte yarışıyor ve tur süreleri farklı çıkıyor. İkisinin motoru, beygir gücü, lastik tutuşu ve virajları aynı. Aradaki fark, daha iyi olan sürücünün makineden daha fazlasını çıkarmasından geliyor.
 
-Modeller de böyle çalışıyor ve bu, muhtemelen daha önce duyduğun bir şikâyeti açıklıyor. Prompt
-yazma becerisi az olan biri istediğini alamıyor. Sonra modelin zayıf olduğuna, o kadar zeki
-olmadığına ya da işin ancak yüzde yetmişini yapabildiğine karar veriyor. Bir başkası aynı modeli
-alıyor, daha iyi bir prompt yazıyor ve işi bitiriyor.
+Modeller de aynı şekilde çalışıyor ve bu, muhtemelen daha önce duyduğun bir şikâyeti açıklıyor. Prompt yazma becerisi az olan biri istediğini alamıyor ve modelin zayıf olduğuna, yeterince zeki olmadığına ya da işin yüzde yetmişini yapabildiğine karar veriyor. Başka biri aynı modeli eline alıp daha iyi bir prompt yazıyor ve işi bitiriyor.
 
-Yani bir model seni hayal kırıklığına uğrattığında, ilk soru hangi modele geçeceğin değil.
+Bu yüzden bir model seni hayal kırıklığına uğrattığında ilk soru, hangi modele geçeceğin olmamalı.
 
 ## 2026'da Prompt Engineering Öldü
 
 Evet, gerçekten.
 
-İlk LLM API'leri 2023 civarında kullanıma açıldığında modeller kırılgandı. İfadedeki küçük bir
-değişiklik iyi bir cevabı yanlış bir cevaba çevirebiliyordu. Bu hassasiyet hayal ürünü değildi,
-ölçülmüştü. O dönemin open model'lerinde, anlamı hiç değiştirmeyen format değişiklikleri doğruluğu
-[76 puana](https://arxiv.org/abs/2310.11324) kadar oynatıyordu. **Prompt Engineer** bir iş unvanıydı.
-Şirketler bütün gün deneme yanılma yapacak insanlar işe alıyordu. Bu insanlar, model beklenen
-output'u üretene kadar uğraşıyordu.
+2023 civarında ilk LLM API'leri kullanılabilir olduğunda modeller kırılgandı. Kelimelerde yapılan küçük bir değişiklik, iyi bir cevabı yanlış bir cevaba çevirebiliyordu. Bu hassasiyet hayal ürünü değildi, ölçülmüştü: o dönemin açık modellerinde anlamı değiştirmeyen biçim değişiklikleri doğruluğu [76 puana kadar](https://arxiv.org/abs/2310.11324) oynatabiliyordu. O zamanlar **Prompt Engineer** bir iş unvanıydı ve şirketler, model beklenen çıktıyı verene kadar deneme yanılmayla bütün günlerini geçirecek insanlar arıyordu.
 
-O günler geçti. Modeller artık çok daha yetenekli. Chain of thought gibi yeteneklerle geliyorlar
-(bu sayfanın ilerisinde anlatılıyor). Bu yetenekler, özensiz bir prompt'tan bile ne demek
-istediğini anlamalarını sağlıyor. 2026'da prompt engineering bir kariyer değil. Bu sistemlerle
-çalışan herkesten beklenen temel bir beceri.
+Bu günler geride kaldı, çünkü modeller artık çok daha yetenekli. Bu sayfanın ilerisinde anlatılan chain of thought gibi yeteneklerle geliyorlar ve bu yetenekler, modelin özensiz bir prompt'tan bile ne demek istediğini anlamasını sağlıyor. Bu yüzden 2026'da prompt engineering bir kariyer değil, bu sistemlerle çalışan herkesten beklenen temel bir beceri.
 
 ```mermaid
 graph TD
-    A["2023<br/>Küçük ifade değişiklikleri cevabı ters çeviriyor<br/>Prompt Engineer bir iş ilanı"] --> B["2024 ile 2025<br/>Instruction tuning iyileşiyor<br/>Modeller cevaplamadan önce düşünmeye eğitiliyor"]
-    B --> C["2026<br/>Özensiz prompt'lar çoğunlukla yine de çalışıyor<br/>Düşünme derinliği bir API parameter'ı<br/>Prompt yazmak varsayılıyor, işe alım konusu değil"]
+    A["2023<br/>Küçük kelime değişiklikleri cevabı tersine çevirir<br/>Prompt Engineer bir iş ilanıydı"] --> B["2024 ile 2025<br/>Instruction tuning iyileşiyor<br/>Modeller cevap vermeden önce akıl yürütmeye eğitiliyor"]
+    B --> C["2026<br/>Özensiz prompt'lar çoğunlukla hâlâ işe yarıyor<br/>Düşünme derinliği bir API parametresi<br/>Prompting beklenen bir beceri, işe alım kriteri değil"]
 ```
 
-Bu yüzden bu modül sadece günlük AI engineering işinde faydalı olanı kapsıyor. Konunun daha ileri
-kısmı [Advanced Prompting](../3_expert/advanced_prompting_tr.md) modülünde.
+Bu yüzden bu modül, yalnızca günlük bir AI mühendisliği işinde işe yarayan kısmı anlatıyor. Konunun daha ileri kısmı [İleri Seviye Prompting](../3_expert/advanced_prompting_tr.md) modülünde.
 
-Sadece faydalı kısmı değil de bütün kataloğu istiyorsan, [Prompt Engineering
-Guide](https://www.promptingguide.ai/) onu veriyor. Ayrıca aşağıdakileri bir müfredat olarak
-değil, başlangıç noktaları olarak gör. Prompt yazmak deneysel bir iş. Bir prompt yazıp output'u
-okuyarak ve prompt'u değiştirerek bu işte iyileşiyorsun.
+Tüm kataloğu istiyorsan, [Prompt Engineering Guide](https://www.promptingguide.ai/) hepsini içeriyor. Bu bölümde anlatılanları da bir müfredat olarak değil, başlangıç noktası olarak gör, çünkü prompting deneysel bir alan. Bu işte ustalaşmanın yolu, bir prompt yazmak, çıktısını okumak ve prompt'u değiştirmek.
 
-## İki Prompt Template'i
+## İki Prompt Şablonu
 
-Kural basit: daha açık ve daha detaylı bir prompt daha iyi bir cevap alıyor. Yine de iki
-template'i bilmek faydalı, çünkü "açık ve detaylı"nın pratikte ne demek olduğunu gösteriyorlar.
-Bu, sınırları tanımlanmış bir prompt demek.
+Kural basit: prompt ne kadar açık ve ayrıntılıysa cevap o kadar iyi olur. Yine de iki şablonu bilmek işe yarar, çünkü "açık ve ayrıntılı" ifadesinin pratikte ne anlama geldiğini gösteriyorlar. Pratikte bu, sınırları belli bir prompt demek.
 
-Basit olanı:
+Basit olan şu:
 
 ```text
 {Goal}
@@ -109,16 +77,15 @@ Basit olanı:
 {Context}
 ```
 
-- **Goal**: ne istediğin, bir iki cümleyle.
-- **Output Format**: cevabın hangi şekilde gelmesi gerektiği.
-- **Warnings**: modelin yapacağını zaten tahmin ettiğin hatalar.
-- **Context**: durumun hakkında, bir yabancının sana yardım edebilmek için bilmesi gereken her
-  şey.
+- **Goal**: ne istediğin, bir iki cümlede.
+- **Output Format**: cevabın alması gereken biçim.
+- **Warnings**: modelin yapmasını şimdiden beklediğin hatalar.
+- **Context**: senin durumunu anlatan, yabancı birinin sana yardım edebilmesi için bilmesi gereken her şey.
 
-![The anatomy of a simple prompt](./images/prompt-1.jpg)  
-*Context dump en uzun ve en özensiz kısım ve bunda bir sorun yok. Hiçbir template'in senin yerine yazamayacağı kısım o.*
+![Basit bir prompt'un yapısı](./images/prompt-1.jpg)  
+*Bağlam dökümü en uzun ve en az cilalı kısım, ve bu bir sorun değil. Hiçbir şablon bu kısmı senin yerine yazamaz.*
 
-Daha detaylı olanı:
+Ayrıntılı olanı şu:
 
 ```text
 {Role}
@@ -129,34 +96,27 @@ Daha detaylı olanı:
 {Stop Conditions}
 ```
 
-- **Role**: model çalışırken kim olmalı. Aşağıdaki role prompting bölümü bunu anlatıyor.
-- **Task**: işin kendisi, sıra önemliyse numaralı adımlar hâlinde.
-- **Context**: arka plan, kısıtlar ve nelerden uzak duracağı.
-- **Reasoning**: bir cevaba karar vermeden önce nasıl düşünmesini istediğin.
-- **Output Format**: tam olarak hangi şekilde, ihtiyacın varsa tablo kolonlarına kadar.
-- **Stop Conditions**: modelin işinin bittiğini nasıl anlayacağı.
+- **Role**: model çalışırken kim olmalı. Aşağıdaki Role Prompting bölümü bunu ele alıyor.
+- **Task**: işin kendisi. Sıra önemliyse adımları numaralandır.
+- **Context**: arka plan, kısıtlar ve neyden kaçınılacağı.
+- **Reasoning**: modelin bir cevaba karar vermeden önce nasıl düşünmesini istediğin.
+- **Output Format**: tam biçim, gerekiyorsa tablo sütunları dahil.
+- **Stop Conditions**: modelin ne zaman bittiğini nasıl anlayacağı.
 
-![The anatomy of a detailed prompt](./images/prompt-2.png)  
-*Stop condition'lar insanların atladığı slot. Stop condition yoksa "bitti", senin tanımın değil modelin tahmini oluyor.*
+![Ayrıntılı bir prompt'un yapısı](./images/prompt-2.png)  
+*Stop conditions, insanların en sık unuttuğu bölüm. Bu bölüm yoksa "bitti" senin tanımın olmaz, modelin tahmini olur.*
 
-Bugünün modelleri iki template'e de sıkı sıkıya uymanı gerektirmiyor ve çoğu zaman uymayacaksın.
-Template'ler burada, "açık bir prompt yaz" belirsiz bir tavsiye olmaktan çıksın diye var.
+Bugünkü modellerin bu şablonlardan birine sıkı sıkıya uymanı gerektirmediği gibi, çoğu zaman da uymayacaksın. Şablonlar, "açık bir prompt yaz" gibi muğlak bir öğütten somut bir şey çıkarmak için burada.
 
 ## In-context Learning ve Few-shot Prompting
 
-Modeller weight'lerinde olmayan şeyleri öğrenebiliyor. Bunu pre-training'le de, fine-tuning'le de
-öğrenmiyorlar. Context'te duran şeyden öğreniyorlar, yani [Memory](../1_fundamentals/memory_tr.md)
-modülündeki working memory'den. Buna **in-context learning**, kısaca ICL deniyor.
+Modeller, ağırlıklarında olmayan şeyleri öğrenebilir; bunu ne pre-training ile ne de fine-tuning ile yaparlar. Bilgiyi context'ten, yani [Memory](../1_fundamentals/memory_tr.md) modülünde anlatılan çalışma belleğinden alırlar. Buna **in-context learning** deniyor, kısaca ICL.
 
-RAG'in çalışmasının sebebi de bu. [RAG & Embeddings](../1_fundamentals/rag_tr.md) modülünde
-weight'ler hiç değişmiyor. Getirilen dokümanlar context'e giriyor ve model onları hemen kullanıyor.
-Kütüphane kapalı kalıyor, sen ihtiyacın olanı masaya koyuyorsun.
+RAG'in çalışmasının sebebi de bu: [Retrieval-Augmented Generation (RAG)](../1_fundamentals/rag_tr.md) modülünde ağırlıklar hiç değişmez, getirilen dokümanlar context'e girer ve model onları hemen kullanır. Kitaplık kapalı kalır, sen de ihtiyacın olanı masana koyarsın.
 
-İki template'e tekrar bak: her ikisinde de context için bir slot var. O slot, modele bir saniye
-öncesine kadar sahip olmadığı bilgiyi verdiğin tek yer.
+İki şablona tekrar baktığında, ikisinde de bir context alanı olduğunu görürsün. Bu alan, modele daha önce bilmediği bir bilgiyi verebildiğin tek yerdir.
 
-ICL sana bir teknik de kazandırıyor. **Few-shot prompting**, gerçek görevi vermeden önce modele
-görevin doğru yapılmış birkaç örneğini göstermek demek:
+ICL bize bir teknik de sunuyor. **Few-shot prompting**, asıl görevi vermeden önce modele görevin birkaç doğru örneğini göstermek anlamına gelir:
 
 ```text
 Classify the sentiment of each message as positive, negative or neutral.
@@ -174,13 +134,9 @@ Message: "it works, but the app crashed twice"
 Sentiment:
 ```
 
-O üç örnek aynı anda iki iş yapıyor. Birincisi, label kümesini sabitliyorlar. Böylece cevap
-nüanslı bir paragraf değil, üç kelimeden biri oluyor. İkincisi, format'ı sabitliyorlar. Böylece
-cevap `Sentiment: <label>` olarak geliyor ve kodun onu okuyabiliyor. Tek başına bir talimatın
-başaramadığı yerde örneklerin başarmasının sebebi genelde bu kombinasyon.
+Bu üç örnek aynı anda iki iş görüyor. Birincisi etiket kümesini sabitliyor, yani cevap bir paragraf nüans yerine üç kelimeden biri oluyor. İkincisi biçimi sabitliyor: cevap `Sentiment: <label>` şeklinde geliyor ve kodun bunu okuyabiliyor. Bu iki işi birlikte yapmaları, örneklerin çoğu zaman tek başına bir talimatın başaramadığını başarmasının nedeni.
 
-Birkaç örnek kullanmak **few-shot**. Hiç örnek kullanmamak ise **zero-shot**. Bir chat penceresine
-her soru yazdığında yaptığın şey de zero-shot.
+Birkaç örnek kullanmaya **few-shot**, hiç örnek kullanmamaya ise **zero-shot** deniyor. Bir sohbet penceresine soru yazdığında her seferinde zero-shot yapmış oluyorsun.
 
 ## Prompt Engineering İpuçları
 
@@ -198,15 +154,11 @@ Daha etkili:
 Create an analytics dashboard. Include as many relevant features and interactions as possible. Go beyond the basics to create a fully-featured implementation.
 ```
 
-İkinci prompt daha kibar ya da daha iyi yazılmış değil. Farkı şu: "bitmiş" hâlin neye benzediği
-hakkında çok daha fazla şey söylüyor. İki örnek de Anthropic'in [prompting best
-practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)
-sayfasından.
+İkinci prompt daha kibar ya da daha iyi yazılmış değil. Aradaki fark, "bitmiş" halin nasıl görünmesi gerektiğini çok daha fazla anlatması. İki örnek de Anthropic'in [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices) dokümanından alındı.
 
-### Context Ekle, Sebeplerini de
+### Bağlam Ekle, Nedenini de Yaz
 
-Model context'te olan şeyden öğreniyor. O yüzden ona bir kuralın sadece ne olduğunu değil, *neden*
-var olduğunu da söyle.
+Model context'ten öğrendiği için ona bir kuralın yalnızca ne olduğunu değil, neden var olduğunu da anlat.
 
 Daha az etkili:
 
@@ -220,23 +172,20 @@ Daha etkili:
 Your response will be read aloud by a text-to-speech engine, so never use ellipses since the text-to-speech engine will not know how to pronounce them.
 ```
 
-İlki, modelin nedenini bilmeden uyacağı bir kural. İkincisi modelin genelleme yapmasını sağlıyor.
-Model, bir konuşma motorunun yanlış okuduğu diğer noktalama işaretlerinden de kaçınacak. Senin
-listelemeyi hiç düşünmediğin işaretler de buna dahil.
+İlk örnek, modelin nedenini bilmeden uymak zorunda olduğu bir kural. İkincisi ise modele genelleme yapabilmesine olanak tanıyor. Üstelik model, sen hiç listelememiş olsan bile konuşma motorunun yanlış okuyacağı başka noktalama işaretlerinden de uzak durur.
 
-### Prompt'a Bir Yapı Ver
+### Prompt'a Yapı Ver
 
-Çoğu zaman prompt'u bölümlere ayırmak istersin. Bölümler modele şunları gösterir:
+Bir prompt'u bölümlere ayırmak çoğu zaman işine yarar. Bölümler modele şunları gösterir:
 
-- hangi kısım talimat;
-- hangi kısım data;
-- hangi kısım hedef;
-- hangi kısım output'u tarif ediyor.
+- hangi kısmın bir talimat olduğunu;
+- hangi kısmın veri olduğunu;
+- hangi kısmın hedef olduğunu;
+- hangi kısmın çıktıyı tarif ettiğini.
 
-Yapı, prompt'u daha okunur yapar ve kısımları birbirinden ayırır. Sonuçları da değiştirir ve bu
-değişikliği ölçebilirsin.
+Yapı, prompt'u okunur kılmakla kalmaz, parçaları birbirinden ayrı tutar ve sonuçları da değiştirir. Bu değişikliği de ölçebilirsin.
 
-XML tag'leri kullanabilirsin. Anthropic'in modelleri bunlara göre ayarlanmış:
+XML etiketlerini de kullanabilirsin, çünkü Anthropic'in modelleri bu biçim için ayarlandı:
 
 ```xml
 <identity>
@@ -253,7 +202,7 @@ One line: BILLING, TECHNICAL or BOTH, followed by a one-sentence reason.
 </output_format>
 ```
 
-Aynı şeyin markdown hâli:
+Aynı şeyi markdown ile yapmak:
 
 ```markdown
 ## Identity
@@ -269,11 +218,9 @@ Read the whole ticket first. Ignore the customer's own guess about the cause.
 One line: BILLING, TECHNICAL or BOTH, followed by a one-sentence reason.
 ```
 
-İki format'ta da nesting çalışıyor ve model hiyerarşiyi hiyerarşi olarak okuyor. Bir `##`
-altındaki `###`, ona ait bir detay. Üst seviye daha fazla ağırlık taşıyor.
+İki biçimde de iç içe yapılar çalışır ve model hiyerarşiyi bir hiyerarşi olarak okur. Bir `##` altındaki `###`, ona ait bir ayrıntıdır. Üst seviye başlık daha fazla ağırlık taşır.
 
-Format'ın standart bir format olması da gerekmiyor. Uygun olduğunda kendi format'ını icat
-edebilirsin:
+Biçimin standart olması da şart değil. Uygun olduğunda kendi biçimini de uydurabilirsin:
 
 ```text
 Please read the emails below from my boss and my friend:
@@ -288,33 +235,25 @@ Write a poem for me.
 Please write a polite reply to both emails.
 ```
 
-Bu ayraçlar neden var? Onlar olmadan "Write a poem for me" tam olarak senden gelen bir talimat
-gibi görünüyor. Model de kimseye cevap yazmak yerine keyifle bir şiir yazabiliyor. Uzun ve
-kalabalık bir prompt'ta yapının sana kazandırdığı şeyin çoğu bu: model senin talimatlarını
-yapıştırdığın metinden ayırt edebiliyor. Bazen yapıştırılan metin sadece kafa karıştırıcı değil,
-düşmanca da olabilir. O zaman aynı problemin bir adı var, prompt injection, ve kendi modülü var:
-[Security](security_tr.md).
+Bu ayraçları neden kullanıyoruz? Onlar olmadan "Write a poem for me" cümlesi, tam olarak senden gelen bir talimat gibi görünür. Model memnuniyetle bir şiir yazabilir, ama kimseye cevap vermeyebilir. Uzun ve kalabalık bir prompt'ta yapının sana verdiği şey tam olarak bu: model kendi talimatlarını, yapıştırdığın metinden ayırabilir. Bazen yapıştırılan metin yalnızca kafa karıştırıcı değil, düşmanca da olabilir. O durumda aynı sorunun bir adı var: prompt injection. Bu konu kendi modülünü hak ediyor: [Security](security_tr.md).
 
 ## Chain of Thought
 
-Araştırmalar, duyduğun anda bariz gelen bir şey buldu. Bir model zor bir görevi daha küçük
-görevlere bölebilir ve ara adımları final cevaptan *önce* yazabilir. Bunu yaptığında final cevap
-iyileşiyor. Bu, aritmetiği kafanda değil kâğıt üzerinde yapmanla aynı şey.
+Araştırmacılar, bir kez duyunca bariz görünen bir şey buldu: bir model zor bir görevi daha küçük görevlere bölebilir ve nihai cevaptan *önce* ara adımları yazabilir. Bunu yaptığında nihai cevap daha iyi oluyor; bu, işlemi kafanda değil kağıda yazarak yapmaya benziyor.
 
-Bir modele şunu sor:
+Modele şunu sor:
 
 ```text
 The cafeteria had 23 apples. They used 20 for lunch and bought 6 more. How many now?
 ```
 
-Düz bir prompt'la doğrudan cevap veriyor:
+Düz bir prompt ile model doğrudan cevap verir:
 
 ```text
 Final Answer: 32 apples
 ```
 
-Bu yanlış. Şimdi modeli önce düşünmeye zorla. Bir cevaba karar vermeden önce ara sonuçlarını
-yazmasını iste:
+Bu cevap yanlış. Şimdi modeli önce düşünmeye zorla: bir cevaba karar vermeden önce ara sonuçlarını yazmasını sağla:
 
 ```text
 <thinking>
@@ -330,63 +269,37 @@ Step 2: final number after buying more. 3 + 6 = 9 apples.
 Final Answer: 9 apples
 ```
 
-Sihir gibi geliyor. Aslında ev işine daha yakın. Bir model **autoregressive**: yazdığı her token,
-bir sonraki token için okuduğu input'un parçası oluyor. `23 - 20 = 3`'ü yazdığında o sonuç artık
-context'inde duruyor. Böylece geri kalanı çözerken onu kafasında tutmak zorunda kalmıyor. Bir
-model için yazmak, düşünmek.
+Bu sihirli gibi duruyor, ama aslında bir düzen meselesi. Model **autoregressive** çalışır: yazdığı her token, bir sonraki token'ı okurken kullandığı girdinin parçası olur. `23 - 20 = 3` yazdığında bu sonuç artık context'inde ve model geri kalan işi yaparken sonucu kafasında tutmak zorunda kalmıyor. Model için yazmak, düşünmek demek.
 
-Bu kursun yazarı bir [Chain of Thought Visualizer](https://cot-visualizer.online/) yaptı. Onunla
-ikisini bir dizi bulmaca üzerinde yan yana izleyebilirsin. Bu bir benchmark değil, bir gösterim:
-düz taraf bilerek kötü cevap verecek şekilde yönlendiriliyor. Bütün bunun neden çalıştığını merak
-ediyorsan, ek okuma olarak [Why Can Large Language Models Generate Correct
-Chain-of-Thoughts?](https://arxiv.org/abs/2310.13571) var.
+Bu kursun yazarı, bir dizi bulmaca üzerinde iki yaklaşımı yan yana izleyebilmen için bir [Chain of Thought Visualizer](https://cot-visualizer.online/) geliştirdi. Bu bir demo, bir benchmark değil: düşünmeden cevap veren taraf, kasıtlı olarak kötü cevap verecek şekilde yönlendirildi. Bunun neden işe yaradığını öğrenmek için ek okuma olarak [Why Can Large Language Models Generate Correct Chain-of-Thoughts?](https://arxiv.org/abs/2310.13571) makalesi var.
 
-### O İş Unvanının Kaybolma Sebebi de Chain of Thought
+### Chain of Thought, Bu Unvanın Neden Kaybolduğunu da Açıklıyor
 
-2026'da neredeyse hiçbir zaman elle chain of thought prompt'u yazmıyorsun.
+2026'da chain of thought prompt'unu elle neredeyse hiç yazmazsın.
 
-ChatGPT ya da bir agent sana "düşünüyor" diye gösterdiğinde, o chain of thought. Bu, biri
-*hadi adım adım düşünelim* yazdığı için olmuyor. Model cevaplamadan önce düşünmeye eğitildiği için
-oluyor. Bunu her zaman yapıyor, sen istesen de istemesen de.
+ChatGPT ya da bir agent "düşünüyor" gösterdiğinde bu chain of thought'tur. Bu, birinin *let us think step by step* yazmasından değil, modelin cevap vermeden önce akıl yürütmek üzere eğitilmiş olmasından kaynaklanır. Sen istesen de istemesen de model her zaman böyle yapar.
 
-Modelin ne kadar düşüneceği artık bir prompt değil, bir kadran. İnsanlar bir modeli high
-thinking'de, low effort'ta ya da max effort'ta çalıştırmaktan bahsettiğinde kastettikleri şey bu.
-Anthropic'in [effort parameter](https://platform.claude.com/docs/en/build-with-claude/effort)'ı
-`low`, `medium`, `high`, `xhigh` ve `max` değerlerini alıyor. Diğer sağlayıcıların da aynı
-düğmenin kendi versiyonu var. Daha fazla düşünme, zor problemlerde daha iyi cevap demek. Aynı
-zamanda daha fazla maliyet, daha yavaş cevap ve daha hızlı dolan bir context window demek.
+Modelin ne kadar düşüneceği artık bir prompt değil, bir kadran. İnsanlar bir modeli high thinking, low effort ya da max effort ile çalıştırmaktan bahsettiğinde bu kadranı kastediyorlar. Anthropic'in [effort parameter](https://platform.claude.com/docs/en/build-with-claude/effort)'ı `low`, `medium`, `high`, `xhigh` ve `max` değerlerini alıyor. Diğer sağlayıcıların da aynı düğmenin kendi sürümleri var. Daha fazla düşünmek, zor problemlerde daha iyi cevaplar demek. Ama aynı zamanda daha fazla maliyet, daha yavaş cevaplar ve daha hızlı dolan bir context window demek.
 
-> **NOT: daha fazla düşünmek her zaman daha iyi değil.** İnsanlar gibi modeller de aşırı
-> düşünebiliyor ve aşırı düşündüklerinde performansları kötüleşiyor. Bu iyi belgelenmiş:
+> **NOT, daha fazla düşünmek her zaman daha iyi değil.** Tıpkı insanlar gibi, modeller de aşırı düşünebilir ve bunu yaptıklarında performansları düşer. Bu konu iyi belgelenmiş:
 >
-> - [Stop Overthinking](https://arxiv.org/abs/2503.16419) bütün alanı tarıyor.
-> - [The Danger of Overthinking](https://arxiv.org/abs/2502.08235) software engineering
->   görevlerinde neredeyse %30 daha iyi sonuç buldu. Bunu en az aşırı düşünen çözümleri seçerek
->   elde etti.
-> - [When More Thinking Hurts](https://aclanthology.org/2026.findings-acl.1199/) modellerin zaten
->   doğru olan cevapları terk ettiğini gösteriyor.
-> - [OptimalThinkingBench](https://proceedings.iclr.cc/paper_files/paper/2026/hash/0f63515b14f33c008158213c7b6191c6-Abstract-Conference.html)
->   hiçbir modelin önündeki soru için henüz doğru miktarda düşünmediği sonucuna varıyor.
+> - [Stop Overthinking](https://arxiv.org/abs/2503.16419) bu alanın tamamını derliyor.
+> - [The Danger of Overthinking](https://arxiv.org/abs/2502.08235) yazılım mühendisliği görevlerinde neredeyse 30% daha iyi sonuç buldu. Bu sonucu, en az aşırı düşünen çözümleri seçerek elde etti.
+> - [When More Thinking Hurts](https://aclanthology.org/2026.findings-acl.1199/) modellerin zaten doğru olan cevapları terk ettiğini gösteriyor.
+> - [OptimalThinkingBench](https://proceedings.iclr.cc/paper_files/paper/2026/hash/0f63515b14f33c008158213c7b6191c6-Abstract-Conference.html) hiçbir modelin, önündeki soru için doğru miktarda düşünmediği sonucuna varıyor.
 
-Yani gerçek beceri, düşünme bütçesini görevin zorluğuyla eşleştirmek. Bu bütçe de yazdığın bir
-cümle değil, ayarladığın bir parameter.
+Asıl beceri, düşünme bütçesini görevin zorluğuna göre ayarlayabilmektir. Bu bütçe, yazdığın bir cümle değil, ayarladığın bir parametredir.
 
 ## Role Prompting
 
-Role prompting, göreve girmeden önce modele bir iş, bir persona ya da bir karakter vermek.
+Role prompting, görevi vermeden önce modele bir iş, bir persona ya da bir karakter vermek demek.
 
-> **NOT: system prompt ne?** System prompt, context'in en tepesinde bir kez yer alıyor. Modelin
-> bütün konuşma boyunca nasıl davrandığını tanımlıyor. Onu kullanıcı değil, modelin ya da agent'ın
-> geliştiricisi yazıyor ve genelde uzun oluyor. Tool'ların schema ve açıklamalarıyla birlikte
-> kaydedildiği yer de burası ([Tool Calling](../1_fundamentals/tools_tr.md)). Gerçek system
-> prompt'ları görmek istersen, [system prompt leaks](https://github.com/asgeirtj/system_prompts_leaks)
-> bunları ChatGPT, Claude, Gemini, Grok ve diğerlerinden birebir toplamış.
+> **NOT, system prompt nedir?** System prompt, context'in en üstünde bir kez yer alır ve konuşmanın tamamında modelin nasıl davranacağını tanımlar. Onu kullanıcı değil, modelin ya da agent'ın geliştiricisi yazar ve genellikle uzun olur. Araçlar da burada, şemaları ve açıklamalarıyla birlikte kayıtlıdır ([LLM Tool Calling](../1_fundamentals/tools_tr.md)). Gerçek system prompt'ları görmek istersen, [system prompt leaks](https://github.com/asgeirtj/system_prompts_leaks) ChatGPT, Claude, Gemini, Grok ve diğerlerinin system prompt'larını kelimesi kelimesine topluyor.
 
-![Inside the system prompt](./images/system-prompt-context.jpeg)  
-*[LLM Fundamentals](../1_fundamentals/llms_tr.md) modülündeki figürün aynısı. Bir role, identity ve instruction kısmına girer. Bu kutudaki her şey kullanıcı bir şey söylemeden önce yazılıyor.*
+![System prompt'un içi](./images/system-prompt-context.jpeg)  
+*Bu şekil [LLM Temelleri](../1_fundamentals/llms_tr.md) modülündeki şeklin aynısı. Rol, kimlik ve talimatların yazıldığı yer burası. Bu kutudaki her şey, kullanıcı tek kelime etmeden önce yazılmış olur.*
 
-Role prompting'in buraya ait olmasının sebebi bu: bir role en iyi işini system prompt'ta yapıyor.
-Tekniğin örnekleri de göründükleri kadar basit:
+Bu yüzden role prompting burada anlatılıyor: bir rol işini en iyi system prompt'ta yapar. Tekniğin kendisine dair örnekler göründükleri kadar basit:
 
 ```text
 Act as a senior software engineer. Review this code and find security bugs.
@@ -396,46 +309,21 @@ Act as a senior software engineer. Review this code and find security bugs.
 You are William Shakespeare. Write a short poem about summer.
 ```
 
-Bir role iki şeyi iyi yapıyor. Birincisi, bakış açısını kuruyor: modele kim olduğunu söylüyor,
-örneğin bir İK müdürü, bir aşçı ya da bir data science mülakatçısı. İkincisi, ton ve stili
-şekillendiriyor. Kelime dağarcığını, varsayılan uzmanlık seviyesini ve format'ı o role'e
-uyduruyor.
+Bir rol iki şeyi iyi yapar. Birincisi bakış açısını belirler ve modele kim olduğunu söyler; bu bir İK müdürü, bir şef ya da bir veri bilimi mülakatçısı olabilir. İkincisi tonu ve üslubu şekillendirir: kelime seçimini, varsayılan uzmanlık seviyesini ve biçimlendirmeyi o rolle uyumlu hale getirir.
 
-Ama bir role modeli güvenilir şekilde daha zeki yapmıyor. İlk zamanların umudu buydu ve tutmadı.
-System prompt'taki persona'lar geniş bir soru yelpazesinde
-[performansı iyileştirmiyor](https://arxiv.org/abs/2311.10054). 2026'daki bir devam çalışması da
-persona prompting'in [uzmanlık derinliğini artırırken netliği
-düşürdüğünü](https://arxiv.org/abs/2605.29420) buldu. Etkisi soruya ve alana bağlı. Bir role'ü,
-bir cevabın *nasıl* okunduğunu şekillendirmek için kullan. Modelin yapabileceklerinin tavanını
-yükseltmesini bekleme.
+Ama rol, modeli güvenilir biçimde daha akıllı yapmaz. Erken dönemde bunun böyle olacağı umuluyordu, ama bu doğru çıkmadı: system prompt'taki personalar, geniş bir soru yelpazesinde [performansı artırmıyor](https://arxiv.org/abs/2311.10054). 2026'daki bir takip çalışması ise persona prompting'in [uzmanlık derinliğini artırıp açıklığı azalttığını](https://arxiv.org/abs/2605.29420) buldu. Etki soruya ve alana bağlı. Bu yüzden rolü, bir cevabın *nasıl* okunacağını şekillendirmek için kullan ve modelin yapabildiklerinin tavanını yükseltmesini bekleme.
 
-Role'ler en çok agent kurarken işe yarıyor. Bir agent tasarlamaktan bahsederken çoğunlukla
-kastettiğimiz şey, tek bir iş için bir system prompt ve bir tool kümesi seçmek. Örneğin, diyelim ki
-bir code review ekibi istiyorsun:
+Roller en çok agent kurarken işe yarar. Bir agent tasarladığımızda genellikle tek bir iş için bir system prompt ile bir araç seti seçiyoruz. Diyelim ki bir kod inceleme ekibi kurmak istiyorsun:
 
-1. **Code Review Agent.** System prompt: kodu yapısal, mantıksal ve mimari kusurlar için incele.
-   Bug'ların ve performans darboğazlarının maddeli bir listesini döndür. Stil ya da security
-   hakkında hiç yorum yapma. Tool'lar: `fetch_repository_files`, `run_ast_parser`.
-2. **Security Auditor Agent.** System prompt: sadece vulnerability, veri sızıntısı ve dependency
-   riskleri için tara. Her birini High, Medium ya da Low olarak derecelendir. Feature ya da
-   refactoring önerme. Tool'lar: `run_sast_scanner`, `check_cve_database`.
-3. **Clean Code Formatter Agent.** System prompt: çalışan kodu okunabilirlik ve bakım kolaylığı için
-   refactor et. DRY ve standart isimlendirmeyi uygula. Mantığı değiştirme ve bug arama. Tool'lar:
-   `execute_linter_auto_fix`, `generate_docstrings`.
+1. **Code Review Agent.** System prompt: kodu yapısal, mantıksal ve mimari hatalar açısından incele. Hataları ve performans darboğazlarını madde işaretli bir listede döndür. Stil ya da güvenlik hakkında asla yorum yapma. Araçlar: `fetch_repository_files`, `run_ast_parser`.
+2. **Security Auditor Agent.** System prompt: yalnızca güvenlik açıklarını, veri sızıntılarını ve bağımlılık risklerini tara. Her birini High, Medium ya da Low olarak derecelendir. Özellik ya da refactoring önerme. Araçlar: `run_sast_scanner`, `check_cve_database`.
+3. **Clean Code Formatter Agent.** System prompt: çalışan kodu okunabilirlik ve bakım kolaylığı için yeniden düzenle. DRY ilkesini ve standart isimlendirmeyi uygula. Mantığı değiştirme ve hata arama. Araçlar: `execute_linter_auto_fix`, `generate_docstrings`.
 
-Üç agent, tek model. Tek farkları role, talimatlar ve tool'lar.
-[Multi-Agent Sistemler](../1_fundamentals/multi_agent_tr.md), işi uzmanlara dağıtan bir supervisor
-çizerken sessizce bunu varsayıyordu.
+Üç agent, tek bir model. Aralarındaki tek fark rol, talimatlar ve araçlar. [Multi-Agent Systems](../1_fundamentals/multi_agent_tr.md) modülü, işleri uzmanlara dağıtan bir supervisor çizerken bunu sessizce varsaymıştı.
 
-Ama dikkatli ol. Bir role sadece hedeflediğin kısmı değil, bütün davranışı değiştiriyor. Modele bir
-security uzmanı role'ü verip sonra ona sanat tarihini sorarsan, cevap hiç role verilmemiş
-hâlinden daha kötü olabilir.
+Ama dikkatli ol: bir rol, yalnızca değiştirmek istediğin kısmı değil, bütün davranışı değiştirir. Modele bir güvenlik uzmanı rolü verip sonra sanat tarihi hakkında soru sorarsan, cevap hiç rol olmadan sorduğundan daha kötü olabilir.
 
-Bu da bizi mixer'a geri getiriyor. "Act as a security expert" network'ün security bilgisini tutan
-kısımlarını yükseltiyor. Sanat tarihini tutan kısımları ise kısık bırakıyor. Bu açıdan bakınca role
-prompting bir retrieval problemi. Modele bilgi eklemiyorsun. Zaten sahip olduğu bilginin
-hangisinin kullanılacağını seçiyorsun. İşin kötü yanı da bu, çünkü kıstığın düğmeler soru
-değiştiğinde kısık kalıyor.
+Bu, mikser benzetmesine geri dönüyor. "Bir güvenlik uzmanı gibi davran" dediğinde güvenlik bilgisini tutan ağ bölümlerini açıyorsun ve sanat tarihini tutan bölümleri kısık bırakıyorsun. Bu açıdan bakınca role prompting bir retrieval problemidir: modele yeni bilgi eklemiyorsun, mevcut bilgisinin hangisinin kullanılacağını seçiyorsun. Dezavantajı da tam burada. Çevirdiğin düğmeler, soru değiştiğinde de kısık kalıyor.
 
 ## Bu serinin neresindeyiz
 
@@ -453,36 +341,31 @@ graph LR
 
 ## Özet
 
-Prompt engineering, istediğin output'u en olası hâle getiren input'u yazmak. Weight'ler donmuş
-durumda, yani elindeki tek düğme prompt. Farklı ifadeler aynı network'ün farklı kısımlarını aktive
-ediyor.
+Prompt engineering, beklediğin çıktıyı en olası kılan girdiyi yazmaktır. Ağırlıklar donmuş olduğu için prompt, elindeki tek düğmedir ve farklı ifadeler aynı ağın farklı bölümlerini devreye sokar.
 
-Güvenilir şekilde işe yarayan şeyler sıradan şeyler:
+Güvenilir biçimde işe yarayan şeyler, sıradan olanlardır:
 
-- ne istediğini tam olarak söyle;
-- sebebini açıkla;
+- tam olarak ne istediğini söyle;
+- nedenini açıkla;
 - modele context'i ver;
-- bir iki örnek göster;
-- uzun bir prompt'u, talimatların data'nla karışamayacağı şekilde yapılandır.
+- bir ya da iki örnek göster;
+- uzun bir prompt'u, talimatlarının verilerle karıştırılamayacağı şekilde yapılandır.
 
-Chain of thought bir zamanlar bu tekniklerden biriydi. Artık modellerin içine yerleşik. İş
-unvanının kaybolmasının ve prompt yazmanın onun yerine temel bir beceri hâline gelmesinin sebebi de
-büyük ölçüde bu.
+Chain of thought eskiden bu tekniklerden biriydi, ama şimdi modellerin içine yerleşmiş durumda. Unvanın kaybolup prompting'in temel bir beceriye dönüşmesinin büyük kısmı da bu yüzden.
 
-Sırada context window'a giren her şey ve o yeri neyin hak ettiğine nasıl karar vereceğin var.
+Sıradaki konu: context window'a giren her şey ve bu alanın neyi hak ettiğine nasıl karar verileceği.
 
-**Hızlı Kontrol**: donmuş bir model, soruyu yeniden ifade ettiğinde neden farklı cevap veriyor? Ve
-bir role prompt'u gerçekte neyi değiştiriyor?
+**Hızlı Kontrol**: Donmuş bir model aynı soruyu farklı ifadeyle sorduğunda neden farklı cevap veriyor? Ve bir role prompt tam olarak neyi değiştiriyor?
 
 ## Kaynaklar
 
-- [Prompt Engineering Guide](https://www.promptingguide.ai/): tekniklerin tam kataloğu, kapsadığımızın çok ötesinde
-- [Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices): Anthropic'in güncel rehberi ve iki öncesi-sonrası örneğinin kaynağı
-- [Quantifying Language Models' Sensitivity to Spurious Features in Prompt Design](https://arxiv.org/abs/2310.11324): 2023 nesli modellerin gerçekte ne kadar kırılgan olduğunun ölçümü
-- [Why Can Large Language Models Generate Correct Chain-of-Thoughts?](https://arxiv.org/abs/2310.13571): yazmanın düşünmek olduğu fikrinin teorisi
-- [Chain of Thought Visualizer](https://cot-visualizer.online/): düşünmenin ve doğrudan cevaplamanın yan yana gösterimi
-- [Effort](https://platform.claude.com/docs/en/build-with-claude/effort): düşünme kadranı ve her seviyenin ne için olduğu
-- [Stop Overthinking: A Survey on Efficient Reasoning for Large Language Models](https://arxiv.org/abs/2503.16419): aşırı düşünme üzerine araştırmalar, tek yerde
-- [When "A Helpful Assistant" Is Not Really Helpful](https://arxiv.org/abs/2311.10054): persona prompt'larının umulduğu kadar faydalı olmadığını gösteren çalışma
-- [System prompt leaks](https://github.com/asgeirtj/system_prompts_leaks): production system prompt'ları, birebir toplanmış
+- [Prompt Engineering Guide](https://www.promptingguide.ai/): tekniklerin tam kataloğu, bu modülde anlattığımızdan çok daha fazlası
+- [Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices): Anthropic'in güncel rehberi ve iki önce-sonra örneğinin kaynağı
+- [Quantifying Language Models' Sensitivity to Spurious Features in Prompt Design](https://arxiv.org/abs/2310.11324): 2023 neslindeki modellerin ne kadar kırılgan olduğunu ölçen çalışma
+- [Why Can Large Language Models Generate Correct Chain-of-Thoughts?](https://arxiv.org/abs/2310.13571): "yazmak düşünmektir" fikrinin arkasındaki teori
+- [Chain of Thought Visualizer](https://cot-visualizer.online/): düşünerek ve hemen cevap vererek üretilen cevapları yan yana gösteren bir demo
+- [Effort](https://platform.claude.com/docs/en/build-with-claude/effort): düşünme düğmesi ve her seviyenin ne için olduğu
+- [Stop Overthinking: A Survey on Efficient Reasoning for Large Language Models](https://arxiv.org/abs/2503.16419): aşırı düşünme üzerine araştırmalar, tek bir yerde
+- [When "A Helpful Assistant" Is Not Really Helpful](https://arxiv.org/abs/2311.10054): persona prompt'larının umulandan daha az yardımcı olduğunu gösteren çalışma
+- [System prompt leaks](https://github.com/asgeirtj/system_prompts_leaks): üretimdeki system prompt'lar, kelimesi kelimesine kopyalanmış
 - [Advanced Prompting](../3_expert/advanced_prompting_tr.md): bu modülün bilerek atladığı teknikler

@@ -10,21 +10,21 @@ questions:
         - "Always, because several agents are an upgrade over one agent."
       explain: "Splitting then gives each agent a short prompt, a small tool list and one job. Multi-agent is a trade, not an upgrade."
     tr:
-      question: "Modüle göre, tek bir agent'ı ne zaman birkaç agent'a bölmelisin?"
+      question: "Modüle göre, tek bir agent'ı ne zaman birden fazla agent'a bölmelisin?"
       options:
         - "Görevin bitmesi için birden fazla adım gerektiğinde."
         - "Agent'ın birden fazla tool çağırması gerektiğinde."
         - "Tek bir system prompt iki alakasız işi öğretmeye çalıştığında."
-        - "Her zaman, çünkü birkaç agent tek agent'a göre bir yükseltmedir."
-      explain: "Bölmek o zaman her agent'a kısa bir prompt, küçük bir tool listesi ve tek bir iş verir. Multi-agent bir yükseltme değil, bir alışveriş."
+        - "Her zaman, çünkü birden fazla agent tek bir agent'a göre bir yükseltmedir."
+      explain: "Böldüğünde her agent kısa bir prompt, küçük bir tool listesi ve tek bir iş alır. Multi-agent bir yükseltme değil, bir takastır (trade-off)."
     fa:
-      question: "طبق این module، چه زمانی باید یک agent را به چند agent تقسیم کنید؟"
+      question: "طبق این module، کی باید یه agent رو به چند تا agent تقسیم کنی؟"
       options:
-        - "وقتی کار برای تمام شدن به بیش از یک مرحله نیاز دارد."
-        - "وقتی agent باید بیش از یک tool را call کند."
-        - "وقتی یک system prompt تلاش می‌کند دو کار بی‌ربط را یاد بدهد."
-        - "همیشه، چون چند agent نسبت به یک agent یک ارتقا هستند."
-      explain: "تقسیم کردن در آن صورت به هر agent یک prompt کوتاه، یک لیست کوچک از tool‌ها و یک کار می‌دهد. Multi-agent یک مبادله است، نه یک ارتقا."
+        - "وقتی کار برای تموم شدن بیشتر از یک مرحله لازم داره."
+        - "وقتی agent باید بیشتر از یک tool رو صدا بزنه."
+        - "وقتی یه system prompt داره سعی می‌کنه دو تا کار بی‌ربط رو یاد بده."
+        - "همیشه، چون چند تا agent نسبت به یه agent یه ارتقا هستن."
+      explain: "تقسیم کردن به هر agent یه prompt کوتاه، یه لیست کوچیک از tool‌ها و یه کار مشخص می‌ده. multi-agent یه مبادله‌ست، نه یه ارتقا."
   - answer: 0
     en:
       question: "The module tells you to start with a supervisor. Why?"
@@ -35,21 +35,21 @@ questions:
         - "Workers need no handover, so context transfer is not a problem."
       explain: "In a supervisor design, every decision passes through one place, so you can see and debug what the system decided. A network is more flexible, but it is much harder to predict."
     tr:
-      question: "Modül, işe supervisor ile başlamanı söylüyor. Neden?"
+      question: "Modül, işe supervisor ile başlamanı söylüyor. Bunun nedeni nedir?"
       options:
-        - "Her karar tek bir yerden geçer, bu yüzden debug etmesi daha kolaydır."
+        - "Her karar tek bir yerden geçtiği için hata ayıklamak (debug) daha kolaydır."
         - "Her agent işi herhangi bir agent'a devredebilir, bu yüzden daha esnektir."
         - "Worker'lar sıradaki adımı kimin yapacağına kendi aralarında karar verir."
-        - "Worker'lar devir (handover) gerektirmez, bu yüzden context transfer bir problem değildir."
-      explain: "Supervisor tasarımında her karar tek bir yerden geçer, bu yüzden sistemin neye karar verdiğini görüp debug edebilirsin. Network daha esnektir, ama tahmin etmesi çok daha zordur."
+        - "Worker'ların bir devir yapmasına gerek yoktur, bu yüzden context transfer bir sorun değildir."
+      explain: "Supervisor tasarımında her karar tek bir yerden geçtiği için sistemin neye karar verdiğini görüp debug edebilirsin. Network daha esnektir, ama tahmin etmesi çok daha zordur."
     fa:
-      question: "این module می‌گوید با یک supervisor شروع کنید. چرا؟"
+      question: "این module می‌گه با یه supervisor شروع کن. دلیلش چیه؟"
       options:
-        - "هر تصمیم از یک جا می‌گذرد، پس debug کردنش آسان‌تر است."
-        - "هر agent می‌تواند کار را به هر agent دیگری بدهد، پس انعطاف‌پذیرتر است."
-        - "worker‌ها بین خودشان تصمیم می‌گیرند که هر مرحله‌ی بعدی را چه کسی انجام دهد."
-        - "worker‌ها به تحویل کار نیازی ندارند، پس context transfer مشکلی نیست."
-      explain: "در طراحی supervisor، هر تصمیم از یک جا می‌گذرد، پس می‌توانید ببینید سیستم چه تصمیمی گرفته و آن را debug کنید. network انعطاف‌پذیرتر است، اما پیش‌بینی آن خیلی سخت‌تر است."
+        - "هر تصمیم از یه جا رد می‌شه، پس دیباگ کردنش راحت‌تره."
+        - "هر agent می‌تونه کار رو به هر agent دیگه‌ای بده، پس انعطاف‌پذیرتره."
+        - "worker‌ها خودشون بین خودشون تصمیم می‌گیرن که مرحله‌ی بعدی رو کی انجام بده."
+        - "worker‌ها به تحویل کار نیاز ندارن، پس context transfer مشکلی نیست."
+      explain: "توی طراحی supervisor، هر تصمیم از یه جا رد می‌شه، پس می‌تونی ببینی سیستم چی تصمیم گرفته و دیباگش کنی. network انعطاف‌پذیرتره، ولی پیش‌بینی‌اش خیلی سخت‌تره."
   - answer: 3
     en:
       question: "Splitting the work across several agents creates two hard problems. Which two?"
@@ -60,21 +60,21 @@ questions:
         - "Coordination and context transfer between agents"
       explain: "Splitting the work creates both problems, and a single agent has neither. Long prompts and long tool lists are single-agent problems that splitting solves."
     tr:
-      question: "İşi birkaç agent'a bölmek iki zor problem yaratır. Hangi ikisi?"
+      question: "İşi birden fazla agent'a bölmek iki zor problem yaratır. Bu iki problem hangileri?"
       options:
         - "Uzun system prompt'lar ve uzun tool listeleri"
         - "Yanlış tool seçimi ve iki işin birbirine karışması"
         - "Tool calling ve turlar boyunca memory"
-        - "Agent'lar arasında coordination ve context transfer"
-      explain: "İki problemi de işi bölmenin kendisi yaratır, ve tek bir agent'ta ikisi de yoktur. Uzun prompt'lar ve uzun tool listeleri, bölmenin çözdüğü tek agent problemleridir."
+        - "Agent'lar arasında koordinasyon ve context transfer"
+      explain: "Bu iki problemi işi bölmenin kendisi yaratır, tek bir agent'ta ise ikisi de yoktur. Uzun prompt'lar ve uzun tool listeleri ise bölmenin çözdüğü, tek agent'a ait problemlerdir."
     fa:
-      question: "تقسیم کار بین چند agent دو مشکل سخت ایجاد می‌کند. کدام دو مشکل؟"
+      question: "تقسیم کار بین چند تا agent دو تا مشکل سخت ایجاد می‌کنه. کدوم دو تا؟"
       options:
         - "system prompt‌های طولانی و لیست‌های طولانی tool"
-        - "انتخاب اشتباه tool و قاطی شدن دو کار"
-        - "Tool calling و memory در طول نوبت‌ها"
+        - "انتخاب اشتباه tool و قاطی شدن دو تا کار"
+        - "Tool calling و memory بین نوبت‌ها"
         - "Coordination و context transfer بین agent‌ها"
-      explain: "تقسیم کار هر دو مشکل را ایجاد می‌کند، و یک agent تنها هیچ‌کدام را ندارد. prompt‌های طولانی و لیست‌های طولانی tool، مشکل‌های تک‌agent هستند که تقسیم آن‌ها را حل می‌کند."
+      explain: "تقسیم کار هر دو مشکل رو ایجاد می‌کنه، ولی یه agent تنها هیچ‌کدومشون رو نداره. prompt‌های طولانی و لیست‌های طولانی tool، مشکل‌هایی هستن که خود یه agent داره و تقسیم کار حلشون می‌کنه."
   - answer: 1
     en:
       question: "What is the difference between shared context and isolated context?"
@@ -87,16 +87,16 @@ questions:
     tr:
       question: "Shared context ile isolated context arasındaki fark nedir?"
       options:
-        - "Shared: her agent sadece kendisine verileni görür. Isolated: her agent her şeyi görür."
-        - "Shared: her agent her şeyi görür. Isolated: her agent sadece kendisine verileni görür."
-        - "Shared: context'i sadece supervisor görür. Isolated: context'i sadece worker'lar görür."
+        - "Shared: her agent yalnızca kendisine verileni görür. Isolated: her agent her şeyi görür."
+        - "Shared: her agent her şeyi görür. Isolated: her agent yalnızca kendisine verileni görür."
+        - "Shared: context'i yalnızca supervisor görür. Isolated: context'i yalnızca worker'lar görür."
         - "Shared: bütün agent'lar tek bir model kullanır. Isolated: her agent kendi modelini kullanır."
-      explain: "Shared context'te devirde (handover) hiçbir şey kaybolmaz, ama context hızla büyür. Isolated context'te her agent ucuz ve odaklı kalır, ama geçirmeyi unuttuğun şey yok olur."
+      explain: "Shared context'te devir sırasında hiçbir şey kaybolmaz, ama context hızla büyür. Isolated context'te her agent ucuz ve odaklı kalır, ama aktarmayı unuttuğun her şey kaybolur."
     fa:
-      question: "تفاوت بین shared context و isolated context چیست؟"
+      question: "فرق بین shared context و isolated context چیه؟"
       options:
-        - "Shared: هر agent فقط چیزی را می‌بیند که دریافت می‌کند. Isolated: هر agent همه چیز را می‌بیند."
-        - "Shared: هر agent همه چیز را می‌بیند. Isolated: هر agent فقط چیزی را می‌بیند که دریافت می‌کند."
-        - "Shared: فقط supervisor، context را می‌بیند. Isolated: فقط worker‌ها آن را می‌بینند."
-        - "Shared: همه‌ی agent‌ها از یک مدل استفاده می‌کنند. Isolated: هر agent از مدل مخصوص خودش استفاده می‌کند."
-      explain: "با shared context، در تحویل چیزی گم نمی‌شود، اما context به سرعت بزرگ می‌شود. با isolated context، هر agent ارزان و متمرکز می‌ماند، اما هر چیزی که یادتان برود منتقل کنید، از بین می‌رود."
+        - "Shared: هر agent فقط چیزی رو می‌بینه که دریافت می‌کنه. Isolated: هر agent همه‌چیز رو می‌بینه."
+        - "Shared: هر agent همه‌چیز رو می‌بینه. Isolated: هر agent فقط چیزی رو می‌بینه که دریافت می‌کنه."
+        - "Shared: فقط supervisor، context رو می‌بینه. Isolated: فقط worker‌ها اون رو می‌بینن."
+        - "Shared: همه‌ی agent‌ها از یه مدل استفاده می‌کنن. Isolated: هر agent از مدل مخصوص خودش استفاده می‌کنه."
+      explain: "با shared context، توی تحویل کار چیزی گم نمی‌شه، ولی context سریع بزرگ می‌شه. با isolated context، هر agent ارزون و متمرکز می‌مونه، ولی هر چیزی که یادت بره پاس بدی، کلاً از بین می‌ره."

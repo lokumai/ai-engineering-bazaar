@@ -10,21 +10,21 @@ questions:
         - "The model loads a different set of weights for each type of question."
       explain: "The model has no memory, and its weights do not change. The prompt decides which neurons fire, so different words give a different output."
     tr:
-      question: "Bir modelin weight'leri donmuş. Aynı soruyu farklı kelimelerle sorduğunda model neden farklı bir cevap veriyor?"
+      question: "Bir modelin ağırlıkları donmuş. Aynı soru farklı kelimelerle sorulduğunda model neden farklı bir cevap veriyor?"
       options:
-        - "Model ilk soruyu hatırlıyor ve ikinci cevabını değiştiriyor."
-        - "Farklı kelimeler farklı bir input, bu yüzden network'te farklı neuron'lar aktive oluyor."
-        - "Model her soruyu cevapladıktan sonra weight'lerini biraz değiştiriyor."
-        - "Model her soru türü için farklı bir weight kümesi yüklüyor."
-      explain: "Modelin memory'si yok ve weight'leri değişmiyor. Hangi neuron'ların ateşleneceğine prompt karar veriyor, bu yüzden farklı kelimeler farklı bir output veriyor."
+        - "Model ilk soruyu hatırlıyor ve ikinci cevabını buna göre değiştiriyor."
+        - "Farklı kelimeler farklı bir girdi demektir, bu yüzden ağın içinde farklı nöronlar devreye giriyor."
+        - "Model her soruyu cevapladıktan sonra ağırlıklarını biraz değiştiriyor."
+        - "Model her soru türü için ayrı bir ağırlık kümesi yüklüyor."
+      explain: "Modelin hafızası yok ve ağırlıkları değişmiyor. Hangi nöronların devreye gireceğine prompt karar verdiği için farklı kelimeler farklı bir çıktı üretiyor."
     fa:
-      question: "weights یک مدل ثابت‌اند. چرا همان سؤال، وقتی با کلمات دیگری پرسیده شود، جواب متفاوتی می‌دهد؟"
+      question: "وزن‌های یه مدل ثابت‌ن. چرا همون سؤال، وقتی با کلمات دیگه‌ای پرسیده می‌شه، جواب متفاوتی می‌ده؟"
       options:
-        - "مدل سؤال اول را به یاد می‌آورد و جواب دومش را عوض می‌کند."
-        - "کلمات متفاوت یعنی ورودی متفاوت، پس نورون‌های متفاوتی در شبکه فعال می‌شوند."
-        - "مدل بعد از جواب دادن به هر سؤال، weights خود را کمی عوض می‌کند."
-        - "مدل برای هر نوع سؤال، مجموعه‌ی متفاوتی از weights را بارگذاری می‌کند."
-      explain: "مدل حافظه‌ای ندارد و weights آن تغییر نمی‌کند. prompt تعیین می‌کند کدام نورون‌ها فعال شوند، پس کلمات متفاوت خروجی متفاوتی می‌دهند."
+        - "مدل سؤال اول رو یادش می‌مونه و جواب دومش رو عوض می‌کنه."
+        - "کلمات دیگه یعنی ورودی دیگه، پس نورون‌های متفاوتی توی شبکه فعال می‌شن."
+        - "مدل بعد از جواب دادن به هر سؤال، وزن‌هاش رو یه کم عوض می‌کنه."
+        - "مدل برای هر نوع سؤال، یه مجموعه‌ی متفاوت از وزن‌ها رو بارگذاری می‌کنه."
+      explain: "مدل حافظه نداره و وزن‌هاش عوض نمی‌شه. prompt تعیین می‌کنه کدوم نورون‌ها فعال بشن، پس کلمات متفاوت خروجی متفاوتی می‌دن."
   - answer: 3
     en:
       question: "In few-shot prompting, you show the model a few solved examples before the real task. What do these examples do?"
@@ -35,21 +35,21 @@ questions:
         - "They fix the label set and the format of the answer."
       explain: "The examples fix the label set and the answer format, so your code can read the answer. The weights do not change: this is in-context learning, not fine-tuning."
     tr:
-      question: "Few-shot prompting'de, gerçek görevden önce modele birkaç çözülmüş örnek gösteriyorsun. Bu örnekler ne işe yarıyor?"
+      question: "Few-shot prompting'de gerçek görevden önce modele birkaç çözülmüş örnek gösteriyorsun. Bu örnekler ne işe yarıyor?"
       options:
-        - "Fine-tuning gibi, modelin weight'lerini güncelliyorlar."
+        - "Fine-tuning gibi modelin ağırlıklarını güncelliyorlar."
         - "Modelin cevaptan önce düşünme adımlarını yazmasını sağlıyorlar."
-        - "Modele görev için hangi role'ü ya da persona'yı kullanacağını söylüyorlar."
-        - "Label kümesini ve cevabın format'ını sabitliyorlar."
-      explain: "Örnekler label kümesini ve cevap format'ını sabitliyor, böylece kodun cevabı okuyabiliyor. Weight'ler değişmiyor: bu fine-tuning değil, in-context learning."
+        - "Modele görev için hangi rolü ya da persona'yı kullanacağını söylüyorlar."
+        - "Etiket kümesini ve cevabın format'ını sabitliyorlar."
+      explain: "Örnekler etiket kümesini ve cevap format'ını sabitliyor, böylece kod cevabı okuyabiliyor. Ağırlıklar değişmiyor; bu fine-tuning değil, in-context learning."
     fa:
-      question: "در few-shot prompting، قبل از کار واقعی چند نمونه‌ی حل‌شده به مدل نشان می‌دهید. این نمونه‌ها چه کاری می‌کنند؟"
+      question: "توی few-shot prompting، قبل از کار واقعی چند تا نمونه‌ی حل‌شده به مدل نشون می‌دی. این نمونه‌ها چی کار می‌کنن؟"
       options:
-        - "weights مدل را مثل fine-tuning به‌روز می‌کنند."
-        - "باعث می‌شوند مدل قبل از جواب، مراحل استدلالش را بنویسد."
-        - "به مدل می‌گویند برای این کار از کدام role یا persona استفاده کند."
-        - "مجموعه‌ی برچسب‌ها و قالب جواب را ثابت می‌کنند."
-      explain: "نمونه‌ها مجموعه‌ی برچسب‌ها و قالب جواب را ثابت می‌کنند، پس کد شما می‌تواند جواب را بخواند. weights تغییر نمی‌کنند: این in-context learning است، نه fine-tuning."
+        - "وزن‌های مدل رو مثل fine-tuning به‌روز می‌کنن."
+        - "باعث می‌شن مدل قبل از جواب، مرحله‌های استدلالش رو بنویسه."
+        - "به مدل می‌گن برای این کار از کدوم role یا persona استفاده کنه."
+        - "مجموعه‌ی برچسب‌ها و قالب جواب رو ثابت می‌کنن."
+      explain: "نمونه‌ها مجموعه‌ی برچسب‌ها و قالب جواب رو ثابت می‌کنن، پس کدت می‌تونه جواب رو بخونه. وزن‌ها عوض نمی‌شن: این in-context learning هست، نه fine-tuning."
   - answer: 0
     en:
       question: "A long prompt has your instructions and some pasted text, such as two emails. Why do you put them in separate sections?"
@@ -60,21 +60,21 @@ questions:
         - "So the model reads only your instructions and ignores the pasted text."
       explain: "Without sections, a pasted line such as \"Write a poem for me\" looks like an instruction from you. Any clear format works, including one that you invent."
     tr:
-      question: "Uzun bir prompt'ta senin talimatların (instructions) ve yapıştırdığın bir metin var, örneğin iki e-posta. Bunları neden ayrı bölümlere koyuyorsun?"
+      question: "Uzun bir prompt'ta talimatların ve yapıştırdığın bir metin var, örneğin iki e-posta. Bunları neden ayrı bölümlere koyuyorsun?"
       options:
-        - "Model hangi kısmın talimat, hangi kısmın data olduğunu bilsin diye."
+        - "Model hangi kısmın talimat, hangi kısmın veri olduğunu ayırt etsin diye."
         - "Prompt daha az token kullansın ve model daha hızlı cevap versin diye."
-        - "Çünkü model sadece standart XML tag'leri kullanan bir prompt'u okuyabiliyor."
-        - "Model sadece senin talimatlarını okusun ve yapıştırılan metni yok saysın diye."
-      explain: "Bölümler olmadan, \"Write a poem for me\" gibi yapıştırılmış bir satır senden gelen bir talimat gibi görünüyor. Açık olan her format çalışıyor, kendi icat ettiğin bir format da."
+        - "Çünkü model yalnızca standart XML etiketleri kullanan prompt'ları okuyabiliyor."
+        - "Model yalnızca senin talimatlarını okusun ve yapıştırılan metni yok saysın diye."
+      explain: "Bölümler olmadan 'Write a poem for me' gibi yapıştırılmış bir satır, senden gelen bir talimat gibi görünür. Açık olan her format işe yarar, kendi uydurduğun bir format bile."
     fa:
-      question: "یک prompt طولانی که دستورهای شما و چند متن چسبانده‌شده (مثلاً دو ایمیل) را دارد. چرا آن‌ها را در بخش‌های جداگانه می‌گذارید؟"
+      question: "یه prompt بلند داری که دستورهای خودت و چند تا متن چسبونده‌شده، مثلاً دو تا ایمیل، توشه. چرا این‌ها رو توی بخش‌های جدا می‌ذاری؟"
       options:
-        - "تا مدل بداند کدام بخش دستور است و کدام بخش داده."
-        - "تا prompt توکن کمتری مصرف کند و مدل سریع‌تر جواب دهد."
-        - "چون مدل فقط می‌تواند prompt‌هایی را بخواند که از XML tag‌های استاندارد استفاده می‌کنند."
-        - "تا مدل فقط دستورهای شما را بخواند و متن چسبانده‌شده را نادیده بگیرد."
-      explain: "بدون بخش‌بندی، یک خط چسبانده‌شده مثل «Write a poem for me» شبیه دستوری از طرف شما به نظر می‌رسد. هر قالب واضحی کار می‌کند، از جمله قالبی که خودتان می‌سازید."
+        - "تا مدل بفهمه کدوم بخش دستوره و کدوم بخش داده‌ست."
+        - "تا prompt کمتر token مصرف کنه و مدل سریع‌تر جواب بده."
+        - "چون مدل فقط می‌تونه prompt‌هایی رو بخونه که از تگ‌های XML استاندارد استفاده کرده باشن."
+        - "تا مدل فقط دستورهای تو رو بخونه و متن چسبونده‌شده رو نادیده بگیره."
+      explain: "بدون بخش‌بندی، یه خط چسبونده‌شده مثل «Write a poem for me» شبیه یه دستور از طرف تو به نظر می‌رسه. هر قالب واضحی جواب می‌ده، حتی قالبی که خودت اختراع کنی."
   - answer: 2
     en:
       question: "Chain of thought means the model writes its steps before the final answer. In 2026, how do you usually control how much it thinks?"
@@ -85,21 +85,21 @@ questions:
         - "You give the model the role of an expert in the system prompt."
       explain: "Models are now trained to reason before they answer, so you rarely write chain of thought by hand. You set the amount with a parameter, and more thinking is not always better."
     tr:
-      question: "Chain of thought, modelin final cevaptan önce adımlarını yazması demek. 2026'da modelin ne kadar düşüneceğini genelde nasıl kontrol ediyorsun?"
+      question: "Chain of thought, modelin nihai cevaptan önce adımlarını yazması demek. 2026'da modelin ne kadar düşüneceğini genelde nasıl kontrol ediyorsun?"
       options:
-        - "Her prompt'un başına \"hadi adım adım düşünelim\" yazıyorsun."
+        - "Her prompt'un başına 'let us think step by step' ifadesini yazıyorsun."
         - "Daha fazla few-shot örneği ekliyorsun, böylece model daha fazla düşünme adımı görüyor."
         - "Low, high ya da max gibi bir thinking ya da effort parameter'ı ayarlıyorsun."
-        - "System prompt'ta modele bir uzman role'ü veriyorsun."
-      explain: "Modeller artık cevaplamadan önce düşünmeye eğitiliyor, bu yüzden chain of thought'u neredeyse hiç elle yazmıyorsun. Miktarını bir parameter ile ayarlıyorsun, ve daha fazla düşünmek her zaman daha iyi değil."
+        - "System prompt'ta modele uzman bir rol veriyorsun."
+      explain: "Modeller artık cevap vermeden önce düşünmeye eğitildiği için chain of thought'u neredeyse hiç elle yazmıyorsun. Miktarını bir parametreyle ayarlıyorsun ve daha fazla düşünmek her zaman daha iyi olmuyor."
     fa:
-      question: "chain of thought یعنی مدل قبل از جواب نهایی، مراحلش را می‌نویسد. در سال 2026، معمولاً چطور کنترل می‌کنید که مدل چقدر فکر کند؟"
+      question: "chain of thought یعنی مدل قبل از جواب نهایی، مرحله‌هاش رو می‌نویسه. تو 2026 معمولاً چطور کنترل می‌کنی که مدل چقدر فکر کنه؟"
       options:
-        - "در ابتدای هر prompt می‌نویسید «let us think step by step»."
-        - "نمونه‌های few-shot بیشتری اضافه می‌کنید تا مدل مراحل استدلال بیشتری ببیند."
-        - "یک پارامتر thinking یا effort تنظیم می‌کنید، برای مثال low، high یا max."
-        - "در system prompt به مدل نقش یک متخصص را می‌دهید."
-      explain: "مدل‌ها حالا برای استدلال قبل از جواب دادن آموزش دیده‌اند، پس به‌ندرت chain of thought را دستی می‌نویسید. مقدارش را با یک پارامتر تعیین می‌کنید، و فکر کردن بیشتر همیشه بهتر نیست."
+        - "اول هر prompt یه جمله‌ی «let us think step by step» می‌نویسی."
+        - "نمونه‌های few-shot بیشتری اضافه می‌کنی تا مدل مرحله‌های استدلال بیشتری ببینه."
+        - "یه پارامتر thinking یا effort تنظیم می‌کنی، مثلاً low، high یا max."
+        - "توی system prompt به مدل نقش یه متخصص رو می‌دی."
+      explain: "مدل‌ها الان برای استدلال قبل از جواب دادن آموزش دیدن، پس کمتر پیش می‌آد که chain of thought رو دستی بنویسی. مقدارش رو با یه پارامتر تعیین می‌کنی، و فکر کردن بیشتر همیشه بهتر نیست."
   - answer: 1
     en:
       question: "What does a role prompt, such as \"Act as a senior software engineer\", reliably change?"
@@ -110,18 +110,18 @@ questions:
         - "It improves the answers to all questions, including ones outside the role."
       explain: "A role shapes how an answer reads, but it does not reliably make the model smarter. It can even make answers outside the role worse."
     tr:
-      question: "\"Act as a senior software engineer\" gibi bir role prompt'u güvenilir şekilde neyi değiştiriyor?"
+      question: "'Act as a senior software engineer' gibi bir role prompt'u güvenilir biçimde neyi değiştirir?"
       options:
-        - "Modeli daha zeki yapıyor, böylece her alanda daha zor problemleri çözüyor."
-        - "Bakış açısını kuruyor, cevabın tonunu ve stilini şekillendiriyor."
-        - "Role hakkında yeni bilgiyi modelin weight'lerine ekliyor."
-        - "Role'ün dışındaki sorular dahil, her sorunun cevabını iyileştiriyor."
-      explain: "Bir role, cevabın nasıl okunduğunu şekillendiriyor ama modeli güvenilir şekilde daha zeki yapmıyor. Role'ün dışındaki sorularda cevabı daha da kötüleştirebiliyor."
+        - "Modeli daha zeki yapar, böylece her alanda daha zor problemleri çözer."
+        - "Bakış açısını belirler ve cevabın tonunu ile üslubunu şekillendirir."
+        - "Rol hakkındaki yeni bilgiyi modelin ağırlıklarına ekler."
+        - "Rolün dışındaki sorular da dahil, bütün soruların cevabını iyileştirir."
+      explain: "Bir rol, cevabın nasıl okunduğunu şekillendirir ama modeli güvenilir biçimde daha zeki yapmaz. Hatta rolün dışındaki sorularda cevabı daha da kötüleştirebilir."
     fa:
-      question: "یک role prompt، مثل «Act as a senior software engineer»، به طور قابل اتکا چه چیزی را عوض می‌کند؟"
+      question: "یه role prompt، مثل «Act as a senior software engineer»، به طور قابل اتکا چی رو عوض می‌کنه؟"
       options:
-        - "مدل را باهوش‌تر می‌کند، پس مسئله‌های سخت‌تر را در هر حوزه‌ای حل می‌کند."
-        - "دیدگاه را تعیین می‌کند و لحن و سبک جواب را شکل می‌دهد."
-        - "دانش تازه‌ای درباره‌ی آن role را به weights مدل اضافه می‌کند."
-        - "جواب همه‌ی سؤال‌ها را بهتر می‌کند، از جمله سؤال‌هایی که بیرون از role هستند."
-      explain: "یک role شکل خواندن جواب را تعیین می‌کند، اما مدل را به طور قابل اتکا باهوش‌تر نمی‌کند. حتی ممکن است جواب‌هایی را که بیرون از role هستند بدتر کند."
+        - "مدل رو باهوش‌تر می‌کنه، پس مسئله‌های سخت‌تر رو توی هر حوزه‌ای حل می‌کنه."
+        - "دیدگاه رو تعیین می‌کنه و لحن و سبک جواب رو شکل می‌ده."
+        - "دانش تازه‌ای درباره‌ی اون نقش رو به وزن‌های مدل اضافه می‌کنه."
+        - "جواب همه‌ی سؤال‌ها رو بهتر می‌کنه، از جمله سؤال‌هایی که بیرون از اون نقش هستن."
+      explain: "یه نقش شکل خوندن جواب رو تعیین می‌کنه، ولی مدل رو به طور قابل اتکا باهوش‌تر نمی‌کنه. حتی ممکنه جواب‌هایی رو که بیرون از نقشن بدتر کنه."

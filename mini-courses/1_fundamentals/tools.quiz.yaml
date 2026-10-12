@@ -17,6 +17,14 @@ questions:
         - "Host makine fonksiyonu çalıştırıyor ve Tool Result'ı yazıyor."
         - "Kullanıcı fonksiyonu çalıştırıyor ve sonucu chat'e yazıyor."
       explain: "Modelin bilgisayarı yok, bu yüzden model yalnızca fonksiyonu isteyen bir Tool Call yazıyor. Fonksiyonu host makine (senin laptop'un ya da sunucun) çalıştırıyor ve Tool Result'ı yazıyor."
+    fa:
+      question: "مدل تصمیم می‌گیرد tool به نام `read_file` را صدا بزند. چه کسی تابع را اجرا می‌کند؟"
+      options:
+        - "مدل، تابع را داخل model weights خودش اجرا می‌کند."
+        - "Framework تابع را به مدل می‌فرستد و مدل آن را اجرا می‌کند."
+        - "Host machine تابع را اجرا می‌کند و Tool Result را می‌نویسد."
+        - "کاربر تابع را اجرا می‌کند و نتیجه را در chat تایپ می‌کند."
+      explain: "مدل کامپیوتر ندارد، پس فقط یک Tool Call می‌نویسد که تابع را درخواست کند. Host machine، یعنی لپ‌تاپ یا سرور شما، آن را اجرا می‌کند و Tool Result را می‌نویسد."
   - answer: 0
     en:
       question: "Why does an agent's context grow faster than a chat's context?"
@@ -34,6 +42,14 @@ questions:
         - "Model her tool call'dan sonra daha uzun bir cevap yazmak zorunda."
         - "Kullanıcı her tool call'dan sonra soruyu tekrar sormak zorunda."
       explain: "Bir tool call iki yeni mesaj ekliyor: Tool Call ve Tool Result. İkisi de context'te kalıyor, bu yüzden tek bir tur iki mesaj yerine birkaç mesaj ekleyebiliyor."
+    fa:
+      question: "چرا context یک agent سریع‌تر از context یک chat بزرگ می‌شود؟"
+      options:
+        - "هر Tool Call و هر Tool Result در context می‌مانند."
+        - "هر tool call یک system prompt تازه به context اضافه می‌کند."
+        - "مدل باید بعد از هر tool call جواب طولانی‌تری بنویسد."
+        - "کاربر باید بعد از هر tool call سوال را دوباره بپرسد."
+      explain: "یک tool call دو پیام تازه اضافه می‌کند: Tool Call و Tool Result. هر دو در context می‌مانند، پس یک نوبت می‌تواند به جای دو پیام، چند پیام اضافه کند."
   - answer: 3
     en:
       question: "You write a function with the `@tool` decorator. Where does the framework get the tool's description?"
@@ -51,6 +67,14 @@ questions:
         - "Elle yazdığın bir JSON dosyasından."
         - "Fonksiyonun docstring'inden."
       explain: "Tool schema'yı senin yerine framework üretiyor, ve description'ı docstring'den okuyor. Name fonksiyonun adından, parameters ise type hint'lerden geliyor."
+    fa:
+      question: "شما یک تابع را با decorator `@tool` می‌نویسید. framework، description یک tool را از کجا می‌گیرد؟"
+      options:
+        - "از نام تابع، `get_weather`."
+        - "از type hint‌ها، برای مثال `city: str`."
+        - "از یک فایل JSON که شما با دست می‌نویسید."
+        - "از docstring تابع."
+      explain: "framework، tool schema را به جای شما می‌سازد و description را از docstring می‌خواند. نام از نام تابع می‌آید و parameter‌ها از type hint‌ها."
   - answer: 1
     en:
       question: "Your tool is called `get_data` and its docstring says \"gets data\". The model picks it at the wrong moments. What fixes this?"
@@ -68,6 +92,14 @@ questions:
         - "Fonksiyonun içindeki kodu daha hızlı ve daha doğru yapmak."
         - "Fonksiyonun gövdesine daha uzun yorumlar (comment) eklemek."
       explain: "Model bir tool seçerken yalnızca name ve description'ı kullanıyor. Daha fazla prompt yazmak, belirsiz bir isim ve docstring'i düzeltmez."
+    fa:
+      question: "tool شما `get_data` نام دارد و docstring آن می‌گوید «gets data». مدل آن را در زمان‌های اشتباه انتخاب می‌کند. چه چیزی این را درست می‌کند؟"
+      options:
+        - "اضافه کردن دستورالعمل‌های بیشتر درباره‌ی tool به system prompt."
+        - "تغییر نام tool و بازنویسی docstring آن برای مدل."
+        - "سریع‌تر و درست‌تر کردن کد داخل تابع."
+        - "اضافه کردن کامنت‌های طولانی‌تر در بدنه‌ی تابع."
+      explain: "مدل برای انتخاب tool فقط از نام و description استفاده می‌کند. prompt بیشتر، یک نام و docstring مبهم را درست نمی‌کند."
   - answer: 2
     en:
       question: "In the Tool Call message, the model writes an `id`, for example `call_9k2m4Xq7`. What is it for?"
@@ -85,3 +117,11 @@ questions:
         - "Tool Result'ı tam olarak bu çağrıyla eşleştiriyor."
         - "Soruyu soran kullanıcıyı tanımlıyor."
       explain: "Host makine, Tool Result'ı aynı `id` ile, `tool_call_id` field'ında etiketliyor. Bu, sonucu onu isteyen çağrıya bağlıyor."
+    fa:
+      question: "در پیام Tool Call، مدل یک `id` می‌نویسد، برای مثال `call_9k2m4Xq7`. این `id` برای چیست؟"
+      options:
+        - "به host machine می‌گوید کدام فایل Python را باز کند."
+        - "تعداد tool‌هایی را که مدل در این chat صدا زده می‌شمارد."
+        - "Tool Result را دقیقاً به همین call وصل می‌کند."
+        - "کاربری را که سوال پرسیده شناسایی می‌کند."
+      explain: "host machine، Tool Result را با همان `id` در field‌ای به نام `tool_call_id` برچسب می‌زند. این کار نتیجه را به call‌ای که آن را خواسته وصل می‌کند."

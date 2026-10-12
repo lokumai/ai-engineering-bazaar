@@ -341,6 +341,20 @@ describe('M15 — the language is a transcription of the mockup', () => {
 
   describe('every dimension the language declares', () => {
     /**
+     * M28 — tokens the mockup CANNOT specify, because it holds no text in
+     * their script. The mockup is English; a Persian page needs a face with
+     * Persian forms, and no transcription of an English page can supply one.
+     * Each entry states why, and the test after the comparison fails one that
+     * has gone stale — the mockup naming a value for it after all, or the
+     * language no longer declaring it — so the hole closes when its reason
+     * does. DESIGN.md records it as a deviation.
+     */
+    const UNTRANSCRIBABLE: Readonly<Record<string, string>> = {
+      '--font-persian':
+        'The face a Persian module is set in. The mockup has no Persian text, so it names no face for it.',
+    }
+
+    /**
      * One direction only, and deliberately. The reverse — every length in the
      * mockup must be a token — is noise: the mockup is full of incidental
      * paddings that are properties of a primitive rather than of the language.
@@ -362,7 +376,7 @@ describe('M15 — the language is a transcription of the mockup', () => {
         name.startsWith('--duration-') ||
         name.startsWith('--ease-') ||
         name.startsWith('--shadow-'),
-    )
+    ).filter(([name]) => !(name in UNTRANSCRIBABLE))
 
     it('reads a token block that is actually there', () => {
       expect(declared.length).toBeGreaterThan(32)
@@ -372,6 +386,17 @@ describe('M15 — the language is a transcription of the mockup', () => {
       const needle = normalise(value).replaceAll(COLOUR_PATTERN, (c) => parseColour(c) ?? c)
       const haystack = normalise(specification).replaceAll(COLOUR_PATTERN, (c) => parseColour(c) ?? c)
       expect(haystack).toContain(needle)
+    })
+
+    it('exempts only what the mockup really cannot specify, and says why', () => {
+      const all = tokensIn(blockFor(language, '@theme') ?? '')
+      const haystack = normalise(specification)
+      for (const [name, why] of Object.entries(UNTRANSCRIBABLE)) {
+        const value = all.get(name)
+        expect(value, `${name} is no longer declared, so its exemption is stale`).toBeDefined()
+        expect(haystack, `${name}'s value is in the mockup after all`).not.toContain(normalise(value!))
+        expect(why.length, 'an exemption without a reason').toBeGreaterThan(20)
+      }
     })
   })
 

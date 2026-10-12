@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react'
 import type { QuizItem } from '@/lib/content/quiz'
+import { type ReadingLang, dirOf, langAttr } from '@/lib/content/languages'
 
 /**
  * The quick quiz's questions, one at a time.
@@ -60,7 +61,7 @@ function Arrow({ back = false }: { back?: boolean }) {
   )
 }
 
-export function QuickQuiz({ items, lang }: { items: readonly QuizItem[]; lang: 'en' | 'tr' }) {
+export function QuickQuiz({ items, lang }: { items: readonly QuizItem[]; lang: ReadingLang }) {
   const [index, setIndex] = useState(0)
   const [picked, setPicked] = useState<readonly (number | null)[]>(() => items.map(() => null))
   const [results, setResults] = useState(false)
@@ -72,7 +73,8 @@ export function QuickQuiz({ items, lang }: { items: readonly QuizItem[]; lang: '
   const answered = choice !== null
   const right = choice === item.answer
   const score = picked.filter((one, at) => one === items[at].answer).length
-  const content = lang === 'tr' ? 'tr' : undefined
+  const content = langAttr(lang)
+  const contentDir = dirOf(lang)
 
   /** Move to a question and give it focus, so it is read out. */
   function go(next: number): void {
@@ -105,7 +107,7 @@ export function QuickQuiz({ items, lang }: { items: readonly QuizItem[]; lang: '
                 <li key={at} data-correct={ok ? 'true' : 'false'}>
                   <button type="button" className="bz-quiz-recap-item" onClick={() => go(at)}>
                     <span className="bz-quiz-recap-mark">{ok ? <Check /> : <Cross />}</span>
-                    <span lang={content}>{one.question}</span>
+                    <span lang={content} dir={contentDir}>{one.question}</span>
                     <span className="sr-only">{ok ? ', correct' : ', not correct'}</span>
                   </button>
                 </li>
@@ -149,7 +151,7 @@ export function QuickQuiz({ items, lang }: { items: readonly QuizItem[]; lang: '
         </button>
       </div>
 
-      <p ref={question} className="bz-quiz-question" tabIndex={-1} lang={content} id={`quiz-q-${index}`}>
+      <p ref={question} className="bz-quiz-question" tabIndex={-1} lang={content} dir={contentDir} id={`quiz-q-${index}`}>
         {item.question}
       </p>
 
@@ -175,7 +177,7 @@ export function QuickQuiz({ items, lang }: { items: readonly QuizItem[]; lang: '
               <span className="bz-quiz-letter" aria-hidden="true">
                 {state === 'right' ? <Check /> : state === 'wrong' ? <Cross /> : LETTERS[at]}
               </span>
-              <span className="bz-quiz-option-text" lang={content}>{option}</span>
+              <span className="bz-quiz-option-text" lang={content} dir={contentDir}>{option}</span>
             </button>
           )
         })}
@@ -190,7 +192,7 @@ export function QuickQuiz({ items, lang }: { items: readonly QuizItem[]; lang: '
               {right ? <Check /> : <Cross />}
               {right ? 'Correct.' : `Not this one. The answer is ${LETTERS[item.answer]}.`}
             </p>
-            <p className="bz-quiz-explain" lang={content}>{item.explain}</p>
+            <p className="bz-quiz-explain" lang={content} dir={contentDir}>{item.explain}</p>
           </>
         )}
       </div>

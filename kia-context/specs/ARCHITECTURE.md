@@ -11,7 +11,7 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, and the Bazaar Street front door for M27 the same day
+covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day
 last_updated: "2026-10-12"
 ---
 
@@ -38,7 +38,7 @@ survives the browser, and joining an organisation lets its managers follow it.
 
 ```
 mini-courses/*.md  ──build──▶  static export  ──▶  the reader's browser
-   (read-only)                  80 pages            record in localStorage
+   (read-only)                  99 pages            record in localStorage
                                                           │
                                                     optional account
                                                           ▼
@@ -130,8 +130,9 @@ rather than read for correctness.
 
 **Two projects meet in one repository, and they meet at exactly one file.**
 
-One is an authored corpus of markdown: 33 course modules in two languages, written by hand. The other
-is a Next.js application that renders it into a static site. They share no code. They share
+One is an authored corpus of markdown: 33 course modules written by hand in English, each with a
+Turkish translation, and the written ones also in Persian (M28). The other is a Next.js
+application that renders it into a static site. They share no code. They share
 `mini-courses/curriculum.yaml`, which the corpus side authors and the application side reads. That
 file is the only place a change on one side can break the other.
 
@@ -147,7 +148,8 @@ mini-courses/                    src/
   curriculum.yaml  ────────────►   lib/content/     ──►  app/          ──►  out/
   <category>/<name>.md             curriculum-file        routes            static
   <category>/<name>_tr.md          loader, render                           export
-  <category>/images/               links, derive, facts
+  <category>/<name>_fa.md          links, derive, facts
+  <category>/images/
 ```
 
 | | Corpus half | Application half |
@@ -155,7 +157,7 @@ mini-courses/                    src/
 | Lives in | `mini-courses/` | `src/`, `tests/`, `scripts/`, `supabase/` |
 | Written by | the author, by hand | a colleague |
 | Governed by | `mini-courses/CLAUDE.md` and `MANIFEST.md` | the root `CLAUDE.md` |
-| Measured | 77 markdown files (`find mini-courses -name '*.md' -not -path '*scratchpad*' \| wc -l`) | 194 TypeScript files, 43,678 lines (`find src -name '*.ts' -o -name '*.tsx' \| xargs wc -l`) |
+| Measured | 96 markdown files (`find mini-courses -name '*.md' -not -path '*scratchpad*' \| wc -l`) | 196 TypeScript files, 44,002 lines (`find src -name '*.ts' -o -name '*.tsx' \| xargs wc -l`) |
 
 **The application never restates a fact that lives in markdown.** No module count, no title, no
 category total is typed into `src/`. Everything is derived at build time. This is enforced socially by
@@ -186,7 +188,13 @@ one line.
 **A module file** is markdown. A `ready` module has a frontmatter fence carrying `summary` and
 `objectives`; a `draft` has no fence at all. Every module has an `_tr.md` Turkish sibling. Since
 **M19** the application renders the Turkish of every `ready` module as its own page under `/tr/`
-(`src/app/tr/courses/[category]/[module]/page.tsx`); a draft's Turkish is not rendered.
+(`src/app/tr/courses/[category]/[module]/page.tsx`); a draft's Turkish is not rendered. Since
+**M28** a written module may also have an `_fa.md` Persian sibling, rendered under `/fa/`
+(`src/app/fa/courses/[category]/[module]/page.tsx`) right to left. Persian is optional per module and
+Turkish is not (**D80**). `src/lib/content/languages.ts` is the one list of translations: the suffix,
+the route segment, the menu's label, the text direction and whether every module must carry one.
+Everything that used to say `'tr'` asks it. A translation is a different body for the same module,
+never a module of its own, so it changes no count, no number and no record key.
 
 **A reader's record** is the only mutable state in the system, and §5 describes it.
 
@@ -269,7 +277,8 @@ things zod cannot express, each error naming the module at fault:
 6. **for each category, the set of `<name>.md` files on disk and the set of names listed must be
    equal in both directions** — so a module listed without a file, and a file written without a
    listing, both fail by name. This is the valuable one;
-7. a module with no `_tr.md` sibling.
+7. a module with no `_tr.md` sibling, and, for every language in `languages.ts`, a sibling whose
+   English name is not listed (a translation of nothing). Since M28 only Turkish is required.
 
 **The link resolver** (`src/lib/content/links.ts`) throws on an internal markdown link that names no
 module, which fails the build rather than shipping a dead link. `tests/corpus/renders.test.ts` also
@@ -282,7 +291,8 @@ second spelling of a status, from every reader-visible string.
 **The corpus rules** (`tests/corpus/renders.test.ts`) refuse a module that names another module by
 number rather than by title, a number in a filename or frontmatter, a raw `<img>` tag, a colour
 literal surviving into a rendered diagram, an image path that does not exist, and a missing Turkish
-sibling.
+sibling. `tests/corpus/translations.test.ts` (M28) holds every translation to the matchers that read
+a body by its words: a translation has a quick check and a summary exactly where its English does.
 
 **`border-width: var(--stroke-struct)` fails** (`tests/unit/stroke-weights.test.ts`). Chrome
 floors border widths to whole pixels, so the 1.5px weight must be painted as a gradient or a height,
@@ -451,7 +461,7 @@ mini-courses/              src/lib/content/                 src/app/
   curriculum.yaml            curriculum-file.ts  validates    generateStaticParams
   1_fundamentals/            loader.ts           walks it       ↓
     llms.md                  render.ts           md → html    out/
-    llms_tr.md               links.ts            rewrites       courses/<cat>/<module>/
+    llms_tr.md, llms_fa.md   links.ts            rewrites       courses/<cat>/<module>/
   2_intermediate/            derive.ts           counts         path/  dashboard/  …
   …                          facts.ts            the spine
 ```
@@ -477,7 +487,7 @@ page prints none.
    location, and leaves mermaid as a `data-mermaid` source div. It also REMOVES what the page states
    elsewhere: the first `h1`, the category dek, the self-check paragraph, and since M24 the series map
    (`## Where this fits in the series` / `## Bu serinin neresindeyiz`), which stays in the file for a
-   reader of raw markdown. `SERIES_HEADINGS` in `lines.ts` holds both languages. And it turns each
+   reader of raw markdown. `SERIES_HEADINGS` in `lines.ts` holds every language. And it turns each
    highlighted code token's colour into a `bz-tok-<role>` class, so the stylesheet — and the reader's
    code palette — decides what a token paints.
 4. `links.ts` rewrites every internal `.md` link to its route, and throws if one names no module.
@@ -485,7 +495,8 @@ page prints none.
    for the corpus.
 6. `boot.ts` emits the channel-A script into `<head>`.
 7. `quiz.ts` (M25) reads a written module's `<name>.quiz.yaml` beside its markdown — 3 to 5 four-choice
-   questions, English and Turkish side by side under one shared answer index — and validates it with
+   questions, English and Turkish (and Persian, where the module has a Persian page) side by side
+   under one shared answer index — and validates it with
    zod, so a malformed quiz fails the build by name. The module page renders it at the very end, after
    the completion checkbox and the pager, closed. **Nothing a reader answers is stored**: the quiz is
    reinforcement, and the record has no field for it.
@@ -509,7 +520,7 @@ Four components import `CategorySlug` from `categories.ts` and all four use `imp
 erased; a value import from `curriculum-file.ts` into a client island pulls the file system into the
 browser bundle and stops the build.
 
-**19 routes** (`find src/app -name page.tsx | wc -l`), producing 80 HTML pages. `/` is a home page
+**20 routes** (`find src/app -name page.tsx | wc -l`), producing 99 HTML pages. `/` is a home page
 built from components; `mini-courses/index.md` is no longer the published home page and is read only as
 a link target. Since **D79** `/` is Bazaar Street: its words, its level doors (one per category in
 `curriculum.yaml`) and its way in are server-rendered markup, its illustration is SVG read from
@@ -517,7 +528,7 @@ a link target. Since **D79** `/` is Bazaar Street: its words, its level doors (o
 motion is one client island that imports `gsap` on demand and turns the stacked page into a walk on a
 wide screen.
 
-**Five of the nineteen are forwards, and a static export has no other way to redirect.** M14 folded
+**Five of the twenty are forwards, and a static export has no other way to redirect.** M14 folded
 `/dashboard/`, `/report/` and `/path/` into `/profile/`, and M17 folded `/courses/` and
 `/courses/[category]/` into the catalog; `output: 'export'` means `next.config`'s
 `redirects` are never applied and a page's own `redirect()` throws at build time, so each of the five
@@ -652,7 +663,7 @@ misleading; use `gh api repos/.../rulesets`.
 
 ## 11. The test suite, and the one rule it lives by
 
-**85** test files (`find tests -name '*.test.ts*' | wc -l`; vitest runs 84 of them) holding **2,171**
+**87** test files (`find tests -name '*.test.ts*' | wc -l`; vitest runs 86 of them) holding **2,194**
 unit and corpus tests, plus **37** Playwright spec files, in four suites that each answer something the others cannot.
 
 | Suite | Runs | Answers |

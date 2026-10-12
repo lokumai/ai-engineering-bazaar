@@ -10,7 +10,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D79, plus open questions O1 to O4 — 2026-09-09 to 2026-10-12"
+covers: "D26 to D80, plus open questions O1 to O4 — 2026-09-09 to 2026-10-12"
 last_updated: 2026-10-12
 ---
 
@@ -1854,6 +1854,70 @@ only, self-hosted), an illustration with its own palette, more than one ornament
 The breadcrumb leaves `/`, because a crumb reading `Home` on the home page names the page the bar
 already marks. The facts strip and `Start with <first module>` went at the author's word; the way in
 is the catalog, and the doors open each level.
+
+### D80 · Persian is the third language, read right to left, at the content level only — 2026-10-12
+
+The author asked for Persian modules: *"the persian support should be only at the module content
+level and not website level such as navbars etc."*, with technical words kept in English as the
+Turkish does, translated by parallel Haiku agents and reviewed by the session that ran them. M19 had
+already settled what a second language IS (an address, a `lang` attribute on the prose and not on
+`<html>`, the chrome left English), so all of that was inherited unchanged. What was decided here is
+what a third language and a first right-to-left one needed on top.
+
+**One registry, not a third copy.** Turkish was spelled inline in about a dozen places: the sibling's
+suffix, the route segment, the menu's two entries, the quiz schema, the link resolver, the config
+validator, the `lang` attributes. *A Persian copy of each* was rejected: three spellings of one
+convention is how one of them ends up pointing at a file that is not there, and the failure is
+silent in the wrong direction (a missing sibling measures zero words, which reads as "no
+translation"). `src/lib/content/languages.ts` lists the translations, and every place that said
+`'tr'` asks it. It is plain data, because the bar's menu is a client component.
+
+**Optional per module, unlike Turkish.** Rule 7 makes every module carry a `_tr.md`, stub or not.
+*The same rule for Persian* was rejected: fourteen planned modules would have needed Persian stubs
+translated from English stubs, which §7.6 already refuses to count as translations. So `_fa.md`
+exists only where a module is written, rule 7 checks the other direction for every language (a
+sibling of nothing is refused by name), and a Persian quiz side is optional in the schema and
+required wherever the module has a Persian page.
+
+**Direction on the content, and only the content.** `dir="rtl"` goes on exactly the elements that
+carry `lang="fa"`: the prose box, the heading, the quiz, the breadcrumb's last crumb, and each entry
+of the contents rail. Inside the prose, what READS flips (list indents, table alignment, a heading
+anchor's gap) and what is DRAWN does not: *turning code blocks and figure frames round* was rejected,
+because a figure frame is a horizontal scroller with its tools pinned top-right and its overflow fade
+on the right edge, so mirroring it would open a wide drawing scrolled to its far end with the fade
+over its first column. The contents rail keeps its left-to-right geometry (its spine is drawn on the
+left edge) and isolates each Persian entry instead, so a title ending in `؟` keeps its mark at the
+right end.
+
+**A face, downloaded, on the Persian route only.** *The system stack* was rejected: most of its
+members have no Arabic script, so Persian fell back glyph by glyph to whatever the platform had.
+Vazirmatn is loaded through `next/font` on `/fa/` only, the way D79 loads Fraunces on the home page,
+and served from the site. MEASURED on the first build: rebinding `--font-sans` reached the headings
+and not one paragraph, because a paragraph inherits the body's family already resolved to the system
+stack; `[lang="fa"]` sets `font-family` as well. The token is outside the mockup, so the
+transcription guard carries it as a named, reasoned exemption that fails if it goes stale, and
+DESIGN.md records it as the tenth deviation.
+
+**How the translation was held.** One brief for nineteen agents fixed the Persian titles, the four
+strings the site matches (`## کجای این مجموعه هستیم`, `## خلاصه`, `## منابع`, `**بررسی سریع**:`),
+the link rule (`_fa.md` for a written module, the English file for a planned one), ASCII digits, no
+dashes, and `شما` as the register. The review then measured structure (headings, fences, mermaid
+skeletons, image paths, URLs, links, quiz shape) and read every opening and summary. Two of the
+agents' splits were settled by the review rather than left to each agent: **alt text is translated**,
+because the site prints it as the figure's label (seven of the nineteen agents had kept it in
+English, as the Turkish does: 27 alt texts, translated in review; `Ralph Wiggum` stays, a name), and the callout label is `نکته` everywhere.
+
+**The home page's second motto** became *"We only cover essentials."* on the author's word, with the
+full stop its three neighbours carry. The mockup it is compared against changed with it. README,
+`mini-courses/index.md` and MANIFEST rule 7 still say "what matters": the author asked for the
+website, and those are his documents. Asked, he confirmed it the same day: *"motto etc should
+remain same. we just want multilinguality in this project for the content of each markdown or
+module thats it."* So the motto changed on the website only, and Persian is content and nothing
+more.
+
+**What it changed in the law, and what it did not.** MANIFESTO §1, §4 and rule 14 name Persian
+beside Turkish; the promise itself (English first, translated once, structure mirrored) is the same
+one, and rule 14 keeps its number and its title.
 
 ## Open questions
 

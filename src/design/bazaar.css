@@ -162,6 +162,13 @@
      the reader has it, the platform's own sans everywhere else. */
   --font-sans: "Avenir Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* M28 — the face Persian is set in. The sans stack above has no Arabic
+     script in most of its members, so a Persian page fell back glyph by glyph
+     to whatever the platform had, which on Linux can be a face with no
+     Persian forms at all. The Persian module route loads Vazirmatn through
+     `next/font` and binds its own value to this name; this stack is what
+     anything outside that route would get. */
+  --font-persian: Vazirmatn, "Noto Naskh Arabic", "Noto Sans Arabic", Tahoma, "Segoe UI", sans-serif;
 
   --text-body:                  16px;
   --text-body--line-height:     1.68;

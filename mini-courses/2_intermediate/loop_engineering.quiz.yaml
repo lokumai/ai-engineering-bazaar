@@ -17,6 +17,14 @@ questions:
         - "Agent hangi tool'ları çağırabilir?"
         - "İlk prompt'u kim yazıyor?"
       explain: "Modüle göre geri kalan her şey stop condition'dan çıkıyor. Yanlışsa loop ya iş bitmeden duruyor ya da çok uzun çalışıp çok maliyet çıkarıyor."
+    fa:
+      question: "کل طراحی از کدام سؤال واحد نتیجه می‌شود؟"
+      options:
+        - "کدام مدل agent را اجرا می‌کند؟"
+        - "stop condition چیست؟"
+        - "agent می‌تواند کدام tool‌ها را فراخوانی کند؟"
+        - "چه کسی اولین prompt را می‌نویسد؟"
+      explain: "ماژول می‌گوید بقیه چیزها از stop condition نتیجه می‌شوند. اگر این شرط اشتباه باشد، loop یا زود متوقف می‌شود یا خیلی طولانی اجرا می‌شود و هزینه زیادی دارد."
   - answer: 2
     en:
       question: "In the verification loop, the /goal command in Claude Code has a goal and a cap on the number of tries. Why is the cap necessary?"
@@ -34,6 +42,14 @@ questions:
         - "Başarı imkânsız olduğunda loop'un durmasını sağlıyor."
         - "Sonraki çalışmayı bir saatin ne zaman başlatacağına karar veriyor."
       explain: "Tek stop condition'ı başarı olan bir loop, başarı imkânsız olduğunda durmuyor. Üst sınır (cap) loop'a ikinci bir durma yolu veriyor."
+    fa:
+      question: "در verification loop، دستور /goal در Claude Code یک هدف و یک سقف (cap) برای تعداد تلاش‌ها دارد. چرا این سقف لازم است؟"
+      options:
+        - "به grader می‌گوید کدام معیارها را بررسی کند."
+        - "نمی‌گذارد context window پر شود."
+        - "وقتی موفقیت غیرممکن است، loop را متوقف می‌کند."
+        - "تعیین می‌کند که کی یک clock اجرای بعدی را شروع کند."
+      explain: "loopی که تنها شرط توقفش موفقیت است، وقتی موفقیت غیرممکن باشد متوقف نمی‌شود. سقف به loop یک راه دوم برای توقف می‌دهد."
   - answer: 0
     en:
       question: "What is the most important rule of the Ralph loop?"
@@ -51,6 +67,14 @@ questions:
         - "Her iterasyon önceki geçişin context'ini koruyor."
         - "Her iterasyon sonucu bir insanın kabul etmesini bekliyor."
       explain: "Ralph loop başına bir iş yapıyor, ve her geçiş temiz bir context window ile başlıyor. State window'da değil, diskte duruyor."
+    fa:
+      question: "مهم‌ترین قاعده Ralph loop چیست؟"
+      options:
+        - "هر iteration یک task از plan را انجام می‌دهد، بعد خارج می‌شود."
+        - "هر iteration کل backlog را یک‌جا پیش می‌برد."
+        - "هر iteration context دور قبلی را نگه می‌دارد."
+        - "هر iteration منتظر می‌ماند تا یک آدم نتیجه را بپذیرد."
+      explain: "Ralph در هر loop یک task انجام می‌دهد، و هر دور با یک context window تازه شروع می‌شود. state در window نیست، روی دیسک است."
   - answer: 3
     en:
       question: "What makes a dynamic workflow different from an agent team?"
@@ -68,3 +92,11 @@ questions:
         - "Workflow sonuçlarını paylaşılan bir task listesinde tutuyor."
         - "Workflow planı bir agent'ta değil, bir script'te tutuyor."
       explain: "Workflow'da sırada ne çalışacağına script karar veriyor ve ara sonuçları script tutuyor. Paylaşılan task listesi agent teams'e ait."
+    fa:
+      question: "چه چیزی dynamic workflow را از agent team متفاوت می‌کند؟"
+      options:
+        - "یک workflow از یک agent استفاده می‌کند و یک team از چند agent."
+        - "یک workflow در هر نوبت منتظر می‌ماند تا یک آدم Enter را بزند."
+        - "یک workflow نتیجه‌هایش را در یک فهرست مشترک task نگه می‌دارد."
+        - "یک workflow plan را در یک script می‌گذارد، نه در یک agent."
+      explain: "در یک workflow، script تعیین می‌کند چه چیزی بعد اجرا شود و نتیجه‌های میانی را نگه می‌دارد. فهرست مشترک task مربوط به agent teams است."

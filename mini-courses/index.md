@@ -28,7 +28,7 @@ The internet already has plenty of AI content. Adding more only makes sense if i
 | [IN PROGRESS] [Expert](3_expert/README.md) | 11 | Advanced tools, memory, multi-agent, prompting, context engineering, coding agents, harness engineering, agent architectures, UI, deployment, training. |
 | [IN PROGRESS] [Protocols & Specs](5_protocols_specs/README.md) | 1 | A single reference of every protocol and spec mentioned across the series. |
 
-Every module is written in English first, with a Turkish version alongside it once the English is final. Each category page says how many of its modules are finished, so the number is never stale here.
+Every module is written in English first, with a Turkish version alongside it once the English is final. Every finished module can also be read in Persian. Each category page says how many of its modules are finished, so the number is never stale here.
 
 ### How to Use
 

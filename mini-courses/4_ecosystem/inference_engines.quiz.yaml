@@ -17,6 +17,14 @@ questions:
         - "Weight'leri yükler ve sıradaki token'ı üretir."
         - "Bir modele erişim satar ve token başına ücret alır."
       explain: "Bir inference engine weight'leri yükler, token'ları sıradaki token'a çevirir, GPU memory'yi ve batching'i yönetir. Token başına ücret almak, senin için bir engine çalıştıran bir provider'ın işidir."
+    fa:
+      question: "یک inference engine چه کاری انجام می‌دهد؟"
+      options:
+        - "weight‌های یک مدل را با داده‌ی جدید training می‌کند."
+        - "یک رابط chat را نشان می‌دهد که کاربران در آن با یک مدل صحبت می‌کنند."
+        - "weight‌ها را بارگذاری می‌کند و token بعدی را تولید می‌کند."
+        - "به یک مدل دسترسی می‌فروشد و به‌ازای هر token پول می‌گیرد."
+      explain: "یک inference engine، weight‌ها را بارگذاری می‌کند، token‌ها را به token بعدی تبدیل می‌کند، و GPU memory و batching را مدیریت می‌کند. گرفتن پول به‌ازای هر token، کاری است که یک provider انجام می‌دهد وقتی یک engine را برای شما اجرا می‌کند."
   - answer: 0
     en:
       question: "The module gives three reasons to run a model yourself. Which reason is the most common?"
@@ -34,6 +42,14 @@ questions:
         - "Token başına fiyatlama her zaman bir GPU'dan pahalıdır."
         - "Kendi GPU'n her zaman bir provider'dan daha hızlı cevap verir."
       explain: "Verinin kendi altyapında (infrastructure) kalması gerekmesi en yaygın sebeptir ve soruyu tek başına çözer. Maliyet ancak bir kesişme noktasını (crossover point) geçtikten sonra bir sebeptir, her zaman değil."
+    fa:
+      question: "این module سه دلیل می‌دهد تا یک مدل را خودتان اجرا کنید. کدام دلیل رایج‌ترین است؟"
+      options:
+        - "داده باید روی زیرساخت (infrastructure) خودتان بماند."
+        - "Self-hosting کار کمتری نسبت به یک provider می‌خواهد."
+        - "قیمت‌گذاری به‌ازای هر token همیشه از یک GPU گران‌تر است."
+        - "GPU خودتان همیشه سریع‌تر از یک provider پاسخ می‌دهد."
+      explain: "داده‌ای که باید روی زیرساخت (infrastructure) خودتان بماند، رایج‌ترین دلیل است و به‌تنهایی تصمیم را مشخص می‌کند. هزینه فقط بعد از گذشتن از یک نقطه‌ی تلاقی (crossover point) دلیل می‌شود، نه همیشه."
   - answer: 1
     en:
       question: "Your team serves many users from one GPU server. Every request starts with the same long system prompt. Which engine fits this case best?"
@@ -51,6 +67,14 @@ questions:
         - "llm-d"
         - "llama.cpp"
       explain: "SGLang, isteklerin uzun bir ortak öneki (prefix) paylaştığı yerde güçlü bir serving engine'dir. Ollama ve llama.cpp tek makine içindir, llm-d ise çok makine içindir."
+    fa:
+      question: "تیم شما از یک سرور GPU به کاربران زیادی سرویس می‌دهد. هر درخواست با یک system prompt طولانی و یکسان شروع می‌شود. کدام engine برای این حالت بهترین است؟"
+      options:
+        - "Ollama"
+        - "SGLang"
+        - "llm-d"
+        - "llama.cpp"
+      explain: "SGLang یک serving engine است که وقتی درخواست‌ها یک prefix طولانی و مشترک دارند، قوی است. Ollama و llama.cpp برای یک ماشین هستند، و llm-d برای چند ماشین."
   - answer: 3
     en:
       question: "You test your self-hosted model with one request at a time. Why does this test mislead you about the server?"
@@ -68,6 +92,14 @@ questions:
         - "Batching sadece bir modeli çok makine boyunca sunduğunda önemlidir."
         - "Tek istekle GPU çoğunlukla boştur ve throughput'u batch belirler."
       explain: "Bir token üretmek az aritmetik ama çok memory trafiği ister, yani tek istek GPU'yu çoğunlukla boş bırakır. Birçok istek birlikte çalışınca tek bir weight yüklemesi hepsine hizmet eder."
+    fa:
+      question: "شما مدل self-hosted خودتان را با یک درخواست در هر لحظه تست می‌کنید. چرا این تست درباره‌ی سرور شما را گمراه می‌کند؟"
+      options:
+        - "تولید یک token بیشتر محاسبه است، پس یک درخواست GPU را پر می‌کند."
+        - "engine قبل از شروع هر درخواستی منتظر یک batch کامل می‌ماند."
+        - "Batching فقط وقتی مهم است که یک مدل را روی چند ماشین سرویس می‌دهید."
+        - "GPU با یک درخواست بیشتر وقت‌ها بیکار است، و batch است که throughput را تعیین می‌کند."
+      explain: "تولید یک token به محاسبه‌ی کم و ترافیک زیاد memory نیاز دارد، پس یک درخواست GPU را بیشتر وقت‌ها بیکار می‌گذارد. وقتی درخواست‌های زیادی با هم اجرا شوند، یک بارگذاری weight‌ها به همه‌ی آن‌ها خدمت می‌کند."
   - answer: 1
     en:
       question: "An engine gives you an API and nothing to look at. What is Open WebUI?"
@@ -85,3 +117,11 @@ questions:
         - "Bir modeli NVIDIA için önceden derleyen (compile) bir araç (tool)."
         - "Inference'ı birçok Kubernetes makinesi boyunca çalıştıran bir platform."
       explain: "Open WebUI, Ollama'yla ya da OpenAI API şeklini konuşan herhangi bir engine'le konuşan bir sohbet arayüzüdür (chat UI). Diğer seçenekler engine'leri anlatır: vLLM, TensorRT-LLM ve llm-d."
+    fa:
+      question: "یک engine فقط یک API به شما می‌دهد و چیزی برای دیدن نمی‌دهد. Open WebUI چیست؟"
+      options:
+        - "یک serving engine که چند درخواست را روی یک GPU batch می‌کند."
+        - "یک رابط chat با حساب کاربری، تاریخچه‌ی گفت‌وگو و تغییر مدل."
+        - "ابزاری که یک مدل را از قبل برای NVIDIA کامپایل می‌کند."
+        - "پلتفرمی که inference را روی چند ماشین Kubernetes اجرا می‌کند."
+      explain: "Open WebUI یک رابط chat است که با Ollama یا هر engine‌ای که ساختار API مربوط به OpenAI را دارد، صحبت می‌کند. گزینه‌های دیگر engine‌ها را توصیف می‌کنند: vLLM، TensorRT-LLM و llm-d."

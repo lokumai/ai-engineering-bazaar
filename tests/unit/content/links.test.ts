@@ -56,6 +56,15 @@ describe('courseLinkFor', () => {
       .toBe('/courses/fundamentals/multi-agent/')
   })
 
+  /** M28 — Persian's sibling resolves the same way, and the page localises it. */
+  it('resolves a _fa target to its English sibling', () => {
+    process.env.NEXT_PUBLIC_SITE_BASE_PATH = ''
+    expect(courseLinkFor('security_fa.md', HARNESS))
+      .toBe(courseLinkFor('security.md', HARNESS))
+    expect(courseLinkFor('../1_fundamentals/multi_agent_fa.md', HARNESS))
+      .toBe('/courses/fundamentals/multi-agent/')
+  })
+
   it('ends every route with a slash, so the canonical form costs no redirect', () => {
     process.env.NEXT_PUBLIC_SITE_BASE_PATH = ''
     for (const target of ['security.md', '../3_expert/advanced_ui.md']) {

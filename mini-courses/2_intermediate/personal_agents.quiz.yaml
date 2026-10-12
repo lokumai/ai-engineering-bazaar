@@ -17,6 +17,14 @@ questions:
         - "Tek bir repo'nun içinde çalışır ve terminali kapattığında durur."
         - "Her konuşmayı unutur, yani her session'a hiç geçmiş olmadan başlar."
       explain: "Bir personal agent, diskte büyümeye devam eden ömür boyu bir memory tutar. Fark model değil: modüle göre dört farkın hiçbiri modelle ilgili değil."
+    fa:
+      question: "کدام‌یک از این موارد یک personal agent را از یک coding agent متفاوت می‌کند؟"
+      options:
+        - "از یک مدل بزرگ‌تر و قوی‌تر از مدل coding agent استفاده می‌کند."
+        - "یک memory روی دیسک نگه می‌دارد که در همه‌ی گفتگو‌های شما بزرگ‌تر می‌شود."
+        - "داخل یک repository کار می‌کند و وقتی ترمینال را می‌بندید، متوقف می‌شود."
+        - "هر گفتگو را فراموش می‌کند، پس هر session را بدون هیچ تاریخچه‌ای شروع می‌کند."
+      explain: "یک personal agent یک memory مادام‌العمر روی دیسک نگه می‌دارد که پیوسته بزرگ‌تر می‌شود. مدل عامل این تفاوت نیست: ماژول می‌گوید هیچ‌کدام از چهار تفاوت به مدل مربوط نیست."
 
   - answer: 3
     en:
@@ -35,6 +43,14 @@ questions:
         - "Agent her giriş yaptığında tüm içeriğini Moltbook'a post olarak atar."
         - "Yazılabilir, yani ona yazabilen her şey agent'ın kim olduğunu değiştirebilir."
       explain: "Agent her uyandığında SOUL.md'yi okur ve ona uyar. Dosyaya yazabilen her şey agent'ı kalıcı olarak değiştirir, ve bu değişiklik sessizdir."
+    fa:
+      question: "SOUL.md یک system prompt است که به شکل فایل نگه داشته می‌شود. چرا این یک ریسک امنیتی است؟"
+      options:
+        - "رمز‌های عبور و API key‌های شما را داخل فایل به‌صورت متن ساده نگه می‌دارد."
+        - "model weights را در خود نگه می‌دارد، پس یک مهاجم می‌تواند کل مدل را کپی کند."
+        - "هر بار که agent وارد می‌شود، کل محتوایش را در Moltbook post می‌کند."
+        - "قابل نوشتن است، پس هر چیزی که بتواند در آن بنویسد، می‌تواند تغییر دهد که agent کیست."
+      explain: "agent هر بار که بیدار می‌شود SOUL.md را می‌خواند و از آن پیروی می‌کند. هر چیزی که بتواند در فایل بنویسد، agent را برای همیشه تغییر می‌دهد، و این تغییر بی‌صداست."
 
   - answer: 2
     en:
@@ -53,6 +69,14 @@ questions:
         - "Problem kendi kendine iyileşmesi gereken tekrarlayan iş olduğunda."
         - "OpenClaw'ın çalıştıramadığı daha güçlü bir model gerektiğinde."
       explain: "Hermes, isteklerindeki desenlerden kendi skill'lerini yazar, yani tekrarlayan iş zamanla iyileşir. İki araç da aynı modelleri çalıştırır, yani fark model değil."
+    fa:
+      question: "Hermes Agent در چه زمانی بهتر از OpenClaw مناسب است؟"
+      options:
+        - "وقتی مسئله، orchestration بین کانال‌های مختلف زیاد است."
+        - "وقتی می‌خواهید یک skill آماده را از marketplace ClawHub بگیرید."
+        - "وقتی مسئله، کار تکراری است که باید خودبه‌خود بهتر شود."
+        - "وقتی به مدلی قوی‌تر از چیزی نیاز دارید که OpenClaw می‌تواند اجرا کند."
+      explain: "Hermes از الگو‌های درخواست‌های شما skill‌های خودش را می‌نویسد، پس کار تکراری با گذشت زمان بهتر می‌شود. هر دو ابزار همان مدل‌ها را اجرا می‌کنند، پس مدل تفاوت نیست."
 
   - answer: 0
     en:
@@ -71,6 +95,14 @@ questions:
         - "Agent'lar, bir insan söylemedikçe riskli bir post'a asla karşı çıkmaz."
         - "Agent'lar tutarlı bir kişiliği yalnızca bir insan izlediğinde korur."
       explain: "Bir çalışma, post'ların %18,4'ünün başka bir agent'a bir şey yapmasını söylediğini buldu. Bu, büyük ölçekte ve kazara yaşanan indirect prompt injection."
+    fa:
+      question: "شبکه‌ی اجتماعی agent‌ها، یعنی Moltbook، چه چیزی را نشان داد؟"
+      options:
+        - "agent‌هایی که post‌های یکدیگر را می‌خوانند، دستور‌هایی را پخش می‌کنند که هیچ صاحبی تأییدشان نکرده است."
+        - "agent‌ها وقتی هیچ انسانی به آن‌ها prompt نمی‌دهد، از post کردن و جواب دادن دست می‌کشند."
+        - "agent‌ها هرگز یک post پرخطر را به چالش نمی‌کشند، مگر این‌که انسانی به آن‌ها بگوید."
+        - "agent‌ها فقط وقتی انسانی آن‌ها را تماشا می‌کند، شخصیت ثابت خود را حفظ می‌کنند."
+      explain: "یک مطالعه نشان داد که 18.4% از post‌ها به یک agent دیگر می‌گفتند کاری انجام دهد. این indirect prompt injection است، و به‌طور تصادفی و در مقیاس بزرگ رخ داد."
 
   - answer: 1
     en:
@@ -89,3 +121,11 @@ questions:
         - "Credential'larını okuyabildiği bir dosyada tut, böylece giriş yapabilsin."
         - "OpenClaw 2.0'a güven, çünkü 2.0 sürümü agent'ı tamamen güvenli yaptı."
       explain: "Agent'ı faydalı yapan erişim, onu tehlikeli yapan erişimle aynı. OpenClaw 2.0 daha iyi, ama kayıtlı credential'ları varsayılan olarak şifrelenmiyor."
+    fa:
+      question: "ماژول برای کم کردن ریسک یک personal agent چه توصیه‌ای می‌کند؟"
+      options:
+        - "حساب‌های اصلی‌تان را به آن بدهید تا کاملاً به جای شما عمل کند."
+        - "آن را در یک container اجرا کنید و حساب‌های جداگانه به آن بدهید، نه حساب‌های اصلی‌تان."
+        - "credential‌های خود را در فایلی نگه دارید که بتواند بخواند، تا بتواند وارد شود."
+        - "به OpenClaw 2.0 اعتماد کنید، چون نسخه‌ی 2.0 agent را کاملاً امن کرده است."
+      explain: "دسترسی‌ای که agent را مفید می‌کند، همان دسترسی‌ای است که آن را خطرناک می‌کند. OpenClaw 2.0 بهتر است، اما credential‌های ذخیره‌شده‌ی آن به‌طور پیش‌فرض رمزگذاری نشده‌اند."

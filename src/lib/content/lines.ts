@@ -38,7 +38,7 @@ export const DIAGRAM_HEADING = /^Mermaid Diagram:\s*/i
  * where they are; a reader of the site has both, so the chart said a third
  * time what the chrome already says twice.
  *
- * **Both languages, and the list is the whole mechanism.** A matcher written
+ * **Every language, and the list is the whole mechanism.** A matcher written
  * in English silently keeps the section on every Turkish page — the failure
  * M19 met twice, in silence, with the quick check and the summary. So both
  * headings are here, in the one place `render.ts` (which drops the section)
@@ -49,6 +49,9 @@ export const DIAGRAM_HEADING = /^Mermaid Diagram:\s*/i
 export const SERIES_HEADINGS: readonly string[] = [
   'Where this fits in the series',
   'Bu serinin neresindeyiz',
+  // M28 — Persian. Fixed in the translators' brief so all nineteen `_fa.md`
+  // files say it the same way, and held by the same corpus test.
+  'کجای این مجموعه هستیم',
 ]
 
 /** A fence, of either marker, at any indent. */

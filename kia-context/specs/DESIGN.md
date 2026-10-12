@@ -11,7 +11,7 @@ source: playground/01-theme-T4-ground-G3-powder.html (light) · playground/01-th
 authority: blueprint
 writes: agent, as the language evolves
 status: active
-covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with nine recorded deviations (the sixth and seventh, the logo and the rail group, 2026-10-11; the eighth, the pager, and the ninth, the Bazaar Street front door, 2026-10-12), the three reader palettes, and the end of a reading page"
+covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with ten recorded deviations (the sixth and seventh, the logo and the rail group, 2026-10-11; the eighth, the pager, the ninth, the Bazaar Street front door, and the tenth, a right-to-left script, 2026-10-12), the three reader palettes, and the end of a reading page"
 last_updated: 2026-10-12
 ---
 
@@ -109,6 +109,9 @@ dark:
 typography:
   sans: '"Avenir Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
   mono: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+  # Tenth deviation: a right-to-left script the source has no text in. Bound
+  # to a downloaded Vazirmatn where Persian is read.
+  persian: 'Vazirmatn, "Noto Naskh Arabic", "Noto Sans Arabic", Tahoma, "Segoe UI", sans-serif'
   body:
     fontFamily: sans
     fontSize: "16px"
@@ -625,10 +628,29 @@ of them scoped to `/`:
 It adds no shadow and no new token: the sign boards are told apart by their hairline, and every CSS
 colour on the page is a token.
 
-**Three of the nine are floors and six are the author's.** The code comment
-deviation, the pager's tracks and the rail's hairline were forced; the `20ch`
-cap, the authorship line, the logo, the rail group's size, the pager's look and
-the front door were chosen.
+**A TENTH DEVIATION, AND THE CONTENT FORCED IT: A RIGHT-TO-LEFT SCRIPT.** On 2026-10-12 the author
+asked for the modules in Persian, at the level of the content and not of the chrome (**D80**). The
+source is English and has no text in an Arabic-script language, so it specifies neither a face nor a
+direction for one, and no transcription of it can. Two things follow, and neither is a choice about
+the look:
+
+- **A face with Persian forms.** `persian` in the token block above. Most of the `sans` stack has no
+  Arabic script, so Persian fell back glyph by glyph to whatever the platform had. Where Persian is
+  read, Vazirmatn is downloaded at build time and served from the site, and Persian text, including
+  the English words inside it, is set in it. *Which* face is the one thing here an agent chose, and
+  it is the author's to change. `transcription.test.ts` carries the token as a named exemption with
+  its reason, and fails if the reason goes away.
+- **A direction.** A run of Persian text reads right to left and its list indents, table alignment
+  and heading-anchor gap mirror with it. What is DRAWN does not: a code slab and a figure's frame stay
+  left-to-right inside it, and so does everything around it, because the chrome is still English.
+
+It adds no colour, no length and no ornament.
+
+**Four of the ten were forced and six are the author's.** The code comment
+deviation, the pager's tracks and the rail's hairline were forced by a measured
+floor, and the Persian face and direction by a script the source has no text
+in; the `20ch` cap, the authorship line, the logo, the rail group's size, the
+pager's look and the front door were chosen.
 
 **The `20ch` cap, the authorship line, the logo, the rail group's size, the pager's look and the front door are the only entries in this file that the author decided rather than a measurement forcing.**
 The rule stands: the mockup outranks this document, a measured accessibility floor outranks the

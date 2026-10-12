@@ -530,4 +530,56 @@
      is `LanguageMenu` now and its rules are in the language with the rest of
      the bar (`bazaar.css`, `.bz-langmenu`). */
 
+  /* ---------------------------------------------------------------------------
+     M28 — A RIGHT-TO-LEFT MODULE: Persian.
+
+     The direction is an attribute on the box that holds the corpus HTML
+     (`Prose`), so everything here is scoped to `[dir="rtl"]` inside the prose
+     and the English page around it is untouched: the bar, the rails and the
+     objectives card stay left-to-right.
+
+     The rules split in two. What READS flips: list indents, the table's cell
+     alignment, a heading anchor's gap, all stated here as physical sides
+     because the rules they mirror are. What is DRAWN stays left-to-right: a
+     code block is code, and a figure's frame is a horizontal scroller with its
+     tools pinned to its top-right corner and its overflow fade on its right
+     edge (`shell.css`), so turning it round would start a wide drawing
+     scrolled to its far end with the fade over its first column. Their
+     captions are prose and stay right-to-left.
+     --------------------------------------------------------------------------- */
+  /* Both lines, and the second is not redundant. Rebinding the token reaches
+     every rule that names `var(--font-sans)` itself, the headings among them;
+     a paragraph names no face and INHERITS one, and what it inherits is the
+     body's family already resolved to the system stack. MEASURED on the first
+     build with only the first line: the h2s were Vazirmatn and every
+     paragraph was "Avenir Next". */
+  [lang="fa"] {
+    --font-sans: var(--font-persian);
+    font-family: var(--font-sans);
+  }
+
+  .bz-prose [dir="rtl"] :is(ul, ol) {
+    padding-left: 0;
+    padding-right: 22px;
+  }
+
+  .bz-prose [dir="rtl"] ul.contains-task-list { padding-right: 0; }
+
+  .bz-prose [dir="rtl"] .bz-tablefig :is(th, td) { text-align: right; }
+
+  .bz-prose [dir="rtl"] .bz-subsection .bz-anchor {
+    margin-left: 0;
+    margin-right: 6px;
+  }
+
+  .bz-prose [dir="rtl"] :is(.bz-slab, .bz-figure-body) { direction: ltr; }
+
+  /* Inline code is a run of left-to-right text inside a right-to-left line,
+     and isolating it keeps its own punctuation with it: without this a span
+     like `tool_calls[0]` can print its bracket at the wrong end. */
+  .bz-prose [dir="rtl"] :not(pre) > code {
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+
 }

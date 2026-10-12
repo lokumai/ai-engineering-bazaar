@@ -19,8 +19,9 @@ behavioural test that proves it.
 like. [`kia-context/specs/DESIGN.md`](kia-context/specs/DESIGN.md) is a
 transcription of its design *language* and names it in `source:`; where the two
 disagree, **the mockup is right and DESIGN.md is the bug** — except where
-DESIGN.md records a deviation: nine of them, three forced by a measured floor
-(**D34**: a measured accessibility floor outranks a transcribed value) and six
+DESIGN.md records a deviation: ten of them, three forced by a measured floor
+(**D34**: a measured accessibility floor outranks a transcribed value), one
+forced by a script the mockup has no text in (Persian, **D80**), and six
 decided by the author. One of the six is the home page, whose reference is
 `playground/10-home-bazaar-street.html` (**D79**).
 
@@ -41,7 +42,10 @@ M14. New milestones go in part 2.
 with a level as an address, the module page, the progress page, the end of a
 module with its quick quiz, the readability pass over the corpus, and the
 Bazaar Street front door. **M19 renders the second language**: every ready
-module has a Turkish page under `/tr/`. **M23 is written and not started**: the
+module has a Turkish page under `/tr/`. **M28 adds Persian**: every ready module
+also has a Persian page under `/fa/`, right to left, with the chrome left
+English; `src/lib/content/languages.ts` is the one list of translations
+(**D80**). **M23 is written and not started**: the
 interface's own strings in Turkish, which are authored content rather than code.
 
 **The retired vocabulary is out of the markup** — `hl-` in any `className` is
@@ -245,8 +249,8 @@ only `INSERT` raises, which is why that suite has both `expectRefused` and
   `curriculum.yaml` must be the same set in both directions, so a module listed
   without a file and a file written without a listing both fail by name. Also
   enforced: unique names, resolvable prerequisites that sit earlier in the
-  course, a `ready` module with a positive duration, and a `_tr.md` sibling for
-  every module.
+  course, a `ready` module with a positive duration, a `_tr.md` sibling for
+  every module, and no `_fa.md` (or any translation) of a module nobody listed.
 - **Regenerate `src/app/lokum-modules.css` in the same commit as a `status`
   change.** `prebuild` writes it, vitest and playwright never run `prebuild`,
   and it is committed for exactly that reason. `public/course-images/` is the

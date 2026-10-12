@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import yaml from 'js-yaml'
 import { z } from 'zod'
+import type { ReadingLang } from './languages'
 import { CONTENT_ROOT } from './paths'
 
 /**
@@ -14,9 +15,10 @@ import { CONTENT_ROOT } from './paths'
  * to make a reader recall the module's main points, not to grade them, so
  * nothing about a reader's answers is stored or counted anywhere.
  *
- * ## One file, both languages
+ * ## One file, every language
  *
- * Each question holds its English and its Turkish side by side with ONE
+ * Each question holds its English and its Turkish (and, since M28, where the
+ * module has one, its Persian) side by side with ONE
  * `answer` index, so the two languages cannot disagree about which option is
  * right, and a translation with a different number of questions or options is
  * a shape error rather than something a reader discovers. The Turkish keeps
@@ -42,13 +44,19 @@ const Question = z.object({
   answer: z.number().int().min(0).max(3),
   en: Side,
   tr: Side,
+  /* M28 — optional in the SCHEMA because Persian is optional per module
+     (`languages.ts`), and required in practice wherever it matters: `quizFor`
+     refuses a Persian page whose quiz lacks a side, and
+     `tests/corpus/quizzes.test.ts` holds every module with a `_fa.md` to a
+     quiz with an `fa` side on every question. */
+  fa: Side.optional(),
 })
 
 const QuizFile = z.object({
   questions: z.array(Question).min(3).max(5),
 })
 
-export type QuizLang = 'en' | 'tr'
+export type QuizLang = ReadingLang
 
 /** One question as a page renders it, in one language. */
 export interface QuizItem {
@@ -79,10 +87,18 @@ export function readQuiz(file: string): z.infer<typeof QuizFile> | null {
 export function quizFor(dir: string, name: string, lang: QuizLang): QuizItem[] | null {
   const quiz = readQuiz(quizPathFor(dir, name))
   if (quiz === null) return null
-  return quiz.questions.map((question) => ({
-    question: question[lang].question,
-    options: question[lang].options,
-    answer: question.answer,
-    explain: question[lang].explain,
-  }))
+  return quiz.questions.map((question, at) => {
+    const side = question[lang]
+    // A Persian page with an English question in it would be the quiet
+    // failure; failing the build by name is the loud one.
+    if (side === undefined) {
+      throw new Error(`${dir}/${name}.quiz.yaml: question ${at + 1} has no ${lang} side`)
+    }
+    return {
+      question: side.question,
+      options: side.options,
+      answer: question.answer,
+      explain: side.explain,
+    }
+  })
 }

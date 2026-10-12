@@ -17,6 +17,14 @@ questions:
         - "Tek bir system prompt iki alakasız işi öğretmeye çalıştığında."
         - "Her zaman, çünkü birkaç agent tek agent'a göre bir yükseltmedir."
       explain: "Bölmek o zaman her agent'a kısa bir prompt, küçük bir tool listesi ve tek bir iş verir. Multi-agent bir yükseltme değil, bir alışveriş."
+    fa:
+      question: "طبق این module، چه زمانی باید یک agent را به چند agent تقسیم کنید؟"
+      options:
+        - "وقتی کار برای تمام شدن به بیش از یک مرحله نیاز دارد."
+        - "وقتی agent باید بیش از یک tool را call کند."
+        - "وقتی یک system prompt تلاش می‌کند دو کار بی‌ربط را یاد بدهد."
+        - "همیشه، چون چند agent نسبت به یک agent یک ارتقا هستند."
+      explain: "تقسیم کردن در آن صورت به هر agent یک prompt کوتاه، یک لیست کوچک از tool‌ها و یک کار می‌دهد. Multi-agent یک مبادله است، نه یک ارتقا."
   - answer: 0
     en:
       question: "The module tells you to start with a supervisor. Why?"
@@ -34,6 +42,14 @@ questions:
         - "Worker'lar sıradaki adımı kimin yapacağına kendi aralarında karar verir."
         - "Worker'lar devir (handover) gerektirmez, bu yüzden context transfer bir problem değildir."
       explain: "Supervisor tasarımında her karar tek bir yerden geçer, bu yüzden sistemin neye karar verdiğini görüp debug edebilirsin. Network daha esnektir, ama tahmin etmesi çok daha zordur."
+    fa:
+      question: "این module می‌گوید با یک supervisor شروع کنید. چرا؟"
+      options:
+        - "هر تصمیم از یک جا می‌گذرد، پس debug کردنش آسان‌تر است."
+        - "هر agent می‌تواند کار را به هر agent دیگری بدهد، پس انعطاف‌پذیرتر است."
+        - "worker‌ها بین خودشان تصمیم می‌گیرند که هر مرحله‌ی بعدی را چه کسی انجام دهد."
+        - "worker‌ها به تحویل کار نیازی ندارند، پس context transfer مشکلی نیست."
+      explain: "در طراحی supervisor، هر تصمیم از یک جا می‌گذرد، پس می‌توانید ببینید سیستم چه تصمیمی گرفته و آن را debug کنید. network انعطاف‌پذیرتر است، اما پیش‌بینی آن خیلی سخت‌تر است."
   - answer: 3
     en:
       question: "Splitting the work across several agents creates two hard problems. Which two?"
@@ -51,6 +67,14 @@ questions:
         - "Tool calling ve turlar boyunca memory"
         - "Agent'lar arasında coordination ve context transfer"
       explain: "İki problemi de işi bölmenin kendisi yaratır, ve tek bir agent'ta ikisi de yoktur. Uzun prompt'lar ve uzun tool listeleri, bölmenin çözdüğü tek agent problemleridir."
+    fa:
+      question: "تقسیم کار بین چند agent دو مشکل سخت ایجاد می‌کند. کدام دو مشکل؟"
+      options:
+        - "system prompt‌های طولانی و لیست‌های طولانی tool"
+        - "انتخاب اشتباه tool و قاطی شدن دو کار"
+        - "Tool calling و memory در طول نوبت‌ها"
+        - "Coordination و context transfer بین agent‌ها"
+      explain: "تقسیم کار هر دو مشکل را ایجاد می‌کند، و یک agent تنها هیچ‌کدام را ندارد. prompt‌های طولانی و لیست‌های طولانی tool، مشکل‌های تک‌agent هستند که تقسیم آن‌ها را حل می‌کند."
   - answer: 1
     en:
       question: "What is the difference between shared context and isolated context?"
@@ -68,3 +92,11 @@ questions:
         - "Shared: context'i sadece supervisor görür. Isolated: context'i sadece worker'lar görür."
         - "Shared: bütün agent'lar tek bir model kullanır. Isolated: her agent kendi modelini kullanır."
       explain: "Shared context'te devirde (handover) hiçbir şey kaybolmaz, ama context hızla büyür. Isolated context'te her agent ucuz ve odaklı kalır, ama geçirmeyi unuttuğun şey yok olur."
+    fa:
+      question: "تفاوت بین shared context و isolated context چیست؟"
+      options:
+        - "Shared: هر agent فقط چیزی را می‌بیند که دریافت می‌کند. Isolated: هر agent همه چیز را می‌بیند."
+        - "Shared: هر agent همه چیز را می‌بیند. Isolated: هر agent فقط چیزی را می‌بیند که دریافت می‌کند."
+        - "Shared: فقط supervisor، context را می‌بیند. Isolated: فقط worker‌ها آن را می‌بینند."
+        - "Shared: همه‌ی agent‌ها از یک مدل استفاده می‌کنند. Isolated: هر agent از مدل مخصوص خودش استفاده می‌کند."
+      explain: "با shared context، در تحویل چیزی گم نمی‌شود، اما context به سرعت بزرگ می‌شود. با isolated context، هر agent ارزان و متمرکز می‌ماند، اما هر چیزی که یادتان برود منتقل کنید، از بین می‌رود."

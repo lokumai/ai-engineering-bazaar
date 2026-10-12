@@ -14,10 +14,12 @@ import {
   countFigures,
   countSources,
   extent,
+  hasTranslation,
   langCoverage,
   sheetFormat,
   translationOf,
 } from './derive'
+import { type ReadingLang, type TranslatedLang, TRANSLATED_LANGS } from './languages'
 import { CONTENT_ROOT } from './paths'
 import { type Revision, revisionFor } from './revision'
 import { type ModuleFrontmatter, parseFrontmatter } from './schema'
@@ -69,6 +71,16 @@ export interface CourseModule {
    * not because anything is currently in that state.
    */
   translation: string | null
+  /**
+   * M28 — every translated body, by language, `null` where there is not a
+   * usable one. `translations.tr` IS `translation` above, read once; Persian is
+   * read by `hasTranslation`, the same rule with the language passed in.
+   *
+   * `translation` stays as Turkish's own name rather than being folded in,
+   * because §7.6's `Lang` value and four test files read it as "the Turkish",
+   * and renaming a field to say the same thing is churn.
+   */
+  translations: Readonly<Record<TranslatedLang, string | null>>
   /** §5.5 `REVISION` / `DATE` — this file's last-touching commit, or null */
   revision: Revision | null
   /** Absolute path, for diagnostics */
@@ -175,10 +187,10 @@ export function loadAllModules(): CourseModule[] {
         // `stripBuildFurniture` and `trimStart` the English body gets, because
         // the two are rendered by the same pipeline and a difference here would
         // show up as a difference in the prose.
-        translation: langCoverage(filePath, entry.status) === 'EN·TR'
-          ? stripBuildFurniture(matter(fs.readFileSync(translationOf(filePath), 'utf8')).content)
-            .trimStart()
-          : null,
+        translation: translationBody(filePath, entry.status, 'tr'),
+        translations: Object.fromEntries(
+          TRANSLATED_LANGS.map((lang) => [lang, translationBody(filePath, entry.status, lang)]),
+        ) as Record<TranslatedLang, string | null>,
         revision: revisionFor(filePath),
         filePath,
         source,
@@ -190,12 +202,30 @@ export function loadAllModules(): CourseModule[] {
   return modules
 }
 
+/**
+ * A translated body, read only where `hasTranslation` has already said there
+ * is one to read (see `translation` for why that is one rule and not two). The
+ * same `stripBuildFurniture` and `trimStart` the English body gets, because the
+ * two are rendered by the same pipeline and a difference here would show up as
+ * a difference in the prose.
+ */
+function translationBody(
+  englishFile: string,
+  status: 'ready' | 'draft',
+  lang: TranslatedLang,
+): string | null {
+  if (!hasTranslation(englishFile, status, lang)) return null
+  return stripBuildFurniture(matter(fs.readFileSync(translationOf(englishFile, lang), 'utf8')).content)
+    .trimStart()
+}
+
 export function loadModule(slug: string): CourseModule | undefined {
   return loadAllModules().find((m) => m.slug === slug)
 }
 
 /**
- * M19 — the same module, READ IN ONE LANGUAGE.
+ * M19 — the same module, READ IN ONE LANGUAGE (Turkish then, any of
+ * `languages.ts`'s since M28).
  *
  * **The whole of the second language is this function**, and that is the point
  * of doing it here rather than in the page. A module's page derives everything
@@ -222,12 +252,12 @@ export function loadModule(slug: string): CourseModule | undefined {
  * address — the `EN` half of §7.6 is a real state and a reader who asked for
  * Turkish must not be handed English without being told.
  */
-export function loadModuleIn(slug: string, lang: 'en' | 'tr'): CourseModule | undefined {
+export function loadModuleIn(slug: string, lang: ReadingLang): CourseModule | undefined {
   const english = loadModule(slug)
   if (!english || lang === 'en') return english
-  if (english.translation === null) return undefined
+  const body = english.translations[lang]
+  if (body === null) return undefined
 
-  const body = english.translation
   return {
     ...english,
     body,

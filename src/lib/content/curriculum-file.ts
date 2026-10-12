@@ -3,6 +3,7 @@ import path from 'node:path'
 import yaml from 'js-yaml'
 import { z } from 'zod'
 import { CATEGORY_DIRS, CATEGORY_SLUGS, type CategorySlug } from './categories'
+import { TRANSLATED_LANGS, TRANSLATIONS, type TranslatedLang } from './languages'
 import { CONTENT_ROOT } from './paths'
 
 /**
@@ -98,24 +99,28 @@ function fail(rule: string, detail: string): never {
  */
 const MODULE_FILE = /^([a-z0-9_]+)\.md$/
 
+/** A translated sibling, `<name>_<lang>.md`, for any language `languages.ts` names. */
+const SIBLING_FILE = new RegExp(`^([a-z0-9_]+)_(${TRANSLATED_LANGS.join('|')})\\.md$`)
+
 /** The names a category directory actually holds, English files only. */
 function namesOnDisk(dir: string): Set<string> {
   const found = new Set<string>()
   for (const filename of fs.readdirSync(path.join(CONTENT_ROOT, dir))) {
-    if (filename.endsWith('_tr.md')) continue
+    if (SIBLING_FILE.test(filename)) continue
     const parts = MODULE_FILE.exec(filename)
     if (parts) found.add(parts[1])
   }
   return found
 }
 
-/** True where the Turkish sibling of `name` exists, under either spelling. */
-function hasTurkish(dir: string, name: string): boolean {
-  const here = path.join(CONTENT_ROOT, dir)
-  return fs.readdirSync(here).some((filename) => {
-    const parts = /^([a-z0-9_]+)_tr\.md$/.exec(filename)
-    return parts?.[1] === name
-  })
+/** The English names `lang`'s siblings in `dir` belong to. */
+function siblingsOnDisk(dir: string, lang: TranslatedLang): Set<string> {
+  const found = new Set<string>()
+  for (const filename of fs.readdirSync(path.join(CONTENT_ROOT, dir))) {
+    const parts = SIBLING_FILE.exec(filename)
+    if (parts && parts[2] === lang) found.add(parts[1])
+  }
+  return found
 }
 
 function sorted(values: Iterable<string>): string {
@@ -247,14 +252,29 @@ function build(): readonly Category[] {
     // with no `_tr.md` at all is a file somebody forgot to create rather than a
     // translation choice. Whether the Turkish is a real translation or a stub
     // is a different question, and `langCoverage` answers that one.
-    const untranslated = category.modules
-      .map((module) => module.name)
-      .filter((name) => !hasTurkish(category.dir, name))
-    if (untranslated.length > 0) {
-      fail(
-        `rule 7, every module needs a Turkish sibling in ${category.dir}/`,
-        `no _tr.md for: ${sorted(untranslated)}`,
-      )
+    //
+    // M28 — the rule is per language now, and only Turkish is `required`
+    // (`languages.ts` says why). What holds for EVERY language is the other
+    // direction: a sibling whose English name is not listed is a translation
+    // of nothing, which is rule 6's failure for a translated file, and without
+    // this it would be skipped by `namesOnDisk` and never reported at all.
+    // `listed` is rule 6's set, above.
+    for (const translation of TRANSLATIONS) {
+      const siblings = siblingsOnDisk(category.dir, translation.id)
+      const untranslated = [...listed].filter((name) => !siblings.has(name))
+      if (translation.required && untranslated.length > 0) {
+        fail(
+          `rule 7, every module needs a ${translation.id} sibling in ${category.dir}/`,
+          `no _${translation.id}.md for: ${sorted(untranslated)}`,
+        )
+      }
+      const orphans = [...siblings].filter((name) => !listed.has(name))
+      if (orphans.length > 0) {
+        fail(
+          `rule 7, every _${translation.id}.md in ${category.dir}/ must translate a listed module`,
+          `translating nothing listed: ${sorted(orphans)}`,
+        )
+      }
     }
   }
 

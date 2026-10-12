@@ -4,7 +4,7 @@ import { SessionProvider } from '@/components/auth/SessionProvider'
 import { Affordances } from '@/components/shell/Affordances'
 import { ReadingOptions } from '@/components/shell/ReadingOptions'
 import { SiteHeader } from '@/components/shell/SiteHeader'
-import { translatedModuleParam } from '@/components/sheet/ModuleSheet'
+import { translatedSlugs } from '@/components/sheet/ModuleSheet'
 import { curriculumFacts } from '@/lib/content/facts'
 import { RecordStateSync } from '@/components/record/RecordStateSync'
 import { recordBootScript } from '@/lib/record/boot'
@@ -85,12 +85,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a href="#main" className="skip-link">
           Skip to content
         </a>
-        {/* The bar's language menu needs to know which modules HAVE a Turkish
-            address, and only the build can say: it is the list the `/tr/` route
-            emits, measured here for the same reason the facts above are. */}
-        <SiteHeader
-          translated={translatedModuleParam().map((one) => `${one.category}/${one.module}`)}
-        />
+        {/* The bar's language menu needs to know which modules HAVE a second
+            address, in which languages, and only the build can say: it is the
+            list each language's route emits, measured here for the same reason
+            the facts above are. */}
+        <SiteHeader translated={translatedSlugs()} />
         {children}
         {/* §6.5 / §6.7 — the overflow fade and the COPY control, once per
             document. In the shell rather than in the prose column because the

@@ -144,17 +144,22 @@ describe('every module in the set', () => {
     }
   })
 
-  it('names another module by title and never by number, in either language', () => {
+  it('names another module by title and never by number, in any language', () => {
     // The number is a position in `curriculum.yaml`, so prose holding one is a
     // second copy of it. All 89 that this replaced were correct on the day they
     // were written and every one of them would have gone silently wrong on the
     // next reorder, which is exactly the failure the config was meant to end.
     // Fenced code is skipped: a sample is free to say whatever it says.
     const withoutFences = (raw: string) => raw.replace(/```[\s\S]*?```/g, '')
-    const byNumber = /\b[Mm]od[u\u00fc]l\p{L}*\s+\d/u
+    // M28 — `ماژول` is Persian's word for it, and it takes no `\b`: a word
+    // boundary is defined over ASCII word characters only.
+    const byNumber = /\b[Mm]od[u\u00fc]l\p{L}*\s+\d|ماژول\S*\s+\d/u
     for (const module of modules) {
       const dir = join(CONTENT_ROOT, module.category.dir)
-      for (const name of [`${module.name}.md`, `${module.name}_tr.md`]) {
+      const persian = `${module.name}_fa.md`
+      const names = [`${module.name}.md`, `${module.name}_tr.md`]
+      if (existsSync(join(dir, persian))) names.push(persian)
+      for (const name of names) {
         expect(withoutFences(readFileSync(join(dir, name), 'utf8')), name)
           .not.toMatch(byNumber)
       }

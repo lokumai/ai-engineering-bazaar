@@ -33,6 +33,7 @@ export function Prose({
   className,
   opening,
   lang,
+  dir,
 }: {
   html: string
   className?: string
@@ -46,6 +47,8 @@ export function Prose({
    * English. One attribute per run of text, and `lang` inherits from there.
    */
   lang?: string
+  /** M28 — `rtl` on the Persian tree, on the same element as `lang` and only it. */
+  dir?: 'rtl'
   /**
    * Rendered as the FIRST child of the prose, before the corpus's own HTML.
    * `01` puts the objectives card exactly there — `.goals` is `.prose`'s first
@@ -58,7 +61,7 @@ export function Prose({
     <>
       <div data-hl-prose="" className={className === undefined ? 'bz-prose' : `bz-prose ${className}`}>
         {opening}
-        <div lang={lang} dangerouslySetInnerHTML={{ __html: html }} />
+        <div lang={lang} dir={dir} dangerouslySetInnerHTML={{ __html: html }} />
       </div>
       {/* §6.10 — the diagram island. It reads the page before it imports
           anything, so prose with no figures never fetches mermaid. */}

@@ -286,7 +286,7 @@ export async function ModuleSheet({
 
   /* The prerequisites, and only them. They were one of three relations
      (`Requirements`, `Unlocks`, `See also`) behind a disclosure beside the
-     completion button; since 2026-10-11 they are a `Before you start` box at the
+     completion button; since 2026-10-12 they are a `Before you start` box at the
      top (`Prerequisites`), and where a module leads is the pager's job. */
   const prerequisites = relation('Requirements', graph.requires(number), localise).targets
 
@@ -456,7 +456,7 @@ export async function ModuleSheet({
           </>
         )}
 
-        {/* THE END OF A MODULE, rebuilt on 2026-10-11 to the author's order:
+        {/* THE END OF A MODULE, rebuilt on 2026-10-12 to the author's order:
             the references (the last section of the prose above), then ONE
             completion checkbox, then Previous and Next, then the quick quiz,
             collapsed. Everything else that stood here — the name prompt, the

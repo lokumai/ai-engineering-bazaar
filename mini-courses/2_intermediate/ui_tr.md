@@ -15,7 +15,7 @@ yerine kendisinin ürettiğinde nelerin değiştiği.
 ```mermaid
 graph LR
     A[Prompt Engineering] --> B[Context Engineering]
-    B --> C[Coding Agents]
+    B --> C[Code Agents]
     C --> D[Harness Engineering]
     D --> E[Loop Engineering]
     E --> F[Generative UI]

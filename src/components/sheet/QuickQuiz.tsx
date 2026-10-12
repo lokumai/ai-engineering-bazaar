@@ -6,7 +6,7 @@ import type { QuizItem } from '@/lib/content/quiz'
 /**
  * The quick quiz's questions, one at a time.
  *
- * The author, 2026-10-11: 3 to 5 four-choice questions per module, an
+ * The author, 2026-10-12: 3 to 5 four-choice questions per module, an
  * explanation of one or two sentences after every answer whether it was right
  * or wrong, Previous and Next between questions, and a way to start over.
  * **Reinforcement, not assessment** — so nothing here is stored, scored on a

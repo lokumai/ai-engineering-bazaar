@@ -99,7 +99,7 @@ categories:
           context summarization, persistent memory or context offloading or
           long-term memory, Subagents, TODO or Explicit Planning, Deep Agents
       - name: coding_agents
-        title: "Coding Agents: Extending Them"
+        title: Code Agents
         status: ready
         minutes: 30
         needs: [agents]

@@ -10,40 +10,41 @@ objectives:
 
 # Training LLMs
 
-[LLM Fundamentals](llms.md) said an LLM is a network with a huge number of parameters, and that it
-predicts the next word. This module is about where those parameters come from.
+[LLM Fundamentals](llms.md) said that an LLM is a network with a huge number of parameters. It
+also said that an LLM predicts the next word. This module is about where those parameters come
+from.
 
-There are two steps, and they are almost nothing alike. One costs millions of dollars and only
-a handful of labs can do it. The other you can run tonight on your own GPU.
+There are two steps, and they are almost completely different. One step costs millions of
+dollars, and only a few labs can do it. You can run the other step tonight on your own GPU.
 
-## What training actually means
+## What Training Means?
 
-A model starts out knowing nothing. Every parameter is a random number, so its output is
+At the start, a model knows nothing. Every parameter is a random number, so its output is
 random too.
 
-Training means feeding it text and nudging those numbers, over and over, until its guesses
-stop being random and start being right.
+Training means that you give the model text and change those numbers by a small amount. You do
+this again and again, until its guesses stop being random and start being right.
 
 ![An untrained network next to a trained one](./images/training-network.jpg)  
-*The same network before and after training. Given "The students opened their", the random weights on the left produce "Sun", and the learned weights on the right produce "Laptops". Nothing about the shape changed, only the numbers inside it.*
+*The same network before and after training. The input is "The students opened their". The random weights on the left produce "Sun". The learned weights on the right produce "Laptops". The shape of the network did not change. Only the numbers inside it changed.*
 
-That is the whole trick. Training does not add rules or facts in any form you could go and
-read. It only adjusts numbers, and the knowledge ends up spread across billions of them. Which
-is why Andrej Karpathy's description has stuck: you can think about it as **compressing the
+That is the whole trick. Training does not add rules or facts in a form that you can open and
+read. It only adjusts numbers. The knowledge ends up spread across billions of them. This is why
+people still use Andrej Karpathy's description: you can think of training as **compressing the
 internet**.
 
-## Pre-training: how a model is born
+## Pre-training
 
-The first and by far the largest step is **pre-training**.
+The first step is **pre-training**, and it is by far the largest.
 
-- The model starts with random, untrained parameters (its "weights").
-- It reads a massive slice of the internet, meaning books, websites, code and articles, and
-  learns to predict the next word, over and over, billions of times.
-- **All** of the model's parameters get updated. For a large model that is billions of numbers
-  changing.
-- It takes thousands of GPUs running for weeks or months, which is why pre-training a large
-  model from scratch costs **millions of dollars**. Only a handful of big labs (OpenAI, Google,
-  Anthropic, Meta and a few others) can afford it.
+- The model starts with parameters (its "weights") that are random and untrained.
+- It reads a very large part of the internet: books, websites, code and articles. From this
+  text, it learns to predict the next word. It does this again and again, billions of times.
+- Pre-training updates **all** of the model's parameters. For a large model, that means
+  billions of numbers change.
+- It needs thousands of GPUs that run for weeks or months. This is why pre-training a large
+  model from scratch costs **millions of dollars**. Only a small number of big labs (OpenAI,
+  Google, Anthropic, Meta and a few others) can afford it.
 
 ```mermaid
 graph LR
@@ -55,48 +56,49 @@ graph LR
 The result is a **general-purpose** model: good at many things, specialised in nothing.
 
 > **NOTE, and this one is an advanced topic.** Notice that nobody labelled that internet text.
-> There is no answer key. The model gets its own training signal by hiding the next word and
-> checking its guess against the word that was actually there, which means the data labels
-> itself. This is called **self-supervised learning**, and diagrams often label it
-> "unsupervised" instead. We come back to it properly in
+> There is no answer key. The model makes its own training signal. It hides the next word, makes
+> a guess, and checks the guess against the word that was really there. So the data labels
+> itself. This is called **self-supervised learning**. Diagrams often label it "unsupervised"
+> instead. We explain it fully in
 > [Advanced Training](../3_expert/advanced_training.md).
 
-## Pre-training and fine-tuning, side by side
+## Why We don't Have to Pre-train?
 
-You do not need to pre-train your own model. Someone else already spent the millions, and you
-can start from their finished model and **fine-tune** it.
+You do not need to pre-train your own model. Someone else already spent the millions. You can
+start from their finished model and **fine-tune** it.
 
-**Fine-tuning** means taking an already pre-trained model and continuing to train it, this time
-on a small, task-specific dataset, so it gets good at one particular job.
+**Fine-tuning** means that you take a model that is already pre-trained, and you continue to
+train it. This time the dataset is small and task-specific, so the model gets good at one
+particular job.
 
-The clearest way to see the difference is the data each step eats:
+The clearest way to see the difference is to look at the data that each step eats:
 
 ![Pre-training versus fine-tuning](./images/pretrain-vs-finetune.png)  
-*Pre-training takes a pile of unlabelled text and no human in the loop, and produces general abilities like completing and understanding text. Fine-tuning takes pairs a human wrote, a prompt and the response it should get, and buys specific abilities like classification or question answering.*
+*Pre-training takes a pile of unlabelled text, with no human in the loop. It produces general abilities, like completing and understanding text. Fine-tuning takes pairs that a human wrote: a prompt, and the response it should get. It adds specific abilities, like classification or question answering.*
 
 So, in one line each:
 
-- **Pre-training** eats **unlabelled** text, scraped at internet scale. Nobody writes the
-  answers, because the next word *is* the answer.
-- **Fine-tuning** eats a **collection of pairs**: input and output, or prompt and response,
-  usually written or checked by people. Thousands of pairs, not billions of pages.
+- **Pre-training** eats **unlabelled** text, collected from across the whole internet. Nobody
+  writes the answers, because the next word *is* the answer.
+- **Fine-tuning** eats a **collection of pairs**: input and output, or prompt and response.
+  People usually write or check these pairs. That is thousands of pairs, not billions of pages.
 
 That difference is why one costs millions and the other fits on a single GPU.
 
-## Fine-tuning: teaching one job really well
+## Fine-tuning
 
-Say you want a model that is really good at summarising articles.
+Imagine that you want a model that is very good at summarising articles.
 
 1. Start with a pre-trained base model.
 2. Collect a dataset of examples: `(long article, human-written short summary)` pairs. A few
    thousand is often enough.
-3. Keep training the model on these pairs, so it learns the pattern "long text in, short and
-   accurate summary out".
-4. The result is noticeably more consistent at summarising than the generic base model, with no
-   pre-training bill.
+3. Continue to train the model on these pairs. This way, it learns the pattern "long text in,
+   short and accurate summary out".
+4. The result is clearly more consistent at summarising than the generic base model. And you do
+   not pay for pre-training.
 
-Here is what a handful of training rows might actually look like. This is exactly what the model
-sees, over and over, during step 3:
+Here is what a few training rows can look like. This is exactly what the model sees, again and
+again, during step 3:
 
 | Article (input) | Human summary (output) |
 |---|---|
@@ -106,13 +108,14 @@ sees, over and over, during step 3:
 | "A new study found that drinking coffee in moderation may reduce the risk of heart disease. Researchers tracked 10,000 participants over five years." | "A 5-year study of 10,000 people found moderate coffee drinking may lower heart disease risk." |
 | "The local football team won their championship game 3-1, securing their first title in a decade." | "The team won the championship 3-1, their first title in ten years." |
 
-By seeing thousands of pairs like these the model does not memorise the answers. It learns the
-*pattern*: take the key facts out of a longer text and compress them into one short, plain
+The model sees thousands of pairs like these, but it does not memorise the answers. It learns
+the *pattern*: take the key facts out of a longer text, and compress them into one short, plain
 sentence.
 
-### Does it actually work?
+### Does it Actually Work?
 
-Let's test it on a brand-new article the model has never seen, not one from the table above.
+Let's test it on a new article that the model has never seen. It is not one of the articles in
+the table above.
 
 **Test article:**
 > "The tech startup announced today that it raised $50 million in Series B funding, led by two
@@ -131,11 +134,12 @@ Let's test it on a brand-new article the model has never seen, not one from the 
 > "The startup raised $50 million in Series B funding to grow its engineering team and expand
 > into three new countries next year."
 
-Notice the difference. The base model rambles, restates the article almost sentence by sentence,
-and opens with filler like "This is an interesting piece of news". The fine-tuned model picked
-up the pattern from the table and applied it to an article it had never seen.
+Notice the difference. The answer of the base model is long and unfocused. It repeats the
+article almost sentence by sentence, and it opens with filler like "This is an interesting piece
+of news". The fine-tuned model learned the pattern from the table. Then it applied that pattern to
+an article it had never seen.
 
-A tiny, simplified example using Hugging Face `transformers`:
+Here is a tiny, simplified example that uses Hugging Face `transformers`:
 
 ```python
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, Trainer, TrainingArguments
@@ -152,9 +156,9 @@ trainer = Trainer(
 trainer.train()  # updates ALL of the model's parameters
 ```
 
-This is **full fine-tuning**, because every parameter gets updated. Same mechanism as
-pre-training, just on a much smaller dataset. Cheaper than pre-training, but for a big model it
-still wants serious GPU memory.
+This is called **full fine-tuning**, because it updates every parameter. It is the same
+mechanism as pre-training, but on a much smaller dataset. It is cheaper than pre-training. But for
+a big model, it still needs a lot of GPU memory.
 
 ```mermaid
 graph LR
@@ -163,24 +167,24 @@ graph LR
     C --> D["Summarisation specialist LLM"]
 ```
 
-## PEFT: the cheap way, and the common one
+## Parameter-efficient Fine-tuning (PEFT)
 
-Full fine-tuning updates every parameter, which for a big model still means large GPUs. Most of
+Full fine-tuning updates every parameter. For a big model, this still means large GPUs. Most of
 us do not have those.
 
-**PEFT (Parameter-Efficient Fine-Tuning)** solves it by **freezing almost the whole model** and
-training only a small number of new, extra parameters.
+**PEFT (Parameter-Efficient Fine-Tuning)** solves this problem. It **freezes almost the whole
+model**, and it trains only a small number of new, extra parameters.
 
 - The frozen part stays exactly as pre-training left it.
-- Only a tiny slice of parameters, often under 1% of the total, actually changes.
-- The most common PEFT technique is **LoRA** (Low-Rank Adaptation). You do not need the maths,
-  just know it is the cheap fine-tuning trick almost everyone uses.
+- Only a very small part of the parameters changes. This is often under 1% of the total.
+- The most common PEFT technique is **LoRA** (Low-Rank Adaptation). You do not need the maths.
+  It is enough to know that LoRA is the cheap fine-tuning trick that almost everyone uses.
 
-The payoff: it runs on a single consumer GPU, trains much faster, and produces a small file
-holding just the extra parameters instead of a whole new copy of the model. This is what real
-projects use most of the time.
+This gives you three benefits. It runs on a single consumer GPU. It trains much faster. And it
+produces a small file that holds only the extra parameters, instead of a whole new copy of the
+model. This is what real projects use most of the time.
 
-A tiny, simplified LoRA example using Hugging Face `peft`:
+Here is a tiny, simplified LoRA example that uses Hugging Face `peft`:
 
 ```python
 from peft import LoraConfig, get_peft_model
@@ -196,33 +200,34 @@ model.print_trainable_parameters()
 ```
 
 Do not confuse PEFT with quantization, which [LLM Fundamentals](llms.md) covered. **PEFT is about
-training cheaply; quantization is about running cheaply.** They are often used together.
+training cheaply. Quantization is about running cheaply.** People often use the two together.
 
-## Unsloth: what people actually reach for
+## Unsloth
 
-Writing the training loop yourself is a lot of wiring, and getting a model to fit in the memory
-you have is its own skill. [Unsloth](https://unsloth.ai/docs) is an open-source library that
-handles both.
+If you write the training loop yourself, you must connect a lot of parts by hand. Making a model
+fit in the memory that you have is a separate skill. [Unsloth](https://unsloth.ai/docs) is an
+open-source library that does both of these jobs.
 
 What you get from it:
 
-- **Fine-tuning that fits.** It rewrites the expensive parts of training so LoRA and
-  quantized-LoRA runs need far less GPU memory and finish faster, which is often the difference
-  between a job that runs on a free Colab GPU and one that does not.
+- **Fine-tuning that fits.** It rewrites the expensive parts of training. Because of this, LoRA
+  and quantized-LoRA runs need far less GPU memory, and they finish faster. Often, this decides
+  whether a job can run on a free Colab GPU or not.
 - **Ready-made notebooks.** The [notebook collection](https://unsloth.ai/docs/get-started/unsloth-notebooks)
-  covers the popular open models. You open one, point it at your dataset, and run it. That is
-  the fastest honest route from "I have some pairs" to "I have a fine-tuned model".
-- **Pre-quantized models for running, not just training.** [LLM Fundamentals](llms.md) mentioned
-  that you rarely quantize anything yourself. These are the releases it meant, so the same project
-  covers compressing a model and training one.
+  covers the popular open models. You open one, give it your dataset, and run it. This is the
+  fastest honest way to go from "I have some pairs" to "I have a fine-tuned model".
+- **Pre-quantized models for running, not only for training.** [LLM Fundamentals](llms.md)
+  mentioned that you rarely quantize anything yourself. These are the releases it meant. So the
+  same project covers both jobs: compressing a model and training one.
 - **A guide, and a reality check.** The
-  [fine-tuning guide](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide) walks the
-  whole process. Read the FAQ,
+  [fine-tuning guide](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide) explains the
+  whole process, step by step. Read the FAQ,
   [is fine-tuning right for me](https://unsloth.ai/docs/get-started/fine-tuning-for-beginners/faq-+-is-fine-tuning-right-for-me),
-  **before** you start, because the honest answer is often no. A better prompt or the retrieval
-  in [RAG & Embeddings](rag.md) solves a lot of problems that look like fine-tuning problems.
+  **before** you start, because the honest answer is often no. Many problems look like
+  fine-tuning problems. A better prompt, or the retrieval in [RAG & Embeddings](rag.md), solves a
+  lot of them.
 
-## The three, side by side
+## Comparing Side-by-side
 
 | | Pre-training | Full fine-tuning | PEFT (e.g. LoRA) |
 |---|---|---|---|
@@ -230,7 +235,7 @@ What you get from it:
 | Data needed | The whole internet, unlabelled | Task-specific pairs | Task-specific pairs |
 | Parameters updated | ALL, from scratch | ALL | SOME, often under 1% |
 | Typical cost | Millions of dollars | Expensive, but far below pre-training | Cheap, fits on one GPU |
-| Who does it | A handful of big AI labs | Companies with real budgets | Most of us, most of the time |
+| Who does it | A few big AI labs | Companies with real budgets | Most of us, most of the time |
 
 ```mermaid
 graph LR
@@ -241,39 +246,41 @@ graph LR
     D --> E
 ```
 
-## When not to fine-tune
+## When Not to Fine-tune
 
-Most people who think they need fine-tuning do not, so it is worth knowing the three cases where
-the answer is no.
+Most people who think they need fine-tuning do not need it. So it is useful to know the three
+cases where the answer is no.
 
-**Do not fine-tune to teach a model your company's knowledge.** That knowledge is alive: the
-codebase gets commits, contracts get amended, policies change. Fine-tuning is a snapshot, and it
-takes hours and real money, so you cannot rerun it every time a file changes. What you want there
-is retrieval, which is [RAG & Embeddings](rag.md).
+**Do not fine-tune to teach a model your company's knowledge.** That knowledge is alive. The
+codebase gets new commits, contracts get updated, and policies change. Fine-tuning is a snapshot.
+It takes hours and real money, so you cannot run it again every time a file changes. What you want
+there is retrieval, which is the topic of [RAG & Embeddings](rag.md).
 
-**Fine-tune for tasks, not for facts.** It is good at teaching a *behaviour*, like summarising in a
-particular shape or classifying into your categories. It is poor at teaching *facts*, because your
-few hundred pages land among billions of parameters holding everything else the model ever read.
+**Fine-tune for tasks, not for facts.** Fine-tuning is good at teaching a *behaviour*, like
+summarising in a particular format or classifying text into your categories. It is poor at
+teaching *facts*. Your few hundred pages land among billions of parameters, and those parameters
+hold everything else the model ever read.
 
-**And remember what you are racing.** Spend a month fine-tuning a model for your task, and by the
-time you are finished the next frontier model is out, trained by a lab with resources you do not
-have, and it is quite possibly better at your task out of the box than your fine-tune of the
-previous generation. Fine-tuning still wins when the task is genuinely yours and genuinely narrow.
-It loses when you are trying to out-train the labs.
+**And remember who you are racing against.** Imagine that you spend a month fine-tuning a model
+for your task. By the time you finish, the next frontier model is out. A lab trained it with
+resources that you do not have. There is a good chance that this new model, with no changes, is
+better at your task than your fine-tuned version of the previous generation. Fine-tuning still
+wins when the task is genuinely yours and genuinely narrow. It loses when you try to beat the labs
+at training.
 
 ## What is Hugging Face?
 
-Both code examples above imported from it, so it is worth one paragraph.
+Both code examples above import from it, so it is worth one paragraph.
 
-[Hugging Face](https://huggingface.co/) is the place the open-source machine learning world
-keeps its work. Its **Models** page is effectively the central registry for open models of every
-kind, not only LLMs: computer vision, speech and audio, and plenty besides. If a research group
-releases an open model, this is usually where it appears.
+[Hugging Face](https://huggingface.co/) is the place where the open-source machine learning
+community keeps its work. Its **Models** page is, in practice, the central registry for open
+models of every kind, not only LLMs. It has models for computer vision, speech and audio, and many
+other areas. When a research group releases an open model, this is usually where it appears.
 
-It also publishes the libraries everyone uses to work with those models. The main one is
-**`transformers`**, which loads a model by name and runs it in a few lines, and there are
-companions for the pieces around it, such as `peft` for the LoRA training above and `datasets`
-for the data you feed it.
+Hugging Face also publishes the libraries that everyone uses to work with those models. The main
+one is **`transformers`**. It loads a model by name and runs it in a few lines of code. There are
+also companion libraries for the parts around it, such as `peft` for the LoRA training above, and
+`datasets` for the data that you give the model.
 
 ## Where this fits in the series
 
@@ -292,23 +299,23 @@ graph LR
 
 ## Summary
 
-Training is just the adjusting of a model's parameters. Pre-training does it from random, on
-unlabelled internet text, for millions of dollars. Fine-tuning does it from someone else's
-finished model, on pairs a human wrote, for very little. PEFT does the same job while touching
-under 1% of the parameters, which is why it is what most projects use.
+Training is just the adjusting of a model's parameters. Pre-training starts from random weights,
+uses unlabelled internet text, and costs millions of dollars. Fine-tuning starts from someone
+else's finished model, uses pairs that a human wrote, and costs very little. PEFT does the same job
+but changes under 1% of the parameters. That is why most projects use it.
 
-But even a fine-tuned model still knows nothing about your private codebase or today's data.
-That gap is exactly what RAG fills, and it is next.
+But even a fine-tuned model still knows nothing about your private codebase or about today's data.
+RAG fills exactly that gap, and it is the next module.
 
-**Quick Check**: what is the difference between full fine-tuning and PEFT, and why is
-pre-training so expensive?
+**Quick Check**: what is the difference between full fine-tuning and PEFT? And why is pre-training
+so expensive?
 
 ## References
 
-- [Unsloth documentation](https://unsloth.ai/docs): the library, top to bottom
+- [Unsloth documentation](https://unsloth.ai/docs): the full documentation of the library
 - [Unsloth: is fine-tuning right for me?](https://unsloth.ai/docs/get-started/fine-tuning-for-beginners/faq-+-is-fine-tuning-right-for-me): read this before you fine-tune anything
 - [Unsloth notebooks](https://unsloth.ai/docs/get-started/unsloth-notebooks): ready-made notebooks for training and for running quantized models
-- [Unsloth fine-tuning guide](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide): the whole process, end to end
+- [Unsloth fine-tuning guide](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide): the whole process, from start to finish
 - [Hugging Face](https://huggingface.co/): the model registry, and the `transformers` library
 - [Fine-tuning AI models](https://cloud.google.com/use-cases/fine-tuning-ai-models?hl=en#fine-tuning-llms-and-ai-models): Google Cloud's overview, useful for the vocabulary
-- [What is LLM Fine-Tuning? (Explained Simply)](https://youtube.com/shorts/Ei4E2lWStqw?si=q0PttlRmBsARGHZU): a short, if you want the whole idea in under a minute
+- [What is LLM Fine-Tuning? (Explained Simply)](https://youtube.com/shorts/Ei4E2lWStqw?si=q0PttlRmBsARGHZU): a short video, if you want the whole idea in under a minute

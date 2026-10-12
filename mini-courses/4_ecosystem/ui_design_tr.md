@@ -2,46 +2,68 @@
 
 Kod yazan bir agent sana bir arayüz de yazar. Problem, her seferinde farklı bir tane yazması.
 
-Bugün bir ayarlar sayfası, yarın bir dashboard iste, ve açıkça iki farklı üründen gelmiş iki ekran alıyorsun: farklı maviler, farklı köşe yuvarlaklığı, farklı buton yüksekliği, bir başlığın ne kadar kalın olduğu konusunda farklı bir fikir. Her biri tek başına iyi görünüyor. Birlikte, kimsenin başında olmadığı gibi görünüyor.
+Bugün bir ayarlar sayfası, yarın bir dashboard iste. Açıkça iki farklı üründen gelmiş iki ekran alırsın:
 
-Bu modül arayüzü düzgün üreten iki tool'la, ve o problemin çözümüyle ilgili; ki çözüm de [Coding Agent'lar: Genişletme](../2_intermediate/coding_agents_tr.md)'deki aynı hile çıkıyor.
+- farklı maviler
+- farklı köşe yuvarlaklığı
+- farklı buton yükseklikleri
+- bir başlığın ne kadar kalın olacağı konusunda farklı bir fikir
 
-## Bir açıklamayı ekrana çeviren iki tool
+Her biri tek başına iyi görünüyor. Birlikte bakınca, sanki işin başında kimse yokmuş gibi görünüyorlar.
 
-**[Google Stitch](https://stitch.withgoogle.com/)** bir prompt, bir görüntü, kaba bir karalama ya da sesli bir açıklama alıyor ve yüksek doğrulukta bir arayüz artı arkasındaki HTML ile CSS'i üretiyor. I/O 2025'te Google Labs'tan çıktı, Gemini üzerinde çalışıyor, ve tasarımcıların önemsediği kısım export: tek tıkla bütün şeyi Figma'ya, layout'u, component'leri ve yapısı bozulmadan gönderiyor. Yani devir teslimin her iki tarafına oturuyor; tartışacak bir resim mi istiyorsun yoksa üzerine kuracak markup mu.
+Bu modül, arayüzü düzgün üreten iki tool'la ilgili. Aynı zamanda o problemin çözümüyle de ilgili. Çözüm de [Code Agent'lar](../2_intermediate/coding_agents_tr.md)'daki hilenin aynısı çıkıyor.
 
-Anthropic Labs'ın Nisan 2026'da çıkan **[Claude Design](https://claude.ai/design)** ürünü aynı işi öbür yönden yapıyor. Prototipleri, slaytları, tek sayfalıkları ve etkileşimli parçaları gerçek HTML, CSS ve JavaScript olarak üretiyor. İki şey onu ilginç yapıyor. Input olarak mevcut bir **codebase**'i alabiliyor, içindeki design system'i çıkarabiliyor, ve sonra istediğin şeye uygulayabiliyor. Ve doğrudan Claude Code'a devrediyor, ki bu da bir prototiple gerçek repo arasındaki boşluğu kapatıyor.
+## Bir Açıklamayı Ekrana Çeviren İki Tool
 
-Aralarındaki desen yeterince net: bir ekranı anlatmak artık çizmekten hızlı, ve çıktı kodun resmi değil kodun kendisi.
+**[Google Stitch](https://stitch.withgoogle.com/)** bir prompt, bir görüntü, kaba bir karalama ya da sesli bir açıklama alıyor. Bundan yüksek doğrulukta (high-fidelity) bir arayüz ve arkasındaki HTML ile CSS'i üretiyor. I/O 2025'te Google Labs'tan çıktı ve Gemini üzerinde çalışıyor. Tasarımcıların önemsediği kısım export. Tek tıkla bütün tasarımı Figma'ya gönderiyor, ve layout, component'ler ve yapı bozulmadan aktarılıyor. Yani tasarımdan geliştirmeye devir teslimin her iki tarafına da uyuyor. Tartışacak bir resim istesen de, üzerine kuracak markup istesen de işe yarıyor.
 
-## Bir design system, ve agent'ın onu neden bir dosyada istediği
+**[Claude Design](https://claude.ai/design)** Anthropic Labs'tan geliyor ve Nisan 2026'da çıktı. Aynı işi öbür yönden yapıyor. Prototipleri, slaytları, tek sayfalıkları ve etkileşimli parçaları gerçek HTML, CSS ve JavaScript olarak üretiyor. İki şey onu ilginç yapıyor. Birincisi, input olarak mevcut bir **codebase**'i alabiliyor. O kodun içindeki design system'i buluyor ve sonra istediğin her şeye uyguluyor. İkincisi, işi doğrudan Claude Code'a devrediyor. Bu da bir prototiple gerçek repo arasındaki boşluğu kapatıyor.
 
-Bir **design system**, bir kez verdiğin ve böylece yeniden vermeyi bıraktığın kararlar kümesi: renkleriniz ve her birinin ne için olduğu, tipografi ölçeği, boşluk adımları, köşe yuvarlaklığı, bir butonun her durumunda nasıl göründüğü. Tasarım ekipleri bunları yıllardır tutuyor. Değişen şey, onları başka kimin okuması gerektiği.
+İki tool'a birlikte bakınca desen yeterince net. Bir ekranı anlatmak artık çizmekten daha hızlı. Ve çıktı kodun resmi değil, kodun kendisi.
 
-Bir ekran üreten agent o kararların her birini anında vermek zorunda, ve senin kararlarını bilmesinin hiçbir yolu yok. Yani inandırıcı olanlar uyduruyor, ve cevap salı günü farklı oluyor. Prompt'ta söylemek tek ekran için işe yarıyor ve ikinciden sağ çıkmıyor.
+## Bir Design System, ve Agent'ın Onu Neden Bir Dosyada İstediği
 
-Çözüm, talimatlarda işe yarayanın aynısı. Kararları bir dosyaya, repo'nun içine yaz, ve agent'ın okumasına izin ver.
+Bir **design system**, bir kez verdiğin ve böylece tekrar vermek zorunda kalmadığın kararların toplamı. Şunları kapsar:
+
+- renklerin ve her birinin ne için olduğu
+- tipografi ölçeği (type scale)
+- boşluk adımları
+- köşe yuvarlaklığı
+- bir butonun her durumunda nasıl göründüğü
+
+Tasarım ekipleri bunları yıllardır tutuyor. Değişen şey, onları başka kimin okuması gerektiği.
+
+Bir ekran üreten agent, o kararların her birini ekranı yaparken vermek zorunda. Senin kararlarını bilmesinin hiçbir yolu yok. Bu yüzden inandırıcı görünen kararlar uyduruyor, ve salı günü cevap farklı oluyor. Kararlarını prompt'ta söyleyebilirsin. Bu tek ekran için işe yarıyor, ama ikinci ekranda artık işe yaramıyor.
+
+Çözüm, talimatlarda işe yarayanın aynısı. Kararları repo'nun içinde bir dosyaya yaz ve agent'ın okumasına izin ver.
 
 ## DESIGN.md
 
-`DESIGN.md` o dosya; Stitch'ten çıkan ve artık proje talimatlarını okuyan her agent'la çalışan bir konvansiyon. Repo kökü, tam olarak o isim, ve çoğu agent onu kendi başına buluyor.
+`DESIGN.md` o dosya. Stitch'ten çıkan bir konvansiyon, ve artık proje talimatlarını okuyan her agent'la çalışıyor. Onu tam bu isimle repo köküne koy, çoğu agent onu kendi başına bulur.
 
 İki tür içerik tutuyor, ve ikisine de ihtiyacı var:
 
-- **Token'lar**, yani tam değerler. Hex kodları, tipografi ölçeği, boşluk adımları, yuvarlaklıklar, component durumları.
-- **Niyet**, kelimelerle. Tasarımın neye benzemeye çalıştığı, bilerek neden kaçındığı, accent renginin neden az kullanıldığı. Bu, bir token listesinin taşıyamayacağı kısım, ve bir agent'ın senin paletini asla göndermeyeceğin bir layout'a uygulamasını engelleyen şey.
+- **Token'lar**, yani tam değerler. Bunlar hex kodları, tipografi ölçeği, boşluk adımları, köşe yuvarlaklıkları ve component durumları.
+- **Niyet**, kelimelerle. Bu kısım tasarımın nasıl bir his vermeye çalıştığını, bilerek neyden kaçındığını ve accent renginin neden az kullanıldığını söyler. Bir token listesi bu kısmı taşıyamaz. Bir agent'ın senin paletini asla yayına almayacağın bir layout'a uygulamasını engelleyen şey budur.
 
-Gösterim bilinmeye değer çünkü çok açık. Tek bir prompt al, Stripe'a göre modellenmiş bir `DESIGN.md` ekle, ve Stripe'ın paletini ve boşluklarını alıyorsun. Başka bir markanın dosyasını koy, başka hiçbir şeyi değiştirme, ve çıktı ona uyacak şekilde değişiyor. [awesome-design-md](https://github.com/VoltAgent/awesome-design-md) popüler markalar için topluluk dosyaları topluyor, yani bunu görmenin en hızlı yolu bir tanesini içine atıp daha önce çalıştırdığın bir prompt'u tekrar çalıştırmak.
+Bu gösterimi bilmeye değer, çünkü çok açık. Tek bir prompt al ve Stripe'a göre modellenmiş bir `DESIGN.md` ekle. Stripe'ın paletini ve boşluklarını alırsın. Şimdi başka bir markanın dosyasını koy ve başka hiçbir şeyi değiştirme. Çıktı yeni dosyaya uyacak şekilde değişir. [awesome-design-md](https://github.com/VoltAgent/awesome-design-md) popüler markalar için topluluk dosyalarını topluyor. Bu yüzden etkiyi görmenin en hızlı yolu şu: o dosyalardan birini repo'na koy, sonra daha önce çalıştırdığın bir prompt'u tekrar çalıştır.
 
-Nereye vardığımıza dikkat et. `AGENTS.md` repo'da çalışmanın kurallarını tutuyor, [Personal Agent'lar](../2_intermediate/personal_agents_tr.md)'daki `SOUL.md` bir agent'ın kim olduğunu tutuyor, ve `DESIGN.md` ürünün neye benzediğini tutuyor. Aynı format, aynı yer, aynı sebep: markdown tam olarak bir insanın rahatça yazabildiği ve bir modelin güvenilir biçimde ayrıştırdığı yerde duruyor, ve repo'da yaşadığı için diğer her şey gibi versiyonlanıp review ediliyor.
+Nereye vardığımıza dikkat et. `AGENTS.md` repo'da çalışmanın kurallarını tutuyor. [Personal Agent'lar](../2_intermediate/personal_agents_tr.md)'daki `SOUL.md` bir agent'ın kim olduğunu tutuyor. `DESIGN.md` de ürünün neye benzediğini tutuyor. Format aynı, yer aynı, sebep aynı. Markdown, bir insanın rahatça yazabildiği ve bir modelin güvenilir biçimde parse edebildiği noktada duruyor. Ve repo'da durduğu için, diğer her şey gibi versiyonlanıyor ve review ediliyor.
 
-## Hâlâ yapmadıkları
+## Hâlâ Yapmadıkları
 
-Dürüst olmaya değer, çünkü demolar ikna edici.
+Bu konuda dürüst olmakta fayda var, çünkü demolar ikna edici.
 
-Bu tool'lar sana hızlıca inandırıcı bir ekran veriyor. Bir tasarımcının verdiği şeyi vermiyorlar, ki o da ekranın ne için olduğunu bilmek: kullanıcının neyi bitirmeye çalıştığı, kazara yapılması zor olması gereken şey, neyin dışarıda bırakılacağı. Üçüncü en iyi layout'u anında üret, ve hâlâ yanlış problemi anında çözüyor olabilirsin.
+Bu tool'lar sana hızlıca inandırıcı bir ekran veriyor. Bir tasarımcının verdiği şeyi vermiyorlar, o da ekranın ne için olduğunu bilmek. Yani kullanıcının neyi bitirmeye çalıştığını, neyin kazara yapılmasının zor olması gerektiğini ve neyin dışarıda bırakılacağını bilmek. Bir tool üçüncü en iyi layout'u anında üretebilir, ve sen yine de yanlış problemi anında çözüyor olabilirsin.
 
-Erişilebilirlik bunun somut versiyonu. Orandan geçmeyen kontrast, düşürülmüş focus durumları, sadece fareyle çalışan bir kontrol, ekran okuyucu için adı olmayan bir ikon butonu. Üretilen bir arayüz sık sık bu şekillerde yanlış oluyor, ve hiçbiri bir ekran görüntüsünde görünmüyor. Kendin kontrol et.
+Erişilebilirlik bunun somut hâli. Üretilen bir arayüz sık sık şu şekillerde yanlış oluyor:
+
+- oran kontrolünden geçmeyen kontrast
+- dışarıda bırakılmış focus durumları
+- sadece fareyle çalışan bir kontrol
+- ekran okuyucu için adı olmayan bir ikon butonu
+
+Bunların hiçbiri bir ekran görüntüsünde görünmüyor. Kendin kontrol et.
 
 ## Bu serinin neresindeyiz
 
@@ -59,19 +81,19 @@ graph LR
 
 ## Özet
 
-Bir agent sana bir arayüz yazar, ve kendi hâline bırakılırsa her seferinde farklı bir tane yazar, çünkü senin tasarım kararlarını anında uydurmak zorunda.
+Bir agent sana bir arayüz yazar. Kendi hâline bırakırsan, her seferinde farklı bir tane yazar. Bunun sebebi, senin tasarım kararlarını çalışırken uydurmak zorunda olması.
 
-Google Stitch bir prompt'u, görüntüyü ya da karalamayı HTML ve CSS'i olan yüksek doğruluklu bir ekrana çeviriyor, ve bütün şeyi Figma'ya export ediyor. Claude Design gerçek HTML, CSS ve JavaScript üretiyor, mevcut bir codebase'ten design system'i okuyabiliyor, ve Claude Code'a devrediyor.
+Google Stitch bir prompt'u, görüntüyü ya da karalamayı HTML ve CSS'i olan yüksek doğruluklu bir ekrana çeviriyor. Bütün tasarımı Figma'ya da export ediyor. Claude Design gerçek HTML, CSS ve JavaScript üretiyor. Mevcut bir codebase'ten design system'i okuyabiliyor ve işi Claude Code'a devrediyor.
 
-Tutarsızlığın çözümü `DESIGN.md`: token'ların ve niyetin, markdown olarak, repo kökünde, agent'ın bulduğu yerde. Gösterimi şu: bir markanın dosyasını başkasıyla değiştirmek çıktıyı değiştiriyor ve başka hiçbir şey değiştirmiyor. `AGENTS.md` ile `SOUL.md`'nin aynı hamlesi, aynı sebeple.
+Tutarsızlığın çözümü `DESIGN.md`. Token'larını ve niyetini markdown olarak, repo kökünde, agent'ın bulduğu yerde tutuyor. Gösterimde bir markanın dosyasını başka bir markanınkiyle değiştiriyorsun ve başka hiçbir şeye dokunmuyorsun. Çıktı değişiyor. Bu, `AGENTS.md` ve `SOUL.md` ile aynı yaklaşım, ve aynı sebeple işe yarıyor.
 
-Hiçbirinin sana vermediği şey, ekranın ne için olduğuna dair yargı, ya da erişilebilir bir sonuç. Üretilen arayüzler rutin olarak kontrast, focus ve klavye erişiminde başarısız oluyor, ve bir ekran görüntüsü bunu sana söylemiyor.
+Bunların hiçbiri sana ekranın ne için olduğuna dair bir yargı vermiyor. Erişilebilir bir sonuç da vermiyor. Üretilen arayüzler kontrast, focus ve klavye erişiminde düzenli olarak başarısız oluyor, ve bir ekran görüntüsü bunu sana söylemiyor.
 
-**Hızlı Kontrol**: paletini prompt'a koydun ve ikinci ekran hâlâ yanlış görünüyor. `DESIGN.md` bir prompt'un tutmadığı neyi tutuyor?
+**Hızlı Kontrol**: paletini prompt'a koydun, ama ikinci ekran hâlâ yanlış görünüyor. `DESIGN.md` bir prompt'un tutmadığı neyi tutuyor?
 
 ## Kaynaklar
 
-- [Google Stitch](https://stitch.withgoogle.com/): prompt, görüntü ya da karalamadan gerçek bir arayüze, tek tıkla Figma export'uyla
+- [Google Stitch](https://stitch.withgoogle.com/): bir prompt'u, görüntüyü ya da karalamayı gerçek bir arayüze çeviriyor ve tek tıkla Figma'ya export ediyor
 - [From idea to app: Introducing Stitch](https://developers.googleblog.com/stitch-a-new-way-to-design-uis/): Google'ın kendi duyurusu, ve DESIGN.md konvansiyonunun çıktığı yer
-- [Claude Design](https://claude.ai/design): gerçek kod olarak prototipler, bir codebase'ten design system'i okuyabiliyor
+- [Claude Design](https://claude.ai/design): prototipleri gerçek kod olarak üretiyor ve bir codebase'ten design system'i okuyabiliyor
 - [awesome-design-md](https://github.com/VoltAgent/awesome-design-md): bilinen markalar için hazır DESIGN.md dosyaları, etkiyi tek çalıştırmada görebilmen için

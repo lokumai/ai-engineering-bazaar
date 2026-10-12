@@ -10,8 +10,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D77, plus open questions O1 to O4 — 2026-09-09 to 2026-10-11"
-last_updated: 2026-10-11
+covers: "D26 to D78, plus open questions O1 to O4 — 2026-09-09 to 2026-10-12"
+last_updated: 2026-10-12
 ---
 
 # 🧠 BRAINSTORM, part 2 — the rebuild, D26 onward
@@ -1713,7 +1713,7 @@ visible mark since M17 made the chips links (**D62**) — only `aria-pressed` wa
 filled, and a link says `aria-current`. Not a decision, a defect; it is in
 M24's follow-up.
 
-### D76 · The end of a module is one checkbox, and the rest leaves the page — 2026-10-11
+### D76 · The end of a module is one checkbox, and the rest leaves the page — 2026-10-12
 
 The author, of the end of every module: a `Save name` / `Skip` prompt, `What you
 built` with a repository form, `Marked by` with four stamps, `Sources opened`,
@@ -1745,7 +1745,7 @@ can start before reading, so they are a `Before you start` box above the prose,
 by title. `Unlocks` and `See also` did not come with them: where a module leads
 is the pager's job, and the rail holds the course.
 
-### D77 · A quiz lives beside its module, both languages in one file, and nothing is stored — 2026-10-11
+### D77 · A quiz lives beside its module, both languages in one file, and nothing is stored — 2026-10-12
 
 The author asked for 3 to 5 four-choice questions per written module, written
 by parallel Opus agents, in simple ASD-STE-style English and in Turkish with
@@ -1771,6 +1771,45 @@ evaluation.
 The agents' own reports surfaced two gaps in the corpus that are the author's to
 close: `training_tr.md` has no `When not to fine-tune` section and `tools_tr.md`
 lacks the `send_email` example and the paragraph on wrapping APIs.
+
+### D78 · The author's heading list, applied with two judgement calls — 2026-10-12
+
+The author sent new headings for fifteen modules, asked that headings be in
+title case ("the first letter of words can be uppercase (but not for example
+'it' or 'i' or don't')"), and asked for every written module to be rewritten in
+ASD-STE-like English, wording only. Two places needed a decision the list did
+not make, and both were taken against the literal reading.
+
+- **Title case for every heading, not only the listed ones.** Applying it to the
+  renamed headings alone would have left each page's `On this page` index in two
+  styles, `Vector Embeddings` above `Why not just fine-tune the model on your
+  documents?`. So every `##` and `###` in the nineteen written modules is title
+  case, with the small words lower case (a, an, the, and, of, to, in, on, for,
+  with, from, as, by, vs) plus the ones the author named (it, is, are, be,
+  don't). The rule is in `mini-courses/CLAUDE.md`. **Four headings keep their
+  exact text** because the app matches them: `## Summary`, `## Özet`, and the
+  two series-map headings in `src/lib/content/lines.ts`. A heading inside a code
+  fence (the prompt-template example in Prompt Engineering) is not a heading.
+- **Security's two red-teaming names are matched to the sections they describe.**
+  As sent, `Red Teaming Systems with Agents` went over the list of tools that
+  attack your own LLM app (promptfoo, PyRIT) and `Red Teaming on AI Agents` over
+  the pentesting agents (Strix, Shannon, PentAGI), which reads the wrong way
+  round for both. They were swapped to fit, and the swap is reported to the
+  author to reverse if it was meant.
+
+**The readability pass was guarded mechanically, because nineteen agents rewrote
+prose at once.** `guard.py` compared each revised file with a snapshot and
+failed on any change to the frontmatter, a heading, a fenced block, an image
+line, the series section, the set of URLs or the set of digit numbers, and on an
+em dash; it was broken on purpose three ways (a mermaid label, a number, a URL)
+and went red each time. That proves the structure and every figure survived. It
+cannot prove the meaning did, so a sample was read by diff, and the agents
+reported facts that looked wrong instead of fixing them.
+
+One framing is the author's and differs from the source: the Loop Engineering
+section calls a recursive language model a **single-agent architecture**. Its
+authors' own write-up says "RLMs are not agents". Both agree it is not a
+multi-agent system, which is the distinction the section exists to draw.
 
 ## Open questions
 

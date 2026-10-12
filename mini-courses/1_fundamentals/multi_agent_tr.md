@@ -1,18 +1,19 @@
 # Multi-Agent Systems
 
 [AI Agent'lar](agents_tr.md) tek bir agent ile bitti: bir loop, bir system prompt, bir tool seti. Bu
-modül birkaç tane kullandığında ne olduğu, ve bunun sana neye mal olduğu.
+modül, birkaç agent kullandığında ne olduğunu ve bunun sana neye mal olduğunu anlatıyor.
 
-## Tek agent neden yetmemeye başlıyor
+## Neden Multi-agent'a İhtiyaç Duyabiliriz?
 
 Gerçek bir istek düşün: *"Veritabanı tablolarımda kaç satır var? Bunları bir bar chart'ta göster."*
 
-Bu iki farklı iş. SQL yaz ve çalıştır, sonra chart çiz. Tek bir agent ikisini de yapabilir, ama
-bunun bedeli var: system prompt artık hem SQL'i hem chart çizmeyi anlatmak zorunda, tool listesi
-uzuyor, ve her çağrı o anda atılan adımla ilgisiz talimatlar taşıyor. Modelin yanlış tool'u seçmesi
-için daha çok yol, iki işi karıştırması için daha çok alan var.
+Bu iki farklı iş. Önce SQL yazıp çalıştırıyorsun, sonra chart çiziyorsun. Tek bir agent ikisini de
+yapabilir, ama bunun bir bedeli var. System prompt artık hem SQL'i hem chart çizmeyi anlatmak
+zorunda, tool listesi de uzuyor. Ayrıca her çağrı, o anki adımla ilgisi olmayan talimatlar taşıyor.
+Bu yüzden modelin yanlış tool'u seçmesi için daha çok yol var. İki işi karıştırması için de daha
+çok alan var.
 
-Bölmek her agent'a kısa bir prompt, küçük bir tool listesi ve tek bir iş veriyor:
+İşi bölersen, her agent kısa bir prompt, küçük bir tool listesi ve tek bir iş alıyor:
 
 - query yazıp çalıştıran bir **SQL agent**
 - sonuçları chart'a çeviren bir **visualisation agent**
@@ -20,21 +21,27 @@ Bölmek her agent'a kısa bir prompt, küçük bir tool listesi ve tek bir iş v
 Her biri [AI Agent'lar](agents_tr.md) modülündeki agent'ın kendisi. Yeni bir şey icat edilmedi.
 Sadece bir loop'tan birkaç loop'a geçtin.
 
-## Başlamak için iki mimari
+## Temel Multi-agent Mimarileri
 
 ![Single agent, network and supervisor architectures](./images/multiagents.png)  
-*Solda, tool'larıyla tek bir agent, ki bu [AI Agent'lar](agents_tr.md) modülünün bittiği yer. Ortada, her agent'ın her agent'la konuşabildiği bir network. Sağda, isteği alıp sadece kendisiyle konuşan worker'lara dağıtan bir supervisor.*
+*Solda: tool'larıyla tek bir agent. [AI Agent'lar](agents_tr.md) modülü burada bitmişti. Ortada: her agent'ın diğer her agent'la konuşabildiği bir network. Sağda: bir supervisor. İsteği alıyor ve işi worker'lara dağıtıyor. Worker'lar da sadece supervisor'la konuşuyor.*
 
-**Supervisor.** Bir agent isteği alıyor, hangi worker'ın ilgilenmesi gerektiğine karar veriyor, işi
-ona geçiriyor, geri geleni topluyor ve kullanıcıya cevap veriyor. Worker'lar sadece supervisor'la
-konuşuyor, başka kimseyle değil. SQL ve chart örneğimiz tam olarak buna oturuyor: supervisor soruyu
-SQL agent'a gönderiyor, satırları alıyor, visualisation agent'a veriyor, ve chart'ı döndürüyor.
+**Supervisor.** Bir agent isteği alıyor. Sonra sırasıyla:
 
-Buna manager-worker ya da orchestrator-worker da deniyor. Aynı şekil.
+- hangi worker'ın bu isteğe bakması gerektiğine karar veriyor
+- işi o worker'a geçiriyor
+- geri geleni topluyor
+- kullanıcıya cevap veriyor
 
-**Network, bazen swarm.** Patron yok. Her agent işi herhangi bir başkasına devredebiliyor, ve sırada
-kimin ne yapacağına kendi aralarında karar veriyorlar. Daha esnek, ve tahmin etmesi çok daha zor,
-çünkü sistemin neye karar verdiğini görebileceğin tek bir yer yok.
+Worker'lar sadece supervisor'la konuşuyor, başka kimseyle değil. SQL ve chart örneğimiz tam olarak
+bu şekle oturuyor. Supervisor soruyu SQL agent'a gönderiyor ve satırları alıyor. Sonra satırları
+visualisation agent'a veriyor ve chart'ı döndürüyor.
+
+Buna manager-worker ya da orchestrator-worker da deniyor. Şekil aynı.
+
+**Network, bazen swarm.** Patron yok. Her agent işi herhangi bir başka agent'a devredebiliyor.
+Sırada kimin ne yapacağına agent'lar kendi aralarında karar veriyor. Bu daha esnek. Ama tahmin
+etmesi de çok daha zor, çünkü sistemin neye karar verdiğini görebileceğin tek bir yer yok.
 
 ```mermaid
 graph TD
@@ -46,57 +53,57 @@ graph TD
     B --> E["Kullanıcıya cevap"]
 ```
 
-**Supervisor ile başla.** Debug etmesi daha kolay, çünkü her karar tek bir yerden geçiyor, ve swarm
-gerektiriyor gibi görünen problemlerin çoğu gerektirmiyor.
+**Supervisor ile başla.** Debug etmesi daha kolay, çünkü her karar tek bir yerden geçiyor. Ayrıca
+swarm gerektiriyor gibi görünen problemlerin çoğu swarm gerektirmiyor.
 
-## İki zor problem
+## Multi-agent'ın Dezavantajları
 
 Bu kısmı ciddiye almaya değer, çünkü iki problem de işi bölmenin *kendisinden* doğuyor. Tek bir
 agent'ta ikisi de yok.
 
-**Coordination.** Kim ne yapıyor, hangi sırayla, ve bir adımın bittiğini kim nasıl biliyor? Tek
-agent'ta bunu loop cevaplıyordu. Birkaç agent'ta bir şeyin karar vermesi gerekiyor, ve o karar
-yanlış olabiliyor: iki agent'ın aynı işi yapması, bir agent'ın hiç gelmeyecek bir şeyi beklemesi,
-bir supervisor'ın devretmeye devam edip hiç durmaması. Daha çok agent, deadlock'a düşmek ya da
-boşa dönmek için daha çok yol demek.
+**Coordination.** Kim ne yapıyor, hangi sırayla? Bir adımın bittiğini kim, nasıl biliyor? Tek
+agent'ta bu soruları loop cevaplıyordu. Birkaç agent'ta bir şeyin karar vermesi gerekiyor ve o karar
+yanlış olabiliyor. İki agent aynı işi yapabilir. Bir agent hiç gelmeyecek bir şeyi bekleyebilir. Bir
+supervisor devretmeye devam edip hiç durmayabilir. Daha çok agent, deadlock'a düşmek ya da sonu
+gelmeyen bir loop'a girmek için daha çok yol demek.
 
-**Context transfer.** Her agent'ın kendi context'i, kendi mesaj yığını var. Yani SQL agent işini
-bitirdiğinde, visualisation agent tam olarak neyi alıyor? Sadece satırları mı? Orijinal soruyu da
-mı? Onları üreten SQL'i de mi? Çok az şey devredersen ikinci agent kör çalışıyor. Her şeyi
-devredersen kocaman bir context'in bedelini ödüyorsun ve agent'ları bölerek kaçmaya çalıştığın
-karışıklığı geri getiriyorsun.
+**Context transfer.** Her agent'ın kendi context'i, yani kendi mesaj yığını (message stack) var.
+Peki SQL agent işini bitirdiğinde, visualisation agent tam olarak neyi alıyor? Sadece satırları mı
+alıyor? Orijinal soruyu da alıyor mu? Satırları üreten SQL'i de alıyor mu? Çok az şey devredersen
+ikinci agent kör çalışıyor. Her şeyi devredersen kocaman bir context'in bedelini ödüyorsun. Üstelik
+agent'ları bölerek kaçmaya çalıştığın karışıklığı da geri getiriyorsun.
 
-Bunu yanlış yapmak, bir multi-agent sistemin yerini aldığı tek agent'tan *daha kötü* çalışmasının
-alışılmış sebebi.
+Bir multi-agent sistem, yerini aldığı tek agent'tan *daha kötü* çalışıyorsa, sebep genellikle bunun
+yanlış yapılmasıdır.
 
-### Shared context mı, isolated context mı
+### Shared Context mı, Isolated Context mı
 
-Bu da her multi-agent tasarımının altındaki seçime götürüyor: agent'lar tek bir context'i
+Bu da her multi-agent tasarımının altında yatan bir seçime götürüyor. Agent'lar tek bir context'i
 **paylaşıyor** mu, yoksa her biri kendi **izole** context'inde mi çalışıyor?
 
-- **Shared:** herkes her şeyi görüyor. Devirde hiçbir şey kaybolmuyor, ve context hızla büyüyor.
-- **Isolated:** her agent sadece kendisine verileni görüyor. Ucuz ve odaklı, ve geçirmeyi
-  unuttuğun şey de öylece yok.
+- **Shared:** herkes her şeyi görüyor. Devirde hiçbir şey kaybolmuyor, ama context hızla büyüyor.
+- **Isolated:** her agent sadece kendisine verileni görüyor. Bu ucuz ve odaklı. Ama geçirmeyi
+  unuttuğun şey de öylece kayboluyor.
 
-İkisi de production'da kullanılıyor, ve bu seçim tasarımın geri kalan neredeyse her şeyini
-belirliyor. Kendi başına ele alınmayı hak edecek kadar derin, o yüzden
-[İleri Seviye Multi-Agent](../3_expert/advanced_multiagent_tr.md) modülünde geri
+İkisi de production'da kullanılıyor. Bu seçim, tasarımın geri kalanında neredeyse her şeyi
+belirliyor. Konu, ayrıca ele alınmayı hak edecek kadar derin. O yüzden
+[İleri Seviye Multi-Agent](../3_expert/advanced_multiagent_tr.md) modülünde ona geri
 döneceğiz.
 
-## Duyacağın diğer mimariler
+## İleri Seviye Multi-agent Mimarileri
 
-Kelimeler tanıdık gelsin diye burada anılıyor, hepsi daha sonra ele alınıyor:
+Bu kelimeler tanıdık gelsin diye onları burada anıyoruz. Hepsini daha sonra ele alacağız:
 
-- **Hierarchical:** supervisor'ların supervisor'ları, tek katman yetmediğinde.
-- **Agent-as-a-tool:** bir agent'ın başka bir agent'a sanki düz bir tool'muş gibi verilmesi, ki
-  [Tool Calling](tools_tr.md) modülünün mekanizmasına tam oturuyor.
-- **Subagent'lar:** kendi izole context'i olan kısa ömürlü yardımcılar doğuran, sonra sadece
-  onların sonuçlarını tutan bir agent.
+- **Hierarchical:** supervisor'ların supervisor'ları. Tek katman yetmediğinde kullanılıyor.
+- **Agent-as-a-tool:** bir agent, başka bir agent'a sanki düz bir tool'muş gibi veriliyor. Bu,
+  [Tool Calling](tools_tr.md) modülündeki mekanizmaya tam oturuyor.
+- **Subagent'lar:** bir agent kısa ömürlü yardımcılar başlatıyor ve her yardımcının kendi izole
+  context'i var. Agent sonra sadece onların sonuçlarını tutuyor.
 
-## Bir tane kurmak
+## Bir Multi-agent Kurmak
 
 ```python
-from smolagents import CodeAgent, tool, HfApiModel
+from smolagents import CodeAgent, tool, InferenceClientModel
 
 @tool
 def sql_query(query: str) -> list:
@@ -108,30 +115,32 @@ def visualise(data: list) -> str:
     """Draw a bar chart from rows and return the path to the image."""
     return chart_from(data)
 
-sql_agent = CodeAgent(tools=[sql_query], model=HfApiModel(), name="sql")
-viz_agent = CodeAgent(tools=[visualise], model=HfApiModel(), name="viz")
+sql_agent = CodeAgent(tools=[sql_query], model=InferenceClientModel(), name="sql",
+                      description="Answers questions by querying the database.")
+viz_agent = CodeAgent(tools=[visualise], model=InferenceClientModel(), name="viz",
+                      description="Draws a chart from rows of data.")
 
 supervisor = CodeAgent(
     tools=[],
-    model=HfApiModel(),
+    model=InferenceClientModel(),
     managed_agents=[sql_agent, viz_agent],   # devredebileceği worker'lar
 )
 
 supervisor.run("How many rows are in my tables? Show them in a bar chart.")
 ```
 
-`managed_agents`'a bak. Supervisor'ın worker'ları ona, [AI Agent'lar](agents_tr.md) modülünde
-tool'ların verildiği şekilde veriliyor; çünkü supervisor'ın bakış açısından onlar tam olarak bu:
+`managed_agents`'a bak. Worker'ları supervisor'a, [AI Agent'lar](agents_tr.md) modülünde agent'a
+tool verdiğin şekilde veriyorsun. Çünkü supervisor'ın bakış açısından worker'lar tam olarak bu:
 çağırıp sonuç alabileceği şeyler.
 
-## Tek agent'ın hâlâ doğru cevap olduğu durumlar
+## Tek Agent'ın Daha İyi Olabileceği Durumlar
 
-Multi-agent bir yükseltme değil. Bir alışveriş: kısa prompt'lar ve net ayrım satın alıyorsun,
-bedelini de coordination ve context transfer ile ödüyorsun.
+Multi-agent bir yükseltme değil. Bir alışveriş. Kısa prompt'lar ve işler arasında daha net bir
+ayrım satın alıyorsun. Bedelini de coordination ve context transfer ile ödüyorsun.
 
-Tek bir prompt hâlâ rahatça sığıyorsa ve tool listesi yönetilebilirse tek agent'ta kal. Tek bir
-system prompt iki alakasız işi öğretmeye çalışıyorsa böl, ve en az bilginin karşıya geçmesi gereken
-dikişten böl.
+Tek bir prompt hâlâ rahatça sığıyorsa ve tool listesini hâlâ kolayca yönetebiliyorsan tek agent'ta
+kal. Tek bir system prompt iki alakasız işi öğretmeye çalışıyorsa böl. Bölerken de, bir agent'tan
+diğerine en az bilginin geçmesi gereken noktadan böl.
 
 ## Bu serinin neresindeyiz
 
@@ -155,19 +164,27 @@ graph LR
 
 ## Özet
 
-Birkaç agent, her birinin kısa bir prompt ve tek bir işi olmasını sağlıyor, ve bir agent'ın
-devredip topladığı supervisor mimarisi de başlamak için doğru olan.
+Birkaç agent, her birinin kısa bir prompt'u ve tek bir işi olmasını sağlıyor. Bir agent'ın işi
+devredip sonuçları topladığı supervisor mimarisi, başlamak için doğru olan mimari.
 
-Devraldığın şey ise **coordination**, yani kimin ne yapacağına ve ne zaman bittiğine karar vermek,
-ve **context transfer**, yani her agent'a neyin verileceğine karar vermek. Bütün zorluk bu ikisi, ve
-ikincisine verdiğin cevap (shared context mı isolated mı) geri kalan her şeyi şekillendiriyor.
+İki problem devralıyorsun. Birincisi **coordination**: kimin ne yapacağına ve işin ne zaman
+bittiğine karar vermek. İkincisi **context transfer**: her agent'a neyin verileceğine karar vermek.
+Bütün zorluk bu ikisi. İkincisine verdiğin cevap (shared context mı, isolated context mı) geri kalan
+her şeyi şekillendiriyor.
 
-Fundamentals burada bitiyor. Artık bütün resim elinde: sadece metin tahmin eden bir model, onun
-masası olan bir context window, o masayı doldurmak için retrieval, iş yapabilmesi için tool'lar,
-turlar boyunca memory, onu bir agent yapan bir loop, ve biri yetmediğinde birkaç agent. Intermediate'teki
-her şey bu yedi fikrin üstüne kuruluyor.
+Fundamentals'ın özü bu. Artık bütün resim elinde:
 
-**Hızlı Kontrol**: bir multi-agent sistemin yarattığı iki zor problem nedir, ve shared ile isolated
+- sadece metin tahmin eden bir model
+- onun masası olan bir context window
+- o masayı doldurmak için retrieval
+- iş yapabilmesi için tool'lar
+- turlar boyunca memory
+- onu bir agent yapan bir loop
+- biri yetmediğinde birkaç agent
+
+Intermediate'teki her şey bu yedi fikrin üstüne kuruluyor.
+
+**Hızlı Kontrol**: bir multi-agent sistemin yarattığı iki zor problem nedir? Shared ile isolated
 context arasındaki fark ne?
 
 ## Kaynaklar

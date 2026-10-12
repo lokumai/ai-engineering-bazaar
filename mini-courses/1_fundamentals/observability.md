@@ -12,29 +12,42 @@ objectives:
 
 In ordinary software, when you want to know what the system does, you read the code. The code is the behaviour.
 
-That stops being true with an agent. The code says "call the model, then run whatever tool it asks for, then go round again". What actually happened on any given run, which tools it chose, in what order, what came back, where it went wrong, is not in the code at all. It only exists in the record of that run.
+With an agent, that stops being true. The code says "call the model, then run whatever tool it asks for, then do it all again". The code does not tell you what actually happened on a given run:
 
-That record is a **trace**, and this module is about keeping it and using it.
+- which tools the agent chose
+- in what order it called them
+- what came back
+- where it went wrong
 
-## What a trace holds
+None of that is in the code at all. It exists only in the record of that run.
 
-A trace is the whole tree of one request. Every model call with its input and its output, every tool call with its arguments and its result, every subagent, and on each of them the tokens, the cost and the duration.
+That record is a **trace**. This module is about how to keep it and how to use it.
 
-That shape matters, because agent failures live in the gaps between steps rather than inside any one of them. The model asked for the right tool with a slightly wrong argument. A tool returned an empty list and the agent treated it as an answer. It looped four times over the same file. It hit the context limit and quietly dropped the instruction it needed. None of that is visible in the final output, which is often a confident paragraph. All of it is visible in a trace.
+## What a Trace Holds
 
-Which is why LangChain put it as plainly as they did in [The Agent Improvement Loop Starts with a Trace](https://www.langchain.com/blog/traces-start-agent-improvement-loop): in traditional software the code documents the behaviour, and in an agentic system the traces do.
+A trace is the whole tree of one request. It holds:
 
-## Where to put them
+- every model call, with its input and its output
+- every tool call, with its arguments and its result
+- every subagent
 
-- **LangSmith** is LangChain's, and the most integrated if you are already using anything from [Agent Frameworks](../4_ecosystem/agent_frameworks.md). Tracing, datasets, evaluators and annotation in one place.
-- **[Langfuse](https://github.com/langfuse/langfuse)** is the open-source one, and the usual answer when the traces must stay on your own infrastructure. It speaks OpenTelemetry as well as the framework SDKs, so it collects from almost anything, and it carries evals, prompt management and datasets alongside the traces.
-- **[Latitude](https://github.com/latitude-dev/latitude-llm)** is also open source, aimed squarely at monitoring in production.
+On each of these, the trace also records the tokens, the cost and the duration.
 
-The thing to check before you pick is not the feature list. It is whether it collects from what you already run, and whether it can keep the traces where your data policy says they have to live. Prompts and tool results are full of customer text, which puts this in the same conversation as the data policy from [Inference Providers](../4_ecosystem/inference_providers.md).
+That tree shape matters. Agent failures happen in the gaps between steps, not inside any one step. For example, the model asked for the right tool, but with a slightly wrong argument. A tool returned an empty list, and the agent treated the empty list as an answer. The agent looped four times over the same file. It hit the context limit and quietly dropped the instruction it needed. None of that is visible in the final output. The final output is often a confident paragraph. All of it is visible in a trace.
 
-## The loop
+This is why LangChain said it so plainly in [The Agent Improvement Loop Starts with a Trace](https://www.langchain.com/blog/traces-start-agent-improvement-loop). In traditional software, the code documents the behaviour. In an agentic system, the traces do.
 
-Collecting traces is not the point. The point is the cycle they start, which is the argument of that LangChain piece:
+## Observability Tools
+
+- **LangSmith** is LangChain's own tool. If you already use anything from [Agent Frameworks](../4_ecosystem/agent_frameworks.md), it is the most integrated choice. It gives you tracing, datasets, evaluators and annotation in one place.
+- **[Langfuse](https://github.com/langfuse/langfuse)** is the open-source one. It is the usual choice when the traces must stay on your own infrastructure. It supports OpenTelemetry as well as the framework SDKs, so it can collect traces from almost anything. Next to the traces, it also has evals, prompt management and datasets.
+- **[Latitude](https://github.com/latitude-dev/latitude-llm)** is also open source. It focuses clearly on monitoring in production.
+
+Before you pick one, the thing to check is not the feature list. The first check is whether it can collect traces from what you already run. The second check is whether it can keep the traces where your data policy says they must stay. Prompts and tool results are full of customer text. So this choice is part of the same discussion as the data policy from [Inference Providers](../4_ecosystem/inference_providers.md).
+
+## The Loop
+
+Collecting traces is not the point. The point is the cycle that the traces start. That cycle is the main argument of the LangChain article:
 
 ```mermaid
 graph LR
@@ -45,19 +58,19 @@ graph LR
     E --> A
 ```
 
-*Every stage is attached to the same object, which is why the loop closes at all. Evaluators score traces. Annotations attach to traces. The offline dataset is made of traces. The regression test replays them. Take the trace away and none of these steps can reach each other.*
+*Every stage is attached to the same object, the trace. That is why the loop can close at all. Evaluators score traces. Annotations attach to traces. The offline dataset is made of traces. The regression test replays them. If you take the trace away, none of these steps can reach each other.*
 
-And it compounds. Each pass produces better data, better data locates failures more precisely, and the next change is aimed better than the last. This is the verification loop that [Loop Engineering](../2_intermediate/loop_engineering.md) covers, running on a longer timescale with a human in it.
+And the gains add up. Each pass produces better data. Better data shows more precisely where the failures are. So the next change is aimed better than the last one. This is the verification loop that [Loop Engineering](../2_intermediate/loop_engineering.md) covers. Here it runs on a longer timescale, and with a human in it.
 
-## The problem nobody expected
+## Using Agents to Observe Other Agents
 
-Then teams got good at collecting traces and hit the wall on the other side. From [From Traces to Insights](https://www.langchain.com/blog/from-traces-to-insights-understanding-agent-behavior-at-scale), a developer describing their own situation: they record over 100,000 traces every single day, and what are they doing with those traces? Literally nothing.
+Then teams got good at collecting traces, and they ran into a problem at the other end. In [From Traces to Insights](https://www.langchain.com/blog/from-traces-to-insights-understanding-agent-behavior-at-scale), a developer describes their own situation. They record over 100,000 traces every single day. And what are they doing with those traces? Literally nothing.
 
-Nobody reads a hundred thousand of anything. And the usual instruments do not save you, because product analytics and online evaluators both answer questions you already thought to ask. They will tell you the failure rate on the check you wrote. They cannot tell you about the failure mode you have never imagined, which is the one costing you users.
+Nobody reads a hundred thousand of anything. And the usual ways of measuring do not save you. Product analytics and online evaluators both answer questions that you already thought to ask. They tell you the failure rate on the check you wrote. They cannot tell you about a failure mode that you have never imagined. And that is the failure mode that costs you users.
 
-So the newest tool in this module is **an agent that reads the traces**. LangSmith's Insights Agent clusters thousands of conversations to surface the usage patterns and failure modes on its own, with nobody specifying what to look for in advance. It is exploratory analysis of a pile too big for a person, done by the same technology that produced the pile.
+So the newest tool in this module is **an agent that reads the traces**. LangSmith's Insights Agent clusters thousands of conversations. In this way, it finds the usage patterns and the failure modes on its own. Nobody has to say in advance what to look for. It does exploratory analysis on a pile that is too big for a person. And the same technology that produced the pile does the analysis.
 
-Which is where this series is heading. [Loop Engineering](../2_intermediate/loop_engineering.md) gets to an agent that designs the loop; this is an agent that audits the output. And it is worth noticing that the reason any of it is necessary is the fact [Harness Engineering](../2_intermediate/harness_engineering.md) starts from: these systems are non-deterministic, they take unbounded natural language as input, and most of their failures therefore turn up in production rather than in your tests.
+This is where the series is heading. [Loop Engineering](../2_intermediate/loop_engineering.md) arrives at an agent that designs the loop. The agent in this module checks the output. Also notice why any of this is necessary. The reason is the same fact that [Harness Engineering](../2_intermediate/harness_engineering.md) starts from. These systems are non-deterministic. They take unbounded natural language as input. So most of their failures appear in production, not in your tests.
 
 ## Where this fits in the series
 
@@ -82,21 +95,35 @@ graph LR
 
 ## Summary
 
-In ordinary software the code tells you what the system does. In an agent it does not, because the code only describes the loop. What happened on a particular run exists only in the trace: every model call, every tool call, every subagent, with the tokens, cost and duration on each.
+In ordinary software, the code tells you what the system does. In an agent, it does not, because the code only describes the loop. What happened on a particular run exists only in the trace. The trace holds every model call, every tool call and every subagent, with the tokens, cost and duration on each one.
 
-That is where agent failures are visible, since they live in the gaps between steps. A slightly wrong argument, an empty result treated as an answer, four passes over the same file, an instruction quietly lost at the context limit. The final output hides all of it.
+The trace is where you can see agent failures, because they happen in the gaps between steps. They look like this:
 
-LangSmith is the integrated choice, Langfuse the open-source one for when traces must stay on your infrastructure, and Latitude another open option focused on production monitoring.
+- a slightly wrong argument
+- an empty result treated as an answer
+- four passes over the same file
+- an instruction quietly lost at the context limit
 
-Collecting them is not the point. The loop is: collect, enrich with evaluators and annotations, find the pattern, change something, check it offline against a dataset made from real traces, and go round with better data than last time.
+The final output hides all of it.
 
-And once there are a hundred thousand traces a day, nobody reads them. Analytics and evaluators only answer questions you already thought of, so the newest answer is an agent that clusters the traces and finds the failure modes you never imagined.
+LangSmith is the integrated choice. Langfuse is the open-source one, for when traces must stay on your own infrastructure. Latitude is another open-source option, and it focuses on production monitoring.
+
+Collecting traces is not the point. The loop is the point:
+
+- Collect the traces.
+- Enrich them with evaluators and annotations.
+- Find the pattern.
+- Change something.
+- Check the change offline, against a dataset made from real traces.
+- Start again, with better data than last time.
+
+And once there are a hundred thousand traces a day, nobody reads them. Analytics and evaluators only answer questions that you already thought of. So the newest answer is an agent that clusters the traces. It finds the failure modes that you never imagined.
 
 **Quick Check**: your agent gives a confident, wrong answer. What would a trace show you that the output cannot?
 
 ## References
 
-- [The Agent Improvement Loop Starts with a Trace](https://www.langchain.com/blog/traces-start-agent-improvement-loop): why the traces document the behaviour now, and the loop they start
+- [The Agent Improvement Loop Starts with a Trace](https://www.langchain.com/blog/traces-start-agent-improvement-loop): why the traces now document the behaviour, and the loop they start
 - [From Traces to Insights: Understanding Agent Behavior at Scale](https://www.langchain.com/blog/from-traces-to-insights-understanding-agent-behavior-at-scale): the hundred-thousand-traces problem, and clustering as the way out
-- [Langfuse](https://github.com/langfuse/langfuse): open source, OpenTelemetry-compatible, with evals and prompt management alongside the traces
-- [Latitude](https://github.com/latitude-dev/latitude-llm): open-source monitoring, aimed at production
+- [Langfuse](https://github.com/langfuse/langfuse): open source, OpenTelemetry-compatible, with evals and prompt management next to the traces
+- [Latitude](https://github.com/latitude-dev/latitude-llm): open-source monitoring, made for production

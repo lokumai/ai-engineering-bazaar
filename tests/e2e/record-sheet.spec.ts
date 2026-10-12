@@ -94,7 +94,7 @@ function printedRevision(page: Page) {
 }
 
 /**
- * 2026-10-11 — a module is completed with ONE checkbox, `Mark this module as
+ * 2026-10-12 — a module is completed with ONE checkbox, `Mark this module as
  * complete`, where it was a `Complete` button with a separate `Un-complete`
  * beside it. Found by its role and its name, so a restyle cannot hide it.
  */
@@ -162,11 +162,11 @@ test('the module as exported is the honest empty form (§12.2, §12.13 class 1)'
   await expect(completion(page)).not.toBeChecked()
 
   // The `Checked by` and `Repositories` rows left the module page with the
-  // `Marked by` card on 2026-10-11; the profile page still prints them.
+  // `Marked by` card on 2026-10-12; the profile page still prints them.
   await expect(page.locator('.bz-card-facts')).toHaveCount(0)
 
   // The module's stamps (§7.4) left the page with the rest of the `Marked by`
-  // card on 2026-10-11.
+  // card on 2026-10-12.
   await expect(page.locator('.bz-stamp')).toHaveCount(0)
 
   // §12.2 — `--` is not `00/32`. The first says "no reading", the second says
@@ -797,7 +797,7 @@ test('. toggles the theme and s signs off the current module (§12.16)', async (
 test('no character shortcut fires from inside a text field (§12.16)', async ({ page }) => {
   await seedTheme(page, 'light')
   // The progress page's name field. A module page has no text field since the
-  // module's own written quick check left it on 2026-10-11, and the guard is
+  // module's own written quick check left it on 2026-10-12, and the guard is
   // about any field the reader types into, wherever it is.
   await page.goto('/profile/')
   await waitForHydratedReadout(page)

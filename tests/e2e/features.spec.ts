@@ -19,7 +19,7 @@ import { SHEETS } from './sheets'
  */
 
 const DRAWN = SHEETS.filter((sheet) => sheet.drawn)
-// 2026-10-11 — one checkbox, where there were a `Complete` and an `Un-complete` button.
+// 2026-10-12 — one checkbox, where there were a `Complete` and an `Un-complete` button.
 const completion = (page: Page) => page.getByRole('checkbox', { name: 'Mark this module as complete' })
 
 test('the reader can sign a module off, and it is still signed after a reload', async ({

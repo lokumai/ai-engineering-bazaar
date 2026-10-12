@@ -1,36 +1,37 @@
 # Training LLMs
 
-[LLM Fundamentals](llms_tr.md) , bir LLM'in çok sayıda parameter'a sahip bir network olduğunu ve
-sonraki kelimeyi tahmin ettiğini söyledi. Bu modül, o parameter'ların nereden geldiğiyle ilgili.
+[LLM Fundamentals](llms_tr.md) modülü, bir LLM'in çok sayıda parameter'a sahip bir network
+olduğunu söyledi. LLM'in sonraki kelimeyi tahmin ettiğini de söyledi. Bu modül, o parameter'ların
+nereden geldiğiyle ilgili.
 
-İki adım var, ve birbirlerine neredeyse hiç benzemiyorlar. Biri milyonlarca dolara mal oluyor ve
+İki adım var ve birbirlerine neredeyse hiç benzemiyorlar. Biri milyonlarca dolara mal oluyor ve
 bunu sadece birkaç lab yapabiliyor. Diğerini bu akşam kendi GPU'nda çalıştırabilirsin.
 
-## Training aslında ne demek
+## Training Ne Demek?
 
-Bir model hiçbir şey bilmeden başlar. Her parameter rastgele bir sayıdır, dolayısıyla output'u da
+Bir model hiçbir şey bilmeden başlar. Her parameter rastgele bir sayıdır, bu yüzden output'u da
 rastgeledir.
 
-Training, ona metin vermek ve bu sayıları tekrar tekrar oynatmak demek; ta ki tahminleri rastgele
-olmayı bırakıp doğru olmaya başlayana kadar.
+Training, modele metin verip bu sayıları biraz değiştirmek demek. Bunu tekrar tekrar yaparsın, ta
+ki modelin tahminleri rastgele olmayı bırakıp doğru olmaya başlayana kadar.
 
 ![Eğitilmemiş bir network ile eğitilmiş olanı yan yana](./images/training-network.jpg)  
-*Aynı network, training'den önce ve sonra. "The students opened their" verildiğinde, soldaki rastgele weight'ler "Sun" üretiyor, sağdaki öğrenilmiş weight'ler ise "Laptops" üretiyor. Şeklinde hiçbir şey değişmedi, sadece içindeki sayılar değişti.*
+*Aynı network, training'den önce ve sonra. Input: "The students opened their". Soldaki rastgele weight'ler "Sun" üretiyor. Sağdaki öğrenilmiş weight'ler ise "Laptops" üretiyor. Network'ün şekli değişmedi. Sadece içindeki sayılar değişti.*
 
-Bütün numara bu. Training modele okuyabileceğin türden kural ya da bilgi eklemez. Sadece sayıları
-ayarlar, ve bilgi milyarlarca sayının arasına yayılmış olarak ortaya çıkar. Andrej Karpathy'nin
-tarifi bu yüzden akılda kalıyor: bunu **internet'i sıkıştırmak** olarak düşünebilirsin.
+Bütün numara bu. Training modele açıp okuyabileceğin türden kural ya da bilgi eklemez. Sadece sayıları
+ayarlar. Bilgi de milyarlarca sayının arasına yayılır. Andrej Karpathy'nin tarifi bu yüzden hâlâ
+kullanılıyor: bunu **internet'i sıkıştırmak** olarak düşünebilirsin.
 
-## Pre-training: bir model nasıl doğar
+## Pre-training
 
 İlk ve açık ara en büyük adım **pre-training**.
 
 - Model rastgele, eğitilmemiş parameter'larla ("weight"leriyle) başlar.
-- İnternetin devasa bir dilimini okur; kitaplar, web siteleri, kod ve makaleler. Ve sonraki
-  kelimeyi tahmin etmeyi, milyarlarca kez tekrar tekrar öğrenir.
+- İnternetin çok büyük bir bölümünü okur: kitaplar, web siteleri, kod ve makaleler. Bu metinden
+  sonraki kelimeyi tahmin etmeyi öğrenir. Bunu tekrar tekrar, milyarlarca kez yapar.
 - Modelin **bütün** parameter'ları güncellenir. Büyük bir model için bu, milyarlarca sayının
   değişmesi demek.
-- Binlerce GPU'nun haftalar ya da aylar boyunca çalışmasını gerektirir; bu yüzden büyük bir modeli
+- Binlerce GPU'nun haftalar ya da aylar boyunca çalışmasını gerektirir. Bu yüzden büyük bir modeli
   sıfırdan pre-train etmek **milyonlarca dolara** mal olur. Bunu sadece birkaç büyük lab (OpenAI,
   Google, Anthropic, Meta ve birkaçı daha) karşılayabilir.
 
@@ -44,47 +45,47 @@ graph LR
 Sonuç **genel amaçlı** bir model: birçok şeyde iyi, hiçbir şeyde uzman değil.
 
 > **NOT, ve bu bir advanced konu.** Dikkat et, o internet metnini kimse label'lamadı. Bir cevap
-> anahtarı yok. Model kendi training signal'ini, sonraki kelimeyi saklayıp tahminini gerçekten
-> orada olan kelimeyle karşılaştırarak elde ediyor; yani veri kendi kendini label'lıyor. Buna
-> **self-supervised learning** deniyor, ve diyagramlar bunu genelde "unsupervised" olarak
-> etiketliyor. Konuya doğru düzgün olarak
-> [İleri Seviye Training](../3_expert/advanced_training_tr.md) modülünde dönüyoruz.
+> anahtarı yok. Model kendi training signal'ini kendisi üretiyor. Sonraki kelimeyi saklıyor, bir
+> tahmin yapıyor ve tahminini gerçekten orada olan kelimeyle karşılaştırıyor. Yani veri kendi
+> kendini label'lıyor. Buna **self-supervised learning** deniyor. Diyagramlar bunu genelde
+> "unsupervised" olarak etiketliyor. Konuyu ayrıntılı olarak
+> [İleri Seviye Training](../3_expert/advanced_training_tr.md) modülünde anlatıyoruz.
 
-## Pre-training ve fine-tuning, yan yana
+## Neden Pre-training Yapmak Zorunda Değiliz?
 
-Kendi modelini pre-train etmen gerekmiyor. Başkası milyonları çoktan harcadı, ve sen onun bitmiş
+Kendi modelini pre-train etmen gerekmiyor. Başkası milyonları çoktan harcadı. Sen onun bitmiş
 modelinden başlayıp **fine-tune** edebilirsin.
 
-**Fine-tuning**, hazır pre-train edilmiş bir modeli alıp, bu kez küçük ve göreve özel bir dataset
-üzerinde training'e devam etmek demek; böylece model tek bir belirli işte iyi hale gelir.
+**Fine-tuning**, zaten pre-train edilmiş bir modeli alıp training'e devam etmek demek. Bu kez
+dataset küçük ve göreve özel, böylece model tek bir belirli işte iyi hale gelir.
 
 Farkı görmenin en net yolu, her adımın yediği veriye bakmak:
 
 ![Pre-training ile fine-tuning karşılaştırması](./images/pretrain-vs-finetune.png)  
-*Pre-training, label'lanmamış bir metin yığınını ve döngüde hiç insan olmadan alıyor, ve metni tamamlamak ya da anlamak gibi genel yetenekler üretiyor. Fine-tuning ise bir insanın yazdığı çiftleri, bir prompt ve alması gereken response'u alıyor, ve classification ya da question answering gibi belirli yetenekler satın alıyor.*
+*Pre-training, label'lanmamış bir metin yığını alıyor ve döngüde hiç insan yok. Metni tamamlamak ya da anlamak gibi genel yetenekler üretiyor. Fine-tuning ise bir insanın yazdığı çiftleri alıyor: bir prompt ve alması gereken response. Classification ya da question answering gibi belirli yetenekler ekliyor.*
 
 Yani, tek satırla:
 
 - **Pre-training**, internet ölçeğinde toplanmış **label'lanmamış** metin yer. Cevapları kimse
   yazmıyor, çünkü sonraki kelimenin kendisi *zaten* cevap.
 - **Fine-tuning**, bir **çift koleksiyonu** yer: input ve output, ya da prompt ve response.
-  Genelde insanlar tarafından yazılmış veya kontrol edilmiş. Milyarlarca sayfa değil, binlerce
+  Bu çiftleri genelde insanlar yazar ya da kontrol eder. Milyarlarca sayfa değil, binlerce
   çift.
 
 Bu fark, birinin neden milyonlara mal olduğunu ve diğerinin neden tek bir GPU'ya sığdığını
 açıklıyor.
 
-## Fine-tuning: tek bir işi gerçekten iyi öğretmek
+## Fine-tuning
 
-Diyelim makaleleri özetlemekte gerçekten iyi bir model istiyorsun.
+Diyelim ki makaleleri özetlemekte çok iyi bir model istiyorsun.
 
 1. Pre-train edilmiş bir base model ile başla.
 2. Örneklerden bir dataset topla: `(uzun makale, insan tarafından yazılmış kısa özet)` çiftleri.
    Birkaç bin tanesi genelde yeter.
-3. Modeli bu çiftler üzerinde eğitmeye devam et, böylece "uzun metin girer, kısa ve doğru özet
-   çıkar" kalıbını öğrenir.
+3. Modeli bu çiftler üzerinde eğitmeye devam et. Böylece model "uzun metin girer, kısa ve doğru
+   özet çıkar" kalıbını öğrenir.
 4. Sonuç, genel base modele göre özetlemede belirgin biçimde daha tutarlı bir model. Pre-training
-   faturası da yok.
+   maliyeti de yok.
 
 Birkaç training satırı gerçekte şöyle görünür. Model 3. adımda tekrar tekrar tam olarak bunu
 görüyor:
@@ -97,12 +98,13 @@ görüyor:
 | "A new study found that drinking coffee in moderation may reduce the risk of heart disease. Researchers tracked 10,000 participants over five years." | "A 5-year study of 10,000 people found moderate coffee drinking may lower heart disease risk." |
 | "The local football team won their championship game 3-1, securing their first title in a decade." | "The team won the championship 3-1, their first title in ten years." |
 
-Bunun gibi binlerce çift görerek model cevapları ezberlemiyor. *Kalıbı* öğreniyor: uzun bir
+Model bunun gibi binlerce çift görüyor, ama cevapları ezberlemiyor. *Kalıbı* öğreniyor: uzun bir
 metinden ana bilgileri çıkar ve tek bir kısa, sade cümleye sıkıştır.
 
-### Gerçekten işe yarıyor mu?
+### Gerçekten İşe Yarıyor mu?
 
-Modelin hiç görmediği yepyeni bir makale üzerinde deneyelim, yukarıdaki tablodan biri değil.
+Modeli, hiç görmediği yepyeni bir makale üzerinde deneyelim. Bu makale yukarıdaki tablodan
+değil.
 
 **Test makalesi:**
 > "The tech startup announced today that it raised $50 million in Series B funding, led by two
@@ -121,9 +123,9 @@ Modelin hiç görmediği yepyeni bir makale üzerinde deneyelim, yukarıdaki tab
 > "The startup raised $50 million in Series B funding to grow its engineering team and expand
 > into three new countries next year."
 
-Farka dikkat et. Base model gevezelik ediyor, makaleyi neredeyse cümle cümle tekrarlıyor ve "This
-is an interesting piece of news" gibi bir dolgu ile açılıyor. Fine-tune edilmiş model tablodaki
-kalıbı kaptı ve hiç görmediği bir makaleye uyguladı.
+Farka dikkat et. Base model'in cevabı uzun ve dağınık. Makaleyi neredeyse cümle cümle tekrarlıyor
+ve "This is an interesting piece of news" gibi bir dolgu cümlesiyle başlıyor. Fine-tune edilmiş
+model tablodaki kalıbı öğrendi. Sonra bu kalıbı hiç görmediği bir makaleye uyguladı.
 
 Hugging Face `transformers` ile küçük ve basitleştirilmiş bir örnek:
 
@@ -143,8 +145,8 @@ trainer.train()  # modelin BÜTÜN parameter'larını güncelliyor
 ```
 
 Buna **full fine-tuning** deniyor, çünkü her parameter güncelleniyor. Pre-training ile aynı
-mekanizma, sadece çok daha küçük bir dataset üzerinde. Pre-training'den ucuz, ama büyük bir model
-için hâlâ ciddi GPU belleği istiyor.
+mekanizma, sadece çok daha küçük bir dataset üzerinde. Pre-training'den daha ucuz. Ama büyük bir
+model için hâlâ çok GPU belleği istiyor.
 
 ```mermaid
 graph LR
@@ -153,22 +155,22 @@ graph LR
     C --> D["Özetleme uzmanı LLM"]
 ```
 
-## PEFT: ucuz yol, ve yaygın olan
+## Parameter-efficient Fine-tuning (PEFT)
 
-Full fine-tuning her parameter'ı güncelliyor, ki büyük bir model için bu hâlâ büyük GPU'lar demek.
+Full fine-tuning her parameter'ı güncelliyor. Büyük bir model için bu, hâlâ büyük GPU'lar demek.
 Çoğumuzda onlar yok.
 
-**PEFT (Parameter-Efficient Fine-Tuning)** bunu, **modelin neredeyse tamamını dondurup** sadece az
-sayıda yeni, ek parameter eğiterek çözüyor.
+**PEFT (Parameter-Efficient Fine-Tuning)** bu sorunu çözüyor. **Modelin neredeyse tamamını
+donduruyor** ve sadece az sayıda yeni, ek parameter eğitiyor.
 
 - Donmuş kısım, pre-training onu nasıl bıraktıysa aynen öyle kalıyor.
-- Sadece küçük bir parameter dilimi, genelde toplamın %1'inden azı, gerçekten değişiyor.
-- En yaygın PEFT tekniği **LoRA** (Low-Rank Adaptation). Matematiğine ihtiyacın yok, sadece bunun
-  neredeyse herkesin kullandığı ucuz fine-tuning numarası olduğunu bil.
+- Parameter'ların sadece çok küçük bir kısmı değişiyor. Bu, genelde toplamın %1'inden azı.
+- En yaygın PEFT tekniği **LoRA** (Low-Rank Adaptation). Matematiğine ihtiyacın yok. LoRA'nın,
+  neredeyse herkesin kullandığı ucuz fine-tuning numarası olduğunu bilmen yeterli.
 
-Kazancı: tek bir consumer GPU'da çalışıyor, çok daha hızlı eğitiliyor, ve modelin yepyeni bir
-kopyası yerine sadece ek parameter'ları tutan küçük bir dosya üretiyor. Gerçek projelerin çoğu
-zaman kullandığı şey bu.
+Bunun üç faydası var. Tek bir consumer GPU'da çalışıyor. Çok daha hızlı eğitiliyor. Ve modelin
+yepyeni bir kopyası yerine, sadece ek parameter'ları tutan küçük bir dosya üretiyor. Gerçek
+projelerin çoğu zaman kullandığı şey bu.
 
 Hugging Face `peft` ile küçük ve basitleştirilmiş bir LoRA örneği:
 
@@ -186,34 +188,37 @@ model.print_trainable_parameters()
 ```
 
 PEFT'i, [LLM Fundamentals](llms_tr.md) modülünde anlattığımız quantization ile karıştırma. **PEFT
-ucuza eğitmekle ilgili; quantization ucuza çalıştırmakla.** Sık sık birlikte kullanılıyorlar.
+ucuza eğitmekle ilgili. Quantization ise ucuza çalıştırmakla ilgili.** İkisi sık sık birlikte
+kullanılıyor.
 
-## Unsloth: insanların gerçekten kullandığı şey
+## Unsloth
 
-Training loop'unu kendin yazmak epey uğraş, ve bir modeli eldeki belleğe sığdırmak başlı başına bir
-beceri. [Unsloth](https://unsloth.ai/docs) ikisini de halleden açık kaynak bir kütüphane.
+Training loop'unu kendin yazarsan, birçok parçayı elle birbirine bağlaman gerekir. Bir modeli
+eldeki belleğe sığdırmak da başlı başına bir beceri. [Unsloth](https://unsloth.ai/docs) bu iki işi
+de yapan açık kaynak bir kütüphane.
 
 Sana verdikleri:
 
-- **Sığan fine-tuning.** Training'in pahalı kısımlarını yeniden yazıyor, böylece LoRA ve
-  quantize edilmiş LoRA çalıştırmaları çok daha az GPU belleği isteyip daha hızlı bitiyor. Bu
-  genelde ücretsiz bir Colab GPU'sunda çalışan bir iş ile çalışmayan bir iş arasındaki fark.
+- **Sığan fine-tuning.** Training'in pahalı kısımlarını yeniden yazıyor. Böylece LoRA ve
+  quantize edilmiş LoRA çalıştırmaları çok daha az GPU belleği istiyor ve daha hızlı bitiyor. Bir
+  işin ücretsiz bir Colab GPU'sunda çalışıp çalışmayacağını çoğu zaman bu belirliyor.
 - **Hazır notebook'lar.** [Notebook koleksiyonu](https://unsloth.ai/docs/get-started/unsloth-notebooks)
-  popüler açık modelleri kapsıyor. Birini açıyorsun, kendi dataset'ine yönlendiriyorsun ve
+  popüler açık modelleri kapsıyor. Birini açıyorsun, ona kendi dataset'ini veriyorsun ve
   çalıştırıyorsun. "Elimde birkaç çift var"dan "fine-tune edilmiş bir modelim var"a giden en hızlı
   dürüst yol bu.
 - **Sadece training için değil, çalıştırmak için de hazır quantize edilmiş modeller.**
-  [LLM Fundamentals](llms_tr.md) modülü neredeyse hiçbir şeyi kendin quantize etmediğinden
-  bahsetmişti. Kastettiği release'ler bunlar, yani aynı proje hem bir modeli sıkıştırmayı hem de
-  eğitmeyi kapsıyor.
+  [LLM Fundamentals](llms_tr.md) modülü, bir şeyi kendin quantize etmeye nadiren ihtiyaç
+  duyduğunu söylemişti. Kastettiği release'ler bunlar. Yani aynı proje iki işi de kapsıyor: bir
+  modeli sıkıştırmak ve eğitmek.
 - **Bir rehber, ve bir gerçeklik kontrolü.**
   [Fine-tuning rehberi](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide) bütün süreci
   anlatıyor. Ama başlamadan **önce**
   [fine-tuning bana uygun mu](https://unsloth.ai/docs/get-started/fine-tuning-for-beginners/faq-+-is-fine-tuning-right-for-me)
-  FAQ'ini oku, çünkü dürüst cevap genelde hayır. Fine-tuning problemi gibi görünen birçok problemi
-  daha iyi bir prompt ya da [RAG & Embeddings](rag_tr.md) modülündeki retrieval çözüyor.
+  FAQ'ini oku, çünkü dürüst cevap genelde hayır. Birçok problem fine-tuning problemi gibi
+  görünüyor. Bunların birçoğunu daha iyi bir prompt ya da [RAG & Embeddings](rag_tr.md)
+  modülündeki retrieval çözüyor.
 
-## Üçü yan yana
+## Yan Yana Karşılaştırma
 
 | | Pre-training | Full fine-tuning | PEFT (örn. LoRA) |
 |---|---|---|---|
@@ -232,19 +237,19 @@ graph LR
     D --> E
 ```
 
-## Hugging Face nedir?
+## Hugging Face Nedir?
 
-Yukarıdaki iki kod örneği de ondan import etti, dolayısıyla bir paragrafı hak ediyor.
+Yukarıdaki iki kod örneği de ondan import ediyor. Bu yüzden bir paragrafı hak ediyor.
 
 [Hugging Face](https://huggingface.co/), açık kaynak machine learning dünyasının işini tuttuğu
-yer. **Models** sayfası, sadece LLM'ler değil her türden açık model için fiilen merkezi registry:
-computer vision, speech ve audio, ve daha epey şey. Bir araştırma grubu açık bir model
-yayınlıyorsa, genelde burada çıkıyor.
+yer. **Models** sayfası, pratikte her türden açık model için merkezi registry. Sadece LLM'ler için
+değil: computer vision, speech ve audio modelleri ve daha pek çok alan için. Bir araştırma grubu
+açık bir model yayınlarsa, model genelde burada çıkıyor.
 
-Ayrıca bu modellerle çalışmak için herkesin kullandığı kütüphaneleri de yayınlıyor. Ana olanı
-**`transformers`**, ki bir modeli ismiyle yükleyip birkaç satırda çalıştırıyor. Etrafındaki
-parçalar için de kardeşleri var, mesela yukarıdaki LoRA training'i için `peft` ve ona vereceğin
-veri için `datasets`.
+Hugging Face, bu modellerle çalışmak için herkesin kullandığı kütüphaneleri de yayınlıyor. Ana
+kütüphane **`transformers`**. Bir modeli ismiyle yüklüyor ve birkaç satır kodla çalıştırıyor.
+Etrafındaki parçalar için yardımcı kütüphaneler de var: mesela yukarıdaki LoRA training'i için
+`peft`, ve modele vereceğin veri için `datasets`.
 
 ## Bu serinin neresindeyiz
 
@@ -263,20 +268,21 @@ graph LR
 
 ## Özet
 
-Training, bir modelin parameter'larının ayarlanmasından başka bir şey değil. Pre-training bunu
-rastgeleden başlayarak, label'lanmamış internet metniyle, milyonlarca dolara yapıyor. Fine-tuning
-başkasının bitmiş modelinden başlayarak, bir insanın yazdığı çiftlerle, çok az maliyetle yapıyor.
-PEFT aynı işi parameter'ların %1'inden azına dokunarak yapıyor, ki çoğu projenin kullandığı şey bu.
+Training, bir modelin parameter'larının ayarlanmasından başka bir şey değil. Pre-training
+rastgele weight'lerden başlıyor, label'lanmamış internet metnini kullanıyor ve milyonlarca dolara
+mal oluyor. Fine-tuning başkasının bitmiş modelinden başlıyor, bir insanın yazdığı çiftleri
+kullanıyor ve maliyeti çok düşük. PEFT aynı işi yapıyor, ama parameter'ların %1'inden azını
+değiştiriyor. Çoğu projenin onu kullanmasının sebebi bu.
 
 Ama fine-tune edilmiş bir model bile senin private codebase'in ya da bugünün verisi hakkında
-hiçbir şey bilmiyor. O boşluğu tam olarak RAG dolduruyor, ve sırada o var.
+hiçbir şey bilmiyor. O boşluğu tam olarak RAG dolduruyor ve sıradaki modül o.
 
-**Hızlı Kontrol**: full fine-tuning ile PEFT arasındaki fark ne, ve pre-training neden bu kadar
+**Hızlı Kontrol**: full fine-tuning ile PEFT arasındaki fark ne? Ve pre-training neden bu kadar
 pahalı?
 
 ## Kaynaklar
 
-- [Unsloth dokümantasyonu](https://unsloth.ai/docs): kütüphanenin tamamı
+- [Unsloth dokümantasyonu](https://unsloth.ai/docs): kütüphanenin bütün dokümantasyonu
 - [Unsloth: fine-tuning bana uygun mu?](https://unsloth.ai/docs/get-started/fine-tuning-for-beginners/faq-+-is-fine-tuning-right-for-me): bir şeyi fine-tune etmeden önce bunu oku
 - [Unsloth notebook'ları](https://unsloth.ai/docs/get-started/unsloth-notebooks): training için ve quantize edilmiş modelleri çalıştırmak için hazır notebook'lar
 - [Unsloth fine-tuning rehberi](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide): baştan sona bütün süreç

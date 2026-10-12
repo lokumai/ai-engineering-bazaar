@@ -9,7 +9,7 @@ import { useHydrated, useRecord, useWriteState } from '@/lib/record/store'
  * The end of a module, part one: ONE familiar control that marks it complete
  * and un-marks it.
  *
- * The author, 2026-10-11, of everything this replaced: *"there should be a
+ * The author, 2026-10-12, of everything this replaced: *"there should be a
  * mechanism to check something as completed or uncheck it using a familiar,
  * industry standard, best practice and intuitive UI/UX"*. What it replaced was
  * a `Completion · Self-asserted` head, a sentence pointing at the objectives,

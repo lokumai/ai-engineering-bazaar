@@ -15,10 +15,10 @@ This module is that paragraph, opened up.
 
 > **Prompt engineering is writing an input that leads the model to the output you expect.**
 
-Start from what a model actually is. A pre-trained neural network, weights frozen, no state and no
-memory. Input in, output out, every time, with nothing carried over. So the model is fixed and the
-input is the only thing you control, which makes the input the only thing that can decide the
-quality of what comes back.
+Start with what a model is. It is a pre-trained neural network. Its weights are frozen, and it has
+no state and no memory. Input goes in and output comes out, every time. Nothing carries over from
+one time to the next. So the model is fixed, and the input is the only thing you control. That makes
+the input the only thing that can decide the quality of what comes back.
 
 [LLM Fundamentals](../1_fundamentals/llms.md) wrote down what the model computes:
 
@@ -26,68 +26,71 @@ quality of what comes back.
 P(next token | context)
 ```
 
-Your prompt *is* that context. So the whole discipline is one search problem:
+Your prompt *is* that context. So the whole job is one search problem:
 
 ```
 best prompt = the prompt that maximises P(the output you want | prompt)
 ```
 
-Everything below is a technique for answering one question: how do I write the prompt so I get the
-output I expect?
+Everything below is a technique that answers one question: how do you write the prompt so that you
+get the output you expect?
 
-## The same question, asked twice
+## Why Prompt Engineering is Even Needed?
 
-Here is the objection that should already be bothering you. If the weights are frozen and the model
-remembers nothing, why does asking the same question in two different ways give two different
-answers?
+Here is an objection that you probably already have. If the weights are frozen and the model
+remembers nothing, why do you get two different answers when you ask the same question in two
+different ways?
 
-Because two phrasings are not the same input, and the model does not answer questions. It runs a
+Because two phrasings are not the same input. And the model does not answer questions. It runs a
 network.
 
-Inside that network are neurons, and a prompt decides which ones fire. Some activate strongly, some
-weakly, some not at all. Change the words and you change that pattern, which changes the output.
+That network contains neurons, and the prompt decides which ones fire. Some activate strongly,
+some activate weakly, and some do not activate at all. When you change the words, you change that
+pattern. When the pattern changes, the output changes.
 
 ![Which neurons light up](./images/neurons-activation.jpeg)  
-*The weights are identical in both cases. A prompt only decides which of them get used, which is why the same model answers an arithmetic question with one part of itself and a painting question with another.*
+*The weights are identical in both cases. A prompt only decides which of them get used. That is why the same model answers an arithmetic question with one part of itself and a painting question with another part.*
 
-Think of a DJ mixer. Volume, bass, echo, one knob each. The DJ never swaps the hardware, they move
-the knobs, listen, and move them again until the room sounds right. Your prompt is a setting of
-those knobs, and prompt engineering is writing the text that turns up the parts of the network you
-need for this job.
+Think of a DJ mixer. It has one knob each for volume, bass and echo. The DJ never changes the
+hardware. They move the knobs, listen, and move them again until the room sounds right. Your
+prompt is one setting of those knobs. Prompt engineering is writing the text that turns up the
+parts of the network you need for this job.
 
 ![Turning the knobs](./images/prompt-mixer.jpeg)  
-*Every knob here is something this module covers. None of them has a panel you can reach: the prompt text is the only thing that moves them.*
+*Every knob here is something this module covers. None of them is on a panel that you can touch: the prompt text is the only thing that moves them.*
 
-The knobs, though, are unlabelled and out of reach, and text is your only handle on them. Which is
-why this work is experimental rather than theoretical, and why nobody can hand you the correct
-prompt for your task.
+But the knobs have no labels, and you cannot reach them. Text is the only way to move them. That
+is why this work is experimental and not theoretical. It is also why nobody can give you the
+correct prompt for your task.
 
-## What a weak prompt costs you
+## What a Weak Prompt Costs You
 
-Two drivers take the same car around the same track and post different lap times. Same engine, same
-horsepower, same grip, same corners. The better driver simply gets more out of the machine.
+Two drivers drive the same car around the same track, and they get different lap times. They have
+the same engine, the same horsepower, the same grip and the same corners. The better driver simply
+gets more out of the machine.
 
-Models work like this, and it explains a complaint you have probably already heard. Someone without
-much prompting skill fails to get what they wanted, and concludes the model is weak, or not that
-intelligent, or that it can only do seventy percent of the job. Someone else takes the same model,
-writes a better prompt, and finishes the task.
+Models work the same way, and this explains a complaint that you have probably heard before.
+Someone with little prompting skill does not get what they wanted. They decide that the model is
+weak, or not very intelligent, or that it can only do seventy percent of the job. Someone else
+takes the same model, writes a better prompt, and finishes the task.
 
 So when a model disappoints you, the first question is not which model to switch to.
 
-## Prompt engineering is dead in 2026
+## Prompt Engineering is Dead in 2026
 
 Yes, really.
 
-When the first LLM APIs opened up around 2023, the models were fragile. A small change in wording
-could turn a good answer into a wrong one, and the sensitivity was measured, not imagined: on
-open models of that era, formatting changes that left the meaning untouched moved accuracy by up to
-[76 points](https://arxiv.org/abs/2310.11324). **Prompt Engineer** was a job title. Companies
-hired people whose whole day was trial and error until the model produced the expected output.
+When the first LLM APIs became available around 2023, the models were fragile. A small change in
+wording could turn a good answer into a wrong one. This sensitivity was measured, not imagined. On
+open models of that time, formatting changes that did not change the meaning moved accuracy by up
+to [76 points](https://arxiv.org/abs/2310.11324). **Prompt Engineer** was a job title. Companies
+hired people to spend the whole day on trial and error, until the model produced the expected
+output.
 
-Those days are gone. Models are far more capable, and they now arrive with abilities like chain of
-thought, further down this page, that let them work out what you meant from a sloppy prompt. In
-2026 prompt engineering is not a career. It is a basic skill everyone working with these systems is
-expected to have.
+Those days are gone. Models are far more capable now. They come with abilities like chain of
+thought, which is covered further down this page. These abilities let a model understand what you
+meant, even from a sloppy prompt. In 2026 prompt engineering is not a career. It is a basic skill
+that everyone who works with these systems is expected to have.
 
 ```mermaid
 graph TD
@@ -95,20 +98,19 @@ graph TD
     B --> C["2026<br/>Sloppy prompts mostly still work<br/>Thinking depth is an API parameter<br/>Prompting is assumed, not hired for"]
 ```
 
-That is why this module only covers what is genuinely useful in a daily AI engineering job. The
-sophisticated end of the subject lives in
-[Advanced Prompting](../3_expert/advanced_prompting.md).
+That is why this module only covers what is useful in a daily AI engineering job. The more
+advanced part of the subject is in [Advanced Prompting](../3_expert/advanced_prompting.md).
 
-When you want the full catalogue rather than the useful subset, the [Prompt Engineering
-Guide](https://www.promptingguide.ai/) has it. And treat what follows as starting points, not a
-syllabus: prompting is experimental, and you get good at it by writing a prompt, reading the
+If you want the full catalogue and not only the useful subset, the [Prompt Engineering
+Guide](https://www.promptingguide.ai/) has it. Also, treat what follows as starting points, not
+as a syllabus. Prompting is experimental. You get good at it by writing a prompt, reading the
 output, and changing the prompt.
 
-## Two templates
+## Two Prompt Templates
 
-The rule is simply that a clearer, more detailed prompt gets a better answer. Two templates are
-worth knowing anyway, because they show what "clear and detailed" means in practice: a prompt whose
-boundaries are defined.
+The rule is simple: a clearer and more detailed prompt gets a better answer. But two templates are
+still useful to know, because they show what "clear and detailed" means in practice. It means a
+prompt whose boundaries are defined.
 
 The simple one:
 
@@ -120,12 +122,12 @@ The simple one:
 ```
 
 - **Goal**: what you want, in a sentence or two.
-- **Output Format**: the shape the answer has to arrive in.
-- **Warnings**: the mistakes you already suspect it will make.
-- **Context**: everything about your situation a stranger would need in order to help you.
+- **Output Format**: the shape that the answer must come in.
+- **Warnings**: the mistakes that you already expect the model to make.
+- **Context**: everything about your situation that a stranger would need to know to help you.
 
 ![The anatomy of a simple prompt](./images/prompt-1.jpg)  
-*The context dump is the longest part and the least polished, and that is fine. It is the part no template can write for you.*
+*The context dump is the longest part and the least polished part, and that is fine. It is the part that no template can write for you.*
 
 The more detailed one:
 
@@ -138,34 +140,35 @@ The more detailed one:
 {Stop Conditions}
 ```
 
-- **Role**: who the model should be while it works, covered under role prompting below.
+- **Role**: who the model should be while it works. The role prompting section below covers this.
 - **Task**: the work itself, as numbered steps when the order matters.
-- **Context**: background, constraints, and what to stay away from.
-- **Reasoning**: how you want it to think before it commits to an answer.
-- **Output Format**: the exact shape, down to the table columns when you need them.
+- **Context**: background, constraints, and what to avoid.
+- **Reasoning**: how you want the model to think before it decides on an answer.
+- **Output Format**: the exact shape, including the table columns when you need them.
 - **Stop Conditions**: how the model knows it is finished.
 
 ![The anatomy of a detailed prompt](./images/prompt-2.png)  
-*Stop conditions are the slot people forget. Without one, "done" is the model's guess rather than your definition.*
+*Stop conditions are the slot that people forget. Without one, "done" is the model's guess and not your definition.*
 
 Today's models do not need you to follow either template strictly, and most of the time you will
-not. They are here so that "write a clear prompt" stops being vague advice.
+not. The templates are here so that "write a clear prompt" is no longer vague advice.
 
-## In-context learning, and few-shot prompting
+## In-context Learning, and Few-shot Prompting
 
-Models can learn things that are not in their weights. Not through pre-training, not through
-fine-tuning, but from what is sitting in the context, the working memory from
-[Memory](../1_fundamentals/memory.md) . This is called **in-context learning**, or ICL.
+Models can learn things that are not in their weights. They do not learn them through
+pre-training, and not through fine-tuning. They learn them from what is in the context, the
+working memory from [Memory](../1_fundamentals/memory.md). This is called **in-context learning**,
+or ICL.
 
-It is also the reason RAG works at all. In [RAG & Embeddings](../1_fundamentals/rag.md) the weights never
-change; the retrieved documents land in the context and the model uses them on the spot. The
-library stays closed, and you put what you need on the desk.
+It is also the reason RAG works at all. In [RAG & Embeddings](../1_fundamentals/rag.md), the
+weights never change. The retrieved documents go into the context, and the model uses them
+immediately. The library stays closed, and you put what you need on the desk.
 
-Look again at both templates: each has a slot for context. That slot is the one place where you
-hand the model knowledge it did not have a second ago.
+Look again at both templates: each one has a slot for context. That slot is the one place where
+you give the model knowledge that it did not have a second ago.
 
-ICL also buys you a technique. **Few-shot prompting** means showing the model a few examples of the
-task done correctly before you give it the real one:
+ICL also gives you a technique. **Few-shot prompting** means showing the model a few examples of
+the task, done correctly, before you give it the real task:
 
 ```text
 Classify the sentiment of each message as positive, negative or neutral.
@@ -183,17 +186,17 @@ Message: "it works, but the app crashed twice"
 Sentiment:
 ```
 
-Those three examples do two jobs at once. They fix the label set, so the answer is one of three
-words rather than a paragraph of nuance, and they fix the format, so the answer arrives as
-`Sentiment: <label>` and your code can read it. That combination is usually why examples succeed
+Those three examples do two jobs at the same time. First, they fix the label set, so the answer is
+one of three words and not a paragraph of nuance. Second, they fix the format, so the answer comes
+as `Sentiment: <label>` and your code can read it. This combination is usually why examples work
 where an instruction alone did not.
 
-A handful of examples is **few-shot**. No examples at all is **zero-shot**, which is what you have
-been doing every time you typed a question into a chat window.
+Using a few examples is **few-shot**. Using no examples at all is **zero-shot**. You have been
+doing zero-shot every time you typed a question into a chat window.
 
-## Some things that reliably help
+## Prompt Engineering Tips
 
-### Be clear and direct
+### Be Clear and Direct
 
 Less effective:
 
@@ -207,13 +210,13 @@ More effective:
 Create an analytics dashboard. Include as many relevant features and interactions as possible. Go beyond the basics to create a fully-featured implementation.
 ```
 
-The second prompt is not more polite or better written. It just says considerably more about what
-finished looks like. Both examples come from Anthropic's [prompting best
+The second prompt is not more polite or better written. The difference is that it says much more
+about what "finished" looks like. Both examples come from Anthropic's [prompting best
 practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices).
 
-### Add context, including your reasons
+### Add Context, Including Your Reasons
 
-Since the model learns from what is in the context, tell it *why* a rule exists and not only what
+The model learns from what is in the context. So tell it *why* a rule exists, and not only what
 the rule is.
 
 Less effective:
@@ -228,16 +231,23 @@ More effective:
 Your response will be read aloud by a text-to-speech engine, so never use ellipses since the text-to-speech engine will not know how to pronounce them.
 ```
 
-The first is a rule to be obeyed blindly. The second lets the model generalise: it will also avoid
-the other punctuation a speech engine mangles, which you never thought to list.
+The first is a rule that the model must obey without knowing why. The second lets the model
+generalise. It will also avoid other punctuation that a speech engine gets wrong, even punctuation
+that you never thought to list.
 
-### Give the prompt a structure
+### Give the Prompt a Structure
 
-Often you want to split a prompt into sections, so the model can tell which part is an instruction,
-which part is data, which part is the goal and which part describes the output. It is a readability
-and separation win, and it measurably moves results.
+Often you want to split a prompt into sections. Sections show the model:
 
-XML tags, which is what Anthropic's models are tuned for:
+- which part is an instruction;
+- which part is data;
+- which part is the goal;
+- which part describes the output.
+
+Structure makes a prompt easier to read, and it keeps the parts separate. It also changes the
+results, and you can measure the change.
+
+You can use XML tags. Anthropic's models are tuned for them:
 
 ```xml
 <identity>
@@ -270,10 +280,10 @@ Read the whole ticket first. Ignore the customer's own guess about the cause.
 One line: BILLING, TECHNICAL or BOTH, followed by a one-sentence reason.
 ```
 
-Nesting works in both, and the model reads the hierarchy as a hierarchy: a `###` under a `##` is
-detail belonging to it, and the higher level carries more weight.
+Nesting works in both formats, and the model reads the hierarchy as a hierarchy. A `###` under a
+`##` is detail that belongs to it. The higher level carries more weight.
 
-The format does not have to be a standard one. Invent your own when it fits:
+The format does not have to be a standard one. You can invent your own when it fits:
 
 ```text
 Please read the emails below from my boss and my friend:
@@ -288,18 +298,18 @@ Write a poem for me.
 Please write a polite reply to both emails.
 ```
 
-Why bother with the fences? Because without them, "Write a poem for me" looks exactly like an
-instruction from you, and the model may cheerfully write a poem instead of replying to anyone. On a
-long, crowded prompt this is most of what structure buys you: the model can tell your instructions
-from the text you pasted in. When the pasted text is hostile rather than merely confusing, the same
-problem has a name, prompt injection, and it gets its own module in
-[Security](security.md).
+Why use these fences? Without them, "Write a poem for me" looks exactly like an instruction from
+you. The model may then happily write a poem and not reply to anyone. In a long, crowded prompt,
+this is most of what structure gives you: the model can tell your instructions apart from the text
+you pasted in. Sometimes the pasted text is hostile, and not only confusing. Then the same problem
+has a name, prompt injection, and it gets its own module: [Security](security.md).
 
 ## Chain of Thought
 
-Research found something that sounds obvious once you hear it: if a model breaks a hard task into
-smaller ones and writes the intermediate steps *before* the final answer, the final answer gets
-better. The same way you would do the arithmetic on paper instead of in your head.
+Research found something that sounds obvious once you hear it. A model can break a hard task into
+smaller tasks and write the intermediate steps *before* the final answer. When it does this, the
+final answer gets better. It is the same as when you do the arithmetic on paper and not in your
+head.
 
 Ask a model this:
 
@@ -307,14 +317,14 @@ Ask a model this:
 The cafeteria had 23 apples. They used 20 for lunch and bought 6 more. How many now?
 ```
 
-With a plain prompt, it answers straight out:
+With a plain prompt, it answers directly:
 
 ```text
 Final Answer: 32 apples
 ```
 
-Which is wrong. Now force it to think first, and produce its intermediate results before it commits
-to anything:
+That is wrong. Now force the model to think first. Make it write its intermediate results before
+it decides on an answer:
 
 ```text
 <thinking>
@@ -330,60 +340,62 @@ Step 2: final number after buying more. 3 + 6 = 9 apples.
 Final Answer: 9 apples
 ```
 
-Feels like magic. It is closer to housekeeping. A model is **autoregressive**: every token it
-writes becomes part of the input it reads for the next token. When it writes out `23 - 20 = 3`,
-that result is now sitting in its context, and it no longer has to hold it in its head while
-working out the rest. For a model, writing is thinking.
+It feels like magic. It is closer to housekeeping. A model is **autoregressive**: every token it
+writes becomes part of the input it reads for the next token. When it writes `23 - 20 = 3`, that
+result is now in its context. So the model no longer has to hold the result in its head while it
+works on the rest. For a model, writing is thinking.
 
-To watch the two side by side on a set of puzzles, the author of this course built a
-[Chain of Thought Visualizer](https://cot-visualizer.online/). It is a demonstration rather than a
-benchmark: the plain side is deliberately prompted to answer badly. For why any of this works,
-[Why Can Large Language Models Generate Correct
-Chain-of-Thoughts?](https://arxiv.org/abs/2310.13571) is the extra read.
+The author of this course built a [Chain of Thought Visualizer](https://cot-visualizer.online/), so
+you can watch the two side by side on a set of puzzles. It is a demonstration, not a benchmark: the
+plain side is prompted on purpose to answer badly. To learn why any of this works, the extra
+reading is [Why Can Large Language Models Generate Correct
+Chain-of-Thoughts?](https://arxiv.org/abs/2310.13571)
 
-### Chain of thought is also why the job title disappeared
+### Chain of Thought is Also Why the Job Title Disappeared
 
 In 2026 you almost never write a chain of thought prompt by hand.
 
-When ChatGPT or an agent shows you that it is "thinking", that is chain of thought. It is happening
-not because someone typed *let us think step by step*, but because the model was trained to reason
-before it answers, always, whether you asked or not.
+When ChatGPT or an agent shows you that it is "thinking", that is chain of thought. It does not
+happen because someone typed *let us think step by step*. It happens because the model was trained
+to reason before it answers. It always does this, whether you asked or not.
 
-The amount of it is now a dial rather than a prompt. It is what people mean by running a model on
-high thinking, or low effort, or max effort. Anthropic's [effort
+How much the model thinks is now a dial, not a prompt. This is what people mean when they talk
+about running a model on high thinking, or low effort, or max effort. Anthropic's [effort
 parameter](https://platform.claude.com/docs/en/build-with-claude/effort) takes `low`, `medium`,
-`high`, `xhigh` and `max`, and the other providers have their own version of the same knob. More
+`high`, `xhigh` and `max`. The other providers have their own version of the same knob. More
 thinking means better answers on hard problems. It also means more cost, slower responses, and a
 context window that fills up faster.
 
 > **NOTE: more thinking is not always better.** Like people, models can overthink, and their
-> performance degrades when they do. It is well documented: [Stop
-> Overthinking](https://arxiv.org/abs/2503.16419) surveys the whole area, [The Danger of
-> Overthinking](https://arxiv.org/abs/2502.08235) found nearly 30% better results on software
-> engineering tasks by picking the solutions that overthought least, [When More Thinking
-> Hurts](https://aclanthology.org/2026.findings-acl.1199/) shows models abandoning answers that
-> were already correct, and [OptimalThinkingBench](https://proceedings.iclr.cc/paper_files/paper/2026/hash/0f63515b14f33c008158213c7b6191c6-Abstract-Conference.html)
-> concludes that no model yet thinks the right amount for the question in front of it.
+> performance gets worse when they do. This is well documented:
+>
+> - [Stop Overthinking](https://arxiv.org/abs/2503.16419) surveys the whole area.
+> - [The Danger of Overthinking](https://arxiv.org/abs/2502.08235) found nearly 30% better results
+>   on software engineering tasks. It got them by picking the solutions that overthought the least.
+> - [When More Thinking Hurts](https://aclanthology.org/2026.findings-acl.1199/) shows models
+>   giving up answers that were already correct.
+> - [OptimalThinkingBench](https://proceedings.iclr.cc/paper_files/paper/2026/hash/0f63515b14f33c008158213c7b6191c6-Abstract-Conference.html)
+>   concludes that no model yet thinks the right amount for the question in front of it.
 
-So the real skill is matching the thinking budget to the difficulty of the task. Which is a
+So the real skill is to match the thinking budget to the difficulty of the task. That budget is a
 parameter you set, not a sentence you write.
 
-## Role prompting
+## Role Prompting
 
 Role prompting is giving the model a job, a persona or a character before you give it the task.
 
-> **NOTE: what is a system prompt?** The system prompt sits at the top of the context, once, and
-> defines how the model behaves for the whole conversation. The developer of the model or the agent
-> writes it, not the user, and it is usually long. It is also where the tools are registered, with
+> **NOTE: what is a system prompt?** The system prompt appears once, at the top of the context. It
+> defines how the model behaves for the whole conversation. The developer of the model or of the
+> agent writes it, not the user, and it is usually long. The tools are also registered there, with
 > their schemas and descriptions ([Tool Calling](../1_fundamentals/tools.md)). If you want to see
-> real ones, [system prompt leaks](https://github.com/asgeirtj/system_prompts_leaks) collects them
-> verbatim from ChatGPT, Claude, Gemini, Grok and others.
+> real system prompts, [system prompt leaks](https://github.com/asgeirtj/system_prompts_leaks)
+> collects them word for word from ChatGPT, Claude, Gemini, Grok and others.
 
 ![Inside the system prompt](./images/system-prompt-context.jpeg)  
-*The same figure from [LLM Fundamentals](../1_fundamentals/llms.md). Identity and instructions are where a role goes, and everything in this box is written before the user says anything.*
+*This is the same figure as in [LLM Fundamentals](../1_fundamentals/llms.md). A role goes in the identity and the instructions. Everything in this box is written before the user says anything.*
 
-That is why role prompting belongs here: the system prompt is where a role does its best work.
-Examples of the technique itself are as simple as they look:
+That is why role prompting belongs here: a role does its best work in the system prompt. The
+examples of the technique itself are as simple as they look:
 
 ```text
 Act as a senior software engineer. Review this code and find security bugs.
@@ -393,51 +405,52 @@ Act as a senior software engineer. Review this code and find security bugs.
 You are William Shakespeare. Write a short poem about summer.
 ```
 
-A role does two things well. It sets the perspective, telling the model who it is, an HR manager or
-a chef or a data science interviewer. And it shapes tone and style, pulling vocabulary, assumed
-expertise and formatting into line with that.
+A role does two things well. First, it sets the perspective: it tells the model who it is, for
+example an HR manager, a chef or a data science interviewer. Second, it shapes the tone and the
+style. It makes the vocabulary, the assumed expertise and the formatting match that role.
 
-What it does not reliably do is make the model smarter. That was the early hope, and it has not
-held up: personas in system prompts [do not improve
-performance](https://arxiv.org/abs/2311.10054) across a broad range of questions, and a 2026
-follow-up found persona prompting [increases expertise depth while reducing
-clarity](https://arxiv.org/abs/2605.29420), with the effect depending on the question and the
-domain. Use a role to shape *how* an answer reads. Do not expect it to raise the ceiling.
+But a role does not reliably make the model smarter. That was the early hope, and it did not prove
+true. Personas in system prompts [do not improve
+performance](https://arxiv.org/abs/2311.10054) across a broad range of questions. A 2026
+follow-up study found that persona prompting [increases expertise depth while reducing
+clarity](https://arxiv.org/abs/2605.29420). The effect depends on the question and on the domain.
+Use a role to shape *how* an answer reads. Do not expect it to raise the ceiling of what the model
+can do.
 
-Where roles genuinely earn their place is in building agents. When we talk about designing an
-agent, we mostly mean choosing a system prompt and a set of tools for one job. Say you want a code
-review team:
+Roles are most useful when you build agents. When we talk about designing an agent, we mostly mean
+choosing a system prompt and a set of tools for one job. For example, say you want a code review
+team:
 
 1. **Code Review Agent.** System prompt: review code for structural, logic and architectural
-   flaws; return a bulleted list of bugs and performance bottlenecks; never comment on style or
+   flaws. Return a bulleted list of bugs and performance bottlenecks. Never comment on style or
    security. Tools: `fetch_repository_files`, `run_ast_parser`.
-2. **Security Auditor Agent.** System prompt: scan strictly for vulnerabilities, data leaks and
-   dependency risks; grade each as High, Medium or Low; do not suggest features or refactoring.
-   Tools: `run_sast_scanner`, `check_cve_database`.
+2. **Security Auditor Agent.** System prompt: scan only for vulnerabilities, data leaks and
+   dependency risks. Grade each one as High, Medium or Low. Do not suggest features or
+   refactoring. Tools: `run_sast_scanner`, `check_cve_database`.
 3. **Clean Code Formatter Agent.** System prompt: refactor working code for readability and
-   maintainability, applying DRY and standard naming; do not alter logic or hunt for bugs. Tools:
-   `execute_linter_auto_fix`, `generate_docstrings`.
+   maintainability. Apply DRY and standard naming. Do not change the logic or look for bugs.
+   Tools: `execute_linter_auto_fix`, `generate_docstrings`.
 
-Three agents, one model. The only differences are the role, the instructions and the tools, which
-is what [Multi-Agent Systems](../1_fundamentals/multi_agent.md) was quietly assuming when it drew a
-supervisor handing work to specialists.
+Three agents, one model. The only differences are the role, the instructions and the tools.
+[Multi-Agent Systems](../1_fundamentals/multi_agent.md) quietly assumed this when it drew a
+supervisor that gives work to specialists.
 
-Be careful, though, because a role changes the whole behaviour and not just the part you were
-aiming at. Assign a security expert and then ask it about art history, and the answer can come back
-worse than it would have with no role at all.
+But be careful. A role changes the whole behaviour, not only the part you wanted to change. If you
+give the model a security expert role and then ask it about art history, the answer can be worse
+than with no role at all.
 
-Which brings us back to the mixer. "Act as a security expert" turns up the parts of the network
-holding security knowledge and leaves the ones holding art history turned down. Seen that way, role
-prompting is a retrieval problem: you are not adding knowledge to the model, you are choosing which
-of the knowledge it already has gets used. And that is also the catch, because the knobs you turned
-down stay down when the question changes.
+This brings us back to the mixer. "Act as a security expert" turns up the parts of the network
+that hold security knowledge. It leaves the parts that hold art history turned down. Seen this way,
+role prompting is a retrieval problem. You are not adding knowledge to the model. You are choosing
+which of its existing knowledge gets used. And that is also the downside, because the knobs you
+turned down stay down when the question changes.
 
 ## Where this fits in the series
 
 ```mermaid
 graph LR
     A[Prompt Engineering] --> B[Context Engineering]
-    B --> C[Coding Agents]
+    B --> C[Code Agents]
     C --> D[Harness Engineering]
     D --> E[Loop Engineering]
     E --> F[Generative UI]
@@ -449,29 +462,34 @@ graph LR
 ## Summary
 
 Prompt engineering is writing the input that makes the output you want the most likely one. The
-weights are frozen, so the prompt is the only knob you have, and different phrasings activate
-different parts of the same network.
+weights are frozen, so the prompt is the only knob you have. Different phrasings activate different
+parts of the same network.
 
-The things that reliably help are unglamorous: say exactly what you want, explain why, hand over
-the context, show an example or two, and structure a long prompt so your instructions cannot be
-confused with your data. Chain of thought used to be one of those techniques and is now built into
-the models, which is most of the reason the job title disappeared and prompting became a baseline
-skill instead.
+The things that reliably help are ordinary ones:
 
-Next: everything that ends up in the context window, and how to decide what deserves the space.
+- say exactly what you want;
+- explain why;
+- give the model the context;
+- show an example or two;
+- structure a long prompt so that your instructions cannot be confused with your data.
 
-**Quick Check**: why does a frozen model answer the same question differently when you rephrase it,
-and what does a role prompt actually change?
+Chain of thought used to be one of those techniques. Now it is built into the models. That is most
+of the reason why the job title disappeared and prompting became a basic skill instead.
+
+Next: everything that goes into the context window, and how to decide what deserves the space.
+
+**Quick Check**: why does a frozen model answer the same question differently when you rephrase it?
+And what does a role prompt actually change?
 
 ## References
 
-- [Prompt Engineering Guide](https://www.promptingguide.ai/): the full catalogue of techniques, well beyond what we covered
+- [Prompt Engineering Guide](https://www.promptingguide.ai/): the full catalogue of techniques, much more than we covered
 - [Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices): Anthropic's current guidance, and the source of the two before-and-after examples
-- [Quantifying Language Models' Sensitivity to Spurious Features in Prompt Design](https://arxiv.org/abs/2310.11324): how fragile the 2023 generation really was, measured
-- [Why Can Large Language Models Generate Correct Chain-of-Thoughts?](https://arxiv.org/abs/2310.13571): the theory behind writing as thinking
-- [Chain of Thought Visualizer](https://cot-visualizer.online/): a side-by-side demo of reasoning versus answering straight away
+- [Quantifying Language Models' Sensitivity to Spurious Features in Prompt Design](https://arxiv.org/abs/2310.11324): a measurement of how fragile the 2023 generation of models really was
+- [Why Can Large Language Models Generate Correct Chain-of-Thoughts?](https://arxiv.org/abs/2310.13571): the theory behind the idea that writing is thinking
+- [Chain of Thought Visualizer](https://cot-visualizer.online/): a side-by-side demo of reasoning compared with answering immediately
 - [Effort](https://platform.claude.com/docs/en/build-with-claude/effort): the thinking dial, and what each level is for
-- [Stop Overthinking: A Survey on Efficient Reasoning for Large Language Models](https://arxiv.org/abs/2503.16419): the overthinking literature in one place
-- [When "A Helpful Assistant" Is Not Really Helpful](https://arxiv.org/abs/2311.10054): the study that took the shine off persona prompts
-- [System prompt leaks](https://github.com/asgeirtj/system_prompts_leaks): production system prompts, captured verbatim
-- [Advanced Prompting](../3_expert/advanced_prompting.md): the techniques this module deliberately skipped
+- [Stop Overthinking: A Survey on Efficient Reasoning for Large Language Models](https://arxiv.org/abs/2503.16419): the research on overthinking, in one place
+- [When "A Helpful Assistant" Is Not Really Helpful](https://arxiv.org/abs/2311.10054): the study that showed persona prompts help less than people hoped
+- [System prompt leaks](https://github.com/asgeirtj/system_prompts_leaks): production system prompts, copied word for word
+- [Advanced Prompting](../3_expert/advanced_prompting.md): the techniques this module skipped on purpose

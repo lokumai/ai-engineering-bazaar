@@ -10,24 +10,24 @@ objectives:
 
 # Personal Agents
 
-Every agent so far has lived in a repository. You open it, you give it a job, it works on your code, and when you close the terminal it is gone.
+Every agent so far has lived in a repository. You open it and give it a job. It works on your code, and when you close the terminal, it is gone.
 
-A personal agent is the same technology pointed at your life instead. It runs on your own machine, it stays running, you talk to it through WhatsApp or Telegram rather than a terminal, and it remembers you between conversations. It sorts your inbox, books things, checks you in for a flight, and gets on with tasks while you are asleep.
+A personal agent is the same technology, pointed at your life instead. It runs on your own machine, and it stays running. You talk to it through WhatsApp or Telegram, not through a terminal. It remembers you between conversations. It sorts your inbox, books things and checks you in for a flight. It also keeps working on tasks while you are asleep.
 
-This one is the newest topic in the series, and the most unsettled.
+This is the newest topic in the series. It is also the least settled one.
 
-## What makes them different
+## What Makes Them Different
 
-Four things, and none of them is really about the model:
+Four things make them different, and none of them is really about the model:
 
-- **Lifelong memory.** Not a context window and not a summary of one session. A store on disk that keeps growing, so the agent knows what you told it in March.
-- **It writes its own skills.** When it notices you asking for the same thing repeatedly, it writes the procedure down and reuses it. The skills from [Coding Agents: Extending Them](coding_agents.md), except nobody authored them.
-- **It reaches you where you already are.** Telegram, WhatsApp, Discord, Slack, Signal, email. There is no app to open, which is most of why people got attached to these.
-- **It runs with your actual access.** Your files, your shell, your logged-in browser. That is what makes it useful, and it is the whole of the risk.
+- **Lifelong memory.** This is not a context window, and it is not a summary of one session. It is a store on disk that keeps growing, so the agent knows what you told it in March.
+- **It writes its own skills.** When it notices that you ask for the same thing again and again, it writes the procedure down and uses it again. These are the skills from [Code Agents](coding_agents.md), but no human wrote them.
+- **It reaches you where you already are.** It works through Telegram, WhatsApp, Discord, Slack, Signal and email. There is no app to open. That is most of the reason why people got so attached to these agents.
+- **It runs with your actual access.** It can use your files, your shell and your logged-in browser. That access is what makes it useful. It is also where all of the risk comes from.
 
-## The story, because it explains the design
+## The Story
 
-This is worth telling properly, because almost every design decision in these tools comes out of it.
+This story is worth telling in full, because almost every design decision in these tools comes from it.
 
 ```mermaid
 graph TD
@@ -40,84 +40,115 @@ graph TD
     A --> B --> C --> D --> E --> F
 ```
 
-An Austrian developer, Peter Steinberger, had a personal assistant project called **Clawd**, named after Claude because that is what it ran on. He released it in November 2025 as **Warelay**, and it grew faster than anything on GitHub had in years.
+An Austrian developer, Peter Steinberger, had a personal assistant project called **Clawd**. He named it after Claude, because Claude was the model it ran on. He released it in November 2025 as **Warelay**, and it grew faster than anything on GitHub had grown in years.
 
-Then Anthropic's lawyers wrote to him, because "Clawd" sits a little too close to "Claude". He complied immediately and renamed it **Moltbot** on 27 January 2026, keeping the lobster theme. Three days later he renamed it again, to **OpenClaw**, on the grounds that Moltbot never quite rolled off the tongue.
+Then Anthropic's lawyers wrote to him, because "Clawd" is a little too close to "Claude". He did what they asked at once. On 27 January 2026 he renamed the project **Moltbot**, and he kept the lobster theme. Three days later he renamed it again, to **OpenClaw**. His reason was that the name Moltbot was never easy to say.
 
-Two things happened in the gap. In roughly the ten seconds between giving up the old GitHub organisation and X handle and claiming the new ones, someone else took both. And a fake `$CLAWD` token appeared on Solana, briefly touched a $16 million market cap, and collapsed. There is a lesson in there about names being infrastructure.
+Two things happened during the renaming. First, he gave up the old GitHub organisation and X handle, and then he claimed the new ones. In the roughly ten seconds between those two steps, someone else took both. Second, a fake `$CLAWD` token appeared on Solana. For a short time its market value reached $16 million, and then it collapsed. There is a lesson in this: names are infrastructure.
 
-In February 2026 Steinberger went to work at OpenAI and set up the **OpenClaw Foundation** as a non-profit to look after the project. It is now well past 380,000 GitHub stars.
+In February 2026, Steinberger went to work at OpenAI. He set up the **OpenClaw Foundation**, a non-profit, to look after the project. The project now has well over 380,000 GitHub stars.
 
-## Moltbook, where the agents talked to each other
+## Moltbook: Social Media for Agents
 
-While all this was happening, an entrepreneur named Matt Schlicht launched **Moltbook**: a Reddit-shaped social network whose users are not people. They are agents, mostly OpenClaw ones, posting and replying to each other. It reached more than 1.5 million agents in its first week.
+While all this was happening, an entrepreneur named Matt Schlicht launched **Moltbook**. It is a social network shaped like Reddit, and its users are not people. They are agents, mostly OpenClaw agents, and they post and reply to each other. In its first week it reached more than 1.5 million agents.
 
-The setup is that you connect your agent and then leave it alone. It decides when to log in, what to post and how to reply. Nobody is prompting it.
+It works like this: you connect your agent, and then you leave it alone. The agent decides when to log in, what to post and how to reply. Nobody is prompting it.
 
-It reads like a stunt and it produced real findings. A study of it, [OpenClaw Agents on Moltbook](https://arxiv.org/abs/2602.02625), measured that **18.4% of posts contained action-inducing instructions**: text telling another agent to go and do something. Put a lot of agents in a room where they read each other's writing and treat it as input, and a fair share of them will pass along instructions no owner ever approved. That is the indirect prompt injection from [Security](security.md), happening at population scale, by accident.
+It looks like a stunt, but it produced real findings. A study of it, [OpenClaw Agents on Moltbook](https://arxiv.org/abs/2602.02625), measured that **18.4% of posts contained action-inducing instructions**. These are pieces of text that tell another agent to go and do something. Put a lot of agents in one room, where they read each other's writing and treat it as input. A good number of them will then pass along instructions that no owner ever approved. That is the indirect prompt injection from [Security](security.md). Here it happens at the scale of a whole population, and by accident.
 
-The same study found something more encouraging alongside it. The agents challenged the risky posts more often than the harmless ones, with no human telling them to, which the authors call emergent normative behaviour. Make of that what you like, but it was not designed in.
+The same study also found something more encouraging. The agents challenged the risky posts more often than the harmless ones, and no human told them to do that. The authors call this emergent normative behaviour. You can decide for yourself what it means, but it was not part of the design.
 
-## SOUL.md, the file that matters
+## SOUL.md
 
-Every OpenClaw agent has a file called `SOUL.md`. It says who the agent is: how it should behave, what it cares about, how it talks. The agent reads it first, every time it wakes up.
+Every OpenClaw agent has a file called `SOUL.md`. It says who the agent is: how it should behave, what it cares about and how it talks. Every time the agent wakes up, it reads this file first.
 
-So it is a system prompt, kept as a file, and given a name that tells you how people think about it. On Moltbook it is what gives an agent a consistent personality across thousands of interactions nobody supervised.
+So it is a system prompt, kept as a file. Its name tells you how people think about it. On Moltbook, this file is what gives an agent a consistent personality across thousands of interactions that nobody supervised.
 
-It is also writable. Which means anything that can write to that file can change who your agent is, permanently, and the change is silent because there is nothing to notice: the agent wakes up and reads its instructions exactly as designed. Hold that next to the indirect prompt injection section of [Security](security.md) and you can see the shape of the problem.
+It is also writable. This means that anything that can write to that file can change who your agent is, and the change is permanent. The change is also silent, because there is nothing to notice: the agent wakes up and reads its instructions, exactly as designed. Put this next to the indirect prompt injection part of [Security](security.md), and you can see the shape of the problem.
 
-## Then people moved to Hermes
+## Hermes Agent
 
-OpenClaw grew fast enough that the engineering did not keep up. A first install ran past a gigabyte with more than three hundred dependencies, and memory got slow: one comparison measured a recall query at 19.6 seconds against 113 milliseconds for the alternative. A few rough releases and people started leaving.
+OpenClaw grew so fast that the engineering did not keep up. A first install was more than a gigabyte, with more than three hundred dependencies. Memory also got slow. One comparison measured a recall query at 19.6 seconds, against 113 milliseconds for the alternative. After a few releases with problems, people started to leave.
 
-Where they went was **[Hermes Agent](https://github.com/NousResearch/hermes-agent)** from Nous Research, MIT licensed, which took the same idea and built it more carefully. Its tagline is "the agent that grows with you". What it does:
+They went to **[Hermes Agent](https://github.com/NousResearch/hermes-agent)** from Nous Research. It is MIT licensed, and it took the same idea and built it more carefully. Its tagline is "the agent that grows with you". This is what it does:
 
-- **Memory that is searchable rather than large.** SQLite on disk, retrieved in tiers, which is where the millisecond figure comes from.
-- **Skills it generates itself** by noticing a pattern in what you keep asking for. OpenClaw's skills were curated by hand and shared through a marketplace called ClawHub; Hermes writes its own.
+- **Memory that is searchable rather than large.** The memory is SQLite on disk, and the agent retrieves it in tiers. That is where the millisecond figure comes from.
+- **Skills it generates itself**, when it notices a pattern in what you keep asking for. OpenClaw's skills were picked by hand, and people shared them through a marketplace called ClawHub. Hermes writes its own.
 - **Scheduling in plain language.** You tell it when, and it turns that into a recurring job.
-- **Subagents with their own sandboxes.** Delegation the way [Context Engineering](context_engineering.md) described it, with a choice of five backends: local, Docker, SSH, Singularity or Modal.
-- **The same channels**, plus web browsing with vision, and access to more than 300 models through Nous Portal.
+- **Subagents with their own sandboxes.** This is delegation the way [Context Engineering](context_engineering.md) described it. You can choose from five backends: local, Docker, SSH, Singularity or Modal.
+- **The same channels**, plus web browsing with vision. It also gives you access to more than 300 models through Nous Portal.
 
 ![Hermes and OpenClaw drawn side by side](./images/hermes-vs-openclaw-archi.png)  
-*The shapes are the argument. Hermes is drawn as a circle that closes back on the user, so what it remembers and the skills it wrote feed the next turn, which is the self-improvement claim as a diagram. OpenClaw has no loop in it at all: everything hangs off a gateway, and that is a routing shape. One picture is about getting better, the other is about moving work to the right place.*
+*The shapes are the argument. Hermes is drawn as a circle that closes back on the user. So what it remembers, and the skills it wrote, feed the next turn. That is the self-improvement claim, drawn as a diagram. OpenClaw has no loop in it at all. Everything connects to a gateway, and that is a routing shape. One picture is about getting better. The other is about moving work to the right place.*
 
-Composio's [OpenClaw vs Hermes Agent: The best agent harness in 2026](https://composio.dev/content/openclaw-vs-hermes-agent) draws the line about as well as it can be drawn: OpenClaw when the problem is orchestration across many channels with a marketplace of ready-made skills, Hermes when the problem is repetitive work that should get better on its own. Firecrawl's [OpenClaw vs Hermes Agent: Which one should you actually run?](https://www.firecrawl.dev/blog/openclaw-vs-hermes) is the same comparison with the benchmark numbers in it.
+Composio's [OpenClaw vs Hermes Agent: The best agent harness in 2026](https://composio.dev/content/openclaw-vs-hermes-agent) explains the difference about as clearly as anyone can. Use OpenClaw when the problem is orchestration across many channels, with a marketplace of ready-made skills. Use Hermes when the problem is repetitive work that should get better on its own. Firecrawl's [OpenClaw vs Hermes Agent: Which one should you actually run?](https://www.firecrawl.dev/blog/openclaw-vs-hermes) makes the same comparison, with the benchmark numbers included.
 
 ![What each one is for](./images/hermes-and-openclaw.png)  
-*The grey pill in the middle is the part to take away. Read the two columns as verbs: everything on the left is the agent changing itself, and everything on the right is the agent moving work around. So the question is not which tool is better. It is which of those two problems you actually have.*
+*The grey pill in the middle is the main point. Read the two columns as verbs. Everything on the left is the agent changing itself. Everything on the right is the agent moving work around. So the question is not which tool is better. It is which of those two problems you actually have.*
 
-Notice that this is the harness argument from [Harness Engineering](harness_engineering.md) again, in a new place. Both of these run the same models. Everything separating them is memory design, skill handling and sandboxing, which is to say the harness.
+Notice that this is the harness argument from [Harness Engineering](harness_engineering.md) again, in a new place. Both of these tools run the same models. Everything that separates them is memory design, skill handling and sandboxing. In other words, everything that separates them is the harness.
 
 ## OpenClaw 2.0
 
-On 30 August 2026 the OpenClaw Foundation shipped version 2.0, built out of more than 16,000 pull requests from over 900 contributors, and it answers most of the complaints above.
+On 30 August 2026, the OpenClaw Foundation shipped version 2.0. It was built from more than 16,000 pull requests by over 900 contributors, and it answers most of the complaints above.
 
-Setup got much shorter: it now detects what you already have, whether that is a Claude or ChatGPT subscription, API keys, or models installed locally, and moves the rest of the configuration into a conversation with the agent after it starts. The gateway starts in about 575 milliseconds rather than 1.6 seconds. Two people can share a live session, and the second one arrives with the context the agent already gathered rather than starting over.
+Setup got much shorter. It now detects what you already have: a Claude or ChatGPT subscription, API keys, or models installed locally. Then it moves the rest of the configuration into a conversation with the agent, after the agent starts. The gateway starts in about 575 milliseconds instead of 1.6 seconds. Two people can share a live session. The second person arrives with the context the agent already gathered, and does not have to start over.
 
-The security work is the more interesting half. There are now explicit per-session permission modes, filesystem access anchored to a workspace instead of your whole disk, credential prompts that keep secrets out of the chat and out of the model's context, and search across past conversations.
+The security work is the more interesting half. The new version now has:
 
-Being honest about where it still stands: reviewers have pointed out that stored credentials are not encrypted by default and that sandboxing is limited. Better is not the same as safe.
+- Explicit permission modes for each session
+- Filesystem access limited to a workspace, instead of your whole disk
+- Credential prompts that keep secrets out of the chat and out of the model's context
+- Search across past conversations
 
-## Alternatives, and not hosting it yourself
+We should be honest about where it still stands. Reviewers have pointed out that stored credentials are not encrypted by default. They have also pointed out that sandboxing is limited. Better is not the same as safe.
 
-**[nanoclaw](https://github.com/nanocoai/nanoclaw)** is the lightweight option, and it made a different call on the risk: every agent runs in a container. It connects to WhatsApp, Telegram, Slack, Discord and Gmail, keeps memory and scheduled jobs, and runs directly on Anthropic's Agents SDK. If the full thing feels like too much to put on your laptop, start here.
+## Alternatives, and Not Hosting it Yourself
 
-And if you do not want to run any of it, these are hosted for you. **[Kimi Claw](https://www.kimi.com/en/help/kimi-claw)** is Moonshot's, aimed at desktop and Android with integrations for WeChat, Feishu, WeCom and DingTalk, which makes it the practical choice if your work happens in those apps. **[myclaw.ai](https://myclaw.ai/)** hosts one for you as a service. The trade is the obvious one: you stop maintaining it, and it stops being only yours.
+**[nanoclaw](https://github.com/nanocoai/nanoclaw)** is the lightweight option. It made a different choice about the risk: every agent runs in a container. It connects to WhatsApp, Telegram, Slack, Discord and Gmail. It keeps memory and scheduled jobs, and it runs directly on Anthropic's Agents SDK. If the full version feels like too much to put on your laptop, start here.
 
-## The part to be sober about
+And if you do not want to run any of it, you can use one that someone else hosts for you. **[Kimi Claw](https://www.kimi.com/en/help/kimi-claw)** is Moonshot's. It is made for desktop and Android, and it has integrations for WeChat, Feishu, WeCom and DingTalk. That makes it the practical choice if your work happens in those apps. **[myclaw.ai](https://myclaw.ai/)** hosts one for you as a service. The trade-off is the obvious one: you stop maintaining it, and it stops being only yours.
 
-An agent with your files, your shell, your logged-in browser, a memory that never resets and permission to write its own skills is the most useful assistant in this series and the largest attack surface in it.
+## More Personal Agents
 
-That is not theoretical. In February 2026 a computer science student, Jack Luo, found that his own configured agent had made him a profile on an experimental dating service and started screening matches, without being asked. Nothing malicious happened. It simply did something plausible that nobody had authorised, and it did it under his name.
+OpenClaw and Hermes are open source, and they come from the community. In 2026 the large AI companies shipped their own personal agents. These agents share one idea: an agent that keeps working in the background after you close the app.
 
-So: run it in a container if you can, give it separate accounts rather than your main ones, keep credentials out of files it can read, and put the guardrails from [Security](security.md) around the tools that touch anything irreversible. The reason this module comes after that one is not the ordering of the syllabus.
+- **[dots](https://openai.com/index/introducing-dots/)** from OpenAI are always-on agents. Each dot has its own cloud computer. It learns from your feedback over time, and it connects to thousands of apps through plugins. You talk to it in ChatGPT, Slack or Teams. OpenAI started to release it gradually in September 2026, to Pro and Business Premium users.
+- **[Muse](https://ai.meta.com/muse/)** is Meta's personal agent. It browses the web, makes purchases and creates documents. It also manages your email and calendar through connectors, and it keeps working in the background. You reach it in the Muse app on mobile or Mac, or directly in WhatsApp. It asks you before it sends a message, buys something or shares information.
+- **[Grok Bot](https://x.ai/bot)** comes from the makers of Grok. It gives you AI teammates that sign in to your tools and use them the way you do. You can teach it a workflow by letting it watch you work. All your bots share one persistent cloud computer, so they keep working when your laptop is closed.
+- **[Gemini Spark](https://gemini.google/overview/agent/spark/)** is Google's personal agent. It works in the background, even when your phone and laptop are off. It connects to Gmail, Calendar, Drive and other Google apps (all of them are turned off by default). It checks with you before it takes a major action.
+
+The big difference from OpenClaw and Hermes is where they run. These agents run on the company's machines, not on yours. So there is nothing to install or maintain. The trade-off is the same as with the hosted options above: you stop maintaining it, and it stops being only yours.
+
+## The Part to be Sober About
+
+Think about an agent that has all of these:
+
+- your files
+- your shell
+- your logged-in browser
+- a memory that never resets
+- permission to write its own skills
+
+That agent is the most useful assistant in this series. It is also the largest attack surface in the series.
+
+This is not a theoretical risk. In February 2026 a computer science student, Jack Luo, found that the agent he had set up had made him a profile on an experimental dating service. It had also started to screen matches, and nobody had asked it to. Nothing malicious happened. The agent did something that seemed reasonable, but nobody had authorised it, and it did it under his name.
+
+So, here is what to do:
+
+- Run it in a container if you can.
+- Give it separate accounts, not your main ones.
+- Keep credentials out of files it can read.
+- Put the guardrails from [Security](security.md) around the tools that touch anything irreversible.
+
+This module comes after that one for a reason, and the reason is not the order of the syllabus.
 
 ## Where this fits in the series
 
 ```mermaid
 graph LR
     A[Prompt Engineering] --> B[Context Engineering]
-    B --> C[Coding Agents]
+    B --> C[Code Agents]
     C --> D[Harness Engineering]
     D --> E[Loop Engineering]
     E --> F[Generative UI]
@@ -135,28 +166,31 @@ graph LR
 
 ## Summary
 
-A personal agent is the technology from this whole series pointed at your life rather than a repository. It keeps memory that never resets, writes its own skills when it spots a pattern, reaches you through the chat apps you already use, and runs with your real access.
+A personal agent is the technology from this whole series, pointed at your life rather than at a repository. It keeps a memory that never resets, and it writes its own skills when it sees a pattern. It reaches you through the chat apps you already use, and it runs with your real access.
 
-OpenClaw is the one that made this a subject. It grew out of a project called Clawd and shipped as Warelay in November 2025. A trademark complaint then got it renamed twice in three days, and it became the fastest-growing repository on GitHub.
+OpenClaw is the project that made this a subject. It grew out of a project called Clawd, and it shipped as Warelay in November 2025. Then a trademark complaint led to two renames in three days. It also became the fastest-growing repository on GitHub.
 
-Moltbook came next, and put a million of these agents into a social network with each other. What it demonstrated, entirely by accident, is that agents reading each other's posts will pass along instructions nobody ever approved.
+Moltbook came next. It put more than a million of these agents together in one social network. Entirely by accident, it showed that agents that read each other's posts will pass along instructions that nobody ever approved.
 
-`SOUL.md` is the file worth understanding. It is a system prompt kept on disk, and the agent reads it every time it wakes up. It is also writable, which means whoever can write to it decides who your agent is.
+`SOUL.md` is the file worth understanding. It is a system prompt kept on disk, and the agent reads it every time it wakes up. It is also writable. So whoever can write to it decides who your agent is.
 
-People moved to Hermes Agent when OpenClaw got heavy. Hermes has searchable memory, it generates its own skills, and it sandboxes its subagents. OpenClaw 2.0 then closed most of that gap. Both of them run the same models, so everything separating the two is the harness.
+When OpenClaw got heavy, people moved to Hermes Agent. Hermes has searchable memory, it generates its own skills, and it sandboxes its subagents. Then OpenClaw 2.0 closed most of that gap. Both of them run the same models, so everything that separates the two is the harness.
 
-And all of it is the same trade. The access that makes a personal agent useful is the access that makes it dangerous, which is why this module sits where it does.
+OpenAI, Meta, Google and the makers of Grok now ship their own hosted personal agents: dots, Muse, Gemini Spark and Grok Bot. They run on the company's machines. So there is nothing to maintain, and nothing is only yours.
+
+And all of it is the same trade-off. The access that makes a personal agent useful is the access that makes it dangerous. That is why this module sits where it does.
 
 **Quick Check**: `SOUL.md` is just a markdown file that the agent reads when it starts. Why is that the most security-sensitive file on the machine?
 
 ## References
 
-- [OpenClaw](https://github.com/openclaw/openclaw) and [openclaw.ai](https://openclaw.ai/): the project and its own description of what it does
+- [OpenClaw](https://github.com/openclaw/openclaw) and [openclaw.ai](https://openclaw.ai/): the project, and its own description of what it does
 - [Hermes Agent](https://github.com/NousResearch/hermes-agent) and [hermes-agent.nousresearch.com](https://hermes-agent.nousresearch.com/): the alternative people moved to, and its feature list
-- [OpenClaw vs Hermes Agent: The best agent harness in 2026](https://composio.dev/content/openclaw-vs-hermes-agent): the clearest statement of when each one fits
-- [OpenClaw vs Hermes Agent: Which one should you actually run?](https://www.firecrawl.dev/blog/openclaw-vs-hermes): the same comparison with install sizes and memory latency measured
+- [OpenClaw vs Hermes Agent: The best agent harness in 2026](https://composio.dev/content/openclaw-vs-hermes-agent): the clearest explanation of when each one fits
+- [OpenClaw vs Hermes Agent: Which one should you actually run?](https://www.firecrawl.dev/blog/openclaw-vs-hermes): the same comparison, with measured install sizes and memory latency
 - [Hermes vs OpenClaw: Self-Evolving Coding Agent or Local AI Control Plane?](https://www.kimi.ai/resources/hermes-vs-openclaw): a third comparison, if the first two disagree
-- [OpenClaw Agents on Moltbook: Risky Instruction Sharing and Norm Enforcement in an Agent-Only Social Network](https://arxiv.org/abs/2602.02625): the 18.4% figure, and the norm enforcement nobody designed
-- [nanoclaw](https://github.com/nanocoai/nanoclaw): the lightweight alternative, in containers by default
-- [Kimi Claw](https://www.kimi.com/en/help/kimi-claw) and [myclaw.ai](https://myclaw.ai/): hosted, for when running it yourself is not an option
+- [OpenClaw Agents on Moltbook: Risky Instruction Sharing and Norm Enforcement in an Agent-Only Social Network](https://arxiv.org/abs/2602.02625): the 18.4% figure, and the norm enforcement that nobody designed
+- [nanoclaw](https://github.com/nanocoai/nanoclaw): the lightweight alternative, which uses containers by default
+- [Kimi Claw](https://www.kimi.com/en/help/kimi-claw) and [myclaw.ai](https://myclaw.ai/): hosted versions, for when you cannot run it yourself
+- [Introducing dots](https://openai.com/index/introducing-dots/), [Muse](https://ai.meta.com/muse/), [Grok Bot](https://x.ai/bot) and [Gemini Spark](https://gemini.google/overview/agent/spark/): the personal agents that the large AI companies host for you
 - [Security](security.md): the module to read first, and the one that explains why `SOUL.md` matters

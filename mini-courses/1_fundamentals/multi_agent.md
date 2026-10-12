@@ -11,40 +11,48 @@ objectives:
 # Multi-Agent Systems
 
 [AI Agents](agents.md) ended with one agent: one loop, one system prompt, one set of tools. This
-module is what happens when you use several, and what that costs you.
+module is about what happens when you use several agents, and what that costs you.
 
-## Why one agent stops being enough
+## Why We Might Need Multi-agents
 
 Take a real request: *"How many rows are in my database tables? Show them in a bar chart."*
 
-That is two different jobs. Write and run SQL, then draw a chart. One agent can do both, but you
-pay for it: the system prompt now has to explain SQL *and* charting, the tool list is longer, and
-every call carries instructions that are irrelevant to the step being taken. The model has more
-ways to pick the wrong tool and more room to confuse the two jobs.
+That is two different jobs. First you write and run SQL, then you draw a chart. One agent can do
+both, but you pay a price for it. The system prompt now has to explain SQL *and* charting, and the
+tool list gets longer. Every call also carries instructions that have nothing to do with the
+current step. So the model has more ways to pick the wrong tool, and more room to confuse the two
+jobs.
 
-Splitting it gives each agent a short prompt, a small tool list and one job:
+If you split the work, each agent gets a short prompt, a small tool list and one job:
 
 - a **SQL agent** that writes and runs queries
 - a **visualisation agent** that turns results into charts
 
-Each one is just an agent from [AI Agents](agents.md) . Nothing new has been invented. You have
-simply gone from one loop to several.
+Each one is just an agent from [AI Agents](agents.md). Nothing new has been invented. You have
+only gone from one loop to several loops.
 
-## Two architectures to start with
+## Basic Multi-agent Architectures
 
 ![Single agent, network and supervisor architectures](./images/multiagents.png)  
-*Left, one agent with its tools, which is where [AI Agents](agents.md) ended. Middle, a network where every agent can talk to every other. Right, a supervisor that receives the request and delegates to workers who only talk to it.*
+*Left: one agent with its tools. This is where [AI Agents](agents.md) ended. Middle: a network, where every agent can talk to every other agent. Right: a supervisor. It receives the request and delegates the work to workers, and the workers only talk to the supervisor.*
 
-**Supervisor.** One agent receives the request, decides which worker should handle it, passes the
-work along, collects what comes back, and answers the user. Workers talk to the supervisor and
-nowhere else. Our SQL and chart example fits this exactly: the supervisor sends the question to the
-SQL agent, takes the rows, hands them to the visualisation agent, and returns the chart.
+**Supervisor.** One agent receives the request. Then, in this order, it:
 
-You will also see this called manager-worker or orchestrator-worker. Same shape.
+- decides which worker should handle the request
+- passes the work to that worker
+- collects what comes back
+- answers the user
 
-**Network, sometimes called a swarm.** No boss. Every agent can hand work to any other, and they
-decide among themselves who does what next. More flexible, and much harder to predict, because
-there is no single place where you can see what the system decided.
+Workers talk to the supervisor and to no one else. Our SQL and chart example fits this shape
+exactly. The supervisor sends the question to the SQL agent and takes the rows. Then it hands the
+rows to the visualisation agent and returns the chart.
+
+You will also see this called manager-worker or orchestrator-worker. It is the same shape.
+
+**Network, sometimes called a swarm.** There is no boss. Every agent can hand work to any other
+agent. The agents decide among themselves who does what next. This is more flexible. It is also
+much harder to predict, because there is no single place where you can see what the system
+decided.
 
 ```mermaid
 graph TD
@@ -57,54 +65,56 @@ graph TD
 ```
 
 **Start with a supervisor.** It is easier to debug, because every decision passes through one
-place, and most problems that look like they need a swarm do not.
+place. Also, most problems that look like they need a swarm do not need one.
 
-## The two hard problems
+## Multi-agent Drawbacks
 
-This is the part worth taking seriously, because both problems are created *by* splitting the work.
-A single agent has neither.
+This is the part to take seriously, because both problems come *from* splitting the work. A single
+agent has neither.
 
-**Coordination.** Who does what, in what order, and how does anyone know a step is finished? With
-one agent, the loop answered that. With several, something has to decide, and that decision can be
-wrong: two agents doing the same work, an agent waiting on something that never arrives, a
-supervisor that keeps delegating and never stops. More agents means more ways to deadlock or spin.
+**Coordination.** Who does what, and in what order? How does anyone know that a step is finished?
+With one agent, the loop answered these questions. With several agents, something has to decide,
+and that decision can be wrong. Two agents can do the same work. An agent can wait for something
+that never arrives. A supervisor can keep delegating and never stop. More agents means more ways
+to deadlock, or to loop without end.
 
-**Context transfer.** Each agent has its own context, its own message stack. So when the SQL agent
-finishes, what exactly does the visualisation agent get? The rows only? The original question too?
-The SQL that produced them? Hand over too little and the second agent works blind. Hand over
-everything and you have paid for a huge context and reintroduced the confusion you split the agents
-up to avoid.
+**Context transfer.** Each agent has its own context: its own message stack. So when the SQL agent
+finishes, what exactly does the visualisation agent get? Does it get only the rows? Does it also
+get the original question? Does it get the SQL that produced the rows? If you hand over too little,
+the second agent works blind. If you hand over everything, you pay for a huge context. You also
+bring back the confusion that you split the agents to avoid.
 
-Getting this wrong is the usual reason a multi-agent system performs *worse* than the single agent
-it replaced.
+Getting this wrong is the usual reason why a multi-agent system performs *worse* than the single
+agent it replaced.
 
-### Shared context, or isolated context
+### Shared Context, or Isolated Context
 
-That leads to the choice underneath every multi-agent design: do the agents **share** one context,
-or does each work in its own **isolated** one?
+That leads to a choice that sits under every multi-agent design. Do the agents **share** one
+context, or does each agent work in its own **isolated** context?
 
-- **Shared:** everyone sees everything. Nothing gets lost in handover, and the context grows fast.
-- **Isolated:** each agent sees only what it was handed. Cheap and focused, and whatever you forgot
-  to pass along is simply gone.
+- **Shared:** everyone sees everything. Nothing gets lost in the handover, but the context grows
+  fast.
+- **Isolated:** each agent sees only what it was handed. This is cheap and focused. But whatever
+  you forgot to pass along is simply gone.
 
-Both are used in production, and the choice drives almost everything else about the design. It has
-enough depth to deserve its own treatment, so we come back to it in
+Production systems use both. This choice decides almost everything else about the design. The
+topic is deep enough to deserve its own discussion, so we come back to it in
 [Advanced Multi-Agent](../3_expert/advanced_multiagent.md).
 
-## Other architectures you will hear about
+## Advanced Multi-agent Architectures
 
-Named here so the words are familiar, all covered later:
+We name these here so that the words are familiar. We cover all of them later:
 
-- **Hierarchical:** supervisors of supervisors, for when one layer is not enough.
-- **Agent-as-a-tool:** one agent exposed to another as if it were a plain tool, which slots neatly
-  into the mechanism from [Tool Calling](tools.md).
-- **Subagents:** an agent that spawns short-lived helpers with their own isolated context, then
-  keeps only their results.
+- **Hierarchical:** supervisors of supervisors. You use this when one layer is not enough.
+- **Agent-as-a-tool:** one agent is given to another agent as if it were a plain tool. This fits
+  directly into the mechanism from [Tool Calling](tools.md).
+- **Subagents:** an agent starts short-lived helpers, and each helper has its own isolated context.
+  The agent then keeps only their results.
 
-## Building one
+## Building a Multi-agent
 
 ```python
-from smolagents import CodeAgent, tool, HfApiModel
+from smolagents import CodeAgent, tool, InferenceClientModel
 
 @tool
 def sql_query(query: str) -> list:
@@ -116,30 +126,32 @@ def visualise(data: list) -> str:
     """Draw a bar chart from rows and return the path to the image."""
     return chart_from(data)
 
-sql_agent = CodeAgent(tools=[sql_query], model=HfApiModel(), name="sql")
-viz_agent = CodeAgent(tools=[visualise], model=HfApiModel(), name="viz")
+sql_agent = CodeAgent(tools=[sql_query], model=InferenceClientModel(), name="sql",
+                      description="Answers questions by querying the database.")
+viz_agent = CodeAgent(tools=[visualise], model=InferenceClientModel(), name="viz",
+                      description="Draws a chart from rows of data.")
 
 supervisor = CodeAgent(
     tools=[],
-    model=HfApiModel(),
+    model=InferenceClientModel(),
     managed_agents=[sql_agent, viz_agent],   # the workers it can delegate to
 )
 
 supervisor.run("How many rows are in my tables? Show them in a bar chart.")
 ```
 
-Look at `managed_agents`. The supervisor's workers are handed to it the same way tools were in
-[AI Agents](agents.md) , because from the supervisor's point of view that is what they are: things
-it can call and get a result from.
+Look at `managed_agents`. You hand the workers to the supervisor in the same way that you handed
+tools to the agent in [AI Agents](agents.md). This is because, from the supervisor's point of view,
+that is what the workers are: things it can call and get a result from.
 
-## When one agent is still the right answer
+## When a Single Agent Might be Better
 
-Multi-agent is not an upgrade. It is a trade: you buy shorter prompts and clearer separation, and
-you pay in coordination and context transfer.
+Multi-agent is not an upgrade. It is a trade. You buy shorter prompts and a clearer separation
+between jobs. You pay for them in coordination and context transfer.
 
-Stay with one agent while one prompt still fits comfortably and the tool list is manageable. Split
-when a single system prompt is trying to teach two unrelated jobs, and split along the seam where
-the least information has to cross.
+Stay with one agent while one prompt still fits comfortably and the tool list is still easy to
+manage. Split when a single system prompt tries to teach two unrelated jobs. When you split, split
+at the point where the least information has to cross from one agent to the other.
 
 ## Where this fits in the series
 
@@ -163,25 +175,33 @@ graph LR
 
 ## Summary
 
-Several agents let each one keep a short prompt and a single job, and the supervisor architecture,
+Several agents let each agent keep a short prompt and a single job. The supervisor architecture,
 where one agent delegates and collects, is the one to start with.
 
-What you inherit is **coordination**, deciding who does what and when it is done, and **context
-transfer**, deciding what each agent is handed. Those two are the whole difficulty, and how you
-answer the second one, shared context or isolated, shapes everything else.
+You inherit two problems. The first is **coordination**: deciding who does what, and when
+it is done. The second is **context transfer**: deciding what each agent is handed. Those two are
+the whole difficulty. How you answer the second one (shared context or isolated context) shapes
+everything else.
 
-That is the end of Fundamentals. You now have the full picture: a model that only predicts text, a
-context window that is its desk, retrieval to fill that desk, tools to let it act, memory across
-turns, a loop that makes it an agent, and several agents when one is not enough. Everything in
-Intermediate is built on these seven ideas.
+That is the core of Fundamentals. You now have the full picture:
 
-**Quick Check**: what are the two hard problems a multi-agent system creates, and what is the
+- a model that only predicts text
+- a context window that is its desk
+- retrieval to fill that desk
+- tools to let it act
+- memory across turns
+- a loop that makes it an agent
+- several agents when one is not enough
+
+Everything in Intermediate is built on these seven ideas.
+
+**Quick Check**: what are the two hard problems that a multi-agent system creates? And what is the
 difference between shared and isolated context?
 
 ## References
 
 - [Multi-agent systems](https://docs.langchain.com/oss/python/langchain/multi-agent): the patterns, in more depth
 - [LangGraph multi-agent concepts](https://langchain-ai.github.io/langgraph/concepts/multi_agent/): supervisor, network and the rest, with code
-- [What is an agent?](https://www.langchain.com/blog/what-is-an-agent): worth rereading here, since a supervisor is a decision about autonomy
-- [AI Agents](agents.md): the single loop all of this is built from
+- [What is an agent?](https://www.langchain.com/blog/what-is-an-agent): worth reading again here, because a supervisor is a decision about autonomy
+- [AI Agents](agents.md): the single loop that all of this is built from
 - [Advanced Multi-Agent](../3_expert/advanced_multiagent.md): shared and isolated context, and agent-to-agent protocols

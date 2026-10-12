@@ -1148,7 +1148,7 @@ const MORE_GENEROUS =
 
 /** The author's words for the pager, once, for the entries that need them. */
 const PAGER_STANDS_OUT =
-  'The author, 2026-10-11: *"Next and Previous with proper color, if necessary '
+  'The author, 2026-10-12: *"Next and Previous with proper color, if necessary '
   + 'icon, etc that actually stands out from the remaining of the center '
   + 'panel"*. `01` draws the tile as a quiet hairlined box; the product draws '
   + 'it as a control, taller, rounder and edged in `line-strong`, with Next '

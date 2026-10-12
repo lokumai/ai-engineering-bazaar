@@ -115,7 +115,7 @@ function Cell({
       data-draft={target.draft ? '' : undefined}
     >
       {back && <Chevron back />}
-      {/* 2026-10-11 — `Previous` and `Next` over the destination's title, the
+      {/* 2026-10-12 — `Previous` and `Next` over the destination's title, the
           shape every course and docs site uses, and in the colours that make
           them the strongest thing at the end of the page: Next filled with
           the primary, Previous outlined in it. They were one quiet line each,

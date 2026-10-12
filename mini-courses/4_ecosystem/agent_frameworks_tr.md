@@ -1,14 +1,22 @@
 # Agent Framework'leri
 
-Buraya kadar her şey agent'ların nasıl çalıştığıyla ilgiliydi. Bu modül, bir tane kurmak için gerçekte ne kurduğunla ilgili.
+Buraya kadar her şey agent'ların nasıl çalıştığıyla ilgiliydi. Bu modül ise bir agent geliştirirken gerçekte neyi kurduğunla ilgili.
 
-Dürüst başlangıç noktası: bir framework'e ihtiyacın yok. [AI Agent'lar](../1_fundamentals/agents_tr.md) loop'u göstermişti, ve o loop, ortasında bir tool dağıtımı olan, bir model çağrısı etrafındaki bir `while` döngüsü. Bunu bir öğleden sonrada yazabilirsin.
+Dürüst başlangıç noktası şu: bir framework'e ihtiyacın yok. [AI Agent'lar](../1_fundamentals/agents_tr.md) loop'u göstermişti. Bu loop, bir model çağrısının etrafında dönen bir `while` döngüsü. Ortasında da bir tool dispatch var. Bunu bir öğleden sonrada yazabilirsin.
 
-Framework'ten aldığın şey, loop'un etrafındaki her şey. Bir sağlayıcı 500 döndürdüğünde retry. Kullanıcının token'ları geldikçe görmesi için streaming. Her fonksiyon için elle JSON yazmayasın diye standart bir tool schema'sı. Bir restart'tan sağ çıkan memory. Trace'leri koyacak bir yer. Bu liste, insanların çoğunun ikinci projeden sonra kendi loop'unu yazmayı bırakmasının sebebi.
+Framework'ten aldığın şey, loop'un etrafındaki her şey:
 
-## LangChain stack'i, ki üç şey
+- Bir sağlayıcı 500 hatası döndürdüğünde retry.
+- Streaming, böylece kullanıcı token'ları geldikçe görüyor.
+- Standart bir tool schema'sı, böylece her fonksiyon için JSON'u elle yazmıyorsun.
+- Bir restart'tan sonra da kaybolmayan memory.
+- Trace'leri koyacak bir yer.
 
-İlk öğrenilecek olan bu. En eksiksiz olanı, en güncel olanı, ve yakınında bir yerde production'da çalışması en muhtemel olanı. Ayrıca insanların kafasını karıştırıyor, çünkü "LangChain" üç farklı seviyede üç ayrı kütüphane, ve hangisini istediğin işe bağlı.
+Bu liste, insanların çoğunun ikinci projeden sonra kendi loop'unu yazmayı bırakmasının sebebi.
+
+## LangChain Stack'i
+
+İlk öğrenilecek olan bu. En eksiksiz ve en güncel olanı bu. Yakınında bir yerde production'da çalışıyor olma ihtimali en yüksek olan da bu. Ama insanların kafasını karıştırıyor, çünkü "LangChain" üç farklı seviyede üç ayrı kütüphane. Hangisini istediğin, işe bağlı.
 
 ```mermaid
 graph TD
@@ -17,47 +25,68 @@ graph TD
     C --> D["Model, ve senin tool'ların"]
 ```
 
-**[LangGraph](https://github.com/langchain-ai/langgraph)** runtime, ve üçünün en alt seviyesi. Agent'ını bir graph olarak tanımlıyorsun: node'lar adımlar, edge'ler sırada ne olabileceği, ve state aralarında dolaşıyor. State açık olduğu için runtime onu kaydedebiliyor, oradan devam edebiliyor, ve bir insanın ortada araya girmesine izin verebiliyor. Kontrol akışı işin zor kısmıysa ve ona sahip olmak istiyorsan LangGraph'a uzan.
+**[LangGraph](https://github.com/langchain-ai/langgraph)** runtime ve üçünün en alt seviyesi. Agent'ını bir graph olarak tanımlıyorsun. Node'lar adımlar, edge'ler sırada ne olabileceği, state ise aralarında dolaşıyor. State açık (explicit) olduğu için runtime onu kaydedebiliyor ve oradan devam edebiliyor. Ayrıca bir insanın çalışmanın ortasında araya girmesine izin verebiliyor. Kontrol akışı işin zor kısmıysa ve onu kendin kontrol etmek istiyorsan LangGraph'ı kullan.
 
-**[LangChain](https://github.com/langchain-ai/langchain)** ana arayüz, ve başlaman gereken yer. LangGraph'ın üstünde duruyor ve sana sıradan agent'ı birkaç satırda veriyor: bir model, birkaç tool, biraz middleware. Middleware, [Harness Engineering](../2_intermediate/harness_engineering_tr.md) işinin olduğu yer, ve aynı zamanda [Security](../2_intermediate/security_tr.md)'deki guardrail'lerin yaşadığı yer.
+**[LangChain](https://github.com/langchain-ai/langchain)** ana arayüz ve başlaman gereken yer. LangGraph'ın üstünde duruyor. Sana sıradan agent'ı birkaç satır kodla veriyor: bir model, birkaç tool ve biraz middleware. Middleware, [Harness Engineering](../2_intermediate/harness_engineering_tr.md) işinin yapıldığı yer. [Security](../2_intermediate/security_tr.md)'deki guardrail'ler de burada duruyor.
 
-**[deepagents](https://github.com/langchain-ai/deepagents)** en üst seviye, diğer ikisinin üstüne kurulu. Kendisine batteries-included bir agent harness diyor, ve bataryalar da tam olarak [Context Engineering](../2_intermediate/context_engineering_tr.md)'deki liste: planlama, bir filesystem, kendi window'ları olan subagent'lar, ve uzun thread'lerin özetlenmesi. İstediğin şey kendine özel bir mimari değil deep agent mimarisiyse, buradan başla ve montajı atla.
+**[deepagents](https://github.com/langchain-ai/deepagents)** en üst seviye. Diğer ikisinin üstüne kurulu. Kendisine "batteries-included" bir agent harness diyor. Bataryalar da tam olarak [Context Engineering](../2_intermediate/context_engineering_tr.md)'deki liste:
 
-Yani pratik kural basit. LangChain'den başla. Akışı kendin kontrol etmen gerektiğinde LangGraph'a in. Bütün mimarinin sana verilmesini istediğinde deepagents'a çık.
+- planlama
+- bir filesystem
+- kendi context window'ları olan subagent'lar
+- uzun thread'lerin özetlenmesi
 
-## Diğer Python seçenekleri
+Özel bir mimari değil de deep agent mimarisini istiyorsan, buradan başla ve montajı atla.
 
-Bunların hiçbiri yanlış değil. Farklı ödünler veriyorlar, ve ödün genelde senin yerine ne kadarına karar verdikleri.
+Yani pratik kural basit. LangChain'den başla. Akışı kendin kontrol etmen gerektiğinde LangGraph'a in. Bütün mimarinin hazır gelmesini istediğinde deepagents'a çık.
 
-- **[Agno](https://github.com/agno-agi/agno)** tek agent'ın ötesine, bütün platforma bakıyor: agent'ları bir script yerine bir sistem olarak kurmak, çalıştırmak ve yönetmek.
-- **[CrewAI](https://github.com/crewAIInc/crewAI)** her şeyi roller etrafında düzenliyor. İşleri olan bir agent ekibi tanımlıyorsun ve iş birliği yapmalarına izin veriyorsun, ki bu da [Multi-Agent Sistemler](../1_fundamentals/multi_agent_tr.md)'deki şekillere düzgün oturuyor.
-- **Hugging Face'in [smolagents](https://github.com/huggingface/smolagents)** kütüphanesi küçük olanı, ve bilerek öyle: kodla düşünen agent'lar için asgari bir kütüphane. [Loop Engineering](../2_intermediate/loop_engineering_tr.md)'deki CodeAct fikrinin kütüphane hâli, ve bir loop'u kullanmak değil anlamak istiyorsan okunacak en iyisi.
-- **[Pydantic AI](https://github.com/pydantic/pydantic-ai)** Pydantic'in iyi olduğu şeyi getiriyor, yani tip'leri. Her model ve her arayüz baştan sona tipli, böylece bozuk bir tool çağrısı bir gizem değil bir validation hatası oluyor.
+## Diğer Python Seçenekleri
+
+Bunların hiçbiri yanlış değil. Her biri farklı ödünler (trade-off) veriyor. Ödün genelde, senin yerine ne kadar çok şeye karar verdikleri.
+
+- **[Agno](https://github.com/agno-agi/agno)** tek agent'ın ötesine, bütün platforma bakıyor. Agent'ları bir script olarak değil, bir sistem olarak kurmana, çalıştırmana ve yönetmene yardım ediyor.
+- **[CrewAI](https://github.com/crewAIInc/crewAI)** her şeyi roller etrafında düzenliyor. Her birinin bir işi olan bir agent ekibi tanımlıyorsun ve birlikte çalışmalarına izin veriyorsun. Bu da [Multi-Agent Sistemler](../1_fundamentals/multi_agent_tr.md)'deki şekillere iyi oturuyor.
+- **Hugging Face'in [smolagents](https://github.com/huggingface/smolagents)** kütüphanesi küçük olanı ve bilerek küçük tutulmuş. Kodla düşünen agent'lar için yalın (barebones) bir kütüphane. [Loop Engineering](../2_intermediate/loop_engineering_tr.md)'deki CodeAct fikrinin kütüphane hâli. Bir loop'u kullanmak değil de anlamak istiyorsan, okunacak en iyi kütüphane de bu.
+- **[Pydantic AI](https://github.com/pydantic/pydantic-ai)** Pydantic'in iyi olduğu şeyi getiriyor: tip'leri. Her model ve her arayüz baştan sona tipli. Böylece bozuk bir tool çağrısı gizemli bir sorun değil, bir validation hatası oluyor.
 
 ## Projen TypeScript ise
 
-Bilinmeye değer iki tane, çünkü yukarıdaki bütün stack Python öncelikli ve ürün kodunun çoğu değil.
+Burada bilmeye değer iki framework var. Sebebi şu: yukarıdaki bütün stack Python öncelikli, ama ürün kodunun çoğu Python ile yazılmıyor.
 
-- **[Mastra](https://github.com/mastra-ai/mastra)** agent'lar ve AI uygulamaları için modern TypeScript framework'ü, ve o dildeki LangChain karşılığına en yakın şey.
-- **[VoltAgent](https://github.com/VoltAgent/voltagent)** açık kaynak bir TypeScript framework'ünün üstünde bir agent engineering platformu, yani operasyon tarafına daha çok yaslanıyor.
+- **[Mastra](https://github.com/mastra-ai/mastra)** agent'lar ve AI uygulamaları için modern TypeScript framework'ü. O dilde LangChain'e en yakın şey bu.
+- **[VoltAgent](https://github.com/VoltAgent/voltagent)** açık kaynak bir TypeScript framework'ünün üstüne kurulmuş bir agent engineering platformu. Bu yüzden daha çok operasyon tarafına odaklanıyor.
 
-## Agent yerine workflow istediğinde
+## AI Workflow'ları
 
-Doğru anlamaya değen bir ayrım var, çünkü yanlış seçmek sana aylara mal oluyor.
+Burada doğru anlaman önemli bir ayrım var. Yanlış seçersen, bu sana aylara mal oluyor.
 
-Bir **AI workflow**, birinin yazdığı bir yolu çalıştırıyor. Adımlar sabit, sırada ne olacağına kod karar veriyor, ve model belirli noktalarda belirli işleri yapmak için çağrılıyor. Bir **AI agent** kendisi karar veriyor: tool'ları ve sırayı kendi seçiyor, ve yol her çalışmada farklı. [Prompt Engineering Guide'ın karşılaştırması](https://www.promptingguide.ai/agents/ai-workflows-vs-ai-agents) bunu hard-coded mantığa karşı LLM'in yürüttüğü akıl yürütme diye koyuyor.
+Bir **AI workflow**, birinin yazdığı bir yolu çalıştırıyor. Adımlar sabit. Sırada ne olacağına kod karar veriyor. Kod, modeli belirli noktalarda belirli işler için çağırıyor. Bir **AI agent** ise kendisi karar veriyor. Tool'ları ve sırayı kendi seçiyor, ve yol her çalışmada farklı. [Prompt Engineering Guide'ın karşılaştırması](https://www.promptingguide.ai/agents/ai-workflows-vs-ai-agents) bunu, hard-coded mantığa karşı LLM'in yürüttüğü akıl yürütme olarak tanımlıyor.
 
-Hata, agent'ın yetişkin versiyon olduğunu varsaymak. Değil. Gereksinimler durağansa ve adımları biliyorsan, bir workflow daha öngörülebilir, daha ucuz ve debug'ı daha kolay; ve öngörülebilir genelde production'ın istediği şey. Agent'ı, adımları kimsenin önceden yazamadığı açık uçlu işlere sakla.
+Hata, agent'ın yetişkin versiyon olduğunu varsaymak. Değil. Gereksinimler sabitse ve adımları biliyorsan, bir workflow daha öngörülebilir, daha ucuz ve debug etmesi daha kolay. Öngörülebilirlik de genelde production'ın istediği şey. Agent'ı, adımları kimsenin önceden yazamadığı açık uçlu işler için sakla.
 
-**[n8n](https://github.com/n8n-io/n8n)** insanların workflow yarısı için en çok kullandığı tool. Görsel bir kanvasta kuruyorsun, 400'den fazla entegrasyonu bağlıyorsun, ihtiyaç duyduğun yere kendi kodunu koyuyorsun, ve kendin barındırıyorsun ya da onların bulutunu kullanıyorsun. "Bir form gönderildiğinde sınıflandır, bir şeye bak, veritabanına yaz, bir mesaj gönder" için bu bir agent'ı rahatça yeniyor.
+**[n8n](https://github.com/n8n-io/n8n)** insanların workflow yarısı için en çok kullandığı tool. Onunla:
 
-Ve [Coding Agent'lar: Genişletme](../2_intermediate/coding_agents_tr.md) ile bir halka kapatıyor. n8n bir MCP server çalıştırıyor, yani coding agent'ın senin n8n instance'ına bağlanıp **workflow'u senin için kurabiliyor**: ne istediğini düz dille anlatıyorsun, o da node'ları birleştiriyor, sonucu doğruluyor, çalıştırıyor ve bozulanı düzeltiyor. MCP üzerinden workflow kurmak v2.13'te geldi. Yani agent ve workflow alternatif olmaktan çıkıyor, ve agent workflow'u yazan şey oluyor.
+- görsel bir kanvas üzerinde kuruyorsun
+- 400'den fazla entegrasyonu bağlıyorsun
+- ihtiyaç duyduğun yere kendi kodunu ekliyorsun
+- kendi sunucunda çalıştırıyorsun (self-host) ya da onların bulutunu kullanıyorsun
 
-## Ve hiç kod yazmayacaksan
+"Bir form gönderildiğinde sınıflandır, bir şeye bak, veritabanına yaz, bir mesaj gönder" gibi bir iş düşün. Böyle bir iş için bu tool, bir agent'tan rahatça daha iyi.
 
-Düpedüz söylemeye değer, çünkü mühendisler bunu atlama eğiliminde: bir sürü iş için doğru cevap bir no-code platform. **Lovable** ve **Bolt** bir açıklamayı çalışan bir uygulamaya çeviriyor, deploy ediyor, ve değiştirmek için prompt'lamaya devam etmene izin veriyor. Bir prototip, bir iç tool, ya da arkasında form olan bir landing page için bu, haftalar yerine saatler.
+Bu da bizi [Code Agent'lar](../2_intermediate/coding_agents_tr.md) konusuna geri götürüyor. n8n bir MCP server çalıştırıyor. Yani coding agent'ın senin n8n instance'ına bağlanıp **workflow'u senin için kurabiliyor**. Ne istediğini düz bir dille anlatıyorsun, coding agent da:
 
-Ödün alışılmış olanı. Şimdi hız alıyorsun, sonra daha az kontrol, ve platformdan çıkmak yeniden kurmak demek. Hangisini satın aldığını bil.
+- node'ları birleştiriyor
+- sonucu doğruluyor
+- workflow'u çalıştırıyor
+- bozulanı düzeltiyor
+
+MCP üzerinden workflow kurmak v2.13'te geldi. Yani agent ve workflow artık birbirinin alternatifi değil. Agent, workflow'u yazan şey oluyor.
+
+## No-code Seçenekler
+
+Bunu açıkça söylemeye değer, çünkü mühendisler bunu atlama eğiliminde. Bir sürü iş için doğru cevap bir no-code platform. **[Lovable](https://lovable.dev/)**, **[Bolt](https://bolt.new/)** ve **[Replit](https://replit.com/)** bir açıklamayı çalışan bir uygulamaya çeviriyor. Uygulamayı deploy ediyor, sen de değiştirmek için prompt yazmaya devam edebiliyorsun. Bir prototip, bir iç tool ya da arkasında form olan bir landing page için bu, haftalar yerine saatler sürüyor.
+
+Buradaki ödün her zamanki ödün. Şimdi hız kazanıyorsun, sonra daha az kontrolün oluyor. Platformdan çıkarsan, uygulamayı yeniden kurman gerekiyor. Hangisini satın aldığını bil.
 
 ## Bu serinin neresindeyiz
 
@@ -72,25 +101,32 @@ graph LR
 
 ## Özet
 
-Bir framework sana agent loop'unu vermiyor, ki onu kendin yazabilirsin. Loop'un etrafındaki her şeyi veriyor: retry'lar, streaming, tool schema'ları, bir restart'tan sağ çıkan memory, ve trace'lerin gideceği bir yer.
+Bir framework sana agent loop'unu vermiyor. Onu kendin yazabilirsin. Loop'un etrafındaki her şeyi veriyor:
 
-LangChain üç seviyede üç kütüphane. LangGraph runtime, state'in açık olduğu ve bir çalışmanın kaydedilip devam ettirilip kesilebildiği yer. LangChain sıradan arayüz ve başlanacak yer. deepagents ise zaten kurulmuş deep agent mimarisi. Ortadan başla, ve iş gerektirdikçe yukarı ya da aşağı git.
+- retry'lar
+- streaming
+- tool schema'ları
+- bir restart'tan sonra da kaybolmayan memory
+- trace'lerin gideceği bir yer
 
-Agno, CrewAI, smolagents ve Pydantic AI diğer Python seçenekleri, ve çoğunlukla senin yerine ne kadarına karar verdiklerinde farklılaşıyorlar. Mastra ve VoltAgent da TypeScript cevapları.
+LangChain üç seviyede üç kütüphane. LangGraph runtime. State'i açık olduğu için bir çalışmayı kaydedebiliyor, devam ettirebiliyor ve kesebiliyorsun. LangChain sıradan arayüz ve başlanacak yer. deepagents ise hazır kurulmuş deep agent mimarisi. Ortadan başla, iş gerektirdikçe yukarı ya da aşağı git.
 
-Sonra en çok önemli olan ayrım: bir workflow senin yazdığın yolu çalıştırıyor, bir agent kendi yolunu seçiyor. Agent bir yükseltme değil. Adımları yazabiliyorsan yaz, ve n8n de onun yaşadığı yer. MCP server'ı sayesinde coding agent'ın o workflow'ları senin için kurabiliyor, ki bu da iki yaklaşımı rakip değil ortak yapıyor.
+Agno, CrewAI, smolagents ve Pydantic AI diğer Python seçenekleri. Aralarındaki fark çoğunlukla, senin yerine ne kadar çok şeye karar verdikleri. Mastra ve VoltAgent da TypeScript cevapları.
+
+Sonra en önemli ayrım geliyor. Bir workflow senin yazdığın yolu çalıştırıyor. Bir agent ise kendi yolunu seçiyor. Agent bir yükseltme değil. Adımları yazabiliyorsan yaz, n8n de o adımların yaşadığı yer. MCP server'ı sayesinde coding agent'ın o workflow'ları senin için kurabiliyor. Bu da iki yaklaşımı rakip değil, ortak yapıyor.
 
 **Hızlı Kontrol**: işin her adımını önceden anlatabiliyorsun. Bir agent kurmalı mısın, ve neden hayır?
 
 ## Kaynaklar
 
 - [LangChain](https://github.com/langchain-ai/langchain): ana arayüz, ve başlanacak yer
-- [LangGraph](https://github.com/langchain-ai/langgraph): alttaki runtime, kontrol akışına sahip olmak istediğinde
+- [LangGraph](https://github.com/langchain-ai/langgraph): alttaki runtime, akışı kendin kontrol etmek istediğinde
 - [deepagents](https://github.com/langchain-ai/deepagents): deep agent mimarisi, zaten bir araya getirilmiş
 - [Agno](https://github.com/agno-agi/agno): script yerine yönetilen bir platform olarak agent'lar
 - [CrewAI](https://github.com/crewAIInc/crewAI): bir ekipte roller olarak düzenlenmiş agent'lar
-- [smolagents](https://github.com/huggingface/smolagents): asgari olanı, ve okunacak en iyisi
-- [Pydantic AI](https://github.com/pydantic/pydantic-ai): baştan sona tipli, böylece bozuk tool çağrıları yüksek sesle patlıyor
+- [smolagents](https://github.com/huggingface/smolagents): yalın olanı ve okunacak en iyisi
+- [Pydantic AI](https://github.com/pydantic/pydantic-ai): baştan sona tipli, böylece bozuk bir tool çağrısı açık bir hata veriyor
 - [Mastra](https://github.com/mastra-ai/mastra) ve [VoltAgent](https://github.com/VoltAgent/voltagent): TypeScript seçenekleri
 - [AI Workflows vs AI Agents](https://www.promptingguide.ai/agents/ai-workflows-vs-ai-agents): ayrım, ve hangisinin ne zaman doğru olduğu
 - [n8n](https://github.com/n8n-io/n8n): workflow platformu, ve [workflow'ları senin için kuran bir MCP server](https://docs.n8n.io/advanced-ai/mcp/accessing-n8n-mcp-server/) ile
+- [Lovable](https://lovable.dev/), [Bolt](https://bolt.new/) ve [Replit](https://replit.com/): bir uygulamayı düz dille anlat, çalışan bir tane al

@@ -64,6 +64,21 @@ actually changed. Name the files, and read `git status` before every commit.
   the working files as well as the modules.
 - **Plain English.** Short sentences, common words, readable by a non-native speaker. Not a
   textbook, so no Roman-numeral outlines or lettered subsections.
+- **ASD-STE-like English.** The author, 2026-10-12: "an English similar to ASD-STE English", so
+  that "any human can easily read and understand, especially those that are non-native". One idea
+  per sentence, about 20 words or fewer, active voice, common words, one term for one thing, no
+  idioms and no buzzwords. Technical terms stay, because they are the subject. So do the author's
+  voice and rhetorical turns: simplifying is not flattening, and the revised text is usually
+  longer. The Turkish gets the same treatment, more lightly.
+- **Headings are short, familiar, and in title case.** The same day the author renamed the headings
+  of fifteen modules, "Embeddings: numbers that carry meaning" to "Vector Embeddings" and "Skills,
+  which the agent picks up when it needs them" to "Skills". A heading names the topic the way an
+  engineer would search for it: no "X, which does Y" and no "X: a clause explaining it".
+  Capitalise every word except the small ones (a, an, the, and, or, but, of, to, in, into, on,
+  at, for, with, from, as, by, vs) and the ones the author named (it, is, are, be, don't). The
+  first word is always capitalised, and so is the last unless it is one the author named, so
+  "What a Harness is Made Of" but "What Loop Engineering is". Two headings keep their exact text because the app matches them:
+  `## Summary` / `## Özet` and `## Where this fits in the series` / `## Bu serinin neresindeyiz`.
 - **Never dense. Being concise is not a goal here.** Plain English and compressed English are not
   the same thing, and compression is the failure mode this project keeps hitting. Amirkia, after
   reading modules 10 to 12: "Make sure you did not make the language too dense solely to make it
@@ -457,7 +472,7 @@ this can go wrong while everything else still passes.
 
 A written module carries a quick quiz in `<name>.quiz.yaml` beside its markdown. The module page
 shows it at the very end, collapsed under **Want a quick quiz?**, after the completion checkbox and
-Previous / Next. The author asked for it on 2026-10-11.
+Previous / Next. The author asked for it on 2026-10-12.
 
 **It is for reinforcement, not assessment.** It helps a reader recall the module's main points right
 after reading. Nothing is tricky, nothing is scored on a record, and nothing is stored.

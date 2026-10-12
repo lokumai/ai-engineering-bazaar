@@ -11,8 +11,8 @@ source: playground/01-theme-T4-ground-G3-powder.html (light) · playground/01-th
 authority: blueprint
 writes: agent, as the language evolves
 status: active
-covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with eight recorded deviations (the sixth to eighth, the logo, the rail group and the pager, 2026-10-11), the three reader palettes, and the end of a reading page"
-last_updated: 2026-10-11
+covers: "the Bazaar language, transcribed from T4 on ground G3, with its derived dark sibling, plus the six primitives M16 derived from the component mockups — 2026-09-13, with eight recorded deviations (the sixth and seventh, the logo and the rail group, 2026-10-11; the eighth, the pager, 2026-10-12), the three reader palettes, and the end of a reading page"
+last_updated: 2026-10-12
 ---
 
 ---
@@ -592,7 +592,7 @@ never by colour alone. The fidelity harness records it in `AUTHOR_DEVIATIONS`.
 **AN EIGHTH DEVIATION, AND THE AUTHOR'S: THE PAGER STANDS OUT.** `01:240-243`
 draws a pager tile as a quiet white box with a hairline, 13×15 padding, a 4px
 radius and a faint direction label over the title. **The author replaced it on
-2026-10-11** with tiles that *"actually stand out from the remaining of the
+2026-10-12** with tiles that *"actually stand out from the remaining of the
 center panel"*: taller, at the `lg` radius, edged in `line-strong`, `Previous`
 outlined with its label and arrow in `primary`, `Next` filled with `primary`.
 The grid, its gap and its margin are still `01`'s. The fidelity harness

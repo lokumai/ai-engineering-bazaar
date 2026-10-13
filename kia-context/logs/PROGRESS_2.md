@@ -4097,6 +4097,12 @@ user facing. why would a user need to read this ?"*, followed by a list of chang
       `mini-courses/` prefix, its own Contributing section and no images in `index.md`).
 - [x] All five level links answer 200 on the live site.
 - [x] `npm test` 2,194 passed; `npm run build` produced 99 HTML pages.
+- [x] CI's browser suite failed once on this PR, on a test the README cannot reach:
+      `completion.spec.ts`, "a reader's completions are ticked in frame one", read the readout's
+      `data-hydrated` as `null`. MEASURED: a parser race, 1 failure in 5 local runs on code
+      identical to `main`; the module rows end near byte 32 K of `/profile/` and the first readout
+      starts near 45.6 K, so a frame can land between them. The probe now waits for both: 20 of 20
+      runs pass, and a copy of the page with the readout prerendered `true` still fails it.
 
 ---
 

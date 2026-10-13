@@ -136,10 +136,14 @@ async function probeControlCPaint(page: Page): Promise<void> {
       const look = () => {
         frames += 1
         const rows = document.querySelectorAll(row)
+        // The readout sits in the HTML some 13 KB after the last module row,
+        // so a frame can land between the two: the rows parsed, the readout not
+        // yet. Waiting for both is still a wait for the parser, never for state.
         // 240 frames is four seconds, after which the reading is taken anyway
         // and its emptiness fails loudly rather than the probe silently never
         // producing one.
-        if (rows.length === 0 && frames < 240) {
+        const readout = document.querySelector('.bz-readout')
+        if ((rows.length === 0 || readout === null) && frames < 240) {
           requestAnimationFrame(look)
           return
         }
@@ -153,7 +157,7 @@ async function probeControlCPaint(page: Page): Promise<void> {
           record: document.documentElement.getAttribute('data-hl-record'),
           ticked: ticked.sort((a, b) => a - b),
           rows: rows.length,
-          hydrated: document.querySelector('.bz-readout')?.getAttribute('data-hydrated') ?? null,
+          hydrated: readout?.getAttribute('data-hydrated') ?? null,
           frames,
         }
       }

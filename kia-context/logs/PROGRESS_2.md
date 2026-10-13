@@ -11,7 +11,8 @@ description: >
   2026-10-12, all shipped and merged: the end of a module and its quiz, the readability pass, and the
   Bazaar Street front door. Then the v1.0.0 release, M28, Persian modules read right to left,
   merged as PR #30, M29, both translations rewritten in their own language, and M30, the Persian
-  rewritten by meaning and a clarity hunt in all three languages.
+  rewritten by meaning and a clarity hunt in all three languages, M31, two promo videos made
+  with HyperFrames and /brag and then removed before merging, and M32, the README rewritten for readers.
   Every milestone carries its deliverables and acceptance criteria as `- [ ]` checkboxes, ticked as
   the work lands, and closes with a dated report; the loop that governs that is in part 1 and is not
   restated here. Part 1 holds M1 to M15 and is closed.
@@ -20,14 +21,14 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M30, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. Checkbox format repaired across the part on 2026-09-13."
-last_updated: 2026-10-12
+covers: "M16 to M32, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. Checkbox format repaired across the part on 2026-09-13."
+last_updated: 2026-10-13
 ---
 
-# 📈 PROGRESS, part 2 — M16 to M30
+# 📈 PROGRESS, part 2 — M16 to M32
 
 > **← Part 1: [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the review pass over M10 to M14.
-> This part holds **M16 to M30**, in the order they were worked.
+> This part holds **M16 to M32**, in the order they were worked.
 
 ## How to work this file
 
@@ -74,6 +75,8 @@ deliverables as a numbered list; M18 wrote none at all; M19 to M22 had none eith
 | **M28** | Persian, the third language | **Done** — 2026-10-12, merged as PR #30 |
 | **M29** | Translations written in their own language | **Done** — 2026-10-12, merged as PR #31 |
 | **M30** | Persian by meaning, and every sentence for a beginner | **Done** — 2026-10-12, merged as PR #32 |
+| **M31** | ~~Two promo videos, HyperFrames and /brag~~ | **Removed** — made 2026-10-12 on `feat/promo-videos`, removed at the author's request on 2026-10-13 before merging; no video reached `main` |
+| **M32** | The README, rewritten for readers | **Done** — 2026-10-13, squash-merged as PR #33 with M31's removal |
 
 ---
 
@@ -4006,6 +4009,100 @@ milestone did.
 **Found in the English, still open for the author**: `memory.md` lists long-term memory as "(online,
 temporary)" and its table says it persists across sessions; `loop_engineering.md` says "four lines
 of bash" over a three-line block and "the four levels" where the module has five.
+
+---
+
+## 🏁 Milestone M31: ~~Two promo videos, one with HyperFrames and one with /brag~~ — REMOVED, NEVER MERGED
+
+> **Removed on 2026-10-13.** The author: *"remove the two promo videos entirely. Commit and push and
+> merge to main."* `assets/videos/` was deleted on the branch, and the branch was squash-merged, so
+> no video, footage or composition file is in `main`'s history. The entry below is kept as the
+> record of what was made and how (D84), struck in its title rather than deleted.
+
+Branch `feat/promo-videos`, from `main` at `8b502fc` (M30 merged). Not merged: the author asked for
+the videos *"in a new branch"*. The author, 2026-10-12: *"please in a new branch under
+assets/videos/, using the hyperframes and brag and using each, create 2 videos of 30-second long,
+each with a different focus and style, but using a design similar to AI engineering bazaar. using
+proper theme songs, do not make it verbose, make it easy to read and understand. as an idea, you can
+mention our philosophy and selling points as well as brain rot and memes for gen Z"*. How it was
+made, and the two alternatives rejected, are **D84**.
+
+### Deliverables
+
+- [x] **The HyperFrames cut**, `assets/videos/bazaar-hyperframes/renders/video.mp4`, landscape: the
+      philosophy and the selling points. Built with HyperFrames' own product-launch workflow
+      (capture, a frame preset remapped by hand onto `bazaar.css`'s tokens because the script's
+      automatic mapping made the ground white, a storyboard of eight frames on the music's beat
+      grid, one frame worker per frame, assembly, transitions). The hook "A lot of AI content online
+      is guesswork."; the real home page's hero and a walk down the real street past its three signs
+      (recorded, D84); "19 modules. 20 to 30 minutes each." beside the AI Agents module's own
+      bell-curve meme; "Every finished module, in three languages." over the same module's title in
+      English, Turkish and Persian; "Free. No account needed." and the logo, the name and the address.
+- [x] **The /brag cut**, `assets/videos/bazaar-brag/brag.mp4`, vertical: the Gen Z brain-rot cut,
+      made by a forked agent with /brag (on Opus 5.5 it runs as /brag-slim): a doomscroll of AI hot
+      takes, "brain.exe has stopped responding / Cause: brain rot", the site's bar, gate and stalls
+      from its own SVG art, the three signs, a receipt of the selling points ending "+1000 aura" and
+      a FREE stamp, and "AI engineering, minus the brain rot. (ok, a little)". Plan, share copy and
+      source beside it.
+- [x] **Reproducible**: `scripts/record-walk.mjs` and `scripts/record-plates.mjs` rebuild the
+      footage and the plates from the static export; the capture and the 15 MB footage are not
+      committed (`.gitignore` in the project). `bazaar-brag/source/README.md` has its four commands.
+      `assets/videos/README.md` lists both videos and the credits (ende.app CC BY 4.0, Kenney CC0).
+### Acceptance criteria
+
+- [x] MEASURED, the HyperFrames cut: 30.000 s, 1920x1080, 30 fps, H.264 and AAC 48 kHz stereo,
+      -15.9 LUFS integrated, true peak -3.6 dBFS, 7.6 MB (a CRF 21 re-encode of the 23.2 MB render,
+      SSIM 0.996 against it). `hyperframes check`: lint, runtime, layout and motion 0 findings,
+      contrast 21/21 WCAG AA.
+- [x] MEASURED, the /brag cut: 30.000 s, 1080x1920, 30 fps, 900 frames, -14.4 LUFS integrated, true
+      peak -2.7 dBFS, 8.6 MB, its best settled frame baked in as frame 0.
+- [x] Every number on screen measured from the repository: 19 finished modules (33 planned), 20 to
+      30 minutes each, Persian for every finished module, a quiz at the end of each (89 questions).
+- [x] Stills from every frame and both sides of every cut looked at, in both videos.
+
+### Report — M31, 2026-10-12
+
+**Three things the review found that no check could.** The language frame first showed each
+translated page with the module's objectives still in English, because a translated module takes
+its objectives from the English file; a three-languages claim over English text was cropped to the
+title band. In the /brag cut, falling lokum cubes crossed the tagline for half a second; they now
+fall from behind the gate's edge. And HyperFrames' preset script remapped the brand onto a white
+ground and a lavender bloom; `frame.md` was corrected by hand to the site's tokens.
+
+**Two notes on the HyperFrames pipeline.** A frame's `<video>` is hoisted to the root at assembly
+and only numeric x, y, width and height survive, so a crop is written as geometry, never as a CSS
+transform; and the hoisted video does not take part in a frame's crossfade, so the hook to gate
+transition plays as a cut, which on the same paper ground and on the beat reads as intended.
+
+---
+
+## 🏁 Milestone M32: The README, rewritten for readers — SHIPPED, SQUASH-MERGED AS PR #33
+
+Same branch, `feat/promo-videos`, squash-merged to `main` together with M31's removal, so `main` gets
+the README and none of the videos. The author, 2026-10-13: *"remove this shit from README. README is
+user facing. why would a user need to read this ?"*, followed by a list of changes.
+
+### Deliverables
+
+- [x] **`README.md` and `mini-courses/index.md` in step** (the corpus agreement's two files that move
+      together): the author's own opening paragraph replaces the old one, the
+      🏪 emoji and the note on how translations are made are gone, Structure comes before Why This Is
+      Valuable, a new point "A human verifies it" follows "A human writes it" (the count "seven" is
+      dropped from the lead-in, since `MANIFEST.md` still has seven rules), the level links point at
+      the live site, and the progress section is two sentences.
+
+### Acceptance criteria
+
+- [x] The two files differ only by the corpus agreement's transform (no "Read online" line, no
+      `mini-courses/` prefix, its own Contributing section and no images in `index.md`).
+- [x] All five level links answer 200 on the live site.
+- [x] `npm test` 2,194 passed; `npm run build` produced 99 HTML pages.
+- [x] CI's browser suite failed once on this PR, on a test the README cannot reach:
+      `completion.spec.ts`, "a reader's completions are ticked in frame one", read the readout's
+      `data-hydrated` as `null`. MEASURED: a parser race, 1 failure in 5 local runs on code
+      identical to `main`; the module rows end near byte 32 K of `/profile/` and the first readout
+      starts near 45.6 K, so a frame can land between them. The probe now waits for both: 20 of 20
+      runs pass, and a copy of the page with the readout prerendered `true` still fails it.
 
 ---
 

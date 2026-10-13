@@ -10,8 +10,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D83, plus open questions O1 to O4 — 2026-09-09 to 2026-10-12"
-last_updated: 2026-10-12
+covers: "D26 to D84, plus open questions O1 to O4 — 2026-09-09 to 2026-10-13"
+last_updated: 2026-10-13
 ---
 
 # 🧠 BRAINSTORM, part 2 — the rebuild, D26 onward
@@ -2001,6 +2001,34 @@ sentences, but do an adversary analysis and try to find those sentences in each 
 module there is 1 or 2 of them) and fix them only."* So three Opus agents hunt module by module for
 the few offending sentences and rewrite only those, English first and then Turkish and Persian,
 after D82's agents had finished so no two agents wrote one file.
+
+### ~~D84 · The promo videos show the real site, recorded, and use produced music~~ — 2026-10-12, withdrawn 2026-10-13
+
+> **Withdrawn.** The author had both videos removed before they reached `main` (M31). The reasoning is
+> kept because it is still the answer if a video is made again: record the real street with a fake
+> clock rather than redraw it, and use produced, licensed music rather than generated.
+
+The author asked for two 30-second videos under `assets/videos/`, one made with HyperFrames and one
+with /brag, *"using a design similar to AI engineering bazaar. using proper theme songs, do not make
+it verbose, make it easy to read and understand"*, with the philosophy and selling points, and brain
+rot and memes for Gen Z. Each tool got one of the two jobs: HyperFrames the landscape cut on the
+philosophy, /brag the vertical brain-rot cut.
+
+**The street is recorded, not redrawn.** The most characteristic thing the project has is the Bazaar
+Street home page (D79), a GSAP walk that ScrollTrigger scrubs with a 0.9 s lag. *Rebuilding the art
+inside the composition* was rejected as a copy that drifts from the site; *panning flat screenshots*
+was rejected because the walk's parallax and its stall animations are the point. The walk is
+recorded frame by frame instead, with Playwright's fake clock advancing exactly 1/30 s a frame and
+CSS animations pinned to the frame time, so the footage is deterministic
+(`assets/videos/bazaar-hyperframes/scripts/record-walk.mjs`). The /brag cut inlines the street's own
+SVG art from `src/components/home/street/art/` for the same reason.
+
+**The music is produced, not generated.** HyperFrames looks music up in HeyGen's catalog or generates
+it with Lyria or MusicGen. MEASURED on this machine: no HeyGen sign-in, no Gemini or Google key, and
+no torch, so neither route could run without a credential or a multi-gigabyte install, and MusicGen
+would not be "a proper theme song" anyway. Both videos use /brag's bundled ende.app "Happy Beats /
+Business Moves" tracks instead, which ende.app licenses CC BY 4.0, so the credit travels with the
+videos (`assets/videos/README.md`).
 
 ## Open questions
 

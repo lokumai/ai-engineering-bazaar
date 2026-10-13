@@ -21,7 +21,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M32, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged on 2026-10-13. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M32, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-10-13
 ---
 
@@ -76,7 +76,7 @@ deliverables as a numbered list; M18 wrote none at all; M19 to M22 had none eith
 | **M29** | Translations written in their own language | **Done** — 2026-10-12, merged as PR #31 |
 | **M30** | Persian by meaning, and every sentence for a beginner | **Done** — 2026-10-12, merged as PR #32 |
 | **M31** | ~~Two promo videos, HyperFrames and /brag~~ | **Removed** — made 2026-10-12 on `feat/promo-videos`, removed at the author's request on 2026-10-13 before merging; no video reached `main` |
-| **M32** | The README, rewritten for readers | **Done** — 2026-10-13, squash-merged with M31's removal (PR below) |
+| **M32** | The README, rewritten for readers | **Done** — 2026-10-13, squash-merged as PR #33 with M31's removal |
 
 ---
 
@@ -4076,7 +4076,7 @@ transition plays as a cut, which on the same paper ground and on the beat reads 
 
 ---
 
-## 🏁 Milestone M32: The README, rewritten for readers — SHIPPED
+## 🏁 Milestone M32: The README, rewritten for readers — SHIPPED, SQUASH-MERGED AS PR #33
 
 Same branch, `feat/promo-videos`, squash-merged to `main` together with M31's removal, so `main` gets
 the README and none of the videos. The author, 2026-10-13: *"remove this shit from README. README is

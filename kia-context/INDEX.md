@@ -57,7 +57,7 @@ and the same explanation given in person for the third time. See `genesis/GENESI
 | 2026-10-12 | Both translations rewritten in their own language: readability before faithfulness | M29, merged as PR #31 (D81, MANIFESTO rule 17) |
 | 2026-10-12 | Persian by meaning, not by phrase; every sentence for a beginner, in every language | M30, merged as PR #32 (D82, D83, MANIFESTO rule 18) |
 | 2026-10-12 | ~~Two 30-second promo videos, one made with HyperFrames and one with /brag~~, removed before merging | M31 (D84, withdrawn) |
-| 2026-10-13 | The README rewritten for readers | M32, squash-merged with M31's removal |
+| 2026-10-13 | The README rewritten for readers | M32, squash-merged as PR #33 with M31's removal |
 
 **The harness itself was installed on 2026-09-08**, 105 commits in. Everything before that date was
 reconstructed from git and is labelled as inferred inside each file.

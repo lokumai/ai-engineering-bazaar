@@ -10,8 +10,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D84, plus open questions O1 to O4 — 2026-09-09 to 2026-10-12"
-last_updated: 2026-10-12
+covers: "D26 to D84, plus open questions O1 to O4 — 2026-09-09 to 2026-10-13"
+last_updated: 2026-10-13
 ---
 
 # 🧠 BRAINSTORM, part 2 — the rebuild, D26 onward
@@ -2002,7 +2002,11 @@ module there is 1 or 2 of them) and fix them only."* So three Opus agents hunt m
 the few offending sentences and rewrite only those, English first and then Turkish and Persian,
 after D82's agents had finished so no two agents wrote one file.
 
-### D84 · The promo videos show the real site, recorded, and use produced music — 2026-10-12
+### ~~D84 · The promo videos show the real site, recorded, and use produced music~~ — 2026-10-12, withdrawn 2026-10-13
+
+> **Withdrawn.** The author had both videos removed before they reached `main` (M31). The reasoning is
+> kept because it is still the answer if a video is made again: record the real street with a fake
+> clock rather than redraw it, and use produced, licensed music rather than generated.
 
 The author asked for two 30-second videos under `assets/videos/`, one made with HyperFrames and one
 with /brag, *"using a design similar to AI engineering bazaar. using proper theme songs, do not make

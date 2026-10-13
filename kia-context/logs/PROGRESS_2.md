@@ -4042,6 +4042,12 @@ made, and the two alternatives rejected, are **D84**.
       footage and the plates from the static export; the capture and the 15 MB footage are not
       committed (`.gitignore` in the project). `bazaar-brag/source/README.md` has its four commands.
       `assets/videos/README.md` lists both videos and the credits (ende.app CC BY 4.0, Kenney CC0).
+- [x] **The README, rewritten for readers** (the author, 2026-10-13: *"README is user facing"*), with
+      `mini-courses/index.md` in step: the author's own opening paragraph replaces the old one, the
+      🏪 emoji and the note on how translations are made are gone, Structure comes before Why This Is
+      Valuable, a new point "A human verifies it" follows "A human writes it" (the count "seven" is
+      dropped from the lead-in, since `MANIFEST.md` still has seven rules), the level links point at
+      the live site, and the progress section is two sentences.
 
 ### Acceptance criteria
 

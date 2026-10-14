@@ -338,6 +338,34 @@ test('a level door opens that level, and the page it leaves still works', async 
   expect(problems.failedRequests).toEqual([])
 })
 
+/* The welcome at each door (2026-10-14): a tray of lokum offered while the door
+   is pointed at, and put away after. Asserted twice because two mechanisms
+   carry it: `home.css` alone under reduced motion, and the island's timeline
+   when motion is allowed. The narrow window keeps the doors in the stack, where
+   they sit in the document rather than at the far end of the walk. */
+for (const reducedMotion of ['reduce', 'no-preference'] as const) {
+  test(`a door offers a tray of lokum while it is pointed at, and only then (${reducedMotion})`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 700, height: 1000 })
+    await page.emulateMedia({ reducedMotion })
+    await page.goto('/')
+
+    const door = page.locator('.bz-street .door').first()
+    const offer = door.locator('.tray .offer')
+    await door.scrollIntoViewIfNeeded()
+    await expect(offer).toHaveCSS('opacity', '0')
+    // The tray is drawn over the door, so it must never take the click.
+    await expect(door.locator('.tray')).toHaveCSS('pointer-events', 'none')
+
+    await door.hover()
+    await expect(offer).toHaveCSS('opacity', '1')
+
+    await page.mouse.move(1, 1)
+    await expect(offer).toHaveCSS('opacity', '0')
+  })
+}
+
 // ---------------------------------------------------------------------------
 // The record survives the page it is edited from
 // ---------------------------------------------------------------------------

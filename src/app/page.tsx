@@ -99,7 +99,7 @@ const STALLS: ReadonlyArray<{
   },
 ]
 
-/** The concept draws five doors; a sixth level would reuse the first drawing. */
+/** The concept draws five doors, and a tray for each; a sixth level would reuse the first. */
 const DOOR_ART = 5
 
 /** Where the doors and the way in stand in the hall, in the art's own units. */
@@ -140,6 +140,16 @@ function at(props: Record<string, string | number>): CSSProperties {
  * `data-cat` like every other level mark on the site. A level added to the
  * curriculum gets a door without this file changing.
  *
+ * ## The welcome at each door
+ *
+ * Pointing at a door, or reaching it with the keyboard, brings a brass tray of
+ * lokum out of the doorway: the bazaar's way of offering a guest a sweet (the
+ * author asked for exactly that on 2026-10-14, after the README's photograph).
+ * Each tray is drawn in its door's own coordinates (`art/tray-N.html`), with the
+ * stall's platter and cubes and that level's colour on top, so it lines up with
+ * the door at any size. The motion is the island's; with no script or with
+ * reduced motion, `home.css` shows the tray on hover and focus without moving it.
+ *
  * ## What left, and where it went
  *
  * The lead action `Start with <first module>` and the facts strip were removed
@@ -152,6 +162,7 @@ export default function HomePage() {
     title: category.title,
     href: levelRoute(category.slug),
     art: `door-${(i % DOOR_ART) + 1}` as ArtName,
+    tray: `tray-${(i % DOOR_ART) + 1}` as ArtName,
     x: DOOR_X + i * DOOR_STEP,
   }))
 
@@ -216,7 +227,7 @@ export default function HomePage() {
                 style={at({ '--x': door.x, '--y': DOOR_Y })}
               >
                 <span className="plaque">{door.title}</span>
-                <span className="door-art" aria-hidden="true" dangerouslySetInnerHTML={{ __html: art(door.art) }} />
+                <span className="door-art" aria-hidden="true" dangerouslySetInnerHTML={{ __html: art(door.art) + art(door.tray) }} />
               </Link>
             ))}
           </nav>

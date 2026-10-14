@@ -21,14 +21,14 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M32, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. Checkbox format repaired across the part on 2026-09-13."
-last_updated: 2026-10-13
+covers: "M16 to M33, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — built on `feat/door-ikram` on 2026-10-14. Checkbox format repaired across the part on 2026-09-13."
+last_updated: 2026-10-14
 ---
 
-# 📈 PROGRESS, part 2 — M16 to M32
+# 📈 PROGRESS, part 2 — M16 to M33
 
 > **← Part 1: [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the review pass over M10 to M14.
-> This part holds **M16 to M32**, in the order they were worked.
+> This part holds **M16 to M33**, in the order they were worked.
 
 ## How to work this file
 
@@ -77,6 +77,7 @@ deliverables as a numbered list; M18 wrote none at all; M19 to M22 had none eith
 | **M30** | Persian by meaning, and every sentence for a beginner | **Done** — 2026-10-12, merged as PR #32 |
 | **M31** | ~~Two promo videos, HyperFrames and /brag~~ | **Removed** — made 2026-10-12 on `feat/promo-videos`, removed at the author's request on 2026-10-13 before merging; no video reached `main` |
 | **M32** | The README, rewritten for readers | **Done** — 2026-10-13, squash-merged as PR #33 with M31's removal |
+| **M33** | A tray of lokum at every door | **Built** — 2026-10-14, on branch `feat/door-ikram` |
 
 ---
 
@@ -4103,6 +4104,41 @@ user facing. why would a user need to read this ?"*, followed by a list of chang
       identical to `main`; the module rows end near byte 32 K of `/profile/` and the first readout
       starts near 45.6 K, so a frame can land between them. The probe now waits for both: 20 of 20
       runs pass, and a copy of the page with the readout prerendered `true` still fails it.
+
+---
+
+## 🏁 Milestone M33: A tray of lokum at every door — BUILT ON A BRANCH
+
+Branch `feat/door-ikram`, from `main` at `53c62c7`. The author, 2026-10-14: *"when I hover over each
+door/level, I want it to have some sort of animation or minimal increase in size ... can it be a
+tepsi of lokum doing ikram when we hover ? something like the image at the end of the readme ... in
+the same theme and style of what exists"*. The home page's reference, `playground/10`, draws no
+hover state, so this is the author's addition on top of D79, not a deviation from it.
+
+### Deliverables
+
+- [x] **Five trays**, `src/components/home/street/art/tray-1.html` to `tray-5.html`, each drawn in
+      its door's own coordinates (`viewBox 0 0 190 470`) so it lines up at any size: the lokum
+      stall's brass platter (`#C99A4B`, `#E8C682`) carrying a 3-2-1 pyramid of the stall's cubes,
+      that level's colour on top, and two of the scale stall's sparkles.
+- [x] **The motion**, `wireOffers()` in `motion.ts`, in walk and stack: a door that is pointed at
+      or keyboard-focused grows 3.5% from its foot and the tray comes forward out of the doorway
+      (from 60% size and lower, `power3.out`, 0.45 s); it goes back faster when the reader leaves.
+- [x] **No script or reduced motion**: `home.css` shows the tray on `:hover` and `:focus-visible`
+      without moving it. The tray never takes the pointer, so the door stays the link.
+- [x] **A behavioural test**, `home.spec.ts`, under both motion settings: the tray is hidden, shows
+      on hover, hides after, and never takes the pointer.
+
+### Acceptance criteria
+
+- [x] Looked at in walk, stack and reduced motion, hovered and keyboard-focused.
+- [x] MEASURED, a trap: naming GSAP's `svgOrigin` in both halves of a `fromTo` left the tray 46.67
+      units low (`matrix(1,0,0,1,0,46.67)`), resting on the floor cube; the origins are now set
+      once before the tweens and the final transform is the identity.
+- [x] Each guard proven by breaking it: no CSS hover rule fails the reduced-motion case, a tray
+      never put away fails the motion case, a tray that takes the pointer fails both.
+- [x] The gate: typecheck clean, 2,194 unit and corpus tests, build 99 HTML pages, Playwright
+      1,201 passed, 59 skipped, 0 failed before the new tests, and the home spec 12 of 12 after.
 
 ---
 

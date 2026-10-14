@@ -435,7 +435,31 @@
   }
 
   .bz-street .door-art {
+    position: relative;
     margin-top: -4px;
+  }
+
+  /* The welcome: a tray of lokum drawn over its door in the door's own units,
+     so it lines up at any size. It never takes the pointer, so the door stays
+     the link. The island moves it; without the island (no script, reduced
+     motion) it shows while the door is pointed at or focused, and does not
+     move. */
+  .bz-street .door-art .tray {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .bz-street .tray .offer,
+  .bz-street .tray .glint {
+    opacity: 0;
+  }
+
+  .bz-street .door:is(:hover, :focus-visible) .tray :is(.offer, .glint) {
+    opacity: 1;
   }
 
   .bz-street .plaque {

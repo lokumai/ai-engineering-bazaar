@@ -32,6 +32,7 @@ export type ArtName =
   | 'stall-papers'
   | `icon-${1 | 2 | 3 | 4}`
   | `door-${1 | 2 | 3 | 4 | 5}`
+  | `tray-${1 | 2 | 3 | 4 | 5}`
 
 export function art(name: ArtName): string {
   const hit = cache.get(name)

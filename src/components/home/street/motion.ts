@@ -20,6 +20,10 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
  * - **still**: `prefers-reduced-motion: reduce`. Nothing moves; the doors are
  *   set open, which is how the still picture is meant to look.
  *
+ * In walk and stack, a door that is pointed at or focused also offers the
+ * reader a tray of lokum (`wireOffers`). In still, and with no script at all,
+ * `home.css` shows the same tray on hover and focus without moving it.
+ *
  * It returns a cleanup that puts every moved node back where the server put it.
  * The island calls that from a LAYOUT effect, which runs before React removes
  * the page on a client navigation: a node React rendered must be back under its
@@ -192,6 +196,45 @@ export function initBazaar(root: HTMLElement): Cleanup {
       .to(sw, { opacity: 1, duration: 0.14 }, 0)
       .to(sw, { rotationX: 0, duration: 1.5, ease: 'elastic.out(1, 0.32)' }, 0)
       .fromTo(sw, { rotation: -5 }, { rotation: 0, duration: 2, ease: 'elastic.out(1.1, 0.22)' }, 0.15)
+  }
+
+  /* ---------- the welcome: a tray of lokum offered at a door that is pointed at or focused ---------- */
+  function wireOffers(): Cleanup {
+    const off: Array<() => void> = []
+    doors.forEach((door) => {
+      const tray = door.querySelector('.tray')
+      if (tray === null) return
+      /* The tray comes forward out of the doorway: small and low, as if from
+         inside, to full size at the height a host holds a tepsi. 95 345 is
+         the middle of the tray's rim in the door's own units. */
+      const offer = $('.offer', tray)
+      const glint = $('.glint', tray)
+      /* The origins are set once, before any tween: naming svgOrigin in both
+         halves of a fromTo makes GSAP re-derive it from the moved element and
+         leave the tray 47 units low (measured: matrix(1,0,0,1,0,46.67)). */
+      gsap.set(offer, { svgOrigin: '95 345' })
+      gsap.set(glint, { svgOrigin: '95 268' })
+      const tl = gsap
+        .timeline({ paused: true })
+        .fromTo($('.door-art', door), { scale: 1 }, { scale: 1.035, transformOrigin: '50% 100%', duration: 0.3, ease: 'power2.out' }, 0)
+        .fromTo(offer, { opacity: 0, y: 70, scale: 0.6 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: 'power3.out' }, 0)
+        .fromTo(glint, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.25, ease: 'power2.out' }, 0.3)
+      let pointed = false
+      let focused = false
+      const update = () => {
+        if (pointed || focused) tl.timeScale(1).play()
+        else tl.timeScale(1.6).reverse()
+      }
+      const handlers: Array<[string, EventListener]> = [
+        ['pointerenter', () => { pointed = true; update() }],
+        ['pointerleave', () => { pointed = false; update() }],
+        ['focusin', () => { focused = door.matches(':focus-visible'); update() }],
+        ['focusout', () => { focused = false; update() }],
+      ]
+      handlers.forEach(([type, fn]) => door.addEventListener(type, fn))
+      off.push(() => handlers.forEach(([type, fn]) => door.removeEventListener(type, fn)))
+    })
+    return () => off.forEach((undo) => undo())
   }
 
   /* ---------- walk ---------- */
@@ -380,8 +423,14 @@ export function initBazaar(root: HTMLElement): Cleanup {
     },
     (ctx) => {
       const { walk, motion, still } = ctx.conditions as Record<string, boolean>
-      if (walk) return enterWalk()
-      if (motion) return enterStack()
+      if (walk || motion) {
+        const leave = walk ? enterWalk() : enterStack()
+        const unwire = wireOffers()
+        return () => {
+          unwire()
+          leave()
+        }
+      }
       if (still) enterStill()
       return undefined
     },

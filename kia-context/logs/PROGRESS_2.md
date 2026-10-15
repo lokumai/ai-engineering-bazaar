@@ -4167,7 +4167,10 @@ shows 3."* The cause, the four options and the one the author chose are **D85**.
 - [x] The built bar prints 6 (`Repository on GitHub, 6 stars`).
 - [x] Typecheck clean, 2,194 unit tests, build clean, `accessibility` and `responsive` specs (the
       two that read the control) 97 passed, 6 skipped.
-- [ ] The deploy log shows the refresh step, and the live site shows the current count.
+- [x] MEASURED after the merge: the Deploy run for `4dbdb35` (run 38748661455) logged
+      `github-stars: 6 -> 6, measured 2026-10-15`, and the live site's bar read "Repository on
+      GitHub, 6 stars" against GitHub's 6. The first scheduled run, 04:17 UTC on 2026-10-16, had not
+      happened yet when this was written.
 
 ---
 

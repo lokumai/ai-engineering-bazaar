@@ -69,6 +69,16 @@ mindmap
       Lint ve test kapıları
 ```
 
+Her parçanın ne olduğunu sade bir dille anlatalım:
+
+- **System prompt'lar.** Agent'ın herhangi bir işe başlamadan önce okuduğu talimatlar bunlar. Çoğunu sağlayıcı yazar, senin `AGENTS.md` dosyan da bunlara eklenir.
+- **Tool'lar, skill'ler, MCP sunucuları ve açıklamaları.** Agent'ın yapabildiği eylemler bunlar. Her birinin, o eylemin ne işe yaradığını modele anlatan kısa bir açıklaması vardır.
+- **Hazır gelen altyapı.** Agent'ın çalıştığı yer burası: dosyalarını tuttuğu bir dosya sistemi, kodu güvenle çalıştırabildiği bir sandbox ve web'i kullanıp kendi sonuçlarını kontrol edebildiği bir tarayıcı.
+- **Orkestrasyon mantığı.** İşin hangi parçasını kimin yapacağına bu kod karar verir. Ayrı işler için subagent başlatır, işi bir agent'tan diğerine devreder (handoff) ve hangi adımı hangi modelin çalıştıracağını seçer (model routing).
+- **Deterministik çalışma için hook'lar ve middleware.** Bunlar, model ne karar verirse versin belirli noktalarda çalışan kodlardır, bu yüzden her çalıştırmada aynı şekilde davranırlar. Compaction buna bir örnek: context window dolmak üzereyken eski içeriği özetler ki agent çalışmaya devam edebilsin. Bunu [Context Engineering](context_engineering_tr.md) modülünde görmüştün. Continuation başka bir örnek: model hedefe ulaşmadan durmaya kalkarsa bir hook bunu yakalar ve orijinal görevi temiz bir context window'da modele yeniden verir. Bir sonraki modülün, yani [Loop Engineering](loop_engineering_tr.md) modülünün anlattığı Ralph loop tam olarak budur. Üçüncü örnek de lint kontrolü: agent'ın yazdığı kodu kontrol eder ve bulduğu hataları modele geri gönderir.
+
+LangChain bu parçaları bir videoda da anlatıyor: [What is an Agent Harness?](https://www.youtube.com/watch?v=R0ckdFjUF5U).
+
 Listede tool *açıklamalarının* da yer aldığına dikkat et. Açıklama bir prompt'tur: model, o tool'u çağırıp çağırmayacağına karar verirken okuduğu metin budur. Bu yüzden bir tool'un adını değiştirirsen ya da açıklamasındaki tek bir cümleyi yeniden yazarsan, agent farklı davranır. Bu bir prompt işi değil, harness işidir. Çünkü isteği değil, ortamı değiştirmiş olursun.
 
 Bütün bunları düzenlemenin en net yolunu Birgitta Böckeler'in [Harness engineering for coding agent users](https://martinfowler.com/articles/harness-engineering.html) yazısı sunuyor. Yazıya göre bir harness iki tür şeyden oluşur:
@@ -205,4 +215,5 @@ Bütün bunlar gerçek bir emeğe değer, çünkü etkisini sayılarda görebili
 - [awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering): Bu pratik için araçlar ve rehberler.
 - [Agent Harness Explained in 2 minutes](https://youtube.com/shorts/IVdJj_aNwhE): Kısa versiyon, izlemeyi tercih edersen.
 - [Agent Harness explained in 8min..](https://www.youtube.com/watch?v=1a1VXDdIyrk): Daha uzun versiyon. Yukarıdaki halkalar gibi üç pratiği yan yana koyuyor.
+- [What is an Agent Harness?](https://www.youtube.com/watch?v=R0ckdFjUF5U): LangChain'in, anatomy yazısını yazan ekipten, harness'ın parçalarını anlatan kendi videosu.
 - [İleri Seviye Harness Engineering](../3_expert/advanced_harness_engineering_tr.md): Profiller, kendini evrimleştiren harness'ler ve modelin içine taşınanlar.

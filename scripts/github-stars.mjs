@@ -10,11 +10,20 @@
  * **The committed file is the source of truth for a build, not this script.**
  * `npm run build` does NOT run it: a build that needs the network is a build
  * that fails on a plane and in a CI runner with no egress, and the number is
- * decoration on a link that works without it. So the file ships with whatever
- * the last run wrote, the site prints that, and somebody runs this when they
- * want it fresher:
+ * decoration on a link that works without it.
+ *
+ * **The deploy runs it, so the live site stays current (D85).** Left to a
+ * person, the committed answer said 3 for five weeks while GitHub said 6. The
+ * Deploy workflow now runs this just before `npm run build`, on every push to
+ * `main` and once a day on a schedule, and builds from what it wrote; nothing
+ * is committed back. The committed file is only the fallback for a failed fetch
+ * and for every other build. To refresh that fallback by hand:
  *
  *     node scripts/github-stars.mjs
+ *
+ * With `GITHUB_TOKEN` set (the workflow passes its own), the request is
+ * authenticated, so a shared runner's address does not meet the anonymous rate
+ * limit of 60 requests an hour.
  *
  * It writes `src/lib/github-stars.json` and prints what changed. A failed fetch
  * writes nothing and exits 0 — a stale number is a smaller lie than no number
@@ -48,8 +57,13 @@ const was = previous()
 
 let stars = null
 try {
+  const token = process.env.GITHUB_TOKEN
   const response = await fetch(`https://api.github.com/repos/${SLUG}`, {
-    headers: { accept: 'application/vnd.github+json', 'user-agent': SLUG },
+    headers: {
+      accept: 'application/vnd.github+json',
+      'user-agent': SLUG,
+      ...(token ? { authorization: `Bearer ${token}` } : {}),
+    },
     signal: AbortSignal.timeout(15_000),
   })
   if (!response.ok) throw new Error(`HTTP ${response.status}`)

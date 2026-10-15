@@ -171,7 +171,9 @@ export function SiteHeader({
             <StarGlyph />
             {/* No figure at all where none has been measured — never a zero
                 somebody invented (§11.25). `scripts/github-stars.mjs` writes
-                the committed answer and the build never reaches the network. */}
+                the answer: in the deploy job before every build and daily
+                (D85), or by hand for the committed fallback. `npm run build`
+                itself never reaches the network. */}
             {stars !== null && <span className="bz-bar-stars">{stars}</span>}
           </a>
         </div>

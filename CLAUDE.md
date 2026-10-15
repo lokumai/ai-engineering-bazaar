@@ -37,7 +37,7 @@ trusting its brief.**
 `PROGRESS.md` is part 1 and closed: M1 to M15, and the review pass over M10 to
 M14. New milestones go in part 2.
 
-**M17 to M22, M24 to M30, M32 and M33 have shipped**, recorded in
+**M17 to M22, M24 to M30, and M32 to M34 have shipped**, recorded in
 [`kia-context/logs/PROGRESS_2.md`](kia-context/logs/PROGRESS_2.md): one catalog
 with a level as an address, the module page, the progress page, the end of a
 module with its quick quiz, the readability pass over the corpus, and the

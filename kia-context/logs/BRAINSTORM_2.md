@@ -10,8 +10,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D84, plus open questions O1 to O4 — 2026-09-09 to 2026-10-13"
-last_updated: 2026-10-13
+covers: "D26 to D85, plus open questions O1 to O4 — 2026-09-09 to 2026-10-15"
+last_updated: 2026-10-15
 ---
 
 # 🧠 BRAINSTORM, part 2 — the rebuild, D26 onward
@@ -1334,6 +1334,9 @@ it; `npm run build` reads that file and never reaches the network. So the number
 is never typed, the build works on a plane and in a runner with no egress, and
 the staleness is visible in the file's own `measured` date rather than implied.
 
+> **Amended by D85 (2026-10-15):** the deploy job now runs the fetch before every build and daily;
+> `npm run build` still never reaches the network.
+
 **`stars: null` is a real state and the bar draws it** — the mark and the star
 with no figure beside them, which is the house spelling for "nobody counted"
 (§11.25) and never a zero somebody invented. Measured on the first run: 3.
@@ -2029,6 +2032,28 @@ no torch, so neither route could run without a credential or a multi-gigabyte in
 would not be "a proper theme song" anyway. Both videos use /brag's bundled ende.app "Happy Beats /
 Business Moves" tracks instead, which ende.app licenses CC BY 4.0, so the credit travels with the
 videos (`assets/videos/README.md`).
+
+### D85 · The star count is refreshed by the deploy, not by a person — 2026-10-15
+
+The author found the bar saying 3 stars while GitHub said 6. D64's committed answer had been written
+once, on 2026-09-11, and nobody had run `scripts/github-stars.mjs` since: a refresh left to memory
+is a refresh that does not happen. Four ways were put to the author:
+
+1. **The deploy runs the fetch before it builds, and once a day on a schedule.** The live site is
+   never more than a day old; a failed fetch keeps the committed number; `npm run build` and CI
+   still never need the network.
+2. **Refresh by hand, now.** No change, and stale again within weeks, which is what happened.
+3. **Fetched in the reader's browser.** Exact, and a request to GitHub on every page view from a
+   site whose README now says nothing is sent anywhere unless the reader signs in; D64 rejected it
+   for the same reason.
+4. **No number at all.** Never wrong, and the figure the author asked for is gone.
+
+**Taken: 1, by the author.** The workflow passes its own token, so a shared runner's address does
+not meet the anonymous limit of 60 requests an hour, and nothing is committed back, because `main`
+takes changes only through a pull request and a bot opening one a day would be noise. So the
+committed file is the fallback and may lag the live site; its `measured` date says by how much. A
+scheduled workflow in a public repository is switched off by GitHub after 60 days without activity
+in the repository; a push re-enables it.
 
 ## Open questions
 

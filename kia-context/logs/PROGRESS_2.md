@@ -21,14 +21,14 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M34, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M35, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — built on 2026-10-15. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-10-15
 ---
 
-# 📈 PROGRESS, part 2 — M16 to M34
+# 📈 PROGRESS, part 2 — M16 to M35
 
 > **← Part 1: [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the review pass over M10 to M14.
-> This part holds **M16 to M34**, in the order they were worked.
+> This part holds **M16 to M35**, in the order they were worked.
 
 ## How to work this file
 
@@ -79,6 +79,7 @@ deliverables as a numbered list; M18 wrote none at all; M19 to M22 had none eith
 | **M32** | The README, rewritten for readers | **Done** — 2026-10-13, squash-merged as PR #33 with M31's removal |
 | **M33** | A tray of lokum at every door | **Done** — 2026-10-14, merged as PR #34 |
 | **M34** | The star count stays current | **Done** — 2026-10-15, merged as PR #36 |
+| **M35** | Harness Engineering names its parts in plain words | **Built** — 2026-10-15, on branch `content/harness-anatomy` |
 
 ---
 
@@ -4171,6 +4172,36 @@ shows 3."* The cause, the four options and the one the author chose are **D85**.
       `github-stars: 6 -> 6, measured 2026-10-15`, and the live site's bar read "Repository on
       GitHub, 6 stars" against GitHub's 6. The first scheduled run, 04:17 UTC on 2026-10-16, had not
       happened yet when this was written.
+
+---
+
+## 🏁 Milestone M35: Harness Engineering names its parts in plain words — BUILT ON A BRANCH
+
+Branch `content/harness-anatomy`, from `main` at `4b618ab`. The author, 2026-10-15, pasting LangChain's
+list (*"Concretely, a harness includes things like: System Prompts; Tools, Skills, MCPs and their
+descriptions; Bundled Infrastructure (filesystem, sandbox, browser); Orchestration Logic (subagent
+spawning, handoffs, model routing); Hooks/Middleware for deterministic execution (compaction,
+continuation, lint checks)"*): *"please include and integrate the description above to make our
+harness module in intermediate richer, and then add that youtube link as well to references"*.
+
+### Deliverables
+
+- [x] **"What a Harness is Made Of"** in `harness_engineering.md` explains each of the five parts in a
+      plain sentence or two, right under the mindmap that draws them. Compaction calls back to
+      Context Engineering and continuation forward to Loop Engineering's Ralph loop.
+- [x] **The video**, LangChain's [What is an Agent Harness?](https://www.youtube.com/watch?v=R0ckdFjUF5U)
+      (title fetched, not guessed), in the text and in References.
+- [x] **Turkish and Persian** in step, written in their own languages, with the links pointing at
+      the `_tr.md` and `_fa.md` modules.
+
+### Acceptance criteria
+
+- [x] MEASURED, the source: the list is in [The Anatomy of an Agent
+      Harness](https://www.langchain.com/blog/the-anatomy-of-an-agent-harness), which the section
+      already cites; compaction and continuation are explained as that article explains them.
+- [x] In all three files: headings 11/11 and fences 6/6 unchanged, two external links added, no em
+      dash, no Persian digit; `check-mermaid.mjs` 9/9; 2,194 unit and corpus tests; build clean, the
+      video on all three built pages.
 
 ---
 

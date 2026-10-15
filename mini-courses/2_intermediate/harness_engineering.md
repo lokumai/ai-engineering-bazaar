@@ -81,6 +81,16 @@ mindmap
       Lint and test gates
 ```
 
+Here is what each part is, in plain words:
+
+- **System prompts.** These are the instructions that the agent reads before it starts any task. The vendor writes most of them, and your `AGENTS.md` adds to them.
+- **Tools, skills and MCP servers, and their descriptions.** These are the actions that the agent can take. Each action has a short description that tells the model what the action does.
+- **Bundled infrastructure.** This is the place where the agent works. It has a filesystem where the agent keeps its files, a sandbox where it can run code safely, and a browser where it can use the web and check its own results.
+- **Orchestration logic.** This code decides who does each part of the work. It starts subagents for separate tasks, it passes work from one agent to another (a handoff), and it chooses which model runs which step (model routing).
+- **Hooks and middleware for deterministic execution.** This is code that runs at fixed points, whatever the model decides, so it behaves the same way on every run. Compaction is one example. When the context window is nearly full, it summarises the older content so that the agent can continue, as you saw in [Context Engineering](context_engineering.md). Continuation is another example. When the model tries to stop before the goal is done, a hook catches the stop and gives the model its original task again, in a fresh context window. That is the Ralph loop, which the next module, [Loop Engineering](loop_engineering.md), covers. A lint check is the third example. It checks the code that the agent wrote and sends any errors back to the model.
+
+LangChain also explains these parts in a video, [What is an Agent Harness?](https://www.youtube.com/watch?v=R0ckdFjUF5U).
+
 Notice that the tool *descriptions* are in the list. A description is a prompt. It is the text that the model reads when it decides whether to call that tool. So if you rename a tool, or rewrite one sentence of its description, the agent behaves differently. That counts as harness work, not prompt work, because you edited the environment and not the request.
 
 The clearest way to organise all of this comes from Birgitta Böckeler's [Harness engineering for coding agent users](https://martinfowler.com/articles/harness-engineering.html). It splits a harness into two kinds of thing:
@@ -221,4 +231,5 @@ Next: so far, you are still in the driver's seat. You write the prompt, you read
 - [awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering): tools and guides for the practice
 - [Agent Harness Explained in 2 minutes](https://youtube.com/shorts/IVdJj_aNwhE): the short version, if you prefer to watch
 - [Agent Harness explained in 8min..](https://www.youtube.com/watch?v=1a1VXDdIyrk): the longer version, which puts the three practices side by side, like the rings above
+- [What is an Agent Harness?](https://www.youtube.com/watch?v=R0ckdFjUF5U): LangChain's own video on the parts of a harness, from the team behind the anatomy article
 - [Advanced Harness Engineering](../3_expert/advanced_harness_engineering.md): profiles, self-evolving harnesses, and what is moving into the model

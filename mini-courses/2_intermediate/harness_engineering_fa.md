@@ -71,6 +71,16 @@ mindmap
       گیت‌های lint و test
 ```
 
+اینم توضیح ساده‌ی هر کدوم از این اجزا:
+
+- **System prompt‌ها.** دستورهایی‌ان که agent قبل از شروع هر کاری می‌خونه. بیشترشون رو سازنده‌ی agent نوشته و `AGENTS.md` خودت هم بهشون اضافه می‌شه.
+- **Tool‌ها، Skill‌ها، MCP server‌ها و توضیحشون.** این‌ها کارهایی‌ان که agent می‌تونه انجام بده، و هر کدوم یه توضیح کوتاه دارن که به مدل می‌گه اون کار به چه دردی می‌خوره.
+- **زیرساختی که همراهش میاد (Bundled infrastructure).** جاییه که agent توش کار می‌کنه: یه filesystem که فایل‌هاش رو اونجا نگه می‌داره، یه sandbox که توش بی‌خطر کد اجرا می‌کنه، و یه browser که باهاش از وب استفاده می‌کنه و نتیجه‌ی کار خودش رو چک می‌کنه.
+- **منطق Orchestration.** این کد تصمیم می‌گیره هر بخش از کار رو کی انجام بده. برای کارهای جدا subagent راه می‌ندازه، کار رو از یه agent به agent دیگه می‌سپره (handoff)، و انتخاب می‌کنه هر قدم رو کدوم مدل اجرا کنه (model routing).
+- **Hook‌ها و middleware برای اجرای قطعی (deterministic).** کدهایی‌ان که سر نقطه‌های مشخصی اجرا می‌شن، مدل هر تصمیمی هم که بگیره، واسه همین هر بار دقیقاً همون‌جوری رفتار می‌کنن. Compaction یکی از نمونه‌هاشه: وقتی context window داره پر می‌شه، محتوای قدیمی‌تر رو خلاصه می‌کنه تا agent بتونه کارش رو ادامه بده. این رو قبلاً توی [Context Engineering](context_engineering_fa.md) دیدی. Continuation یه نمونه‌ی دیگه‌ست: اگه مدل بخواد قبل از رسیدن به هدف کار رو ول کنه، یه hook جلوش رو می‌گیره و همون کار اول رو توی یه context window تمیز دوباره بهش می‌ده. اسم این کار Ralph loop‌ه، که درس بعدی، یعنی [Loop Engineering](loop_engineering_fa.md)، درباره‌شه. Lint check هم نمونه‌ی سومه: کدی که agent نوشته رو چک می‌کنه و هر خطایی پیدا کنه برمی‌گردونه به مدل.
+
+LangChain این اجزا رو توی یه ویدیو هم توضیح داده: [What is an Agent Harness?](https://www.youtube.com/watch?v=R0ckdFjUF5U).
+
 دقت کن که *توضیح* tool‌ها هم توی این لیسته. توضیح هر tool خودش یه prompt‌ه، یعنی متنیه که مدل موقع تصمیم گرفتن برای صدا زدن یا نزدن اون tool می‌خونه. پس اگه اسم یه tool رو عوض کنی، یا حتی یه جمله از توضیحش رو بازنویسی کنی، رفتار agent فرق می‌کنه. این کار جزو harness حساب می‌شه، نه prompt، چون محیط رو عوض کردی نه درخواست رو.
 
 روشن‌ترین دسته‌بندی برای همه‌ی این‌ها رو Birgitta Böckeler توی [Harness engineering for coding agent users](https://martinfowler.com/articles/harness-engineering.html) داده، که harness رو به دو جور چیز تقسیم می‌کنه:
@@ -211,4 +221,5 @@ Agent = Model + Harness. Claude Code، Codex و Pi همه harness‌ان. harnes
 - [awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering): ابزارها و راهنماها برای این کار
 - [Agent Harness Explained in 2 minutes](https://youtube.com/shorts/IVdJj_aNwhE): نسخه‌ی کوتاه، اگه دیدن ویدیو رو ترجیح می‌دی
 - [Agent Harness explained in 8min..](https://www.youtube.com/watch?v=1a1VXDdIyrk): نسخه‌ی بلندتر، که سه تا روش رو کنار هم می‌ذاره، مثل همون حلقه‌های بالا
+- [What is an Agent Harness?](https://www.youtube.com/watch?v=R0ckdFjUF5U): ویدیوی خود LangChain، از همون تیمی که مقاله‌ی anatomy رو نوشته، درباره‌ی اجزای harness
 - [Advanced Harness Engineering](../3_expert/advanced_harness_engineering.md): profile‌ها، harness‌هایی که خودشون رو تکامل می‌دن، و چیزهایی که دارن می‌رن توی خود مدل

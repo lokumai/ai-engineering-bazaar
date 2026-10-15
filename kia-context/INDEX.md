@@ -59,7 +59,7 @@ and the same explanation given in person for the third time. See `genesis/GENESI
 | 2026-10-12 | ~~Two 30-second promo videos, one made with HyperFrames and one with /brag~~, removed before merging | M31 (D84, withdrawn) |
 | 2026-10-13 | The README rewritten for readers | M32, squash-merged as PR #33 with M31's removal |
 | 2026-10-14 | A tray of lokum offered at each door on hover | M33, merged as PR #34 |
-| 2026-10-15 | The star count refreshed by the deploy, not by a person | M34 (D85) |
+| 2026-10-15 | The star count refreshed by the deploy, not by a person | M34, merged as PR #36 (D85) |
 
 **The harness itself was installed on 2026-09-08**, 105 commits in. Everything before that date was
 reconstructed from git and is labelled as inferred inside each file.

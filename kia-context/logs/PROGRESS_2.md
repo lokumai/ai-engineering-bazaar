@@ -21,7 +21,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M35, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — built on 2026-10-15. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M35, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-10-15
 ---
 
@@ -79,7 +79,7 @@ deliverables as a numbered list; M18 wrote none at all; M19 to M22 had none eith
 | **M32** | The README, rewritten for readers | **Done** — 2026-10-13, squash-merged as PR #33 with M31's removal |
 | **M33** | A tray of lokum at every door | **Done** — 2026-10-14, merged as PR #34 |
 | **M34** | The star count stays current | **Done** — 2026-10-15, merged as PR #36 |
-| **M35** | Harness Engineering names its parts in plain words | **Built** — 2026-10-15, on branch `content/harness-anatomy` |
+| **M35** | Harness Engineering names its parts in plain words | **Done** — 2026-10-15, merged as PR #38 |
 
 ---
 
@@ -4175,9 +4175,10 @@ shows 3."* The cause, the four options and the one the author chose are **D85**.
 
 ---
 
-## 🏁 Milestone M35: Harness Engineering names its parts in plain words — BUILT ON A BRANCH
+## 🏁 Milestone M35: Harness Engineering names its parts in plain words — SHIPPED, MERGED AS PR #38
 
-Branch `content/harness-anatomy`, from `main` at `4b618ab`. The author, 2026-10-15, pasting LangChain's
+Branch `content/harness-anatomy`, from `main` at `4b618ab`, committed as `3154e40` and merged to
+`main` as PR #38 once CI passed. The author, 2026-10-15, pasting LangChain's
 list (*"Concretely, a harness includes things like: System Prompts; Tools, Skills, MCPs and their
 descriptions; Bundled Infrastructure (filesystem, sandbox, browser); Orchestration Logic (subagent
 spawning, handoffs, model routing); Hooks/Middleware for deterministic execution (compaction,

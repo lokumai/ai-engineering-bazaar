@@ -21,14 +21,14 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M33, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. Checkbox format repaired across the part on 2026-09-13."
-last_updated: 2026-10-14
+covers: "M16 to M34, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — built on 2026-10-15. Checkbox format repaired across the part on 2026-09-13."
+last_updated: 2026-10-15
 ---
 
-# 📈 PROGRESS, part 2 — M16 to M33
+# 📈 PROGRESS, part 2 — M16 to M34
 
 > **← Part 1: [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the review pass over M10 to M14.
-> This part holds **M16 to M33**, in the order they were worked.
+> This part holds **M16 to M34**, in the order they were worked.
 
 ## How to work this file
 
@@ -78,6 +78,7 @@ deliverables as a numbered list; M18 wrote none at all; M19 to M22 had none eith
 | **M31** | ~~Two promo videos, HyperFrames and /brag~~ | **Removed** — made 2026-10-12 on `feat/promo-videos`, removed at the author's request on 2026-10-13 before merging; no video reached `main` |
 | **M32** | The README, rewritten for readers | **Done** — 2026-10-13, squash-merged as PR #33 with M31's removal |
 | **M33** | A tray of lokum at every door | **Done** — 2026-10-14, merged as PR #34 |
+| **M34** | The star count stays current | **Built** — 2026-10-15, on branch `fix/github-stars-refresh` |
 
 ---
 
@@ -4140,6 +4141,32 @@ hover state, so this is the author's addition on top of D79, not a deviation fro
       never put away fails the motion case, a tray that takes the pointer fails both.
 - [x] The gate: typecheck clean, 2,194 unit and corpus tests, build 99 HTML pages, Playwright
       1,201 passed, 59 skipped, 0 failed before the new tests, and the home spec 12 of 12 after.
+
+---
+
+## 🏁 Milestone M34: The star count stays current — BUILT ON A BRANCH
+
+Branch `fix/github-stars-refresh`, from `main` at `83a2cdf`. The author, 2026-10-15: *"the star values
+of github in our website are not updated or reflected. Currently our stars are 6 yet the website
+shows 3."* The cause, the four options and the one the author chose are **D85**.
+
+### Deliverables
+
+- [x] **The deploy refreshes the count**: `.github/workflows/deploy.yml` runs
+      `node scripts/github-stars.mjs` after `npm ci` and before the build, with the workflow's own
+      token, and runs on a daily schedule (`17 4 * * *`) as well as on every push to `main`.
+- [x] **The script authenticates** when `GITHUB_TOKEN` is set, and still exits 0 and keeps the
+      committed number when the API fails.
+- [x] **The committed fallback** refreshed: `src/lib/github-stars.json` 3 → 6, measured 2026-10-15.
+
+### Acceptance criteria
+
+- [x] MEASURED, the three paths of the script: anonymous 3 → 6; authenticated 6 → 6; a rejected
+      token (HTTP 401) keeps 6 and exits 0.
+- [x] The built bar prints 6 (`Repository on GitHub, 6 stars`).
+- [x] Typecheck clean, 2,194 unit tests, build clean, `accessibility` and `responsive` specs (the
+      two that read the control) 97 passed, 6 skipped.
+- [ ] The deploy log shows the refresh step, and the live site shows the current count.
 
 ---
 

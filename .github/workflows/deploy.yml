@@ -9,6 +9,11 @@ name: Deploy
 on:
   push:
     branches: [main]
+  # Once a day, so the star count in the bar is never more than a day old even
+  # when nothing is merged (D85). Off the hour, when GitHub's schedulers are
+  # least loaded.
+  schedule:
+    - cron: "17 4 * * *"
   workflow_dispatch:
 
 permissions:
@@ -44,6 +49,13 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci
+      # The star count in the bar, fresh from GitHub before every build (D85).
+      # The script exits 0 and keeps the committed number if the API fails, so
+      # a rate limit can never fail a deploy. Nothing is committed back.
+      - name: Refresh the star count
+        run: node scripts/github-stars.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Build the site for its base path
         run: npm run build
         env:

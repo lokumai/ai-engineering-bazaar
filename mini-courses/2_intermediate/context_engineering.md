@@ -417,6 +417,7 @@ actually save you?
 - [What Is a Deep Agent?](https://www.nvidia.com/en-us/glossary/deep-agents/): the same definition, stated plainly
 - [The Agent 2.0 Era: Mastering Long-Horizon Tasks with Deep Agents](https://medium.com/@amirkiarafiei/the-agent-2-0-era-mastering-long-horizon-tasks-with-deep-agents-part-3-745705e13b16): the same architecture, explained from start to finish
 - [deepagents](https://github.com/langchain-ai/deepagents): the library, and the [Deep Agents overview](https://docs.langchain.com/oss/python/deepagents/overview) that documents it
+- [Context Engineering: How Deep Agents Remember](https://www.langchain.com/blog/context-engineering-deep-agents-remember): how deepagents keeps the context of a long run small (offloading, summarization, skills, subagents and memory files), and why memory kept as plain files lets you change models
 - [Measuring AI Ability to Complete Long Software Tasks](https://arxiv.org/abs/2503.14499): where the time-horizon number comes from, and the doubling trend
 - [Task-completion time horizons](https://metr.org/time-horizons/): the current numbers per model, kept up to date
 - [Awesome-Long-Horizon-Agents](https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents): the research landscape, sorted, if you want to go deeper than this module

@@ -256,6 +256,7 @@ Sırada kodlama agent'larının kendisi ve birini genişletmenin altı yolu var.
 - [What Is a Deep Agent?](https://www.nvidia.com/en-us/glossary/deep-agents/): aynı tanım, sade bir dille.
 - [The Agent 2.0 Era: Mastering Long-Horizon Tasks with Deep Agents](https://medium.com/@amirkiarafiei/the-agent-2-0-era-mastering-long-horizon-tasks-with-deep-agents-part-3-745705e13b16): aynı mimari, baştan sona anlatılmış.
 - [deepagents](https://github.com/langchain-ai/deepagents): kütüphane. Belgeleri için [Deep Agents overview](https://docs.langchain.com/oss/python/deepagents/overview).
+- [Context Engineering: How Deep Agents Remember](https://www.langchain.com/blog/context-engineering-deep-agents-remember): deepagents'ın uzun bir çalışmada context'i nasıl küçük tuttuğu (offloading, özetleme, skill'ler, subagent'lar ve memory dosyaları) ve memory'yi düz dosyalarda tutmanın model değiştirmeyi neden kolaylaştırdığı.
 - [Measuring AI Ability to Complete Long Software Tasks](https://arxiv.org/abs/2503.14499): zaman ufku sayısının kaynağı ve ikiye katlanma trendi.
 - [Task-completion time horizons](https://metr.org/time-horizons/): her model için güncel sayılar.
 - [Awesome-Long-Horizon-Agents](https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents): araştırma manzarası, sıralanmış. Bu modülden daha derine inmek istersen.

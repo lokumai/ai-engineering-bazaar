@@ -128,5 +128,7 @@ And once there are a hundred thousand traces a day, nobody reads them. Analytics
 
 - [The Agent Improvement Loop Starts with a Trace](https://www.langchain.com/blog/traces-start-agent-improvement-loop): why the traces now document the behaviour, and the loop they start
 - [From Traces to Insights: Understanding Agent Behavior at Scale](https://www.langchain.com/blog/from-traces-to-insights-understanding-agent-behavior-at-scale): the hundred-thousand-traces problem, and clustering as the way out
+- [AI agent evaluation](https://langfuse.com/resources/engineering/ai-agent-evaluation): how to judge an agent by its path, its tool calls, the task it finished and the whole conversation, both before release and on live traffic
 - [Langfuse](https://github.com/langfuse/langfuse): open source, OpenTelemetry-compatible, with evals and prompt management next to the traces
+- [Agent Graphs](https://langfuse.com/docs/observability/features/agent-graphs): Langfuse draws a run as a graph of its steps, so you see the shape of an agent at a glance
 - [Latitude](https://github.com/latitude-dev/latitude-llm): open-source monitoring, made for production

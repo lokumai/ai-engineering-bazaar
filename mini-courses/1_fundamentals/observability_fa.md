@@ -118,5 +118,7 @@ LangSmith ابزار خود LangChain‌ه، برای همین اگه از قب�
 
 - [The Agent Improvement Loop Starts with a Trace](https://www.langchain.com/blog/traces-start-agent-improvement-loop): چرا حالا رفتار سیستم رو trace‌ها مستند می‌کنن، و حلقه‌ای که با trace راه می‌افته
 - [From Traces to Insights: Understanding Agent Behavior at Scale](https://www.langchain.com/blog/from-traces-to-insights-understanding-agent-behavior-at-scale): دردسرِ صد هزار trace در روز، و خوشه‌بندی به‌عنوان راه خلاص شدن ازش
+- [AI agent evaluation](https://langfuse.com/resources/engineering/ai-agent-evaluation): اینکه چطور یه agent رو از روی مسیری که رفته، tool call‌هاش، کاری که تموم کرده و کل مکالمه بسنجی، هم قبل از انتشار هم روی ترافیک واقعی
 - [Langfuse](https://github.com/langfuse/langfuse): متن‌باز، سازگار با OpenTelemetry، با eval و مدیریت prompt کنار trace‌ها
+- [Agent Graphs](https://langfuse.com/docs/observability/features/agent-graphs): Langfuse هر اجرا رو به شکل یه گراف از قدم‌هاش می‌کشه، تا شکل کلی agent رو با یه نگاه ببینی
 - [Latitude](https://github.com/latitude-dev/latitude-llm): monitoring متن‌باز، مخصوص production

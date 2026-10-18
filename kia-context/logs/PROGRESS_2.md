@@ -21,14 +21,14 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M35, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. Checkbox format repaired across the part on 2026-09-13."
-last_updated: 2026-10-15
+covers: "M16 to M36, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. Checkbox format repaired across the part on 2026-09-13."
+last_updated: 2026-10-18
 ---
 
-# 📈 PROGRESS, part 2 — M16 to M35
+# 📈 PROGRESS, part 2 — M16 to M36
 
 > **← Part 1: [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the review pass over M10 to M14.
-> This part holds **M16 to M35**, in the order they were worked.
+> This part holds **M16 to M36**, in the order they were worked.
 
 ## How to work this file
 
@@ -80,6 +80,7 @@ deliverables as a numbered list; M18 wrote none at all; M19 to M22 had none eith
 | **M33** | A tray of lokum at every door | **Done** — 2026-10-14, merged as PR #34 |
 | **M34** | The star count stays current | **Done** — 2026-10-15, merged as PR #36 |
 | **M35** | Harness Engineering names its parts in plain words | **Done** — 2026-10-15, merged as PR #38 |
+| **M36** | Three references for Observability and Context Engineering | **Done** — 2026-10-18, merged as PR #42 |
 
 ---
 
@@ -4203,6 +4204,31 @@ harness module in intermediate richer, and then add that youtube link as well to
 - [x] In all three files: headings 11/11 and fences 6/6 unchanged, two external links added, no em
       dash, no Persian digit; `check-mermaid.mjs` 9/9; 2,194 unit and corpus tests; build clean, the
       video on all three built pages.
+
+---
+
+## 🏁 Milestone M36: Three references for Observability and Context Engineering — SHIPPED, MERGED AS PR #42
+
+Branch `content/obs-context-refs`, from `main` at `7e4c62c`, merged to `main` as PR #42 once CI
+passed. The author, 2026-10-18: *"for
+observability add these references ... also as a reference for context engineering, use this ...
+then commit and push and merge"*.
+
+### Deliverables
+
+- [x] **Observability** (`1_fundamentals/observability.md`, `_tr`, `_fa`): Langfuse's [AI agent
+      evaluation](https://langfuse.com/resources/engineering/ai-agent-evaluation) after the articles,
+      and Langfuse's [Agent Graphs](https://langfuse.com/docs/observability/features/agent-graphs)
+      right after the Langfuse entry.
+- [x] **Context Engineering** (`2_intermediate/context_engineering.md`, `_tr`, `_fa`): LangChain's
+      [Context Engineering: How Deep Agents Remember](https://www.langchain.com/blog/context-engineering-deep-agents-remember)
+      after the `deepagents` entry.
+
+### Acceptance criteria
+
+- [x] Every title fetched from its page, and each note says what the page covers.
+- [x] Nine lines added across the six files and nothing else moved; no em dash; 2,194 unit and
+      corpus tests; build clean, the links on the built pages.
 
 ---
 

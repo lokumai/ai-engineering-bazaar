@@ -255,6 +255,7 @@ deep agent یعنی agent‌ی که بیشتر این کارها رو خودش �
 - [What Is a Deep Agent?](https://www.nvidia.com/en-us/glossary/deep-agents/): همون تعریف، ساده و سرراست
 - [The Agent 2.0 Era: Mastering Long-Horizon Tasks with Deep Agents](https://medium.com/@amirkiarafiei/the-agent-2-0-era-mastering-long-horizon-tasks-with-deep-agents-part-3-745705e13b16): همون معماری، از اول تا آخر
 - [deepagents](https://github.com/langchain-ai/deepagents): خود کتابخونه، و [Deep Agents overview](https://docs.langchain.com/oss/python/deepagents/overview) که مستنداتشه
+- [Context Engineering: How Deep Agents Remember](https://www.langchain.com/blog/context-engineering-deep-agents-remember): اینکه deepagents چطور context یه اجرای طولانی رو کوچیک نگه می‌داره (offloading، خلاصه‌سازی، skill‌ها، subagent‌ها و فایل‌های memory)، و چرا نگه داشتن memory توی فایل‌های ساده باعث می‌شه بتونی مدل رو عوض کنی
 - [Measuring AI Ability to Complete Long Software Tasks](https://arxiv.org/abs/2503.14499): عدد time horizon از کجا میاد، و روند دو برابر شدنش
 - [Task-completion time horizons](https://metr.org/time-horizons/): عددهای فعلی هر مدل، همیشه به‌روز
 - [Awesome-Long-Horizon-Agents](https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents): تصویر کلی پژوهش‌ها، دسته‌بندی‌شده، اگه بخوای از این درس عمیق‌تر بری

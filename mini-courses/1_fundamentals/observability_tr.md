@@ -118,5 +118,7 @@ Günde yüz bin trace oluşmaya başladığında onları kimse okumaz. Analitik 
 
 - [The Agent Improvement Loop Starts with a Trace](https://www.langchain.com/blog/traces-start-agent-improvement-loop): trace'lerin artık davranışı neden belgelediğini ve onların başlattığı döngüyü
 - [From Traces to Insights: Understanding Agent Behavior at Scale](https://www.langchain.com/blog/from-traces-to-insights-understanding-agent-behavior-at-scale): yüz bin trace sorunu ve bu sorundan çıkış yolu olarak kümelemeyi
+- [AI agent evaluation](https://langfuse.com/resources/engineering/ai-agent-evaluation): bir agent'ı izlediği yola, tool çağrılarına, bitirdiği işe ve konuşmanın bütününe bakarak değerlendirmek, hem yayından önce hem canlı trafikte
 - [Langfuse](https://github.com/langfuse/langfuse): açık kaynaklı, OpenTelemetry ile uyumlu; trace'lerin yanında eval'ler ve prompt yönetimi de var
+- [Agent Graphs](https://langfuse.com/docs/observability/features/agent-graphs): Langfuse bir çalıştırmayı adımlarından oluşan bir grafik olarak çiziyor, böylece agent'ın genel şeklini bir bakışta görüyorsun
 - [Latitude](https://github.com/latitude-dev/latitude-llm): açık kaynaklı, doğrudan üretim ortamı için tasarlanmış bir izleme aracı

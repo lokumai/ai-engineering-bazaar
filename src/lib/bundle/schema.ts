@@ -129,10 +129,13 @@ export const LinkTarget = z.discriminatedUnion('kind', [
     kind: z.literal('module'),
     key: z.string().min(1),
     lang: Lang,
-    fragment: z.string().min(1).optional().describe('The target id, without the #.'),
+    fragment: z.string().min(1).optional().describe('The target heading id, without the # and not percent-encoded.'),
   }),
   z.strictObject({ kind: z.literal('external'), url: z.string().regex(/^https?:\/\//i) }),
-  z.strictObject({ kind: z.literal('anchor'), id: z.string().min(1) }),
+  z.strictObject({
+    kind: z.literal('anchor'),
+    id: z.string().min(1).describe('A heading id in the same document, not percent-encoded.'),
+  }),
   z.strictObject({ kind: z.literal('catalog') }),
 ])
 
@@ -159,11 +162,15 @@ export const Cell = z.strictObject({ inlines: z.array(Inline) })
 
 const Token = z.strictObject({
   text: z.string(),
-  role: z.string().min(1).optional().describe('The bz-tok-<role> suffix; coloured with --color-slab-<role>.'),
+  role: z.string().min(1).optional().describe(
+    'The bz-tok-<role> suffix; coloured with --color-slab-<role>, or as a token with no role when the app has no such colour.',
+  ),
   bold: z.literal(true).optional(),
 })
 
-const FIGURE_NUMBER = z.string().regex(/^\d+(?:\.\d+)?$/).describe('The label printed after FIG. or TBL.')
+const FIGURE_NUMBER = z.string().regex(/^\d+(?:\.\d+)?$/).describe(
+  'Printed after TBL. on a table and after FIG. on an image or a diagram; the two sequences are counted apart and share numbers.',
+)
 
 export type Block =
   | { type: 'paragraph'; inlines: Inline[]; lead?: boolean }

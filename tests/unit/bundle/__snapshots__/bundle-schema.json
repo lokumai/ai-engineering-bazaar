@@ -826,7 +826,7 @@
                         "type": "string"
                       },
                       "role": {
-                        "description": "The bz-tok-<role> suffix; coloured with --color-slab-<role>.",
+                        "description": "The bz-tok-<role> suffix; coloured with --color-slab-<role>, or as a token with no role when the app has no such colour.",
                         "type": "string",
                         "minLength": 1
                       },
@@ -860,7 +860,7 @@
               "number": {
                 "type": "string",
                 "pattern": "^\\d+(?:\\.\\d+)?$",
-                "description": "The label printed after FIG. or TBL."
+                "description": "Printed after TBL. on a table and after FIG. on an image or a diagram; the two sequences are counted apart and share numbers."
               },
               "title": {
                 "type": [
@@ -950,7 +950,7 @@
               "number": {
                 "type": "string",
                 "pattern": "^\\d+(?:\\.\\d+)?$",
-                "description": "The label printed after FIG. or TBL."
+                "description": "Printed after TBL. on a table and after FIG. on an image or a diagram; the two sequences are counted apart and share numbers."
               },
               "title": {
                 "type": [
@@ -1005,7 +1005,7 @@
               "number": {
                 "type": "string",
                 "pattern": "^\\d+(?:\\.\\d+)?$",
-                "description": "The label printed after FIG. or TBL."
+                "description": "Printed after TBL. on a table and after FIG. on an image or a diagram; the two sequences are counted apart and share numbers."
               },
               "title": {
                 "type": [
@@ -1191,7 +1191,7 @@
                         "description": "A language id: en, or one of the translations the index lists."
                       },
                       "fragment": {
-                        "description": "The target id, without the #.",
+                        "description": "The target heading id, without the # and not percent-encoded.",
                         "type": "string",
                         "minLength": 1
                       }
@@ -1230,7 +1230,8 @@
                       },
                       "id": {
                         "type": "string",
-                        "minLength": 1
+                        "minLength": 1,
+                        "description": "A heading id in the same document, not percent-encoded."
                       }
                     },
                     "required": [
@@ -1750,7 +1751,7 @@
                         "type": "string"
                       },
                       "role": {
-                        "description": "The bz-tok-<role> suffix; coloured with --color-slab-<role>.",
+                        "description": "The bz-tok-<role> suffix; coloured with --color-slab-<role>, or as a token with no role when the app has no such colour.",
                         "type": "string",
                         "minLength": 1
                       },
@@ -1784,7 +1785,7 @@
               "number": {
                 "type": "string",
                 "pattern": "^\\d+(?:\\.\\d+)?$",
-                "description": "The label printed after FIG. or TBL."
+                "description": "Printed after TBL. on a table and after FIG. on an image or a diagram; the two sequences are counted apart and share numbers."
               },
               "title": {
                 "type": [
@@ -1874,7 +1875,7 @@
               "number": {
                 "type": "string",
                 "pattern": "^\\d+(?:\\.\\d+)?$",
-                "description": "The label printed after FIG. or TBL."
+                "description": "Printed after TBL. on a table and after FIG. on an image or a diagram; the two sequences are counted apart and share numbers."
               },
               "title": {
                 "type": [
@@ -1929,7 +1930,7 @@
               "number": {
                 "type": "string",
                 "pattern": "^\\d+(?:\\.\\d+)?$",
-                "description": "The label printed after FIG. or TBL."
+                "description": "Printed after TBL. on a table and after FIG. on an image or a diagram; the two sequences are counted apart and share numbers."
               },
               "title": {
                 "type": [
@@ -2115,7 +2116,7 @@
                         "description": "A language id: en, or one of the translations the index lists."
                       },
                       "fragment": {
-                        "description": "The target id, without the #.",
+                        "description": "The target heading id, without the # and not percent-encoded.",
                         "type": "string",
                         "minLength": 1
                       }
@@ -2154,7 +2155,8 @@
                       },
                       "id": {
                         "type": "string",
-                        "minLength": 1
+                        "minLength": 1,
+                        "description": "A heading id in the same document, not percent-encoded."
                       }
                     },
                     "required": [
@@ -2402,7 +2404,7 @@
                     "type": "string"
                   },
                   "role": {
-                    "description": "The bz-tok-<role> suffix; coloured with --color-slab-<role>.",
+                    "description": "The bz-tok-<role> suffix; coloured with --color-slab-<role>, or as a token with no role when the app has no such colour.",
                     "type": "string",
                     "minLength": 1
                   },
@@ -2436,7 +2438,7 @@
           "number": {
             "type": "string",
             "pattern": "^\\d+(?:\\.\\d+)?$",
-            "description": "The label printed after FIG. or TBL."
+            "description": "Printed after TBL. on a table and after FIG. on an image or a diagram; the two sequences are counted apart and share numbers."
           },
           "title": {
             "type": [
@@ -2526,7 +2528,7 @@
           "number": {
             "type": "string",
             "pattern": "^\\d+(?:\\.\\d+)?$",
-            "description": "The label printed after FIG. or TBL."
+            "description": "Printed after TBL. on a table and after FIG. on an image or a diagram; the two sequences are counted apart and share numbers."
           },
           "title": {
             "type": [
@@ -2581,7 +2583,7 @@
           "number": {
             "type": "string",
             "pattern": "^\\d+(?:\\.\\d+)?$",
-            "description": "The label printed after FIG. or TBL."
+            "description": "Printed after TBL. on a table and after FIG. on an image or a diagram; the two sequences are counted apart and share numbers."
           },
           "title": {
             "type": [
@@ -2767,7 +2769,7 @@
                         "description": "A language id: en, or one of the translations the index lists."
                       },
                       "fragment": {
-                        "description": "The target id, without the #.",
+                        "description": "The target heading id, without the # and not percent-encoded.",
                         "type": "string",
                         "minLength": 1
                       }
@@ -2806,7 +2808,8 @@
                       },
                       "id": {
                         "type": "string",
-                        "minLength": 1
+                        "minLength": 1,
+                        "description": "A heading id in the same document, not percent-encoded."
                       }
                     },
                     "required": [
@@ -2983,7 +2986,7 @@
                     "description": "A language id: en, or one of the translations the index lists."
                   },
                   "fragment": {
-                    "description": "The target id, without the #.",
+                    "description": "The target heading id, without the # and not percent-encoded.",
                     "type": "string",
                     "minLength": 1
                   }
@@ -3022,7 +3025,8 @@
                   },
                   "id": {
                     "type": "string",
-                    "minLength": 1
+                    "minLength": 1,
+                    "description": "A heading id in the same document, not percent-encoded."
                   }
                 },
                 "required": [
@@ -3081,7 +3085,7 @@
             "description": "A language id: en, or one of the translations the index lists."
           },
           "fragment": {
-            "description": "The target id, without the #.",
+            "description": "The target heading id, without the # and not percent-encoded.",
             "type": "string",
             "minLength": 1
           }
@@ -3120,7 +3124,8 @@
           },
           "id": {
             "type": "string",
-            "minLength": 1
+            "minLength": 1,
+            "description": "A heading id in the same document, not percent-encoded."
           }
         },
         "required": [
@@ -3294,7 +3299,7 @@
                         "description": "A language id: en, or one of the translations the index lists."
                       },
                       "fragment": {
-                        "description": "The target id, without the #.",
+                        "description": "The target heading id, without the # and not percent-encoded.",
                         "type": "string",
                         "minLength": 1
                       }
@@ -3333,7 +3338,8 @@
                       },
                       "id": {
                         "type": "string",
-                        "minLength": 1
+                        "minLength": 1,
+                        "description": "A heading id in the same document, not percent-encoded."
                       }
                     },
                     "required": [

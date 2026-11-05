@@ -15,11 +15,12 @@
  * components that call these functions are client islands (§12.2). So their
  * server parents measure the labels once and hand them down, the same way every
  * other build-time fact crosses that line. This module still imports nothing
- * that reaches `node:fs`: since M28 its one import is `languages.ts`, which is
- * plain data so that client islands can read it too.
+ * that reaches `node:fs`: its imports are `languages.ts` and `tracks.ts`, both
+ * plain data so that client islands can read them too.
  */
 
 import { TRANSLATED_LANGS } from './content/languages'
+import { EVERYONE_SEGMENT, type Track, catalogRoute } from './tracks'
 
 /** What the chrome needs to know about one subsystem. */
 export interface CategoryLabel {
@@ -249,19 +250,25 @@ export function breadcrumbFor(
     return [{ label: ROOT_CRUMB, href: '/' }, { label: NOT_FOUND_TITLE, href: null }]
   }
 
-  const segments = segmentsOf(pathname)
+  const all = segmentsOf(pathname)
+  // D91 — a For Everyone page's trail is the For Engineers trail with every link
+  // kept inside For Everyone. The track has no page of its own to crumb to, and
+  // the bar already names it.
+  const everyone = all[0] === EVERYONE_SEGMENT
+  const segments = everyone ? all.slice(1) : all
+  const prefix = everyone ? `/${EVERYONE_SEGMENT}` : ''
   if (segments.length === 0) return [{ label: ROOT_CRUMB, href: null }]
 
   const crumbs: Crumb[] = [{ label: ROOT_CRUMB, href: '/' }]
   segments.forEach((segment, i) => {
     const last = i === segments.length - 1
-    const path = `/${segments.slice(0, i + 1).join('/')}/`
+    const path = `${prefix}/${segments.slice(0, i + 1).join('/')}/`
     crumbs.push({
       label: titleFor(segment, categories),
       href: last || WITHOUT_A_PAGE.has(path) ? null : path,
     })
   })
-  return retargetCourseAncestors(crumbs, segments)
+  return retargetCourseAncestors(crumbs, segments, everyone ? 'everyone' : 'engineers')
 }
 
 /**
@@ -288,13 +295,13 @@ export function breadcrumbFor(
  * on. MEASURED on the export: retargeting modules alone left five links into a
  * retired route, one per level stub, which is the same defect one level down.
  */
-function retargetCourseAncestors(crumbs: Crumb[], segments: string[]): Crumb[] {
+function retargetCourseAncestors(crumbs: Crumb[], segments: string[], track: Track): Crumb[] {
   if (segments[0] !== SET_SEGMENT || segments.length < 2) return crumbs
 
   // crumbs[0] is the root; crumbs[1] is `courses` and crumbs[2] is the level.
-  crumbs[1] = { label: INDEX_TITLE, href: INDEX_ROUTE }
+  crumbs[1] = { label: INDEX_TITLE, href: catalogRoute(track) }
   if (segments.length > 2) {
-    crumbs[2] = { label: crumbs[2].label, href: levelRoute(segments[1]) }
+    crumbs[2] = { label: crumbs[2].label, href: catalogRoute(track, segments[1]) }
   }
   return crumbs
 }

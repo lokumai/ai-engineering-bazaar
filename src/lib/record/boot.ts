@@ -143,6 +143,8 @@ if(own(o,q)&&!bad(q)&&/^\\d{1,4}$/.test(q)&&o[q]===true)return 1}return 0};
 var dwell=function(v){return typeof v==="number"&&fin(v)&&Math.round(v)>0?1:0};
 var kept=function(rec){return inst(rec.signedOff)||pat(rec.signedRevision,H)||rec.reachedEnd===true
 ||dwell(rec.dwellSeconds)||ticked(rec.checklist)?1:0};
+var sg=String(window.location&&window.location.pathname||"").split("/"),tk=inL(sg,"everyone")?"everyone":(inL(sg,"courses")||inL(sg,"sheets")?"engineers":null);
+r.setAttribute("data-bz-track",tk||"engineers");
 var raw=null,ok=1;
 try{raw=window.localStorage.getItem(${JSON.stringify(RECORD_STORAGE_KEY)})}catch(e){ok=0}
 r.setAttribute("data-hl-storage",ok?"ok":"blocked");
@@ -155,17 +157,16 @@ if(isObj(d.prefs)&&d.prefs.railFolded===true)r.setAttribute("data-bz-rail","fold
 if(isObj(d.prefs)&&inL(V,d.prefs.catalogView))r.setAttribute("data-hl-view",d.prefs.catalogView);
 if(isObj(d.prefs)&&inL(P,d.prefs.figurePalette))r.setAttribute("data-hl-figures",d.prefs.figurePalette);
 if(isObj(d.prefs)&&inL(P,d.prefs.codePalette))r.setAttribute("data-hl-code",d.prefs.codePalette);
-var counts={},k,c,i,n,rec,sh=d.sheets,has=0;
+if(!tk&&isObj(d.prefs)&&inL(["engineers","everyone"],d.prefs.track))r.setAttribute("data-bz-track",d.prefs.track);
+var k,has=0;
 if(arr(d.days)&&someDay(d.days))has=1;
 if(isObj(d.meta)&&inst(d.meta.lastExport))has=1;
-if(!has&&isObj(sh)){for(k in sh){
-if(!own(sh,k)||bad(k))continue;
-rec=sh[k];
-if(!isObj(rec))continue;
-if(kept(rec)){has=1;break}}}
+var any=function(sh){if(!isObj(sh))return 0;var q,x;for(q in sh){
+if(!own(sh,q)||bad(q))continue;x=sh[q];if(isObj(x)&&kept(x))return 1}return 0};
+if(!has&&(any(d.sheets)||any(d.everyoneSheets)))has=1;
 if(!has)return;
 r.setAttribute("data-hl-record","1");
-if(!isObj(sh))return;
+var stamp=function(sh,cp,dp){if(!isObj(sh))return;var counts={},c,i,n,rec;
 for(k in sh){
 if(!own(sh,k)||bad(k))continue;
 rec=sh[k];
@@ -173,12 +174,14 @@ if(!isObj(rec)||!rec.signedOff)continue;
 i=k.indexOf("/");
 if(i>0){c=k.slice(0,i);if(!bad(c))counts[c]=(own(counts,c)?counts[c]:0)+1}
 n=M[k];
-if(typeof n==="number")r.classList.add("hl-signed-"+n)}
+if(typeof n==="number")r.classList.add(cp+"signed-"+n)}
 for(c in counts){
 if(!own(counts,c))continue;
 n=typeof T[c]==="number"?T[c]:0;
-r.classList.add("hl-cat-"+c+(n>0&&counts[c]>=n?"-complete":"-started"));
-if(n>0)r.style.setProperty("--bz-done-"+c,Math.round(counts[c]/n*100)+"%")}
+r.classList.add(cp+"cat-"+c+(n>0&&counts[c]>=n?"-complete":"-started"));
+if(n>0)r.style.setProperty(dp+c,Math.round(counts[c]/n*100)+"%")}};
+stamp(d.sheets,"hl-","--bz-done-");
+stamp(d.everyoneSheets,"hl-e-","--bz-edone-");
 }catch(e){}})();`
 }
 

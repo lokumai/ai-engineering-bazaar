@@ -1,5 +1,6 @@
 import { RailTab } from '@/components/curriculum/RailFold'
 import { Readout } from '@/components/record/Readout'
+import type { Track } from '@/lib/tracks'
 import { categoryLabels } from '@/lib/content/chrome'
 import { curriculumFacts } from '@/lib/content/facts'
 import { Breadcrumb } from './Breadcrumb'
@@ -62,8 +63,16 @@ export function PageShell({
   trailLabel,
   trailLeaf,
   trailLeafLang,
+  track,
 }: {
   children: React.ReactNode
+  /**
+   * D91 — the track this page belongs to, or undefined for a page that belongs
+   * to neither (home, progress, legend). It marks the page's regions with
+   * `data-track`, which is what scopes each track's frame-one marks to its own
+   * page (the generated stylesheet and `category.css`).
+   */
+  track?: Track
   /** §5.2 — `MODULE 13 OF 33`. Omitted, the footer names the route instead. */
   sheet?: string | null
   /** §5.2, §11.26 — this file's last-touching commit, never repo HEAD. */
@@ -98,7 +107,8 @@ export function PageShell({
    */
   trailLabel?: string
 }) {
-  const facts = curriculumFacts()
+  const facts = curriculumFacts(track ?? 'engineers')
+  const everyoneFacts = curriculumFacts('everyone')
 
   const inner = (
     <>
@@ -140,7 +150,7 @@ export function PageShell({
    * the header after the skip.
    */
   const main = (
-    <main id="main" tabIndex={-1} className="bz-main">
+    <main id="main" tabIndex={-1} className="bz-main" data-track={track}>
       {inner}
     </main>
   )
@@ -148,7 +158,7 @@ export function PageShell({
   return (
     <>
       {rail === undefined ? main : (
-        <div className="bz-shell" data-bz-aside={aside === undefined ? undefined : ''}>
+        <div className="bz-shell" data-bz-aside={aside === undefined ? undefined : ''} data-track={track}>
           {/* M21 — THE FOLD CONTROL, and it is here rather than in the page
               because of the TAB ORDER.
 
@@ -175,7 +185,7 @@ export function PageShell({
       <SiteFooter
         sheet={sheet}
         revision={revision}
-        readout={<Readout variant="compact" facts={facts} />}
+        readout={<Readout variant="compact" facts={facts} everyoneFacts={everyoneFacts} track={track} />}
       />
     </>
   )

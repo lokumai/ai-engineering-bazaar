@@ -5,6 +5,7 @@ import type { CategorySlug } from './categories'
 import {
   CATEGORIES,
   type Category,
+  EVERYONE_DIR,
   categoryBySlug,
   moduleByName,
 } from './curriculum-file'
@@ -25,6 +26,7 @@ import { type Revision, revisionFor } from './revision'
 import { type ModuleFrontmatter, parseFrontmatter } from './schema'
 import { fullSlug, moduleSlugFromName } from './slugs'
 import { stripBuildFurniture, stripLeadIn } from './strip'
+import type { Track } from '../tracks'
 
 export interface CourseModule {
   /** `fundamentals/llms` — the identifier used across the app */
@@ -87,6 +89,53 @@ export interface CourseModule {
   filePath: string
   /** `2_intermediate/security.md` — what an error message and a link resolver name */
   source: string
+  /**
+   * D86, D91 — the module's For Everyone version, read from
+   * `<level>/everyone/<name>.md`, or null where it is not written yet (no file,
+   * or a file with no words in it).
+   */
+  everyone: EveryoneVersion | null
+}
+
+/** A For Everyone file and its translations. */
+export interface EveryoneVersion {
+  filePath: string
+  summary: string | null
+  objectives: string[]
+  body: string
+  translations: Readonly<Record<TranslatedLang, string | null>>
+  revision: Revision | null
+}
+
+/**
+ * The For Everyone version of one module. Its frontmatter is optional and holds
+ * at most `summary` and `objectives`, as an English module's does (parsed as a
+ * draft's, so neither is required); a translation is used when its file exists
+ * and has words in it.
+ */
+function everyoneVersion(dir: string, name: string): EveryoneVersion | null {
+  const filePath = path.join(CONTENT_ROOT, dir, EVERYONE_DIR, `${name}.md`)
+  if (!fs.existsSync(filePath)) return null
+  const parsed = matter(fs.readFileSync(filePath, 'utf8'))
+  const body = stripBuildFurniture(parsed.content).trimStart()
+  if (extent(stripLeadIn(body)) === 0) return null
+  const sheet = parseFrontmatter(parsed.data, `${dir}/${EVERYONE_DIR}/${name}.md`, 'draft')
+  const translations = Object.fromEntries(
+    TRANSLATED_LANGS.map((lang) => {
+      const file = translationOf(filePath, lang)
+      if (!fs.existsSync(file)) return [lang, null]
+      const text = stripBuildFurniture(matter(fs.readFileSync(file, 'utf8')).content).trimStart()
+      return [lang, extent(stripLeadIn(text)) > 0 ? text : null]
+    }),
+  ) as Record<TranslatedLang, string | null>
+  return {
+    filePath,
+    summary: sheet.summary,
+    objectives: sheet.objectives,
+    body,
+    translations,
+    revision: revisionFor(filePath),
+  }
 }
 
 /**
@@ -194,6 +243,7 @@ export function loadAllModules(): CourseModule[] {
         revision: revisionFor(filePath),
         filePath,
         source,
+        everyone: everyoneVersion(category.dir, entry.name),
       })
     }
   }
@@ -252,8 +302,13 @@ export function loadModule(slug: string): CourseModule | undefined {
  * address — the `EN` half of §7.6 is a real state and a reader who asked for
  * Turkish must not be handed English without being told.
  */
-export function loadModuleIn(slug: string, lang: ReadingLang): CourseModule | undefined {
+export function loadModuleIn(
+  slug: string,
+  lang: ReadingLang,
+  track: Track = 'engineers',
+): CourseModule | undefined {
   const english = loadModule(slug)
+  if (track === 'everyone') return everyoneIn(english, lang)
   if (!english || lang === 'en') return english
   const body = english.translations[lang]
   if (body === null) return undefined
@@ -302,4 +357,39 @@ export function loadCategoryIntro(slug: CategorySlug): string | null {
   const readme = path.join(CONTENT_ROOT, category.dir, 'README.md')
   if (!fs.existsSync(readme)) return null
   return matter(fs.readFileSync(readme, 'utf8')).content.trimStart()
+}
+
+/**
+ * D91 — a module's For Everyone page in a language, built from its For Everyone
+ * file and the curriculum's own facts (number, level, minutes, prerequisites).
+ * It is a written page wherever the file exists, whatever the For Engineers
+ * module's status, and undefined where it is not written yet.
+ */
+function everyoneIn(english: CourseModule | undefined, lang: ReadingLang): CourseModule | undefined {
+  const version = english?.everyone
+  if (!english || !version) return undefined
+  const body = lang === 'en' ? version.body : version.translations[lang]
+  if (body === null) return undefined
+  const frontmatter: ModuleFrontmatter = {
+    ...english.frontmatter,
+    status: 'ready',
+    title: headingOf(body) ?? english.frontmatter.title,
+    summary: version.summary,
+    objectives: version.objectives,
+  }
+  const words = extent(stripLeadIn(body))
+  return {
+    ...english,
+    frontmatter,
+    body,
+    extent: words,
+    sheetFormat: sheetFormat(frontmatter, words),
+    figures: countFigures(body),
+    sources: countSources(body),
+    translations: version.translations,
+    translation: version.translations.tr,
+    revision: version.revision,
+    filePath: version.filePath,
+    source: `${english.category.dir}/${EVERYONE_DIR}/${english.name}.md`,
+  }
 }

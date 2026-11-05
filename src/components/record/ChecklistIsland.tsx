@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react'
 import { setChecklistItem } from '@/lib/record/events'
+import { sheetsOf } from '@/lib/record/schema'
+import type { Track } from '@/lib/tracks'
 import { nowIso, snapshot, subscribe, update } from '@/lib/record/store'
 
 /**
@@ -48,7 +50,7 @@ export const CHECKLIST_SELECTORS = {
 /** A module-scope guard, so a second mount is a no-op (the Affordances rule). */
 let instances = 0
 
-export function ChecklistIsland({ slug }: { slug: string }) {
+export function ChecklistIsland({ slug, track = 'engineers' }: { slug: string; track?: Track }) {
   useEffect(() => {
     if (instances > 0) return undefined
     instances += 1
@@ -80,7 +82,7 @@ export function ChecklistIsland({ slug }: { slug: string }) {
     }
 
     function paint(): void {
-      const sheet = snapshot().sheets[slug]
+      const sheet = sheetsOf(snapshot(), track)[slug]
       for (const { index, item, box } of boxes) {
         const ticked = sheet?.checklist[String(index)] === true
         box.checked = ticked
@@ -93,7 +95,7 @@ export function ChecklistIsland({ slug }: { slug: string }) {
       if (!(box instanceof HTMLInputElement)) return
       const entry = boxes.find((candidate) => candidate.box === box)
       if (entry === undefined) return
-      update((data) => setChecklistItem(data, slug, entry.index, box.checked, nowIso()))
+      update((data) => setChecklistItem(data, slug, entry.index, box.checked, nowIso(), track))
     }
 
     paint()
@@ -116,7 +118,7 @@ export function ChecklistIsland({ slug }: { slug: string }) {
       }
       instances -= 1
     }
-  }, [slug])
+  }, [slug, track])
 
   return null
 }

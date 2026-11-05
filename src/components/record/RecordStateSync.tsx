@@ -1,8 +1,11 @@
 'use client'
 
+import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'
-import { type StampFacts, stampRecordState } from '@/lib/record/stamp'
-import { snapshot, subscribe } from '@/lib/record/store'
+import { setTrack } from '@/lib/record/events'
+import { type StampFacts, TRACK_ATTR, currentTrack, stampRecordState } from '@/lib/record/stamp'
+import { snapshot, subscribe, update } from '@/lib/record/store'
+import { trackOfPath } from '@/lib/tracks'
 
 /**
  * §12.2 Channel A, after first paint.
@@ -25,18 +28,30 @@ import { snapshot, subscribe } from '@/lib/record/store'
  * stops the build (§12.2).
  */
 export function RecordStateSync({ facts }: { facts: StampFacts }) {
+  const pathname = usePathname()
+
   useEffect(() => {
     const root = document.documentElement
 
     function apply(): void {
       stampRecordState(root, snapshot(), facts)
+      // D91 — and the current track, which a client transition can change.
+      root.setAttribute(TRACK_ATTR, currentTrack(pathname, snapshot()))
     }
 
     // Once on mount as well as on every change: the boot script may have been
     // unable to read storage at all, and another tab may have written since.
     apply()
     return subscribe(apply)
-  }, [facts])
+  }, [facts, pathname])
+
+  /* D91 — a track page remembers its track, so a page that belongs to neither
+     shows the bar in the track the reader was reading. A preference written by
+     visiting a page; the home page's own choice writes nothing (D86). */
+  useEffect(() => {
+    const track = trackOfPath(pathname)
+    if (track !== null) update((data) => setTrack(data, track))
+  }, [pathname])
 
   return null
 }

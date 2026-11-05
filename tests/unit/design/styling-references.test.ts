@@ -321,7 +321,8 @@ const NOT_READ_BY_THIS_SWEEP = new Set(['lokum-modules.css'])
  * `var()` that resolves to nothing at all, silently. A `var(--x, 0%)` cannot
  * be silent. The case below enforces that rather than trusting it.
  */
-const COMPOSED_AT_RUNTIME = /^--bz-done-[a-z-]+$/
+// D91 — and `--bz-edone-<slug>`, the same reading for For Everyone.
+const COMPOSED_AT_RUNTIME = /^--bz-e?done-[a-z-]+$/
 
 function surfaceReferences(): Reference[] {
   return readdirSync(SURFACE_DIR)
@@ -610,7 +611,7 @@ describe('M16 closing condition: the retired vocabulary is out of the markup', (
     // The three stamped families, whose pattern `stamp.ts` owns. Read from
     // there rather than restated, so this cannot drift from the writer.
     const owned = readFileSync(join(ROOT, 'src/lib/record/stamp.ts'), 'utf8')
-    expect(owned).toContain('hl-(?:signed-\\d+|cat-[a-z0-9-]+-(?:started|complete))')
+    expect(owned).toContain('hl-(?:e-)?(?:signed-\\d+|cat-[a-z0-9-]+-(?:started|complete))')
 
     // And the storage keys, which are the reader's own data.
     const schema = readFileSync(join(ROOT, 'src/lib/record/schema.ts'), 'utf8')

@@ -47,6 +47,8 @@ import { type CourseModule, loadAllModules, loadModuleIn } from '@/lib/content/l
 import { quizFor } from '@/lib/content/quiz'
 import { renderMarkdown } from '@/lib/content/render'
 import { href } from '@/lib/url'
+import { type Track, catalogRoute, moduleRoute } from '@/lib/tracks'
+import Link from 'next/link'
 import { scheduleOfParts, summarySentence } from '@/lib/content/schedule'
 import { sheetFacts, sheetLabel } from '@/lib/content/title-block'
 import {
@@ -85,6 +87,23 @@ function routeMapFor(lang: TranslatedLang): (route: string) => string {
   return (route) => (translated.has(route) ? `/${lang}${route}` : route)
 }
 
+/**
+ * D91 — the same rule for a For Everyone page: a link to a module goes to its
+ * For Everyone page in this language where one is written, and otherwise to the
+ * For Engineers page the plain map above would choose. A reader is never sent to
+ * a page that does not exist.
+ */
+function everyoneRouteMap(lang: ReadingLang): (route: string) => string {
+  const written = new Map(
+    loadAllModules()
+      .filter((sheet) => sheet.everyone !== null
+        && (lang === 'en' || sheet.everyone.translations[lang] !== null))
+      .map((sheet) => [`/courses/${sheet.slug}/`, moduleRoute(sheet.slug, 'everyone', lang)]),
+  )
+  const plain = lang === 'en' ? (route: string) => route : routeMapFor(lang)
+  return (route) => written.get(route) ?? plain(route)
+}
+
 /** M28 — `'en' | 'tr'` until Persian; `languages.ts` owns the list now. */
 export type SheetLang = ReadingLang
 
@@ -117,6 +136,21 @@ export function translatedModuleParam(lang: TranslatedLang): SheetRouteParams[] 
 }
 
 /**
+ * D91 — the For Everyone tree's pages. In English, every module: a written one
+ * shows its text and an unwritten one says it is not written yet, so the bar's
+ * switch can always open the same module in the other track (C1: the
+ * explanation comes after the click). In a translation, every module that has a
+ * page in that language in either track.
+ */
+export function everyoneModuleParam(lang: ReadingLang): SheetRouteParams[] {
+  return loadAllModules()
+    .filter((sheet) => lang === 'en'
+      || sheet.translations[lang] !== null
+      || (sheet.everyone !== null && sheet.everyone.translations[lang] !== null))
+    .map((sheet) => ({ category: sheet.category.slug, module: sheet.moduleSlug }))
+}
+
+/**
  * M28 — which modules have a second address, per language, as `level/module`
  * slugs: what the bar's language menu needs, measured by the build because only
  * the build knows.
@@ -133,15 +167,19 @@ export function translatedSlugs(): Record<TranslatedLang, string[]> {
 export async function sheetMetadata(
   params: Promise<SheetRouteParams>,
   lang: SheetLang,
+  track: Track = 'engineers',
 ): Promise<Metadata> {
   const { category, module } = await params
-  const sheet = loadModuleIn(`${category}/${module}`, lang)
-  if (!sheet) return {}
+  const sheet = loadModuleIn(`${category}/${module}`, lang, track)
+  if (!sheet) {
+    const english = loadModuleIn(`${category}/${module}`, 'en')
+    // D91 — an unwritten For Everyone page: named, and kept out of search.
+    return english ? { title: english.frontmatter.title, robots: { index: false } } : {}
+  }
 
   const slug = `${category}/${module}`
   const translatedPage = lang !== 'en'
-  const pathIn = (one: ReadingLang) =>
-    one === 'en' ? `/courses/${slug}/` : `/${one}/courses/${slug}/`
+  const pathIn = (one: ReadingLang) => moduleRoute(slug, track, one)
   const available = TRANSLATED_LANGS.filter((one) => sheet.translations[one] !== null)
 
   return {
@@ -251,14 +289,18 @@ function target(
 export async function ModuleSheet({
   params,
   lang,
+  track = 'engineers',
 }: {
   params: Promise<SheetRouteParams>
   lang: SheetLang
+  /** D91 — which track's version of the module this page is. */
+  track?: Track
 }) {
   const { category, module } = await params
   const slug = `${category}/${module}`
-  const sheet = loadModuleIn(slug, lang)
+  const sheet = loadModuleIn(slug, lang, track)
   const position = positionOf(slug)
+  if (!sheet && track === 'everyone' && position) return <NotWritten slug={slug} lang={lang} />
   if (!sheet || !position) notFound()
 
   const graph = moduleGraph()
@@ -287,11 +329,14 @@ export async function ModuleSheet({
 
   /* One map for every link out of this page — the prose's cross-references, the
      pager and the rail. Identity on the English tree, so nothing branches. */
-  const localise = lang !== 'en' ? routeMapFor(lang) : (route: string) => route
+  const localise = track === 'everyone'
+    ? everyoneRouteMap(lang)
+    : lang !== 'en' ? routeMapFor(lang) : (route: string) => route
 
   // The quick quiz, in the page's language, or null where the module has none
   // (`quiz.ts`). A draft never has one: there is nothing yet to recall.
-  const quiz = drawn ? quizFor(sheet.category.dir, sheet.name, lang) : null
+  // A For Everyone page has none: the quiz file asks about the For Engineers text.
+  const quiz = drawn && track === 'engineers' ? quizFor(sheet.category.dir, sheet.name, lang) : null
 
   // A4 sheets render no prose: §4.5's body is one sentence and a schedule, and
   // the markdown holds nothing else once the h1, the dek, the placeholder note
@@ -300,7 +345,7 @@ export async function ModuleSheet({
     ? await renderMarkdown(sheet.body, {
       imageBase: imageBaseFor(sheet.category.slug),
       sheet: number,
-      localiseRoute: translated ? localise : undefined,
+      localiseRoute: translated || track === 'everyone' ? localise : undefined,
     })
     : null
 
@@ -352,6 +397,7 @@ export async function ModuleSheet({
       never give.
     */
     <PageShell
+      track={track}
       sheet={sheetLabel(facts)}
       revision={sheet.revision}
       rail={curriculum}
@@ -496,7 +542,7 @@ export async function ModuleSheet({
             counter — left the page on the author's word: *"I DO NOT NEED ANY
             SUCH THING"*. The record still holds what they wrote; the profile
             page still shows it. A draft has no completion and no quiz. */}
-        <SignOff slug={slug} revision={sheet.revision?.hash ?? null} drawn={drawn} />
+        <SignOff slug={slug} revision={sheet.revision?.hash ?? null} drawn={drawn} track={track} />
 
         <PrevNext previous={target(previous, localise)} next={target(next, localise)} />
 
@@ -523,8 +569,38 @@ export async function ModuleSheet({
         )}
 
         {drawn && rendered !== null && rendered.checklist.length > 0 && (
-          <ChecklistIsland slug={slug} />
+          <ChecklistIsland slug={slug} track={track} />
         )}
+      </div>
+    </PageShell>
+  )
+}
+
+/**
+ * D91 — a For Everyone page that is not written yet, in this language. It says
+ * so, and offers the two places a reader can go: the same module For
+ * Engineers, and the For Everyone catalog. The chrome is the site's, so the
+ * words are English, as the rest of the chrome is.
+ */
+function NotWritten({ slug, lang }: { slug: string; lang: SheetLang }) {
+  const english = loadModuleIn(slug, 'en')
+  if (!english) notFound()
+  const engineers = english.translations[lang as TranslatedLang] != null
+    ? moduleRoute(slug, 'engineers', lang)
+    : moduleRoute(slug, 'engineers')
+  return (
+    <PageShell track="everyone" trailLeaf={english.frontmatter.title}>
+      <div className="bz-sheet" data-format="A4">
+        <h1 className="bz-display">{english.frontmatter.title}</h1>
+        <p className="bz-lead">
+          The For Everyone version of this module is not written yet.
+        </p>
+        <div className="bz-actions">
+          <Link className="bz-btn" href={engineers}>Read it For Engineers</Link>
+          <Link className="bz-btn bz-btn-quiet" href={catalogRoute('everyone', english.category.slug)}>
+            See what is written For Everyone
+          </Link>
+        </div>
       </div>
     </PageShell>
   )

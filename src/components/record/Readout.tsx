@@ -7,6 +7,8 @@ import {
   type CurriculumFacts,
 } from '@/lib/record/derive'
 import { nowIso, useHydrated, useRecord } from '@/lib/record/store'
+import { trackView } from '@/lib/record/schema'
+import type { Track } from '@/lib/tracks'
 import { hoursMinutes } from '@/lib/text'
 
 /**
@@ -69,6 +71,13 @@ export interface ReadoutProps {
    */
   facts: CurriculumFacts
   /**
+   * D91 — the For Everyone facts, for a page that belongs to neither track: the
+   * strip then counts the track the reader last opened (`prefs.track`).
+   */
+  everyoneFacts?: CurriculumFacts
+  /** D91 — the page's own track, where it has one. */
+  track?: Track
+  /**
    * §5.8, §7.1 `TRACES n/32` — REQUIRES and SEE ALSO edges with both endpoints
    * signed off. The record's facts carry the denominator but not the graph, so
    * the dashboard — which builds the graph — is the only surface that can
@@ -110,9 +119,20 @@ function Cell({
   )
 }
 
-export function Readout({ variant, facts, traces = null, className }: ReadoutProps) {
-  const data = useRecord()
+export function Readout({
+  variant,
+  facts: engineersFacts,
+  everyoneFacts,
+  track: pageTrack,
+  traces = null,
+  className,
+}: ReadoutProps) {
+  const record = useRecord()
   const hydrated = useHydrated()
+  // Channel B: the page's track, or on a neutral page the last one opened.
+  const track: Track = pageTrack ?? (hydrated ? record.prefs.track : null) ?? 'engineers'
+  const data = trackView(record, track)
+  const facts = track === 'everyone' && everyoneFacts ? everyoneFacts : engineersFacts
 
   const counts = signedCount(data, facts)
   const minutes = readingMinutes(data, facts)

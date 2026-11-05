@@ -97,6 +97,9 @@ function fail(rule: string, detail: string): never {
  * here: a stray `1_llms.md` is now a file nobody listed, which rule 6 refuses
  * by name. That is deliberate rather than incidental.
  */
+/** D91 — the folder inside a category that holds the For Everyone versions. */
+export const EVERYONE_DIR = 'everyone'
+
 const MODULE_FILE = /^([a-z0-9_]+)\.md$/
 
 /** A translated sibling, `<name>_<lang>.md`, for any language `languages.ts` names. */
@@ -274,6 +277,32 @@ function build(): readonly Category[] {
           `rule 7, every _${translation.id}.md in ${category.dir}/ must translate a listed module`,
           `translating nothing listed: ${sorted(orphans)}`,
         )
+      }
+    }
+
+    // ---- rule 8: the For Everyone folder (D91) ---------------------------
+    // `<dir>/everyone/<name>.md` is a module's For Everyone version, with its
+    // `_tr` / `_fa` siblings beside it. It is optional per module, so only the
+    // other direction is checked: a file there for a name nobody listed would
+    // render nowhere, and a translation there needs its English file.
+    const everyoneDir = path.join(category.dir, EVERYONE_DIR)
+    if (fs.existsSync(path.join(CONTENT_ROOT, everyoneDir))) {
+      const written = namesOnDisk(everyoneDir)
+      const strangers = [...written].filter((name) => !listed.has(name))
+      if (strangers.length > 0) {
+        fail(
+          `rule 8, every file in ${everyoneDir}/ must be a module listed under ${category.slug}`,
+          `on disk and not listed: ${sorted(strangers)}`,
+        )
+      }
+      for (const translation of TRANSLATIONS) {
+        const orphans = [...siblingsOnDisk(everyoneDir, translation.id)].filter((name) => !written.has(name))
+        if (orphans.length > 0) {
+          fail(
+            `rule 8, every _${translation.id}.md in ${everyoneDir}/ needs its English file beside it`,
+            `no English file for: ${sorted(orphans)}`,
+          )
+        }
       }
     }
   }

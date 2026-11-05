@@ -57,7 +57,7 @@ export default function CatalogPage() {
   const rows = sheetRows()
 
   return (
-    <PageShell column={false}>
+    <PageShell column={false} track="engineers">
       <h1 className="bz-display">Catalog</h1>
 
       {/* NO OPENING PARAGRAPH. It explained the three views, the two filters

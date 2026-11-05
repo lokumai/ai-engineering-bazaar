@@ -28,6 +28,7 @@
  */
 
 import { carriesNothing, type RecordData } from './schema'
+import { type Track, isTrack, trackOfPath } from '../tracks'
 
 /** The slice of `<html>` the stamps touch. */
 export interface StampRoot {
@@ -61,44 +62,53 @@ export interface StampFacts {
 /**
  * The prefixes this module owns. Anything else on `<html>` is left alone.
  */
-const OWNED = /^hl-(?:signed-\d+|cat-[a-z0-9-]+-(?:started|complete))$/
+const OWNED = /^hl-(?:e-)?(?:signed-\d+|cat-[a-z0-9-]+-(?:started|complete))$/
 
 /**
  * The class set a record implies. Sorted, so two callers comparing results —
  * and the cross-test — are comparing sets rather than insertion orders.
  */
-export function stampClassesFor(data: RecordData, facts: StampFacts): string[] {
+/**
+ * D91 — each track's classes carry their own prefix: `hl-signed-<n>` and
+ * `hl-cat-…` for For Engineers, `hl-e-signed-<n>` and `hl-e-cat-…` for For
+ * Everyone. Both are stamped every time, so a page that shows both tracks (the
+ * progress page) is right in frame one; `data-track` regions pick one.
+ */
+const STAMP_PREFIX: Readonly<Record<Track, string>> = { engineers: 'hl-', everyone: 'hl-e-' }
+
+function classesOf(
+  sheets: RecordData['sheets'],
+  facts: StampFacts,
+  prefix: string,
+): string[] {
   const counts = new Map<string, number>()
   const classes: string[] = []
-
-  for (const [slug, sheet] of Object.entries(data.sheets)) {
+  for (const [slug, sheet] of Object.entries(sheets)) {
     if (sheet.signedOff === null || sheet.signedOff === undefined) continue
-
-    // The category is the slug's own first segment, which is why identity is
-    // the slug: no second map is needed and no number can drift.
     const cut = slug.indexOf('/')
     if (cut > 0) {
       const category = slug.slice(0, cut)
       counts.set(category, (counts.get(category) ?? 0) + 1)
     }
-
     const module = facts.slugToModule[slug]
-    if (typeof module === 'number') classes.push(`hl-signed-${module}`)
+    if (typeof module === 'number') classes.push(`${prefix}signed-${module}`)
   }
-
   for (const [category, approved] of counts) {
     const total = facts.categoryTotals[category] ?? 0
-    // `-complete` needs a real total. With none, the honest answer is that the
-    // subsystem is under way, not that it is finished.
-    classes.push(`hl-cat-${category}-${total > 0 && approved >= total ? 'complete' : 'started'}`)
+    classes.push(`${prefix}cat-${category}-${total > 0 && approved >= total ? 'complete' : 'started'}`)
   }
-
-  return classes.sort()
+  return classes
 }
 
-/** The custom property a level's dial reads, for one category slug. */
-export function progressProperty(category: string): string {
-  return `--bz-done-${category}`
+export function stampClassesFor(data: RecordData, facts: StampFacts): string[] {
+  return [
+    ...classesOf(data.sheets, facts, STAMP_PREFIX.engineers),
+    ...classesOf(data.everyoneSheets ?? {}, facts, STAMP_PREFIX.everyone),
+  ].sort()
+}
+
+export function progressProperty(category: string, track: Track = 'engineers'): string {
+  return `--bz-${track === 'everyone' ? 'e' : ''}done-${category}`
 }
 
 /**
@@ -126,36 +136,38 @@ export function stampProgressFor(
   data: RecordData,
   facts: StampFacts,
 ): Record<string, string> {
-  const counts = new Map<string, number>()
-
-  for (const [slug, sheet] of Object.entries(data.sheets)) {
-    if (sheet.signedOff === null || sheet.signedOff === undefined) continue
-    const cut = slug.indexOf('/')
-    if (cut > 0) {
-      const category = slug.slice(0, cut)
-      counts.set(category, (counts.get(category) ?? 0) + 1)
+  const properties: Record<string, string> = {}
+  for (const track of ['engineers', 'everyone'] as const) {
+    const counts = new Map<string, number>()
+    const sheets = track === 'everyone' ? (data.everyoneSheets ?? {}) : data.sheets
+    for (const [slug, sheet] of Object.entries(sheets)) {
+      if (sheet.signedOff === null || sheet.signedOff === undefined) continue
+      const cut = slug.indexOf('/')
+      if (cut > 0) {
+        const category = slug.slice(0, cut)
+        counts.set(category, (counts.get(category) ?? 0) + 1)
+      }
+    }
+    for (const [category, approved] of counts) {
+      const total = facts.categoryTotals[category] ?? 0
+      if (total <= 0) continue
+      properties[progressProperty(category, track)] = `${Math.round((approved / total) * 100)}%`
     }
   }
-
-  const properties: Record<string, string> = {}
-  for (const [category, approved] of counts) {
-    const total = facts.categoryTotals[category] ?? 0
-    // With no total there is no fraction to state, and 0% would be a claim
-    // rather than an absence — the same reason `-complete` needs a real total.
-    if (total <= 0) continue
-    properties[progressProperty(category)] = `${Math.round((approved / total) * 100)}%`
-  }
-
   return properties
 }
 
 /**
- * Apply the stamps, removing the ones that are no longer true.
- *
- * Removal is the half a boot script never needs and this function always does:
- * un-signing a sheet has to take its class off, or the mark keeps claiming a
- * sign-off the reader has withdrawn.
+ * D91 — the track the bar shows: the page's own, or on a page that belongs to
+ * neither track the one the reader last opened, or For Engineers.
  */
+export function currentTrack(pathname: string, data: RecordData): Track {
+  return trackOfPath(pathname) ?? (isTrack(data.prefs.track) ? data.prefs.track : 'engineers')
+}
+
+/** The attribute the bar's switch and the progress page's tabs read in frame one. */
+export const TRACK_ATTR = 'data-bz-track'
+
 export function stampRecordState(
   root: StampRoot,
   data: RecordData,
@@ -179,10 +191,12 @@ export function stampRecordState(
   if (root.style !== undefined) {
     const progress = stampProgressFor(data, facts)
     for (const category of Object.keys(facts.categoryTotals)) {
-      const name = progressProperty(category)
-      const value = progress[name]
-      if (value === undefined) root.style.removeProperty(name)
-      else root.style.setProperty(name, value)
+      for (const track of ['engineers', 'everyone'] as const) {
+        const name = progressProperty(category, track)
+        const value = progress[name]
+        if (value === undefined) root.style.removeProperty(name)
+        else root.style.setProperty(name, value)
+      }
     }
   }
 

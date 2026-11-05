@@ -19,7 +19,8 @@ import {
 } from '@/lib/content/rows'
 import { setCatalogView } from '@/lib/record/events'
 import { update, useRecord } from '@/lib/record/store'
-import { INDEX_ROUTE, levelRoute } from '@/lib/route-labels'
+import { trackView } from '@/lib/record/schema'
+import { type Track, catalogRoute } from '@/lib/tracks'
 import { plural } from '@/lib/text'
 import { CatalogCards } from './CatalogCards'
 import { CatalogOverview } from './CatalogOverview'
@@ -203,8 +204,11 @@ export function Catalog({
   rows,
   label,
   level = ALL_LEVELS,
+  track = 'engineers',
 }: {
   rows: readonly SheetRow[]
+  /** D91 — whose catalog this is: its links and its state filter follow it. */
+  track?: Track
   /** Names the table's scroll region and each view's section (§10.3). */
   label: string
   /**
@@ -218,7 +222,7 @@ export function Catalog({
   level?: string
 }) {
   const [select, setSelect] = useState(DEFAULT_FILTER_ID)
-  const record = useRecord()
+  const record = trackView(useRecord(), track)
 
   /**
    * §12.4.1 — the slugs the reader has asserted, and nothing else about them.
@@ -306,7 +310,7 @@ export function Catalog({
             {LEVEL_GROUP_LABEL}:
           </span>
           <Link
-            href={INDEX_ROUTE}
+            href={catalogRoute(track)}
             className="bz-chip"
             {...{ [RESET_ATTR]: '' }}
             aria-current={level === ALL_LEVELS ? 'page' : undefined}
@@ -328,7 +332,7 @@ export function Catalog({
           {levelRefs.map((one) => (
             <Link
               key={one.slug}
-              href={levelRoute(one.slug)}
+              href={catalogRoute(track, one.slug)}
               className="bz-chip"
               data-cat={one.slug}
               aria-current={level === one.slug ? 'page' : undefined}
@@ -412,7 +416,7 @@ export function Catalog({
         <NoMatch
           total={rows.length}
           onClear={clear}
-          clearTo={level === ALL_LEVELS ? null : INDEX_ROUTE}
+          clearTo={level === ALL_LEVELS ? null : catalogRoute(track)}
         />
       ) : (
         <div className="bz-views">

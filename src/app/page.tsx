@@ -376,7 +376,10 @@ export default function HomePage() {
             <p className="switch" data-switch-line>
               These doors open <b data-track-name>For Engineers</b>.{' '}
               <button type="button" className="sw-link" data-switch hidden>
-                Open them <span data-track-other>For Everyone</span> instead
+                {/* One child: the button is inline-flex on a phone, which would make each text run its own item and drop the spaces between them. */}
+                <span>
+                  Open them <span data-track-other>For Everyone</span> instead
+                </span>
               </button>
             </p>
             <Link className="bz-btn" href={INDEX_ROUTE}>

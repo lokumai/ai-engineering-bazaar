@@ -539,18 +539,33 @@ class Converter {
     }
   }
 
+  /**
+   * A fragment as the heading id it names. micromark percent-encodes an href
+   * while github-slugger keeps a heading's Unicode, so `#çok-güzel` arrives as
+   * `#%C3%A7ok-g%C3%BCzel`. A browser decodes the fragment before it looks for
+   * the id, which is why the web page never showed it; the native reader
+   * compares strings, and every non-ASCII target would miss with no error.
+   */
+  fragmentId(encoded: string): string {
+    try {
+      return decodeURIComponent(encoded)
+    } catch {
+      return this.fail(`the link fragment "#${encoded}" is not valid percent-encoding`)
+    }
+  }
+
   target(node: Element): LinkTarget {
     const course = node.data?.courseTarget
     if (course !== undefined) {
       if (course.kind === 'catalog') return { kind: 'catalog' }
-      const fragment = course.fragment.replace(/^#/, '')
+      const fragment = this.fragmentId(course.fragment.replace(/^#/, ''))
       return fragment === ''
         ? { kind: 'module', key: course.key, lang: course.lang }
         : { kind: 'module', key: course.key, lang: course.lang, fragment }
     }
     const href = property(node, 'href')
     if (typeof href !== 'string') this.fail('a link has no href')
-    if (href.startsWith('#') && href.length > 1) return { kind: 'anchor', id: href.slice(1) }
+    if (href.startsWith('#') && href.length > 1) return { kind: 'anchor', id: this.fragmentId(href.slice(1)) }
     if (/^https?:\/\//i.test(href)) return { kind: 'external', url: href }
     return this.fail(`a link to "${href}" is neither a course link, an anchor nor external`)
   }

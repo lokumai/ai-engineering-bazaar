@@ -156,6 +156,21 @@ describe('toBlocks', () => {
     })
   })
 
+  // micromark percent-encodes a link's href while a heading's id keeps its
+  // Unicode, so a target read off the href would never equal the id it names.
+  it('gives a non-ASCII anchor and fragment the heading\'s own id, not the percent-encoded href', async () => {
+    const blocks = await blocksOf(`## Çok güzel\n\n[here](#çok-güzel) and [there](${target.name}.md#çok-güzel)\n\n## بخش\n\n[x](#بخش)`)
+    const ids = blocks.flatMap((block) => (block.type === 'heading' ? [block.id] : []))
+    const targets = blocks.flatMap((block) => (block.type === 'paragraph' ? block.inlines : []))
+      .flatMap((inline) => (inline.type === 'link' ? [inline.target] : []))
+    expect(targets).toEqual([
+      { kind: 'anchor', id: ids[0] },
+      { kind: 'module', key: target.slug, lang: 'en', fragment: ids[0] },
+      { kind: 'anchor', id: ids[1] },
+    ])
+    expect(ids[0]).toContain('ç')
+  })
+
   it('wraps a tight item\'s inlines into one paragraph', async () => {
     expect(await only('- one\n- two *x*')).toEqual({
       type: 'list',

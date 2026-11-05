@@ -10,8 +10,8 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D85, plus open questions O1 to O4 — 2026-09-09 to 2026-10-15"
-last_updated: 2026-10-15
+covers: "D26 to D85 and D88, plus open questions O1 to O4 — 2026-09-09 to 2026-11-05 (D86 and D87 are recorded on branch design/round-2026-11)"
+last_updated: 2026-11-05
 ---
 
 # 🧠 BRAINSTORM, part 2 — the rebuild, D26 onward
@@ -2054,6 +2054,49 @@ takes changes only through a pull request and a bot opening one a day would be n
 committed file is the fallback and may lag the live site; its `measured` date says by how much. A
 scheduled workflow in a public repository is switched off by GitHub after 60 days without activity
 in the repository; a push re-enables it.
+
+### D88 · The account layer, the role paths and the record of work are removed from the code, not hidden — and the test suite is cut to what guards a reader — 2026-11-05
+
+M38 took the unused features off `/profile/` and left their code in the tree, on the reasoning that
+a component nothing imports costs nothing. **A measurement changed our minds.** The author exported
+their progress and found their old role path, `data analyst`, in the file: hiding the control left
+the field in the record, so the feature was gone from the page and still present in what the reader
+carries away. Their words: *"All those features should be gone, even the docs under docs/."*
+
+Two ways were open:
+
+1. **Strip the fields on export only**, and keep the code. Smallest change; the record, the boot
+   script, the store and the account, path and report code (24,490 lines of `src/` this change
+   deleted) would still describe
+   features nobody can reach, and the next reader of the code would maintain them.
+2. **Remove the features**: the account layer (Supabase, sign-in, teams, organisations, `/join/`,
+   `/auth/callback/`, the seam `AccountSync`, `supabase/`, its two scripts, `docs/`), the role paths,
+   the record of work and its specimen, the three M14 forwards, and the record fields they wrote
+   (`identity`, a module's `quiz`, `sources` and `submittals`, `prefs.aliasNamedFor`,
+   `meta.lastClaim`).
+
+**Taken: 2.** The schema version did not move, because the validator reads only the fields it
+knows: a record stored before this change parses, and its old fields drop out on the next write and
+from every export. `tests/unit/record/validate.test.ts` holds that, and it was seen failing when the
+validator was made to keep `identity`.
+
+**The test suite was cut in the same change, at the author's word** — *"remove unnecessary tests that
+bloat the CI and makes it super slow, keep the necessary tests"* — after measuring where CI's time
+went: the browser suite was 806 of a 960-second run (run 42018183569). What went, and why each was
+not guarding a reader:
+
+- Every test of a removed feature (2,107 → 1,144 unit tests; 1,234 → 461 browser cases overall).
+- The fidelity harness's one-mutation-per-fact loop: 166 facts × 3 viewports, each loading a mockup
+  to prove the checker notices one property. It proves the checker, not the site; each stage block
+  keeps its own mutation case.
+- The 1024px project, which ran `responsive`, `containment` and `fidelity` a third time. `responsive`
+  and `containment` keep their 390px run, where layout and diagram overflow break first.
+- `title-block` and `site-footer` check three representative modules instead of all 33;
+  `module-sheets` still loads every module.
+- CI's base-path-less build and its link check: the deploy publishes the base-path build, which CI
+  still builds and link-checks.
+
+And CI runs four Playwright workers instead of two, on GitHub's 4-vCPU runner.
 
 ## Open questions
 

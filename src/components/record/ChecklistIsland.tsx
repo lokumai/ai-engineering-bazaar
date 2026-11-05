@@ -93,11 +93,7 @@ export function ChecklistIsland({ slug }: { slug: string }) {
       if (!(box instanceof HTMLInputElement)) return
       const entry = boxes.find((candidate) => candidate.box === box)
       if (entry === undefined) return
-      update((data) => setChecklistItem(data, slug, entry.index, box.checked, nowIso()), {
-      kind: 'setChecklistItem',
-      sheetSlug: slug,
-      payload: { index: entry.index, ticked: box.checked },
-    })
+      update((data) => setChecklistItem(data, slug, entry.index, box.checked, nowIso()))
     }
 
     paint()

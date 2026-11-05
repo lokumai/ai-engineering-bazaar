@@ -610,7 +610,7 @@ describe('M16 closing condition: the retired vocabulary is out of the markup', (
     // The three stamped families, whose pattern `stamp.ts` owns. Read from
     // there rather than restated, so this cannot drift from the writer.
     const owned = readFileSync(join(ROOT, 'src/lib/record/stamp.ts'), 'utf8')
-    expect(owned).toContain('hl-(?:signed-\\d+|cat-[a-z0-9-]+-(?:started|complete)|role-[a-z-]+)')
+    expect(owned).toContain('hl-(?:signed-\\d+|cat-[a-z0-9-]+-(?:started|complete))')
 
     // And the storage keys, which are the reader's own data.
     const schema = readFileSync(join(ROOT, 'src/lib/record/schema.ts'), 'utf8')

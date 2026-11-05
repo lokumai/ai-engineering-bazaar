@@ -1,5 +1,4 @@
 import { RailTab } from '@/components/curriculum/RailFold'
-import { ClaimReceipt } from '@/components/record/ClaimReceipt'
 import { Readout } from '@/components/record/Readout'
 import { categoryLabels } from '@/lib/content/chrome'
 import { curriculumFacts } from '@/lib/content/facts'
@@ -124,13 +123,6 @@ export function PageShell({
         edge. The reading page is unchanged, because there the page is the
         column and the two already agreed.
       */}
-      {column ? (
-        <div className="bz-col">
-          <ClaimReceipt />
-        </div>
-      ) : (
-        <ClaimReceipt />
-      )}
       {trail && (column ? (
         <div className="bz-col">
           <Breadcrumb categories={categoryLabels()} current={trailLabel} leaf={trailLeaf} leafLang={trailLeafLang} />

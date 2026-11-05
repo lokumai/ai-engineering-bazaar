@@ -284,12 +284,6 @@ test('control C completes a module from the progress page, and takes it back', a
   )
   expect(stored.data.sheets[slugOf(target)]?.signedOff).not.toBeNull()
 
-  // §12.3.5 — the first completion on a record mints the mark seed, once, and
-  // control C takes the same path control A does (`lib/record/complete.ts`).
-  // Without that shared path this write would have left the reader with no
-  // mark on their exported record and nothing would have failed.
-  expect(stored.data.identity.markSeed).toMatch(/^[0-9a-f]{8}$/)
-
   // And it is its own undo (§12.4.1): no dialog, and the tick goes with it.
   await toggle.click()
   await expect(tick).not.toBeVisible()

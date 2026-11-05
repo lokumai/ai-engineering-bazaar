@@ -13,7 +13,6 @@
  *   `class="hl-signed-<n>"`               one per signed-off module number
  *   `class="hl-cat-<slug>-started"`       0 < approved < total in that category
  *   `class="hl-cat-<slug>-complete"`      approved >= total
- *   `class="hl-role-<id>"`                the reader's role (§13.3)
  *   `data-hl-record="1"`                  a record CARRYING SOMETHING exists
  *   `data-hl-storage="ok" | "blocked"`    tells empty state 1 from 4 (§12.13)
  *   `data-bz-rail="folded"`               M10 — the curriculum rail is folded
@@ -45,7 +44,7 @@
  * who chose Paper and nothing else would otherwise meet Night every time.
  *
  * The view id is matched against the embedded `VIEW_IDS` before it reaches the
- * attribute, for the same reason the nine role ids are: the value comes out of
+ * attribute: the value comes out of
  * Web Storage, it is untrusted input wherever it is read (§12.1.3), and the
  * only thing done with it here is to put it where a stylesheet's attribute
  * selector will answer to it.
@@ -60,9 +59,7 @@
  * theme click, and that reader was then shown "Where you left off" and a
  * continue control for a sheet they had never opened. The stamp now waits on
  * the same rule `schema.ts`'s `carriesNothing` applies — no day recorded, no
- * `meta.lastExport`, no identity field, and every sheet record empty by
- * `isEmptySheetRecord` — and an identity field alone is enough, because a name,
- * a mark or a role is something the reader put there.
+ * `meta.lastExport`, and every sheet record empty by `isEmptySheetRecord`.
  *
  * That rule is therefore written twice, which §12.1's one-definition rule
  * otherwise forbids. The duplication is forced: this file's product is an ES5
@@ -77,7 +74,7 @@
  * read `!=null` and truthiness, on the reasoning that a hand-edited record
  * arrives with fields missing and §12.1.3 says this script must not throw —
  * which confused not throwing with accepting. These checks run on RAW storage,
- * before `coerceRecordData`, so `{identity:{name:7}}`, an unknown `mark`, `days`
+ * before `coerceRecordData`, so `days`
  * as an object and more besides stamped a record the parser then threw away: the
  * home screen chose "Where you left off" and the record behind it was empty.
  * Seven such shapes were measured. Every field this gate inspects is now checked
@@ -94,23 +91,14 @@
  * `fundamentals`), which is why identity is the slug: no second map is needed
  * and no number can drift.
  *
- * The nine role ids are embedded as build-time data and the stored value is
- * matched against them before it reaches a class name. Interpolating a string
- * lifted from Web Storage into `classList.add` would let a hand-edited record
- * choose its own selector, and §12.1.3's rule is that a record read back out of
- * storage is untrusted input wherever it is read — here included, where the only
- * thing done with the value is to concatenate it into a class name.
- *
  * ES5 only, and no library: this runs before anything has decided what the
  * bundle targets, in whatever browser the reader brought.
  */
 
 import {
   CATALOG_VIEWS,
-  MARK_IDS,
   PALETTE_IDS,
   RECORD_STORAGE_KEY,
-  ROLE_IDS,
   SCHEMA_VERSION,
 } from './schema'
 
@@ -134,13 +122,13 @@ export function recordBootScript(
   slugToModule: Record<string, number>,
 ): string {
   return `(function(){try{
-var T=${embed(categoryTotals)},M=${embed(slugToModule)},R=${embed(ROLE_IDS)},MK=${embed(MARK_IDS)},V=${embed(CATALOG_VIEWS)},P=${embed(PALETTE_IDS)};
+var T=${embed(categoryTotals)},M=${embed(slugToModule)},V=${embed(CATALOG_VIEWS)},P=${embed(PALETTE_IDS)};
 var r=document.documentElement;
 var isObj=function(v){return Object.prototype.toString.call(v)==="[object Object]"};
 var own=function(o,k){return Object.prototype.hasOwnProperty.call(o,k)};
 var bad=function(k){return !k||k.length>200||k==="__proto__"||k==="constructor"||k==="prototype"};
 var arr=function(v){return Object.prototype.toString.call(v)==="[object Array]"};
-var G=/^[A-Za-z0-9._-]{1,100}$/,H=/^[0-9a-f]{4,40}$/,S=/^[0-9a-f]{8}$/;
+var H=/^[0-9a-f]{4,40}$/;
 var pat=function(v,re){return typeof v==="string"&&re.test(v)?1:0};
 var fin=function(x){return x===x&&isFinite(x)?1:0};
 var realDay=function(t){var dt=new Date(t+"T00:00:00.000Z"),ms=dt.getTime();
@@ -150,17 +138,11 @@ var inst=function(v){if(!pat(v,/^\\d{4}-\\d{2}-\\d{2}(?:[T ][\\d:.+\\-Z]{1,20})?
 return realDay(v.slice(0,10))&&fin(Date.parse(v))?1:0};
 var inL=function(L,v){for(var j=0;j<L.length;j++){if(L[j]===v)return 1}return 0};
 var someDay=function(a){for(var j=0;j<a.length;j++){if(day(a[j]))return 1}return 0};
-var someSrc=function(a){if(!arr(a))return 0;for(var j=0;j<a.length;j++){if(pat(a[j],/^https?:\\/\\//i))return 1}return 0};
-var someSub=function(a){if(!arr(a))return 0;var e;for(var j=0;j<a.length;j++){e=a[j];
-if(isObj(e)&&pat(e.owner,G)&&pat(e.repo,G))return 1}return 0};
 var ticked=function(o){if(!isObj(o))return 0;var q;for(q in o){
 if(own(o,q)&&!bad(q)&&/^\\d{1,4}$/.test(q)&&o[q]===true)return 1}return 0};
-var quiz=function(q){if(!isObj(q))return 0;
-if(typeof q.answer==="string"&&q.answer.replace(/^\\s+|\\s+$/g,"")!=="")return 1;
-return q.assessed==="matched"||q.assessed==="missed"?1:0};
 var dwell=function(v){return typeof v==="number"&&fin(v)&&Math.round(v)>0?1:0};
 var kept=function(rec){return inst(rec.signedOff)||pat(rec.signedRevision,H)||rec.reachedEnd===true
-||dwell(rec.dwellSeconds)||quiz(rec.quiz)||ticked(rec.checklist)||someSrc(rec.sources)||someSub(rec.submittals)?1:0};
+||dwell(rec.dwellSeconds)||ticked(rec.checklist)?1:0};
 var raw=null,ok=1;
 try{raw=window.localStorage.getItem(${JSON.stringify(RECORD_STORAGE_KEY)})}catch(e){ok=0}
 r.setAttribute("data-hl-storage",ok?"ok":"blocked");
@@ -173,11 +155,9 @@ if(isObj(d.prefs)&&d.prefs.railFolded===true)r.setAttribute("data-bz-rail","fold
 if(isObj(d.prefs)&&inL(V,d.prefs.catalogView))r.setAttribute("data-hl-view",d.prefs.catalogView);
 if(isObj(d.prefs)&&inL(P,d.prefs.figurePalette))r.setAttribute("data-hl-figures",d.prefs.figurePalette);
 if(isObj(d.prefs)&&inL(P,d.prefs.codePalette))r.setAttribute("data-hl-code",d.prefs.codePalette);
-var counts={},k,c,i,n,rec,id,ro=null,sh=d.sheets,has=0;
+var counts={},k,c,i,n,rec,sh=d.sheets,has=0;
 if(arr(d.days)&&someDay(d.days))has=1;
 if(isObj(d.meta)&&inst(d.meta.lastExport))has=1;
-id=d.identity;
-if(isObj(id)&&(typeof id.name==="string"||pat(id.markSeed,S)||inL(MK,id.mark)||inL(R,id.role)))has=1;
 if(!has&&isObj(sh)){for(k in sh){
 if(!own(sh,k)||bad(k))continue;
 rec=sh[k];
@@ -185,8 +165,6 @@ if(!isObj(rec))continue;
 if(kept(rec)){has=1;break}}}
 if(!has)return;
 r.setAttribute("data-hl-record","1");
-if(isObj(id)&&typeof id.role==="string"&&!bad(id.role)){for(i=0;i<R.length;i++){if(R[i]===id.role){ro=id.role;break}}}
-if(ro)r.classList.add("hl-role-"+ro);
 if(!isObj(sh))return;
 for(k in sh){
 if(!own(sh,k)||bad(k))continue;
@@ -206,10 +184,8 @@ if(n>0)r.style.setProperty("--bz-done-"+c,Math.round(counts[c]/n*100)+"%")}
 
 /**
  * The script with no build-time facts embedded. It still stamps
- * `data-hl-storage`, `data-hl-record`, `hl-role-<id>` and the per-category
- * `-started` classes, which is exactly as much as can be known without
- * measuring the corpus — the sign-off marks and `-complete` need the factory.
- * The role does not: its vocabulary is frozen in `lib/path/roles.ts` rather than
- * measured off the sheets.
+ * `data-hl-storage`, `data-hl-record` and the per-category `-started`
+ * classes, which is exactly as much as can be known without measuring the
+ * corpus — the sign-off marks and `-complete` need the factory.
  */
 export const RECORD_BOOT_SCRIPT: string = recordBootScript({}, {})

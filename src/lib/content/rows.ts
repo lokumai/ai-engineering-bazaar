@@ -80,8 +80,8 @@ export interface SheetRow {
   summary: string | null
   /**
    * §4.8 column 9 / §7.4 — the sign-off slots THIS sheet supplies, in
-   * `sheetStamps`' order, as `Stamp.id` spells them: `SIGN-OFF`, and then
-   * `QUIZ`, `CHECKLIST` and `SOURCES` where the sheet can supply each. Empty on
+   * `sheetStamps`' order, as `Stamp.id` spells them: `COMPLETION`, and then
+   * `CHECKLIST` where the module has one. Empty on
    * a sheet nobody has drawn, which supplies none of them.
    *
    * This is a fact about the drawing, not about the reader: it says which

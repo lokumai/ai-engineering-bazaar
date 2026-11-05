@@ -133,17 +133,7 @@
     background: transparent;
   }
 
-  /* -- §13.2 the face legend ----------------------------------------------
-     The accessible content of the mark: the SVG is `aria-hidden` in every
-     state, so this table is what a reader actually reads. The swatch is
-     `01`'s `.tag i` grown to a row's height. */
-  .bz-legend-swatch {
-    display: inline-block;
-    width: 9px;
-    height: 9px;
-    border-radius: var(--radius-xs);
-    background: var(--bz-cat, var(--color-line));
-  }
+  
 
   /* -- a figure, opened -----------------------------------------------------
      A real capability with no mockup: a diagram too big for the measure can be
@@ -292,16 +282,7 @@
     list-style: none;
   }
 
-  /* -- §14.11 the join criteria -------------------------------------------
-     The one place a reader is told what a join actually checks. It reuses the
-     completion block's head and body, because it is the same shape — a caption,
-     a statement, and a list of conditions — and stage 7 authored that. */
-  .bz-signoff-criteria {
-    margin: 10px 0 0;
-    padding-left: 18px;
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-item);
-  }
+  
 
   /* Not a design rule: a horizontal clip for a container whose child is
      allowed to be wider than it, where the scroll belongs to an ancestor. */
@@ -324,58 +305,6 @@
     min-width: 0;
     color: var(--color-on-surface-muted);
     font-size: var(--text-item);
-  }
-
-  /* §12.10 — the curriculum drawing's own three parts. The SVG is
-     `aria-hidden`, so the caption and the table under it are what a reader
-     actually reads, and they are the accessible content rather than a fallback.
-     Derived from `01`'s `figcaption` and the language's own table. */
-  .bz-diagram-title {
-    margin: 0 0 8px;
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-meta);
-  }
-
-  .bz-diagram-legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
-    margin: 10px 0 0;
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-meta);
-  }
-
-  .bz-diagram-table {
-    margin: 12px 0 0;
-  }
-
-  .bz-diagram-table > summary {
-    cursor: pointer;
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-item);
-  }
-
-  /* One module in the drawing, and in the legend page's specimen of it. Four
-     states, and they are NOT the figure's `.bz-node`: that is a hand-drawn box
-     in a mermaid figure and this is an SVG the record draws. Two things named
-     the same would be two things agreeing on nothing. */
-  .bz-diagram-node > rect {
-    fill: var(--color-surface-raised);
-    stroke: var(--color-line-strong);
-  }
-
-  .bz-diagram-node[data-state="draft"] > rect {
-    stroke-dasharray: 3 2;
-  }
-
-  .bz-diagram-node[data-state="signed"] > rect {
-    fill: var(--color-success);
-    stroke: var(--color-success);
-  }
-
-  .bz-diagram-node[data-state="started"] > rect {
-    stroke: var(--bz-cat, var(--color-line-strong));
-    stroke-width: 1.5px;
   }
 
   /* §13.2 — the mark's sugar dusting. Decoration inside an `aria-hidden`

@@ -173,31 +173,6 @@ describe('sheetLabelFor', () => {
 })
 
 describe('an ancestor segment with no page of its own (§15.1)', () => {
-  /**
-   * MEASURED by `scripts/check-links-out.mjs` on its first run: exactly one
-   * internal link in the export resolved to nothing — `/auth/`, the crumb above
-   * a reader mid-sign-in. `/auth/` is a directory holding `callback/` and was
-   * never exported as a page, and the trail linked every ancestor.
-   *
-   * The cases below assert the trail. They are not a guard on the set: they
-   * expect `href: null`, which is what a stale entry also produces, so they
-   * stay green in exactly the direction that hurts a reader — a page added at
-   * `/auth/` and this set not updated. `WITHOUT_A_PAGE` is guarded by the
-   * router-tree case that follows them, which reads the filesystem instead.
-   */
-  it('names the segment but does not link it', () => {
-    /* The claim is the two `href: null`s. **The labels were the raw folder
-       names until M22's follow-up** — `auth` and `callback` over a heading
-       reading `Completing sign-in` — which is the defect M22 measured across
-       eight routes and missed on this one, because the guard it wrote for it
-       walked a hand-written list of routes that did not include this one. A
-       review walked all 61 exported routes and found it. */
-    expect(breadcrumbFor('/auth/callback/', CATEGORIES)).toEqual([
-      { label: 'Home', href: '/' },
-      { label: 'Signing in', href: null },
-      { label: 'Completing sign-in', href: null },
-    ])
-  })
 
   /* M17 — the ancestor does still have a page and it is a FORWARD, so the
      crumb opens what that forward opens. A trail whose every ancestor costs a
@@ -241,7 +216,7 @@ describe('an ancestor segment with no page of its own (§15.1)', () => {
     const exported = new Set(routes(APP, '/'))
     // The walk has to be finding something, or the assertion below is vacuous.
     expect(exported.has('/')).toBe(true)
-    expect(exported.has('/auth/callback/')).toBe(true)
+    expect(exported.has('/profile/')).toBe(true)
 
     for (const claimed of WITHOUT_A_PAGE) {
       expect(exported.has(claimed), `${claimed} has a page, so the crumb should link`).toBe(false)

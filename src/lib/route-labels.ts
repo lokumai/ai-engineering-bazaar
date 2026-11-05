@@ -145,20 +145,7 @@ const ROUTE_TITLES: Record<string, string> = {
   [SET_SEGMENT]: 'Curriculum',
   [INDEX_SEGMENT]: 'Catalog',
   profile: 'Your progress',
-  team: 'Team',
-  assignments: 'Assignments',
   legend: 'Legend',
-  specimen: 'Specimen record',
-  'sign-in': 'Sign in',
-  alias: 'Choose an alias',
-  join: 'Join an organisation',
-  /* M22 filled this table from the ten routes it walked and MISSED ONE, which
-     is the argument against a hand-written list twice over: `/auth/callback/`
-     read `Home / auth / callback` over a heading saying `Completing sign-in`,
-     and it went unnoticed because the guard's own route list was hand-written
-     too. A review walked all 61 exported routes instead and found it. */
-  auth: 'Signing in',
-  callback: 'Completing sign-in',
 }
 
 /**
@@ -226,7 +213,7 @@ export function levelRoute(slug: string): string {
  * router tree rather than the trail, because a test that only asserts
  * `breadcrumbFor`'s output agrees with whatever this set happens to say.
  */
-export const WITHOUT_A_PAGE: ReadonlySet<string> = new Set(['/auth/'])
+export const WITHOUT_A_PAGE: ReadonlySet<string> = new Set<string>()
 
 /**
  * What `/` is called in the trail. §15.1 renamed it: the root of every path on

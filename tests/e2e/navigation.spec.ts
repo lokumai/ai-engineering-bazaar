@@ -127,14 +127,8 @@ const EVERY_ROUTE: readonly string[] = [
   '/sheets/fundamentals/',
   A0.path,
   INDEX_SHEET,
-  '/join/',
   '/legend/',
-  '/legend/specimen/',
   '/profile/',
-  '/sign-in/',
-  '/sign-in/alias/',
-  '/team/',
-  '/team/assignments/',
 ]
 
 test('every route carries the same navbar', async ({ page }) => {

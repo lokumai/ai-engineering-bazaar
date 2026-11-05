@@ -1,5 +1,4 @@
-import { seedFrom } from '../identity/mark'
-import { mintMarkSeed, signOff, unsign } from './events'
+import { signOff, unsign } from './events'
 import type { RecordData } from './schema'
 import { nowIso, requestPersistence, update } from './store'
 
@@ -16,49 +15,17 @@ import { nowIso, requestPersistence, update } from './store'
  * (`kia-context/specs/ARCHITECTURE.md` §5).
  *
  * Without this the second control would have been a second implementation of
- * the first completion, and the first completion is not one write. It is three:
- * the sign-off itself, the mark seed — minted once per record and never again
- * (§12.3.5) — and the one permitted call to `navigator.storage.persist()`,
- * which §12.1.6 allows on a single genuine user gesture. A control that did the
- * first and not the other two would leave a reader who completed their first
- * module from the progress page with no mark on their exported record and no
- * persistence request ever made, and nothing would have failed.
- *
- * **What it does not do is prompt for a name.** §12.3.2 asks for a name at
- * exactly one moment — the first completion, inline, in the module's own
- * `CHECKED BY` field — and that is a piece of the module page's layout rather
- * than of this write. So the return value says whether this was the first
- * completion and the caller decides what to ask; control C asks nothing, which
- * is correct for a control operating on a list of modules the reader is not
- * inside.
+ * the first completion, which is two writes: the completion itself and the one
+ * permitted call to `navigator.storage.persist()`, which §12.1.6 allows on a
+ * single genuine user gesture.
  */
-
-/**
- * §12.3.5 — four bytes from the CSPRNG, once.
- *
- * The bytes are generated here and the hex is built by a pure function, which
- * is why `seedFrom` has no parameter a name could arrive through: a
- * name-derived mark would silently change on every already-completed module the
- * moment the reader renamed themselves. Returns null where Web Crypto is
- * unavailable, and the mark then renders as nothing rather than as a pattern
- * from a predictable seed.
- */
-function mintSeed(): string | null {
-  try {
-    const bytes = new Uint8Array(4)
-    crypto.getRandomValues(bytes)
-    return seedFrom(bytes)
-  } catch {
-    return null
-  }
-}
 
 export interface CompletionOutcome {
   /** What the record now says: completed, or not. */
   completed: boolean
   /**
-   * True when this was the first completion on this record, which is the one
-   * moment §12.3.2 allows a name to be asked for. Always false for an un-do.
+   * True when this was the first completion on this record. Always false for
+   * an un-do.
    */
   first: boolean
 }
@@ -85,31 +52,16 @@ export function toggleCompletion(
   revision: string | null = null,
 ): CompletionOutcome {
   if ((record.sheets[slug]?.signedOff ?? null) !== null) {
-    update((data) => unsign(data, slug), { kind: 'unsign', sheetSlug: slug })
+    update((data) => unsign(data, slug))
     return { completed: false, first: false }
   }
 
   const now = nowIso()
-  // The seed is minted once and never regenerated, so its absence is the
-  // honest test for "this is the first completion" (§12.3.5).
-  const first = record.identity.markSeed === null
-  update((data) => signOff(data, slug, revision, now), {
-    // §12.4.3's drift line needs the revision the reader completed AGAINST, and
-    // the log is where a later un-complete and re-complete stays visible.
-    kind: 'signOff',
-    sheetSlug: slug,
-    payload: { revision },
-  })
-
-  if (first) {
-    const seed = mintSeed()
-    if (seed !== null) {
-      update((data) => mintMarkSeed(data, seed, now), { kind: 'mintMarkSeed' })
-    }
-    // §12.1.6 — called once, on a genuine user gesture. A `false` answer is
-    // normal, not an error, and the store records the queried value.
-    void requestPersistence()
-  }
+  // The first completion on this record is the one genuine user gesture
+  // §12.1.6 allows `navigator.storage.persist()` to be asked on.
+  const first = Object.values(record.sheets).every((sheet) => sheet.signedOff === null)
+  update((data) => signOff(data, slug, revision, now))
+  if (first) void requestPersistence()
 
   return { completed: true, first }
 }

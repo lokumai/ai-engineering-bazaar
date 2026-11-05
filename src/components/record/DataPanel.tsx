@@ -2,21 +2,16 @@
 
 import { useEffect, useState } from 'react'
 import {
-  REMOTE_ERASE_FAILED,
   UNDO_CLOSED,
   erasedRecord,
   eraseStored,
   readRawStored,
   restoreStoredQuarantine,
-  eraseRemote,
-  remoteEraseNote,
   undoLabel,
-  type RemoteEraseOutcome,
   undoSecondsLeft,
 } from '@/lib/record/erase'
 import { markActivity, markExported } from '@/lib/record/events'
-import { canonicalRecordJson } from '@/lib/record/report'
-import { SCHEMA_VERSION, type RecordData } from '@/lib/record/schema'
+import type { RecordData } from '@/lib/record/schema'
 import {
   exportJson,
   flush,
@@ -25,8 +20,6 @@ import {
   snapshot,
   update,
   useHydrated,
-  eraseAccountCopy,
-  hasAccountCopy,
 } from '@/lib/record/store'
 import { EraseDialog } from './EraseDialog'
 
@@ -48,15 +41,9 @@ import { EraseDialog } from './EraseDialog'
  * asserting a state the reader cannot verify.
  *
  * **An imported file is untrusted input, and is fully validated before
- * anything is committed** (§12.15). `importJson` accepts either the raw `.json`
- * or a `RECORD OF WORK` `.html`, because the failure mode that removes is a
- * learner who keeps the pretty document and loses the record.
- *
- * **A mismatched content digest is a tamper INDICATOR, never a guarantee**
- * (§12.15, §12.12.5). A hash cannot prevent forgery in a client-only system —
- * whoever edited the record could recompute it — so the file is imported and
- * the state is printed, rather than rejected on the strength of a check that
- * only ever detects the careless case.
+ * anything is committed** (§12.15). Since M40 the importer reads the exported
+ * `.json` only: the RECORD OF WORK `.html` and its content digest went with the
+ * report.
  */
 
 /** §12.12.1's rule for a filename: a fixed ASCII template, never the name. */
@@ -64,56 +51,12 @@ function exportFilename(at: string): string {
   return `hl-record-${at.slice(0, 10)}.json`
 }
 
-/**
- * §12.12.5 — the digest as the `RECORD OF WORK` prints it, lifted back out.
- *
- * A substring match on the document's own definition list, not a parse: the
- * file is untrusted input and there is nothing here worth building a parser
- * for. Returns null for a raw `.json` export, which carries no digest at all,
- * and null if `report.ts` ever renames the row — both degrade to
- * `NO CONTENT DIGEST IN THIS FILE`, which is a true statement about the file
- * rather than an accusation about the reader.
- *
- * Exported for the test, which is the only way this is reachable in node.
- */
-export function printedDigestFrom(text: string): string | null {
-  const row = /<dt[^>]*>\s*Content digest\s*<\/dt>\s*<dd[^>]*>\s*([0-9a-f]{64})\s*<\/dd>/i.exec(text)
-  return row === null ? null : row[1].toLowerCase()
-}
-
-/**
- * SHA-256 over the canonical record JSON, hex — the same input
- * `buildRecordOfWork` was handed. Null where Web Crypto is not available, which
- * prints as `NOT CHECKED`: §12.1.6's rule that a value which was not queried is
- * never printed as an answer applies to a hash as much as to storage state.
- */
-async function sha256Hex(input: string): Promise<string | null> {
-  try {
-    if (typeof crypto === 'undefined' || crypto.subtle === undefined) return null
-    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input))
-    return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('')
-  } catch {
-    return null
-  }
-}
-
-type DigestState = 'matched' | 'edited' | 'absent' | 'unchecked'
-
 type ImportState =
   | { kind: 'idle' }
-  | { kind: 'imported'; digest: DigestState; schema: number }
+  | { kind: 'imported'; schema: number }
   | { kind: 'empty' }
   | { kind: 'unreadable'; reason: 'newer' | 'malformed' }
   | { kind: 'unopened' }
-
-/** §12.14.1's register: uppercase mono key, value, no terminal period. */
-const DIGEST_READOUT: Record<DigestState, string> = {
-  matched: 'CONTENT DIGEST MATCHED',
-  // §12.15's exact wording. A visible, honest state — not a rejection.
-  edited: 'EDITED OUTSIDE THIS APPLICATION',
-  absent: 'NO CONTENT DIGEST IN THIS FILE',
-  unchecked: 'CONTENT DIGEST NOT CHECKED',
-}
 
 export function DataPanel() {
   const hydrated = useHydrated()
@@ -131,13 +74,6 @@ export function DataPanel() {
     at: number
   } | null>(null)
   const [erasedAt, setErasedAt] = useState<number | null>(null)
-  /**
-   * §14.6 — what happened to the account's copy, or null while signed out.
-   * Held rather than assumed: a refused delete and a dropped connection are
-   * indistinguishable from here, so the reader is told the copy MAY remain
-   * rather than being told either way.
-   */
-  const [remoteErase, setRemoteErase] = useState<RemoteEraseOutcome | null>(null)
   const [left, setLeft] = useState(0)
 
   /**
@@ -231,23 +167,9 @@ export function DataPanel() {
       return
     }
 
-    const printed = printedDigestFrom(text)
-    let digest: DigestState
-    if (printed === null) {
-      digest = 'absent'
-    } else if (result.schema !== SCHEMA_VERSION) {
-      // The digest was taken over the record in its OLD shape; the ladder has
-      // since migrated it, so the two hashes cannot agree and a mismatch here
-      // would be a false accusation.
-      digest = 'unchecked'
-    } else {
-      const actual = await sha256Hex(canonicalRecordJson(result.data))
-      digest = actual === null ? 'unchecked' : actual === printed ? 'matched' : 'edited'
-    }
-
     update(() => result.data)
     flush()
-    setImported({ kind: 'imported', digest, schema: result.schema })
+    setImported({ kind: 'imported', schema: result.schema })
   }
 
   function onErase(): void {
@@ -258,16 +180,6 @@ export function DataPanel() {
     setUndo({ data: snapshot(), quarantine: readRawStored().quarantine, at })
     setErasedAt(at)
     setLeft(undoSecondsLeft(at, at))
-    // §16.3 — `erasedRecord` and not `EMPTY_RECORD`: it owns the one field an
-    // erase must NOT reset, and it owns the argument for why. This panel does
-    // not sign the reader out, so a flag reset here would let the next claim
-    // re-decide the alias offer and write the reader's name back into the record
-    // they just erased, in this tab, while the reader is still looking at it.
-    //
-    // FOR THIS TAB is the whole of the claim: `eraseStored()` two lines down
-    // removes the key this record is written to, so the flag does not outlive
-    // the load. `erase.ts` states that limit and argues why a tombstone that DID
-    // outlive it would cost more than it buys.
     update((data) => erasedRecord(data))
     // Immediate, then the keys go: the flush clears the pending write, so
     // nothing rewrites the key half a second after it was removed.
@@ -276,13 +188,6 @@ export function DataPanel() {
     setImported({ kind: 'idle' })
     setExported(null)
 
-    // §14.6 — and only now. `eraseAccountCopy` settles the push this erase just
-    // queued before it deletes, so the row cannot be recreated by a flush that
-    // lands a moment later. Fire-and-forget: §12.2's rule is that a local write
-    // never waits for the network, and an erase is the write that can least
-    // afford to.
-    setRemoteErase(null)
-    void eraseRemote(hasAccountCopy() ? () => eraseAccountCopy() : null).then(setRemoteErase)
   }
 
   function onUndo(): void {
@@ -321,7 +226,7 @@ export function DataPanel() {
           <span className="bz-field-label">Import a record from a file</span>
           <input
             type="file"
-            accept=".json,.html,application/json,text/html"
+            accept=".json,application/json"
             onChange={(event) => void onImport(event)}
             // `.bz-field input` already gives the border, the ground and the
             // type; a file input needs its own height and vertical padding.
@@ -329,8 +234,7 @@ export function DataPanel() {
           />
         </label>
         <p className="bz-field-hint">
-          Either the exported .json or the RECORD OF WORK .html that carries it.
-          Importing replaces the record in this browser with the one in the file.
+          The exported .json. Importing replaces the record in this browser with the one in the file.
         </p>
 
         {imported.kind !== 'idle' && (
@@ -340,33 +244,14 @@ export function DataPanel() {
                 <p className="text-mark m-0 text-on-surface">
                   {`RECORD IMPORTED · SCHEMA ${imported.schema}`}
                 </p>
-                <p
-                  className={
-                    imported.digest === 'edited'
-                      ? 'bz-not-saved text-mark'
-                      : 'text-mark m-0 mt-1 text-on-surface-muted'
-                  }
-                >
-                  {DIGEST_READOUT[imported.digest]}
-                </p>
-                <p className="mt-1 mb-0 text-meta leading-normal text-on-surface-muted">
-                  {imported.digest === 'edited'
-                    ? 'The record in this file does not hash to the digest printed '
-                      + 'in it. The file was imported anyway, because a hash '
-                      + 'cannot prevent forgery in a system with no server: it '
-                      + 'is an indicator, not a guarantee.'
-                    : 'A digest proves only that the file has not changed since '
-                      + 'it was generated. It proves nothing about the facts '
-                      + 'inside it.'}
-                </p>
               </>
             )}
             {imported.kind === 'empty' && (
               <>
                 <p className="text-mark m-0 text-on-surface">NO RECORD IN THIS FILE</p>
                 <p className="mt-1 mb-0 text-meta leading-normal text-on-surface-muted">
-                  Nothing was changed. The exported .json and the RECORD OF WORK
-                  .html both carry the record; another file does not.
+                  Nothing was changed. Only the exported .json carries the
+                  record.
                 </p>
               </>
             )}
@@ -411,19 +296,6 @@ export function DataPanel() {
             <p className="text-mark m-0 text-on-surface">
               {undo !== null && left > 0 ? undoLabel(left) : UNDO_CLOSED}
             </p>
-            {/* §14.6 — said only when it needs saying. `remoteEraseNote`
-                returns null for `deleted` and for `signed-out`: a delete that
-                worked is what the dialog already promised, and warning a
-                signed-out reader about an account copy sends them chasing a
-                row that never existed. */}
-            {remoteErase !== null && remoteEraseNote(remoteErase) !== null && (
-              <>
-                <p className="text-mark mt-1 mb-0 text-on-surface">{REMOTE_ERASE_FAILED}</p>
-                <p className="mt-1 mb-0 text-meta leading-normal text-on-surface-muted">
-                  {remoteEraseNote(remoteErase)}
-                </p>
-              </>
-            )}
             <p className="mt-1 mb-0 text-meta leading-normal text-on-surface-muted">
               The completion marks ready before this page loaded stay on screen
               until the page is reloaded: they are painted by the boot script,

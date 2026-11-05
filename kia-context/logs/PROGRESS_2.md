@@ -21,14 +21,14 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M38, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M40 (M39 on branch design/round-2026-11), 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-11-05
 ---
 
-# 📈 PROGRESS, part 2 — M16 to M38
+# 📈 PROGRESS, part 2 — M16 to M40
 
 > **← Part 1: [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the review pass over M10 to M14.
-> This part holds **M16 to M38**, in the order they were worked.
+> This part holds **M16 to M40**, in the order they were worked.
 
 ## How to work this file
 
@@ -4297,6 +4297,51 @@ progress per track (D86) is not part of this milestone and waits for the track s
 - [x] `ARCHITECTURE.md` §8 and the vocabulary table, and the M16 capability ledger, say which
       capabilities left the page.
 - [x] Typecheck, 2,107 unit and corpus tests, and the full browser suite (1,175 passed, 59 skipped) pass.
+
+
+## 🏁 Milestone M40: Removed features gone from the code, and the test suite cut to what guards a reader — SHIPPED, MERGED AS PR #PRNUM
+
+Branch `chore/remove-deprecated`, from `main` at `bc39c96`. (M39, the round-2 design choices, is
+recorded on branch `design/round-2026-11`, where it is still in progress.) The author, 2026-11-05,
+after exporting their progress and finding their old role path in the file: *"All those features
+should be gone, even the docs under docs/ ... also remove the unnecessary tests ... Do not overkill
+or overengineer."* Then: *"for tests, I mean overall tests ... keep the necessary tests and remove
+the ones that are not that important."* **D88** records the choice.
+
+### Deliverables
+
+- [x] **The account layer is removed**: `/sign-in/`, `/sign-in/alias/`, `/join/`, `/team/`,
+      `/team/assignments/`, `/auth/callback/`, the Supabase client and sync, `AccountSync`,
+      `supabase/`, `scripts/check-supabase.mjs`, `scripts/test-rls.mjs`, `.env.local.example`, the
+      `@supabase/supabase-js` dependency, the deploy's account variables and its sign-in page check,
+      and the three files in `docs/`. `SECURITY.md` is rewritten to the one risk left.
+- [x] **The role paths, the record of work and its specimen are removed**, with `/legend/specimen/`
+      and M14's three forwards (`/dashboard/`, `/path/`, `/report/`).
+- [x] **The record no longer holds** the name, mark, mark seed, role, a module's quiz answer, opened
+      sources or linked repositories, `prefs.aliasNamedFor` or `meta.lastClaim`. Schema version 1 is
+      unchanged: a record stored before this parses, and the old fields drop out on the next write
+      and from every export. Import reads the exported `.json` only.
+- [x] **`/legend/`** keeps the keyboard map, gains the single-key shortcut switch (WCAG 2.2 SC 2.1.4;
+      it had no home since M38 removed the keyboard row), and keeps where the progress is kept, the
+      mark and the colophon. The diagram key, the specimen and the "what this site does not have"
+      list went.
+- [x] **The catalog's per-module squares** are completion and checklist; quiz and sources could
+      never fill since M25.
+- [x] **Dead CSS removed** from `progress.css`, `completion.css` and `derived.css`, and the
+      generator's step group from `lokum-modules.css` (regenerated).
+- [x] **Tests**: 2,107 → 1,144 unit tests; 1,234 → 461 browser cases (the 1024px project gone, the
+      fidelity per-fact mutation loop gone, two per-module loops sampled). CI builds once, with the
+      base path, and runs four Playwright workers.
+
+### Acceptance criteria
+
+- [x] A record carrying the removed fields loses them on read, proven by a test seen failing
+      when the validator keeps `identity`.
+- [x] No source file links to a removed route; no source file is left that nothing imports.
+- [x] Typecheck clean; 1,144 unit tests pass; the base-path build passes the link gate; the browser
+      suite passes (451 passed, 10 skipped).
+- [x] Root `CLAUDE.md`, `ARCHITECTURE.md` (§1, rule 3, rule 6 struck, §5, §6 struck, routes, §8
+      struck, §10 to §12), `tests/README.md` and D88 say what went.
 
 ---
 

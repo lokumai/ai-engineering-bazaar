@@ -1,9 +1,7 @@
 # Working agreement
 
-Rules for any AI assistant working in this repo. **This file is live**, see
-[Keeping this file current](#keeping-this-file-current) at the bottom.
-
-`AGENTS.md` is an identical copy. Change one, change both.
+Rules for any AI assistant working on the course under `mini-courses/`. `AGENTS.md` is an identical
+copy: change one, change both. This file is live, see [Keeping this file current](#keeping-this-file-current).
 
 ## Read first
 
@@ -15,104 +13,54 @@ every module links out · only what matters.
 ## How we work together
 
 **The author writes, you shape.** Amirkia supplies the explanation, the structure and the
-references. Whatever arrives in chat is **raw material, not copy**, rough notes written between
-the two of you. Turn it into something written for the reader; do not paste it in as it stands.
+references. Whatever arrives in chat is raw material, not copy: turn it into something written for
+the reader, and keep the author's arguments and rhetorical turns.
 
-**Never invent content to fill a gap.** If the draft is missing a fact, a number or a link, mark
-it and ask:
+**Never invent content to fill a gap.** If the draft is missing a fact, a number or a link, mark it
+and ask: `<!-- NEED: the figure for X -->`.
 
-```markdown
-<!-- NEED: the figure for X -->
-```
+**Deliver the literal ask, nothing more**, but correct what is wrong: a broken heading hierarchy,
+arithmetic that does not add up, a dead cross-reference, a diagram that misrepresents the mechanism,
+a caption that does not match its image. Fix it and say what you changed. Add nothing that was not
+asked.
 
-**Deliver the literal ask, nothing more.** No unrequested sections, notes, labels or defensive
-caveats. If something genuinely seems missing, say so in one line *outside* the deliverable.
+**Write to Amirkia in plain technical English.** Technical terms are welcome; a metaphor standing in
+for the mechanism is not. Define a term in the sentence that uses it.
 
-**But do correct what is wrong.** Broken heading hierarchies, arithmetic that does not add up,
-dead cross-references, a diagram that misrepresents the mechanism, an image whose caption does
-not match what it shows: fix these and say plainly what you changed. Verify numbers in the
-draft rather than passing them through. The line is: **correct what is wrong, add nothing that
-was not asked.**
+**Never delete a file the author works in.** Copying content out of a file is not permission to
+remove it, and approval of a long plan is not approval of every line in it. `scratchpad/` is his to
+think in; nothing in it is ours to tidy.
 
-**Write to Amirkia in plain technical English.** Technical terms are welcome, he is an AI
-engineer. A metaphor standing in for the mechanism is not: "the feature lost its safety net" was
-asked to be rewritten as "those features still work, but if someone breaks them later nothing will
-notice automatically". Where a term has to stay, define it in the same sentence. This is about the
-conversation, not only the modules, where the manifest already demands the same thing.
-
-**Never delete a file the author works in.** `scratchpad/topics.txt` was deleted because a plan
-step said so, after he had agreed only that its *notes* should be copied into `curriculum.yaml`.
-Copying content out of a file is not permission to remove it, and approval of a long plan is not
-approval of every line in it. If a step removes something the author touches, ask about that step
-on its own, in one sentence, at the moment it would happen. `scratchpad/` is his to think in and
-nothing in it is ours to tidy.
-
-**Stage explicit paths, never a directory.** `git add mini-courses/2_intermediate` sweeps in
-whatever the author has dropped there and not yet committed. That happened: nine in-progress images
-went into a commit and onto the remote because a directory was staged instead of the files that had
-actually changed. Name the files, and read `git status` before every commit.
-
-**Do not commit or push unless asked.**
+**Stage explicit paths, never a directory**, and read `git status` before every commit: the author
+drops in-progress images into the category folders. **Do not commit or push unless asked.**
 
 ## Writing rules
 
-- **Public files are written for readers**, not for the two of you. No mention of drafts,
-  workflow, AI assistance, or internal directory paths.
+- **Public files are written for readers.** No mention of drafts, workflow, AI assistance or
+  internal paths.
 - **First person:** "me" for the author, "we" for the project. Never a bare "I".
-- **No em dashes.** Never use `—` as punctuation. Use a colon, a comma, parentheses, or split
-  the sentence in two. This applies to English, Turkish and Persian, to captions and list items, and to
-  the working files as well as the modules.
-- **Plain English.** Short sentences, common words, readable by a non-native speaker. Not a
-  textbook, so no Roman-numeral outlines or lettered subsections.
-- **ASD-STE-like English.** The author, 2026-10-12: "an English similar to ASD-STE English", so
-  that "any human can easily read and understand, especially those that are non-native". One idea
-  per sentence, about 20 words or fewer, active voice, common words, one term for one thing, no
-  idioms and no buzzwords. Technical terms stay, because they are the subject. So do the author's
-  voice and rhetorical turns: simplifying is not flattening, and the revised text is usually
-  longer. **This is for the English only.** A translation does not copy its short sentences:
-  see [Translating a module](#translating-a-module).
-- **Headings are short, familiar, and in title case.** The same day the author renamed the headings
-  of fifteen modules, "Embeddings: numbers that carry meaning" to "Vector Embeddings" and "Skills,
-  which the agent picks up when it needs them" to "Skills". A heading names the topic the way an
-  engineer would search for it: no "X, which does Y" and no "X: a clause explaining it".
-  Capitalise every word except the small ones (a, an, the, and, or, but, of, to, in, into, on,
-  at, for, with, from, as, by, vs) and the ones the author named (it, is, are, be, don't). The
-  first word is always capitalised, and so is the last unless it is one the author named, so
-  "What a Harness is Made Of" but "What Loop Engineering is". Two headings keep their exact text because the app matches them:
-  `## Summary` / `## Özet` and `## Where this fits in the series` / `## Bu serinin neresindeyiz`
-  (the Persian spellings are under [Translating a module](#persian)).
-- **Every sentence is written for a beginner, in every language.** The author, 2026-10-12: *"we hate
-  very short and dense sentences. we prefer sentences that are simpler to understand by human even
-  if it costs the sentence to include no buzzword, no jargon and become longer ... does not try to
-  say many things with a few words, but ... tries to be clear, as if everyone is beginner here."*
-  This holds for English, Turkish and Persian alike. A short sentence that packs several ideas or a
-  run of jargon into a few words is the failure; the fix is a longer, plainer sentence.
-- **Never dense. Being concise is not a goal here.** Plain English and compressed English are not
-  the same thing, and compression is the failure mode this project keeps hitting. Amirkia, after
-  reading modules 10 to 12: "Make sure you did not make the language too dense solely to make it
-  short or concise. We do not like dense language at all." Five shapes to watch for, all of them
-  found in those three modules:
+- **No em dashes**, in any language, in modules, captions and working files alike. Use a colon, a
+  comma, parentheses, or two sentences.
+- **ASD-STE-like English**: one idea per sentence, about 20 words or fewer, active voice, common
+  words, one term for one thing, no idioms or buzzwords. Technical terms stay. This is for the English
+  only; a translation does not copy its short sentences.
+- **Never dense. Being concise is not a goal.** Every sentence is for a beginner, in every language:
+  a short sentence that packs several ideas or a run of jargon is the failure, and the fix is a
+  longer, plainer sentence. The shapes to watch for: a clause folded back on itself, a fragment used
+  as a sentence ("Which means…"), stacked adjectives, one sentence carrying a list, and a run of
+  one-clause sentences. Read the paragraph aloud: would someone explaining it say it that way?
+  Loosening a module makes it longer, and that is correct.
+- **The test is depth, not word count.** A module may cover a lot as long as no single part dives
+  into detail. Do not trim a module for its length.
+- **Headings are short, familiar, and in title case**, naming the topic the way an engineer would
+  search for it: no "X, which does Y". Capitalise every word except a, an, the, and, or, but, of, to,
+  in, into, on, at, for, with, from, as, by, vs, and the author's it, is, are, be, don't. The first
+  word is always capitalised, and the last unless it is one of the author's ("What Loop Engineering
+  is"). Two headings keep their exact text because the app matches them: `## Summary` / `## Özet`
+  and `## Where this fits in the series` / `## Bu serinin neresindeyiz` (Persian below).
+- **Every module ends with links out** and a References list built only from links used in the text.
 
-  | Shape | Example that had to be rewritten |
-  | --- | --- |
-  | A clause folded back on itself | "a request with a good success rate, and a good success rate is not what you want from that particular sentence" |
-  | A fragment used as a sentence | "Which means…", "Which is a sensor pointed at the guides.", "Concretely, then." |
-  | Stacked adjectives | "the stable, high-level, repository-wide stuff" |
-  | One sentence carrying a list | five items through four semicolons, ninety words. Make it a list. |
-  | A run of one-clause sentences | ten in a row, one per extension point. Reads like notes, not a person. Summaries attract this. |
-
-  The check is not the word count. Read the paragraph aloud and ask whether somebody explaining
-  this out loud would say it that way. **Loosening a module makes it longer, and that is the
-  correct outcome**: all six files grew in that pass. His own drafts are unhurried, use whole
-  sentences, and repeat a point where repeating it helps.
-- **The test is depth, not word count.** Every part must stay simple and high-level; a module
-  that covers a lot is fine as long as no single part dives into detail. Do not trim a module,
-  or flag it as too long, just because the total word count is above some number. Going deep
-  is what breaks the rule, not going wide.
-- **Every module ends with links out** and a short References list built from the links actually
-  used in the text.
-- **Keep the author's rhetorical turns.** Trim repetition and self-praise; keep the arguments and
-  the punchy phrasings.
+## Images and captions
 
 **Images use markdown, never raw HTML.** The image line, two trailing spaces, then the caption in
 italics on the next line:
@@ -122,275 +70,115 @@ italics on the next line:
 *One or two lines saying something the picture cannot say on its own.*
 ```
 
-This matters more than it looks. The app turns that into a real `<figure>`: it numbers it
-(`FIG. 4.2`), uses the alt text as the caption label, puts the italic line in a `<p
-class="bz-caption-note">`, applies a width class, and rewrites the path to the copied
-`/course-images/` location. **Raw HTML is stripped out of the markdown entirely**, so an
-`<img>` tag written by hand does not render on the published site at all. It was tried, and eight
-figures silently disappeared from the site while still showing on GitHub.
+The app turns that into a numbered figure, prints the alt text as the figure's label (so give it a
+short capitalised title), and rewrites the path. Raw HTML is stripped from the markdown, so a
+hand-written `<img>` does not render on the site at all.
 
-So the alt text is not just accessibility text, it is the printed figure label: give it a short
-title, capitalised.
-
-**A caption note only attaches to an image, never to a mermaid diagram.** Measured in the export
-2026-09-03. For a markdown image the italic line becomes the figure's `<p class="bz-caption-note">`.
-For a mermaid fence the build writes the `<figcaption>` label from the nearest heading instead
-(`FIG. 29.1`, then that heading), and an italic line after the closing fence stays an ordinary
-`<p><em>` paragraph. That is still worth writing, because it reads as a caption to anyone on the page or on
-GitHub and it is where the punchline a mermaid node cannot hold belongs. Just do not count on it
-showing up as a caption, and do not count `bz-caption-note` to check a diagram has one.
-
+A caption note attaches to an image only. A mermaid fence takes its label from the nearest heading,
+and an italic line after it stays an ordinary paragraph. Still write that line: it is where the
+punchline a mermaid node cannot hold belongs.
 
 ## How a module gets written
 
-Practices settled while writing the first three Fundamentals modules. They are not style garnish, they are what makes a
-module land.
-
-**Open by connecting, then name the one idea.** The first lines say what the previous module
-established and what this one adds. No greetings, no "welcome", no "in this module we will".
-
-**Figures carry the argument, they never decorate.** Put a figure where the reader needs it, not
-at the end of the section. If a figure is good enough to change what the section should say, then
-restructure the section: the training-network figure became the opening of Training LLMs because it
-answers "what does training change", which the draft never asked. The caption says something the
-picture cannot say for itself: the mechanism, the one thing to notice, or the consequence. A
-caption that restates the alt text is wasted.
-
-**Answer the misconception the material just invited.** Immediately, in one or two sentences. The
-three-dimensional embedding picture gets "real embeddings have hundreds of dimensions". PEFT gets
-"do not confuse this with quantization". A figure labelled "unsupervised" gets the note that the
-precise term is self-supervised. Silence here is how a simple explanation becomes a wrong one.
-
-**One analogy per hard idea, then call it back.** The context window is a desktop and the weights
-are a library: introduced once, used again in the fine-tuning comparison, and again in the summary.
-Repeating one analogy builds a reader's model. Stacking three analogies destroys it.
-
-**Defer depth with a real link, never with a vague promise.** Introduce a term plainly and point at
-the module that owns it. Advanced asides belong in a `> **NOTE...**` blockquote so the main line
-stays simple for the reader who does not want the detour.
-
-**Mermaid, never ASCII art.** And remember a mermaid node cannot hold a punchline, so whatever the
-old ASCII block said in its last line becomes a sentence after the diagram.
-
-**One code sample, at the rawest useful level.** Show the mechanic once and list the tools that
-wrap it, ordered by how much they do for you. Four samples of the same idea in four libraries is
-padding. Every fence gets a language tag, which the build requires.
-
-**Verify, do not pass through.** Check the arithmetic in the draft: a 32B model at 16-bit is about
-64 GB, and the draft saying 44 GB had to be fixed. Fetch every external link and use its real
-title: two guessed titles this session were both wrong. On a project whose whole premise is that
-machine-written content on these topics is unreliable, a wrong number or a mislabelled source is
-the one unforgivable defect.
-
-**Make an earlier module pay off in a later one.** RAG & Embeddings' retrieval pipeline reappears
-in Tool Calling as a tool, with the note that letting the model decide *when* to retrieve is most of
-what separates a RAG app from an agent. LLM Fundamentals' `read_file(path)` tool schema reappears in
-Tool Calling's system prompt. These callbacks are what make the set a series rather than seven articles, and they
-cost one sentence each.
-
-**Cut the filler.** No greetings, no "Keep going 🚀", no "Quiz Yourself", no telling the reader how
-valuable the material is.
-
-**End with links out**, and build the References list only from links actually used in the text,
-each with a few words on why it is worth opening.
-
-**API examples use the OpenAI and OpenRouter-compatible shape**, because LLM Fundamentals points readers at
-OpenRouter and they could actually run what they read. Add one line noting field names differ
-slightly between providers while the shape does not.
+- **Open by connecting, then name the one idea.** What the previous module established and what this
+  one adds. No greetings, no "in this module we will".
+- **Figures carry the argument, they never decorate.** Put a figure where the reader needs it. If a
+  figure changes what the section should say, restructure the section. A caption says the mechanism,
+  the one thing to notice, or the consequence, never the alt text again.
+- **Answer the misconception the material just invited**, in one or two sentences (real embeddings
+  have hundreds of dimensions; PEFT is not quantization).
+- **One analogy per hard idea, then call it back** later in the module. Never stack three.
+- **Defer depth with a real link** to the module that owns it. Advanced asides go in a
+  `> **NOTE...**` blockquote.
+- **Mermaid, never ASCII art.**
+- **One code sample, at the rawest useful level**, then the tools that wrap it. Every fence gets a
+  language tag; the build requires it. API examples use the OpenAI / OpenRouter-compatible shape,
+  with one line saying field names differ slightly between providers.
+- **Verify, do not pass through.** Check the arithmetic. Fetch every external link and use its real
+  title. A wrong number or a mislabelled source is the one unforgivable defect here.
+- **Make an earlier module pay off in a later one**, in a sentence: that is what makes a series.
+- **Cut the filler**: no "Keep going 🚀", no "Quiz Yourself", no telling the reader how valuable it is.
 
 ## Translating a module
 
-**The author, 2026-10-12: "WE CARE MORE ABOUT READABILITY AND CLARITY IN OTHER LANGUAGES THAN TO
-LITERAL TRANSLATION AND TRUTHFULNESS."** That is the rule every other line here serves. A Turkish or
-Persian module reads the way people of that language talk and write, never like English translated
-word by word. The first Persian pass was translated sentence by sentence and he rejected all of it:
-*"like a literal translation which I hate ... NEVER USE DENSE AND VERY SHORT SENTENCES"*. Measured, it
-averaged 11 words a sentence, with 29% of sentences at 7 words or fewer, because it copied the
-English's ASD-STE sentences one for one.
+**The author: "WE CARE MORE ABOUT READABILITY AND CLARITY IN OTHER LANGUAGES THAN TO LITERAL
+TRANSLATION AND TRUTHFULNESS."** English is written and finished first; each translation is written
+once, from the final English.
 
-So **translate the module, not the sentences.** Keep what the site and the reader depend on: the
-sections and their order, every figure, code block, table, link, fact and number. Everything below
-that is free: merge sentences, reorder them, add the connectives a native speaker would use, drop a
-phrase that only works in English, use a native idiom for an English one. Sentences flow, joined
-with `ve`, `ama`, `çünkü`, `yani` or `و`، `ولی`، `چون`، `یعنی`; a run of short sentences is the failure,
-and so is the opposite, a dense line packed with clauses.
+**Translate the module, not the sentences.** Keep the sections and their order, every figure, code
+block, table, link, fact and number. Everything below that is free: merge and reorder sentences, add
+the connectives a native speaker uses, replace an English idiom with its meaning or a native one. A
+run of short sentences is the failure, and so is a dense line packed with clauses.
 
-Write a translation only once the English is final, then:
-
-- **Keep the structure** and check it: heading counts, figures, mermaid blocks, code blocks. Those
-  counts prove nothing was dropped. They prove nothing about how it reads, so read it too.
-- **Then read the opening and the closing of both.** Matching counts prove nothing was dropped,
-  not that the right thing is there. `harness_engineering_tr.md` shipped with Loop Engineering's
-  opening paragraphs, so the module introduced itself as the wrong module while every count
-  matched perfectly. Nothing automated can catch that; two minutes of reading can.
-- **Turkish is natural, professional Turkish**, the register of a good Turkish tech blog or a
-  senior engineer talking to a teammate, with the reader as `sen`. Not stiff, not slang.
-- **Technical vocabulary stays English**, inflected with Turkish suffixes: `context'in`,
-  `parameter'lar`, `weight'ler`, `chunk'ları`. Words Turks already say in Turkish stay Turkish
-  (`model`, `veri`, `kod`, `dosya`).
+- **Check the structure, then read it.** Matching heading, figure and code counts prove nothing was
+  dropped, not that the right thing is there: read the opening and the closing of both files.
+- **Turkish** is natural, professional Turkish, the register of a good Turkish tech blog, with the
+  reader as `sen`. Technical vocabulary stays English with Turkish suffixes (`context'in`,
+  `weight'ler`); words Turks say in Turkish stay Turkish (`model`, `veri`, `kod`).
 - **Translate a teaching example, keep a data example.** "The capital of Turkey" becomes
-  "Türkiye'nin başkenti", because that example only works if the reader completes the sentence in
-  their own head. The article-and-summary pairs stay in English, because they are a record of what
-  a model was actually shown and produced.
-- Turkish runs roughly 20% shorter than the English. That is the language, not missing content.
+  "Türkiye'nin başkenti"; a record of what a model was shown stays in English.
 
 ### Persian
 
-A written module may also have a Persian sibling, `<name>_fa.md`. Unlike Turkish it is optional: a
-planned module has none, and none is created as a stub. Everything above holds for it, plus:
+A written module may have a Persian sibling, `<name>_fa.md`. Unlike Turkish it is optional, and a
+planned module gets none. Everything above holds, plus:
 
-- **Say the meaning, never the phrase.** The second Persian pass had the right register and still
-  read as English: it carried English expressions over word by word. The author's example, from
-  Prompt Engineering's two drivers with "the same engine, the same horsepower, the same grip": *"no
-  need to convert «گرفتنش یکیه» for 'the same grip'. It is wrong. No one in Persian uses that."* So
-  read the English paragraph, understand its point, and write how an Iranian engineer would make
-  that point, with expressions Persians actually use. An English idiom ("under the hood", "pays
-  off", "the heavy lifting") becomes its meaning or a real Persian idiom; an English sentence
-  skeleton ("Here is the thing.", "That is the whole point.") becomes a Persian sentence built
-  around its own verb. A calque is grammatical and still wrong.
+- **Say the meaning, never the phrase.** A calque is grammatical and still wrong: read the English
+  paragraph, understand its point, and write how an Iranian engineer would make it.
+- **Everyday spoken Persian, written down**: colloquial verbs (`می‌شه`، `می‌تونی`)، `یه`، `رو`، and the
+  reader as `تو`. Never formal book Persian.
+- **Technical vocabulary stays English, in Latin letters**; a Persian suffix joins it with a
+  zero-width non-joiner (`Agent‌ها`). A Persian word for a technical concept takes the English in
+  parentheses the first time: `استدلال (reasoning)`.
+- **No frontmatter.** **ASCII digits**, Persian punctuation (`،` `؛` `؟`).
+- **Four strings the site matches**, spelled exactly: `## کجای این مجموعه هستیم`, `## خلاصه`,
+  `## منابع`, and `**بررسی سریع**:` at the start of the quick check line. The callout is `**نکته:**`.
+- **Links** to a written module point at its `_fa.md` with its Persian title; a link to a planned
+  module stays as in the English.
+- **Code blocks and the series map's mermaid stay byte-identical**; other diagrams translate labels
+  only, and `node scripts/check-mermaid.mjs <file>_fa.md` must pass. Alt text is translated.
 
-- **No frontmatter.** The file opens on its `# ` title, as a `_tr.md` does.
-- **Technical vocabulary stays English, in Latin letters**, written as the English writes it:
-  `prompt`, `token`, `context window`, `Agent`, `SQL`, `database`. A Persian suffix joins it with a
-  zero-width non-joiner: `Agent‌ها`, `prompt‌های`. Where a Persian word stands for a technical
-  concept, the English follows in parentheses the first time: `استدلال (reasoning)`.
-- **Everyday spoken Persian, written down**, the way Iranian developers write in blog posts and
-  Telegram channels: colloquial verbs (`می‌شه`، `می‌تونی`، `داره`)، `یه` for "a", `رو` after an
-  object, and the reader as `تو`. Never formal book Persian. Words Persians already say in Persian
-  stay Persian (`مدل`، `داده`، `کد`، `فایل`).
-- **ASCII digits** (`2026`, `52.8%`), never Persian ones, so numbers match the English and the code.
-  Persian punctuation in Persian sentences: `،` `؛` `؟`.
-- **Four strings the site matches by their words**, so they are spelled exactly:
-  `## کجای این مجموعه هستیم` (the series map), `## خلاصه`, `## منابع`, and
-  `**بررسی سریع**:` at the start of the quick check line. The callout label is `**نکته:**`.
-- **Links**: a link to a written module points at its `_fa.md` with that module's Persian title; a
-  link to a planned module stays exactly as in the English, target and text.
-- **Code blocks and the series map's mermaid stay byte-identical.** Other diagrams translate their
-  labels only, never a node id or an arrow, and `node scripts/check-mermaid.mjs <file>_fa.md` must
-  pass. Image alt text is translated, because the site prints it as the figure's label.
-- The site renders it under `/fa/` right to left. The objectives card stays English, as on a
-  Turkish page.
+## Visuals
 
-## Two files that move together
+Rule 5 of the manifest: a module without a picture is usually unfinished. In order of cost:
 
-`README.md` and `mini-courses/index.md` are the same page for two audiences. **Change one, update
-the other in the same commit.** The transform from README to index:
+1. **Reuse a figure that already exists**; a figure the reader has seen does double duty.
+2. **Draw one with the project templates** (below). Generated images go to the author to run.
+3. **Mermaid**, picking the type from the shape of the idea: `flowchart` for a flow,
+   `sequenceDiagram` for actors taking turns (most of Fundamentals), `mindmap` for a breakdown,
+   `stateDiagram-v2`, `pie`, `quadrantChart`, `erDiagram`, `xychart-beta`. A story over time is a
+   `graph TD` with one node per era, never `timeline` (it ignores the site colours and clips).
+   `mindmap` keeps its own bright colours on purpose. **No colour literals in mermaid**: only the
+   nine hexes the pipeline maps are allowed, so use none.
+4. **Search for one**: an image search, an article worth linking, a YouTube video or Short (fetch its
+   real title), or a meme that states an argument the prose then unpacks.
 
-- drop the "Read online" line, since the reader is already there
-- strip the `mini-courses/` prefix from link paths, since `index.md` lives inside it
-- keep the `MANIFEST.md` and `ROADMAP.md` links relative in both, since both files sit inside
-  `mini-courses/`
-- **link nothing outside `mini-courses/` from `index.md`.** An internal `.md` link the corpus
-  cannot resolve fails the build, so point at GitHub or name the file in prose instead
-- keep the Contributing section at the end of `index.md`
+Whatever the source, the caption says something the picture cannot, and check what the picture
+actually shows before writing about it.
 
-**`index.md` is no longer the published home page.** It used to be, and this rule used to say so.
-The app's §15 work replaced `/` with a home screen built from components, and `lib/content/` now
-reads `index.md` only as a link target: `../index.md` from inside a category resolves to
-`/sheets/`, the catalog. So `index.md` is a page for people browsing `mini-courses/` on GitHub, nothing more.
-Keeping it in step with `README.md` is still worth doing for that reader, but do not expect to find
-its prose in the export, and do not go looking for a bug when you cannot.
+### Figure formats
 
-**Both files describe the course, not the machinery.** The technical detail belongs in
-`kia-context/specs/ARCHITECTURE.md`, which covers the repository, the build and the application. It
-used to be a file at the repository root; it was folded into the context harness on 2026-09-08.
-`README.md` was trimmed from 2,704 words to about 1,000 on that basis: what was cut had to land
-somewhere first, and the eight notable test checks moved into `tests/README.md` rather than being
-deleted.
+Decided 2026-11-05 (D87). **A module must read fully in a plain markdown viewer**, so every figure is
+a markdown image or a Mermaid fence. No MDX, no raw HTML.
 
-## Language
-
-Modules are written and finalized in **English first**. The Turkish `*_tr.md` files, and the
-Persian `*_fa.md` files of the written modules, are translated only once the English is final, so
-each module is translated once per language.
-
-## Where a visual comes from
-
-Rule 5 of the manifest says pictures do a lot of the work, so a module without one is usually
-unfinished. There are four places to get one, roughly in order of how much work they cost.
-
-**1. Reuse a figure that already exists.** The cheapest and often the best. `agent-context.jpeg` was
-drawn for Tool Calling and reused in AI Agents for one pass of the loop; `llm-context.jpeg` was
-drawn for LLM Fundamentals and reused in Memory as the message stack. A figure the reader has seen before does
-double duty: it teaches the new point and reminds them of the old one.
-
-**2. Draw one with the project templates.** For anything about context, messages, tools or agents,
-use the three-column system: `assets/empty-context-template.jpeg` and
-`assets/context-style-template.jpeg`, with ready-made prompts in
-`mini-courses/scratchpad/diagrams/`. Generated images go to the author to run, not to a tool here.
-
-**3. Mermaid, and not always a flowchart.** No generation step, renders on the site and on GitHub,
-and free to edit later. Default to it over a generated image whenever the content has a shape
-mermaid already knows.
-
-**Pick the type from the shape of the idea, not out of habit.** The corpus reaches for
-`graph LR` almost every time, and several of those would read better as something else. Mermaid
-11.17 is what ships, so all of these are available:
-
-| The idea is | Use |
+| Use | Format |
 | --- | --- |
-| A flow, a branch, a pipeline | `flowchart` / `graph` |
-| Actors exchanging messages over time | `sequenceDiagram` |
-| A breakdown of a topic into parts | `mindmap` |
-| How a topic evolved, what replaced what | `graph TD`, one node per era (see the warning below) |
-| Things that are in one state until an event moves them | `stateDiagram-v2` |
-| Proportions of a whole | `pie` |
-| Options compared on two axes | `quadrantChart` |
-| Entities and how they relate | `erDiagram` |
-| A measurement against another | `xychart-beta` |
+| Structure: flows, parts, sequences, states | Mermaid |
+| An illustration, a drawn scene, an annotated picture | SVG drawn by an agent, by hand or exported from HTML/CSS |
+| A photograph, a screenshot, a found image | PNG or JPEG |
+| A short loop that needs motion | GIF or animated WebP, kept short |
 
-**`sequenceDiagram`** matters especially here: it is the honest shape for anything where a user, a
-host and a model take turns, which is most of Fundamentals.
+- **Keep the source** of an agent-drawn figure beside it (the SVG, or the HTML/CSS it came from).
+- **One file per language when a figure carries words**: `name.svg`, `name_tr.svg`, `name_fa.svg`.
+- **Motion lives inside the file**, and a frozen frame still makes the point.
+- **Interactive is only an upgrade**: a sibling the site may swap in (`name.motion.html`); the
+  markdown always references the plain image.
 
-**Two types colour themselves, and the two were judged differently.** `timeline` and `mindmap` both
-paint their own blocks and branches in bright inline colours (orange, magenta, yellow) that the
-site's design tokens never reach, so they stay bright in dark mode.
+### The diagram system
 
-- **`mindmap` is allowed.** It was tried in Context Engineering, and Amirkia looked at it and liked the
-  colours: "no worries if it ignores site design". So a mindmap keeps its own palette on purpose.
-- **`timeline` is not.** Same colour problem, plus it grows wide enough to clip its last column.
-  Tried in Prompt Engineering and replaced. A story over time reads better as a `graph TD` with one node per
-  era and the events inside the node, which themes correctly and reads top to bottom as
-  chronological. The manifest-rule-1 point still stands: a model cannot tell a reader when an idea
-  appeared or what it replaced, so the *content* of that figure is one only a human can supply.
-
-Either way, look at a self-colouring diagram in the browser, in both themes, before trusting it.
-
-Anything ending in `-beta` works but its syntax can still move, so prefer a stable type where one
-fits.
-
-**No colour literals in mermaid.** A test asserts no `#hex` survives into a rendered diagram. The
-pipeline rewrites `style NODE fill:#HEX` into themed classes, but only for nine specific hexes it
-knows (`#90EE90`, `#FFFF00`, `#FFB6C1` and six more). Any other colour fails the build. The safe
-move is to use no colour at all and let structure carry the meaning.
-
-**4. Search for one.** Entirely legitimate and often faster than drawing:
-
-- **Google Images** or a web search for an existing diagram of a standard idea. The king-and-queen
-  embedding picture and the pre-training-versus-fine-tuning diagram both came this way.
-- **An article** with a good figure, which also gives the module a reference worth linking.
-- **YouTube**, including **Shorts**, for a video that explains something better than prose will.
-  Always fetch the real title rather than guessing it.
-- **Memes and brain rot.** Not decoration, and not a joke at the reader's expense: a good meme
-  compresses an argument. AI Agents carries three, and each one states a different claim the prose
-  then unpacks. If a meme is doing that work, it earns its place.
-
-**Whatever the source, the caption still has to say something the picture cannot.** A found image
-with a caption that only names it is worse than no image. And check what the picture actually shows
-before writing about it: a figure labelled "unsupervised" needed a note that the precise term is
-self-supervised, and three memes in AI Agents had captions that threw their arguments away.
-
-## Diagrams
-
-One visual system for the whole project. Templates:
-
-- `assets/empty-context-template.jpeg`: the three-column layout, USER | CONTEXT | LLM. Ships
-  with **no arrows**; the prompt draws them.
-- `assets/context-style-template.jpeg`: the component style sheet.
-
-Ready-made prompts: `mini-courses/scratchpad/diagrams/three-column-template-prompts.md`.
-
-**Palette (do not invent colors):**
+Templates: `assets/empty-context-template.jpeg` (the three columns USER | CONTEXT | LLM, with no
+arrows) and `assets/context-style-template.jpeg` (the component style). Ready-made prompts:
+`mini-courses/scratchpad/diagrams/three-column-template-prompts.md`.
 
 | Box | Hex | Outline |
 | --- | --- | --- |
@@ -404,210 +192,112 @@ Ready-made prompts: `mini-courses/scratchpad/diagrams/three-column-template-prom
 | LLM | `#D4691E` orange | solid |
 | User | `#6E6E6E` grey | solid |
 
-Both AI variants are green, same author and same hue, separated by dash and stroke weight. Only
-message boxes get the light hand-scribbled fill; the User box, the Context container and the LLM
-box stay outline only.
+Do not invent colours. Only message boxes get the light scribbled fill. **The arrow rule:** an arrow
+means *someone wrote this message*, from the USER or LLM box to one message box; the LLM emits the
+Tool Call, the host produces the Tool Result, and nothing is drawn for the context being sent.
 
-**The arrow rule:** an arrow means *someone wrote this message*. It starts at the USER box or the
-LLM box and ends on one specific message box. The LLM emits the Tool Call; the host machine
-produces the Tool Result. There is **no arrow for the context being sent to the model**, because both
-sides can see the whole board, so nothing moves.
+**Image-gen prompts** refer to the pasted templates by what they show, never by number, and say what
+to draw, never what not to draw. Finished images go in `mini-courses/<category>/images/`; `assets/`
+never publishes.
 
-**Writing image-gen prompts:**
+## The course shape: `curriculum.yaml`
 
-- The author pastes the template images. Refer to them by what they show, such as "the attached empty
-  three-column diagram" or "the attached style sheet". Never use numbered references.
-- Say what to draw. Do not list what not to draw; the model draws what you say.
-- Finished images go in `mini-courses/<category>/images/`. `assets/` is outside the corpus and
-  never publishes.
+**`mini-courses/curriculum.yaml` is the one place the course shape lives.** Category and module order
+are file order, and a module's number is its position, computed by the app. Reordering is moving a
+line.
 
-## Starting a new module
+- A module is listed by `name` (its file stem and URL), with a required `title`, a `status` (default
+  `draft`), `minutes`, and `needs` naming prerequisites by name.
+- **A module file's frontmatter is `summary` and `objectives` only**; a draft has none. Adding
+  `module:` or `status:` back fails the build.
+- **Filenames carry no number**, the H1 is the title alone, and prose names another module by title,
+  never by number: `[Context Engineering](context_engineering.md)`.
+- The app derives the sequence, so no `*Category: … Module 11*` dek, no Previous/Next footers and no
+  `## Modules` lists in category READMEs.
+- The build validates the config by name: unique names, prerequisites that sit earlier, minutes above
+  zero for a `ready` module, a `_tr.md` for every module, an `_fa.md` only for a listed module, and
+  **the files on disk and the names listed for a category must be the same set, both ways**.
 
-Four things, and the third is the one that is easy to forget.
-
-1. Copy `mini-courses/_module_template.md` to `<category>/<name>.md`, where `<name>` is lowercase
-   with underscores and no number.
-2. Create `<name>_tr.md` beside it, even as a stub. A module with no Turkish sibling fails the
-   build.
-3. **Add one line to `curriculum.yaml`**, in the position the module should hold. That line is what
-   gives it a number, a title, a status and a place in the sequence; without it the file is one
-   nobody listed, and the build says so by name.
-4. **Once it is written, give it a quick quiz**: `<name>.quiz.yaml` beside it (next section).
-
-The template carries the two frontmatter fields a file still declares (`summary` and `objectives`)
-and an annotated body showing every structure the renderer understands: figures, mermaid, tables,
-tagged code, cross-references, the optional Quick Check and checklist, and the sequence rail the app
-strips. It is never loaded as a module itself, because the loader reads the config rather than the
-directory.
-
-## Checks before you call something done
-
-```bash
-npm test          # vitest, includes the content and internal-link checks
-npm run build     # the Next.js build that ships
-```
-
-CI runs `npm run typecheck`, `npm test`, `npm run build` and the Playwright suite. The content
-checks live in `src/lib/content/`, so a broken cross-reference in a module fails `npm test`.
-
-**A green suite is not proof the page is right.** When you change *how* content is authored, rather
-than what it says, look at the static export:
-
-```bash
-grep -rl "my-new-figure" out/courses/    # is it actually on a page?
-```
-
-That is how the missing-images defect was caught, and only after typecheck, 1948 tests and the
-build had all passed. Tests check what someone thought to check; the export is what ships.
-
-**Never write a test that states a fact about the content.** The suite used to pin word counts,
-module numbers, checklist totals and quoted prose, so ordinary edits turned the build red and
-taught nobody anything. It was cut from 1,948 tests to a few hundred in September 2026. A test may
-check a rule that holds for any module; it may not record what a module currently says.
-`tests/README.md` carries the rule, the four layers that replaced the old suite, and what to ask
-before adding a test. Read it before touching anything under `tests/`.
-
-**Comparing two builds needs `scripts/compare-export.sh`, never `diff -r`.** A raw recursive diff
-between two builds of *identical* source is never empty, for four reasons that say nothing about
-the site: Turbopack names chunk files per build; Next.js stamps a random 21-character build id into
-every page's payload; the React payload numbers its rows, so adding one prop to one client
-component renumbers rows on every page that uses it and moves ~1KB with the visible page unchanged;
-and `out/course-images/` mirrors whatever is on disk, including untracked images. The script
-compares what a reader can see (every page with `<script>` blocks stripped and the two random
-values normalised) plus the page inventory by name. This is the strongest check in the repo for a
-change that is *not supposed to* alter the site:
-
-```bash
-npm run build && cp -a out /tmp/out-base   # before
-# … make the change …
-npm run build && ./scripts/compare-export.sh /tmp/out-base out
-```
-
-To build a reference from another commit without disturbing the working tree, use a throwaway
-worktree and hard-link `node_modules` into it (`cp -al`, which costs no disk and takes under a
-second). Turbopack rejects a *symlinked* `node_modules` with "points out of the filesystem root".
-
-**If the suite fails, run `git status` before assuming it was you.** The author edits these files
-while you work. Twice this has been the real cause: a save that silently dropped a section, and a
-frontmatter fence broken into `## module: 3` with the closing `---` deleted, which took 31 test
-files down. A file carrying `NOTE:` or bracketed markers is the author's live draft: fix only the
-structural breakage, leave every marker untouched, and say what you fixed.
-
-Also check: every module ends with a References section, no leftover `NEED` markers you meant to
-fill, and no placeholder cross-references like "module X".
-
-## One central curriculum config
-
-**`mini-courses/curriculum.yaml` is the one place the course shape lives.** Category order and
-module order are file order in it, and no number appears in it at all: a module's number is its
-position, computed in exactly one place in the app. Reordering the course is moving a line.
-
-- **A module is listed by `name`**, which is its file stem and the source of its URL.
-  `title` is required (`rag` is not "RAG & Embeddings" by any rule), `status` defaults to `draft`,
-  `minutes` defaults to 0, and `needs` names prerequisites **by name**, so `needs: [prompt_engineering]`
-  and the link `[Prompt Engineering](prompt_engineering.md)` share one string a grep can find.
-- **A module file's frontmatter is `summary` and `objectives`, and nothing else.** A draft has
-  neither, so it has no frontmatter fence at all. Adding `module:` or `status:` back to a file fails
-  the build by name: the config owns both.
-- **Filenames carry no number.** `2_intermediate/context_engineering.md`, and the URL is
-  `/courses/intermediate/context-engineering/`. The directory keeps its own prefix.
-- **The H1 is the title alone.** `# Context Engineering`.
-- **Prose names another module by title, never by number.** A cross-reference is
-  `[Context Engineering](context_engineering.md)`, and a sentence says "Context Engineering covers
-  the four levers", not "Module 9 covers".
-- **Three things are deleted rather than maintained**, because the app strips all three and two of
-  them had already drifted into being wrong: the italic `*Category: … — Module 11 (4 of 7 …)*` dek,
-  the `**Previous/Next Module:**` footers, and the `## Modules` lists in the category READMEs. The
-  app derives the sequence, the position and the listing from the config.
-
-**Adding a module is three things**: the two markdown files, and one line in the yaml. Nothing else
-moves, and `git status --short` will show four paths: the config, the two new files, and the regenerated `src/app/lokum-modules.css`.
-
-**The config is validated, and the validator is worth reading before you fight it.**
-`src/lib/content/curriculum-file.ts` refuses seven things `zod` cannot express, each naming the
-module at fault: the categories must be in the app's own order, every name must be unique, every
-`needs` entry must resolve and must sit earlier in the file, a `ready` module needs minutes above
-zero, **the `.md` files on disk in a category and the names listed for it must be the same set,
-both directions**, every module needs a `_tr.md` sibling, and an `_fa.md` must translate a listed
-module. That fifth one is the valuable one: a
-module you list without writing the file, and a file you write without listing it, are the two ways
-this can go wrong while everything else still passes.
+**Starting a new module:** copy `_module_template.md` to `<category>/<name>.md` (lowercase,
+underscores, no number); create `<name>_tr.md` beside it, even as a stub; add its line to
+`curriculum.yaml`; once written, give it a quick quiz. A `status` change regenerates
+`src/app/lokum-modules.css`, which goes in the same commit.
 
 ## The quick quiz
 
-A written module carries a quick quiz in `<name>.quiz.yaml` beside its markdown. The module page
-shows it at the very end, collapsed under **Want a quick quiz?**, after the completion checkbox and
-Previous / Next. The author asked for it on 2026-10-12.
+A written module carries `<name>.quiz.yaml` beside it, shown at the end of the module page. It is
+reinforcement, not assessment: nothing is scored or stored.
 
-**It is for reinforcement, not assessment.** It helps a reader recall the module's main points right
-after reading. Nothing is tricky, nothing is scored on a record, and nothing is stored.
-
-- **3 to 5 questions**, each with **4 options** and exactly one correct, and **an explanation of one
-  or two short sentences** that the reader sees after answering, right or wrong.
-- **Every fact comes from the module text.** A question about something the module does not say is
-  a question the reader cannot answer from the module.
-- **ASD-STE-style English**: one idea per sentence, 20 words or fewer, active voice, common words,
-  no idioms. The quiz is for readers whose English is basic as well as for everyone else.
-- **Turkish beside the English, under one shared answer index**, so the two languages cannot
-  disagree about which option is right. Technical words stay English, as in the module. Where a
-  Turkish word stands for a technical concept, the English follows in parentheses: `yetenek (skill)`.
-- **Persian too, wherever the module has a `_fa.md`**: an `fa:` side after the `tr:` side of every
-  question, the options in the same order. The build fails a Persian page whose quiz lacks one.
-- **Each translated side is written, not translated**: natural Turkish and everyday Persian, by the
-  rule at the top of [Translating a module](#translating-a-module), with only the options' order and
-  meaning held to the English.
-- Options of similar length; no "all of the above" or "none of the above"; the correct answer moves
-  around between questions. No em dashes, no exclamation marks.
-
-The file is YAML, every string in double quotes:
+- **3 to 5 questions**, 4 options each, exactly one correct, and an explanation of one or two short
+  sentences shown after answering.
+- **Every fact comes from the module text.** ASD-STE-style English. Options of similar length, no
+  "all of the above", the correct answer moving between questions.
+- **Turkish beside the English under one shared answer index**, and Persian (`fa:`) wherever the
+  module has a `_fa.md`. Each side is written in its language, not translated, with only the options'
+  order and meaning held to the English.
 
 ```yaml
 questions:
-  - answer: 1          # zero-based index of the correct option, shared by both languages
+  - answer: 1          # zero-based index of the correct option, shared by every language
     en: { question: "...", options: ["...", "...", "...", "..."], explain: "..." }
     tr: { question: "...", options: ["...", "...", "...", "..."], explain: "..." }
 ```
 
-The build validates the shape (`src/lib/content/quiz.ts`) and fails on a malformed file by name;
-`tests/corpus/quizzes.test.ts` holds the rules that hold for any quiz. **When a module changes,
-re-read its quiz**: a question about a section that moved or was cut is the one thing nothing
-automated catches.
+The build validates the shape. **When a module changes, re-read its quiz**: a question about a cut
+section is the one thing nothing automated catches.
 
-The module's own `**Quick Check**:` line stays in the markdown for a reader of the raw file, as the
-series map does, but the site no longer shows it: the quick quiz replaced it.
+## README.md and index.md move together
+
+`README.md` and `mini-courses/index.md` are the same page for two audiences. **Change one, update the
+other in the same commit.** For `index.md`: drop the "Read online" line, strip the `mini-courses/`
+prefix from links, keep `MANIFEST.md` and `ROADMAP.md` links relative, link nothing outside
+`mini-courses/` (an unresolvable internal link fails the build), and keep Contributing at the end.
+Both describe the course, not the machinery.
+
+## Checks before you call something done
+
+```bash
+npm test          # includes the content and internal-link checks
+npm run build     # the build that ships
+```
+
+- **A green suite is not proof the page is right.** When you change how content is authored, look at
+  the export: `grep -rl "my-new-figure" out/courses/`.
+- **Never write a test that states a fact about the content** (a word count, a module number, quoted
+  prose). `tests/README.md` has the rule.
+- **Compare two builds with `scripts/compare-export.sh`, never `diff -r`**: chunk names, build ids and
+  payload row numbers differ between identical builds.
+- **If the suite fails, run `git status` first.** The author edits these files while you work. A file
+  carrying `NOTE:` or bracketed markers is a live draft: fix only structural breakage and leave every
+  marker.
+- Every module ends with References, no `NEED` markers left that you meant to fill, and no
+  placeholder cross-references like "module X".
 
 ## Repo map
 
 ```
-README.md                GitHub landing page
-assets/                  diagram source templates (not published)
-mini-courses/            the authored corpus, and all this file governs
-  MANIFEST.md            the seven rules, the contract
+README.md                the GitHub landing page
+assets/                  diagram templates (not published)
+mini-courses/            the authored course, and all this file governs
+  MANIFEST.md            the seven rules
   ROADMAP.md             the order we intend to build in
   CLAUDE.md / AGENTS.md  this file
   _module_template.md    copy this to start a module
   index.md               the GitHub page for mini-courses/, mirrors README.md
-  curriculum.yaml        the course shape: the one place a module's position lives
-  <level>/<name>.quiz.yaml  a written module's quick quiz, every language it has
-  1_fundamentals/        rewritten, in English, Turkish and Persian
-  2_intermediate/        rewritten, in English, Turkish and Persian; one module still a draft
-  3_expert/              draft
-  4_ecosystem/           written, in English, Turkish and Persian; one module still a draft
-  5_protocols_specs/     draft
+  curriculum.yaml        the course shape
+  <level>/               modules, their _tr.md and _fa.md, quizzes and images
   scratchpad/            research notes and diagram prompts, never published
-src/ tests/ scripts/     the Next.js app that renders the corpus (not ours)
+src/ tests/ scripts/     the website that renders the course (the root CLAUDE.md)
 ```
 
-The app is a colleague's work. **Our side of the line is `mini-courses/`**, plus the
-README sections that describe the course. Do not edit the app to accommodate the
-content; the content is plain markdown and the app reads it as authored.
-
-The notes under `mini-courses/scratchpad/research/` are raw material for facts and sources. Their
-dense, citation-heavy style is what the rewrite is replacing, so do not copy it.
+The website and the course are both the author's. A colleague builds the mobile reader in its own
+repository; a change he proposes here never alters the course or the website unless the author asks
+(D90). Do not edit the app to accommodate content: the content is plain markdown and the app reads it
+as authored. Notes under `scratchpad/research/` are raw material for facts and sources; do not copy
+their dense style.
 
 ## Keeping this file current
 
-**This file and `AGENTS.md` are live documents.** When a conversation settles a new rule, whether
-a naming decision, a palette change, or a preference about how something should read, add it here in
-the same session, in both files, and keep it short. When a rule here turns out to be wrong,
-correct it rather than working around it.
+When a conversation settles a new rule, add it here in the same session, in both files, and keep it
+short. When a rule here turns out to be wrong, correct it rather than working around it. Leave out
+counts and history: they go stale, and `kia-context/` keeps the history.

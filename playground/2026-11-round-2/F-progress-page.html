@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F · The progress page</title>
+<style>
+:root{
+  --ground:#fdfbf7;--raised:#ffffff;--sunken:#e6dac6;--line:#d8cbb4;--line-strong:#c3b299;
+  --text:#20242e;--title:#1b1b47;--muted:#6a6558;--faint:#948d7d;
+  --bar:#282864;--on-bar:#ffffff;--on-bar-dim:#c9c6e4;--bar-field:rgba(255,255,255,.08);
+  --bar-field-line:rgba(255,255,255,.25);--bar-hover:rgba(255,255,255,.10);--chip:#fdfbf7;--chip-ink:#1b1b47;
+  --ornament:#c8a078;--success:#2f8c86;--danger:#a0503c;
+  --fund:#2f8c86;--inter:#282864;--expert:#7a4a86;--eco:#b8873b;--proto:#a0503c;
+  --sans:"Avenir Next",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{background:var(--ground)}
+body{margin:0;background:var(--ground);color:var(--text);font:16px/1.6 var(--sans)}
+a{color:inherit}
+button{font:inherit}
+
+/* ---------- the playground's own frame ---------- */
+.pg{max-width:1400px;margin:0 auto;padding:40px 20px 80px}
+.pg-q{margin:0;color:var(--title);font:600 30px/1.2 var(--sans);letter-spacing:-.01em;max-width:30ch}
+.pg-lede{margin:12px 0 0;color:var(--muted);font-size:15px;max-width:76ch}
+.pg-jump{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 0;padding:0;list-style:none}
+.pg-jump a{display:inline-flex;gap:8px;align-items:center;height:34px;padding:0 12px;border:1px solid var(--line-strong);border-radius:5px;background:var(--raised);color:var(--title);font-size:14px;text-decoration:none}
+.pg-jump a:hover{border-color:var(--muted)}
+.pg-jump b{font-weight:700}
+.pg-gone{margin:22px 0 0;padding:14px 16px;border:1px solid var(--line);border-radius:7px;background:var(--raised);color:var(--muted);font-size:14px;max-width:110ch}
+.pg-gone strong{color:var(--text);font-weight:600}
+
+.opt{margin:56px 0 0;scroll-margin-top:16px}
+.opt-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:8px 40px;align-items:start;padding-top:24px;border-top:1px solid var(--line-strong)}
+.opt-title{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:0;color:var(--title);font:600 22px/1.25 var(--sans)}
+.opt-code{display:inline-grid;place-items:center;min-width:42px;height:32px;padding:0 8px;border-radius:5px;background:var(--bar);color:#fff;font:700 15px/1 var(--sans)}
+.opt-rec{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:9px;background:#1f6b66;color:#fff;font:600 13px/1 var(--sans)}
+.opt-what{margin:10px 0 0;color:var(--text);font-size:15.5px}
+.opt-why{margin:10px 0 0;padding-left:10px;border-left:3px solid var(--success);color:var(--text);font-size:14.5px}
+.opt-why b{color:var(--title)}
+.opt-list{margin:0;padding-left:18px;color:var(--text);font-size:14.5px;line-height:1.55}
+.opt-list li{margin:0 0 6px}
+.opt-list li::marker{color:var(--ornament)}
+
+.frame{margin:22px 0 0;border:1px solid var(--line-strong);border-radius:9px;overflow:hidden;background:var(--ground)}
+
+/* ---------- the site: bar and tile band ---------- */
+.bar{background:var(--bar);color:var(--on-bar)}
+.bar-inner{display:flex;align-items:center;gap:16px;height:58px;padding:0 22px}
+.brand{display:flex;flex:none;align-items:center;gap:10px;color:#fff;font:600 16px/1 var(--sans);white-space:nowrap;text-decoration:none}
+.brand img{width:32px;height:32px;display:block}
+.nav{display:flex;align-items:center;gap:2px;margin-left:4px;min-width:0;overflow-x:auto;scrollbar-width:none}
+.nav a{display:inline-flex;align-items:center;gap:6px;height:32px;padding:7px 11px;border-radius:5px;color:var(--on-bar-dim);font:500 14.5px/1 var(--sans);text-decoration:none;white-space:nowrap}
+.nav a:hover{background:var(--bar-hover);color:#fff}
+.nav a[aria-current]{background:var(--chip);color:var(--chip-ink);font-weight:600}
+.spacer{flex:1}
+.bar-tools{display:flex;align-items:center;gap:8px;flex:none}
+.bar-icon{display:grid;place-items:center;width:33px;height:33px;border:1px solid var(--bar-field-line);border-radius:5px;background:var(--bar-field);color:#fff}
+.bar-track{display:inline-flex;align-items:center;gap:7px;height:33px;padding:0 11px;border:1px solid var(--bar-field-line);border-radius:5px;background:var(--bar-field);color:#fff;font:500 14px/1 var(--sans);white-space:nowrap}
+.bar-repo{display:inline-flex;align-items:center;gap:6px;height:33px;padding:0 10px;border:1px solid var(--bar-field-line);border-radius:5px;background:var(--bar-field);color:#fff;font:600 13px/1 var(--sans)}
+.bar-repo .star{color:var(--ornament)}
+.bar-track .short{display:none}
+.band{height:18px;background-color:#282864;background-image:linear-gradient(45deg,#2f8c86 25%,transparent 25% 75%,#2f8c86 75%),linear-gradient(45deg,#c8a078 25%,transparent 25% 75%,#c8a078 75%),linear-gradient(45deg,#a0503c 25%,transparent 25% 75%,#a0503c 75%);background-size:18px 18px,18px 18px,54px 18px;background-position:0 0,9px 9px,27px 0;border-bottom:2px solid #b8873b}
+
+/* ---------- the site: page ---------- */
+.page{padding:26px 48px 56px}
+.crumb{margin:0;color:var(--muted);font-size:13.5px}
+.crumb a{text-decoration:none}
+.crumb a:hover{text-decoration:underline}
+.crumb span{margin:0 7px;color:var(--faint)}
+.h1{margin:12px 0 0;padding-bottom:18px;border-bottom:1px solid var(--line);color:var(--title);font:600 38px/1.16 var(--sans);letter-spacing:-.015em}
+
+/* tabs: the ordinary underline tab */
+.tabs{display:flex;gap:4px;margin:4px 0 22px;border-bottom:1px solid var(--line)}
+.h1.has-tabs{border-bottom:0;padding-bottom:6px}
+.tab{position:relative;display:inline-flex;align-items:baseline;gap:9px;height:48px;padding:14px 14px 0;border:0;background:none;color:var(--muted);font:500 15px/1 var(--sans);cursor:pointer}
+.tab:hover{color:var(--text)}
+.tab .count{color:var(--faint);font-size:13.5px;font-weight:500;font-variant-numeric:tabular-nums}
+.tab[aria-selected="true"]{color:var(--title);font-weight:600}
+.tab[aria-selected="true"] .count{color:var(--muted)}
+.tab[aria-selected="true"]::after{content:"";position:absolute;left:10px;right:10px;bottom:-1px;height:3px;border-radius:2px 2px 0 0;background:var(--bar)}
+.tab:focus-visible{outline:2px solid var(--bar);outline-offset:-2px;border-radius:5px}
+.tabs-gap{height:22px}
+
+/* stacked: one heading per track */
+.track{margin:0 0 34px}
+.track-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 16px;margin:24px 0 14px}
+.track-head h2{margin:0;color:var(--title);font:600 18.5px/1.35 var(--sans)}
+.track-head p{margin:0;color:var(--muted);font-size:13.5px;font-variant-numeric:tabular-nums}
+
+/* the level cards: today's look */
+.levels{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin:0;padding:0;list-style:none}
+.level{padding:16px 14px;border:1px solid var(--line);border-radius:8px;background:var(--raised)}
+.lhead{text-align:center}
+.lorder{display:block;color:var(--faint);font:600 12.5px/1.5 var(--mono)}
+.ltitle{display:block;margin:0;color:var(--text);font:600 14px/1.3 var(--sans)}
+.dial{display:grid;place-items:center;width:74px;height:74px;margin:10px auto 10px;border-radius:50%;background:conic-gradient(var(--cat) 0 var(--done,0%),var(--sunken) var(--done,0%));transition:--done .3s}
+.dial-v{display:grid;place-items:center;width:56px;height:56px;border-radius:50%;background:var(--raised);color:var(--text);font:600 16px/1 var(--sans);font-variant-numeric:tabular-nums}
+.mods{margin:12px 0 0;padding:0;list-style:none}
+.mod{display:flex;align-items:flex-start;gap:8px;padding:4px 0;font-size:14px;line-height:1.3}
+.tog{flex:none;display:grid;place-items:center;width:17px;height:17px;padding:0;border:1px solid var(--line-strong);border-radius:50%;background:var(--raised);cursor:pointer;margin-top:1px}
+.tog:hover{border-color:var(--muted)}
+.tog[aria-pressed="true"]{border-color:transparent;background:transparent}
+.tog .mark{display:none;place-items:center;width:15px;height:15px;border-radius:50%;background:var(--success);color:#fff}
+.tog[aria-pressed="true"] .mark{display:grid}
+.tog:focus-visible{outline:2px solid var(--bar);outline-offset:2px}
+.planned{flex:none;width:17px;height:17px;border:1px dashed var(--line-strong);border-radius:50%;background:var(--raised);margin-top:1px}
+.mlink{display:flex;align-items:baseline;gap:8px;color:var(--text);text-decoration:none}
+.mlink:hover{text-decoration:underline}
+.mnum{color:var(--faint);font:600 12.5px/1.5 var(--mono)}
+.mod[data-drawn="false"] .mlink{color:var(--faint)}
+.said{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+.legend{display:flex;flex-wrap:wrap;gap:16px;margin:18px 0 0;padding:0;list-style:none;color:var(--muted);font-size:13.5px}
+.legend li{display:inline-flex;align-items:center;gap:7px}
+.key{display:block;flex:none;width:9px;height:9px;border-radius:3px;background:var(--sunken)}
+.key.done{background:var(--success)}
+.key.planned{border:1px dashed var(--line-strong)}
+
+/* F2: the one quiet data line */
+.data{display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px;margin:34px 0 0;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13.5px}
+.data p{margin:0;flex:1 1 320px}
+.data-actions{display:flex;flex-wrap:wrap;gap:4px 16px}
+.lbtn{padding:4px 0;border:0;background:none;color:var(--title);font:500 13.5px/1.4 var(--sans);text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:3px;cursor:pointer}
+.lbtn:hover{text-decoration-color:currentColor}
+.lbtn.danger{color:var(--danger)}
+.confirm{display:none;flex-basis:100%;align-items:center;flex-wrap:wrap;gap:8px 14px;margin-top:6px;padding:10px 12px;border:1px solid var(--line-strong);border-radius:6px;background:var(--raised);color:var(--text)}
+.confirm[data-open]{display:flex}
+.btn{height:32px;padding:0 12px;border:1px solid var(--line-strong);border-radius:5px;background:var(--raised);color:var(--text);font:500 14px/1 var(--sans);cursor:pointer}
+.btn.solid{border-color:var(--danger);background:var(--danger);color:#fff}
+.note{flex-basis:100%;margin:2px 0 0;color:var(--success);min-height:0}
+
+.foot{display:flex;flex-wrap:wrap;gap:6px 14px;padding:14px 22px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+.foot a{text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:3px}
+
+@media (max-width:980px){
+  .opt-head{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .brand span,.bar-repo,.bar-icon.theme{display:none}
+  .bar-inner{gap:8px;padding:0 12px}
+  .page{padding:20px 16px 40px}
+  .h1{font-size:30px}
+  .bar-track .full{display:none}
+  .bar-track .short{display:inline}
+  .bar-track{padding:0 8px}
+  .tab{padding:12px 10px 0;height:auto;min-height:48px;flex-direction:column;align-items:flex-start;gap:4px;padding-bottom:10px}
+  .mod{min-height:44px;align-items:center}
+  .tog,.planned{margin-top:0}
+  .foot{padding:14px 16px}
+}
+@media (prefers-reduced-motion:reduce){ *{transition:none!important;scroll-behavior:auto!important} }
+</style>
+</head>
+<body>
+<main class="pg">
+  <h1 class="pg-q">What should the progress page keep, now that progress is kept per track?</h1>
+  <p class="pg-lede">Three slim versions of <a href="http://localhost:3111/profile/">/profile/</a>. Each one keeps the five level cards exactly as they look today, and shows realistic progress: For Engineers has 7 of 33 done (5 of 8 Fundamentals), For Everyone has 2 of 33. Every mark below can be clicked.</p>
+  <ul class="pg-jump" aria-label="Options">
+    <li><a href="#F1"><b>F1</b> Tabs, nothing else</a></li>
+    <li><a href="#F2"><b>F2</b> Tabs and a data line &middot; Recommended</a></li>
+    <li><a href="#F3"><b>F3</b> Both tracks stacked</a></li>
+  </ul>
+  <p class="pg-gone"><strong>Gone in all three:</strong> the account block (name, Checked by, the approval marks, seeds), Across browsers, Waiting on you, Readout, Streak, Stamps, What you built, Role and path, The curriculum as one diagram, Record of work, and the five settings rows. <strong>The three numbers row is gone too</strong>: Days in a row is a streak, and Reading time is a sum nobody acts on. Modules completed survives as the count beside each track's name, where it tells you which track is further along.</p>
+
+  <section class="opt" id="F1" aria-labelledby="F1-t">
+    <div class="opt-head">
+      <div>
+        <h2 class="opt-title" id="F1-t"><span class="opt-code">F1</span> Tabs, nothing else</h2>
+        <p class="opt-what">Two tabs under the heading, one per track, each with its count. Under them, the five level cards. That is the whole page.</p>
+      </div>
+      <ul class="opt-list">
+        <li>The shortest the page can be: one screen on a laptop, and nothing on it that nobody uses.</li>
+        <li>The page opens on the track you are reading in (the one the top bar shows). The tabs only change the view; they do not switch your track.</li>
+        <li>No way to save or move your progress. If the browser clears its storage, both tracks are gone, and the page never told you that could happen.</li>
+      </ul>
+    </div>
+    <div class="frame" data-variant="tabs"></div>
+  </section>
+
+  <section class="opt" id="F2" aria-labelledby="F2-t">
+    <div class="opt-head">
+      <div>
+        <h2 class="opt-title" id="F2-t"><span class="opt-code">F2</span> Tabs and a data line <span class="opt-rec">Recommended</span></h2>
+        <p class="opt-what">F1, plus one quiet line at the bottom: your progress lives in this browser, with three actions to back it up, restore it, or reset it.</p>
+        <p class="opt-why"><b>Recommended:</b> progress lives only in the browser, so one line that lets a reader keep a copy is worth its space.</p>
+      </div>
+      <ul class="opt-list">
+        <li>The progress is never sent anywhere, which is good for privacy, but a browser can delete it without asking: clearing site data, a private window, or Safari after seven days without a visit. A backup file is the only thing that survives that.</li>
+        <li>Restore also moves progress to another browser or computer, which is the one useful thing the removed sign-in did.</li>
+        <li>Costs one line of small text below the legend. Reset clears both tracks and asks once before it does; it cannot be undone without a backup.</li>
+      </ul>
+    </div>
+    <div class="frame" data-variant="tabs data"></div>
+  </section>
+
+  <section class="opt" id="F3" aria-labelledby="F3-t">
+    <div class="opt-head">
+      <div>
+        <h2 class="opt-title" id="F3-t"><span class="opt-code">F3</span> Both tracks stacked</h2>
+        <p class="opt-what">No tabs. The page shows For Engineers with its five cards, then For Everyone with its five cards, each under its own heading and count.</p>
+      </div>
+      <ul class="opt-list">
+        <li>Everything is visible at once, with no control to learn. Good for a reader who really does both tracks.</li>
+        <li>The page is twice as long, and most readers stay in one track, so half of it is usually a wall of empty rings.</li>
+        <li>The two lists name the same 33 modules, so the eye has to check which heading it is under before ticking. F2's data line can sit under this one as well.</li>
+      </ul>
+    </div>
+    <div class="frame" data-variant="stacked"></div>
+  </section>
+</main>
+
+<script>
+const LOGO = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiPjxpbWFnZSB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgeGxpbms6aHJlZj0iZGF0YTppbWFnZS93ZWJwO2Jhc2U2NCxVa2xHUmd3WkFBQlhSVUpRVmxBNFdBb0FBQUFRQUFBQWZ3QUFmd0FBUVV4UVNMZ0ZBQUFCc0lYdG55RkoxaGYvZjQ1dHo2eDNQR3ZidG0zYnZEdTJiZHUyYmR2MkdVOW5SUHd1V3RVWkZYZDdFUkVUd0JPMUJndFZzd2F3eG1wbEJoTjNuUUdFeGtOOXpPQ2dGLzlxNEs4ZnVtMTNnTVpEVmN6aDBIZHE2TzFmZmU2Sms0RW1WTU1jOW5tSHBEYmxIRnRKK3ZXTGpuVndxMEp3MlBOVnJYTFUwRG0yU2RKM2I1b1BibjB2T096ODNLMVMxTWhUbTZSL3ZIUi9vTEYrRmh5V1BHT2pGTE5HbjZLVVhyUVBFRHowSzRjWmoveExhck42bTF0SjM3aGhkOEN0SHpsTXVPRTNVcHZWK3h3bERYejJtcGxnVGVnekRuYmg5NlUyYTR4VGxQU25GKzhQdVBVUk44SjVYNWRpVWdkempKSStkdlZjc05BbnpPSFVyMG94cWF1NWxmUzNGeDBJMWhjY2p2aXdGSk02SGFPa3R5N0MrZ0hyM3lHbHBNN25OdXZYdTJPbEJXc2UyYTRjVmVZT2ZXdGNjY1pibEtPS2pUb01MOHM1VGdOWjViYjVPcHJTM3BSYmxhVFNBczNQbE1xNnVyakZXNVJyNXV5cnJMS3VLZTdBd3FMT3dLdlc2bkthd2pZVWQwOWhJVXo1blZKWmR4Ukd3M1BWbG5WdGFjWUhGY3U2cmJDQS9WeXByS2NXTis1WHBkMVUzUFMvSzVkMVpYR3ovMWZhVXdvemxtOHI3ZVhGclZWcEw2UEJMQlMwT3BmMlhKc1lBR3RDR1lHRm0wdTdDVmkyY2hyZ1ZzYjBmNVoyN1M0UGZubEwvTnVIYmxnRWJ0MEQrNkZTU2RMZnQybm8vN3hrSFppSHJnVytvbGlXMU1hY2M0eFMrOXBWZ0hjck1QRlhTbVhscktGeksyMy8xRzFUTUErZG1ydFJ1YXdSNXlqcGg4Y0JidDBKcy83ZVI2UWNXK2tMMTgwRXQyNkVjZkFIcFQ0aUtXWHBUeTg1QUt5eE1Rc05USGtrWnZYYkdLWDAwcFdBMjVnRWg0a1AvRnA5T2JmU2pzL2V2eE9ZOWM1aHhoVS9sR0pma2hRbGJYcmJRZUNoSjhFREUyNyt2ZFFtOWUwY1d5bS81ekR3SGhod3dZK2ttTlRmYzVUMGhrWDRhS3pCTHZ1cUZMTXFHTFArZERJMklqZlk0MHRTU3Fwa3Ezd3VQcHdIMlAvVkc5VW0xVFBxUHpQRFVHWnd3c2NsSlZVMTZXZ0dCNGVUUGlrcFp0VzF6UmNPY2pqNFBWS0txbTZyaXdCbjRSdWxGRlhoVnBlQmNmUWZsYUtxbkhROEZ0WnRWYXRxcjhkNXZ3WlU2Nml6WU1vL2NxNVdxNHRoMlZiVksrbzgyRFZXTEdzL1dLbUtTYXRnNTRHcXJZY2xXK3FWdFcwNXJNdzErOTljbUwrcFpscUo4U1hGV2tsYVErQnJGY3ZhRitPTEZaTTJFTWIvWEtsV1dYa1Y3QktWYTZXcy9XQzlxcjRXMXRWdGRkMnl0TEp1a2xiRFRnUEtGVnNKOC85ZnI2eTBPeXpaVXJPQlhXRG5nWnB0WFFxN3REV0x1OEx1dVdaYUNXdFU3Nnk4SjZ5cjJwYUZzTFppTVg4bkdJY3AxU3BGbllSem1tSmhLUmFTVytsK0hFNVVLa3hLc1lRby9mVmlIRGlpc0pRLy9EWXB4YTdGcklFWExjWUJEbEl1YWtDWGM4NW5wWlM2bEpMMDVnM2dETjZ2ckFGdFhPNXc4bWVsbUxxU292VEJROEVEUSs2bVZFNUsrdWZabUFjNDcvdFNURjFJVWZyNmFlREcwTTU3dEtPUTNFcHYzd2tEUEREKytwOUlNWTFWYnFXZlhHbVlNYnlGaFQ5UmlybDd1WlYrZVFFNFF6cE11dUduVWt4amtWdnB0N2RNQW1mRWdUbXZrTlNtamtYcG40OU54NDFoZzhQazYzOGd4ZFN6S1AzcjhabmdqTmJnbURmL1QwcXhReWxwMjB1WGdqUGk0REQraXU5S0tmWWtTbHVlc1FROE1QcGdzUFN1SDBncDVtN2tLTDFsTlRTQjBRYUg1dEp2U0RtT0ttYmxONjJESnRCYmQyak8rSVNrTm85ZGJxVnZuZ1FlNkdWd3NMTStJYVU0a2h3bHZlTkE4RUR2UXdPYy9JRWRVa3hqRktYZjNlUzQwZXZnd0pFZmxuTE1RNlJXeXU4K0dOd1kyK0FCVmovdFQxS0t1WGRSMnY2VVdlQ01aWENEa3o0dEtiYXh6ZEtXMSs4SFpuVFFEV2JkOGpWSk1mY21acVczcjRPR01YZURJOS93UHczK3djTzdnaGtkdFFZNDRlM2JwWmhHRjdQMHJuM0JBMTMwQUV1dWVjM2JuM1NVZ1JzZERnMnc1dlVicFJUemlGS1czbnNJbU5GVmQ0WnVqSzY3dzRycnZ5RXA1bUZ5bEQ1NEZKalJaV3NhYnp4UW9qbUVVOTRmcFRaTFNxMzAxV1BCakhxR0Jsai91aWpsS09rdmR4cm1WTllOOW43eFh5WDkrUEg1NEZUWUhHWWRkTm82QjZmUzVneHVBdlVPN2haNElsdFdVRGdnTGhNQUFQQkNBSjBCS29BQWdBQStNUlNIUXFJaEREM0hNaEFCZ2xtQU5MZ0RzY3Z3M21xVmgvQWYxWDllOGhTWW51cC9wK2ovMWEvcGoyQVAwKy8ydlZVOHczN1BmdHY3di81QWU2SC9BZW9CL2ZmOHo2elAvVDlobjl5ZllBL1lEMDRmMmkrRFArMy83ajl1UGdJL212K0cvL0hzQWYvVDFBT0VBL2tINEFlQkg5OThDL3gzNkIvYWYzRHp4OE5mWFJxUjlxK0hYZWI4anRRWDJQNXhQMGZZcjdGL3FQUUw5d3Z1M2YwYWp2aGYyQVAxaDlIdjluNFUvbm5zQi96Lys1LzlIN3F2cGcvd1BIajljZXdML04vN1gveC9YcDlvZm9wZnJDNTVlRUI0K3FVc0lUSVI5c216YytnMEd4SSt5Y00vZUo5ZzZETjNwVDZyK3JBK3RSUHZJdnFKamR0UkFBWHFYVDdhWlRtTDUyZGJDTktOY3VqY09vMjQzLy8vL0NVQXBFUW5OdDlUbFZkNy9FVGVXSXplYzlPMGxKRytaaGpLWVlNdXU3M3JNY21aVkdsL3RaeU4xT1JPdThhNW1kUmZwME1qK0VpTGMvQ0dEa1ZRRzRtTEYvc3F5M0lrNmRyMkNWV1hPZStZVk9YOEJJTFZlTTl0QnRjTGF5SFlmb3A2OFl5c3ZKMldIV0tQbWR1Q09nS0YwQnEwcXZNb2UzS21lcTBYUTFWNHptY0FQTTRaREZhU1ZuUFRaTEtuNzN3RzFVb0tiWVRBQ3ZtU1pOZWV6MGxSVzFlV1p5TjB0U1Vab3E1V28vWVZMWURUZ2FvVEQwcjZBWWNWVE5QM3Q4SlN5YnJ5ZnZFKzlqdEpmTmJ0ZlVUWmpVVGxHdFRSVE1HL2Y2NmZPVDhHem43RWdhLzQyUkdXTUVETWkwMzl2MWRKdkFkTzRYaHhqS09oSkhyL3BsRStRZ0FBL3YrUHZDKy93Q0R2Zk85UVRPOFBBSHp5VFRQdkxJQXZQVGRxSmZNcDRRN2trR01EKzlHdHFycFArMFZWbHJGNGphejRNNERKbDBnWi9nK2U3RnpXM1VMVUhmaHNVcWpZN0N4VktBRW5nQy9nWm9FcWpLUEladGQ0czQ1OGdmKzV1SFJCRnZDR3JadXM3UGtKbGFVeGo4eUxIK3lUbkZ0OUpBTWI0dm5XK2w3K01KZnhrdmtpVlgzWVRJNTVvbGFoQjhyNjl6SWJVMVExTm1ialdaNkhKVk1OT0RUZFU4ekRBVEUrUzJ0Lzd5cEFDRi80dUpzZDJ0bkkwYUJ1NWE3SktlWi9ZblBpL3c4OVh2ckVtZXVuWEs2aExtZnptUHoyaUdYNEw1VjhRTVVCMG9uOWY5UXhOdnJtS3Jac3lzZjVyb0pOQk1LZzA5cTlWU1hXN1VDSzltaVVSaHlkRisvaXVIYVlrcVkrOGtSLzNjKzM4aWMyQTVtVXpJd0kvRXFFaEZxZ3AxZm5ZSzZUdlR2ZXFRd2JwV09IZ3BUUjEwcEFUZVprYm5aOEFEVm8ydGd2ajh2ZzBPNVdmR2Z3VUh1ZmR6Q1RZM3VnNFpZaHlWWWZyZXVuTUxEd3QzRUtSSy9ZdHp1UHZYU2VkU2tteHdhQlhVUjR6bXNWb3NuMnhxVDZ2TzdzdW5EY1hZdTNMRlNBUm5VVDNqNGtuRUNkNHNYQWdBelMyUUlnNjdldmdRaVdDdG1jWWtwcWpVQjlEVXZsOERLam9YNm1Nd3I3alNvRHJqaVFaVUtONDE2TGd3MDY5L1l4SXlIdjFmQWlSZjBQelg4WnhmdDhSZG80dVM1UHVlV1NlT09ra3gxdDRJU1FrblhBQ3F6dnRzaUNKOGVxak1VS2ZrbjJjTmVNT0tJZ3luby9NNXVZTVZKenBiS0labmVmY0VYeHVHbE9QeWVHMDlqRTM5NlpSUlpjc2FGUXhiemNLa05TenBhSlc2SWhtanB2L25Ddkw5N1MydHlPRVlQU0E0SkF1Ulh4K285dlFKeThESmx1SHRCUzQzS2xVTmwrUjl2eC9JRy83dzROVGdIOXN0dXl4NGNsS3dGS0dJOHRNSkUwUHZzTlQ1WGM1ZWdUeERWdHIxVVpVS29icWk0SDBpWW1ZdWx0VWJxSkdFT1NjU0FoVWVqNFA4WFI4Z3ozU2FoQi9uWkk5WHJMTEcrSi83cisrcHM3ZGlQbzhqKzFhRjg5MTZzS0VMcHZSb1ljb0RoQncvQTlGQmZSTjY2VGxIb1NOdnlUMnhVRmtwcG1QTVgyazR5STNiQms2SlFKekNkcXJTMHI0SVJjRlc3eVdCV2tMdEtnSnRtL1dYYkFWNUNSWlR3b0lHNDg4MVBwK0E0QTA3amkvRGNabXJMVHRTTURlWllqVWZkUFFoZ1poVW0wbzZqa3NTY2M5bXY0L3lyd1dMT0U3UTlHTkNRSU1kNjM2dldDSDE4RFRMOGQzSGNCdVEweXFlSEc5bVVxZTJ4ZTZIeDVnS2FKQVpGclAwTVNJVTRMSksrc2dWUGdUazkwNlAxOXlSNThDVnpyWmt0TkRrcFM3OVk3MUtsNkdKRVIwemk5SlpzL0Q0RnVacGJ1T0FFSnM5K3I5RVdlMDMya0JiR2I4TklmQ2RTUXU4N240UFlBLy9yOS82VXZOUmVhRFgybGJkMlVtKzZuVHdxVVE3S3pwbGlUWFVQUkhBS2lsRTRkaXhPM1RrR2hCaHNBcWFGeWNXblRGck5mT1FUTjc5RS9mQ3ArRmh4QmpSdC9wSDVhd1FxQzl6S0VhcFNpNGdPbEF0aTl0SHNrQnF1ZkZTeEhmc0Zrc1N3WnNrdXkxT3FWMmxSVkpWd2lQQkFvRHNhbmY1ZWxITHkwVGJnWnUxaDFQMGpyaXZYQk01b3g4RGlJRmF4MkVRbk9uVEJtTGVrdjcwMGRyamZCcDcrME1nSWpMQnB4d1FyS3YxOU9Zc3ViWEZuVEMvbjR5aWdhNllzaWlXcHNQYnk0NWtmVVpwRng5TFZjbVJyOWo5OWROekg4OTRUM2RVd3BFSmpSbk9JSXRJR1Q5dVg4cGFmUUVjWDdCL2EyNXRxdjlxTzFBdkRKaE1QNGJQTEdwVk82S2hMZjQza0szdjZGRnBDRlA1OS9mUE5uK1ZmckczdkdMOVdZeHQ5VUJhVlNBdUVUcU5ySlRYWjVpVFhpNmpHVU15ZWJSM1RMY28rbVdzdU9IVUxKZEtYSE9TQ1ZNVnhKTllnd0UxcS9NcjdXckNCN3NmOXVsUXU5ZGFmdGJOMDdNdzRud25CVllZcWJJYjdMYTFvQi9zR1J2YmVORFRvYmtvN1dCVkNyT0pKT1NQMG5HdUhLQUEwaDJQVlI1N0R0SXNiRUVtZmZuZHNCbDJwczFEZng3Tkd2Y1plSnJuQzMvTUgrNEVrSURiOFZuSU9TUURQUWQ3TnErYTZzOVAwaFJSa3MwbjhDSk53dWMvb3dpYmdqVHlmOER1Z0lSTGJqNUZQK3hLQXY3WW1TcTluaEQ2VElpNUwrZmdnc003YlFNOTFpOUFqbjI2UGp2dWdvdjNWVk1lT21hZkd4R040d2N3VGlPb0dhbC9tSjhTL3NzTWJ0QlMwa2ZkZlpYaVdtYzh3QTFGOWo1VnlwSU1LTU1icWx3a21jN3E5MndTV0VtRlhiQ0F4UU9TWTlYS1FqbGE1NTMxTVluODVKYkg0MG1XWi8zMHJVMVBJbFJFR3RLaUpQOEx0dHJzY09KTEFWY1ZNNkhkYVpyekdSVUR3MVBVa0MyT0ZHOURUVCs2MlNJSnpOSUVYR1dXTytKR2s2NHk0cW8rZ2dJMkc2d0hmVnQ4ZWxpYmd0bUlTa3prRzFzWldpZWlVOTNTQ0UwdWxKNlNsSjBpZFk1YVg5c3JyZHU1d1hZYndIaXpJMkZTZVRONU9Nd21SSlN4UlhnWEMxUWh1b0ZZSVYycC9iVDJtSUJuUzNCRWZ1Tzc2VlRTL0JGUURpNTVsMEVKZE1QMmkzU1dYcHRDVGpUT0hXamZpVTRNbTQ4R2tINDBpcjhUZit0SitwMXdaM2hGZEtvSlcwOGNrR0ptWkNpaVpnemMzbWlEUEdsNE8weXBMaDFXMHVsZkRHb1VkbEoveFNKUU1rVnF4ZEV5KzZ6WTdsL0YxdUhYYXpoWlRmcXZPdXBUbTNuK1FmLzBmYW4vRDNHanhGTUlsQzNhM0IrdFFPcnZOcWN5WFpnVGhMcitlcU11UVFVbDhSZFJ6WWhEdG14UFJqeEZxaEFNQnl0RzFiREhNT2l1ODlmRWtKbi9FRkdURjhVL3V2RXYrazNpek1XUncvYkJPZTdXSjI3VWlVMm5oNGhLUjhOaWgrbHRwUU1VL0ZUdGJUZllWQTJHci90aEJQUVgwZllKYWM3SjU4RWZVeUFaUzFpRmN1SnorZ0RKc2VmaUtkT2liSHFkaHQrQVc2SXdLUGN4RHZieXRONkxYUjlEZHdWV3R2TDQ5TkV4U1hiL3NzbU9LcTN6b29rWm9GOHRvMzRCdXYrbnkxVGV2NGZ2NXZPWWNvbU1MNm4rVW43SC9VZ3dKT3B1RHNIQS9jRThNTnFBNjNDVmpVRmdxNTdnVjJlS2FUdnVlWVhCbWMzVHRTdldzR0JnSkEyV2NxNTFKMThNbWJVZmFwK0NMeXB0K0xjbzlaaGIzZ2E5QU1HOFhBa0lmcWZsa01QYlRlcmM2UDJkbHg3MUFNUDk0T2hNOHp4TlY5TnZEZW8rL29WWmlTZlB1bzEvRkczdUVvTlJKNDFUZnVraGpqZ29sVHVqYzU1R2RpeDhZbEhiblB3eHZrcnpWaVVBVk45NS9vSWpybklZRVpuZDd6UHpjN2lyeWFNbnBTNzFzdk5tekxJUTRldlg1bm1wdUlrM1dSZHBrTlo1blVyZ2JWNE5jUyszUVRnVlFWdW4xcFN5VjdqMVN3cDI4TnVCZTdZbmJtUGFoN0piSUVnaFM0SE5RY2VTNkF0cWsyMktvd3pyTkdnUkN5R29UYk0yekc3Vlcyc21XQkdLVXZhOUIrc0ZiVVpIQmY1dlFPazFIYngycXF4SEt2cnRuMGNlZnNSdE5OTlYzTXBuR3hqLzVpakpYY0UzVzNmNzZ2V1E3TndTcDIvMW1id25nTEl3MUQvellveE9maExhQVYyT25FRFBOVTBlQjMra3lpT2RPdUVraGo0QjFnbCtRL2lWOVlzblR5LzhnQ0tObkJ5dGFBTFhNRFlWRi9jRjdvbkVmK0h2MytWM0RKNkJnUFY5N1Y4Lzl0ZlRITGxhcEdTeDZpbTdvOHNEWGEvNDRsUWdJa0RFSUlkUVAxbWsrRTdMazBlN2NVT0RoMERUSUJpZDhqcVlvQnhpbi9CUEpEVnQ0YlpMejNVcWxWNlZUQkEraW0zL21TK2NkTHNtUHZ3K3NIWVZDMEhTSHpTMUdFRnpiWTlKTWdGRHJEdFVWSmY2eXdmcyt1b2FZalc1K3E0MTg5cjdPci84Y3RKZElRLzZuTXZ0cG5ZWUJmUUQ2NDMyeHpBT2ZWaFZ1dllrajVoSTVUdkgwcGNRVTVGd0hqMzRINW1IUTNVSkc5YTNnM3JSc0E4OVZ0amxCa3RtWnFDajVOR3V6M0djQ2JsNWpSaExZMmpIY2dEVUxFZjJGTXJKbGZPR09jMENOMk1INnJ4dEQ0VEVXdjFJZmlXY0R6OXc2dGlUKzlsei9oN3crMStpbGpQMjJ1ZllwNTVyWXRXKzlsR0toWTJFTXh3eUJPcUNsVHFsQ01ZemJldVJ1S3c5QTRFYkQzNmdlQ3hlM3dLUGlZdUFWSnM0UXVKVk54ZDF5d0xwVjByZDNObkZFbDJVMzI2WkJzZG1sVUtYMGJTSUdPMjZFWnQzMVN2Sk5YTjF3QUM3bkdMQW5lc1NKTVZqalpDeXM4c3UxSm9ub0I1TEJjekpBblU2V21QM0xUZjM3bzB4RHJUWHRrZFVLRWhvNGcwS2R0LzdLMGVyY3RmMUFFMk1xZS9pQjFYZmtnN0ZuUjNNc2NKdEFHN1FJa21GTW1ZOFVaYjhURWcrbi9RYW95eFZLMVhDallabnFhS3l5ektXZVBBSWtHUS9ueDVEUHFvNHpYZCtxOFpZL1BRclltbGFoOE9NNjFDK1hxa2QyMVQ4SjZ2R2haYWFwL0FvZ2ErTSthdVpka1I3SU9qU3pQcXdxNG9NL3VZc1RmdnJkS293Mnc2dGx0NHlaMlZoWml4VHNpSmpwVVI5NzFlRU42NzVqTkNNaTY3clNNamo1K28zMHZHVVJMNllhcFNvd0xrTmZkUFBnUU1Raklna3F5aXErenN3NEhGUmM2SXh0MU5SMTJycSswb1JRRHVnU3ZLM2JpT2dEL0dFTlR1cHFFdkY2WUVzRkVMWUhYMmJSYXpMc3kxUE4xSUdPY2k1WVk3NUxWZUE5Q1NWZ05VSE9SZkk0eHpzT3E5VlZ4REdWRkJFd21tbHZaNWc1dENFeFhpS1hPZ1VJOU9RQ3gwVUdtVHBMbmRMQ2hRWEdKU1dNQTFtV09lWWFTK2RjWDl2YkZEQkp1NGFiNEx1T3hOTWpzMzVsK1VjYkJiblRZOG1uSUV3V1Nnc2lRWWZpdzRzY3pLdGV6VlczT29ObGpHcjQ5dWRXb2RNdG8vT3pyWG4vSlZuSFdwemVEVW9NOWgwUS9EbER3REJDV1NueUp2b0tRdGtubjhpdTd1cjBqK21EZkJJS2pjVndqempqWHZPNW54VXZac2phUkxzeHhmZWp3bUh5dHA3RnJkWHkvM3dHZ2Y4amVSejg2OU94dDZma3hDdXlEQXFMQzZlbGpTRFF3ZEd1VEFMWEV5Y3l0OG12elpsRENFb1Fmd1hZUlViTDExcmwzMndzZ2l4WDZQUWFrUUpzTEY3VTFHVVhoRzhBbGJVcWhlQlZ0bGdoMUc5azR2TXg1NmNaenNjL09LeUJsOTVUREk0clJOcnREYUhrZDRIeVRjZlRpaVZydjZ4QjdSY1IyTU1PN1grNTN0WVlZaDEyYkwyQmJmbU0wMEZ4anJmbnpCTW5FNGplbDMzNTZRencwZnN5Slg0dHVnNG5tSytYTDRLcHNLQWVray9KTE1SZjN2M3BYeml0eDBpNU9TTnFxV3U4Z3QzdWtPT2pYOTk2Y1dSMng0ektsWEVxOHNscVA4L2pzazFLY3JmdWJFYmk4c3ZCVHRzbGM4U3IwNXg5R3huajRxcXpZSEE3akZ6NW5UTzhodlV6V3NSMUxhVEtzNC90ejFQQ0wxV2QwbkMzdm5mMmYrZHQzVC84aGRhWGh1cjJSOEcwU3BUTEFXaWNIVVJ2cUtoY0tPem0rODMvRlJ3Qk0xQUltcm9lbnJRTWg4bnNOWUczbWtVTDdQZW42YlZydFZuNmI2WThtZEhWM3lzRjNzSi9FdkNvQXRqMFdvT2t3SVl5MGRNSzNTdlhUZFhJYm9LYklncEN6MEJKeHdSRE5vZitocldORmFLZ3FvcHNSVFJHTjNZdzQzZUJaZ3pycU15REtFenRUeGhrWjNjSUs3SGNycHhISCtaSE5iSURQb0JmTFdoY1lIcGNBZWJIbTVkbU9MZEFIWmtTWmR2Z2ZVUUpOLzZlVVRlK3NDSmVlTFVLZlpTOGlIcTJWcSsyV0hLa3NncHBHMEdZSHpIRUcvd2diK2ZocXhUS1JZdjFkVm4xVG4ralhzNXlic2tqRDVxVm92ZE1aNW16OCtTR3U0THZDWk5oRW42cHdEcDV2NURJZThrUi9EK1E5dUhYek1lMWpUaTdCOVJKcnNQWENFSzJHQ0gxTndqbjhpSWtXY21DV054SDkyTnQreWZpNER3b1hkNnJtMDBkTVl4NmdoYkRQT0YwTnlyT0Z4dytKaURkT1JaaS9wUkdYenNhalBvWmdEbUZ4ZzRjU0lKMWwxSlJHcXNhSmN6d0ZJOXhOUitPZi9mdTYvUEJMRFJZWHVFVVd1TmVub21pekNmaGMxSzJhU0l0UUs1Sm1CVk1qR055dzBDZndBQ2VPd2tFOTJkNTg4RVBScXVCQW1wWmpGUTJQZU4rT1RBSUQ2cUFBY0xIVUFmODlKSGs1bHo1VzNKVDg4TnN5V3JlUjU3WWZ2T3FzK1RUeHp3bTVUallmdjZrS29HNnJUTXFUZTFiRUkrV1diZE80eWxpTk1Yc0VRT2NKb08rdDZwTlhWVEdtenhVNXNiVkVMMGF6b1ptaGhFKzFMMmdzVXVXL0c2OHJmZ0J4UW1IVEpKMzlTWU1BK1QwYXFrRmhiMCtXYVJmT3ZFZTcwNmZocWdFSXQvOXRvZURJbjhQZjExd0E0aUJRa0tPSTU0QzZmL2dZZmZLL1ZpNkcrNkNJa2IrZmRKanQ0NW5MTGNtQm83VFMwRC9idUNVWEIxekVvNWZ1ck0vdW9kcmJ0S3ZqTmxMN1p3dEFFVnM4K01oeFpBbUR5blN1c3VIeHRBbWVQK1NXRGFFQk9EMmVDdmo1VS81eFJRL3FEU2Q1ZDAzTDI0NDZtLzlXOFgva0xWU0FVeHVGdGxxYzZBYU94TG9EM0g2V2FIcXU1L0Y0ZkVQbTI2bGNEa1pZbmQ1aXNwTERIQktmL3lkaEdWd20wSmdyem9kZW9BQW9YMjdxbmpJVVVUMzF4WkVsTVh5ZFVHSU9DOGFJT1IrUDg3Q1g0YVEvdEFSeS9sNkMrREFSWmIxYm9BQUFBQUFBIi8+PC9zdmc+Cg==";
+const LEVELS = [
+  {slug:"fundamentals",title:"Fundamentals",cat:"var(--fund)",mods:[
+    ["llms","LLM Fundamentals",1],["training","Training LLMs",1],["rag","RAG & Embeddings",1],["tools","Tool Calling",1],
+    ["memory","Memory",1],["agents","AI Agents",1],["multi-agent","Multi-Agent Systems",1],["observability","Observability",1]]},
+  {slug:"intermediate",title:"Intermediate",cat:"var(--inter)",mods:[
+    ["prompt-engineering","Prompt Engineering",1],["context-engineering","Context Engineering",1],["coding-agents","Code Agents",1],
+    ["harness-engineering","Harness Engineering",1],["loop-engineering","Loop Engineering",1],["ui","Generative UI",0],
+    ["security","Security",1],["personal-agents","Personal Agents",1]]},
+  {slug:"expert",title:"Expert",cat:"var(--expert)",mods:[
+    ["advanced-tools","Advanced Tools",0],["advanced-memory","Advanced Memory",0],["advanced-multiagent","Advanced Multi-Agent",0],
+    ["advanced-prompting","Advanced Prompting",0],["advanced-context-engineering","Advanced Context Engineering",0],
+    ["advanced-coding-agents","Advanced Coding Agents",0],["advanced-harness-engineering","Advanced Harness Engineering",0],
+    ["advanced-agent-architectures","Advanced Agent Architectures",0],["advanced-ui","Advanced UI",0],
+    ["advanced-deployment","Advanced Deployment",0],["advanced-training","Advanced Training",0]]},
+  {slug:"ecosystem",title:"Ecosystem",cat:"var(--eco)",mods:[
+    ["agent-frameworks","Agent Frameworks",1],["inference-providers","Inference Providers",1],["inference-engines","Inference Engines",1],
+    ["ui-design","UI Design",1],["choosing-tech-stack","Choosing a Tech Stack",0]]},
+  {slug:"protocols",title:"Protocols & Specs",cat:"var(--proto)",mods:[["protocols-reference","Protocols Reference",0]]}
+];
+const TOTAL = LEVELS.reduce((n,l)=>n+l.mods.length,0);
+const TRACKS = [{id:"eng",name:"For Engineers"},{id:"all",name:"For Everyone"}];
+const START = {
+  eng:["fundamentals/llms","fundamentals/training","fundamentals/rag","fundamentals/tools","fundamentals/memory","intermediate/prompt-engineering","ecosystem/agent-frameworks"],
+  all:["fundamentals/llms","fundamentals/training"]
+};
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const CHECK = '<svg width="9" height="9" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 6.4 5 8.8l4.6-5.4"/></svg>';
+
+function bar(){
+  return `<header class="bar"><div class="bar-inner">
+    <a class="brand" href="#"><img src="${LOGO}" alt="" width="32" height="32"><span>AI Engineering Bazaar</span></a>
+    <nav class="nav" aria-label="Main"><a href="#">Home</a><a href="#">Catalog <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg></a><a href="#" aria-current="page">Your progress</a></nav>
+    <div class="spacer"></div>
+    <div class="bar-tools">
+      <span class="bar-track" title="Track"><span class="full">For Engineers</span><span class="short" aria-hidden="true">Engineers</span><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg></span>
+      <span class="bar-icon" title="Language"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 3.8 5.6 3.8 9s-1.2 6.4-3.8 9c-2.6-2.6-3.8-5.6-3.8-9S9.4 5.6 12 3Z"/></svg></span>
+      <span class="bar-icon theme" title="Theme"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="1.5" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="8" y="1.5" width="6.5" height="13" fill="currentColor"/></svg></span>
+      <span class="bar-repo"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.72 1.22 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.65-.89-3.65-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.66 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span class="star">&#9733;</span> 6</span>
+    </div>
+  </div></header><div class="band" aria-hidden="true"></div>`;
+}
+
+function card(level, li, track, done){
+  const n0 = LEVELS.slice(0,li).reduce((n,l)=>n+l.mods.length,0);
+  const d = level.mods.filter(m=>done.has(level.slug+"/"+m[0])).length;
+  const pct = (d/level.mods.length*100).toFixed(2)+"%";
+  const rows = level.mods.map((m,i)=>{
+    const key = level.slug+"/"+m[0], num = String(n0+i+1).padStart(2,"0");
+    if(!m[2]) return `<li class="mod" data-drawn="false"><span class="planned" aria-hidden="true"></span><span class="said">Planned.</span><span class="mlink"><span class="mnum">${num}</span><span>${esc(m[1])}</span></span></li>`;
+    const on = done.has(key);
+    return `<li class="mod"><button type="button" class="tog" data-key="${key}" data-track="${track}" aria-pressed="${on}" aria-label="Completed: ${esc(m[1])}"><span class="mark">${CHECK}</span></button><a class="mlink" href="#"><span class="mnum">${num}</span><span>${esc(m[1])}</span></a></li>`;
+  }).join("");
+  return `<li class="level" style="--cat:${level.cat}">
+    <div class="lhead"><span class="lorder">${String(li+1).padStart(2,"0")}</span><h3 class="ltitle">${esc(level.title)}</h3>
+    <div class="dial" style="--done:${pct}" role="img" aria-label="${d} of ${level.mods.length} completed"><span class="dial-v">${d}/${level.mods.length}</span></div></div>
+    <ul class="mods">${rows}</ul></li>`;
+}
+const cards = (track,done)=>`<ul class="levels">${LEVELS.map((l,i)=>card(l,i,track,done)).join("")}</ul>`;
+const legend = `<ul class="legend"><li><span class="key done"></span>Complete</li><li><span class="key"></span>Not yet</li><li><span class="key planned"></span>Planned</li></ul>`;
+const count = done => `${done.size} of ${TOTAL}`;
+
+function mount(frame, idx){
+  const v = frame.dataset.variant.split(" ");
+  const state = {eng:new Set(START.eng), all:new Set(START.all), tab:"eng"};
+  const uid = "v"+idx;
+  function body(){
+    let h = `<nav class="crumb" aria-label="Breadcrumb"><a href="#">Home</a><span>/</span>Your progress</nav><h1 class="h1${v.includes("tabs")?" has-tabs":""}">Your progress</h1>`;
+    if(v.includes("tabs")){
+      h += `<div class="tabs" role="tablist" aria-label="Track">` + TRACKS.map(t=>
+        `<button type="button" class="tab" role="tab" id="${uid}-tab-${t.id}" aria-controls="${uid}-panel" aria-selected="${state.tab===t.id}" tabindex="${state.tab===t.id?0:-1}" data-tab="${t.id}">${t.name}<span class="count">${count(state[t.id])}</span></button>`).join("") + `</div>`;
+      h += `<div role="tabpanel" id="${uid}-panel" aria-labelledby="${uid}-tab-${state.tab}">${cards(state.tab,state[state.tab])}${legend}</div>`;
+    } else {
+      h += TRACKS.map(t=>`<section class="track" aria-labelledby="${uid}-h-${t.id}"><div class="track-head"><h2 id="${uid}-h-${t.id}">${t.name}</h2><p>${count(state[t.id])} completed</p></div>${cards(t.id,state[t.id])}</section>`).join("") + legend;
+    }
+    if(v.includes("data")){
+      h += `<div class="data"><p>Your progress is saved in this browser only. A backup file keeps it safe if the browser clears it, and moves it to another browser.</p>
+        <div class="data-actions"><button type="button" class="lbtn" data-act="backup">Back up to a file</button><button type="button" class="lbtn" data-act="restore">Restore from a file</button><button type="button" class="lbtn danger" data-act="reset">Reset</button></div>
+        <div class="confirm" role="group" aria-label="Confirm reset"><span>Reset clears both tracks in this browser.</span><button type="button" class="btn solid" data-act="reset-yes">Reset progress</button><button type="button" class="btn" data-act="reset-no">Keep it</button></div>
+        <p class="note" aria-live="polite"></p></div>`;
+    }
+    return h;
+  }
+  function render(focusTab){
+    frame.innerHTML = bar() + `<div class="page">${body()}</div>` +
+      `<footer class="foot"><a href="#">Repository</a><a href="#">MIT licence</a><a href="#">LokumAI</a><a href="#">Intellica</a><a href="#">PIA Group</a></footer>`;
+    if(focusTab) frame.querySelector(`[data-tab="${state.tab}"]`).focus();
+  }
+  frame.addEventListener("click", e=>{
+    const t = e.target.closest("button, a"); if(!t) return;
+    if(t.tagName==="A"){ e.preventDefault(); return; }
+    if(t.dataset.tab){ state.tab=t.dataset.tab; render(true); return; }
+    if(t.dataset.key){ const s=state[t.dataset.track]; s.has(t.dataset.key)?s.delete(t.dataset.key):s.add(t.dataset.key);
+      const sel = `[data-key="${t.dataset.key}"][data-track="${t.dataset.track}"]`; render(); frame.querySelector(sel)?.focus(); return; }
+    const note = frame.querySelector(".note"), conf = frame.querySelector(".confirm");
+    if(t.dataset.act==="backup"){
+      const blob = new Blob([JSON.stringify({kind:"ai-engineering-bazaar-progress",tracks:{"for-engineers":[...state.eng],"for-everyone":[...state.all]}},null,2)],{type:"application/json"});
+      const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="bazaar-progress.json"; a.click(); URL.revokeObjectURL(a.href);
+      note.textContent="Saved bazaar-progress.json."; }
+    if(t.dataset.act==="restore"){ note.textContent="In the built page this opens a file picker and reads the backup file."; }
+    if(t.dataset.act==="reset"){ conf.toggleAttribute("data-open",true); note.textContent=""; conf.querySelector(".btn").focus(); }
+    if(t.dataset.act==="reset-no"){ conf.removeAttribute("data-open"); }
+    if(t.dataset.act==="reset-yes"){ state.eng.clear(); state.all.clear(); render(); frame.querySelector(".note").textContent="Both tracks are reset."; }
+  });
+  frame.addEventListener("keydown", e=>{
+    if(!e.target.dataset.tab || !["ArrowLeft","ArrowRight","Home","End"].includes(e.key)) return;
+    e.preventDefault(); state.tab = state.tab==="eng"?"all":"eng";
+    if(e.key==="Home") state.tab="eng"; if(e.key==="End") state.tab="all"; render(true);
+  });
+  render();
+}
+document.querySelectorAll(".frame").forEach(mount);
+</script>
+</body>
+</html>

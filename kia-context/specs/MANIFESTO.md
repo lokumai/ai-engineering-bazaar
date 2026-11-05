@@ -10,7 +10,7 @@ authority: law
 writes: agent, from what the human decided
 status: active
 covers: the whole product
-last_updated: "2026-10-12"
+last_updated: "2026-11-05"
 ---
 
 # 📜 MANIFESTO — What we are building, and why
@@ -93,8 +93,8 @@ reason, and so does a Persian version of every written one (**D80**). See `genes
 8. **Never dense. Being concise is not a goal here.** Plain English and compressed English are not the
    same thing, and compression is the failure mode this project keeps hitting. Loosening a module makes
    it longer, and that is the correct outcome.
-9. **Nothing is gated.** No sign-up wall, no paywall, no feature a reader has to register for. An
-   account copies progress between devices and unlocks nothing.
+9. **Nothing is gated.** No sign-up wall, no paywall, no feature a reader has to register for. There
+   are no accounts at all since 2026-11-05 (D88).
 10. **A reader's progress is theirs.** It lives in their browser by default, they can download it,
     restore it and erase it, and none of it is required to read anything.
 11. **Completion is the reader's own claim.** There is no test, no grade and no assessment. Nobody
@@ -153,5 +153,10 @@ Three questions kill most proposals:
 
 - The author's own working files are his. Nothing under `mini-courses/scratchpad/` is ours to tidy,
   and copying content out of a file is not permission to remove it.
-- The application is a colleague's work. Changes there are for making the corpus render correctly, not
-  for accommodating content that could have been written differently.
+- ~~The application is a colleague's work.~~ Superseded 2026-11-05 (D90): the website is the
+  author's, code and design and content.
+- **The author's website comes first.** A colleague's change may not alter the website's design,
+  content or behaviour, or anything the author added, unless the author asks for that change. A pull
+  request that merges without a conflict is not thereby acceptable: "no conflict" says the edits do not
+  overlap, not that the author wants them. Each side builds its own app without disturbing the other's
+  code (D90).

@@ -1,289 +1,103 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+The operating manual for the application in this repository. The architecture is
+[`kia-context/specs/ARCHITECTURE.md`](kia-context/specs/ARCHITECTURE.md), the only architecture
+document; what is being built now is in `kia-context/logs/` (start at `kia-context/INDEX.md`).
+This file holds what changes rarely: who owns what, the commands, and the rules a build enforces.
 
-[`kia-context/specs/ARCHITECTURE.md`](kia-context/specs/ARCHITECTURE.md) is the
-architecture document, and the only one: the six rules that explain why the code
-looks the way it does, plus the domain, the lifecycles and the vocabulary. Read it
-before a first substantive change. This file is the operating manual on top of it.
-The root `ARCHITECTURE.md` was folded into it on 2026-09-08.
+## Who owns what
 
-**The interface has been replaced, and M16 is closed.** Not the functionality:
-every capability stayed, and the presentation, the vocabulary and the palette
-changed. The capability ledger at the end of
-[`kia-context/logs/PROGRESS_2.md`](kia-context/logs/PROGRESS_2.md) is the check
-that nothing was lost — one row per capability, where it lives, and the
-behavioural test that proves it.
-**The mockup is the specification, and it outranks every document.**
-`playground/01-theme-T4-ground-G3-powder.html` is what the interface must look
-like. [`kia-context/specs/DESIGN.md`](kia-context/specs/DESIGN.md) is a
-transcription of its design *language* and names it in `source:`; where the two
-disagree, **the mockup is right and DESIGN.md is the bug** — except where
-DESIGN.md records a deviation: ten of them, three forced by a measured floor
-(**D34**: a measured accessibility floor outranks a transcribed value), one
-forced by a script the mockup has no text in (Persian, **D80**), and six
-decided by the author. One of the six is the home page, whose reference is
-`playground/10-home-bazaar-street.html` (**D79**).
-
-**M16 was ten stages and all ten shipped**, in
-[`kia-context/logs/PROGRESS_2.md`](kia-context/logs/PROGRESS_2.md) — the token
-layer, the shell, the navigation, the rail, the catalog, the reading page, code
-and figures, completion, progress and account, home, and the eight routes no
-mockup draws. Each stage's entry names its reference mockup, what it touched,
-the fidelity roles it added and the traps in it; seven reports follow, and each
-one records what its own brief had wrong. **Read a stage's report before
-trusting its brief.**
-
-`PROGRESS.md` is part 1 and closed: M1 to M15, and the review pass over M10 to
-M14. New milestones go in part 2.
-
-**M17 to M22, M24 to M30, M32 to M38, and M40 have shipped**, recorded in
-[`kia-context/logs/PROGRESS_2.md`](kia-context/logs/PROGRESS_2.md): one catalog
-with a level as an address, the module page, the progress page, the end of a
-module with its quick quiz, the readability pass over the corpus, and the
-Bazaar Street front door. **M19 renders the second language**: every ready
-module has a Turkish page under `/tr/`. **M28 adds Persian**: every ready module
-also has a Persian page under `/fa/`, right to left, with the chrome left
-English; `src/lib/content/languages.ts` is the one list of translations
-(**D80**). **M23 is written and not started**: the
-interface's own strings in Turkish, which are authored content rather than code.
-
-**The retired vocabulary is out of the markup** — `hl-` in any `className` is
-**0**, from 792 — and what survives of that prefix survives on purpose: the
-`data-hl-*` attributes islands and specs query, the three `<html>`
-stamp families whose pattern `src/lib/record/stamp.ts` owns, and the storage
-keys, whose prefix is the only isolation available on a shared `github.io`
-origin. **Renaming any of those costs a keyboard shortcut, a mark that is right
-in frame one, or every existing reader's record.** A guard checks all three
-rather than merely excluding them.
-
-One thing is still the author's to settle, recorded in the code rather than
-left implicit: whether a figure wider than the measure may bleed past the text
-(it does not, and reversing that is one rule in `prose.css` — **D43**). The
-other, the pager's faint direction label (**D45**), was settled on 2026-10-12
-when the author redesigned the end of a module: the label now clears the text
-floor (DESIGN.md's eighth deviation).
-
-Two things every stage does. It compares the built surface to its mockup by
-adding roles to `APP_SELECTORS` in `tests/e2e/fidelity.ts` **and** a
-`fidelity.spec.ts` block with its mutation, in the same sitting. And it takes
-**geometry from the component mockup and colour from the shell** (**D31**):
-`02` to `09` are on a deliberately older palette, so reading them literally
-would put a green accent on a cool grey ground.
-
-**Since stage 4, D31 is mechanical rather than a rule to remember.** The
-harness knows which mockup specifies which role (`REFERENCE_OF`), and a role
-whose reference is not `01` **may carry no colour fact** — so a non-shell
-mockup can only ever be compared on lengths and type steps. Two more registries
-go with it, and each entry has to state a reason: `WITHOUT_REFERENCE` for a
-component no mockup draws (**D30**), and `NARROW_DEVIATIONS` for a fact that
-stops being specified below the language's own lower breakpoint. A guard fails
-any narrow deviation that has stopped deviating, because a stale exemption
-hides the next difference.
-
-**`src/design/bazaar.css` is the language as CSS** — both themes, every
-primitive — and it is the token layer the site loads. A surface stylesheet in
-`src/app/` arranges its primitives and defines none of its own;
-`tests/unit/design/surface-stylesheets.test.ts` holds them to that.
-
-**Three guards exist because of failures that nothing else could see, and they
-are three corners of one failure.** A class or a token can go missing in three
-directions and none of them is an error to any other tool in this project:
-`tests/unit/design/styling-references.test.ts` reads every colour, font and size
-utility plus every `var(--…)` out of the markup and the surface stylesheets and
-requires each to resolve against the language — because **a Tailwind utility
-named after a deleted token emits nothing at all**, with no error and no
-warning, and 401 references were silently inert for one commit. The same file
-also refuses **a `bz-` class no stylesheet answers to**, which is that failure
-pointing the other way and is the state the whole interface was in for one
-commit after stage 0 deleted the eleven stylesheets: unstyled semantic HTML,
-and not one thing in the suite said so. And
-`tests/unit/color/category-css.test.ts` refuses **a generated selector no
-component carries**, which four of its five groups were for four commits.
-
-Beside them, `tests/e2e/fidelity.ts` compares a built page to its mockup fact by
-fact, which is the check whose absence let five milestones ship the wrong
-design. It knows five reference documents now, each in one record.
-
-**Before styling anything, open the mockup, then DESIGN.md — and copy neither a
-nearby component nor the old stylesheets.** M9 to M14 re-themed the old
-interface instead of rebuilding it, because the design document they were built
-against described the old structure carrying the new palette; 378 of the old
-design's 398 class names survived five milestones meant to replace them
-(`logs/BRAINSTORM_2.md` **D26**). Two live constraints: the top bar is a solid
-cobalt slab with its own on-bar sub-palette and never sits on the page ground,
-and because the ground is `#FDFBF7` a raised surface is told apart by its
-**hairline and not its fill** — with `line` for grouping and `line-strong` for
-an interactive or hovered edge. **A surface's layout is not in DESIGN.md by
-design**: it lives in the M16 table, against the mockup that surface came from.
-
-## Two halves, and which file governs which
-
-This repository holds two projects that meet at one file, and they have separate
-working agreements. Read the right one.
-
-| Working in | Governed by | In short |
+| Working in | Governed by | Owner |
 | --- | --- | --- |
-| `src/`, `tests/`, `scripts/` | **this file** | The application that renders the corpus |
-| `mini-courses/` | [`mini-courses/CLAUDE.md`](mini-courses/CLAUDE.md) | The authored course, and everything `MANIFEST.md` governs |
+| `src/`, `tests/`, `scripts/` | this file | the author's website |
+| `mini-courses/` | [`mini-courses/CLAUDE.md`](mini-courses/CLAUDE.md) | the author's course |
 
-They share the derive-never-restate rule and the measure-do-not-assert habit,
-and they diverge on almost everything else: the corpus agreement is about prose,
-figures, translation and the seven manifest rules, none of which apply to code.
+**The author's website comes first.** A colleague builds the mobile reader in its own repository.
+A colleague's pull request may not change the website's design, content or behaviour, or anything
+the author added, unless the author asks; one that merges without a conflict is not thereby
+acceptable (`kia-context/specs/MANIFESTO.md` §7, D90). Never merge a colleague's PR without the
+author's word.
 
-**`mini-courses/curriculum.yaml` is the file they meet at.** It is authored by
-the course side and read by the app side, which makes it the only place a change
-in one half can break the other. `mini-courses/AGENTS.md` is a byte-identical
-copy of the corpus agreement; the `AGENTS.md` at this root is something else
-entirely, a block `next dev` writes and re-adds on every run, so leave it alone
-apart from committing it with your work.
+**`mini-courses/curriculum.yaml` is where the two halves meet**: authored by the course side, read
+by the app. `mini-courses/AGENTS.md` is a byte-identical copy of the corpus agreement. The
+`AGENTS.md` at this root opens with a block `next dev` writes and re-adds on every run; leave it
+alone apart from committing it.
+
+## The design
+
+**The mockup is the specification and outranks every document.**
+`playground/01-theme-T4-ground-G3-powder.html` is the shell; `playground/10-home-bazaar-street.html`
+is the home page (D79). [`kia-context/specs/DESIGN.md`](kia-context/specs/DESIGN.md) transcribes
+the design language; where it disagrees with the mockup, the mockup is right, except for the
+deviations DESIGN.md records. Before styling anything, open the mockup, then DESIGN.md, and copy
+neither a nearby component nor an old stylesheet (D26).
+
+`src/design/bazaar.css` is the language as CSS, both themes and every primitive. A surface
+stylesheet in `src/app/` arranges those primitives and defines none of its own. A raised surface is
+told apart by its hairline, not its fill. Geometry comes from a component mockup and colour from the
+shell (D31); `tests/e2e/fidelity.ts` compares a built page to its mockup and knows which mockup
+specifies which role.
 
 ## Commands
 
 ```bash
-npm run dev            # next dev on :3000, basePath '' (prebuild copies course images)
+npm run dev            # next dev on :3000
 npm run build          # static export into out/
 npm run typecheck      # tsc --noEmit, strict
-npm test               # vitest run — tests/unit/** + tests/corpus/**
+npm test               # vitest: tests/unit/** + tests/corpus/**
 npm run test:e2e       # playwright: builds, serves out/ on :3111, real Chrome
-npm run test:e2e:dev   # same suite against next dev (unminified React errors)
+SITE_BASE_PATH=/ai-engineering-bazaar npm run build   # the build GitHub Pages serves
+node scripts/check-mermaid.mjs <file>.md              # parses and renders every diagram
 ```
 
-CI (`.github/workflows/ci.yml`) runs typecheck → test → build → e2e, in that
-order. Run all four before opening a PR; a green `npm test` alone means little
-here, because the link gate and the export itself only fail in `build`.
-
-**A single test:**
-
-```bash
-npx vitest run tests/unit/record/merge.test.ts        # one file
-npx vitest run tests/unit/record -t "erase"            # by name
-npx playwright test theme.spec.ts --project=chrome-1440
-npx playwright test responsive.spec.ts --project=chrome-390 -g "no sideways"
-```
-
-`responsive` and `containment` also run on `chrome-390`; everything else runs
-on `chrome-1440` only (M40 dropped the 1024 project). First run on a machine needs real
-Chrome: `npx playwright install --with-deps chrome`, or set
-`E2E_CHANNEL=chromium` to use the bundled build.
-
-**Reproducing the deployed build** — GitHub Pages serves from a sub-path, and a
-missing `basePath` is invisible locally:
-
-```bash
-SITE_BASE_PATH=/ai-engineering-bazaar npm run build
-npm run serve:out
-```
-
-```bash
-node scripts/check-mermaid.mjs <file>.md                 # parses AND renders every diagram in Chrome
-```
-
-Run `check-mermaid.mjs` on any doc whose mermaid you touched: a broken diagram
-is an error box on GitHub, never a build failure.
+CI runs typecheck, test, the base-path build with its link check, then e2e. A green `npm test`
+means little alone: the link gate and the export only fail in `build`. `responsive` and
+`containment` also run at 390px; the rest of the browser suite runs at 1440. First run on a machine:
+`npx playwright install --with-deps chrome`.
 
 ## Architecture, in the parts that span files
 
-**The content pipeline.** `mini-courses/curriculum.yaml` + `mini-courses/*.md` →
-`src/lib/content/` → routes. `curriculum-file.ts` validates the config with zod
-plus seven cross-file rules, `loader.ts` **walks that config** rather than the
-directory, `render.ts` does md→html, `links.ts` rewrites cross-references,
-`derive.ts` counts, and `facts.ts` is the spine every page asks for the corpus.
+**The content pipeline.** `curriculum.yaml` and `mini-courses/*.md` → `src/lib/content/` → routes.
+`curriculum-file.ts` validates the config, `loader.ts` walks the config rather than the directory,
+`render.ts` turns markdown into HTML, and `facts.ts` is what every page asks for the corpus. A
+module's number is its position in `curriculum.yaml`, written nowhere else. All of this reaches
+`node:fs`, so a client component may never import it.
 
-Because the loader walks the config, **a module's number is its position in
-`curriculum.yaml`**, computed there and written nowhere else. Filenames carry no
-number, prose names another module by title, and a module's own frontmatter is
-`summary` and `objectives` only. Adding `module:` or `status:` back to a file
-fails the build. Reordering the course is moving one line. All of it is
-build-time-only and reaches `node:fs`, so it may never be imported by a client
-component — that is why `layout.tsx` measures `curriculumFacts()` itself and
-passes the result down as props.
+**The record.** `src/lib/record/` is the reader's state in `localStorage`, and `store.ts` is its only
+writer. It is read twice per page: **channel A**, a blocking script in `<head>` (`boot.ts`) that
+stamps `<html>` so CSS draws progress in the first frame, and **channel B**, React islands after
+mount. There is no account layer and no server (D88): the reader keeps a copy with export, import
+and erase on `/profile/`.
 
-**The record.** `src/lib/record/` is the learner's state, and `store.ts` is its
-only writer. Reads happen twice per page and the split is load-bearing (§12.2):
+## Rules a build enforces
 
-- **Channel A** — `boot.ts` generates a blocking inline script in `<head>` that
-  reads `localStorage`, stamps `<html>`, and lets CSS draw the progress marks
-  before first paint. No React, correct in frame one.
-- **Channel B** — React islands after mount (`RecordStateSync`, panels,
-  dialogs). `getServerSnapshot` returns the frozen empty record, because the
-  prerendered HTML has never met the reader.
-
-Anything derived belongs in exactly one file: `derive.ts` (how far along),
-`scope.ts` (where the record goes, i.e. the reader-visible copy about it),
-`storage.ts` (what a write means).
-
-**There is no account layer and no server** since M40 (2026-11-05): Supabase,
-sign-in, teams, organisations, role paths and the record of work were removed
-on the author's word. The record lives in this browser only, and
-Export / import / erase on `/profile/` is how a reader keeps a copy.
-
-## Rules that are enforced, and will fail a build
-
-- **`mini-courses/` is read-only.** Nothing in `src/` may restate a fact that
-  lives in a markdown file — no module count, no title, no category total.
-  Derive it at build time.
-- **The config is validated, and the useful rule is the set comparison.** For
-  each category, the `.md` files on disk and the names listed in
-  `curriculum.yaml` must be the same set in both directions, so a module listed
-  without a file and a file written without a listing both fail by name. Also
-  enforced: unique names, resolvable prerequisites that sit earlier in the
-  course, a `ready` module with a positive duration, a `_tr.md` sibling for
-  every module, and no `_fa.md` (or any translation) of a module nobody listed.
-- **Regenerate `src/app/lokum-modules.css` in the same commit as a `status`
-  change.** `prebuild` writes it, vitest and playwright never run `prebuild`,
-  and it is committed for exactly that reason. `public/course-images/` is the
-  other generated output and is gitignored, being only a copy of what is already
-  in `mini-courses/`.
-- **A test may check a rule that holds for any content; it may never write down
-  a fact about the content.** A word count, a table count, a heading spine or a
-  module number in an assertion turns an ordinary edit red and teaches nobody
-  anything. [`tests/README.md`](tests/README.md) carries the rule, the four
-  layers and what fails for a reason. The browser suite leaks hardest here,
-  because `tests/e2e/sheets.ts` names representative sheets by number and specs
-  then measure prose on them.
-- **An unresolvable internal `.md` link fails the build**, and
-  `tests/corpus/renders.test.ts` also asserts that no rendered module body
-  carries a non-external `href` ending in `.md`.
-- **The copy register** (`tests/unit/copy-register.test.ts`) bans exclamation
-  marks, praise, anthropomorphism, "just"/"simply"/"easy", "please"/"sorry",
-  confirmshaming, and a second spelling of any status (`NOT DRAWN`, never
-  `NOT YET DRAWN`) from every reader-visible string.
-- **`border-width: var(--stroke-struct)` fails** (`stroke-weights.test.ts`).
-  Chrome floors border widths to whole pixels, so the middle line weight must be
-  painted — a gradient or a height — not bordered.
-- **Colour is never the only signal.** Contrast and palette tests recompute
-  every ratio from the shipped stylesheets rather than asserting a table, and an
-  e2e spec loads the site under `forced-colors: active`.
-- Decisions are pure functions with the clock passed in — no `Date.now()` in a
-  reducer, no `Math.random()` in a layout.
+- **`mini-courses/` is read-only to the app**, and nothing in `src/` restates a fact that lives in a
+  markdown file: no module count, title or total. Derive it.
+- **The config is validated**: the `.md` files in a category and the names listed for it must be the
+  same set both ways, plus unique names, earlier prerequisites and a `_tr.md` for every module.
+- **Regenerate `src/app/lokum-modules.css` in the same commit as a `status` change** (`prebuild`
+  writes it; vitest and playwright never run `prebuild`).
+- **A test may check a rule that holds for any content, never a fact about the content.**
+  [`tests/README.md`](tests/README.md) has the rule.
+- **An unresolvable internal `.md` link fails the build.**
+- **The copy register** (`tests/unit/copy-register.test.ts`) bans exclamation marks, praise,
+  "just"/"simply"/"easy", "please"/"sorry" and a second spelling of any status.
+- **Colour is never the only signal**; ratios are recomputed from the shipped stylesheets.
+- Decisions are pure functions with the clock passed in: no `Date.now()` in a reducer.
 
 ## Working conventions
 
-- **Measure, don't assert.** Every important result in this repository came from
-  measuring: counting broken links in the export, watching a magic link fail
-  cross-device in Chrome, executing the doc SQL against the live schema.
-  Verify counts and constants from the repo, not from memory.
-- **Mutation-test guards that matter.** A test that passes against a
-  deliberately broken implementation protects nothing.
-- Module headers record the decision and *why*, including rejected alternatives
-  and the measurement that settled it. A comment restating the code is a defect.
-- **Never add `Co-Authored-By: Claude`, "Generated with Claude Code", or any
-  other AI attribution** to a commit message or PR body in this repository.
-- `docs/superpowers/` is gitignored — specs and plans stay local, never
-  committed. `.env.local` and a loose `supabase-access-tokens` file are ignored
-  because they hold real secrets; do not remove those `.gitignore` lines.
-## Read next
-
-| Document | For |
-| --- | --- |
-| [`kia-context/specs/ARCHITECTURE.md`](kia-context/specs/ARCHITECTURE.md) | The six rules, the domain, the lifecycles, the build, the runtime layers |
-| [`mini-courses/CLAUDE.md`](mini-courses/CLAUDE.md) | The corpus agreement: how a module gets written, figures, translation |
-| [`mini-courses/MANIFEST.md`](mini-courses/MANIFEST.md) | The seven rules every module is held to |
-| [`kia-context/specs/DESIGN.md`](kia-context/specs/DESIGN.md) | The design system: every token value, which border token to use, the six primitives M16 derived, and the do-nots |
-| [`tests/README.md`](tests/README.md) | The testing rule, the four layers, and the checks that fail for a reason |
-| [`SECURITY.md`](SECURITY.md) | The shared-origin exposure, and the one accepted risk |
-
+- **Measure, don't assert.** Verify every count and constant from the repository.
+- **Mutation-test a guard that matters**: a test that passes against a broken implementation
+  protects nothing.
+- A module header records the decision and why, including what was rejected. A comment restating
+  the code is a defect.
+- **Never add `Co-Authored-By: Claude`, "Generated with Claude Code", or any other AI attribution**
+  to a commit message or PR body in this repository.
+- `docs/superpowers/` is gitignored. Keep the `.gitignore` lines for `.env.local` and
+  `supabase-access-tokens`: those files held real secrets.
+- **A retired feature is removed end to end**: its code, its record fields, its CSS, its docs and
+  its tests, not hidden (D88).
 
 @AGENTS.md
 <!-- kiacontext:begin -->

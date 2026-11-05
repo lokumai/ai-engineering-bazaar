@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Language button icon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ground: #fdfbf7; --raised: #ffffff; --sunken: #e6dac6;
+  --line: #d8cbb4; --line-strong: #c3b299;
+  --ink: #20242e; --title: #1b1b47; --muted: #6a6558; --faint: #948d7d;
+  --bar: #282864; --on-bar: #ffffff; --on-bar-dim: #c9c6e4;
+  --bar-hover: rgba(255,255,255,.10); --bar-field: rgba(255,255,255,.08); --bar-field-line: rgba(255,255,255,.25);
+  --gold: #b8873b; --focus: #a0503c; --primary: #282864;
+  --shadow-menu: 0 12px 28px rgba(40,30,10,.13);
+  --sans: "Avenir Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --persian: Vazirmatn, "Noto Naskh Arabic", "Noto Sans Arabic", Tahoma, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+html { background: var(--ground); }
+body { margin: 0; background: var(--ground); color: var(--ink); font: 15px/1.55 var(--sans); }
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+:lang(fa) { font-family: var(--persian); }
+
+/* ---- the document around the options ---- */
+.page { max-width: 1320px; margin: 0 auto; padding: 44px 28px 96px; }
+.q { margin: 0 0 10px; max-width: 860px; color: var(--title); font-size: 28px; line-height: 1.2; font-weight: 650; }
+.lead { margin: 0 0 20px; max-width: 800px; color: var(--muted); font-size: 16px; }
+.jump { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.jump a { display: inline-flex; align-items: center; gap: 7px; height: 33px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 9px; background: var(--raised); color: var(--muted); font-size: 13.5px; font-weight: 600; }
+.jump a:hover { background: var(--sunken); color: var(--ink); }
+.jump b { color: var(--title); }
+
+.opt { margin-top: 56px; padding-top: 34px; border-top: 1px solid var(--line); scroll-margin-top: 16px; }
+.opt-head { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 12px; }
+.code { padding: 2px 9px; border: 1px solid var(--line-strong); border-radius: 5px; background: var(--raised); color: var(--title); font-size: 15px; font-weight: 700; }
+.opt h2 { margin: 0; color: var(--title); font-size: 22px; line-height: 1.25; font-weight: 650; }
+.rec { padding: 3px 10px; border-radius: 9px; background: var(--bar); color: #fff; font-size: 13px; font-weight: 600; }
+.opt-text { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 12px 40px; max-width: 1180px; }
+.opt-text p { margin: 0 0 8px; }
+.opt-text ul { margin: 0; padding-left: 20px; }
+.opt-text li { margin: 3px 0; }
+.opt-text h3 { margin: 0 0 4px; color: var(--title); font-size: 14.5px; font-weight: 650; }
+.why { margin-top: 10px !important; padding: 10px 12px; border: 1px solid var(--line); border-radius: 7px; background: var(--raised); }
+.flag.inline-flag { display: inline-block; vertical-align: -2px; margin: 0 2px; }
+
+.stages { display: grid; grid-template-columns: minmax(0, 1fr) 452px; gap: 28px; margin-top: 22px; align-items: start; }
+.stage-label { margin: 0 0 8px; color: var(--muted); font-size: 13.5px; font-weight: 600; }
+.stage { container: stage / inline-size; position: relative; overflow: hidden; height: 330px; border: 1px solid var(--line); border-radius: 9px; background: var(--ground); }
+.said { min-height: 22px; margin: 8px 0 0; color: var(--muted); font-size: 13.5px; }
+
+/* the Persian flag choice, for the two flag options */
+.fachoice { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 10px; color: var(--muted); font-size: 13.5px; }
+.seg { height: 30px; padding: 0 11px; border: 1px solid var(--line-strong); border-radius: 9px; background: var(--raised); color: var(--muted); font: 600 13px/1 var(--sans); cursor: pointer; }
+.seg:hover { background: var(--sunken); color: var(--ink); }
+.seg[aria-pressed="true"] { border-color: var(--bar); background: var(--bar); color: #fff; }
+
+/* ---- the states panel: the button alone, on the bar ---- */
+.states { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.cell { margin: 0; }
+.strip { display: flex; align-items: center; justify-content: flex-end; gap: 10px; height: 58px; padding: 0 16px; border-radius: 7px; background: var(--bar); color: var(--on-bar); }
+.cell figcaption { margin-top: 5px; color: var(--muted); font-size: 13px; }
+.cell figcaption span:lang(fa) { font-size: 14px; }
+
+/* ---- the bar, transcribed from src/design/bazaar.css ---- */
+.bar { background: var(--bar); color: var(--on-bar); }
+.bar-inner { display: flex; align-items: center; gap: 16px; height: 58px; padding: 0 22px; }
+.brand { display: flex; flex: none; align-items: center; gap: 10px; color: var(--on-bar); font: 600 16px/1 var(--sans); white-space: nowrap; }
+.brand img { display: block; width: 32px; height: 32px; }
+.bar-nav { display: flex; margin-left: 4px; }
+.bar-nav > ul { display: flex; align-items: center; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.bar-link { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 7px 11px; border-radius: 5px; color: var(--on-bar-dim); font: 500 14.5px/1 var(--sans); white-space: nowrap; }
+.bar-link:hover { background: var(--bar-hover); color: var(--on-bar); }
+.spacer { flex: 1; }
+.bar :focus-visible, .strip :focus-visible, .ring { outline: 2px solid var(--on-bar) !important; outline-offset: 2px; }
+.bar-icon { display: grid; flex: none; place-items: center; width: 33px; height: 33px; padding: 0; border: 1px solid var(--bar-field-line); border-radius: 5px; background: var(--bar-field); color: var(--on-bar); font: 600 11px/1 var(--sans); cursor: pointer; }
+.bar-icon:hover, .bar-repo:hover { background: var(--bar-hover); }
+.bar-repo { display: inline-flex; flex: none; align-items: center; gap: 6px; height: 33px; padding: 0 9px; border: 1px solid var(--bar-field-line); border-radius: 5px; background: var(--bar-field); color: var(--on-bar); font: 600 12.5px/1 var(--sans); }
+.bar-repo .star { color: var(--gold); }
+.band { height: 18px; background-color: #282864; background-image: linear-gradient(45deg,#2f8c86 25%,transparent 25% 75%,#2f8c86 75%), linear-gradient(45deg,#c8a078 25%,transparent 25% 75%,#c8a078 75%), linear-gradient(45deg,#a0503c 25%,transparent 25% 75%,#a0503c 75%); background-size: 18px 18px, 18px 18px, 54px 18px; background-position: 0 0, 9px 9px, 27px 0; border-bottom: 2px solid #b8873b; }
+
+/* the language trigger and its variants */
+.lang { position: relative; flex: none; }
+.lang > summary { list-style: none; }
+.lang > summary::-webkit-details-marker { display: none; }
+.lang[open] > summary { background: var(--bar-hover); }
+.lang-btn.wide { display: inline-flex; gap: 7px; width: auto; padding: 0 9px; }
+.codetxt { font: 600 11px/1 var(--sans); letter-spacing: .02em; }
+.aa { font: 600 14px/1 var(--sans); letter-spacing: -.01em; }
+.fa-code { font: 600 13px/1 var(--persian); }
+.flag { display: block; flex: none; width: 21px; height: 14px; border-radius: 2px; outline: 1px solid rgba(255,255,255,.4); outline-offset: 0; }
+.menu .flag { outline-color: rgba(32,36,46,.2); }
+.flag.script { display: grid; place-items: center; outline: 0; border: 1px solid rgba(255,255,255,.55); color: var(--on-bar); font: 600 10.5px/1 var(--persian); }
+.menu .flag.script { border-color: var(--line-strong); color: var(--title); }
+
+/* ---- the page under the menu ---- */
+.frag { padding: 28px 40px; }
+.frag[dir="rtl"] { text-align: right; }
+.crumb { margin: 0 0 12px; color: var(--muted); font-size: 13.5px; direction: ltr; text-align: left; }
+.crumb span { margin: 0 6px; color: var(--faint); }
+.display { margin: 0 0 14px; color: var(--title); font-size: 40px; line-height: 1.15; font-weight: 700; }
+.frag p.first { max-width: 680px; margin: 0; font-size: 17px; line-height: 1.7; }
+.frag[dir="rtl"] p.first { margin-left: auto; }
+
+/* ---- the menu, transcribed (.bz-menu + .bz-langmenu-panel) ---- */
+details:not([open]) > .menu { display: none; }
+.menu { position: absolute; top: 40px; right: 0; left: auto; z-index: 60; min-width: 160px; padding: 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--raised); box-shadow: var(--shadow-menu); color: var(--ink); }
+.item { display: flex; align-items: center; gap: 9px; padding: 7px 10px; border-radius: 5px; color: var(--ink); font: 500 14px/1.3 var(--sans); white-space: nowrap; cursor: pointer; }
+.item:hover { background: var(--sunken); }
+.item:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+.item .name:lang(fa) { font-size: 15px; }
+.check { flex: none; margin-left: auto; color: var(--primary); visibility: hidden; }
+.item .name { margin-right: 14px; }
+.item[aria-current] .check { visibility: visible; }
+.mcode { flex: none; width: 26px; padding: 3px 0; border: 1px solid var(--line-strong); border-radius: 3px; color: var(--muted); font: 600 10.5px/1 var(--sans); text-align: center; letter-spacing: .02em; }
+
+@container stage (max-width: 767px) {
+  .bar-inner { gap: 8px; padding: 0 12px; }
+  .brand-word { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .bar-nav { min-width: 0; margin-left: 0; }
+  .bar-nav > ul { overflow: hidden; }
+  .bar-icon.theme { width: 30px; }
+  .lang { position: static; }
+  .menu { top: 76px; left: 12px; right: 12px; min-width: 0; }
+  .frag { padding: 24px 20px; }
+  .display { font-size: 30px; }
+  .frag p.first { font-size: 16px; }
+}
+
+@media (max-width: 1100px) {
+  .stages { grid-template-columns: minmax(0, 1fr); }
+  .opt-text { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 600px) {
+  .page { padding: 28px 16px 64px; }
+  .q { font-size: 23px; }
+  .stage { height: 380px; margin: 0 -16px; border-left: 0; border-right: 0; border-radius: 0; }
+  .states { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<!-- Flags, drawn here. Every flag is shown 3:2 and cropped from the centre. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <clipPath id="uk-t"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath>
+    <symbol id="f-en" viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice">
+      <rect width="60" height="30" fill="#012169"/>
+      <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>
+      <path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#uk-t)" stroke="#C8102E" stroke-width="4"/>
+      <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/>
+      <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/>
+    </symbol>
+    <symbol id="f-us" viewBox="0 0 190 100" preserveAspectRatio="xMidYMid slice">
+      <rect width="190" height="100" fill="#B22234"/>
+      <path d="M0,11.5h190M0,26.9h190M0,42.3h190M0,57.7h190M0,73.1h190M0,88.5h190" stroke="#fff" stroke-width="7.7"/>
+      <rect width="76" height="53.8" fill="#3C3B6E"/>
+      <g fill="#fff"><circle cx="10" cy="9" r="2.4"/><circle cx="26" cy="9" r="2.4"/><circle cx="42" cy="9" r="2.4"/><circle cx="58" cy="9" r="2.4"/><circle cx="18" cy="20" r="2.4"/><circle cx="34" cy="20" r="2.4"/><circle cx="50" cy="20" r="2.4"/><circle cx="66" cy="20" r="2.4"/><circle cx="10" cy="31" r="2.4"/><circle cx="26" cy="31" r="2.4"/><circle cx="42" cy="31" r="2.4"/><circle cx="58" cy="31" r="2.4"/><circle cx="18" cy="42" r="2.4"/><circle cx="34" cy="42" r="2.4"/><circle cx="50" cy="42" r="2.4"/><circle cx="66" cy="42" r="2.4"/></g>
+    </symbol>
+    <symbol id="f-tr" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+      <rect width="1200" height="800" fill="#E30A17"/>
+      <circle cx="425" cy="400" r="200" fill="#fff"/>
+      <circle cx="475" cy="400" r="160" fill="#E30A17"/>
+      <polygon fill="#fff" points="583.3,400 764.2,458.8 652.4,304.9 652.4,495.1 764.2,341.2"/>
+    </symbol>
+    <symbol id="f-fa" viewBox="0 0 630 360" preserveAspectRatio="xMidYMid slice">
+      <rect width="630" height="120" fill="#239F40"/>
+      <rect y="120" width="630" height="120" fill="#fff"/>
+      <rect y="240" width="630" height="120" fill="#DA0000"/>
+      <path d="M0,114h630M0,246h630" stroke="#fff" stroke-width="5" stroke-dasharray="16 10" opacity=".85"/>
+      <g fill="none" stroke="#DA0000" stroke-width="9" stroke-linecap="round">
+        <path d="M315,138v84"/>
+        <path d="M302,150a34,34 0 0,0 0,58"/><path d="M328,150a34,34 0 0,1 0,58"/>
+        <path d="M290,140a50,50 0 0,0 6,82"/><path d="M340,140a50,50 0 0,1 -6,82"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<main class="page">
+  <h1 class="q">What should the language button in the bar show, instead of the globe?</h1>
+  <p class="lead">Each option is the real bar on LLM Fundamentals with the language menu open. Pick a language in the menu and the button and the page follow it. Beside it, the button on its own for each language, and with the keyboard focus ring.</p>
+  <ul class="jump">
+    <li><a href="#e1"><b>E1</b> 文A glyph</a></li>
+    <li><a href="#e2"><b>E2</b> Aa glyph</a></li>
+    <li><a href="#e3"><b>E3</b> Language code</a></li>
+    <li><a href="#e4"><b>E4</b> Flag and code</a></li>
+    <li><a href="#e5"><b>E5</b> Flag alone</a></li>
+  </ul>
+
+  <section class="opt" id="e1" data-opt="e1">
+    <div class="opt-head"><span class="code">E1</span><h2>The translate glyph</h2><span class="rec">Recommended</span></div>
+    <div class="opt-text">
+      <div>
+        <p>A Latin A beside a character from another script, the mark Google Translate made familiar, drawn in the bar's 1.5px line so it matches the theme and repository icons.</p>
+        <ul>
+          <li>It means "language" and nothing else. A globe can also mean region, website or the internet.</li>
+          <li>Stays a 33px square, so the bar keeps its row of equal buttons.</li>
+          <li>Does not say which language the page is in. The check in the menu does, and the page itself does.</li>
+        </ul>
+        <p class="why"><b>Why recommended:</b> it is the most widely recognised language mark after the globe, it means the same thing to an English, Turkish or Persian reader, and it carries no country.</p>
+      </div>
+      <div>
+        <h3>Seen on</h3>
+        <p>Wikipedia (the language button at the top of every article), Google Translate, Chrome's translate button, and Material's own "translate" icon.</p>
+      </div>
+    </div>
+    <div class="stages">
+      <div><p class="stage-label">In the bar, menu open</p><div class="stage" data-stage></div><p class="said">Click Türkçe or فارسی in the menu.</p></div>
+      <div><p class="stage-label">The button on its own</p><div class="states" data-states></div></div>
+    </div>
+  </section>
+
+  <section class="opt" id="e2" data-opt="e2">
+    <div class="opt-head"><span class="code">E2</span><h2>An Aa glyph</h2></div>
+    <div class="opt-text">
+      <div>
+        <p>The letters Aa, set in the bar's own type, standing for "text" and the language it is in.</p>
+        <ul>
+          <li>Quiet and typographic. No drawing to get right at 16px.</li>
+          <li>Most readers know Aa as text size or reading settings (Safari's reader, Apple Books, Kindle), so many will expect a font menu here.</li>
+          <li>Latin letters only, so it says nothing to a reader of the Persian page that the 文A glyph does not say better.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Seen on</h3>
+        <p>Rare as a language button. Common as a text-settings button: Safari's reader view, Apple Books, the Kindle app.</p>
+      </div>
+    </div>
+    <div class="stages">
+      <div><p class="stage-label">In the bar, menu open</p><div class="stage" data-stage></div><p class="said">Click Türkçe or فارسی in the menu.</p></div>
+      <div><p class="stage-label">The button on its own</p><div class="states" data-states></div></div>
+    </div>
+  </section>
+
+  <section class="opt" id="e3" data-opt="e3">
+    <div class="opt-head"><span class="code">E3</span><h2>The language code</h2></div>
+    <div class="opt-text">
+      <div>
+        <p>The button shows the code of the language being read: EN, TR or FA. The menu repeats the codes beside the names.</p>
+        <ul>
+          <li>The only option that answers "which language am I reading" from the bar.</li>
+          <li>It is what the shell mockup drew: <code>01</code> has a <code>TR</code> square in exactly this slot.</li>
+          <li>Two letters can read as a label rather than a button, and FA is less obvious to a Persian reader than فا. The chrome is English, so FA stays consistent with it.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Seen on</h3>
+        <p>europa.eu and many government and airline sites, usually with a small chevron or globe beside the code.</p>
+      </div>
+    </div>
+    <div class="stages">
+      <div><p class="stage-label">In the bar, menu open</p><div class="stage" data-stage></div><p class="said">Click Türkçe or فارسی in the menu.</p></div>
+      <div><p class="stage-label">The button on its own</p><div class="states" data-states></div></div>
+    </div>
+  </section>
+
+  <section class="opt" id="e4" data-opt="e4">
+    <div class="opt-head"><span class="code">E4</span><h2>A small flag beside the code</h2></div>
+    <div class="opt-text">
+      <div>
+        <p>The button widens like the repository button and shows the flag of the current language, then its code. The menu puts a flag beside each name. Persian can take Iran's flag, or no flag: the button then shows the code alone, and the menu a small chip with the script itself, فا.</p>
+        <ul>
+          <li>UX guidance generally advises against flags for languages: a flag stands for a country, and a language is not one. English is not only British <svg class="inline-flag flag" viewBox="0 0 21 14" style="outline-color:rgba(32,36,46,.2)"><use href="#f-en" width="21" height="14"/></svg> (the US flag <svg class="inline-flag flag" viewBox="0 0 21 14" style="outline-color:rgba(32,36,46,.2)"><use href="#f-us" width="21" height="14"/></svg> is the usual alternative, and either one leaves the other readers out).</li>
+          <li>Persian is spoken in Iran, Afghanistan and Tajikistan, and Iran's flag is politically loaded: the current flag and the older Lion and Sun flag each read as a statement. The no-flag chip avoids that, but then one language looks different from the other two.</li>
+          <li>Flags are quick to scan, but the UK flag's navy nearly disappears on the cobalt bar without its hairline.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Seen on</h3>
+        <p>The default switcher of WordPress translation plugins (WPML, Polylang). Apple uses flags only on its country and region page, which is the case flags are right for.</p>
+      </div>
+    </div>
+    <div class="stages">
+      <div>
+        <div class="fachoice" role="group" aria-label="Persian shown with"><span>Persian shown with</span><button type="button" class="seg" data-fa="flag" aria-pressed="true">Iran's flag</button><button type="button" class="seg" data-fa="noflag" aria-pressed="false">No flag (<bdi lang="fa">فا</bdi>)</button></div>
+        <div class="stage" data-stage></div><p class="said">Click Türkçe or فارسی in the menu.</p>
+      </div>
+      <div><p class="stage-label">The button on its own</p><div class="states" data-states></div></div>
+    </div>
+  </section>
+
+  <section class="opt" id="e5" data-opt="e5">
+    <div class="opt-head"><span class="code">E5</span><h2>The flag alone</h2></div>
+    <div class="opt-text">
+      <div>
+        <p>The flag of the current language replaces the glyph inside the 33px square. For Persian, Iran's flag, or no flag: the button then shows فا.</p>
+        <ul>
+          <li>The most compact way to show the current language, and the square stays square.</li>
+          <li>Everything said against flags under E4 applies, and more strongly: with no code beside it, the flag is the whole message.</li>
+          <li>A flag in a button reads as "country" or "region" to many readers, so some will expect a shipping or locale setting.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Seen on</h3>
+        <p>Booking.com's header (a flag that opens the language and region list) and many hotel and shop sites.</p>
+      </div>
+    </div>
+    <div class="stages">
+      <div>
+        <div class="fachoice" role="group" aria-label="Persian shown with"><span>Persian shown with</span><button type="button" class="seg" data-fa="flag" aria-pressed="true">Iran's flag</button><button type="button" class="seg" data-fa="noflag" aria-pressed="false">No flag (<bdi lang="fa">فا</bdi>)</button></div>
+        <div class="stage" data-stage></div><p class="said">Click Türkçe or فارسی in the menu.</p>
+      </div>
+      <div><p class="stage-label">The button on its own</p><div class="states" data-states></div></div>
+    </div>
+  </section>
+</main>
+
+<script>
+const LOGO = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiPjxpbWFnZSB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgeGxpbms6aHJlZj0iZGF0YTppbWFnZS93ZWJwO2Jhc2U2NCxVa2xHUmd3WkFBQlhSVUpRVmxBNFdBb0FBQUFRQUFBQWZ3QUFmd0FBUVV4UVNMZ0ZBQUFCc0lYdG55RkoxaGYvZjQ1dHo2eDNQR3ZidG0zYnZEdTJiZHUyYmR2MkdVOW5SUHd1V3RVWkZYZDdFUkVUd0JPMUJndFZzd2F3eG1wbEJoTjNuUUdFeGtOOXpPQ2dGLzlxNEs4ZnVtMTNnTVpEVmN6aDBIZHE2TzFmZmU2Sms0RW1WTU1jOW5tSHBEYmxIRnRKK3ZXTGpuVndxMEp3MlBOVnJYTFUwRG0yU2RKM2I1b1BibjB2T096ODNLMVMxTWhUbTZSL3ZIUi9vTEYrRmh5V1BHT2pGTE5HbjZLVVhyUVBFRHowSzRjWmoveExhck42bTF0SjM3aGhkOEN0SHpsTXVPRTNVcHZWK3h3bERYejJtcGxnVGVnekRuYmg5NlUyYTR4VGxQU25GKzhQdVBVUk44SjVYNWRpVWdkempKSStkdlZjc05BbnpPSFVyMG94cWF1NWxmUzNGeDBJMWhjY2p2aXdGSk02SGFPa3R5N0MrZ0hyM3lHbHBNN25OdXZYdTJPbEJXc2UyYTRjVmVZT2ZXdGNjY1pibEtPS2pUb01MOHM1VGdOWjViYjVPcHJTM3BSYmxhVFNBczNQbE1xNnVyakZXNVJyNXV5cnJMS3VLZTdBd3FMT3dLdlc2bkthd2pZVWQwOWhJVXo1blZKWmR4Ukd3M1BWbG5WdGFjWUhGY3U2cmJDQS9WeXByS2NXTis1WHBkMVUzUFMvSzVkMVpYR3ovMWZhVXdvemxtOHI3ZVhGclZWcEw2UEJMQlMwT3BmMlhKc1lBR3RDR1lHRm0wdTdDVmkyY2hyZ1ZzYjBmNVoyN1M0UGZubEwvTnVIYmxnRWJ0MEQrNkZTU2RMZnQybm8vN3hrSFppSHJnVytvbGlXMU1hY2M0eFMrOXBWZ0hjck1QRlhTbVhscktGeksyMy8xRzFUTUErZG1ydFJ1YXdSNXlqcGg4Y0JidDBKcy83ZVI2UWNXK2tMMTgwRXQyNkVjZkFIcFQ0aUtXWHBUeTg1QUt5eE1Rc05USGtrWnZYYkdLWDAwcFdBMjVnRWg0a1AvRnA5T2JmU2pzL2V2eE9ZOWM1aHhoVS9sR0pma2hRbGJYcmJRZUNoSjhFREUyNyt2ZFFtOWUwY1d5bS81ekR3SGhod3dZK2ttTlRmYzVUMGhrWDRhS3pCTHZ1cUZMTXFHTFArZERJMklqZlk0MHRTU3Fwa3Ezd3VQcHdIMlAvVkc5VW0xVFBxUHpQRFVHWnd3c2NsSlZVMTZXZ0dCNGVUUGlrcFp0VzF6UmNPY2pqNFBWS0txbTZyaXdCbjRSdWxGRlhoVnBlQmNmUWZsYUtxbkhROEZ0WnRWYXRxcjhkNXZ3WlU2Nml6WU1vL2NxNVdxNHRoMlZiVksrbzgyRFZXTEdzL1dLbUtTYXRnNTRHcXJZY2xXK3FWdFcwNXJNdzErOTljbUwrcFpscUo4U1hGV2tsYVErQnJGY3ZhRitPTEZaTTJFTWIvWEtsV1dYa1Y3QktWYTZXcy9XQzlxcjRXMXRWdGRkMnl0TEp1a2xiRFRnUEtGVnNKOC85ZnI2eTBPeXpaVXJPQlhXRG5nWnB0WFFxN3REV0x1OEx1dVdaYUNXdFU3Nnk4SjZ5cjJwYUZzTFppTVg4bkdJY3AxU3BGbllSem1tSmhLUmFTVytsK0hFNVVLa3hLc1lRby9mVmlIRGlpc0pRLy9EWXB4YTdGcklFWExjWUJEbEl1YWtDWGM4NW5wWlM2bEpMMDVnM2dETjZ2ckFGdFhPNXc4bWVsbUxxU292VEJROEVEUSs2bVZFNUsrdWZabUFjNDcvdFNURjFJVWZyNmFlREcwTTU3dEtPUTNFcHYzd2tEUEREKytwOUlNWTFWYnFXZlhHbVlNYnlGaFQ5UmlybDd1WlYrZVFFNFF6cE11dUduVWt4amtWdnB0N2RNQW1mRWdUbXZrTlNtamtYcG40OU54NDFoZzhQazYzOGd4ZFN6S1AzcjhabmdqTmJnbURmL1QwcXhReWxwMjB1WGdqUGk0REQraXU5S0tmWWtTbHVlc1FROE1QcGdzUFN1SDBncDVtN2tLTDFsTlRTQjBRYUg1dEp2U0RtT0ttYmxONjJESnRCYmQyak8rSVNrTm85ZGJxVnZuZ1FlNkdWd3NMTStJYVU0a2h3bHZlTkE4RUR2UXdPYy9JRWRVa3hqRktYZjNlUzQwZXZnd0pFZmxuTE1RNlJXeXU4K0dOd1kyK0FCVmovdFQxS0t1WGRSMnY2VVdlQ01aWENEa3o0dEtiYXh6ZEtXMSs4SFpuVFFEV2JkOGpWSk1mY21acVczcjRPR01YZURJOS93UHczK3djTzdnaGtkdFFZNDRlM2JwWmhHRjdQMHJuM0JBMTMwQUV1dWVjM2JuM1NVZ1JzZERnMnc1dlVicFJUemlGS1czbnNJbU5GVmQ0WnVqSzY3dzRycnZ5RXA1bUZ5bEQ1NEZKalJaV3NhYnp4UW9qbUVVOTRmcFRaTFNxMzAxV1BCakhxR0Jsai91aWpsS09rdmR4cm1WTllOOW43eFh5WDkrUEg1NEZUWUhHWWRkTm82QjZmUzVneHVBdlVPN2haNElsdFdVRGdnTGhNQUFQQkNBSjBCS29BQWdBQStNUlNIUXFJaEREM0hNaEFCZ2xtQU5MZ0RzY3Z3M21xVmgvQWYxWDllOGhTWW51cC9wK2ovMWEvcGoyQVAwKy8ydlZVOHczN1BmdHY3di81QWU2SC9BZW9CL2ZmOHo2elAvVDlobjl5ZllBL1lEMDRmMmkrRFArMy83ajl1UGdJL212K0cvL0hzQWYvVDFBT0VBL2tINEFlQkg5OThDL3gzNkIvYWYzRHp4OE5mWFJxUjlxK0hYZWI4anRRWDJQNXhQMGZZcjdGL3FQUUw5d3Z1M2YwYWp2aGYyQVAxaDlIdjluNFUvbm5zQi96Lys1LzlIN3F2cGcvd1BIajljZXdML04vN1gveC9YcDlvZm9wZnJDNTVlRUI0K3FVc0lUSVI5c216YytnMEd4SSt5Y00vZUo5ZzZETjNwVDZyK3JBK3RSUHZJdnFKamR0UkFBWHFYVDdhWlRtTDUyZGJDTktOY3VqY09vMjQzLy8vL0NVQXBFUW5OdDlUbFZkNy9FVGVXSXplYzlPMGxKRytaaGpLWVlNdXU3M3JNY21aVkdsL3RaeU4xT1JPdThhNW1kUmZwME1qK0VpTGMvQ0dEa1ZRRzRtTEYvc3F5M0lrNmRyMkNWV1hPZStZVk9YOEJJTFZlTTl0QnRjTGF5SFlmb3A2OFl5c3ZKMldIV0tQbWR1Q09nS0YwQnEwcXZNb2UzS21lcTBYUTFWNHptY0FQTTRaREZhU1ZuUFRaTEtuNzN3RzFVb0tiWVRBQ3ZtU1pOZWV6MGxSVzFlV1p5TjB0U1Vab3E1V28vWVZMWURUZ2FvVEQwcjZBWWNWVE5QM3Q4SlN5YnJ5ZnZFKzlqdEpmTmJ0ZlVUWmpVVGxHdFRSVE1HL2Y2NmZPVDhHem43RWdhLzQyUkdXTUVETWkwMzl2MWRKdkFkTzRYaHhqS09oSkhyL3BsRStRZ0FBL3YrUHZDKy93Q0R2Zk85UVRPOFBBSHp5VFRQdkxJQXZQVGRxSmZNcDRRN2trR01EKzlHdHFycFArMFZWbHJGNGphejRNNERKbDBnWi9nK2U3RnpXM1VMVUhmaHNVcWpZN0N4VktBRW5nQy9nWm9FcWpLUEladGQ0czQ1OGdmKzV1SFJCRnZDR3JadXM3UGtKbGFVeGo4eUxIK3lUbkZ0OUpBTWI0dm5XK2w3K01KZnhrdmtpVlgzWVRJNTVvbGFoQjhyNjl6SWJVMVExTm1ialdaNkhKVk1OT0RUZFU4ekRBVEUrUzJ0Lzd5cEFDRi80dUpzZDJ0bkkwYUJ1NWE3SktlWi9ZblBpL3c4OVh2ckVtZXVuWEs2aExtZnptUHoyaUdYNEw1VjhRTVVCMG9uOWY5UXhOdnJtS3Jac3lzZjVyb0pOQk1LZzA5cTlWU1hXN1VDSzltaVVSaHlkRisvaXVIYVlrcVkrOGtSLzNjKzM4aWMyQTVtVXpJd0kvRXFFaEZxZ3AxZm5ZSzZUdlR2ZXFRd2JwV09IZ3BUUjEwcEFUZVprYm5aOEFEVm8ydGd2ajh2ZzBPNVdmR2Z3VUh1ZmR6Q1RZM3VnNFpZaHlWWWZyZXVuTUxEd3QzRUtSSy9ZdHp1UHZYU2VkU2tteHdhQlhVUjR6bXNWb3NuMnhxVDZ2TzdzdW5EY1hZdTNMRlNBUm5VVDNqNGtuRUNkNHNYQWdBelMyUUlnNjdldmdRaVdDdG1jWWtwcWpVQjlEVXZsOERLam9YNm1Nd3I3alNvRHJqaVFaVUtONDE2TGd3MDY5L1l4SXlIdjFmQWlSZjBQelg4WnhmdDhSZG80dVM1UHVlV1NlT09ra3gxdDRJU1FrblhBQ3F6dnRzaUNKOGVxak1VS2ZrbjJjTmVNT0tJZ3luby9NNXVZTVZKenBiS0labmVmY0VYeHVHbE9QeWVHMDlqRTM5NlpSUlpjc2FGUXhiemNLa05TenBhSlc2SWhtanB2L25Ddkw5N1MydHlPRVlQU0E0SkF1Ulh4K285dlFKeThESmx1SHRCUzQzS2xVTmwrUjl2eC9JRy83dzROVGdIOXN0dXl4NGNsS3dGS0dJOHRNSkUwUHZzTlQ1WGM1ZWdUeERWdHIxVVpVS29icWk0SDBpWW1ZdWx0VWJxSkdFT1NjU0FoVWVqNFA4WFI4Z3ozU2FoQi9uWkk5WHJMTEcrSi83cisrcHM3ZGlQbzhqKzFhRjg5MTZzS0VMcHZSb1ljb0RoQncvQTlGQmZSTjY2VGxIb1NOdnlUMnhVRmtwcG1QTVgyazR5STNiQms2SlFKekNkcXJTMHI0SVJjRlc3eVdCV2tMdEtnSnRtL1dYYkFWNUNSWlR3b0lHNDg4MVBwK0E0QTA3amkvRGNabXJMVHRTTURlWllqVWZkUFFoZ1poVW0wbzZqa3NTY2M5bXY0L3lyd1dMT0U3UTlHTkNRSU1kNjM2dldDSDE4RFRMOGQzSGNCdVEweXFlSEc5bVVxZTJ4ZTZIeDVnS2FKQVpGclAwTVNJVTRMSksrc2dWUGdUazkwNlAxOXlSNThDVnpyWmt0TkRrcFM3OVk3MUtsNkdKRVIwemk5SlpzL0Q0RnVacGJ1T0FFSnM5K3I5RVdlMDMya0JiR2I4TklmQ2RTUXU4N240UFlBLy9yOS82VXZOUmVhRFgybGJkMlVtKzZuVHdxVVE3S3pwbGlUWFVQUkhBS2lsRTRkaXhPM1RrR2hCaHNBcWFGeWNXblRGck5mT1FUTjc5RS9mQ3ArRmh4QmpSdC9wSDVhd1FxQzl6S0VhcFNpNGdPbEF0aTl0SHNrQnF1ZkZTeEhmc0Zrc1N3WnNrdXkxT3FWMmxSVkpWd2lQQkFvRHNhbmY1ZWxITHkwVGJnWnUxaDFQMGpyaXZYQk01b3g4RGlJRmF4MkVRbk9uVEJtTGVrdjcwMGRyamZCcDcrME1nSWpMQnB4d1FyS3YxOU9Zc3ViWEZuVEMvbjR5aWdhNllzaWlXcHNQYnk0NWtmVVpwRng5TFZjbVJyOWo5OWROekg4OTRUM2RVd3BFSmpSbk9JSXRJR1Q5dVg4cGFmUUVjWDdCL2EyNXRxdjlxTzFBdkRKaE1QNGJQTEdwVk82S2hMZjQza0szdjZGRnBDRlA1OS9mUE5uK1ZmckczdkdMOVdZeHQ5VUJhVlNBdUVUcU5ySlRYWjVpVFhpNmpHVU15ZWJSM1RMY28rbVdzdU9IVUxKZEtYSE9TQ1ZNVnhKTllnd0UxcS9NcjdXckNCN3NmOXVsUXU5ZGFmdGJOMDdNdzRud25CVllZcWJJYjdMYTFvQi9zR1J2YmVORFRvYmtvN1dCVkNyT0pKT1NQMG5HdUhLQUEwaDJQVlI1N0R0SXNiRUVtZmZuZHNCbDJwczFEZng3Tkd2Y1plSnJuQzMvTUgrNEVrSURiOFZuSU9TUURQUWQ3TnErYTZzOVAwaFJSa3MwbjhDSk53dWMvb3dpYmdqVHlmOER1Z0lSTGJqNUZQK3hLQXY3WW1TcTluaEQ2VElpNUwrZmdnc003YlFNOTFpOUFqbjI2UGp2dWdvdjNWVk1lT21hZkd4R040d2N3VGlPb0dhbC9tSjhTL3NzTWJ0QlMwa2ZkZlpYaVdtYzh3QTFGOWo1VnlwSU1LTU1icWx3a21jN3E5MndTV0VtRlhiQ0F4UU9TWTlYS1FqbGE1NTMxTVluODVKYkg0MG1XWi8zMHJVMVBJbFJFR3RLaUpQOEx0dHJzY09KTEFWY1ZNNkhkYVpyekdSVUR3MVBVa0MyT0ZHOURUVCs2MlNJSnpOSUVYR1dXTytKR2s2NHk0cW8rZ2dJMkc2d0hmVnQ4ZWxpYmd0bUlTa3prRzFzWldpZWlVOTNTQ0UwdWxKNlNsSjBpZFk1YVg5c3JyZHU1d1hZYndIaXpJMkZTZVRONU9Nd21SSlN4UlhnWEMxUWh1b0ZZSVYycC9iVDJtSUJuUzNCRWZ1Tzc2VlRTL0JGUURpNTVsMEVKZE1QMmkzU1dYcHRDVGpUT0hXamZpVTRNbTQ4R2tINDBpcjhUZit0SitwMXdaM2hGZEtvSlcwOGNrR0ptWkNpaVpnemMzbWlEUEdsNE8weXBMaDFXMHVsZkRHb1VkbEoveFNKUU1rVnF4ZEV5KzZ6WTdsL0YxdUhYYXpoWlRmcXZPdXBUbTNuK1FmLzBmYW4vRDNHanhGTUlsQzNhM0IrdFFPcnZOcWN5WFpnVGhMcitlcU11UVFVbDhSZFJ6WWhEdG14UFJqeEZxaEFNQnl0RzFiREhNT2l1ODlmRWtKbi9FRkdURjhVL3V2RXYrazNpek1XUncvYkJPZTdXSjI3VWlVMm5oNGhLUjhOaWgrbHRwUU1VL0ZUdGJUZllWQTJHci90aEJQUVgwZllKYWM3SjU4RWZVeUFaUzFpRmN1SnorZ0RKc2VmaUtkT2liSHFkaHQrQVc2SXdLUGN4RHZieXRONkxYUjlEZHdWV3R2TDQ5TkV4U1hiL3NzbU9LcTN6b29rWm9GOHRvMzRCdXYrbnkxVGV2NGZ2NXZPWWNvbU1MNm4rVW43SC9VZ3dKT3B1RHNIQS9jRThNTnFBNjNDVmpVRmdxNTdnVjJlS2FUdnVlWVhCbWMzVHRTdldzR0JnSkEyV2NxNTFKMThNbWJVZmFwK0NMeXB0K0xjbzlaaGIzZ2E5QU1HOFhBa0lmcWZsa01QYlRlcmM2UDJkbHg3MUFNUDk0T2hNOHp4TlY5TnZEZW8rL29WWmlTZlB1bzEvRkczdUVvTlJKNDFUZnVraGpqZ29sVHVqYzU1R2RpeDhZbEhiblB3eHZrcnpWaVVBVk45NS9vSWpybklZRVpuZDd6UHpjN2lyeWFNbnBTNzFzdk5tekxJUTRldlg1bm1wdUlrM1dSZHBrTlo1blVyZ2JWNE5jUyszUVRnVlFWdW4xcFN5VjdqMVN3cDI4TnVCZTdZbmJtUGFoN0piSUVnaFM0SE5RY2VTNkF0cWsyMktvd3pyTkdnUkN5R29UYk0yekc3Vlcyc21XQkdLVXZhOUIrc0ZiVVpIQmY1dlFPazFIYngycXF4SEt2cnRuMGNlZnNSdE5OTlYzTXBuR3hqLzVpakpYY0UzVzNmNzZ2V1E3TndTcDIvMW1id25nTEl3MUQvellveE9maExhQVYyT25FRFBOVTBlQjMra3lpT2RPdUVraGo0QjFnbCtRL2lWOVlzblR5LzhnQ0tObkJ5dGFBTFhNRFlWRi9jRjdvbkVmK0h2MytWM0RKNkJnUFY5N1Y4Lzl0ZlRITGxhcEdTeDZpbTdvOHNEWGEvNDRsUWdJa0RFSUlkUVAxbWsrRTdMazBlN2NVT0RoMERUSUJpZDhqcVlvQnhpbi9CUEpEVnQ0YlpMejNVcWxWNlZUQkEraW0zL21TK2NkTHNtUHZ3K3NIWVZDMEhTSHpTMUdFRnpiWTlKTWdGRHJEdFVWSmY2eXdmcyt1b2FZalc1K3E0MTg5cjdPci84Y3RKZElRLzZuTXZ0cG5ZWUJmUUQ2NDMyeHpBT2ZWaFZ1dllrajVoSTVUdkgwcGNRVTVGd0hqMzRINW1IUTNVSkc5YTNnM3JSc0E4OVZ0amxCa3RtWnFDajVOR3V6M0djQ2JsNWpSaExZMmpIY2dEVUxFZjJGTXJKbGZPR09jMENOMk1INnJ4dEQ0VEVXdjFJZmlXY0R6OXc2dGlUKzlsei9oN3crMStpbGpQMjJ1ZllwNTVyWXRXKzlsR0toWTJFTXh3eUJPcUNsVHFsQ01ZemJldVJ1S3c5QTRFYkQzNmdlQ3hlM3dLUGlZdUFWSnM0UXVKVk54ZDF5d0xwVjByZDNObkZFbDJVMzI2WkJzZG1sVUtYMGJTSUdPMjZFWnQzMVN2Sk5YTjF3QUM3bkdMQW5lc1NKTVZqalpDeXM4c3UxSm9ub0I1TEJjekpBblU2V21QM0xUZjM3bzB4RHJUWHRrZFVLRWhvNGcwS2R0LzdLMGVyY3RmMUFFMk1xZS9pQjFYZmtnN0ZuUjNNc2NKdEFHN1FJa21GTW1ZOFVaYjhURWcrbi9RYW95eFZLMVhDallabnFhS3l5ektXZVBBSWtHUS9ueDVEUHFvNHpYZCtxOFpZL1BRclltbGFoOE9NNjFDK1hxa2QyMVQ4SjZ2R2haYWFwL0FvZ2ErTSthdVpka1I3SU9qU3pQcXdxNG9NL3VZc1RmdnJkS293Mnc2dGx0NHlaMlZoWml4VHNpSmpwVVI5NzFlRU42NzVqTkNNaTY3clNNamo1K28zMHZHVVJMNllhcFNvd0xrTmZkUFBnUU1Raklna3F5aXErenN3NEhGUmM2SXh0MU5SMTJycSswb1JRRHVnU3ZLM2JpT2dEL0dFTlR1cHFFdkY2WUVzRkVMWUhYMmJSYXpMc3kxUE4xSUdPY2k1WVk3NUxWZUE5Q1NWZ05VSE9SZkk0eHpzT3E5VlZ4REdWRkJFd21tbHZaNWc1dENFeFhpS1hPZ1VJOU9RQ3gwVUdtVHBMbmRMQ2hRWEdKU1dNQTFtV09lWWFTK2RjWDl2YkZEQkp1NGFiNEx1T3hOTWpzMzVsK1VjYkJiblRZOG1uSUV3V1Nnc2lRWWZpdzRzY3pLdGV6VlczT29ObGpHcjQ5dWRXb2RNdG8vT3pyWG4vSlZuSFdwemVEVW9NOWgwUS9EbER3REJDV1NueUp2b0tRdGtubjhpdTd1cjBqK21EZkJJS2pjVndqempqWHZPNW54VXZac2phUkxzeHhmZWp3bUh5dHA3RnJkWHkvM3dHZ2Y4amVSejg2OU94dDZma3hDdXlEQXFMQzZlbGpTRFF3ZEd1VEFMWEV5Y3l0OG12elpsRENFb1Fmd1hZUlViTDExcmwzMndzZ2l4WDZQUWFrUUpzTEY3VTFHVVhoRzhBbGJVcWhlQlZ0bGdoMUc5azR2TXg1NmNaenNjL09LeUJsOTVUREk0clJOcnREYUhrZDRIeVRjZlRpaVZydjZ4QjdSY1IyTU1PN1grNTN0WVlZaDEyYkwyQmJmbU0wMEZ4anJmbnpCTW5FNGplbDMzNTZRencwZnN5Slg0dHVnNG5tSytYTDRLcHNLQWVray9KTE1SZjN2M3BYeml0eDBpNU9TTnFxV3U4Z3QzdWtPT2pYOTk2Y1dSMng0ektsWEVxOHNscVA4L2pzazFLY3JmdWJFYmk4c3ZCVHRzbGM4U3IwNXg5R3huajRxcXpZSEE3akZ6NW5UTzhodlV6V3NSMUxhVEtzNC90ejFQQ0wxV2QwbkMzdm5mMmYrZHQzVC84aGRhWGh1cjJSOEcwU3BUTEFXaWNIVVJ2cUtoY0tPem0rODMvRlJ3Qk0xQUltcm9lbnJRTWg4bnNOWUczbWtVTDdQZW42YlZydFZuNmI2WThtZEhWM3lzRjNzSi9FdkNvQXRqMFdvT2t3SVl5MGRNSzNTdlhUZFhJYm9LYklncEN6MEJKeHdSRE5vZitocldORmFLZ3FvcHNSVFJHTjNZdzQzZUJaZ3pycU15REtFenRUeGhrWjNjSUs3SGNycHhISCtaSE5iSURQb0JmTFdoY1lIcGNBZWJIbTVkbU9MZEFIWmtTWmR2Z2ZVUUpOLzZlVVRlK3NDSmVlTFVLZlpTOGlIcTJWcSsyV0hLa3NncHBHMEdZSHpIRUcvd2diK2ZocXhUS1JZdjFkVm4xVG4ralhzNXlic2tqRDVxVm92ZE1aNW16OCtTR3U0THZDWk5oRW42cHdEcDV2NURJZThrUi9EK1E5dUhYek1lMWpUaTdCOVJKcnNQWENFSzJHQ0gxTndqbjhpSWtXY21DV054SDkyTnQreWZpNER3b1hkNnJtMDBkTVl4NmdoYkRQT0YwTnlyT0Z4dytKaURkT1JaaS9wUkdYenNhalBvWmdEbUZ4ZzRjU0lKMWwxSlJHcXNhSmN6d0ZJOXhOUitPZi9mdTYvUEJMRFJZWHVFVVd1TmVub21pekNmaGMxSzJhU0l0UUs1Sm1CVk1qR055dzBDZndBQ2VPd2tFOTJkNTg4RVBScXVCQW1wWmpGUTJQZU4rT1RBSUQ2cUFBY0xIVUFmODlKSGs1bHo1VzNKVDg4TnN5V3JlUjU3WWZ2T3FzK1RUeHp3bTVUallmdjZrS29HNnJUTXFUZTFiRUkrV1diZE80eWxpTk1Yc0VRT2NKb08rdDZwTlhWVEdtenhVNXNiVkVMMGF6b1ptaGhFKzFMMmdzVXVXL0c2OHJmZ0J4UW1IVEpKMzlTWU1BK1QwYXFrRmhiMCtXYVJmT3ZFZTcwNmZocWdFSXQvOXRvZURJbjhQZjExd0E0aUJRa0tPSTU0QzZmL2dZZmZLL1ZpNkcrNkNJa2IrZmRKanQ0NW5MTGNtQm83VFMwRC9idUNVWEIxekVvNWZ1ck0vdW9kcmJ0S3ZqTmxMN1p3dEFFVnM4K01oeFpBbUR5blN1c3VIeHRBbWVQK1NXRGFFQk9EMmVDdmo1VS81eFJRL3FEU2Q1ZDAzTDI0NDZtLzlXOFgva0xWU0FVeHVGdGxxYzZBYU94TG9EM0g2V2FIcXU1L0Y0ZkVQbTI2bGNEa1pZbmQ1aXNwTERIQktmL3lkaEdWd20wSmdyem9kZW9BQW9YMjdxbmpJVVVUMzF4WkVsTVh5ZFVHSU9DOGFJT1IrUDg3Q1g0YVEvdEFSeS9sNkMrREFSWmIxYm9BQUFBQUFBIi8+PC9zdmc+Cg==';
+const LANGS = {
+  en: { name: 'English', code: 'EN', dir: 'ltr', crumb: 'LLM Fundamentals', title: 'LLM Fundamentals',
+        first: 'Everything else in this series is built on top of this module. An LLM is simple to describe: text goes in, and text comes out.' },
+  tr: { name: 'Türkçe', code: 'TR', dir: 'ltr', crumb: 'LLM Temelleri', title: 'LLM Temelleri',
+        first: 'Serideki diğer her şey bu modülün üzerine kurulu. Bir LLM\'i anlatmak aslında kolay: içeri metin girer, dışarıya metin çıkar.' },
+  fa: { name: 'فارسی', code: 'FA', dir: 'rtl', crumb: 'مبانی LLM', title: 'مبانی LLM',
+        first: 'این درس پایه‌ی کل این مجموعه‌ست. LLM رو خیلی ساده می‌شه توضیح داد: بهش متن می‌دی و متن تحویلت می‌ده.' },
+};
+const ORDER = ['en', 'tr', 'fa'];
+
+const translateGlyph = '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 3.6h7.2M5.1 1.9v1.7"/><path d="M7.3 3.6C6.7 6.3 4.8 8.6 2 10"/><path d="M3.5 5.7c.9 1.6 2.3 2.9 4.1 3.8"/><path d="M8.9 14.2l2.8-7.4h.7l2.8 7.4"/><path d="M9.9 11.8h4.3"/></svg>';
+const theme = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2.75" y="2.75" width="10.5" height="10.5"/><path d="M8 2.75h5.25v10.5H8z" fill="currentColor"/></svg>';
+const gh = '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>';
+const star = '<svg class="star" width="11" height="11" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 .9l2.2 4.6 5 .7-3.6 3.5.9 5L8 12.3l-4.5 2.4.9-5L.8 6.2l5-.7z"/></svg>';
+const check = '<svg class="check" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg>';
+
+function flag(lang, fa) {
+  if (lang === 'fa' && fa === 'noflag') return '<span class="flag script" lang="fa" aria-hidden="true">فا</span>';
+  return `<svg class="flag" viewBox="0 0 21 14" aria-hidden="true"><use href="#f-${lang}" width="21" height="14"/></svg>`;
+}
+
+/* What each option puts in the button, and in front of each menu row. */
+const OPTIONS = {
+  e1: { button: () => translateGlyph, lead: () => '' },
+  e2: { button: () => '<span class="aa" aria-hidden="true">Aa</span>', lead: () => '' },
+  e3: { button: (l) => `<span class="codetxt" aria-hidden="true">${LANGS[l].code}</span>`, lead: (l) => `<span class="mcode" aria-hidden="true">${LANGS[l].code}</span>` },
+  e4: { wide: true, button: (l, fa) => (l === 'fa' && fa === 'noflag' ? '' : flag(l, fa)) + `<span class="codetxt" aria-hidden="true">${LANGS[l].code}</span>`, lead: (l, fa) => flag(l, fa) },
+  e5: { button: (l, fa) => (l === 'fa' && fa === 'noflag') ? '<span class="fa-code" lang="fa" aria-hidden="true">فا</span>' : flag(l, fa), lead: (l, fa) => flag(l, fa) },
+};
+
+function button(opt, lang, fa, extra = '') {
+  const o = OPTIONS[opt];
+  return `<span class="bar-icon lang-btn${o.wide ? ' wide' : ''}${extra}" role="img" aria-label="Language: ${LANGS[lang].name}">${o.button(lang, fa)}</span>`;
+}
+
+function menu(opt, lang, fa) {
+  return `<div class="menu">` + ORDER.map((l) =>
+    `<a href="#" class="item" data-lang="${l}"${l === lang ? ' aria-current="page"' : ''}>${OPTIONS[opt].lead(l, fa)}<span class="name" lang="${l}">${LANGS[l].name}</span>${check}</a>`
+  ).join('') + `</div>`;
+}
+
+function stage(opt, lang, fa, open) {
+  const o = OPTIONS[opt];
+  const L = LANGS[lang];
+  return `<header class="bar"><div class="bar-inner">
+    <a class="brand" href="#"><img src="${LOGO}" alt=""><span class="brand-word">AI Engineering Bazaar</span></a>
+    <nav class="bar-nav" aria-label="Main"><ul>
+      <li><a class="bar-link" href="#">Home</a></li><li><a class="bar-link" href="#">Catalog</a></li><li><a class="bar-link" href="#">Your progress</a></li>
+    </ul></nav>
+    <span class="spacer"></span>
+    <details class="lang"${open ? ' open' : ''}><summary class="bar-icon lang-btn${o.wide ? ' wide' : ''}" aria-label="Language: ${L.name}">${o.button(lang, fa)}</summary>${menu(opt, lang, fa)}</details>
+    <button class="bar-icon theme" type="button" aria-label="Theme">${theme}</button>
+    <a class="bar-repo" href="#" aria-label="Repository, 6 stars">${gh}${star}6</a>
+  </div></header><div class="band"></div>
+  <div class="frag" dir="${L.dir}" lang="${lang}">
+    <p class="crumb" lang="en">Home<span>/</span>Catalog<span>/</span>Fundamentals<span>/</span><bdi lang="${lang}">${L.crumb}</bdi></p>
+    <h3 class="display">${L.title}</h3>
+    <p class="first">${L.first}</p>
+  </div>`;
+}
+
+function states(opt, fa, flags) {
+  const cells = [];
+  for (const l of ORDER) {
+    if (flags && l === 'fa') {
+      cells.push(cell(opt, l, 'flag', `<span lang="fa">فارسی</span> page, Iran's flag`));
+      cells.push(cell(opt, l, 'noflag', `<span lang="fa">فارسی</span> page, no flag`));
+    } else {
+      cells.push(cell(opt, l, fa, `<span lang="${l}">${LANGS[l].name}</span> page`));
+    }
+  }
+  cells.push(cell(opt, 'en', fa, 'Keyboard focus', ' ring'));
+  return cells.join('');
+}
+function cell(opt, lang, fa, caption, extra = '') {
+  return `<figure class="cell"><div class="strip">${button(opt, lang, fa, extra)}<span class="bar-icon theme" aria-hidden="true">${theme}</span></div><figcaption>${caption}</figcaption></figure>`;
+}
+
+document.querySelectorAll('[data-opt]').forEach((section) => {
+  const opt = section.dataset.opt;
+  const flags = opt === 'e4' || opt === 'e5';
+  const st = { lang: 'en', fa: 'flag' };
+  const stageEl = section.querySelector('[data-stage]');
+  const statesEl = section.querySelector('[data-states]');
+  const render = (open, focusLang) => {
+    stageEl.innerHTML = stage(opt, st.lang, st.fa, open);
+    if (focusLang) stageEl.querySelector(`[data-lang="${focusLang}"]`)?.focus();
+  };
+  render(true);
+  statesEl.innerHTML = states(opt, st.fa, flags);
+
+  stageEl.addEventListener('click', (e) => {
+    const item = e.target.closest('[data-lang]');
+    if (item) { e.preventDefault(); st.lang = item.dataset.lang; render(true, st.lang); return; }
+    if (e.target.closest('a[href="#"]')) e.preventDefault();
+  });
+  stageEl.addEventListener('keydown', (e) => {
+    const d = stageEl.querySelector('details');
+    if (e.key === 'Escape' && d.open) { d.open = false; d.querySelector('summary').focus(); }
+  });
+  section.querySelectorAll('[data-fa]').forEach((b) => b.addEventListener('click', () => {
+    st.fa = b.dataset.fa;
+    section.querySelectorAll('[data-fa]').forEach((x) => x.setAttribute('aria-pressed', x === b));
+    render(stageEl.querySelector('details').open);
+  }));
+});
+</script>
+</body>
+</html>

@@ -10,7 +10,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D85 and D88, plus open questions O1 to O4 — 2026-09-09 to 2026-11-05 (D86 and D87 are recorded on branch design/round-2026-11)"
+covers: "D26 to D88 and D90, plus open questions O1 to O5 — 2026-09-09 to 2026-11-05 (D89 is on PR #57)"
 last_updated: 2026-11-05
 ---
 
@@ -2055,6 +2055,53 @@ committed file is the fallback and may lag the live site; its `measured` date sa
 scheduled workflow in a public repository is switched off by GitHub after 60 days without activity
 in the repository; a push re-enables it.
 
+### D86 · Two tracks of every module, For Engineers and For Everyone — 2026-11-05
+
+The company wants to certify people without a computer-science background as well as developers,
+and the course was written for developers. The author's answer: a second version of each module,
+written for a reader with almost no technical background, in plain language and analogy, shorter,
+leaving parts out, and written from scratch rather than cut down.
+
+**Every module gets one, and that was the author's call over a curated subset.** The proposal was a
+non-technical track of its own module list, skipping modules such as Inference Engines or Harness
+Engineering. The author rejected it: *"ALL !!! because our course is still on AI Engineering ...
+they should know whats harness engineering and whats inference engine but in simple words ... even
+if it consists of only a few sentences or paragraphs."* So the two tracks have the same modules, and
+a non-technical module may be a few paragraphs.
+
+**Languages follow the same order as the technical modules**: English first, then Turkish, then
+Persian, each written from scratch in its own language (D81, D82).
+
+**Progress is kept per track.** Completing a module in one track does not complete it in the other;
+this changes how the record is stored, and the change is a deliberate one.
+
+**The home page's track choice saves nothing.** The author: *"this selection should not necessarily
+save anything ... the only diff between the two choices is that selecting one takes to tech and
+selecting the other takes to non-tech ... behaviour should be identical for everyone."* A reader who
+scrolls the street again meets the same choice; nobody is locked to a track.
+
+**Names**: the author's lead pair is *For Everyone* / *For Engineers*; the playground shows the
+alternatives (round 2026-11). The switch between tracks sits in the bar like the language menu, a
+visible mark says which track a page is in, and the catalog menu lists both tracks' levels; each of
+those is chosen in the same round.
+
+### D87 · Figures: committed sources, no MDX, a markdown module stays standalone — 2026-11-05
+
+Image generation for figures was slow and fragile. Agents can draw figures themselves, and some
+libraries (Three.js, GSAP, Lottie) can make them move. The constraint the author set: *"my module
+markdowns be standalone, meaning that if someone takes them out of my website and uses a simple
+VSCode markdown viewer, they should be able to read the content."*
+
+**MDX was rejected**: a component shows as raw code in every plain viewer, GitHub does not render
+it, and three languages of it multiply the cost. **Taken, with the author's agreement**: Mermaid for
+structure; SVG drawn by an agent (by hand or exported from HTML/CSS) as the default illustration,
+because it renders everywhere, stays sharp, can carry CSS motion, and its text can be written per
+language; PNG/JPEG for photographs and screenshots; GIF or animated WebP only for short loops. An
+interactive figure is only ever an optional upgrade the site makes: the markdown references the
+plain image, and the site may swap in an interactive sibling of the same name. The standard is in
+`mini-courses/CLAUDE.md`, "Figure formats". Note that VS Code's own preview does not render Mermaid
+without an extension; GitHub does.
+
 ### D88 · The account layer, the role paths and the record of work are removed from the code, not hidden — and the test suite is cut to what guards a reader — 2026-11-05
 
 M38 took the unused features off `/profile/` and left their code in the tree, on the reasoning that
@@ -2097,6 +2144,26 @@ not guarding a reader:
   still builds and link-checks.
 
 And CI runs four Playwright workers instead of two, on GitHub's 4-vCPU runner.
+
+### D90 · The author's website comes first; a colleague's PR that merges cleanly is not thereby accepted — 2026-11-05
+
+A colleague (GitHub `cevheri`) builds a Flutter mobile reader in its own repository,
+`lokumai/ai-engineering-bazaar-mobile`, and opened PR #57 here so the website build publishes the
+content bundle that app reads (his D89 and M41, on that branch). After reading it the author set the
+rule: *"his PR should not change my website design or content. website should remain as is and my
+code and design have higher priority. meaning that if he changes something that I myself added and
+yet no conflicts appear, we should not think that they should be merged ... I develop my app he
+develops his app and we should not bother each other."*
+
+The alternative it rejects is the default GitHub teaches: a green check and no conflict mean a PR can
+go in. A conflict only says two edits touched the same lines; a change that rewrites something the
+author built, in lines the author has not touched since, merges silently. So a colleague's PR is read
+for what it changes on the website, not only for whether it merges.
+
+**PR #57 is not merged.** Its CI fails: the two builds CI compares disagree on every module's
+revision, the e2e build reading `17f7c2c` for all of them. The author and the agent will finish the
+changes the author wants first, and then tell cevheri what changed. The promise is
+`specs/MANIFESTO.md` §7.
 
 ## Open questions
 
@@ -2154,6 +2221,37 @@ considered were:
 
 My recommendation was 2. The author chose 3, which is stronger: it leaves exactly one architecture
 document rather than one and a half.
+
+
+### ~~O5 · CI takes 16 to 20 minutes for a static site~~ — opened and closed 2026-11-05
+
+**Closed by D88.** The author asked for the tests that bloat CI to go, keeping the necessary ones.
+With the 1024px project, the per-fact mutation loop and the tests of removed features gone, four
+workers and one build, PR #56's run took 8m41s, its browser step 421 s against 806 s before.
+
+The question as it was opened, for the record:
+
+The author asked why. **Measured**, on run 42018183569 (`main`, 15.9 min): the browser suite is
+806 s of 960 s; `npm ci` 13 s, typecheck 9 s, `npm test` 33 s, the two builds 31 s and 24 s, the
+Chrome install 21 s. PR #55's run took 19m47s. Every merge costs at least two runs: one per push to
+the PR branch, and one on `main` afterwards, which the merge does not wait for.
+
+Why the browser suite is slow:
+
+- **2 workers** (`playwright.config.ts`, `workers: process.env.CI ? 2 : undefined`, with no comment
+  giving a reason) on GitHub's 4-vCPU runner. The same suite at 2 workers on the 16-core work
+  machine takes 4.8 min; at its default worker count, 2.8 min with the build included.
+- **1,234 cases**: 690 at 1440 px, 272 each at 1024 and 390. `fidelity.spec.ts` alone is 681.
+- **166 × 3 of them prove the checker, not the site**: the "notices `<fact>` changing" loop loads a
+  mockup once per design fact per viewport to mutate one property (51 s of the 291 s local run at 2
+  workers).
+- The e2e step **builds the site a third time** in its `webServer`.
+
+The levers, as they stood: shard the suite across parallel jobs; raise the workers to 4; collapse
+the mutation loop to one page load per reference document per viewport, proving the same thing; serve
+the CI build to Playwright instead of rebuilding. **Trap:** a job matrix renames the check to
+`Build and test (1)` and so on, and `main`'s ruleset requires exactly `Build and test`. A PR would
+then never become mergeable, so a sharded version needs one final job carrying that name.
 
 ---
 

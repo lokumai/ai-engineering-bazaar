@@ -211,9 +211,8 @@ test('a seeded record stamps <html> inside the first frame (§12.2 channel A)', 
   // the other from a build-time table.
   expect(painted!.className).toContain(`hl-signed-${SHEET.module}`)
   expect(painted!.className).toContain(`hl-cat-${SHEET.category}-started`)
-  // §12.2's other two stamps, in the same frame: one says a record was read, the
-  // other is what tells §12.13's class 1 from its class 4.
-  expect(painted!.record).toBe('1')
+  // §12.2's other stamp, in the same frame: what tells §12.13's class 1 from
+  // its class 4.
   expect(painted!.storage).toBe('ok')
 
   // And the reading is genuinely pre-React, which is what makes the three above
@@ -269,9 +268,7 @@ test('with nothing stored the first frame claims no record (§12.2, §12.13)', a
   expect(painted).toBeDefined()
   expect(painted!.className).not.toContain('hl-signed-')
   expect(painted!.className).not.toContain('hl-cat-')
-  // Absent, not `"0"`: `data-hl-record` is the existence of a record, and
-  // storage answered, so the page is class 1 and not class 4.
-  expect(painted!.record).toBeNull()
+  // Storage answered, so the page is class 1 and not class 4.
   expect(painted!.storage).toBe('ok')
 })
 
@@ -407,12 +404,10 @@ test('the mascot is aria-hidden and byte-identical in every state (§12.2, §12.
  * load, the boot script would have re-stamped `<html>` and the test would pass
  * while the bug was still there.
  *
- * §15.2.1 raised the stakes: the route this run passes through is now the home
- * screen, whose *visible* half is chosen by nothing but the `data-hl-record`
- * this same stamp carries. So the hop through `/` reads the two blocks' computed
- * display as well as the class list — on a document the router built rather than
- * the browser loaded, which is the only place a stamp that survives a fresh load
- * and nothing else would show.
+ * The route passes through the home screen, so the stamp is read there as well
+ * as on the sheet: on a document the router built rather than the browser
+ * loaded, which is the only place a stamp that survives a fresh load and
+ * nothing else would show.
  */
 test('channel A stays true across a client transition (§12.2)', async ({ page }) => {
   const problems = watchPage(page)
@@ -432,8 +427,7 @@ test('channel A stays true across a client transition (§12.2)', async ({ page }
   // the sheet to the home screen, the home screen to the manifest at
   // `INDEX_SHEET`, and the manifest into the other subsystem's sheet. It was two
   // until §15.1 moved the flat table off `/`; the hop through the home screen is
-  // kept rather than routed around, because that is the page whose content the
-  // stamp now chooses.
+  // kept rather than routed around.
   //
   // Scoped to the banner. `getByRole('link', { name: /^Lokum/ })` on the whole
   // page meant the wordmark for as long as it was the only link whose name
@@ -446,20 +440,16 @@ test('channel A stays true across a client transition (§12.2)', async ({ page }
   await page.getByRole('banner').getByRole('link', { name: /Bazaar/ }).click()
   await expect(page.locator('h1.bz-hero-title')).toBeVisible()
 
-  /* §15.2.1 — the stamp, read as the reader meets it. A stamp lost in a client
+  /* The stamp, read as the reader meets it. A stamp lost in a client
      transition would take the reader's own state away from them a frame after
      they earned it, and every navigation on this site is a client transition.
-
-     **M18 removed both of the things this used to read on the home page** — the
-     continue block and control C's tick — so the assertion is on the stamp
-     itself, which is what `stampRecordState` is responsible for and what was
-     broken when this test was written. The tick is asserted on the page that
-     still draws it, two steps below. */
-  await expect(page.locator('html')).toHaveAttribute('data-hl-record', '1')
+     The home page draws no mark of its own, so the class on `<html>` is what
+     there is to read. */
+  expect(await hasRootClass(page, `hl-signed-${SHEET.module}`)).toBe(true)
 
   await page.getByRole('link', { name: 'Progress', exact: true }).click()
   await expect(page).toHaveURL(/\/profile\/$/)
-  await expect(page.locator('html')).toHaveAttribute('data-hl-record', '1')
+  expect(await hasRootClass(page, `hl-signed-${SHEET.module}`)).toBe(true)
   await expect(
     page.locator(`[data-track="engineers"] .bz-cmod[data-module="${SHEET.module}"] .bz-cmod-mark`),
   ).toBeVisible()

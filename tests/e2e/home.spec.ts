@@ -5,11 +5,9 @@ import {
   firstPaint,
   probeFirstPaint,
   readRawRecord,
-  readRecord,
   seedRecord,
   signedSheet,
   slugOf,
-  waitForRecord,
 } from './record'
 import { A0, DRAWN_COUNT, INDEX_SHEET, SHEETS, SHEET_COUNT, sheetByModule } from './sheets'
 import { watchPage } from './watch'
@@ -132,7 +130,7 @@ test('a clean browser meets the whole page, and it claims nothing about the read
 // ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
-// §15.11 — a record that carries nothing is not a returning reader
+// §15.11 — a record that carries nothing stamps no progress
 // ---------------------------------------------------------------------------
 
 /**
@@ -140,9 +138,7 @@ test('a clean browser meets the whole page, and it claims nothing about the read
  * `days` by default, so the suite's ordinary "empty seed" is already a record
  * that carries something; the state under test is the one the store leaves
  * behind when a reader has touched the site without reading it — a schema
- * stamp, a preference, and nothing else. That envelope used to stamp
- * `data-hl-record` and hand the reader a continue control for a module they had
- * never opened.
+ * stamp, a preference, and nothing else.
  */
 const CARRIES_NOTHING: ReadonlyArray<[string, RecordSeed]> = [
   ['a migration stamp and nothing else', { days: [] }],
@@ -153,31 +149,24 @@ const CARRIES_NOTHING: ReadonlyArray<[string, RecordSeed]> = [
   ['a catalog view and nothing else', { days: [], prefs: { catalogView: 'table' } }],
 ]
 
+/** The classes and properties channel A uses to draw progress, either track. */
+const PROGRESS_CLASS = /^hl-(?:e-)?(?:signed-|cat-)/
+const PROGRESS_PROPERTY = /--bz-(?:e)?done-/
+
 for (const [what, seed] of CARRIES_NOTHING) {
-  test(`a record carrying ${what} is not a returning reader (§15.11)`, async ({
-    page,
-  }) => {
+  test(`a record carrying ${what} stamps no progress (§15.11)`, async ({ page }) => {
     const problems = watchPage(page)
     await probeFirstPaint(page)
     await seedRecord(page, seed)
     await page.goto('/')
 
-    // Absent, not `"0"`: the key IS in storage and it parses, so this is the
-    // boot script having applied `carriesNothing`'s rule rather than having
-    // failed to read anything.
+    // The key IS in storage and it parses, so what follows is the boot script
+    // applying the rule rather than having failed to read anything.
     expect(await readRawRecord(page)).not.toBeNull()
-    expect((await firstPaint(page))!.record).toBeNull()
-    expect((await firstPaint(page))!.storage).toBe('ok')
-
-    /* M18 — the STAMP is the whole claim now, and it always was.
-
-       This read the continue block the stamp revealed, and the author had that
-       block removed; what §15.11 says is that an envelope carrying only a
-       schema version or a preference is not a reader who has been here, and
-       that is a fact about `data-hl-record` rather than about any one control.
-       The stamp is asserted above, before first paint, which is stricter than
-       reading what it drew. What the page does with it is `/profile/`'s
-       business now, and `completion.spec.ts` measures that. */
+    const painted = (await firstPaint(page))!
+    expect(painted.storage).toBe('ok')
+    expect(painted.className.split(/\s+/).filter((token) => PROGRESS_CLASS.test(token))).toEqual([])
+    expect((await page.locator('html').getAttribute('style')) ?? '').not.toMatch(PROGRESS_PROPERTY)
 
     expect(problems.consoleErrors).toEqual([])
     expect(problems.failedRequests).toEqual([])
@@ -216,59 +205,6 @@ for (const state of ['clean', 'with a record'] as const) {
     expect(title).not.toMatch(/\b(you|your|welcome|back|resume|continue|left off)\b/i)
   })
 }
-
-// ---------------------------------------------------------------------------
-// §15.2.1 — the state switch after a client transition
-// ---------------------------------------------------------------------------
-
-/**
- * The reader who becomes a returning reader DURING the visit.
- *
- * MEASURED before this existed: a clean browser opened `/`, saved an alias on
- * `/sign-in/alias/`, pressed Home, and got the first-visit document —
- * `data-hl-record` absent — correct only after a full reload. `boot.ts` was the
- * attribute's only writer and `stampRecordState` explicitly left it alone. Every
- * navigation on this site is a client transition, so "whatever was true at load"
- * was the whole session.
- *
- * The route is a real one and taken through real controls: complete a module,
- * then follow a link a reader can see. Seeding storage and reloading would
- * test the boot script again, which was never the half that was broken.
- */
-test('a first write during the visit reaches the home page without a reload (§15.2.1)', async ({
-  page,
-}) => {
-  await page.goto('/')
-  await expect(page.locator('html')).not.toHaveAttribute('data-hl-record', '1')
-
-  // The write, through the control the reader would use.
-  await page.goto(A0.path)
-  await page.getByRole('checkbox', { name: 'Mark this module as complete' }).check()
-  await waitForRecord(
-    page,
-    (envelope) => envelope?.data.sheets[slugOf(A0)]?.signedOff != null,
-    'the completion',
-  )
-
-  // Home the way a reader gets there: a link, not a reload. The breadcrumb is
-  // where a reader on this route sees a way back.
-  await page
-    .getByRole('navigation', { name: 'Curriculum' })
-    .getByRole('link', { name: 'Home', exact: true })
-    .click()
-  await expect(page).toHaveURL(/\/$/)
-
-  await expect(page.locator('html')).toHaveAttribute('data-hl-record', '1')
-
-  // And it survives the reload, i.e. the two stampers agree rather than one
-  // undoing the other.
-  //
-  // M18 — the continue block this used to watch is gone; the stamp it was
-  // revealed by is the claim, and `stampRecordState` is the half that was
-  // broken. `boot.ts` is the other half and the reload is what asks it.
-  await page.reload()
-  await expect(page.locator('html')).toHaveAttribute('data-hl-record', '1')
-})
 
 // ---------------------------------------------------------------------------
 // §13.1.4, §10.4 — a level is never told apart by colour alone

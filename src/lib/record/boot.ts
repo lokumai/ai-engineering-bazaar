@@ -13,7 +13,6 @@
  *   `class="hl-signed-<n>"`               one per signed-off module number
  *   `class="hl-cat-<slug>-started"`       0 < approved < total in that category
  *   `class="hl-cat-<slug>-complete"`      approved >= total
- *   `data-hl-record="1"`                  a record CARRYING SOMETHING exists
  *   `data-hl-storage="ok" | "blocked"`    tells empty state 1 from 4 (§12.13)
  *   `data-bz-rail="folded"`               M10 — the curriculum rail is folded
  *   `data-hl-view="<id>"`                 M12 — the catalog view last chosen
@@ -31,17 +30,17 @@
  * `stamp.ts`'s `stampProgressFor` is the same derivation for after mount, and
  * `boot.test.ts` compares the two.
  *
- * **The rail and the view stamps are written BEFORE the `carriesNothing`
- * gate**, and that order is the whole reason either is stamped here at all. A
- * reader whose only stored state is a folded rail carries nothing by §15.11's
- * rule, so the gate returns before the class list is touched; stamping the
- * fold after it would mean the rail sprang open on every load for exactly the
- * readers who had asked for it to be shut. It is not a claim that a record
- * exists — it is a layout preference, and the two questions are answered
- * separately. M12's catalog view is the same case one screen over: a reader
- * whose only stored state is "show me the table" would otherwise meet the
- * overview on every load. The two palettes are the same case again: a reader
- * who chose Paper and nothing else would otherwise meet Night every time.
+ * **The rail and the view stamps are written BEFORE the `has` gate**, and that
+ * order is the whole reason either is stamped here at all. A reader whose only
+ * stored state is a folded rail carries nothing by §15.11's rule, so the gate
+ * returns before the class list is touched; stamping the fold after it would
+ * mean the rail sprang open on every load for exactly the readers who had asked
+ * for it to be shut. It is a layout preference, not a record of work, and the
+ * two questions are answered separately. M12's catalog view is the same case
+ * one screen over: a reader whose only stored state is "show me the table"
+ * would otherwise meet the overview on every load. The two palettes are the
+ * same case again: a reader who chose Paper and nothing else would otherwise
+ * meet Night every time.
  *
  * The view id is matched against the embedded `VIEW_IDS` before it reaches the
  * attribute: the value comes out of
@@ -52,32 +51,30 @@
  * The whole body is inside try/catch and does nothing on failure, which lands
  * the page in the honest empty state rather than a half-drawn one.
  *
- * §15.11 — `data-hl-record` is the ONLY thing choosing between the home
- * screen's two halves (`app/home.css`), so stamping it for any parseable
- * envelope was a page that lied: an envelope holding nothing but `prefs`, or
- * nothing but a migration stamp, is written by the store on a reader's first
- * theme click, and that reader was then shown "Where you left off" and a
- * continue control for a sheet they had never opened. The stamp now waits on
- * the same rule `schema.ts`'s `carriesNothing` applies — no day recorded, no
- * `meta.lastExport`, and every sheet record empty by `isEmptySheetRecord`.
+ * §15.11 — a record that carries nothing stamps nothing. An envelope holding
+ * only `prefs`, or only a migration stamp, is what the store writes on a
+ * reader's first theme click, and it has no sign-off to draw. `has` is the
+ * same rule `schema.ts`'s `carriesNothing` applies — no day recorded, no
+ * `meta.lastExport`, and every sheet record empty by `isEmptySheetRecord` — and
+ * the script returns early when it is false, before the class and property
+ * stamps.
  *
  * That rule is therefore written twice, which §12.1's one-definition rule
  * otherwise forbids. The duplication is forced: this file's product is an ES5
  * source string handed to the browser inside `<head>`, so it cannot import
  * `carriesNothing` — there is no module graph yet when it runs. What binds the
- * two copies is `tests/unit/record/boot.test.ts`, which runs the emitted script
- * against raw payloads and compares the stamp to
- * `carriesNothing(coerceRecordData(raw))`; a change to either that the other
+ * script to the typed side is `tests/unit/record/boot.test.ts`, which runs the
+ * emitted script against raw payloads and compares what it stamps to
+ * `stampClassesFor(coerceRecordData(raw))`; a change to either that the other
  * does not match fails there.
  *
  * **The gate validates SHAPE, and the loose version of it was a defect.** It
  * read `!=null` and truthiness, on the reasoning that a hand-edited record
  * arrives with fields missing and §12.1.3 says this script must not throw —
  * which confused not throwing with accepting. These checks run on RAW storage,
- * before `coerceRecordData`, so `days`
- * as an object and more besides stamped a record the parser then threw away: the
- * home screen chose "Where you left off" and the record behind it was empty.
- * Seven such shapes were measured. Every field this gate inspects is now checked
+ * before `coerceRecordData`, so `days` as an object and more besides treated a
+ * record as carrying something when the parser then threw the value away. Seven
+ * such shapes were measured. Every field this gate inspects is now checked
  * against the rule the coercer applies to it — the same patterns, the same id
  * lists, the same real-calendar-day round trip — and being strict is what does
  * not throw, because each helper answers 0 for anything it does not recognise.
@@ -165,7 +162,6 @@ var any=function(sh){if(!isObj(sh))return 0;var q,x;for(q in sh){
 if(!own(sh,q)||bad(q))continue;x=sh[q];if(isObj(x)&&kept(x))return 1}return 0};
 if(!has&&(any(d.sheets)||any(d.everyoneSheets)))has=1;
 if(!has)return;
-r.setAttribute("data-hl-record","1");
 var stamp=function(sh,cp,dp){if(!isObj(sh))return;var counts={},c,i,n,rec;
 for(k in sh){
 if(!own(sh,k)||bad(k))continue;
@@ -187,8 +183,8 @@ stamp(d.everyoneSheets,"hl-e-","--bz-edone-");
 
 /**
  * The script with no build-time facts embedded. It still stamps
- * `data-hl-storage`, `data-hl-record` and the per-category `-started`
- * classes, which is exactly as much as can be known without measuring the
- * corpus — the sign-off marks and `-complete` need the factory.
+ * `data-hl-storage` and the per-category `-started` classes, which is exactly
+ * as much as can be known without measuring the corpus — the sign-off marks and
+ * `-complete` need the factory.
  */
 export const RECORD_BOOT_SCRIPT: string = recordBootScript({}, {})

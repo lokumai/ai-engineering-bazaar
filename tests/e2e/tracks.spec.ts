@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { readRawRecord, slugOf } from './record'
+import { readRawRecord, seedRecord, signedSheet, slugOf } from './record'
 import { A0 } from './sheets'
 
 /**
@@ -107,4 +107,34 @@ test('on a phone every main destination is in view in the bar, with the switch a
     expect(box.left).toBeGreaterThanOrEqual(nav!.x - 1)
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)
+})
+
+// While no For Everyone module is written, its side has nothing to draw and
+// counts nothing, so only the For Engineers half can fail today; the rule
+// itself is proven in `tests/unit/record/tracks.test.ts`. The For Everyone
+// half starts checking the day a module is written.
+test('a module completed For Engineers is not completed For Everyone, in frame one and after hydration', async ({ page }) => {
+  await seedRecord(page, { sheets: { [SLUG]: signedSheet(null) } })
+  const row = (track: string) => page.locator(`[data-panel="${track}"] .bz-cmod[data-module="${A0.module}"]`)
+  // Where the module has a control in a track, its mark; an unwritten For
+  // Everyone module has none, which also draws nothing.
+  const drawn = (track: string) => row(track).locator('.bz-cmod-mark').evaluateAll((marks) =>
+    marks.some((mark) => getComputedStyle(mark).display !== 'none'))
+  const shown = async (track: string) => {
+    await expect(row(track), `the ${track} panel does not list the module`).toHaveCount(1)
+    return drawn(track)
+  }
+
+  // Frame one: the boot script and the stylesheet only.
+  await page.route('**/*.js', (route) => route.abort())
+  await page.goto('/profile/')
+  expect(await shown('engineers'), 'the For Engineers completion is not drawn').toBe(true)
+  expect(await shown('everyone'), 'the For Engineers completion is drawn For Everyone').toBe(false)
+  await page.unroute('**/*.js')
+
+  // After hydration: the counts in the tabs and the footer agree.
+  await page.goto('/profile/')
+  await expect(page.locator('.bz-ptab[data-track-id="engineers"] .bz-ptab-count')).toHaveText(/^1 of \d+$/)
+  await expect(page.locator('.bz-ptab[data-track-id="everyone"] .bz-ptab-count')).toHaveText(/^0 of \d+$/)
+  expect(await shown('everyone')).toBe(false)
 })

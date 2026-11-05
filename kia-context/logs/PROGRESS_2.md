@@ -4405,39 +4405,49 @@ too large, with information that goes stale.
 - [ ] PR #57: finish the changes the author wants, then tell cevheri what changed (D90).
 
 
-## 🏁 Milestone M43: Two tracks, the bar and the progress page — IN PROGRESS
+## 🏁 Milestone M43: Two tracks, the bar and the progress page — BUILT, IN REVIEW
 
 Branch `feat/round-2-build`. Builds M39's picks A1, B1, C1, D2, E4 and F2 and the two bar requests,
-on D91's design.
+on D91's design (and D91's "changed while building").
 
 ### Deliverables
 
-- [ ] For Everyone content: `mini-courses/<level>/everyone/<name>.md` (+ `_tr.md`, `_fa.md`), loaded
-      and validated; a file for a name nobody listed fails the build.
-- [ ] For Everyone routes: `/everyone/sheets/`, `/everyone/sheets/<level>/`,
-      `/everyone/courses/<level>/<module>/` and their `/tr/` and `/fa/` module pages. A module with
-      no For Everyone file shows as not written yet in the For Everyone catalog.
-- [ ] The record holds `everyoneSheets` and `prefs.track`; completion, export, import and erase are
-      per track or cover both; the boot script stamps both tracks and `data-bz-track`.
-- [ ] The bar: a two-segment track toggle (For Engineers / For Everyone), the current one filled in a
-      colour that reads as active, linking to the same page in the other track where it exists; icons
-      only on a phone.
-- [ ] The catalog menu: two tabs, For Engineers and For Everyone, over the level list, opening on the
+- [x] For Everyone content: `mini-courses/<level>/everyone/<name>.md` (+ `_tr.md`, `_fa.md`), loaded
+      and validated; a file for a name nobody listed fails the build (validator rule 8). None is
+      written yet.
+- [x] For Everyone routes: `/everyone/sheets/`, `/everyone/sheets/<level>/`,
+      `/everyone/courses/<level>/<module>/` and their `/tr/` and `/fa/` module pages. ~~A module with
+      no For Everyone file shows as not written yet in the For Everyone catalog.~~ Every module has a
+      For Everyone page; an unwritten one says so, links back, and is `noindex` (D91, changed while
+      building: `output: 'export'` rejects an empty `generateStaticParams`).
+- [x] The record holds `everyoneSheets` ~~and `prefs.track`~~; completion, export, import and erase
+      are per track or cover both; the boot script stamps both tracks and `data-bz-track`. The last
+      track lives in `sessionStorage` `hl-track`, because a visit must write nothing (D91).
+- [x] The bar: a two-segment track toggle (For Engineers / For Everyone), the current one filled with
+      the band's gold, linking to the same module or level in the other track; it drops `For` at
+      1180px and shows icons only at 880px.
+- [x] The catalog menu: two tabs, For Engineers and For Everyone, over the level list, opening on the
       current track.
-- [ ] The language button: a flag and the code (UK for English, Turkey for Turkish, `فا` with no flag
-      for Persian); the menu shows the same beside each name.
-- [ ] `Progress` in the bar; the theme button draws a sun and a moon.
-- [ ] `/profile/`: two tabs, one per track, each with its level rings and count, opening on the
-      current track; under them one line with Back up, Restore and Reset.
+- [x] The language button: a flag and the code (UK for English, Turkey for Turkish, `فا` with no flag
+      for Persian); the menu shows the same beside each name, and on a For Everyone page it offers
+      the For Everyone page in each language.
+- [x] `Progress` in the bar; the theme button draws a sun and a moon.
+- [x] `/profile/`: two tabs, one per track, each with its level rings and count, opening on the
+      current track; under them one line with Back up, Restore and Reset. The continue card and the
+      statistics row are removed end to end (F2).
 
 ### Acceptance criteria
 
-- [ ] Every For Engineers address and every existing record still works; a record from before M43
-      reads as For Engineers progress.
-- [ ] Completing a module in one track does not complete it in the other, in frame one and after
-      hydration.
+- [x] Every For Engineers address and every existing record still works; a record from before M43
+      reads as For Engineers progress (`sheets` kept its name; nothing migrates).
+- [x] Completing a module in one track does not complete it in the other, in frame one and after
+      hydration: `tests/unit/record/tracks.test.ts` (the record, the stamps, the boot script's
+      track), proven by two mutations. The browser half (`tracks.spec.ts`) can only fail on the For
+      Engineers side until a For Everyone module is written.
 - [ ] The full gate is green and each new surface is compared to its playground option by
-      screenshot.
+      screenshot. *Screenshots read for the bar at 390, 768, 900, 1100 and 1440, the menu, the
+      progress page and the not-written page; the bar measured on 9 pages in three languages at 24
+      widths with no sideways scroll. Waiting on the two reviews.*
 
 ## 🏁 Milestone M44: The home page: four scenes, the track choice and two characters — IN PROGRESS
 
@@ -4460,22 +4470,23 @@ Builds M39's picks G1b, G2a, G3a, G4a, H1, and P3 with P4.
 - [ ] Every motto and one door per level stay, walking or not, at every width; no sideways scroll.
 - [ ] The walk and the reduced-motion still are both checked by screenshot against the playground.
 
-## 🏁 Milestone M45: Reference lists grouped by kind — IN PROGRESS
+## 🏁 Milestone M45: Reference lists grouped by kind — BUILT
 
 Builds M39's pick J2, with the author's five kinds.
 
 ### Deliverables
 
-- [ ] Every module's References, in English, Turkish and Persian, grouped under `###` headings in
+- [x] Every module's References, in English, Turkish and Persian, grouped under `###` headings in
       this order, each kind only where it has an item: 📄 Articles, 🎬 Videos, 🛠️ Tools,
       🗃️ Repositories, 🧭 Modules. A list or course on GitHub is a repository; otherwise an article.
-- [ ] The rule written into `mini-courses/CLAUDE.md` (and `AGENTS.md`), with the translated headings.
-- [ ] A corpus test: a References section that has subheadings uses only those five.
+- [x] The rule written into `mini-courses/CLAUDE.md` (and `AGENTS.md`), with the translated headings.
+- [x] A corpus test: a References section that has subheadings uses only those five
+      (`tests/corpus/references.test.ts`).
 
 ### Acceptance criteria
 
-- [ ] No reference is lost or duplicated: the set of links in each References section is the same
-      before and after, in every language.
+- [x] No reference is lost or duplicated: the set of links in each References section is the same
+      before and after, in every language. Measured against `main`: 61 files, 626 links, 0 differ.
 
 ---
 

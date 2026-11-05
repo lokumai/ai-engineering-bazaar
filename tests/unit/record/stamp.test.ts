@@ -117,6 +117,12 @@ describe('the two stampers agree', () => {
     ['a single-module level, where one sign-off completes it',
       signed('protocols/protocols-reference')],
     ['a slug the build has no module number for', signed('expert/advanced-ui')],
+    // D91 — the For Everyone map, alone and beside For Engineers.
+    ['one module For Everyone', signOff(EMPTY_RECORD, 'intermediate/security', null, AT, 'everyone')],
+    ['a single-module level For Everyone',
+      signOff(EMPTY_RECORD, 'protocols/protocols-reference', null, AT, 'everyone')],
+    ['the same module in both tracks',
+      signOff(signed('intermediate/security'), 'intermediate/security', null, AT, 'everyone')],
   ]
 
   for (const [name, data] of CASES) {

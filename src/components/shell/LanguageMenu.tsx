@@ -78,21 +78,27 @@ export function alternatesOf(
   return { slug, track, current, available: ['en', ...others] }
 }
 
-/** A globe: the mark every product uses for "the language of this page". */
 /**
- * M39 E4 — the flag of a language, beside its code. English takes the UK flag
- * and Turkish Turkey's. Persian takes none: a flag stands for a country, Persian
- * is spoken in three, and Iran's flag is a statement either way (D91), so it
- * shows its own script, `فا`, in a small chip instead. Drawn inline, because an
- * emoji flag does not render on Windows.
+ * M39 E4 — the flag of a language, beside its code: the UK's for English,
+ * Turkey's for Turkish and, since M46, Iran's for Persian (the author's call;
+ * D91 had first shown Persian's script in a chip instead). Drawn inline,
+ * because an emoji flag does not render on Windows. At 20px Iran's emblem is
+ * drawn as its outline and the two takbir bands as dashes, which is what the
+ * real flag reads as at that size.
  */
 function Flag({ lang }: { lang: ReadingLang }) {
   const clip = useId()
   if (lang === 'fa') {
     return (
-      <span className="bz-flag bz-flag-script" aria-hidden="true" lang="fa">
-        فا
-      </span>
+      <svg className="bz-flag" viewBox="0 0 630 360" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+        <rect width="630" height="120" fill="#239F40" />
+        <rect y="120" width="630" height="120" fill="#fff" />
+        <rect y="240" width="630" height="120" fill="#DA0000" />
+        <path d="M0,113 H630 M0,247 H630" stroke="#fff" strokeWidth="6" strokeDasharray="14 8" />
+        <g fill="none" stroke="#DA0000" strokeWidth="9" strokeLinecap="round">
+          <path d="M300,140 Q276,180 300,222 M330,140 Q354,180 330,222 M315,136 V224" />
+        </g>
+      </svg>
     )
   }
   if (lang === 'tr') {
@@ -207,7 +213,7 @@ export function LanguageMenu({
           aria-label={`Language: ${currentLabel}`}
           title="Language"
         >
-          {here.current !== 'fa' && <Flag lang={here.current} />}
+          <Flag lang={here.current} />
           <span className="bz-langmenu-code">{here.current.toUpperCase()}</span>
         </summary>
         <div className="bz-menu bz-langmenu-panel">

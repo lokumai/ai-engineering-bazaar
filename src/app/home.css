@@ -90,11 +90,6 @@
   }
 
   .bz-street .gate-copy .bz-btn,
-  .bz-street .cta-wrap .bz-btn {
-    font-size: 17px;
-    padding: 13px 22px;
-  }
-
   .bz-street .gate-arch {
     position: relative;
     margin-top: 26px;
@@ -430,11 +425,7 @@
   }
 
   .bz-street .sign.question h2 {
-    margin: 0 0 6px;
-  }
-
-  .bz-street .sign.question p {
-    font-size: 17px;
+    margin: 0;
   }
 
   .bz-street .tracks {
@@ -506,6 +497,17 @@
     width: 24px;
     height: 24px;
   }
+
+  /* M46 — the icon and the track's name share one row: stacked, the icon took
+     a line of its own the sign did not need. */
+  .bz-street .sg-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .bz-street .sg-head .sg-ico { margin-bottom: 0; flex: none; }
 
   .bz-street .sg-t {
     display: block;
@@ -926,6 +928,16 @@
     font-size: max(17px, calc(20px * var(--u)));
   }
 
+  /* M46 — on the walk the motto signs keep a 380px floor, so on a short
+     window a sign is wider against its stall than the art: the signpost's
+     Sources arrow and the lantern's projector went under the sign at 1280x720.
+     Their props stand 80 units further along (the signs moved 30), on the walk
+     only: the stacked layout crops each stall to x 450-1200 and has room. */
+  html.is-walk .bz-street svg[data-art="lantern"] .scene,
+  html.is-walk .bz-street svg[data-art="signpost"] .scene {
+    translate: 80px 0;
+  }
+
   html.is-walk .bz-street .door {
     position: absolute;
     top: calc(var(--y) * var(--u) * 1px);
@@ -977,12 +989,18 @@
     transform: translateX(-50%);
   }
 
+  /* On the walk the signs scale with the stalls they hang over, so the stacked
+     layout's caps (600px and 440px) are lifted: kept, they stopped the signs
+     growing above about 1440px while the stalls went on, and at 2560x1440 the
+     names, the question and a button wrapped onto two lines. */
   html.is-walk .bz-street .sign.question {
     width: max(calc(420px / var(--k, 1)), calc(560px * var(--u)));
+    max-width: none;
   }
 
   html.is-walk .bz-street .track-sign {
     width: max(calc(340px / var(--k, 1)), calc(396px * var(--u)));
+    max-width: none;
   }
 
   html.is-walk .bz-street .sign.question .board {
@@ -991,10 +1009,6 @@
 
   html.is-walk .bz-street .sign.question h2 {
     font-size: max(calc(20px / var(--k, 1)), calc(29px * var(--u)));
-  }
-
-  html.is-walk .bz-street .sign.question p {
-    font-size: max(calc(14px / var(--k, 1)), calc(17px * var(--u)));
   }
 
   html.is-walk .bz-street .track-sign .board {
@@ -1011,6 +1025,13 @@
     width: 60%;
     height: 60%;
   }
+
+  html.is-walk .bz-street .sg-head {
+    gap: max(calc(8px / var(--k, 1)), calc(12px * var(--u)));
+    margin-bottom: max(calc(4px / var(--k, 1)), calc(10px * var(--u)));
+  }
+
+  html.is-walk .bz-street .sg-head .sg-ico { margin-bottom: 0; }
 
   html.is-walk .bz-street .sg-t {
     font-size: max(calc(20px / var(--k, 1)), calc(31px * var(--u)));

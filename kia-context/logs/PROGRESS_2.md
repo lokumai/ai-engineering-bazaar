@@ -21,14 +21,14 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M36, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. Checkbox format repaired across the part on 2026-09-13."
-last_updated: 2026-10-18
+covers: "M16 to M37, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — pushed on 2026-11-05. Checkbox format repaired across the part on 2026-09-13."
+last_updated: 2026-11-05
 ---
 
-# 📈 PROGRESS, part 2 — M16 to M36
+# 📈 PROGRESS, part 2 — M16 to M37
 
 > **← Part 1: [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the review pass over M10 to M14.
-> This part holds **M16 to M36**, in the order they were worked.
+> This part holds **M16 to M37**, in the order they were worked.
 
 ## How to work this file
 
@@ -81,6 +81,7 @@ deliverables as a numbered list; M18 wrote none at all; M19 to M22 had none eith
 | **M34** | The star count stays current | **Done** — 2026-10-15, merged as PR #36 |
 | **M35** | Harness Engineering names its parts in plain words | **Done** — 2026-10-15, merged as PR #38 |
 | **M36** | Three references for Observability and Context Engineering | **Done** — 2026-10-18, merged as PR #42 |
+| **M37** | Stale mockups removed from `playground/` | **Pushed** — 2026-11-05, on branch `chore/playground-cleanup` |
 
 ---
 
@@ -4229,6 +4230,29 @@ then commit and push and merge"*.
 - [x] Every title fetched from its page, and each note says what the page covers.
 - [x] Nine lines added across the six files and nothing else moved; no em dash; 2,194 unit and
       corpus tests; build clean, the links on the built pages.
+
+---
+
+## 🏁 Milestone M37: Stale mockups removed from `playground/` — PUSHED ON A BRANCH
+
+Branch `chore/playground-cleanup`, from `main` at `a941364`. The author, 2026-11-05, after a breakdown
+of every file in `playground/` by what references it: *"delete the ones in Safe to delete table"*.
+
+### Deliverables
+
+- [x] **Ten files deleted**, the rejected options of the September design choice, referenced nowhere
+      outside `playground/`: `00-vocabulary.html`, themes `T1`, `T2`, `T3` and `T4-bazaar`,
+      `01-theme-T4-grounds.html`, grounds `G1`, `G2` and `G4`, and `generate-grounds.py` (236 KB).
+      They stay in git history.
+- [x] **Kept**: the six mockups the tests load (`01-…-G3-powder`, `01-…-G3-DARK`, `03`, `05`, `07`,
+      `10`) and the six that only comments or kia-context name (`02`, `04`, `06`, `08`, `09`,
+      `index.html`).
+
+### Acceptance criteria
+
+- [x] 2,194 unit and corpus tests pass after the deletion.
+- [ ] Open: `playground/index.html` still links the nine deleted pages; it is the record of the
+      author's ten choices (PROGRESS.md M8), so whether to edit it is the author's call.
 
 ---
 

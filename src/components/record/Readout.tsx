@@ -72,7 +72,7 @@ export interface ReadoutProps {
   facts: CurriculumFacts
   /**
    * D91 — the For Everyone facts, for a page that belongs to neither track: the
-   * strip then counts the track the reader last opened (`prefs.track`).
+   * strip then counts the track the reader last opened in this tab.
    */
   everyoneFacts?: CurriculumFacts
   /** D91 — the page's own track, where it has one. */

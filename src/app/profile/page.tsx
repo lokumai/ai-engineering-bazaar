@@ -76,7 +76,6 @@ export default function ProgressPage() {
         levels={levelsOf(track)}
         headingId={`progress-levels-${track}`}
         track={track}
-        stats={false}
       />
     </>
   )

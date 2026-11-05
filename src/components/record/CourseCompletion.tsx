@@ -4,15 +4,8 @@ import Link from 'next/link'
 import { CategoryTally } from '@/components/course/CategoryTally'
 import type { CategorySlug } from '@/lib/content/categories'
 import { toggleCompletion } from '@/lib/record/complete'
-import {
-  readingMinutes,
-  signedCount,
-  uptime,
-  type CurriculumFacts,
-} from '@/lib/record/derive'
-import { nowIso, useHydrated, useRecord } from '@/lib/record/store'
-import { hoursMinutes, plural } from '@/lib/text'
-import { trackView } from '@/lib/record/schema'
+import type { CurriculumFacts } from '@/lib/record/derive'
+import { useRecord } from '@/lib/record/store'
 import type { Track } from '@/lib/tracks'
 
 /**
@@ -137,73 +130,22 @@ export function CourseCompletion({
   levels,
   headingId,
   track = 'engineers',
-  stats = true,
 }: {
-  /** `curriculumFacts()`, for the three counts. Measured by the page (§12.2). */
+  /** `curriculumFacts()`, for the level tallies. Measured by the page (§12.2). */
   facts: CurriculumFacts
   levels: readonly CompletionLevel[]
   /** The id of the heading this control is labelled by. */
   headingId: string
   /** D91 — whose completions these cards show and write. */
   track?: Track
-  /** The three-figure row; the progress page states its counts in its tabs instead. */
-  stats?: boolean
 }) {
   const full = useRecord()
-  const record = trackView(full, track)
-  const hydrated = useHydrated()
-
-  const counts = signedCount(record, facts)
-  const minutes = readingMinutes(record, facts)
-  /**
-   * The clock is read only once the store has answered, which is after the
-   * hydration commit and never in the first client render — which has to match
-   * the server's. UTC, the basis `store.ts` writes days in, so the reading
-   * cannot change on a flight.
-   */
-  const streak = hydrated ? uptime(record, nowIso().slice(0, 10)).streak : null
 
   return (
     <section className="bz-cc" aria-labelledby={headingId} data-track={track}>
-      {/* O2's answer, in three readings. `XP`, `Rank` and `I at 8` are gone
-          because nobody could name the question they answered; what is left is
-          three quantities a reader already thinks in. Each is derived, each
-          prints `--` until the store has answered, and each has exactly one
-          implementation in `lib/record/derive.ts`. */}
-      {stats && (
-      <dl className="bz-cc-stats">
-        <div>
-          <dt>Modules completed</dt>
-          <dd>
-            <span className="bz-cc-stat-value">
-              {hydrated ? counts.signed : NO_READING}
-            </span>{' '}
-            of {counts.of}
-          </dd>
-        </div>
-        <div>
-          <dt>Reading time</dt>
-          <dd>
-            <span className="bz-cc-stat-value">
-              {hydrated ? hoursMinutes(minutes.done) : NO_READING}
-            </span>{' '}
-            of {hoursMinutes(minutes.of)}
-          </dd>
-        </div>
-        <div>
-          <dt>Days in a row</dt>
-          <dd>
-            <span className="bz-cc-stat-value">{streak === null ? NO_READING : streak}</span>{' '}
-            {streak === 1 ? 'day' : 'days'}
-          </dd>
-        </div>
-      </dl>
-      )}
-
       <ul className="bz-cc-levels">
         {levels.map((level) => {
           const ready = level.modules.filter((one) => one.drawn)
-          const planned = level.modules.length - ready.length
 
           return (
             <li key={level.slug} className="bz-cc-level" data-cat={level.slug}>

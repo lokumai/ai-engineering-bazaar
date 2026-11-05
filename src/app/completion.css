@@ -469,50 +469,6 @@
     margin: 0;
   }
 
-  /* The three statistics, and `05:195-200` is the rename map they exist for:
-     "~~XP 0~~ becomes minutes read, ~~UPTIME 1D~~ becomes days in a row,
-     ~~CLASS —~~ and ~~I AT 8~~ are dropped entirely because neither answered a
-     question anybody was asking."
-
-     A numeral used as display type is genuinely new to the language — `01`
-     states every count at reading size — so the step is `section`, which is
-     the 25px between `05`'s 24 and `07`'s 26, at the language's own emphatic
-     weight rather than `05`'s 700. */
-  .bz-cc-stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 26px;
-    margin: 0 0 18px;
-    padding-top: 18px;
-    border-top: 1px solid var(--color-line);
-  }
-
-  .bz-cc-stats dt {
-    order: 2;
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-meta);
-  }
-
-  .bz-cc-stats dd {
-    order: 1;
-    margin: 0;
-    color: var(--color-on-surface-muted);
-    font-size: var(--text-meta);
-  }
-
-  .bz-cc-stats > div {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .bz-cc-stat-value {
-    display: block;
-    color: var(--color-on-surface-title);
-    font: 600 var(--text-section) / 1.1 var(--font-sans);
-    letter-spacing: var(--tracking-section);
-    font-variant-numeric: tabular-nums;
-  }
-
   .bz-cc-note {
     margin: 0 0 22px;
     color: var(--color-on-surface-muted);

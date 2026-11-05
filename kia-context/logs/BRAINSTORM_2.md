@@ -2208,16 +2208,17 @@ build, and the measurement that moved each is the reason.
   visit must write nothing to the reader's record until they record something (ARCHITECTURE §12.13),
   and a test that asserts exactly that went red the moment opening a page wrote `prefs.track`. The
   memory now lasts for the tab, which is what it is for; `prefs.track` was removed from the schema.
-- **The bar gives way in steps, measured** (choice 5). With both full names the bar ran to 1,080px
-  at 1024, so `For` drops at 1180px and below. With the switch and the flag in the bar the page
-  then scrolled sideways between 881 and 1016px, and below 880, where the navigation becomes a
-  scroller, Catalog and Progress sat past its edge (the scroller was 77px wide at 390). So: below
-  1024 the Home link (the logo is the link home), the star count and the code beside the flag go;
-  below 960 the switch shows its two icons; below 480 the repository button goes (the footer links
-  it on every page) and the links' side padding gives. Measured on 9 pages in three languages at 24
-  widths from 320 to 1440: no sideways scroll at any, and every destination in view from 390 up.
-  Narrower than that the navigation still scrolls inside itself, which the bar's narrow rules
-  intend.
+- **The bar gives way at the language's own breakpoints, measured** (choice 5). With both full
+  names the bar ran to 1,080px at 1024; with the switch and the flag in it the page then scrolled
+  sideways up to 1016px, and below 880, where the navigation becomes a scroller, Catalog and
+  Progress sat past its edge (the scroller was 77px wide at 390). A first fix added widths of its
+  own (1023, 960, 480) and the design language's breakpoint guard rejected them, rightly: the bar
+  now gives way only at the fold (1180: `For`, the Home link, the star count and the code beside
+  the flag go; the logo is the link home), the rail breakpoint (880: the switch shows its icons)
+  and the touch floor (767: the repository button goes, since the footer links it). Measured on 9
+  pages in three languages at 24 widths from 320 to 1440: no sideways scroll at any, and every
+  destination in view from 390 up. Narrower than that the navigation still scrolls inside itself,
+  which the bar's narrow rules intend.
 
 F2 also took out the progress page's continue card and statistics row: the tabs and the data line
 are the whole page. The language menu keeps the track (a For Everyone page's menu offers the For

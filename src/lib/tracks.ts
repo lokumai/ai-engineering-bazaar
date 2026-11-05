@@ -7,7 +7,7 @@
  * Everyone lives under one prefix, `/everyone/`, after the language prefix when
  * there is one (`/tr/everyone/courses/…`). A page that belongs to neither track
  * (home, progress, legend, 404) has no track in its address; the bar then shows
- * the track the reader last opened (`prefs.track`).
+ * the track the reader last opened in this tab (`lastTrack`).
  *
  * Imports nothing, so a client island and the boot script's factory can both
  * read it without pulling the content layer into the browser.

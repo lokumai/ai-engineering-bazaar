@@ -363,13 +363,6 @@
 
   .bz-trackswitch-icon { flex: none; }
 
-  /* MEASURED at 1024px with both full names: the bar ran to 1080, and the
-     page scrolled sideways. Between the phone and the desktop the names drop
-     their `For`. */
-  @media (max-width: 1180px) {
-    .bz-trackswitch-for { display: none; }
-  }
-
   /* The bar's controls keep their size; at narrow widths the navigation is the
      part that scrolls inside itself (see the bar's own rules above), so these
      must not be the part that gives way. */
@@ -379,26 +372,27 @@
   .bz-bar-repo { flex: none; }
 
   /* MEASURED from 320 to 1440 on module, catalog, home and progress pages in
-     all three languages, once the switch and the flag joined the bar. Without
-     these steps the page scrolled sideways between 881 and 1016px, and below
-     880, where the navigation becomes a scroller, Catalog and Progress sat
-     past its edge (the scroller was 77px wide at 390). Below 1024 the Home
-     link goes (the logo is the link home), with the star count and the code
-     beside the flag; below 960 the switch shows its two icons, its names kept
-     as the links' accessible names; below 480 the repository button goes (the
-     footer links it on every page) and the links' side padding gives. Below
-     390 the navigation still scrolls inside itself, as the bar's narrow rules
-     above intend. */
-  @media (max-width: 1023px) {
+     all three languages, once the switch and the flag joined the bar: with both
+     full names it ran to 1,080px at 1024, the page scrolled sideways up to
+     1016px, and below the rail breakpoint, where the navigation becomes a
+     scroller, Catalog and Progress sat past its edge (77px wide at 390). The
+     bar gives way at the language's own breakpoints only.
+
+     At the fold the switch's names drop their `For`, the Home link goes (the
+     logo is the link home), and so do the star count and the code beside the
+     flag (the flag states it; Persian has no flag and keeps its script). */
+  @media (max-width: 1180px) {
+    .bz-trackswitch-for,
     .bz-bar-nav li[data-home],
     .bz-bar-star,
-    .bz-bar-stars { display: none; }
-    /* The language button keeps its flag and drops the code beside it, which
-       the flag already states (Persian has no flag and keeps its script). */
+    .bz-bar-stars,
     .bz-flag + .bz-langmenu-code { display: none; }
+    .bz-bar-nav .bz-bar-link { padding-inline: 8px; }
   }
 
-  @media (max-width: 960px) {
+  /* At the rail breakpoint the switch shows its two icons; its names stay
+     the links' accessible names. */
+  @media (max-width: 880px) {
     .bz-trackswitch-seg { padding: 0 8px; }
     .bz-trackswitch-label {
       position: absolute;
@@ -411,15 +405,14 @@
     }
   }
 
-  @media (max-width: 480px) {
+  /* On a phone the repository button goes (the footer links it on every
+     page) and the gaps tighten. Narrower than 390 the navigation still
+     scrolls inside itself, as the bar's narrow rules above intend. */
+  @media (max-width: 767px) {
     .bz-bar-repo { display: none; }
     .bz-bar-inner { gap: 6px; }
-    /* MEASURED at 390 on a page with the language button: Progress still ran
-       16px past the scroller. The links' side padding is the last give, and
-       their height (the touch target) does not change. */
     .bz-bar-nav .bz-bar-link { padding-inline: 6px; }
   }
-
 
   /* ---------------------------------------------------------------------------
      THE CATALOG MENU'S TWO TABS (M39 D2).

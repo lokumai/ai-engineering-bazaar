@@ -199,7 +199,6 @@ export type Role =
   | 'levelCard'
   | 'dial'
   | 'dialValue'
-  | 'statRow'
   | 'legendKey'
   | 'boardList'
   | 'boardMod'
@@ -459,8 +458,6 @@ const FACTS: readonly Fact[] = [
   { role: 'dialValue', property: 'height', mutate: '99px' },
   { role: 'levelCard', property: 'paddingTop', mutate: '99px' },
   { role: 'levelCard', property: 'paddingLeft', mutate: '99px' },
-  { role: 'statRow', property: 'gap', mutate: '99px' },
-  { role: 'statRow', property: 'paddingTop', mutate: '99px' },
   { role: 'legendKey', property: 'width', mutate: '99px' },
   { role: 'legendKey', property: 'height', mutate: '99px' },
   { role: 'legendKey', property: 'borderRadius', mutate: '99px' },
@@ -681,7 +678,6 @@ export const PROGRESS_SELECTORS: SelectorMap = {
   levelCard: '.ring',
   dial: '.ring .dial',
   dialValue: '.ring .dial span',
-  statRow: '.stat',
   legendKey: '.legend i',
 }
 
@@ -757,7 +753,7 @@ export const REFERENCE_OF: Readonly<Partial<Record<Role, Reference>>> = {
   crumb: '01', display: '01', tag: '01', section: '01', subsection: '01',
   actions: '01', buttonQuiet: '01', pager: '01', pagerItem: '01',
 
-  levelCard: '05', dial: '05', dialValue: '05', statRow: '05', legendKey: '05',
+  levelCard: '05', dial: '05', dialValue: '05', legendKey: '05',
 
   continueHero: '07', continueNum: '07', panel: '07', field: '07',
   fieldLabel: '07', fieldInput: '07',
@@ -925,7 +921,6 @@ export const APP_SELECTORS: SelectorMap = {
   levelCard: '.bz-cc-level',
   dial: '.bz-dial',
   dialValue: '.bz-dial-value',
-  statRow: '.bz-cc-stats',
   legendKey: '.bz-cc-legend-key[data-key="todo"]',
 
   /* Stage 8 — progress and account, read off `/profile/`. The hero is channel

@@ -458,12 +458,11 @@ test('a door opens the track that was chosen', async ({ page }) => {
   await page.locator('.bz-street [data-choose="all"]').click()
 
   const level = LEVELS[0]
-  // The track's pages are built by their own route; this only needs the click
-  // to ask for the right address, so the address is answered with a stub.
-  await page.route(`**${EVERYONE(level)}**`, (route) =>
-    route.fulfill({ status: 200, contentType: 'text/html', body: '<title>track</title>' }))
   await page.locator(`.bz-street .door[data-cat="${level}"]`).click()
   await expect(page).toHaveURL(new RegExp(`${EVERYONE(level)}?$`))
+  // And the page it lands on is that track's, by the bar's own account.
+  await expect(page.getByRole('navigation', { name: 'Track' }).getByRole('link', { name: /For Everyone/ }))
+    .toHaveAttribute('aria-current', 'true')
 })
 
 test('the track choice and its two characters stack on a phone without pushing the page sideways', async ({

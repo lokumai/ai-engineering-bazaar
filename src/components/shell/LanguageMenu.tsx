@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useId, useMemo, useRef } from 'react'
+import { EVERYONE_SEGMENT, type Track, moduleRoute } from '@/lib/tracks'
 import {
   type ReadingLang,
   type TranslatedLang,
@@ -49,7 +50,7 @@ import {
 export const LANGUAGE_PICKER_LABEL = 'Language of this module'
 
 /** `/courses/<level>/<module>/` and its translated twins, as one parse. */
-const MODULE = new RegExp(`^/(?:(${TRANSLATED_LANGS.join('|')})/)?courses/([^/]+/[^/]+)/?$`)
+const MODULE = new RegExp(`^/(?:(${TRANSLATED_LANGS.join('|')})/)?(?:(${EVERYONE_SEGMENT})/)?courses/([^/]+/[^/]+)/?$`)
 
 /**
  * Every address of the module at `pathname` — English first, then each
@@ -63,15 +64,18 @@ const MODULE = new RegExp(`^/(?:(${TRANSLATED_LANGS.join('|')})/)?courses/([^/]+
 export function alternatesOf(
   pathname: string,
   translated: Readonly<Record<TranslatedLang, ReadonlySet<string>>>,
-): { slug: string; current: ReadingLang; available: readonly ReadingLang[] } | null {
+): { slug: string; track: Track; current: ReadingLang; available: readonly ReadingLang[] } | null {
   const match = MODULE.exec(pathname)
   if (!match) return null
-  const slug = match[2]
+  const slug = match[3]
+  // D91 — a For Everyone page is built in every language its module has a
+  // For Engineers page in, so the same sets answer for both tracks.
+  const track: Track = match[2] ? 'everyone' : 'engineers'
   const others = TRANSLATED_LANGS.filter((lang) => translated[lang].has(slug))
   if (others.length === 0) return null
   const current = (match[1] as TranslatedLang | undefined) ?? 'en'
   if (current !== 'en' && !others.includes(current)) return null
-  return { slug, current, available: ['en', ...others] }
+  return { slug, track, current, available: ['en', ...others] }
 }
 
 /** A globe: the mark every product uses for "the language of this page". */
@@ -132,13 +136,9 @@ function CheckGlyph() {
   )
 }
 
-const LANGUAGES: readonly { id: ReadingLang; label: string; href: (slug: string) => string }[] = [
-  { id: 'en', label: 'English', href: (slug) => `/courses/${slug}/` },
-  ...TRANSLATIONS.map((one) => ({
-    id: one.id,
-    label: one.label,
-    href: (slug: string) => `/${one.id}/courses/${slug}/`,
-  })),
+const LANGUAGES: readonly { id: ReadingLang; label: string }[] = [
+  { id: 'en', label: 'English' },
+  ...TRANSLATIONS.map((one) => ({ id: one.id, label: one.label })),
 ]
 
 export function LanguageMenu({
@@ -215,7 +215,7 @@ export function LanguageMenu({
             <Link
               key={one.id}
               className="bz-menu-item"
-              href={one.href(here.slug)}
+              href={moduleRoute(here.slug, here.track, one.id)}
               hrefLang={one.id}
               lang={one.id}
               dir={dirOf(one.id)}

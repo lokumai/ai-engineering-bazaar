@@ -314,7 +314,7 @@
      gold and the bar's dark chip ink, so it reads as the active state rather
      than as one more button; the other segment is the bar's dim ink.
 
-     The fill is drawn from `data-bz-trackswitch` on `<html>`, which the boot script
+     The fill is drawn from `data-bz-track` on `<html>`, which the boot script
      stamps before first paint, so the right segment is filled in frame one.
      With no stamp at all (scripts refused) For Engineers is filled, which is
      the track every address without `/everyone/` belongs to.
@@ -348,16 +348,16 @@
     color: var(--color-on-bar);
   }
 
-  html:not([data-bz-trackswitch="everyone"]) .bz-trackswitch-seg[data-track-id="engineers"],
-  html[data-bz-trackswitch="everyone"] .bz-trackswitch-seg[data-track-id="everyone"] {
+  html:not([data-bz-track="everyone"]) .bz-trackswitch-seg[data-track-id="engineers"],
+  html[data-bz-track="everyone"] .bz-trackswitch-seg[data-track-id="everyone"] {
     background: var(--color-ornament);
     color: var(--color-on-bar-chip);
   }
 
   /* The one non-colour carrier of "this one": the filled segment's name is in
      a heavier weight too, and its link says `aria-current`. */
-  html:not([data-bz-trackswitch="everyone"]) .bz-trackswitch-seg[data-track-id="engineers"] .bz-trackswitch-label,
-  html[data-bz-trackswitch="everyone"] .bz-trackswitch-seg[data-track-id="everyone"] .bz-trackswitch-label {
+  html:not([data-bz-track="everyone"]) .bz-trackswitch-seg[data-track-id="engineers"] .bz-trackswitch-label,
+  html[data-bz-track="everyone"] .bz-trackswitch-seg[data-track-id="everyone"] .bz-trackswitch-label {
     font-weight: 700;
   }
 
@@ -378,11 +378,22 @@
   .bz-bar-icon,
   .bz-bar-repo { flex: none; }
 
-  /* C1 does not fit a phone in words: the icons stay, the names become the
-     links' accessible names only. The language button keeps its flag and
-     drops the code beside it, which the flag already states. */
-  @media (max-width: 767px) {
-    .bz-flag + .bz-langmenu-code { display: none; }
+  /* MEASURED once the switch and the flag joined the bar: below 880px, where
+     the navigation becomes a scroller, it was 77px wide at 390 and 119px at
+     768, so Catalog and Progress sat past its edge; and at 900, where it does
+     not scroll, the document was 938px wide. The logo is already the link
+     home, the star count is the repository button's least needed part, and on
+     a phone the footer links the repository on every page, so those go first.
+     The switch keeps its two icons; its names stay the links' accessible
+     names. Below 360 the navigation still scrolls inside itself, as the bar's
+     narrow rules above intend. */
+  @media (max-width: 960px) {
+    .bz-bar-nav li[data-home],
+    .bz-bar-star,
+    .bz-bar-stars { display: none; }
+  }
+
+  @media (max-width: 880px) {
     .bz-trackswitch-seg { padding: 0 8px; }
     .bz-trackswitch-label {
       position: absolute;
@@ -393,6 +404,17 @@
       clip-path: inset(50%);
       white-space: nowrap;
     }
+  }
+
+  @media (max-width: 480px) {
+    .bz-bar-repo { display: none; }
+    .bz-bar-inner { gap: 6px; }
+  }
+
+  /* On a phone the language button keeps its flag and drops the code beside
+     it, which the flag already states. */
+  @media (max-width: 767px) {
+    .bz-flag + .bz-langmenu-code { display: none; }
   }
 
   /* ---------------------------------------------------------------------------

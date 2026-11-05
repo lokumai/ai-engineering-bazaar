@@ -26,15 +26,24 @@ test('the switch leads to the same module in the other track, and back', async (
 
 test('a For Everyone page is For Everyone in frame one, before any script file loads', async ({ page }) => {
   await page.route('**/*.js', (route) => route.abort())
-  await page.goto(EVERYONE)
+  const fills = async (path: string) => {
+    await page.goto(path)
+    return page.evaluate(() => {
+      const fill = (id: string) => {
+        const seg = document.querySelector(`.bz-trackswitch-seg[data-track-id="${id}"]`)
+        return seg ? getComputedStyle(seg).backgroundColor : null
+      }
+      return { engineers: fill('engineers'), everyone: fill('everyone') }
+    })
+  }
+  const onEngineers = await fills(A0.path)
+  const onEveryone = await fills(EVERYONE)
   await expect(page.locator('html')).toHaveAttribute('data-bz-track', 'everyone')
-  const filled = await page.evaluate(() => {
-    const seg = document.querySelector('.bz-trackswitch-seg[data-track-id="everyone"]')
-    const other = document.querySelector('.bz-trackswitch-seg[data-track-id="engineers"]')
-    return seg && other ? [getComputedStyle(seg).backgroundColor, getComputedStyle(other).backgroundColor] : null
-  })
-  expect(filled, 'no track switch').not.toBeNull()
-  expect(filled![0], 'the current track is not filled').not.toBe(filled![1])
+  expect(onEngineers.engineers, 'no track switch').not.toBeNull()
+  expect(onEngineers.engineers, 'For Engineers is not filled on its own page').not.toBe(onEngineers.everyone)
+  // The filled segment moves: For Everyone takes the fill For Engineers had.
+  expect(onEveryone.everyone, 'For Everyone is not filled on its own page').toBe(onEngineers.engineers)
+  expect(onEveryone.engineers).toBe(onEngineers.everyone)
 })
 
 test('an unwritten For Everyone module says so, and offers both ways on', async ({ page }) => {
@@ -70,4 +79,32 @@ test('the progress page opens on the track the reader was reading, and nothing i
   await expect(page.locator('[data-panel="engineers"]')).toBeHidden()
   // §12.13 — opening pages records nothing; the last track lives in the tab only.
   expect(await readRawRecord(page)).toBeNull()
+})
+
+test('a For Everyone page offers the same languages as its For Engineers page, each in its own track', async ({ page }) => {
+  const offered = async (path: string) => {
+    await page.goto(path)
+    return page.locator('.bz-langmenu a').evaluateAll((links) =>
+      links.map((link) => new URL((link as HTMLAnchorElement).href).pathname))
+  }
+  const engineers = await offered(A0.path)
+  const everyone = await offered(EVERYONE)
+  expect(engineers.length, 'the module offers no second language, so this checks nothing').toBeGreaterThan(1)
+  expect(everyone).toEqual(engineers.map((path) => path.replace(/(^|\/)courses\//, '$1everyone/courses/')))
+})
+
+test('on a phone every main destination is in view in the bar, with the switch and the flag beside them', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto(A0.path)
+  const nav = await page.locator('.bz-bar-nav > ul').boundingBox()
+  const links = page.locator('.bz-bar-nav > ul > li').filter({ visible: true })
+  expect(await links.count(), 'no main destination is shown').toBeGreaterThan(1)
+  for (const box of await links.evaluateAll((items) => items.map((item) => {
+    const rect = item.getBoundingClientRect()
+    return { text: item.textContent?.trim() ?? '', left: rect.left, right: rect.right }
+  }))) {
+    expect(box.right, `${box.text} runs past the bar's navigation`).toBeLessThanOrEqual(nav!.x + nav!.width + 1)
+    expect(box.left).toBeGreaterThanOrEqual(nav!.x - 1)
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390)
 })

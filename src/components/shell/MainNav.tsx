@@ -344,7 +344,7 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
           const hasMenu = destination.href === INDEX_ROUTE
 
           return (
-            <li key={destination.href}>
+            <li key={destination.href} data-home={destination.href === '/' ? '' : undefined}>
               {hasMenu ? (
                 <details
                   ref={panel}

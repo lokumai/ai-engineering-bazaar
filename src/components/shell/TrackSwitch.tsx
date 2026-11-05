@@ -24,7 +24,7 @@ import {
  * with no script: on a module, the same module (an unwritten For Everyone
  * module has a page saying so, D91); on a catalog page, the same level; on a
  * page that belongs to neither track, that track's catalog. Which segment is
- * filled is drawn by `shell.css` from `data-bz-trackswitch`, which the boot script
+ * filled is drawn by `shell.css` from `data-bz-track`, which the boot script
  * stamps before first paint; the island only adds `aria-current`.
  *
  * On a phone the two names become their icons (`shell.css`), because C1 does

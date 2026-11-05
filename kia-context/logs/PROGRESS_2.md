@@ -4450,7 +4450,10 @@ on D91's design (and D91's "changed while building").
       900, 1100 and 1440, the menu, the progress page and the not-written page; the bar measured
       on 9 pages in three languages at 24 widths with no sideways scroll. A code review and a
       browser review ran; every finding is fixed or answered in D91 and the PR.
-- [ ] The full gate is green (recorded with the PR).
+- [x] The full gate is green: typecheck; 1,154 unit and corpus tests; the base-path build and its
+      link gate (166 pages, 10,346 internal links); the browser suite, 458 passed and 10 skipped. A
+      first run had one console 404 in `home.spec.ts` after a door click that did not recur in 175
+      further runs of that flow, so it is noted rather than fixed.
 
 ## 🏁 Milestone M44: The home page: four scenes, the track choice and two characters — BUILT AND REVIEWED
 

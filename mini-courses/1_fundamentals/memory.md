@@ -105,6 +105,11 @@ There are three kinds of memory, and you cannot use one in place of another. **P
 
 ## References
 
+### 📄 Articles
+
 - [The three memory types every LLM developer must know](https://medium.com/@sahilnanga4/the-three-memory-types-every-llm-developer-must-know-3358c26fdff3): the same split, seen from a different angle
+
+### 🧭 Modules
+
 - [RAG & Embeddings](rag.md): how long-term memory gets retrieved back into working memory
 - [Advanced Memory](../3_expert/advanced_memory.md): where this goes next

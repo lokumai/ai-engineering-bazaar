@@ -240,16 +240,30 @@ Loop engineering یعنی طراحی یه چرخه‌ی تکرارشونده ک�
 
 ## منابع
 
+### 📄 مقاله‌ها
+
 - [The Art of Loop Engineering](https://www.langchain.com/blog/the-art-of-loop-engineering): loop engineering به‌عنوان روی هم چیدن loop‌ها، و چهار سطحش
 - [Loop engineering: Getting started with loops](https://claude.com/blog/getting-started-with-loops): `/goal`، `/loop` و `/schedule`، و اینکه هر کدوم کِی وایمیسه
 - [everything is a ralph loop](https://ghuntley.com/loop/): خود تکنیک از زبون کسی که ساختش، و قانون یه task در هر loop
-- [ralph-loop plugin](https://claude.com/plugins/ralph-loop): نسخه‌ی آماده برای Claude Code
-- [snarktank/ralph](https://github.com/snarktank/ralph): یه autonomous loop که تا تیک خوردن همه‌ی آیتم‌های یه سند requirements ادامه می‌ده
-- [loop-engineering](https://github.com/cobusgreyling/loop-engineering): الگوها، starter‌ها و ابزارهای CLI، از جمله یکی برای حساب‌وکتاب هزینه‌ی یه اجرای طولانی
 - [Ralph Wiggum Loop for Claude Code](https://awesomeclaude.ai/ralph-wiggum): یه راهنمای نوشتاری، و اینکه چرا prompt‌ی که اپراتور می‌نویسه از خود مدل مهم‌تره
 - [Orchestrate teams of Claude Code sessions](https://code.claude.com/docs/en/agent-teams): agent teams، task list مشترک، و معماری پشتش
 - [Orchestrate subagents at scale with dynamic workflows](https://code.claude.com/docs/en/workflows): یه workflow script چه شکلیه، محدودیت‌هاش، و مقایسه‌ی چهارتایی
 - [Executable Code Actions Elicit Better LLM Agents](https://arxiv.org/abs/2402.01030): CodeAct، که توش کد می‌شه action space
 - [Recursive Language Models](https://arxiv.org/abs/2512.24601): خود مقاله، همراه با [یادداشت Alex Zhang](https://alexzhang13.github.io/blog/2025/rlm/) و کتابخونه‌ی [rlm](https://github.com/alexzhang13/rlm)
+
+### 🎬 ویدیوها
+
 - [Loop Engineering explained in 8min..](https://www.youtube.com/watch?v=4biXYSNkn9Y): کل موضوع این درس توی هشت دقیقه، اگه دیدن رو به خوندن ترجیح می‌دی
+
+### 🛠️ ابزارها
+
+- [ralph-loop plugin](https://claude.com/plugins/ralph-loop): نسخه‌ی آماده برای Claude Code
+
+### 🗃️ Repository‌ها
+
+- [snarktank/ralph](https://github.com/snarktank/ralph): یه autonomous loop که تا تیک خوردن همه‌ی آیتم‌های یه سند requirements ادامه می‌ده
+- [loop-engineering](https://github.com/cobusgreyling/loop-engineering): الگوها، starter‌ها و ابزارهای CLI، از جمله یکی برای حساب‌وکتاب هزینه‌ی یه اجرای طولانی
+
+### 🧭 ماژول‌ها
+
 - [Advanced Agent Architectures](../3_expert/advanced_agent_architectures.md): CodeAct، recursive language model‌ها و بقیه، با توضیح کامل

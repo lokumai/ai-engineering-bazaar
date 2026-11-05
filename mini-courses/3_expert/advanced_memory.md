@@ -32,4 +32,6 @@ graph LR
 
 ## References
 
+### 📄 Articles
+
 - [Dreaming: Better memory for a more helpful ChatGPT](https://openai.com/index/chatgpt-memory-dreaming/): OpenAI's memory system that keeps what ChatGPT remembers fresh and relevant across conversations, and the starting point for Agent Dreaming

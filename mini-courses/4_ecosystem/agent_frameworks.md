@@ -129,6 +129,16 @@ Then comes the distinction that matters most. A workflow runs a path that you wr
 
 ## References
 
+### 📄 Articles
+
+- [AI Workflows vs AI Agents](https://www.promptingguide.ai/agents/ai-workflows-vs-ai-agents): the distinction, and when each one is right
+
+### 🛠️ Tools
+
+- [Lovable](https://lovable.dev/), [Bolt](https://bolt.new/) and [Replit](https://replit.com/): describe an app in plain language and get a working one
+
+### 🗃️ Repositories
+
 - [LangChain](https://github.com/langchain-ai/langchain): the main interface, and the place to start
 - [LangGraph](https://github.com/langchain-ai/langgraph): the runtime underneath, for when you want to control the flow yourself
 - [deepagents](https://github.com/langchain-ai/deepagents): the deep agent architecture, already put together
@@ -137,6 +147,4 @@ Then comes the distinction that matters most. A workflow runs a path that you wr
 - [smolagents](https://github.com/huggingface/smolagents): the barebones one, and the best to read
 - [Pydantic AI](https://github.com/pydantic/pydantic-ai): typed from end to end, so a bad tool call fails with a clear error
 - [Mastra](https://github.com/mastra-ai/mastra) and [VoltAgent](https://github.com/VoltAgent/voltagent): the TypeScript options
-- [AI Workflows vs AI Agents](https://www.promptingguide.ai/agents/ai-workflows-vs-ai-agents): the distinction, and when each one is right
 - [n8n](https://github.com/n8n-io/n8n): the workflow platform, with [an MCP server that builds the workflows for you](https://docs.n8n.io/advanced-ai/mcp/accessing-n8n-mcp-server/)
-- [Lovable](https://lovable.dev/), [Bolt](https://bolt.new/) and [Replit](https://replit.com/): describe an app in plain language and get a working one

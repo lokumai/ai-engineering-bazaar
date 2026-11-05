@@ -277,10 +277,18 @@ pahalı?
 
 ## Kaynaklar
 
-- [Unsloth documentation](https://unsloth.ai/docs): kütüphanenin tam dokümantasyonu
+### 📄 Makaleler
+
 - [Unsloth: is fine-tuning right for me?](https://unsloth.ai/docs/get-started/fine-tuning-for-beginners/faq-+-is-fine-tuning-right-for-me): fine-tuning yapmadan önce mutlaka oku
 - [Unsloth notebooks](https://unsloth.ai/docs/get-started/unsloth-notebooks): eğitim için ve kuantize modelleri çalıştırmak için hazır notebook'lar
 - [Unsloth fine-tuning guide](https://unsloth.ai/docs/get-started/fine-tuning-llms-guide): başından sonuna tüm süreç
-- [Hugging Face](https://huggingface.co/): model kaydı ve `transformers` kütüphanesi
 - [Fine-tuning AI models](https://cloud.google.com/use-cases/fine-tuning-ai-models?hl=en#fine-tuning-llms-and-ai-models): Google Cloud'un genel bakışı, terimleri öğrenmek için faydalı
+
+### 🎬 Videolar
+
 - [What is LLM Fine-Tuning? (Explained Simply)](https://youtube.com/shorts/Ei4E2lWStqw?si=q0PttlRmBsARGHZU): fikrin tamamını bir dakikadan kısa sürede görmek istersen kısa bir video
+
+### 🛠️ Araçlar
+
+- [Unsloth documentation](https://unsloth.ai/docs): kütüphanenin tam dokümantasyonu
+- [Hugging Face](https://huggingface.co/): model kaydı ve `transformers` kütüphanesi

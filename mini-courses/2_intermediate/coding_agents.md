@@ -244,17 +244,25 @@ Next: hooks were the first thing in this module that the model does not get a vo
 
 ## References
 
+### 📄 Articles
+
 - [Claude Code features](https://code.claude.com/docs/en/agent-sdk/claude-code-features): the whole extension surface on one page, useful as a checklist of what your own agent supports
-- [agents.md](https://agents.md/): the open format, including how nested files work in a monorepo
 - [How Claude remembers your project](https://code.claude.com/docs/en/memory): the CLAUDE.md and auto memory split, and where the files live
 - [Connect to MCP servers](https://code.claude.com/docs/en/mcp-quickstart): how to add a server from start to finish, and what to check when it does not connect
-- [awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers): the community list, to check whether your tool already exists
 - [Equipping agents for the real world with Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills): where progressive disclosure is explained properly
 - [Extend Claude with skills](https://code.claude.com/docs/en/skills): the practical version, including the two fields that decide who may invoke a skill
+- [Hooks reference](https://code.claude.com/docs/en/hooks): every lifecycle event, and the input that each one receives
+- [Discover plugins](https://code.claude.com/docs/en/discover-plugins) and the [plugins reference](https://code.claude.com/docs/en/plugins-reference): first how to install a plugin, then how to build one
+
+### 🛠️ Tools
+
+- [agents.md](https://agents.md/): the open format, including how nested files work in a monorepo
+- [Artificial Analysis](https://artificialanalysis.ai/): benchmark numbers for each model and each reasoning setting, if you want to see what effort gives you
+
+### 🗃️ Repositories
+
+- [awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers): the community list, to check whether your tool already exists
 - [anthropics/skills](https://github.com/anthropics/skills): the official skill collection
 - [awesome-claude](https://github.com/webfuse-com/awesome-claude): a broader curated list of Claude tooling
 - [awesome-claude-code-subagents](https://github.com/VoltAgent/awesome-claude-code-subagents): more than a hundred subagent definitions to start from
-- [Hooks reference](https://code.claude.com/docs/en/hooks): every lifecycle event, and the input that each one receives
-- [Discover plugins](https://code.claude.com/docs/en/discover-plugins) and the [plugins reference](https://code.claude.com/docs/en/plugins-reference): first how to install a plugin, then how to build one
 - [claude-plugins-official](https://github.com/anthropics/claude-plugins-official): the managed plugin directory
-- [Artificial Analysis](https://artificialanalysis.ai/): benchmark numbers for each model and each reasoning setting, if you want to see what effort gives you

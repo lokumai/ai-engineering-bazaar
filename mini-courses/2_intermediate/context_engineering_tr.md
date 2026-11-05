@@ -242,6 +242,8 @@ Sırada kodlama agent'larının kendisi ve birini genişletmenin altı yolu var.
 
 ## Kaynaklar
 
+### 📄 Makaleler
+
 - [Context Rot: How Increasing Input Tokens Impacts LLM Performance](https://www.trychroma.com/research/context-rot): bütün bunların arkasındaki Chroma çalışması. 18 model ve iğne ile dikkat dağıtıcı deneylerini içerir.
 - [How Long Contexts Fail](https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html): Drew Breunig'in adlandırdığı dört hata türü. Bunlar, sürekli alıntılanan erken bir halüsinasyondan eskiyle çelişen yeni bilgiye kadar uzanıyor.
 - [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents): en eksiksiz ele alış ve compaction ile subagent rehberinin kaynağı.
@@ -250,14 +252,26 @@ Sırada kodlama agent'larının kendisi ve birini genişletmenin altı yolu var.
 - [Context Engineering for Agents](https://rlancemartin.github.io/2025/06/23/context_engineering/): aynı dört fiil, yeniden kullanmaya değer diyagramlarla.
 - [Karpathy'nin context engineering üzerine paylaşımı](https://x.com/karpathy/status/1937902205765607626): terimi herkesin önüne koyan paylaşım.
 - [Context Engineering for AI Agents: Lessons from Building Manus](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus): gerçek deneyimden somut dersler, özellikle dosya sistemi ve recitation dersleri.
-- [Stop stuffing your context window (here's why)](https://youtube.com/shorts/9P36wMntNSI): kısa versiyonu, izlemeyi tercih edersen.
-- [DeepWiki](https://deepwiki.org/): her depo için bir wiki. Böylece agent kodu okumak yerine kod hakkında okur.
 - [Agents 2.0: From Shallow Loops to Deep Agents](https://www.philschmid.de/agents-2.0-deep-agents): bir agent'ı deep yapan şeyin ne olduğu ve neden bir özellik değil de bir mimari olduğu.
 - [What Is a Deep Agent?](https://www.nvidia.com/en-us/glossary/deep-agents/): aynı tanım, sade bir dille.
 - [The Agent 2.0 Era: Mastering Long-Horizon Tasks with Deep Agents](https://medium.com/@amirkiarafiei/the-agent-2-0-era-mastering-long-horizon-tasks-with-deep-agents-part-3-745705e13b16): aynı mimari, baştan sona anlatılmış.
-- [deepagents](https://github.com/langchain-ai/deepagents): kütüphane. Belgeleri için [Deep Agents overview](https://docs.langchain.com/oss/python/deepagents/overview).
 - [Context Engineering: How Deep Agents Remember](https://www.langchain.com/blog/context-engineering-deep-agents-remember): deepagents'ın uzun bir çalışmada context'i nasıl küçük tuttuğu (offloading, özetleme, skill'ler, subagent'lar ve memory dosyaları) ve memory'yi düz dosyalarda tutmanın model değiştirmeyi neden kolaylaştırdığı.
 - [Measuring AI Ability to Complete Long Software Tasks](https://arxiv.org/abs/2503.14499): zaman ufku sayısının kaynağı ve ikiye katlanma trendi.
 - [Task-completion time horizons](https://metr.org/time-horizons/): her model için güncel sayılar.
+
+### 🎬 Videolar
+
+- [Stop stuffing your context window (here's why)](https://youtube.com/shorts/9P36wMntNSI): kısa versiyonu, izlemeyi tercih edersen.
+
+### 🛠️ Araçlar
+
+- [DeepWiki](https://deepwiki.org/): her depo için bir wiki. Böylece agent kodu okumak yerine kod hakkında okur.
+
+### 🗃️ Repolar
+
+- [deepagents](https://github.com/langchain-ai/deepagents): kütüphane. Belgeleri için [Deep Agents overview](https://docs.langchain.com/oss/python/deepagents/overview).
 - [Awesome-Long-Horizon-Agents](https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents): araştırma manzarası, sıralanmış. Bu modülden daha derine inmek istersen.
+
+### 🧭 Modüller
+
 - [İleri Seviye Context Engineering](../3_expert/advanced_context_engineering_tr.md): bu modülün dışarıda bıraktığı teknikler.

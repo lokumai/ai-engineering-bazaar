@@ -174,13 +174,24 @@ OpenAI، Meta، Google و سازنده‌های Grok هم حالا personal agen
 
 ## منابع
 
-- [OpenClaw](https://github.com/openclaw/openclaw) و [openclaw.ai](https://openclaw.ai/): خود پروژه، و توضیحی که خودش از کارش می‌ده
-- [Hermes Agent](https://github.com/NousResearch/hermes-agent) و [hermes-agent.nousresearch.com](https://hermes-agent.nousresearch.com/): جایگزینی که کاربرها رفتن سراغش، با لیست قابلیت‌هاش
+### 📄 مقاله‌ها
+
 - [OpenClaw vs Hermes Agent: The best agent harness in 2026](https://composio.dev/content/openclaw-vs-hermes-agent): روشن‌ترین توضیح درباره‌ی اینکه هر کدوم کِی به کار میاد
 - [OpenClaw vs Hermes Agent: Which one should you actually run?](https://www.firecrawl.dev/blog/openclaw-vs-hermes): همون مقایسه، با حجم نصب و تأخیر memory که واقعاً اندازه گرفته شده
 - [Hermes vs OpenClaw: Self-Evolving Coding Agent or Local AI Control Plane?](https://www.kimi.ai/resources/hermes-vs-openclaw): یه مقایسه‌ی سوم، برای وقتی که دو تای اول با هم نمی‌خونن
 - [OpenClaw Agents on Moltbook: Risky Instruction Sharing and Norm Enforcement in an Agent-Only Social Network](https://arxiv.org/abs/2602.02625): عدد 18.4%، و هنجارهایی که بدون اینکه کسی طراحیشون کرده باشه رعایت شدن
-- [nanoclaw](https://github.com/nanocoai/nanoclaw): گزینه‌ی سبک‌وزن، که به‌طور پیش‌فرض از container استفاده می‌کنه
+
+### 🛠️ ابزارها
+
 - [Kimi Claw](https://www.kimi.com/en/help/kimi-claw) و [myclaw.ai](https://myclaw.ai/): نسخه‌های host‌شده، برای وقتی که خودت نمی‌تونی اجراش کنی
 - [Introducing dots](https://openai.com/index/introducing-dots/)، [Muse](https://ai.meta.com/muse/)، [Grok Bot](https://x.ai/bot) و [Gemini Spark](https://gemini.google/overview/agent/spark/): personal agent‌هایی که شرکت‌های بزرگ AI برات host می‌کنن
+
+### 🗃️ Repository‌ها
+
+- [OpenClaw](https://github.com/openclaw/openclaw) و [openclaw.ai](https://openclaw.ai/): خود پروژه، و توضیحی که خودش از کارش می‌ده
+- [Hermes Agent](https://github.com/NousResearch/hermes-agent) و [hermes-agent.nousresearch.com](https://hermes-agent.nousresearch.com/): جایگزینی که کاربرها رفتن سراغش، با لیست قابلیت‌هاش
+- [nanoclaw](https://github.com/nanocoai/nanoclaw): گزینه‌ی سبک‌وزن، که به‌طور پیش‌فرض از container استفاده می‌کنه
+
+### 🧭 ماژول‌ها
+
 - [Security](security_fa.md): درسی که باید اول بخونیش، و همونیه که توضیح می‌ده چرا `SOUL.md` این‌قدر مهمه

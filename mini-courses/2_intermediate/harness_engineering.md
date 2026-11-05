@@ -217,6 +217,8 @@ Next: so far, you are still in the driver's seat. You write the prompt, you read
 
 ## References
 
+### 📄 Articles
+
 - [Harness Engineering: What It Is and How It Complements Context Engineering](https://medium.com/@amirkiarafiei/harness-engineering-what-it-is-and-how-it-complements-context-engineering-6545b40bfc84): the car, the track and the barriers, in full detail
 - [The Anatomy of an Agent Harness](https://www.langchain.com/blog/the-anatomy-of-an-agent-harness): Agent = Model + Harness, and the list of parts that this module works from
 - [How to Build a Custom Agent Harness](https://www.langchain.com/blog/how-to-build-a-custom-agent-harness): how to build one yourself, with middleware
@@ -225,11 +227,20 @@ Next: so far, you are still in the driver's seat. You write the prompt, you read
 - [Harness engineering for coding agent users](https://martinfowler.com/articles/harness-engineering.html): the idea of guides and sensors, the split into computational and inferential, and the most complete text on the subject
 - [The importance of Agent Harness in 2026](https://www.philschmid.de/agent-harness-2026): the harness as the operating system around the model, and why it should be easy to delete
 - [Finding the Best Harness for DeepSeek V4 Flash](https://composio.dev/content/best-agent-harness-deepseek-v4-flash): eight harnesses and one model, with cost and speed next to the pass rate
+
+### 🎬 Videos
+
+- [Agent Harness Explained in 2 minutes](https://youtube.com/shorts/IVdJj_aNwhE): the short version, if you prefer to watch
+- [Agent Harness explained in 8min..](https://www.youtube.com/watch?v=1a1VXDdIyrk): the longer version, which puts the three practices side by side, like the rings above
+- [What is an Agent Harness?](https://www.youtube.com/watch?v=R0ckdFjUF5U): LangChain's own video on the parts of a harness, from the team behind the anatomy article
+
+### 🗃️ Repositories
+
 - [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness): a harness published next to the model it was tuned for
 - [deepagents](https://github.com/langchain-ai/deepagents): the open harness from the anatomy article
 - [best-of-Agent-Harnesses](https://github.com/RyanAlberts/best-of-Agent-Harnesses): a ranked list of more than a hundred, scored again every week
 - [awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering): tools and guides for the practice
-- [Agent Harness Explained in 2 minutes](https://youtube.com/shorts/IVdJj_aNwhE): the short version, if you prefer to watch
-- [Agent Harness explained in 8min..](https://www.youtube.com/watch?v=1a1VXDdIyrk): the longer version, which puts the three practices side by side, like the rings above
-- [What is an Agent Harness?](https://www.youtube.com/watch?v=R0ckdFjUF5U): LangChain's own video on the parts of a harness, from the team behind the anatomy article
+
+### 🧭 Modules
+
 - [Advanced Harness Engineering](../3_expert/advanced_harness_engineering.md): profiles, self-evolving harnesses, and what is moving into the model

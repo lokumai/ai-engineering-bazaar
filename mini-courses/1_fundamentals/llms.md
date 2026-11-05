@@ -320,14 +320,25 @@ all, in one way or another, answers to the question: *what do we put on that lim
 
 ## References
 
+### 📄 Articles
+
 - [Scaling Laws for Neural Language Models](https://arxiv.org/abs/2001.08361): Kaplan et
   al., 2020, the measurement behind "bigger models are better"
+
+### 🎬 Videos
+
+- [Large Language Models explained briefly](https://youtu.be/LPZh9BOjkQs?si=8kH-lzHbfHRL1_8h): a video
+  that covers the same topics, if you prefer to watch rather than read
+
+### 🛠️ Tools
+
 - [Artificial Analysis](https://artificialanalysis.ai/): model comparisons and benchmarks
 - [Ollama](https://ollama.com/): pull and serve models locally
 - [LMStudio](https://lmstudio.ai/): GUI for running models locally
 - [Unsloth](https://unsloth.ai/): pre-quantized model releases
 - [Google AI Studio](https://aistudio.google.com/): free-tier API keys
 - [OpenRouter](https://openrouter.ai/): one key for many providers
+
+### 🗃️ Repositories
+
 - [System prompt leaks](https://github.com/asgeirtj/system_prompts_leaks)
-- [Large Language Models explained briefly](https://youtu.be/LPZh9BOjkQs?si=8kH-lzHbfHRL1_8h): a video
-  that covers the same topics, if you prefer to watch rather than read

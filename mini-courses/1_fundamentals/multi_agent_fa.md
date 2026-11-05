@@ -151,8 +151,13 @@ graph LR
 
 ## منابع
 
+### 📄 مقاله‌ها
+
 - [Multi-agent systems](https://docs.langchain.com/oss/python/langchain/multi-agent): همین الگوها، با جزئیات بیشتر
 - [LangGraph multi-agent concepts](https://langchain-ai.github.io/langgraph/concepts/multi_agent/): supervisor، network و بقیه، همراه با کد
 - [What is an agent?](https://www.langchain.com/blog/what-is-an-agent): این‌جا ارزش دوباره خوندن داره، چون انتخاب supervisor در واقع یه تصمیم درباره‌ی میزان خودمختاریه
+
+### 🧭 ماژول‌ها
+
 - [AI Agents](agents_fa.md): همون loop تکی که همه‌ی این‌ها ازش ساخته شده
 - [Advanced Multi-Agent](../3_expert/advanced_multiagent.md): shared و isolated context، و پروتکل‌های ارتباط agent با agent

@@ -201,6 +201,8 @@ Bütün bunlar gerçek bir emeğe değer, çünkü etkisini sayılarda görebili
 
 ## Kaynaklar
 
+### 📄 Makaleler
+
 - [Harness Engineering: What It Is and How It Complements Context Engineering](https://medium.com/@amirkiarafiei/harness-engineering-what-it-is-and-how-it-complements-context-engineering-6545b40bfc84): Arabayı, pisti ve bariyerleri tüm ayrıntılarıyla anlatıyor.
 - [The Anatomy of an Agent Harness](https://www.langchain.com/blog/the-anatomy-of-an-agent-harness): Agent = Model + Harness ve bu modülün dayandığı parça listesi.
 - [How to Build a Custom Agent Harness](https://www.langchain.com/blog/how-to-build-a-custom-agent-harness): Kendi harness'ini middleware ile nasıl kuracağını gösteriyor.
@@ -209,11 +211,20 @@ Bütün bunlar gerçek bir emeğe değer, çünkü etkisini sayılarda görebili
 - [Harness engineering for coding agent users](https://martinfowler.com/articles/harness-engineering.html): Guide ve sensor fikri, computational ile inferential ayrımı ve konunun en eksiksiz metni.
 - [The importance of Agent Harness in 2026](https://www.philschmid.de/agent-harness-2026): Harness'i model etrafındaki işletim sistemi olarak ele alıyor ve neden kolayca silinebilir olması gerektiğini açıklıyor.
 - [Finding the Best Harness for DeepSeek V4 Flash](https://composio.dev/content/best-agent-harness-deepseek-v4-flash): Sekiz harness ve tek bir model; geçme oranının yanında maliyet ve hız da var.
+
+### 🎬 Videolar
+
+- [Agent Harness Explained in 2 minutes](https://youtube.com/shorts/IVdJj_aNwhE): Kısa versiyon, izlemeyi tercih edersen.
+- [Agent Harness explained in 8min..](https://www.youtube.com/watch?v=1a1VXDdIyrk): Daha uzun versiyon. Yukarıdaki halkalar gibi üç pratiği yan yana koyuyor.
+- [What is an Agent Harness?](https://www.youtube.com/watch?v=R0ckdFjUF5U): LangChain'in, anatomy yazısını yazan ekipten, harness'ın parçalarını anlatan kendi videosu.
+
+### 🗃️ Repolar
+
 - [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness): Ayarlandığı modelin yanında yayımlanmış bir harness.
 - [deepagents](https://github.com/langchain-ai/deepagents): Anatomi yazısındaki açık harness.
 - [best-of-Agent-Harnesses](https://github.com/RyanAlberts/best-of-Agent-Harnesses): Yüzden fazla harness'in sıralandığı, her hafta yeniden puanlanan bir liste.
 - [awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering): Bu pratik için araçlar ve rehberler.
-- [Agent Harness Explained in 2 minutes](https://youtube.com/shorts/IVdJj_aNwhE): Kısa versiyon, izlemeyi tercih edersen.
-- [Agent Harness explained in 8min..](https://www.youtube.com/watch?v=1a1VXDdIyrk): Daha uzun versiyon. Yukarıdaki halkalar gibi üç pratiği yan yana koyuyor.
-- [What is an Agent Harness?](https://www.youtube.com/watch?v=R0ckdFjUF5U): LangChain'in, anatomy yazısını yazan ekipten, harness'ın parçalarını anlatan kendi videosu.
+
+### 🧭 Modüller
+
 - [İleri Seviye Harness Engineering](../3_expert/advanced_harness_engineering_tr.md): Profiller, kendini evrimleştiren harness'ler ve modelin içine taşınanlar.

@@ -181,9 +181,17 @@ framework برای همینه که این‌ها رو مدیریت کنه، و �
 
 ## منابع
 
+### 📄 مقاله‌ها
+
 - [LLM agents](https://www.promptingguide.ai/research/llm-agents): مرور کامل‌تری از همین ایده
 - [Agent components](https://www.promptingguide.ai/agents/components): اجزای یه agent، یکی‌یکی
 - [What is an agent?](https://www.langchain.com/blog/what-is-an-agent): agent، workflow و state machine رو روی یه طیف خودمختاری کنار هم نشون می‌ده
+
+### 🗃️ Repository‌ها
+
 - [smolagents](https://github.com/huggingface/smolagents): framework‌ای که بالا ازش استفاده کردیم
+
+### 🧭 ماژول‌ها
+
 - [Tool Calling](tools_fa.md): این‌که tool schema از کجا میاد
 - [Memory](memory_fa.md): message stack‌ای که loop مدام بزرگ‌ترش می‌کنه

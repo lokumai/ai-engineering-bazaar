@@ -102,9 +102,14 @@ batching ایده‌ایه که همه‌ی عددهای این درس رو تو
 
 ## منابع
 
+### 🛠️ ابزارها
+
+- [Ollama](https://ollama.com/) و [LM Studio](https://lmstudio.ai/): wrapper‌های محلی، که توی [مبانی LLM](../1_fundamentals/llms_fa.md) دیدیمشون
+
+### 🗃️ Repository‌ها
+
 - [llama.cpp](https://github.com/ggml-org/llama.cpp): inference مدل‌های زبانی با C و C++، و پایه‌ای که wrapper‌های محلی روش ساخته شدن
 - [SGLang](https://github.com/sgl-project/sglang): serve کردن پرسرعت، که وقتی درخواست‌ها prefix مشترک دارن خیلی خوب جواب می‌ده
 - [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM): مال NVIDIA، که از قبل کامپایل می‌شه تا latency پایین‌تری بده
 - [llm-d](https://github.com/llm-d/llm-d): serve کردن روی چند تا سرور با Kubernetes
 - [Open WebUI](https://github.com/open-webui/open-webui): رابط چتی که می‌شه جلوی هر کدوم از این‌ها گذاشت
-- [Ollama](https://ollama.com/) و [LM Studio](https://lmstudio.ai/): wrapper‌های محلی، که توی [مبانی LLM](../1_fundamentals/llms_fa.md) دیدیمشون

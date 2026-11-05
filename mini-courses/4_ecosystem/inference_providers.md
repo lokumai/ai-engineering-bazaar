@@ -132,8 +132,13 @@ And measure latency on the paid tier, because the free tier is not the product y
 
 ## References
 
+### 🛠️ Tools
+
 - [OpenRouter](https://openrouter.ai/): one key for many models, and the fastest way to compare them
 - [Portkey](https://portkey.ai/) and its open-source [gateway](https://github.com/Portkey-AI/gateway): routing with your own keys, plus guardrails and observability
 - [AgentRouter](https://www.agentrouter.to/quick-start): one key and one wallet for the paid APIs an agent calls
 - [Google AI Studio](https://aistudio.google.com/): a free key and a daily allowance, which is enough to learn on
+
+### 🧭 Modules
+
 - [LLM Fundamentals](../1_fundamentals/llms.md): where the first API call and the quantization trade-off are explained

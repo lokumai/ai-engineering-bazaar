@@ -225,12 +225,23 @@ Serinin geri kalanında context window'u aklında tut. RAG, memory, agent'lar ve
 
 ## Kaynaklar
 
+### 📄 Makaleler
+
 - [Scaling Laws for Neural Language Models](https://arxiv.org/abs/2001.08361): Kaplan et al., 2020. "Büyük modeller daha iyidir" fikrinin arkasındaki ölçüm.
+
+### 🎬 Videolar
+
+- [Large Language Models explained briefly](https://youtu.be/LPZh9BOjkQs?si=8kH-lzHbfHRL1_8h): aynı konuları işleyen bir video, okumak yerine izlemeyi tercih edenler için
+
+### 🛠️ Araçlar
+
 - [Artificial Analysis](https://artificialanalysis.ai/): model karşılaştırmaları ve benchmark'lar
 - [Ollama](https://ollama.com/): modelleri yerelde indirip sunmak
 - [LMStudio](https://lmstudio.ai/): modelleri yerelde çalıştırmak için bir GUI
 - [Unsloth](https://unsloth.ai/): önceden quantize edilmiş model sürümleri
 - [Google AI Studio](https://aistudio.google.com/): ücretsiz katman için API anahtarları
 - [OpenRouter](https://openrouter.ai/): birçok sağlayıcı için tek anahtar
+
+### 🗃️ Repolar
+
 - [System prompt leaks](https://github.com/asgeirtj/system_prompts_leaks)
-- [Large Language Models explained briefly](https://youtu.be/LPZh9BOjkQs?si=8kH-lzHbfHRL1_8h): aynı konuları işleyen bir video, okumak yerine izlemeyi tercih edenler için

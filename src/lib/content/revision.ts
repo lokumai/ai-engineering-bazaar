@@ -77,3 +77,30 @@ export function revisionFor(filePath: string): Revision | null {
   index ??= buildRevisionIndex()
   return index.get(path.resolve(filePath)) ?? null
 }
+
+/**
+ * The committer date of the HEAD commit the build runs on, in UTC
+ * (`YYYY-MM-DDTHH:MM:SS.sssZ`): the content bundle's `publishedAt`, which the
+ * native reader orders versions by (spec 2.6, 2.7). Deterministic per commit,
+ * unlike a build time.
+ *
+ * **It throws where `revisionFor` degrades.** A sheet with no revision prints
+ * nothing and is still a correct sheet; an index with no date cannot be
+ * ordered against the one the reader already holds, and an invented date would
+ * order it wrongly with nothing failing. So a build with no git history fails
+ * here, by name.
+ */
+export function headCommitDate(git: GitRunner = run): string {
+  let printed: string
+  try {
+    printed = git(['log', '-1', '--format=%cI', 'HEAD']).trim()
+  } catch (error) {
+    throw new Error(`revision: git could not read the committer date of HEAD: ${String(error)}`)
+  }
+  if (printed === '') throw new Error('revision: git printed no committer date for HEAD')
+  const date = new Date(printed)
+  if (Number.isNaN(date.getTime())) {
+    throw new Error(`revision: the committer date of HEAD is "${printed}", which is not a date`)
+  }
+  return date.toISOString()
+}

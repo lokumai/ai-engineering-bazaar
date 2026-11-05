@@ -294,20 +294,20 @@ test('a started level draws its face at the structural weight (§8.2, §12.2)', 
     WHERE THE MASCOT IS. This read `header svg`, and the site header does not
     carry it any more: `01` specifies the brand as a tile — four glazed squares
     from the same series, one left as an outline — and M16 stage 1 built that.
-    So the mark moved rather than being lost; it renders at 132px in the
-    drafter block on this route, at 96px on `/legend/` and exploded on the 404.
+    So the mark moved rather than being lost; it renders at 96px on `/legend/`
+    and exploded on the 404. `/profile/` drew it at 132px in the drafter block
+    until that block was removed on 2026-11-05, and this read it there.
 
     Located through its own faces rather than through a wrapper class, so this
-    anchor survives stage 8's rename of the block around it. `.first()` because
-    `/legend/` aside, a page may carry the mark more than once and the register's
-    face legend is a second instance.
+    anchor survives a rename of the block around it. `.first()` because a page
+    may carry the mark more than once.
 
     The state below is still channel A's and is still the point: the rules that
     set it are `html.hl-cat-<slug>-started|complete`, which went with the
     deleted `lokum.css` and are stage 7's to write. Until they exist this fails
     on merit, which is the correct thing for it to do.
   */
-  await page.goto('/profile/')
+  await page.goto('/legend/')
 
   const faces = await page
     .locator('svg:has(.bz-face)')
@@ -338,9 +338,9 @@ test('a level with every module completed is hatched, not merely inked (§8.2, �
 
   await seedRecord(page, { sheets })
   await probeFirstPaint(page)
-  // `/profile/` for the same reason as the test above: the header's mark is a
-  // tile now, and the mascot draws in the drafter block.
-  await page.goto('/profile/')
+  // `/legend/` for the same reason as the test above: the header's mark is a
+  // tile now, and the legend is where the mascot draws.
+  await page.goto('/legend/')
 
   expect((await firstPaint(page))!.className).toContain(`hl-cat-${category}-complete`)
 
@@ -382,12 +382,12 @@ test('the mascot is aria-hidden and byte-identical in every state (§12.2, §12.
   // since stage 1 is `01`'s four-square tile and not this component at all.
   const mascot = page.locator('svg:has(.bz-face)').first()
 
-  await page.goto('/profile/')
+  await page.goto('/legend/')
   await expect(mascot).toHaveAttribute('aria-hidden', 'true')
   const unseeded = await mascot.evaluate((node) => node.outerHTML)
 
   await seedRecord(page, { sheets: { [SLUG]: signedSheet('b7225f8') } })
-  await page.goto('/profile/')
+  await page.goto('/legend/')
   await expect(mascot).toHaveAttribute('aria-hidden', 'true')
   const seeded = await mascot.evaluate((node) => node.outerHTML)
 
@@ -600,9 +600,11 @@ test('the first sign-off mints one mark seed and nothing mints a second (§12.3.
   // Neither is a rename, which is §12.3.5's whole point: the mark is generated
   // from the seed, so an identity edit cannot retroactively alter an artefact
   // the reader has already signed.
-  await page.goto('/profile/')
-  await page.getByRole('textbox', { name: /Name or initials/ }).fill('Ada Lovelace')
-  await page.getByRole('button', { name: 'SAVE NAME', exact: true }).click()
+  // The alias screen is the one place left that renames the reader.
+  await page.goto('/sign-in/alias/')
+  await waitForHydratedReadout(page)
+  await page.getByRole('textbox', { name: /Alias, as you would sign/ }).fill('Ada Lovelace')
+  await page.getByRole('button', { name: 'KEEP THIS ALIAS', exact: true }).click()
   const renamed = await waitForRecord(page, (env) => env?.data.identity.name === 'Ada Lovelace')
   expect(renamed.data.identity.markSeed).toBe(minted)
 })
@@ -796,15 +798,14 @@ test('. toggles the theme and s signs off the current module (§12.16)', async (
 
 test('no character shortcut fires from inside a text field (§12.16)', async ({ page }) => {
   await seedTheme(page, 'light')
-  // The progress page's name field. A module page has no text field since the
-  // module's own written quick check left it on 2026-10-12, and the guard is
-  // about any field the reader types into, wherever it is.
-  await page.goto('/profile/')
+  // The alias screen's name field. A module page has no text field since the
+  // module's own written quick check left it on 2026-10-12, and `/profile/`
+  // has none since its name field left with the drafter block on 2026-11-05.
+  // The guard is about any field the reader types into, wherever it is.
+  await page.goto('/sign-in/alias/')
   await waitForHydratedReadout(page)
 
-  // On screen at load: the drafter block is the one part of the page that is
-  // not a disclosure (§16.1).
-  const answer = page.getByRole('textbox', { name: /Name or initials/ })
+  const answer = page.getByRole('textbox', { name: /Alias, as you would sign/ })
   await answer.focus()
   for (const key of ['s', '.', '?', 'g', 'j', '[']) await page.keyboard.press(key)
 

@@ -1223,14 +1223,10 @@ test.describe('M16 stage 8 — progress and account', () => {
    * box is `display: none` and the comparison would agree with itself about
    * nothing.
    */
-  const BUILT: readonly Role[] = [
-    'continueHero',
-    'continueNum',
-    'panel',
-    'field',
-    'fieldLabel',
-    'fieldInput',
-  ]
+  // The panel and the field left this page on 2026-11-05 with the account
+  // block and the settings rows; stage 10 still compares both against `07`, on
+  // `/sign-in/alias/`.
+  const BUILT: readonly Role[] = ['continueHero', 'continueNum']
 
   test('is indistinguishable from `07`, in every length it specifies', async ({ page }) => {
     await page.goto(DASHBOARD_URL)
@@ -1367,69 +1363,13 @@ test.describe('M16 stage 8 — progress and account', () => {
   })
 
   /**
-   * §13.3 — the nine-role reveal, in a browser, with every `.js` request
-   * refused.
-   *
-   * All nine ordered paths are in the prerendered document and channel A shows
-   * one. The unit guard holds the STYLESHEET to naming all nine and negating
-   * all nine; this holds the PAGE to showing exactly one of them, which is the
-   * thing a reader would notice and the thing no regular expression over CSS
-   * can see.
+   * THE MUTATION. Pointed at the continue card's padding: `07` states 11px and
+   * the language holds 8px on the radius deliberately, so the padding is the
+   * one of the two that is meant to agree and is therefore the one worth
+   * proving can disagree. The panel's own mutation is stage 10's now, on the
+   * route that still draws one.
    */
-  test('shows one role path in frame one, and only one', async ({ page }) => {
-    await page.route('**/*.js', (route) => route.abort())
-    await seedRecord(page, { identity: { role: 'qa' } })
-    await page.goto('/profile/')
-    // The role row is a `<details>` and a closed one has no rendered box, so
-    // `checkVisibility()` would report every path hidden for the wrong reason.
-    // Opening a `<summary>` is the browser's own behaviour and needs no script.
-    await page.locator('section[aria-labelledby="role"] summary').click()
-
-    const seen = await page.evaluate(() => {
-      const shown = [...document.querySelectorAll('.bz-path-body')].filter((node) =>
-        node.checkVisibility(),
-      )
-      return {
-        total: document.querySelectorAll('.bz-path-body').length,
-        shown: shown.map((node) => node.getAttribute('data-role')),
-        empties: [...document.querySelectorAll('.bz-path-empty')].filter((node) =>
-          node.checkVisibility(),
-        ).length,
-      }
-    })
-
-    expect(seen.total, 'the nine paths are not all prerendered').toBe(9)
-    expect(seen.shown).toEqual(['qa'])
-    // And the empty state is NOT shown beside it, which is the contradiction
-    // the negation chain exists to prevent.
-    expect(seen.empties, 'the empty state is shown beside a chosen path').toBe(0)
-  })
-
-  /** The other half: no role, no path, and the empty state instead. */
-  test('shows no path at all, and says so, when no role is on record', async ({ page }) => {
-    await page.route('**/*.js', (route) => route.abort())
-    await page.goto('/profile/')
-    await page.locator('section[aria-labelledby="role"] summary').click()
-
-    const seen = await page.evaluate(() => ({
-      shown: [...document.querySelectorAll('.bz-path-body')].filter((node) =>
-        node.checkVisibility(),
-      ).length,
-      empties: [...document.querySelectorAll('.bz-path-empty')].filter((node) =>
-        node.checkVisibility(),
-      ).length,
-    }))
-
-    expect(seen.shown, 'a path is drawn for a role nobody chose').toBe(0)
-    expect(seen.empties, 'no empty state where there is no path').toBeGreaterThan(0)
-  })
-  /**
-   * THE MUTATION, owed since this block was written. Pointed at the panel's
-   * padding: `07` states 11px and the language holds 8px on the radius
-   * deliberately, so the padding is the one of the two that is meant to agree
-   * and is therefore the one worth proving can disagree.
-   */
-  test('notices when a panel stops taking `07`\'s padding', async ({ page }) => {
+  test('notices when the continue card stops taking `07`\'s padding', async ({ page }) => {
     await page.goto(DASHBOARD_URL)
     await freezeMotion(page)
     const reference = await extractDesignFacts(page, DASHBOARD_SELECTORS)
@@ -1437,16 +1377,15 @@ test.describe('M16 stage 8 — progress and account', () => {
     await seedRecord(page, { sheets: { 'fundamentals/llms': signedSheet('a1b2c3d') } })
     await page.goto('/profile/')
     await waitForHydratedReadout(page)
-    await openRegisterRow(page, 'data')
     await freezeMotion(page)
     await page.addStyleTag({
-      content: '.bz-panel { padding-top: 4px !important; padding-left: 4px !important; }',
+      content: '.bz-cont { padding-top: 4px !important; padding-left: 4px !important; }',
     })
     const mutated = await extractDesignFacts(page, APP_SELECTORS)
 
     const facts = differencesIn(reference, mutated, BUILT).map((one) => one.fact)
-    expect(facts).toContain('panel.paddingTop')
-    expect(facts).toContain('panel.paddingLeft')
+    expect(facts).toContain('continueHero.paddingTop')
+    expect(facts).toContain('continueHero.paddingLeft')
   })
 })
 

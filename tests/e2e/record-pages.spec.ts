@@ -2,8 +2,6 @@ import { mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { type Page, expect, test } from '@playwright/test'
-import { REGISTER_ROWS } from '@/app/profile/page'
-import { DRAFTER_HEADING_ID } from '@/components/record/DrafterBlock'
 import {
   QUARANTINE_KEY,
   RECORD_KEY,
@@ -191,316 +189,6 @@ function definition(page: Page, scope: string, term: string): Promise<string | n
 // §12.10 — THE CURRICULUM DIAGRAM
 // ===========================================================================
 
-const DIAGRAM = 'svg[role="graphics-document"]'
-
-/**
- * M14 — the diagram, opened.
- *
- * It was `/dashboard/`'s centrepiece; that route folded into `/profile/` and
- * the drawing is the `diagram` row of its register. Every assertion below is
- * the same claim about the same drawing — it moved rather than changing — but a
- * closed `<details>` has no box, so the row has to be opened before anything
- * measures geometry, focus or visibility. `openRegisterRow` is idempotent and
- * waits for the body to be rendered, which is why it is the gesture rather
- * than a click on the summary.
- */
-async function openDiagram(page: Page): Promise<void> {
-  await page.goto('/profile/')
-  await openRegisterRow(page, 'diagram')
-}
-
-test('§12.10.1 — the diagram is a graphics-document, and role="img" appears nowhere on it', async ({
-  page,
-}) => {
-  const problems = watchPage(page)
-  await seedRecord(page, SEEDED)
-  await openDiagram(page)
-
-  const svg = page.locator(DIAGRAM)
-  await expect(svg).toHaveCount(1)
-
-  // §10.1 gave this `role="img"`. Under ARIA 1.2 that role has PRESENTATIONAL
-  // CHILDREN, so all 32 node names would be erased from the accessibility tree
-  // while the markup carrying them stayed exactly as it is. That is the whole
-  // reason §12.10.1 exists, and it is the one thing this test is for.
-  await expect(page.locator('figure svg[role="img"]')).toHaveCount(0)
-  await expect(page.locator('figure [role="img"]')).toHaveCount(0)
-
-  // Named by a real `<title>` and described by a real `<desc>`, both of which
-  // have to resolve to text: `aria-labelledby` pointing at an empty element is
-  // a nameless drawing, and React renders `<title>` empty if it is handed an
-  // array of children.
-  const names = await svg.evaluate((node) => {
-    const idOf = (attribute: string): string => node.getAttribute(attribute) ?? ''
-    const textOf = (id: string): string =>
-      (document.getElementById(id)?.textContent ?? '').trim()
-    return {
-      labelledby: idOf('aria-labelledby'),
-      describedby: idOf('aria-describedby'),
-      title: textOf(idOf('aria-labelledby')),
-      desc: textOf(idOf('aria-describedby')),
-    }
-  })
-  expect(names.labelledby).not.toBe('')
-  expect(names.describedby).not.toBe('')
-  expect(names.title).toContain(`${SHEET_COUNT} modules`)
-  expect(names.desc.length).toBeGreaterThan(40)
-
-  expect(problems.consoleErrors).toEqual([])
-  expect(problems.failedRequests).toEqual([])
-})
-
-test('§12.10.1 — every band is a graphics-object and states its own counted total', async ({
-  page,
-}) => {
-  await seedRecord(page, SEEDED)
-  await openDiagram(page)
-
-  const bands = page.locator(`${DIAGRAM} > g[role="graphics-object"]`)
-  await expect(bands).toHaveCount(CATEGORY_PATHS.length)
-
-  const labels = await bands.evaluateAll((nodes) =>
-    nodes.map((node) => node.getAttribute('aria-label') ?? ''),
-  )
-  for (const label of labels) {
-    // §12.10.1's exact form. Both numbers are counted, never typed (§11.25).
-    expect(label).toMatch(/^Level \d\d — .+ — \d+ of \d+ completed$/)
-  }
-
-  // The record is in the labels, which is the only place a screen-reader user
-  // learns it: the accent fill and the solid outline are not in the tree.
-  //
-  // Both numbers are counted here too, and that is the point rather than
-  // tidiness: the denominator is the size of the subsystem and the numerator is
-  // what the seed signed off inside it. Written down, either one would make an
-  // added or reordered sheet fail this test instead of the thing it guards.
-  const signedIn = (category: string) =>
-    Object.keys(SEEDED.sheets ?? {}).filter((slug) => slug.startsWith(`${category}/`)).length
-  const sizeOf = (category: string) =>
-    SHEETS.filter((sheet) => sheet.category === category).length
-
-  for (const category of ['fundamentals', 'intermediate']) {
-    const stated = new RegExp(`— ${signedIn(category)} of ${sizeOf(category)} completed$`)
-    expect(labels.filter((label) => stated.test(label)), category).toHaveLength(1)
-  }
-})
-
-test('§12.10.1 — every node is named from aria-label, never from its visible text', async ({
-  page,
-}) => {
-  await seedRecord(page, SEEDED)
-  await openDiagram(page)
-
-  const nodes = page.locator(`${DIAGRAM} g[role="graphics-symbol"]`)
-  await expect(nodes).toHaveCount(SHEET_COUNT)
-
-  const read = await nodes.evaluateAll((elements) =>
-    elements.map((element) => ({
-      label: element.getAttribute('aria-label') ?? '',
-      visible: (element.querySelector('text')?.textContent ?? '').trim(),
-      id: element.id,
-    })),
-  )
-
-  for (const [index, node] of read.entries()) {
-    const sheet = SHEETS[index]
-    expect(node.label, `module ${sheet.module} has no accessible name`).not.toBe('')
-    // The visible `<text>` is the zero-padded module number and does NOT
-    // compute into the accessible name, so the name has to carry everything a
-    // reader of the drawing gets for free — the title and the state.
-    expect(node.visible).toMatch(/^\d\d$/)
-    expect(node.label).not.toBe(node.visible)
-    expect(node.label).toContain(`Module ${sheet.module}`)
-    expect(node.label).toContain(sheet.title)
-    expect(node.id).toBe(`hl-node-${sheet.path.split('/').slice(2, 4).join('-')}`)
-  }
-
-  // §12.10.1's state clause, for the sheets this record holds. Found by route,
-  // not by position: these were `read[0]`, `read[12]` and `read[15]` until the
-  // September 2026 reorder moved Security from 13 to 15 and turned 16 into a
-  // drawn sheet, at which point two of the three were asserting about the
-  // wrong module.
-  const at = (path: string) => read[SHEETS.findIndex((sheet) => sheet.path === path)]
-  expect(at('/courses/fundamentals/llms/').label).toContain('completed 2026-07-01')
-  expect(at('/courses/intermediate/security/').label).toContain('completed 2026-08-11')
-  expect(read[SHEETS.findIndex((sheet) => !sheet.drawn)].label).toContain('planned')
-})
-
-test('§12.10.2 — the whole diagram is one tab stop', async ({ page }) => {
-  await seedRecord(page, SEEDED)
-  await openDiagram(page)
-
-  const tabindexes = await page
-    .locator(`${DIAGRAM} g[role="graphics-symbol"]`)
-    .evaluateAll((nodes) => nodes.map((node) => node.getAttribute('tabindex')))
-
-  // 32 tab stops is the wrong answer. Exactly one node is reachable by Tab and
-  // the other 31 are reachable only by the arrow keys.
-  expect(tabindexes.filter((value) => value === '0')).toHaveLength(1)
-  expect(tabindexes.filter((value) => value === '-1')).toHaveLength(SHEET_COUNT - 1)
-  expect(tabindexes[0]).toBe('0')
-})
-
-test('§12.10.2 — ArrowRight moves within a band, ArrowDown moves between bands', async ({
-  page,
-}) => {
-  await seedRecord(page, SEEDED)
-  await openDiagram(page)
-
-  const focusedId = () => page.evaluate(() => document.activeElement?.id ?? null)
-  const roving = () =>
-    page
-      .locator(`${DIAGRAM} g[role="graphics-symbol"][tabindex="0"]`)
-      .evaluateAll((nodes) => nodes.map((node) => node.id))
-
-  await page.locator(`${DIAGRAM} g[role="graphics-symbol"][tabindex="0"]`).focus()
-  expect(await focusedId()).toBe('hl-node-fundamentals-llms')
-
-  await page.keyboard.press('ArrowRight')
-  expect(await focusedId()).toBe('hl-node-fundamentals-training')
-  // The roving index followed the focus: there is still one tab stop, and it is
-  // now the node the reader is on. A stale `tabindex="0"` behind them would put
-  // Tab back at the start of the band on the next pass.
-  expect(await roving()).toEqual(['hl-node-fundamentals-training'])
-
-  await page.keyboard.press('ArrowLeft')
-  expect(await focusedId()).toBe('hl-node-fundamentals-llms')
-  // The band's own edge holds: ArrowLeft at column 0 does not fall into the
-  // previous band, because Left/Right are within-band moves (§12.10.2).
-  await page.keyboard.press('ArrowLeft')
-  expect(await focusedId()).toBe('hl-node-fundamentals-llms')
-
-  await page.keyboard.press('ArrowDown')
-  const down = await focusedId()
-  expect(down).not.toBeNull()
-  expect(down!.startsWith('hl-node-intermediate-')).toBe(true)
-  expect(await roving()).toEqual([down])
-
-  await page.keyboard.press('ArrowUp')
-  expect((await focusedId())!.startsWith('hl-node-fundamentals-')).toBe(true)
-})
-
-test('§12.10.2 — Enter on a focused node opens that module', async ({ page }) => {
-  await seedRecord(page, SEEDED)
-  await openDiagram(page)
-
-  await page.locator(`${DIAGRAM} g[role="graphics-symbol"][tabindex="0"]`).focus()
-  await page.keyboard.press('Enter')
-
-  await expect(page).toHaveURL(new RegExp(`${sheetByModule(1).path}$`))
-  await expect(page.locator('main h1')).toBeVisible()
-})
-
-test('§12.10.3 — the table equivalent is in the DOM with the disclosure closed', async ({
-  page,
-}) => {
-  await seedRecord(page, SEEDED)
-  await openDiagram(page)
-
-  const details = page.locator('details.bz-diagram-table')
-  await expect(details).toHaveCount(1)
-  // Closed on arrival, and mandatory rather than optional: it is the only form
-  // in which a reader can VERIFY a dependency claim, and it is what serialises
-  // into the record document.
-  expect(await details.evaluate((node) => (node as HTMLDetailsElement).open)).toBe(false)
-
-  const rows = details.locator('tbody tr')
-  await expect(rows).toHaveCount(SHEET_COUNT)
-
-  // Never `display: none` when collapsed (§12.10.3): the rows are in the tree
-  // with a real computed display, which is what makes them printable and
-  // serialisable while the disclosure is shut.
-  expect(
-    await details.locator('table').evaluate((node) => getComputedStyle(node).display),
-  ).not.toBe('none')
-
-  // Number, sheet, subsystem, state, requires, feeds — the whole graph, so the
-  // dependency claims the SVG draws can actually be checked.
-  expect(
-    await details.locator('thead th').evaluateAll((nodes) =>
-      nodes.map((node) => (node.textContent ?? '').trim()),
-    ),
-  ).toEqual(['#', 'Module', 'Level', 'State', 'Requirements', 'Unlocks'])
-
-  await details.locator('summary').click()
-  await expect(rows.first()).toBeVisible()
-  await expect(details.locator('tbody a', { hasText: sheetByModule(13).title })).toHaveAttribute(
-    'href',
-    sheetByModule(13).path,
-  )
-})
-
-test('§12.10 — the emitted geometry is byte-identical across two loads', async ({ page }) => {
-  /**
-   * "No `Math.random`, no `Date`, no floating-point coordinates in output — the
-   * emitted SVG must be byte-identical build to build, so it diffs cleanly and
-   * the record document is reproducible."
-   *
-   * A barycentre sweep with an unstable tie-break, or a coordinate that came
-   * out of a float, produces a drawing that is correct every time and different
-   * every time. Nothing but two real loads can tell the two apart.
-   */
-  const COORDINATES = ['x', 'y', 'width', 'height', 'x1', 'y1', 'x2', 'y2']
-
-  const geometry = () =>
-    page.evaluate(({ coordinates }) => {
-      const svg = document.querySelector('svg[role="graphics-document"]')
-      if (svg === null) return null
-      const attributes = [
-        'viewBox', ...coordinates, 'd', 'transform',
-        // The record's own contribution to the drawing, captured alongside the
-        // geometry: a state painted from a stable record has to be stable too.
-        'data-state', 'data-kind', 'data-live',
-      ]
-      const elements = [svg, ...svg.querySelectorAll('*')]
-      const floats: string[] = []
-      for (const element of elements) {
-        const numbers = [
-          ...coordinates.map((name) => element.getAttribute(name) ?? ''),
-          ...(element.getAttribute('d') ?? '').split(/[\s,A-Za-z]+/),
-          ...(element.getAttribute('viewBox') ?? '').split(/\s+/),
-          ...(element.getAttribute('transform') ?? '').split(/[^\d.-]+/),
-        ]
-        for (const value of numbers) if (value.includes('.')) floats.push(value)
-      }
-      return {
-        dump: elements
-          .map((element) =>
-            [
-              element.tagName,
-              ...attributes.map((name) => element.getAttribute(name) ?? ''),
-              element.tagName === 'text' ? (element.textContent ?? '') : '',
-            ].join('|'),
-          )
-          .join('\n'),
-        floats,
-      }
-    }, { coordinates: COORDINATES })
-
-  await seedRecord(page, SEEDED)
-  await openDiagram(page)
-  // §12.2 channel B: the record reaches the drawing after the hydration commit,
-  // so both captures have to be taken on the same side of it. Otherwise this
-  // test compares a pre-hydration frame with a post-hydration one and reports a
-  // difference that is the design working.
-  const signed = page.locator(`${DIAGRAM} g[role="graphics-symbol"][data-state="signed"]`)
-  await expect(signed).toHaveCount(3)
-  const first = await geometry()
-  expect(first).not.toBeNull()
-
-  await page.reload()
-  await expect(signed).toHaveCount(3)
-  const second = await geometry()
-
-  expect(second!.dump).toBe(first!.dump)
-  expect(first!.dump.length).toBeGreaterThan(2000)
-
-  // The other half of the same sentence: "no floating-point coordinates in
-  // output". A float in the emitted SVG is where build-to-build drift comes
-  // from, and it would make the record document irreproducible.
-  expect(first!.floats).toEqual([])
-})
-
 /**
  * M13/M14 — `ContinueLine` is on the HOME page now, not on a progress page.
  *
@@ -590,6 +278,14 @@ test('§12.10.6 — CONTINUE is absent when there is no next module', async ({ p
 
 /** §16.4.2's house spelling for "no reading taken yet". */
 const NO_READING = '--'
+
+/**
+ * The register's rows. Since 2026-11-05 there is one: the author removed every
+ * other row from the page as unused, and kept `Export, import, erase` because
+ * the record lives only in the browser. The generic register tests below still
+ * run over this list, so a row added back must be added here too.
+ */
+const REGISTER_ROWS = [{ id: 'data', name: 'Export, import, erase' }] as const
 
 /**
  * §16.4.1 — what a summary line is allowed to say: a count, `--`, or a named
@@ -703,79 +399,36 @@ async function settledRegister(page: Page): Promise<Record<string, RowSnapshot>>
   return snapshot
 }
 
-test('§16.4 — the account block arrives open, and every row arrives closed', async ({
+test('§16.4 — the page draws one row, Export, import, erase, and it arrives closed', async ({
   page,
 }) => {
   const problems = watchPage(page)
   await seedRecord(page, SEEDED)
   await page.goto('/profile/')
 
-  // §16.1 — the one block that arrives open, and it is open because it is not a
-  // disclosure at all: both of the controls a reader comes here for are on
-  // screen with nothing clicked. `IdentityPanel`'s field and §16.2's mark row
-  // are asserted rather than the box, because they are what "open" is for.
-  await expect(page.locator(`h2#${DRAFTER_HEADING_ID}`)).toBeVisible()
-  await expect(page.getByRole('textbox', { name: /Name or initials/ })).toBeVisible()
-  await expect(page.locator('label[data-hl-mark]').first()).toBeVisible()
-  // …and it is not itself inside a fold, which is the other half of "open".
-  await expect(page.locator('details .bz-drafter')).toHaveCount(0)
+  // The level circles are first, and nothing above them asks for a name.
+  await expect(page.locator('h2#progress-levels')).toBeVisible()
+  await expect(page.getByRole('textbox', { name: /Name or initials/ })).toHaveCount(0)
+  await expect(page.locator('label[data-hl-mark]')).toHaveCount(0)
 
   const rows = page.locator('main section.bz-register-row')
   await expect(rows).toHaveCount(REGISTER_ROWS.length)
-
   const state = await rows.evaluateAll((nodes) =>
     nodes.map((node) => ({
       row: node.getAttribute('aria-labelledby'),
-      // The heading lives inside the `<summary>` so the panel's id stays on a
-      // heading. M22 made it an `h3`: the rows are inside named groups now, and
-      // thirteen `h2` peers with one heading over them was the flat list the
-      // author reported (§16.7 gains a level rather than losing one).
       heading: node.querySelector(':scope > details > summary > h3')?.id ?? null,
       open: node.querySelector(':scope > details')?.hasAttribute('open') ?? null,
+      group: node.closest('[data-bz-register-group]')?.getAttribute('data-bz-register-group') ?? null,
     })),
   )
-
-  // Order is part of the specification (§16.4), so the ids are compared as a
-  // sequence, and the heading ids are compared to the same sequence: a row
-  // named by an id that is not on a heading is a dead anchor.
   const expected = REGISTER_ROWS.map((row) => row.id)
   expect(state.map((row) => row.row)).toEqual(expected)
   expect(state.map((row) => row.heading)).toEqual(expected)
-
-  /* M22 — **and each row is inside the group it names**, which is what the
-     regroup is FOR: a reader looking for their export should be able to find
-     it without opening anything. Read off the DOM rather than off the table, so
-     a row assigned to a group the page does not render fails here instead of
-     disappearing quietly. */
-  const grouped = await page.evaluate(() =>
-    [...document.querySelectorAll('[data-bz-register-group]')].map((group) => ({
-      group: group.getAttribute('data-bz-register-group'),
-      heading: group.querySelector(':scope > .bz-panel-head > h2')?.id ?? null,
-      rows: [...group.querySelectorAll('section.bz-register-row')]
-        .map((row) => row.getAttribute('aria-labelledby')),
-    })))
-
-  expect(grouped.length, 'the register draws no groups').toBeGreaterThan(1)
-  for (const group of grouped) {
-    expect(group.heading, `${group.group} has no heading`).toBe(group.group)
-    expect(group.rows.length, `${group.group} is an empty heading`).toBeGreaterThan(0)
-  }
-  // Every row lands in exactly one group, and between them they are all of them.
-  expect(grouped.flatMap((group) => group.rows)).toEqual(expected)
-
-  // §16.4.3 — which rows were open is not remembered, so every load is every
-  // row closed. Reported as the offending rows rather than as a count.
+  expect(state.map((row) => row.group)).toEqual(['group-data'])
+  // §16.4.3 — which rows were open is not remembered, so every load is closed.
   expect(state.filter((row) => row.open !== false).map((row) => row.row)).toEqual([])
 
   // §12.1.2's quarantine note renders nothing when there is nothing to report.
-  //
-  // Asserted on the note's own words rather than on the substring `NOT READ`,
-  // which is what this line looked for until M14: the attention panel folded
-  // in from `/dashboard/` explains that "the count of attempts is held in the
-  // event log, which this page does not read", and Playwright's text matching
-  // is case-insensitive and whitespace-normalised, so `not read` matched a
-  // sentence about something else entirely. The full readout is the note's, and
-  // `QUARANTINE_COPY` is exported for exactly this kind of assertion.
   for (const { readout } of Object.values(QUARANTINE_COPY)) {
     await expect(page.getByText(readout, { exact: false })).toHaveCount(0)
   }
@@ -1057,61 +710,8 @@ test('§16.4.1 / §16.4.2 — a summary reading comes from the body it summarise
  */
 type RowId = (typeof REGISTER_ROWS)[number]['id']
 
-/** The four answers `storageReadout()` is typed to return, and no fifth. */
-const STORAGE_ANSWERS = /^(PERSISTENT|BEST-EFFORT|UNAVAILABLE|UNKNOWN)$/
-
 const EXPECTED_READINGS = {
-  readout: {
-    thin: `0 of ${SHEET_COUNT} completed`,
-    // Every drawn sheet is signed off in the rich seed; the denominator is the
-    // whole set, drawn or not, which is what the strip counts against.
-    rich: `${DRAWN_COUNT} of ${SHEET_COUNT} completed`,
-  },
-  // 14 is §7.3's window, which the strip in this row's body draws as fourteen
-  // ticks; the numerator is the seed's own day list.
-  uptime: {
-    thin: '0 of last 14 days',
-    rich: `${(EVERYTHING_RECORDED.days ?? []).length} of last 14 days`,
-  },
-  stamps: { thin: '0 of # earned', rich: '# of # earned' },
-  submittals: { thin: 'Nothing added yet', rich: '1 filed' },
-  /* `roles.ts`'s own label for the seeded `software-engineer`, and now printed
-     as written: it used to be upper-cased by the row's class rather than by the
-     component, and M16 removed the class. A role's name is a proper noun and
-     not a status token, so sentence case is what it should have been reading
-     all along — and the rest of the register's readings went with it. They had
-     been written in mixed case and looked uniform only because the row's class
-     uppercased every one: with that gone, `0 of 43 traces` sat next to
-     `2 OF 9 EARNED` on the same page. Twelve summary lines, one voice. */
-  role: { thin: 'No role on record', rich: 'Software Engineer' },
-  // The default build ships accounts off, and this is the one spelling of that
-  // status (§16.6) — so this row also pins the wording the four surfaces in the
-  // fold share.
-  'bz-orgs-head': { thin: 'Accounts not enabled yet', rich: 'Accounts not enabled yet' },
-  // M14's two rows, folded in from `/dashboard/` and `/report/`.
-  //
-  // The diagram's reading is `TRACES` — the edges with BOTH endpoints completed
-  // (§5.8) — because that is the one number only the surface holding the graph
-  // can count, and it is the same `useTraces` the strip inside the row uses. It
-  // moves with the record, which is what the case below this table requires of
-  // any reading with a digit in it. The first version of this row printed the
-  // corpus's own two counts and read identically for an empty record and a
-  // completed one; that is what that case caught.
-  //
-  // The record of work has no count at all — there is no measure of how much
-  // record of work a reader has — so it prints its subject the way the export
-  // row does (§16.4.2).
-  diagram: { thin: '0 of # traces', rich: '# of # traces' },
-  report: { thin: 'ONE FILE, BUILT IN THIS BROWSER', rich: 'ONE FILE, BUILT IN THIS BROWSER' },
-  // §17.6's notation. The thin seed has met no account; the rich seed carries a
-  // merge of four with nothing lost.
-  claim: { thin: 'NO CLAIM ON RECORD', rich: '4 MERGED · 0 LOST' },
-  storage: { thin: STORAGE_ANSWERS, rich: STORAGE_ANSWERS },
-  // One key: the record's. The quarantine key is absent in both seeds, and a
-  // second key appearing here would be a payload no reader asked for.
-  raw: { thin: '1 keys · # bytes', rich: '1 keys · # bytes' },
   data: { thin: 'YOUR COPY OF THE RECORD', rich: 'YOUR COPY OF THE RECORD' },
-  keyboard: { thin: 'Character keys on', rich: 'Character keys off' },
 } as const satisfies Record<RowId, { thin: string | RegExp; rich: string | RegExp }>
 
 /**
@@ -1169,147 +769,6 @@ test('§16.4.1 — each row reads in its own notation, and the notation is pinne
       `${id}: a full record reads "${rich[id].reading}", not "${String(expected.rich)}"`,
     ).toMatch(readingPattern(expected.rich))
   }
-
-  /**
-   * The one row whose reading is an environment answer rather than a count gets
-   * the stronger claim available to it: the summary is the same string its own
-   * body's first `<dd>` prints, from the same call, in the same notation. That is
-   * what fails on a reading hard-coded to a value nothing queried.
-   *
-   * Both are read in ONE `evaluate`, after waiting for the browser to answer,
-   * and the reason is a race this assertion measured: `navigator.storage
-   * .persisted()` resolves after `settledRegister` has already seen two equal
-   * snapshots, so the snapshot above holds `UNKNOWN` while the live page holds
-   * `BEST-EFFORT` — both true, half a frame apart. Comparing the snapshot to a
-   * later read of the body reported a drift that was only elapsed time, which is
-   * why `UNKNOWN` is one of the four answers the table admits for this row.
-   */
-  const STORAGE_ROW = 'section[aria-labelledby="storage"]'
-  await expect
-    .poll(() => definition(page, STORAGE_ROW, 'Storage'))
-    .toMatch(/^(PERSISTENT|BEST-EFFORT|UNAVAILABLE)$/)
-
-  const storage = await page.evaluate((scope) => {
-    const root = document.querySelector(scope) as HTMLElement
-    const reading = (root.querySelector('.bz-register-reading') as HTMLElement).innerText.trim()
-    let body = ''
-    for (const dt of root.querySelectorAll('dt')) {
-      if ((dt.textContent ?? '').trim().toLowerCase() !== 'storage') continue
-      body = ((dt.nextElementSibling as HTMLElement | null)?.textContent ?? '').trim()
-    }
-    return { reading, body }
-  }, STORAGE_ROW)
-
-  expect(storage.body, 'the STORAGE reading is not the answer its own body prints').toBe(
-    storage.reading,
-  )
-})
-
-test('§12.1.6 — STORAGE prints the answer the browser gave, never an assumption', async ({
-  page,
-}) => {
-  await seedRecord(page, SEEDED)
-  await page.goto('/profile/')
-  // §16.4 — the `<dl>` this test reads is in the storage row's body, and the
-  // computed `border-style` it takes off one `<dd>` is only a used value while
-  // that body is rendered (hazard H-A).
-  await openRegisterRow(page, 'storage')
-
-  const STORAGE = 'section[aria-labelledby="storage"]'
-
-  // `navigator.storage.persisted()` is asked and its answer is printed.
-  // `UNKNOWN` is a legal fourth reading — it means the question has not been
-  // answered yet — so this polls rather than snapshotting: a browser that DID
-  // answer must never leave `UNKNOWN` on the page.
-  await expect
-    .poll(() => definition(page, STORAGE, 'Storage'))
-    .toMatch(/^(PERSISTENT|BEST-EFFORT|UNAVAILABLE)$/)
-
-  // §12.1.6, §11.35 — bytes, labelled an approximation, and never a
-  // percentage, gauge, ring or fill bar. The spec's own word for
-  // `estimate()` is "imprecise": browsers pad and round it deliberately, and a
-  // fill bar drawn from a padded number invites a reader to plan against it.
-  // Real Chrome implements `estimate()`, so the label is asserted rather than
-  // allowed for: a browser that did not answer prints `NOT REPORTED`, which is
-  // a different reading of a different fact and would fail here.
-  await expect
-    .poll(() => definition(page, STORAGE, 'Estimated use'))
-    .toMatch(/^[\d,]+ BYTES · APPROXIMATE$/)
-
-  const panel = (await page.locator(STORAGE).textContent()) ?? ''
-  expect(panel).not.toContain('%')
-  expect(panel.toLowerCase()).not.toContain('percent')
-  expect(await page.locator(`${STORAGE} progress, ${STORAGE} meter`).count()).toBe(0)
-
-  // §12.15 — a dashed, unsigned state, in §12.15's own words, before any export.
-  expect(await definition(page, STORAGE, 'Last export')).toBe('No export on record')
-  expect(
-    await page
-      .locator(`${STORAGE} dd`, { hasText: 'No export on record' })
-      .locator('span')
-      .evaluate((node) => getComputedStyle(node).borderStyle),
-  ).toBe('dashed')
-
-  // The envelope's own instant, printed because the key really is there — a
-  // written-then-removed key must not be reported as a saved record.
-  expect(await definition(page, STORAGE, 'Record saved')).toMatch(/^\d{4}-\d{2}-\d{2}T/)
-})
-
-test('§12.11 item 7 — the raw stored values are printed verbatim', async ({ page }) => {
-  await seedRecord(page, SEEDED)
-  await page.goto('/profile/')
-
-  const raw = page.locator('section[aria-labelledby="raw"] pre.bz-raw')
-  await expect(raw).toHaveCount(2)
-
-  // The cheapest possible proof that §1 reaches the storage layer: not this
-  // application telling the reader what it recorded, but the bytes. Nothing is
-  // reformatted on the way out, so the panel and the key are ONE STRING — which
-  // is compared inside the page, at one instant, rather than across two round
-  // trips that could straddle a write.
-  await expect
-    .poll(() =>
-      page.evaluate((key) => {
-        const shown =
-          document.querySelector('section[aria-labelledby="raw"] pre.bz-raw')?.textContent ?? null
-        const stored = window.localStorage.getItem(key)
-        return { identical: shown !== null && shown === stored, empty: stored === null }
-      }, RECORD_KEY),
-    )
-    .toEqual({ identical: true, empty: false })
-
-  const shown = (await raw.first().textContent()) ?? ''
-  expect(shown).toContain('"schema":1')
-  expect(shown).toContain(READER)
-  expect(shown).toContain('"markSeed":"a1b2c3d4"')
-
-  // Both keys, and an absent one is reported absent rather than as an empty
-  // record — a different fact, printed as one.
-  await expect(raw.nth(1)).toHaveText('NO VALUE STORED UNDER THIS KEY')
-})
-
-test('§12.11 item 5 — the submittal register reprints the reconstructed URL only', async ({
-  page,
-}) => {
-  await seedRecord(page, SEEDED)
-  await page.goto('/profile/')
-
-  const register = page.locator('section[aria-labelledby="submittals"]')
-  const link = register.locator('a[href^="https://github.com"]')
-  await expect(link).toHaveCount(1)
-
-  const { href, text } = await link.evaluate((node) => ({
-    href: (node as HTMLAnchorElement).getAttribute('href') ?? '',
-    text: (node.textContent ?? '').trim(),
-  }))
-  expect(href).toBe('https://github.com/cevheri/hidden-line')
-  expect(text).toBe(href)
-  await expect(link).toHaveAttribute('rel', 'noopener noreferrer')
-  await expect(link).toHaveAttribute('target', '_blank')
-
-  // §12.9.3 — the hash is the reader's, and the register says so rather than
-  // implying this application checked it.
-  await expect(register).toContainText('supplied by reader; not fetched or verified')
 })
 
 // ===========================================================================
@@ -1456,9 +915,6 @@ test('§12.15 — a confirmed erase removes both keys and offers a working UNDO'
   await expect
     .poll(() => Promise.all([readRawRecord(page), readRawRecord(page, QUARANTINE_KEY)]))
     .toEqual([null, null])
-  await expect(page.locator('section[aria-labelledby="raw"] pre.bz-raw').first()).toHaveText(
-    'NO VALUE STORED UNDER THIS KEY',
-  )
 
   // §12.15 — reversible, and the line says for how long. A readout: uppercase
   // mono key, value, no terminal period (§12.14.1).
@@ -1586,7 +1042,6 @@ test('§12.15 — export, erase, import: the record comes back identical', async
   // which a closed row's `<section>` still is: only its body is unrendered. Both
   // rows this test drives are opened instead, and opening the storage row IS the
   // wait — `openRegisterRow` returns once the body is on screen.
-  await openRegisterRow(page, 'storage')
   await openRegisterRow(page, 'data')
 
   expect(await page.evaluate(() => 'showSaveFilePicker' in window)).toBe(false)
@@ -1608,7 +1063,7 @@ test('§12.15 — export, erase, import: the record comes back identical', async
   // `lastExport` is recorded, so `NO EXPORT ON RECORD` can be a truthful state
   // rather than a permanent one.
   await expect
-    .poll(() => definition(page, 'section[aria-labelledby="storage"]', 'Last export'))
+    .poll(async () => (await storedData(page))?.meta?.lastExport ?? '')
     .toMatch(/^\d{4}-\d{2}-\d{2}T/)
 
   const before = await settled(page)
@@ -1642,65 +1097,6 @@ test('§12.15 — export, erase, import: the record comes back identical', async
   // the export's own day in `days` are stamped AFTER the payload is serialised,
   // so a file cannot carry them and a round trip does not restore them.
   expect(readerWork((await storedData(page)) as RecordData)).toEqual(readerWork(before))
-  await expect(page.locator('section[aria-labelledby="raw"] pre.bz-raw').first()).toContainText(
-    READER,
-  )
-})
-
-test('§12.12.6 — the importer accepts the RECORD OF WORK .html and matches its digest', async ({
-  page,
-}) => {
-  await seedRecord(page, SEEDED)
-  await installSaveProbe(page)
-
-  // The document is generated by the `report` row of the progress page's
-  // register, which is the only place that builds it: M14 folded `/report/`
-  // into `/profile/`. The failure mode §12.12.6 removes is a learner who keeps
-  // the pretty document and loses the record, so the pretty document has to
-  // import — and both halves of that round trip are now on one page.
-  await page.goto('/profile/')
-  await openRegisterRow(page, 'report')
-  await expect(page.locator('[data-hl-report][data-hydrated="true"]')).toHaveCount(1)
-  const generatedFrom = await settled(page)
-  await expect
-    .poll(() => definition(page, 'section[aria-labelledby="hl-report-save"]', 'Bytes'))
-    .toMatch(/^[\d,]+ \/ 256,000$/)
-  await page.getByRole('button', { name: 'DOWNLOAD' }).click()
-  const saved = await lastSaved(page)
-
-  expect(saved.type).toBe('text/html;charset=utf-8')
-  expect(saved.filename).toMatch(/^record-of-work-\d{4}-\d{2}-\d{2}\.html$/)
-
-  const inFile = payloadOf(saved.text)
-  expect(inFile.schema).toBe(1)
-  expect(inFile.data).toEqual(generatedFrom)
-
-  await page.goto('/profile/')
-  // §16.4 — `ERASE ALL LOCAL DATA` is inside the `data` row, and a closed row
-  // has no rendered box for `click()` to reach (hazard H-A).
-  await openRegisterRow(page, 'data')
-  await page.getByRole('button', { name: 'ERASE ALL LOCAL DATA' }).click()
-  await page.locator(DIALOG).getByLabel('Type ERASE to confirm').fill('ERASE')
-  await page.locator(DIALOG).getByRole('button', { name: 'Erase all data' }).click()
-  await expect.poll(() => readRawRecord(page)).toBeNull()
-
-  await page
-    .getByLabel('Import a record from a file')
-    .setInputFiles(onDisk(saved.filename, saved.text))
-
-  await expect(page.getByText('RECORD IMPORTED · SCHEMA 1')).toBeVisible()
-  // §12.15 / §12.12.5 — a digest is a tamper INDICATOR, never a guarantee, and
-  // it is printed either way. On an unedited file it matches, which is the
-  // whole of what a digest is entitled to say.
-  await expect(page.getByText('CONTENT DIGEST MATCHED')).toBeVisible()
-  await expect(page.getByText('It proves nothing about the facts inside it.')).toBeVisible()
-
-  // The pretty document really is the backup: the state comes back whole.
-  await expect.poll(() => storedData(page)).toEqual(inFile.data)
-  await expect(page.locator('section[aria-labelledby="submittals"] a')).toHaveAttribute(
-    'href',
-    'https://github.com/cevheri/hidden-line',
-  )
 })
 
 test('§12.15 — an unreadable file changes nothing, and each state has its own words', async ({
@@ -1743,34 +1139,6 @@ test('§12.15 — an unreadable file changes nothing, and each state has its own
   expect(await storedData(page)).toEqual(before)
 })
 
-test('§17.1 — a receipt on the record outlives the document that reported it', async ({
-  page,
-}) => {
-  // Seeded, not claimed: this asserts the STORED half, with no account and no
-  // network. The claim that writes it is gated in `accounts.spec.ts`.
-  await seedRecord(page, EVERYTHING_RECORDED)
-  await page.goto('/profile/')
-  await settledRegister(page)
-
-  // No document claimed anything, so the arrival line is absent — in EITHER
-  // state, which is why this is the marker both of them carry and not the
-  // routine state's class.
-  await expect(page.locator('[data-hl-receipt]')).toHaveCount(0)
-  // ...and the register still reports what the record holds.
-  await expect(registerReading(page, 'claim')).toHaveText('4 MERGED · 0 LOST')
-
-  const fold = await openRegisterRow(page, 'claim')
-  await expect(fold).toContainText('CLAIMED 2026-08-11')
-  await expect(fold).toContainText('Nothing was deleted.')
-  // §17.3's regression pin, in a browser: the identity line is printed for a
-  // name that changed and not for a provenance that did not.
-  await expect(fold).toContainText('The name on the record is the one your account holds.')
-  await expect(fold).not.toContainText('The path role on the record')
-
-  // And the reading a closed row prints is the reading its open body reports.
-  await expect(registerReading(page, 'claim')).toHaveText('4 MERGED · 0 LOST')
-})
-
 /**
  * §17.6 — the affordance labelled DETAILS lands on the fold, not on its lid.
  *
@@ -1781,23 +1149,8 @@ test('§17.1 — a receipt on the record outlives the document that reported it'
  * plain visit still finds every row closed, which is what stops the island from
  * being a switch that opens the whole register.
  */
-test('§17.6 — a fragment opens the row it names, and only it', async ({ page }) => {
+test('§17.6 — the #data fragment opens the data row, and a plain visit opens none', async ({ page }) => {
   await seedRecord(page, EVERYTHING_RECORDED)
-
-  await page.goto('/profile/#claim')
-  await settledRegister(page)
-
-  const fold = page.locator(
-    'section.bz-register-row[aria-labelledby="claim"] details.bz-register-fold',
-  )
-  await expect
-    .poll(() => fold.evaluate((node) => (node as HTMLDetailsElement).open), {
-      message: 'the claim row stayed shut for a link that names it',
-    })
-    .toBe(true)
-  // Open as the reader experiences it, not merely as an attribute: the body's
-  // own text is on screen.
-  await expect(fold.locator('.bz-register-body')).toContainText('CLAIMED 2026-08-11')
 
   // The export controls' row is the other fragment two surfaces point at.
   await page.goto('/profile/#data')

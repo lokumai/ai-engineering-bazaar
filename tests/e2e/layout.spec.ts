@@ -111,7 +111,7 @@ test.describe('layout invariants, on every route', () => {
    * `display: none` is exempt and is not a loophole — a hidden cell has no
    * geometry to disagree about, and the catalog hides whole columns by design.
    */
-  for (const route of ['/sheets/', '/sheets/expert/', '/profile/'] as const) {
+  for (const route of ['/sheets/', '/sheets/expert/'] as const) {
     test(`every table cell is still a table cell — ${route}`, async ({ page }) => {
       await page.goto(route)
       await page.waitForLoadState('networkidle')

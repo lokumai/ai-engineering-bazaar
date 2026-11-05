@@ -324,20 +324,18 @@ test('the mark options reach the §10.4 touch floor below 768px', async ({ page 
   test.skip(page.viewportSize()!.width >= 768, '§10.4 sets the floor below 768')
 
   /*
-    §16.2.2 — one picker, three call sites, and two of them are routes a reader
-    reaches on a phone. `/sign-in/alias/` is the first-run screen this test was
-    written for; `/profile/` renders the same component at its default prefix
-    inside the drafter block, so a measurement on one route says nothing about
-    the other and both are walked.
+    §16.2.2 — `/sign-in/alias/` is the first-run screen this test was written
+    for, and since 2026-11-05 the only route that renders the picker:
+    `/profile/` drew it inside the drafter block until that block was removed.
 
     WHERE THE FLOOR IS STATED. `progress.css`, on `.bz-markrow-cell`, and
     exactly once. It used to be `profile.css`, which M16 stage 0 deleted with
     the other ten — so this test was red at 390 with the cell MEASURED at 19px
     against 44 — and stage 8 restored it while building the picker's surface.
-    Stated once is the point: three call sites render this picker, and a floor
-    written per call site is a floor one of them will be missing.
+    Stated once is the point: a floor written per call site is a floor the next
+    call site will be missing.
   */
-  for (const route of ['/sign-in/alias/', '/profile/']) {
+  for (const route of ['/sign-in/alias/']) {
     await page.goto(route)
     await page.waitForLoadState('networkidle')
 

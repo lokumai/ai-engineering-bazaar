@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { NAME_FROM_ADDRESS, RECORD_SCOPE } from '@/lib/record/scope'
 import { describe, expect, it } from 'vitest'
-import ProfilePage, { REGISTER_GROUPS, REGISTER_ROWS } from '@/app/profile/page'
+import ProfilePage from '@/app/profile/page'
 import { DataPanel, printedDigestFrom } from '@/components/record/DataPanel'
 import { DrafterBlock } from '@/components/record/DrafterBlock'
 import { ERASE_COPY, EraseDialog } from '@/components/record/EraseDialog'
@@ -468,8 +468,6 @@ describe('§16.2.1 — the offered mark is a marking, and it is words', () => {
     // no offer to make and no cell is marked. A glyph marked as offered by
     // nobody would be worse than an unmarked row.
     expect(MARK).not.toContain('data-hl-offered')
-    expect(PAGE).not.toContain('data-hl-offered')
-    expect(words(PAGE)).not.toContain('OFFERED FOR YOUR ROLE')
   })
 })
 
@@ -614,223 +612,63 @@ describe('§12.1.6, §11.35 — the storage panel prints bytes and nothing else'
 })
 
 /**
- * §16.1, §16.4 — the page itself: one open block, then one register.
- *
- * **What the two assertions below replaced, and why they are not a list any
- * more.** Both pinned the eleven panels as a hand-typed sequence: eleven
- * `bz-panel-title` strings in order, and the same eleven ids again as a second
- * literal. §16 folds nine of those panels into register rows, so a list would
- * have had to be retyped — and a list retyped is a second author of an order the
- * page already holds. `REGISTER_ROWS` is exported from `profile/page.tsx` for
- * exactly this reason (hazard H-P): the page maps over that array, so what
- * ships and what is asserted are the same array in the same order.
- *
- * **The order is still ORDERED.** §16.4 fixes the sequence — Readout, Uptime,
- * Stamps, Submittal register, Role and path, Organisation, Storage, Stored
- * values, Export/import/erase, Keyboard — because a reader who has been here
- * before finds a row by where it sits. `toEqual` over an array, never a set.
+ * The page itself, after the removal of 2026-11-05: the circles, the continue
+ * card, and one register row, `Export, import, erase`. Everything else the
+ * author called unused is gone, and the second test below keeps it gone.
  */
-describe('§16.1, §16.4 — the page itself: the account block, then your progress', () => {
+describe('the page itself: the circles, then your data', () => {
   it('prints its own chord beside its title (§12.16)', () => {
     expect(PAGE).toContain('>G P<')
-    // M14 — one progress-and-account route where there were four, and the
-    // title is what it is for rather than what the URL is called.
     expect(PAGE).toContain('Your progress')
   })
 
-  it('renders exactly REGISTER_ROWS, in exactly that order', () => {
+  it('renders one register row, the data row, under its group heading', () => {
     const rows = [...PAGE.matchAll(/<h3 id="([^"]+)" class="bz-register-name">([^<]+)</g)]
       .map(([, id, name]) => ({ id, name }))
-    expect(rows).toEqual(REGISTER_ROWS.map(({ id, name }) => ({ id, name })))
-
-    /* M22 — **and every row is under the group it names.** The table is one
-       flat ordered list with a `group` field rather than a nesting, so the
-       sequence above is still the specification; what this adds is that the
-       rendering honours the field. A row assigned to a group the page does not
-       render would vanish silently, which is the exact failure the milestone's
-       inventory exists to prevent. */
-    for (const group of REGISTER_GROUPS) {
-      const heading = PAGE.indexOf(`id="${group.id}"`)
-      expect(heading, `${group.id} has no heading on the page`).toBeGreaterThan(-1)
-      for (const row of REGISTER_ROWS.filter((one) => one.group === group.id)) {
-        expect(PAGE.indexOf(`id="${row.id}"`), `${row.id} is not under ${group.id}`)
-          .toBeGreaterThan(heading)
-      }
-    }
-    // Every row is a `bz-register-fold` and nothing else on the page is, so
-    // the count is the count of rows — a row rendered outside the register, or
-    // a row in the table and not rendered, moves one of these two numbers.
-    //
-    // Counted on the CLASS rather than on `<details`, which is what it was
-    // until M14: the rows that arrived with the fold of `/dashboard/` bring
-    // disclosures of their own inside their bodies (the diagram's dependency
-    // table is one), and a bare `<details` count would have made this
-    // assertion about how many nested folds the page's panels happen to use.
-    expect(occurrences(PAGE, /class="bz-register-fold"/g)).toBe(REGISTER_ROWS.length)
+    expect(rows).toEqual([{ id: 'data', name: 'Export, import, erase' }])
+    expect(PAGE.indexOf('id="group-data"')).toBeGreaterThan(-1)
+    expect(PAGE.indexOf('id="data"')).toBeGreaterThan(PAGE.indexOf('id="group-data"'))
+    expect(occurrences(PAGE, /class="bz-register-fold"/g)).toBe(1)
   })
 
-  it('opens with the account block and closes every row', () => {
-    // §16.4: the rows are always closed on arrival. `<details open>` is the
-    // single-attribute mutation this catches.
-    expect(PAGE).not.toContain('<details open')
-    expect(PAGE.indexOf('id="drafter"')).toBeGreaterThan(-1)
+  it('draws none of the panels the author removed', () => {
+    for (const id of [
+      'drafter', 'waiting', 'readout', 'uptime', 'stamps', 'submittals', 'role', 'diagram',
+      'report', 'bz-orgs-head', 'claim', 'storage', 'raw', 'keyboard',
+    ]) {
+      expect(PAGE, id).not.toContain(`id="${id}"`)
+    }
+    expect(PAGE).not.toContain('data-hl-mark=')
+    expect(words(PAGE)).not.toMatch(/Checked by|Waiting on you|Streak|Stamps|Role and path/)
+  })
 
-    /* M22 — **`id="register"` no longer exists**, and that is the milestone
-       rather than a rename. One heading reading `What else is on record` sat
-       over thirteen rows of four different kinds; it named the container and
-       not the contents, which is what let a reader open rows until they found
-       their export. There are five group headings now, each naming what is
-       inside it, so the ordering is asserted against the FIRST of them. */
-    const firstGroup = PAGE.indexOf(`id="${REGISTER_GROUPS[0].id}"`)
-    expect(firstGroup, 'the register has no group headings').toBeGreaterThan(-1)
-    expect(PAGE.indexOf('id="drafter"')).toBeLessThan(firstGroup)
-    expect(firstGroup).toBeLessThan(PAGE.indexOf('class="bz-register-fold"'))
+  it('closes every row on arrival', () => {
+    expect(PAGE).not.toContain('<details open')
   })
 
   it('resolves every aria-labelledby against an id in the same document', () => {
-    // The link gate cannot see a dead in-page anchor (§16.9's last row), so the
-    // whole page is checked rather than the ten ids that used to be listed:
-    // every name reference on the sheet, wherever it came from.
     const named = new Set([...PAGE.matchAll(/aria-labelledby="([^"]+)"/g)].map(([, id]) => id))
-    expect(named.size).toBeGreaterThanOrEqual(REGISTER_ROWS.length)
+    expect(named.size, 'no name references found, so nothing was checked').toBeGreaterThan(0)
     for (const id of named) expect(PAGE, id).toContain(`id="${id}"`)
   })
 
-  it('gives every heading id exactly one reference, so no anchor is ambiguous', () => {
-    // Hazard 2's other half. `bz-orgs-head` and `bz-account-head` are pointed at
-    // from elsewhere in the tree, and `AuthShell` drops both in inline chrome so
-    // that the register row and the drafter half own them. Two elements carrying
-    // one id is not redundancy: the browser jumps to whichever comes first.
+  it('gives every heading id exactly one element', () => {
     const headings = [...PAGE.matchAll(/<h[123] id="([^"]+)"/g)].map(([, id]) => id)
-    expect(headings.length).toBeGreaterThan(REGISTER_ROWS.length)
+    expect(headings.length, 'no headings found, so nothing was checked').toBeGreaterThan(0)
     for (const id of headings) {
       expect(occurrences(PAGE, new RegExp(`id="${id}"`, 'g')), id).toBe(1)
-      expect(occurrences(PAGE, new RegExp(`aria-labelledby="${id}"`, 'g')), id).toBe(1)
     }
-  })
-
-  /**
-   * §16.4.1 — the rule that makes folding honest, at the level a suite with no
-   * DOM can hold it: the reading is real text on the closed summary.
-   *
-   * `RegisterRow` throws on a blank reading and `register.test.tsx` pins that
-   * guard; what this adds is that the ASSEMBLED page passes one to every row.
-   * The e2e suite carries the other half — that the closed reading equals the
-   * one the opened body prints — because that needs a browser.
-   */
-  it('states a reading on every closed row (§16.4.1)', () => {
-    for (const { id } of REGISTER_ROWS) {
-      const summary = summaryOf(PAGE, id)
-      // `[^>]*` between the class and the `>`: the span carries `data-reading`
-      // too, and a pattern that assumed the tag ended right after the class
-      // stopped matching the moment it did — reporting `null` rather than a
-      // blank reading, which is the same failure shape as a selector inside a
-      // regex going quietly stale.
-      const reading = /class="bz-register-reading"[^>]*>([\s\S]*?)<\/span>/.exec(summary)
-      expect(reading, id).not.toBeNull()
-      expect(words((reading as RegExpExecArray)[1]).trim(), id).not.toBe('')
-    }
-  })
-
-  /**
-   * §16.8 gate 2, stated on the assembled page rather than on the component.
-   *
-   * The mark picker's own contract is pinned above, against `<MarkPicker />` in
-   * isolation; that says nothing about how many times the PAGE renders it, and
-   * §16.0's first measured finding was that the old sheet drew the same eight
-   * options twice with a third copy on `/sign-in/alias/`. So the property is a
-   * count over the whole sheet: `data-hl-mark` appears once per mark and no
-   * more, on a `<label>` (hazard H-C — `responsive.spec.ts` counts exactly
-   * those and a copy on an inner wrapper makes it sixteen), in the order
-   * `MARK_PICKER_IDS` fixes.
-   *
-   * A second radiogroup is caught today by the seed line being said twice
-   * (§16.6, below) and by a strict-mode locator violation in
-   * `colour-not-alone.spec.ts` — both real, both indirect: a future variant
-   * that suppressed the seed line would slip past the first, and the second
-   * lives in a suite that only runs after a build. Measured by mutation: a
-   * second `<MarkPicker>` in `DrafterBlock` took `data-hl-mark` from 8 to 16
-   * and `role="radiogroup"` from 2 to 3 while this file was otherwise green.
-   *
-   * `role="radiogroup"` is NOT asserted as one: the page carries two by design
-   * — the mark row and §13.3's role picker, which `path.spec.ts:48` pins at
-   * nine options and hazard H-N keeps to a single group.
-   */
-  it('draws the mark picker once and only once on the whole module (§16.2.2)', () => {
-    const marks = [...PAGE.matchAll(/<label[^>]*data-hl-mark="([^"]+)"/g)].map(([, id]) => id)
-    expect(marks).toEqual([...MARK_PICKER_IDS])
-    // Every occurrence of the attribute is one of those labels: a nested copy
-    // would raise this count without changing the list above.
-    expect(occurrences(PAGE, /data-hl-mark=/g)).toBe(MARK_PICKER_IDS.length)
-    // One radio group name behind them, so there is one tab stop and one
-    // selection for the whole sheet.
-    expect(occurrences(PAGE, /name="hl-mark"/g)).toBe(MARK_PICKER_IDS.length)
   })
 
   it('keeps one h1 and skips no level in the outline (§16.7)', () => {
     expect(occurrences(PAGE, /<h1/g)).toBe(1)
-
-    /* **M22 replaced a depth cap with the property the cap stood for.**
-       This read "no `h4`, because M14 folded three routes in here without
-       adding a level". M22 added one on purpose: the thirteen register rows
-       became `h3` under five group headings, because a flat list of thirteen
-       `h2` peers is exactly what a reader navigating by heading hears as "a
-       mess", and a visual grouping alone would have left that outline
-       untouched. The rows' own panels then had to move to `h4`, or a reader
-       leaving `Record of work` landed on something that read like a new
-       section of the page.
-
-       A depth cap was never the invariant — a SKIPPED LEVEL is. An outline
-       that goes h2 → h4 is broken at any depth, and one that goes h1 → h2 →
-       h3 → h4 is sound at four. So the levels are read in document order and
-       every step down is checked to be one. */
     const levels = [...PAGE.matchAll(/<h([1-6])[ >]/g)].map(([, digit]) => Number(digit))
-    expect(levels.length, 'no headings found, so nothing was checked')
-      .toBeGreaterThan(REGISTER_ROWS.length)
     expect(levels[0], 'the page does not open on its h1').toBe(1)
-
     const skipped = levels
       .map((level, i) => ({ level, previous: levels[i - 1] ?? level }))
       .filter((step) => step.level - step.previous > 1)
       .map((step) => `h${step.previous} → h${step.level}`)
     expect(skipped, 'the outline skips a level').toEqual([])
-
-    /* **AND THE INVERSION, which the check above cannot see.** A review proved
-       it: putting `ReportPanel`'s three headings back to `h2` — the defect M22
-       says it fixed — produces ZERO downward skips, because h3 → h2 is a step
-       UP and that check is one-directional. Nothing else pinned those levels,
-       so the fix was unguarded.
-
-       A heading inside a register row may not outrank the row it sits in.
-       Stated as the RELATION rather than as a level, so it survives §16.7
-       gaining or losing one. */
-    const levelOf = new Map(
-      [...PAGE.matchAll(/<h([1-6])[^>]*id="([^"]+)"/g)]
-        .map(([, level, id]) => [id, Number(level)] as const),
-    )
-    const rowLevels = REGISTER_ROWS
-      .map((row) => levelOf.get(row.id))
-      .filter((level): level is number => level !== undefined)
-    expect(rowLevels.length, 'no register row carries a heading').toBe(REGISTER_ROWS.length)
-
-    const deepestRow = Math.max(...rowLevels)
-    const outranking = [...levelOf.entries()]
-      .filter(([id, level]) => id.startsWith('hl-report-') && level <= deepestRow)
-      .map(([id, level]) => `${id} is h${level}, the rows are h${deepestRow}`)
-    expect(outranking, 'a panel heading outranks the register row it is inside').toEqual([])
-  })
-
-  /**
-   * M14 — `TRACES` used to be absent from this page, because only the
-   * dashboard built the graph and a dash standing in for a number nobody
-   * counted is what §11.25 forbids. The dashboard folded in here, so the cell
-   * is now on this page — and it must appear ONLY inside the row that counts
-   * it, which is the same rule stated where the graph now lives.
-   */
-  it('prints TRACES only inside the row that counts it (§11.25, §5.8)', () => {
-    const row = PAGE.slice(PAGE.indexOf('id="diagram"'), PAGE.indexOf('id="report"'))
-    expect(row).toContain('Traces')
-    expect(occurrences(PAGE, /Traces/g)).toBe(occurrences(row, /Traces/g))
   })
 
   it('is inside the shell, so it has a main region and a footer', () => {
@@ -885,9 +723,7 @@ describe('§12.14.1 — the copy register, over every string this task authors',
     ['NAME_FROM_ADDRESS', NAME_FROM_ADDRESS],
     ['DATA_READING', DATA_READING],
     // And every closed row's own line: the name and the reading it states.
-    ...REGISTER_ROWS.map(
-      ({ id }): [string, string] => [`row ${id}`, words(summaryOf(PAGE, id))],
-    ),
+    ['row data', words(summaryOf(PAGE, 'data'))],
   ]
 
   const FIRST_PERSON = /\b(?:I|I'm|I've|we|we'll|we've|my|our)\b/i
@@ -960,28 +796,9 @@ describe('§12.14.1 — the copy register, over every string this task authors',
    * drawing's two mono lines, the drafter halves' marks — without any of them
    * being enrolled by hand.
    */
-  it('ends every readout on the module without a full stop', () => {
+  it('ends every readout on the page without a full stop', () => {
     const found = readouts(PAGE)
-    // A floor, so a broken extractor reads as a failure rather than as a page
-    // with nothing to check: every register row prints one, at least.
-    expect(found.length).toBeGreaterThan(REGISTER_ROWS.length)
+    expect(found.length, 'no readouts found, so nothing was checked').toBeGreaterThan(0)
     for (const readout of found) expect(readout, readout).not.toMatch(/\.$/)
-    // The three the old fixed list named are still among them, so the property
-    // did not become weaker than the assertion it replaced.
-    for (const readout of ['NO NAME ON RECORD', 'NOTHING ADDED YET', NO_SEED_MINTED]) {
-      expect(found, readout).toContain(readout)
-    }
-  })
-
-  it('states the absence of the seed exactly once on the screen (§16.6)', () => {
-    // Two authors, one string: `MarkPicker` prints it under the row and
-    // `DrafterMark` prints it under the drawing when the record has hydrated and
-    // carries no seed. On the prerender the drawing prints `SEED · --` — it has
-    // not read the record yet — so the sheet states the absence once. Twice
-    // would be one status said twice on one screen; a second SPELLING would be
-    // §16.6's failure, and this catches both.
-    expect(occurrences(PAGE, new RegExp(NO_SEED_MINTED, 'g'))).toBe(1)
-    expect(words(PAGE)).not.toMatch(/SEED · NOT MINTED/)
-    expect(words(PAGE)).not.toMatch(/NO SEED YET|SEED NOT MINTED/)
   })
 })

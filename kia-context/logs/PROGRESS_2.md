@@ -21,14 +21,14 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M37, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M38, 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #PRNUM on 2026-11-05. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-11-05
 ---
 
-# 📈 PROGRESS, part 2 — M16 to M37
+# 📈 PROGRESS, part 2 — M16 to M38
 
 > **← Part 1: [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the review pass over M10 to M14.
-> This part holds **M16 to M37**, in the order they were worked.
+> This part holds **M16 to M38**, in the order they were worked.
 
 ## How to work this file
 
@@ -1121,13 +1121,13 @@ the milestone's promise and M9 to M14's failure was losing them quietly.
 | Complete a module from the overview | **M18: `/profile/` alone.** The home page drew control C as well until the author took the level grid off the front door; the component and the mockup are unchanged, and the count of surfaces drawing it went from two to one | `completion` (9), which is where `home.spec.ts`'s eight control-C tests moved, plus the one that measures the dials against the rows |
 | ~~A self-check, self-marked, no score kept~~ | **Removed from the site in M25 on the author's word**, replaced by the quick quiz: 3 to 5 four-choice questions with an explanation each, nothing stored (**D77**). The `**Quick Check**:` line stays in the markdown | `module-end` (7), `quizzes.test.ts` |
 | A checklist that is never a gate | the module | `record-sheet` §12.4.1 cases |
-| ~~Register a repository, refusing a hostile URL~~ | **Removed in M25 on the author's word** — no page adds a submittal any more. The record keeps the ones it holds and `/profile/` still lists them; the URL allowlist stays in `lib/` with its unit tests | — |
+| ~~Register a repository, refusing a hostile URL~~ | **Removed in M25 on the author's word** — no page adds a submittal any more. The record keeps the ones it holds, and `/profile/` listed them until M38 removed that row; the URL allowlist stays in `lib/` with its unit tests | — |
 | See how far through each level you are | **M18: `/profile/`**, the rail and the catalog. `/` no longer reports on the reader at all | `fidelity` stage 7 (the annulus, and the channel-A percentage with JS aborted), `rail`, and `home.spec.ts`'s assertion that the front door carries no `.bz-cmod` and no tally |
-| A role, and the path it suggests | `/profile/` | `path` (6), `category-surfaces`'s nine-role pair |
-| What is waiting on you | `/profile/` | `record-pages` (28) |
+| ~~A role, and the path it suggests~~ | **Removed in M38 on the author's word** (2026-11-05). `paths.ts` and the components stay in the tree; a stored role still parses and exports | ~~`path` (6)~~, deleted with the row; `category-surfaces`'s nine-role pair still holds the stylesheet |
+| ~~What is waiting on you~~ | **Removed in M38 on the author's word** | — |
 | Take a copy of the record out, and put one back | `/profile/`'s data row | `record-pages`, `record-report` unit |
 | Erase everything, told what will go | `/profile/`'s erase dialog | `record-pages` §12.15 cases |
-| The record of work, as a document | `/profile/`'s report row | `record-report` unit, `category-hues` |
+| ~~The record of work, as a document~~ | **Removed from the page in M38 on the author's word**; `report.ts` stays in the tree | `record-report` unit, which tests the builder and not a page |
 | An optional account, gating nothing | `/sign-in/`, `/join/` | `accounts` (12, gated), `accounts-disabled` (5) |
 | An alias, with no account at all | `/sign-in/alias/` | `alias` (5) |
 | A team's roster and assignments | `/team/`, `/team/assignments/` | `accessibility` (19), `colour-not-alone` |
@@ -4255,6 +4255,48 @@ of every file in `playground/` by what references it: *"delete the ones in Safe 
 - [x] `playground/index.html`, the record of the author's ten choices (PROGRESS.md M8), linked the
       nine deleted pages; at the author's word they now point at each file on GitHub at `a941364`,
       the last commit that had them, and no local link in it is dead.
+
+
+## 🏁 Milestone M38: The progress page keeps the circles and the data row — SHIPPED, MERGED AS PR #PRNUM
+
+Branch `feat/progress-slim`, from `main` at `d3575ce`. The author, 2026-11-05, after six readers had
+used the site: the progress page's unused features *"can be freely removed"*, and the change should
+land early because colleagues are about to design a mobile app against the site and open PRs on it.
+The round-2 playground (`playground/2026-11-round-2/F-progress-page.html`) drew the slimmed page;
+progress per track (D86) is not part of this milestone and waits for the track system.
+
+### Deliverables
+
+- [x] **`/profile/` keeps three things**: the level circles (`CourseCompletion`, M22), the continue
+      card, and one register row, **Export, import, erase**, under a `Your data` heading. The record
+      lives only in this browser, so the exported file is the reader's only copy that survives a
+      cleared browser; that is why the row stays.
+- [x] **Removed from the page**: the account block (the name, `Checked by`, the mark and its seed,
+      sign-in), `Waiting on you`, and the rows for the readout and face legend, the streak, stamps,
+      submittals, the role path, the curriculum diagram, the record of work, the organisation, the
+      last claim, storage, stored values and the keyboard. `src/app/profile/page.tsx` went from 699
+      lines to 124.
+- [x] **The components stay in the tree**, imported by nothing on this page: `DrafterBlock`,
+      `AttentionPanel`, `src/components/path/`, `ReportPanel` and the rest. The record schema is
+      unchanged, so every existing reader's record parses, exports and merges as before.
+- [x] `/profile/#data` still opens the data row; `/dashboard/`, `/path/` and `/report/` still forward
+      to `/profile/`.
+
+### Acceptance criteria
+
+- [x] The tests of removed features are deleted, not skipped: 23 browser tests (`path.spec.ts`
+      whole, 13 in `record-pages`, 2 in `fidelity` stage 8, 2 in `colour-not-alone`) and 3 unit
+      tests. Tests that checked a capability that still exists were moved to where it now lives:
+      the mascot's faces, hatch and byte-identity to `/legend/`; the rename that mints no second
+      seed, the typed-into-a-field shortcut guard and the mark picker's forced-colours radio to
+      `/sign-in/alias/`; the round-trip export reads `meta.lastExport` from storage instead of the
+      removed storage row.
+- [x] Fidelity stage 8 compares the continue card alone, with its mutation moved to the card's
+      padding; the panel and field are still compared against `07` by stage 10, on
+      `/sign-in/alias/`.
+- [x] `ARCHITECTURE.md` §8 and the vocabulary table, and the M16 capability ledger, say which
+      capabilities left the page.
+- [x] Typecheck, 2,107 unit and corpus tests, and the full browser suite (1,175 passed, 59 skipped) pass.
 
 ---
 

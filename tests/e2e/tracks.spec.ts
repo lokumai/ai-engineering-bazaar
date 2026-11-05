@@ -205,3 +205,35 @@ test('the home page\'s signs and the bar agree, both ways, and a sign keeps noth
   await expect(page.locator('.bz-street [data-choose][aria-pressed="true"]')).toHaveCount(0)
   expect(await readRawRecord(page)).toBeNull()
 })
+
+test('every language in the menu carries a flag, and the button shows the current one', async ({ page }) => {
+  // M46 — Persian included: the author asked for Iran's flag rather than the script chip.
+  for (const path of [A0.path, `/tr${A0.path}`, `/fa${A0.path}`]) {
+    await page.goto(path)
+    const rows = page.locator('.bz-langmenu a')
+    const count = await rows.count()
+    if (count === 0) continue
+    await expect(rows.locator('svg.bz-flag')).toHaveCount(count)
+    await expect(page.locator('.bz-langmenu summary svg.bz-flag')).toHaveCount(1)
+  }
+  await page.goto(`/fa${A0.path}`)
+  await expect(page.locator('.bz-langmenu summary svg.bz-flag'), 'the Persian page offers no menu, so this checks nothing').toHaveCount(1)
+})
+
+test('a track sign carries its icon and its name on one row', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto('/')
+    const rows = await page.locator('.bz-street .track-sign .board').evaluateAll((boards) => boards.map((board) => {
+      const icon = board.querySelector('.sg-ico')!.getBoundingClientRect()
+      const name = board.querySelector('.sg-t')!.getBoundingClientRect()
+      return { overlapY: Math.min(icon.bottom, name.bottom) - Math.max(icon.top, name.top), beside: name.left >= icon.right }
+    }))
+    expect(rows.length).toBe(2)
+    for (const row of rows) {
+      expect(row.beside, `the name is not beside its icon at ${width}px`).toBe(true)
+      expect(row.overlapY, `the name is not on the icon's row at ${width}px`).toBeGreaterThan(0)
+    }
+  }
+})

@@ -21,7 +21,7 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M40 and M42 to M45 (M41 on PR #57), 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. M43 to M45 — the round-2 picks (D91) — merged as PR #59 on 2026-11-05. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M40 and M42 to M46 (M41 on PR #57), 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. M43 to M45 — the round-2 picks (D91) — merged as PR #59 on 2026-11-05. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-11-05
 ---
 
@@ -4500,6 +4500,42 @@ Builds M39's pick J2, with the author's five kinds.
 
 - [x] No reference is lost or duplicated: the set of links in each References section is the same
       before and after, in every language. Measured against `main`: 61 files, 626 links, 0 differ.
+
+## 🏁 Milestone M46: The home page's choice, two stalls and the doors, tidied; Iran's flag for Persian — IN PROGRESS
+
+Branch `feat/home-polish`, from `main` at `fac2aa4`. The author, 2026-11-05, after M43 to M45
+shipped: remove the question's second line and raise the two signs so more of the shops shows; put
+each sign's icon and name on one row; on the signpost and the lantern stalls move the sign and the
+props right so the sign stops covering them; take the button off the doors and centre the line
+under them; and give Persian Iran's flag.
+
+### Deliverables
+
+- [x] The question is one line, "How would you like to read?"; the module count under it is gone.
+- [x] The two track signs hang at y=195 instead of 224 in the street's units; each sign's icon and
+      name share a row (`.sg-head`).
+- [x] On the walk, the lantern's and the signpost's signs stand 30 units further along and their
+      props 80 (a CSS `translate` on the scene, walk only: the stacked layout crops each stall to
+      x 450-1200 and has no room to spare).
+- [x] The doors keep only the line "These doors open …", centred under them; the `Open the
+      curriculum` button there is removed (the one in the opening hero stays).
+- [x] Persian's flag is Iran's, drawn inline like the other two, in the bar and in the menu; the
+      `فا` chip and its CSS are removed (D91 item 5 struck).
+- [x] Found on the way: on the walk the signs kept the stacked layout's caps (440px and 600px), so
+      above about 1440px they stopped growing with the stalls and at 2560x1440 the names, the
+      question and a button wrapped. The caps are lifted on the walk.
+
+### Acceptance criteria
+
+- [x] At the choice, measured at 1024x768, 1280x720, 1366x768, 1440x900, 1920x1080 and 2560x1440:
+      the signs' rails clear the question, the signs end above the stalls' goods (117px above at
+      1440x900, against 48px before), every title, button and the question sit on one line, and
+      the page does not scroll sideways.
+- [x] At 1280x720 the signpost's Sources arrow and the lantern's projector are clear of their signs
+      (screenshots read at 1024x768, 1280x720, 1440x900 and 1920x1080).
+- [x] Two new browser tests, each seen failing under a mutation: a track sign's icon and name share
+      a row (390 and 1440), and every language in the menu carries a flag.
+- [ ] The full gate is green, and the PR is merged.
 
 ---
 

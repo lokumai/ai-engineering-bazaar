@@ -2189,9 +2189,10 @@ make; each is the smallest one that keeps today's For Engineers URLs and records
    scopes each track's marks to its own regions, so the progress page can show both tracks' rings
    correctly before any script runs.
 5. **Details the pages left open.** The bar's toggle (B1 + C1) shrinks to its two icons below the
-   phone breakpoint, since C1 does not fit there. Persian shows its script, `فا`, and no flag (E4's
-   own no-flag option), because a flag stands for a country and Iran's is politically loaded; English
-   shows the UK flag. A reader who scrolls past the home page's track choice gets doors that open For
+   phone breakpoint, since C1 does not fit there. ~~Persian shows its script, `فا`, and no flag (E4's
+   own no-flag option), because a flag stands for a country and Iran's is politically loaded~~
+   *(reversed by the author, 2026-11-05, M46: "for the farsi, use iran flag")*; English shows the UK
+   flag. A reader who scrolls past the home page's track choice gets doors that open For
    Engineers, with one line to switch (N1, recommended beside H1).
 
 **Changed while building, 2026-11-05.** Three of the choices above did not survive contact with the

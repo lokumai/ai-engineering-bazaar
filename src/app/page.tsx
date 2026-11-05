@@ -6,7 +6,6 @@ import { BazaarStreetMotion } from '@/components/home/BazaarStreetMotion'
 import { art, type ArtName } from '@/components/home/street/art'
 import { PageShell } from '@/components/shell/PageShell'
 import { CATEGORIES } from '@/lib/content/curriculum-file'
-import { curriculumFacts } from '@/lib/content/facts'
 import { INDEX_ROUTE, levelRoute } from '@/lib/route-labels'
 import { SITE_NAME } from '@/lib/site'
 
@@ -83,7 +82,7 @@ const STALLS: ReadonlyArray<{
     art: 'stall-lantern',
     icon: 'icon-3',
     hue: 'var(--color-category-5)',
-    x: 3910,
+    x: 3940,
     title: 'Pictures do most of the work.',
     body:
       'Every module comes with pictures, diagrams and code. Often there are memes too, and '
@@ -93,7 +92,7 @@ const STALLS: ReadonlyArray<{
     art: 'stall-signpost',
     icon: 'icon-4',
     hue: 'var(--color-category-3)',
-    x: 5110,
+    x: 5140,
     title: 'Every module points you somewhere next.',
     body:
       'Each module ends with links to extra articles, sources and videos, for when you want to go deeper.',
@@ -120,7 +119,8 @@ const CTA_AT = { x: 7040 + HALL_SHIFT, y: 786 }
 
 /** The question hangs over the gap between the two stalls. */
 const QUESTION_AT = { x: TRACK_START + 820, y: 40 }
-const SIGN_Y = 224
+/** M46 — the signs hang close under the question, so more of the stalls shows. */
+const SIGN_Y = 195
 
 /** The characters stand beside their stalls; each caption is centred under its character. */
 const TRACKS: ReadonlyArray<{
@@ -241,10 +241,6 @@ function at(props: Record<string, string | number>): CSSProperties {
  * "Why this and not the hundredth AI blog" panel became the four stalls.
  */
 export default function HomePage() {
-  /* The sentence under the question is a count, so it is the course's own:
-     every module in the curriculum, written or not, which is what both tracks
-     list. */
-  const moduleCount = curriculumFacts().sheets.length
   const doors = CATEGORIES.map((category, i) => ({
     slug: category.slug,
     title: category.title,
@@ -312,7 +308,6 @@ export default function HomePage() {
               <div className="swing">
                 <div className="board">
                   <h2 id="track-q" className={display.className}>How would you like to read?</h2>
-                  <p>The same {moduleCount} modules either way. You can switch later from the top bar.</p>
                 </div>
               </div>
             </div>
@@ -323,10 +318,12 @@ export default function HomePage() {
                     <div className="rail" />
                     <div className="swing">
                       <button type="button" className="board" data-choose={track.id} aria-pressed="false">
-                        <span className="sg-ico" aria-hidden="true">
-                          <TrackIcon track={track.id} />
+                        <span className="sg-head">
+                          <span className="sg-ico" aria-hidden="true">
+                            <TrackIcon track={track.id} />
+                          </span>
+                          <span className={`sg-t ${display.className}`}>{track.name}</span>
                         </span>
-                        <span className={`sg-t ${display.className}`}>{track.name}</span>
                         <span className="sg-p">{track.body}</span>
                         <span className="sg-go">
                           <span className="sg-off">Choose {track.name}</span>
@@ -382,9 +379,6 @@ export default function HomePage() {
                 </span>
               </button>
             </p>
-            <Link className="bz-btn" href={INDEX_ROUTE}>
-              Open the curriculum
-            </Link>
           </div>
         </section>
 

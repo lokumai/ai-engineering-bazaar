@@ -63,7 +63,7 @@ and the same explanation given in person for the third time. See `genesis/GENESI
 | 2026-10-15 | Harness Engineering names the five parts of a harness in plain words | M35, merged as PR #38 |
 | 2026-10-18 | Three references for Observability and Context Engineering | M36, merged as PR #42 |
 | 2026-11-05 | Ten stale mockups removed from `playground/` | M37, merged as PR #54 |
-| 2026-11-05 | The progress page keeps the level circles, the continue card and the data row | M38, merged as PR #PRNUM |
+| 2026-11-05 | The progress page keeps the level circles, the continue card and the data row | M38, merged as PR #55 |
 
 **The harness itself was installed on 2026-09-08**, 105 commits in. Everything before that date was
 reconstructed from git and is labelled as inferred inside each file.

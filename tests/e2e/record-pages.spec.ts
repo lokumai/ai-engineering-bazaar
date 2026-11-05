@@ -79,13 +79,13 @@ async function storedData(page: Page): Promise<RecordData | null> {
  *
  * It used to wait on §12.1.6's durability query LANDING IN STORAGE instead. That
  * write is gone on purpose: routing the queried grant through the reducer made
- * merely loading a page put an envelope in storage, and the boot script stamps
- * `data-hl-record` from whatever storage holds at load — so from a reader's
- * second page view onward, an envelope written by their first would have had the
- * empty state tell them they had cleared a record they never made (§12.13). With
- * nothing written on load there is no write for a comparison to straddle, and
- * waiting on the DOM is the better signal regardless: it is what the reader can
- * see, not an inference from a side effect.
+ * merely loading a page put an envelope in storage, and the boot script reads
+ * whatever storage holds at load — so from a reader's second page view onward,
+ * an envelope written by their first would have had the empty state tell them
+ * they had cleared a record they never made (§12.13). With nothing written on
+ * load there is no write for a comparison to straddle, and waiting on the DOM is
+ * the better signal regardless: it is what the reader can see, not an inference
+ * from a side effect.
  */
 async function settled(page: Page): Promise<RecordData> {
   await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()

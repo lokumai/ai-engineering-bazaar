@@ -190,12 +190,12 @@ function askPersisted(): void {
         //
         // `update` schedules a flush, so writing the grant here made merely
         // LOADING a page put an envelope in storage. Two things were wrong with
-        // that. It breaks §12.13's own distinction: the boot script stamps
-        // `data-hl-record` from whatever storage holds at load, so from a
-        // reader's SECOND page view onward an envelope written by their first
-        // would have had the empty state tell them they had cleared a record
-        // they never made. And it wrote to a reader's device for a fact about
-        // their browser, before they had asked the site to remember anything.
+        // that. It breaks §12.13's own distinction: the boot script reads
+        // whatever storage holds at load, so from a reader's SECOND page view
+        // onward an envelope written by their first would have had the empty
+        // state tell them they had cleared a record they never made. And it
+        // wrote to a reader's device for a fact about their browser, before
+        // they had asked the site to remember anything.
         //
         // Nothing is lost. The grant is re-queried on every load and
         // `storageReadout` reads this variable first, so the readout is the

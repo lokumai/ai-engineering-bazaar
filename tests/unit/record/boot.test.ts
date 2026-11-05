@@ -1,13 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import { PALETTE_IDS } from '@/lib/reading/palettes'
 import { RECORD_BOOT_SCRIPT, recordBootScript } from '@/lib/record/boot'
-import { stampProgressFor } from '@/lib/record/stamp'
+import { stampClassesFor, stampProgressFor } from '@/lib/record/stamp'
 import { coerceRecordData } from '@/lib/record/validate'
 import {
   EMPTY_RECORD,
   RECORD_STORAGE_KEY,
   SCHEMA_VERSION,
-  carriesNothing,
   emptySheetRecord,
   type RecordData,
   type SheetRecord,
@@ -125,14 +124,12 @@ describe('data-hl-storage — what tells empty state 4 from empty state 1 (§12.
   it('is ok when storage answers, even with nothing in it', () => {
     const stamped = run(script)
     expect(stamped.attributes.get('data-hl-storage')).toBe('ok')
-    expect(stamped.attributes.has('data-hl-record')).toBe(false)
     expect(stamped.classes.size).toBe(0)
   })
 
   it('is blocked when the property access throws', () => {
     const stamped = run(script, { getterThrows: true })
     expect(stamped.attributes.get('data-hl-storage')).toBe('blocked')
-    expect(stamped.attributes.has('data-hl-record')).toBe(false)
   })
 
   it('is blocked when the read throws', () => {
@@ -145,7 +142,6 @@ describe('the marks CSS draws from (§12.2 Channel A)', () => {
 
   it('stamps one class per completed module number', () => {
     const stamped = run(script, { stored: envelope(signedSheets('fundamentals/llms', 'intermediate/security')) })
-    expect(stamped.attributes.get('data-hl-record')).toBe('1')
     expect([...stamped.classes].sort()).toEqual([
       'hl-cat-fundamentals-started',
       'hl-cat-intermediate-started',
@@ -164,7 +160,6 @@ describe('the marks CSS draws from (§12.2 Channel A)', () => {
   it('ignores a module that is present but not completed', () => {
     const stored = envelope({ sheets: { 'fundamentals/llms': { signedOff: null, reachedEnd: true } } })
     const stamped = run(script, { stored })
-    expect(stamped.attributes.get('data-hl-record')).toBe('1')
     expect(stamped.classes.size).toBe(0)
   })
 
@@ -183,7 +178,6 @@ describe('the marks CSS draws from (§12.2 Channel A)', () => {
     const stored = envelope(signedSheets('fundamentals/llms'), SCHEMA_VERSION + 1)
     const stamped = run(script, { stored })
     expect(stamped.classes.size).toBe(0)
-    expect(stamped.attributes.has('data-hl-record')).toBe(false)
     expect(stamped.attributes.get('data-hl-storage')).toBe('ok')
   })
 
@@ -213,38 +207,12 @@ describe('the marks CSS draws from (§12.2 Channel A)', () => {
 
   it('needs no category totals to be useful, which is what the bare constant is', () => {
     const stamped = run(RECORD_BOOT_SCRIPT, { stored: envelope(signedSheets('fundamentals/llms')) })
-    expect(stamped.attributes.get('data-hl-record')).toBe('1')
     expect(stamped.attributes.get('data-hl-storage')).toBe('ok')
     // No module map, so no sign-off marks; the category still reads as started.
     expect([...stamped.classes]).toEqual(['hl-cat-fundamentals-started'])
   })
 })
 
-/**
- * §15.11 — the boot script's rule, cross-tested against the pair that decides
- * what the application actually holds.
- *
- * `data-hl-record` is the whole of the home screen's decision (`app/home.css`),
- * so before this the stamp went on for any parseable envelope: a reader whose
- * record held nothing but `prefs` — which the store writes on a first theme
- * click — was shown "Where you left off" and a continue control for a sheet
- * they had never opened.
- *
- * **The pair matters, and the first version of these cases had it wrong.** They
- * compared the stamp to `carriesNothing(data)` over typed `RecordData`, so every
- * input was already well-shaped and the whole malformed axis went untested — and
- * the boot script's presence checks run on RAW storage, before
- * `coerceRecordData`. Measured: seven shapes stamped while the coercer discarded
- * the value, among them `identity.name` as a number, an unknown `mark`, and
- * `days` as an object. A record read back out of storage is untrusted input
- * (§12.1.3) and the gate was applying weaker rules than the parser it guards.
- *
- * So the invariant is `stamp ⟺ !carriesNothing(coerceRecordData(raw))`, asserted
- * over well-formed AND malformed input, and the malformed half is what the boot
- * script's shape helpers exist for. The rule is still written twice — an inline
- * script has no module graph to import from — and these cases are the only thing
- * keeping the two copies honest.
- */
 describe('the one numeric reading, and both channels agreeing on it (§12.2)', () => {
   const script = recordBootScript(TOTALS, MODULES)
 
@@ -318,8 +286,23 @@ describe('the one numeric reading, and both channels agreeing on it (§12.2)', (
   })
 })
 
-describe('data-hl-record only goes on a record that carries something (§15.11)', () => {
+/**
+ * §15.11 — a record that carries nothing makes the script stamp nothing, and
+ * what it does stamp is what the typed side derives.
+ *
+ * The reference is `stampClassesFor` and `stampProgressFor` over
+ * `coerceRecordData(raw)`, the pair that decides what the application holds
+ * after mount. The cases include malformed raw payloads as well as well-formed
+ * ones, because the script's presence checks run on RAW storage, before
+ * `coerceRecordData`: a record read back out of storage is untrusted input
+ * (§12.1.3), and a gate applying weaker rules than the parser it guards would
+ * draw marks from a value the parser discards. Seven such shapes were measured
+ * when it did. The rule is written twice — an inline script has no module graph
+ * to import from — and these cases are the only thing keeping the copies honest.
+ */
+describe('a record that carries nothing stamps nothing (§15.11)', () => {
   const script = recordBootScript(TOTALS, MODULES)
+  const FACTS = { categoryTotals: TOTALS, slugToModule: MODULES }
 
   const withSheet = (sheet: Partial<SheetRecord>): RecordData => ({
     ...EMPTY_RECORD,
@@ -339,6 +322,14 @@ describe('data-hl-record only goes on a record that carries something (§15.11)'
     ['dwell on a module and nothing else', withSheet({ dwellSeconds: 41 })],
     ['one checklist box', withSheet({ checklist: { '7': true } })],
     ['a module completed', withSheet({ signedOff: '2026-08-14T09:00:00.000Z' })],
+    ['an empty module entry For Everyone', { ...EMPTY_RECORD, everyoneSheets: { 'fundamentals/llms': emptySheetRecord() } }],
+    [
+      'a module completed For Everyone',
+      {
+        ...EMPTY_RECORD,
+        everyoneSheets: { 'fundamentals/llms': { ...emptySheetRecord(), signedOff: '2026-08-14T09:00:00.000Z' } },
+      },
+    ],
   ]
 
   /**
@@ -373,30 +364,45 @@ describe('data-hl-record only goes on a record that carries something (§15.11)'
     ['a signedRevision too short to be a hash', { sheets: { 'fundamentals/llms': { signedRevision: 'abc' } } }],
     ['a module key over the safe length', { sheets: { ['f/' + 'x'.repeat(250)]: { reachedEnd: true } } }],
     ['modules as an array', { sheets: [{ reachedEnd: true }] }],
+    ['one real sign-off among fields of the wrong shape', { days: 'x', sheets: { 'fundamentals/llms': { signedOff: '2026-08-14T09:00:00.000Z', dwellSeconds: 'lots', checklist: 'yes' } } }],
+    ['a sign-off that is not a date', { sheets: { 'fundamentals/llms': { signedOff: 'yesterday' } } }],
+    ['a For Everyone sign-off on an impossible day', { everyoneSheets: { 'fundamentals/llms': { signedOff: '2026-02-31T09:00:00.000Z' } } }],
   ]
 
   const both: ReadonlyArray<[string, unknown]> = [...CASES, ...MALFORMED]
 
+  /** Everything the script stamped that the typed side owns, as one comparable value. */
+  const marks = (stamped: Stamped) => ({
+    classes: [...stamped.classes].sort(),
+    properties: Object.fromEntries([...stamped.properties].sort()),
+  })
+  const derived = (data: unknown) => {
+    const typed = coerceRecordData(data)
+    return {
+      classes: stampClassesFor(typed, FACTS),
+      properties: stampProgressFor(typed, FACTS),
+    }
+  }
+
   for (const [name, data] of both) {
-    it(`agrees with the coercer for: ${name}`, () => {
+    it(`stamps what the coercer derives for: ${name}`, () => {
       const stamped = run(script, { stored: envelope(data) })
       expect(stamped.attributes.get('data-hl-storage')).toBe('ok')
-      expect(stamped.attributes.has('data-hl-record'))
-        .toBe(!carriesNothing(coerceRecordData(data)))
+      expect(marks(stamped)).toEqual(derived(data))
     })
   }
 
   /**
-   * Non-vacuity for the block above: a case list that happened to be all-`false`
-   * would pass against a gate that never stamps, and all-`true` against one that
-   * always does. Both answers have to appear, on both halves of the list.
+   * Non-vacuity for the block above: a case list whose every answer is empty
+   * would pass against a script that never stamps, and one whose every answer
+   * is non-empty against a script that always does. Both have to appear, on
+   * both halves of the list.
    */
   it('has cases on both sides of the answer, well-formed and malformed alike', () => {
-    const kept = (data: unknown) => !carriesNothing(coerceRecordData(data))
     for (const half of [CASES, MALFORMED]) {
-      const answers = half.map(([, data]) => kept(data))
-      expect(answers).toContain(true)
-      expect(answers).toContain(false)
+      const stamps = half.map(([, data]) => derived(data).classes.length > 0)
+      expect(stamps).toContain(true)
+      expect(stamps).toContain(false)
     }
   })
 
@@ -405,7 +411,6 @@ describe('data-hl-record only goes on a record that carries something (§15.11)'
     // storage is blocked must be told so even with nothing recorded.
     const blocked = run(script, { stored: envelope(EMPTY_RECORD), getterThrows: true })
     expect(blocked.attributes.get('data-hl-storage')).toBe('blocked')
-    expect(blocked.attributes.has('data-hl-record')).toBe(false)
   })
 
   /**
@@ -416,9 +421,9 @@ describe('data-hl-record only goes on a record that carries something (§15.11)'
    * carries nothing by §15.11's rule, so the gate returns before any class is
    * touched. Stamping either after it would mean the rail sprang open, and the
    * catalog fell back to the overview, on every load for exactly the readers
-   * who had asked for something else. Both attributes are asserted together
-   * with the ABSENCE of `data-hl-record`, which is what makes this a test of
-   * the order rather than of the attribute.
+   * who had asked for something else. The attributes are asserted together
+   * with an empty class list, which is what makes this a test of the order: the
+   * gate did return early, and the preferences were stamped anyway.
    */
   it('stamps a layout preference on a record that carries nothing (M10, M12)', () => {
     const stamped = run(script, {
@@ -426,7 +431,6 @@ describe('data-hl-record only goes on a record that carries something (§15.11)'
     })
     expect(stamped.attributes.get('data-bz-rail')).toBe('folded')
     expect(stamped.attributes.get('data-hl-view')).toBe('table')
-    expect(stamped.attributes.has('data-hl-record')).toBe(false)
     expect([...stamped.classes]).toEqual([])
   })
 
@@ -454,7 +458,7 @@ describe('data-hl-record only goes on a record that carries something (§15.11)'
     // state is a colour choice would otherwise meet Night on every load.
     expect(stamped.attributes.get('data-hl-figures')).toBe('paper')
     expect(stamped.attributes.get('data-hl-code')).toBe('blueprint')
-    expect(stamped.attributes.has('data-hl-record')).toBe(false)
+    expect(stamped.classes.size).toBe(0)
 
     for (const palette of ['sepia', '', 7, null, {}, 'PAPER'])
       for (const [field, attribute] of [['figurePalette', 'data-hl-figures'], ['codePalette', 'data-hl-code']])
@@ -479,7 +483,8 @@ describe('data-hl-record only goes on a record that carries something (§15.11)'
     ]) {
       const stamped = run(script, { stored: envelope(data) })
       expect(stamped.attributes.get('data-hl-storage')).toBe('ok')
-      expect(stamped.attributes.has('data-hl-record')).toBe(false)
+      expect(stamped.classes.size).toBe(0)
+      expect(stamped.properties.size).toBe(0)
     }
   })
 })

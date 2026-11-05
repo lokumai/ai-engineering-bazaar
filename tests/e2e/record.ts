@@ -333,8 +333,6 @@ export async function waitForSheet(
 /** What `<html>` carried inside the first `requestAnimationFrame`. */
 export interface FirstPaint {
   className: string
-  /** `data-hl-record="1"` — a readable record exists. */
-  record: string | null
   /** `data-hl-storage` — §12.13's class 1 told from class 4. */
   storage: string | null
   /**
@@ -375,7 +373,6 @@ export async function probeFirstPaint(page: Page): Promise<void> {
       const root = document.documentElement
       ;(window as unknown as PaintWindow).__hlRecordFirstPaint = {
         className: root.className,
-        record: root.getAttribute('data-hl-record'),
         storage: root.getAttribute('data-hl-storage'),
         hydrated: document.querySelector('.bz-readout')?.getAttribute('data-hydrated') ?? null,
       }

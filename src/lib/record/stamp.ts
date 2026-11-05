@@ -27,7 +27,7 @@
  * DOM at all.
  */
 
-import { carriesNothing, type RecordData } from './schema'
+import type { RecordData } from './schema'
 import { type Track, trackOfPath } from '../tracks'
 
 /** The slice of `<html>` the stamps touch. */
@@ -37,7 +37,6 @@ export interface StampRoot {
     remove(token: string): void
     forEach?(callback: (token: string) => void): void
   }
-  setAttribute(name: string, value: string): void
   /** Every class currently on the element, so the stale ones can be removed. */
   readonly className: string
   /**
@@ -202,37 +201,4 @@ export function stampRecordState(
 
   // `data-hl-storage` is deliberately NOT touched here. It is an answer only the
   // boot script can give: whether the READ threw, at load, in this document.
-  //
-  // `data-hl-record` is set here and NEVER REMOVED, and the asymmetry is the
-  // whole of it. See `RECORD_ATTR` below.
-  if (!carriesNothing(data)) root.setAttribute(RECORD_ATTR, '1')
 }
-
-/**
- * Why the record attribute goes ON here and never comes OFF.
- *
- * **The removal half stays with the load, for §12.13.** `data-hl-record`
- * separates empty-state class 1 from class 2: a fresh browser has no attribute
- * at all and reads as NEVER STARTED, while a reader who erased their record
- * keeps the `1` the load stamped and correctly reads as CLEARED BY YOU.
- * Recomputing the attribute from the live record — setting AND clearing —
- * collapses the two, because an erased record and a never-started one look
- * identical from the inside and only the load can tell them apart. That is why
- * this function did not touch the attribute at all.
- *
- * **But the addition half was never covered by that reason, and §15 made its
- * absence reader-visible.** Before the home screen, this attribute drove only
- * §12.13's copy, where being one load out of date costs nothing. §15.2.1 hung
- * the entire choice between the home screen's two halves on it (`app/home.css`),
- * and every navigation on this site is a client transition — so a reader who
- * arrived with no record, saved an alias or signed off a sheet, and then pressed
- * Home was shown the first-visit document and told they were new here. MEASURED
- * in Chrome: `data-hl-record` absent, `.hl-home-new` visible, and correct only
- * after a full reload.
- *
- * Setting it one-way fixes that and cannot collapse §12.13's two classes: the
- * attribute only ever appears for a record that carries something, and an erase
- * leaves it exactly where the old reasoning wanted it — present, because this
- * browser did once hold a record.
- */
-const RECORD_ATTR = 'data-hl-record'

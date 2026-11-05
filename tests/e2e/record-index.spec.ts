@@ -320,7 +320,6 @@ test('the boot script stamps the index before its first paint too (§12.2 channe
   expect(painted).toBeDefined()
   expect(painted!.className).toContain(`hl-signed-${SEEDED.module}`)
   expect(painted!.className).toContain(`hl-cat-${SEEDED.category}-started`)
-  expect(painted!.record).toBe('1')
 })
 
 // ---------------------------------------------------------------------------

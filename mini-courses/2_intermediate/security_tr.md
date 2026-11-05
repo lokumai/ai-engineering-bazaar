@@ -180,25 +180,33 @@ Sıradaki konu, bir repo'nun içinde değil günlük hayatında seninle yaşayan
 
 ## Kaynaklar
 
+### 📄 Makaleler
+
 - [Adversarial Prompting in LLMs](https://www.promptingguide.ai/risks/adversarial): injection, leaking ve jailbreaking arasındaki net ayrım. Aşağıdaki sayfalar her birine daha derinlemesine iniyor
 - [Prompt Injection in LLMs](https://www.promptingguide.ai/prompts/adversarial-prompting/prompt-injection), [Prompt Leaking in LLMs](https://www.promptingguide.ai/prompts/adversarial-prompting/prompt-leaking) ve [Jailbreaking LLMs](https://www.promptingguide.ai/prompts/adversarial-prompting/jailbreaking-llms): her biri için ayrı bir sayfa, çalıştırabileceğin örneklerle
 - [What Are AI Guardrails?](https://www.ibm.com/think/topics/ai-guardrails): girdi tarafı ve çıktı tarafı ayrımı, sade bir dille
-- [Guardrails AI](https://github.com/guardrails-ai/guardrails): model çağrısının etrafındaki validator'lar, bir kontrol başarısız olduğunda yeniden deneme ile
-- [NeMo Guardrails](https://github.com/NVIDIA-NeMo/Guardrails): konuşma tabanlı sistemler için programlanabilir rail'ler
 - [LangChain guardrails](https://docs.langchain.com/oss/python/langchain/guardrails): before-agent ve after-agent middleware'leri, ayrıca PII ve insan onaylı işlem
+- [The Crescendo Multi-Turn LLM Jailbreak Attack](https://www.usenix.org/conference/usenixsecurity25/presentation/russinovich): kademeli tırmanan zararsız sorular. Anlaman gereken en önemli saldırı biçimi budur
+- [DeepInception](https://arxiv.org/abs/2311.03191), [FlipAttack](https://arxiv.org/abs/2410.02832), [Sugar-Coated Poison](https://arxiv.org/abs/2504.05652) ve [BreakFun](https://arxiv.org/abs/2510.17904): dört saldırı makalesi daha, sonuncusu bizim
+
+### 🛠️ Araçlar
+
 - [Prompt Guard 86M](https://huggingface.co/meta-llama/Prompt-Guard-86M): girdiyi benign, injection ya da jailbreak olarak sınıflandıran küçük bir sınıflandırıcı
 - [Llama Guard 4](https://developer.meta.com/ai/docs/model-cards-and-prompt-formats/llama-guard-4/): 12B, çok modlu, 14 tehlike kategorisi, girdi ve çıktı
 - [Llama Guard 3](https://ollama.com/library/llama-guard3), [Granite 4.1 Guardian](https://ollama.com/library/granite4.1-guardian) ve [ShieldGemma](https://ollama.com/library/shieldgemma): üçü de Ollama üzerinde, yani yerelde başlamanın en kolay yolu
 - [gpt-oss-safeguard](https://ollama.com/library/gpt-oss-safeguard): senin yazdığın bir politikaya göre karar verir ve gerekçesini gösterir
 - [Llama 3.1 Nemotron Safety Guard 8B v3](https://build.nvidia.com/nvidia/llama-3_1-nemotron-safety-guard-8b-v3): 9 dilde 23 kategori
+- [AI Red Teaming Agent](https://learn.microsoft.com/en-us/azure/foundry/concepts/ai-red-teaming-agent): otomatik yoklama, PyRIT üzerine kurulu ve bir saldırı başarı oranı raporlar
+
+### 🗃️ Repolar
+
+- [Guardrails AI](https://github.com/guardrails-ai/guardrails): model çağrısının etrafındaki validator'lar, bir kontrol başarısız olduğunda yeniden deneme ile
+- [NeMo Guardrails](https://github.com/NVIDIA-NeMo/Guardrails): konuşma tabanlı sistemler için programlanabilir rail'ler
 - [promptfoo](https://github.com/promptfoo/promptfoo): bir yapılandırmadan, CI içinde red teaming ve tarama
 - [deepteam](https://github.com/confident-ai/deepteam): LLM'ler ve agent'lar için bir red teaming framework'ü
 - [OpenRT](https://github.com/AI45Lab/OpenRT): çok modlu modeller için 40'tan fazla saldırı yöntemi
 - [PyRIT](https://github.com/microsoft/PyRIT): Microsoft'un red teaming framework'ü, Crescendo, TAP ve PAIR çalıştırılabilir sınıflar olarak
-- [AI Red Teaming Agent](https://learn.microsoft.com/en-us/azure/foundry/concepts/ai-red-teaming-agent): otomatik yoklama, PyRIT üzerine kurulu ve bir saldırı başarı oranı raporlar
 - [AI Red Teaming Playground Labs](https://github.com/microsoft/AI-Red-Teaming-Playground-Labs): bunu yaparak öğrenmek için laboratuvarlar ve altyapı
 - [Strix](https://github.com/usestrix/strix), [Shannon](https://github.com/KeygraphHQ/shannon), [PentAGI](https://github.com/vxcontrol/pentagi) ve [Pentest Swarm AI](https://github.com/Armur-Ai/Pentest-Swarm-AI): penetrasyon testini yapan agent'lar
 - [claude-red](https://github.com/SnailSploit/Claude-Red): zaten sahip olduğun bir agent için ofansif güvenlik skill kütüphanesi
 - [security-audit-skill](https://github.com/cloudflare/security-audit-skill): aynı mekanizmanın savunma tarafı, Cloudflare'den, her bulgu raporlanmadan önce doğrulanmış olarak
-- [The Crescendo Multi-Turn LLM Jailbreak Attack](https://www.usenix.org/conference/usenixsecurity25/presentation/russinovich): kademeli tırmanan zararsız sorular. Anlaman gereken en önemli saldırı biçimi budur
-- [DeepInception](https://arxiv.org/abs/2311.03191), [FlipAttack](https://arxiv.org/abs/2410.02832), [Sugar-Coated Poison](https://arxiv.org/abs/2504.05652) ve [BreakFun](https://arxiv.org/abs/2510.17904): dört saldırı makalesi daha, sonuncusu bizim

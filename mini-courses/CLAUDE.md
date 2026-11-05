@@ -59,6 +59,14 @@ drops in-progress images into the category folders. **Do not commit or push unle
   is"). Two headings keep their exact text because the app matches them: `## Summary` / `## Özet`
   and `## Where this fits in the series` / `## Bu serinin neresindeyiz` (Persian below).
 - **Every module ends with links out** and a References list built only from links used in the text.
+- **The References list is grouped by kind**, under `###` headings, each present only when it has an
+  item, in this order and with these exact words: `### 📄 Articles` (written posts, papers, docs
+  pages that explain a topic), `### 🎬 Videos`, `### 🛠️ Tools` (a product, library or service, by its
+  home page or docs landing), `### 🗃️ Repositories` (GitHub or GitLab, awesome-lists included),
+  `### 🧭 Modules` (a relative `.md` link). Turkish: `Makaleler`, `Videolar`, `Araçlar`, `Repolar`,
+  `Modüller`. Persian: `مقاله‌ها`, `ویدیوها`, `ابزارها`, `Repository‌ها` (with a zero-width
+  non-joiner before `ها`), `ماژول‌ها`. An item's kind is the kind of its first link, and it keeps the
+  same kind in all three languages. Items keep the author's order inside a group.
 
 ## Images and captions
 

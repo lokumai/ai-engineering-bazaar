@@ -248,16 +248,30 @@ Next: everything in this module made an agent harder to supervise. The Security 
 
 ## References
 
+### 📄 Articles
+
 - [The Art of Loop Engineering](https://www.langchain.com/blog/the-art-of-loop-engineering): loop engineering as stacking loops, and the four levels
 - [Loop engineering: Getting started with loops](https://claude.com/blog/getting-started-with-loops): `/goal`, `/loop` and `/schedule`, with the stop condition each one uses
 - [everything is a ralph loop](https://ghuntley.com/loop/): the original technique, and the one-task-per-loop rule
-- [ralph-loop plugin](https://claude.com/plugins/ralph-loop): the packaged version for Claude Code
-- [snarktank/ralph](https://github.com/snarktank/ralph): an autonomous loop that runs until every item in a requirements document is complete
-- [loop-engineering](https://github.com/cobusgreyling/loop-engineering): patterns, starters and CLI tools, including cost auditing for a long run
 - [Ralph Wiggum Loop for Claude Code](https://awesomeclaude.ai/ralph-wiggum): a written walkthrough, and why the operator's prompt matters more than the model
 - [Orchestrate teams of Claude Code sessions](https://code.claude.com/docs/en/agent-teams): agent teams, the shared task list, and the architecture behind it
 - [Orchestrate subagents at scale with dynamic workflows](https://code.claude.com/docs/en/workflows): what a workflow script looks like, its limits, and the four-way comparison
 - [Executable Code Actions Elicit Better LLM Agents](https://arxiv.org/abs/2402.01030): CodeAct, where code becomes the action space
 - [Recursive Language Models](https://arxiv.org/abs/2512.24601): the paper, with [Alex Zhang's write-up](https://alexzhang13.github.io/blog/2025/rlm/) and the [rlm](https://github.com/alexzhang13/rlm) library
+
+### 🎬 Videos
+
 - [Loop Engineering explained in 8min..](https://www.youtube.com/watch?v=4biXYSNkn9Y): this module's own subject in eight minutes, if you would rather watch it
+
+### 🛠️ Tools
+
+- [ralph-loop plugin](https://claude.com/plugins/ralph-loop): the packaged version for Claude Code
+
+### 🗃️ Repositories
+
+- [snarktank/ralph](https://github.com/snarktank/ralph): an autonomous loop that runs until every item in a requirements document is complete
+- [loop-engineering](https://github.com/cobusgreyling/loop-engineering): patterns, starters and CLI tools, including cost auditing for a long run
+
+### 🧭 Modules
+
 - [Advanced Agent Architectures](../3_expert/advanced_agent_architectures.md): CodeAct, recursive language models and the rest, covered properly

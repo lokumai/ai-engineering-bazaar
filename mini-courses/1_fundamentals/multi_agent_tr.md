@@ -151,8 +151,13 @@ Intermediate'teki her şey bu yedi fikrin üzerine kurulu.
 
 ## Kaynaklar
 
+### 📄 Makaleler
+
 - [Multi-agent systems](https://docs.langchain.com/oss/python/langchain/multi-agent): bu kalıpları daha derinlemesine anlatıyor
 - [LangGraph multi-agent concepts](https://langchain-ai.github.io/langgraph/concepts/multi_agent/): supervisor, network ve diğerleri, kod örnekleriyle birlikte
 - [What is an agent?](https://www.langchain.com/blog/what-is-an-agent): supervisor'ın aslında bir özerklik kararı olduğunu hatırlamak için burada yeniden okumaya değer
+
+### 🧭 Modüller
+
 - [AI Agents](agents_tr.md): bütün bunların üzerine kurulduğu tek döngü
 - [İleri Seviye Multi-Agent](../3_expert/advanced_multiagent_tr.md): ortak ve izole bağlam ile agent'lar arası protokoller

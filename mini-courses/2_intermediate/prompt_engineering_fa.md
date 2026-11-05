@@ -360,13 +360,24 @@ chain of thought هم قبلاً یکی از همین تکنیک‌ها بود،
 
 ## منابع
 
+### 📄 مقاله‌ها
+
 - [Prompt Engineering Guide](https://www.promptingguide.ai/): فهرست کامل تکنیک‌ها، خیلی بیشتر از چیزی که این‌جا گفتیم
 - [Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices): راهنمای فعلی Anthropic، و جایی که دو تا مثال قبل و بعد رو ازش برداشتیم
 - [Quantifying Language Models' Sensitivity to Spurious Features in Prompt Design](https://arxiv.org/abs/2310.11324): اندازه‌گیری اینکه مدل‌های نسل 2023 واقعاً چقدر شکننده بودن
 - [Why Can Large Language Models Generate Correct Chain-of-Thoughts?](https://arxiv.org/abs/2310.13571): تئوری پشت این ایده که برای مدل، نوشتن همون فکر کردنه
-- [Chain of Thought Visualizer](https://cot-visualizer.online/): استدلال کردن و جواب فوری دادن، کنار هم
 - [Effort](https://platform.claude.com/docs/en/build-with-claude/effort): پیچ فکر کردن، و اینکه هر سطحش به چه کاری میاد
 - [Stop Overthinking: A Survey on Efficient Reasoning for Large Language Models](https://arxiv.org/abs/2503.16419): پژوهش‌های مربوط به زیادی فکر کردن، یک‌جا
 - [When "A Helpful Assistant" Is Not Really Helpful](https://arxiv.org/abs/2311.10054): پژوهشی که نشون داد prompt‌های persona کمتر از اون چیزی که امید داشتن کمک می‌کنن
+
+### 🛠️ ابزارها
+
+- [Chain of Thought Visualizer](https://cot-visualizer.online/): استدلال کردن و جواب فوری دادن، کنار هم
+
+### 🗃️ Repository‌ها
+
 - [System prompt leaks](https://github.com/asgeirtj/system_prompts_leaks): system prompt‌های محصول‌های واقعی، کلمه به کلمه
+
+### 🧭 ماژول‌ها
+
 - [Advanced Prompting](../3_expert/advanced_prompting.md): تکنیک‌هایی که این درس عمداً سراغشون نرفت

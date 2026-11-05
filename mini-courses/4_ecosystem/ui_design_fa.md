@@ -93,7 +93,15 @@ Google Stitch از یه prompt، عکس یا طرح دستی یه صفحه‌ی 
 
 ## منابع
 
-- [Google Stitch](https://stitch.withgoogle.com/): از یه prompt، عکس یا طرح دستی، یه interface واقعی می‌سازه و با یه کلیک می‌فرستدش توی Figma
+### 📄 مقاله‌ها
+
 - [From idea to app: Introducing Stitch](https://developers.googleblog.com/stitch-a-new-way-to-design-uis/): اعلام رسمی خود گوگل، و جایی که قرارداد DESIGN.md از اونجا شروع شد
+
+### 🛠️ ابزارها
+
+- [Google Stitch](https://stitch.withgoogle.com/): از یه prompt، عکس یا طرح دستی، یه interface واقعی می‌سازه و با یه کلیک می‌فرستدش توی Figma
 - [Claude Design](https://claude.ai/design): prototype رو به شکل کد واقعی می‌سازه، و می‌تونه design system رو از دل یه codebase بخونه
+
+### 🗃️ Repository‌ها
+
 - [awesome-design-md](https://github.com/VoltAgent/awesome-design-md): فایل‌های DESIGN.md آماده برای برندهای معروف، که اثرش رو با یه بار اجرا ببینی

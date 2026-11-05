@@ -95,6 +95,11 @@ graph LR
 
 ## منابع
 
+### 📄 مقاله‌ها
+
 - [The three memory types every LLM developer must know](https://medium.com/@sahilnanga4/the-three-memory-types-every-llm-developer-must-know-3358c26fdff3): همین تقسیم‌بندی، از یه زاویه‌ی دیگه
+
+### 🧭 ماژول‌ها
+
 - [RAG و Embedding‌ها](rag_fa.md): این‌که long-term memory چطور برمی‌گرده توی working memory
 - [Advanced Memory](../3_expert/advanced_memory.md): ادامه‌ی این بحث

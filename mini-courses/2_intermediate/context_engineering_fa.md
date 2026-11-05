@@ -241,6 +241,8 @@ deep agent یعنی agent‌ی که بیشتر این کارها رو خودش �
 
 ## منابع
 
+### 📄 مقاله‌ها
+
 - [Context Rot: How Increasing Input Tokens Impacts LLM Performance](https://www.trychroma.com/research/context-rot): پژوهش Chroma که همه‌ی این بحث از اون شروع شد، با 18 مدل و آزمایش‌های سوزن و distractor
 - [How Long Contexts Fail](https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html): چهار شکست اسم‌دار Drew Breunig، از یه hallucination اولیه که مدام بهش ارجاع داده می‌شه تا اطلاعات تازه‌ای که با قبلی‌ها تناقض داره
 - [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents): کامل‌ترین توضیح، و منبع راهنمایی‌های compaction و subagent
@@ -249,14 +251,26 @@ deep agent یعنی agent‌ی که بیشتر این کارها رو خودش �
 - [Context Engineering for Agents](https://rlancemartin.github.io/2025/06/23/context_engineering/): همون چهار تا، با نمودارهایی که می‌ارزه دوباره ازشون استفاده کنی
 - [Karpathy on context engineering](https://x.com/karpathy/status/1937902205765607626): پستی که این اصطلاح رو سر زبون همه انداخت
 - [Context Engineering for AI Agents: Lessons from Building Manus](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus): درس‌های مشخص از تجربه‌ی واقعی، مخصوصاً درباره‌ی filesystem و recitation
-- [Stop stuffing your context window (here's why)](https://youtube.com/shorts/9P36wMntNSI): نسخه‌ی کوتاهش، اگه دیدن ویدیو رو ترجیح می‌دی
-- [DeepWiki](https://deepwiki.org/): یه wiki برای هر repository، تا agent‌ت به‌جای خوندن خود کد، درباره‌ی کد بخونه
 - [Agents 2.0: From Shallow Loops to Deep Agents](https://www.philschmid.de/agents-2.0-deep-agents): اینکه چی یه agent رو deep می‌کنه، و چرا این یه معماریه نه یه feature
 - [What Is a Deep Agent?](https://www.nvidia.com/en-us/glossary/deep-agents/): همون تعریف، ساده و سرراست
 - [The Agent 2.0 Era: Mastering Long-Horizon Tasks with Deep Agents](https://medium.com/@amirkiarafiei/the-agent-2-0-era-mastering-long-horizon-tasks-with-deep-agents-part-3-745705e13b16): همون معماری، از اول تا آخر
-- [deepagents](https://github.com/langchain-ai/deepagents): خود کتابخونه، و [Deep Agents overview](https://docs.langchain.com/oss/python/deepagents/overview) که مستنداتشه
 - [Context Engineering: How Deep Agents Remember](https://www.langchain.com/blog/context-engineering-deep-agents-remember): اینکه deepagents چطور context یه اجرای طولانی رو کوچیک نگه می‌داره (offloading، خلاصه‌سازی، skill‌ها، subagent‌ها و فایل‌های memory)، و چرا نگه داشتن memory توی فایل‌های ساده باعث می‌شه بتونی مدل رو عوض کنی
 - [Measuring AI Ability to Complete Long Software Tasks](https://arxiv.org/abs/2503.14499): عدد time horizon از کجا میاد، و روند دو برابر شدنش
 - [Task-completion time horizons](https://metr.org/time-horizons/): عددهای فعلی هر مدل، همیشه به‌روز
+
+### 🎬 ویدیوها
+
+- [Stop stuffing your context window (here's why)](https://youtube.com/shorts/9P36wMntNSI): نسخه‌ی کوتاهش، اگه دیدن ویدیو رو ترجیح می‌دی
+
+### 🛠️ ابزارها
+
+- [DeepWiki](https://deepwiki.org/): یه wiki برای هر repository، تا agent‌ت به‌جای خوندن خود کد، درباره‌ی کد بخونه
+
+### 🗃️ Repository‌ها
+
+- [deepagents](https://github.com/langchain-ai/deepagents): خود کتابخونه، و [Deep Agents overview](https://docs.langchain.com/oss/python/deepagents/overview) که مستنداتشه
 - [Awesome-Long-Horizon-Agents](https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents): تصویر کلی پژوهش‌ها، دسته‌بندی‌شده، اگه بخوای از این درس عمیق‌تر بری
+
+### 🧭 ماژول‌ها
+
 - [Advanced Context Engineering](../3_expert/advanced_context_engineering.md): تکنیک‌هایی که این درس کنار گذاشت

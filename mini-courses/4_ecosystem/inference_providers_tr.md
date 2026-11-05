@@ -122,8 +122,13 @@ Gecikmeyi de ücretli katmanda ölç, çünkü ücretsiz katman sunacağın ür�
 
 ## Kaynaklar
 
+### 🛠️ Araçlar
+
 - [OpenRouter](https://openrouter.ai/): birçok model için tek key ve bu modelleri karşılaştırmanın en hızlı yolu
 - [Portkey](https://portkey.ai/) ve açık kaynaklı [gateway](https://github.com/Portkey-AI/gateway)'i: kendi key'lerinle yönlendirme, üstüne guardrail'ler ve observability
 - [AgentRouter](https://www.agentrouter.to/quick-start): bir agent'ın çağırdığı ücretli API'ler için tek key ve tek cüzdan
 - [Google AI Studio](https://aistudio.google.com/): ücretsiz bir key ve öğrenmek için yeterli bir günlük kota
+
+### 🧭 Modüller
+
 - [LLM Temelleri](../1_fundamentals/llms_tr.md): ilk API çağrısının ve niceleme (quantization) trade-off'unun anlatıldığı bölüm

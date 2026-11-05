@@ -297,11 +297,22 @@ fine-tuning again?
 
 ## References
 
+### 📄 Articles
+
 - [RAG vs fine-tuning](https://www.redhat.com/en/topics/ai/rag-vs-fine-tuning): Red Hat's comparison, the long version of the section above
+
+### 🎬 Videos
+
 - [What is RAG?](https://youtube.com/shorts/KBRvB_NDY-o?si=DIUHt8lihi0EzgxT): the whole idea, in one short video
 - [Fine-Tuning vs RAG: Why Not Both?](https://youtube.com/shorts/24jqSMs10zE?si=zuhAbSZcFGkTKVfI): on using the two together
+
+### 🛠️ Tools
+
 - [Haystack](https://haystack.deepset.ai/): RAG pipelines from ready-made parts
 - [LlamaIndex](https://www.llamaindex.ai/): connecting an LLM to your data
+
+### 🗃️ Repositories
+
 - [ChromaDB](https://github.com/chroma-core/chroma): the easiest vector database to start with
 - [FAISS](https://github.com/facebookresearch/faiss): the search layer on its own
 - [RAGFlow](https://github.com/infiniflow/ragflow), [LightRAG](https://github.com/HKUDS/LightRAG), [PageIndex](https://github.com/VectifyAI/PageIndex), [RAG-Anything](https://github.com/HKUDS/RAG-Anything), [DocsGPT](https://github.com/arc53/DocsGPT), [MiniRAG](https://github.com/HKUDS/MiniRAG) and [PixelRAG](https://github.com/StarTrail-org/PixelRAG): complete RAG systems you can run as they are

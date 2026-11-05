@@ -178,9 +178,17 @@ Sırada ise bir agent birden fazlaya dönüştüğünde neler olduğu var.
 
 ## Kaynaklar
 
+### 📄 Makaleler
+
 - [LLM agents](https://www.promptingguide.ai/research/llm-agents): aynı fikri daha geniş ele alan bir derleme
 - [Agent components](https://www.promptingguide.ai/agents/components): bir agent'ın parçaları tek tek
 - [What is an agent?](https://www.langchain.com/blog/what-is-an-agent): agent'ları, iş akışlarını ve durum makinelerini tek bir özerklik spektrumunda yerleştiriyor
+
+### 🗃️ Repolar
+
 - [smolagents](https://github.com/huggingface/smolagents): yukarıda kullanılan framework
+
+### 🧭 Modüller
+
 - [LLM Tool Calling](tools_tr.md): tool şemasının nereden geldiği
 - [Memory](memory_tr.md): döngünün büyüttüğü mesaj yığını

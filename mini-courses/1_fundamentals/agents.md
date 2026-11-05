@@ -229,9 +229,17 @@ Next: what happens when one agent becomes several.
 
 ## References
 
+### 📄 Articles
+
 - [LLM agents](https://www.promptingguide.ai/research/llm-agents): a fuller survey of the same idea
 - [Agent components](https://www.promptingguide.ai/agents/components): the parts of an agent, one by one
 - [What is an agent?](https://www.langchain.com/blog/what-is-an-agent): places agents, workflows and state machines on one autonomy spectrum
+
+### 🗃️ Repositories
+
 - [smolagents](https://github.com/huggingface/smolagents): the framework used above
+
+### 🧭 Modules
+
 - [Tool Calling](tools.md): where the tool schema comes from
 - [Memory](memory.md): the message stack that the loop keeps growing

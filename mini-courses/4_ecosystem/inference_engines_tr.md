@@ -102,9 +102,14 @@ Batching, bu modüldeki her sayıyı açıklayan fikirdir. Tek bir isteğe hizme
 
 ## Kaynaklar
 
+### 🛠️ Araçlar
+
+- [Ollama](https://ollama.com/) ve [LM Studio](https://lmstudio.ai/): [LLM Temelleri](../1_fundamentals/llms_tr.md) modülünde anlatılan yerel sarmalayıcılar.
+
+### 🗃️ Repolar
+
 - [llama.cpp](https://github.com/ggml-org/llama.cpp): C ve C++ ile yazılmış bir LLM inference projesi. Yerel sarmalayıcıların dayandığı temel budur.
 - [SGLang](https://github.com/sgl-project/sglang): yüksek performanslı serving. Ortak bir prefix paylaşan isteklerde güçlüdür.
 - [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM): NVIDIA'dan gelir ve daha düşük gecikme için önceden derlenir.
 - [llm-d](https://github.com/llm-d/llm-d): Kubernetes üzerinde birden fazla makineye yayılmış serving.
 - [Open WebUI](https://github.com/open-webui/open-webui): bunların herhangi birinin önüne koyabileceğin chat arayüzü.
-- [Ollama](https://ollama.com/) ve [LM Studio](https://lmstudio.ai/): [LLM Temelleri](../1_fundamentals/llms_tr.md) modülünde anlatılan yerel sarmalayıcılar.

@@ -119,6 +119,16 @@ Agno، CrewAI، smolagents و Pydantic AI بقیه‌ی گزینه‌های Pyth
 
 ## منابع
 
+### 📄 مقاله‌ها
+
+- [AI Workflows vs AI Agents](https://www.promptingguide.ai/agents/ai-workflows-vs-ai-agents): فرق این دو، و اینکه هر کدوم کِی درسته
+
+### 🛠️ ابزارها
+
+- [Lovable](https://lovable.dev/)، [Bolt](https://bolt.new/) و [Replit](https://replit.com/): اپلیکیشنی که می‌خوای رو با زبون ساده توضیح بده و یه نسخه‌ی کارکن تحویل بگیر
+
+### 🗃️ Repository‌ها
+
 - [LangChain](https://github.com/langchain-ai/langchain): رابط اصلی، و جایی که باید شروع کنی
 - [LangGraph](https://github.com/langchain-ai/langgraph): runtime زیرش، برای وقتی که می‌خوای جریان کار رو خودت کنترل کنی
 - [deepagents](https://github.com/langchain-ai/deepagents): معماری deep agent، که از قبل سرهم شده
@@ -127,6 +137,4 @@ Agno، CrewAI، smolagents و Pydantic AI بقیه‌ی گزینه‌های Pyth
 - [smolagents](https://github.com/huggingface/smolagents): ساده‌ترینشون، و بهترینشون برای خوندن
 - [Pydantic AI](https://github.com/pydantic/pydantic-ai): از سر تا ته type داره، پس یه tool call خراب با یه خطای روشن fail می‌شه
 - [Mastra](https://github.com/mastra-ai/mastra) و [VoltAgent](https://github.com/VoltAgent/voltagent): گزینه‌های TypeScript
-- [AI Workflows vs AI Agents](https://www.promptingguide.ai/agents/ai-workflows-vs-ai-agents): فرق این دو، و اینکه هر کدوم کِی درسته
 - [n8n](https://github.com/n8n-io/n8n): پلتفرم workflow، با [یه MCP server که workflow‌ها رو برات می‌سازه](https://docs.n8n.io/advanced-ai/mcp/accessing-n8n-mcp-server/)
-- [Lovable](https://lovable.dev/)، [Bolt](https://bolt.new/) و [Replit](https://replit.com/): اپلیکیشنی که می‌خوای رو با زبون ساده توضیح بده و یه نسخه‌ی کارکن تحویل بگیر

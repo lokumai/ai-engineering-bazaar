@@ -207,6 +207,8 @@ Agent = Model + Harness. Claude Code، Codex و Pi همه harness‌ان. harnes
 
 ## منابع
 
+### 📄 مقاله‌ها
+
 - [Harness Engineering: What It Is and How It Complements Context Engineering](https://medium.com/@amirkiarafiei/harness-engineering-what-it-is-and-how-it-complements-context-engineering-6545b40bfc84): ماشین، پیست و گاردریل‌ها، با همه‌ی جزئیات
 - [The Anatomy of an Agent Harness](https://www.langchain.com/blog/the-anatomy-of-an-agent-harness): Agent = Model + Harness، و لیست اجزایی که این درس از روش جلو رفته
 - [How to Build a Custom Agent Harness](https://www.langchain.com/blog/how-to-build-a-custom-agent-harness): ساختن یه harness برای خودت، با middleware
@@ -215,11 +217,20 @@ Agent = Model + Harness. Claude Code، Codex و Pi همه harness‌ان. harnes
 - [Harness engineering for coding agent users](https://martinfowler.com/articles/harness-engineering.html): ایده‌ی guide و sensor، تقسیم به computational و inferential، و کامل‌ترین نوشته درباره‌ی این موضوع
 - [The importance of Agent Harness in 2026](https://www.philschmid.de/agent-harness-2026): harness به‌عنوان سیستم‌عامل دور مدل، و اینکه چرا باید راحت بشه دورش انداخت
 - [Finding the Best Harness for DeepSeek V4 Flash](https://composio.dev/content/best-agent-harness-deepseek-v4-flash): هشت harness و یه مدل، با هزینه و سرعت کنار نرخ موفقیت
+
+### 🎬 ویدیوها
+
+- [Agent Harness Explained in 2 minutes](https://youtube.com/shorts/IVdJj_aNwhE): نسخه‌ی کوتاه، اگه دیدن ویدیو رو ترجیح می‌دی
+- [Agent Harness explained in 8min..](https://www.youtube.com/watch?v=1a1VXDdIyrk): نسخه‌ی بلندتر، که سه تا روش رو کنار هم می‌ذاره، مثل همون حلقه‌های بالا
+- [What is an Agent Harness?](https://www.youtube.com/watch?v=R0ckdFjUF5U): ویدیوی خود LangChain، از همون تیمی که مقاله‌ی anatomy رو نوشته، درباره‌ی اجزای harness
+
+### 🗃️ Repository‌ها
+
 - [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness): harness‌ی که کنار همون مدلی منتشر شده که براش تنظیم شده
 - [deepagents](https://github.com/langchain-ai/deepagents): harness متن‌بازی که توی مقاله‌ی anatomy اومده
 - [best-of-Agent-Harnesses](https://github.com/RyanAlberts/best-of-Agent-Harnesses): رتبه‌بندی بیشتر از صد تا harness، که هر هفته از نو امتیاز می‌گیرن
 - [awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering): ابزارها و راهنماها برای این کار
-- [Agent Harness Explained in 2 minutes](https://youtube.com/shorts/IVdJj_aNwhE): نسخه‌ی کوتاه، اگه دیدن ویدیو رو ترجیح می‌دی
-- [Agent Harness explained in 8min..](https://www.youtube.com/watch?v=1a1VXDdIyrk): نسخه‌ی بلندتر، که سه تا روش رو کنار هم می‌ذاره، مثل همون حلقه‌های بالا
-- [What is an Agent Harness?](https://www.youtube.com/watch?v=R0ckdFjUF5U): ویدیوی خود LangChain، از همون تیمی که مقاله‌ی anatomy رو نوشته، درباره‌ی اجزای harness
+
+### 🧭 ماژول‌ها
+
 - [Advanced Harness Engineering](../3_expert/advanced_harness_engineering.md): profile‌ها، harness‌هایی که خودشون رو تکامل می‌دن، و چیزهایی که دارن می‌رن توی خود مدل

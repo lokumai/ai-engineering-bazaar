@@ -174,13 +174,24 @@ Ve hepsinin altında aynı takas yatıyor: personal agent'ı faydalı kılan eri
 
 ## Kaynaklar
 
-- [OpenClaw](https://github.com/openclaw/openclaw) ve [openclaw.ai](https://openclaw.ai/): projenin kendisi ve ne yaptığına dair kendi açıklaması
-- [Hermes Agent](https://github.com/NousResearch/hermes-agent) ve [hermes-agent.nousresearch.com](https://hermes-agent.nousresearch.com/): insanların geçtiği alternatif ve özellik listesi
+### 📄 Makaleler
+
 - [OpenClaw vs Hermes Agent: The best agent harness in 2026](https://composio.dev/content/openclaw-vs-hermes-agent): hangisinin ne zaman uygun olduğunu en net anlatan yazı
 - [OpenClaw vs Hermes Agent: Which one should you actually run?](https://www.firecrawl.dev/blog/openclaw-vs-hermes): aynı karşılaştırma, ölçülmüş kurulum boyutları ve hafıza gecikmesiyle
 - [Hermes vs OpenClaw: Self-Evolving Coding Agent or Local AI Control Plane?](https://www.kimi.ai/resources/hermes-vs-openclaw): ilk ikisi çelişirse üçüncü bir karşılaştırma
 - [OpenClaw Agents on Moltbook: Risky Instruction Sharing and Norm Enforcement in an Agent-Only Social Network](https://arxiv.org/abs/2602.02625): %18.4 rakamı ve kimsenin tasarlamadığı norm uygulaması
-- [nanoclaw](https://github.com/nanocoai/nanoclaw): varsayılan olarak container kullanan hafif alternatif
+
+### 🛠️ Araçlar
+
 - [Kimi Claw](https://www.kimi.com/en/help/kimi-claw) ve [myclaw.ai](https://myclaw.ai/): kendin çalıştıramadığında kullanabileceğin barındırılan sürümler
 - [Introducing dots](https://openai.com/index/introducing-dots/), [Muse](https://ai.meta.com/muse/), [Grok Bot](https://x.ai/bot) ve [Gemini Spark](https://gemini.google/overview/agent/spark/): büyük yapay zekâ şirketlerinin senin için barındırdığı personal agent'lar
+
+### 🗃️ Repolar
+
+- [OpenClaw](https://github.com/openclaw/openclaw) ve [openclaw.ai](https://openclaw.ai/): projenin kendisi ve ne yaptığına dair kendi açıklaması
+- [Hermes Agent](https://github.com/NousResearch/hermes-agent) ve [hermes-agent.nousresearch.com](https://hermes-agent.nousresearch.com/): insanların geçtiği alternatif ve özellik listesi
+- [nanoclaw](https://github.com/nanocoai/nanoclaw): varsayılan olarak container kullanan hafif alternatif
+
+### 🧭 Modüller
+
 - [Security](security_tr.md): önce okunması gereken modül; `SOUL.md`'nin neden önemli olduğunu da açıklıyor

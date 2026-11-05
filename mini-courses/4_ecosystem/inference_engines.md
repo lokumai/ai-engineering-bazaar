@@ -110,9 +110,14 @@ Batching is the idea that explains every number in this module. A GPU that serve
 
 ## References
 
+### 🛠️ Tools
+
+- [Ollama](https://ollama.com/) and [LM Studio](https://lmstudio.ai/): the local wrappers, covered in [LLM Fundamentals](../1_fundamentals/llms.md)
+
+### 🗃️ Repositories
+
 - [llama.cpp](https://github.com/ggml-org/llama.cpp): LLM inference in C and C++, and the base that the local wrappers are built on
 - [SGLang](https://github.com/sgl-project/sglang): high-performance serving, strong when requests share a prefix
 - [TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM): from NVIDIA, compiled ahead of time for lower latency
 - [llm-d](https://github.com/llm-d/llm-d): serving across many machines on Kubernetes
 - [Open WebUI](https://github.com/open-webui/open-webui): the chat interface to put in front of any of them
-- [Ollama](https://ollama.com/) and [LM Studio](https://lmstudio.ai/): the local wrappers, covered in [LLM Fundamentals](../1_fundamentals/llms.md)

@@ -95,6 +95,11 @@ graph LR
 
 ## Kaynaklar
 
+### 📄 Makaleler
+
 - [The three memory types every LLM developer must know](https://medium.com/@sahilnanga4/the-three-memory-types-every-llm-developer-must-know-3358c26fdff3): aynı üçlü ayrım, bu kez farklı bir açıdan
+
+### 🧭 Modüller
+
 - [Retrieval-Augmented Generation (RAG)](rag_tr.md): uzun süreli belleğin çalışma belleğine nasıl geri getirildiğini anlatır
 - [İleri Seviye Hafıza](../3_expert/advanced_memory_tr.md): bu konunun devamı

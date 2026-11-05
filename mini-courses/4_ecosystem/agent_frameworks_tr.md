@@ -119,6 +119,16 @@ Sonra en önemli ayrım geliyor: bir workflow, senin yazdığın bir yolu izler;
 
 ## Kaynaklar
 
+### 📄 Makaleler
+
+- [AI Workflows vs AI Agents](https://www.promptingguide.ai/agents/ai-workflows-vs-ai-agents): bu ayrım ve her birinin ne zaman doğru olduğu
+
+### 🛠️ Araçlar
+
+- [Lovable](https://lovable.dev/), [Bolt](https://bolt.new/) ve [Replit](https://replit.com/): uygulamayı sade bir dille tarif et, çalışan bir uygulama al
+
+### 🗃️ Repolar
+
 - [LangChain](https://github.com/langchain-ai/langchain): ana arayüz ve başlamak için doğru yer
 - [LangGraph](https://github.com/langchain-ai/langgraph): altta çalışan runtime, akışı kendin kontrol etmek istediğinde
 - [deepagents](https://github.com/langchain-ai/deepagents): deep agent mimarisi, zaten birleştirilmiş halde
@@ -127,6 +137,4 @@ Sonra en önemli ayrım geliyor: bir workflow, senin yazdığın bir yolu izler;
 - [smolagents](https://github.com/huggingface/smolagents): en sade olanı, okumak için en iyisi
 - [Pydantic AI](https://github.com/pydantic/pydantic-ai): baştan sona tiplenmiş, bu yüzden hatalı bir tool çağrısı açık bir hatayla düşer
 - [Mastra](https://github.com/mastra-ai/mastra) ve [VoltAgent](https://github.com/VoltAgent/voltagent): TypeScript seçenekleri
-- [AI Workflows vs AI Agents](https://www.promptingguide.ai/agents/ai-workflows-vs-ai-agents): bu ayrım ve her birinin ne zaman doğru olduğu
 - [n8n](https://github.com/n8n-io/n8n): workflow platformu, [workflow'ları senin yerine kuran bir MCP sunucusuyla](https://docs.n8n.io/advanced-ai/mcp/accessing-n8n-mcp-server/)
-- [Lovable](https://lovable.dev/), [Bolt](https://bolt.new/) ve [Replit](https://replit.com/): uygulamayı sade bir dille tarif et, çalışan bir uygulama al

@@ -263,4 +263,6 @@ Sırada memory var: context doldukça bu mesajların başına ne geldiğine baka
 
 ## Kaynaklar
 
+### 📄 Makaleler
+
 - [Mastering LLM tool calling](https://machinelearningmastery.com/mastering-llm-tool-calling-the-complete-framework-for-connecting-models-to-the-real-world/): tam çerçeve, burada ihtiyacımız olandan daha fazla wire format (mesajların ham biçimi) ayrıntısıyla.

@@ -103,7 +103,15 @@ None of it gives you judgement about what the screen is for. None of it gives yo
 
 ## References
 
-- [Google Stitch](https://stitch.withgoogle.com/): turns a prompt, an image or a sketch into a real interface, and exports it to Figma in one click
+### 📄 Articles
+
 - [From idea to app: Introducing Stitch](https://developers.googleblog.com/stitch-a-new-way-to-design-uis/): Google's own announcement, and where the DESIGN.md convention comes from
+
+### 🛠️ Tools
+
+- [Google Stitch](https://stitch.withgoogle.com/): turns a prompt, an image or a sketch into a real interface, and exports it to Figma in one click
 - [Claude Design](https://claude.ai/design): makes prototypes as real code, and can read the design system out of a codebase
+
+### 🗃️ Repositories
+
 - [awesome-design-md](https://github.com/VoltAgent/awesome-design-md): ready-made DESIGN.md files for well-known brands, so you can see the effect in one run

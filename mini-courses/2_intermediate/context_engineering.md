@@ -403,6 +403,8 @@ actually save you?
 
 ## References
 
+### 📄 Articles
+
 - [Context Rot: How Increasing Input Tokens Impacts LLM Performance](https://www.trychroma.com/research/context-rot): the Chroma study behind all of this, 18 models, and the needle-and-distractor experiments
 - [How Long Contexts Fail](https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html): Drew Breunig's four named failures, from an early hallucination that keeps getting cited to new information that contradicts the old
 - [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents): the most complete treatment, and the source of the compaction and subagent guidance
@@ -411,14 +413,26 @@ actually save you?
 - [Context Engineering for Agents](https://rlancemartin.github.io/2025/06/23/context_engineering/): the same four, with diagrams that are worth reusing
 - [Karpathy on context engineering](https://x.com/karpathy/status/1937902205765607626): the post that put the term in front of everyone
 - [Context Engineering for AI Agents: Lessons from Building Manus](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus): specific lessons from real experience, especially the filesystem and recitation lessons
-- [Stop stuffing your context window (here's why)](https://youtube.com/shorts/9P36wMntNSI): the short version, if you would rather watch
-- [DeepWiki](https://deepwiki.org/): a wiki per repository, so your agent reads about the code instead of reading the code
 - [Agents 2.0: From Shallow Loops to Deep Agents](https://www.philschmid.de/agents-2.0-deep-agents): what makes an agent deep, and why it is an architecture rather than a feature
 - [What Is a Deep Agent?](https://www.nvidia.com/en-us/glossary/deep-agents/): the same definition, stated plainly
 - [The Agent 2.0 Era: Mastering Long-Horizon Tasks with Deep Agents](https://medium.com/@amirkiarafiei/the-agent-2-0-era-mastering-long-horizon-tasks-with-deep-agents-part-3-745705e13b16): the same architecture, explained from start to finish
-- [deepagents](https://github.com/langchain-ai/deepagents): the library, and the [Deep Agents overview](https://docs.langchain.com/oss/python/deepagents/overview) that documents it
 - [Context Engineering: How Deep Agents Remember](https://www.langchain.com/blog/context-engineering-deep-agents-remember): how deepagents keeps the context of a long run small (offloading, summarization, skills, subagents and memory files), and why memory kept as plain files lets you change models
 - [Measuring AI Ability to Complete Long Software Tasks](https://arxiv.org/abs/2503.14499): where the time-horizon number comes from, and the doubling trend
 - [Task-completion time horizons](https://metr.org/time-horizons/): the current numbers per model, kept up to date
+
+### 🎬 Videos
+
+- [Stop stuffing your context window (here's why)](https://youtube.com/shorts/9P36wMntNSI): the short version, if you would rather watch
+
+### 🛠️ Tools
+
+- [DeepWiki](https://deepwiki.org/): a wiki per repository, so your agent reads about the code instead of reading the code
+
+### 🗃️ Repositories
+
+- [deepagents](https://github.com/langchain-ai/deepagents): the library, and the [Deep Agents overview](https://docs.langchain.com/oss/python/deepagents/overview) that documents it
 - [Awesome-Long-Horizon-Agents](https://github.com/RUC-NLPIR/Awesome-Long-Horizon-Agents): the research landscape, sorted, if you want to go deeper than this module
+
+### 🧭 Modules
+
 - [Advanced Context Engineering](../3_expert/advanced_context_engineering.md): the techniques this module left out

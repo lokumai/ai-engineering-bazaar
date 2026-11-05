@@ -234,17 +234,25 @@ Sırada: bu modülde modelin söz hakkı olmadığı ilk şey hook'lardı. Bu fi
 
 ## Kaynaklar
 
+### 📄 Makaleler
+
 - [Claude Code features](https://code.claude.com/docs/en/agent-sdk/claude-code-features): tüm genişletme yüzeyi tek sayfada. Kendi agent'ının neleri desteklediğini kontrol etmek için bir liste olarak işe yarar.
-- [agents.md](https://agents.md/): açık format. Monorepo'da iç içe dosyaların nasıl çalıştığı da bu sayfada.
 - [How Claude remembers your project](https://code.claude.com/docs/en/memory): CLAUDE.md ile auto memory arasındaki ayrım ve dosyaların nerede durduğu.
 - [Connect to MCP servers](https://code.claude.com/docs/en/mcp-quickstart): bir server'ı baştan sona nasıl ekleyeceğin ve bağlanmadığında nelere bakman gerektiği.
-- [awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers): topluluk listesi. İhtiyacın olan tool'un zaten var olup olmadığını kontrol etmek için.
 - [Equipping agents for the real world with Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills): kademeli açılımın doğru şekilde anlatıldığı yer.
 - [Extend Claude with skills](https://code.claude.com/docs/en/skills): pratik sürüm. Bir skill'i kimin çağırabileceğini belirleyen iki alan da burada.
+- [Hooks reference](https://code.claude.com/docs/en/hooks): her yaşam döngüsü olayı ve her birinin aldığı girdi.
+- [Discover plugins](https://code.claude.com/docs/en/discover-plugins) ve [plugins reference](https://code.claude.com/docs/en/plugins-reference): önce bir plugin'in nasıl kurulacağı, sonra nasıl oluşturulacağı.
+
+### 🛠️ Araçlar
+
+- [agents.md](https://agents.md/): açık format. Monorepo'da iç içe dosyaların nasıl çalıştığı da bu sayfada.
+- [Artificial Analysis](https://artificialanalysis.ai/): her model ve her akıl yürütme ayarı için benchmark sayıları. Effort'un sana ne kazandırdığını görmek istersen.
+
+### 🗃️ Repolar
+
+- [awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers): topluluk listesi. İhtiyacın olan tool'un zaten var olup olmadığını kontrol etmek için.
 - [anthropics/skills](https://github.com/anthropics/skills): resmî skill koleksiyonu.
 - [awesome-claude](https://github.com/webfuse-com/awesome-claude): Claude araçlarının daha geniş, derlenmiş bir listesi.
 - [awesome-claude-code-subagents](https://github.com/VoltAgent/awesome-claude-code-subagents): başlamak için yüzü aşkın subagent tanımı.
-- [Hooks reference](https://code.claude.com/docs/en/hooks): her yaşam döngüsü olayı ve her birinin aldığı girdi.
-- [Discover plugins](https://code.claude.com/docs/en/discover-plugins) ve [plugins reference](https://code.claude.com/docs/en/plugins-reference): önce bir plugin'in nasıl kurulacağı, sonra nasıl oluşturulacağı.
 - [claude-plugins-official](https://github.com/anthropics/claude-plugins-official): Anthropic'in yönettiği plugin dizini.
-- [Artificial Analysis](https://artificialanalysis.ai/): her model ve her akıl yürütme ayarı için benchmark sayıları. Effort'un sana ne kazandırdığını görmek istersen.

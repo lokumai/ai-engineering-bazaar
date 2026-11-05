@@ -26,10 +26,10 @@ export type ArtName =
   | 'defs'
   | 'gate'
   | 'walk'
-  | 'stall-scribe'
-  | 'stall-scale'
-  | 'stall-pictures'
-  | 'stall-papers'
+  | 'stall-draft'
+  | 'stall-sieve'
+  | 'stall-lantern'
+  | 'stall-signpost'
   | `icon-${1 | 2 | 3 | 4}`
   | `door-${1 | 2 | 3 | 4 | 5}`
   | `tray-${1 | 2 | 3 | 4 | 5}`

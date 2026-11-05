@@ -1,5 +1,6 @@
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { STALL_TIMELINES } from './stall-timelines'
 
 /**
  * The home page's motion: the walk through the bazaar, and the stalls coming
@@ -45,123 +46,6 @@ const num = (el: Element, key: string): number => Number(data(el, key))
 const STOPS = [720, 1990, 3190, 4390, 5590, 7040]
 /* Layer speeds relative to the stall row. */
 const SP = { back: 0.3, mid: 1, beams: 0.8, fore: 1.45 }
-
-/* ---------- prop timelines: each lasts about one unit, and is scrubbed ---------- */
-
-function tlScribe(svg: Element): gsap.core.Timeline {
-  const tl = gsap.timeline()
-  const lines = $$<SVGElement>('.ln', svg)
-  const quill = $('.quill', svg)
-  const sheet = $('.sheet', svg)
-  const seal = $('.seal', svg)
-  const fresh = $('.fresh', svg)
-  const L = lines.map((l) => ({ x0: num(l, 'x0'), x1: num(l, 'x1'), y: num(l, 'y') }))
-  const [qx, qy] = pair(data(quill, 'rest'))
-  const [tx, ty, ts] = pair(data(sheet, 'to'))
-  const G = 0.012
-  const D = 0.066
-  let t = 0
-  tl.fromTo(quill, { x: L[0].x0, y: L[0].y, rotation: 0 }, { x: L[0].x0, y: L[0].y, duration: 0.001 }, 0)
-  L.forEach((ln, i) => {
-    tl.to(quill, { x: ln.x0, y: ln.y, duration: G }, t)
-      .fromTo(lines[i], { attr: { 'stroke-dashoffset': 1 } }, { attr: { 'stroke-dashoffset': 0 }, duration: D }, t + G)
-      .to(quill, { x: ln.x1, duration: D }, t + G)
-    t += G + D
-  })
-  tl.fromTo(seal, { scale: 2.6, opacity: 0, transformOrigin: '50% 50%' }, { scale: 1, opacity: 1, duration: 0.06, ease: 'power3.in' }, t + 0.02)
-    .to(quill, { x: qx, y: qy, rotation: 16, duration: 0.08, ease: 'power1.inOut' }, t + 0.01)
-    .fromTo(sheet, { x: 0, y: 0, scale: 1, rotation: 0 }, { x: tx, y: ty, scale: ts, rotation: 3, transformOrigin: '0% 0%', duration: 0.2, ease: 'power2.inOut' }, t + 0.13)
-    .fromTo(fresh, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.1, ease: 'power2.out' }, t + 0.3)
-  return tl
-}
-
-function tlScale(svg: Element): gsap.core.Timeline {
-  const tl = gsap.timeline()
-  const beam = $('.beam', svg)
-  const panL = $('.panL', svg)
-  const panR = $('.panR', svg)
-  const its = $$('.it', svg)
-  const sparks = $$('.spark', svg)
-  const pv = data(beam, 'pivot').replace(',', ' ')
-  const tilt = num(beam, 'tilt')
-  const DY = num(beam, 'arm') * Math.sin((tilt * Math.PI) / 180)
-  const I = its.map((el) => ({
-    el,
-    hx: num(el, 'hx'),
-    hy: num(el, 'hy'),
-    px: num(el, 'px'),
-    py: num(el, 'py'),
-    keep: data(el, 'keep') !== '',
-  }))
-  /* the three keepers hop first so they land on the bottom of the pan */
-  const order = [...I.filter((i) => i.keep), ...I.filter((i) => !i.keep)]
-  order.forEach((it, i) => {
-    const t0 = i * 0.05
-    tl.fromTo(it.el, { x: it.hx, y: it.hy, rotation: 0 }, { x: it.px, duration: 0.1, ease: 'none' }, t0)
-      .to(it.el, { y: Math.min(it.hy, it.py) - 42, duration: 0.05, ease: 'power2.out' }, t0)
-      .to(it.el, { y: it.py, duration: 0.05, ease: 'power2.in' }, t0 + 0.05)
-  })
-  tl.fromTo(beam, { rotation: 0, svgOrigin: pv }, { rotation: tilt, svgOrigin: pv, duration: 0.1, ease: 'power2.inOut' }, 0.46)
-    .fromTo(panR, { y: 0 }, { y: DY, duration: 0.1, ease: 'power2.inOut' }, 0.46)
-    .fromTo(panL, { y: 0 }, { y: -DY, duration: 0.1, ease: 'power2.inOut' }, 0.46)
-  I.forEach((it) => tl.to(it.el, { y: it.py + DY, duration: 0.1, ease: 'power2.inOut' }, 0.46))
-  I.filter((it) => !it.keep).forEach((it, j) => {
-    const t0 = 0.6 + j * 0.035
-    tl.to(it.el, { x: it.px + 150 + j * 38, duration: 0.2, ease: 'power1.out' }, t0)
-      .to(it.el, { y: it.py + DY - 36, duration: 0.05, ease: 'power2.out' }, t0)
-      .to(it.el, { y: 1040, duration: 0.15, ease: 'power2.in' }, t0 + 0.05)
-      .to(it.el, { rotation: 140 + j * 55, transformOrigin: '50% 50%', duration: 0.2 }, t0)
-  })
-  tl.to(beam, { rotation: 0, svgOrigin: pv, duration: 0.12, ease: 'back.out(2.2)' }, 0.8)
-    .to(panR, { y: 0, duration: 0.12, ease: 'back.out(2.2)' }, 0.8)
-    .to(panL, { y: 0, duration: 0.12, ease: 'back.out(2.2)' }, 0.8)
-  I.filter((it) => it.keep).forEach((it) => tl.to(it.el, { y: it.py, duration: 0.12, ease: 'back.out(2.2)' }, 0.8))
-  tl.fromTo(sparks, { scale: 0, opacity: 0, transformOrigin: '50% 50%' }, { scale: 1, opacity: 1, duration: 0.08, stagger: 0.025, ease: 'back.out(3)' }, 0.9)
-  return tl
-}
-
-function tlPictures(svg: Element): gsap.core.Timeline {
-  const tl = gsap.timeline()
-  $$('.frm', svg).forEach((fr, i) => {
-    const t0 = 0.04 + i * 0.24
-    const back = $('.frm-back', fr)
-    const front = $('.frm-front', fr)
-    const nailAt = data(fr, 'nail')
-    if (nailAt) {
-      const nail = nailAt.replace(',', ' ')
-      tl.fromTo(fr, { rotation: num(fr, 'swing'), svgOrigin: nail }, { rotation: 0, svgOrigin: nail, duration: 0.34, ease: 'elastic.out(1, 0.35)' }, t0)
-    } else {
-      tl.fromTo(fr, { y: -40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.14, ease: 'power2.out' }, t0)
-    }
-    tl.fromTo(back, { opacity: 1, scaleX: 1, transformOrigin: '50% 50%' }, { scaleX: 0, duration: 0.08, ease: 'power1.in' }, t0 + 0.12)
-      .fromTo(front, { scaleX: 0, transformOrigin: '50% 50%' }, { scaleX: 1, duration: 0.08, ease: 'power1.out' }, t0 + 0.2)
-  })
-  tl.fromTo($('.shades', svg), { y: -46, opacity: 0 }, { y: 0, opacity: 1, duration: 0.12, ease: 'bounce.out' }, 0.86)
-  return tl
-}
-
-function tlPapers(svg: Element): gsap.core.Timeline {
-  const tl = gsap.timeline()
-  $$('.pf', svg)
-    .filter((p) => data(p, 'dx') !== '')
-    .forEach((p, i) => {
-      const t0 = 0.02 + i * 0.085
-      const r = num(p, 'r')
-      tl.fromTo(p, { x: 0, y: 0, rotation: r, transformOrigin: '50% 50%' }, { y: -40, rotation: r + 10, duration: 0.06, ease: 'power1.out' }, t0)
-        .to(p, { x: num(p, 'dx'), duration: 0.32, ease: 'sine.in' }, t0 + 0.06)
-        .to(p, { y: -(num(p, 'y') + 240), duration: 0.32, ease: 'power1.out' }, t0 + 0.06)
-        .to(p, { rotation: r + num(p, 'spin'), duration: 0.32, ease: 'none' }, t0 + 0.06)
-    })
-  tl.fromTo($('.bookglow', svg), { opacity: 0.15 }, { opacity: 0.9, duration: 0.5 }, 0)
-  return tl
-}
-
-const PROPS: Record<string, (svg: Element) => gsap.core.Timeline> = {
-  scribe: tlScribe,
-  scale: tlScale,
-  pictures: tlPictures,
-  papers: tlPapers,
-}
 
 export function initBazaar(root: HTMLElement): Cleanup {
   const html = document.documentElement
@@ -325,7 +209,7 @@ export function initBazaar(root: HTMLElement): Cleanup {
       master.to(cam, { x: to, duration: dur, ease: 'power1.inOut' }, pos)
       const arrive = pos + dur
       const hold = last ? 0.6 : HOLD
-      const ptl = last ? tlDoors(true) : PROPS[data(baySvgs[i - 1], 'art')](baySvgs[i - 1])
+      const ptl = last ? tlDoors(true) : STALL_TIMELINES[data(baySvgs[i - 1], 'art')](baySvgs[i - 1])
       master.add(ptl.timeScale(ptl.duration() / (LEAD + hold - 0.06)), arrive - LEAD)
       master.to(cam, { x: to + (last ? 0 : 54), duration: hold }, arrive)
       from = to + (last ? 0 : 54)
@@ -392,7 +276,7 @@ export function initBazaar(root: HTMLElement): Cleanup {
         onEnter: () => s.timeScale(1).play(),
         onLeaveBack: () => s.timeScale(2).reverse(),
       })
-      ScrollTrigger.create({ trigger: svg, start: 'top 82%', end: 'bottom 42%', scrub: 0.7, animation: PROPS[data(svg, 'art')](svg) })
+      ScrollTrigger.create({ trigger: svg, start: 'top 82%', end: 'bottom 42%', scrub: 0.7, animation: STALL_TIMELINES[data(svg, 'art')](svg) })
     })
     ScrollTrigger.create({ trigger: $('.doors', root), start: 'top 80%', end: 'bottom 55%', scrub: 0.7, animation: tlDoors(false) })
     gsap.fromTo($('#archBox', root), { scale: 1 }, {

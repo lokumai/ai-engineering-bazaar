@@ -57,7 +57,7 @@ const STALLS: ReadonlyArray<{
   body: string
 }> = [
   {
-    art: 'stall-scribe',
+    art: 'stall-draft',
     icon: 'icon-1',
     hue: 'var(--color-category-1)',
     x: 1510,
@@ -68,7 +68,7 @@ const STALLS: ReadonlyArray<{
       + 'by AI engineers who build this for a living.',
   },
   {
-    art: 'stall-scale',
+    art: 'stall-sieve',
     icon: 'icon-2',
     hue: 'var(--color-category-4)',
     x: 2710,
@@ -79,7 +79,7 @@ const STALLS: ReadonlyArray<{
       + 'that matter most, and nothing else.',
   },
   {
-    art: 'stall-pictures',
+    art: 'stall-lantern',
     icon: 'icon-3',
     hue: 'var(--color-category-5)',
     x: 3910,
@@ -89,7 +89,7 @@ const STALLS: ReadonlyArray<{
       + 'sometimes even a little brain rot, because a good meme can explain an idea in one look.',
   },
   {
-    art: 'stall-papers',
+    art: 'stall-signpost',
     icon: 'icon-4',
     hue: 'var(--color-category-3)',
     x: 5110,

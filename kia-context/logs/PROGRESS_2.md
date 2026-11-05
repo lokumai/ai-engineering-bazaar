@@ -4299,7 +4299,7 @@ progress per track (D86) is not part of this milestone and waits for the track s
 - [x] Typecheck, 2,107 unit and corpus tests, and the full browser suite (1,175 passed, 59 skipped) pass.
 
 
-## 🏁 Milestone M40: Removed features gone from the code, and the test suite cut to what guards a reader — SHIPPED, MERGED AS PR #PRNUM
+## 🏁 Milestone M40: Removed features gone from the code, and the test suite cut to what guards a reader — SHIPPED, MERGED AS PR #56
 
 Branch `chore/remove-deprecated`, from `main` at `bc39c96`. (M39, the round-2 design choices, is
 recorded on branch `design/round-2026-11`, where it is still in progress.) The author, 2026-11-05,

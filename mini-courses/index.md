@@ -41,7 +41,7 @@ The internet already has plenty of AI content. Adding more only makes sense if i
 
 ## Your progress stays in your browser
 
-Your progress is saved only in your own browser, on your device, and nothing is sent anywhere unless you choose to sign in. No account is needed, so it stays private and secure.
+Your progress is saved only in your own browser, on your device, and nothing is sent anywhere. There is no account, so it stays private.
 
 ## Contributing
 

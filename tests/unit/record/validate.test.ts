@@ -117,88 +117,6 @@ describe('parseEnvelope — an understood envelope', () => {
     expect(Object.isFrozen(data)).toBe(false)
   })
 
-  it('drops every unknown key at every level', () => {
-    const data = ok(
-      wrap({
-        identity: { name: 'A', evil: 1 },
-        prefs: { charKeys: false, theme: 'dark' },
-        meta: { lastExport: null, persisted: null, tokens: 'nope' },
-        nope: 2,
-      }),
-    )
-    // The point is unchanged — `evil`, `theme`, `tokens` and `nope` are all
-    // gone — but the key set is read off `EMPTY_RECORD` rather than typed a
-    // second time here. The old assertion pinned the four literal lists, and
-    // §16.3's `prefs.aliasNamedFor` is what made that a liability: widening the
-    // shape in `schema.ts` failed this test for the shape being correct. The
-    // frozen empty record is the schema's one statement of its own key set, so
-    // an unknown key still dies and a NEW key does not have to be typed twice.
-    expect(Object.keys(data).sort()).toEqual(Object.keys(EMPTY_RECORD).sort())
-    expect(Object.keys(data.identity).sort()).toEqual(Object.keys(EMPTY_RECORD.identity).sort())
-    expect(Object.keys(data.prefs).sort()).toEqual(Object.keys(EMPTY_RECORD.prefs).sort())
-    expect(Object.keys(data.meta).sort()).toEqual(Object.keys(EMPTY_RECORD.meta).sort())
-    // And the keys that were smuggled in are named, so the test still fails if
-    // the coercion started copying its input wholesale.
-    for (const smuggled of ['nope', 'evil', 'theme', 'tokens']) {
-      expect(JSON.stringify(data), smuggled).not.toContain(smuggled)
-    }
-  })
-})
-
-describe('coercion — identity', () => {
-  it('keeps a name exactly as typed and never truncates it (§12.3.4)', () => {
-    const long = 'İlker '.repeat(40)
-    expect(ok(wrap({ identity: { name: long } })).identity.name).toBe(long)
-  })
-
-  it('coerces a non-string name to null rather than to a placeholder person', () => {
-    for (const name of [42, true, {}, [], null]) {
-      expect(ok(wrap({ identity: { name } })).identity.name).toBeNull()
-    }
-  })
-
-  it('accepts only 8 lowercase hex characters as a markSeed', () => {
-    expect(ok(wrap({ identity: { markSeed: 'a1b2c3d4' } })).identity.markSeed).toBe('a1b2c3d4')
-    for (const seed of ['A1B2C3D4', 'a1b2c3d', 'a1b2c3d45', 'a1b2c3dg', 12345678, '']) {
-      expect(ok(wrap({ identity: { markSeed: seed } })).identity.markSeed).toBeNull()
-    }
-  })
-
-  it('accepts only the marks the geometry can draw', () => {
-    // The vocabulary is lib/identity/mark.ts's, and it is lowercase: an id the
-    // geometry cannot draw would leave the stamp silently blank, so an unknown
-    // one becomes null and the reader falls back to the seeded pattern.
-    for (const mark of ['weld', 'hex', 'datum', 'section', 'finish', 'centre', 'seeded']) {
-      expect(ok(wrap({ identity: { mark } })).identity.mark).toBe(mark)
-    }
-    for (const mark of ['WELD', 'Weld', 'BOGUS', 7, null, {}, []]) {
-      expect(ok(wrap({ identity: { mark } })).identity.mark).toBeNull()
-    }
-  })
-
-  it('accepts only the nine frozen §13.3 role ids', () => {
-    for (const role of ['software-engineer', 'devops', 'data-engineer', 'data-analyst',
-      'analyst', 'qa', 'project-manager', 'dba', 'pre-sales']) {
-      expect(ok(wrap({ identity: { role } })).identity.role).toBe(role)
-    }
-    for (const role of ['QA', 'Qa', 'business-analyst', 'sre', '', 7, true, null, {}, []]) {
-      expect(ok(wrap({ identity: { role } })).identity.role).toBeNull()
-    }
-  })
-
-  it('reads an unknown role as ABSENT and never as the nearest one', () => {
-    // A hand-edited import and a retired id arrive by the same door, and the
-    // honest reading of both is that the reader has not said — which draws the
-    // §13.4.3 picker. Repairing `business-analyst` into `analyst` would print a
-    // job title the reader never chose and draw somebody else's path.
-    const data = ok(wrap({ identity: { name: 'A', role: 'business-analyst' } }))
-    expect(data.identity.role).toBeNull()
-    expect(data.identity.name).toBe('A')
-  })
-
-  it('omits the role entirely for a record that never carried one', () => {
-    expect(ok(wrap({ identity: { name: 'A' } })).identity.role).toBeNull()
-  })
 })
 
 describe('coercion — prototype pollution', () => {
@@ -327,28 +245,6 @@ describe('coercion — days', () => {
   })
 })
 
-describe('coercion — the quiz', () => {
-  it('keeps an answer with its assessment', () => {
-    const quiz = ok(
-      wrap({ sheets: { 'a/b': { quiz: { answer: 'a guess', assessed: 'missed', at: '2026-08-31T10:00:00.000Z' } } } }),
-    ).sheets['a/b'].quiz
-    expect(quiz).toEqual({ answer: 'a guess', assessed: 'missed', at: '2026-08-31T10:00:00.000Z' })
-  })
-
-  it('coerces an unknown assessment to unknown — never to a third state (§12.4.2)', () => {
-    for (const assessed of ['passed', 'MATCHED', true, 1]) {
-      const quiz = ok(wrap({ sheets: { 'a/b': { quiz: { answer: 'x', assessed } } } })).sheets['a/b'].quiz
-      expect(quiz?.assessed).toBeNull()
-    }
-  })
-
-  it('drops a quiz record that holds neither an answer nor an assessment', () => {
-    expect(ok(wrap({ sheets: { 'a/b': { quiz: {}, reachedEnd: true } } })).sheets['a/b'].quiz).toBeNull()
-    expect(ok(wrap({ sheets: { 'a/b': { quiz: [], reachedEnd: true } } })).sheets['a/b'].quiz).toBeNull()
-    expect(ok(wrap({ sheets: { 'a/b': { quiz: 'matched', reachedEnd: true } } })).sheets['a/b'].quiz).toBeNull()
-  })
-})
-
 describe('coercion — the checklist', () => {
   it('keeps only ticked integer indices', () => {
     const data = ok(
@@ -364,104 +260,6 @@ describe('coercion — the checklist', () => {
   it('coerces a checklist array to an empty map', () => {
     expect(ok(wrap({ sheets: { 'a/b': { checklist: [true, true], reachedEnd: true } } })).sheets['a/b'].checklist)
       .toEqual({})
-  })
-})
-
-describe('coercion — sources', () => {
-  it('keeps distinct http(s) URLs in the order they were opened', () => {
-    const data = ok(
-      wrap({
-        sheets: {
-          'a/b': {
-            sources: ['https://a.example/x', 'http://b.example/', 'https://a.example/x'],
-          },
-        },
-      }),
-    )
-    expect(data.sheets['a/b'].sources).toEqual(['https://a.example/x', 'http://b.example/'])
-  })
-
-  it('drops a javascript: URL, so it can never reach an href in the exported record', () => {
-    const data = ok(
-      wrap({
-        sheets: {
-          'a/b': {
-            reachedEnd: true,
-            sources: ['javascript:alert(1)', 'data:text/html,x', 'file:///etc/passwd', '//evil.example', 7],
-          },
-        },
-      }),
-    )
-    expect(data.sheets['a/b'].sources).toEqual([])
-  })
-})
-
-describe('coercion — submittals', () => {
-  const submittal = (owner: string, repo: string, extra: Record<string, unknown> = {}) => ({
-    owner, repo, url: 'https://evil.example/pwn', commit: null, note: 'n', at: '2026-08-31T10:00:00.000Z', ...extra,
-  })
-
-  it('caps a hostile 500-entry array at three (§12.9.1)', () => {
-    const many = Array.from({ length: 500 }, (_, i) => submittal('o' + i, 'r' + i))
-    const kept = ok(wrap({ sheets: { 'a/b': { submittals: many } } })).sheets['a/b'].submittals
-    expect(kept).toHaveLength(3)
-    expect(kept.map((s) => s.owner)).toEqual(['o0', 'o1', 'o2'])
-  })
-
-  it('rebuilds the url from owner and repo, discarding whatever was stored (§12.9.2)', () => {
-    const kept = ok(wrap({ sheets: { 'a/b': { submittals: [submittal('lokumai', 'ai-minicourses')] } } }))
-      .sheets['a/b'].submittals
-    expect(kept[0].url).toBe('https://github.com/lokumai/ai-minicourses')
-  })
-
-  it('drops an entry whose owner or repo is not a GitHub segment', () => {
-    const kept = ok(
-      wrap({
-        sheets: {
-          'a/b': {
-            reachedEnd: true,
-            submittals: [
-              submittal('own er', 'repo'),
-              submittal('owner', 're/po'),
-              submittal('', 'repo'),
-              submittal('o'.repeat(101), 'repo'),
-              submittal('owner', 'repo'),
-            ],
-          },
-        },
-      }),
-    ).sheets['a/b'].submittals
-    expect(kept.map((s) => s.url)).toEqual(['https://github.com/owner/repo'])
-  })
-
-  it('drops a duplicate owner/repo on the same module, case-insensitively', () => {
-    const kept = ok(
-      wrap({ sheets: { 'a/b': { submittals: [submittal('Own', 'Repo'), submittal('own', 'repo')] } } }),
-    ).sheets['a/b'].submittals
-    expect(kept).toHaveLength(1)
-    expect(kept[0].owner).toBe('Own')
-  })
-
-  it('keeps a commit hash only in the documented shape (§12.9.3)', () => {
-    const commitOf = (commit: unknown) =>
-      ok(wrap({ sheets: { 'a/b': { submittals: [submittal('o', 'r', { commit })] } } }))
-        .sheets['a/b'].submittals[0].commit
-    expect(commitOf('a1b2c3d')).toBe('a1b2c3d')
-    expect(commitOf('f'.repeat(40))).toBe('f'.repeat(40))
-    expect(commitOf('A1B2C3D')).toBeNull()
-    expect(commitOf('a1b2c3')).toBeNull()
-    expect(commitOf('f'.repeat(41))).toBeNull()
-    expect(commitOf('zzzzzzz')).toBeNull()
-    expect(commitOf(1234567)).toBeNull()
-  })
-
-  it('keeps the note as text and coerces a non-string to empty', () => {
-    const noteOf = (note: unknown) =>
-      ok(wrap({ sheets: { 'a/b': { submittals: [submittal('o', 'r', { note })] } } }))
-        .sheets['a/b'].submittals[0].note
-    expect(noteOf('built the retry loop')).toBe('built the retry loop')
-    expect(noteOf('</script><img src=x onerror=1>')).toBe('</script><img src=x onerror=1>')
-    expect(noteOf(42)).toBe('')
   })
 })
 
@@ -506,17 +304,6 @@ describe('envelopeTextFrom — the importer accepts the report as well as the JS
     expect(envelopeTextFrom('  {"schema":1,"data":{}}  ')).toBe('{"schema":1,"data":{}}')
   })
 
-  it('lifts the payload out of a RECORD OF WORK document', () => {
-    const html = [
-      '<!doctype html><html lang="en"><head><title>RECORD OF WORK</title></head><body>',
-      '<script type="application/json" id="hl-record">{"schema":1,"data":{"days":["2026-08-31"]}}</script>',
-      '</body></html>',
-    ].join('\n')
-    const text = envelopeTextFrom(html)
-    expect(text).not.toBeNull()
-    expect(JSON.parse(text as string).data.days).toEqual(['2026-08-31'])
-  })
-
   it('passes an indented export through, which is the shape the file has', () => {
     const pretty = JSON.stringify({ schema: 1, savedAt: NOW_ISO, data: { days: ['2026-08-31'] } }, null, 2)
     const text = envelopeTextFrom(`\n${pretty}\n`)
@@ -534,126 +321,34 @@ describe('envelopeTextFrom — the importer accepts the report as well as the JS
   })
 })
 
-describe('§17.3 — meta.lastClaim is a widening, and a defensive read', () => {
-  const RECEIPT = {
-    at: '2026-09-02T11:17:00.000Z',
-    summary: {
-      outcome: 'merged',
-      signed: { here: 1, account: 1, shared: 0, merged: 2 },
-      submittals: { here: 0, account: 0, shared: 0, merged: 0 },
-      droppedSignatures: [],
-      droppedSubmittals: [],
-      identity: {
-        name: 'account',
-        markSeed: 'account',
-        role: 'absent',
-        markChanged: false,
-        nameChanged: false,
-        roleChanged: false,
+
+/**
+ * M40 (2026-11-05) — the author exported their progress and found their old
+ * role path ("data analyst") in the file. A record stored before the removal
+ * still carries those fields; reading it drops them, so the next write and
+ * every export carry only what the site still records.
+ */
+describe('a record stored before M40 loses the removed fields on read', () => {
+  const OLD = {
+    identity: { name: 'Ada', markSeed: 'a1b2c3d4', mark: 'datum', role: 'data-analyst' },
+    sheets: {
+      'fundamentals/llms': {
+        signedOff: '2026-07-01T08:00:00.000Z',
+        quiz: { answer: 'x', assessed: 'matched', at: '2026-07-01T08:00:00.000Z' },
+        sources: ['https://example.com/'],
+        submittals: [{ owner: 'o', repo: 'r' }],
       },
     },
+    prefs: { aliasNamedFor: 'someone' },
+    meta: { lastClaim: { at: '2026-07-01T08:00:00.000Z' } },
   }
 
-  it('defaults to null, so a record written before the field still loads', () => {
-    const data = coerceRecordData({ identity: { name: 'Ada' }, meta: { lastExport: null } })
-    expect(data.meta.lastClaim).toBeNull()
-    expect(data.identity.name).toBe('Ada')
-  })
-
-  it('keeps a well-formed receipt verbatim', () => {
-    const data = coerceRecordData({ meta: { lastClaim: RECEIPT } })
-    expect(data.meta.lastClaim).toEqual(RECEIPT)
-  })
-
-  it('drops a receipt with an unrecognised outcome, and keeps the record', () => {
-    const data = coerceRecordData({
-      identity: { name: 'Ada' },
-      meta: { lastClaim: { ...RECEIPT, summary: { ...RECEIPT.summary, outcome: 'invented' } } },
-    })
-    expect(data.meta.lastClaim).toBeNull()
-    expect(data.identity.name).toBe('Ada')
-  })
-
-  it('drops a receipt whose instant is not one, and one whose counts are not numbers', () => {
-    expect(coerceRecordData({ meta: { lastClaim: { ...RECEIPT, at: 'yesterday' } } })
-      .meta.lastClaim).toBeNull()
-    expect(coerceRecordData({
-      meta: {
-        lastClaim: {
-          ...RECEIPT,
-          summary: { ...RECEIPT.summary, signed: { here: 'two', account: 1, shared: 0, merged: 2 } },
-        },
-      },
-    }).meta.lastClaim).toBeNull()
-  })
-
-  it('drops a receipt whose dropped lists are not arrays of strings', () => {
-    // Both lists are printed as prose — `a sheet keeps its 3 most recent (…)` —
-    // so a shape the joiner cannot print is not a receipt.
-    expect(coerceRecordData({
-      meta: {
-        lastClaim: { ...RECEIPT, summary: { ...RECEIPT.summary, droppedSignatures: 'none' } },
-      },
-    }).meta.lastClaim).toBeNull()
-    expect(coerceRecordData({
-      meta: {
-        lastClaim: { ...RECEIPT, summary: { ...RECEIPT.summary, droppedSubmittals: [1, 2] } },
-      },
-    }).meta.lastClaim).toBeNull()
-  })
-
-  it('keeps a receipt whose identity provenance is off-vocabulary, defaulting the field', () => {
-    // A bad field loses the FIELD, not the record: after §17.2 these three
-    // provenances are read by nothing, so discarding the whole account of a
-    // merge over one of them would be a penalty out of all proportion.
-    const data = coerceRecordData({
-      meta: {
-        lastClaim: {
-          ...RECEIPT,
-          summary: {
-            ...RECEIPT.summary,
-            identity: { ...RECEIPT.summary.identity, role: 'invented' },
-          },
-        },
-      },
-    })
-    expect(data.meta.lastClaim?.summary.identity.role).toBe('absent')
-    // And the parts the reader is shown are untouched.
-    expect(data.meta.lastClaim?.summary.signed).toEqual(RECEIPT.summary.signed)
-    expect(data.meta.lastClaim?.summary.identity.name).toBe('account')
-  })
-
-  it('drops a receipt whose counts are numbers but not counts', () => {
-    // `Number.isFinite` admitted both of these, and the register would then
-    // print `1.5 MERGED · 0 LOST`.
-    for (const merged of [-5, 1.5]) {
-      expect(coerceRecordData({
-        meta: {
-          lastClaim: {
-            ...RECEIPT,
-            summary: {
-              ...RECEIPT.summary,
-              signed: { here: 1, account: 1, shared: 0, merged },
-            },
-          },
-        },
-      }).meta.lastClaim, `${merged} is not a count`).toBeNull()
+  it('keeps the completion and drops every removed field', () => {
+    const data = coerceRecordData(OLD)
+    expect(data.sheets['fundamentals/llms']?.signedOff).toBe('2026-07-01T08:00:00.000Z')
+    const text = JSON.stringify(data)
+    for (const gone of ['identity', 'data-analyst', 'quiz', 'sources', 'submittals', 'aliasNamedFor', 'lastClaim']) {
+      expect(text, gone).not.toContain(gone)
     }
-    expect(coerceRecordData({
-      meta: {
-        lastClaim: {
-          ...RECEIPT,
-          summary: {
-            ...RECEIPT.summary,
-            submittals: { here: -1, account: 0, shared: 0, merged: 0 },
-          },
-        },
-      },
-    }).meta.lastClaim).toBeNull()
-  })
-
-  it('drops a receipt that is not an object at all', () => {
-    expect(coerceRecordData({ meta: { lastClaim: 'yes' } }).meta.lastClaim).toBeNull()
-    expect(coerceRecordData({ meta: { lastClaim: [] } }).meta.lastClaim).toBeNull()
   })
 })

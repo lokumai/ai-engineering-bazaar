@@ -53,98 +53,32 @@ export const THEME_KEY = 'hl-theme'
 /** §12.1.2 — inside the envelope, never in the key. */
 export const SCHEMA_VERSION = 1
 
-export interface QuizRecord {
-  answer: string
-  assessed: 'matched' | 'missed' | null
-  at: string
-}
-
-export interface Submittal {
-  owner: string
-  repo: string
-  /** §12.9.2 — the RECONSTRUCTED `https://github.com/{owner}/{repo}`. */
-  url: string
-  commit: string | null
-  note: string
-  at: string
-}
-
 export interface SheetRecord {
   signedOff: string | null
   signedRevision: string | null
   reachedEnd: boolean
   dwellSeconds: number
-  quiz: QuizRecord | null
   checklist: { [index: string]: boolean }
-  sources: string[]
-  submittals: Submittal[]
 }
 
 export interface RecordData {
-  identity: {
-    name: string | null
-    markSeed: string | null
-    mark: string | null
-    /** §13.3 — `null` is the whole of "has not said", and it is the default. */
-    role: string | null
-  }
   /** §12.1.3 — keyed by SLUG (`intermediate/security`), never by number. */
   sheets: { [slug: string]: SheetRecord }
   days: string[]
   /**
-   * §16.3 — `aliasNamedFor` is stated here for the same reason §13.3's
-   * `identity.role` is: a nullable addition is a WIDENING, not a migration
-   * (`migrate.ts`'s header), so `coerceRecordData` defaults it and every
-   * record the app HOLDS carries the key. A seed that omitted it would put a
-   * shape in storage that the store never writes, and the three §12.12.6 /
-   * §12.15 round trips compare raw storage against a record that went through
-   * the store — they read as data loss when the only difference is a key the
-   * seed forgot. Measured: omitting it made those three specs red while the
-   * app was correct.
-   *
-   * M10's `railFolded` is here for exactly that reason: it is the third
-   * widening of `prefs`, and the three round trips above compare raw storage
-   * against a record that went through the store. M12's `catalogView` is the
-   * fourth, on the same terms, and M24's two palettes the fifth and sixth —
-   * which the full suite measured the same way: two round trips red, the app
-   * correct, the seed a key short.
+   * Every key the store writes is stated here, because the round trips compare
+   * raw storage against a record that went through the store: a seed a key
+   * short reads as data loss when the app is correct.
    */
   prefs: {
     charKeys: boolean
     railFolded: boolean
-    aliasNamedFor: string | null
     catalogView: 'overview' | 'cards' | 'table' | null
     /** M24 — the two palettes, `null` until a reader chooses. */
     figurePalette: 'night' | 'paper' | 'blueprint' | null
     codePalette: 'night' | 'paper' | 'blueprint' | null
   }
-  /**
-   * §17.3 — `lastClaim` is typed out the same structural way as everything
-   * else here (see the module docblock): a shape drift in `lib/record/claim.ts`
-   * that the migration ladder was supposed to catch should fail a browser test.
-   */
-  meta: { lastExport: string | null; persisted: boolean | null; lastClaim: ClaimReceipt | null }
-}
-
-export type ClaimIdentitySource = 'account' | 'local' | 'absent'
-
-export interface ClaimReceipt {
-  at: string
-  summary: {
-    outcome: 'merged' | 'adopted'
-    signed: { here: number; account: number; shared: number; merged: number }
-    submittals: { here: number; account: number; shared: number; merged: number }
-    droppedSignatures: string[]
-    droppedSubmittals: string[]
-    identity: {
-      name: ClaimIdentitySource
-      markSeed: ClaimIdentitySource
-      role: ClaimIdentitySource
-      markChanged: boolean
-      nameChanged: boolean
-      roleChanged: boolean
-    }
-  }
+  meta: { lastExport: string | null; persisted: boolean | null }
 }
 
 export interface Envelope {
@@ -156,7 +90,6 @@ export interface Envelope {
 /** A seed only ever states the fields it cares about; the rest default. */
 export type SheetSeed = Partial<SheetRecord>
 export interface RecordSeed {
-  identity?: Partial<RecordData['identity']>
   sheets?: { [slug: string]: SheetSeed }
   days?: string[]
   prefs?: Partial<RecordData['prefs']>
@@ -175,10 +108,7 @@ export function sheetRecord(seed: SheetSeed = {}): SheetRecord {
     signedRevision: null,
     reachedEnd: false,
     dwellSeconds: 0,
-    quiz: null,
     checklist: {},
-    sources: [],
-    submittals: [],
     ...seed,
   }
 }
@@ -198,19 +128,17 @@ export function recordData(seed: RecordSeed = {}): RecordData {
     sheets[slug] = sheetRecord(sheet)
   }
   return {
-    identity: { name: null, markSeed: null, mark: null, role: null, ...seed.identity },
     sheets,
     days: seed.days ?? [SEED_DAY],
     prefs: {
       charKeys: true,
       railFolded: false,
-      aliasNamedFor: null,
       catalogView: null,
       figurePalette: null,
       codePalette: null,
       ...seed.prefs,
     },
-    meta: { lastExport: null, persisted: null, lastClaim: null, ...seed.meta },
+    meta: { lastExport: null, persisted: null, ...seed.meta },
   }
 }
 

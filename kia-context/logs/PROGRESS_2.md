@@ -12,7 +12,7 @@ description: >
   Bazaar Street front door. Then the v1.0.0 release, M28, Persian modules read right to left,
   merged as PR #30, M29, both translations rewritten in their own language, and M30, the Persian
   rewritten by meaning and a clarity hunt in all three languages, M31, two promo videos made
-  with HyperFrames and /brag and then removed before merging, and M32, the README rewritten for readers, up to M37, the content bundle for the mobile reader.
+  with HyperFrames and /brag and then removed before merging, and M32, the README rewritten for readers, up to M41, the content bundle for the mobile reader.
   Every milestone carries its deliverables and acceptance criteria as `- [ ]` checkboxes, ticked as
   the work lands, and closes with a dated report; the loop that governs that is in part 1 and is not
   restated here. Part 1 holds M1 to M15 and is closed.
@@ -21,14 +21,14 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M37, 2026-09-09 onward: M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23, the interface's own strings, is written and not started; M24, the author's requests of 2026-10-11, shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25, the end of a module rebuilt, and a quick quiz, shipped and merged as PR #25; M26, headings, the requested additions and ASD-STE-like English across the corpus, merged as PR #26. M27, the Bazaar Street front door, merged as PR #27. Released as v1.0.0 on 2026-10-12. M28, Persian, the third language, merged as PR #30 the same day. M29, both translations rewritten in their own language (D81), merged as PR #31 the same day. M30, the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83), merged as PR #32 the same day. M31, two promo videos, one made with HyperFrames and one with /brag (D84), removed at the author's request before merging. M32, the README rewritten for readers, squash-merged as PR #33 on 2026-10-13. M33, a tray of lokum offered at each door on hover, merged as PR #34 on 2026-10-14. M34, the star count refreshed by the deploy (D85), merged as PR #36 on 2026-10-15. M35, Harness Engineering names its parts in plain words, merged as PR #38 on 2026-10-15. M36, three references for Observability and Context Engineering, merged as PR #42 on 2026-10-18. Checkbox format repaired across the part on 2026-09-13. M37, the content bundle for the mobile reader (D86), is opened as PR #57, PR 1 of the mobile reader."
+covers: "M16 to M41 (M39 on branch design/round-2026-11), 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. Checkbox format repaired across the part on 2026-09-13. M41, the content bundle for the mobile reader (D89), is opened as PR #57, PR 1 of the mobile reader."
 last_updated: 2026-11-05
 ---
 
-# 📈 PROGRESS, part 2 — M16 to M37
+# 📈 PROGRESS, part 2 — M16 to M41
 
 > **← Part 1: [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the review pass over M10 to M14.
-> This part holds **M16 to M36**, in the order they were worked.
+> This part holds **M16 to M41**, in the order they were worked.
 
 ## How to work this file
 
@@ -81,6 +81,10 @@ deliverables as a numbered list; M18 wrote none at all; M19 to M22 had none eith
 | **M34** | The star count stays current | **Done** — 2026-10-15, merged as PR #36 |
 | **M35** | Harness Engineering names its parts in plain words | **Done** — 2026-10-15, merged as PR #38 |
 | **M36** | Three references for Observability and Context Engineering | **Done** — 2026-10-18, merged as PR #42 |
+| **M37** | Stale mockups removed from `playground/` | **Done** — 2026-11-05, merged as PR #54 |
+| **M38** | The progress page keeps the circles and the data row | **Done**, 2026-11-05, merged as PR #55 |
+| **M40** | Removed features gone from the code, and the test suite cut | **Done**, 2026-11-05, merged as PR #56 |
+| **M41** | The content bundle for the mobile reader | **Open**, 2026-11-05, PR #57 |
 
 ---
 
@@ -1120,13 +1124,13 @@ the milestone's promise and M9 to M14's failure was losing them quietly.
 | Complete a module from the overview | **M18: `/profile/` alone.** The home page drew control C as well until the author took the level grid off the front door; the component and the mockup are unchanged, and the count of surfaces drawing it went from two to one | `completion` (9), which is where `home.spec.ts`'s eight control-C tests moved, plus the one that measures the dials against the rows |
 | ~~A self-check, self-marked, no score kept~~ | **Removed from the site in M25 on the author's word**, replaced by the quick quiz: 3 to 5 four-choice questions with an explanation each, nothing stored (**D77**). The `**Quick Check**:` line stays in the markdown | `module-end` (7), `quizzes.test.ts` |
 | A checklist that is never a gate | the module | `record-sheet` §12.4.1 cases |
-| ~~Register a repository, refusing a hostile URL~~ | **Removed in M25 on the author's word** — no page adds a submittal any more. The record keeps the ones it holds and `/profile/` still lists them; the URL allowlist stays in `lib/` with its unit tests | — |
+| ~~Register a repository, refusing a hostile URL~~ | **Removed in M25 on the author's word** — no page adds a submittal any more. The record keeps the ones it holds, and `/profile/` listed them until M38 removed that row; the URL allowlist stays in `lib/` with its unit tests | — |
 | See how far through each level you are | **M18: `/profile/`**, the rail and the catalog. `/` no longer reports on the reader at all | `fidelity` stage 7 (the annulus, and the channel-A percentage with JS aborted), `rail`, and `home.spec.ts`'s assertion that the front door carries no `.bz-cmod` and no tally |
-| A role, and the path it suggests | `/profile/` | `path` (6), `category-surfaces`'s nine-role pair |
-| What is waiting on you | `/profile/` | `record-pages` (28) |
+| ~~A role, and the path it suggests~~ | **Removed in M38 on the author's word** (2026-11-05). `paths.ts` and the components stay in the tree; a stored role still parses and exports | ~~`path` (6)~~, deleted with the row; `category-surfaces`'s nine-role pair still holds the stylesheet |
+| ~~What is waiting on you~~ | **Removed in M38 on the author's word** | — |
 | Take a copy of the record out, and put one back | `/profile/`'s data row | `record-pages`, `record-report` unit |
 | Erase everything, told what will go | `/profile/`'s erase dialog | `record-pages` §12.15 cases |
-| The record of work, as a document | `/profile/`'s report row | `record-report` unit, `category-hues` |
+| ~~The record of work, as a document~~ | **Removed from the page in M38 on the author's word**; `report.ts` stays in the tree | `record-report` unit, which tests the builder and not a page |
 | An optional account, gating nothing | `/sign-in/`, `/join/` | `accounts` (12, gated), `accounts-disabled` (5) |
 | An alias, with no account at all | `/sign-in/alias/` | `alias` (5) |
 | A team's roster and assignments | `/team/`, `/team/assignments/` | `accessibility` (19), `colour-not-alone` |
@@ -4232,11 +4236,123 @@ then commit and push and merge"*.
 
 ---
 
-## Milestone M37: The content bundle for the mobile reader
+## 🏁 Milestone M37: Stale mockups removed from `playground/` — SHIPPED, MERGED AS PR #54
 
-Branch `feat/content-bundle`, from `main` at `a941364`, ten commits, one per task; not pushed and not merged when this was written.
+Branch `chore/playground-cleanup`, from `main` at `a941364`, merged to `main` as PR #54 once CI
+passed. The author, 2026-11-05, after a breakdown
+of every file in `playground/` by what references it: *"delete the ones in Safe to delete table"*.
+
+### Deliverables
+
+- [x] **Ten files deleted**, the rejected options of the September design choice, referenced nowhere
+      outside `playground/`: `00-vocabulary.html`, themes `T1`, `T2`, `T3` and `T4-bazaar`,
+      `01-theme-T4-grounds.html`, grounds `G1`, `G2` and `G4`, and `generate-grounds.py` (236 KB).
+      They stay in git history.
+- [x] **Kept**: the six mockups the tests load (`01-…-G3-powder`, `01-…-G3-DARK`, `03`, `05`, `07`,
+      `10`) and the six that only comments or kia-context name (`02`, `04`, `06`, `08`, `09`,
+      `index.html`).
+
+### Acceptance criteria
+
+- [x] 2,194 unit and corpus tests pass after the deletion.
+- [x] `playground/index.html`, the record of the author's ten choices (PROGRESS.md M8), linked the
+      nine deleted pages; at the author's word they now point at each file on GitHub at `a941364`,
+      the last commit that had them, and no local link in it is dead.
+
+
+## 🏁 Milestone M38: The progress page keeps the circles and the data row — SHIPPED, MERGED AS PR #55
+
+Branch `feat/progress-slim`, from `main` at `d3575ce`. The author, 2026-11-05, after six readers had
+used the site: the progress page's unused features *"can be freely removed"*, and the change should
+land early because colleagues are about to design a mobile app against the site and open PRs on it.
+The round-2 playground (`playground/2026-11-round-2/F-progress-page.html`) drew the slimmed page;
+progress per track (D86) is not part of this milestone and waits for the track system.
+
+### Deliverables
+
+- [x] **`/profile/` keeps three things**: the level circles (`CourseCompletion`, M22), the continue
+      card, and one register row, **Export, import, erase**, under a `Your data` heading. The record
+      lives only in this browser, so the exported file is the reader's only copy that survives a
+      cleared browser; that is why the row stays.
+- [x] **Removed from the page**: the account block (the name, `Checked by`, the mark and its seed,
+      sign-in), `Waiting on you`, and the rows for the readout and face legend, the streak, stamps,
+      submittals, the role path, the curriculum diagram, the record of work, the organisation, the
+      last claim, storage, stored values and the keyboard. `src/app/profile/page.tsx` went from 699
+      lines to 124.
+- [x] **The components stay in the tree**, imported by nothing on this page: `DrafterBlock`,
+      `AttentionPanel`, `src/components/path/`, `ReportPanel` and the rest. The record schema is
+      unchanged, so every existing reader's record parses, exports and merges as before.
+- [x] `/profile/#data` still opens the data row; `/dashboard/`, `/path/` and `/report/` still forward
+      to `/profile/`.
+
+### Acceptance criteria
+
+- [x] The tests of removed features are deleted, not skipped: 23 browser tests (`path.spec.ts`
+      whole, 13 in `record-pages`, 2 in `fidelity` stage 8, 2 in `colour-not-alone`) and 3 unit
+      tests. Tests that checked a capability that still exists were moved to where it now lives:
+      the mascot's faces, hatch and byte-identity to `/legend/`; the rename that mints no second
+      seed, the typed-into-a-field shortcut guard and the mark picker's forced-colours radio to
+      `/sign-in/alias/`; the round-trip export reads `meta.lastExport` from storage instead of the
+      removed storage row.
+- [x] Fidelity stage 8 compares the continue card alone, with its mutation moved to the card's
+      padding; the panel and field are still compared against `07` by stage 10, on
+      `/sign-in/alias/`.
+- [x] `ARCHITECTURE.md` §8 and the vocabulary table, and the M16 capability ledger, say which
+      capabilities left the page.
+- [x] Typecheck, 2,107 unit and corpus tests, and the full browser suite (1,175 passed, 59 skipped) pass.
+
+
+## 🏁 Milestone M40: Removed features gone from the code, and the test suite cut to what guards a reader — SHIPPED, MERGED AS PR #56
+
+Branch `chore/remove-deprecated`, from `main` at `bc39c96`. (M39, the round-2 design choices, is
+recorded on branch `design/round-2026-11`, where it is still in progress.) The author, 2026-11-05,
+after exporting their progress and finding their old role path in the file: *"All those features
+should be gone, even the docs under docs/ ... also remove the unnecessary tests ... Do not overkill
+or overengineer."* Then: *"for tests, I mean overall tests ... keep the necessary tests and remove
+the ones that are not that important."* **D88** records the choice.
+
+### Deliverables
+
+- [x] **The account layer is removed**: `/sign-in/`, `/sign-in/alias/`, `/join/`, `/team/`,
+      `/team/assignments/`, `/auth/callback/`, the Supabase client and sync, `AccountSync`,
+      `supabase/`, `scripts/check-supabase.mjs`, `scripts/test-rls.mjs`, `.env.local.example`, the
+      `@supabase/supabase-js` dependency, the deploy's account variables and its sign-in page check,
+      and the three files in `docs/`. `SECURITY.md` is rewritten to the one risk left.
+- [x] **The role paths, the record of work and its specimen are removed**, with `/legend/specimen/`
+      and M14's three forwards (`/dashboard/`, `/path/`, `/report/`).
+- [x] **The record no longer holds** the name, mark, mark seed, role, a module's quiz answer, opened
+      sources or linked repositories, `prefs.aliasNamedFor` or `meta.lastClaim`. Schema version 1 is
+      unchanged: a record stored before this parses, and the old fields drop out on the next write
+      and from every export. Import reads the exported `.json` only.
+- [x] **`/legend/`** keeps the keyboard map, gains the single-key shortcut switch (WCAG 2.2 SC 2.1.4;
+      it had no home since M38 removed the keyboard row), and keeps where the progress is kept, the
+      mark and the colophon. The diagram key, the specimen and the "what this site does not have"
+      list went.
+- [x] **The catalog's per-module squares** are completion and checklist; quiz and sources could
+      never fill since M25.
+- [x] **Dead CSS removed** from `progress.css`, `completion.css` and `derived.css`, and the
+      generator's step group from `lokum-modules.css` (regenerated).
+- [x] **Tests**: 2,107 → 1,144 unit tests; 1,234 → 461 browser cases (the 1024px project gone, the
+      fidelity per-fact mutation loop gone, two per-module loops sampled). CI builds once, with the
+      base path, and runs four Playwright workers.
+
+### Acceptance criteria
+
+- [x] A record carrying the removed fields loses them on read, proven by a test seen failing
+      when the validator keeps `identity`.
+- [x] No source file links to a removed route; no source file is left that nothing imports.
+- [x] Typecheck clean; 1,144 unit tests pass; the base-path build passes the link gate; the browser
+      suite passes (451 passed, 10 skipped).
+- [x] Root `CLAUDE.md`, `ARCHITECTURE.md` (§1, rule 3, rule 6 struck, §5, §6 struck, routes, §8
+      struck, §10 to §12), `tests/README.md` and D88 say what went.
+
+
+## Milestone M41: The content bundle for the mobile reader
+
+Branch `feat/content-bundle`, from `main` at `a941364`, ten commits, one per task; opened as PR #57, and merged with `main` after M40 (see the last section).
+It was written as M37 and D86 and renumbered when the merge found both taken: M37 by the playground cleanup, D86, D87 and M39 by branch `design/round-2026-11`.
 It is PR 1 of the mobile reader: the web build now publishes the course as a versioned, content-addressed JSON bundle under `out/api/` that a native reader renders without deriving anything.
-The shape of the bundle and why is **D86**; the contract is ARCHITECTURE §13; MANIFESTO rule 10 gained one sentence about device backup.
+The shape of the bundle and why is **D89**; the contract is ARCHITECTURE §13; MANIFESTO rule 10 gained one sentence about device backup.
 
 ### Deliverables
 
@@ -4250,7 +4366,7 @@ The shape of the bundle and why is **D86**; the contract is ARCHITECTURE §13; M
 - [x] **The route handlers** under `src/app/api/` (`75ccf3f`).
 - [x] **The finaliser** `scripts/finalize-bundle.mjs`, the checker `scripts/check-bundle-out.mjs` and the e2e contract check `tests/e2e/bundle.spec.ts` (`d228635`).
 - [x] **CI and deploy**: Chromium installed before each build, the bundle checked after both builds and the two `api/` trees diffed, and the deploy waiting for the live `contentVersion` (`65cb429`).
-- [x] **The written record**: ARCHITECTURE §13 and two rows in its rule-4 table, MANIFESTO rule 10, **D86**, this entry, and the `CLAUDE.md` and `tests/README.md` lines.
+- [x] **The written record**: ARCHITECTURE §13 and two rows in its rule-4 table, MANIFESTO rule 10, **D89**, this entry, and the `CLAUDE.md` and `tests/README.md` lines.
 
 ### Acceptance criteria
 
@@ -4269,7 +4385,7 @@ Measured on `65cb429` on 2026-11-05 unless a commit is named.
 - [x] **10.** The conformance snapshot exists, holds five sections and eight constants and no vocabulary list, and its web-side test passes.
 - [x] **11.** `ci.yml` runs `check-bundle-out` after each build and diffs the two trees; `deploy.yml` checks `_site` before publishing and polls the live index for the new `contentVersion`.
       The live check has not yet run against a deploy.
-- [x] **12.** This entry, **D86**, ARCHITECTURE §13, MANIFESTO rule 10, `CLAUDE.md` and `tests/README.md`, with frontmatter updated.
+- [x] **12.** This entry, **D89**, ARCHITECTURE §13, MANIFESTO rule 10, `CLAUDE.md` and `tests/README.md`, with frontmatter updated.
 
 The gate on `65cb429`, one stage at a time under `heavy`: typecheck clean; 104 test files and 2,384 unit and corpus tests; build clean; `check-links-out` and `check-bundle-out` pass on the plain and the base-path build; e2e as in 2 above.
 The finaliser drew 138 diagrams, the largest glyph move between the first drawing and the finished file was 0.133 px, and the index lists 215 files and 43 images.
@@ -4283,10 +4399,26 @@ Filed here rather than folded into this branch.
 
 - `scripts/check-mermaid.mjs:17` validates diagrams with `mermaid.initialize({ startOnLoad: false })` and not with `mermaidConfig()`, so it checks a configuration the site does not render with.
 - `src/lib/figure/mermaid-config.ts:144-147`: `flowchart.htmlLabels: false` does not stop mermaid emitting `foreignObject`; only a top-level `htmlLabels: false` does, which is why the bundle's render config sets one.
-- `docs/data-flow.md:369` says `checklist[i]` merges by "last writer", but `src/lib/record/merge.ts:179-189` takes the union, deliberately, as `merge.ts:161-176` explains.
-- `src/lib/record/merge.ts:50-53`: `Date.parse` reads an instant with no offset in local time (measured under `TZ=Asia/Tokyo`), so the merge order of such an instant depends on the device's zone.
-  A rule is needed before the merge is ported to the app.
-- `src/lib/record/validate.ts:125-130`: `asInstant` acceptance depends on the engine's `Date.parse`, and only V8 has been measured.
+- ~~`docs/data-flow.md:369` says `checklist[i]` merges by "last writer", but `src/lib/record/merge.ts:179-189` takes the union, deliberately, as `merge.ts:161-176` explains.~~ Both files went with M40 (D88).
+- ~~`src/lib/record/merge.ts:50-53`: `Date.parse` reads an instant with no offset in local time (measured under `TZ=Asia/Tokyo`), so the merge order of such an instant depends on the device's zone.
+  A rule is needed before the merge is ported to the app.~~ `merge.ts` went with M40 (D88), so there is no merge to port.
+- `src/lib/record/validate.ts:105-110` (`125-130` before the merge): `asInstant` acceptance depends on the engine's `Date.parse`, and only V8 has been measured.
+
+### Merged with `main` after M40
+
+On 2026-11-05 `origin/main` at `17f7c2c` was merged in, carrying M37 (the playground cleanup), M38 and M40.
+Git stopped on both workflows, `INDEX.md`, `BRAINSTORM_2.md`, `PROGRESS_2.md`, `ARCHITECTURE.md`, `DataPanel.tsx`, `events.ts` and `validate.ts`; `package-lock.json` merged cleanly and `npm install` left it unchanged.
+
+- **The record**: main's `src/lib/record/` and `DataPanel.tsx` were taken whole, and only the exports the conformance test reads were put back: `isSigned`, `INSTANT_DAY`, `serialise`, `exportFilename` (moved from `DataPanel.tsx` into `store.ts`), `SHORT_HASH`, `ISO_DAY` and `ISO_TIME`.
+  `MARK_SEED` was not, because `mintMarkSeed` went with M40.
+- **The conformance snapshot** now pins what M40 left: seven constants, without `MARK_SEED`; an `EMPTY_RECORD` without `identity`, `prefs.aliasNamedFor` or `meta.lastClaim`, and a sheet without `quiz`, `sources` or `submittals`; 120 parse cases, where the five that read a record of work out of HTML became one that pins an HTML page as carrying no record, because import reads the `.json` only; 11 reduce cases, without the three `mintMarkSeed` cases and the one that kept `aliasNamedFor` through an erase; and a `tally` of `sheets` alone.
+  The invalid UTF-8 case moved from the removed name into a sheet slug.
+- **CI** builds once, with the base path, as M40 left it, and checks the bundle after that build.
+  The determinism and base-path check now diffs that `api/` tree against the one the browser suite builds without a base path, so it costs no build; criterion 6 holds in that form, and criterion 7, two base-path builds, is not repeated in CI.
+- **Renumbered**: this milestone was M37 and its decision D86; both numbers were taken on `main` and on `design/round-2026-11`.
+
+The gate after the merge, one stage at a time under `heavy`: typecheck clean; 82 test files and 1,351 unit and corpus tests; the plain and the base-path build both pass `check-bundle-out` and `check-links-out`, and their `api/` trees are byte-identical; e2e 452 passed, 10 skipped, and its own build's `api/` tree is byte-identical to the base-path one.
+`contentVersion` is `db80145249e7328c3b8debb307e157facd1a237a965f7d5604ce3a8dcf62cb87`, the same as before the merge, with 215 files and 43 images: M40 changed no bundle input, and `record-conformance.json` is outside `contentVersion` by §13's design.
 
 ---
 

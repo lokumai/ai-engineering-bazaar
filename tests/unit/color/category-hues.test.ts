@@ -5,7 +5,6 @@ import { contrastRatio } from '@/lib/color/contrast'
 import { hexToOklch } from '@/lib/color/oklch'
 import { CATEGORIES } from '@/lib/content/curriculum-file'
 import { readDesignToken } from '@/lib/content/code-theme'
-import { CATEGORY_HUES } from '@/lib/record/report'
 
 /**
  * The five-hue `category-*` series, checked against what it promises.
@@ -175,32 +174,5 @@ describe('a viewer can tell any two of them apart', () => {
       expect(hexToOklch(hue(ordinal, theme)).C, `category-${ordinal}`)
         .toBeGreaterThan(0.02)
     }
-  })
-})
-
-describe('the exported record carries the same five, and no others', () => {
-  /**
-   * The one copy of this palette that cannot read the token layer: a RECORD OF
-   * WORK is opened from `file://` with an opaque origin and no stylesheet to
-   * import, so `src/lib/record/report.ts` inlines the hues. A wrong value there
-   * is invisible — the document would just be a slightly different colour from
-   * the site, in a file nobody can reissue.
-   */
-  it('matches the language, in curriculum order', () => {
-    const expected = Object.fromEntries(
-      CATEGORIES.map((category, index) => [
-        category.slug,
-        hue(index + 1, 'light').toUpperCase(),
-      ]),
-    )
-    const actual = Object.fromEntries(
-      Object.entries(CATEGORY_HUES).map(([slug, value]) => [slug, value.toUpperCase()]),
-    )
-    expect(actual).toEqual(expected)
-  })
-
-  it('names every category the curriculum has, and nothing else', () => {
-    expect(Object.keys(CATEGORY_HUES).sort())
-      .toEqual(CATEGORIES.map((category) => category.slug).sort())
   })
 })

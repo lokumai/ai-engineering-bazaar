@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { openRegisterRow, seedRecord, signedSheet } from './record'
+import { seedRecord, signedSheet } from './record'
 import { A0, CATEGORY_PATHS, INDEX_SHEET } from './sheets'
 import { showCatalogView, showTable } from './views'
 
@@ -45,7 +45,7 @@ test.beforeEach(async ({ page }) => {
 test('a category card still reports its standing with no colour (§13.1.3 item 2)', async ({
   page,
 }) => {
-  await seedRecord(page, { identity: { role: 'software-engineer' }, sheets: SIGNED })
+  await seedRecord(page, {sheets: SIGNED })
 
   /* M17 — the band and its meter are on the level's own catalog entry now, one
      per page rather than five on one. `SIGNED` carries a signed sheet in each
@@ -122,16 +122,12 @@ test('a module row still states its own status with no colour (§13.1.3 item 3)'
   expect(borders.every((colour) => colour !== 'rgba(0, 0, 0, 0)')).toBe(true)
 })
 
-test('LKM-01 still reports every level with no colour (§13.1.3 item 1)', async ({
-  page,
-}) => {
+test('LKM-01 draws its faces with no fill (§13.1.3 item 1)', async ({ page }) => {
   await seedRecord(page, { sheets: SIGNED })
-  // M14 — the mark and its face legend are the `readout` row of the progress
-  // page's register: `/dashboard/` folded into `/profile/`. The row is opened
-  // because a closed `<details>` has no box, and `getComputedStyle` on an
-  // unrendered element answers about a box that is not there.
-  await page.goto('/profile/')
-  await openRegisterRow(page, 'readout')
+  // `/legend/` since 2026-11-05. The mark and its face legend were the
+  // `readout` row of the progress page until that row was removed; the legend
+  // still draws the mark, and the face legend went with the row.
+  await page.goto('/legend/')
 
   /*
     The faces carry no fill. What is left is §8.2's line types and the face
@@ -154,12 +150,9 @@ test('LKM-01 still reports every level with no colour (§13.1.3 item 1)', async 
       .evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).fill))
 
   const fills = await faceFills()
-  // Two cubes on this page, not one: the 28px mark in the header and the 128px
-  // hero (§13.2's four sizes). So the count is a positive multiple of the face
-  // count rather than the face count itself — asserting it directly would have
-  // been a claim about the page's furniture, and it would break the day a third
-  // mark appears. The face count comes off the subsystem list, because there is
-  // one face per subsystem.
+  // The face count comes off the subsystem list, because there is one face per
+  // subsystem; a multiple of it, because a page may carry the mark more than
+  // once.
   expect(fills.length).toBeGreaterThan(0)
   expect(fills.length % CATEGORY_PATHS.length).toBe(0)
   expect(fills.every((fill) => fill === 'none')).toBe(true)
@@ -171,174 +164,6 @@ test('LKM-01 still reports every level with no colour (§13.1.3 item 1)', async 
   expect(unforced.length).toBe(fills.length)
   expect(unforced.every((fill) => fill === 'none')).toBe(true)
   await page.emulateMedia({ forcedColors: 'active' })
-
-  // One row per subsystem, each naming its flavour, its subsystem and its
-  // count in words.
-  const legend = page.locator('.bz-legend-swatch')
-  await expect(legend).toHaveCount(CATEGORY_PATHS.length)
-
-  const text = await page.locator('body').innerText()
-  for (const flavour of ['TURKUAZ', 'LACİVERT', 'ERİK', 'BAL', 'KİREMİT']) {
-    expect(text, flavour).toContain(flavour)
-  }
-  for (const title of ['Fundamentals', 'Intermediate', 'Expert', 'Ecosystem']) {
-    expect(text, title).toContain(title)
-  }
-
-  // A subsystem holding no drawn sheets says so in the register's own word
-  // rather than as a bare dash or as `0/9`, which would each imply something
-  // untrue (§11.25, §13.14a).
-  expect(text).toContain('PLANNED')
-})
-
-test('a path step still states its state with no colour (§13.1.3 item 6)', async ({ page }) => {
-  await seedRecord(page, { identity: { role: 'software-engineer' }, sheets: SIGNED })
-  // M14 — the nine paths are the `role` row of the progress page's register.
-  await page.goto('/profile/')
-  await openRegisterRow(page, 'role')
-
-  const body = page.locator('.bz-path-body[data-role="software-engineer"]')
-  await expect(body).toBeVisible()
-
-  // Every step names its subsystem and its tier in text, so the leading rule's
-  // hue repeats a fact rather than carrying one.
-  const first = body.locator('.bz-step').first()
-  await expect(first).toContainText(/FUNDAMENTALS/i)
-  await expect(first).toContainText(/CORE|SUPPORTING|CONTEXT/i)
-
-  // And the two states a step can be in are words, not colours.
-  await expect(body.locator('.bz-step-tick:visible').first()).toContainText('COMPLETED')
-  await expect(body).toContainText(/REMAINING ON THIS PATH/i)
-})
-
-test('the swatch is labelled by the row it sits in, never by hue alone', async ({ page }) => {
-  await seedRecord(page, { sheets: SIGNED })
-  await page.goto('/profile/')
-  await openRegisterRow(page, 'readout')
-
-  // §13.1.3 item 8 — the swatch is the one place a hue appears without an
-  // adjacent count of its own, which is why it is `aria-hidden` and why its row
-  // carries the flavour name, the subsystem and the count as text. Under forced
-  // colours it is a bordered box with the system ground, and the row is
-  // unchanged.
-  for (const swatch of await page.locator('.bz-legend-swatch').all()) {
-    await expect(swatch).toHaveAttribute('aria-hidden', 'true')
-  }
-
-  const rows = page.locator('tr', { has: page.locator('.bz-legend-swatch') })
-  await expect(rows).toHaveCount(CATEGORY_PATHS.length)
-  for (const row of await rows.all()) {
-    // Flavour, subsystem, and a reading: three cells, all of them words.
-    expect((await row.innerText()).trim().length).toBeGreaterThan(8)
-  }
-})
-
-test('the account block and a closed row read as text with no colour (§16.2.3, §16.7)', async ({
-  page,
-}) => {
-  /**
-   * §16 introduced two surfaces that carry state in paint, and both of them are
-   * deleted by this mode rather than merely dimmed.
-   *
-   * The selected mark cell has three carriers: an `--accent-wash` ground, a
-   * 1.5px inset shadow and a bold label. `forced-colors: active` drops every
-   * `background-image` and every `box-shadow` on the page, so two of the three
-   * are gone here and the third — a font weight — is not a state a reader can be
-   * asked to infer. §16.2.3's answer is that the native radio, hidden at every
-   * other width because the glyph and its name are the control, is brought back
-   * into view in this mode; the selection is then read from the platform's own
-   * control, which is the one thing forced colours cannot take away.
-   *
-   * The register's closed row is the other: the fold is drawn as a painted
-   * hairline grid, and the open row's marker is a painted 2px cut line. What
-   * makes a closed row honest is not any of that — it is §16.4.1's reading,
-   * which is real text in the summary. So this reads it as text, with the row
-   * still closed, which is also the screen-reader case: the line is announced
-   * without opening anything.
-   */
-  await seedRecord(page, {
-    identity: {
-      name: 'Ada Lovelace',
-      markSeed: 'a1b2c3d4',
-      mark: 'datum',
-      role: 'software-engineer',
-    },
-    sheets: SIGNED,
-  })
-  await page.goto('/profile/')
-  await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
-
-  // ---- the drafter block, in words -----------------------------------------
-  const drafter = page.locator('.bz-drafter')
-  await expect(drafter).toBeVisible()
-
-  // The mark and the seed are two mono lines under the drawing, and they are the
-  // information the deleted definition list described without printing: the mark
-  // is a choice, the seed is the record of a past act.
-  const lines = await drafter.locator('.bz-drafter-line').allInnerTexts()
-  expect(lines.length, 'the drawing states neither its mark nor its seed').toBeGreaterThan(1)
-  expect(lines.join('\n')).toMatch(/MARK ·/)
-  expect(lines.join('\n')).toMatch(/SEED ·|NO SEED MINTED YET/)
-
-  // Both halves name themselves, and the naming is the substitute for the
-  // painted 1.5px rule between them, which this mode has just deleted.
-  const halves = await drafter.locator('.bz-drafter-half h3').allInnerTexts()
-  expect(halves.length).toBe(2)
-  for (const half of halves) expect(half.trim().length).toBeGreaterThan(3)
-
-  /*
-    §16.2.3 — the chosen mark is readable from the native control, not from the
-    wash.
-
-    THE DESIGN IS A SWAP, SO BOTH HALVES ARE ASSERTED. The glyph and its name
-    are the control at every other width, so the radio is `opacity: 0` there;
-    under forced colours it comes back, because the platform's own widget is
-    then the only thing that can say which option is chosen. `progress.css`
-    states both, and stage 8 restored them after stage 0 deleted the stylesheet
-    that used to.
-
-    This comment said the rule was missing and that `toBeVisible()` "can no
-    longer tell the design from its absence" — true when it was written, stale
-    since stage 8, and the second half is the part worth keeping: **it is still
-    true of `toBeVisible()`**, because Playwright counts an `opacity: 0` element
-    as visible. It has a box and it is not `visibility: hidden`. So the swap is
-    read from the COMPUTED OPACITY in both modes, which is the only assertion
-    that can fail if either half of the rule goes away.
-  */
-  const chosen = page.locator('label[data-hl-mark="datum"] input[name="hl-mark"]')
-  await expect(chosen).toBeChecked()
-
-  await page.emulateMedia({ forcedColors: 'none' })
-  expect(
-    await chosen.evaluate((node) => getComputedStyle(node).opacity),
-    'the native radio is meant to be out of sight while the glyph is the control',
-  ).toBe('0')
-
-  await page.emulateMedia({ forcedColors: 'active' })
-  expect(
-    await chosen.evaluate((node) => getComputedStyle(node).opacity),
-    'with no colour at all the native radio is what says which mark is chosen',
-  ).toBe('1')
-  await expect(chosen).toBeVisible()
-  // And the cell says which mark it is in text, because the glyph is decoration:
-  // it is `aria-hidden` in every state and its fill is gone here.
-  await expect(page.locator('label[data-hl-mark="datum"]')).toContainText(/\S/)
-
-  // ---- one closed row, in words -------------------------------------------
-  const row = page.locator('section.bz-register-row').first()
-  const fold = row.locator('details.bz-register-fold')
-  expect(await fold.evaluate((node) => (node as HTMLDetailsElement).open)).toBe(false)
-
-  const name = (await row.locator('.bz-register-name').innerText()).trim()
-  const reading = (await row.locator('.bz-register-reading').innerText()).trim()
-  expect(name.length, 'a closed row does not name itself').toBeGreaterThan(2)
-  // §16.4.1 — folding removes prose and never a fact, and with no colour at all
-  // the fact is still the only thing that has to survive.
-  expect(reading, 'a closed row states no reading under forced colours').not.toBe('')
-  expect(reading === '--' || /\d/.test(reading) || /^[A-Z]/.test(reading)).toBe(true)
-  // The whole summary reads as one line of text: name, reading, and the mono
-  // chevron, which is `aria-hidden` and therefore not in this reading.
-  expect((await row.locator('summary').innerText()).trim()).toContain(name)
 })
 
 /**

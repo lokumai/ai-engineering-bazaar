@@ -308,62 +308,6 @@ test('the home screen cannot be nudged sideways at any width', async ({ page }) 
 })
 
 /**
- * §10.4 on the alias picker, which the test above cannot reach.
- *
- * That test measures the `::after` hit-area idiom on a module sheet. The mark
- * picker meets the floor a different way — `max-md:min-h-11` on the label, which
- * is `RolePicker`'s spelling of the same rule — so it needs its own measurement
- * rather than an entry in that selector list.
- *
- * It is worth a test of its own because it shipped 2px under: MEASURED at 42px
- * against a 44px floor, on a screen whose whole purpose is a reader choosing
- * between eight options with a thumb. Nothing else in the suite looks at this
- * route's controls.
- */
-test('the mark options reach the §10.4 touch floor below 768px', async ({ page }) => {
-  test.skip(page.viewportSize()!.width >= 768, '§10.4 sets the floor below 768')
-
-  /*
-    §16.2.2 — one picker, three call sites, and two of them are routes a reader
-    reaches on a phone. `/sign-in/alias/` is the first-run screen this test was
-    written for; `/profile/` renders the same component at its default prefix
-    inside the drafter block, so a measurement on one route says nothing about
-    the other and both are walked.
-
-    WHERE THE FLOOR IS STATED. `progress.css`, on `.bz-markrow-cell`, and
-    exactly once. It used to be `profile.css`, which M16 stage 0 deleted with
-    the other ten — so this test was red at 390 with the cell MEASURED at 19px
-    against 44 — and stage 8 restored it while building the picker's surface.
-    Stated once is the point: three call sites render this picker, and a floor
-    written per call site is a floor one of them will be missing.
-  */
-  for (const route of ['/sign-in/alias/', '/profile/']) {
-    await page.goto(route)
-    await page.waitForLoadState('networkidle')
-
-    const options = await page
-      .locator('label[data-hl-mark]')
-      .evaluateAll((nodes) => nodes.map((node) => ({
-        mark: node.getAttribute('data-hl-mark'),
-        height: Math.round(node.getBoundingClientRect().height),
-      })))
-
-    // Asserted, not assumed: a picker that rendered nothing would otherwise pass
-    // a loop over an empty list. Eight is the whole vocabulary — `seeded` plus the
-    // seven named glyphs — and `alias.spec.ts` pins the order. Exactly eight is
-    // also hazard H-C: `data-hl-mark` on a wrapper as well as on the label makes
-    // this sixteen, and the picker would still look right.
-    expect(options.length, `${route} no longer renders eight mark options`).toBe(8)
-    for (const option of options) {
-      expect(
-        option.height,
-        `${option.mark} is under the touch floor on ${route}`,
-      ).toBeGreaterThanOrEqual(44)
-    }
-  }
-})
-
-/**
  * EVERY CONTROL, ON THE ROUTES THE CONTROLS ARE ON.
  *
  * This test's name was true and its body was not. It visited one module sheet
@@ -705,7 +649,6 @@ test('no label paints its text over the text beside it', async ({ page }) => {
     expect(collisions, `${route} — a label's text is painted over its neighbour's`).toEqual([])
   }
 })
-
 
 /**
  * §4.7's one hard rule, on the routes the sample above cannot reach.

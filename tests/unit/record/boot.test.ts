@@ -330,18 +330,14 @@ describe('data-hl-record only goes on a record that carries something (§15.11)'
     ['a freshly minted record, which is what a migration stamp leaves behind', EMPTY_RECORD],
     [
       'a record holding only a preference',
-      { ...EMPTY_RECORD, prefs: { charKeys: false, railFolded: false, aliasNamedFor: null, catalogView: null, figurePalette: null, codePalette: null } },
+      { ...EMPTY_RECORD, prefs: { charKeys: false, railFolded: false, catalogView: null, figurePalette: null, codePalette: null } },
     ],
     ['a record holding only an empty module entry', withSheet({})],
-    ['a name the reader typed', { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, name: 'Ada' } }],
-    ['a mark seed', { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, markSeed: 'a1b2c3d4' } }],
-    ['a role the reader chose', { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, role: 'qa' } }],
     ['a day on which something was written', { ...EMPTY_RECORD, days: ['2026-08-31'] }],
-    ['an export the reader took', { ...EMPTY_RECORD, meta: { lastExport: '2026-08-31T09:00:00.000Z', persisted: null, lastClaim: null } }],
+    ['an export the reader took', { ...EMPTY_RECORD, meta: { lastExport: '2026-08-31T09:00:00.000Z', persisted: null } }],
     ['a module reached the end of', withSheet({ reachedEnd: true })],
     ['dwell on a module and nothing else', withSheet({ dwellSeconds: 41 })],
     ['one checklist box', withSheet({ checklist: { '7': true } })],
-    ['one source opened', withSheet({ sources: ['https://example.invalid/paper'] })],
     ['a module completed', withSheet({ signedOff: '2026-08-14T09:00:00.000Z' })],
   ]
 
@@ -410,13 +406,6 @@ describe('data-hl-record only goes on a record that carries something (§15.11)'
     const blocked = run(script, { stored: envelope(EMPTY_RECORD), getterThrows: true })
     expect(blocked.attributes.get('data-hl-storage')).toBe('blocked')
     expect(blocked.attributes.has('data-hl-record')).toBe(false)
-  })
-
-  it('draws no class for a role on a record that carries nothing else, but does stamp it', () => {
-    const data: RecordData = { ...EMPTY_RECORD, identity: { ...EMPTY_RECORD.identity, role: 'qa' } }
-    const stamped = run(script, { stored: envelope(data) })
-    expect(stamped.attributes.get('data-hl-record')).toBe('1')
-    expect([...stamped.classes]).toEqual(['hl-role-qa'])
   })
 
   /**

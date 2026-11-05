@@ -2,7 +2,6 @@ import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { CATEGORIES } from '@/lib/content/curriculum-file'
-import { ROLE_IDS } from '@/lib/path/roles'
 
 /**
  * The channel-A state lists a SURFACE has to keep complete.
@@ -63,7 +62,6 @@ function declared(pattern: RegExp): boolean {
 
 const CARRIER = /\[data-cat="[a-z-]+"\]\s*\{[^}]*--bz-cat:/
 const AGGREGATE = /html\.hl-cat-[a-z-]+-(?:started|complete)\b/
-const ROLE_REVEAL = /\.hl-role-[a-z-]+/
 
 describe('the category hue carrier, once a surface declares one', () => {
   it.skipIf(!declared(CARRIER))('maps every category slug to a hue, and only real ones', () => {
@@ -97,25 +95,6 @@ describe('the two aggregate category states, once a surface declares them', () =
   )
 })
 
-describe('the role path shows exactly one body, once a surface declares it', () => {
-  it.skipIf(!declared(ROLE_REVEAL))('names all nine roles in the reveal rule', () => {
-    const named = captures(/html\.hl-role-([a-z-]+)\s/g)
-    expect(named.sort()).toEqual([...ROLE_IDS].sort())
-  })
-
-  /**
-   * The empty state is shown by negating every role at once. A role missing
-   * from that chain shows the empty state AND that role's path together — two
-   * contradictory answers on one screen.
-   */
-  it.skipIf(!declared(ROLE_REVEAL))('negates all nine roles in the empty-state rule', () => {
-    const chain = /html((?::not\(\.hl-role-[a-z-]+\))+)/.exec(css)
-    expect(chain, 'no empty-state negation chain in any surface stylesheet').not.toBeNull()
-    const negated = [...(chain?.[1] ?? '').matchAll(/\.hl-role-([a-z-]+)/g)].map((m) => m[1])
-    expect(negated.sort()).toEqual([...ROLE_IDS].sort())
-  })
-})
-
 describe('the guards themselves', () => {
   /**
    * Every rule above is skipped when its list is absent, so all of them would
@@ -127,7 +106,5 @@ describe('the guards themselves', () => {
   it('knows what it is supposed to be covering', () => {
     expect(SLUGS.length).toBe(CATEGORIES.length)
     expect(new Set(SLUGS).size).toBe(SLUGS.length)
-    expect(ROLE_IDS.length).toBeGreaterThan(0)
-    expect(new Set(ROLE_IDS).size).toBe(ROLE_IDS.length)
   })
 })

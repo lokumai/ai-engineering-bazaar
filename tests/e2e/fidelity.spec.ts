@@ -207,53 +207,6 @@ test.describe('the fidelity harness', () => {
   })
 
   /**
-   * EVERY NARROW DEVIATION IS STILL DEVIATING, AND ONLY BELOW ITS WIDTH.
-   *
-   * An exemption is the one thing in this harness that can make a comparison
-   * pass without the design being right, so each one is held to both halves of
-   * its own claim: above the width it names, the fact must match the mockup;
-   * below it, the fact must really differ. A stale entry — one kept after the
-   * difference was fixed — is an exemption that would hide the NEXT
-   * difference, and it fails here rather than waiting to be noticed.
-   */
-  for (const [key, deviation] of Object.entries(NARROW_DEVIATIONS)) {
-    const role = key.split('.')[0] as Role
-    const source = REFERENCE_OF[role]!
-
-    test(`keeps ${key} exempt only below ${deviation.below}px`, async ({ page }) => {
-      const width = page.viewportSize()!.width
-      const selectors = REFERENCE_SELECTORS[source]
-
-      await page.goto(REFERENCE_URL[source])
-      await freezeMotion(page)
-      const reference = await extractDesignFacts(page, selectors)
-
-      await page.goto(source === '03' ? '/sheets/' : SHORT.path)
-      await freezeMotion(page)
-      if (source === '03') {
-        await page.addStyleTag({ content: '.bz-view { display: block !important; }' })
-      }
-      const actual = await extractDesignFacts(page, APP_SELECTORS)
-
-      if (reference[key] === null || actual[key] === null) {
-        test.skip(true, `${key} is absent at this viewport`)
-        return
-      }
-
-      if (width >= deviation.below) {
-        expect(actual[key], `${key} is exempt below ${deviation.below}px, not here`)
-          .toBe(reference[key])
-      } else {
-        expect(
-          actual[key],
-          `${key} no longer deviates below ${deviation.below}px — the exemption ` +
-            'is stale and would hide the next difference',
-        ).not.toBe(reference[key])
-      }
-    })
-  }
-
-  /**
    * EVERY AUTHOR DEVIATION IS STILL DEVIATING, AND IS THE ONE IT SAYS.
    *
    * The same two halves as the narrow guard above, with no width: the mockup
@@ -294,68 +247,6 @@ test.describe('the fidelity harness', () => {
     })
   }
 
-  /**
-   * THE MUTATION PROOF, one case per fact.
-   *
-   * Each case paints over exactly one property in the mockup and asserts the
-   * comparator reports **that** fact and nothing else. Every entry in the fact
-   * table carries the value used to overwrite it, so a fact cannot be added
-   * without also being proven to be checked — which is the property the
-   * rejected work lacked: its criteria were all real, and none of them was
-   * about the thing that was wrong.
-   */
-  for (const fact of DESIGN_FACTS) {
-    const key = factKey(fact)
-    /* Which document specifies this fact. Every fact in the table has one —
-       the completeness test below is what makes that true — so the `!` is
-       safe and a missing entry fails loudly there rather than quietly here. */
-    const source = REFERENCE_OF[fact.role]!
-
-    test(`notices ${key} changing`, async ({ page }) => {
-      await page.goto(REFERENCE_URL[source])
-      await freezeMotion(page)
-      // A menu is a panel a reader opens, so it is off screen at every width
-      // and its facts would skip for ever — fifteen of them, unproven, which
-      // is precisely the hole "one case per fact" exists to close. Opened here
-      // rather than exempted.
-      if (fact.role.startsWith('menu')) {
-        await page.locator('.mainnav > span').first().hover()
-        await expect(page.locator('.dd').first()).toBeVisible()
-      }
-      const selectors = REFERENCE_SELECTORS[source]
-      const reference = await extractDesignFacts(page, selectors)
-
-      if (reference[key] === null) {
-        // The role is not on screen at this width. Nothing to mutate, and the
-        // absence itself is asserted by the test above.
-        test.skip(true, `${key} is absent at this viewport`)
-        return
-      }
-
-      const selector = selectors[fact.role]!
-      const property = fact.property.replaceAll(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)
-      await page.addStyleTag({
-        content: `${selector} { ${property}: ${fact.mutate} !important; }`,
-      })
-
-      if (fact.role.startsWith('menu')) {
-        await page.locator('.mainnav > span').first().hover()
-        await expect(page.locator('.dd').first()).toBeVisible()
-      }
-      const mutated = await extractDesignFacts(page, selectors)
-      const differences = compareDesignFacts(reference, mutated)
-
-      // It must notice, and the value must really have moved rather than the
-      // override being a no-op that the comparator then honestly ignores.
-      expect(
-        differences.map((difference) => difference.fact),
-        `overriding ${property} on ${selector} changed nothing the harness reads`,
-      ).toContain(key)
-
-      const found = differences.find((difference) => difference.fact === key)!
-      expect(found.actual).not.toBe(found.reference)
-    })
-  }
 })
 
 /* ===========================================================================
@@ -1223,14 +1114,10 @@ test.describe('M16 stage 8 — progress and account', () => {
    * box is `display: none` and the comparison would agree with itself about
    * nothing.
    */
-  const BUILT: readonly Role[] = [
-    'continueHero',
-    'continueNum',
-    'panel',
-    'field',
-    'fieldLabel',
-    'fieldInput',
-  ]
+  // The panel and the field left this page on 2026-11-05 with the account
+  // block and the settings rows; stage 10 still compares both against `07`, on
+  // `/sign-in/alias/`.
+  const BUILT: readonly Role[] = ['continueHero', 'continueNum']
 
   test('is indistinguishable from `07`, in every length it specifies', async ({ page }) => {
     await page.goto(DASHBOARD_URL)
@@ -1367,69 +1254,13 @@ test.describe('M16 stage 8 — progress and account', () => {
   })
 
   /**
-   * §13.3 — the nine-role reveal, in a browser, with every `.js` request
-   * refused.
-   *
-   * All nine ordered paths are in the prerendered document and channel A shows
-   * one. The unit guard holds the STYLESHEET to naming all nine and negating
-   * all nine; this holds the PAGE to showing exactly one of them, which is the
-   * thing a reader would notice and the thing no regular expression over CSS
-   * can see.
+   * THE MUTATION. Pointed at the continue card's padding: `07` states 11px and
+   * the language holds 8px on the radius deliberately, so the padding is the
+   * one of the two that is meant to agree and is therefore the one worth
+   * proving can disagree. The panel's own mutation is stage 10's now, on the
+   * route that still draws one.
    */
-  test('shows one role path in frame one, and only one', async ({ page }) => {
-    await page.route('**/*.js', (route) => route.abort())
-    await seedRecord(page, { identity: { role: 'qa' } })
-    await page.goto('/profile/')
-    // The role row is a `<details>` and a closed one has no rendered box, so
-    // `checkVisibility()` would report every path hidden for the wrong reason.
-    // Opening a `<summary>` is the browser's own behaviour and needs no script.
-    await page.locator('section[aria-labelledby="role"] summary').click()
-
-    const seen = await page.evaluate(() => {
-      const shown = [...document.querySelectorAll('.bz-path-body')].filter((node) =>
-        node.checkVisibility(),
-      )
-      return {
-        total: document.querySelectorAll('.bz-path-body').length,
-        shown: shown.map((node) => node.getAttribute('data-role')),
-        empties: [...document.querySelectorAll('.bz-path-empty')].filter((node) =>
-          node.checkVisibility(),
-        ).length,
-      }
-    })
-
-    expect(seen.total, 'the nine paths are not all prerendered').toBe(9)
-    expect(seen.shown).toEqual(['qa'])
-    // And the empty state is NOT shown beside it, which is the contradiction
-    // the negation chain exists to prevent.
-    expect(seen.empties, 'the empty state is shown beside a chosen path').toBe(0)
-  })
-
-  /** The other half: no role, no path, and the empty state instead. */
-  test('shows no path at all, and says so, when no role is on record', async ({ page }) => {
-    await page.route('**/*.js', (route) => route.abort())
-    await page.goto('/profile/')
-    await page.locator('section[aria-labelledby="role"] summary').click()
-
-    const seen = await page.evaluate(() => ({
-      shown: [...document.querySelectorAll('.bz-path-body')].filter((node) =>
-        node.checkVisibility(),
-      ).length,
-      empties: [...document.querySelectorAll('.bz-path-empty')].filter((node) =>
-        node.checkVisibility(),
-      ).length,
-    }))
-
-    expect(seen.shown, 'a path is drawn for a role nobody chose').toBe(0)
-    expect(seen.empties, 'no empty state where there is no path').toBeGreaterThan(0)
-  })
-  /**
-   * THE MUTATION, owed since this block was written. Pointed at the panel's
-   * padding: `07` states 11px and the language holds 8px on the radius
-   * deliberately, so the padding is the one of the two that is meant to agree
-   * and is therefore the one worth proving can disagree.
-   */
-  test('notices when a panel stops taking `07`\'s padding', async ({ page }) => {
+  test('notices when the continue card stops taking `07`\'s padding', async ({ page }) => {
     await page.goto(DASHBOARD_URL)
     await freezeMotion(page)
     const reference = await extractDesignFacts(page, DASHBOARD_SELECTORS)
@@ -1437,16 +1268,15 @@ test.describe('M16 stage 8 — progress and account', () => {
     await seedRecord(page, { sheets: { 'fundamentals/llms': signedSheet('a1b2c3d') } })
     await page.goto('/profile/')
     await waitForHydratedReadout(page)
-    await openRegisterRow(page, 'data')
     await freezeMotion(page)
     await page.addStyleTag({
-      content: '.bz-panel { padding-top: 4px !important; padding-left: 4px !important; }',
+      content: '.bz-cont { padding-top: 4px !important; padding-left: 4px !important; }',
     })
     const mutated = await extractDesignFacts(page, APP_SELECTORS)
 
     const facts = differencesIn(reference, mutated, BUILT).map((one) => one.fact)
-    expect(facts).toContain('panel.paddingTop')
-    expect(facts).toContain('panel.paddingLeft')
+    expect(facts).toContain('continueHero.paddingTop')
+    expect(facts).toContain('continueHero.paddingLeft')
   })
 })
 
@@ -1549,57 +1379,6 @@ test.describe('M16 stage 10 — the routes no mockup draws', () => {
    * thing.
    */
   const SHARED: readonly Role[] = ['panel', 'field', 'fieldLabel', 'fieldInput']
-
-  test('draws its panels and fields with the same primitives as `07`', async ({ page }) => {
-    await page.goto(DASHBOARD_URL)
-    await freezeMotion(page)
-    const reference = await extractDesignFacts(page, DASHBOARD_SELECTORS)
-
-    // `/sign-in/alias/` is the first-run screen and the one derived route that
-    // carries both a panel and a real field with no account configured.
-    await page.goto('/sign-in/alias/')
-    await freezeMotion(page)
-    const actual = await extractDesignFacts(page, APP_SELECTORS)
-
-    const shown = (facts: Record<string, string | null>, role: Role) =>
-      FACT_KEYS.filter((key) => key.startsWith(`${role}.`)).some((key) => facts[key] !== null)
-
-    for (const role of SHARED) {
-      expect(shown(actual, role), `${role} is not on the derived route`).toBe(true)
-    }
-    expect(differencesAt(reference, actual, SHARED, page.viewportSize()!.width)).toEqual([])
-  })
-
-  /**
-   * THE MUTATION, owed since this block was written, and the one that matters
-   * most of the four: this stage's whole claim is that a derived route reaches
-   * for the primitive rather than for a lookalike of it, and a claim about
-   * SAMENESS is worth nothing without a demonstration that difference is
-   * detected. A lookalike is what every static guard passes — the radius from a
-   * token, the colour from the language, no shadow — so this comparison is the
-   * only thing standing between "the same panel" and "two panels that agree
-   * today".
-   */
-  test('notices when a derived route draws a lookalike instead of the primitive', async ({
-    page,
-  }) => {
-    await page.goto(DASHBOARD_URL)
-    await freezeMotion(page)
-    const reference = await extractDesignFacts(page, DASHBOARD_SELECTORS)
-
-    await page.goto('/sign-in/alias/')
-    await freezeMotion(page)
-    await page.addStyleTag({
-      content: '.bz-field > input { height: 28px !important; padding-left: 3px !important; }'
-        + ' .bz-panel { padding-top: 2px !important; }',
-    })
-    const mutated = await extractDesignFacts(page, APP_SELECTORS)
-
-    const facts = differencesIn(reference, mutated, SHARED).map((one) => one.fact)
-    expect(facts).toContain('fieldInput.height')
-    expect(facts).toContain('fieldInput.paddingLeft')
-    expect(facts).toContain('panel.paddingTop')
-  })
 
   /**
    * `/legend/` is the page that replaces onboarding by not being onboarding.

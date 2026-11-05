@@ -11,7 +11,7 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: "the whole system as built on 2026-09-10, with M16 shipped: every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day; the content bundle under out/api/ for M37 on 2026-11-05"
+covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05, and the account layer, role paths, record of work and two thirds of the test suite removed for M40 the same day, and the content bundle under out/api/ for M41 the same day
 last_updated: "2026-11-05"
 ---
 
@@ -32,19 +32,13 @@ are the corpus, and everything a page shows — the progress marks, the figure n
 counts, the revision hashes, the dependency graph — is derived from those files at build time. The
 output is a static export: HTML, CSS and JS on GitHub Pages, no server.
 
-On top of that sits an optional account layer. A reader can work with no account at all, in which
-case nothing about them leaves their browser. Signing in copies their record to Supabase so it
-survives the browser, and joining an organisation lets its managers follow it.
+Nothing about a reader leaves their browser. There was an optional account layer (Supabase,
+sign-in, organisations and a manager panel); M40 removed it on 2026-11-05, on the author's word,
+with the role paths and the record of work. A reader keeps a copy by exporting a file.
 
 ```
 mini-courses/*.md  ──build──▶  static export  ──▶  the reader's browser
-   (read-only)                  99 pages            record in localStorage
-                                                          │
-                                                    optional account
-                                                          ▼
-                                                  Supabase: tables + RLS
-                                                          │
-                                                    manager panel
+   (read-only)                  89 pages            record in localStorage
 ```
 
 ---
@@ -80,13 +74,12 @@ first time somebody adds a module, and nothing fails. §2 below is where this ru
 
 ### 3 · The browser is the source
 
-The reader's record lives in `localStorage`; Supabase holds a replica.
+The reader's record lives in `localStorage`, and nowhere else since M40.
 
 Not a preference, a consequence. There is no request-time server, so no cookie and no header can
 carry reader state into prerendered HTML. The progress marks have to be right in the **first painted
 frame**, which means reading storage synchronously, which means a `fetch` cannot be on that path. So
-the network is kept off it entirely: a local write never waits, and the account layer is something
-that happens afterwards.
+the network is kept off it entirely: a local write never waits.
 
 ### 4 · One definition of each thing
 
@@ -119,14 +112,11 @@ What remains for a real browser is what only a browser can answer: did the diagr
 the theme right in the first frame, does any page push the document sideways at 390px, does a
 signed-in reader's record actually reach a second machine.
 
-### 6 · Authorisation lives in the database
+### ~~6 · Authorisation lives in the database~~ — retired with the account layer (M40)
 
-Every access rule is a row-level-security policy in Postgres. No Edge Functions, no RPC, no views,
-which also means the schema is portable Postgres and moves to Neon or a self-hosted box unchanged.
-
-The corollary matters as much: an over-permissive policy **never raises an error**. It answers, with
-rows it should not have returned. So the policies are tested against a real database with real JWTs
-rather than read for correctness.
+~~Every access rule is a row-level-security policy in Postgres.~~ There is no database since
+2026-11-05: M40 removed Supabase, its ten tables and every policy. The number is kept, because
+rules are cited by number.
 
 ---
 
@@ -156,7 +146,7 @@ mini-courses/                    src/
 
 | | Corpus half | Application half |
 |---|---|---|
-| Lives in | `mini-courses/` | `src/`, `tests/`, `scripts/`, `supabase/` |
+| Lives in | `mini-courses/` | `src/`, `tests/`, `scripts/` |
 | Written by | the author, by hand | a colleague |
 | Governed by | `mini-courses/CLAUDE.md` and `MANIFEST.md` | the root `CLAUDE.md` |
 | Measured | 96 markdown files (`find mini-courses -name '*.md' -not -path '*scratchpad*' \| wc -l`) | 196 TypeScript files, 44,002 lines (`find src -name '*.ts' -o -name '*.tsx' \| xargs wc -l`) |
@@ -312,22 +302,24 @@ schema version 1 (`src/lib/record/schema.ts`). A record that fails to parse is m
 
 ```
 RecordData
-  identity   { name, markSeed, mark, role }
-  sheets     { [slug]: { signedOff, signedRevision, reachedEnd, dwellSeconds,
-                         quiz { answer, assessed }, checklist {}, sources [], submittals [] } }
-  days       [ ISO dates ]          the streak
-  prefs      { charKeys, railFolded, aliasNamedFor, catalogView, figurePalette, codePalette }
-  meta       { lastExport, persisted, lastClaim }
+  sheets     { [slug]: { signedOff, signedRevision, reachedEnd, dwellSeconds, checklist {} } }
+  days       [ ISO dates ]
+  prefs      { charKeys, railFolded, catalogView, figurePalette, codePalette }
+  meta       { lastExport, persisted }
 ```
 
-`dwellSeconds` is capped at 3600 and `submittals` at 3, both in `schema.ts`.
+**M40 removed `identity` (name, mark seed, mark, role), each module's `quiz`, `sources` and
+`submittals`, `prefs.aliasNamedFor` and `meta.lastClaim`.** The schema version did not move:
+`coerceRecordData` reads only the fields above and ignores every other key, so a record stored
+before M40 parses, and its old fields drop out on the next write and from every export. Nothing
+writes `reachedEnd` or `dwellSeconds` any more; they are kept so a stored value still counts.
 
 **`prefs` holds the browser's preferences, not the reader's history.** `charKeys` is SC 2.1.4's off
 switch, `railFolded` (M10) is whether the curriculum rail on a module page is folded away,
 `catalogView` (M12) is which of the catalog's three views the reader last chose, and `figurePalette`
 and `codePalette` (M24) are which of three palettes the reader put the diagrams and the code in. All
 of them are facts about the machine in front of the reader rather than about the reader, which is why `prefs` is the one
-field `carriesNothing` ignores and the one `mergeRecords` resolves local-wins. A widening here needs
+field `carriesNothing` ignores. A widening here needs
 no migration rung: `coerceRecordData` defaults a missing key, and the default is the honest answer for
 a reader who never expressed a preference.
 
@@ -340,16 +332,14 @@ exactly where they put themselves.
 
 **The record store is the only writer, and a UI preference is not an exception.** The temptation with
 `railFolded` was a second `localStorage` key beside the record; that would be a second writer, and it
-would also be invisible to the export, the erase dialog and the account merge — three surfaces that
-are supposed to account for everything the site remembers.
+would also be invisible to the export and the erase dialog, which are supposed to account for
+everything the site remembers.
 
-**One write can be three, and that is why completion has one path.** D14 puts a completion control at
-the end of a module (**A**) and another across the whole course on the home and progress pages
-(**C**). The first completion on a record does three things — the sign-off, the mark seed minted once
-and never again, and the single permitted `navigator.storage.persist()` — so both controls call
-`src/lib/record/complete.ts`'s `toggleCompletion` rather than implementing that sequence twice. A
-second control doing only the first of the three would leave a reader with no mark on their exported
-record and no persistence request ever made, and nothing would have failed.
+**One write can be two, and that is why completion has one path.** D14 puts a completion control at
+the end of a module (**A**) and another across the whole course on the progress page (**C**). The
+first completion on a record also makes the single permitted `navigator.storage.persist()` request,
+so both controls call `src/lib/record/complete.ts`'s `toggleCompletion` rather than implementing
+that sequence twice.
 
 **`sheets` is keyed by slug, not by number.** This is what makes a curriculum reorder safe: renaming a
 module orphans its progress, but moving it does not.
@@ -365,10 +355,6 @@ module orphans its progress, but moving it does not.
 ┌─ Channel B ──────────────────────────────────────────────┐
 │ React islands, post-mount: readouts, panels, dialogs     │
 │ getServerSnapshot returns the frozen empty record        │
-└──────────────────────────────────────────────────────────┘
-┌─ The account layer, optional ────────────────────────────┐
-│ session → the claim → merge → throttled push             │
-│ AccountSync.tsx is the ONE place these are joined        │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -423,33 +409,13 @@ Both are `logs/BRAINSTORM.md` **D20**.
 
 ---
 
-## 6. Accounts, which gate nothing
+## 6. ~~Accounts, which gate nothing~~ — removed in M40
 
-The account layer is optional. `NEXT_PUBLIC_AUTH_ENABLED` defaults to `false`, and with no
-`.env.local` the whole suite still runs green. Signing in copies a record between devices; it unlocks
-no content.
-
-`src/components/record/AccountSync.tsx` is **the seam** — the single place where the session,
-`createSync`, `createRemoteRecordStore`, `claimMerge` and the claim UI are joined. Its absence was the
-largest defect in this work: ten agents built both halves of the account layer and nothing joined
-them, so signing in did nothing at all. **A seam needs an owner.** Every module either side of it is
-deliberately ignorant of the others, which is what makes each testable in isolation, and the price of
-that ignorance is that one file has to know all of them. When adding to either side, check the seam
-actually calls it. `src/lib/record/wire.ts` is the shared vocabulary both
-halves compile against.
-
-**Authorisation is row-level security and nothing else.** `supabase/migrations/` holds **5** migration
-files defining **10** tables — `orgs`, `profiles`, `memberships`, `org_manager`, `pending_invites`,
-`record_state`, `learner_event`, `assignments`, `assignment_sheets`, `assignment_targets` — and **28**
-policies (`grep -c 'create policy' supabase/migrations/*.sql`). There are **no** Edge Functions, no
-RPC, no views and no triggers: the schema stays portable Postgres.
-
-An over-permissive policy raises no error, which is why every policy change needs
-`scripts/test-rls.mjs`. Note that RLS *filters* `UPDATE` and `DELETE` silently and only `INSERT`
-raises, which is why that suite has both `expectRefused` and `expectTouchesNothing`.
-
-The event log is append-only and the **client** mints each event id, which is what makes a push
-idempotent: an event resent after a failed flush lands as itself rather than as a duplicate.
+The optional account layer — Supabase sign-in, the cross-device copy, organisations, a manager
+panel, assignments, and the seam `AccountSync.tsx` that joined them — was removed on 2026-11-05 on
+the author's word, with `supabase/` (5 migrations, 10 tables, 28 policies), `scripts/check-supabase.mjs`,
+`scripts/test-rls.mjs` and `docs/`. `logs/BRAINSTORM_2.md` **D88** records the decision. The
+section number is kept, because sections are cited by number.
 
 ---
 
@@ -507,8 +473,9 @@ page prints none.
 order, and a `Before you start` box above the prose names the prerequisites. The module's own
 self-check, the submittal form, the stamps, `Checked by` and the sources counter left the page on the
 author's word. **The record still carries every field they wrote** — `quiz`, `submittals`,
-`sources` — so an existing reader's record parses, exports and merges unchanged, and `/profile/`
-still reports what it holds; there is simply no longer a control on a module page that adds to them.
+`sources` — so an existing reader's record parses, exports and merges unchanged, and the exported
+file still carries what it holds; there is simply no longer a control on a module page that adds to
+them, and since M38 no page that shows them either.
 The module's task-list checkboxes are untouched and still write `checklist`.
 
 **In the browser**, mermaid renders client-side from that `data-mermaid` source. This is the cause of
@@ -522,7 +489,7 @@ Four components import `CategorySlug` from `categories.ts` and all four use `imp
 erased; a value import from `curriculum-file.ts` into a client island pulls the file system into the
 browser bundle and stops the build.
 
-**20 routes** (`find src/app -name page.tsx | wc -l`), producing 99 HTML pages. `/` is a home page
+**10 routes** (`find src/app -name page.tsx | wc -l`), producing 89 HTML pages (measured 2026-11-05, after M40). `/` is a home page
 built from components; `mini-courses/index.md` is no longer the published home page and is read only as
 a link target. Since **D79** `/` is Bazaar Street: its words, its level doors (one per category in
 `curriculum.yaml`) and its way in are server-rendered markup, its illustration is SVG read from
@@ -530,10 +497,10 @@ a link target. Since **D79** `/` is Bazaar Street: its words, its level doors (o
 motion is one client island that imports `gsap` on demand and turns the stacked page into a walk on a
 wide screen.
 
-**Five of the twenty are forwards, and a static export has no other way to redirect.** M14 folded
-`/dashboard/`, `/report/` and `/path/` into `/profile/`, and M17 folded `/courses/` and
-`/courses/[category]/` into the catalog; `output: 'export'` means `next.config`'s
-`redirects` are never applied and a page's own `redirect()` throws at build time, so each of the five
+**Two of the ten are forwards, and a static export has no other way to redirect.** M17 folded
+`/courses/` and `/courses/[category]/` into the catalog (M14's three forwards to `/profile/` were
+removed in M40); `output: 'export'` means `next.config`'s
+`redirects` are never applied and a page's own `redirect()` throws at build time, so each of them
 renders `MovedTo` instead — an inline script (the only one of the three mechanisms that can carry the
 fragment), a `<meta http-equiv="refresh">` for a reader with scripting off, and a visible link. The
 target goes through `lib/url.ts`'s `href()`, because `basePath` rewrites only what the router touches
@@ -541,22 +508,12 @@ and a hardcoded path would work locally and 404 on GitHub Pages. `logs/BRAINSTOR
 
 ---
 
-## 8. Learning paths
+## 8. ~~Learning paths~~ — removed in M40
 
-`src/lib/path/paths.ts` holds **9** hand-written role paths — software engineer, devops, data
-engineer, data analyst, analyst, QA, project manager, DBA, pre-sales. Each is an ordered list of steps
-naming a module by route, with a `tier` and a reader-visible `reason` explaining why that module is on
-that path.
-
-A path's denominator counts only steps whose module is `ready`, computed by `isDrawnStep(step, drawn)`
-against the corpus's own set. A path whose every step is readable is the goal, not an error.
-
-**All nine live on one surface and channel A shows one.** They were `/path/` until M14 and are the
-`role` row of `/profile/`'s register now: every body is in the prerendered document and
-`.bz-path-body[data-role="<id>"]` is revealed against the `hl-role-<id>` class the boot script stamps
-before first paint. There are no per-role routes and there must not be — a static export would
-prerender a nine-way fan-out once for every reader, putting eight pages on the site describing
-somebody else's route.
+The nine hand-written role paths (`src/lib/path/`), the role a reader chose, and the `hl-role-<id>`
+stamp that revealed one path in frame one were removed on 2026-11-05 (**D88**). M38 had already
+taken the role row off `/profile/`; the author then found the stored role ("data analyst") in an
+export and asked for every trace to go. The section number is kept.
 
 ---
 
@@ -580,12 +537,12 @@ uses the left.**
 | feeds | the modules a module is a prerequisite *for* | **Unlocks** |
 | requires | a module's own prerequisites | **Requirements** |
 | title block | the module's own panel of facts | **Module info** — M11 moved it out of the right rail and into the column |
-| the register | the reader's stored history | **Your progress** — the page's own title and the navbar's fourth item since M14 |
+| the register | the reader's stored history | **Your progress** — the page's own title and the navbar's fourth item since M14; since M38 it draws the level circles, the continue card and one row, **Export, import, erase** |
 | the drafter | the reader | **you** / **Account** |
 | index sheet | the flat list of all modules, at `/sheets` | **Catalog** |
 | extent | length in words and minutes | **Length** |
-| uptime | days in a row | **Streak**, and **Days in a row** on completion control C |
-| submittal register | the repositories a reader has linked to a module | **What you built** |
+| uptime | days in a row | ~~**Streak**~~ — shown nowhere since M38, which removed the readout row; `Uptime` is still in the tree |
+| submittal register | the repositories a reader has linked to a module | ~~**What you built**~~ — shown nowhere since M38; the record still carries `submittals` |
 | unsigned | a module the reader has not completed | **Not completed** |
 | A0 / A4 | the two page anatomies, chosen by `status` | — internal |
 | mark, class, XP | badge, rank, points | ~~**Rank** / **XP**~~ — **nothing.** M13 took all three off every instrument: nobody could name the question they answered, and `Reading time` took XP's cell (`logs/BRAINSTORM.md` **D22**). `xp()` and `classOf()` are still in `derive.ts`, rendered by nothing |
@@ -640,7 +597,7 @@ that produced it. Treat them as citations you cannot follow, not as dead links.
 ## 10. Stack, and the commands that matter
 
 Next.js 16 with Turbopack, React, TypeScript in strict mode, Tailwind v4, vitest, Playwright against
-real Chrome, zod, gray-matter, js-yaml, mermaid 11.17, Supabase.
+real Chrome, zod, gray-matter, js-yaml, mermaid 11.17.
 
 ```bash
 npm run dev            # next dev on :3000
@@ -650,12 +607,10 @@ npm test               # vitest: tests/unit/** + tests/corpus/**
 npm run test:e2e       # playwright: builds, serves out/ on :3111, real Chrome
 ```
 
-CI runs typecheck → test → build → link check → build again under the Pages sub-path → link check →
-e2e, in that order. A green `npm test` alone means little: the link gate and the export itself only
+CI runs typecheck → test → build under the Pages sub-path → link check → e2e, in that order (one
+build since M40; the base-path-less build before it asked the same questions of a build nobody
+publishes). A green `npm test` alone means little: the link gate and the export itself only
 fail in `build`.
-
-Two credentialed suites skip cleanly with no `.env.local`: `scripts/check-supabase.mjs` and
-`scripts/test-rls.mjs`.
 
 **`main` is protected by a ruleset named `main-require-pr`**, so a direct push is rejected even for a
 fast-forward. Note that `repos/.../branches/main/protection` returns 404 for this repository, which is
@@ -665,15 +620,16 @@ misleading; use `gh api repos/.../rulesets`.
 
 ## 11. The test suite, and the one rule it lives by
 
-**87** test files (`find tests -name '*.test.ts*' | wc -l`; vitest runs 86 of them) holding **2,194**
-unit and corpus tests, plus **37** Playwright spec files, in four suites that each answer something the others cannot.
+**65** test files (`find tests -name '*.test.ts*' | wc -l`; vitest runs 64 of them) holding
+**1,144** unit and corpus tests, plus **33** Playwright spec files holding **461** browser cases
+(measured 2026-11-05; M40 cut them from 2,107 and 1,234, **D88**), in three suites that each answer
+something the others cannot.
 
 | Suite | Runs | Answers |
 |---|---|---|
 | `npm test`, vitest | every push | anything that computes a value, with no DOM |
 | `tests/corpus/` | inside `npm test` | the transforms against every real module, not a fixture |
-| `npm run test:e2e`, real Chrome | every push | first-frame correctness, layout at three widths, real interaction |
-| `node scripts/test-rls.mjs` | by hand, needs credentials | every policy, through PostgREST, with real sessions |
+| `npm run test:e2e`, real Chrome | every push | first-frame correctness, layout at 1440 and 390, real interaction |
 
 **Two habits are load-bearing rather than decorative.**
 
@@ -727,10 +683,6 @@ The workflow guards the two failures that would otherwise publish **green** and 
 It also checks the **published** site rather than the artifact, because the worst failures happen
 after the upload.
 
-Accounts are gated on `NEXT_PUBLIC_AUTH_ENABLED`, a build-time constant. It is a real safety measure
-rather than a rollout convenience: `SECURITY.md` covers what enabling it costs while the site is
-served from a shared origin, and the conditions under which a custom domain stops being optional.
-
 **`main` is protected by a ruleset named `main-require-pr`**, so a direct push is rejected even for a
 fast-forward, and `gh pr merge --admin` is refused while a check is still running. Note that
 `repos/.../branches/main/protection` returns 404 for this repository, which is misleading; use
@@ -742,7 +694,7 @@ fast-forward, and `gh pr merge --admin` is refused while a check is still runnin
 
 Every build also publishes the course as JSON under `out/api/`, for the native mobile reader.
 The reader renders what it is given and derives nothing: slugging, figure numbering, row headers, link localisation and code tokens have all been computed in TypeScript, and the reader maps each node to a widget.
-Why a block tree and not HTML or markdown is **D86**.
+Why a block tree and not HTML or markdown is **D89**.
 
 **The contract is `src/lib/bundle/schema.ts`, and only there.**
 It is a set of strict zod schemas, so a key the contract does not name fails the build instead of reaching the reader.
@@ -785,7 +737,7 @@ Removing, renaming or retyping a field means `api/v2/`, and `api/v1/` stays publ
 
 **Checks.**
 `node scripts/check-bundle-out.mjs <dir>` reads a finished export and recomputes every claim the index makes: the file set, each sha256, `contentVersion`, the SVG profile of every diagram, the diagram font, and no field starting with the base path.
-CI runs it after the plain build and after the base-path build, and then requires the two `api/` trees to be byte-identical.
+CI runs it after its one build, which has the base path, and after the browser suite has rebuilt `out/` without one it requires the two `api/` trees to be byte-identical, which holds both the base path and the build's determinism to account.
 The deploy runs it on `_site` before publishing, and after publishing it polls the live `api/v1/index.json` until it serves this build's `contentVersion`, for at most the first response's `max-age` plus a minute.
 It sends no query string, because the Pages edge leaves the query out of its cache key, so a stale entry can only be waited out.
 
@@ -801,11 +753,7 @@ one subject than an architecture document should.
 | `mini-courses/MANIFEST.md` | The seven rules every module is held to. Read before writing content |
 | `mini-courses/CLAUDE.md` | The working agreement: how a module gets written, the diagram system, the naming rules |
 | `tests/README.md` | The testing rule, the four layers, and what fails for a reason |
-| `docs/data-flow.md` | The record, storage, sync, two devices, the exported file |
-| `docs/auth-flow.md` | Sign-in, sessions, joining, who may read what |
-| `docs/manager-queries.md` | Tables, columns, joins, and the SQL a manager needs |
-| `SECURITY.md` | Threat notes, accepted risks, operational rules |
-| `supabase/README.md` | Applying the schema |
+| `SECURITY.md` | The shared-origin exposure and the one accepted risk |
 | `README.md` | What the course is, and the commands to run it |
 
 **The code carries its own reasoning.** Modules open with a comment recording the decision and *why*,

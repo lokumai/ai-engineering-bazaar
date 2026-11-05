@@ -17,36 +17,23 @@
  *     on. Data read back out of Web Storage is untrusted input; an imported
  *     file doubly so.
  *
- * Two rules here are security controls rather than tidiness, and both are
- * tested: a `sources` entry must be http(s), so no `javascript:` URL can reach
- * an `href` in the exported record; and a submittal's `url` is **rebuilt** from
- * its owner and repo, so the stored string never reaches a link (§12.9.2).
- *
- * What this file deliberately does NOT do: sanitise or truncate reader text.
- * §12.3.4 sanitises the name where it is typed, and §12.3.4 forbids truncating
- * the stored value. Hostile text is handled at the point it is printed, by the
- * two escapers of §12.12.7 — removing the sink, not fencing the input.
+ * Since M40 the record holds no reader-typed text and no URL at all: the
+ * name, the opened sources and the linked repositories went with the features
+ * that wrote them, and a stored record that still carries them parses with
+ * those keys dropped, like any other unknown key.
  */
 
 import { isViewId } from '../catalog/views'
 import { isPaletteId } from '../reading/palettes'
-import type { ClaimIdentitySource, ClaimReceipt, ClaimSummary } from './claim'
 import { migrate } from './migrate'
 import {
   DWELL_CAP_SECONDS,
   EMPTY_RECORD,
-  MARK_IDS,
-  MAX_SUBMITTALS,
-  ROLE_IDS,
   SCHEMA_VERSION,
   isEmptySheetRecord,
   isSafeKey,
-  type MarkId,
-  type QuizRecord,
   type RecordData,
-  type RoleId,
   type SheetRecord,
-  type Submittal,
 } from './schema'
 
 export type ParseResult =
@@ -60,23 +47,15 @@ export type ParseResult =
   | { kind: 'ok'; data: RecordData; schema: number; savedAt: string | null }
   | { kind: 'quarantine'; reason: 'newer' | 'malformed'; raw: string }
 
-/** §12.9.2 — GitHub's own documented rule for an owner or a repo segment. */
-const GH_SEGMENT = /^[A-Za-z0-9._-]{1,100}$/
-/** §12.9.3 — a reader-supplied commit hash, never fetched. */
-const COMMIT = /^[0-9a-f]{7,40}$/
-/** §12.3.5 — the minted seed. Lowercase only: it is generated, never typed. */
-const MARK_SEED = /^[0-9a-f]{8}$/
 /**
  * A git short hash as a record may hold it. `revision.ts` now writes a fixed
  * width, but a record signed against an earlier build carries whatever length
- * git chose then, so the floor stays 4, not §12.9.3's 7. A different rule from
- * COMMIT because it is a different fact from a different source.
+ * git chose then, so the floor stays 4.
  */
 export const SHORT_HASH = /^[0-9a-f]{4,40}$/
 export const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/
 export const ISO_TIME = /^\d{4}-\d{2}-\d{2}(?:[T ][\d:.+\-Z]{1,20})?$/
 const INDEX_KEY = /^\d{1,4}$/
-const EXTERNAL_URL = /^https?:\/\//i
 
 function isRecordObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -146,35 +125,6 @@ function asDwell(value: unknown): number {
   return Math.min(DWELL_CAP_SECONDS, Math.max(0, Math.round(value)))
 }
 
-function coerceMark(value: unknown): MarkId | null {
-  return MARK_IDS.includes(value as MarkId) ? (value as MarkId) : null
-}
-
-/**
- * §13.3 — one of the nine frozen ids, or nothing.
- *
- * An unknown id is ABSENT, never repaired into a neighbouring value. A record
- * read back out of Web Storage is untrusted input (§12.1.3), and the two ways a
- * stranger reaches this function are a hand-edited import and a role id this
- * build has retired — in both cases the honest reading is that the reader has
- * not said, which draws the §13.4.3 picker. Guessing `analyst` for a stored
- * `business-analyst` would print a job title the reader never chose, and the id
- * is also what keys `PATHS`, so a near miss would draw somebody else's path.
- */
-function coerceRole(value: unknown): RoleId | null {
-  return ROLE_IDS.includes(value as RoleId) ? (value as RoleId) : null
-}
-
-function coerceQuiz(value: unknown): QuizRecord | null {
-  if (!isRecordObject(value)) return null
-  const answer = typeof value.answer === 'string' ? value.answer : ''
-  const assessed =
-    value.assessed === 'matched' || value.assessed === 'missed' ? value.assessed : null
-  // Holds neither a retrieval attempt nor a self-assessment: absent, not empty.
-  if (answer.trim() === '' && assessed === null) return null
-  return { answer, assessed, at: asInstant(value.at) ?? '' }
-}
-
 function coerceChecklist(value: unknown): { [index: string]: boolean } {
   const out: { [index: string]: boolean } = {}
   if (!isRecordObject(value)) return out
@@ -186,46 +136,6 @@ function coerceChecklist(value: unknown): { [index: string]: boolean } {
   return out
 }
 
-function coerceSources(value: unknown): string[] {
-  if (!Array.isArray(value)) return []
-  const seen = new Set<string>()
-  const out: string[] = []
-  for (const entry of value) {
-    const url = asString(entry)
-    if (url === null || !EXTERNAL_URL.test(url) || seen.has(url)) continue
-    seen.add(url)
-    out.push(url)
-  }
-  return out
-}
-
-function coerceSubmittals(value: unknown): Submittal[] {
-  if (!Array.isArray(value)) return []
-  const out: Submittal[] = []
-  const seen = new Set<string>()
-  for (const entry of value) {
-    if (out.length >= MAX_SUBMITTALS) break
-    if (!isRecordObject(entry)) continue
-    const owner = asPattern(entry.owner, GH_SEGMENT)
-    const repo = asPattern(entry.repo, GH_SEGMENT)
-    if (owner === null || repo === null) continue
-    const key = `${owner.toLowerCase()}/${repo.toLowerCase()}`
-    if (seen.has(key)) continue
-    seen.add(key)
-    out.push({
-      owner,
-      repo,
-      // §12.9.2 — reconstructed, so an attacker-controlled query string,
-      // userinfo or homograph host can never reach an href.
-      url: `https://github.com/${owner}/${repo}`,
-      commit: asPattern(entry.commit, COMMIT),
-      note: typeof entry.note === 'string' ? entry.note : '',
-      at: asInstant(entry.at) ?? '',
-    })
-  }
-  return out
-}
-
 function coerceSheet(value: unknown): SheetRecord {
   const input = isRecordObject(value) ? value : {}
   return {
@@ -233,10 +143,7 @@ function coerceSheet(value: unknown): SheetRecord {
     signedRevision: asPattern(input.signedRevision, SHORT_HASH),
     reachedEnd: asBoolean(input.reachedEnd, false),
     dwellSeconds: asDwell(input.dwellSeconds),
-    quiz: coerceQuiz(input.quiz),
     checklist: coerceChecklist(input.checklist),
-    sources: coerceSources(input.sources),
-    submittals: coerceSubmittals(input.submittals),
   }
 }
 
@@ -265,109 +172,15 @@ function coerceDays(value: unknown): string[] {
 }
 
 /**
- * §17.3 — the stored receipt, read the way §12.12 reads everything: a bad field
- * loses the field and never the record.
- *
- * Structural rather than schema-versioned, because the receipt is a projection of
- * a type this module cannot import a validator for. Every count is checked, so a
- * hand-edited file cannot put a string where the register prints a number.
- */
-function asClaimReceipt(value: unknown): ClaimReceipt | null {
-  if (!isRecordObject(value)) return null
-  const at = asInstant(value.at)
-  if (at === null) return null
-  if (!isRecordObject(value.summary)) return null
-
-  const summary = value.summary
-  if (summary.outcome !== 'merged' && summary.outcome !== 'adopted') return null
-
-  const counts = (input: unknown): ClaimSummary['signed'] | null => {
-    if (!isRecordObject(input)) return null
-    const keys = ['here', 'account', 'shared', 'merged'] as const
-    // A count, not merely a number. `Number.isFinite` admitted `-5` and `1.5`,
-    // and a hand-edited file could then make the register print
-    // `1.5 MERGED · 0 LOST` — a reading about the reader's own work that is not
-    // a possible reading of it.
-    if (!keys.every((key) => Number.isInteger(input[key]) && (input[key] as number) >= 0)) {
-      return null
-    }
-    return {
-      here: input.here as number,
-      account: input.account as number,
-      shared: input.shared as number,
-      merged: input.merged as number,
-    }
-  }
-  const signed = counts(summary.signed)
-  const submittals = counts(summary.submittals)
-  if (signed === null || submittals === null) return null
-
-  const slugs = (input: unknown): string[] | null =>
-    Array.isArray(input) && input.every((item) => typeof item === 'string')
-      ? [...(input as string[])]
-      : null
-  const droppedSignatures = slugs(summary.droppedSignatures)
-  const droppedSubmittals = slugs(summary.droppedSubmittals)
-  if (droppedSignatures === null || droppedSubmittals === null) return null
-
-  if (!isRecordObject(summary.identity)) return null
-  const identity = summary.identity
-  const source = (input: unknown): ClaimIdentitySource | null =>
-    input === 'account' || input === 'local' || input === 'absent' ? input : null
-  // Defaulted rather than fatal, which is this module's own promise: a bad
-  // field loses the field and never the record. These three are provenances,
-  // and after §17.2 nothing reads them — `claimSummaryLines` prints the
-  // `*Changed` booleans and `claimIsNews` tests them, so an off-vocabulary
-  // string here costs the reader nothing, while discarding the receipt over it
-  // would cost them the whole account of a merge. `absent` is the honest
-  // default: it means "neither side is known to have supplied this".
-  //
-  // `outcome` keeps whole-receipt rejection because it IS printed
-  // (`NO RECORD IN ACCOUNT` / `TWO RECORDS`) and has no third value to fall
-  // back to, and so do `at` and the count blocks, which the register prints as
-  // numbers and a date.
-  const name = source(identity.name) ?? 'absent'
-  const markSeed = source(identity.markSeed) ?? 'absent'
-  const role = source(identity.role) ?? 'absent'
-
-  return {
-    at,
-    summary: {
-      outcome: summary.outcome,
-      signed,
-      submittals,
-      droppedSignatures,
-      droppedSubmittals,
-      identity: {
-        name,
-        markSeed,
-        role,
-        markChanged: asBoolean(identity.markChanged, false),
-        nameChanged: asBoolean(identity.nameChanged, false),
-        roleChanged: asBoolean(identity.roleChanged, false),
-      },
-    },
-  }
-}
-
-/**
  * Total: every input, including a symbol, a function or `undefined`, produces a
  * record. The result is always a fresh mutable object — never the frozen
  * EMPTY_RECORD singleton, which a reducer would then be unable to build on.
  */
 export function coerceRecordData(input: unknown): RecordData {
   const data = isRecordObject(input) ? input : {}
-  const identity = isRecordObject(data.identity) ? data.identity : {}
   const prefs = isRecordObject(data.prefs) ? data.prefs : {}
   const meta = isRecordObject(data.meta) ? data.meta : {}
   return {
-    identity: {
-      // Kept exactly as typed and never truncated (§12.3.4).
-      name: typeof identity.name === 'string' ? identity.name : null,
-      markSeed: asPattern(identity.markSeed, MARK_SEED),
-      mark: coerceMark(identity.mark),
-      role: coerceRole(identity.role),
-    },
     sheets: coerceSheets(data.sheets),
     days: coerceDays(data.days),
     prefs: {
@@ -381,20 +194,6 @@ export function coerceRecordData(input: unknown): RecordData {
        * hand-edited record must not decide the layout.
        */
       railFolded: asBoolean(prefs.railFolded, EMPTY_RECORD.prefs.railFolded),
-      /**
-       * §16.3. A string stays, everything else — a number, a boolean, an
-       * object, an absent key, the empty string — becomes null, which is the
-       * value that means "no account has named this record" and so is the only
-       * safe default: a wrong-typed flag coerced to a truthy id would suppress
-       * an offer for an account that never made one. `asString` refuses `''`
-       * for the same reason it does everywhere else here — an empty id compares
-       * unequal to every real account id, so storing one would leave the seam
-       * re-offering for ever.
-       *
-       * A record written before this field existed reads back with null and
-       * needs no rung on the migration ladder; see `migrate.ts` on widening.
-       */
-      aliasNamedFor: asString(prefs.aliasNamedFor),
       /**
        * M12. One of the three ids or null, matched against `CATALOG_VIEWS`
        * rather than trusted, for the reason §12.1.3 gives about every value
@@ -416,28 +215,14 @@ export function coerceRecordData(input: unknown): RecordData {
     meta: {
       lastExport: asInstant(meta.lastExport),
       persisted: asTriState(meta.persisted),
-      lastClaim: asClaimReceipt(meta.lastClaim),
     },
   }
 }
 
-/**
- * §12.12.6 — the importer accepts either the raw `.json` or the report
- * `.html`, because the failure mode this removes is a learner who keeps the
- * pretty document and loses the record. The payload lives in a
- * `<script type="application/json" id="hl-record">` data block, which is never
- * evaluated as code; lifting its text is a substring operation, not parsing.
- */
+/** The importer reads the exported `.json` only; anything else carries no record. */
 export function envelopeTextFrom(input: string): string | null {
   const text = input.trim()
-  if (text === '') return null
-  if (text.startsWith('{')) return text
-  const opening = /<script[^>]*id=["']hl-record["'][^>]*>/i.exec(text)
-  if (!opening) return null
-  const start = opening.index + opening[0].length
-  const end = text.indexOf('</script', start)
-  const payload = text.slice(start, end === -1 ? undefined : end).trim()
-  return payload === '' ? null : payload
+  return text.startsWith('{') ? text : null
 }
 
 /**

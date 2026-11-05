@@ -97,7 +97,7 @@ reason, and so does a Persian version of every written one (**D80**). See `genes
    account copies progress between devices and unlocks nothing.
 10. **A reader's progress is theirs.** It lives in their browser by default, they can download it,
     restore it and erase it, and none of it is required to read anything.
-    In the mobile app their progress lives on the device, and erasing it there cannot reach a copy the device has already backed up, which the erase screen says (**D86**).
+    In the mobile app their progress lives on the device, and erasing it there cannot reach a copy the device has already backed up, which the erase screen says (**D89**).
 11. **Completion is the reader's own claim.** There is no test, no grade and no assessment. Nobody
     else marks a module done, and a reader can undo it at any time.
 12. **Never state a number the project cannot check.** Counts, durations, totals and citations are

@@ -2,68 +2,29 @@
  * §12.1.2 / §12.1.3 — the record's shape, its two storage keys, and the frozen
  * empty form the server renders.
  *
- * **The rule is that nothing in `lib/record/` imports from `lib/content/`** —
- * not that nothing here imports at all. This file takes two type vocabularies
- * from fs-free leaves (`MarkId` from `lib/identity/mark.ts`, `RoleId` from
- * `lib/path/roles.ts`), which cross no boundary. The earlier wording said
- * "imports nothing", which was already untrue when the first of those landed and
- * would have read as licence to drop the rule that matters. That rule is not
- * tidiness: `lib/content/derive.ts`, `loader.ts`,
- * `revision.ts` and `paths.ts` reach `node:fs`, a client leaf imports the
- * record store, and a single value carried across that line pulls `node:fs`
- * into the browser bundle and stops the build. `lib/content/rows.ts` is the
- * same shape for the same reason.
+ * **The rule is that nothing in `lib/record/` imports from `lib/content/`.**
+ * `lib/content/derive.ts`, `loader.ts` and `revision.ts` reach `node:fs`, a
+ * client leaf imports the record store, and a single value carried across that
+ * line pulls `node:fs` into the browser bundle and stops the build. The two
+ * vocabularies imported below come from fs-free leaves and cross no boundary.
  *
  * Modules are keyed by **slug** (`fundamentals/llms`), never by module number.
  * The set has been renumbered before; a number is a label, a slug is an
  * identity (§12.1.3).
+ *
+ * ## What the record no longer holds (2026-11-05, M40)
+ *
+ * The reader's name, mark, mark seed and role, and each module's self-check
+ * answer, opened sources and linked repositories. The features that wrote and
+ * showed them were removed on the author's word. A stored record that still
+ * carries them parses unchanged: `validate.ts` reads only the fields below and
+ * ignores the rest, so the old fields drop out on the next write and the
+ * schema version did not have to move.
  */
 
 /**
- * §12.3.5 — the drafter's mark.
- *
- * The vocabulary is owned by `lib/identity/mark.ts`, which is the module that
- * knows what each id can actually be drawn as. It is re-exported here so the
- * record's consumers can take the type from the record, and so that this file
- * cannot grow a second copy that drifts out of the geometry's reach — which is
- * exactly what happened once already: two unions named `MarkId`, six uppercase
- * values against seven lowercase, compiling cleanly because no file yet
- * imported both.
- *
- * Both leaves are fs-free, so the import crosses no boundary (§12.2).
- */
-import type { ClaimReceipt } from './claim'
-import { type MarkId, STORABLE_MARK_IDS } from '../identity/mark'
-
-export type { MarkId }
-export const MARK_IDS: readonly MarkId[] = STORABLE_MARK_IDS
-
-/**
- * §13.3 — the reader's role.
- *
- * Same arrangement as `MarkId` above, for the same reason: `lib/path/roles.ts`
- * is the module that knows what a role is offered as, so the union lives there
- * and is re-exported here rather than restated. The `MarkId` docblock records
- * what a second copy costs — two unions of the same name, differing values,
- * compiling cleanly because nothing imported both — and one such incident is
- * the whole budget.
- *
- * `roles.ts` imports nothing, so this crosses no boundary (§12.2).
- */
-import { type RoleId, ROLE_IDS as PATH_ROLE_IDS } from '../path/roles'
-
-export type { RoleId }
-export const ROLE_IDS: readonly RoleId[] = PATH_ROLE_IDS
-
-/**
- * M12 / D13 — which catalog view the reader chose.
- *
- * The third vocabulary this file takes from an fs-free leaf, on the same terms
- * as `MarkId` and `RoleId` above: `lib/catalog/views.ts` is the module that
- * knows what a view is offered as — its name, its icon and the question it
- * answers — so the union lives there and is re-exported here. It imports
- * nothing, so this crosses no boundary (§12.2), and the boot script embeds the
- * same `VIEW_IDS` array rather than a second list of three strings.
+ * M12 / D13 — which catalog view the reader chose. `lib/catalog/views.ts` owns
+ * the union and the boot script embeds the same `VIEW_IDS` array.
  */
 import { type CatalogViewId, VIEW_IDS as CATALOG_VIEW_IDS } from '../catalog/views'
 
@@ -71,66 +32,29 @@ export type { CatalogViewId }
 export const CATALOG_VIEWS: readonly CatalogViewId[] = CATALOG_VIEW_IDS
 
 /**
- * The fourth vocabulary from an fs-free leaf, on the same terms: the palettes a
- * reader can put the diagrams and the code in (`lib/reading/palettes.ts`). The
- * boot script embeds this array to match a stored id before it reaches an
- * attribute.
+ * The palettes a reader can put the diagrams and the code in
+ * (`lib/reading/palettes.ts`). The boot script embeds this array to match a
+ * stored id before it reaches an attribute.
  */
 import { type PaletteId, PALETTE_IDS as READING_PALETTE_IDS } from '../reading/palettes'
 
 export type { PaletteId }
 export const PALETTE_IDS: readonly PaletteId[] = READING_PALETTE_IDS
 
-/** §12.6 — self-report, unscored. `null` is `unknown`, a first-class value. */
-export interface QuizRecord {
-  answer: string
-  assessed: 'matched' | 'missed' | null
-  at: string
-}
-
-/** §12.9 — the thing the reader hands in against a sheet. */
-export interface Submittal {
-  owner: string
-  repo: string
-  /** RECONSTRUCTED `https://github.com/{owner}/{repo}`, never the raw input. */
-  url: string
-  /** Reader-supplied, `/^[0-9a-f]{7,40}$/`, never fetched (§12.9.3). */
-  commit: string | null
-  note: string
-  at: string
-}
-
 export interface SheetRecord {
-  /** ISO instant of sign-off; null = not signed off. The reader asserts it. */
+  /** ISO instant of completion; null = not completed. The reader asserts it. */
   signedOff: string | null
-  /** The sheet's REV short hash AT sign-off, for the §12.4.3 drift line. */
+  /** The module's REV short hash AT completion, for the §12.4.3 drift line. */
   signedRevision: string | null
-  /** Observed. Printed as evidence; gates nothing (§12.4.4). */
+  /** Observed. Gates nothing (§12.4.4). */
   reachedEnd: boolean
-  /** Observed, accumulated, capped at DWELL_CAP_SECONDS per sheet. */
+  /** Observed, accumulated, capped at DWELL_CAP_SECONDS per module. */
   dwellSeconds: number
-  quiz: QuizRecord | null
-  /** Keyed by stable index within the sheet (§12.7). Only ticks are stored. */
+  /** Keyed by stable index within the module (§12.7). Only ticks are stored. */
   checklist: { [index: string]: boolean }
-  /** DISTINCT external URLs opened from this sheet (§12.8). Evidence, not XP. */
-  sources: string[]
-  submittals: Submittal[]
 }
 
 export interface RecordData {
-  identity: {
-    /** Exactly as typed, NFC-normalised, sanitised per §12.3.4. */
-    name: string | null
-    /** 8 lowercase hex, minted ONCE, never derived from the name (§12.3.5). */
-    markSeed: string | null
-    /** The reader's override; null means "use markSeed". */
-    mark: MarkId | null
-    /**
-     * §13.3 — one of the nine frozen ids, or `null` for "has not said". Never
-     * inferred: not from the name, not from which sheets have been signed off.
-     */
-    role: RoleId | null
-  }
   sheets: { [slug: string]: SheetRecord }
   /** ISO dates (YYYY-MM-DD) on which anything was written. */
   days: string[]
@@ -138,80 +62,20 @@ export interface RecordData {
     /** §12.16 — character-key shortcuts, default true for this audience. */
     charKeys: boolean
     /**
-     * M10 — whether the curriculum rail on a module page is folded away.
-     *
-     * It lives in `prefs` for the same reason `charKeys` does: it is a fact
-     * about the browser in front of the reader rather than about the reader,
-     * and `prefs` is the field `carriesNothing` ignores and `mergeRecords`
-     * resolves local-wins. A reader who folds the rail on a laptop has not
-     * said anything about their phone.
-     *
-     * The record store is the only writer of learner state
-     * (`kia-context/specs/ARCHITECTURE.md` §5), so the fold is written here or
-     * it is not written at all. It is NOT a second `localStorage` key: two
-     * writers to one reader's state is the defect that rule exists to prevent.
-     *
-     * Default false — the rail is open — because a reader who has never met
-     * this site has not asked for it to be hidden, and the honest empty form
-     * of a preference is the one the reader did not set.
+     * M10 — whether the curriculum rail on a module page is folded away. A
+     * fact about this browser, not the reader, so it lives in `prefs`, which
+     * `carriesNothing` ignores. The record store is the only writer of learner
+     * state (`kia-context/specs/ARCHITECTURE.md` §5), so it is not a second
+     * `localStorage` key. Default false: the rail is open.
      */
     railFolded: boolean
     /**
-     * §16.3 — the account id whose address the alias was offered from, or
-     * `null` for "no account has named this record".
-     *
-     * It lives in `prefs` and not in `identity` because it is not a fact about
-     * the reader; it is this browser's note that one offer has already been
-     * made, and `prefs` is the field `carriesNothing` ignores (see below) and
-     * that `mergeRecords` resolves local-wins. Both of those are the behaviour
-     * this flag needs: an offer already declined must not travel to a browser
-     * that would then re-offer, and the flag must never make an erased record
-     * look like a record.
-     *
-     * The id, rather than a boolean, because the question the seam asks is
-     * "has THIS account already offered?" — a second account signing into the
-     * same browser is a different reader making a first offer, and a boolean
-     * could not tell the two apart. `noteAliasNamed` is its only writer.
-     *
-     * ONE SLOT, and it defers the collision rather than removing it. REPORTED BY
-     * REVIEW: A clears the name, B signs in and takes the slot, B clears the
-     * name, A signs back in — the slot now reads B, so A's removal is re-offered
-     * over. A set of settled accounts is what would close it, and that is a
-     * schema widening with its own bounded-cleanup question; filed as §16.11
-     * rather than carried in here, because it needs two accounts in one browser
-     * and four acts to reach, and the one-account case it was built for holds.
-     */
-    aliasNamedFor: string | null
-    /**
-     * M12 / D13 — which of the catalog's three views the reader last chose, or
-     * `null` for "has not chosen".
-     *
-     * The same argument as `railFolded`, one screen over: it is a fact about
-     * the layout this reader prefers, not about their work on the curriculum,
-     * so it lives in `prefs` — the field `carriesNothing` ignores and
-     * `mergeRecords` resolves local-wins. A reader who picked Table on a
-     * desktop has not said anything about their phone, where the table is the
-     * view a 390px window can least afford.
-     *
-     * `null` and not `'overview'`, and the distinction is load-bearing: it is
-     * what tells "has not chosen" from "chose the one that happens to be the
-     * default". The boot script stamps nothing for null, the stylesheet's
-     * fallback rule reveals the default view, and a later change of default
-     * therefore moves the reader who never chose and leaves the reader who did
-     * exactly where they put themselves.
-     *
-     * `store.ts` is the only writer (`kia-context/specs/ARCHITECTURE.md` §5),
-     * and `setCatalogView` is the one reducer that touches it.
+     * M12 / D13 — which of the catalog's views the reader last chose, or `null`
+     * for "has not chosen". `null` and not `'overview'`, so a later change of
+     * default moves only the readers who never chose.
      */
     catalogView: CatalogViewId | null
-    /**
-     * 2026-10-11 — the palette the reader put the diagrams in, or `null` for
-     * "has not chosen". `catalogView`'s argument exactly: a fact about how this
-     * reader likes a page drawn, not about their work, so it lives in `prefs`,
-     * which `carriesNothing` ignores and `mergeRecords` resolves local-wins.
-     * Null and not `'night'`, so a later change of default moves only the
-     * readers who never chose.
-     */
+    /** 2026-10-11 — the palette for the diagrams, or `null` for "has not chosen". */
     figurePalette: PaletteId | null
     /** The same, for the code blocks. A separate choice on purpose. */
     codePalette: PaletteId | null
@@ -219,18 +83,6 @@ export interface RecordData {
   meta: {
     lastExport: string | null
     persisted: boolean | null
-    /**
-     * §17.1 — the last claim that was NEWS, as this browser saw it.
-     *
-     * Local by construction: `mergeRecords` resolves `meta` local-wins, so a
-     * receipt written in one browser can never be printed by another — which is
-     * the honest semantics, because a claim is an event between THIS browser and
-     * the account, and "1 sheet merged" reported in a browser where nothing was
-     * merged is a page lying about the reader's own history (§1).
-     *
-     * Written only by `events.noteClaim`, only when `claimIsNews` holds.
-     */
-    lastClaim: ClaimReceipt | null
   }
 }
 
@@ -259,16 +111,13 @@ export const RECORD_QUARANTINE_KEY = 'hl-record-quarantine'
 /** §12.1.2 — inside the envelope, never in the key. Increments by one. */
 export const SCHEMA_VERSION = 1
 
-/** §12.4.4 — dwell is capped per sheet, so a left-open tab cannot dominate. */
+/** §12.4.4 — dwell is capped per module, so a left-open tab cannot dominate. */
 export const DWELL_CAP_SECONDS = 3600
-
-/** §12.9.1 — up to three per sheet. */
-export const MAX_SUBMITTALS = 3
 
 /**
  * The only two hazards a map key in this record presents. A slug is NOT
  * shape-checked: if the corpus renames a category the record must survive it,
- * and a key no sheet answers to costs nothing, because every selector in
+ * and a key no module answers to costs nothing, because every selector in
  * `derive.ts` iterates the curriculum rather than the record. What is refused
  * is the three prototype names, which plain assignment would turn into a
  * prototype write, and a length no identifier has.
@@ -296,99 +145,51 @@ function deepFreeze<T>(value: T): T {
  * singleton (identity-equal across calls) or `useSyncExternalStore` re-renders
  * for ever, and it must be frozen so a reducer handed it cannot mutate the
  * value the server also rendered from.
- *
- * "Nothing signed off, every sheet dashed, readouts at `--`" is the only
- * non-lying thing build-time HTML can claim about a reader it has never met.
  */
 export const EMPTY_RECORD: RecordData = deepFreeze<RecordData>({
-  identity: { name: null, markSeed: null, mark: null, role: null },
   sheets: {},
   days: [],
   prefs: {
     charKeys: true,
     railFolded: false,
-    aliasNamedFor: null,
     catalogView: null,
     figurePalette: null,
     codePalette: null,
   },
-  meta: { lastExport: null, persisted: null, lastClaim: null },
+  meta: { lastExport: null, persisted: null },
 })
 
 /**
- * True when a sheet record carries nothing at all. §11.25's absent-not-empty
- * rule needs this in two places: the validator drops such a record on read, and
- * the §12.15 erase dialog must not enumerate a sheet state that holds nothing.
- */
-/**
- * Does this record carry nothing the reader made?
- *
- * Used by the cross-tab path to decide whether a record is worth sending to an
- * account, and the rule it serves is narrow: **a tab never pushes an empty
- * record.** An empty envelope cannot inform an account of anything, and there
- * are exactly two ways one arrives — the reader erased, or storage was cleared
- * under this tab. In the first case the erasing tab performs the account-side
- * delete itself; in the second the account copy is the thing that is supposed to
- * survive.
- *
- * Without the rule an erase could be undone by a tab that had nothing to do with
- * it: `DataPanel` writes the empty record, flushes it, and only then removes the
- * key, so every other open tab sees a VALID EMPTY ENVELOPE, adopts it, and
- * pushes — a push that races the delete and can land after it, recreating a row
- * that then looks like a record rather than a leftover.
- *
- * `prefs` is deliberately not consulted. A reader who toggled a keyboard
- * preference has made no record, and treating that as content would send an
- * otherwise-empty envelope for the sake of one boolean.
- *
- * §16.3's `prefs.aliasNamedFor` is the case that makes the rule load-bearing
- * rather than tidy. That flag is written from an ACCOUNT, moments after a
- * sign-in, so a record the reader erased can still carry it — and if it counted
- * as content, the erasing tab's `DataPanel` write would leave every other open
- * tab holding a valid non-empty envelope to push, racing the account-side
- * delete and recreating the row. Nothing may ever be added to `prefs` that this
- * function then consults.
- *
- * The same rule now covers `meta.lastClaim` (§17.3), and for a sharper version
- * of the same hazard: a claim that moved nothing writes a receipt whose every
- * count is zero. If that counted as content, an empty browser that had merely
- * met an account would be stamped as holding a record, every other open tab
- * would hold a pushable envelope, and this function would stop being able to
- * tell an erase from a claim. `meta.lastExport` is consulted and `meta.lastClaim`
- * is not; the difference is that an export is something the reader DID.
+ * Does this record carry nothing the reader made? `prefs` is deliberately not
+ * consulted: a reader who toggled a preference has made no record.
  */
 export function carriesNothing(data: RecordData): boolean {
   if (data.days.length > 0) return false
   if (data.meta.lastExport !== null) return false
-  const identity = data.identity
-  if (identity.name !== null || identity.markSeed !== null) return false
-  if (identity.mark !== null || identity.role !== null) return false
   return Object.values(data.sheets).every(isEmptySheetRecord)
 }
 
+/**
+ * True when a module record carries nothing at all. The validator drops such a
+ * record on read, and the erase dialog does not list a module that holds nothing.
+ */
 export function isEmptySheetRecord(sheet: SheetRecord): boolean {
   return (
     sheet.signedOff === null &&
     sheet.signedRevision === null &&
     !sheet.reachedEnd &&
     sheet.dwellSeconds === 0 &&
-    sheet.quiz === null &&
-    Object.keys(sheet.checklist).length === 0 &&
-    sheet.sources.length === 0 &&
-    sheet.submittals.length === 0
+    Object.keys(sheet.checklist).length === 0
   )
 }
 
-/** A fresh, mutable sheet record: nothing observed, nothing asserted. */
+/** A fresh, mutable module record: nothing observed, nothing asserted. */
 export function emptySheetRecord(): SheetRecord {
   return {
     signedOff: null,
     signedRevision: null,
     reachedEnd: false,
     dwellSeconds: 0,
-    quiz: null,
     checklist: {},
-    sources: [],
-    submittals: [],
   }
 }

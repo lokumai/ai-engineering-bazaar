@@ -24,7 +24,6 @@
  * number the curriculum now computes:
  *
  *   A  every module      the segment fills with its category hue
- *   B  drawn modules     the path step says SIGNED OFF
  *   C  drawn modules     the same segment, inside `forced-colors: active`,
  *                        filled with a system colour so the state survives
  *                        with no hue at all
@@ -122,26 +121,6 @@ export function render() {
 ${selectors(every, (pad, n) => `html.hl-signed-${pad} .bz-seg[data-module="${n}"]`)}
     background: var(--bz-cat);
     border-color: var(--bz-cat);
-  }
-
-  /* B. The drawn modules only. A step the reader has signed off says so in
-     words. A draft sheet has no sign-off control at all (§12.4.1), so no
-     selector for one could ever match, and writing one would state that it
-     could.
-
-     THIS STATES display AND NOTHING ELSE, and that is a fix rather than a
-     style. It used to also set color: var(--color-accent-ink), a token of the
-     RETIRED palette that no theme has ever declared. An undeclared custom
-     property is invalid at computed-value time, so color fell back to unset —
-     which for an inherited property means inherit — and the word silently took
-     the step's body ink instead of the teal progress.css gives it. Nothing
-     failed: this file is excluded by name from all three of the guards that
-     would have caught it.
-     The generated sheet's whole job is WHICH module is revealed. What the
-     revealed thing looks like belongs to the surface stylesheet, which is
-     already how group D is divided. */
-${selectors(drawn, (pad, n) => `html.hl-signed-${pad} .bz-step[data-module="${n}"] .bz-step-tick`)}
-    display: inline;
   }
 
   /* D. M10 — the curriculum rail's tick, for the drawn modules only. The mark

@@ -92,7 +92,7 @@ test('the ninth column is COMPLETION, and its squares are 14 × 14 (§4.8, §12.
   await expect(headers.nth(6)).toHaveText(/^completion$/i, { useInnerText: true })
 
   const boxes = squares(page, SEEDED_SLUG)
-  await expect(boxes).toHaveCount(4)
+  await expect(boxes).toHaveCount(2)
   const measured = await boxes.evaluateAll((nodes) =>
     nodes.map((node) => {
       const style = getComputedStyle(node)
@@ -157,7 +157,7 @@ test('a seeded record paints the squares its record has earned (§12.2 channel B
   const problems = watchPage(page)
   await seedRecord(page, {
     sheets: {
-      [SEEDED_SLUG]: signedSheet('b7225f8', { quiz: { answer: 'a', assessed: 'matched', at: '' } }),
+      [SEEDED_SLUG]: signedSheet('b7225f8'),
     },
   })
   await page.goto(INDEX_SHEET)
@@ -167,10 +167,8 @@ test('a seeded record paints the squares its record has earned (§12.2 channel B
   // which squares to draw — so a square is filled when its slot's count has
   // reached its threshold, one rule for all four slots.
   await expect(slotState(page, SEEDED_SLUG, 'COMPLETION')).toHaveAttribute('data-signed', 'true')
-  await expect(slotState(page, SEEDED_SLUG, 'QUIZ')).toHaveAttribute('data-signed', 'true')
-  // Nothing was ticked and no source was opened, so those two stay as drawn.
+  // Nothing was ticked, so the checklist square stays as drawn.
   await expect(slotState(page, SEEDED_SLUG, 'CHECKLIST')).toHaveAttribute('data-signed', 'false')
-  await expect(slotState(page, SEEDED_SLUG, 'SOURCES')).toHaveAttribute('data-signed', 'false')
 
   // Every other sheet's cell is untouched: one island paints all of them, and a
   // selector that matched too broadly would fill the whole column.

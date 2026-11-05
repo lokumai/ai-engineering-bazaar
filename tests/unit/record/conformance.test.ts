@@ -8,15 +8,7 @@ import {
   type CurriculumFacts,
 } from '@/lib/record/derive'
 import { erasedRecord } from '@/lib/record/erase'
-import {
-  INSTANT_DAY,
-  MARK_SEED,
-  markActivity,
-  markExported,
-  mintMarkSeed,
-  signOff,
-  unsign,
-} from '@/lib/record/events'
+import { INSTANT_DAY, markActivity, markExported, signOff, unsign } from '@/lib/record/events'
 import {
   EMPTY_RECORD,
   SCHEMA_VERSION,
@@ -46,9 +38,9 @@ import { ISO_DAY, ISO_TIME, envelopeTextFrom, parseEnvelope } from '@/lib/record
  * `npx vitest -u` or fix what you broke.
  *
  * **No vocabulary rides along.** The app passes through every subtree it does
- * not write, so it never needs the web's lists of roles, marks, views or
- * palettes, and a copy of one would be a second rule that drifts. The shape
- * test below holds the fixture to its five sections and eight constants.
+ * not write, so it never needs the web's lists of views or palettes, and a
+ * copy of one would be a second rule that drifts. The shape test below holds
+ * the fixture to its five sections and seven constants.
  *
  * **The `signedOff` cases are generated, not chosen.** The app's acceptance has
  * to equal V8's `Date.parse` over every shape `ISO_TIME` admits, and no grammar
@@ -64,7 +56,6 @@ const SAVED_AT = '2026-03-14T08:00:00.000Z'
 const NOW = '2026-03-14T09:26:53.589Z'
 const LATER = '2026-03-15T07:10:00.000Z'
 const REVISION = 'a1b2c3d'
-const SEED = '0a1b2c3d'
 
 const SIGNED_SHEET: SheetRecord = { ...emptySheetRecord(), signedOff: NOW, signedRevision: REVISION }
 
@@ -72,9 +63,8 @@ function canonical(patch: Partial<RecordData> = {}): RecordData {
   return structuredClone({ ...EMPTY_RECORD, ...patch })
 }
 
-/** One signed sheet, a name, a seed and a day: canonical, and not empty. */
+/** One signed sheet and a day: canonical, and not empty. */
 const CANONICAL = canonical({
-  identity: { ...EMPTY_RECORD.identity, name: 'Ada', markSeed: SEED },
   sheets: { 'alpha/first': SIGNED_SHEET },
   days: [DAY],
 })
@@ -187,22 +177,9 @@ const ENVELOPE_CASES: ParseCase[] = [
   { name: 'envelope: data an array', input: envelopeText('[]') },
   { name: 'envelope: data a string', input: envelopeText('"data"') },
   {
-    name: 'envelope: html, the record block with its closing tag',
-    input: `<!doctype html><html><body><p>Record</p><script id="hl-record" type="application/json">${envelopeText()}</script></body></html>`,
+    name: 'envelope: an html page around the record carries no record',
+    input: `<!doctype html><html><body><script id="hl-record" type="application/json">${envelopeText()}</script></body></html>`,
   },
-  {
-    name: 'envelope: html, an upper-case opening tag with a single-quoted id',
-    input: `<html><SCRIPT TYPE="application/json" ID='hl-record'>\n${envelopeText()}\n</script></html>`,
-  },
-  {
-    name: 'envelope: html, the record block with no closing tag',
-    input: `<html><script id="hl-record">${envelopeText()}`,
-  },
-  {
-    name: 'envelope: html, an upper-case closing tag',
-    input: `<html><script id="hl-record">${envelopeText()}</SCRIPT></html>`,
-  },
-  { name: 'envelope: html, no record block', input: '<html><body><p>Record</p></body></html>' },
   {
     name: 'envelope: a leading BOM in bytes',
     inputBase64: Buffer.from(Uint8Array.from([...BOM, ...ENCODER.encode(envelopeText())])).toString(
@@ -213,9 +190,7 @@ const ENVELOPE_CASES: ParseCase[] = [
     name: 'envelope: invalid UTF-8 inside a string',
     inputBase64: Buffer.from(
       bytesWith(
-        envelopeText(
-          dataText({ identity: JSON.stringify({ ...CANONICAL.identity, name: `Ada${BAD_BYTE}` }) }),
-        ),
+        withSheet(`alpha/second${BAD_BYTE}`, SIGNED_SHEET),
         BAD_BYTE,
         [0xff],
       ),
@@ -286,7 +261,6 @@ const PARSE_CASES = [...ENVELOPE_CASES, ...SHEET_MAP_CASES, ...SIGNED_OFF_CASES,
 type Step =
   | { op: 'signOff'; slug: string; revision: string | null; now: string }
   | { op: 'unsign'; slug: string; now: string }
-  | { op: 'mintMarkSeed'; seed: string; now: string }
   | { op: 'markActivity'; now: string }
   | { op: 'markExported'; now: string }
   | { op: 'erase'; now: string }
@@ -303,8 +277,6 @@ function apply(data: RecordData, step: Step): RecordData {
       return signOff(data, step.slug, step.revision, step.now)
     case 'unsign':
       return unsign(data, step.slug)
-    case 'mintMarkSeed':
-      return mintMarkSeed(data, step.seed, step.now)
     case 'markActivity':
       return markActivity(data, step.now)
     case 'markExported':
@@ -360,24 +332,6 @@ const REDUCE_CASES: ReduceCase[] = [
     steps: [{ op: 'unsign', slug: 'alpha/second', now: LATER }],
   },
   {
-    name: 'signOff then mintMarkSeed at the same now',
-    before: EMPTY,
-    steps: [
-      { op: 'signOff', slug: 'alpha/first', revision: REVISION, now: LATER },
-      { op: 'mintMarkSeed', seed: SEED, now: LATER },
-    ],
-  },
-  {
-    name: 'mintMarkSeed never reseeds',
-    before: CANONICAL,
-    steps: [{ op: 'mintMarkSeed', seed: 'ffffffff', now: LATER }],
-  },
-  {
-    name: 'mintMarkSeed refuses a malformed seed',
-    before: EMPTY,
-    steps: [{ op: 'mintMarkSeed', seed: '0A1B2C3D', now: LATER }],
-  },
-  {
     name: 'markActivity stamps a new day once',
     before: CANONICAL,
     steps: [
@@ -406,11 +360,6 @@ const REDUCE_CASES: ReduceCase[] = [
   {
     name: 'erase',
     before: CANONICAL,
-    steps: [{ op: 'erase', now: LATER }],
-  },
-  {
-    name: 'erase keeps prefs.aliasNamedFor',
-    before: canonical({ ...CANONICAL, prefs: { ...CANONICAL.prefs, aliasNamedFor: 'account-1' } }),
     steps: [{ op: 'erase', now: LATER }],
   },
 ]
@@ -536,11 +485,7 @@ const DERIVE_CASES: DeriveCase[] = [
   {
     name: 'a sign-off for a slug the curriculum does not list',
     index: INDEX,
-    record: canonical({
-      identity: { ...EMPTY_RECORD.identity, name: 'Ada' },
-      sheets: signedSheets('alpha/first', 'gamma/gone'),
-      days: [DAY],
-    }),
+    record: canonical({ sheets: signedSheets('alpha/first', 'gamma/gone'), days: [DAY] }),
   },
   {
     name: 'a module whose level no level declares',
@@ -563,7 +508,6 @@ function buildFixture() {
       SOFT_CAP_BYTES,
       ISO_TIME: ISO_TIME.source,
       ISO_DAY: ISO_DAY.source,
-      MARK_SEED: MARK_SEED.source,
       INSTANT_DAY: INSTANT_DAY.source,
       EMPTY_SHEET: emptySheetRecord(),
       EMPTY_RECORD,
@@ -590,7 +534,6 @@ describe('the record conformance fixture', () => {
       'SOFT_CAP_BYTES',
       'ISO_TIME',
       'ISO_DAY',
-      'MARK_SEED',
       'INSTANT_DAY',
       'EMPTY_SHEET',
       'EMPTY_RECORD',

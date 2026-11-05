@@ -37,7 +37,7 @@ trusting its brief.**
 `PROGRESS.md` is part 1 and closed: M1 to M15, and the review pass over M10 to
 M14. New milestones go in part 2.
 
-**M17 to M22, M24 to M30, and M32 to M36 have shipped**, recorded in
+**M17 to M22, M24 to M30, M32 to M38, and M40 have shipped**, recorded in
 [`kia-context/logs/PROGRESS_2.md`](kia-context/logs/PROGRESS_2.md): one catalog
 with a level as an address, the module page, the progress page, the end of a
 module with its quick quiz, the readability pass over the corpus, and the
@@ -124,7 +124,7 @@ working agreements. Read the right one.
 
 | Working in | Governed by | In short |
 | --- | --- | --- |
-| `src/`, `tests/`, `scripts/`, `supabase/` | **this file** | The application that renders the corpus |
+| `src/`, `tests/`, `scripts/` | **this file** | The application that renders the corpus |
 | `mini-courses/` | [`mini-courses/CLAUDE.md`](mini-courses/CLAUDE.md) | The authored course, and everything `MANIFEST.md` governs |
 
 They share the derive-never-restate rule and the measure-do-not-assert habit,
@@ -160,13 +160,13 @@ here, because the link gate and the export itself only fail in `build`.
 
 ```bash
 npx vitest run tests/unit/record/merge.test.ts        # one file
-npx vitest run tests/unit/path -t "denominator"       # by name
+npx vitest run tests/unit/record -t "erase"            # by name
 npx playwright test theme.spec.ts --project=chrome-1440
 npx playwright test responsive.spec.ts --project=chrome-390 -g "no sideways"
 ```
 
-`responsive`, `containment` and `fidelity` run on all three viewport projects
-(1440/1024/390); everything else runs on `chrome-1440` only. First run on a machine needs real
+`responsive` and `containment` also run on `chrome-390`; everything else runs
+on `chrome-1440` only (M40 dropped the 1024 project). First run on a machine needs real
 Chrome: `npx playwright install --with-deps chrome`, or set
 `E2E_CHANNEL=chromium` to use the bundled build.
 
@@ -178,15 +178,8 @@ SITE_BASE_PATH=/ai-engineering-bazaar npm run build
 npm run serve:out
 ```
 
-**The two credentialed suites** skip cleanly with no `.env.local`, so a fresh
-clone still runs everything green:
-
 ```bash
-node scripts/check-supabase.mjs                          # config + live checks, prints no secrets
-node scripts/test-rls.mjs                                # every RLS policy, real JWTs, real PostgREST
-NEXT_PUBLIC_AUTH_ENABLED=true npm run build              # then, against that build:
-E2E_ACCOUNTS=1 npx playwright test accounts.spec.ts
-node scripts/check-mermaid.mjs docs/*.md                 # parses AND renders every diagram in Chrome
+node scripts/check-mermaid.mjs <file>.md                 # parses AND renders every diagram in Chrome
 ```
 
 Run `check-mermaid.mjs` on any doc whose mermaid you touched: a broken diagram
@@ -220,27 +213,13 @@ only writer. Reads happen twice per page and the split is load-bearing (§12.2):
   prerendered HTML has never met the reader.
 
 Anything derived belongs in exactly one file: `derive.ts` (how far along),
-`attention.ts` (what "stalled" means), `scope.ts` (where the record goes, i.e.
-the reader-visible copy about it), `storage.ts` (what a write means).
+`scope.ts` (where the record goes, i.e. the reader-visible copy about it),
+`storage.ts` (what a write means).
 
-**The account layer** is optional and gates nothing.
-`src/components/record/AccountSync.tsx` is **the seam** — the single place where
-session, `createSync`, `createRemoteRecordStore`, `claimMerge` and the claim UI
-are joined. Its absence was the largest defect in Phase 4: both halves existed
-and signing in did nothing. When adding to either side, check that the seam
-actually calls it.
-
-`src/lib/record/wire.ts` is the shared vocabulary between the local and remote
-halves (`EventKind`, `LearnerEvent`, `RemoteRecordStore`, `Progress`). Change it
-deliberately; both sides compile against it.
-
-**Authorisation is row-level security only.** `supabase/migrations/` holds the ten
-tables and every policy, applied with `psql` in numeric order. **No Edge
-Functions, no RPC, no views, no triggers** — the schema stays portable Postgres.
-An over-permissive policy raises no error, so every policy change needs
-`scripts/test-rls.mjs`; note that RLS *filters* `UPDATE`/`DELETE` silently and
-only `INSERT` raises, which is why that suite has both `expectRefused` and
-`expectTouchesNothing`.
+**There is no account layer and no server** since M40 (2026-11-05): Supabase,
+sign-in, teams, organisations, role paths and the record of work were removed
+on the author's word. The record lives in this browser only, and
+Export / import / erase on `/profile/` is how a reader keeps a copy.
 
 ## Rules that are enforced, and will fail a build
 
@@ -298,17 +277,6 @@ only `INSERT` raises, which is why that suite has both `expectRefused` and
 - `docs/superpowers/` is gitignored — specs and plans stay local, never
   committed. `.env.local` and a loose `supabase-access-tokens` file are ignored
   because they hold real secrets; do not remove those `.gitignore` lines.
-- Do not paste the database password or `SUPABASE_SERVICE_ROLE_KEY` into chat, a
-  log, or any GitHub Actions secret used by the deploy workflow. Only
-  `NEXT_PUBLIC_SUPABASE_URL`, the publishable key, and
-  `NEXT_PUBLIC_AUTH_ENABLED` belong there.
-- **Never enable Supabase's email autoconfirm** while `orgs.join_domain` is in
-  use — it makes `email_verified` true for an address nobody proved, and the
-  join policies cannot tell the difference. See `SECURITY.md`.
-- `NEXT_PUBLIC_AUTH_ENABLED` defaults to `false` and must stay that way in
-  `.env.local`: the default e2e run asserts zero Supabase requests, and CI never
-  sees your local file.
-
 ## Read next
 
 | Document | For |
@@ -318,11 +286,7 @@ only `INSERT` raises, which is why that suite has both `expectRefused` and
 | [`mini-courses/MANIFEST.md`](mini-courses/MANIFEST.md) | The seven rules every module is held to |
 | [`kia-context/specs/DESIGN.md`](kia-context/specs/DESIGN.md) | The design system: every token value, which border token to use, the six primitives M16 derived, and the do-nots |
 | [`tests/README.md`](tests/README.md) | The testing rule, the four layers, and the checks that fail for a reason |
-| [`docs/data-flow.md`](docs/data-flow.md) | The record, storage, sync, two devices, the exported file |
-| [`docs/auth-flow.md`](docs/auth-flow.md) | Sign-in, sessions, joining, who may read what |
-| [`docs/manager-queries.md`](docs/manager-queries.md) | Tables, columns, joins, manager SQL |
-| [`SECURITY.md`](SECURITY.md) | The shared-origin exposure, accepted risks, operational rules |
-| [`supabase/README.md`](supabase/README.md) | Applying the schema |
+| [`SECURITY.md`](SECURITY.md) | The shared-origin exposure, and the one accepted risk |
 
 
 @AGENTS.md

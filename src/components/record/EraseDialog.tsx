@@ -4,8 +4,6 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { useState } from 'react'
 import { tally } from '@/lib/record/derive'
 import {
-  ERASE_CLOSE_ACCOUNT,
-  ERASE_ORG_HISTORY,
   ERASE_SCOPE,
   ERASE_WORD,
   NOTHING_RECORDED,
@@ -86,13 +84,6 @@ export const ERASE_COPY = {
   head: 'Erase',
   title: 'Erase all progress in this browser?',
   scope: ERASE_SCOPE,
-  /**
-   * §14.6 rows 2 and 3, the spec's own added line — "Kurumsal geçmişin
-   * silinmez; tamamen silmek için hesabını kapat." — in English. Two sentences
-   * rather than one clause: the survival of the log and the one way to end it
-   * are separate facts, and joining them with a semicolon buries the second.
-   */
-  history: `${ERASE_ORG_HISTORY} ${ERASE_CLOSE_ACCOUNT}`,
   confirmLabel: `Type ${ERASE_WORD} to confirm`,
   danger: 'Erase all data',
   decline: 'Keep my data',
@@ -161,14 +152,6 @@ export function EraseDialog({
             <p className="m-0 mb-2 text-meta leading-normal text-on-surface-muted">
               {ERASE_COPY.scope}
             </p>
-            {/* §14.6 — its own paragraph, not a fourth clause of the one above.
-                This is the sentence a reader in an organisation has to leave
-                the dialog having read, and a sentence appended to a paragraph
-                about storage keys is a sentence that gets skimmed. */}
-            <p className="m-0 mb-3 text-meta leading-normal text-on-surface-muted">
-              {ERASE_COPY.history}
-            </p>
-
             <label className="bz-field">
               <span className="bz-field-label">{ERASE_COPY.confirmLabel}</span>
               <input

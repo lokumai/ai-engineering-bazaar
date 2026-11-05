@@ -49,35 +49,31 @@ jobs:
       # in Chrome, so the build cannot run without it: it exits 1 naming this
       # command rather than fall back to a browser whose metrics differ.
       - run: npx playwright install --with-deps chromium
-      - run: npm run build
-
-      # §15.1.2 — the corpus link test fails the build on a dead `.md` link, but
-      # nothing caught a MOVED ROUTE: a static export ships an internal href
-      # that resolves to nothing without erroring. This gate reads the export
-      # itself, which is the only place that question can be answered.
+      # One build, with the base path, because that is the export the deploy
+      # publishes and the only one where a root-relative link that lacks the
+      # base path can exist. It also catches a moved route: a static export
+      # ships an internal href that resolves to nothing without erroring, and
+      # this gate reads the export itself. The base-path-less build that ran
+      # first until M40 (2026-11-05, D88) asked the same questions of a build
+      # nobody publishes; the browser suite below builds its own.
+      - run: SITE_BASE_PATH=/ai-engineering-bazaar npm run build
       - run: node scripts/check-links-out.mjs out
       # The content bundle under out/api/ against its contract: every file the
       # index names, every hash, the SVG profile and the diagram font. The copy
-      # is the base-path-less bundle the next build is compared with.
-      - run: node scripts/check-bundle-out.mjs out && cp -r out/api "$RUNNER_TEMP/api-plain"
-
-      # The gate's whole reason for existing is a root-relative link that lacks
-      # the base path, and that link cannot exist in the build above: GitHub
-      # Pages serves from a sub-path, so the export the deploy publishes is the
-      # only one where the question is real. Running it once, base-path-less,
-      # would have been a gate for the case that cannot fail.
-      - run: SITE_BASE_PATH=/ai-engineering-bazaar npm run build
-      - run: node scripts/check-links-out.mjs out
-      # Bundle paths are site-relative, so the base path must change nothing
-      # under api/: a byte of difference is the base path leaking into the
-      # bundle, which the native reader would then fetch from the wrong place.
-      - run: node scripts/check-bundle-out.mjs out && diff -r "$RUNNER_TEMP/api-plain" out/api
+      # is compared with the browser suite's own build at the end of this job.
+      - run: node scripts/check-bundle-out.mjs out && cp -r out/api "$RUNNER_TEMP/api-base"
       # `chrome`, not `chromium`: playwright.config.ts runs the suite on real
       # Google Chrome via `channel: 'chrome'`, and installing the bundled
       # Chromium instead only passes because the runner image happens to ship
       # Chrome already.
       - run: npx playwright install --with-deps chrome
       - run: npm run test:e2e
+      # The browser suite rebuilt out/ without the base path. Bundle paths are
+      # site-relative, so the two bundles must match byte for byte: a
+      # difference is either the base path leaking into the bundle, which the
+      # native reader would then fetch from the wrong place, or a build that is
+      # not deterministic. This reuses that build rather than adding one.
+      - run: diff -r "$RUNNER_TEMP/api-base" out/api
       - uses: actions/upload-artifact@v7
         if: failure()
         with:

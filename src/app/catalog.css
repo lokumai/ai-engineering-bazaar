@@ -596,7 +596,6 @@
      the column they drew — `ModuleRow`'s `RowState` records what carries the
      state instead, and none of it needs a rule. */
 
-
   /* `.bz-row-topics` was here — one line, clipped with an ellipsis — and M20
      deleted it with the cell it lived in. The description is a disclosure now,
      so there is nothing to clip: closed it is a short trigger, and open it

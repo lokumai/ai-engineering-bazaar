@@ -19,6 +19,7 @@ import {
   externalLinks,
 } from '@/lib/content/derive'
 import { CONTENT_ROOT } from '@/lib/content/paths'
+import { HASH_WIDTH } from '@/lib/content/revision'
 import { stripLeadIn } from '@/lib/content/strip'
 
 describe('loadAllModules', () => {
@@ -172,7 +173,7 @@ describe('loadAllModules', () => {
     const m = loadModule('fundamentals/llms')!
     const git = (args: string[]) =>
       execFileSync('git', ['-C', CONTENT_ROOT, ...args], { encoding: 'utf8' }).trim()
-    expect(m.revision!.hash).toBe(git(['log', '-1', '--format=%h', '--', m.filePath]))
+    expect(m.revision!.hash).toBe(git(['log', '-1', '--format=%H', '--', m.filePath]).slice(0, HASH_WIDTH))
     expect(m.revision!.date).toBe(
       git(['log', '-1', '--format=%ad', '--date=short', '--', m.filePath]),
     )

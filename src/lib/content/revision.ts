@@ -9,10 +9,24 @@ import { CONTENT_ROOT } from './paths'
  * Git is a build convenience, not a build dependency: a shallow checkout, an
  * exported tarball or a machine with no `git` on PATH all degrade to `null`,
  * and the sheet prints nothing rather than a hash it cannot stand behind.
+ *
+ * **The hash is the full one cut to `HASH_WIDTH`, not git's `%h`.** `%h` is
+ * as long as git judges unambiguous: it grows from 7 to 8 characters once the
+ * repository passes about 16,384 objects and follows a machine's
+ * `core.abbrev`, so one commit printed `4b2e229` by default and `4b2e229be5`
+ * under `core.abbrev=10`. The hash feeds the bundle's `contentVersion`, and a
+ * length change would move it with no content change. `--abbrev=7` was
+ * rejected too: git still lengthens a hash that is ambiguous in the local
+ * object store, which differs between a clone and CI. Seven is the width every
+ * hash had when this was pinned, so a sign-off recorded against an earlier
+ * build still matches its sheet's REV.
  */
 
+/** The width every revision hash is written at. */
+export const HASH_WIDTH = 7
+
 export interface Revision {
-  /** The short hash git itself chose, not a slice of the long one. */
+  /** The commit hash cut to `HASH_WIDTH`. */
   hash: string
   /** The commit's author date, `YYYY-MM-DD`. */
   date: string
@@ -21,7 +35,7 @@ export interface Revision {
 /** Runs a git command in the content tree and returns its stdout. */
 export type GitRunner = (args: readonly string[]) => string
 
-/** `<short hash> <author date>` — the header line of one commit record. */
+/** `<hash> <author date>`: the header line of one commit record. */
 const COMMIT = /^([0-9a-f]{4,}) (\d{4}-\d{2}-\d{2})$/
 
 function run(args: readonly string[]): string {
@@ -33,7 +47,7 @@ function run(args: readonly string[]): string {
 }
 
 /**
- * Parse `git log --format=%h %ad --date=short --name-only` output into an
+ * Parse `git log --format=%H %ad --date=short --name-only` output into an
  * absolute-path index. The log arrives newest-first, so the first commit to
  * name a file is the one that last touched it — later mentions are history.
  */
@@ -47,7 +61,7 @@ export function parseRevisionLog(log: string, repoRoot: string): Map<string, Rev
 
     const header = COMMIT.exec(line)
     if (header) {
-      current = { hash: header[1], date: header[2] }
+      current = { hash: header[1].slice(0, HASH_WIDTH), date: header[2] }
       continue
     }
     if (current === null) continue
@@ -63,7 +77,7 @@ export function buildRevisionIndex(git: GitRunner = run): Map<string, Revision> 
   try {
     const repoRoot = git(['rev-parse', '--show-toplevel']).trim()
     if (repoRoot === '') return new Map()
-    const log = git(['log', '--format=%h %ad', '--date=short', '--name-only', '--', '.'])
+    const log = git(['log', '--format=%H %ad', '--date=short', '--name-only', '--', '.'])
     return parseRevisionLog(log, repoRoot)
   } catch {
     return new Map()

@@ -67,9 +67,10 @@ const COMMIT = /^[0-9a-f]{7,40}$/
 /** §12.3.5 — the minted seed. Lowercase only: it is generated, never typed. */
 const MARK_SEED = /^[0-9a-f]{8}$/
 /**
- * A git short hash as `revision.ts` actually emits it — git chooses the length,
- * so the floor is 4, not §12.9.3's 7. A different rule from COMMIT because it
- * is a different fact from a different source.
+ * A git short hash as a record may hold it. `revision.ts` now writes a fixed
+ * width, but a record signed against an earlier build carries whatever length
+ * git chose then, so the floor stays 4, not §12.9.3's 7. A different rule from
+ * COMMIT because it is a different fact from a different source.
  */
 export const SHORT_HASH = /^[0-9a-f]{4,40}$/
 export const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/

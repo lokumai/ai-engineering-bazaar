@@ -56,6 +56,16 @@ describe('buildRevisionIndex', () => {
     expect(buildRevisionIndex(notARepo).size).toBe(0)
   })
 
+  // git's own %h grows with the object count and follows core.abbrev, so the
+  // same commit printed a different hash on a different machine or a year on,
+  // and the bundle's contentVersion moved with no content change.
+  it('writes every hash at one fixed width, whatever length git would choose', () => {
+    const full = 'c0ffee1234567890abcdef1234567890abcdef12'
+    const log = [`${full} 2026-08-31`, '', 'mini-courses/1_fundamentals/llms.md', ''].join('\n')
+    const index = buildRevisionIndex((args) => (args.includes('rev-parse') ? '/repo\n' : log))
+    expect(index.get('/repo/mini-courses/1_fundamentals/llms.md')).toEqual({ hash: 'c0ffee1', date: '2026-08-31' })
+  })
+
   it('asks git for the last-touching commit of each file, never for HEAD', () => {
     const seen: string[][] = []
     buildRevisionIndex((args) => {

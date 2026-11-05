@@ -4372,7 +4372,7 @@ the ones that are not that important."* **D88** records the choice.
       struck, §10 to §12), `tests/README.md` and D88 say what went.
 
 
-## 🏁 Milestone M42: Who owns what, and the instruction files trimmed — SHIPPED, MERGED AS PR #PRNUM
+## 🏁 Milestone M42: Who owns what, and the instruction files trimmed — SHIPPED, MERGED AS PR #58
 
 Branch `design/round-2026-11`, merged together with M39's playground pages. (M41 is the number PR #57
 holds, unmerged.) The author, 2026-11-05: a colleague's PR must not change the website's design or

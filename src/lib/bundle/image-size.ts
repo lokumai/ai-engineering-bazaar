@@ -15,6 +15,12 @@ import { CONTENT_ROOT } from '@/lib/content/paths'
  * here. The extension is not consulted, because a misnamed file is still the
  * format its bytes say it is.
  *
+ * **A JPEG is reported at the size it is drawn**, after its Exif orientation:
+ * orientations 5 to 8 turn the image a quarter, every renderer the reader might
+ * use honours them, and the frame header alone would reserve a landscape box
+ * for a portrait photo. An Exif block that cannot be read, or an orientation
+ * outside 1 to 8, throws naming the file for the same reason as above.
+ *
  * No image library: a header is a few dozen bytes at known offsets, and a
  * dependency that decodes whole images to answer that is weight with no use.
  *
@@ -64,8 +70,47 @@ function pngSize(bytes: Uint8Array, name: string): ImageSize {
   return { width: u32(bytes, 16, name), height: u32(bytes, 20, name) }
 }
 
+const EXIF_HEADER = [0x45, 0x78, 0x69, 0x66, 0, 0]
+const ORIENTATION_TAG = 0x0112
+const TIFF_SHORT = 3
+
+/**
+ * The Exif orientation in an APP1 payload, 1 when its IFD0 has none, or
+ * `undefined` when the APP1 is not Exif at all (XMP shares the marker).
+ */
+function exifOrientation(bytes: Uint8Array, start: number, end: number, name: string): number | undefined {
+  if (end > bytes.length) fail(name, 'the Exif block ends early')
+  if (!startsWith(bytes.subarray(start, end), EXIF_HEADER)) return undefined
+  const tiff = start + EXIF_HEADER.length
+  const order = String.fromCharCode(bytes[tiff] ?? 0, bytes[tiff + 1] ?? 0)
+  if (order !== 'II' && order !== 'MM') fail(name, `the Exif block has byte order "${order}", not II or MM`)
+  const little = order === 'II'
+  const read = (offset: number, size: 2 | 4): number => {
+    const at = tiff + offset
+    if (offset < 0 || at + size > end) fail(name, 'the Exif block ends early')
+    let value = 0
+    for (let index = 0; index < size; index += 1) {
+      value = value * 256 + bytes[little ? at + size - 1 - index : at + index]
+    }
+    return value
+  }
+  if (read(2, 2) !== 42) fail(name, 'the Exif block is not a TIFF structure')
+  const ifd = read(4, 4)
+  const count = read(ifd, 2)
+  for (let index = 0; index < count; index += 1) {
+    const entry = ifd + 2 + index * 12
+    if (read(entry, 2) !== ORIENTATION_TAG) continue
+    if (read(entry + 2, 2) !== TIFF_SHORT || read(entry + 4, 4) !== 1) fail(name, 'the Exif orientation is not one short')
+    const orientation = read(entry + 8, 2)
+    if (orientation < 1 || orientation > 8) fail(name, `the Exif orientation is ${orientation}, not 1 to 8`)
+    return orientation
+  }
+  return 1
+}
+
 function jpegSize(bytes: Uint8Array, name: string): ImageSize {
   let at = 2
+  let orientation = 1
   while (at < bytes.length) {
     if (bytes[at] !== 0xff) fail(name, `no JPEG marker at byte ${at}`)
     // Any number of 0xFF fill bytes may precede a marker.
@@ -78,9 +123,13 @@ function jpegSize(bytes: Uint8Array, name: string): ImageSize {
     if (marker === 0xd9 || marker === 0xda) fail(name, 'the JPEG has no frame header before its image data')
 
     const length = u16(bytes, at, name)
+    if (marker === 0xe1) orientation = exifOrientation(bytes, at + 2, at + length, name) ?? orientation
     if (marker >= 0xc0 && marker <= 0xcf && !NOT_A_FRAME.has(marker)) {
       // length(2) precision(1) height(2) width(2)
-      return { width: u16(bytes, at + 5, name), height: u16(bytes, at + 3, name) }
+      const width = u16(bytes, at + 5, name)
+      const height = u16(bytes, at + 3, name)
+      // 5 to 8 transpose the image; 1 to 4 only mirror or half-turn it.
+      return orientation >= 5 ? { width: height, height: width } : { width, height }
     }
     at += length
   }

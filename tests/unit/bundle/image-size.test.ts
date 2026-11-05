@@ -34,7 +34,26 @@ function jpeg(...segments: number[][]): Uint8Array {
 }
 
 const app0 = segment(0xe0, [0x4a, 0x46, 0x49, 0x46, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0])
-const exif = segment(0xe1, [0x45, 0x78, 0x69, 0x66, 0, 0, ...new Array(40).fill(7)])
+const EXIF_HEADER = [0x45, 0x78, 0x69, 0x66, 0, 0]
+
+/**
+ * An APP1 Exif segment whose IFD0 holds one entry. With `orientation`
+ * undefined the IFD carries a different tag, as a file with no orientation does.
+ */
+function exifSegment(orientation: number | undefined, order: 'MM' | 'II' = 'MM'): number[] {
+  const be = order === 'MM'
+  const two = (value: number) => (be ? u16(value) : u16(value).reverse())
+  const four = (value: number) => (be ? u32(value) : u32(value).reverse())
+  const tag = orientation === undefined ? 0x010f : 0x0112
+  const tiff = [
+    ...(be ? [0x4d, 0x4d] : [0x49, 0x49]), ...two(42), ...four(8),
+    ...two(1), ...two(tag), ...two(3), ...four(1), ...two(orientation ?? 1), 0, 0,
+    ...four(0),
+  ]
+  return segment(0xe1, [...EXIF_HEADER, ...tiff])
+}
+
+const exif = exifSegment(1)
 const dht = segment(0xc4, new Array(29).fill(1))
 
 describe('imageSize', () => {
@@ -52,6 +71,39 @@ describe('imageSize', () => {
 
   it('reads a JPEG whose EXIF segment comes before the frame', () => {
     expect(imageSize(jpeg(exif, sof(0xc0, 33, 44)), 'a.jpeg')).toEqual({ width: 33, height: 44 })
+  })
+
+  // Every renderer turns the image by its Exif orientation, so a reader that
+  // reserved the stored size would lay a portrait photo out as a landscape.
+  describe('reports a JPEG at the size it is drawn, after its Exif orientation', () => {
+    for (const orientation of [5, 6, 7, 8]) {
+      it(`swaps width and height for orientation ${orientation}`, () => {
+        expect(imageSize(jpeg(exifSegment(orientation), sof(0xc0, 4032, 3024)), 'a.jpg')).toEqual({ width: 3024, height: 4032 })
+      })
+    }
+
+    for (const orientation of [1, 2, 3, 4]) {
+      it(`keeps width and height for orientation ${orientation}`, () => {
+        expect(imageSize(jpeg(exifSegment(orientation), sof(0xc0, 4032, 3024)), 'a.jpg')).toEqual({ width: 4032, height: 3024 })
+      })
+    }
+
+    it('reads a little-endian Exif block', () => {
+      expect(imageSize(jpeg(exifSegment(6, 'II'), sof(0xc0, 40, 30)), 'a.jpg')).toEqual({ width: 30, height: 40 })
+    })
+
+    it('keeps the stored size when the Exif block has no orientation', () => {
+      expect(imageSize(jpeg(exifSegment(undefined), sof(0xc0, 40, 30)), 'a.jpg')).toEqual({ width: 40, height: 30 })
+    })
+
+    it('refuses an orientation outside 1 to 8, naming the file', () => {
+      expect(() => imageSize(jpeg(exifSegment(9), sof(0xc0, 40, 30)), 'images/odd.jpg')).toThrow(/images\/odd\.jpg/)
+    })
+
+    it('refuses an Exif block it cannot read, naming the file', () => {
+      const garbage = segment(0xe1, [...EXIF_HEADER, ...new Array(40).fill(7)])
+      expect(() => imageSize(jpeg(garbage, sof(0xc0, 40, 30)), 'images/bad.jpg')).toThrow(/images\/bad\.jpg/)
+    })
   })
 
   it('reads a progressive JPEG', () => {

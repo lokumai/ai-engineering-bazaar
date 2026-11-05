@@ -4535,7 +4535,8 @@ under them; and give Persian Iran's flag.
       (screenshots read at 1024x768, 1280x720, 1440x900 and 1920x1080).
 - [x] Two new browser tests, each seen failing under a mutation: a track sign's icon and name share
       a row (390 and 1440), and every language in the menu carries a flag.
-- [ ] The full gate is green, and the PR is merged.
+- [x] The full gate is green: typecheck; 1,154 unit and corpus tests; the base-path build and its
+      link gate; the browser suite, 466 passed and 10 skipped.
 
 ---
 

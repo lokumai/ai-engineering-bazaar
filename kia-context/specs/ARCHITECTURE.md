@@ -11,8 +11,8 @@ description: >
 authority: blueprint
 writes: agent, when explicitly refactoring
 status: active
-covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day
-last_updated: "2026-10-12"
+covers: the whole system as built on 2026-09-10, with M16 shipped — every route on the design language; the record, channel A and the render step corrected for M24 on 2026-10-11, and the quiz and the end of a module for M25 on 2026-10-12, the Bazaar Street front door for M27 and the Persian pages for M28 the same day, and the progress page slimmed to its circles and its data row for M38 on 2026-11-05
+last_updated: "2026-11-05"
 ---
 
 # 🏗️ ARCHITECTURE — How this project is built
@@ -505,8 +505,9 @@ page prints none.
 order, and a `Before you start` box above the prose names the prerequisites. The module's own
 self-check, the submittal form, the stamps, `Checked by` and the sources counter left the page on the
 author's word. **The record still carries every field they wrote** — `quiz`, `submittals`,
-`sources` — so an existing reader's record parses, exports and merges unchanged, and `/profile/`
-still reports what it holds; there is simply no longer a control on a module page that adds to them.
+`sources` — so an existing reader's record parses, exports and merges unchanged, and the exported
+file still carries what it holds; there is simply no longer a control on a module page that adds to
+them, and since M38 no page that shows them either.
 The module's task-list checkboxes are untouched and still write `checklist`.
 
 **In the browser**, mermaid renders client-side from that `data-mermaid` source. This is the cause of
@@ -549,12 +550,15 @@ that path.
 A path's denominator counts only steps whose module is `ready`, computed by `isDrawnStep(step, drawn)`
 against the corpus's own set. A path whose every step is readable is the goal, not an error.
 
-**All nine live on one surface and channel A shows one.** They were `/path/` until M14 and are the
-`role` row of `/profile/`'s register now: every body is in the prerendered document and
-`.bz-path-body[data-role="<id>"]` is revealed against the `hl-role-<id>` class the boot script stamps
-before first paint. There are no per-role routes and there must not be — a static export would
-prerender a nine-way fan-out once for every reader, putting eight pages on the site describing
-somebody else's route.
+**No page renders them since M38 (2026-11-05).** They were `/path/` until M14 and then the `role`
+row of `/profile/`'s register, where every body was in the prerendered document and
+`.bz-path-body[data-role="<id>"]` was revealed against the `hl-role-<id>` class the boot script
+stamps before first paint. The author removed the row with the progress page's other unused
+features. `paths.ts`, `src/components/path/` and the stamp are still in the tree, and a stored
+`identity.role` still parses and exports, so the row can come back without a migration. If it does,
+there are still no per-role routes, and there must not be — a static export would prerender a
+nine-way fan-out once for every reader, putting eight pages on the site describing somebody else's
+route.
 
 ---
 
@@ -578,12 +582,12 @@ uses the left.**
 | feeds | the modules a module is a prerequisite *for* | **Unlocks** |
 | requires | a module's own prerequisites | **Requirements** |
 | title block | the module's own panel of facts | **Module info** — M11 moved it out of the right rail and into the column |
-| the register | the reader's stored history | **Your progress** — the page's own title and the navbar's fourth item since M14 |
+| the register | the reader's stored history | **Your progress** — the page's own title and the navbar's fourth item since M14; since M38 it draws the level circles, the continue card and one row, **Export, import, erase** |
 | the drafter | the reader | **you** / **Account** |
 | index sheet | the flat list of all modules, at `/sheets` | **Catalog** |
 | extent | length in words and minutes | **Length** |
-| uptime | days in a row | **Streak**, and **Days in a row** on completion control C |
-| submittal register | the repositories a reader has linked to a module | **What you built** |
+| uptime | days in a row | ~~**Streak**~~ — shown nowhere since M38, which removed the readout row; `Uptime` is still in the tree |
+| submittal register | the repositories a reader has linked to a module | ~~**What you built**~~ — shown nowhere since M38; the record still carries `submittals` |
 | unsigned | a module the reader has not completed | **Not completed** |
 | A0 / A4 | the two page anatomies, chosen by `status` | — internal |
 | mark, class, XP | badge, rank, points | ~~**Rank** / **XP**~~ — **nothing.** M13 took all three off every instrument: nobody could name the question they answered, and `Reading time` took XP's cell (`logs/BRAINSTORM.md` **D22**). `xp()` and `classOf()` are still in `derive.ts`, rendered by nothing |

@@ -66,11 +66,12 @@ test('the reader is given a name and a mark once there is a record', async ({ pa
 })
 
 test('the mascot draws itself', async ({ page }) => {
-  // `/profile/` and not `/`, and `svg:has(.bz-face)` and not `header svg`. The
+  // `/legend/` and not `/`, and `svg:has(.bz-face)` and not `header svg`. The
   // header's first SVG is `01`'s four-square brand tile since M16 stage 1, so
   // this asserted real geometry about a different drawing entirely and passed
-  // on it. The mark renders at 132px in the drafter block here.
-  await page.goto('/profile/')
+  // on it. The mark renders at 96px in the legend; `/profile/` drew it at 132px
+  // in the drafter block until that block was removed on 2026-11-05.
+  await page.goto('/legend/')
 
   // Drawn in code, so "it rendered" means real geometry with real size, not an
   // empty <svg> box.

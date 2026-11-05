@@ -75,73 +75,18 @@ test.describe('§14.1 accounts are switched off', () => {
     await expectNoDoor(page, '/sign-in/')
   })
 
-  test('/profile/ says so too, and its drafter block offers no door', async ({ page }) => {
+  test('/profile/ offers no door either', async ({ page }) => {
     /**
-     * §16.1 — the constraint on half B of the drafter block, and the test that
-     * fails first if it is broken.
-     *
-     * §16 moved the sign-in controls onto `/profile/`, inside a block that is
-     * open on arrival: before §16 the only page that could offer a door was
-     * `/sign-in/`, and the ban above was scoped to that route accordingly. The
-     * block renders `SignInPanel` in `inline` chrome rather than writing a
-     * second sign-in form (§16.1.1, §11.38), so the flag is still read in one
-     * place — but `chrome` reaching into the state machine, or the block
-     * branching on the session itself, would put an email field and two provider
-     * buttons on the profile sheet of a deployment that has no backend. That is
-     * §14.1's worst outcome: a control that cannot work, on the page a reader
-     * with no account is sent to.
+     * §16.1 put the sign-in controls on `/profile/`, inside the drafter block.
+     * That block was removed on 2026-11-05 with the rest of the account
+     * surface, so the page now has nothing to say about accounts at all. The
+     * ban stays, because `/profile/` is the page a reader with no account is
+     * sent to, and a door put back there must read the flag like `/sign-in/`.
      */
     await seedRecord(page, { identity: { name: 'Ada Lovelace', markSeed: '0123abcd' } })
     await page.goto('/profile/')
     await waitForHydratedReadout(page)
-
-    /**
-     * The state, in the words of the state it is in — the same single spelling
-     * `/sign-in/` prints, from the same author.
-     *
-     * **Scoped and counted, and that is §16.4.1's contract rather than a way
-     * around strict mode.** Before §16 this string appeared exactly once on
-     * `/profile/`, so one unscoped `getByText` was unambiguous. §16 gave every
-     * fold the duty of stating its own reading while closed, and four surfaces
-     * now report this one status: the drafter block's inline readout, the account
-     * panel's `Session` line, the organisation row's closed summary and that
-     * row's body. Weakening the wording to make one match again would delete the
-     * reading a closed row exists to print.
-     *
-     * So what is asserted is where it is READ — visibly, in the block a reader
-     * arrives at, and on the organisation row's own summary line — plus the rule
-     * that repetition may not become divergence: every occurrence of the status
-     * anywhere in `<main>` is this spelling, which is what fails if a fifth
-     * surface prints `ACCOUNTS NOT ENABLED` or `… IN THIS BUILD` (§16.6).
-     */
-    const OFF = 'Accounts not enabled yet'
-    await expect(
-      page.locator('section[aria-labelledby="bz-account-head"]').getByText(OFF).first(),
-    ).toBeVisible()
-    await expect(
-      page.locator('section[aria-labelledby="bz-orgs-head"] .bz-register-reading'),
-    ).toHaveText(OFF)
-
-    const main = (await page.locator('main').textContent()) ?? ''
-    const said = (needle: string): number => main.split(needle).length - 1
-    expect(said(OFF), 'the status is read on four surfaces (§16.4.1)').toBe(4)
-    // CASE-INSENSITIVELY, since M16: the four surfaces used to print this in
-    // capitals because the classes carrying it uppercased them, and comparing a
-    // literal uppercase substring to the sentence-case string now counts zero
-    // against four. What the rule is about is a second WORDING — `ACCOUNTS NOT
-    // ENABLED` without the `YET`, or `… IN THIS BUILD` — so it counts every
-    // occurrence of the stem whatever its case and requires all of them to be
-    // this one.
-    const stem = (main.toLowerCase().split('accounts not enabled').length - 1)
-    expect(stem, 'a second spelling of one status is on the page (§16.6)').toBe(said(OFF))
-
     await expectNoDoor(page, '/profile/')
-
-    // And the half is not merely empty: it says what does work without one,
-    // which is §14.13's honesty requirement applied to the block.
-    await expect(page.locator('section[aria-labelledby="bz-account-head"]')).toContainText(
-      /without an account/i,
-    )
   })
 
   test('no page opens a connection to the project', async ({ page }) => {

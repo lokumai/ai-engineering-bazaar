@@ -11,7 +11,6 @@ import { categoryIntro } from '@/lib/content/intro'
 import { categoryCoverage, categoryRows, sheetRows } from '@/lib/content/manifest'
 import { renderMarkdown } from '@/lib/content/render'
 import type { Track } from '@/lib/tracks'
-import type { Metadata } from 'next'
 
 /**
  * One level of the catalog, in either track: `/sheets/<level>/` and

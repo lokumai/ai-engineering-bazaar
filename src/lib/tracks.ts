@@ -112,3 +112,20 @@ export function readingTrackOf(pathname: string, hydrated: boolean): Track {
   const stamped = document.documentElement.getAttribute('data-bz-track')
   return isTrack(stamped) ? stamped : DEFAULT_TRACK
 }
+
+/**
+ * D91 — choosing a track on a page that belongs to neither (the bar's switch
+ * on home or progress, or the home page's two signs): the page stays where it
+ * is and everything that shows the track follows. It goes where a track page
+ * would put it, this tab's session storage and `<html>`, and never into the
+ * record, since a choice of view records nothing (§12.13). `TRACK_EVENT` tells
+ * every island that reads the track (`useReadingTrack`) and the home page's
+ * doors.
+ */
+export const TRACK_EVENT = 'bz-track'
+
+export function chooseTrack(track: Track): void {
+  rememberTrack(track)
+  document.documentElement.setAttribute('data-bz-track', track)
+  window.dispatchEvent(new CustomEvent<Track>(TRACK_EVENT, { detail: track }))
+}

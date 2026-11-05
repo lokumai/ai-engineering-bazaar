@@ -170,6 +170,10 @@ export function DataPanel() {
     update(() => result.data)
     flush()
     setImported({ kind: 'imported', schema: result.schema })
+    // A restore replaces what a reset left behind, so the reset's undo goes:
+    // offering it now would put back an older erase over the restored file.
+    setUndo(null)
+    setErasedAt(null)
   }
 
   function onErase(): void {
@@ -187,7 +191,6 @@ export function DataPanel() {
     eraseStored()
     setImported({ kind: 'idle' })
     setExported(null)
-
   }
 
   function onUndo(): void {

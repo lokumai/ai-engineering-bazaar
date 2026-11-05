@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { readRawRecord, seedRecord, signedSheet, slugOf } from './record'
+import { readRawRecord, seedRecord, signedSheet, slugOf, waitForHydratedReadout } from './record'
 import { A0 } from './sheets'
 
 /**
@@ -137,4 +137,46 @@ test('a module completed For Engineers is not completed For Everyone, in frame o
   await expect(page.locator('.bz-ptab[data-track-id="engineers"] .bz-ptab-count')).toHaveText(/^1 of \d+$/)
   await expect(page.locator('.bz-ptab[data-track-id="everyone"] .bz-ptab-count')).toHaveText(/^0 of \d+$/)
   expect(await shown('everyone')).toBe(false)
+})
+
+test('on a page of neither track the switch changes the track in place, and records nothing', async ({ page }) => {
+  await page.goto('/profile/')
+  await waitForHydratedReadout(page)
+  const track = page.getByRole('navigation', { name: 'Track' })
+  await track.getByRole('link', { name: /For Everyone/ }).click()
+  await expect(page).toHaveURL(/\/profile\/$/)
+  await expect(track.getByRole('link', { name: /For Everyone/ })).toHaveAttribute('aria-current', 'true')
+  await expect(page.locator('html')).toHaveAttribute('data-bz-track', 'everyone')
+  await expect(page.locator('[data-panel="everyone"]')).toBeVisible()
+  await expect(page.getByRole('tab', { name: /For Everyone/ })).toHaveAttribute('aria-selected', 'true')
+  expect(await page.evaluate(() => sessionStorage.getItem('hl-track'))).toBe('everyone')
+  expect(await readRawRecord(page)).toBeNull()
+
+  // And it survives a reload, for this tab.
+  await page.reload()
+  await expect(page.locator('html')).toHaveAttribute('data-bz-track', 'everyone')
+})
+
+test('both track tablists follow the ARIA tabs pattern: one tab stop, arrows move and select', async ({ page }) => {
+  await page.goto('/profile/')
+  await waitForHydratedReadout(page)
+  const progress = page.getByRole('tablist', { name: 'Progress by track' })
+  await expect(progress.locator('[role="tab"][tabindex="0"]')).toHaveCount(1)
+  await progress.getByRole('tab', { name: /For Engineers/ }).focus()
+  await page.keyboard.press('ArrowRight')
+  const everyone = progress.getByRole('tab', { name: /For Everyone/ })
+  await expect(everyone).toBeFocused()
+  await expect(everyone).toHaveAttribute('aria-selected', 'true')
+  await expect(page.locator('[data-panel="everyone"]')).toBeVisible()
+  await page.keyboard.press('Home')
+  await expect(progress.getByRole('tab', { name: /For Engineers/ })).toBeFocused()
+
+  await page.locator('.bz-bar-nav summary').click()
+  const menu = page.getByRole('tablist', { name: 'Catalog by track' })
+  await expect(menu.locator('[role="tab"][tabindex="0"]')).toHaveCount(1)
+  await menu.locator('[role="tab"][tabindex="0"]').focus()
+  await page.keyboard.press('ArrowRight')
+  const focused = menu.locator('[role="tab"]:focus')
+  await expect(focused).toHaveAttribute('aria-selected', 'true')
+  await expect(focused).toHaveAttribute('tabindex', '0')
 })

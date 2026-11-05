@@ -426,6 +426,10 @@ test('§12.15 — export, erase, import: the record comes back identical', async
     .setInputFiles(onDisk(exported.filename, exported.text))
 
   await expect(page.getByText('Restored from the file.')).toBeVisible()
+  // The reset's undo is gone with the reset it would have undone: offering it
+  // now would put an older erase back over the restored file.
+  await expect(page.getByRole('button', { name: 'Undo', exact: true })).toHaveCount(0)
+  await expect(page.getByText(/^Reset\./)).toHaveCount(0)
 
   // The record that comes back is the record the file carried, field for
   // field — which is what makes the export a backup rather than a souvenir.

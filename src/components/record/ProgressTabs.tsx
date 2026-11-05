@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { signedCount, type CurriculumFacts } from '@/lib/record/derive'
 import { trackView } from '@/lib/record/schema'
 import { useHydrated, useRecord } from '@/lib/record/store'
-import { TRACKS, type Track, readingTrackOf } from '@/lib/tracks'
+import { TRACKS, type Track } from '@/lib/tracks'
+import { useReadingTrack } from '@/lib/use-reading-track'
 
 const NO_READING = '--'
 
@@ -17,6 +18,13 @@ const NO_READING = '--'
  * `data-tab` on the tab set, which overrides it. The tabs only change the view;
  * they do not switch the reader's track. The counts are tallies, so they are
  * channel B and print `--` until the store has answered.
+ *
+ * The ARIA tabs pattern: one tab in the Tab order (the selected one), the arrow
+ * keys and Home / End move between them and select. `aria-selected` is channel
+ * B: before hydration it names For Engineers while the CSS may already paint
+ * For Everyone, which no attribute can know without a script; it agrees from
+ * hydration on. Named "Progress by track" so it is not a second landmark-like
+ * "Track" beside the bar's switch.
  */
 export function ProgressTabs({
   facts,
@@ -28,12 +36,28 @@ export function ProgressTabs({
   const record = useRecord()
   const hydrated = useHydrated()
   const [chosen, setChosen] = useState<Track | null>(null)
-  const shown: Track = chosen ?? readingTrackOf('/profile/', hydrated)
+  const reading = useReadingTrack('/profile/')
+  const shown: Track = chosen ?? reading
+  const tabs = useRef<Partial<Record<Track, HTMLButtonElement | null>>>({})
+
+  function keyDown(event: React.KeyboardEvent<HTMLButtonElement>, at: number): void {
+    const last = TRACKS.length - 1
+    const to = event.key === 'ArrowRight' ? (at === last ? 0 : at + 1)
+      : event.key === 'ArrowLeft' ? (at === 0 ? last : at - 1)
+      : event.key === 'Home' ? 0
+      : event.key === 'End' ? last
+      : null
+    if (to === null) return
+    event.preventDefault()
+    const next = TRACKS[to].id
+    setChosen(next)
+    tabs.current[next]?.focus()
+  }
 
   return (
     <div className="bz-ptabs" data-tab={chosen ?? undefined}>
-      <div role="tablist" aria-label="Track" className="bz-ptabs-list">
-        {TRACKS.map((track) => {
+      <div role="tablist" aria-label="Progress by track" className="bz-ptabs-list">
+        {TRACKS.map((track, at) => {
           const counts = signedCount(trackView(record, track.id), facts[track.id])
           return (
             <button
@@ -43,9 +67,12 @@ export function ProgressTabs({
               id={`bz-ptab-${track.id}`}
               aria-controls={`bz-ppanel-${track.id}`}
               aria-selected={shown === track.id}
+              tabIndex={shown === track.id ? 0 : -1}
+              ref={(node) => { tabs.current[track.id] = node }}
               data-track-id={track.id}
               className="bz-ptab"
               onClick={() => setChosen(track.id)}
+              onKeyDown={(event) => keyDown(event, at)}
             >
               {track.label}
               <span className="bz-ptab-count">

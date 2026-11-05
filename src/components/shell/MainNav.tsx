@@ -4,8 +4,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { INDEX_ROUTE, INDEX_TITLE, type CategoryLabel } from '@/lib/route-labels'
-import { useHydrated } from '@/lib/record/store'
-import { TRACKS, type Track, EVERYONE_SEGMENT, catalogRoute, readingTrackOf, trackOfPath } from '@/lib/tracks'
+import { TRACKS, type Track, EVERYONE_SEGMENT, catalogRoute, trackOfPath } from '@/lib/tracks'
+import { useReadingTrack } from '@/lib/use-reading-track'
 
 /**
  * M10 — the navbar. One row, on every route, with a dropdown per level.
@@ -196,11 +196,10 @@ const CLOSE_DELAY_MS = 260
 
 export function MainNav({ categories }: { categories: readonly CategoryLabel[] }) {
   const pathname = usePathname() ?? '/'
-  const hydrated = useHydrated()
   /* M39 D2 — the menu's two tabs. The tab of the track the reader is in is the
      one selected when the menu opens; a tab changes only which track the levels
      below open into. With no script, the For Engineers list is the one shown. */
-  const readingTrack: Track = readingTrackOf(pathname, hydrated)
+  const readingTrack: Track = useReadingTrack(pathname)
   const pageTrack = trackOfPath(pathname)
   const [tab, setTab] = useState<Track>('engineers')
   const panel = useRef<HTMLDetailsElement>(null)
@@ -374,8 +373,8 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
                   </summary>
 
                   <div className="bz-menu" ref={menu}>
-                    <div role="tablist" aria-label="Track" className="bz-menu-tabs">
-                      {TRACKS.map((one) => (
+                    <div role="tablist" aria-label="Catalog by track" className="bz-menu-tabs">
+                      {TRACKS.map((one, at) => (
                         <button
                           key={one.id}
                           type="button"
@@ -383,8 +382,23 @@ export function MainNav({ categories }: { categories: readonly CategoryLabel[] }
                           id={`bz-menu-tab-${one.id}`}
                           aria-controls={`bz-menu-panel-${one.id}`}
                           aria-selected={tab === one.id}
+                          tabIndex={tab === one.id ? 0 : -1}
                           className="bz-menu-tab"
                           onClick={() => setTab(one.id)}
+                          onKeyDown={(event) => {
+                            // The ARIA tabs pattern: arrows and Home / End move
+                            // between the two and select; Tab goes on into the list.
+                            const last = TRACKS.length - 1
+                            const to = event.key === 'ArrowRight' ? (at === last ? 0 : at + 1)
+                              : event.key === 'ArrowLeft' ? (at === 0 ? last : at - 1)
+                              : event.key === 'Home' ? 0
+                              : event.key === 'End' ? last
+                              : null
+                            if (to === null) return
+                            event.preventDefault()
+                            setTab(TRACKS[to].id)
+                            document.getElementById(`bz-menu-tab-${TRACKS[to].id}`)?.focus()
+                          }}
                         >
                           {one.label}
                         </button>

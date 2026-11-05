@@ -145,8 +145,6 @@ export function CourseCompletion({
     <section className="bz-cc" aria-labelledby={headingId} data-track={track}>
       <ul className="bz-cc-levels">
         {levels.map((level) => {
-          const ready = level.modules.filter((one) => one.drawn)
-
           return (
             <li key={level.slug} className="bz-cc-level" data-cat={level.slug}>
               <div className="bz-cc-head">

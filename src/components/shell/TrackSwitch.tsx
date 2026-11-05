@@ -2,16 +2,17 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useHydrated } from '@/lib/record/store'
 import type { TranslatedLang } from '@/lib/content/languages'
 import {
   TRACKS,
   type Track,
   EVERYONE_SEGMENT,
   catalogRoute,
+  chooseTrack,
   moduleRoute,
-  readingTrackOf,
+  trackOfPath,
 } from '@/lib/tracks'
+import { useReadingTrack } from '@/lib/use-reading-track'
 
 /**
  * M39 B1 + C1 — the track's name in the bar, as a two-segment toggle: both
@@ -23,7 +24,9 @@ import {
  * Each segment is a LINK to the same page in that track, so the switch works
  * with no script: on a module, the same module (an unwritten For Everyone
  * module has a page saying so, D91); on a catalog page, the same level; on a
- * page that belongs to neither track, that track's catalog. Which segment is
+ * page that belongs to neither track (home, progress), the page stays put and
+ * only the track changes (`chooseTrack`) — the link to that track's catalog is
+ * what a reader with no script, or a modified click, gets. Which segment is
  * filled is drawn by `shell.css` from `data-bz-track`, which the boot script
  * stamps before first paint; the island only adds `aria-current`.
  *
@@ -37,9 +40,9 @@ export function TrackSwitch({
   translated: Readonly<Record<TranslatedLang, readonly string[]>>
 }) {
   const pathname = usePathname() ?? '/'
-  const hydrated = useHydrated()
-  const current: Track = readingTrackOf(pathname, hydrated)
+  const current: Track = useReadingTrack(pathname)
   const targets = targetsFor(pathname, translated)
+  const neutral = trackOfPath(pathname) === null
 
   return (
     <nav aria-label="Track" className="bz-trackswitch">
@@ -51,6 +54,11 @@ export function TrackSwitch({
           className="bz-trackswitch-seg"
           data-track-id={track.id}
           aria-current={current === track.id ? 'true' : undefined}
+          onClick={neutral ? (event) => {
+            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+            event.preventDefault()
+            chooseTrack(track.id)
+          } : undefined}
         >
           <TrackIcon track={track.id} />
           <span className="bz-trackswitch-label">

@@ -8,10 +8,11 @@ import { unified } from 'unified'
 import { SKIP, visit } from 'unist-util-visit'
 import { toString as hastToString } from 'hast-util-to-string'
 import type { Element, ElementContent, Root, RootContent, Text } from 'hast'
+import { href } from '@/lib/url'
 import { widthForColumns } from '@/lib/figure/width'
 import type { ChecklistItem } from './checklist'
 import { DIAGRAM_HEADING, SERIES_HEADINGS } from './lines'
-import { courseLinkFor, isCourseLink, sheetSource } from './links'
+import { courseRouteFor, isCourseLink, sheetSource } from './links'
 import { assertNoRawHex, remapMermaidFills } from './mermaid'
 import { CODE_TOKEN_ROLES, codeThemes, readDesignToken, toHex } from './code-theme'
 import { icon, paletteMenu } from './tools'
@@ -81,7 +82,9 @@ export interface RenderOptions {
    * page already does, and the other direction is a cycle. So this file applies
    * a mapping it is handed and has no opinion about the second language at all.
    *
-   * Given the resolved route, return the one to use. The default is identity.
+   * Given the bare resolved route (`/courses/<level>/<module>/`, no base path
+   * and no fragment, both of which are applied after it), return the one to
+   * use. The default is identity.
    */
   localiseRoute?: (route: string) => string
 }
@@ -888,11 +891,22 @@ function rehypeCourseLinks(sheet: number | undefined, localise?: (route: string)
         )
       }
 
-      // `courseLinkFor` answers null only for an href `isCourseLink` has
+      // `courseRouteFor` answers null only for an href `isCourseLink` has
       // already rejected, so this is narrowing rather than a branch: a link it
       // recognises and cannot resolve throws instead.
-      const route = courseLinkFor(value, source)
-      if (route !== null) node.properties.href = localise ? localise(route) : route
+      const resolved = courseRouteFor(value, source)
+      if (resolved === null) return
+
+      // Localise the BARE route, then apply the base path, then the fragment.
+      // The caller's map is a set of bare routes, so a string that already
+      // carries the base path or a fragment never matches it; that order was
+      // the defect which sent every Turkish and Persian cross-reference on the
+      // deployed build back to English. `href()` is applied here and nowhere
+      // else in this plugin: a prose anchor is not a `<Link>`, so the base path
+      // is this module's job (see `lib/url.ts`), and the route keeps its
+      // trailing slash because `trailingSlash: true` makes that form canonical.
+      const { route, fragment } = resolved
+      node.properties.href = href(localise ? localise(route) : route) + fragment
     })
   }
 }

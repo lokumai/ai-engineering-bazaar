@@ -23,7 +23,7 @@ import { SignOff } from '@/components/record/SignOff'
 import { ChecklistIsland } from '@/components/record/ChecklistIsland'
 import { CurriculumRail } from '@/components/curriculum/CurriculumRail'
 import { ContentsDrawer } from '@/components/sheet/ContentsDrawer'
-import type { DependencyRelation, SheetLink } from '@/components/sheet/DependencyBlock'
+import type { SheetLink } from '@/components/sheet/DependencyBlock'
 import { Objectives } from '@/components/sheet/Objectives'
 import { PrevNext, type PrevNextTarget } from '@/components/sheet/PrevNext'
 import { ScheduleOfParts } from '@/components/sheet/ScheduleOfParts'
@@ -33,21 +33,13 @@ import { QuickQuiz } from '@/components/sheet/QuickQuiz'
 import { SheetRail } from '@/components/sheet/SheetRail'
 import { StatusBand } from '@/components/sheet/StatusBand'
 import { PageShell } from '@/components/shell/PageShell'
-import {
-  moduleByNumber,
-  neighbours,
-  positionOf,
-  sheetCount,
-  sheetPath,
-} from '@/lib/content/curriculum'
+import { positionOf, sheetCount } from '@/lib/content/curriculum'
 import { moduleGraph } from '@/lib/content/edges'
-import { imageBaseFor } from '@/lib/content/images'
 import { railLevels } from '@/lib/content/rail'
-import { type CourseModule, loadAllModules, loadModuleIn } from '@/lib/content/loader'
-import { quizFor } from '@/lib/content/quiz'
-import { renderMarkdown } from '@/lib/content/render'
+import { loadAllModules, loadModuleIn } from '@/lib/content/loader'
+import { type RenderRef, moduleRenderInput } from '@/lib/content/module-render'
 import { href } from '@/lib/url'
-import { scheduleOfParts, summarySentence } from '@/lib/content/schedule'
+import { summarySentence } from '@/lib/content/schedule'
 import { sheetFacts, sheetLabel } from '@/lib/content/title-block'
 import {
   type ReadingLang,
@@ -56,34 +48,6 @@ import {
   dirOf,
   langAttr,
 } from '@/lib/content/languages'
-
-/**
- * M19 — keep a Turkish reader in Turkish when they follow a cross-reference.
- *
- * `rehypeCourseLinks` resolves `llms_tr.md` to a route, and the route it
- * resolves to is the ENGLISH one. **MEASURED on the built tree before this
- * existed: all 121 cross-references in the corpus landed in English**, so every
- * Turkish page was a one-way door — and nothing failed, because every one of
- * those links resolved perfectly.
- *
- * **It only redirects where there IS a Turkish address.** A module with no
- * usable translation has no `/tr/` page (`generateStaticParams` does not emit
- * one), so a link to it stays English rather than becoming a 404 — a reader
- * sent to the English text of a module nobody translated is told nothing but is
- * also promised nothing, and a 404 would be worse on both counts.
- *
- * Built here rather than in `render.ts` because answering "does this module
- * have a translation" is the loader's knowledge, and `render.ts` may not import
- * the loader — the module page already does and the other direction is a cycle.
- */
-function routeMapFor(lang: TranslatedLang): (route: string) => string {
-  const translated = new Set(
-    loadAllModules()
-      .filter((sheet) => sheet.translations[lang] !== null)
-      .map((sheet) => `/courses/${sheet.slug}/`),
-  )
-  return (route) => (translated.has(route) ? `/${lang}${route}` : route)
-}
 
 /** M28 — `'en' | 'tr'` until Persian; `languages.ts` owns the list now. */
 export type SheetLang = ReadingLang
@@ -183,7 +147,7 @@ export async function sheetMetadata(
 }
 
 /**
- * A dependency edge, resolved from a module number to something linkable.
+ * A dependency edge, as `moduleRenderInput` resolved and localised it.
  *
  * **M19 — the FOURTH region that had to be localised**, and it was found by a
  * review rather than by the test written for exactly this. The prose, the pager
@@ -192,27 +156,12 @@ export async function sheetMetadata(
  * they were reading in. The test named three regions, so the fourth could not
  * fail it — it asserts over every link on the page now.
  */
-function link(module: number, localise: (route: string) => string): SheetLink | null {
-  const target = moduleByNumber(module)
-  if (!target) return null
+function link(ref: RenderRef): SheetLink {
   return {
-    module,
-    title: target.frontmatter.title,
-    path: localise(sheetPath(target)),
-    draft: target.frontmatter.status === 'draft',
-  }
-}
-
-function relation(
-  label: string,
-  modules: readonly number[],
-  localise: (route: string) => string,
-): DependencyRelation {
-  return {
-    label,
-    targets: modules
-      .map((module) => link(module, localise))
-      .filter((target): target is SheetLink => target !== null),
+    module: ref.module.frontmatter.module,
+    title: ref.module.frontmatter.title,
+    path: ref.path,
+    draft: ref.module.frontmatter.status === 'draft',
   }
 }
 
@@ -224,9 +173,9 @@ function relation(
  * the control a reader uses more than any other on this page — dropped them
  * into English at the end of every module. The rail did the same thing.
  *
- * `localise` is the same map the prose gets, so the rule is stated once: a
- * module with a Turkish address goes to it, and one without stays English
- * rather than becoming a 404.
+ * `moduleRenderInput` localises the pager with the same map the prose gets, so
+ * the rule is stated once: a module with a Turkish address goes to it, and one
+ * without stays English rather than becoming a 404.
  *
  * **The title is not localised and that is not an oversight.** A pager names
  * its neighbour, and the neighbour's Turkish title lives in its own body — this
@@ -235,16 +184,13 @@ function relation(
  * link; it is recorded in the milestone as the first thing to fix if the author
  * wants it.
  */
-function target(
-  sheet: CourseModule | null,
-  localise: (route: string) => string,
-): PrevNextTarget | null {
-  if (!sheet) return null
+function target(ref: RenderRef | null): PrevNextTarget | null {
+  if (!ref) return null
   return {
-    module: sheet.frontmatter.module,
-    title: sheet.frontmatter.title,
-    path: localise(sheetPath(sheet)),
-    draft: sheet.frontmatter.status === 'draft',
+    module: ref.module.frontmatter.module,
+    title: ref.module.frontmatter.title,
+    path: ref.path,
+    draft: ref.module.frontmatter.status === 'draft',
   }
 }
 
@@ -271,7 +217,11 @@ export async function ModuleSheet({
   })
 
   const format = sheet.sheetFormat
-  const drawn = format !== 'A4'
+  /* Everything this page renders out of the module, derived once and shared
+     with the content bundle (`module-render.ts`): the body, the quiz, the
+     draft's summary and parts, and every link out, already localised. */
+  const input = await moduleRenderInput(sheet, lang)
+  const drawn = input.drawn
 
   /* M19 — is THIS page a translated one. Only the `lang` attributes below read
      it, which are `undefined` on the English tree because an attribute restating
@@ -285,24 +235,7 @@ export async function ModuleSheet({
   const contentLang = langAttr(lang)
   const contentDir = dirOf(lang)
 
-  /* One map for every link out of this page — the prose's cross-references, the
-     pager and the rail. Identity on the English tree, so nothing branches. */
-  const localise = lang !== 'en' ? routeMapFor(lang) : (route: string) => route
-
-  // The quick quiz, in the page's language, or null where the module has none
-  // (`quiz.ts`). A draft never has one: there is nothing yet to recall.
-  const quiz = drawn ? quizFor(sheet.category.dir, sheet.name, lang) : null
-
-  // A4 sheets render no prose: §4.5's body is one sentence and a schedule, and
-  // the markdown holds nothing else once the h1, the dek, the placeholder note
-  // and the deleted progress rail are accounted for.
-  const rendered = drawn
-    ? await renderMarkdown(sheet.body, {
-      imageBase: imageBaseFor(sheet.category.slug),
-      sheet: number,
-      localiseRoute: translated ? localise : undefined,
-    })
-    : null
+  const quiz = input.quiz
 
   // M11 — the RIGHT rail: what is on this page, and what sits either side of
   // it in the dependency graph. A draft has neither: no sections, because §4.5
@@ -311,14 +244,14 @@ export async function ModuleSheet({
      every entry is Turkish — `LLM nedir?`, `Bir LLM ne kadar büyük?`. Marked
      for the same reason the heading is. */
   const rail = drawn ? (
-    <SheetRail toc={rendered?.toc.filter((entry) => entry.depth === 2) ?? []} lang={lang} />
+    <SheetRail toc={input.toc.filter((entry) => entry.depth === 2)} lang={lang} />
   ) : null
 
   /* The prerequisites, and only them. They were one of three relations
      (`Requirements`, `Unlocks`, `See also`) behind a disclosure beside the
      completion button; since 2026-10-12 they are a `Before you start` box at the
      top (`Prerequisites`), and where a module leads is the pager's job. */
-  const prerequisites = relation('Requirements', graph.requires(number), localise).targets
+  const prerequisites = input.prerequisites.map(link)
 
   // M10 — the LEFT rail: the curriculum, one accordion section per level, with
   // this module's level open and enlarged. Every module page gets it, draft
@@ -329,17 +262,11 @@ export async function ModuleSheet({
       levels={railLevels()}
       currentSlug={slug}
       currentLevel={sheet.category.slug}
-      localise={localise}
+      localise={input.localise}
     />
   )
 
-  // §4.5 item 5 — the single descriptive sentence, read out of the source
-  // rather than retyped, and absent rather than invented if it is not there.
-  const summary = drawn
-    ? null
-    : sheet.frontmatter.summary ?? summarySentence(sheet.body)
-
-  const { previous, next } = neighbours(slug)
+  const summary = input.summary
 
   return (
     // §5.2 — the footer's own row of facts, which only this page knows: the
@@ -464,14 +391,14 @@ export async function ModuleSheet({
             So the element that holds Turkish says it does. `lang` inherits, so
             everything inside the prose is covered by this one attribute and the
             chrome outside it keeps the document's own English. */}
-        {drawn && rendered ? (
+        {drawn && input.html !== null ? (
           <Prose
-            html={rendered.html}
+            html={input.html}
             lang={contentLang}
             dir={contentDir}
             opening={
               <Objectives
-                items={sheet.frontmatter.objectives}
+                items={input.objectives}
                 lang={translated ? 'en' : undefined}
               />
             }
@@ -479,11 +406,11 @@ export async function ModuleSheet({
         ) : (
           <>
             <Objectives
-              items={sheet.frontmatter.objectives}
+              items={input.objectives}
               lang={translated ? 'en' : undefined}
             />
             {summary && <p className="bz-lead" lang={translated ? 'en' : undefined}>{summary}</p>}
-            <ScheduleOfParts parts={scheduleOfParts(sheet.body)} />
+            <ScheduleOfParts parts={input.parts} />
           </>
         )}
 
@@ -498,7 +425,7 @@ export async function ModuleSheet({
             page still shows it. A draft has no completion and no quiz. */}
         <SignOff slug={slug} revision={sheet.revision?.hash ?? null} drawn={drawn} />
 
-        <PrevNext previous={target(previous, localise)} next={target(next, localise)} />
+        <PrevNext previous={target(input.previous)} next={target(input.next)} />
 
         {quiz !== null && (
           /* Hidden until asked for: a native disclosure, so it opens with no
@@ -522,7 +449,7 @@ export async function ModuleSheet({
           </details>
         )}
 
-        {drawn && rendered !== null && rendered.checklist.length > 0 && (
+        {drawn && input.checklist.length > 0 && (
           <ChecklistIsland slug={slug} />
         )}
       </div>

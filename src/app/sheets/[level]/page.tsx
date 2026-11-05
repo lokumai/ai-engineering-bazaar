@@ -8,9 +8,8 @@ import { SignOffMarks } from '@/components/record/SignOffMarks'
 import { PageShell } from '@/components/shell/PageShell'
 import { CATEGORIES, categoryBySlug } from '@/lib/content/curriculum-file'
 import { curriculumFacts } from '@/lib/content/facts'
-import { categoryIntro } from '@/lib/content/intro'
 import { categoryCoverage, categoryRows, sheetRows } from '@/lib/content/manifest'
-import { renderMarkdown } from '@/lib/content/render'
+import { levelRenderInput } from '@/lib/content/module-render'
 
 /**
  * M17 / D62 — the catalog, opened at one level. Six of these, prerendered.
@@ -85,8 +84,7 @@ export default async function LevelCatalogPage({
   if (!category) notFound()
 
   const own = categoryRows(category)
-  const intro = categoryIntro(category.slug)
-  const notes = intro === null ? null : await renderMarkdown(intro)
+  const notes = await levelRenderInput(category.slug)
 
   return (
     <PageShell column={false}>

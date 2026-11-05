@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useHydrated, useRecord } from '@/lib/record/store'
+import { useHydrated } from '@/lib/record/store'
 import type { TranslatedLang } from '@/lib/content/languages'
 import {
   TRACKS,
@@ -10,7 +10,7 @@ import {
   EVERYONE_SEGMENT,
   catalogRoute,
   moduleRoute,
-  trackOfPath,
+  readingTrackOf,
 } from '@/lib/tracks'
 
 /**
@@ -24,7 +24,7 @@ import {
  * with no script: on a module, the same module (an unwritten For Everyone
  * module has a page saying so, D91); on a catalog page, the same level; on a
  * page that belongs to neither track, that track's catalog. Which segment is
- * filled is drawn by `shell.css` from `data-bz-track`, which the boot script
+ * filled is drawn by `shell.css` from `data-bz-trackswitch`, which the boot script
  * stamps before first paint; the island only adds `aria-current`.
  *
  * On a phone the two names become their icons (`shell.css`), because C1 does
@@ -37,23 +37,29 @@ export function TrackSwitch({
   translated: Readonly<Record<TranslatedLang, readonly string[]>>
 }) {
   const pathname = usePathname() ?? '/'
-  const record = useRecord()
   const hydrated = useHydrated()
-  const current: Track = trackOfPath(pathname) ?? (hydrated ? record.prefs.track : null) ?? 'engineers'
+  const current: Track = readingTrackOf(pathname, hydrated)
   const targets = targetsFor(pathname, translated)
 
   return (
-    <nav aria-label="Track" className="bz-track">
+    <nav aria-label="Track" className="bz-trackswitch">
       {TRACKS.map((track) => (
         <Link
           key={track.id}
           href={targets[track.id]}
-          className="bz-track-seg"
+          prefetch={false}
+          className="bz-trackswitch-seg"
           data-track-id={track.id}
           aria-current={current === track.id ? 'true' : undefined}
         >
           <TrackIcon track={track.id} />
-          <span className="bz-track-label">{track.label}</span>
+          <span className="bz-trackswitch-label">
+            {/* `For ` is its own span: between the phone and the desktop the
+                bar has room for `Engineers` and `Everyone` but not for both
+                full names (`shell.css`). */}
+            <span className="bz-trackswitch-for">For </span>
+            {track.label.replace(/^For /, '')}
+          </span>
         </Link>
       ))}
     </nav>
@@ -95,7 +101,7 @@ function TrackIcon({ track }: { track: Track }) {
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
-      className="bz-track-icon"
+      className="bz-trackswitch-icon"
     >
       {track === 'engineers' ? (
         <path d="M5.5 4.5 2 8l3.5 3.5M10.5 4.5 14 8l-3.5 3.5" />

@@ -175,10 +175,13 @@ test('the header tab order runs left to right and stops at the repo link', async
   // level dropdown moved onto it. The levels inside that panel are still in
   // the tab order, which is what the cap of 40 above is for.
   expect(at(/^catalog$/i)).toBe(3)
-  // M14 — the last destination reads `Your progress`. It was `My progress`,
-  // and the copy register bans the first person outright.
-  expect(at(/^your progress$/i)).toBe(4)
-  expect(at(/toggle theme/i)).toBeGreaterThan(at(/^your progress$/i))
+  // The last destination reads `Progress` since 2026-11-05 (the author's word).
+  expect(at(/^progress$/i)).toBe(4)
+  // M39 — the track switch sits between the destinations and the controls,
+  // both of its segments in order.
+  expect(at(/engineers/i), 'the track switch').toBeGreaterThan(at(/^progress$/i))
+  expect(at(/everyone/i)).toBe(at(/engineers/i) + 1)
+  expect(at(/toggle theme/i)).toBeGreaterThan(at(/everyone/i))
   expect(at(/repository/i)).toBeGreaterThan(at(/toggle theme/i))
 
   /* WHERE THE HEADER HANDS OVER, and this has now changed three times.
@@ -245,7 +248,9 @@ test('the level panel is inert when closed and reachable when open', async ({ pa
   const summary = page.locator('summary.bz-bar-link')
   // Inside the main navigation: the bar's language menu is a `.bz-menu` too
   // since 2026-10-11, with two rows of its own on a translated module.
-  const levels = page.locator('.bz-bar-nav .bz-menu-item')
+  // M39 D2 — the panel holds one list per track and shows one; these are the
+  // shown list's rows.
+  const levels = page.locator('.bz-bar-nav ul:not([hidden]) > li > .bz-menu-item')
 
   /**
    * Each stop, and whether it is INSIDE THE PANEL — which is the question, and

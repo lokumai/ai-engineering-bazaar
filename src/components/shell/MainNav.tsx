@@ -4,8 +4,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { INDEX_ROUTE, INDEX_TITLE, type CategoryLabel } from '@/lib/route-labels'
-import { useHydrated, useRecord } from '@/lib/record/store'
-import { TRACKS, type Track, EVERYONE_SEGMENT, catalogRoute, trackOfPath } from '@/lib/tracks'
+import { useHydrated } from '@/lib/record/store'
+import { TRACKS, type Track, EVERYONE_SEGMENT, catalogRoute, readingTrackOf, trackOfPath } from '@/lib/tracks'
 
 /**
  * M10 — the navbar. One row, on every route, with a dropdown per level.
@@ -194,12 +194,11 @@ const CLOSE_DELAY_MS = 260
 
 export function MainNav({ categories }: { categories: readonly CategoryLabel[] }) {
   const pathname = usePathname() ?? '/'
-  const record = useRecord()
   const hydrated = useHydrated()
   /* M39 D2 — the menu's two tabs. The tab of the track the reader is in is the
      one selected when the menu opens; a tab changes only which track the levels
      below open into. With no script, the For Engineers list is the one shown. */
-  const readingTrack: Track = trackOfPath(pathname) ?? (hydrated ? record.prefs.track : null) ?? 'engineers'
+  const readingTrack: Track = readingTrackOf(pathname, hydrated)
   const pageTrack = trackOfPath(pathname)
   const [tab, setTab] = useState<Track>('engineers')
   const panel = useRef<HTMLDetailsElement>(null)

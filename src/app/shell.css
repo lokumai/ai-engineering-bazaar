@@ -314,12 +314,12 @@
      gold and the bar's dark chip ink, so it reads as the active state rather
      than as one more button; the other segment is the bar's dim ink.
 
-     The fill is drawn from `data-bz-track` on `<html>`, which the boot script
+     The fill is drawn from `data-bz-trackswitch` on `<html>`, which the boot script
      stamps before first paint, so the right segment is filled in frame one.
      With no stamp at all (scripts refused) For Engineers is filled, which is
      the track every address without `/everyone/` belongs to.
      --------------------------------------------------------------------------- */
-  .bz-track {
+  .bz-trackswitch {
     display: inline-flex;
     align-items: center;
     gap: 2px;
@@ -330,7 +330,7 @@
     background: var(--color-bar-field);
   }
 
-  .bz-track-seg {
+  .bz-trackswitch-seg {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -343,31 +343,48 @@
     white-space: nowrap;
   }
 
-  .bz-track-seg:hover {
+  .bz-trackswitch-seg:hover {
     background: var(--color-bar-hover);
     color: var(--color-on-bar);
   }
 
-  html:not([data-bz-track="everyone"]) .bz-track-seg[data-track-id="engineers"],
-  html[data-bz-track="everyone"] .bz-track-seg[data-track-id="everyone"] {
+  html:not([data-bz-trackswitch="everyone"]) .bz-trackswitch-seg[data-track-id="engineers"],
+  html[data-bz-trackswitch="everyone"] .bz-trackswitch-seg[data-track-id="everyone"] {
     background: var(--color-ornament);
     color: var(--color-on-bar-chip);
   }
 
   /* The one non-colour carrier of "this one": the filled segment's name is in
      a heavier weight too, and its link says `aria-current`. */
-  html:not([data-bz-track="everyone"]) .bz-track-seg[data-track-id="engineers"] .bz-track-label,
-  html[data-bz-track="everyone"] .bz-track-seg[data-track-id="everyone"] .bz-track-label {
+  html:not([data-bz-trackswitch="everyone"]) .bz-trackswitch-seg[data-track-id="engineers"] .bz-trackswitch-label,
+  html[data-bz-trackswitch="everyone"] .bz-trackswitch-seg[data-track-id="everyone"] .bz-trackswitch-label {
     font-weight: 700;
   }
 
-  .bz-track-icon { flex: none; }
+  .bz-trackswitch-icon { flex: none; }
+
+  /* MEASURED at 1024px with both full names: the bar ran to 1080, and the
+     page scrolled sideways. Between the phone and the desktop the names drop
+     their `For`. */
+  @media (max-width: 1180px) {
+    .bz-trackswitch-for { display: none; }
+  }
+
+  /* The bar's controls keep their size; at narrow widths the navigation is the
+     part that scrolls inside itself (see the bar's own rules above), so these
+     must not be the part that gives way. */
+  .bz-trackswitch,
+  .bz-langmenu,
+  .bz-bar-icon,
+  .bz-bar-repo { flex: none; }
 
   /* C1 does not fit a phone in words: the icons stay, the names become the
-     links' accessible names only. */
+     links' accessible names only. The language button keeps its flag and
+     drops the code beside it, which the flag already states. */
   @media (max-width: 767px) {
-    .bz-track-seg { padding: 0 8px; }
-    .bz-track-label {
+    .bz-flag + .bz-langmenu-code { display: none; }
+    .bz-trackswitch-seg { padding: 0 8px; }
+    .bz-trackswitch-label {
       position: absolute;
       width: 1px;
       height: 1px;

@@ -61,8 +61,10 @@ const SEEDED_SLUG = slugOf(SEEDED)
    §15.11 is actually about. */
 
 /** Control C's own selectors (D14). */
-const LEVEL_CARD = '.bz-cc-level'
-const MODULE_ROW = '.bz-cmod'
+// M39 F2 — the progress page holds both tracks' cards; these are For Engineers'.
+const ENGINEERS = '[data-track="engineers"]'
+const LEVEL_CARD = `${ENGINEERS} .bz-cc-level`
+const MODULE_ROW = `${ENGINEERS} .bz-cmod`
 const TICK = '.bz-cmod-mark'
 /**
  * The word that states the completion to an assistive technology. It is the
@@ -239,8 +241,8 @@ test('the counts arrive after mount, and the ticks do not move', async ({ page }
   await expect(page.locator('.bz-readout[data-hydrated="true"]').first()).toBeAttached()
   await expect(page.locator(`${MODULE_ROW}[data-module="${SEEDED.module}"] ${TICK}`)).toBeVisible()
 
-  // The three numbers, which are `--` until the store has answered.
-  const numbers = page.locator('.bz-cc-stats')
+  // The tab's count, which is `--` until the store has answered (M39 F2).
+  const numbers = page.locator('.bz-ptab[data-track-id="engineers"] .bz-ptab-count')
   await expect(numbers).toContainText(`1 of ${SHEET_COUNT}`)
   await expect(numbers).not.toContainText('--')
 
@@ -276,7 +278,7 @@ test('control C completes a module from the progress page, and takes it back', a
   await expect
     .poll(() => saidRevealed(page, target.module), { timeout: 3_000 })
     .toBe(true)
-  await expect(page.locator('.bz-cc-stats')).toContainText(`1 of ${SHEET_COUNT}`)
+  await expect(page.locator('.bz-ptab[data-track-id="engineers"] .bz-ptab-count')).toContainText(`1 of ${SHEET_COUNT}`)
   const stored = await waitForRecord(
     page,
     (envelope) => envelope?.data.sheets[slugOf(target)]?.signedOff != null,
@@ -508,7 +510,7 @@ test('every number control C prints is derived from the modules it is printed be
      bare attribute selector picked them up, which is the failure this test
      produced on its first run here. On the home page the dials were the only
      consumer, so the selector had never had to say which it meant. */
-  const dial = '.bz-dial-value [data-hl-cat-tally]'
+  const dial = `${ENGINEERS} .bz-dial-value [data-hl-cat-tally]`
   await expect(page.locator(dial).first()).toHaveText(/\/\d+$/)
   const dials = await page.locator(dial).allInnerTexts()
   expect(dials.length, 'no level states a tally').toBeGreaterThan(0)

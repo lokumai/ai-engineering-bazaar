@@ -28,7 +28,7 @@
  */
 
 import { carriesNothing, type RecordData } from './schema'
-import { type Track, isTrack, trackOfPath } from '../tracks'
+import { type Track, trackOfPath } from '../tracks'
 
 /** The slice of `<html>` the stamps touch. */
 export interface StampRoot {
@@ -159,10 +159,10 @@ export function stampProgressFor(
 
 /**
  * D91 — the track the bar shows: the page's own, or on a page that belongs to
- * neither track the one the reader last opened, or For Engineers.
+ * neither track the one this tab last opened (`lastTrack`), or For Engineers.
  */
-export function currentTrack(pathname: string, data: RecordData): Track {
-  return trackOfPath(pathname) ?? (isTrack(data.prefs.track) ? data.prefs.track : 'engineers')
+export function currentTrack(pathname: string, remembered: Track | null): Track {
+  return trackOfPath(pathname) ?? remembered ?? 'engineers'
 }
 
 /** The attribute the bar's switch and the progress page's tabs read in frame one. */

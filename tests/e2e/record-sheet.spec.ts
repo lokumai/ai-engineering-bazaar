@@ -457,11 +457,11 @@ test('channel A stays true across a client transition (§12.2)', async ({ page }
      still draws it, two steps below. */
   await expect(page.locator('html')).toHaveAttribute('data-hl-record', '1')
 
-  await page.getByRole('link', { name: 'Your progress', exact: true }).click()
+  await page.getByRole('link', { name: 'Progress', exact: true }).click()
   await expect(page).toHaveURL(/\/profile\/$/)
   await expect(page.locator('html')).toHaveAttribute('data-hl-record', '1')
   await expect(
-    page.locator(`.bz-cmod[data-module="${SHEET.module}"] .bz-cmod-mark`),
+    page.locator(`[data-track="engineers"] .bz-cmod[data-module="${SHEET.module}"] .bz-cmod-mark`),
   ).toBeVisible()
 
   await page.getByRole('link', { name: 'Home', exact: true }).first().click()

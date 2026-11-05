@@ -8,7 +8,7 @@ import {
 } from '@/lib/record/derive'
 import { nowIso, useHydrated, useRecord } from '@/lib/record/store'
 import { trackView } from '@/lib/record/schema'
-import type { Track } from '@/lib/tracks'
+import { type Track, readingTrackOf } from '@/lib/tracks'
 import { hoursMinutes } from '@/lib/text'
 
 /**
@@ -129,8 +129,8 @@ export function Readout({
 }: ReadoutProps) {
   const record = useRecord()
   const hydrated = useHydrated()
-  // Channel B: the page's track, or on a neutral page the last one opened.
-  const track: Track = pageTrack ?? (hydrated ? record.prefs.track : null) ?? 'engineers'
+  // Channel B: the page's track, or on a neutral page the one this tab last read in.
+  const track: Track = pageTrack ?? readingTrackOf('/', hydrated)
   const data = trackView(record, track)
   const facts = track === 'everyone' && everyoneFacts ? everyoneFacts : engineersFacts
 

@@ -25,7 +25,6 @@
 
 import { isViewId } from '../catalog/views'
 import { isPaletteId } from '../reading/palettes'
-import { isTrack } from '../tracks'
 import { migrate } from './migrate'
 import {
   DWELL_CAP_SECONDS,
@@ -212,7 +211,6 @@ export function coerceRecordData(input: unknown): RecordData {
        */
       figurePalette: isPaletteId(prefs.figurePalette) ? prefs.figurePalette : null,
       codePalette: isPaletteId(prefs.codePalette) ? prefs.codePalette : null,
-      track: isTrack(prefs.track) ? prefs.track : null,
     },
     meta: {
       lastExport: asInstant(meta.lastExport),

@@ -330,7 +330,7 @@ describe('data-hl-record only goes on a record that carries something (§15.11)'
     ['a freshly minted record, which is what a migration stamp leaves behind', EMPTY_RECORD],
     [
       'a record holding only a preference',
-      { ...EMPTY_RECORD, prefs: { charKeys: false, railFolded: false, catalogView: null, figurePalette: null, codePalette: null, track: null } },
+      { ...EMPTY_RECORD, prefs: { charKeys: false, railFolded: false, catalogView: null, figurePalette: null, codePalette: null } },
     ],
     ['a record holding only an empty module entry', withSheet({})],
     ['a day on which something was written', { ...EMPTY_RECORD, days: ['2026-08-31'] }],

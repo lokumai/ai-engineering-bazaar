@@ -142,11 +142,6 @@ export function setChecklistItem(
   }, track)
 }
 
-/** D91 — remembers the track of the track page the reader opened. */
-export function setTrack(data: RecordData, track: Track): RecordData {
-  if (data.prefs.track === track) return data
-  return { ...data, prefs: { ...data.prefs, track } }
-}
 
 /**
  * §12.16 — SC 2.1.4's off switch for single-character shortcuts. Default on for

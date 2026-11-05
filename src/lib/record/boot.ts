@@ -144,7 +144,8 @@ var dwell=function(v){return typeof v==="number"&&fin(v)&&Math.round(v)>0?1:0};
 var kept=function(rec){return inst(rec.signedOff)||pat(rec.signedRevision,H)||rec.reachedEnd===true
 ||dwell(rec.dwellSeconds)||ticked(rec.checklist)?1:0};
 var sg=String(window.location&&window.location.pathname||"").split("/"),tk=inL(sg,"everyone")?"everyone":(inL(sg,"courses")||inL(sg,"sheets")?"engineers":null);
-r.setAttribute("data-bz-track",tk||"engineers");
+var tm=null;try{tm=window.sessionStorage.getItem("hl-track")}catch(e){}
+r.setAttribute("data-bz-track",tk||(tm==="everyone"?"everyone":"engineers"));
 var raw=null,ok=1;
 try{raw=window.localStorage.getItem(${JSON.stringify(RECORD_STORAGE_KEY)})}catch(e){ok=0}
 r.setAttribute("data-hl-storage",ok?"ok":"blocked");
@@ -157,7 +158,6 @@ if(isObj(d.prefs)&&d.prefs.railFolded===true)r.setAttribute("data-bz-rail","fold
 if(isObj(d.prefs)&&inL(V,d.prefs.catalogView))r.setAttribute("data-hl-view",d.prefs.catalogView);
 if(isObj(d.prefs)&&inL(P,d.prefs.figurePalette))r.setAttribute("data-hl-figures",d.prefs.figurePalette);
 if(isObj(d.prefs)&&inL(P,d.prefs.codePalette))r.setAttribute("data-hl-code",d.prefs.codePalette);
-if(!tk&&isObj(d.prefs)&&inL(["engineers","everyone"],d.prefs.track))r.setAttribute("data-bz-track",d.prefs.track);
 var k,has=0;
 if(arr(d.days)&&someDay(d.days))has=1;
 if(isObj(d.meta)&&inst(d.meta.lastExport))has=1;

@@ -83,12 +83,6 @@ export interface RecordData {
     figurePalette: PaletteId | null
     /** The same, for the code blocks. A separate choice on purpose. */
     codePalette: PaletteId | null
-    /**
-     * D91 — the track of the last track page the reader opened, or null. A page
-     * that belongs to neither track (home, progress, legend) shows the bar in
-     * this one. The home page's choice writes nothing (D86).
-     */
-    track: Track | null
   }
   meta: {
     lastExport: string | null
@@ -166,7 +160,6 @@ export const EMPTY_RECORD: RecordData = deepFreeze<RecordData>({
     catalogView: null,
     figurePalette: null,
     codePalette: null,
-    track: null,
   },
   meta: { lastExport: null, persisted: null },
 })

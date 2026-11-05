@@ -208,7 +208,7 @@ export function LanguageMenu({
           title="Language"
         >
           {here.current !== 'fa' && <Flag lang={here.current} />}
-          <span>{here.current.toUpperCase()}</span>
+          <span className="bz-langmenu-code">{here.current.toUpperCase()}</span>
         </summary>
         <div className="bz-menu bz-langmenu-panel">
           {LANGUAGES.filter((one) => here.available.includes(one.id)).map((one) => (

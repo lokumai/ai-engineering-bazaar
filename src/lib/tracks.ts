@@ -73,3 +73,42 @@ export function moduleRoute(slug: string, track: Track, lang: string = 'en'): st
   const prefix = track === 'everyone' ? `/${EVERYONE_SEGMENT}` : ''
   return `${language}${prefix}/courses/${slug}/`
 }
+
+/**
+ * D91 — the track of the last track page opened IN THIS TAB, for the pages that
+ * belong to neither track. Session storage and not the record, deliberately:
+ * reading the site writes nothing to the reader's record until they record
+ * something (§12.13), and opening a page is not recording anything. A tab
+ * forgets it when it closes. The boot script reads the same key before first
+ * paint; `RecordStateSync` writes it.
+ */
+export const TRACK_SESSION_KEY = 'hl-track'
+
+export function lastTrack(): Track | null {
+  try {
+    const value = window.sessionStorage.getItem(TRACK_SESSION_KEY)
+    return isTrack(value) ? value : null
+  } catch {
+    return null
+  }
+}
+
+export function rememberTrack(track: Track): void {
+  try {
+    window.sessionStorage.setItem(TRACK_SESSION_KEY, track)
+  } catch {
+    // A refused write costs only the memory; the page still says its track.
+  }
+}
+
+/**
+ * The track the bar shows on this page: the page's own, or after hydration the
+ * one stamped on `<html>` (from the address, or this tab's last track page).
+ */
+export function readingTrackOf(pathname: string, hydrated: boolean): Track {
+  const own = trackOfPath(pathname)
+  if (own !== null) return own
+  if (!hydrated) return DEFAULT_TRACK
+  const stamped = document.documentElement.getAttribute('data-bz-track')
+  return isTrack(stamped) ? stamped : DEFAULT_TRACK
+}

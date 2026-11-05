@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { signedCount, type CurriculumFacts } from '@/lib/record/derive'
 import { trackView } from '@/lib/record/schema'
 import { useHydrated, useRecord } from '@/lib/record/store'
-import { TRACKS, type Track } from '@/lib/tracks'
+import { TRACKS, type Track, readingTrackOf } from '@/lib/tracks'
 
 const NO_READING = '--'
 
@@ -28,7 +28,7 @@ export function ProgressTabs({
   const record = useRecord()
   const hydrated = useHydrated()
   const [chosen, setChosen] = useState<Track | null>(null)
-  const shown: Track = chosen ?? (hydrated ? record.prefs.track : null) ?? 'engineers'
+  const shown: Track = chosen ?? readingTrackOf('/profile/', hydrated)
 
   return (
     <div className="bz-ptabs" data-tab={chosen ?? undefined}>

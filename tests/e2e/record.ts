@@ -64,6 +64,8 @@ export interface SheetRecord {
 export interface RecordData {
   /** §12.1.3 — keyed by SLUG (`intermediate/security`), never by number. */
   sheets: { [slug: string]: SheetRecord }
+  /** D91 — For Everyone's completions, the same shape. */
+  everyoneSheets: { [slug: string]: SheetRecord }
   days: string[]
   /**
    * Every key the store writes is stated here, because the round trips compare
@@ -91,6 +93,7 @@ export interface Envelope {
 export type SheetSeed = Partial<SheetRecord>
 export interface RecordSeed {
   sheets?: { [slug: string]: SheetSeed }
+  everyoneSheets?: { [slug: string]: SheetSeed }
   days?: string[]
   prefs?: Partial<RecordData['prefs']>
   meta?: Partial<RecordData['meta']>
@@ -127,8 +130,13 @@ export function recordData(seed: RecordSeed = {}): RecordData {
   for (const [slug, sheet] of Object.entries(seed.sheets ?? {})) {
     sheets[slug] = sheetRecord(sheet)
   }
+  const everyoneSheets: RecordData['everyoneSheets'] = {}
+  for (const [slug, sheet] of Object.entries(seed.everyoneSheets ?? {})) {
+    everyoneSheets[slug] = sheetRecord(sheet)
+  }
   return {
     sheets,
+    everyoneSheets,
     days: seed.days ?? [SEED_DAY],
     prefs: {
       charKeys: true,

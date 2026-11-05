@@ -21,14 +21,14 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M40 and M42 (M41 on PR #57), 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M40 and M42 to M45 (M41 on PR #57), 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-11-05
 ---
 
-# 📈 PROGRESS, part 2 — M16 to M42
+# 📈 PROGRESS, part 2 — M16 to M45
 
 > **← Part 1: [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the review pass over M10 to M14.
-> This part holds **M16 to M42**, in the order they were worked.
+> This part holds **M16 to M45**, in the order they were worked.
 
 ## How to work this file
 
@@ -4316,10 +4316,19 @@ Engineers one, and **D87**, the figure formats, with no MDX. D87's rule is writt
       E the language button, F the progress page per track, G a scene per home-page stall, H the
       track choice before the doors, I the two characters beside it, J the kinds of reference in a
       module's list.
-- [ ] The author's picks, one code per page.
-- [ ] The site built from them: the track system (names, mark, switch, catalog menu, progress per
-      track), the language button, the home page's scenes, choice step and characters, and the
-      reference-list format.
+- [x] The author's picks, 2026-11-05: **A1** For Engineers / For Everyone; **B1** the track's name in
+      the bar, in a colour that reads as active rather than as one more button; **C1** the two-segment
+      toggle, *"because it is easier for first time users to know such feature exists"*; **D2** tabs
+      at the top of the catalog menu; **E4** a small flag beside the language code; **F2** tabs and a
+      data line; **G1b** the edited draft, **G2a** the sieve, **G3a** the magic lantern, **G4a** the
+      signpost; **H1** two shop signs over two stalls; **P3 and P4 together**: a Sipahi horseman and a
+      Bazargan merchant, each with its name in Turkish and the English in parentheses, the Sipahi's
+      stall with weapons, code and smith's tools for engineering, the merchant's with tea, spices and
+      the things a Turkish merchant sells; **J2** groups under five emoji headings (📄 articles,
+      🎬 videos, 🧭 modules, 🛠️ tools that are not repositories, 🗃️ repositories). Also asked the same
+      day: the bar's `Your progress` reads `Progress`, and the theme button becomes a sun and moon.
+- [ ] The site built from them: **M43** (the track system and the bar), **M44** (the home page),
+      **M45** (the reference lists). D91 records the choices the pages left open.
 
 ### Acceptance criteria
 
@@ -4394,6 +4403,79 @@ too large, with information that goes stale.
 - [x] The root `AGENTS.md` is untouched: it is the `next dev` block and the installed kia-context
       block, nothing else.
 - [ ] PR #57: finish the changes the author wants, then tell cevheri what changed (D90).
+
+
+## 🏁 Milestone M43: Two tracks, the bar and the progress page — IN PROGRESS
+
+Branch `feat/round-2-build`. Builds M39's picks A1, B1, C1, D2, E4 and F2 and the two bar requests,
+on D91's design.
+
+### Deliverables
+
+- [ ] For Everyone content: `mini-courses/<level>/everyone/<name>.md` (+ `_tr.md`, `_fa.md`), loaded
+      and validated; a file for a name nobody listed fails the build.
+- [ ] For Everyone routes: `/everyone/sheets/`, `/everyone/sheets/<level>/`,
+      `/everyone/courses/<level>/<module>/` and their `/tr/` and `/fa/` module pages. A module with
+      no For Everyone file shows as not written yet in the For Everyone catalog.
+- [ ] The record holds `everyoneSheets` and `prefs.track`; completion, export, import and erase are
+      per track or cover both; the boot script stamps both tracks and `data-bz-track`.
+- [ ] The bar: a two-segment track toggle (For Engineers / For Everyone), the current one filled in a
+      colour that reads as active, linking to the same page in the other track where it exists; icons
+      only on a phone.
+- [ ] The catalog menu: two tabs, For Engineers and For Everyone, over the level list, opening on the
+      current track.
+- [ ] The language button: a flag and the code (UK for English, Turkey for Turkish, `فا` with no flag
+      for Persian); the menu shows the same beside each name.
+- [ ] `Progress` in the bar; the theme button draws a sun and a moon.
+- [ ] `/profile/`: two tabs, one per track, each with its level rings and count, opening on the
+      current track; under them one line with Back up, Restore and Reset.
+
+### Acceptance criteria
+
+- [ ] Every For Engineers address and every existing record still works; a record from before M43
+      reads as For Engineers progress.
+- [ ] Completing a module in one track does not complete it in the other, in frame one and after
+      hydration.
+- [ ] The full gate is green and each new surface is compared to its playground option by
+      screenshot.
+
+## 🏁 Milestone M44: The home page: four scenes, the track choice and two characters — IN PROGRESS
+
+Builds M39's picks G1b, G2a, G3a, G4a, H1, and P3 with P4.
+
+### Deliverables
+
+- [ ] The four stalls play G1b (the edited draft), G2a (the sieve), G3a (the magic lantern) and G4a
+      (the signpost) with the scroll, ported from the playground page; reduced motion shows each
+      scene's still frame.
+- [ ] Before the doors, two hanging signs over two stalls choose For Engineers or For Everyone; the
+      doors then open into that track. With no choice, or no script, they open For Engineers, with one
+      line to switch (N1). The choice is not saved (D86).
+- [ ] A Sipahi horseman beside For Engineers and a Bazargan merchant beside For Everyone, each named
+      in Turkish with the English in parentheses; the Sipahi's stall shows weapons, code and smith's
+      tools, the merchant's tea, spices and Turkish goods.
+
+### Acceptance criteria
+
+- [ ] Every motto and one door per level stay, walking or not, at every width; no sideways scroll.
+- [ ] The walk and the reduced-motion still are both checked by screenshot against the playground.
+
+## 🏁 Milestone M45: Reference lists grouped by kind — IN PROGRESS
+
+Builds M39's pick J2, with the author's five kinds.
+
+### Deliverables
+
+- [ ] Every module's References, in English, Turkish and Persian, grouped under `###` headings in
+      this order, each kind only where it has an item: 📄 Articles, 🎬 Videos, 🛠️ Tools,
+      🗃️ Repositories, 🧭 Modules. A list or course on GitHub is a repository; otherwise an article.
+- [ ] The rule written into `mini-courses/CLAUDE.md` (and `AGENTS.md`), with the translated headings.
+- [ ] A corpus test: a References section that has subheadings uses only those five.
+
+### Acceptance criteria
+
+- [ ] No reference is lost or duplicated: the set of links in each References section is the same
+      before and after, in every language.
 
 ---
 

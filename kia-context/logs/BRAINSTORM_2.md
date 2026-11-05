@@ -10,7 +10,7 @@ description: >
 authority: reasoning
 writes: agent, when a decision is taken
 status: active
-covers: "D26 to D88 and D90, plus open questions O1 to O5 — 2026-09-09 to 2026-11-05 (D89 is on PR #57)"
+covers: "D26 to D88, D90 and D91, plus open questions O1 to O5 — 2026-09-09 to 2026-11-05 (D89 is on PR #57)"
 last_updated: 2026-11-05
 ---
 
@@ -2164,6 +2164,34 @@ for what it changes on the website, not only for whether it merges.
 revision, the e2e build reading `17f7c2c` for all of them. The author and the agent will finish the
 changes the author wants first, and then tell cevheri what changed. The promise is
 `specs/MANIFESTO.md` §7.
+
+### D91 · How the two tracks are built: a folder, a URL prefix, a second sheet map, and both tracks stamped — 2026-11-05
+
+The author picked the round-2 options (M39). Building them needed five choices the pages did not
+make; each is the smallest one that keeps today's For Engineers URLs and records unchanged.
+
+1. **Content.** A For Everyone module is `mini-courses/<level>/everyone/<name>.md`, with `_tr.md`
+   and `_fa.md` beside it under the same rules, listed by the same `curriculum.yaml` name. A module
+   has a For Everyone page only where that file exists; elsewhere the For Everyone catalog says it is
+   not written yet. Rejected: a second `curriculum.yaml` (two lists of one course would drift) and a
+   name suffix such as `_everyone.md` (it collides with the `_tr` / `_fa` suffix rule).
+2. **Addresses.** For Everyone lives under an `/everyone/` prefix: `/everyone/sheets/`,
+   `/everyone/sheets/<level>/`, `/everyone/courses/<level>/<module>/`, and `/tr/` or `/fa/` before
+   it for a translation. For Engineers keeps every address it has, so no bookmark breaks.
+3. **The record.** Completion is per track (D86): `everyoneSheets` sits beside `sheets`, with the
+   same shape. Export, import and erase cover both. `prefs.track` remembers the last track page the
+   reader opened, so a page that belongs to neither track (home, progress, legend) shows the bar in
+   the track they were reading. The home page's choice itself writes nothing (D86).
+4. **Frame one.** The boot script stamps both tracks every time (`hl-signed-<n>` for For Engineers,
+   `hl-e-signed-<n>` for For Everyone, and the level classes the same way) and puts the current track
+   on `<html>` as `data-bz-track`. A page region carries `data-track`, and the generated stylesheet
+   scopes each track's marks to its own regions, so the progress page can show both tracks' rings
+   correctly before any script runs.
+5. **Details the pages left open.** The bar's toggle (B1 + C1) shrinks to its two icons below the
+   phone breakpoint, since C1 does not fit there. Persian shows its script, `فا`, and no flag (E4's
+   own no-flag option), because a flag stands for a country and Iran's is politically loaded; English
+   shows the UK flag. A reader who scrolls past the home page's track choice gets doors that open For
+   Engineers, with one line to switch (N1, recommended beside H1).
 
 ## Open questions
 

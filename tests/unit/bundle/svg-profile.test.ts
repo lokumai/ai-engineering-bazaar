@@ -79,6 +79,13 @@ describe('profileViolations', () => {
     expect(profileViolations(svg('<text x="1" y="1">A &amp; B &lt; C &quot;D&quot;</text>'))).toEqual([])
   })
 
+  // XML escapes only `<`, `&` and quotes, so a label about CSS or HTML reaches
+  // a <text> node verbatim; it is drawn as text and is not markup.
+  it('accepts a forbidden string in a label\'s text', () => {
+    const label = 'set var(--x), a class=foo, a style=bar and dominant-baseline or alignment-baseline'
+    expect(profileViolations(svg(`<text x="1" y="1">${label}</text>`))).toEqual([])
+  })
+
   for (const [forbidden, input] of Object.entries(CARRIES)) {
     it(`refuses ${forbidden}`, () => {
       const violations = profileViolations(input)

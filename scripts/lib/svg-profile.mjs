@@ -74,7 +74,12 @@ export const ALLOWED_ATTRIBUTES = Object.freeze({
   gradientTransform: 'A transformed gradient vector.',
 })
 
-/** Strings that must not occur anywhere in a diagram file (spec 2.9.4). */
+/**
+ * Strings that must not occur in a diagram file's markup (spec 2.9.4): in a tag
+ * or an attribute, never in the text a label draws. XML escapes only `<`, `&`
+ * and quotes, so a label that mentions `var(` or `class=` reaches a `<text>`
+ * node verbatim, and refusing it stopped a correct diagram.
+ */
 export const FORBIDDEN_STRINGS = Object.freeze([
   '<style',
   '<marker',
@@ -241,12 +246,16 @@ export function stripNonPainting(svg) {
  */
 export function profileViolations(svg) {
   const violations = []
+  const { tags, unmatched } = tokenize(svg)
 
+  // Past a `<` that opens no tag, text cannot be told from markup, so the
+  // rest of the file is searched whole.
+  const markup = tags.map((tag) => svg.slice(tag.start, tag.end)).join('')
+    + (unmatched === null ? '' : svg.slice(unmatched))
   for (const forbidden of FORBIDDEN_STRINGS) {
-    if (carries(svg, forbidden)) violations.push(`forbidden string "${forbidden}"`)
+    if (carries(markup, forbidden)) violations.push(`forbidden string "${forbidden}"`)
   }
 
-  const { tags, unmatched } = tokenize(svg)
   if (unmatched !== null) violations.push(`unmatched < at offset ${unmatched}`)
 
   const root = tags.find((tag) => !tag.closing)

@@ -30,7 +30,19 @@
  *
  * A marker's overflow is clipped to its viewport in the browser and is not
  * clipped here; mermaid's markers draw inside their viewport.
+ *
+ * **What the group takes from its element.** A browser draws markers as part
+ * of the element that uses them, so the element's own `opacity` fades its
+ * arrowheads and its `display="none"` hides them. Neither is inherited, and the
+ * group is the element's sibling, so both are copied onto it; without that a
+ * hidden edge kept its arrowhead and a faded one drew it at full strength.
+ * `visibility` is not copied: a marker's content takes it from the marker's
+ * own ancestors, and the finaliser has already written it on every shape in
+ * the marker body.
  */
+
+/** The element's own attributes a browser applies to its markers too. */
+const CARRIED_TO_MARKERS = ['opacity', 'display']
 
 const TAG = /<(\/?)([A-Za-z][\w:.-]*)((?:\s+[^\s=/>]+\s*=\s*(?:"[^"]*"|'[^']*'))*)\s*(\/?)>/g
 const ATTRIBUTE = /\s+([^\s=/>]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g
@@ -289,6 +301,10 @@ export function flattenMarkers(svg) {
       end += close[0].length
     }
 
+    const carried = CARRIED_TO_MARKERS
+      .filter((attribute) => attributes[attribute] !== undefined)
+      .map((attribute) => ` ${attribute}="${attributes[attribute]}"`)
+      .join('')
     const groups = []
     for (const position of ['start', 'mid', 'end']) {
       const reference = attributes[`marker-${position}`]
@@ -317,7 +333,7 @@ export function flattenMarkers(svg) {
           + `rotate(${format(orientation(marker, vertex, position))}) `
           + `scale(${format(scale)}) `
           + `translate(${format(-marker.refX)} ${format(-marker.refY)})`
-        groups.push(`<g transform="${transform}">${marker.body}</g>`)
+        groups.push(`<g transform="${transform}"${carried}>${marker.body}</g>`)
       }
     }
 

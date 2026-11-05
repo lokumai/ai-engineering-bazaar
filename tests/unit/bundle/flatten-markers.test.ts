@@ -94,6 +94,23 @@ describe('flattenMarkers', () => {
     expect(() => flattenMarkers(drawing({ orient: 'foo' }))).toThrow(/foo/)
   })
 
+  // A browser draws a marker as part of its element, so the element's own
+  // opacity fades the arrowhead and its display="none" hides it; a sibling
+  // group inherits neither unless they are written on it.
+  it('carries the element\'s own opacity and display onto its arrowheads', () => {
+    const edge = '<path d="M0 0 L10 0" opacity="0.3" display="none" stroke-width="1" marker-start="url(#arrow)" marker-end="url(#arrow)"/>'
+    const groups = [...flattenMarkers(drawing({}, edge)).matchAll(/<g\b[^>]*>/g)].map((match) => match[0])
+    expect(groups).toHaveLength(2)
+    for (const group of groups) {
+      expect(group).toContain(' opacity="0.3"')
+      expect(group).toContain(' display="none"')
+    }
+  })
+
+  it('adds nothing to the arrowhead of an element that sets neither', () => {
+    expect(flattenMarkers(drawing())).toMatch(/<g transform="[^"]*">/)
+  })
+
   it('refuses a marker nobody defined', () => {
     const edge = '<path d="M0 0 L10 0" stroke-width="1" marker-end="url(#missing)"/>'
     expect(() => flattenMarkers(drawing({}, edge))).toThrow(/missing/)

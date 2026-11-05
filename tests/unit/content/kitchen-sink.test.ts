@@ -9,8 +9,11 @@ import { renderMarkdown } from '@/lib/content/render'
  * The file next door carries every structure the pipeline understands: a lead
  * paragraph, a Roman-numbered section, a three-column table, a captioned
  * image, a mermaid diagram with a semantic fill, a tagged fence, an untagged
- * fence, both kinds of blockquote, a checklist, an external link, two
- * cross-references and a Quick Check.
+ * fence, both kinds of blockquote, a checklist, emphasis, strong and deleted
+ * text, inline code, a hard line break, an ordered list that starts past one,
+ * a level-four heading, a table with column alignment, a horizontal rule, an
+ * external link, three cross-references (one with a fragment), an anchor link,
+ * a link to the catalog and a Quick Check.
  *
  * Change the renderer and this test prints a line-by-line diff of what changed
  * in the output. Accept it with `npx vitest -u` or fix what you broke.

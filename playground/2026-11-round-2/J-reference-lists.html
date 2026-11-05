@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference lists</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ground: #fdfbf7; --raised: #ffffff; --sunken: #e6dac6;
+  --line: #d8cbb4; --line-strong: #c3b299;
+  --ink: #20242e; --title: #1b1b47; --muted: #6a6558; --faint: #948d7d;
+  --bar: #282864; --on-bar: #ffffff; --on-bar-dim: #c9c6e4;
+  --ornament: #c8a078; --gold: #b8873b; --focus: #a0503c; --primary: #282864;
+  --slab: #1d1f27; --slab-line: #33363f; --slab-ink: #e7e3d8; --slab-muted: #9aa0ad;
+  --slab-kw: #c48ce0; --slab-str: #8fcf9a; --slab-fn: #7fb8e8; --slab-num: #e0a45c;
+  --sans: "Avenir Next", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --persian: Vazirmatn, "Noto Naskh Arabic", "Noto Sans Arabic", Tahoma, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+html { background: var(--ground); }
+body { margin: 0; background: var(--ground); color: var(--ink); font: 15px/1.55 var(--sans); }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+code { font: 13px/1 var(--mono); }
+[lang="fa"] { font-family: var(--persian); }
+
+/* ---- the document around the options ---- */
+.page { max-width: 1320px; margin: 0 auto; padding: 44px 28px 96px; }
+.q { margin: 0 0 10px; max-width: 900px; color: var(--title); font-size: 28px; line-height: 1.2; font-weight: 650; }
+.lead { margin: 0 0 20px; max-width: 820px; color: var(--muted); font-size: 16px; }
+.jump { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.jump a { display: inline-flex; align-items: center; gap: 7px; height: 33px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 9px; background: var(--raised); color: var(--muted); font-size: 13.5px; font-weight: 600; text-decoration: none; }
+.jump a:hover { background: var(--sunken); color: var(--ink); }
+.jump b { color: var(--title); }
+
+.shared { margin-top: 40px; }
+.sub-h { margin: 0 0 6px; color: var(--title); font-size: 18.5px; font-weight: 650; }
+.sub-p { margin: 0 0 14px; max-width: 860px; color: var(--muted); }
+.kinds { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.kinds li { display: flex; gap: 11px; padding: 12px 13px; border: 1px solid var(--line); border-radius: 7px; background: var(--raised); }
+.kind-e { font-size: 24px; line-height: 1.1; }
+.kinds b { display: block; color: var(--title); font-weight: 650; }
+.kind-what { display: block; color: var(--ink); font-size: 13.5px; line-height: 1.4; margin-top: 2px; }
+.kind-sr { display: block; color: var(--muted); font-size: 12.5px; margin-top: 6px; }
+.fact { margin: 14px 0 0; max-width: 980px; padding: 10px 13px; border: 1px solid var(--line); border-radius: 7px; background: var(--raised); font-size: 14px; }
+
+.opt { margin-top: 56px; padding-top: 34px; border-top: 1px solid var(--line); scroll-margin-top: 16px; }
+.opt-head { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 12px; }
+.code { padding: 2px 9px; border: 1px solid var(--line-strong); border-radius: 5px; background: var(--raised); color: var(--title); font-size: 15px; font-weight: 700; }
+.opt > .opt-head h2 { margin: 0; color: var(--title); font-size: 22px; line-height: 1.25; font-weight: 650; }
+.rec { padding: 3px 10px; border-radius: 9px; background: var(--bar); color: #fff; font-size: 13px; font-weight: 600; }
+.opt-text { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 12px 40px; max-width: 1200px; }
+.opt-text p { margin: 0; }
+.opt-text ul { margin: 0; padding-left: 20px; }
+.opt-text li { margin: 0 0 6px; }
+.why { max-width: 1200px; margin: 12px 0 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 7px; background: var(--raised); }
+
+.pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr); gap: 24px; margin-top: 22px; align-items: start; }
+.col { min-width: 0; }
+.stage-label { margin: 0 0 8px; color: var(--muted); font-size: 13.5px; font-weight: 600; }
+.stage-label code { font-size: 12.5px; }
+
+/* the raw file: the site's own code slab */
+.slab { overflow: hidden; border: 1px solid var(--slab-line); border-radius: 9px; background: var(--slab); }
+.slab-head { display: flex; justify-content: space-between; padding: 9px 13px; border-bottom: 1px solid var(--slab-line); color: var(--slab-muted); font: 12.5px/1.3 var(--mono); }
+.slab pre { margin: 0; padding: 14px 16px 16px; color: var(--slab-ink); font: 12.5px/1.75 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+.m-h { color: var(--slab-kw); }
+.m-p { color: var(--slab-muted); }
+.m-u { color: var(--slab-fn); }
+.m-e { font-family: var(--sans); }
+.slab[data-fa] pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "JetBrains Mono", "Liberation Mono", Vazirmatn, monospace; }
+
+/* the rendered side: the module page's reading column */
+.site { border: 1px solid var(--line); border-radius: 9px; background: var(--ground); padding: 4px 30px 18px; }
+.prose { font: 16px/1.68 var(--sans); color: var(--ink); }
+.prose[lang="fa"] { font-family: var(--persian); }
+.prose .sec { display: flex; align-items: center; gap: 12px; margin: 26px 0 14px; color: var(--title); font: 600 25px/1.28 var(--sans); letter-spacing: -0.012em; }
+.prose[lang="fa"] .sec { font-family: var(--persian); }
+.prose .sec::after { content: ""; flex: 1; height: 2px; background: repeating-linear-gradient(90deg, var(--ornament) 0 6px, transparent 6px 12px); }
+.prose .subsec { margin: 30px 0 8px; color: var(--ink); font: 600 18.5px/1.35 var(--sans); }
+.prose .sec + .subsec { margin-top: 18px; }
+.prose ul { margin: 0 0 17px; padding-left: 22px; list-style: disc; }
+.prose[dir="rtl"] ul { padding-left: 0; padding-right: 22px; }
+.prose li { margin: 6px 0; }
+.prose a { color: var(--primary); font-weight: 500; text-decoration: underline; text-decoration-color: var(--ornament); text-underline-offset: 2px; }
+.prose .ext { color: var(--faint); font-size: 12.5px; }
+.prose .kind { font-family: var(--sans); }
+.tablefig { margin: 0 0 18px; border: 1px solid var(--line); border-radius: 9px; background: var(--raised); overflow: hidden; }
+.tablefig figcaption { padding: 11px 14px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 13.5px; font-weight: 600; }
+.tablefig figcaption { color: var(--ink); }
+.scroller { overflow-x: auto; }
+.tablefig table { width: 100%; border-collapse: collapse; font-size: 14.5px; line-height: 1.5; }
+.tablefig :is(th, td) { padding: 9px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.tablefig thead th { background: var(--sunken); color: var(--ink); font: 600 12.5px/1.3 var(--sans); }
+.tablefig tbody th { font-weight: 600; }
+.tablefig tbody tr:last-child :is(th, td) { border-bottom: 0; }
+
+/* the checks row: a phone and a screen reader */
+.checks { display: grid; grid-template-columns: 390px minmax(0, 1fr); gap: 28px; margin-top: 22px; align-items: start; }
+.phone { position: relative; width: 390px; height: 560px; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 9px; background: var(--ground); }
+.phone::after { content: ""; position: absolute; inset: auto 0 0 0; height: 40px; pointer-events: none; background: linear-gradient(rgba(253,251,247,0), var(--ground)); }
+.phone-bar { display: flex; align-items: center; gap: 16px; height: 50px; padding: 0 14px; background: var(--bar); color: var(--on-bar-dim); font-size: 14.5px; }
+.cube { width: 24px; height: 24px; border-radius: 3px; background: linear-gradient(135deg, #d9734a 0 50%, #2f8c86 50%); }
+.phone-body { height: 508px; overflow-y: auto; padding: 0 24px 40px; }
+.phone-body .sec { margin-top: 20px; }
+.check-side { min-width: 0; }
+.sr { margin: 0; padding: 12px 14px 12px 34px; border: 1px solid var(--line); border-radius: 7px; background: var(--raised); font-size: 14px; line-height: 1.5; }
+.sr li { margin: 0 0 7px; color: var(--muted); }
+.sr li b { color: var(--title); font-weight: 650; }
+.sr i { font-style: normal; color: var(--faint); }
+.note { margin: 10px 0 0; max-width: 640px; color: var(--muted); font-size: 14px; }
+
+.fa-block { margin-top: 34px; padding-top: 24px; border-top: 1px dashed var(--line); }
+
+/* the comparison and the classification */
+.end { margin-top: 64px; padding-top: 34px; border-top: 1px solid var(--line); scroll-margin-top: 16px; }
+.end h2 { margin: 0 0 6px; color: var(--title); font-size: 22px; font-weight: 650; }
+.cmp-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 9px; background: var(--raised); }
+.cmp, .every { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.5; }
+.cmp :is(th, td), .every :is(th, td) { padding: 10px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.cmp thead th, .every thead th { background: var(--sunken); color: var(--ink); font-size: 13px; font-weight: 650; }
+.cmp tbody th { width: 170px; color: var(--title); font-weight: 650; }
+.cmp td { width: 28%; }
+.cmp tbody tr:last-child :is(th, td), .every tbody tr:last-child :is(th, td) { border-bottom: 0; }
+.every-wrap { border: 1px solid var(--line); border-radius: 9px; background: var(--raised); overflow: hidden; }
+.every td:first-child { width: 40px; color: var(--faint); }
+.every a { color: var(--primary); font-weight: 500; text-decoration: underline; text-decoration-color: var(--ornament); text-underline-offset: 2px; }
+.every .ext { color: var(--faint); font-size: 12px; }
+.every .host { display: block; color: var(--muted); font-size: 12.5px; }
+.every td:last-child { width: 190px; white-space: nowrap; }
+.tally { margin: 10px 0 0; color: var(--muted); font-size: 14px; }
+
+@media (max-width: 1100px) {
+  .kinds { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pair, .opt-text { grid-template-columns: minmax(0, 1fr); }
+  .checks { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 600px) {
+  .page { padding: 28px 16px 64px; }
+  .q { font-size: 23px; }
+  .kinds { grid-template-columns: minmax(0, 1fr); }
+  .site { padding: 2px 14px 12px; }
+  .phone { width: 100%; max-width: 390px; }
+  .phone-body { padding: 0 16px; }
+  .cmp { min-width: 720px; }
+  .every td:last-child { white-space: normal; width: auto; }
+  .every .host { display: none; }
+}
+</style>
+</head>
+<body>
+<main class="page">
+  <h1 class="q">How should a module's References list tell an article from a video from a tool?</h1>
+  <p class="lead">Every option is plain markdown, so the module reads the same on GitHub, in VS Code and in its Turkish and Persian versions. Each one is shown with the real Harness Engineering list: the file as written, and the page as the site draws it.</p>
+  <ul class="jump" aria-label="Options">
+    <li><a href="#J1"><b>J1</b> One emoji per item · Recommended</a></li>
+    <li><a href="#J2"><b>J2</b> Groups under headings</a></li>
+    <li><a href="#J3"><b>J3</b> A table</a></li>
+    <li><a href="#compare">Side by side</a></li>
+    <li><a href="#every">Every reference, by kind</a></li>
+  </ul>
+
+  <section class="shared" aria-labelledby="kinds-t">
+    <h3 class="sub-h" id="kinds-t">The kinds, and their emoji</h3>
+    <p class="sub-p">Five kinds cover every reference in the three lists read for this page. A course is rare, so it shares 📚 with lists rather than adding a sixth emoji. When an item has two links, its kind is the kind of the first one. J2 and J3 use the same five kinds as words.</p>
+    <ul class="kinds"><li><span class="kind-e">📄</span><span><b>Article</b><span class="kind-what">a written post, a paper, or a docs page</span><span class="kind-sr">A screen reader says “page facing up”</span></span></li><li><span class="kind-e">🎬</span><span><b>Video</b><span class="kind-what">YouTube, Shorts, a recorded talk</span><span class="kind-sr">A screen reader says “clapper board”</span></span></li><li><span class="kind-e">🧰</span><span><b>Tool or library</b><span class="kind-what">a GitHub repository, a library, a product</span><span class="kind-sr">A screen reader says “toolbox”</span></span></li><li><span class="kind-e">📚</span><span><b>List or course</b><span class="kind-what">a list of resources, or a course</span><span class="kind-sr">A screen reader says “books”</span></span></li><li><span class="kind-e">🧭</span><span><b>Module of this course</b><span class="kind-what">another module of this course</span><span class="kind-sr">A screen reader says “compass”</span></span></li></ul>
+    <p class="tally">Harness Engineering: 8 articles, 3 videos, 2 tools, 2 lists, 1 module.</p>
+  </section>
+
+  
+<section class="opt" id="J1" aria-labelledby="J1-t">
+  <div class="opt-head"><span class="code">J1</span><h2 id="J1-t">One emoji at the start of each item</h2><span class="rec">Recommended</span></div>
+  <div class="opt-text">
+    <p>The list stays as it is, in the order you wrote it. Each item gets one emoji between the bullet and the link, outside the brackets, so the link text is still only the title.</p>
+    <ul><li>Nothing else changes: same order, same list, no new headings. The emoji is the same character in English, Turkish and Persian, so a translation never has to translate it.</li><li>Reads the same on GitHub, in VS Code, on a phone and right to left. Five emoji to learn, and the link next to each one confirms it (a youtube.com link next to 🎬).</li><li>Costs: a screen reader says the emoji name before every link ("page facing up"). The site can read "Article" there instead without touching the markdown; GitHub cannot.</li></ul>
+  </div>
+  <p class="why"><b>Why this one:</b> it tells the kinds apart with one character per line and changes nothing else, in any viewer and any of the three languages.</p>
+  <div class="pair">
+    <div class="col"><p class="stage-label">(a) In the file, <code>harness_engineering.md</code></p><div class="slab"><div class="slab-head"><span>harness_engineering.md</span><span>raw markdown</span></div><pre><span class="m-h">## References</span>
+
+<span class="m-p">- </span><span class="m-e">📄</span> [Harness Engineering: What It Is and How It Complements Context Engineering]<span class="m-u">(https://medium.com/@amirkiarafiei/harness-engineering-what-it-is-and-how-it-complements-context-engineering-6545b40bfc84)</span>: the car, the track and the barriers, in full detail
+<span class="m-p">- </span><span class="m-e">📄</span> [The Anatomy of an Agent Harness]<span class="m-u">(https://www.langchain.com/blog/the-anatomy-of-an-agent-harness)</span>: Agent = Model + Harness, and the list of parts that this module works from
+<span class="m-p">- </span><span class="m-e">📄</span> [How to Build a Custom Agent Harness]<span class="m-u">(https://www.langchain.com/blog/how-to-build-a-custom-agent-harness)</span>: how to build one yourself, with middleware
+<span class="m-p">- </span><span class="m-e">📄</span> [Improving Deep Agents with harness engineering]<span class="m-u">(https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering)</span>: five concrete changes, and the jump from 52.8% to 66.5% that they produced
+<span class="m-p">- </span><span class="m-e">📄</span> [Harness engineering: leveraging Codex in an agent-first world]<span class="m-u">(https://openai.com/index/harness-engineering/)</span>: a team that built a product with agents, and what they had to do to their repository first
+<span class="m-p">- </span><span class="m-e">📄</span> [Harness engineering for coding agent users]<span class="m-u">(https://martinfowler.com/articles/harness-engineering.html)</span>: the idea of guides and sensors, the split into computational and inferential, and the most complete text on the subject
+<span class="m-p">- </span><span class="m-e">📄</span> [The importance of Agent Harness in 2026]<span class="m-u">(https://www.philschmid.de/agent-harness-2026)</span>: the harness as the operating system around the model, and why it should be easy to delete
+<span class="m-p">- </span><span class="m-e">📄</span> [Finding the Best Harness for DeepSeek V4 Flash]<span class="m-u">(https://composio.dev/content/best-agent-harness-deepseek-v4-flash)</span>: eight harnesses and one model, with cost and speed next to the pass rate
+<span class="m-p">- </span><span class="m-e">🧰</span> [DeepSeek Harness]<span class="m-u">(https://github.com/deepseek-ai/deepseek-harness)</span>: a harness published next to the model it was tuned for
+<span class="m-p">- </span><span class="m-e">🧰</span> [deepagents]<span class="m-u">(https://github.com/langchain-ai/deepagents)</span>: the open harness from the anatomy article
+<span class="m-p">- </span><span class="m-e">📚</span> [best-of-Agent-Harnesses]<span class="m-u">(https://github.com/RyanAlberts/best-of-Agent-Harnesses)</span>: a ranked list of more than a hundred, scored again every week
+<span class="m-p">- </span><span class="m-e">📚</span> [awesome-harness-engineering]<span class="m-u">(https://github.com/walkinglabs/awesome-harness-engineering)</span>: tools and guides for the practice
+<span class="m-p">- </span><span class="m-e">🎬</span> [Agent Harness Explained in 2 minutes]<span class="m-u">(https://youtube.com/shorts/IVdJj_aNwhE)</span>: the short version, if you prefer to watch
+<span class="m-p">- </span><span class="m-e">🎬</span> [Agent Harness explained in 8min..]<span class="m-u">(https://www.youtube.com/watch?v=1a1VXDdIyrk)</span>: the longer version, which puts the three practices side by side, like the rings above
+<span class="m-p">- </span><span class="m-e">🎬</span> [What is an Agent Harness?]<span class="m-u">(https://www.youtube.com/watch?v=R0ckdFjUF5U)</span>: LangChain's own video on the parts of a harness, from the team behind the anatomy article
+<span class="m-p">- </span><span class="m-e">🧭</span> [Advanced Harness Engineering]<span class="m-u">(../3_expert/advanced_harness_engineering.md)</span>: profiles, self-evolving harnesses, and what is moving into the model</pre></div></div>
+    <div class="col"><p class="stage-label">(b) On the site, the module page at 1440px</p><div class="site"><div class="sheet prose "><h2 class="sec"><span>References</span></h2><ul><li><span class="kind" aria-hidden="false">📄</span> <a href="https://medium.com/@amirkiarafiei/harness-engineering-what-it-is-and-how-it-complements-context-engineering-6545b40bfc84" target="_blank" rel="noopener">Harness Engineering: What It Is and How It Complements Context Engineering⁠<span class="ext" aria-hidden="true">↗</span></a>: the car, the track and the barriers, in full detail</li><li><span class="kind" aria-hidden="false">📄</span> <a href="https://www.langchain.com/blog/the-anatomy-of-an-agent-harness" target="_blank" rel="noopener">The Anatomy of an Agent Harness⁠<span class="ext" aria-hidden="true">↗</span></a>: Agent = Model + Harness, and the list of parts that this module works from</li><li><span class="kind" aria-hidden="false">📄</span> <a href="https://www.langchain.com/blog/how-to-build-a-custom-agent-harness" target="_blank" rel="noopener">How to Build a Custom Agent Harness⁠<span class="ext" aria-hidden="true">↗</span></a>: how to build one yourself, with middleware</li><li><span class="kind" aria-hidden="false">📄</span> <a href="https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering" target="_blank" rel="noopener">Improving Deep Agents with harness engineering⁠<span class="ext" aria-hidden="true">↗</span></a>: five concrete changes, and the jump from 52.8% to 66.5% that they produced</li><li><span class="kind" aria-hidden="false">📄</span> <a href="https://openai.com/index/harness-engineering/" target="_blank" rel="noopener">Harness engineering: leveraging Codex in an agent-first world⁠<span class="ext" aria-hidden="true">↗</span></a>: a team that built a product with agents, and what they had to do to their repository first</li><li><span class="kind" aria-hidden="false">📄</span> <a href="https://martinfowler.com/articles/harness-engineering.html" target="_blank" rel="noopener">Harness engineering for coding agent users⁠<span class="ext" aria-hidden="true">↗</span></a>: the idea of guides and sensors, the split into computational and inferential, and the most complete text on the subject</li><li><span class="kind" aria-hidden="false">📄</span> <a href="https://www.philschmid.de/agent-harness-2026" target="_blank" rel="noopener">The importance of Agent Harness in 2026⁠<span class="ext" aria-hidden="true">↗</span></a>: the harness as the operating system around the model, and why it should be easy to delete</li><li><span class="kind" aria-hidden="false">📄</span> <a href="https://composio.dev/content/best-agent-harness-deepseek-v4-flash" target="_blank" rel="noopener">Finding the Best Harness for DeepSeek V4 Flash⁠<span class="ext" aria-hidden="true">↗</span></a>: eight harnesses and one model, with cost and speed next to the pass rate</li><li><span class="kind" aria-hidden="false">🧰</span> <a href="https://github.com/deepseek-ai/deepseek-harness" target="_blank" rel="noopener">DeepSeek Harness⁠<span class="ext" aria-hidden="true">↗</span></a>: a harness published next to the model it was tuned for</li><li><span class="kind" aria-hidden="false">🧰</span> <a href="https://github.com/langchain-ai/deepagents" target="_blank" rel="noopener">deepagents⁠<span class="ext" aria-hidden="true">↗</span></a>: the open harness from the anatomy article</li><li><span class="kind" aria-hidden="false">📚</span> <a href="https://github.com/RyanAlberts/best-of-Agent-Harnesses" target="_blank" rel="noopener">best-of-Agent-Harnesses⁠<span class="ext" aria-hidden="true">↗</span></a>: a ranked list of more than a hundred, scored again every week</li><li><span class="kind" aria-hidden="false">📚</span> <a href="https://github.com/walkinglabs/awesome-harness-engineering" target="_blank" rel="noopener">awesome-harness-engineering⁠<span class="ext" aria-hidden="true">↗</span></a>: tools and guides for the practice</li><li><span class="kind" aria-hidden="false">🎬</span> <a href="https://youtube.com/shorts/IVdJj_aNwhE" target="_blank" rel="noopener">Agent Harness Explained in 2 minutes⁠<span class="ext" aria-hidden="true">↗</span></a>: the short version, if you prefer to watch</li><li><span class="kind" aria-hidden="false">🎬</span> <a href="https://www.youtube.com/watch?v=1a1VXDdIyrk" target="_blank" rel="noopener">Agent Harness explained in 8min..⁠<span class="ext" aria-hidden="true">↗</span></a>: the longer version, which puts the three practices side by side, like the rings above</li><li><span class="kind" aria-hidden="false">🎬</span> <a href="https://www.youtube.com/watch?v=R0ckdFjUF5U" target="_blank" rel="noopener">What is an Agent Harness?⁠<span class="ext" aria-hidden="true">↗</span></a>: LangChain's own video on the parts of a harness, from the team behind the anatomy article</li><li><span class="kind" aria-hidden="false">🧭</span> <a href="../3_expert/advanced_harness_engineering.md">Advanced Harness Engineering</a>: profiles, self-evolving harnesses, and what is moving into the model</li></ul></div></div></div>
+  </div>
+  <div class="checks">
+    <div><p class="stage-label">On a phone, 390px. The frame scrolls.</p><div class="phone" aria-label="Phone width, 390 pixels"><div class="phone-bar"><span class="cube"></span><span>Home</span><span>Catalog</span></div><div class="phone-body prose "><h2 class="sec"><span>References</span></h2><ul><li><span class="kind" aria-hidden="false">📄</span> <a href="https://medium.com/@amirkiarafiei/harness-engineering-what-it-is-and-how-it-complements-context-engineering-6545b40bfc84" target="_blank" rel="noopener">Harness Engineering: What It Is and How It Complements Context Engineering⁠<span class="ext" aria-hidden="true">↗</span></a>: the car, the track and the barriers, in full detail</li><li><span class="kind" aria-hidden="false">📄</span> <a href="https://www.langchain.com/blog/the-anatomy-of-an-agent-harness" target="_blank" rel="noopener">The Anatomy of an Agent Harness⁠<span class="ext" aria-hidden="true">↗</span></a>: Agent = Model + Harness, and the list of parts that this module works from</li><li><span class="kind" aria-hidden="false">📄</span> <a href="https://www.langchain.com/blog/how-to-build-a-custom-agent-harness" target="_blank" rel="noopener">How to Build a Custom Agent Harness⁠<span class="ext" aria-hidden="true">↗</span></a>: how to build one yourself, with middleware</li><li><span class="kind" aria-hidden="false">📄</span> <a href="https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering" target="_blank" rel="noopener">Improving Deep Agents with harness engineering⁠<span class="ext" aria-hidden="true">↗</span></a>: five concrete changes, and the jump from 52.8% to 66.5% that they produced</li><li><span class="kind" aria-hidden="false">📄</span> <a href="https://openai.com/index/harness-engineering/" target="_blank" rel="noopener">Harness engineering: leveraging Codex in an agent-first world⁠<span class="ext" aria-hidden="true">↗</span></a>: a team that built a product with agents, and what they had to do to their repository first</li><li><span class="kind" aria-hidden="false">📄</span> <a href="https://martinfowler.com/articles/harness-engineering.html" target="_blank" rel="noopener">Harness engineering for coding agent users⁠<span class="ext" aria-hidden="true">↗</span></a>: the idea of guides and sensors, the split into computational and inferential, and the most complete text on the subject</li><li><span class="kind" aria-hidden="false">📄</span> <a href="https://www.philschmid.de/agent-harness-2026" target="_blank" rel="noopener">The importance of Agent Harness in 2026⁠<span class="ext" aria-hidden="true">↗</span></a>: the harness as the operating system around the model, and why it should be easy to delete</li><li><span class="kind" aria-hidden="false">📄</span> <a href="https://composio.dev/content/best-agent-harness-deepseek-v4-flash" target="_blank" rel="noopener">Finding the Best Harness for DeepSeek V4 Flash⁠<span class="ext" aria-hidden="true">↗</span></a>: eight harnesses and one model, with cost and speed next to the pass rate</li><li><span class="kind" aria-hidden="false">🧰</span> <a href="https://github.com/deepseek-ai/deepseek-harness" target="_blank" rel="noopener">DeepSeek Harness⁠<span class="ext" aria-hidden="true">↗</span></a>: a harness published next to the model it was tuned for</li><li><span class="kind" aria-hidden="false">🧰</span> <a href="https://github.com/langchain-ai/deepagents" target="_blank" rel="noopener">deepagents⁠<span class="ext" aria-hidden="true">↗</span></a>: the open harness from the anatomy article</li><li><span class="kind" aria-hidden="false">📚</span> <a href="https://github.com/RyanAlberts/best-of-Agent-Harnesses" target="_blank" rel="noopener">best-of-Agent-Harnesses⁠<span class="ext" aria-hidden="true">↗</span></a>: a ranked list of more than a hundred, scored again every week</li><li><span class="kind" aria-hidden="false">📚</span> <a href="https://github.com/walkinglabs/awesome-harness-engineering" target="_blank" rel="noopener">awesome-harness-engineering⁠<span class="ext" aria-hidden="true">↗</span></a>: tools and guides for the practice</li><li><span class="kind" aria-hidden="false">🎬</span> <a href="https://youtube.com/shorts/IVdJj_aNwhE" target="_blank" rel="noopener">Agent Harness Explained in 2 minutes⁠<span class="ext" aria-hidden="true">↗</span></a>: the short version, if you prefer to watch</li><li><span class="kind" aria-hidden="false">🎬</span> <a href="https://www.youtube.com/watch?v=1a1VXDdIyrk" target="_blank" rel="noopener">Agent Harness explained in 8min..⁠<span class="ext" aria-hidden="true">↗</span></a>: the longer version, which puts the three practices side by side, like the rings above</li><li><span class="kind" aria-hidden="false">🎬</span> <a href="https://www.youtube.com/watch?v=R0ckdFjUF5U" target="_blank" rel="noopener">What is an Agent Harness?⁠<span class="ext" aria-hidden="true">↗</span></a>: LangChain's own video on the parts of a harness, from the team behind the anatomy article</li><li><span class="kind" aria-hidden="false">🧭</span> <a href="../3_expert/advanced_harness_engineering.md">Advanced Harness Engineering</a>: profiles, self-evolving harnesses, and what is moving into the model</li></ul></div></div></div>
+    <div class="check-side">
+      <p class="stage-label">What a screen reader says (NVDA or VoiceOver, in Chrome)</p>
+      <ol class="sr"><li>list, 16 items</li><li>bullet<i>, </i><b>page facing up</b><i>, </i>link, Harness Engineering: What It Is and How It Complements Context Engineering<i>, </i>the car, the track and the barriers, in full detail</li><li>bullet<i>, </i><b>toolbox</b><i>, </i>link, DeepSeek Harness<i>, </i>a harness published next to the model it was tuned for</li><li>bullet<i>, </i><b>clapper board</b><i>, </i>link, Agent Harness Explained in 2 minutes<i>, </i>the short version, if you prefer to watch</li><li>bullet<i>, </i><b>compass</b><i>, </i>link, Advanced Harness Engineering<i>, </i>profiles, self-evolving harnesses, and what is moving into the model</li></ol>
+      <p class="note">GitHub, VS Code and the site today all read the emoji by its Unicode name. On the site, the renderer could mark a leading kind emoji as an image named “Article”, “Video” and so on, so the line reads “Article, link, …”. That is one rule in <code>src/lib/content/render.ts</code>, and the markdown stays the same.</p>
+      
+      
+    </div>
+  </div>
+  
+  <div class="fa-block">
+    <h3 class="sub-h">J1 in Persian, right to left</h3>
+    <p class="sub-p">The same five emoji, the same position in the line. Five of the sixteen Persian lines, one of each kind, taken from <code>harness_engineering_fa.md</code>.</p>
+    <div class="pair">
+      <div class="col"><p class="stage-label">(a) In the file, <code>harness_engineering_fa.md</code></p><div class="slab" data-fa><div class="slab-head"><span>harness_engineering_fa.md</span><span>raw markdown</span></div><pre><span class="m-h">## منابع</span>
+
+<span class="m-p">- </span><span class="m-e">📄</span> [Harness Engineering: What It Is and How It Complements Context Engineering]<span class="m-u">(https://medium.com/@amirkiarafiei/harness-engineering-what-it-is-and-how-it-complements-context-engineering-6545b40bfc84)</span>: ماشین، پیست و گاردریل‌ها، با همه‌ی جزئیات
+<span class="m-p">- </span><span class="m-e">🧰</span> [DeepSeek Harness]<span class="m-u">(https://github.com/deepseek-ai/deepseek-harness)</span>: harness‌ی که کنار همون مدلی منتشر شده که براش تنظیم شده
+<span class="m-p">- </span><span class="m-e">📚</span> [best-of-Agent-Harnesses]<span class="m-u">(https://github.com/RyanAlberts/best-of-Agent-Harnesses)</span>: رتبه‌بندی بیشتر از صد تا harness، که هر هفته از نو امتیاز می‌گیرن
+<span class="m-p">- </span><span class="m-e">🎬</span> [Agent Harness Explained in 2 minutes]<span class="m-u">(https://youtube.com/shorts/IVdJj_aNwhE)</span>: نسخه‌ی کوتاه، اگه دیدن ویدیو رو ترجیح می‌دی
+<span class="m-p">- </span><span class="m-e">🧭</span> [Advanced Harness Engineering]<span class="m-u">(../3_expert/advanced_harness_engineering.md)</span>: profile‌ها، harness‌هایی که خودشون رو تکامل می‌دن، و چیزهایی که دارن می‌رن توی خود مدل</pre></div></div>
+      <div class="col"><p class="stage-label">(b) On the site, <code>/fa/courses/intermediate/harness-engineering/</code></p><div class="site"><div class="sheet prose" lang="fa" dir="rtl"><h2 class="sec"><span>منابع</span></h2><ul><li><span class="kind" aria-hidden="false">📄</span> <a href="https://medium.com/@amirkiarafiei/harness-engineering-what-it-is-and-how-it-complements-context-engineering-6545b40bfc84" target="_blank" rel="noopener">Harness Engineering: What It Is and How It Complements Context Engineering⁠<span class="ext" aria-hidden="true">↗</span></a>: ماشین، پیست و گاردریل‌ها، با همه‌ی جزئیات</li><li><span class="kind" aria-hidden="false">🧰</span> <a href="https://github.com/deepseek-ai/deepseek-harness" target="_blank" rel="noopener">DeepSeek Harness⁠<span class="ext" aria-hidden="true">↗</span></a>: harness‌ی که کنار همون مدلی منتشر شده که براش تنظیم شده</li><li><span class="kind" aria-hidden="false">📚</span> <a href="https://github.com/RyanAlberts/best-of-Agent-Harnesses" target="_blank" rel="noopener">best-of-Agent-Harnesses⁠<span class="ext" aria-hidden="true">↗</span></a>: رتبه‌بندی بیشتر از صد تا harness، که هر هفته از نو امتیاز می‌گیرن</li><li><span class="kind" aria-hidden="false">🎬</span> <a href="https://youtube.com/shorts/IVdJj_aNwhE" target="_blank" rel="noopener">Agent Harness Explained in 2 minutes⁠<span class="ext" aria-hidden="true">↗</span></a>: نسخه‌ی کوتاه، اگه دیدن ویدیو رو ترجیح می‌دی</li><li><span class="kind" aria-hidden="false">🧭</span> <a href="../3_expert/advanced_harness_engineering.md">Advanced Harness Engineering</a>: profile‌ها، harness‌هایی که خودشون رو تکامل می‌دن، و چیزهایی که دارن می‌رن توی خود مدل</li></ul></div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="opt" id="J2" aria-labelledby="J2-t">
+  <div class="opt-head"><span class="code">J2</span><h2 id="J2-t">Small groups, each under a short heading</h2></div>
+  <div class="opt-text">
+    <p>The list is split into groups by kind, each under a ### heading inside References. Items keep your order inside their group.</p>
+    <ul><li>The kind is a word, so it reads well to everyone, screen readers included, and a reader looking for videos goes straight to the group.</li><li>Costs: five headings at the bottom of every page, each with its own § link. The order you chose across kinds is lost, and short lists end up with groups of one (Observability has 6 references in 3 kinds).</li><li>Five heading words to keep identical in three languages across every module.</li></ul>
+  </div>
+  
+  <div class="pair">
+    <div class="col"><p class="stage-label">(a) In the file, <code>harness_engineering.md</code></p><div class="slab"><div class="slab-head"><span>harness_engineering.md</span><span>raw markdown</span></div><pre><span class="m-h">## References</span>
+
+<span class="m-h">### Articles</span>
+
+<span class="m-p">- </span>[Harness Engineering: What It Is and How It Complements Context Engineering]<span class="m-u">(https://medium.com/@amirkiarafiei/harness-engineering-what-it-is-and-how-it-complements-context-engineering-6545b40bfc84)</span>: the car, the track and the barriers, in full detail
+<span class="m-p">- </span>[The Anatomy of an Agent Harness]<span class="m-u">(https://www.langchain.com/blog/the-anatomy-of-an-agent-harness)</span>: Agent = Model + Harness, and the list of parts that this module works from
+<span class="m-p">- </span>[How to Build a Custom Agent Harness]<span class="m-u">(https://www.langchain.com/blog/how-to-build-a-custom-agent-harness)</span>: how to build one yourself, with middleware
+<span class="m-p">- </span>[Improving Deep Agents with harness engineering]<span class="m-u">(https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering)</span>: five concrete changes, and the jump from 52.8% to 66.5% that they produced
+<span class="m-p">- </span>[Harness engineering: leveraging Codex in an agent-first world]<span class="m-u">(https://openai.com/index/harness-engineering/)</span>: a team that built a product with agents, and what they had to do to their repository first
+<span class="m-p">- </span>[Harness engineering for coding agent users]<span class="m-u">(https://martinfowler.com/articles/harness-engineering.html)</span>: the idea of guides and sensors, the split into computational and inferential, and the most complete text on the subject
+<span class="m-p">- </span>[The importance of Agent Harness in 2026]<span class="m-u">(https://www.philschmid.de/agent-harness-2026)</span>: the harness as the operating system around the model, and why it should be easy to delete
+<span class="m-p">- </span>[Finding the Best Harness for DeepSeek V4 Flash]<span class="m-u">(https://composio.dev/content/best-agent-harness-deepseek-v4-flash)</span>: eight harnesses and one model, with cost and speed next to the pass rate
+
+<span class="m-h">### Videos</span>
+
+<span class="m-p">- </span>[Agent Harness Explained in 2 minutes]<span class="m-u">(https://youtube.com/shorts/IVdJj_aNwhE)</span>: the short version, if you prefer to watch
+<span class="m-p">- </span>[Agent Harness explained in 8min..]<span class="m-u">(https://www.youtube.com/watch?v=1a1VXDdIyrk)</span>: the longer version, which puts the three practices side by side, like the rings above
+<span class="m-p">- </span>[What is an Agent Harness?]<span class="m-u">(https://www.youtube.com/watch?v=R0ckdFjUF5U)</span>: LangChain's own video on the parts of a harness, from the team behind the anatomy article
+
+<span class="m-h">### Tools and libraries</span>
+
+<span class="m-p">- </span>[DeepSeek Harness]<span class="m-u">(https://github.com/deepseek-ai/deepseek-harness)</span>: a harness published next to the model it was tuned for
+<span class="m-p">- </span>[deepagents]<span class="m-u">(https://github.com/langchain-ai/deepagents)</span>: the open harness from the anatomy article
+
+<span class="m-h">### Lists and courses</span>
+
+<span class="m-p">- </span>[best-of-Agent-Harnesses]<span class="m-u">(https://github.com/RyanAlberts/best-of-Agent-Harnesses)</span>: a ranked list of more than a hundred, scored again every week
+<span class="m-p">- </span>[awesome-harness-engineering]<span class="m-u">(https://github.com/walkinglabs/awesome-harness-engineering)</span>: tools and guides for the practice
+
+<span class="m-h">### In this course</span>
+
+<span class="m-p">- </span>[Advanced Harness Engineering]<span class="m-u">(../3_expert/advanced_harness_engineering.md)</span>: profiles, self-evolving harnesses, and what is moving into the model</pre></div></div>
+    <div class="col"><p class="stage-label">(b) On the site, the module page at 1440px</p><div class="site"><div class="sheet prose "><h2 class="sec"><span>References</span></h2><h3 class="subsec">Articles</h3><ul><li><a href="https://medium.com/@amirkiarafiei/harness-engineering-what-it-is-and-how-it-complements-context-engineering-6545b40bfc84" target="_blank" rel="noopener">Harness Engineering: What It Is and How It Complements Context Engineering⁠<span class="ext" aria-hidden="true">↗</span></a>: the car, the track and the barriers, in full detail</li><li><a href="https://www.langchain.com/blog/the-anatomy-of-an-agent-harness" target="_blank" rel="noopener">The Anatomy of an Agent Harness⁠<span class="ext" aria-hidden="true">↗</span></a>: Agent = Model + Harness, and the list of parts that this module works from</li><li><a href="https://www.langchain.com/blog/how-to-build-a-custom-agent-harness" target="_blank" rel="noopener">How to Build a Custom Agent Harness⁠<span class="ext" aria-hidden="true">↗</span></a>: how to build one yourself, with middleware</li><li><a href="https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering" target="_blank" rel="noopener">Improving Deep Agents with harness engineering⁠<span class="ext" aria-hidden="true">↗</span></a>: five concrete changes, and the jump from 52.8% to 66.5% that they produced</li><li><a href="https://openai.com/index/harness-engineering/" target="_blank" rel="noopener">Harness engineering: leveraging Codex in an agent-first world⁠<span class="ext" aria-hidden="true">↗</span></a>: a team that built a product with agents, and what they had to do to their repository first</li><li><a href="https://martinfowler.com/articles/harness-engineering.html" target="_blank" rel="noopener">Harness engineering for coding agent users⁠<span class="ext" aria-hidden="true">↗</span></a>: the idea of guides and sensors, the split into computational and inferential, and the most complete text on the subject</li><li><a href="https://www.philschmid.de/agent-harness-2026" target="_blank" rel="noopener">The importance of Agent Harness in 2026⁠<span class="ext" aria-hidden="true">↗</span></a>: the harness as the operating system around the model, and why it should be easy to delete</li><li><a href="https://composio.dev/content/best-agent-harness-deepseek-v4-flash" target="_blank" rel="noopener">Finding the Best Harness for DeepSeek V4 Flash⁠<span class="ext" aria-hidden="true">↗</span></a>: eight harnesses and one model, with cost and speed next to the pass rate</li></ul><h3 class="subsec">Videos</h3><ul><li><a href="https://youtube.com/shorts/IVdJj_aNwhE" target="_blank" rel="noopener">Agent Harness Explained in 2 minutes⁠<span class="ext" aria-hidden="true">↗</span></a>: the short version, if you prefer to watch</li><li><a href="https://www.youtube.com/watch?v=1a1VXDdIyrk" target="_blank" rel="noopener">Agent Harness explained in 8min..⁠<span class="ext" aria-hidden="true">↗</span></a>: the longer version, which puts the three practices side by side, like the rings above</li><li><a href="https://www.youtube.com/watch?v=R0ckdFjUF5U" target="_blank" rel="noopener">What is an Agent Harness?⁠<span class="ext" aria-hidden="true">↗</span></a>: LangChain's own video on the parts of a harness, from the team behind the anatomy article</li></ul><h3 class="subsec">Tools and libraries</h3><ul><li><a href="https://github.com/deepseek-ai/deepseek-harness" target="_blank" rel="noopener">DeepSeek Harness⁠<span class="ext" aria-hidden="true">↗</span></a>: a harness published next to the model it was tuned for</li><li><a href="https://github.com/langchain-ai/deepagents" target="_blank" rel="noopener">deepagents⁠<span class="ext" aria-hidden="true">↗</span></a>: the open harness from the anatomy article</li></ul><h3 class="subsec">Lists and courses</h3><ul><li><a href="https://github.com/RyanAlberts/best-of-Agent-Harnesses" target="_blank" rel="noopener">best-of-Agent-Harnesses⁠<span class="ext" aria-hidden="true">↗</span></a>: a ranked list of more than a hundred, scored again every week</li><li><a href="https://github.com/walkinglabs/awesome-harness-engineering" target="_blank" rel="noopener">awesome-harness-engineering⁠<span class="ext" aria-hidden="true">↗</span></a>: tools and guides for the practice</li></ul><h3 class="subsec">In this course</h3><ul><li><a href="../3_expert/advanced_harness_engineering.md">Advanced Harness Engineering</a>: profiles, self-evolving harnesses, and what is moving into the model</li></ul></div></div></div>
+  </div>
+  <div class="checks">
+    <div><p class="stage-label">On a phone, 390px, opened at the second group. The frame scrolls.</p><div class="phone" aria-label="Phone width, 390 pixels"><div class="phone-bar"><span class="cube"></span><span>Home</span><span>Catalog</span></div><div class="phone-body prose start-videos"><h2 class="sec"><span>References</span></h2><h3 class="subsec">Articles</h3><ul><li><a href="https://medium.com/@amirkiarafiei/harness-engineering-what-it-is-and-how-it-complements-context-engineering-6545b40bfc84" target="_blank" rel="noopener">Harness Engineering: What It Is and How It Complements Context Engineering⁠<span class="ext" aria-hidden="true">↗</span></a>: the car, the track and the barriers, in full detail</li><li><a href="https://www.langchain.com/blog/the-anatomy-of-an-agent-harness" target="_blank" rel="noopener">The Anatomy of an Agent Harness⁠<span class="ext" aria-hidden="true">↗</span></a>: Agent = Model + Harness, and the list of parts that this module works from</li><li><a href="https://www.langchain.com/blog/how-to-build-a-custom-agent-harness" target="_blank" rel="noopener">How to Build a Custom Agent Harness⁠<span class="ext" aria-hidden="true">↗</span></a>: how to build one yourself, with middleware</li><li><a href="https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering" target="_blank" rel="noopener">Improving Deep Agents with harness engineering⁠<span class="ext" aria-hidden="true">↗</span></a>: five concrete changes, and the jump from 52.8% to 66.5% that they produced</li><li><a href="https://openai.com/index/harness-engineering/" target="_blank" rel="noopener">Harness engineering: leveraging Codex in an agent-first world⁠<span class="ext" aria-hidden="true">↗</span></a>: a team that built a product with agents, and what they had to do to their repository first</li><li><a href="https://martinfowler.com/articles/harness-engineering.html" target="_blank" rel="noopener">Harness engineering for coding agent users⁠<span class="ext" aria-hidden="true">↗</span></a>: the idea of guides and sensors, the split into computational and inferential, and the most complete text on the subject</li><li><a href="https://www.philschmid.de/agent-harness-2026" target="_blank" rel="noopener">The importance of Agent Harness in 2026⁠<span class="ext" aria-hidden="true">↗</span></a>: the harness as the operating system around the model, and why it should be easy to delete</li><li><a href="https://composio.dev/content/best-agent-harness-deepseek-v4-flash" target="_blank" rel="noopener">Finding the Best Harness for DeepSeek V4 Flash⁠<span class="ext" aria-hidden="true">↗</span></a>: eight harnesses and one model, with cost and speed next to the pass rate</li></ul><h3 class="subsec">Videos</h3><ul><li><a href="https://youtube.com/shorts/IVdJj_aNwhE" target="_blank" rel="noopener">Agent Harness Explained in 2 minutes⁠<span class="ext" aria-hidden="true">↗</span></a>: the short version, if you prefer to watch</li><li><a href="https://www.youtube.com/watch?v=1a1VXDdIyrk" target="_blank" rel="noopener">Agent Harness explained in 8min..⁠<span class="ext" aria-hidden="true">↗</span></a>: the longer version, which puts the three practices side by side, like the rings above</li><li><a href="https://www.youtube.com/watch?v=R0ckdFjUF5U" target="_blank" rel="noopener">What is an Agent Harness?⁠<span class="ext" aria-hidden="true">↗</span></a>: LangChain's own video on the parts of a harness, from the team behind the anatomy article</li></ul><h3 class="subsec">Tools and libraries</h3><ul><li><a href="https://github.com/deepseek-ai/deepseek-harness" target="_blank" rel="noopener">DeepSeek Harness⁠<span class="ext" aria-hidden="true">↗</span></a>: a harness published next to the model it was tuned for</li><li><a href="https://github.com/langchain-ai/deepagents" target="_blank" rel="noopener">deepagents⁠<span class="ext" aria-hidden="true">↗</span></a>: the open harness from the anatomy article</li></ul><h3 class="subsec">Lists and courses</h3><ul><li><a href="https://github.com/RyanAlberts/best-of-Agent-Harnesses" target="_blank" rel="noopener">best-of-Agent-Harnesses⁠<span class="ext" aria-hidden="true">↗</span></a>: a ranked list of more than a hundred, scored again every week</li><li><a href="https://github.com/walkinglabs/awesome-harness-engineering" target="_blank" rel="noopener">awesome-harness-engineering⁠<span class="ext" aria-hidden="true">↗</span></a>: tools and guides for the practice</li></ul><h3 class="subsec">In this course</h3><ul><li><a href="../3_expert/advanced_harness_engineering.md">Advanced Harness Engineering</a>: profiles, self-evolving harnesses, and what is moving into the model</li></ul></div></div></div>
+    <div class="check-side">
+      <p class="stage-label">What a screen reader says (NVDA or VoiceOver, in Chrome)</p>
+      <ol class="sr"><li><b>heading level 3, Articles</b></li><li>list, 8 items<i>, </i>bullet<i>, </i>link, Harness Engineering: What It Is and How It Complements Context Engineering<i>, </i>the car, the track and the barriers, in full detail</li><li>…</li><li><b>heading level 3, Videos</b></li><li>list, 3 items<i>, </i>bullet<i>, </i>link, Agent Harness Explained in 2 minutes<i>, </i>the short version, if you prefer to watch</li></ol>
+      
+      <p class="note">The heading key (H) jumps from group to group, which is the best way through of the three.</p>
+      
+    </div>
+  </div>
+  
+</section>
+
+<section class="opt" id="J3" aria-labelledby="J3-t">
+  <div class="opt-head"><span class="code">J3</span><h2 id="J3-t">A table with a Type column</h2></div>
+  <div class="opt-text">
+    <p>The list becomes a three-column table: the type in words, the link, and why it is worth opening.</p>
+    <ul><li>The most explicit: the type is a column you can read down, and in words.</li><li>Costs: the site turns every markdown table into a numbered figure, so it would print "TBL. 12.1 — References" over it. At phone width three columns squeeze each title into a narrow column.</li><li>The raw file gets hard to read and edit: one long line per row, and a | inside a title breaks the row.</li></ul>
+  </div>
+  
+  <div class="pair">
+    <div class="col"><p class="stage-label">(a) In the file, <code>harness_engineering.md</code></p><div class="slab"><div class="slab-head"><span>harness_engineering.md</span><span>raw markdown</span></div><pre><span class="m-h">## References</span>
+
+<span class="m-p">|</span> Type <span class="m-p">|</span> Reference <span class="m-p">|</span> Why open it <span class="m-p">|</span>
+<span class="m-p">|</span> --- <span class="m-p">|</span> --- <span class="m-p">|</span> --- <span class="m-p">|</span>
+<span class="m-p">|</span> Article <span class="m-p">|</span> [Harness Engineering: What It Is and How It Complements Context Engineering]<span class="m-u">(https://medium.com/@amirkiarafiei/harness-engineering-what-it-is-and-how-it-complements-context-engineering-6545b40bfc84)</span> <span class="m-p">|</span> the car, the track and the barriers, in full detail <span class="m-p">|</span>
+<span class="m-p">|</span> Article <span class="m-p">|</span> [The Anatomy of an Agent Harness]<span class="m-u">(https://www.langchain.com/blog/the-anatomy-of-an-agent-harness)</span> <span class="m-p">|</span> Agent = Model + Harness, and the list of parts that this module works from <span class="m-p">|</span>
+<span class="m-p">|</span> Article <span class="m-p">|</span> [How to Build a Custom Agent Harness]<span class="m-u">(https://www.langchain.com/blog/how-to-build-a-custom-agent-harness)</span> <span class="m-p">|</span> how to build one yourself, with middleware <span class="m-p">|</span>
+<span class="m-p">|</span> Article <span class="m-p">|</span> [Improving Deep Agents with harness engineering]<span class="m-u">(https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering)</span> <span class="m-p">|</span> five concrete changes, and the jump from 52.8% to 66.5% that they produced <span class="m-p">|</span>
+<span class="m-p">|</span> Article <span class="m-p">|</span> [Harness engineering: leveraging Codex in an agent-first world]<span class="m-u">(https://openai.com/index/harness-engineering/)</span> <span class="m-p">|</span> a team that built a product with agents, and what they had to do to their repository first <span class="m-p">|</span>
+<span class="m-p">|</span> Article <span class="m-p">|</span> [Harness engineering for coding agent users]<span class="m-u">(https://martinfowler.com/articles/harness-engineering.html)</span> <span class="m-p">|</span> the idea of guides and sensors, the split into computational and inferential, and the most complete text on the subject <span class="m-p">|</span>
+<span class="m-p">|</span> Article <span class="m-p">|</span> [The importance of Agent Harness in 2026]<span class="m-u">(https://www.philschmid.de/agent-harness-2026)</span> <span class="m-p">|</span> the harness as the operating system around the model, and why it should be easy to delete <span class="m-p">|</span>
+<span class="m-p">|</span> Article <span class="m-p">|</span> [Finding the Best Harness for DeepSeek V4 Flash]<span class="m-u">(https://composio.dev/content/best-agent-harness-deepseek-v4-flash)</span> <span class="m-p">|</span> eight harnesses and one model, with cost and speed next to the pass rate <span class="m-p">|</span>
+<span class="m-p">|</span> Tool <span class="m-p">|</span> [DeepSeek Harness]<span class="m-u">(https://github.com/deepseek-ai/deepseek-harness)</span> <span class="m-p">|</span> a harness published next to the model it was tuned for <span class="m-p">|</span>
+<span class="m-p">|</span> Tool <span class="m-p">|</span> [deepagents]<span class="m-u">(https://github.com/langchain-ai/deepagents)</span> <span class="m-p">|</span> the open harness from the anatomy article <span class="m-p">|</span>
+<span class="m-p">|</span> List <span class="m-p">|</span> [best-of-Agent-Harnesses]<span class="m-u">(https://github.com/RyanAlberts/best-of-Agent-Harnesses)</span> <span class="m-p">|</span> a ranked list of more than a hundred, scored again every week <span class="m-p">|</span>
+<span class="m-p">|</span> List <span class="m-p">|</span> [awesome-harness-engineering]<span class="m-u">(https://github.com/walkinglabs/awesome-harness-engineering)</span> <span class="m-p">|</span> tools and guides for the practice <span class="m-p">|</span>
+<span class="m-p">|</span> Video <span class="m-p">|</span> [Agent Harness Explained in 2 minutes]<span class="m-u">(https://youtube.com/shorts/IVdJj_aNwhE)</span> <span class="m-p">|</span> the short version, if you prefer to watch <span class="m-p">|</span>
+<span class="m-p">|</span> Video <span class="m-p">|</span> [Agent Harness explained in 8min..]<span class="m-u">(https://www.youtube.com/watch?v=1a1VXDdIyrk)</span> <span class="m-p">|</span> the longer version, which puts the three practices side by side, like the rings above <span class="m-p">|</span>
+<span class="m-p">|</span> Video <span class="m-p">|</span> [What is an Agent Harness?]<span class="m-u">(https://www.youtube.com/watch?v=R0ckdFjUF5U)</span> <span class="m-p">|</span> LangChain's own video on the parts of a harness, from the team behind the anatomy article <span class="m-p">|</span>
+<span class="m-p">|</span> Module <span class="m-p">|</span> [Advanced Harness Engineering]<span class="m-u">(../3_expert/advanced_harness_engineering.md)</span> <span class="m-p">|</span> profiles, self-evolving harnesses, and what is moving into the model <span class="m-p">|</span></pre></div></div>
+    <div class="col"><p class="stage-label">(b) On the site, the module page at 1440px</p><div class="site"><div class="sheet prose "><h2 class="sec"><span>References</span></h2><figure class="tablefig"><figcaption>TBL. 12.1 — References</figcaption><div class="scroller"><table><thead><tr><th>Type</th><th>Reference</th><th>Why open it</th></tr></thead><tbody><tr><th scope="row">Article</th><td><a href="https://medium.com/@amirkiarafiei/harness-engineering-what-it-is-and-how-it-complements-context-engineering-6545b40bfc84" target="_blank" rel="noopener">Harness Engineering: What It Is and How It Complements Context Engineering⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>the car, the track and the barriers, in full detail</td></tr><tr><th scope="row">Article</th><td><a href="https://www.langchain.com/blog/the-anatomy-of-an-agent-harness" target="_blank" rel="noopener">The Anatomy of an Agent Harness⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>Agent = Model + Harness, and the list of parts that this module works from</td></tr><tr><th scope="row">Article</th><td><a href="https://www.langchain.com/blog/how-to-build-a-custom-agent-harness" target="_blank" rel="noopener">How to Build a Custom Agent Harness⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>how to build one yourself, with middleware</td></tr><tr><th scope="row">Article</th><td><a href="https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering" target="_blank" rel="noopener">Improving Deep Agents with harness engineering⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>five concrete changes, and the jump from 52.8% to 66.5% that they produced</td></tr><tr><th scope="row">Article</th><td><a href="https://openai.com/index/harness-engineering/" target="_blank" rel="noopener">Harness engineering: leveraging Codex in an agent-first world⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>a team that built a product with agents, and what they had to do to their repository first</td></tr><tr><th scope="row">Article</th><td><a href="https://martinfowler.com/articles/harness-engineering.html" target="_blank" rel="noopener">Harness engineering for coding agent users⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>the idea of guides and sensors, the split into computational and inferential, and the most complete text on the subject</td></tr><tr><th scope="row">Article</th><td><a href="https://www.philschmid.de/agent-harness-2026" target="_blank" rel="noopener">The importance of Agent Harness in 2026⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>the harness as the operating system around the model, and why it should be easy to delete</td></tr><tr><th scope="row">Article</th><td><a href="https://composio.dev/content/best-agent-harness-deepseek-v4-flash" target="_blank" rel="noopener">Finding the Best Harness for DeepSeek V4 Flash⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>eight harnesses and one model, with cost and speed next to the pass rate</td></tr><tr><th scope="row">Tool</th><td><a href="https://github.com/deepseek-ai/deepseek-harness" target="_blank" rel="noopener">DeepSeek Harness⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>a harness published next to the model it was tuned for</td></tr><tr><th scope="row">Tool</th><td><a href="https://github.com/langchain-ai/deepagents" target="_blank" rel="noopener">deepagents⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>the open harness from the anatomy article</td></tr><tr><th scope="row">List</th><td><a href="https://github.com/RyanAlberts/best-of-Agent-Harnesses" target="_blank" rel="noopener">best-of-Agent-Harnesses⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>a ranked list of more than a hundred, scored again every week</td></tr><tr><th scope="row">List</th><td><a href="https://github.com/walkinglabs/awesome-harness-engineering" target="_blank" rel="noopener">awesome-harness-engineering⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>tools and guides for the practice</td></tr><tr><th scope="row">Video</th><td><a href="https://youtube.com/shorts/IVdJj_aNwhE" target="_blank" rel="noopener">Agent Harness Explained in 2 minutes⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>the short version, if you prefer to watch</td></tr><tr><th scope="row">Video</th><td><a href="https://www.youtube.com/watch?v=1a1VXDdIyrk" target="_blank" rel="noopener">Agent Harness explained in 8min..⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>the longer version, which puts the three practices side by side, like the rings above</td></tr><tr><th scope="row">Video</th><td><a href="https://www.youtube.com/watch?v=R0ckdFjUF5U" target="_blank" rel="noopener">What is an Agent Harness?⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>LangChain's own video on the parts of a harness, from the team behind the anatomy article</td></tr><tr><th scope="row">Module</th><td><a href="../3_expert/advanced_harness_engineering.md">Advanced Harness Engineering</a></td><td>profiles, self-evolving harnesses, and what is moving into the model</td></tr></tbody></table></div></figure></div></div></div>
+  </div>
+  <div class="checks">
+    <div><p class="stage-label">On a phone, 390px. The frame scrolls.</p><div class="phone" aria-label="Phone width, 390 pixels"><div class="phone-bar"><span class="cube"></span><span>Home</span><span>Catalog</span></div><div class="phone-body prose "><h2 class="sec"><span>References</span></h2><figure class="tablefig"><figcaption>TBL. 12.1 — References</figcaption><div class="scroller"><table><thead><tr><th>Type</th><th>Reference</th><th>Why open it</th></tr></thead><tbody><tr><th scope="row">Article</th><td><a href="https://medium.com/@amirkiarafiei/harness-engineering-what-it-is-and-how-it-complements-context-engineering-6545b40bfc84" target="_blank" rel="noopener">Harness Engineering: What It Is and How It Complements Context Engineering⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>the car, the track and the barriers, in full detail</td></tr><tr><th scope="row">Article</th><td><a href="https://www.langchain.com/blog/the-anatomy-of-an-agent-harness" target="_blank" rel="noopener">The Anatomy of an Agent Harness⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>Agent = Model + Harness, and the list of parts that this module works from</td></tr><tr><th scope="row">Article</th><td><a href="https://www.langchain.com/blog/how-to-build-a-custom-agent-harness" target="_blank" rel="noopener">How to Build a Custom Agent Harness⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>how to build one yourself, with middleware</td></tr><tr><th scope="row">Article</th><td><a href="https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering" target="_blank" rel="noopener">Improving Deep Agents with harness engineering⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>five concrete changes, and the jump from 52.8% to 66.5% that they produced</td></tr><tr><th scope="row">Article</th><td><a href="https://openai.com/index/harness-engineering/" target="_blank" rel="noopener">Harness engineering: leveraging Codex in an agent-first world⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>a team that built a product with agents, and what they had to do to their repository first</td></tr><tr><th scope="row">Article</th><td><a href="https://martinfowler.com/articles/harness-engineering.html" target="_blank" rel="noopener">Harness engineering for coding agent users⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>the idea of guides and sensors, the split into computational and inferential, and the most complete text on the subject</td></tr><tr><th scope="row">Article</th><td><a href="https://www.philschmid.de/agent-harness-2026" target="_blank" rel="noopener">The importance of Agent Harness in 2026⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>the harness as the operating system around the model, and why it should be easy to delete</td></tr><tr><th scope="row">Article</th><td><a href="https://composio.dev/content/best-agent-harness-deepseek-v4-flash" target="_blank" rel="noopener">Finding the Best Harness for DeepSeek V4 Flash⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>eight harnesses and one model, with cost and speed next to the pass rate</td></tr><tr><th scope="row">Tool</th><td><a href="https://github.com/deepseek-ai/deepseek-harness" target="_blank" rel="noopener">DeepSeek Harness⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>a harness published next to the model it was tuned for</td></tr><tr><th scope="row">Tool</th><td><a href="https://github.com/langchain-ai/deepagents" target="_blank" rel="noopener">deepagents⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>the open harness from the anatomy article</td></tr><tr><th scope="row">List</th><td><a href="https://github.com/RyanAlberts/best-of-Agent-Harnesses" target="_blank" rel="noopener">best-of-Agent-Harnesses⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>a ranked list of more than a hundred, scored again every week</td></tr><tr><th scope="row">List</th><td><a href="https://github.com/walkinglabs/awesome-harness-engineering" target="_blank" rel="noopener">awesome-harness-engineering⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>tools and guides for the practice</td></tr><tr><th scope="row">Video</th><td><a href="https://youtube.com/shorts/IVdJj_aNwhE" target="_blank" rel="noopener">Agent Harness Explained in 2 minutes⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>the short version, if you prefer to watch</td></tr><tr><th scope="row">Video</th><td><a href="https://www.youtube.com/watch?v=1a1VXDdIyrk" target="_blank" rel="noopener">Agent Harness explained in 8min..⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>the longer version, which puts the three practices side by side, like the rings above</td></tr><tr><th scope="row">Video</th><td><a href="https://www.youtube.com/watch?v=R0ckdFjUF5U" target="_blank" rel="noopener">What is an Agent Harness?⁠<span class="ext" aria-hidden="true">↗</span></a></td><td>LangChain's own video on the parts of a harness, from the team behind the anatomy article</td></tr><tr><th scope="row">Module</th><td><a href="../3_expert/advanced_harness_engineering.md">Advanced Harness Engineering</a></td><td>profiles, self-evolving harnesses, and what is moving into the model</td></tr></tbody></table></div></figure></div></div></div>
+    <div class="check-side">
+      <p class="stage-label">What a screen reader says (NVDA or VoiceOver, in Chrome)</p>
+      <ol class="sr"><li>region, Table 12.1<i>, </i><b>table with 17 rows and 3 columns</b></li><li>row 1<i>, </i>Type, column 1<i>, </i>Reference, column 2<i>, </i>Why open it, column 3</li><li>row 2<i>, </i><b>Type, Article</b><i>, </i>Reference, link, Harness Engineering: What It Is and How It Complements Context Engineering<i>, </i>Why open it, the car, the track and the barriers, in full detail</li><li>row 10<i>, </i><b>Type, Tool</b><i>, </i>Reference, link, DeepSeek Harness<i>, </i>Why open it, a harness published next to the model it was tuned for</li></ol>
+      
+      
+      <p class="note">Every cell is announced with its column name, so each reference takes longer to hear than it does as a list item.</p>
+    </div>
+  </div>
+  
+</section>
+
+  <section class="end" id="compare" aria-labelledby="compare-t">
+    <h2 id="compare-t">Side by side</h2>
+    <p class="sub-p">“On this page” is the contents list on the right of every module page.</p>
+    
+<div class="cmp-wrap"><table class="cmp">
+<thead><tr><th></th><th>J1 · emoji</th><th>J2 · groups</th><th>J3 · table</th></tr></thead>
+<tbody>
+<tr><th>GitHub and VS Code preview</th>
+<td>Renders as written. The emoji are drawn by the system's emoji font. All five are plain emoji characters that need no extra invisible character to show in colour, so none of them falls back to a black-and-white glyph.</td>
+<td>Renders as written. GitHub adds the five headings to its Outline menu and gives each one an anchor.</td>
+<td>Renders as a table. The raw file, which is what you edit, is one long line per row.</td></tr>
+<tr><th>On a phone</th>
+<td>Each item is one emoji wider; the titles wrap where they wrap now. 1718px of scrolling in this page's phone frame.</td>
+<td>The same lines plus five headings: 1956px.</td>
+<td>Three columns in 342px: titles break over several short lines and rows get tall: 2707px.</td></tr>
+<tr><th>“On this page”</th>
+<td>No change.</td>
+<td>No change. The site's contents list shows <code>##</code> headings only (<code>ModuleSheet.tsx</code> keeps <code>toc</code> entries of depth 2), so a <code>###</code> gets the subsection style and a § link but no entry. GitHub's own Outline does list them.</td>
+<td>No change.</td></tr>
+<tr><th>Keeping it consistent</th>
+<td>One character per item: 176 items in English, 176 in Turkish, 175 in Persian today. The Turkish and Persian lists must carry the same emoji in the same order as the English one, which a test can check, since the links already line up line by line.</td>
+<td>Items move into groups in all three files, and five heading words are written three ways each. Every module has to use the same five, in the same order.</td>
+<td>Every list rewritten as rows in all three files. Type words translated. A <code>|</code> in a title or a note has to be escaped.</td></tr>
+<tr><th>Screen readers</th>
+<td>The emoji name before every link: “page facing up”, “clapper board”, “toolbox”, “books”, “compass”. The site can say “Article” instead; GitHub cannot.</td>
+<td>Clean: “heading level 3, Videos”, then the list. The heading key moves between kinds.</td>
+<td>The kind is a spoken word, but every cell also announces its row and column.</td></tr>
+</tbody></table></div>
+  </section>
+
+  <section class="end" id="every" aria-labelledby="every-t">
+    <h2 id="every-t">Every reference in Harness Engineering, by kind</h2>
+    <p class="sub-p">In the order of the file. Number 8 is a written benchmark report, so it counts as an article. 11 and 12 are GitHub repositories, but what they hold is a list of other links, so they count as lists, not tools.</p>
+    <div class="every-wrap"><table class="every"><thead><tr><th>#</th><th>Reference</th><th>Kind</th></tr></thead><tbody><tr><td>1</td><td><a href="https://medium.com/@amirkiarafiei/harness-engineering-what-it-is-and-how-it-complements-context-engineering-6545b40bfc84" target="_blank" rel="noopener">Harness Engineering: What It Is and How It Complements Context Engineering⁠<span class="ext" aria-hidden="true">↗</span></a><span class="host">medium.com</span></td><td><span class="kind-cell">📄 Article</span></td></tr><tr><td>2</td><td><a href="https://www.langchain.com/blog/the-anatomy-of-an-agent-harness" target="_blank" rel="noopener">The Anatomy of an Agent Harness⁠<span class="ext" aria-hidden="true">↗</span></a><span class="host">langchain.com</span></td><td><span class="kind-cell">📄 Article</span></td></tr><tr><td>3</td><td><a href="https://www.langchain.com/blog/how-to-build-a-custom-agent-harness" target="_blank" rel="noopener">How to Build a Custom Agent Harness⁠<span class="ext" aria-hidden="true">↗</span></a><span class="host">langchain.com</span></td><td><span class="kind-cell">📄 Article</span></td></tr><tr><td>4</td><td><a href="https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering" target="_blank" rel="noopener">Improving Deep Agents with harness engineering⁠<span class="ext" aria-hidden="true">↗</span></a><span class="host">langchain.com</span></td><td><span class="kind-cell">📄 Article</span></td></tr><tr><td>5</td><td><a href="https://openai.com/index/harness-engineering/" target="_blank" rel="noopener">Harness engineering: leveraging Codex in an agent-first world⁠<span class="ext" aria-hidden="true">↗</span></a><span class="host">openai.com</span></td><td><span class="kind-cell">📄 Article</span></td></tr><tr><td>6</td><td><a href="https://martinfowler.com/articles/harness-engineering.html" target="_blank" rel="noopener">Harness engineering for coding agent users⁠<span class="ext" aria-hidden="true">↗</span></a><span class="host">martinfowler.com</span></td><td><span class="kind-cell">📄 Article</span></td></tr><tr><td>7</td><td><a href="https://www.philschmid.de/agent-harness-2026" target="_blank" rel="noopener">The importance of Agent Harness in 2026⁠<span class="ext" aria-hidden="true">↗</span></a><span class="host">philschmid.de</span></td><td><span class="kind-cell">📄 Article</span></td></tr><tr><td>8</td><td><a href="https://composio.dev/content/best-agent-harness-deepseek-v4-flash" target="_blank" rel="noopener">Finding the Best Harness for DeepSeek V4 Flash⁠<span class="ext" aria-hidden="true">↗</span></a><span class="host">composio.dev</span></td><td><span class="kind-cell">📄 Article</span></td></tr><tr><td>9</td><td><a href="https://github.com/deepseek-ai/deepseek-harness" target="_blank" rel="noopener">DeepSeek Harness⁠<span class="ext" aria-hidden="true">↗</span></a><span class="host">github.com</span></td><td><span class="kind-cell">🧰 Tool or library</span></td></tr><tr><td>10</td><td><a href="https://github.com/langchain-ai/deepagents" target="_blank" rel="noopener">deepagents⁠<span class="ext" aria-hidden="true">↗</span></a><span class="host">github.com</span></td><td><span class="kind-cell">🧰 Tool or library</span></td></tr><tr><td>11</td><td><a href="https://github.com/RyanAlberts/best-of-Agent-Harnesses" target="_blank" rel="noopener">best-of-Agent-Harnesses⁠<span class="ext" aria-hidden="true">↗</span></a><span class="host">github.com</span></td><td><span class="kind-cell">📚 List</span></td></tr><tr><td>12</td><td><a href="https://github.com/walkinglabs/awesome-harness-engineering" target="_blank" rel="noopener">awesome-harness-engineering⁠<span class="ext" aria-hidden="true">↗</span></a><span class="host">github.com</span></td><td><span class="kind-cell">📚 List</span></td></tr><tr><td>13</td><td><a href="https://youtube.com/shorts/IVdJj_aNwhE" target="_blank" rel="noopener">Agent Harness Explained in 2 minutes⁠<span class="ext" aria-hidden="true">↗</span></a><span class="host">youtube.com</span></td><td><span class="kind-cell">🎬 Video</span></td></tr><tr><td>14</td><td><a href="https://www.youtube.com/watch?v=1a1VXDdIyrk" target="_blank" rel="noopener">Agent Harness explained in 8min..⁠<span class="ext" aria-hidden="true">↗</span></a><span class="host">youtube.com</span></td><td><span class="kind-cell">🎬 Video</span></td></tr><tr><td>15</td><td><a href="https://www.youtube.com/watch?v=R0ckdFjUF5U" target="_blank" rel="noopener">What is an Agent Harness?⁠<span class="ext" aria-hidden="true">↗</span></a><span class="host">youtube.com</span></td><td><span class="kind-cell">🎬 Video</span></td></tr><tr><td>16</td><td><a href="../3_expert/advanced_harness_engineering.md">Advanced Harness Engineering</a><span class="host">this course</span></td><td><span class="kind-cell">🧭 Module</span></td></tr></tbody></table></div>
+  </section>
+</main>
+<script>
+for (const body of document.querySelectorAll('.start-videos')) {
+  const h = [...body.querySelectorAll('.subsec')][1]
+  if (h) body.scrollTop = h.offsetTop - body.offsetTop - 12
+}
+</script>
+</body>
+</html>

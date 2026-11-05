@@ -21,14 +21,14 @@ description: >
 authority: state
 writes: agent, every session
 status: active
-covers: "M16 to M40 (M39 on branch design/round-2026-11), 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. Checkbox format repaired across the part on 2026-09-13."
+covers: "M16 to M40 and M42 (M41 on PR #57), 2026-09-09 onward — M16 the ten stages and the review pass, M17 the curriculum fold, M18 the front door, M20 the catalog's descriptions, M21 the module page, M22 the progress redesign and M19's pipeline, all six done; M23 — the interface's own strings — is written and not started; M24 — the author's requests of 2026-10-11 — shipped and merged as PR #23, with a same-day follow-up (the level chip `All`, a filter bar that no longer sticks, the current level marked); M25 — the end of a module rebuilt, and a quick quiz — shipped and merged as PR #25; M26 — headings, the requested additions and ASD-STE-like English across the corpus — merged as PR #26. M27 — the Bazaar Street front door — merged as PR #27. Released as v1.0.0 on 2026-10-12. M28 — Persian, the third language — merged as PR #30 the same day. M29 — both translations rewritten in their own language (D81) — merged as PR #31 the same day. M30 — the Persian rewritten by meaning and a clarity hunt in all three languages (D82, D83) — merged as PR #32 the same day. M31 — two promo videos, one made with HyperFrames and one with /brag (D84) — removed at the author's request before merging. M32 — the README rewritten for readers — squash-merged as PR #33 on 2026-10-13. M33 — a tray of lokum offered at each door on hover — merged as PR #34 on 2026-10-14. M34 — the star count refreshed by the deploy (D85) — merged as PR #36 on 2026-10-15. M35 — Harness Engineering names its parts in plain words — merged as PR #38 on 2026-10-15. M36 — three references for Observability and Context Engineering — merged as PR #42 on 2026-10-18. M37 — ten stale mockups removed from playground/ — merged as PR #54 on 2026-11-05. M38 — the progress page slimmed to its circles, the continue card and the data row — merged as PR #55 on 2026-11-05. Checkbox format repaired across the part on 2026-09-13."
 last_updated: 2026-11-05
 ---
 
-# 📈 PROGRESS, part 2 — M16 to M40
+# 📈 PROGRESS, part 2 — M16 to M42
 
 > **← Part 1: [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the review pass over M10 to M14.
-> This part holds **M16 to M40**, in the order they were worked.
+> This part holds **M16 to M42**, in the order they were worked.
 
 ## How to work this file
 
@@ -4299,6 +4299,34 @@ progress per track (D86) is not part of this milestone and waits for the track s
 - [x] Typecheck, 2,107 unit and corpus tests, and the full browser suite (1,175 passed, 59 skipped) pass.
 
 
+## 🏁 Milestone M39: Two tracks and a new front door, chosen in the playground — IN PROGRESS, WAITING ON THE AUTHOR'S PICKS
+
+Branch `design/round-2026-11`. The author, 2026-11-05, after six readers had used the site, set the
+order: decide the designs in `playground/` first, then build the site from the picks, and revise the
+content (the readers' feedback, the GitHub issues, the new modules) last. Two decisions were taken
+the same day without a playground: **D86**, every module gets a For Everyone version beside the For
+Engineers one, and **D87**, the figure formats, with no MDX. D87's rule is written into
+`mini-courses/CLAUDE.md` (and `AGENTS.md`) as "Figure formats".
+
+### Deliverables
+
+- [x] **Ten option pages** in `playground/2026-11-round-2/`, each with its options labelled by code,
+      their trade-offs and one recommendation, and an `index.html` that lists all ten: A track
+      names, B the mark that says which track a page is in, C switching track, D the catalog menu,
+      E the language button, F the progress page per track, G a scene per home-page stall, H the
+      track choice before the doors, I the two characters beside it, J the kinds of reference in a
+      module's list.
+- [ ] The author's picks, one code per page.
+- [ ] The site built from them: the track system (names, mark, switch, catalog menu, progress per
+      track), the language button, the home page's scenes, choice step and characters, and the
+      reference-list format.
+
+### Acceptance criteria
+
+- [ ] Every built surface matches the option the author picked, compared in a screenshot.
+- [ ] Every existing route and capability survives; a For Everyone page exists only where it is
+      written, and the switch says so where it is not.
+
 ## 🏁 Milestone M40: Removed features gone from the code, and the test suite cut to what guards a reader — SHIPPED, MERGED AS PR #56
 
 Branch `chore/remove-deprecated`, from `main` at `bc39c96`. (M39, the round-2 design choices, is
@@ -4342,6 +4370,30 @@ the ones that are not that important."* **D88** records the choice.
       suite passes (451 passed, 10 skipped).
 - [x] Root `CLAUDE.md`, `ARCHITECTURE.md` (§1, rule 3, rule 6 struck, §5, §6 struck, routes, §8
       struck, §10 to §12), `tests/README.md` and D88 say what went.
+
+
+## 🏁 Milestone M42: Who owns what, and the instruction files trimmed — SHIPPED, MERGED AS PR #58
+
+Branch `design/round-2026-11`, merged together with M39's playground pages. (M41 is the number PR #57
+holds, unmerged.) The author, 2026-11-05: a colleague's PR must not change the website's design or
+content, and *"if he changes something that I myself added and yet no conflicts appear, we should not
+think that they should be merged"*; and the root and `mini-courses/` `CLAUDE.md` / `AGENTS.md` were
+too large, with information that goes stale.
+
+### Deliverables
+
+- [x] **The ownership rule**: `specs/MANIFESTO.md` §7 (the standing constraint that called the app
+      a colleague's work is struck and replaced), D90, and one paragraph in the root `CLAUDE.md`.
+- [x] **The root `CLAUDE.md`'s project part rewritten** to what changes rarely: who owns what, the
+      design's source of truth, commands, the cross-file architecture, the enforced rules and the
+      conventions. Milestone history and counts went; `kia-context/` keeps them. 400 → 214 lines,
+      the installed kia-context block unchanged.
+- [x] **`mini-courses/CLAUDE.md` and `AGENTS.md`** (identical) rewritten with every rule kept and
+      the anecdotes, stale counts and duplicated sections cut; the repo map now says the website is
+      the author's. 636 → 303 lines.
+- [x] The root `AGENTS.md` is untouched: it is the `next dev` block and the installed kia-context
+      block, nothing else.
+- [ ] PR #57: finish the changes the author wants, then tell cevheri what changed (D90).
 
 ---
 

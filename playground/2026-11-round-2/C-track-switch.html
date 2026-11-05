@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Switching track</title>
+<style>
+:root{
+  --ground:#fdfbf7;--raised:#ffffff;--sand:#e6dac6;--line:#d8cbb4;--line-2:#c3b299;
+  --ink:#20242e;--title:#1b1b47;--muted:#6a6558;--faint:#948d7d;
+  --bar:#282864;--on-bar:#ffffff;--on-bar-dim:#c9c6e4;--bar-hover:rgba(255,255,255,.10);
+  --field:rgba(255,255,255,.08);--field-line:rgba(255,255,255,.25);--chip:#fdfbf7;--chip-ink:#1b1b47;
+  --orn:#c8a078;--focus:#a0503c;
+  --c1:#2f8c86;--c2:#282864;--c3:#7a4a86;--c4:#b8873b;--c5:#a0503c;
+  --sans:"Avenir Next",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --persian:Vazirmatn,"Noto Naskh Arabic","Noto Sans Arabic",Tahoma,"Segoe UI",sans-serif;
+  --menu-shadow:0 12px 28px rgba(40,30,10,.13);
+  --band:linear-gradient(45deg,#2f8c86 25%,transparent 25% 75%,#2f8c86 75%),linear-gradient(45deg,#c8a078 25%,transparent 25% 75%,#c8a078 75%),linear-gradient(45deg,#a0503c 25%,transparent 25% 75%,#a0503c 75%);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font:16px/1.6 var(--sans)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+button{font:inherit;color:inherit}
+
+/* ---------- the page that holds the options ---------- */
+.p-bar{background:var(--bar);color:#fff;height:58px;display:flex;align-items:center;gap:14px;padding:0 22px}
+.p-bar a{color:#fff;text-decoration:none;font-weight:600;display:flex;align-items:center;gap:10px}
+.p-bar .logo{width:28px;height:28px;background:url("data:image/webp;base64,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") center/contain no-repeat;flex:none}
+.p-bar .dim{color:var(--on-bar-dim);font-weight:500;font-size:14.5px}
+.p-band{height:18px;background-color:#282864;background-image:var(--band);background-size:18px 18px,18px 18px,54px 18px;background-position:0 0,9px 9px,27px 0;border-bottom:2px solid #b8873b}
+.wrap{max-width:1360px;margin:0 auto;padding:40px 40px 96px}
+.q{color:var(--title);font-size:32px;line-height:1.18;letter-spacing:-.015em;margin:0 0 10px;font-weight:650;max-width:30ch}
+.q-sub{color:var(--muted);margin:0 0 22px;max-width:76ch}
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.jump a{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);background:var(--raised);border:1px solid var(--line);border-radius:6px;padding:6px 12px 6px 6px;font-size:14px;font-weight:500}
+.jump a:hover{border-color:var(--line-2)}
+.code{display:inline-block;background:var(--title);color:#fff;border-radius:4px;padding:0 7px;font:700 13px/22px var(--sans);flex:none}
+.jump .star{color:var(--muted);font-weight:600;font-size:12.5px}
+.opt{border-top:1px solid var(--line);margin-top:44px;padding-top:36px}
+.opt-head{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:0 0 8px}
+.opt-head .code{font-size:15px;line-height:26px;padding:0 9px}
+.opt-head h2{margin:0;color:var(--title);font-size:24px;line-height:1.25;letter-spacing:-.012em;font-weight:650}
+.rec{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--orn);background:#fbf3e7;color:#5a4224;border-radius:9px;padding:2px 10px;font-size:13.5px;font-weight:600}
+.rec svg{flex:none}
+.what{margin:0 0 12px;max-width:80ch;font-size:16px}
+.why{margin:0 0 14px;color:#5a4224;font-size:15px;max-width:80ch}
+.why b{color:#5a4224}
+.trade{display:grid;grid-template-columns:1fr 1fr;gap:6px 28px;margin:0 0 22px;padding:0;list-style:none;max-width:1100px}
+.trade li{position:relative;padding-left:22px;font-size:14.5px;line-height:1.5;color:var(--ink)}
+.trade li::before{position:absolute;left:0;top:0;font-weight:700;width:16px;text-align:center}
+.trade li.good::before{content:"+";color:var(--c1)}
+.trade li.cost::before{content:"\2212";color:var(--c5)}
+.trade-label{display:none}
+.caption{font-size:13.5px;color:var(--muted);margin:0 0 8px;font-weight:600}
+.pair-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.note{font-size:14px;color:var(--muted);margin:10px 0 0;max-width:80ch}
+.scaler{width:100%;overflow:hidden;min-width:0}
+.pair-grid > *,.dark-row > *,.ctx > *{min-width:0}
+.scaler > .site{transform-origin:0 0}
+@media (max-width:900px){
+  .wrap{padding:28px 16px 72px}
+  .q{font-size:26px}
+  .trade{grid-template-columns:1fr}
+  .pair-grid{grid-template-columns:1fr}
+}
+
+/* ---------- the site, drawn ---------- */
+.site{--s-ground:var(--ground);background:var(--ground);color:var(--ink);border:1px solid var(--line);border-radius:8px;overflow:hidden;font-family:var(--sans);text-align:left;position:relative}
+.s-bar{background:var(--bar);color:#fff;height:58px;display:flex;align-items:center;gap:16px;padding:0 22px;position:relative;z-index:3}
+.s-brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:600;font-size:16px;white-space:nowrap;text-decoration:none}
+.s-brand i{width:32px;height:32px;background:url("data:image/webp;base64,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") center/contain no-repeat;display:block;flex:none}
+.s-nav{display:flex;gap:2px;align-items:center;margin-left:6px}
+.s-link{color:var(--on-bar-dim);font-size:14.5px;font-weight:500;padding:7px 11px;border-radius:5px;line-height:1;display:inline-flex;gap:6px;align-items:center;white-space:nowrap;background:none;border:0;cursor:pointer;text-decoration:none}
+.s-link:hover{background:var(--bar-hover);color:#fff}
+.s-link.is-on{background:var(--chip);color:var(--chip-ink)}
+.s-sp{flex:1}
+.s-icon{width:33px;height:33px;border:1px solid var(--field-line);background:var(--field);border-radius:5px;display:grid;place-items:center;color:#fff;flex:none;cursor:pointer;padding:0}
+.s-icon:hover{background:rgba(255,255,255,.16)}
+.s-repo{height:33px;border:1px solid var(--field-line);background:var(--field);border-radius:5px;display:flex;align-items:center;gap:6px;padding:0 9px;color:#fff;font-size:12.5px;font-weight:600;flex:none}
+.s-repo .st{color:var(--c4)}
+.s-band{height:18px;background-color:#282864;background-image:var(--band);background-size:18px 18px,18px 18px,54px 18px;background-position:0 0,9px 9px,27px 0;border-bottom:2px solid #b8873b}
+.s-shell{display:grid;grid-template-columns:240px 1fr}
+.s-rail{padding:18px 12px 24px;border-right:1px solid var(--line);background:var(--ground)}
+.s-rail-head{font-size:13px;font-weight:600;color:var(--muted);margin:0 2px 6px;display:flex;align-items:center;gap:7px}
+.s-group{margin-top:8px}
+.s-group > .g{display:flex;align-items:center;gap:9px;padding:9px 12px 9px 9px;border-radius:14px 14px 4px 4px;font-size:14.5px;font-weight:600;line-height:1.2;border:1px solid var(--line);background:var(--raised)}
+.s-group.open > .g{background:var(--sand);border-color:var(--sand)}
+.s-group .k{width:4px;height:16px;border-radius:2px;background:var(--cat);flex:none}
+.s-group .n{margin-left:auto;font-size:12.5px;color:var(--muted);font-weight:500}
+.s-group.open .n{color:var(--ink);font-weight:600}
+.s-items{list-style:none;margin:6px 0 0 16px;padding:0 0 0 12px;border-left:1px solid var(--line)}
+.s-items li{font-size:14px;color:var(--muted);padding:6px 9px;border-radius:5px;line-height:1.5;display:flex;align-items:center;gap:8px}
+.s-items li.cur{background:var(--cat);color:#fff;font-weight:600}
+.s-items li.pend{color:var(--faint)}
+.s-items .tk{margin-left:auto;color:var(--c1);display:flex}
+.s-items li.cur .tk{color:#fff}
+.s-main{padding:30px 44px 36px;min-width:0}
+.s-crumb{font-size:14px;color:var(--muted);margin:0 0 14px;display:flex;flex-wrap:wrap;gap:0 8px;align-items:center}
+.s-crumb .sep{color:var(--faint)}
+.s-h1{font-size:38px;line-height:1.16;letter-spacing:-.015em;color:var(--title);font-weight:650;margin:0 0 10px}
+.s-meta{font-size:14px;color:var(--muted);margin:0 0 24px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 11px}
+.s-card{background:var(--raised);border:1px solid var(--line);border-radius:8px;padding:18px 22px 10px;margin:0 0 22px}
+.s-card h3{margin:0 0 8px;font-size:14.5px;color:var(--title);font-weight:650}
+.s-card ul{margin:0;padding-left:22px}
+.s-card li{font-size:15.5px;line-height:1.5;margin:0 0 9px}
+.s-lead{color:var(--muted);font-size:16px;line-height:1.68;margin:0}
+/* the bar's dropdown panel, the one every bar menu shares */
+.s-menu{position:absolute;top:calc(100% + 6px);background:var(--raised);border:1px solid var(--line);border-radius:8px;box-shadow:var(--menu-shadow);padding:6px;min-width:170px;z-index:10;color:var(--ink)}
+.s-mi{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:5px;font-size:14px;font-weight:500;line-height:1.3;color:var(--ink);text-decoration:none;background:none;border:0;width:100%;text-align:left;cursor:pointer;white-space:nowrap}
+.s-mi:hover{background:#f6f0e6}
+.s-mi .ck{margin-left:auto;color:var(--title);display:flex}
+.s-mi .cnt{margin-left:auto;font-size:12.5px;color:var(--muted)}
+.s-mi .key{width:4px;height:14px;border-radius:2px;background:var(--cat);flex:none}
+.s-mh{font-size:13px;font-weight:650;color:var(--title);padding:8px 10px 4px;display:flex;align-items:center;gap:7px}
+.s-mh + .s-mi{margin-top:0}
+.s-msep{height:1px;background:var(--line);margin:6px 4px}
+
+/* the dark sibling: the slab promoted, the bar unchanged */
+.site.dark{--ground:#1d1f27;--raised:#262933;--sand:#181a21;--line:#33363f;--line-2:#444854;--ink:#e7e3d8;--title:#e9e6e0;--muted:#9aa0ad;--faint:#606571;--c2:#676daf;--c3:#91609d;--c5:#ad5b47}
+.site.dark .s-group.open > .g{background:#2d3039;border-color:#2d3039}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.try{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin:0 0 12px;font-size:14px;color:var(--muted)}
+.try button{border:1px solid var(--line);background:var(--raised);border-radius:6px;padding:5px 11px;font-size:14px;cursor:pointer;color:var(--ink)}
+.try button:hover{border-color:var(--line-2)}
+.try button[aria-pressed="true"]{border-color:var(--title);color:var(--title);font-weight:600;box-shadow:inset 0 0 0 1px var(--title)}
+.hint{font-size:13.5px;color:var(--muted);margin:8px 0 0}
+.s-dd{position:relative;display:flex}
+.s-dd .s-menu{right:0}
+/* C1: a two-segment toggle */
+.seg{display:flex;padding:2px;gap:2px;border:1px solid var(--field-line);background:var(--field);border-radius:6px;height:33px}
+.seg button{border:0;background:none;color:var(--on-bar-dim);font-size:13.5px;font-weight:600;padding:0 10px;border-radius:4px;display:flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap}
+.seg button:hover{color:#fff;background:var(--bar-hover)}
+.seg button[aria-pressed="true"]{background:var(--chip);color:var(--chip-ink)}
+.seg button.missing{color:rgba(201,198,228,.62)}
+.seg button.missing span{text-decoration:underline dotted;text-underline-offset:3px}
+/* C2 and C3: a labelled trigger */
+.trk-btn{height:33px;display:flex;align-items:center;gap:7px;padding:0 10px 0 9px;border:1px solid var(--field-line);background:var(--field);border-radius:5px;color:#fff;font-size:13.5px;font-weight:600;white-space:nowrap;cursor:pointer}
+.trk-btn:hover,.trk-btn[aria-expanded="true"]{background:rgba(255,255,255,.16)}
+.trk-btn .dim{color:var(--on-bar-dim);font-weight:500}
+.s-mi .sub{display:block;font-size:12.5px;color:var(--muted);font-weight:400;margin-top:2px;white-space:normal}
+.s-mi.na{color:var(--muted)}
+.s-mi.off{cursor:default;color:var(--faint)}
+.s-mi.off:hover{background:none}
+.s-mi .lbl{display:flex;flex-direction:column}
+.s-mi .ic{display:flex;color:var(--title)}
+.s-mi.na .ic,.s-mi.off .ic{color:var(--faint)}
+.s-menu.wide{min-width:250px}
+/* the page inside */
+.t-pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-2);background:var(--raised);color:var(--title);border-radius:5px;padding:1px 9px 1px 7px;font-size:13.5px;font-weight:600;line-height:22px}
+.s-crumb .trk{color:var(--title);font-weight:600}
+.notice{background:var(--raised);border:1px solid var(--line-2);border-radius:8px;padding:12px 16px;margin:0 0 20px;font-size:14.5px;line-height:1.5;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.notice .lnk,.altline .lnk{color:var(--title);font-weight:600;text-decoration:underline;text-underline-offset:3px;background:none;border:0;padding:0;cursor:pointer;font-size:inherit}
+.altline{display:flex;align-items:center;gap:8px;font-size:14.5px;color:var(--muted);margin:-12px 0 22px}
+.altline .ic{display:flex;color:var(--title)}
+.lv{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:8px;background:var(--raised)}
+.lv li{display:flex;align-items:center;gap:12px;padding:11px 16px;font-size:15px}
+.lv li + li{border-top:1px solid var(--line)}
+.lv .no{color:var(--faint);width:20px;font-size:13px}
+.lv button{background:none;border:0;padding:0;font-size:15px;color:var(--title);font-weight:600;cursor:pointer;text-align:left}
+.lv button:hover{text-decoration:underline;text-underline-offset:3px}
+.lv .pend{color:var(--faint)}
+.lv .st{margin-left:auto;font-size:13px;color:var(--faint)}
+.lv .min{margin-left:auto;font-size:13px;color:var(--muted)}
+.s-main[dir="rtl"]{font-family:var(--persian);text-align:right}
+.s-main[dir="rtl"] .s-lead{font-size:17px;line-height:1.9}
+.c-frame .s-shell{grid-template-columns:262px 1fr;height:640px;overflow:hidden}
+.phone{display:grid;grid-template-columns:repeat(2,minmax(0,390px));gap:24px;margin-top:22px}
+.phone .s-bar{padding:0 14px;gap:8px}
+.phone .s-icon.on{background:var(--chip);color:var(--chip-ink);border-color:var(--chip)}
+@media (max-width:900px){.phone{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="p-bar"><a href="index.html"><span class="logo"></span>AI Engineering Bazaar <span class="dim">Round 2 choices</span></a></div>
+<div class="p-band"></div>
+<main class="wrap">
+  <h1 class="q">Which control switches the module you are reading to the other track?</h1>
+  <p class="q-sub">Each mock below works: click the control in its bar. Try it on LLM Fundamentals, which exists in both tracks, and on Tool Calling, whose For Everyone version is not written yet. The mocks assume that on day one For Everyone has three Fundamentals modules written, and that this reader has finished two modules For Engineers and none For Everyone, so the ticks in the rail change with the track.</p>
+  <ul class="jump">
+    <li><a href="#C1"><span class="code">C1</span>Two-segment toggle</a></li>
+    <li><a href="#C2"><span class="code">C2</span>Track menu in the bar <span class="star">Recommended</span></a></li>
+    <li><a href="#C3"><span class="code">C3</span>One menu for track and language</a></li>
+    <li><a href="#C4"><span class="code">C4</span>A link under the title</a></li>
+  </ul>
+
+  <section class="opt" id="C1">
+    <div class="opt-head"><span class="code">C1</span><h2>A two-segment toggle in the bar</h2></div>
+    <p class="what">Both track names sit in the bar side by side, and the one you are in is filled. One click moves you to the same module in the other track.</p>
+    <ul class="trade">
+      <li class="good">Both choices are always visible, so the reader learns the second track exists without opening anything.</li>
+      <li class="good">One click, no menu.</li>
+      <li class="cost">The widest of the four: 297px of the bar in this mock, against 166px for C2, and it cannot fit on a phone.</li>
+      <li class="cost">A missing version can only be shown as a dimmed segment, and the explanation comes after the click.</li>
+    </ul>
+    <div class="mock" data-variant="c1"></div>
+  </section>
+
+  <section class="opt" id="C2">
+    <div class="opt-head"><span class="code">C2</span><h2>A track menu in the bar, like the language menu</h2><span class="rec"><svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1.5l1.96 3.97 4.38.64-3.17 3.09.75 4.36L8 11.5l-3.92 2.06.75-4.36L1.66 6.11l4.38-.64L8 1.5Z"/></svg> Recommended</span></div>
+    <p class="what">A button in the bar names the track you are in. It opens a menu with both tracks, the current one ticked, exactly like the language menu next to it.</p>
+    <p class="why"><b>Why:</b> it names the track and switches it in one place, it is the same shape as the two menus the bar already has, and a row has room to say "not written yet" before the click.</p>
+    <ul class="trade">
+      <li class="good">Familiar: the same dropdown as Catalog and the language button.</li>
+      <li class="good">The missing case is explained in the menu, and still leads somewhere useful.</li>
+      <li class="cost">Two clicks instead of one.</li>
+      <li class="cost">The other track is hidden until the menu is opened (the home page choice and the catalog menu show it).</li>
+    </ul>
+    <div class="mock" data-variant="c2"></div>
+    <p class="caption" style="margin-top:22px">On a phone the button keeps its icon and drops the words; the repository button has to leave the bar to make room</p>
+    <div class="phone">
+      <div class="scaler"><div class="site" data-w="390"><div class="s-bar"><a class="s-brand"><i></i></a><span class="s-link" style="padding:7px 8px">Home</span><span class="s-link" style="padding:7px 8px">Catalog <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5"/></svg></span><span class="s-sp"></span><span class="s-icon" title="For Engineers"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 4.25 1.75 8l3.75 3.75M10.5 4.25 14.25 8l-3.75 3.75"/></svg></span><span class="s-icon" title="Language"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="6.25"/><path d="M1.75 8h12.5"/><path d="M8 1.75c1.8 1.7 2.7 3.8 2.7 6.25S9.8 12.55 8 14.25C6.2 12.55 5.3 10.45 5.3 8S6.2 3.45 8 1.75Z"/></svg></span><span class="s-icon" title="Toggle theme"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2.75" y="2.75" width="10.5" height="10.5"/><path d="M8 2.75h5.25v10.5H8z" fill="currentColor" stroke="none"/></svg></span></div><div class="s-band"></div><div class="s-main" style="padding:18px 16px 20px"><div class="s-crumb">Home <span class="sep">/</span> <b style="color:var(--title)">For Engineers</b> <span class="sep">/</span> Fundamentals</div><h1 class="s-h1" style="font-size:30px">LLM Fundamentals</h1><div class="s-meta" style="margin:0"><span class="t-pill"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 4.25 1.75 8l3.75 3.75M10.5 4.25 14.25 8l-3.75 3.75"/></svg>For Engineers</span>25 min · 2,486 words</div></div></div></div>
+      <div class="scaler"><div class="site" data-w="390"><div class="s-bar"><a class="s-brand"><i></i></a><span class="s-link" style="padding:7px 8px">Home</span><span class="s-link" style="padding:7px 8px">Catalog <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5"/></svg></span><span class="s-sp"></span><span class="s-icon" title="For Everyone"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M8 4.4C6.6 3.4 4.6 3 2 3.2v9.1c2.6-.2 4.6.2 6 1.2 1.4-1 3.4-1.4 6-1.2V3.2c-2.6-.2-4.6.2-6 1.2Z"/><path d="M8 4.4v9.1"/></svg></span><span class="s-icon" title="Toggle theme"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2.75" y="2.75" width="10.5" height="10.5"/><path d="M8 2.75h5.25v10.5H8z" fill="currentColor" stroke="none"/></svg></span></div><div class="s-band"></div><div class="s-main" style="padding:18px 16px 20px"><div class="s-crumb">Home <span class="sep">/</span> <b style="color:var(--title)">For Everyone</b> <span class="sep">/</span> Fundamentals</div><h1 class="s-h1" style="font-size:30px">LLM Fundamentals</h1><div class="s-meta" style="margin:0"><span class="t-pill"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M8 4.4C6.6 3.4 4.6 3 2 3.2v9.1c2.6-.2 4.6.2 6 1.2 1.4-1 3.4-1.4 6-1.2V3.2c-2.6-.2-4.6.2-6 1.2Z"/><path d="M8 4.4v9.1"/></svg>For Everyone</span>20 min</div></div></div></div>
+    </div>
+    <p class="note">In For Everyone the language button disappears in C1, C2 and C4: a For Everyone module has no Turkish or Persian page yet, and the bar already hides the language menu wherever a module has only one language.</p>
+  </section>
+
+  <section class="opt" id="C3">
+    <div class="opt-head"><span class="code">C3</span><h2>One menu for track and language</h2></div>
+    <p class="what">The language button becomes a single menu for how you read this module: the track at the top, the language below it.</p>
+    <ul class="trade">
+      <li class="good">One button in the bar instead of two.</li>
+      <li class="good">Shows how the two interact: in For Everyone, Türkçe and فارسی are listed as not translated yet.</li>
+      <li class="cost">Mixes two unrelated choices, so neither has an obvious name for the button.</li>
+      <li class="cost">The longest menu, and the one most readers open only for the language.</li>
+    </ul>
+    <div class="mock" data-variant="c3"></div>
+  </section>
+
+  <section class="opt" id="C4">
+    <div class="opt-head"><span class="code">C4</span><h2>A link under the title</h2></div>
+    <p class="what">Nothing new in the bar. A line under the title says the module is also written for the other track, and links to it.</p>
+    <ul class="trade">
+      <li class="good">Plain words, where the reader is already looking, and nothing to open.</li>
+      <li class="good">Costs no room in the bar, so it is the same on a phone.</li>
+      <li class="cost">Goes against the decision that the switch lives in the bar; it would only work as an extra beside C1, C2 or C3.</li>
+      <li class="cost">Only on module pages; the level lists and the progress page would need their own way.</li>
+    </ul>
+    <div class="mock" data-variant="c4"></div>
+  </section>
+</main>
+<script>
+const IC = {
+  eng: (s = 16) => `<svg width="${s}" height="${s}" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 4.25 1.75 8l3.75 3.75M10.5 4.25 14.25 8l-3.75 3.75"/></svg>`,
+  every: (s = 16) => `<svg width="${s}" height="${s}" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M8 4.4C6.6 3.4 4.6 3 2 3.2v9.1c2.6-.2 4.6.2 6 1.2 1.4-1 3.4-1.4 6-1.2V3.2c-2.6-.2-4.6.2-6 1.2Z"/><path d="M8 4.4v9.1"/></svg>`,
+  globe: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="6.25"/><path d="M1.75 8h12.5"/><path d="M8 1.75c1.8 1.7 2.7 3.8 2.7 6.25S9.8 12.55 8 14.25C6.2 12.55 5.3 10.45 5.3 8S6.2 3.45 8 1.75Z"/></svg>`,
+  theme: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2.75" y="2.75" width="10.5" height="10.5"/><path d="M8 2.75h5.25v10.5H8z" fill="currentColor" stroke="none"/></svg>`,
+  gh: `<svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.42 7.42 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>`,
+  star: `<svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1.5l1.96 3.97 4.38.64-3.17 3.09.75 4.36L8 11.5l-3.92 2.06.75-4.36L1.66 6.11l4.38-.64L8 1.5Z"/></svg>`,
+  check: `<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg>`,
+  chev: `<svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5"/></svg>`,
+  tick: `<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg>`,
+  rec: `<svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1.5l1.96 3.97 4.38.64-3.17 3.09.75 4.36L8 11.5l-3.92 2.06.75-4.36L1.66 6.11l4.38-.64L8 1.5Z"/></svg>`,
+}
+
+const LEVELS = [
+  { slug: 'fundamentals', title: 'Fundamentals', n: 8, cat: 'var(--c1)' },
+  { slug: 'intermediate', title: 'Intermediate', n: 8, cat: 'var(--c2)' },
+  { slug: 'expert', title: 'Expert', n: 11, cat: 'var(--c3)' },
+  { slug: 'ecosystem', title: 'Ecosystem', n: 5, cat: 'var(--c4)' },
+  { slug: 'protocols', title: 'Protocols & Specs', n: 1, cat: 'var(--c5)' },
+]
+const FUNDAMENTALS = ['LLM Fundamentals', 'Training LLMs', 'RAG & Embeddings', 'Tool Calling', 'Memory', 'AI Agents', 'Multi-Agent Systems', 'Observability']
+
+/* The real English module, and a For Everyone version written for this mock only. */
+const MODULES = {
+  llms: {
+    eng: {
+      title: 'LLM Fundamentals', meta: '25 min · 2,486 words',
+      obj: ['Explain what an LLM does with a prompt, and why it is a next-token predictor',
+        'Describe the context window and why it is the limit that shapes everything else',
+        'Name the message types a context is built from, and who writes each one',
+        'Explain what a turn is, in a plain chat and in an agent',
+        'Choose between running a model locally and calling a cloud provider'],
+      lead: 'Everything else in this series is built on top of this module. An LLM is simple to describe: text goes in, and text comes out. But almost every idea later in the series (RAG, tools, memory, agents) exists because of one specific limit. We will get to that limit in a minute.',
+      tr: { title: 'LLM Temelleri', lead: 'Serideki diğer her şey bu modülün üzerine kurulu. Bir LLM\'i anlatmak aslında kolay: içeri metin girer, dışarıya metin çıkar. Ancak seride ele alacağımız neredeyse her fikir, yani RAG, tool\'lar, hafıza (memory) ve agent\'lar, tek bir sınırın yüzünden ortaya çıktı.' },
+      fa: { title: 'مبانی LLM', lead: 'این درس پایه‌ی کل این مجموعه‌ست. LLM رو خیلی ساده می‌شه توضیح داد: بهش متن می‌دی و متن تحویلت می‌ده. ولی تقریباً همه‌ی ایده‌هایی که بعداً می‌بینیم، از RAG و tool گرفته تا memory و agent، از دل یه محدودیت مشخص بیرون اومدن که کمی جلوتر بهش می‌رسیم.' },
+    },
+    every: {
+      title: 'LLM Fundamentals', meta: '20 min',
+      obj: ['Say in plain words what a chatbot does with the message you type',
+        'Explain why a long chat can make it lose track of what you said first',
+        'Tell apart what you wrote, what the app added, and what came back',
+        'Decide when an app on your own laptop is enough, and when an online one is better'],
+      lead: 'You have typed a question into a chatbot and read the answer. This module is about what happens in between. There is no code in it: every idea is shown with an everyday example first.',
+    },
+  },
+  tools: {
+    eng: {
+      title: 'Tool Calling', meta: '25 min · 1,787 words',
+      obj: ['Explain how a model requests a tool call, and who actually executes it',
+        'Describe what a tool schema contains, and where it comes from',
+        'Explain why a tool\'s name and description decide whether it gets used',
+        'Follow one real tool call through the request and the response',
+        'Identify tasks that need a tool rather than more prompting'],
+      lead: 'LLM Fundamentals, Training LLMs and RAG & Embeddings covered three things: what a model is, how it was trained, and how to put your own data in front of it. In all of that, the model is still only reading. In this module, the model starts doing things: it reads a file, runs a command, or calls an API.',
+      tr: { title: 'LLM Tool Calling', lead: 'LLM Temelleri, Training LLMs ve RAG modüllerinde üç şeyi ele aldık: model nedir, nasıl eğitilir ve kendi verini modelin önüne nasıl koyarsın. Bu üç modülde model hâlâ yalnızca okuyordu, ama bu modülde bir şeyler yapmaya başlıyor: bir dosyayı okuyor, bir komut çalıştırıyor ya da bir API\'yi çağırıyor.' },
+      fa: { title: 'Tool Calling', lead: 'توی مبانی LLM، Training LLMs و RAG و Embedding‌ها سه تا چیز رو دیدیم: مدل چیه، چطور train شده، و چطور داده‌ی خودت رو بذاری جلوش. ولی توی همه‌ی این‌ها مدل فقط می‌خونه. از این درس به بعد مدل دست به کار می‌شه.' },
+    },
+    every: null,
+  },
+}
+
+function barHTML({ right = '', nav = true, catalogOn = false } = {}) {
+  return `<div class="s-bar"><a class="s-brand"><i></i>AI Engineering Bazaar</a>` +
+    (nav ? `<nav class="s-nav"><span class="s-link">Home</span><span class="s-link${catalogOn ? ' is-on' : ''}">Catalog ${IC.chev}</span><span class="s-link">Your progress</span></nav>` : '') +
+    `<span class="s-sp"></span>${right}</div>`
+}
+function barTail(globe = true) {
+  return (globe ? `<span class="s-icon" title="Language">${IC.globe}</span>` : '') +
+    `<span class="s-icon" title="Toggle theme">${IC.theme}</span><span class="s-repo">${IC.gh}<span class="st">${IC.star}</span>6</span>`
+}
+
+/* `done` is the per-track record: which Fundamentals modules this reader has finished in THIS track. */
+function railHTML({ head = 'Curriculum', current = 0, done = [], pending = [] } = {}) {
+  const items = FUNDAMENTALS.map((t, i) =>
+    `<li class="${i === current ? 'cur' : ''}${pending.includes(i) ? ' pend' : ''}">${t}${done.includes(i) ? `<span class="tk" title="Completed">${IC.tick}</span>` : ''}</li>`).join('')
+  return `<aside class="s-rail"><div class="s-rail-head">${head}</div>` +
+    LEVELS.map((l, i) => i === 0
+      ? `<div class="s-group open" style="--cat:${l.cat}"><div class="g"><span class="k"></span>${l.title}<span class="n">${l.n}</span></div><ul class="s-items">${items}</ul></div>`
+      : `<div class="s-group" style="--cat:${l.cat}"><div class="g"><span class="k"></span>${l.title}<span class="n">${l.n}</span></div></div>`).join('') +
+    `</aside>`
+}
+
+function crumbHTML(parts) {
+  return `<div class="s-crumb">${parts.map((p) => `<span>${p}</span>`).join('<span class="sep">/</span>')}</div>`
+}
+function cardHTML(obj) {
+  return `<div class="s-card"><h3>What you will be able to do</h3><ul>${obj.map((o) => `<li>${o}</li>`).join('')}</ul></div>`
+}
+
+/* Every frame is drawn at its real width and zoomed to fit the column, so a 390px window shows the same page smaller. */
+function fit() {
+  document.querySelectorAll('.scaler').forEach((sc) => {
+    const s = sc.firstElementChild
+    const w = +s.dataset.w
+    s.style.width = w + 'px'
+    s.style.zoom = Math.min(1, sc.clientWidth / w)
+  })
+}
+addEventListener('resize', fit)
+
+const NAME = { eng: 'For Engineers', every: 'For Everyone' }
+const EVERY_WRITTEN = [0, 1, 2]
+const DONE = { eng: [0, 1], every: [] }
+const IDX = { llms: 0, tools: 3 }
+const LANGS = [['en', 'English'], ['tr', 'Türkçe'], ['fa', 'فارسی']]
+
+function hasOther(s) { return !!MODULES[s.mod][s.track === 'eng' ? 'every' : 'eng'] }
+
+function controls(v, s) {
+  const other = s.track === 'eng' ? 'every' : 'eng'
+  const missing = !hasOther(s) && s.view === 'module'
+  const globe = s.track === 'eng'
+    ? `<div class="s-dd"><button class="s-icon" data-act="open:lang" aria-expanded="${s.open === 'lang'}" aria-label="Language" title="Language">${IC.globe}</button>${s.open === 'lang' ? `<div class="s-menu">${LANGS.map(([id, l]) => `<button class="s-mi" data-act="lang:${id}"${id === 'fa' ? ' dir="rtl" style="justify-content:flex-end"' : ''}>${l}${s.lang === id ? `<span class="ck">${IC.check}</span>` : ''}</button>`).join('')}</div>` : ''}</div>`
+    : ''
+  if (v === 'c1') {
+    const seg = ['eng', 'every'].map((t) => {
+      const miss = t === other && missing
+      return `<button aria-pressed="${s.track === t}" data-act="track:${t}" class="${miss ? 'missing' : ''}" title="${miss ? 'Not written for this track yet' : NAME[t]}">${IC[t]()}<span>${NAME[t]}</span></button>`
+    }).join('')
+    return `<div class="seg" role="group" aria-label="Track">${seg}</div>` + globe + barTail(false)
+  }
+  if (v === 'c2') {
+    const rows = ['eng', 'every'].map((t) => {
+      const miss = t === other && missing
+      const lvl = t === 'every' ? 'For Everyone' : 'For Engineers'
+      return `<button class="s-mi${miss ? ' na' : ''}" data-act="track:${t}"><span class="ic">${IC[t]()}</span><span class="lbl">${NAME[t]}${miss ? `<span class="sub">Not written yet. Opens the ${lvl} Fundamentals list.</span>` : ''}</span>${s.track === t ? `<span class="ck">${IC.check}</span>` : ''}</button>`
+    }).join('')
+    return `<div class="s-dd"><button class="trk-btn" data-act="open:trk" aria-expanded="${s.open === 'trk'}">${IC[s.track]()}${NAME[s.track]}${IC.chev}</button>${s.open === 'trk' ? `<div class="s-menu wide">${rows}</div>` : ''}</div>` + globe + barTail(false)
+  }
+  if (v === 'c3') {
+    const tRows = ['eng', 'every'].map((t) => {
+      const miss = t === other && missing
+      return `<button class="s-mi${miss ? ' na' : ''}" data-act="track:${t}"><span class="ic">${IC[t]()}</span><span class="lbl">${NAME[t]}${miss ? `<span class="sub">Not written yet. Opens the Fundamentals list.</span>` : ''}</span>${s.track === t ? `<span class="ck">${IC.check}</span>` : ''}</button>`
+    }).join('')
+    const lRows = LANGS.map(([id, l]) => {
+      const off = s.track === 'every' && id !== 'en'
+      const rtl = id === 'fa' ? ' dir="rtl"' : ''
+      return off
+        ? `<span class="s-mi off"><span class="lbl"><span${rtl}>${l}</span><span class="sub">Not translated yet</span></span></span>`
+        : `<button class="s-mi" data-act="lang:${id}"><span${rtl}>${l}</span>${s.lang === id ? `<span class="ck">${IC.check}</span>` : ''}</button>`
+    }).join('')
+    const code = { en: 'EN', tr: 'TR', fa: 'FA' }[s.lang]
+    return `<div class="s-dd"><button class="trk-btn" data-act="open:read" aria-expanded="${s.open === 'read'}">${IC[s.track]()}${NAME[s.track]}<span class="dim">· ${code}</span>${IC.chev}</button>${s.open === 'read' ? `<div class="s-menu wide"><div class="s-mh">Track</div>${tRows}<div class="s-msep"></div><div class="s-mh">Language</div>${lRows}</div>` : ''}</div>` + barTail(false)
+  }
+  return globe + barTail(false)
+}
+
+function moduleMain(v, s) {
+  const base = MODULES[s.mod][s.track]
+  const tx = s.lang !== 'en' && base[s.lang] ? base[s.lang] : null
+  const title = tx ? tx.title : base.title
+  let alt = ''
+  if (v === 'c4') {
+    const other = s.track === 'eng' ? 'every' : 'eng'
+    alt = hasOther(s)
+      ? `<p class="altline"><span class="ic">${IC[other]()}</span>Also written ${other === 'every' ? 'for everyone' : 'for engineers'}. <button class="lnk" data-act="track:${other}">Read that version</button></p>`
+      : `<p class="altline"><span class="ic">${IC.every()}</span>A version for everyone is not written yet.</p>`
+  }
+  const notice = s.notice ? `<div class="notice">${s.notice}</div>` : ''
+  return `<div class="s-main"${s.lang === 'fa' ? ' dir="rtl" lang="fa"' : ''}>${notice}${crumbHTML(['Home', `<span class="trk">${NAME[s.track]}</span>`, 'Fundamentals', title])}<h1 class="s-h1">${title}</h1><div class="s-meta"><span class="t-pill">${IC[s.track]()}${NAME[s.track]}</span><span dir="ltr">${base.meta}</span></div>${alt}${tx ? '' : cardHTML(base.obj)}<p class="s-lead">${tx ? tx.lead : base.lead}</p></div>`
+}
+
+function levelMain(s) {
+  const from = MODULES[s.mod].eng.title
+  const rows = FUNDAMENTALS.map((t, i) => EVERY_WRITTEN.includes(i)
+    ? `<li><span class="no">${i + 1}</span><button data-act="goto:${i}">${t}</button><span class="min">${i === 0 ? '20 min' : ''}</span></li>`
+    : `<li><span class="no">${i + 1}</span><span class="pend">${t}</span><span class="st">Not written yet</span></li>`).join('')
+  return `<div class="s-main"><div class="notice"><span>${from} is not written for everyone yet. This is what For Everyone has in Fundamentals so far.</span><button class="lnk" data-act="back">Back to ${from} for engineers</button></div>${crumbHTML(['Home', '<span class="trk">For Everyone</span>', 'Fundamentals'])}<h1 class="s-h1">Fundamentals</h1><div class="s-meta"><span class="t-pill">${IC.every()}For Everyone</span><span>${EVERY_WRITTEN.length} of ${FUNDAMENTALS.length} written</span></div><ul class="lv">${rows}</ul></div>`
+}
+
+function render(el) {
+  const v = el.dataset.variant, s = el._s
+  const rail = railHTML({
+    current: s.view === 'module' ? IDX[s.mod] : -1,
+    done: DONE[s.track],
+    pending: s.track === 'every' ? [3, 4, 5, 6, 7] : [],
+  })
+  const main = s.view === 'module' ? moduleMain(v, s) : levelMain(s)
+  el.innerHTML = `<div class="try">Try it on:
+    <button data-act="mod:llms" aria-pressed="${s.mod === 'llms'}">LLM Fundamentals (written in both tracks)</button>
+    <button data-act="mod:tools" aria-pressed="${s.mod === 'tools'}">Tool Calling (not written for everyone yet)</button></div>
+    <div class="scaler"><div class="site c-frame" data-w="1280">${barHTML({ right: controls(v, s) })}<div class="s-band"></div><div class="s-shell">${rail}${main}</div></div></div>
+    <p class="hint">${v === 'c4' ? 'Click the link under the title.' : v === 'c1' ? 'Click either segment in the bar.' : 'Open the menu in the bar.'} The rail's ticks are this reader's progress in the track shown.</p>`
+  fit()
+}
+
+function act(el, a) {
+  const s = el._s
+  const [k, val] = a.split(':')
+  if (k === 'open') { s.open = s.open === val ? null : val; return }
+  s.open = null
+  if (k === 'mod') Object.assign(s, { mod: val, track: 'eng', view: 'module', lang: 'en', notice: '' })
+  if (k === 'back') Object.assign(s, { track: 'eng', view: 'module', notice: '' })
+  if (k === 'goto') Object.assign(s, { mod: val === '0' ? 'llms' : s.mod, view: val === '0' ? 'module' : 'level', notice: '' })
+  if (k === 'lang') { s.lang = val; s.notice = '' }
+  if (k === 'track' && val !== s.track) {
+    const target = MODULES[s.mod][val]
+    s.notice = ''
+    if (!target) { Object.assign(s, { track: val, view: 'level', lang: 'en' }) }
+    else {
+      if (s.lang !== 'en' && !target[s.lang]) s.notice = `Shown in English: this version has no ${s.lang === 'tr' ? 'Türkçe' : 'فارسی'} page yet.`
+      if (!target[s.lang]) s.lang = 'en'
+      Object.assign(s, { track: val, view: 'module' })
+    }
+  }
+}
+
+document.querySelectorAll('.mock').forEach((el) => {
+  el._s = { mod: 'llms', track: 'eng', view: 'module', lang: 'en', open: null, notice: '' }
+  el.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-act]')
+    if (!b) return
+    act(el, b.dataset.act)
+    render(el)
+    const again = el.querySelector(`[data-act="${b.dataset.act}"]`)
+    if (again) again.focus({ preventScroll: true })
+  })
+  render(el)
+})
+document.addEventListener('pointerdown', (e) => {
+  document.querySelectorAll('.mock').forEach((el) => {
+    if (el._s.open && !e.target.closest('.s-dd') && !(el.contains(e.target) && e.target.closest('[data-act]'))) { el._s.open = null; render(el) }
+  })
+})
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return
+  document.querySelectorAll('.mock').forEach((el) => { if (el._s.open) { el._s.open = null; render(el) } })
+})
+fit()
+</script>
+</body>
+</html>

@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Track names</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,500..800,0..100&display=swap">
+<style>
+:root{
+  --ground:#fdfbf7;--raised:#ffffff;--sand:#e6dac6;--line:#d8cbb4;--line-2:#c3b299;
+  --ink:#20242e;--title:#1b1b47;--muted:#6a6558;--faint:#948d7d;
+  --bar:#282864;--on-bar:#ffffff;--on-bar-dim:#c9c6e4;--bar-hover:rgba(255,255,255,.10);
+  --field:rgba(255,255,255,.08);--field-line:rgba(255,255,255,.25);--chip:#fdfbf7;--chip-ink:#1b1b47;
+  --orn:#c8a078;--focus:#a0503c;
+  --c1:#2f8c86;--c2:#282864;--c3:#7a4a86;--c4:#b8873b;--c5:#a0503c;
+  --sans:"Avenir Next",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --persian:Vazirmatn,"Noto Naskh Arabic","Noto Sans Arabic",Tahoma,"Segoe UI",sans-serif;
+  --menu-shadow:0 12px 28px rgba(40,30,10,.13);
+  --band:linear-gradient(45deg,#2f8c86 25%,transparent 25% 75%,#2f8c86 75%),linear-gradient(45deg,#c8a078 25%,transparent 25% 75%,#c8a078 75%),linear-gradient(45deg,#a0503c 25%,transparent 25% 75%,#a0503c 75%);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font:16px/1.6 var(--sans)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+button{font:inherit;color:inherit}
+
+/* ---------- the page that holds the options ---------- */
+.p-bar{background:var(--bar);color:#fff;height:58px;display:flex;align-items:center;gap:14px;padding:0 22px}
+.p-bar a{color:#fff;text-decoration:none;font-weight:600;display:flex;align-items:center;gap:10px}
+.p-bar .logo{width:28px;height:28px;background:url("data:image/webp;base64,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") center/contain no-repeat;flex:none}
+.p-bar .dim{color:var(--on-bar-dim);font-weight:500;font-size:14.5px}
+.p-band{height:18px;background-color:#282864;background-image:var(--band);background-size:18px 18px,18px 18px,54px 18px;background-position:0 0,9px 9px,27px 0;border-bottom:2px solid #b8873b}
+.wrap{max-width:1360px;margin:0 auto;padding:40px 40px 96px}
+.q{color:var(--title);font-size:32px;line-height:1.18;letter-spacing:-.015em;margin:0 0 10px;font-weight:650;max-width:30ch}
+.q-sub{color:var(--muted);margin:0 0 22px;max-width:76ch}
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.jump a{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);background:var(--raised);border:1px solid var(--line);border-radius:6px;padding:6px 12px 6px 6px;font-size:14px;font-weight:500}
+.jump a:hover{border-color:var(--line-2)}
+.code{display:inline-block;background:var(--title);color:#fff;border-radius:4px;padding:0 7px;font:700 13px/22px var(--sans);flex:none}
+.jump .star{color:var(--muted);font-weight:600;font-size:12.5px}
+.opt{border-top:1px solid var(--line);margin-top:44px;padding-top:36px}
+.opt-head{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:0 0 8px}
+.opt-head .code{font-size:15px;line-height:26px;padding:0 9px}
+.opt-head h2{margin:0;color:var(--title);font-size:24px;line-height:1.25;letter-spacing:-.012em;font-weight:650}
+.rec{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--orn);background:#fbf3e7;color:#5a4224;border-radius:9px;padding:2px 10px;font-size:13.5px;font-weight:600}
+.rec svg{flex:none}
+.what{margin:0 0 12px;max-width:80ch;font-size:16px}
+.why{margin:0 0 14px;color:#5a4224;font-size:15px;max-width:80ch}
+.why b{color:#5a4224}
+.trade{display:grid;grid-template-columns:1fr 1fr;gap:6px 28px;margin:0 0 22px;padding:0;list-style:none;max-width:1100px}
+.trade li{position:relative;padding-left:22px;font-size:14.5px;line-height:1.5;color:var(--ink)}
+.trade li::before{position:absolute;left:0;top:0;font-weight:700;width:16px;text-align:center}
+.trade li.good::before{content:"+";color:var(--c1)}
+.trade li.cost::before{content:"\2212";color:var(--c5)}
+.trade-label{display:none}
+.caption{font-size:13.5px;color:var(--muted);margin:0 0 8px;font-weight:600}
+.pair-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.note{font-size:14px;color:var(--muted);margin:10px 0 0;max-width:80ch}
+.scaler{width:100%;overflow:hidden;min-width:0}
+.pair-grid > *,.dark-row > *,.ctx > *{min-width:0}
+.scaler > .site{transform-origin:0 0}
+@media (max-width:900px){
+  .wrap{padding:28px 16px 72px}
+  .q{font-size:26px}
+  .trade{grid-template-columns:1fr}
+  .pair-grid{grid-template-columns:1fr}
+}
+
+/* ---------- the site, drawn ---------- */
+.site{--s-ground:var(--ground);background:var(--ground);color:var(--ink);border:1px solid var(--line);border-radius:8px;overflow:hidden;font-family:var(--sans);text-align:left;position:relative}
+.s-bar{background:var(--bar);color:#fff;height:58px;display:flex;align-items:center;gap:16px;padding:0 22px;position:relative;z-index:3}
+.s-brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:600;font-size:16px;white-space:nowrap;text-decoration:none}
+.s-brand i{width:32px;height:32px;background:url("data:image/webp;base64,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") center/contain no-repeat;display:block;flex:none}
+.s-nav{display:flex;gap:2px;align-items:center;margin-left:6px}
+.s-link{color:var(--on-bar-dim);font-size:14.5px;font-weight:500;padding:7px 11px;border-radius:5px;line-height:1;display:inline-flex;gap:6px;align-items:center;white-space:nowrap;background:none;border:0;cursor:pointer;text-decoration:none}
+.s-link:hover{background:var(--bar-hover);color:#fff}
+.s-link.is-on{background:var(--chip);color:var(--chip-ink)}
+.s-sp{flex:1}
+.s-icon{width:33px;height:33px;border:1px solid var(--field-line);background:var(--field);border-radius:5px;display:grid;place-items:center;color:#fff;flex:none;cursor:pointer;padding:0}
+.s-icon:hover{background:rgba(255,255,255,.16)}
+.s-repo{height:33px;border:1px solid var(--field-line);background:var(--field);border-radius:5px;display:flex;align-items:center;gap:6px;padding:0 9px;color:#fff;font-size:12.5px;font-weight:600;flex:none}
+.s-repo .st{color:var(--c4)}
+.s-band{height:18px;background-color:#282864;background-image:var(--band);background-size:18px 18px,18px 18px,54px 18px;background-position:0 0,9px 9px,27px 0;border-bottom:2px solid #b8873b}
+.s-shell{display:grid;grid-template-columns:240px 1fr}
+.s-rail{padding:18px 12px 24px;border-right:1px solid var(--line);background:var(--ground)}
+.s-rail-head{font-size:13px;font-weight:600;color:var(--muted);margin:0 2px 6px;display:flex;align-items:center;gap:7px}
+.s-group{margin-top:8px}
+.s-group > .g{display:flex;align-items:center;gap:9px;padding:9px 12px 9px 9px;border-radius:14px 14px 4px 4px;font-size:14.5px;font-weight:600;line-height:1.2;border:1px solid var(--line);background:var(--raised)}
+.s-group.open > .g{background:var(--sand);border-color:var(--sand)}
+.s-group .k{width:4px;height:16px;border-radius:2px;background:var(--cat);flex:none}
+.s-group .n{margin-left:auto;font-size:12.5px;color:var(--muted);font-weight:500}
+.s-group.open .n{color:var(--ink);font-weight:600}
+.s-items{list-style:none;margin:6px 0 0 16px;padding:0 0 0 12px;border-left:1px solid var(--line)}
+.s-items li{font-size:14px;color:var(--muted);padding:6px 9px;border-radius:5px;line-height:1.5;display:flex;align-items:center;gap:8px}
+.s-items li.cur{background:var(--cat);color:#fff;font-weight:600}
+.s-items li.pend{color:var(--faint)}
+.s-items .tk{margin-left:auto;color:var(--c1);display:flex}
+.s-items li.cur .tk{color:#fff}
+.s-main{padding:30px 44px 36px;min-width:0}
+.s-crumb{font-size:14px;color:var(--muted);margin:0 0 14px;display:flex;flex-wrap:wrap;gap:0 8px;align-items:center}
+.s-crumb .sep{color:var(--faint)}
+.s-h1{font-size:38px;line-height:1.16;letter-spacing:-.015em;color:var(--title);font-weight:650;margin:0 0 10px}
+.s-meta{font-size:14px;color:var(--muted);margin:0 0 24px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 11px}
+.s-card{background:var(--raised);border:1px solid var(--line);border-radius:8px;padding:18px 22px 10px;margin:0 0 22px}
+.s-card h3{margin:0 0 8px;font-size:14.5px;color:var(--title);font-weight:650}
+.s-card ul{margin:0;padding-left:22px}
+.s-card li{font-size:15.5px;line-height:1.5;margin:0 0 9px}
+.s-lead{color:var(--muted);font-size:16px;line-height:1.68;margin:0}
+/* the bar's dropdown panel, the one every bar menu shares */
+.s-menu{position:absolute;top:calc(100% + 6px);background:var(--raised);border:1px solid var(--line);border-radius:8px;box-shadow:var(--menu-shadow);padding:6px;min-width:170px;z-index:10;color:var(--ink)}
+.s-mi{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:5px;font-size:14px;font-weight:500;line-height:1.3;color:var(--ink);text-decoration:none;background:none;border:0;width:100%;text-align:left;cursor:pointer;white-space:nowrap}
+.s-mi:hover{background:#f6f0e6}
+.s-mi .ck{margin-left:auto;color:var(--title);display:flex}
+.s-mi .cnt{margin-left:auto;font-size:12.5px;color:var(--muted)}
+.s-mi .key{width:4px;height:14px;border-radius:2px;background:var(--cat);flex:none}
+.s-mh{font-size:13px;font-weight:650;color:var(--title);padding:8px 10px 4px;display:flex;align-items:center;gap:7px}
+.s-mh + .s-mi{margin-top:0}
+.s-msep{height:1px;background:var(--line);margin:6px 4px}
+
+/* the dark sibling: the slab promoted, the bar unchanged */
+.site.dark{--ground:#1d1f27;--raised:#262933;--sand:#181a21;--line:#33363f;--line-2:#444854;--ink:#e7e3d8;--title:#e9e6e0;--muted:#9aa0ad;--faint:#606571;--c2:#676daf;--c3:#91609d;--c5:#ad5b47}
+.site.dark .s-group.open > .g{background:#2d3039;border-color:#2d3039}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.pair{font-size:20px;color:var(--title);font-weight:650;margin:0 0 10px;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline}
+.pair .slash{color:var(--faint);font-weight:400}
+.tr{font-size:14px;color:var(--muted);margin:-8px 0 14px}
+.tr b{color:var(--ink);font-weight:600}
+.ctx{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.15fr) minmax(0,1.15fr);gap:20px;margin-top:14px}
+@media (max-width:1100px){.ctx{grid-template-columns:1fr}}
+.ctx > div{display:flex;flex-direction:column}
+.ctx > div > :last-child{flex:1}
+.where{font-size:13.5px;color:var(--muted);font-weight:600;margin:0 0 8px}
+/* the bar strip */
+.seg{display:flex;padding:2px;gap:2px;border:1px solid var(--field-line);background:var(--field);border-radius:6px;height:33px}
+.seg span{color:var(--on-bar-dim);font-size:13.5px;font-weight:600;padding:0 10px;border-radius:4px;display:flex;align-items:center;white-space:nowrap}
+.seg span.on{background:var(--chip);color:var(--chip-ink)}
+.strip .s-band{height:10px;background-size:10px 10px,10px 10px,30px 10px;background-position:0 0,5px 5px,15px 0;border-bottom-width:1px}
+/* the catalog menu, drawn open on the page ground */
+.menu-stage{background:var(--ground);border:1px solid var(--line);border-radius:8px;padding:16px}
+.menu-stage .s-menu{position:static;box-shadow:var(--menu-shadow);max-width:290px}
+.menu-stage .s-mh{padding-top:9px}
+/* the module page mark */
+.mod-stage{background:var(--ground);border:1px solid var(--line);border-radius:8px;padding:22px 24px}
+.mod-stage .s-h1{font-size:32px}
+.t-pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-2);background:var(--raised);color:var(--title);border-radius:5px;padding:1px 9px 1px 7px;font-size:13.5px;font-weight:600;line-height:22px}
+.mod-stage .s-crumb .trk{color:var(--title);font-weight:600}
+.mod-stage .s-meta{margin-bottom:14px}
+.mod-stage .two{display:grid;gap:14px}
+.mod-stage .two > div + div{border-top:1px dashed var(--line);padding-top:14px}
+/* the home page choice */
+.home-stage{position:relative;border-radius:8px;overflow:hidden;background:#efe3cf;border:1px solid var(--line);min-height:370px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:22px 18px 40px;text-align:center}
+.home-stage svg.arch{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:min(94%,430px);height:auto}
+.home-stage::after{content:"";position:absolute;left:0;right:0;bottom:0;height:14px;background:#d9c7a8;border-top:1px solid #c3b299}
+.home-stage .ask{position:relative;z-index:1;font-family:"Fraunces","Iowan Old Style",Georgia,serif;font-variation-settings:"SOFT" 100;font-weight:650;color:var(--title);font-size:24px;line-height:1.2;margin:0 0 14px;max-width:16ch}
+.home-stage .btns{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.home-stage .btn{background:var(--bar);color:#fff;border-radius:5px;padding:9px 16px;font-weight:650;font-size:15px;line-height:1.25;min-width:128px}
+.home-stage .btn small{display:block;font-weight:500;font-size:12.5px;color:var(--on-bar-dim);margin-top:2px}
+.left-out{background:var(--raised);border:1px solid var(--line);border-radius:8px;padding:14px 18px;margin:26px 0 0;max-width:900px;font-size:14.5px}
+.left-out b{color:var(--title)}
+</style>
+</head>
+<body>
+<div class="p-bar"><a href="index.html"><span class="logo"></span>AI Engineering Bazaar <span class="dim">Round 2 choices</span></a></div>
+<div class="p-band"></div>
+<main class="wrap">
+  <h1 class="q">What should the two tracks be called?</h1>
+  <p class="q-sub">Each pair is shown in the four places a reader meets it: the switch in the bar, the headings of the catalog menu, the mark on a module page, and the two buttons at the end of the home page street. The Turkish line is there because the bar's own words will be translated later (M23), and some pairs survive that better than others.</p>
+  <ul class="jump" id="jump"></ul>
+  <div class="left-out"><b>Left out on purpose:</b> Technical / Non-technical, Advanced / Beginner, Pro / Basic. Each one names the second track by what its reader lacks, and the second track is not a lesser version: it covers the same modules and levels.</div>
+  <div id="pairs"></div>
+</main>
+<script>
+const IC = {
+  eng: (s = 16) => `<svg width="${s}" height="${s}" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 4.25 1.75 8l3.75 3.75M10.5 4.25 14.25 8l-3.75 3.75"/></svg>`,
+  every: (s = 16) => `<svg width="${s}" height="${s}" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M8 4.4C6.6 3.4 4.6 3 2 3.2v9.1c2.6-.2 4.6.2 6 1.2 1.4-1 3.4-1.4 6-1.2V3.2c-2.6-.2-4.6.2-6 1.2Z"/><path d="M8 4.4v9.1"/></svg>`,
+  globe: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="6.25"/><path d="M1.75 8h12.5"/><path d="M8 1.75c1.8 1.7 2.7 3.8 2.7 6.25S9.8 12.55 8 14.25C6.2 12.55 5.3 10.45 5.3 8S6.2 3.45 8 1.75Z"/></svg>`,
+  theme: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2.75" y="2.75" width="10.5" height="10.5"/><path d="M8 2.75h5.25v10.5H8z" fill="currentColor" stroke="none"/></svg>`,
+  gh: `<svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.42 7.42 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>`,
+  star: `<svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1.5l1.96 3.97 4.38.64-3.17 3.09.75 4.36L8 11.5l-3.92 2.06.75-4.36L1.66 6.11l4.38-.64L8 1.5Z"/></svg>`,
+  check: `<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg>`,
+  chev: `<svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5"/></svg>`,
+  tick: `<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg>`,
+  rec: `<svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1.5l1.96 3.97 4.38.64-3.17 3.09.75 4.36L8 11.5l-3.92 2.06.75-4.36L1.66 6.11l4.38-.64L8 1.5Z"/></svg>`,
+}
+
+const LEVELS = [
+  { slug: 'fundamentals', title: 'Fundamentals', n: 8, cat: 'var(--c1)' },
+  { slug: 'intermediate', title: 'Intermediate', n: 8, cat: 'var(--c2)' },
+  { slug: 'expert', title: 'Expert', n: 11, cat: 'var(--c3)' },
+  { slug: 'ecosystem', title: 'Ecosystem', n: 5, cat: 'var(--c4)' },
+  { slug: 'protocols', title: 'Protocols & Specs', n: 1, cat: 'var(--c5)' },
+]
+const FUNDAMENTALS = ['LLM Fundamentals', 'Training LLMs', 'RAG & Embeddings', 'Tool Calling', 'Memory', 'AI Agents', 'Multi-Agent Systems', 'Observability']
+
+/* The real English module, and a For Everyone version written for this mock only. */
+const MODULES = {
+  llms: {
+    eng: {
+      title: 'LLM Fundamentals', meta: '25 min · 2,486 words',
+      obj: ['Explain what an LLM does with a prompt, and why it is a next-token predictor',
+        'Describe the context window and why it is the limit that shapes everything else',
+        'Name the message types a context is built from, and who writes each one',
+        'Explain what a turn is, in a plain chat and in an agent',
+        'Choose between running a model locally and calling a cloud provider'],
+      lead: 'Everything else in this series is built on top of this module. An LLM is simple to describe: text goes in, and text comes out. But almost every idea later in the series (RAG, tools, memory, agents) exists because of one specific limit. We will get to that limit in a minute.',
+      tr: { title: 'LLM Temelleri', lead: 'Serideki diğer her şey bu modülün üzerine kurulu. Bir LLM\'i anlatmak aslında kolay: içeri metin girer, dışarıya metin çıkar. Ancak seride ele alacağımız neredeyse her fikir, yani RAG, tool\'lar, hafıza (memory) ve agent\'lar, tek bir sınırın yüzünden ortaya çıktı.' },
+      fa: { title: 'مبانی LLM', lead: 'این درس پایه‌ی کل این مجموعه‌ست. LLM رو خیلی ساده می‌شه توضیح داد: بهش متن می‌دی و متن تحویلت می‌ده. ولی تقریباً همه‌ی ایده‌هایی که بعداً می‌بینیم، از RAG و tool گرفته تا memory و agent، از دل یه محدودیت مشخص بیرون اومدن که کمی جلوتر بهش می‌رسیم.' },
+    },
+    every: {
+      title: 'LLM Fundamentals', meta: '20 min',
+      obj: ['Say in plain words what a chatbot does with the message you type',
+        'Explain why a long chat can make it lose track of what you said first',
+        'Tell apart what you wrote, what the app added, and what came back',
+        'Decide when an app on your own laptop is enough, and when an online one is better'],
+      lead: 'You have typed a question into a chatbot and read the answer. This module is about what happens in between. There is no code in it: every idea is shown with an everyday example first.',
+    },
+  },
+  tools: {
+    eng: {
+      title: 'Tool Calling', meta: '25 min · 1,787 words',
+      obj: ['Explain how a model requests a tool call, and who actually executes it',
+        'Describe what a tool schema contains, and where it comes from',
+        'Explain why a tool\'s name and description decide whether it gets used',
+        'Follow one real tool call through the request and the response',
+        'Identify tasks that need a tool rather than more prompting'],
+      lead: 'LLM Fundamentals, Training LLMs and RAG & Embeddings covered three things: what a model is, how it was trained, and how to put your own data in front of it. In all of that, the model is still only reading. In this module, the model starts doing things: it reads a file, runs a command, or calls an API.',
+      tr: { title: 'LLM Tool Calling', lead: 'LLM Temelleri, Training LLMs ve RAG modüllerinde üç şeyi ele aldık: model nedir, nasıl eğitilir ve kendi verini modelin önüne nasıl koyarsın. Bu üç modülde model hâlâ yalnızca okuyordu, ama bu modülde bir şeyler yapmaya başlıyor: bir dosyayı okuyor, bir komut çalıştırıyor ya da bir API\'yi çağırıyor.' },
+      fa: { title: 'Tool Calling', lead: 'توی مبانی LLM، Training LLMs و RAG و Embedding‌ها سه تا چیز رو دیدیم: مدل چیه، چطور train شده، و چطور داده‌ی خودت رو بذاری جلوش. ولی توی همه‌ی این‌ها مدل فقط می‌خونه. از این درس به بعد مدل دست به کار می‌شه.' },
+    },
+    every: null,
+  },
+}
+
+function barHTML({ right = '', nav = true, catalogOn = false } = {}) {
+  return `<div class="s-bar"><a class="s-brand"><i></i>AI Engineering Bazaar</a>` +
+    (nav ? `<nav class="s-nav"><span class="s-link">Home</span><span class="s-link${catalogOn ? ' is-on' : ''}">Catalog ${IC.chev}</span><span class="s-link">Your progress</span></nav>` : '') +
+    `<span class="s-sp"></span>${right}</div>`
+}
+function barTail(globe = true) {
+  return (globe ? `<span class="s-icon" title="Language">${IC.globe}</span>` : '') +
+    `<span class="s-icon" title="Toggle theme">${IC.theme}</span><span class="s-repo">${IC.gh}<span class="st">${IC.star}</span>6</span>`
+}
+
+/* `done` is the per-track record: which Fundamentals modules this reader has finished in THIS track. */
+function railHTML({ head = 'Curriculum', current = 0, done = [], pending = [] } = {}) {
+  const items = FUNDAMENTALS.map((t, i) =>
+    `<li class="${i === current ? 'cur' : ''}${pending.includes(i) ? ' pend' : ''}">${t}${done.includes(i) ? `<span class="tk" title="Completed">${IC.tick}</span>` : ''}</li>`).join('')
+  return `<aside class="s-rail"><div class="s-rail-head">${head}</div>` +
+    LEVELS.map((l, i) => i === 0
+      ? `<div class="s-group open" style="--cat:${l.cat}"><div class="g"><span class="k"></span>${l.title}<span class="n">${l.n}</span></div><ul class="s-items">${items}</ul></div>`
+      : `<div class="s-group" style="--cat:${l.cat}"><div class="g"><span class="k"></span>${l.title}<span class="n">${l.n}</span></div></div>`).join('') +
+    `</aside>`
+}
+
+function crumbHTML(parts) {
+  return `<div class="s-crumb">${parts.map((p) => `<span>${p}</span>`).join('<span class="sep">/</span>')}</div>`
+}
+function cardHTML(obj) {
+  return `<div class="s-card"><h3>What you will be able to do</h3><ul>${obj.map((o) => `<li>${o}</li>`).join('')}</ul></div>`
+}
+
+/* Every frame is drawn at its real width and zoomed to fit the column, so a 390px window shows the same page smaller. */
+function fit() {
+  document.querySelectorAll('.scaler').forEach((sc) => {
+    const s = sc.firstElementChild
+    const w = +s.dataset.w
+    s.style.width = w + 'px'
+    s.style.zoom = Math.min(1, sc.clientWidth / w)
+  })
+}
+addEventListener('resize', fit)
+
+const PAIRS = [
+  { code: 'A1', eng: 'For Engineers', every: 'For Everyone', tr: ['Mühendisler için', 'Herkes için'], rec: true,
+    what: 'Names who each track is written for. The author\'s favourite so far.',
+    why: 'it says who each version is for in the reader\'s own terms, "Everyone" invites without labelling anybody, and it reads well in all four places.',
+    good: ['"For Everyone" includes engineers too, which is true: anyone may read either track.', 'The two names share their first word, so they read as a pair in a menu.'],
+    cost: ['"For Engineers" can sound closed to a curious reader who is not one.', 'The two names start the same way, so a fast reader has to look past "For".'],
+    ask: 'Which version would you like to read?' },
+  { code: 'A2', eng: 'Technical', every: 'Plain language', tr: ['Teknik', 'Sade dil'],
+    what: 'Names how each track is written, not who reads it.',
+    good: ['Describes the writing, so no reader is labelled at all.', 'Short, and translates cleanly.'],
+    cost: ['"Plain language" can read as a style setting rather than a separate course.', 'Uneven lengths: one word against two.'],
+    ask: 'How should it be written?' },
+  { code: 'A3', eng: 'Hands-on', every: 'Big picture', tr: ['Uygulamalı', 'Genel bakış'],
+    what: 'Names what each track gives you: doing it, or seeing how it fits together.',
+    good: ['Familiar course-platform words, and both sound like something you would want.', 'Says what you get, which helps someone choose.'],
+    cost: ['"Big picture" can sound like a summary, when it is a full module.', 'A manager who builds nothing may still want "Hands-on" examples; the names blur that.'],
+    ask: 'How do you want to learn it?' },
+  { code: 'A4', eng: 'Build it', every: 'Understand it', tr: ['Kur', 'Anla'],
+    what: 'Two verbs: the goal of each track.',
+    good: ['Short and friendly: 207px in the bar switch, against 253px for A1.', 'The goal is the choice, which is honest.'],
+    cost: ['A verb reads oddly as a label: "Tool Calling, Build it".', 'Engineers also want to understand it, so the split sounds wrong to them.', 'Turkish turns it into commands: "Kur / Anla".'],
+    ask: 'What do you want to do with it?' },
+  { code: 'A5', eng: 'Engineer track', every: 'Explorer track', tr: ['Mühendis yolu', 'Kâşif yolu'],
+    what: 'Two named paths, each with a character.',
+    good: ['"Explorer" is warm and curious, and says nothing about what the reader lacks.', 'The word "track" says plainly that these are two courses.'],
+    cost: ['"Explorer" is vague: it does not say the writing has no code.', 'The longest pair: 267px in the bar switch, against 253px for A1 and 203px for A6.'],
+    ask: 'Which path through the bazaar?' },
+  { code: 'A6', eng: 'Deep dive', every: 'Clear view', tr: ['Derinlemesine', 'Net bakış'],
+    what: 'Two images: going deep, or seeing clearly.',
+    good: ['Both sound good; neither track sounds second-best.', 'Short, and pleasant on the home page.'],
+    cost: ['Idioms: neither says who it is for or how it is written.', 'Images translate badly, and "deep dive" is a cliché.'],
+    ask: 'How far in do you want to go?' },
+]
+
+const ARCH = `<svg class="arch" viewBox="0 0 400 420" aria-hidden="true"><defs><pattern id="st" width="28" height="28" patternUnits="userSpaceOnUse"><rect width="14" height="28" fill="#a0503c"/><rect x="14" width="14" height="28" fill="#f8efe0"/></pattern></defs><path d="M40 420V180A160 130 0 0 1 360 180V420" fill="none" stroke="url(#st)" stroke-width="22"/><path d="M58 420V182A142 114 0 0 1 342 182V420" fill="#f7ecdb"/><path d="M58 420V182A142 114 0 0 1 342 182V420" fill="none" stroke="#c8a078" stroke-width="2"/><circle cx="200" cy="112" r="17" fill="#fdfbf7" stroke="#a0503c" stroke-width="4"/><g stroke="#a0503c" stroke-width="1.5"><path d="M200 97v30M185 112h30M189 101l22 22M211 101l-22 22"/></g><g transform="translate(200 175)"><path d="M0 -14V0" stroke="#6a6558" stroke-width="1.2" stroke-dasharray="2 2"/><path d="M-9 12a9 13 0 0 0 18 0a9 13 0 0 0-18 0Z" fill="#2f8c86"/><circle cx="-3" cy="9" r="1.4" fill="#fff"/><circle cx="3" cy="14" r="1.4" fill="#fff"/><circle cx="2" cy="6" r="1.2" fill="#fff"/><path d="M-4 0h8l-2 -2h-4Z" fill="#b8873b"/><path d="M-3 25h6l-3 5Z" fill="#b8873b"/></g></svg>`
+
+function strip(p) {
+  const right = `<div class="seg"><span class="on">${p.eng}</span><span>${p.every}</span></div>` + barTail()
+  return `<div class="scaler strip"><div class="site" data-w="1280">${barHTML({ right })}<div class="s-band"></div></div></div>`
+}
+function menu(p) {
+  const lv = LEVELS.map((l) => `<span class="s-mi" style="--cat:${l.cat}"><span class="key"></span>${l.title}<span class="cnt">${l.n}</span></span>`).join('')
+  return `<div class="menu-stage"><div class="s-menu"><span class="s-mi"><span class="key" style="background:none"></span>Curriculum<span class="cnt">All</span></span><div class="s-msep"></div><div class="s-mh">${p.eng}</div>${lv}<div class="s-msep"></div><div class="s-mh">${p.every}</div>${lv}</div></div>`
+}
+function mod(p) {
+  const one = (name, icon, meta) => `<div>${crumbHTML(['Home', `<span class="trk">${name}</span>`, 'Fundamentals', 'Tool Calling'])}<div class="s-h1">Tool Calling</div><div class="s-meta" style="margin:0"><span class="t-pill">${icon}${name}</span><span>${meta}</span></div></div>`
+  return `<div class="mod-stage"><div class="two">${one(p.eng, IC.eng(), '25 min · 1,787 words')}${one(p.every, IC.every(), '20 min')}</div></div>`
+}
+function home(p) {
+  return `<div class="home-stage">${ARCH}<p class="ask">${p.ask}</p><div class="btns"><span class="btn">${p.eng}<small>With code</small></span><span class="btn">${p.every}<small>No code needed</small></span></div></div>`
+}
+
+document.getElementById('jump').innerHTML = PAIRS.map((p) => `<li><a href="#${p.code}"><span class="code">${p.code}</span>${p.eng} / ${p.every}${p.rec ? ' <span class="star">Recommended</span>' : ''}</a></li>`).join('')
+document.getElementById('pairs').innerHTML = PAIRS.map((p) => `
+  <section class="opt" id="${p.code}">
+    <div class="opt-head"><span class="code">${p.code}</span><h2>${p.eng} <span style="color:var(--faint);font-weight:400">/</span> ${p.every}</h2>${p.rec ? `<span class="rec">${IC.rec} Recommended</span>` : ''}</div>
+    <p class="what">${p.what}</p>
+    ${p.why ? `<p class="why"><b>Why:</b> ${p.why}</p>` : ''}
+    <p class="tr">In Turkish: <b>${p.tr[0]}</b> / <b>${p.tr[1]}</b></p>
+    <ul class="trade">${p.good.map((g) => `<li class="good">${g}</li>`).join('')}${p.cost.map((c) => `<li class="cost">${c}</li>`).join('')}</ul>
+    <p class="where">In the bar, as the switch</p>
+    ${strip(p)}
+    <div class="ctx">
+      <div><p class="where">In the catalog menu</p>${menu(p)}</div>
+      <div><p class="where">On a module page</p>${mod(p)}</div>
+      <div><p class="where">On the home page, at the end of the street</p>${home(p)}</div>
+    </div>
+  </section>`).join('')
+fit()
+document.fonts && document.fonts.ready.then(fit)
+</script>
+</body>
+</html>

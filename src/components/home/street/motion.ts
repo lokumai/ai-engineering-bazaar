@@ -1,6 +1,7 @@
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { STALL_TIMELINES } from './stall-timelines'
+import { CHOSEN } from './track'
 
 /**
  * The home page's motion: the walk through the bazaar, and the stalls coming
@@ -42,8 +43,13 @@ const data = (el: Element, key: string): string => (el as HTMLElement | SVGEleme
 const num = (el: Element, key: string): number => Number(data(el, key))
 
 /* Camera stops: the world x at the centre of the screen at the start, at each
-   of the four stalls, and at the doors. World units are 900 tall. */
-const STOPS = [720, 1990, 3190, 4390, 5590, 7040]
+   of the four stalls, at the track choice (the middle of the two track bays)
+   and at the doors. World units are 900 tall. */
+const STOPS = [720, 1990, 3190, 4390, 5590, 7020, 8600]
+/** The stops that are one of the four mottos' stalls, by index in STOPS. */
+const STALL_STOPS = 4
+/** The choice is a decision, so the walk holds there longer than at a stall. */
+const CHOICE_HOLD = 0.95
 /* Layer speeds relative to the stall row. */
 const SP = { back: 0.3, mid: 1, beams: 0.8, fore: 1.45 }
 
@@ -54,6 +60,16 @@ export function initBazaar(root: HTMLElement): Cleanup {
   const baySvgs = stalls.map((st) => $<SVGSVGElement>('.bay-svg', st))
   const doors = $$('.door', root)
   const cta = $('.cta-wrap', root)
+  /* The track choice: the question, two signs, two bays with a character each,
+     and a caption under each character. */
+  const tracks = $$('.track', root)
+  const trackSigns = tracks.map((t) => $('.sign', t))
+  const trackSvgs = tracks.map((t) => $<SVGSVGElement>('.bay-svg', t))
+  const whos = tracks.map((t) => $('.who', t))
+  const question = $('.choice .sign.question', root)
+  const bays = [...baySvgs, ...trackSvgs]
+  /* Set by the walk while it stands: scrolls the page to where the doors are. */
+  let toDoors: (() => void) | null = null
 
   gsap.registerPlugin(ScrollTrigger)
 
@@ -145,12 +161,12 @@ export function initBazaar(root: HTMLElement): Cleanup {
     gate.parentNode!.insertBefore(section, gate)
     move(gate, stage, street)
     const endBay = L.mid.children[2]
-    baySvgs.forEach((svg) => {
+    bays.forEach((svg) => {
       svg.setAttribute('viewBox', data(svg, 'full'))
       svg.setAttribute('preserveAspectRatio', 'none')
       move(svg, L.mid, endBay)
     })
-    signEls.forEach((sg) => move(sg, L.top))
+    ;[...signEls, question, ...trackSigns, ...whos].forEach((el) => move(el, L.top))
     move($('.doors', root), L.top)
     move(cta, L.top)
     html.classList.add('is-walk')
@@ -165,7 +181,14 @@ export function initBazaar(root: HTMLElement): Cleanup {
       VW = html.clientWidth
       stage.style.setProperty('--u', String(U))
     }
-    const signs = signEls.map((sg, i) => ({ el: sg, at: STOPS[i + 1] - 660, on: false, tl: swingTL(sg) }))
+    /* A sign flaps down as the camera nears it. The mottos' signs come in at the
+       stop they belong to; the choice's signs are read off where they hang. */
+    const hangs = (el: HTMLElement): number => Number(el.style.getPropertyValue('--x'))
+    const signs = [
+      ...signEls.map((sg, i) => ({ el: sg, at: STOPS[i + 1] - 660 })),
+      { el: question, at: hangs(question) - 760 },
+      ...trackSigns.map((sg) => ({ el: sg, at: hangs(sg) - 600 })),
+    ].map((one) => ({ ...one, on: false, tl: swingTL(one.el) }))
     const apply = () => {
       const x = cam.x
       L.back.style.transform = `translate3d(${VW / 2 - x * SP.back * U}px,0,0)`
@@ -202,14 +225,23 @@ export function initBazaar(root: HTMLElement): Cleanup {
     const LEAD = 0.42
     let pos = 1.02
     let from = STOPS[0]
+    let choiceAt = 0
     for (let i = 1; i < STOPS.length; i++) {
       const last = i === STOPS.length - 1
+      const choice = i === STALL_STOPS + 1
       const to = STOPS[i]
       const dur = ((to - from) * 0.8) / 1000
       master.to(cam, { x: to, duration: dur, ease: 'power1.inOut' }, pos)
       const arrive = pos + dur
-      const hold = last ? 0.6 : HOLD
-      const ptl = last ? tlDoors(true) : STALL_TIMELINES[data(baySvgs[i - 1], 'art')](baySvgs[i - 1])
+      const hold = last ? 0.6 : choice ? CHOICE_HOLD : HOLD
+      if (choice) choiceAt = arrive + hold / 2
+      /* The choice has no prop to play: its signs swing in on their own and its
+         characters idle in CSS. An empty second keeps the rescaling below honest. */
+      const ptl = last
+        ? tlDoors(true)
+        : choice
+          ? gsap.timeline().to({}, { duration: 1 })
+          : STALL_TIMELINES[data(baySvgs[i - 1], 'art')](baySvgs[i - 1])
       master.add(ptl.timeScale(ptl.duration() / (LEAD + hold - 0.06)), arrive - LEAD)
       master.to(cam, { x: to + (last ? 0 : 54), duration: hold }, arrive)
       from = to + (last ? 0 : 54)
@@ -227,11 +259,14 @@ export function initBazaar(root: HTMLElement): Cleanup {
     })
     ScrollTrigger.addEventListener('refreshInit', size)
     ScrollTrigger.addEventListener('refresh', apply)
+    toDoors = () => window.scrollTo({ top: st.end, behavior: 'smooth' })
 
     /* keyboard: a control inside the walk brings the walk to where that control is visible */
     const onFocus = (e: FocusEvent) => {
       const target = e.target as HTMLElement
-      const p = target.closest('.door, .cta-wrap') ? 1 : 0
+      const p = target.closest('.door, .cta-wrap')
+        ? 1
+        : target.closest('.track-sign') ? choiceAt / master.duration() : 0
       const y = st.start + p * (st.end - st.start)
       if (Math.abs(window.scrollY - y) > 4) {
         window.scrollTo(0, y)
@@ -242,6 +277,7 @@ export function initBazaar(root: HTMLElement): Cleanup {
     section.addEventListener('focusin', onFocus)
 
     return () => {
+      toDoors = null
       section.removeEventListener('focusin', onFocus)
       ScrollTrigger.removeEventListener('refreshInit', size)
       ScrollTrigger.removeEventListener('refresh', apply)
@@ -256,7 +292,7 @@ export function initBazaar(root: HTMLElement): Cleanup {
         const [node, parent, next] = moved[i]
         parent.insertBefore(node, next)
       }
-      baySvgs.forEach((svg) => {
+      bays.forEach((svg) => {
         svg.setAttribute('viewBox', data(svg, 'cropView'))
         svg.removeAttribute('preserveAspectRatio')
       })
@@ -278,6 +314,15 @@ export function initBazaar(root: HTMLElement): Cleanup {
       })
       ScrollTrigger.create({ trigger: svg, start: 'top 82%', end: 'bottom 42%', scrub: 0.7, animation: STALL_TIMELINES[data(svg, 'art')](svg) })
     })
+    ;[question, ...trackSigns].forEach((sign) => {
+      const s = swingTL(sign)
+      ScrollTrigger.create({
+        trigger: sign,
+        start: 'top 88%',
+        onEnter: () => s.timeScale(1).play(),
+        onLeaveBack: () => s.timeScale(2).reverse(),
+      })
+    })
     ScrollTrigger.create({ trigger: $('.doors', root), start: 'top 80%', end: 'bottom 55%', scrub: 0.7, animation: tlDoors(false) })
     gsap.fromTo($('#archBox', root), { scale: 1 }, {
       scale: 1.12,
@@ -286,7 +331,7 @@ export function initBazaar(root: HTMLElement): Cleanup {
       scrollTrigger: { trigger: $('#gate', root), start: 'top top', end: 'bottom top', scrub: true },
     })
     return () => {
-      signEls.forEach((sg) => gsap.set($('.swing', sg), { clearProps: 'all' }))
+      ;[...signEls, question, ...trackSigns].forEach((sg) => gsap.set($('.swing', sg), { clearProps: 'all' }))
     }
   }
 
@@ -295,9 +340,21 @@ export function initBazaar(root: HTMLElement): Cleanup {
     tlDoors(false).progress(1)
   }
 
-  baySvgs.forEach((svg) => {
+  bays.forEach((svg) => {
     svg.dataset.cropView = svg.getAttribute('viewBox') ?? ''
   })
+
+  /* Choosing a track brings the doors into view: the walk plays on to them, and
+     the stack scrolls to them. The doors are already on screen at the end of the
+     page, so the walk only has to be told where that is. */
+  const onChosen = () => {
+    if (toDoors !== null) toDoors()
+    else {
+      const calm = matchMedia('(prefers-reduced-motion: reduce)').matches
+      $('.end', root).scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' })
+    }
+  }
+  root.addEventListener(CHOSEN, onChosen)
   const mm = gsap.matchMedia()
   mm.add(
     {
@@ -319,5 +376,8 @@ export function initBazaar(root: HTMLElement): Cleanup {
       return undefined
     },
   )
-  return () => mm.revert()
+  return () => {
+    root.removeEventListener(CHOSEN, onChosen)
+    mm.revert()
+  }
 }

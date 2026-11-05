@@ -30,6 +30,8 @@ export type ArtName =
   | 'stall-sieve'
   | 'stall-lantern'
   | 'stall-signpost'
+  | 'track-eng'
+  | 'track-all'
   | `icon-${1 | 2 | 3 | 4}`
   | `door-${1 | 2 | 3 | 4 | 5}`
   | `tray-${1 | 2 | 3 | 4 | 5}`

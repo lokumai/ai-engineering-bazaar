@@ -396,6 +396,272 @@
     }
   }
 
+  /* ---------- the track choice, stacked: a phone, reduced motion, no script ----------
+     The question over two stalls, each under a sign that is a button (D89).
+     The signs are drawn the way the mottos' are, and take the same tokens that
+     do not flip, so a sign reads the same at night. Each stall's art holds its
+     character, and the character's name stands on the floor under it. */
+  .bz-street .choice {
+    padding: clamp(48px, 7vw, 88px) 16px clamp(40px, 6vw, 72px);
+    border-top: 1px solid var(--color-line);
+    background: var(--color-surface);
+  }
+
+  .bz-street .choice-in {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .bz-street .sign.question {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .bz-street .sign.question .board {
+    padding: 18px 26px 20px;
+    text-align: center;
+  }
+
+  .bz-street .sign.question h2 {
+    margin: 0 0 6px;
+  }
+
+  .bz-street .sign.question p {
+    font-size: 17px;
+  }
+
+  .bz-street .tracks {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 56px;
+  }
+
+  .bz-street .track {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .bz-street .track-sign {
+    position: relative;
+    z-index: 2;
+    order: -1;
+    width: 100%;
+    max-width: 440px;
+    margin: 0 0 22px;
+  }
+
+  .bz-street .track-art {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid var(--color-line);
+    border-radius: var(--shape-arch);
+    background: var(--color-bar-chip);
+  }
+
+  .bz-street .track-art svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* The sign is the button: the board fills it, and the choosing is in what it says. */
+  .bz-street .track-sign .board {
+    display: block;
+    width: 100%;
+    margin: 0;
+    font: inherit;
+    text-align: left;
+    color: var(--color-on-bar-chip);
+    cursor: pointer;
+  }
+
+  .bz-street .track-sign .board:hover {
+    border-color: var(--color-line-strong);
+    border-top-color: var(--hue);
+  }
+
+  .bz-street .sg-ico {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 12px;
+    border-radius: var(--radius-xl);
+    background: var(--hue);
+    color: var(--color-on-bar);
+  }
+
+  .bz-street .sg-ico svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .bz-street .sg-t {
+    display: block;
+    font-size: clamp(26px, 2.4vw, 32px);
+    font-weight: 650;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    font-variation-settings: "SOFT" 40, "opsz" 60;
+    color: var(--color-on-bar-chip);
+  }
+
+  /* Three lines tall on both signs, so the two boards end together. */
+  .bz-street .sg-p {
+    display: block;
+    min-height: 4.5em;
+    margin: 10px 0 16px;
+    font-size: 16.5px;
+    line-height: 1.5;
+  }
+
+  /* Two marks that are not a colour tell a chosen sign from the other: the
+     label says Chosen with a tick, and the board is ringed. */
+  .bz-street .sg-go {
+    display: inline-flex;
+    align-items: center;
+    padding: 11px 18px;
+    border: 2px solid var(--color-on-bar-chip);
+    border-radius: var(--radius-base);
+    background: var(--color-on-bar-chip);
+    color: var(--color-on-bar);
+    font: 600 16px / 1.2 var(--font-sans);
+  }
+
+  .bz-street .sg-on,
+  .bz-street .track-sign .board[aria-pressed="true"] .sg-off {
+    display: none;
+  }
+
+  .bz-street .track-sign .board[aria-pressed="true"] .sg-on {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .bz-street .sg-on svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .bz-street .track-sign .board[aria-pressed="true"] {
+    outline: 3px solid var(--color-on-bar-chip);
+    outline-offset: 3px;
+  }
+
+  .bz-street .track-sign .board[aria-pressed="true"]:focus-visible {
+    outline-color: var(--color-focus);
+  }
+
+  .bz-street .track-sign .board[aria-pressed="true"] .sg-go {
+    background: var(--color-on-bar);
+    color: var(--color-on-bar-chip);
+  }
+
+  /* The character's name: Turkish, then the English in brackets, on the floor. */
+  .bz-street .who {
+    position: absolute;
+    top: 88%;
+    left: var(--l);
+    z-index: 1;
+    margin: 0;
+    padding: 3px 9px 2px;
+    border: 1px solid var(--color-line);
+    border-bottom: 3px solid var(--hue);
+    border-radius: var(--shape-arch);
+    background: var(--color-on-bar);
+    color: var(--color-on-bar-chip);
+    font-size: clamp(11px, 2.9vw, 14px);
+    font-weight: 700;
+    line-height: 1.25;
+    white-space: nowrap;
+    transform: translateX(-50%);
+  }
+
+  /* The line under the doors: which track they open, and the way to the other. */
+  .bz-street .cta-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .bz-street .switch {
+    margin: 0;
+    padding: 7px 14px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-base);
+    background: var(--color-surface);
+    color: var(--color-on-surface);
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  .bz-street .sw-link {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-on-surface-title);
+    font: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+
+  .bz-street .sw-link[hidden] {
+    display: none;
+  }
+
+  @media (min-width: 760px) {
+    .bz-street .tracks {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 56px 32px;
+    }
+  }
+
+  /* The characters are alive: a plume, a falcon, a tail, a pair of scales.
+     Each is drawn in the view box of its own small picture, so the origins are
+     in that picture's units. Nothing here moves under reduced motion. */
+  .bz-street .fig {
+    display: block;
+    overflow: visible;
+  }
+
+  .bz-street .fig * { transform-box: view-box; }
+  .bz-street .fig .breathe { transform-origin: 110px 392px; animation: bz-fig-breathe 4.2s ease-in-out infinite; }
+  .bz-street .fig .head { transform-origin: 110px 140px; animation: bz-fig-nod 6s ease-in-out infinite; }
+  .bz-street .fig .blink { transform-origin: 110px 111px; animation: bz-fig-blink 5.5s infinite; }
+  .bz-street .fig .sash { transform-origin: 129px 246px; animation: bz-fig-sway 3.4s ease-in-out infinite alternate; }
+  .bz-street .f-merchant .beam { transform-origin: 168px 172px; animation: bz-fig-beam 3s ease-in-out infinite alternate; }
+  .bz-street .f-merchant .pan-l { transform-origin: 140px 172px; animation: bz-fig-pan 3s ease-in-out infinite alternate; }
+  .bz-street .f-merchant .pan-r { transform-origin: 196px 172px; animation: bz-fig-pan 3s ease-in-out infinite alternate; }
+  .bz-street .f-sipahi .plume { transform-origin: 110px 42px; animation: bz-fig-sway 2.2s ease-in-out infinite alternate; }
+  .bz-street .f-sipahi .falcon { transform-origin: 168px 170px; animation: bz-fig-falcon 4s ease-in-out infinite; }
+  .bz-street .f-sipahi .falcon-wing { transform-origin: 166px 148px; animation: bz-fig-wing 4s ease-in-out infinite; }
+  .bz-street .horse .tail { transform-box: fill-box; transform-origin: 100% 0%; animation: bz-fig-tail 3.2s ease-in-out infinite alternate; }
+  .bz-street .horse .head { transform-box: fill-box; transform-origin: 0% 80%; animation: bz-fig-hnod 5s ease-in-out infinite; }
+
+  @keyframes bz-fig-breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.008, 1.018); } }
+  @keyframes bz-fig-nod { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-2deg); } 60% { transform: rotate(1.5deg); } }
+  @keyframes bz-fig-blink { 0%, 95%, 100% { transform: scaleY(1); } 97% { transform: scaleY(0.1); } }
+  @keyframes bz-fig-sway { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
+  @keyframes bz-fig-beam { from { transform: rotate(-7deg); } to { transform: rotate(7deg); } }
+  @keyframes bz-fig-pan { from { transform: rotate(7deg); } to { transform: rotate(-7deg); } }
+  @keyframes bz-fig-falcon { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-6deg); } 40% { transform: rotate(3deg); } }
+  @keyframes bz-fig-wing { 0%, 60%, 100% { transform: rotate(0); } 70% { transform: rotate(-30deg); } 80% { transform: rotate(-6deg); } 88% { transform: rotate(-26deg); } }
+  @keyframes bz-fig-tail { from { transform: rotate(-5deg); } to { transform: rotate(7deg); } }
+  @keyframes bz-fig-hnod { 0%, 100% { transform: rotate(0); } 40% { transform: rotate(4deg); } 70% { transform: rotate(-2deg); } }
+
   /* ---------- the doors, one per level, and the way in ---------- */
   .bz-street .end {
     padding: clamp(40px, 6vw, 72px) 16px clamp(56px, 7vw, 96px);
@@ -497,6 +763,7 @@
 
   /* ---------- the walk: a wide screen with motion allowed ---------- */
   html.is-walk .bz-street .mottos,
+  html.is-walk .bz-street .choice,
   html.is-walk .bz-street .end {
     display: none;
   }
@@ -660,6 +927,8 @@
   }
 
   html.is-walk .bz-street .cta-wrap {
+    flex-direction: row;
+    gap: 18px;
     position: absolute;
     top: calc(var(--y) * var(--u) * 1px);
     left: calc(var(--x) * var(--u) * 1px);
@@ -667,9 +936,62 @@
     white-space: nowrap;
   }
 
+  /* The track choice on the walk: the question and the two signs hang in the
+     street where their stalls are, and each character's name stands on the floor
+     under it. Centred on the x the page gives, because their widths follow the
+     window's height and the stalls' do not. */
+  html.is-walk .bz-street .sign.question,
+  html.is-walk .bz-street .track-sign {
+    transform: translateX(-50%);
+  }
+
+  html.is-walk .bz-street .sign.question {
+    width: max(460px, calc(560px * var(--u)));
+  }
+
+  html.is-walk .bz-street .track-sign {
+    width: max(360px, calc(396px * var(--u)));
+  }
+
+  html.is-walk .bz-street .sign.question .board {
+    padding: max(14px, calc(18px * var(--u))) max(20px, calc(26px * var(--u))) max(16px, calc(20px * var(--u)));
+  }
+
+  html.is-walk .bz-street .sign.question p {
+    font-size: max(15px, calc(17px * var(--u)));
+  }
+
+  html.is-walk .bz-street .sg-ico {
+    width: max(34px, calc(40px * var(--u)));
+    height: max(34px, calc(40px * var(--u)));
+    margin-bottom: max(8px, calc(12px * var(--u)));
+  }
+
+  html.is-walk .bz-street .sg-t {
+    font-size: max(24px, calc(31px * var(--u)));
+  }
+
+  html.is-walk .bz-street .sg-p {
+    margin: max(6px, calc(10px * var(--u))) 0 max(10px, calc(16px * var(--u)));
+    font-size: max(15px, calc(16.8px * var(--u)));
+  }
+
+  html.is-walk .bz-street .sg-go {
+    padding: max(9px, calc(11px * var(--u))) max(14px, calc(18px * var(--u)));
+    font-size: max(15px, calc(16px * var(--u)));
+  }
+
+  html.is-walk .bz-street .who {
+    top: calc(var(--y) * var(--u) * 1px);
+    left: calc(var(--x) * var(--u) * 1px);
+    font-size: max(14px, calc(16px * var(--u)));
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .bz-street .lamp svg,
-    .bz-street .twinkle {
+    .bz-street .twinkle,
+    .bz-street .fig *,
+    .bz-street .horse * {
       animation: none;
     }
     .bz-street .mote {

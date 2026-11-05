@@ -12,7 +12,7 @@ description: >
   Bazaar Street front door. Then the v1.0.0 release, M28, Persian modules read right to left,
   merged as PR #30, M29, both translations rewritten in their own language, and M30, the Persian
   rewritten by meaning and a clarity hunt in all three languages, M31, two promo videos made
-  with HyperFrames and /brag and then removed before merging, and M32, the README rewritten for readers.
+  with HyperFrames and /brag and then removed before merging, and M32, the README rewritten for readers, up to M37, the content bundle for the mobile reader.
   Every milestone carries its deliverables and acceptance criteria as `- [ ]` checkboxes, ticked as
   the work lands, and closes with a dated report; the loop that governs that is in part 1 and is not
   restated here. Part 1 holds M1 to M15 and is closed.
@@ -25,7 +25,7 @@ covers: "M16 to M37, 2026-09-09 onward: M16 the ten stages and the review pass, 
 last_updated: 2026-11-05
 ---
 
-# 📈 PROGRESS, part 2 — M16 to M36
+# 📈 PROGRESS, part 2 — M16 to M37
 
 > **← Part 1: [`PROGRESS.md`](PROGRESS.md)** — M1 to M15, and the review pass over M10 to M14.
 > This part holds **M16 to M36**, in the order they were worked.
